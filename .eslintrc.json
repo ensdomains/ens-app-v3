@@ -3,18 +3,15 @@
   "extends": [
     "next/core-web-vitals",
     "airbnb",
-    "airbnb-typescript"
+    "airbnb-typescript",
+    "prettier",
+    "plugin:prettier/recommended"
   ],
-  "plugins": [
-    "testing-library",
-    "@typescript-eslint"
-  ],
+  "plugins": ["testing-library", "@typescript-eslint", "prettier"],
   "parser": "@typescript-eslint/parser",
   "overrides": [
     {
-      "files": [
-        "**/__tests__/**/*.[jt]s?(x)"
-      ],
+      "files": ["**/__tests__/**/*.[jt]s?(x)"],
       "env": { "jest/globals": true },
       "globals": {
         "context": "readonly"
@@ -27,9 +24,7 @@
     },
     // Only uses Testing Library lint rules in test files
     {
-      "files": [
-        "**/cypress/**/*.[jt]s?(x)"
-      ],
+      "files": ["**/cypress/**/*.[jt]s?(x)"],
       "env": { "cypress/globals": true },
       "plugins": ["cypress"],
       "extends": ["plugin:cypress/recommended"]
@@ -51,10 +46,7 @@
         "ts": "never",
         "tsx": "never"
       }
-   ],
-    "react/require-default-props": "off",
-    "jsx-a11y/anchor-is-valid": "off",
-    "semi": "off",
-    "@typescript-eslint/semi": ["error"]
+    ],
+    "prettier/prettier": "error"
   }
 }
