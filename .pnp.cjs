@@ -8462,10 +8462,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["nanoid", [
-        ["npm:3.1.30", {
-          "packageLocation": "./.yarn/cache/nanoid-npm-3.1.30-58cf6fe7ec-276d0d4b0c.zip/node_modules/nanoid/",
+        ["npm:3.2.0", {
+          "packageLocation": "./.yarn/cache/nanoid-npm-3.2.0-27f7f3aa52-3d1d5a69fe.zip/node_modules/nanoid/",
           "packageDependencies": [
-            ["nanoid", "npm:3.1.30"]
+            ["nanoid", "npm:3.2.0"]
           ],
           "linkType": "HARD",
         }]
@@ -9048,7 +9048,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["postcss", "npm:8.2.15"],
             ["colorette", "npm:1.4.0"],
-            ["nanoid", "npm:3.1.30"],
+            ["nanoid", "npm:3.2.0"],
             ["source-map", "npm:0.6.1"]
           ],
           "linkType": "HARD",
