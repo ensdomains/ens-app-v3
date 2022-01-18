@@ -1,34 +1,60 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# ens-app-v2
 
-## Getting Started
+Version 2 of the ENS app.
 
-First, run the development server:
+## Default Settings
+
+- [Yarn2 with PnP](https://yarnpkg.com/)
+- [NextJS](https://nextjs.org/) with [TypeScript](https://www.typescriptlang.org/)
+- [Jest](https://jestjs.io/) (coverage 100%)
+- [Cypress](https://www.cypress.io/)
+- [ESLint](https://eslint.org/) with [airbnb-typescript](https://github.com/iamturns/eslint-config-airbnb-typescript) rules
+- [Github Actions](https://github.com/features/actions) (Coverage, E2E)
+- Using [Husky](https://typicode.github.io/husky/#/)
+  - Auto update patch version before commit
+  - Check Lint, Coverage, E2E before push
+
+## Usage
+
+### Install
 
 ```bash
-npm run dev
-# or
+yarn && yarn postinstall
+```
+
+### Running Dev Server
+
+```bash
 yarn dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### Lint
 
-You can start editing the page by modifying `pages/index.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn lint
+```
 
-[API routes](https://nextjs.org/docs/api-routes/introduction) can be accessed on [http://localhost:3000/api/hello](http://localhost:3000/api/hello). This endpoint can be edited in `pages/api/hello.ts`.
+### Unit Test
 
-The `pages/api` directory is mapped to `/api/*`. Files in this directory are treated as [API routes](https://nextjs.org/docs/api-routes/introduction) instead of React pages.
+```bash
+yarn test
+yarn test:watch
+yarn test:coverage
+```
 
-## Learn More
+### E2E Test
 
-To learn more about Next.js, take a look at the following resources:
+```bash
+yarn cypress
+yarn cypress:headless
+yarn e2e
+yarn e2e:headless
+```
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+### Build and Export
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+```bash
+yarn build
+yarn start
+yarn export
+```
