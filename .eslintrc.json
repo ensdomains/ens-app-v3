@@ -53,6 +53,8 @@
       }
    ],
     "react/require-default-props": "off",
-    "jsx-a11y/anchor-is-valid": "off"
+    "jsx-a11y/anchor-is-valid": "off",
+    "semi": "off",
+    "@typescript-eslint/semi": ["error"]
   }
 }
