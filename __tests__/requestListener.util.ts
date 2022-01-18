@@ -1,7 +1,6 @@
-import type { NextApiRequest, NextApiResponse } from 'next';
-import type { IncomingMessage, ServerResponse } from 'http';
-
-import { apiResolver } from 'next/dist/server/api-utils';
+import type { IncomingMessage, ServerResponse } from "http";
+import type { NextApiRequest, NextApiResponse } from "next";
+import { apiResolver } from "next/dist/server/api-utils";
 
 interface Props {
   query?: any;
@@ -16,11 +15,11 @@ export default function requestListener({ query = {}, handler }: Props) {
       query,
       handler,
       {
-        previewModeId: 'id',
-        previewModeEncryptionKey: 'key',
-        previewModeSigningKey: 'key',
+        previewModeId: "id",
+        previewModeEncryptionKey: "key",
+        previewModeSigningKey: "key",
       },
-      false,
+      false
     );
   };
 }
