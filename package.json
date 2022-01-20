@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.16",
+  "version": "0.1.17",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -8,8 +8,8 @@
     "lint": "next lint",
     "export": "next export",
     "test": "jest --env=./custom-test-env.js",
-    "test:watch": "jest --watch",
-    "test:coverage": "jest --coverage",
+    "test:watch": "jest --env=./custom-test-env.js --watch",
+    "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "cypress": "cypress open",
     "cypress:headless": "cypress run",
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
