@@ -41,7 +41,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
             ["@ensdomains/ui", "npm:3.3.14"],
             ["@ethersproject/keccak256", "npm:5.5.0"],
-            ["@testing-library/jest-dom", "npm:5.14.1"],
+            ["@testing-library/jest-dom", "npm:5.16.1"],
             ["@testing-library/react", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.2"],
             ["@types/jest", "npm:27.0.2"],
             ["@types/lodash", "npm:4.14.178"],
@@ -3506,13 +3506,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@testing-library/jest-dom", [
-        ["npm:5.14.1", {
-          "packageLocation": "./.yarn/cache/@testing-library-jest-dom-npm-5.14.1-1ece992419-eeba37ba10.zip/node_modules/@testing-library/jest-dom/",
+        ["npm:5.16.1", {
+          "packageLocation": "./.yarn/cache/@testing-library-jest-dom-npm-5.16.1-c862a31148-c5e3b5b021.zip/node_modules/@testing-library/jest-dom/",
           "packageDependencies": [
-            ["@testing-library/jest-dom", "npm:5.14.1"],
+            ["@testing-library/jest-dom", "npm:5.16.1"],
             ["@babel/runtime", "npm:7.15.4"],
             ["@types/testing-library__jest-dom", "npm:5.14.1"],
-            ["aria-query", "npm:4.2.2"],
+            ["aria-query", "npm:5.0.0"],
             ["chalk", "npm:3.0.0"],
             ["css", "npm:3.0.0"],
             ["css.escape", "npm:1.5.1"],
@@ -5390,6 +5390,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["aria-query", "npm:4.2.2"],
             ["@babel/runtime", "npm:7.15.4"],
             ["@babel/runtime-corejs3", "npm:7.15.4"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:5.0.0", {
+          "packageLocation": "./.yarn/cache/aria-query-npm-5.0.0-986fb11e0e-c41f98866c.zip/node_modules/aria-query/",
+          "packageDependencies": [
+            ["aria-query", "npm:5.0.0"]
           ],
           "linkType": "HARD",
         }]
@@ -9345,7 +9352,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
             ["@ensdomains/ui", "npm:3.3.14"],
             ["@ethersproject/keccak256", "npm:5.5.0"],
-            ["@testing-library/jest-dom", "npm:5.14.1"],
+            ["@testing-library/jest-dom", "npm:5.16.1"],
             ["@testing-library/react", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.2"],
             ["@types/jest", "npm:27.0.2"],
             ["@types/lodash", "npm:4.14.178"],

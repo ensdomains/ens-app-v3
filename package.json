@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.14",
+  "version": "0.1.15",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -41,7 +41,7 @@
     "react-dom": "*"
   },
   "devDependencies": {
-    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.2",
     "@types/lodash": "^4",
