@@ -3,7 +3,7 @@ const nextJest = require("next/jest");
 const createJestConfig = nextJest({ dir: "." });
 
 const customJestConfig = {
-  testEnvironment: "jsdom",
+  testEnvironment: "jest-environment-jsdom",
   collectCoverageFrom: [
     "**/*.{js,jsx,ts,tsx}",
     "!**/*.d.ts",
@@ -20,13 +20,10 @@ const customJestConfig = {
     // Handle image imports
     // https://jestjs.io/docs/webpack#handling-static-assets
     "^.+\\.(jpg|jpeg|png|gif|webp|svg)$": `<rootDir>/__mocks__/fileMock.js`,
-
-    // Handle module aliases
     "^__tests__/(.*)$": "<rootDir>/__tests__/$1",
-    "^pages/(.*)$": "<rootDir>/pages/$1",
-    "^src/(.*)$": "<rootDir>/src/$1",
+    "^@app/(.*)$": "<rootDir>/src/$1",
   },
-  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts", "jest-plugin-context/setup"],
+  setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
   testPathIgnorePatterns: [
     "<rootDir>/node_modules/",
     "<rootDir>/.yarn/",

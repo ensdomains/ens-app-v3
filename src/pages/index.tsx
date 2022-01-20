@@ -1,6 +1,3 @@
-import type { NextPage } from "next";
-import Head from "next/head";
-import Image from "next/image";
 import {
   Card,
   Code,
@@ -12,7 +9,10 @@ import {
   Logo,
   Main,
   Title,
-} from "src/components/basics";
+} from "@app/components/basics";
+import type { NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
 
 const Home: NextPage = () => (
   <Container>

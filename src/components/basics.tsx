@@ -1,4 +1,4 @@
-import mq from "src/mediaQuery";
+import mq from "@app/mediaQuery";
 import styled from "styled-components";
 
 export const Container = styled.div`
