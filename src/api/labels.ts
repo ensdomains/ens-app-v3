@@ -2,7 +2,7 @@ import {
   decodeLabelhash,
   encodeLabelhash,
   isEncodedLabelhash,
-} from "@ensdomains/ui";
+} from "@ensdomains/ui/utils";
 import { keccak256 } from "@ethersproject/keccak256";
 
 function getLabels() {

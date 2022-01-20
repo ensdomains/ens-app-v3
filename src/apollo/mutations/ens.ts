@@ -16,16 +16,14 @@ export async function setup({
   customProvider,
   ensAddress,
 }: Record<string, any>) {
-  const option: Record<string, any> = {
+  const option: Parameters<typeof setupENS>[0] = {
     reloadOnAccountsChange: false,
     enforceReadOnly,
     enforceReload,
     customProvider,
     ensAddress,
+    infura: enforceReadOnly ? undefined : INFURA_ID,
   };
-  if (enforceReadOnly) {
-    option.infura = INFURA_ID;
-  }
   const {
     ens: ensInstance,
     registrar: registrarInstance,

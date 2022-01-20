@@ -7,7 +7,7 @@
     "prettier",
     "plugin:prettier/recommended"
   ],
-  "plugins": ["testing-library", "@typescript-eslint", "prettier"],
+  "plugins": ["testing-library", "@typescript-eslint", "prettier", "jest"],
   "parser": "@typescript-eslint/parser",
   "overrides": [
     {
@@ -84,6 +84,7 @@
         "format": ["PascalCase"]
       }
     ],
-    "radix": "off"
+    "radix": "off",
+    "consistent-return": "off"
   }
 }

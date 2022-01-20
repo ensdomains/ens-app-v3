@@ -19,7 +19,6 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle image imports
     // https://jestjs.io/docs/webpack#handling-static-assets
-    "^.+\\.(jpg|jpeg|png|gif|webp|svg)$": `<rootDir>/__mocks__/fileMock.js`,
     "^__tests__/(.*)$": "<rootDir>/__tests__/$1",
     "^@app/(.*)$": "<rootDir>/src/$1",
   },

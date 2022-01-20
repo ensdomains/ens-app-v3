@@ -6,12 +6,12 @@ import { normalize } from "@ensdomains/eth-ens-namehash";
 import {
   emptyAddress as _emptyAddress,
   getEnsStartBlock as _ensStartBlock,
-  getNetworkId,
   isEncodedLabelhash,
   isLabelValid as _isLabelValid,
   parseSearchTerm as _parseSearchTerm,
   validateName as _validateName,
-} from "@ensdomains/ui";
+} from "@ensdomains/ui/utils/index";
+import { getNetworkId } from "@ensdomains/ui/web3";
 import { keccak256 } from "@ethersproject/keccak256";
 import throttle from "lodash/throttle";
 import { CID } from "multiformats";
