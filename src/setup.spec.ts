@@ -1,21 +1,34 @@
-import { connect } from "@app/api/web3modal";
-import { setup } from "@app/apollo/mutations/ens";
+/* eslint-disable import/first */
+import { connect as _connect } from "@app/api/web3modal";
+import { setup as _setup } from "@app/apollo/mutations/ens";
 import {
-  accountsReactive,
-  globalErrorReactive,
-  isAppReadyReactive,
-  networkIdReactive,
-  networkReactive,
+  accountsReactive as _accountsReactive,
+  globalErrorReactive as _globalErrorReactive,
+  isAppReadyReactive as _isAppReadyReactive,
+  networkIdReactive as _networkIdReactive,
+  networkReactive as _networkReactive,
 } from "@app/apollo/reactiveVars";
 import defaultSetup, {
   getProvider,
   isSupportedNetwork,
   setWeb3Provider,
 } from "@app/setup";
-import { getNetwork, getNetworkId } from "@ensdomains/ui";
+import {
+  getNetwork as _getNetwork,
+  getNetworkId as _getNetworkId,
+} from "@ensdomains/ui";
 
-const mockedSetup = setup as jest.MockedFunction<typeof setup>;
-const mockedConnect = jest.fn() as jest.MockedFunction<typeof connect>;
+jest.doMock("@app/api/web3modal", () => ({
+  connect: jest.fn(),
+}));
+
+jest.doMock("@app/apollo/mutations/ens", () => ({
+  setup: jest.fn(),
+}));
+
+const setup = jest.fn() as jest.MockedFunction<typeof _setup>;
+
+const connect = jest.fn() as jest.MockedFunction<typeof _connect>;
 
 jest.mock("@app/apollo/reactiveVars", () => ({
   ...jest.requireActual("@app/apollo/reactiveVars"),
@@ -26,21 +39,21 @@ jest.mock("@app/apollo/reactiveVars", () => ({
   isAppReadyReactive: jest.fn(),
 }));
 
-const mockedNetworkIdReactive = networkIdReactive as jest.MockedFunction<
-  typeof networkIdReactive
->;
-const mockedNetworkReactive = networkReactive as jest.MockedFunction<
-  typeof networkReactive
->;
-const mockedAccountsReactive = accountsReactive as jest.MockedFunction<
-  typeof accountsReactive
->;
-const mockedGlobalErrorReactive = globalErrorReactive as jest.MockedFunction<
-  typeof globalErrorReactive
->;
-const mockedIsAppReadyReactive = isAppReadyReactive as jest.MockedFunction<
-  typeof isAppReadyReactive
->;
+const networkIdReactive = jest.fn() as Partial<
+  typeof _networkIdReactive
+> as jest.MockedFunction<typeof _networkIdReactive>;
+const networkReactive = jest.fn() as Partial<
+  typeof _networkReactive
+> as jest.MockedFunction<typeof _networkReactive>;
+const accountsReactive = jest.fn() as Partial<
+  typeof _accountsReactive
+> as jest.MockedFunction<typeof _accountsReactive>;
+const globalErrorReactive = jest.fn() as Partial<
+  typeof _globalErrorReactive
+> as jest.MockedFunction<typeof _globalErrorReactive>;
+const isAppReadyReactive = jest.fn() as Partial<
+  typeof _isAppReadyReactive
+> as jest.MockedFunction<typeof _isAppReadyReactive>;
 
 jest.mock("@ensdomains/ui", () => ({
   ...jest.requireActual("@ensdomains/ui"),
@@ -48,22 +61,23 @@ jest.mock("@ensdomains/ui", () => ({
   getNetwork: jest.fn(),
 }));
 
-const mockedGetNetworkId = getNetworkId as jest.MockedFunction<
-  typeof getNetworkId
->;
-const mockedGetNetwork = getNetwork as jest.MockedFunction<typeof getNetwork>;
+const getNetworkId = _getNetworkId as jest.MockedFunction<typeof _getNetworkId>;
+const getNetwork = _getNetwork as jest.MockedFunction<typeof _getNetwork>;
 
 describe("getProvider", () => {
-  it("should return readOnly provider if connect() fails", async () => {
-    mockedConnect.mockImplementation(() => Promise.reject());
-    mockedSetup.mockImplementation(() =>
+  it.only("should return readOnly provider if connect() fails", async () => {
+    connect.mockImplementation(() =>
+      Promise.reject(new Error("There was an error while connecting"))
+    );
+    setup.mockReturnValue(
       Promise.resolve({
         ens: undefined,
+        providerObject: undefined,
         registrar: undefined,
-        providerObject: { readOnlyProvider: true },
       })
     );
     const provider = await getProvider(false);
+    console.log(provider);
     expect(provider.readOnlyProvider).toBeTruthy();
   });
 
@@ -86,9 +100,13 @@ describe("getProvider", () => {
     });
 
     it("should return provider when using local blockchain", async () => {
-      setup.mockImplementation(() => ({
-        providerObject: { localProvider: true },
-      }));
+      setup.mockImplementation(() =>
+        Promise.resolve({
+          ens: undefined,
+          registrar: undefined,
+          providerObject: { localProvider: true },
+        })
+      );
       const provider = await getProvider(false);
       expect(provider.localProvider);
     });
@@ -101,11 +119,8 @@ describe("getProvider", () => {
     it("should call connect if there is a cached provider", async () => {
       expect.assertions(1);
       window.localStorage.setItem("WEB3_CONNECT_CACHED_PROVIDER", "injected");
-      connect.mockImplementation(
-        () =>
-          new Promise(() => {
-            expect(true).toBeTruthy();
-          })
+      connect.mockImplementation(() =>
+        Promise.resolve(expect(true).toBeTruthy())
       );
       getProvider();
     });
@@ -113,24 +128,21 @@ describe("getProvider", () => {
 
   describe("no cached provider", () => {
     it("should call setup", async () => {
-      setup.mockImplementation(() => {
-        return new Promise((resolve) => {
-          resolve({ provierObject: {} });
-        });
-      });
-      const provider = await getProvider(false);
+      setup.mockImplementation(() =>
+        Promise.resolve({
+          ens: undefined,
+          registrar: undefined,
+          providerObject: {},
+        })
+      );
+      await getProvider(false);
       expect(setup).toHaveBeenCalled();
     }, 10000);
   });
 
   describe("reconnect == true", () => {
     it("should call connect if reconnect == true", async () => {
-      connect.mockImplementation(
-        () =>
-          new Promise((resolve) => {
-            resolve(1);
-          })
-      );
+      connect.mockImplementation(() => Promise.resolve(1));
       const provider = await getProvider(true);
       expect(provider).toEqual(1);
     });
@@ -140,10 +152,10 @@ describe("getProvider", () => {
 describe("setWeb3Provider", () => {
   it("should update network id when network id changes", async () => {
     expect.assertions(1);
-    getNetworkId.mockImplementation(() => "2");
-    getNetwork.mockImplementation(() => "Main");
+    getNetworkId.mockImplementation(() => Promise.resolve("2"));
+    getNetwork.mockImplementation(() => Promise.resolve("Main"));
     const mockProvider = {
-      on: (event, callback) => {
+      on: (event: any, callback: any) => {
         const cb = async () => {
           try {
             await callback("1");
@@ -162,10 +174,10 @@ describe("setWeb3Provider", () => {
   });
   it("should update accounts when accounts change", async () => {
     expect.assertions(1);
-    getNetworkId.mockImplementation(() => "2");
-    getNetwork.mockImplementation(() => "Main");
+    getNetworkId.mockImplementation(() => Promise.resolve("2"));
+    getNetwork.mockImplementation(() => Promise.resolve("Main"));
     const mockProvider = {
-      on: (event, callback) => {
+      on: (event: any, callback: any) => {
         const cb = async () => {
           try {
             await callback("1");
@@ -184,11 +196,11 @@ describe("setWeb3Provider", () => {
   });
   it("should remove listeners on the provider if they already exist", async () => {
     expect.assertions(1);
-    getNetworkId.mockImplementation(() => 2);
-    getNetwork.mockImplementation(() => "Main");
+    getNetworkId.mockImplementation(() => Promise.resolve(2));
+    getNetwork.mockImplementation(() => Promise.resolve("Main"));
     const mockRemoveAllListeners = jest.fn();
     const mockProvider = {
-      on: (event, callback) => {},
+      on: () => {},
       removeAllListeners: mockRemoveAllListeners,
     };
     await setWeb3Provider(mockProvider);
@@ -196,10 +208,10 @@ describe("setWeb3Provider", () => {
   });
   it("should update network when network changes", async () => {
     expect.assertions(1);
-    getNetworkId.mockImplementation(() => 2);
-    getNetwork.mockImplementation(() => "Main");
+    getNetworkId.mockImplementation(() => Promise.resolve(2));
+    getNetwork.mockImplementation(() => Promise.resolve("Main"));
     const mockProvider = {
-      on: (event, callback) => {
+      on: (event: any, callback: any) => {
         const cb = async () => {
           try {
             await callback("1");
@@ -218,10 +230,10 @@ describe("setWeb3Provider", () => {
   });
   it("should set global error if chain is changed to an unsupported network", async () => {
     expect.assertions(2);
-    getNetworkId.mockImplementation(() => 2);
-    getNetwork.mockImplementation(() => "Main");
+    getNetworkId.mockImplementation(() => Promise.resolve(2));
+    getNetwork.mockImplementation(() => Promise.resolve("Main"));
     const mockProvider = {
-      on: (event, callback) => {
+      on: (event: any, callback: any) => {
         const cb = async () => {
           try {
             await callback(1314);
@@ -251,9 +263,9 @@ describe("isSupportedNetwork", () => {
 });
 
 describe("setup", () => {
-  let originalReactAppStage;
-  let originalReactAppEnsAddress;
-  let originalReactAppLabels;
+  let originalReactAppStage: any;
+  let originalReactAppEnsAddress: any;
+  let originalReactAppLabels: any;
   beforeAll(() => {
     originalReactAppStage = process.env.REACT_APP_STAGE;
     originalReactAppEnsAddress = process.env.REACT_APP_ENS_ADDRESS;
@@ -268,11 +280,15 @@ describe("setup", () => {
     process.env.REACT_APP_LABELS = originalReactAppLabels;
   });
   it("should set global error if network is unsupported", async () => {
-    setup.mockImplementation(() => ({
-      providerObject: { localProvider: true },
-    }));
+    setup.mockImplementation(() =>
+      Promise.resolve({
+        ens: undefined,
+        registrar: undefined,
+        providerObject: { localProvider: true },
+      })
+    );
     await getProvider(false);
-    getNetworkId.mockImplementation(() => 222);
+    getNetworkId.mockImplementation(() => Promise.resolve(222));
     await defaultSetup(false);
     expect(globalErrorReactive).toHaveBeenCalled();
   });
@@ -290,16 +306,20 @@ describe("setup", () => {
 
   it("should allow setup to continue if network is supported", async () => {
     const mockProvider = {
-      on: (event, callback) => {},
+      on: () => {},
       removeAllListeners: () => null,
     };
-    getNetworkId.mockImplementation(() => 1);
-    getNetwork.mockImplementation(() => "Main");
-    setup.mockImplementation(() => ({
-      providerObject: mockProvider,
-    }));
+    getNetworkId.mockImplementation(() => Promise.resolve(1));
+    getNetwork.mockImplementation(() => Promise.resolve("Main"));
+    setup.mockImplementation(() =>
+      Promise.resolve({
+        ens: undefined,
+        registrar: undefined,
+        providerObject: mockProvider,
+      })
+    );
     await getProvider(false);
-    getNetworkId.mockImplementation(() => 1);
+    getNetworkId.mockImplementation(() => Promise.resolve(1));
     await defaultSetup(false);
     expect(isAppReadyReactive).toHaveBeenCalled();
   });

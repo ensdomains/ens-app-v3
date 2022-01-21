@@ -22,8 +22,9 @@ export async function setup({
     enforceReload,
     customProvider,
     ensAddress,
-    infura: enforceReadOnly ? undefined : INFURA_ID,
+    infura: enforceReadOnly ? INFURA_ID : undefined,
   };
+
   const {
     ens: ensInstance,
     registrar: registrarInstance,

@@ -47,7 +47,7 @@ export const isSupportedNetwork = (networkId: number) => {
   }
 };
 
-export const getProvider = async (reconnect: boolean) => {
+export const getProvider = async (reconnect?: boolean) => {
   let provider;
   try {
     if (
@@ -92,6 +92,7 @@ export const getProvider = async (reconnect: boolean) => {
       enforceReadOnly: true,
       enforceReload: false,
     });
+
     provider = providerObject;
     return provider;
   } catch (e: any) {

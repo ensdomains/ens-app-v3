@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.17",
+  "version": "0.1.18",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
