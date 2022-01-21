@@ -4,8 +4,6 @@
 /* eslint-disable consistent-return */
 import modeNames from "@app/api/modes";
 import { sendHelper, sendHelperArray } from "@app/api/resolverUtils";
-// eslint-disable-next-line import/no-cycle
-import getClient from "@app/apollo/apolloClient";
 import getENS, { getRegistrar } from "@app/apollo/mutations/ens";
 import { isENSReadyReactive, namesReactive } from "@app/apollo/reactiveVars";
 import COIN_LIST_KEYS from "@app/constants/coinList";
@@ -31,7 +29,7 @@ import {
   isDecrypted,
   labelhash,
   utils,
-} from "@ensdomains/ui";
+} from "@ensdomains/ui"; // eslint-disable-next-line import/no-cycle
 import isEqual from "lodash/isEqual";
 import getReverseRecord from "./getReverseRecord";
 
@@ -237,7 +235,8 @@ async function getParent(name: any) {
 }
 
 async function getRegistrant(name: any) {
-  const client = getClient();
+  // eslint-disable-next-line global-require
+  const client = require("@app/apollo/apolloClient").default;
   try {
     const { data, error } = await client.query({
       query: GET_REGISTRANT_FROM_SUBGRAPH,

@@ -8436,6 +8436,7 @@ __metadata:
     identity-obj-proxy: ^3.0.0
     jest: ^27.4.7
     jest-environment-jsdom: ^27.4.6
+    jest-localstorage-mock: ^2.4.18
     lodash: ^4.17.21
     multiformats: ^9.5.9
     next: ^12.0.8
@@ -12890,6 +12891,13 @@ __metadata:
     jest-get-type: ^27.4.0
     pretty-format: ^27.4.6
   checksum: 4259400403d51b1297b9ab05c1342345c4a93a77c99447b061192ed81b56efcbdd28a03914c9f97670d2f3498bdc368712575d6218b02e3af1656b7db507d3bf
+  languageName: node
+  linkType: hard
+
+"jest-localstorage-mock@npm:^2.4.18":
+  version: 2.4.18
+  resolution: "jest-localstorage-mock@npm:2.4.18"
+  checksum: e534d954a316bd60642791b22df55af0c544507a0d1b30475f675e817f960b93a383370bfc9b65d6f5b93525bbbdc563b8697a38d2c958ec862e37195ccb74b9
   languageName: node
   linkType: hard
 

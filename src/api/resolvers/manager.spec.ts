@@ -1,20 +1,19 @@
-import { getNamehash } from "@ensdomains/ui";
-import { emptyAddress } from "../../utils/utils";
+import { emptyAddress } from "@app/utils/utils";
 import { handleMultipleTransactions, handleSingleTransaction } from "./manager";
 
 jest.mock("@ensdomains/ui", () => ({
-  __esModule: true,
   ...jest.requireActual("@ensdomains/ui"),
   getNamehash: jest.fn(),
   encodeContenthash: jest.fn(),
 }));
 
-jest.mock("../resolverUtils", () => ({
-  __esModule: true,
-  ...jest.requireActual("../resolverUtils"),
+jest.mock("@app/api/resolverUtils", () => ({
+  ...jest.requireActual("@app/api/resolverUtils"),
   sendHelper: jest.fn(),
   sendHelperArray: jest.fn(),
 }));
+
+const { getNamehash } = require("@ensdomains/ui");
 
 describe("handleMultipleTransactions", () => {
   it("should set contentHash to emptyAddress if value is emptyAddress", () => {
