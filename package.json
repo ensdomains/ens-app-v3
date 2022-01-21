@@ -1,13 +1,13 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.23",
+  "version": "0.1.24",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
-    "test": "jest --env=./custom-test-env.js -i src/utils/graphql.spec.ts",
+    "test": "jest --env=./custom-test-env.js",
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "cypress": "cypress open",
