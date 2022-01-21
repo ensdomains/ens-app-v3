@@ -12,7 +12,7 @@ import {
   validateName as _validateName,
 } from "@ensdomains/ui/utils/index";
 import { getNetworkId } from "@ensdomains/ui/web3";
-import { keccak256 } from "@ethersproject/keccak256";
+import { keccak256 } from "js-sha3";
 import throttle from "lodash/throttle";
 import { CID } from "multiformats";
 import { useEffect, useRef } from "react";

@@ -8392,7 +8392,6 @@ __metadata:
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch"
     "@ensdomains/web3modal": ^1.10.1
-    "@ethersproject/keccak256": ^5.5.0
     "@gnosis.pm/safe-apps-provider": ^0.9.3
     "@gnosis.pm/safe-apps-sdk": ^6.2.0
     "@myetherwallet/mewconnect-web-client": ^2.2.0-beta.16
@@ -8437,6 +8436,7 @@ __metadata:
     jest: ^27.4.7
     jest-environment-jsdom: ^27.4.6
     jest-localstorage-mock: ^2.4.18
+    js-sha3: ^0.8.0
     lodash: ^4.17.21
     multiformats: ^9.5.9
     next: ^12.0.8

@@ -3,7 +3,7 @@ import {
   encodeLabelhash,
   isEncodedLabelhash,
 } from "@ensdomains/ui/utils";
-import { keccak256 } from "@ethersproject/keccak256";
+import { keccak256 } from "js-sha3";
 
 function getLabels() {
   return JSON.parse(localStorage.getItem("labels") as string) || {};
