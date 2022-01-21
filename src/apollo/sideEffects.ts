@@ -3,7 +3,7 @@ import { emptyAddress } from "../utils/utils";
 import getENS from "./mutations/ens";
 import { isENSReadyReactive } from "./reactiveVars";
 
-export const getReverseRecord = async (address: string | undefined | null) => {
+export const getReverseRecord = async (address?: string | undefined | null) => {
   if (!isENSReadyReactive() || !address) return { name: null, match: false };
 
   try {
