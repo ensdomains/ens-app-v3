@@ -1,4 +1,6 @@
 /** @type {import('next').NextConfig} */
+const { i18n } = require("./next-i18next.config");
+
 module.exports = {
   reactStrictMode: true,
   experimental: {
@@ -7,4 +9,5 @@ module.exports = {
     swcFileReading: false,
   },
   swcMinify: true,
+  i18n,
 };
