@@ -54,5 +54,6 @@ yarn-error.log*
 !/cypress/plugins
 !/cypress/support
 
-# storybook
-/storybook-static
+
+# IDEs
+.idea

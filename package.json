@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.25",
+  "version": "0.1.26",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
@@ -21,6 +21,7 @@
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
+    "@ensdomains/thorin": "github:ensdomains/thorin#workspace=@ensdomains/thorin",
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch",
     "@ensdomains/web3modal": "^1.10.1",
     "@gnosis.pm/safe-apps-provider": "^0.9.3",
