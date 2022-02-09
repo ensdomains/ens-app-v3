@@ -21,12 +21,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       {
         "name": "ens-app-v2",
         "reference": "workspace:."
+      },
+      {
+        "name": "test-environment",
+        "reference": "workspace:test-environment"
       }
     ],
     "enableTopLevelFallback": true,
     "ignorePatternData": "(^(?:\\.yarn\\/sdks(?:\\/(?!\\.{1,2}(?:\\/|$))(?:(?:(?!(?:^|\\/)\\.{1,2}(?:\\/|$)).)*?)|$))$)",
     "fallbackExclusionList": [
-      ["ens-app-v2", ["workspace:."]]
+      ["ens-app-v2", ["workspace:."]],
+      ["test-environment", ["workspace:test-environment"]]
     ],
     "fallbackPool": [
       [
@@ -238,6 +243,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.2.4"
       ],
       [
+        "@emotion/hash",
+        "npm:0.8.0"
+      ],
+      [
         "@emotion/is-prop-valid",
         "npm:0.8.8"
       ],
@@ -323,6 +332,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "@ensdomains/solsha1",
         "npm:0.0.3"
+      ],
+      [
+        "@ensdomains/thorin",
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256"
       ],
       [
         "@ensdomains/ui",
@@ -681,16 +694,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.2.8"
       ],
       [
-        "@nomiclabs/hardhat-ethers",
-        "virtual:b10914a604aceef7b3fe6b95fb02f8a6d735de1570a7941edfabf5c77f16dde6f0ee18efb2f5adbe13216c07be84a0c30a4e7e90ead4c300647e23a876ac6b7c#npm:2.0.4"
-      ],
-      [
         "@nomiclabs/hardhat-truffle5",
         "virtual:cd804966a4af2a115ae98988b74c122bdd7fc9af5d9f9a5a62f576ef89ea18c25fbb8b994a1a65d60bf2e11d89eb0b2e6cc089c93112e3539943bc0642c881d5#npm:2.0.3"
-      ],
-      [
-        "@nomiclabs/hardhat-waffle",
-        "virtual:b10914a604aceef7b3fe6b95fb02f8a6d735de1570a7941edfabf5c77f16dde6f0ee18efb2f5adbe13216c07be84a0c30a4e7e90ead4c300647e23a876ac6b7c#npm:2.0.1"
       ],
       [
         "@nomiclabs/truffle-contract",
@@ -1123,6 +1128,30 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "@typescript-eslint/visitor-keys",
         "npm:5.10.0"
+      ],
+      [
+        "@vanilla-extract/css",
+        "npm:1.6.8"
+      ],
+      [
+        "@vanilla-extract/css-utils",
+        "npm:0.1.2"
+      ],
+      [
+        "@vanilla-extract/dynamic",
+        "npm:2.0.2"
+      ],
+      [
+        "@vanilla-extract/private",
+        "npm:1.0.3"
+      ],
+      [
+        "@vanilla-extract/recipes",
+        "virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:0.2.3"
+      ],
+      [
+        "@vanilla-extract/sprinkles",
+        "virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:1.3.3"
       ],
       [
         "@walletconnect/browser-utils",
@@ -2186,11 +2215,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "color-convert",
-        "npm:1.9.3"
+        "npm:2.0.1"
       ],
       [
         "color-name",
-        "npm:1.1.3"
+        "npm:1.1.4"
       ],
       [
         "colorette",
@@ -2365,6 +2394,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.5.1"
       ],
       [
+        "cssesc",
+        "npm:3.0.0"
+      ],
+      [
         "cssom",
         "npm:0.4.4"
       ],
@@ -2439,6 +2472,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "deep-is",
         "npm:0.1.4"
+      ],
+      [
+        "deep-object-diff",
+        "npm:1.1.0"
       ],
       [
         "deepmerge",
@@ -2566,7 +2603,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "dotenv",
-        "npm:8.6.0"
+        "npm:15.0.0"
       ],
       [
         "dotignore",
@@ -3141,6 +3178,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.0.0"
       ],
       [
+        "focus-visible",
+        "npm:5.2.0"
+      ],
+      [
         "follow-redirects",
         "virtual:f57bb93e361f2ec655d3c7a580ac0d897e80a4ceb361062d1e4ab84c1ac2129aad341ab7c192e2a39eadfd988c4b8d6815f8240290f820f74f823ba0474068c0#npm:1.14.7"
       ],
@@ -3330,7 +3371,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "hardhat",
-        "npm:2.8.2"
+        "npm:2.8.3"
       ],
       [
         "harmony-reflect",
@@ -3358,7 +3399,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "has-flag",
-        "npm:3.0.0"
+        "npm:4.0.0"
       ],
       [
         "has-symbol-support-x",
@@ -4749,6 +4790,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.2.2"
       ],
       [
+        "outdent",
+        "npm:0.8.0"
+      ],
+      [
         "p-cancelable",
         "npm:1.1.0"
       ],
@@ -5530,7 +5575,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "solc",
-        "npm:0.4.26"
+        "npm:0.7.3"
       ],
       [
         "solium",
@@ -5799,6 +5844,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "terser-webpack-plugin",
         "virtual:1905fa9a003006e181a5dcf6b0c124c2eb89032d996ea29b1c8ad2d29757d15a5a93f977b0ce6b5033cd1ffab367a51f8cebf6e4c0243a163e942ba088f3a1b6#npm:5.2.4"
+      ],
+      [
+        "test-environment",
+        "workspace:test-environment"
       ],
       [
         "test-exclude",
@@ -6422,6 +6471,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.16"],
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256"],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "npm:1.10.1"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
@@ -8046,6 +8096,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@emotion/hash", [
+        ["npm:0.8.0", {
+          "packageLocation": "./.yarn/cache/@emotion-hash-npm-0.8.0-0104f4bbf3-4b35d88a97.zip/node_modules/@emotion/hash/",
+          "packageDependencies": [
+            ["@emotion/hash", "npm:0.8.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@emotion/is-prop-valid", [
         ["npm:0.8.8", {
           "packageLocation": "./.yarn/cache/@emotion-is-prop-valid-npm-0.8.8-261a0f2426-bb7ec6d48c.zip/node_modules/@emotion/is-prop-valid/",
@@ -8312,6 +8371,40 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@ensdomains/solsha1", "npm:0.0.3"],
             ["hash-test-vectors", "npm:1.3.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@ensdomains/thorin", [
+        ["https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256", {
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-https-3b3d8e845a-ffe7e5f73c.zip/node_modules/@ensdomains/thorin/",
+          "packageDependencies": [
+            ["@ensdomains/thorin", "https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256", {
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-b4a3907755/0/cache/@ensdomains-thorin-https-3b3d8e845a-ffe7e5f73c.zip/node_modules/@ensdomains/thorin/",
+          "packageDependencies": [
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256"],
+            ["@types/react", "npm:17.0.30"],
+            ["@types/react-dom", null],
+            ["@vanilla-extract/css", "npm:1.6.8"],
+            ["@vanilla-extract/css-utils", "npm:0.1.2"],
+            ["@vanilla-extract/dynamic", "npm:2.0.2"],
+            ["@vanilla-extract/recipes", "virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:0.2.3"],
+            ["@vanilla-extract/sprinkles", "virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:1.3.3"],
+            ["clsx", "npm:1.1.1"],
+            ["focus-visible", "npm:5.2.0"],
+            ["lodash", "npm:4.17.21"],
+            ["react", "npm:17.0.2"],
+            ["react-dom", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"]
+          ],
+          "packagePeers": [
+            "@types/react-dom",
+            "@types/react",
+            "react-dom",
+            "react"
           ],
           "linkType": "HARD",
         }]
@@ -11541,6 +11634,97 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/visitor-keys", "npm:5.10.0"],
             ["@typescript-eslint/types", "npm:5.10.0"],
             ["eslint-visitor-keys", "npm:3.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@vanilla-extract/css", [
+        ["npm:1.6.8", {
+          "packageLocation": "./.yarn/cache/@vanilla-extract-css-npm-1.6.8-2b0da5ed75-1bee577c83.zip/node_modules/@vanilla-extract/css/",
+          "packageDependencies": [
+            ["@vanilla-extract/css", "npm:1.6.8"],
+            ["@emotion/hash", "npm:0.8.0"],
+            ["@vanilla-extract/private", "npm:1.0.3"],
+            ["chalk", "npm:4.1.2"],
+            ["css-what", "npm:5.1.0"],
+            ["cssesc", "npm:3.0.0"],
+            ["csstype", "npm:3.0.10"],
+            ["deep-object-diff", "npm:1.1.0"],
+            ["deepmerge", "npm:4.2.2"],
+            ["escape-string-regexp", "npm:4.0.0"],
+            ["outdent", "npm:0.8.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@vanilla-extract/css-utils", [
+        ["npm:0.1.2", {
+          "packageLocation": "./.yarn/cache/@vanilla-extract-css-utils-npm-0.1.2-58c55a7410-002c658899.zip/node_modules/@vanilla-extract/css-utils/",
+          "packageDependencies": [
+            ["@vanilla-extract/css-utils", "npm:0.1.2"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@vanilla-extract/dynamic", [
+        ["npm:2.0.2", {
+          "packageLocation": "./.yarn/cache/@vanilla-extract-dynamic-npm-2.0.2-b974034f8e-c6f22606bc.zip/node_modules/@vanilla-extract/dynamic/",
+          "packageDependencies": [
+            ["@vanilla-extract/dynamic", "npm:2.0.2"],
+            ["@vanilla-extract/private", "npm:1.0.3"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@vanilla-extract/private", [
+        ["npm:1.0.3", {
+          "packageLocation": "./.yarn/cache/@vanilla-extract-private-npm-1.0.3-27ba5cf703-866a71ba68.zip/node_modules/@vanilla-extract/private/",
+          "packageDependencies": [
+            ["@vanilla-extract/private", "npm:1.0.3"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@vanilla-extract/recipes", [
+        ["npm:0.2.3", {
+          "packageLocation": "./.yarn/cache/@vanilla-extract-recipes-npm-0.2.3-c811c9ea3d-41ae6d981b.zip/node_modules/@vanilla-extract/recipes/",
+          "packageDependencies": [
+            ["@vanilla-extract/recipes", "npm:0.2.3"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:0.2.3", {
+          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-recipes-virtual-32491fb4e3/0/cache/@vanilla-extract-recipes-npm-0.2.3-c811c9ea3d-41ae6d981b.zip/node_modules/@vanilla-extract/recipes/",
+          "packageDependencies": [
+            ["@vanilla-extract/recipes", "virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:0.2.3"],
+            ["@types/vanilla-extract__css", null],
+            ["@vanilla-extract/css", "npm:1.6.8"]
+          ],
+          "packagePeers": [
+            "@types/vanilla-extract__css",
+            "@vanilla-extract/css"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["@vanilla-extract/sprinkles", [
+        ["npm:1.3.3", {
+          "packageLocation": "./.yarn/cache/@vanilla-extract-sprinkles-npm-1.3.3-db35e7f4c5-68cff1633a.zip/node_modules/@vanilla-extract/sprinkles/",
+          "packageDependencies": [
+            ["@vanilla-extract/sprinkles", "npm:1.3.3"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:1.3.3", {
+          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-sprinkles-virtual-cc7cc68599/0/cache/@vanilla-extract-sprinkles-npm-1.3.3-db35e7f4c5-68cff1633a.zip/node_modules/@vanilla-extract/sprinkles/",
+          "packageDependencies": [
+            ["@vanilla-extract/sprinkles", "virtual:b4a3907755de7afbdd2e73c46ae9b855fba81408805a6408896145666a1920ba9b89dd32f12b139c5f2abe01db72ef99df03a5527ca5e027aa96fd327c488eed#npm:1.3.3"],
+            ["@types/vanilla-extract__css", null],
+            ["@vanilla-extract/css", "npm:1.6.8"]
+          ],
+          "packagePeers": [
+            "@types/vanilla-extract__css",
+            "@vanilla-extract/css"
           ],
           "linkType": "HARD",
         }]
@@ -15856,6 +16040,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["cssesc", [
+        ["npm:3.0.0", {
+          "packageLocation": "./.yarn/cache/cssesc-npm-3.0.0-15ec56f86f-f8c4ababff.zip/node_modules/cssesc/",
+          "packageDependencies": [
+            ["cssesc", "npm:3.0.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["cssom", [
         ["npm:0.3.8", {
           "packageLocation": "./.yarn/cache/cssom-npm-0.3.8-a9291d36ff-24beb3087c.zip/node_modules/cssom/",
@@ -15883,6 +16076,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["csstype", [
+        ["npm:3.0.10", {
+          "packageLocation": "./.yarn/cache/csstype-npm-3.0.10-e26ef49bb2-20a8fa324f.zip/node_modules/csstype/",
+          "packageDependencies": [
+            ["csstype", "npm:3.0.10"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:3.0.9", {
           "packageLocation": "./.yarn/cache/csstype-npm-3.0.9-0801c4a6d7-199f9af7e6.zip/node_modules/csstype/",
           "packageDependencies": [
@@ -16241,6 +16441,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/deep-is-npm-0.1.4-88938b5a67-edb65dd0d7.zip/node_modules/deep-is/",
           "packageDependencies": [
             ["deep-is", "npm:0.1.4"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["deep-object-diff", [
+        ["npm:1.1.0", {
+          "packageLocation": "./.yarn/cache/deep-object-diff-npm-1.1.0-5f43b9eddc-4e7c1b7cd2.zip/node_modules/deep-object-diff/",
+          "packageDependencies": [
+            ["deep-object-diff", "npm:1.1.0"]
           ],
           "linkType": "HARD",
         }]
@@ -16631,6 +16840,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["dotenv", [
+        ["npm:15.0.0", {
+          "packageLocation": "./.yarn/cache/dotenv-npm-15.0.0-596676c735-be5d852b2a.zip/node_modules/dotenv/",
+          "packageDependencies": [
+            ["dotenv", "npm:15.0.0"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:8.6.0", {
           "packageLocation": "./.yarn/cache/dotenv-npm-8.6.0-2ce3e9f7bb-38e902c80b.zip/node_modules/dotenv/",
           "packageDependencies": [
@@ -16939,6 +17155,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.16"],
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256"],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "npm:1.10.1"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
@@ -19391,6 +19608,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["focus-visible", [
+        ["npm:5.2.0", {
+          "packageLocation": "./.yarn/cache/focus-visible-npm-5.2.0-0a54ff0da1-876f646ef4.zip/node_modules/focus-visible/",
+          "packageDependencies": [
+            ["focus-visible", "npm:5.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["follow-redirects", [
         ["npm:1.14.4", {
           "packageLocation": "./.yarn/cache/follow-redirects-npm-1.14.4-19eb02e590-d4ce74cf5c.zip/node_modules/follow-redirects/",
@@ -20188,6 +20414,60 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/hardhat-npm-2.8.2-702d98c89f-c7d247e2d8.zip/node_modules/hardhat/",
           "packageDependencies": [
             ["hardhat", "npm:2.8.2"],
+            ["@ethereumjs/block", "npm:3.6.0"],
+            ["@ethereumjs/blockchain", "npm:5.5.1"],
+            ["@ethereumjs/common", "npm:2.6.0"],
+            ["@ethereumjs/tx", "npm:3.4.0"],
+            ["@ethereumjs/vm", "npm:5.6.0"],
+            ["@ethersproject/abi", "npm:5.5.0"],
+            ["@sentry/node", "npm:5.30.0"],
+            ["@solidity-parser/parser", "npm:0.14.0"],
+            ["@types/bn.js", "npm:5.1.0"],
+            ["@types/lru-cache", "npm:5.1.1"],
+            ["abort-controller", "npm:3.0.0"],
+            ["adm-zip", "npm:0.4.16"],
+            ["ansi-escapes", "npm:4.3.2"],
+            ["chalk", "npm:2.4.2"],
+            ["chokidar", "npm:3.5.3"],
+            ["ci-info", "npm:2.0.0"],
+            ["debug", "virtual:4d5b41b4c144bc0f7c0e4c4c2164d0bc5d527811557a2fd7f2ec3307b1cf1ca97f42a730a90b32caada41091b3e922a1e5a2d8c6ff2841b6857305532c68aca8#npm:4.3.2"],
+            ["enquirer", "npm:2.3.6"],
+            ["env-paths", "npm:2.2.1"],
+            ["eth-sig-util", "npm:2.5.4"],
+            ["ethereum-cryptography", "npm:0.1.3"],
+            ["ethereumjs-abi", "npm:0.6.8"],
+            ["ethereumjs-util", "npm:7.1.3"],
+            ["find-up", "npm:2.1.0"],
+            ["fp-ts", "npm:1.19.3"],
+            ["fs-extra", "npm:7.0.1"],
+            ["glob", "npm:7.2.0"],
+            ["https-proxy-agent", "npm:5.0.0"],
+            ["immutable", "npm:4.0.0"],
+            ["io-ts", "npm:1.10.4"],
+            ["lodash", "npm:4.17.21"],
+            ["merkle-patricia-tree", "npm:4.2.2"],
+            ["mnemonist", "npm:0.38.5"],
+            ["mocha", "npm:7.2.0"],
+            ["node-fetch", "virtual:532bf8f344b6bc1886dc170719f02ac3cd74c96b42d9a8a22d95557b4f16a11aea89c356c60d8669328d858e59fbdb2d9b7002462e2abf863884eaa4e484f587#npm:2.6.7"],
+            ["qs", "npm:6.10.3"],
+            ["raw-body", "npm:2.4.2"],
+            ["resolve", "patch:resolve@npm%3A1.17.0#~builtin<compat/resolve>::version=1.17.0&hash=07638b"],
+            ["semver", "npm:6.3.0"],
+            ["slash", "npm:3.0.0"],
+            ["solc", "npm:0.7.3"],
+            ["source-map-support", "npm:0.5.21"],
+            ["stacktrace-parser", "npm:0.1.10"],
+            ["true-case-path", "npm:2.2.1"],
+            ["tsort", "npm:0.0.1"],
+            ["uuid", "npm:8.3.2"],
+            ["ws", "virtual:702d98c89fb25a4d2bbd64a97fd22c2f10da5ab5b69600c786bb0e877405c58781f74d916278bc3c8b4b1b9b2014208b546602f6970ae0e8a0d67105b6e46091#npm:7.5.5"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.8.3", {
+          "packageLocation": "./.yarn/cache/hardhat-npm-2.8.3-085d0bc75f-760faf9c91.zip/node_modules/hardhat/",
+          "packageDependencies": [
+            ["hardhat", "npm:2.8.3"],
             ["@ethereumjs/block", "npm:3.6.0"],
             ["@ethereumjs/blockchain", "npm:5.5.1"],
             ["@ethereumjs/common", "npm:2.6.0"],
@@ -25341,6 +25621,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["outdent", [
+        ["npm:0.8.0", {
+          "packageLocation": "./.yarn/cache/outdent-npm-0.8.0-5e36779041-72b7c1a287.zip/node_modules/outdent/",
+          "packageDependencies": [
+            ["outdent", "npm:0.8.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["p-cancelable", [
         ["npm:0.3.0", {
           "packageLocation": "./.yarn/cache/p-cancelable-npm-0.3.0-abade43096-2b27639be8.zip/node_modules/p-cancelable/",
@@ -29179,6 +29468,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "webpack"
           ],
           "linkType": "HARD",
+        }]
+      ]],
+      ["test-environment", [
+        ["workspace:test-environment", {
+          "packageLocation": "./test-environment/",
+          "packageDependencies": [
+            ["test-environment", "workspace:test-environment"],
+            ["dotenv", "npm:15.0.0"],
+            ["hardhat", "npm:2.8.3"]
+          ],
+          "linkType": "SOFT",
         }]
       ]],
       ["test-exclude", [

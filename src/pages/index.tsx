@@ -8,8 +8,8 @@ import {
   Grid,
   Logo,
   Main,
-  Title,
 } from "@app/components/basics";
+import { Typography } from "@ensdomains/thorin";
 import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -28,7 +28,7 @@ const Home: NextPage = () => {
       </Head>
 
       <Main>
-        <Title>{t("title")}</Title>
+        <Typography>{t("title")}</Typography>
 
         <Description>
           Get started by editing <Code>pages/index.tsx</Code>

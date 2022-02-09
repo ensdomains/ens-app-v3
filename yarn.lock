@@ -945,6 +945,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@emotion/hash@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "@emotion/hash@npm:0.8.0"
+  checksum: 4b35d88a97e67275c1d990c96d3b0450451d089d1508619488fc0acb882cb1ac91e93246d471346ebd1b5402215941ef4162efe5b51534859b39d8b3a0e3ffaa
+  languageName: node
+  linkType: hard
+
 "@emotion/is-prop-valid@npm:^0.8.8":
   version: 0.8.8
   resolution: "@emotion/is-prop-valid@npm:0.8.8"
@@ -1187,6 +1194,25 @@ __metadata:
   dependencies:
     hash-test-vectors: ^1.3.2
   checksum: 1a84ccc329da4d40422c770e0baea1a63869f31a417589e3451a9997542c2f6683b6f8d3410de97580bbdce0567aba79328a86c7fda8925e446e02d724be6880
+  languageName: node
+  linkType: hard
+
+"@ensdomains/thorin@github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin":
+  version: 0.1.0
+  resolution: "@ensdomains/thorin@https://github.com/ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=7887da7f817c5eacb194a96b124433b24684e256"
+  dependencies:
+    "@vanilla-extract/css": ^1.6.8
+    "@vanilla-extract/css-utils": ^0.1.2
+    "@vanilla-extract/dynamic": ^2.0.2
+    "@vanilla-extract/recipes": ^0.2.3
+    "@vanilla-extract/sprinkles": ^1.3.3
+    clsx: ^1.1.1
+    focus-visible: ^5.2.0
+    lodash: ^4.17.21
+  peerDependencies:
+    react: ^17
+    react-dom: ^17
+  checksum: ffe7e5f73c6aa3580c5761d13d2988bd76e5a33e445565c728405b43299db7db859784bc6b5ad7ddfc6c7646d3646308fe85b5dc85c6f23e6e8c278a282e13eb
   languageName: node
   linkType: hard
 
@@ -3808,6 +3834,65 @@ __metadata:
     "@typescript-eslint/types": 5.10.0
     eslint-visitor-keys: ^3.0.0
   checksum: 9b99c6be709c59be6a1705f0244aad732a5e523af8b8eb87e5dd6a3d27a027329bf2617aa6f15a36f79bce4215ac09277e144737a0d8d674e93b073b36fd963e
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/css-utils@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@vanilla-extract/css-utils@npm:0.1.2"
+  checksum: 002c65889910c5a1f6672f2f0451e9667aa2a5e17eeb58cf14f4eda1869c6eed9a6a25951ffa444650a65919ecb61831c05380707ab787568be10927653ed53c
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/css@npm:^1.6.8":
+  version: 1.6.8
+  resolution: "@vanilla-extract/css@npm:1.6.8"
+  dependencies:
+    "@emotion/hash": ^0.8.0
+    "@vanilla-extract/private": ^1.0.3
+    chalk: ^4.1.1
+    css-what: ^5.0.1
+    cssesc: ^3.0.0
+    csstype: ^3.0.7
+    deep-object-diff: ^1.1.0
+    deepmerge: ^4.2.2
+    escape-string-regexp: ^4.0.0
+    outdent: ^0.8.0
+  checksum: 1bee577c83ef11e3bdba1cb1b29fee2c07774eed3b304c4f6d674ad5ebcebe755278db5de00de0ed98463484c74982318e777acba9aed4770833e1c9383d45f3
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/dynamic@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@vanilla-extract/dynamic@npm:2.0.2"
+  dependencies:
+    "@vanilla-extract/private": ^1.0.3
+  checksum: c6f22606bce094a5682c6d842be6d6965b9448f8973eaabdaa7a7438146458c22490c1c63345f08d2226f1c95ac20731835a5140c2c18646b2c1287b65607b84
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/private@npm:^1.0.3":
+  version: 1.0.3
+  resolution: "@vanilla-extract/private@npm:1.0.3"
+  checksum: 866a71ba6804edeb0735684e7723ba78f5cf0bb40d4fb538fe6bf7d73928099e341312337b2a510ac0ce96ff8a4b39eb7f7a5fad0c842532353dd20e7278f29b
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/recipes@npm:^0.2.3":
+  version: 0.2.3
+  resolution: "@vanilla-extract/recipes@npm:0.2.3"
+  peerDependencies:
+    "@vanilla-extract/css": ^1.0.0
+  checksum: 41ae6d981b6400eacfa497362809c3aa657be9246ff10367e47e51dc486ab53c1e6d55e2728f692f6c2736ac41d3000649a5948058ebaf31cf470b8525b73c71
+  languageName: node
+  linkType: hard
+
+"@vanilla-extract/sprinkles@npm:^1.3.3":
+  version: 1.3.3
+  resolution: "@vanilla-extract/sprinkles@npm:1.3.3"
+  peerDependencies:
+    "@vanilla-extract/css": ^1.0.0
+  checksum: 68cff1633a9e2829b739f5322b5bfea7989bd3b780fa9bb7f8c3c4ef3f865c2a7c1815fa333ac7d8562f3239989ade1b7835c447560237f1cfca0aba9f465a91
   languageName: node
   linkType: hard
 
@@ -6622,7 +6707,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"chalk@npm:^4.0.0, chalk@npm:^4.1.0":
+"chalk@npm:^4.0.0, chalk@npm:^4.1.0, chalk@npm:^4.1.1":
   version: 4.1.2
   resolution: "chalk@npm:4.1.2"
   dependencies:
@@ -6962,7 +7047,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"clsx@npm:^1.1.0":
+"clsx@npm:^1.1.0, clsx@npm:^1.1.1":
   version: 1.1.1
   resolution: "clsx@npm:1.1.1"
   checksum: ff052650329773b9b245177305fc4c4dc3129f7b2be84af4f58dc5defa99538c61d4207be7419405a5f8f3d92007c954f4daba5a7b74e563d5de71c28c830063
@@ -7515,6 +7600,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"cssesc@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "cssesc@npm:3.0.0"
+  bin:
+    cssesc: bin/cssesc
+  checksum: f8c4ababffbc5e2ddf2fa9957dda1ee4af6048e22aeda1869d0d00843223c1b13ad3f5d88b51caa46c994225eacb636b764eb807a8883e2fb6f99b4f4e8c48b2
+  languageName: node
+  linkType: hard
+
 "cssom@npm:^0.4.4":
   version: 0.4.4
   resolution: "cssom@npm:0.4.4"
@@ -7542,6 +7636,13 @@ __metadata:
   version: 3.0.9
   resolution: "csstype@npm:3.0.9"
   checksum: 199f9af7e673f9f188525c3102a329d637ff46c52f6385a4427ff5cb17adcb736189150170a7af7c5701d18d7704bdad130273f4aa7e44c6c4f9967e6115dc93
+  languageName: node
+  linkType: hard
+
+"csstype@npm:^3.0.7":
+  version: 3.0.10
+  resolution: "csstype@npm:3.0.10"
+  checksum: 20a8fa324f2b33ddf94aa7507d1b6ab3daa6f3cc308888dc50126585d7952f2471de69b2dbe0635d1fdc31223fef8e070842691877e725caf456e2378685a631
   languageName: node
   linkType: hard
 
@@ -7760,6 +7861,13 @@ __metadata:
   version: 0.1.4
   resolution: "deep-is@npm:0.1.4"
   checksum: edb65dd0d7d1b9c40b2f50219aef30e116cedd6fc79290e740972c132c09106d2e80aa0bc8826673dd5a00222d4179c84b36a790eef63a4c4bca75a37ef90804
+  languageName: node
+  linkType: hard
+
+"deep-object-diff@npm:^1.1.0":
+  version: 1.1.0
+  resolution: "deep-object-diff@npm:1.1.0"
+  checksum: 4e7c1b7cd214312f4b94de62be765899f887c9e95cf6320b1d4df6bb7b861db0dff6b180fa1947a0db2eb56c902d64c20e285d49b316da2bfafed1a44ed3c232
   languageName: node
   linkType: hard
 
@@ -8107,6 +8215,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"dotenv@npm:^15.0.0":
+  version: 15.0.0
+  resolution: "dotenv@npm:15.0.0"
+  checksum: be5d852b2ad1708780e7038481c0687ce4bb9edf354d439872511e966a5f28c083f296e1d1c182256d695bfdd67e320382eb3b0f2e9d83efa3615cd1757257ab
+  languageName: node
+  linkType: hard
+
 "dotenv@npm:^8.2.0":
   version: 8.6.0
   resolution: "dotenv@npm:8.6.0"
@@ -8390,6 +8505,7 @@ __metadata:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/eth-ens-namehash": ^2.0.15
+    "@ensdomains/thorin": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin"
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch"
     "@ensdomains/web3modal": ^1.10.1
     "@gnosis.pm/safe-apps-provider": ^0.9.3
@@ -10500,6 +10616,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"focus-visible@npm:^5.2.0":
+  version: 5.2.0
+  resolution: "focus-visible@npm:5.2.0"
+  checksum: 876f646ef453680d3d34e9f9b23961527ffd5ccaed8690f423d4fbfa37ff023d98a490972bc1387850e37ec2e44958c81f6096ef95b67462e5c4b5404cf1dbb9
+  languageName: node
+  linkType: hard
+
 "follow-redirects@npm:1.5.10":
   version: 1.5.10
   resolution: "follow-redirects@npm:1.5.10"
@@ -11293,6 +11416,63 @@ __metadata:
   bin:
     hardhat: internal/cli/cli.js
   checksum: c7d247e2d8b7c2bf9040ad2d16fc507c1bec1d1d11c37bb90065be2093f4b15160c71dc710f73a4a52a3aefce36a62382413998f2024a74e99f58460e27119b5
+  languageName: node
+  linkType: hard
+
+"hardhat@npm:^2.8.3":
+  version: 2.8.3
+  resolution: "hardhat@npm:2.8.3"
+  dependencies:
+    "@ethereumjs/block": ^3.6.0
+    "@ethereumjs/blockchain": ^5.5.0
+    "@ethereumjs/common": ^2.6.0
+    "@ethereumjs/tx": ^3.4.0
+    "@ethereumjs/vm": ^5.6.0
+    "@ethersproject/abi": ^5.1.2
+    "@sentry/node": ^5.18.1
+    "@solidity-parser/parser": ^0.14.0
+    "@types/bn.js": ^5.1.0
+    "@types/lru-cache": ^5.1.0
+    abort-controller: ^3.0.0
+    adm-zip: ^0.4.16
+    ansi-escapes: ^4.3.0
+    chalk: ^2.4.2
+    chokidar: ^3.4.0
+    ci-info: ^2.0.0
+    debug: ^4.1.1
+    enquirer: ^2.3.0
+    env-paths: ^2.2.0
+    eth-sig-util: ^2.5.2
+    ethereum-cryptography: ^0.1.2
+    ethereumjs-abi: ^0.6.8
+    ethereumjs-util: ^7.1.3
+    find-up: ^2.1.0
+    fp-ts: 1.19.3
+    fs-extra: ^7.0.1
+    glob: ^7.1.3
+    https-proxy-agent: ^5.0.0
+    immutable: ^4.0.0-rc.12
+    io-ts: 1.10.4
+    lodash: ^4.17.11
+    merkle-patricia-tree: ^4.2.2
+    mnemonist: ^0.38.0
+    mocha: ^7.2.0
+    node-fetch: ^2.6.0
+    qs: ^6.7.0
+    raw-body: ^2.4.1
+    resolve: 1.17.0
+    semver: ^6.3.0
+    slash: ^3.0.0
+    solc: 0.7.3
+    source-map-support: ^0.5.13
+    stacktrace-parser: ^0.1.10
+    true-case-path: ^2.2.1
+    tsort: 0.0.1
+    uuid: ^8.3.2
+    ws: ^7.4.6
+  bin:
+    hardhat: internal/cli/cli.js
+  checksum: 760faf9c91d5c6cb5035bf9e62d14fb52cae6a995b86195457cf1d41a1fb73c4ec1ef9c7e8e033e335495d65265a072ddef4a4b56b1cbaa94c18fc87edf91e16
   languageName: node
   linkType: hard
 
@@ -15979,6 +16159,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"outdent@npm:^0.8.0":
+  version: 0.8.0
+  resolution: "outdent@npm:0.8.0"
+  checksum: 72b7c1a287674317ea477999ec24e73a9eda21de35eb9429218f4a5bab899e964afaee7508265898118fee5cbee1d79397916b66dd8aeee285cd948ea5b1f562
+  languageName: node
+  linkType: hard
+
 "p-cancelable@npm:^0.3.0":
   version: 0.3.0
   resolution: "p-cancelable@npm:0.3.0"
@@ -19426,6 +19613,15 @@ resolve@^2.0.0-next.3:
   checksum: 11c1246b1991015a8881742878af779e3863fad42f626ffda957dbf28c94bf51e7994cffb9ffbec86ff3c23ab45ffa6d79d453c15e664306e35fc7b2c4eee5f4
   languageName: node
   linkType: hard
+
+"test-environment@workspace:test-environment":
+  version: 0.0.0-use.local
+  resolution: "test-environment@workspace:test-environment"
+  dependencies:
+    dotenv: ^15.0.0
+    hardhat: ^2.8.3
+  languageName: unknown
+  linkType: soft
 
 "test-exclude@npm:^6.0.0":
   version: 6.0.0

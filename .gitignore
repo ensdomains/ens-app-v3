@@ -57,3 +57,5 @@ yarn-error.log*
 
 # IDEs
 .idea
+
+test-environment/*
