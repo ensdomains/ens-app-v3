@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.27",
+  "version": "0.1.28",
   "workspaces": [
     "test-environment"
   ],
@@ -17,20 +17,21 @@
     "cypress:headless": "cypress run",
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
     "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "update:thorin": "yalc update @ensdomains/thorin --dev"
   },
   "dependencies": {
     "@apollo/client": "^3.5.7",
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin",
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch",
     "@ensdomains/web3modal": "^1.10.1",
     "@gnosis.pm/safe-apps-provider": "^0.9.3",
     "@gnosis.pm/safe-apps-sdk": "^6.2.0",
     "@myetherwallet/mewconnect-web-client": "^2.2.0-beta.16",
     "@portis/web3": "^4.0.6",
+    "@svgr/webpack": "^6.2.1",
     "@toruslabs/torus-embed": "^1.20.2",
     "@walletconnect/web3-provider": "^1.7.1",
     "ethers": "^5.5.3",
@@ -55,6 +56,7 @@
     "react-dom": "*"
   },
   "devDependencies": {
+    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.2",

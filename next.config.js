@@ -10,4 +10,20 @@ module.exports = {
   },
   swcMinify: true,
   i18n,
+  webpack: (config, options) => {
+    config.module.rules.push({
+      test: /\.svg$/,
+      issuer: /\.tsx?$/,
+      include: [options.dir],
+      use: [
+        "next-swc-loader",
+        {
+          loader: "@svgr/webpack",
+          options: { babel: false },
+        },
+      ],
+    });
+
+    return config;
+  },
 };

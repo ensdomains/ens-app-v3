@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/thorin": {
+      "signature": "6503bf8e297a8568fb40a3331edfbc85",
+      "pure": true,
+      "replaced": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin"
+    }
+  }
+}

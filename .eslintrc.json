@@ -85,6 +85,9 @@
       }
     ],
     "radix": "off",
-    "consistent-return": "off"
+    "consistent-return": "off",
+    "jsx-a11y/anchor-is-valid": "off",
+    "no-return-assign": "off",
+    "react/require-default-props": "off"
   }
 }

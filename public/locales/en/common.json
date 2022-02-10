@@ -1,3 +1,15 @@
 {
-  "title": "Hello world!"
+  "title": "Your web3 username",
+  "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
+  "navigation": {
+    "home": "Home",
+    "about": "About ENS",
+    "developers": "Developers",
+    "community": "Community",
+    "help": "Help",
+    "governance": "Governance",
+    "docs": "Docs",
+    "bugBounty": "Bug Bounty",
+    "mediaKit": "Media Kit"
+  }
 }
