@@ -2231,7 +2231,7 @@ __metadata:
 
 "@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
   version: 0.1.0
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=bdf572&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=78a460&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@vanilla-extract/css": ^1.6.8
     "@vanilla-extract/css-utils": ^0.1.2
@@ -2244,7 +2244,7 @@ __metadata:
   peerDependencies:
     react: ^17
     react-dom: ^17
-  checksum: 7fbd5daf2ff77eadad1a36491159dac651bad769a2f42eeea06c295248eeb459a90301ad587fa18df9ce8701e60781244d3196bfe1a1739c4273dd9a6abc3957
+  checksum: ab761e80e1e2863405c2d45def2ef81d8aa225e6c00d31eecc0082bc132a186168aa46a40925e3f4f7a75ad825a294deb1f7c0c08d92cecc34e12af3f1127752
   languageName: node
   linkType: hard
 
@@ -2310,17 +2310,17 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/web3modal@npm:^1.10.1":
-  version: 1.10.1
-  resolution: "@ensdomains/web3modal@npm:1.10.1"
+"@ensdomains/web3modal@github:ensdomains/web3modal#redesign":
+  version: 1.10.2
+  resolution: "@ensdomains/web3modal@https://github.com/ensdomains/web3modal.git#commit=e7802891bf7cac4243e484b5a787494f15979541"
   dependencies:
     detect-browser: ^5.1.0
     prop-types: ^15.7.2
     react: ^16.8.6
     react-dom: ^16.8.6
-    styled-components: ^5.1.1
+    styled-components: ^5.3.3
     tslib: ^1.10.0
-  checksum: 321441a8fbea4d9317c46b36269578b9dee30867bcfeec527e0c99da700b7fc196633fa83a354ec395b8b8d1340c856256ae006c180c9d0d3ed02baacfb097bb
+  checksum: 3210851b05c00ddfe00b234e9de5b925b24d5a6e6950ed13d1eae054856fb20cb1319405d83fcf153d84e45bb06d28c38f6de60e281a1a4c18d59ea191f3f67e
   languageName: node
   linkType: hard
 
@@ -9789,7 +9789,7 @@ __metadata:
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch"
-    "@ensdomains/web3modal": ^1.10.1
+    "@ensdomains/web3modal": "github:ensdomains/web3modal#redesign"
     "@gnosis.pm/safe-apps-provider": ^0.9.3
     "@gnosis.pm/safe-apps-sdk": ^6.2.0
     "@myetherwallet/mewconnect-web-client": ^2.2.0-beta.16
@@ -9838,7 +9838,7 @@ __metadata:
     jest-localstorage-mock: ^2.4.18
     js-sha3: ^0.8.0
     lodash: ^4.17.21
-    multiformats: ^9.5.9
+    multiformats: 9.4.8
     next: ^12.0.8
     next-i18next: ^10.2.0
     prettier: 2.5.1
@@ -16616,7 +16616,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multiformats@npm:^9.4.2, multiformats@npm:^9.5.9":
+"multiformats@npm:9.4.8":
+  version: 9.4.8
+  resolution: "multiformats@npm:9.4.8"
+  checksum: 161fd721ab5e301a1740d15ac158e7506942ef0be99be79a60bdf1a03142f7055f9c0609072da590eb840453b3996ffd37b974996d7eddfa3c765eebaba03708
+  languageName: node
+  linkType: hard
+
+"multiformats@npm:^9.4.2":
   version: 9.5.9
   resolution: "multiformats@npm:9.5.9"
   checksum: 9bd472b566fd0bf6796e75a7e30e624b8fe7b4b451225e5e1367a116065dad708d14c258554cdc98560882921347e1e80dd979c007427d13b7907ac7052ce845
@@ -20663,7 +20670,7 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
-"styled-components@npm:^5.1.1, styled-components@npm:^5.3.3":
+"styled-components@npm:^5.3.3":
   version: 5.3.3
   resolution: "styled-components@npm:5.3.3"
   dependencies:

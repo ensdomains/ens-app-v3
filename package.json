@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.31",
+  "version": "0.1.32",
   "workspaces": [
     "test-environment"
   ],
@@ -26,7 +26,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch",
-    "@ensdomains/web3modal": "^1.10.1",
+    "@ensdomains/web3modal": "github:ensdomains/web3modal#redesign",
     "@gnosis.pm/safe-apps-provider": "^0.9.3",
     "@gnosis.pm/safe-apps-sdk": "^6.2.0",
     "@myetherwallet/mewconnect-web-client": "^2.2.0-beta.16",
@@ -39,7 +39,7 @@
     "iso-639-1": "^2.1.13",
     "js-sha3": "^0.8.0",
     "lodash": "^4.17.21",
-    "multiformats": "^9.5.9",
+    "multiformats": "9.4.8",
     "next": "^12.0.8",
     "next-i18next": "^10.2.0",
     "react": "^17.0.2",

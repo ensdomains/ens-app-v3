@@ -1,3 +1,5 @@
+import { ApolloProvider } from "@apollo/client";
+import getClient, { setupClient } from "@app/apollo/apolloClient";
 import { BreakpointProvider } from "@app/utils/BreakpointProvider";
 import { ThemeProvider } from "@ensdomains/thorin";
 import "@ensdomains/thorin/styles";
@@ -27,6 +29,8 @@ a {
 
 * {
   box-sizing: border-box;
+  font-feature-settings: "ss01" on, "ss03" on;
+  -moz-font-feature-settings: "ss01" on, "ss03" on;
 }
 `;
 
@@ -38,14 +42,20 @@ const breakpoints = {
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
+  if (typeof window !== "undefined") {
+    import("@app/setup").then((setup) => setup.default(false));
+  }
+  setupClient();
   return (
     <>
       <GlobalStyle />
-      <ThemeProvider>
-        <BreakpointProvider queries={breakpoints}>
-          <Component {...pageProps} />
-        </BreakpointProvider>
-      </ThemeProvider>
+      <ApolloProvider {...{ client: getClient() }}>
+        <ThemeProvider>
+          <BreakpointProvider queries={breakpoints}>
+            <Component {...pageProps} />
+          </BreakpointProvider>
+        </ThemeProvider>
+      </ApolloProvider>
     </>
   );
 }

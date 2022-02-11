@@ -14,8 +14,8 @@ import {
 import { getNetworkId } from "@ensdomains/ui/web3";
 import { keccak256 } from "js-sha3";
 import throttle from "lodash/throttle";
-import { CID } from "multiformats";
 import { useEffect, useRef } from "react";
+import CID from "../../.yarn/cache/multiformats-npm-9.4.8-3b569a54ba-161fd721ab.zip/node_modules/multiformats/cjs/src/index.js";
 
 // From https://github.com/0xProject/0x-monorepo/blob/development/packages/utils/src/address_utils.ts
 

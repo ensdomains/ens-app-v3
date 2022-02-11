@@ -15,6 +15,7 @@ const GradientTitle = styled.h1`
   background-image: ${vars.mode.gradients.accent};
   background-repeat: no-repeat;
   background-size: 110%;
+  -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
   margin: 0;

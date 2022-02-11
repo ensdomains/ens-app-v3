@@ -11,5 +11,8 @@
     "docs": "Docs",
     "bugBounty": "Bug Bounty",
     "mediaKit": "Media Kit"
+  },
+  "profile": {
+    "disconnect": "Disconnect"
   }
 }
