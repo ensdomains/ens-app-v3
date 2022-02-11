@@ -1,4 +1,3 @@
-import { useEffect, useState } from "react";
 import { css } from "styled-components";
 
 type Breakpoint = "small" | "medium" | "large" | "xLarge";
@@ -33,34 +32,5 @@ const mq = keys.reduce((acc, sizeLabel) => {
   }, {} as Record<BreakpointType, Function>);
   return acc;
 }, {} as Record<Breakpoint, Record<BreakpointType, Function>>);
-
-export const useMedia = (
-  type: BreakpointType,
-  query: Breakpoint,
-  defaultState: boolean
-) => {
-  const [state, setState] = useState(defaultState);
-
-  useEffect(() => {
-    let mounted = true;
-    const mql = window.matchMedia(
-      `(${breakpointTypes[type]}: ${breakpoints[query]})`
-    );
-    const onChange = () => {
-      if (!mounted) return;
-      setState(!!mql.matches);
-    };
-
-    mql.addListener(onChange);
-    setState(mql.matches);
-
-    return () => {
-      mounted = false;
-      mql.removeListener(onChange);
-    };
-  }, [query, type]);
-
-  return state;
-};
 
 export default mq;

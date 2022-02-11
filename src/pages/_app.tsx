@@ -1,3 +1,4 @@
+import { BreakpointProvider } from "@app/utils/BreakpointProvider";
 import { ThemeProvider } from "@ensdomains/thorin";
 import "@ensdomains/thorin/styles";
 import { appWithTranslation } from "next-i18next";
@@ -29,12 +30,21 @@ a {
 }
 `;
 
+const breakpoints = {
+  sm: "(min-width: 640px)",
+  md: "(min-width: 768px)",
+  lg: "(min-width: 1024px)",
+  xl: "(min-width: 1280px)",
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <>
       <GlobalStyle />
       <ThemeProvider>
-        <Component {...pageProps} />
+        <BreakpointProvider queries={breakpoints}>
+          <Component {...pageProps} />
+        </BreakpointProvider>
       </ThemeProvider>
     </>
   );

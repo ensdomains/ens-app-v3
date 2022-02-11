@@ -5,8 +5,8 @@ import { Header } from "../components/Header";
 export const Basic = ({ children }: { children: React.ReactNode }) => {
   return (
     <Box
-      paddingX="16"
-      paddingY="12"
+      paddingX={{ xs: "8", sm: "16" }}
+      paddingY={{ xs: "10", sm: "12" }}
       display="flex"
       flexDirection="column"
       alignItems="stretch"

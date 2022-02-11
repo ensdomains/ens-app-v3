@@ -2,7 +2,7 @@ import { Box, Input } from "@ensdomains/thorin";
 
 export const SearchInput = () => {
   return (
-    <Box marginX="16">
+    <Box marginX={{ xs: "0", md: "16" }}>
       <Box
         boxShadow="0.25"
         borderRadius="2.5xLarge"

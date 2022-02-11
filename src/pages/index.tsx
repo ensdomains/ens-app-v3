@@ -9,6 +9,7 @@ import styled from "styled-components";
 
 const GradientTitle = styled.h1`
   font-size: ${vars.fontSizes.headingOne};
+  text-align: center;
   font-weight: 800;
   background-image: ${vars.mode.gradients.accent};
   background-repeat: no-repeat;
@@ -20,6 +21,7 @@ const GradientTitle = styled.h1`
 
 const SubtitleWrapper = styled(Box)`
   max-width: calc(${vars.space["72"]} * 2 - ${vars.space["4"]});
+  line-height: 150%;
   text-align: center;
   margin-bottom: ${vars.space["3"]};
 `;
@@ -39,11 +41,12 @@ const Home: NextPage = () => {
         display="flex"
         alignItems="center"
         justifyContent="center"
+        width="full"
       >
         <Stack align="center" justify="center" space="3">
           <GradientTitle>{t("title")}</GradientTitle>
           <SubtitleWrapper>
-            <Typography size="large" color="textSecondary">
+            <Typography size="large" color="textSecondary" lineHeight="1.5">
               {t("description")}
             </Typography>
           </SubtitleWrapper>

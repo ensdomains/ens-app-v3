@@ -14,7 +14,13 @@ export const Footer = () => {
   const { t } = useTranslation("common");
 
   return (
-    <Box as="footer" display="flex" flexDirection="row" marginTop="2.5">
+    <Box
+      as="footer"
+      display="flex"
+      flexDirection={{ xs: "column", md: "row" }}
+      alignItems="center"
+      marginTop="2.5"
+    >
       <Stack direction="horizontal" align="center">
         <StyledNavLink href="/bug-bounty">
           {t("navigation.bugBounty")}
@@ -23,7 +29,7 @@ export const Footer = () => {
           {t("navigation.mediaKit")}
         </StyledNavLink>
       </Stack>
-      <Box flexGrow={1} />
+      <Box flexGrow={1} marginBottom={{ xs: "2.5", md: "0" }} />
       <Stack direction="horizontal">
         <SocialIcon
           Icon={SocialTwitter}
