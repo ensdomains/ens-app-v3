@@ -1,3 +1,4 @@
+import { useBreakpoint } from "@app/utils/BreakpointProvider";
 import { Box, vars } from "@ensdomains/thorin";
 import { ElementType } from "react";
 import styled from "styled-components";
@@ -36,17 +37,17 @@ export const SocialIcon = ({
   Icon,
   ColoredIcon,
   color,
-  iconWidth = "10",
   href,
 }: {
   Icon: ElementType;
   ColoredIcon?: ElementType;
   color?: string;
-  iconWidth?: keyof typeof vars.space;
   href: string;
 }) => {
+  const breakpoints = useBreakpoint();
+
   return (
-    <SocialIconWrapper href={href} $boxSize={iconWidth}>
+    <SocialIconWrapper href={href} $boxSize={breakpoints.sm ? "10" : "8"}>
       <StyledIcon key={href} $iconColor={color} as={Icon} />
       {ColoredIcon && <StyledColoredIcon as={ColoredIcon} />}
     </SocialIconWrapper>

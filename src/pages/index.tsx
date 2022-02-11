@@ -1,5 +1,6 @@
 import { SearchInput } from "@app/components/SearchInput";
 import { Basic } from "@app/layouts/Basic";
+import mq from "@app/mediaQuery";
 import { Box, Stack, Typography, vars } from "@ensdomains/thorin";
 import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
@@ -8,7 +9,7 @@ import Head from "next/head";
 import styled from "styled-components";
 
 const GradientTitle = styled.h1`
-  font-size: ${vars.fontSizes.headingOne};
+  font-size: ${vars.fontSizes.headingTwo};
   text-align: center;
   font-weight: 800;
   background-image: ${vars.mode.gradients.accent};
@@ -17,6 +18,10 @@ const GradientTitle = styled.h1`
   background-clip: text;
   color: transparent;
   margin: 0;
+
+  ${mq.small.min`
+    font-size: ${vars.fontSizes.headingOne};
+  `}
 `;
 
 const SubtitleWrapper = styled(Box)`

@@ -9,6 +9,7 @@ import {
 import { useTranslation } from "next-i18next";
 import styled from "styled-components";
 import ENSFull from "../assets/ENSFull.svg";
+import ENSWithGradient from "../assets/ENSWithGradient.svg";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { LanugageDropdown } from "./LanguageDropdown";
 import { StyledNavLink } from "./StyledNavLink";
@@ -57,15 +58,18 @@ export const Header = () => {
 
   return (
     <Box as="header">
-      <Stack direction="horizontal" justify="center" align="center" space="6">
-        <Stack
-          direction={{ xs: "vertical", sm: "horizontal" }}
-          justify="flex-start"
-          align="center"
-        >
+      <Stack
+        direction="horizontal"
+        justify="center"
+        align="center"
+        space={{ xs: "3", sm: "6" }}
+      >
+        {breakpoints.sm ? (
           <ENSFull height="48" />
-          <LanugageDropdown />
-        </Stack>
+        ) : (
+          <ENSWithGradient height="48" />
+        )}
+        <LanugageDropdown />
         <Box flexGrow={1} />
         {breakpoints.lg && (
           <>
@@ -83,9 +87,11 @@ export const Header = () => {
           ).map((route) => ({ ...route, label: t(route.label) }))}
         />
         <Button
-          prefix={<StyledIconEthTransparentInverted size="6" />}
+          prefix={
+            <StyledIconEthTransparentInverted size={{ xs: "4", sm: "6" }} />
+          }
           variant="action"
-          size="medium"
+          size={breakpoints.sm ? "medium" : "small"}
         >
           Connect
         </Button>
