@@ -14,8 +14,8 @@ export const Footer = () => {
   const { t } = useTranslation("common");
 
   return (
-    <Box display="flex" flexDirection="row">
-      <Stack direction="horizontal">
+    <Box as="footer" display="flex" flexDirection="row" marginTop="2.5">
+      <Stack direction="horizontal" align="center">
         <StyledNavLink href="/bug-bounty">
           {t("navigation.bugBounty")}
         </StyledNavLink>
@@ -25,15 +25,36 @@ export const Footer = () => {
       </Stack>
       <Box flexGrow={1} />
       <Stack direction="horizontal">
-        <SocialIcon Icon={SocialTwitter} color="#5298FF" />
-        <SocialIcon Icon={SocialGithub} color="#0F0F0F" />
-        <SocialIcon Icon={SocialDiscord} color="#7F83FF" />
-        <SocialIcon Icon={SocialMedium} color="#0F0F0F" />
+        <SocialIcon
+          Icon={SocialTwitter}
+          color="#5298FF"
+          href="https://twitter.com/ensdomains"
+        />
+        <SocialIcon
+          Icon={SocialGithub}
+          color="#0F0F0F"
+          href="https://github.com/ensdomains"
+        />
+        <SocialIcon
+          Icon={SocialDiscord}
+          color="#7F83FF"
+          href="https://chat.ens.domains"
+        />
+        <SocialIcon
+          Icon={SocialMedium}
+          color="#0F0F0F"
+          href="https://medium.com/the-ethereum-name-service"
+        />
         <SocialIcon
           Icon={SocialDiscourse}
           ColoredIcon={SocialDiscourseColour}
+          href="https://discuss.ens.domains/"
         />
-        <SocialIcon Icon={SocialYoutube} color="#EE1919" />
+        <SocialIcon
+          Icon={SocialYoutube}
+          color="#EE1919"
+          href="https://www.youtube.com/ensdomains"
+        />
       </Stack>
     </Box>
   );

@@ -1,5 +1,6 @@
+import { SearchInput } from "@app/components/SearchInput";
 import { Basic } from "@app/layouts/Basic";
-import { Box, Typography } from "@ensdomains/thorin";
+import { Box, Stack, Typography, vars } from "@ensdomains/thorin";
 import type { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
@@ -7,19 +8,20 @@ import Head from "next/head";
 import styled from "styled-components";
 
 const GradientTitle = styled.h1`
-  font-size: var(--fontSizes-headingOne);
+  font-size: ${vars.fontSizes.headingOne};
   font-weight: 800;
-  background-image: var(--mode-gradients-accent);
+  background-image: ${vars.mode.gradients.accent};
   background-repeat: no-repeat;
   background-size: 110%;
   background-clip: text;
   color: transparent;
-  margin-bottom: var(--space-3);
+  margin: 0;
 `;
 
 const SubtitleWrapper = styled(Box)`
-  max-width: calc(var(--space-72) * 2);
+  max-width: calc(${vars.space["72"]} * 2 - ${vars.space["4"]});
   text-align: center;
+  margin-bottom: ${vars.space["3"]};
 `;
 
 const Home: NextPage = () => {
@@ -35,16 +37,18 @@ const Home: NextPage = () => {
       <Box
         flexGrow={1}
         display="flex"
-        flexDirection="column"
-        justifyContent="center"
         alignItems="center"
+        justifyContent="center"
       >
-        <GradientTitle>{t("title")}</GradientTitle>
-        <SubtitleWrapper>
-          <Typography size="large" color="textSecondary">
-            {t("description")}
-          </Typography>
-        </SubtitleWrapper>
+        <Stack align="center" justify="center" space="3">
+          <GradientTitle>{t("title")}</GradientTitle>
+          <SubtitleWrapper>
+            <Typography size="large" color="textSecondary">
+              {t("description")}
+            </Typography>
+          </SubtitleWrapper>
+          <SearchInput />
+        </Stack>
       </Box>
     </Basic>
   );

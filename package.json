@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.28",
+  "version": "0.1.29",
   "workspaces": [
     "test-environment"
   ],
@@ -36,6 +36,7 @@
     "@walletconnect/web3-provider": "^1.7.1",
     "ethers": "^5.5.3",
     "graphql": "^16.2.0",
+    "iso-639-1": "^2.1.13",
     "js-sha3": "^0.8.0",
     "lodash": "^4.17.21",
     "multiformats": "^9.5.9",

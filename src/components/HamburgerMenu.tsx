@@ -17,6 +17,7 @@ export const HamburgerMenu = ({
   return (
     <DropdownButton
       chevron={false}
+      shortThrow
       buttonProps={{
         shadowless: true,
         variant: "transparent",
