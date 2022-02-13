@@ -71,7 +71,7 @@ export const Header = () => {
   const breakpoints = useBreakpoint();
   const { t } = useTranslation("common");
   const {
-    data: { accounts, isSafeApp, network, displayName, isReadOnly },
+    data: { accounts, network, displayName, isReadOnly },
   } = useQuery(NETWORK_INFORMATION_QUERY);
 
   const { data: { getReverseRecord } = {}, loading: reverseRecordLoading } =

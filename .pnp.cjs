@@ -623,7 +623,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@ensdomains/web3modal",
-        "https://github.com/ensdomains/web3modal.git#commit=e7802891bf7cac4243e484b5a787494f15979541"
+        "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"
       ],
       [
         "@eslint/eslintrc",
@@ -6897,7 +6897,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=78a460&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."],
-            ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=e7802891bf7cac4243e484b5a787494f15979541"],
+            ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
             ["@gnosis.pm/safe-apps-sdk", "npm:6.2.0"],
             ["@myetherwallet/mewconnect-web-client", "npm:2.2.0-beta.16"],
@@ -10901,15 +10901,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@ensdomains/web3modal", [
-        ["https://github.com/ensdomains/web3modal.git#commit=e7802891bf7cac4243e484b5a787494f15979541", {
-          "packageLocation": "./.yarn/cache/@ensdomains-web3modal-https-f2a893da49-3210851b05.zip/node_modules/@ensdomains/web3modal/",
+        ["https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847", {
+          "packageLocation": "./.yarn/cache/@ensdomains-web3modal-https-facbb5e4f6-e220d0a8f6.zip/node_modules/@ensdomains/web3modal/",
           "packageDependencies": [
-            ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=e7802891bf7cac4243e484b5a787494f15979541"],
+            ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["detect-browser", "npm:5.3.0"],
             ["prop-types", "npm:15.7.2"],
             ["react", "npm:16.14.0"],
-            ["react-dom", "virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:16.14.0"],
-            ["styled-components", "virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:5.3.3"],
+            ["react-dom", "virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:16.14.0"],
+            ["styled-components", "virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:5.3.3"],
             ["tslib", "npm:1.14.1"]
           ],
           "linkType": "HARD",
@@ -16387,16 +16387,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:ab4a5515892c4fc8be3aadc800eddc1153944690ec3c40ddfb4874fbca6115fd3e547298e0f04e816b76cb3d90cb9932fe0493fd9f06166e1c163d96d7514d23#npm:2.0.2", {
-          "packageLocation": "./.yarn/__virtual__/babel-plugin-styled-components-virtual-02237a039d/0/cache/babel-plugin-styled-components-npm-2.0.2-0e7aa5c426-3de729e909.zip/node_modules/babel-plugin-styled-components/",
+        ["virtual:62c9d79a223972162f7dceaab3f9ee0afd0b55701858427325ae1d7e443d4267d6975241627faf347d039249375e7d7fbf220e12fdae12224d3c2b8047fbe101#npm:2.0.2", {
+          "packageLocation": "./.yarn/__virtual__/babel-plugin-styled-components-virtual-e096baf318/0/cache/babel-plugin-styled-components-npm-2.0.2-0e7aa5c426-3de729e909.zip/node_modules/babel-plugin-styled-components/",
           "packageDependencies": [
-            ["babel-plugin-styled-components", "virtual:ab4a5515892c4fc8be3aadc800eddc1153944690ec3c40ddfb4874fbca6115fd3e547298e0f04e816b76cb3d90cb9932fe0493fd9f06166e1c163d96d7514d23#npm:2.0.2"],
+            ["babel-plugin-styled-components", "virtual:62c9d79a223972162f7dceaab3f9ee0afd0b55701858427325ae1d7e443d4267d6975241627faf347d039249375e7d7fbf220e12fdae12224d3c2b8047fbe101#npm:2.0.2"],
             ["@babel/helper-annotate-as-pure", "npm:7.16.7"],
             ["@babel/helper-module-imports", "npm:7.16.7"],
             ["@types/styled-components", null],
             ["babel-plugin-syntax-jsx", "npm:6.18.0"],
             ["lodash", "npm:4.17.21"],
-            ["styled-components", "virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:5.3.3"]
+            ["styled-components", "virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:5.3.3"]
           ],
           "packagePeers": [
             "@types/styled-components",
@@ -20063,7 +20063,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=78a460&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."],
-            ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=e7802891bf7cac4243e484b5a787494f15979541"],
+            ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
             ["@gnosis.pm/safe-apps-sdk", "npm:6.2.0"],
             ["@myetherwallet/mewconnect-web-client", "npm:2.2.0-beta.16"],
@@ -29898,10 +29898,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:16.14.0", {
-          "packageLocation": "./.yarn/__virtual__/react-dom-virtual-e35eb95c5a/0/cache/react-dom-npm-16.14.0-516a97ad33-5a5c49da0f.zip/node_modules/react-dom/",
+        ["virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:16.14.0", {
+          "packageLocation": "./.yarn/__virtual__/react-dom-virtual-bde79cd40c/0/cache/react-dom-npm-16.14.0-516a97ad33-5a5c49da0f.zip/node_modules/react-dom/",
           "packageDependencies": [
-            ["react-dom", "virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:16.14.0"],
+            ["react-dom", "virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:16.14.0"],
             ["@types/react", null],
             ["loose-envify", "npm:1.4.0"],
             ["object-assign", "npm:4.1.1"],
@@ -32091,10 +32091,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
-        ["virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:5.3.3", {
-          "packageLocation": "./.yarn/__virtual__/styled-components-virtual-ab4a551589/0/cache/styled-components-npm-5.3.3-211149e93b-a104341068.zip/node_modules/styled-components/",
+        ["virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:5.3.3", {
+          "packageLocation": "./.yarn/__virtual__/styled-components-virtual-62c9d79a22/0/cache/styled-components-npm-5.3.3-211149e93b-a104341068.zip/node_modules/styled-components/",
           "packageDependencies": [
-            ["styled-components", "virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:5.3.3"],
+            ["styled-components", "virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:5.3.3"],
             ["@babel/helper-module-imports", "npm:7.16.7"],
             ["@babel/traverse", "npm:7.16.8"],
             ["@emotion/is-prop-valid", "npm:0.8.8"],
@@ -32103,11 +32103,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/react", null],
             ["@types/react-dom", null],
             ["@types/react-is", null],
-            ["babel-plugin-styled-components", "virtual:ab4a5515892c4fc8be3aadc800eddc1153944690ec3c40ddfb4874fbca6115fd3e547298e0f04e816b76cb3d90cb9932fe0493fd9f06166e1c163d96d7514d23#npm:2.0.2"],
+            ["babel-plugin-styled-components", "virtual:62c9d79a223972162f7dceaab3f9ee0afd0b55701858427325ae1d7e443d4267d6975241627faf347d039249375e7d7fbf220e12fdae12224d3c2b8047fbe101#npm:2.0.2"],
             ["css-to-react-native", "npm:3.0.0"],
             ["hoist-non-react-statics", "npm:3.3.2"],
             ["react", "npm:16.14.0"],
-            ["react-dom", "virtual:f2a893da49e094de492dd39520a4f46d717ebec4d537572c2a107f95f600205adf7e028fc71fae106e29086779d2b1f65f6de7df91f20520ba57e108050f61ba#npm:16.14.0"],
+            ["react-dom", "virtual:facbb5e4f66609c82d07315309205e0aba700988b04b6783834d422b8209f119cf5023cbaefe19b2fe4d0affe7da27685982fa161c669454b593df9692950938#npm:16.14.0"],
             ["react-is", null],
             ["shallowequal", "npm:1.1.0"],
             ["supports-color", "npm:5.5.0"]

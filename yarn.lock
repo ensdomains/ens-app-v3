@@ -2310,9 +2310,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/web3modal@github:ensdomains/web3modal#redesign":
+"@ensdomains/web3modal@github:ensdomains/web3modal#head=redesign&commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847":
   version: 1.10.2
-  resolution: "@ensdomains/web3modal@https://github.com/ensdomains/web3modal.git#commit=e7802891bf7cac4243e484b5a787494f15979541"
+  resolution: "@ensdomains/web3modal@https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"
   dependencies:
     detect-browser: ^5.1.0
     prop-types: ^15.7.2
@@ -2320,7 +2320,7 @@ __metadata:
     react-dom: ^16.8.6
     styled-components: ^5.3.3
     tslib: ^1.10.0
-  checksum: 3210851b05c00ddfe00b234e9de5b925b24d5a6e6950ed13d1eae054856fb20cb1319405d83fcf153d84e45bb06d28c38f6de60e281a1a4c18d59ea191f3f67e
+  checksum: e220d0a8f66046963f192bc3a0d725edb9f9ff739bf77f08c2694b42472a834c60523e3f1436ddd46631f48953b1123d8fd46c20cb60809aa1f3964eda8d5e99
   languageName: node
   linkType: hard
 
@@ -9789,7 +9789,7 @@ __metadata:
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch"
-    "@ensdomains/web3modal": "github:ensdomains/web3modal#redesign"
+    "@ensdomains/web3modal": "github:ensdomains/web3modal#head=redesign&commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"
     "@gnosis.pm/safe-apps-provider": ^0.9.3
     "@gnosis.pm/safe-apps-sdk": ^6.2.0
     "@myetherwallet/mewconnect-web-client": ^2.2.0-beta.16
