@@ -1,6 +1,6 @@
-# ens-app-v2
+# ENS App V3
 
-Version 2 of the ENS app.
+Version 3 of the ENS app.
 
 ## Default Settings
 
