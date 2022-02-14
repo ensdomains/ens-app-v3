@@ -69,6 +69,8 @@ export const HeaderConnect = () => {
         getReverseRecord.avatar &&
         imageUrl(getReverseRecord?.avatar, displayName, network)
       }
+      size={breakpoints.sm ? "medium" : "small"}
+      alignDropdown="right"
     />
   ) : (
     <Button
