@@ -6,9 +6,11 @@ import {
   Button,
   IconEthTransparentInverted,
   Profile,
+  Spinner,
   vars,
 } from "@ensdomains/thorin";
 import { useTranslation } from "next-i18next";
+import { useEffect } from "react";
 import styled from "styled-components";
 
 const NETWORK_INFORMATION_QUERY = gql`
@@ -42,6 +44,11 @@ export const HeaderConnect = () => {
       skip: !accounts?.length,
     });
 
+  useEffect(
+    () => console.log(isReadOnly, accounts, reverseRecordLoading),
+    [isReadOnly, accounts, reverseRecordLoading, network]
+  );
+
   return !isReadOnly ? (
     <Profile
       address={accounts[0]}
@@ -70,7 +77,13 @@ export const HeaderConnect = () => {
           module.connectProvider()
         )
       }
-      prefix={<StyledIconEthTransparentInverted size={{ xs: "4", sm: "6" }} />}
+      prefix={
+        network === "Loading" || accounts?.[0] ? (
+          <Spinner color="white" />
+        ) : (
+          <StyledIconEthTransparentInverted size={{ xs: "4", sm: "6" }} />
+        )
+      }
       variant="action"
       size={breakpoints.sm ? "medium" : "small"}
     >
