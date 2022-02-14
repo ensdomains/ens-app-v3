@@ -1,5 +1,6 @@
 import { ApolloProvider } from "@apollo/client";
 import getClient, { setupClient } from "@app/apollo/apolloClient";
+import useReactiveVarListeners from "@app/hooks/useReactiveVarListeners";
 import { BreakpointProvider } from "@app/utils/BreakpointProvider";
 import { ThemeProvider } from "@ensdomains/thorin";
 import "@ensdomains/thorin/styles";
@@ -41,6 +42,16 @@ const breakpoints = {
   xl: "(min-width: 1280px)",
 };
 
+const ApolloReactiveProvider = ({
+  children,
+}: {
+  children: React.ReactNode;
+}) => {
+  useReactiveVarListeners();
+
+  return <>{children}</>;
+};
+
 function MyApp({ Component, pageProps }: AppProps) {
   if (typeof window !== "undefined") {
     import("@app/setup").then((setup) => setup.default(false));
@@ -50,11 +61,13 @@ function MyApp({ Component, pageProps }: AppProps) {
     <>
       <GlobalStyle />
       <ApolloProvider {...{ client: getClient() }}>
-        <ThemeProvider>
-          <BreakpointProvider queries={breakpoints}>
-            <Component {...pageProps} />
-          </BreakpointProvider>
-        </ThemeProvider>
+        <ApolloReactiveProvider>
+          <ThemeProvider>
+            <BreakpointProvider queries={breakpoints}>
+              <Component {...pageProps} />
+            </BreakpointProvider>
+          </ThemeProvider>
+        </ApolloReactiveProvider>
       </ApolloProvider>
     </>
   );

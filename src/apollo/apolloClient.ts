@@ -88,6 +88,7 @@ export function setupClient() {
   const option = {
     cache,
     link: splitLink,
+    connectToDevTools: true,
   };
 
   client = new ApolloClient(option);
