@@ -94,9 +94,18 @@ export const ProfileDetails = ({
             : undefined
         }
       />
-      <Typography size="headingTwo" weight="bold">
-        {name}
-      </Typography>
+      <Stack direction="horizontal" align="center">
+        <Typography size="headingTwo" weight="bold">
+          {name}
+        </Typography>
+        {getTextRecord("name") && (
+          <Box marginTop="1">
+            <Typography weight="bold" color="textTertiary">
+              {getTextRecord("name")?.value}
+            </Typography>
+          </Box>
+        )}
+      </Stack>
       {getTextRecord("description") && (
         <Typography>{getTextRecord("description")?.value}</Typography>
       )}
