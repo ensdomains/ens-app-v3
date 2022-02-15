@@ -90,6 +90,10 @@ const ProfilePage: NextPage = () => {
 
   return (
     <Basic
+      title={
+        (_name === "me" && "Your Profile") ||
+        (domain && domain.name ? `${_name}'s Profile` : `Loading Profile`)
+      }
       loading={
         !(
           network &&
