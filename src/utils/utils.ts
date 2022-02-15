@@ -1,5 +1,5 @@
 import { saveName } from "@app/api/labels";
-import getENS from "@app/apollo/mutations/ens";
+import getENS, { getRegistrar } from "@app/apollo/mutations/ens";
 import { globalErrorReactive } from "@app/apollo/reactiveVars";
 import { validate } from "@ensdomains/ens-validation";
 import { normalize } from "@ensdomains/eth-ens-namehash";
@@ -8,6 +8,7 @@ import {
   getEnsStartBlock as _ensStartBlock,
   isEncodedLabelhash,
   isLabelValid as _isLabelValid,
+  labelhash,
   parseSearchTerm as _parseSearchTerm,
   validateName as _validateName,
 } from "@ensdomains/ui/utils/index";
@@ -315,6 +316,15 @@ export function imageUrl(url: string, name: any, network: string) {
   console.warn("Unsupported avatar", network, name, url);
 }
 
+export function ensNftImageUrl(name: string, _network: string) {
+  const network =
+    networkName[_network?.toLowerCase() as keyof typeof networkName];
+  const tokenId = labelhash(name.substring(0, name.length - 4));
+  const contractAddress = (getRegistrar() as any).permanentRegistrar.address;
+
+  return `https://metadata.ens.domains/${network}/${contractAddress}/${tokenId}/image`;
+}
+
 export function isCID(hash: string | CID) {
   try {
     if (typeof hash === "string") {
@@ -338,3 +348,16 @@ export function asyncThrottle(func: (arg0: any) => Promise<any>, wait: any) {
       throttled(resolve, reject, args);
     });
 }
+
+export const shortenAddress = (
+  address = "",
+  maxLength = 10,
+  leftSlice = 5,
+  rightSlice = 5
+) => {
+  if (address.length < maxLength) {
+    return address;
+  }
+
+  return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`;
+};

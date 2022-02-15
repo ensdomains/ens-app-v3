@@ -10,7 +10,7 @@ import {
   vars,
 } from "@ensdomains/thorin";
 import { useTranslation } from "next-i18next";
-import { useEffect } from "react";
+import { useRouter } from "next/router";
 import styled from "styled-components";
 
 const NETWORK_INFORMATION_QUERY = gql`
@@ -30,6 +30,7 @@ const StyledIconEthTransparentInverted = styled(IconEthTransparentInverted)`
 `;
 
 export const HeaderConnect = () => {
+  const router = useRouter();
   const breakpoints = useBreakpoint();
   const { t } = useTranslation("common");
   const {
@@ -44,16 +45,15 @@ export const HeaderConnect = () => {
       skip: !accounts?.length,
     });
 
-  useEffect(
-    () => console.log(isReadOnly, accounts, reverseRecordLoading),
-    [isReadOnly, accounts, reverseRecordLoading, network]
-  );
-
   return !isReadOnly ? (
     <Profile
       address={accounts[0]}
       ensName={displayName}
       dropdownItems={[
+        {
+          label: t("profile.myProfile"),
+          onClick: () => router.push("/profile/me"),
+        },
         {
           label: t("profile.disconnect"),
           color: "red",
@@ -89,7 +89,7 @@ export const HeaderConnect = () => {
       variant="action"
       size={breakpoints.sm ? "medium" : "small"}
     >
-      Connect
+      {t("profile.connect")}
     </Button>
   );
 };

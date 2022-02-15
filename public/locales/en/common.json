@@ -1,6 +1,7 @@
 {
   "title": "Your web3 username",
   "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
+  "loading": "Loading",
   "navigation": {
     "home": "Home",
     "about": "About",
@@ -13,6 +14,13 @@
     "mediaKit": "Media Kit"
   },
   "profile": {
-    "disconnect": "Disconnect"
+    "myProfile": "My Profile",
+    "disconnect": "Disconnect",
+    "connect": "Connect"
+  },
+  "name": {
+    "expires": "Expires",
+    "registrant": "Registrant",
+    "controller": "Controller"
   }
 }

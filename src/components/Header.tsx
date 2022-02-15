@@ -32,14 +32,6 @@ const DropdownRoutes = [
     label: "navigation.docs",
     href: "/docs",
   },
-  {
-    label: "navigation.bugBounty",
-    href: "/bug-bounty",
-  },
-  {
-    label: "navigation.mediaKit",
-    href: "/media-kit",
-  },
 ];
 
 const HeaderWrapper = styled(Box)`

@@ -12,7 +12,7 @@ export const LanugageDropdown = () => {
   const formatName = (language: string) =>
     breakpoints.sm ? ISO6391.getNativeName(language) : language.toUpperCase();
 
-  return (
+  return i18n.options ? (
     <DropdownButton
       inner
       shortThrow={!breakpoints.sm}
@@ -41,5 +41,5 @@ export const LanugageDropdown = () => {
         {formatName(i18n.language)}
       </Box>
     </DropdownButton>
-  );
+  ) : null;
 };

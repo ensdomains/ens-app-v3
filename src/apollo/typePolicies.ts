@@ -54,6 +54,11 @@ export default {
             : `${address.slice(0, 5)}...${address.slice(-4)}`;
         },
       },
+      primaryName: {
+        read() {
+          return reverseRecordReactive()?.name || null;
+        },
+      },
       avatar: {
         read() {
           return reverseRecordReactive()?.avatar || "";

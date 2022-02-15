@@ -10,6 +10,17 @@ module.exports = {
   },
   swcMinify: true,
   i18n,
+  images: {
+    domains: ["metadata.ens.domains"],
+  },
+  async rewrites() {
+    return [
+      {
+        source: "/profile/:name",
+        destination: "/profile?name=:name",
+      },
+    ];
+  },
   webpack: (config, options) => {
     config.module.rules.push({
       test: /\.svg$/,

@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const NodeFields = gql`
   fragment NodeFields on Node {
     name
+    createdAt
     decrypted
     parent
     parentOwner
