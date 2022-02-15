@@ -1,0 +1,1 @@
+export { IconPencil } from './IconPencil';

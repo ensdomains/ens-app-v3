@@ -1,0 +1,100 @@
+export declare type Mode = 'light' | 'dark';
+export declare type Accent = 'blue' | 'green' | 'indigo' | 'orange' | 'pink' | 'purple' | 'red' | 'teal' | 'yellow' | 'grey';
+export declare type Gradients = 'blue' | 'green' | 'red';
+export declare const colors: {
+    base: {
+        black: string;
+        white: string;
+        current: string;
+        inherit: string;
+        transparent: string;
+    };
+    light: {
+        blue: string;
+        green: string;
+        red: string;
+        indigo: string;
+        orange: string;
+        pink: string;
+        purple: string;
+        teal: string;
+        yellow: string;
+        grey: string;
+        background: string;
+        backgroundSecondary: string;
+        backgroundTertiary: string;
+        foreground: string;
+        groupBackground: string;
+        groupBorder: string;
+        gradients: {
+            blue: string;
+            green: string;
+            red: string;
+        };
+    };
+    dark: {
+        blue: string;
+        green: string;
+        red: string;
+        indigo: string;
+        orange: string;
+        pink: string;
+        purple: string;
+        teal: string;
+        yellow: string;
+        grey: string;
+        background: string;
+        backgroundSecondary: string;
+        backgroundTertiary: string;
+        foreground: string;
+        groupBackground: string;
+        groupBorder: string;
+        gradients: {
+            blue: string;
+            green: string;
+            red: string;
+        };
+    };
+};
+export declare const shades: {
+    light: {
+        accent: string;
+        accentSecondary: string;
+        accentSecondaryHover: string;
+        backgroundHide: string;
+        backgroundHideFallback: string;
+        foregroundSecondary: string;
+        foregroundSecondaryHover: string;
+        foregroundTertiary: string;
+        groupBorder: string;
+        border: string;
+        borderSecondary: string;
+        borderTertiary: string;
+        text: string;
+        textSecondary: string;
+        textSecondaryHover: string;
+        textTertiary: string;
+        textTertiaryHover: string;
+        textPlaceholder: string;
+    };
+    dark: {
+        accent: string;
+        accentSecondary: string;
+        accentSecondaryHover: string;
+        backgroundHide: string;
+        backgroundHideFallback: string;
+        foregroundSecondary: string;
+        foregroundSecondaryHover: string;
+        foregroundTertiary: string;
+        groupBorder: string;
+        border: string;
+        borderSecondary: string;
+        borderTertiary: string;
+        text: string;
+        textSecondary: string;
+        textSecondaryHover: string;
+        textTertiary: string;
+        textTertiaryHover: string;
+        textPlaceholder: string;
+    };
+};

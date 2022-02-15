@@ -18,7 +18,7 @@ Version 3 of the ENS app.
 
 ### Install
 
-**For the moment, you need the [@ensdomains/thorin](https://github.com/ensdomains/thorin) repo cloned locally in the same parent directory as this.**
+**For the moment, you should have the [@ensdomains/thorin](https://github.com/ensdomains/thorin) repo cloned locally in the same parent directory as this.**
 
 #### Install yalc globally
 
@@ -26,7 +26,7 @@ Version 3 of the ENS app.
 npm i -g yalc
 ```
 
-#### Locally publish thorin and update
+#### Locally publish thorin and update (not required)
 
 ```bash
 cd ../thorin

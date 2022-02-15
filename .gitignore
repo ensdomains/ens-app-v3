@@ -45,7 +45,7 @@ yarn-error.log*
 #/.pnp.*
 
 # yalc cache
-.yalc/
+.yalc/**/*.md
 
 # jest coverage
 /coverage

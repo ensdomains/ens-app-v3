@@ -1,0 +1,51 @@
+{
+  "name": "@ensdomains/thorin",
+  "version": "0.1.0",
+  "description": "A web3 native design system",
+  "main": "./dist/index.cjs.js",
+  "module": "./dist/index.es.js",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.es.js",
+      "require": "./dist/index.cjs.js"
+    },
+    "./styles": {
+      "import": "./dist/style.css",
+      "require": "./dist/style.css"
+    }
+  },
+  "sideEffects": [
+    "src/atoms/**/*",
+    "src/theme/**/*",
+    "*.css.ts"
+  ],
+  "files": [
+    "dist/**"
+  ],
+  "repository": "ensdomains/thorin",
+  "license": "MIT",
+  "scripts": {
+    "build": "vite build",
+    "clean": "rimraf dist src/components/icons/generated/",
+    "lint:types": "tsc --noEmit",
+    "prepack": "yarn gen:icons && yarn build",
+    "publish": "yarn npm publish",
+    "test": "jest"
+  },
+  "dependencies": {
+    "@vanilla-extract/css": "^1.6.8",
+    "@vanilla-extract/css-utils": "^0.1.2",
+    "@vanilla-extract/dynamic": "^2.0.2",
+    "@vanilla-extract/recipes": "^0.2.3",
+    "@vanilla-extract/sprinkles": "^1.3.3",
+    "clsx": "^1.1.1",
+    "focus-visible": "^5.2.0",
+    "lodash": "^4.17.21"
+  },
+  "peerDependencies": {
+    "react": "^17",
+    "react-dom": "^17"
+  },
+  "yalcSig": "6de598e3a06e71a264e705051235fe08"
+}

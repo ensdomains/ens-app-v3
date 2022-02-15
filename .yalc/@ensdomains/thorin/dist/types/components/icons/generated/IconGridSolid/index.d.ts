@@ -1,0 +1,1 @@
+export { IconGridSolid } from './IconGridSolid';

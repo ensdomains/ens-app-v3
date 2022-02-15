@@ -1,0 +1,1 @@
+export { IconUsersSolid } from './IconUsersSolid';

@@ -1,0 +1,1 @@
+export { IconEthTransparent } from './IconEthTransparent';

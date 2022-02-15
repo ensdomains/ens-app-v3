@@ -1,0 +1,1 @@
+export { IconCode } from './IconCode';

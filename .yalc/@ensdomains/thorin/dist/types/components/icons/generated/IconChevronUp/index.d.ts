@@ -1,0 +1,1 @@
+export { IconChevronUp } from './IconChevronUp';

@@ -1,0 +1,1 @@
+export { IconEthTransparentInverted } from './IconEthTransparentInverted';

@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.44",
+  "version": "0.1.47",
   "workspaces": [
     "test-environment"
   ],
@@ -17,7 +17,6 @@
     "cypress:headless": "cypress run",
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
     "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless",
-    "setup:dev": "yalc add @ensdomains/thorin",
     "postinstall": "husky install",
     "postyalc": "yarn"
   },
@@ -26,6 +25,7 @@
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
+    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin",
     "@ensdomains/ui": "patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch",
     "@ensdomains/web3modal": "github:ensdomains/web3modal#head=redesign&commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847",
     "@gnosis.pm/safe-apps-provider": "^0.9.3",
@@ -58,7 +58,6 @@
     "react-dom": "*"
   },
   "devDependencies": {
-    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.2",
