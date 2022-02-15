@@ -143,9 +143,11 @@ export const AddressProfileButton = ({
 export const OtherProfileButton = ({
   iconKey,
   value,
+  type = "text",
 }: {
   iconKey: string;
   value: string;
+  type?: "text" | "address";
 }) => {
   const isLink = value.startsWith("http://") || value.startsWith("https://");
 
@@ -154,9 +156,24 @@ export const OtherProfileButton = ({
       link={isLink ? value : undefined}
       value={value}
       prefixSize="max"
-      prefix={<Typography>{iconKey}</Typography>}
+      prefix={
+        type === "address" ? (
+          <Box
+            backgroundColor="textTertiary"
+            paddingX="1.5"
+            paddingY="0.25"
+            borderRadius="large"
+          >
+            <Typography color="white" size="label">
+              {iconKey}
+            </Typography>
+          </Box>
+        ) : (
+          <Typography color="textSecondary">{iconKey}</Typography>
+        )
+      }
     >
-      {value.length > 20 ? `${value.slice(0, 20)}...` : value}
+      {value.length > 15 ? `${value.slice(0, 15)}...` : value}
     </ProfileButton>
   );
 };

@@ -39,9 +39,15 @@ const ProfileSection = ({
         </Typography>
         <Box marginTop="2" marginLeft="-4">
           <Stack direction="horizontal" space="2" wrap>
-            {array.map((item: { key: string; value: string }) => (
-              <Button key={item.key} iconKey={item.key} value={item.value} />
-            ))}
+            {array.map(
+              (item: {
+                key: string;
+                value: string;
+                type?: "text" | "address";
+              }) => (
+                <Button {...{ ...item, iconKey: item.key }} />
+              )
+            )}
           </Stack>
         </Box>
       </Box>
