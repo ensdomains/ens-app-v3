@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.41",
+  "version": "0.1.42",
   "workspaces": [
     "test-environment"
   ],
@@ -18,7 +18,7 @@
     "e2e": "start-server-and-test dev http://localhost:3000 cypress",
     "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless",
     "postinstall": "husky install",
-    "update:thorin": "yalc update @ensdomains/thorin --dev"
+    "postyalc": "yarn"
   },
   "dependencies": {
     "@apollo/client": "^3.5.7",
