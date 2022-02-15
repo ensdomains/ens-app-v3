@@ -1,0 +1,13 @@
+{
+  "name": "test-environment",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "hardhat:start": "yarn hardhat node --hostname 0.0.0.0",
+    "start": "yarn hardhat node --hostname 0.0.0.0 && yarn wait-on tcp:8545 && docker-compose up"
+  },
+  "dependencies": {
+    "dotenv": "^15.0.0",
+    "hardhat": "^2.8.3"
+  }
+}
