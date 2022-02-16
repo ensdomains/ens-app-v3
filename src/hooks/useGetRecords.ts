@@ -8,11 +8,14 @@ import { formatsByCoinType } from "@ensdomains/address-encoder";
 import { getNamehash } from "@ensdomains/ui";
 
 export const useGetRecords = (domain = { name: undefined }) => {
-  const { data: dataResolver } = useQuery(GET_RESOLVER_FROM_SUBGRAPH, {
-    variables: {
-      id: getNamehash(domain.name),
-    },
-  });
+  const { data: dataResolver, loading: resolverLoading } = useQuery(
+    GET_RESOLVER_FROM_SUBGRAPH,
+    {
+      variables: {
+        id: getNamehash(domain.name),
+      },
+    }
+  );
 
   const resolver =
     dataResolver && dataResolver.domain && dataResolver.domain.resolver;
@@ -50,6 +53,6 @@ export const useGetRecords = (domain = { name: undefined }) => {
   return {
     dataAddresses,
     dataTextRecords,
-    recordsLoading: addressesLoading || textRecordsLoading,
+    recordsLoading: addressesLoading || textRecordsLoading || resolverLoading,
   };
 };

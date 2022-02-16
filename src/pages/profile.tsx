@@ -82,22 +82,21 @@ const ProfilePage: NextPage = () => {
   const [type, setType] = useState<any>(undefined);
   /* eslint-enable @typescript-eslint/no-unused-vars */
   const [name, setNormalisedName] = useState("");
+  const [domain, setDomain] = useState<any>(undefined);
 
   const {
     data: { isENSReady, network, accounts, primaryName, isReadOnly },
   } = useQuery(NETWORK_INFORMATION_QUERY);
-  const { data: { singleName: domain } = { singleName: undefined } } = useQuery(
-    GET_SINGLE_NAME,
-    {
+  const { data: { singleName: _domain } = { singleName: undefined } } =
+    useQuery(GET_SINGLE_NAME, {
       variables: { name },
       fetchPolicy: "no-cache",
       context: {
         queryDeduplication: false,
       },
-    }
-  );
+    });
   const { dataAddresses, dataTextRecords, recordsLoading } =
-    useGetRecords(domain);
+    useGetRecords(_domain);
   const expiryDate = domain && domain.expiryTime && (domain.expiryTime as Date);
 
   useEffect(() => {
@@ -128,6 +127,11 @@ const ProfilePage: NextPage = () => {
       }
     }
   }, [_name, primaryName, isReadOnly, isENSReady]);
+
+  useEffect(() => {
+    const timeout = _domain && setTimeout(() => setDomain(_domain), 100);
+    return () => clearTimeout(timeout);
+  }, [_domain]);
 
   return (
     <Basic
