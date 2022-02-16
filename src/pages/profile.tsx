@@ -151,7 +151,7 @@ const ProfilePage: NextPage = () => {
         <Box
           display="flex"
           flexDirection={{ xs: "column-reverse", md: "row" }}
-          gap="8"
+          gap={{ md: "8" }}
           position="relative"
           marginTop={router.query.from ? "8" : "0"}
         >
@@ -160,11 +160,13 @@ const ProfilePage: NextPage = () => {
               <BackButton to={router.query.from as string} />
             </Box>
           )}
-          <ProfileNftDetails
-            name={name}
-            selfAddress={accounts?.[0]}
-            {...{ network, expiryDate, domain }}
-          />
+          <Box marginTop={{ xs: "8", md: "0" }}>
+            <ProfileNftDetails
+              name={name}
+              selfAddress={accounts?.[0]}
+              {...{ network, expiryDate, domain }}
+            />
+          </Box>
           <DetailsWrapper>
             <ProfileDetails
               name={name}
