@@ -1,9 +1,6 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require("./next-i18next.config");
 const { withPlugins } = require("next-compose-plugins");
-const withBundleAnalyzer = require("@next/bundle-analyzer")({
-  enabled: process.env.ANALYZE === "true",
-});
 
 let nextConfig = {
   reactStrictMode: true,
@@ -12,7 +9,8 @@ let nextConfig = {
     // remove this once this PR is merged to main: https://github.com/vercel/next.js/pull/33236
     swcFileReading: false,
   },
-  swcMinify: true,
+  // change to true once infinite loop is fixed
+  swcMinify: false,
   i18n,
   images: {
     domains: ["metadata.ens.domains"],
@@ -45,6 +43,13 @@ let nextConfig = {
   },
 };
 
-let plugins = [[withBundleAnalyzer]];
+let plugins = [];
+
+if (process.env.ANALYZE) {
+  const withBundleAnalyzer = require("@next/bundle-analyzer")({
+    enabled: true,
+  });
+  plugins.push([withBundleAnalyzer]);
+}
 
 module.exports = withPlugins(plugins, nextConfig);
