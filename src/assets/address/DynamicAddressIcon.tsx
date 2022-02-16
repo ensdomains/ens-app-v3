@@ -1,19 +1,13 @@
-import AddressBitcoin from "./AddressBitcoin.svg";
-import AddressBNB from "./AddressBNB.svg";
-import AddressDoge from "./AddressDoge.svg";
-import AddressEthereum from "./AddressEthereum.svg";
-import AddressLitecoin from "./AddressLitecoin.svg";
-import AddressPolkadot from "./AddressPolkadot.svg";
-import AddressSolana from "./AddressSolana.svg";
+import dynamic from "next/dynamic";
 
 export const addressIconTypes = {
-  btc: AddressBitcoin,
-  bnb: AddressBNB,
-  eth: AddressEthereum,
-  doge: AddressDoge,
-  ltc: AddressLitecoin,
-  dot: AddressPolkadot,
-  sol: AddressSolana,
+  btc: dynamic(() => import("./AddressBitcoin.svg")),
+  bnb: dynamic(() => import("./AddressBNB.svg")),
+  eth: dynamic(() => import("./AddressEthereum.svg")),
+  doge: dynamic(() => import("./AddressDoge.svg")),
+  ltc: dynamic(() => import("./AddressLitecoin.svg")),
+  dot: dynamic(() => import("./AddressPolkadot.svg")),
+  sol: dynamic(() => import("./AddressSolana.svg")),
 };
 
 export const DynamicAddressIcon = ({

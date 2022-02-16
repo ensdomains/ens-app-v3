@@ -1,17 +1,12 @@
-import SocialDiscord from "./SocialDiscord.svg";
-import SocialDiscourse from "./SocialDiscourseColour.svg";
-import SocialGithub from "./SocialGithub.svg";
-import SocialMedium from "./SocialMedium.svg";
-import SocialTwitter from "./SocialTwitter.svg";
-import SocialYoutube from "./SocialYoutube.svg";
+import dynamic from "next/dynamic";
 
 export const socialIconTypes = {
-  discord: SocialDiscord,
-  discourse: SocialDiscourse,
-  github: SocialGithub,
-  medium: SocialMedium,
-  twitter: SocialTwitter,
-  youtube: SocialYoutube,
+  discord: dynamic(() => import("./SocialDiscord.svg")),
+  discourse: dynamic(() => import("./SocialDiscourseColour.svg")),
+  github: dynamic(() => import("./SocialGithub.svg")),
+  medium: dynamic(() => import("./SocialMedium.svg")),
+  twitter: dynamic(() => import("./SocialTwitter.svg")),
+  youtube: dynamic(() => import("./SocialYoutube.svg")),
 };
 
 export const DynamicSocialIcon = ({
@@ -21,6 +16,6 @@ export const DynamicSocialIcon = ({
   name: keyof typeof socialIconTypes;
   fill?: string;
 }) => {
-  const Icon = socialIconTypes[name];
+  const Icon = socialIconTypes[name] as any;
   return <Icon {...props} />;
 };
