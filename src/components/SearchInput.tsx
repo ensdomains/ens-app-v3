@@ -99,6 +99,7 @@ export const SearchInput = () => {
           suffix={SuffixElement()}
           autoComplete="off"
           autoCorrect="off"
+          spellCheck="false"
         />
       </Box>
     </Box>
