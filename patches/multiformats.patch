@@ -1,0 +1,113 @@
+diff --git a/package.json b/package.json
+index 332bb4cb4db9a9219d457ad0fcf15827e73a8878..6cd84433ff97dfb9cad0d5897b58fab4a989d1d6 100644
+--- a/package.json
++++ b/package.json
+@@ -36,108 +36,6 @@
+   ],
+   "author": "Mikeal Rogers <mikeal.rogers@gmail.com> (https://www.mikealrogers.com/)",
+   "license": "(Apache-2.0 AND MIT)",
+-  "exports": {
+-    ".": {
+-      "browser": "./esm/src/index.js",
+-      "require": "./cjs/src/index.js",
+-      "import": "./esm/src/index.js"
+-    },
+-    "./cid": {
+-      "browser": "./esm/src/cid.js",
+-      "require": "./cjs/src/cid.js",
+-      "import": "./esm/src/cid.js"
+-    },
+-    "./basics": {
+-      "browser": "./esm/src/basics.js",
+-      "require": "./cjs/src/basics.js",
+-      "import": "./esm/src/basics.js"
+-    },
+-    "./block": {
+-      "browser": "./esm/src/block.js",
+-      "require": "./cjs/src/block.js",
+-      "import": "./esm/src/block.js"
+-    },
+-    "./traversal": {
+-      "browser": "./esm/src/traversal.js",
+-      "require": "./cjs/src/traversal.js",
+-      "import": "./esm/src/traversal.js"
+-    },
+-    "./bases/identity": {
+-      "browser": "./esm/src/bases/identity.js",
+-      "require": "./cjs/src/bases/identity.js",
+-      "import": "./esm/src/bases/identity.js"
+-    },
+-    "./bases/base2": {
+-      "browser": "./esm/src/bases/base2.js",
+-      "require": "./cjs/src/bases/base2.js",
+-      "import": "./esm/src/bases/base2.js"
+-    },
+-    "./bases/base8": {
+-      "browser": "./esm/src/bases/base8.js",
+-      "require": "./cjs/src/bases/base8.js",
+-      "import": "./esm/src/bases/base8.js"
+-    },
+-    "./bases/base10": {
+-      "browser": "./esm/src/bases/base10.js",
+-      "require": "./cjs/src/bases/base10.js",
+-      "import": "./esm/src/bases/base10.js"
+-    },
+-    "./bases/base16": {
+-      "browser": "./esm/src/bases/base16.js",
+-      "require": "./cjs/src/bases/base16.js",
+-      "import": "./esm/src/bases/base16.js"
+-    },
+-    "./bases/base32": {
+-      "browser": "./esm/src/bases/base32.js",
+-      "require": "./cjs/src/bases/base32.js",
+-      "import": "./esm/src/bases/base32.js"
+-    },
+-    "./bases/base36": {
+-      "browser": "./esm/src/bases/base36.js",
+-      "require": "./cjs/src/bases/base36.js",
+-      "import": "./esm/src/bases/base36.js"
+-    },
+-    "./bases/base58": {
+-      "browser": "./esm/src/bases/base58.js",
+-      "require": "./cjs/src/bases/base58.js",
+-      "import": "./esm/src/bases/base58.js"
+-    },
+-    "./bases/base64": {
+-      "browser": "./esm/src/bases/base64.js",
+-      "require": "./cjs/src/bases/base64.js",
+-      "import": "./esm/src/bases/base64.js"
+-    },
+-    "./hashes/hasher": {
+-      "browser": "./esm/src/hashes/hasher.js",
+-      "require": "./cjs/src/hashes/hasher.js",
+-      "import": "./esm/src/hashes/hasher.js"
+-    },
+-    "./hashes/digest": {
+-      "browser": "./esm/src/hashes/digest.js",
+-      "require": "./cjs/src/hashes/digest.js",
+-      "import": "./esm/src/hashes/digest.js"
+-    },
+-    "./hashes/sha2": {
+-      "browser": "./esm/src/hashes/sha2-browser.js",
+-      "require": "./cjs/src/hashes/sha2.js",
+-      "import": "./esm/src/hashes/sha2.js"
+-    },
+-    "./hashes/identity": {
+-      "browser": "./esm/src/hashes/identity.js",
+-      "require": "./cjs/src/hashes/identity.js",
+-      "import": "./esm/src/hashes/identity.js"
+-    },
+-    "./codecs/json": {
+-      "browser": "./esm/src/codecs/json.js",
+-      "require": "./cjs/src/codecs/json.js",
+-      "import": "./esm/src/codecs/json.js"
+-    },
+-    "./codecs/raw": {
+-      "browser": "./esm/src/codecs/raw.js",
+-      "require": "./cjs/src/codecs/raw.js",
+-      "import": "./esm/src/codecs/raw.js"
+-    }
+-  },
+   "devDependencies": {
+     "@ipld/dag-pb": "^2.1.14",
+     "@stablelib/sha256": "^1.0.1",

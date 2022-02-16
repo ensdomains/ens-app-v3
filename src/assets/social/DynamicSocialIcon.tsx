@@ -19,6 +19,7 @@ export const DynamicSocialIcon = ({
   ...props
 }: {
   name: keyof typeof socialIconTypes;
+  fill?: string;
 }) => {
   const Icon = socialIconTypes[name];
   return <Icon {...props} />;

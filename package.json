@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.48",
+  "version": "0.1.49",
   "workspaces": [
     "test-environment"
   ],
@@ -10,6 +10,8 @@
     "start": "next start",
     "lint": "next lint",
     "export": "next export",
+    "analyze": "ANALYZE=true yarn build",
+    "analyse": "yarn analyze",
     "test": "jest --env=./custom-test-env.js",
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
@@ -40,8 +42,9 @@
     "iso-639-1": "^2.1.13",
     "js-sha3": "^0.8.0",
     "lodash": "^4.17.21",
-    "multiformats": "9.4.8",
+    "multiformats": "patch:multiformats@9.6.4#./patches/multiformats.patch",
     "next": "^12.0.8",
+    "next-compose-plugins": "^2.2.1",
     "next-i18next": "^10.2.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
@@ -58,6 +61,7 @@
     "react-dom": "*"
   },
   "devDependencies": {
+    "@next/bundle-analyzer": "^12.0.10",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
     "@types/jest": "^27.0.2",

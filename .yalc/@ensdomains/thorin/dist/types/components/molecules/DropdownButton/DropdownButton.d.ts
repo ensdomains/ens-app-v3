@@ -4,7 +4,7 @@ import type { DropdownProps } from '../Dropdown';
 import * as styles from './styles.css';
 declare type Props = {
     children: React.ReactNode;
-    buttonProps?: ButtonProps;
+    buttonProps?: Partial<ButtonProps>;
     dropdownItems: DropdownProps['items'];
     inner?: boolean;
     chevron?: boolean;

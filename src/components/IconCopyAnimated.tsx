@@ -42,6 +42,8 @@ export const IconCopyAnimated = memo(
   }: {
     copied?: boolean;
     checkStrokeWidth?: keyof typeof vars.borderWidths;
+    size?: keyof typeof vars.space;
+    color?: keyof typeof vars.colors;
   }) => {
     return (
       <IconWrapper $copied={copied}>

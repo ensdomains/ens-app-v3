@@ -1,7 +1,8 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require("./next-i18next.config");
+const { withPlugins, optional } = require("next-compose-plugins");
 
-module.exports = {
+let nextConfig = {
   reactStrictMode: true,
   experimental: {
     styledComponents: true,
@@ -38,3 +39,13 @@ module.exports = {
     return config;
   },
 };
+
+let plugins = [
+  [
+    optional(() => require("@next/bundle-analyzer")),
+    { enabled: true },
+    [process.env.ANALYZE],
+  ],
+];
+
+module.exports = withPlugins(plugins, nextConfig);
