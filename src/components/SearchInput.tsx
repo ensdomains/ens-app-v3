@@ -10,6 +10,7 @@ import {
 } from "@ensdomains/thorin";
 import debounce from "lodash/debounce";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
 
@@ -32,6 +33,7 @@ const setSearchedVal = debounce(
 );
 
 export const SearchInput = () => {
+  const router = useRouter();
   const initial = useInitial();
   const [searchedVal, _setSearchedVal] = useState("");
   const [inputVal, setInputVal] = useState("");
@@ -95,6 +97,20 @@ export const SearchInput = () => {
           hideLabel
           placeholder="Search for a name"
           value={inputVal}
+          onKeyDown={(e) =>
+            e.key === "Enter" &&
+            domain &&
+            domain.name &&
+            searchedVal === inputVal &&
+            !loading &&
+            router.push(
+              {
+                pathname: `/profile/${domain.name}`,
+                query: { from: "/" },
+              },
+              `/profile/${domain.name}`
+            )
+          }
           onChange={(e) => setInputVal(e.target.value)}
           suffix={SuffixElement()}
           autoComplete="off"
