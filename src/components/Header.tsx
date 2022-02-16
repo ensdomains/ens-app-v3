@@ -49,6 +49,10 @@ const LogoAnchor = styled.a`
   cursor: pointer;
   transition: all 0.15s ease-in-out;
 
+  & > svg {
+    vertical-align: bottom;
+  }
+
   &:hover {
     filter: brightness(1.05);
     transform: translateY(-1px);

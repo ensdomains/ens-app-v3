@@ -2,6 +2,7 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
+import type { ApolloClient, NormalizedCacheObject } from "@apollo/client";
 import modeNames from "@app/api/modes";
 import { sendHelper, sendHelperArray } from "@app/api/resolverUtils";
 import getENS, { getRegistrar } from "@app/apollo/mutations/ens";
@@ -234,9 +235,10 @@ async function getParent(name: any) {
   return [parent, parentOwner];
 }
 
-async function getRegistrant(name: any) {
-  // eslint-disable-next-line global-require
-  const client = require("@app/apollo/apolloClient").default;
+async function getRegistrant(
+  name: any,
+  client: ApolloClient<NormalizedCacheObject>
+) {
   try {
     const { data, error } = await client.query({
       query: GET_REGISTRANT_FROM_SUBGRAPH,
@@ -371,7 +373,11 @@ const resolvers = {
       return ens.getOwner(name);
     },
 
-    singleName: async (_: any, { name }: Record<string, any>) => {
+    singleName: async (
+      _: any,
+      { name }: Record<string, any>,
+      client: ApolloClient<NormalizedCacheObject>
+    ) => {
       try {
         if (!isENSReadyReactive() || !name)
           return {
@@ -439,7 +445,7 @@ const resolvers = {
           getParent(name),
           getDNSEntryDetails(name),
           getTestEntry(name),
-          getRegistrant(name),
+          getRegistrant(name, client),
         ];
 
         const [

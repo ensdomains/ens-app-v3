@@ -2,15 +2,18 @@ import { ensNftImageUrl, shortenAddress } from "@app/utils/utils";
 import { Box, Stack, Typography, vars } from "@ensdomains/thorin";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
-import { Fragment } from "react";
+import { Fragment, useState } from "react";
 import styled from "styled-components";
 import { CopyButton } from "../CopyButton";
 
-const StyledNftBox = styled(Box)`
+const StyledNftBox = styled(Box)<{ $loading: boolean }>`
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: ${({ $loading }) =>
+    $loading ? vars.colors.accentGradient : "none"};
+  border-radius: ${vars.radii["2xLarge"]};
   margin-bottom: ${vars.space["8"]};
   & > span {
     border-radius: ${vars.radii["2xLarge"]};
@@ -30,13 +33,20 @@ export const ProfileNftDetails = ({
   expiryDate: Date;
   domain: Record<any, any>;
 }) => {
+  const [nftLoading, setNftLoading] = useState(true);
   const { t } = useTranslation("profile");
   const { t: tc } = useTranslation("common");
 
   return (
     <Box>
-      <StyledNftBox>
-        <Image src={ensNftImageUrl(name, network)} width={270} height={270} />
+      <StyledNftBox $loading={nftLoading}>
+        <Image
+          onLoadingComplete={() => setNftLoading(false)}
+          src="/"
+          loader={() => ensNftImageUrl(name, network)}
+          width={270}
+          height={270}
+        />
       </StyledNftBox>
       <Box marginTop="4">
         <Stack>

@@ -14,7 +14,6 @@ import {
   web3ProviderReactive,
 } from "@app/apollo/reactiveVars";
 import { getReverseRecord } from "@app/apollo/sideEffects";
-import { setupAnalytics } from "@app/utils/analytics";
 import { getAccounts, getNetwork, getNetworkId } from "@ensdomains/ui";
 import { isReadOnly } from "@ensdomains/ui/web3";
 import getShouldDelegate from "./api/delegate";
@@ -186,7 +185,8 @@ export default async (reconnect: boolean) => {
 
     isReadOnlyReactive(isReadOnly());
 
-    setupAnalytics();
+    // add back for normal prod
+    // setupAnalytics();
 
     isAppReadyReactive(true);
   } catch (e) {

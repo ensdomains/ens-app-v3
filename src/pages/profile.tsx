@@ -5,10 +5,13 @@ import { GET_SINGLE_NAME } from "@app/graphql/queries";
 import { useGetRecords } from "@app/hooks/useGetRecords";
 import { Basic } from "@app/layouts/Basic";
 import mq from "@app/mediaQuery";
+import { useBreakpoint } from "@app/utils/BreakpointProvider";
 import { parseSearchTerm, validateName } from "@app/utils/utils";
-import { Box } from "@ensdomains/thorin";
+import { Box, IconArrowCircle, Typography, vars } from "@ensdomains/thorin";
 import { NextPage } from "next";
+import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
+import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -32,8 +35,46 @@ const DetailsWrapper = styled(Box)`
   `}
 `;
 
+const ArrowBack = styled(Box)`
+  color: ${vars.colors.textTertiary};
+  transform: rotate(180deg);
+  width: ${vars.space["7"]};
+  height: ${vars.space["7"]};
+`;
+
+const BackContainer = styled(Box)`
+  transition: all 0.15s ease-in-out;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: ${vars.space["2"]};
+
+  &:hover {
+    filter: contrast(0.8);
+    transform: translateY(-1px);
+  }
+`;
+
+const BackButton = ({ to }: { to: string }) => {
+  const { t } = useTranslation("common");
+
+  return (
+    <Link href={to}>
+      <a>
+        <BackContainer>
+          <ArrowBack as={IconArrowCircle} />
+          <Typography weight="bold" color="textTertiary" size="large">
+            {t("navigation.back")}
+          </Typography>
+        </BackContainer>
+      </a>
+    </Link>
+  );
+};
+
 const ProfilePage: NextPage = () => {
   const router = useRouter();
+  const breakpoints = useBreakpoint();
   const _name = router.query.name as string;
 
   /* eslint-disable @typescript-eslint/no-unused-vars */
@@ -105,6 +146,11 @@ const ProfilePage: NextPage = () => {
         )
       }
     >
+      {router.query.from && !breakpoints.md && (
+        <Box width="full" display="flex" alignItems="flex-start">
+          <BackButton to={router.query.from as string} />
+        </Box>
+      )}
       <Box
         flexGrow={1}
         display="flex"
@@ -116,7 +162,14 @@ const ProfilePage: NextPage = () => {
           display="flex"
           flexDirection={{ xs: "column-reverse", md: "row" }}
           gap="8"
+          position="relative"
+          marginTop={router.query.from ? "8" : "0"}
         >
+          {router.query.from && breakpoints.md && (
+            <Box marginTop="-12" position="absolute">
+              <BackButton to={router.query.from as string} />
+            </Box>
+          )}
           <ProfileNftDetails
             name={name}
             selfAddress={accounts?.[0]}

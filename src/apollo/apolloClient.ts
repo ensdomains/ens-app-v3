@@ -67,7 +67,11 @@ export function setupClient() {
 
       if (resolvers.Query[operationName]) {
         return fromPromise(
-          resolvers.Query[operationName]?.apply(null, [null, variables]),
+          resolvers.Query[operationName]?.apply(null, [
+            null,
+            variables,
+            client,
+          ]),
           operation
         );
       }
