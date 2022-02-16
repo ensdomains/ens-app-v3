@@ -141,7 +141,6 @@ const ProfilePage: NextPage = () => {
           network !== "Loading" &&
           domain &&
           domain.name &&
-          dataAddresses &&
           !recordsLoading
         )
       }

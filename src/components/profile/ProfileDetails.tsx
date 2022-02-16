@@ -31,35 +31,33 @@ const ProfileSection = ({
   const { t } = useTranslation("profile");
   const Button = button;
 
-  return (
-    condition && (
-      <Box>
-        <Typography color="textSecondary" weight="bold" size="base">
-          {t(label)}
-        </Typography>
-        <Box marginTop="2" marginLeft="-4">
-          <Stack direction="horizontal" space="2" wrap>
-            {array.map(
-              (item: {
-                key: string;
-                value: string;
-                type?: "text" | "address";
-              }) => (
-                <Button {...{ ...item, iconKey: item.key }} />
-              )
-            )}
-          </Stack>
-        </Box>
+  return condition ? (
+    <Box>
+      <Typography color="textSecondary" weight="bold" size="base">
+        {t(label)}
+      </Typography>
+      <Box marginTop="2" marginLeft="-4">
+        <Stack direction="horizontal" space="2" wrap>
+          {array.map(
+            (item: {
+              key: string;
+              value: string;
+              type?: "text" | "address";
+            }) => (
+              <Button {...{ ...item, iconKey: item.key }} />
+            )
+          )}
+        </Stack>
       </Box>
-    )
-  );
+    </Box>
+  ) : null;
 };
 
 export const ProfileDetails = ({
   name,
   network,
-  textRecords,
-  addresses,
+  textRecords = [],
+  addresses = [],
 }: {
   name: string;
   network: string;
@@ -85,6 +83,7 @@ export const ProfileDetails = ({
       <Avatar
         size="32"
         label={name}
+        placeholder={!getTextRecord("avatar")}
         src={
           textRecords && textRecords.length > 0 && getTextRecord("avatar")
             ? imageUrl(
