@@ -51,13 +51,17 @@ export const ProfileNftDetails = ({
       <Box marginTop="4">
         <Stack>
           {[
-            {
-              label: tc("name.expires"),
-              type: "text",
-              value: `${expiryDate.toLocaleDateString(undefined, {
-                month: "long",
-              })} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`,
-            },
+            ...[
+              expiryDate
+                ? {
+                    label: tc("name.expires"),
+                    type: "text",
+                    value: `${expiryDate.toLocaleDateString(undefined, {
+                      month: "long",
+                    })} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`,
+                  }
+                : null,
+            ],
             {
               label: tc("name.registrant"),
               type: "address",
@@ -68,47 +72,53 @@ export const ProfileNftDetails = ({
               type: "address",
               value: domain.owner,
             },
-          ].map((item, inx, arr) => (
-            <Fragment key={item.label}>
-              <Box
-                marginX="2"
-                display="flex"
-                justifyContent="space-between"
-                alignItems="center"
-                fontWeight="bold"
-              >
-                <Typography color="textTertiary">{item.label}</Typography>
-                <Box
-                  display="flex"
-                  flexDirection="row"
-                  alignItems="center"
-                  gap="2"
-                >
+          ].map(
+            (item, inx, arr) =>
+              item && (
+                <Fragment key={item.label}>
                   <Box
+                    marginX="2"
                     display="flex"
-                    flexDirection="column"
-                    alignItems="flex-end"
-                    gap="1"
+                    justifyContent="space-between"
+                    alignItems="center"
+                    fontWeight="bold"
                   >
-                    {item.type === "address" && item.value === selfAddress && (
-                      <Typography color="textTertiary">
-                        {t("yourWallet")}
-                      </Typography>
-                    )}
-                    <Typography color="textSecondary">
-                      {item.type === "address"
-                        ? shortenAddress(item.value)
-                        : item.value}
-                    </Typography>
+                    <Typography color="textTertiary">{item.label}</Typography>
+                    <Box
+                      display="flex"
+                      flexDirection="row"
+                      alignItems="center"
+                      gap="2"
+                    >
+                      <Box
+                        display="flex"
+                        flexDirection="column"
+                        alignItems="flex-end"
+                        gap="1"
+                      >
+                        {item.type === "address" &&
+                          item.value === selfAddress && (
+                            <Typography color="textTertiary">
+                              {t("yourWallet")}
+                            </Typography>
+                          )}
+                        <Typography color="textSecondary">
+                          {item.type === "address"
+                            ? shortenAddress(item.value)
+                            : item.value}
+                        </Typography>
+                      </Box>
+                      {item.type === "address" && (
+                        <CopyButton value={item.value} />
+                      )}
+                    </Box>
                   </Box>
-                  {item.type === "address" && <CopyButton value={item.value} />}
-                </Box>
-              </Box>
-              {inx !== arr.length - 1 && (
-                <Box height="0.25" backgroundColor="foregroundSecondary" />
-              )}
-            </Fragment>
-          ))}
+                  {inx !== arr.length - 1 && (
+                    <Box height="0.25" backgroundColor="foregroundSecondary" />
+                  )}
+                </Fragment>
+              )
+          )}
         </Stack>
       </Box>
     </Box>

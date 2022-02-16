@@ -1,11 +1,18 @@
-import { useLazyQuery } from "@apollo/client";
+import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { GET_SINGLE_NAME } from "@app/graphql/queries";
 import { parseSearchTerm } from "@app/utils/utils";
 import { validateName } from "@ensdomains/ui";
 import { useEffect, useState } from "react";
 
+const NETWORK_INFORMATION_QUERY = gql`
+  query getNetworkInfo @client {
+    isENSReady
+  }
+`;
+
 export const useGetDomainFromInput = (input: string) => {
-  const _name = input.split(".").length === 1 ? `${input}.eth` : input;
+  const _name =
+    input && (input.split(".").length === 1 ? `${input}.eth` : input);
 
   const [name, setNormalisedName] = useState("");
   const [valid, setValid] = useState<boolean | undefined>(undefined);
@@ -23,9 +30,14 @@ export const useGetDomainFromInput = (input: string) => {
     },
   });
 
+  const {
+    data: { isENSReady },
+  } = useQuery(NETWORK_INFORMATION_QUERY);
+
   useEffect(() => {
     let normalisedName;
     if (
+      isENSReady &&
       typeof _name === "string" &&
       _name.length >= 3 &&
       !_name.split(".").some((label) => label.length === 0)
@@ -57,7 +69,8 @@ export const useGetDomainFromInput = (input: string) => {
               setLoading(false);
             }
           })
-          .catch(() => {
+          .catch((err) => {
+            console.error("Error parsing search:", err);
             setValid(false);
             setLoading(false);
           });
@@ -67,7 +80,7 @@ export const useGetDomainFromInput = (input: string) => {
       setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_name]);
+  }, [_name, isENSReady]);
 
   return { valid, type, domain, loading };
 };
