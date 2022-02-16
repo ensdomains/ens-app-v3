@@ -3,6 +3,7 @@ import { ProfileDetails } from "@app/components/profile/ProfileDetails";
 import { ProfileNftDetails } from "@app/components/profile/ProfileNftDetails";
 import { useGetDomainFromInput } from "@app/hooks/useGetDomainFromInput";
 import { useGetRecords } from "@app/hooks/useGetRecords";
+import { useProtectedRoute } from "@app/hooks/useProtectedRoute";
 import { Basic } from "@app/layouts/Basic";
 import mq from "@app/mediaQuery";
 import { useBreakpoint } from "@app/utils/BreakpointProvider";
@@ -18,6 +19,7 @@ import styled from "styled-components";
 const NETWORK_INFORMATION_QUERY = gql`
   query getNetworkInfo @client {
     isENSReady
+    isAppReady
     network
     accounts
     primaryName
@@ -80,7 +82,14 @@ const ProfilePage: NextPage = () => {
   const [domain, setDomain] = useState<any>(undefined);
 
   const {
-    data: { network, accounts, primaryName },
+    data: {
+      isENSReady,
+      isAppReady,
+      network,
+      accounts,
+      primaryName,
+      isReadOnly,
+    },
   } = useQuery(NETWORK_INFORMATION_QUERY);
 
   const name = isSelf ? primaryName : _name;
@@ -89,6 +98,19 @@ const ProfilePage: NextPage = () => {
     useGetDomainFromInput(name);
   const { dataAddresses, dataTextRecords, recordsLoading } =
     useGetRecords(_domain);
+
+  useProtectedRoute(
+    "/",
+    // for /profile route, always redirect
+    router.asPath !== "/profile" &&
+      // When anything is loading, return true
+      (network !== "Loading" && isENSReady && isAppReady
+        ? // if is self, user must be connected
+          (isSelf ? !isReadOnly : true) &&
+          typeof name === "string" &&
+          name.length > 0
+        : true)
+  );
 
   const expiryDate = domain && domain.expiryTime && (domain.expiryTime as Date);
 

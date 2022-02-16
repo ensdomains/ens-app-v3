@@ -4,6 +4,7 @@ import {
   delegatesReactive,
   favouritesReactive,
   globalErrorReactive,
+  isAppReadyReactive,
   isENSReadyReactive,
   isReadOnlyReactive,
   isRunningAsSafeAppReactive,
@@ -77,6 +78,11 @@ export default {
       isENSReady: {
         read() {
           return isENSReadyReactive();
+        },
+      },
+      isAppReady: {
+        read() {
+          return isAppReadyReactive();
         },
       },
       favourites: {
