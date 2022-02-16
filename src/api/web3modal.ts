@@ -36,6 +36,9 @@ const option = {
     },
     mewconnect: {
       package: () => import("@myetherwallet/mewconnect-web-client"),
+      display: {
+        color: "#05c0a5",
+      },
       packageFactory: true,
       options: {
         infuraId: INFURA_ID,

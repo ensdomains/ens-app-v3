@@ -22,10 +22,10 @@ export const Footer = () => {
       marginTop="2.5"
     >
       <Stack direction="horizontal" align="center">
-        <StyledNavLink href="/bug-bounty">
+        <StyledNavLink disabled href="/bug-bounty">
           {t("navigation.bugBounty")}
         </StyledNavLink>
-        <StyledNavLink href="/media-kit">
+        <StyledNavLink disabled href="/media-kit">
           {t("navigation.mediaKit")}
         </StyledNavLink>
       </Stack>

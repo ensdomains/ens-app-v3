@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require("./next-i18next.config");
-const { withPlugins, optional } = require("next-compose-plugins");
+const { withPlugins } = require("next-compose-plugins");
+const withBundleAnalyzer = require("@next/bundle-analyzer")({
+  enabled: process.env.ANALYZE === "true",
+});
 
 let nextConfig = {
   reactStrictMode: true,
@@ -31,7 +34,9 @@ let nextConfig = {
         "next-swc-loader",
         {
           loader: "@svgr/webpack",
-          options: { babel: false },
+          options: {
+            babel: false,
+          },
         },
       ],
     });
@@ -40,12 +45,6 @@ let nextConfig = {
   },
 };
 
-let plugins = [
-  [
-    optional(() => require("@next/bundle-analyzer")),
-    { enabled: true },
-    [process.env.ANALYZE],
-  ],
-];
+let plugins = [[withBundleAnalyzer]];
 
 module.exports = withPlugins(plugins, nextConfig);

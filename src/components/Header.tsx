@@ -14,26 +14,30 @@ import { StyledNavLink } from "./StyledNavLink";
 
 const AlwaysShownRoutes = [
   { href: "/", label: "navigation.home" },
-  { href: "/about", label: "navigation.about" },
-  { href: "/developers", label: "navigation.developers" },
+  { href: "/about", disabled: true, label: "navigation.about" },
+  { href: "/developers", disabled: true, label: "navigation.developers" },
 ];
 
 const DropdownRoutes = [
   {
     label: "navigation.community",
     href: "/community",
+    disabled: true,
   },
   {
     label: "navigation.help",
     href: "/help",
+    disabled: true,
   },
   {
     label: "navigation.governance",
     href: "/governance",
+    disabled: true,
   },
   {
     label: "navigation.docs",
     href: "/docs",
+    disabled: true,
   },
 ];
 
@@ -80,15 +84,16 @@ export const Header = () => {
         </ConditionalWrapper>
         <LanugageDropdown />
         <Box flexGrow={1} />
-        {breakpoints.lg && (
-          <>
-            <StyledNavLink href="/">{t("navigation.home")}</StyledNavLink>
-            <StyledNavLink href="/about">{t("navigation.about")}</StyledNavLink>
-            <StyledNavLink href="/developers">
-              {t("navigation.developers")}
+        {breakpoints.lg &&
+          AlwaysShownRoutes.map((route) => (
+            <StyledNavLink
+              disabled={route.disabled}
+              key={route.href}
+              href={route.href}
+            >
+              {t(route.label)}
             </StyledNavLink>
-          </>
-        )}
+          ))}
         <HamburgerMenu
           dropdownItems={(!breakpoints.lg
             ? [...AlwaysShownRoutes, ...DropdownRoutes]

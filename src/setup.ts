@@ -15,7 +15,6 @@ import {
 } from "@app/apollo/reactiveVars";
 import { getReverseRecord } from "@app/apollo/sideEffects";
 import { setupAnalytics } from "@app/utils/analytics";
-import { safeInfo, setupSafeApp } from "@app/utils/safeApps";
 import { getAccounts, getNetwork, getNetworkId } from "@ensdomains/ui";
 import { isReadOnly } from "@ensdomains/ui/web3";
 import getShouldDelegate from "./api/delegate";
@@ -73,11 +72,12 @@ export const getProvider = async (reconnect?: boolean) => {
       return provider;
     }
 
-    const safe = await safeInfo();
-    if (safe) {
-      provider = await setupSafeApp(safe);
-      return provider;
-    }
+    // TEMPORARILY REMOVED
+    // const safe = await safeInfo();
+    // if (safe) {
+    //   provider = await setupSafeApp(safe);
+    //   return provider;
+    // }
 
     if (
       window.localStorage.getItem("WEB3_CONNECT_CACHED_PROVIDER") ||
