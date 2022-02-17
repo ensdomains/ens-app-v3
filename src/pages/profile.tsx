@@ -1,12 +1,12 @@
 import { gql, useQuery } from "@apollo/client";
 import { ProfileDetails } from "@app/components/profile/ProfileDetails";
 import { ProfileNftDetails } from "@app/components/profile/ProfileNftDetails";
-import { GET_SINGLE_NAME } from "@app/graphql/queries";
+import { useGetDomainFromInput } from "@app/hooks/useGetDomainFromInput";
 import { useGetRecords } from "@app/hooks/useGetRecords";
+import { useProtectedRoute } from "@app/hooks/useProtectedRoute";
 import { Basic } from "@app/layouts/Basic";
 import mq from "@app/mediaQuery";
 import { useBreakpoint } from "@app/utils/BreakpointProvider";
-import { parseSearchTerm, validateName } from "@app/utils/utils";
 import { Box, IconArrowCircle, Typography, vars } from "@ensdomains/thorin";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
@@ -19,6 +19,7 @@ import styled from "styled-components";
 const NETWORK_INFORMATION_QUERY = gql`
   query getNetworkInfo @client {
     isENSReady
+    isAppReady
     network
     accounts
     primaryName
@@ -76,57 +77,42 @@ const ProfilePage: NextPage = () => {
   const router = useRouter();
   const breakpoints = useBreakpoint();
   const _name = router.query.name as string;
+  const isSelf = _name === "me";
 
-  /* eslint-disable @typescript-eslint/no-unused-vars */
-  const [valid, setValid] = useState<boolean | undefined>(undefined);
-  const [type, setType] = useState<any>(undefined);
-  /* eslint-enable @typescript-eslint/no-unused-vars */
-  const [name, setNormalisedName] = useState("");
   const [domain, setDomain] = useState<any>(undefined);
 
   const {
-    data: { isENSReady, network, accounts, primaryName, isReadOnly },
+    data: {
+      isENSReady,
+      isAppReady,
+      network,
+      accounts,
+      primaryName,
+      isReadOnly,
+    },
   } = useQuery(NETWORK_INFORMATION_QUERY);
-  const { data: { singleName: _domain } = { singleName: undefined } } =
-    useQuery(GET_SINGLE_NAME, {
-      variables: { name },
-      fetchPolicy: "no-cache",
-      context: {
-        queryDeduplication: false,
-      },
-    });
+
+  const name = isSelf ? primaryName : _name;
+
+  const { domain: _domain, loading: domainLoading } =
+    useGetDomainFromInput(name);
   const { dataAddresses, dataTextRecords, recordsLoading } =
     useGetRecords(_domain);
+
+  useProtectedRoute(
+    "/",
+    // for /profile route, always redirect
+    router.asPath !== "/profile" &&
+      // When anything is loading, return true
+      (network !== "Loading" && isENSReady && isAppReady
+        ? // if is self, user must be connected
+          (isSelf ? !isReadOnly : true) &&
+          typeof name === "string" &&
+          name.length > 0
+        : true)
+  );
+
   const expiryDate = domain && domain.expiryTime && (domain.expiryTime as Date);
-
-  useEffect(() => {
-    let normalisedName;
-    if (
-      isENSReady &&
-      (_name !== "me" || (_name === "me" && !isReadOnly && primaryName))
-    ) {
-      try {
-        // This is under the assumption that validateName never returns false
-        normalisedName = validateName(_name === "me" ? primaryName : _name);
-        setNormalisedName(normalisedName);
-      } finally {
-        parseSearchTerm(normalisedName || _name).then((_type: any) => {
-          if (_type === "supported" || _type === "tld" || _type === "search") {
-            setValid(true);
-
-            setType(_type);
-          } else {
-            if (_type === "invalid") {
-              setType("domainMalformed");
-            } else {
-              setType(_type);
-            }
-            setValid(false);
-          }
-        });
-      }
-    }
-  }, [_name, primaryName, isReadOnly, isENSReady]);
 
   useEffect(() => {
     const timeout = _domain && setTimeout(() => setDomain(_domain), 100);
@@ -145,6 +131,7 @@ const ProfilePage: NextPage = () => {
           network !== "Loading" &&
           domain &&
           domain.name &&
+          !domainLoading &&
           !recordsLoading
         )
       }
@@ -164,7 +151,7 @@ const ProfilePage: NextPage = () => {
         <Box
           display="flex"
           flexDirection={{ xs: "column-reverse", md: "row" }}
-          gap="8"
+          gap={{ md: "8" }}
           position="relative"
           marginTop={router.query.from ? "8" : "0"}
         >
@@ -173,11 +160,13 @@ const ProfilePage: NextPage = () => {
               <BackButton to={router.query.from as string} />
             </Box>
           )}
-          <ProfileNftDetails
-            name={name}
-            selfAddress={accounts?.[0]}
-            {...{ network, expiryDate, domain }}
-          />
+          <Box marginTop={{ xs: "8", md: "0" }}>
+            <ProfileNftDetails
+              name={name}
+              selfAddress={accounts?.[0]}
+              {...{ network, expiryDate, domain }}
+            />
+          </Box>
           <DetailsWrapper>
             <ProfileDetails
               name={name}

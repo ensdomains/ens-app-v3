@@ -84,7 +84,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@babel/helper-create-class-features-plugin",
-        "virtual:a46fe4b82d30740bd689440f7bc2125dfecd2c75b5be09e512aeb38da9dd4921ab6dcbf7d334d36eab4fa6446af07f8c582efdca98ca736db0f1169405670ae9#npm:7.16.7"
+        "virtual:41b0581c30b26ea9c7bc0be806c2609d972c15dca28e526843d014e6c9cac9a9d64bc69769a919e8c727cfe88354b0bfb0d106a8dccbc4ccec09f3f35f00c53b#npm:7.16.7"
       ],
       [
         "@babel/helper-create-regexp-features-plugin",
@@ -192,7 +192,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@babel/plugin-proposal-class-properties",
-        "virtual:9b5a460417df2a712af1bc3a91b1a8c683e9c601e561a27a3f4fb0ebd229289b26704c727166e8dc2c4ef9036440a7cda36bcf936386e91128d96796f8aa24b0#npm:7.16.7"
+        "virtual:167299084b3e36bc06ef1399e0888e127da1326648fd0c9b9307e231422b1b65a5377b5a6a8c4a5fca097beda39fd3cbe43c5ac7c80e1a47d37f77a71a6f4b5d#npm:7.16.7"
       ],
       [
         "@babel/plugin-proposal-class-static-block",
@@ -619,7 +619,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@ensdomains/ui",
-        "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."
+        "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."
       ],
       [
         "@ensdomains/web3modal",
@@ -6635,7 +6635,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "walletlink",
-        "npm:2.4.4"
+        "npm:2.4.7"
       ],
       [
         "watchpack",
@@ -6916,7 +6916,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v2%40workspace%3A."],
-            ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
             ["@gnosis.pm/safe-apps-sdk", "npm:6.2.0"],
@@ -6980,7 +6980,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.3"],
             ["supertest", "npm:6.1.6"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=493e53"],
-            ["walletlink", "npm:2.4.4"],
+            ["walletlink", "npm:2.4.7"],
             ["zen-observable-ts", "npm:1.2.3"]
           ],
           "linkType": "SOFT",
@@ -7354,6 +7354,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
+        ["virtual:41b0581c30b26ea9c7bc0be806c2609d972c15dca28e526843d014e6c9cac9a9d64bc69769a919e8c727cfe88354b0bfb0d106a8dccbc4ccec09f3f35f00c53b#npm:7.16.7", {
+          "packageLocation": "./.yarn/__virtual__/@babel-helper-create-class-features-plugin-virtual-402675face/0/cache/@babel-helper-create-class-features-plugin-npm-7.16.7-c6427dd468-55f4eccb93.zip/node_modules/@babel/helper-create-class-features-plugin/",
+          "packageDependencies": [
+            ["@babel/helper-create-class-features-plugin", "virtual:41b0581c30b26ea9c7bc0be806c2609d972c15dca28e526843d014e6c9cac9a9d64bc69769a919e8c727cfe88354b0bfb0d106a8dccbc4ccec09f3f35f00c53b#npm:7.16.7"],
+            ["@babel/core", null],
+            ["@babel/helper-annotate-as-pure", "npm:7.16.7"],
+            ["@babel/helper-environment-visitor", "npm:7.16.7"],
+            ["@babel/helper-function-name", "npm:7.16.7"],
+            ["@babel/helper-member-expression-to-functions", "npm:7.16.7"],
+            ["@babel/helper-optimise-call-expression", "npm:7.16.7"],
+            ["@babel/helper-replace-supers", "npm:7.16.7"],
+            ["@babel/helper-split-export-declaration", "npm:7.16.7"],
+            ["@types/babel__core", null]
+          ],
+          "packagePeers": [
+            "@babel/core",
+            "@types/babel__core"
+          ],
+          "linkType": "HARD",
+        }],
         ["virtual:a46fe4b82d30740bd689440f7bc2125dfecd2c75b5be09e512aeb38da9dd4921ab6dcbf7d334d36eab4fa6446af07f8c582efdca98ca736db0f1169405670ae9#npm:7.16.7", {
           "packageLocation": "./.yarn/__virtual__/@babel-helper-create-class-features-plugin-virtual-1fee59ee96/0/cache/@babel-helper-create-class-features-plugin-npm-7.16.7-c6427dd468-55f4eccb93.zip/node_modules/@babel/helper-create-class-features-plugin/",
           "packageDependencies": [
@@ -7379,26 +7399,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@babel/helper-create-class-features-plugin", "virtual:ab67dc76fe0885dc99a7e12adca8b8d21feec9dc0e9a4fb2528196041799415292285e42b4033d82780427e8ab375fb672efea337631b821f7786f8e10945bbc#npm:7.17.1"],
             ["@babel/core", "npm:7.17.2"],
-            ["@babel/helper-annotate-as-pure", "npm:7.16.7"],
-            ["@babel/helper-environment-visitor", "npm:7.16.7"],
-            ["@babel/helper-function-name", "npm:7.16.7"],
-            ["@babel/helper-member-expression-to-functions", "npm:7.16.7"],
-            ["@babel/helper-optimise-call-expression", "npm:7.16.7"],
-            ["@babel/helper-replace-supers", "npm:7.16.7"],
-            ["@babel/helper-split-export-declaration", "npm:7.16.7"],
-            ["@types/babel__core", null]
-          ],
-          "packagePeers": [
-            "@babel/core",
-            "@types/babel__core"
-          ],
-          "linkType": "HARD",
-        }],
-        ["virtual:f7a9f51bf9c34280014672f2d4fc9e9f16eafb1d2f46eb4d6fe51340e7610ea7dffb4131e9553c9ce99a5700fff99ad23c72652d4ccf3163b7d3fafb8f8e2d35#npm:7.16.7", {
-          "packageLocation": "./.yarn/__virtual__/@babel-helper-create-class-features-plugin-virtual-4624d7b61f/0/cache/@babel-helper-create-class-features-plugin-npm-7.16.7-c6427dd468-55f4eccb93.zip/node_modules/@babel/helper-create-class-features-plugin/",
-          "packageDependencies": [
-            ["@babel/helper-create-class-features-plugin", "virtual:f7a9f51bf9c34280014672f2d4fc9e9f16eafb1d2f46eb4d6fe51340e7610ea7dffb4131e9553c9ce99a5700fff99ad23c72652d4ccf3163b7d3fafb8f8e2d35#npm:7.16.7"],
-            ["@babel/core", null],
             ["@babel/helper-annotate-as-pure", "npm:7.16.7"],
             ["@babel/helper-environment-visitor", "npm:7.16.7"],
             ["@babel/helper-function-name", "npm:7.16.7"],
@@ -7967,12 +7967,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:9b5a460417df2a712af1bc3a91b1a8c683e9c601e561a27a3f4fb0ebd229289b26704c727166e8dc2c4ef9036440a7cda36bcf936386e91128d96796f8aa24b0#npm:7.16.7", {
-          "packageLocation": "./.yarn/__virtual__/@babel-plugin-proposal-class-properties-virtual-f7a9f51bf9/0/cache/@babel-plugin-proposal-class-properties-npm-7.16.7-a687cd42c3-3977e841e1.zip/node_modules/@babel/plugin-proposal-class-properties/",
+        ["virtual:167299084b3e36bc06ef1399e0888e127da1326648fd0c9b9307e231422b1b65a5377b5a6a8c4a5fca097beda39fd3cbe43c5ac7c80e1a47d37f77a71a6f4b5d#npm:7.16.7", {
+          "packageLocation": "./.yarn/__virtual__/@babel-plugin-proposal-class-properties-virtual-41b0581c30/0/cache/@babel-plugin-proposal-class-properties-npm-7.16.7-a687cd42c3-3977e841e1.zip/node_modules/@babel/plugin-proposal-class-properties/",
           "packageDependencies": [
-            ["@babel/plugin-proposal-class-properties", "virtual:9b5a460417df2a712af1bc3a91b1a8c683e9c601e561a27a3f4fb0ebd229289b26704c727166e8dc2c4ef9036440a7cda36bcf936386e91128d96796f8aa24b0#npm:7.16.7"],
+            ["@babel/plugin-proposal-class-properties", "virtual:167299084b3e36bc06ef1399e0888e127da1326648fd0c9b9307e231422b1b65a5377b5a6a8c4a5fca097beda39fd3cbe43c5ac7c80e1a47d37f77a71a6f4b5d#npm:7.16.7"],
             ["@babel/core", null],
-            ["@babel/helper-create-class-features-plugin", "virtual:f7a9f51bf9c34280014672f2d4fc9e9f16eafb1d2f46eb4d6fe51340e7610ea7dffb4131e9553c9ce99a5700fff99ad23c72652d4ccf3163b7d3fafb8f8e2d35#npm:7.16.7"],
+            ["@babel/helper-create-class-features-plugin", "virtual:41b0581c30b26ea9c7bc0be806c2609d972c15dca28e526843d014e6c9cac9a9d64bc69769a919e8c727cfe88354b0bfb0d106a8dccbc4ccec09f3f35f00c53b#npm:7.16.7"],
             ["@babel/helper-plugin-utils", "npm:7.16.7"],
             ["@types/babel__core", null]
           ],
@@ -10858,12 +10858,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@ensdomains/ui", [
-        ["patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A.", {
-          "packageLocation": "./.yarn/cache/@ensdomains-ui-patch-9b5a460417-c6c34594bb.zip/node_modules/@ensdomains/ui/",
+        ["patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A.", {
+          "packageLocation": "./.yarn/cache/@ensdomains-ui-patch-167299084b-51d08a5796.zip/node_modules/@ensdomains/ui/",
           "packageDependencies": [
-            ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."],
             ["@0xproject/utils", "npm:2.0.2"],
-            ["@babel/plugin-proposal-class-properties", "virtual:9b5a460417df2a712af1bc3a91b1a8c683e9c601e561a27a3f4fb0ebd229289b26704c727166e8dc2c4ef9036440a7cda36bcf936386e91128d96796f8aa24b0#npm:7.16.7"],
+            ["@babel/plugin-proposal-class-properties", "virtual:167299084b3e36bc06ef1399e0888e127da1326648fd0c9b9307e231422b1b65a5377b5a6a8c4a5fca097beda39fd3cbe43c5ac7c80e1a47d37f77a71a6f4b5d#npm:7.16.7"],
             ["@babel/runtime", "npm:7.16.7"],
             ["@ensdomains/address-encoder", "npm:0.2.16"],
             ["@ensdomains/content-hash", "npm:2.5.7"],
@@ -20053,7 +20053,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v2%40workspace%3A."],
-            ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
             ["@gnosis.pm/safe-apps-sdk", "npm:6.2.0"],
@@ -20117,7 +20117,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.3"],
             ["supertest", "npm:6.1.6"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=493e53"],
-            ["walletlink", "npm:2.4.4"],
+            ["walletlink", "npm:2.4.7"],
             ["zen-observable-ts", "npm:1.2.3"]
           ],
           "linkType": "SOFT",
@@ -33642,10 +33642,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["walletlink", [
-        ["npm:2.4.4", {
-          "packageLocation": "./.yarn/cache/walletlink-npm-2.4.4-e36616da5e-4e85ceeb5a.zip/node_modules/walletlink/",
+        ["npm:2.4.7", {
+          "packageLocation": "./.yarn/cache/walletlink-npm-2.4.7-e32005123c-1d34d112ac.zip/node_modules/walletlink/",
           "packageDependencies": [
-            ["walletlink", "npm:2.4.4"],
+            ["walletlink", "npm:2.4.7"],
             ["@metamask/safe-event-emitter", "npm:2.0.0"],
             ["bind-decorator", "npm:1.0.11"],
             ["bn.js", "npm:5.2.0"],

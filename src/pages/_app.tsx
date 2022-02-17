@@ -6,6 +6,7 @@ import { ThemeProvider } from "@ensdomains/thorin";
 import "@ensdomains/thorin/styles";
 import { appWithTranslation } from "next-i18next";
 import type { AppProps } from "next/app";
+import { useEffect } from "react";
 import { createGlobalStyle } from "styled-components";
 import "../styles.css";
 
@@ -53,9 +54,12 @@ const ApolloReactiveProvider = ({
 };
 
 function MyApp({ Component, pageProps }: AppProps) {
-  if (typeof window !== "undefined") {
-    import("@app/setup").then((setup) => setup.default(false));
-  }
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      import("@app/setup").then((setup) => setup.default(false));
+    }
+  }, []);
+
   setupClient();
   return (
     <>

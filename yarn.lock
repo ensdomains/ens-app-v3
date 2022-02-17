@@ -2260,7 +2260,7 @@ __metadata:
 
 "@ensdomains/ui@patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch::locator=ens-app-v2%40workspace%3A.":
   version: 3.3.14
-  resolution: "@ensdomains/ui@patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=d374a0&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ui@patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@0xproject/utils": ^2.0.2
     "@babel/plugin-proposal-class-properties": ^7.8.3
@@ -2285,7 +2285,7 @@ __metadata:
     lodash: ^4.17.11
     node-fetch: ^2.6.1
     web3: ^1.3.0
-  checksum: c6c34594bb6f710c0af340cb2515ded577071706411592d4b048ca262c7e20b09529167c57da2feed6b644dad6846bd7e04f7834233c02e07be33cfba560ba50
+  checksum: 51d08a5796a3866f2bb4e553194656f75f21b616f84cbff83103b28088a7df18db6f2151399accb11edecc294ae9da90ee17dad8d88dee7635aff3c4d8e20be7
   languageName: node
   linkType: hard
 
@@ -9841,7 +9841,7 @@ __metadata:
     styled-components: ^5.3.3
     supertest: ^6.1.6
     typescript: 4.4.4
-    walletlink: ^2.4.4
+    walletlink: ^2.4.7
     zen-observable-ts: ^1.1.0
   peerDependencies:
     "@typescript-eslint/eslint-plugin": "*"
@@ -22005,9 +22005,9 @@ typescript@4.4.4:
   languageName: node
   linkType: hard
 
-"walletlink@npm:^2.4.4":
-  version: 2.4.4
-  resolution: "walletlink@npm:2.4.4"
+"walletlink@npm:^2.4.7":
+  version: 2.4.7
+  resolution: "walletlink@npm:2.4.7"
   dependencies:
     "@metamask/safe-event-emitter": 2.0.0
     bind-decorator: ^1.0.11
@@ -22022,7 +22022,7 @@ typescript@4.4.4:
     preact: ^10.5.9
     rxjs: ^6.6.3
     stream-browserify: ^3.0.0
-  checksum: 4e85ceeb5ab2d81270acd8e3ba3edb4977eeaa4dcf6da6010192da37494068d4d6f1256839ce6b689bb018e8bf730b63548b4d767bb346caf3fd570782194b2c
+  checksum: 1d34d112ac4272caf517e96e4afcbeb50dd0999fcb1af1da2b91bcd5a5d30547489288d95afad8482735e9778130f2137083125d6408863639582c8bd4434561
   languageName: node
   linkType: hard
 

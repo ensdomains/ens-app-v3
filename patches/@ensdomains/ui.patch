@@ -1,9 +1,9 @@
 diff --git a/constants/interfaces.d.ts b/constants/interfaces.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..5f1a4aafbca1af8965f821d9e5830d2fab00cbf8
+index 0000000000000000000000000000000000000000..14e2565e9cd940295edd8c36c3616d756e105ab7
 --- /dev/null
 +++ b/constants/interfaces.d.ts
-@@ -0,0 +1,10 @@
+@@ -0,0 +1,11 @@
 +export namespace interfaces {
 +    const legacyRegistrar: string;
 +    const permanentRegistrar: string;
@@ -14,6 +14,16 @@ index 0000000000000000000000000000000000000000..5f1a4aafbca1af8965f821d9e5830d2f
 +    const dnssecClaimOld: string;
 +    const dnssecClaimNew: string;
 +}
++//# sourceMappingURL=interfaces.d.ts.map
+\ No newline at end of file
+diff --git a/constants/interfaces.d.ts.map b/constants/interfaces.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..0cb5714b0e3cda8e7332817afb2a8811605a6bde
+--- /dev/null
++++ b/constants/interfaces.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"interfaces.d.ts","sourceRoot":"","sources":["../../src/constants/interfaces.js"],"names":[],"mappings":""}
+\ No newline at end of file
 diff --git a/constants/interfaces.js b/constants/interfaces.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..902a4e8e4e6573b6ece8fc10596adb1eb887edad
@@ -40,10 +50,10 @@ index 0000000000000000000000000000000000000000..902a4e8e4e6573b6ece8fc10596adb1e
 \ No newline at end of file
 diff --git a/contracts.d.ts b/contracts.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..9c0421a3df979ba93ab2a8cacf9668b6c17fbf04
+index 0000000000000000000000000000000000000000..e42652d707340f138e23f5bf015ce7754f62d37e
 --- /dev/null
 +++ b/contracts.d.ts
-@@ -0,0 +1,49 @@
+@@ -0,0 +1,50 @@
 +export function getTestRegistrarContract({ address, provider }: {
 +    address: any;
 +    provider: any;
@@ -93,6 +103,16 @@ index 0000000000000000000000000000000000000000..9c0421a3df979ba93ab2a8cacf9668b6
 +    provider: any;
 +}): Contract;
 +import { Contract } from "ethers";
++//# sourceMappingURL=contracts.d.ts.map
+\ No newline at end of file
+diff --git a/contracts.d.ts.map b/contracts.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..7efcde41be301794a0ad1444224876a418942f3f
+--- /dev/null
++++ b/contracts.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"contracts.d.ts","sourceRoot":"","sources":["../src/contracts.js"],"names":[],"mappings":"AAiCA;;;aAEC;AAlBD;;;aAEC;AAUD;;;aAEC;AAVD;;;aAEC;AAED;;;aAEC;AAcD;;;aAEC;AAND;;;aAEC;AAMD;;;aAEC;AAED;;;aAEC;AAMD;;;aAEC;AAND;;;aAEC;AAMD;;;aAEC"}
+\ No newline at end of file
 diff --git a/contracts.js b/contracts.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..3720540f13c1dbbaeb26f48b05960178a13fff8f
@@ -203,14 +223,13 @@ index 0000000000000000000000000000000000000000..3720540f13c1dbbaeb26f48b05960178
 \ No newline at end of file
 diff --git a/dnsregistrar.d.ts b/dnsregistrar.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..e2a7bca9ee51ee02598dd1e402fb2defd735b25c
+index 0000000000000000000000000000000000000000..b4ae576de1d2caeae13ddb32725bee8869901b9d
 --- /dev/null
 +++ b/dnsregistrar.d.ts
-@@ -0,0 +1,46 @@
+@@ -0,0 +1,44 @@
 +export default DNSRegistrar;
 +declare class DNSRegistrar {
-+    constructor(provider: any, oracleAddress: any, isOld?: boolean);
-+    provider: any;
++    constructor(oracleAddress: any, isOld?: boolean);
 +    oracleAddress: any;
 +    isOld: boolean;
 +    OracleClass: typeof OldOracle | typeof NewOracle;
@@ -225,16 +244,14 @@ index 0000000000000000000000000000000000000000..e2a7bca9ee51ee02598dd1e402fb2def
 +import { Oracle as OldOracle } from "@ensdomains/dnssecoraclejs-017";
 +import { Oracle as NewOracle } from "@ensdomains/dnssecoraclejs";
 +declare class Claim {
-+    constructor({ oracle, registrar, isFound, result, textDomain, encodedName }: {
++    constructor({ oracle, isFound, result, textDomain, encodedName }: {
 +        oracle: any;
-+        registrar: any;
 +        isFound: any;
 +        result: any;
 +        textDomain: any;
 +        encodedName: any;
 +    });
 +    oracle: any;
-+    registrar: any;
 +    result: any;
 +    isFound: any;
 +    textDomain: any;
@@ -253,12 +270,22 @@ index 0000000000000000000000000000000000000000..e2a7bca9ee51ee02598dd1e402fb2def
 +     */
 +    getOwner(): any;
 +}
++//# sourceMappingURL=dnsregistrar.d.ts.map
+\ No newline at end of file
+diff --git a/dnsregistrar.d.ts.map b/dnsregistrar.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..3734ecf2396edb6b6c8839d46b488625777cce97
+--- /dev/null
++++ b/dnsregistrar.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"dnsregistrar.d.ts","sourceRoot":"","sources":["../src/dnsregistrar.js"],"names":[],"mappings":";AA6CA;IACE,iDAQC;IAPC,mBAAkC;IAClC,eAAkB;IAEhB,iDAA4B;IAKhC;;;;;OAKG;IACH,YAFW,MAAM,kBAchB;CACF;;;AApED;IACE;;;;;;OAMC;IALC,YAAoB;IACpB,YAAoB;IACpB,aAAsB;IACtB,gBAA4B;IAC5B,iBAA8B;IAGhC,6BAEC;IAED;;OAEG;IACH,iBAEC;IAED;;OAEG;IACH,iBAEC;IAED;;OAEG;IACH,gBAMC;CACF"}
+\ No newline at end of file
 diff --git a/dnsregistrar.js b/dnsregistrar.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..d168f5ebf5e549ec3b49ff7aba350ab8da1aba97
+index 0000000000000000000000000000000000000000..4d62c059202421bc6cb8e508fcb016120afa3400
 --- /dev/null
 +++ b/dnsregistrar.js
-@@ -0,0 +1,186 @@
+@@ -0,0 +1,181 @@
 +"use strict";
 +
 +var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -278,9 +305,9 @@ index 0000000000000000000000000000000000000000..d168f5ebf5e549ec3b49ff7aba350ab8
 +
 +var _dnsprovejs = require("@ensdomains/dnsprovejs");
 +
-+var _dnssecoraclejs = require("@ensdomains/dnssecoraclejs-017");
++var _dnssecoraclejs = require("@ensdomains/dnssecoraclejs");
 +
-+var _dnssecoraclejs2 = require("@ensdomains/dnssecoraclejs");
++var _dnssecoraclejs2 = require("@ensdomains/dnssecoraclejs-017");
 +
 +var _dnsPacket = _interopRequireDefault(require("dns-packet"));
 +
@@ -289,14 +316,12 @@ index 0000000000000000000000000000000000000000..d168f5ebf5e549ec3b49ff7aba350ab8
 +var Claim = /*#__PURE__*/function () {
 +  function Claim(_ref) {
 +    var oracle = _ref.oracle,
-+        registrar = _ref.registrar,
 +        isFound = _ref.isFound,
 +        result = _ref.result,
 +        textDomain = _ref.textDomain,
 +        encodedName = _ref.encodedName;
 +    (0, _classCallCheck2["default"])(this, Claim);
 +    this.oracle = oracle;
-+    this.registrar = registrar;
 +    this.result = result;
 +    this.isFound = isFound;
 +    this.textDomain = textDomain;
@@ -367,17 +392,16 @@ index 0000000000000000000000000000000000000000..d168f5ebf5e549ec3b49ff7aba350ab8
 +}();
 +
 +var DNSRegistrar = /*#__PURE__*/function () {
-+  function DNSRegistrar(provider, oracleAddress) {
-+    var isOld = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
++  function DNSRegistrar(oracleAddress) {
++    var isOld = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : false;
 +    (0, _classCallCheck2["default"])(this, DNSRegistrar);
-+    this.provider = provider;
 +    this.oracleAddress = oracleAddress;
 +    this.isOld = isOld;
 +
 +    if (isOld) {
-+      this.OracleClass = _dnssecoraclejs.Oracle;
-+    } else {
 +      this.OracleClass = _dnssecoraclejs2.Oracle;
++    } else {
++      this.OracleClass = _dnssecoraclejs.Oracle;
 +    }
 +  }
 +  /**
@@ -399,7 +423,7 @@ index 0000000000000000000000000000000000000000..d168f5ebf5e549ec3b49ff7aba350ab8
 +              case 0:
 +                encodedName = '0x' + _dnsPacket["default"].name.encode(name).toString('hex');
 +                textDomain = '_ens.' + name;
-+                prover = _dnsprovejs.DNSProver.create("https://cloudflare-dns.com/dns-query");
++                prover = _dnsprovejs.DNSProver.create('https://cloudflare-dns.com/dns-query');
 +                _context2.next = 5;
 +                return (0, _web.getProvider)();
 +
@@ -412,20 +436,18 @@ index 0000000000000000000000000000000000000000..d168f5ebf5e549ec3b49ff7aba350ab8
 +
 +              case 10:
 +                _context2.t2 = _context2.sent;
-+                _context2.t3 = this.registrar;
-+                _context2.t4 = textDomain;
-+                _context2.t5 = encodedName;
-+                _context2.t6 = {
++                _context2.t3 = textDomain;
++                _context2.t4 = encodedName;
++                _context2.t5 = {
 +                  oracle: _context2.t1,
 +                  result: _context2.t2,
 +                  isFound: true,
-+                  registrar: _context2.t3,
-+                  textDomain: _context2.t4,
-+                  encodedName: _context2.t5
++                  textDomain: _context2.t3,
++                  encodedName: _context2.t4
 +                };
-+                return _context2.abrupt("return", new _context2.t0(_context2.t6));
++                return _context2.abrupt("return", new _context2.t0(_context2.t5));
 +
-+              case 16:
++              case 15:
 +              case "end":
 +                return _context2.stop();
 +            }
@@ -448,10 +470,10 @@ index 0000000000000000000000000000000000000000..d168f5ebf5e549ec3b49ff7aba350ab8
 \ No newline at end of file
 diff --git a/ens.d.ts b/ens.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..64502a45347378643b63090fc54e312addeadd57
+index 0000000000000000000000000000000000000000..9d66f0600a52620a310622cb263e5502100bf501
 --- /dev/null
 +++ b/ens.d.ts
-@@ -0,0 +1,84 @@
+@@ -0,0 +1,85 @@
 +export function getNamehash(name: any): string;
 +export class ENS {
 +    constructor({ networkId, registryAddress, provider }: {
@@ -497,10 +519,10 @@ index 0000000000000000000000000000000000000000..64502a45347378643b63090fc54e312a
 +    getTextWithResolver(name: any, key: any, resolverAddr: any): Promise<any>;
 +    getName(address: any): Promise<{
 +        name: any;
-+    }>;
++    } | undefined>;
 +    getNameWithResolver(address: any, resolverAddr: any): Promise<{
 +        name: any;
-+    }>;
++    } | undefined>;
 +    isMigrated(name: any): Promise<any>;
 +    getResolverDetails(node: any): Promise<any>;
 +    getSubdomains(name: any): Promise<{
@@ -536,6 +558,16 @@ index 0000000000000000000000000000000000000000..64502a45347378643b63090fc54e312a
 +    }): Promise<any>;
 +}
 +import { Contract } from "ethers";
++//# sourceMappingURL=ens.d.ts.map
+\ No newline at end of file
+diff --git a/ens.d.ts.map b/ens.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..6461acb30e4dc7e4133bbca683a25df62b7f1317
+--- /dev/null
++++ b/ens.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"ens.d.ts","sourceRoot":"","sources":["../src/ens.js"],"names":[],"mappings":"AA0CA,+CAEC;AA0BD;IACE;;;;OAcC;IAbC;;;;;;;;;;;;;MAA0B;IAS1B,qBAAsC;IAGtC,cAAsB;IAIxB,mCAEC;IAID,kCAIC;IAED,qCAGC;IAED,gCAGC;IAED,sEAGC;IAED,mEAGC;IAED,sEAmBC;IAED,oCAGC;IAED,8CAIC;IAED,6EAoBC;IAED;;;OAGC;IAED;;;OA6CC;IAED,2CAGC;IAED,0EAmBC;IAED;;mBAIC;IAED;;mBAsBC;IAED,oCAGC;IAED,4CAmBC;IAED;;;;;;;SA6BC;IAED,0CA0BC;IAID,iDAMC;IAED,wDAUC;IAED,wEAiBC;IAED,oDAMC;IAED,kDAGC;IAED,iFAUC;IAED,yDAGC;IAED,wFAqBC;IAED,kDAGC;IAED,iFAUC;IAED,sDAGC;IAED,qFAcC;IAED,6DAGC;IAED,4FAUC;IAED,yCAQC;IAED,yCAMC;IAED,sEAoBC;IAED,8CAaC;IAID;;;qBAqBC;CACF"}
+\ No newline at end of file
 diff --git a/ens.js b/ens.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..457b1bb45c79f58a40ed328208cd72beb97db542
@@ -2285,10 +2317,10 @@ index 0000000000000000000000000000000000000000..457b1bb45c79f58a40ed328208cd72be
 \ No newline at end of file
 diff --git a/index.d.ts b/index.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..2963c3dbc9ba0f22649936757e8f05085a3e2a12
+index 0000000000000000000000000000000000000000..eb161e989f597949fe32eba476431d6c7ec68109
 --- /dev/null
 +++ b/index.d.ts
-@@ -0,0 +1,22 @@
+@@ -0,0 +1,23 @@
 +export function setupENS({ customProvider, ensAddress, reloadOnAccountsChange, enforceReadOnly, enforceReload, infura }?: {
 +    customProvider: any;
 +    ensAddress: any;
@@ -2311,6 +2343,16 @@ index 0000000000000000000000000000000000000000..2963c3dbc9ba0f22649936757e8f0508
 +export * from "./contracts";
 +import { ENS } from "./ens.js";
 +export { utils, ethers } from "ethers";
++//# sourceMappingURL=index.d.ts.map
+\ No newline at end of file
+diff --git a/index.d.ts.map b/index.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..d8aedaf05ffdb83f4e6f28c3a2d9e043ec4b47b7
+--- /dev/null
++++ b/index.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../src/index.js"],"names":[],"mappings":"AAKA;;;;;;;;;;;;;GAoBC"}
+\ No newline at end of file
 diff --git a/index.js b/index.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..0ccb542e9d7cedfb98cac9151ff04a9fc2b3478b
@@ -2512,12 +2554,14 @@ index 0000000000000000000000000000000000000000..0ccb542e9d7cedfb98cac9151ff04a9f
 +}
 \ No newline at end of file
 diff --git a/package.json b/package.json
-index 0076ee6b8c6b63197ad89bb1d0e578a627e2e9ed..6a83d94be13876eb371e8dbb511f371c7d6d3263 100644
+index 0076ee6b8c6b63197ad89bb1d0e578a627e2e9ed..9fd5276dd6bff3b1d985c4d293ea651b55151bd6 100644
 --- a/package.json
 +++ b/package.json
-@@ -2,14 +2,14 @@
+@@ -1,15 +1,15 @@
+ {
    "name": "@ensdomains/ui",
-   "version": "3.3.14",
+-  "version": "3.3.14",
++  "version": "3.3.12",
    "description": "UI components and reusable code",
 -  "main": "src/index.js",
 -  "files": [
@@ -2535,21 +2579,57 @@ index 0076ee6b8c6b63197ad89bb1d0e578a627e2e9ed..6a83d94be13876eb371e8dbb511f371c
      "prepublishOnly": "yarn build",
      "pub": "yarn publish --access public"
    },
-@@ -63,6 +63,7 @@
-     "js-sha3": "^0.8.0",
-     "lodash": "^4.17.11",
-     "node-fetch": "^2.6.1",
-+    "typescript": "^4.5.4",
-     "web3": "^1.3.0"
+@@ -38,13 +38,14 @@
+     "eslint-plugin-standard": "^3.0.1",
+     "esm": "^3.2.22",
+     "ganache-core": "^2.10.1",
+-    "jest": "^24.8.0"
++    "jest": "^24.8.0",
++    "web3": "^1.3.0"
+   },
+   "dependencies": {
+     "@0xproject/utils": "^2.0.2",
+     "@babel/plugin-proposal-class-properties": "^7.8.3",
+     "@babel/runtime": "^7.4.4",
+-    "@ensdomains/address-encoder": "^0.2.15",
++    "@ensdomains/address-encoder": "^0.2.14",
+     "@ensdomains/content-hash": "^2.5.7",
+     "@ensdomains/contracts": "^0.0.1",
+     "@ensdomains/dnsprovejs": "^0.4.1",
+@@ -59,11 +60,11 @@
+     "bs58": "^4.0.1",
+     "cross-fetch": "^3.0.2",
+     "dns-packet": "^5.2.1",
+-    "ethers": "^5.4.4",
+-    "js-sha3": "^0.8.0",
+-    "lodash": "^4.17.11",
+-    "node-fetch": "^2.6.1",
+-    "web3": "^1.3.0"
++    "js-sha3": "^0.8.0"
++  },
++  "peerDependencies": {
++    "ethers": "^",
++    "lodash": "^"
    },
    "prettier": {
+     "semi": false,
 diff --git a/preimage.d.ts b/preimage.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..3b5e70ed84966db4e13039937a63d6dad5deb5cb
+index 0000000000000000000000000000000000000000..6f91a60c7eb23f7fd30bdf8f19079212e5c55a1c
 --- /dev/null
 +++ b/preimage.d.ts
+@@ -0,0 +1,2 @@
++export function decryptHashes(...hashes: any[]): any;
++//# sourceMappingURL=preimage.d.ts.map
+\ No newline at end of file
+diff --git a/preimage.d.ts.map b/preimage.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..addd0daac1db406c3f6fbc504ca191cc95458cfb
+--- /dev/null
++++ b/preimage.d.ts.map
 @@ -0,0 +1 @@
-+export function decryptHashes(...hashes: any[]): Promise<any>;
++{"version":3,"file":"preimage.d.ts","sourceRoot":"","sources":["../src/preimage.js"],"names":[],"mappings":"AAIA,qDAaC"}
+\ No newline at end of file
 diff --git a/preimage.js b/preimage.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..543d4b0775a46b105b0e3f7485b8169242fb47a6
@@ -2590,10 +2670,10 @@ index 0000000000000000000000000000000000000000..543d4b0775a46b105b0e3f7485b81692
 \ No newline at end of file
 diff --git a/registrar.d.ts b/registrar.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..12f9f3017bf7c4bb26bd638aab7749fd379441ea
+index 0000000000000000000000000000000000000000..bfab1da71070f1388a9b40794ace7b454dfa8fca
 --- /dev/null
 +++ b/registrar.d.ts
-@@ -0,0 +1,101 @@
+@@ -0,0 +1,102 @@
 +export function setupRegistrar(registryAddress: any): Promise<Registrar>;
 +export default class Registrar {
 +    constructor({ registryAddress, ethAddress, legacyAuctionRegistrarAddress, controllerAddress, bulkRenewalAddress, provider }: {
@@ -2632,15 +2712,15 @@ index 0000000000000000000000000000000000000000..12f9f3017bf7c4bb26bd638aab7749fd
 +        error: any;
 +    }>;
 +    getPermanentEntry(label: any): Promise<false | {
-+        available: any;
-+        nameExpires: any;
++        available: null;
++        nameExpires: null;
 +    }>;
 +    getEntry(label: any): Promise<{
 +        currentBlockDate: Date;
 +        registrant: number;
-+        transferEndDate: any;
++        transferEndDate: null;
 +        isNewRegistrar: boolean;
-+        gracePeriodEndDate: any;
++        gracePeriodEndDate: null;
 +        deedOwner: string;
 +        state: number;
 +        registrationDate: number;
@@ -2652,9 +2732,9 @@ index 0000000000000000000000000000000000000000..12f9f3017bf7c4bb26bd638aab7749fd
 +    } | {
 +        currentBlockDate: Date;
 +        registrant: number;
-+        transferEndDate: any;
++        transferEndDate: null;
 +        isNewRegistrar: boolean;
-+        gracePeriodEndDate: any;
++        gracePeriodEndDate: null;
 +        deedOwner: string;
 +        state: number;
 +        registrationDate: number;
@@ -2689,18 +2769,28 @@ index 0000000000000000000000000000000000000000..12f9f3017bf7c4bb26bd638aab7749fd
 +        isOld: boolean;
 +    }>;
 +    getDNSEntry(name: any, parentOwner: any, owner: any): Promise<{
-+        stateError: any;
++        stateError: null;
 +    }>;
 +    submitProof(name: any, parentOwner: any): Promise<any>;
 +    registerTestdomain(label: any): Promise<any>;
-+    expiryTimes(label: any): Promise<Date>;
++    expiryTimes(label: any): Promise<Date | undefined>;
 +}
++//# sourceMappingURL=registrar.d.ts.map
+\ No newline at end of file
+diff --git a/registrar.d.ts.map b/registrar.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..ab63209ec0124f4de062ef397643f9f32ad0a6dc
+--- /dev/null
++++ b/registrar.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"registrar.d.ts","sourceRoot":"","sources":["../src/registrar.js"],"names":[],"mappings":"AAkpBA,yEA6BC;AAlnBD;IACE;;;;;;;OA2CC;IANC,8CAA4C;IAC5C,wDAAgE;IAChE,kDAAoD;IACpD,qBAAsC;IACtC,uCAA8B;IAC9B,+BAAc;IAGhB,oCAMC;IAED,0DAGC;IAED;;;;;;;;;;;;;;;;;;OA+BC;IAED;;;OA0CC;IAED;;;;;;;;;;;;;;;;;;;;;;;;;;;;OAwCC;IAED,6CAMC;IAJG,iBAAiD;IAMrD,gEA4BC;IAED,+DAwBC;IAED,qDAIC;IAED,wDAOC;IAED,wCAGC;IAED,wCAGC;IAED,qEAmBC;IAED,2DASC;IAED,kDAUC;IAED,+DAmDC;IAED,2CAkBC;IAED,+CAiBC;IAED,mDAeC;IAED,sCAOC;IAED,mDAcC;IAED;;;;;;OAwBC;IAED;;OAwDC;IAED,uDA+BC;IAED,6CAYC;IAED,mDAYC;CACF"}
+\ No newline at end of file
 diff --git a/registrar.js b/registrar.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..585bb119da579c1f30614c39f1d7c4bda85c53cb
+index 0000000000000000000000000000000000000000..0670d85c38c94544de29c03c37f77f4125bb1da2
 --- /dev/null
 +++ b/registrar.js
-@@ -0,0 +1,1711 @@
+@@ -0,0 +1,1710 @@
 +"use strict";
 +
 +var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -2723,19 +2813,19 @@ index 0000000000000000000000000000000000000000..585bb119da579c1f30614c39f1d7c4bd
 +
 +var _createClass2 = _interopRequireDefault(require("@babel/runtime/helpers/createClass"));
 +
-+var _dnsregistrar = _interopRequireDefault(require("./dnsregistrar"));
-+
-+var _contracts = require("./contracts");
-+
-+var _web = require("./web3");
-+
-+var _namehash = require("./utils/namehash");
++var _ethers = require("ethers");
 +
 +var _interfaces = require("./constants/interfaces");
 +
++var _contracts = require("./contracts");
++
++var _dnsregistrar = _interopRequireDefault(require("./dnsregistrar"));
++
 +var _labelhash = require("./utils/labelhash");
 +
-+var _ethers = require("ethers");
++var _namehash = require("./utils/namehash");
++
++var _web = require("./web3");
 +
 +function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); if (enumerableOnly) { symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; }); } keys.push.apply(keys, symbols); } return keys; }
 +
@@ -3183,7 +3273,7 @@ index 0000000000000000000000000000000000000000..585bb119da579c1f30614c39f1d7c4bd
 +                }
 +
 +                _context7.next = 18;
-+                return _Registrar7.estimateGas["safeTransferFrom(address,address,uint256)"](account, to, labelHash);
++                return _Registrar7.estimateGas['safeTransferFrom(address,address,uint256)'](account, to, labelHash);
 +
 +              case 18:
 +                gas = _context7.sent;
@@ -3192,7 +3282,7 @@ index 0000000000000000000000000000000000000000..585bb119da579c1f30614c39f1d7c4bd
 +                });
 +
 +              case 20:
-+                return _context7.abrupt("return", _Registrar7["safeTransferFrom(address,address,uint256)"](account, to, labelHash, overrides));
++                return _context7.abrupt("return", _Registrar7['safeTransferFrom(address,address,uint256)'](account, to, labelHash, overrides));
 +
 +              case 23:
 +                _context7.prev = 23;
@@ -3979,7 +4069,7 @@ index 0000000000000000000000000000000000000000..585bb119da579c1f30614c39f1d7c4bd
 +    key: "getDNSEntry",
 +    value: function () {
 +      var _getDNSEntry = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee23(name, parentOwner, owner) {
-+        var dnsRegistrar, web3Provider, provider, _yield$this$selectDns, isOld, registrarContract, oracleAddress, registrarjs, claim, result;
++        var dnsRegistrar, provider, _yield$this$selectDns, isOld, registrarContract, oracleAddress, registrarjs, claim, result;
 +
 +        return _regenerator["default"].wrap(function _callee23$(_context23) {
 +          while (1) {
@@ -3989,40 +4079,39 @@ index 0000000000000000000000000000000000000000..585bb119da579c1f30614c39f1d7c4bd
 +                dnsRegistrar = {
 +                  stateError: null
 +                };
-+                web3Provider = (0, _web.getLegacyProvider)();
-+                _context23.next = 4;
++                _context23.next = 3;
 +                return (0, _web.getProvider)();
 +
-+              case 4:
++              case 3:
 +                provider = _context23.sent;
-+                _context23.next = 7;
++                _context23.next = 6;
 +                return this.selectDnsRegistrarContract({
 +                  parentOwner: parentOwner,
 +                  provider: provider
 +                });
 +
-+              case 7:
++              case 6:
 +                _yield$this$selectDns = _context23.sent;
 +                isOld = _yield$this$selectDns.isOld;
 +                registrarContract = _yield$this$selectDns.registrarContract;
-+                _context23.next = 12;
++                _context23.next = 11;
 +                return registrarContract.oracle();
 +
-+              case 12:
++              case 11:
 +                oracleAddress = _context23.sent;
-+                registrarjs = new _dnsregistrar["default"](web3Provider.givenProvider, oracleAddress, isOld);
-+                _context23.prev = 14;
-+                _context23.next = 17;
++                registrarjs = new _dnsregistrar["default"](oracleAddress, isOld);
++                _context23.prev = 13;
++                _context23.next = 16;
 +                return registrarjs.claim(name);
 +
-+              case 17:
++              case 16:
 +                claim = _context23.sent;
 +                result = claim.getResult();
 +                dnsRegistrar.claim = claim;
 +                dnsRegistrar.result = result;
 +
 +                if (!(claim && claim.isFound)) {
-+                  _context23.next = 26;
++                  _context23.next = 25;
 +                  break;
 +                }
 +
@@ -4042,68 +4131,68 @@ index 0000000000000000000000000000000000000000..585bb119da579c1f30614c39f1d7c4bd
 +                  dnsRegistrar.state = 6;
 +                }
 +
-+                _context23.next = 39;
++                _context23.next = 38;
 +                break;
 +
-+              case 26:
++              case 25:
 +                if (!(claim && claim.nsec)) {
-+                  _context23.next = 38;
++                  _context23.next = 37;
 +                  break;
 +                }
 +
 +                if (!(result.results.length === 4)) {
-+                  _context23.next = 31;
++                  _context23.next = 30;
 +                  break;
 +                }
 +
 +                // DNS entry does not exist
 +                dnsRegistrar.state = 1;
-+                _context23.next = 36;
++                _context23.next = 35;
 +                break;
 +
-+              case 31:
++              case 30:
 +                if (!(result.results.length === 6)) {
-+                  _context23.next = 35;
++                  _context23.next = 34;
 +                  break;
 +                }
 +
 +                // DNS entry exists but _ens subdomain does not exist
 +                dnsRegistrar.state = 3;
-+                _context23.next = 36;
++                _context23.next = 35;
 +                break;
 +
-+              case 35:
++              case 34:
 +                throw "DNSSEC results cannot be ".concat(result.results.length);
 +
-+              case 36:
-+                _context23.next = 39;
++              case 35:
++                _context23.next = 38;
 +                break;
 +
-+              case 38:
++              case 37:
 +                // DNSSEC is not enabled
 +                dnsRegistrar.state = 2;
 +
-+              case 39:
-+                _context23.next = 46;
++              case 38:
++                _context23.next = 45;
 +                break;
 +
-+              case 41:
-+                _context23.prev = 41;
-+                _context23.t0 = _context23["catch"](14);
++              case 40:
++                _context23.prev = 40;
++                _context23.t0 = _context23["catch"](13);
 +                console.log('Problem fetching data from DNS', _context23.t0); // Problem fetching data from DNS
 +
 +                dnsRegistrar.stateError = _context23.t0.message;
 +                dnsRegistrar.state = 0;
 +
-+              case 46:
++              case 45:
 +                return _context23.abrupt("return", dnsRegistrar);
 +
-+              case 47:
++              case 46:
 +              case "end":
 +                return _context23.stop();
 +            }
 +          }
-+        }, _callee23, this, [[14, 41]]);
++        }, _callee23, this, [[13, 40]]);
 +      }));
 +
 +      function getDNSEntry(_x30, _x31, _x32) {
@@ -7719,33 +7808,43 @@ index 885b70a40b82faad27afda15e786c6a4ff3dc272..00000000000000000000000000000000
 -}
 diff --git a/utils/contents.d.ts b/utils/contents.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..2cfdd72aff11bb6f0ca85fc1b611b7d60e270e34
+index 0000000000000000000000000000000000000000..647f8ff981e2e43441c8c6d27da05d58ff78f868
 --- /dev/null
 +++ b/utils/contents.d.ts
-@@ -0,0 +1,23 @@
+@@ -0,0 +1,24 @@
 +export function decodeContenthash(encoded: any): {
 +    protocolType?: undefined;
 +    decoded?: undefined;
 +    error?: undefined;
 +} | {
-+    protocolType: any;
++    protocolType: null;
 +    decoded: any;
 +    error?: undefined;
 +} | {
-+    protocolType: string;
++    protocolType: string | undefined;
 +    decoded: any;
 +    error: any;
 +};
 +export function validateContent(encoded: any): any;
-+export function isValidContenthash(encoded: any): boolean;
++export function isValidContenthash(encoded: any): boolean | undefined;
 +export function getProtocolType(encoded: any): {
 +    protocolType: any;
 +    decoded: any;
-+};
++} | undefined;
 +export function encodeContenthash(text: any): {
 +    encoded: boolean;
-+    error: string;
++    error: string | undefined;
 +};
++//# sourceMappingURL=contents.d.ts.map
+\ No newline at end of file
+diff --git a/utils/contents.d.ts.map b/utils/contents.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..b97beb828d55557448d4f8bc964604294359d136
+--- /dev/null
++++ b/utils/contents.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"contents.d.ts","sourceRoot":"","sources":["../../src/utils/contents.js"],"names":[],"mappings":"AAUA;;;;;;;;;;;;EAoCC;AAED,mDAEC;AAED,sEAOC;AAED;;;cAeC;AAED;;;EAmDC"}
+\ No newline at end of file
 diff --git a/utils/contents.js b/utils/contents.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..1ff7410c3f9eb342d9ec2bae9e24372cdeda8db6
@@ -7927,19 +8026,19 @@ index 0000000000000000000000000000000000000000..1ff7410c3f9eb342d9ec2bae9e24372c
 \ No newline at end of file
 diff --git a/utils/index.d.ts b/utils/index.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..44c6652fe37285752db9f915606c4020f8b1069a
+index 0000000000000000000000000000000000000000..17142c447285ec8607158861d2c1c8edc3976b86
 --- /dev/null
 +++ b/utils/index.d.ts
-@@ -0,0 +1,20 @@
+@@ -0,0 +1,21 @@
 +export function uniq(a: any, param: any): any;
 +export const emptyAddress: "0x0000000000000000000000000000000000000000";
 +export function getEtherScanAddr(): Promise<"https://etherscan.io/" | "https://ropsten.etherscan.io/" | "https://rinkeby.etherscan.io/">;
 +export function getEnsStartBlock(): Promise<0 | 3327417 | 25409>;
-+export function checkLabels(...labelHashes: any[]): any[];
++export function checkLabels(...labelHashes: any[]): null[];
 +export function mergeLabels(labels1: any, labels2: any): any;
 +export function validateName(name: any): any;
 +export function parseSearchTerm(term: any, validTld: any): "invalid" | "short" | "supported" | "unsupported" | "address" | "tld" | "search";
-+export function isLabelValid(name: any): boolean;
++export function isLabelValid(name: any): boolean | undefined;
 +import { labelhash } from "./labelhash";
 +import { isEncodedLabelhash } from "./labelhash";
 +import { isDecrypted } from "./labelhash";
@@ -7951,6 +8050,16 @@ index 0000000000000000000000000000000000000000..44c6652fe37285752db9f915606c4020
 +import { isValidContenthash } from "./contents";
 +import { getProtocolType } from "./contents";
 +export { labelhash, isEncodedLabelhash, isDecrypted, decodeLabelhash, encodeLabelhash, namehash, encodeContenthash, decodeContenthash, isValidContenthash, getProtocolType };
++//# sourceMappingURL=index.d.ts.map
+\ No newline at end of file
+diff --git a/utils/index.d.ts.map b/utils/index.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..9fc5b2d8913f911d8698b4891c562f5691b4da98
+--- /dev/null
++++ b/utils/index.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"index.d.ts","sourceRoot":"","sources":["../../src/utils/index.js"],"names":[],"mappings":"AAqBA,8CAGG;AAsGH,wEAAiE;AAlGjE,yIAeC;AAED,iEAYC;AA/BD,2DAAqE;AAoCrE,6DACiE;AAEjE,6CAgBC;AAcD,4IA6BC;AAzCD,6DAUC"}
+\ No newline at end of file
 diff --git a/utils/index.js b/utils/index.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..29511ab3cc5f99b6dcc97e1684d620151f84e9f9
@@ -8237,15 +8346,25 @@ index 0000000000000000000000000000000000000000..29511ab3cc5f99b6dcc97e1684d62015
 \ No newline at end of file
 diff --git a/utils/labelhash.d.ts b/utils/labelhash.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..5221737063739ed3ef0a7dd258b9c11585a09624
+index 0000000000000000000000000000000000000000..87756ed3791b052de641741987ffb2f58b8203f8
 --- /dev/null
 +++ b/utils/labelhash.d.ts
-@@ -0,0 +1,5 @@
+@@ -0,0 +1,6 @@
 +export function encodeLabelhash(hash: any): string;
 +export function decodeLabelhash(hash: any): string;
-+export function isEncodedLabelhash(hash: any): boolean;
++export function isEncodedLabelhash(hash: any): any;
 +export function isDecrypted(name: any): any;
 +export function labelhash(unnormalisedLabelOrLabelhash: any): string;
++//# sourceMappingURL=labelhash.d.ts.map
+\ No newline at end of file
+diff --git a/utils/labelhash.d.ts.map b/utils/labelhash.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..b362858ea37d0644517b6c42b1d44d8352676264
+--- /dev/null
++++ b/utils/labelhash.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"labelhash.d.ts","sourceRoot":"","sources":["../../src/utils/labelhash.js"],"names":[],"mappings":"AAGA,mDAUC;AAED,mDAYC;AAED,mDAEC;AAED,4CAQC;AAED,qEAOC"}
+\ No newline at end of file
 diff --git a/utils/labelhash.js b/utils/labelhash.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..52c143be767bd69d3079ba7884b21b91dc3b6b51
@@ -8314,11 +8433,21 @@ index 0000000000000000000000000000000000000000..52c143be767bd69d3079ba7884b21b91
 \ No newline at end of file
 diff --git a/utils/namehash.d.ts b/utils/namehash.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..42d434f9202e16ea775a4a04b3c4f909aa2fb1c6
+index 0000000000000000000000000000000000000000..c871efe356886ac7cefd71219585f9cc87ee89a3
 --- /dev/null
 +++ b/utils/namehash.d.ts
-@@ -0,0 +1 @@
+@@ -0,0 +1,2 @@
 +export function namehash(inputName: any): string;
++//# sourceMappingURL=namehash.d.ts.map
+\ No newline at end of file
+diff --git a/utils/namehash.d.ts.map b/utils/namehash.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..ae1b3ef015a480f688a46109f22ab2f190470287
+--- /dev/null
++++ b/utils/namehash.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"namehash.d.ts","sourceRoot":"","sources":["../../src/utils/namehash.js"],"names":[],"mappings":"AAIA,iDAyBC"}
+\ No newline at end of file
 diff --git a/utils/namehash.js b/utils/namehash.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..d2ed20c0cf5355429026e3a6a4144b3559f20d34
@@ -8371,13 +8500,23 @@ index 0000000000000000000000000000000000000000..d2ed20c0cf5355429026e3a6a4144b35
 \ No newline at end of file
 diff --git a/utils/records.d.ts b/utils/records.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..d75bc891ac5e4d246b1a0f0b2ed8123bb9f71f22
+index 0000000000000000000000000000000000000000..43818bbc3b3344f5d29f434a9d05e83ba9a3e2ef
 --- /dev/null
 +++ b/utils/records.d.ts
-@@ -0,0 +1,3 @@
+@@ -0,0 +1,4 @@
 +export function validateRecord(record: any): any;
 +export function getPlaceholder(recordType: any, contentType: any): "" | "Enter an Ethereum address" | "Enter a content hash (eg: ipfs://..., bzz://..., onion://..., onion3://..., sia://..., arweave://...)" | "Enter a content";
 +export const EMPTY_ADDRESS: "0x0000000000000000000000000000000000000000";
++//# sourceMappingURL=records.d.ts.map
+\ No newline at end of file
+diff --git a/utils/records.d.ts.map b/utils/records.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..b544be0b0b2f24cdba973bba72dd04c1bf87073c
+--- /dev/null
++++ b/utils/records.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"records.d.ts","sourceRoot":"","sources":["../../src/utils/records.js"],"names":[],"mappings":"AAEA,iDAmBC;AAED,kOAaC;AAED,yEAAyE"}
+\ No newline at end of file
 diff --git a/utils/records.js b/utils/records.js
 new file mode 100644
 index 0000000000000000000000000000000000000000..0b16648d82f1e5a5785c6ebfbe7bb716e7578091
@@ -8443,20 +8582,20 @@ index 0000000000000000000000000000000000000000..0b16648d82f1e5a5785c6ebfbe7bb716
 \ No newline at end of file
 diff --git a/web3.d.ts b/web3.d.ts
 new file mode 100644
-index 0000000000000000000000000000000000000000..aefabf38caf760579072d376b5f77f66a031ce72
+index 0000000000000000000000000000000000000000..04e70946f504df3d70a3de9fac1ce46b1e4eb451
 --- /dev/null
 +++ b/web3.d.ts
 @@ -0,0 +1,25 @@
 +export function setupWeb3({ customProvider, reloadOnAccountsChange, enforceReadOnly, enforceReload, infura }: {
 +    customProvider: any;
-+    reloadOnAccountsChange?: boolean;
-+    enforceReadOnly?: boolean;
-+    enforceReload?: boolean;
-+    infura?: boolean;
++    reloadOnAccountsChange?: boolean | undefined;
++    enforceReadOnly?: boolean | undefined;
++    enforceReload?: boolean | undefined;
++    infura?: boolean | undefined;
 +}): Promise<{
 +    provider: any;
 +    signer: any;
-+}>;
++} | undefined>;
 +export function getWeb3(): Promise<any>;
 +export function getWeb3Read(): Promise<any>;
 +export function isReadOnly(): boolean;
@@ -8471,13 +8610,22 @@ index 0000000000000000000000000000000000000000..aefabf38caf760579072d376b5f77f66
 +    number: any;
 +    timestamp: any;
 +}>;
-+export function getLegacyProvider(): any;
++//# sourceMappingURL=web3.d.ts.map
+\ No newline at end of file
+diff --git a/web3.d.ts.map b/web3.d.ts.map
+new file mode 100644
+index 0000000000000000000000000000000000000000..b37a7f4daeb30b9b5ba571eda84e0c9bed9bb6de
+--- /dev/null
++++ b/web3.d.ts.map
+@@ -0,0 +1 @@
++{"version":3,"file":"web3.d.ts","sourceRoot":"","sources":["../src/web3.js"],"names":[],"mappings":"AAyBA;;;;;;;;;eAsGC;AAED,wCAOC;AAED,4CAOC;AAED,sCAEC;AAED,qTAaC;AAED,4CAEC;AAED,0CAsBC;AAED,2CASC;AAED,4CAmBC;AAED,6CAIC;AAED,2CAIC;AAED;;;GAeC"}
+\ No newline at end of file
 diff --git a/web3.js b/web3.js
 new file mode 100644
-index 0000000000000000000000000000000000000000..49ab0380b98c29f1b1c1f6329cec5c43edd0d677
+index 0000000000000000000000000000000000000000..7f910e07a8da188866e6135dd668ddef2d7ba1f0
 --- /dev/null
 +++ b/web3.js
-@@ -0,0 +1,698 @@
+@@ -0,0 +1,685 @@
 +"use strict";
 +
 +var _interopRequireDefault = require("@babel/runtime/helpers/interopRequireDefault");
@@ -8497,42 +8645,34 @@ index 0000000000000000000000000000000000000000..49ab0380b98c29f1b1c1f6329cec5c43
 +exports.getNetworkId = getNetworkId;
 +exports.getNetwork = getNetwork;
 +exports.getBlock = getBlock;
-+exports.getLegacyProvider = getLegacyProvider;
 +
 +var _regenerator = _interopRequireDefault(require("@babel/runtime/regenerator"));
 +
 +var _asyncToGenerator2 = _interopRequireDefault(require("@babel/runtime/helpers/asyncToGenerator"));
 +
-+var _ethers = require("ethers");
-+
-+var _web = _interopRequireDefault(require("web3"));
-+
 +var _iframeProvider = require("@ethvault/iframe-provider");
 +
++var _ethers = require("ethers");
++
 +var provider;
-+var legacyProvider;
 +var signer;
 +var readOnly = false;
 +var requested = false;
 +var address;
 +
 +function getDefaultProvider() {
-+  legacyProvider = new _web["default"](getNetworkProviderUrl(1));
 +  return new _ethers.ethers.getDefaultProvider('homestead', 'any');
 +}
 +
 +function getJsonRpcProvider(providerOrUrl) {
-+  legacyProvider = new _web["default"](providerOrUrl);
 +  return new _ethers.ethers.providers.JsonRpcProvider(providerOrUrl, 'any');
 +}
 +
 +function getWeb3Provider(providerOrUrl) {
-+  legacyProvider = new _web["default"](providerOrUrl);
 +  return new _ethers.ethers.providers.Web3Provider(providerOrUrl, 'any');
 +}
 +
 +function getInfuraProvider(infura) {
-+  legacyProvider = new _web["default"]("https://mainnet.infura.io/v3/".concat(infura));
 +  return new _ethers.ethers.providers.InfuraProvider('homestead', infura);
 +}
 +
@@ -9123,8 +9263,7 @@ index 0000000000000000000000000000000000000000..49ab0380b98c29f1b1c1f6329cec5c43
 +
 +function getBlock() {
 +  return _getBlock.apply(this, arguments);
-+} // This provider is used to pass to dnsprovejs which only supports web3js provider
-+
++}
 +
 +function _getBlock() {
 +  _getBlock = (0, _asyncToGenerator2["default"])( /*#__PURE__*/_regenerator["default"].mark(function _callee11() {
@@ -9172,17 +9311,13 @@ index 0000000000000000000000000000000000000000..49ab0380b98c29f1b1c1f6329cec5c43
 +  }));
 +  return _getBlock.apply(this, arguments);
 +}
-+
-+function getLegacyProvider() {
-+  return legacyProvider;
-+}
 \ No newline at end of file
 diff --git a/yarn.lock b/yarn.lock
 new file mode 100644
-index 0000000000000000000000000000000000000000..f550b119315ef1b474c34d17546f99ee5bfec5b4
+index 0000000000000000000000000000000000000000..78c41c72e0d1286ba61fccd6c20fb003ab3cf4af
 --- /dev/null
 +++ b/yarn.lock
-@@ -0,0 +1,12997 @@
+@@ -0,0 +1,12992 @@
 +# THIS IS AN AUTOGENERATED FILE. DO NOT EDIT THIS FILE DIRECTLY.
 +# yarn lockfile v1
 +
@@ -10127,10 +10262,10 @@ index 0000000000000000000000000000000000000000..f550b119315ef1b474c34d17546f99ee
 +    exec-sh "^0.3.2"
 +    minimist "^1.2.0"
 +
-+"@ensdomains/address-encoder@^0.2.15":
-+  version "0.2.16"
-+  resolved "https://registry.yarnpkg.com/@ensdomains/address-encoder/-/address-encoder-0.2.16.tgz#063bfa89b4841a28fb4935d4d9882b9b64a86393"
-+  integrity sha512-V9CmwUbJgCQb+WBW+dhZptuOwGY5AaFnDGZ6POOv+oMu8dZYuAz2BoBkX7XY9t/Nz+FvMz9CeOvM4uhy4v24Zw==
++"@ensdomains/address-encoder@^0.2.14":
++  version "0.2.14"
++  resolved "https://registry.yarnpkg.com/@ensdomains/address-encoder/-/address-encoder-0.2.14.tgz#3e0add07ca241d49443fb14e303e3a45ae164d97"
++  integrity sha512-FYdKvFY9cPrwYhoaaSkZRIOAzUQ0+lSfml+sC0mI88MvspgtDnVlMjiAYDRUqbt7F+5w1e2mm7iVDkLVXyPVKg==
 +  dependencies:
 +    bech32 "^2.0.0"
 +    blakejs "^1.1.0"
@@ -20783,11 +20918,6 @@ index 0000000000000000000000000000000000000000..f550b119315ef1b474c34d17546f99ee
 +  version "4.4.2"
 +  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.4.2.tgz#6d618640d430e3569a1dfb44f7d7e600ced3ee86"
 +  integrity sha512-gzP+t5W4hdy4c+68bfcv0t400HVJMMd2+H9B7gae1nQlBzCqvrXX+6GL/b3GAgyTH966pzrZ70/fRjwAtZksSQ==
-+
-+typescript@^4.5.4:
-+  version "4.5.4"
-+  resolved "https://registry.yarnpkg.com/typescript/-/typescript-4.5.4.tgz#a17d3a0263bf5c8723b9c52f43c5084edf13c2e8"
-+  integrity sha512-VgYs2A2QIRuGphtzFV7aQJduJ2gyfTljngLzjpfW9FoYZF6xuw1W0vW9ghCKLfcWrCFxK81CSGRAvS1pn4fIUg==
 +
 +typewise-core@^1.2, typewise-core@^1.2.0:
 +  version "1.2.0"

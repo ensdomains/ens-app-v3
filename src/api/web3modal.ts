@@ -31,7 +31,7 @@ const option = {
       packageFactory: true,
       options: {
         appName: "Ethereum name service",
-        jsonRpcUrl: `https://mainnet.infura.io/v3/${INFURA_ID}`,
+        infuraId: INFURA_ID,
       },
     },
     mewconnect: {
