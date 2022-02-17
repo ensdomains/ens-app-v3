@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.61",
+  "version": "0.1.62",
   "workspaces": [
     "test-environment"
   ],
