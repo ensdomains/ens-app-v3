@@ -9841,7 +9841,7 @@ __metadata:
     styled-components: ^5.3.3
     supertest: ^6.1.6
     typescript: 4.4.4
-    walletlink: ^2.4.4
+    walletlink: ^2.4.7
     zen-observable-ts: ^1.1.0
   peerDependencies:
     "@typescript-eslint/eslint-plugin": "*"
@@ -22005,9 +22005,9 @@ typescript@4.4.4:
   languageName: node
   linkType: hard
 
-"walletlink@npm:^2.4.4":
-  version: 2.4.4
-  resolution: "walletlink@npm:2.4.4"
+"walletlink@npm:^2.4.7":
+  version: 2.4.7
+  resolution: "walletlink@npm:2.4.7"
   dependencies:
     "@metamask/safe-event-emitter": 2.0.0
     bind-decorator: ^1.0.11
@@ -22022,7 +22022,7 @@ typescript@4.4.4:
     preact: ^10.5.9
     rxjs: ^6.6.3
     stream-browserify: ^3.0.0
-  checksum: 4e85ceeb5ab2d81270acd8e3ba3edb4977eeaa4dcf6da6010192da37494068d4d6f1256839ce6b689bb018e8bf730b63548b4d767bb346caf3fd570782194b2c
+  checksum: 1d34d112ac4272caf517e96e4afcbeb50dd0999fcb1af1da2b91bcd5a5d30547489288d95afad8482735e9778130f2137083125d6408863639582c8bd4434561
   languageName: node
   linkType: hard
 

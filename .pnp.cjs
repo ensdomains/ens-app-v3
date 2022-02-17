@@ -6635,7 +6635,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "walletlink",
-        "npm:2.4.4"
+        "npm:2.4.7"
       ],
       [
         "watchpack",
@@ -6980,7 +6980,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.3"],
             ["supertest", "npm:6.1.6"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=493e53"],
-            ["walletlink", "npm:2.4.4"],
+            ["walletlink", "npm:2.4.7"],
             ["zen-observable-ts", "npm:1.2.3"]
           ],
           "linkType": "SOFT",
@@ -20117,7 +20117,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.3"],
             ["supertest", "npm:6.1.6"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=493e53"],
-            ["walletlink", "npm:2.4.4"],
+            ["walletlink", "npm:2.4.7"],
             ["zen-observable-ts", "npm:1.2.3"]
           ],
           "linkType": "SOFT",
@@ -33642,10 +33642,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["walletlink", [
-        ["npm:2.4.4", {
-          "packageLocation": "./.yarn/cache/walletlink-npm-2.4.4-e36616da5e-4e85ceeb5a.zip/node_modules/walletlink/",
+        ["npm:2.4.7", {
+          "packageLocation": "./.yarn/cache/walletlink-npm-2.4.7-e32005123c-1d34d112ac.zip/node_modules/walletlink/",
           "packageDependencies": [
-            ["walletlink", "npm:2.4.4"],
+            ["walletlink", "npm:2.4.7"],
             ["@metamask/safe-event-emitter", "npm:2.0.0"],
             ["bind-decorator", "npm:1.0.11"],
             ["bn.js", "npm:5.2.0"],
