@@ -5,7 +5,7 @@ export const clientReactive = makeVar<any>(null);
 
 export const networkIdReactive = makeVar<providers.Networkish | any>(1);
 
-export const web3ProviderReactive = makeVar<providers.Provider | null>(null);
+export const web3ProviderReactive = makeVar<any>(null);
 
 export const networkReactive = makeVar<providers.Network | null>(null);
 

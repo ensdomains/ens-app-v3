@@ -1,5 +1,7 @@
+import { networkIdReactive } from "@app/apollo/reactiveVars";
 import { emptyAddress } from "@app/utils/utils";
-import { ethers, getNetworkId, getProvider } from "@ensdomains/ui";
+import { getWeb3 } from "@ensdomains/ui";
+import { Contract, utils } from "ethers";
 
 const ENSTokenABI = [
   {
@@ -23,15 +25,17 @@ const contractAddress = "0xc18360217d8f7ab5e7c516566761ea12ce7f9d72";
 export default async function getShouldDelegate(
   address: string | undefined | null
 ) {
+  const provider = await getWeb3();
+  if (!provider) return false;
   // if no address for connection
   if (!address) return false;
   // if user isn't on mainnet
-  if ((await getNetworkId()) !== 1) return false;
+  if ((await networkIdReactive()) !== 1) return false;
   try {
-    const ENSTokenContract = new ethers.Contract(
+    const ENSTokenContract = new Contract(
       contractAddress,
       ENSTokenABI,
-      await getProvider()
+      provider
     );
     const balanceOf = await ENSTokenContract.balanceOf(address);
     // if address has no balance
@@ -39,7 +43,7 @@ export default async function getShouldDelegate(
     const delegates = await ENSTokenContract.delegates(address);
     // if address already delegated
     if (delegates !== emptyAddress) return false;
-    return ethers.utils.formatEther(balanceOf);
+    return utils.formatEther(balanceOf);
   } catch (e) {
     console.log("error getting delegated amount", e);
   }

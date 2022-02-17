@@ -120,7 +120,7 @@ export const getProvider = async (reconnect?: boolean) => {
 export const setWeb3Provider = async (provider: any) => {
   web3ProviderReactive(provider);
 
-  const accounts = await getAccounts();
+  const accounts = isReadOnly() ? [] : await getAccounts();
 
   if (provider) {
     provider.removeAllListeners();

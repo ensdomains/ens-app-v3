@@ -1,6 +1,7 @@
 import { gql, useQuery } from "@apollo/client";
 import { GET_REVERSE_RECORD } from "@app/graphql/queries";
 import { useBreakpoint } from "@app/utils/BreakpointProvider";
+import { connectProvider, disconnectProvider } from "@app/utils/providerUtils";
 import { imageUrl } from "@app/utils/utils";
 import {
   Button,
@@ -57,10 +58,7 @@ export const HeaderConnect = () => {
         {
           label: t("profile.disconnect"),
           color: "red",
-          onClick: () =>
-            import("@app/utils/providerUtils").then((module) =>
-              module.disconnectProvider()
-            ),
+          onClick: () => disconnectProvider(),
         },
       ]}
       avatar={
@@ -74,11 +72,7 @@ export const HeaderConnect = () => {
     />
   ) : (
     <Button
-      onClick={() =>
-        import("@app/utils/providerUtils").then((module) =>
-          module.connectProvider()
-        )
-      }
+      onClick={() => connectProvider()}
       prefix={
         network === "Loading" || accounts?.[0] ? (
           <Spinner color="white" />
