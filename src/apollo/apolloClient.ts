@@ -7,13 +7,12 @@ import {
   Operation,
   split,
 } from "@apollo/client";
-// eslint-disable-next-line import/no-cycle
-import resolvers from "@app/api/resolvers";
 import { Observable } from "zen-observable-ts";
 import { networkIdReactive } from "./reactiveVars";
 import typePolicies from "./typePolicies";
 
 let client: ApolloClient<NormalizedCacheObject>;
+let resolvers: any;
 
 const cache = new InMemoryCache({ typePolicies });
 
@@ -60,6 +59,8 @@ export function setupClient() {
   const httpLink = new HttpLink({
     uri: () => getGraphQLAPI(),
   });
+
+  resolvers = import("@app/api/resolvers").then((module) => module.default);
 
   const web3Link = new ApolloLink(
     (operation: Operation): Observable<any> | null => {
