@@ -1,3 +1,4 @@
+import mq from "@app/mediaQuery";
 import { useBreakpoint } from "@app/utils/BreakpointProvider";
 import { Box, Stack, vars } from "@ensdomains/thorin";
 import { useTranslation } from "next-i18next";
@@ -10,6 +11,7 @@ import { ConditionalWrapper } from "./ConditionalWrapper";
 import { HamburgerMenu } from "./HamburgerMenu";
 import { HeaderConnect } from "./HeaderConnect";
 import { LanugageDropdown } from "./LanguageDropdown";
+import { SearchInput } from "./SearchInput";
 import { StyledNavLink } from "./StyledNavLink";
 
 const AlwaysShownRoutes = [
@@ -41,8 +43,13 @@ const DropdownRoutes = [
   },
 ];
 
-const HeaderWrapper = styled(Box)`
+const HeaderWrapper = styled(Box)<{ $isHome: boolean }>`
   height: ${vars.space["16"]};
+  ${({ $isHome }) =>
+    !$isHome &&
+    mq.medium.min`
+    margin-bottom:  ${vars.space["12"]};
+  `}
 `;
 
 const LogoAnchor = styled.a`
@@ -59,13 +66,19 @@ const LogoAnchor = styled.a`
   }
 `;
 
+const VerticalLine = styled(Box)`
+  width: 1px;
+  height: ${vars.space["14"]};
+  background-color: ${vars.colors.borderSecondary};
+`;
+
 export const Header = () => {
   const router = useRouter();
   const breakpoints = useBreakpoint();
   const { t } = useTranslation("common");
 
   return (
-    <HeaderWrapper as="header">
+    <HeaderWrapper $isHome={router.asPath === "/"} as="header">
       <Stack
         direction="horizontal"
         justify="center"
@@ -80,13 +93,19 @@ export const Header = () => {
             </Link>
           )}
         >
-          {breakpoints.sm ? (
+          {breakpoints.sm && router.asPath === "/" ? (
             <ENSFull height="48" />
           ) : (
             <ENSWithGradient height="48" />
           )}
         </ConditionalWrapper>
         <LanugageDropdown />
+        {router.asPath !== "/" && breakpoints.md && (
+          <>
+            <VerticalLine />
+            <SearchInput size="large" />
+          </>
+        )}
         <Box flexGrow={1} />
         {breakpoints.lg &&
           AlwaysShownRoutes.map((route) => (

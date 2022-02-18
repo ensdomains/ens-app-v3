@@ -43,6 +43,7 @@ const ArrowBack = styled(Box)`
 `;
 
 const BackContainer = styled(Box)`
+  cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: flex;
   flex-direction: row;
@@ -60,7 +61,7 @@ const BackButton = () => {
   const { t } = useTranslation("common");
 
   return (
-    <BackContainer as="button" onClick={() => router.back()}>
+    <BackContainer role="button" onClick={() => router.back()}>
       <ArrowBack as={IconArrowCircle} />
       <Typography weight="bold" color="textTertiary" size="large">
         {t("navigation.back")}
@@ -114,6 +115,11 @@ const ProfilePage: NextPage = () => {
     const timeout = _domain && setTimeout(() => setDomain(_domain), 100);
     return () => clearTimeout(timeout);
   }, [_domain]);
+
+  useEffect(
+    () => console.log(network, domain, domainLoading, recordsLoading),
+    [network, domain, domainLoading, recordsLoading]
+  );
 
   return (
     <Basic
