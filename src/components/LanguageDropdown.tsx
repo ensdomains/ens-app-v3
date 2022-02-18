@@ -31,11 +31,11 @@ export const LanugageDropdown = () => {
         }))}
     >
       <Box
-        width={{ xs: "fit", sm: "14" }}
+        width={{ xs: "fit", sm: "12" }}
         paddingX={{ xs: "1.5", sm: "0" }}
         paddingY={{ xs: "0.5", sm: "0" }}
         display={{ xs: "block", sm: "flex" }}
-        fontSize={{ xs: "small", sm: "base" }}
+        fontSize="label"
         alignItems="flex-start"
       >
         {formatName(i18n.language)}
