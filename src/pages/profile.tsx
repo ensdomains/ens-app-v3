@@ -11,7 +11,6 @@ import { Box, IconArrowCircle, Typography, vars } from "@ensdomains/thorin";
 import { NextPage } from "next";
 import { useTranslation } from "next-i18next";
 import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -56,20 +55,17 @@ const BackContainer = styled(Box)`
   }
 `;
 
-const BackButton = ({ to }: { to: string }) => {
+const BackButton = () => {
+  const router = useRouter();
   const { t } = useTranslation("common");
 
   return (
-    <Link href={to}>
-      <a>
-        <BackContainer>
-          <ArrowBack as={IconArrowCircle} />
-          <Typography weight="bold" color="textTertiary" size="large">
-            {t("navigation.back")}
-          </Typography>
-        </BackContainer>
-      </a>
-    </Link>
+    <BackContainer as="button" onClick={() => router.back()}>
+      <ArrowBack as={IconArrowCircle} />
+      <Typography weight="bold" color="textTertiary" size="large">
+        {t("navigation.back")}
+      </Typography>
+    </BackContainer>
   );
 };
 
@@ -136,9 +132,9 @@ const ProfilePage: NextPage = () => {
         )
       }
     >
-      {router.query.from && !breakpoints.md && (
+      {!breakpoints.md && (
         <Box width="full" display="flex" alignItems="flex-start">
-          <BackButton to={router.query.from as string} />
+          <BackButton />
         </Box>
       )}
       <Box
@@ -153,11 +149,11 @@ const ProfilePage: NextPage = () => {
           flexDirection={{ xs: "column-reverse", md: "row" }}
           gap={{ md: "8" }}
           position="relative"
-          marginTop={router.query.from ? "8" : "0"}
+          marginTop="8"
         >
-          {router.query.from && breakpoints.md && (
+          {breakpoints.md && (
             <Box marginTop="-12" position="absolute">
-              <BackButton to={router.query.from as string} />
+              <BackButton />
             </Box>
           )}
           <Box marginTop={{ xs: "8", md: "0" }}>

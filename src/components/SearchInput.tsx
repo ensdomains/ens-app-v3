@@ -54,7 +54,6 @@ export const SearchInput = () => {
             as={`/profile/${domain.name}`}
             href={{
               pathname: `/profile/${domain.name}`,
-              query: { from: "/" },
             }}
           >
             <a>
@@ -106,7 +105,6 @@ export const SearchInput = () => {
             router.push(
               {
                 pathname: `/profile/${domain.name}`,
-                query: { from: "/" },
               },
               `/profile/${domain.name}`
             )
