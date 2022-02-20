@@ -108,14 +108,11 @@ export const SearchInput = ({
         );
       }
     }
-    if (inputVal !== searchedVal || loading) {
-      return (
-        <Box opacity="50" marginRight="2">
-          <Spinner color="foreground" />
-        </Box>
-      );
-    }
-    return null;
+    return (
+      <Box opacity="50" marginRight="2">
+        <Spinner color="foreground" />
+      </Box>
+    );
   };
 
   return (
