@@ -3,11 +3,33 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "hardhat:start": "yarn hardhat node --hostname 0.0.0.0",
-    "start": "yarn hardhat node --hostname 0.0.0.0 && yarn wait-on tcp:8545 && docker-compose up"
+    "hardhat:start": "yarn hardhat node --hostname 0.0.0.0 > ./cache/hardhat.log",
+    "docker:start": "yarn wait-on tcp:8545 && ./scripts/docker.sh",
+    "docker:start:root": "yarn wait-on tcp:8545 && sudo ./scripts/docker.sh",
+    "start": "yarn hardhat:start & yarn docker:start",
+    "start:root": "yarn hardhat:start & yarn docker:start:root",
+    "start:ci": "yarn archive:ci && yarn hardhat:start && yarn docker:start",
+    "archive:load": "yarn node ./start.mjs load",
+    "archive:compress": "yarn node ./start.mjs compress",
+    "archive:ci": "yarn node ./start.mjs ci"
   },
   "dependencies": {
-    "dotenv": "^15.0.0",
-    "hardhat": "^2.8.3"
+    "ansi-colors": "^4.1.1",
+    "cli-progress": "^3.10.0",
+    "decompress-zip": "^0.3.3",
+    "docker-compose": "^0.23.17",
+    "dotenv": "^16.0.0",
+    "fs-extra": "^10.0.0",
+    "got": "^12.0.1",
+    "hardhat": "^2.8.3",
+    "lz4": "^0.6.5",
+    "progress-stream": "^2.0.0",
+    "tar-fs": "^2.1.1",
+    "wait-on": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3",
+    "@types/progress-stream": "^2",
+    "@types/tar-fs": "^2"
   }
 }

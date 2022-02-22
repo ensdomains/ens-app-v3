@@ -1,0 +1,11 @@
+# test environment
+**
+!package.json
+!README.md
+!docker-compose.yml
+!.gitignore
+!.env.example
+!hardhat.config.js
+!start.mjs
+!scripts/
+!scripts/*

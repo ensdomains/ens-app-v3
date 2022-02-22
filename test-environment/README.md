@@ -50,17 +50,7 @@ where an action will be activated to create the new dataset for others to use.
 
 ### Dataset naming scheme
 
-#### All datasets
-
 ```js
 `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}.archive`;
 // e.g. data_14119046_QmTmU4syjQb8gfNq8TCQGv441qp2zQMNKnQ4smjKhpLQ6F_1643850493.archive.zip
-```
-
-#### Latest datasets
-
-```js
-`data_${BRANCH}.latest`;
-// e.g. data_main.latest
-// e.g. data_dev.latest
 ```
