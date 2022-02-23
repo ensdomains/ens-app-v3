@@ -20,6 +20,7 @@ services:
       ethereum: "mainnet:http://host.docker.internal:8545"
       GRAPH_LOG: debug
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: "true"
+      DISABLE_BLOCK_INGESTOR: "true"
     extra_hosts:
       - "host.docker.internal:host-gateway"
   ipfs:

@@ -1,13 +1,20 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.73",
+  "version": "0.1.74",
   "workspaces": [
     "test-environment"
   ],
   "scripts": {
     "dev": "next dev",
+    "dev:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens next dev",
     "build": "next build",
+    "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens next build",
     "start": "next start",
+    "env": "yarn workspace test-environment",
+    "env:load": "yarn env load",
+    "env:start": "yarn env start",
+    "env:start:ci": "yarn env start:ci",
+    "env:start:root": "yarn env start:root",
     "lint": "next lint",
     "export": "next export",
     "analyze": "ANALYZE=true yarn build",

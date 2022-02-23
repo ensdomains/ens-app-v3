@@ -5,7 +5,7 @@
 !docker-compose.yml
 !.gitignore
 !.env.example
-!hardhat.config.js
+!ganache.mjs
 !start.mjs
 !scripts/
 !scripts/*
