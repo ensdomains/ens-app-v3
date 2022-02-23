@@ -96,14 +96,20 @@ export const SearchInput = ({
       if (valid && domain.state === "Owned") {
         return (
           <Box role="button" onClick={handleSearch}>
-            <SearchArrowButton as={IconArrowCircle} />
+            <SearchArrowButton
+              data-testid="search-button"
+              as={IconArrowCircle}
+            />
           </Box>
         );
       }
       if (!valid && inputVal.length >= 3) {
         return (
           <Box onClick={() => setInputVal("")}>
-            <SearchArrowButton as={IconCancelCircle} />
+            <SearchArrowButton
+              data-testid="search-invalid"
+              as={IconCancelCircle}
+            />
           </Box>
         );
       }
