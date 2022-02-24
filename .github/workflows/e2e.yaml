@@ -11,6 +11,11 @@ jobs:
         node-version: [16.x]
 
     steps:
+      - name: Modify env file
+        run: |
+          cd ./test-environment
+          copy .env.example .env
+          sed -i 's/\(FORK_RPC_URL\=\).*/\1${{ secrets.FORK_RPC_URL }}/' .env
       - uses: actions/checkout@v2
       - uses: actions/setup-node@v2
         with:
