@@ -1,64 +1,102 @@
-const { exec, spawn, spawnSync } = require("child_process");
+const concurrently = require("concurrently");
 const path = require("path");
-const waitOn = require("wait-on");
+const { execSync } = require("child_process");
 
 const args = process.argv.slice(2);
 
-const pipeOpts = {
-  stdio: [process.stdin, process.stdout, process.stderr],
-  shell: "/bin/bash",
-};
+let type = "normal";
+let envcmd = "yarn env:start";
+let cycmd = "yarn cypress:wait";
+let sudopref = "";
 
-const start = async () => {
-  const ganache = spawn("yarn", ["node", "./ganache.mjs"], {
-    ...pipeOpts,
-    cwd: path.join(process.cwd(), "test-environment"),
+switch (args[0]) {
+  case "root": {
+    console.log("Running script in root mode");
+    type = "root";
+    envcmd = "yarn env:start:root";
+    sudopref = "sudo ";
+    break;
+  }
+  case "ci": {
+    console.log("Running script in CI mode");
+    type = "ci";
+    envcmd = "yarn env:start:ci";
+    cycmd = "yarn cypress:wait:ci";
+    break;
+  }
+  default: {
+    console.log("Running script in user mode");
+  }
+}
+
+const { commands } = concurrently(
+  [
+    {
+      command: "yarn buildandstart:glocal",
+      name: "nextjs",
+      prefixColor: "green.bold",
+    },
+    {
+      command: envcmd,
+      name: "env",
+      prefixColor: "blue.bold",
+      cwd: path.resolve(__dirname, "../test-environment"),
+    },
+    {
+      command: cycmd,
+      name: "cypress",
+      prefixColor: "yellow.bold",
+    },
+  ],
+  {
+    prefix: "name",
+  }
+);
+
+commands.forEach((cmd) => {
+  if (cmd.index === 2) {
+    cmd.close.subscribe(() => cleanup());
+  }
+  cmd.error.subscribe(() => cleanup());
+});
+
+let cleanupRunning = false;
+
+function cleanup() {
+  if (cleanupRunning) return;
+  cleanupRunning = true;
+  commands.forEach((cmd) => {
+    let children = wrapTry(execSync, `pgrep -f "${cmd.command}"`);
+    while (children) {
+      const child = children
+        .toString()
+        .split("\n")
+        .find((x) => parseInt(x));
+
+      if (child) {
+        const res = wrapTry(execSync, `pgrep -P ${child.trim()}`);
+        wrapTry(execSync, `${sudopref}kill -9 ${child.trim()}`);
+        if (res && !res.toString().includes("No such process")) {
+          children = res;
+        } else {
+          children = null;
+        }
+      } else {
+        children = null;
+      }
+    }
+    wrapTry(execSync, `${sudopref}kill -2 ${cmd.pid}`);
   });
-
-  await waitOn({
-    resources: ["tcp:8545"],
+  execSync(`${sudopref}docker-compose down`, {
+    cwd: path.resolve(__dirname, "../test-environment"),
   });
+  process.exit(0);
+}
 
-  args[0] === "ci" &&
-    spawnSync("yarn", ["node", "./start.mjs", "ci"], {
-      ...pipeOpts,
-      cwd: path.join(process.cwd(), "test-environment"),
-    });
-
-  const docker =
-    args[0] === "root"
-      ? spawn("sudo", ["docker-compose", "up"], {
-          ...pipeOpts,
-          cwd: path.join(process.cwd(), "test-environment"),
-        })
-      : spawn("docker-compose", ["up"], {
-          ...pipeOpts,
-          cwd: path.join(process.cwd(), "test-environment"),
-        });
-
-  spawnSync("yarn", ["build:glocal"], pipeOpts);
-
-  const server = spawn("yarn", ["start"], pipeOpts);
-
-  await waitOn({
-    resources: ["http://localhost:3000", "http://localhost:8040"],
-  });
-  const cypress =
-    args[0] === "ci"
-      ? spawn("yarn", ["cypress:ci"], pipeOpts)
-      : spawn("yarn", ["cypress"], pipeOpts);
-
-  process.on("SIGINT", () => {
-    ganache.kill("SIGINT");
-    docker.kill("SIGINT");
-    server.kill("SIGINT");
-    cypress.kill("SIGINT");
-  });
-
-  cypress.on("exit", () => {
-    console.log("PIDS", ganache.pid, docker.pid, server.pid, cypress.pid);
-    process.exit(0);
-  });
-};
-
-start();
+function wrapTry(fn, ...args) {
+  try {
+    return fn(...args);
+  } catch {
+    return;
+  }
+}

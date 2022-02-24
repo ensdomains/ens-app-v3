@@ -2962,6 +2962,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.6.2"
       ],
       [
+        "concurrently",
+        "npm:7.0.0"
+      ],
+      [
         "configstore",
         "npm:5.0.1"
       ],
@@ -3164,6 +3168,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "data-urls",
         "npm:2.0.0"
+      ],
+      [
+        "date-fns",
+        "npm:2.28.0"
       ],
       [
         "dateformat",
@@ -6938,6 +6946,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.4.8"
       ],
       [
+        "spawn-command",
+        "npm:0.0.2"
+      ],
+      [
         "spawn-error-forwarder",
         "npm:1.0.0"
       ],
@@ -7927,7 +7939,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "yargs",
-        "npm:13.3.2"
+        "npm:16.2.0"
       ],
       [
         "yargs-parser",
@@ -7994,6 +8006,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@walletconnect/web3-provider", "npm:1.7.1"],
             ["babel-jest", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:27.4.6"],
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.2"],
+            ["concurrently", "npm:7.0.0"],
             ["cypress", "npm:8.6.0"],
             ["eslint", "npm:7.32.0"],
             ["eslint-config-airbnb", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:18.2.1"],
@@ -8032,7 +8045,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["start-server-and-test", "npm:1.14.0"],
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.3"],
             ["supertest", "npm:6.1.6"],
-            ["tree-kill", "npm:1.2.2"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=493e53"],
             ["wait-on", "npm:6.0.1"],
             ["walletlink", "npm:2.4.7"],
@@ -20854,6 +20866,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["concurrently", [
+        ["npm:7.0.0", {
+          "packageLocation": "./.yarn/cache/concurrently-npm-7.0.0-c402b003bc-1be78f24bf.zip/node_modules/concurrently/",
+          "packageDependencies": [
+            ["concurrently", "npm:7.0.0"],
+            ["chalk", "npm:4.1.2"],
+            ["date-fns", "npm:2.28.0"],
+            ["lodash", "npm:4.17.21"],
+            ["rxjs", "npm:6.6.7"],
+            ["spawn-command", "npm:0.0.2"],
+            ["supports-color", "npm:8.1.1"],
+            ["tree-kill", "npm:1.2.2"],
+            ["yargs", "npm:16.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["configstore", [
         ["npm:5.0.1", {
           "packageLocation": "./.yarn/cache/configstore-npm-5.0.1-739433cdc5-60ef65d493.zip/node_modules/configstore/",
@@ -21577,6 +21606,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["abab", "npm:2.0.5"],
             ["whatwg-mimetype", "npm:2.3.0"],
             ["whatwg-url", "npm:8.7.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["date-fns", [
+        ["npm:2.28.0", {
+          "packageLocation": "./.yarn/cache/date-fns-npm-2.28.0-c19c5add1b-a0516b2e4f.zip/node_modules/date-fns/",
+          "packageDependencies": [
+            ["date-fns", "npm:2.28.0"]
           ],
           "linkType": "HARD",
         }]
@@ -22774,6 +22812,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@walletconnect/web3-provider", "npm:1.7.1"],
             ["babel-jest", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:27.4.6"],
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.2"],
+            ["concurrently", "npm:7.0.0"],
             ["cypress", "npm:8.6.0"],
             ["eslint", "npm:7.32.0"],
             ["eslint-config-airbnb", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:18.2.1"],
@@ -22812,7 +22851,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["start-server-and-test", "npm:1.14.0"],
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.3"],
             ["supertest", "npm:6.1.6"],
-            ["tree-kill", "npm:1.2.2"],
             ["typescript", "patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=493e53"],
             ["wait-on", "npm:6.0.1"],
             ["walletlink", "npm:2.4.7"],
@@ -36672,6 +36710,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/sourcemap-codec-npm-1.4.8-3a1a9e60b1-b57981c056.zip/node_modules/sourcemap-codec/",
           "packageDependencies": [
             ["sourcemap-codec", "npm:1.4.8"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["spawn-command", [
+        ["npm:0.0.2", {
+          "packageLocation": "./.yarn/cache/spawn-command-npm-0.0.2-014d4d5d9f-e35c5d2817.zip/node_modules/spawn-command/",
+          "packageDependencies": [
+            ["spawn-command", "npm:0.0.2"]
           ],
           "linkType": "HARD",
         }]

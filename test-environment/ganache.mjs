@@ -15,7 +15,7 @@ const server = ganache.server({
 });
 
 server.listen(8545, "0.0.0.0", (err) => {
-  if (err) throw err;
+  if (err) throw new Error(err.message);
 
   console.log("Ganache listening on port 8545");
 });

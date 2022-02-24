@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.76",
+  "version": "0.1.77",
   "workspaces": [
     "test-environment"
   ],
@@ -23,11 +23,14 @@
     "test": "jest --env=./custom-test-env.js",
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
-    "cypress": "CYPRESS_REMOTE_DEBUGGING_PORT=9222 cypress run --headed --browser chrome",
-    "cypress:ci": "yarn cypress --record --key insert-key-here",
-    "e2e": "start-server-and-test 'yarn env:start' 8040 'yarn buildandstart:glocal' 3000 'yarn cypress'",
-    "e2e:root": "start-server-and-test 'yarn env:start:root' 8040 'yarn buildandstart:glocal' 3000 'yarn cypress'",
-    "e2e:ci": "start-server-and-test 'yarn env:start:ci' 8040 'yarn buildandstart:glocal' 3000 'yarn cypress:ci'",
+    "waiton:all": "wait-on http://localhost:3000 && wait-on http://localhost:8040",
+    "cypress:start": "CYPRESS_REMOTE_DEBUGGING_PORT=9222 cypress run --headed --browser chrome",
+    "cypress:ci": "yarn cypress:start --record --key insert-key-here",
+    "cypress:wait": "yarn waiton:all && yarn cypress:start",
+    "cypress:wait:ci": "yarn waiton:all && yarn cypress:ci",
+    "e2e": "yarn node ./scripts/e2e.js",
+    "e2e:root": "yarn node ./scripts/e2e.js root",
+    "e2e:ci": "yarn node ./scripts/e2e.js ci",
     "postinstall": "husky install",
     "postyalc": "yarn"
   },
@@ -87,6 +90,7 @@
     "@typescript-eslint/parser": "^5.10.0",
     "babel-jest": "^27.4.6",
     "babel-loader": "^8.2.2",
+    "concurrently": "^7.0.0",
     "cypress": "^8.6.0",
     "eslint": "7.32.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -111,7 +115,6 @@
     "prettier": "2.5.1",
     "start-server-and-test": "^1.14.0",
     "supertest": "^6.1.6",
-    "tree-kill": "^1.2.2",
     "typescript": "4.4.4",
     "wait-on": "^6.0.1"
   },
