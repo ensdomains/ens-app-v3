@@ -10,7 +10,7 @@ const NETWORK_INFORMATION_QUERY = gql`
   }
 `;
 
-export const useGetDomainFromInput = (input: string) => {
+export const useGetDomainFromInput = (input: string, skip?: any) => {
   const _name =
     input && (input.split(".").length === 1 ? `${input}.eth` : input);
 
@@ -24,7 +24,7 @@ export const useGetDomainFromInput = (input: string) => {
     { data: { singleName: domain } = { singleName: undefined } },
   ] = useLazyQuery(GET_SINGLE_NAME, {
     variables: { name },
-    fetchPolicy: "no-cache",
+    fetchPolicy: "cache-and-network",
     context: {
       queryDeduplication: false,
     },
@@ -36,48 +36,51 @@ export const useGetDomainFromInput = (input: string) => {
 
   useEffect(() => {
     let normalisedName;
-    if (
-      isENSReady &&
-      typeof _name === "string" &&
-      _name.length >= 3 &&
-      !_name.split(".").some((label) => label.length === 0)
-    ) {
+    if (!skip) {
       try {
         setLoading(true);
-        // This is under the assumption that validateName never returns false
-        normalisedName = validateName(_name);
-        setNormalisedName(normalisedName);
-      } finally {
-        parseSearchTerm(normalisedName || _name)
-          .then((_type: any) => {
-            if (
-              _type === "supported" ||
-              _type === "tld" ||
-              _type === "search"
-            ) {
-              setValid(true);
+        if (
+          isENSReady &&
+          typeof _name === "string" &&
+          _name.length >= 3 &&
+          !_name.split(".").some((label) => label.length === 0)
+        ) {
+          try {
+            // This is under the assumption that validateName never returns false
+            normalisedName = validateName(_name);
+            setNormalisedName(normalisedName);
+          } finally {
+            parseSearchTerm(normalisedName || _name)
+              .then((_type: any) => {
+                if (
+                  _type === "supported" ||
+                  _type === "tld" ||
+                  _type === "search"
+                ) {
+                  setValid(true);
 
-              setType(_type);
-              getDomain().finally(() => setLoading(false));
-            } else {
-              if (_type === "invalid") {
-                setType("domainMalformed");
-              } else {
-                setType(_type);
-              }
-              setValid(false);
-              setLoading(false);
-            }
-          })
-          .catch((err) => {
-            console.error("Error parsing search:", err);
-            setValid(false);
-            setLoading(false);
-          });
+                  setType(_type);
+                  getDomain();
+                } else {
+                  if (_type === "invalid") {
+                    setType("domainMalformed");
+                  } else {
+                    setType(_type);
+                  }
+                  setValid(false);
+                }
+              })
+              .catch((err) => {
+                console.error("Error parsing search:", err);
+                setValid(false);
+              });
+          }
+        } else {
+          setValid(false);
+        }
+      } finally {
+        setLoading(false);
       }
-    } else {
-      setValid(false);
-      setLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_name, isENSReady]);

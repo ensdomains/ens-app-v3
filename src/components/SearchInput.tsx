@@ -9,9 +9,8 @@ import {
   vars,
 } from "@ensdomains/thorin";
 import debounce from "lodash/debounce";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import styled from "styled-components";
 
 const SearchArrowButton = styled(Box)<{ danger?: boolean }>`
@@ -27,17 +26,48 @@ const SearchArrowButton = styled(Box)<{ danger?: boolean }>`
   }
 `;
 
+const SearchInputWrapper = styled(Box)<{ $size: "large" | "extraLarge" }>`
+  box-shadow: ${vars.shadows["0.25"]} ${vars.colors.foregroundSecondary};
+  border-radius: ${vars.radii["2.5xLarge"]};
+  border-width: 1px;
+  border-color: ${vars.colors.borderTertiary};
+  width: 100%;
+
+  ${({ $size }) =>
+    $size === "large" &&
+    `
+    transition: all 0.35s cubic-bezier(1, 0, 0.1, 1.6);
+    max-width: ${vars.space["80"]};
+    &:focus-within {
+      max-width: calc(${vars.space["80"]} + ${vars.space["24"]});
+    }
+    box-shadow: ${vars.shadows["0.25"]} ${vars.colors.foregroundSecondary};
+    & input::placeholder {
+      color: ${vars.colors.textTertiary};
+    }
+  `}
+`;
+
 const setSearchedVal = debounce(
   (input: string, setFunc: (input: string) => void) => setFunc(input),
   500
 );
 
-export const SearchInput = () => {
+export const SearchInput = ({
+  size = "extraLarge",
+}: {
+  size?: "large" | "extraLarge";
+}) => {
   const router = useRouter();
   const initial = useInitial();
+
   const [searchedVal, _setSearchedVal] = useState("");
   const [inputVal, setInputVal] = useState("");
-  const { domain, valid, loading } = useGetDomainFromInput(searchedVal);
+  const { domain, valid, loading } = useGetDomainFromInput(
+    searchedVal,
+    searchedVal === "" || inputVal === ""
+  );
+  const searchInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     if (!initial) {
@@ -46,21 +76,28 @@ export const SearchInput = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputVal]);
 
+  const handleSearch = () =>
+    router
+      .push(
+        {
+          pathname: `/profile/${domain.name}`,
+        },
+        `/profile/${domain.name}`
+      )
+      .then(() => {
+        setInputVal("");
+        _setSearchedVal("");
+        searchInputRef.current?.blur();
+      });
+
   const SuffixElement = () => {
+    if (inputVal === "") return null;
     if (domain && domain.name && searchedVal === inputVal && !loading) {
       if (valid && domain.state === "Owned") {
         return (
-          <Link
-            as={`/profile/${domain.name}`}
-            href={{
-              pathname: `/profile/${domain.name}`,
-              query: { from: "/" },
-            }}
-          >
-            <a>
-              <SearchArrowButton as={IconArrowCircle} />
-            </a>
-          </Link>
+          <Box role="button" onClick={handleSearch}>
+            <SearchArrowButton as={IconArrowCircle} />
+          </Box>
         );
       }
       if (!valid && inputVal.length >= 3) {
@@ -71,27 +108,21 @@ export const SearchInput = () => {
         );
       }
     }
-    if (inputVal !== searchedVal || loading) {
-      return (
-        <Box opacity="50" marginRight="2">
-          <Spinner color="foreground" />
-        </Box>
-      );
-    }
-    return null;
+    return (
+      <Box opacity="50" marginRight="2">
+        <Spinner color="foreground" />
+      </Box>
+    );
   };
 
   return (
-    <Box paddingX={{ xs: "0", md: "12" }} width="full">
-      <Box
-        boxShadow="0.25"
-        borderRadius="2.5xLarge"
-        borderWidth="px"
-        borderColor="borderTertiary"
-        width="full"
-      >
+    <Box
+      paddingX={size === "extraLarge" ? { xs: "0", md: "12" } : "0"}
+      width="full"
+    >
+      <SearchInputWrapper $size={size}>
         <Input
-          size="extraLarge"
+          size={size}
           borderRadius="2.5xLarge"
           label="Name search"
           hideLabel
@@ -103,21 +134,19 @@ export const SearchInput = () => {
             domain.name &&
             searchedVal === inputVal &&
             !loading &&
-            router.push(
-              {
-                pathname: `/profile/${domain.name}`,
-                query: { from: "/" },
-              },
-              `/profile/${domain.name}`
-            )
+            handleSearch
           }
           onChange={(e) => setInputVal(e.target.value)}
+          ref={searchInputRef}
           suffix={SuffixElement()}
           autoComplete="off"
           autoCorrect="off"
+          backgroundColor={
+            size === "large" ? "background" : "backgroundSecondary"
+          }
           spellCheck="false"
         />
-      </Box>
+      </SearchInputWrapper>
     </Box>
   );
 };
