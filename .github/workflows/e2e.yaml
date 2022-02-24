@@ -4,7 +4,6 @@ on: [push, pull_request]
 
 jobs:
   build:
-    if: ${{ false }} # disable for now
     runs-on: ubuntu-latest
 
     strategy:
@@ -18,4 +17,4 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: yarn
       - run: yarn install
-      - run: yarn e2e:headless
+      - run: yarn e2e:ci
