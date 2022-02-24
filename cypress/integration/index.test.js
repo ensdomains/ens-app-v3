@@ -9,7 +9,9 @@ describe("Profile", () => {
     cy.acceptMetamaskAccess();
 
     // replace with data-testid when design system supports it
-    cy.contains("0x").click();
+    cy.contains("0x", {
+      timeout: 15000,
+    }).click();
     cy.contains("My Profile").should("be.visible");
     cy.contains("0x").click();
     cy.contains("My Profile").should("not.be.visible");

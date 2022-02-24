@@ -40,7 +40,7 @@ jobs:
       - name: Get cached test-environment file
         uses: actions/cache@v2
         with:
-          path: ${{ env.GITHUB_WORKSPACE }}/test-environment/archives/data_${{ env.BLOCK_HEIGHT }}_${{ env.SUBGRAPH_ID }}_${{ env.EPOCH_TIME }}.archive.tar.lz4
+          path: ${{ env.GITHUB_WORKSPACE }}/test-environment/archives
           key: data-${{ env.BLOCK_HEIGHT }}-${{ env.SUBGRAPH_ID }}-${{ env.EPOCH_TIME }}
           restore-keys: data-${{ env.BLOCK_HEIGHT }}-${{ env.SUBGRAPH_ID }}-${{ env.EPOCH_TIME }}
 
