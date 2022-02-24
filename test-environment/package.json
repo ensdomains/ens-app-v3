@@ -8,7 +8,7 @@
     "docker:start:root": "yarn wait-on tcp:8545 && sudo ./scripts/docker.sh",
     "start": "yarn ganache:start & yarn docker:start",
     "start:root": "yarn ganache:start & yarn docker:start:root",
-    "start:ci": "yarn archive:ci && yarn ganache:start && yarn docker:start",
+    "start:ci": "yarn archive:ci && yarn ganache:start & yarn docker:start",
     "archive:load": "yarn node ./start.mjs load",
     "archive:compress": "yarn node ./start.mjs compress",
     "archive:ci": "yarn node ./start.mjs ci"
