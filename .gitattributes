@@ -1,1 +1,2 @@
-.yarn/**/* binary linguist-generated
+.yarn/**/* linguist-generated
+.yalc/**/* linguist-generated
