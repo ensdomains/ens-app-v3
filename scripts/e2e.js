@@ -57,12 +57,12 @@ commands.forEach((cmd) => {
   if (cmd.index === 2) {
     cmd.close.subscribe(() => cleanup());
   }
-  cmd.error.subscribe(() => cleanup());
+  cmd.error.subscribe(() => cleanup(true));
 });
 
 let cleanupRunning = false;
 
-function cleanup() {
+function cleanup(error = false) {
   if (cleanupRunning) return;
   cleanupRunning = true;
   commands.forEach((cmd) => {
@@ -90,7 +90,7 @@ function cleanup() {
   execSync(`${sudopref}docker-compose down`, {
     cwd: path.resolve(__dirname, "../test-environment"),
   });
-  process.exit(0);
+  process.exit(error ? 1 : 0);
 }
 
 function wrapTry(fn, ...args) {
