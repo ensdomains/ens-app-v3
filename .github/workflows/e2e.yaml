@@ -15,7 +15,7 @@ jobs:
       - name: Modify env file
         working-directory: ./test-environment
         run: |
-          copy .env.example .env
+          cp .env.example .env
           sed -i 's/\(FORK_RPC_URL\=\).*/\1${{ secrets.FORK_RPC_URL }}/' .env
       - uses: actions/setup-node@v2
         with:
