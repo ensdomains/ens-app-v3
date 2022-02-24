@@ -16,7 +16,6 @@
   "dependencies": {
     "ansi-colors": "^4.1.1",
     "cli-progress": "^3.10.0",
-    "cloneable-readable": "^2.1.0",
     "decompress-zip": "^0.3.3",
     "docker-compose": "^0.23.17",
     "dotenv": "^16.0.0",
@@ -30,7 +29,6 @@
   },
   "devDependencies": {
     "@types/cli-progress": "^3",
-    "@types/cloneable-readable": "^2",
     "@types/progress-stream": "^2",
     "@types/tar-fs": "^2"
   }
