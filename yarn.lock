@@ -4976,6 +4976,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/cloneable-readable@npm:^2":
+  version: 2.0.0
+  resolution: "@types/cloneable-readable@npm:2.0.0"
+  dependencies:
+    "@types/node": "*"
+  checksum: cbddd725b36c7e44dc31b8b171b258806a8aaf99ef5404d5f21e0d704ee1cdadd89183c83d639e4f1158dfce56a80e9e0671e0f8c6676a7213f5b957ac0a0512
+  languageName: node
+  linkType: hard
+
 "@types/cookiejar@npm:*":
   version: 2.1.2
   resolution: "@types/cookiejar@npm:2.1.2"
@@ -9340,6 +9349,16 @@ __metadata:
   version: 1.0.4
   resolution: "clone@npm:1.0.4"
   checksum: d06418b7335897209e77bdd430d04f882189582e67bd1f75a04565f3f07f5b3f119a9d670c943b6697d0afb100f03b866b3b8a1f91d4d02d72c4ecf2bb64b5dd
+  languageName: node
+  linkType: hard
+
+"cloneable-readable@npm:^2.1.0":
+  version: 2.1.0
+  resolution: "cloneable-readable@npm:2.1.0"
+  dependencies:
+    inherits: ^2.0.1
+    readable-stream: ^3.3.0
+  checksum: 7cba0112daafadbc74d4e57ed0e302617bc026c44cc5bd15d1a17e75598116ff57fd8450c0809d4735332930eff90875a48276e3d1626c8039cd36bca8647f09
   languageName: node
   linkType: hard
 
@@ -22249,7 +22268,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:3, readable-stream@npm:^3.0.0, readable-stream@npm:^3.0.6, readable-stream@npm:^3.1.0, readable-stream@npm:^3.1.1, readable-stream@npm:^3.4.0, readable-stream@npm:^3.5.0, readable-stream@npm:^3.6.0":
+"readable-stream@npm:3, readable-stream@npm:^3.0.0, readable-stream@npm:^3.0.6, readable-stream@npm:^3.1.0, readable-stream@npm:^3.1.1, readable-stream@npm:^3.3.0, readable-stream@npm:^3.4.0, readable-stream@npm:^3.5.0, readable-stream@npm:^3.6.0":
   version: 3.6.0
   resolution: "readable-stream@npm:3.6.0"
   dependencies:
@@ -24994,10 +25013,12 @@ resolve@^2.0.0-next.3:
   resolution: "test-environment@workspace:test-environment"
   dependencies:
     "@types/cli-progress": ^3
+    "@types/cloneable-readable": ^2
     "@types/progress-stream": ^2
     "@types/tar-fs": ^2
     ansi-colors: ^4.1.1
     cli-progress: ^3.10.0
+    cloneable-readable: ^2.1.0
     decompress-zip: ^0.3.3
     docker-compose: ^0.23.17
     dotenv: ^16.0.0

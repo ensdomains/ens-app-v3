@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.89",
+  "version": "0.1.90",
   "workspaces": [
     "test-environment"
   ],
@@ -25,7 +25,7 @@
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "waiton:all": "wait-on http://localhost:3000 && wait-on http://localhost:8040",
     "cypress:start": "CYPRESS_REMOTE_DEBUGGING_PORT=9222 cypress run --headed --browser chrome",
-    "cypress:ci": "yarn cypress:start --record --key insert-key-here",
+    "cypress:ci": "yarn cypress:start",
     "cypress:wait": "yarn waiton:all && yarn cypress:start",
     "cypress:wait:ci": "yarn waiton:all && yarn cypress:ci",
     "e2e": "yarn node ./scripts/e2e.js",

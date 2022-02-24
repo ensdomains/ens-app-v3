@@ -1,15 +1,17 @@
 import colors from "ansi-colors";
+import { exec as _exec } from "child_process";
 import cliProgress from "cli-progress";
 import "dotenv/config";
 import fs from "fs-extra";
 import got from "got";
 import lz4 from "lz4";
 import progress from "progress-stream";
-import { pipeline } from "stream";
+import { PassThrough, pipeline } from "stream";
 import tar from "tar-fs";
 import { URL as URLClass } from "url";
 import { promisify } from "util";
 
+const exec = promisify(_exec);
 const __dirname = new URLClass(".", import.meta.url).pathname;
 
 const createProgressBar = (name, hasSpeed) =>
@@ -120,15 +122,26 @@ async function decompressToOutput() {
   });
 }
 
-async function downloadFile(path, extract = false) {
+async function downloadFile() {
   return new Promise(async (resolve, reject) => {
-    if (path.includes("archives") && !fs.existsSync(`${__dirname}/archives`))
-      await fs.mkdir("archives");
-    if (fs.existsSync(path))
-      await fs.rm(path, { recursive: true, force: true });
+    if (!fs.existsSync(`${__dirname}/archives`)) await fs.mkdir("archives");
+    if (fs.existsSync(outPath)) {
+      console.log("Data directory exists");
+      await exec(`rm -rf ${outPath}/*`).catch(() => {
+        console.log("Needs sudo to remove files");
+        return exec(`sudo rm -rf ${outPath}/*`);
+      });
+    }
 
     const input = got.stream(URL);
     const progressStream = progress({});
+    const archiveOutput = fs.createWriteStream(
+      localURL + ".tar.lz4",
+      streamOpts
+    );
+    const unarchiver = tar.extract(outPath);
+    const decoder = lz4.createDecoderStream();
+    const tunnel = new PassThrough();
 
     input.on("response", (response) => {
       progressBar.start(parseInt(response.headers["content-length"]), 0, {
@@ -147,20 +160,13 @@ async function downloadFile(path, extract = false) {
       });
     });
 
-    if (extract) {
-      const unarchiver = tar.extract(path);
-      const decoder = lz4.createDecoderStream();
+    tunnel.on("data", (chunk) => decoder.write(chunk));
+    tunnel.on("close", () => decoder.end());
 
-      await streamPipeline(input, progressStream, decoder, unarchiver).catch(
-        (err) => reject(err)
-      );
-    } else {
-      const output = fs.createWriteStream(path, streamOpts);
-
-      await streamPipeline(input, progressStream, output).catch((err) =>
-        reject(err)
-      );
-    }
+    await Promise.all([
+      streamPipeline(input, tunnel, progressStream, archiveOutput),
+      streamPipeline(decoder, unarchiver),
+    ]).catch((err) => reject(err));
 
     progressBar.stop();
     resolve();
@@ -190,11 +196,10 @@ switch (args[0]) {
       time = Date.now();
     } else {
       console.log("Archive already exists, skipping download");
+      await decompressToOutput().then(() =>
+        logTime("Decompressed and copied in")
+      );
     }
-    console.log("Copying data to /data...");
-    await decompressToOutput().then(() =>
-      logTime("Copied archive to /data in")
-    );
     break;
   }
   case "compress": {
