@@ -22,14 +22,26 @@ const ProfileSection = ({
   label,
   array,
   button,
+  supported,
+  type,
 }: {
   condition: any;
   label: string;
   array: Array<Record<"key" | "value", string>>;
   button: any;
+  supported?: Array<string>;
+  type?: "address" | "text";
 }) => {
   const { t } = useTranslation("profile");
   const Button = button;
+  const supportedArray = supported
+    ? array.filter((x) => supported.includes(x.key.toLowerCase()))
+    : array;
+  const unsupportedArray = supported
+    ? array
+        .filter((x) => !supported.includes(x.key.toLowerCase()))
+        .map((x) => ({ ...x, type }))
+    : [];
 
   return condition ? (
     <Box>
@@ -38,7 +50,7 @@ const ProfileSection = ({
       </Typography>
       <Box marginTop="2" marginLeft="-4">
         <Stack direction="horizontal" space="2" wrap>
-          {array.map(
+          {supportedArray.map(
             (item: {
               key: string;
               value: string;
@@ -47,6 +59,14 @@ const ProfileSection = ({
               <Button {...{ ...item, iconKey: item.key }} />
             )
           )}
+          {unsupportedArray.length > 0 &&
+            unsupportedArray.map(
+              (item: {
+                key: string;
+                value: string;
+                type?: "text" | "address";
+              }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />
+            )}
         </Stack>
       </Box>
     </Box>
@@ -69,9 +89,6 @@ export const ProfileDetails = ({
     ...textRecords
       .filter((x) => !supportedTexts.includes(x.key.toLowerCase()))
       .map((x) => ({ ...x, type: "text" })),
-    ...addresses
-      .filter((x) => !supportedAddresses.includes(x.key.toLowerCase()))
-      .map((x) => ({ ...x, type: "address" })),
   ];
 
   return (
@@ -140,12 +157,9 @@ export const ProfileDetails = ({
           />
           <ProfileSection
             label="addresses"
-            condition={
-              addresses &&
-              addresses.filter((x) =>
-                supportedAddresses.includes(x.key.toLowerCase())
-              ).length > 0
-            }
+            type="address"
+            condition={addresses && addresses.length > 0}
+            supported={supportedAddresses}
             array={addresses}
             button={AddressProfileButton}
           />

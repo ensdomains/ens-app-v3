@@ -1,3 +1,5 @@
+import { reverseRecordReactive } from "@app/apollo/reactiveVars";
+import { useGetReverseRecord } from "@app/hooks/useGetReverseRecord";
 import { ensNftImageUrl, shortenAddress } from "@app/utils/utils";
 import { Box, Stack, Typography, vars } from "@ensdomains/thorin";
 import { useTranslation } from "next-i18next";
@@ -20,6 +22,81 @@ const StyledNftBox = styled(Box)<{ $loading: boolean }>`
   }
 `;
 
+const HoverableSelfName = styled(Box)<{ name: string }>`
+  position: relative;
+  visibility: visible;
+  transition: all 0.15s ease-in-out 0.15s;
+  color: inherit;
+
+  &::before {
+    transition: all 0.15s ease-in-out 0.15s;
+    content: ${({ name }) => `"${name}"`};
+    visibility: hidden;
+    color: transparent;
+    position: absolute;
+    right: 0;
+  }
+
+  &:hover {
+    transition: all 0.15s ease-in-out;
+    visibility: hidden;
+    color: transparent;
+  }
+
+  &:hover::before {
+    transition: all 0.15s ease-in-out;
+    visibility: visible;
+    color: ${vars.colors.text};
+  }
+`;
+
+const AddressBox = ({
+  address,
+  isSelf,
+}: {
+  address: string;
+  isSelf: boolean;
+}) => {
+  const { t } = useTranslation("profile");
+
+  const { data: reverseRecordData } = useGetReverseRecord(
+    address,
+    !address || address.length <= 0 || isSelf
+  );
+
+  const primaryName = reverseRecordReactive()?.name;
+
+  const highlightName = isSelf || (reverseRecordData && reverseRecordData.name);
+
+  const TopElement = () => {
+    if (isSelf) {
+      if (primaryName && primaryName.length > 0) {
+        return (
+          <HoverableSelfName name={primaryName}>
+            {t("yourWallet")}
+          </HoverableSelfName>
+        );
+      }
+      return t("yourWallet");
+    }
+    return (reverseRecordData && reverseRecordData.name) || "No ENS Name";
+  };
+
+  return (
+    <Box display="flex" flexDirection="row" alignItems="center" gap="2">
+      <Box display="flex" flexDirection="column" alignItems="flex-end" gap="1">
+        <Typography color={highlightName ? "textSecondary" : "textTertiary"}>
+          <TopElement />
+        </Typography>
+        <Typography color={highlightName ? "textTertiary" : "textSecondary"}>
+          {shortenAddress(address)}
+        </Typography>
+      </Box>
+      <CopyButton value={address} />
+    </Box>
+  );
+};
+
 export const ProfileNftDetails = ({
   name,
   selfAddress,
@@ -34,7 +111,6 @@ export const ProfileNftDetails = ({
   domain: Record<any, any>;
 }) => {
   const [nftLoading, setNftLoading] = useState(true);
-  const { t } = useTranslation("profile");
   const { t: tc } = useTranslation("common");
 
   return (
@@ -84,34 +160,16 @@ export const ProfileNftDetails = ({
                     fontWeight="bold"
                   >
                     <Typography color="textTertiary">{item.label}</Typography>
-                    <Box
-                      display="flex"
-                      flexDirection="row"
-                      alignItems="center"
-                      gap="2"
-                    >
-                      <Box
-                        display="flex"
-                        flexDirection="column"
-                        alignItems="flex-end"
-                        gap="1"
-                      >
-                        {item.type === "address" &&
-                          item.value === selfAddress && (
-                            <Typography color="textTertiary">
-                              {t("yourWallet")}
-                            </Typography>
-                          )}
-                        <Typography color="textSecondary">
-                          {item.type === "address"
-                            ? shortenAddress(item.value)
-                            : item.value}
-                        </Typography>
-                      </Box>
-                      {item.type === "address" && (
-                        <CopyButton value={item.value} />
-                      )}
-                    </Box>
+                    {item.type === "address" ? (
+                      <AddressBox
+                        address={item.value}
+                        isSelf={item.value === selfAddress}
+                      />
+                    ) : (
+                      <Typography color="textSecondary">
+                        {item.value}
+                      </Typography>
+                    )}
                   </Box>
                   {inx !== arr.length - 1 && (
                     <Box height="0.25" backgroundColor="foregroundSecondary" />
