@@ -1,11 +1,11 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.65",
+  "version": "0.1.66",
   "workspaces": [
     "test-environment"
   ],
   "scripts": {
-    "dev": "next dev",
+    "dev": "NODE_NO_WARNINGS=1 next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
