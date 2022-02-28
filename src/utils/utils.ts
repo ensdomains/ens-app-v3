@@ -316,6 +316,16 @@ export function imageUrl(url: string, name: any, network: string) {
   console.warn("Unsupported avatar", network, name, url);
 }
 
+// eslint-disable-next-line consistent-return
+export function imageUrlUnknownRecord(name: string, network: string) {
+  const _network =
+    networkName[network?.toLowerCase() as keyof typeof networkName];
+  if (_network) {
+    return `https://metadata.ens.domains/${_network}/avatar/${name}`;
+  }
+  return "";
+}
+
 export function ensNftImageUrl(name: string, _network: string) {
   const network =
     networkName[_network?.toLowerCase() as keyof typeof networkName];
