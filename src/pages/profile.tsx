@@ -131,6 +131,7 @@ const BackButton = () => {
 
 const ProfilePage: NextPage = () => {
   const router = useRouter();
+  const { t } = useTranslation("profile");
   const breakpoints = useBreakpoint();
   const _name = router.query.name as string;
   const isSelf = _name === "me";
@@ -216,14 +217,14 @@ const ProfilePage: NextPage = () => {
             role="button"
             onClick={() => setTab("profile")}
           >
-            Profile
+            {t("tabs.profile.name")}
           </TabButton>
           <TabButton
             $active={tab === "subdomains"}
             role="button"
             onClick={() => setTab("subdomains")}
           >
-            Subdomains
+            {t("tabs.subdomains.name")}
           </TabButton>
         </TabButtonWrapper>
         <GridItem $area="nft-details">

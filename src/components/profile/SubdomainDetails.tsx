@@ -7,6 +7,7 @@ import {
   Typography,
   vars,
 } from "@ensdomains/thorin";
+import { useTranslation } from "next-i18next";
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import styled from "styled-components";
@@ -79,6 +80,8 @@ export const SubdomainDetails = ({
   network: string;
   loading: boolean;
 }) => {
+  const { t } = useTranslation("profile");
+
   return (
     <>
       {!loading && subdomains.length > 0 ? (
@@ -92,7 +95,7 @@ export const SubdomainDetails = ({
           justifyContent="center"
           alignItems="center"
         >
-          {loading ? "Loading subdomains" : "No subdomains have been added."}
+          {loading ? t("tabs.subdomains.loading") : t("tabs.subdomains.empty")}
         </Box>
       )}
     </>
