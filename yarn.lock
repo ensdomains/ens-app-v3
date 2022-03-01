@@ -4023,6 +4023,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@openzeppelin/contracts@npm:^4.5.0":
+  version: 4.5.0
+  resolution: "@openzeppelin/contracts@npm:4.5.0"
+  checksum: 1c9c5dff041905771d2a83ac29c64dbf0b48603de43f74a34fb1358813d7c7bf259efe2f64e2112b410c5cca7a0b41aaedd882368be5f01a6d50a3ee0740f962
+  languageName: node
+  linkType: hard
+
 "@polka/url@npm:^1.0.0-next.20":
   version: 1.0.0-next.21
   resolution: "@polka/url@npm:1.0.0-next.21"
@@ -9533,6 +9540,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"commander@npm:^8.1.0":
+  version: 8.3.0
+  resolution: "commander@npm:8.3.0"
+  checksum: 0f82321821fc27b83bd409510bb9deeebcfa799ff0bf5d102128b500b7af22872c0c92cb6a0ebc5a4cf19c6b550fba9cedfa7329d18c6442a625f851377bacf0
+  languageName: node
+  linkType: hard
+
 "common-ancestor-path@npm:^1.0.1":
   version: 1.0.1
   resolution: "common-ancestor-path@npm:1.0.1"
@@ -11361,6 +11375,18 @@ __metadata:
   languageName: unknown
   linkType: soft
 
+"ens-contracts@github:ensdomains/ens-contracts":
+  version: 0.0.8
+  resolution: "ens-contracts@https://github.com/ensdomains/ens-contracts.git#commit=6f273b861e759e17fa24e5e66b174de321756e93"
+  dependencies:
+    "@ensdomains/buffer": ^0.0.13
+    "@ensdomains/solsha1": 0.0.3
+    "@openzeppelin/contracts": ^4.1.0
+    dns-packet: ^5.3.0
+  checksum: d24da445012393f61553c42cdf6cc7f74947e94e86ff2f2aca92a7902b13c72520d57ef4f28776e960a302079f7c6b7e19950f80586c60839dc2a519aba61e48
+  languageName: node
+  linkType: hard
+
 "entities@npm:^2.0.0":
   version: 2.2.0
   resolution: "entities@npm:2.2.0"
@@ -12949,7 +12975,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.1.4":
+"ethers@npm:^5.1.4, ethers@npm:^5.5.4":
   version: 5.5.4
   resolution: "ethers@npm:5.5.4"
   dependencies:
@@ -23777,6 +23803,23 @@ resolve@^2.0.0-next.3:
   languageName: node
   linkType: hard
 
+"solc@npm:^0.8.12":
+  version: 0.8.12
+  resolution: "solc@npm:0.8.12"
+  dependencies:
+    command-exists: ^1.2.8
+    commander: ^8.1.0
+    follow-redirects: ^1.12.1
+    js-sha3: 0.8.0
+    memorystream: ^0.3.1
+    semver: ^5.5.0
+    tmp: 0.0.33
+  bin:
+    solcjs: solc.js
+  checksum: 14e0caad3908860a67abe6bb016e50c87484184681287b136783ebbbe661d1651d678ee0365d51c6d252a129349d61b3805e2e6d02834852e049257f62f662b5
+  languageName: node
+  linkType: hard
+
 "solium-plugin-security@npm:0.1.1":
   version: 0.1.1
   resolution: "solium-plugin-security@npm:0.1.1"
@@ -24993,6 +25036,8 @@ resolve@^2.0.0-next.3:
   version: 0.0.0-use.local
   resolution: "test-environment@workspace:test-environment"
   dependencies:
+    "@ensdomains/buffer": ^0.0.13
+    "@openzeppelin/contracts": ^4.5.0
     "@types/cli-progress": ^3
     "@types/progress-stream": ^2
     "@types/tar-fs": ^2
@@ -25001,11 +25046,14 @@ resolve@^2.0.0-next.3:
     decompress-zip: ^0.3.3
     docker-compose: ^0.23.17
     dotenv: ^16.0.0
+    ens-contracts: "github:ensdomains/ens-contracts"
+    ethers: ^5.5.4
     fs-extra: ^10.0.0
     ganache: ^7.0.2
     got: ^12.0.1
     lz4: ^0.6.5
     progress-stream: ^2.0.0
+    solc: ^0.8.12
     tar-fs: ^2.1.1
     wait-on: ^6.0.1
   languageName: unknown

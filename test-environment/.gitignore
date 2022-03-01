@@ -9,3 +9,5 @@
 !start.mjs
 !scripts/
 !scripts/*
+!deployments/
+!deployments/*

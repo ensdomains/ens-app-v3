@@ -1,5 +1,6 @@
 import "dotenv/config";
 import ganache from "ganache";
+// import deployWrapper from "./deployments/wrapper.js";
 
 const server = ganache.server({
   chain: {
@@ -18,4 +19,5 @@ server.listen(8545, "0.0.0.0", (err) => {
   if (err) throw new Error(err.message);
 
   console.log("Ganache listening on port 8545");
+  // deployWrapper(server);
 });

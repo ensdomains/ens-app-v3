@@ -1119,7 +1119,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@openzeppelin/contracts",
-        "npm:4.4.2"
+        "npm:4.5.0"
       ],
       [
         "@polka/url",
@@ -3482,6 +3482,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.3.6"
       ],
       [
+        "ens-contracts",
+        "https://github.com/ensdomains/ens-contracts.git#commit=6f273b861e759e17fa24e5e66b174de321756e93"
+      ],
+      [
         "entities",
         "npm:2.2.0"
       ],
@@ -3999,7 +4003,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "follow-redirects",
-        "virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.4"
+        "virtual:f57bb93e361f2ec655d3c7a580ac0d897e80a4ceb361062d1e4ab84c1ac2129aad341ab7c192e2a39eadfd988c4b8d6815f8240290f820f74f823ba0474068c0#npm:1.14.7"
       ],
       [
         "for-each",
@@ -6907,7 +6911,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "solc",
-        "npm:0.4.26"
+        "npm:0.8.12"
       ],
       [
         "solium",
@@ -13949,6 +13953,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@openzeppelin/contracts", "npm:4.4.2"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:4.5.0", {
+          "packageLocation": "./.yarn/cache/@openzeppelin-contracts-npm-4.5.0-c6f6b2c463-1c9c5dff04.zip/node_modules/@openzeppelin/contracts/",
+          "packageDependencies": [
+            ["@openzeppelin/contracts", "npm:4.5.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["@polka/url", [
@@ -20741,6 +20752,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["commander", "npm:7.2.0"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:8.3.0", {
+          "packageLocation": "./.yarn/cache/commander-npm-8.3.0-c0d18c66d5-0f82321821.zip/node_modules/commander/",
+          "packageDependencies": [
+            ["commander", "npm:8.3.0"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["common-ancestor-path", [
@@ -22857,6 +22875,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["zen-observable-ts", "npm:1.2.3"]
           ],
           "linkType": "SOFT",
+        }]
+      ]],
+      ["ens-contracts", [
+        ["https://github.com/ensdomains/ens-contracts.git#commit=6f273b861e759e17fa24e5e66b174de321756e93", {
+          "packageLocation": "./.yarn/cache/ens-contracts-https-b6287619fe-d24da44501.zip/node_modules/ens-contracts/",
+          "packageDependencies": [
+            ["ens-contracts", "https://github.com/ensdomains/ens-contracts.git#commit=6f273b861e759e17fa24e5e66b174de321756e93"],
+            ["@ensdomains/buffer", "npm:0.0.13"],
+            ["@ensdomains/solsha1", "npm:0.0.3"],
+            ["@openzeppelin/contracts", "npm:4.4.2"],
+            ["dns-packet", "npm:5.3.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["entities", [
@@ -36539,6 +36570,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["tmp", "npm:0.0.33"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:0.8.12", {
+          "packageLocation": "./.yarn/cache/solc-npm-0.8.12-281d9136c8-14e0caad39.zip/node_modules/solc/",
+          "packageDependencies": [
+            ["solc", "npm:0.8.12"],
+            ["command-exists", "npm:1.2.9"],
+            ["commander", "npm:8.3.0"],
+            ["follow-redirects", "virtual:f57bb93e361f2ec655d3c7a580ac0d897e80a4ceb361062d1e4ab84c1ac2129aad341ab7c192e2a39eadfd988c4b8d6815f8240290f820f74f823ba0474068c0#npm:1.14.7"],
+            ["js-sha3", "npm:0.8.0"],
+            ["memorystream", "npm:0.3.1"],
+            ["semver", "npm:5.7.1"],
+            ["tmp", "npm:0.0.33"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["solium", [
@@ -37907,6 +37952,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./test-environment/",
           "packageDependencies": [
             ["test-environment", "workspace:test-environment"],
+            ["@ensdomains/buffer", "npm:0.0.13"],
+            ["@openzeppelin/contracts", "npm:4.5.0"],
             ["@types/cli-progress", "npm:3.9.2"],
             ["@types/progress-stream", "npm:2.0.2"],
             ["@types/tar-fs", "npm:2.0.1"],
@@ -37915,11 +37962,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["decompress-zip", "npm:0.3.3"],
             ["docker-compose", "npm:0.23.17"],
             ["dotenv", "npm:16.0.0"],
+            ["ens-contracts", "https://github.com/ensdomains/ens-contracts.git#commit=6f273b861e759e17fa24e5e66b174de321756e93"],
+            ["ethers", "npm:5.5.4"],
             ["fs-extra", "npm:10.0.0"],
             ["ganache", "npm:7.0.2"],
             ["got", "npm:12.0.1"],
             ["lz4", "npm:0.6.5"],
             ["progress-stream", "npm:2.0.0"],
+            ["solc", "npm:0.8.12"],
             ["tar-fs", "npm:2.1.1"],
             ["wait-on", "npm:6.0.1"]
           ],
