@@ -2208,9 +2208,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
+"@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v3%40workspace%3A.":
   version: 0.1.0
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v3%40workspace%3A."
   dependencies:
     "@vanilla-extract/css": ^1.6.8
     "@vanilla-extract/css-utils": ^0.1.2
@@ -2258,9 +2258,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ui@patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch::locator=ens-app-v2%40workspace%3A.":
+"@ensdomains/ui@patch:@ensdomains/ui@3.3.14#./patches/@ensdomains/ui.patch::locator=ens-app-v3%40workspace%3A.":
   version: 3.3.14
-  resolution: "@ensdomains/ui@patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ui@patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v3%40workspace%3A."
   dependencies:
     "@0xproject/utils": ^2.0.2
     "@babel/plugin-proposal-class-properties": ^7.8.3
@@ -9768,9 +9768,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ens-app-v2@workspace:.":
+"ens-app-v3@workspace:.":
   version: 0.0.0-use.local
-  resolution: "ens-app-v2@workspace:."
+  resolution: "ens-app-v3@workspace:."
   dependencies:
     "@apollo/client": ^3.5.7
     "@ensdomains/address-encoder": ^0.2.16
@@ -16615,9 +16615,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multiformats@patch:multiformats@9.6.4#./patches/multiformats.patch::locator=ens-app-v2%40workspace%3A.":
+"multiformats@patch:multiformats@9.6.4#./patches/multiformats.patch::locator=ens-app-v3%40workspace%3A.":
   version: 9.6.4
-  resolution: "multiformats@patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."
+  resolution: "multiformats@patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v3%40workspace%3A."
   checksum: e10130e5df59c60e95fe1a38816e4ce81f59c52572b337dd6397f899f535c799c7727afe8d6c840a480c9c5df55a4428d6ba0fb25882021d044a395a5cb2672c
   languageName: node
   linkType: hard
