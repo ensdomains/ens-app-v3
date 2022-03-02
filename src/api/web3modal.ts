@@ -1,106 +1,106 @@
-import { getNetwork, getNetworkId, isReadOnly } from "@ensdomains/ui";
-import { setup as setupENS } from "../apollo/mutations/ens";
+import { getNetwork, getNetworkId, isReadOnly } from '@ensdomains/ui'
+import { setup as setupENS } from '../apollo/mutations/ens'
 import {
   isReadOnlyReactive,
   networkIdReactive,
   networkReactive,
   web3ProviderReactive,
-} from "../apollo/reactiveVars";
+} from '../apollo/reactiveVars'
 
 const INFURA_ID =
-  typeof window !== "undefined" && window.location.host === "app.ens.domains"
-    ? "90f210707d3c450f847659dc9a3436ea"
-    : "58a380d3ecd545b2b5b3dad5d2b18bf0";
+  typeof window !== 'undefined' && window.location.host === 'app.ens.domains'
+    ? '90f210707d3c450f847659dc9a3436ea'
+    : '58a380d3ecd545b2b5b3dad5d2b18bf0'
 
-const PORTIS_ID = "57e5d6ca-e408-4925-99c4-e7da3bdb8bf5";
+const PORTIS_ID = '57e5d6ca-e408-4925-99c4-e7da3bdb8bf5'
 
-let provider: any;
+let provider: any
 const option = {
-  network: "mainnet", // optional
+  network: 'mainnet', // optional
   cacheProvider: true, // optional
   providerOptions: {
     walletconnect: {
-      package: () => import("@walletconnect/web3-provider"),
+      package: () => import('@walletconnect/web3-provider'),
       packageFactory: true,
       options: {
         infuraId: INFURA_ID,
       },
     },
     walletlink: {
-      package: () => import("walletlink"),
+      package: () => import('walletlink'),
       packageFactory: true,
       options: {
-        appName: "Ethereum name service",
+        appName: 'Ethereum name service',
         infuraId: INFURA_ID,
       },
     },
     mewconnect: {
-      package: () => import("@myetherwallet/mewconnect-web-client"),
+      package: () => import('@myetherwallet/mewconnect-web-client'),
       display: {
-        color: "#05c0a5",
+        color: '#05c0a5',
       },
       packageFactory: true,
       options: {
         infuraId: INFURA_ID,
-        description: " ",
+        description: ' ',
       },
     },
     portis: {
-      package: () => import("@portis/web3"),
+      package: () => import('@portis/web3'),
       packageFactory: true,
       options: {
         id: PORTIS_ID,
       },
     },
     torus: {
-      package: () => import("@toruslabs/torus-embed"),
+      package: () => import('@toruslabs/torus-embed'),
       packageFactory: true,
     },
   },
-};
+}
 
-let web3Modal: any;
+let web3Modal: any
 export const connect = async () => {
   try {
-    const Web3Modal = (await import("@ensdomains/web3modal")).default;
+    const Web3Modal = (await import('@ensdomains/web3modal')).default
 
-    web3Modal = new Web3Modal(option);
-    provider = await web3Modal.connect();
+    web3Modal = new Web3Modal(option)
+    provider = await web3Modal.connect()
 
     await setupENS({
       customProvider: provider,
       reloadOnAccountsChange: false,
       enforceReload: true,
-    });
-    return provider;
+    })
+    return provider
   } catch (e) {
-    if (e !== "Modal closed by user") {
-      throw e;
+    if (e !== 'Modal closed by user') {
+      throw e
     }
   }
-};
+}
 
 export const disconnect = async () => {
   if (web3Modal) {
-    await web3Modal.clearCachedProvider();
+    await web3Modal.clearCachedProvider()
   }
 
   // Disconnect wallet connect provider
   if (provider && provider.disconnect) {
-    provider.disconnect();
+    provider.disconnect()
   }
   await setupENS({
     reloadOnAccountsChange: false,
     enforceReadOnly: true,
     enforceReload: false,
-  });
+  })
 
-  isReadOnlyReactive(isReadOnly());
-  web3ProviderReactive(null);
-  networkIdReactive(await getNetworkId());
-  networkReactive(await getNetwork());
-};
+  isReadOnlyReactive(isReadOnly())
+  web3ProviderReactive(null)
+  networkIdReactive(await getNetworkId())
+  networkReactive(await getNetwork())
+}
 
 export const setWeb3Modal = (x: any) => {
-  web3Modal = x;
-};
+  web3Modal = x
+}

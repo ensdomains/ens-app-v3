@@ -1,8 +1,8 @@
 export default [
-  "Open",
-  "Auction",
-  "Owned",
-  "Forbidden",
-  "Reveal",
-  "NotYetAvailable",
-];
+  'Open',
+  'Auction',
+  'Owned',
+  'Forbidden',
+  'Reveal',
+  'NotYetAvailable',
+]

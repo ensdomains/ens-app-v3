@@ -1,9 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
 export const useInitial = () => {
-  const [initial, setInitial] = useState(true);
+  const [initial, setInitial] = useState(true)
 
-  useEffect(() => setInitial(false), []);
+  useEffect(() => setInitial(false), [])
 
-  return initial;
-};
+  return initial
+}

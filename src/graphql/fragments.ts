@@ -1,4 +1,4 @@
-import { gql } from "@apollo/client";
+import { gql } from '@apollo/client'
 
 export const NodeFields = gql`
   fragment NodeFields on Node {
@@ -13,7 +13,7 @@ export const NodeFields = gql`
     content
     contentType
   }
-`;
+`
 
 export const SubDomainStateFields = gql`
   fragment SubDomainStateFields on SubDomain {
@@ -27,4 +27,4 @@ export const SubDomainStateFields = gql`
     available
     state
   }
-`;
+`

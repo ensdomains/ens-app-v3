@@ -2,21 +2,21 @@
 /* eslint-disable array-callback-return */
 /* eslint-disable no-param-reassign */
 /* eslint-disable consistent-return */
-import type { ApolloClient, NormalizedCacheObject } from "@apollo/client";
-import modeNames from "@app/api/modes";
-import { sendHelper, sendHelperArray } from "@app/api/resolverUtils";
-import getENS, { getRegistrar } from "@app/apollo/mutations/ens";
-import { isENSReadyReactive, namesReactive } from "@app/apollo/reactiveVars";
-import COIN_LIST_KEYS from "@app/constants/coinList";
-import TEXT_RECORD_KEYS from "@app/constants/textRecords.json";
-import { GET_REGISTRANT_FROM_SUBGRAPH } from "@app/graphql/queries";
-import { isEmptyAddress } from "@app/utils/records";
+import type { ApolloClient, NormalizedCacheObject } from '@apollo/client'
+import modeNames from '@app/api/modes'
+import { sendHelper, sendHelperArray } from '@app/api/resolverUtils'
+import getENS, { getRegistrar } from '@app/apollo/mutations/ens'
+import { isENSReadyReactive, namesReactive } from '@app/apollo/reactiveVars'
+import COIN_LIST_KEYS from '@app/constants/coinList'
+import TEXT_RECORD_KEYS from '@app/constants/textRecords.json'
+import { GET_REGISTRANT_FROM_SUBGRAPH } from '@app/graphql/queries'
+import { isEmptyAddress } from '@app/utils/records'
 import {
   emptyAddress,
   MAINNET_DNSREGISTRAR_ADDRESS,
   ROPSTEN_DNSREGISTRAR_ADDRESS,
-} from "@app/utils/utils";
-import { formatsByName } from "@ensdomains/address-encoder";
+} from '@app/utils/utils'
+import { formatsByName } from '@ensdomains/address-encoder'
 import {
   encodeContenthash,
   getBlock,
@@ -30,162 +30,156 @@ import {
   isDecrypted,
   labelhash,
   utils,
-} from "@ensdomains/ui"; // eslint-disable-next-line import/no-cycle
-import isEqual from "lodash/isEqual";
-import getReverseRecord from "./getReverseRecord";
+} from '@ensdomains/ui' // eslint-disable-next-line import/no-cycle
+import isEqual from 'lodash/isEqual'
+import getReverseRecord from './getReverseRecord'
 
 const defaults = {
   names: [],
-};
+}
 
 async function delay(ms: number) {
-  return new Promise((resolve) => setTimeout(resolve, ms));
+  return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
 function setState(node: Record<string, any>) {
-  let { state } = node;
+  let { state } = node
   if (node.isDNSRegistrar) {
-    return node;
+    return node
   }
   if (node.available) {
-    state = "Open";
+    state = 'Open'
   } else {
-    state = "Owned";
+    state = 'Owned'
   }
   return {
     ...node,
     state,
-  };
+  }
 }
 
 export const handleSingleTransaction = async (
   name: any,
   record: any,
-  resolverInstance: any
+  resolverInstance: any,
 ) => {
-  const namehash = getNamehash(name);
+  const namehash = getNamehash(name)
 
-  if (record.contractFn === "setContenthash") {
-    let value;
+  if (record.contractFn === 'setContenthash') {
+    let value
     if (isEmptyAddress(record.value)) {
-      value = emptyAddress;
+      value = emptyAddress
     } else {
-      value = encodeContenthash(record.value)?.encoded;
+      value = encodeContenthash(record.value)?.encoded
     }
 
-    const contentTx = await resolverInstance[record.contractFn](
-      namehash,
-      value
-    );
-    return sendHelper(contentTx);
+    const contentTx = await resolverInstance[record.contractFn](namehash, value)
+    return sendHelper(contentTx)
   }
 
-  if (record.contractFn === "setText") {
+  if (record.contractFn === 'setText') {
     const textRecordTx = await resolverInstance[record.contractFn](
       namehash,
       record.key,
-      record.value
-    );
-    return sendHelper(textRecordTx);
+      record.value,
+    )
+    return sendHelper(textRecordTx)
   }
 
-  if (record.contractFn === "setAddr(bytes32,uint256,bytes)") {
-    const coinRecord = record;
-    const { decoder, coinType } = formatsByName[coinRecord.key];
-    let addressAsBytes;
+  if (record.contractFn === 'setAddr(bytes32,uint256,bytes)') {
+    const coinRecord = record
+    const { decoder, coinType } = formatsByName[coinRecord.key]
+    let addressAsBytes
 
     // use 0x00... for ETH because an empty string throws
-    if (coinRecord.key === "ETH" && coinRecord.value === "") {
-      coinRecord.value = emptyAddress;
+    if (coinRecord.key === 'ETH' && coinRecord.value === '') {
+      coinRecord.value = emptyAddress
     }
 
-    if (!coinRecord.value || coinRecord.value === "") {
-      addressAsBytes = Buffer.from("");
+    if (!coinRecord.value || coinRecord.value === '') {
+      addressAsBytes = Buffer.from('')
     } else {
-      addressAsBytes = decoder(coinRecord.value);
+      addressAsBytes = decoder(coinRecord.value)
     }
 
     const coinRecordTx = await resolverInstance[record.contractFn](
       namehash,
       coinType,
-      addressAsBytes
-    );
+      addressAsBytes,
+    )
 
-    return sendHelper(coinRecordTx);
+    return sendHelper(coinRecordTx)
   }
 
-  console.error("Single transaction error");
-};
+  console.error('Single transaction error')
+}
 
 export const handleMultipleTransactions = async (
   name: any,
   records: any,
-  resolverInstance: any
+  resolverInstance: any,
 ) => {
   try {
-    const resolver = resolverInstance.interface;
-    const namehash = getNamehash(name);
+    const resolver = resolverInstance.interface
+    const namehash = getNamehash(name)
 
     const transactionArray = records.map((record: any) => {
-      if (record.contractFn === "setContenthash") {
-        let value;
+      if (record.contractFn === 'setContenthash') {
+        let value
         if (isEmptyAddress(record.value)) {
-          value = emptyAddress;
+          value = emptyAddress
         } else {
-          value = encodeContenthash(record.value)?.encoded;
+          value = encodeContenthash(record.value)?.encoded
         }
-        return resolver.encodeFunctionData(record.contractFn, [
-          namehash,
-          value,
-        ]);
+        return resolver.encodeFunctionData(record.contractFn, [namehash, value])
       }
 
-      if (record.contractFn === "setText") {
+      if (record.contractFn === 'setText') {
         return resolver.encodeFunctionData(record.contractFn, [
           namehash,
           record.key,
           record.value,
-        ]);
+        ])
       }
 
-      if (record.contractFn === "setAddr(bytes32,uint256,bytes)") {
-        const { decoder, coinType } = formatsByName[record.key];
-        let addressAsBytes;
+      if (record.contractFn === 'setAddr(bytes32,uint256,bytes)') {
+        const { decoder, coinType } = formatsByName[record.key]
+        let addressAsBytes
         // use 0x00... for ETH because an empty string throws
-        if (record.key === "ETH" && record.value === "") {
-          record.value = emptyAddress;
+        if (record.key === 'ETH' && record.value === '') {
+          record.value = emptyAddress
         }
-        if (!record.value || record.value === "") {
-          addressAsBytes = Buffer.from("");
+        if (!record.value || record.value === '') {
+          addressAsBytes = Buffer.from('')
         } else {
-          addressAsBytes = decoder(record.value);
+          addressAsBytes = decoder(record.value)
         }
         return resolver.encodeFunctionData(record.contractFn, [
           namehash,
           coinType,
           addressAsBytes,
-        ]);
+        ])
       }
-    });
+    })
 
     // flatten textrecords and addresses and remove undefined
     // transactionArray.flat().filter(bytes => bytes)
     // add them all together into one transaction
-    const tx1 = await resolverInstance.multicall(transactionArray);
-    return await sendHelper(tx1);
+    const tx1 = await resolverInstance.multicall(transactionArray)
+    return await sendHelper(tx1)
   } catch (e) {
-    console.log("error creating transaction array", e);
+    console.log('error creating transaction array', e)
   }
-};
+}
 
 async function getRegistrarEntry(name: any) {
-  const registrar = getRegistrar();
-  const nameArray = name.split(".");
-  if (nameArray.length > 3 || nameArray[1] !== "eth") {
-    return {};
+  const registrar = getRegistrar()
+  const nameArray = name.split('.')
+  if (nameArray.length > 3 || nameArray[1] !== 'eth') {
+    return {}
   }
 
-  const entry = await registrar.getEntry(nameArray[0]);
+  const entry = await registrar.getEntry(nameArray[0])
   const {
     registrant,
     deedOwner,
@@ -201,7 +195,7 @@ async function getRegistrarEntry(name: any) {
     expiryTime,
     isNewRegistrar,
     available,
-  } = entry;
+  } = entry
 
   return {
     name: `${name}`,
@@ -220,81 +214,81 @@ async function getRegistrarEntry(name: any) {
     isNewRegistrar: !!isNewRegistrar,
     available,
     expiryTime: expiryTime || null,
-  };
+  }
 }
 
 async function getParent(name: any) {
-  const ens = getENS();
-  const nameArray = name.split(".");
+  const ens = getENS()
+  const nameArray = name.split('.')
   if (nameArray.length < 1) {
-    return [null, null];
+    return [null, null]
   }
-  nameArray.shift();
-  const parent = nameArray.join(".");
-  const parentOwner = await ens.getOwner(parent);
-  return [parent, parentOwner];
+  nameArray.shift()
+  const parent = nameArray.join('.')
+  const parentOwner = await ens.getOwner(parent)
+  return [parent, parentOwner]
 }
 
 async function getRegistrant(
   name: any,
-  client: ApolloClient<NormalizedCacheObject>
+  client: ApolloClient<NormalizedCacheObject>,
 ) {
   try {
     const { data, error } = await client.query({
       query: GET_REGISTRANT_FROM_SUBGRAPH,
-      fetchPolicy: "network-only",
-      variables: { id: labelhash(name.split(".")[0]) },
+      fetchPolicy: 'network-only',
+      variables: { id: labelhash(name.split('.')[0]) },
       context: {
         queryDeduplication: false,
       },
-    });
+    })
     if (!data || !data.registration) {
-      return null;
+      return null
     }
     if (error) {
-      console.log("Error getting registrant from subgraph", error);
-      return null;
+      console.log('Error getting registrant from subgraph', error)
+      return null
     }
 
-    return utils.getAddress(data.registration.registrant.id);
+    return utils.getAddress(data.registration.registrant.id)
   } catch (e) {
-    console.log("GraphQL error from getRegistrant", e);
-    return null;
+    console.log('GraphQL error from getRegistrant', e)
+    return null
   }
 }
 
 async function setDNSSECTldOwner(ens: any, tld: any, networkId: any) {
-  const tldowner = (await ens.getOwner(tld)).toLocaleLowerCase();
-  if (parseInt(tldowner, 16) !== 0) return tldowner;
+  const tldowner = (await ens.getOwner(tld)).toLocaleLowerCase()
+  if (parseInt(tldowner, 16) !== 0) return tldowner
   switch (networkId) {
     case 1:
-      return MAINNET_DNSREGISTRAR_ADDRESS;
+      return MAINNET_DNSREGISTRAR_ADDRESS
     case 3:
-      return ROPSTEN_DNSREGISTRAR_ADDRESS;
+      return ROPSTEN_DNSREGISTRAR_ADDRESS
     default:
-      return emptyAddress;
+      return emptyAddress
   }
 }
 
 async function getDNSEntryDetails(name: any) {
-  const ens = getENS();
-  const registrar = getRegistrar();
-  const nameArray = name.split(".");
-  const networkId = await getNetworkId();
-  if (nameArray.length !== 2 || nameArray[1] === "eth") return {};
+  const ens = getENS()
+  const registrar = getRegistrar()
+  const nameArray = name.split('.')
+  const networkId = await getNetworkId()
+  if (nameArray.length !== 2 || nameArray[1] === 'eth') return {}
 
-  const tld = nameArray[1];
-  let owner;
-  const tldowner = await setDNSSECTldOwner(ens, tld, networkId);
+  const tld = nameArray[1]
+  let owner
+  const tldowner = await setDNSSECTldOwner(ens, tld, networkId)
   try {
-    owner = (await ens.getOwner(name)).toLocaleLowerCase();
+    owner = (await ens.getOwner(name)).toLocaleLowerCase()
   } catch {
-    return {};
+    return {}
   }
 
-  const isDNSRegistrarSupported = await registrar.isDNSRegistrar(tldowner);
+  const isDNSRegistrarSupported = await registrar.isDNSRegistrar(tldowner)
   if (isDNSRegistrarSupported && tldowner !== emptyAddress) {
-    const dnsEntry = await registrar.getDNSEntry(name, tldowner, owner);
+    const dnsEntry = await registrar.getDNSEntry(name, tldowner, owner)
     return {
       isDNSRegistrar: true,
       dnsOwner: dnsEntry.claim?.result
@@ -303,80 +297,80 @@ async function getDNSEntryDetails(name: any) {
       state: dnsEntry.state,
       stateError: dnsEntry.stateError,
       parentOwner: tldowner,
-    };
+    }
   }
 }
 
 async function getTestEntry(name: any) {
-  const registrar = getRegistrar();
-  const nameArray = name.split(".");
-  if (nameArray.length < 3 && nameArray[1] === "test") {
-    const expiryTime = await registrar.expiryTimes(nameArray[0]);
-    if (expiryTime) return { expiryTime };
+  const registrar = getRegistrar()
+  const nameArray = name.split('.')
+  if (nameArray.length < 3 && nameArray[1] === 'test') {
+    const expiryTime = await registrar.expiryTimes(nameArray[0])
+    if (expiryTime) return { expiryTime }
   }
-  return {};
+  return {}
 }
 
 function adjustForShortNames(node: any) {
-  const nameArray = node.name.split(".");
-  const { label, parent } = node;
+  const nameArray = node.name.split('.')
+  const { label, parent } = node
 
   // return original node if is subdomain or not eth
-  if (nameArray.length > 2 || parent !== "eth" || label.length > 6) return node;
+  if (nameArray.length > 2 || parent !== 'eth' || label.length > 6) return node
 
   // if the auctions are over
   if (new Date() > new Date(1570924800000)) {
-    return node;
+    return node
   }
 
-  let auctionEnds: Date;
-  let onAuction = true;
+  let auctionEnds: Date
+  let onAuction = true
 
   if (label.length >= 5) {
-    auctionEnds = new Date(1569715200000); // 29 September
+    auctionEnds = new Date(1569715200000) // 29 September
   } else if (label.length >= 4) {
-    auctionEnds = new Date(1570320000000); // 6 October
+    auctionEnds = new Date(1570320000000) // 6 October
   } else if (label.length >= 3) {
-    auctionEnds = new Date(1570924800000); // 13 October
+    auctionEnds = new Date(1570924800000) // 13 October
   } else {
-    return node;
+    return node
   }
 
   if (new Date() > auctionEnds) {
-    onAuction = false;
+    onAuction = false
   }
 
   return {
     ...node,
     auctionEnds,
     onAuction,
-    state: onAuction ? "Auction" : node.state,
-  };
+    state: onAuction ? 'Auction' : node.state,
+  }
 }
 
 const resolvers = {
   Query: {
     publicResolver: async () => {
       try {
-        const ens = getENS();
-        const resolver = await ens.getAddress("resolver.eth");
+        const ens = getENS()
+        const resolver = await ens.getAddress('resolver.eth')
         return {
           address: resolver,
-          __typename: "Resolver",
-        };
+          __typename: 'Resolver',
+        }
       } catch (e) {
-        console.log("error getting public resolver", e);
+        console.log('error getting public resolver', e)
       }
     },
     getOwner: (_: any, { name }: Record<string, any>) => {
-      const ens = getENS();
-      return ens.getOwner(name);
+      const ens = getENS()
+      return ens.getOwner(name)
     },
 
     singleName: async (
       _: any,
       { name }: Record<string, any>,
-      client: ApolloClient<NormalizedCacheObject>
+      client: ApolloClient<NormalizedCacheObject>,
     ) => {
       try {
         if (!isENSReadyReactive() || !name)
@@ -406,10 +400,10 @@ const resolvers = {
             deedOwner: null,
             registrant: null,
             auctionEnds: null,
-          };
+          }
 
-        const ens = getENS();
-        const decrypted = isDecrypted(name);
+        const ens = getENS()
+        const decrypted = isDecrypted(name)
 
         const node = {
           name: null,
@@ -437,7 +431,7 @@ const resolvers = {
           deedOwner: null,
           registrant: null,
           auctionEnds: null, // remove when auction is over
-        };
+        }
 
         const dataSources = [
           getRegistrarEntry(name),
@@ -446,7 +440,7 @@ const resolvers = {
           getDNSEntryDetails(name),
           getTestEntry(name),
           getRegistrant(name, client),
-        ];
+        ]
 
         const [
           registrarEntry,
@@ -455,9 +449,9 @@ const resolvers = {
           dnsEntry,
           testEntry,
           registrant,
-        ] = await Promise.all(dataSources);
+        ] = await Promise.all(dataSources)
 
-        const names = namesReactive();
+        const names = namesReactive()
 
         let detailedNode = adjustForShortNames({
           ...node,
@@ -470,10 +464,10 @@ const resolvers = {
             (registrarEntry.registrant ? registrarEntry.registrant : null),
           parent,
           parentOwner,
-          __typename: "Node",
-        });
+          __typename: 'Node',
+        })
 
-        detailedNode = setState(detailedNode);
+        detailedNode = setState(detailedNode)
         // Override parentOwner for dns if exists
         if (
           dnsEntry &&
@@ -481,310 +475,310 @@ const resolvers = {
           parseInt(dnsEntry.parentOwner, 16) !== 0 &&
           parseInt(detailedNode.parentOwner, 16) === 0
         ) {
-          detailedNode.parentOwner = dnsEntry.parentOwner;
+          detailedNode.parentOwner = dnsEntry.parentOwner
         }
 
-        namesReactive([...names, detailedNode]);
+        namesReactive([...names, detailedNode])
 
-        return detailedNode;
+        return detailedNode
       } catch (e) {
-        console.log("Error in Single Name", e);
-        throw e;
+        console.log('Error in Single Name', e)
+        throw e
       }
     },
     getResolverMigrationInfo: async (
       _: any,
-      { name, resolver }: Record<string, any>
+      { name, resolver }: Record<string, any>,
     ) => {
       /* TODO add hardcoded resolver addresses */
-      const ens = getENS();
-      const networkId = await getNetworkId();
+      const ens = getENS()
+      const networkId = await getNetworkId()
 
       const RESOLVERS: Record<
         number,
-        Record<"DEPRECATED" | "OLD", Array<string>>
+        Record<'DEPRECATED' | 'OLD', Array<string>>
       > = {
         1: {
           DEPRECATED: [],
           OLD: [
-            "0x5ffc014343cd971b7eb70732021e26c35b744cc4",
-            "0x6dbc5978711cb22d7ba611bc18cec308ea12ea95",
-            "0xd3ddccdd3b25a8a7423b5bee360a42146eb4baf3",
-            "0x226159d592e2b063810a10ebf6dcbada94ed68b8",
+            '0x5ffc014343cd971b7eb70732021e26c35b744cc4',
+            '0x6dbc5978711cb22d7ba611bc18cec308ea12ea95',
+            '0xd3ddccdd3b25a8a7423b5bee360a42146eb4baf3',
+            '0x226159d592e2b063810a10ebf6dcbada94ed68b8',
           ],
         },
         3: {
           OLD: [
-            "0x12299799a50340FB860D276805E78550cBaD3De3", // Ropsten
-            "0x9C4c3B509e47a298544d0fD0591B47550845e903", // Ropsten
+            '0x12299799a50340FB860D276805E78550cBaD3De3', // Ropsten
+            '0x9C4c3B509e47a298544d0fD0591B47550845e903', // Ropsten
           ],
           DEPRECATED: [],
         },
         4: {
-          OLD: ["0x06E6B4E68b0B9B2617b35Eec811535050999282F"],
+          OLD: ['0x06E6B4E68b0B9B2617b35Eec811535050999282F'],
           DEPRECATED: [],
         },
         5: {
-          OLD: ["0xfF77b96d6bafCec0D684bB528b22e0Ab09C70663"],
+          OLD: ['0xfF77b96d6bafCec0D684bB528b22e0Ab09C70663'],
           DEPRECATED: [],
         },
-      };
+      }
 
-      let DEPRECATED_RESOLVERS: any[] = [];
+      let DEPRECATED_RESOLVERS: any[] = []
       let OLD_RESOLVERS = [
-        "0xDaaF96c344f63131acadD0Ea35170E7892d3dfBA", // all networks
-      ];
+        '0xDaaF96c344f63131acadD0Ea35170E7892d3dfBA', // all networks
+      ]
 
       if (RESOLVERS[networkId]) {
-        DEPRECATED_RESOLVERS = [...RESOLVERS[networkId].DEPRECATED];
-        OLD_RESOLVERS = [...OLD_RESOLVERS, ...RESOLVERS[networkId].OLD];
+        DEPRECATED_RESOLVERS = [...RESOLVERS[networkId].DEPRECATED]
+        OLD_RESOLVERS = [...OLD_RESOLVERS, ...RESOLVERS[networkId].OLD]
       }
 
       if (
         process &&
-        process.env.REACT_APP_STAGE === "local" &&
+        process.env.REACT_APP_STAGE === 'local' &&
         process.env.REACT_APP_DEPRECATED_RESOLVERS
       ) {
         const localResolvers =
-          process.env.REACT_APP_DEPRECATED_RESOLVERS.split(",");
-        DEPRECATED_RESOLVERS = [...DEPRECATED_RESOLVERS, ...localResolvers];
+          process.env.REACT_APP_DEPRECATED_RESOLVERS.split(',')
+        DEPRECATED_RESOLVERS = [...DEPRECATED_RESOLVERS, ...localResolvers]
       }
 
       /* Deprecated resolvers are using the new registry and can be continued to be used */
 
       function calculateIsDeprecatedResolver(address: string) {
         return DEPRECATED_RESOLVERS.map((a) => a.toLowerCase()).includes(
-          address.toLowerCase()
-        );
+          address.toLowerCase(),
+        )
       }
 
       /* Old Public resolvers are using the old registry and must be migrated  */
 
       function calculateIsOldPublicResolver(address: string) {
         return OLD_RESOLVERS.map((a) => a.toLowerCase()).includes(
-          address.toLowerCase()
-        );
+          address.toLowerCase(),
+        )
       }
 
       async function calculateIsPublicResolverReady() {
-        const publicResolver = await ens.getAddress("resolver.eth");
+        const publicResolver = await ens.getAddress('resolver.eth')
         return !OLD_RESOLVERS.map((a) => a.toLowerCase()).includes(
-          publicResolver
-        );
+          publicResolver,
+        )
       }
 
-      const isDeprecatedResolver = calculateIsDeprecatedResolver(resolver);
-      const isOldPublicResolver = calculateIsOldPublicResolver(resolver);
-      const isPublicResolverReady = await calculateIsPublicResolverReady();
+      const isDeprecatedResolver = calculateIsDeprecatedResolver(resolver)
+      const isOldPublicResolver = calculateIsOldPublicResolver(resolver)
+      const isPublicResolverReady = await calculateIsPublicResolverReady()
       return {
         name,
         isDeprecatedResolver,
         isOldPublicResolver,
         isPublicResolverReady,
-        __typename: "ResolverMigration",
-      };
+        __typename: 'ResolverMigration',
+      }
     },
     isMigrated: (_: any, { name }: Record<string, any>) => {
-      const ens = getENS();
-      return ens.isMigrated(name);
+      const ens = getENS()
+      return ens.isMigrated(name)
     },
     isContractController: async (
       _: any,
-      { address }: Record<"address", any>
+      { address }: Record<'address', any>,
     ) => {
-      const provider = await getWeb3();
-      const bytecode = await provider.getCode(address);
-      return bytecode !== "0x";
+      const provider = await getWeb3()
+      const bytecode = await provider.getCode(address)
+      return bytecode !== '0x'
     },
     getSubDomains: async (_: any, { name }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const rawSubDomains = await ens.getSubdomains(name);
+        const ens = getENS()
+        const rawSubDomains = await ens.getSubdomains(name)
 
         return {
           subDomains: rawSubDomains,
-          __typename: "SubDomains",
-        };
+          __typename: 'SubDomains',
+        }
       } catch (e) {
-        console.log("getSubDomains error: ", e);
+        console.log('getSubDomains error: ', e)
       }
     },
     getReverseRecord,
     getText: async (_: any, { name, key }: Record<string, any>) => {
-      const ens = getENS();
-      const text = await ens.getText(name, key);
-      if (text === "") {
-        return null;
+      const ens = getENS()
+      const text = await ens.getText(name, key)
+      if (text === '') {
+        return null
       }
 
-      return text;
+      return text
     },
     getAddr: async (_: any, { name, key }: Record<string, any>) => {
-      const ens = getENS();
-      const address = await ens.getAddr(name, key);
-      if (address === "") {
-        return null;
+      const ens = getENS()
+      const address = await ens.getAddr(name, key)
+      if (address === '') {
+        return null
       }
 
-      return address;
+      return address
     },
     getAddresses: (_: any, { name, keys }: Record<string, any>) => {
-      const ens = getENS();
+      const ens = getENS()
       const addresses = keys.map((key: any) =>
-        ens.getAddr(name, key).then((addr: any) => ({ key, value: addr }))
-      );
-      return Promise.all(addresses);
+        ens.getAddr(name, key).then((addr: any) => ({ key, value: addr })),
+      )
+      return Promise.all(addresses)
     },
     getTextRecords: async (_: any, { name, keys }: Record<string, any>) => {
-      if (!name || !keys) return [];
-      const ens = getENS();
+      if (!name || !keys) return []
+      const ens = getENS()
       const textRecords = keys.map((key: any) =>
-        ens.getText(name, key).then((addr: any) => ({ key, value: addr }))
-      );
-      return Promise.all(textRecords);
+        ens.getText(name, key).then((addr: any) => ({ key, value: addr })),
+      )
+      return Promise.all(textRecords)
     },
     waitBlockTimestamp: async (_: any, { waitUntil }: Record<string, any>) => {
       if (waitUntil) {
-        let block = await getBlock();
-        let timestamp = block.timestamp * 1000;
+        let block = await getBlock()
+        let timestamp = block.timestamp * 1000
         /* eslint-disable no-await-in-loop */
         while (timestamp < waitUntil) {
-          block = await getBlock();
-          timestamp = block.timestamp * 1000;
-          await delay(1000);
+          block = await getBlock()
+          timestamp = block.timestamp * 1000
+          await delay(1000)
         }
         /* eslint-enable no-await-in-loop */
-        return true;
+        return true
       }
-      return false;
+      return false
     },
     getBalance: async (_: any, { address }: Record<string, any>) => {
-      const provider = await getProvider();
-      let balance;
+      const provider = await getProvider()
+      let balance
       try {
-        balance = await provider.getBalance(address);
+        balance = await provider.getBalance(address)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
-      return balance;
+      return balance
     },
   },
   Mutation: {
     registerTestdomain: async (_: any, { label }: Record<string, any>) => {
-      const registrar = getRegistrar();
-      const tx = await registrar.registerTestdomain(label);
-      return sendHelper(tx);
+      const registrar = getRegistrar()
+      const tx = await registrar.registerTestdomain(label)
+      return sendHelper(tx)
     },
     setName: async (_: any, { name }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.claimAndSetReverseRecordName(name);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.claimAndSetReverseRecordName(name)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setOwner: async (_: any, { name, address }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setOwner(name, address);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setOwner(name, address)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setSubnodeOwner: async (_: any, { name, address }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setSubnodeOwner(name, address);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setSubnodeOwner(name, address)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setResolver: async (_: any, { name, address }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setResolver(name, address);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setResolver(name, address)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setAddress: async (_: any, { name, recordValue }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setAddress(name, recordValue);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setAddress(name, recordValue)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setAddr: async (
       _: any,
-      { name, key, recordValue }: Record<string, any>
+      { name, key, recordValue }: Record<string, any>,
     ) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setAddr(name, key, recordValue);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setAddr(name, key, recordValue)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setContent: async (_: any, { name, recordValue }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setContent(name, recordValue);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setContent(name, recordValue)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setContenthash: async (
       _: any,
-      { name, recordValue }: Record<string, any>
+      { name, recordValue }: Record<string, any>,
     ) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setContenthash(name, recordValue);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setContenthash(name, recordValue)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     setText: async (
       _: any,
-      { name, key, recordValue }: Record<string, any>
+      { name, key, recordValue }: Record<string, any>,
     ) => {
       try {
-        const ens = getENS();
-        const tx = await ens.setText(name, key, recordValue);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.setText(name, key, recordValue)
+        return await sendHelper(tx)
       } catch (e) {
-        console.error(e);
+        console.error(e)
       }
     },
     addMultiRecords: async (_: any, { name, records }: Record<string, any>) => {
-      const ens = getENS();
+      const ens = getENS()
 
-      const provider = await getProvider();
-      const resolver = await ens.getResolver(name);
+      const provider = await getProvider()
+      const resolver = await ens.getResolver(name)
       const resolverInstanceWithoutSigner = await getResolverContract({
         address: resolver,
         provider,
-      });
-      const signer = await getSigner();
-      const resolverInstance = resolverInstanceWithoutSigner.connect(signer);
+      })
+      const signer = await getSigner()
+      const resolverInstance = resolverInstanceWithoutSigner.connect(signer)
 
       if (records.length === 1) {
-        return handleSingleTransaction(name, records[0], resolverInstance);
+        return handleSingleTransaction(name, records[0], resolverInstance)
       }
-      return handleMultipleTransactions(name, records, resolverInstance);
+      return handleMultipleTransactions(name, records, resolverInstance)
     },
     migrateResolver: async (_: any, { name }: Record<string, any>) => {
-      const ens = getENS();
-      const provider = await getProvider();
+      const ens = getENS()
+      const provider = await getProvider()
 
       function setupTransactions({
         name: _name,
@@ -792,137 +786,137 @@ const resolvers = {
         resolverInstance,
       }: Record<string, any>) {
         try {
-          const resolver = resolverInstance.interface;
-          const namehash = getNamehash(_name);
+          const resolver = resolverInstance.interface
+          const namehash = getNamehash(_name)
           const transactionArray = records.map((record: any, i: number) => {
             switch (i) {
               case 0:
-                if (parseInt(record, 16) === 0) return undefined;
-                return resolver.encodeFunctionData("setAddr(bytes32,address)", [
+                if (parseInt(record, 16) === 0) return undefined
+                return resolver.encodeFunctionData('setAddr(bytes32,address)', [
                   namehash,
                   record,
-                ]);
+                ])
               case 1:
-                if (!record || parseInt(record, 16) === 0) return undefined;
-                return resolver.encodeFunctionData("setContenthash", [
+                if (!record || parseInt(record, 16) === 0) return undefined
+                return resolver.encodeFunctionData('setContenthash', [
                   namehash,
                   record,
-                ]);
+                ])
               case 2:
                 return record.map((textRecord: any) => {
-                  if (textRecord.value.length === 0) return undefined;
-                  return resolver.encodeFunctionData("setText", [
+                  if (textRecord.value.length === 0) return undefined
+                  return resolver.encodeFunctionData('setText', [
                     namehash,
                     textRecord.key,
                     textRecord.value,
-                  ]);
-                });
+                  ])
+                })
               case 3:
                 return record.map((coinRecord: any) => {
-                  if (parseInt(coinRecord.value, 16) === 0) return undefined;
-                  const { decoder, coinType } = formatsByName[coinRecord.key];
-                  let addressAsBytes;
-                  if (!coinRecord.value || coinRecord.value === "") {
-                    addressAsBytes = Buffer.from("");
+                  if (parseInt(coinRecord.value, 16) === 0) return undefined
+                  const { decoder, coinType } = formatsByName[coinRecord.key]
+                  let addressAsBytes
+                  if (!coinRecord.value || coinRecord.value === '') {
+                    addressAsBytes = Buffer.from('')
                   } else {
-                    addressAsBytes = decoder(coinRecord.value);
+                    addressAsBytes = decoder(coinRecord.value)
                   }
                   return resolver.encodeFunctionData(
-                    "setAddr(bytes32,uint256,bytes)",
-                    [namehash, coinType, addressAsBytes]
-                  );
-                });
+                    'setAddr(bytes32,uint256,bytes)',
+                    [namehash, coinType, addressAsBytes],
+                  )
+                })
               default:
-                throw Error("More records than expected");
+                throw Error('More records than expected')
             }
-          });
+          })
 
           // flatten textrecords and addresses and remove undefined
-          return transactionArray.flat().filter((bytes: any) => bytes);
+          return transactionArray.flat().filter((bytes: any) => bytes)
         } catch (e) {
-          console.log("error creating transaction array", e);
+          console.log('error creating transaction array', e)
         }
       }
 
       function calculateIsOldContentResolver(resolver: any) {
         const oldContentResolvers = [
-          "0x5ffc014343cd971b7eb70732021e26c35b744cc4",
-          "0x6dbc5978711cb22d7ba611bc18cec308ea12ea95",
-          "0xbf80bc10d6ebfee11bea9a157d762110a0b73d95",
-        ];
+          '0x5ffc014343cd971b7eb70732021e26c35b744cc4',
+          '0x6dbc5978711cb22d7ba611bc18cec308ea12ea95',
+          '0xbf80bc10d6ebfee11bea9a157d762110a0b73d95',
+        ]
         const localResolvers = process.env.REACT_APP_OLD_CONTENT_RESOLVERS
-          ? process.env.REACT_APP_OLD_CONTENT_RESOLVERS.split(",")
-          : [];
+          ? process.env.REACT_APP_OLD_CONTENT_RESOLVERS.split(',')
+          : []
 
         const oldResolvers = [...oldContentResolvers, ...localResolvers].map(
           (a) => {
-            return a.toLowerCase();
-          }
-        );
+            return a.toLowerCase()
+          },
+        )
 
-        return oldResolvers.includes(resolver.toLowerCase());
+        return oldResolvers.includes(resolver.toLowerCase())
       }
 
       function buildKeyValueObjects(keys: any, values: any) {
         return values.map((record: any, i: number) => ({
           key: keys[i],
           value: record,
-        }));
+        }))
       }
 
       async function getAllTextRecords(_name: any) {
-        const promises = TEXT_RECORD_KEYS.map((key) => ens.getText(_name, key));
-        const records = await Promise.all(promises);
-        return buildKeyValueObjects(TEXT_RECORD_KEYS, records);
+        const promises = TEXT_RECORD_KEYS.map((key) => ens.getText(_name, key))
+        const records = await Promise.all(promises)
+        return buildKeyValueObjects(TEXT_RECORD_KEYS, records)
       }
 
       async function getAllTextRecordsWithResolver(_name: any, resolver: any) {
         const promises = TEXT_RECORD_KEYS.map((key) =>
-          ens.getTextWithResolver(_name, key, resolver)
-        );
-        const records = await Promise.all(promises);
-        return buildKeyValueObjects(TEXT_RECORD_KEYS, records);
+          ens.getTextWithResolver(_name, key, resolver),
+        )
+        const records = await Promise.all(promises)
+        return buildKeyValueObjects(TEXT_RECORD_KEYS, records)
       }
 
       async function getAllAddresses(_name: any) {
-        const promises = COIN_LIST_KEYS.map((key) => ens.getAddr(_name, key));
-        const records = await Promise.all(promises);
-        return buildKeyValueObjects(COIN_LIST_KEYS, records);
+        const promises = COIN_LIST_KEYS.map((key) => ens.getAddr(_name, key))
+        const records = await Promise.all(promises)
+        return buildKeyValueObjects(COIN_LIST_KEYS, records)
       }
 
       async function getAllAddressesWithResolver(_name: any, resolver: any) {
         const promises = COIN_LIST_KEYS.map((key) =>
-          ens.getAddrWithResolver(_name, key, resolver)
-        );
-        const records = await Promise.all(promises);
-        return buildKeyValueObjects(COIN_LIST_KEYS, records);
+          ens.getAddrWithResolver(_name, key, resolver),
+        )
+        const records = await Promise.all(promises)
+        return buildKeyValueObjects(COIN_LIST_KEYS, records)
       }
 
       async function getOldContent(_name: any) {
-        const resolver = await ens.getResolver(_name);
-        const namehash = getNamehash(_name);
+        const resolver = await ens.getResolver(_name)
+        const namehash = getNamehash(_name)
         const resolverInstanceWithoutSigner = await getOldResolverContract({
           address: resolver,
           provider,
-        });
-        const content = await resolverInstanceWithoutSigner.content(namehash);
-        const { encoded } = encodeContenthash(`bzz://${content}`);
-        return encoded;
+        })
+        const content = await resolverInstanceWithoutSigner.content(namehash)
+        const { encoded } = encodeContenthash(`bzz://${content}`)
+        return encoded
       }
 
       async function getContenthashWithResolver(_name: any, resolver: any) {
-        const namehash = getNamehash(_name);
+        const namehash = getNamehash(_name)
         const resolverInstanceWithoutSigner = await getResolverContract({
           address: resolver,
           provider,
-        });
+        })
         // eslint-disable-next-line @typescript-eslint/return-await
-        return await resolverInstanceWithoutSigner.contenthash(namehash);
+        return await resolverInstanceWithoutSigner.contenthash(namehash)
       }
 
       async function getContenthash(_name: any) {
-        const resolver = await ens.getResolver(_name);
-        return getContenthashWithResolver(_name, resolver);
+        const resolver = await ens.getResolver(_name)
+        return getContenthashWithResolver(_name, resolver)
       }
 
       async function getAllRecords(_name: any, isOldContentResolver: boolean) {
@@ -931,8 +925,8 @@ const resolvers = {
           isOldContentResolver ? getOldContent(_name) : getContenthash(_name),
           getAllTextRecords(_name),
           getAllAddresses(_name),
-        ];
-        return Promise.all(promises);
+        ]
+        return Promise.all(promises)
       }
 
       async function getAllRecordsNew(_name: any, publicResolver: any) {
@@ -941,25 +935,25 @@ const resolvers = {
           getContenthashWithResolver(_name, publicResolver),
           getAllTextRecordsWithResolver(_name, publicResolver),
           getAllAddressesWithResolver(_name, publicResolver),
-        ];
-        return Promise.all(promises);
+        ]
+        return Promise.all(promises)
       }
 
       function areRecordsEqual(oldRecords: any, newRecords: any) {
-        return isEqual(oldRecords, newRecords);
+        return isEqual(oldRecords, newRecords)
       }
 
       // get public resolver
       try {
-        const publicResolver = await ens.getAddress("resolver.eth");
-        const resolver = await ens.getResolver(name);
-        const isOldContentResolver = calculateIsOldContentResolver(resolver);
+        const publicResolver = await ens.getAddress('resolver.eth')
+        const resolver = await ens.getResolver(name)
+        const isOldContentResolver = calculateIsOldContentResolver(resolver)
 
         // get old and new records in parallel
         const [records, newResolverRecords] = await Promise.all([
           getAllRecords(name, isOldContentResolver),
           getAllRecordsNew(name, publicResolver),
-        ]);
+        ])
 
         // compare new and old records
         if (!areRecordsEqual(records, newResolverRecords)) {
@@ -967,61 +961,60 @@ const resolvers = {
           const resolverInstanceWithoutSigner = await getResolverContract({
             address: publicResolver,
             provider,
-          });
-          const signer = await getSigner();
-          const resolverInstance =
-            resolverInstanceWithoutSigner.connect(signer);
+          })
+          const signer = await getSigner()
+          const resolverInstance = resolverInstanceWithoutSigner.connect(signer)
           const transactionArray = setupTransactions({
             name,
             records,
             resolverInstance,
-          });
+          })
           // add them all together into one transaction
-          const tx1 = await resolverInstance.multicall(transactionArray);
+          const tx1 = await resolverInstance.multicall(transactionArray)
           // once the record has been migrated, migrate the resolver using setResolver to the new public resolver
-          const tx2 = await ens.setResolver(name, publicResolver);
+          const tx2 = await ens.setResolver(name, publicResolver)
           // await migrate records into new resolver
-          return await sendHelperArray([tx1, tx2]);
+          return await sendHelperArray([tx1, tx2])
         }
-        const tx = await ens.setResolver(name, publicResolver);
-        const value = await sendHelper(tx);
-        return [value];
+        const tx = await ens.setResolver(name, publicResolver)
+        const value = await sendHelper(tx)
+        return [value]
       } catch (e) {
-        console.log("Error migrating resolver", e);
-        throw e;
+        console.log('Error migrating resolver', e)
+        throw e
       }
     },
     migrateRegistry: async (_: any, { name, address }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const resolver = await ens.getResolver(name);
-        const tx = await ens.setSubnodeRecord(name, address, resolver);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const resolver = await ens.getResolver(name)
+        const tx = await ens.setSubnodeRecord(name, address, resolver)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     createSubdomain: async (_: any, { name }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.createSubdomain(name);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.createSubdomain(name)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
     deleteSubdomain: async (_: any, { name }: Record<string, any>) => {
       try {
-        const ens = getENS();
-        const tx = await ens.deleteSubdomain(name);
-        return await sendHelper(tx);
+        const ens = getENS()
+        const tx = await ens.deleteSubdomain(name)
+        return await sendHelper(tx)
       } catch (e) {
-        console.log(e);
+        console.log(e)
       }
     },
   },
-};
+}
 
-export default resolvers;
+export default resolvers
 
-export { defaults };
+export { defaults }

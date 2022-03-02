@@ -1,19 +1,19 @@
-import { gql, useQuery } from "@apollo/client";
-import { ProfileDetails } from "@app/components/profile/ProfileDetails";
-import { ProfileNftDetails } from "@app/components/profile/ProfileNftDetails";
-import { useGetDomainFromInput } from "@app/hooks/useGetDomainFromInput";
-import { useGetRecords } from "@app/hooks/useGetRecords";
-import { useProtectedRoute } from "@app/hooks/useProtectedRoute";
-import { Basic } from "@app/layouts/Basic";
-import mq from "@app/mediaQuery";
-import { useBreakpoint } from "@app/utils/BreakpointProvider";
-import { Box, IconArrowCircle, Typography, vars } from "@ensdomains/thorin";
-import { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+import { gql, useQuery } from '@apollo/client'
+import { ProfileDetails } from '@app/components/profile/ProfileDetails'
+import { ProfileNftDetails } from '@app/components/profile/ProfileNftDetails'
+import { useGetDomainFromInput } from '@app/hooks/useGetDomainFromInput'
+import { useGetRecords } from '@app/hooks/useGetRecords'
+import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
+import { Basic } from '@app/layouts/Basic'
+import mq from '@app/mediaQuery'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { Box, IconArrowCircle, Typography, vars } from '@ensdomains/thorin'
+import { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 const NETWORK_INFORMATION_QUERY = gql`
   query getNetworkInfo @client {
@@ -24,7 +24,7 @@ const NETWORK_INFORMATION_QUERY = gql`
     primaryName
     isReadOnly
   }
-`;
+`
 
 const DetailsWrapper = styled(Box)`
   width: 90vw;
@@ -33,14 +33,14 @@ const DetailsWrapper = styled(Box)`
   ${mq.medium.min`
     width: 50vw;
   `}
-`;
+`
 
 const ArrowBack = styled(Box)`
   color: ${vars.colors.textTertiary};
   transform: rotate(180deg);
-  width: ${vars.space["7"]};
-  height: ${vars.space["7"]};
-`;
+  width: ${vars.space['7']};
+  height: ${vars.space['7']};
+`
 
 const BackContainer = styled(Box)`
   cursor: pointer;
@@ -48,35 +48,35 @@ const BackContainer = styled(Box)`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: ${vars.space["2"]};
+  gap: ${vars.space['2']};
 
   &:hover {
     filter: contrast(0.8);
     transform: translateY(-1px);
   }
-`;
+`
 
 const BackButton = () => {
-  const router = useRouter();
-  const { t } = useTranslation("common");
+  const router = useRouter()
+  const { t } = useTranslation('common')
 
   return (
     <BackContainer role="button" onClick={() => router.back()}>
       <ArrowBack as={IconArrowCircle} />
       <Typography weight="bold" color="textTertiary" size="large">
-        {t("navigation.back")}
+        {t('navigation.back')}
       </Typography>
     </BackContainer>
-  );
-};
+  )
+}
 
 const ProfilePage: NextPage = () => {
-  const router = useRouter();
-  const breakpoints = useBreakpoint();
-  const _name = router.query.name as string;
-  const isSelf = _name === "me";
+  const router = useRouter()
+  const breakpoints = useBreakpoint()
+  const _name = router.query.name as string
+  const isSelf = _name === 'me'
 
-  const [domain, setDomain] = useState<any>(undefined);
+  const [domain, setDomain] = useState<any>(undefined)
 
   const {
     data: {
@@ -87,50 +87,50 @@ const ProfilePage: NextPage = () => {
       primaryName,
       isReadOnly,
     },
-  } = useQuery(NETWORK_INFORMATION_QUERY);
+  } = useQuery(NETWORK_INFORMATION_QUERY)
 
-  const name = isSelf ? primaryName : _name;
+  const name = isSelf ? primaryName : _name
 
   const { domain: _domain, loading: domainLoading } =
-    useGetDomainFromInput(name);
+    useGetDomainFromInput(name)
   const { dataAddresses, dataTextRecords, recordsLoading } =
-    useGetRecords(_domain);
+    useGetRecords(_domain)
 
   useProtectedRoute(
-    "/",
+    '/',
     // for /profile route, always redirect
-    router.asPath !== "/profile" &&
+    router.asPath !== '/profile' &&
       // When anything is loading, return true
-      (network !== "Loading" && isENSReady && isAppReady
+      (network !== 'Loading' && isENSReady && isAppReady
         ? // if is self, user must be connected
           (isSelf ? !isReadOnly : true) &&
-          typeof name === "string" &&
+          typeof name === 'string' &&
           name.length > 0
-        : true)
-  );
+        : true),
+  )
 
-  const expiryDate = domain && domain.expiryTime && (domain.expiryTime as Date);
+  const expiryDate = domain && domain.expiryTime && (domain.expiryTime as Date)
 
   useEffect(() => {
-    const timeout = _domain && setTimeout(() => setDomain(_domain), 100);
-    return () => clearTimeout(timeout);
-  }, [_domain]);
+    const timeout = _domain && setTimeout(() => setDomain(_domain), 100)
+    return () => clearTimeout(timeout)
+  }, [_domain])
 
   useEffect(
     () => console.log(network, domain, domainLoading, recordsLoading),
-    [network, domain, domainLoading, recordsLoading]
-  );
+    [network, domain, domainLoading, recordsLoading],
+  )
 
   return (
     <Basic
       title={
-        (_name === "me" && "Your Profile") ||
+        (_name === 'me' && 'Your Profile') ||
         (domain && domain.name ? `${_name}'s Profile` : `Loading Profile`)
       }
       loading={
         !(
           network &&
-          network !== "Loading" &&
+          network !== 'Loading' &&
           domain &&
           domain.name &&
           !domainLoading &&
@@ -152,8 +152,8 @@ const ProfilePage: NextPage = () => {
       >
         <Box
           display="flex"
-          flexDirection={{ xs: "column-reverse", md: "row" }}
-          gap={{ md: "8" }}
+          flexDirection={{ xs: 'column-reverse', md: 'row' }}
+          gap={{ md: '8' }}
           position="relative"
           marginTop="8"
         >
@@ -162,7 +162,7 @@ const ProfilePage: NextPage = () => {
               <BackButton />
             </Box>
           )}
-          <Box marginTop={{ xs: "8", md: "0" }}>
+          <Box marginTop={{ xs: '8', md: '0' }}>
             <ProfileNftDetails
               name={name}
               selfAddress={accounts?.[0]}
@@ -180,8 +180,8 @@ const ProfilePage: NextPage = () => {
         </Box>
       </Box>
     </Basic>
-  );
-};
+  )
+}
 
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
@@ -189,7 +189,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       ...(await serverSideTranslations(locale)),
       // Will be passed to the page component as props
     },
-  };
+  }
 }
 
-export default ProfilePage;
+export default ProfilePage
