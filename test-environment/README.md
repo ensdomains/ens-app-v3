@@ -3,7 +3,7 @@
 ## How it works
 
 The testing environment used here is implemented in the stateless and stateful tests for ENS app.
-The environment consists of two parts: the hardhat Ethereum node, and the docker graph instance.
+The environment consists of two parts: the ganache Ethereum node, and the docker graph instance.
 Which environment type you use is dependent on your testing circumstances.
 
 ## Environment Types
@@ -45,22 +45,47 @@ deployment script should be left in the repo to serve as an archive.
 To update the graph-node dataset, the BLOCK_HEIGHT variable must be changed within the `.env` file.
 
 If the dataset is a dependency for a local test, you will need to first let your local graph-node
-dataset update so that your test can pass. Once this is done you can push your changes to github
-where an action will be activated to create the new dataset for others to use.
+dataset update so that your test can pass.
+
+Once your data is up to date, you can run
+
+```bash
+yarn archive:compress
+```
+
+in this directory, which will give you a archive file for your dataset.
 
 ### Dataset naming scheme
-
-#### All datasets
 
 ```js
 `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}.archive`;
 // e.g. data_14119046_QmTmU4syjQb8gfNq8TCQGv441qp2zQMNKnQ4smjKhpLQ6F_1643850493.archive.zip
 ```
 
-#### Latest datasets
+## Running the environment
 
-```js
-`data_${BRANCH}.latest`;
-// e.g. data_main.latest
-// e.g. data_dev.latest
+_Run all commands in the root directory._
+
+To run the test environment on your local machine, first copy the `.env.example` file and change
+`FORK_RPC_URL` to an archive node of your choosing. You'll also need to have docker installed on
+your machine.
+
+After this you can run:
+
+```bash
+# Normal
+yarn env:load && yarn env:start
+# Docker root install
+yarn env:load && yarn env:start:root
+# CI environments (cacheless)
+yarn env:start:ci
+```
+
+After this you can then run the app with:
+
+```bash
+# Dev build
+yarn dev:glocal
+# Production build
+yarn build:glocal && yarn start
 ```
