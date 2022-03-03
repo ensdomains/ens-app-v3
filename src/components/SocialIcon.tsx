@@ -1,7 +1,7 @@
-import { useBreakpoint } from "@app/utils/BreakpointProvider";
-import { Box, vars } from "@ensdomains/thorin";
-import { ElementType } from "react";
-import styled from "styled-components";
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { Box, vars } from '@ensdomains/thorin'
+import { ElementType } from 'react'
+import styled from 'styled-components'
 
 const SocialIconWrapper = styled.a<{ $boxSize: keyof typeof vars.space }>`
   position: relative;
@@ -11,7 +11,7 @@ const SocialIconWrapper = styled.a<{ $boxSize: keyof typeof vars.space }>`
   justify-content: center;
   width: ${({ $boxSize }) => vars.space[$boxSize]};
   min-height: ${({ $boxSize }) => vars.space[$boxSize]};
-`;
+`
 
 const StyledIcon = styled(Box)<{ $iconColor?: string }>`
   height: 80%;
@@ -21,7 +21,7 @@ const StyledIcon = styled(Box)<{ $iconColor?: string }>`
   ${SocialIconWrapper}:hover && {
     ${({ $iconColor }) => `fill: ${$iconColor};`};
   }
-`;
+`
 
 const StyledColoredIcon = styled(Box)`
   height: 80%;
@@ -31,7 +31,7 @@ const StyledColoredIcon = styled(Box)`
   ${SocialIconWrapper}:hover && {
     opacity: 1;
   }
-`;
+`
 
 export const SocialIcon = ({
   Icon,
@@ -39,17 +39,17 @@ export const SocialIcon = ({
   color,
   href,
 }: {
-  Icon: ElementType;
-  ColoredIcon?: ElementType;
-  color?: string;
-  href: string;
+  Icon: ElementType
+  ColoredIcon?: ElementType
+  color?: string
+  href: string
 }) => {
-  const breakpoints = useBreakpoint();
+  const breakpoints = useBreakpoint()
 
   return (
-    <SocialIconWrapper href={href} $boxSize={breakpoints.sm ? "10" : "8"}>
+    <SocialIconWrapper href={href} $boxSize={breakpoints.sm ? '10' : '8'}>
       <StyledIcon key={href} $iconColor={color} as={Icon} />
       {ColoredIcon && <StyledColoredIcon as={ColoredIcon} />}
     </SocialIconWrapper>
-  );
-};
+  )
+}

@@ -1,9 +1,9 @@
-import { vars } from "@ensdomains/thorin";
-import Link, { LinkProps } from "next/link";
-import { useRouter } from "next/router";
-import { PropsWithChildren } from "react";
-import styled from "styled-components";
-import { ConditionalWrapper } from "./ConditionalWrapper";
+import { vars } from '@ensdomains/thorin'
+import Link, { LinkProps } from 'next/link'
+import { useRouter } from 'next/router'
+import { PropsWithChildren } from 'react'
+import styled from 'styled-components'
+import { ConditionalWrapper } from './ConditionalWrapper'
 
 const StyledAnchor = styled.a<{ isActive: boolean; disabled?: boolean }>`
   color: ${vars.colors.textTertiary};
@@ -23,16 +23,16 @@ const StyledAnchor = styled.a<{ isActive: boolean; disabled?: boolean }>`
     cursor: default;
   `}
   ${({ isActive }) => isActive && `color: ${vars.colors.accent};`}
-`;
+`
 
 export const StyledNavLink = ({
   children,
   disabled,
   ...props
 }: PropsWithChildren<LinkProps> & {
-  disabled?: boolean;
+  disabled?: boolean
 }) => {
-  const router = useRouter();
+  const router = useRouter()
   return (
     <ConditionalWrapper
       condition={!disabled}
@@ -46,5 +46,5 @@ export const StyledNavLink = ({
         {children}
       </StyledAnchor>
     </ConditionalWrapper>
-  );
-};
+  )
+}

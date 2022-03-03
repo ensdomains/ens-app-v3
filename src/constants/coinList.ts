@@ -1,5 +1,5 @@
-import { formatsByName } from "@ensdomains/address-encoder";
+import { formatsByName } from '@ensdomains/address-encoder'
 
-const COIN_LIST = Object.keys(formatsByName).filter((c) => !c.match(/_LEGACY/));
+const COIN_LIST = Object.keys(formatsByName).filter((c) => !c.match(/_LEGACY/))
 
-export default COIN_LIST;
+export default COIN_LIST

@@ -1,4 +1,4 @@
-import { imageUrlUnknownRecord } from "@app/utils/utils";
+import { imageUrlUnknownRecord } from '@app/utils/utils'
 import {
   Avatar,
   Box,
@@ -6,15 +6,15 @@ import {
   Stack,
   Typography,
   vars,
-} from "@ensdomains/thorin";
-import { useTranslation } from "next-i18next";
-import Link from "next/link";
-import { useEffect, useState } from "react";
-import styled from "styled-components";
+} from '@ensdomains/thorin'
+import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import styled from 'styled-components'
 
 type Subdomain = {
-  name: string;
-};
+  name: string
+}
 
 const SubdomainWrapper = styled(Box)`
   display: flex;
@@ -22,7 +22,7 @@ const SubdomainWrapper = styled(Box)`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: ${vars.space["3"]} ${vars.space["4.5"]};
+  padding: ${vars.space['3']} ${vars.space['4.5']};
   border-bottom: 1px solid ${vars.colors.borderTertiary};
   transition: all 0.15s ease-in-out;
 
@@ -33,34 +33,34 @@ const SubdomainWrapper = styled(Box)`
   &:last-of-type {
     border: none;
   }
-`;
+`
 
 const SubdomainItem = ({
   name,
   network,
 }: Subdomain & {
-  network: string;
+  network: string
 }) => {
-  const [src, setSrc] = useState("");
+  const [src, setSrc] = useState('')
 
   useEffect(() => {
     const run = async () => {
-      const response = await fetch(imageUrlUnknownRecord(name, network));
-      const imgBlob = response && (await response.blob());
-      const _src = URL.createObjectURL(imgBlob);
-      if (imgBlob?.type.startsWith("image/")) {
-        setSrc(_src);
+      const response = await fetch(imageUrlUnknownRecord(name, network))
+      const imgBlob = response && (await response.blob())
+      const _src = URL.createObjectURL(imgBlob)
+      if (imgBlob?.type.startsWith('image/')) {
+        setSrc(_src)
       }
-    };
+    }
 
-    run();
-  }, [name, network]);
+    run()
+  }, [name, network])
 
   return (
     <Link href={`/profile/${name}`} passHref>
       <SubdomainWrapper as="a">
         <Stack direction="horizontal" justify="center" align="center" space="4">
-          <Avatar label={name} src={src} placeholder={src === ""} size="9" />
+          <Avatar label={name} src={src} placeholder={src === ''} size="9" />
           <Typography color="text" weight="bold" size="extraLarge">
             {name}
           </Typography>
@@ -68,19 +68,19 @@ const SubdomainItem = ({
         <IconArrowRight strokeWidth="0.75" color="textTertiary" />
       </SubdomainWrapper>
     </Link>
-  );
-};
+  )
+}
 
 export const SubdomainDetails = ({
   subdomains,
   network,
   loading,
 }: {
-  subdomains: Subdomain[];
-  network: string;
-  loading: boolean;
+  subdomains: Subdomain[]
+  network: string
+  loading: boolean
 }) => {
-  const { t } = useTranslation("profile");
+  const { t } = useTranslation('profile')
 
   return (
     <>
@@ -95,9 +95,9 @@ export const SubdomainDetails = ({
           justifyContent="center"
           alignItems="center"
         >
-          {loading ? t("tabs.subdomains.loading") : t("tabs.subdomains.empty")}
+          {loading ? t('tabs.subdomains.loading') : t('tabs.subdomains.empty')}
         </Box>
       )}
     </>
-  );
-};
+  )
+}

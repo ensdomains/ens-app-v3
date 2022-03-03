@@ -1,35 +1,35 @@
-import { Box, Stack } from "@ensdomains/thorin";
-import { useTranslation } from "next-i18next";
-import SocialDiscord from "../assets/social/SocialDiscord.svg";
-import SocialDiscourse from "../assets/social/SocialDiscourse.svg";
-import SocialDiscourseColour from "../assets/social/SocialDiscourseColour.svg";
-import SocialGithub from "../assets/social/SocialGithub.svg";
-import SocialMedium from "../assets/social/SocialMedium.svg";
-import SocialTwitter from "../assets/social/SocialTwitter.svg";
-import SocialYoutube from "../assets/social/SocialYoutube.svg";
-import { SocialIcon } from "./SocialIcon";
-import { StyledNavLink } from "./StyledNavLink";
+import { Box, Stack } from '@ensdomains/thorin'
+import { useTranslation } from 'next-i18next'
+import SocialDiscord from '../assets/social/SocialDiscord.svg'
+import SocialDiscourse from '../assets/social/SocialDiscourse.svg'
+import SocialDiscourseColour from '../assets/social/SocialDiscourseColour.svg'
+import SocialGithub from '../assets/social/SocialGithub.svg'
+import SocialMedium from '../assets/social/SocialMedium.svg'
+import SocialTwitter from '../assets/social/SocialTwitter.svg'
+import SocialYoutube from '../assets/social/SocialYoutube.svg'
+import { SocialIcon } from './SocialIcon'
+import { StyledNavLink } from './StyledNavLink'
 
 export const Footer = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
   return (
     <Box
       as="footer"
       display="flex"
-      flexDirection={{ xs: "column", md: "row" }}
+      flexDirection={{ xs: 'column', md: 'row' }}
       alignItems="center"
       marginTop="2.5"
     >
       <Stack direction="horizontal" align="center">
         <StyledNavLink disabled href="/bug-bounty">
-          {t("navigation.bugBounty")}
+          {t('navigation.bugBounty')}
         </StyledNavLink>
         <StyledNavLink disabled href="/media-kit">
-          {t("navigation.mediaKit")}
+          {t('navigation.mediaKit')}
         </StyledNavLink>
       </Stack>
-      <Box flexGrow={1} marginBottom={{ xs: "2.5", md: "0" }} />
+      <Box flexGrow={1} marginBottom={{ xs: '2.5', md: '0' }} />
       <Stack direction="horizontal">
         <SocialIcon
           Icon={SocialTwitter}
@@ -63,5 +63,5 @@ export const Footer = () => {
         />
       </Stack>
     </Box>
-  );
-};
+  )
+}

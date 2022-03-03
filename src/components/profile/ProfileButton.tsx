@@ -1,14 +1,14 @@
 import {
   addressIconTypes,
   DynamicAddressIcon,
-} from "@app/assets/address/DynamicAddressIcon";
+} from '@app/assets/address/DynamicAddressIcon'
 import {
   DynamicSocialIcon,
   socialIconTypes,
-} from "@app/assets/social/DynamicSocialIcon";
-import { useCopied } from "@app/hooks/useCopied";
-import { getSocialData } from "@app/utils/getSocialData";
-import { shortenAddress } from "@app/utils/utils";
+} from '@app/assets/social/DynamicSocialIcon'
+import { useCopied } from '@app/hooks/useCopied'
+import { getSocialData } from '@app/utils/getSocialData'
+import { shortenAddress } from '@app/utils/utils'
 import {
   Box,
   BoxProps,
@@ -16,30 +16,30 @@ import {
   IconArrowUp,
   Stack,
   Typography,
-} from "@ensdomains/thorin";
-import React from "react";
-import styled from "styled-components";
-import { ConditionalWrapper } from "../ConditionalWrapper";
-import { IconCopyAnimated } from "../IconCopyAnimated";
+} from '@ensdomains/thorin'
+import React from 'react'
+import styled from 'styled-components'
+import { ConditionalWrapper } from '../ConditionalWrapper'
+import { IconCopyAnimated } from '../IconCopyAnimated'
 
 const RotatedIconArrowUp = styled(Box)`
   transform: rotate(45deg);
-`;
+`
 
 const ProfileButton = ({
-  prefixSize = "4",
+  prefixSize = '4',
   prefix,
   children,
   link,
   value,
 }: {
-  prefixSize?: BoxProps["height"];
-  prefix?: React.ReactNode;
-  children: React.ReactNode;
-  link?: string;
-  value: string;
+  prefixSize?: BoxProps['height']
+  prefix?: React.ReactNode
+  children: React.ReactNode
+  link?: string
+  value: string
 }) => {
-  const { copy, copied } = useCopied();
+  const { copy, copied } = useCopied()
 
   return (
     <ConditionalWrapper
@@ -84,17 +84,17 @@ const ProfileButton = ({
         </Box>
       </Button>
     </ConditionalWrapper>
-  );
-};
+  )
+}
 
 export const SocialProfileButton = ({
   iconKey,
   value,
 }: {
-  iconKey: string;
-  value: string;
+  iconKey: string
+  value: string
 }) => {
-  const socialData = getSocialData(iconKey, value);
+  const socialData = getSocialData(iconKey, value)
 
   return socialData ? (
     <ProfileButton
@@ -106,21 +106,21 @@ export const SocialProfileButton = ({
         />
       }
       value={socialData.value}
-      link={socialData.type === "link" ? socialData.urlFormatter : undefined}
+      link={socialData.type === 'link' ? socialData.urlFormatter : undefined}
     >
       {socialData.value}
     </ProfileButton>
-  ) : null;
-};
+  ) : null
+}
 
 export const AddressProfileButton = ({
   iconKey: _iconKey,
   value,
 }: {
-  iconKey: string;
-  value: string;
+  iconKey: string
+  value: string
 }) => {
-  const iconKey = _iconKey.toLowerCase();
+  const iconKey = _iconKey.toLowerCase()
 
   return addressIconTypes[iconKey as keyof typeof addressIconTypes] ? (
     <ProfileButton
@@ -137,19 +137,19 @@ export const AddressProfileButton = ({
     >
       {shortenAddress(value)}
     </ProfileButton>
-  ) : null;
-};
+  ) : null
+}
 
 export const OtherProfileButton = ({
   iconKey,
   value,
-  type = "text",
+  type = 'text',
 }: {
-  iconKey: string;
-  value: string;
-  type?: "text" | "address";
+  iconKey: string
+  value: string
+  type?: 'text' | 'address'
 }) => {
-  const isLink = value.startsWith("http://") || value.startsWith("https://");
+  const isLink = value.startsWith('http://') || value.startsWith('https://')
 
   return (
     <ProfileButton
@@ -157,7 +157,7 @@ export const OtherProfileButton = ({
       value={value}
       prefixSize="max"
       prefix={
-        type === "address" ? (
+        type === 'address' ? (
           <Box
             backgroundColor="textTertiary"
             paddingX="1.5"
@@ -175,5 +175,5 @@ export const OtherProfileButton = ({
     >
       {value.length > 15 ? `${value.slice(0, 15)}...` : value}
     </ProfileButton>
-  );
-};
+  )
+}

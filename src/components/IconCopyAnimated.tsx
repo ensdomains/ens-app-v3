@@ -1,6 +1,6 @@
-import { Box, IconCheck, IconCopy, vars } from "@ensdomains/thorin";
-import { memo } from "react";
-import styled from "styled-components";
+import { Box, IconCheck, IconCopy, vars } from '@ensdomains/thorin'
+import { memo } from 'react'
+import styled from 'styled-components'
 
 const IconWrapper = styled(Box)<{ $copied: boolean }>`
   position: relative;
@@ -32,24 +32,24 @@ const IconWrapper = styled(Box)<{ $copied: boolean }>`
             visibility: visible;
         }
     `}
-`;
+`
 
 export const IconCopyAnimated = memo(
   ({
     copied = false,
-    checkStrokeWidth = "1",
+    checkStrokeWidth = '1',
     ...props
   }: {
-    copied?: boolean;
-    checkStrokeWidth?: keyof typeof vars.borderWidths;
-    size?: keyof typeof vars.space;
-    color?: keyof typeof vars.colors;
+    copied?: boolean
+    checkStrokeWidth?: keyof typeof vars.borderWidths
+    size?: keyof typeof vars.space
+    color?: keyof typeof vars.colors
   }) => {
     return (
       <IconWrapper $copied={copied}>
         <IconCheck strokeWidth={checkStrokeWidth} {...props} />
         <IconCopy {...props} />
       </IconWrapper>
-    );
-  }
-);
+    )
+  },
+)
