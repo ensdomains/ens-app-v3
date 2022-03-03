@@ -4,7 +4,7 @@ import ganache from "ganache";
 
 const server = ganache.server({
   chain: {
-    chainId: 1,
+    chainId: 3,
   },
   fork: {
     url: process.env.FORK_RPC_URL,
