@@ -1,3 +1,4 @@
+import { useFormatHash } from "@app/hooks/useFormatHash";
 import { imageUrlUnknownRecord } from "@app/utils/utils";
 import {
   Avatar,
@@ -42,6 +43,7 @@ const SubdomainItem = ({
   network: string;
 }) => {
   const [src, setSrc] = useState("");
+  const formattedName = useFormatHash(name);
 
   useEffect(() => {
     const run = async () => {
@@ -62,7 +64,7 @@ const SubdomainItem = ({
         <Stack direction="horizontal" justify="center" align="center" space="4">
           <Avatar label={name} src={src} placeholder={src === ""} size="9" />
           <Typography color="text" weight="bold" size="extraLarge">
-            {name}
+            {formattedName}
           </Typography>
         </Stack>
         <IconArrowRight strokeWidth="0.75" color="textTertiary" />
