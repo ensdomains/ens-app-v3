@@ -60,8 +60,3 @@ yarn-error.log*
 
 # IDEs
 .idea
-
-# test environment
-test-environment/*
-!/test-environment/package.json
-!/test-environment/README.md

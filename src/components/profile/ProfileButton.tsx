@@ -32,12 +32,14 @@ const ProfileButton = ({
   children,
   link,
   value,
+  testid,
 }: {
   prefixSize?: BoxProps["height"];
   prefix?: React.ReactNode;
   children: React.ReactNode;
   link?: string;
   value: string;
+  testid?: string;
 }) => {
   const { copy, copied } = useCopied();
 
@@ -53,7 +55,7 @@ const ProfileButton = ({
         variant="secondary"
         shadowless
       >
-        <Box paddingX="1" paddingY="0" width="full">
+        <Box data-testid={testid} paddingX="1" paddingY="0" width="full">
           <Stack
             direction="horizontal"
             space="2"
@@ -124,6 +126,7 @@ export const AddressProfileButton = ({
 
   return addressIconTypes[iconKey as keyof typeof addressIconTypes] ? (
     <ProfileButton
+      testid={`address-profile-button-${iconKey}`}
       prefixSize="5"
       prefix={
         <Box
