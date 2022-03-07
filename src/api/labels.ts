@@ -33,8 +33,7 @@ export function saveName(name: string) {
   });
 }
 
-// eslint-disable-next-line consistent-return
-export function checkLabel(hash: string): string | undefined {
+export function checkLabel(hash: string): string | null {
   const labels = getLabels();
   if (isEncodedLabelhash(hash)) {
     return labels[decodeLabelhash(hash)];
@@ -43,6 +42,8 @@ export function checkLabel(hash: string): string | undefined {
   if (hash.startsWith("0x")) {
     return labels[`${hash.slice(2)}`];
   }
+
+  return null;
 }
 
 export function encodeLabel(label: any) {

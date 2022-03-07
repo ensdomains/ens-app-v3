@@ -8,6 +8,8 @@ import {
   split,
 } from "@apollo/client";
 import { asyncMap } from "@apollo/client/utilities";
+import { decryptName } from "@app/api/labels";
+import { bracketFormat, truncateFormat } from "@app/utils/utils";
 import { Observable } from "zen-observable-ts";
 import resolvers from "../api/resolvers";
 import { networkIdReactive } from "./reactiveVars";
@@ -85,18 +87,15 @@ export function setupClient() {
         let returnable =
           response.data[operation.operationName] ||
           response.data[Object.keys(response.data)[0]];
-        const addFormat = (name: string) =>
-          name.replaceAll(/(\[.{3})(.{58})(.{3}\])/g, "$1...$3");
-        const addSquareBrackets = (name: string) =>
-          name.replaceAll(/(0x)(.{64})(?=\.)/g, "[$2]");
 
         const traverseObj = async (obj: Object): Promise<any> => {
           const newObj: any = obj;
           if (obj) {
             Object.entries(obj).forEach(async ([key, value]) => {
               if (typeof value === "string" && key === "name") {
-                newObj.name = addSquareBrackets(value);
-                newObj.formattedName = addFormat(newObj.name);
+                newObj.name = decryptName(value);
+                newObj.name = bracketFormat(newObj.name);
+                newObj.formattedName = truncateFormat(newObj.name);
                 return;
               }
               if (typeof value === "object") {

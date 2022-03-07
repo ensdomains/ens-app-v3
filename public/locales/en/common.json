@@ -17,7 +17,8 @@
   "profile": {
     "myProfile": "My Profile",
     "disconnect": "Disconnect",
-    "connect": "Connect"
+    "connect": "Connect",
+    "noPrimaryName": "No Primary Name"
   },
   "name": {
     "expires": "Expires",

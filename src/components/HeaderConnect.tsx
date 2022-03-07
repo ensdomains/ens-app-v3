@@ -21,7 +21,7 @@ const NETWORK_INFORMATION_QUERY = gql`
     isSafeApp
     avatar
     network
-    displayName
+    formattedPrimaryName
   }
 `;
 
@@ -35,7 +35,7 @@ export const HeaderConnect = () => {
   const breakpoints = useBreakpoint();
   const { t } = useTranslation("common");
   const {
-    data: { accounts, network, displayName, isReadOnly },
+    data: { accounts, network, isReadOnly, formattedPrimaryName },
   } = useQuery(NETWORK_INFORMATION_QUERY);
 
   const { data: { getReverseRecord } = {}, loading: reverseRecordLoading } =
@@ -49,7 +49,7 @@ export const HeaderConnect = () => {
   return !isReadOnly ? (
     <Profile
       address={accounts[0]}
-      ensName={displayName}
+      ensName={formattedPrimaryName || t("profile.noPrimaryName")}
       dropdownItems={[
         {
           label: t("profile.myProfile"),
@@ -65,7 +65,7 @@ export const HeaderConnect = () => {
         !reverseRecordLoading &&
         getReverseRecord &&
         getReverseRecord.avatar &&
-        imageUrl(getReverseRecord?.avatar, displayName, network)
+        imageUrl(getReverseRecord?.avatar, getReverseRecord?.name, network)
       }
       size={breakpoints.sm ? "medium" : "small"}
       alignDropdown="right"

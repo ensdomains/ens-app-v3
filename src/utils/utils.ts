@@ -127,11 +127,11 @@ export const parseSearchTerm = async (term: any) => {
   const domains = term.split(".");
   const tld = domains[domains.length - 1];
   try {
-    _validateName(tld);
+    validateName(term);
   } catch (e) {
+    console.error(e);
     return "invalid";
   }
-  console.log("** parseSearchTerm", { ens });
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const address = await ens.getOwner(tld);
   return _parseSearchTerm(term, true);
@@ -326,8 +326,14 @@ export function imageUrlUnknownRecord(name: string, network: string) {
   return "";
 }
 
-export const formatHashed = (name: string) =>
+export const formatHashed = (name: string): string =>
   name.replaceAll(/(\[)(.{64})(\])/g, "0x$2");
+
+export const truncateFormat = (name: string): string =>
+  name.replaceAll(/(\[.{3})(.{58})(.{3}\])/g, "$1...$3");
+
+export const bracketFormat = (name: string): string =>
+  name.replaceAll(/(0x)(.{64})(?=\.)/g, "[$2]");
 
 export function ensNftImageUrl(name: string, _network: string) {
   const network =

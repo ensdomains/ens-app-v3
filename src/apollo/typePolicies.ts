@@ -51,13 +51,22 @@ export default {
           const address = accountsReactive()?.[0];
           if (!address) return "";
           return hasValidReverseRecord(reverseRecordReactive())
-            ? reverseRecordReactive().name
+            ? reverseRecordReactive().formattedName
             : `${address.slice(0, 5)}...${address.slice(-4)}`;
         },
       },
       primaryName: {
         read() {
-          return reverseRecordReactive()?.name || null;
+          return hasValidReverseRecord(reverseRecordReactive())
+            ? reverseRecordReactive()?.name
+            : null;
+        },
+      },
+      formattedPrimaryName: {
+        read() {
+          return hasValidReverseRecord(reverseRecordReactive())
+            ? reverseRecordReactive()?.formattedName
+            : null;
         },
       },
       avatar: {

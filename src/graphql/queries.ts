@@ -13,7 +13,7 @@ export const GET_REVERSE_RECORD = gql`
   query getReverseRecord($address: String) {
     getReverseRecord(address: $address) {
       name
-      formattedName @client
+      formattedName
       address
       avatar
       match

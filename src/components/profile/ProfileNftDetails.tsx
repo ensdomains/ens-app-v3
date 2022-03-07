@@ -1,4 +1,4 @@
-import { reverseRecordReactive } from "@app/apollo/reactiveVars";
+import { gql, useQuery } from "@apollo/client";
 import { useGetReverseRecord } from "@app/hooks/useGetReverseRecord";
 import { emptyAddress, ensNftImageUrl, shortenAddress } from "@app/utils/utils";
 import { Box, Stack, Typography, vars } from "@ensdomains/thorin";
@@ -50,6 +50,13 @@ const HoverableSelfName = styled(Box)<{ name: string }>`
   }
 `;
 
+const VALID_PRIMARY_QUERY = gql`
+  query ValidPrimary {
+    primaryName
+    formattedPrimaryName
+  }
+`;
+
 const AddressBox = ({
   address,
   isSelf,
@@ -63,16 +70,17 @@ const AddressBox = ({
     address,
     !address || address.length <= 0 || isSelf
   );
-
-  const primaryName = reverseRecordReactive()?.name;
+  const {
+    data: { primaryName, formattedPrimaryName },
+  } = useQuery(VALID_PRIMARY_QUERY);
 
   const highlightName = isSelf || (reverseRecordData && reverseRecordData.name);
 
   const TopElement = () => {
     if (isSelf) {
-      if (primaryName && primaryName.length > 0) {
+      if (primaryName && formattedPrimaryName) {
         return (
-          <HoverableSelfName name={primaryName}>
+          <HoverableSelfName name={formattedPrimaryName}>
             {t("yourWallet")}
           </HoverableSelfName>
         );
