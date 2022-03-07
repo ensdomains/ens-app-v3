@@ -1,13 +1,21 @@
 {
-  "name": "ens-app-v3",
-  "version": "0.1.76",
+  "name": "ens-app-v2",
+  "version": "0.1.106",
   "workspaces": [
     "test-environment"
   ],
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
+    "dev:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens next dev",
     "build": "next build",
+    "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens next build",
     "start": "next start",
+    "buildandstart:glocal": "yarn build:glocal && yarn start",
+    "env": "yarn workspace test-environment",
+    "env:load": "yarn env load",
+    "env:start": "yarn env start",
+    "env:start:ci": "yarn env start:ci",
+    "env:start:root": "yarn env start:root",
     "lint": "next lint",
     "export": "next export",
     "analyze": "ANALYZE=true yarn build",
@@ -15,10 +23,14 @@
     "test": "jest --env=./custom-test-env.js",
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
-    "cypress": "cypress open",
-    "cypress:headless": "cypress run",
-    "e2e": "start-server-and-test dev http://localhost:3000 cypress",
-    "e2e:headless": "start-server-and-test dev http://localhost:3000 cypress:headless",
+    "waiton:all": "wait-on http://localhost:3000 && wait-on http://localhost:8040",
+    "cypress:start": "CYPRESS_REMOTE_DEBUGGING_PORT=9222 cypress run --headed --browser chrome",
+    "cypress:ci": "yarn cypress:start",
+    "cypress:wait": "yarn waiton:all && yarn cypress:start",
+    "cypress:wait:ci": "yarn waiton:all && yarn cypress:ci",
+    "e2e": "yarn node ./scripts/e2e.js",
+    "e2e:root": "yarn node ./scripts/e2e.js root",
+    "e2e:ci": "yarn node ./scripts/e2e.js ci",
     "postinstall": "husky install",
     "postyalc": "yarn"
   },
@@ -61,6 +73,7 @@
     "react-dom": "*"
   },
   "devDependencies": {
+    "@ensdomains/cypress-metamask": "patch:@ensdomains/cypress-metamask@https://github.com/ensdomains/cypress-metamask.git#./patches/@ensdomains/cypress-metamask.patch",
     "@next/bundle-analyzer": "^12.0.10",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
@@ -77,6 +90,7 @@
     "@typescript-eslint/parser": "^5.10.0",
     "babel-jest": "^27.4.6",
     "babel-loader": "^8.2.2",
+    "concurrently": "^7.0.0",
     "cypress": "^8.6.0",
     "eslint": "7.32.0",
     "eslint-config-airbnb": "^18.2.1",
@@ -101,7 +115,16 @@
     "prettier": "2.5.1",
     "start-server-and-test": "^1.14.0",
     "supertest": "^6.1.6",
-    "typescript": "4.4.4"
+    "typescript": "4.4.4",
+    "wait-on": "^6.0.1"
   },
-  "packageManager": "yarn@3.1.1"
+  "packageManager": "yarn@3.1.1",
+  "dependenciesMeta": {
+    "@ensdomains/cypress-metamask@1.1.0-development": {
+      "unplugged": true
+    },
+    "@ensdomains/cypress-metamask@1.2.0-development": {
+      "unplugged": true
+    }
+  }
 }

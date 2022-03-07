@@ -59,11 +59,19 @@ yarn test:coverage
 
 ### E2E Test
 
+For more information on the testing environment used, see the [test-environment's README](https://github.com/ensdomains/ens-app-v3/tree/main/test-environment).
+
 ```bash
-yarn cypress
-yarn cypress:headless
+# If you don't have an archive loaded in, run this first
+yarn env:load
+
+# Then you can run the respective e2e command
+# For most circumstances
 yarn e2e
-yarn e2e:headless
+# For if your docker instance requires root access
+yarn e2e:root
+# For if you're running CI or want to only run one command for tests
+yarn e2e:ci
 ```
 
 ### Build and Export

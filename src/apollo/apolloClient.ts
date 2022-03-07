@@ -26,8 +26,8 @@ const endpoints: Record<number, string> = {
 function getGraphQLAPI(): string {
   const network = networkIdReactive() as number
 
-  if (network > 100 && process.env.REACT_APP_GRAPH_NODE_URI) {
-    return process.env.REACT_APP_GRAPH_NODE_URI
+  if (process.env.NEXT_PUBLIC_GRAPH_URI) {
+    return process.env.NEXT_PUBLIC_GRAPH_URI
   }
 
   if (endpoints[network]) {
