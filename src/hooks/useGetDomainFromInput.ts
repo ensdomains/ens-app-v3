@@ -1,6 +1,6 @@
 import { gql, useLazyQuery, useQuery } from "@apollo/client";
 import { GET_SINGLE_NAME } from "@app/graphql/queries";
-import { formatHashed, parseSearchTerm } from "@app/utils/utils";
+import { parseSearchTerm } from "@app/utils/utils";
 import { validateName } from "@ensdomains/ui";
 import { useEffect, useState } from "react";
 
@@ -47,8 +47,7 @@ export const useGetDomainFromInput = (input: string, skip?: any) => {
         ) {
           try {
             // This is under the assumption that validateName never returns false
-            normalisedName = formatHashed(_name);
-            normalisedName = validateName(normalisedName);
+            normalisedName = validateName(_name);
             setNormalisedName(normalisedName);
           } finally {
             parseSearchTerm(normalisedName || _name)

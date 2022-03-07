@@ -53,7 +53,6 @@ const HoverableSelfName = styled(Box)<{ name: string }>`
 const VALID_PRIMARY_QUERY = gql`
   query ValidPrimary {
     primaryName
-    formattedPrimaryName
   }
 `;
 
@@ -71,16 +70,16 @@ const AddressBox = ({
     !address || address.length <= 0 || isSelf
   );
   const {
-    data: { primaryName, formattedPrimaryName },
+    data: { primaryName },
   } = useQuery(VALID_PRIMARY_QUERY);
 
   const highlightName = isSelf || (reverseRecordData && reverseRecordData.name);
 
   const TopElement = () => {
     if (isSelf) {
-      if (primaryName && formattedPrimaryName) {
+      if (primaryName && primaryName.length > 0) {
         return (
-          <HoverableSelfName name={formattedPrimaryName}>
+          <HoverableSelfName name={primaryName}>
             {t("yourWallet")}
           </HoverableSelfName>
         );

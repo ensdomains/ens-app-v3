@@ -84,9 +84,15 @@ export function setupClient() {
   const formatUnknownLink = new ApolloLink(
     (operation: Operation, forward: any) => {
       return asyncMap(forward(operation), async (response: any) => {
-        let returnable =
-          response.data[operation.operationName] ||
-          response.data[Object.keys(response.data)[0]];
+        const originalData =
+          response.data &&
+          (response.data[operation.operationName] ||
+            response.data[Object.keys(response.data)[0]]);
+        let returnable = Array.isArray(originalData)
+          ? [...originalData]
+          : {
+              ...originalData,
+            };
 
         const traverseObj = async (obj: Object): Promise<any> => {
           const newObj: any = obj;
@@ -108,6 +114,14 @@ export function setupClient() {
 
         if (returnable && typeof returnable === "object") {
           returnable = await traverseObj(returnable);
+          return {
+            ...response,
+            data: {
+              ...response.data,
+              [operation.operationName || Object.keys(response.data)[0]]:
+                returnable,
+            },
+          };
         }
 
         return response;
