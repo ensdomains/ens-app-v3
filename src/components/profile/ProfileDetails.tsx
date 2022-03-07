@@ -75,11 +75,13 @@ const ProfileSection = ({
 
 export const ProfileDetails = ({
   name,
+  formattedName,
   network,
   textRecords = [],
   addresses = [],
 }: {
   name: string;
+  formattedName: string;
   network: string;
   textRecords: Array<Record<"key" | "value", string>>;
   addresses: Array<Record<"key" | "value", string>>;
@@ -118,7 +120,7 @@ export const ProfileDetails = ({
       />
       <Stack direction="horizontal" align="center">
         <Typography size="headingTwo" weight="bold">
-          {name}
+          {formattedName || name}
         </Typography>
         {getTextRecord("name") && (
           <Box marginTop="1">

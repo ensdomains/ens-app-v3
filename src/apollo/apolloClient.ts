@@ -7,6 +7,7 @@ import {
   Operation,
   split,
 } from "@apollo/client";
+import { asyncMap } from "@apollo/client/utilities";
 import { Observable } from "zen-observable-ts";
 import resolvers from "../api/resolvers";
 import { networkIdReactive } from "./reactiveVars";
@@ -78,6 +79,43 @@ export function setupClient() {
     }
   );
 
+  const formatUnknownLink = new ApolloLink(
+    (operation: Operation, forward: any) => {
+      return asyncMap(forward(operation), async (response: any) => {
+        let returnable =
+          response.data[operation.operationName] ||
+          response.data[Object.keys(response.data)[0]];
+        const addFormat = (name: string) =>
+          name.replaceAll(/(\[.{3})(.{58})(.{3}\])/g, "$1...$3");
+        const addSquareBrackets = (name: string) =>
+          name.replaceAll(/(0x)(.{64})(?=\.)/g, "[$2]");
+
+        const traverseObj = async (obj: Object): Promise<any> => {
+          const newObj: any = obj;
+          if (obj) {
+            Object.entries(obj).forEach(async ([key, value]) => {
+              if (typeof value === "string" && key === "name") {
+                newObj.name = addSquareBrackets(value);
+                newObj.formattedName = addFormat(newObj.name);
+                return;
+              }
+              if (typeof value === "object") {
+                newObj[key] = await traverseObj(value);
+              }
+            });
+          }
+          return newObj;
+        };
+
+        if (returnable && typeof returnable === "object") {
+          returnable = await traverseObj(returnable);
+        }
+
+        return response;
+      });
+    }
+  );
+
   const splitLink = split(
     ({ operationName }) => {
       return (
@@ -90,7 +128,7 @@ export function setupClient() {
 
   const option = {
     cache,
-    link: splitLink,
+    link: formatUnknownLink.concat(splitLink),
     connectToDevTools: true,
   };
 

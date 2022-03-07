@@ -1,4 +1,3 @@
-import { useFormatHash } from "@app/hooks/useFormatHash";
 import { imageUrlUnknownRecord } from "@app/utils/utils";
 import {
   Avatar,
@@ -15,6 +14,7 @@ import styled from "styled-components";
 
 type Subdomain = {
   name: string;
+  formattedName: string;
 };
 
 const SubdomainWrapper = styled(Box)`
@@ -38,12 +38,12 @@ const SubdomainWrapper = styled(Box)`
 
 const SubdomainItem = ({
   name,
+  formattedName,
   network,
 }: Subdomain & {
   network: string;
 }) => {
   const [src, setSrc] = useState("");
-  const formattedName = useFormatHash(name);
 
   useEffect(() => {
     const run = async () => {
@@ -62,7 +62,12 @@ const SubdomainItem = ({
     <Link href={`/profile/${name}`} passHref>
       <SubdomainWrapper as="a">
         <Stack direction="horizontal" justify="center" align="center" space="4">
-          <Avatar label={name} src={src} placeholder={src === ""} size="9" />
+          <Avatar
+            label={formattedName}
+            src={src}
+            placeholder={src === ""}
+            size="9"
+          />
           <Typography color="text" weight="bold" size="extraLarge">
             {formattedName}
           </Typography>
@@ -86,7 +91,7 @@ export const SubdomainDetails = ({
 
   return (
     <>
-      {!loading && subdomains.length > 0 ? (
+      {!loading && subdomains && subdomains.length > 0 ? (
         subdomains.map((subdomain) => (
           <SubdomainItem network={network} {...subdomain} />
         ))

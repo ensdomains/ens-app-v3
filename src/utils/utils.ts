@@ -3,12 +3,12 @@ import getENS, { getRegistrar } from "@app/apollo/mutations/ens";
 import { globalErrorReactive } from "@app/apollo/reactiveVars";
 import { validate } from "@ensdomains/ens-validation";
 import { normalize } from "@ensdomains/eth-ens-namehash";
+import { labelhash, namehash } from "@ensdomains/ui";
 import {
   emptyAddress as _emptyAddress,
   getEnsStartBlock as _ensStartBlock,
   isEncodedLabelhash,
   isLabelValid as _isLabelValid,
-  labelhash,
   parseSearchTerm as _parseSearchTerm,
   validateName as _validateName,
 } from "@ensdomains/ui/utils/index";
@@ -326,10 +326,17 @@ export function imageUrlUnknownRecord(name: string, network: string) {
   return "";
 }
 
+export const formatHashed = (name: string) =>
+  name.replaceAll(/(\[)(.{64})(\])/g, "0x$2");
+
 export function ensNftImageUrl(name: string, _network: string) {
   const network =
     networkName[_network?.toLowerCase() as keyof typeof networkName];
-  const tokenId = labelhash(name.substring(0, name.length - 4));
+  const formattedName = formatHashed(name);
+  const tokenId =
+    name.split(".").length > 2
+      ? namehash(formattedName)
+      : labelhash(formattedName.substring(0, formattedName.length - 4));
   const contractAddress = (getRegistrar() as any).permanentRegistrar.address;
 
   return `https://metadata.ens.domains/${network}/${contractAddress}/${tokenId}/image`;

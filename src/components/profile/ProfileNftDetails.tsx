@@ -1,6 +1,6 @@
 import { reverseRecordReactive } from "@app/apollo/reactiveVars";
 import { useGetReverseRecord } from "@app/hooks/useGetReverseRecord";
-import { ensNftImageUrl, shortenAddress } from "@app/utils/utils";
+import { emptyAddress, ensNftImageUrl, shortenAddress } from "@app/utils/utils";
 import { Box, Stack, Typography, vars } from "@ensdomains/thorin";
 import { useTranslation } from "next-i18next";
 import Image from "next/image";
@@ -82,7 +82,7 @@ const AddressBox = ({
     return (reverseRecordData && reverseRecordData.name) || "No ENS Name";
   };
 
-  return (
+  return address ? (
     <Box display="flex" flexDirection="row" alignItems="center" gap="2">
       <Box display="flex" flexDirection="column" alignItems="flex-end" gap="1">
         <Typography color={highlightName ? "textSecondary" : "textTertiary"}>
@@ -94,6 +94,8 @@ const AddressBox = ({
       </Box>
       <CopyButton value={address} />
     </Box>
+  ) : (
+    <Typography color="textSecondary">None</Typography>
   );
 };
 
@@ -141,12 +143,12 @@ export const ProfileNftDetails = ({
             {
               label: tc("name.registrant"),
               type: "address",
-              value: domain.registrant,
+              value: domain.registrant !== emptyAddress && domain.registrant,
             },
             {
               label: tc("name.controller"),
               type: "address",
-              value: domain.owner,
+              value: domain.owner !== emptyAddress && domain.owner,
             },
           ].map(
             (item, inx, arr) =>

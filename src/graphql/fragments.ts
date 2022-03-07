@@ -3,6 +3,7 @@ import { gql } from "@apollo/client";
 export const NodeFields = gql`
   fragment NodeFields on Node {
     name
+    formattedName @client
     decrypted
     parent
     parentOwner
@@ -20,6 +21,7 @@ export const SubDomainStateFields = gql`
     label
     domain
     name
+    formattedName @client
     owner
     price
     rent

@@ -13,6 +13,7 @@ export const GET_REVERSE_RECORD = gql`
   query getReverseRecord($address: String) {
     getReverseRecord(address: $address) {
       name
+      formattedName @client
       address
       avatar
       match
@@ -141,6 +142,7 @@ export const GET_SUBDOMAINS_FROM_SUBGRAPH = gql`
         labelhash
         isMigrated
         name
+        formattedName @client
         owner {
           id
         }
@@ -223,9 +225,11 @@ export const GET_REGISTRATIONS_SUBGRAPH = gql`
           labelName
           labelhash
           name
+          formattedName @client
           isMigrated
           parent {
             name
+            formattedName @client
           }
         }
       }
@@ -243,6 +247,7 @@ export const GET_REGISTRATIONS_BY_IDS_SUBGRAPH = gql`
       domain {
         id
         name
+        formattedName @client
       }
     }
   }
@@ -260,9 +265,11 @@ export const GET_DOMAINS_SUBGRAPH = gql`
         labelName
         labelhash
         name
+        formattedName @client
         isMigrated
         parent {
           name
+          formattedName @client
         }
       }
     }

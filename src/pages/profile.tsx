@@ -238,6 +238,7 @@ const ProfilePage: NextPage = () => {
           <TabWrapper>
             {tab === "profile" ? (
               <ProfileDetails
+                formattedName={domain?.formattedName}
                 name={name}
                 addresses={dataAddresses && dataAddresses.getAddresses}
                 textRecords={dataTextRecords && dataTextRecords.getTextRecords}
