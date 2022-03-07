@@ -1,12 +1,12 @@
-import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 
 export const useProtectedRoute = (baseRoute: string, condition: any) => {
-  const router = useRouter();
+  const router = useRouter()
 
   useEffect(() => {
     if (!condition) {
-      router.push(baseRoute);
+      router.push(baseRoute)
     }
-  }, [router, condition, baseRoute]);
-};
+  }, [router, condition, baseRoute])
+}

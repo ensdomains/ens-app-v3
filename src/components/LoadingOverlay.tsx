@@ -1,8 +1,8 @@
-import { Box, Spinner, Typography } from "@ensdomains/thorin";
-import { useTranslation } from "next-i18next";
+import { Box, Spinner, Typography } from '@ensdomains/thorin'
+import { useTranslation } from 'next-i18next'
 
 export const LoadingOverlay = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
   return (
     <Box
@@ -14,9 +14,9 @@ export const LoadingOverlay = () => {
       gap="4"
     >
       <Typography size="headingOne" weight="bold">
-        {t("loading")}
+        {t('loading')}
       </Typography>
       <Spinner size="large" color="accent" />
     </Box>
-  );
-};
+  )
+}

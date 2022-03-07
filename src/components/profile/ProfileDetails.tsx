@@ -1,21 +1,21 @@
-import supportedAddresses from "@app/constants/supportedAddresses.json";
-import supportedTexts from "@app/constants/supportedTexts.json";
-import { imageUrl } from "@app/utils/utils";
-import { Avatar, Box, Stack, Typography, vars } from "@ensdomains/thorin";
-import { useTranslation } from "next-i18next";
-import styled from "styled-components";
+import supportedAddresses from '@app/constants/supportedAddresses.json'
+import supportedTexts from '@app/constants/supportedTexts.json'
+import { imageUrl } from '@app/utils/utils'
+import { Avatar, Box, Stack, Typography, vars } from '@ensdomains/thorin'
+import { useTranslation } from 'next-i18next'
+import styled from 'styled-components'
 import {
   AddressProfileButton,
   OtherProfileButton,
   SocialProfileButton,
-} from "./ProfileButton";
+} from './ProfileButton'
 
 const ProfileInfoBox = styled(Box)`
   background-image: ${vars.colors.accentGradient};
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: 100% 120px;
-`;
+`
 
 const ProfileSection = ({
   condition,
@@ -25,23 +25,23 @@ const ProfileSection = ({
   supported,
   type,
 }: {
-  condition: any;
-  label: string;
-  array: Array<Record<"key" | "value", string>>;
-  button: any;
-  supported?: Array<string>;
-  type?: "address" | "text";
+  condition: any
+  label: string
+  array: Array<Record<'key' | 'value', string>>
+  button: any
+  supported?: Array<string>
+  type?: 'address' | 'text'
 }) => {
-  const { t } = useTranslation("profile");
-  const Button = button;
+  const { t } = useTranslation('profile')
+  const Button = button
   const supportedArray = supported
     ? array.filter((x) => supported.includes(x.key.toLowerCase()))
-    : array;
+    : array
   const unsupportedArray = supported
     ? array
         .filter((x) => !supported.includes(x.key.toLowerCase()))
         .map((x) => ({ ...x, type }))
-    : [];
+    : []
 
   return condition ? (
     <Box>
@@ -52,26 +52,26 @@ const ProfileSection = ({
         <Stack direction="horizontal" space="2" wrap>
           {supportedArray.map(
             (item: {
-              key: string;
-              value: string;
-              type?: "text" | "address";
+              key: string
+              value: string
+              type?: 'text' | 'address'
             }) => (
               <Button {...{ ...item, iconKey: item.key }} />
-            )
+            ),
           )}
           {unsupportedArray.length > 0 &&
             unsupportedArray.map(
               (item: {
-                key: string;
-                value: string;
-                type?: "text" | "address";
-              }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />
+                key: string
+                value: string
+                type?: 'text' | 'address'
+              }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />,
             )}
         </Stack>
       </Box>
     </Box>
-  ) : null;
-};
+  ) : null
+}
 
 export const ProfileDetails = ({
   name,
@@ -79,17 +79,17 @@ export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
 }: {
-  name: string;
-  network: string;
-  textRecords: Array<Record<"key" | "value", string>>;
-  addresses: Array<Record<"key" | "value", string>>;
+  name: string
+  network: string
+  textRecords: Array<Record<'key' | 'value', string>>
+  addresses: Array<Record<'key' | 'value', string>>
 }) => {
-  const getTextRecord = (key: string) => textRecords.find((x) => x.key === key);
+  const getTextRecord = (key: string) => textRecords.find((x) => x.key === key)
   const otherRecords = [
     ...textRecords
       .filter((x) => !supportedTexts.includes(x.key.toLowerCase()))
-      .map((x) => ({ ...x, type: "text" })),
-  ];
+      .map((x) => ({ ...x, type: 'text' })),
+  ]
 
   return (
     <ProfileInfoBox
@@ -100,18 +100,18 @@ export const ProfileDetails = ({
       <Avatar
         size="32"
         label={name}
-        placeholder={!getTextRecord("avatar")}
+        placeholder={!getTextRecord('avatar')}
         src={
-          textRecords && textRecords.length > 0 && getTextRecord("avatar")
+          textRecords && textRecords.length > 0 && getTextRecord('avatar')
             ? imageUrl(
                 (
-                  getTextRecord("avatar") || {
-                    key: "avatar",
-                    value: "",
+                  getTextRecord('avatar') || {
+                    key: 'avatar',
+                    value: '',
                   }
                 ).value,
                 name,
-                network
+                network,
               )
             : undefined
         }
@@ -120,24 +120,24 @@ export const ProfileDetails = ({
         <Typography size="headingTwo" weight="bold">
           {name}
         </Typography>
-        {getTextRecord("name") && (
+        {getTextRecord('name') && (
           <Box marginTop="1">
             <Typography weight="bold" color="textTertiary">
-              {getTextRecord("name")?.value}
+              {getTextRecord('name')?.value}
             </Typography>
           </Box>
         )}
       </Stack>
-      {getTextRecord("description") && (
-        <Typography>{getTextRecord("description")?.value}</Typography>
+      {getTextRecord('description') && (
+        <Typography>{getTextRecord('description')?.value}</Typography>
       )}
-      {getTextRecord("url") && (
+      {getTextRecord('url') && (
         <Box width="min">
-          <a href={getTextRecord("url")?.value}>
+          <a href={getTextRecord('url')?.value}>
             <Typography color="blue">
-              {getTextRecord("url")
-                ?.value.replace(/http(s?):\/\//g, "")
-                .replace(/\/$/g, "")}
+              {getTextRecord('url')
+                ?.value.replace(/http(s?):\/\//g, '')
+                .replace(/\/$/g, '')}
             </Typography>
           </a>
         </Box>
@@ -149,7 +149,7 @@ export const ProfileDetails = ({
             condition={
               textRecords &&
               textRecords.filter((x) =>
-                supportedTexts.includes(x.key.toLowerCase())
+                supportedTexts.includes(x.key.toLowerCase()),
               ).length > 0
             }
             array={textRecords}
@@ -172,5 +172,5 @@ export const ProfileDetails = ({
         </Stack>
       </Box>
     </ProfileInfoBox>
-  );
-};
+  )
+}

@@ -81,3 +81,7 @@ yarn build
 yarn start
 yarn export
 ```
+
+## PR builds
+
+Vercel will automatically build and deploy a test site when pushed to a new PR branch.

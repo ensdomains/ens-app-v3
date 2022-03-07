@@ -1,56 +1,56 @@
-import mq from "@app/mediaQuery";
-import { useBreakpoint } from "@app/utils/BreakpointProvider";
-import { Box, Stack, vars } from "@ensdomains/thorin";
-import { useTranslation } from "next-i18next";
-import Link from "next/link";
-import { useRouter } from "next/router";
-import styled from "styled-components";
-import ENSFull from "../assets/ENSFull.svg";
-import ENSWithGradient from "../assets/ENSWithGradient.svg";
-import { ConditionalWrapper } from "./ConditionalWrapper";
-import { HamburgerMenu } from "./HamburgerMenu";
-import { HeaderConnect } from "./HeaderConnect";
-import { LanugageDropdown } from "./LanguageDropdown";
-import { SearchInput } from "./SearchInput";
-import { StyledNavLink } from "./StyledNavLink";
+import mq from '@app/mediaQuery'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { Box, Stack, vars } from '@ensdomains/thorin'
+import { useTranslation } from 'next-i18next'
+import Link from 'next/link'
+import { useRouter } from 'next/router'
+import styled from 'styled-components'
+import ENSFull from '../assets/ENSFull.svg'
+import ENSWithGradient from '../assets/ENSWithGradient.svg'
+import { ConditionalWrapper } from './ConditionalWrapper'
+import { HamburgerMenu } from './HamburgerMenu'
+import { HeaderConnect } from './HeaderConnect'
+import { LanugageDropdown } from './LanguageDropdown'
+import { SearchInput } from './SearchInput'
+import { StyledNavLink } from './StyledNavLink'
 
 const AlwaysShownRoutes = [
-  { href: "/", label: "navigation.home" },
-  { href: "/about", disabled: true, label: "navigation.about" },
-  { href: "/developers", disabled: true, label: "navigation.developers" },
-];
+  { href: '/', label: 'navigation.home' },
+  { href: '/about', disabled: true, label: 'navigation.about' },
+  { href: '/developers', disabled: true, label: 'navigation.developers' },
+]
 
 const DropdownRoutes = [
   {
-    label: "navigation.community",
-    href: "/community",
+    label: 'navigation.community',
+    href: '/community',
     disabled: true,
   },
   {
-    label: "navigation.help",
-    href: "/help",
+    label: 'navigation.help',
+    href: '/help',
     disabled: true,
   },
   {
-    label: "navigation.governance",
-    href: "/governance",
+    label: 'navigation.governance',
+    href: '/governance',
     disabled: true,
   },
   {
-    label: "navigation.docs",
-    href: "/docs",
+    label: 'navigation.docs',
+    href: '/docs',
     disabled: true,
   },
-];
+]
 
 const HeaderWrapper = styled(Box)<{ $isHome: boolean }>`
-  height: ${vars.space["16"]};
+  height: ${vars.space['16']};
   ${({ $isHome }) =>
     !$isHome &&
     mq.medium.min`
-    margin-bottom:  ${vars.space["12"]};
+    margin-bottom:  ${vars.space['12']};
   `}
-`;
+`
 
 const LogoAnchor = styled.a`
   cursor: pointer;
@@ -64,43 +64,43 @@ const LogoAnchor = styled.a`
     filter: brightness(1.05);
     transform: translateY(-1px);
   }
-`;
+`
 
 const VerticalLine = styled(Box)`
   width: 1px;
-  height: ${vars.space["14"]};
+  height: ${vars.space['14']};
   background-color: ${vars.colors.borderSecondary};
-`;
+`
 
 export const Header = () => {
-  const router = useRouter();
-  const breakpoints = useBreakpoint();
-  const { t } = useTranslation("common");
+  const router = useRouter()
+  const breakpoints = useBreakpoint()
+  const { t } = useTranslation('common')
 
   return (
-    <HeaderWrapper $isHome={router.asPath === "/"} as="header">
+    <HeaderWrapper $isHome={router.asPath === '/'} as="header">
       <Stack
         direction="horizontal"
         justify="center"
         align="center"
-        space={{ xs: "3", sm: "6" }}
+        space={{ xs: '3', sm: '6' }}
       >
         <ConditionalWrapper
-          condition={router.asPath !== "/"}
+          condition={router.asPath !== '/'}
           wrapper={(children) => (
             <Link passHref href="/">
               <LogoAnchor>{children}</LogoAnchor>
             </Link>
           )}
         >
-          {breakpoints.sm && router.asPath === "/" ? (
+          {breakpoints.sm && router.asPath === '/' ? (
             <ENSFull height="48" />
           ) : (
             <ENSWithGradient height="48" />
           )}
         </ConditionalWrapper>
         <LanugageDropdown />
-        {router.asPath !== "/" && breakpoints.md && (
+        {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
             <SearchInput size="large" />
@@ -126,5 +126,5 @@ export const Header = () => {
         <HeaderConnect />
       </Stack>
     </HeaderWrapper>
-  );
-};
+  )
+}

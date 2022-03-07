@@ -1,5 +1,5 @@
-import mq from "@app/mediaQuery";
-import styled from "styled-components";
+import mq from '@app/mediaQuery'
+import styled from 'styled-components'
 
 export const Container = styled.div`
   min-height: 100vh;
@@ -9,7 +9,7 @@ export const Container = styled.div`
   justify-content: center;
   align-items: center;
   height: 100vh;
-`;
+`
 
 export const Main = styled.main`
   padding: 5rem 0;
@@ -18,7 +18,7 @@ export const Main = styled.main`
   flex-direction: column;
   justify-content: center;
   align-items: center;
-`;
+`
 
 export const Footer = styled.footer`
   width: 100%;
@@ -27,21 +27,21 @@ export const Footer = styled.footer`
   display: flex;
   justify-content: center;
   align-items: center;
-`;
+`
 
 export const FooterLink = styled.a`
   display: flex;
   justify-content: center;
   align-items: center;
   flex-grow: 1;
-`;
+`
 
 export const Title = styled.h1`
   margin: 0;
   line-height: 1.15;
   font-size: 4rem;
   text-align: center;
-`;
+`
 
 export const TitleLink = styled.a`
   color: #0070f3;
@@ -52,13 +52,13 @@ export const TitleLink = styled.a`
   &:active {
     text-decoration: underline;
   }
-`;
+`
 
 export const Description = styled.p`
   text-align: center;
   line-height: 1.5;
   font-size: 1.5rem;
-`;
+`
 
 export const Code = styled.code`
   background: #fafafa;
@@ -67,7 +67,7 @@ export const Code = styled.code`
   font-size: 1.1rem;
   font-family: Menlo, Monaco, Lucida Console, Liberation Mono, DejaVu Sans Mono,
     Bitstream Vera Sans Mono, Courier New, monospace;
-`;
+`
 
 export const Grid = styled.div`
   display: flex;
@@ -81,7 +81,7 @@ export const Grid = styled.div`
     width: 100%;
     flex-direction: column;
   `}
-`;
+`
 
 export const Card = styled.a`
   margin: 1rem;
@@ -111,9 +111,9 @@ export const Card = styled.a`
     font-size: 1.25rem;
     line-height: 1.5;
   }
-`;
+`
 
 export const Logo = styled.span`
   height: 1em;
   margin-left: 0.5rem;
-`;
+`

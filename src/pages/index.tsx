@@ -1,11 +1,11 @@
-import { SearchInput } from "@app/components/SearchInput";
-import { Basic } from "@app/layouts/Basic";
-import mq from "@app/mediaQuery";
-import { Box, Stack, Typography, vars } from "@ensdomains/thorin";
-import type { NextPage } from "next";
-import { useTranslation } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
-import styled from "styled-components";
+import { SearchInput } from '@app/components/SearchInput'
+import { Basic } from '@app/layouts/Basic'
+import mq from '@app/mediaQuery'
+import { Box, Stack, Typography, vars } from '@ensdomains/thorin'
+import type { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import styled from 'styled-components'
 
 const GradientTitle = styled.h1`
   font-size: ${vars.fontSizes.headingTwo};
@@ -22,17 +22,17 @@ const GradientTitle = styled.h1`
   ${mq.small.min`
     font-size: ${vars.fontSizes.headingOne};
   `}
-`;
+`
 
 const SubtitleWrapper = styled(Box)`
-  max-width: calc(${vars.space["72"]} * 2 - ${vars.space["4"]});
+  max-width: calc(${vars.space['72']} * 2 - ${vars.space['4']});
   line-height: 150%;
   text-align: center;
-  margin-bottom: ${vars.space["3"]};
-`;
+  margin-bottom: ${vars.space['3']};
+`
 
 const Home: NextPage = () => {
-  const { t } = useTranslation("common");
+  const { t } = useTranslation('common')
 
   return (
     <Basic>
@@ -44,18 +44,18 @@ const Home: NextPage = () => {
         width="full"
       >
         <Stack align="center" justify="center" space="3">
-          <GradientTitle>{t("title")}</GradientTitle>
+          <GradientTitle>{t('title')}</GradientTitle>
           <SubtitleWrapper>
             <Typography size="large" color="textSecondary" lineHeight="1.5">
-              {t("description")}
+              {t('description')}
             </Typography>
           </SubtitleWrapper>
           <SearchInput />
         </Stack>
       </Box>
     </Basic>
-  );
-};
+  )
+}
 
 export async function getStaticProps({ locale }: { locale: string }) {
   return {
@@ -63,7 +63,7 @@ export async function getStaticProps({ locale }: { locale: string }) {
       ...(await serverSideTranslations(locale)),
       // Will be passed to the page component as props
     },
-  };
+  }
 }
 
-export default Home;
+export default Home

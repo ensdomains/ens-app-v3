@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const { i18n } = require("./next-i18next.config");
 const { withPlugins } = require("next-compose-plugins");
+const path = require("path");
 
 let nextConfig = {
   reactStrictMode: true,
@@ -24,6 +25,13 @@ let nextConfig = {
     ];
   },
   webpack: (config, options) => {
+    config.module.rules.push({
+      test: /ens.+\.json$/,
+      use: {
+        loader: path.resolve(__dirname, "./loaders/abi-loader.js"),
+        options: {},
+      },
+    });
     config.module.rules.push({
       test: /\.svg$/,
       issuer: /\.tsx?$/,

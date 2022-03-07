@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
 export const useCopied = () => {
-  const [copied, setCopied] = useState(false);
+  const [copied, setCopied] = useState(false)
 
   const copy = (value: string) => {
-    navigator.clipboard.writeText(value);
-    setCopied(true);
-  };
+    navigator.clipboard.writeText(value)
+    setCopied(true)
+  }
 
   useEffect(() => {
-    let timeout: any;
+    let timeout: any
     if (copied) {
-      timeout = setTimeout(() => setCopied(false), 1500);
+      timeout = setTimeout(() => setCopied(false), 1500)
     }
-    return () => clearTimeout(timeout);
-  }, [copied]);
+    return () => clearTimeout(timeout)
+  }, [copied])
 
-  return { copy, copied };
-};
+  return { copy, copied }
+}

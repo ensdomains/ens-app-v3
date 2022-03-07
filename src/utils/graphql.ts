@@ -1,5 +1,5 @@
-import get from "lodash/get";
-import { decryptName } from "../api/labels";
+import get from 'lodash/get'
+import { decryptName } from '../api/labels'
 
 export function refetchTilUpdated(
   refetch: () => Promise<{ data: any }>,
@@ -7,38 +7,38 @@ export function refetchTilUpdated(
   keyToCompare: string | number,
   name: string,
   prevData: any,
-  getterString: any
+  getterString: any,
 ) {
-  const maxTries = 10;
-  let tries = maxTries;
-  let incrementedInterval = interval;
+  const maxTries = 10
+  let tries = maxTries
+  let incrementedInterval = interval
 
   function recurseRefetch() {
     if (tries > 0) {
       return setTimeout(() => {
-        tries -= 1;
-        incrementedInterval = interval * (maxTries - tries + 1);
+        tries -= 1
+        incrementedInterval = interval * (maxTries - tries + 1)
         refetch().then(({ data }) => {
           const updated =
             get(data, getterString)?.find(
               (item: { domain: { name: string } }) => {
-                return decryptName(item.domain.name) === name;
-              }
+                return decryptName(item.domain.name) === name
+              },
             )[keyToCompare] !==
             get(prevData, getterString)?.find(
               (item: { domain: { name: string } }) => {
-                return decryptName(item.domain.name) === name;
-              }
-            )[keyToCompare];
+                return decryptName(item.domain.name) === name
+              },
+            )[keyToCompare]
 
-          if (updated) return;
-          return recurseRefetch();
-        });
-      }, incrementedInterval);
+          if (updated) return
+          return recurseRefetch()
+        })
+      }, incrementedInterval)
     }
   }
 
-  recurseRefetch();
+  recurseRefetch()
 }
 
 export function refetchTilUpdatedSingle({
@@ -48,36 +48,36 @@ export function refetchTilUpdatedSingle({
   prevData,
   getterString,
 }: {
-  refetch: () => Promise<{ data: any }>;
-  interval: number;
-  keyToCompare: string | number;
-  prevData: any;
-  getterString: any;
+  refetch: () => Promise<{ data: any }>
+  interval: number
+  keyToCompare: string | number
+  prevData: any
+  getterString: any
 }) {
-  const maxTries = 10;
-  let tries = maxTries;
-  let incrementedInterval = interval;
+  const maxTries = 10
+  let tries = maxTries
+  let incrementedInterval = interval
 
   function recurseRefetch() {
     if (tries > 0) {
       return setTimeout(() => {
-        tries -= 1;
-        incrementedInterval = interval * (maxTries - tries + 1);
+        tries -= 1
+        incrementedInterval = interval * (maxTries - tries + 1)
         refetch().then(({ data }) => {
           const updated =
             get(data, getterString)[keyToCompare] !==
-            get(prevData, getterString)[keyToCompare];
+            get(prevData, getterString)[keyToCompare]
 
-          if (updated) return;
-          return recurseRefetch();
-        });
-      }, incrementedInterval);
+          if (updated) return
+          return recurseRefetch()
+        })
+      }, incrementedInterval)
     }
   }
 
-  recurseRefetch();
+  recurseRefetch()
 }
 
 export const getQueryName = (document: {
-  definitions: { name: { value: any } }[];
-}) => document.definitions[0]?.name?.value;
+  definitions: { name: { value: any } }[]
+}) => document.definitions[0]?.name?.value
