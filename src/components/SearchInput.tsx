@@ -124,7 +124,8 @@ export const SearchInput = ({
   return (
     <Box
       paddingX={size === "extraLarge" ? { xs: "0", md: "12" } : "0"}
-      width="full"
+      width={size === "extraLarge" ? "full" : "auto"}
+      flexGrow={1}
     >
       <SearchInputWrapper $size={size}>
         <Input
