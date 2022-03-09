@@ -41,8 +41,9 @@ const progressBar = createProgressBar("Download", true);
 const extractProgressBar = createProgressBar("Extract", true);
 const compressProgressBar = createProgressBar("Compress", false);
 
-const { BLOCK_HEIGHT, SUBGRAPH_ID, EPOCH_TIME, BASE_URL } = process.env;
-const fileName = `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}.archive`;
+const { BLOCK_HEIGHT, SUBGRAPH_ID, EPOCH_TIME, BASE_URL, NETWORK } =
+  process.env;
+const fileName = `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}_${NETWORK}.archive`;
 const URL = `${BASE_URL}/${fileName}.tar.lz4`;
 const localURL = `${__dirname}/archives/${fileName}`;
 const outPath = `${__dirname}/data`;
