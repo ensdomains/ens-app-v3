@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.108",
+  "version": "0.1.109",
   "workspaces": [
     "test-environment"
   ],
@@ -12,7 +12,7 @@
     "start": "next start",
     "buildandstart:glocal": "yarn build:glocal && yarn start",
     "env": "yarn workspace test-environment",
-    "env:load": "yarn env load",
+    "env:load": "yarn env archive:load",
     "env:start": "yarn env start",
     "env:start:ci": "yarn env start:ci",
     "env:start:root": "yarn env start:root",

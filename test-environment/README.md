@@ -42,7 +42,12 @@ deployment script should be left in the repo to serve as an archive.
 
 ## Updating the graph-node dataset
 
+Generally, you will want to set a graft variable in the `subgraph.yaml` file for the subgraph. You
+can find more about the ENS subgraph [here](https://github.com/ensdomains/ens-subgraph). You'll also
+documentation for grafting available [here](https://thegraph.com/docs/en/developer/create-subgraph-hosted/#grafting-onto-existing-subgraphs).
+
 To update the graph-node dataset, the BLOCK_HEIGHT variable must be changed within the `.env` file.
+It should be set to the same value as the graft block.
 
 If the dataset is a dependency for a local test, you will need to first let your local graph-node
 dataset update so that your test can pass.
@@ -58,8 +63,8 @@ in this directory, which will give you a archive file for your dataset.
 ### Dataset naming scheme
 
 ```js
-`data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}.archive`;
-// e.g. data_14119046_QmTmU4syjQb8gfNq8TCQGv441qp2zQMNKnQ4smjKhpLQ6F_1643850493.archive.zip
+const file = `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}_${NETWORK}.archive`
+// e.g. data_14119046_QmTmU4syjQb8gfNq8TCQGv441qp2zQMNKnQ4smjKhpLQ6F_1643850493_ropsten.archive.tar.lz4
 ```
 
 ## Running the environment
