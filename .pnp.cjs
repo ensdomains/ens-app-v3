@@ -910,6 +910,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.0.3"
       ],
       [
+        "@mapbox/node-pre-gyp",
+        "npm:1.0.8"
+      ],
+      [
         "@metamask/obs-store",
         "npm:7.0.0"
       ],
@@ -2839,7 +2843,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "cliui",
-        "npm:7.0.4"
+        "npm:3.2.0"
       ],
       [
         "clone",
@@ -5698,10 +5702,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.4.0"
       ],
       [
-        "needle",
-        "npm:2.9.1"
-      ],
-      [
         "negotiator",
         "npm:0.6.3"
       ],
@@ -5742,6 +5742,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.0.2"
       ],
       [
+        "node-cmake",
+        "npm:2.3.2"
+      ],
+      [
         "node-emoji",
         "npm:1.11.0"
       ],
@@ -5764,10 +5768,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "node-int64",
         "npm:0.4.0"
-      ],
-      [
-        "node-pre-gyp",
-        "npm:0.13.0"
       ],
       [
         "node-releases",
@@ -5972,10 +5972,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "os-tmpdir",
         "npm:1.0.2"
-      ],
-      [
-        "osenv",
-        "npm:0.1.5"
       ],
       [
         "ospath",
@@ -6712,10 +6708,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "safer-buffer",
         "npm:2.1.2"
-      ],
-      [
-        "sax",
-        "npm:1.2.4"
       ],
       [
         "saxes",
@@ -7875,7 +7867,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "wrtc",
-        "npm:0.4.7"
+        "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz"
       ],
       [
         "ws",
@@ -13151,6 +13143,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["@mapbox/node-pre-gyp", [
+        ["npm:1.0.8", {
+          "packageLocation": "./.yarn/cache/@mapbox-node-pre-gyp-npm-1.0.8-14ba73c5fc-29a38f3957.zip/node_modules/@mapbox/node-pre-gyp/",
+          "packageDependencies": [
+            ["@mapbox/node-pre-gyp", "npm:1.0.8"],
+            ["detect-libc", "npm:1.0.3"],
+            ["https-proxy-agent", "npm:5.0.0"],
+            ["make-dir", "npm:3.1.0"],
+            ["node-fetch", "virtual:adfe0e2c8c21a31039f1776077ca1d67dbeb53ec1c9231c8e972765923842594c0edc551d646bc72e7e7edc28ac968a539c01d5a380223ff53b8664a7f8d7c1b#npm:2.6.7"],
+            ["nopt", "npm:5.0.0"],
+            ["npmlog", "npm:5.0.1"],
+            ["rimraf", "npm:3.0.2"],
+            ["semver", "npm:7.3.5"],
+            ["tar", "npm:6.1.11"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["@metamask/obs-store", [
         ["npm:7.0.0", {
           "packageLocation": "./.yarn/cache/@metamask-obs-store-npm-7.0.0-86171179e9-e149714038.zip/node_modules/@metamask/obs-store/",
@@ -13221,7 +13231,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["web3-core-requestmanager", "npm:1.5.0"],
             ["web3-utils", "npm:1.5.0"],
             ["webrtc-adapter", "npm:6.4.8"],
-            ["wrtc", "npm:0.4.7"],
+            ["wrtc", "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz"],
             ["ws", "virtual:2113e9439c8ba9439cf22ce71d3c98b3e2fde05bc6686f496cf886e86d10240fbddc893dc037e100767e5f6dae7be497c33643140e4d890a79190b33ff0ee22d#npm:7.5.6"]
           ],
           "linkType": "HARD",
@@ -17417,6 +17427,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["are-we-there-yet", "npm:1.1.7"],
             ["delegates", "npm:1.0.0"],
             ["readable-stream", "npm:2.3.7"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:2.0.0", {
+          "packageLocation": "./.yarn/cache/are-we-there-yet-npm-2.0.0-7d2f5201ce-6c80b4fd04.zip/node_modules/are-we-there-yet/",
+          "packageDependencies": [
+            ["are-we-there-yet", "npm:2.0.0"],
+            ["delegates", "npm:1.0.0"],
+            ["readable-stream", "npm:3.6.0"]
           ],
           "linkType": "HARD",
         }],
@@ -26116,6 +26135,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],
           "linkType": "HARD",
         }],
+        ["npm:3.0.2", {
+          "packageLocation": "./.yarn/cache/gauge-npm-3.0.2-9e22f7af9e-81296c00c7.zip/node_modules/gauge/",
+          "packageDependencies": [
+            ["gauge", "npm:3.0.2"],
+            ["aproba", "npm:2.0.0"],
+            ["color-support", "npm:1.1.3"],
+            ["console-control-strings", "npm:1.1.0"],
+            ["has-unicode", "npm:2.0.1"],
+            ["object-assign", "npm:4.1.1"],
+            ["signal-exit", "npm:3.0.5"],
+            ["string-width", "npm:4.2.3"],
+            ["strip-ansi", "npm:6.0.1"],
+            ["wide-align", "npm:1.1.5"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:4.0.2", {
           "packageLocation": "./.yarn/cache/gauge-npm-4.0.2-c30192725f-65077b87a7.zip/node_modules/gauge/",
           "packageDependencies": [
@@ -27341,14 +27376,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["ignore-walk", [
-        ["npm:3.0.4", {
-          "packageLocation": "./.yarn/cache/ignore-walk-npm-3.0.4-dc5095baa0-9e9c5ef6c3.zip/node_modules/ignore-walk/",
-          "packageDependencies": [
-            ["ignore-walk", "npm:3.0.4"],
-            ["minimatch", "npm:3.0.4"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:4.0.1", {
           "packageLocation": "./.yarn/cache/ignore-walk-npm-4.0.1-e301e7e75f-903cd5cb68.zip/node_modules/ignore-walk/",
           "packageDependencies": [
@@ -32027,18 +32054,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["needle", [
-        ["npm:2.9.1", {
-          "packageLocation": "./.yarn/cache/needle-npm-2.9.1-f40e591726-746ae3a378.zip/node_modules/needle/",
-          "packageDependencies": [
-            ["needle", "npm:2.9.1"],
-            ["debug", "virtual:396a3691f7b25accf085fe2fff1f56eb7540eff3f2e928a7572ca1de9b831ff8f22136404f236aaed35d90369918dfc34392844d0f822a310563f34746dfb015#npm:3.2.7"],
-            ["iconv-lite", "npm:0.4.24"],
-            ["sax", "npm:1.2.4"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["negotiator", [
         ["npm:0.6.2", {
           "packageLocation": "./.yarn/cache/negotiator-npm-0.6.2-ba538e167a-dfddaff6c0.zip/node_modules/negotiator/",
@@ -32199,11 +32214,31 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["node-addon-api", [
+        ["npm:1.7.2", {
+          "packageLocation": "./.yarn/unplugged/node-addon-api-npm-1.7.2-c341ccaeb6/node_modules/node-addon-api/",
+          "packageDependencies": [
+            ["node-addon-api", "npm:1.7.2"],
+            ["node-gyp", "npm:8.2.0"]
+          ],
+          "linkType": "HARD",
+        }],
         ["npm:2.0.2", {
           "packageLocation": "./.yarn/unplugged/node-addon-api-npm-2.0.2-8c2c1e9782/node_modules/node-addon-api/",
           "packageDependencies": [
             ["node-addon-api", "npm:2.0.2"],
             ["node-gyp", "npm:8.2.0"]
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
+      ["node-cmake", [
+        ["npm:2.3.2", {
+          "packageLocation": "./.yarn/unplugged/node-cmake-npm-2.3.2-dcfdbdcc57/node_modules/node-cmake/",
+          "packageDependencies": [
+            ["node-cmake", "npm:2.3.2"],
+            ["nan", "npm:2.15.0"],
+            ["which", "npm:1.3.1"],
+            ["yargs", "npm:7.1.2"]
           ],
           "linkType": "HARD",
         }]
@@ -32322,25 +32357,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["node-pre-gyp", [
-        ["npm:0.13.0", {
-          "packageLocation": "./.yarn/unplugged/node-pre-gyp-npm-0.13.0-cc8e2bf16a/node_modules/node-pre-gyp/",
-          "packageDependencies": [
-            ["node-pre-gyp", "npm:0.13.0"],
-            ["detect-libc", "npm:1.0.3"],
-            ["mkdirp", "npm:0.5.5"],
-            ["needle", "npm:2.9.1"],
-            ["nopt", "npm:4.0.3"],
-            ["npm-packlist", "npm:1.4.8"],
-            ["npmlog", "npm:4.1.2"],
-            ["rc", "npm:1.2.8"],
-            ["rimraf", "npm:2.7.1"],
-            ["semver", "npm:5.7.1"],
-            ["tar", "npm:4.4.19"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["node-releases", [
         ["npm:2.0.0", {
           "packageLocation": "./.yarn/cache/node-releases-npm-2.0.0-45232345ac-4342ab7681.zip/node_modules/node-releases/",
@@ -32380,15 +32396,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["nopt", "npm:3.0.6"],
             ["abbrev", "npm:1.1.1"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:4.0.3", {
-          "packageLocation": "./.yarn/cache/nopt-npm-4.0.3-b35e68a869-66cd3b6021.zip/node_modules/nopt/",
-          "packageDependencies": [
-            ["nopt", "npm:4.0.3"],
-            ["abbrev", "npm:1.1.1"],
-            ["osenv", "npm:0.1.5"]
           ],
           "linkType": "HARD",
         }],
@@ -32599,16 +32606,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["npm-packlist", [
-        ["npm:1.4.8", {
-          "packageLocation": "./.yarn/cache/npm-packlist-npm-1.4.8-ddca195225-85f764bd0f.zip/node_modules/npm-packlist/",
-          "packageDependencies": [
-            ["npm-packlist", "npm:1.4.8"],
-            ["ignore-walk", "npm:3.0.4"],
-            ["npm-bundled", "npm:1.1.2"],
-            ["npm-normalize-package-bin", "npm:1.0.1"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:3.0.0", {
           "packageLocation": "./.yarn/cache/npm-packlist-npm-3.0.0-9671ff7386-8550ecdec5.zip/node_modules/npm-packlist/",
           "packageDependencies": [
@@ -32720,6 +32717,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["are-we-there-yet", "npm:1.1.7"],
             ["console-control-strings", "npm:1.1.0"],
             ["gauge", "npm:2.7.4"],
+            ["set-blocking", "npm:2.0.0"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:5.0.1", {
+          "packageLocation": "./.yarn/cache/npmlog-npm-5.0.1-366cab64a2-516b266302.zip/node_modules/npmlog/",
+          "packageDependencies": [
+            ["npmlog", "npm:5.0.1"],
+            ["are-we-there-yet", "npm:2.0.0"],
+            ["console-control-strings", "npm:1.1.0"],
+            ["gauge", "npm:3.0.2"],
             ["set-blocking", "npm:2.0.0"]
           ],
           "linkType": "HARD",
@@ -33128,17 +33136,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ["npm:1.0.2", {
           "packageLocation": "./.yarn/cache/os-tmpdir-npm-1.0.2-e305b0689b-5666560f7b.zip/node_modules/os-tmpdir/",
           "packageDependencies": [
-            ["os-tmpdir", "npm:1.0.2"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["osenv", [
-        ["npm:0.1.5", {
-          "packageLocation": "./.yarn/cache/osenv-npm-0.1.5-435137eb60-779d261920.zip/node_modules/osenv/",
-          "packageDependencies": [
-            ["osenv", "npm:0.1.5"],
-            ["os-homedir", "npm:1.0.2"],
             ["os-tmpdir", "npm:1.0.2"]
           ],
           "linkType": "HARD",
@@ -35771,15 +35768,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/safer-buffer-npm-2.1.2-8d5c0b705e-cab8f25ae6.zip/node_modules/safer-buffer/",
           "packageDependencies": [
             ["safer-buffer", "npm:2.1.2"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["sax", [
-        ["npm:1.2.4", {
-          "packageLocation": "./.yarn/cache/sax-npm-1.2.4-178f05f12f-d3df7d32b8.zip/node_modules/sax/",
-          "packageDependencies": [
-            ["sax", "npm:1.2.4"]
           ],
           "linkType": "HARD",
         }]
@@ -40942,12 +40930,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["wrtc", [
-        ["npm:0.4.7", {
-          "packageLocation": "./.yarn/unplugged/wrtc-npm-0.4.7-d6b7c11156/node_modules/wrtc/",
+        ["https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz", {
+          "packageLocation": "./.yarn/unplugged/wrtc-https-1f13a2a4b3/node_modules/wrtc/",
           "packageDependencies": [
-            ["wrtc", "npm:0.4.7"],
+            ["wrtc", "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz"],
+            ["@mapbox/node-pre-gyp", "npm:1.0.8"],
             ["domexception", "npm:1.0.1"],
-            ["node-pre-gyp", "npm:0.13.0"]
+            ["nan", "npm:2.15.0"],
+            ["node-addon-api", "npm:1.7.2"],
+            ["node-cmake", "npm:2.3.2"]
           ],
           "linkType": "HARD",
         }]
@@ -41425,6 +41416,26 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yargs-parser", "npm:2.4.1"]
           ],
           "linkType": "HARD",
+        }],
+        ["npm:7.1.2", {
+          "packageLocation": "./.yarn/cache/yargs-npm-7.1.2-cbad9f754f-0c330ce133.zip/node_modules/yargs/",
+          "packageDependencies": [
+            ["yargs", "npm:7.1.2"],
+            ["camelcase", "npm:3.0.0"],
+            ["cliui", "npm:3.2.0"],
+            ["decamelize", "npm:1.2.0"],
+            ["get-caller-file", "npm:1.0.3"],
+            ["os-locale", "npm:1.4.0"],
+            ["read-pkg-up", "npm:1.0.1"],
+            ["require-directory", "npm:2.1.1"],
+            ["require-main-filename", "npm:1.0.1"],
+            ["set-blocking", "npm:2.0.0"],
+            ["string-width", "npm:1.0.2"],
+            ["which-module", "npm:1.0.0"],
+            ["y18n", "npm:3.2.2"],
+            ["yargs-parser", "npm:5.0.1"]
+          ],
+          "linkType": "HARD",
         }]
       ]],
       ["yargs-parser", [
@@ -41459,6 +41470,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/yargs-parser-npm-20.2.9-a1d19e598d-8bb69015f2.zip/node_modules/yargs-parser/",
           "packageDependencies": [
             ["yargs-parser", "npm:20.2.9"]
+          ],
+          "linkType": "HARD",
+        }],
+        ["npm:5.0.1", {
+          "packageLocation": "./.yarn/cache/yargs-parser-npm-5.0.1-8a5334189d-8eff7f3653.zip/node_modules/yargs-parser/",
+          "packageDependencies": [
+            ["yargs-parser", "npm:5.0.1"],
+            ["camelcase", "npm:3.0.0"],
+            ["object.assign", "npm:4.1.2"]
           ],
           "linkType": "HARD",
         }],
