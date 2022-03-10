@@ -17,6 +17,14 @@ const ProfileInfoBox = styled(Box)`
   background-size: 100% 120px;
 `;
 
+const EllipsesWrapper = styled(Box)`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: ${vars.fontSizes.headingTwo};
+  font-weight: bold;
+`;
+
 const ProfileSection = ({
   condition,
   label,
@@ -119,9 +127,7 @@ export const ProfileDetails = ({
         }
       />
       <Stack direction="horizontal" align="center">
-        <Typography size="headingTwo" weight="bold">
-          {formattedName || name}
-        </Typography>
+        <EllipsesWrapper>{formattedName || name}</EllipsesWrapper>
         {getTextRecord("name") && (
           <Box marginTop="1">
             <Typography weight="bold" color="textTertiary">

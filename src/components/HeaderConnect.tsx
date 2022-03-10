@@ -21,7 +21,7 @@ const NETWORK_INFORMATION_QUERY = gql`
     isSafeApp
     avatar
     network
-    formattedPrimaryName
+    primaryName
   }
 `;
 
@@ -35,7 +35,7 @@ export const HeaderConnect = () => {
   const breakpoints = useBreakpoint();
   const { t } = useTranslation("common");
   const {
-    data: { accounts, network, isReadOnly, formattedPrimaryName },
+    data: { accounts, network, isReadOnly, primaryName },
   } = useQuery(NETWORK_INFORMATION_QUERY);
 
   const { data: { getReverseRecord } = {}, loading: reverseRecordLoading } =
@@ -49,7 +49,7 @@ export const HeaderConnect = () => {
   return !isReadOnly ? (
     <Profile
       address={accounts[0]}
-      ensName={formattedPrimaryName || t("profile.noPrimaryName")}
+      ensName={primaryName || t("profile.noPrimaryName")}
       dropdownItems={[
         {
           label: t("profile.myProfile"),

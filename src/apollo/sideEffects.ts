@@ -1,5 +1,5 @@
 import { normalize } from "@ensdomains/eth-ens-namehash";
-import { bracketFormat, emptyAddress, truncateFormat } from "../utils/utils";
+import { emptyAddress } from "../utils/utils";
 import getENS from "./mutations/ens";
 import { isENSReadyReactive } from "./reactiveVars";
 
@@ -23,7 +23,6 @@ export const getReverseRecord = async (address?: string | undefined | null) => {
       const avatar = await ens.getText(name, "avatar");
       return {
         name,
-        formattedName: truncateFormat(bracketFormat(name)),
         addr: reverseAddress,
         avatar,
         match: false,

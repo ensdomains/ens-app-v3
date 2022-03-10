@@ -81,3 +81,35 @@ yarn build
 yarn start
 yarn export
 ```
+
+### GraphQL
+
+When using GraphQL, should you need to fetch an ENS name, you should add the **formattedName** field.
+The formattedName field is the output of automatically detecting and truncating or attempting to decode an unknown labelhash.
+You should use this whenever fetching names from the subgraph, as well as from the contracts directly.
+
+```bash
+# Without any label formatting
+[828413908c7277b795387bb5a362c0014a6a76c2e1685991a0206a99ff925fb1].jefflau.eth
+
+# With label formatting, but no matching hash found locally
+[828...fb1].jefflau.eth
+
+# With label formatting, and hash found in localStorage
+unknownlabel1231fa.jefflau.eth
+```
+
+Example in GQL:
+
+```js
+const FETCH_SUBDOMAIN_NAMES = gql`
+  query getSubdomains($id: ID!) {
+    domain(id: $id) {
+      subdomains {
+        name
+        formattedName @client
+      }
+    }
+  }
+`;
+```
