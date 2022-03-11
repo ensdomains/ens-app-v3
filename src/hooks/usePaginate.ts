@@ -47,20 +47,16 @@ export const usePaginate = <TData = any, TVariables = OperationVariables>(
 
   const queryResult = useQuery(query, queryOptions);
 
-  const fetchMoreData = () =>
-    queryResult.fetchMore({
-      ...queryOptions,
-      variables: <TVariables>(<unknown>{
-        ...queryOptions.variables,
-        skip: page * pageSize,
-        first: mergedResults.length + pageSize,
-      }),
-    });
+  const fetchMore = () =>
+    queryResult.refetch({
+      skip: page * pageSize + mergedResults.length,
+      first: pageSize,
+    } as unknown as Partial<TVariables>);
 
   const loadPage = (reqPage: number) => {
     setMergedResults([]);
     _loadPage(reqPage);
   };
 
-  return { ...queryResult, data: mergedResults, fetchMoreData, loadPage };
+  return { ...queryResult, data: mergedResults, fetchMore, loadPage };
 };
