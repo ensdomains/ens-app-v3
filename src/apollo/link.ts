@@ -1,6 +1,7 @@
 import { ApolloLink, HttpLink, Operation, split } from '@apollo/client'
 import resolvers from '@app/api/resolvers'
 import { Observable } from 'zen-observable-ts'
+// eslint-disable-next-line import/no-cycle
 import getClient from './apolloClient'
 import { networkIdReactive } from './reactiveVars'
 

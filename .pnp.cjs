@@ -2539,7 +2539,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "bn.js",
-        "npm:4.12.0"
+        "npm:5.2.0"
       ],
       [
         "body-parser",
@@ -11690,7 +11690,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.16"],
             ["bech32", "npm:2.0.0"],
             ["blakejs", "npm:1.1.1"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["bs58", "npm:4.0.1"],
             ["crypto-addr-codec", "npm:0.1.7"],
             ["js-crc", "npm:0.2.0"],
@@ -12348,7 +12348,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ethersproject/bignumber", "npm:5.5.0"],
             ["@ethersproject/bytes", "npm:5.5.0"],
             ["@ethersproject/logger", "npm:5.5.0"],
-            ["bn.js", "npm:4.12.0"]
+            ["bn.js", "npm:5.2.0"]
           ],
           "linkType": "HARD",
         }]
@@ -12599,7 +12599,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ethersproject/bytes", "npm:5.5.0"],
             ["@ethersproject/logger", "npm:5.5.0"],
             ["@ethersproject/properties", "npm:5.5.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["hash.js", "npm:1.1.7"]
           ],
@@ -15077,7 +15077,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["@truffle/codec", "npm:0.7.1"],
             ["big.js", "npm:5.2.2"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["borc", "npm:2.1.2"],
             ["debug", "virtual:92a28e392bb7746809827b7e8ebf6aec49c5f04125481214ae6ea6f4de204344bcccbe5eb3a2f4388bb368cfa5d84f03ce0d8f32a9fcc3f5e92ea34723da1c56#npm:4.3.2"],
             ["lodash.clonedeep", "npm:4.5.0"],
@@ -16566,7 +16566,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@walletconnect/encoding", "npm:1.0.0"],
             ["@walletconnect/jsonrpc-utils", "npm:1.0.0"],
             ["@walletconnect/types", "npm:1.7.1"],
-            ["bn.js", "npm:4.11.8"],
+            ["bn.js", "npm:5.2.0"],
             ["js-sha3", "npm:0.8.0"],
             ["query-string", "npm:6.13.5"]
           ],
@@ -17731,7 +17731,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/asn1.js-npm-5.4.1-37c7edbcb0-3786a101ac.zip/node_modules/asn1.js/",
           "packageDependencies": [
             ["asn1.js", "npm:5.4.1"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["inherits", "npm:2.0.4"],
             ["minimalistic-assert", "npm:1.0.1"],
             ["safer-buffer", "npm:2.1.2"]
@@ -19377,27 +19377,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["bn.js", [
-        ["npm:4.11.6", {
-          "packageLocation": "./.yarn/cache/bn.js-npm-4.11.6-34a3bf8e02-db23047bf0.zip/node_modules/bn.js/",
-          "packageDependencies": [
-            ["bn.js", "npm:4.11.6"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:4.11.8", {
-          "packageLocation": "./.yarn/cache/bn.js-npm-4.11.8-296affce9a-80d4709cd5.zip/node_modules/bn.js/",
-          "packageDependencies": [
-            ["bn.js", "npm:4.11.8"]
-          ],
-          "linkType": "HARD",
-        }],
-        ["npm:4.12.0", {
-          "packageLocation": "./.yarn/cache/bn.js-npm-4.12.0-3ec6c884f6-39afb4f15f.zip/node_modules/bn.js/",
-          "packageDependencies": [
-            ["bn.js", "npm:4.12.0"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:5.2.0", {
           "packageLocation": "./.yarn/cache/bn.js-npm-5.2.0-11748c0b07-6117170393.zip/node_modules/bn.js/",
           "packageDependencies": [
@@ -21245,7 +21224,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/create-ecdh-npm-4.0.4-1048ce2035-0dd7fca971.zip/node_modules/create-ecdh/",
           "packageDependencies": [
             ["create-ecdh", "npm:4.0.4"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["elliptic", "npm:6.5.4"]
           ],
           "linkType": "HARD",
@@ -22363,7 +22342,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/diffie-hellman-npm-5.0.3-cbef8f3171-0e620f3221.zip/node_modules/diffie-hellman/",
           "packageDependencies": [
             ["diffie-hellman", "npm:5.0.3"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["miller-rabin", "npm:4.0.1"],
             ["randombytes", "npm:2.1.0"]
           ],
@@ -22652,7 +22631,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/elliptic-npm-6.3.3-ed9904ec97-d9899dcc50.zip/node_modules/elliptic/",
           "packageDependencies": [
             ["elliptic", "npm:6.3.3"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["brorand", "npm:1.1.0"],
             ["hash.js", "npm:1.1.7"],
             ["inherits", "npm:2.0.4"]
@@ -22663,7 +22642,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/elliptic-npm-6.5.4-0ca8204a86-d56d21fd04.zip/node_modules/elliptic/",
           "packageDependencies": [
             ["elliptic", "npm:6.5.4"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["brorand", "npm:1.1.0"],
             ["hash.js", "npm:1.1.7"],
             ["hmac-drbg", "npm:1.0.1"],
@@ -24349,7 +24328,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/eth-lib-npm-0.1.29-f0336c8400-d1494fc0af.zip/node_modules/eth-lib/",
           "packageDependencies": [
             ["eth-lib", "npm:0.1.29"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["nano-json-stream-parser", "npm:0.1.2"],
             ["servify", "npm:0.1.12"],
@@ -24362,7 +24341,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/eth-lib-npm-0.2.7-7f1c4117da-977eb162ce.zip/node_modules/eth-lib/",
           "packageDependencies": [
             ["eth-lib", "npm:0.2.7"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["xhr-request-promise", "npm:0.1.3"]
           ],
@@ -24372,7 +24351,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/eth-lib-npm-0.2.8-3c025a63dd-be7efb0b08.zip/node_modules/eth-lib/",
           "packageDependencies": [
             ["eth-lib", "npm:0.2.8"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["xhr-request-promise", "npm:0.1.3"]
           ],
@@ -24589,7 +24568,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethereumjs-abi-https-8bd779d1bf-ae074be0bb.zip/node_modules/ethereumjs-abi/",
           "packageDependencies": [
             ["ethereumjs-abi", "https://github.com/ethereumjs/ethereumjs-abi.git#commit=ee3994657fa7a427238e6ba92a84d0b529bbcde0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["ethereumjs-util", "npm:6.2.1"]
           ],
           "linkType": "HARD",
@@ -24598,7 +24577,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethereumjs-abi-npm-0.6.5-a34e05df00-3abdc79dc6.zip/node_modules/ethereumjs-abi/",
           "packageDependencies": [
             ["ethereumjs-abi", "npm:0.6.5"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["ethereumjs-util", "npm:4.5.1"]
           ],
           "linkType": "HARD",
@@ -24607,7 +24586,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethereumjs-abi-npm-0.6.8-c911e0a245-cede2a8ae7.zip/node_modules/ethereumjs-abi/",
           "packageDependencies": [
             ["ethereumjs-abi", "npm:0.6.8"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["ethereumjs-util", "npm:6.2.1"]
           ],
           "linkType": "HARD",
@@ -24721,7 +24700,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethereumjs-util-npm-4.5.1-a9e60d7752-ee91fbd296.zip/node_modules/ethereumjs-util/",
           "packageDependencies": [
             ["ethereumjs-util", "npm:4.5.1"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["create-hash", "npm:1.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["ethereum-cryptography", "npm:0.1.3"],
@@ -24733,7 +24712,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethereumjs-util-npm-5.2.0-93e7b9fcef-930d1521b2.zip/node_modules/ethereumjs-util/",
           "packageDependencies": [
             ["ethereumjs-util", "npm:5.2.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["create-hash", "npm:1.2.0"],
             ["ethjs-util", "npm:0.1.6"],
             ["keccak", "npm:1.4.0"],
@@ -24747,7 +24726,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethereumjs-util-npm-5.2.1-72b39f4e7e-20db6c639d.zip/node_modules/ethereumjs-util/",
           "packageDependencies": [
             ["ethereumjs-util", "npm:5.2.1"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["create-hash", "npm:1.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["ethereum-cryptography", "npm:0.1.3"],
@@ -24762,7 +24741,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["ethereumjs-util", "npm:6.2.1"],
             ["@types/bn.js", "npm:4.11.6"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["create-hash", "npm:1.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["ethereum-cryptography", "npm:0.1.3"],
@@ -24789,7 +24768,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethereumjs-utils-npm-5.2.5-5e0b9d85fb-2e5c0834bd.zip/node_modules/ethereumjs-utils/",
           "packageDependencies": [
             ["ethereumjs-utils", "npm:5.2.5"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["create-hash", "npm:1.2.0"],
             ["ethjs-util", "npm:0.1.6"],
             ["keccak", "npm:1.4.0"],
@@ -24867,7 +24846,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ethers", "npm:4.0.0-beta.14"],
             ["@types/node", "npm:10.17.60"],
             ["aes-js", "npm:3.0.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["elliptic", "npm:6.3.3"],
             ["hash.js", "npm:1.1.3"],
             ["js-sha3", "npm:0.5.7"],
@@ -24883,7 +24862,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [
             ["ethers", "npm:4.0.49"],
             ["aes-js", "npm:3.0.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["elliptic", "npm:6.5.4"],
             ["hash.js", "npm:1.1.3"],
             ["js-sha3", "npm:0.5.7"],
@@ -24974,7 +24953,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ethjs-unit-npm-0.1.6-fb3575f27f-df6b4752ff.zip/node_modules/ethjs-unit/",
           "packageDependencies": [
             ["ethjs-unit", "npm:0.1.6"],
-            ["bn.js", "npm:4.11.6"],
+            ["bn.js", "npm:5.2.0"],
             ["number-to-bn", "npm:1.7.0"]
           ],
           "linkType": "HARD",
@@ -31312,7 +31291,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/miller-rabin-npm-4.0.1-3426ac0bf7-00cd1ab838.zip/node_modules/miller-rabin/",
           "packageDependencies": [
             ["miller-rabin", "npm:4.0.1"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["brorand", "npm:1.1.0"]
           ],
           "linkType": "HARD",
@@ -32796,7 +32775,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/number-to-bn-npm-1.7.0-dce8575cfb-5b8c9dbe7b.zip/node_modules/number-to-bn/",
           "packageDependencies": [
             ["number-to-bn", "npm:1.7.0"],
-            ["bn.js", "npm:4.11.6"],
+            ["bn.js", "npm:5.2.0"],
             ["strip-hex-prefix", "npm:1.0.0"]
           ],
           "linkType": "HARD",
@@ -34392,7 +34371,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/public-encrypt-npm-4.0.3-b25e19fada-215d446e43.zip/node_modules/public-encrypt/",
           "packageDependencies": [
             ["public-encrypt", "npm:4.0.3"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["browserify-rsa", "npm:4.1.0"],
             ["create-hash", "npm:1.2.0"],
             ["parse-asn1", "npm:5.1.6"],
@@ -35901,7 +35880,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["secp256k1", "npm:3.7.1"],
             ["bindings", "npm:1.5.0"],
             ["bip66", "npm:1.1.5"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["create-hash", "npm:1.2.0"],
             ["drbg.js", "npm:1.0.1"],
             ["elliptic", "npm:6.5.4"],
@@ -35917,7 +35896,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["secp256k1", "npm:3.8.0"],
             ["bindings", "npm:1.5.0"],
             ["bip66", "npm:1.1.5"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["create-hash", "npm:1.2.0"],
             ["drbg.js", "npm:1.0.1"],
             ["elliptic", "npm:6.5.4"],
@@ -40139,7 +40118,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-eth-iban-npm-1.2.11-a3e9f7c128-1c28b3ad2c.zip/node_modules/web3-eth-iban/",
           "packageDependencies": [
             ["web3-eth-iban", "npm:1.2.11"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["web3-utils", "npm:1.2.11"]
           ],
           "linkType": "HARD",
@@ -40148,7 +40127,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-eth-iban-npm-1.3.6-281fad53e0-f535cf5b80.zip/node_modules/web3-eth-iban/",
           "packageDependencies": [
             ["web3-eth-iban", "npm:1.3.6"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["web3-utils", "npm:1.3.6"]
           ],
           "linkType": "HARD",
@@ -40157,7 +40136,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-eth-iban-npm-1.5.0-c371d86460-4366ec979d.zip/node_modules/web3-eth-iban/",
           "packageDependencies": [
             ["web3-eth-iban", "npm:1.5.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["web3-utils", "npm:1.5.0"]
           ],
           "linkType": "HARD",
@@ -40166,7 +40145,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-eth-iban-npm-1.7.0-8c2dbbee9b-5a11fd27e5.zip/node_modules/web3-eth-iban/",
           "packageDependencies": [
             ["web3-eth-iban", "npm:1.7.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["web3-utils", "npm:1.7.0"]
           ],
           "linkType": "HARD",
@@ -40499,7 +40478,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-utils-npm-1.2.11-618f0ef456-1e43235963.zip/node_modules/web3-utils/",
           "packageDependencies": [
             ["web3-utils", "npm:1.2.11"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["eth-lib", "npm:0.2.8"],
             ["ethereum-bloom-filters", "npm:1.0.10"],
             ["ethjs-unit", "npm:0.1.6"],
@@ -40514,7 +40493,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-utils-npm-1.2.9-2b3f1b98ea-7ac1853aa8.zip/node_modules/web3-utils/",
           "packageDependencies": [
             ["web3-utils", "npm:1.2.9"],
-            ["bn.js", "npm:4.11.8"],
+            ["bn.js", "npm:5.2.0"],
             ["eth-lib", "npm:0.2.7"],
             ["ethereum-bloom-filters", "npm:1.0.10"],
             ["ethjs-unit", "npm:0.1.6"],
@@ -40529,7 +40508,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-utils-npm-1.3.6-1b4d647a0e-e9950ff9a6.zip/node_modules/web3-utils/",
           "packageDependencies": [
             ["web3-utils", "npm:1.3.6"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["eth-lib", "npm:0.2.8"],
             ["ethereum-bloom-filters", "npm:1.0.10"],
             ["ethjs-unit", "npm:0.1.6"],
@@ -40544,7 +40523,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-utils-npm-1.5.0-e9a93956d8-3dce220665.zip/node_modules/web3-utils/",
           "packageDependencies": [
             ["web3-utils", "npm:1.5.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["eth-lib", "npm:0.2.8"],
             ["ethereum-bloom-filters", "npm:1.0.10"],
             ["ethjs-unit", "npm:0.1.6"],
@@ -40558,7 +40537,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/web3-utils-npm-1.7.0-98c0723746-cd96c8cca5.zip/node_modules/web3-utils/",
           "packageDependencies": [
             ["web3-utils", "npm:1.7.0"],
-            ["bn.js", "npm:4.12.0"],
+            ["bn.js", "npm:5.2.0"],
             ["ethereum-bloom-filters", "npm:1.0.10"],
             ["ethereumjs-util", "npm:7.1.3"],
             ["ethjs-unit", "npm:0.1.6"],

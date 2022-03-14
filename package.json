@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.111",
+  "version": "0.1.112",
   "workspaces": [
     "test-environment"
   ],
@@ -120,7 +120,8 @@
     "wait-on": "^6.0.1"
   },
   "resolutions": {
-    "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz"
+    "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz",
+    "bn.js": "npm:bn.js@^5.2.0"
   },
   "packageManager": "yarn@3.1.1",
   "dependenciesMeta": {
