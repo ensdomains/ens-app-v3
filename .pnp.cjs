@@ -1978,6 +1978,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:3.1.2"
       ],
       [
+        "apollo-link-lazy",
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.1.0"
+      ],
+      [
         "aproba",
         "npm:2.0.0"
       ],
@@ -8000,6 +8004,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/eslint-plugin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.10.0"],
             ["@typescript-eslint/parser", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.10.0"],
             ["@walletconnect/web3-provider", "npm:1.7.1"],
+            ["apollo-link-lazy", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.1.0"],
             ["babel-jest", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:27.4.6"],
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.2"],
             ["concurrently", "npm:7.0.0"],
@@ -17386,6 +17391,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
+      ["apollo-link-lazy", [
+        ["npm:0.1.0", {
+          "packageLocation": "./.yarn/cache/apollo-link-lazy-npm-0.1.0-70093f9b79-28d073b64e.zip/node_modules/apollo-link-lazy/",
+          "packageDependencies": [
+            ["apollo-link-lazy", "npm:0.1.0"]
+          ],
+          "linkType": "SOFT",
+        }],
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.1.0", {
+          "packageLocation": "./.yarn/__virtual__/apollo-link-lazy-virtual-9f4b6a3d21/0/cache/apollo-link-lazy-npm-0.1.0-70093f9b79-28d073b64e.zip/node_modules/apollo-link-lazy/",
+          "packageDependencies": [
+            ["apollo-link-lazy", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.1.0"],
+            ["@apollo/client", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.5.7"],
+            ["@types/apollo__client", null]
+          ],
+          "packagePeers": [
+            "@apollo/client",
+            "@types/apollo__client"
+          ],
+          "linkType": "HARD",
+        }]
+      ]],
       ["aproba", [
         ["npm:1.2.0", {
           "packageLocation": "./.yarn/cache/aproba-npm-1.2.0-34129f0778-0fca141966.zip/node_modules/aproba/",
@@ -22847,6 +22874,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/eslint-plugin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.10.0"],
             ["@typescript-eslint/parser", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.10.0"],
             ["@walletconnect/web3-provider", "npm:1.7.1"],
+            ["apollo-link-lazy", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.1.0"],
             ["babel-jest", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:27.4.6"],
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.2"],
             ["concurrently", "npm:7.0.0"],

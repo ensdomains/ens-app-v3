@@ -6687,6 +6687,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"apollo-link-lazy@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "apollo-link-lazy@npm:0.1.0"
+  peerDependencies:
+    "@apollo/client": ^3.0.0
+  checksum: 28d073b64e700162bc603b8c87db91ac383c5580a57ebca2e9687b6275fc24cd591fb1cb5464b136f26fa4c0d1fc8984676fee3d6999926b5e407e8530ffe26f
+  languageName: node
+  linkType: hard
+
 "aproba@npm:^1.0.3":
   version: 1.2.0
   resolution: "aproba@npm:1.2.0"
@@ -11346,6 +11355,7 @@ __metadata:
     "@typescript-eslint/eslint-plugin": ^5.10.0
     "@typescript-eslint/parser": ^5.10.0
     "@walletconnect/web3-provider": ^1.7.1
+    apollo-link-lazy: ^0.1.0
     babel-jest: ^27.4.6
     babel-loader: ^8.2.2
     concurrently: ^7.0.0
