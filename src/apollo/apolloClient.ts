@@ -19,7 +19,6 @@ export function setupClient() {
   }
 
   client = new ApolloClient(option)
-  console.log(client)
 }
 
 export default function getClient() {
