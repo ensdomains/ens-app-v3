@@ -1,4 +1,5 @@
 import { useQuery } from "@apollo/client";
+import { isENSReadyReactive } from "@app/apollo/reactiveVars";
 import { GET_REVERSE_RECORD } from "@app/graphql/queries";
 import { emptyAddress } from "@ensdomains/ui";
 
@@ -9,7 +10,7 @@ export const useGetReverseRecord = (address: string, skip: any) => {
       variables: {
         address,
       },
-      skip,
+      skip: skip || !isENSReadyReactive(),
     }
   );
 

@@ -337,7 +337,8 @@ export const bracketFormat = (name: string): string =>
 
 export function ensNftImageUrl(name: string, _network: string) {
   const network =
-    networkName[_network?.toLowerCase() as keyof typeof networkName];
+    networkName[_network?.toLowerCase() as keyof typeof networkName] ||
+    _network;
   const formattedName = formatHashed(name);
   const tokenId =
     name.split(".").length > 2
@@ -384,3 +385,6 @@ export const shortenAddress = (
 
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`;
 };
+
+export const secondsToDays = (seconds: number) =>
+  Math.floor(seconds / (60 * 60 * 24));

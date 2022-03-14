@@ -47,7 +47,7 @@ const connectedRoutes = [
     disabled: true,
     href: "/favourites",
   },
-  { label: "navigation.connected.myNames", disabled: false, href: "/my-names" },
+  { label: "navigation.connected.myNames", disabled: false, href: "/names/me" },
 ];
 
 const HeaderWrapper = styled(Box)<{ $isHome: boolean }>`

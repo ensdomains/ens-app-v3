@@ -1,7 +1,9 @@
 import { Typography } from "@ensdomains/thorin";
 import styled from "styled-components";
+import { DomainsGridView } from "./DomainsGridView";
+import { DomainsListView } from "./DomainsListView";
 
-type Domain = {
+export type Domain = {
   name: string;
   formattedName: string;
 };
@@ -16,16 +18,16 @@ const AllWrapper = styled.div`
 export const DomainsList = ({
   domains,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  network,
   loading,
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   view,
 }: {
   domains: Domain[];
-  network: string;
   loading: boolean;
   view: "list" | "grid";
 }) => {
+  const network = "mainnet";
+
   if (loading) {
     return (
       <AllWrapper>
@@ -34,7 +36,7 @@ export const DomainsList = ({
     );
   }
 
-  if (domains.length === 0) {
+  if (!domains || domains === undefined || domains.length === 0) {
     return (
       <AllWrapper>
         <Typography size="headingTwo" weight="bold" color="textTertiary">
@@ -43,5 +45,10 @@ export const DomainsList = ({
       </AllWrapper>
     );
   }
-  return null;
+
+  if (view === "list") {
+    return <DomainsListView domains={domains} network={network} />;
+  }
+
+  return <DomainsGridView domains={domains} network={network} />;
 };
