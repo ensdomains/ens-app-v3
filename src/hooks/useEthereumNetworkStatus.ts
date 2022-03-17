@@ -1,33 +1,31 @@
-import { useEffect, useState } from 'react'
-import { ethers } from 'ethers'
+import { useEffect } from 'react'
+import { gql, useQuery } from '@apollo/client'
 
-type EthereumNetworkStatus = 'unknown' | 'valid' | 'invalid'
+const REACT_VAR_LISTENERS = gql`
+  query reactiveVarListeners @client {
+    networkId
+    isENSReady
+    globalError
+    isAppReady
+  }
+`
 
-export const useEthereumNetworkStatus = (): EthereumNetworkStatus => {
-  const [status, setStatus] = useState<EthereumNetworkStatus>('unknown')
+export const useEthereumNetworkStatus = () => {
+  const {
+    data: { networkId, isENSReady, globalError, isAppReady },
+  } = useQuery(REACT_VAR_LISTENERS)
 
   useEffect(() => {
-    let provider: ethers.providers.Web3Provider
-    const acceptedNetworks: string[] =
-      process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORKS?.split(',') || []
+    console.log(networkId, isENSReady, globalError, isAppReady)
+    // console.log('get provider', getProvider)
+    // const test = async () => {
+    //   if (getProvider) {
+    //     const provider = await getProvider()
+    //     console.log(provider)
+    //   }
+    // }
+    // test()
 
-    const eventHandler = (newNetwork: any) => {
-      const name = newNetwork?.name
-      if (!name) setStatus('unknown')
-      else if (acceptedNetworks.includes(name)) setStatus('valid')
-      else setStatus('invalid')
-    }
-    if (window.ethereum) {
-      provider = new ethers.providers.Web3Provider(
-        window.ethereum as any,
-        'any',
-      )
-      provider.on('network', eventHandler)
-    }
-
-    return () => {
-      if (provider) provider.off('network', eventHandler)
-    }
-  }, [setStatus])
-  return status
+    return () => {}
+  }, [networkId, isENSReady, globalError, isAppReady])
 }
