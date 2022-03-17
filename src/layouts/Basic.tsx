@@ -2,6 +2,7 @@ import { Footer } from '@app/components/Footer'
 import { LoadingOverlay } from '@app/components/LoadingOverlay'
 import { Box } from '@ensdomains/thorin'
 import Head from 'next/head'
+import { useAcceptedEthereumNetworksRedirect } from '@app/hooks/useAcceptedEthereumNetworksRedirect'
 import { Header } from '../components/Header'
 
 export const Basic = ({
@@ -13,6 +14,7 @@ export const Basic = ({
   children: React.ReactNode
   title?: string
 }) => {
+  useAcceptedEthereumNetworksRedirect()
   return (
     <Box
       paddingX={{ xs: '8', sm: '16' }}

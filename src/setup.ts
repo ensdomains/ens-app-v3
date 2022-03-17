@@ -16,6 +16,7 @@ import {
 import { getReverseRecord } from '@app/apollo/sideEffects'
 import { getAccounts, getNetwork, getNetworkId } from '@ensdomains/ui'
 import { isReadOnly } from '@ensdomains/ui/web3'
+import { isNumber, toNumber } from 'lodash'
 import getShouldDelegate from './api/delegate'
 
 export const setFavourites = () => {
@@ -43,6 +44,19 @@ export const isSupportedNetwork = (networkId: number) => {
     default:
       return false
   }
+}
+
+export const isAcceptedNetwork = (networkId: number): boolean => {
+  const _acceptedNetworkIds =
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS
+  if (_acceptedNetworkIds) {
+    const acceptedNetworkIds = _acceptedNetworkIds
+      .split(',')
+      .map(toNumber)
+      .filter(isNumber)
+    return acceptedNetworkIds.includes(networkId)
+  }
+  return false
 }
 
 export const getProvider = async (reconnect?: boolean) => {
@@ -130,7 +144,20 @@ export const setWeb3Provider = async (provider: any) => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   provider?.on('chainChanged', async (_: any) => {
     const networkId = await getNetworkId()
+
+    if (!isAcceptedNetwork(networkId)) {
+      networkIdReactive(networkId)
+      networkReactive(await getNetwork())
+      globalErrorReactive({
+        ...globalErrorReactive(),
+        network: 'Unsupported Network',
+      })
+      return
+    }
+
     if (!isSupportedNetwork(networkId)) {
+      networkIdReactive(networkId)
+      networkReactive(await getNetwork())
       globalErrorReactive({
         ...globalErrorReactive(),
         network: 'Unsupported Network',
@@ -146,6 +173,10 @@ export const setWeb3Provider = async (provider: any) => {
 
     networkIdReactive(networkId)
     networkReactive(await getNetwork())
+    globalErrorReactive({
+      ...globalErrorReactive(),
+      network: undefined,
+    })
   })
 
   provider?.on('accountsChanged', async (_accounts: any[]) => {
@@ -165,7 +196,19 @@ export default async (reconnect: boolean) => {
 
     const networkId = await getNetworkId()
 
+    if (!isAcceptedNetwork(networkId)) {
+      networkIdReactive(networkId)
+      networkReactive(await getNetwork())
+      globalErrorReactive({
+        ...globalErrorReactive(),
+        network: 'Unsupported Network',
+      })
+      return
+    }
+
     if (!isSupportedNetwork(networkId)) {
+      networkIdReactive(networkId)
+      networkReactive(await getNetwork())
       globalErrorReactive({
         ...globalErrorReactive(),
         network: 'Unsupported Network',
@@ -175,6 +218,10 @@ export default async (reconnect: boolean) => {
 
     networkIdReactive(await getNetworkId())
     networkReactive(await getNetwork())
+    globalErrorReactive({
+      ...globalErrorReactive(),
+      network: undefined,
+    })
 
     await setWeb3Provider(provider)
 
