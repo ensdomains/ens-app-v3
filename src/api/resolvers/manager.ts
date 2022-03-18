@@ -7,7 +7,6 @@ import modeNames from '@app/api/modes'
 import { sendHelper, sendHelperArray } from '@app/api/resolverUtils'
 import getENS, { getRegistrar } from '@app/apollo/mutations/ens'
 import { isENSReadyReactive, namesReactive } from '@app/apollo/reactiveVars'
-import COIN_LIST_KEYS from '@app/constants/coinList'
 import TEXT_RECORD_KEYS from '@app/constants/textRecords.json'
 import { GET_REGISTRANT_FROM_SUBGRAPH } from '@app/graphql/queries'
 import { isEmptyAddress } from '@app/utils/records'
@@ -16,7 +15,6 @@ import {
   MAINNET_DNSREGISTRAR_ADDRESS,
   ROPSTEN_DNSREGISTRAR_ADDRESS,
 } from '@app/utils/utils'
-import { formatsByName } from '@ensdomains/address-encoder'
 import {
   encodeContenthash,
   getBlock,
@@ -87,6 +85,8 @@ export const handleSingleTransaction = async (
   }
 
   if (record.contractFn === 'setAddr(bytes32,uint256,bytes)') {
+    const { formatsByName } = await import('@ensdomains/address-encoder')
+
     const coinRecord = record
     const { decoder, coinType } = formatsByName[coinRecord.key]
     let addressAsBytes
@@ -123,7 +123,7 @@ export const handleMultipleTransactions = async (
     const resolver = resolverInstance.interface
     const namehash = getNamehash(name)
 
-    const transactionArray = records.map((record: any) => {
+    const transactionArray = records.map(async (record: any) => {
       if (record.contractFn === 'setContenthash') {
         let value
         if (isEmptyAddress(record.value)) {
@@ -143,6 +143,8 @@ export const handleMultipleTransactions = async (
       }
 
       if (record.contractFn === 'setAddr(bytes32,uint256,bytes)') {
+        const { formatsByName } = await import('@ensdomains/address-encoder')
+
         const { decoder, coinType } = formatsByName[record.key]
         let addressAsBytes
         // use 0x00... for ETH because an empty string throws
@@ -788,48 +790,55 @@ const resolvers = {
         try {
           const resolver = resolverInstance.interface
           const namehash = getNamehash(_name)
-          const transactionArray = records.map((record: any, i: number) => {
-            switch (i) {
-              case 0:
-                if (parseInt(record, 16) === 0) return undefined
-                return resolver.encodeFunctionData('setAddr(bytes32,address)', [
-                  namehash,
-                  record,
-                ])
-              case 1:
-                if (!record || parseInt(record, 16) === 0) return undefined
-                return resolver.encodeFunctionData('setContenthash', [
-                  namehash,
-                  record,
-                ])
-              case 2:
-                return record.map((textRecord: any) => {
-                  if (textRecord.value.length === 0) return undefined
-                  return resolver.encodeFunctionData('setText', [
-                    namehash,
-                    textRecord.key,
-                    textRecord.value,
-                  ])
-                })
-              case 3:
-                return record.map((coinRecord: any) => {
-                  if (parseInt(coinRecord.value, 16) === 0) return undefined
-                  const { decoder, coinType } = formatsByName[coinRecord.key]
-                  let addressAsBytes
-                  if (!coinRecord.value || coinRecord.value === '') {
-                    addressAsBytes = Buffer.from('')
-                  } else {
-                    addressAsBytes = decoder(coinRecord.value)
-                  }
+          const transactionArray = records.map(
+            async (record: any, i: number) => {
+              switch (i) {
+                case 0:
+                  if (parseInt(record, 16) === 0) return undefined
                   return resolver.encodeFunctionData(
-                    'setAddr(bytes32,uint256,bytes)',
-                    [namehash, coinType, addressAsBytes],
+                    'setAddr(bytes32,address)',
+                    [namehash, record],
                   )
-                })
-              default:
-                throw Error('More records than expected')
-            }
-          })
+                case 1:
+                  if (!record || parseInt(record, 16) === 0) return undefined
+                  return resolver.encodeFunctionData('setContenthash', [
+                    namehash,
+                    record,
+                  ])
+                case 2:
+                  return record.map((textRecord: any) => {
+                    if (textRecord.value.length === 0) return undefined
+                    return resolver.encodeFunctionData('setText', [
+                      namehash,
+                      textRecord.key,
+                      textRecord.value,
+                    ])
+                  })
+                case 3: {
+                  const { formatsByName } = await import(
+                    '@ensdomains/address-encoder'
+                  )
+
+                  return record.map((coinRecord: any) => {
+                    if (parseInt(coinRecord.value, 16) === 0) return undefined
+                    const { decoder, coinType } = formatsByName[coinRecord.key]
+                    let addressAsBytes
+                    if (!coinRecord.value || coinRecord.value === '') {
+                      addressAsBytes = Buffer.from('')
+                    } else {
+                      addressAsBytes = decoder(coinRecord.value)
+                    }
+                    return resolver.encodeFunctionData(
+                      'setAddr(bytes32,uint256,bytes)',
+                      [namehash, coinType, addressAsBytes],
+                    )
+                  })
+                }
+                default:
+                  throw Error('More records than expected')
+              }
+            },
+          )
 
           // flatten textrecords and addresses and remove undefined
           return transactionArray.flat().filter((bytes: any) => bytes)
@@ -879,12 +888,14 @@ const resolvers = {
       }
 
       async function getAllAddresses(_name: any) {
+        const COIN_LIST_KEYS = (await import('@app/constants/coinList')).default
         const promises = COIN_LIST_KEYS.map((key) => ens.getAddr(_name, key))
         const records = await Promise.all(promises)
         return buildKeyValueObjects(COIN_LIST_KEYS, records)
       }
 
       async function getAllAddressesWithResolver(_name: any, resolver: any) {
+        const COIN_LIST_KEYS = (await import('@app/constants/coinList')).default
         const promises = COIN_LIST_KEYS.map((key) =>
           ens.getAddrWithResolver(_name, key, resolver),
         )

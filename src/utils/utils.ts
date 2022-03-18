@@ -1,7 +1,6 @@
 import { saveName } from '@app/api/labels'
 import getENS, { getRegistrar } from '@app/apollo/mutations/ens'
 import { globalErrorReactive } from '@app/apollo/reactiveVars'
-import { validate } from '@ensdomains/ens-validation'
 import { normalize } from '@ensdomains/eth-ens-namehash'
 import {
   emptyAddress as _emptyAddress,
@@ -214,16 +213,6 @@ export function isRecordEmpty(value: any) {
 export const hasValidReverseRecord = (getReverseRecord: any) =>
   getReverseRecord?.name && getReverseRecord.name !== emptyAddress
 
-export const hasNonAscii = () => {
-  const strs = window.location.pathname.split('/')
-  const rslt = strs.reduce((accum, next) => {
-    if (accum) return true
-    if (!validate(next)) return true
-    return accum
-  }, false)
-  return rslt
-}
-
 export function usePrevious(value: any) {
   // The ref object is a generic container whose current property is mutable ...
   // ... and can hold any value, similar to an instance property on a class
@@ -317,11 +306,11 @@ export function imageUrl(url: string, name: any, network: string) {
 // eslint-disable-next-line consistent-return
 export function imageUrlUnknownRecord(name: string, network: string) {
   const _network =
-    networkName[network?.toLowerCase() as keyof typeof networkName];
+    networkName[network?.toLowerCase() as keyof typeof networkName]
   if (_network) {
-    return `https://metadata.ens.domains/${_network}/avatar/${name}`;
+    return `https://metadata.ens.domains/${_network}/avatar/${name}`
   }
-  return "";
+  return ''
 }
 
 export function ensNftImageUrl(name: string, _network: string) {

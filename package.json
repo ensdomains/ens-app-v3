@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.109",
+  "version": "0.1.112",
   "workspaces": [
     "test-environment"
   ],
@@ -49,6 +49,7 @@
     "@svgr/webpack": "^6.2.1",
     "@toruslabs/torus-embed": "^1.20.2",
     "@walletconnect/web3-provider": "^1.7.1",
+    "apollo-link-lazy": "^0.1.0",
     "ethers": "^5.5.3",
     "graphql": "^16.2.0",
     "iso-639-1": "^2.1.13",
@@ -119,7 +120,8 @@
     "wait-on": "^6.0.1"
   },
   "resolutions": {
-    "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz"
+    "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz",
+    "bn.js": "npm:bn.js@^5.2.0"
   },
   "packageManager": "yarn@3.1.1",
   "dependenciesMeta": {

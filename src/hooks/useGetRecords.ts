@@ -4,10 +4,21 @@ import {
   GET_RESOLVER_FROM_SUBGRAPH,
   GET_TEXT_RECORDS,
 } from '@app/graphql/queries'
-import { formatsByCoinType } from '@ensdomains/address-encoder'
 import { getNamehash } from '@ensdomains/ui'
+import { useEffect, useState } from 'react'
+
+const loadFormats = async () => {
+  const { formatsByCoinType } = await import('@ensdomains/address-encoder')
+  return formatsByCoinType
+}
 
 export const useGetRecords = (domain = { name: undefined }) => {
+  const [formatsByCoinType, setFormatsByCoinType] = useState<any>([])
+
+  useEffect(() => {
+    loadFormats().then((formats) => setFormatsByCoinType(formats))
+  }, [])
+
   const { data: dataResolver, loading: resolverLoading } = useQuery(
     GET_RESOLVER_FROM_SUBGRAPH,
     {
@@ -23,6 +34,7 @@ export const useGetRecords = (domain = { name: undefined }) => {
   const coinList =
     resolver &&
     resolver.coinTypes &&
+    formatsByCoinType.length > 0 &&
     resolver.coinTypes
       .map((c: any) => {
         return formatsByCoinType[c] && formatsByCoinType[c].name

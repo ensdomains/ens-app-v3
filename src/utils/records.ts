@@ -4,10 +4,9 @@ import {
   emptyAddress,
   supportedAvatarProtocols,
 } from '@app/utils/utils'
-import { formatsByName } from '@ensdomains/address-encoder'
 import { encodeContenthash, isValidContenthash } from '@ensdomains/ui'
 
-export function validateRecord({
+export async function validateRecord({
   key,
   value,
   contractFn,
@@ -40,6 +39,7 @@ export function validateRecord({
         return false
       }
       try {
+        const { formatsByName } = await import('@ensdomains/address-encoder')
         formatsByName[key].decoder(value)
         return true
       } catch {
