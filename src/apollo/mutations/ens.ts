@@ -16,25 +16,33 @@ export async function setup({
   customProvider,
   ensAddress,
 }: Record<string, any>) {
-  const option: Parameters<typeof setupENS>[0] = {
-    reloadOnAccountsChange: false,
-    enforceReadOnly,
-    enforceReload,
-    customProvider,
-    ensAddress,
-    infura: enforceReadOnly ? INFURA_ID : undefined,
-  }
+  try {
+    const option: Parameters<typeof setupENS>[0] = {
+      reloadOnAccountsChange: false,
+      enforceReadOnly,
+      enforceReload,
+      customProvider,
+      ensAddress,
+      infura: enforceReadOnly ? INFURA_ID : undefined,
+    }
 
-  const {
-    ens: ensInstance,
-    registrar: registrarInstance,
-    providerObject,
-  } = await setupENS(option)
-  ens = ensInstance
-  registrar = registrarInstance
-  ensRegistryAddress = ensAddress
-  isENSReadyReactive(true)
-  return { ens, registrar, providerObject }
+    const {
+      ens: ensInstance,
+      registrar: registrarInstance,
+      providerObject,
+    } = await setupENS(option)
+    ens = ensInstance
+    registrar = registrarInstance
+    ensRegistryAddress = ensAddress
+    isENSReadyReactive(true)
+    return { ens, registrar, providerObject }
+  } catch (e) {
+    ens = {}
+    registrar = {}
+    ensRegistryAddress = ''
+    isENSReadyReactive(false)
+    return { ens, registrar, providerObject: undefined }
+  }
 }
 
 export function getRegistrar() {

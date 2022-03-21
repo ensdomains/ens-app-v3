@@ -14,27 +14,32 @@ const REACT_VAR_LISTENERS = gql`
 
 const NetworkPage: NextPage = () => {
   const {
-    data: { globalError },
+    data: { globalError, isAppReady },
   } = useQuery(REACT_VAR_LISTENERS)
 
+  const isLoading = !isAppReady && !globalError.network
   const isAcceptedNetwork = !globalError.network
 
   return (
     <Basic>
-      <>
-        {isAcceptedNetwork ? (
-          <>
-            <div>Your network is good.</div>
-          </>
-        ) : (
-          <>
-            <div>
-              We are currently only using Ropstin network. Please change your
-              network and refresh the page{' '}
-            </div>
-          </>
-        )}
-      </>
+      {isLoading ? (
+        <>Loading...</>
+      ) : (
+        <>
+          {isAcceptedNetwork ? (
+            <>
+              <div>Your network is good.</div>
+            </>
+          ) : (
+            <>
+              <div>
+                We are currently only using Ropstin network. Please change your
+                network
+              </div>
+            </>
+          )}
+        </>
+      )}
     </Basic>
   )
 }

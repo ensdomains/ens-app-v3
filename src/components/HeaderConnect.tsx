@@ -46,7 +46,7 @@ export const HeaderConnect = () => {
       skip: !accounts?.length,
     })
 
-  return !isReadOnly ? (
+  return !isReadOnly && accounts && accounts[0] ? (
     <Profile
       address={accounts[0]}
       ensName={displayName}

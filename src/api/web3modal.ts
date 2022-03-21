@@ -72,9 +72,11 @@ export const connect = async () => {
       reloadOnAccountsChange: false,
       enforceReload: true,
     })
+
     return provider
   } catch (e) {
     if (e !== 'Modal closed by user') {
+      console.log('web3modal:connect error', e)
       throw e
     }
   }

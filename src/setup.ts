@@ -2,22 +2,18 @@ import { connect } from '@app/api/web3modal'
 import { setup } from '@app/apollo/mutations/ens'
 import {
   accountsReactive,
-  delegatesReactive,
   favouritesReactive,
   globalErrorReactive,
   isAppReadyReactive,
   isReadOnlyReactive,
   networkIdReactive,
   networkReactive,
-  reverseRecordReactive,
   subDomainFavouritesReactive,
   web3ProviderReactive,
 } from '@app/apollo/reactiveVars'
-import { getReverseRecord } from '@app/apollo/sideEffects'
 import { getAccounts, getNetwork, getNetworkId } from '@ensdomains/ui'
 import { isReadOnly } from '@ensdomains/ui/web3'
 import { isNumber, toNumber } from 'lodash'
-import getShouldDelegate from './api/delegate'
 
 export const setFavourites = () => {
   favouritesReactive(
@@ -62,6 +58,7 @@ export const isAcceptedNetwork = (networkId: number): boolean => {
 export const getProvider = async (reconnect?: boolean) => {
   let provider
   try {
+    // For local testing
     if (
       process.env.REACT_APP_STAGE === 'local' &&
       process.env.REACT_APP_ENS_ADDRESS
@@ -100,15 +97,16 @@ export const getProvider = async (reconnect?: boolean) => {
       return provider
     }
 
+    // Default readonly provider
     const { providerObject } = await setup({
       reloadOnAccountsChange: false,
       enforceReadOnly: true,
       enforceReload: false,
     })
-
     provider = providerObject
     return provider
   } catch (e: any) {
+    console.log(e)
     if (e.message.match(/Unsupported network/)) {
       globalErrorReactive({
         ...globalErrorReactive(),
@@ -131,39 +129,40 @@ export const getProvider = async (reconnect?: boolean) => {
   }
 }
 
+export const setupNetworkReactiveVariables = async () => {
+  const networkId = await getNetworkId()
+  const network = await getNetwork()
+
+  if (!isAcceptedNetwork(networkId) || !isSupportedNetwork(networkId)) {
+    networkIdReactive(networkId)
+    networkReactive(network)
+    globalErrorReactive({
+      ...globalErrorReactive(),
+      network: 'Unsupported Network',
+    })
+    return
+  }
+
+  networkIdReactive(await getNetworkId())
+  networkReactive(await getNetwork())
+  globalErrorReactive({
+    ...globalErrorReactive(),
+    network: undefined,
+  })
+}
+
 export const setWeb3Provider = async (provider: any) => {
   web3ProviderReactive(provider)
 
-  const accounts = isReadOnly() ? [] : await getAccounts()
-
   if (provider) {
     provider.removeAllListeners()
-    accountsReactive(accounts)
   }
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   provider?.on('chainChanged', async (_: any) => {
-    const networkId = await getNetworkId()
+    isAppReadyReactive(false)
 
-    if (!isAcceptedNetwork(networkId)) {
-      networkIdReactive(networkId)
-      networkReactive(await getNetwork())
-      globalErrorReactive({
-        ...globalErrorReactive(),
-        network: 'Unsupported Network',
-      })
-      return
-    }
-
-    if (!isSupportedNetwork(networkId)) {
-      networkIdReactive(networkId)
-      networkReactive(await getNetwork())
-      globalErrorReactive({
-        ...globalErrorReactive(),
-        network: 'Unsupported Network',
-      })
-      return
-    }
+    await setupNetworkReactiveVariables()
 
     await setup({
       customProvider: provider,
@@ -171,12 +170,7 @@ export const setWeb3Provider = async (provider: any) => {
       enforceReload: true,
     })
 
-    networkIdReactive(networkId)
-    networkReactive(await getNetwork())
-    globalErrorReactive({
-      ...globalErrorReactive(),
-      network: undefined,
-    })
+    isAppReadyReactive(true)
   })
 
   provider?.on('accountsChanged', async (_accounts: any[]) => {
@@ -186,51 +180,40 @@ export const setWeb3Provider = async (provider: any) => {
   return provider
 }
 
+/**
+ * Runs the setup process get the right provider and set global state
+ *
+ * @param reconnect forces the provider to be acquired through web3modal.
+ * Set to false on initial execution and true thereafter
+ *
+ * @mutation web3ProviderReactive
+ * @mutation networkIdReactive network number
+ * @mutation networkReactive network name
+ * @mutation accountsReactive the account associated with the provider
+ * @mutation isENSReadyReactive if ens registrar and contracts where successfully set up. Set in setup()
+ * @mutation isAppReadyReactive if the app has finished loading scripts
+ *
+ * * */
 export default async (reconnect: boolean) => {
   try {
+    isAppReadyReactive(false)
+
     setFavourites()
     setSubDomainFavourites()
+
     const provider = await getProvider(reconnect)
 
-    if (!provider) throw new Error('Please install a wallet')
-
-    const networkId = await getNetworkId()
-
-    if (!isAcceptedNetwork(networkId)) {
-      networkIdReactive(networkId)
-      networkReactive(await getNetwork())
-      globalErrorReactive({
-        ...globalErrorReactive(),
-        network: 'Unsupported Network',
-      })
-      return
+    if (!provider) {
+      throw new Error('Please install a wallet')
     }
 
-    if (!isSupportedNetwork(networkId)) {
-      networkIdReactive(networkId)
-      networkReactive(await getNetwork())
-      globalErrorReactive({
-        ...globalErrorReactive(),
-        network: 'Unsupported Network',
-      })
-      return
-    }
+    const accounts = isReadOnly() ? [] : await getAccounts()
+    accountsReactive(accounts)
+    isReadOnlyReactive(isReadOnly())
 
-    networkIdReactive(await getNetworkId())
-    networkReactive(await getNetwork())
-    globalErrorReactive({
-      ...globalErrorReactive(),
-      network: undefined,
-    })
+    await setupNetworkReactiveVariables()
 
     await setWeb3Provider(provider)
-
-    if (accountsReactive()?.[0]) {
-      reverseRecordReactive(await getReverseRecord(accountsReactive()?.[0]))
-      delegatesReactive(await getShouldDelegate(accountsReactive()?.[0]))
-    }
-
-    isReadOnlyReactive(isReadOnly())
 
     // add back for normal prod
     // setupAnalytics();

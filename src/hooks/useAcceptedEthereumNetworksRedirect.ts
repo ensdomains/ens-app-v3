@@ -15,7 +15,6 @@ export const useAcceptedEthereumNetworksRedirect = () => {
     data: { globalError },
   } = useQuery(REACT_VAR_LISTENERS)
 
-  console.log(globalError)
   const shouldRedirect: boolean =
     !!globalError.network && router.asPath !== '/network'
 

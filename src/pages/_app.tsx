@@ -9,6 +9,7 @@ import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
 import { createGlobalStyle } from 'styled-components'
 import '../styles.css'
+import { useAcceptedEthereumNetworksRedirect } from '@app/hooks/useAcceptedEthereumNetworksRedirect'
 
 const GlobalStyle = createGlobalStyle`
 html,
@@ -49,7 +50,7 @@ const ApolloReactiveProvider = ({
   children: React.ReactNode
 }) => {
   useReactiveVarListeners()
-
+  useAcceptedEthereumNetworksRedirect()
   return <>{children}</>
 }
 
