@@ -2,6 +2,8 @@ import { NextPage } from 'next'
 import { Basic } from '@app/layouts/Basic'
 import React from 'react'
 import { gql, useQuery } from '@apollo/client'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 
 const REACT_VAR_LISTENERS = gql`
   query reactiveVarListeners @client {
@@ -13,6 +15,8 @@ const REACT_VAR_LISTENERS = gql`
 `
 
 const NetworkPage: NextPage = () => {
+  const { t } = useTranslation('network')
+
   const {
     data: { globalError, isAppReady },
   } = useQuery(REACT_VAR_LISTENERS)
@@ -21,27 +25,27 @@ const NetworkPage: NextPage = () => {
   const isAcceptedNetwork = !globalError.network
 
   return (
-    <Basic>
-      {isLoading ? (
-        <>Loading...</>
+    <Basic title={t('title')} loading={isLoading}>
+      {isAcceptedNetwork ? (
+        <>
+          <div>{t('successMessage')}</div>
+        </>
       ) : (
         <>
-          {isAcceptedNetwork ? (
-            <>
-              <div>Your network is good.</div>
-            </>
-          ) : (
-            <>
-              <div>
-                We are currently only using Ropstin network. Please change your
-                network
-              </div>
-            </>
-          )}
+          <div>{t('errorMessage')}</div>
         </>
       )}
     </Basic>
   )
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale)),
+      // Will be passed to the page component as props
+    },
+  }
 }
 
 export default NetworkPage

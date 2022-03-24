@@ -1,12 +1,6 @@
 // TODO: Implement this test properly
 
-// import { disconnect } from "./web3modal";
-
-// jest.mock("../apollo/mutations/ens", () => ({
-//   ...jest.requireActual("../apollo/mutations/ens"),
-//   setup: jest.fn(),
-// }));
-
+export {}
 // const { setup } = require("@app/apollo/mutations/ens");
 
 // describe("disconnect", () => {

@@ -1,0 +1,5 @@
+{
+  "title": "Network",
+  "successMessage": "Your network is good.",
+  "errorMessage": "We are currently only accepting transactions on the Ropsten Test Network."
+}

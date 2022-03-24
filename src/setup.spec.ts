@@ -2,16 +2,23 @@ import type { connect as Connect } from '@app/api/web3modal'
 import type { setup as Setup } from '@app/apollo/mutations/ens'
 import type {
   accountsReactive as AccountsReactive,
-  globalErrorReactive as GlobalErrorReactive,
   isAppReadyReactive as IsAppReadyReactive,
   networkIdReactive as NetworkIdReactive,
   networkReactive as NetworkReactive,
+  globalErrorReactive as GlobalErrorReactive,
 } from '@app/apollo/reactiveVars'
 import type {
   getNetwork as GetNetwork,
   getNetworkId as GetNetworkId,
 } from '@ensdomains/ui'
 import { asMock } from '__tests__/helpers'
+import { getAcceptedNetworkIds, isAcceptedNetwork } from '@app/setup'
+import * as process from 'process'
+import {
+  isENSReadyReactive,
+  isReadOnlyReactive,
+  web3ProviderReactive,
+} from '@app/apollo/reactiveVars'
 
 jest.mock('@app/api/web3modal', () => ({
   connect: jest.fn(),
@@ -23,6 +30,11 @@ jest.mock('@app/apollo/mutations/ens', () => ({
 
 jest.mock('@app/apollo/reactiveVars', () => ({
   ...jest.requireActual('@app/apollo/reactiveVars'),
+  favouritesReactive: jest.fn(),
+  subDomainFavouritesReactive: jest.fn(),
+  web3ProviderReactive: jest.fn(),
+  isReadOnlyReactive: jest.fn(),
+  isENSReadyReactive: jest.fn(),
   networkIdReactive: jest.fn(),
   networkReactive: jest.fn(),
   accountsReactive: jest.fn(),
@@ -277,6 +289,71 @@ describe('isSupportedNetwork', () => {
   })
 })
 
+describe('getAcceptedNetworkIds', () => {
+  let envVariable: string | undefined
+  beforeAll(() => {
+    envVariable = process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS
+  })
+  afterAll(() => {
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = envVariable
+  })
+  it('empty environment variable', () => {
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = undefined
+    expect(getAcceptedNetworkIds()).toEqual([])
+  })
+
+  it('malformed join', () => {
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = ','
+    expect(getAcceptedNetworkIds()).toEqual([])
+  })
+
+  it('malformed evironment varibale', () => {
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = 'text,adfd,dff'
+    expect(getAcceptedNetworkIds()).toEqual([])
+  })
+
+  it('partially malformed evironment varibale', () => {
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = 'text,adfd,3'
+    expect(getAcceptedNetworkIds()).toEqual([3])
+  })
+
+  it('partially malformed evironment varibale', () => {
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = '0,1,3'
+    expect(getAcceptedNetworkIds()).toEqual([0, 1, 3])
+  })
+})
+
+describe('isAcceptedNetworkId', () => {
+  let envVariable: string | undefined
+  beforeAll(() => {
+    envVariable = process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = '0,1,3'
+  })
+  afterAll(() => {
+    process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = envVariable
+  })
+
+  it('test 0', () => {
+    expect(isAcceptedNetwork(0)).toBeTruthy()
+  })
+
+  it('test 1', () => {
+    expect(isAcceptedNetwork(1)).toBeTruthy()
+  })
+
+  it('test 2', () => {
+    expect(isAcceptedNetwork(2)).toBeFalsy()
+  })
+
+  it('test 3', () => {
+    expect(isAcceptedNetwork(3)).toBeTruthy()
+  })
+
+  it('test 4', () => {
+    expect(isAcceptedNetwork(4)).toBeFalsy()
+  })
+})
+
 describe('setup', () => {
   let originalReactAppStage: any
   let originalReactAppEnsAddress: any
@@ -337,5 +414,22 @@ describe('setup', () => {
     getNetworkId.mockImplementation(() => Promise.resolve(1))
     await defaultSetup(false)
     expect(isAppReadyReactive).toHaveBeenCalled()
+  })
+
+  it('set global state to error', async () => {
+    const mockGetProvider = jest.fn(getProvider)
+    mockGetProvider.mockReturnValue(undefined)
+    await defaultSetup(true)
+    expect(web3ProviderReactive).toHaveBeenLastCalledWith(null)
+    expect(networkIdReactive).toHaveBeenLastCalledWith(null)
+    expect(networkIdReactive).toHaveBeenLastCalledWith(null)
+    expect(accountsReactive).toHaveBeenLastCalledWith([])
+    expect(isReadOnlyReactive).toHaveBeenLastCalledWith(true)
+    expect(isENSReadyReactive).toHaveBeenLastCalledWith(false)
+    expect(isAppReadyReactive).toHaveBeenLastCalledWith(true)
+    const globalErrorMockCalls = globalErrorReactive.mock.calls
+    const globalErrorLastMockCall =
+      globalErrorMockCalls[globalErrorMockCalls.length - 1][0]
+    expect(globalErrorLastMockCall?.network).toEqual('provider unavailable')
   })
 })

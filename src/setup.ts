@@ -5,6 +5,7 @@ import {
   favouritesReactive,
   globalErrorReactive,
   isAppReadyReactive,
+  isENSReadyReactive,
   isReadOnlyReactive,
   networkIdReactive,
   networkReactive,
@@ -13,7 +14,7 @@ import {
 } from '@app/apollo/reactiveVars'
 import { getAccounts, getNetwork, getNetworkId } from '@ensdomains/ui'
 import { isReadOnly } from '@ensdomains/ui/web3'
-import { isNumber, toNumber } from 'lodash'
+import { isEmpty, isNaN, isNumber, negate, reject, toNumber } from 'lodash'
 
 export const setFavourites = () => {
   favouritesReactive(
@@ -42,17 +43,22 @@ export const isSupportedNetwork = (networkId: number) => {
   }
 }
 
-export const isAcceptedNetwork = (networkId: number): boolean => {
+export const getAcceptedNetworkIds = (): number[] => {
   const _acceptedNetworkIds =
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS
   if (_acceptedNetworkIds) {
     const acceptedNetworkIds = _acceptedNetworkIds
       .split(',')
+      .filter(negate(isEmpty))
       .map(toNumber)
-      .filter(isNumber)
-    return acceptedNetworkIds.includes(networkId)
+      .filter(negate(isNaN))
+    return acceptedNetworkIds
   }
-  return false
+  return []
+}
+
+export const isAcceptedNetwork = (networkId: number): boolean => {
+  return getAcceptedNetworkIds().includes(networkId)
 }
 
 export const getProvider = async (reconnect?: boolean) => {
@@ -180,35 +186,54 @@ export const setWeb3Provider = async (provider: any) => {
   return provider
 }
 
+const setErrorReactiveState = (error: string) => {
+  web3ProviderReactive(null)
+  networkIdReactive(null)
+  networkReactive(null)
+  accountsReactive([])
+  isReadOnlyReactive(true)
+  isENSReadyReactive(false)
+  isAppReadyReactive(true)
+  globalErrorReactive({
+    ...globalErrorReactive(),
+    network: error,
+  })
+}
+
 /**
  * Runs the setup process get the right provider and set global state
  *
  * @param reconnect forces the provider to be acquired through web3modal.
  * Set to false on initial execution and true thereafter
  *
+ * @mutation favoritesReactive
+ * @mutation subDomainFavoritesReactive
  * @mutation web3ProviderReactive
  * @mutation networkIdReactive network number
  * @mutation networkReactive network name
  * @mutation accountsReactive the account associated with the provider
+ * @mutation isReadOnlyReactive
  * @mutation isENSReadyReactive if ens registrar and contracts where successfully set up. Set in setup()
  * @mutation isAppReadyReactive if the app has finished loading scripts
+ * @mutation globalErrorReactive
  *
  * * */
 export default async (reconnect: boolean) => {
   try {
     isAppReadyReactive(false)
 
+    const provider = await getProvider(reconnect)
+    if (!provider) {
+      setErrorReactiveState('provider unavailable')
+      return
+    }
+
     setFavourites()
     setSubDomainFavourites()
 
-    const provider = await getProvider(reconnect)
-
-    if (!provider) {
-      throw new Error('Please install a wallet')
-    }
-
     const accounts = isReadOnly() ? [] : await getAccounts()
     accountsReactive(accounts)
+
     isReadOnlyReactive(isReadOnly())
 
     await setupNetworkReactiveVariables()
@@ -221,5 +246,6 @@ export default async (reconnect: boolean) => {
     isAppReadyReactive(true)
   } catch (e) {
     console.error('setup error: ', e)
+    setErrorReactiveState('setup error')
   }
 }
