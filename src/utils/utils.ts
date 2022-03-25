@@ -1,7 +1,6 @@
 import { saveName } from '@app/api/labels'
 import getENS, { getRegistrar } from '@app/apollo/mutations/ens'
 import { globalErrorReactive } from '@app/apollo/reactiveVars'
-import { validate } from '@ensdomains/ens-validation'
 import { normalize } from '@ensdomains/eth-ens-namehash'
 import {
   emptyAddress as _emptyAddress,
@@ -213,16 +212,6 @@ export function isRecordEmpty(value: any) {
 
 export const hasValidReverseRecord = (getReverseRecord: any) =>
   getReverseRecord?.name && getReverseRecord.name !== emptyAddress
-
-export const hasNonAscii = () => {
-  const strs = window.location.pathname.split('/')
-  const rslt = strs.reduce((accum, next) => {
-    if (accum) return true
-    if (!validate(next)) return true
-    return accum
-  }, false)
-  return rslt
-}
 
 export function usePrevious(value: any) {
   // The ref object is a generic container whose current property is mutable ...
