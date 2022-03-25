@@ -76,7 +76,7 @@ export const connect = async () => {
     return provider
   } catch (e) {
     if (e !== 'Modal closed by user') {
-      console.log('web3modal:connect error', e)
+      console.error('web3modal:connect error', e)
       throw e
     }
   }
