@@ -297,27 +297,27 @@ describe('getAcceptedNetworkIds', () => {
   afterAll(() => {
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = envVariable
   })
-  it('empty environment variable', () => {
+  it('should return empty array if environment variable is undefined', () => {
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = undefined
     expect(getAcceptedNetworkIds()).toEqual([])
   })
 
-  it('malformed join', () => {
+  it('should return empty array if environment variable is a single comma', () => {
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = ','
     expect(getAcceptedNetworkIds()).toEqual([])
   })
 
-  it('malformed evironment varibale', () => {
+  it('should return empty array if environment variable does not contain integers', () => {
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = 'text,adfd,dff'
     expect(getAcceptedNetworkIds()).toEqual([])
   })
 
-  it('partially malformed evironment varibale', () => {
+  it('should return an array of any valid integers in the environment variable', () => {
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = 'text,adfd,3'
     expect(getAcceptedNetworkIds()).toEqual([3])
   })
 
-  it('partially malformed evironment varibale', () => {
+  it('should return an array of integers', () => {
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = '0,1,3'
     expect(getAcceptedNetworkIds()).toEqual([0, 1, 3])
   })
@@ -333,23 +333,23 @@ describe('isAcceptedNetworkId', () => {
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS = envVariable
   })
 
-  it('test 0', () => {
+  it('should return true if network id is 0 ', () => {
     expect(isAcceptedNetwork(0)).toBeTruthy()
   })
 
-  it('test 1', () => {
+  it('should return true if network id is 1', () => {
     expect(isAcceptedNetwork(1)).toBeTruthy()
   })
 
-  it('test 2', () => {
+  it('should return false if network id is 2', () => {
     expect(isAcceptedNetwork(2)).toBeFalsy()
   })
 
-  it('test 3', () => {
+  it('should return true if network id is 3', () => {
     expect(isAcceptedNetwork(3)).toBeTruthy()
   })
 
-  it('test 4', () => {
+  it('should return false if network id is 4', () => {
     expect(isAcceptedNetwork(4)).toBeFalsy()
   })
 })
@@ -416,7 +416,7 @@ describe('setup', () => {
     expect(isAppReadyReactive).toHaveBeenCalled()
   })
 
-  it('set global state to error', async () => {
+  it('should set global state to the error state if setup is unable to create a provider', async () => {
     const mockGetProvider = jest.fn(getProvider)
     mockGetProvider.mockReturnValue(undefined)
     await defaultSetup(true)

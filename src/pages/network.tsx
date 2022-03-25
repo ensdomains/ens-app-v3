@@ -1,9 +1,13 @@
 import { NextPage } from 'next'
 import { Basic } from '@app/layouts/Basic'
-import React from 'react'
+import React, { useMemo } from 'react'
 import { gql, useQuery } from '@apollo/client'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { getAcceptedNetworkIds } from '@app/setup'
+import { getNetworkNameFromId } from '@app/utils/utils'
+import styled from 'styled-components'
+import { capitalize } from 'lodash'
 
 const REACT_VAR_LISTENERS = gql`
   query reactiveVarListeners @client {
@@ -12,6 +16,10 @@ const REACT_VAR_LISTENERS = gql`
     network
     isAppReady
   }
+`
+const MessageContainer = styled.div`
+  display: flex;
+  justify-content: center;
 `
 
 const NetworkPage: NextPage = () => {
@@ -24,16 +32,19 @@ const NetworkPage: NextPage = () => {
   const isLoading = !isAppReady && !globalError.network
   const isAcceptedNetwork = !globalError.network
 
+  const accepted: string = useMemo(() => {
+    return getAcceptedNetworkIds()
+      .map(getNetworkNameFromId)
+      .map(capitalize)
+      .join(', ')
+  }, [])
+
   return (
     <Basic title={t('title')} loading={isLoading}>
       {isAcceptedNetwork ? (
-        <>
-          <div>{t('successMessage')}</div>
-        </>
+        <MessageContainer>{t('successMessage')}</MessageContainer>
       ) : (
-        <>
-          <div>{t('errorMessage')}</div>
-        </>
+        <MessageContainer>{t('errorMessage', { accepted })}</MessageContainer>
       )}
     </Basic>
   )

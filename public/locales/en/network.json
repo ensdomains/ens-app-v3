@@ -1,5 +1,5 @@
 {
   "title": "Network",
-  "successMessage": "Your network is good.",
-  "errorMessage": "We are currently only accepting transactions on the Ropsten Test Network."
+  "successMessage": "You are currently connected to an accepted network.",
+  "errorMessage": "We are currently only accepting transactions on the following networks: {{accepted}}."
 }

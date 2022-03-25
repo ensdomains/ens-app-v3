@@ -14,7 +14,7 @@ import {
 } from '@app/apollo/reactiveVars'
 import { getAccounts, getNetwork, getNetworkId } from '@ensdomains/ui'
 import { isReadOnly } from '@ensdomains/ui/web3'
-import { isEmpty, isNaN, isNumber, negate, reject, toNumber } from 'lodash'
+import { isEmpty, isNaN, negate, toNumber } from 'lodash'
 
 export const setFavourites = () => {
   favouritesReactive(
@@ -44,15 +44,14 @@ export const isSupportedNetwork = (networkId: number) => {
 }
 
 export const getAcceptedNetworkIds = (): number[] => {
-  const _acceptedNetworkIds =
+  const acceptedNetworkIds =
     process.env.NEXT_PUBLIC_ACCEPTED_ETHEREUM_NETWORK_IDS
-  if (_acceptedNetworkIds) {
-    const acceptedNetworkIds = _acceptedNetworkIds
+  if (acceptedNetworkIds) {
+    return acceptedNetworkIds
       .split(',')
       .filter(negate(isEmpty))
       .map(toNumber)
       .filter(negate(isNaN))
-    return acceptedNetworkIds
   }
   return []
 }

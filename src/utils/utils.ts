@@ -317,11 +317,11 @@ export function imageUrl(url: string, name: any, network: string) {
 // eslint-disable-next-line consistent-return
 export function imageUrlUnknownRecord(name: string, network: string) {
   const _network =
-    networkName[network?.toLowerCase() as keyof typeof networkName];
+    networkName[network?.toLowerCase() as keyof typeof networkName]
   if (_network) {
-    return `https://metadata.ens.domains/${_network}/avatar/${name}`;
+    return `https://metadata.ens.domains/${_network}/avatar/${name}`
   }
-  return "";
+  return ''
 }
 
 export function ensNftImageUrl(name: string, _network: string) {
@@ -368,4 +368,42 @@ export const shortenAddress = (
   }
 
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
+}
+
+export const getNetworkNameFromId = (networkId: number): string => {
+  switch (networkId) {
+    case 1: {
+      return 'mainnet'
+    }
+    case 2: {
+      return 'morden'
+    }
+    case 3: {
+      return 'ropsten'
+    }
+    case 4: {
+      return 'rinkeby'
+    }
+    case 5: {
+      return 'goerli'
+    }
+    case 2018: {
+      return 'dev'
+    }
+    case 6: {
+      return 'kotti'
+    }
+    case 7: {
+      return 'mordor'
+    }
+    case 212: {
+      return 'astor'
+    }
+    case 42: {
+      return 'kovan'
+    }
+    default: {
+      return 'unknown'
+    }
+  }
 }
