@@ -1,33 +1,21 @@
-import { gql, useQuery } from '@apollo/client'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileNftDetails } from '@app/components/profile/ProfileNftDetails'
 import { SubdomainDetails } from '@app/components/profile/SubdomainDetails'
-import { GET_SUBDOMAINS_FROM_SUBGRAPH } from '@app/graphql/queries'
 import { useGetDomainFromInput } from '@app/hooks/useGetDomainFromInput'
-import { useGetRecords } from '@app/hooks/useGetRecords'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useEns } from '@app/utils/EnsProvider'
 import { Box, IconArrowCircle, Typography, vars } from '@ensdomains/thorin'
-import { getNamehash } from '@ensdomains/ui'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useQuery } from 'react-query'
 import styled from 'styled-components'
-
-const NETWORK_INFORMATION_QUERY = gql`
-  query getNetworkInfo @client {
-    isENSReady
-    isAppReady
-    network
-    accounts
-    primaryName
-    isReadOnly
-  }
-`
+import { useAccount, useNetwork } from 'wagmi'
 
 const GridItem = styled(Box)<{ $area: string }>`
   grid-area: ${({ $area }) => $area};
@@ -136,73 +124,66 @@ const ProfilePage: NextPage = () => {
   const _name = router.query.name as string
   const isSelf = _name === 'me'
 
-  const [domain, setDomain] = useState<any>(undefined)
   const [tab, setTab] = useState<'profile' | 'subdomains'>('profile')
 
-  const {
-    data: {
-      isENSReady,
-      isAppReady,
-      network,
-      accounts,
-      primaryName,
-      isReadOnly,
-    },
-  } = useQuery(NETWORK_INFORMATION_QUERY)
-
-  const name = isSelf ? primaryName : _name
-
-  const { domain: _domain, loading: domainLoading } =
-    useGetDomainFromInput(name)
-  const { dataAddresses, dataTextRecords, recordsLoading } =
-    useGetRecords(_domain)
-
-  const { data: subdomainData, loading: subdomainLoading } = useQuery(
-    GET_SUBDOMAINS_FROM_SUBGRAPH,
+  const [
     {
-      variables: {
-        id: _domain && getNamehash(_domain.name),
-      },
-      skip: !_domain || !_domain.name,
+      data: { chain },
     },
+  ] = useNetwork()
+  const { ready, getOwner } = useEns()
+  const [
+    {
+      data: { ens: ensData, address } = { ens: undefined, address: undefined },
+      loading: accountLoading,
+    },
+  ] = useAccount()
+
+  const name = isSelf && ensData?.name ? ensData.name : _name
+
+  const { profile, loading: profileLoading } = useGetDomainFromInput(name)
+  const { data: ownerData, isLoading: ownerLoading } = useQuery(
+    `getOwner-${name}`,
+    () => getOwner(name),
   )
+
+  const subdomainData: any[] = []
+  const subdomainLoading = false
+
+  // const { data: subdomainData, loading: subdomainLoading } = useQuery(
+  //   GET_SUBDOMAINS_FROM_SUBGRAPH,
+  //   {
+  //     variables: {
+  //       id: _domain && getNamehash(_domain.name),
+  //     },
+  //     skip: !_domain || !_domain.name,
+  //   },
+  // )
 
   useProtectedRoute(
     '/',
     // for /profile route, always redirect
     router.asPath !== '/profile' &&
       // When anything is loading, return true
-      (network !== 'Loading' && isENSReady && isAppReady
+      (ready
         ? // if is self, user must be connected
-          (isSelf ? !isReadOnly : true) &&
+          (isSelf ? address : true) &&
           typeof name === 'string' &&
           name.length > 0
         : true),
   )
 
-  const expiryDate = domain && domain.expiryTime && (domain.expiryTime as Date)
+  useEffect(() => console.log(profile, ownerData), [profile, ownerData])
 
-  useEffect(() => {
-    const timeout = _domain && setTimeout(() => setDomain(_domain), 100)
-    return () => clearTimeout(timeout)
-  }, [_domain])
+  const expiryDate = new Date()
 
   return (
     <Basic
       title={
         (_name === 'me' && 'Your Profile') ||
-        (domain && domain.name ? `${_name}'s Profile` : `Loading Profile`)
+        (_name ? `${_name}'s Profile` : `Loading Profile`)
       }
-      loading={
-        !(
-          network &&
-          network !== 'Loading' &&
-          domain &&
-          domain.name &&
-          !domainLoading &&
-          !recordsLoading
-        )
-      }
+      loading={!(ready && !profileLoading && !ownerLoading && !accountLoading)}
     >
       <WrapperGrid>
         <GridItem
@@ -228,25 +209,36 @@ const ProfilePage: NextPage = () => {
           </TabButton>
         </TabButtonWrapper>
         <GridItem $area="nft-details">
-          <ProfileNftDetails
-            name={name}
-            selfAddress={accounts?.[0]}
-            {...{ network, expiryDate, domain }}
-          />
+          {ownerData && (
+            <ProfileNftDetails
+              name={name}
+              selfAddress={address}
+              {...{
+                network: chain?.name || 'mainnet',
+                expiryDate,
+                ownerData,
+                ensData,
+              }}
+            />
+          )}
         </GridItem>
         <DetailsWrapper $area="details">
           <TabWrapper>
             {tab === 'profile' ? (
               <ProfileDetails
                 name={name}
-                addresses={dataAddresses && dataAddresses.getAddresses}
-                textRecords={dataTextRecords && dataTextRecords.getTextRecords}
-                network={network}
+                addresses={(profile?.records?.coinTypes || []).map(
+                  (item: any) => ({ key: item.coin, value: item.addr }),
+                )}
+                textRecords={(profile?.records?.texts || [])
+                  .map((item: any) => ({ key: item.key, value: item.value }))
+                  .filter((item: any) => item.value !== null)}
+                network={chain?.name || 'mainnet'}
               />
             ) : (
               <SubdomainDetails
-                subdomains={subdomainData?.domain?.subdomains}
-                network={network}
+                subdomains={subdomainData}
+                network={chain?.name || 'mainnet'}
                 loading={subdomainLoading}
               />
             )}

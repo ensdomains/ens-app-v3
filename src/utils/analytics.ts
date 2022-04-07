@@ -1,4 +1,3 @@
-import { getNetworkId } from '@ensdomains/ui'
 import ReactGA from 'react-ga'
 
 const TrackingID = {
@@ -12,11 +11,6 @@ function isProduction() {
 
 function isDev() {
   return window.location.host === 'ensappdev.surge.sh'
-}
-
-async function isMainnet() {
-  const id = await getNetworkId()
-  return id === 1
 }
 
 export function setUtm() {
@@ -66,7 +60,7 @@ export const trackReferral = async ({
   premium: number
   years: number
 }) => {
-  const mainnet = await isMainnet()
+  const mainnet = false
   const referrer = getUtm()
   const unitPrice = (price - premium) / years / labels.length
 

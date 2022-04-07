@@ -1,9 +1,10 @@
+import { keccak256 } from 'js-sha3'
+// eslint-disable-next-line import/no-cycle
 import {
   decodeLabelhash,
   encodeLabelhash,
   isEncodedLabelhash,
-} from '@ensdomains/ui/utils'
-import { keccak256 } from 'js-sha3'
+} from '../utils/utils'
 
 function getLabels() {
   return JSON.parse(localStorage.getItem('labels') as string) || {}

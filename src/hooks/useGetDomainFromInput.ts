@@ -1,14 +1,7 @@
-import { gql, useLazyQuery, useQuery } from '@apollo/client'
-import { GET_SINGLE_NAME } from '@app/graphql/queries'
-import { parseSearchTerm } from '@app/utils/utils'
-import { validateName } from '@ensdomains/ui'
+import { useEns } from '@app/utils/EnsProvider'
+import { parseSearchTerm, validateName } from '@app/utils/utils'
 import { useEffect, useState } from 'react'
-
-const NETWORK_INFORMATION_QUERY = gql`
-  query getNetworkInfo @client {
-    isENSReady
-  }
-`
+import { useQuery } from 'react-query'
 
 export const useGetDomainFromInput = (input: string, skip?: any) => {
   const _name =
@@ -19,20 +12,9 @@ export const useGetDomainFromInput = (input: string, skip?: any) => {
   const [type, setType] = useState<any>(undefined)
   const [loading, setLoading] = useState(false)
 
-  const [
-    getDomain,
-    { data: { singleName: domain } = { singleName: undefined } },
-  ] = useLazyQuery(GET_SINGLE_NAME, {
-    variables: { name },
-    fetchPolicy: 'cache-and-network',
-    context: {
-      queryDeduplication: false,
-    },
-  })
+  const { ready, getProfile } = useEns()
 
-  const {
-    data: { isENSReady },
-  } = useQuery(NETWORK_INFORMATION_QUERY)
+  const { data: profile } = useQuery(`profile-${name}`, () => getProfile(name))
 
   useEffect(() => {
     let normalisedName
@@ -40,7 +22,7 @@ export const useGetDomainFromInput = (input: string, skip?: any) => {
       try {
         setLoading(true)
         if (
-          isENSReady &&
+          ready &&
           typeof _name === 'string' &&
           _name.length >= 3 &&
           !_name.split('.').some((label) => label.length === 0)
@@ -60,7 +42,6 @@ export const useGetDomainFromInput = (input: string, skip?: any) => {
                   setValid(true)
 
                   setType(_type)
-                  getDomain()
                 } else {
                   if (_type === 'invalid') {
                     setType('domainMalformed')
@@ -83,7 +64,7 @@ export const useGetDomainFromInput = (input: string, skip?: any) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_name, isENSReady])
+  }, [_name, ready])
 
-  return { valid, type, domain, loading }
+  return { valid, type, profile, name, loading }
 }

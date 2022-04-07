@@ -5,6 +5,11 @@
       "signature": "1d659840745e4dafababc9cb2242587b",
       "pure": true,
       "replaced": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin"
+    },
+    "@ensdomains/ensjs": {
+      "signature": "c8ffc7bba65d50abb52d527e1f76369e",
+      "pure": true,
+      "replaced": "portal:.yalc/@ensdomains/ensjs"
     }
   }
 }
