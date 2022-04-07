@@ -10,16 +10,16 @@ export const universalWrapper = {
     const universalResolver = await contracts?.getUniversalResolver()!
     return {
       to: universalResolver.address,
-      data: universalResolver.interface.encodeFunctionData(
-        'resolve(bytes,bytes)',
-        [hexEncodeName(name), data],
-      ),
+      data: universalResolver.interface.encodeFunctionData('resolve', [
+        hexEncodeName(name),
+        data,
+      ]),
     }
   },
   decode: async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
     const universalResolver = await contracts?.getUniversalResolver()!
     const response = universalResolver.interface.decodeFunctionResult(
-      'resolve(bytes,bytes)',
+      'resolve',
       data,
     )
     if (!response || !response[0]) {
@@ -38,7 +38,7 @@ export const resolverMulticallWrapper = {
     const formattedDataArr = data.map((item) => (item as any).data)
     return {
       to: publicResolver.address,
-      data: publicResolver.interface.encodeFunctionData('multicall(bytes[])', [
+      data: publicResolver.interface.encodeFunctionData('multicall', [
         formattedDataArr,
       ]),
     }
@@ -46,7 +46,7 @@ export const resolverMulticallWrapper = {
   decode: async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
     const publicResolver = await contracts?.getPublicResolver()!
     const response = publicResolver.interface.decodeFunctionResult(
-      'multicall(bytes[])',
+      'multicall',
       data,
     )
     if (!response) {

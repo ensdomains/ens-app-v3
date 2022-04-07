@@ -1,0 +1,1 @@
+[{"type":"constructor","payable":false,"inputs":[{"type":"string","name":"_metaDataUri"}]},{"type":"function","name":"uri","constant":true,"stateMutability":"view","payable":false,"inputs":[{"type":"uint256"}],"outputs":[{"type":"string"}]}]

@@ -67,7 +67,7 @@ const getDataForAddress = async ({ contracts, _getAddr, _getContentHash, _getTex
     try {
         result = await DNCOCURP?.reverse(hexEncodeName(reverseNode), [
             {
-                target: universalResolver?.address,
+                target: universalResolver.address,
                 data: data,
                 dataType: 0,
                 locations: makeHashIndexes(data, reverseNode),

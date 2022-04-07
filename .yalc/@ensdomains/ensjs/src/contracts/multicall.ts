@@ -1,4 +1,5 @@
 import { ethers } from 'ethers'
+import { Multicall__factory } from '../generated/factories/Multicall__factory'
 
 const defaultAddress = '0xcA11bde05977b3631167028862bE2a173976CA11'
 
@@ -22,4 +23,4 @@ const ABI = [
 ]
 
 export default (provider: ethers.providers.JsonRpcProvider, address?: string) =>
-  new ethers.Contract(address || defaultAddress, ABI, provider)
+  Multicall__factory.connect(address || defaultAddress, provider)

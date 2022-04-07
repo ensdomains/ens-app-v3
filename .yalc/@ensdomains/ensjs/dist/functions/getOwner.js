@@ -8,19 +8,15 @@ export async function _getOwner({ contracts }, name) {
     const labels = name.split('.');
     const registryData = {
         target: registry.address,
-        callData: registry.interface.encodeFunctionData('owner(bytes32)', [
-            namehash,
-        ]),
+        callData: registry.interface.encodeFunctionData('owner', [namehash]),
     };
     const nameWrapperData = {
         target: nameWrapper.address,
-        callData: nameWrapper.interface.encodeFunctionData('ownerOf(uint256)', [
-            namehash,
-        ]),
+        callData: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
     };
     const registrarData = {
         target: baseRegistrar.address,
-        callData: baseRegistrar.interface.encodeFunctionData('ownerOf(uint256)', [
+        callData: baseRegistrar.interface.encodeFunctionData('ownerOf', [
             ethers.utils.solidityKeccak256(['string'], [labels[0]]),
         ]),
     };

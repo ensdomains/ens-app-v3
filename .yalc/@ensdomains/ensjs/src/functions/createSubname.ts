@@ -45,7 +45,7 @@ export default async function (
     resolverAddress = (await contracts?.getPublicResolver())!.address
   }
 
-  const label = labels.shift()
+  const label = labels.shift() as string
   const labelhash = ethers.utils.solidityKeccak256(['string'], [label])
   const parentNodehash = ethers.utils.namehash(labels.join('.'))
 

@@ -6,12 +6,14 @@ export const _getContentHash = {
         const publicResolver = await contracts?.getPublicResolver();
         return {
             to: '0x0000000000000000000000000000000000000000',
-            data: publicResolver.interface.encodeFunctionData('contenthash(bytes32)', [ethers.utils.namehash(name)]),
+            data: publicResolver.interface.encodeFunctionData('contenthash', [
+                ethers.utils.namehash(name),
+            ]),
         };
     },
     decode: async ({ contracts }, data) => {
         const publicResolver = await contracts?.getPublicResolver();
-        const [response] = publicResolver.interface.decodeFunctionResult('contenthash(bytes32)', data);
+        const [response] = publicResolver.interface.decodeFunctionResult('contenthash', data);
         if (!response) {
             return null;
         }
@@ -42,12 +44,15 @@ export const _getText = {
         const publicResolver = await contracts?.getPublicResolver();
         return {
             to: '0x0000000000000000000000000000000000000000',
-            data: publicResolver.interface.encodeFunctionData('text(bytes32,string)', [ethers.utils.namehash(name), key]),
+            data: publicResolver.interface.encodeFunctionData('text', [
+                ethers.utils.namehash(name),
+                key,
+            ]),
         };
     },
     decode: async ({ contracts }, data) => {
         const publicResolver = await contracts?.getPublicResolver();
-        const [response] = publicResolver.interface.decodeFunctionResult('text(bytes32,string)', data);
+        const [response] = publicResolver.interface.decodeFunctionResult('text', data);
         if (!response) {
             return null;
         }

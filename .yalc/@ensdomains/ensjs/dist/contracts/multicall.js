@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { Multicall__factory } from '../generated/factories/Multicall__factory';
 const defaultAddress = '0xcA11bde05977b3631167028862bE2a173976CA11';
 const ABI = [
     'function aggregate(tuple(address target, bytes callData)[] calls) payable returns (uint256 blockNumber, bytes[] returnData)',
@@ -18,4 +18,4 @@ const ABI = [
     'function tryAggregate(bool requireSuccess, tuple(address target, bytes callData)[] calls) payable returns (tuple(bool success, bytes returnData)[] returnData)',
     'function tryBlockAndAggregate(bool requireSuccess, tuple(address target, bytes callData)[] calls) payable returns (uint256 blockNumber, bytes32 blockHash, tuple(bool success, bytes returnData)[] returnData)',
 ];
-export default (provider, address) => new ethers.Contract(address || defaultAddress, ABI, provider);
+export default (provider, address) => Multicall__factory.connect(address || defaultAddress, provider);

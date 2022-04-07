@@ -1,3 +1,4 @@
+import { ethers } from 'ethers';
 import { ENSArgs } from '..';
 declare type RecordItem = {
     key: string;
@@ -8,5 +9,5 @@ declare type RecordOptions = {
     texts?: RecordItem[];
     coinTypes?: RecordItem[];
 };
-export default function ({ contracts, provider, getResolver, }: ENSArgs<'contracts' | 'provider' | 'getResolver'>, name: string, records: RecordOptions): Promise<any>;
+export default function ({ contracts, provider, getResolver, }: ENSArgs<'contracts' | 'provider' | 'getResolver'>, name: string, records: RecordOptions): Promise<ethers.ContractTransaction | undefined>;
 export {};

@@ -1622,7 +1622,7 @@ __metadata:
 
 "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
   version: 3.0.0
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -1633,12 +1633,7 @@ __metadata:
     graphql-request: ^4.1.0
   peerDependencies:
     ethers: "*"
-  dependenciesMeta:
-    ens-contracts-namewrapper:
-      built: false
-    ens-contracts-universal:
-      built: false
-  checksum: 4a1bf0fa2a09480ba194989bc664b8e0293ab52e23cc462ad0cc26cfbe207f85f1b6b45b6a0823ac4175b401161e0f772ce8b2170af1be2a6c37263e7ab50764
+  checksum: 4cc66538c86ac4b81706d6f06c7ac51ed1fac08a41eca650085ffbc2c0c047d7588a001147f50a21da4b9329455a3514352b7c224ec184add1450af3b58cb9a5
   languageName: node
   linkType: hard
 

@@ -11,7 +11,7 @@ const raw = async ({ contracts }, name) => {
     const nameWrapper = await contracts?.getNameWrapper();
     return {
         to: nameWrapper.address,
-        data: nameWrapper.interface.encodeFunctionData('getFuses(bytes32)', [
+        data: nameWrapper.interface.encodeFunctionData('getFuses', [
             ethers.utils.namehash(name),
         ]),
     };
@@ -19,7 +19,7 @@ const raw = async ({ contracts }, name) => {
 const decode = async ({ contracts }, data, name) => {
     const nameWrapper = await contracts?.getNameWrapper();
     try {
-        const [fuses, vulnerability, vulnerableNode] = nameWrapper.interface.decodeFunctionResult('getFuses(bytes32)', data);
+        const [fuses, vulnerability, vulnerableNode] = nameWrapper.interface.decodeFunctionResult('getFuses', data);
         const fuseObj = Object.fromEntries(Object.keys(fuseEnums).map((fuseEnum) => [
             fuseEnum
                 .toLowerCase()

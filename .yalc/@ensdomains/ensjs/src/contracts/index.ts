@@ -1,4 +1,12 @@
 import { ethers } from 'ethers'
+import type { BaseRegistrarImplementation } from '../generated/BaseRegistrarImplementation'
+import type { DNCOCURP } from '../generated/DNCOCURP'
+import type { ENSRegistry } from '../generated/ENSRegistry'
+import type { Multicall } from '../generated/Multicall'
+import type { NameWrapper } from '../generated/NameWrapper'
+import type { PublicResolver } from '../generated/PublicResolver'
+import type { ReverseRegistrar } from '../generated/ReverseRegistrar'
+import type { UniversalResolver } from '../generated/UniversalResolver'
 
 export default class ContractManager {
   private provider: ethers.providers.Provider
@@ -7,13 +15,10 @@ export default class ContractManager {
     this.provider = provider
   }
 
-  private generateContractGetter = (path: string) => {
+  private generateContractGetter = <C>(path: string) => {
     let imported: any
-    let contract: ethers.Contract
-    return async (
-      passedProvider?: any,
-      address?: string,
-    ): Promise<ethers.Contract> => {
+    let contract: C
+    return async (passedProvider?: any, address?: string): Promise<C> => {
       if (!imported) {
         imported = (
           await import(
@@ -23,21 +28,26 @@ export default class ContractManager {
         ).default
       }
       if (passedProvider) {
-        return imported(passedProvider, address) as ethers.Contract
+        return imported(passedProvider, address) as C
       }
       if (!contract) {
-        contract = imported(this.provider) as ethers.Contract
+        contract = imported(this.provider) as C
       }
-      return contract as ethers.Contract
+      return contract as C
     }
   }
 
-  public getPublicResolver = this.generateContractGetter('publicResolver')
-  public getUniversalResolver = this.generateContractGetter('universalResolver')
-  public getRegistry = this.generateContractGetter('registry')
-  public getReverseRegistrar = this.generateContractGetter('reverseRegistrar')
-  public getDNCOCURP = this.generateContractGetter('DNCOCURP')
-  public getNameWrapper = this.generateContractGetter('nameWrapper')
-  public getBaseRegistrar = this.generateContractGetter('baseRegistrar')
-  public getMulticall = this.generateContractGetter('multicall')
+  public getPublicResolver =
+    this.generateContractGetter<PublicResolver>('publicResolver')
+  public getUniversalResolver =
+    this.generateContractGetter<UniversalResolver>('universalResolver')
+  public getRegistry = this.generateContractGetter<ENSRegistry>('registry')
+  public getReverseRegistrar =
+    this.generateContractGetter<ReverseRegistrar>('reverseRegistrar')
+  public getDNCOCURP = this.generateContractGetter<DNCOCURP>('DNCOCURP')
+  public getNameWrapper =
+    this.generateContractGetter<NameWrapper>('nameWrapper')
+  public getBaseRegistrar =
+    this.generateContractGetter<BaseRegistrarImplementation>('baseRegistrar')
+  public getMulticall = this.generateContractGetter<Multicall>('multicall')
 }

@@ -18,10 +18,7 @@ export default async function ({ contracts, provider, getResolver, }, name, reco
     const calls = [];
     if (records.contentHash) {
         const contentHash = records.contentHash === '' ? '' : encodeContenthash(records.contentHash);
-        const data = resolver?.interface.encodeFunctionData('setContentHash', [
-            namehash,
-            contentHash,
-        ]);
+        const data = resolver?.interface.encodeFunctionData('setContenthash', [namehash, contentHash]);
         data && calls.push(data);
     }
     if (records.texts && records.texts.length > 0) {

@@ -14,7 +14,7 @@ const raw = async ({ contracts }: ENSArgs<'contracts'>, name: string) => {
   const nameWrapper = await contracts?.getNameWrapper()!
   return {
     to: nameWrapper.address,
-    data: nameWrapper.interface.encodeFunctionData('getFuses(bytes32)', [
+    data: nameWrapper.interface.encodeFunctionData('getFuses', [
       ethers.utils.namehash(name),
     ]),
   }
@@ -28,7 +28,7 @@ const decode = async (
   const nameWrapper = await contracts?.getNameWrapper()!
   try {
     const [fuses, vulnerability, vulnerableNode] =
-      nameWrapper.interface.decodeFunctionResult('getFuses(bytes32)', data)
+      nameWrapper.interface.decodeFunctionResult('getFuses', data)
 
     const fuseObj = Object.fromEntries(
       Object.keys(fuseEnums).map((fuseEnum) => [

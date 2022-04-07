@@ -550,7 +550,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ensjs",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A."\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@ensdomains/eth-ens-namehash",\
@@ -3630,7 +3630,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "graphql-request",\
-        "virtual:73653d1deb1337fb58fe36d13f69e9bb6b212408ed3870da9220cabc8bb80864e6ca2cc8ea87929c52a7decb1d226c31869d693a8afffc5f59f6aacb06f85b98#npm:4.2.0"\
+        "virtual:315a7cfd7d38a4d91b20f604e458fcd8f15bdb15dd1506529672b63b25f8c05cecb4702508e12af6899384cb8bf26b866bb4a41f8e507ce58546b61e7af9c5ab#npm:4.2.0"\
       ],\
       [\
         "graphql-tag",\
@@ -6918,7 +6918,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/cypress-metamask", "patch:@ensdomains/cypress-metamask@https%3A//github.com/ensdomains/cypress-metamask.git%23commit=b870c5ad7c42b374d237516b507595f9f6b796a1#./patches/@ensdomains/cypress-metamask.patch::version=1.1.0-development&hash=504e11&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v2%40workspace%3A."],\
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],\
@@ -10020,17 +10020,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ensjs", [\
-        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-b6709635d3-4a1bf0fa2a.zip/node_modules/@ensdomains/ensjs/",\
+        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-c322a902e8-4cc66538c8.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A."]\
+            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-73653d1deb/0/cache/@ensdomains-ensjs-file-b6709635d3-4a1bf0fa2a.zip/node_modules/@ensdomains/ensjs/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-315a7cfd7d/0/cache/@ensdomains-ensjs-file-c322a902e8-4cc66538c8.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/content-hash", "npm:2.5.7"],\
             ["@ensdomains/ens-contracts", "npm:0.0.11"],\
@@ -10038,7 +10038,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dns-packet", "npm:5.3.1"],\
             ["ethers", "npm:5.6.2"],\
             ["graphql", "npm:16.3.0"],\
-            ["graphql-request", "virtual:73653d1deb1337fb58fe36d13f69e9bb6b212408ed3870da9220cabc8bb80864e6ca2cc8ea87929c52a7decb1d226c31869d693a8afffc5f59f6aacb06f85b98#npm:4.2.0"]\
+            ["graphql-request", "virtual:315a7cfd7d38a4d91b20f604e458fcd8f15bdb15dd1506529672b63b25f8c05cecb4702508e12af6899384cb8bf26b866bb4a41f8e507ce58546b61e7af9c5ab#npm:4.2.0"]\
           ],\
           "packagePeers": [\
             "@types/ethers",\
@@ -18997,7 +18997,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/cypress-metamask", "patch:@ensdomains/cypress-metamask@https%3A//github.com/ensdomains/cypress-metamask.git%23commit=b870c5ad7c42b374d237516b507595f9f6b796a1#./patches/@ensdomains/cypress-metamask.patch::version=1.1.0-development&hash=504e11&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=5c2e86&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v2%40workspace%3A."],\
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],\
@@ -22145,10 +22145,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:73653d1deb1337fb58fe36d13f69e9bb6b212408ed3870da9220cabc8bb80864e6ca2cc8ea87929c52a7decb1d226c31869d693a8afffc5f59f6aacb06f85b98#npm:4.2.0", {\
-          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-7e2010d4d4/0/cache/graphql-request-npm-4.2.0-95901c7d1b-c508705ebd.zip/node_modules/graphql-request/",\
+        ["virtual:315a7cfd7d38a4d91b20f604e458fcd8f15bdb15dd1506529672b63b25f8c05cecb4702508e12af6899384cb8bf26b866bb4a41f8e507ce58546b61e7af9c5ab#npm:4.2.0", {\
+          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-05e10fa882/0/cache/graphql-request-npm-4.2.0-95901c7d1b-c508705ebd.zip/node_modules/graphql-request/",\
           "packageDependencies": [\
-            ["graphql-request", "virtual:73653d1deb1337fb58fe36d13f69e9bb6b212408ed3870da9220cabc8bb80864e6ca2cc8ea87929c52a7decb1d226c31869d693a8afffc5f59f6aacb06f85b98#npm:4.2.0"],\
+            ["graphql-request", "virtual:315a7cfd7d38a4d91b20f604e458fcd8f15bdb15dd1506529672b63b25f8c05cecb4702508e12af6899384cb8bf26b866bb4a41f8e507ce58546b61e7af9c5ab#npm:4.2.0"],\
             ["@types/graphql", null],\
             ["cross-fetch", "npm:3.1.5"],\
             ["extract-files", "npm:9.0.0"],\

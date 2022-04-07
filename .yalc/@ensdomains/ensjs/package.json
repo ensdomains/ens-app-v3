@@ -13,6 +13,7 @@
   "author": "TateB <yo@taytems.xyz>",
   "license": "MIT",
   "scripts": {
+    "generate-types": "ts-node scripts/runTypechain.ts",
     "start": "ts-node --files src/index.test.ts",
     "test": "jest --run-in-band src/tests",
     "test:specific": "ts-node --files ",
@@ -32,13 +33,5 @@
   "peerDependencies": {
     "ethers": "*"
   },
-  "dependenciesMeta": {
-    "ens-contracts-namewrapper": {
-      "built": false
-    },
-    "ens-contracts-universal": {
-      "built": false
-    }
-  },
-  "yalcSig": "c8ffc7bba65d50abb52d527e1f76369e"
+  "yalcSig": "cb32b06840a432ef2016004ade769633"
 }

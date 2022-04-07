@@ -10,8 +10,8 @@ export async function _batch(
   return multicall.callStatic.tryAggregate(
     requireSuccess,
     transactions.map((tx) => ({
-      target: tx.to,
-      callData: tx.data,
+      target: tx.to!,
+      callData: tx.data!,
     })),
   )
 }

@@ -163,7 +163,7 @@ const getDataForAddress = async (
   try {
     result = await DNCOCURP?.reverse(hexEncodeName(reverseNode), [
       {
-        target: universalResolver?.address,
+        target: universalResolver!.address,
         data: data,
         dataType: 0,
         locations: makeHashIndexes(data as string, reverseNode),

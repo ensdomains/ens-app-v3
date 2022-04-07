@@ -49,10 +49,10 @@ export default async function (
   if (records.contentHash) {
     const contentHash =
       records.contentHash === '' ? '' : encodeContenthash(records.contentHash)
-    const data = resolver?.interface.encodeFunctionData('setContentHash', [
-      namehash,
-      contentHash,
-    ])
+    const data = (resolver?.interface.encodeFunctionData as any)(
+      'setContenthash',
+      [namehash, contentHash],
+    )
     data && calls.push(data)
   }
 

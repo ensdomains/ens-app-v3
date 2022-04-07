@@ -6,17 +6,16 @@ const raw = async ({ contracts }: ENSArgs<'contracts'>, name: string) => {
   const universalResolver = await contracts?.getUniversalResolver()!
   return {
     to: universalResolver.address,
-    data: universalResolver.interface.encodeFunctionData(
-      'findResolver(bytes)',
-      [hexEncodeName(name)],
-    ),
+    data: universalResolver.interface.encodeFunctionData('findResolver', [
+      hexEncodeName(name),
+    ]),
   }
 }
 
 const decode = async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
   const universalResolver = await contracts?.getUniversalResolver()!
   const response = universalResolver.interface.decodeFunctionResult(
-    'findResolver(bytes)',
+    'findResolver',
     data,
   )
 

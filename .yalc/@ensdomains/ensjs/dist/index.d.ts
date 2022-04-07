@@ -84,7 +84,7 @@ export declare class ENS {
      */
     withProvider: (provider: ethers.providers.JsonRpcProvider) => ENS;
     batch: (...args: [GenericGeneratedRawFunction, ...any[]][]) => Promise<any[]>;
-    _batch: (transactions: ethers.providers.TransactionRequest[], requireSuccess?: boolean | undefined) => Promise<any>;
+    _batch: (transactions: ethers.providers.TransactionRequest[], requireSuccess?: boolean | undefined) => Promise<import("./generated/Multicall").Multicall3.ResultStructOutput[]>;
     getProfile: (nameOrAddress: string, options?: {
         contentHash?: boolean | undefined;
         texts?: boolean | string[] | undefined;
@@ -95,13 +95,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             texts?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
@@ -118,13 +118,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             texts?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
@@ -142,13 +142,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             texts?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
@@ -165,13 +165,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             texts?: {
                 key: string | number;
-                type: "addr" | "text" | "contentHash";
+                type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
@@ -314,7 +314,11 @@ export declare class ENS {
     _getAddr: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string, coinType?: string | number | undefined, bypassFormat?: boolean | undefined) => Promise<{
             to: string;
-            data: string;
+            data: string; /**
+             * Creates an object of ENS properties from an array
+             * @param {FunctionDeps} dependencies - An array of ENS properties
+             * @returns {Object} - An object of ENS properties
+             */
         }>;
         decode: ({ contracts }: ENSArgs<"contracts">, data: string, _name: string, coinType?: string | number | undefined) => Promise<string | {
             coin: string;
@@ -373,7 +377,7 @@ export declare class ENS {
         }>;
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<ethers.utils.Result | null>;
     }>;
-    setName: (name: string) => Promise<any>;
+    setName: (name: string) => Promise<ethers.ContractTransaction | undefined>;
     setRecords: (name: string, records: {
         contentHash?: string | undefined;
         texts?: {
@@ -384,20 +388,20 @@ export declare class ENS {
             key: string;
             value: string;
         }[] | undefined;
-    }) => Promise<any>;
+    }) => Promise<ethers.ContractTransaction | undefined>;
     setResolver: (name: string, contract: "registry" | "nameWrapper", resolver?: string | undefined, options?: {
         addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<any>;
+    } | undefined) => Promise<ethers.ContractTransaction>;
     transferName: (name: string, newOwner: string, contract: "registry" | "nameWrapper" | "baseRegistrar", options?: {
         addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<any>;
+    } | undefined) => Promise<ethers.ContractTransaction>;
     wrapName: (name: string, wrappedOwner: string, fuseOptions?: string | number | import("./@types/FuseOptions").FuseOptions | undefined, resolverAddress?: string | undefined, options?: {
         addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<any>;
+    } | undefined) => Promise<ethers.ContractTransaction>;
     unwrapName: (name: string, newController: string, newRegistrant?: string | undefined, options?: {
         addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<any>;
-    burnFuses: (name: string, fusesToBurn: import("./@types/FuseOptions").FuseOptions) => Promise<any>;
+    } | undefined) => Promise<ethers.ContractTransaction>;
+    burnFuses: (name: string, fusesToBurn: import("./@types/FuseOptions").FuseOptions) => Promise<ethers.ContractTransaction>;
     createSubname: (args_0: {
         name: string;
         owner: string;
@@ -418,9 +422,9 @@ export declare class ENS {
         options?: {
             addressOrIndex?: string | number | undefined;
         } | undefined;
-    })) => Promise<any>;
+    })) => Promise<ethers.ContractTransaction>;
     deleteSubname: (name: string, contract: "registry" | "nameWrapper", options?: {
         addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<any>;
+    } | undefined) => Promise<ethers.ContractTransaction>;
 }
 export {};

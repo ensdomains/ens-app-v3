@@ -5,7 +5,7 @@ const raw = async ({ contracts }, address) => {
     const reverseNode = address.toLowerCase().substring(2) + '.addr.reverse';
     return {
         to: universalResolver.address,
-        data: universalResolver.interface.encodeFunctionData('reverse(bytes)', [
+        data: universalResolver.interface.encodeFunctionData('reverse', [
             hexEncodeName(reverseNode),
         ]),
     };
@@ -15,7 +15,7 @@ const decode = async ({ contracts }, data, address) => {
         return null;
     const universalResolver = await contracts?.getUniversalResolver();
     try {
-        const result = universalResolver.interface.decodeFunctionResult('reverse(bytes)', data);
+        const result = universalResolver.interface.decodeFunctionResult('reverse', data);
         const decoded = ethers.utils.defaultAbiCoder.decode(['bytes', 'address'], result['1']);
         const [addr] = ethers.utils.defaultAbiCoder.decode(['address'], decoded[0]);
         return {

@@ -10,13 +10,13 @@ export default function ({ getProfile }: ENSArgs<'getProfile'>, name: string, op
         contentHash?: string | import("../utils/contentHash").DecodedContentHash | null | undefined;
         coinTypes?: {
             key: string | number;
-            type: "addr" | "text" | "contentHash";
+            type: "text" | "addr" | "contentHash";
             coin?: string | undefined;
             value: string;
         }[] | undefined;
         texts?: {
             key: string | number;
-            type: "addr" | "text" | "contentHash";
+            type: "text" | "addr" | "contentHash";
             coin?: string | undefined;
             value: string;
         }[] | undefined;
@@ -33,13 +33,13 @@ export default function ({ getProfile }: ENSArgs<'getProfile'>, name: string, op
         contentHash?: string | import("../utils/contentHash").DecodedContentHash | null | undefined;
         coinTypes?: {
             key: string | number;
-            type: "addr" | "text" | "contentHash";
+            type: "text" | "addr" | "contentHash";
             coin?: string | undefined;
             value: string;
         }[] | undefined;
         texts?: {
             key: string | number;
-            type: "addr" | "text" | "contentHash";
+            type: "text" | "addr" | "contentHash";
             coin?: string | undefined;
             value: string;
         }[] | undefined;
