@@ -1,1 +1,0 @@
-export { IconExclamation } from './IconExclamation';

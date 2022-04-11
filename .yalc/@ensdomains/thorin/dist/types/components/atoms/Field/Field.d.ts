@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { ReactNodeNoStrings } from '../../../types';
 import { useFieldIds } from '../../../hooks';
-import { BoxProps } from '../Box';
+import { Space } from '@/src/tokens';
 declare type State = ReturnType<typeof useFieldIds> | undefined;
 declare type NativeFormProps = React.AllHTMLAttributes<HTMLFormElement>;
 export declare type FieldBaseProps = {
@@ -12,7 +12,7 @@ export declare type FieldBaseProps = {
     labelSecondary?: React.ReactNode;
     required?: NativeFormProps['required'];
     inline?: boolean;
-    width?: BoxProps['width'];
+    width?: Space;
 };
 declare type Props = FieldBaseProps & {
     children: React.ReactElement | ((context: State) => ReactNodeNoStrings);

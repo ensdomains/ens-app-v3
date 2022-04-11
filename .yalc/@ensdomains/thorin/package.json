@@ -45,7 +45,8 @@
   },
   "peerDependencies": {
     "react": "^17",
-    "react-dom": "^17"
+    "react-dom": "^17",
+    "styled-components": "5.3.3"
   },
-  "yalcSig": "1d659840745e4dafababc9cb2242587b"
+  "yalcSig": "ad9bac9ead9e81a17253904bf51fcdc3"
 }

@@ -34,5 +34,5 @@ export declare type Props = {
     onFocus?: NativeInputProps['onFocus'];
     onReset?(): void;
 };
-export declare const FileInput: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLElement>>;
+export declare const FileInput: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLDivElement>>;
 export {};

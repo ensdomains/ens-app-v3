@@ -1,27 +1,18 @@
 import * as React from 'react';
-import { BoxProps } from '../Box';
-export declare const Typography: React.ForwardRefExoticComponent<{
-    align?: BoxProps['textAlign'];
-    as?: "label" | "div" | "code" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "i" | "p" | "span" | undefined;
+import { Colors } from '@/src/tokens';
+declare type Variants = 'small' | 'large' | 'extraLarge' | 'label' | 'labelHeading';
+declare type Weights = 'bold' | 'semiBold' | 'medium' | 'normal' | 'light';
+declare type Fonts = 'sans' | 'mono';
+declare type Props = {
+    as?: 'code' | 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'label' | 'p' | 'span' | 'i';
     children?: React.ReactNode;
-    color?: BoxProps['color'];
-    font?: BoxProps['fontFamily'];
-    letterSpacing?: BoxProps['letterSpacing'];
-    lineHeight?: BoxProps['lineHeight'];
-    size?: BoxProps['fontSize'];
-    transform?: BoxProps['textTransform'];
-    weight?: BoxProps['fontWeight'];
-    whiteSpace?: BoxProps['whiteSpace'];
-} & import("@vanilla-extract/recipes/dist/declarations/src/types").VariantSelection<{
-    variant: {
-        extraLarge: string;
-        large: string;
-        base: string;
-        small: string;
-        label: string;
-        labelHeading: string;
-    };
-    ellipsis: {
-        true: string;
-    };
-}> & React.RefAttributes<HTMLElement>>;
+    ellipsis?: boolean;
+    variant?: Variants;
+    className?: string;
+    weight?: Weights;
+    font?: Fonts;
+    color?: Colors;
+    size?: 'small' | 'base';
+};
+export declare const Typography: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLElement>>;
+export {};

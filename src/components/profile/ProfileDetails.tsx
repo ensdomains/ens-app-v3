@@ -1,7 +1,7 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { imageUrl } from '@app/utils/utils'
-import { Avatar, Box, Stack, Typography, vars } from '@ensdomains/thorin'
+import { Avatar, tokens, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import styled from 'styled-components'
 import {
@@ -10,11 +10,27 @@ import {
   SocialProfileButton,
 } from './ProfileButton'
 
-const ProfileInfoBox = styled(Box)`
-  background-image: ${vars.colors.accentGradient};
+const ProfileInfoBox = styled.div`
+  background-image: ${({ theme }) => tokens.colors[theme.mode].accentGradient};
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: 100% 120px;
+  padding: ${tokens.space['12']};
+  background-color: ${({ theme }) => tokens.colors[theme.mode].background};
+  border-radius: ${tokens.radii['2xLarge']};
+`
+
+const Stack = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-gap: ${tokens.space['2']};
+  gap: ${tokens.space['2']};
+  flex-wrap: wrap;
+`
+
+const StackWrapper = styled.div`
+  margin-top: ${tokens.space['2']};
+  margin-left: calc(-1 * ${tokens.space['4']});
 `
 
 const ProfileSection = ({
@@ -44,12 +60,12 @@ const ProfileSection = ({
     : []
 
   return condition ? (
-    <Box>
+    <div>
       <Typography color="textSecondary" weight="bold" size="base">
         {t(label)}
       </Typography>
-      <Box marginTop="2" marginLeft="-4">
-        <Stack direction="horizontal" space="2" wrap>
+      <StackWrapper>
+        <Stack>
           {supportedArray.map(
             (item: {
               key: string
@@ -68,10 +84,25 @@ const ProfileSection = ({
               }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />,
             )}
         </Stack>
-      </Box>
-    </Box>
+      </StackWrapper>
+    </div>
   ) : null
 }
+
+const DetailStack = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-gap: 4px;
+  gap: 4px;
+  align-items: center;
+`
+
+const RecordsStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-gap: 16px;
+  gap: 16px;
+`
 
 export const ProfileDetails = ({
   name,
@@ -92,11 +123,7 @@ export const ProfileDetails = ({
   ]
 
   return (
-    <ProfileInfoBox
-      padding="12"
-      backgroundColor="background"
-      borderRadius="2xLarge"
-    >
+    <ProfileInfoBox>
       <Avatar
         size="32"
         label={name}
@@ -116,23 +143,23 @@ export const ProfileDetails = ({
             : undefined
         }
       />
-      <Stack direction="horizontal" align="center">
-        <Typography size="headingTwo" weight="bold">
+      <DetailStack>
+        <Typography variant="extraLarge" weight="bold">
           {name}
         </Typography>
         {getTextRecord('name') && (
-          <Box marginTop="1">
+          <div style={{ marginTop: '4px' }}>
             <Typography weight="bold" color="textTertiary">
               {getTextRecord('name')?.value}
             </Typography>
-          </Box>
+          </div>
         )}
-      </Stack>
+      </DetailStack>
       {getTextRecord('description') && (
         <Typography>{getTextRecord('description')?.value}</Typography>
       )}
       {getTextRecord('url') && (
-        <Box width="min">
+        <div style={{ width: 'min-content' }}>
           <a href={getTextRecord('url')?.value}>
             <Typography color="blue">
               {getTextRecord('url')
@@ -140,10 +167,10 @@ export const ProfileDetails = ({
                 .replace(/\/$/g, '')}
             </Typography>
           </a>
-        </Box>
+        </div>
       )}
-      <Box marginTop="4">
-        <Stack direction="vertical" space="4">
+      <div style={{ marginTop: '16px' }}>
+        <RecordsStack>
           <ProfileSection
             label="accounts"
             condition={
@@ -169,8 +196,8 @@ export const ProfileDetails = ({
             array={otherRecords}
             button={OtherProfileButton}
           />
-        </Stack>
-      </Box>
+        </RecordsStack>
+      </div>
     </ProfileInfoBox>
   )
 }

@@ -1,7 +1,6 @@
 import * as React from 'react';
-import { BoxProps } from '../..';
+import { FlattenInterpolation } from 'styled-components';
 import { FieldBaseProps } from '../../atoms/Field';
-import * as styles from './styles.css';
 declare type NativeInputProps = React.AllHTMLAttributes<HTMLInputElement>;
 declare type BaseProps = FieldBaseProps & {
     autoFocus?: NativeInputProps['autoFocus'];
@@ -18,7 +17,6 @@ declare type BaseProps = FieldBaseProps & {
     spellCheck?: NativeInputProps['spellCheck'];
     suffix?: React.ReactNode;
     tabIndex?: NativeInputProps['tabIndex'];
-    textTransform?: BoxProps['textTransform'];
     type?: 'email' | 'number' | 'text';
     units?: string;
     value?: string | number;
@@ -26,9 +24,8 @@ declare type BaseProps = FieldBaseProps & {
     onChange?: React.EventHandler<React.ChangeEvent<HTMLInputElement>>;
     onFocus?: NativeInputProps['onFocus'];
     onKeyDown?: React.KeyboardEventHandler<HTMLInputElement>;
-    size?: styles.Size;
-    backgroundColor?: BoxProps['backgroundColor'];
-    borderRadius?: BoxProps['borderRadius'];
+    size?: 'medium' | 'large' | 'extraLarge';
+    parentStyles?: FlattenInterpolation<any>;
 };
 declare type WithTypeEmail = {
     type?: 'email';

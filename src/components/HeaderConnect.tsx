@@ -5,10 +5,10 @@ import { connectProvider, disconnectProvider } from '@app/utils/providerUtils'
 import { imageUrl } from '@app/utils/utils'
 import {
   Button,
-  IconEthTransparentInverted,
+  EthTransparentInvertedSVG,
   Profile,
   Spinner,
-  vars,
+  tokens,
 } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
@@ -25,9 +25,9 @@ const NETWORK_INFORMATION_QUERY = gql`
   }
 `
 
-const StyledIconEthTransparentInverted = styled(IconEthTransparentInverted)`
-  margin-right: calc(${vars.space['2']} * -1);
-  margin-left: calc(${vars.space['2']} * -1);
+const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
+  margin-right: calc(${tokens.space['2']} * -1);
+  margin-left: calc(${tokens.space['2']} * -1);
 `
 
 export const HeaderConnect = () => {

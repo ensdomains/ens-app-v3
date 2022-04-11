@@ -1,20 +1,27 @@
 import { useCopied } from '@app/hooks/useCopied'
-import { Box, Button } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin'
+import styled from 'styled-components'
 import { IconCopyAnimated } from './IconCopyAnimated'
+
+const Container = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 export const CopyButton = ({ value }: { value: string }) => {
   const { copy, copied } = useCopied()
 
   return (
-    <Box display="flex" alignItems="center" justifyContent="center">
+    <Container>
       <Button
         onClick={() => copy(value)}
-        size="extraSmall"
+        size="small"
         variant="transparent"
         shadowless
       >
         <IconCopyAnimated copied={copied} size="3.5" />
       </Button>
-    </Box>
+    </Container>
   )
 }

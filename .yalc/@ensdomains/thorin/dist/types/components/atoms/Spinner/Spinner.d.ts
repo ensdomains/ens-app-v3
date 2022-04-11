@@ -1,11 +1,9 @@
 import * as React from 'react';
-import { BoxProps } from '../Box';
-export declare const Spinner: React.ForwardRefExoticComponent<{
-    accessibilityLabel?: string | undefined;
-    color?: BoxProps['color'];
-} & import("@vanilla-extract/recipes/dist/declarations/src/types").VariantSelection<{
-    size: {
-        small: string;
-        large: string;
-    };
-}> & React.RefAttributes<HTMLElement>>;
+import { Colors } from '@/src/tokens';
+declare type Props = {
+    accessibilityLabel?: string;
+    color?: Colors;
+    size?: 'small' | 'large';
+};
+export declare const Spinner: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLElement>>;
+export {};

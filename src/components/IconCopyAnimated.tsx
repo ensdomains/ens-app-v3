@@ -1,8 +1,8 @@
-import { Box, IconCheck, IconCopy, vars } from '@ensdomains/thorin'
+import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
 import { memo } from 'react'
 import styled from 'styled-components'
 
-const IconWrapper = styled(Box)<{ $copied: boolean }>`
+const IconWrapper = styled.div<{ $copied: boolean }>`
   position: relative;
   & > svg {
     transition: all 0.15s ease-in-out;
@@ -41,14 +41,14 @@ export const IconCopyAnimated = memo(
     ...props
   }: {
     copied?: boolean
-    checkStrokeWidth?: keyof typeof vars.borderWidths
-    size?: keyof typeof vars.space
-    color?: keyof typeof vars.colors
+    checkStrokeWidth?: keyof typeof tokens.borderWidths
+    size?: keyof typeof tokens.space
+    color?: keyof typeof tokens.colors.light | keyof typeof tokens.colors.dark
   }) => {
     return (
       <IconWrapper $copied={copied}>
-        <IconCheck strokeWidth={checkStrokeWidth} {...props} />
-        <IconCopy {...props} />
+        <CheckSVG strokeWidth={checkStrokeWidth} {...props} />
+        <CopySVG {...props} />
       </IconWrapper>
     )
   },

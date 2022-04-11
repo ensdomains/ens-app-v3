@@ -18,5 +18,5 @@ export declare const Textarea: React.ForwardRefExoticComponent<FieldBaseProps & 
     onChange?: ((event: React.ChangeEvent<HTMLTextAreaElement>) => void) | undefined;
     onBlur?: NativeTextareaProps['onBlur'];
     onFocus?: NativeTextareaProps['onFocus'];
-} & React.RefAttributes<HTMLElement>>;
+} & React.RefAttributes<HTMLTextAreaElement>>;
 export {};

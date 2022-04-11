@@ -1,28 +1,28 @@
 import { reverseRecordReactive } from '@app/apollo/reactiveVars'
 import { useGetReverseRecord } from '@app/hooks/useGetReverseRecord'
 import { ensNftImageUrl, shortenAddress } from '@app/utils/utils'
-import { Box, Stack, Typography, vars } from '@ensdomains/thorin'
+import { tokens, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import Image from 'next/image'
 import { Fragment, useState } from 'react'
 import styled from 'styled-components'
 import { CopyButton } from '../CopyButton'
 
-const StyledNftBox = styled(Box)<{ $loading: boolean }>`
+const StyledNftBox = styled.div<{ $loading: boolean }>`
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${({ $loading }) =>
-    $loading ? vars.colors.accentGradient : 'none'};
-  border-radius: ${vars.radii['2xLarge']};
-  margin-bottom: ${vars.space['8']};
+  background: ${({ $loading, theme }) =>
+    $loading ? tokens.colors[theme.mode].accentGradient : 'none'};
+  border-radius: ${tokens.radii['2xLarge']};
+  margin-bottom: ${tokens.space['8']};
   & > span {
-    border-radius: ${vars.radii['2xLarge']};
+    border-radius: ${tokens.radii['2xLarge']};
   }
 `
 
-const HoverableSelfName = styled(Box)<{ name: string }>`
+const HoverableSelfName = styled.div<{ name: string }>`
   position: relative;
   visibility: visible;
   transition: all 0.15s ease-in-out 0.15s;
@@ -46,8 +46,45 @@ const HoverableSelfName = styled(Box)<{ name: string }>`
   &:hover::before {
     transition: all 0.15s ease-in-out;
     visibility: visible;
-    color: ${vars.colors.text};
+    color: ${({ theme }) => tokens.colors[theme.mode].text};
   }
+`
+
+const HoverableSelfNameWrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  flex-gap: ${tokens.space['2']};
+  gap: ${tokens.space['2']};
+`
+
+const HoverableSelfNameContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  flex-gap: ${tokens.space['1']};
+  gap: ${tokens.space['1']};
+`
+
+const Stack = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: ${tokens.space['1']};
+  flex-gap: ${tokens.space['1']};
+`
+
+const ItemContainer = styled.div`
+  margin: 0 ${tokens.space['2']};
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+`
+
+const HorizontalLine = styled.div`
+  height: 1px;
+  background-color: ${({ theme }) =>
+    tokens.colors[theme.mode].foregroundSecondary};
 `
 
 const AddressBox = ({
@@ -83,17 +120,17 @@ const AddressBox = ({
   }
 
   return (
-    <Box display="flex" flexDirection="row" alignItems="center" gap="2">
-      <Box display="flex" flexDirection="column" alignItems="flex-end" gap="1">
+    <HoverableSelfNameWrapper>
+      <HoverableSelfNameContainer>
         <Typography color={highlightName ? 'textSecondary' : 'textTertiary'}>
           <TopElement />
         </Typography>
         <Typography color={highlightName ? 'textTertiary' : 'textSecondary'}>
           {shortenAddress(address)}
         </Typography>
-      </Box>
+      </HoverableSelfNameContainer>
       <CopyButton value={address} />
-    </Box>
+    </HoverableSelfNameWrapper>
   )
 }
 
@@ -114,7 +151,7 @@ export const ProfileNftDetails = ({
   const { t: tc } = useTranslation('common')
 
   return (
-    <Box>
+    <div>
       <StyledNftBox $loading={nftLoading}>
         <Image
           onLoadingComplete={() => setNftLoading(false)}
@@ -124,7 +161,7 @@ export const ProfileNftDetails = ({
           height={270}
         />
       </StyledNftBox>
-      <Box marginTop="4">
+      <div style={{ marginTop: tokens.space['4'] }}>
         <Stack>
           {[
             ...[
@@ -152,13 +189,7 @@ export const ProfileNftDetails = ({
             (item, inx, arr) =>
               item && (
                 <Fragment key={item.label}>
-                  <Box
-                    marginX="2"
-                    display="flex"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    fontWeight="bold"
-                  >
+                  <ItemContainer>
                     <Typography color="textTertiary">{item.label}</Typography>
                     {item.type === 'address' ? (
                       <AddressBox
@@ -170,15 +201,13 @@ export const ProfileNftDetails = ({
                         {item.value}
                       </Typography>
                     )}
-                  </Box>
-                  {inx !== arr.length - 1 && (
-                    <Box height="0.25" backgroundColor="foregroundSecondary" />
-                  )}
+                  </ItemContainer>
+                  {inx !== arr.length - 1 && <HorizontalLine />}
                 </Fragment>
               ),
           )}
         </Stack>
-      </Box>
-    </Box>
+      </div>
+    </div>
   )
 }

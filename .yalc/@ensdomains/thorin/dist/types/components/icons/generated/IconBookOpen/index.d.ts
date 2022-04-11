@@ -1,1 +1,0 @@
-export { IconBookOpen } from './IconBookOpen';

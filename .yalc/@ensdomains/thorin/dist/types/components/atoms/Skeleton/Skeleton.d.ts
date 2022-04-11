@@ -1,13 +1,10 @@
 import * as React from 'react';
-import { BoxProps } from '../Box';
+import { Colors, Radii } from '@/src/tokens';
 declare type Props = {
     as?: 'div' | 'span';
-    backgroundColor?: BoxProps['backgroundColor'];
-    radius?: BoxProps['borderRadius'];
-    height?: BoxProps['height'];
+    backgroundColor?: Colors;
+    radius?: Radii;
     loading?: boolean;
-    maxWidth?: BoxProps['maxWidth'];
-    width?: BoxProps['width'];
 };
-export declare const Skeleton: ({ as, backgroundColor, radius, children, height, loading, maxWidth, width, }: React.PropsWithChildren<Props>) => JSX.Element;
+export declare const Skeleton: ({ as, children, loading, }: React.PropsWithChildren<Props>) => JSX.Element;
 export {};
