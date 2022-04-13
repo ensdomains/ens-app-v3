@@ -56,7 +56,10 @@ const infuraId = '58a380d3ecd545b2b5b3dad5d2b18bf0'
 const provider = ({ chainId }: { chainId?: number }) =>
   new providers.JsonRpcProvider('http://localhost:8545', 'ropsten')
 
-const chains: Chain[] = [{ ...chain.mainnet, name: 'Ethereum' }]
+const chains: Chain[] = [
+  { ...chain.mainnet, name: 'Ethereum' },
+  { ...chain.ropsten, name: 'Ropsten' },
+]
 
 const wallets = getDefaultWallets({
   chains,
