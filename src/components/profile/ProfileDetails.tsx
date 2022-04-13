@@ -83,16 +83,17 @@ const ProfileSection = ({
 const DetailStack = styled.div`
   display: flex;
   flex-direction: row;
-  flex-gap: 4px;
-  gap: 4px;
+  flex-gap: ${tokens.space['1']};
+  gap: ${tokens.space['1']};
   align-items: center;
 `
 
 const RecordsStack = styled.div`
   display: flex;
   flex-direction: column;
-  flex-gap: 16px;
-  gap: 16px;
+  flex-gap: ${tokens.space['4']};
+  gap: ${tokens.space['4']};
+  margin-top: ${tokens.space['4']};
 `
 
 export const ProfileDetails = ({
@@ -160,35 +161,33 @@ export const ProfileDetails = ({
           </a>
         </div>
       )}
-      <div style={{ marginTop: '16px' }}>
-        <RecordsStack>
-          <ProfileSection
-            label="accounts"
-            condition={
-              textRecords &&
-              textRecords.filter((x) =>
-                supportedTexts.includes(x.key.toLowerCase()),
-              ).length > 0
-            }
-            array={textRecords}
-            button={SocialProfileButton}
-          />
-          <ProfileSection
-            label="addresses"
-            type="address"
-            condition={addresses && addresses.length > 0}
-            supported={supportedAddresses}
-            array={addresses}
-            button={AddressProfileButton}
-          />
-          <ProfileSection
-            label="otherRecords"
-            condition={otherRecords && otherRecords.length > 0}
-            array={otherRecords}
-            button={OtherProfileButton}
-          />
-        </RecordsStack>
-      </div>
+      <RecordsStack>
+        <ProfileSection
+          label="accounts"
+          condition={
+            textRecords &&
+            textRecords.filter((x) =>
+              supportedTexts.includes(x.key.toLowerCase()),
+            ).length > 0
+          }
+          array={textRecords}
+          button={SocialProfileButton}
+        />
+        <ProfileSection
+          label="addresses"
+          type="address"
+          condition={addresses && addresses.length > 0}
+          supported={supportedAddresses}
+          array={addresses}
+          button={AddressProfileButton}
+        />
+        <ProfileSection
+          label="otherRecords"
+          condition={otherRecords && otherRecords.length > 0}
+          array={otherRecords}
+          button={OtherProfileButton}
+        />
+      </RecordsStack>
     </ProfileInfoBox>
   )
 }
