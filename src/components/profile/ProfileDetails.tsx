@@ -26,9 +26,6 @@ const Stack = styled.div`
   flex-gap: ${tokens.space['2']};
   gap: ${tokens.space['2']};
   flex-wrap: wrap;
-`
-
-const StackWrapper = styled.div`
   margin-top: ${tokens.space['2']};
   margin-left: calc(-1 * ${tokens.space['4']});
 `
@@ -64,27 +61,21 @@ const ProfileSection = ({
       <Typography color="textSecondary" weight="bold" size="base">
         {t(label)}
       </Typography>
-      <StackWrapper>
-        <Stack>
-          {supportedArray.map(
+      <Stack>
+        {supportedArray.map(
+          (item: { key: string; value: string; type?: 'text' | 'address' }) => (
+            <Button {...{ ...item, iconKey: item.key }} />
+          ),
+        )}
+        {unsupportedArray.length > 0 &&
+          unsupportedArray.map(
             (item: {
               key: string
               value: string
               type?: 'text' | 'address'
-            }) => (
-              <Button {...{ ...item, iconKey: item.key }} />
-            ),
+            }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />,
           )}
-          {unsupportedArray.length > 0 &&
-            unsupportedArray.map(
-              (item: {
-                key: string
-                value: string
-                type?: 'text' | 'address'
-              }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />,
-            )}
-        </Stack>
-      </StackWrapper>
+      </Stack>
     </div>
   ) : null
 }
