@@ -34,17 +34,17 @@ const StyledAddressIcon = styled(DynamicAddressIcon)`
   height: ${tokens.space['5']};
 `
 
-const RotatedIconArrowUp = styled(ArrowUpSVG)`
+const PrimaryText = styled(Typography)`
+  color: ${({ theme }) => tokens.colors[theme.mode].text};
+`
+
+const RotatedIconArrowUp = styled.svg`
   display: block;
   transform: rotate(45deg);
   height: ${tokens.space['3.5']};
   width: ${tokens.space['3.5']};
   stroke-width: ${tokens.borderWidths['1']};
   color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
-`
-
-const PrimaryText = styled(Typography)`
-  color: ${({ theme }) => tokens.colors[theme.mode].text};
 `
 
 const ProfileButton = ({
@@ -89,7 +89,7 @@ const ProfileButton = ({
             </div>
             <PrimaryText>{children}</PrimaryText>
             {link ? (
-              <RotatedIconArrowUp key={link} />
+              <RotatedIconArrowUp as={ArrowUpSVG} key={link} />
             ) : (
               <IconCopyAnimated
                 key={value}

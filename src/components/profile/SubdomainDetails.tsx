@@ -46,7 +46,7 @@ const Stack = styled.div`
   flex-gap: ${tokens.space['4']};
 `
 
-const RightArrow = styled(ArrowRightSVG)`
+const RightArrow = styled.svg`
   stroke-width: ${tokens.borderWidths['0.75']};
   color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
   display: block;
@@ -84,7 +84,7 @@ const SubdomainItem = ({
             {name}
           </Typography>
         </Stack>
-        <RightArrow />
+        <RightArrow as={ArrowRightSVG} />
       </SubdomainWrapper>
     </Link>
   )

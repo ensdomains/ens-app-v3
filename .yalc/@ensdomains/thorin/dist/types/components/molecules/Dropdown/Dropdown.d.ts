@@ -17,7 +17,7 @@ declare type Props = {
     keepMenuOnTop?: boolean;
     items: DropdownItem[];
     size?: 'small' | 'medium';
-    label?: string;
+    label?: React.ReactNode;
 };
 export declare const Dropdown: {
     ({ children, buttonProps, items, inner, chevron, align, shortThrow, keepMenuOnTop, size, label, }: Props): JSX.Element;
