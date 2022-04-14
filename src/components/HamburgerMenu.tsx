@@ -1,11 +1,19 @@
-import { Dropdown, MenuSVG } from '@ensdomains/thorin'
+import { Dropdown, MenuSVG, tokens } from '@ensdomains/thorin'
 import type { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 import { useRouter } from 'next/router'
+import styled from 'styled-components'
 
 export interface HamburgerItem extends Partial<DropdownItem> {
   label: string
   href?: string
 }
+
+const MenuIcon = styled(MenuSVG)`
+  display: block;
+  width: ${tokens.space['4.5']};
+  height: ${tokens.space['4.5']};
+  stroke-width: ${tokens.borderWidths['0.75']};
+`
 
 export const HamburgerMenu = ({
   dropdownItems,
@@ -40,8 +48,7 @@ export const HamburgerMenu = ({
               : router.push(item.href))) ||
           (() => null),
       }))}
-    >
-      <MenuSVG />
-    </Dropdown>
+      label={<MenuIcon />}
+    />
   )
 }

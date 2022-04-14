@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNodeNoStrings } from '../../../types';
-export declare type Size = 'small' | 'medium';
+export declare type Size = 'extraSmall' | 'small' | 'medium';
 declare type NativeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 declare type NativeAnchorProps = React.AllHTMLAttributes<HTMLAnchorElement>;
 declare type Variant = 'primary' | 'secondary' | 'action' | 'transparent';

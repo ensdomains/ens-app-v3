@@ -523,10 +523,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.2.4"
       ],
       [
-        "@emotion/hash",
-        "npm:0.8.0"
-      ],
-      [
         "@emotion/is-prop-valid",
         "npm:0.8.8"
       ],
@@ -619,7 +615,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@ensdomains/thorin",
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A."
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=c7b4fc&locator=ens-app-v2%40workspace%3A."
       ],
       [
         "@ensdomains/ui",
@@ -1668,30 +1664,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "@typescript-eslint/visitor-keys",
         "npm:5.10.0"
-      ],
-      [
-        "@vanilla-extract/css",
-        "npm:1.6.8"
-      ],
-      [
-        "@vanilla-extract/css-utils",
-        "npm:0.1.2"
-      ],
-      [
-        "@vanilla-extract/dynamic",
-        "npm:2.0.2"
-      ],
-      [
-        "@vanilla-extract/private",
-        "npm:1.0.3"
-      ],
-      [
-        "@vanilla-extract/recipes",
-        "virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:0.2.3"
-      ],
-      [
-        "@vanilla-extract/sprinkles",
-        "virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:1.3.3"
       ],
       [
         "@walletconnect/browser-utils",
@@ -3134,10 +3106,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.5.1"
       ],
       [
-        "cssesc",
-        "npm:3.0.0"
-      ],
-      [
         "csso",
         "npm:4.2.0"
       ],
@@ -3240,10 +3208,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [
         "deep-is",
         "npm:0.1.4"
-      ],
-      [
-        "deep-object-diff",
-        "npm:1.1.7"
       ],
       [
         "deepmerge",
@@ -5982,10 +5946,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.2.2"
       ],
       [
-        "outdent",
-        "npm:0.8.0"
-      ],
-      [
         "p-cancelable",
         "npm:1.1.0"
       ],
@@ -7980,7 +7940,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/cypress-metamask", "patch:@ensdomains/cypress-metamask@https%3A//github.com/ensdomains/cypress-metamask.git%23commit=b870c5ad7c42b374d237516b507595f9f6b796a1#./patches/@ensdomains/cypress-metamask.patch::version=1.1.0-development&hash=504e11&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=c7b4fc&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
@@ -11637,15 +11597,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["@emotion/hash", [
-        ["npm:0.8.0", {
-          "packageLocation": "./.yarn/cache/@emotion-hash-npm-0.8.0-0104f4bbf3-4b35d88a97.zip/node_modules/@emotion/hash/",
-          "packageDependencies": [
-            ["@emotion/hash", "npm:0.8.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["@emotion/is-prop-valid", [
         ["npm:0.8.8", {
           "packageLocation": "./.yarn/cache/@emotion-is-prop-valid-npm-0.8.8-261a0f2426-bb7ec6d48c.zip/node_modules/@emotion/is-prop-valid/",
@@ -11937,25 +11888,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@ensdomains/thorin", [
-        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A.", {
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-4a41c0c23b-c428d3221e.zip/node_modules/@ensdomains/thorin/",
+        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=c7b4fc&locator=ens-app-v2%40workspace%3A.", {
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-5d917721cd-4ad4822709.zip/node_modules/@ensdomains/thorin/",
           "packageDependencies": [
-            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A."]
+            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=c7b4fc&locator=ens-app-v2%40workspace%3A."]
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A.", {
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-439b9b773a/0/cache/@ensdomains-thorin-file-4a41c0c23b-c428d3221e.zip/node_modules/@ensdomains/thorin/",
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=c7b4fc&locator=ens-app-v2%40workspace%3A.", {
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-6aa22a3e20/0/cache/@ensdomains-thorin-file-5d917721cd-4ad4822709.zip/node_modules/@ensdomains/thorin/",
           "packageDependencies": [
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=c7b4fc&locator=ens-app-v2%40workspace%3A."],
             ["@types/react", "npm:17.0.30"],
             ["@types/react-dom", null],
             ["@types/styled-components", "npm:5.1.20"],
-            ["@vanilla-extract/css", "npm:1.6.8"],
-            ["@vanilla-extract/css-utils", "npm:0.1.2"],
-            ["@vanilla-extract/dynamic", "npm:2.0.2"],
-            ["@vanilla-extract/recipes", "virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:0.2.3"],
-            ["@vanilla-extract/sprinkles", "virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:1.3.3"],
             ["clsx", "npm:1.1.1"],
             ["focus-visible", "npm:5.2.0"],
             ["lodash", "npm:4.17.21"],
@@ -16281,97 +16227,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@typescript-eslint/visitor-keys", "npm:5.10.0"],
             ["@typescript-eslint/types", "npm:5.10.0"],
             ["eslint-visitor-keys", "npm:3.0.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@vanilla-extract/css", [
-        ["npm:1.6.8", {
-          "packageLocation": "./.yarn/cache/@vanilla-extract-css-npm-1.6.8-2b0da5ed75-1bee577c83.zip/node_modules/@vanilla-extract/css/",
-          "packageDependencies": [
-            ["@vanilla-extract/css", "npm:1.6.8"],
-            ["@emotion/hash", "npm:0.8.0"],
-            ["@vanilla-extract/private", "npm:1.0.3"],
-            ["chalk", "npm:4.1.2"],
-            ["css-what", "npm:5.1.0"],
-            ["cssesc", "npm:3.0.0"],
-            ["csstype", "npm:3.0.10"],
-            ["deep-object-diff", "npm:1.1.7"],
-            ["deepmerge", "npm:4.2.2"],
-            ["escape-string-regexp", "npm:4.0.0"],
-            ["outdent", "npm:0.8.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@vanilla-extract/css-utils", [
-        ["npm:0.1.2", {
-          "packageLocation": "./.yarn/cache/@vanilla-extract-css-utils-npm-0.1.2-58c55a7410-002c658899.zip/node_modules/@vanilla-extract/css-utils/",
-          "packageDependencies": [
-            ["@vanilla-extract/css-utils", "npm:0.1.2"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@vanilla-extract/dynamic", [
-        ["npm:2.0.2", {
-          "packageLocation": "./.yarn/cache/@vanilla-extract-dynamic-npm-2.0.2-b974034f8e-c6f22606bc.zip/node_modules/@vanilla-extract/dynamic/",
-          "packageDependencies": [
-            ["@vanilla-extract/dynamic", "npm:2.0.2"],
-            ["@vanilla-extract/private", "npm:1.0.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@vanilla-extract/private", [
-        ["npm:1.0.3", {
-          "packageLocation": "./.yarn/cache/@vanilla-extract-private-npm-1.0.3-27ba5cf703-866a71ba68.zip/node_modules/@vanilla-extract/private/",
-          "packageDependencies": [
-            ["@vanilla-extract/private", "npm:1.0.3"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@vanilla-extract/recipes", [
-        ["npm:0.2.3", {
-          "packageLocation": "./.yarn/cache/@vanilla-extract-recipes-npm-0.2.3-c811c9ea3d-41ae6d981b.zip/node_modules/@vanilla-extract/recipes/",
-          "packageDependencies": [
-            ["@vanilla-extract/recipes", "npm:0.2.3"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:0.2.3", {
-          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-recipes-virtual-36bec60969/0/cache/@vanilla-extract-recipes-npm-0.2.3-c811c9ea3d-41ae6d981b.zip/node_modules/@vanilla-extract/recipes/",
-          "packageDependencies": [
-            ["@vanilla-extract/recipes", "virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:0.2.3"],
-            ["@types/vanilla-extract__css", null],
-            ["@vanilla-extract/css", "npm:1.6.8"]
-          ],
-          "packagePeers": [
-            "@types/vanilla-extract__css",
-            "@vanilla-extract/css"
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["@vanilla-extract/sprinkles", [
-        ["npm:1.3.3", {
-          "packageLocation": "./.yarn/cache/@vanilla-extract-sprinkles-npm-1.3.3-db35e7f4c5-68cff1633a.zip/node_modules/@vanilla-extract/sprinkles/",
-          "packageDependencies": [
-            ["@vanilla-extract/sprinkles", "npm:1.3.3"]
-          ],
-          "linkType": "SOFT",
-        }],
-        ["virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:1.3.3", {
-          "packageLocation": "./.yarn/__virtual__/@vanilla-extract-sprinkles-virtual-1c1485ba58/0/cache/@vanilla-extract-sprinkles-npm-1.3.3-db35e7f4c5-68cff1633a.zip/node_modules/@vanilla-extract/sprinkles/",
-          "packageDependencies": [
-            ["@vanilla-extract/sprinkles", "virtual:439b9b773a6a287e7361890bce694e84d29bc93045c9dd91d6fcf64e55c6771700e5e12d66fa0dce3d2a4fb8df7ecfb6f707675c5f3af096e54fabe4bf9c354a#npm:1.3.3"],
-            ["@types/vanilla-extract__css", null],
-            ["@vanilla-extract/css", "npm:1.6.8"]
-          ],
-          "packagePeers": [
-            "@types/vanilla-extract__css",
-            "@vanilla-extract/css"
           ],
           "linkType": "HARD",
         }]
@@ -21446,15 +21301,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD",
         }]
       ]],
-      ["cssesc", [
-        ["npm:3.0.0", {
-          "packageLocation": "./.yarn/cache/cssesc-npm-3.0.0-15ec56f86f-f8c4ababff.zip/node_modules/cssesc/",
-          "packageDependencies": [
-            ["cssesc", "npm:3.0.0"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
       ["csso", [
         ["npm:4.2.0", {
           "packageLocation": "./.yarn/cache/csso-npm-4.2.0-b277db8d71-380ba9663d.zip/node_modules/csso/",
@@ -21492,13 +21338,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["csstype", [
-        ["npm:3.0.10", {
-          "packageLocation": "./.yarn/cache/csstype-npm-3.0.10-e26ef49bb2-20a8fa324f.zip/node_modules/csstype/",
-          "packageDependencies": [
-            ["csstype", "npm:3.0.10"]
-          ],
-          "linkType": "HARD",
-        }],
         ["npm:3.0.9", {
           "packageLocation": "./.yarn/cache/csstype-npm-3.0.9-0801c4a6d7-199f9af7e6.zip/node_modules/csstype/",
           "packageDependencies": [
@@ -21997,15 +21836,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/deep-is-npm-0.1.4-88938b5a67-edb65dd0d7.zip/node_modules/deep-is/",
           "packageDependencies": [
             ["deep-is", "npm:0.1.4"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["deep-object-diff", [
-        ["npm:1.1.7", {
-          "packageLocation": "./.yarn/cache/deep-object-diff-npm-1.1.7-f83d006c8d-543fb1ae87.zip/node_modules/deep-object-diff/",
-          "packageDependencies": [
-            ["deep-object-diff", "npm:1.1.7"]
           ],
           "linkType": "HARD",
         }]
@@ -22833,7 +22663,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/cypress-metamask", "patch:@ensdomains/cypress-metamask@https%3A//github.com/ensdomains/cypress-metamask.git%23commit=b870c5ad7c42b374d237516b507595f9f6b796a1#./patches/@ensdomains/cypress-metamask.patch::version=1.1.0-development&hash=504e11&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=c7b4fc&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
@@ -33157,15 +32987,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ospath-npm-1.2.2-c8f45523a8-505f48a4f4.zip/node_modules/ospath/",
           "packageDependencies": [
             ["ospath", "npm:1.2.2"]
-          ],
-          "linkType": "HARD",
-        }]
-      ]],
-      ["outdent", [
-        ["npm:0.8.0", {
-          "packageLocation": "./.yarn/cache/outdent-npm-0.8.0-5e36779041-72b7c1a287.zip/node_modules/outdent/",
-          "packageDependencies": [
-            ["outdent", "npm:0.8.0"]
           ],
           "linkType": "HARD",
         }]

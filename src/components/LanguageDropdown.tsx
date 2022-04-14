@@ -50,10 +50,11 @@ export const LanugageDropdown = () => {
               { locale: lang },
             ),
         }))}
-    >
-      <MobileInnerDropdownButton $large={isLarge}>
-        {formatName(i18n.language)}
-      </MobileInnerDropdownButton>
-    </Dropdown>
+      label={
+        <MobileInnerDropdownButton $large={isLarge}>
+          {formatName(i18n.language)}
+        </MobileInnerDropdownButton>
+      }
+    />
   ) : null
 }

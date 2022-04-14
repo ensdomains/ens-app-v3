@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import { GET_REVERSE_RECORD } from '@app/graphql/queries'
+import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { connectProvider, disconnectProvider } from '@app/utils/providerUtils'
 import { imageUrl } from '@app/utils/utils'
@@ -26,8 +27,16 @@ const NETWORK_INFORMATION_QUERY = gql`
 `
 
 const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
+  color: white;
+  display: block;
   margin-right: calc(${tokens.space['2']} * -1);
   margin-left: calc(${tokens.space['2']} * -1);
+  height: ${tokens.space['4']};
+  width: ${tokens.space['4']};
+  ${mq.small.min`
+    height: ${tokens.space['6']};
+    width: ${tokens.space['6']};
+  `}
 `
 
 export const HeaderConnect = () => {
@@ -77,7 +86,7 @@ export const HeaderConnect = () => {
         network === 'Loading' || accounts?.[0] ? (
           <Spinner color="white" />
         ) : (
-          <StyledIconEthTransparentInverted size={{ xs: '4', sm: '6' }} />
+          <StyledIconEthTransparentInverted />
         )
       }
       variant="action"

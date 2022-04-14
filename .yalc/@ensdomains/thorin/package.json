@@ -34,11 +34,6 @@
     "test": "jest"
   },
   "dependencies": {
-    "@vanilla-extract/css": "^1.6.8",
-    "@vanilla-extract/css-utils": "^0.1.2",
-    "@vanilla-extract/dynamic": "^2.0.2",
-    "@vanilla-extract/recipes": "^0.2.3",
-    "@vanilla-extract/sprinkles": "^1.3.3",
     "clsx": "^1.1.1",
     "focus-visible": "^5.2.0",
     "lodash": "^4.17.21"
@@ -46,7 +41,7 @@
   "peerDependencies": {
     "react": "^17",
     "react-dom": "^17",
-    "styled-components": "5.3.3"
+    "styled-components": "^5.3.3"
   },
-  "yalcSig": "ad9bac9ead9e81a17253904bf51fcdc3"
+  "yalcSig": "8c202850cf8580e29ba7a4acd8ad54fa"
 }

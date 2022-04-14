@@ -27,10 +27,11 @@ const Container = styled.div<{ $size: 'large' | 'extraLarge' }>`
 `
 
 const SearchArrowButton = styled.div<{ danger?: boolean }>`
+  display: block;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
   color: ${({ danger, theme }) =>
-    danger ? tokens.colors[theme.mode].red : tokens.colors[theme.mode].red};
+    danger ? tokens.colors[theme.mode].red : tokens.colors[theme.mode].accent};
   width: ${tokens.space['7']};
   height: ${tokens.space['7']};
   margin-right: ${tokens.space['2']};
@@ -40,12 +41,11 @@ const SearchArrowButton = styled.div<{ danger?: boolean }>`
   }
 `
 
-// borderSecondary should be borderTertiary
 const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
   box-shadow: ${({ theme }) => tokens.boxShadows[theme.mode]['0.25']};
   border-radius: ${tokens.radii['2.5xLarge']};
   border-width: 1px;
-  border-color: ${({ theme }) => tokens.colors[theme.mode].borderSecondary};
+  border-color: ${({ theme }) => tokens.colors[theme.mode].borderTertiary};
   width: 100%;
 
   ${({ $size, theme }) =>

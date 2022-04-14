@@ -16,7 +16,7 @@ export const CopyButton = ({ value }: { value: string }) => {
     <Container>
       <Button
         onClick={() => copy(value)}
-        size="small"
+        size="extraSmall"
         variant="transparent"
         shadowless
       >
