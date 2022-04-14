@@ -587,8 +587,8 @@
     border-width: ${r.space.px};
     border-top-width: 0;
     border-color: ${r.colors[e.mode].borderSecondary};
-    padding-top: ${r.space["2.5"]};
     padding: 0 ${r.space["1.5"]};
+    padding-top: ${r.space["2.5"]};
     padding-bottom: ${r.space["1.5"]};
     margin-top: -${r.space["2.5"]};
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6);

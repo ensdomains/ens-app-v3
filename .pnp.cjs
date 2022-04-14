@@ -615,7 +615,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],
       [
         "@ensdomains/thorin",
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A."
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A."
       ],
       [
         "@ensdomains/ui",
@@ -7940,7 +7940,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/cypress-metamask", "patch:@ensdomains/cypress-metamask@https%3A//github.com/ensdomains/cypress-metamask.git%23commit=b870c5ad7c42b374d237516b507595f9f6b796a1#./patches/@ensdomains/cypress-metamask.patch::version=1.1.0-development&hash=504e11&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],
@@ -11888,17 +11888,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]
       ]],
       ["@ensdomains/thorin", [
-        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A.", {
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-76241e43ef-87b4bd7326.zip/node_modules/@ensdomains/thorin/",
+        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A.", {
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-30242cf94d-f41a2c789a.zip/node_modules/@ensdomains/thorin/",
           "packageDependencies": [
-            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A."]
+            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A."]
           ],
           "linkType": "SOFT",
         }],
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A.", {
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-618489a49c/0/cache/@ensdomains-thorin-file-76241e43ef-87b4bd7326.zip/node_modules/@ensdomains/thorin/",
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A.", {
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-bc7b769137/0/cache/@ensdomains-thorin-file-30242cf94d-f41a2c789a.zip/node_modules/@ensdomains/thorin/",
           "packageDependencies": [
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A."],
             ["@types/react", "npm:17.0.30"],
             ["@types/react-dom", null],
             ["@types/styled-components", "npm:5.1.20"],
@@ -22663,7 +22663,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/cypress-metamask", "patch:@ensdomains/cypress-metamask@https%3A//github.com/ensdomains/cypress-metamask.git%23commit=b870c5ad7c42b374d237516b507595f9f6b796a1#./patches/@ensdomains/cypress-metamask.patch::version=1.1.0-development&hash=504e11&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ens-validation", "npm:0.1.0"],
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A."],
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/ui", "patch:@ensdomains/ui@npm%3A3.3.14#./patches/@ensdomains/ui.patch::version=3.3.14&hash=9412b9&locator=ens-app-v2%40workspace%3A."],
             ["@ensdomains/web3modal", "https://github.com/ensdomains/web3modal.git#commit=a23ccae4cb5bcaf75ebddc628c71cd93a8b87847"],
             ["@gnosis.pm/safe-apps-provider", "npm:0.9.3"],

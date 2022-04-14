@@ -2071,8 +2071,8 @@ const DropdownMenuContainer = styled.div`
     border-width: ${tokens.space["px"]};
     border-top-width: 0;
     border-color: ${tokens.colors[theme.mode].borderSecondary};
-    padding-top: ${tokens.space["2.5"]};
     padding: 0 ${tokens.space["1.5"]};
+    padding-top: ${tokens.space["2.5"]};
     padding-bottom: ${tokens.space["1.5"]};
     margin-top: -${tokens.space["2.5"]};
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6);
