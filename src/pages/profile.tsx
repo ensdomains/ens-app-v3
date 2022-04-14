@@ -9,7 +9,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Box, IconArrowCircle, Typography, vars } from '@ensdomains/thorin'
+import { ArrowCircleSVG, tokens, Typography } from '@ensdomains/thorin'
 import { getNamehash } from '@ensdomains/ui'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
@@ -29,7 +29,7 @@ const NETWORK_INFORMATION_QUERY = gql`
   }
 `
 
-const GridItem = styled(Box)<{ $area: string }>`
+const GridItem = styled.div<{ $area: string }>`
   grid-area: ${({ $area }) => $area};
 `
 
@@ -42,20 +42,20 @@ const DetailsWrapper = styled(GridItem)`
   `}
 `
 
-const ArrowBack = styled(Box)`
-  color: ${vars.colors.textTertiary};
+const ArrowBack = styled.div`
+  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
   transform: rotate(180deg);
-  width: ${vars.space['7']};
-  height: ${vars.space['7']};
+  width: ${tokens.space['7']};
+  height: ${tokens.space['7']};
 `
 
-const BackContainer = styled(Box)`
+const BackContainer = styled.div`
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: ${vars.space['2']};
+  gap: ${tokens.space['2']};
 
   &:hover {
     filter: contrast(0.8);
@@ -63,23 +63,23 @@ const BackContainer = styled(Box)`
   }
 `
 
-const TabButton = styled(Box)<{ $active: boolean }>`
+const TabButton = styled.div<{ $active: boolean }>`
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   font-weight: bold;
-  font-size: ${vars.fontSizes.headingThree};
-  color: ${vars.colors.textTertiary};
+  font-size: ${tokens.fontSizes.headingThree};
+  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
 
   &:hover {
-    color: ${vars.colors.textSecondary};
+    color: ${({ theme }) => tokens.colors[theme.mode].textSecondary};
   }
 
-  ${({ $active }) =>
+  ${({ $active, theme }) =>
     $active &&
     `
-    color: ${vars.colors.accent};
+    color: ${tokens.colors[theme.mode].accent};
     &:hover {
-      color: ${vars.colors.accent};
+      color: ${tokens.colors[theme.mode].accent};
     }
   `}
 `
@@ -88,24 +88,24 @@ const TabButtonWrapper = styled(GridItem)`
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  gap: ${vars.space['1']};
+  gap: ${tokens.space['1']};
 
   ${mq.medium.min`
       flex-direction: row;
       align-items: center;
-      gap: ${vars.space['4']};
+      gap: ${tokens.space['4']};
     `}
 `
 
-const TabWrapper = styled(Box)`
-  background-color: ${vars.colors.background};
-  border-radius: ${vars.radii['2xLarge']};
+const TabWrapper = styled.div`
+  background-color: ${({ theme }) => tokens.colors[theme.mode].background};
+  border-radius: ${tokens.radii['2xLarge']};
 `
 
-const WrapperGrid = styled(Box)`
+const WrapperGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${vars.space['4']};
+  gap: ${tokens.space['4']};
   align-self: center;
   justify-content: center;
   grid-template-areas: 'back-button tabs' 'details details' 'nft-details nft-details';
@@ -121,8 +121,8 @@ const BackButton = () => {
 
   return (
     <BackContainer role="button" onClick={() => router.back()}>
-      <ArrowBack as={IconArrowCircle} />
-      <Typography weight="bold" color="textTertiary" size="large">
+      <ArrowBack as={ArrowCircleSVG} />
+      <Typography weight="bold" color="textTertiary" variant="large">
         {t('navigation.back')}
       </Typography>
     </BackContainer>
@@ -206,8 +206,8 @@ const ProfilePage: NextPage = () => {
     >
       <WrapperGrid>
         <GridItem
+          style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
           $area="back-button"
-          alignSelf={breakpoints.md ? 'center' : 'flex-end'}
         >
           <BackButton />
         </GridItem>

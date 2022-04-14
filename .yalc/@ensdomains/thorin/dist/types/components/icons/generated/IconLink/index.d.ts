@@ -1,1 +1,0 @@
-export { IconLink } from './IconLink';

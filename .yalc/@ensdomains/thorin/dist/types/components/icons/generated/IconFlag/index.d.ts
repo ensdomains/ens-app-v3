@@ -1,1 +1,0 @@
-export { IconFlag } from './IconFlag';

@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@ensdomains/thorin": {
-      "signature": "1d659840745e4dafababc9cb2242587b",
+      "signature": "ad9bac9ead9e81a17253904bf51fcdc3",
       "pure": true,
       "replaced": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin"
     }

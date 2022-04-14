@@ -1,17 +1,12 @@
 import * as React from 'react';
-import { BoxProps } from '../..';
-export declare const CountdownCircle: React.ForwardRefExoticComponent<{
-    accessibilityLabel?: string | undefined;
+import { Colors } from '@/src/tokens';
+declare type Props = {
+    accessibilityLabel?: string;
     countdownAmount: number;
-    color?: BoxProps['color'];
-    disabled?: boolean | undefined;
-    callback?: (() => void) | undefined;
-} & import("@vanilla-extract/recipes/dist/declarations/src/types").VariantSelection<{
-    size: {
-        small: string;
-        large: string;
-    };
-    disabled: {
-        true: string;
-    };
-}> & React.RefAttributes<HTMLElement>>;
+    color?: Colors;
+    disabled?: boolean;
+    callback?: () => void;
+    size?: 'small' | 'large';
+};
+export declare const CountdownCircle: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLDivElement>>;
+export {};

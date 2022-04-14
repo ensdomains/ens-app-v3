@@ -1,3 +1,6 @@
-import { BoxProps } from '../Box';
-import { Size } from './styles.css';
-export declare const getCenterProps: (center: boolean | undefined, size: Size, side: 'left' | 'right') => Pick<BoxProps, 'position'>;
+export interface GetCenterProps {
+    center: boolean | undefined;
+    size: 'small' | 'medium' | 'extraSmall' | undefined;
+    side: 'left' | 'right';
+}
+export declare const getCenterProps: ({ center, size, side }: GetCenterProps) => string | false | undefined;

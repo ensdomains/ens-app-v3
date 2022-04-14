@@ -1,7 +1,7 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { imageUrl } from '@app/utils/utils'
-import { Avatar, Box, Stack, Typography, vars } from '@ensdomains/thorin'
+import { Avatar, tokens, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import styled from 'styled-components'
 import {
@@ -10,11 +10,24 @@ import {
   SocialProfileButton,
 } from './ProfileButton'
 
-const ProfileInfoBox = styled(Box)`
-  background-image: ${vars.colors.accentGradient};
+const ProfileInfoBox = styled.div`
+  background-image: ${({ theme }) => tokens.colors[theme.mode].accentGradient};
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: 100% 120px;
+  padding: ${tokens.space['12']};
+  background-color: ${({ theme }) => tokens.colors[theme.mode].background};
+  border-radius: ${tokens.radii['2xLarge']};
+`
+
+const Stack = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-gap: ${tokens.space['2']};
+  gap: ${tokens.space['2']};
+  flex-wrap: wrap;
+  margin-top: ${tokens.space['2']};
+  margin-left: calc(-1 * ${tokens.space['4']});
 `
 
 const ProfileSection = ({
@@ -44,34 +57,44 @@ const ProfileSection = ({
     : []
 
   return condition ? (
-    <Box>
+    <div>
       <Typography color="textSecondary" weight="bold" size="base">
         {t(label)}
       </Typography>
-      <Box marginTop="2" marginLeft="-4">
-        <Stack direction="horizontal" space="2" wrap>
-          {supportedArray.map(
+      <Stack>
+        {supportedArray.map(
+          (item: { key: string; value: string; type?: 'text' | 'address' }) => (
+            <Button {...{ ...item, iconKey: item.key }} />
+          ),
+        )}
+        {unsupportedArray.length > 0 &&
+          unsupportedArray.map(
             (item: {
               key: string
               value: string
               type?: 'text' | 'address'
-            }) => (
-              <Button {...{ ...item, iconKey: item.key }} />
-            ),
+            }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />,
           )}
-          {unsupportedArray.length > 0 &&
-            unsupportedArray.map(
-              (item: {
-                key: string
-                value: string
-                type?: 'text' | 'address'
-              }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />,
-            )}
-        </Stack>
-      </Box>
-    </Box>
+      </Stack>
+    </div>
   ) : null
 }
+
+const DetailStack = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-gap: ${tokens.space['1']};
+  gap: ${tokens.space['1']};
+  align-items: center;
+`
+
+const RecordsStack = styled.div`
+  display: flex;
+  flex-direction: column;
+  flex-gap: ${tokens.space['4']};
+  gap: ${tokens.space['4']};
+  margin-top: ${tokens.space['4']};
+`
 
 export const ProfileDetails = ({
   name,
@@ -92,11 +115,7 @@ export const ProfileDetails = ({
   ]
 
   return (
-    <ProfileInfoBox
-      padding="12"
-      backgroundColor="background"
-      borderRadius="2xLarge"
-    >
+    <ProfileInfoBox>
       <Avatar
         size="32"
         label={name}
@@ -116,23 +135,23 @@ export const ProfileDetails = ({
             : undefined
         }
       />
-      <Stack direction="horizontal" align="center">
-        <Typography size="headingTwo" weight="bold">
+      <DetailStack>
+        <Typography variant="extraLarge" weight="bold">
           {name}
         </Typography>
         {getTextRecord('name') && (
-          <Box marginTop="1">
+          <div style={{ marginTop: '4px' }}>
             <Typography weight="bold" color="textTertiary">
               {getTextRecord('name')?.value}
             </Typography>
-          </Box>
+          </div>
         )}
-      </Stack>
+      </DetailStack>
       {getTextRecord('description') && (
         <Typography>{getTextRecord('description')?.value}</Typography>
       )}
       {getTextRecord('url') && (
-        <Box width="min">
+        <div style={{ width: 'min-content' }}>
           <a href={getTextRecord('url')?.value}>
             <Typography color="blue">
               {getTextRecord('url')
@@ -140,37 +159,35 @@ export const ProfileDetails = ({
                 .replace(/\/$/g, '')}
             </Typography>
           </a>
-        </Box>
+        </div>
       )}
-      <Box marginTop="4">
-        <Stack direction="vertical" space="4">
-          <ProfileSection
-            label="accounts"
-            condition={
-              textRecords &&
-              textRecords.filter((x) =>
-                supportedTexts.includes(x.key.toLowerCase()),
-              ).length > 0
-            }
-            array={textRecords}
-            button={SocialProfileButton}
-          />
-          <ProfileSection
-            label="addresses"
-            type="address"
-            condition={addresses && addresses.length > 0}
-            supported={supportedAddresses}
-            array={addresses}
-            button={AddressProfileButton}
-          />
-          <ProfileSection
-            label="otherRecords"
-            condition={otherRecords && otherRecords.length > 0}
-            array={otherRecords}
-            button={OtherProfileButton}
-          />
-        </Stack>
-      </Box>
+      <RecordsStack>
+        <ProfileSection
+          label="accounts"
+          condition={
+            textRecords &&
+            textRecords.filter((x) =>
+              supportedTexts.includes(x.key.toLowerCase()),
+            ).length > 0
+          }
+          array={textRecords}
+          button={SocialProfileButton}
+        />
+        <ProfileSection
+          label="addresses"
+          type="address"
+          condition={addresses && addresses.length > 0}
+          supported={supportedAddresses}
+          array={addresses}
+          button={AddressProfileButton}
+        />
+        <ProfileSection
+          label="otherRecords"
+          condition={otherRecords && otherRecords.length > 0}
+          array={otherRecords}
+          button={OtherProfileButton}
+        />
+      </RecordsStack>
     </ProfileInfoBox>
   )
 }

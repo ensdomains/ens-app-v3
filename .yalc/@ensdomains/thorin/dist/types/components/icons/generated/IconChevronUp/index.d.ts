@@ -1,1 +1,0 @@
-export { IconChevronUp } from './IconChevronUp';

@@ -9,21 +9,33 @@ import {
 import { useCopied } from '@app/hooks/useCopied'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
-import {
-  Box,
-  BoxProps,
-  Button,
-  IconArrowUp,
-  Stack,
-  Typography,
-} from '@ensdomains/thorin'
+import { ArrowUpSVG, Button, tokens, Typography } from '@ensdomains/thorin'
 import React from 'react'
 import styled from 'styled-components'
 import { ConditionalWrapper } from '../ConditionalWrapper'
 import { IconCopyAnimated } from '../IconCopyAnimated'
 
-const RotatedIconArrowUp = styled(Box)`
+const RotatedIconArrowUp = styled.div`
   transform: rotate(45deg);
+`
+
+const Container = styled.div`
+  padding: 0 ${tokens.space['1']};
+  width: 100%:
+`
+
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-gap: ${tokens.space['2']};
+  gap: ${tokens.space['2']};
+  align-items: center;
+  justify-content: center;
+`
+
+const StyledAddressIcon = styled(DynamicAddressIcon)`
+  width: ${tokens.space['5']};
+  height: ${tokens.space['5']};
 `
 
 const ProfileButton = ({
@@ -34,7 +46,7 @@ const ProfileButton = ({
   value,
   testid,
 }: {
-  prefixSize?: BoxProps['height']
+  prefixSize?: keyof typeof tokens.space
   prefix?: React.ReactNode
   children: React.ReactNode
   link?: string
@@ -50,21 +62,16 @@ const ProfileButton = ({
     >
       <Button
         onClick={link ? undefined : () => copy(value)}
-        size="extraSmall"
+        size="small"
         shape="circle"
         variant="secondary"
         shadowless
       >
-        <Box data-testid={testid} paddingX="1" paddingY="0" width="full">
-          <Stack
-            direction="horizontal"
-            space="2"
-            justify="center"
-            align="center"
-          >
-            <Box width={prefixSize} height={prefixSize}>
+        <Container data-testid={testid}>
+          <Wrapper>
+            <div style={{ width: prefixSize, height: prefixSize }}>
               {prefix}
-            </Box>
+            </div>
             <Typography color="textPrimary">{children}</Typography>
             {link ? (
               <RotatedIconArrowUp
@@ -72,7 +79,7 @@ const ProfileButton = ({
                 size="3.5"
                 strokeWidth="1"
                 color="textTertiary"
-                as={IconArrowUp}
+                as={ArrowUpSVG}
               />
             ) : (
               <IconCopyAnimated
@@ -82,8 +89,8 @@ const ProfileButton = ({
                 color="textTertiary"
               />
             )}
-          </Stack>
-        </Box>
+          </Wrapper>
+        </Container>
       </Button>
     </ConditionalWrapper>
   )
@@ -129,12 +136,7 @@ export const AddressProfileButton = ({
       testid={`address-profile-button-${iconKey}`}
       prefixSize="5"
       prefix={
-        <Box
-          width="5"
-          height="5"
-          as={DynamicAddressIcon}
-          name={iconKey as keyof typeof addressIconTypes}
-        />
+        <StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />
       }
       value={value}
     >
@@ -142,6 +144,10 @@ export const AddressProfileButton = ({
     </ProfileButton>
   ) : null
 }
+
+const OtherContainer = styled.div`
+  background-color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
+`
 
 export const OtherProfileButton = ({
   iconKey,
@@ -161,16 +167,11 @@ export const OtherProfileButton = ({
       prefixSize="max"
       prefix={
         type === 'address' ? (
-          <Box
-            backgroundColor="textTertiary"
-            paddingX="1.5"
-            paddingY="0.25"
-            borderRadius="large"
-          >
-            <Typography color="white" size="label">
+          <OtherContainer>
+            <Typography color="white" size="small">
               {iconKey}
             </Typography>
-          </Box>
+          </OtherContainer>
         ) : (
           <Typography color="textSecondary">{iconKey}</Typography>
         )

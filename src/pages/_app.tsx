@@ -2,13 +2,17 @@ import { ApolloProvider } from '@apollo/client'
 import getClient, { setupClient } from '@app/apollo/apolloClient'
 import useReactiveVarListeners from '@app/hooks/useReactiveVarListeners'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { ThemeProvider } from '@ensdomains/thorin'
-import '@ensdomains/thorin/styles'
+import type { DefaultTheme } from '@ensdomains/thorin'
+import { ThorinGlobalStyles } from '@ensdomains/thorin'
 import { appWithTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
 import { useEffect } from 'react'
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import '../styles.css'
+
+const theme: DefaultTheme = {
+  mode: 'light',
+}
 
 const GlobalStyle = createGlobalStyle`
 html,
@@ -63,11 +67,12 @@ function MyApp({ Component, pageProps }: AppProps) {
   setupClient()
   return (
     <>
-      <GlobalStyle />
       <ApolloProvider {...{ client: getClient() }}>
         <ApolloReactiveProvider>
-          <ThemeProvider>
+          <ThemeProvider theme={theme}>
             <BreakpointProvider queries={breakpoints}>
+              <GlobalStyle />
+              <ThorinGlobalStyles />
               <Component {...pageProps} />
             </BreakpointProvider>
           </ThemeProvider>

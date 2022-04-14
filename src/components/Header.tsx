@@ -1,6 +1,6 @@
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Box, Stack, vars } from '@ensdomains/thorin'
+import { tokens } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -43,12 +43,12 @@ const DropdownRoutes = [
   },
 ]
 
-const HeaderWrapper = styled(Box)<{ $isHome: boolean }>`
-  height: ${vars.space['16']};
+const HeaderWrapper = styled.header<{ $isHome: boolean }>`
+  height: ${tokens.space['16']};
   ${({ $isHome }) =>
     !$isHome &&
     mq.medium.min`
-    margin-bottom:  ${vars.space['12']};
+    margin-bottom:  ${tokens.space['12']};
   `}
 `
 
@@ -66,10 +66,23 @@ const LogoAnchor = styled.a`
   }
 `
 
-const VerticalLine = styled(Box)`
+const VerticalLine = styled.div`
   width: 1px;
-  height: ${vars.space['14']};
-  background-color: ${vars.colors.borderSecondary};
+  height: ${tokens.space['14']};
+  background-color: ${({ theme }) => tokens.colors[theme.mode].borderSecondary};
+`
+
+const NavContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  flex-gap: ${tokens.space['3']};
+  gap: ${tokens.space['3']};
+  ${mq.small.min`
+    flex-gap: ${tokens.space['6']};
+    gap: ${tokens.space['6']};
+  `}
 `
 
 export const Header = () => {
@@ -78,13 +91,8 @@ export const Header = () => {
   const { t } = useTranslation('common')
 
   return (
-    <HeaderWrapper $isHome={router.asPath === '/'} as="header">
-      <Stack
-        direction="horizontal"
-        justify="center"
-        align="center"
-        space={{ xs: '3', sm: '6' }}
-      >
+    <HeaderWrapper $isHome={router.asPath === '/'}>
+      <NavContainer>
         <ConditionalWrapper
           condition={router.asPath !== '/'}
           wrapper={(children) => (
@@ -94,9 +102,9 @@ export const Header = () => {
           )}
         >
           {breakpoints.sm && router.asPath === '/' ? (
-            <ENSFull height="48" />
+            <ENSFull height={tokens.space['12']} />
           ) : (
-            <ENSWithGradient height="48" />
+            <ENSWithGradient height={tokens.space['12']} />
           )}
         </ConditionalWrapper>
         <LanugageDropdown />
@@ -106,7 +114,7 @@ export const Header = () => {
             <SearchInput size="large" />
           </>
         )}
-        <Box flexGrow={1} />
+        <div style={{ flexGrow: 1 }} />
         {breakpoints.lg &&
           AlwaysShownRoutes.map((route) => (
             <StyledNavLink
@@ -124,7 +132,7 @@ export const Header = () => {
           ).map((route) => ({ ...route, label: t(route.label) }))}
         />
         <HeaderConnect />
-      </Stack>
+      </NavContainer>
     </HeaderWrapper>
   )
 }

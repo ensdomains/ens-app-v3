@@ -2274,7 +2274,7 @@ __metadata:
 
 "@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
   version: 0.1.0
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=519d53&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@vanilla-extract/css": ^1.6.8
     "@vanilla-extract/css-utils": ^0.1.2
@@ -2287,7 +2287,8 @@ __metadata:
   peerDependencies:
     react: ^17
     react-dom: ^17
-  checksum: 6b83a65b70ff730ee82d86152aa0892497d58eb831a77dcb2ec5697fab8a0dd2728805f660b3393173e703179c17a60ac97dcd4e6af6719b52f12164a86a5543
+    styled-components: 5.3.3
+  checksum: c428d3221e9dede866c83d8f57426a66f7153e2751eab770168c5b543d1fe34f8e460a70cdfc965af323da87f45ffa9430c54d3ae3ced85feee2b27d4b3a49a9
   languageName: node
   linkType: hard
 

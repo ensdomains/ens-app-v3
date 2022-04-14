@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { BoxProps } from '../..';
 import { Props as CardProps } from '../../atoms/Card/Card';
 declare type Props = {
     title?: string | React.ReactNode;
@@ -8,10 +7,9 @@ declare type Props = {
     leading?: React.ReactNode;
     center?: boolean;
     children: React.ReactNode;
-    boxProps?: BoxProps;
     backdropSurface?: React.ElementType;
     onDismiss?: () => void;
     open: boolean;
 } & CardProps;
-export declare const Dialog: ({ title, subtitle, trailing, leading, center, children, boxProps, ...cardProps }: Props) => JSX.Element;
+export declare const Dialog: ({ title, subtitle, trailing, leading, center, children, ...cardProps }: Props) => JSX.Element;
 export {};

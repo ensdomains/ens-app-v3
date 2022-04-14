@@ -1,14 +1,13 @@
 import * as React from 'react';
-import { BoxProps } from '../Box';
-import * as styles from './styles.css';
 declare type Props = {
-    align?: BoxProps['textAlign'];
-    as?: 'div' | 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'legend';
+    align?: React.CSSProperties['textAlign'];
+    as?: 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6' | 'legend';
     children?: React.ReactNode;
-    color?: BoxProps['color'];
+    color?: string;
     id?: string;
-    transform?: BoxProps['textTransform'];
+    transform?: React.CSSProperties['textTransform'];
     responsive?: boolean;
-} & styles.Variants;
-export declare const Heading: ({ align, as, children, color, id, level, responsive, transform, }: Props) => JSX.Element;
+    level?: '1' | '2';
+};
+export declare const Heading: ({ align, children, as, id, level, responsive, transform, }: Props) => JSX.Element;
 export {};
