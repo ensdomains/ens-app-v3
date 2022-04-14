@@ -1,7 +1,7 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { imageUrl } from '@app/utils/utils'
-import { Avatar, tokens, Typography } from '@ensdomains/thorin'
+import { Avatar, Heading, tokens, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import styled from 'styled-components'
 import {
@@ -83,8 +83,8 @@ const ProfileSection = ({
 const DetailStack = styled.div`
   display: flex;
   flex-direction: row;
-  flex-gap: ${tokens.space['1']};
-  gap: ${tokens.space['1']};
+  flex-gap: ${tokens.space['4']};
+  gap: ${tokens.space['4']};
   align-items: center;
 `
 
@@ -136,9 +136,7 @@ export const ProfileDetails = ({
         }
       />
       <DetailStack>
-        <Typography variant="extraLarge" weight="bold">
-          {name}
-        </Typography>
+        <Heading level="2">{name}</Heading>
         {getTextRecord('name') && (
           <div style={{ marginTop: '4px' }}>
             <Typography weight="bold" color="textTertiary">

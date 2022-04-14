@@ -69,8 +69,8 @@ const HoverableSelfNameContainer = styled.div`
 const Stack = styled.div`
   display: flex;
   flex-direction: column;
-  gap: ${tokens.space['1']};
-  flex-gap: ${tokens.space['1']};
+  gap: ${tokens.space['4']};
+  flex-gap: ${tokens.space['4']};
 `
 
 const ItemContainer = styled.div`

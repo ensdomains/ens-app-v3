@@ -9,7 +9,6 @@ type Subdomain = {
   name: string
 }
 
-// should be borderTertiary
 const SubdomainWrapper = styled.div`
   display: flex;
   flex-direction: row;
@@ -18,12 +17,12 @@ const SubdomainWrapper = styled.div`
   width: 100%;
   padding: ${tokens.space['3']} ${tokens.space['4.5']};
   border-bottom: 1px solid
-    ${({ theme }) => tokens.colors[theme.mode].borderSecondary};
+    ${({ theme }) => tokens.colors[theme.mode].borderTertiary};
   transition: all 0.15s ease-in-out;
 
   &:hover {
     background-color: ${({ theme }) =>
-      tokens.colors[theme.mode].backgroundTertiary};
+      tokens.colors[theme.mode].backgroundSecondary};
   }
 
   &:last-of-type {
@@ -43,7 +42,16 @@ const Stack = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
+  gap: ${tokens.space['4']};
   flex-gap: ${tokens.space['4']};
+`
+
+const RightArrow = styled.svg`
+  stroke-width: ${tokens.borderWidths['0.75']};
+  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
+  display: block;
+  height: ${tokens.space['6']};
+  width: ${tokens.space['6']};
 `
 
 const SubdomainItem = ({
@@ -76,7 +84,7 @@ const SubdomainItem = ({
             {name}
           </Typography>
         </Stack>
-        <ArrowRightSVG strokeWidth="0.75" color="textTertiary" />
+        <RightArrow as={ArrowRightSVG} />
       </SubdomainWrapper>
     </Link>
   )

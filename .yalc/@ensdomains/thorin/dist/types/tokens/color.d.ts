@@ -84,6 +84,7 @@ export declare const colors: {
         backgroundTertiary: string;
         border: string;
         borderSecondary: string;
+        borderTertiary: string;
         foreground: string;
         foregroundSecondary: string;
         foregroundSecondaryHover: string;
@@ -123,6 +124,7 @@ export declare const colors: {
         backgroundTertiary: string;
         border: string;
         borderSecondary: string;
+        borderTertiary: string;
         foreground: string;
         foregroundSecondary: string;
         foregroundSecondaryHover: string;

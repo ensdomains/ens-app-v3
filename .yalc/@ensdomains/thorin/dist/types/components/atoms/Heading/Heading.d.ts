@@ -9,5 +9,5 @@ declare type Props = {
     responsive?: boolean;
     level?: '1' | '2';
 };
-export declare const Heading: ({ align, children, as, id, level, responsive, transform, }: Props) => JSX.Element;
+export declare const Heading: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLDivElement>>;
 export {};

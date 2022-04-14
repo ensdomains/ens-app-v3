@@ -1,5 +1,6 @@
 import { gql, useQuery } from '@apollo/client'
 import { GET_REVERSE_RECORD } from '@app/graphql/queries'
+import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { connectProvider, disconnectProvider } from '@app/utils/providerUtils'
 import { imageUrl } from '@app/utils/utils'
@@ -26,8 +27,16 @@ const NETWORK_INFORMATION_QUERY = gql`
 `
 
 const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
+  color: white;
+  display: block;
   margin-right: calc(${tokens.space['2']} * -1);
   margin-left: calc(${tokens.space['2']} * -1);
+  height: ${tokens.space['4']};
+  width: ${tokens.space['4']};
+  ${mq.small.min`
+    height: ${tokens.space['6']};
+    width: ${tokens.space['6']};
+  `}
 `
 
 export const HeaderConnect = () => {
@@ -46,44 +55,51 @@ export const HeaderConnect = () => {
       skip: !accounts?.length,
     })
 
-  return !isReadOnly ? (
-    <Profile
-      address={accounts[0]}
-      ensName={displayName}
-      dropdownItems={[
-        {
-          label: t('profile.myProfile'),
-          onClick: () => router.push('/profile/me'),
-        },
-        {
-          label: t('profile.disconnect'),
-          color: 'red',
-          onClick: () => disconnectProvider(),
-        },
-      ]}
-      avatar={
-        !reverseRecordLoading &&
-        getReverseRecord &&
-        getReverseRecord.avatar &&
-        imageUrl(getReverseRecord?.avatar, displayName, network)
-      }
-      size={breakpoints.sm ? 'medium' : 'small'}
-      alignDropdown="right"
-    />
-  ) : (
-    <Button
-      onClick={() => connectProvider()}
-      prefix={
-        network === 'Loading' || accounts?.[0] ? (
-          <Spinner color="white" />
-        ) : (
-          <StyledIconEthTransparentInverted size={{ xs: '4', sm: '6' }} />
-        )
-      }
-      variant="action"
-      size={breakpoints.sm ? 'medium' : 'small'}
-    >
-      {t('profile.connect')}
-    </Button>
-  )
+  if (!isReadOnly) {
+    return (
+      <Profile
+        address={accounts[0]}
+        ensName={displayName}
+        dropdownItems={[
+          {
+            label: t('profile.myProfile'),
+            onClick: () => router.push('/profile/me'),
+          },
+          {
+            label: t('profile.disconnect'),
+            color: 'red',
+            onClick: () => disconnectProvider(),
+          },
+        ]}
+        avatar={
+          !reverseRecordLoading &&
+          getReverseRecord &&
+          getReverseRecord.avatar &&
+          imageUrl(getReverseRecord?.avatar, displayName, network)
+        }
+        size={breakpoints.sm ? 'medium' : 'small'}
+        alignDropdown="right"
+      />
+    )
+  }
+
+  if (breakpoints.md !== undefined) {
+    return (
+      <Button
+        onClick={() => connectProvider()}
+        prefix={
+          network === 'Loading' || accounts?.[0] ? (
+            <Spinner color="accentText" />
+          ) : (
+            <StyledIconEthTransparentInverted />
+          )
+        }
+        variant="action"
+        size={breakpoints.md ? 'medium' : 'small'}
+      >
+        {t('profile.connect')}
+      </Button>
+    )
+  }
+  return null
 }

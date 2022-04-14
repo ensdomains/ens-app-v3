@@ -12,6 +12,7 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>`
   display: block;
   font-size: ${tokens.fontSizes.label};
   align-items: center;
+  transition: none;
 
   ${({ $large }) =>
     $large &&
@@ -50,10 +51,11 @@ export const LanugageDropdown = () => {
               { locale: lang },
             ),
         }))}
-    >
-      <MobileInnerDropdownButton $large={isLarge}>
-        {formatName(i18n.language)}
-      </MobileInnerDropdownButton>
-    </Dropdown>
+      label={
+        <MobileInnerDropdownButton $large={isLarge}>
+          {formatName(i18n.language)}
+        </MobileInnerDropdownButton>
+      }
+    />
   ) : null
 }

@@ -55,6 +55,7 @@ export declare const tokens: {
             backgroundTertiary: string;
             border: string;
             borderSecondary: string;
+            borderTertiary: string;
             foreground: string;
             foregroundSecondary: string;
             foregroundSecondaryHover: string;
@@ -94,6 +95,7 @@ export declare const tokens: {
             backgroundTertiary: string;
             border: string;
             borderSecondary: string;
+            borderTertiary: string;
             foreground: string;
             foregroundSecondary: string;
             foregroundSecondaryHover: string;

@@ -34,21 +34,52 @@ const IconWrapper = styled.div<{ $copied: boolean }>`
     `}
 `
 
+type SVGProps = {
+  checkStrokeWidth?: keyof typeof tokens.borderWidths
+  size?: keyof typeof tokens.space
+  color?: keyof typeof tokens.colors.light | keyof typeof tokens.colors.dark
+}
+
+const SVGWrapper = styled.svg<{
+  $checkStrokeWidth: SVGProps['checkStrokeWidth']
+  $size: SVGProps['size']
+  $color: SVGProps['color']
+}>`
+  ${({ $checkStrokeWidth }) =>
+    $checkStrokeWidth &&
+    `stroke-width: ${tokens.borderWidths[$checkStrokeWidth]};`}
+  ${({ $size }) =>
+    $size && `width: ${tokens.space[$size]}; height: ${tokens.space[$size]};`}
+  ${({ theme, $color }) =>
+    $color && `color: ${tokens.colors[theme.mode][$color]};`}
+`
+
 export const IconCopyAnimated = memo(
   ({
     copied = false,
     checkStrokeWidth = '1',
-    ...props
+    size = '6',
+    color,
   }: {
     copied?: boolean
-    checkStrokeWidth?: keyof typeof tokens.borderWidths
-    size?: keyof typeof tokens.space
-    color?: keyof typeof tokens.colors.light | keyof typeof tokens.colors.dark
-  }) => {
+  } & SVGProps) => {
     return (
       <IconWrapper $copied={copied}>
-        <CheckSVG strokeWidth={checkStrokeWidth} {...props} />
-        <CopySVG {...props} />
+        <SVGWrapper
+          {...{
+            $checkStrokeWidth: checkStrokeWidth,
+            $size: size,
+            $color: color,
+          }}
+          as={CheckSVG}
+        />
+        <SVGWrapper
+          {...{
+            $size: size,
+            $color: color,
+          }}
+          as={CopySVG}
+        />
       </IconWrapper>
     )
   },

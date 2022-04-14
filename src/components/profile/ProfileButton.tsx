@@ -15,10 +15,6 @@ import styled from 'styled-components'
 import { ConditionalWrapper } from '../ConditionalWrapper'
 import { IconCopyAnimated } from '../IconCopyAnimated'
 
-const RotatedIconArrowUp = styled.div`
-  transform: rotate(45deg);
-`
-
 const Container = styled.div`
   padding: 0 ${tokens.space['1']};
   width: 100%:
@@ -36,6 +32,19 @@ const Wrapper = styled.div`
 const StyledAddressIcon = styled(DynamicAddressIcon)`
   width: ${tokens.space['5']};
   height: ${tokens.space['5']};
+`
+
+const PrimaryText = styled(Typography)`
+  color: ${({ theme }) => tokens.colors[theme.mode].text};
+`
+
+const RotatedIconArrowUp = styled.svg`
+  display: block;
+  transform: rotate(45deg);
+  height: ${tokens.space['3.5']};
+  width: ${tokens.space['3.5']};
+  stroke-width: ${tokens.borderWidths['1']};
+  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
 `
 
 const ProfileButton = ({
@@ -62,25 +71,25 @@ const ProfileButton = ({
     >
       <Button
         onClick={link ? undefined : () => copy(value)}
-        size="small"
+        size="extraSmall"
         shape="circle"
         variant="secondary"
         shadowless
       >
         <Container data-testid={testid}>
           <Wrapper>
-            <div style={{ width: prefixSize, height: prefixSize }}>
+            <div
+              data-testid="found"
+              style={{
+                width: tokens.space[prefixSize],
+                height: tokens.space[prefixSize],
+              }}
+            >
               {prefix}
             </div>
-            <Typography color="textPrimary">{children}</Typography>
+            <PrimaryText>{children}</PrimaryText>
             {link ? (
-              <RotatedIconArrowUp
-                key={link}
-                size="3.5"
-                strokeWidth="1"
-                color="textTertiary"
-                as={ArrowUpSVG}
-              />
+              <RotatedIconArrowUp as={ArrowUpSVG} key={link} />
             ) : (
               <IconCopyAnimated
                 key={value}
