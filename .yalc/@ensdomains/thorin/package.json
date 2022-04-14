@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/thorin",
-  "version": "0.1.0",
+  "version": "0.5.0",
   "description": "A web3 native design system",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.es.js",
@@ -29,7 +29,7 @@
     "build": "vite build",
     "clean": "rimraf dist src/components/icons/generated/",
     "lint:types": "tsc --noEmit",
-    "prepack": "yarn gen:icons && yarn build",
+    "prepack": "yarn build",
     "publish": "yarn npm publish",
     "test": "jest"
   },
@@ -43,5 +43,5 @@
     "react-dom": "^17",
     "styled-components": "^5.3.3"
   },
-  "yalcSig": "9cfb4bb5954aa7a20ea68a5d9aad3225"
+  "yalcSig": "0ce9ca8e3f094228a98ae6cfd7f31d40"
 }

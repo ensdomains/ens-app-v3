@@ -18,9 +18,18 @@ declare type Props = {
     items: DropdownItem[];
     size?: 'small' | 'medium';
     label?: React.ReactNode;
+    isOpen?: boolean;
+};
+declare type PropsWithIsOpen = {
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+declare type PropsWithoutIsOpen = {
+    isOpen?: never;
+    setIsOpen?: never;
 };
 export declare const Dropdown: {
-    ({ children, buttonProps, items, inner, chevron, align, shortThrow, keepMenuOnTop, size, label, }: Props): JSX.Element;
+    ({ children, buttonProps, items, inner, chevron, align, shortThrow, keepMenuOnTop, size, label, ...props }: Props & (PropsWithIsOpen | PropsWithoutIsOpen)): JSX.Element;
     displayName: string;
 };
 export {};

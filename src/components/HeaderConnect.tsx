@@ -55,44 +55,51 @@ export const HeaderConnect = () => {
       skip: !accounts?.length,
     })
 
-  return !isReadOnly ? (
-    <Profile
-      address={accounts[0]}
-      ensName={displayName}
-      dropdownItems={[
-        {
-          label: t('profile.myProfile'),
-          onClick: () => router.push('/profile/me'),
-        },
-        {
-          label: t('profile.disconnect'),
-          color: 'red',
-          onClick: () => disconnectProvider(),
-        },
-      ]}
-      avatar={
-        !reverseRecordLoading &&
-        getReverseRecord &&
-        getReverseRecord.avatar &&
-        imageUrl(getReverseRecord?.avatar, displayName, network)
-      }
-      size={breakpoints.sm ? 'medium' : 'small'}
-      alignDropdown="right"
-    />
-  ) : (
-    <Button
-      onClick={() => connectProvider()}
-      prefix={
-        network === 'Loading' || accounts?.[0] ? (
-          <Spinner color="accentText" />
-        ) : (
-          <StyledIconEthTransparentInverted />
-        )
-      }
-      variant="action"
-      size={breakpoints.sm ? 'medium' : 'small'}
-    >
-      {t('profile.connect')}
-    </Button>
-  )
+  if (!isReadOnly) {
+    return (
+      <Profile
+        address={accounts[0]}
+        ensName={displayName}
+        dropdownItems={[
+          {
+            label: t('profile.myProfile'),
+            onClick: () => router.push('/profile/me'),
+          },
+          {
+            label: t('profile.disconnect'),
+            color: 'red',
+            onClick: () => disconnectProvider(),
+          },
+        ]}
+        avatar={
+          !reverseRecordLoading &&
+          getReverseRecord &&
+          getReverseRecord.avatar &&
+          imageUrl(getReverseRecord?.avatar, displayName, network)
+        }
+        size={breakpoints.sm ? 'medium' : 'small'}
+        alignDropdown="right"
+      />
+    )
+  }
+
+  if (breakpoints.md !== undefined) {
+    return (
+      <Button
+        onClick={() => connectProvider()}
+        prefix={
+          network === 'Loading' || accounts?.[0] ? (
+            <Spinner color="accentText" />
+          ) : (
+            <StyledIconEthTransparentInverted />
+          )
+        }
+        variant="action"
+        size={breakpoints.md ? 'medium' : 'small'}
+      >
+        {t('profile.connect')}
+      </Button>
+    )
+  }
+  return null
 }

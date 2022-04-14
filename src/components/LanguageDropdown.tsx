@@ -12,6 +12,7 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>`
   display: block;
   font-size: ${tokens.fontSizes.label};
   align-items: center;
+  transition: none;
 
   ${({ $large }) =>
     $large &&

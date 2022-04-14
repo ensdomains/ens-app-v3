@@ -2266,8 +2266,8 @@ __metadata:
   linkType: hard
 
 "@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
-  version: 0.1.0
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f66004&locator=ens-app-v2%40workspace%3A."
+  version: 0.5.0
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=d8736f&locator=ens-app-v2%40workspace%3A."
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2276,7 +2276,7 @@ __metadata:
     react: ^17
     react-dom: ^17
     styled-components: ^5.3.3
-  checksum: de5d12e6adcc38ff1ebda7b487f0d44b19b19efa22e90cbea974ed2d125f7591bd953b7280d7e46e36b2b039f1305293c37e9c32a48490b3c3418a00e32878f0
+  checksum: 87b4bd7326eb32fb638d8713429f649a2c7da230e77003ebe212c27c55b3b90df6d8c659396fae3051c5917e6748a8545417154b7867093efc893c24a0ee9d64
   languageName: node
   linkType: hard
 
