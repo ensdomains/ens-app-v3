@@ -536,10 +536,10 @@ const Container$b = styled.div`
 
   ${({
   theme,
-  color
+  $color
 }) => `
-    color: ${tokens.colors[theme.mode][color]};
-    stroke: ${tokens.colors[theme.mode][color]};
+    color: ${tokens.colors[theme.mode][$color]};
+    stroke: ${tokens.colors[theme.mode][$color]};
   `}
 
   ${({
@@ -569,7 +569,7 @@ const Spinner = React.forwardRef(({
   color = "accent"
 }, ref) => {
   return /* @__PURE__ */ React.createElement(Container$b, {
-    color,
+    $color: color,
     ref,
     size
   }, accessibilityLabel && /* @__PURE__ */ React.createElement(VisuallyHidden, null, accessibilityLabel), /* @__PURE__ */ React.createElement("svg", {
@@ -1495,7 +1495,7 @@ const Container$6 = styled.div`
   hover
 }) => hover && `
       transition-duration: ${tokens.transitionDuration["150"]};
-      transition-property: colors;
+      transition-property: color, border-color, background-color;
       transition-timing-function: ${tokens.transitionTimingFunction["inOut"]};
   `}
 
@@ -2463,7 +2463,7 @@ const InputParent = styled.div`
     color: ${tokens.colors[theme.mode].text};
     display: flex;
     transition-duration: ${tokens.transitionDuration["150"]};
-    transition-property: colors;
+    transition-property: color, border-color, background-color;
     transition-timing-function: ${tokens.transitionTimingFunction["inOut"]};
     
     &:focus-within {
@@ -2645,7 +2645,7 @@ const MaxButton = styled.button`
       padding: ${tokens.space["2"]};
       text-transform: uppercase;
       transition-duration: ${tokens.transitionDuration["150"]};
-      transition-property: colors;
+      transition-property: color, border-color, background-color;
       transition-timing-function: ${tokens.transitionTimingFunction["inOut"]};
       visibility: hidden;
       
@@ -4146,7 +4146,7 @@ const Container$1 = styled.div`
   justify-content: space-between;
   border-radius: ${tokens.radii["full"]};
   transition-duration: ${tokens.transitionDuration["150"]};
-  transition-property: colors;
+  transition-property: color, border-color, background-color;
   transition-timing-function: ${tokens.transitionTimingFunction["inOut"]};
   position: relative;
   z-index: 10;
@@ -4840,7 +4840,7 @@ const TextArea = styled.textarea`
       min-height: ${tokens.space["14"]};
       padding: ${tokens.space["4"]};
       transition-duration: ${tokens.transitionDuration["150"]};
-      transition-property: colors;
+      transition-property: color, border-color, background-color;
       transition-timing-function: ${tokens.transitionTimingFunction["inOut"]};
       width: ${tokens.space["full"]};
       resize: none;

@@ -84,7 +84,7 @@ export const HeaderConnect = () => {
       onClick={() => connectProvider()}
       prefix={
         network === 'Loading' || accounts?.[0] ? (
-          <Spinner color="white" />
+          <Spinner color="accentText" />
         ) : (
           <StyledIconEthTransparentInverted />
         )
