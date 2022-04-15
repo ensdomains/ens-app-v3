@@ -26,7 +26,9 @@ module.exports = {
           prefixColor: 'magenta.bold',
         },
         {
-          command: process.env.CI ? 'yarn cypress:ci' : 'yarn cypress:start',
+          command: `yarn wait-on http://localhost:3000 && ${
+            process.env.CI ? 'yarn cypress:ci' : 'yarn cypress:start'
+          }`,
           name: 'cypress',
           prefixColor: 'yellow.bold',
           finishOnExit: true,
