@@ -1630,8 +1630,8 @@ __metadata:
   linkType: hard
 
 "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env::locator=ens-app-v2%40workspace%3A.":
-  version: 0.1.1
-  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=8be065&locator=ens-app-v2%40workspace%3A."
+  version: 0.1.2
+  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=83341e&locator=ens-app-v2%40workspace%3A."
   dependencies:
     ansi-colors: ^4.1.1
     cli-progress: ^3.10.0
@@ -1646,7 +1646,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 3cb4ab0a8b93c652af8670db826ce3e48a1b01e2470f6301e895bb977327689edc14d81b81e5e76a4f4bbc48f23591beb0417398f6df9335805fcb3d740a0b9d
+  checksum: a93bda3632b1fe5204667d82052d00491109fdabc646f3908131eb77d2c83883c32388254e1b9df11cae1c5367a3751c37a5c628e53ad3296fc7a91f07737b2b
   languageName: node
   linkType: hard
 
@@ -8980,7 +8980,7 @@ __metadata:
       unplugged: true
     "@ensdomains/cypress-metamask@1.2.0-development":
       unplugged: true
-    "@ensdomains/ens-test-env@0.1.1":
+    "@ensdomains/ens-test-env@0.1.2":
       unplugged: true
   languageName: unknown
   linkType: soft

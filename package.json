@@ -129,7 +129,7 @@
     "@ensdomains/cypress-metamask@1.2.0-development": {
       "unplugged": true
     },
-    "@ensdomains/ens-test-env@0.1.1": {
+    "@ensdomains/ens-test-env@0.1.2": {
       "unplugged": true
     }
   }

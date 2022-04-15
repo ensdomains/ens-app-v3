@@ -1,12 +1,13 @@
 require('dotenv').config({ path: process.env.INIT_CWD + '/.env.local' })
+require('dotenv').config({ path: process.env.INIT_CWD + '/.env' })
 
 module.exports = {
   ganache: {
-    block: 12066620,
-    network: 'ropsten',
-    networkId: 3,
+    block: parseInt(process.env.BLOCK_HEIGHT),
+    network: process.env.NETWORK,
+    networkId: parseInt(process.env.CHAIN_ID),
     rpcUrl: process.env.FORK_RPC_URL,
-    mnemonic: 'test test test test test test test test test test test junk',
+    mnemonic: process.env.SECRET_WORDS,
     port: 8545,
     host: '0.0.0.0',
   },

@@ -12,29 +12,36 @@ let dockerComposeDir
 let dockerEnv
 
 const killChildren = (cmdName, pid = 0, error) => {
-  let children = wrapTry(execSync, `pgrep -f "${cmdName}"`)
-  while (children) {
-    const child = children
-      .toString()
-      .split('\n')
-      .find((x) => parseInt(x))
+  if (cmdName.includes('&&')) {
+    cmdName.split('&&').forEach((cmd) => killChildren(cmd, pid, error))
+  } else {
+    if (cmdName.startsWith('yarn ')) {
+      cmdName = cmdName.replace('yarn ', 'yarn.*')
+    }
+    let children = wrapTry(execSync, `pgrep -f "${cmdName}"`)
+    while (children) {
+      const child = children
+        .toString()
+        .split('\n')
+        .find((x) => parseInt(x))
 
-    if (child) {
-      const res = wrapTry(execSync, `pgrep -P ${child.trim()}`)
-      wrapTry(execSync, `${sudopref}kill -9 ${child.trim()}`)
-      if (res && !res.toString().includes('No such process')) {
-        children = res
+      if (child) {
+        const res = wrapTry(execSync, `pgrep -P ${child.trim()}`)
+        wrapTry(execSync, `${sudopref}kill -9 ${child.trim()}`)
+        if (res && !res.toString().includes('No such process')) {
+          children = res
+        } else {
+          children = null
+        }
       } else {
         children = null
       }
-    } else {
-      children = null
     }
-  }
-  if (pid) {
-    wrapTry(execSync, `${sudopref}kill -2 ${pid}`)
-  } else {
-    process.exit(error ? 1 : 0)
+    if (pid) {
+      wrapTry(execSync, `${sudopref}kill -2 ${pid}`)
+    } else {
+      process.exit(error ? 1 : 0)
+    }
   }
 }
 
