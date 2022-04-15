@@ -41,9 +41,6 @@ yarn-error.log*
 !.yarn/sdks
 !.yarn/versions
 
-# yalc cache
-.yalc/**/*.md
-
 # jest coverage
 /coverage
 
