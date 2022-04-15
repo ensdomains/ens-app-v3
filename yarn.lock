@@ -1450,7 +1450,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@cypress/request@npm:^2.88.5, @cypress/request@npm:^2.88.6":
+"@colors/colors@npm:1.5.0":
+  version: 1.5.0
+  resolution: "@colors/colors@npm:1.5.0"
+  checksum: d64d5260bed1d5012ae3fc617d38d1afc0329fec05342f4e6b838f46998855ba56e0a73833f4a80fa8378c84810da254f76a8a19c39d038260dc06dc4e007425
+  languageName: node
+  linkType: hard
+
+"@cypress/request@npm:^2.88.10, @cypress/request@npm:^2.88.5":
   version: 2.88.10
   resolution: "@cypress/request@npm:2.88.10"
   dependencies:
@@ -1551,6 +1558,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ensdomains/buffer@npm:^0.1.0":
+  version: 0.1.0
+  resolution: "@ensdomains/buffer@npm:0.1.0"
+  dependencies:
+    "@nomiclabs/hardhat-truffle5": ^2.0.0
+  checksum: 038698633d9e3b22b01abb16c749a8915044d9c1b1571ef67265f5232e3bef32a93ddb7714ec367c4c01b055cf64a92b4dc17319acc8d96ab7e98abaac7ec693
+  languageName: node
+  linkType: hard
+
 "@ensdomains/content-hash@npm:^2.5.7":
   version: 2.5.7
   resolution: "@ensdomains/content-hash@npm:2.5.7"
@@ -1610,6 +1626,27 @@ __metadata:
     "@openzeppelin/contracts": ^4.1.0
     dns-packet: ^5.3.0
   checksum: e21674ee8ddc6df3dd27276efb51a9e19728cc9d0f61c79df1a20a985b525f7a7fe8eecfed4775901eae0f189ccab4295d616401ad11ecd3839f30795efa0ed5
+  languageName: node
+  linkType: hard
+
+"@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env::locator=ens-app-v2%40workspace%3A.":
+  version: 0.1.1
+  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=8be065&locator=ens-app-v2%40workspace%3A."
+  dependencies:
+    ansi-colors: ^4.1.1
+    cli-progress: ^3.10.0
+    concurrently: ^7.0.0
+    dotenv: ^16.0.0
+    fs-extra: ^10.0.1
+    ganache: ^7.0.3
+    got: ^12.0.2
+    lz4: ^0.6.5
+    progress-stream: ^2.0.0
+    tar-fs: ^2.1.1
+    wait-on: ^6.0.1
+  bin:
+    ens-test-env: ./src/index.js
+  checksum: 3cb4ab0a8b93c652af8670db826ce3e48a1b01e2470f6301e895bb977327689edc14d81b81e5e76a4f4bbc48f23591beb0417398f6df9335805fcb3d740a0b9d
   languageName: node
   linkType: hard
 
@@ -3983,15 +4020,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/cli-progress@npm:^3":
-  version: 3.9.2
-  resolution: "@types/cli-progress@npm:3.9.2"
-  dependencies:
-    "@types/node": "*"
-  checksum: 371ecb29c45dce7127b4a8626521d908ce7dfaea6a537fcd491b12aea3a8ff58452eb1b33e0d2e0724c81b56df3930195e521e12fe979518deb5329a7a884a02
-  languageName: node
-  linkType: hard
-
 "@types/cookiejar@npm:*":
   version: 2.1.2
   resolution: "@types/cookiejar@npm:2.1.2"
@@ -4196,15 +4224,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/progress-stream@npm:^2":
-  version: 2.0.2
-  resolution: "@types/progress-stream@npm:2.0.2"
-  dependencies:
-    "@types/node": "*"
-  checksum: c076d7acb4ae4a986795fbf5014a0d6057b8da48dfb077359bdff0e5c1595bb29e7220593f9d5149c3506596e8c7d42d794e4e5a502d3c8f0c3e9b69b041ace1
-  languageName: node
-  linkType: hard
-
 "@types/prop-types@npm:*":
   version: 15.7.4
   resolution: "@types/prop-types@npm:15.7.4"
@@ -4284,6 +4303,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/sinonjs__fake-timers@npm:8.1.1":
+  version: 8.1.1
+  resolution: "@types/sinonjs__fake-timers@npm:8.1.1"
+  checksum: ca09d54d47091d87020824a73f026300fa06b17cd9f2f9b9387f28b549364b141ef194ee28db762f6588de71d8febcd17f753163cb7ea116b8387c18e80ebd5c
+  languageName: node
+  linkType: hard
+
 "@types/sinonjs__fake-timers@npm:^6.0.2":
   version: 6.0.4
   resolution: "@types/sinonjs__fake-timers@npm:6.0.4"
@@ -4332,25 +4358,6 @@ __metadata:
   dependencies:
     "@types/superagent": "*"
   checksum: f0e2b44f86bec2f708d6a3d0cb209055b487922040773049b0f8c6b557af52d4b5fa904e17dfaa4ce6e610172206bbec7b62420d158fa57b6ffc2de37b1730d3
-  languageName: node
-  linkType: hard
-
-"@types/tar-fs@npm:^2":
-  version: 2.0.1
-  resolution: "@types/tar-fs@npm:2.0.1"
-  dependencies:
-    "@types/node": "*"
-    "@types/tar-stream": "*"
-  checksum: 07042a5c850e1d4b4dd62224491d33a540a8842139d2abf5547ce8d7bda2a5c557beebe14f59b3ab018bd49b596e9e2b349fa4d17279cf3dc0f918642f2a7ef9
-  languageName: node
-  linkType: hard
-
-"@types/tar-stream@npm:*":
-  version: 2.2.2
-  resolution: "@types/tar-stream@npm:2.2.2"
-  dependencies:
-    "@types/node": "*"
-  checksum: 4b33bc0d53770e952d6e2e8acb8889190510326a3e255d0c6edd94136d6027ecae939a7b49188d1d02d774328d9a3742ff633d505709d1a1200b3413c88d793d
   languageName: node
   linkType: hard
 
@@ -6197,16 +6204,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"binary@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "binary@npm:0.3.0"
-  dependencies:
-    buffers: ~0.1.1
-    chainsaw: ~0.1.0
-  checksum: b4699fda9e2c2981e74a46b0115cf0d472eda9b68c0e9d229ef494e92f29ce81acf0a834415094cffcc340dfee7c4ef8ce5d048c65c18067a7ed850323f777af
-  languageName: node
-  linkType: hard
-
 "bind-decorator@npm:^1.0.11":
   version: 1.0.11
   resolution: "bind-decorator@npm:1.0.11"
@@ -6622,13 +6619,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"buffers@npm:~0.1.1":
-  version: 0.1.1
-  resolution: "buffers@npm:0.1.1"
-  checksum: ad6f8e483efab39cefd92bdc04edbff6805e4211b002f4d1cfb70c6c472a61cc89fb18c37bcdfdd4ee416ca096e9ff606286698a7d41a18b539bac12fd76d4d5
-  languageName: node
-  linkType: hard
-
 "bufferutil@npm:4.0.5":
   version: 4.0.5
   resolution: "bufferutil@npm:4.0.5"
@@ -6876,15 +6866,6 @@ __metadata:
     pathval: ^1.1.1
     type-detect: ^4.0.5
   checksum: acff93fd537f96d4a4d62dd83810285dffcfccb5089e1bf2a1205b28ec82d93dff551368722893cf85004282df10ee68802737c33c90c5493957ed449ed7ce71
-  languageName: node
-  linkType: hard
-
-"chainsaw@npm:~0.1.0":
-  version: 0.1.0
-  resolution: "chainsaw@npm:0.1.0"
-  dependencies:
-    traverse: ">=0.3.0 <0.4"
-  checksum: 22a96b9fb0cd9fb20813607c0869e61817d1acc81b5d455cc6456b5e460ea1dd52630e0f76b291cf8294bfb6c1fc42e299afb52104af9096242699d6d3aa6d3e
   languageName: node
   linkType: hard
 
@@ -7142,6 +7123,19 @@ __metadata:
     colors:
       optional: true
   checksum: 956e175f8eb019c26465b9f1e51121c08d8978e2aab04be7f8520ea8a4e67906fcbd8516dfb77e386ae3730ef0281aa21a65613dffbfa3d62969263252bd25a9
+  languageName: node
+  linkType: hard
+
+"cli-table3@npm:~0.6.1":
+  version: 0.6.2
+  resolution: "cli-table3@npm:0.6.2"
+  dependencies:
+    "@colors/colors": 1.5.0
+    string-width: ^4.2.0
+  dependenciesMeta:
+    "@colors/colors":
+      optional: true
+  checksum: 2f82391698b8a2a2a5e45d2adcfea5d93e557207f90455a8d4c1aac688e9b18a204d9eb4ba1d322fa123b17d64ea3dc5e11de8b005529f3c3e7dbeb27cb4d9be
   languageName: node
   linkType: hard
 
@@ -8028,23 +8022,24 @@ __metadata:
   languageName: node
   linkType: hard
 
-"cypress@npm:^8.6.0":
-  version: 8.7.0
-  resolution: "cypress@npm:8.7.0"
+"cypress@npm:^9.5.4":
+  version: 9.5.4
+  resolution: "cypress@npm:9.5.4"
   dependencies:
-    "@cypress/request": ^2.88.6
+    "@cypress/request": ^2.88.10
     "@cypress/xvfb": ^1.2.4
     "@types/node": ^14.14.31
-    "@types/sinonjs__fake-timers": ^6.0.2
+    "@types/sinonjs__fake-timers": 8.1.1
     "@types/sizzle": ^2.3.2
     arch: ^2.2.0
     blob-util: ^2.0.2
     bluebird: ^3.7.2
+    buffer: ^5.6.0
     cachedir: ^2.3.0
     chalk: ^4.1.0
     check-more-types: ^2.24.0
     cli-cursor: ^3.1.0
-    cli-table3: ~0.6.0
+    cli-table3: ~0.6.1
     commander: ^5.1.0
     common-tags: ^1.8.0
     dayjs: ^1.10.4
@@ -8063,20 +8058,19 @@ __metadata:
     listr2: ^3.8.3
     lodash: ^4.17.21
     log-symbols: ^4.0.0
-    minimist: ^1.2.5
+    minimist: ^1.2.6
     ospath: ^1.2.2
     pretty-bytes: ^5.6.0
     proxy-from-env: 1.0.0
-    ramda: ~0.27.1
     request-progress: ^3.0.0
+    semver: ^7.3.2
     supports-color: ^8.1.1
     tmp: ~0.2.1
     untildify: ^4.0.0
-    url: ^0.11.0
     yauzl: ^2.10.0
   bin:
     cypress: bin/cypress
-  checksum: 607771bda6c37228cd8537a7faa2ae89ae9bcf2720210b22865f532059d8c7e0741bb7520f241c46ceacd503ff349e41f0eea104734e71423071dd67a79098b9
+  checksum: 55c61f33db5658da8e5af5c6de64f40a85aeb7cba1219f2772675406f6431b7aa7512e13173d0f475af026fffe9878289229b4f5c74d307eac22d8f51fc29f77
   languageName: node
   linkType: hard
 
@@ -8242,23 +8236,6 @@ __metadata:
   dependencies:
     mimic-response: ^3.1.0
   checksum: d377cf47e02d805e283866c3f50d3d21578b779731e8c5072d6ce8c13cc31493db1c2f6784da9d1d5250822120cefa44f1deab112d5981015f2e17444b763812
-  languageName: node
-  linkType: hard
-
-"decompress-zip@npm:^0.3.3":
-  version: 0.3.3
-  resolution: "decompress-zip@npm:0.3.3"
-  dependencies:
-    binary: ^0.3.0
-    graceful-fs: ^4.1.3
-    mkpath: ^0.1.0
-    nopt: ^3.0.1
-    q: ^1.1.2
-    readable-stream: ^1.1.8
-    touch: 0.0.3
-  bin:
-    decompress-zip: bin/decompress-zip
-  checksum: bf6f929602573e3b5bf76f0413fdb2e07efd1dcf4f6cb28742ff59a8ab05dd475fe26a7d9f2f84c39e4d541c9311d18d72d251b139a1b81122c91bad1a27a7c2
   languageName: node
   linkType: hard
 
@@ -8566,15 +8543,6 @@ __metadata:
   dependencies:
     "@leichtgewicht/ip-codec": ^2.0.1
   checksum: 196ff74a0669126cf5fc901a5849b72f625bd7a4cb163b3f4d41fbe19ed0b017cf7674daef5b0acbd448c094fcd795e501d7066f301be428e4acecfcf3c5f336
-  languageName: node
-  linkType: hard
-
-"docker-compose@npm:^0.23.17":
-  version: 0.23.17
-  resolution: "docker-compose@npm:0.23.17"
-  dependencies:
-    yaml: ^1.10.2
-  checksum: c308bf067cabe178d245b3e499119937b1d2a5effdc9fac6227e04be4308a0250ca7bb1471789b3d0492ea2ce83f74e40b7517a9a5cb540a21355a64e4ad5d3c
   languageName: node
   linkType: hard
 
@@ -8919,7 +8887,9 @@ __metadata:
   dependencies:
     "@apollo/client": ^3.5.7
     "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/buffer": ^0.1.0
     "@ensdomains/cypress-metamask": "patch:@ensdomains/cypress-metamask@https://github.com/ensdomains/cypress-metamask.git#./patches/@ensdomains/cypress-metamask.patch"
+    "@ensdomains/ens-test-env": "file:.yalc/@ensdomains/ens-test-env"
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
@@ -8928,6 +8898,7 @@ __metadata:
     "@gnosis.pm/safe-apps-sdk": ^6.2.0
     "@myetherwallet/mewconnect-web-client": ^2.2.0-beta.16
     "@next/bundle-analyzer": ^12.0.10
+    "@openzeppelin/contracts": ^4.5.0
     "@portis/web3": ^4.0.6
     "@rainbow-me/rainbowkit": ^0.0.2
     "@svgr/webpack": ^6.2.1
@@ -8950,7 +8921,10 @@ __metadata:
     babel-jest: ^27.4.6
     babel-loader: ^8.2.2
     concurrently: ^7.0.0
-    cypress: ^8.6.0
+    cypress: ^9.5.4
+    dotenv: ^16.0.0
+    ens-contracts-namewrapper: "github:ensdomains/ens-contracts#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375"
+    ens-contracts-universal: "github:ensdomains/ens-contracts#head=feature/record-proxy&commit=ec2657e78811ff9fa09436209798a6135ecca9b7"
     eslint: 7.32.0
     eslint-config-airbnb: ^19.0.4
     eslint-config-airbnb-base: ^15.0.0
@@ -8987,6 +8961,7 @@ __metadata:
     react-ga: ^3.3.0
     react-is: ^17.0.2
     react-query: ^3.34.19
+    solc: ^0.8.13
     start-server-and-test: ^1.14.0
     styled-components: ^5.3.3
     supertest: ^6.1.6
@@ -9005,18 +8980,32 @@ __metadata:
       unplugged: true
     "@ensdomains/cypress-metamask@1.2.0-development":
       unplugged: true
+    "@ensdomains/ens-test-env@0.1.1":
+      unplugged: true
   languageName: unknown
   linkType: soft
 
-"ens-contracts@github:ensdomains/ens-contracts":
+"ens-contracts-namewrapper@github:ensdomains/ens-contracts#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375":
   version: 0.0.9
-  resolution: "ens-contracts@https://github.com/ensdomains/ens-contracts.git#commit=3c91d41d87430bb869eb7bc886789dc27be1fa04"
+  resolution: "ens-contracts-namewrapper@https://github.com/ensdomains/ens-contracts.git#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375"
   dependencies:
     "@ensdomains/buffer": ^0.0.13
     "@ensdomains/solsha1": 0.0.3
     "@openzeppelin/contracts": ^4.1.0
     dns-packet: ^5.3.0
-  checksum: e3c0d91a00ecc5acccaafd81e5eb64230874006182dcf4e5c0a5389cf7f87018f3a2ab1f5cf18e65c71d8de42b81c722a7d8f6a14baaa1508edb823fd36ad739
+  checksum: b55db43ae003ccf635dcf0f87b16fbda7f2f84c326d30b5a205f41e3fe37d6ccb66ea015f68e05f65f39ed6928a005a083a92576074e1f495123a1b208972941
+  languageName: node
+  linkType: hard
+
+"ens-contracts-universal@github:ensdomains/ens-contracts#head=feature/record-proxy&commit=ec2657e78811ff9fa09436209798a6135ecca9b7":
+  version: 0.0.8
+  resolution: "ens-contracts-universal@https://github.com/ensdomains/ens-contracts.git#commit=ec2657e78811ff9fa09436209798a6135ecca9b7"
+  dependencies:
+    "@ensdomains/buffer": ^0.0.13
+    "@ensdomains/solsha1": 0.0.3
+    "@openzeppelin/contracts": ^4.1.0
+    dns-packet: ^5.3.0
+  checksum: 08373960575af2e19765808a2d857804f7af0e2c2df443dcd64ae790b92232f488ee36ffe432d50eb6597b1e070dee699b952606c60e34a893cc368fc8c0fe60
   languageName: node
   linkType: hard
 
@@ -10366,7 +10355,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethers@npm:^5.1.4, ethers@npm:^5.4.7, ethers@npm:^5.5.4, ethers@npm:^5.6.1, ethers@npm:^5.6.2":
+"ethers@npm:^5.1.4, ethers@npm:^5.4.7, ethers@npm:^5.6.1, ethers@npm:^5.6.2":
   version: 5.6.2
   resolution: "ethers@npm:5.6.2"
   dependencies:
@@ -11021,7 +11010,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fs-extra@npm:^10.0.0":
+"fs-extra@npm:^10.0.0, fs-extra@npm:^10.0.1":
   version: 10.0.1
   resolution: "fs-extra@npm:10.0.1"
   dependencies:
@@ -11135,7 +11124,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ganache@npm:^7.0.2":
+"ganache@npm:^7.0.3":
   version: 7.0.4
   resolution: "ganache@npm:7.0.4"
   dependencies:
@@ -11503,7 +11492,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"got@npm:^12.0.1":
+"got@npm:^12.0.2":
   version: 12.0.3
   resolution: "got@npm:12.0.3"
   dependencies:
@@ -11546,7 +11535,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graceful-fs@npm:*, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.3, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
+"graceful-fs@npm:*, graceful-fs@npm:^4.1.15, graceful-fs@npm:^4.1.2, graceful-fs@npm:^4.1.6, graceful-fs@npm:^4.2.0, graceful-fs@npm:^4.2.4, graceful-fs@npm:^4.2.6, graceful-fs@npm:^4.2.9":
   version: 4.2.10
   resolution: "graceful-fs@npm:4.2.10"
   checksum: 3f109d70ae123951905d85032ebeae3c2a5a7a997430df00ea30df0e3a6c60cf6689b109654d6fdacd28810a053348c4d14642da1d075049e6be1ba5216218da
@@ -15152,13 +15141,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mkpath@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "mkpath@npm:0.1.0"
-  checksum: e893f262a78018ba7bac9f4bd2eb80a2d49b30c30fbc027ff49d64929b28e26f3d7177632058dfc6897ce14dbbb7a32f8a4c244d548e0b30b7bd004e9ae065d5
-  languageName: node
-  linkType: hard
-
 "mocha@npm:^5.2.0":
   version: 5.2.0
   resolution: "mocha@npm:5.2.0"
@@ -15718,28 +15700,6 @@ __metadata:
   bin:
     nopt: bin/nopt.js
   checksum: d35fdec187269503843924e0114c0c6533fb54bbf1620d0f28b4b60ba01712d6687f62565c55cc20a504eff0fbe5c63e22340c3fad549ad40469ffb611b04f2f
-  languageName: node
-  linkType: hard
-
-"nopt@npm:^3.0.1":
-  version: 3.0.6
-  resolution: "nopt@npm:3.0.6"
-  dependencies:
-    abbrev: 1
-  bin:
-    nopt: ./bin/nopt.js
-  checksum: 7f8579029a0d7cb3341c6b1610b31e363f708b7aaaaf3580e3ec5ae8528d1f3a79d350d8bfa331776e6c6703a5a148b72edd9b9b4c1dd55874d8e70e963d1e20
-  languageName: node
-  linkType: hard
-
-"nopt@npm:~1.0.10":
-  version: 1.0.10
-  resolution: "nopt@npm:1.0.10"
-  dependencies:
-    abbrev: 1
-  bin:
-    nopt: ./bin/nopt.js
-  checksum: f62575aceaa3be43f365bf37a596b89bbac2e796b001b6d2e2a85c2140a4e378ff919e2753ccba959c4fd344776fc88c29b393bc167fa939fb1513f126f4cd45
   languageName: node
   linkType: hard
 
@@ -17217,7 +17177,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"q@npm:^1.1.2, q@npm:^1.5.1":
+"q@npm:^1.5.1":
   version: 1.5.1
   resolution: "q@npm:1.5.1"
   checksum: 147baa93c805bc1200ed698bdf9c72e9e42c05f96d007e33a558b5fdfd63e5ea130e99313f28efc1783e90e6bdb4e48b67a36fcc026b7b09202437ae88a1fb12
@@ -17688,7 +17648,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"readable-stream@npm:^1.0.33, readable-stream@npm:^1.1.8":
+"readable-stream@npm:^1.0.33":
   version: 1.1.14
   resolution: "readable-stream@npm:1.1.14"
   dependencies:
@@ -18738,7 +18698,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"solc@npm:^0.8.12":
+"solc@npm:^0.8.13":
   version: 0.8.13
   resolution: "solc@npm:0.8.13"
   dependencies:
@@ -19682,33 +19642,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"test-environment@workspace:test-environment":
-  version: 0.0.0-use.local
-  resolution: "test-environment@workspace:test-environment"
-  dependencies:
-    "@ensdomains/buffer": ^0.0.13
-    "@openzeppelin/contracts": ^4.5.0
-    "@types/cli-progress": ^3
-    "@types/progress-stream": ^2
-    "@types/tar-fs": ^2
-    ansi-colors: ^4.1.1
-    cli-progress: ^3.10.0
-    decompress-zip: ^0.3.3
-    docker-compose: ^0.23.17
-    dotenv: ^16.0.0
-    ens-contracts: "github:ensdomains/ens-contracts"
-    ethers: ^5.5.4
-    fs-extra: ^10.0.0
-    ganache: ^7.0.2
-    got: ^12.0.1
-    lz4: ^0.6.5
-    progress-stream: ^2.0.0
-    solc: ^0.8.12
-    tar-fs: ^2.1.1
-    wait-on: ^6.0.1
-  languageName: unknown
-  linkType: soft
-
 "test-exclude@npm:^6.0.0":
   version: 6.0.0
   resolution: "test-exclude@npm:6.0.0"
@@ -19864,15 +19797,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"touch@npm:0.0.3":
-  version: 0.0.3
-  resolution: "touch@npm:0.0.3"
-  dependencies:
-    nopt: ~1.0.10
-  checksum: cb407965a93f6a25c08b94068ce707b38843baa6228016b6b6678756521aa8c5d9de2b3838b40725a7ddccef9748c8bebf2ca200dc648e4cf35303552a6ab256
-  languageName: node
-  linkType: hard
-
 "tough-cookie@npm:^4.0.0":
   version: 4.0.0
   resolution: "tough-cookie@npm:4.0.0"
@@ -19916,13 +19840,6 @@ __metadata:
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
   checksum: 726321c5eaf41b5002e17ffbd1fb7245999a073e8979085dacd47c4b4e8068ff5777142fc6726d6ca1fd2ff16921b48788b87225cbc57c72636f6efa8efbffe3
-  languageName: node
-  linkType: hard
-
-"traverse@npm:>=0.3.0 <0.4":
-  version: 0.3.9
-  resolution: "traverse@npm:0.3.9"
-  checksum: 982982e4e249e9bbf063732a41fe5595939892758524bbef5d547c67cdf371b13af72b5434c6a61d88d4bb4351d6dabc6e22d832e0d16bc1bc684ef97a1cc59e
   languageName: node
   linkType: hard
 
@@ -22209,7 +22126,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"yaml@npm:^1.10.0, yaml@npm:^1.10.2":
+"yaml@npm:^1.10.0":
   version: 1.10.2
   resolution: "yaml@npm:1.10.2"
   checksum: ce4ada136e8a78a0b08dc10b4b900936912d15de59905b2bf415b4d33c63df1d555d23acb2a41b23cf9fb5da41c256441afca3d6509de7247daa062fd2c5ea5f

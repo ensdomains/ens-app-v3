@@ -57,3 +57,9 @@ yarn-error.log*
 
 # IDEs
 .idea
+
+# test environment
+/subgraphs
+/archives
+/data
+/test-environment

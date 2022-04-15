@@ -10,6 +10,10 @@
       "signature": "cb32b06840a432ef2016004ade769633",
       "pure": true,
       "replaced": "portal:.yalc/@ensdomains/ensjs"
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "7369b27be6b12ffcde61f3e08d1268fc",
+      "file": true
     }
   }
 }

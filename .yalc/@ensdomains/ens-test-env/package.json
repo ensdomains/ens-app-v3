@@ -1,0 +1,23 @@
+{
+  "name": "@ensdomains/ens-test-env",
+  "type": "module",
+  "version": "0.1.1",
+  "files": [
+    "src"
+  ],
+  "dependencies": {
+    "ansi-colors": "^4.1.1",
+    "cli-progress": "^3.10.0",
+    "concurrently": "^7.0.0",
+    "dotenv": "^16.0.0",
+    "fs-extra": "^10.0.1",
+    "ganache": "^7.0.3",
+    "got": "^12.0.2",
+    "lz4": "^0.6.5",
+    "progress-stream": "^2.0.0",
+    "tar-fs": "^2.1.1",
+    "wait-on": "^6.0.1"
+  },
+  "bin": "./src/index.js",
+  "yalcSig": "7369b27be6b12ffcde61f3e08d1268fc"
+}
