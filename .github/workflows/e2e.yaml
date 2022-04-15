@@ -26,9 +26,8 @@ jobs:
       - uses: actions/checkout@v2
 
       - name: Modify env file
-        working-directory: ./test-environment
         run: |
-          echo 'FORK_RPC_URL=${{ secrets.ROPSTEN_FORK_RPC_URL }}' .env.local
+          echo 'FORK_RPC_URL=${{ secrets.ROPSTEN_FORK_RPC_URL }}' > .env.local
           cat .env >> $GITHUB_ENV
 
       - uses: actions/setup-node@v2
