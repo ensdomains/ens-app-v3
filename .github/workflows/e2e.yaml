@@ -55,7 +55,7 @@ jobs:
           install-command: yarn install --immutable
           command-prefix: yarn dlx
           build: yarn build:glocal
-          start: yarn e2e:ci
+          command: yarn e2e:ci
           browser: chrome
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
