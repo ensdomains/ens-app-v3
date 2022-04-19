@@ -53,10 +53,11 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install-command: yarn install --immutable
-          command-prefix: CYPRESS_REMOTE_DEBUGGING_PORT=9222 yarn dlx
+          command-prefix: yarn dlx
           build: yarn build:glocal
           start: yarn start, yarn e2e:ci
           wait-on: 'http://localhost:3000, http://localhost:8040'
           browser: chrome
         env:
+          CYPRESS_REMOTE_DEBUGGING_PORT: 9222
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
