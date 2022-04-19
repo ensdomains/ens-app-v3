@@ -1,6 +1,11 @@
 require('dotenv').config({ path: process.env.INIT_CWD + '/.env.local' })
 require('dotenv').config({ path: process.env.INIT_CWD + '/.env' })
 
+console.log('GOING TO LOG ENV VARS')
+console.log('chainid', process.env.CHAIN_ID)
+console.log('network', process.env.NETWORK)
+console.log('secretwords', process.env.SECRET_WORDS)
+
 module.exports = {
   docker: {
     chainId: parseInt(process.env.CHAIN_ID),
