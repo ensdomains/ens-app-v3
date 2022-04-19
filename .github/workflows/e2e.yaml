@@ -47,6 +47,7 @@ jobs:
 
       - name: Extract Archive
         run: |
+          mkdir ./data
           tar -I lz4 -xf ./archives/archive.tar.lz4 -C ./data
 
       - uses: actions/setup-node@v3
