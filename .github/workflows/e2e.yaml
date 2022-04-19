@@ -53,7 +53,7 @@ jobs:
         uses: cypress-io/github-action@v3
         with:
           install-command: yarn install --immutable
-          command: yarn cypress run --config-file cypress.json --browser chromium --headed
+          command: for f in cypress/integration/*.test.js ; do yarn cypress run --browser --headed chromium --config-file cypress.json --spec $f ; done
           command-prefix: yarn dlx
           build: yarn build:glocal
           start: yarn start, yarn e2e:ci
