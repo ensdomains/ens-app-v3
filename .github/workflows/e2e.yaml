@@ -58,8 +58,8 @@ jobs:
           start: yarn start, yarn e2e:ci
           wait-on: 'http://localhost:3000, http://localhost:8040'
         env:
-          DEBUG: cypress:*
           CYPRESS_REMOTE_DEBUGGING_PORT: 9222
+          CYPRESS_NO_COMMAND_LOG: 1
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v2
