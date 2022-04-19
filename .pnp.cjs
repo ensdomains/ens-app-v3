@@ -492,10 +492,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:0.2.3"\
       ],\
       [\
-        "@colors/colors",\
-        "npm:1.5.0"\
-      ],\
-      [\
         "@cspotcode/source-map-consumer",\
         "npm:0.8.0"\
       ],\
@@ -2801,7 +2797,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "cypress",\
-        "npm:9.5.4"\
+        "npm:8.7.0"\
       ],\
       [\
         "d",\
@@ -7183,7 +7179,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-jest", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:27.5.1"],\
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.4"],\
             ["concurrently", "npm:7.1.0"],\
-            ["cypress", "npm:9.5.4"],\
+            ["cypress", "npm:8.7.0"],\
             ["dotenv", "npm:16.0.0"],\
             ["ens-contracts-namewrapper", "https://github.com/ensdomains/ens-contracts.git#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375"],\
             ["ens-contracts-universal", "https://github.com/ensdomains/ens-contracts.git#commit=ec2657e78811ff9fa09436209798a6135ecca9b7"],\
@@ -10092,15 +10088,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@bcoe-v8-coverage-npm-0.2.3-9e27b3c57e-850f930553.zip/node_modules/@bcoe/v8-coverage/",\
           "packageDependencies": [\
             ["@bcoe/v8-coverage", "npm:0.2.3"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["@colors/colors", [\
-        ["npm:1.5.0", {\
-          "packageLocation": "./.yarn/cache/@colors-colors-npm-1.5.0-875af3a8b4-d64d5260be.zip/node_modules/@colors/colors/",\
-          "packageDependencies": [\
-            ["@colors/colors", "npm:1.5.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -13997,13 +13984,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/sinonjs__fake-timers", "npm:6.0.4"]\
           ],\
           "linkType": "HARD"\
-        }],\
-        ["npm:8.1.1", {\
-          "packageLocation": "./.yarn/cache/@types-sinonjs__fake-timers-npm-8.1.1-95ac9b59b5-ca09d54d47.zip/node_modules/@types/sinonjs__fake-timers/",\
-          "packageDependencies": [\
-            ["@types/sinonjs__fake-timers", "npm:8.1.1"]\
-          ],\
-          "linkType": "HARD"\
         }]\
       ]],\
       ["@types/sizzle", [\
@@ -17631,15 +17611,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["string-width", "npm:4.2.3"]\
           ],\
           "linkType": "HARD"\
-        }],\
-        ["npm:0.6.2", {\
-          "packageLocation": "./.yarn/cache/cli-table3-npm-0.6.2-dff919b99d-2f82391698.zip/node_modules/cli-table3/",\
-          "packageDependencies": [\
-            ["cli-table3", "npm:0.6.2"],\
-            ["@colors/colors", "npm:1.5.0"],\
-            ["string-width", "npm:4.2.3"]\
-          ],\
-          "linkType": "HARD"\
         }]\
       ]],\
       ["cli-truncate", [\
@@ -18642,24 +18613,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:9.5.4", {\
-          "packageLocation": "./.yarn/unplugged/cypress-npm-9.5.4-7de2af0bf1/node_modules/cypress/",\
+        ["npm:8.7.0", {\
+          "packageLocation": "./.yarn/unplugged/cypress-npm-8.7.0-29ae8cc87f/node_modules/cypress/",\
           "packageDependencies": [\
-            ["cypress", "npm:9.5.4"],\
+            ["cypress", "npm:8.7.0"],\
             ["@cypress/request", "npm:2.88.10"],\
             ["@cypress/xvfb", "npm:1.2.4"],\
             ["@types/node", "npm:14.18.12"],\
-            ["@types/sinonjs__fake-timers", "npm:8.1.1"],\
+            ["@types/sinonjs__fake-timers", "npm:6.0.4"],\
             ["@types/sizzle", "npm:2.3.3"],\
             ["arch", "npm:2.2.0"],\
             ["blob-util", "npm:2.0.2"],\
             ["bluebird", "npm:3.7.2"],\
-            ["buffer", "npm:5.7.1"],\
             ["cachedir", "npm:2.3.0"],\
             ["chalk", "npm:4.1.2"],\
             ["check-more-types", "npm:2.24.0"],\
             ["cli-cursor", "npm:3.1.0"],\
-            ["cli-table3", "npm:0.6.2"],\
+            ["cli-table3", "npm:0.6.1"],\
             ["commander", "npm:5.1.0"],\
             ["common-tags", "npm:1.8.2"],\
             ["dayjs", "npm:1.11.0"],\
@@ -18682,11 +18652,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ospath", "npm:1.2.2"],\
             ["pretty-bytes", "npm:5.6.0"],\
             ["proxy-from-env", "npm:1.0.0"],\
+            ["ramda", "npm:0.27.2"],\
             ["request-progress", "npm:3.0.0"],\
-            ["semver", "npm:7.3.6"],\
             ["supports-color", "npm:8.1.1"],\
             ["tmp", "npm:0.2.1"],\
             ["untildify", "npm:4.0.0"],\
+            ["url", "npm:0.11.0"],\
             ["yauzl", "npm:2.10.0"]\
           ],\
           "linkType": "HARD"\
@@ -19795,7 +19766,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-jest", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:27.5.1"],\
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.4"],\
             ["concurrently", "npm:7.1.0"],\
-            ["cypress", "npm:9.5.4"],\
+            ["cypress", "npm:8.7.0"],\
             ["dotenv", "npm:16.0.0"],\
             ["ens-contracts-namewrapper", "https://github.com/ensdomains/ens-contracts.git#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375"],\
             ["ens-contracts-universal", "https://github.com/ensdomains/ens-contracts.git#commit=ec2657e78811ff9fa09436209798a6135ecca9b7"],\
