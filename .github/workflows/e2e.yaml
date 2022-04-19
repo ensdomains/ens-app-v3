@@ -53,7 +53,7 @@ jobs:
         uses: cypress-io/github-action@v2
         with:
           install-command: yarn install --immutable
-          command: yarn dlx
+          command-prefix: yarn dlx
           build: yarn build:glocal
           start: yarn start, yarn e2e:ci
           wait-on: 'http://localhost:3000, http://localhost:8040'
