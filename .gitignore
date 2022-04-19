@@ -60,3 +60,7 @@ yarn-error.log*
 /archives
 /data
 /test-environment
+
+# hardhat
+/cache
+/artifacts

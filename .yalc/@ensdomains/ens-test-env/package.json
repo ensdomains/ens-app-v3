@@ -1,14 +1,14 @@
 {
   "name": "@ensdomains/ens-test-env",
   "type": "module",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "files": [
     "src"
   ],
   "dependencies": {
     "ansi-colors": "^4.1.1",
     "cli-progress": "^3.10.0",
-    "concurrently": "^7.0.0",
+    "concurrently": "^7.1.0",
     "dotenv": "^16.0.0",
     "fs-extra": "^10.0.1",
     "ganache": "^7.0.3",
@@ -20,5 +20,5 @@
   },
   "preferUnplugged": true,
   "bin": "./src/index.js",
-  "yalcSig": "465016287ba8bc185fc83ea0f512e32d"
+  "yalcSig": "277cadcd45aea8c882296f3b956070f7"
 }

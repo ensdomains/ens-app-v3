@@ -23,24 +23,39 @@ jobs:
         node-version: [16.x]
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - name: Modify env file
+      - name: Get and modify .env file
         run: |
-          echo 'FORK_RPC_URL=${{ secrets.ROPSTEN_FORK_RPC_URL }}' > .env.local
+          cp .env.local.example .env.local
+          sed -i 's@\(FORK_RPC_URL\=\).*@\1${{ secrets.ROPSTEN_FORK_RPC_URL }}@' .env.local
           cat .env >> $GITHUB_ENV
 
-      - uses: actions/setup-node@v2
-        with:
-          node-version: ${{ matrix.node-version }}
-          cache: yarn
-
-      - run: yarn install
       - name: Get cached test-environment file
-        uses: actions/cache@v2
+        uses: actions/cache@v3
+        id: archive-cache
         with:
           path: ./archives
           key: data-${{ env.BLOCK_HEIGHT }}-${{ env.SUBGRAPH_ID }}-${{ env.EPOCH_TIME }}-${{ env.NETWORK }}
-          restore-keys: data-${{ env.BLOCK_HEIGHT }}-${{ env.SUBGRAPH_ID }}-${{ env.EPOCH_TIME }}-${{ env.NETWORK }}
 
-      - run: yarn e2e:ci
+      - name: Download Archive
+        if: steps.archive-cache.outputs.cache-hit != 'true'
+        run: |
+          mkdir -p archives
+          curl ${{ env.ARCHIVE_URL }}/data_${{ env.BLOCK_HEIGHT }}_${{ env.SUBGRAPH_ID }}_${{ env.EPOCH_TIME }}_${{ env.NETWORK }}.archive.tar.lz4 \
+            -o ./archives/archive.tar.lz4
+
+      - name: Extract Archive
+        run: |
+          tar -I lz4 -xf ./archives/archive.tar.lz4
+
+      - name: E2E on Chrome
+        uses: cypress-io/github-action@v2
+        with:
+          install-command: yarn install --immutable
+          command-prefix: yarn dlx
+          build: yarn build:glocal
+          start: yarn e2e:ci
+          browser: chrome
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

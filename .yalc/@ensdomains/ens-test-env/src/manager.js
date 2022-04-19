@@ -2,7 +2,6 @@ import { execSync } from 'child_process'
 import concurrently from 'concurrently'
 import path from 'path'
 import { URL as URLClass } from 'url'
-import waitOn from 'wait-on'
 
 const __dirname = new URLClass('.', import.meta.url).pathname
 
@@ -45,19 +44,17 @@ const killChildren = (cmdName, pid = 0, error) => {
   }
 }
 
-function cleanup(error = false, deployGraph, commands) {
+function cleanup(error = false, commands) {
   console.log('RECEIEVED CLEANUP')
   if (cleanupRunning) return
   cleanupRunning = true
-  if (deployGraph) {
-    execSync(
-      `${sudopref}docker-compose -f ${dockerComposeDir} -p ens-test-env down`,
-      {
-        cwd: process.env.INIT_CWD,
-        env: { ...process.env, ...dockerEnv },
-      },
-    )
-  }
+  execSync(
+    `${sudopref}docker-compose -f ${dockerComposeDir} -p ens-test-env down`,
+    {
+      cwd: process.env.INIT_CWD,
+      env: { ...process.env, ...dockerEnv },
+    },
+  )
   commands.forEach((cmd) => killChildren(cmd.command, cmd.pid, error))
   killChildren('ens-test-env', 0, error)
   process.exit(error ? 1 : 0)
@@ -71,33 +68,29 @@ function wrapTry(fn, ...args) {
   }
 }
 
-export const main = async (deployGraph, config) => {
+export const main = async (config) => {
   const cmdsToRun = []
   const inxsToFinishOnExit = []
 
-  if (deployGraph) {
-    if (config.graph.useSudo) {
-      sudopref = 'sudo '
-    }
-    inxsToFinishOnExit.push(0)
-    dockerComposeDir = config.graph.composeFile
-      ? path.resolve(process.env.INIT_CWD, config.graph.composeFile)
-      : path.resolve(__dirname, './docker-compose.yml')
-    dockerEnv = {
-      NETWORK: config.ganache.network,
-      DOCKER_RPC_URL: !!config.graph.bypassLocalRpc
-        ? config.ganache.rpcUrl
-        : `http://host.docker.internal:${config.ganache.port}`,
-      DATA_FOLDER: path.resolve(process.env.INIT_CWD, config.paths.data),
-    }
-    cmdsToRun.push({
-      command: `${sudopref}docker-compose -f ${dockerComposeDir} -p ens-test-env up`,
-      name: 'graph-docker',
-      prefixColor: 'green.bold',
-      cwd: process.env.INIT_CWD,
-      env: { ...process.env, ...dockerEnv },
-    })
+  if (config.docker.sudo) {
+    sudopref = 'sudo '
   }
+  inxsToFinishOnExit.push(0)
+  dockerComposeDir = config.docker.file
+    ? path.resolve(process.env.INIT_CWD, config.docker.file)
+    : path.resolve(__dirname, './docker-compose.yml')
+  dockerEnv = {
+    NETWORK: config.docker.network,
+    DOCKER_RPC_URL: 'http://host.docker.internal:8545',
+    DATA_FOLDER: path.resolve(process.env.INIT_CWD, config.paths.data),
+  }
+  cmdsToRun.push({
+    command: `${sudopref}docker-compose -f ${dockerComposeDir} -p ens-test-env up`,
+    name: 'graph-docker',
+    prefixColor: 'green.bold',
+    cwd: process.env.INIT_CWD,
+    env: { ...process.env, ...dockerEnv },
+  })
 
   config.scripts &&
     config.scripts.forEach((script, i) => {
@@ -106,23 +99,28 @@ export const main = async (deployGraph, config) => {
       }
       cmdsToRun.push(script)
       if (script.finishOnExit) {
-        inxsToFinishOnExit.push(deployGraph ? i + 1 : i)
+        inxsToFinishOnExit.push(i + 1)
       }
     })
 
-  if (!config.graph.bypassLocalRpc) {
-    await waitOn({
-      resources: ['tcp:' + config.ganache.port],
+  config.deployCommand &&
+    cmdsToRun.push({
+      command: `yarn wait-on tcp:8545 && ${config.deployCommand}`,
+      name: 'deploy',
+      prefixColor: 'blue.bold',
+      cwd: process.env.INIT_CWD,
     })
-  }
+
   if (cmdsToRun.length > 0) {
-    const { commands } = concurrently(cmdsToRun, { prefix: 'name' })
+    const { commands } = concurrently(cmdsToRun, {
+      prefix: 'name',
+    })
 
     commands.forEach((cmd) => {
       if (inxsToFinishOnExit.includes(cmd.index)) {
-        cmd.close.subscribe(() => cleanup(false, deployGraph, commands))
+        cmd.close.subscribe(() => cleanup(false, commands))
       }
-      cmd.error.subscribe(() => cleanup(true, deployGraph, commands))
+      cmd.error.subscribe(() => cleanup(true, commands))
     })
   }
 }

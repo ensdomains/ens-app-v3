@@ -12,14 +12,12 @@ if (args[0] === '--help' || args[0] === '-h') args[0] = 'help'
 const help = () => {
   console.log(`
     Usage:
-        ens-test-env start [--no-graph|--no-reset|--no-deploy|--config]
+        ens-test-env start [--no-reset|--config]
         ens-test-env data [--load|--compress]
         ens-test-env help
     
     Options:
-        --no-graph   Don't run graph-node
         --no-reset   Don't reset data folder
-        --no-deploy  Don't deploy contracts
         --config     Specify config directory
         --load       Load data from archive
         --compress   Compress data folder to archive
@@ -42,21 +40,15 @@ const checkKnownArgs = (maxArgs, ...knownArgs) => {
 }
 
 const start = async () => {
-  checkKnownArgs(2, '--no-graph', '--no-reset', '--no-deploy')
-  if (args.includes('--no-graph') && args.includes('--no-reset')) {
-    console.log("Can't use --no-graph and --no-reset at the same time")
-    return help()
-  }
+  checkKnownArgs(1, '--no-reset')
   const opts = {
-    deployGraph: !args.includes('--no-graph'),
     resetData: !args.includes('--no-reset'),
-    deployContracts: !args.includes('--no-deploy'),
   }
-  if (opts.resetData && opts.deployGraph) {
+  if (opts.resetData) {
     await fetchData('--load', config)
   }
-  ganache(opts.deployContracts, config)
-  manager(opts.deployGraph, config)
+  ganache(config)
+  manager(config)
 }
 
 const data = async () => {
@@ -86,7 +78,7 @@ const main = async () => {
     ).default
   }
   // if config doesn't have all data, throw error
-  if (!config || !config.ganache || !config.graph) {
+  if (!config || !config.docker || !config.archive) {
     console.log('No valid config found')
     return help()
   }
@@ -94,7 +86,6 @@ const main = async () => {
   config.paths = {
     archives: './archives',
     data: './data',
-    deployments: './deployments',
     ...(config.paths ? config.paths : {}),
   }
   switch (args[0]) {
