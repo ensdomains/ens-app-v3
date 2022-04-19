@@ -49,18 +49,15 @@ jobs:
         run: |
           tar -I lz4 -xf ./archives/archive.tar.lz4
 
-      - run: sudo apt-get install libgtk2.0-0 libgtk-3-0 libgbm-dev libnotify-dev libgconf-2-4 libnss3 libxss1 libasound2 libxtst6 xauth xvfb
-      - uses: browser-actions/setup-chrome@latest
-      - run: chrome --version
-
       - name: E2E on Chrome
         uses: cypress-io/github-action@v2
         with:
           install-command: yarn install --immutable
-          command: yarn cypress run --config-file cypress.json --browser chrome --headed
+          command: yarn dlx
           build: yarn build:glocal
           start: yarn start, yarn e2e:ci
           wait-on: 'http://localhost:3000, http://localhost:8040'
+          browser: chrome
         env:
           CYPRESS_REMOTE_DEBUGGING_PORT: 9222
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
