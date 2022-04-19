@@ -1,6 +1,3 @@
 {
-  "baseUrl": "http://localhost:3000",
-  "video": false,
-  "videoUploadOnPasses": false,
-  "numTestsKeptInMemory": 0
+  "baseUrl": "http://localhost:3000"
 }

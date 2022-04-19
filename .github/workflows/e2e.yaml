@@ -17,6 +17,7 @@ jobs:
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     timeout-minutes: 10
     runs-on: ubuntu-latest
+    container: cypress/browsers:node16.14.0-slim-chrome99-ff97
     needs: [pre_job]
     strategy:
       matrix:
@@ -30,7 +31,6 @@ jobs:
           cp .env.local.example .env.local
           sed -i 's@\(FORK_RPC_URL\=\).*@\1${{ secrets.ROPSTEN_FORK_RPC_URL }}@' .env.local
           cat .env >> $GITHUB_ENV
-          cat .env.local >> $GITHUB_ENV
 
       - name: Get cached test-environment file
         uses: actions/cache@v3
@@ -61,7 +61,6 @@ jobs:
           wait-on: 'http://localhost:3000, http://localhost:8040'
         env:
           CYPRESS_REMOTE_DEBUGGING_PORT: 9222
-          CYPRESS_NO_COMMAND_LOG: 1
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - uses: actions/upload-artifact@v2
