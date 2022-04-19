@@ -60,7 +60,7 @@ jobs:
         env:
           CYPRESS_REMOTE_DEBUGGING_PORT: 9222
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          METAMASK_VERSION: ${{ env.METAMASK_VERSION }}
+          METAMASK_VERSION: '9.4.0'
           PASSWORD: ${{ env.PASSWORD }}
           SECRET_WORDS: ${{ env.SECRET_WORDS }}
           NETWORK_NAME: ${{ env.NETWORK_NAME }}
