@@ -25,10 +25,11 @@ module.exports = {
           },
           {
             command: `yarn wait-on http://localhost:3000 && ${
-              process.env.CI ? 'yarn cypress:ci' : 'yarn cypress:start'
+              process.env.CI ? 'yarn synpress:ci' : 'yarn synpress:start'
             }`,
-            name: 'cypress',
+            name: 'synpress',
             prefixColor: 'yellow.bold',
+            env: process.env,
             finishOnExit: true,
             waitForGraph: true,
           },

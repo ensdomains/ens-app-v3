@@ -45,12 +45,10 @@ yarn-error.log*
 /coverage
 
 # cypress
-/cypress/*
-!/cypress/fixtures
-!/cypress/integration
-!/cypress/plugins
-!/cypress/support
-
+/e2e/*
+!/e2e/specs
+!/e2e/.eslintrc.js
+!/e2e/tsconfig.json
 
 # IDEs
 .idea

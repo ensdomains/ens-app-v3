@@ -30,12 +30,18 @@
       "@app/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": [
+    "next-env.d.ts",
+    "mdx.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "e2e/tsconfig.json"
+  ],
   "exclude": [
     "node_modules",
     ".yarn",
     "custom-test-env.js",
-    "cypress/**/*",
+    "e2e/**/*",
     "**/*.ignore.ts",
     "**/*.ignore.tsx"
   ]
