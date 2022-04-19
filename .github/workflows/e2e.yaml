@@ -17,7 +17,6 @@ jobs:
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    container: cypress/browsers:node16.14.0-slim-chrome99-ff97
     needs: [pre_job]
     strategy:
       matrix:
@@ -50,18 +49,14 @@ jobs:
         run: |
           tar -I lz4 -xf ./archives/archive.tar.lz4
 
-      - name: E2E on Chrome
-        uses: cypress-io/github-action@v3
+      - name: actions/setup-node@v3
         with:
-          install-command: yarn install --immutable
-          command: yarn cypress run --config-file cypress.json --browser chromium --headed
-          command-prefix: yarn dlx
-          build: yarn build:glocal
-          start: yarn start, yarn e2e:ci
-          wait-on: 'http://localhost:3000, http://localhost:8040'
-        env:
-          CYPRESS_REMOTE_DEBUGGING_PORT: 9222
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          node-version: '16'
+          cache: 'yarn'
+
+      - run: yarn install --immutable
+
+      - run: yarn e2e:ci
 
       - uses: actions/upload-artifact@v2
         if: failure()
