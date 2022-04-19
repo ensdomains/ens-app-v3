@@ -55,11 +55,16 @@ jobs:
           install-command: yarn install --immutable
           command: yarn cypress run --config-file cypress.json --browser chrome --headed
           build: yarn build:glocal
-          start: yarn start, yarn e2e:ci
+          start: yarn start, yarn e2e:ci, echo '${{ env }}'
           wait-on: 'http://localhost:3000, http://localhost:8040'
         env:
           CYPRESS_REMOTE_DEBUGGING_PORT: 9222
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          METAMASK_VERSION: ${{ env.METAMASK_VERSION }}
+          PASSWORD: ${{ env.PASSWORD }}
+          SECRET_WORDS: ${{ env.SECRET_WORDS }}
+          NETWORK_NAME: ${{ env.NETWORK_NAME }}
+          RPC_URL: ${{ env.RPC_URL }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
