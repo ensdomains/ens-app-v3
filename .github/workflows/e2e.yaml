@@ -50,7 +50,7 @@ jobs:
           tar -I lz4 -xf ./archives/archive.tar.lz4
 
       - name: E2E on Chrome
-        uses: cypress-io/github-action@v2
+        uses: cypress-io/github-action@v3
         with:
           install-command: yarn install --immutable
           command: yarn cypress run --config-file cypress.json --browser chrome --headed
