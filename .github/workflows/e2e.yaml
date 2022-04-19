@@ -56,11 +56,4 @@ jobs:
 
       - run: yarn install --immutable
 
-      - name: E2E on Chrome
-        uses: cypress-io/github-action@v2
-        with:
-          install: false
-          command: yarn e2e:ci
-          browser: chrome
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - run: yarn e2e:ci
