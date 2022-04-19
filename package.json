@@ -88,7 +88,7 @@
     "babel-jest": "^27.4.6",
     "babel-loader": "^8.2.2",
     "concurrently": "^7.0.0",
-    "cypress": "^9.5.4",
+    "cypress": "^8.6.0",
     "dotenv": "^16.0.0",
     "ens-contracts-namewrapper": "github:ensdomains/ens-contracts#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375",
     "ens-contracts-universal": "github:ensdomains/ens-contracts#head=feature/record-proxy&commit=ec2657e78811ff9fa09436209798a6135ecca9b7",
