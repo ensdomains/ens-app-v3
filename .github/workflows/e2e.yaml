@@ -30,6 +30,7 @@ jobs:
           cp .env.local.example .env.local
           sed -i 's@\(FORK_RPC_URL\=\).*@\1${{ secrets.ROPSTEN_FORK_RPC_URL }}@' .env.local
           cat .env >> $GITHUB_ENV
+          cat .env.local >> $GITHUB_ENV
 
       - name: Get cached test-environment file
         uses: actions/cache@v3
@@ -53,7 +54,7 @@ jobs:
         uses: cypress-io/github-action@v3
         with:
           install-command: yarn install --immutable
-          command: for f in cypress/integration/*.test.js ; do yarn cypress run --browser --headed chromium --config-file cypress.json --spec $f ; done
+          command: yarn cypress run --config-file cypress.json --browser chromium --headed
           command-prefix: yarn dlx
           build: yarn build:glocal
           start: yarn start, yarn e2e:ci
