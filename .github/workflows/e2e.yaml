@@ -49,12 +49,17 @@ jobs:
         run: |
           tar -I lz4 -xf ./archives/archive.tar.lz4
 
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'yarn'
+
+      - run: yarn install --immutable
+
       - name: E2E on Chrome
         uses: cypress-io/github-action@v2
         with:
-          install-command: yarn install --immutable
-          command-prefix: yarn dlx
-          build: yarn build:glocal
+          install: false
           command: yarn e2e:ci
           browser: chrome
         env:

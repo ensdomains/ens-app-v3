@@ -19,7 +19,7 @@
     "cypress:start": "CYPRESS_REMOTE_DEBUGGING_PORT=9222 cypress run --headed --browser chrome",
     "cypress:ci": "yarn cypress:start",
     "e2e": "E2E=true yarn ens-test-env start",
-    "e2e:ci": "E2E=true CI=true yarn ens-test-env start",
+    "e2e:ci": "E2E=true CI=true yarn ens-test-env start --no-reset",
     "postinstall": "husky install"
   },
   "dependencies": {
