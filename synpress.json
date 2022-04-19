@@ -5,6 +5,8 @@
   "integrationFolder": "e2e/specs",
   "screenshotsFolder": "e2e/screenshots",
   "videosFolder": "e2e/videos",
+  "video": false,
+  "screenshotOnRunFailure": false,
   "chromeWebSecurity": true,
   "viewportWidth": 1366,
   "viewportHeight": 768,
