@@ -1647,7 +1647,7 @@ __metadata:
 
 "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env::locator=ens-app-v2%40workspace%3A.":
   version: 0.1.3
-  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=221196&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=a64266&locator=ens-app-v2%40workspace%3A."
   dependencies:
     ansi-colors: ^4.1.1
     cli-progress: ^3.10.0
@@ -1662,7 +1662,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 393679ab2e2cd31dec8a728d71d5fb5a4858febc811aefe48eca7c712d7aa63bcc85c8789842c81df6064c98baf2c23ca17cfae3c35e3f89dc45c0ae7a5e5504
+  checksum: 56f9b3490ce6ccdd0ebffa309937d2b436f8d1ff48c39dd43880be7ffbfc847ae8ae1d0abe28688512a531b551107d55e5e1ef09ae12fe380bb17b35f567854c
   languageName: node
   linkType: hard
 
