@@ -53,7 +53,7 @@ jobs:
         uses: cypress-io/github-action@v3
         with:
           install-command: yarn install --immutable
-          command: yarn cypress run --config-file cypress.json --browser chrome --headed
+          command: yarn cypress run --config-file cypress.json --browser chromium --headed
           build: yarn build:glocal
           start: yarn start, yarn e2e:ci
           wait-on: 'http://localhost:3000, http://localhost:8040'
