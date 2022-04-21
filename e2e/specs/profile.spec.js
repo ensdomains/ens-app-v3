@@ -21,11 +21,11 @@ describe('Profile', () => {
 
     cy.get('[placeholder="Search for a name"]').type('jefflau')
     cy.get('[data-testid="search-button"]', {
-      timeout: 15000,
+      timeout: 25000,
     }).click()
 
     cy.get('[data-testid="address-profile-button-eth"]', {
-      timeout: 15000,
+      timeout: 25000,
     }).should('has.text', '0x866...95eEE')
   })
 })

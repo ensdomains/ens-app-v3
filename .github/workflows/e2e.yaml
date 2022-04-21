@@ -18,6 +18,9 @@ jobs:
     timeout-minutes: 10
     runs-on: ubuntu-latest
     needs: [pre_job]
+    permissions:
+      contents: 'read'
+      id-token: 'write'
     strategy:
       matrix:
         node-version: [16.x]
@@ -31,24 +34,16 @@ jobs:
           sed -i 's@\(FORK_RPC_URL\=\).*@\1${{ secrets.ROPSTEN_FORK_RPC_URL }}@' .env.local
           cat .env >> $GITHUB_ENV
 
-      - name: Get cached test-environment file
-        uses: actions/cache@v3
-        id: archive-cache
+      - id: 'auth'
+        uses: 'google-github-actions/auth@v0'
         with:
-          path: ./archives
-          key: data-${{ env.BLOCK_HEIGHT }}-${{ env.SUBGRAPH_ID }}-${{ env.EPOCH_TIME }}-${{ env.NETWORK }}
+          credentials_json: '${{ secrets.GOOGLE_CREDENTIALS }}'
 
-      - name: Download Archive
-        if: steps.archive-cache.outputs.cache-hit != 'true'
-        run: |
-          mkdir -p archives
-          curl ${{ env.ARCHIVE_URL }}/data_${{ env.BLOCK_HEIGHT }}_${{ env.SUBGRAPH_ID }}_${{ env.EPOCH_TIME }}_${{ env.NETWORK }}.archive.tar.lz4 \
-            -o ./archives/archive.tar.lz4
-
-      - name: Extract Archive
-        run: |
-          mkdir ./data
-          tar -I lz4 -xf ./archives/archive.tar.lz4 -C ./data
+      - id: 'get-credentials'
+        uses: 'google-github-actions/get-gke-credentials@v0'
+        with:
+          cluster_name: 'ens-test-env-gke'
+          location: 'asia-southeast1-b'
 
       - uses: actions/setup-node@v3
         with:
@@ -57,7 +52,7 @@ jobs:
 
       - run: yarn install --immutable
 
-      - run: yarn e2e:ci
+      - run: yarn e2e
 
       - uses: actions/upload-artifact@v2
         if: failure()

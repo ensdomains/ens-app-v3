@@ -9,7 +9,9 @@ import React, {
 import { useProvider } from 'wagmi'
 
 const defaultValue: ENS = new ENS({
-  graphURI: 'http://localhost:8000/subgraphs/name/graphprotocol/ens',
+  graphURI:
+    process.env.NEXT_PUBLIC_GRAPH_URI ||
+    'http://localhost:8000/subgraphs/name/graphprotocol/ens',
 })
 
 const EnsContext = createContext({ ...defaultValue, ready: false })

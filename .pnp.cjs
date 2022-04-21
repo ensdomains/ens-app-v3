@@ -1363,6 +1363,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:4.0.1"\
       ],\
       [\
+        "@types/http-proxy",\
+        "npm:1.17.8"\
+      ],\
+      [\
         "@types/istanbul-lib-coverage",\
         "npm:2.0.4"\
       ],\
@@ -4295,6 +4299,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.0.0"\
       ],\
       [\
+        "http-proxy",\
+        "npm:1.18.1"\
+      ],\
+      [\
         "http-proxy-agent",\
         "npm:5.0.0"\
       ],\
@@ -6246,6 +6254,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.0.0"\
       ],\
       [\
+        "requires-port",\
+        "npm:1.0.0"\
+      ],\
+      [\
         "resolve",\
         "patch:resolve@npm%3A1.22.0#~builtin<compat/resolve>::version=1.22.0&hash=07638b"\
       ],\
@@ -7594,6 +7606,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.4"],\
             ["@toruslabs/torus-embed", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:1.21.0"],\
             ["@types/glob", "npm:7.2.0"],\
+            ["@types/http-proxy", "npm:1.17.8"],\
             ["@types/jest", "npm:27.4.1"],\
             ["@types/lodash", "npm:4.14.181"],\
             ["@types/node", "npm:16.11.26"],\
@@ -7637,6 +7650,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["hardhat", "npm:2.9.3"],\
             ["hardhat-dependency-compiler", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:1.1.2"],\
             ["hardhat-deploy", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.11.4"],\
+            ["http-proxy", "npm:1.18.1"],\
             ["husky", "npm:7.0.4"],\
             ["identity-obj-proxy", "npm:3.0.0"],\
             ["iso-639-1", "npm:2.1.13"],\
@@ -14203,6 +14217,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-http-cache-semantics-npm-4.0.1-90863c7a3e-1048aacf62.zip/node_modules/@types/http-cache-semantics/",\
           "packageDependencies": [\
             ["@types/http-cache-semantics", "npm:4.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@types/http-proxy", [\
+        ["npm:1.17.8", {\
+          "packageLocation": "./.yarn/cache/@types-http-proxy-npm-1.17.8-0e73b3e3eb-3b3d683498.zip/node_modules/@types/http-proxy/",\
+          "packageDependencies": [\
+            ["@types/http-proxy", "npm:1.17.8"],\
+            ["@types/node", "npm:17.0.23"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -21658,6 +21682,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.4"],\
             ["@toruslabs/torus-embed", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:1.21.0"],\
             ["@types/glob", "npm:7.2.0"],\
+            ["@types/http-proxy", "npm:1.17.8"],\
             ["@types/jest", "npm:27.4.1"],\
             ["@types/lodash", "npm:4.14.181"],\
             ["@types/node", "npm:16.11.26"],\
@@ -21701,6 +21726,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["hardhat", "npm:2.9.3"],\
             ["hardhat-dependency-compiler", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:1.1.2"],\
             ["hardhat-deploy", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.11.4"],\
+            ["http-proxy", "npm:1.18.1"],\
             ["husky", "npm:7.0.4"],\
             ["identity-obj-proxy", "npm:3.0.0"],\
             ["iso-639-1", "npm:2.1.13"],\
@@ -25972,6 +25998,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/http-https-npm-1.0.0-d2d5339bdb-82fc4d2e51.zip/node_modules/http-https/",\
           "packageDependencies": [\
             ["http-https", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["http-proxy", [\
+        ["npm:1.18.1", {\
+          "packageLocation": "./.yarn/cache/http-proxy-npm-1.18.1-a313c479c5-f5bd96bf83.zip/node_modules/http-proxy/",\
+          "packageDependencies": [\
+            ["http-proxy", "npm:1.18.1"],\
+            ["eventemitter3", "npm:4.0.7"],\
+            ["follow-redirects", "virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9"],\
+            ["requires-port", "npm:1.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -32859,6 +32897,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/require-main-filename-npm-2.0.0-03eef65c84-e9e294695f.zip/node_modules/require-main-filename/",\
           "packageDependencies": [\
             ["require-main-filename", "npm:2.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["requires-port", [\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/requires-port-npm-1.0.0-fd036b488a-eee0e303ad.zip/node_modules/requires-port/",\
+          "packageDependencies": [\
+            ["requires-port", "npm:1.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\

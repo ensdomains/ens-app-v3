@@ -54,7 +54,10 @@ const infuraId = '58a380d3ecd545b2b5b3dad5d2b18bf0'
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const provider = ({ chainId }: { chainId?: number }) =>
-  new providers.JsonRpcProvider('http://localhost:8545', chainId)
+  new providers.JsonRpcProvider(
+    process.env.NEXT_PROVIDER || 'http://localhost:8545',
+    chainId,
+  )
 
 const chains: Chain[] = [
   { ...chain.mainnet, name: 'Ethereum' },

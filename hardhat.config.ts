@@ -22,7 +22,7 @@ const config: HardhatUserConfig = {
   networks: {
     localhost: {
       saveDeployments: false,
-      url: 'http://localhost:8545',
+      url: process.env.RPC_URL,
       chainId: parseInt(process.env.CHAIN_ID!),
       accounts: {
         mnemonic: process.env.SECRET_WORDS!,
