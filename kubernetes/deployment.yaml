@@ -77,6 +77,8 @@ spec:
             - $(BLOCK_HEIGHT)
             - '--wallet.mnemonic'
             - $(SECRET_WORDS)
+            - '--wallet.defaultBalance'
+            - '1000'
             - '--db'
             - '/ganache'
           env:

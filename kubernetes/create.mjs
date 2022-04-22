@@ -116,7 +116,10 @@ const main = async () => {
   }
   if (deployContracts) {
     log('Deploying contracts...')
-    await exec('yarn hardhat deploy')
+    const contractsRun = spawn('yarn', ['hardhat', 'deploy'], {
+      stdio: 'inherit',
+    })
+    await new Promise((resolve) => contractsRun.on('exit', resolve))
   }
   let synpressRun
   if (withSynpress && isCI) {
