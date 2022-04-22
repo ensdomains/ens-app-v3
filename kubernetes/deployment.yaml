@@ -58,10 +58,6 @@ spec:
       containers:
         - name: ganache
           image: taytems/ganache-node-16-amd64:latest
-          resources:
-            requests:
-              memory: '3G'
-              cpu: '2'
           volumeMounts:
             - mountPath: /ganache
               subPath: ganache
@@ -105,10 +101,6 @@ spec:
                   key: SECRET_WORDS
         - name: graph-node
           image: graphprotocol/graph-node:latest
-          resources:
-            requests:
-              memory: '3G'
-              cpu: '1'
           ports:
             - containerPort: 8000
             - containerPort: 8001
