@@ -118,6 +118,7 @@ const main = async () => {
     log('Deploying contracts...')
     const contractsRun = spawn('yarn', ['hardhat', 'deploy'], {
       stdio: 'inherit',
+      env: process.env,
     })
     await new Promise((resolve) => contractsRun.on('exit', resolve))
   }
