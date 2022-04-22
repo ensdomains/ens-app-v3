@@ -576,7 +576,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ens-test-env",\
-        "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=a64266&locator=ens-app-v2%40workspace%3A."\
+        "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=0d5226&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@ensdomains/ens-validation",\
@@ -3079,6 +3079,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.14.1"\
       ],\
       [\
+        "data-uri-to-buffer",\
+        "npm:4.0.0"\
+      ],\
+      [\
         "data-urls",\
         "npm:2.0.0"\
       ],\
@@ -3847,6 +3851,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.1.0"\
       ],\
       [\
+        "fetch-blob",\
+        "npm:3.1.5"\
+      ],\
+      [\
         "fetch-ponyfill",\
         "npm:4.1.0"\
       ],\
@@ -3953,6 +3961,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "form-data-encoder",\
         "npm:1.7.1"\
+      ],\
+      [\
+        "formdata-polyfill",\
+        "npm:4.0.10"\
       ],\
       [\
         "formidable",\
@@ -5513,6 +5525,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "node-cmake",\
         "npm:2.3.2"\
+      ],\
+      [\
+        "node-domexception",\
+        "npm:1.0.0"\
       ],\
       [\
         "node-fetch",\
@@ -7294,6 +7310,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:1.1.5"\
       ],\
       [\
+        "web-streams-polyfill",\
+        "npm:3.2.1"\
+      ],\
+      [\
         "web3",\
         "npm:1.5.3"\
       ],\
@@ -7586,7 +7606,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@apollo/client", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.5.10"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
-            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=a64266&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=0d5226&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
@@ -10941,10 +10961,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ens-test-env", [\
-        ["file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=a64266&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-file-d17d4efa70/node_modules/@ensdomains/ens-test-env/",\
+        ["file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=0d5226&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-file-0d269b67df/node_modules/@ensdomains/ens-test-env/",\
           "packageDependencies": [\
-            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=a64266&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=0d5226&locator=ens-app-v2%40workspace%3A."],\
+            ["@ethersproject/wallet", "npm:5.6.0"],\
             ["ansi-colors", "npm:4.1.1"],\
             ["cli-progress", "npm:3.10.0"],\
             ["concurrently", "npm:7.1.0"],\
@@ -10953,6 +10974,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ganache", "npm:7.0.4"],\
             ["got", "npm:12.0.3"],\
             ["lz4", "npm:0.6.5"],\
+            ["node-fetch", "npm:3.2.3"],\
             ["progress-stream", "npm:2.0.0"],\
             ["tar-fs", "npm:2.1.1"],\
             ["wait-on", "npm:6.0.1"]\
@@ -20510,6 +20532,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["data-uri-to-buffer", [\
+        ["npm:4.0.0", {\
+          "packageLocation": "./.yarn/cache/data-uri-to-buffer-npm-4.0.0-e7a49f58f7-a010653869.zip/node_modules/data-uri-to-buffer/",\
+          "packageDependencies": [\
+            ["data-uri-to-buffer", "npm:4.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["data-urls", [\
         ["npm:2.0.0", {\
           "packageLocation": "./.yarn/cache/data-urls-npm-2.0.0-2b80c32b82-97caf828aa.zip/node_modules/data-urls/",\
@@ -21662,7 +21693,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@apollo/client", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.5.10"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
-            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=a64266&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=0d5226&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
@@ -24307,6 +24338,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["fetch-blob", [\
+        ["npm:3.1.5", {\
+          "packageLocation": "./.yarn/cache/fetch-blob-npm-3.1.5-82671261d9-6493f21bfe.zip/node_modules/fetch-blob/",\
+          "packageDependencies": [\
+            ["fetch-blob", "npm:3.1.5"],\
+            ["node-domexception", "npm:1.0.0"],\
+            ["web-streams-polyfill", "npm:3.2.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["fetch-ponyfill", [\
         ["npm:4.1.0", {\
           "packageLocation": "./.yarn/cache/fetch-ponyfill-npm-4.1.0-cb82c60fae-00c85b661a.zip/node_modules/fetch-ponyfill/",\
@@ -24683,6 +24725,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/form-data-encoder-npm-1.7.1-7c80545199-a2a360d558.zip/node_modules/form-data-encoder/",\
           "packageDependencies": [\
             ["form-data-encoder", "npm:1.7.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["formdata-polyfill", [\
+        ["npm:4.0.10", {\
+          "packageLocation": "./.yarn/cache/formdata-polyfill-npm-4.0.10-e03013c013-82a34df292.zip/node_modules/formdata-polyfill/",\
+          "packageDependencies": [\
+            ["formdata-polyfill", "npm:4.0.10"],\
+            ["fetch-blob", "npm:3.1.5"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -30307,6 +30359,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["node-domexception", [\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/node-domexception-npm-1.0.0-e1e813b76f-ee1d37dd2a.zip/node_modules/node-domexception/",\
+          "packageDependencies": [\
+            ["node-domexception", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["node-fetch", [\
         ["npm:1.7.3", {\
           "packageLocation": "./.yarn/cache/node-fetch-npm-1.7.3-eb8372f991-3bb0528c05.zip/node_modules/node-fetch/",\
@@ -30330,6 +30391,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["node-fetch", "npm:2.6.7"]\
           ],\
           "linkType": "SOFT"\
+        }],\
+        ["npm:3.2.3", {\
+          "packageLocation": "./.yarn/cache/node-fetch-npm-3.2.3-0f62fc8780-6f702b2683.zip/node_modules/node-fetch/",\
+          "packageDependencies": [\
+            ["node-fetch", "npm:3.2.3"],\
+            ["data-uri-to-buffer", "npm:4.0.0"],\
+            ["fetch-blob", "npm:3.1.5"],\
+            ["formdata-polyfill", "npm:4.0.10"]\
+          ],\
+          "linkType": "HARD"\
         }],\
         ["virtual:e414995db9c779306e687c7a7c66965e66d0cd7270f6b9fc4f00cc9772c5d50b305ab83e142e0e21dbf10968f7437cbdfcb170d05f4bde68707ac7d0082c9cca#npm:2.6.7", {\
           "packageLocation": "./.yarn/__virtual__/node-fetch-virtual-10f4bc17d9/0/cache/node-fetch-npm-2.6.7-777aa2a6df-8d816ffd1e.zip/node_modules/node-fetch/",\
@@ -36526,6 +36597,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["web-encoding", "npm:1.1.5"],\
             ["@zxing/text-encoding", "npm:0.9.0"],\
             ["util", "npm:0.12.4"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["web-streams-polyfill", [\
+        ["npm:3.2.1", {\
+          "packageLocation": "./.yarn/cache/web-streams-polyfill-npm-3.2.1-835bd3857e-b119c78574.zip/node_modules/web-streams-polyfill/",\
+          "packageDependencies": [\
+            ["web-streams-polyfill", "npm:3.2.1"]\
           ],\
           "linkType": "HARD"\
         }]\

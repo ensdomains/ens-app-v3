@@ -1,10 +1,15 @@
 module.exports = {
+  deployCommand: 'yarn hardhat deploy',
+  tenderlyUser: 'ens',
+  tenderlyProject: 'core',
+  tenderlyKey: 'tenderly-key',
   docker: {
     file: './docker-compose.yml',
     sudo: false,
     chainId: 0,
     network: 'mainnet',
     forkRpcUrl: 'https://example.com',
+    graphRpcUrl: 'http://localhost:8545',
     secretWords: 'test test test test test test test test test test test junk',
   },
   archive: {
@@ -13,7 +18,6 @@ module.exports = {
     block: 12066620,
     baseUrl: 'https://storage.googleapis.com/ens-manager-build-data',
   },
-  deployCommand: 'yarn hardhat deploy',
   scripts: [
     {
       command: 'example',

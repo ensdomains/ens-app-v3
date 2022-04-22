@@ -26,6 +26,7 @@ export const main = async (config) => {
   const server = ganache.server({
     chain: {
       chainId: config.docker.chainId,
+      networkId: config.docker.chainId,
     },
     fork: {
       url: config.docker.forkRpcUrl,

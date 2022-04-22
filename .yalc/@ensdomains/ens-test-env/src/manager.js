@@ -2,6 +2,7 @@ import { execSync } from 'child_process'
 import concurrently from 'concurrently'
 import path from 'path'
 import { URL as URLClass } from 'url'
+import { deleteFork, generateFork } from './tenderly.js'
 
 const __dirname = new URLClass('.', import.meta.url).pathname
 
@@ -44,10 +45,13 @@ const killChildren = (cmdName, pid = 0, error) => {
   }
 }
 
-function cleanup(error = false, commands) {
+async function cleanup(error = false, commands, config, useTenderly) {
   console.log('RECEIEVED CLEANUP')
   if (cleanupRunning) return
   cleanupRunning = true
+  if (useTenderly) {
+    await deleteFork(config)
+  }
   execSync(
     `${sudopref}docker-compose -f ${dockerComposeDir} -p ens-test-env down`,
     {
@@ -68,20 +72,28 @@ function wrapTry(fn, ...args) {
   }
 }
 
-export const main = async (config) => {
+export const main = async (config, useTenderly, allowTenderlyDelete) => {
   const cmdsToRun = []
   const inxsToFinishOnExit = []
 
   if (config.docker.sudo) {
     sudopref = 'sudo '
   }
+
+  if (useTenderly) {
+    console.log('USING TENDERLY!')
+    config.docker.graphRpcUrl = await generateFork(config)
+  }
+
   inxsToFinishOnExit.push(0)
   dockerComposeDir = config.docker.file
     ? path.resolve(process.env.INIT_CWD, config.docker.file)
     : path.resolve(__dirname, './docker-compose.yml')
   dockerEnv = {
     NETWORK: config.docker.network,
-    DOCKER_RPC_URL: 'http://host.docker.internal:8545',
+    DOCKER_RPC_URL: config.docker.graphRpcUrl
+      ? config.docker.graphRpcUrl
+      : 'http://host.docker.internal:8545',
     DATA_FOLDER: path.resolve(process.env.INIT_CWD, config.paths.data),
   }
   cmdsToRun.push({
@@ -105,10 +117,15 @@ export const main = async (config) => {
 
   config.deployCommand &&
     cmdsToRun.push({
-      command: `yarn wait-on tcp:8545 && ${config.deployCommand}`,
+      command: `${useTenderly ? '' : 'yarn wait-on tcp:8545 && '}${
+        config.deployCommand
+      }`,
       name: 'deploy',
       prefixColor: 'blue.bold',
       cwd: process.env.INIT_CWD,
+      env: {
+        TENDERLY_RPC_URL: useTenderly ? config.docker.graphRpcUrl : undefined,
+      },
     })
 
   if (cmdsToRun.length > 0) {
@@ -118,9 +135,13 @@ export const main = async (config) => {
 
     commands.forEach((cmd) => {
       if (inxsToFinishOnExit.includes(cmd.index)) {
-        cmd.close.subscribe(() => cleanup(false, commands))
+        cmd.close.subscribe(() =>
+          cleanup(false, commands, config, useTenderly && allowTenderlyDelete),
+        )
       }
-      cmd.error.subscribe(() => cleanup(true, commands))
+      cmd.error.subscribe(() =>
+        cleanup(true, commands, config, useTenderly && allowTenderlyDelete),
+      )
     })
   }
 }

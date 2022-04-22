@@ -1754,9 +1754,10 @@ __metadata:
   linkType: hard
 
 "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env::locator=ens-app-v2%40workspace%3A.":
-  version: 0.1.3
-  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=a64266&locator=ens-app-v2%40workspace%3A."
+  version: 0.1.4
+  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=0d5226&locator=ens-app-v2%40workspace%3A."
   dependencies:
+    "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
     cli-progress: ^3.10.0
     concurrently: ^7.1.0
@@ -1765,12 +1766,13 @@ __metadata:
     ganache: ^7.0.3
     got: ^12.0.2
     lz4: ^0.6.5
+    node-fetch: ^3.2.3
     progress-stream: ^2.0.0
     tar-fs: ^2.1.1
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 56f9b3490ce6ccdd0ebffa309937d2b436f8d1ff48c39dd43880be7ffbfc847ae8ae1d0abe28688512a531b551107d55e5e1ef09ae12fe380bb17b35f567854c
+  checksum: 8197c5b8d7e137148f4d73d94227bc438587dfcbaa2324eaf3cec84ec95eecf68a0df4139cc2a246e73b66b2541560769012a84ea69a0d73a4cfb25e4a5ca2d7
   languageName: node
   linkType: hard
 
@@ -2433,7 +2435,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/wallet@npm:5.6.0, @ethersproject/wallet@npm:^5.0.0, @ethersproject/wallet@npm:^5.4.0":
+"@ethersproject/wallet@npm:5.6.0, @ethersproject/wallet@npm:^5.0.0, @ethersproject/wallet@npm:^5.4.0, @ethersproject/wallet@npm:^5.6.0":
   version: 5.6.0
   resolution: "@ethersproject/wallet@npm:5.6.0"
   dependencies:
@@ -9759,6 +9761,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"data-uri-to-buffer@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "data-uri-to-buffer@npm:4.0.0"
+  checksum: a010653869abe8bb51259432894ac62c52bf79ad761d418d94396f48c346f2ae739c46b254e8bb5987bded8a653d467db1968db3a69bab1d33aa5567baa5cfc7
+  languageName: node
+  linkType: hard
+
 "data-urls@npm:^2.0.0":
   version: 2.0.0
   resolution: "data-urls@npm:2.0.0"
@@ -12826,6 +12835,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"fetch-blob@npm:^3.1.2, fetch-blob@npm:^3.1.4":
+  version: 3.1.5
+  resolution: "fetch-blob@npm:3.1.5"
+  dependencies:
+    node-domexception: ^1.0.0
+    web-streams-polyfill: ^3.0.3
+  checksum: 6493f21bfe196798343431d20c0284835202728d076dd2cbf502a2846679f9265f3b0c3a7224750ae1a770b925da09e592b05fe7c3a22ca27794a39a0039ab21
+  languageName: node
+  linkType: hard
+
 "fetch-ponyfill@npm:^4.0.0":
   version: 4.1.0
   resolution: "fetch-ponyfill@npm:4.1.0"
@@ -13167,6 +13186,15 @@ __metadata:
     combined-stream: ^1.0.6
     mime-types: ^2.1.12
   checksum: 10c1780fa13dbe1ff3100114c2ce1f9307f8be10b14bf16e103815356ff567b6be39d70fc4a40f8990b9660012dc24b0f5e1dde1b6426166eb23a445ba068ca3
+  languageName: node
+  linkType: hard
+
+"formdata-polyfill@npm:^4.0.10":
+  version: 4.0.10
+  resolution: "formdata-polyfill@npm:4.0.10"
+  dependencies:
+    fetch-blob: ^3.1.2
+  checksum: 82a34df292afadd82b43d4a740ce387bc08541e0a534358425193017bf9fb3567875dc5f69564984b1da979979b70703aa73dee715a17b6c229752ae736dd9db
   languageName: node
   linkType: hard
 
@@ -18277,6 +18305,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-domexception@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "node-domexception@npm:1.0.0"
+  checksum: ee1d37dd2a4eb26a8a92cd6b64dfc29caec72bff5e1ed9aba80c294f57a31ba4895a60fd48347cf17dd6e766da0ae87d75657dfd1f384ebfa60462c2283f5c7f
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:2.6.1":
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
@@ -18295,6 +18330,17 @@ __metadata:
     encoding:
       optional: true
   checksum: 8d816ffd1ee22cab8301c7756ef04f3437f18dace86a1dae22cf81db8ef29c0bf6655f3215cb0cdb22b420b6fe141e64b26905e7f33f9377a7fa59135ea3e10b
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^3.2.3":
+  version: 3.2.3
+  resolution: "node-fetch@npm:3.2.3"
+  dependencies:
+    data-uri-to-buffer: ^4.0.0
+    fetch-blob: ^3.1.4
+    formdata-polyfill: ^4.0.10
+  checksum: 6f702b2683d6e1c097e99888bedaac4625d6895f2a8a60573a2bc04916f5577ea61d274f26e308c08cfb724b23d45de7d3514c14b59e0293e9809c66c88ac12c
   languageName: node
   linkType: hard
 
@@ -23840,6 +23886,13 @@ __metadata:
     "@zxing/text-encoding":
       optional: true
   checksum: 2234a2b122f41006ce07859b3c0bf2e18f46144fda2907d5db0b571b76aa5c26977c646100ad9c00d2f8a4f6f2b848bc02147845d8c447ab365ec4eff376338d
+  languageName: node
+  linkType: hard
+
+"web-streams-polyfill@npm:^3.0.3":
+  version: 3.2.1
+  resolution: "web-streams-polyfill@npm:3.2.1"
+  checksum: b119c78574b6d65935e35098c2afdcd752b84268e18746606af149e3c424e15621b6f1ff0b42b2676dc012fc4f0d313f964b41a4b5031e525faa03997457da02
   languageName: node
   linkType: hard
 
