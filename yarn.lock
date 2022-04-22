@@ -1755,7 +1755,7 @@ __metadata:
 
 "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env::locator=ens-app-v2%40workspace%3A.":
   version: 0.1.4
-  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=0d5226&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=24ce6e&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1763,7 +1763,7 @@ __metadata:
     concurrently: ^7.1.0
     dotenv: ^16.0.0
     fs-extra: ^10.0.1
-    ganache: ^7.0.3
+    ganache: ^7.0.4
     got: ^12.0.2
     lz4: ^0.6.5
     node-fetch: ^3.2.3
@@ -1772,7 +1772,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 8197c5b8d7e137148f4d73d94227bc438587dfcbaa2324eaf3cec84ec95eecf68a0df4139cc2a246e73b66b2541560769012a84ea69a0d73a4cfb25e4a5ca2d7
+  checksum: 21f47a37e1b6ef059f5c83f675189f1ace7715c4667b7cdc2fb31517b5d82391f6297389567a5563cc93b86267827a9eec57c32a5dddb9c30c3e2dde0fe113ae
   languageName: node
   linkType: hard
 
@@ -13402,7 +13402,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ganache@npm:^7.0.3, ganache@npm:^7.0.4":
+"ganache@npm:^7.0.4":
   version: 7.0.4
   resolution: "ganache@npm:7.0.4"
   dependencies:
