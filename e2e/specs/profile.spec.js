@@ -24,7 +24,7 @@ describe('Profile', () => {
 
     cy.get('[placeholder="Search for a name"]').type('jefflau')
     cy.get('[data-testid="search-button"]', {
-      timeout: 25000,
+      timeout: 100000,
     }).click()
 
     cy.get('[data-testid="address-profile-button-eth"]', {
