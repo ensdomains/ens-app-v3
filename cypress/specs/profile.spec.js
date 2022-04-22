@@ -1,4 +1,7 @@
 describe('Profile', () => {
+  before(() => {
+    cy.intercept('http://localhost:8000/**')
+  })
   it('should allow user to connect', () => {
     cy.visit('/')
     cy.contains('Connect').click()
