@@ -10,7 +10,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const metadataHost = ''
   const metadataUrl = `${metadataHost}/name/0x{id}`
 
-  console.log('Deploying NameWrapper...')
+  console.log('Deploying NameWrapper...', `[Using: ${deployer}]`)
 
   const StaticMetadataService = await deploy('StaticMetadataService', {
     from: deployer,

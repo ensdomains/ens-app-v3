@@ -49,9 +49,13 @@ const clean = async (eventType = '', ...args) => {
 }
 
 const main = async () => {
-  log('Creating test environment...')
-  const createRun = await exec('yarn kube:create')
-  log(createRun.stdout)
+  if (!isCI) {
+    log('Creating test environment...')
+    const createRun = await exec('yarn kube:create')
+    log(createRun.stdout)
+  } else {
+    log('Skipping create since CI is enabled')
+  }
   log('Waiting for ready...')
   for (let iw = 0; iw < 10; iw++) {
     try {
@@ -120,6 +124,7 @@ const main = async () => {
       stdio: 'inherit',
       env: process.env,
     })
+    contractsRun.on('error', clean.bind(null, 'error'))
     await new Promise((resolve) => contractsRun.on('exit', resolve))
   }
   let synpressRun
@@ -143,8 +148,8 @@ const main = async () => {
     })
   }
   if (synpressRun) {
-    synpressRun.on('exit', clean.bind(null, 'exit'))
     synpressRun.on('error', clean.bind(null, 'error'))
+    synpressRun.on('exit', clean.bind(null, 'exit'))
     spawns.push(synpressRun)
   }
 }

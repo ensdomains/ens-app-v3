@@ -54,6 +54,10 @@ jobs:
 
       - run: yarn e2e
 
+      - name: Cleanup Kubernetes
+        if: always()
+        run: yarn kube:delete
+
       - uses: actions/upload-artifact@v2
         if: failure()
         with:
