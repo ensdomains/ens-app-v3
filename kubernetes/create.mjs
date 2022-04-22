@@ -125,7 +125,11 @@ const main = async () => {
       env: process.env,
     })
     contractsRun.on('error', clean.bind(null, 'error'))
-    await new Promise((resolve) => contractsRun.on('exit', resolve))
+    await new Promise((resolve) =>
+      contractsRun.on('exit', (code, signal) =>
+        code === 0 ? resolve() : clean('error', code, signal),
+      ),
+    )
   }
   let synpressRun
   if (withSynpress && isCI) {
