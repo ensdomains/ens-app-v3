@@ -28,12 +28,6 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Get and modify .env file
-        run: |
-          cp .env.local.example .env.local
-          sed -i 's@\(FORK_RPC_URL\=\).*@\1${{ secrets.ROPSTEN_FORK_RPC_URL }}@' .env.local
-          cat .env >> $GITHUB_ENV
-
       - id: 'auth'
         uses: 'google-github-actions/auth@v0'
         with:
