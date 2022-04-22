@@ -67,22 +67,27 @@ const main = async () => {
       await new Promise((r) => setTimeout(r, 1000))
     }
   }
-  log('Attaching...')
-  spawns.push(
-    spawn('yarn', ['kube:attach'], {
-      stdio: ['ignore', process.stdout, process.stderr],
-    }),
-  )
+  if (!isCI) {
+    log('Attaching...')
+    spawns.push(
+      spawn('yarn', ['kube:attach'], {
+        stdio: ['ignore', process.stdout, process.stderr],
+      }),
+    )
+  } else {
+    log('Not attaching since CI is enabled')
+  }
   let ip
   let i = 0
   while (!ip && i < 10) {
-    await new Promise((resolve) => setTimeout(resolve, 10000))
     log(`Checking for IP... (attempt ${i + 1}/10)`)
     try {
       const attempt = await exec('yarn kube:get:ip')
       ip = attempt.stdout.trim()
+      break
     } catch {}
     i += 1
+    await new Promise((resolve) => setTimeout(resolve, 10000))
   }
   if (!ip) {
     await clean()
