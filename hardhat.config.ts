@@ -32,7 +32,7 @@ const config: HardhatUserConfig = {
       url: process.env.RPC_URL,
       chainId: parseInt(process.env.CHAIN_ID!),
       accounts: {
-        mnemonic: process.env.SECRET_WORDS!,
+        mnemonic: 'test test test test test test test test test test test junk',
       },
       live: false,
     },
