@@ -18,7 +18,9 @@ const killChildren = (cmdName, pid = 0, error) => {
     if (cmdName.startsWith('yarn ')) {
       cmdName = cmdName.replace('yarn ', 'yarn.*')
     }
-    let children = wrapTry(execSync, `pgrep -f "${cmdName}"`)
+    let children = wrapTry(execSync, `pgrep -f "${cmdName} || exit 0"`, {
+      stdio: 'ignore',
+    })
     while (children) {
       const child = children
         .toString()
@@ -26,8 +28,12 @@ const killChildren = (cmdName, pid = 0, error) => {
         .find((x) => parseInt(x))
 
       if (child) {
-        const res = wrapTry(execSync, `pgrep -P ${child.trim()}`)
-        wrapTry(execSync, `${sudopref}kill -9 ${child.trim()}`)
+        const res = wrapTry(execSync, `pgrep -P ${child.trim()}`, {
+          stdio: 'ignore',
+        })
+        wrapTry(execSync, `${sudopref}kill -9 ${child.trim()} || exit 0`, {
+          stdio: 'ignore',
+        })
         if (res && !res.toString().includes('No such process')) {
           children = res
         } else {
@@ -38,7 +44,9 @@ const killChildren = (cmdName, pid = 0, error) => {
       }
     }
     if (pid) {
-      wrapTry(execSync, `${sudopref}kill -2 ${pid}`)
+      wrapTry(execSync, `${sudopref}kill -2 ${pid} || exit 0`, {
+        stdio: 'ignore',
+      })
     } else {
       process.exit(error ? 1 : 0)
     }
