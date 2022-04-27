@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.112",
+  "version": "0.1.122",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
     "dev:glocal": "NODE_NO_WARNINGS=1 NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 yarn dev",

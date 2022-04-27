@@ -1,3 +1,12 @@
+import { radii } from './border';
+import { colors } from './color';
+import { space } from './space';
+export declare const breakpoints: {
+    sm: number;
+    md: number;
+    lg: number;
+    xl: number;
+};
 export declare const tokens: {
     borderStyles: {
         none: string;
@@ -26,18 +35,31 @@ export declare const tokens: {
         light: {
             blue: string;
             green: string;
-            red: string;
+            grey: string;
             indigo: string;
             orange: string;
             pink: string;
             purple: string;
+            red: string;
             teal: string;
             yellow: string;
-            grey: string;
+            accent: string;
+            accentSecondary: string;
+            accentSecondaryHover: string;
+            accentTertiary: string;
+            accentText: string;
+            accentGradient: string;
             background: string;
+            backgroundHide: string;
             backgroundSecondary: string;
             backgroundTertiary: string;
+            border: string;
+            borderSecondary: string;
+            borderTertiary: string;
             foreground: string;
+            foregroundSecondary: string;
+            foregroundSecondaryHover: string;
+            foregroundTertiary: string;
             groupBackground: string;
             groupBorder: string;
             gradients: {
@@ -45,22 +67,39 @@ export declare const tokens: {
                 green: string;
                 red: string;
             };
+            text: string;
+            textPlaceholder: string;
+            textSecondary: string;
+            textTertiary: string;
         };
         dark: {
             blue: string;
             green: string;
-            red: string;
+            grey: string;
             indigo: string;
             orange: string;
             pink: string;
             purple: string;
+            red: string;
             teal: string;
             yellow: string;
-            grey: string;
+            accent: string;
+            accentSecondary: string;
+            accentSecondaryHover: string;
+            accentTertiary: string;
+            accentText: string;
+            accentGradient: string;
             background: string;
+            backgroundHide: string;
             backgroundSecondary: string;
             backgroundTertiary: string;
+            border: string;
+            borderSecondary: string;
+            borderTertiary: string;
             foreground: string;
+            foregroundSecondary: string;
+            foregroundSecondaryHover: string;
+            foregroundTertiary: string;
             groupBackground: string;
             groupBorder: string;
             gradients: {
@@ -68,6 +107,10 @@ export declare const tokens: {
                 green: string;
                 red: string;
             };
+            text: string;
+            textPlaceholder: string;
+            textSecondary: string;
+            textTertiary: string;
         };
     };
     fonts: {
@@ -223,6 +266,20 @@ export declare const tokens: {
         '72': string;
         '80': string;
         '96': string;
+        '112': string;
+        '128': string;
+        '144': string;
+        '168': string;
+        '192': string;
+        '224': string;
+        '256': string;
+        '288': string;
+        '320': string;
+        '1/4': string;
+        '1/3': string;
+        '1/2': string;
+        '2/3': string;
+        '3/4': string;
         auto: string;
         full: string;
         fit: string;
@@ -232,6 +289,74 @@ export declare const tokens: {
         viewWidth: string;
         none: string;
     };
+    breakpoints: {
+        sm: number;
+        md: number;
+        lg: number;
+        xl: number;
+    };
+    transitionDuration: {
+        '75': string;
+        '100': string;
+        '150': string;
+        '200': string;
+        '300': string;
+        '500': string;
+        '700': string;
+        '1000': string;
+    };
+    transitionTimingFunction: {
+        linear: string;
+        in: string;
+        out: string;
+        inOut: string;
+    };
+    boxShadows: {
+        light: {
+            '0': string;
+            '0.02': string;
+            '0.25': string;
+            '0.5': string;
+            '1': string;
+        };
+        dark: {
+            '0': string;
+            '0.02': string;
+            '0.25': string;
+            '0.5': string;
+            '1': string;
+        };
+    };
+    accentsRaw: {
+        dark: {
+            blue: string;
+            green: string;
+            grey: string;
+            indigo: string;
+            orange: string;
+            pink: string;
+            purple: string;
+            red: string;
+            teal: string;
+            yellow: string;
+        };
+        light: {
+            blue: string;
+            green: string;
+            grey: string;
+            indigo: string;
+            orange: string;
+            pink: string;
+            purple: string;
+            red: string;
+            teal: string;
+            yellow: string;
+        };
+    };
 };
 export type { Accent, Mode } from './color';
 export declare type Tokens = typeof tokens;
+export declare type Breakpoints = keyof typeof breakpoints;
+export declare type Space = keyof typeof space;
+export declare type Colors = keyof typeof colors.light;
+export declare type Radii = keyof typeof radii;

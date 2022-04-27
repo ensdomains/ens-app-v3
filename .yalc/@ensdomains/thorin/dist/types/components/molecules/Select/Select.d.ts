@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FieldBaseProps } from '../../atoms/Field';
-declare type NativeSelectProps = React.AllHTMLAttributes<HTMLSelectElement>;
+declare type NativeSelectProps = React.AllHTMLAttributes<HTMLDivElement>;
 declare type OptionProps = {
     value: string;
     label?: string;

@@ -1,12 +1,14 @@
 import * as React from 'react';
-import { BoxProps } from '../Box';
-import * as styles from './styles.css';
+import { Space } from '@/src/tokens';
+declare type Shape = 'circle' | 'square';
 export declare type Props = {
     as?: 'img' | React.ComponentType;
     label: string;
     placeholder?: boolean;
     noBorder?: boolean;
-    size?: BoxProps['height'];
+    size?: Space;
     src?: string;
-} & styles.Variants;
-export declare const Avatar: ({ as, label, placeholder, noBorder, shape, size, src, }: Props) => JSX.Element;
+    shape?: Shape;
+};
+export declare const Avatar: ({ label, placeholder, noBorder, shape, size, src, }: Props) => JSX.Element;
+export {};

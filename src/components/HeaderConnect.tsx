@@ -1,9 +1,10 @@
+import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import {
   Button,
-  IconEthTransparentInverted,
+  EthTransparentInvertedSVG,
   Profile,
-  vars,
+  tokens,
 } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useTranslation } from 'next-i18next'
@@ -11,9 +12,17 @@ import { useRouter } from 'next/router'
 import styled from 'styled-components'
 import { useAccount } from 'wagmi'
 
-const StyledIconEthTransparentInverted = styled(IconEthTransparentInverted)`
-  margin-right: calc(${vars.space['2']} * -1);
-  margin-left: calc(${vars.space['2']} * -1);
+const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
+  color: white;
+  display: block;
+  margin-right: calc(${tokens.space['2']} * -1);
+  margin-left: calc(${tokens.space['2']} * -1);
+  height: ${tokens.space['4']};
+  width: ${tokens.space['4']};
+  ${mq.small.min`
+    height: ${tokens.space['6']};
+    width: ${tokens.space['6']};
+  `}
 `
 
 export const HeaderConnect = () => {

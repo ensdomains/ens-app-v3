@@ -1,1 +1,0 @@
-export { IconDuplicate } from './IconDuplicate';

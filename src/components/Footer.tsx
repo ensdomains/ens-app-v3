@@ -1,5 +1,7 @@
-import { Box, Stack } from '@ensdomains/thorin'
+import mq from '@app/mediaQuery'
+import { tokens } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
+import styled from 'styled-components'
 import SocialDiscord from '../assets/social/SocialDiscord.svg'
 import SocialDiscourse from '../assets/social/SocialDiscourse.svg'
 import SocialDiscourseColour from '../assets/social/SocialDiscourseColour.svg'
@@ -10,27 +12,54 @@ import SocialYoutube from '../assets/social/SocialYoutube.svg'
 import { SocialIcon } from './SocialIcon'
 import { StyledNavLink } from './StyledNavLink'
 
+const Container = styled.footer`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: ${tokens.space['2.5']};
+  ${mq.medium.min`
+    flex-direction: row;
+  `}
+`
+
+const LinkContainer = styled.div`
+  display: flex;
+  direction: row;
+  align-items: center;
+  flex-gap: ${tokens.space['4']};
+  gap: ${tokens.space['4']};
+`
+
+const FlexSeparator = styled.div`
+  flex-grow: 1;
+  margin-bottom: ${tokens.space['2.5']};
+  ${mq.medium.min`
+    margin-bottom: 0;
+  `}
+`
+
+const SocialIconContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  flex-gap: ${tokens.space['2']};
+  gap: ${tokens.space['2']};
+`
+
 export const Footer = () => {
   const { t } = useTranslation('common')
 
   return (
-    <Box
-      as="footer"
-      display="flex"
-      flexDirection={{ xs: 'column', md: 'row' }}
-      alignItems="center"
-      marginTop="2.5"
-    >
-      <Stack direction="horizontal" align="center">
+    <Container>
+      <LinkContainer>
         <StyledNavLink disabled href="/bug-bounty">
           {t('navigation.bugBounty')}
         </StyledNavLink>
         <StyledNavLink disabled href="/media-kit">
           {t('navigation.mediaKit')}
         </StyledNavLink>
-      </Stack>
-      <Box flexGrow={1} marginBottom={{ xs: '2.5', md: '0' }} />
-      <Stack direction="horizontal">
+      </LinkContainer>
+      <FlexSeparator />
+      <SocialIconContainer>
         <SocialIcon
           Icon={SocialTwitter}
           color="#5298FF"
@@ -61,7 +90,7 @@ export const Footer = () => {
           color="#EE1919"
           href="https://www.youtube.com/ensdomains"
         />
-      </Stack>
-    </Box>
+      </SocialIconContainer>
+    </Container>
   )
 }

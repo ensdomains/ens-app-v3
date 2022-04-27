@@ -1,1 +1,0 @@
-export { IconClose } from './IconClose';

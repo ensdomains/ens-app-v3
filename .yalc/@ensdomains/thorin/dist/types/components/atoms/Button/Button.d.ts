@@ -1,9 +1,10 @@
 import * as React from 'react';
 import { ReactNodeNoStrings } from '../../../types';
-import { BoxProps } from '../Box';
-import * as styles from './styles.css';
-declare type NativeButtonProps = React.AllHTMLAttributes<HTMLButtonElement>;
+export declare type Size = 'extraSmall' | 'small' | 'medium';
+declare type NativeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
 declare type NativeAnchorProps = React.AllHTMLAttributes<HTMLAnchorElement>;
+declare type Variant = 'primary' | 'secondary' | 'action' | 'transparent';
+declare type Tone = 'accent' | 'blue' | 'green' | 'red';
 declare type BaseProps = {
     /** Centers text and reserves space for icon and spinner */
     center?: boolean;
@@ -15,27 +16,27 @@ declare type BaseProps = {
     /** Shows loading spinner inside button */
     loading?: boolean;
     /** Constrains button to specific shape */
-    shape?: styles.Shape;
+    shape?: 'square' | 'circle';
     /** Sets dimensions and layout  */
-    size?: styles.Size;
+    size?: Size;
     /** Adds ReactNode after children */
     suffix?: ReactNodeNoStrings;
     tabIndex?: NativeButtonProps['tabIndex'];
     type?: NativeButtonProps['type'];
-    variant?: styles.Variant;
-    width?: BoxProps['width'];
-    zIndex?: BoxProps['zIndex'];
+    variant?: Variant;
+    width?: string;
+    zIndex?: string;
     pressed?: boolean;
     shadowless?: boolean;
     onClick?: React.MouseEventHandler<HTMLElement> | undefined;
 };
 declare type WithTone = {
-    tone?: styles.Tone;
+    tone?: Tone;
     variant?: 'primary' | 'secondary';
 };
 declare type WithoutTone = {
     tone?: never;
-    variant?: styles.Variant;
+    variant?: Variant;
 };
 declare type WithAnchor = {
     as?: 'a';

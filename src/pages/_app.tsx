@@ -17,11 +17,18 @@ import { createGlobalStyle } from 'styled-components'
 import { chain, WagmiProvider } from 'wagmi'
 import '../styles.css'
 
+const theme: DefaultTheme = {
+  mode: 'light',
+}
+
 const GlobalStyle = createGlobalStyle`
 html,
 body {
   padding: 0;
   margin: 0;
+}
+
+*, ::before, ::after {
   font-family: Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -87,7 +94,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             provider={provider}
           >
             <EnsProvider>
-              <ThemeProvider>
+              <ThemeProvider theme={theme}>
                 <BreakpointProvider queries={breakpoints}>
                   <Component {...pageProps} />
                 </BreakpointProvider>

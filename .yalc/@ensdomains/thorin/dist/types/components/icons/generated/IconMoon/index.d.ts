@@ -1,1 +1,0 @@
-export { IconMoon } from './IconMoon';

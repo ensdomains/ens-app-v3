@@ -1853,21 +1853,17 @@ __metadata:
   linkType: hard
 
 "@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
-  version: 0.1.0
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f1f231&locator=ens-app-v2%40workspace%3A."
+  version: 0.5.0
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=fa72d1&locator=ens-app-v2%40workspace%3A."
   dependencies:
-    "@vanilla-extract/css": ^1.6.8
-    "@vanilla-extract/css-utils": ^0.1.2
-    "@vanilla-extract/dynamic": ^2.0.2
-    "@vanilla-extract/recipes": ^0.2.3
-    "@vanilla-extract/sprinkles": ^1.3.3
     clsx: ^1.1.1
     focus-visible: ^5.2.0
     lodash: ^4.17.21
   peerDependencies:
     react: ^17
     react-dom: ^17
-  checksum: 6b83a65b70ff730ee82d86152aa0892497d58eb831a77dcb2ec5697fab8a0dd2728805f660b3393173e703179c17a60ac97dcd4e6af6719b52f12164a86a5543
+    styled-components: ^5.3.3
+  checksum: f41a2c789a9162fd450cb140623911b99d7975f19374bfc6d241ad0786b5c296d80aee6ee33b1f9d044fa697ac33fe228b6ae72cd4e938601085de5fdb1310d4
   languageName: node
   linkType: hard
 
@@ -5148,14 +5144,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/css-utils@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@vanilla-extract/css-utils@npm:0.1.2"
-  checksum: 002c65889910c5a1f6672f2f0451e9667aa2a5e17eeb58cf14f4eda1869c6eed9a6a25951ffa444650a65919ecb61831c05380707ab787568be10927653ed53c
-  languageName: node
-  linkType: hard
-
-"@vanilla-extract/css@npm:^1.6.6, @vanilla-extract/css@npm:^1.6.8":
+"@vanilla-extract/css@npm:^1.6.6":
   version: 1.6.8
   resolution: "@vanilla-extract/css@npm:1.6.8"
   dependencies:
@@ -5189,16 +5178,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@vanilla-extract/recipes@npm:^0.2.3":
-  version: 0.2.4
-  resolution: "@vanilla-extract/recipes@npm:0.2.4"
-  peerDependencies:
-    "@vanilla-extract/css": ^1.0.0
-  checksum: 4814aacbba325407857cf71a1685ec5415fef7376255422244fc18f710f811bc542e67087e22040016dfc664a47d04394e9f0905adf6411311e90acb13c560b0
-  languageName: node
-  linkType: hard
-
-"@vanilla-extract/sprinkles@npm:^1.3.3, @vanilla-extract/sprinkles@npm:^1.4.0":
+"@vanilla-extract/sprinkles@npm:^1.4.0":
   version: 1.4.0
   resolution: "@vanilla-extract/sprinkles@npm:1.4.0"
   peerDependencies:

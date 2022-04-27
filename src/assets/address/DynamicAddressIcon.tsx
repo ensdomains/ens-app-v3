@@ -13,7 +13,7 @@ export const addressIconTypes = {
 export const DynamicAddressIcon = ({
   name,
   ...props
-}: {
+}: JSX.IntrinsicAttributes & {
   name: keyof typeof addressIconTypes
 }) => {
   const Icon = addressIconTypes[name]

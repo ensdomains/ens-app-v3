@@ -1,6 +1,19 @@
-.yarn/**/* linguist-generated
-.yalc/**/* linguist-generated
-.pnp.cjs linguist-generated
-.pnp.loader.mjs linguist-generated
-yarn.lock linguist-generated
-yalc.lock linguist-generated
+.yarn/**/*       linguist-generated -diff
+.yalc/**/*       linguist-generated -diff
+.pnp.cjs         text linguist-generated -diff
+.pnp.loader.mjs  text linguist-generated -diff
+yarn.lock        text linguist-generated -diff
+yalc.lock        text linguist-generated -diff
+*.lock           text linguist-generated -diff
+
+# Archives
+*.gz              binary
+*.tar             binary
+*.zip             binary
+
+# Fonts
+*.ttf             binary
+*.eot             binary
+*.otf             binary
+*.woff            binary
+*.woff2           binary

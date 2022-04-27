@@ -1,1 +1,0 @@
-export { IconPlusSmall } from './IconPlusSmall';

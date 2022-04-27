@@ -1,51 +1,74 @@
+/* eslint-disable jsx-a11y/click-events-have-key-events */
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+/* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useGetDomainFromInput } from '@app/hooks/useGetDomainFromInput'
 import { useInitial } from '@app/hooks/useInitial'
+import mq from '@app/mediaQuery'
 import {
-  Box,
-  IconArrowCircle,
-  IconCancelCircle,
+  ArrowCircleSVG,
+  CancelCircleSVG,
   Input,
   Spinner,
-  vars,
+  tokens,
 } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 import { useEffect, useRef, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-const SearchArrowButton = styled(Box)<{ danger?: boolean }>`
+const Container = styled.div<{ $size: 'large' | 'extraLarge' }>`
+  width: 100%;
+  ${({ $size }) =>
+    $size === 'extraLarge' &&
+    mq.medium.min`
+    padding-left: 48px;
+    padding-right: 48px;
+  `}
+`
+
+const SearchArrowButton = styled.div<{ danger?: boolean }>`
+  display: block;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
-  color: ${({ danger }) => (danger ? vars.colors.red : vars.colors.accent)};
-  width: ${vars.space['7']};
-  height: ${vars.space['7']};
-  margin-right: ${vars.space['2']};
+  color: ${({ danger, theme }) =>
+    danger ? tokens.colors[theme.mode].red : tokens.colors[theme.mode].accent};
+  width: ${tokens.space['7']};
+  height: ${tokens.space['7']};
+  margin-right: ${tokens.space['2']};
   &:hover {
     filter: brightness(1.05);
     transform: translateY(-1px);
   }
 `
 
-const SearchInputWrapper = styled(Box)<{ $size: 'large' | 'extraLarge' }>`
-  box-shadow: ${vars.shadows['0.25']} ${vars.colors.foregroundSecondary};
-  border-radius: ${vars.radii['2.5xLarge']};
+const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
+  box-shadow: ${({ theme }) => tokens.boxShadows[theme.mode]['0.25']};
+  border-radius: ${tokens.radii['2.5xLarge']};
   border-width: 1px;
-  border-color: ${vars.colors.borderTertiary};
+  border-color: ${({ theme }) => tokens.colors[theme.mode].borderTertiary};
   width: 100%;
 
-  ${({ $size }) =>
+  ${({ $size, theme }) =>
     $size === 'large' &&
     `
     transition: all 0.35s cubic-bezier(1, 0, 0.1, 1.6);
-    max-width: ${vars.space['80']};
+    max-width: ${tokens.space['80']};
     &:focus-within {
-      max-width: calc(${vars.space['80']} + ${vars.space['24']});
+      max-width: calc(${tokens.space['80']} + ${tokens.space['24']});
     }
-    box-shadow: ${vars.shadows['0.25']} ${vars.colors.foregroundSecondary};
+    box-shadow: ${tokens.boxShadows[theme.mode]['0.25']};
     & input::placeholder {
-      color: ${vars.colors.textTertiary};
+      color: ${tokens.colors[theme.mode].textTertiary};
     }
   `}
+`
+
+const StyledInputParent = (size: 'large' | 'extraLarge') => css`
+  border-radius: ${tokens.radii['2.5xLarge']};
+  background-color: ${({ theme }) =>
+    size === 'large'
+      ? tokens.colors[theme.mode].background
+      : tokens.colors[theme.mode].backgroundSecondary};
 `
 
 const setSearchedVal = debounce(
@@ -95,41 +118,37 @@ export const SearchInput = ({
     if (profile && searchedVal === inputVal && !loading) {
       if (valid) {
         return (
-          <Box role="button" onClick={handleSearch}>
+          <div role="button" onClick={handleSearch}>
             <SearchArrowButton
               data-testid="search-button"
-              as={IconArrowCircle}
+              as={ArrowCircleSVG}
             />
-          </Box>
+          </div>
         )
       }
       if (!valid && inputVal.length >= 3) {
         return (
-          <Box onClick={() => setInputVal('')}>
+          <div onClick={() => setInputVal('')}>
             <SearchArrowButton
               data-testid="search-invalid"
-              as={IconCancelCircle}
+              as={CancelCircleSVG}
             />
-          </Box>
+          </div>
         )
       }
     }
     return (
-      <Box opacity="50" marginRight="2">
+      <div style={{ opacity: 0.5, marginRight: '8px' }}>
         <Spinner color="foreground" />
-      </Box>
+      </div>
     )
   }
 
   return (
-    <Box
-      paddingX={size === 'extraLarge' ? { xs: '0', md: '12' } : '0'}
-      width="full"
-    >
+    <Container $size={size}>
       <SearchInputWrapper $size={size}>
         <Input
           size={size}
-          borderRadius="2.5xLarge"
           label="Name search"
           hideLabel
           placeholder="Search for a name"
@@ -147,12 +166,10 @@ export const SearchInput = ({
           suffix={SuffixElement()}
           autoComplete="off"
           autoCorrect="off"
-          backgroundColor={
-            size === 'large' ? 'background' : 'backgroundSecondary'
-          }
+          parentStyles={StyledInputParent(size)}
           spellCheck="false"
         />
       </SearchInputWrapper>
-    </Box>
+    </Container>
   )
 }

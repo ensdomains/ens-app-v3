@@ -1,22 +1,35 @@
 import * as React from 'react';
-import { BoxProps } from '../..';
+import { Props as ButtonProps } from '@/src/components/atoms/Button';
+import { Colors } from '@/src/tokens';
 export declare type DropdownItem = {
     label: string;
     onClick(): void;
-    color?: BoxProps['color'];
+    color?: Colors;
     disabled?: boolean;
 };
-export declare type BaseProps = {
-    items: DropdownItem[];
-    isOpen: boolean;
-    setIsOpen: (isOpen: boolean) => void;
-    children: React.ReactNode;
+declare type Props = {
+    children?: React.ReactNode;
+    buttonProps?: ButtonProps;
     inner?: boolean;
+    chevron?: boolean;
     align?: 'left' | 'right';
     shortThrow?: boolean;
-    keepOnTop?: boolean;
+    keepMenuOnTop?: boolean;
+    items: DropdownItem[];
+    size?: 'small' | 'medium';
+    label?: React.ReactNode;
+    isOpen?: boolean;
+};
+declare type PropsWithIsOpen = {
+    isOpen: boolean;
+    setIsOpen: React.Dispatch<React.SetStateAction<boolean>>;
+};
+declare type PropsWithoutIsOpen = {
+    isOpen?: never;
+    setIsOpen?: never;
 };
 export declare const Dropdown: {
-    ({ items, isOpen, setIsOpen, children, inner, align, shortThrow, keepOnTop, }: BaseProps): JSX.Element;
+    ({ children, buttonProps, items, inner, chevron, align, shortThrow, keepMenuOnTop, size, label, ...props }: Props & (PropsWithIsOpen | PropsWithoutIsOpen)): JSX.Element;
     displayName: string;
 };
+export {};

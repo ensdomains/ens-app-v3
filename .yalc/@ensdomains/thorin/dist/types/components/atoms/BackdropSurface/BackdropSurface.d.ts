@@ -1,2 +1,2 @@
-import { BoxProps } from '../Box';
-export declare const BackdropSurface: ({ ...props }: BoxProps) => JSX.Element;
+import { ReactElement } from 'react';
+export declare const BackdropSurface: (props: ReactElement) => JSX.Element;

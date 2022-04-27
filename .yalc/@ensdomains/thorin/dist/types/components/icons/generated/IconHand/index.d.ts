@@ -1,1 +1,0 @@
-export { IconHand } from './IconHand';

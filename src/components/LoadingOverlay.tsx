@@ -1,22 +1,24 @@
-import { Box, Spinner, Typography } from '@ensdomains/thorin'
+import { Heading, Spinner, tokens } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
+import styled from 'styled-components'
+
+const Container = styled.div`
+  flex-grow: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex-gap: ${tokens.space['4']};
+  gap: ${tokens.space['4']};
+`
 
 export const LoadingOverlay = () => {
   const { t } = useTranslation('common')
 
   return (
-    <Box
-      flexGrow={1}
-      display="flex"
-      alignItems="center"
-      justifyContent="center"
-      flexDirection="row"
-      gap="4"
-    >
-      <Typography size="headingOne" weight="bold">
-        {t('loading')}
-      </Typography>
+    <Container>
+      <Heading level="1">{t('loading')}</Heading>
       <Spinner size="large" color="accent" />
-    </Box>
+    </Container>
   )
 }

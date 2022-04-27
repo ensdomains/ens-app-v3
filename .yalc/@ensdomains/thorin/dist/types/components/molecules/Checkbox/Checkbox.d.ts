@@ -14,6 +14,6 @@ export declare const Checkbox: React.ForwardRefExoticComponent<FieldBaseProps & 
     onBlur?: NativeInputProps['onBlur'];
     variant?: "switch" | "regular" | undefined;
     color?: "grey" | "white" | undefined;
-    size?: "medium" | "large" | "small" | undefined;
+    size?: "small" | "medium" | "large" | undefined;
 } & React.RefAttributes<HTMLInputElement>>;
 export {};
