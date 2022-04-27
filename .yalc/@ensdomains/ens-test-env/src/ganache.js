@@ -36,6 +36,9 @@ export const main = async (config) => {
       mnemonic: config.docker.secretWords,
       unlockedAccounts: config.docker.unlockedAccounts || [],
     },
+    database: {
+      dbPath: config.docker.dbPath,
+    },
   })
 
   server.listen(8545, '0.0.0.0', (err) => {

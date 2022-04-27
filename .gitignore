@@ -58,9 +58,8 @@ yarn-error.log*
 /archives
 /data
 /test-environment
+/ganache
 
 # hardhat
 /cache
 /artifacts
-
-.time

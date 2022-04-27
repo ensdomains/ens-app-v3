@@ -13,6 +13,7 @@ module.exports = {
     forkRpcUrl: process.env.FORK_RPC_URL,
     secretWords: process.env.SECRET_WORDS,
     unlockedAccounts: ['0xa303ddC620aa7d1390BACcc8A495508B183fab59'],
+    dbPath: './ganache',
   },
   archive: {
     subgraphId: process.env.SUBGRAPH_ID,

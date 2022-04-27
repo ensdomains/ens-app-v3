@@ -52,6 +52,13 @@ jobs:
           mkdir ./data
           tar -I lz4 -xf ./archives/archive.tar.lz4 -C ./data
 
+      - name: Get ganache cache
+        uses: actions/cache@v3
+        id: ganache-cache
+        with:
+          path: ./ganache
+          key: ganache
+
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
