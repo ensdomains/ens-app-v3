@@ -7,7 +7,7 @@
       "replaced": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin"
     },
     "@ensdomains/ensjs": {
-      "signature": "6b5acd19f58a8f7a32106af6786ea91a",
+      "signature": "bd74a3e02645ef872650ee4f6694307d",
       "pure": true,
       "replaced": "portal:.yalc/@ensdomains/ensjs"
     },

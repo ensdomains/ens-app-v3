@@ -1,15 +1,17 @@
 import { ENSArgs } from '..';
-export declare function _getOwner({ contracts }: ENSArgs<'contracts'>, name: string): Promise<{
-    registryOwner: any;
-    nameWrapperOwner: any;
-    registrarOwner: any;
-}>;
-export declare function getOwner({ contracts }: ENSArgs<'contracts'>, name: string): Promise<{
-    owner: any;
-    ownershipLevel: string;
-    registrant?: undefined;
-} | {
-    registrant: any;
-    owner: any;
-    ownershipLevel: string;
-} | null>;
+declare const _default: {
+    raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
+        to: string;
+        data: string;
+    }>;
+    decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<{
+        owner: any;
+        ownershipLevel: string;
+        registrant?: undefined;
+    } | {
+        registrant: any;
+        owner: any;
+        ownershipLevel: string;
+    } | null>;
+};
+export default _default;

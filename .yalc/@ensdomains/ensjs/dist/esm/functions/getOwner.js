@@ -1,49 +1,44 @@
 import { ethers } from 'ethers';
-export async function _getOwner({ contracts }, name) {
-    const multicall = await contracts?.getMulticall();
+import { labelhash } from '../utils/labels';
+const raw = async ({ contracts, multicallWrapper }, name) => {
     const registry = await contracts?.getRegistry();
     const baseRegistrar = await contracts?.getBaseRegistrar();
     const nameWrapper = await contracts?.getNameWrapper();
     const namehash = ethers.utils.namehash(name);
     const labels = name.split('.');
     const registryData = {
-        target: registry.address,
-        callData: registry.interface.encodeFunctionData('owner', [namehash]),
+        to: registry.address,
+        data: registry.interface.encodeFunctionData('owner', [namehash]),
     };
     const nameWrapperData = {
-        target: nameWrapper.address,
-        callData: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
+        to: nameWrapper.address,
+        data: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
     };
     const registrarData = {
-        target: baseRegistrar.address,
-        callData: baseRegistrar.interface.encodeFunctionData('ownerOf', [
-            ethers.utils.solidityKeccak256(['string'], [labels[0]]),
+        to: baseRegistrar.address,
+        data: baseRegistrar.interface.encodeFunctionData('ownerOf', [
+            labelhash(labels[0]),
         ]),
     };
     const data = [registryData, nameWrapperData];
     if (labels.length == 2 && labels[1] === 'eth') {
         data.push(registrarData);
     }
-    const returnedData = await multicall.callStatic.tryAggregate(false, data);
-    const decodedData = [
-        returnedData[0][1],
-        returnedData[1][1],
-        returnedData[2]?.[1],
-    ].map((ret) => ret &&
+    return multicallWrapper.raw(data);
+};
+const decode = async ({ contracts, multicallWrapper }, data, name) => {
+    if (data === null)
+        return null;
+    const result = await multicallWrapper.decode(data);
+    if (result === null)
+        return null;
+    const nameWrapper = await contracts?.getNameWrapper();
+    const decodedData = [result[0][1], result[1][1], result[2]?.[1]].map((ret) => ret &&
         ret !== '0x' &&
         ethers.utils.defaultAbiCoder.decode(['address'], ret));
     const registryOwner = decodedData[0][0];
     const nameWrapperOwner = decodedData[1][0];
     const registrarOwner = decodedData[2]?.[0];
-    return {
-        registryOwner,
-        nameWrapperOwner,
-        registrarOwner,
-    };
-}
-export async function getOwner({ contracts }, name) {
-    const nameWrapper = await contracts?.getNameWrapper();
-    const { registryOwner, nameWrapperOwner, registrarOwner } = await _getOwner({ contracts }, name);
     const labels = name.split('.');
     // check for only .eth names
     if (labels[labels.length - 1] === 'eth') {
@@ -103,4 +98,5 @@ export async function getOwner({ contracts }, name) {
     }
     // for anything else, return null
     return null;
-}
+};
+export default { raw, decode };

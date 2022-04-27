@@ -17,7 +17,7 @@ import type {
   getHistoryWithDetail,
 } from './functions/getHistory'
 import type getName from './functions/getName'
-import type { getOwner } from './functions/getOwner'
+import type getOwner from './functions/getOwner'
 import type getProfile from './functions/getProfile'
 import type getRecords from './functions/getRecords'
 import type getResolver from './functions/getResolver'
@@ -82,19 +82,36 @@ export type RawFunction = {
   decode: (...args: any[]) => Promise<any>
 }
 
+export type BatchFunctionResult<F extends RawFunction> = {
+  args: Parameters<OmitFirstArg<F['raw']>>
+  raw: F['raw']
+  decode: F['decode']
+}
+
+type BatchFunction<F extends RawFunction> = (
+  ...args: Parameters<OmitFirstArg<F['raw']>>
+) => BatchFunctionResult<F>
+
+export type RawFunctionWithBatch = {
+  batch: BatchFunction<any>
+} & RawFunction
+
 interface GeneratedRawFunction<F extends RawFunction>
   extends Function,
     RawFunction {
   (...args: Parameters<OmitFirstArg<F['raw']>>): ReturnType<
     OmitFirstTwoArgs<F['decode']>
   >
+  batch: BatchFunction<F>
 }
 
 type CombineFunctionDeps<F> = F extends RawFunction
   ? FunctionDeps<F['raw']> | FunctionDeps<F['decode']>
   : never
 
-export interface GenericGeneratedRawFunction extends Function, RawFunction {}
+export interface GenericGeneratedRawFunction
+  extends Function,
+    RawFunctionWithBatch {}
 
 export class ENS {
   [x: string]: any
@@ -147,8 +164,14 @@ export class ENS {
     path: string,
     dependencies: FunctionDeps<F>,
     exportName: string = 'default',
-    subFunc?: 'raw' | 'decode' | 'combine',
+    subFunc?: 'raw' | 'decode' | 'combine' | 'batch',
+    passthrough?: RawFunction,
   ): Function => {
+    // if batch is specified, create batch func
+    if (subFunc === 'batch') {
+      return (...args: any[]) => ({ args, ...passthrough })
+    }
+
     const thisRef = this
     const mainFunc = async function (...args: any[]) {
       // check the initial provider and set if it exists
@@ -159,7 +182,7 @@ export class ENS {
         `./functions/${path}`
       )
 
-      // if combine isn't specified, run normally'
+      // if combine isn't specified, run normally
       // otherwise, create a function from the raw and decode functions
       if (subFunc !== 'combine') {
         // get the function to call
@@ -199,6 +222,13 @@ export class ENS {
         exportName,
         'decode',
       ) as (data: any, ...args: any[]) => Promise<any>
+      mainFunc.batch = this.importGenerator<F>(
+        path,
+        dependencies,
+        exportName,
+        'batch',
+        { raw: mainFunc.raw as any, decode: mainFunc.decode as any },
+      )
     }
 
     return mainFunc as Function
@@ -357,17 +387,10 @@ export class ENS {
     '_getText',
   )
 
-  public _getOwner = this.generateFunction<typeof getOwner>(
-    'getOwner',
-    ['contracts'],
-    '_getOwner',
-  )
-
-  public getOwner = this.generateFunction<typeof getOwner>(
-    'getOwner',
-    ['contracts'],
-    'getOwner',
-  )
+  public getOwner = this.generateRawFunction<typeof getOwner>('getOwner', [
+    'contracts',
+    'multicallWrapper',
+  ])
 
   public getExpiry = this.generateRawFunction<typeof getExpiry>('getExpiry', [
     'contracts',

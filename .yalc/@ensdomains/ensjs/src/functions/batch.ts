@@ -1,17 +1,15 @@
-import { ENSArgs, GenericGeneratedRawFunction } from '..'
-
-type BatchItem = [GenericGeneratedRawFunction, ...any[]]
+import { BatchFunctionResult, ENSArgs, RawFunction } from '..'
 
 const raw = async (
   { multicallWrapper }: ENSArgs<'multicallWrapper'>,
-  ...items: BatchItem[]
+  ...items: BatchFunctionResult<RawFunction>[]
 ) => {
   const rawDataArr: { to: string; data: string }[] = await Promise.all(
-    items.map(([func, ...args]) => {
-      if (!func.raw) {
-        throw new Error(`${func.name} is not batchable`)
+    items.map(({ args, raw }, i: number) => {
+      if (!raw) {
+        throw new Error(`Function ${i} is not batchable`)
       }
-      return func.raw(...args)
+      return raw(...args)
     }),
   )
   return multicallWrapper.raw(rawDataArr)
@@ -20,14 +18,14 @@ const raw = async (
 const decode = async (
   { multicallWrapper }: ENSArgs<'multicallWrapper'>,
   data: string,
-  ...items: BatchItem[]
-) => {
+  ...items: BatchFunctionResult<RawFunction>[]
+): Promise<any[] | null> => {
   const response = await multicallWrapper.decode(data)
   if (!response) return null
 
   return Promise.all(
     response.map((ret: any, i: number) =>
-      items[i][0].decode(ret.returnData, ...items[i].slice(1)),
+      items[i].decode(ret.returnData, ...items[i].args),
     ),
   )
 }

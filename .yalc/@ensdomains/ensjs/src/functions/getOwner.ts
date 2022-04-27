@@ -1,11 +1,11 @@
 import { ethers } from 'ethers'
 import { ENSArgs } from '..'
+import { labelhash } from '../utils/labels'
 
-export async function _getOwner(
-  { contracts }: ENSArgs<'contracts'>,
+const raw = async (
+  { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   name: string,
-) {
-  const multicall = await contracts?.getMulticall()!
+) => {
   const registry = await contracts?.getRegistry()!
   const baseRegistrar = await contracts?.getBaseRegistrar()!
   const nameWrapper = await contracts?.getNameWrapper()!
@@ -14,33 +14,40 @@ export async function _getOwner(
   const labels = name.split('.')
 
   const registryData = {
-    target: registry.address,
-    callData: registry.interface.encodeFunctionData('owner', [namehash]),
+    to: registry.address,
+    data: registry.interface.encodeFunctionData('owner', [namehash]),
   }
   const nameWrapperData = {
-    target: nameWrapper.address,
-    callData: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
+    to: nameWrapper.address,
+    data: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
   }
   const registrarData = {
-    target: baseRegistrar.address,
-    callData: baseRegistrar.interface.encodeFunctionData('ownerOf', [
-      ethers.utils.solidityKeccak256(['string'], [labels[0]]),
+    to: baseRegistrar.address,
+    data: baseRegistrar.interface.encodeFunctionData('ownerOf', [
+      labelhash(labels[0]),
     ]),
   }
 
-  const data: any[] = [registryData, nameWrapperData]
+  const data: { to: string; data: string }[] = [registryData, nameWrapperData]
 
   if (labels.length == 2 && labels[1] === 'eth') {
     data.push(registrarData)
   }
 
-  const returnedData = await multicall.callStatic.tryAggregate(false, data)
+  return multicallWrapper.raw(data)
+}
 
-  const decodedData = [
-    returnedData[0][1],
-    returnedData[1][1],
-    returnedData[2]?.[1],
-  ].map(
+const decode = async (
+  { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
+  data: string,
+  name: string,
+) => {
+  if (data === null) return null
+  const result = await multicallWrapper.decode(data)
+  if (result === null) return null
+  const nameWrapper = await contracts?.getNameWrapper()!
+
+  const decodedData = [result[0][1], result[1][1], result[2]?.[1]].map(
     (ret) =>
       ret &&
       ret !== '0x' &&
@@ -53,22 +60,6 @@ export async function _getOwner(
     decodedData[2] as ethers.utils.Result | undefined
   )?.[0]
 
-  return {
-    registryOwner,
-    nameWrapperOwner,
-    registrarOwner,
-  }
-}
-
-export async function getOwner(
-  { contracts }: ENSArgs<'contracts'>,
-  name: string,
-) {
-  const nameWrapper = await contracts?.getNameWrapper()!
-  const { registryOwner, nameWrapperOwner, registrarOwner } = await _getOwner(
-    { contracts },
-    name,
-  )
   const labels = name.split('.')
 
   // check for only .eth names
@@ -135,3 +126,4 @@ export async function getOwner(
   // for anything else, return null
   return null
 }
+export default { raw, decode }

@@ -131,7 +131,7 @@ const ProfilePage: NextPage = () => {
       data: { chain },
     },
   ] = useNetwork()
-  const { ready, getOwner, getExpiry, getSubnames } = useEns()
+  const { ready, getOwner, getExpiry, getSubnames, batch } = useEns()
   const [
     {
       data: { ens: ensData, address } = { ens: undefined, address: undefined },
@@ -142,27 +142,31 @@ const ProfilePage: NextPage = () => {
   const name = isSelf && ensData?.name ? ensData.name : _name
 
   const { profile, loading: profileLoading } = useGetDomainFromInput(name)
-  const { data: ownerData, isLoading: ownerLoading } = useQuery(
-    ['getOwner', name],
-    () => getOwner(name),
+  const { data: batchData, isLoading: batchLoading } = useQuery(
+    ['batch', 'getOwner', 'getExpiry', name],
+    () => batch(getOwner.batch(name), getExpiry.batch(name)),
+    {
+      enabled: !!(name && profile),
+    },
   )
-  const { data: expiryData, isLoading: expiryLoading } = useQuery(
-    ['getExpiry', name],
-    () => getExpiry(name),
-  )
+
+  const ownerData = batchData?.[0] as Awaited<ReturnType<typeof getOwner>>
+  const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
 
   const expiryDate = expiryData?.expiry
 
   const { data: subnameData, isLoading: subnamesLoading } = useQuery(
     ['getSubnames', name],
     () => getSubnames(name),
+    {
+      enabled: !!(name && profile),
+    },
   )
 
   const isLoading =
     !ready ||
     profileLoading ||
-    ownerLoading ||
-    expiryLoading ||
+    batchLoading ||
     subnamesLoading ||
     accountLoading
 

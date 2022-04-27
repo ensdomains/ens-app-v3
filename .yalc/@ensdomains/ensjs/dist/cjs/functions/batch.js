@@ -1,11 +1,11 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const raw = async ({ multicallWrapper }, ...items) => {
-    const rawDataArr = await Promise.all(items.map(([func, ...args]) => {
-        if (!func.raw) {
-            throw new Error(`${func.name} is not batchable`);
+    const rawDataArr = await Promise.all(items.map(({ args, raw }, i) => {
+        if (!raw) {
+            throw new Error(`Function ${i} is not batchable`);
         }
-        return func.raw(...args);
+        return raw(...args);
     }));
     return multicallWrapper.raw(rawDataArr);
 };
@@ -13,7 +13,7 @@ const decode = async ({ multicallWrapper }, data, ...items) => {
     const response = await multicallWrapper.decode(data);
     if (!response)
         return null;
-    return Promise.all(response.map((ret, i) => items[i][0].decode(ret.returnData, ...items[i].slice(1))));
+    return Promise.all(response.map((ret, i) => items[i].decode(ret.returnData, ...items[i].args)));
 };
 exports.default = {
     raw,

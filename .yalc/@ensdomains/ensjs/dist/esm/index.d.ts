@@ -21,10 +21,20 @@ export declare type RawFunction = {
     }>;
     decode: (...args: any[]) => Promise<any>;
 };
+export declare type BatchFunctionResult<F extends RawFunction> = {
+    args: Parameters<OmitFirstArg<F['raw']>>;
+    raw: F['raw'];
+    decode: F['decode'];
+};
+declare type BatchFunction<F extends RawFunction> = (...args: Parameters<OmitFirstArg<F['raw']>>) => BatchFunctionResult<F>;
+export declare type RawFunctionWithBatch = {
+    batch: BatchFunction<any>;
+} & RawFunction;
 interface GeneratedRawFunction<F extends RawFunction> extends Function, RawFunction {
     (...args: Parameters<OmitFirstArg<F['raw']>>): ReturnType<OmitFirstTwoArgs<F['decode']>>;
+    batch: BatchFunction<F>;
 }
-export interface GenericGeneratedRawFunction extends Function, RawFunction {
+export interface GenericGeneratedRawFunction extends Function, RawFunctionWithBatch {
 }
 export declare class ENS {
     [x: string]: any;
@@ -84,11 +94,11 @@ export declare class ENS {
      */
     withProvider: (provider: ethers.providers.JsonRpcProvider) => ENS;
     batch: GeneratedRawFunction<{
-        raw: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, ...items: [GenericGeneratedRawFunction, ...any[]][]) => Promise<{
+        raw: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, ...items: BatchFunctionResult<RawFunction>[]) => Promise<{
             to: string;
             data: string;
         }>;
-        decode: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, data: string, ...items: [GenericGeneratedRawFunction, ...any[]][]) => Promise<any[] | null>;
+        decode: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, data: string, ...items: BatchFunctionResult<RawFunction>[]) => Promise<any[] | null>;
     }>;
     getProfile: (nameOrAddress: string, options?: {
         contentHash?: boolean | undefined;
@@ -318,10 +328,6 @@ export declare class ENS {
     }>;
     _getAddr: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string, coinType?: string | number | undefined, bypassFormat?: boolean | undefined) => Promise<{
-            /**
-             * Checks for an initial provider and if it exists, sets it as the provider
-             * @returns {Promise<void>} - A promise that resolves when the provider is checked, and set if needed
-             */
             to: string;
             data: string;
         }>;
@@ -344,24 +350,21 @@ export declare class ENS {
         }>;
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<any>;
     }>;
-    _getOwner: (name: string) => Promise<{
-        owner: any;
-        ownershipLevel: string;
-        registrant?: undefined;
-    } | {
-        registrant: any;
-        owner: any;
-        ownershipLevel: string;
-    } | null>;
-    getOwner: (name: string) => Promise<{
-        owner: any;
-        ownershipLevel: string;
-        registrant?: undefined;
-    } | {
-        registrant: any;
-        owner: any;
-        ownershipLevel: string;
-    } | null>;
+    getOwner: GeneratedRawFunction<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
+            to: string;
+            data: string;
+        }>;
+        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<{
+            owner: any;
+            ownershipLevel: string;
+            registrant?: undefined;
+        } | {
+            registrant: any;
+            owner: any;
+            ownershipLevel: string;
+        } | null>;
+    }>;
     getExpiry: GeneratedRawFunction<{
         raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
             to: string;

@@ -23,6 +23,7 @@
   "author": "TateB <yo@taytems.xyz>",
   "license": "MIT",
   "scripts": {
+    "env": "yarn ens-test-env",
     "generate-types": "ts-node scripts/runTypechain.ts",
     "generate-abis": "hardhat export-abi",
     "start": "ts-node --files src/index.test.ts",
@@ -46,5 +47,5 @@
   "peerDependencies": {
     "ethers": "*"
   },
-  "yalcSig": "6b5acd19f58a8f7a32106af6786ea91a"
+  "yalcSig": "bd74a3e02645ef872650ee4f6694307d"
 }

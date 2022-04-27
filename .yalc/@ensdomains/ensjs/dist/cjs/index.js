@@ -75,7 +75,11 @@ class ENS {
      * @param {string} subFunc - The type of function being imported
      * @returns {Function} - The generated wrapped function
      */
-    importGenerator = (path, dependencies, exportName = 'default', subFunc) => {
+    importGenerator = (path, dependencies, exportName = 'default', subFunc, passthrough) => {
+        // if batch is specified, create batch func
+        if (subFunc === 'batch') {
+            return (...args) => ({ args, ...passthrough });
+        }
         const thisRef = this;
         const mainFunc = async function (...args) {
             // check the initial provider and set if it exists
@@ -84,7 +88,7 @@ class ENS {
             const mod = await Promise.resolve().then(() => __importStar(require(
             /* webpackMode: "lazy", webpackChunkName: "[request]", webpackPreload: true */
             `./functions/${path}`)));
-            // if combine isn't specified, run normally'
+            // if combine isn't specified, run normally
             // otherwise, create a function from the raw and decode functions
             if (subFunc !== 'combine') {
                 // get the function to call
@@ -105,6 +109,7 @@ class ENS {
         if (subFunc === 'combine') {
             mainFunc.raw = this.importGenerator(path, dependencies, exportName, 'raw');
             mainFunc.decode = this.importGenerator(path, dependencies, exportName, 'decode');
+            mainFunc.batch = this.importGenerator(path, dependencies, exportName, 'batch', { raw: mainFunc.raw, decode: mainFunc.decode });
         }
         return mainFunc;
     };
@@ -183,8 +188,10 @@ class ENS {
     _getAddr = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getAddr');
     getText = this.generateRawFunction('getSpecificRecord', ['contracts', 'universalWrapper'], 'getText');
     _getText = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getText');
-    _getOwner = this.generateFunction('getOwner', ['contracts'], '_getOwner');
-    getOwner = this.generateFunction('getOwner', ['contracts'], 'getOwner');
+    getOwner = this.generateRawFunction('getOwner', [
+        'contracts',
+        'multicallWrapper',
+    ]);
     getExpiry = this.generateRawFunction('getExpiry', [
         'contracts',
         'multicallWrapper',

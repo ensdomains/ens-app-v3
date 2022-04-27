@@ -1,10 +1,9 @@
-import { ENSArgs, GenericGeneratedRawFunction } from '..';
-declare type BatchItem = [GenericGeneratedRawFunction, ...any[]];
+import { BatchFunctionResult, ENSArgs, RawFunction } from '..';
 declare const _default: {
-    raw: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, ...items: BatchItem[]) => Promise<{
+    raw: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, ...items: BatchFunctionResult<RawFunction>[]) => Promise<{
         to: string;
         data: string;
     }>;
-    decode: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, data: string, ...items: BatchItem[]) => Promise<any[] | null>;
+    decode: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, data: string, ...items: BatchFunctionResult<RawFunction>[]) => Promise<any[] | null>;
 };
 export default _default;

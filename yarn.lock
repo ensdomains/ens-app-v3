@@ -1798,7 +1798,7 @@ __metadata:
 
 "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
   version: 3.0.2
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=68957b&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=e69dc7&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -1809,7 +1809,7 @@ __metadata:
     graphql-request: ^4.1.0
   peerDependencies:
     ethers: "*"
-  checksum: 089a54e909af54bc87b76fe24a6d14906215d19a7300e3295bc140814642205140d7b825e2dd1d84cc56e3fc067eeec57c8c0ed62672dab3afb110f269a31283
+  checksum: 774da01c712385e2737127bcfacc4c7b5a79ae66e5a561c47856fa6b21520c76cca4184ce59be7f04e176afcdb243d789c01d828ea159440ea481430c6035214
   languageName: node
   linkType: hard
 
@@ -10765,7 +10765,7 @@ __metadata:
     styled-components: ^5.3.3
     supertest: ^6.1.6
     ts-node: ^10.7.0
-    typescript: 4.4.4
+    typescript: ^4.6.3
     wagmi: ^0.2.24
     wait-on: ^6.0.1
     walletlink: ^2.4.7
@@ -23173,23 +23173,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:4.4.4":
-  version: 4.4.4
-  resolution: "typescript@npm:4.4.4"
+"typescript@npm:^4.6.3":
+  version: 4.6.3
+  resolution: "typescript@npm:4.6.3"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 89ecb8436bb48ef5594d49289f5f89103071716b6e4844278f4fb3362856e31203e187a9c76d205c3f0b674d221a058fd28310dbcbcf5d95e9a57229bb5203f1
+  checksum: 255bb26c8cb846ca689dd1c3a56587af4f69055907aa2c154796ea28ee0dea871535b1c78f85a6212c77f2657843a269c3a742d09d81495b97b914bf7920415b
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@4.4.4#~builtin<compat/typescript>":
-  version: 4.4.4
-  resolution: "typescript@patch:typescript@npm%3A4.4.4#~builtin<compat/typescript>::version=4.4.4&hash=bda367"
+"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
+  version: 4.6.3
+  resolution: "typescript@patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=bda367"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 3d1b04449662193544b81d055479d03b4c5dca95f1a82f8922596f089d894c9fefbe16639d1d9dfe26a7054419645530cef44001bc17aed1fe1eb3c237e9b3c7
+  checksum: 6bf45caf847062420592e711bc9c28bf5f9a9a7fa8245343b81493e4ededae33f1774009d1234d911422d1646a2c839f44e1a23ecb111b40a60ac2ea4c1482a8
   languageName: node
   linkType: hard
 
