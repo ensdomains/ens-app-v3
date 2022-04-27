@@ -93,7 +93,7 @@ const TabWrapper = styled.div`
 const WrapperGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${tokens.space['4']};
+  gap: ${tokens.space['8']};
   align-self: center;
   justify-content: center;
   grid-template-areas: 'back-button tabs' 'details details' 'nft-details nft-details';

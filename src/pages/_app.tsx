@@ -1,7 +1,7 @@
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
-import { ThemeProvider } from '@ensdomains/thorin'
-import '@ensdomains/thorin/styles'
+import type { DefaultTheme } from '@ensdomains/thorin'
+import { ThorinGlobalStyles } from '@ensdomains/thorin'
 import {
   Chain,
   connectorsForWallets,
@@ -13,7 +13,7 @@ import { providers } from 'ethers'
 import { appWithTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
 import { QueryClient, QueryClientProvider } from 'react-query'
-import { createGlobalStyle } from 'styled-components'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { chain, WagmiProvider } from 'wagmi'
 import '../styles.css'
 
@@ -84,26 +84,21 @@ const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <>
-      <GlobalStyle />
-      <QueryClientProvider client={queryClient}>
-        <RainbowKitProvider chains={chains}>
-          <WagmiProvider
-            autoConnect
-            connectors={connectors}
-            provider={provider}
-          >
-            <EnsProvider>
-              <ThemeProvider theme={theme}>
-                <BreakpointProvider queries={breakpoints}>
-                  <Component {...pageProps} />
-                </BreakpointProvider>
-              </ThemeProvider>
-            </EnsProvider>
-          </WagmiProvider>
-        </RainbowKitProvider>
-      </QueryClientProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <RainbowKitProvider chains={chains}>
+        <WagmiProvider autoConnect connectors={connectors} provider={provider}>
+          <EnsProvider>
+            <ThemeProvider theme={theme}>
+              <BreakpointProvider queries={breakpoints}>
+                <GlobalStyle />
+                <ThorinGlobalStyles />
+                <Component {...pageProps} />
+              </BreakpointProvider>
+            </ThemeProvider>
+          </EnsProvider>
+        </WagmiProvider>
+      </RainbowKitProvider>
+    </QueryClientProvider>
   )
 }
 

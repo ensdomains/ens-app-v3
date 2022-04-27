@@ -1,4 +1,5 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
+import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { imageUrl } from '@app/utils/utils'
 import { Avatar, Heading, tokens, Typography } from '@ensdomains/thorin'
@@ -110,7 +111,11 @@ export const ProfileDetails = ({
   const getTextRecord = (key: string) => textRecords.find((x) => x.key === key)
   const otherRecords = [
     ...textRecords
-      .filter((x) => !supportedTexts.includes(x.key.toLowerCase()))
+      .filter(
+        (x) =>
+          !supportedTexts.includes(x.key.toLowerCase()) &&
+          !supportedProfileItems.includes(x.key.toLowerCase()),
+      )
       .map((x) => ({ ...x, type: 'text' })),
   ]
 
