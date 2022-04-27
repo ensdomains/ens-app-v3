@@ -4,13 +4,6 @@ import 'hardhat-dependency-compiler'
 import 'hardhat-deploy'
 import { HardhatUserConfig } from 'hardhat/config'
 
-console.log(
-  'HARDHAT CONFIG:',
-  process.env.RPC_URL,
-  process.env.CHAIN_ID,
-  process.env.SECRET_WORDS,
-)
-
 const config: HardhatUserConfig = {
   solidity: {
     compilers: [

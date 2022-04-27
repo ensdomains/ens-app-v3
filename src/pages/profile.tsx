@@ -12,7 +12,7 @@ import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
@@ -131,7 +131,7 @@ const ProfilePage: NextPage = () => {
       data: { chain },
     },
   ] = useNetwork()
-  const { ready, getOwner } = useEns()
+  const { ready, getOwner, getExpiry, getSubnames } = useEns()
   const [
     {
       data: { ens: ensData, address } = { ens: undefined, address: undefined },
@@ -143,22 +143,28 @@ const ProfilePage: NextPage = () => {
 
   const { profile, loading: profileLoading } = useGetDomainFromInput(name)
   const { data: ownerData, isLoading: ownerLoading } = useQuery(
-    `getOwner-${name}`,
+    ['getOwner', name],
     () => getOwner(name),
   )
+  const { data: expiryData, isLoading: expiryLoading } = useQuery(
+    ['getExpiry', name],
+    () => getExpiry(name),
+  )
 
-  const subdomainData: any[] = []
-  const subdomainLoading = false
+  const expiryDate = expiryData?.expiry
 
-  // const { data: subdomainData, loading: subdomainLoading } = useQuery(
-  //   GET_SUBDOMAINS_FROM_SUBGRAPH,
-  //   {
-  //     variables: {
-  //       id: _domain && getNamehash(_domain.name),
-  //     },
-  //     skip: !_domain || !_domain.name,
-  //   },
-  // )
+  const { data: subnameData, isLoading: subnamesLoading } = useQuery(
+    ['getSubnames', name],
+    () => getSubnames(name),
+  )
+
+  const isLoading =
+    !ready ||
+    profileLoading ||
+    ownerLoading ||
+    expiryLoading ||
+    subnamesLoading ||
+    accountLoading
 
   useProtectedRoute(
     '/',
@@ -173,17 +179,13 @@ const ProfilePage: NextPage = () => {
         : true),
   )
 
-  useEffect(() => console.log(profile, ownerData), [profile, ownerData])
-
-  const expiryDate = new Date()
-
   return (
     <Basic
       title={
         (_name === 'me' && 'Your Profile') ||
         (_name ? `${_name}'s Profile` : `Loading Profile`)
       }
-      loading={!(ready && !profileLoading && !ownerLoading && !accountLoading)}
+      loading={isLoading}
     >
       <WrapperGrid>
         <GridItem
@@ -209,7 +211,7 @@ const ProfilePage: NextPage = () => {
           </TabButton>
         </TabButtonWrapper>
         <GridItem $area="nft-details">
-          {ownerData && (
+          {ownerData && expiryDate && (
             <ProfileNftDetails
               name={name}
               selfAddress={address}
@@ -237,9 +239,9 @@ const ProfilePage: NextPage = () => {
               />
             ) : (
               <SubdomainDetails
-                subdomains={subdomainData}
+                subdomains={subnameData || []}
                 network={chain?.name || 'mainnet'}
-                loading={subdomainLoading}
+                loading={subnamesLoading}
               />
             )}
           </TabWrapper>

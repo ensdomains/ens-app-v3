@@ -1,6 +1,6 @@
 import { ethers } from 'ethers'
 import type { BaseRegistrarImplementation } from '../generated/BaseRegistrarImplementation'
-import type { DNCOCURP } from '../generated/DNCOCURP'
+import type { DoNotCallOnChainUniversalResolverProxy } from '../generated/DoNotCallOnChainUniversalResolverProxy'
 import type { ENSRegistry } from '../generated/ENSRegistry'
 import type { Multicall } from '../generated/Multicall'
 import type { NameWrapper } from '../generated/NameWrapper'
@@ -44,7 +44,10 @@ export default class ContractManager {
   public getRegistry = this.generateContractGetter<ENSRegistry>('registry')
   public getReverseRegistrar =
     this.generateContractGetter<ReverseRegistrar>('reverseRegistrar')
-  public getDNCOCURP = this.generateContractGetter<DNCOCURP>('DNCOCURP')
+  public getDNCOCURP =
+    this.generateContractGetter<DoNotCallOnChainUniversalResolverProxy>(
+      'doNotCallOnChainUniversalResolverProxy',
+    )
   public getNameWrapper =
     this.generateContractGetter<NameWrapper>('nameWrapper')
   public getBaseRegistrar =

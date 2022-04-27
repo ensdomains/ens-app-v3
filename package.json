@@ -3,9 +3,9 @@
   "version": "0.1.112",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
-    "dev:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens next dev",
+    "dev:glocal": "NODE_NO_WARNINGS=1 NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 yarn dev",
     "build": "next build",
-    "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens next build",
+    "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 next build",
     "start": "next start",
     "buildandstart:glocal": "yarn build:glocal && yarn start",
     "env": "yarn ens-test-env",
@@ -93,6 +93,7 @@
     "cypress": "^9.5.4",
     "cypress-wait-until": "^1.7.2",
     "dotenv": "^16.0.0",
+    "ens-contracts-main": "github:ensdomains/ens-contracts#head=master&commit=43b483db7ae3b13b985b3600779aa4e65ca22964",
     "ens-contracts-namewrapper": "github:ensdomains/ens-contracts#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375",
     "ens-contracts-universal": "github:ensdomains/ens-contracts#head=feature/record-proxy&commit=ec2657e78811ff9fa09436209798a6135ecca9b7",
     "eslint": "7.32.0",
@@ -129,7 +130,8 @@
   },
   "resolutions": {
     "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz",
-    "bn.js": "npm:bn.js@^5.2.0"
+    "bn.js": "npm:bn.js@^5.2.0",
+    "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13"
   },
   "packageManager": "yarn@3.2.0",
   "dependenciesMeta": {

@@ -11,160 +11,179 @@ import type {
 
 const _abi = [
   {
-    type: "constructor",
-    payable: false,
     inputs: [
       {
-        type: "address",
+        internalType: "address",
         name: "_registry",
-      },
-    ],
-  },
-  {
-    type: "error",
-    name: "OffchainLookup",
-    inputs: [
-      {
         type: "address",
-        name: "sender",
-      },
-      {
-        type: "string[]",
-        name: "urls",
-      },
-      {
-        type: "bytes",
-        name: "callData",
-      },
-      {
-        type: "bytes4",
-        name: "callbackFunction",
-      },
-      {
-        type: "bytes",
-        name: "extraData",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    type: "function",
-    name: "findResolver",
-    constant: true,
-    stateMutability: "view",
-    payable: false,
     inputs: [
       {
+        internalType: "address",
+        name: "sender",
+        type: "address",
+      },
+      {
+        internalType: "string[]",
+        name: "urls",
+        type: "string[]",
+      },
+      {
+        internalType: "bytes",
+        name: "callData",
         type: "bytes",
-        name: "name",
+      },
+      {
+        internalType: "bytes4",
+        name: "callbackFunction",
+        type: "bytes4",
+      },
+      {
+        internalType: "bytes",
+        name: "extraData",
+        type: "bytes",
       },
     ],
+    name: "OffchainLookup",
+    type: "error",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes",
+        name: "name",
+        type: "bytes",
+      },
+    ],
+    name: "findResolver",
     outputs: [
       {
+        internalType: "contract Resolver",
+        name: "",
         type: "address",
       },
       {
+        internalType: "bytes32",
+        name: "",
         type: "bytes32",
       },
     ],
+    stateMutability: "view",
+    type: "function",
   },
   {
-    type: "function",
-    name: "registry",
-    constant: true,
-    stateMutability: "view",
-    payable: false,
     inputs: [],
+    name: "registry",
     outputs: [
       {
+        internalType: "contract ENS",
+        name: "",
         type: "address",
       },
     ],
+    stateMutability: "view",
+    type: "function",
   },
   {
-    type: "function",
-    name: "resolve",
-    constant: true,
-    stateMutability: "view",
-    payable: false,
     inputs: [
       {
-        type: "bytes",
+        internalType: "bytes",
         name: "name",
+        type: "bytes",
       },
       {
-        type: "bytes",
+        internalType: "bytes",
         name: "data",
+        type: "bytes",
       },
     ],
+    name: "resolve",
     outputs: [
       {
+        internalType: "bytes",
+        name: "",
         type: "bytes",
       },
       {
+        internalType: "address",
+        name: "",
         type: "address",
       },
     ],
+    stateMutability: "view",
+    type: "function",
   },
   {
-    type: "function",
-    name: "resolveCallback",
-    constant: true,
-    stateMutability: "view",
-    payable: false,
     inputs: [
       {
-        type: "bytes",
+        internalType: "bytes",
         name: "response",
+        type: "bytes",
       },
       {
-        type: "bytes",
+        internalType: "bytes",
         name: "extraData",
+        type: "bytes",
       },
     ],
+    name: "resolveCallback",
     outputs: [
       {
+        internalType: "bytes",
+        name: "",
         type: "bytes",
       },
     ],
+    stateMutability: "view",
+    type: "function",
   },
   {
-    type: "function",
-    name: "reverse",
-    constant: true,
-    stateMutability: "view",
-    payable: false,
     inputs: [
       {
-        type: "bytes",
+        internalType: "bytes",
         name: "reverseNode",
+        type: "bytes",
       },
     ],
+    name: "reverse",
     outputs: [
       {
+        internalType: "string",
+        name: "",
         type: "string",
       },
       {
+        internalType: "bytes",
+        name: "",
         type: "bytes",
       },
     ],
+    stateMutability: "view",
+    type: "function",
   },
   {
-    type: "function",
-    name: "supportsInterface",
-    constant: true,
-    stateMutability: "view",
-    payable: false,
     inputs: [
       {
-        type: "bytes4",
+        internalType: "bytes4",
         name: "interfaceId",
+        type: "bytes4",
       },
     ],
+    name: "supportsInterface",
     outputs: [
       {
+        internalType: "bool",
+        name: "",
         type: "bool",
       },
     ],
+    stateMutability: "view",
+    type: "function",
   },
 ];
 

@@ -1,10 +1,34 @@
 import { keccak256 } from 'js-sha3'
-// eslint-disable-next-line import/no-cycle
-import {
-  decodeLabelhash,
-  encodeLabelhash,
-  isEncodedLabelhash,
-} from '../utils/utils'
+
+export function decodeLabelhash(hash: string) {
+  if (!(hash.startsWith('[') && hash.endsWith(']'))) {
+    throw Error(
+      'Expected encoded labelhash to start and end with square brackets',
+    )
+  }
+
+  if (hash.length !== 66) {
+    throw Error('Expected encoded labelhash to have a length of 66')
+  }
+
+  return `${hash.slice(1, -1)}`
+}
+
+export function encodeLabelhash(hash: string) {
+  if (!hash.startsWith('0x')) {
+    throw new Error('Expected label hash to start with 0x')
+  }
+
+  if (hash.length !== 66) {
+    throw new Error('Expected label hash to have a length of 66')
+  }
+
+  return `[${hash.slice(2)}]`
+}
+
+export function isEncodedLabelhash(hash: string) {
+  return hash.startsWith('[') && hash.endsWith(']') && hash.length === 66
+}
 
 function getLabels() {
   return JSON.parse(localStorage.getItem('labels') as string) || {}

@@ -34,6 +34,7 @@ export const main = async (config) => {
     },
     wallet: {
       mnemonic: config.docker.secretWords,
+      unlockedAccounts: config.docker.unlockedAccounts || [],
     },
   })
 

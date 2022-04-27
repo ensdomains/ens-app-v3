@@ -14,6 +14,7 @@ import styled from 'styled-components'
 
 type Subdomain = {
   name: string
+  truncatedName?: string
 }
 
 const SubdomainWrapper = styled(Box)`
@@ -38,6 +39,7 @@ const SubdomainWrapper = styled(Box)`
 const SubdomainItem = ({
   name,
   network,
+  truncatedName,
 }: Subdomain & {
   network: string
 }) => {
@@ -62,7 +64,7 @@ const SubdomainItem = ({
         <Stack direction="horizontal" justify="center" align="center" space="4">
           <Avatar label={name} src={src} placeholder={src === ''} size="9" />
           <Typography color="text" weight="bold" size="extraLarge">
-            {name}
+            {truncatedName || name}
           </Typography>
         </Stack>
         <IconArrowRight strokeWidth="0.75" color="textTertiary" />

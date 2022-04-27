@@ -17,33 +17,68 @@ const _abi = [
         name: "ensAddr",
         type: "address",
       },
-      {
-        internalType: "contract Resolver",
-        name: "resolverAddr",
-        type: "address",
-      },
     ],
-    payable: false,
     stateMutability: "nonpayable",
     type: "constructor",
   },
   {
-    constant: true,
-    inputs: [],
-    name: "ADDR_REVERSE_NODE",
-    outputs: [
+    anonymous: false,
+    inputs: [
       {
+        indexed: true,
+        internalType: "address",
+        name: "controller",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "enabled",
+        type: "bool",
+      },
+    ],
+    name: "ControllerChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+      {
+        indexed: true,
         internalType: "bytes32",
-        name: "",
+        name: "node",
         type: "bytes32",
       },
     ],
-    payable: false,
-    stateMutability: "view",
-    type: "function",
+    name: "ReverseClaimed",
+    type: "event",
   },
   {
-    constant: false,
     inputs: [
       {
         internalType: "address",
@@ -59,12 +94,39 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    constant: false,
+    inputs: [
+      {
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+    ],
+    name: "claimForAddr",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "address",
@@ -85,27 +147,42 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    payable: false,
     stateMutability: "nonpayable",
     type: "function",
   },
   {
-    constant: true,
-    inputs: [],
-    name: "defaultResolver",
-    outputs: [
+    inputs: [
       {
-        internalType: "contract Resolver",
+        internalType: "address",
         name: "",
         type: "address",
       },
     ],
-    payable: false,
+    name: "controllers",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
     stateMutability: "view",
     type: "function",
   },
   {
-    constant: true,
+    inputs: [],
+    name: "defaultResolver",
+    outputs: [
+      {
+        internalType: "contract NameResolver",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
     inputs: [],
     name: "ens",
     outputs: [
@@ -115,12 +192,10 @@ const _abi = [
         type: "address",
       },
     ],
-    payable: false,
     stateMutability: "view",
     type: "function",
   },
   {
-    constant: true,
     inputs: [
       {
         internalType: "address",
@@ -136,12 +211,61 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    payable: false,
     stateMutability: "pure",
     type: "function",
   },
   {
-    constant: false,
+    inputs: [],
+    name: "owner",
+    outputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [],
+    name: "renounceOwnership",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "controller",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "enabled",
+        type: "bool",
+      },
+    ],
+    name: "setController",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+    ],
+    name: "setDefaultResolver",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
     inputs: [
       {
         internalType: "string",
@@ -157,7 +281,53 @@ const _abi = [
         type: "bytes32",
       },
     ],
-    payable: false,
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+      {
+        internalType: "string",
+        name: "name",
+        type: "string",
+      },
+    ],
+    name: "setNameForAddr",
+    outputs: [
+      {
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "transferOwnership",
+    outputs: [],
     stateMutability: "nonpayable",
     type: "function",
   },

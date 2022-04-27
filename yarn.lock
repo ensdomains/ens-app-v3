@@ -1755,7 +1755,7 @@ __metadata:
 
 "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env::locator=ens-app-v2%40workspace%3A.":
   version: 0.1.4
-  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=846f98&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=756ecc&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1772,7 +1772,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 2e1c7fc312f46f3eb2ee37ab3425be84cfc64a063391a2a4c5daba64d96b162c9c1ce3b11b1146a4d8ec3fdf0e0766344b64151bfec0b423a7f20ba71af15cac
+  checksum: 2ca0a5e73c1558ba36e1317106c03475038a3607335fcc425fd96333ea392eabfb494b937cf778f500041184fd098cec35737001a570280b7e9e97ffd3e0d320
   languageName: node
   linkType: hard
 
@@ -1797,8 +1797,8 @@ __metadata:
   linkType: hard
 
 "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
-  version: 3.0.0
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=961d89&locator=ens-app-v2%40workspace%3A."
+  version: 3.0.2
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=68957b&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -1809,7 +1809,7 @@ __metadata:
     graphql-request: ^4.1.0
   peerDependencies:
     ethers: "*"
-  checksum: 4cc66538c86ac4b81706d6f06c7ac51ed1fac08a41eca650085ffbc2c0c047d7588a001147f50a21da4b9329455a3514352b7c224ec184add1450af3b58cb9a5
+  checksum: 089a54e909af54bc87b76fe24a6d14906215d19a7300e3295bc140814642205140d7b825e2dd1d84cc56e3fc067eeec57c8c0ed62672dab3afb110f269a31283
   languageName: node
   linkType: hard
 
@@ -3187,13 +3187,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@nomiclabs/hardhat-ethers@npm:^2.0.5":
-  version: 2.0.5
-  resolution: "@nomiclabs/hardhat-ethers@npm:2.0.5"
+"@nomiclabs/hardhat-ethers@npm:hardhat-deploy-ethers@0.3.0-beta.13":
+  version: 0.3.0-beta.13
+  resolution: "hardhat-deploy-ethers@npm:0.3.0-beta.13"
   peerDependencies:
     ethers: ^5.0.0
     hardhat: ^2.0.0
-  checksum: 07a5916f9fbb1efd24effc0d3949c70d1f45240d0bc4705653f1d378573c419c72d9a00f8db48b19c4aa27bd6c9dc0033aa40717cc9d77025a2cceeb59668463
+  checksum: 45206bf8d088cda08822ecf79d73e4027d8a4777cc23c3ef94568e316c45b8597130d72826fb2417edd32fe4b3dc54097161bef577663769b5c47b8262b983bb
   languageName: node
   linkType: hard
 
@@ -10737,6 +10737,7 @@ __metadata:
     cypress: ^9.5.4
     cypress-wait-until: ^1.7.2
     dotenv: ^16.0.0
+    ens-contracts-main: "github:ensdomains/ens-contracts#head=master&commit=43b483db7ae3b13b985b3600779aa4e65ca22964"
     ens-contracts-namewrapper: "github:ensdomains/ens-contracts#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375"
     ens-contracts-universal: "github:ensdomains/ens-contracts#head=feature/record-proxy&commit=ec2657e78811ff9fa09436209798a6135ecca9b7"
     eslint: 7.32.0
@@ -10801,6 +10802,18 @@ __metadata:
       unplugged: true
   languageName: unknown
   linkType: soft
+
+"ens-contracts-main@github:ensdomains/ens-contracts#head=master&commit=43b483db7ae3b13b985b3600779aa4e65ca22964":
+  version: 0.0.9
+  resolution: "ens-contracts-main@https://github.com/ensdomains/ens-contracts.git#commit=43b483db7ae3b13b985b3600779aa4e65ca22964"
+  dependencies:
+    "@ensdomains/buffer": ^0.0.13
+    "@ensdomains/solsha1": 0.0.3
+    "@openzeppelin/contracts": ^4.1.0
+    dns-packet: ^5.3.0
+  checksum: 711f6e55655c56f77380526b20e7a6c9c490e722d27d59534bb2f002515b4f56de893482fe9bd4409a5774980736ebdd96c93913220eea22b164027dbc4f0888
+  languageName: node
+  linkType: hard
 
 "ens-contracts-namewrapper@github:ensdomains/ens-contracts#commit=9b42c4b57e76aa4041847579c0bd5c3ca3cf6375":
   version: 0.0.9

@@ -1,13 +1,15 @@
 import { ethers } from 'ethers'
 import ContractManager from './contracts'
-import type { batch, _batch } from './functions/batch'
-import type {
+import type batch from './functions/batch'
+import {
+  multicallWrapper,
   resolverMulticallWrapper,
   universalWrapper,
 } from './functions/batchWrappers'
 import type burnFuses from './functions/burnFuses'
 import type createSubname from './functions/createSubname'
 import deleteSubname from './functions/deleteSubname'
+import getExpiry from './functions/getExpiry'
 import type getFuses from './functions/getFuses'
 import type {
   getHistory,
@@ -27,10 +29,12 @@ import type {
   _getContentHash,
   _getText,
 } from './functions/getSpecificRecord'
+import getSubnames from './functions/getSubnames'
 import type setName from './functions/setName'
 import type setRecords from './functions/setRecords'
 import type setResolver from './functions/setResolver'
 import type transferName from './functions/transferName'
+import type transferSubname from './functions/transferSubname'
 import type unwrapName from './functions/unwrapName'
 import type wrapName from './functions/wrapName'
 import GqlManager from './GqlManager'
@@ -264,16 +268,9 @@ export class ENS {
     return newENS
   }
 
-  public batch = this.generateFunction<typeof batch>(
-    'batch',
-    ['contracts'],
-    'batch',
-  )
-  public _batch = this.generateFunction<typeof _batch>(
-    'batch',
-    ['contracts'],
-    '_batch',
-  )
+  public batch = this.generateRawFunction<typeof batch>('batch', [
+    'multicallWrapper',
+  ])
 
   public getProfile = this.generateFunction<typeof getProfile>('getProfile', [
     'contracts',
@@ -372,6 +369,16 @@ export class ENS {
     'getOwner',
   )
 
+  public getExpiry = this.generateRawFunction<typeof getExpiry>('getExpiry', [
+    'contracts',
+    'multicallWrapper',
+  ])
+
+  public getSubnames = this.generateFunction<typeof getSubnames>(
+    'getSubnames',
+    ['gqlInstance'],
+  )
+
   public universalWrapper = this.generateRawFunction<typeof universalWrapper>(
     'batchWrappers',
     ['contracts'],
@@ -381,6 +388,12 @@ export class ENS {
   public resolverMulticallWrapper = this.generateRawFunction<
     typeof resolverMulticallWrapper
   >('batchWrappers', ['contracts'], 'resolverMulticallWrapper')
+
+  public multicallWrapper = this.generateRawFunction<typeof multicallWrapper>(
+    'batchWrappers',
+    ['contracts'],
+    'multicallWrapper',
+  )
 
   public setName = this.generateFunction<typeof setName>('setName', [
     'contracts',
@@ -425,6 +438,11 @@ export class ENS {
 
   public deleteSubname = this.generateFunction<typeof deleteSubname>(
     'deleteSubname',
+    ['contracts', 'provider', 'transferSubname'],
+  )
+
+  public transferSubname = this.generateFunction<typeof transferSubname>(
+    'transferSubname',
     ['contracts', 'provider'],
   )
 }

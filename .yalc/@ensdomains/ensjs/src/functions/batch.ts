@@ -1,27 +1,11 @@
-import { ethers } from 'ethers'
 import { ENSArgs, GenericGeneratedRawFunction } from '..'
-
-export async function _batch(
-  { contracts }: ENSArgs<'contracts'>,
-  transactions: ethers.providers.TransactionRequest[],
-  requireSuccess: boolean = false,
-) {
-  const multicall = await contracts?.getMulticall()!
-  return multicall.callStatic.tryAggregate(
-    requireSuccess,
-    transactions.map((tx) => ({
-      target: tx.to!,
-      callData: tx.data!,
-    })),
-  )
-}
 
 type BatchItem = [GenericGeneratedRawFunction, ...any[]]
 
-export async function batch(
-  { contracts }: ENSArgs<'contracts'>,
+const raw = async (
+  { multicallWrapper }: ENSArgs<'multicallWrapper'>,
   ...items: BatchItem[]
-) {
+) => {
   const rawDataArr: { to: string; data: string }[] = await Promise.all(
     items.map(([func, ...args]) => {
       if (!func.raw) {
@@ -30,10 +14,25 @@ export async function batch(
       return func.raw(...args)
     }),
   )
-  const response = await _batch({ contracts }, rawDataArr)
+  return multicallWrapper.raw(rawDataArr)
+}
+
+const decode = async (
+  { multicallWrapper }: ENSArgs<'multicallWrapper'>,
+  data: string,
+  ...items: BatchItem[]
+) => {
+  const response = await multicallWrapper.decode(data)
+  if (!response) return null
+
   return Promise.all(
     response.map((ret: any, i: number) =>
       items[i][0].decode(ret.returnData, ...items[i].slice(1)),
     ),
   )
+}
+
+export default {
+  raw,
+  decode,
 }

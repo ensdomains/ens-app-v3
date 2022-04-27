@@ -7,12 +7,12 @@
       "replaced": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin"
     },
     "@ensdomains/ensjs": {
-      "signature": "cb32b06840a432ef2016004ade769633",
+      "signature": "6b5acd19f58a8f7a32106af6786ea91a",
       "pure": true,
       "replaced": "portal:.yalc/@ensdomains/ensjs"
     },
     "@ensdomains/ens-test-env": {
-      "signature": "35e842885d7d9a97cd3b002b957e07cd",
+      "signature": "345d236d7ce48c0ea50ec1d8422b14bd",
       "file": true
     }
   }

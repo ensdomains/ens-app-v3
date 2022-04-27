@@ -1,3 +1,4 @@
+import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { hexEncodeName } from '../utils/hexEncodedName'
 
@@ -53,5 +54,38 @@ export const resolverMulticallWrapper = {
       return null
     }
     return response
+  },
+}
+
+export const multicallWrapper = {
+  raw: async function (
+    { contracts }: ENSArgs<'contracts'>,
+    transactions: ethers.providers.TransactionRequest[],
+    requireSuccess: boolean = false,
+  ) {
+    const multicall = await contracts?.getMulticall()!
+    return {
+      to: multicall.address,
+      data: multicall.interface.encodeFunctionData('tryAggregate', [
+        requireSuccess,
+        transactions.map((tx) => ({
+          target: tx.to!,
+          callData: tx.data!,
+        })),
+      ]),
+    }
+  },
+  decode: async function ({ contracts }: ENSArgs<'contracts'>, data: string) {
+    if (!data) return null
+    const multicall = await contracts?.getMulticall()!
+    try {
+      const [result] = multicall.interface.decodeFunctionResult(
+        'tryAggregate',
+        data,
+      )
+      return result
+    } catch {
+      return null
+    }
   },
 }

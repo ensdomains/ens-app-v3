@@ -11,6 +11,7 @@ module.exports = {
     forkRpcUrl: 'https://example.com',
     graphRpcUrl: 'http://localhost:8545',
     secretWords: 'test test test test test test test test test test test junk',
+    unlockedAccounts: ['0x0000000000000000000000000000000000000000'],
   },
   archive: {
     subgraphId: 'QmXxAE7Urtv6TPa8o8XmPwLVQNbH6r35hRKHP63udTxTNa',

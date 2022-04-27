@@ -14,7 +14,9 @@ export const useGetDomainFromInput = (input: string, skip?: any) => {
 
   const { ready, getProfile } = useEns()
 
-  const { data: profile } = useQuery(`profile-${name}`, () => getProfile(name))
+  const { data: profile } = useQuery(['getProfile', name], () =>
+    getProfile(name),
+  )
 
   useEffect(() => {
     let normalisedName

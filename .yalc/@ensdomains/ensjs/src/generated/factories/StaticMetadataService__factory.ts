@@ -11,31 +11,34 @@ import type {
 
 const _abi = [
   {
-    type: "constructor",
-    payable: false,
     inputs: [
       {
-        type: "string",
+        internalType: "string",
         name: "_metaDataUri",
+        type: "string",
       },
     ],
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
-    type: "function",
-    name: "uri",
-    constant: true,
-    stateMutability: "view",
-    payable: false,
     inputs: [
       {
+        internalType: "uint256",
+        name: "",
         type: "uint256",
       },
     ],
+    name: "uri",
     outputs: [
       {
+        internalType: "string",
+        name: "",
         type: "string",
       },
     ],
+    stateMutability: "view",
+    type: "function",
   },
 ];
 
