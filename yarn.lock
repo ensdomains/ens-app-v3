@@ -1755,7 +1755,7 @@ __metadata:
 
 "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env::locator=ens-app-v2%40workspace%3A.":
   version: 0.1.4
-  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=b46cf1&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ens-test-env@file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=1d2270&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1772,7 +1772,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 931ac0c6c275a53cdb2497ce521f046ca29f9dcf34eb711f94fa439a83dd93df731c97d2a3208fce472c6d2ef2a6207267da2f8a9dafcab5db8dfb8babc2d327
+  checksum: 0169c0f0a37174b6421ac99f8cc0ccaac10a3acff2b1e6cb3f411e5b3e730d2d97cd1df0f6e2a0eb644bbff5c0a1e93f8cc54bc80fbc8f30a23ac5dece47bdf9
   languageName: node
   linkType: hard
 

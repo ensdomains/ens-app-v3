@@ -84,7 +84,7 @@ const main = async () => {
     ).default
   }
   // if config doesn't have all data, throw error
-  if (!config || !config.docker || !config.archive) {
+  if (!config || !config.archive || !config.ethereum) {
     console.log('No valid config found')
     return help()
   }

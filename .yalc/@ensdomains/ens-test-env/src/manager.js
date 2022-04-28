@@ -81,27 +81,30 @@ function wrapTry(fn, ...args) {
 }
 
 export const main = async (config, useTenderly, allowTenderlyDelete) => {
+  let graphRpcUrl = 'http://host.docker.internal:8545'
   const cmdsToRun = []
   const inxsToFinishOnExit = []
 
-  if (config.docker.sudo) {
+  if (config.docker?.sudo) {
     sudopref = 'sudo '
+  }
+
+  if (config.graph?.bypassLocal) {
+    graphRpcUrl = config.ethereum.fork.url
   }
 
   if (useTenderly) {
     console.log('USING TENDERLY!')
-    config.docker.graphRpcUrl = await generateFork(config)
+    graphRpcUrl = await generateFork(config)
   }
 
   inxsToFinishOnExit.push(0)
-  dockerComposeDir = config.docker.file
+  dockerComposeDir = config.docker?.file
     ? path.resolve(process.env.INIT_CWD, config.docker.file)
     : path.resolve(__dirname, './docker-compose.yml')
   dockerEnv = {
-    NETWORK: config.docker.network,
-    DOCKER_RPC_URL: config.docker.graphRpcUrl
-      ? config.docker.graphRpcUrl
-      : 'http://host.docker.internal:8545',
+    NETWORK: config.archive.network,
+    DOCKER_RPC_URL: graphRpcUrl,
     DATA_FOLDER: path.resolve(process.env.INIT_CWD, config.paths.data),
   }
   cmdsToRun.push({
@@ -132,7 +135,7 @@ export const main = async (config, useTenderly, allowTenderlyDelete) => {
       prefixColor: 'blue.bold',
       cwd: process.env.INIT_CWD,
       env: {
-        TENDERLY_RPC_URL: useTenderly ? config.docker.graphRpcUrl : undefined,
+        TENDERLY_RPC_URL: useTenderly ? graphRpcUrl : undefined,
       },
     })
 

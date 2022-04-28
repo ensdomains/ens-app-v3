@@ -24,20 +24,14 @@ export const main = async (config) => {
   }
 
   const server = ganache.server({
+    ...config.ethereum,
     chain: {
-      chainId: config.docker.chainId,
-      networkId: config.docker.chainId,
+      ...config.ethereum.chain,
+      networkId: config.ethereum.chain.chainId,
     },
     fork: {
-      url: config.docker.forkRpcUrl,
-      blockNumber: config.archive.block,
-    },
-    wallet: {
-      mnemonic: config.docker.secretWords,
-      unlockedAccounts: config.docker.unlockedAccounts || [],
-    },
-    database: {
-      dbPath: config.docker.dbPath,
+      ...config.ethereum.fork,
+      blockNumber: config.archive.blockNumber,
     },
   })
 

@@ -6,6 +6,68 @@ The testing environment used here is implemented in the stateless and stateful t
 The environment consists of two parts: the ganache Ethereum node, and the docker graph instance.
 Which environment type you use is dependent on your testing circumstances.
 
+## Configuration
+
+There should be a file named `ens-test-env.config.js` in your project's root directory.
+You can add a JSDoc type import to import the config type.
+
+```js
+/**
+ * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
+ **/
+module.exports = {
+  deployCommand: 'yarn hardhat deploy',
+  tenderly: {
+    user: 'ens',
+    project: 'core',
+    key: 'tenderly-key',
+  },
+  archive: {
+    subgraphId: 'QmXxAE7Urtv6TPa8o8XmPwLVQNbH6r35hRKHP63udTxTNa',
+    epochTime: 1646894980,
+    blockNumber: 12066620,
+    baseUrl: 'https://storage.googleapis.com/ens-manager-build-data',
+    network: 'mainnet',
+  },
+  docker: {
+    file: './docker-compose.yml',
+    sudo: false,
+  },
+  ethereum: {
+    chain: {
+      chainId: 0,
+    },
+    fork: {
+      url: 'https://example.com',
+    },
+    wallet: {
+      mnemonic: 'test test test test test test test test test test test junk',
+      unlockedAccounts: ['0x0000000000000000000000000000000000000000'],
+    },
+    database: {
+      dbPath: './ganache',
+    },
+  },
+  graph: {
+    bypassLocal: false,
+  },
+  scripts: [
+    {
+      command: 'example',
+      name: 'example',
+      prefixColor: 'blue.bold',
+      cwd: path.resolve('./'),
+      finishOnExit: true,
+      waitForGraph: true,
+    },
+  ],
+  paths: {
+    archives: './archives',
+    data: './data',
+  },
+}
+```
+
 ## Environment Types
 
 ### Stateless
@@ -36,8 +98,8 @@ tests wherever possible.
 
 ## Contract deployments
 
-Contract deployments are a small but neccessary part of testing ENS app, you can deploy contracts to
-both stateless and stateful environments. After the locally tested contract is deployment, the
+Contract deployments are a small but neccessary part of testing, you can deploy contracts to
+both stateless and stateful environments. After the locally tested contract is deployed, the
 deployment script should be left in the repo to serve as an archive.
 
 ## Updating the graph-node dataset
@@ -55,7 +117,7 @@ dataset update so that your test can pass.
 Once your data is up to date, you can run
 
 ```bash
-yarn archive:compress
+yarn ens-test-env data --compress
 ```
 
 in this directory, which will give you a archive file for your dataset.
@@ -69,28 +131,13 @@ const file = `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}_${NETWORK}.archi
 
 ## Running the environment
 
-_Run all commands in the root directory._
-
-To run the test environment on your local machine, first copy the `.env.example` file and change
-`FORK_RPC_URL` to an archive node of your choosing. You'll also need to have docker installed on
-your machine.
-
 After this you can run:
 
 ```bash
-# Normal
-yarn env:load && yarn env:start
-# Docker root install
-yarn env:load && yarn env:start:root
-# CI environments (cacheless)
-yarn env:start:ci
-```
-
-After this you can then run the app with:
-
-```bash
-# Dev build
-yarn dev:glocal
-# Production build
-yarn build:glocal && yarn start
+# Start
+yarn ens-test-env start
+# Load data only
+yarn ens-test-env data --load
+# Export generated data
+yarn ens-test-env data --compress
 ```

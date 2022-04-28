@@ -23,11 +23,12 @@ const fetchWithAuth =
 
 export const generateFork = async (config) => {
   const {
-    tenderlyKey: key,
-    tenderlyUser: user,
-    tenderlyProject: project,
-    docker: { chainId, secretWords: mnemonic },
-    archive: { block },
+    tenderly: { user, project, key },
+    ethereum: {
+      chain: { chainId },
+      wallet: { mnemonic },
+    },
+    archive: { blockNumber },
   } = config
 
   if (!key) {
@@ -47,7 +48,7 @@ export const generateFork = async (config) => {
     method: 'POST',
     body: {
       network_id: `${chainId}`,
-      block_number: block,
+      block_number: blockNumber,
     },
   })
 
@@ -83,11 +84,7 @@ export const generateFork = async (config) => {
 }
 
 export const deleteFork = async (config) => {
-  const {
-    tenderlyKey: key,
-    tenderlyUser: user,
-    tenderlyProject: project,
-  } = config
+  const { key, user, project } = config.tenderly
 
   if (!key) {
     throw new Error('Missing Tenderly access key')

@@ -184,11 +184,11 @@ async function downloadFile() {
 export const main = async (arg, config) => {
   let time = Date.now()
 
-  BLOCK_HEIGHT = config.archive.block
+  BLOCK_HEIGHT = config.archive.blockNumber
   SUBGRAPH_ID = config.archive.subgraphId
   EPOCH_TIME = config.archive.epochTime
   BASE_URL = config.archive.baseUrl
-  NETWORK = config.docker.network
+  NETWORK = config.archive.network
 
   fileName = `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}_${NETWORK}.archive`
   URL = `${BASE_URL}/${fileName}.tar.lz4`

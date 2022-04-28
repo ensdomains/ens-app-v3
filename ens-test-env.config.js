@@ -1,27 +1,39 @@
 require('dotenv').config({ path: process.env.INIT_CWD + '/.env.local' })
-require('dotenv').config({ path: process.env.INIT_CWD + '/.env' })
+require('dotenv').config({
+  path: process.env.INIT_CWD + '/.env',
+  override: true,
+})
 
 console.log('GOING TO LOG ENV VARS')
 console.log('chainid', process.env.CHAIN_ID)
 console.log('network', process.env.NETWORK)
 console.log('secretwords', process.env.SECRET_WORDS)
+console.log('block', process.env.BLOCK_HEIGHT)
 
+/**
+ * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
+ **/
 module.exports = {
-  docker: {
-    chainId: parseInt(process.env.CHAIN_ID),
-    network: process.env.NETWORK,
-    forkRpcUrl: process.env.FORK_RPC_URL,
-    secretWords: process.env.SECRET_WORDS,
-    unlockedAccounts: ['0xa303ddC620aa7d1390BACcc8A495508B183fab59'],
-    dbPath: './ganache',
-  },
+  deployCommand: 'yarn hardhat deploy',
   archive: {
     subgraphId: process.env.SUBGRAPH_ID,
     epochTime: process.env.EPOCH_TIME,
-    block: parseInt(process.env.BLOCK_HEIGHT),
+    blockNumber: parseInt(process.env.BLOCK_HEIGHT),
     baseUrl: 'https://storage.googleapis.com/ens-manager-build-data',
+    network: process.env.NETWORK,
   },
-  deployCommand: 'yarn hardhat deploy',
+  ethereum: {
+    chain: {
+      chainId: parseInt(process.env.CHAIN_ID),
+    },
+    fork: {
+      url: process.env.FORK_RPC_URL,
+    },
+    wallet: {
+      mnemonic: process.env.SECRET_WORDS,
+      unlockedAccounts: ['0xa303ddC620aa7d1390BACcc8A495508B183fab59'],
+    },
+  },
   scripts: [
     ...(process.env.E2E
       ? [

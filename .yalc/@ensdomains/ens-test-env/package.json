@@ -5,6 +5,7 @@
   "files": [
     "src"
   ],
+  "types": "src/index.d.ts",
   "dependencies": {
     "@ethersproject/wallet": "^5.6.0",
     "ansi-colors": "^4.1.1",
@@ -22,5 +23,5 @@
   },
   "preferUnplugged": true,
   "bin": "./src/index.js",
-  "yalcSig": "7ff95272736ee940fba861b307d582ee"
+  "yalcSig": "9350c1e208cccc7ede6d26bd54c533a0"
 }
