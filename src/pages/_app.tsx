@@ -1,13 +1,20 @@
-import { ApolloProvider } from '@apollo/client'
-import getClient, { setupClient } from '@app/apollo/apolloClient'
-import useReactiveVarListeners from '@app/hooks/useReactiveVarListeners'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
+import { EnsProvider } from '@app/utils/EnsProvider'
 import type { DefaultTheme } from '@ensdomains/thorin'
 import { ThorinGlobalStyles } from '@ensdomains/thorin'
+import {
+  Chain,
+  connectorsForWallets,
+  getDefaultWallets,
+  RainbowKitProvider,
+} from '@rainbow-me/rainbowkit'
+import '@rainbow-me/rainbowkit/styles.css'
+import { providers } from 'ethers'
 import { appWithTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
-import { useEffect } from 'react'
+import { QueryClient, QueryClientProvider } from 'react-query'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import { chain, WagmiProvider } from 'wagmi'
 import '../styles.css'
 
 const theme: DefaultTheme = {
@@ -50,38 +57,48 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const ApolloReactiveProvider = ({
-  children,
-}: {
-  children: React.ReactNode
-}) => {
-  useReactiveVarListeners()
+const infuraId = '58a380d3ecd545b2b5b3dad5d2b18bf0'
 
-  return <>{children}</>
-}
+const provider = ({ chainId }: { chainId?: number }) =>
+  process.env.NEXT_PUBLIC_PROVIDER
+    ? new providers.JsonRpcProvider(process.env.NEXT_PUBLIC_PROVIDER, chainId)
+    : new providers.InfuraProvider(chainId, infuraId)
+
+const chains: Chain[] = [
+  { ...chain.mainnet, name: 'Ethereum' },
+  { ...chain.ropsten, name: 'Ropsten' },
+]
+
+const wallets = getDefaultWallets({
+  chains,
+  infuraId,
+  appName: 'ENS',
+  jsonRpcUrl: ({ chainId }) =>
+    chains.find((x) => x.id === chainId)?.rpcUrls?.[0] ??
+    chain.mainnet.rpcUrls[0],
+})
+
+const connectors = connectorsForWallets(wallets)
+
+const queryClient = new QueryClient()
 
 function MyApp({ Component, pageProps }: AppProps) {
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      import('@app/setup').then((setup) => setup.default(false))
-    }
-  }, [])
-
-  setupClient()
   return (
-    <>
-      <ApolloProvider {...{ client: getClient() }}>
-        <ApolloReactiveProvider>
-          <ThemeProvider theme={theme}>
-            <BreakpointProvider queries={breakpoints}>
-              <GlobalStyle />
-              <ThorinGlobalStyles />
-              <Component {...pageProps} />
-            </BreakpointProvider>
-          </ThemeProvider>
-        </ApolloReactiveProvider>
-      </ApolloProvider>
-    </>
+    <QueryClientProvider client={queryClient}>
+      <RainbowKitProvider chains={chains}>
+        <WagmiProvider autoConnect connectors={connectors} provider={provider}>
+          <EnsProvider>
+            <ThemeProvider theme={theme}>
+              <BreakpointProvider queries={breakpoints}>
+                <GlobalStyle />
+                <ThorinGlobalStyles />
+                <Component {...pageProps} />
+              </BreakpointProvider>
+            </ThemeProvider>
+          </EnsProvider>
+        </WagmiProvider>
+      </RainbowKitProvider>
+    </QueryClientProvider>
   )
 }
 

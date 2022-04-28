@@ -156,6 +156,12 @@ export const AddressProfileButton = ({
 
 const OtherContainer = styled.div`
   background-color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
+  padding: ${tokens.space['0.25']} ${tokens.space['1.5']};
+  border-radius: ${tokens.radii.large};
+`
+
+const OtherContainerAddressPrefix = styled(Typography)`
+  color: ${tokens.colors.base.white};
 `
 
 export const OtherProfileButton = ({
@@ -177,9 +183,9 @@ export const OtherProfileButton = ({
       prefix={
         type === 'address' ? (
           <OtherContainer>
-            <Typography color="white" size="small">
+            <OtherContainerAddressPrefix variant="label">
               {iconKey}
-            </Typography>
+            </OtherContainerAddressPrefix>
           </OtherContainer>
         ) : (
           <Typography color="textSecondary">{iconKey}</Typography>

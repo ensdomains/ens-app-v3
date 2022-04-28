@@ -88,6 +88,9 @@
     "consistent-return": "off",
     "jsx-a11y/anchor-is-valid": "off",
     "no-return-assign": "off",
-    "react/require-default-props": "off"
+    "react/require-default-props": "off",
+    "react/function-component-definition": "off",
+    "react/no-unstable-nested-components": ["off", { "allowAsProps": true }],
+    "react/jsx-no-useless-fragment": "off"
   }
 }

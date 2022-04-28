@@ -7,6 +7,7 @@ import styled from 'styled-components'
 
 type Subdomain = {
   name: string
+  truncatedName?: string
 }
 
 const SubdomainWrapper = styled.div`
@@ -57,6 +58,7 @@ const RightArrow = styled.svg`
 const SubdomainItem = ({
   name,
   network,
+  truncatedName,
 }: Subdomain & {
   network: string
 }) => {
@@ -81,7 +83,7 @@ const SubdomainItem = ({
         <Stack>
           <Avatar label={name} src={src} placeholder={src === ''} size="9" />
           <Typography color="text" weight="bold" variant="extraLarge">
-            {name}
+            {truncatedName || name}
           </Typography>
         </Stack>
         <RightArrow as={ArrowRightSVG} />

@@ -86,7 +86,7 @@ export const SearchInput = ({
 
   const [searchedVal, _setSearchedVal] = useState('')
   const [inputVal, setInputVal] = useState('')
-  const { domain, valid, loading } = useGetDomainFromInput(
+  const { profile, valid, loading, name } = useGetDomainFromInput(
     searchedVal,
     searchedVal === '' || inputVal === '',
   )
@@ -103,9 +103,9 @@ export const SearchInput = ({
     router
       .push(
         {
-          pathname: `/profile/${domain.name}`,
+          pathname: `/profile/${name}`,
         },
-        `/profile/${domain.name}`,
+        `/profile/${name}`,
       )
       .then(() => {
         setInputVal('')
@@ -115,8 +115,8 @@ export const SearchInput = ({
 
   const SuffixElement = () => {
     if (inputVal === '') return null
-    if (domain && domain.name && searchedVal === inputVal && !loading) {
-      if (valid && domain.state === 'Owned') {
+    if (profile && searchedVal === inputVal && !loading) {
+      if (valid) {
         return (
           <div role="button" onClick={handleSearch}>
             <SearchArrowButton
@@ -155,8 +155,8 @@ export const SearchInput = ({
           value={inputVal}
           onKeyDown={(e) =>
             e.key === 'Enter' &&
-            domain &&
-            domain.name &&
+            name &&
+            profile &&
             searchedVal === inputVal &&
             !loading &&
             handleSearch

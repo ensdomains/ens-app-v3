@@ -1,37 +1,15 @@
 # ENS App V3
 
-Version 3 of the ENS app.
+The all new, all cool version of the ENS manager.
 
-## Default Settings
+## EXTERNAL CONTRIBUTOR NOTICE
 
-- [Yarn2 with PnP](https://yarnpkg.com/)
-- [NextJS](https://nextjs.org/) with [TypeScript](https://www.typescriptlang.org/)
-- [Jest](https://jestjs.io/) (coverage 100%)
-- [Cypress](https://www.cypress.io/)
-- [ESLint](https://eslint.org/) with [airbnb-typescript](https://github.com/iamturns/eslint-config-airbnb-typescript) rules
-- [Github Actions](https://github.com/features/actions) (Coverage, E2E)
-- Using [Husky](https://typicode.github.io/husky/#/)
-  - Auto update patch version before commit
-  - Check Lint, Coverage, E2E before push
+**Please note that everything within this repo is currently in alpha, and should only be run on local nodes or testnets.**
+**Any PR submitted may not be responded to for a while, since we are very actively implementing features.**
 
 ## Usage
 
 ### Install
-
-**For the moment, you should have the [@ensdomains/thorin](https://github.com/ensdomains/thorin) repo cloned locally in the same parent directory as this.**
-
-#### Install yalc globally
-
-```bash
-npm i -g yalc
-```
-
-#### Locally publish thorin and update (not required)
-
-```bash
-cd ../thorin
-yarn publish:local
-```
 
 ```bash
 yarn && yarn postinstall
@@ -41,6 +19,9 @@ yarn && yarn postinstall
 
 ```bash
 yarn dev
+
+# Or with local provider set
+yarn dev:glocal
 ```
 
 ### Lint
@@ -57,31 +38,64 @@ yarn test:watch
 yarn test:coverage
 ```
 
-### E2E Test
+### Test Environment
 
-For more information on the testing environment used, see the [test-environment's README](https://github.com/ensdomains/ens-app-v3/tree/main/test-environment).
+1. Create a local env file from the example:
 
 ```bash
-# If you don't have an archive loaded in, run this first
-yarn env:load
-
-# Then you can run the respective e2e command
-# For most circumstances
-yarn e2e
-# For if your docker instance requires root access
-yarn e2e:root
-# For if you're running CI or want to only run one command for tests
-yarn e2e:ci
+cp .env.local.example .env.local
 ```
 
-### Build and Export
+2. Add archive node URL to env file
+
+3. Starting the environment:
+
+```bash
+yarn env start
+```
+
+For more information on the testing environment used, see [ens-test-env](https://github.com/ensdomains/ensjs-v3/tree/main/packages/ens-test-env/).
+
+### E2E Testing
+
+**Note: You don't need to run the test environment command. It is all handled in the e2e script.**
+
+```bash
+yarn e2e
+```
+
+### Building and Starting
 
 ```bash
 yarn build
 yarn start
-yarn export
+
+# Or with local provider set
+yarn build:glocal
+yarn buildandstart:glocal
 ```
 
 ## PR builds
 
 Vercel will automatically build and deploy a test site when pushed to a new PR branch.
+
+## External Package Local Development
+
+1. Install yalc globally:
+
+```bash
+npm i -g yalc
+```
+
+2. Run relevant update script within external repo, for example:
+
+```bash
+# Example publish script for ENSjs, be aware this may have changed.
+yarn publish:local:ensjs
+```
+
+3. Run yarn within this repo:
+
+```bash
+yarn
+```

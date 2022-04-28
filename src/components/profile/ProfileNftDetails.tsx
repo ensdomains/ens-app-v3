@@ -1,11 +1,12 @@
-import { reverseRecordReactive } from '@app/apollo/reactiveVars'
-import { useGetReverseRecord } from '@app/hooks/useGetReverseRecord'
+import { useEns } from '@app/utils/EnsProvider'
 import { ensNftImageUrl, shortenAddress } from '@app/utils/utils'
 import { tokens, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import Image from 'next/image'
 import { Fragment, useState } from 'react'
+import { useQuery } from 'react-query'
 import styled from 'styled-components'
+import { useAccount } from 'wagmi'
 import { CopyButton } from '../CopyButton'
 
 const StyledNftBox = styled.div<{ $loading: boolean }>`
@@ -96,27 +97,25 @@ const AddressBox = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { data: reverseRecordData } = useGetReverseRecord(
-    address,
-    !address || address.length <= 0 || isSelf,
-  )
+  const { getName } = useEns()
+  const { data } = useQuery(`name-${address}`, () => getName(address))
 
-  const primaryName = reverseRecordReactive()?.name
+  const [{ data: { ens } = { ens: undefined } }] = useAccount()
 
-  const highlightName = isSelf || (reverseRecordData && reverseRecordData.name)
+  const highlightName = isSelf || (data && data.name)
 
   const TopElement = () => {
     if (isSelf) {
-      if (primaryName && primaryName.length > 0) {
+      if (ens?.name && ens.name.length > 0) {
         return (
-          <HoverableSelfName name={primaryName}>
+          <HoverableSelfName name={ens?.name}>
             {t('yourWallet')}
           </HoverableSelfName>
         )
       }
       return t('yourWallet')
     }
-    return (reverseRecordData && reverseRecordData.name) || 'No ENS Name'
+    return (data && data.name) || 'No ENS Name'
   }
 
   return (
@@ -139,16 +138,24 @@ export const ProfileNftDetails = ({
   selfAddress,
   network,
   expiryDate,
-  domain,
+  ownerData,
 }: {
   name: string
   selfAddress?: string
   network: string
   expiryDate: Date
-  domain: Record<any, any>
+  ownerData: {
+    owner: string
+    registrant?: string
+  }
 }) => {
   const [nftLoading, setNftLoading] = useState(true)
   const { t: tc } = useTranslation('common')
+  const { contracts } = useEns()
+  const { data: baseRegistrarAddress } = useQuery(
+    'base-registrar-address',
+    () => contracts?.getBaseRegistrar()!.then((c) => c.address),
+  )
 
   return (
     <div>
@@ -156,7 +163,9 @@ export const ProfileNftDetails = ({
         <Image
           onLoadingComplete={() => setNftLoading(false)}
           src="/"
-          loader={() => ensNftImageUrl(name, network)}
+          loader={() =>
+            ensNftImageUrl(name, network, baseRegistrarAddress || '')
+          }
           width={270}
           height={270}
         />
@@ -178,16 +187,17 @@ export const ProfileNftDetails = ({
             {
               label: tc('name.registrant'),
               type: 'address',
-              value: domain.registrant,
+              value: ownerData.registrant,
             },
             {
               label: tc('name.controller'),
               type: 'address',
-              value: domain.owner,
+              value: ownerData.owner,
             },
           ].map(
             (item, inx, arr) =>
-              item && (
+              item &&
+              item.value && (
                 <Fragment key={item.label}>
                   <ItemContainer>
                     <Typography color="textTertiary">{item.label}</Typography>

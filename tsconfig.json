@@ -1,7 +1,19 @@
 {
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS",
+      "target": "ESNext",
+      "moduleResolution": "node",
+      "strict": true,
+      "esModuleInterop": true,
+      "allowJs": true,
+      "checkJs": true
+    }
+  },
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "downlevelIteration": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -21,6 +33,19 @@
       "@app/*": ["./src/*"]
     }
   },
-  "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".yarn", "custom-test-env.js", "cypress/**/*"]
+  "include": [
+    "next-env.d.ts",
+    "mdx.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "e2e/tsconfig.json"
+  ],
+  "exclude": [
+    "node_modules",
+    ".yarn",
+    "custom-test-env.js",
+    "e2e/**/*",
+    "**/*.ignore.ts",
+    "**/*.ignore.tsx"
+  ]
 }

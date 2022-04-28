@@ -1,17 +1,5 @@
-import { saveName } from '@app/api/labels'
-import getENS, { getRegistrar } from '@app/apollo/mutations/ens'
-import { globalErrorReactive } from '@app/apollo/reactiveVars'
+import { decodeLabelhash, isEncodedLabelhash, saveName } from '@app/api/labels'
 import { normalize } from '@ensdomains/eth-ens-namehash'
-import {
-  emptyAddress as _emptyAddress,
-  getEnsStartBlock as _ensStartBlock,
-  isEncodedLabelhash,
-  isLabelValid as _isLabelValid,
-  labelhash,
-  parseSearchTerm as _parseSearchTerm,
-  validateName as _validateName,
-} from '@ensdomains/ui/utils/index'
-import { getNetworkId } from '@ensdomains/ui/web3'
 import { keccak256 } from 'js-sha3'
 import throttle from 'lodash/throttle'
 import { CID } from 'multiformats'
@@ -22,6 +10,7 @@ import { useEffect, useRef } from 'react'
 const BASIC_ADDRESS_REGEX = /^(0x)?[0-9a-f]{40}$/i
 const SAME_CASE_ADDRESS_REGEX = /^(0x)?([0-9a-f]{40}|[0-9A-F]{40})$/
 const ADDRESS_LENGTH = 40
+export const emptyAddress = '0x0000000000000000000000000000000000000000'
 export const MAINNET_DNSREGISTRAR_ADDRESS =
   '0x58774Bb8acD458A640aF0B88238369A167546ef2'
 export const ROPSTEN_DNSREGISTRAR_ADDRESS =
@@ -41,6 +30,40 @@ export const supportedAvatarProtocols = [
   'ipfs://',
   'eip155',
 ]
+
+export function _validateName(name: string) {
+  const nameArray = name.split('.')
+  const hasEmptyLabels = nameArray.some((label) => label.length === 0)
+  if (hasEmptyLabels) throw new Error('Domain cannot have empty labels')
+  const normalizedArray = nameArray.map((label) => {
+    if (label === '[root]') {
+      return label
+    }
+    return isEncodedLabelhash(label) ? label : normalize(label)
+  })
+  return normalizedArray.join('.')
+}
+
+export function labelhash(unnormalisedLabelOrLabelhash: string) {
+  if (unnormalisedLabelOrLabelhash === '[root]') {
+    return ''
+  }
+  return isEncodedLabelhash(unnormalisedLabelOrLabelhash)
+    ? `0x${decodeLabelhash(unnormalisedLabelOrLabelhash)}`
+    : `0x${keccak256(normalize(unnormalisedLabelOrLabelhash))}`
+}
+
+export function _isLabelValid(name: string) {
+  try {
+    _validateName(name)
+    if (name.indexOf('.') === -1) {
+      return true
+    }
+  } catch (e) {
+    console.log(e)
+    return false
+  }
+}
 
 export const addressUtils = {
   isChecksumAddress(address: any) {
@@ -84,26 +107,22 @@ export const uniq = (a: any, param: any) =>
       a.map((mapItem: any) => mapItem[param]).indexOf(item[param]) === pos,
   )
 
-export async function getEtherScanAddr() {
-  const networkId = await getNetworkId()
-  switch (networkId) {
-    case 1:
-    case '1':
-      return 'https://etherscan.io/'
-    case 3:
-    case '3':
-      return 'https://ropsten.etherscan.io/'
-    case 4:
-    case '4':
-      return 'https://rinkeby.etherscan.io/'
-    default:
-      return 'https://etherscan.io/'
-  }
-}
-
-export async function ensStartBlock() {
-  return _ensStartBlock()
-}
+// export async function getEtherScanAddr() {
+//   const networkId = await getNetworkId()
+//   switch (networkId) {
+//     case 1:
+//     case '1':
+//       return 'https://etherscan.io/'
+//     case 3:
+//     case '3':
+//       return 'https://ropsten.etherscan.io/'
+//     case 4:
+//     case '4':
+//       return 'https://rinkeby.etherscan.io/'
+//     default:
+//       return 'https://etherscan.io/'
+//   }
+// }
 
 // export const checkLabels = (...labelHashes) =>
 //   labelHashes.map(labelHash => checkLabelHash(labelHash) || null)
@@ -121,8 +140,39 @@ export function isLabelValid(name: any) {
   return _isLabelValid(name)
 }
 
+export const _parseSearchTerm = (term: string, validTld: any) => {
+  const regex = /[^.]+$/
+
+  try {
+    validateName(term)
+  } catch (e) {
+    return 'invalid'
+  }
+
+  if (term.indexOf('.') !== -1) {
+    const termArray = term.split('.')
+    const tld = term.match(regex) ? (term.match(regex) as any)[0] : ''
+    if (validTld) {
+      if (tld === 'eth' && [...termArray[termArray.length - 2]].length < 3) {
+        // code-point length
+        return 'short'
+      }
+      return 'supported'
+    }
+
+    return 'unsupported'
+  }
+  if (addressUtils.isAddress(term)) {
+    return 'address'
+  }
+  // check if the search term is actually a tld
+  if (validTld) {
+    return 'tld'
+  }
+  return 'search'
+}
+
 export const parseSearchTerm = async (term: any) => {
-  const ens = getENS()
   const domains = term.split('.')
   const tld = domains[domains.length - 1]
   try {
@@ -130,17 +180,28 @@ export const parseSearchTerm = async (term: any) => {
   } catch (e) {
     return 'invalid'
   }
-  console.log('** parseSearchTerm', { ens })
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const address = await ens.getOwner(tld)
   return _parseSearchTerm(term, true)
+}
+
+export function encodeLabelhash(hash: string) {
+  if (!hash.startsWith('0x')) {
+    throw new Error('Expected label hash to start with 0x')
+  }
+
+  if (hash.length !== 66) {
+    throw new Error('Expected label hash to have a length of 66')
+  }
+
+  return `[${hash.slice(2)}]`
 }
 
 export function humaniseName(name: any) {
   return name
     .split('.')
     .map((label: string | any[]) => {
-      return isEncodedLabelhash(label) ? `[unknown${label.slice(1, 8)}]` : label
+      return isEncodedLabelhash(label as string)
+        ? `[unknown${label.slice(1, 8)}]`
+        : label
     })
     .join('.')
 }
@@ -194,8 +255,6 @@ export function isElementInViewport(el: Element) {
   )
 }
 
-export const emptyAddress = _emptyAddress
-
 export function isShortName(term: any) {
   return [...term].length < 3
 }
@@ -243,10 +302,9 @@ export function filterNormalised(data: any, name: any, nested = false) {
     })
   } catch (e: any) {
     if (e.message.match(/Illegal char/)) {
-      globalErrorReactive({
-        ...globalErrorReactive(),
+      return {
         invalidCharacter: 'Invalid character',
-      })
+      }
     }
   }
 }
@@ -264,11 +322,6 @@ export function normaliseOrMark(data: any, name: any, nested = false) {
         console.log('domain: ', { ...domain, hasInvalidCharacter: true })
         return { ...data, hasInvalidCharacter: true }
       }
-
-      globalErrorReactive({
-        ...globalErrorReactive(),
-        invalidCharacter: `Name error: ${e.message}`,
-      })
       return { ...data, hasInvalidCharacter: true }
     }
 
@@ -313,13 +366,16 @@ export function imageUrlUnknownRecord(name: string, network: string) {
   return ''
 }
 
-export function ensNftImageUrl(name: string, _network: string) {
+export function ensNftImageUrl(
+  name: string,
+  _network: string,
+  regAddr: string,
+) {
   const network =
     networkName[_network?.toLowerCase() as keyof typeof networkName]
   const tokenId = labelhash(name.substring(0, name.length - 4))
-  const contractAddress = (getRegistrar() as any).permanentRegistrar.address
 
-  return `https://metadata.ens.domains/${network}/${contractAddress}/${tokenId}/image`
+  return `https://metadata.ens.domains/${network}/${regAddr}/${tokenId}/image`
 }
 
 export function isCID(hash: string | CID) {

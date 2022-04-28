@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    "types": [
+      "cypress",
+      "@types/puppeteer-core",
+      "@synthetixio/synpress/support",
+      "cypress-wait-until",
+      "@testing-library/cypress"
+    ],
+    "outDir": "./output"
+  },
+  "include": ["**/*.*"]
+}
