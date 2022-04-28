@@ -186,8 +186,8 @@ const ProfilePage: NextPage = () => {
   return (
     <Basic
       title={
-        (_name === 'me' && 'Your Profile') ||
-        (_name ? `${_name}'s Profile` : `Loading Profile`)
+        (_name === 'me' && 'Your Profile on') ||
+        (_name ? `${_name} on` : `Loading... -`)
       }
       loading={isLoading}
     >
