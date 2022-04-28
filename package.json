@@ -122,6 +122,9 @@
   "dependenciesMeta": {
     "@ensdomains/ens-test-env@0.1.2": {
       "unplugged": true
+    },
+    "@synthetixio/synpress@1.2.0": {
+      "unplugged": true
     }
   }
 }

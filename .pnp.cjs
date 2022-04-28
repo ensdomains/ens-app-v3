@@ -12684,7 +12684,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ]],\
       ["@synthetixio/synpress", [\
         ["npm:1.2.0", {\
-          "packageLocation": "./.yarn/cache/@synthetixio-synpress-npm-1.2.0-c81b3275ff-08c9c4ca15.zip/node_modules/@synthetixio/synpress/",\
+          "packageLocation": "./.yarn/unplugged/@synthetixio-synpress-npm-1.2.0-c81b3275ff/node_modules/@synthetixio/synpress/",\
           "packageDependencies": [\
             ["@synthetixio/synpress", "npm:1.2.0"],\
             ["@cypress/code-coverage", "virtual:c81b3275ffd808436e588ef2092d84e96bc7a485403abc9940875ea5a689db36664064eb2ef6967b58b80425acc530f355dd5cc221b1a1fda41ad783e6a4d429#npm:3.9.12"],\
