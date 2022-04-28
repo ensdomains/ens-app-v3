@@ -11,3 +11,4 @@ export { RadioButtonGroup } from './RadioButtonGroup';
 export { Select } from './Select';
 export { SkeletonGroup } from './SkeletonGroup';
 export { Textarea } from './Textarea';
+export { Tooltip, TooltipPopover } from './Tooltip';

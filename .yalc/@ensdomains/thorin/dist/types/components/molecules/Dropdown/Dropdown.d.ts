@@ -1,12 +1,13 @@
 import * as React from 'react';
 import { Props as ButtonProps } from '@/src/components/atoms/Button';
 import { Colors } from '@/src/tokens';
-export declare type DropdownItem = {
+declare type DropdownItemObject = {
     label: string;
     onClick(): void;
     color?: Colors;
     disabled?: boolean;
 };
+export declare type DropdownItem = DropdownItemObject | React.ReactNode;
 declare type Props = {
     children?: React.ReactNode;
     buttonProps?: ButtonProps;
@@ -18,6 +19,7 @@ declare type Props = {
     items: DropdownItem[];
     size?: 'small' | 'medium';
     label?: React.ReactNode;
+    menuLabelAlign?: 'flex-start' | 'flex-end' | 'center';
     isOpen?: boolean;
 };
 declare type PropsWithIsOpen = {
@@ -29,7 +31,7 @@ declare type PropsWithoutIsOpen = {
     setIsOpen?: never;
 };
 export declare const Dropdown: {
-    ({ children, buttonProps, items, inner, chevron, align, shortThrow, keepMenuOnTop, size, label, ...props }: Props & (PropsWithIsOpen | PropsWithoutIsOpen)): JSX.Element;
+    ({ children, buttonProps, items, inner, chevron, align, menuLabelAlign, shortThrow, keepMenuOnTop, size, label, ...props }: Props & (PropsWithIsOpen | PropsWithoutIsOpen)): JSX.Element;
     displayName: string;
 };
 export {};

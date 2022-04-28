@@ -1,10 +1,12 @@
-import { Dropdown, MenuSVG, tokens } from '@ensdomains/thorin'
-import type { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
+import { Colors, Dropdown, MenuSVG, tokens } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
-export interface HamburgerItem extends Partial<DropdownItem> {
+export interface HamburgerItem {
   label: string
+  onClick?: () => void
+  color?: Colors
+  disabled?: boolean
   href?: string
 }
 

@@ -11,3 +11,4 @@ export { Spinner } from './Spinner';
 export { Tag } from './Tag';
 export { Typography } from './Typography';
 export { VisuallyHidden } from './VisuallyHidden';
+export { DynamicPopover } from './DynamicPopover';
