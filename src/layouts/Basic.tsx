@@ -38,7 +38,7 @@ export const Basic = ({
   return (
     <Container>
       <Head>
-        <title>{title ? `${title} - ` : ''}ENS App</title>
+        <title>{title ? `${title} ` : ''}ENS</title>
       </Head>
       <Header />
       <LoadingContainer>

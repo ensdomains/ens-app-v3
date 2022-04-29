@@ -51,6 +51,7 @@ export const LanugageDropdown = () => {
               { locale: lang },
             ),
         }))}
+      menuLabelAlign="flex-start"
       label={
         <MobileInnerDropdownButton $large={isLarge}>
           {formatName(i18n.language)}
