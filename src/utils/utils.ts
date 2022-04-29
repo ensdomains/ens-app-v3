@@ -1,6 +1,10 @@
-import { decodeLabelhash, isEncodedLabelhash, saveName } from '@app/api/labels'
+import {
+  decodeLabelhash,
+  isEncodedLabelhash,
+  labelhash as keccak256,
+  saveName,
+} from '@ensdomains/ensjs/dist/cjs/utils/labels'
 import { normalize } from '@ensdomains/eth-ens-namehash'
-import { keccak256 } from 'js-sha3'
 import throttle from 'lodash/throttle'
 import { CID } from 'multiformats'
 import { useEffect, useRef } from 'react'
