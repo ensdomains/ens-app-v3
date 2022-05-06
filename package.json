@@ -28,9 +28,9 @@
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "^0.5.3",
-    "@rainbow-me/rainbowkit": "^0.0.2",
+    "@rainbow-me/rainbowkit": "^0.1.0",
     "@svgr/webpack": "^6.2.1",
-    "ethers": "^5.6.2",
+    "ethers": "^5.6.5",
     "iso-639-1": "^2.1.13",
     "lodash": "^4.17.21",
     "multiformats": "patch:multiformats@9.6.4#./patches/multiformats.patch",
@@ -44,7 +44,7 @@
     "react-is": "^17.0.2",
     "react-query": "^3.34.19",
     "styled-components": "^5.3.3",
-    "wagmi": "^0.2.24"
+    "wagmi": "^0.3.3"
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",

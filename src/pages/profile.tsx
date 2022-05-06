@@ -127,18 +127,18 @@ const ProfilePage: NextPage = () => {
 
   const [tab, setTab] = useState<'profile' | 'subdomains'>('profile')
 
-  const [
+  const { activeChain: chain } = useNetwork()
+  const { ready, getOwner, getExpiry, getName, getSubnames, batch } = useEns()
+  const { data: accountData } = useAccount()
+  const address = accountData?.address
+
+  const { data: ensData, isLoading: primaryLoading } = useQuery(
+    ['getName', address],
+    () => getName(address!),
     {
-      data: { chain },
+      enabled: !!address,
     },
-  ] = useNetwork()
-  const { ready, getOwner, getExpiry, getSubnames, batch } = useEns()
-  const [
-    {
-      data: { ens: ensData, address } = { ens: undefined, address: undefined },
-      loading: accountLoading,
-    },
-  ] = useAccount()
+  )
 
   const name = isSelf && ensData?.name ? ensData.name : _name
 
@@ -176,7 +176,7 @@ const ProfilePage: NextPage = () => {
     profileLoading ||
     batchLoading ||
     subnamesLoading ||
-    accountLoading
+    primaryLoading
 
   useProtectedRoute(
     '/',
