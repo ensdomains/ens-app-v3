@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "bd74a3e02645ef872650ee4f6694307d",
+      "signature": "7c127df8a6a6cad6f635bf02ecc05e45",
       "pure": true,
       "replaced": "portal:.yalc/@ensdomains/ensjs"
     },

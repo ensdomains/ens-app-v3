@@ -161,6 +161,9 @@ export class ENS {
             'multicallWrapper',
         ]);
         this.getSubnames = this.generateFunction('getSubnames', ['gqlInstance']);
+        this.getNames = this.generateFunction('getNames', [
+            'gqlInstance',
+        ]);
         this.universalWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'universalWrapper');
         this.resolverMulticallWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'resolverMulticallWrapper');
         this.multicallWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'multicallWrapper');
