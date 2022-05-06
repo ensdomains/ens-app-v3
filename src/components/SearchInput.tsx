@@ -13,7 +13,7 @@ import {
 } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div<{ $size: 'large' | 'extraLarge' }>`
@@ -26,12 +26,12 @@ const Container = styled.div<{ $size: 'large' | 'extraLarge' }>`
   `}
 `
 
-const SearchArrowButton = styled.div<{ danger?: boolean }>`
+const SearchArrowButton = styled.div<{ $danger?: boolean }>`
   display: block;
   transition: all 0.15s ease-in-out;
   cursor: pointer;
-  color: ${({ danger, theme }) =>
-    danger ? tokens.colors[theme.mode].red : tokens.colors[theme.mode].accent};
+  color: ${({ $danger, theme }) =>
+    $danger ? tokens.colors[theme.mode].red : tokens.colors[theme.mode].accent};
   width: ${tokens.space['7']};
   height: ${tokens.space['7']};
   margin-right: ${tokens.space['2']};
@@ -76,6 +76,8 @@ const setSearchedVal = debounce(
   500,
 )
 
+type ButtonState = 'none' | 'loading' | 'danger' | 'success'
+
 export const SearchInput = ({
   size = 'extraLarge',
 }: {
@@ -86,11 +88,26 @@ export const SearchInput = ({
 
   const [searchedVal, _setSearchedVal] = useState('')
   const [inputVal, setInputVal] = useState('')
-  const { profile, valid, loading, name } = useGetDomainFromInput(
+  const { profile, valid, loading, name, status } = useGetDomainFromInput(
     searchedVal,
     searchedVal === '' || inputVal === '',
   )
   const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const buttonState: ButtonState = useMemo(() => {
+    if (inputVal === '') return 'none'
+    if (profile && searchedVal === inputVal && !loading && valid)
+      return 'success'
+    if (
+      (profile === null &&
+        searchedVal === inputVal &&
+        !loading &&
+        (status === 'success' || status === 'error')) ||
+      valid === false
+    )
+      return 'danger'
+    return 'loading'
+  }, [inputVal, loading, profile, searchedVal, status, valid])
 
   useEffect(() => {
     if (!initial) {
@@ -114,9 +131,14 @@ export const SearchInput = ({
       })
 
   const SuffixElement = () => {
-    if (inputVal === '') return null
-    if (profile && searchedVal === inputVal && !loading) {
-      if (valid) {
+    switch (buttonState) {
+      case 'loading':
+        return (
+          <div style={{ opacity: 0.5, marginRight: '8px' }}>
+            <Spinner color="foreground" />
+          </div>
+        )
+      case 'success':
         return (
           <div role="button" onClick={handleSearch}>
             <SearchArrowButton
@@ -125,23 +147,19 @@ export const SearchInput = ({
             />
           </div>
         )
-      }
-      if (!valid && inputVal.length >= 3) {
+      case 'danger':
         return (
           <div onClick={() => setInputVal('')}>
             <SearchArrowButton
+              $danger
               data-testid="search-invalid"
               as={CancelCircleSVG}
             />
           </div>
         )
-      }
+      default:
+        return null
     }
-    return (
-      <div style={{ opacity: 0.5, marginRight: '8px' }}>
-        <Spinner color="foreground" />
-      </div>
-    )
   }
 
   return (

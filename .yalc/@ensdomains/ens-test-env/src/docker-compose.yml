@@ -20,6 +20,7 @@ services:
       ethereum: '$NETWORK:$DOCKER_RPC_URL'
       GRAPH_LOG: debug
       GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
+      GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: 'true'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
   ipfs:

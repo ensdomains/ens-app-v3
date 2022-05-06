@@ -19,7 +19,8 @@ export const validateName = (name: string) => {
 }
 
 export const validateTLD = (name: string) => {
-  return validateName(name[name.length - 1])
+  const labels = name.split('.')
+  return validateName(labels[labels.length - 1])
 }
 
 type InputType = {
@@ -46,18 +47,18 @@ export const parseInputType = (input: string): InputType => {
       if (tld === 'eth' && [...termArray[termArray.length - 2]].length < 3) {
         // code-point length
         return {
-          type: 'label',
+          type: 'name',
           info: 'short',
         }
       }
       return {
-        type: 'label',
+        type: 'name',
         info: 'supported',
       }
     }
 
     return {
-      type: 'label',
+      type: 'name',
       info: 'unsupported',
     }
   } else if (isAddress(input)) {
@@ -66,7 +67,7 @@ export const parseInputType = (input: string): InputType => {
     }
   } else {
     return {
-      type: 'name',
+      type: 'label',
     }
   }
 }

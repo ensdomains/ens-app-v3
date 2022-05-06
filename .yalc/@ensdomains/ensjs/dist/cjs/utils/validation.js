@@ -23,7 +23,8 @@ const validateName = (name) => {
 };
 exports.validateName = validateName;
 const validateTLD = (name) => {
-    return (0, exports.validateName)(name[name.length - 1]);
+    const labels = name.split('.');
+    return (0, exports.validateName)(labels[labels.length - 1]);
 };
 exports.validateTLD = validateTLD;
 const parseInputType = (input) => {
@@ -44,17 +45,17 @@ const parseInputType = (input) => {
             if (tld === 'eth' && [...termArray[termArray.length - 2]].length < 3) {
                 // code-point length
                 return {
-                    type: 'label',
+                    type: 'name',
                     info: 'short',
                 };
             }
             return {
-                type: 'label',
+                type: 'name',
                 info: 'supported',
             };
         }
         return {
-            type: 'label',
+            type: 'name',
             info: 'unsupported',
         };
     }
@@ -65,7 +66,7 @@ const parseInputType = (input) => {
     }
     else {
         return {
-            type: 'name',
+            type: 'label',
         };
     }
 };

@@ -19,7 +19,8 @@ export const validateName = (name) => {
     return normalizedName;
 };
 export const validateTLD = (name) => {
-    return validateName(name[name.length - 1]);
+    const labels = name.split('.');
+    return validateName(labels[labels.length - 1]);
 };
 export const parseInputType = (input) => {
     const validTLD = validateTLD(input);
@@ -39,17 +40,17 @@ export const parseInputType = (input) => {
             if (tld === 'eth' && [...termArray[termArray.length - 2]].length < 3) {
                 // code-point length
                 return {
-                    type: 'label',
+                    type: 'name',
                     info: 'short',
                 };
             }
             return {
-                type: 'label',
+                type: 'name',
                 info: 'supported',
             };
         }
         return {
-            type: 'label',
+            type: 'name',
             info: 'unsupported',
         };
     }
@@ -60,7 +61,7 @@ export const parseInputType = (input) => {
     }
     else {
         return {
-            type: 'name',
+            type: 'label',
         };
     }
 };
