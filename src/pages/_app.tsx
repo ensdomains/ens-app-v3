@@ -1,12 +1,13 @@
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
-import type { DefaultTheme } from '@ensdomains/thorin'
-import { ThorinGlobalStyles } from '@ensdomains/thorin'
+import { DefaultTheme, ThorinGlobalStyles, tokens } from '@ensdomains/thorin'
 import {
   apiProvider,
   configureChains,
   getDefaultWallets,
+  lightTheme,
   RainbowKitProvider,
+  Theme,
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { appWithTranslation } from 'next-i18next'
@@ -18,6 +19,16 @@ import '../styles.css'
 
 const theme: DefaultTheme = {
   mode: 'light',
+}
+
+const rainbowKitTheme: Theme = {
+  ...lightTheme({
+    accentColor: tokens.colors.light.accent,
+    borderRadius: 'medium',
+  }),
+  fonts: {
+    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
+  },
 }
 
 const GlobalStyle = createGlobalStyle`
@@ -92,7 +103,7 @@ function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
       <WagmiProvider client={wagmiClient}>
-        <RainbowKitProvider chains={chains}>
+        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
           <EnsProvider>
             <ThemeProvider theme={theme}>
               <BreakpointProvider queries={breakpoints}>
