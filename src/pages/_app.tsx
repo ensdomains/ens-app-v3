@@ -77,6 +77,8 @@ const { provider, chains } = configureChains(
           })),
         ]
       : []),
+    apiProvider.infura('58a380d3ecd545b2b5b3dad5d2b18bf0'),
+    apiProvider.jsonRpc(() => ({ rpcUrl: 'https://cloudflare-eth.com/' })),
   ],
 )
 
