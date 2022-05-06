@@ -1,24 +1,34 @@
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
-import type { DefaultTheme } from '@ensdomains/thorin'
-import { ThorinGlobalStyles } from '@ensdomains/thorin'
+import { DefaultTheme, ThorinGlobalStyles, tokens } from '@ensdomains/thorin'
 import {
-  Chain,
-  connectorsForWallets,
+  apiProvider,
+  configureChains,
   getDefaultWallets,
+  lightTheme,
   RainbowKitProvider,
+  Theme,
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
-import { providers } from 'ethers'
 import { appWithTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
-import { chain, WagmiProvider } from 'wagmi'
+import { chain, createClient, WagmiProvider } from 'wagmi'
 import '../styles.css'
 
 const theme: DefaultTheme = {
   mode: 'light',
+}
+
+const rainbowKitTheme: Theme = {
+  ...lightTheme({
+    accentColor: tokens.colors.light.accent,
+    borderRadius: 'medium',
+  }),
+  fonts: {
+    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
+  },
 }
 
 const GlobalStyle = createGlobalStyle`
@@ -57,36 +67,45 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const infuraId = '58a380d3ecd545b2b5b3dad5d2b18bf0'
+const { provider, chains } = configureChains(
+  [chain.mainnet, chain.ropsten],
+  [
+    ...(process.env.NEXT_PUBLIC_PROVIDER
+      ? [
+          apiProvider.jsonRpc(() => ({
+            rpcUrl: process.env.NEXT_PUBLIC_PROVIDER!,
+          })),
+        ]
+      : []),
+    apiProvider.infura('58a380d3ecd545b2b5b3dad5d2b18bf0'),
+    apiProvider.jsonRpc(() => ({ rpcUrl: 'https://cloudflare-eth.com/' })),
+  ],
+)
 
-const provider = ({ chainId }: { chainId?: number }) =>
-  process.env.NEXT_PUBLIC_PROVIDER
-    ? new providers.JsonRpcProvider(process.env.NEXT_PUBLIC_PROVIDER, chainId)
-    : new providers.InfuraProvider(chainId, infuraId)
-
-const chains: Chain[] = [
-  { ...chain.mainnet, name: 'Ethereum' },
-  { ...chain.ropsten, name: 'Ropsten' },
-]
-
-const wallets = getDefaultWallets({
-  chains,
-  infuraId,
+const { connectors } = getDefaultWallets({
   appName: 'ENS',
-  jsonRpcUrl: ({ chainId }) =>
-    chains.find((x) => x.id === chainId)?.rpcUrls?.[0] ??
-    chain.mainnet.rpcUrls[0],
+  chains,
 })
 
-const connectors = connectorsForWallets(wallets)
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+})
 
-const queryClient = new QueryClient()
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <RainbowKitProvider chains={chains}>
-        <WagmiProvider autoConnect connectors={connectors} provider={provider}>
+      <WagmiProvider client={wagmiClient}>
+        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
           <EnsProvider>
             <ThemeProvider theme={theme}>
               <BreakpointProvider queries={breakpoints}>
@@ -96,8 +115,8 @@ function MyApp({ Component, pageProps }: AppProps) {
               </BreakpointProvider>
             </ThemeProvider>
           </EnsProvider>
-        </WagmiProvider>
-      </RainbowKitProvider>
+        </RainbowKitProvider>
+      </WagmiProvider>
     </QueryClientProvider>
   )
 }

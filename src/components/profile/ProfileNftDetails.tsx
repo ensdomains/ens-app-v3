@@ -6,7 +6,6 @@ import Image from 'next/image'
 import { Fragment, useState } from 'react'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
-import { useAccount } from 'wagmi'
 import { CopyButton } from '../CopyButton'
 
 const StyledNftBox = styled.div<{ $loading: boolean }>`
@@ -98,17 +97,17 @@ const AddressBox = ({
   const { t } = useTranslation('profile')
 
   const { getName } = useEns()
-  const { data } = useQuery(`name-${address}`, () => getName(address))
-
-  const [{ data: { ens } = { ens: undefined } }] = useAccount()
+  const { data } = useQuery(['getName', address], () => getName(address), {
+    enabled: !!address,
+  })
 
   const highlightName = isSelf || (data && data.name)
 
   const TopElement = () => {
     if (isSelf) {
-      if (ens?.name && ens.name.length > 0) {
+      if (data?.name && data.name.length > 0) {
         return (
-          <HoverableSelfName name={ens?.name}>
+          <HoverableSelfName name={data?.name}>
             {t('yourWallet')}
           </HoverableSelfName>
         )

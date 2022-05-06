@@ -1,5 +1,7 @@
 import { solidityKeccak256 } from 'ethers/lib/utils';
+import { truncateFormat } from './format';
 export const labelhash = (input) => solidityKeccak256(['string'], [input]);
+export const keccakFromString = (input) => labelhash(input);
 export function decodeLabelhash(hash) {
     if (!(hash.startsWith('[') && hash.endsWith(']'))) {
         throw Error('Expected encoded labelhash to start and end with square brackets');
@@ -77,15 +79,7 @@ export function decryptName(name) {
         .map((label) => checkLabel(label) || label)
         .join('.');
 }
-export function truncateUndecryptedName(name) {
-    const nameArray = name.split('.');
-    const truncatedArray = nameArray.map((label) => {
-        if (checkIsDecrypted(label))
-            return label;
-        return `${label.slice(0, 5)}...${label.slice(60)}`;
-    });
-    return truncatedArray.join('.');
-}
+export const truncateUndecryptedName = (name) => truncateFormat(name);
 export function checkLocalStorageSize() {
     if (!localStorage)
         return 'Empty (0 KB)';

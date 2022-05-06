@@ -17,6 +17,7 @@ import type {
   getHistoryWithDetail,
 } from './functions/getHistory'
 import type getName from './functions/getName'
+import type getNames from './functions/getNames'
 import type getOwner from './functions/getOwner'
 import type getProfile from './functions/getProfile'
 import type getRecords from './functions/getRecords'
@@ -401,6 +402,10 @@ export class ENS {
     'getSubnames',
     ['gqlInstance'],
   )
+
+  public getNames = this.generateFunction<typeof getNames>('getNames', [
+    'gqlInstance',
+  ])
 
   public universalWrapper = this.generateRawFunction<typeof universalWrapper>(
     'batchWrappers',

@@ -1,7 +1,10 @@
 import { solidityKeccak256 } from 'ethers/lib/utils'
+import { truncateFormat } from './format'
 
 export const labelhash = (input: string) =>
   solidityKeccak256(['string'], [input])
+
+export const keccakFromString = (input: string) => labelhash(input)
 
 export function decodeLabelhash(hash: string) {
   if (!(hash.startsWith('[') && hash.endsWith(']'))) {
@@ -100,14 +103,7 @@ export function decryptName(name: string) {
     .join('.')
 }
 
-export function truncateUndecryptedName(name: string) {
-  const nameArray = name.split('.')
-  const truncatedArray = nameArray.map((label: string | any[]) => {
-    if (checkIsDecrypted(label)) return label
-    return `${label.slice(0, 5)}...${label.slice(60)}`
-  })
-  return truncatedArray.join('.')
-}
+export const truncateUndecryptedName = (name: string) => truncateFormat(name)
 
 export function checkLocalStorageSize() {
   if (!localStorage) return 'Empty (0 KB)'

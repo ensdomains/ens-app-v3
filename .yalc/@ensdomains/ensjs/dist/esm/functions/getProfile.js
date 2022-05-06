@@ -2,6 +2,7 @@ import { formatsByName } from '@ensdomains/address-encoder';
 import { ethers } from 'ethers';
 import { decodeContenthash } from '../utils/contentHash';
 import { hexEncodeName } from '../utils/hexEncodedName';
+import { parseInputType } from '../utils/validation';
 const makeMulticallData = async ({ _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }, name, options) => {
     let calls = [];
     options.texts &&
@@ -287,17 +288,11 @@ export default async function ({ contracts, gqlInstance, getName, _getAddr, _get
             }
         });
     }
-    if (nameOrAddress.includes('.')) {
-        return getProfileFromName({
-            contracts,
-            gqlInstance,
-            _getAddr,
-            _getContentHash,
-            _getText,
-            resolverMulticallWrapper,
-        }, nameOrAddress, options);
+    const inputType = parseInputType(nameOrAddress);
+    if (inputType.type === 'unknown' || inputType.info === 'unsupported') {
+        throw new Error('Invalid input type');
     }
-    else {
+    if (inputType.type === 'address') {
         return getProfileFromAddress({
             contracts,
             gqlInstance,
@@ -308,4 +303,12 @@ export default async function ({ contracts, gqlInstance, getName, _getAddr, _get
             resolverMulticallWrapper,
         }, nameOrAddress, options);
     }
+    return getProfileFromName({
+        contracts,
+        gqlInstance,
+        _getAddr,
+        _getContentHash,
+        _getText,
+        resolverMulticallWrapper,
+    }, nameOrAddress, options);
 }

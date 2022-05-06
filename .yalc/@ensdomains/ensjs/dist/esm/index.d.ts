@@ -375,7 +375,13 @@ export declare class ENS {
             gracePeriod: number;
         } | null>;
     }>;
-    getSubnames: (name: string) => Promise<{
+    getSubnames: (args_0: {
+        name: string;
+        page?: number | undefined;
+        pageSize?: number | undefined;
+        orderDirection?: "asc" | "desc" | undefined;
+        orderBy?: "labelName" | "createdAt" | undefined;
+    }) => Promise<{
         id: string;
         labelName: string | null;
         truncatedName?: string | undefined;
@@ -386,6 +392,19 @@ export declare class ENS {
             id: string;
         };
     }[]>;
+    getNames: (args_0: {
+        address: string;
+        type: "owner" | "registrant";
+        page?: number | undefined;
+        pageSize?: number | undefined;
+        orderDirection?: "asc" | "desc" | undefined;
+    } & ({
+        type: "registrant";
+        orderBy?: "expiryDate" | "registrationDate" | "labelName" | undefined;
+    } | {
+        type: "owner";
+        orderBy?: "labelName" | "createdAt" | undefined;
+    })) => Promise<import("./functions/getNames").OwnedName[] | import("./functions/getNames").Registration[]>;
     universalWrapper: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string, data: string) => Promise<{
             to: string;

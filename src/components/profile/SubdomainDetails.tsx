@@ -107,7 +107,11 @@ export const SubdomainDetails = ({
     <>
       {!loading && subdomains.length > 0 ? (
         subdomains.map((subdomain) => (
-          <SubdomainItem network={network} {...subdomain} />
+          <SubdomainItem
+            key={subdomain.name}
+            network={network}
+            {...subdomain}
+          />
         ))
       ) : (
         <EmptyDetailContainer>

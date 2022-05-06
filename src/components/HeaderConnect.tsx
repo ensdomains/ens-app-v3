@@ -10,7 +10,7 @@ import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useDisconnect } from 'wagmi'
 
 const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
   color: white;
@@ -30,7 +30,7 @@ export const HeaderConnect = () => {
   const breakpoints = useBreakpoint()
   const { t } = useTranslation('common')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [_, disconnect] = useAccount()
+  const { disconnect } = useDisconnect()
 
   return (
     <ConnectButton.Custom>

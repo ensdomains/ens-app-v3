@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { decodeContenthash, DecodedContentHash } from '../utils/contentHash'
 import { hexEncodeName } from '../utils/hexEncodedName'
+import { parseInputType } from '../utils/validation'
 
 type InternalProfileOptions = {
   contentHash?: boolean | string | DecodedContentHash
@@ -520,20 +521,13 @@ export default async function (
     })
   }
 
-  if (nameOrAddress.includes('.')) {
-    return getProfileFromName(
-      {
-        contracts,
-        gqlInstance,
-        _getAddr,
-        _getContentHash,
-        _getText,
-        resolverMulticallWrapper,
-      },
-      nameOrAddress,
-      options,
-    )
-  } else {
+  const inputType = parseInputType(nameOrAddress)
+
+  if (inputType.type === 'unknown' || inputType.info === 'unsupported') {
+    throw new Error('Invalid input type')
+  }
+
+  if (inputType.type === 'address') {
     return getProfileFromAddress(
       {
         contracts,
@@ -548,4 +542,17 @@ export default async function (
       options,
     )
   }
+
+  return getProfileFromName(
+    {
+      contracts,
+      gqlInstance,
+      _getAddr,
+      _getContentHash,
+      _getText,
+      resolverMulticallWrapper,
+    },
+    nameOrAddress,
+    options,
+  )
 }

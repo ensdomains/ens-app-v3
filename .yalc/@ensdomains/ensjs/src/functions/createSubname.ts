@@ -32,9 +32,7 @@ export default async function (
   const labels = name.split('.')
 
   if (labels.length === 1) {
-    throw new Error(
-      'Subnames in ENS.js can only be created for other subnames, not TLDs',
-    )
+    throw new Error('Subnames in ENS.js can only be created for 2LDs, not TLDs')
   }
 
   if ('fuses' in wrapperArgs && contract === 'registry') {

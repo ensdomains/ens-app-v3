@@ -39,6 +39,7 @@
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/content-hash": "^2.5.7",
     "@ensdomains/ens-contracts": "^0.0.11",
+    "@ensdomains/eth-ens-namehash": "^2.0.15",
     "dns-packet": "^5.3.1",
     "ethers": "^5.6.1",
     "graphql": "^16.3.0",
@@ -47,5 +48,5 @@
   "peerDependencies": {
     "ethers": "*"
   },
-  "yalcSig": "bd74a3e02645ef872650ee4f6694307d"
+  "yalcSig": "3b6c8d323b476371f1adea98306954ba"
 }

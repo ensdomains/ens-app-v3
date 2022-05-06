@@ -10,5 +10,12 @@ declare type Subname = {
         id: string;
     };
 };
-declare const getSubnames: ({ gqlInstance }: ENSArgs<'gqlInstance'>, name: string) => Promise<Subname[]>;
+declare type Params = {
+    name: string;
+    page?: number;
+    pageSize?: number;
+    orderDirection?: 'asc' | 'desc';
+    orderBy?: 'createdAt' | 'labelName';
+};
+declare const getSubnames: ({ gqlInstance }: ENSArgs<'gqlInstance'>, { name, page, pageSize, orderDirection, orderBy }: Params) => Promise<Subname[]>;
 export default getSubnames;

@@ -1,9 +1,12 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.checkLocalStorageSize = exports.truncateUndecryptedName = exports.decryptName = exports.checkIsDecrypted = exports.parseName = exports.encodeLabel = exports.checkLabel = exports.saveName = exports.saveLabel = exports.isEncodedLabelhash = exports.encodeLabelhash = exports.decodeLabelhash = exports.labelhash = void 0;
+exports.checkLocalStorageSize = exports.truncateUndecryptedName = exports.decryptName = exports.checkIsDecrypted = exports.parseName = exports.encodeLabel = exports.checkLabel = exports.saveName = exports.saveLabel = exports.isEncodedLabelhash = exports.encodeLabelhash = exports.decodeLabelhash = exports.keccakFromString = exports.labelhash = void 0;
 const utils_1 = require("ethers/lib/utils");
+const format_1 = require("./format");
 const labelhash = (input) => (0, utils_1.solidityKeccak256)(['string'], [input]);
 exports.labelhash = labelhash;
+const keccakFromString = (input) => (0, exports.labelhash)(input);
+exports.keccakFromString = keccakFromString;
 function decodeLabelhash(hash) {
     if (!(hash.startsWith('[') && hash.endsWith(']'))) {
         throw Error('Expected encoded labelhash to start and end with square brackets');
@@ -91,15 +94,7 @@ function decryptName(name) {
         .join('.');
 }
 exports.decryptName = decryptName;
-function truncateUndecryptedName(name) {
-    const nameArray = name.split('.');
-    const truncatedArray = nameArray.map((label) => {
-        if (checkIsDecrypted(label))
-            return label;
-        return `${label.slice(0, 5)}...${label.slice(60)}`;
-    });
-    return truncatedArray.join('.');
-}
+const truncateUndecryptedName = (name) => (0, format_1.truncateFormat)(name);
 exports.truncateUndecryptedName = truncateUndecryptedName;
 function checkLocalStorageSize() {
     if (!localStorage)

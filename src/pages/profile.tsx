@@ -7,6 +7,7 @@ import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
+import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
 import { ArrowCircleSVG, tokens, Typography } from '@ensdomains/thorin'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
@@ -126,25 +127,30 @@ const ProfilePage: NextPage = () => {
 
   const [tab, setTab] = useState<'profile' | 'subdomains'>('profile')
 
-  const [
+  const { activeChain: chain } = useNetwork()
+  const { ready, getOwner, getExpiry, getName, getSubnames, batch } = useEns()
+  const { data: accountData } = useAccount()
+  const address = accountData?.address
+
+  const { data: ensData, isLoading: primaryLoading } = useQuery(
+    ['getName', address],
+    () => getName(address!),
     {
-      data: { chain },
+      enabled: !!address,
     },
-  ] = useNetwork()
-  const { ready, getOwner, getExpiry, getSubnames, batch } = useEns()
-  const [
-    {
-      data: { ens: ensData, address } = { ens: undefined, address: undefined },
-      loading: accountLoading,
-    },
-  ] = useAccount()
+  )
 
   const name = isSelf && ensData?.name ? ensData.name : _name
 
-  const { profile, loading: profileLoading } = useGetDomainFromInput(name)
+  const {
+    profile,
+    loading: profileLoading,
+    name: normalisedName,
+  } = useGetDomainFromInput(name)
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', name],
-    () => batch(getOwner.batch(name), getExpiry.batch(name)),
+    () =>
+      batch(getOwner.batch(normalisedName), getExpiry.batch(normalisedName)),
     {
       enabled: !!(name && profile),
     },
@@ -157,18 +163,20 @@ const ProfilePage: NextPage = () => {
 
   const { data: subnameData, isLoading: subnamesLoading } = useQuery(
     ['getSubnames', name],
-    () => getSubnames(name),
+    () => getSubnames({ name }),
     {
       enabled: !!(name && profile),
     },
   )
+
+  const truncatedName = truncateFormat(normalisedName)
 
   const isLoading =
     !ready ||
     profileLoading ||
     batchLoading ||
     subnamesLoading ||
-    accountLoading
+    primaryLoading
 
   useProtectedRoute(
     '/',
@@ -187,7 +195,7 @@ const ProfilePage: NextPage = () => {
     <Basic
       title={
         (_name === 'me' && 'Your Profile on') ||
-        (_name ? `${_name} on` : `Loading... -`)
+        (normalisedName ? `${normalisedName} on` : `Loading... -`)
       }
       loading={isLoading}
     >
@@ -232,7 +240,7 @@ const ProfilePage: NextPage = () => {
           <TabWrapper>
             {tab === 'profile' ? (
               <ProfileDetails
-                name={name}
+                name={truncatedName}
                 addresses={(profile?.records?.coinTypes || []).map(
                   (item: any) => ({ key: item.coin, value: item.addr }),
                 )}
