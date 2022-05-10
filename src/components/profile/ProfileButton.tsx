@@ -9,42 +9,52 @@ import {
 import { useCopied } from '@app/hooks/useCopied'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
-import { ArrowUpSVG, Button, tokens, Typography } from '@ensdomains/thorin'
+import { ArrowUpSVG, Button, Space, Typography } from '@ensdomains/thorin'
 import React from 'react'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { ConditionalWrapper } from '../ConditionalWrapper'
 import { IconCopyAnimated } from '../IconCopyAnimated'
 
 const Container = styled.div`
-  padding: 0 ${tokens.space['1']};
+  ${({ theme }) => `
+  padding: 0 ${theme.space['1']};
   width: 100%:
+  `}
 `
 
 const Wrapper = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: row;
-  flex-gap: ${tokens.space['2']};
-  gap: ${tokens.space['2']};
+  flex-gap: ${theme.space['2']};
+  gap: ${theme.space['2']};
   align-items: center;
   justify-content: center;
+  `}
 `
 
 const StyledAddressIcon = styled(DynamicAddressIcon)`
-  width: ${tokens.space['5']};
-  height: ${tokens.space['5']};
+  ${({ theme }) => `
+  width: ${theme.space['5']};
+  height: ${theme.space['5']};
+  `}
 `
 
 const PrimaryText = styled(Typography)`
-  color: ${({ theme }) => tokens.colors[theme.mode].text};
+  ${({ theme }) => `
+  color: ${theme.colors.text};
+  `}
 `
 
 const RotatedIconArrowUp = styled.svg`
+  ${({ theme }) => `
   display: block;
   transform: rotate(45deg);
-  height: ${tokens.space['3.5']};
-  width: ${tokens.space['3.5']};
-  stroke-width: ${tokens.borderWidths['1']};
-  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
+  height: ${theme.space['3.5']};
+  width: ${theme.space['3.5']};
+  stroke-width: ${theme.borderWidths['1']};
+  color: ${theme.colors.textTertiary};
+  `}
 `
 
 const ProfileButton = ({
@@ -55,13 +65,14 @@ const ProfileButton = ({
   value,
   testid,
 }: {
-  prefixSize?: keyof typeof tokens.space
+  prefixSize?: Space
   prefix?: React.ReactNode
   children: React.ReactNode
   link?: string
   value: string
   testid?: string
 }) => {
+  const { space } = useTheme()
   const { copy, copied } = useCopied()
 
   return (
@@ -81,8 +92,8 @@ const ProfileButton = ({
             <div
               data-testid="found"
               style={{
-                width: tokens.space[prefixSize],
-                height: tokens.space[prefixSize],
+                width: space[prefixSize],
+                height: space[prefixSize],
               }}
             >
               {prefix}
@@ -155,13 +166,17 @@ export const AddressProfileButton = ({
 }
 
 const OtherContainer = styled.div`
-  background-color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
-  padding: ${tokens.space['0.25']} ${tokens.space['1.5']};
-  border-radius: ${tokens.radii.large};
+  ${({ theme }) => `
+  background-color: ${theme.colors.textTertiary};
+  padding: ${theme.space['0.25']} ${theme.space['1.5']};
+  border-radius: ${theme.radii.large};
+  `}
 `
 
 const OtherContainerAddressPrefix = styled(Typography)`
-  color: ${tokens.colors.base.white};
+  ${({ theme }) => `
+  color: ${theme.colors.white};
+  `}
 `
 
 export const OtherProfileButton = ({

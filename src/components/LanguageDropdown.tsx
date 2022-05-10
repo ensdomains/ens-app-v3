@@ -1,26 +1,26 @@
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Dropdown, tokens } from '@ensdomains/thorin'
+import { Dropdown } from '@ensdomains/thorin'
 import ISO6391 from 'iso-639-1'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const MobileInnerDropdownButton = styled.div<{ $large: boolean }>`
-  width: fit;
-  padding: ${tokens.space['0.5']} ${tokens.space['1.5']};
-  display: block;
-  font-size: ${tokens.fontSizes.label};
-  align-items: center;
-  transition: none;
-
-  ${({ $large }) =>
-    $large &&
+  ${({ theme, $large }) => css`
+    width: fit;
+    padding: ${theme.space['0.5']} ${theme.space['1.5']};
+    display: block;
+    font-size: ${theme.fontSizes.label};
+    align-items: center;
+    transition: none;
+    ${$large &&
     mq.small.min`
-    width: ${tokens.space['12']};
-    padding: 0;
-    display: flex;
-    align-items: flex-start;
+      width: ${theme.space['12']};
+      padding: 0;
+      display: flex;
+      align-items: flex-start;
+    `}
   `}
 `
 

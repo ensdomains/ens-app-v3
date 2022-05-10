@@ -8,14 +8,14 @@ import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { ArrowCircleSVG, tokens, Typography } from '@ensdomains/thorin'
+import { ArrowCircleSVG, Typography } from '@ensdomains/thorin'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
 
 const GridItem = styled.div<{ $area: string }>`
@@ -32,10 +32,12 @@ const DetailsWrapper = styled(GridItem)`
 `
 
 const ArrowBack = styled.div`
-  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
+  ${({ theme }) => `
+  color: ${theme.colors.textTertiary};
   transform: rotate(180deg);
-  width: ${tokens.space['7']};
-  height: ${tokens.space['7']};
+  width: ${theme.space['7']};
+  height: ${theme.space['7']};
+  `}
 `
 
 const BackContainer = styled.div`
@@ -44,7 +46,7 @@ const BackContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: ${tokens.space['2']};
+  gap: ${({ theme }) => theme.space['2']};
 
   &:hover {
     filter: contrast(0.8);
@@ -53,48 +55,55 @@ const BackContainer = styled.div`
 `
 
 const TabButton = styled.div<{ $active: boolean }>`
+  ${({ theme, $active }) => `
   cursor: pointer;
   transition: all 0.15s ease-in-out;
   font-weight: bold;
-  font-size: ${tokens.fontSizes.headingThree};
-  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
+  font-size: ${theme.fontSizes.headingThree};
+  color: ${theme.colors.textTertiary};
 
   &:hover {
-    color: ${({ theme }) => tokens.colors[theme.mode].textSecondary};
+    color: ${theme.colors.textSecondary};
   }
 
-  ${({ $active, theme }) =>
+  ${
     $active &&
     `
-    color: ${tokens.colors[theme.mode].accent};
+    color: ${theme.colors.accent};
     &:hover {
-      color: ${tokens.colors[theme.mode].accent};
+      color: ${theme.colors.accent};
     }
+  `
+  }
   `}
 `
 
 const TabButtonWrapper = styled(GridItem)`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: ${tokens.space['1']};
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: ${theme.space['1']};
 
-  ${mq.medium.min`
+    ${mq.medium.min`
       flex-direction: row;
       align-items: center;
-      gap: ${tokens.space['4']};
+      gap: ${theme.space['4']};
     `}
+  `}
 `
 
 const TabWrapper = styled.div`
-  background-color: ${({ theme }) => tokens.colors[theme.mode].background};
-  border-radius: ${tokens.radii['2xLarge']};
+  ${({ theme }) => `
+  background-color: ${theme.colors.background};
+  border-radius: ${theme.radii['2xLarge']};
+  `}
 `
 
 const WrapperGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${tokens.space['8']};
+  gap: ${({ theme }) => theme.space['8']};
   align-self: center;
   justify-content: center;
   grid-template-areas: 'back-button tabs' 'details details' 'nft-details nft-details';

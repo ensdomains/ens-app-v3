@@ -1,4 +1,4 @@
-import { Colors, Dropdown, MenuSVG, tokens } from '@ensdomains/thorin'
+import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import styled from 'styled-components'
 
@@ -11,10 +11,12 @@ export interface HamburgerItem {
 }
 
 const MenuIcon = styled(MenuSVG)`
+  ${({ theme }) => `
   display: block;
-  width: ${tokens.space['4.5']};
-  height: ${tokens.space['4.5']};
-  stroke-width: ${tokens.borderWidths['0.75']};
+  width: ${theme.space['4.5']};
+  height: ${theme.space['4.5']};
+  stroke-width: ${theme.borderWidths['0.75']};
+  `}
 `
 
 export const HamburgerMenu = ({

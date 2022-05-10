@@ -1,6 +1,9 @@
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
-import { DefaultTheme, ThorinGlobalStyles, tokens } from '@ensdomains/thorin'
+import {
+  lightTheme as thorinLightTheme,
+  ThorinGlobalStyles,
+} from '@ensdomains/thorin'
 import {
   apiProvider,
   configureChains,
@@ -17,13 +20,9 @@ import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { chain, createClient, WagmiProvider } from 'wagmi'
 import '../styles.css'
 
-const theme: DefaultTheme = {
-  mode: 'light',
-}
-
 const rainbowKitTheme: Theme = {
   ...lightTheme({
-    accentColor: tokens.colors.light.accent,
+    accentColor: thorinLightTheme.colors.accent,
     borderRadius: 'medium',
   }),
   fonts: {
@@ -107,7 +106,7 @@ function MyApp({ Component, pageProps }: AppProps) {
       <WagmiProvider client={wagmiClient}>
         <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
           <EnsProvider>
-            <ThemeProvider theme={theme}>
+            <ThemeProvider theme={thorinLightTheme}>
               <BreakpointProvider queries={breakpoints}>
                 <GlobalStyle />
                 <ThorinGlobalStyles />
