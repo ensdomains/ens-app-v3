@@ -2,7 +2,7 @@ import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { imageUrl } from '@app/utils/utils'
-import { Avatar, Heading, tokens, Typography } from '@ensdomains/thorin'
+import { Avatar, Heading, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import styled from 'styled-components'
 import {
@@ -11,24 +11,28 @@ import {
   SocialProfileButton,
 } from './ProfileButton'
 
-const ProfileInfoBox = styled.div`
-  background-image: ${({ theme }) => tokens.colors[theme.mode].accentGradient};
+const ProfileInfoBox = styled.div`'
+  ${({ theme }) => `
+  background-image: ${theme.colors.accentGradient};
   background-repeat: no-repeat;
   background-attachment: scroll;
   background-size: 100% 120px;
-  padding: ${tokens.space['12']};
-  background-color: ${({ theme }) => tokens.colors[theme.mode].background};
-  border-radius: ${tokens.radii['2xLarge']};
+  padding: ${theme.space['12']};
+  background-color: ${theme.colors.background};
+  border-radius: ${theme.radii['2xLarge']};
+  `}
 `
 
 const Stack = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: row;
-  flex-gap: ${tokens.space['2']};
-  gap: ${tokens.space['2']};
+  flex-gap: ${theme.space['2']};
+  gap: ${theme.space['2']};
   flex-wrap: wrap;
-  margin-top: ${tokens.space['2']};
-  margin-left: calc(-1 * ${tokens.space['4']});
+  margin-top: ${theme.space['2']};
+  margin-left: calc(-1 * ${theme.space['4']});
+  `}
 `
 
 const ProfileSection = ({
@@ -82,19 +86,23 @@ const ProfileSection = ({
 }
 
 const DetailStack = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: row;
-  flex-gap: ${tokens.space['4']};
-  gap: ${tokens.space['4']};
+  flex-gap: ${theme.space['4']};
+  gap: ${theme.space['4']};
   align-items: center;
+  `}
 `
 
 const RecordsStack = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: column;
-  flex-gap: ${tokens.space['4']};
-  gap: ${tokens.space['4']};
-  margin-top: ${tokens.space['4']};
+  flex-gap: ${theme.space['4']};
+  gap: ${theme.space['4']};
+  margin-top: ${theme.space['4']};
+  `}
 `
 
 export const ProfileDetails = ({

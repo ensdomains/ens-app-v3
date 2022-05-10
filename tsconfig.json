@@ -41,8 +41,6 @@
     "e2e/tsconfig.json"
   ],
   "exclude": [
-    "node_modules",
-    ".yarn",
     "custom-test-env.js",
     "e2e/**/*",
     "**/*.ignore.ts",

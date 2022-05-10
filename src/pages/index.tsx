@@ -1,34 +1,38 @@
 import { SearchInput } from '@app/components/SearchInput'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
-import { tokens, Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const GradientTitle = styled.h1`
-  font-size: ${tokens.fontSizes.headingTwo};
-  text-align: center;
-  font-weight: 800;
-  background-image: ${({ theme }) => tokens.colors[theme.mode].accentGradient};
-  background-repeat: no-repeat;
-  background-size: 110%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  margin: 0;
+  ${({ theme }) => css`
+    font-size: ${theme.fontSizes.headingTwo};
+    text-align: center;
+    font-weight: 800;
+    background-image: ${theme.colors.accentGradient};
+    background-repeat: no-repeat;
+    background-size: 110%;
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    margin: 0;
 
-  ${mq.small.min`
-    font-size: ${tokens.fontSizes.headingOne};
+    ${mq.small.min`
+      font-size: ${theme.fontSizes.headingOne};
+    `}
   `}
 `
 
 const SubtitleWrapper = styled.div`
-  max-width: calc(${tokens.space['72']} * 2 - ${tokens.space['4']});
+  ${({ theme }) => `
+  max-width: calc(${theme.space['72']} * 2 - ${theme.space['4']});
   line-height: 150%;
   text-align: center;
-  margin-bottom: ${tokens.space['3']};
+  margin-bottom: ${theme.space['3']};
+  `}
 `
 
 const Container = styled.div`
@@ -40,16 +44,20 @@ const Container = styled.div`
 `
 
 const Stack = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  flex-gap: ${tokens.space['3']};
-  gap: ${tokens.space['3']};
+  flex-gap: ${theme.space['3']};
+  gap: ${theme.space['3']};
+  `}
 `
 
 const Description = styled(Typography)`
-  line-height: ${tokens.lineHeights['1.5']};
+  ${({ theme }) => `
+  line-height: ${theme.lineHeights['1.5']};
+  `}
 `
 
 const Home: NextPage = () => {

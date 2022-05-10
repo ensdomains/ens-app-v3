@@ -1,23 +1,25 @@
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { tokens } from '@ensdomains/thorin'
+import { Space } from '@ensdomains/thorin'
 import { ElementType } from 'react'
 import styled from 'styled-components'
 
-const SocialIconWrapper = styled.a<{ $boxSize: keyof typeof tokens.space }>`
+const SocialIconWrapper = styled.a<{ $boxSize: Space }>`
   position: relative;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: ${({ $boxSize }) => tokens.space[$boxSize]};
-  min-height: ${({ $boxSize }) => tokens.space[$boxSize]};
+  ${({ theme, $boxSize }) => `
+    width: ${theme.space[$boxSize]};
+    min-height: ${theme.space[$boxSize]};
+  `}
 `
 
 const StyledIcon = styled.div<{ $iconColor?: string }>`
   height: 80%;
   position: absolute;
   transition: 0.15s all ease-in-out;
-  fill: ${({ theme }) => tokens.colors[theme.mode].backgroundHide};
+  fill: ${({ theme }) => theme.colors.backgroundHide};
   ${SocialIconWrapper}:hover && {
     ${({ $iconColor }) => `fill: ${$iconColor};`};
   }

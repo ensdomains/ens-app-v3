@@ -1,5 +1,5 @@
 import { imageUrlUnknownRecord } from '@app/utils/utils'
-import { ArrowRightSVG, Avatar, tokens, Typography } from '@ensdomains/thorin'
+import { ArrowRightSVG, Avatar, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
@@ -11,48 +11,52 @@ type Subdomain = {
 }
 
 const SubdomainWrapper = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  padding: ${tokens.space['3']} ${tokens.space['4.5']};
-  border-bottom: 1px solid
-    ${({ theme }) => tokens.colors[theme.mode].borderTertiary};
+  padding: ${theme.space['3']} ${theme.space['4.5']};
+  border-bottom: 1px solid ${theme.colors.borderTertiary};
   transition: all 0.15s ease-in-out;
 
   &:hover {
-    background-color: ${({ theme }) =>
-      tokens.colors[theme.mode].backgroundSecondary};
+    background-color: ${theme.colors.backgroundSecondary};
   }
 
   &:last-of-type {
     border: none;
   }
+  `}
 `
 
 const EmptyDetailContainer = styled.div`
-  padding: ${tokens.space['4']};
+  padding: ${({ theme }) => theme.space['4']};
   display: flex;
   justify-content: center;
   align-items: center;
 `
 
 const Stack = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: ${tokens.space['4']};
-  flex-gap: ${tokens.space['4']};
+  gap: ${theme.space['4']};
+  flex-gap: ${theme.space['4']};
+  `}
 `
 
 const RightArrow = styled.svg`
-  stroke-width: ${tokens.borderWidths['0.75']};
-  color: ${({ theme }) => tokens.colors[theme.mode].textTertiary};
+  ${({ theme }) => `
+  stroke-width: ${theme.borderWidths['0.75']};
+  color: ${theme.colors.textTertiary};
   display: block;
-  height: ${tokens.space['6']};
-  width: ${tokens.space['6']};
+  height: ${theme.space['6']};
+  width: ${theme.space['6']};
+  `}
 `
 
 const SubdomainItem = ({

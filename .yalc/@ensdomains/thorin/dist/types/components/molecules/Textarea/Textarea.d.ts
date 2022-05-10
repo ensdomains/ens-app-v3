@@ -1,0 +1,22 @@
+import * as React from 'react';
+import { FieldBaseProps } from '../../atoms/Field';
+declare type NativeTextareaProps = React.AllHTMLAttributes<HTMLTextAreaElement>;
+export declare const Textarea: React.ForwardRefExoticComponent<FieldBaseProps & {
+    autoCorrect?: NativeTextareaProps['autoCorrect'];
+    autoFocus?: NativeTextareaProps['autoFocus'];
+    defaultValue?: string | number | undefined;
+    disabled?: boolean | undefined;
+    id?: NativeTextareaProps['id'];
+    name?: string | undefined;
+    maxLength?: NativeTextareaProps['maxLength'];
+    placeholder?: NativeTextareaProps['placeholder'];
+    readOnly?: NativeTextareaProps['readOnly'];
+    rows?: NativeTextareaProps['rows'];
+    spellCheck?: NativeTextareaProps['spellCheck'];
+    tabIndex?: NativeTextareaProps['tabIndex'];
+    value?: string | number | undefined;
+    onChange?: ((event: React.ChangeEvent<HTMLTextAreaElement>) => void) | undefined;
+    onBlur?: NativeTextareaProps['onBlur'];
+    onFocus?: NativeTextareaProps['onFocus'];
+} & React.RefAttributes<HTMLTextAreaElement>>;
+export {};

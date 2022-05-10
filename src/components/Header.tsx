@@ -1,10 +1,9 @@
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { tokens } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import styled from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import { ConditionalWrapper } from './ConditionalWrapper'
@@ -44,11 +43,12 @@ const DropdownRoutes = [
 ]
 
 const HeaderWrapper = styled.header<{ $isHome: boolean }>`
-  height: ${tokens.space['16']};
-  ${({ $isHome }) =>
-    !$isHome &&
+  ${({ theme, $isHome }) => css`
+    height: ${theme.space['16']};
+    ${!$isHome &&
     mq.medium.min`
-    margin-bottom:  ${tokens.space['12']};
+    margin-bottom:  ${theme.space['12']};
+  `}
   `}
 `
 
@@ -67,9 +67,11 @@ const LogoAnchor = styled.a`
 `
 
 const VerticalLine = styled.div`
+  ${({ theme }) => `
   width: 1px;
-  height: ${tokens.space['14']};
-  background-color: ${({ theme }) => tokens.colors[theme.mode].borderSecondary};
+  height: ${theme.space['14']};
+  background-color: ${theme.colors.borderSecondary};
+  `}
 `
 
 const NavContainer = styled.div`
@@ -77,17 +79,20 @@ const NavContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  flex-gap: ${tokens.space['3']};
-  gap: ${tokens.space['3']};
-  ${mq.small.min`
-    flex-gap: ${tokens.space['6']};
-    gap: ${tokens.space['6']};
+  ${({ theme }) => css`
+    flex-gap: ${theme.space['3']};
+    gap: ${theme.space['3']};
+    ${mq.small.min`
+      flex-gap: ${theme.space['6']};
+      gap: ${theme.space['6']};
+    `}
   `}
 `
 
 export const Header = () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
+  const { space } = useTheme()
   const { t } = useTranslation('common')
 
   return (
@@ -102,9 +107,9 @@ export const Header = () => {
           )}
         >
           {breakpoints.sm && router.asPath === '/' ? (
-            <ENSFull height={tokens.space['12']} />
+            <ENSFull height={space['12']} />
           ) : (
-            <ENSWithGradient height={tokens.space['12']} />
+            <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
         <LanugageDropdown />

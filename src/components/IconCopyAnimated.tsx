@@ -45,13 +45,18 @@ const SVGWrapper = styled.svg<{
   $size: SVGProps['size']
   $color: SVGProps['color']
 }>`
-  ${({ $checkStrokeWidth }) =>
+  ${({ theme, $checkStrokeWidth, $size, $color }) => `
+  ${
     $checkStrokeWidth &&
-    `stroke-width: ${tokens.borderWidths[$checkStrokeWidth]};`}
-  ${({ $size }) =>
-    $size && `width: ${tokens.space[$size]}; height: ${tokens.space[$size]};`}
-  ${({ theme, $color }) =>
-    $color && `color: ${tokens.colors[theme.mode][$color]};`}
+    `stroke-width: ${theme.borderWidths[$checkStrokeWidth]};`
+  }
+  ${
+    $size &&
+    `width: ${theme.space[$size]};
+    height: ${theme.space[$size]};`
+  }
+  ${$color && `color: ${theme.colors[$color]};`}
+  `}
 `
 
 export const IconCopyAnimated = memo(

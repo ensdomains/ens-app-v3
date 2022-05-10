@@ -1843,9 +1843,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.5.3":
-  version: 0.5.3
-  resolution: "@ensdomains/thorin@npm:0.5.3"
+"@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
+  version: 0.5.4
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6e4914&locator=ens-app-v2%40workspace%3A."
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -1854,7 +1854,7 @@ __metadata:
     react: ^17
     react-dom: ^17
     styled-components: ^5.3.3
-  checksum: 6e62d1a96e2802b2f24c1f8e858fa58ea495a413d9016947b694de454368c3d0f01909b7b64e10ee63dac89f74997490f35ec8fc7ced243857c5e8c792d4f58e
+  checksum: 0817b9056cb1a4e67e7b1a6fe5a1e500ccdc2d8e73585b6d818950f0f3f5ac721d59b70463dcbaba735e4e1de35cfe6b111d7df2a1209cc27bd4952ed7307824
   languageName: node
   linkType: hard
 
@@ -4436,14 +4436,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/styled-components@npm:^5":
-  version: 5.1.24
-  resolution: "@types/styled-components@npm:5.1.24"
+"@types/styled-components@npm:5.1.23":
+  version: 5.1.23
+  resolution: "@types/styled-components@npm:5.1.23"
   dependencies:
     "@types/hoist-non-react-statics": "*"
     "@types/react": "*"
     csstype: ^3.0.2
-  checksum: 158c69085ad899622f558426c623d3052f7b521ede01c0fd342280c93ef2ac462a39c4c3b2374e7c7e2630fcc64dfcfd8f4446c8d4809cbac9a7b962a73357c0
+  checksum: 78bc52c70df3964cb3826bdc7f2aa298b610971b63f1e015184f425236219b97d8efaf665603960388763686335e2d8b981e4ee3d87f0e3e3781bad35b0a646a
   languageName: node
   linkType: hard
 
@@ -10213,7 +10213,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.5.3
+    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5
@@ -10232,7 +10232,7 @@ __metadata:
     "@types/puppeteer-core": ^5.4.0
     "@types/react": 17.0.30
     "@types/react-is": ^17
-    "@types/styled-components": ^5
+    "@types/styled-components": 5.1.23
     "@types/testing-library__jest-dom": ^5
     "@typescript-eslint/eslint-plugin": ^5.10.0
     "@typescript-eslint/parser": ^5.10.0
@@ -10283,7 +10283,7 @@ __metadata:
     react-query: ^3.34.19
     styled-components: ^5.3.3
     ts-node: ^10.7.0
-    typescript: ^4.6.3
+    typescript: ^4.6.4
     wagmi: ^0.3.3
     wait-on: ^6.0.1
   peerDependencies:
@@ -22154,23 +22154,23 @@ __metadata:
   languageName: node
   linkType: hard
 
-"typescript@npm:^4.6.3":
-  version: 4.6.3
-  resolution: "typescript@npm:4.6.3"
+"typescript@npm:^4.6.4":
+  version: 4.6.4
+  resolution: "typescript@npm:4.6.4"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 255bb26c8cb846ca689dd1c3a56587af4f69055907aa2c154796ea28ee0dea871535b1c78f85a6212c77f2657843a269c3a742d09d81495b97b914bf7920415b
+  checksum: e7bfcc39cd4571a63a54e5ea21f16b8445268b9900bf55aee0e02ad981be576acc140eba24f1af5e3c1457767c96cea6d12861768fb386cf3ffb34013718631a
   languageName: node
   linkType: hard
 
-"typescript@patch:typescript@^4.6.3#~builtin<compat/typescript>":
-  version: 4.6.3
-  resolution: "typescript@patch:typescript@npm%3A4.6.3#~builtin<compat/typescript>::version=4.6.3&hash=bda367"
+"typescript@patch:typescript@^4.6.4#~builtin<compat/typescript>":
+  version: 4.6.4
+  resolution: "typescript@patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"
   bin:
     tsc: bin/tsc
     tsserver: bin/tsserver
-  checksum: 6bf45caf847062420592e711bc9c28bf5f9a9a7fa8245343b81493e4ededae33f1774009d1234d911422d1646a2c839f44e1a23ecb111b40a60ac2ea4c1482a8
+  checksum: 1cb434fbc637d347be90e3a0c6cd05e33c38f941713c8786d3031faf1842c2c148ba91d2fac01e7276b0ae3249b8633f1660e32686cc7a8c6a8fd5361dc52c66
   languageName: node
   linkType: hard
 

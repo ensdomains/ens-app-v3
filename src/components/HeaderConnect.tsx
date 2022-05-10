@@ -1,27 +1,24 @@
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import {
-  Button,
-  EthTransparentInvertedSVG,
-  Profile,
-  tokens,
-} from '@ensdomains/thorin'
+import { Button, EthTransparentInvertedSVG, Profile } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 
 const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
-  color: white;
-  display: block;
-  margin-right: calc(${tokens.space['2']} * -1);
-  margin-left: calc(${tokens.space['2']} * -1);
-  height: ${tokens.space['4']};
-  width: ${tokens.space['4']};
-  ${mq.small.min`
-    height: ${tokens.space['6']};
-    width: ${tokens.space['6']};
+  ${({ theme }) => css`
+    color: white;
+    display: block;
+    margin-right: calc(${theme.space['2']} * -1);
+    margin-left: calc(${theme.space['2']} * -1);
+    height: ${theme.space['4']};
+    width: ${theme.space['4']};
+    ${mq.small.min`
+      height: ${theme.space['6']};
+      width: ${theme.space['6']};
+    `}
   `}
 `
 

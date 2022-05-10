@@ -1,25 +1,26 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { ensNftImageUrl, shortenAddress } from '@app/utils/utils'
-import { tokens, Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import Image from 'next/image'
 import { Fragment, useState } from 'react'
 import { useQuery } from 'react-query'
-import styled from 'styled-components'
+import styled, { useTheme } from 'styled-components'
 import { CopyButton } from '../CopyButton'
 
 const StyledNftBox = styled.div<{ $loading: boolean }>`
+  ${({ theme, $loading }) => `
   width: 100%;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: ${({ $loading, theme }) =>
-    $loading ? tokens.colors[theme.mode].accentGradient : 'none'};
-  border-radius: ${tokens.radii['2xLarge']};
-  margin-bottom: ${tokens.space['8']};
+  background: ${$loading ? theme.colors.accentGradient : 'none'};
+  border-radius: ${theme.radii['2xLarge']};
+  margin-bottom: ${theme.space['8']};
   & > span {
-    border-radius: ${tokens.radii['2xLarge']};
+    border-radius: ${theme.radii['2xLarge']};
   }
+  `}
 `
 
 const HoverableSelfName = styled.div<{ name: string }>`
@@ -46,35 +47,41 @@ const HoverableSelfName = styled.div<{ name: string }>`
   &:hover::before {
     transition: all 0.15s ease-in-out;
     visibility: visible;
-    color: ${({ theme }) => tokens.colors[theme.mode].text};
+    color: ${({ theme }) => theme.colors.text};
   }
 `
 
 const HoverableSelfNameWrapper = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: row;
   align-items: center;
-  flex-gap: ${tokens.space['2']};
-  gap: ${tokens.space['2']};
+  flex-gap: ${theme.space['2']};
+  gap: ${theme.space['2']};
+  `}
 `
 
 const HoverableSelfNameContainer = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: column;
   align-items: flex-end;
-  flex-gap: ${tokens.space['1']};
-  gap: ${tokens.space['1']};
+  flex-gap: ${theme.space['1']};
+  gap: ${theme.space['1']};
+  `}
 `
 
 const Stack = styled.div`
+  ${({ theme }) => `
   display: flex;
   flex-direction: column;
-  gap: ${tokens.space['4']};
-  flex-gap: ${tokens.space['4']};
+  gap: ${theme.space['4']};
+  flex-gap: ${theme.space['4']};
+  `}
 `
 
 const ItemContainer = styled.div`
-  margin: 0 ${tokens.space['2']};
+  margin: 0 ${({ theme }) => theme.space['2']};
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -83,8 +90,7 @@ const ItemContainer = styled.div`
 
 const HorizontalLine = styled.div`
   height: 1px;
-  background-color: ${({ theme }) =>
-    tokens.colors[theme.mode].foregroundSecondary};
+  background-color: ${({ theme }) => theme.colors.foregroundSecondary};
 `
 
 const AddressBox = ({
@@ -150,6 +156,7 @@ export const ProfileNftDetails = ({
 }) => {
   const [nftLoading, setNftLoading] = useState(true)
   const { t: tc } = useTranslation('common')
+  const { space } = useTheme()
   const { contracts } = useEns()
   const { data: baseRegistrarAddress } = useQuery(
     'base-registrar-address',
@@ -169,7 +176,7 @@ export const ProfileNftDetails = ({
           height={270}
         />
       </StyledNftBox>
-      <div style={{ marginTop: tokens.space['4'] }}>
+      <div style={{ marginTop: space['4'] }}>
         <Stack>
           {[
             ...[
