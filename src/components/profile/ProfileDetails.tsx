@@ -11,7 +11,7 @@ import {
   SocialProfileButton,
 } from './ProfileButton'
 
-const ProfileInfoBox = styled.div`'
+const ProfileInfoBox = styled.div`
   ${({ theme }) => `
   background-image: ${theme.colors.accentGradient};
   background-repeat: no-repeat;
