@@ -105,94 +105,56 @@ export declare class ENS {
         texts?: boolean | string[] | undefined;
         coinTypes?: boolean | string[] | undefined;
     } | undefined) => Promise<{
-        address: any;
-        records: {
+        isMigrated: boolean | null;
+        createdAt: string | null;
+        address?: string | undefined;
+        name?: string | undefined;
+        match?: boolean | undefined;
+        message?: string | undefined;
+        records?: {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
-            coinTypes?: {
-                key: string | number;
-                type: "text" | "addr" | "contentHash";
-                coin?: string | undefined;
-                value: string;
-            }[] | undefined;
             texts?: {
                 key: string | number;
                 type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
-        };
-        resolverAddress: any;
-    } | {
-        name: any;
-        records: null;
-        match: boolean;
-        resolverAddress?: undefined;
-    } | {
-        name: any;
-        records: {
-            contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             coinTypes?: {
                 key: string | number;
                 type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
-            texts?: {
-                key: string | number;
-                type: "text" | "addr" | "contentHash";
-                coin?: string | undefined;
-                value: string;
-            }[] | undefined;
-        };
-        match: boolean;
-        resolverAddress: any;
+        } | undefined;
+        resolverAddress?: string | undefined;
     } | null>;
     getRecords: (name: string, options?: {
         contentHash?: boolean | undefined;
         texts?: boolean | string[] | undefined;
         coinTypes?: boolean | string[] | undefined;
     } | undefined) => Promise<{
-        address: any;
-        records: {
+        isMigrated: boolean | null;
+        createdAt: string | null;
+        address?: string | undefined;
+        name?: string | undefined;
+        match?: boolean | undefined;
+        message?: string | undefined;
+        records?: {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
-            coinTypes?: {
-                key: string | number;
-                type: "text" | "addr" | "contentHash";
-                coin?: string | undefined;
-                value: string;
-            }[] | undefined;
             texts?: {
                 key: string | number;
                 type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
-        };
-        resolverAddress: any;
-    } | {
-        name: any;
-        records: null;
-        match: boolean;
-        resolverAddress?: undefined;
-    } | {
-        name: any;
-        records: {
-            contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             coinTypes?: {
                 key: string | number;
                 type: "text" | "addr" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
-            texts?: {
-                key: string | number;
-                type: "text" | "addr" | "contentHash";
-                coin?: string | undefined;
-                value: string;
-            }[] | undefined;
-        };
-        match: boolean;
-        resolverAddress: any;
+        } | undefined;
+        resolverAddress?: string | undefined;
     } | null>;
     getName: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, address: string) => Promise<{
@@ -356,13 +318,9 @@ export declare class ENS {
             data: string;
         }>;
         decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<{
-            owner: any;
-            ownershipLevel: string;
-            registrant?: undefined;
-        } | {
-            registrant: any;
-            owner: any;
-            ownershipLevel: string;
+            registrant?: string | undefined;
+            owner: string;
+            ownershipLevel: "registrar" | "registry" | "nameWrapper";
         } | null>;
     }>;
     getExpiry: GeneratedRawFunction<{

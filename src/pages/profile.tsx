@@ -1,8 +1,9 @@
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileNftDetails } from '@app/components/profile/ProfileNftDetails'
 import { SubdomainDetails } from '@app/components/profile/SubdomainDetails'
-import { useGetDomainFromInput } from '@app/hooks/useGetDomainFromInput'
+import { useProfile } from '@app/hooks/useProfile'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
+import { useValidate } from '@app/hooks/useValidate'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -13,7 +14,7 @@ import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
@@ -135,6 +136,7 @@ const ProfilePage: NextPage = () => {
   const isSelf = _name === 'me'
 
   const [tab, setTab] = useState<'profile' | 'subdomains'>('profile')
+  const [error, setError] = useState<string | null>(null)
 
   const { activeChain: chain } = useNetwork()
   const { ready, getOwner, getExpiry, getName, getSubnames, batch } = useEns()
@@ -151,11 +153,13 @@ const ProfilePage: NextPage = () => {
 
   const name = isSelf && ensData?.name ? ensData.name : _name
 
-  const {
-    profile,
-    loading: profileLoading,
-    name: normalisedName,
-  } = useGetDomainFromInput(name)
+  const { name: normalisedName, valid } = useValidate(name, !name)
+
+  const { profile, loading: profileLoading } = useProfile(
+    normalisedName,
+    !normalisedName,
+  )
+
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', name],
     () =>
@@ -200,6 +204,21 @@ const ProfilePage: NextPage = () => {
         : true),
   )
 
+  useEffect(() => {
+    if (valid && profile && profile.isMigrated && !profile.message) {
+      setError(null)
+    } else if (!valid) {
+      setError('This name is invalid.')
+    } else if (profile && !profile.isMigrated) {
+      setError('This name is not migrated to the new registry.')
+    } else if (profile && profile.message) {
+      setError(profile.message)
+    } else {
+      setError('Unknown error.')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [valid, profile?.isMigrated, profile?.message])
+
   return (
     <Basic
       title={
@@ -208,66 +227,70 @@ const ProfilePage: NextPage = () => {
       }
       loading={isLoading}
     >
-      <WrapperGrid>
-        <GridItem
-          style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
-          $area="back-button"
-        >
-          <BackButton />
-        </GridItem>
-        <TabButtonWrapper $area="tabs">
-          <TabButton
-            $active={tab === 'profile'}
-            role="button"
-            onClick={() => setTab('profile')}
+      {!error ? (
+        <WrapperGrid>
+          <GridItem
+            style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
+            $area="back-button"
           >
-            {t('tabs.profile.name')}
-          </TabButton>
-          <TabButton
-            $active={tab === 'subdomains'}
-            role="button"
-            onClick={() => setTab('subdomains')}
-          >
-            {t('tabs.subdomains.name')}
-          </TabButton>
-        </TabButtonWrapper>
-        <GridItem $area="nft-details">
-          {ownerData && expiryDate && (
-            <ProfileNftDetails
-              name={name}
-              selfAddress={address}
-              {...{
-                network: chain?.name || 'mainnet',
-                expiryDate,
-                ownerData,
-                ensData,
-              }}
-            />
-          )}
-        </GridItem>
-        <DetailsWrapper $area="details">
-          <TabWrapper>
-            {tab === 'profile' ? (
-              <ProfileDetails
-                name={truncatedName}
-                addresses={(profile?.records?.coinTypes || []).map(
-                  (item: any) => ({ key: item.coin, value: item.addr }),
-                )}
-                textRecords={(profile?.records?.texts || [])
-                  .map((item: any) => ({ key: item.key, value: item.value }))
-                  .filter((item: any) => item.value !== null)}
-                network={chain?.name || 'mainnet'}
-              />
-            ) : (
-              <SubdomainDetails
-                subdomains={subnameData || []}
-                network={chain?.name || 'mainnet'}
-                loading={subnamesLoading}
+            <BackButton />
+          </GridItem>
+          <TabButtonWrapper $area="tabs">
+            <TabButton
+              $active={tab === 'profile'}
+              role="button"
+              onClick={() => setTab('profile')}
+            >
+              {t('tabs.profile.name')}
+            </TabButton>
+            <TabButton
+              $active={tab === 'subdomains'}
+              role="button"
+              onClick={() => setTab('subdomains')}
+            >
+              {t('tabs.subdomains.name')}
+            </TabButton>
+          </TabButtonWrapper>
+          <GridItem $area="nft-details">
+            {ownerData && expiryDate && (
+              <ProfileNftDetails
+                name={name}
+                selfAddress={address}
+                {...{
+                  network: chain?.name || 'mainnet',
+                  expiryDate,
+                  ownerData,
+                  ensData,
+                }}
               />
             )}
-          </TabWrapper>
-        </DetailsWrapper>
-      </WrapperGrid>
+          </GridItem>
+          <DetailsWrapper $area="details">
+            <TabWrapper>
+              {tab === 'profile' ? (
+                <ProfileDetails
+                  name={truncatedName}
+                  addresses={(profile?.records?.coinTypes || []).map(
+                    (item: any) => ({ key: item.coin, value: item.addr }),
+                  )}
+                  textRecords={(profile?.records?.texts || [])
+                    .map((item: any) => ({ key: item.key, value: item.value }))
+                    .filter((item: any) => item.value !== null)}
+                  network={chain?.name || 'mainnet'}
+                />
+              ) : (
+                <SubdomainDetails
+                  subdomains={subnameData || []}
+                  network={chain?.name || 'mainnet'}
+                  loading={subnamesLoading}
+                />
+              )}
+            </TabWrapper>
+          </DetailsWrapper>
+        </WrapperGrid>
+      ) : (
+        <Typography>{error}</Typography>
+      )}
     </Basic>
   )
 }

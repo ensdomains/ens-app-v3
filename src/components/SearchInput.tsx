@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useGetDomainFromInput } from '@app/hooks/useGetDomainFromInput'
+import { useExists } from '@app/hooks/useExists'
 import { useInitial } from '@app/hooks/useInitial'
+import { useValidate } from '@app/hooks/useValidate'
 import mq from '@app/mediaQuery'
 import {
   ArrowCircleSVG,
@@ -93,18 +94,25 @@ export const SearchInput = ({
 
   const [searchedVal, _setSearchedVal] = useState('')
   const [inputVal, setInputVal] = useState('')
-  const { profile, valid, loading, name, status } = useGetDomainFromInput(
+
+  const { valid, name } = useValidate(
     searchedVal,
     searchedVal === '' || inputVal === '',
   )
+  const {
+    exists: nameExists,
+    loading,
+    status,
+  } = useExists(name, !name || name === '')
+
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const buttonState: ButtonState = useMemo(() => {
     if (inputVal === '') return 'none'
-    if (profile && searchedVal === inputVal && !loading && valid)
+    if (nameExists && searchedVal === inputVal && !loading && valid)
       return 'success'
     if (
-      (profile === null &&
+      (!nameExists &&
         searchedVal === inputVal &&
         !loading &&
         (status === 'success' || status === 'error')) ||
@@ -112,7 +120,7 @@ export const SearchInput = ({
     )
       return 'danger'
     return 'loading'
-  }, [inputVal, loading, profile, searchedVal, status, valid])
+  }, [inputVal, loading, nameExists, searchedVal, status, valid])
 
   useEffect(() => {
     if (!initial) {
@@ -179,7 +187,7 @@ export const SearchInput = ({
           onKeyDown={(e) =>
             e.key === 'Enter' &&
             name &&
-            profile &&
+            nameExists &&
             searchedVal === inputVal &&
             !loading &&
             handleSearch

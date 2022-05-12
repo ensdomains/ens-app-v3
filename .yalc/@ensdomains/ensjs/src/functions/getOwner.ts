@@ -2,6 +2,12 @@ import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { labelhash } from '../utils/labels'
 
+type Owner = {
+  registrant?: string
+  owner: string
+  ownershipLevel: 'nameWrapper' | 'registry' | 'registrar'
+}
+
 const raw = async (
   { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   name: string,
@@ -41,7 +47,7 @@ const decode = async (
   { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   data: string,
   name: string,
-) => {
+): Promise<Owner | null> => {
   if (data === null) return null
   const result = await multicallWrapper.decode(data)
   if (result === null) return null

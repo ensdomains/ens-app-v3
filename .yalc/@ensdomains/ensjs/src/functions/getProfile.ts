@@ -23,6 +23,22 @@ type DataItem = {
   coin?: string
   value: string
 }
+
+type ResolvedProfile = {
+  isMigrated: boolean | null
+  createdAt: string | null
+  address?: string
+  name?: string
+  match?: boolean
+  message?: string
+  records?: {
+    contentHash?: DecodedContentHash | string | null
+    texts?: DataItem[]
+    coinTypes?: DataItem[]
+  }
+  resolverAddress?: string
+}
+
 const makeMulticallData = async (
   {
     _getAddr,
@@ -129,78 +145,6 @@ const getDataForName = async (
       options,
     ),
     resolverAddress: resolver['1'],
-  }
-}
-
-const getDataForAddress = async (
-  {
-    contracts,
-    _getAddr,
-    _getContentHash,
-    _getText,
-    resolverMulticallWrapper,
-  }: ENSArgs<
-    | 'contracts'
-    | '_getText'
-    | '_getAddr'
-    | '_getContentHash'
-    | 'resolverMulticallWrapper'
-  >,
-  address: string,
-  options: InternalProfileOptions,
-) => {
-  const universalResolver = await contracts?.getUniversalResolver()
-  const DNCOCURP = await contracts?.getDNCOCURP()
-
-  const reverseNode = address.toLowerCase().substring(2) + '.addr.reverse'
-
-  const { data, calls } = await makeMulticallData(
-    { _getAddr, _getContentHash, _getText, resolverMulticallWrapper },
-    reverseNode,
-    options,
-  )
-
-  let result: any
-  try {
-    result = await DNCOCURP?.reverse(hexEncodeName(reverseNode), [
-      {
-        target: universalResolver!.address,
-        data: data,
-        dataType: 0,
-        locations: makeHashIndexes(data as string, reverseNode),
-      },
-    ])
-  } catch {
-    return null
-  }
-
-  const name = result.name
-  const URData = result.returnData[0]
-  const [URDecoded, resolverAddress] = ethers.utils.defaultAbiCoder.decode(
-    ['bytes', 'address'],
-    URData,
-  )
-  const [recordData] = await resolverMulticallWrapper.decode(URDecoded)
-
-  const matchAddress = recordData[calls.findIndex((x) => x.key === '60')]
-
-  if (
-    !matchAddress ||
-    (await _getAddr.decode(matchAddress)).toLowerCase() !==
-      address.toLowerCase()
-  ) {
-    return { name, records: null, match: false }
-  }
-  return {
-    name,
-    records: await formatRecords(
-      { _getAddr, _getContentHash, _getText },
-      recordData,
-      calls,
-      options,
-    ),
-    match: true,
-    resolverAddress,
   }
 }
 
@@ -318,11 +262,13 @@ const formatRecords = async (
 const graphFetch = async (
   { gqlInstance }: ENSArgs<'gqlInstance'>,
   name: string,
-  wantedRecords: ProfileOptions,
+  wantedRecords?: ProfileOptions,
 ) => {
   const query = gqlInstance.gql`
     query getRecords($name: String!) {
       domains(where: { name: $name }) {
+        isMigrated
+        createdAt
         resolver {
           texts
           coinTypes
@@ -341,9 +287,11 @@ const graphFetch = async (
 
   if (!domains || domains.length === 0) return null
 
-  const [{ resolver: resolverResponse }] = domains
+  const [{ resolver: resolverResponse, isMigrated, createdAt }] = domains
 
   let returnedRecords: ProfileResponse = {}
+
+  if (!wantedRecords) return { isMigrated, createdAt }
 
   Object.keys(wantedRecords).forEach((key: string) => {
     const data = wantedRecords[key as keyof ProfileOptions]
@@ -356,13 +304,60 @@ const graphFetch = async (
     }
   })
 
-  return returnedRecords
+  return { ...returnedRecords, isMigrated, createdAt }
 }
 
 type ProfileOptions = {
   contentHash?: boolean
   texts?: boolean | string[]
   coinTypes?: boolean | string[]
+}
+
+const getProfileFromName = async (
+  {
+    contracts,
+    gqlInstance,
+    _getAddr,
+    _getContentHash,
+    _getText,
+    resolverMulticallWrapper,
+  }: ENSArgs<
+    | 'contracts'
+    | 'gqlInstance'
+    | '_getText'
+    | '_getAddr'
+    | '_getContentHash'
+    | 'resolverMulticallWrapper'
+  >,
+  name: string,
+  options?: ProfileOptions,
+) => {
+  const usingOptions =
+    !options || options?.texts === true || options?.coinTypes === true
+      ? options || { contentHash: true, texts: true, coinTypes: true }
+      : undefined
+  const graphResult = await graphFetch({ gqlInstance }, name, usingOptions)
+  if (!graphResult) return null
+  const {
+    isMigrated,
+    createdAt,
+    ...wantedRecords
+  }: { isMigrated: boolean; createdAt: string } & InternalProfileOptions =
+    graphResult
+  const result = await getDataForName(
+    {
+      contracts,
+      _getAddr,
+      _getContentHash,
+      _getText,
+      resolverMulticallWrapper,
+    },
+    name,
+    usingOptions ? wantedRecords : (options as InternalProfileOptions),
+  )
+  if (!result)
+    return { isMigrated, createdAt, message: "Records fetch didn't complete" }
+  return { ...result, isMigrated, createdAt, message: undefined }
 }
 
 const getProfileFromAddress = async (
@@ -386,107 +381,32 @@ const getProfileFromAddress = async (
   address: string,
   options?: ProfileOptions,
 ) => {
-  if (
-    !options ||
-    (options && options.texts === true) ||
-    options.coinTypes === true
-  ) {
-    let name
-    try {
-      name = await getName(address)
-    } catch {
-      return null
-    }
-    if (!name || !name.name || name.name === '') return null
-    if (!name.match) return { name, records: null, match: false }
-    const wantedRecords = await graphFetch(
-      { gqlInstance },
-      name.name,
-      options || { contentHash: true, texts: true, coinTypes: true },
-    )
-    if (!wantedRecords) return null
-    const result = await getDataForName(
-      {
-        contracts,
-        _getAddr,
-        _getContentHash,
-        _getText,
-        resolverMulticallWrapper,
-      },
-      name.name,
-      wantedRecords,
-    )
-    if (!result) return null
-    delete result.address
-    return { ...result, match: true, name: name.name }
-  } else {
-    return await getDataForAddress(
-      {
-        contracts,
-        _getAddr,
-        _getContentHash,
-        _getText,
-        resolverMulticallWrapper,
-      },
-      address,
-      options as InternalProfileOptions,
-    )
+  let name
+  try {
+    name = await getName(address)
+  } catch {
+    return null
   }
-}
-
-const getProfileFromName = async (
-  {
-    contracts,
-    gqlInstance,
-    _getAddr,
-    _getContentHash,
-    _getText,
-    resolverMulticallWrapper,
-  }: ENSArgs<
-    | 'contracts'
-    | 'gqlInstance'
-    | '_getText'
-    | '_getAddr'
-    | '_getContentHash'
-    | 'resolverMulticallWrapper'
-  >,
-  name: string,
-  options?: ProfileOptions,
-) => {
-  if (
-    !options ||
-    (options && options.texts === true) ||
-    options.coinTypes === true
-  ) {
-    const wantedRecords = await graphFetch(
-      { gqlInstance },
-      name,
-      options || { contentHash: true, texts: true, coinTypes: true },
-    )
-    if (!wantedRecords) return null
-    return await getDataForName(
-      {
-        contracts,
-        _getAddr,
-        _getContentHash,
-        _getText,
-        resolverMulticallWrapper,
-      },
-      name,
-      wantedRecords,
-    )
-  } else {
-    return await getDataForName(
-      {
-        contracts,
-        _getAddr,
-        _getContentHash,
-        _getText,
-        resolverMulticallWrapper,
-      },
-      name,
-      options as InternalProfileOptions,
-    )
+  if (!name || !name.name || name.name === '') return null
+  if (!name.match) return { ...name, isMigrated: null, createdAt: null }
+  const result = await getProfileFromName(
+    {
+      contracts,
+      gqlInstance,
+      _getAddr,
+      _getContentHash,
+      _getText,
+      resolverMulticallWrapper,
+    },
+    name.name,
+    options,
+  )
+  if (!result || result.message) return null
+  delete (result as any).address
+  return {
+    ...result,
+    ...name,
+    message: undefined,
   }
 }
 
@@ -510,7 +430,7 @@ export default async function (
   >,
   nameOrAddress: string,
   options?: ProfileOptions,
-) {
+): Promise<ResolvedProfile | null> {
   if (options && options.coinTypes && typeof options.coinTypes !== 'boolean') {
     options.coinTypes = options.coinTypes.map((coin: string) => {
       if (!isNaN(parseInt(coin))) {

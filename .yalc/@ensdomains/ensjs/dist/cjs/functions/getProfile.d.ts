@@ -6,32 +6,24 @@ declare type DataItem = {
     coin?: string;
     value: string;
 };
+declare type ResolvedProfile = {
+    isMigrated: boolean | null;
+    createdAt: string | null;
+    address?: string;
+    name?: string;
+    match?: boolean;
+    message?: string;
+    records?: {
+        contentHash?: DecodedContentHash | string | null;
+        texts?: DataItem[];
+        coinTypes?: DataItem[];
+    };
+    resolverAddress?: string;
+};
 declare type ProfileOptions = {
     contentHash?: boolean;
     texts?: boolean | string[];
     coinTypes?: boolean | string[];
 };
-export default function ({ contracts, gqlInstance, getName, _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }: ENSArgs<'contracts' | 'gqlInstance' | 'getName' | '_getText' | '_getAddr' | '_getContentHash' | 'resolverMulticallWrapper'>, nameOrAddress: string, options?: ProfileOptions): Promise<{
-    address: any;
-    records: {
-        contentHash?: string | DecodedContentHash | null | undefined;
-        coinTypes?: DataItem[] | undefined;
-        texts?: DataItem[] | undefined;
-    };
-    resolverAddress: any;
-} | {
-    name: any;
-    records: null;
-    match: boolean;
-    resolverAddress?: undefined;
-} | {
-    name: any;
-    records: {
-        contentHash?: string | DecodedContentHash | null | undefined;
-        coinTypes?: DataItem[] | undefined;
-        texts?: DataItem[] | undefined;
-    };
-    match: boolean;
-    resolverAddress: any;
-} | null>;
+export default function ({ contracts, gqlInstance, getName, _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }: ENSArgs<'contracts' | 'gqlInstance' | 'getName' | '_getText' | '_getAddr' | '_getContentHash' | 'resolverMulticallWrapper'>, nameOrAddress: string, options?: ProfileOptions): Promise<ResolvedProfile | null>;
 export {};
