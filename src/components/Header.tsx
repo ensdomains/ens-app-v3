@@ -7,8 +7,8 @@ import styled, { css, useTheme } from 'styled-components'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import { ConditionalWrapper } from './ConditionalWrapper'
+import { HeaderConnect } from './ConnectButton'
 import { HamburgerMenu } from './HamburgerMenu'
-import { HeaderConnect } from './HeaderConnect'
 import { LanugageDropdown } from './LanguageDropdown'
 import { SearchInput } from './SearchInput'
 import { StyledNavLink } from './StyledNavLink'
@@ -145,7 +145,7 @@ export const Header = () => {
             : dropdownRoutes
           ).map((route) => ({ ...route, label: t(route.label) }))}
         />
-        <HeaderConnect />
+        {breakpoints.sm && <HeaderConnect />}
       </NavContainer>
     </HeaderWrapper>
   )
