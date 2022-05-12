@@ -1,10 +1,12 @@
 import mq from '@app/mediaQuery'
+import { zorbImageDataURI } from '@app/utils/gradient'
 import { Button, EthTransparentInvertedSVG, Profile } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
-import { useDisconnect } from 'wagmi'
+import { useAccount, useDisconnect } from 'wagmi'
 
 const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
   ${({ theme }) => css`
@@ -81,6 +83,12 @@ export const HeaderConnect = () => {
   const { t } = useTranslation('common')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { disconnect } = useDisconnect()
+  const { data: accountData } = useAccount()
+  const addressInParent = accountData?.address
+  const zorbImg = useMemo(
+    () => addressInParent && zorbImageDataURI(addressInParent, 'address'),
+    [addressInParent],
+  )
 
   return (
     <ConnectButtonWrapper>
@@ -99,7 +107,7 @@ export const HeaderConnect = () => {
               onClick: () => disconnect(),
             },
           ]}
-          avatar={ensAvatar}
+          avatar={ensAvatar || zorbImg}
           size="medium"
           alignDropdown="right"
         />

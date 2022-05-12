@@ -111,11 +111,10 @@ const TabContainer = styled.div<{ $connected: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
   padding: ${theme.space['2']} ${theme.space['6']};
-  padding-right: ${theme.space['2']};
   ${
     !$connected &&
     `
-      padding-right: ${theme.space['6']};
+      padding-right: ${theme.space['2']};
     `
   }
   `}
