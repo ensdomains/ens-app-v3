@@ -1,13 +1,12 @@
-import { Avatar } from '@ensdomains/thorin'
-import { zorbImageDataURI } from '@zoralabs/zorb'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { ComponentProps, ComponentType, useMemo } from 'react'
+import { ComponentType, useMemo } from 'react'
 import styled from 'styled-components'
 import CogSVG from '../assets/Cog.svg'
 import GridSVG from '../assets/Grid.svg'
 import HeartSVG from '../assets/Heart.svg'
 import MagnifyingGlassSVG from '../assets/MagnifyingGlass.svg'
+import { AvatarWithZorb } from './AvatarWithZorb'
 import { ConnectButtonWrapper } from './ConnectButton'
 
 const AvatarWrapper = styled.div<{ $active: boolean }>`
@@ -30,31 +29,31 @@ const IconContainer = styled.div<{ $active: boolean }>`
 `
 
 const Icon = ({
-  href,
   as,
-  active,
+  tab,
+  activeTab,
 }: {
-  href: string
+  tab: TabItem
   as: string | ComponentType<any>
-  active: boolean
+  activeTab: AnyTab
 }) => {
   return (
-    <Link href={href} passHref>
+    <Link href={tab.href} passHref>
       <LinkWrapper>
-        <IconContainer $active={active} as={as} />
+        <IconContainer $active={activeTab === tab.name} as={as} />
       </LinkWrapper>
     </Link>
   )
 }
-
-type Tab = 'search' | 'names' | 'profile' | 'favourites' | 'settings'
-type AnyTab = Tab | 'unknown'
-
-const tabs: {
+type TabItem = {
   name: Tab
   href: string
   label: string
-}[] = [
+}
+type Tab = 'search' | 'names' | 'profile' | 'favourites' | 'settings'
+type AnyTab = Tab | 'unknown'
+
+const tabs: TabItem[] = [
   {
     name: 'search',
     href: '/',
@@ -87,9 +86,10 @@ const TabWrapper = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
+  z-index: 1;
   ${({ theme }) => `
-  background: linear-gradient(180deg, ${theme.colors.background}, 0) 0%, ${theme.colors.background} 50%);
-  padding: ${theme.space['8']} ${theme.space['4']};
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, ${theme.colors.background} 60%);
+  padding: ${theme.space['6']} ${theme.space['4']};
   `}
 `
 
@@ -103,7 +103,7 @@ const TabContainer = styled.div`
   background-color: ${theme.colors.background};
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
-  padding: ${theme.space['4']} ${theme.space['8']};
+  padding: ${theme.space['2']} ${theme.space['8']};
   `}
 `
 
@@ -113,60 +113,37 @@ const BottomPlaceholder = styled.div`
   `}
 `
 
-const AvatarWithZorb = ({
-  src,
-  address,
-  ...props
-}: ComponentProps<typeof Avatar> & { address: string }) => {
-  const zorbImg = useMemo(() => zorbImageDataURI(address), [address])
-  return <Avatar {...props} src={src || zorbImg} />
-}
-
 export const TabBar = () => {
   const router = useRouter()
   const path = router.pathname
-  const activeTab: AnyTab =
-    tabs.filter(({ href }) => path.startsWith(href))[0]?.name || 'unknown'
+  const activeTab: AnyTab = useMemo(
+    () => tabs.filter(({ href }) => href === path)[0]?.name || 'unknown',
+    [path],
+  )
 
   return (
     <>
       <BottomPlaceholder />
       <TabWrapper>
         <TabContainer>
-          <Icon
-            active={activeTab === 'search'}
-            href="/"
-            as={MagnifyingGlassSVG}
-          />
+          <Icon activeTab={activeTab} tab={tabs[0]} as={MagnifyingGlassSVG} />
           <ConnectButtonWrapper>
             {({ ensAvatar, address }) => (
               <>
-                <Icon
-                  active={activeTab === 'names'}
-                  href="/names"
-                  as={GridSVG}
-                />
-                <Link href="/profile" passHref>
+                <Icon activeTab={activeTab} tab={tabs[1]} as={GridSVG} />
+                <Link href={tabs[2].href} passHref>
                   <a>
-                    <AvatarWrapper $active={activeTab === 'profile'}>
+                    <AvatarWrapper $active={activeTab === tabs[2].name}>
                       <AvatarWithZorb
-                        label="profile"
+                        label={tabs[2].label}
                         src={ensAvatar}
                         address={address}
                       />
                     </AvatarWrapper>
                   </a>
                 </Link>
-                <Icon
-                  active={activeTab === 'favourites'}
-                  href="/favourites"
-                  as={HeartSVG}
-                />
-                <Icon
-                  active={activeTab === 'settings'}
-                  href="/settings"
-                  as={CogSVG}
-                />
+                <Icon activeTab={activeTab} tab={tabs[3]} as={HeartSVG} />
+                <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
               </>
             )}
           </ConnectButtonWrapper>
