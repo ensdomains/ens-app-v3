@@ -1,13 +1,13 @@
+import { useConnected } from '@app/hooks/useConnected'
+import { Avatar } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ComponentType, useMemo } from 'react'
 import styled from 'styled-components'
-import { useAccount } from 'wagmi'
 import CogSVG from '../assets/Cog.svg'
 import GridSVG from '../assets/Grid.svg'
 import HeartSVG from '../assets/Heart.svg'
 import MagnifyingGlassSVG from '../assets/MagnifyingGlass.svg'
-import { AvatarWithZorb } from './AvatarWithZorb'
 import { ConnectButtonWrapper } from './ConnectButton'
 
 const AvatarWrapper = styled.div<{ $active: boolean }>`
@@ -99,7 +99,7 @@ const TabWrapper = styled.div`
   `}
 `
 
-const TabContainer = styled.div<{ $connected?: boolean }>`
+const TabContainer = styled.div<{ $connected: boolean }>`
   ${({ theme, $connected }) => `
   display: flex;
   flex-direction: row;
@@ -130,7 +130,7 @@ export const TabBar = () => {
   const router = useRouter()
   const from = router.query.from as string
   const path = router.pathname
-  const { data: accountData } = useAccount()
+  const connected = useConnected()
   const activeTab: AnyTab = useMemo(
     () =>
       tabs.find(({ href, name }) => href === path || from === name)?.name ||
@@ -142,26 +142,22 @@ export const TabBar = () => {
     <>
       <BottomPlaceholder />
       <TabWrapper>
-        <TabContainer $connected={!!accountData}>
+        <TabContainer $connected={connected}>
           <Icon activeTab={activeTab} tab={tabs[0]} as={MagnifyingGlassSVG} />
-          {!accountData && (
+          {!connected && (
             <>
               <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
               <div />
             </>
           )}
           <ConnectButtonWrapper isTabBar>
-            {({ ensAvatar, address }) => (
+            {({ ensAvatar, zorb }) => (
               <>
                 <Icon activeTab={activeTab} tab={tabs[1]} as={GridSVG} />
                 <Link href={tabs[2].href} passHref>
                   <a>
                     <AvatarWrapper $active={activeTab === tabs[2].name}>
-                      <AvatarWithZorb
-                        label={tabs[2].label}
-                        src={ensAvatar}
-                        address={address}
-                      />
+                      <Avatar label={tabs[2].label} src={ensAvatar || zorb} />
                     </AvatarWrapper>
                   </a>
                 </Link>

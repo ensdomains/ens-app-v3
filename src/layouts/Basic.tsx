@@ -1,5 +1,6 @@
 import { Footer } from '@app/components/Footer'
 import { LoadingOverlay } from '@app/components/LoadingOverlay'
+import { useInitial } from '@app/hooks/useInitial'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import Head from 'next/head'
@@ -38,6 +39,7 @@ export const Basic = ({
   children: React.ReactNode
   title?: string
 }) => {
+  const initial = useInitial()
   const breakpoints = useBreakpoint()
 
   return (
@@ -49,7 +51,7 @@ export const Basic = ({
       <LoadingContainer>
         {loading ? <LoadingOverlay /> : children}
       </LoadingContainer>
-      {!breakpoints.sm ? <TabBar /> : <Footer />}
+      {!initial && (!breakpoints.sm ? <TabBar /> : <Footer />)}
     </Container>
   )
 }

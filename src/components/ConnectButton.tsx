@@ -1,6 +1,8 @@
 import mq from '@app/mediaQuery'
+import { zorbImageDataURI } from '@app/utils/gradient'
 import { Button, EthTransparentInvertedSVG, Profile } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import type { TFunction } from 'next-i18next'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
@@ -43,6 +45,10 @@ export type AccountRenderProps = {
   ensAvatar?: string
   ensName?: string
   hasPendingTransactions: boolean
+  disconnect: () => void
+  router: ReturnType<typeof useRouter>
+  t: TFunction
+  zorb: string
 }
 
 export const ConnectButtonWrapper = ({
@@ -52,7 +58,10 @@ export const ConnectButtonWrapper = ({
   isTabBar?: boolean
   children: (renderProps: AccountRenderProps) => React.ReactNode
 }) => {
+  const router = useRouter()
   const { t } = useTranslation('common')
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { disconnect } = useDisconnect()
 
   return (
     <ConnectButton.Custom>
@@ -69,7 +78,13 @@ export const ConnectButtonWrapper = ({
             </Button>
           </StyledButtonWrapper>
         ) : (
-          children(account)
+          children({
+            ...account,
+            disconnect,
+            router,
+            t,
+            zorb: zorbImageDataURI(account.address, 'address'),
+          })
         )
       }
     </ConnectButton.Custom>
@@ -77,14 +92,9 @@ export const ConnectButtonWrapper = ({
 }
 
 export const HeaderConnect = () => {
-  const router = useRouter()
-  const { t } = useTranslation('common')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const { disconnect } = useDisconnect()
-
   return (
     <ConnectButtonWrapper>
-      {({ address, ensName, ensAvatar }) => (
+      {({ address, ensName, ensAvatar, router, t, disconnect, zorb }) => (
         <Profile
           address={address}
           ensName={ensName}
@@ -99,7 +109,7 @@ export const HeaderConnect = () => {
               onClick: () => disconnect(),
             },
           ]}
-          avatar={ensAvatar}
+          avatar={ensAvatar || zorb}
           size="medium"
           alignDropdown="right"
         />
