@@ -12,12 +12,24 @@ const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
     display: block;
     margin-right: calc(${theme.space['2']} * -1);
     margin-left: calc(${theme.space['2']} * -1);
-    height: ${theme.space['4']};
-    width: ${theme.space['4']};
+    height: ${theme.space['5']};
+    width: ${theme.space['5']};
     ${mq.small.min`
       height: ${theme.space['6']};
       width: ${theme.space['6']};
     `}
+  `}
+`
+
+const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>`
+  ${({ theme, $isTabBar }) =>
+    $isTabBar &&
+    `
+    flex-grow: 1;
+    & button {
+      width: ${theme.space.full};
+      border-radius: ${theme.radii.full};
+    }
   `}
 `
 
@@ -46,17 +58,16 @@ export const ConnectButtonWrapper = ({
     <ConnectButton.Custom>
       {({ account, openConnectModal }) =>
         !account ? (
-          <Button
-            onClick={() => openConnectModal()}
-            prefix={
-              <StyledIconEthTransparentInverted size={isTabBar ? '4' : '6'} />
-            }
-            variant="action"
-            size={isTabBar ? 'small' : 'medium'}
-            shape={isTabBar ? 'circle' : 'square'}
-          >
-            {t('profile.connect')}
-          </Button>
+          <StyledButtonWrapper $isTabBar={isTabBar}>
+            <Button
+              onClick={() => openConnectModal()}
+              prefix={<StyledIconEthTransparentInverted />}
+              variant="action"
+              size="medium"
+            >
+              {t('profile.connect')}
+            </Button>
+          </StyledButtonWrapper>
         ) : (
           children(account)
         )

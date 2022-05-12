@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ComponentType, useMemo } from 'react'
 import styled from 'styled-components'
+import { useAccount } from 'wagmi'
 import CogSVG from '../assets/Cog.svg'
 import GridSVG from '../assets/Grid.svg'
 import HeartSVG from '../assets/Heart.svg'
@@ -19,13 +20,18 @@ const AvatarWrapper = styled.div<{ $active: boolean }>`
 `
 
 const LinkWrapper = styled.a`
-  height: 24px;
-  width: 24px;
+  ${({ theme }) => `
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: ${theme.space['12']};
+  `}
 `
 
 const IconContainer = styled.div<{ $active: boolean }>`
-  color: ${({ theme, $active }) =>
-    $active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
+  ${({ theme, $active }) => `
+    color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
+  `}
 `
 
 const Icon = ({
@@ -93,17 +99,24 @@ const TabWrapper = styled.div`
   `}
 `
 
-const TabContainer = styled.div`
-  ${({ theme }) => `
+const TabContainer = styled.div<{ $connected?: boolean }>`
+  ${({ theme, $connected }) => `
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: space-evenly;
+  gap: ${theme.space['6']};
   border-radius: ${theme.radii.full};
   background-color: ${theme.colors.background};
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
-  padding: ${theme.space['2']} ${theme.space['8']};
+  padding: ${theme.space['2']} ${theme.space['6']};
+  ${
+    !$connected &&
+    `
+      padding-right: ${theme.space['2']};
+    `
+  }
   `}
 `
 
@@ -117,6 +130,7 @@ export const TabBar = () => {
   const router = useRouter()
   const from = router.query.from as string
   const path = router.pathname
+  const { data: accountData } = useAccount()
   const activeTab: AnyTab = useMemo(
     () =>
       tabs.find(({ href, name }) => href === path || from === name)?.name ||
@@ -128,9 +142,15 @@ export const TabBar = () => {
     <>
       <BottomPlaceholder />
       <TabWrapper>
-        <TabContainer>
+        <TabContainer $connected={!!accountData}>
           <Icon activeTab={activeTab} tab={tabs[0]} as={MagnifyingGlassSVG} />
-          <ConnectButtonWrapper>
+          {!accountData && (
+            <>
+              <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
+              <div />
+            </>
+          )}
+          <ConnectButtonWrapper isTabBar>
             {({ ensAvatar, address }) => (
               <>
                 <Icon activeTab={activeTab} tab={tabs[1]} as={GridSVG} />
