@@ -1,4 +1,5 @@
 import { useConnected } from '@app/hooks/useConnected'
+import { Avatar } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ComponentType, useMemo } from 'react'
@@ -7,7 +8,6 @@ import CogSVG from '../assets/Cog.svg'
 import GridSVG from '../assets/Grid.svg'
 import HeartSVG from '../assets/Heart.svg'
 import MagnifyingGlassSVG from '../assets/MagnifyingGlass.svg'
-import { AvatarWithZorb } from './AvatarWithZorb'
 import { ConnectButtonWrapper } from './ConnectButton'
 
 const AvatarWrapper = styled.div<{ $active: boolean }>`
@@ -151,17 +151,13 @@ export const TabBar = () => {
             </>
           )}
           <ConnectButtonWrapper isTabBar>
-            {({ ensAvatar, address }) => (
+            {({ ensAvatar, zorb }) => (
               <>
                 <Icon activeTab={activeTab} tab={tabs[1]} as={GridSVG} />
                 <Link href={tabs[2].href} passHref>
                   <a>
                     <AvatarWrapper $active={activeTab === tabs[2].name}>
-                      <AvatarWithZorb
-                        label={tabs[2].label}
-                        src={ensAvatar}
-                        address={address}
-                      />
+                      <Avatar label={tabs[2].label} src={ensAvatar || zorb} />
                     </AvatarWrapper>
                   </a>
                 </Link>
