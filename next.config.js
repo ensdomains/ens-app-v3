@@ -29,6 +29,10 @@ let nextConfig = {
         source: '/profile/:name',
         destination: '/profile?name=:name',
       },
+      {
+        source: '/names/:address',
+        destination: '/names?address=:address',
+      },
     ]
   },
   webpack: (config, options) => {

@@ -13,34 +13,43 @@ import { LanugageDropdown } from './LanguageDropdown'
 import { SearchInput } from './SearchInput'
 import { StyledNavLink } from './StyledNavLink'
 
-const AlwaysShownRoutes = [
-  { href: '/', label: 'navigation.home' },
+const alwaysShownRoutes = [
+  { href: '/', disabled: false, label: 'navigation.home' },
   { href: '/about', disabled: true, label: 'navigation.about' },
   { href: '/developers', disabled: true, label: 'navigation.developers' },
 ]
 
-const DropdownRoutes = [
+const dropdownRoutes = [
   {
     label: 'navigation.community',
-    href: '/community',
     disabled: true,
+    href: '/community',
   },
   {
     label: 'navigation.help',
-    href: '/help',
     disabled: true,
+    href: '/help',
   },
   {
     label: 'navigation.governance',
-    href: '/governance',
     disabled: true,
+    href: '/governance',
   },
   {
     label: 'navigation.docs',
-    href: '/docs',
     disabled: true,
+    href: '/docs',
   },
 ]
+
+// const connectedRoutes = [
+//   {
+//     label: 'navigation.connected.favourites',
+//     disabled: true,
+//     href: '/favourites',
+//   },
+//   { label: 'navigation.connected.myNames', disabled: false, href: '/names/me' },
+// ]
 
 const HeaderWrapper = styled.header<{ $isHome: boolean }>`
   ${({ theme, $isHome }) => css`
@@ -121,7 +130,7 @@ export const Header = () => {
         )}
         <div style={{ flexGrow: 1 }} />
         {breakpoints.lg &&
-          AlwaysShownRoutes.map((route) => (
+          alwaysShownRoutes.map((route) => (
             <StyledNavLink
               disabled={route.disabled}
               key={route.href}
@@ -132,8 +141,8 @@ export const Header = () => {
           ))}
         <HamburgerMenu
           dropdownItems={(!breakpoints.lg
-            ? [...AlwaysShownRoutes, ...DropdownRoutes]
-            : DropdownRoutes
+            ? [...alwaysShownRoutes, ...dropdownRoutes]
+            : dropdownRoutes
           ).map((route) => ({ ...route, label: t(route.label) }))}
         />
         <HeaderConnect />
