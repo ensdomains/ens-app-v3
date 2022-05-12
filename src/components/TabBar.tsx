@@ -1,8 +1,8 @@
+import { useConnected } from '@app/hooks/useConnected'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ComponentType, useMemo } from 'react'
 import styled from 'styled-components'
-import { useAccount } from 'wagmi'
 import CogSVG from '../assets/Cog.svg'
 import GridSVG from '../assets/Grid.svg'
 import HeartSVG from '../assets/Heart.svg'
@@ -99,7 +99,7 @@ const TabWrapper = styled.div`
   `}
 `
 
-const TabContainer = styled.div<{ $connected?: boolean }>`
+const TabContainer = styled.div<{ $connected: boolean }>`
   ${({ theme, $connected }) => `
   display: flex;
   flex-direction: row;
@@ -111,10 +111,11 @@ const TabContainer = styled.div<{ $connected?: boolean }>`
   border: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
   padding: ${theme.space['2']} ${theme.space['6']};
+  padding-right: ${theme.space['2']};
   ${
     !$connected &&
     `
-      padding-right: ${theme.space['2']};
+      padding-right: ${theme.space['6']};
     `
   }
   `}
@@ -130,7 +131,7 @@ export const TabBar = () => {
   const router = useRouter()
   const from = router.query.from as string
   const path = router.pathname
-  const { data: accountData } = useAccount()
+  const connected = useConnected()
   const activeTab: AnyTab = useMemo(
     () =>
       tabs.find(({ href, name }) => href === path || from === name)?.name ||
@@ -142,9 +143,9 @@ export const TabBar = () => {
     <>
       <BottomPlaceholder />
       <TabWrapper>
-        <TabContainer $connected={!!accountData}>
+        <TabContainer $connected={connected}>
           <Icon activeTab={activeTab} tab={tabs[0]} as={MagnifyingGlassSVG} />
-          {!accountData && (
+          {!connected && (
             <>
               <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
               <div />
