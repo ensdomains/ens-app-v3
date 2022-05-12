@@ -1,9 +1,11 @@
 import { Footer } from '@app/components/Footer'
 import { LoadingOverlay } from '@app/components/LoadingOverlay'
 import mq from '@app/mediaQuery'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import Head from 'next/head'
 import styled, { css } from 'styled-components'
 import { Header } from '../components/Header'
+import { TabBar } from '../components/TabBar'
 
 const Container = styled.div`
   ${({ theme }) => css`
@@ -36,6 +38,8 @@ export const Basic = ({
   children: React.ReactNode
   title?: string
 }) => {
+  const breakpoints = useBreakpoint()
+
   return (
     <Container>
       <Head>
@@ -45,8 +49,7 @@ export const Basic = ({
       <LoadingContainer>
         {loading ? <LoadingOverlay /> : children}
       </LoadingContainer>
-
-      <Footer />
+      {!breakpoints.sm ? <TabBar /> : <Footer />}
     </Container>
   )
 }

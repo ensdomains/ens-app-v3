@@ -133,7 +133,7 @@ const ProfilePage: NextPage = () => {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const _name = router.query.name as string
-  const isSelf = _name === 'me'
+  const isSelf = _name === '' || _name === undefined
 
   const [tab, setTab] = useState<'profile' | 'subdomains'>('profile')
   const [error, setError] = useState<string | null>(null)

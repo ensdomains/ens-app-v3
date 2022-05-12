@@ -30,6 +30,7 @@
     "@ensdomains/thorin": "^0.5.5",
     "@rainbow-me/rainbowkit": "^0.1.0",
     "@svgr/webpack": "^6.2.1",
+    "@zoralabs/zorb": "^0.1.0",
     "ethers": "^5.6.5",
     "iso-639-1": "^2.1.13",
     "lodash": "^4.17.21",
