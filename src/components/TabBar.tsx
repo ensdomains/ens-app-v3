@@ -115,10 +115,13 @@ const BottomPlaceholder = styled.div`
 
 export const TabBar = () => {
   const router = useRouter()
+  const from = router.query.from as string
   const path = router.pathname
   const activeTab: AnyTab = useMemo(
-    () => tabs.filter(({ href }) => href === path)[0]?.name || 'unknown',
-    [path],
+    () =>
+      tabs.find(({ href, name }) => href === path || from === name)?.name ||
+      'unknown',
+    [path, from],
   )
 
   return (
