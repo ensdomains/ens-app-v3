@@ -17,7 +17,7 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount, useEnsName, useNetwork } from 'wagmi'
 
 const GridItem = styled.div<{ $area: string }>`
   grid-area: ${({ $area }) => $area};
@@ -133,25 +133,19 @@ const ProfilePage: NextPage = () => {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const _name = router.query.name as string
-  const isSelf = _name === 'me'
+  const isSelf = _name === '' || _name === undefined
 
   const [tab, setTab] = useState<'profile' | 'subdomains'>('profile')
   const [error, setError] = useState<string | null>(null)
 
   const { activeChain: chain } = useNetwork()
-  const { ready, getOwner, getExpiry, getName, getSubnames, batch } = useEns()
+  const { ready, getOwner, getExpiry, getSubnames, batch } = useEns()
   const { data: accountData } = useAccount()
   const address = accountData?.address
 
-  const { data: ensData, isLoading: primaryLoading } = useQuery(
-    ['getName', address],
-    () => getName(address!),
-    {
-      enabled: !!address,
-    },
-  )
+  const { data: ensName, isLoading: primaryLoading } = useEnsName({ address })
 
-  const name = isSelf && ensData?.name ? ensData.name : _name
+  const name = isSelf && ensName ? ensName : _name
 
   const { name: normalisedName, valid } = useValidate(name, !name)
 
@@ -193,15 +187,11 @@ const ProfilePage: NextPage = () => {
 
   useProtectedRoute(
     '/',
-    // for /profile route, always redirect
-    router.asPath !== '/profile' &&
-      // When anything is loading, return true
-      (ready
-        ? // if is self, user must be connected
-          (isSelf ? address : true) &&
-          typeof name === 'string' &&
-          name.length > 0
-        : true),
+    // When anything is loading, return true
+    ready
+      ? // if is self, user must be connected
+        (isSelf ? address : true) && typeof name === 'string' && name.length > 0
+      : true,
   )
 
   useEffect(() => {
@@ -229,12 +219,14 @@ const ProfilePage: NextPage = () => {
     >
       {!error ? (
         <WrapperGrid>
-          <GridItem
-            style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
-            $area="back-button"
-          >
-            <BackButton />
-          </GridItem>
+          {!isSelf && (
+            <GridItem
+              style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
+              $area="back-button"
+            >
+              <BackButton />
+            </GridItem>
+          )}
           <TabButtonWrapper $area="tabs">
             <TabButton
               $active={tab === 'profile'}
@@ -260,7 +252,6 @@ const ProfilePage: NextPage = () => {
                   network: chain?.name || 'mainnet',
                   expiryDate,
                   ownerData,
-                  ensData,
                 }}
               />
             )}
