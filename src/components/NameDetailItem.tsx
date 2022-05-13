@@ -1,3 +1,4 @@
+import { useZorb } from '@app/hooks/useZorb'
 import { imageUrlUnknownRecord } from '@app/utils/utils'
 import { Avatar, Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
@@ -15,7 +16,7 @@ const NameItemWrapper = styled.div`
     border-bottom: 1px solid ${theme.colors.borderTertiary};
     transition: all 0.15s ease-in-out;
     &:hover {
-      background-color: ${theme.colors.backgroundTertiary};
+      background-color: ${theme.colors.backgroundSecondary};
     }
     &:last-of-type {
       border: none;
@@ -33,11 +34,13 @@ const NameItemContainer = styled.div`
 `
 
 type Name = {
+  id: string
   name: string
-  truncatedName: string
+  truncatedName?: string
 }
 
-export const DomainDetailItem = ({
+export const NameDetailItem = ({
+  id,
   name,
   truncatedName,
   network,
@@ -47,6 +50,7 @@ export const DomainDetailItem = ({
   children: ReactNode
 }) => {
   const [src, setSrc] = useState('')
+  const zorb = useZorb(id, 'hash')
 
   useEffect(() => {
     const run = async () => {
@@ -57,7 +61,6 @@ export const DomainDetailItem = ({
         setSrc(_src)
       }
     }
-
     run()
   }, [name, network])
 
@@ -65,12 +68,7 @@ export const DomainDetailItem = ({
     <Link href={`/profile/${name}`} passHref>
       <NameItemWrapper as="a">
         <NameItemContainer>
-          <Avatar
-            label={truncatedName}
-            src={src}
-            placeholder={src === ''}
-            size="9"
-          />
+          <Avatar label={truncatedName || name} src={src || zorb} size="9" />
           <Typography color="text" weight="bold" variant="extraLarge">
             {truncatedName}
           </Typography>

@@ -160,7 +160,10 @@ export const gradientForBytes = (address: string) => {
   )
 }
 
-export const zorbImageSVG = (input: string, type: 'name' | 'address') => {
+export const zorbImageSVG = (
+  input: string,
+  type: 'name' | 'address' | 'hash',
+) => {
   const bytes = type === 'name' ? namehash(input) : input
   const gradientInfo = gradientForBytes(bytes)
   return `
@@ -175,18 +178,17 @@ export const zorbImageSVG = (input: string, type: 'name' | 'address') => {
         <stop offset="1" stop-color="${gradientInfo[4]}" />
       </linearGradient>
     </defs>
-    <g transform="translate(5,5)">
-      <path
-        d="M100 50C100 22.3858 77.6142 0 50 0C22.3858 0 0 22.3858 0 50C0 77.6142 22.3858 100 50 100C77.6142 100 100 77.6142 100 50Z"
-        fill="url(#gzr)" />
-      <path stroke="rgba(0,0,0,0.075)" fill="transparent" stroke-width="1"
-        d="M50,0.5c27.3,0,49.5,22.2,49.5,49.5S77.3,99.5,50,99.5S0.5,77.3,0.5,50S22.7,0.5,50,0.5z" />
-    </g>
+    <path
+      d="M110 55C110 24.6244 85.3756 0 55 0C24.6244 0 0 24.6244 0 55C0 85.3756 24.6244 110 55 110C85.3756 110 110 85.3756 110 55Z"
+      fill="url(#gzr)" />
   </svg>
     `
 }
 
-export const zorbImageDataURI = (input: string, type: 'name' | 'address') => {
+export const zorbImageDataURI = (
+  input: string,
+  type: 'name' | 'address' | 'hash',
+) => {
   return `data:image/svg+xml;base64,${Buffer.from(
     zorbImageSVG(input, type),
     'utf-8',

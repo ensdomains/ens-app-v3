@@ -1,6 +1,7 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
+import { useZorb } from '@app/hooks/useZorb'
 import { imageUrl } from '@app/utils/utils'
 import { Avatar, Heading, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
@@ -10,6 +11,7 @@ import {
   OtherProfileButton,
   SocialProfileButton,
 } from './ProfileButton'
+import { TabWrapper } from './TabWrapper'
 
 const ProfileInfoBox = styled.div`
   ${({ theme }) => `
@@ -126,79 +128,79 @@ export const ProfileDetails = ({
       )
       .map((x) => ({ ...x, type: 'text' })),
   ]
+  const zorb = useZorb(name, 'name')
 
   return (
-    <ProfileInfoBox>
-      <Avatar
-        size="32"
-        label={name}
-        placeholder={!getTextRecord('avatar')}
-        src={
-          textRecords && textRecords.length > 0 && getTextRecord('avatar')
-            ? imageUrl(
-                (
-                  getTextRecord('avatar') || {
-                    key: 'avatar',
-                    value: '',
-                  }
-                ).value,
-                name,
-                network,
-              )
-            : undefined
-        }
-      />
-      <DetailStack>
-        <Heading level="2">{name}</Heading>
-        {getTextRecord('name') && (
-          <div style={{ marginTop: '4px' }}>
-            <Typography weight="bold" color="textTertiary">
-              {getTextRecord('name')?.value}
-            </Typography>
+    <TabWrapper>
+      <ProfileInfoBox>
+        <Avatar
+          size="32"
+          label={name}
+          src={
+            imageUrl(
+              (
+                getTextRecord('avatar') || {
+                  key: 'avatar',
+                  value: '',
+                }
+              ).value,
+              name,
+              network,
+            ) || zorb
+          }
+        />
+        <DetailStack>
+          <Heading level="2">{name}</Heading>
+          {getTextRecord('name') && (
+            <div style={{ marginTop: '4px' }}>
+              <Typography weight="bold" color="textTertiary">
+                {getTextRecord('name')?.value}
+              </Typography>
+            </div>
+          )}
+        </DetailStack>
+        {getTextRecord('description') && (
+          <Typography>{getTextRecord('description')?.value}</Typography>
+        )}
+        {getTextRecord('url') && (
+          <div style={{ width: 'min-content' }}>
+            <a href={getTextRecord('url')?.value}>
+              <Typography color="blue">
+                {getTextRecord('url')
+                  ?.value.replace(/http(s?):\/\//g, '')
+                  .replace(/\/$/g, '')}
+              </Typography>
+            </a>
           </div>
         )}
-      </DetailStack>
-      {getTextRecord('description') && (
-        <Typography>{getTextRecord('description')?.value}</Typography>
-      )}
-      {getTextRecord('url') && (
-        <div style={{ width: 'min-content' }}>
-          <a href={getTextRecord('url')?.value}>
-            <Typography color="blue">
-              {getTextRecord('url')
-                ?.value.replace(/http(s?):\/\//g, '')
-                .replace(/\/$/g, '')}
-            </Typography>
-          </a>
-        </div>
-      )}
-      <RecordsStack>
-        <ProfileSection
-          label="accounts"
-          condition={
-            textRecords &&
-            textRecords.filter((x) =>
-              supportedTexts.includes(x.key.toLowerCase()),
-            ).length > 0
-          }
-          array={textRecords}
-          button={SocialProfileButton}
-        />
-        <ProfileSection
-          label="addresses"
-          type="address"
-          condition={addresses && addresses.length > 0}
-          supported={supportedAddresses}
-          array={addresses}
-          button={AddressProfileButton}
-        />
-        <ProfileSection
-          label="otherRecords"
-          condition={otherRecords && otherRecords.length > 0}
-          array={otherRecords}
-          button={OtherProfileButton}
-        />
-      </RecordsStack>
-    </ProfileInfoBox>
+        <RecordsStack>
+          <ProfileSection
+            label="accounts"
+            condition={
+              textRecords &&
+              textRecords.filter((x) =>
+                supportedTexts.includes(x.key.toLowerCase()),
+              ).length > 0
+            }
+            array={textRecords}
+            button={SocialProfileButton}
+          />
+          <ProfileSection
+            label="addresses"
+            type="address"
+            condition={addresses && addresses.length > 0}
+            supported={supportedAddresses}
+            array={addresses}
+            button={AddressProfileButton}
+          />
+          <ProfileSection
+            label="otherRecords"
+            condition={otherRecords && otherRecords.length > 0}
+            array={otherRecords}
+            button={OtherProfileButton}
+          />
+        </RecordsStack>
+      </ProfileInfoBox>
+    </TabWrapper>
   )
 }

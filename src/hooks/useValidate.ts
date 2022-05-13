@@ -30,5 +30,5 @@ export const useValidate = (input: string, skip?: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_name, skip])
 
-  return { valid, type, name }
+  return { valid, type, name, labelCount: name.split('.').length }
 }

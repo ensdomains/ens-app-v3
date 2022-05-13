@@ -148,7 +148,7 @@ export const ProfileNftDetails = ({
   name: string
   selfAddress?: string
   network: string
-  expiryDate: Date
+  expiryDate?: Date | null
   ownerData: {
     owner: string
     registrant?: string
