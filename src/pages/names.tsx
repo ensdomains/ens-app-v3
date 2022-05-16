@@ -2,6 +2,7 @@ import DownDirectionSVG from '@app/assets/DownDirection.svg'
 import GridSVG from '@app/assets/Grid.svg'
 import ListSVG from '@app/assets/List.svg'
 import UpDirectionSVG from '@app/assets/UpDirection.svg'
+import { NameGridView } from '@app/components/names/NameGridView'
 import { NameListView } from '@app/components/names/NameListView'
 import { TabWrapper } from '@app/components/profile/TabWrapper'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
@@ -46,6 +47,10 @@ const TabWrapperWithButtons = styled.div`
   align-items: normal;
   justify-content: flex-start;
   width: 100%;
+  ${({ theme }) => css`
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
+  `}
 `
 
 const FilterContainer = styled.div`
@@ -79,7 +84,7 @@ const SelectWrapper = styled.div`
     width: ${theme.space['32']};
     & [role='listbox'] {
       background: ${theme.colors.background};
-      z-index: 1;
+      z-index: 5;
     }
     ${mq.medium.min`
       width: ${theme.space['48']};
@@ -269,9 +274,13 @@ const NamesPage: NextPage = () => {
           </FilterContainer>
         </TopContainer>
         <TabWrapperWithButtons>
-          {viewType === 'list' && currentPage && pageLength > 0 ? (
-            <NameListView currentPage={currentPage} network={chain?.name!} />
-          ) : null}
+          {currentPage &&
+            pageLength > 0 &&
+            (viewType === 'list' ? (
+              <NameListView currentPage={currentPage} network={chain?.name!} />
+            ) : (
+              <NameGridView currentPage={currentPage} network={chain?.name!} />
+            ))}
           {pageLength < 1 && (!currentPage || currentPage.length === 0) && (
             <TabWrapper>
               <EmptyDetailContainer>{t('names.empty')}</EmptyDetailContainer>

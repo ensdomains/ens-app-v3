@@ -1,9 +1,10 @@
 import { useZorb } from '@app/hooks/useZorb'
+import mq from '@app/mediaQuery'
 import { imageUrlUnknownRecord } from '@app/utils/utils'
 import { Avatar, Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { ReactNode, useEffect, useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const NameItemWrapper = styled.div`
   ${({ theme }) => `
@@ -37,6 +38,15 @@ const NameItemContainer = styled.div`
 const AvatarWrapper = styled.div`
   ${({ theme }) => `
     width: ${theme.space['9']};
+  `}
+`
+
+const TypeWrapper = styled.div`
+  ${({ theme }) => css`
+    max-width: ${theme.space['48']};
+    ${mq.medium.min`
+      max-width: ${theme.space['96']};
+    `}
   `}
 `
 
@@ -78,9 +88,16 @@ export const NameDetailItem = ({
           <AvatarWrapper>
             <Avatar label={truncatedName || name} src={src || zorb} />
           </AvatarWrapper>
-          <Typography color="text" weight="bold" variant="extraLarge">
-            {truncatedName}
-          </Typography>
+          <TypeWrapper>
+            <Typography
+              color="text"
+              ellipsis
+              weight="bold"
+              variant="extraLarge"
+            >
+              {truncatedName}
+            </Typography>
+          </TypeWrapper>
         </NameItemContainer>
         {children}
       </NameItemWrapper>
