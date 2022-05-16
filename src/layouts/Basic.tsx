@@ -19,8 +19,8 @@ const Container = styled.div`
     min-width: 100%;
     min-height: 100vh;
     ${mq.small.min`
-    padding: ${theme.space['12']} ${theme.space['16']};
-  `}
+      padding: ${theme.space['12']} ${theme.space['16']};
+    `}
   `}
 `
 

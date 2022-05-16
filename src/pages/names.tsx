@@ -105,6 +105,9 @@ const Container = styled.div`
   display: flex;
   flex-direction: column;
   ${({ theme }) => `
+    width: 100%;
+    max-width: ${theme.space['320']};
+    margin: 0 auto;
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
   `}
