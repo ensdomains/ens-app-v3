@@ -418,3 +418,6 @@ export const shortenAddress = (
 
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
+
+export const secondsToDays = (seconds: number) =>
+  Math.floor(seconds / (60 * 60 * 24))

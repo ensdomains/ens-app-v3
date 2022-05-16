@@ -56,7 +56,7 @@ const HeaderWrapper = styled.header<{ $isHome: boolean }>`
     height: ${theme.space['16']};
     ${!$isHome &&
     mq.medium.min`
-    margin-bottom:  ${theme.space['12']};
+    margin-bottom: ${theme.space['6']};
   `}
   `}
 `

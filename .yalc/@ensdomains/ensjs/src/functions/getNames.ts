@@ -12,20 +12,15 @@ export type Name = {
   parent: {
     name: string
   }
-}
-
-export type OwnedName = Name & {
-  createdAt: Date
-}
-
-export type Registration = Name & {
-  registrationDate: Date
-  expiryDate: Date
+  createdAt?: Date
+  registrationDate?: Date
+  expiryDate?: Date
+  type: 'domain' | 'registration'
 }
 
 type BaseParams = {
   address: string
-  type: 'registrant' | 'owner'
+  type: 'registrant' | 'owner' | 'all'
   page?: number
   pageSize?: number
   orderDirection?: 'asc' | 'desc'
@@ -41,7 +36,37 @@ type OwnerParams = {
   orderBy?: 'createdAt' | 'labelName'
 }
 
-type Params = BaseParams & (RegistrantParams | OwnerParams)
+type AllParams = {
+  type: 'all'
+  orderBy?: 'labelName' | 'creationDate'
+  page?: never
+  pageSize?: never
+}
+
+type Params = BaseParams & (RegistrantParams | OwnerParams | AllParams)
+
+const mapDomain = (domain: any) => {
+  const decrypted = decryptName(domain.name)
+  return {
+    ...domain,
+    name: decrypted,
+    truncatedName: truncateFormat(decrypted),
+    createdAt: new Date(parseInt(domain.createdAt) * 1000),
+    type: 'domain',
+  }
+}
+
+const mapRegistration = (registration: any) => {
+  const decrypted = decryptName(registration.domain.name)
+  return {
+    expiryDate: new Date(parseInt(registration.expiryDate) * 1000),
+    registrationDate: new Date(parseInt(registration.registrationDate) * 1000),
+    ...registration.domain,
+    name: decrypted,
+    truncatedName: truncateFormat(decrypted),
+    type: 'registration',
+  }
+}
 
 const getNames = async (
   { gqlInstance }: ENSArgs<'gqlInstance'>,
@@ -70,7 +95,35 @@ const getNames = async (
   let queryVars: object = {}
   let finalQuery: string = ''
 
-  if (type === 'owner') {
+  if (type === 'all') {
+    finalQuery = gqlInstance.gql`
+      query getNames(
+        $id: ID!
+        $expiryDate: Int
+      ) {
+        account(id: $id) {
+          registrations(
+            first: 1000
+            where: { expiryDate_gt: $expiryDate }
+          ) {
+            registrationDate
+            expiryDate
+            domain {
+              ${domainQueryData}
+            }
+          }
+          domains(first: 1000) {
+            ${domainQueryData}
+            createdAt
+          }
+        }
+      }
+    `
+    queryVars = {
+      id: address,
+      expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
+    }
+  } else if (type === 'owner') {
     if (typeof page !== 'number') {
       finalQuery = gqlInstance.gql`
         query getNames(
@@ -88,8 +141,8 @@ const getNames = async (
       `
       queryVars = {
         id: address,
-        orderBy: orderBy,
-        orderDirection: orderDirection,
+        orderBy,
+        orderDirection,
       }
     } else {
       finalQuery = gqlInstance.gql`
@@ -118,8 +171,8 @@ const getNames = async (
         id: address,
         first: pageSize,
         skip: (page || 0) * pageSize,
-        orderBy: orderBy,
-        orderDirection: orderDirection,
+        orderBy,
+        orderDirection,
       }
     }
   } else {
@@ -149,8 +202,8 @@ const getNames = async (
 
       queryVars = {
         id: address,
-        orderBy: orderBy,
-        orderDirection: orderDirection,
+        orderBy,
+        orderDirection,
         expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
       }
     } else {
@@ -193,29 +246,30 @@ const getNames = async (
   }
 
   const { account } = await client.request(finalQuery, queryVars)
-  if (type === 'owner') {
-    return account.domains.map((domain: any) => {
-      const decrypted = decryptName(domain.name)
-      return {
-        ...domain,
-        name: decrypted,
-        truncatedName: truncateFormat(decrypted),
-        createdAt: new Date(parseInt(domain.createdAt) * 1000),
+  if (type === 'all') {
+    return [
+      ...account.domains.map(mapDomain),
+      ...account.registrations.map(mapRegistration),
+    ].sort((a, b) => {
+      if (orderDirection === 'desc') {
+        if (orderBy === 'labelName') {
+          return b.name.localeCompare(a.name)
+        } else {
+          return b.createdAt.getTime() - a.createdAt.getTime()
+        }
+      } else {
+        if (orderBy === 'labelName') {
+          return a.name.localeCompare(b.name)
+        } else if (orderBy === 'creationDate') {
+          return a.createdAt.getTime() - b.createdAt.getTime()
+        }
       }
-    }) as OwnedName[]
+    }) as Name[]
+  } else if (type === 'owner') {
+    return account.domains.map(mapDomain) as Name[]
+  } else {
+    return account.registrations.map(mapRegistration) as Name[]
   }
-  return account.registrations.map((registration: any) => {
-    const decrypted = decryptName(registration.domain.name)
-    return {
-      expiryDate: new Date(parseInt(registration.expiryDate) * 1000),
-      registrationDate: new Date(
-        parseInt(registration.registrationDate) * 1000,
-      ),
-      ...registration.domain,
-      name: decrypted,
-      truncatedName: truncateFormat(decrypted),
-    }
-  }) as Registration[]
 }
 
 export default getNames
