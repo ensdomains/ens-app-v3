@@ -13,6 +13,7 @@ import { ConnectButtonWrapper } from './ConnectButton'
 const AvatarWrapper = styled.div<{ $active: boolean }>`
   ${({ theme, $active }) => `
   position: relative;
+  width: ${theme.space['10']};
   border: 2px solid ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
   background-color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
   border-radius: ${theme.radii.full};

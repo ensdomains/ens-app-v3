@@ -52,7 +52,6 @@ export const useNamesFromAddress = ({
 
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {
-      console.log('SORT LABELNAME')
       if (sort.orderDirection === 'asc') {
         return (a: Name, b: Name) =>
           (a.truncatedName || '').localeCompare(b.truncatedName || '')
@@ -71,8 +70,12 @@ export const useNamesFromAddress = ({
         (a.registrationDate?.getTime() || a.createdAt?.getTime() || 0)
     }
     if (sort.orderDirection === 'asc') {
-      return (a: Name, b: Name) =>
-        (a.expiryDate?.getTime() || 0) - (b.expiryDate?.getTime() || 0)
+      return (a: Name, b: Name) => {
+        if (!a.expiryDate) {
+          return 1
+        }
+        return (a.expiryDate?.getTime() || 0) - (b.expiryDate?.getTime() || 0)
+      }
     }
     return (a: Name, b: Name) =>
       (b.expiryDate?.getTime() || 0) - (a.expiryDate?.getTime() || 0)
@@ -80,7 +83,6 @@ export const useNamesFromAddress = ({
 
   useEffect(() => {
     if (status === 'success' && data) {
-      console.log('resorting')
       setSortedData(
         data
           .sort(sortFunc)

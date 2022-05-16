@@ -107,6 +107,12 @@ const RecordsStack = styled.div`
   `}
 `
 
+const AvatarWrapper = styled.div`
+  ${({ theme }) => `
+    width: ${theme.space['32']};
+  `}
+`
+
 export const ProfileDetails = ({
   name,
   network,
@@ -133,22 +139,23 @@ export const ProfileDetails = ({
   return (
     <TabWrapper>
       <ProfileInfoBox>
-        <Avatar
-          size="32"
-          label={name}
-          src={
-            imageUrl(
-              (
-                getTextRecord('avatar') || {
-                  key: 'avatar',
-                  value: '',
-                }
-              ).value,
-              name,
-              network,
-            ) || zorb
-          }
-        />
+        <AvatarWrapper>
+          <Avatar
+            label={name}
+            src={
+              imageUrl(
+                (
+                  getTextRecord('avatar') || {
+                    key: 'avatar',
+                    value: '',
+                  }
+                ).value,
+                name,
+                network,
+              ) || zorb
+            }
+          />
+        </AvatarWrapper>
         <DetailStack>
           <Heading level="2">{name}</Heading>
           {getTextRecord('name') && (

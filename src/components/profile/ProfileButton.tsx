@@ -57,6 +57,10 @@ const RotatedIconArrowUp = styled.svg`
   `}
 `
 
+const MinWidthWrapper = styled.div`
+  width: min-content;
+`
+
 const ProfileButton = ({
   prefixSize = '4',
   prefix,
@@ -80,38 +84,40 @@ const ProfileButton = ({
       condition={link}
       wrapper={(wrapperChildren) => <a href={link}>{wrapperChildren}</a>}
     >
-      <Button
-        onClick={link ? undefined : () => copy(value)}
-        size="extraSmall"
-        shape="circle"
-        variant="secondary"
-        shadowless
-      >
-        <Container data-testid={testid}>
-          <Wrapper>
-            <div
-              data-testid="found"
-              style={{
-                width: space[prefixSize],
-                height: space[prefixSize],
-              }}
-            >
-              {prefix}
-            </div>
-            <PrimaryText>{children}</PrimaryText>
-            {link ? (
-              <RotatedIconArrowUp as={ArrowUpSVG} key={link} />
-            ) : (
-              <IconCopyAnimated
-                key={value}
-                copied={copied}
-                size="3"
-                color="textTertiary"
-              />
-            )}
-          </Wrapper>
-        </Container>
-      </Button>
+      <MinWidthWrapper>
+        <Button
+          onClick={link ? undefined : () => copy(value)}
+          size="extraSmall"
+          shape="circle"
+          variant="secondary"
+          shadowless
+        >
+          <Container data-testid={testid}>
+            <Wrapper>
+              <div
+                data-testid="found"
+                style={{
+                  width: space[prefixSize],
+                  height: space[prefixSize],
+                }}
+              >
+                {prefix}
+              </div>
+              <PrimaryText>{children}</PrimaryText>
+              {link ? (
+                <RotatedIconArrowUp as={ArrowUpSVG} key={link} />
+              ) : (
+                <IconCopyAnimated
+                  key={value}
+                  copied={copied}
+                  size="3"
+                  color="textTertiary"
+                />
+              )}
+            </Wrapper>
+          </Container>
+        </Button>
+      </MinWidthWrapper>
     </ConditionalWrapper>
   )
 }

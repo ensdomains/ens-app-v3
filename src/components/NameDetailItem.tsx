@@ -11,6 +11,7 @@ const NameItemWrapper = styled.div`
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
+    flex-wrap: wrap;
     width: 100%;
     padding: ${theme.space['3']} ${theme.space['4.5']};
     border-bottom: 1px solid ${theme.colors.borderTertiary};
@@ -31,6 +32,12 @@ const NameItemContainer = styled.div`
   justify-content: center;
   gap: 16px;
   flex-gap: 16px;
+`
+
+const AvatarWrapper = styled.div`
+  ${({ theme }) => `
+    width: ${theme.space['9']};
+  `}
 `
 
 type Name = {
@@ -68,7 +75,9 @@ export const NameDetailItem = ({
     <Link href={`/profile/${name}`} passHref>
       <NameItemWrapper as="a">
         <NameItemContainer>
-          <Avatar label={truncatedName || name} src={src || zorb} size="9" />
+          <AvatarWrapper>
+            <Avatar label={truncatedName || name} src={src || zorb} />
+          </AvatarWrapper>
           <Typography color="text" weight="bold" variant="extraLarge">
             {truncatedName}
           </Typography>

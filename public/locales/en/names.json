@@ -6,5 +6,10 @@
     "your": "your",
     "wallet": "wallet"
   },
-  "empty": "No names found for this address"
+  "empty": "No names found for this address",
+  "sortTypes": {
+    "expiryDate": "Expiry Date",
+    "labelName": "Name",
+    "creationDate": "Creation Date"
+  }
 }

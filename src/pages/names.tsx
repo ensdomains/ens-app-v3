@@ -1,10 +1,13 @@
+import DownDirectionSVG from '@app/assets/DownDirection.svg'
 import GridSVG from '@app/assets/Grid.svg'
 import ListSVG from '@app/assets/List.svg'
+import UpDirectionSVG from '@app/assets/UpDirection.svg'
 import { NameListView } from '@app/components/names/NameListView'
 import { TabWrapper } from '@app/components/profile/TabWrapper'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
+import mq from '@app/mediaQuery'
 import {
   Button,
   Heading,
@@ -16,8 +19,8 @@ import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import styled from 'styled-components'
+import { useMemo, useState } from 'react'
+import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
 
 const EmptyDetailContainer = styled.div`
@@ -47,27 +50,40 @@ const TabWrapperWithButtons = styled.div`
 
 const FilterContainer = styled.div`
   display: flex;
-  flex-direction: column;
-  align-items: center;
+  flex-direction: row;
+  align-items: flex-end;
   justify-content: center;
-  ${({ theme }) => `
-    gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
+  ${({ theme }) => css`
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
+    ${mq.medium.min`
+      gap: ${theme.space['8']};
+      flex-gap: ${theme.space['8']};
+    `}
   `}
 `
 
-const FilterButtons = styled.div`
+const ViewButtons = styled.div`
   display: flex;
   flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  ${({ theme }) => `
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
+  `}
 `
 
 const SelectWrapper = styled.div`
-  ${({ theme }) => `
-    width: ${theme.space['48']};
-    & [role="listbox"] {
+  ${({ theme }) => css`
+    width: ${theme.space['32']};
+    & [role='listbox'] {
       background: ${theme.colors.background};
       z-index: 1;
     }
+    ${mq.medium.min`
+      width: ${theme.space['48']};
+    `}
   `}
 `
 
@@ -96,9 +112,27 @@ const SectionHeader = styled.div`
 
 const TopContainer = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  align-items: flex-start;
   justify-content: space-between;
+  ${({ theme }) => `
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
+  `}
+  ${mq.medium.min`
+    flex-direction: row;
+  `}
+`
+
+const SortAndDirections = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  justify-content: center;
+  ${({ theme }) => `
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
+  `}
 `
 
 type SortType = 'expiryDate' | 'labelName' | 'creationDate'
@@ -116,8 +150,8 @@ const NamesPage: NextPage = () => {
 
   const [viewType, setViewType] = useState<ViewType>('list')
   const [sortType, setSortType] = useState<SortType>('expiryDate')
-  const [orderDirection] = useState<SortDirection>('desc')
-  const [filter, setFilter] = useState<FilterType>('none')
+  const [orderDirection, setOrderDirection] = useState<SortDirection>('desc')
+  const [filter] = useState<FilterType>('none')
   const [page, setPage] = useState(1)
 
   const {
@@ -135,8 +169,6 @@ const NamesPage: NextPage = () => {
     resultsPerPage: 10,
     filter: filter === 'none' ? undefined : filter,
   })
-
-  useEffect(() => console.log(currentPage), [currentPage])
 
   const loading =
     isLoading ||
@@ -158,62 +190,84 @@ const NamesPage: NextPage = () => {
               } ${t('subtitle.wallet')}`}
             </Typography>
           </SectionHeader>
-          <FilterButtons>
-            <Button
-              pressed={viewType === 'grid'}
-              onClick={() => setViewType('grid')}
-              variant="transparent"
-              shadowless
-              size="extraSmall"
-            >
-              <div style={{ height: '24px' }}>
-                <GridSVG width="24" height="24" />
-              </div>
-            </Button>
-            <Button
-              pressed={viewType === 'list'}
-              onClick={() => setViewType('list')}
-              variant="transparent"
-              shadowless
-              size="extraSmall"
-            >
-              <div style={{ height: '24px' }}>
-                <ListSVG width="24" height="24" />
-              </div>
-            </Button>
-          </FilterButtons>
-        </TopContainer>
-        <TabWrapper>
           <FilterContainer>
-            <FilterDropdownContainer>
-              <SelectWrapper>
-                <Select
-                  label="Sort by"
-                  onChange={(e) => e?.value && setSortType(e.value as SortType)}
-                  options={[
-                    { label: 'Expiry Date', value: 'expiryDate' },
-                    {
-                      label: 'Creation Date',
-                      value: 'creationDate',
-                    },
-                    { label: 'Name', value: 'labelName' },
-                  ]}
-                />
-              </SelectWrapper>
-              <SelectWrapper>
-                <Select
-                  label="Filter"
-                  onChange={(e) => e?.value && setFilter(e.value as FilterType)}
-                  options={[
-                    { label: 'Registrant', value: 'registration' },
-                    { label: 'Controller', value: 'domain' },
-                    { label: 'None', value: 'none' },
-                  ]}
-                />
-              </SelectWrapper>
-            </FilterDropdownContainer>
+            <SortAndDirections>
+              <FilterDropdownContainer>
+                <SelectWrapper>
+                  <Select
+                    selected={useMemo(
+                      () => ({
+                        value: sortType,
+                        label: t(`sortTypes.${sortType}`),
+                      }),
+                      // eslint-disable-next-line react-hooks/exhaustive-deps
+                      [sortType],
+                    )}
+                    size="small"
+                    label="Sort by"
+                    onChange={(e) =>
+                      e?.value && setSortType(e.value as SortType)
+                    }
+                    options={[
+                      { label: t('sortTypes.expiryDate'), value: 'expiryDate' },
+                      {
+                        label: t('sortTypes.creationDate'),
+                        value: 'creationDate',
+                      },
+                      { label: t('sortTypes.labelName'), value: 'labelName' },
+                    ]}
+                  />
+                </SelectWrapper>
+              </FilterDropdownContainer>
+              <Button
+                pressed={orderDirection === 'desc'}
+                onClick={() => setOrderDirection('desc')}
+                variant="transparent"
+                shadowless
+                size="extraSmall"
+              >
+                <div style={{ height: '24px' }}>
+                  <DownDirectionSVG width="24" height="24" />
+                </div>
+              </Button>
+              <Button
+                pressed={orderDirection === 'asc'}
+                onClick={() => setOrderDirection('asc')}
+                variant="transparent"
+                shadowless
+                size="extraSmall"
+              >
+                <div style={{ height: '24px' }}>
+                  <UpDirectionSVG width="24" height="24" />
+                </div>
+              </Button>
+            </SortAndDirections>
+            <ViewButtons>
+              <Button
+                pressed={viewType === 'grid'}
+                onClick={() => setViewType('grid')}
+                variant="transparent"
+                shadowless
+                size="extraSmall"
+              >
+                <div style={{ height: '24px' }}>
+                  <GridSVG width="24" height="24" />
+                </div>
+              </Button>
+              <Button
+                pressed={viewType === 'list'}
+                onClick={() => setViewType('list')}
+                variant="transparent"
+                shadowless
+                size="extraSmall"
+              >
+                <div style={{ height: '24px' }}>
+                  <ListSVG width="24" height="24" />
+                </div>
+              </Button>
+            </ViewButtons>
           </FilterContainer>
-        </TabWrapper>
+        </TopContainer>
         <TabWrapperWithButtons>
           {viewType === 'list' && currentPage && pageLength > 0 ? (
             <NameListView currentPage={currentPage} network={chain?.name!} />
