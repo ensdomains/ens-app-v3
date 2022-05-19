@@ -1788,7 +1788,7 @@ __metadata:
 
 "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
   version: 3.0.2
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=bb6819&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -1800,7 +1800,7 @@ __metadata:
     graphql-request: ^4.1.0
   peerDependencies:
     ethers: "*"
-  checksum: 47731e6c8991a02718c937dcb9253265d89c3cc37ad9ec592bac3bdb8c7685e75b6c6744a091826c3a96aa72f25206cb327cee7a0c5e129bb5ba63f61e1611be
+  checksum: 073a24b77876fe91620e83ba30678e42701f7da1869fcc0414793b9d806d05d424b3ed9c3545853c16f0c6a29b612202b3d4e779aae025fd4201a2201da1888e
   languageName: node
   linkType: hard
 
@@ -1843,9 +1843,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.5.5":
-  version: 0.5.5
-  resolution: "@ensdomains/thorin@npm:0.5.5"
+"@ensdomains/thorin@npm:^0.5.7":
+  version: 0.5.7
+  resolution: "@ensdomains/thorin@npm:0.5.7"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -1854,7 +1854,7 @@ __metadata:
     react: ^17
     react-dom: ^17
     styled-components: ^5.3.3
-  checksum: e4b196b228e599d13c7634cff8e07b393039a0f37e6ad6bd3bd6307519fec086e58423544c95232991bf190c7e257912aae1f4aee0c4a5d6d35c99467ffc6b33
+  checksum: 0ba952736f73de6b769a7338ec401fdfe1571065169cc4e09d56c93f5ff53cfde199e2cff2fd3f2cf65c8a036cc7914fa493ae1c750aae3e869e12d16560e8ab
   languageName: node
   linkType: hard
 
@@ -10213,7 +10213,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.5.5
+    "@ensdomains/thorin": ^0.5.7
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5

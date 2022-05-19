@@ -346,16 +346,12 @@ export function prependUrl(url: string) {
 
 // eslint-disable-next-line consistent-return
 export function imageUrl(url: string, name: any, network: string) {
-  const _network =
-    networkName[network?.toLowerCase() as keyof typeof networkName]
-  const _protocol = supportedAvatarProtocols.find((proto) =>
-    url.startsWith(proto),
-  )
+  const supported = Object.keys(networkName).includes(network?.toLowerCase())
   // check if given uri is supported
   // provided network name is valid,
   // domain name is available
-  if (_protocol && _network && name) {
-    return `https://metadata.ens.domains/${_network}/avatar/${name}`
+  if (supported && name) {
+    return `https://metadata.ens.domains/${network.toLowerCase()}/avatar/${name}`
   }
   console.warn('Unsupported avatar', network, name, url)
 }
@@ -377,9 +373,8 @@ export function ensNftImageUrl(
 ) {
   const network =
     networkName[_network?.toLowerCase() as keyof typeof networkName]
-  const tokenId = labelhash(name.substring(0, name.length - 4))
 
-  return `https://metadata.ens.domains/${network}/${regAddr}/${tokenId}/image`
+  return `https://metadata.ens.domains/${network}/${regAddr}/${name}/image`
 }
 
 export function isCID(hash: string | CID) {
@@ -418,3 +413,6 @@ export const shortenAddress = (
 
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
+
+export const secondsToDays = (seconds: number) =>
+  Math.floor(seconds / (60 * 60 * 24))

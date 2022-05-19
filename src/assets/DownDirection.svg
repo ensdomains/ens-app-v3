@@ -1,0 +1,8 @@
+<svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <path d="M1.5 3.1579H12.64" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+    <path d="M1.5 12H9.15961" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+    <path d="M1.5 20.8421H22.5" stroke="currentColor" stroke-width="3" stroke-linecap="round" />
+    <path fill-rule="evenodd" clip-rule="evenodd"
+        d="M23.4444 10.3599C23.9538 10.8692 23.956 11.6929 23.4494 12.1995L19.193 16.4559C18.6863 16.9625 17.8627 16.9603 17.3533 16.4509L13.2214 12.319C12.712 11.8096 12.7098 10.9859 13.2164 10.4793C13.723 9.97269 14.5466 9.97492 15.056 10.4843L16.9613 12.3896L16.9613 1.83611C16.9594 1.11769 17.5402 0.536869 18.2586 0.538816C18.977 0.540763 19.561 1.12474 19.563 1.84316L19.563 12.3967L21.6047 10.3549C22.1114 9.84825 22.935 9.85048 23.4444 10.3599Z"
+        fill="currentColor" />
+</svg>

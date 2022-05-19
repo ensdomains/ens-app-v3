@@ -1,6 +1,6 @@
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileNftDetails } from '@app/components/profile/ProfileNftDetails'
-import { SubdomainDetails } from '@app/components/profile/SubdomainDetails'
+import { SubnameDetails } from '@app/components/profile/SubnameDetails'
 import { useProfile } from '@app/hooks/useProfile'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useValidate } from '@app/hooks/useValidate'
@@ -9,7 +9,7 @@ import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { ArrowCircleSVG, Typography } from '@ensdomains/thorin'
+import { ArrowCircleSVG, ExclamationSVG, Typography } from '@ensdomains/thorin'
 import { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -94,23 +94,54 @@ const TabButtonWrapper = styled(GridItem)`
   `}
 `
 
-const TabWrapper = styled.div`
-  ${({ theme }) => `
-  background-color: ${theme.colors.background};
-  border-radius: ${theme.radii['2xLarge']};
-  `}
-`
-
-const WrapperGrid = styled.div`
+const WrapperGrid = styled.div<{ $hasError?: boolean }>`
   display: grid;
   grid-template-columns: 1fr;
   gap: ${({ theme }) => theme.space['8']};
   align-self: center;
   justify-content: center;
-  grid-template-areas: 'back-button tabs' 'details details' 'nft-details nft-details';
-  ${mq.medium.min`
-    grid-template-areas: "back-button tabs" "nft-details details";
-    grid-template-columns: 270px 2fr;
+  ${({ $hasError }) => css`
+    grid-template-areas: ${$hasError ? "'error error'" : ''} 'back-button tabs' 'details details' 'nft-details nft-details';
+    ${mq.medium.min`
+      grid-template-areas: ${
+        $hasError ? "'error error'" : ''
+      } "back-button tabs" "nft-details details";
+      grid-template-columns: 270px 2fr;
+    `}
+  `}
+`
+
+const ErrorIcon = styled.div`
+  ${({ theme }) => `
+    background: rgba(255, 255, 255, 0.5);
+    color: ${theme.colors.yellow};
+    stroke-width: ${theme.space['0.5']};
+    width: max-content;
+    height: max-content;
+    min-height: ${theme.space['12']};
+    min-width: ${theme.space['12']};
+    padding: ${theme.space['1']};
+    border-radius: ${theme.radii.almostExtraLarge};
+  `}
+`
+
+const ErrorContainer = styled.div`
+  ${({ theme }) => `
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: flex-start;
+  gap: ${theme.space['4']};
+  flex-gap: ${theme.space['4']};
+  grid-area: error;
+  background: rgba(${theme.accentsRaw.yellow}, 0.25);
+  border-radius: ${theme.radii['2xLarge']};
+  padding: ${theme.space['2']};
+  padding-right: ${theme.space['8']};
+  color: ${theme.colors.textSecondary};
+  & > div {
+    line-height: ${theme.lineHeights.normal};
+  }
   `}
 `
 
@@ -135,11 +166,11 @@ const ProfilePage: NextPage = () => {
   const _name = router.query.name as string
   const isSelf = _name === '' || _name === undefined
 
-  const [tab, setTab] = useState<'profile' | 'subdomains'>('profile')
+  const [tab, setTab] = useState<'profile' | 'subnames'>('profile')
   const [error, setError] = useState<string | null>(null)
 
   const { activeChain: chain } = useNetwork()
-  const { ready, getOwner, getExpiry, getSubnames, batch } = useEns()
+  const { ready, getOwner, getExpiry, batch } = useEns()
   const { data: accountData } = useAccount()
   const address = accountData?.address
 
@@ -147,7 +178,7 @@ const ProfilePage: NextPage = () => {
 
   const name = isSelf && ensName ? ensName : _name
 
-  const { name: normalisedName, valid } = useValidate(name, !name)
+  const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
 
   const { profile, loading: profileLoading } = useProfile(
     normalisedName,
@@ -155,11 +186,16 @@ const ProfilePage: NextPage = () => {
   )
 
   const { data: batchData, isLoading: batchLoading } = useQuery(
-    ['batch', 'getOwner', 'getExpiry', name],
+    ['batch', 'getOwner', 'getExpiry', normalisedName],
     () =>
-      batch(getOwner.batch(normalisedName), getExpiry.batch(normalisedName)),
+      labelCount > 2
+        ? Promise.all([getOwner(normalisedName)])
+        : batch(
+            getOwner.batch(normalisedName),
+            getExpiry.batch(normalisedName),
+          ),
     {
-      enabled: !!(name && profile),
+      enabled: !!(normalisedName && valid),
     },
   )
 
@@ -168,22 +204,9 @@ const ProfilePage: NextPage = () => {
 
   const expiryDate = expiryData?.expiry
 
-  const { data: subnameData, isLoading: subnamesLoading } = useQuery(
-    ['getSubnames', name],
-    () => getSubnames({ name }),
-    {
-      enabled: !!(name && profile),
-    },
-  )
-
   const truncatedName = truncateFormat(normalisedName)
 
-  const isLoading =
-    !ready ||
-    profileLoading ||
-    batchLoading ||
-    subnamesLoading ||
-    primaryLoading
+  const isLoading = !ready || profileLoading || batchLoading || primaryLoading
 
   useProtectedRoute(
     '/',
@@ -209,6 +232,10 @@ const ProfilePage: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valid, profile?.isMigrated, profile?.message])
 
+  useEffect(() => {
+    setTab('profile')
+  }, [_name])
+
   return (
     <Basic
       title={
@@ -217,71 +244,72 @@ const ProfilePage: NextPage = () => {
       }
       loading={isLoading}
     >
-      {!error ? (
-        <WrapperGrid>
-          {!isSelf && (
-            <GridItem
-              style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
-              $area="back-button"
-            >
-              <BackButton />
-            </GridItem>
-          )}
-          <TabButtonWrapper $area="tabs">
-            <TabButton
-              $active={tab === 'profile'}
-              role="button"
-              onClick={() => setTab('profile')}
-            >
-              {t('tabs.profile.name')}
-            </TabButton>
-            <TabButton
-              $active={tab === 'subdomains'}
-              role="button"
-              onClick={() => setTab('subdomains')}
-            >
-              {t('tabs.subdomains.name')}
-            </TabButton>
-          </TabButtonWrapper>
-          <GridItem $area="nft-details">
-            {ownerData && expiryDate && (
-              <ProfileNftDetails
-                name={name}
-                selfAddress={address}
-                {...{
-                  network: chain?.name || 'mainnet',
-                  expiryDate,
-                  ownerData,
-                }}
-              />
-            )}
+      <WrapperGrid $hasError={!!error}>
+        {error && (
+          <ErrorContainer>
+            <ErrorIcon as={ExclamationSVG} />
+            <Typography variant="large" weight="bold">
+              {error}
+            </Typography>
+          </ErrorContainer>
+        )}
+        {!isSelf && (
+          <GridItem
+            style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
+            $area="back-button"
+          >
+            <BackButton />
           </GridItem>
-          <DetailsWrapper $area="details">
-            <TabWrapper>
-              {tab === 'profile' ? (
-                <ProfileDetails
-                  name={truncatedName}
-                  addresses={(profile?.records?.coinTypes || []).map(
-                    (item: any) => ({ key: item.coin, value: item.addr }),
-                  )}
-                  textRecords={(profile?.records?.texts || [])
-                    .map((item: any) => ({ key: item.key, value: item.value }))
-                    .filter((item: any) => item.value !== null)}
-                  network={chain?.name || 'mainnet'}
-                />
-              ) : (
-                <SubdomainDetails
-                  subdomains={subnameData || []}
-                  network={chain?.name || 'mainnet'}
-                  loading={subnamesLoading}
-                />
+        )}
+        <TabButtonWrapper $area="tabs">
+          <TabButton
+            $active={tab === 'profile'}
+            role="button"
+            onClick={() => setTab('profile')}
+          >
+            {t('tabs.profile.name')}
+          </TabButton>
+          <TabButton
+            $active={tab === 'subnames'}
+            role="button"
+            onClick={() => setTab('subnames')}
+          >
+            {t('tabs.subnames.name')}
+          </TabButton>
+        </TabButtonWrapper>
+        <GridItem $area="nft-details">
+          {ownerData && (
+            <ProfileNftDetails
+              name={name}
+              selfAddress={address}
+              {...{
+                network: chain?.name || 'mainnet',
+                expiryDate,
+                ownerData,
+              }}
+            />
+          )}
+        </GridItem>
+        <DetailsWrapper $area="details">
+          {tab === 'profile' ? (
+            <ProfileDetails
+              name={truncatedName}
+              addresses={(profile?.records?.coinTypes || []).map(
+                (item: any) => ({ key: item.coin, value: item.addr }),
               )}
-            </TabWrapper>
-          </DetailsWrapper>
-        </WrapperGrid>
-      ) : (
-        <Typography>{error}</Typography>
-      )}
+              textRecords={(profile?.records?.texts || [])
+                .map((item: any) => ({ key: item.key, value: item.value }))
+                .filter((item: any) => item.value !== null)}
+              network={chain?.name || 'mainnet'}
+            />
+          ) : (
+            <SubnameDetails
+              name={normalisedName}
+              network={chain?.name || 'mainnet'}
+            />
+          )}
+        </DetailsWrapper>
+      </WrapperGrid>
     </Basic>
   )
 }

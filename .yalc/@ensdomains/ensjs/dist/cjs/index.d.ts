@@ -352,7 +352,7 @@ export declare class ENS {
     }[]>;
     getNames: (args_0: {
         address: string;
-        type: "owner" | "registrant";
+        type: "owner" | "registrant" | "all";
         page?: number | undefined;
         pageSize?: number | undefined;
         orderDirection?: "asc" | "desc" | undefined;
@@ -362,7 +362,12 @@ export declare class ENS {
     } | {
         type: "owner";
         orderBy?: "labelName" | "createdAt" | undefined;
-    })) => Promise<import("./functions/getNames").OwnedName[] | import("./functions/getNames").Registration[]>;
+    } | {
+        type: "all";
+        orderBy?: "labelName" | "creationDate" | undefined;
+        page?: undefined;
+        pageSize?: undefined;
+    })) => Promise<import("./functions/getNames").Name[]>;
     universalWrapper: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string, data: string) => Promise<{
             to: string;

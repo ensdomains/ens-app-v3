@@ -1,3 +1,4 @@
+import { useConnected } from '@app/hooks/useConnected'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useTranslation } from 'next-i18next'
@@ -13,33 +14,39 @@ import { LanugageDropdown } from './LanguageDropdown'
 import { SearchInput } from './SearchInput'
 import { StyledNavLink } from './StyledNavLink'
 
-const AlwaysShownRoutes = [
-  { href: '/', label: 'navigation.home' },
+const publicRoutes = [
+  { href: '/', disabled: false, label: 'navigation.home' },
   { href: '/about', disabled: true, label: 'navigation.about' },
   { href: '/developers', disabled: true, label: 'navigation.developers' },
-]
-
-const DropdownRoutes = [
   {
     label: 'navigation.community',
-    href: '/community',
     disabled: true,
+    href: '/community',
   },
   {
     label: 'navigation.help',
-    href: '/help',
     disabled: true,
+    href: '/help',
   },
   {
     label: 'navigation.governance',
-    href: '/governance',
     disabled: true,
+    href: '/governance',
   },
   {
     label: 'navigation.docs',
-    href: '/docs',
     disabled: true,
+    href: '/docs',
   },
+]
+
+const connectedRoutes = [
+  {
+    label: 'navigation.connected.favourites',
+    disabled: true,
+    href: '/favourites',
+  },
+  { label: 'navigation.connected.myNames', disabled: false, href: '/names' },
 ]
 
 const HeaderWrapper = styled.header<{ $isHome: boolean }>`
@@ -47,7 +54,7 @@ const HeaderWrapper = styled.header<{ $isHome: boolean }>`
     height: ${theme.space['16']};
     ${!$isHome &&
     mq.medium.min`
-    margin-bottom:  ${theme.space['12']};
+    margin-bottom: ${theme.space['6']};
   `}
   `}
 `
@@ -92,8 +99,17 @@ const NavContainer = styled.div`
 export const Header = () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
+  const connected = useConnected()
   const { space } = useTheme()
   const { t } = useTranslation('common')
+  const dropdownRoutes = breakpoints.sm
+    ? [
+        publicRoutes[0],
+        ...(connected ? connectedRoutes : []),
+        ...publicRoutes.slice(1),
+      ]
+    : publicRoutes.slice(1)
+  const alwaysVisibleRoutes = breakpoints.lg ? dropdownRoutes.splice(0, 3) : []
 
   return (
     <HeaderWrapper $isHome={router.asPath === '/'}>
@@ -120,21 +136,20 @@ export const Header = () => {
           </>
         )}
         <div style={{ flexGrow: 1 }} />
-        {breakpoints.lg &&
-          AlwaysShownRoutes.map((route) => (
-            <StyledNavLink
-              disabled={route.disabled}
-              key={route.href}
-              href={route.href}
-            >
-              {t(route.label)}
-            </StyledNavLink>
-          ))}
+        {alwaysVisibleRoutes.map((route) => (
+          <StyledNavLink
+            disabled={route.disabled}
+            key={route.href}
+            href={route.href}
+          >
+            {t(route.label)}
+          </StyledNavLink>
+        ))}
         <HamburgerMenu
-          dropdownItems={(!breakpoints.lg
-            ? [...AlwaysShownRoutes, ...DropdownRoutes]
-            : DropdownRoutes
-          ).map((route) => ({ ...route, label: t(route.label) }))}
+          dropdownItems={dropdownRoutes.map((route) => ({
+            ...route,
+            label: t(route.label),
+          }))}
         />
         {breakpoints.sm && <HeaderConnect />}
       </NavContainer>

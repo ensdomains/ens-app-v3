@@ -49,6 +49,10 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
     border-width: 1px;
     border-color: ${theme.colors.borderTertiary};
     width: 100%;
+    & input::placeholder {
+      color: ${theme.colors.textTertiary};
+      font-weight: ${theme.fontWeights.bold};
+    }
     ${
       $size === 'large' &&
       `

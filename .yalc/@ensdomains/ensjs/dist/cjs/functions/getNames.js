@@ -2,6 +2,27 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const format_1 = require("../utils/format");
 const labels_1 = require("../utils/labels");
+const mapDomain = (domain) => {
+    const decrypted = (0, labels_1.decryptName)(domain.name);
+    return {
+        ...domain,
+        name: decrypted,
+        truncatedName: (0, format_1.truncateFormat)(decrypted),
+        createdAt: new Date(parseInt(domain.createdAt) * 1000),
+        type: 'domain',
+    };
+};
+const mapRegistration = (registration) => {
+    const decrypted = (0, labels_1.decryptName)(registration.domain.name);
+    return {
+        expiryDate: new Date(parseInt(registration.expiryDate) * 1000),
+        registrationDate: new Date(parseInt(registration.registrationDate) * 1000),
+        ...registration.domain,
+        name: decrypted,
+        truncatedName: (0, format_1.truncateFormat)(decrypted),
+        type: 'registration',
+    };
+};
 const getNames = async ({ gqlInstance }, { address: _address, type, page, pageSize = 10, orderDirection, orderBy, }) => {
     const address = _address.toLowerCase();
     const client = gqlInstance.client;
@@ -17,7 +38,36 @@ const getNames = async ({ gqlInstance }, { address: _address, type, page, pageSi
   `;
     let queryVars = {};
     let finalQuery = '';
-    if (type === 'owner') {
+    if (type === 'all') {
+        finalQuery = gqlInstance.gql `
+      query getNames(
+        $id: ID!
+        $expiryDate: Int
+      ) {
+        account(id: $id) {
+          registrations(
+            first: 1000
+            where: { expiryDate_gt: $expiryDate }
+          ) {
+            registrationDate
+            expiryDate
+            domain {
+              ${domainQueryData}
+            }
+          }
+          domains(first: 1000) {
+            ${domainQueryData}
+            createdAt
+          }
+        }
+      }
+    `;
+        queryVars = {
+            id: address,
+            expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
+        };
+    }
+    else if (type === 'owner') {
         if (typeof page !== 'number') {
             finalQuery = gqlInstance.gql `
         query getNames(
@@ -35,8 +85,8 @@ const getNames = async ({ gqlInstance }, { address: _address, type, page, pageSi
       `;
             queryVars = {
                 id: address,
-                orderBy: orderBy,
-                orderDirection: orderDirection,
+                orderBy,
+                orderDirection,
             };
         }
         else {
@@ -65,8 +115,8 @@ const getNames = async ({ gqlInstance }, { address: _address, type, page, pageSi
                 id: address,
                 first: pageSize,
                 skip: (page || 0) * pageSize,
-                orderBy: orderBy,
-                orderDirection: orderDirection,
+                orderBy,
+                orderDirection,
             };
         }
     }
@@ -96,8 +146,8 @@ const getNames = async ({ gqlInstance }, { address: _address, type, page, pageSi
       `;
             queryVars = {
                 id: address,
-                orderBy: orderBy,
-                orderDirection: orderDirection,
+                orderBy,
+                orderDirection,
                 expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
             };
         }
@@ -139,26 +189,34 @@ const getNames = async ({ gqlInstance }, { address: _address, type, page, pageSi
         }
     }
     const { account } = await client.request(finalQuery, queryVars);
-    if (type === 'owner') {
-        return account.domains.map((domain) => {
-            const decrypted = (0, labels_1.decryptName)(domain.name);
-            return {
-                ...domain,
-                name: decrypted,
-                truncatedName: (0, format_1.truncateFormat)(decrypted),
-                createdAt: new Date(parseInt(domain.createdAt) * 1000),
-            };
+    if (type === 'all') {
+        return [
+            ...account.domains.map(mapDomain),
+            ...account.registrations.map(mapRegistration),
+        ].sort((a, b) => {
+            if (orderDirection === 'desc') {
+                if (orderBy === 'labelName') {
+                    return b.name.localeCompare(a.name);
+                }
+                else {
+                    return b.createdAt.getTime() - a.createdAt.getTime();
+                }
+            }
+            else {
+                if (orderBy === 'labelName') {
+                    return a.name.localeCompare(b.name);
+                }
+                else if (orderBy === 'creationDate') {
+                    return a.createdAt.getTime() - b.createdAt.getTime();
+                }
+            }
         });
     }
-    return account.registrations.map((registration) => {
-        const decrypted = (0, labels_1.decryptName)(registration.domain.name);
-        return {
-            expiryDate: new Date(parseInt(registration.expiryDate) * 1000),
-            registrationDate: new Date(parseInt(registration.registrationDate) * 1000),
-            ...registration.domain,
-            name: decrypted,
-            truncatedName: (0, format_1.truncateFormat)(decrypted),
-        };
-    });
+    else if (type === 'owner') {
+        return account.domains.map(mapDomain);
+    }
+    else {
+        return account.registrations.map(mapRegistration);
+    }
 };
 exports.default = getNames;

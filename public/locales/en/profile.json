@@ -8,10 +8,10 @@
     "profile": {
       "name": "Profile"
     },
-    "subdomains": {
-      "name": "Subdomains",
-      "loading": "Loading subdomains",
-      "empty": "No subdomains have been added"
+    "subnames": {
+      "name": "Subnames",
+      "loading": "Loading subnames",
+      "empty": "No subnames have been added"
     }
   }
 }

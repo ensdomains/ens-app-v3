@@ -9,17 +9,14 @@ export declare type Name = {
     parent: {
         name: string;
     };
-};
-export declare type OwnedName = Name & {
-    createdAt: Date;
-};
-export declare type Registration = Name & {
-    registrationDate: Date;
-    expiryDate: Date;
+    createdAt?: Date;
+    registrationDate?: Date;
+    expiryDate?: Date;
+    type: 'domain' | 'registration';
 };
 declare type BaseParams = {
     address: string;
-    type: 'registrant' | 'owner';
+    type: 'registrant' | 'owner' | 'all';
     page?: number;
     pageSize?: number;
     orderDirection?: 'asc' | 'desc';
@@ -32,6 +29,12 @@ declare type OwnerParams = {
     type: 'owner';
     orderBy?: 'createdAt' | 'labelName';
 };
-declare type Params = BaseParams & (RegistrantParams | OwnerParams);
-declare const getNames: ({ gqlInstance }: ENSArgs<'gqlInstance'>, { address: _address, type, page, pageSize, orderDirection, orderBy, }: Params) => Promise<OwnedName[] | Registration[]>;
+declare type AllParams = {
+    type: 'all';
+    orderBy?: 'labelName' | 'creationDate';
+    page?: never;
+    pageSize?: never;
+};
+declare type Params = BaseParams & (RegistrantParams | OwnerParams | AllParams);
+declare const getNames: ({ gqlInstance }: ENSArgs<'gqlInstance'>, { address: _address, type, page, pageSize, orderDirection, orderBy, }: Params) => Promise<Name[]>;
 export default getNames;
