@@ -49,13 +49,22 @@ const connectedRoutes = [
   { label: 'navigation.connected.myNames', disabled: false, href: '/names' },
 ]
 
-const HeaderWrapper = styled.header<{ $isHome: boolean }>`
-  ${({ theme, $isHome }) => css`
-    height: ${theme.space['16']};
+const HeaderWrapper = styled.header<{
+  $isHome: boolean
+  $hasCustomItems: boolean
+}>`
+  ${({ theme, $isHome, $hasCustomItems }) => css`
+    ${$hasCustomItems
+      ? `
+      height: min-content;
+    `
+      : `
+      height: ${theme.space['16']};
+    `}
     ${!$isHome &&
     mq.medium.min`
-    margin-bottom: ${theme.space['6']};
-  `}
+      margin-bottom: ${theme.space['6']};
+    `}
   `}
 `
 
@@ -96,7 +105,13 @@ const NavContainer = styled.div`
   `}
 `
 
-export const Header = () => {
+export const Header = ({
+  leading,
+  trailing,
+}: {
+  leading?: React.ReactNode
+  trailing?: React.ReactNode
+}) => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
   const connected = useConnected()
@@ -112,46 +127,57 @@ export const Header = () => {
   const alwaysVisibleRoutes = breakpoints.lg ? dropdownRoutes.splice(0, 3) : []
 
   return (
-    <HeaderWrapper $isHome={router.asPath === '/'}>
+    <HeaderWrapper
+      $hasCustomItems={!!(leading || trailing)}
+      $isHome={router.asPath === '/'}
+    >
       <NavContainer>
-        <ConditionalWrapper
-          condition={router.asPath !== '/'}
-          wrapper={(children) => (
-            <Link passHref href="/">
-              <LogoAnchor>{children}</LogoAnchor>
-            </Link>
-          )}
-        >
-          {breakpoints.sm && router.asPath === '/' ? (
-            <ENSFull height={space['12']} />
-          ) : (
-            <ENSWithGradient height={space['12']} />
-          )}
-        </ConditionalWrapper>
-        <LanugageDropdown />
-        {router.asPath !== '/' && breakpoints.md && (
+        {leading || (
           <>
-            <VerticalLine />
-            <SearchInput size="large" />
+            <ConditionalWrapper
+              condition={router.asPath !== '/'}
+              wrapper={(children) => (
+                <Link passHref href="/">
+                  <LogoAnchor>{children}</LogoAnchor>
+                </Link>
+              )}
+            >
+              {breakpoints.sm && router.asPath === '/' ? (
+                <ENSFull height={space['12']} />
+              ) : (
+                <ENSWithGradient height={space['12']} />
+              )}
+            </ConditionalWrapper>
+            <LanugageDropdown />
+            {router.asPath !== '/' && breakpoints.md && (
+              <>
+                <VerticalLine />
+                <SearchInput size="large" />
+              </>
+            )}
           </>
         )}
         <div style={{ flexGrow: 1 }} />
-        {alwaysVisibleRoutes.map((route) => (
-          <StyledNavLink
-            disabled={route.disabled}
-            key={route.href}
-            href={route.href}
-          >
-            {t(route.label)}
-          </StyledNavLink>
-        ))}
-        <HamburgerMenu
-          dropdownItems={dropdownRoutes.map((route) => ({
-            ...route,
-            label: t(route.label),
-          }))}
-        />
-        {breakpoints.sm && <HeaderConnect />}
+        {trailing || (
+          <>
+            {alwaysVisibleRoutes.map((route) => (
+              <StyledNavLink
+                disabled={route.disabled}
+                key={route.href}
+                href={route.href}
+              >
+                {t(route.label)}
+              </StyledNavLink>
+            ))}
+            <HamburgerMenu
+              dropdownItems={dropdownRoutes.map((route) => ({
+                ...route,
+                label: t(route.label),
+              }))}
+            />
+            {breakpoints.sm && <HeaderConnect />}
+          </>
+        )}
       </NavContainer>
     </HeaderWrapper>
   )

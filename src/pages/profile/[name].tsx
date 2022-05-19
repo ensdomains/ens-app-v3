@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { HeaderText } from '@app/components/HeaderText'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
-import { ProfileNftDetails } from '@app/components/profile/ProfileNftDetails'
-import { SubnameDetails } from '@app/components/profile/SubnameDetails'
+import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useInitial } from '@app/hooks/useInitial'
 import { useProfile } from '@app/hooks/useProfile'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
@@ -10,7 +11,7 @@ import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { ArrowCircleSVG, ExclamationSVG, Typography } from '@ensdomains/thorin'
+import { Button, ExclamationSVG, Typography } from '@ensdomains/thorin'
 import { GetStaticPaths, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -25,6 +26,11 @@ const GridItem = styled.div<{ $area: string }>`
 `
 
 const DetailsWrapper = styled(GridItem)`
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: ${({ theme }) => theme.space['2']};
+  flex-gap: ${({ theme }) => theme.space['2']};
   width: 90vw;
   max-width: 600px;
 
@@ -56,45 +62,6 @@ const BackContainer = styled.div`
   }
 `
 
-const TabButton = styled.div<{ $active: boolean }>`
-  ${({ theme, $active }) => `
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  font-weight: bold;
-  font-size: ${theme.fontSizes.headingThree};
-  color: ${theme.colors.textTertiary};
-
-  &:hover {
-    color: ${theme.colors.textSecondary};
-  }
-
-  ${
-    $active &&
-    `
-    color: ${theme.colors.accent};
-    &:hover {
-      color: ${theme.colors.accent};
-    }
-  `
-  }
-  `}
-`
-
-const TabButtonWrapper = styled(GridItem)`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: ${theme.space['1']};
-
-    ${mq.medium.min`
-      flex-direction: row;
-      align-items: center;
-      gap: ${theme.space['4']};
-    `}
-  `}
-`
-
 const WrapperGrid = styled.div<{ $hasError?: boolean }>`
   display: grid;
   grid-template-columns: 1fr;
@@ -102,11 +69,11 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>`
   align-self: center;
   justify-content: center;
   ${({ $hasError }) => css`
-    grid-template-areas: ${$hasError ? "'error error'" : ''} 'back-button tabs' 'details details' 'nft-details nft-details';
+    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'nft-details nft-details';
     ${mq.medium.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
-      } "back-button tabs" "nft-details details";
+      } "nft-details details";
       grid-template-columns: 270px 2fr;
     `}
   `}
@@ -146,19 +113,20 @@ const ErrorContainer = styled.div`
   `}
 `
 
-const BackButton = () => {
-  const router = useRouter()
-  const { t } = useTranslation('common')
+const SelfButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  ${({ theme }) => `
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
 
-  return (
-    <BackContainer role="button" onClick={() => router.back()}>
-      <ArrowBack as={ArrowCircleSVG} />
-      <Typography weight="bold" color="textTertiary" variant="large">
-        {t('navigation.back')}
-      </Typography>
-    </BackContainer>
-  )
-}
+    & > button {
+      border-radius: ${theme.radii.extraLarge};
+      border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+      background-color: ${theme.colors.background};
+    }
+  `}
+`
 
 const ProfilePage: NextPage = () => {
   const router = useRouter()
@@ -244,8 +212,19 @@ const ProfilePage: NextPage = () => {
     setTab('profile')
   }, [_name])
 
+  const getTextRecord = (key: string) =>
+    profile?.records?.texts?.find((x) => x.key === key)
+
   return (
     <Basic
+      leading={
+        !isLoading && (
+          <HeaderText
+            title={isSelf ? 'Your profile' : normalisedName}
+            subtitle={isSelf ? normalisedName : 'Profile'}
+          />
+        )
+      }
       title={
         (_name === 'me' && 'Your Profile on') ||
         (normalisedName ? `${normalisedName} on` : `Loading... -`)
@@ -261,61 +240,46 @@ const ProfilePage: NextPage = () => {
             </Typography>
           </ErrorContainer>
         )}
-        {!isSelf && (
-          <GridItem
-            style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
-            $area="back-button"
-          >
-            <BackButton />
-          </GridItem>
-        )}
-        <TabButtonWrapper $area="tabs">
-          <TabButton
-            $active={tab === 'profile'}
-            role="button"
-            onClick={() => setTab('profile')}
-          >
-            {t('tabs.profile.name')}
-          </TabButton>
-          <TabButton
-            $active={tab === 'subnames'}
-            role="button"
-            onClick={() => setTab('subnames')}
-          >
-            {t('tabs.subnames.name')}
-          </TabButton>
-        </TabButtonWrapper>
-        <GridItem $area="nft-details">
-          {ownerData && (
-            <ProfileNftDetails
-              name={name}
-              selfAddress={address}
-              {...{
-                network: chain?.name || 'mainnet',
-                expiryDate,
-                ownerData,
-              }}
-            />
-          )}
-        </GridItem>
         <DetailsWrapper $area="details">
-          {tab === 'profile' ? (
-            <ProfileDetails
-              name={truncatedName}
-              addresses={(profile?.records?.coinTypes || []).map(
-                (item: any) => ({ key: item.coin, value: item.addr }),
-              )}
-              textRecords={(profile?.records?.texts || [])
-                .map((item: any) => ({ key: item.key, value: item.value }))
-                .filter((item: any) => item.value !== null)}
-              network={chain?.name || 'mainnet'}
-            />
-          ) : (
-            <SubnameDetails
-              name={normalisedName}
-              network={chain?.name || 'mainnet'}
-            />
+          <ProfileSnippet
+            name={normalisedName}
+            network={chain?.name!}
+            url={getTextRecord('url')?.value}
+            description={getTextRecord('description')?.value}
+            recordName={getTextRecord('name')?.value}
+            button={isSelf ? undefined : 'viewDetails'}
+          />
+          {isSelf && (
+            <SelfButtons>
+              <Button shadowless variant="transparent" size="small">
+                Edit Profile
+              </Button>
+              <Button
+                onClick={() =>
+                  router.push({
+                    pathname: `/profile/${normalisedName}/details`,
+                    query: {
+                      from: router.asPath,
+                    },
+                  })
+                }
+                shadowless
+                variant="transparent"
+                size="small"
+              >
+                View Details
+              </Button>
+            </SelfButtons>
           )}
+          <ProfileDetails
+            addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
+              key: item.coin,
+              value: item.addr,
+            }))}
+            textRecords={(profile?.records?.texts || [])
+              .map((item: any) => ({ key: item.key, value: item.value }))
+              .filter((item: any) => item.value !== null)}
+          />
         </DetailsWrapper>
       </WrapperGrid>
     </Basic>

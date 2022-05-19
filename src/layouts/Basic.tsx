@@ -34,10 +34,14 @@ export const Basic = ({
   loading = false,
   children,
   title,
+  leading,
+  trailing,
 }: {
   loading?: boolean
   children: React.ReactNode
   title?: string
+  leading?: React.ReactNode
+  trailing?: React.ReactNode
 }) => {
   const initial = useInitial()
   const breakpoints = useBreakpoint()
@@ -47,7 +51,7 @@ export const Basic = ({
       <Head>
         <title>{title ? `${title} ` : ''}ENS</title>
       </Head>
-      <Header />
+      <Header trailing={trailing} leading={leading} />
       <LoadingContainer>
         {loading ? <LoadingOverlay /> : children}
       </LoadingContainer>
