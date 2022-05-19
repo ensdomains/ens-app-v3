@@ -1,6 +1,7 @@
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileNftDetails } from '@app/components/profile/ProfileNftDetails'
 import { SubnameDetails } from '@app/components/profile/SubnameDetails'
+import { useInitial } from '@app/hooks/useInitial'
 import { useProfile } from '@app/hooks/useProfile'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useValidate } from '@app/hooks/useValidate'
@@ -10,7 +11,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
 import { ArrowCircleSVG, ExclamationSVG, Typography } from '@ensdomains/thorin'
-import { NextPage } from 'next'
+import { GetStaticPaths, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
@@ -164,14 +165,15 @@ const ProfilePage: NextPage = () => {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const _name = router.query.name as string
-  const isSelf = _name === '' || _name === undefined
+  const isSelf = _name === 'connected'
 
   const [tab, setTab] = useState<'profile' | 'subnames'>('profile')
   const [error, setError] = useState<string | null>(null)
 
+  const initial = useInitial()
   const { activeChain: chain } = useNetwork()
   const { ready, getOwner, getExpiry, batch } = useEns()
-  const { data: accountData } = useAccount()
+  const { data: accountData, isLoading: accountLoading } = useAccount()
   const address = accountData?.address
 
   const { data: ensName, isLoading: primaryLoading } = useEnsName({ address })
@@ -206,7 +208,13 @@ const ProfilePage: NextPage = () => {
 
   const truncatedName = truncateFormat(normalisedName)
 
-  const isLoading = !ready || profileLoading || batchLoading || primaryLoading
+  const isLoading =
+    !ready ||
+    profileLoading ||
+    batchLoading ||
+    primaryLoading ||
+    accountLoading ||
+    initial
 
   useProtectedRoute(
     '/',
@@ -320,6 +328,13 @@ export async function getStaticProps({ locale }: { locale: string }) {
       ...(await serverSideTranslations(locale)),
       // Will be passed to the page component as props
     },
+  }
+}
+
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
   }
 }
 

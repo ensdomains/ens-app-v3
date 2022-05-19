@@ -1,8 +1,8 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
+import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { imageUrl } from '@app/utils/utils'
 import { Avatar, Heading, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import styled from 'styled-components'
@@ -135,26 +135,13 @@ export const ProfileDetails = ({
       .map((x) => ({ ...x, type: 'text' })),
   ]
   const zorb = useZorb(name, 'name')
+  const avatar = useAvatar(name, network)
 
   return (
     <TabWrapper>
       <ProfileInfoBox>
         <AvatarWrapper>
-          <Avatar
-            label={name}
-            src={
-              imageUrl(
-                (
-                  getTextRecord('avatar') || {
-                    key: 'avatar',
-                    value: '',
-                  }
-                ).value,
-                name,
-                network,
-              ) || zorb
-            }
-          />
+          <Avatar label={name} src={avatar || zorb} />
         </AvatarWrapper>
         <DetailStack>
           <Heading level="2">{name}</Heading>

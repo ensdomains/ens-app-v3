@@ -101,7 +101,7 @@ export const HeaderConnect = () => {
           dropdownItems={[
             {
               label: t('profile.myProfile'),
-              onClick: () => router.push('/profile/me'),
+              onClick: () => router.push('/my/profile'),
             },
             {
               label: t('profile.disconnect'),

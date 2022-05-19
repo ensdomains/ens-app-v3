@@ -68,22 +68,22 @@ const tabs: TabItem[] = [
   },
   {
     name: 'names',
-    href: '/names',
+    href: '/my/names',
     label: 'tabs.names',
   },
   {
     name: 'profile',
-    href: '/profile',
+    href: '/my/profile',
     label: 'tabs.profile',
   },
   {
     name: 'favourites',
-    href: '/favourites',
+    href: '/my/favourites',
     label: 'tabs.favourites',
   },
   {
     name: 'settings',
-    href: '/settings',
+    href: '/my/settings',
     label: 'tabs.settings',
   },
 ]
