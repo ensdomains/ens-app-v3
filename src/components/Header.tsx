@@ -102,11 +102,14 @@ export const Header = () => {
   const connected = useConnected()
   const { space } = useTheme()
   const { t } = useTranslation('common')
-  const dropdownRoutes = [
-    ...(breakpoints.sm ? [publicRoutes[0]] : []),
-    ...(connected && breakpoints.sm ? connectedRoutes : []),
-    ...publicRoutes.slice(1),
-  ]
+  const dropdownRoutes = breakpoints.sm
+    ? [
+        publicRoutes[0],
+        ...(connected ? connectedRoutes : []),
+        ...publicRoutes.slice(1),
+      ]
+    : publicRoutes.slice(1)
+  const alwaysVisibleRoutes = breakpoints.lg ? dropdownRoutes.splice(0, 3) : []
 
   return (
     <HeaderWrapper $isHome={router.asPath === '/'}>
@@ -133,21 +136,20 @@ export const Header = () => {
           </>
         )}
         <div style={{ flexGrow: 1 }} />
-        {breakpoints.lg &&
-          dropdownRoutes.slice(0, 3).map((route) => (
-            <StyledNavLink
-              disabled={route.disabled}
-              key={route.href}
-              href={route.href}
-            >
-              {t(route.label)}
-            </StyledNavLink>
-          ))}
+        {alwaysVisibleRoutes.map((route) => (
+          <StyledNavLink
+            disabled={route.disabled}
+            key={route.href}
+            href={route.href}
+          >
+            {t(route.label)}
+          </StyledNavLink>
+        ))}
         <HamburgerMenu
-          dropdownItems={(!breakpoints.lg
-            ? dropdownRoutes
-            : dropdownRoutes.slice(3)
-          ).map((route) => ({ ...route, label: t(route.label) }))}
+          dropdownItems={dropdownRoutes.map((route) => ({
+            ...route,
+            label: t(route.label),
+          }))}
         />
         {breakpoints.sm && <HeaderConnect />}
       </NavContainer>
