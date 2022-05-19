@@ -1,3 +1,4 @@
+import { useConnected } from '@app/hooks/useConnected'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useTranslation } from 'next-i18next'
@@ -13,13 +14,10 @@ import { LanugageDropdown } from './LanguageDropdown'
 import { SearchInput } from './SearchInput'
 import { StyledNavLink } from './StyledNavLink'
 
-const alwaysShownRoutes = [
+const publicRoutes = [
   { href: '/', disabled: false, label: 'navigation.home' },
   { href: '/about', disabled: true, label: 'navigation.about' },
   { href: '/developers', disabled: true, label: 'navigation.developers' },
-]
-
-const dropdownRoutes = [
   {
     label: 'navigation.community',
     disabled: true,
@@ -42,14 +40,14 @@ const dropdownRoutes = [
   },
 ]
 
-// const connectedRoutes = [
-//   {
-//     label: 'navigation.connected.favourites',
-//     disabled: true,
-//     href: '/favourites',
-//   },
-//   { label: 'navigation.connected.myNames', disabled: false, href: '/names/me' },
-// ]
+const connectedRoutes = [
+  {
+    label: 'navigation.connected.favourites',
+    disabled: true,
+    href: '/favourites',
+  },
+  { label: 'navigation.connected.myNames', disabled: false, href: '/names' },
+]
 
 const HeaderWrapper = styled.header<{ $isHome: boolean }>`
   ${({ theme, $isHome }) => css`
@@ -101,8 +99,14 @@ const NavContainer = styled.div`
 export const Header = () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
+  const connected = useConnected()
   const { space } = useTheme()
   const { t } = useTranslation('common')
+  const dropdownRoutes = [
+    ...(breakpoints.sm ? [publicRoutes[0]] : []),
+    ...(connected && breakpoints.sm ? connectedRoutes : []),
+    ...publicRoutes.slice(1),
+  ]
 
   return (
     <HeaderWrapper $isHome={router.asPath === '/'}>
@@ -130,7 +134,7 @@ export const Header = () => {
         )}
         <div style={{ flexGrow: 1 }} />
         {breakpoints.lg &&
-          alwaysShownRoutes.map((route) => (
+          dropdownRoutes.slice(0, 3).map((route) => (
             <StyledNavLink
               disabled={route.disabled}
               key={route.href}
@@ -141,8 +145,8 @@ export const Header = () => {
           ))}
         <HamburgerMenu
           dropdownItems={(!breakpoints.lg
-            ? [...alwaysShownRoutes, ...dropdownRoutes]
-            : dropdownRoutes
+            ? dropdownRoutes
+            : dropdownRoutes.slice(3)
           ).map((route) => ({ ...route, label: t(route.label) }))}
         />
         {breakpoints.sm && <HeaderConnect />}

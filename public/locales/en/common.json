@@ -12,7 +12,11 @@
     "docs": "Docs",
     "bugBounty": "Bug Bounty",
     "mediaKit": "Media Kit",
-    "back": "Back"
+    "back": "Back",
+    "connected": {
+      "favourites": "Favourites",
+      "myNames": "My Names"
+    }
   },
   "profile": {
     "myProfile": "My Profile",
