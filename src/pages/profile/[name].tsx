@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { HeaderText } from '@app/components/HeaderText'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useInitial } from '@app/hooks/useInitial'
@@ -217,14 +216,8 @@ const ProfilePage: NextPage = () => {
 
   return (
     <Basic
-      leading={
-        !isLoading && (
-          <HeaderText
-            title={isSelf ? 'Your profile' : normalisedName}
-            subtitle={isSelf ? normalisedName : 'Profile'}
-          />
-        )
-      }
+      heading={isSelf ? 'Your profile' : normalisedName}
+      subheading={isSelf ? normalisedName : 'Profile'}
       title={
         (_name === 'me' && 'Your Profile on') ||
         (normalisedName ? `${normalisedName} on` : `Loading... -`)
