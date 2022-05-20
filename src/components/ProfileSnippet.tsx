@@ -20,6 +20,7 @@ const Container = styled.div<{ $banner?: string }>`
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
     display: flex;
     flex-direction: column;
     align-items: flex-start;

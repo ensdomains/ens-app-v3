@@ -3,6 +3,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import mq from '@app/mediaQuery'
 import { Avatar, Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
+import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -66,11 +67,20 @@ export const NameDetailItem = ({
   network: string
   children: ReactNode
 }) => {
+  const router = useRouter()
   const avatar = useAvatar(name, network)
   const zorb = useZorb(id, 'hash')
 
   return (
-    <Link href={`/profile/${name}`} passHref>
+    <Link
+      href={{
+        pathname: `/profile/${name}`,
+        query: {
+          from: router.asPath,
+        },
+      }}
+      passHref
+    >
       <NameItemWrapper as="a">
         <NameItemContainer>
           <AvatarWrapper>

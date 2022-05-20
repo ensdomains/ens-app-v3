@@ -15,6 +15,7 @@ const ProfileInfoBox = styled.div`
   padding: ${theme.space['6']} ${theme.space['4']};
   background-color: ${theme.colors.background};
   border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
   border-radius: ${theme.radii['2xLarge']};
   `}
 `

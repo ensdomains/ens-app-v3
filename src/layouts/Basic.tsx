@@ -15,7 +15,7 @@ import { TabBar } from '../components/TabBar'
 
 const Container = styled.div`
   ${({ theme }) => css`
-    padding: ${theme.space['10']} ${theme.space['8']};
+    padding: ${theme.space['5']} ${theme.space['6']};
     display: flex;
     flex-gap: ${theme.space['8']};
     gap: ${theme.space['8']};
@@ -33,6 +33,26 @@ const LoadingContainer = styled.div`
   flex-grow: 1;
   display: flex;
   flex-direction: column;
+`
+
+const DesktopBackContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
+
+const ContentWrapper = styled.div`
+  ${({ theme }) => `
+    max-width: ${theme.space['288']};
+    width: 100%;
+    align-self: center;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['8']};
+    flex-gap: ${theme.space['8']};
+  `}
 `
 
 const BackArrow = styled.div`
@@ -94,9 +114,24 @@ export const Basic = ({
         <title>{title ? `${title} ` : ''}ENS</title>
       </Head>
       <Header trailing={HeaderItems.trailing} leading={HeaderItems.leading} />
-      <LoadingContainer>
-        {loading ? <LoadingOverlay /> : children}
-      </LoadingContainer>
+      <ContentWrapper>
+        {!loading &&
+          breakpoints.sm &&
+          (HeaderItems.leading || HeaderItems.trailing) && (
+            <DesktopBackContainer>
+              {HeaderItems.leading}
+              <div style={{ flexGrow: 1 }} />
+              {HeaderItems.trailing}
+            </DesktopBackContainer>
+          )}
+        {loading ? (
+          <LoadingContainer>
+            <LoadingOverlay />
+          </LoadingContainer>
+        ) : (
+          children
+        )}
+      </ContentWrapper>
       {!initial && (!breakpoints.sm ? <TabBar /> : <Footer />)}
     </Container>
   )

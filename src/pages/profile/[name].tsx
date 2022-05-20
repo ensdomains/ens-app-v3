@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { NameSnippet } from '@app/components/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useInitial } from '@app/hooks/useInitial'
@@ -30,49 +31,22 @@ const DetailsWrapper = styled(GridItem)`
   justify-content: flex-start;
   gap: ${({ theme }) => theme.space['2']};
   flex-gap: ${({ theme }) => theme.space['2']};
-  width: 90vw;
-  max-width: 600px;
-
-  ${mq.medium.min`
-    width: 50vw;
-  `}
-`
-
-const ArrowBack = styled.div`
-  ${({ theme }) => `
-  color: ${theme.colors.textTertiary};
-  transform: rotate(180deg);
-  width: ${theme.space['7']};
-  height: ${theme.space['7']};
-  `}
-`
-
-const BackContainer = styled.div`
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: ${({ theme }) => theme.space['2']};
-
-  &:hover {
-    filter: contrast(0.8);
-    transform: translateY(-1px);
-  }
+  width: 100%;
 `
 
 const WrapperGrid = styled.div<{ $hasError?: boolean }>`
+  flex-grow: 1;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${({ theme }) => theme.space['8']};
+  gap: ${({ theme }) => theme.space['5']};
   align-self: center;
-  justify-content: center;
   ${({ $hasError }) => css`
-    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'nft-details nft-details';
+    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details';
     ${mq.medium.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
-      } "nft-details details";
+      } "name-details details";
       grid-template-columns: 270px 2fr;
     `}
   `}
@@ -122,6 +96,7 @@ const SelfButtons = styled.div`
     & > button {
       border-radius: ${theme.radii.extraLarge};
       border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
       background-color: ${theme.colors.background};
     }
   `}
@@ -134,7 +109,6 @@ const ProfilePage: NextPage = () => {
   const _name = router.query.name as string
   const isSelf = _name === 'connected'
 
-  const [tab, setTab] = useState<'profile' | 'subnames'>('profile')
   const [error, setError] = useState<string | null>(null)
 
   const initial = useInitial()
@@ -207,10 +181,6 @@ const ProfilePage: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valid, profile?.isMigrated, profile?.message])
 
-  useEffect(() => {
-    setTab('profile')
-  }, [_name])
-
   const getTextRecord = (key: string) =>
     profile?.records?.texts?.find((x) => x.key === key)
 
@@ -233,6 +203,17 @@ const ProfilePage: NextPage = () => {
             </Typography>
           </ErrorContainer>
         )}
+        {breakpoints.sm && ownerData && (
+          <GridItem $area="name-details">
+            <NameSnippet
+              name={normalisedName}
+              network={chain?.name!}
+              ownerData={ownerData}
+              expiryDate={expiryDate}
+              showButton={!isSelf}
+            />
+          </GridItem>
+        )}
         <DetailsWrapper $area="details">
           <ProfileSnippet
             name={normalisedName}
@@ -240,7 +221,7 @@ const ProfilePage: NextPage = () => {
             url={getTextRecord('url')?.value}
             description={getTextRecord('description')?.value}
             recordName={getTextRecord('name')?.value}
-            button={isSelf ? undefined : 'viewDetails'}
+            button={isSelf || breakpoints.sm ? undefined : 'viewDetails'}
           />
           {isSelf && (
             <SelfButtons>
