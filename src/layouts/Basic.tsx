@@ -23,7 +23,7 @@ const Container = styled.div`
     align-items: stretch;
     min-width: 100%;
     min-height: 100vh;
-    ${mq.small.min`
+    ${mq.medium.min`
       padding: ${theme.space['12']} ${theme.space['16']};
     `}
   `}

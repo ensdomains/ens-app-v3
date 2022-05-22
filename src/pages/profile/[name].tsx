@@ -203,7 +203,7 @@ const ProfilePage: NextPage = () => {
             </Typography>
           </ErrorContainer>
         )}
-        {breakpoints.sm && ownerData && (
+        {breakpoints.md && ownerData && (
           <GridItem $area="name-details">
             <NameSnippet
               name={normalisedName}

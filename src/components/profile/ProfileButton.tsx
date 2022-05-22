@@ -198,6 +198,12 @@ const OtherContainerAddressPrefix = styled(Typography)`
   `}
 `
 
+const OtherContainerTextPrefix = styled(Typography)`
+  ${({ theme }) => `
+    padding-left: ${theme.space['0.5']};
+  `}
+`
+
 export const OtherProfileButton = ({
   iconKey,
   value,
@@ -233,7 +239,9 @@ export const OtherProfileButton = ({
             </OtherContainerAddressPrefix>
           </OtherContainer>
         ) : (
-          <Typography color="textSecondary">{iconKey}</Typography>
+          <OtherContainerTextPrefix color="textSecondary">
+            {iconKey}
+          </OtherContainerTextPrefix>
         )
       }
     >
