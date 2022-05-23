@@ -73,17 +73,17 @@ const tabs: TabItem[] = [
   },
   {
     name: 'profile',
-    href: '/profile',
+    href: '/my/profile',
     label: 'tabs.profile',
   },
   {
     name: 'favourites',
-    href: '/favourites',
+    href: '/my/favourites',
     label: 'tabs.favourites',
   },
   {
     name: 'settings',
-    href: '/settings',
+    href: '/my/settings',
     label: 'tabs.settings',
   },
 ]
@@ -130,7 +130,7 @@ const BottomPlaceholder = styled.div`
 export const TabBar = () => {
   const router = useRouter()
   const from = router.query.from as string
-  const path = router.pathname
+  const path = router.asPath
   const connected = useConnected()
   const activeTab: AnyTab = useMemo(
     () =>

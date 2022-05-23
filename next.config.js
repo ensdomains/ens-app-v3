@@ -26,8 +26,8 @@ let nextConfig = {
   async rewrites() {
     return [
       {
-        source: '/profile/:name',
-        destination: '/profile?name=:name',
+        source: '/my/profile',
+        destination: '/profile/connected',
       },
       {
         source: '/names/:address',

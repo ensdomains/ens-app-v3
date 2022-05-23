@@ -1,9 +1,10 @@
+import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import mq from '@app/mediaQuery'
-import { imageUrlUnknownRecord } from '@app/utils/utils'
 import { Avatar, Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
-import { ReactNode, useEffect, useState } from 'react'
+import { useRouter } from 'next/router'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 const NameItemWrapper = styled.div`
@@ -66,27 +67,24 @@ export const NameDetailItem = ({
   network: string
   children: ReactNode
 }) => {
-  const [src, setSrc] = useState('')
+  const router = useRouter()
+  const avatar = useAvatar(name, network)
   const zorb = useZorb(id, 'hash')
 
-  useEffect(() => {
-    const run = async () => {
-      const response = await fetch(imageUrlUnknownRecord(name, network))
-      const imgBlob = response && (await response.blob())
-      const _src = URL.createObjectURL(imgBlob)
-      if (imgBlob?.type.startsWith('image/')) {
-        setSrc(_src)
-      }
-    }
-    run()
-  }, [name, network])
-
   return (
-    <Link href={`/profile/${name}`} passHref>
+    <Link
+      href={{
+        pathname: `/profile/${name}`,
+        query: {
+          from: router.asPath,
+        },
+      }}
+      passHref
+    >
       <NameItemWrapper as="a">
         <NameItemContainer>
           <AvatarWrapper>
-            <Avatar label={truncatedName || name} src={src || zorb} />
+            <Avatar label={truncatedName || name} src={avatar || zorb} />
           </AvatarWrapper>
           <TypeWrapper>
             <Typography

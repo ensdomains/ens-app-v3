@@ -7,18 +7,24 @@ import {
   socialIconTypes,
 } from '@app/assets/social/DynamicSocialIcon'
 import { useCopied } from '@app/hooks/useCopied'
+import mq from '@app/mediaQuery'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
 import { ArrowUpSVG, Button, Space, Typography } from '@ensdomains/thorin'
-import React from 'react'
-import styled, { useTheme } from 'styled-components'
+import React, { useMemo } from 'react'
+import styled, { css, useTheme } from 'styled-components'
 import { ConditionalWrapper } from '../ConditionalWrapper'
 import { IconCopyAnimated } from '../IconCopyAnimated'
 
 const Container = styled.div`
-  ${({ theme }) => `
-  padding: 0 ${theme.space['1']};
+  ${({ theme }) => css`
+  padding: 0;
+  padding-right: ${theme.space['0.25']};
   width: 100%:
+  ${mq.medium.min`
+    padding: 0 ${theme.space['1']};
+  `}
   `}
 `
 
@@ -155,6 +161,7 @@ export const AddressProfileButton = ({
   iconKey: string
   value: string
 }) => {
+  const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
   return addressIconTypes[iconKey as keyof typeof addressIconTypes] ? (
@@ -166,7 +173,12 @@ export const AddressProfileButton = ({
       }
       value={value}
     >
-      {shortenAddress(value)}
+      {shortenAddress(
+        value,
+        undefined,
+        breakpoints.sm ? undefined : 4,
+        breakpoints.sm ? undefined : 3,
+      )}
     </ProfileButton>
   ) : null
 }
@@ -174,14 +186,21 @@ export const AddressProfileButton = ({
 const OtherContainer = styled.div`
   ${({ theme }) => `
   background-color: ${theme.colors.textTertiary};
-  padding: ${theme.space['0.25']} ${theme.space['1.5']};
+  padding: ${theme.space['0.5']} ${theme.space['1.25']};
   border-radius: ${theme.radii.large};
   `}
 `
 
 const OtherContainerAddressPrefix = styled(Typography)`
   ${({ theme }) => `
-  color: ${theme.colors.white};
+    color: ${theme.colors.white};
+    font-size: ${theme.fontSizes.label};
+  `}
+`
+
+const OtherContainerTextPrefix = styled(Typography)`
+  ${({ theme }) => `
+    padding-left: ${theme.space['0.5']};
   `}
 `
 
@@ -194,7 +213,18 @@ export const OtherProfileButton = ({
   value: string
   type?: 'text' | 'address'
 }) => {
+  const breakpoints = useBreakpoint()
   const isLink = value.startsWith('http://') || value.startsWith('https://')
+
+  const formattedValue = useMemo(() => {
+    if (breakpoints.sm) {
+      if (type === 'address') {
+        return shortenAddress(value)
+      }
+      return value.length > 15 ? `${value.slice(0, 15)}...` : value
+    }
+    return value.length > 5 ? `${value.slice(0, 5)}...` : value
+  }, [type, value, breakpoints])
 
   return (
     <ProfileButton
@@ -209,11 +239,13 @@ export const OtherProfileButton = ({
             </OtherContainerAddressPrefix>
           </OtherContainer>
         ) : (
-          <Typography color="textSecondary">{iconKey}</Typography>
+          <OtherContainerTextPrefix color="textSecondary">
+            {iconKey}
+          </OtherContainerTextPrefix>
         )
       }
     >
-      {value.length > 15 ? `${value.slice(0, 15)}...` : value}
+      {formattedValue}
     </ProfileButton>
   )
 }

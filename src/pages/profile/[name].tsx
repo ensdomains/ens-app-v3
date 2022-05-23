@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { NameSnippet } from '@app/components/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
-import { ProfileNftDetails } from '@app/components/profile/ProfileNftDetails'
-import { SubnameDetails } from '@app/components/profile/SubnameDetails'
+import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { useInitial } from '@app/hooks/useInitial'
 import { useProfile } from '@app/hooks/useProfile'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useValidate } from '@app/hooks/useValidate'
@@ -9,8 +11,8 @@ import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { ArrowCircleSVG, ExclamationSVG, Typography } from '@ensdomains/thorin'
-import { NextPage } from 'next'
+import { Button, ExclamationSVG, Typography } from '@ensdomains/thorin'
+import { GetStaticPaths, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
@@ -24,88 +26,27 @@ const GridItem = styled.div<{ $area: string }>`
 `
 
 const DetailsWrapper = styled(GridItem)`
-  width: 90vw;
-  max-width: 600px;
-
-  ${mq.medium.min`
-    width: 50vw;
-  `}
-`
-
-const ArrowBack = styled.div`
-  ${({ theme }) => `
-  color: ${theme.colors.textTertiary};
-  transform: rotate(180deg);
-  width: ${theme.space['7']};
-  height: ${theme.space['7']};
-  `}
-`
-
-const BackContainer = styled.div`
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
   display: flex;
-  flex-direction: row;
-  align-items: center;
+  flex-direction: column;
+  justify-content: flex-start;
   gap: ${({ theme }) => theme.space['2']};
-
-  &:hover {
-    filter: contrast(0.8);
-    transform: translateY(-1px);
-  }
-`
-
-const TabButton = styled.div<{ $active: boolean }>`
-  ${({ theme, $active }) => `
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
-  font-weight: bold;
-  font-size: ${theme.fontSizes.headingThree};
-  color: ${theme.colors.textTertiary};
-
-  &:hover {
-    color: ${theme.colors.textSecondary};
-  }
-
-  ${
-    $active &&
-    `
-    color: ${theme.colors.accent};
-    &:hover {
-      color: ${theme.colors.accent};
-    }
-  `
-  }
-  `}
-`
-
-const TabButtonWrapper = styled(GridItem)`
-  ${({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-end;
-    gap: ${theme.space['1']};
-
-    ${mq.medium.min`
-      flex-direction: row;
-      align-items: center;
-      gap: ${theme.space['4']};
-    `}
-  `}
+  flex-gap: ${({ theme }) => theme.space['2']};
+  width: 100%;
 `
 
 const WrapperGrid = styled.div<{ $hasError?: boolean }>`
+  flex-grow: 1;
+  width: 100%;
   display: grid;
   grid-template-columns: 1fr;
-  gap: ${({ theme }) => theme.space['8']};
+  gap: ${({ theme }) => theme.space['5']};
   align-self: center;
-  justify-content: center;
   ${({ $hasError }) => css`
-    grid-template-areas: ${$hasError ? "'error error'" : ''} 'back-button tabs' 'details details' 'nft-details nft-details';
+    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details';
     ${mq.medium.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
-      } "back-button tabs" "nft-details details";
+      } "name-details details";
       grid-template-columns: 270px 2fr;
     `}
   `}
@@ -145,33 +86,35 @@ const ErrorContainer = styled.div`
   `}
 `
 
-const BackButton = () => {
-  const router = useRouter()
-  const { t } = useTranslation('common')
+const SelfButtons = styled.div`
+  display: flex;
+  flex-direction: row;
+  ${({ theme }) => `
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
 
-  return (
-    <BackContainer role="button" onClick={() => router.back()}>
-      <ArrowBack as={ArrowCircleSVG} />
-      <Typography weight="bold" color="textTertiary" variant="large">
-        {t('navigation.back')}
-      </Typography>
-    </BackContainer>
-  )
-}
+    & > button {
+      border-radius: ${theme.radii.extraLarge};
+      border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      background-color: ${theme.colors.background};
+    }
+  `}
+`
 
 const ProfilePage: NextPage = () => {
   const router = useRouter()
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const _name = router.query.name as string
-  const isSelf = _name === '' || _name === undefined
+  const isSelf = _name === 'connected'
 
-  const [tab, setTab] = useState<'profile' | 'subnames'>('profile')
   const [error, setError] = useState<string | null>(null)
 
+  const initial = useInitial()
   const { activeChain: chain } = useNetwork()
   const { ready, getOwner, getExpiry, batch } = useEns()
-  const { data: accountData } = useAccount()
+  const { data: accountData, isLoading: accountLoading } = useAccount()
   const address = accountData?.address
 
   const { data: ensName, isLoading: primaryLoading } = useEnsName({ address })
@@ -206,7 +149,13 @@ const ProfilePage: NextPage = () => {
 
   const truncatedName = truncateFormat(normalisedName)
 
-  const isLoading = !ready || profileLoading || batchLoading || primaryLoading
+  const isLoading =
+    !ready ||
+    profileLoading ||
+    batchLoading ||
+    primaryLoading ||
+    accountLoading ||
+    initial
 
   useProtectedRoute(
     '/',
@@ -232,12 +181,13 @@ const ProfilePage: NextPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valid, profile?.isMigrated, profile?.message])
 
-  useEffect(() => {
-    setTab('profile')
-  }, [_name])
+  const getTextRecord = (key: string) =>
+    profile?.records?.texts?.find((x) => x.key === key)
 
   return (
     <Basic
+      heading={isSelf ? 'Your profile' : normalisedName}
+      subheading={isSelf ? normalisedName : 'Profile'}
       title={
         (_name === 'me' && 'Your Profile on') ||
         (normalisedName ? `${normalisedName} on` : `Loading... -`)
@@ -253,61 +203,57 @@ const ProfilePage: NextPage = () => {
             </Typography>
           </ErrorContainer>
         )}
-        {!isSelf && (
-          <GridItem
-            style={{ alignSelf: breakpoints.md ? 'center' : 'flex-end' }}
-            $area="back-button"
-          >
-            <BackButton />
+        {breakpoints.md && ownerData && (
+          <GridItem $area="name-details">
+            <NameSnippet
+              name={normalisedName}
+              network={chain?.name!}
+              ownerData={ownerData}
+              expiryDate={expiryDate}
+              showButton={!isSelf}
+            />
           </GridItem>
         )}
-        <TabButtonWrapper $area="tabs">
-          <TabButton
-            $active={tab === 'profile'}
-            role="button"
-            onClick={() => setTab('profile')}
-          >
-            {t('tabs.profile.name')}
-          </TabButton>
-          <TabButton
-            $active={tab === 'subnames'}
-            role="button"
-            onClick={() => setTab('subnames')}
-          >
-            {t('tabs.subnames.name')}
-          </TabButton>
-        </TabButtonWrapper>
-        <GridItem $area="nft-details">
-          {ownerData && (
-            <ProfileNftDetails
-              name={name}
-              selfAddress={address}
-              {...{
-                network: chain?.name || 'mainnet',
-                expiryDate,
-                ownerData,
-              }}
-            />
-          )}
-        </GridItem>
         <DetailsWrapper $area="details">
-          {tab === 'profile' ? (
-            <ProfileDetails
-              name={truncatedName}
-              addresses={(profile?.records?.coinTypes || []).map(
-                (item: any) => ({ key: item.coin, value: item.addr }),
-              )}
-              textRecords={(profile?.records?.texts || [])
-                .map((item: any) => ({ key: item.key, value: item.value }))
-                .filter((item: any) => item.value !== null)}
-              network={chain?.name || 'mainnet'}
-            />
-          ) : (
-            <SubnameDetails
-              name={normalisedName}
-              network={chain?.name || 'mainnet'}
-            />
+          <ProfileSnippet
+            name={normalisedName}
+            network={chain?.name!}
+            url={getTextRecord('url')?.value}
+            description={getTextRecord('description')?.value}
+            recordName={getTextRecord('name')?.value}
+            button={isSelf || breakpoints.sm ? undefined : 'viewDetails'}
+          />
+          {isSelf && (
+            <SelfButtons>
+              <Button shadowless variant="transparent" size="small">
+                Edit Profile
+              </Button>
+              <Button
+                onClick={() =>
+                  router.push({
+                    pathname: `/profile/${normalisedName}/details`,
+                    query: {
+                      from: router.asPath,
+                    },
+                  })
+                }
+                shadowless
+                variant="transparent"
+                size="small"
+              >
+                View Details
+              </Button>
+            </SelfButtons>
           )}
+          <ProfileDetails
+            addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
+              key: item.coin,
+              value: item.addr,
+            }))}
+            textRecords={(profile?.records?.texts || [])
+              .map((item: any) => ({ key: item.key, value: item.value }))
+              .filter((item: any) => item.value !== null)}
+          />
         </DetailsWrapper>
       </WrapperGrid>
     </Basic>
@@ -320,6 +266,13 @@ export async function getStaticProps({ locale }: { locale: string }) {
       ...(await serverSideTranslations(locale)),
       // Will be passed to the page component as props
     },
+  }
+}
+
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
   }
 }
 

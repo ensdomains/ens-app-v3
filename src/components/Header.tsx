@@ -49,14 +49,8 @@ const connectedRoutes = [
   { label: 'navigation.connected.myNames', disabled: false, href: '/names' },
 ]
 
-const HeaderWrapper = styled.header<{ $isHome: boolean }>`
-  ${({ theme, $isHome }) => css`
-    height: ${theme.space['16']};
-    ${!$isHome &&
-    mq.medium.min`
-    margin-bottom: ${theme.space['6']};
-  `}
-  `}
+const HeaderWrapper = styled.header`
+  height: min-content;
 `
 
 const LogoAnchor = styled.a`
@@ -96,12 +90,42 @@ const NavContainer = styled.div`
   `}
 `
 
-export const Header = () => {
+const DefaultLeadingItem = () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
-  const connected = useConnected()
   const { space } = useTheme()
+
+  return (
+    <>
+      <ConditionalWrapper
+        condition={router.asPath !== '/'}
+        wrapper={(children) => (
+          <Link passHref href="/">
+            <LogoAnchor>{children}</LogoAnchor>
+          </Link>
+        )}
+      >
+        {breakpoints.sm && router.asPath === '/' ? (
+          <ENSFull height={space['12']} />
+        ) : (
+          <ENSWithGradient height={space['12']} />
+        )}
+      </ConditionalWrapper>
+      <LanugageDropdown />
+      {router.asPath !== '/' && breakpoints.md && (
+        <>
+          <VerticalLine />
+          <SearchInput size="large" />
+        </>
+      )}
+    </>
+  )
+}
+
+const DefaultTrailingItem = () => {
   const { t } = useTranslation('common')
+  const connected = useConnected()
+  const breakpoints = useBreakpoint()
   const dropdownRoutes = breakpoints.sm
     ? [
         publicRoutes[0],
@@ -112,46 +136,70 @@ export const Header = () => {
   const alwaysVisibleRoutes = breakpoints.lg ? dropdownRoutes.splice(0, 3) : []
 
   return (
-    <HeaderWrapper $isHome={router.asPath === '/'}>
-      <NavContainer>
-        <ConditionalWrapper
-          condition={router.asPath !== '/'}
-          wrapper={(children) => (
-            <Link passHref href="/">
-              <LogoAnchor>{children}</LogoAnchor>
-            </Link>
-          )}
+    <>
+      {alwaysVisibleRoutes.map((route) => (
+        <StyledNavLink
+          disabled={route.disabled}
+          key={route.href}
+          href={route.href}
         >
-          {breakpoints.sm && router.asPath === '/' ? (
-            <ENSFull height={space['12']} />
-          ) : (
-            <ENSWithGradient height={space['12']} />
-          )}
-        </ConditionalWrapper>
-        <LanugageDropdown />
-        {router.asPath !== '/' && breakpoints.md && (
-          <>
-            <VerticalLine />
-            <SearchInput size="large" />
-          </>
+          {t(route.label)}
+        </StyledNavLink>
+      ))}
+      <HamburgerMenu
+        dropdownItems={dropdownRoutes.map((route) => ({
+          ...route,
+          label: t(route.label),
+        }))}
+      />
+      {breakpoints.sm && <HeaderConnect />}
+    </>
+  )
+}
+
+const MobileLayout = ({
+  leading,
+  trailing,
+}: {
+  leading?: React.ReactNode
+  trailing?: React.ReactNode
+}) => {
+  return (
+    <>
+      {leading || <DefaultLeadingItem />}
+      <div style={{ flexGrow: 1 }} />
+      {trailing || <DefaultTrailingItem />}
+    </>
+  )
+}
+
+const DesktopLayout = () => {
+  return (
+    <>
+      <DefaultLeadingItem />
+      <div style={{ flexGrow: 1 }} />
+      <DefaultTrailingItem />
+    </>
+  )
+}
+
+export const Header = ({
+  leading,
+  trailing,
+}: {
+  leading?: React.ReactNode
+  trailing?: React.ReactNode
+}) => {
+  const breakpoints = useBreakpoint()
+
+  return (
+    <HeaderWrapper>
+      <NavContainer>
+        {!breakpoints.sm ? (
+          <MobileLayout leading={leading} trailing={trailing} />
+        ) : (
+          <DesktopLayout />
         )}
-        <div style={{ flexGrow: 1 }} />
-        {alwaysVisibleRoutes.map((route) => (
-          <StyledNavLink
-            disabled={route.disabled}
-            key={route.href}
-            href={route.href}
-          >
-            {t(route.label)}
-          </StyledNavLink>
-        ))}
-        <HamburgerMenu
-          dropdownItems={dropdownRoutes.map((route) => ({
-            ...route,
-            label: t(route.label),
-          }))}
-        />
-        {breakpoints.sm && <HeaderConnect />}
       </NavContainer>
     </HeaderWrapper>
   )

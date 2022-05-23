@@ -138,6 +138,9 @@ export const SearchInput = ({
       .push(
         {
           pathname: `/profile/${name}`,
+          query: {
+            from: router.asPath,
+          },
         },
         `/profile/${name}`,
       )

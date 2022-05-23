@@ -22,7 +22,9 @@
     "myProfile": "My Profile",
     "disconnect": "Disconnect",
     "connect": "Connect",
-    "noPrimaryName": "No Primary Name"
+    "noPrimaryName": "No Primary Name",
+    "viewProfile": "View Profile",
+    "viewDetails": "View Details"
   },
   "name": {
     "expires": "Expires",

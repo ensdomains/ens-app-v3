@@ -6,6 +6,7 @@ import { ConditionalWrapper } from './ConditionalWrapper'
 
 const StyledAnchor = styled.a<{ isActive: boolean; disabled?: boolean }>`
   ${({ theme, disabled, isActive }) => `
+    white-space: nowrap;
     color: ${theme.colors.textTertiary};
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.fontSizes.large};
