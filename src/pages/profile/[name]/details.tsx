@@ -35,7 +35,12 @@ const NameDetails: NextPage = () => {
   const isLoading = detailsLoading || accountLoading
 
   return (
-    <Basic loading={isLoading} title={`${normalisedName} - `}>
+    <Basic
+      heading={normalisedName}
+      subheading="Name Details"
+      loading={isLoading}
+      title={`${normalisedName} - `}
+    >
       <div>
         <NameSnippetMobile
           expiryDate={expiryDate}
