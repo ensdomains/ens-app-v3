@@ -1,12 +1,12 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { ensNftImageUrl, shortenAddress } from '@app/utils/utils'
+import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
 import { AddressAvatar, AvatarWithZorb } from '../AvatarWithZorb'
+import { NFTImage } from '../NFTImage'
 
 const Container = styled.div`
   ${({ theme }) => `
@@ -231,24 +231,11 @@ export const NameSnippet = ({
   showButton?: boolean
 }) => {
   const [nftLoading, setNftLoading] = useState(true)
-  const { contracts } = useEns()
-  const { data: baseRegistrarAddress } = useQuery(
-    'base-registrar-address',
-    () => contracts?.getBaseRegistrar()!.then((c) => c.address),
-  )
 
   return (
     <Container>
       <StyledNftBox $loading={nftLoading}>
-        <Image
-          onLoadingComplete={() => setNftLoading(false)}
-          src="/"
-          loader={() =>
-            ensNftImageUrl(name, network, baseRegistrarAddress || '')
-          }
-          width={270}
-          height={270}
-        />
+        <NFTImage name={name} network={network} callback={setNftLoading} />
       </StyledNftBox>
       <NameDetailSnippet
         name={name}

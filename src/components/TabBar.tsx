@@ -32,6 +32,8 @@ const LinkWrapper = styled.a`
 const IconContainer = styled.div<{ $active: boolean }>`
   ${({ theme, $active }) => `
     color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
+    width: ${theme.space['6']};
+    height: ${theme.space['6']};
   `}
 `
 

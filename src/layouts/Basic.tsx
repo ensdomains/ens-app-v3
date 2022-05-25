@@ -15,7 +15,7 @@ import { TabBar } from '../components/TabBar'
 
 const Container = styled.div`
   ${({ theme }) => css`
-    padding: ${theme.space['5']} ${theme.space['6']};
+    padding: ${theme.space['5']} ${theme.space['4']};
     display: flex;
     flex-gap: ${theme.space['8']};
     gap: ${theme.space['8']};
