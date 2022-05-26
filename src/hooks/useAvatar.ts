@@ -35,7 +35,7 @@ export const useNFTImage = (name: string | undefined, network: string) => {
   )
   const { data, isLoading, status } = useQuery(
     ['getNFTImage', name],
-    () => ensNftImageUrl(name!, network, baseRegistrarAddress!),
+    () => fetchImg(ensNftImageUrl(name!, network, baseRegistrarAddress!)),
     {
       enabled: ready && !!name && !!baseRegistrarAddress,
     },
