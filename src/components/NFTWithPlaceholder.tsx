@@ -1,8 +1,8 @@
-import { useState } from 'react'
+import { useNFTImage } from '@app/hooks/useAvatar'
+import { ComponentProps } from 'react'
 import styled from 'styled-components'
-import { NFTImage } from './NFTImage'
 
-const StyledNftBox = styled.div<{ $loading: boolean }>`
+const StyledNftBox = styled.img<{ $loading: boolean }>`
   ${({ theme, $loading }) => `
   width: 100%;
   display: flex;
@@ -20,15 +20,13 @@ const StyledNftBox = styled.div<{ $loading: boolean }>`
 export const NFTWithPlaceholder = ({
   name,
   network,
+  ...props
 }: {
   name: string
   network: string
-}) => {
-  const [nftLoading, setNftLoading] = useState(true)
+} & ComponentProps<'img'> &
+  ComponentProps<typeof StyledNftBox>) => {
+  const { image, isLoading } = useNFTImage(name, network)
 
-  return (
-    <StyledNftBox $loading={nftLoading}>
-      <NFTImage name={name} network={network} callback={setNftLoading} />
-    </StyledNftBox>
-  )
+  return <StyledNftBox {...{ ...props, $loading: isLoading, src: image }} />
 }

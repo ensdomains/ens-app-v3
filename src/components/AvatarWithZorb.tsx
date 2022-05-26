@@ -14,7 +14,7 @@ export const AvatarWithZorb = ({
   address: string
   network: string
 }) => {
-  const avatar = useAvatar(name, network)
+  const { avatar } = useAvatar(name, network)
   const zorb = useZorb(address, 'address')
   return <Avatar {...props} src={avatar || zorb} />
 }

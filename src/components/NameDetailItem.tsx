@@ -68,7 +68,7 @@ export const NameDetailItem = ({
   children: ReactNode
 }) => {
   const router = useRouter()
-  const avatar = useAvatar(name, network)
+  const { avatar } = useAvatar(name, network)
   const zorb = useZorb(id, 'hash')
 
   return (

@@ -3,10 +3,9 @@ import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import { useState } from 'react'
 import styled from 'styled-components'
 import { Card } from '../Card'
-import { NFTImage } from '../NFTImage'
+import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 import { OutlinedButton } from '../OutlinedButton'
 import { FavouriteButton } from './FavouriteButton'
 
@@ -19,13 +18,11 @@ const Container = styled(Card)`
   `}
 `
 
-const ImageWrapper = styled.div<{ $loading?: boolean }>`
-  ${({ theme, $loading }) => `
-    background: ${$loading ? theme.colors.accentGradient : 'none'};
+const ImageWrapper = styled(NFTWithPlaceholder)`
+  ${({ theme }) => `
     border-radius: ${theme.radii.extraLarge};
-    & > span {
-      border-radius: ${theme.radii.extraLarge};
-    }
+    width: 170px;
+    height: 170px;
   `}
 `
 
@@ -96,18 +93,9 @@ export const NameSnippetMobile = ({
   expiryDate?: Date | null
   canSend?: boolean
 }) => {
-  const [nftLoading, setNftLoading] = useState(true)
-
   return (
     <Container>
-      <ImageWrapper $loading={nftLoading}>
-        <NFTImage
-          name={name}
-          network={network}
-          callback={setNftLoading}
-          size={170}
-        />
-      </ImageWrapper>
+      <ImageWrapper name={name} network={network} />
       <RightColumn>
         <ExpiryAndFavouriteRow>
           {expiryDate ? (

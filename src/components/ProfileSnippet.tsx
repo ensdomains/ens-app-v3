@@ -117,7 +117,7 @@ export const ProfileSnippet = ({
   const router = useRouter()
   const { t } = useTranslation('common')
   const zorb = useZorb(name, 'name')
-  const avatar = useAvatar(name, network)
+  const { avatar } = useAvatar(name, network)
 
   return (
     <Container $banner={banner}>

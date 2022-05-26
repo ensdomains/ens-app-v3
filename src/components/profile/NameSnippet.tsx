@@ -216,7 +216,11 @@ export const NameSnippet = ({
 }) => {
   return (
     <Container>
-      <NFTWithPlaceholder name={name} network={network} />
+      <NFTWithPlaceholder
+        name={name}
+        network={network}
+        style={{ width: '270px', height: '270px' }}
+      />
       <NameDetailSnippet
         name={name}
         expiryDate={expiryDate}

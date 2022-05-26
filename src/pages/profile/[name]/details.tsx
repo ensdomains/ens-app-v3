@@ -162,7 +162,11 @@ const NameDetails: NextPage = () => {
       <WrapperGrid>
         <DetailsContainer $area="details">
           {breakpoints.lg ? (
-            <NFTWithPlaceholder name={normalisedName} network={chain?.name!} />
+            <NFTWithPlaceholder
+              name={normalisedName}
+              network={chain?.name!}
+              style={{ width: '270px', height: '270px' }}
+            />
           ) : (
             <NameSnippetMobile
               expiryDate={expiryDate}
