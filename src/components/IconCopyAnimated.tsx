@@ -5,6 +5,7 @@ import styled from 'styled-components'
 const IconWrapper = styled.div<{ $copied: boolean }>`
   position: relative;
   & > svg {
+    display: block;
     transition: all 0.15s ease-in-out;
   }
   & > svg:first-child {
