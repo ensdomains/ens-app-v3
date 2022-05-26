@@ -246,7 +246,6 @@ export const RecordsTab = ({
 
   const formattedContentHash = useMemo(() => {
     if (contentHash) {
-      console.log(contentHash)
       if (typeof contentHash === 'string') {
         return contentHash
       }
