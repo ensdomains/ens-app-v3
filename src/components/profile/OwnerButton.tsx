@@ -1,6 +1,14 @@
 import { usePrimary } from '@app/hooks/usePrimary'
-import { Button, Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { shortenAddress } from '@app/utils/utils'
+import {
+  Button,
+  DownIndicatorSVG,
+  Dropdown,
+  Typography,
+} from '@ensdomains/thorin'
+import { ReactNode, useMemo, useState } from 'react'
+import styled, { css } from 'styled-components'
 import { AvatarWithZorb } from '../AvatarWithZorb'
 
 const ButtonWrapper = styled.div`
@@ -60,35 +68,201 @@ const TextContainer = styled.div`
   flex-gap: 0;
 `
 
-export const OwnerButton = ({
+const OwnerButtonWrapper = ({
+  children,
+  onClick,
+  className,
+}: {
+  children: ReactNode
+  onClick?: () => void
+  className?: string
+}) => {
+  return (
+    <ButtonWrapper className={className}>
+      <Button onClick={onClick} size="extraSmall">
+        {children}
+      </Button>
+    </ButtonWrapper>
+  )
+}
+
+const OwnerButtonNormal = ({
   address,
+  name,
   network,
   label,
 }: {
   address: string
+  name?: string | null
   network: string
   label: string
 }) => {
-  const { name } = usePrimary(address)
+  return (
+    <OwnerButtonWrapper>
+      <Content>
+        <AvatarWrapper>
+          <AvatarWithZorb
+            label={name || address}
+            address={address}
+            name={name || undefined}
+            network={network}
+          />
+        </AvatarWrapper>
+        <TextContainer>
+          <Label ellipsis>{label}</Label>
+          <Name ellipsis>{name}</Name>
+        </TextContainer>
+      </Content>
+    </OwnerButtonWrapper>
+  )
+}
+
+const ChevronIcon = styled.div<{ $pressed: boolean }>`
+  ${({ theme, $pressed }) => css`
+    width: ${theme.space['3']};
+    color: ${theme.colors.foreground};
+    opacity: ${theme.opacity['30']};
+    margin: ${theme.space['2']};
+    transform: rotate(0deg);
+    transition: all 0.2s ease-in-out;
+    ${$pressed &&
+    css`
+      opacity: ${theme.opacity['70']};
+      transform: rotate(180deg);
+    `}
+  `}
+`
+
+const OwnerRow = styled.div`
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: ${theme.space['1.5']};
+    flex-gap: ${theme.space['1.5']};
+  `}
+`
+
+const ContentWithDropdown = styled(Content)`
+  ${({ theme }) => `
+    gap: ${theme.space['1']};
+    flex-gap: ${theme.space['1']};
+  `}
+`
+
+const OwnerButtonWrapperWithDropdown = styled(OwnerButtonWrapper)`
+  ${({ theme }) => `
+    & > button {
+      padding: ${theme.space['2']} ${theme.space['3']};
+    }
+  `}
+`
+
+const OwnerButtonWithDropdown = ({
+  address,
+  name,
+  network,
+  label,
+  canTransfer,
+}: {
+  address: string
+  name?: string | null
+  network: string
+  label: string
+  canTransfer: boolean
+}) => {
+  const router = useRouterWithHistory()
+  const [isOpen, setIsOpen] = useState(false)
+
+  const menuItems = useMemo(() => {
+    const items: any[] = [
+      {
+        label: 'View Address',
+        color: 'text',
+        onClick: () => router.push(`/address/${address}`),
+      },
+      {
+        label: 'Copy Address',
+        color: 'text',
+        onClick: () => navigator.clipboard.writeText(address),
+      },
+    ]
+    if (name) {
+      items[0] = {
+        label: 'View Profile',
+        color: 'text',
+        onClick: () => router.push(`/profile/${name}`),
+      }
+    }
+    if (canTransfer) {
+      items.push({
+        label: 'Transfer',
+        color: 'accent',
+        // eslint-disable-next-line no-alert
+        onClick: () => alert('Not implemented'),
+      })
+    }
+    return items
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [address, name, canTransfer])
 
   return (
-    <ButtonWrapper>
-      <Button size="extraSmall">
-        <Content>
-          <AvatarWrapper>
-            <AvatarWithZorb
-              label={name || address}
-              address={address}
-              name={name || undefined}
-              network={network}
-            />
-          </AvatarWrapper>
-          <TextContainer>
-            <Label ellipsis>{label}</Label>
-            <Name ellipsis>{name}</Name>
-          </TextContainer>
-        </Content>
-      </Button>
-    </ButtonWrapper>
+    <Dropdown
+      items={menuItems}
+      isOpen={isOpen}
+      setIsOpen={setIsOpen}
+      keepMenuOnTop
+      shortThrow
+    >
+      <OwnerButtonWrapperWithDropdown onClick={() => setIsOpen(true)}>
+        <ContentWithDropdown>
+          <Label ellipsis>{label}</Label>
+          <div style={{ flexGrow: 1 }} />
+          <OwnerRow>
+            <Name ellipsis>{name || shortenAddress(address)}</Name>
+            <AvatarWrapper>
+              <AvatarWithZorb
+                label={name || address}
+                address={address}
+                name={name || undefined}
+                network={network}
+              />
+            </AvatarWrapper>
+          </OwnerRow>
+          <ChevronIcon $pressed={isOpen} as={DownIndicatorSVG} />
+        </ContentWithDropdown>
+      </OwnerButtonWrapperWithDropdown>
+    </Dropdown>
+  )
+}
+
+export const OwnerButton = ({
+  address,
+  network,
+  label,
+  canTransfer,
+  asDropdown,
+}: {
+  address: string
+  network: string
+  label: string
+  canTransfer: boolean
+  asDropdown?: boolean
+}) => {
+  const { name } = usePrimary(address)
+
+  if (!asDropdown) {
+    return <OwnerButtonNormal {...{ address, network, label, name }} />
+  }
+
+  return (
+    <OwnerButtonWithDropdown
+      address={address}
+      canTransfer={canTransfer}
+      label={label}
+      network={network}
+      name={name}
+    />
   )
 }

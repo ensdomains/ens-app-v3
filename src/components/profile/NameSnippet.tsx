@@ -2,11 +2,10 @@ import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
 import { AddressAvatar, AvatarWithZorb } from '../AvatarWithZorb'
-import { NFTImage } from '../NFTImage'
+import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 
 const Container = styled.div`
   ${({ theme }) => `
@@ -16,21 +15,6 @@ const Container = styled.div`
     justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
-
-const StyledNftBox = styled.div<{ $loading: boolean }>`
-  ${({ theme, $loading }) => `
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${$loading ? theme.colors.accentGradient : 'none'};
-  border-radius: ${theme.radii['2xLarge']};
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-  & > span {
-    border-radius: ${theme.radii['2xLarge']};
-  }
   `}
 `
 
@@ -230,13 +214,9 @@ export const NameSnippet = ({
   }
   showButton?: boolean
 }) => {
-  const [nftLoading, setNftLoading] = useState(true)
-
   return (
     <Container>
-      <StyledNftBox $loading={nftLoading}>
-        <NFTImage name={name} network={network} callback={setNftLoading} />
-      </StyledNftBox>
+      <NFTWithPlaceholder name={name} network={network} />
       <NameDetailSnippet
         name={name}
         expiryDate={expiryDate}

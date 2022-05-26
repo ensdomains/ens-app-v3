@@ -1,3 +1,5 @@
+import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
+import { DetailSnippet } from '@app/components/profile/details/DetailSnippet'
 import { RecordsTab } from '@app/components/profile/details/RecordsTab'
 import { SubnamesTab } from '@app/components/profile/details/SubnamesTab'
 import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
@@ -5,6 +7,7 @@ import { OwnerButton } from '@app/components/profile/OwnerButton'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Card, Typography } from '@ensdomains/thorin'
 import type { GetStaticPaths, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -27,7 +30,7 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>`
   align-self: center;
   ${({ $hasError }) => css`
     grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'content content';
-    ${mq.medium.min`
+    ${mq.large.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
       } "details content";
@@ -47,7 +50,7 @@ const DetailsContainer = styled(GridItem)`
 `
 
 const OwnerButtons = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -55,6 +58,12 @@ const OwnerButtons = styled.div`
     justify-content: stretch;
     gap: ${theme.space['1']};
     flex-gap: ${theme.space['1']};
+    ${mq.small.min`
+      flex-direction: column;
+      & > div {
+        max-width: initial !important;
+      }
+    `}
   `}
 `
 
@@ -90,10 +99,17 @@ const TabButton = styled.button<{ $selected: boolean }>`
     background: none;
     color: ${$selected ? theme.colors.accent : theme.colors.textTertiary};
     font-size: ${theme.fontSizes.extraLarge};
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      color: ${$selected ? theme.colors.accent : theme.colors.textSecondary};
+    }
   `}
 `
 
 const NameDetails: NextPage = () => {
+  const breakpoints = useBreakpoint()
   const router = useRouter()
   const name = router.query.name as string
 
@@ -109,10 +125,12 @@ const NameDetails: NextPage = () => {
     isLoading: detailsLoading,
   } = useNameDetails(name)
 
-  const ownerAbilities = useMemo(() => {
+  const selfAbilities = useMemo(() => {
     const abilities = {
       canEdit: false,
       canSend: false,
+      canChangeOwner: false,
+      canChangeRegistrant: false,
     }
     if (!address || !ownerData) return abilities
     if (
@@ -120,9 +138,12 @@ const NameDetails: NextPage = () => {
       (!ownerData.registrant && ownerData.owner === address)
     ) {
       abilities.canSend = true
+      abilities.canChangeOwner = true
+      abilities.canChangeRegistrant = true
     }
     if (ownerData.owner === address) {
       abilities.canEdit = true
+      abilities.canChangeOwner = true
     }
     return abilities
   }, [address, ownerData])
@@ -140,12 +161,16 @@ const NameDetails: NextPage = () => {
     >
       <WrapperGrid>
         <DetailsContainer $area="details">
-          <NameSnippetMobile
-            expiryDate={expiryDate}
-            name={normalisedName}
-            network={chain?.name!}
-            canSend={ownerAbilities.canSend}
-          />
+          {breakpoints.lg ? (
+            <NFTWithPlaceholder name={normalisedName} network={chain?.name!} />
+          ) : (
+            <NameSnippetMobile
+              expiryDate={expiryDate}
+              name={normalisedName}
+              network={chain?.name!}
+              canSend={selfAbilities.canSend}
+            />
+          )}
           <OwnerButtons>
             {ownerData?.owner && (
               <OwnerButton
@@ -156,6 +181,8 @@ const NameDetails: NextPage = () => {
                     ? 'Owner'
                     : 'Controller'
                 }
+                asDropdown={!!breakpoints.lg}
+                canTransfer={selfAbilities.canChangeOwner}
               />
             )}
             {ownerData?.registrant && (
@@ -163,9 +190,17 @@ const NameDetails: NextPage = () => {
                 address={ownerData.registrant}
                 network={chain?.name!}
                 label="Registrant"
+                asDropdown={!!breakpoints.lg}
+                canTransfer={selfAbilities.canChangeRegistrant}
               />
             )}
           </OwnerButtons>
+          {breakpoints.lg && (
+            <DetailSnippet
+              canSend={selfAbilities.canSend}
+              expiryDate={expiryDate}
+            />
+          )}
         </DetailsContainer>
         <TabContainer $area="content">
           <TabButtonContainer>
@@ -195,7 +230,7 @@ const NameDetails: NextPage = () => {
                   texts={(profile?.records?.texts as any) || []}
                   addresses={(profile?.records?.coinTypes as any) || []}
                   contentHash={profile?.records?.contentHash}
-                  canEdit={ownerAbilities.canEdit}
+                  canEdit={selfAbilities.canEdit}
                 />
               ),
               subnames: (

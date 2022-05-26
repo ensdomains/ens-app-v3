@@ -1,8 +1,9 @@
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
+import mq from '@app/mediaQuery'
 import { Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../TabWrapper'
 
 type TextRecord = {
@@ -26,7 +27,7 @@ type ContentHash =
   | string
 
 const TabWrapper = styled(OriginalTabWrapper)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -34,6 +35,11 @@ const TabWrapper = styled(OriginalTabWrapper)`
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
     padding: ${theme.space['4.5']};
+    ${mq.medium.min`
+      padding: ${theme.space['6']};
+      gap: ${theme.space['6']};
+      flex-gap: ${theme.space['6']};
+    `}
   `}
 `
 
@@ -96,7 +102,7 @@ const EditButton = styled.button`
 `
 
 const RecordContainer = styled.button`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -104,21 +110,31 @@ const RecordContainer = styled.button`
     justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    background: rgba(0, 0, 0, 0.05);
+    background: rgba(0, 0, 0, 0.04);
     padding: ${theme.space['1.5']} ${theme.space['3']};
     border-radius: ${theme.radii.large};
     font-size: calc(${theme.fontSizes.small} - ${theme.space.px});
-    transition: all 0.3s ease-in-out;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
 
-    &:active {
-      filter: brightness(1.05);
+    &:hover {
+      background: rgba(0, 0, 0, 0.08);
       transform: translateY(-1px);
     }
+
+    &:active {
+      background: rgba(0, 0, 0, 0.04);
+      transform: translateY(0);
+    }
+
+    ${mq.medium.min`
+      font-size: ${theme.fontSizes.small};
+    `}
   `}
 `
 
 const RecordKey = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space['20']};
     min-width: ${theme.space['20']};
     height: ${theme.space.full};
@@ -130,6 +146,11 @@ const RecordKey = styled(Typography)`
     text-align: left;
     overflow-wrap: break-word;
     word-break: break-all;
+
+    ${mq.medium.min`
+      width: ${theme.space['28']};
+      min-width: ${theme.space['28']};
+    `}
   `}
 `
 
@@ -141,10 +162,17 @@ const CopyButtonWrapper = styled.div`
 `
 
 const RecordValue = styled(Typography)<{ $fullWidth: boolean }>`
-  ${({ theme, $fullWidth }) => `
-    max-width: calc(100% - ${$fullWidth ? '0px' : theme.space['20']} - ${
-    theme.space['9']
-  } - ${$fullWidth ? theme.space['2'] : theme.space['4']});
+  ${({ theme, $fullWidth }) => css`
+    max-width: calc(
+      100% - ${$fullWidth ? '0px' : theme.space['20']} - ${theme.space['9']} -
+        ${$fullWidth ? theme.space['2'] : theme.space['4']}
+    );
+
+    ${mq.medium.min`
+      max-width: calc(100% - ${$fullWidth ? '0px' : theme.space['28']} - ${
+      theme.space['9']
+    } - ${$fullWidth ? theme.space['2'] : theme.space['4']});
+    `}
   `}
   overflow-wrap: break-word;
   text-align: left;

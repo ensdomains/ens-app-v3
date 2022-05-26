@@ -1,13 +1,14 @@
 import FastForwardSVG from '@app/assets/FastForward.svg'
-import HeartSVG from '@app/assets/Heart.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
 import { formatExpiry } from '@app/utils/utils'
-import { Button, Typography } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { Card } from '../Card'
 import { NFTImage } from '../NFTImage'
+import { OutlinedButton } from '../OutlinedButton'
+import { FavouriteButton } from './FavouriteButton'
 
 const Container = styled(Card)`
   ${({ theme }) => `
@@ -56,45 +57,12 @@ const ExpiryAndFavouriteRow = styled.div`
   `}
 `
 
-const FavouriteButton = styled.button`
-  ${({ theme }) => `
-    outline: none;
-    background: none;
-    border: none;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: ${theme.space['8']};
-    height: ${theme.space['8']};
-  `}
-`
-
-const HeartIcon = styled.svg`
-  ${({ theme }) => `
-    display: block;
-    color: transparent;
-    stroke: ${theme.colors.borderSecondary};
-    width: ${theme.space['6']};
-    height: ${theme.space['6']};
-  `}
-`
-
 const RowWithGap = styled.div`
   ${({ theme }) => `
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: ${theme.space['1']};
-  `}
-`
-
-const OutlinedButtonWrapper = styled.div`
-  ${({ theme }) => `
-  & > button {
-    border: 1px solid rgba(0, 0, 0, 0.06);
-    height: ${theme.space['12']};
-    border-radius: ${theme.radii.extraLarge};
-  }
   `}
 `
 
@@ -152,39 +120,31 @@ export const NameSnippetMobile = ({
           ) : (
             <Typography>No expiry</Typography>
           )}
-          <FavouriteButton>
-            <HeartIcon as={HeartSVG} />
-          </FavouriteButton>
+          <FavouriteButton />
         </ExpiryAndFavouriteRow>
         {expiryDate && (
-          <OutlinedButtonWrapper>
-            <Button size="small" shadowless variant="transparent">
-              <InnerButton>
-                <ButtonIcon as={FastForwardSVG} />
-                <Typography weight="bold">Extend</Typography>
-              </InnerButton>
-            </Button>
-          </OutlinedButtonWrapper>
+          <OutlinedButton size="small" shadowless variant="transparent">
+            <InnerButton>
+              <ButtonIcon as={FastForwardSVG} />
+              <Typography weight="bold">Extend</Typography>
+            </InnerButton>
+          </OutlinedButton>
         )}
         {canSend && (
           <RowWithGap>
             <div style={{ flexGrow: 1 }}>
-              <OutlinedButtonWrapper>
-                <Button size="small" shadowless variant="transparent">
-                  <InnerButton>
-                    <ButtonIcon as={PaperPlaneSVG} />
-                    <Typography weight="bold">Send</Typography>
-                  </InnerButton>
-                </Button>
-              </OutlinedButtonWrapper>
-            </div>
-            <OutlinedButtonWrapper>
-              <Button size="small" shadowless variant="transparent">
+              <OutlinedButton size="small" shadowless variant="transparent">
                 <InnerButton>
-                  <ButtonIcon as={TripleDotSVG} />
+                  <ButtonIcon as={PaperPlaneSVG} />
+                  <Typography weight="bold">Send</Typography>
                 </InnerButton>
-              </Button>
-            </OutlinedButtonWrapper>
+              </OutlinedButton>
+            </div>
+            <OutlinedButton size="small" shadowless variant="transparent">
+              <InnerButton>
+                <ButtonIcon as={TripleDotSVG} />
+              </InnerButton>
+            </OutlinedButton>
           </RowWithGap>
         )}
       </RightColumn>
