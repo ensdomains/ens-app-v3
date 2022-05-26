@@ -181,7 +181,12 @@ const NameDetails: NextPage = () => {
                     ? 'Owner'
                     : 'Controller'
                 }
-                asDropdown={!!breakpoints.lg}
+                type={breakpoints.lg ? 'dropdown' : 'dialog'}
+                description={
+                  ownerData.ownershipLevel === 'nameWrapper'
+                    ? 'Owns and controls the name'
+                    : 'Controls all the records of the name'
+                }
                 canTransfer={selfAbilities.canChangeOwner}
               />
             )}
@@ -190,7 +195,8 @@ const NameDetails: NextPage = () => {
                 address={ownerData.registrant}
                 network={chain?.name!}
                 label="Registrant"
-                asDropdown={!!breakpoints.lg}
+                type={breakpoints.lg ? 'dropdown' : 'dialog'}
+                description="The owner of the NFT"
                 canTransfer={selfAbilities.canChangeRegistrant}
               />
             )}

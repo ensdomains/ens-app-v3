@@ -57,6 +57,10 @@ a {
   font-feature-settings: "ss01" on, "ss03" on;
   -moz-font-feature-settings: "ss01" on, "ss03" on;
 }
+
+.modal > div {
+  z-index: 9999;
+}
 `
 
 const breakpoints = {

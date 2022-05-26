@@ -1,8 +1,11 @@
+import { useCopied } from '@app/hooks/useCopied'
 import { usePrimary } from '@app/hooks/usePrimary'
+import { useProfile } from '@app/hooks/useProfile'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { shortenAddress } from '@app/utils/utils'
 import {
   Button,
+  Dialog,
   DownIndicatorSVG,
   Dropdown,
   Typography,
@@ -10,6 +13,9 @@ import {
 import { ReactNode, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { AvatarWithZorb } from '../AvatarWithZorb'
+import { IconCopyAnimated } from '../IconCopyAnimated'
+import { OutlinedButton } from '../OutlinedButton'
+import { ProfileSnippet } from '../ProfileSnippet'
 
 const ButtonWrapper = styled.div`
   width: 100%;
@@ -86,34 +92,146 @@ const OwnerButtonWrapper = ({
   )
 }
 
-const OwnerButtonNormal = ({
+const AddressCopyContainer = styled.div`
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: ${theme.space.full};
+    padding: ${theme.space['3']};
+    color: ${theme.colors.textSecondary};
+  `}
+`
+
+const AddressCopyButton = styled(OutlinedButton)`
+  ${({ theme }) => `
+    width: ${theme.space.full};
+    & > button > div {
+      width: ${theme.space.full};
+    }
+  `}
+`
+
+const InnerDialog = styled.div`
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['1']};
+    flex-gap: ${theme.space['1']};
+    margin-bottom: ${theme.space['2']};
+    padding: 0 ${theme.space['6']};
+    width: ${theme.space.full};
+  `}
+`
+
+const TransferButton = styled.button`
+  ${({ theme }) => `
+    outline: none;
+    padding: none;
+    margin: none;
+    border: none;
+    background-color: transparent;
+    color: ${theme.colors.accent};
+    margin-top: ${theme.space['4']};
+  `}
+`
+
+const ProfileSnippetWrapper = styled.div`
+  ${({ theme }) => `
+    width: ${theme.space.full};
+  `}
+`
+
+const OwnerButtonWithPopup = ({
   address,
   name,
   network,
   label,
+  description,
+  canTransfer,
 }: {
   address: string
   name?: string | null
   network: string
   label: string
+  description: string
+  canTransfer: boolean
 }) => {
+  const { copy, copied } = useCopied()
+  const [open, setOpen] = useState(false)
+  const { profile, loading } = useProfile(name!, !name)
+
+  const getTextRecord = (key: string) =>
+    profile?.records?.texts?.find((x) => x.key === key)
+
   return (
-    <OwnerButtonWrapper>
-      <Content>
-        <AvatarWrapper>
-          <AvatarWithZorb
-            label={name || address}
-            address={address}
-            name={name || undefined}
-            network={network}
-          />
-        </AvatarWrapper>
-        <TextContainer>
-          <Label ellipsis>{label}</Label>
-          <Name ellipsis>{name}</Name>
-        </TextContainer>
-      </Content>
-    </OwnerButtonWrapper>
+    <>
+      <OwnerButtonWrapper onClick={() => setOpen(true)}>
+        <Content>
+          <AvatarWrapper>
+            <AvatarWithZorb
+              label={name || address}
+              address={address}
+              name={name || undefined}
+              network={network}
+            />
+          </AvatarWrapper>
+          <TextContainer>
+            <Label ellipsis>{label}</Label>
+            <Name ellipsis>{name}</Name>
+          </TextContainer>
+        </Content>
+      </OwnerButtonWrapper>
+      <Dialog
+        open={open}
+        subtitle={description}
+        title={label}
+        variant="closable"
+        onDismiss={() => setOpen(false)}
+      >
+        <InnerDialog>
+          {name && !loading && (
+            <ProfileSnippetWrapper>
+              <ProfileSnippet
+                name={name}
+                network={network}
+                button="viewProfile"
+                description={getTextRecord('description')?.value}
+                recordName={getTextRecord('name')?.value}
+                url={getTextRecord('url')?.value}
+              />
+            </ProfileSnippetWrapper>
+          )}
+          <AddressCopyButton
+            variant="transparent"
+            size="extraSmall"
+            shadowless
+            onClick={() => copy(address)}
+          >
+            <AddressCopyContainer>
+              <Typography variant="large" weight="bold">
+                {shortenAddress(address, 14, 8, 6)}
+              </Typography>
+              <IconCopyAnimated
+                color="textTertiary"
+                copied={copied}
+                size="3.5"
+              />
+            </AddressCopyContainer>
+          </AddressCopyButton>
+          {canTransfer && (
+            <TransferButton>
+              <Typography variant="large" weight="bold">
+                Transfer
+              </Typography>
+            </TransferButton>
+          )}
+        </InnerDialog>
+      </Dialog>
+    </>
   )
 }
 
@@ -242,18 +360,24 @@ export const OwnerButton = ({
   network,
   label,
   canTransfer,
-  asDropdown,
+  type = 'dialog',
+  description,
 }: {
   address: string
   network: string
   label: string
   canTransfer: boolean
-  asDropdown?: boolean
+  type?: 'dropdown' | 'dialog'
+  description: string
 }) => {
   const { name } = usePrimary(address)
 
-  if (!asDropdown) {
-    return <OwnerButtonNormal {...{ address, network, label, name }} />
+  if (type === 'dialog') {
+    return (
+      <OwnerButtonWithPopup
+        {...{ address, network, label, name, description, canTransfer }}
+      />
+    )
   }
 
   return (
