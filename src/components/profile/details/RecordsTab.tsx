@@ -246,10 +246,11 @@ export const RecordsTab = ({
 
   const formattedContentHash = useMemo(() => {
     if (contentHash) {
+      console.log(contentHash)
       if (typeof contentHash === 'string') {
         return contentHash
       }
-      if (typeof contentHash === 'object') {
+      if (typeof contentHash === 'object' && contentHash.decoded) {
         return `${contentHash.protocolType}://${contentHash.decoded}`
       }
     }
