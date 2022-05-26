@@ -10,7 +10,7 @@ export const AvatarWithZorb = ({
   network,
   ...props
 }: ComponentProps<typeof Avatar> & {
-  name: string
+  name?: string
   address: string
   network: string
 }) => {

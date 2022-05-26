@@ -1,11 +1,58 @@
 import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
+import { OwnerButton } from '@app/components/profile/OwnerButton'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Basic } from '@app/layouts/Basic'
+import mq from '@app/mediaQuery'
 import type { GetStaticPaths, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
+import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
+
+const GridItem = styled.div<{ $area: string }>`
+  grid-area: ${({ $area }) => $area};
+`
+
+const WrapperGrid = styled.div<{ $hasError?: boolean }>`
+  flex-grow: 1;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: ${({ theme }) => theme.space['5']};
+  align-self: center;
+  ${({ $hasError }) => css`
+    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'content content';
+    ${mq.medium.min`
+      grid-template-areas: ${
+        $hasError ? "'error error'" : ''
+      } "details content";
+      grid-template-columns: 270px 2fr;
+    `}
+  `}
+`
+
+const DetailsContainer = styled(GridItem)`
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: stretch;
+    gap: ${theme.space['1']};
+  `}
+`
+
+const OwnerButtons = styled.div`
+  ${({ theme }) => `
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    align-items: stretch;
+    justify-content: stretch;
+    gap: ${theme.space['1']};
+    flex-gap: ${theme.space['1']};
+  `}
+`
 
 const NameDetails: NextPage = () => {
   const router = useRouter()
@@ -41,14 +88,36 @@ const NameDetails: NextPage = () => {
       loading={isLoading}
       title={`${normalisedName} - `}
     >
-      <div>
-        <NameSnippetMobile
-          expiryDate={expiryDate}
-          name={normalisedName}
-          network={chain?.name!}
-          canSend={canSend}
-        />
-      </div>
+      <WrapperGrid>
+        <DetailsContainer $area="details">
+          <NameSnippetMobile
+            expiryDate={expiryDate}
+            name={normalisedName}
+            network={chain?.name!}
+            canSend={canSend}
+          />
+          <OwnerButtons>
+            {ownerData?.owner && (
+              <OwnerButton
+                address={ownerData.owner}
+                network={chain?.name!}
+                label={
+                  ownerData.ownershipLevel === 'nameWrapper'
+                    ? 'Owner'
+                    : 'Controller'
+                }
+              />
+            )}
+            {ownerData?.registrant && (
+              <OwnerButton
+                address={ownerData.registrant}
+                network={chain?.name!}
+                label="Registrant"
+              />
+            )}
+          </OwnerButtons>
+        </DetailsContainer>
+      </WrapperGrid>
     </Basic>
   )
 }
