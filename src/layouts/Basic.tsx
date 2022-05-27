@@ -84,7 +84,7 @@ export const Basic = ({
     if (router.query.from) {
       return {
         leading: (
-          <div>
+          <div data-testid="back-button">
             <Button
               onClick={() => router.back()}
               variant="transparent"
