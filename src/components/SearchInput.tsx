@@ -20,7 +20,7 @@ const Container = styled.div<{ $size: 'large' | 'extraLarge' }>`
   width: 100%;
   ${({ $size }) =>
     $size === 'extraLarge' &&
-    mq.medium.min`
+    mq.md.min`
     padding-left: 48px;
     padding-right: 48px;
   `}

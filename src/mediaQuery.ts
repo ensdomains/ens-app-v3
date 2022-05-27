@@ -1,6 +1,6 @@
 import { css } from 'styled-components'
 
-type Breakpoint = 'small' | 'medium' | 'large' | 'xLarge'
+type Breakpoint = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 type BreakpointType = 'min' | 'max'
 
 const breakpointTypes: Record<BreakpointType, string> = {
@@ -9,10 +9,11 @@ const breakpointTypes: Record<BreakpointType, string> = {
 }
 
 const breakpoints: Record<Breakpoint, string> = {
-  small: '480px',
-  medium: '768px',
-  large: '992px',
-  xLarge: '1200px',
+  xs: '360px',
+  sm: '640px',
+  md: '768px',
+  lg: '1024px',
+  xl: '1280px',
 }
 
 type CSSParams = Parameters<typeof css>

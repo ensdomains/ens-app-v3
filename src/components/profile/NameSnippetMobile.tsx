@@ -1,6 +1,7 @@
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
 import styled from 'styled-components'
@@ -21,8 +22,10 @@ const Container = styled(Card)`
 const ImageWrapper = styled(NFTWithPlaceholder)`
   ${({ theme }) => `
     border-radius: ${theme.radii.extraLarge};
-    width: 170px;
-    height: 170px;
+    width: 35vw;
+    height: 35vw;
+    max-width: 170px;
+    max-height: 170px;
   `}
 `
 
@@ -93,6 +96,8 @@ export const NameSnippetMobile = ({
   expiryDate?: Date | null
   canSend?: boolean
 }) => {
+  const breakpoints = useBreakpoint()
+
   return (
     <Container>
       <ImageWrapper name={name} network={network} />
@@ -113,7 +118,7 @@ export const NameSnippetMobile = ({
         {expiryDate && (
           <OutlinedButton size="small" shadowless variant="transparent">
             <InnerButton>
-              <ButtonIcon as={FastForwardSVG} />
+              {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
               <Typography weight="bold">Extend</Typography>
             </InnerButton>
           </OutlinedButton>
@@ -123,7 +128,7 @@ export const NameSnippetMobile = ({
             <div style={{ flexGrow: 1 }}>
               <OutlinedButton size="small" shadowless variant="transparent">
                 <InnerButton>
-                  <ButtonIcon as={PaperPlaneSVG} />
+                  {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
                   <Typography weight="bold">Send</Typography>
                 </InnerButton>
               </OutlinedButton>

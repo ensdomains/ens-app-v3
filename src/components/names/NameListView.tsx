@@ -14,7 +14,7 @@ const OtherItemsContainer = styled.div`
   ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    ${mq.medium.min`
+    ${mq.md.min`
       gap: ${theme.space['4']};
       flex-gap: ${theme.space['4']};
     `}
