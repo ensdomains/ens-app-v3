@@ -5,8 +5,6 @@ import {
   ThorinGlobalStyles,
 } from '@ensdomains/thorin'
 import {
-  apiProvider,
-  configureChains,
   getDefaultWallets,
   lightTheme,
   RainbowKitProvider,
@@ -17,7 +15,9 @@ import { appWithTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
-import { chain, createClient, WagmiProvider } from 'wagmi'
+import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
+import { infuraProvider } from 'wagmi/providers/infura'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import '../styles.css'
 
 const rainbowKitTheme: Theme = {
@@ -71,13 +71,13 @@ const { provider, chains } = configureChains(
   [
     ...(process.env.NEXT_PUBLIC_PROVIDER
       ? [
-          apiProvider.jsonRpc(() => ({
-            rpcUrl: process.env.NEXT_PUBLIC_PROVIDER!,
-          })),
+          jsonRpcProvider({
+            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+          }),
         ]
       : []),
-    apiProvider.infura('58a380d3ecd545b2b5b3dad5d2b18bf0'),
-    apiProvider.jsonRpc(() => ({ rpcUrl: 'https://cloudflare-eth.com/' })),
+    infuraProvider({ infuraId: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
+    jsonRpcProvider({ rpc: () => ({ http: 'https://cloudflare-eth.com/' }) }),
   ],
 )
 
@@ -103,7 +103,7 @@ const queryClient = new QueryClient({
 function MyApp({ Component, pageProps }: AppProps) {
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiProvider client={wagmiClient}>
+      <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
           <EnsProvider>
             <ThemeProvider theme={thorinLightTheme}>
@@ -115,7 +115,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             </ThemeProvider>
           </EnsProvider>
         </RainbowKitProvider>
-      </WagmiProvider>
+      </WagmiConfig>
     </QueryClientProvider>
   )
 }
