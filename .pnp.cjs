@@ -608,7 +608,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/thorin",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.8"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"\
       ],\
       [\
         "@eslint/eslintrc",\
@@ -7288,7 +7288,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.8"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -10708,17 +10708,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/thorin", [\
-        ["npm:0.5.8", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-npm-0.5.8-217f4a4601-8e93a26654.zip/node_modules/@ensdomains/thorin/",\
+        ["npm:0.5.9", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-npm-0.5.9-da0c5eed18-0ad3f8ce14.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "npm:0.5.8"]\
+            ["@ensdomains/thorin", "npm:0.5.9"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.8", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-dc163087cd/0/cache/@ensdomains-thorin-npm-0.5.8-217f4a4601-8e93a26654.zip/node_modules/@ensdomains/thorin/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-b7ad4af1f7/0/cache/@ensdomains-thorin-npm-0.5.9-da0c5eed18-0ad3f8ce14.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.8"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
             ["@types/react", "npm:17.0.30"],\
             ["@types/react-dom", null],\
             ["@types/react-transition-state", null],\
@@ -20650,7 +20650,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.8"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\

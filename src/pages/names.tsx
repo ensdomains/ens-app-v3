@@ -20,7 +20,7 @@ import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
 
@@ -203,14 +203,10 @@ const NamesPage: NextPage = () => {
               <FilterDropdownContainer>
                 <SelectWrapper>
                   <Select
-                    selected={useMemo(
-                      () => ({
-                        value: sortType,
-                        label: t(`sortTypes.${sortType}`),
-                      }),
-                      // eslint-disable-next-line react-hooks/exhaustive-deps
-                      [sortType],
-                    )}
+                    value={{
+                      value: sortType,
+                      label: t(`sortTypes.${sortType}`),
+                    }}
                     size="small"
                     label="Sort by"
                     onChange={(e) =>
