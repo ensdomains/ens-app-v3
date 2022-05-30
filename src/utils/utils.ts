@@ -416,3 +416,8 @@ export const shortenAddress = (
 
 export const secondsToDays = (seconds: number) =>
   Math.floor(seconds / (60 * 60 * 24))
+
+export const formatExpiry = (expiry: Date) => `
+${expiry.toLocaleDateString(undefined, {
+  month: 'long',
+})} ${expiry.getDate()}, ${expiry.getFullYear()}`

@@ -20,7 +20,7 @@ const GradientTitle = styled.h1`
     color: transparent;
     margin: 0;
 
-    ${mq.small.min`
+    ${mq.sm.min`
       font-size: ${theme.fontSizes.headingOne};
     `}
   `}

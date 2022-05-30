@@ -4,8 +4,8 @@ import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { useQuery } from 'wagmi'
-import { NameDetailItem } from '../NameDetailItem'
-import { TabWrapper } from './TabWrapper'
+import { NameDetailItem } from '../../NameDetailItem'
+import { TabWrapper } from '../TabWrapper'
 
 type Subname = {
   id: string
@@ -49,7 +49,7 @@ const TabWrapperWithButtons = styled.div`
   width: 100%;
 `
 
-export const SubnameDetails = ({
+export const SubnamesTab = ({
   name,
   network,
 }: {

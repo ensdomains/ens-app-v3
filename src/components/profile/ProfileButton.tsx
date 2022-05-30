@@ -22,7 +22,7 @@ const Container = styled.div`
   padding: 0;
   padding-right: ${theme.space['0.25']};
   width: 100%:
-  ${mq.medium.min`
+  ${mq.md.min`
     padding: 0 ${theme.space['1']};
   `}
   `}

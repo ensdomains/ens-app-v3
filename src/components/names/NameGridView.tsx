@@ -14,7 +14,7 @@ const NameGrid = styled.div`
   display: grid;
   ${({ theme }) => css`
     grid-template-columns: repeat(auto-fit, minmax(${theme.space['32']}, 1fr));
-    ${mq.medium.min`
+    ${mq.md.min`
       grid-template-columns: repeat(auto-fit, minmax(${theme.space['64']}, 1fr));
     `}
     gap: ${theme.space['8']};

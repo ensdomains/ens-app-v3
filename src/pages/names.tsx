@@ -20,7 +20,7 @@ import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
 
@@ -61,7 +61,7 @@ const FilterContainer = styled.div`
   ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    ${mq.medium.min`
+    ${mq.md.min`
       gap: ${theme.space['8']};
       flex-gap: ${theme.space['8']};
     `}
@@ -86,7 +86,7 @@ const SelectWrapper = styled.div`
       background: ${theme.colors.background};
       z-index: 5;
     }
-    ${mq.medium.min`
+    ${mq.md.min`
       width: ${theme.space['48']};
     `}
   `}
@@ -127,7 +127,7 @@ const TopContainer = styled.div`
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
   `}
-  ${mq.medium.min`
+  ${mq.md.min`
     flex-direction: row;
   `}
 `
@@ -203,14 +203,10 @@ const NamesPage: NextPage = () => {
               <FilterDropdownContainer>
                 <SelectWrapper>
                   <Select
-                    selected={useMemo(
-                      () => ({
-                        value: sortType,
-                        label: t(`sortTypes.${sortType}`),
-                      }),
-                      // eslint-disable-next-line react-hooks/exhaustive-deps
-                      [sortType],
-                    )}
+                    value={{
+                      value: sortType,
+                      label: t(`sortTypes.${sortType}`),
+                    }}
                     size="small"
                     label="Sort by"
                     onChange={(e) =>

@@ -1,12 +1,11 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { ensNftImageUrl, shortenAddress } from '@app/utils/utils'
+import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
-import Image from 'next/image'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
 import { useQuery } from 'react-query'
 import styled from 'styled-components'
 import { AddressAvatar, AvatarWithZorb } from '../AvatarWithZorb'
+import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 
 const Container = styled.div`
   ${({ theme }) => `
@@ -16,21 +15,6 @@ const Container = styled.div`
     justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
-
-const StyledNftBox = styled.div<{ $loading: boolean }>`
-  ${({ theme, $loading }) => `
-  width: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  background: ${$loading ? theme.colors.accentGradient : 'none'};
-  border-radius: ${theme.radii['2xLarge']};
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-  & > span {
-    border-radius: ${theme.radii['2xLarge']};
-  }
   `}
 `
 
@@ -230,26 +214,13 @@ export const NameSnippet = ({
   }
   showButton?: boolean
 }) => {
-  const [nftLoading, setNftLoading] = useState(true)
-  const { contracts } = useEns()
-  const { data: baseRegistrarAddress } = useQuery(
-    'base-registrar-address',
-    () => contracts?.getBaseRegistrar()!.then((c) => c.address),
-  )
-
   return (
     <Container>
-      <StyledNftBox $loading={nftLoading}>
-        <Image
-          onLoadingComplete={() => setNftLoading(false)}
-          src="/"
-          loader={() =>
-            ensNftImageUrl(name, network, baseRegistrarAddress || '')
-          }
-          width={270}
-          height={270}
-        />
-      </StyledNftBox>
+      <NFTWithPlaceholder
+        name={name}
+        network={network}
+        style={{ width: '270px', height: '270px' }}
+      />
       <NameDetailSnippet
         name={name}
         expiryDate={expiryDate}

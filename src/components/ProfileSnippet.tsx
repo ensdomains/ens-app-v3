@@ -104,7 +104,6 @@ export const ProfileSnippet = ({
   description,
   url,
   button,
-  currentPage,
   network,
 }: {
   name: string
@@ -113,13 +112,12 @@ export const ProfileSnippet = ({
   description?: string
   url?: string
   button?: 'viewDetails' | 'viewProfile'
-  currentPage?: string
   network: string
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
   const zorb = useZorb(name, 'name')
-  const avatar = useAvatar(name, network)
+  const { avatar } = useAvatar(name, network)
 
   return (
     <Container $banner={banner}>
@@ -138,7 +136,7 @@ export const ProfileSnippet = ({
                         ? `/profile/${name}/details`
                         : `/profile/${name}`,
                     query: {
-                      from: currentPage,
+                      from: router.asPath,
                     },
                   })
                 }

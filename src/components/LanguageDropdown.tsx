@@ -15,7 +15,7 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>`
     align-items: center;
     transition: none;
     ${$large &&
-    mq.small.min`
+    mq.sm.min`
       width: ${theme.space['12']};
       padding: 0;
       display: flex;

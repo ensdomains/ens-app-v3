@@ -83,7 +83,7 @@ const NavContainer = styled.div`
   ${({ theme }) => css`
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
-    ${mq.small.min`
+    ${mq.sm.min`
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
     `}

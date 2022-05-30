@@ -3,21 +3,16 @@ import { NameSnippet } from '@app/components/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useInitial } from '@app/hooks/useInitial'
-import { useProfile } from '@app/hooks/useProfile'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
-import { useValidate } from '@app/hooks/useValidate'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useEns } from '@app/utils/EnsProvider'
-import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
 import { Button, ExclamationSVG, Typography } from '@ensdomains/thorin'
 import { GetStaticPaths, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName, useNetwork } from 'wagmi'
 
@@ -43,7 +38,7 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>`
   align-self: center;
   ${({ $hasError }) => css`
     grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details';
-    ${mq.medium.min`
+    ${mq.md.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
       } "name-details details";
@@ -109,11 +104,9 @@ const ProfilePage: NextPage = () => {
   const _name = router.query.name as string
   const isSelf = _name === 'connected'
 
-  const [error, setError] = useState<string | null>(null)
-
   const initial = useInitial()
   const { activeChain: chain } = useNetwork()
-  const { ready, getOwner, getExpiry, batch } = useEns()
+
   const { data: accountData, isLoading: accountLoading } = useAccount()
   const address = accountData?.address
 
@@ -121,65 +114,26 @@ const ProfilePage: NextPage = () => {
 
   const name = isSelf && ensName ? ensName : _name
 
-  const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
-
-  const { profile, loading: profileLoading } = useProfile(
+  const {
+    isLoading: detailsLoading,
+    error,
+    profile,
+    ownerData,
+    expiryDate,
     normalisedName,
-    !normalisedName,
-  )
-
-  const { data: batchData, isLoading: batchLoading } = useQuery(
-    ['batch', 'getOwner', 'getExpiry', normalisedName],
-    () =>
-      labelCount > 2
-        ? Promise.all([getOwner(normalisedName)])
-        : batch(
-            getOwner.batch(normalisedName),
-            getExpiry.batch(normalisedName),
-          ),
-    {
-      enabled: !!(normalisedName && valid),
-    },
-  )
-
-  const ownerData = batchData?.[0] as Awaited<ReturnType<typeof getOwner>>
-  const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
-
-  const expiryDate = expiryData?.expiry
-
-  const truncatedName = truncateFormat(normalisedName)
+  } = useNameDetails(name)
 
   const isLoading =
-    !ready ||
-    profileLoading ||
-    batchLoading ||
-    primaryLoading ||
-    accountLoading ||
-    initial
+    detailsLoading || primaryLoading || accountLoading || initial
 
   useProtectedRoute(
     '/',
     // When anything is loading, return true
-    ready
+    isLoading
       ? // if is self, user must be connected
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0
       : true,
   )
-
-  useEffect(() => {
-    if (valid && profile && profile.isMigrated && !profile.message) {
-      setError(null)
-    } else if (!valid) {
-      setError('This name is invalid.')
-    } else if (profile && !profile.isMigrated) {
-      setError('This name is not migrated to the new registry.')
-    } else if (profile && profile.message) {
-      setError(profile.message)
-    } else {
-      setError('Unknown error.')
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valid, profile?.isMigrated, profile?.message])
 
   const getTextRecord = (key: string) =>
     profile?.records?.texts?.find((x) => x.key === key)

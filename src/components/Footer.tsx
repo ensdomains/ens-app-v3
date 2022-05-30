@@ -16,7 +16,7 @@ const Container = styled.footer`
   flex-direction: column;
   align-items: center;
   margin-top: ${({ theme }) => theme.space['2.5']};
-  ${mq.medium.min`
+  ${mq.md.min`
     flex-direction: row;
   `}
 `
@@ -34,7 +34,7 @@ const LinkContainer = styled.div`
 const FlexSeparator = styled.div`
   flex-grow: 1;
   margin-bottom: ${({ theme }) => theme.space['2.5']};
-  ${mq.medium.min`
+  ${mq.md.min`
     margin-bottom: 0;
   `}
 `

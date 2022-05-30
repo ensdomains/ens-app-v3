@@ -45,7 +45,7 @@ const AvatarWrapper = styled.div`
 const TypeWrapper = styled.div`
   ${({ theme }) => css`
     max-width: ${theme.space['48']};
-    ${mq.medium.min`
+    ${mq.md.min`
       max-width: ${theme.space['96']};
     `}
   `}
@@ -68,7 +68,7 @@ export const NameDetailItem = ({
   children: ReactNode
 }) => {
   const router = useRouter()
-  const avatar = useAvatar(name, network)
+  const { avatar } = useAvatar(name, network)
   const zorb = useZorb(id, 'hash')
 
   return (
