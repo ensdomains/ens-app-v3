@@ -1,0 +1,63 @@
+import { Checkbox, Field } from '@ensdomains/thorin'
+import styled from 'styled-components'
+import SortControl, {
+  SortType,
+  SortDirection,
+} from '../@molecules/SortControl/SortControl'
+
+const PopoverContainer = styled.div`
+  ${({ theme }) => `
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['3']};
+    padding: ${theme.space['3']};
+    width: 90vw;
+    max-width: 310px;    
+    background: ${theme.colors.white};
+    border: 1px solid ${theme.colors.borderTertiary};
+    box-shadow: ${theme.boxShadows['0.02']};
+  `}
+`
+
+const CheckBoxesWrapper = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+`
+
+const CheckBoxWrapper = styled.div`
+  ${({ theme }) => `
+    padding: ${theme.space['2']};
+    background: ${theme.colors.backgroundSecondary};
+    border: 1px solid ${theme.colors.borderSecondary};
+    border-radius: ${theme.space['2.5']};
+  `}
+`
+
+type PopoverProps = {
+  sortBy: SortType
+  sortDirection: SortDirection
+}
+
+const FilterPopover = ({ sortBy, sortDirection }: PopoverProps) => {
+  const initialSortValue = {
+    type: sortBy,
+    direction: sortDirection,
+  }
+  return (
+    <PopoverContainer>
+      <SortControl value={initialSortValue} />
+      <Field label="Show">
+        <CheckBoxesWrapper>
+          {['registrant', 'controller', 'owner'].map((type) => (
+            <CheckBoxWrapper>
+              <Checkbox label={type} />
+            </CheckBoxWrapper>
+          ))}
+        </CheckBoxesWrapper>
+      </Field>
+    </PopoverContainer>
+  )
+}
+
+export default FilterPopover
