@@ -5,11 +5,11 @@ import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { FavouriteButton } from '../FavouriteButton'
 
 const Container = styled(Card)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -22,7 +22,7 @@ const Container = styled(Card)`
 `
 
 const ExpiryContainer = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -34,7 +34,7 @@ const ExpiryContainer = styled.div`
   `}
 `
 const Row = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -46,13 +46,13 @@ const Row = styled.div`
 `
 
 const FullWidthOutlinedButton = styled(OutlinedButton)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space.full};
   `}
 `
 
 const InnerButton = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -63,7 +63,7 @@ const InnerButton = styled.div`
 `
 
 const ButtonIcon = styled.svg`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: block;
     width: ${theme.space['4']};
     height: ${theme.space['4']};

@@ -4,14 +4,14 @@ import TripleDotSVG from '@app/assets/TripleDot.svg'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Card } from '../Card'
 import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 import { OutlinedButton } from '../OutlinedButton'
 import { FavouriteButton } from './FavouriteButton'
 
 const Container = styled(Card)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     padding: ${theme.space['3']};
     width: ${theme.space.full};
     align-items: stretch;
@@ -20,7 +20,7 @@ const Container = styled(Card)`
 `
 
 const ImageWrapper = styled(NFTWithPlaceholder)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     border-radius: ${theme.radii.extraLarge};
     width: 35vw;
     height: 35vw;
@@ -35,14 +35,14 @@ const RightColumn = styled.div`
   flex-direction: column;
   align-self: flex-end;
   justify-content: flex-end;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     height: ${theme.space.full};
     gap: ${theme.space['1']};
   `}
 `
 
 const ExpiresHeading = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     color: ${theme.colors.textTertiary};
   `}
 `
@@ -52,13 +52,13 @@ const ExpiryAndFavouriteRow = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     margin-bottom: ${theme.space['1']};
   `}
 `
 
 const RowWithGap = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -67,7 +67,7 @@ const RowWithGap = styled.div`
 `
 
 const InnerButton = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -78,7 +78,7 @@ const InnerButton = styled.div`
 `
 
 const ButtonIcon = styled.svg`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: block;
     width: ${theme.space['4']};
     height: ${theme.space['4']};

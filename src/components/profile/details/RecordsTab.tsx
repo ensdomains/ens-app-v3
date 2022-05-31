@@ -44,7 +44,7 @@ const TabWrapper = styled(OriginalTabWrapper)`
 `
 
 const RecordSection = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -59,7 +59,7 @@ const SectionHeader = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space.full};
     padding: 0 ${theme.radii.large};
   `}
@@ -70,14 +70,14 @@ const SectionTitleContainer = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: flex-start;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
   `}
 `
 
 const SectionTitle = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     color: ${theme.colors.foreground};
   `}
 `
@@ -89,7 +89,7 @@ const SectionSubtitle = styled(Typography)`
 `
 
 const EditButton = styled.button`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: block;
     outline: none;
     border: none;
@@ -182,13 +182,13 @@ const InnerCopyButton = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space['9']};
   `}
 `
 
 const LegacyType = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     color: ${theme.colors.textTertiary};
   `}
 `

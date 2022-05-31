@@ -26,13 +26,13 @@ const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>`
   ${({ theme, $isTabBar }) =>
     $isTabBar &&
-    `
-    flex-grow: 1;
-    & button {
-      width: ${theme.space.full};
-      border-radius: ${theme.radii.full};
-    }
-  `}
+    css`
+      flex-grow: 1;
+      & button {
+        width: ${theme.space.full};
+        border-radius: ${theme.radii.full};
+      }
+    `}
 `
 
 export type AccountRenderProps = {

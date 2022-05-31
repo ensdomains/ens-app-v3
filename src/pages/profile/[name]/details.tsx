@@ -79,7 +79,7 @@ const OwnerButtons = styled.div`
 `
 
 const TabButtonContainer = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     margin-left: ${theme.radii.extraLarge};
     display: flex;
     flex-direction: row;
@@ -87,11 +87,11 @@ const TabButtonContainer = styled.div`
     justify-content: flex-start;
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
-     `}
+  `}
 `
 
 const TabContainer = styled(GridItem)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -101,7 +101,7 @@ const TabContainer = styled(GridItem)`
 `
 
 const TabButton = styled.button<{ $selected: boolean }>`
-  ${({ theme, $selected }) => `
+  ${({ theme, $selected }) => css`
     display: block;
     outline: none;
     border: none;

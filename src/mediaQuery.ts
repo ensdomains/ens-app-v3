@@ -22,16 +22,16 @@ const typeKeys = Object.keys(breakpointTypes) as Array<BreakpointType>
 
 const mq = keys.reduce((acc, sizeLabel) => {
   acc[sizeLabel] = typeKeys.reduce((accumulator, typeLabel) => {
-    accumulator[typeLabel] = (...args: CSSParams) => {
+    accumulator[typeLabel] = ((...args: CSSParams) => {
       return css`
         @media (${breakpointTypes[typeLabel]}: ${breakpoints[sizeLabel]}) {
           ${css(...args)};
         }
       `
-    }
+    }) as typeof css
     return accumulator
-  }, {} as Record<BreakpointType, Function>)
+  }, {} as Record<BreakpointType, typeof css>)
   return acc
-}, {} as Record<Breakpoint, Record<BreakpointType, Function>>)
+}, {} as Record<Breakpoint, Record<BreakpointType, typeof css>>)
 
 export default mq

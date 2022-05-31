@@ -3,12 +3,12 @@ import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { AddressAvatar, AvatarWithZorb } from '../AvatarWithZorb'
 import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 
 const Container = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -19,7 +19,7 @@ const Container = styled.div`
 `
 
 const OwnerContainer = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -29,14 +29,14 @@ const OwnerContainer = styled.div`
 `
 
 const AvatarWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space['5']};
     height: ${theme.space['5']};
   `}
 `
 
 const OwnerWithEns = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -104,7 +104,7 @@ const ItemContainer = styled.div`
 `
 
 const NameDetailContainer = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -119,7 +119,7 @@ const NameDetailContainer = styled.div`
 `
 
 const ButtonWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     margin-top: ${theme.space['2']};
     & > button {
       border: ${theme.space.px} solid ${theme.colors.borderSecondary};
@@ -129,7 +129,7 @@ const ButtonWrapper = styled.div`
 `
 
 const LeftText = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     color: ${theme.colors.textTertiary};
   `}
 `

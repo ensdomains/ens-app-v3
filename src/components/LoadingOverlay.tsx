@@ -1,6 +1,6 @@
 import { Heading, Spinner } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const Container = styled.div`
   flex-grow: 1;
@@ -8,7 +8,7 @@ const Container = styled.div`
   align-items: center;
   justify-content: center;
   flex-direction: row;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     flex-gap: ${theme.space['4']};
     gap: ${theme.space['4']};
   `}

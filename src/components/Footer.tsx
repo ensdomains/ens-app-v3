@@ -1,6 +1,6 @@
 import mq from '@app/mediaQuery'
 import { useTranslation } from 'next-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import SocialDiscord from '../assets/social/SocialDiscord.svg'
 import SocialDiscourse from '../assets/social/SocialDiscourse.svg'
 import SocialDiscourseColour from '../assets/social/SocialDiscourseColour.svg'
@@ -25,9 +25,9 @@ const LinkContainer = styled.div`
   display: flex;
   direction: row;
   align-items: center;
-  ${({ theme }) => `
-  flex-gap: ${theme.space['4']};
-  gap: ${theme.space['4']};
+  ${({ theme }) => css`
+    flex-gap: ${theme.space['4']};
+    gap: ${theme.space['4']};
   `}
 `
 
@@ -42,9 +42,9 @@ const FlexSeparator = styled.div`
 const SocialIconContainer = styled.div`
   display: flex;
   flex-direction: row;
-  ${({ theme }) => `
-  flex-gap: ${theme.space['2']};
-  gap: ${theme.space['2']};
+  ${({ theme }) => css`
+    flex-gap: ${theme.space['2']};
+    gap: ${theme.space['2']};
   `}
 `
 

@@ -543,6 +543,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.2.1"\
       ],\
       [\
+        "@emmetio/abbreviation",\
+        "npm:2.2.3"\
+      ],\
+      [\
+        "@emmetio/css-abbreviation",\
+        "npm:2.1.4"\
+      ],\
+      [\
+        "@emmetio/scanner",\
+        "npm:1.0.0"\
+      ],\
+      [\
         "@emotion/hash",\
         "npm:0.8.0"\
       ],\
@@ -608,7 +620,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/thorin",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"\
       ],\
       [\
         "@eslint/eslintrc",\
@@ -3218,6 +3230,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:0.8.1"\
       ],\
       [\
+        "emmet",\
+        "npm:2.3.6"\
+      ],\
+      [\
         "emoji-regex",\
         "npm:8.0.0"\
       ],\
@@ -4744,6 +4760,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "json5",\
         "npm:2.2.1"\
+      ],\
+      [\
+        "jsonc-parser",\
+        "npm:2.3.1"\
       ],\
       [\
         "jsonfile",\
@@ -6777,6 +6797,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"\
       ],\
       [\
+        "typescript-styled-plugin",\
+        "npm:0.18.2"\
+      ],\
+      [\
+        "typescript-template-language-service-decorator",\
+        "npm:2.3.1"\
+      ],\
+      [\
         "u2f-api",\
         "npm:0.2.7"\
       ],\
@@ -6975,6 +7003,30 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "void-elements",\
         "npm:3.1.0"\
+      ],\
+      [\
+        "vscode-css-languageservice",\
+        "npm:5.4.2"\
+      ],\
+      [\
+        "vscode-emmet-helper",\
+        "npm:2.6.4"\
+      ],\
+      [\
+        "vscode-languageserver-textdocument",\
+        "npm:1.0.4"\
+      ],\
+      [\
+        "vscode-languageserver-types",\
+        "npm:3.17.1"\
+      ],\
+      [\
+        "vscode-nls",\
+        "npm:5.0.1"\
+      ],\
+      [\
+        "vscode-uri",\
+        "npm:3.0.3"\
       ],\
       [\
         "w3c-hr-time",\
@@ -7292,7 +7344,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -7367,6 +7419,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.5"],\
             ["ts-node", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:10.7.0"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"],\
+            ["typescript-styled-plugin", "npm:0.18.2"],\
             ["wagmi", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.4.3"],\
             ["wait-on", "npm:6.0.1"]\
           ],\
@@ -10470,6 +10523,35 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@emmetio/abbreviation", [\
+        ["npm:2.2.3", {\
+          "packageLocation": "./.yarn/cache/@emmetio-abbreviation-npm-2.2.3-3417da17df-8637ff0c2a.zip/node_modules/@emmetio/abbreviation/",\
+          "packageDependencies": [\
+            ["@emmetio/abbreviation", "npm:2.2.3"],\
+            ["@emmetio/scanner", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@emmetio/css-abbreviation", [\
+        ["npm:2.1.4", {\
+          "packageLocation": "./.yarn/cache/@emmetio-css-abbreviation-npm-2.1.4-05e2d03465-ede72dafc4.zip/node_modules/@emmetio/css-abbreviation/",\
+          "packageDependencies": [\
+            ["@emmetio/css-abbreviation", "npm:2.1.4"],\
+            ["@emmetio/scanner", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@emmetio/scanner", [\
+        ["npm:1.0.0", {\
+          "packageLocation": "./.yarn/cache/@emmetio-scanner-npm-1.0.0-9b3eb0b7bc-4e4366bf0b.zip/node_modules/@emmetio/scanner/",\
+          "packageDependencies": [\
+            ["@emmetio/scanner", "npm:1.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@emotion/hash", [\
         ["npm:0.8.0", {\
           "packageLocation": "./.yarn/cache/@emotion-hash-npm-0.8.0-0104f4bbf3-4b35d88a97.zip/node_modules/@emotion/hash/",\
@@ -10712,17 +10794,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/thorin", [\
-        ["npm:0.5.9", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-npm-0.5.9-da0c5eed18-0ad3f8ce14.zip/node_modules/@ensdomains/thorin/",\
+        ["git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-git@github.com-6c5e43837a-05ebf5c3f8.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "npm:0.5.9"]\
+            ["@ensdomains/thorin", "git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-b7ad4af1f7/0/cache/@ensdomains-thorin-npm-0.5.9-da0c5eed18-0ad3f8ce14.zip/node_modules/@ensdomains/thorin/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-296469e783/0/cache/@ensdomains-thorin-git@github.com-6c5e43837a-05ebf5c3f8.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"],\
             ["@types/react", "npm:17.0.30"],\
             ["@types/react-dom", null],\
             ["@types/react-transition-state", null],\
@@ -20517,6 +20599,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["emmet", [\
+        ["npm:2.3.6", {\
+          "packageLocation": "./.yarn/cache/emmet-npm-2.3.6-89b875a245-96d56212d7.zip/node_modules/emmet/",\
+          "packageDependencies": [\
+            ["emmet", "npm:2.3.6"],\
+            ["@emmetio/abbreviation", "npm:2.2.3"],\
+            ["@emmetio/css-abbreviation", "npm:2.1.4"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["emoji-regex", [\
         ["npm:7.0.3", {\
           "packageLocation": "./.yarn/cache/emoji-regex-npm-7.0.3-cfe9479bb3-9159b2228b.zip/node_modules/emoji-regex/",\
@@ -20632,7 +20725,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -20707,6 +20800,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["styled-components", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.3.5"],\
             ["ts-node", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:10.7.0"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"],\
+            ["typescript-styled-plugin", "npm:0.18.2"],\
             ["wagmi", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.4.3"],\
             ["wait-on", "npm:6.0.1"]\
           ],\
@@ -26955,6 +27049,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/json5-npm-2.2.1-44675c859c-74b8a23b10.zip/node_modules/json5/",\
           "packageDependencies": [\
             ["json5", "npm:2.2.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["jsonc-parser", [\
+        ["npm:2.3.1", {\
+          "packageLocation": "./.yarn/cache/jsonc-parser-npm-2.3.1-9bef9d1f9b-de37640bd1.zip/node_modules/jsonc-parser/",\
+          "packageDependencies": [\
+            ["jsonc-parser", "npm:2.3.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -34177,6 +34280,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["typescript-styled-plugin", [\
+        ["npm:0.18.2", {\
+          "packageLocation": "./.yarn/cache/typescript-styled-plugin-npm-0.18.2-8ec1653d73-a410974ba8.zip/node_modules/typescript-styled-plugin/",\
+          "packageDependencies": [\
+            ["typescript-styled-plugin", "npm:0.18.2"],\
+            ["typescript-template-language-service-decorator", "npm:2.3.1"],\
+            ["vscode-css-languageservice", "npm:5.4.2"],\
+            ["vscode-emmet-helper", "npm:2.6.4"],\
+            ["vscode-languageserver-textdocument", "npm:1.0.4"],\
+            ["vscode-languageserver-types", "npm:3.17.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["typescript-template-language-service-decorator", [\
+        ["npm:2.3.1", {\
+          "packageLocation": "./.yarn/cache/typescript-template-language-service-decorator-npm-2.3.1-d342f6eed9-0592142990.zip/node_modules/typescript-template-language-service-decorator/",\
+          "packageDependencies": [\
+            ["typescript-template-language-service-decorator", "npm:2.3.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["u2f-api", [\
         ["npm:0.2.7", {\
           "packageLocation": "./.yarn/cache/u2f-api-npm-0.2.7-d72d3c4b82-7f19ce46fc.zip/node_modules/u2f-api/",\
@@ -34807,6 +34933,77 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/void-elements-npm-3.1.0-4f43780839-0390f81810.zip/node_modules/void-elements/",\
           "packageDependencies": [\
             ["void-elements", "npm:3.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vscode-css-languageservice", [\
+        ["npm:5.4.2", {\
+          "packageLocation": "./.yarn/cache/vscode-css-languageservice-npm-5.4.2-93ba53a08d-faa35690c1.zip/node_modules/vscode-css-languageservice/",\
+          "packageDependencies": [\
+            ["vscode-css-languageservice", "npm:5.4.2"],\
+            ["vscode-languageserver-textdocument", "npm:1.0.4"],\
+            ["vscode-languageserver-types", "npm:3.17.1"],\
+            ["vscode-nls", "npm:5.0.1"],\
+            ["vscode-uri", "npm:3.0.3"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vscode-emmet-helper", [\
+        ["npm:2.6.4", {\
+          "packageLocation": "./.yarn/cache/vscode-emmet-helper-npm-2.6.4-d49a658881-ccee14eada.zip/node_modules/vscode-emmet-helper/",\
+          "packageDependencies": [\
+            ["vscode-emmet-helper", "npm:2.6.4"],\
+            ["emmet", "npm:2.3.6"],\
+            ["jsonc-parser", "npm:2.3.1"],\
+            ["vscode-languageserver-textdocument", "npm:1.0.4"],\
+            ["vscode-languageserver-types", "npm:3.17.1"],\
+            ["vscode-nls", "npm:5.0.1"],\
+            ["vscode-uri", "npm:2.1.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vscode-languageserver-textdocument", [\
+        ["npm:1.0.4", {\
+          "packageLocation": "./.yarn/cache/vscode-languageserver-textdocument-npm-1.0.4-ebc18acc81-d0b63abb9d.zip/node_modules/vscode-languageserver-textdocument/",\
+          "packageDependencies": [\
+            ["vscode-languageserver-textdocument", "npm:1.0.4"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vscode-languageserver-types", [\
+        ["npm:3.17.1", {\
+          "packageLocation": "./.yarn/cache/vscode-languageserver-types-npm-3.17.1-fb063d7845-ceb4145dfd.zip/node_modules/vscode-languageserver-types/",\
+          "packageDependencies": [\
+            ["vscode-languageserver-types", "npm:3.17.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vscode-nls", [\
+        ["npm:5.0.1", {\
+          "packageLocation": "./.yarn/cache/vscode-nls-npm-5.0.1-3c9d81d64b-a9dc0cf1fc.zip/node_modules/vscode-nls/",\
+          "packageDependencies": [\
+            ["vscode-nls", "npm:5.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["vscode-uri", [\
+        ["npm:2.1.2", {\
+          "packageLocation": "./.yarn/cache/vscode-uri-npm-2.1.2-818cfab1f1-58c2d21018.zip/node_modules/vscode-uri/",\
+          "packageDependencies": [\
+            ["vscode-uri", "npm:2.1.2"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:3.0.3", {\
+          "packageLocation": "./.yarn/cache/vscode-uri-npm-3.0.3-56e09d8aa6-683bf9de83.zip/node_modules/vscode-uri/",\
+          "packageDependencies": [\
+            ["vscode-uri", "npm:3.0.3"]\
           ],\
           "linkType": "HARD"\
         }]\

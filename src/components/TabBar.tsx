@@ -3,7 +3,7 @@ import { Avatar } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ComponentType, useMemo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import CogSVG from '../assets/Cog.svg'
 import GridSVG from '../assets/Grid.svg'
 import HeartSVG from '../assets/Heart.svg'
@@ -11,26 +11,29 @@ import MagnifyingGlassSVG from '../assets/MagnifyingGlass.svg'
 import { ConnectButtonWrapper } from './ConnectButton'
 
 const AvatarWrapper = styled.div<{ $active: boolean }>`
-  ${({ theme, $active }) => `
-  position: relative;
-  width: ${theme.space['10']};
-  border: 2px solid ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
-  background-color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
-  border-radius: ${theme.radii.full};
+  ${({ theme, $active }) => css`
+    position: relative;
+    width: ${theme.space['10']};
+    border: 2px solid
+      ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
+    background-color: ${$active
+      ? theme.colors.accent
+      : 'rgba(196, 196, 196, 1)'};
+    border-radius: ${theme.radii.full};
   `}
 `
 
 const LinkWrapper = styled.a`
-  ${({ theme }) => `
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: ${theme.space['12']};
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: ${theme.space['12']};
   `}
 `
 
 const IconContainer = styled.div<{ $active: boolean }>`
-  ${({ theme, $active }) => `
+  ${({ theme, $active }) => css`
     color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
     width: ${theme.space['6']};
     height: ${theme.space['6']};

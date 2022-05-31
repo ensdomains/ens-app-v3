@@ -27,11 +27,11 @@ const GradientTitle = styled.h1`
 `
 
 const SubtitleWrapper = styled.div`
-  ${({ theme }) => `
-  max-width: calc(${theme.space['72']} * 2 - ${theme.space['4']});
-  line-height: 150%;
-  text-align: center;
-  margin-bottom: ${theme.space['3']};
+  ${({ theme }) => css`
+    max-width: calc(${theme.space['72']} * 2 - ${theme.space['4']});
+    line-height: 150%;
+    text-align: center;
+    margin-bottom: ${theme.space['3']};
   `}
 `
 
@@ -40,23 +40,23 @@ const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 100%:
+  width: 100%;
 `
 
 const Stack = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  flex-gap: ${theme.space['3']};
-  gap: ${theme.space['3']};
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex-gap: ${theme.space['3']};
+    gap: ${theme.space['3']};
   `}
 `
 
 const Description = styled(Typography)`
-  ${({ theme }) => `
-  line-height: ${theme.lineHeights['1.5']};
+  ${({ theme }) => css`
+    line-height: ${theme.lineHeights['1.5']};
   `}
 `
 

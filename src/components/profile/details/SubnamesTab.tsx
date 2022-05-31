@@ -2,7 +2,7 @@ import { useEns } from '@app/utils/EnsProvider'
 import { ArrowRightSVG, PageButtons } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
 import { NameDetailItem } from '../../NameDetailItem'
 import { TabWrapper } from '../TabWrapper'
@@ -21,17 +21,17 @@ const EmptyDetailContainer = styled.div`
 `
 
 const RightArrow = styled.svg`
-  ${({ theme }) => `
-  stroke-width: ${theme.borderWidths['0.75']};
-  color: ${theme.colors.textTertiary};
-  display: block;
-  height: ${theme.space['6']};
-  width: ${theme.space['6']};
+  ${({ theme }) => css`
+    stroke-width: ${theme.borderWidths['0.75']};
+    color: ${theme.colors.textTertiary};
+    display: block;
+    height: ${theme.space['6']};
+    width: ${theme.space['6']};
   `}
 `
 
 const PageButtonsContainer = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;

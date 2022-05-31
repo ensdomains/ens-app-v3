@@ -68,10 +68,10 @@ const LogoAnchor = styled.a`
 `
 
 const VerticalLine = styled.div`
-  ${({ theme }) => `
-  width: 1px;
-  height: ${theme.space['14']};
-  background-color: ${theme.colors.borderSecondary};
+  ${({ theme }) => css`
+    width: 1px;
+    height: ${theme.space['14']};
+    background-color: ${theme.colors.borderSecondary};
   `}
 `
 

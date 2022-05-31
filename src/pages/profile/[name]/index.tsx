@@ -48,7 +48,7 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>`
 `
 
 const ErrorIcon = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     background: rgba(255, 255, 255, 0.5);
     color: ${theme.colors.yellow};
     stroke-width: ${theme.space['0.5']};
@@ -62,29 +62,29 @@ const ErrorIcon = styled.div`
 `
 
 const ErrorContainer = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  gap: ${theme.space['4']};
-  flex-gap: ${theme.space['4']};
-  grid-area: error;
-  background: rgba(${theme.accentsRaw.yellow}, 0.25);
-  border-radius: ${theme.radii['2xLarge']};
-  padding: ${theme.space['2']};
-  padding-right: ${theme.space['8']};
-  color: ${theme.colors.textSecondary};
-  & > div {
-    line-height: ${theme.lineHeights.normal};
-  }
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
+    grid-area: error;
+    background: rgba(${theme.accentsRaw.yellow}, 0.25);
+    border-radius: ${theme.radii['2xLarge']};
+    padding: ${theme.space['2']};
+    padding-right: ${theme.space['8']};
+    color: ${theme.colors.textSecondary};
+    & > div {
+      line-height: ${theme.lineHeights.normal};
+    }
   `}
 `
 
 const SelfButtons = styled.div`
   display: flex;
   flex-direction: row;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
 

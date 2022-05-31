@@ -27,23 +27,23 @@ const Container = styled.div<{ $size: 'large' | 'extraLarge' }>`
 `
 
 const SearchArrowButton = styled.div<{ $danger?: boolean }>`
-  ${({ $danger, theme }) => `
-  display: block;
-  transition: all 0.15s ease-in-out;
-  cursor: pointer;
-  color: ${$danger ? theme.colors.red : theme.colors.accent};
-  width: ${theme.space['7']};
-  height: ${theme.space['7']};
-  margin-right: ${theme.space['2']};
-  &:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-  }
+  ${({ $danger, theme }) => css`
+    display: block;
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+    color: ${$danger ? theme.colors.red : theme.colors.accent};
+    width: ${theme.space['7']};
+    height: ${theme.space['7']};
+    margin-right: ${theme.space['2']};
+    &:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
   `}
 `
 
 const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
-  ${({ theme, $size }) => `
+  ${({ theme, $size }) => css`
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2.5xLarge']};
     border-width: 1px;
@@ -53,9 +53,8 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
       color: ${theme.colors.textTertiary};
       font-weight: ${theme.fontWeights.bold};
     }
-    ${
-      $size === 'large' &&
-      `
+    ${$size === 'large' &&
+    css`
       transition: all 0.35s cubic-bezier(1, 0, 0.1, 1.6);
       max-width: ${theme.space['80']};
       &:focus-within {
@@ -65,19 +64,16 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
       & input::placeholder {
         color: ${theme.colors.textTertiary};
       }
-    `
-    }
+    `}
   `}
 `
 
 const StyledInputParent = (size: 'large' | 'extraLarge') => css`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     border-radius: ${theme.radii['2.5xLarge']};
-    background-color: ${
-      size === 'large'
-        ? theme.colors.background
-        : theme.colors.backgroundSecondary
-    };
+    background-color: ${size === 'large'
+      ? theme.colors.background
+      : theme.colors.backgroundSecondary};
   `}
 `
 

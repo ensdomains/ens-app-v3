@@ -1,9 +1,9 @@
 import HeartSVG from '@app/assets/Heart.svg'
 import type { ComponentProps } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const FavouriteButtonContainer = styled.button`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     outline: none;
     background: none;
     border: none;
@@ -16,7 +16,7 @@ const FavouriteButtonContainer = styled.button`
 `
 
 const HeartIcon = styled.svg`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: block;
     color: transparent;
     stroke: ${theme.colors.borderSecondary};
