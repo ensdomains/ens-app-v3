@@ -22,8 +22,8 @@ const TransactionSectionHeadingContainer = styled.div`
 
 const TransactionSectionHeading = styled(SectionHeading)<{
   $hasTransactions: boolean
-}>`
-  ${({ theme, $hasTransactions }) => css`
+}>(
+  ({ theme, $hasTransactions }) => css`
     position: relative;
     ${$hasTransactions &&
     css`
@@ -37,11 +37,11 @@ const TransactionSectionHeading = styled(SectionHeading)<{
         top: ${theme.space['2']};
       }
     `}
-  `}
-`
+  `,
+)
 
-const TransactionSectionContainer = styled.div<{ $hasTransactions: boolean }>`
-  ${({ theme, $hasTransactions }) => css`
+const TransactionSectionContainer = styled.div<{ $transactionLength: number }>`
+  ${({ theme, $transactionLength }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -51,9 +51,15 @@ const TransactionSectionContainer = styled.div<{ $hasTransactions: boolean }>`
     height: ${theme.space['13']};
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
-    ${$hasTransactions &&
+    transition: 0.2s all ease-in-out, 0s justify-content 0s linear,
+      0s color 0s linear;
+    ${$transactionLength &&
     css`
-      height: auto;
+      ${TransactionSectionHeading} {
+        color: transparent;
+      }
+      justify-content: flex-end;
+      height: calc(${$transactionLength} * ${theme.space['18']});
       background-color: transparent;
       border: 1px solid ${theme.colors.borderTertiary};
     `}
@@ -69,7 +75,8 @@ const RecentTransactionsMessage = styled(Typography)`
 const TransactionContainer = styled(Card)`
   ${({ theme }) => css`
     width: 100%;
-    padding: ${theme.space['3']};
+    min-height: ${theme.space['18']};
+    padding: 0 ${theme.space['3']};
     flex-direction: row;
     justify-content: flex-start;
     gap: ${theme.space['3']};
@@ -121,81 +128,6 @@ export const TransactionSection = () => {
   const { activeChain } = useNetwork()
   const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
-  // const transactions = [
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'pending',
-  //     confirmations: 0,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setRecords',
-  //     status: 'confirmed',
-  //     confirmations: 1,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'failed',
-  //     confirmations: 1,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'pending',
-  //     confirmations: 0,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setRecords',
-  //     status: 'confirmed',
-  //     confirmations: 1,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'failed',
-  //     confirmations: 1,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'pending',
-  //     confirmations: 0,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setRecords',
-  //     status: 'confirmed',
-  //     confirmations: 1,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'failed',
-  //     confirmations: 1,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'pending',
-  //     confirmations: 0,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setRecords',
-  //     status: 'confirmed',
-  //     confirmations: 1,
-  //   },
-  //   {
-  //     hash: '0x2edba3efac370d27ea850ba16c87b76af696072b9c61210b4c9f8fea57577894',
-  //     description: 'setName',
-  //     status: 'failed',
-  //     confirmations: 1,
-  //   },
-  // ]
-
   const [viewAmt, setViewAmt] = useState(5)
 
   return (
@@ -222,7 +154,7 @@ export const TransactionSection = () => {
           </Button>
         </div>
       </TransactionSectionHeadingContainer>
-      <TransactionSectionContainer $hasTransactions={transactions.length > 0}>
+      <TransactionSectionContainer $transactionLength={transactions.length}>
         {transactions.length > 0 ? (
           <>
             {transactions.slice(0, viewAmt - 1).map((transaction) => (
