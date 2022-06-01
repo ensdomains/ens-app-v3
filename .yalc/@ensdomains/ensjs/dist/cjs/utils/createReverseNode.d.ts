@@ -1,2 +1,2 @@
-declare const _default: (address: string) => string;
-export default _default;
+declare const _default: (address: string) => string
+export default _default

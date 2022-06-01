@@ -2,97 +2,97 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
+import { Contract, Signer, utils } from 'ethers'
+import type { Provider } from '@ethersproject/providers'
 import type {
   DefaultReverseResolver,
   DefaultReverseResolverInterface,
-} from "../DefaultReverseResolver";
+} from '../DefaultReverseResolver'
 
 const _abi = [
   {
     inputs: [
       {
-        internalType: "contract ENS",
-        name: "ensAddr",
-        type: "address",
+        internalType: 'contract ENS',
+        name: 'ensAddr',
+        type: 'address',
       },
     ],
     payable: false,
-    stateMutability: "nonpayable",
-    type: "constructor",
+    stateMutability: 'nonpayable',
+    type: 'constructor',
   },
   {
     constant: true,
     inputs: [],
-    name: "ens",
+    name: 'ens',
     outputs: [
       {
-        internalType: "contract ENS",
-        name: "",
-        type: "address",
+        internalType: 'contract ENS',
+        name: '',
+        type: 'address',
       },
     ],
     payable: false,
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     constant: true,
     inputs: [
       {
-        internalType: "bytes32",
-        name: "",
-        type: "bytes32",
+        internalType: 'bytes32',
+        name: '',
+        type: 'bytes32',
       },
     ],
-    name: "name",
+    name: 'name',
     outputs: [
       {
-        internalType: "string",
-        name: "",
-        type: "string",
+        internalType: 'string',
+        name: '',
+        type: 'string',
       },
     ],
     payable: false,
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
   {
     constant: false,
     inputs: [
       {
-        internalType: "bytes32",
-        name: "node",
-        type: "bytes32",
+        internalType: 'bytes32',
+        name: 'node',
+        type: 'bytes32',
       },
       {
-        internalType: "string",
-        name: "_name",
-        type: "string",
+        internalType: 'string',
+        name: '_name',
+        type: 'string',
       },
     ],
-    name: "setName",
+    name: 'setName',
     outputs: [],
     payable: false,
-    stateMutability: "nonpayable",
-    type: "function",
+    stateMutability: 'nonpayable',
+    type: 'function',
   },
-];
+]
 
 export class DefaultReverseResolver__factory {
-  static readonly abi = _abi;
+  static readonly abi = _abi
   static createInterface(): DefaultReverseResolverInterface {
-    return new utils.Interface(_abi) as DefaultReverseResolverInterface;
+    return new utils.Interface(_abi) as DefaultReverseResolverInterface
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): DefaultReverseResolver {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
-    ) as DefaultReverseResolver;
+      signerOrProvider,
+    ) as DefaultReverseResolver
   }
 }

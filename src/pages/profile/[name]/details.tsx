@@ -1,20 +1,22 @@
+import { useMemo, useState } from 'react'
+import styled, { css } from 'styled-components'
+import { useAccount, useNetwork } from 'wagmi'
+import { Typography } from '@ensdomains/thorin'
+import type { GetStaticPaths, NextPage } from 'next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useRouter } from 'next/router'
+
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
-import { DetailSnippet } from '@app/components/profile/details/DetailSnippet'
-import { RecordsTab } from '@app/components/profile/details/RecordsTab'
-import { SubnamesTab } from '@app/components/profile/details/SubnamesTab'
-import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
-import { OwnerButton } from '@app/components/profile/OwnerButton'
+import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
+import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
+import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
+import More from '@app/components/pages/profile/[name]/details/More/More'
+import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
+import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Card, Typography } from '@ensdomains/thorin'
-import type { GetStaticPaths, NextPage } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
-import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { useAccount, useNetwork } from 'wagmi'
 
 const GridItem = styled.div<{ $area: string }>`
   grid-area: ${({ $area }) => $area};
@@ -246,7 +248,7 @@ const NameDetails: NextPage = () => {
               subnames: (
                 <SubnamesTab name={normalisedName} network={chain?.name!} />
               ),
-              more: <Card>Test</Card>,
+              more: <More />,
             }[tab]
           }
         </TabContainer>

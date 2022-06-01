@@ -11,127 +11,127 @@ import type {
   PopulatedTransaction,
   Signer,
   utils,
-} from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+} from 'ethers'
+import type { FunctionFragment, Result } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
 import type {
   TypedEventFilter,
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "./common";
+} from './common'
 
 export interface DefaultReverseResolverInterface extends utils.Interface {
   functions: {
-    "ens()": FunctionFragment;
-    "name(bytes32)": FunctionFragment;
-    "setName(bytes32,string)": FunctionFragment;
-  };
+    'ens()': FunctionFragment
+    'name(bytes32)': FunctionFragment
+    'setName(bytes32,string)': FunctionFragment
+  }
 
   getFunction(
-    nameOrSignatureOrTopic: "ens" | "name" | "setName"
-  ): FunctionFragment;
+    nameOrSignatureOrTopic: 'ens' | 'name' | 'setName',
+  ): FunctionFragment
 
-  encodeFunctionData(functionFragment: "ens", values?: undefined): string;
-  encodeFunctionData(functionFragment: "name", values: [BytesLike]): string;
+  encodeFunctionData(functionFragment: 'ens', values?: undefined): string
+  encodeFunctionData(functionFragment: 'name', values: [BytesLike]): string
   encodeFunctionData(
-    functionFragment: "setName",
-    values: [BytesLike, string]
-  ): string;
+    functionFragment: 'setName',
+    values: [BytesLike, string],
+  ): string
 
-  decodeFunctionResult(functionFragment: "ens", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "name", data: BytesLike): Result;
-  decodeFunctionResult(functionFragment: "setName", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'ens', data: BytesLike): Result
+  decodeFunctionResult(functionFragment: 'name', data: BytesLike): Result
+  decodeFunctionResult(functionFragment: 'setName', data: BytesLike): Result
 
-  events: {};
+  events: {}
 }
 
 export interface DefaultReverseResolver extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this
+  attach(addressOrName: string): this
+  deployed(): Promise<this>
 
-  interface: DefaultReverseResolverInterface;
+  interface: DefaultReverseResolverInterface
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    toBlock?: string | number | undefined,
+  ): Promise<Array<TEvent>>
 
   listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
+    eventFilter?: TypedEventFilter<TEvent>,
+  ): Array<TypedListener<TEvent>>
+  listeners(eventName?: string): Array<Listener>
   removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    eventFilter: TypedEventFilter<TEvent>,
+  ): this
+  removeAllListeners(eventName?: string): this
+  off: OnEvent<this>
+  on: OnEvent<this>
+  once: OnEvent<this>
+  removeListener: OnEvent<this>
 
   functions: {
-    ens(overrides?: CallOverrides): Promise<[string]>;
+    ens(overrides?: CallOverrides): Promise<[string]>
 
-    name(arg0: BytesLike, overrides?: CallOverrides): Promise<[string]>;
+    name(arg0: BytesLike, overrides?: CallOverrides): Promise<[string]>
 
     setName(
       node: BytesLike,
       _name: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<ContractTransaction>;
-  };
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<ContractTransaction>
+  }
 
-  ens(overrides?: CallOverrides): Promise<string>;
+  ens(overrides?: CallOverrides): Promise<string>
 
-  name(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
+  name(arg0: BytesLike, overrides?: CallOverrides): Promise<string>
 
   setName(
     node: BytesLike,
     _name: string,
-    overrides?: Overrides & { from?: string | Promise<string> }
-  ): Promise<ContractTransaction>;
+    overrides?: Overrides & { from?: string | Promise<string> },
+  ): Promise<ContractTransaction>
 
   callStatic: {
-    ens(overrides?: CallOverrides): Promise<string>;
+    ens(overrides?: CallOverrides): Promise<string>
 
-    name(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
+    name(arg0: BytesLike, overrides?: CallOverrides): Promise<string>
 
     setName(
       node: BytesLike,
       _name: string,
-      overrides?: CallOverrides
-    ): Promise<void>;
-  };
+      overrides?: CallOverrides,
+    ): Promise<void>
+  }
 
-  filters: {};
+  filters: {}
 
   estimateGas: {
-    ens(overrides?: CallOverrides): Promise<BigNumber>;
+    ens(overrides?: CallOverrides): Promise<BigNumber>
 
-    name(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+    name(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
 
     setName(
       node: BytesLike,
       _name: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<BigNumber>;
-  };
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<BigNumber>
+  }
 
   populateTransaction: {
-    ens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    ens(overrides?: CallOverrides): Promise<PopulatedTransaction>
 
     name(
       arg0: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>
 
     setName(
       node: BytesLike,
       _name: string,
-      overrides?: Overrides & { from?: string | Promise<string> }
-    ): Promise<PopulatedTransaction>;
-  };
+      overrides?: Overrides & { from?: string | Promise<string> },
+    ): Promise<PopulatedTransaction>
+  }
 }

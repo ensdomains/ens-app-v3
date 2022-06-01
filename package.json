@@ -109,7 +109,7 @@
     "jest": "^27.4.7",
     "jest-environment-jsdom": "^27.4.6",
     "jest-localstorage-mock": "^2.4.18",
-    "prettier": "2.5.1",
+    "prettier": "2.6.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4",
     "wait-on": "^6.0.1"

@@ -1,0 +1,6 @@
+.yarn
+.yalc
+yarn.lock
+.next
+out
+artefacts

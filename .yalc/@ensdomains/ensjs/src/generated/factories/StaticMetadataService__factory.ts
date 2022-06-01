@@ -2,59 +2,59 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from "ethers";
-import type { Provider } from "@ethersproject/providers";
+import { Contract, Signer, utils } from 'ethers'
+import type { Provider } from '@ethersproject/providers'
 import type {
   StaticMetadataService,
   StaticMetadataServiceInterface,
-} from "../StaticMetadataService";
+} from '../StaticMetadataService'
 
 const _abi = [
   {
     inputs: [
       {
-        internalType: "string",
-        name: "_metaDataUri",
-        type: "string",
+        internalType: 'string',
+        name: '_metaDataUri',
+        type: 'string',
       },
     ],
-    stateMutability: "nonpayable",
-    type: "constructor",
+    stateMutability: 'nonpayable',
+    type: 'constructor',
   },
   {
     inputs: [
       {
-        internalType: "uint256",
-        name: "",
-        type: "uint256",
+        internalType: 'uint256',
+        name: '',
+        type: 'uint256',
       },
     ],
-    name: "uri",
+    name: 'uri',
     outputs: [
       {
-        internalType: "string",
-        name: "",
-        type: "string",
+        internalType: 'string',
+        name: '',
+        type: 'string',
       },
     ],
-    stateMutability: "view",
-    type: "function",
+    stateMutability: 'view',
+    type: 'function',
   },
-];
+]
 
 export class StaticMetadataService__factory {
-  static readonly abi = _abi;
+  static readonly abi = _abi
   static createInterface(): StaticMetadataServiceInterface {
-    return new utils.Interface(_abi) as StaticMetadataServiceInterface;
+    return new utils.Interface(_abi) as StaticMetadataServiceInterface
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider
+    signerOrProvider: Signer | Provider,
   ): StaticMetadataService {
     return new Contract(
       address,
       _abi,
-      signerOrProvider
-    ) as StaticMetadataService;
+      signerOrProvider,
+    ) as StaticMetadataService
   }
 }

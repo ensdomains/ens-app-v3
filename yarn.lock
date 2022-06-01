@@ -10275,7 +10275,7 @@ __metadata:
     next-compose-plugins: ^2.2.1
     next-i18next: ^10.2.0
     next-transpile-modules: ^9.0.0
-    prettier: 2.5.1
+    prettier: 2.6.2
     react: ^17.0.2
     react-dom: ^17.0.2
     react-ga: ^3.3.0
@@ -18683,15 +18683,6 @@ __metadata:
   dependencies:
     fast-diff: ^1.1.2
   checksum: 00ce8011cf6430158d27f9c92cfea0a7699405633f7f1d4a45f07e21bf78e99895911cbcdc3853db3a824201a7c745bd49bfea8abd5fb9883e765a90f74f8392
-  languageName: node
-  linkType: hard
-
-"prettier@npm:2.5.1":
-  version: 2.5.1
-  resolution: "prettier@npm:2.5.1"
-  bin:
-    prettier: bin-prettier.js
-  checksum: 21b9408476ea1c544b0e45d51ceb94a84789ff92095abb710942d780c862d0daebdb29972d47f6b4d0f7ebbfb0ffbf56cc2cfa3e3e9d1cca54864af185b15b66
   languageName: node
   linkType: hard
 

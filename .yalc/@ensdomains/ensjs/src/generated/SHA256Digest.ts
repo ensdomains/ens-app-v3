@@ -9,58 +9,58 @@ import type {
   PopulatedTransaction,
   Signer,
   utils,
-} from "ethers";
-import type { FunctionFragment, Result } from "@ethersproject/abi";
-import type { Listener, Provider } from "@ethersproject/providers";
+} from 'ethers'
+import type { FunctionFragment, Result } from '@ethersproject/abi'
+import type { Listener, Provider } from '@ethersproject/providers'
 import type {
   TypedEventFilter,
   TypedEvent,
   TypedListener,
   OnEvent,
-} from "./common";
+} from './common'
 
 export interface SHA256DigestInterface extends utils.Interface {
   functions: {
-    "verify(bytes,bytes)": FunctionFragment;
-  };
+    'verify(bytes,bytes)': FunctionFragment
+  }
 
-  getFunction(nameOrSignatureOrTopic: "verify"): FunctionFragment;
+  getFunction(nameOrSignatureOrTopic: 'verify'): FunctionFragment
 
   encodeFunctionData(
-    functionFragment: "verify",
-    values: [BytesLike, BytesLike]
-  ): string;
+    functionFragment: 'verify',
+    values: [BytesLike, BytesLike],
+  ): string
 
-  decodeFunctionResult(functionFragment: "verify", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: 'verify', data: BytesLike): Result
 
-  events: {};
+  events: {}
 }
 
 export interface SHA256Digest extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this;
-  attach(addressOrName: string): this;
-  deployed(): Promise<this>;
+  connect(signerOrProvider: Signer | Provider | string): this
+  attach(addressOrName: string): this
+  deployed(): Promise<this>
 
-  interface: SHA256DigestInterface;
+  interface: SHA256DigestInterface
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined
-  ): Promise<Array<TEvent>>;
+    toBlock?: string | number | undefined,
+  ): Promise<Array<TEvent>>
 
   listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>
-  ): Array<TypedListener<TEvent>>;
-  listeners(eventName?: string): Array<Listener>;
+    eventFilter?: TypedEventFilter<TEvent>,
+  ): Array<TypedListener<TEvent>>
+  listeners(eventName?: string): Array<Listener>
   removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>
-  ): this;
-  removeAllListeners(eventName?: string): this;
-  off: OnEvent<this>;
-  on: OnEvent<this>;
-  once: OnEvent<this>;
-  removeListener: OnEvent<this>;
+    eventFilter: TypedEventFilter<TEvent>,
+  ): this
+  removeAllListeners(eventName?: string): this
+  off: OnEvent<this>
+  on: OnEvent<this>
+  once: OnEvent<this>
+  removeListener: OnEvent<this>
 
   functions: {
     /**
@@ -71,9 +71,9 @@ export interface SHA256Digest extends BaseContract {
     verify(
       data: BytesLike,
       hash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<[boolean]>;
-  };
+      overrides?: CallOverrides,
+    ): Promise<[boolean]>
+  }
 
   /**
    * Verifies a cryptographic hash.
@@ -83,8 +83,8 @@ export interface SHA256Digest extends BaseContract {
   verify(
     data: BytesLike,
     hash: BytesLike,
-    overrides?: CallOverrides
-  ): Promise<boolean>;
+    overrides?: CallOverrides,
+  ): Promise<boolean>
 
   callStatic: {
     /**
@@ -95,11 +95,11 @@ export interface SHA256Digest extends BaseContract {
     verify(
       data: BytesLike,
       hash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<boolean>;
-  };
+      overrides?: CallOverrides,
+    ): Promise<boolean>
+  }
 
-  filters: {};
+  filters: {}
 
   estimateGas: {
     /**
@@ -110,9 +110,9 @@ export interface SHA256Digest extends BaseContract {
     verify(
       data: BytesLike,
       hash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<BigNumber>;
-  };
+      overrides?: CallOverrides,
+    ): Promise<BigNumber>
+  }
 
   populateTransaction: {
     /**
@@ -123,7 +123,7 @@ export interface SHA256Digest extends BaseContract {
     verify(
       data: BytesLike,
       hash: BytesLike,
-      overrides?: CallOverrides
-    ): Promise<PopulatedTransaction>;
-  };
+      overrides?: CallOverrides,
+    ): Promise<PopulatedTransaction>
+  }
 }
