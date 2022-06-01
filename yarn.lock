@@ -3252,9 +3252,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@rainbow-me/rainbowkit@npm:^0.2.0":
-  version: 0.2.0
-  resolution: "@rainbow-me/rainbowkit@npm:0.2.0"
+"@rainbow-me/rainbowkit@npm:0.2.2":
+  version: 0.2.2
+  resolution: "@rainbow-me/rainbowkit@npm:0.2.2"
   dependencies:
     "@vanilla-extract/css": 1.7.0
     "@vanilla-extract/dynamic": 2.0.2
@@ -3267,7 +3267,26 @@ __metadata:
     react: ">=17"
     react-dom: ">=17"
     wagmi: ^0.4.2
-  checksum: 049a12b204d7ec921e793dd6d8767a75a8a05139f11b44cae88dc8fded762a07cb8fe04c118cc2037742b11296ffa7ff4003e8c21c4daaf02df3fb490a414b67
+  checksum: a1f6781e7da0c83fc624c109ff2c2a8dfb33fa2bc534044ffcc9a1e5da915ff3b0e8516063b0e20c00a91a946488cbdfeaeae6356009e4e47dc29a0688be5c80
+  languageName: node
+  linkType: hard
+
+"@rainbow-me/rainbowkit@patch:@rainbow-me/rainbowkit@0.2.2#./patches/@rainbow-me/rainbowkit.patch::locator=ens-app-v2%40workspace%3A.":
+  version: 0.2.2
+  resolution: "@rainbow-me/rainbowkit@patch:@rainbow-me/rainbowkit@npm%3A0.2.2#./patches/@rainbow-me/rainbowkit.patch::version=0.2.2&hash=527739&locator=ens-app-v2%40workspace%3A."
+  dependencies:
+    "@vanilla-extract/css": 1.7.0
+    "@vanilla-extract/dynamic": 2.0.2
+    "@vanilla-extract/sprinkles": 1.4.1
+    clsx: 1.1.1
+    qrcode: 1.5.0
+    react-remove-scroll: 2.5.3
+  peerDependencies:
+    ethers: ">=5.5.1"
+    react: ">=17"
+    react-dom: ">=17"
+    wagmi: ^0.4.2
+  checksum: 51af9dc923730c1e92c7cbd9c2948187863ff402910531df050db02c84327e68ce4228f57059509faaa7d7628907c10739a753beb229ec5a696ada1221e9a1c0
   languageName: node
   linkType: hard
 
@@ -10253,7 +10272,7 @@ __metadata:
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5
     "@openzeppelin/contracts": ^4.5.0
-    "@rainbow-me/rainbowkit": ^0.2.0
+    "@rainbow-me/rainbowkit": "patch:@rainbow-me/rainbowkit@0.2.2#./patches/@rainbow-me/rainbowkit.patch"
     "@svgr/webpack": ^6.2.1
     "@synthetixio/synpress": ^1.2.0
     "@testing-library/cypress": ^8.0.2

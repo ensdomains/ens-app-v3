@@ -34,7 +34,8 @@
   "transaction": {
     "description": {
       "setName": "Set Name",
-      "setRecords": "Set Records"
+      "setRecords": "Set Records",
+      "test": "Test Transaction"
     },
     "status": {
       "pending": "Pending",

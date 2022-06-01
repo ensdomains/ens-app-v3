@@ -1,3 +1,4 @@
+import { DevSection } from '@app/components/settings/DevSection'
 import { TransactionSection } from '@app/components/settings/TransactionSection'
 import { WalletSection } from '@app/components/settings/WalletSection'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
@@ -15,6 +16,7 @@ const SettingsPage: NextPage = () => {
     <Basic title="Settings -" heading="Settings" loading={isLoading}>
       <TransactionSection />
       <WalletSection />
+      <DevSection />
     </Basic>
   )
 }

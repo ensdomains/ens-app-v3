@@ -1,5 +1,8 @@
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
-import type { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
+import {
+  useClearRecentTransactions,
+  useRecentTransactions,
+} from '@rainbow-me/rainbowkit'
 import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
@@ -7,9 +10,6 @@ import { useNetwork } from 'wagmi'
 import { Card } from '../Card'
 import { Outlink } from '../Outlink'
 import { SectionContainer, SectionHeading } from './Section'
-
-const useRecentTransactions = (): Transaction[] => []
-const useClearRecentTransactions = () => () => {}
 
 const TransactionSectionHeadingContainer = styled.div`
   width: 100%;
@@ -19,18 +19,23 @@ const TransactionSectionHeadingContainer = styled.div`
   justify-content: space-between;
 `
 
-const TransactionSectionHeading = styled(SectionHeading)`
-  ${({ theme }) => css`
+const TransactionSectionHeading = styled(SectionHeading)<{
+  $hasTransactions: boolean
+}>`
+  ${({ theme, $hasTransactions }) => css`
     position: relative;
-    &::after {
-      content: '';
-      position: absolute;
-      height: ${theme.space['3']};
-      width: ${theme.space['3']};
-      background-color: ${theme.colors.red};
-      border-radius: ${theme.radii.full};
-      top: ${theme.space['2']};
-    }
+    ${$hasTransactions &&
+    css`
+      &::after {
+        content: '';
+        position: absolute;
+        height: ${theme.space['3']};
+        width: ${theme.space['3']};
+        background-color: ${theme.colors.red};
+        border-radius: ${theme.radii.full};
+        top: ${theme.space['2']};
+      }
+    `}
   `}
 `
 
@@ -195,7 +200,11 @@ export const TransactionSection = () => {
   return (
     <SectionContainer>
       <TransactionSectionHeadingContainer>
-        <TransactionSectionHeading variant="large" weight="bold">
+        <TransactionSectionHeading
+          $hasTransactions={transactions.length > 0}
+          variant="large"
+          weight="bold"
+        >
           Transactions
         </TransactionSectionHeading>
         <div>
