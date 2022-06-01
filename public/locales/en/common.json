@@ -38,9 +38,19 @@
       "test": "Test Transaction"
     },
     "status": {
-      "pending": "Pending",
-      "confirmed": "Confirmed",
-      "failed": "Failed"
+      "pending": {
+        "regular": "Pending"
+      },
+      "confirmed": {
+        "regular": "Confirmed",
+        "notifyTitle": "Transaction Successful",
+        "notifyMessage": "Your \"%s\" transaction was successful"
+      },
+      "failed": {
+        "regular": "Failed",
+        "notifyTitle": "Transaction Failure",
+        "notifyMessage": "Your \"%s\" transaction failed and was reverted"
+      }
     }
   }
 }

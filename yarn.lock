@@ -1868,9 +1868,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@git@github.com:ensdomains/thorin.git#head=add-toasts&workspace=@ensdomains/thorin":
+"@ensdomains/thorin@git@github.com:ensdomains/thorin.git#head=add-toasts&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee&workspace=@ensdomains/thorin":
   version: 0.5.9
-  resolution: "@ensdomains/thorin@git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"
+  resolution: "@ensdomains/thorin@git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -1880,7 +1880,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 05ebf5c3f8e3ed8d5afdadfab9f6fb35b0df464a756417aa576e6573b87d31adc283c5c6e0db5a1abcffa067a5c5d1a94a00c75aef69578b3956a091627af53c
+  checksum: 5b5b530434a2c6ce7b7c57da44e2945b0a79ba06da50e075885d83100fdbdbd849fde922f4aef1ae38aeb7a7e5515aa8c424935f842708a1bfbb9b207c16f443
   languageName: node
   linkType: hard
 
@@ -10267,7 +10267,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": "git@github.com:ensdomains/thorin.git#head=add-toasts&workspace=@ensdomains/thorin"
+    "@ensdomains/thorin": "git@github.com:ensdomains/thorin.git#head=add-toasts&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee&workspace=@ensdomains/thorin"
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5

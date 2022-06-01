@@ -1,3 +1,4 @@
+import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
 import {
   useClearRecentTransactions,
@@ -198,10 +199,12 @@ export const TransactionSection = () => {
   const [viewAmt, setViewAmt] = useState(5)
 
   return (
-    <SectionContainer>
+    <SectionContainer $name="transactions">
       <TransactionSectionHeadingContainer>
         <TransactionSectionHeading
-          $hasTransactions={transactions.length > 0}
+          $hasTransactions={
+            transactions.filter((x) => x.status === 'pending').length > 0
+          }
           variant="large"
           weight="bold"
         >
@@ -233,16 +236,16 @@ export const TransactionSection = () => {
                     $error={transaction.status === 'failed'}
                     variant="labelHeading"
                   >
-                    {t(`transaction.status.${transaction.status}`)}
+                    {t(`transaction.status.${transaction.status}.regular`)}
                   </TransactionStatus>
                 </TransactionInfoContainer>
                 <ViewLinkContainer>
                   <Outlink
-                    href={`https://${
-                      activeChain?.name && activeChain.name === 'mainnet'
-                        ? ''
-                        : `${activeChain?.name}.`
-                    }etherscan.io/tx/${transaction.hash}`}
+                    href={makeEtherscanLink(
+                      transaction.hash,
+                      activeChain?.name,
+                    )}
+                    target="_blank"
                   >
                     View on Etherscan
                   </Outlink>

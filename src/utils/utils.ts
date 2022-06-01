@@ -421,3 +421,8 @@ export const formatExpiry = (expiry: Date) => `
 ${expiry.toLocaleDateString(undefined, {
   month: 'long',
 })} ${expiry.getDate()}, ${expiry.getFullYear()}`
+
+export const makeEtherscanLink = (hash: string, network?: string) =>
+  `https://${
+    !network || network === 'mainnet' ? '' : `${network}.`
+  }etherscan.io/tx/${hash}`

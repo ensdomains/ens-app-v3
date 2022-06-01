@@ -15,7 +15,6 @@ export const DevSection = () => {
         value: '0',
       },
     })
-    console.log(transaction)
     addTransaction({
       description: 'test',
       hash: transaction.hash,

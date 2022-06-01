@@ -620,7 +620,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/thorin",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee"\
       ],\
       [\
         "@eslint/eslintrc",\
@@ -7344,7 +7344,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -10794,17 +10794,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/thorin", [\
-        ["git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-git@github.com-6c5e43837a-05ebf5c3f8.zip/node_modules/@ensdomains/thorin/",\
+        ["git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-git@github.com-9fad444f72-5b5b530434.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"]\
+            ["@ensdomains/thorin", "git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-296469e783/0/cache/@ensdomains-thorin-git@github.com-6c5e43837a-05ebf5c3f8.zip/node_modules/@ensdomains/thorin/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-a736a11ee9/0/cache/@ensdomains-thorin-git@github.com-9fad444f72-5b5b530434.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee"],\
             ["@types/react", "npm:17.0.30"],\
             ["@types/react-dom", null],\
             ["@types/react-transition-state", null],\
@@ -20725,7 +20725,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=4133d3849129366f7a1cc9fad8c457eb3135a5bf"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#git@github.com:ensdomains/thorin.git#workspace=%40ensdomains%2Fthorin&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
