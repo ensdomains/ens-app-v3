@@ -203,14 +203,12 @@ const NamesPage: NextPage = () => {
               <FilterDropdownContainer>
                 <SelectWrapper>
                   <Select
-                    value={{
-                      value: sortType,
-                      label: t(`sortTypes.${sortType}`),
-                    }}
+                    value={sortType}
                     size="small"
                     label="Sort by"
                     onChange={(e) =>
-                      e?.value && setSortType(e.value as SortType)
+                      e?.currentTarget?.value &&
+                      setSortType(e.currentTarget.value as SortType)
                     }
                     options={[
                       { label: t('sortTypes.expiryDate'), value: 'expiryDate' },
