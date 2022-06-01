@@ -1,5 +1,6 @@
 import { useConnected } from '@app/hooks/useConnected'
 import { Avatar } from '@ensdomains/thorin'
+import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ComponentType, useMemo } from 'react'
@@ -23,12 +24,27 @@ const AvatarWrapper = styled.div<{ $active: boolean }>`
   `}
 `
 
-const LinkWrapper = styled.a`
-  ${({ theme }) => css`
+const LinkWrapper = styled.a<{ $hasNotification?: boolean }>`
+  ${({ theme, $hasNotification }) => css`
+    position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     width: ${theme.space['12']};
+    ${$hasNotification &&
+    css`
+      &::after {
+        content: '';
+        position: absolute;
+        height: ${theme.space['4']};
+        width: ${theme.space['4']};
+        border: ${theme.space['0.5']} solid ${theme.colors.background};
+        background-color: ${theme.colors.red};
+        border-radius: ${theme.radii.full};
+        top: calc(-1 * ${theme.space['2']});
+        right: ${theme.space['0.5']};
+      }
+    `}
   `}
 `
 
@@ -44,14 +60,16 @@ const Icon = ({
   as,
   tab,
   activeTab,
+  hasNotification,
 }: {
   tab: TabItem
   as: string | ComponentType<any>
   activeTab: AnyTab
+  hasNotification?: boolean
 }) => {
   return (
     <Link href={tab.href} passHref>
-      <LinkWrapper>
+      <LinkWrapper $hasNotification={hasNotification}>
         <IconContainer $active={activeTab === tab.name} as={as} />
       </LinkWrapper>
     </Link>
@@ -99,36 +117,38 @@ const TabWrapper = styled.div`
   left: 0;
   right: 0;
   z-index: 1;
-  ${({ theme }) => `
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, ${theme.colors.background} 60%);
-  padding: ${theme.space['6']} ${theme.space['4']};
+  ${({ theme }) => css`
+    background: linear-gradient(
+      180deg,
+      rgba(255, 255, 255, 0) 0%,
+      ${theme.colors.background} 60%
+    );
+    padding: ${theme.space['6']} ${theme.space['4']};
   `}
 `
 
 const TabContainer = styled.div<{ $connected: boolean }>`
-  ${({ theme, $connected }) => `
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-evenly;
-  gap: ${theme.space['6']};
-  border-radius: ${theme.radii.full};
-  background-color: ${theme.colors.background};
-  border: 1px solid rgba(0, 0, 0, 0.08);
-  box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
-  padding: ${theme.space['2']} ${theme.space['6']};
-  ${
-    !$connected &&
-    `
+  ${({ theme, $connected }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: ${theme.space['6']};
+    border-radius: ${theme.radii.full};
+    background-color: ${theme.colors.background};
+    border: 1px solid rgba(0, 0, 0, 0.08);
+    box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
+    padding: ${theme.space['2']} ${theme.space['6']};
+    ${!$connected &&
+    css`
       padding-right: ${theme.space['2']};
-    `
-  }
+    `}
   `}
 `
 
 const BottomPlaceholder = styled.div`
-  ${({ theme }) => `
-  height: ${theme.space['28']};
+  ${({ theme }) => css`
+    height: ${theme.space['28']};
   `}
 `
 
@@ -143,6 +163,9 @@ export const TabBar = () => {
       'unknown',
     [path, from],
   )
+
+  const transactions = useRecentTransactions()
+  const pendingTransactions = transactions.filter((x) => x.status === 'pending')
 
   return (
     <>
@@ -168,7 +191,12 @@ export const TabBar = () => {
                   </a>
                 </Link>
                 <Icon activeTab={activeTab} tab={tabs[3]} as={HeartSVG} />
-                <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
+                <Icon
+                  activeTab={activeTab}
+                  tab={tabs[4]}
+                  as={CogSVG}
+                  hasNotification={pendingTransactions.length > 0}
+                />
               </>
             )}
           </ConnectButtonWrapper>
