@@ -30,5 +30,16 @@
     "expires": "Expires",
     "registrant": "Registrant",
     "controller": "Controller"
+  },
+  "transaction": {
+    "description": {
+      "setName": "Set Name",
+      "setRecords": "Set Records"
+    },
+    "status": {
+      "pending": "Pending",
+      "confirmed": "Confirmed",
+      "failed": "Failed"
+    }
   }
 }
