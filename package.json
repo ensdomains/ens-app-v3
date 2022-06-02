@@ -29,7 +29,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "git@github.com:ensdomains/thorin.git#head=add-toasts&commit=1f0044a2691d4261aa2595184f671c0c2930b8ee&workspace=@ensdomains/thorin",
+    "@ensdomains/thorin": "^0.5.12",
     "@rainbow-me/rainbowkit": "patch:@rainbow-me/rainbowkit@0.2.2#./patches/@rainbow-me/rainbowkit.patch",
     "@svgr/webpack": "^6.2.1",
     "ethers": "^5.6.5",
