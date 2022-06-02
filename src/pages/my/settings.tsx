@@ -5,6 +5,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import type { NextPage } from 'next'
+import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import styled from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -36,12 +37,13 @@ const OtherWrapper = styled.div`
 `
 
 const SettingsPage: NextPage = () => {
+  const { t } = useTranslation('settings')
   const { data: addressData, isLoading } = useAccount()
 
   useProtectedRoute('/', isLoading ? true : addressData)
 
   return (
-    <Basic title="Settings -" heading="Settings" loading={isLoading}>
+    <Basic title={`${t('title')} -`} heading={t('title')} loading={isLoading}>
       <WrapperGrid>
         <TransactionSection />
         <OtherWrapper>

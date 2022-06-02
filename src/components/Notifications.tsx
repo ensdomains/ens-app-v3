@@ -23,8 +23,8 @@ export const Notifications = () => {
 
   const [open, setOpen] = useState(false)
 
-  const [notifcationQueue, setNotificationQueue] = useState<Notification[]>([])
-  const currentNotification = notifcationQueue[0]
+  const [notificationQueue, setNotificationQueue] = useState<Notification[]>([])
+  const currentNotification = notificationQueue[0]
 
   useEffect(() => {
     const updatedTransactions = transactions.filter((transaction) => {

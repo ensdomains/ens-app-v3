@@ -144,7 +144,7 @@ export const ProfileSnippet = ({
                 variant="transparent"
                 size="extraSmall"
               >
-                {t(`profile.${button}`)}
+                {t(`wallet.${button}`)}
               </Button>
             </DetailButtonWrapper>
           )}
