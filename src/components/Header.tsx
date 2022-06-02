@@ -1,6 +1,6 @@
 import { useConnected } from '@app/hooks/useConnected'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { mq } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'

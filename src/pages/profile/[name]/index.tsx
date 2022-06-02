@@ -6,9 +6,8 @@ import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button, ExclamationSVG, Typography } from '@ensdomains/thorin'
+import { Button, ExclamationSVG, mq, Typography } from '@ensdomains/thorin'
 import { GetStaticPaths, NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -41,9 +40,9 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>(
     grid-template-columns: 1fr;
     gap: ${theme.space['5']};
     align-self: center;
-    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details';
+    grid-template-areas: ${$hasError && "'error error'"} 'details details';
     ${mq.md.min(css`
-      grid-template-areas: ${$hasError ? "'error error'" : ''} 'name-details details';
+      grid-template-areas: ${$hasError && "'error error'"} 'name-details details';
       grid-template-columns: 270px 2fr;
     `)}
   `,

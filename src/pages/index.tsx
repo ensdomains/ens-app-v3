@@ -1,7 +1,6 @@
 import { SearchInput } from '@app/components/SearchInput'
 import { Basic } from '@app/layouts/Basic'
-import mq from '@app/mediaQuery'
-import { Typography } from '@ensdomains/thorin'
+import { mq, Typography } from '@ensdomains/thorin'
 import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -15,6 +14,7 @@ const GradientTitle = styled.h1(
     background-image: ${theme.colors.accentGradient};
     background-repeat: no-repeat;
     background-size: 110%;
+    /* stylelint-disable-next-line property-no-vendor-prefix */
     -webkit-background-clip: text;
     background-clip: text;
     color: transparent;

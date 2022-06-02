@@ -1,6 +1,10 @@
-import mq from '@app/mediaQuery'
 import { zorbImageDataURI } from '@app/utils/gradient'
-import { Button, EthTransparentInvertedSVG, Profile } from '@ensdomains/thorin'
+import {
+  Button,
+  EthTransparentInvertedSVG,
+  mq,
+  Profile,
+} from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import type { TFunction } from 'next-i18next'
 import { useTranslation } from 'next-i18next'

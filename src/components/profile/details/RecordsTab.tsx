@@ -1,7 +1,6 @@
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
-import mq from '@app/mediaQuery'
-import { Typography } from '@ensdomains/thorin'
+import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../TabWrapper'

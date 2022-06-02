@@ -7,11 +7,10 @@ import {
   socialIconTypes,
 } from '@app/assets/social/DynamicSocialIcon'
 import { useCopied } from '@app/hooks/useCopied'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
-import { ArrowUpSVG, Button, Space, Typography } from '@ensdomains/thorin'
+import { ArrowUpSVG, Button, mq, Space, Typography } from '@ensdomains/thorin'
 import React, { useMemo } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 import { ConditionalWrapper } from '../ConditionalWrapper'

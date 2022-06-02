@@ -1,6 +1,5 @@
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Dropdown } from '@ensdomains/thorin'
+import { Dropdown, mq } from '@ensdomains/thorin'
 import ISO6391 from 'iso-639-1'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'

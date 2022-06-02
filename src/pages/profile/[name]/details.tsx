@@ -6,9 +6,8 @@ import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/profile/OwnerButton'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Basic } from '@app/layouts/Basic'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Card, Typography } from '@ensdomains/thorin'
+import { Card, mq, Typography } from '@ensdomains/thorin'
 import type { GetStaticPaths, NextPage } from 'next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
@@ -31,9 +30,9 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>(
     grid-template-rows: min-content;
     gap: ${theme.space['5']};
     align-self: center;
-    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'content content';
+    grid-template-areas: ${$hasError && "'error error'"} 'details details' 'content content';
     ${mq.lg.min(css`
-      grid-template-areas: ${$hasError ? "'error error'" : ''} 'details content';
+      grid-template-areas: ${$hasError && "'error error'"} 'details content';
       grid-template-columns: 270px 2fr;
     `)}
   `,

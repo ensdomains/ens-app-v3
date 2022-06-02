@@ -4,11 +4,11 @@
 import { useExists } from '@app/hooks/useExists'
 import { useInitial } from '@app/hooks/useInitial'
 import { useValidate } from '@app/hooks/useValidate'
-import mq from '@app/mediaQuery'
 import {
   ArrowCircleSVG,
   CancelCircleSVG,
   Input,
+  mq,
   Spinner,
 } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'

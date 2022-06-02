@@ -8,10 +8,10 @@ import { TabWrapper } from '@app/components/profile/TabWrapper'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
-import mq from '@app/mediaQuery'
 import {
   Button,
   Heading,
+  mq,
   PageButtons,
   Select,
   Typography,

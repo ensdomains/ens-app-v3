@@ -1,4 +1,4 @@
-import mq from '@app/mediaQuery'
+import { mq } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import styled, { css } from 'styled-components'
 import SocialDiscord from '../assets/social/SocialDiscord.svg'

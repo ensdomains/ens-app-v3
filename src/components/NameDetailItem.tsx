@@ -1,7 +1,6 @@
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import mq from '@app/mediaQuery'
-import { Avatar, Typography } from '@ensdomains/thorin'
+import { Avatar, mq, Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
