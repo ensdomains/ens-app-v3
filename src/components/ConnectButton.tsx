@@ -8,23 +8,23 @@ import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 
-const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
-  ${({ theme }) => css`
+const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)(
+  ({ theme }) => css`
     color: white;
     display: block;
     margin-right: calc(${theme.space['2']} * -1);
     margin-left: calc(${theme.space['2']} * -1);
     height: ${theme.space['5']};
     width: ${theme.space['5']};
-    ${mq.sm.min`
+    ${mq.sm.min(css`
       height: ${theme.space['6']};
       width: ${theme.space['6']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>`
-  ${({ theme, $isTabBar }) =>
+const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(
+  ({ theme, $isTabBar }) =>
     $isTabBar &&
     css`
       flex-grow: 1;
@@ -32,8 +32,8 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>`
         width: ${theme.space.full};
         border-radius: ${theme.radii.full};
       }
-    `}
-`
+    `,
+)
 
 export type AccountRenderProps = {
   address: string

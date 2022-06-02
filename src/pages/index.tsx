@@ -7,8 +7,8 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import styled, { css } from 'styled-components'
 
-const GradientTitle = styled.h1`
-  ${({ theme }) => css`
+const GradientTitle = styled.h1(
+  ({ theme }) => css`
     font-size: ${theme.fontSizes.headingTwo};
     text-align: center;
     font-weight: 800;
@@ -20,45 +20,47 @@ const GradientTitle = styled.h1`
     color: transparent;
     margin: 0;
 
-    ${mq.sm.min`
+    ${mq.sm.min(css`
       font-size: ${theme.fontSizes.headingOne};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const SubtitleWrapper = styled.div`
-  ${({ theme }) => css`
+const SubtitleWrapper = styled.div(
+  ({ theme }) => css`
     max-width: calc(${theme.space['72']} * 2 - ${theme.space['4']});
     line-height: 150%;
     text-align: center;
     margin-bottom: ${theme.space['3']};
-  `}
-`
+  `,
+)
 
-const Container = styled.div`
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-`
+const Container = styled.div(
+  () => css`
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+  `,
+)
 
-const Stack = styled.div`
-  ${({ theme }) => css`
+const Stack = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
-  `}
-`
+  `,
+)
 
-const Description = styled(Typography)`
-  ${({ theme }) => css`
+const Description = styled(Typography)(
+  ({ theme }) => css`
     line-height: ${theme.lineHeights['1.5']};
-  `}
-`
+  `,
+)
 
 const Home: NextPage = () => {
   const { t } = useTranslation('common')

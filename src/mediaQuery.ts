@@ -16,22 +16,23 @@ const breakpoints: Record<Breakpoint, string> = {
   xl: '1280px',
 }
 
-type CSSParams = Parameters<typeof css>
+type MediaQuery = (args: ReturnType<typeof css>) => ReturnType<typeof css>
+
 const keys = Object.keys(breakpoints) as Array<Breakpoint>
 const typeKeys = Object.keys(breakpointTypes) as Array<BreakpointType>
 
 const mq = keys.reduce((acc, sizeLabel) => {
   acc[sizeLabel] = typeKeys.reduce((accumulator, typeLabel) => {
-    accumulator[typeLabel] = ((...args: CSSParams) => {
+    accumulator[typeLabel] = ((args: ReturnType<typeof css>) => {
       return css`
         @media (${breakpointTypes[typeLabel]}: ${breakpoints[sizeLabel]}) {
-          ${css(...args)};
+          ${args};
         }
       `
-    }) as typeof css
+    }) as MediaQuery
     return accumulator
-  }, {} as Record<BreakpointType, typeof css>)
+  }, {} as Record<BreakpointType, MediaQuery>)
   return acc
-}, {} as Record<Breakpoint, Record<BreakpointType, typeof css>>)
+}, {} as Record<Breakpoint, Record<BreakpointType, MediaQuery>>)
 
 export default mq

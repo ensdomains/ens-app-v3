@@ -6,8 +6,8 @@ import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 
-const MobileInnerDropdownButton = styled.div<{ $large: boolean }>`
-  ${({ theme, $large }) => css`
+const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
+  ({ theme, $large }) => css`
     width: fit;
     padding: ${theme.space['0.5']} ${theme.space['1.5']};
     display: block;
@@ -15,14 +15,14 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>`
     align-items: center;
     transition: none;
     ${$large &&
-    mq.sm.min`
+    mq.sm.min(css`
       width: ${theme.space['12']};
       padding: 0;
       display: flex;
       align-items: flex-start;
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
 export const LanugageDropdown = () => {
   const breakpoints = useBreakpoint()

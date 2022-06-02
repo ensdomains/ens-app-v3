@@ -16,49 +16,49 @@ import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
 
-const GridItem = styled.div<{ $area: string }>`
-  grid-area: ${({ $area }) => $area};
-`
+const GridItem = styled.div<{ $area: string }>(
+  ({ $area }) => css`
+    grid-area: ${$area};
+  `,
+)
 
-const WrapperGrid = styled.div<{ $hasError?: boolean }>`
-  flex-grow: 1;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: min-content;
-  gap: ${({ theme }) => theme.space['5']};
-  align-self: center;
-  ${({ $hasError }) => css`
+const WrapperGrid = styled.div<{ $hasError?: boolean }>(
+  ({ theme, $hasError }) => css`
+    flex-grow: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content;
+    gap: ${theme.space['5']};
+    align-self: center;
     grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'content content';
-    ${mq.lg.min`
-      grid-template-areas: ${
-        $hasError ? "'error error'" : ''
-      } "details content";
+    ${mq.lg.min(css`
+      grid-template-areas: ${$hasError ? "'error error'" : ''} 'details content';
       grid-template-columns: 270px 2fr;
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const DetailsContainer = styled(GridItem)`
-  ${({ theme }) => css`
+const DetailsContainer = styled(GridItem)(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
     gap: ${theme.space['1']};
-    ${mq.sm.min`
+    ${mq.sm.min(css`
       flex-direction: row;
       justify-content: center;
-    `}
-    ${mq.lg.min`
+    `)}
+    ${mq.lg.min(css`
       flex-direction: column;
       justify-content: flex-start;
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const OwnerButtons = styled.div`
-  ${({ theme }) => css`
+const OwnerButtons = styled.div(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -66,20 +66,20 @@ const OwnerButtons = styled.div`
     justify-content: stretch;
     gap: ${theme.space['1']};
     flex-gap: ${theme.space['1']};
-    ${mq.xs.min`
+    ${mq.xs.min(css`
       flex-direction: row;
-    `}
-    ${mq.sm.min`
+    `)}
+    ${mq.sm.min(css`
       flex-direction: column;
       & > div {
         max-width: initial !important;
       }
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const TabButtonContainer = styled.div`
-  ${({ theme }) => css`
+const TabButtonContainer = styled.div(
+  ({ theme }) => css`
     margin-left: ${theme.radii.extraLarge};
     display: flex;
     flex-direction: row;
@@ -87,21 +87,21 @@ const TabButtonContainer = styled.div`
     justify-content: flex-start;
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
-  `}
-`
+  `,
+)
 
-const TabContainer = styled(GridItem)`
-  ${({ theme }) => css`
+const TabContainer = styled(GridItem)(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
     gap: ${theme.space['3']};
-  `}
-`
+  `,
+)
 
-const TabButton = styled.button<{ $selected: boolean }>`
-  ${({ theme, $selected }) => css`
+const TabButton = styled.button<{ $selected: boolean }>(
+  ({ theme, $selected }) => css`
     display: block;
     outline: none;
     border: none;
@@ -116,8 +116,8 @@ const TabButton = styled.button<{ $selected: boolean }>`
     &:hover {
       color: ${$selected ? theme.colors.accent : theme.colors.textSecondary};
     }
-  `}
-`
+  `,
+)
 
 const NameDetails: NextPage = () => {
   const breakpoints = useBreakpoint()

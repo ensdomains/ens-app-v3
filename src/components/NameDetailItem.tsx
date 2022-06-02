@@ -7,8 +7,8 @@ import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
-const NameItemWrapper = styled.div`
-  ${({ theme }) => css`
+const NameItemWrapper = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -24,32 +24,34 @@ const NameItemWrapper = styled.div`
     &:last-of-type {
       border: none;
     }
-  `}
-`
+  `,
+)
 
-const NameItemContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  flex-gap: 16px;
-`
+const NameItemContainer = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-gap: 16px;
+  `,
+)
 
-const AvatarWrapper = styled.div`
-  ${({ theme }) => css`
+const AvatarWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['9']};
-  `}
-`
+  `,
+)
 
-const TypeWrapper = styled.div`
-  ${({ theme }) => css`
+const TypeWrapper = styled.div(
+  ({ theme }) => css`
     max-width: ${theme.space['48']};
-    ${mq.md.min`
+    ${mq.md.min(css`
       max-width: ${theme.space['96']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
 type Name = {
   id: string

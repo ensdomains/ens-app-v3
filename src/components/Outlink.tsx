@@ -5,24 +5,24 @@ import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import type { UrlObject } from 'url'
 
-const StyledAnchor = styled.a`
-  ${({ theme }) => css`
+const StyledAnchor = styled.a(
+  ({ theme }) => css`
     padding-right: ${theme.space['4']};
     position: relative;
     color: ${theme.colors.accent};
-  `}
-`
+  `,
+)
 
-const OutlinkIcon = styled.div`
-  ${({ theme }) => css`
+const OutlinkIcon = styled.div(
+  ({ theme }) => css`
     position: absolute;
     top: ${theme.space['0']};
     right: ${theme.space['0']};
     width: ${theme.space['3.5']};
     height: ${theme.space['3.5']};
     opacity: ${theme.opacity[50]};
-  `}
-`
+  `,
+)
 
 export const Outlink = ({
   href,
