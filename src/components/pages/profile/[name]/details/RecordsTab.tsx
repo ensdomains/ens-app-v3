@@ -35,7 +35,7 @@ const TabWrapper = styled(OriginalTabWrapper)`
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
     padding: ${theme.space['4.5']};
-    ${mq.medium.min`
+    ${mq.md.min`
       padding: ${theme.space['6']};
       gap: ${theme.space['6']};
       flex-gap: ${theme.space['6']};
@@ -127,7 +127,7 @@ const RecordContainer = styled.button`
       transform: translateY(0);
     }
 
-    ${mq.medium.min`
+    ${mq.md.min`
       font-size: ${theme.fontSizes.small};
     `}
   `}
@@ -147,7 +147,7 @@ const RecordKey = styled(Typography)`
     overflow-wrap: break-word;
     word-break: break-all;
 
-    ${mq.medium.min`
+    ${mq.md.min`
       width: ${theme.space['28']};
       min-width: ${theme.space['28']};
     `}
@@ -168,7 +168,7 @@ const RecordValue = styled(Typography)<{ $fullWidth: boolean }>`
         ${$fullWidth ? theme.space['2'] : theme.space['4']}
     );
 
-    ${mq.medium.min`
+    ${mq.md.min`
       max-width: calc(100% - ${$fullWidth ? '0px' : theme.space['28']} - ${
       theme.space['9']
     } - ${$fullWidth ? theme.space['2'] : theme.space['4']});

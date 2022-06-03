@@ -32,7 +32,7 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>`
   align-self: center;
   ${({ $hasError }) => css`
     grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'content content';
-    ${mq.large.min`
+    ${mq.lg.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
       } "details content";
@@ -42,12 +42,20 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>`
 `
 
 const DetailsContainer = styled(GridItem)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: stretch;
     gap: ${theme.space['1']};
+    ${mq.sm.min`
+      flex-direction: row;
+      justify-content: center;
+    `}
+    ${mq.lg.min`
+      flex-direction: column;
+      justify-content: flex-start;
+    `}
   `}
 `
 
@@ -55,12 +63,15 @@ const OwnerButtons = styled.div`
   ${({ theme }) => css`
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: stretch;
     justify-content: stretch;
     gap: ${theme.space['1']};
     flex-gap: ${theme.space['1']};
-    ${mq.small.min`
+    ${mq.xs.min`
+      flex-direction: row;
+    `}
+    ${mq.sm.min`
       flex-direction: column;
       & > div {
         max-width: initial !important;

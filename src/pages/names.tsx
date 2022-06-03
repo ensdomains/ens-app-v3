@@ -61,7 +61,7 @@ const FilterContainer = styled.div`
   ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    ${mq.medium.min`
+    ${mq.md.min`
       gap: ${theme.space['8']};
       flex-gap: ${theme.space['8']};
     `}
@@ -86,7 +86,7 @@ const SelectWrapper = styled.div`
       background: ${theme.colors.background};
       z-index: 5;
     }
-    ${mq.medium.min`
+    ${mq.md.min`
       width: ${theme.space['48']};
     `}
   `}
@@ -127,7 +127,7 @@ const TopContainer = styled.div`
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
   `}
-  ${mq.medium.min`
+  ${mq.md.min`
     flex-direction: row;
   `}
 `

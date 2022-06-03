@@ -81,7 +81,7 @@ export const DetailSnippet = ({
     <Container>
       <Row>
         {expiryDate && (
-          <ExpiryContainer>
+          <ExpiryContainer data-testid="expiry-data">
             <Typography weight="bold">Expires</Typography>
             <Typography weight="bold">{formatExpiry(expiryDate)}</Typography>
           </ExpiryContainer>

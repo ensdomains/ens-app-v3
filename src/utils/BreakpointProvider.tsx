@@ -4,7 +4,7 @@ const defaultValue = {}
 
 const BreakpointContext = createContext<Partial<Query>>(defaultValue)
 
-type QueryType = 'sm' | 'md' | 'lg' | 'xl'
+type QueryType = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
 type Query = Record<QueryType, string>
 
 const BreakpointProvider = ({

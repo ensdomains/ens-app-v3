@@ -38,7 +38,7 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>`
   align-self: center;
   ${({ $hasError }) => css`
     grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details';
-    ${mq.medium.min`
+    ${mq.md.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
       } "name-details details";

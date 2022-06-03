@@ -16,7 +16,7 @@ const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
     margin-left: calc(${theme.space['2']} * -1);
     height: ${theme.space['5']};
     width: ${theme.space['5']};
-    ${mq.small.min`
+    ${mq.sm.min`
       height: ${theme.space['6']};
       width: ${theme.space['6']};
     `}

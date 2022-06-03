@@ -337,7 +337,7 @@ const OwnerButtonWithDropdown = ({
         <ContentWithDropdown>
           <Label ellipsis>{label}</Label>
           <div style={{ flexGrow: 1 }} />
-          <OwnerRow>
+          <OwnerRow data-testid={`${label.toLowerCase()}-data`}>
             <Name ellipsis>{name || shortenAddress(address)}</Name>
             <AvatarWrapper>
               <AvatarWithZorb
