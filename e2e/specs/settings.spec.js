@@ -1,33 +1,32 @@
+import { acceptMetamaskAccess } from '../setup'
+
 describe('Settings', () => {
   it('should allow user to disconnect', () => {
-    cy.visit('/')
-    cy.contains('Connect').click()
-    cy.contains('MetaMask').click()
-    cy.acceptMetamaskAccess()
+    acceptMetamaskAccess()
 
     cy.visit('/my/settings')
-    cy.contains('Disconnect').click()
+    cy.findByTestId('wallet-section-disconnect').click()
     cy.url().should('eq', 'http://localhost:3000/')
   })
 
   describe('Transactions', () => {
-    it('should add successful transaction to the transaction list, and show the corresponding notification', () => {
+    it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
       cy.visit('/')
       cy.contains('Connect').click()
       cy.contains('MetaMask').click()
+      cy.wait(1000)
 
       cy.visit('/my/settings')
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
-      cy.contains('Test Transaction')
-        .parent()
+      cy.findByTestId('transaction-confirmed')
         .should('be.visible')
-        .should('have.text', 'Confirmed')
+        .should('contain.text', 'Test Transaction')
       cy.findByTestId('toast-desktop')
         .should('be.visible')
-        .should('have.text', 'Transaction Successful')
+        .should('contain.text', 'Transaction Successful')
         .should(
-          'have.text',
+          'contain.text',
           'Your "Test Transaction" transaction was successful',
         )
     })
@@ -36,19 +35,19 @@ describe('Settings', () => {
       cy.visit('/')
       cy.contains('Connect').click()
       cy.contains('MetaMask').click()
+      cy.wait(1000)
 
       cy.visit('/my/settings')
       cy.contains('Add Failing Transaction').click()
       cy.confirmMetamaskTransaction()
-      cy.contains('Test Transaction')
-        .parent()
+      cy.findByTestId('transaction-failed')
         .should('be.visible')
-        .should('have.text', 'Failed')
+        .should('contain.text', 'Test Transaction')
       cy.findByTestId('toast-desktop')
         .should('be.visible')
-        .should('have.text', 'Transaction Failure')
+        .should('contain.text', 'Transaction Failure')
         .should(
-          'have.text',
+          'contain.text',
           'Your "Test Transaction" transaction failed and was reverted',
         )
     })
@@ -57,19 +56,21 @@ describe('Settings', () => {
       cy.visit('/')
       cy.contains('Connect').click()
       cy.contains('MetaMask').click()
+      cy.wait(1000)
 
       cy.visit('/my/settings')
+      cy.contains('Stop Automine').click()
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
-      cy.contains('Test Transaction')
-        .parent()
+      cy.findByTestId('transaction-pending')
         .should('be.visible')
-        .should('have.text', 'Pending')
+        .should('contain.text', 'Test Transaction')
+      cy.contains('Start Automine').click()
       cy.findByTestId('toast-desktop')
         .should('be.visible')
-        .should('have.text', 'Transaction Successful')
+        .should('contain.text', 'Transaction Successful')
         .should(
-          'have.text',
+          'contain.text',
           'Your "Test Transaction" transaction was successful',
         )
     })
@@ -78,12 +79,13 @@ describe('Settings', () => {
       cy.visit('/')
       cy.contains('Connect').click()
       cy.contains('MetaMask').click()
+      cy.wait(1000)
 
       cy.visit('/my/settings')
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
       cy.contains('Clear').click()
-      cy.contains('Test Transaction').should('be.undefined')
+      cy.findByTestId('transaction-confirmed').should('not.exist')
     })
   })
 })

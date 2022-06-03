@@ -14,9 +14,11 @@ export const WalletSection = () => {
       <SectionHeading variant="large" weight="bold">
         {t('section.wallet.title')}
       </SectionHeading>
-      <Button tone="red" onClick={() => disconnect()}>
-        {tc('wallet.disconnect')}
-      </Button>
+      <div data-testid="wallet-section-disconnect" style={{ width: '100%' }}>
+        <Button tone="red" onClick={() => disconnect()}>
+          {tc('wallet.disconnect')}
+        </Button>
+      </div>
     </SectionContainer>
   )
 }

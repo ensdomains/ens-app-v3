@@ -159,7 +159,10 @@ export const TransactionSection = () => {
         {transactions.length > 0 ? (
           <>
             {transactions.slice(0, viewAmt - 1).map((transaction) => (
-              <TransactionContainer key={transaction.hash}>
+              <TransactionContainer
+                data-testid={`transaction-${transaction.status}`}
+                key={transaction.hash}
+              >
                 {transaction.status === 'pending' && <Spinner color="accent" />}
                 <TransactionInfoContainer>
                   <Typography weight="bold">
