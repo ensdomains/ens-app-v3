@@ -48,7 +48,7 @@ const SettingsPage: NextPage = () => {
         <TransactionSection />
         <OtherWrapper>
           <WalletSection />
-          {process.env.NODE_ENV === 'development' && <DevSection />}
+          {process.env.NEXT_PUBLIC_PROVIDER && <DevSection />}
         </OtherWrapper>
       </WrapperGrid>
     </Basic>
