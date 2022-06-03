@@ -1,18 +1,24 @@
 import styled from 'styled-components'
 
+import ResolverDetails from './ResolverDetails'
+import Fuses from './Fuses'
 import Accordion, { AccordionData } from './Accordion'
 
 const data: AccordionData = [
   {
-    title: 'title1',
-    body: <div>body 1</div>,
+    title: 'Resolver',
+    body: <ResolverDetails />,
   },
   {
-    title: 'title2',
-    body: <div>body 2</div>,
+    title: 'Fuses',
+    body: <Fuses />,
   },
   {
-    title: 'title3',
+    title: 'Token ID',
+    body: <div>body 3</div>,
+  },
+  {
+    title: 'Registration Date',
     body: <div>body 3</div>,
   },
 ]

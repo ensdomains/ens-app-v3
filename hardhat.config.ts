@@ -16,6 +16,12 @@ const config: HardhatUserConfig = {
           },
         },
       },
+      {
+        version: '0.4.24',
+      },
+      {
+        version: '0.5.0',
+      },
     ],
   },
   defaultNetwork: 'localhost',
