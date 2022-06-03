@@ -10,13 +10,14 @@ describe('Settings', () => {
   })
 
   describe('Transactions', () => {
-    it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
+    before(() => {
       cy.visit('/')
       cy.contains('Connect').click()
       cy.contains('MetaMask').click()
       cy.wait(1000)
-
       cy.visit('/my/settings')
+    })
+    it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-confirmed')
@@ -32,12 +33,6 @@ describe('Settings', () => {
     })
 
     it('should add a failed transaction to the transaction list, and show the corresponding notification', () => {
-      cy.visit('/')
-      cy.contains('Connect').click()
-      cy.contains('MetaMask').click()
-      cy.wait(1000)
-
-      cy.visit('/my/settings')
       cy.contains('Add Failing Transaction').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-failed')
@@ -53,12 +48,6 @@ describe('Settings', () => {
     })
 
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
-      cy.visit('/')
-      cy.contains('Connect').click()
-      cy.contains('MetaMask').click()
-      cy.wait(1000)
-
-      cy.visit('/my/settings')
       cy.contains('Stop Automine').click()
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
