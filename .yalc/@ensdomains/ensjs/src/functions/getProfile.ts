@@ -356,7 +356,7 @@ const getProfileFromName = async (
     usingOptions ? wantedRecords : (options as InternalProfileOptions),
   )
   if (!result)
-    return { isMigrated, createdAt, message: "Records fetch didn't complete" }
+    return { isMigrated, createdAt, message: "Records fetch didn't complete***" }
   return { ...result, isMigrated, createdAt, message: undefined }
 }
 

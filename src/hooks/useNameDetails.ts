@@ -55,6 +55,8 @@ export const useNameDetails = (name: string) => {
 
   const isLoading = !ready || profileLoading || batchLoading
 
+  console.log('error: ', error)
+
   return {
     error,
     normalisedName,

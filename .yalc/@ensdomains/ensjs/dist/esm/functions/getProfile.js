@@ -66,7 +66,9 @@ const getDataForName = async (
   let resolver
   try {
     resolver = await universalResolver?.resolve(hexEncodeName(name), data)
-  } catch {
+  } catch(e) {
+    console.error('getDataForName error: ', e)
+    debugger
     return null
   }
   const [recordData] = await resolverMulticallWrapper.decode(resolver['0'])
@@ -246,7 +248,7 @@ const getProfileFromName = async (
     usingOptions ? wantedRecords : options,
   )
   if (!result)
-    return { isMigrated, createdAt, message: "Records fetch didn't complete" }
+    return { isMigrated, createdAt, message: "Records fetch didn't complete 8888888" }
   return { ...result, isMigrated, createdAt, message: undefined }
 }
 const getProfileFromAddress = async (

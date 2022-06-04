@@ -47,53 +47,53 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   )
   await ethControllerContract.commit(commitment)
 
-  const minCommitmentAge = await ethControllerContract.minCommitmentAge()
-  await hre.ethers.provider.send('evm_increaseTime', [
-    minCommitmentAge.toNumber(),
-  ])
-  await hre.ethers.provider.send('evm_mine', [120])
+  // const minCommitmentAge = await ethControllerContract.minCommitmentAge()
+  // await hre.ethers.provider.send('evm_increaseTime', [
+  //   minCommitmentAge.toNumber(),
+  // ])
+  // await hre.ethers.provider.send('evm_mine', [120])
 
-  const value = await ethControllerContract.rentPrice(name, duration)
+  // const value = await ethControllerContract.rentPrice(name, duration)
 
-  const trx = await ethControllerContract.register(
-    name,
-    deployer,
-    duration,
-    secret,
-    {
-      value,
-      gasLimit: 10000000,
-    },
-  )
+  // const trx = await ethControllerContract.register(
+  //   name,
+  //   deployer,
+  //   duration,
+  //   secret,
+  //   {
+  //     value,
+  //     gasLimit: 10000000,
+  //   },
+  // )
 
-  await trx.wait()
+  // await trx.wait()
 
-  const newnameAvailable = await ethControllerContract.available(name)
-  console.log('name available: ', newnameAvailable)
+  // const newnameAvailable = await ethControllerContract.available(name)
+  // console.log('name available: ', newnameAvailable)
 
-  // Wrap name ---
+  // // Wrap name ---
 
-  const baseRegistrar = await hre.ethers.getContractAt(
-    'BaseRegistrarImplementation',
-    registrarAddress,
-    signer,
-  )
-  const namehash =
-    '0xc30c7c8c16adfbd5df69a066e85938d73b485946399f6938c9c5d0d342400010'
+  // const baseRegistrar = await hre.ethers.getContractAt(
+  //   'BaseRegistrarImplementation',
+  //   registrarAddress,
+  //   signer,
+  // )
+  // const namehash =
+  //   '0xc30c7c8c16adfbd5df69a066e85938d73b485946399f6938c9c5d0d342400010'
 
-  await baseRegistrar.setApprovalForAll(nameWrapperAddress, true, {
-    gasLimit: 10000000,
-  })
+  // await baseRegistrar.setApprovalForAll(nameWrapperAddress, true, {
+  //   gasLimit: 10000000,
+  // })
 
-  const nameWrapperContract = await hre.ethers.getContractAt(
-    'NameWrapper',
-    nameWrapperAddress,
-    signer,
-  )
+  // const nameWrapperContract = await hre.ethers.getContractAt(
+  //   'NameWrapper',
+  //   nameWrapperAddress,
+  //   signer,
+  // )
 
-  await nameWrapperContract.wrapETH2LD(name, deployer, 0, constants.AddressZero)
+  // await nameWrapperContract.wrapETH2LD(name, deployer, 0, constants.AddressZero)
 
-  console.log('getFuses: ', await nameWrapperContract.getFuses(namehash))
+  // console.log('getFuses: ', await nameWrapperContract.getFuses(namehash))
 }
 
 export default func
