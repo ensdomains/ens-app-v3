@@ -211,8 +211,8 @@ const NamesPage: NextPage = () => {
                     value={sortType}
                     size="small"
                     label="Sort by"
-                    onChange={(e: any) =>
-                      setSortType(e.target.value as SortType)
+                    onChange={(e) =>
+                      setSortType(e.currentTarget.value as SortType)
                     }
                     options={[
                       { label: t('sortTypes.expiryDate'), value: 'expiryDate' },

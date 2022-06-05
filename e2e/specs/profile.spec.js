@@ -1,13 +1,8 @@
-describe('Profile', () => {
-  before(() => {
-    cy.intercept('http://localhost:8000/**')
-  })
-  it('should allow user to connect', () => {
-    cy.visit('/')
-    cy.contains('Connect').click()
-    cy.contains('MetaMask').click()
-    cy.acceptMetamaskAccess()
+import { acceptMetamaskAccess } from '../setup'
 
+describe('Profile', () => {
+  it('should allow user to connect', () => {
+    acceptMetamaskAccess()
     // replace with data-testid when design system supports it
     cy.contains('0x', {
       timeout: 15000,

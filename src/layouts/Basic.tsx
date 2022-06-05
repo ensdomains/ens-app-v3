@@ -127,7 +127,7 @@ export const Basic = ({
               {HeaderItems.trailing}
             </DesktopBackContainer>
           )}
-        {loading ? (
+        {!router.isReady || loading ? (
           <LoadingContainer>
             <LoadingOverlay />
           </LoadingContainer>
