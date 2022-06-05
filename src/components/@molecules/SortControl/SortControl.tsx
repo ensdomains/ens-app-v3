@@ -2,42 +2,42 @@ import { Button, Select } from '@ensdomains/thorin'
 import UpDirectionSVG from '@app/assets/UpDirection.svg'
 import DownDirectionSVG from '@app/assets/DownDirection.svg'
 import styled, { css } from 'styled-components'
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { ChangeEvent } from 'react'
 import mq from '@app/mediaQuery'
 import { useTranslation } from 'next-i18next'
 
-const SortAndDirections = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: center;
-  ${({ theme }) => `
+const SortAndDirections = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const FilterDropdownContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  ${({ theme }) => `
+const FilterDropdownContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const SelectWrapper = styled.div`
-  ${({ theme }) => css`
+const SelectWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['32']};
     & [role='listbox'] {
       background: ${theme.colors.background};
       z-index: 5;
     }
-    ${mq.medium.min`
+    ${mq.md.min`
       width: ${theme.space['48']};
     `}
-  `}
-`
+  `,
+)
 
 export enum SortType {
   expiryDate = 'expiryDate',
@@ -50,43 +50,40 @@ export enum SortDirection {
   desc = 'desc',
 }
 
-type SortValue = {
+export type SortValue = {
   type: SortType
   direction: SortDirection
 }
 
 export type SortControlProps = {
-  value?: SortValue
+  value: SortValue
   onChange?: (value: SortValue) => void
 }
 
-const SortControl = ({ value: _value, onChange }: SortControlProps) => {
-  const { t } = useTranslation('names')
+const SortControl = ({ value, onChange }: SortControlProps) => {
+  const { t } = useTranslation('common')
 
-  const [value, setValue] = useState<SortValue>(
-    _value || { type: SortType.expiryDate, direction: SortDirection.desc },
-  )
-  useEffect(() => {
-    if (_value && _value !== value) setValue(_value)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_value])
-  const { type, direction } = value
+  // const [value, setValue] = useState<SortValue>(
+  //   _value || { type: SortType.expiryDate, direction: SortDirection.desc },
+  // )
+  // useEffect(() => {
+  //   if (_value && _value !== value) setValue(_value)
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [_value])
 
-  const handleTypeChange = (option: { value: string } | null) => {
-    if (!option) return
-    if (option.value in SortType) {
+  const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value: newType } = e.target
+    if (newType in SortType) {
       const newValue = {
-        ...value,
-        type: option.value as SortType,
+        type: newType as SortType,
+        direction: value.direction,
       }
-      setValue(newValue)
       if (onChange) onChange(newValue)
     }
   }
 
   const handleDirectionClick = (_direction: SortDirection) => () => {
     const newValue = { ...value, direction: _direction }
-    setValue(newValue)
     if (onChange) onChange(newValue)
   }
 
@@ -95,14 +92,7 @@ const SortControl = ({ value: _value, onChange }: SortControlProps) => {
       <FilterDropdownContainer>
         <SelectWrapper>
           <Select
-            selected={useMemo(
-              () => ({
-                value: type,
-                label: t(`sortTypes.${type}`),
-              }),
-              // eslint-disable-next-line react-hooks/exhaustive-deps
-              [type],
-            )}
+            value={value.type}
             size="small"
             label="Sort by"
             onChange={handleTypeChange}
@@ -118,7 +108,7 @@ const SortControl = ({ value: _value, onChange }: SortControlProps) => {
         </SelectWrapper>
       </FilterDropdownContainer>
       <Button
-        pressed={direction === 'desc'}
+        pressed={value.direction === 'desc'}
         onClick={handleDirectionClick(SortDirection.desc)}
         variant="transparent"
         shadowless
@@ -129,7 +119,7 @@ const SortControl = ({ value: _value, onChange }: SortControlProps) => {
         </div>
       </Button>
       <Button
-        pressed={direction === 'asc'}
+        pressed={value.direction === 'asc'}
         onClick={handleDirectionClick(SortDirection.asc)}
         variant="transparent"
         shadowless

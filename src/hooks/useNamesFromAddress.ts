@@ -125,5 +125,11 @@ export const useNamesFromAddress = ({
     [pages, page],
   )
 
-  return { currentPage, isLoading, status, pageLength: pages?.length || 0 }
+  return {
+    currentPage,
+    isLoading,
+    status,
+    pageLength: pages?.length || 0,
+    results: sortedData?.length || 0,
+  }
 }

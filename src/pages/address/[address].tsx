@@ -1,115 +1,278 @@
-import { NextPage } from 'next'
+import { useState } from 'react'
+import { GetStaticPaths, NextPage } from 'next'
 import { useRouter } from 'next/router'
-// import { useTranslation } from 'next-i18next'
-// import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Basic } from '@app/layouts/Basic'
-import Accordian from '@app/components/@molecules/Accordian/Accordian'
-import AccordianSummary from '@app/components/@molecules/Accordian/AccordianSummary'
-import styled from 'styled-components'
-import { Avatar, Button } from '@ensdomains/thorin'
+import { useTranslation } from 'next-i18next'
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import styled, { css } from 'styled-components'
+import { useNetwork } from 'wagmi'
+import { PageButtons, ExclamationSVG, Typography } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
-import FilterIcon from '@app/assets/Filter.svg'
-import FilterControl from '../../components/address/FilterControl'
+import AliasItem from '@app/components/address/AliasItem'
+import mq from '@app/mediaQuery'
+import { NameListView } from '@app/components/names/NameListView'
+import {
+  SortDirection,
+  SortType,
+  SortValue,
+} from '@app/components/@molecules/SortControl/SortControl'
+import Accordian from '@app/components/@molecules/Accordian/Accordian'
+import { Basic } from '@app/layouts/Basic'
+import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
+import { shortenAddress } from '@app/utils/utils'
+import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
+import AccordianSummary from '@app/components/@molecules/Accordian/AccordianSummary'
+import FilterControl from '@app/components/address/FilterControl'
 
-const AliasesLabel = styled.span`
-  ${({ theme }) => `
+const MOCK_ALIASES = [
+  { name: 'alias1.eth' },
+  { name: 'alias2.eth' },
+  { name: 'alias3.th' },
+]
+
+const AliasesLabel = styled.span(
+  ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
     font-weight: ${theme.fontWeights.bold};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     font-family: ${theme.fonts.sans};
     line-height: ${theme.lineHeights['1.375']};
     font-feature-settings: 'ss01' on, 'ss03' on;
-  `}
-`
+  `,
+)
 
-const AliasContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  ${({ theme }) => `
-    background: ${theme.colors.foregroundSecondary};
-    padding: ${theme.space['0.5']} ${theme.space['0.5']} ${theme.space['0.5']} ${theme.space['4']};
-  `}
-`
+const GridItem = styled.div<{ $area: string }>(
+  ({ $area }) => css`
+    grid-area: ${$area};
+  `,
+)
 
-const AliasAvatarContianer = styled.div`
-  ${({ theme }) => `
-    flex: 0 0 ${theme.space['6']};
-  `}
-`
+const WrapperGrid = styled.div<{ $hasError?: boolean }>(
+  ({ theme, $hasError }) => css`
+    flex-grow: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: min-content;
+    gap: ${theme.space['5']};
+    align-self: center;
+    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'content content';
+    ${mq.lg.min`
+      grid-template-areas: ${
+        $hasError ? "'error error'" : ''
+      } "details content";
+      grid-template-columns: 270px 2fr;
+    `}
+  `,
+)
 
-const AliasLabel = styled.div`
-  ${({ theme }) => `
-    font-size: ${theme.fontSizes.root};
-    font-weight: ${theme.fontWeights.bold};
-    letter-spacing: ${theme.letterSpacings['-0.01']};
-    text-overflow: ellipsis;
-      overflow: hidden;
-      white-space: nowrap;
-      line-height: ${theme.lineHeights['1.25']};
-    flex: 1;
-    
-  `}
-`
-const AliasButtonContainer = styled.div`
-  margin-right: -5px;
-`
+const DetailsContainer = styled(GridItem)(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['2']};
+  `,
+)
+
+const ContentContainer = styled(GridItem)(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+  `,
+)
+
+const PageButtonsWrapper = styled.div(
+  () => css`
+    display: flex;
+    justify-content: flex-end;
+  `,
+)
+
+const ErrorIcon = styled.div(
+  ({ theme }) => css`
+    background: rgba(255, 255, 255, 0.5);
+    color: ${theme.colors.yellow};
+    stroke-width: ${theme.space['0.5']};
+    width: max-content;
+    height: max-content;
+    min-height: ${theme.space['12']};
+    min-width: ${theme.space['12']};
+    padding: ${theme.space['1']};
+    border-radius: ${theme.radii.almostExtraLarge};
+  `,
+)
+
+const ErrorContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
+    grid-area: error;
+    background: rgba(${theme.accentsRaw.yellow}, 0.25);
+    border-radius: ${theme.radii['2xLarge']};
+    padding: ${theme.space['2']};
+    padding-right: ${theme.space['8']};
+    color: ${theme.colors.textSecondary};
+    & > div {
+      line-height: ${theme.lineHeights.normal};
+    }
+  `,
+)
 
 const AddressPage: NextPage = () => {
-  const router = useRouter()
-  // const { t } = useTranslation('address')
+  const { t } = useTranslation('address')
+  const { query, isReady } = useRouter()
   // const breakpoints = useBreakpoint()
-  const address = router.query.address as string
+  const address = query.address as string
+  const { activeChain: chain } = useNetwork()
+
+  const [page, setPage] = useState(1)
+
+  // Filter Controls
+
+  const [sortValue, setSortValue] = useState<SortValue>({
+    type: SortType.expiryDate,
+    direction: SortDirection.desc,
+  })
+
+  const [filter, setFilter] = useState<'registration' | 'domain' | 'none'>(
+    'none',
+  )
+
+  const onFilterControlChange = (control: {
+    sort: SortValue
+    filter: 'registration' | 'domain' | 'none'
+  }) => {
+    const { sort: _sort, filter: _filter } = control
+    if (
+      _sort.type !== sortValue.type ||
+      _sort.direction !== sortValue.direction
+    )
+      setSortValue(control.sort)
+    if (_filter !== filter) setFilter(_filter)
+  }
+
+  // Primary Profile
+
+  const { profile: primaryProfile, loading: primaryProfileLoading } =
+    usePrimaryProfile(address)
+
+  const getTextRecord = (key: string) =>
+    primaryProfile?.records?.texts?.find((x) => x.key === key)
+
+  // Names
+
+  const {
+    currentPage = [],
+    isLoading: namesLoading,
+    status: namesStatus,
+    pageLength,
+    results,
+  } = useNamesFromAddress({
+    address,
+    sort: {
+      type: sortValue.type,
+      orderDirection: sortValue.direction,
+    },
+    page,
+    resultsPerPage: 10,
+    filter: filter === 'none' ? undefined : filter,
+  })
+
+  const loading = !isReady || namesLoading || primaryProfileLoading
+
+  const hasErrors = namesStatus === 'error'
+
+  const error = hasErrors ? t('errors.names') : ''
+
   return (
     <Basic
-      heading="heading"
-      subheading="subheading"
-      title="title"
-      loading={false}
+      heading={shortenAddress(address)}
+      title={`${address} - ENS`}
+      loading={loading}
     >
-      <FilterIcon />
-      {address}
-      <FilterControl />
-      <NoProfileSnippet />
-      <ProfileSnippet
-        description="description"
-        name="name"
-        button="viewProfile"
-        network="main"
-      />
-      <div>
-        <Accordian>
-          <AccordianSummary>
-            <AliasesLabel>Aliases</AliasesLabel>
-          </AccordianSummary>
-          <AliasContainer>
-            <AliasAvatarContianer>
-              <Avatar label="hello" />
-            </AliasAvatarContianer>
-            <AliasLabel>areallylongnamegoeshere.eth</AliasLabel>
-            <AliasButtonContainer>
-              <Button size="small" variant="transparent">
-                VIEW
-              </Button>
-            </AliasButtonContainer>
-          </AliasContainer>
-          <AliasContainer>ONE</AliasContainer>
-          <AliasContainer>ONE</AliasContainer>
-          <AliasContainer>ONE</AliasContainer>
-          <AliasContainer>ONE</AliasContainer>
-        </Accordian>
-        <Accordian>
-          <AccordianSummary>HELLO</AccordianSummary>
-          <div>ONE</div>
-          <div>ONE</div>
-          <div>ONE</div>
-          <div>ONE</div>
-          <div>ONE</div>
-        </Accordian>
-      </div>
+      <WrapperGrid $hasError={hasErrors}>
+        {error && (
+          <ErrorContainer>
+            <ErrorIcon as={ExclamationSVG} />
+            <Typography variant="large" weight="bold">
+              {error}
+            </Typography>
+          </ErrorContainer>
+        )}
+        <DetailsContainer $area="details">
+          {primaryProfile ? (
+            <>
+              <ProfileSnippet
+                name={primaryProfile.name!}
+                network={chain?.name!}
+                button="viewProfile"
+                description={getTextRecord('description')?.value}
+                recordName={getTextRecord('name')?.value}
+                url={getTextRecord('url')?.value}
+              />
+              <div>
+                <Accordian>
+                  <AccordianSummary>
+                    <AliasesLabel>{t('aliases')}</AliasesLabel>
+                  </AccordianSummary>
+                  {MOCK_ALIASES.map((alias) => (
+                    <AliasItem key={alias.name} profile={alias} />
+                  ))}
+                </Accordian>
+              </div>
+            </>
+          ) : (
+            <>
+              <NoProfileSnippet />
+            </>
+          )}
+        </DetailsContainer>
+        <ContentContainer $area="content">
+          <FilterControl
+            sort={sortValue}
+            filter={filter}
+            resultsCount={results}
+            onChange={onFilterControlChange}
+          />
+          <NameListView
+            currentPage={currentPage || []}
+            network={chain?.name!}
+          />
+          <PageButtonsWrapper>
+            <PageButtons
+              current={page}
+              onChange={(value) => setPage(value)}
+              total={pageLength}
+              max={5}
+              alwaysShowFirst
+              alwaysShowLast
+            />
+          </PageButtonsWrapper>
+        </ContentContainer>
+      </WrapperGrid>
     </Basic>
   )
+}
+
+export async function getStaticProps({ locale }: { locale: string }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale)),
+      // Will be passed to the page component as props
+    },
+  }
+}
+
+export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
+  return {
+    paths: [],
+    fallback: 'blocking',
+  }
 }
 
 export default AddressPage

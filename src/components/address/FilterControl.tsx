@@ -1,9 +1,11 @@
-import { Button, DynamicPopover, Typography } from '@ensdomains/thorin'
 import React from 'react'
 import styled from 'styled-components'
+import { useTranslation } from 'next-i18next'
+import { DynamicPopover, Typography } from '@ensdomains/thorin'
 import FilterIcon from '@app/assets/Filter.svg'
-import FilterPopover from './FilterPopover'
-import { SortDirection, SortType } from '../@molecules/SortControl/SortControl'
+import { SortValue } from '@app/components/@molecules/SortControl/SortControl'
+import { OutlinedButton } from '@app/components/OutlinedButton'
+import FilterPopover from '@app/components/address/FilterPopover'
 
 const Container = styled.div`
   display: flex;
@@ -11,30 +13,43 @@ const Container = styled.div`
   justify-content: space-between;
 `
 
-type FilterPopoverProps = {
-  sortBy?: SortType
-  sortDirection?: SortDirection
+type FilterControlProps = {
+  sort: SortValue
+  filter: 'none' | 'registration' | 'domain'
   resultsCount?: number
+  onChange?: (data: {
+    sort: FilterControlProps['sort']
+    filter: FilterControlProps['filter']
+  }) => void
 }
 
 const FilterControl = ({
-  sortBy = SortType.expiryDate,
-  sortDirection = SortDirection.desc,
+  sort,
+  filter,
   resultsCount = 0,
-}: FilterPopoverProps) => {
+  onChange,
+}: FilterControlProps) => {
+  const { t } = useTranslation('address')
+
   return (
     <Container>
       <DynamicPopover
         popover={
-          <FilterPopover sortBy={sortBy} sortDirection={sortDirection} />
+          <FilterPopover sort={sort} filter={filter} onChange={onChange} />
         }
         placement="bottom-start"
       >
-        <Button variant="secondary" suffix={<FilterIcon />} size="small">
-          Filter
-        </Button>
+        <OutlinedButton
+          variant="secondary"
+          suffix={<FilterIcon />}
+          size="small"
+        >
+          {t('filter')}
+        </OutlinedButton>
       </DynamicPopover>
-      <Typography>{resultsCount} results</Typography>
+      <Typography color="textTertiary">
+        {t('results', { count: resultsCount })}
+      </Typography>
     </Container>
   )
 }

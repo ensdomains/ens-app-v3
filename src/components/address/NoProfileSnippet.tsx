@@ -45,10 +45,9 @@ const NoProfileSnippet = () => {
         <Avatar label="profile-label" />
       </AvatarContainer>
       <ProfileContent>
-        <ProfileTitle>Title</ProfileTitle>
+        <ProfileTitle>No primary name set</ProfileTitle>
         <Typography variant="small" color="text">
-          Here is where the description goes and this is some more words to make
-          it go two lines
+          This wallet needs to set a primary name to create a profile
         </Typography>
       </ProfileContent>
     </Container>

@@ -1,9 +1,8 @@
+import React from 'react'
 import { Checkbox, Field } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
-import SortControl, {
-  SortType,
-  SortDirection,
-} from '../@molecules/SortControl/SortControl'
+import { useTranslation } from 'next-i18next'
+import SortControl, { SortValue } from '../@molecules/SortControl/SortControl'
 
 const PopoverContainer = styled.div(
   ({ theme }) => css`
@@ -44,30 +43,64 @@ const CheckBoxLabel = styled.span(
     line-height: ${theme.lineHeights['1.375']};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     color: ${theme.colors.black};
+    text-transform: capitalize;
   `,
 )
 
 type PopoverProps = {
-  sortBy: SortType
-  sortDirection: SortDirection
+  sort: SortValue
+  filter: 'none' | 'registration' | 'domain'
+  onChange?: (data: Omit<PopoverProps, 'onChange'>) => void
 }
 
-const FilterPopover = ({ sortBy, sortDirection }: PopoverProps) => {
-  const initialSortValue = {
-    type: sortBy,
-    direction: sortDirection,
+const FilterPopover = ({ sort, filter, onChange }: PopoverProps) => {
+  const { t } = useTranslation('common')
+
+  const onSortChange = (newSort: SortValue) => {
+    if (newSort.type !== sort.type || newSort.direction !== sort.direction) {
+      if (onChange) onChange({ sort: newSort, filter })
+    }
+  }
+
+  const onFilterClick = (newFilter: PopoverProps['filter']) => () => {
+    if (filter !== newFilter) {
+      if (onChange)
+        onChange({
+          sort,
+          filter: newFilter,
+        })
+    }
   }
 
   return (
     <PopoverContainer>
-      <SortControl value={initialSortValue} />
+      <SortControl value={sort} onChange={onSortChange} />
       <Field label="Show">
         <CheckBoxesWrapper>
-          {['registrant', 'controller', 'owner'].map((type) => (
-            <CheckBoxWrapper>
-              <Checkbox label={<CheckBoxLabel>{type}</CheckBoxLabel>} />
-            </CheckBoxWrapper>
-          ))}
+          <CheckBoxWrapper onClick={onFilterClick('registration')}>
+            <Checkbox
+              value="registration"
+              label={<CheckBoxLabel>{t('name.registrant')}</CheckBoxLabel>}
+              checked={filter === 'registration'}
+              readOnly
+            />
+          </CheckBoxWrapper>
+          <CheckBoxWrapper onClick={onFilterClick('domain')}>
+            <Checkbox
+              value="domain"
+              label={<CheckBoxLabel>{t('name.controller')}</CheckBoxLabel>}
+              checked={filter === 'domain'}
+              readOnly
+            />
+          </CheckBoxWrapper>
+          <CheckBoxWrapper onClick={onFilterClick('none')}>
+            <Checkbox
+              value="none"
+              label={<CheckBoxLabel>{t('name.all')}</CheckBoxLabel>}
+              checked={filter === 'none'}
+              readOnly
+            />
+          </CheckBoxWrapper>
         </CheckBoxesWrapper>
       </Field>
     </PopoverContainer>

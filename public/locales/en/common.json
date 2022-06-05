@@ -29,6 +29,13 @@
   "name": {
     "expires": "Expires",
     "registrant": "Registrant",
-    "controller": "Controller"
+    "controller": "Controller",
+    "owner": "Owner",
+    "all": "All"
+  },
+  "sortTypes": {
+    "expiryDate": "Expiry Date",
+    "labelName": "Name",
+    "creationDate": "Creation Date"
   }
 }
