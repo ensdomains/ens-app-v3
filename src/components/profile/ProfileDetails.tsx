@@ -3,7 +3,7 @@ import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import {
   AddressProfileButton,
   OtherProfileButton,
@@ -11,23 +11,23 @@ import {
 } from './ProfileButton'
 
 const ProfileInfoBox = styled.div`
-  ${({ theme }) => `
-  padding: ${theme.space['6']} ${theme.space['4']};
-  background-color: ${theme.colors.background};
-  border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-  border-radius: ${theme.radii['2xLarge']};
+  ${({ theme }) => css`
+    padding: ${theme.space['6']} ${theme.space['4']};
+    background-color: ${theme.colors.background};
+    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    border-radius: ${theme.radii['2xLarge']};
   `}
 `
 
 const Stack = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: row;
-  flex-gap: ${theme.space['2']};
-  gap: ${theme.space['2']};
-  flex-wrap: wrap;
-  margin-top: ${theme.space['2']};
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    flex-gap: ${theme.space['2']};
+    gap: ${theme.space['2']};
+    flex-wrap: wrap;
+    margin-top: ${theme.space['2']};
   `}
 `
 
@@ -86,11 +86,11 @@ const ProfileSection = ({
 }
 
 const RecordsStack = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: column;
-  flex-gap: ${theme.space['4']};
-  gap: ${theme.space['4']};
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    flex-gap: ${theme.space['4']};
+    gap: ${theme.space['4']};
   `}
 `
 

@@ -1,13 +1,13 @@
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { ComponentProps } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const StyledNftBox = styled.img<{ $loading: boolean }>`
-  ${({ theme, $loading }) => `
-  width: 100%;
-  background: ${$loading ? theme.colors.accentGradient : 'none'};
-  border-radius: ${theme.radii['2xLarge']};
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+  ${({ theme, $loading }) => css`
+    width: 100%;
+    background: ${$loading ? theme.colors.accentGradient : 'none'};
+    border-radius: ${theme.radii['2xLarge']};
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
   `}
 `
 

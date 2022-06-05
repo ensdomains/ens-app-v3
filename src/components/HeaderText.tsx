@@ -1,5 +1,5 @@
 import { Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const Wrapper = styled.div<{ $align: 'left' | 'right' }>`
   display: flex;
@@ -10,14 +10,14 @@ const Wrapper = styled.div<{ $align: 'left' | 'right' }>`
 `
 
 const Title = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
     line-height: ${theme.lineHeights.normal};
   `}
 `
 
 const Subtitle = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     line-height: ${theme.lineHeights.normal};
     color: ${theme.colors.textTertiary};
   `}

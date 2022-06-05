@@ -26,13 +26,13 @@ const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>`
   ${({ theme, $isTabBar }) =>
     $isTabBar &&
-    `
-    flex-grow: 1;
-    & button {
-      width: ${theme.space.full};
-      border-radius: ${theme.radii.full};
-    }
-  `}
+    css`
+      flex-grow: 1;
+      & button {
+        width: ${theme.space.full};
+        border-radius: ${theme.radii.full};
+      }
+    `}
 `
 
 export type AccountRenderProps = {
@@ -74,7 +74,7 @@ export const ConnectButtonWrapper = ({
               variant="action"
               size="medium"
             >
-              {t('profile.connect')}
+              {t('wallet.connect')}
             </Button>
           </StyledButtonWrapper>
         ) : (
@@ -100,11 +100,11 @@ export const HeaderConnect = () => {
           ensName={ensName}
           dropdownItems={[
             {
-              label: t('profile.myProfile'),
+              label: t('wallet.myProfile'),
               onClick: () => router.push('/my/profile'),
             },
             {
-              label: t('profile.disconnect'),
+              label: t('wallet.disconnect'),
               color: 'red',
               onClick: () => disconnect(),
             },

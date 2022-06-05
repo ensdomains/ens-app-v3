@@ -29,8 +29,8 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "^0.5.9",
-    "@rainbow-me/rainbowkit": "^0.2.0",
+    "@ensdomains/thorin": "^0.5.12",
+    "@rainbow-me/rainbowkit": "patch:@rainbow-me/rainbowkit@0.2.2#./patches/@rainbow-me/rainbowkit.patch",
     "@svgr/webpack": "^6.2.1",
     "ethers": "^5.6.5",
     "iso-639-1": "^2.1.13",
@@ -112,6 +112,7 @@
     "prettier": "2.5.1",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4",
+    "typescript-styled-plugin": "^0.18.2",
     "wait-on": "^6.0.1"
   },
   "resolutions": {
@@ -119,7 +120,8 @@
     "bn.js": "npm:bn.js@^5.2.0",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
     "@next/swc-linux-x64-gnu": "12.1.4",
-    "cypress": "9.5.3"
+    "cypress": "9.5.3",
+    "@rainbow-me/rainbowkit@0.2.2": "patch:@rainbow-me/rainbowkit@npm:0.2.2#.yarn/patches/@rainbow-me-rainbowkit-npm-0.2.2-f20a4ff5e0.patch"
   },
   "packageManager": "yarn@3.2.0",
   "dependenciesMeta": {

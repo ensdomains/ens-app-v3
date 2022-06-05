@@ -43,7 +43,7 @@ const DesktopBackContainer = styled.div`
 `
 
 const ContentWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     max-width: ${theme.space['288']};
     width: 100%;
     align-self: center;
@@ -56,7 +56,7 @@ const ContentWrapper = styled.div`
 `
 
 const BackArrow = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space['6']};
     height: ${theme.space['6']};
     display: block;
@@ -124,7 +124,7 @@ export const Basic = ({
               {HeaderItems.trailing}
             </DesktopBackContainer>
           )}
-        {loading ? (
+        {!router.isReady || loading ? (
           <LoadingContainer>
             <LoadingOverlay />
           </LoadingContainer>

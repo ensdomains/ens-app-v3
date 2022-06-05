@@ -1,3 +1,4 @@
+import { Notifications } from '@app/components/Notifications'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import {
@@ -111,6 +112,7 @@ function MyApp({ Component, pageProps }: AppProps) {
               <BreakpointProvider queries={breakpoints}>
                 <GlobalStyle />
                 <ThorinGlobalStyles />
+                <Notifications />
                 <Component {...pageProps} />
               </BreakpointProvider>
             </ThemeProvider>

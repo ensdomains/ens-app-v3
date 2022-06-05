@@ -7,7 +7,13 @@
       "strict": true,
       "esModuleInterop": true,
       "allowJs": true,
-      "checkJs": true
+      "checkJs": true,
+      "plugins": [
+        {
+          "name": "typescript-styled-plugin",
+          "tags": ["styled", "css", "mq"]
+        }
+      ]
     }
   },
   "compilerOptions": {
@@ -31,7 +37,17 @@
     "incremental": true,
     "paths": {
       "@app/*": ["./src/*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin",
+        "tags": ["styled", "css", "mq"],
+        "validate": true,
+        "lint": {
+          "validProperties": ["flex-gap"]
+        }
+      }
+    ]
   },
   "include": [
     "next-env.d.ts",

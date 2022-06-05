@@ -8,7 +8,7 @@ import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 const NameItemWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -37,7 +37,7 @@ const NameItemContainer = styled.div`
 `
 
 const AvatarWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space['9']};
   `}
 `

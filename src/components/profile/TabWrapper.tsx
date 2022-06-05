@@ -1,7 +1,7 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 export const TabWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: 1px solid rgba(0, 0, 0, 0.06);

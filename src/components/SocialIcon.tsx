@@ -1,7 +1,7 @@
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Space } from '@ensdomains/thorin'
 import { ElementType } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const SocialIconWrapper = styled.a<{ $boxSize: Space }>`
   position: relative;
@@ -9,7 +9,7 @@ const SocialIconWrapper = styled.a<{ $boxSize: Space }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  ${({ theme, $boxSize }) => `
+  ${({ theme, $boxSize }) => css`
     width: ${theme.space[$boxSize]};
     min-height: ${theme.space[$boxSize]};
   `}

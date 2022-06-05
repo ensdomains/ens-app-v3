@@ -5,15 +5,15 @@ import { Avatar, Button, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import React from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
 const Container = styled.div<{ $banner?: string }>`
-  ${({ theme, $banner }) => `
+  ${({ theme, $banner }) => css`
     padding: ${theme.space['6']};
     padding-top: ${theme.space['16']};
-    background-image: ${
-      $banner ? `url(${$banner})` : theme.colors.gradients.blue
-    };
+    background-image: ${$banner
+      ? `url(${$banner})`
+      : theme.colors.gradients.blue};
     background-repeat: no-repeat;
     background-attachment: scroll;
     background-size: 100% ${theme.space['28']};
@@ -31,29 +31,29 @@ const Container = styled.div<{ $banner?: string }>`
 `
 
 const AvatarWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space['24']};
   `}
 `
 
 const DetailStack = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: row;
-  flex-gap: ${theme.space['2']};
-  gap: ${theme.space['2']};
-  align-items: center;
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    flex-gap: ${theme.space['2']};
+    gap: ${theme.space['2']};
+    align-items: center;
   `}
 `
 
 const Name = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
   `}
 `
 
 const TextStack = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -144,7 +144,7 @@ export const ProfileSnippet = ({
                 variant="transparent"
                 size="extraSmall"
               >
-                {t(`profile.${button}`)}
+                {t(`wallet.${button}`)}
               </Button>
             </DetailButtonWrapper>
           )}

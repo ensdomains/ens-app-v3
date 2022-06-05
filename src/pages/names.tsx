@@ -31,7 +31,7 @@ const EmptyDetailContainer = styled.div`
   align-items: center;
 `
 const PageButtonsContainer = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -73,7 +73,7 @@ const ViewButtons = styled.div`
   flex-direction: row;
   align-items: center;
   justify-content: center;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
   `}
@@ -95,7 +95,7 @@ const SelectWrapper = styled.div`
 const FilterDropdownContainer = styled.div`
   display: flex;
   flex-direction: row;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
   `}
@@ -104,7 +104,7 @@ const FilterDropdownContainer = styled.div`
 const Container = styled.div`
   display: flex;
   flex-direction: column;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     max-width: ${theme.space['320']};
     margin: 0 auto;
@@ -123,7 +123,7 @@ const TopContainer = styled.div`
   flex-direction: column;
   align-items: flex-start;
   justify-content: space-between;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
   `}
@@ -137,7 +137,7 @@ const SortAndDirections = styled.div`
   flex-direction: row;
   align-items: flex-end;
   justify-content: center;
-  ${({ theme }) => `
+  ${({ theme }) => css`
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
   `}
@@ -203,14 +203,11 @@ const NamesPage: NextPage = () => {
               <FilterDropdownContainer>
                 <SelectWrapper>
                   <Select
-                    value={{
-                      value: sortType,
-                      label: t(`sortTypes.${sortType}`),
-                    }}
+                    value={sortType}
                     size="small"
                     label="Sort by"
                     onChange={(e) =>
-                      e?.value && setSortType(e.value as SortType)
+                      setSortType(e.currentTarget.value as SortType)
                     }
                     options={[
                       { label: t('sortTypes.expiryDate'), value: 'expiryDate' },

@@ -22,7 +22,7 @@ const ButtonWrapper = styled.div`
   & > button {
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-    ${({ theme }) => `
+    ${({ theme }) => css`
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii.extraLarge};
     `}
@@ -33,7 +33,7 @@ const ButtonWrapper = styled.div`
 `
 
 const Content = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -45,21 +45,21 @@ const Content = styled.div`
 `
 
 const Label = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     color: ${theme.colors.textTertiary};
     font-size: ${theme.fontSizes.small};
   `}
 `
 
 const Name = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     color: ${theme.colors.text};
     font-size: ${theme.fontSizes.small};
   `}
 `
 
 const AvatarWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space['6']};
     height: ${theme.space['6']};
   `}
@@ -93,7 +93,7 @@ const OwnerButtonWrapper = ({
 }
 
 const AddressCopyContainer = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -105,7 +105,7 @@ const AddressCopyContainer = styled.div`
 `
 
 const AddressCopyButton = styled(OutlinedButton)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space.full};
     & > button > div {
       width: ${theme.space.full};
@@ -114,7 +114,7 @@ const AddressCopyButton = styled(OutlinedButton)`
 `
 
 const InnerDialog = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -128,7 +128,7 @@ const InnerDialog = styled.div`
 `
 
 const TransferButton = styled.button`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     outline: none;
     padding: none;
     margin: none;
@@ -140,7 +140,7 @@ const TransferButton = styled.button`
 `
 
 const ProfileSnippetWrapper = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     width: ${theme.space.full};
   `}
 `
@@ -252,7 +252,7 @@ const ChevronIcon = styled.div<{ $pressed: boolean }>`
 `
 
 const OwnerRow = styled.div`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -263,14 +263,14 @@ const OwnerRow = styled.div`
 `
 
 const ContentWithDropdown = styled(Content)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     gap: ${theme.space['1']};
     flex-gap: ${theme.space['1']};
   `}
 `
 
 const OwnerButtonWrapperWithDropdown = styled(OwnerButtonWrapper)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     & > button {
       padding: ${theme.space['2']} ${theme.space['3']};
     }

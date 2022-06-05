@@ -19,47 +19,47 @@ import { IconCopyAnimated } from '../IconCopyAnimated'
 
 const Container = styled.div`
   ${({ theme }) => css`
-  padding: 0;
-  padding-right: ${theme.space['0.25']};
-  width: 100%:
-  ${mq.md.min`
-    padding: 0 ${theme.space['1']};
-  `}
+    padding: 0;
+    padding-right: ${theme.space['0.25']};
+    width: 100%;
+    ${mq.md.min`
+      padding: 0 ${theme.space['1']};
+    `}
   `}
 `
 
 const Wrapper = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: row;
-  flex-gap: ${theme.space['2']};
-  gap: ${theme.space['2']};
-  align-items: center;
-  justify-content: center;
+  ${({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    flex-gap: ${theme.space['2']};
+    gap: ${theme.space['2']};
+    align-items: center;
+    justify-content: center;
   `}
 `
 
 const StyledAddressIcon = styled(DynamicAddressIcon)`
-  ${({ theme }) => `
-  width: ${theme.space['5']};
-  height: ${theme.space['5']};
+  ${({ theme }) => css`
+    width: ${theme.space['5']};
+    height: ${theme.space['5']};
   `}
 `
 
 const PrimaryText = styled(Typography)`
-  ${({ theme }) => `
-  color: ${theme.colors.text};
+  ${({ theme }) => css`
+    color: ${theme.colors.text};
   `}
 `
 
 const RotatedIconArrowUp = styled.svg`
-  ${({ theme }) => `
-  display: block;
-  transform: rotate(45deg);
-  height: ${theme.space['3.5']};
-  width: ${theme.space['3.5']};
-  stroke-width: ${theme.borderWidths['1']};
-  color: ${theme.colors.textTertiary};
+  ${({ theme }) => css`
+    display: block;
+    transform: rotate(45deg);
+    height: ${theme.space['3.5']};
+    width: ${theme.space['3.5']};
+    stroke-width: ${theme.borderWidths['1']};
+    color: ${theme.colors.textTertiary};
   `}
 `
 
@@ -184,22 +184,22 @@ export const AddressProfileButton = ({
 }
 
 const OtherContainer = styled.div`
-  ${({ theme }) => `
-  background-color: ${theme.colors.textTertiary};
-  padding: ${theme.space['0.5']} ${theme.space['1.25']};
-  border-radius: ${theme.radii.large};
+  ${({ theme }) => css`
+    background-color: ${theme.colors.textTertiary};
+    padding: ${theme.space['0.5']} ${theme.space['1.25']};
+    border-radius: ${theme.radii.large};
   `}
 `
 
 const OtherContainerAddressPrefix = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     color: ${theme.colors.white};
     font-size: ${theme.fontSizes.label};
   `}
 `
 
 const OtherContainerTextPrefix = styled(Typography)`
-  ${({ theme }) => `
+  ${({ theme }) => css`
     padding-left: ${theme.space['0.5']};
   `}
 `
