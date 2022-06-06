@@ -12,7 +12,6 @@ import {
   Theme,
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
-import { appWithTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
 import { I18nextProvider } from 'react-i18next'
 import { QueryClient, QueryClientProvider } from 'react-query'
@@ -127,4 +126,4 @@ function MyApp({ Component, pageProps }: AppProps) {
   )
 }
 
-export default appWithTranslation(MyApp)
+export default MyApp
