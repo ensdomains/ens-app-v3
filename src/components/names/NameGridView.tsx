@@ -80,10 +80,12 @@ const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>(
   `,
 )
 
-const ExpiryText = styled.div<{ $primary: boolean }>`
-  font-weight: bold;
-  opacity: ${({ $primary }) => ($primary ? 0.6 : 0.8)};
-`
+const ExpiryText = styled.div<{ $primary: boolean }>(
+  ({ $primary }) => css`
+    font-weight: bold;
+    opacity: ${$primary ? 0.6 : 0.8};
+  `,
+)
 
 const Expiry = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()
