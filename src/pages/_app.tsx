@@ -57,6 +57,7 @@ a {
 * {
   box-sizing: border-box;
   font-feature-settings: "ss01" on, "ss03" on;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
   -moz-font-feature-settings: "ss01" on, "ss03" on;
 }
 `

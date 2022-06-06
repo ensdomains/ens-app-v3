@@ -4,8 +4,8 @@ import { PropsWithChildren } from 'react'
 import styled, { css } from 'styled-components'
 import { ConditionalWrapper } from './ConditionalWrapper'
 
-const StyledAnchor = styled.a<{ isActive: boolean; disabled?: boolean }>`
-  ${({ theme, disabled, isActive }) => css`
+const StyledAnchor = styled.a<{ $isActive: boolean; disabled?: boolean }>(
+  ({ theme, $isActive, disabled }) => css`
     white-space: nowrap;
     color: ${theme.colors.textTertiary};
     font-weight: ${theme.fontWeights.bold};
@@ -22,12 +22,12 @@ const StyledAnchor = styled.a<{ isActive: boolean; disabled?: boolean }>`
             color: ${theme.colors.textSecondary};
           }
         `}
-    ${isActive &&
+    ${$isActive &&
     css`
       color: ${theme.colors.accent};
     `}
-  `}
-`
+  `,
+)
 
 export const StyledNavLink = ({
   children,
@@ -46,7 +46,10 @@ export const StyledNavLink = ({
         </Link>
       )}
     >
-      <StyledAnchor disabled={disabled} isActive={router.asPath === props.href}>
+      <StyledAnchor
+        disabled={disabled}
+        $isActive={router.asPath === props.href}
+      >
         {children}
       </StyledAnchor>
     </ConditionalWrapper>

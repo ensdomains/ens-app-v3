@@ -4,11 +4,11 @@
 import { useExists } from '@app/hooks/useExists'
 import { useInitial } from '@app/hooks/useInitial'
 import { useValidate } from '@app/hooks/useValidate'
-import mq from '@app/mediaQuery'
 import {
   ArrowCircleSVG,
   CancelCircleSVG,
   Input,
+  mq,
   Spinner,
 } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'
@@ -16,18 +16,19 @@ import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-const Container = styled.div<{ $size: 'large' | 'extraLarge' }>`
-  width: 100%;
-  ${({ $size }) =>
-    $size === 'extraLarge' &&
-    mq.md.min`
-    padding-left: 48px;
-    padding-right: 48px;
-  `}
-`
+const Container = styled.div<{ $size: 'large' | 'extraLarge' }>(
+  ({ $size }) => css`
+    width: 100%;
+    ${$size === 'extraLarge' &&
+    mq.md.min(css`
+      padding-left: 48px;
+      padding-right: 48px;
+    `)}
+  `,
+)
 
-const SearchArrowButton = styled.div<{ $danger?: boolean }>`
-  ${({ $danger, theme }) => css`
+const SearchArrowButton = styled.div<{ $danger?: boolean }>(
+  ({ theme, $danger }) => css`
     display: block;
     transition: all 0.15s ease-in-out;
     cursor: pointer;
@@ -39,11 +40,11 @@ const SearchArrowButton = styled.div<{ $danger?: boolean }>`
       filter: brightness(1.05);
       transform: translateY(-1px);
     }
-  `}
-`
+  `,
+)
 
-const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
-  ${({ theme, $size }) => css`
+const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
+  ({ theme, $size }) => css`
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2.5xLarge']};
     border-width: 1px;
@@ -65,17 +66,18 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>`
         color: ${theme.colors.textTertiary};
       }
     `}
-  `}
-`
+  `,
+)
 
-const StyledInputParent = (size: 'large' | 'extraLarge') => css`
-  ${({ theme }) => css`
-    border-radius: ${theme.radii['2.5xLarge']};
-    background-color: ${size === 'large'
-      ? theme.colors.background
-      : theme.colors.backgroundSecondary};
-  `}
-`
+const StyledInputParent = (size: 'large' | 'extraLarge') =>
+  css(
+    ({ theme }) => css`
+      border-radius: ${theme.radii['2.5xLarge']};
+      background-color: ${size === 'large'
+        ? theme.colors.background
+        : theme.colors.backgroundSecondary};
+    `,
+  )
 
 const setSearchedVal = debounce(
   (input: string, setFunc: (input: string) => void) => setFunc(input),

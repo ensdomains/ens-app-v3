@@ -1,8 +1,8 @@
 import { Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 
-export const SectionContainer = styled.div<{ $name?: string }>`
-  ${({ theme, $name }) => css`
+export const SectionContainer = styled.div<{ $name?: string }>(
+  ({ theme, $name }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -13,11 +13,11 @@ export const SectionContainer = styled.div<{ $name?: string }>`
     css`
       grid-area: ${$name};
     `}
-  `}
-`
+  `,
+)
 
-export const SectionHeading = styled(Typography)`
-  ${({ theme }) => css`
+export const SectionHeading = styled(Typography)(
+  ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
-  `}
-`
+  `,
+)

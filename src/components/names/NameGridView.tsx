@@ -1,39 +1,43 @@
 import ClockSVG from '@app/assets/Clock.svg'
 import { ReturnedName } from '@app/hooks/useNamesFromAddress'
-import mq from '@app/mediaQuery'
 import { secondsToDays } from '@app/utils/utils'
-import { Colors } from '@ensdomains/thorin'
+import { Colors, mq } from '@ensdomains/thorin'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 
-const NameGrid = styled.div`
-  display: grid;
-  ${({ theme }) => css`
+const NameGrid = styled.div(
+  ({ theme }) => css`
+    display: grid;
     grid-template-columns: repeat(auto-fit, minmax(${theme.space['32']}, 1fr));
-    ${mq.md.min`
-      grid-template-columns: repeat(auto-fit, minmax(${theme.space['64']}, 1fr));
-    `}
+    ${mq.md.min(css`
+      grid-template-columns: repeat(
+        auto-fit,
+        minmax(${theme.space['64']}, 1fr)
+      );
+    `)}
     gap: ${theme.space['8']};
-  `}
-`
+  `,
+)
 
-const NameGridItem = styled.div`
-  display: flex;
-  position: relative;
-  align-items: center;
-  justify-content: center;
-  margin: 0;
-  padding: 0;
-  transition: all 0.15s ease-in-out;
-  &:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-  }
-`
+const NameGridItem = styled.div(
+  () => css`
+    display: flex;
+    position: relative;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    transition: all 0.15s ease-in-out;
+    &:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+  `,
+)
 
-const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>`
-  ${({ theme, $color, $primary }) => `
+const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>(
+  ({ theme, $color, $primary }) => css`
     display: flex;
     gap: ${theme.space['1']};
     flex-gap: ${theme.space['1']};
@@ -47,25 +51,24 @@ const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>`
     z-index: 1;
     right: calc(-1 * ${theme.space['1.5']});
     top: calc(-1 * ${theme.space['1.5']});
-    border-radius: ${theme.radii.full};
     border-style: solid;
     border-width: 2px;
     border-color: rgba(
-      ${
-        $color === 'foreground'
-          ? '0,0,0'
-          : theme.accentsRaw[$color as keyof typeof theme.accentsRaw]
-      },
+      ${$color === 'foreground'
+        ? '0,0,0'
+        : theme.accentsRaw[$color as keyof typeof theme.accentsRaw]},
       ${$primary ? '0.2' : '0.42'}
     );
     color: rgb(${theme.colors[$color]});
-  `}
-`
+  `,
+)
 
-const ExpiryText = styled.div<{ $primary: boolean }>`
-  font-weight: bold;
-  opacity: ${({ $primary }) => ($primary ? 0.6 : 0.8)};
-`
+const ExpiryText = styled.div<{ $primary: boolean }>(
+  ({ $primary }) => css`
+    font-weight: bold;
+    opacity: ${$primary ? 0.6 : 0.8};
+  `,
+)
 
 const Expiry = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()

@@ -6,48 +6,49 @@ import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button, ExclamationSVG, Typography } from '@ensdomains/thorin'
+import { Button, ExclamationSVG, mq, Typography } from '@ensdomains/thorin'
 import { GetStaticPaths, NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName, useNetwork } from 'wagmi'
 
-const GridItem = styled.div<{ $area: string }>`
-  grid-area: ${({ $area }) => $area};
-`
+const GridItem = styled.div<{ $area: string }>(
+  ({ $area }) => css`
+    grid-area: ${$area};
+  `,
+)
 
-const DetailsWrapper = styled(GridItem)`
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-start;
-  gap: ${({ theme }) => theme.space['2']};
-  flex-gap: ${({ theme }) => theme.space['2']};
-  width: 100%;
-`
+const DetailsWrapper = styled(GridItem)(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
+    width: 100%;
+  `,
+)
 
-const WrapperGrid = styled.div<{ $hasError?: boolean }>`
-  flex-grow: 1;
-  width: 100%;
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: ${({ theme }) => theme.space['5']};
-  align-self: center;
-  ${({ $hasError }) => css`
-    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details';
-    ${mq.md.min`
-      grid-template-areas: ${
-        $hasError ? "'error error'" : ''
-      } "name-details details";
+const WrapperGrid = styled.div<{ $hasError?: boolean }>(
+  ({ theme, $hasError }) => css`
+    flex-grow: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: ${theme.space['5']};
+    align-self: center;
+    grid-template-areas: ${$hasError && "'error error'"} 'details details';
+    ${mq.md.min(css`
+      grid-template-areas: ${$hasError && "'error error'"} 'name-details details';
       grid-template-columns: 270px 2fr;
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const ErrorIcon = styled.div`
-  ${({ theme }) => css`
+const ErrorIcon = styled.div(
+  ({ theme }) => css`
     background: rgba(255, 255, 255, 0.5);
     color: ${theme.colors.yellow};
     stroke-width: ${theme.space['0.5']};
@@ -57,11 +58,11 @@ const ErrorIcon = styled.div`
     min-width: ${theme.space['12']};
     padding: ${theme.space['1']};
     border-radius: ${theme.radii.almostExtraLarge};
-  `}
-`
+  `,
+)
 
-const ErrorContainer = styled.div`
-  ${({ theme }) => css`
+const ErrorContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -77,13 +78,13 @@ const ErrorContainer = styled.div`
     & > div {
       line-height: ${theme.lineHeights.normal};
     }
-  `}
-`
+  `,
+)
 
-const SelfButtons = styled.div`
-  display: flex;
-  flex-direction: row;
-  ${({ theme }) => css`
+const SelfButtons = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
 
@@ -93,8 +94,8 @@ const SelfButtons = styled.div`
       box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
       background-color: ${theme.colors.background};
     }
-  `}
-`
+  `,
+)
 
 const ProfilePage: NextPage = () => {
   const router = useRouter()

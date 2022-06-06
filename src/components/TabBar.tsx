@@ -11,8 +11,8 @@ import HeartSVG from '../assets/Heart.svg'
 import MagnifyingGlassSVG from '../assets/MagnifyingGlass.svg'
 import { ConnectButtonWrapper } from './ConnectButton'
 
-const AvatarWrapper = styled.div<{ $active: boolean }>`
-  ${({ theme, $active }) => css`
+const AvatarWrapper = styled.div<{ $active: boolean }>(
+  ({ theme, $active }) => css`
     position: relative;
     width: ${theme.space['10']};
     border: 2px solid
@@ -21,11 +21,11 @@ const AvatarWrapper = styled.div<{ $active: boolean }>`
       ? theme.colors.accent
       : 'rgba(196, 196, 196, 1)'};
     border-radius: ${theme.radii.full};
-  `}
-`
+  `,
+)
 
-const LinkWrapper = styled.a<{ $hasNotification?: boolean }>`
-  ${({ theme, $hasNotification }) => css`
+const LinkWrapper = styled.a<{ $hasNotification?: boolean }>(
+  ({ theme, $hasNotification }) => css`
     position: relative;
     display: flex;
     align-items: center;
@@ -45,16 +45,16 @@ const LinkWrapper = styled.a<{ $hasNotification?: boolean }>`
         right: ${theme.space['0.5']};
       }
     `}
-  `}
-`
+  `,
+)
 
-const IconContainer = styled.div<{ $active: boolean }>`
-  ${({ theme, $active }) => css`
+const IconContainer = styled.div<{ $active: boolean }>(
+  ({ theme, $active }) => css`
     color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
     width: ${theme.space['6']};
     height: ${theme.space['6']};
-  `}
-`
+  `,
+)
 
 const Icon = ({
   as,
@@ -111,24 +111,24 @@ const tabs: TabItem[] = [
   },
 ]
 
-const TabWrapper = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 1;
-  ${({ theme }) => css`
+const TabWrapper = styled.div(
+  ({ theme }) => css`
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 1;
     background: linear-gradient(
       180deg,
       rgba(255, 255, 255, 0) 0%,
       ${theme.colors.background} 60%
     );
     padding: ${theme.space['6']} ${theme.space['4']};
-  `}
-`
+  `,
+)
 
-const TabContainer = styled.div<{ $connected: boolean }>`
-  ${({ theme, $connected }) => css`
+const TabContainer = styled.div<{ $connected: boolean }>(
+  ({ theme, $connected }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -143,14 +143,14 @@ const TabContainer = styled.div<{ $connected: boolean }>`
     css`
       padding-right: ${theme.space['2']};
     `}
-  `}
-`
+  `,
+)
 
-const BottomPlaceholder = styled.div`
-  ${({ theme }) => css`
+const BottomPlaceholder = styled.div(
+  ({ theme }) => css`
     height: ${theme.space['28']};
-  `}
-`
+  `,
+)
 
 export const TabBar = () => {
   const router = useRouter()

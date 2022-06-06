@@ -2,17 +2,17 @@ import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
 
-const IconWrapper = styled.div<{ $copied: boolean }>`
-  position: relative;
-  & > svg {
-    display: block;
-    transition: all 0.15s ease-in-out;
-  }
-  & > svg:first-child {
-    position: absolute;
-  }
-  ${(props) =>
-    props.$copied
+const IconWrapper = styled.div<{ $copied: boolean }>(
+  ({ $copied }) => css`
+    position: relative;
+    & > svg {
+      display: block;
+      transition: all 0.15s ease-in-out;
+    }
+    & > svg:first-child {
+      position: absolute;
+    }
+    ${$copied
       ? css`
           & > svg:first-child {
             opacity: 1;
@@ -33,7 +33,8 @@ const IconWrapper = styled.div<{ $copied: boolean }>`
             visibility: visible;
           }
         `}
-`
+  `,
+)
 
 type SVGProps = {
   checkStrokeWidth?: keyof typeof tokens.borderWidths
@@ -45,8 +46,8 @@ const SVGWrapper = styled.svg<{
   $checkStrokeWidth: SVGProps['checkStrokeWidth']
   $size: SVGProps['size']
   $color: SVGProps['color']
-}>`
-  ${({ theme, $checkStrokeWidth, $size, $color }) => css`
+}>(
+  ({ theme, $checkStrokeWidth, $size, $color }) => css`
     ${$checkStrokeWidth &&
     css`
       stroke-width: ${theme.borderWidths[$checkStrokeWidth]};
@@ -60,8 +61,8 @@ const SVGWrapper = styled.svg<{
     css`
       color: ${theme.colors[$color]};
     `}
-  `}
-`
+  `,
+)
 
 export const IconCopyAnimated = memo(
   ({
