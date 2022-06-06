@@ -60,6 +60,7 @@ let nextConfig = {
     })
     config.plugins.push(
       new StylelintPlugin({
+        cwd: path.resolve(__dirname, './src'),
         extensions: ['tsx'],
         failOnError: process.env.NODE_ENV !== 'development',
         cache: false,
