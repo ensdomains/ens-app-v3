@@ -5,8 +5,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
 import type { NextPage } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -53,15 +52,6 @@ const SettingsPage: NextPage = () => {
       </WrapperGrid>
     </Basic>
   )
-}
-
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale)),
-      // Will be passed to the page component as props
-    },
-  }
 }
 
 export default SettingsPage

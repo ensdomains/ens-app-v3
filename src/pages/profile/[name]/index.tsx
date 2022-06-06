@@ -10,9 +10,8 @@ import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button, ExclamationSVG, Typography } from '@ensdomains/thorin'
 import { GetStaticPaths, NextPage } from 'next'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName, useNetwork } from 'wagmi'
 
@@ -214,13 +213,8 @@ const ProfilePage: NextPage = () => {
   )
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale)),
-      // Will be passed to the page component as props
-    },
-  }
+export const getStaticProps = async () => {
+  return {}
 }
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {

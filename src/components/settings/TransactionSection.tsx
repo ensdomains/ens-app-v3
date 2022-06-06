@@ -4,8 +4,8 @@ import {
   useClearRecentTransactions,
   useRecentTransactions,
 } from '@rainbow-me/rainbowkit'
-import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useNetwork } from 'wagmi'
 import { Card } from '../Card'

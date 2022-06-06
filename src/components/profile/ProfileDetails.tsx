@@ -2,7 +2,7 @@ import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import {
   AddressProfileButton,

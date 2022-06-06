@@ -2,8 +2,8 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Toast } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
-import { useTranslation } from 'next-i18next'
 import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useNetwork } from 'wagmi'
 
 type Notification = {

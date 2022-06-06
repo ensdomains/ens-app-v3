@@ -2,9 +2,9 @@ import TripleDot from '@app/assets/TripleDot.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { Avatar, Button, Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
 import React from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div<{ $banner?: string }>`

@@ -10319,6 +10319,9 @@ __metadata:
     hardhat-dependency-compiler: ^1.1.2
     hardhat-deploy: ^0.11.4
     husky: ^7.0.0
+    i18next: ^21.8.8
+    i18next-browser-languagedetector: ^6.1.4
+    i18next-http-backend: ^1.4.1
     iso-639-1: ^2.1.13
     jest: ^27.4.7
     jest-environment-jsdom: ^27.4.6
@@ -10333,6 +10336,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-ga: ^3.3.0
+    react-i18next: ^11.17.0
     react-is: ^17.0.2
     react-query: ^3.34.19
     react-transition-state: ^1.1.4
@@ -13929,10 +13933,28 @@ __metadata:
   languageName: node
   linkType: hard
 
+"i18next-browser-languagedetector@npm:^6.1.4":
+  version: 6.1.4
+  resolution: "i18next-browser-languagedetector@npm:6.1.4"
+  dependencies:
+    "@babel/runtime": ^7.14.6
+  checksum: 379dba3527c359c3adeb26c1e16e6b7e007989763c4361d43662e4d9412c538ca35e28a6a12df0654edc0adb78b44ff5afdf4c5d842bbf0e83db59d5e9e02f55
+  languageName: node
+  linkType: hard
+
 "i18next-fs-backend@npm:^1.0.7":
   version: 1.1.4
   resolution: "i18next-fs-backend@npm:1.1.4"
   checksum: 7da252aa618f82555a99709b0f8afed997b7b20aeb5e66c92fe13f5b676c80b8a3cad24a1e38c599c6ab6e9169c4be87268c30e48cf1965cbcc8a69ff76bd0a4
+  languageName: node
+  linkType: hard
+
+"i18next-http-backend@npm:^1.4.1":
+  version: 1.4.1
+  resolution: "i18next-http-backend@npm:1.4.1"
+  dependencies:
+    cross-fetch: 3.1.5
+  checksum: 1ed4c68c458cc5e7c60af3b641223b9f1b49b6e7ded0fb908cf034ddf62de401db9bb8bb0f6be0634c53ceeee0fec7e03e7171b0dea2cbebca5bbcee6da46e2f
   languageName: node
   linkType: hard
 
@@ -13942,6 +13964,15 @@ __metadata:
   dependencies:
     "@babel/runtime": ^7.17.2
   checksum: bc6e117874d9b69a39d6ad322851d25f75908c7fa977c8771b98ba7b0273aceba96e82326ed0855b8db098b1490c5a0decbe62b4f61dac84fdc677c2fdc52bb8
+  languageName: node
+  linkType: hard
+
+"i18next@npm:^21.8.8":
+  version: 21.8.8
+  resolution: "i18next@npm:21.8.8"
+  dependencies:
+    "@babel/runtime": ^7.17.2
+  checksum: 2d5e1868f2830b8487014b7bf8dfa72af13224c0991892d7e0ccc56ceabab35a60ca285a90d2a9f587c49ab67ea8e0d0f032a3fd1d14ff0ecbfd3e1a5c1e8510
   languageName: node
   linkType: hard
 
@@ -19267,6 +19298,25 @@ __metadata:
     react-native:
       optional: true
   checksum: 3e86c5e7a73eef88eff7487bbc87ecf3d5c6808ce3d0cc1e9599e6a1b72466d2d6ced2b1b600c18a2309757bea49d1670526a1bc8953a9bf377964e9ea3c9166
+  languageName: node
+  linkType: hard
+
+"react-i18next@npm:^11.17.0":
+  version: 11.17.0
+  resolution: "react-i18next@npm:11.17.0"
+  dependencies:
+    "@babel/runtime": ^7.14.5
+    html-escaper: ^2.0.2
+    html-parse-stringify: ^3.0.1
+  peerDependencies:
+    i18next: ">= 19.0.0"
+    react: ">= 16.8.0"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+    react-native:
+      optional: true
+  checksum: 0ed6823af56f4133bf1664262206be6651cbea95e2f9275411d6346c6b8009e277b32fe60702fd06607d13b8979913bd013da702e25fa3f4e1bd73e403417296
   languageName: node
   linkType: hard
 
