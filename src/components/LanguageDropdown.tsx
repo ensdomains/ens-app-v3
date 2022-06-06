@@ -41,7 +41,10 @@ export const LanugageDropdown = () => {
       chevron={isLarge}
       size={isLarge ? 'medium' : 'small'}
       items={(i18n.options.supportedLngs || [])
-        .filter((lang: string) => lang !== i18n.language)
+        .filter(
+          (lang: string) =>
+            lang && lang !== i18n.resolvedLanguage && lang !== 'cimode',
+        )
         .map((lang: string) => ({
           label: formatName(lang),
           onClick: () => i18n.changeLanguage(lang),
@@ -49,7 +52,7 @@ export const LanugageDropdown = () => {
       menuLabelAlign="flex-start"
       label={
         <MobileInnerDropdownButton $large={isLarge}>
-          {formatName(i18n.language)}
+          {formatName(i18n.language || 'en')}
         </MobileInnerDropdownButton>
       }
     />
