@@ -1,27 +1,28 @@
 import { Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 
-const Wrapper = styled.div<{ $align: 'left' | 'right' }>`
-  display: flex;
-  flex-direction: column;
-  align-items: ${({ $align }) =>
-    $align === 'left' ? 'flex-start' : 'flex-end'};
-  justify-content: center;
-`
+const Wrapper = styled.div<{ $align: 'left' | 'right' }>(
+  ({ $align }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: ${$align === 'left' ? 'flex-start' : 'flex-end'};
+    justify-content: center;
+  `,
+)
 
-const Title = styled(Typography)`
-  ${({ theme }) => css`
+const Title = styled(Typography)(
+  ({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
     line-height: ${theme.lineHeights.normal};
-  `}
-`
+  `,
+)
 
-const Subtitle = styled(Typography)`
-  ${({ theme }) => css`
+const Subtitle = styled(Typography)(
+  ({ theme }) => css`
     line-height: ${theme.lineHeights.normal};
     color: ${theme.colors.textTertiary};
-  `}
-`
+  `,
+)
 
 export const HeaderText = ({
   title,

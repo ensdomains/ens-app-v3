@@ -1,4 +1,4 @@
-import mq from '@app/mediaQuery'
+import { mq } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
 import styled, { css } from 'styled-components'
 import SocialDiscord from '../assets/social/SocialDiscord.svg'
@@ -11,42 +11,46 @@ import SocialYoutube from '../assets/social/SocialYoutube.svg'
 import { SocialIcon } from './SocialIcon'
 import { StyledNavLink } from './StyledNavLink'
 
-const Container = styled.footer`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-top: ${({ theme }) => theme.space['2.5']};
-  ${mq.md.min`
-    flex-direction: row;
-  `}
-`
+const Container = styled.footer(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: ${theme.space['2.5']};
+    ${mq.md.min(css`
+      flex-direction: row;
+    `)}
+  `,
+)
 
-const LinkContainer = styled.div`
-  display: flex;
-  direction: row;
-  align-items: center;
-  ${({ theme }) => css`
+const LinkContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    direction: row;
+    align-items: center;
     flex-gap: ${theme.space['4']};
     gap: ${theme.space['4']};
-  `}
-`
+  `,
+)
 
-const FlexSeparator = styled.div`
-  flex-grow: 1;
-  margin-bottom: ${({ theme }) => theme.space['2.5']};
-  ${mq.md.min`
-    margin-bottom: 0;
-  `}
-`
+const FlexSeparator = styled.div(
+  ({ theme }) => css`
+    flex-grow: 1;
+    margin-bottom: ${theme.space['2.5']};
+    ${mq.md.min(css`
+      margin-bottom: 0;
+    `)}
+  `,
+)
 
-const SocialIconContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  ${({ theme }) => css`
+const SocialIconContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
     flex-gap: ${theme.space['2']};
     gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
 export const Footer = () => {
   const { t } = useTranslation('common')

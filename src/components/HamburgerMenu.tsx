@@ -10,14 +10,14 @@ export interface HamburgerItem {
   href?: string
 }
 
-const MenuIcon = styled(MenuSVG)`
-  ${({ theme }) => css`
+const MenuIcon = styled(MenuSVG)(
+  ({ theme }) => css`
     display: block;
     width: ${theme.space['4.5']};
     height: ${theme.space['4.5']};
     stroke-width: ${theme.borderWidths['0.75']};
-  `}
-`
+  `,
+)
 
 export const HamburgerMenu = ({
   dropdownItems,

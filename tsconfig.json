@@ -42,7 +42,7 @@
       {
         "name": "typescript-styled-plugin",
         "tags": ["styled", "css", "mq"],
-        "validate": true,
+        "validate": false,
         "lint": {
           "validProperties": ["flex-gap"]
         }

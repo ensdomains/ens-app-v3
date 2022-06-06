@@ -7,65 +7,66 @@ import {
   socialIconTypes,
 } from '@app/assets/social/DynamicSocialIcon'
 import { useCopied } from '@app/hooks/useCopied'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
-import { ArrowUpSVG, Button, Space, Typography } from '@ensdomains/thorin'
+import { ArrowUpSVG, Button, mq, Space, Typography } from '@ensdomains/thorin'
 import React, { useMemo } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 import { ConditionalWrapper } from '../ConditionalWrapper'
 import { IconCopyAnimated } from '../IconCopyAnimated'
 
-const Container = styled.div`
-  ${({ theme }) => css`
+const Container = styled.div(
+  ({ theme }) => css`
     padding: 0;
     padding-right: ${theme.space['0.25']};
     width: 100%;
-    ${mq.md.min`
+    ${mq.md.min(css`
       padding: 0 ${theme.space['1']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const Wrapper = styled.div`
-  ${({ theme }) => css`
+const Wrapper = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     flex-gap: ${theme.space['2']};
     gap: ${theme.space['2']};
     align-items: center;
     justify-content: center;
-  `}
-`
+  `,
+)
 
-const StyledAddressIcon = styled(DynamicAddressIcon)`
-  ${({ theme }) => css`
+const StyledAddressIcon = styled(DynamicAddressIcon)(
+  ({ theme }) => css`
     width: ${theme.space['5']};
     height: ${theme.space['5']};
-  `}
-`
+  `,
+)
 
-const PrimaryText = styled(Typography)`
-  ${({ theme }) => css`
+const PrimaryText = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.text};
-  `}
-`
+  `,
+)
 
-const RotatedIconArrowUp = styled.svg`
-  ${({ theme }) => css`
+const RotatedIconArrowUp = styled.svg(
+  ({ theme }) => css`
     display: block;
     transform: rotate(45deg);
     height: ${theme.space['3.5']};
     width: ${theme.space['3.5']};
     stroke-width: ${theme.borderWidths['1']};
     color: ${theme.colors.textTertiary};
-  `}
-`
+  `,
+)
 
-const MinWidthWrapper = styled.div`
-  width: min-content;
-`
+const MinWidthWrapper = styled.div(
+  () => css`
+    width: min-content;
+  `,
+)
 
 const ProfileButton = ({
   prefixSize = '4',
@@ -183,26 +184,26 @@ export const AddressProfileButton = ({
   ) : null
 }
 
-const OtherContainer = styled.div`
-  ${({ theme }) => css`
+const OtherContainer = styled.div(
+  ({ theme }) => css`
     background-color: ${theme.colors.textTertiary};
     padding: ${theme.space['0.5']} ${theme.space['1.25']};
     border-radius: ${theme.radii.large};
-  `}
-`
+  `,
+)
 
-const OtherContainerAddressPrefix = styled(Typography)`
-  ${({ theme }) => css`
+const OtherContainerAddressPrefix = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.white};
     font-size: ${theme.fontSizes.label};
-  `}
-`
+  `,
+)
 
-const OtherContainerTextPrefix = styled(Typography)`
-  ${({ theme }) => css`
+const OtherContainerTextPrefix = styled(Typography)(
+  ({ theme }) => css`
     padding-left: ${theme.space['0.5']};
-  `}
-`
+  `,
+)
 
 export const OtherProfileButton = ({
   iconKey,
