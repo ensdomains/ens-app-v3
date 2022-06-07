@@ -3,9 +3,8 @@ import { Footer } from '@app/components/Footer'
 import { HeaderText } from '@app/components/HeaderText'
 import { LoadingOverlay } from '@app/components/LoadingOverlay'
 import { useInitial } from '@app/hooks/useInitial'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button } from '@ensdomains/thorin'
+import { Button, mq } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
@@ -13,8 +12,8 @@ import styled, { css } from 'styled-components'
 import { Header } from '../components/Header'
 import { TabBar } from '../components/TabBar'
 
-const Container = styled.div`
-  ${({ theme }) => css`
+const Container = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['5']} ${theme.space['4']};
     display: flex;
     flex-gap: ${theme.space['8']};
@@ -23,27 +22,31 @@ const Container = styled.div`
     align-items: stretch;
     min-width: 100%;
     min-height: 100vh;
-    ${mq.md.min`
+    ${mq.md.min(css`
       padding: ${theme.space['12']} ${theme.space['16']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const LoadingContainer = styled.div`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-`
+const LoadingContainer = styled.div(
+  () => css`
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+  `,
+)
 
-const DesktopBackContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`
+const DesktopBackContainer = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  `,
+)
 
-const ContentWrapper = styled.div`
-  ${({ theme }) => `
+const ContentWrapper = styled.div(
+  ({ theme }) => css`
     max-width: ${theme.space['288']};
     width: 100%;
     align-self: center;
@@ -52,16 +55,16 @@ const ContentWrapper = styled.div`
     flex-direction: column;
     gap: ${theme.space['8']};
     flex-gap: ${theme.space['8']};
-  `}
-`
+  `,
+)
 
-const BackArrow = styled.div`
-  ${({ theme }) => `
+const BackArrow = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['6']};
     height: ${theme.space['6']};
     display: block;
-  `}
-`
+  `,
+)
 
 export const Basic = ({
   loading = false,
@@ -124,7 +127,7 @@ export const Basic = ({
               {HeaderItems.trailing}
             </DesktopBackContainer>
           )}
-        {loading ? (
+        {!router.isReady || loading ? (
           <LoadingContainer>
             <LoadingOverlay />
           </LoadingContainer>

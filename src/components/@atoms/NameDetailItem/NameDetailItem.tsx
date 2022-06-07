@@ -1,14 +1,13 @@
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import mq from '@app/mediaQuery'
-import { Avatar, Typography } from '@ensdomains/thorin'
+import { Avatar, mq, Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
-const NameItemWrapper = styled.div`
-  ${({ theme }) => `
+const NameItemWrapper = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -24,32 +23,34 @@ const NameItemWrapper = styled.div`
     &:last-of-type {
       border: none;
     }
-  `}
-`
+  `,
+)
 
-const NameItemContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-  flex-gap: 16px;
-`
+const NameItemContainer = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    flex-gap: 16px;
+  `,
+)
 
-const AvatarWrapper = styled.div`
-  ${({ theme }) => `
+const AvatarWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['9']};
-  `}
-`
+  `,
+)
 
-const TypeWrapper = styled.div`
-  ${({ theme }) => css`
+const TypeWrapper = styled.div(
+  ({ theme }) => css`
     max-width: ${theme.space['48']};
-    ${mq.md.min`
+    ${mq.md.min(css`
       max-width: ${theme.space['96']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
 type Name = {
   id: string

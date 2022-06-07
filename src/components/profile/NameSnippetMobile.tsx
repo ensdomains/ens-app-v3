@@ -4,86 +4,86 @@ import TripleDotSVG from '@app/assets/TripleDot.svg'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Card } from '../Card'
 import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 import { OutlinedButton } from '../OutlinedButton'
 import { FavouriteButton } from './FavouriteButton'
 
-const Container = styled(Card)`
-  ${({ theme }) => `
+const Container = styled(Card)(
+  ({ theme }) => css`
     padding: ${theme.space['3']};
     width: ${theme.space.full};
     align-items: stretch;
     gap: ${theme.space['3']};
-  `}
-`
+  `,
+)
 
-const ImageWrapper = styled(NFTWithPlaceholder)`
-  ${({ theme }) => `
+const ImageWrapper = styled(NFTWithPlaceholder)(
+  ({ theme }) => css`
     border-radius: ${theme.radii.extraLarge};
     width: 35vw;
     height: 35vw;
     max-width: 170px;
     max-height: 170px;
-  `}
-`
+  `,
+)
 
-const RightColumn = styled.div`
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  align-self: flex-end;
-  justify-content: flex-end;
-  ${({ theme }) => `
+const RightColumn = styled.div(
+  ({ theme }) => css`
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    align-self: flex-end;
+    justify-content: flex-end;
     height: ${theme.space.full};
     gap: ${theme.space['1']};
-  `}
-`
+  `,
+)
 
-const ExpiresHeading = styled(Typography)`
-  ${({ theme }) => `
+const ExpiresHeading = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.textTertiary};
-  `}
-`
+  `,
+)
 
-const ExpiryAndFavouriteRow = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  ${({ theme }) => `
+const ExpiryAndFavouriteRow = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     margin-bottom: ${theme.space['1']};
-  `}
-`
+  `,
+)
 
-const RowWithGap = styled.div`
-  ${({ theme }) => `
+const RowWithGap = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: ${theme.space['1']};
-  `}
-`
+  `,
+)
 
-const InnerButton = styled.div`
-  ${({ theme }) => `
+const InnerButton = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const ButtonIcon = styled.svg`
-  ${({ theme }) => `
+const ButtonIcon = styled.svg(
+  ({ theme }) => css`
     display: block;
     width: ${theme.space['4']};
     height: ${theme.space['4']};
-  `}
-`
+  `,
+)
 
 export const NameSnippetMobile = ({
   name,

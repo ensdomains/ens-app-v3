@@ -1,18 +1,18 @@
 import { Heading, Spinner } from '@ensdomains/thorin'
 import { useTranslation } from 'next-i18next'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-const Container = styled.div`
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-direction: row;
-  ${({ theme }) => `
+const Container = styled.div(
+  ({ theme }) => css`
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
     flex-gap: ${theme.space['4']};
     gap: ${theme.space['4']};
-  `}
-`
+  `,
+)
 
 export const LoadingOverlay = () => {
   const { t } = useTranslation('common')

@@ -6,8 +6,13 @@ import { TabWrapper } from '@app/components/profile/TabWrapper'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
-import mq from '@app/mediaQuery'
-import { Button, Heading, PageButtons, Typography } from '@ensdomains/thorin'
+import {
+  Button,
+  Heading,
+  PageButtons,
+  mq,
+  Typography,
+} from '@ensdomains/thorin'
 import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -21,91 +26,96 @@ import SortControl, {
   SortValue,
 } from '@app/components/@molecules/SortControl/SortControl'
 
-const EmptyDetailContainer = styled.div`
-  padding: ${({ theme }) => theme.space['4']};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
-const PageButtonsContainer = styled.div`
-  ${({ theme }) => `
+const EmptyDetailContainer = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['4']};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
+
+const PageButtonsContainer = styled.div(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
     padding: ${theme.space['2']} ${theme.space['4']};
-  `}
-`
+  `,
+)
 
-const TabWrapperWithButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: normal;
-  justify-content: flex-start;
-  width: 100%;
-  ${({ theme }) => css`
+const TabWrapperWithButtons = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+    justify-content: flex-start;
+    width: 100%;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const FilterContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: center;
-  ${({ theme }) => css`
+const FilterContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    justify-content: center;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    ${mq.md.min`
+    ${mq.md.min(css`
       gap: ${theme.space['8']};
       flex-gap: ${theme.space['8']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const ViewButtons = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  ${({ theme }) => `
+const ViewButtons = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  ${({ theme }) => `
+const Container = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
     width: 100%;
     max-width: ${theme.space['320']};
     margin: 0 auto;
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
-  `}
-`
+  `,
+)
 
-const SectionHeader = styled.div`
-  display: flex;
-  flex-direction: column;
-`
+const SectionHeader = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: column;
+  `,
+)
 
-const TopContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: space-between;
-  ${({ theme }) => `
+const TopContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: space-between;
     gap: ${theme.space['4']};
     flex-gap: ${theme.space['4']};
-  `}
-  ${mq.md.min`
-    flex-direction: row;
-  `}
-`
+    ${mq.md.min(css`
+      flex-direction: row;
+    `)}
+  `,
+)
 
 type ViewType = 'grid' | 'list'
 type FilterType = 'domain' | 'registration' | 'none'
