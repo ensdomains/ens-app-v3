@@ -1,3 +1,3 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >0.0.0;
-import 'ens-contracts/contracts/resolvers/PublicResolver.sol';
+import 'ens-contracts/contracts/ethregistrar/DummyOracle.sol';
