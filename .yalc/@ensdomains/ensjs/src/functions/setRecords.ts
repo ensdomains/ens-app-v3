@@ -1,18 +1,6 @@
-import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 import { ethers } from 'ethers'
 import { ENSArgs } from '..'
-import { encodeContenthash } from '../utils/contentHash'
-
-type RecordItem = {
-  key: string
-  value: string
-}
-
-type RecordOptions = {
-  contentHash?: string
-  texts?: RecordItem[]
-  coinTypes?: RecordItem[]
-}
+import { generateRecordCallArray, RecordOptions } from '../utils/recordHelpers'
 
 export default async function (
   {
@@ -44,46 +32,7 @@ export default async function (
   )?.connect(provider?.getSigner()!)
   const namehash = ethers.utils.namehash(name)
 
-  const calls: string[] = []
-
-  if (records.contentHash) {
-    const contentHash =
-      records.contentHash === '' ? '' : encodeContenthash(records.contentHash)
-    const data = (resolver?.interface.encodeFunctionData as any)(
-      'setContenthash',
-      [namehash, contentHash],
-    )
-    data && calls.push(data)
-  }
-
-  if (records.texts && records.texts.length > 0) {
-    records.texts.forEach(({ key, value }: RecordItem) => {
-      const data = resolver?.interface.encodeFunctionData('setText', [
-        namehash,
-        key,
-        value,
-      ])
-      data && calls.push(data)
-    })
-  }
-
-  if (records.coinTypes && records.coinTypes.length > 0) {
-    records.coinTypes.forEach(({ key, value }: RecordItem) => {
-      let coinTypeInstance
-      if (!isNaN(parseInt(key))) {
-        coinTypeInstance = formatsByCoinType[parseInt(key)]
-      } else {
-        coinTypeInstance = formatsByName[key.toUpperCase()]
-      }
-      const coinType = coinTypeInstance.coinType
-      const encodedAddress = coinTypeInstance.decoder(value)
-      const data = resolver?.interface.encodeFunctionData(
-        'setAddr(bytes32,uint256,bytes)',
-        [namehash, coinType, encodedAddress],
-      )
-      data && calls.push(data)
-    })
-  }
+  const calls: string[] = generateRecordCallArray(namehash, records, resolver!)
 
   return resolver?.multicall(calls)
 }

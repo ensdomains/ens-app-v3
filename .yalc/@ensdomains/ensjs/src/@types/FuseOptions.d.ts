@@ -5,5 +5,5 @@ export type FuseOptions = {
   cannotSetResolver?: boolean
   cannotSetTtl?: boolean
   cannotCreateSubdomain?: boolean
-  cannotReplaceSubdomain?: boolean
+  parentCannotControl?: boolean
 }

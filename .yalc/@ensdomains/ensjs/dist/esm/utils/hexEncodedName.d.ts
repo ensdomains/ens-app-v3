@@ -1,1 +1,1 @@
-export declare const hexEncodeName: (name: string) => string
+export declare const hexEncodeName: (name: string) => string;

@@ -12,572 +12,581 @@ import type {
   PopulatedTransaction,
   Signer,
   utils,
-} from 'ethers'
+} from "ethers";
 import type {
   FunctionFragment,
   Result,
   EventFragment,
-} from '@ethersproject/abi'
-import type { Listener, Provider } from '@ethersproject/providers'
+} from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
 import type {
   TypedEventFilter,
   TypedEvent,
   TypedListener,
   OnEvent,
-} from './common'
+} from "./common";
 
 export interface NameWrapperInterface extends utils.Interface {
   functions: {
-    '_tokens(uint256)': FunctionFragment
-    'allFusesBurned(bytes32,uint96)': FunctionFragment
-    'balanceOf(address,uint256)': FunctionFragment
-    'balanceOfBatch(address[],uint256[])': FunctionFragment
-    'burnFuses(bytes32,uint96)': FunctionFragment
-    'controllers(address)': FunctionFragment
-    'ens()': FunctionFragment
-    'getData(uint256)': FunctionFragment
-    'getFuses(bytes32)': FunctionFragment
-    'isApprovedForAll(address,address)': FunctionFragment
-    'isTokenOwnerOrApproved(bytes32,address)': FunctionFragment
-    'metadataService()': FunctionFragment
-    'names(bytes32)': FunctionFragment
-    'onERC721Received(address,address,uint256,bytes)': FunctionFragment
-    'owner()': FunctionFragment
-    'ownerOf(uint256)': FunctionFragment
-    'registerAndWrapETH2LD(string,address,uint256,address,uint96)': FunctionFragment
-    'registrar()': FunctionFragment
-    'renew(uint256,uint256)': FunctionFragment
-    'renounceOwnership()': FunctionFragment
-    'safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)': FunctionFragment
-    'safeTransferFrom(address,address,uint256,uint256,bytes)': FunctionFragment
-    'setApprovalForAll(address,bool)': FunctionFragment
-    'setController(address,bool)': FunctionFragment
-    'setMetadataService(address)': FunctionFragment
-    'setRecord(bytes32,address,address,uint64)': FunctionFragment
-    'setResolver(bytes32,address)': FunctionFragment
-    'setSubnodeOwner(bytes32,bytes32,address)': FunctionFragment
-    'setSubnodeOwnerAndWrap(bytes32,string,address,uint96)': FunctionFragment
-    'setSubnodeRecord(bytes32,bytes32,address,address,uint64)': FunctionFragment
-    'setSubnodeRecordAndWrap(bytes32,string,address,address,uint64,uint96)': FunctionFragment
-    'setTTL(bytes32,uint64)': FunctionFragment
-    'supportsInterface(bytes4)': FunctionFragment
-    'transferOwnership(address)': FunctionFragment
-    'unwrap(bytes32,bytes32,address)': FunctionFragment
-    'unwrapETH2LD(bytes32,address,address)': FunctionFragment
-    'uri(uint256)': FunctionFragment
-    'wrap(bytes,address,uint96,address)': FunctionFragment
-    'wrapETH2LD(string,address,uint96,address)': FunctionFragment
-  }
+    "_tokens(uint256)": FunctionFragment;
+    "allFusesBurned(bytes32,uint96)": FunctionFragment;
+    "balanceOf(address,uint256)": FunctionFragment;
+    "balanceOfBatch(address[],uint256[])": FunctionFragment;
+    "burnChildFuses(bytes32,bytes32,uint96)": FunctionFragment;
+    "burnFuses(bytes32,uint96)": FunctionFragment;
+    "controllers(address)": FunctionFragment;
+    "ens()": FunctionFragment;
+    "getData(uint256)": FunctionFragment;
+    "getFuses(bytes32)": FunctionFragment;
+    "isApprovedForAll(address,address)": FunctionFragment;
+    "isTokenOwnerOrApproved(bytes32,address)": FunctionFragment;
+    "metadataService()": FunctionFragment;
+    "names(bytes32)": FunctionFragment;
+    "onERC721Received(address,address,uint256,bytes)": FunctionFragment;
+    "owner()": FunctionFragment;
+    "ownerOf(uint256)": FunctionFragment;
+    "registerAndWrapETH2LD(string,address,uint256,address,uint96)": FunctionFragment;
+    "registrar()": FunctionFragment;
+    "renew(uint256,uint256)": FunctionFragment;
+    "renounceOwnership()": FunctionFragment;
+    "safeBatchTransferFrom(address,address,uint256[],uint256[],bytes)": FunctionFragment;
+    "safeTransferFrom(address,address,uint256,uint256,bytes)": FunctionFragment;
+    "setApprovalForAll(address,bool)": FunctionFragment;
+    "setController(address,bool)": FunctionFragment;
+    "setMetadataService(address)": FunctionFragment;
+    "setRecord(bytes32,address,address,uint64)": FunctionFragment;
+    "setResolver(bytes32,address)": FunctionFragment;
+    "setSubnodeOwner(bytes32,string,address,uint96)": FunctionFragment;
+    "setSubnodeRecord(bytes32,string,address,address,uint64,uint96)": FunctionFragment;
+    "setTTL(bytes32,uint64)": FunctionFragment;
+    "supportsInterface(bytes4)": FunctionFragment;
+    "transferOwnership(address)": FunctionFragment;
+    "unwrap(bytes32,bytes32,address)": FunctionFragment;
+    "unwrapETH2LD(bytes32,address,address)": FunctionFragment;
+    "uri(uint256)": FunctionFragment;
+    "wrap(bytes,address,uint96,address)": FunctionFragment;
+    "wrapETH2LD(string,address,uint96,address)": FunctionFragment;
+  };
 
   getFunction(
     nameOrSignatureOrTopic:
-      | '_tokens'
-      | 'allFusesBurned'
-      | 'balanceOf'
-      | 'balanceOfBatch'
-      | 'burnFuses'
-      | 'controllers'
-      | 'ens'
-      | 'getData'
-      | 'getFuses'
-      | 'isApprovedForAll'
-      | 'isTokenOwnerOrApproved'
-      | 'metadataService'
-      | 'names'
-      | 'onERC721Received'
-      | 'owner'
-      | 'ownerOf'
-      | 'registerAndWrapETH2LD'
-      | 'registrar'
-      | 'renew'
-      | 'renounceOwnership'
-      | 'safeBatchTransferFrom'
-      | 'safeTransferFrom'
-      | 'setApprovalForAll'
-      | 'setController'
-      | 'setMetadataService'
-      | 'setRecord'
-      | 'setResolver'
-      | 'setSubnodeOwner'
-      | 'setSubnodeOwnerAndWrap'
-      | 'setSubnodeRecord'
-      | 'setSubnodeRecordAndWrap'
-      | 'setTTL'
-      | 'supportsInterface'
-      | 'transferOwnership'
-      | 'unwrap'
-      | 'unwrapETH2LD'
-      | 'uri'
-      | 'wrap'
-      | 'wrapETH2LD',
-  ): FunctionFragment
+      | "_tokens"
+      | "allFusesBurned"
+      | "balanceOf"
+      | "balanceOfBatch"
+      | "burnChildFuses"
+      | "burnFuses"
+      | "controllers"
+      | "ens"
+      | "getData"
+      | "getFuses"
+      | "isApprovedForAll"
+      | "isTokenOwnerOrApproved"
+      | "metadataService"
+      | "names"
+      | "onERC721Received"
+      | "owner"
+      | "ownerOf"
+      | "registerAndWrapETH2LD"
+      | "registrar"
+      | "renew"
+      | "renounceOwnership"
+      | "safeBatchTransferFrom"
+      | "safeTransferFrom"
+      | "setApprovalForAll"
+      | "setController"
+      | "setMetadataService"
+      | "setRecord"
+      | "setResolver"
+      | "setSubnodeOwner"
+      | "setSubnodeRecord"
+      | "setTTL"
+      | "supportsInterface"
+      | "transferOwnership"
+      | "unwrap"
+      | "unwrapETH2LD"
+      | "uri"
+      | "wrap"
+      | "wrapETH2LD"
+  ): FunctionFragment;
 
   encodeFunctionData(
-    functionFragment: '_tokens',
-    values: [BigNumberish],
-  ): string
+    functionFragment: "_tokens",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'allFusesBurned',
-    values: [BytesLike, BigNumberish],
-  ): string
+    functionFragment: "allFusesBurned",
+    values: [BytesLike, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'balanceOf',
-    values: [string, BigNumberish],
-  ): string
+    functionFragment: "balanceOf",
+    values: [string, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'balanceOfBatch',
-    values: [string[], BigNumberish[]],
-  ): string
+    functionFragment: "balanceOfBatch",
+    values: [string[], BigNumberish[]]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'burnFuses',
-    values: [BytesLike, BigNumberish],
-  ): string
-  encodeFunctionData(functionFragment: 'controllers', values: [string]): string
-  encodeFunctionData(functionFragment: 'ens', values?: undefined): string
+    functionFragment: "burnChildFuses",
+    values: [BytesLike, BytesLike, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'getData',
-    values: [BigNumberish],
-  ): string
-  encodeFunctionData(functionFragment: 'getFuses', values: [BytesLike]): string
+    functionFragment: "burnFuses",
+    values: [BytesLike, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "controllers", values: [string]): string;
+  encodeFunctionData(functionFragment: "ens", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'isApprovedForAll',
-    values: [string, string],
-  ): string
+    functionFragment: "getData",
+    values: [BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "getFuses", values: [BytesLike]): string;
   encodeFunctionData(
-    functionFragment: 'isTokenOwnerOrApproved',
-    values: [BytesLike, string],
-  ): string
+    functionFragment: "isApprovedForAll",
+    values: [string, string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'metadataService',
-    values?: undefined,
-  ): string
-  encodeFunctionData(functionFragment: 'names', values: [BytesLike]): string
+    functionFragment: "isTokenOwnerOrApproved",
+    values: [BytesLike, string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'onERC721Received',
-    values: [string, string, BigNumberish, BytesLike],
-  ): string
-  encodeFunctionData(functionFragment: 'owner', values?: undefined): string
+    functionFragment: "metadataService",
+    values?: undefined
+  ): string;
+  encodeFunctionData(functionFragment: "names", values: [BytesLike]): string;
   encodeFunctionData(
-    functionFragment: 'ownerOf',
-    values: [BigNumberish],
-  ): string
+    functionFragment: "onERC721Received",
+    values: [string, string, BigNumberish, BytesLike]
+  ): string;
+  encodeFunctionData(functionFragment: "owner", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'registerAndWrapETH2LD',
-    values: [string, string, BigNumberish, string, BigNumberish],
-  ): string
-  encodeFunctionData(functionFragment: 'registrar', values?: undefined): string
+    functionFragment: "ownerOf",
+    values: [BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'renew',
-    values: [BigNumberish, BigNumberish],
-  ): string
+    functionFragment: "registerAndWrapETH2LD",
+    values: [string, string, BigNumberish, string, BigNumberish]
+  ): string;
+  encodeFunctionData(functionFragment: "registrar", values?: undefined): string;
   encodeFunctionData(
-    functionFragment: 'renounceOwnership',
-    values?: undefined,
-  ): string
+    functionFragment: "renew",
+    values: [BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'safeBatchTransferFrom',
-    values: [string, string, BigNumberish[], BigNumberish[], BytesLike],
-  ): string
+    functionFragment: "renounceOwnership",
+    values?: undefined
+  ): string;
   encodeFunctionData(
-    functionFragment: 'safeTransferFrom',
-    values: [string, string, BigNumberish, BigNumberish, BytesLike],
-  ): string
+    functionFragment: "safeBatchTransferFrom",
+    values: [string, string, BigNumberish[], BigNumberish[], BytesLike]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setApprovalForAll',
-    values: [string, boolean],
-  ): string
+    functionFragment: "safeTransferFrom",
+    values: [string, string, BigNumberish, BigNumberish, BytesLike]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setController',
-    values: [string, boolean],
-  ): string
+    functionFragment: "setApprovalForAll",
+    values: [string, boolean]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setMetadataService',
-    values: [string],
-  ): string
+    functionFragment: "setController",
+    values: [string, boolean]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setRecord',
-    values: [BytesLike, string, string, BigNumberish],
-  ): string
+    functionFragment: "setMetadataService",
+    values: [string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setResolver',
-    values: [BytesLike, string],
-  ): string
+    functionFragment: "setRecord",
+    values: [BytesLike, string, string, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setSubnodeOwner',
-    values: [BytesLike, BytesLike, string],
-  ): string
+    functionFragment: "setResolver",
+    values: [BytesLike, string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setSubnodeOwnerAndWrap',
-    values: [BytesLike, string, string, BigNumberish],
-  ): string
+    functionFragment: "setSubnodeOwner",
+    values: [BytesLike, string, string, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setSubnodeRecord',
-    values: [BytesLike, BytesLike, string, string, BigNumberish],
-  ): string
+    functionFragment: "setSubnodeRecord",
+    values: [BytesLike, string, string, string, BigNumberish, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setSubnodeRecordAndWrap',
-    values: [BytesLike, string, string, string, BigNumberish, BigNumberish],
-  ): string
+    functionFragment: "setTTL",
+    values: [BytesLike, BigNumberish]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'setTTL',
-    values: [BytesLike, BigNumberish],
-  ): string
+    functionFragment: "supportsInterface",
+    values: [BytesLike]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'supportsInterface',
-    values: [BytesLike],
-  ): string
+    functionFragment: "transferOwnership",
+    values: [string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'transferOwnership',
-    values: [string],
-  ): string
+    functionFragment: "unwrap",
+    values: [BytesLike, BytesLike, string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'unwrap',
-    values: [BytesLike, BytesLike, string],
-  ): string
+    functionFragment: "unwrapETH2LD",
+    values: [BytesLike, string, string]
+  ): string;
+  encodeFunctionData(functionFragment: "uri", values: [BigNumberish]): string;
   encodeFunctionData(
-    functionFragment: 'unwrapETH2LD',
-    values: [BytesLike, string, string],
-  ): string
-  encodeFunctionData(functionFragment: 'uri', values: [BigNumberish]): string
+    functionFragment: "wrap",
+    values: [BytesLike, string, BigNumberish, string]
+  ): string;
   encodeFunctionData(
-    functionFragment: 'wrap',
-    values: [BytesLike, string, BigNumberish, string],
-  ): string
-  encodeFunctionData(
-    functionFragment: 'wrapETH2LD',
-    values: [string, string, BigNumberish, string],
-  ): string
+    functionFragment: "wrapETH2LD",
+    values: [string, string, BigNumberish, string]
+  ): string;
 
-  decodeFunctionResult(functionFragment: '_tokens', data: BytesLike): Result
+  decodeFunctionResult(functionFragment: "_tokens", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'allFusesBurned',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'balanceOf', data: BytesLike): Result
+    functionFragment: "allFusesBurned",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'balanceOfBatch',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'burnFuses', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'controllers', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'ens', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'getData', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'getFuses', data: BytesLike): Result
+    functionFragment: "balanceOfBatch",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'isApprovedForAll',
-    data: BytesLike,
-  ): Result
+    functionFragment: "burnChildFuses",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "burnFuses", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'isTokenOwnerOrApproved',
-    data: BytesLike,
-  ): Result
+    functionFragment: "controllers",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "ens", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getData", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "getFuses", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'metadataService',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'names', data: BytesLike): Result
+    functionFragment: "isApprovedForAll",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'onERC721Received',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'owner', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'ownerOf', data: BytesLike): Result
+    functionFragment: "isTokenOwnerOrApproved",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'registerAndWrapETH2LD',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'registrar', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'renew', data: BytesLike): Result
+    functionFragment: "metadataService",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "names", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'renounceOwnership',
-    data: BytesLike,
-  ): Result
+    functionFragment: "onERC721Received",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "owner", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "ownerOf", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'safeBatchTransferFrom',
-    data: BytesLike,
-  ): Result
+    functionFragment: "registerAndWrapETH2LD",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "registrar", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "renew", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'safeTransferFrom',
-    data: BytesLike,
-  ): Result
+    functionFragment: "renounceOwnership",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'setApprovalForAll',
-    data: BytesLike,
-  ): Result
+    functionFragment: "safeBatchTransferFrom",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'setController',
-    data: BytesLike,
-  ): Result
+    functionFragment: "safeTransferFrom",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'setMetadataService',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'setRecord', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'setResolver', data: BytesLike): Result
+    functionFragment: "setApprovalForAll",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'setSubnodeOwner',
-    data: BytesLike,
-  ): Result
+    functionFragment: "setController",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'setSubnodeOwnerAndWrap',
-    data: BytesLike,
-  ): Result
+    functionFragment: "setMetadataService",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setRecord", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'setSubnodeRecord',
-    data: BytesLike,
-  ): Result
+    functionFragment: "setResolver",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'setSubnodeRecordAndWrap',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'setTTL', data: BytesLike): Result
+    functionFragment: "setSubnodeOwner",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'supportsInterface',
-    data: BytesLike,
-  ): Result
+    functionFragment: "setSubnodeRecord",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "setTTL", data: BytesLike): Result;
   decodeFunctionResult(
-    functionFragment: 'transferOwnership',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'unwrap', data: BytesLike): Result
+    functionFragment: "supportsInterface",
+    data: BytesLike
+  ): Result;
   decodeFunctionResult(
-    functionFragment: 'unwrapETH2LD',
-    data: BytesLike,
-  ): Result
-  decodeFunctionResult(functionFragment: 'uri', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'wrap', data: BytesLike): Result
-  decodeFunctionResult(functionFragment: 'wrapETH2LD', data: BytesLike): Result
+    functionFragment: "transferOwnership",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "unwrap", data: BytesLike): Result;
+  decodeFunctionResult(
+    functionFragment: "unwrapETH2LD",
+    data: BytesLike
+  ): Result;
+  decodeFunctionResult(functionFragment: "uri", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "wrap", data: BytesLike): Result;
+  decodeFunctionResult(functionFragment: "wrapETH2LD", data: BytesLike): Result;
 
   events: {
-    'ApprovalForAll(address,address,bool)': EventFragment
-    'ControllerChanged(address,bool)': EventFragment
-    'FusesBurned(bytes32,uint96)': EventFragment
-    'NameUnwrapped(bytes32,address)': EventFragment
-    'NameWrapped(bytes32,bytes,address,uint96)': EventFragment
-    'OwnershipTransferred(address,address)': EventFragment
-    'TransferBatch(address,address,address,uint256[],uint256[])': EventFragment
-    'TransferSingle(address,address,address,uint256,uint256)': EventFragment
-    'URI(string,uint256)': EventFragment
-  }
+    "ApprovalForAll(address,address,bool)": EventFragment;
+    "ControllerChanged(address,bool)": EventFragment;
+    "FusesBurned(bytes32,uint96)": EventFragment;
+    "NameUnwrapped(bytes32,address)": EventFragment;
+    "NameWrapped(bytes32,bytes,address,uint96)": EventFragment;
+    "OwnershipTransferred(address,address)": EventFragment;
+    "TransferBatch(address,address,address,uint256[],uint256[])": EventFragment;
+    "TransferSingle(address,address,address,uint256,uint256)": EventFragment;
+    "URI(string,uint256)": EventFragment;
+  };
 
-  getEvent(nameOrSignatureOrTopic: 'ApprovalForAll'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'ControllerChanged'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'FusesBurned'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'NameUnwrapped'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'NameWrapped'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'OwnershipTransferred'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'TransferBatch'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'TransferSingle'): EventFragment
-  getEvent(nameOrSignatureOrTopic: 'URI'): EventFragment
+  getEvent(nameOrSignatureOrTopic: "ApprovalForAll"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "ControllerChanged"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "FusesBurned"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NameUnwrapped"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "NameWrapped"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "OwnershipTransferred"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferBatch"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "TransferSingle"): EventFragment;
+  getEvent(nameOrSignatureOrTopic: "URI"): EventFragment;
 }
 
 export interface ApprovalForAllEventObject {
-  account: string
-  operator: string
-  approved: boolean
+  account: string;
+  operator: string;
+  approved: boolean;
 }
 export type ApprovalForAllEvent = TypedEvent<
   [string, string, boolean],
   ApprovalForAllEventObject
->
+>;
 
-export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>
+export type ApprovalForAllEventFilter = TypedEventFilter<ApprovalForAllEvent>;
 
 export interface ControllerChangedEventObject {
-  controller: string
-  active: boolean
+  controller: string;
+  active: boolean;
 }
 export type ControllerChangedEvent = TypedEvent<
   [string, boolean],
   ControllerChangedEventObject
->
+>;
 
 export type ControllerChangedEventFilter =
-  TypedEventFilter<ControllerChangedEvent>
+  TypedEventFilter<ControllerChangedEvent>;
 
 export interface FusesBurnedEventObject {
-  node: string
-  fuses: BigNumber
+  node: string;
+  fuses: BigNumber;
 }
 export type FusesBurnedEvent = TypedEvent<
   [string, BigNumber],
   FusesBurnedEventObject
->
+>;
 
-export type FusesBurnedEventFilter = TypedEventFilter<FusesBurnedEvent>
+export type FusesBurnedEventFilter = TypedEventFilter<FusesBurnedEvent>;
 
 export interface NameUnwrappedEventObject {
-  node: string
-  owner: string
+  node: string;
+  owner: string;
 }
 export type NameUnwrappedEvent = TypedEvent<
   [string, string],
   NameUnwrappedEventObject
->
+>;
 
-export type NameUnwrappedEventFilter = TypedEventFilter<NameUnwrappedEvent>
+export type NameUnwrappedEventFilter = TypedEventFilter<NameUnwrappedEvent>;
 
 export interface NameWrappedEventObject {
-  node: string
-  name: string
-  owner: string
-  fuses: BigNumber
+  node: string;
+  name: string;
+  owner: string;
+  fuses: BigNumber;
 }
 export type NameWrappedEvent = TypedEvent<
   [string, string, string, BigNumber],
   NameWrappedEventObject
->
+>;
 
-export type NameWrappedEventFilter = TypedEventFilter<NameWrappedEvent>
+export type NameWrappedEventFilter = TypedEventFilter<NameWrappedEvent>;
 
 export interface OwnershipTransferredEventObject {
-  previousOwner: string
-  newOwner: string
+  previousOwner: string;
+  newOwner: string;
 }
 export type OwnershipTransferredEvent = TypedEvent<
   [string, string],
   OwnershipTransferredEventObject
->
+>;
 
 export type OwnershipTransferredEventFilter =
-  TypedEventFilter<OwnershipTransferredEvent>
+  TypedEventFilter<OwnershipTransferredEvent>;
 
 export interface TransferBatchEventObject {
-  operator: string
-  from: string
-  to: string
-  ids: BigNumber[]
-  values: BigNumber[]
+  operator: string;
+  from: string;
+  to: string;
+  ids: BigNumber[];
+  values: BigNumber[];
 }
 export type TransferBatchEvent = TypedEvent<
   [string, string, string, BigNumber[], BigNumber[]],
   TransferBatchEventObject
->
+>;
 
-export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>
+export type TransferBatchEventFilter = TypedEventFilter<TransferBatchEvent>;
 
 export interface TransferSingleEventObject {
-  operator: string
-  from: string
-  to: string
-  id: BigNumber
-  value: BigNumber
+  operator: string;
+  from: string;
+  to: string;
+  id: BigNumber;
+  value: BigNumber;
 }
 export type TransferSingleEvent = TypedEvent<
   [string, string, string, BigNumber, BigNumber],
   TransferSingleEventObject
->
+>;
 
-export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>
+export type TransferSingleEventFilter = TypedEventFilter<TransferSingleEvent>;
 
 export interface URIEventObject {
-  value: string
-  id: BigNumber
+  value: string;
+  id: BigNumber;
 }
-export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>
+export type URIEvent = TypedEvent<[string, BigNumber], URIEventObject>;
 
-export type URIEventFilter = TypedEventFilter<URIEvent>
+export type URIEventFilter = TypedEventFilter<URIEvent>;
 
 export interface NameWrapper extends BaseContract {
-  connect(signerOrProvider: Signer | Provider | string): this
-  attach(addressOrName: string): this
-  deployed(): Promise<this>
+  connect(signerOrProvider: Signer | Provider | string): this;
+  attach(addressOrName: string): this;
+  deployed(): Promise<this>;
 
-  interface: NameWrapperInterface
+  interface: NameWrapperInterface;
 
   queryFilter<TEvent extends TypedEvent>(
     event: TypedEventFilter<TEvent>,
     fromBlockOrBlockhash?: string | number | undefined,
-    toBlock?: string | number | undefined,
-  ): Promise<Array<TEvent>>
+    toBlock?: string | number | undefined
+  ): Promise<Array<TEvent>>;
 
   listeners<TEvent extends TypedEvent>(
-    eventFilter?: TypedEventFilter<TEvent>,
-  ): Array<TypedListener<TEvent>>
-  listeners(eventName?: string): Array<Listener>
+    eventFilter?: TypedEventFilter<TEvent>
+  ): Array<TypedListener<TEvent>>;
+  listeners(eventName?: string): Array<Listener>;
   removeAllListeners<TEvent extends TypedEvent>(
-    eventFilter: TypedEventFilter<TEvent>,
-  ): this
-  removeAllListeners(eventName?: string): this
-  off: OnEvent<this>
-  on: OnEvent<this>
-  once: OnEvent<this>
-  removeListener: OnEvent<this>
+    eventFilter: TypedEventFilter<TEvent>
+  ): this;
+  removeAllListeners(eventName?: string): this;
+  off: OnEvent<this>;
+  on: OnEvent<this>;
+  once: OnEvent<this>;
+  removeListener: OnEvent<this>;
 
   functions: {
-    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>
+    _tokens(
+      arg0: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     allFusesBurned(
       node: BytesLike,
       fuseMask: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<[boolean]>
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     balanceOf(
       account: string,
       id: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<[BigNumber]>
+      overrides?: CallOverrides
+    ): Promise<[BigNumber]>;
 
     balanceOfBatch(
       accounts: string[],
       ids: BigNumberish[],
-      overrides?: CallOverrides,
-    ): Promise<[BigNumber[]]>
+      overrides?: CallOverrides
+    ): Promise<[BigNumber[]]>;
+
+    burnChildFuses(
+      parentNode: BytesLike,
+      labelhash: BytesLike,
+      _fuses: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     burnFuses(
       node: BytesLike,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    controllers(arg0: string, overrides?: CallOverrides): Promise<[boolean]>
+    controllers(arg0: string, overrides?: CallOverrides): Promise<[boolean]>;
 
-    ens(overrides?: CallOverrides): Promise<[string]>
+    ens(overrides?: CallOverrides): Promise<[string]>;
 
     getData(
       tokenId: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<[string, BigNumber] & { owner: string; fuses: BigNumber }>
+      overrides?: CallOverrides
+    ): Promise<[string, BigNumber] & { owner: string; fuses: BigNumber }>;
 
     getFuses(
       node: BytesLike,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<
       [BigNumber, number, string] & {
-        fuses: BigNumber
-        vulnerability: number
-        vulnerableNode: string
+        fuses: BigNumber;
+        vulnerability: number;
+        vulnerableNode: string;
       }
-    >
+    >;
 
     isApprovedForAll(
       account: string,
       operator: string,
-      overrides?: CallOverrides,
-    ): Promise<[boolean]>
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     isTokenOwnerOrApproved(
       node: BytesLike,
       addr: string,
-      overrides?: CallOverrides,
-    ): Promise<[boolean]>
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
-    metadataService(overrides?: CallOverrides): Promise<[string]>
+    metadataService(overrides?: CallOverrides): Promise<[string]>;
 
-    names(arg0: BytesLike, overrides?: CallOverrides): Promise<[string]>
+    names(arg0: BytesLike, overrides?: CallOverrides): Promise<[string]>;
 
     onERC721Received(
       to: string,
       arg1: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<[string]>
+    owner(overrides?: CallOverrides): Promise<[string]>;
 
-    ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+    ownerOf(
+      id: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<[string] & { owner: string }>;
 
     registerAndWrapETH2LD(
       label: string,
@@ -585,20 +594,20 @@ export interface NameWrapper extends BaseContract {
       duration: BigNumberish,
       resolver: string,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    registrar(overrides?: CallOverrides): Promise<[string]>
+    registrar(overrides?: CallOverrides): Promise<[string]>;
 
     renew(
       tokenId: BigNumberish,
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     safeBatchTransferFrom(
       from: string,
@@ -606,8 +615,8 @@ export interface NameWrapper extends BaseContract {
       ids: BigNumberish[],
       amounts: BigNumberish[],
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     safeTransferFrom(
       from: string,
@@ -615,196 +624,187 @@ export interface NameWrapper extends BaseContract {
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setApprovalForAll(
       operator: string,
       approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setController(
       controller: string,
       active: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setMetadataService(
       _newMetadataService: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setRecord(
       node: BytesLike,
       owner: string,
       resolver: string,
       ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setResolver(
       node: BytesLike,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setSubnodeOwner(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
-
-    setSubnodeOwnerAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setSubnodeRecord(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      resolver: string,
-      ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
-
-    setSubnodeRecordAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       resolver: string,
       ttl: BigNumberish,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     setTTL(
       node: BytesLike,
       ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     supportsInterface(
       interfaceId: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<[boolean]>
+      overrides?: CallOverrides
+    ): Promise<[boolean]>;
 
     transferOwnership(
       newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     unwrap(
       parentNode: BytesLike,
-      label: BytesLike,
+      labelhash: BytesLike,
       newController: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     unwrapETH2LD(
-      label: BytesLike,
+      labelhash: BytesLike,
       newRegistrant: string,
       newController: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
-    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
 
     wrap(
       name: BytesLike,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
 
     wrapETH2LD(
       label: string,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<ContractTransaction>
-  }
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<ContractTransaction>;
+  };
 
-  _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+  _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
   allFusesBurned(
     node: BytesLike,
     fuseMask: BigNumberish,
-    overrides?: CallOverrides,
-  ): Promise<boolean>
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   balanceOf(
     account: string,
     id: BigNumberish,
-    overrides?: CallOverrides,
-  ): Promise<BigNumber>
+    overrides?: CallOverrides
+  ): Promise<BigNumber>;
 
   balanceOfBatch(
     accounts: string[],
     ids: BigNumberish[],
-    overrides?: CallOverrides,
-  ): Promise<BigNumber[]>
+    overrides?: CallOverrides
+  ): Promise<BigNumber[]>;
+
+  burnChildFuses(
+    parentNode: BytesLike,
+    labelhash: BytesLike,
+    _fuses: BigNumberish,
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   burnFuses(
     node: BytesLike,
     _fuses: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  controllers(arg0: string, overrides?: CallOverrides): Promise<boolean>
+  controllers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
-  ens(overrides?: CallOverrides): Promise<string>
+  ens(overrides?: CallOverrides): Promise<string>;
 
   getData(
     tokenId: BigNumberish,
-    overrides?: CallOverrides,
-  ): Promise<[string, BigNumber] & { owner: string; fuses: BigNumber }>
+    overrides?: CallOverrides
+  ): Promise<[string, BigNumber] & { owner: string; fuses: BigNumber }>;
 
   getFuses(
     node: BytesLike,
-    overrides?: CallOverrides,
+    overrides?: CallOverrides
   ): Promise<
     [BigNumber, number, string] & {
-      fuses: BigNumber
-      vulnerability: number
-      vulnerableNode: string
+      fuses: BigNumber;
+      vulnerability: number;
+      vulnerableNode: string;
     }
-  >
+  >;
 
   isApprovedForAll(
     account: string,
     operator: string,
-    overrides?: CallOverrides,
-  ): Promise<boolean>
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   isTokenOwnerOrApproved(
     node: BytesLike,
     addr: string,
-    overrides?: CallOverrides,
-  ): Promise<boolean>
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
-  metadataService(overrides?: CallOverrides): Promise<string>
+  metadataService(overrides?: CallOverrides): Promise<string>;
 
-  names(arg0: BytesLike, overrides?: CallOverrides): Promise<string>
+  names(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
 
   onERC721Received(
     to: string,
     arg1: string,
     tokenId: BigNumberish,
     data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  owner(overrides?: CallOverrides): Promise<string>
+  owner(overrides?: CallOverrides): Promise<string>;
 
-  ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<string>
+  ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   registerAndWrapETH2LD(
     label: string,
@@ -812,20 +812,20 @@ export interface NameWrapper extends BaseContract {
     duration: BigNumberish,
     resolver: string,
     _fuses: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  registrar(overrides?: CallOverrides): Promise<string>
+  registrar(overrides?: CallOverrides): Promise<string>;
 
   renew(
     tokenId: BigNumberish,
     duration: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   renounceOwnership(
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   safeBatchTransferFrom(
     from: string,
@@ -833,8 +833,8 @@ export interface NameWrapper extends BaseContract {
     ids: BigNumberish[],
     amounts: BigNumberish[],
     data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   safeTransferFrom(
     from: string,
@@ -842,196 +842,187 @@ export interface NameWrapper extends BaseContract {
     id: BigNumberish,
     amount: BigNumberish,
     data: BytesLike,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setApprovalForAll(
     operator: string,
     approved: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setController(
     controller: string,
     active: boolean,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setMetadataService(
     _newMetadataService: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setRecord(
     node: BytesLike,
     owner: string,
     resolver: string,
     ttl: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setResolver(
     node: BytesLike,
     resolver: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setSubnodeOwner(
     parentNode: BytesLike,
-    label: BytesLike,
-    owner: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
-
-  setSubnodeOwnerAndWrap(
-    parentNode: BytesLike,
     label: string,
     newOwner: string,
     _fuses: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setSubnodeRecord(
     parentNode: BytesLike,
-    label: BytesLike,
-    owner: string,
-    resolver: string,
-    ttl: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
-
-  setSubnodeRecordAndWrap(
-    parentNode: BytesLike,
     label: string,
     newOwner: string,
     resolver: string,
     ttl: BigNumberish,
     _fuses: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   setTTL(
     node: BytesLike,
     ttl: BigNumberish,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   supportsInterface(
     interfaceId: BytesLike,
-    overrides?: CallOverrides,
-  ): Promise<boolean>
+    overrides?: CallOverrides
+  ): Promise<boolean>;
 
   transferOwnership(
     newOwner: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   unwrap(
     parentNode: BytesLike,
-    label: BytesLike,
+    labelhash: BytesLike,
     newController: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   unwrapETH2LD(
-    label: BytesLike,
+    labelhash: BytesLike,
     newRegistrant: string,
     newController: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
-  uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+  uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
   wrap(
     name: BytesLike,
     wrappedOwner: string,
     _fuses: BigNumberish,
     resolver: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   wrapETH2LD(
     label: string,
     wrappedOwner: string,
     _fuses: BigNumberish,
     resolver: string,
-    overrides?: Overrides & { from?: string | Promise<string> },
-  ): Promise<ContractTransaction>
+    overrides?: Overrides & { from?: string | Promise<string> }
+  ): Promise<ContractTransaction>;
 
   callStatic: {
-    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     allFusesBurned(
       node: BytesLike,
       fuseMask: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<boolean>
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     balanceOf(
       account: string,
       id: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     balanceOfBatch(
       accounts: string[],
       ids: BigNumberish[],
-      overrides?: CallOverrides,
-    ): Promise<BigNumber[]>
+      overrides?: CallOverrides
+    ): Promise<BigNumber[]>;
+
+    burnChildFuses(
+      parentNode: BytesLike,
+      labelhash: BytesLike,
+      _fuses: BigNumberish,
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     burnFuses(
       node: BytesLike,
       _fuses: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    controllers(arg0: string, overrides?: CallOverrides): Promise<boolean>
+    controllers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
 
-    ens(overrides?: CallOverrides): Promise<string>
+    ens(overrides?: CallOverrides): Promise<string>;
 
     getData(
       tokenId: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<[string, BigNumber] & { owner: string; fuses: BigNumber }>
+      overrides?: CallOverrides
+    ): Promise<[string, BigNumber] & { owner: string; fuses: BigNumber }>;
 
     getFuses(
       node: BytesLike,
-      overrides?: CallOverrides,
+      overrides?: CallOverrides
     ): Promise<
       [BigNumber, number, string] & {
-        fuses: BigNumber
-        vulnerability: number
-        vulnerableNode: string
+        fuses: BigNumber;
+        vulnerability: number;
+        vulnerableNode: string;
       }
-    >
+    >;
 
     isApprovedForAll(
       account: string,
       operator: string,
-      overrides?: CallOverrides,
-    ): Promise<boolean>
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     isTokenOwnerOrApproved(
       node: BytesLike,
       addr: string,
-      overrides?: CallOverrides,
-    ): Promise<boolean>
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
-    metadataService(overrides?: CallOverrides): Promise<string>
+    metadataService(overrides?: CallOverrides): Promise<string>;
 
-    names(arg0: BytesLike, overrides?: CallOverrides): Promise<string>
+    names(arg0: BytesLike, overrides?: CallOverrides): Promise<string>;
 
     onERC721Received(
       to: string,
       arg1: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<string>
+      overrides?: CallOverrides
+    ): Promise<string>;
 
-    owner(overrides?: CallOverrides): Promise<string>
+    owner(overrides?: CallOverrides): Promise<string>;
 
-    ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<string>
+    ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     registerAndWrapETH2LD(
       label: string,
@@ -1039,18 +1030,18 @@ export interface NameWrapper extends BaseContract {
       duration: BigNumberish,
       resolver: string,
       _fuses: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    registrar(overrides?: CallOverrides): Promise<string>
+    registrar(overrides?: CallOverrides): Promise<string>;
 
     renew(
       tokenId: BigNumberish,
       duration: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    renounceOwnership(overrides?: CallOverrides): Promise<void>
+    renounceOwnership(overrides?: CallOverrides): Promise<void>;
 
     safeBatchTransferFrom(
       from: string,
@@ -1058,8 +1049,8 @@ export interface NameWrapper extends BaseContract {
       ids: BigNumberish[],
       amounts: BigNumberish[],
       data: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     safeTransferFrom(
       from: string,
@@ -1067,283 +1058,274 @@ export interface NameWrapper extends BaseContract {
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setApprovalForAll(
       operator: string,
       approved: boolean,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setController(
       controller: string,
       active: boolean,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setMetadataService(
       _newMetadataService: string,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setRecord(
       node: BytesLike,
       owner: string,
       resolver: string,
       ttl: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setResolver(
       node: BytesLike,
       resolver: string,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setSubnodeOwner(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      overrides?: CallOverrides,
-    ): Promise<string>
-
-    setSubnodeOwnerAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       _fuses: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<string>
+      overrides?: CallOverrides
+    ): Promise<string>;
 
     setSubnodeRecord(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      resolver: string,
-      ttl: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>
-
-    setSubnodeRecordAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       resolver: string,
       ttl: BigNumberish,
       _fuses: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     setTTL(
       node: BytesLike,
       ttl: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     supportsInterface(
       interfaceId: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<boolean>
+      overrides?: CallOverrides
+    ): Promise<boolean>;
 
     transferOwnership(
       newOwner: string,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     unwrap(
       parentNode: BytesLike,
-      label: BytesLike,
+      labelhash: BytesLike,
       newController: string,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     unwrapETH2LD(
-      label: BytesLike,
+      labelhash: BytesLike,
       newRegistrant: string,
       newController: string,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
-    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
 
     wrap(
       name: BytesLike,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: CallOverrides,
-    ): Promise<void>
+      overrides?: CallOverrides
+    ): Promise<void>;
 
     wrapETH2LD(
       label: string,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: CallOverrides,
-    ): Promise<void>
-  }
+      overrides?: CallOverrides
+    ): Promise<void>;
+  };
 
   filters: {
-    'ApprovalForAll(address,address,bool)'(
+    "ApprovalForAll(address,address,bool)"(
       account?: string | null,
       operator?: string | null,
-      approved?: null,
-    ): ApprovalForAllEventFilter
+      approved?: null
+    ): ApprovalForAllEventFilter;
     ApprovalForAll(
       account?: string | null,
       operator?: string | null,
-      approved?: null,
-    ): ApprovalForAllEventFilter
+      approved?: null
+    ): ApprovalForAllEventFilter;
 
-    'ControllerChanged(address,bool)'(
+    "ControllerChanged(address,bool)"(
       controller?: string | null,
-      active?: null,
-    ): ControllerChangedEventFilter
+      active?: null
+    ): ControllerChangedEventFilter;
     ControllerChanged(
       controller?: string | null,
-      active?: null,
-    ): ControllerChangedEventFilter
+      active?: null
+    ): ControllerChangedEventFilter;
 
-    'FusesBurned(bytes32,uint96)'(
+    "FusesBurned(bytes32,uint96)"(
       node?: BytesLike | null,
-      fuses?: null,
-    ): FusesBurnedEventFilter
-    FusesBurned(node?: BytesLike | null, fuses?: null): FusesBurnedEventFilter
+      fuses?: null
+    ): FusesBurnedEventFilter;
+    FusesBurned(node?: BytesLike | null, fuses?: null): FusesBurnedEventFilter;
 
-    'NameUnwrapped(bytes32,address)'(
+    "NameUnwrapped(bytes32,address)"(
       node?: BytesLike | null,
-      owner?: null,
-    ): NameUnwrappedEventFilter
+      owner?: null
+    ): NameUnwrappedEventFilter;
     NameUnwrapped(
       node?: BytesLike | null,
-      owner?: null,
-    ): NameUnwrappedEventFilter
+      owner?: null
+    ): NameUnwrappedEventFilter;
 
-    'NameWrapped(bytes32,bytes,address,uint96)'(
+    "NameWrapped(bytes32,bytes,address,uint96)"(
       node?: BytesLike | null,
       name?: null,
       owner?: null,
-      fuses?: null,
-    ): NameWrappedEventFilter
+      fuses?: null
+    ): NameWrappedEventFilter;
     NameWrapped(
       node?: BytesLike | null,
       name?: null,
       owner?: null,
-      fuses?: null,
-    ): NameWrappedEventFilter
+      fuses?: null
+    ): NameWrappedEventFilter;
 
-    'OwnershipTransferred(address,address)'(
+    "OwnershipTransferred(address,address)"(
       previousOwner?: string | null,
-      newOwner?: string | null,
-    ): OwnershipTransferredEventFilter
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
     OwnershipTransferred(
       previousOwner?: string | null,
-      newOwner?: string | null,
-    ): OwnershipTransferredEventFilter
+      newOwner?: string | null
+    ): OwnershipTransferredEventFilter;
 
-    'TransferBatch(address,address,address,uint256[],uint256[])'(
+    "TransferBatch(address,address,address,uint256[],uint256[])"(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       ids?: null,
-      values?: null,
-    ): TransferBatchEventFilter
+      values?: null
+    ): TransferBatchEventFilter;
     TransferBatch(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       ids?: null,
-      values?: null,
-    ): TransferBatchEventFilter
+      values?: null
+    ): TransferBatchEventFilter;
 
-    'TransferSingle(address,address,address,uint256,uint256)'(
+    "TransferSingle(address,address,address,uint256,uint256)"(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       id?: null,
-      value?: null,
-    ): TransferSingleEventFilter
+      value?: null
+    ): TransferSingleEventFilter;
     TransferSingle(
       operator?: string | null,
       from?: string | null,
       to?: string | null,
       id?: null,
-      value?: null,
-    ): TransferSingleEventFilter
+      value?: null
+    ): TransferSingleEventFilter;
 
-    'URI(string,uint256)'(
+    "URI(string,uint256)"(
       value?: null,
-      id?: BigNumberish | null,
-    ): URIEventFilter
-    URI(value?: null, id?: BigNumberish | null): URIEventFilter
-  }
+      id?: BigNumberish | null
+    ): URIEventFilter;
+    URI(value?: null, id?: BigNumberish | null): URIEventFilter;
+  };
 
   estimateGas: {
-    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+    _tokens(arg0: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     allFusesBurned(
       node: BytesLike,
       fuseMask: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     balanceOf(
       account: string,
       id: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     balanceOfBatch(
       accounts: string[],
       ids: BigNumberish[],
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
+
+    burnChildFuses(
+      parentNode: BytesLike,
+      labelhash: BytesLike,
+      _fuses: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     burnFuses(
       node: BytesLike,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    controllers(arg0: string, overrides?: CallOverrides): Promise<BigNumber>
+    controllers(arg0: string, overrides?: CallOverrides): Promise<BigNumber>;
 
-    ens(overrides?: CallOverrides): Promise<BigNumber>
+    ens(overrides?: CallOverrides): Promise<BigNumber>;
 
     getData(
       tokenId: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    getFuses(node: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+    getFuses(node: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     isApprovedForAll(
       account: string,
       operator: string,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     isTokenOwnerOrApproved(
       node: BytesLike,
       addr: string,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
-    metadataService(overrides?: CallOverrides): Promise<BigNumber>
+    metadataService(overrides?: CallOverrides): Promise<BigNumber>;
 
-    names(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>
+    names(arg0: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
 
     onERC721Received(
       to: string,
       arg1: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    owner(overrides?: CallOverrides): Promise<BigNumber>
+    owner(overrides?: CallOverrides): Promise<BigNumber>;
 
-    ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+    ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     registerAndWrapETH2LD(
       label: string,
@@ -1351,20 +1333,20 @@ export interface NameWrapper extends BaseContract {
       duration: BigNumberish,
       resolver: string,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    registrar(overrides?: CallOverrides): Promise<BigNumber>
+    registrar(overrides?: CallOverrides): Promise<BigNumber>;
 
     renew(
       tokenId: BigNumberish,
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     safeBatchTransferFrom(
       from: string,
@@ -1372,8 +1354,8 @@ export interface NameWrapper extends BaseContract {
       ids: BigNumberish[],
       amounts: BigNumberish[],
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     safeTransferFrom(
       from: string,
@@ -1381,203 +1363,194 @@ export interface NameWrapper extends BaseContract {
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setApprovalForAll(
       operator: string,
       approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setController(
       controller: string,
       active: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setMetadataService(
       _newMetadataService: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setRecord(
       node: BytesLike,
       owner: string,
       resolver: string,
       ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setResolver(
       node: BytesLike,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setSubnodeOwner(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
-
-    setSubnodeOwnerAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setSubnodeRecord(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      resolver: string,
-      ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
-
-    setSubnodeRecordAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       resolver: string,
       ttl: BigNumberish,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     setTTL(
       node: BytesLike,
       ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     supportsInterface(
       interfaceId: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<BigNumber>
+      overrides?: CallOverrides
+    ): Promise<BigNumber>;
 
     transferOwnership(
       newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     unwrap(
       parentNode: BytesLike,
-      label: BytesLike,
+      labelhash: BytesLike,
       newController: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     unwrapETH2LD(
-      label: BytesLike,
+      labelhash: BytesLike,
       newRegistrant: string,
       newController: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
-    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>
+    uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
 
     wrap(
       name: BytesLike,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
 
     wrapETH2LD(
       label: string,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<BigNumber>
-  }
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<BigNumber>;
+  };
 
   populateTransaction: {
     _tokens(
       arg0: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     allFusesBurned(
       node: BytesLike,
       fuseMask: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     balanceOf(
       account: string,
       id: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     balanceOfBatch(
       accounts: string[],
       ids: BigNumberish[],
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
+
+    burnChildFuses(
+      parentNode: BytesLike,
+      labelhash: BytesLike,
+      _fuses: BigNumberish,
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     burnFuses(
       node: BytesLike,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     controllers(
       arg0: string,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    ens(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    ens(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     getData(
       tokenId: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     getFuses(
       node: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isApprovedForAll(
       account: string,
       operator: string,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     isTokenOwnerOrApproved(
       node: BytesLike,
       addr: string,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
-    metadataService(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    metadataService(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     names(
       arg0: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     onERC721Received(
       to: string,
       arg1: string,
       tokenId: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    owner(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     ownerOf(
       id: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     registerAndWrapETH2LD(
       label: string,
@@ -1585,20 +1558,20 @@ export interface NameWrapper extends BaseContract {
       duration: BigNumberish,
       resolver: string,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
-    registrar(overrides?: CallOverrides): Promise<PopulatedTransaction>
+    registrar(overrides?: CallOverrides): Promise<PopulatedTransaction>;
 
     renew(
       tokenId: BigNumberish,
       duration: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     renounceOwnership(
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     safeBatchTransferFrom(
       from: string,
@@ -1606,8 +1579,8 @@ export interface NameWrapper extends BaseContract {
       ids: BigNumberish[],
       amounts: BigNumberish[],
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     safeTransferFrom(
       from: string,
@@ -1615,123 +1588,107 @@ export interface NameWrapper extends BaseContract {
       id: BigNumberish,
       amount: BigNumberish,
       data: BytesLike,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setApprovalForAll(
       operator: string,
       approved: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setController(
       controller: string,
       active: boolean,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setMetadataService(
       _newMetadataService: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setRecord(
       node: BytesLike,
       owner: string,
       resolver: string,
       ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setResolver(
       node: BytesLike,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setSubnodeOwner(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
-
-    setSubnodeOwnerAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setSubnodeRecord(
       parentNode: BytesLike,
-      label: BytesLike,
-      owner: string,
-      resolver: string,
-      ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
-
-    setSubnodeRecordAndWrap(
-      parentNode: BytesLike,
       label: string,
       newOwner: string,
       resolver: string,
       ttl: BigNumberish,
       _fuses: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     setTTL(
       node: BytesLike,
       ttl: BigNumberish,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     supportsInterface(
       interfaceId: BytesLike,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     transferOwnership(
       newOwner: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     unwrap(
       parentNode: BytesLike,
-      label: BytesLike,
+      labelhash: BytesLike,
       newController: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     unwrapETH2LD(
-      label: BytesLike,
+      labelhash: BytesLike,
       newRegistrant: string,
       newController: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     uri(
       tokenId: BigNumberish,
-      overrides?: CallOverrides,
-    ): Promise<PopulatedTransaction>
+      overrides?: CallOverrides
+    ): Promise<PopulatedTransaction>;
 
     wrap(
       name: BytesLike,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
 
     wrapETH2LD(
       label: string,
       wrappedOwner: string,
       _fuses: BigNumberish,
       resolver: string,
-      overrides?: Overrides & { from?: string | Promise<string> },
-    ): Promise<PopulatedTransaction>
-  }
+      overrides?: Overrides & { from?: string | Promise<string> }
+    ): Promise<PopulatedTransaction>;
+  };
 }

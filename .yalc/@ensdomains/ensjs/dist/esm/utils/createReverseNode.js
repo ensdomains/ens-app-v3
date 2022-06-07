@@ -1,1 +1,1 @@
-export default (address) => address.toLowerCase().substring(2) + '.addr.reverse'
+export default (address) => address.toLowerCase().substring(2) + '.addr.reverse';
