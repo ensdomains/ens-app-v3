@@ -2,200 +2,210 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from 'ethers'
-import type { Provider } from '@ethersproject/providers'
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   UniversalResolver,
   UniversalResolverInterface,
-} from '../UniversalResolver'
+} from "../UniversalResolver";
 
 const _abi = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_registry',
-        type: 'address',
+        internalType: "address",
+        name: "_registry",
+        type: "address",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'sender',
-        type: 'address',
+        internalType: "address",
+        name: "sender",
+        type: "address",
       },
       {
-        internalType: 'string[]',
-        name: 'urls',
-        type: 'string[]',
+        internalType: "string[]",
+        name: "urls",
+        type: "string[]",
       },
       {
-        internalType: 'bytes',
-        name: 'callData',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "callData",
+        type: "bytes",
       },
       {
-        internalType: 'bytes4',
-        name: 'callbackFunction',
-        type: 'bytes4',
+        internalType: "bytes4",
+        name: "callbackFunction",
+        type: "bytes4",
       },
       {
-        internalType: 'bytes',
-        name: 'extraData',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "extraData",
+        type: "bytes",
       },
     ],
-    name: 'OffchainLookup',
-    type: 'error',
+    name: "OffchainLookup",
+    type: "error",
   },
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: 'name',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "name",
+        type: "bytes",
       },
     ],
-    name: 'findResolver',
+    name: "findResolver",
     outputs: [
       {
-        internalType: 'contract Resolver',
-        name: '',
-        type: 'address',
+        internalType: "contract Resolver",
+        name: "",
+        type: "address",
       },
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'registry',
+    name: "registry",
     outputs: [
       {
-        internalType: 'contract ENS',
-        name: '',
-        type: 'address',
+        internalType: "contract ENS",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: 'name',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "name",
+        type: "bytes",
       },
       {
-        internalType: 'bytes',
-        name: 'data',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
       },
     ],
-    name: 'resolve',
+    name: "resolve",
     outputs: [
       {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
       },
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: 'response',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "response",
+        type: "bytes",
       },
       {
-        internalType: 'bytes',
-        name: 'extraData',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "extraData",
+        type: "bytes",
       },
     ],
-    name: 'resolveCallback',
+    name: "resolveCallback",
     outputs: [
       {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: 'reverseNode',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "reverseName",
+        type: "bytes",
       },
     ],
-    name: 'reverse',
+    name: "reverse",
     outputs: [
       {
-        internalType: 'string',
-        name: '',
-        type: 'string',
+        internalType: "string",
+        name: "",
+        type: "string",
       },
       {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes4',
-        name: 'interfaceId',
-        type: 'bytes4',
+        internalType: "bytes4",
+        name: "interfaceId",
+        type: "bytes4",
       },
     ],
-    name: 'supportsInterface',
+    name: "supportsInterface",
     outputs: [
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
-]
+];
 
 export class UniversalResolver__factory {
-  static readonly abi = _abi
+  static readonly abi = _abi;
   static createInterface(): UniversalResolverInterface {
-    return new utils.Interface(_abi) as UniversalResolverInterface
+    return new utils.Interface(_abi) as UniversalResolverInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider,
+    signerOrProvider: Signer | Provider
   ): UniversalResolver {
-    return new Contract(address, _abi, signerOrProvider) as UniversalResolver
+    return new Contract(address, _abi, signerOrProvider) as UniversalResolver;
   }
 }

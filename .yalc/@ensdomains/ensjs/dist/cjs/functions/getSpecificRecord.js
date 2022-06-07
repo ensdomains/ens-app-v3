@@ -1,170 +1,140 @@
-'use strict'
-Object.defineProperty(exports, '__esModule', { value: true })
-exports.getAddr =
-  exports._getAddr =
-  exports.getText =
-  exports._getText =
-  exports.getContentHash =
-  exports._getContentHash =
-    void 0
-const address_encoder_1 = require('@ensdomains/address-encoder')
-const ethers_1 = require('ethers')
-const contentHash_1 = require('../utils/contentHash')
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.getAddr = exports._getAddr = exports.getText = exports._getText = exports.getContentHash = exports._getContentHash = void 0;
+const address_encoder_1 = require("@ensdomains/address-encoder");
+const ethers_1 = require("ethers");
+const contentHash_1 = require("../utils/contentHash");
 exports._getContentHash = {
-  raw: async ({ contracts }, name) => {
-    const publicResolver = await contracts?.getPublicResolver()
-    return {
-      to: '0x0000000000000000000000000000000000000000',
-      data: publicResolver.interface.encodeFunctionData('contenthash', [
-        ethers_1.ethers.utils.namehash(name),
-      ]),
-    }
-  },
-  decode: async ({ contracts }, data) => {
-    const publicResolver = await contracts?.getPublicResolver()
-    const [response] = publicResolver.interface.decodeFunctionResult(
-      'contenthash',
-      data,
-    )
-    if (!response) {
-      return null
-    }
-    const decodedContent = (0, contentHash_1.decodeContenthash)(response)
-    if (
-      !decodedContent ||
-      (ethers_1.ethers.utils.isBytesLike(decodedContent.decoded) &&
-        ethers_1.ethers.utils.hexStripZeros(decodedContent.decoded) === '0x') ||
-      Object.keys(decodedContent).length === 0
-    ) {
-      return null
-    }
-    return decodedContent
-  },
-}
+    raw: async ({ contracts }, name) => {
+        const publicResolver = await contracts?.getPublicResolver();
+        return {
+            to: '0x0000000000000000000000000000000000000000',
+            data: publicResolver.interface.encodeFunctionData('contenthash', [
+                ethers_1.ethers.utils.namehash(name),
+            ]),
+        };
+    },
+    decode: async ({ contracts }, data) => {
+        const publicResolver = await contracts?.getPublicResolver();
+        const [response] = publicResolver.interface.decodeFunctionResult('contenthash', data);
+        if (!response) {
+            return null;
+        }
+        const decodedContent = (0, contentHash_1.decodeContenthash)(response);
+        if (!decodedContent ||
+            (ethers_1.ethers.utils.isBytesLike(decodedContent.decoded) &&
+                ethers_1.ethers.utils.hexStripZeros(decodedContent.decoded) === '0x') ||
+            Object.keys(decodedContent).length === 0) {
+            return null;
+        }
+        return decodedContent;
+    },
+};
 exports.getContentHash = {
-  raw: async ({ contracts, universalWrapper }, name) => {
-    const prData = await exports._getContentHash.raw({ contracts }, name)
-    return await universalWrapper.raw(name, prData.data)
-  },
-  decode: async ({ contracts, universalWrapper }, data) => {
-    const urData = await universalWrapper.decode(data)
-    if (!urData) return null
-    return await exports._getContentHash.decode({ contracts }, urData.data)
-  },
-}
+    raw: async ({ contracts, universalWrapper }, name) => {
+        const prData = await exports._getContentHash.raw({ contracts }, name);
+        return await universalWrapper.raw(name, prData.data);
+    },
+    decode: async ({ contracts, universalWrapper }, data) => {
+        const urData = await universalWrapper.decode(data);
+        if (!urData)
+            return null;
+        return await exports._getContentHash.decode({ contracts }, urData.data);
+    },
+};
 exports._getText = {
-  raw: async ({ contracts }, name, key) => {
-    const publicResolver = await contracts?.getPublicResolver()
-    return {
-      to: '0x0000000000000000000000000000000000000000',
-      data: publicResolver.interface.encodeFunctionData('text', [
-        ethers_1.ethers.utils.namehash(name),
-        key,
-      ]),
-    }
-  },
-  decode: async ({ contracts }, data) => {
-    const publicResolver = await contracts?.getPublicResolver()
-    const [response] = publicResolver.interface.decodeFunctionResult(
-      'text',
-      data,
-    )
-    if (!response) {
-      return null
-    }
-    return response
-  },
-}
+    raw: async ({ contracts }, name, key) => {
+        const publicResolver = await contracts?.getPublicResolver();
+        return {
+            to: '0x0000000000000000000000000000000000000000',
+            data: publicResolver.interface.encodeFunctionData('text', [
+                ethers_1.ethers.utils.namehash(name),
+                key,
+            ]),
+        };
+    },
+    decode: async ({ contracts }, data) => {
+        const publicResolver = await contracts?.getPublicResolver();
+        const [response] = publicResolver.interface.decodeFunctionResult('text', data);
+        if (!response) {
+            return null;
+        }
+        return response;
+    },
+};
 exports.getText = {
-  raw: async ({ contracts, universalWrapper }, name, key) => {
-    const prData = await exports._getText.raw({ contracts }, name, key)
-    return await universalWrapper.raw(name, prData.data)
-  },
-  decode: async ({ contracts, universalWrapper }, data) => {
-    const urData = await universalWrapper.decode(data)
-    if (!urData) return null
-    return await exports._getText.decode({ contracts }, urData.data)
-  },
-}
+    raw: async ({ contracts, universalWrapper }, name, key) => {
+        const prData = await exports._getText.raw({ contracts }, name, key);
+        return await universalWrapper.raw(name, prData.data);
+    },
+    decode: async ({ contracts, universalWrapper }, data) => {
+        const urData = await universalWrapper.decode(data);
+        if (!urData)
+            return null;
+        return await exports._getText.decode({ contracts }, urData.data);
+    },
+};
 exports._getAddr = {
-  raw: async ({ contracts }, name, coinType, bypassFormat) => {
-    if (!coinType) {
-      coinType = 60
-    }
-    const publicResolver = await contracts?.getPublicResolver()
-    if (bypassFormat) {
-      return {
-        to: '0x0000000000000000000000000000000000000000',
-        data: publicResolver.interface.encodeFunctionData(
-          'addr(bytes32,uint256)',
-          [ethers_1.ethers.utils.namehash(name), coinType],
-        ),
-      }
-    }
-    const formatter =
-      typeof coinType === 'string' && isNaN(parseInt(coinType))
-        ? address_encoder_1.formatsByName[coinType]
-        : address_encoder_1.formatsByCoinType[
-            typeof coinType === 'number' ? coinType : parseInt(coinType)
-          ]
-    if (!formatter) {
-      throw new Error(`No formatter found for coin: ${coinType}`)
-    }
-    return {
-      to: '0x0000000000000000000000000000000000000000',
-      data: publicResolver.interface.encodeFunctionData(
-        'addr(bytes32,uint256)',
-        [ethers_1.ethers.utils.namehash(name), formatter.coinType],
-      ),
-    }
-  },
-  decode: async ({ contracts }, data, _name, coinType) => {
-    let returnCoinType = true
-    if (!coinType) {
-      coinType = 60
-      returnCoinType = false
-    }
-    const publicResolver = await contracts?.getPublicResolver()
-    const formatter =
-      typeof coinType === 'string' && isNaN(parseInt(coinType))
-        ? address_encoder_1.formatsByName[coinType]
-        : address_encoder_1.formatsByCoinType[
-            typeof coinType === 'number' ? coinType : parseInt(coinType)
-          ]
-    const [response] = publicResolver.interface.decodeFunctionResult(
-      'addr(bytes32,uint256)',
-      data,
-    )
-    if (!response) return null
-    if (ethers_1.ethers.utils.hexStripZeros(response) === '0x') {
-      return null
-    }
-    const decodedAddr = formatter.encoder(Buffer.from(response.slice(2), 'hex'))
-    if (!decodedAddr) {
-      return null
-    }
-    if (!returnCoinType) {
-      return decodedAddr
-    }
-    return { coin: formatter.name, addr: decodedAddr }
-  },
-}
+    raw: async ({ contracts }, name, coinType, bypassFormat) => {
+        if (!coinType) {
+            coinType = 60;
+        }
+        const publicResolver = await contracts?.getPublicResolver();
+        if (bypassFormat) {
+            return {
+                to: '0x0000000000000000000000000000000000000000',
+                data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [ethers_1.ethers.utils.namehash(name), coinType]),
+            };
+        }
+        const formatter = typeof coinType === 'string' && isNaN(parseInt(coinType))
+            ? address_encoder_1.formatsByName[coinType]
+            : address_encoder_1.formatsByCoinType[typeof coinType === 'number' ? coinType : parseInt(coinType)];
+        if (!formatter) {
+            throw new Error(`No formatter found for coin: ${coinType}`);
+        }
+        return {
+            to: '0x0000000000000000000000000000000000000000',
+            data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [ethers_1.ethers.utils.namehash(name), formatter.coinType]),
+        };
+    },
+    decode: async ({ contracts }, data, _name, coinType) => {
+        let returnCoinType = true;
+        if (!coinType) {
+            coinType = 60;
+            returnCoinType = false;
+        }
+        const publicResolver = await contracts?.getPublicResolver();
+        const formatter = typeof coinType === 'string' && isNaN(parseInt(coinType))
+            ? address_encoder_1.formatsByName[coinType]
+            : address_encoder_1.formatsByCoinType[typeof coinType === 'number' ? coinType : parseInt(coinType)];
+        const [response] = publicResolver.interface.decodeFunctionResult('addr(bytes32,uint256)', data);
+        if (!response)
+            return null;
+        if (ethers_1.ethers.utils.hexStripZeros(response) === '0x') {
+            return null;
+        }
+        const decodedAddr = formatter.encoder(Buffer.from(response.slice(2), 'hex'));
+        if (!decodedAddr) {
+            return null;
+        }
+        if (!returnCoinType) {
+            return decodedAddr;
+        }
+        return { coin: formatter.name, addr: decodedAddr };
+    },
+};
 exports.getAddr = {
-  raw: async ({ contracts, universalWrapper }, name, coinType) => {
-    const prData = await exports._getAddr.raw({ contracts }, name, coinType)
-    return await universalWrapper.raw(name, prData.data)
-  },
-  decode: async ({ contracts, universalWrapper }, data, _name, coinType) => {
-    const urData = await universalWrapper.decode(data)
-    if (!urData) return null
-    return await exports._getAddr.decode(
-      { contracts },
-      urData.data,
-      _name,
-      coinType,
-    )
-  },
-}
+    raw: async ({ contracts, universalWrapper }, name, coinType) => {
+        const prData = await exports._getAddr.raw({ contracts }, name, coinType);
+        return await universalWrapper.raw(name, prData.data);
+    },
+    decode: async ({ contracts, universalWrapper }, data, _name, coinType) => {
+        const urData = await universalWrapper.decode(data);
+        if (!urData)
+            return null;
+        return await exports._getAddr.decode({ contracts }, urData.data, _name, coinType);
+    },
+};
 // export async function getAddr(
 //   { contracts }: ENSArgs<'contracts'>,
 //   name: string,

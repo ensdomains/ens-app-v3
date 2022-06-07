@@ -1,12 +1,9 @@
-import { namehash } from 'ethers/lib/utils'
-import { truncateFormat } from '../utils/format'
-import { decryptName } from '../utils/labels'
-const getSubnames = async (
-  { gqlInstance },
-  { name, page, pageSize = 10, orderDirection, orderBy },
-) => {
-  const client = gqlInstance.client
-  const subdomainsGql = `
+import { namehash } from 'ethers/lib/utils';
+import { truncateFormat } from '../utils/format';
+import { decryptName } from '../utils/labels';
+const getSubnames = async ({ gqlInstance }, { name, page, pageSize = 10, orderDirection, orderBy }) => {
+    const client = gqlInstance.client;
+    const subdomainsGql = `
     id
     labelName
     labelhash
@@ -15,11 +12,11 @@ const getSubnames = async (
     owner {
       id
     }
-  `
-  let queryVars = {}
-  let finalQuery = ''
-  if (typeof page !== 'number') {
-    finalQuery = gqlInstance.gql`
+  `;
+    let queryVars = {};
+    let finalQuery = '';
+    if (typeof page !== 'number') {
+        finalQuery = gqlInstance.gql `
       query getSubnames(
         $id: ID! 
         $orderBy: Domain_orderBy 
@@ -36,14 +33,15 @@ const getSubnames = async (
           }
         }
       }
-    `
-    queryVars = {
-      id: namehash(name),
-      orderBy,
-      orderDirection,
+    `;
+        queryVars = {
+            id: namehash(name),
+            orderBy,
+            orderDirection,
+        };
     }
-  } else {
-    finalQuery = gqlInstance.gql`
+    else {
+        finalQuery = gqlInstance.gql `
       query getSubnames(
         $id: ID! 
         $first: Int
@@ -64,23 +62,23 @@ const getSubnames = async (
           }
         }
       }
-    `
-    queryVars = {
-      id: namehash(name),
-      first: pageSize,
-      skip: (page || 0) * pageSize,
-      orderBy,
-      orderDirection,
+    `;
+        queryVars = {
+            id: namehash(name),
+            first: pageSize,
+            skip: (page || 0) * pageSize,
+            orderBy,
+            orderDirection,
+        };
     }
-  }
-  const { domain } = await client.request(finalQuery, queryVars)
-  return domain.subdomains.map((subname) => {
-    const decrypted = decryptName(subname.name)
-    return {
-      ...subname,
-      name: decrypted,
-      truncatedName: truncateFormat(decrypted),
-    }
-  })
-}
-export default getSubnames
+    const { domain } = await client.request(finalQuery, queryVars);
+    return domain.subdomains.map((subname) => {
+        const decrypted = decryptName(subname.name);
+        return {
+            ...subname,
+            name: decrypted,
+            truncatedName: truncateFormat(decrypted),
+        };
+    });
+};
+export default getSubnames;

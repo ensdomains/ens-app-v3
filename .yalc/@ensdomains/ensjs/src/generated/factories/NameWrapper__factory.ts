@@ -2,1264 +2,1203 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from 'ethers'
-import type { Provider } from '@ethersproject/providers'
-import type { NameWrapper, NameWrapperInterface } from '../NameWrapper'
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
+import type { NameWrapper, NameWrapperInterface } from "../NameWrapper";
 
 const _abi = [
   {
     inputs: [
       {
-        internalType: 'contract ENS',
-        name: '_ens',
-        type: 'address',
+        internalType: "contract ENS",
+        name: "_ens",
+        type: "address",
       },
       {
-        internalType: 'contract IBaseRegistrar',
-        name: '_registrar',
-        type: 'address',
+        internalType: "contract IBaseRegistrar",
+        name: "_registrar",
+        type: "address",
       },
       {
-        internalType: 'contract IMetadataService',
-        name: '_metadataService',
-        type: 'address',
+        internalType: "contract IMetadataService",
+        name: "_metadataService",
+        type: "address",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
     inputs: [],
-    name: 'IncompatibleParent',
-    type: 'error',
+    name: "IncompatibleParent",
+    type: "error",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
     ],
-    name: 'IncorrectTargetOwner',
-    type: 'error',
+    name: "IncorrectTargetOwner",
+    type: "error",
   },
   {
     inputs: [],
-    name: 'IncorrectTokenType',
-    type: 'error',
+    name: "IncorrectTokenType",
+    type: "error",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'labelHash',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "labelHash",
+        type: "bytes32",
       },
       {
-        internalType: 'bytes32',
-        name: 'expectedLabelhash',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "expectedLabelhash",
+        type: "bytes32",
       },
     ],
-    name: 'LabelMismatch',
-    type: 'error',
+    name: "LabelMismatch",
+    type: "error",
   },
   {
     inputs: [
       {
-        internalType: 'string',
-        name: 'label',
-        type: 'string',
+        internalType: "string",
+        name: "label",
+        type: "string",
       },
     ],
-    name: 'LabelTooLong',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'string',
-        name: 'label',
-        type: 'string',
-      },
-    ],
-    name: 'LabelTooShort',
-    type: 'error',
+    name: "LabelTooLong",
+    type: "error",
   },
   {
     inputs: [],
-    name: 'NameNotFound',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-    ],
-    name: 'OperationProhibited',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
-      },
-    ],
-    name: 'Unauthorised',
-    type: 'error',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
-      },
-    ],
-    name: 'UnauthorisedEthWrap',
-    type: 'error',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'bool',
-        name: 'approved',
-        type: 'bool',
-      },
-    ],
-    name: 'ApprovalForAll',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'controller',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'bool',
-        name: 'active',
-        type: 'bool',
-      },
-    ],
-    name: 'ControllerChanged',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        indexed: false,
-        internalType: 'uint96',
-        name: 'fuses',
-        type: 'uint96',
-      },
-    ],
-    name: 'FusesBurned',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-    ],
-    name: 'NameUnwrapped',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        indexed: false,
-        internalType: 'bytes',
-        name: 'name',
-        type: 'bytes',
-      },
-      {
-        indexed: false,
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint96',
-        name: 'fuses',
-        type: 'uint96',
-      },
-    ],
-    name: 'NameWrapped',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-    ],
-    name: 'OwnershipTransferred',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256[]',
-        name: 'ids',
-        type: 'uint256[]',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256[]',
-        name: 'values',
-        type: 'uint256[]',
-      },
-    ],
-    name: 'TransferBatch',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        indexed: true,
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
-      },
-      {
-        indexed: false,
-        internalType: 'uint256',
-        name: 'value',
-        type: 'uint256',
-      },
-    ],
-    name: 'TransferSingle',
-    type: 'event',
-  },
-  {
-    anonymous: false,
-    inputs: [
-      {
-        indexed: false,
-        internalType: 'string',
-        name: 'value',
-        type: 'string',
-      },
-      {
-        indexed: true,
-        internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
-      },
-    ],
-    name: 'URI',
-    type: 'event',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    name: '_tokens',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint96',
-        name: 'fuseMask',
-        type: 'uint96',
-      },
-    ],
-    name: 'allFusesBurned',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
-      },
-    ],
-    name: 'balanceOf',
-    outputs: [
-      {
-        internalType: 'uint256',
-        name: '',
-        type: 'uint256',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address[]',
-        name: 'accounts',
-        type: 'address[]',
-      },
-      {
-        internalType: 'uint256[]',
-        name: 'ids',
-        type: 'uint256[]',
-      },
-    ],
-    name: 'balanceOfBatch',
-    outputs: [
-      {
-        internalType: 'uint256[]',
-        name: '',
-        type: 'uint256[]',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'uint96',
-        name: '_fuses',
-        type: 'uint96',
-      },
-    ],
-    name: 'burnFuses',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-    ],
-    name: 'controllers',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
+    name: "LabelTooShort",
+    type: "error",
   },
   {
     inputs: [],
-    name: 'ens',
-    outputs: [
-      {
-        internalType: 'contract ENS',
-        name: '',
-        type: 'address',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
+    name: "NameNotFound",
+    type: "error",
   },
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
       },
     ],
-    name: 'getData',
-    outputs: [
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        internalType: 'uint96',
-        name: 'fuses',
-        type: 'uint96',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
+    name: "OperationProhibited",
+    type: "error",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "addr",
+        type: "address",
       },
     ],
-    name: 'getFuses',
-    outputs: [
+    name: "Unauthorised",
+    type: "error",
+  },
+  {
+    anonymous: false,
+    inputs: [
       {
-        internalType: 'uint96',
-        name: 'fuses',
-        type: 'uint96',
+        indexed: true,
+        internalType: "address",
+        name: "account",
+        type: "address",
       },
       {
-        internalType: 'enum INameWrapper.NameSafety',
-        name: 'vulnerability',
-        type: 'uint8',
+        indexed: true,
+        internalType: "address",
+        name: "operator",
+        type: "address",
       },
       {
-        internalType: 'bytes32',
-        name: 'vulnerableNode',
-        type: 'bytes32',
+        indexed: false,
+        internalType: "bool",
+        name: "approved",
+        type: "bool",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    name: "ApprovalForAll",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "controller",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "bool",
+        name: "active",
+        type: "bool",
+      },
+    ],
+    name: "ControllerChanged",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "fuses",
+        type: "uint96",
+      },
+    ],
+    name: "FusesBurned",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+    ],
+    name: "NameUnwrapped",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        indexed: false,
+        internalType: "bytes",
+        name: "name",
+        type: "bytes",
+      },
+      {
+        indexed: false,
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint96",
+        name: "fuses",
+        type: "uint96",
+      },
+    ],
+    name: "NameWrapped",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+    ],
+    name: "OwnershipTransferred",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "ids",
+        type: "uint256[]",
+      },
+      {
+        indexed: false,
+        internalType: "uint256[]",
+        name: "values",
+        type: "uint256[]",
+      },
+    ],
+    name: "TransferBatch",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: true,
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "from",
+        type: "address",
+      },
+      {
+        indexed: true,
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        indexed: false,
+        internalType: "uint256",
+        name: "value",
+        type: "uint256",
+      },
+    ],
+    name: "TransferSingle",
+    type: "event",
+  },
+  {
+    anonymous: false,
+    inputs: [
+      {
+        indexed: false,
+        internalType: "string",
+        name: "value",
+        type: "string",
+      },
+      {
+        indexed: true,
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    name: "URI",
+    type: "event",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'account',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
-    name: 'isApprovedForAll',
+    name: "_tokens",
     outputs: [
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
       },
       {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
+        internalType: "uint96",
+        name: "fuseMask",
+        type: "uint96",
       },
     ],
-    name: 'isTokenOwnerOrApproved',
+    name: "allFusesBurned",
     outputs: [
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+    ],
+    name: "balanceOf",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address[]",
+        name: "accounts",
+        type: "address[]",
+      },
+      {
+        internalType: "uint256[]",
+        name: "ids",
+        type: "uint256[]",
+      },
+    ],
+    name: "balanceOfBatch",
+    outputs: [
+      {
+        internalType: "uint256[]",
+        name: "",
+        type: "uint256[]",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "parentNode",
+        type: "bytes32",
+      },
+      {
+        internalType: "bytes32",
+        name: "labelhash",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint96",
+        name: "_fuses",
+        type: "uint96",
+      },
+    ],
+    name: "burnChildFuses",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        internalType: "uint96",
+        name: "_fuses",
+        type: "uint96",
+      },
+    ],
+    name: "burnFuses",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "",
+        type: "address",
+      },
+    ],
+    name: "controllers",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'metadataService',
+    name: "ens",
     outputs: [
       {
-        internalType: 'contract IMetadataService',
-        name: '',
-        type: 'address',
+        internalType: "contract ENS",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
       },
     ],
-    name: 'names',
+    name: "getData",
     outputs: [
       {
-        internalType: 'bytes',
-        name: '',
-        type: 'bytes',
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "fuses",
+        type: "uint96",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: '',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: 'data',
-        type: 'bytes',
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
       },
     ],
-    name: 'onERC721Received',
+    name: "getFuses",
     outputs: [
       {
-        internalType: 'bytes4',
-        name: '',
-        type: 'bytes4',
+        internalType: "uint96",
+        name: "fuses",
+        type: "uint96",
+      },
+      {
+        internalType: "enum INameWrapper.NameSafety",
+        name: "vulnerability",
+        type: "uint8",
+      },
+      {
+        internalType: "bytes32",
+        name: "vulnerableNode",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "account",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+    ],
+    name: "isApprovedForAll",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "addr",
+        type: "address",
+      },
+    ],
+    name: "isTokenOwnerOrApproved",
+    outputs: [
+      {
+        internalType: "bool",
+        name: "",
+        type: "bool",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'owner',
+    name: "metadataService",
     outputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        internalType: "contract IMetadataService",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    name: 'ownerOf',
+    name: "names",
     outputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        internalType: "bytes",
+        name: "",
+        type: "bytes",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'string',
-        name: 'label',
-        type: 'string',
+        internalType: "address",
+        name: "to",
+        type: "address",
       },
       {
-        internalType: 'address',
-        name: 'wrappedOwner',
-        type: 'address',
+        internalType: "address",
+        name: "",
+        type: "address",
       },
       {
-        internalType: 'uint256',
-        name: 'duration',
-        type: 'uint256',
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
       },
       {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
-      },
-      {
-        internalType: 'uint96',
-        name: '_fuses',
-        type: 'uint96',
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
       },
     ],
-    name: 'registerAndWrapETH2LD',
+    name: "onERC721Received",
     outputs: [
       {
-        internalType: 'uint256',
-        name: 'expires',
-        type: 'uint256',
+        internalType: "bytes4",
+        name: "",
+        type: "bytes4",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'registrar',
+    name: "owner",
     outputs: [
       {
-        internalType: 'contract IBaseRegistrar',
-        name: '',
-        type: 'address',
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'duration',
-        type: 'uint256',
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
       },
     ],
-    name: 'renew',
+    name: "ownerOf",
     outputs: [
       {
-        internalType: 'uint256',
-        name: 'expires',
-        type: 'uint256',
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "label",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "wrappedOwner",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_fuses",
+        type: "uint96",
+      },
+    ],
+    name: "registerAndWrapETH2LD",
+    outputs: [
+      {
+        internalType: "uint256",
+        name: "expires",
+        type: "uint256",
+      },
+    ],
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'renounceOwnership',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256[]',
-        name: 'ids',
-        type: 'uint256[]',
-      },
-      {
-        internalType: 'uint256[]',
-        name: 'amounts',
-        type: 'uint256[]',
-      },
-      {
-        internalType: 'bytes',
-        name: 'data',
-        type: 'bytes',
-      },
-    ],
-    name: 'safeBatchTransferFrom',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'from',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'to',
-        type: 'address',
-      },
-      {
-        internalType: 'uint256',
-        name: 'id',
-        type: 'uint256',
-      },
-      {
-        internalType: 'uint256',
-        name: 'amount',
-        type: 'uint256',
-      },
-      {
-        internalType: 'bytes',
-        name: 'data',
-        type: 'bytes',
-      },
-    ],
-    name: 'safeTransferFrom',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'operator',
-        type: 'address',
-      },
-      {
-        internalType: 'bool',
-        name: 'approved',
-        type: 'bool',
-      },
-    ],
-    name: 'setApprovalForAll',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'address',
-        name: 'controller',
-        type: 'address',
-      },
-      {
-        internalType: 'bool',
-        name: 'active',
-        type: 'bool',
-      },
-    ],
-    name: 'setController',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'contract IMetadataService',
-        name: '_newMetadataService',
-        type: 'address',
-      },
-    ],
-    name: 'setMetadataService',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
-      },
-      {
-        internalType: 'uint64',
-        name: 'ttl',
-        type: 'uint64',
-      },
-    ],
-    name: 'setRecord',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
-      },
-    ],
-    name: 'setResolver',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'parentNode',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-    ],
-    name: 'setSubnodeOwner',
+    name: "registrar",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "contract IBaseRegistrar",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'parentNode',
-        type: 'bytes32',
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
       },
       {
-        internalType: 'string',
-        name: 'label',
-        type: 'string',
-      },
-      {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
-      },
-      {
-        internalType: 'uint96',
-        name: '_fuses',
-        type: 'uint96',
+        internalType: "uint256",
+        name: "duration",
+        type: "uint256",
       },
     ],
-    name: 'setSubnodeOwnerAndWrap',
+    name: "renew",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
+        internalType: "uint256",
+        name: "expires",
+        type: "uint256",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
-    inputs: [
-      {
-        internalType: 'bytes32',
-        name: 'parentNode',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'bytes32',
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
-      },
-      {
-        internalType: 'uint64',
-        name: 'ttl',
-        type: 'uint64',
-      },
-    ],
-    name: 'setSubnodeRecord',
+    inputs: [],
+    name: "renounceOwnership",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'parentNode',
-        type: 'bytes32',
+        internalType: "address",
+        name: "from",
+        type: "address",
       },
       {
-        internalType: 'string',
-        name: 'label',
-        type: 'string',
+        internalType: "address",
+        name: "to",
+        type: "address",
       },
       {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
+        internalType: "uint256[]",
+        name: "ids",
+        type: "uint256[]",
       },
       {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
+        internalType: "uint256[]",
+        name: "amounts",
+        type: "uint256[]",
       },
       {
-        internalType: 'uint64',
-        name: 'ttl',
-        type: 'uint64',
-      },
-      {
-        internalType: 'uint96',
-        name: '_fuses',
-        type: 'uint96',
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
       },
     ],
-    name: 'setSubnodeRecordAndWrap',
+    name: "safeBatchTransferFrom",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
+        internalType: "address",
+        name: "from",
+        type: "address",
       },
       {
-        internalType: 'uint64',
-        name: 'ttl',
-        type: 'uint64',
+        internalType: "address",
+        name: "to",
+        type: "address",
+      },
+      {
+        internalType: "uint256",
+        name: "id",
+        type: "uint256",
+      },
+      {
+        internalType: "uint256",
+        name: "amount",
+        type: "uint256",
+      },
+      {
+        internalType: "bytes",
+        name: "data",
+        type: "bytes",
       },
     ],
-    name: 'setTTL',
+    name: "safeTransferFrom",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes4',
-        name: 'interfaceId',
-        type: 'bytes4',
+        internalType: "address",
+        name: "operator",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "approved",
+        type: "bool",
       },
     ],
-    name: 'supportsInterface',
+    name: "setApprovalForAll",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "address",
+        name: "controller",
+        type: "address",
+      },
+      {
+        internalType: "bool",
+        name: "active",
+        type: "bool",
+      },
+    ],
+    name: "setController",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "contract IMetadataService",
+        name: "_newMetadataService",
+        type: "address",
+      },
+    ],
+    name: "setMetadataService",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "owner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "ttl",
+        type: "uint64",
+      },
+    ],
+    name: "setRecord",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+    ],
+    name: "setResolver",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "parentNode",
+        type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "label",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_fuses",
+        type: "uint96",
+      },
+    ],
+    name: "setSubnodeOwner",
     outputs: [
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
+        internalType: "bytes32",
+        name: "parentNode",
+        type: "bytes32",
+      },
+      {
+        internalType: "string",
+        name: "label",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+      {
+        internalType: "uint64",
+        name: "ttl",
+        type: "uint64",
+      },
+      {
+        internalType: "uint96",
+        name: "_fuses",
+        type: "uint96",
       },
     ],
-    name: 'transferOwnership',
+    name: "setSubnodeRecord",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'parentNode',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
       },
       {
-        internalType: 'bytes32',
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'newController',
-        type: 'address',
+        internalType: "uint64",
+        name: "ttl",
+        type: "uint64",
       },
     ],
-    name: 'unwrap',
+    name: "setTTL",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes32',
-        name: 'label',
-        type: 'bytes32',
-      },
-      {
-        internalType: 'address',
-        name: 'newRegistrant',
-        type: 'address',
-      },
-      {
-        internalType: 'address',
-        name: 'newController',
-        type: 'address',
+        internalType: "bytes4",
+        name: "interfaceId",
+        type: "bytes4",
       },
     ],
-    name: 'unwrapETH2LD',
-    outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
-  },
-  {
-    inputs: [
-      {
-        internalType: 'uint256',
-        name: 'tokenId',
-        type: 'uint256',
-      },
-    ],
-    name: 'uri',
+    name: "supportsInterface",
     outputs: [
       {
-        internalType: 'string',
-        name: '',
-        type: 'string',
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: 'name',
-        type: 'bytes',
-      },
-      {
-        internalType: 'address',
-        name: 'wrappedOwner',
-        type: 'address',
-      },
-      {
-        internalType: 'uint96',
-        name: '_fuses',
-        type: 'uint96',
-      },
-      {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: 'wrap',
+    name: "transferOwnership",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'string',
-        name: 'label',
-        type: 'string',
+        internalType: "bytes32",
+        name: "parentNode",
+        type: "bytes32",
       },
       {
-        internalType: 'address',
-        name: 'wrappedOwner',
-        type: 'address',
+        internalType: "bytes32",
+        name: "labelhash",
+        type: "bytes32",
       },
       {
-        internalType: 'uint96',
-        name: '_fuses',
-        type: 'uint96',
-      },
-      {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
+        internalType: "address",
+        name: "newController",
+        type: "address",
       },
     ],
-    name: 'wrapETH2LD',
+    name: "unwrap",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
-]
+  {
+    inputs: [
+      {
+        internalType: "bytes32",
+        name: "labelhash",
+        type: "bytes32",
+      },
+      {
+        internalType: "address",
+        name: "newRegistrant",
+        type: "address",
+      },
+      {
+        internalType: "address",
+        name: "newController",
+        type: "address",
+      },
+    ],
+    name: "unwrapETH2LD",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "uint256",
+        name: "tokenId",
+        type: "uint256",
+      },
+    ],
+    name: "uri",
+    outputs: [
+      {
+        internalType: "string",
+        name: "",
+        type: "string",
+      },
+    ],
+    stateMutability: "view",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "bytes",
+        name: "name",
+        type: "bytes",
+      },
+      {
+        internalType: "address",
+        name: "wrappedOwner",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_fuses",
+        type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+    ],
+    name: "wrap",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+  {
+    inputs: [
+      {
+        internalType: "string",
+        name: "label",
+        type: "string",
+      },
+      {
+        internalType: "address",
+        name: "wrappedOwner",
+        type: "address",
+      },
+      {
+        internalType: "uint96",
+        name: "_fuses",
+        type: "uint96",
+      },
+      {
+        internalType: "address",
+        name: "resolver",
+        type: "address",
+      },
+    ],
+    name: "wrapETH2LD",
+    outputs: [],
+    stateMutability: "nonpayable",
+    type: "function",
+  },
+];
 
 export class NameWrapper__factory {
-  static readonly abi = _abi
+  static readonly abi = _abi;
   static createInterface(): NameWrapperInterface {
-    return new utils.Interface(_abi) as NameWrapperInterface
+    return new utils.Interface(_abi) as NameWrapperInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider,
+    signerOrProvider: Signer | Provider
   ): NameWrapper {
-    return new Contract(address, _abi, signerOrProvider) as NameWrapper
+    return new Contract(address, _abi, signerOrProvider) as NameWrapper;
   }
 }

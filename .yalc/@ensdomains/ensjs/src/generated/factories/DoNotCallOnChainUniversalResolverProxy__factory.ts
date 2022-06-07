@@ -2,185 +2,185 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from 'ethers'
-import type { Provider } from '@ethersproject/providers'
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   DoNotCallOnChainUniversalResolverProxy,
   DoNotCallOnChainUniversalResolverProxyInterface,
-} from '../DoNotCallOnChainUniversalResolverProxy'
+} from "../DoNotCallOnChainUniversalResolverProxy";
 
 const _abi = [
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '_resolver',
-        type: 'address',
+        internalType: "address",
+        name: "_resolver",
+        type: "address",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
       },
       {
         indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: 'OwnershipTransferred',
-    type: 'event',
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
+        internalType: "address",
+        name: "addr",
+        type: "address",
       },
     ],
-    name: 'isOwner',
+    name: "isOwner",
     outputs: [
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'owner',
+    name: "owner",
     outputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'bytes',
-        name: 'reverseNode',
-        type: 'bytes',
+        internalType: "bytes",
+        name: "reverseNode",
+        type: "bytes",
       },
       {
         components: [
           {
-            internalType: 'address',
-            name: 'target',
-            type: 'address',
+            internalType: "address",
+            name: "target",
+            type: "address",
           },
           {
-            internalType: 'bytes',
-            name: 'data',
-            type: 'bytes',
+            internalType: "bytes",
+            name: "data",
+            type: "bytes",
           },
           {
             internalType:
-              'enum DoNotCallOnChainUniversalResolverProxy.ReverseCallDataType',
-            name: 'dataType',
-            type: 'uint8',
+              "enum DoNotCallOnChainUniversalResolverProxy.ReverseCallDataType",
+            name: "dataType",
+            type: "uint8",
           },
           {
-            internalType: 'uint256[]',
-            name: 'locations',
-            type: 'uint256[]',
+            internalType: "uint256[]",
+            name: "locations",
+            type: "uint256[]",
           },
         ],
         internalType:
-          'struct DoNotCallOnChainUniversalResolverProxy.ReverseCall[]',
-        name: 'calls',
-        type: 'tuple[]',
+          "struct DoNotCallOnChainUniversalResolverProxy.ReverseCall[]",
+        name: "calls",
+        type: "tuple[]",
       },
     ],
-    name: 'reverse',
+    name: "reverse",
     outputs: [
       {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
+        internalType: "string",
+        name: "name",
+        type: "string",
       },
       {
-        internalType: 'bytes[]',
-        name: 'returnData',
-        type: 'bytes[]',
+        internalType: "bytes[]",
+        name: "returnData",
+        type: "bytes[]",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'newUniversalResolver',
-        type: 'address',
+        internalType: "address",
+        name: "newUniversalResolver",
+        type: "address",
       },
     ],
-    name: 'setUniversalResolver',
+    name: "setUniversalResolver",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: 'transferOwnership',
+    name: "transferOwnership",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'universalResolver',
+    name: "universalResolver",
     outputs: [
       {
-        internalType: 'contract UniversalResolver',
-        name: '',
-        type: 'address',
+        internalType: "contract UniversalResolver",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
-]
+];
 
 export class DoNotCallOnChainUniversalResolverProxy__factory {
-  static readonly abi = _abi
+  static readonly abi = _abi;
   static createInterface(): DoNotCallOnChainUniversalResolverProxyInterface {
     return new utils.Interface(
-      _abi,
-    ) as DoNotCallOnChainUniversalResolverProxyInterface
+      _abi
+    ) as DoNotCallOnChainUniversalResolverProxyInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider,
+    signerOrProvider: Signer | Provider
   ): DoNotCallOnChainUniversalResolverProxy {
     return new Contract(
       address,
       _abi,
-      signerOrProvider,
-    ) as DoNotCallOnChainUniversalResolverProxy
+      signerOrProvider
+    ) as DoNotCallOnChainUniversalResolverProxy;
   }
 }

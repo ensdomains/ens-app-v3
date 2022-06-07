@@ -2,346 +2,346 @@
 /* tslint:disable */
 /* eslint-disable */
 
-import { Contract, Signer, utils } from 'ethers'
-import type { Provider } from '@ethersproject/providers'
+import { Contract, Signer, utils } from "ethers";
+import type { Provider } from "@ethersproject/providers";
 import type {
   ReverseRegistrar,
   ReverseRegistrarInterface,
-} from '../ReverseRegistrar'
+} from "../ReverseRegistrar";
 
 const _abi = [
   {
     inputs: [
       {
-        internalType: 'contract ENS',
-        name: 'ensAddr',
-        type: 'address',
+        internalType: "contract ENS",
+        name: "ensAddr",
+        type: "address",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'constructor',
+    stateMutability: "nonpayable",
+    type: "constructor",
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: 'address',
-        name: 'controller',
-        type: 'address',
+        internalType: "address",
+        name: "controller",
+        type: "address",
       },
       {
         indexed: false,
-        internalType: 'bool',
-        name: 'enabled',
-        type: 'bool',
+        internalType: "bool",
+        name: "enabled",
+        type: "bool",
       },
     ],
-    name: 'ControllerChanged',
-    type: 'event',
+    name: "ControllerChanged",
+    type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: 'address',
-        name: 'previousOwner',
-        type: 'address',
+        internalType: "address",
+        name: "previousOwner",
+        type: "address",
       },
       {
         indexed: true,
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: 'OwnershipTransferred',
-    type: 'event',
+    name: "OwnershipTransferred",
+    type: "event",
   },
   {
     anonymous: false,
     inputs: [
       {
         indexed: true,
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
+        internalType: "address",
+        name: "addr",
+        type: "address",
       },
       {
         indexed: true,
-        internalType: 'bytes32',
-        name: 'node',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "node",
+        type: "bytes32",
       },
     ],
-    name: 'ReverseClaimed',
-    type: 'event',
+    name: "ReverseClaimed",
+    type: "event",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
     ],
-    name: 'claim',
+    name: "claim",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
+        internalType: "address",
+        name: "addr",
+        type: "address",
       },
       {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
+        internalType: "address",
+        name: "resolver",
+        type: "address",
       },
     ],
-    name: 'claimForAddr',
+    name: "claimForAddr",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
+        internalType: "address",
+        name: "resolver",
+        type: "address",
       },
     ],
-    name: 'claimWithResolver',
+    name: "claimWithResolver",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
-    name: 'controllers',
+    name: "controllers",
     outputs: [
       {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
+        internalType: "bool",
+        name: "",
+        type: "bool",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'defaultResolver',
+    name: "defaultResolver",
     outputs: [
       {
-        internalType: 'contract NameResolver',
-        name: '',
-        type: 'address',
+        internalType: "contract NameResolver",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'ens',
+    name: "ens",
     outputs: [
       {
-        internalType: 'contract ENS',
-        name: '',
-        type: 'address',
+        internalType: "contract ENS",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
+        internalType: "address",
+        name: "addr",
+        type: "address",
       },
     ],
-    name: 'node',
+    name: "node",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'pure',
-    type: 'function',
+    stateMutability: "pure",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'owner',
+    name: "owner",
     outputs: [
       {
-        internalType: 'address',
-        name: '',
-        type: 'address',
+        internalType: "address",
+        name: "",
+        type: "address",
       },
     ],
-    stateMutability: 'view',
-    type: 'function',
+    stateMutability: "view",
+    type: "function",
   },
   {
     inputs: [],
-    name: 'renounceOwnership',
+    name: "renounceOwnership",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'controller',
-        type: 'address',
+        internalType: "address",
+        name: "controller",
+        type: "address",
       },
       {
-        internalType: 'bool',
-        name: 'enabled',
-        type: 'bool',
+        internalType: "bool",
+        name: "enabled",
+        type: "bool",
       },
     ],
-    name: 'setController',
+    name: "setController",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
+        internalType: "address",
+        name: "resolver",
+        type: "address",
       },
     ],
-    name: 'setDefaultResolver',
+    name: "setDefaultResolver",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
+        internalType: "string",
+        name: "name",
+        type: "string",
       },
     ],
-    name: 'setName',
+    name: "setName",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'addr',
-        type: 'address',
+        internalType: "address",
+        name: "addr",
+        type: "address",
       },
       {
-        internalType: 'address',
-        name: 'owner',
-        type: 'address',
+        internalType: "address",
+        name: "owner",
+        type: "address",
       },
       {
-        internalType: 'address',
-        name: 'resolver',
-        type: 'address',
+        internalType: "address",
+        name: "resolver",
+        type: "address",
       },
       {
-        internalType: 'string',
-        name: 'name',
-        type: 'string',
+        internalType: "string",
+        name: "name",
+        type: "string",
       },
     ],
-    name: 'setNameForAddr',
+    name: "setNameForAddr",
     outputs: [
       {
-        internalType: 'bytes32',
-        name: '',
-        type: 'bytes32',
+        internalType: "bytes32",
+        name: "",
+        type: "bytes32",
       },
     ],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
   {
     inputs: [
       {
-        internalType: 'address',
-        name: 'newOwner',
-        type: 'address',
+        internalType: "address",
+        name: "newOwner",
+        type: "address",
       },
     ],
-    name: 'transferOwnership',
+    name: "transferOwnership",
     outputs: [],
-    stateMutability: 'nonpayable',
-    type: 'function',
+    stateMutability: "nonpayable",
+    type: "function",
   },
-]
+];
 
 export class ReverseRegistrar__factory {
-  static readonly abi = _abi
+  static readonly abi = _abi;
   static createInterface(): ReverseRegistrarInterface {
-    return new utils.Interface(_abi) as ReverseRegistrarInterface
+    return new utils.Interface(_abi) as ReverseRegistrarInterface;
   }
   static connect(
     address: string,
-    signerOrProvider: Signer | Provider,
+    signerOrProvider: Signer | Provider
   ): ReverseRegistrar {
-    return new Contract(address, _abi, signerOrProvider) as ReverseRegistrar
+    return new Contract(address, _abi, signerOrProvider) as ReverseRegistrar;
   }
 }
