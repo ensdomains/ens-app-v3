@@ -28,22 +28,22 @@ const GridItem = styled.div<{ $area: string }>(
 )
 
 const WrapperGrid = styled.div<{ $hasError?: boolean }>(
-  ({ theme, $hasError }) => css`
-    flex-grow: 1;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: min-content min-content 1fr;
-    gap: ${theme.space['5']};
-    align-self: center;
-    grid-template-areas: ${$hasError ? "'error'" : ''} 'details' 'content';
-    ${mq.lg.min`
-      grid-template-areas: ${
-        $hasError ? "'error error'" : ''
-      } "details content";
+  ({ theme, $hasError }) => [
+    css`
+      flex-grow: 1;
+      width: 100%;
+      display: grid;
+      grid-template-columns: 1fr;
+      grid-template-rows: min-content min-content 1fr;
+      gap: ${theme.space['5']};
+      align-self: center;
+      grid-template-areas: ${$hasError && "'error'"} 'details' 'content';
+    `,
+    mq.lg.min(css`
       grid-template-columns: 270px 2fr;
-    `}
-  `,
+      grid-template-areas: ${$hasError && "'error error'"} 'details content';
+    `),
+  ],
 )
 
 const DetailsContainer = styled(GridItem)(
