@@ -4,7 +4,7 @@ import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
 import styled from 'styled-components'
 import { useQuery } from 'wagmi'
-import { NameDetailItem } from '../../NameDetailItem'
+import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { TabWrapper } from '../TabWrapper'
 
 type Subname = {

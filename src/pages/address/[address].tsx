@@ -8,38 +8,18 @@ import { useNetwork } from 'wagmi'
 import { PageButtons, ExclamationSVG, Typography } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
-import AliasItem from '@app/components/address/AliasItem'
 import mq from '@app/mediaQuery'
-import { NameListView } from '@app/components/names/NameListView'
+import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import {
   SortDirection,
   SortType,
   SortValue,
 } from '@app/components/@molecules/SortControl/SortControl'
-import Accordian from '@app/components/@molecules/Accordian/Accordian'
 import { Basic } from '@app/layouts/Basic'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { shortenAddress } from '@app/utils/utils'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
-import AccordianSummary from '@app/components/@molecules/Accordian/AccordianSummary'
 import FilterControl from '@app/components/address/FilterControl'
-
-const MOCK_ALIASES = [
-  { name: 'alias1.eth' },
-  { name: 'alias2.eth' },
-  { name: 'alias3.th' },
-]
-
-const AliasesLabel = styled.span(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.extraLarge};
-    font-weight: ${theme.fontWeights.bold};
-    letter-spacing: ${theme.letterSpacings['-0.01']};
-    font-family: ${theme.fonts.sans};
-    line-height: ${theme.lineHeights['1.375']};
-    font-feature-settings: 'ss01' on, 'ss03' on;
-  `,
-)
 
 const GridItem = styled.div<{ $area: string }>(
   ({ $area }) => css`
@@ -53,10 +33,10 @@ const WrapperGrid = styled.div<{ $hasError?: boolean }>(
     width: 100%;
     display: grid;
     grid-template-columns: 1fr;
-    grid-template-rows: min-content;
+    grid-template-rows: min-content min-content 1fr;
     gap: ${theme.space['5']};
     align-self: center;
-    grid-template-areas: ${$hasError ? "'error error'" : ''} 'details details' 'content content';
+    grid-template-areas: ${$hasError ? "'error'" : ''} 'details' 'content';
     ${mq.lg.min`
       grid-template-areas: ${
         $hasError ? "'error error'" : ''
@@ -148,12 +128,19 @@ const AddressPage: NextPage = () => {
     filter: 'registration' | 'domain' | 'none'
   }) => {
     const { sort: _sort, filter: _filter } = control
+    let refresh = false
     if (
       _sort.type !== sortValue.type ||
       _sort.direction !== sortValue.direction
-    )
+    ) {
       setSortValue(control.sort)
-    if (_filter !== filter) setFilter(_filter)
+      refresh = true
+    }
+    if (_filter !== filter) {
+      setFilter(_filter)
+      refresh = true
+    }
+    if (refresh) setPage(1)
   }
 
   // Primary Profile
@@ -171,7 +158,7 @@ const AddressPage: NextPage = () => {
     isLoading: namesLoading,
     status: namesStatus,
     pageLength,
-    results,
+    nameCount,
   } = useNamesFromAddress({
     address,
     sort: {
@@ -192,6 +179,7 @@ const AddressPage: NextPage = () => {
   return (
     <Basic
       heading={shortenAddress(address)}
+      subheading={t('addressDetails')}
       title={`${address} - ENS`}
       loading={loading}
     >
@@ -215,16 +203,6 @@ const AddressPage: NextPage = () => {
                 recordName={getTextRecord('name')?.value}
                 url={getTextRecord('url')?.value}
               />
-              <div>
-                <Accordian>
-                  <AccordianSummary>
-                    <AliasesLabel>{t('aliases')}</AliasesLabel>
-                  </AccordianSummary>
-                  {MOCK_ALIASES.map((alias) => (
-                    <AliasItem key={alias.name} profile={alias} />
-                  ))}
-                </Accordian>
-              </div>
             </>
           ) : (
             <>
@@ -236,7 +214,7 @@ const AddressPage: NextPage = () => {
           <FilterControl
             sort={sortValue}
             filter={filter}
-            resultsCount={results}
+            resultsCount={nameCount}
             onChange={onFilterControlChange}
           />
           <NameListView

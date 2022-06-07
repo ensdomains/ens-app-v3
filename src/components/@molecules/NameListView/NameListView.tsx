@@ -1,10 +1,11 @@
 import type { ReturnedName } from '@app/hooks/useNamesFromAddress'
 import mq from '@app/mediaQuery'
-import { Tag } from '@ensdomains/thorin'
+import { Heading, Tag } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
-import { NameDetailItem } from '../NameDetailItem'
-import { TabWrapper } from '../profile/TabWrapper'
-import { ShortExpiry } from './ExpiryComponents'
+import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
+import { useTranslation } from 'next-i18next'
+import { TabWrapper } from '../../profile/TabWrapper'
 
 const OtherItemsContainer = styled.div`
   display: flex;
@@ -21,6 +22,14 @@ const OtherItemsContainer = styled.div`
   `}
 `
 
+const NoResultsContianer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    justify-content: center;
+    padding: ${theme.space['4']};
+  `,
+)
+
 export const NameListView = ({
   currentPage,
   network,
@@ -28,6 +37,13 @@ export const NameListView = ({
   currentPage: ReturnedName[]
   network: string
 }) => {
+  const { t } = useTranslation('common')
+  if (!currentPage || currentPage.length === 0)
+    return (
+      <NoResultsContianer>
+        <Heading as="h3">{t('errors.noResults')}</Heading>
+      </NoResultsContianer>
+    )
   return (
     <TabWrapper>
       {currentPage.map((name) => (

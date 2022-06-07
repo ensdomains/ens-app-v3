@@ -1,17 +1,17 @@
+import React, { ChangeEvent } from 'react'
+import styled, { css } from 'styled-components'
+import { useTranslation } from 'next-i18next'
+import mq from '@app/mediaQuery'
 import { Button, Select } from '@ensdomains/thorin'
 import UpDirectionSVG from '@app/assets/UpDirection.svg'
 import DownDirectionSVG from '@app/assets/DownDirection.svg'
-import styled, { css } from 'styled-components'
-import React, { ChangeEvent } from 'react'
-import mq from '@app/mediaQuery'
-import { useTranslation } from 'next-i18next'
 
 const SortAndDirections = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
   `,
@@ -39,6 +39,12 @@ const SelectWrapper = styled.div(
   `,
 )
 
+const ButtonWrapper = styled.div(
+  ({ theme }) => css`
+    flex: 0 0 ${theme.space['10']};
+  `,
+)
+
 export enum SortType {
   expiryDate = 'expiryDate',
   labelName = 'labelName',
@@ -62,14 +68,6 @@ export type SortControlProps = {
 
 const SortControl = ({ value, onChange }: SortControlProps) => {
   const { t } = useTranslation('common')
-
-  // const [value, setValue] = useState<SortValue>(
-  //   _value || { type: SortType.expiryDate, direction: SortDirection.desc },
-  // )
-  // useEffect(() => {
-  //   if (_value && _value !== value) setValue(_value)
-  //   // eslint-disable-next-line react-hooks/exhaustive-deps
-  // }, [_value])
 
   const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value: newType } = e.target
@@ -107,28 +105,32 @@ const SortControl = ({ value, onChange }: SortControlProps) => {
           />
         </SelectWrapper>
       </FilterDropdownContainer>
-      <Button
-        pressed={value.direction === 'desc'}
-        onClick={handleDirectionClick(SortDirection.desc)}
-        variant="transparent"
-        shadowless
-        size="extraSmall"
-      >
-        <div style={{ height: '24px' }}>
-          <DownDirectionSVG width="24" height="24" />
-        </div>
-      </Button>
-      <Button
-        pressed={value.direction === 'asc'}
-        onClick={handleDirectionClick(SortDirection.asc)}
-        variant="transparent"
-        shadowless
-        size="extraSmall"
-      >
-        <div style={{ height: '24px' }}>
-          <UpDirectionSVG width="24" height="24" />
-        </div>
-      </Button>
+      <ButtonWrapper>
+        <Button
+          pressed={value.direction === 'desc'}
+          onClick={handleDirectionClick(SortDirection.desc)}
+          variant="transparent"
+          shadowless
+          size="extraSmall"
+        >
+          <div style={{ height: '24px' }}>
+            <DownDirectionSVG width="24" height="24" />
+          </div>
+        </Button>
+      </ButtonWrapper>
+      <ButtonWrapper>
+        <Button
+          pressed={value.direction === 'asc'}
+          onClick={handleDirectionClick(SortDirection.asc)}
+          variant="transparent"
+          shadowless
+          size="extraSmall"
+        >
+          <div style={{ height: '24px' }}>
+            <UpDirectionSVG width="24" height="24" />
+          </div>
+        </Button>
+      </ButtonWrapper>
     </SortAndDirections>
   )
 }

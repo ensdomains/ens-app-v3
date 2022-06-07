@@ -1,21 +1,13 @@
-import DownDirectionSVG from '@app/assets/DownDirection.svg'
 import GridSVG from '@app/assets/Grid.svg'
 import ListSVG from '@app/assets/List.svg'
-import UpDirectionSVG from '@app/assets/UpDirection.svg'
 import { NameGridView } from '@app/components/names/NameGridView'
-import { NameListView } from '@app/components/names/NameListView'
+import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import { TabWrapper } from '@app/components/profile/TabWrapper'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Basic } from '@app/layouts/Basic'
 import mq from '@app/mediaQuery'
-import {
-  Button,
-  Heading,
-  PageButtons,
-  Select,
-  Typography,
-} from '@ensdomains/thorin'
+import { Button, Heading, PageButtons, Typography } from '@ensdomains/thorin'
 import type { NextPage } from 'next'
 import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
@@ -23,6 +15,11 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
+import SortControl, {
+  SortDirection,
+  SortType,
+  SortValue,
+} from '@app/components/@molecules/SortControl/SortControl'
 
 const EmptyDetailContainer = styled.div`
   padding: ${({ theme }) => theme.space['4']};
@@ -79,28 +76,6 @@ const ViewButtons = styled.div`
   `}
 `
 
-const SelectWrapper = styled.div`
-  ${({ theme }) => css`
-    width: ${theme.space['32']};
-    & [role='listbox'] {
-      background: ${theme.colors.background};
-      z-index: 5;
-    }
-    ${mq.md.min`
-      width: ${theme.space['48']};
-    `}
-  `}
-`
-
-const FilterDropdownContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  ${({ theme }) => `
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-  `}
-`
-
 const Container = styled.div`
   display: flex;
   flex-direction: column;
@@ -132,19 +107,6 @@ const TopContainer = styled.div`
   `}
 `
 
-const SortAndDirections = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  justify-content: center;
-  ${({ theme }) => `
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-  `}
-`
-
-type SortType = 'expiryDate' | 'labelName' | 'creationDate'
-type SortDirection = 'asc' | 'desc'
 type ViewType = 'grid' | 'list'
 type FilterType = 'domain' | 'registration' | 'none'
 
@@ -157,8 +119,10 @@ const NamesPage: NextPage = () => {
   const { activeChain: chain } = useNetwork()
 
   const [viewType, setViewType] = useState<ViewType>('list')
-  const [sortType, setSortType] = useState<SortType>('expiryDate')
-  const [orderDirection, setOrderDirection] = useState<SortDirection>('desc')
+  const [sortValue, setSortValue] = useState<SortValue>({
+    type: SortType.expiryDate,
+    direction: SortDirection.desc,
+  })
   const [filter] = useState<FilterType>('none')
   const [page, setPage] = useState(1)
 
@@ -170,8 +134,8 @@ const NamesPage: NextPage = () => {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortType,
-      orderDirection,
+      type: sortValue.type,
+      orderDirection: sortValue.direction,
     },
     page,
     resultsPerPage: 10,
@@ -199,50 +163,10 @@ const NamesPage: NextPage = () => {
             </Typography>
           </SectionHeader>
           <FilterContainer>
-            <SortAndDirections>
-              <FilterDropdownContainer>
-                <SelectWrapper>
-                  <Select
-                    value={sortType}
-                    size="small"
-                    label="Sort by"
-                    onChange={(e) =>
-                      e?.target.value && setSortType(e.target.value as SortType)
-                    }
-                    options={[
-                      { label: t('sortTypes.expiryDate'), value: 'expiryDate' },
-                      {
-                        label: t('sortTypes.creationDate'),
-                        value: 'creationDate',
-                      },
-                      { label: t('sortTypes.labelName'), value: 'labelName' },
-                    ]}
-                  />
-                </SelectWrapper>
-              </FilterDropdownContainer>
-              <Button
-                pressed={orderDirection === 'desc'}
-                onClick={() => setOrderDirection('desc')}
-                variant="transparent"
-                shadowless
-                size="extraSmall"
-              >
-                <div style={{ height: '24px' }}>
-                  <DownDirectionSVG width="24" height="24" />
-                </div>
-              </Button>
-              <Button
-                pressed={orderDirection === 'asc'}
-                onClick={() => setOrderDirection('asc')}
-                variant="transparent"
-                shadowless
-                size="extraSmall"
-              >
-                <div style={{ height: '24px' }}>
-                  <UpDirectionSVG width="24" height="24" />
-                </div>
-              </Button>
-            </SortAndDirections>
+            <SortControl
+              value={sortValue}
+              onChange={(_value) => setSortValue(_value)}
+            />
             <ViewButtons>
               <Button
                 pressed={viewType === 'grid'}

@@ -48,7 +48,7 @@ const FilterControl = ({
         </OutlinedButton>
       </DynamicPopover>
       <Typography color="textTertiary">
-        {t('results', { count: resultsCount })}
+        {t('nameCount', { count: resultsCount })}
       </Typography>
     </Container>
   )

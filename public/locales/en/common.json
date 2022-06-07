@@ -37,5 +37,8 @@
     "expiryDate": "Expiry Date",
     "labelName": "Name",
     "creationDate": "Creation Date"
+  },
+  "errors": {
+    "noResults": "No results found"
   }
 }
