@@ -5,10 +5,9 @@ import { useTranslation } from 'next-i18next'
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import styled, { css } from 'styled-components'
 import { useNetwork } from 'wagmi'
-import { PageButtons, ExclamationSVG, Typography } from '@ensdomains/thorin'
+import { PageButtons, ExclamationSVG, Typography, mq } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
-import mq from '@app/mediaQuery'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import {
   SortDirection,
