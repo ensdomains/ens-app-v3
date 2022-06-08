@@ -6,9 +6,9 @@ import {
   Profile,
 } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import type { TFunction } from 'next-i18next'
-import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
+import type { TFunction } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 

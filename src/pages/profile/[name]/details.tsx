@@ -9,7 +9,6 @@ import { Basic } from '@app/layouts/Basic'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Card, mq, Typography } from '@ensdomains/thorin'
 import type { GetStaticPaths, NextPage } from 'next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
 import { useRouter } from 'next/router'
 import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
@@ -265,13 +264,8 @@ const NameDetails: NextPage = () => {
   )
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
-  return {
-    props: {
-      ...(await serverSideTranslations(locale)),
-      // Will be passed to the page component as props
-    },
-  }
+export const getStaticProps = async () => {
+  return {}
 }
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {

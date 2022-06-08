@@ -1,8 +1,8 @@
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Dropdown, mq } from '@ensdomains/thorin'
 import ISO6391 from 'iso-639-1'
-import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
@@ -33,27 +33,25 @@ export const LanugageDropdown = () => {
   const formatName = (language: string) =>
     isLarge ? ISO6391.getNativeName(language) : language.toUpperCase()
 
-  return i18n.options ? (
+  return i18n.options && router.isReady ? (
     <Dropdown
       inner
       shortThrow={!isLarge}
       chevron={isLarge}
       size={isLarge ? 'medium' : 'small'}
-      items={(i18n.options as any).locales
-        .filter((lang: string) => lang !== i18n.language)
+      items={(i18n.options.supportedLngs || [])
+        .filter(
+          (lang: string) =>
+            lang && lang !== i18n.resolvedLanguage && lang !== 'cimode',
+        )
         .map((lang: string) => ({
           label: formatName(lang),
-          onClick: () =>
-            router.push(
-              { pathname: router.pathname, query: router.query },
-              router.asPath,
-              { locale: lang },
-            ),
+          onClick: () => i18n.changeLanguage(lang),
         }))}
       menuLabelAlign="flex-start"
       label={
         <MobileInnerDropdownButton $large={isLarge}>
-          {formatName(i18n.language)}
+          {formatName(i18n.language || 'en')}
         </MobileInnerDropdownButton>
       }
     />

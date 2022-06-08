@@ -1,13 +1,10 @@
 import ClockSVG from '@app/assets/Clock.svg'
 import { ReturnedName } from '@app/hooks/useNamesFromAddress'
-import { useEns } from '@app/utils/EnsProvider'
-import { ensNftImageUrl, secondsToDays } from '@app/utils/utils'
+import { secondsToDays } from '@app/utils/utils'
 import { Colors, mq } from '@ensdomains/thorin'
-import Image from 'next/image'
 import Link from 'next/link'
-import { useState } from 'react'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
+import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 
 const NameGrid = styled.div(
   ({ theme }) => css`
@@ -35,20 +32,6 @@ const NameGridItem = styled.div(
     &:hover {
       filter: brightness(1.05);
       transform: translateY(-1px);
-    }
-  `,
-)
-
-const StyledNftBox = styled.div<{ $loading: boolean }>(
-  ({ theme, $loading }) => css`
-    width: 100%;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background: ${$loading ? theme.colors.accentGradient : 'none'};
-    border-radius: ${theme.radii['2xLarge']};
-    & > span {
-      border-radius: ${theme.radii['2xLarge']};
     }
   `,
 )
@@ -130,29 +113,16 @@ const GridItem = ({
   network: string
   expiry?: Date
 }) => {
-  const [loading, setLoading] = useState(true)
-  const { contracts } = useEns()
-  const { data: baseRegistrarAddress } = useQuery(
-    'base-registrar-address',
-    () => contracts?.getBaseRegistrar()!.then((c) => c.address),
-  )
-
   return (
     <Link href={`/profile/${name}`} passHref>
       <a>
         <NameGridItem>
           {expiry && <Expiry expiry={expiry} />}
-          <StyledNftBox $loading={loading}>
-            <Image
-              onLoadingComplete={() => setLoading(false)}
-              src="/"
-              loader={() =>
-                ensNftImageUrl(name, network, baseRegistrarAddress || '')
-              }
-              width={270}
-              height={270}
-            />
-          </StyledNftBox>
+          <NFTWithPlaceholder
+            name={name}
+            network={network}
+            style={{ width: 270, height: 270 }}
+          />
         </NameGridItem>
       </a>
     </Link>
