@@ -22,8 +22,7 @@
     "synpress:ci": "yarn synpress:start",
     "e2e": "E2E=true yarn env start",
     "e2e:ci": "E2E=true CI=true yarn env start --no-reset",
-    "postinstall": "husky install",
-    "preinstall": "[ $CF_PAGES ] && ./uninstall-dev-deps.sh"
+    "postinstall": "husky install"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.16",
