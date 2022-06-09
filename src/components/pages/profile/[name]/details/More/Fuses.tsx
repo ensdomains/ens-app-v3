@@ -39,6 +39,13 @@ const TrafficLight = styled.div`
   `}
 `
 
+const Spacer = styled.div`
+  ${({ theme, height }) => `
+    width: 100%;
+    height: ${theme.space[height]};
+    `}
+`
+
 const Fuses = () => {
   const router = useRouter()
   const { name } = router.query
@@ -50,54 +57,85 @@ const Fuses = () => {
     <Typography>Please wrap your name to unlock this feature</Typography>
   ) : (
     <FusesContainer>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Can do everything
+      <div>
+        <Typography weight="bold" color="textTertiary">
+          Permissions
         </Typography>
-        <TrafficLight go={fuseData.fuseObj.canDoEverything} />
-      </FusesRow>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Can burn fuses
+        <Spacer height={5} />
+        <div>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Can do everything
+            </Typography>
+            <TrafficLight go={fuseData.fuseObj.canDoEverything} />
+          </FusesRow>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Can burn fuses
+            </Typography>
+            <TrafficLight go={!fuseData.fuseObj.cannotBurnFuses} />
+          </FusesRow>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Can create subdomains
+            </Typography>
+            <TrafficLight go={!fuseData.fuseObj.cannotCreateSubdomains} />
+          </FusesRow>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Can set resolver
+            </Typography>
+            <TrafficLight go={!fuseData.fuseObj.cannotSetResolver} />
+          </FusesRow>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Can set TTL
+            </Typography>
+            <TrafficLight go={!fuseData.fuseObj.cannotSetTTL} />
+          </FusesRow>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Can transfer
+            </Typography>
+            <TrafficLight go={!fuseData.fuseObj.cannotTransfer} />
+          </FusesRow>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Can unwrap
+            </Typography>
+            <TrafficLight go={!fuseData.fuseObj.cannotUnwrap} />
+          </FusesRow>
+          <FusesRow>
+            <Typography color="textSecondary" weight="bold">
+              Parent can control
+            </Typography>
+            <TrafficLight go={!fuseData.fuseObj.parentCannotControl} />
+          </FusesRow>
+        </div>
+      </div>
+      <Spacer height={10} />
+      <div>
+        <Typography weight="bold" color="textTertiary">
+          Vulnerabilities
         </Typography>
-        <TrafficLight go={!fuseData.fuseObj.cannotBurnFuses} />
-      </FusesRow>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Can create subdomains
-        </Typography>
-        <TrafficLight go={!fuseData.fuseObj.cannotCreateSubdomains} />
-      </FusesRow>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Can set resolver
-        </Typography>
-        <TrafficLight go={!fuseData.fuseObj.cannotSetResolver} />
-      </FusesRow>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Can set TTL
-        </Typography>
-        <TrafficLight go={!fuseData.fuseObj.cannotSetTTL} />
-      </FusesRow>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Can transfer
-        </Typography>
-        <TrafficLight go={!fuseData.fuseObj.cannotTransfer} />
-      </FusesRow>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Can unwrap
-        </Typography>
-        <TrafficLight go={!fuseData.fuseObj.cannotUnwrap} />
-      </FusesRow>
-      <FusesRow>
-        <Typography color="textSecondary" weight="bold">
-          Parent can control
-        </Typography>
-        <TrafficLight go={!fuseData.fuseObj.parentCannotControl} />
-      </FusesRow>
+        <Spacer height={5} />
+        <FusesRow>
+          <Typography color="textSecondary" weight="bold">
+            Vulnerability
+          </Typography>
+          <Typography color="textSecondary">
+            {fuseData.vulnerability}
+          </Typography>
+        </FusesRow>
+        <FusesRow>
+          <Typography color="textSecondary" weight="bold">
+            Vulnerable node
+          </Typography>
+          <Typography color="textSecondary">
+            {fuseData.vulerableNode ?? 'None'}
+          </Typography>
+        </FusesRow>
+      </div>
     </FusesContainer>
   )
 }
