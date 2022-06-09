@@ -1,7 +1,7 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { ArrowRightSVG, PageButtons } from '@ensdomains/thorin'
-import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'

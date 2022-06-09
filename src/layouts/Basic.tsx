@@ -127,7 +127,7 @@ export const Basic = ({
               {HeaderItems.trailing}
             </DesktopBackContainer>
           )}
-        {!router.isReady || loading ? (
+        {(!router.isReady || loading) && router.asPath !== '/' ? (
           <LoadingContainer>
             <LoadingOverlay />
           </LoadingContainer>

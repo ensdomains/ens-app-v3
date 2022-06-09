@@ -1,5 +1,5 @@
 import { Heading, Spinner } from '@ensdomains/thorin'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div(

@@ -20,7 +20,6 @@ let nextConfig = {
   // change to true once infinite loop is fixed
   swcMinify: false,
   // @ts-ignore
-  i18n,
   images: {
     domains: ['metadata.ens.domains'],
   },
