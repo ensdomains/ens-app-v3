@@ -1,26 +1,37 @@
+import { Profile } from '@app/types'
+import { useEffect, useState } from 'react'
 import { usePrimary } from './usePrimary'
 import { useProfile } from './useProfile'
 
 export const usePrimaryProfile = (address: string, skip?: any) => {
   const {
-    name,
+    name: _name,
     loading: primaryLoading,
     status: primaryStatus,
   } = usePrimary(address || '', skip)
 
   const {
-    profile,
+    profile: _profile,
     loading: profileLoading,
     status: profileStatus,
-  } = useProfile(name || '', skip)
+  } = useProfile(_name || '', skip)
 
-  const mergedProfile =
-    primaryStatus === 'success' && primaryStatus === 'success'
-      ? { ...profile, name }
-      : undefined
+  const [profile, setProfile] = useState<Profile | undefined>(undefined)
+  useEffect(() => {
+    let mounted = true
+    if (_name && _profile && mounted) {
+      setProfile({
+        ..._profile,
+        name: _name,
+      })
+    } else if (mounted) setProfile(undefined)
+    return () => {
+      mounted = false
+    }
+  }, [_name, _profile])
 
   return {
-    profile: mergedProfile,
+    profile,
     loading: primaryLoading || profileLoading,
     status: primaryStatus === 'error' ? primaryStatus : profileStatus,
   }
