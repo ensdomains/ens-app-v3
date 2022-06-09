@@ -13,7 +13,7 @@ const raw = async ({ contracts }, address) => {
 };
 const decode = async ({ contracts }, data, address) => {
     if (data === null)
-        return null;
+        return;
     const universalResolver = await contracts?.getUniversalResolver();
     try {
         const result = universalResolver.interface.decodeFunctionResult('reverse', data);

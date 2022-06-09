@@ -52,7 +52,7 @@ const decode = async ({ contracts }, data, name) => {
         };
     }
     catch {
-        return null;
+        return;
     }
 };
 exports.default = {

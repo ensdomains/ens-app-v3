@@ -22,7 +22,9 @@
     "synpress:ci": "yarn synpress:start",
     "e2e": "E2E=true yarn env start",
     "e2e:ci": "E2E=true CI=true yarn env start --no-reset",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "update:local:ensjs": "yalc add @ensdomains/ensjs",
+    "update:local:thorin": "yalc link @ensdomains/thorin"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.16",
@@ -110,7 +112,8 @@
     "prettier": "2.6.2",
     "ts-node": "^10.7.0",
     "typescript": "^4.6.4",
-    "wait-on": "^6.0.1"
+    "wait-on": "^6.0.1",
+    "yalc": "^1.0.0-pre.53"
   },
   "resolutions": {
     "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz",

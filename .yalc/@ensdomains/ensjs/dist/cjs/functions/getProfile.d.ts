@@ -26,5 +26,5 @@ declare type ProfileOptions = {
     texts?: boolean | string[];
     coinTypes?: boolean | string[];
 };
-export default function ({ contracts, gqlInstance, getName, _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }: ENSArgs<'contracts' | 'gqlInstance' | 'getName' | '_getText' | '_getAddr' | '_getContentHash' | 'resolverMulticallWrapper'>, nameOrAddress: string, options?: ProfileOptions): Promise<ResolvedProfile | null>;
+export default function ({ contracts, gqlInstance, getName, _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }: ENSArgs<'contracts' | 'gqlInstance' | 'getName' | '_getText' | '_getAddr' | '_getContentHash' | 'resolverMulticallWrapper'>, nameOrAddress: string, options?: ProfileOptions): Promise<ResolvedProfile | undefined>;
 export {};

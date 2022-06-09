@@ -592,7 +592,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ensjs",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=927425&locator=ens-app-v2%40workspace%3A."\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=b9c9a2&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@ensdomains/eth-ens-namehash",\
@@ -3959,7 +3959,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "graphql-request",\
-        "virtual:7fa9ceebb30aa2eed5dd52be2873d2846a5583ddc79aaff05b1c36c957a6e1efb218c8750957b524e69c1fc7936b165f449dd99e4f38a45e92e4630379b9c705#npm:4.2.0"\
+        "virtual:9e065b2cbd3deb646b62e4dc4d036e6465582bd7bdba5af06f259eb9b995d521ab29b79797dd339b9dee6ab56f8f4fa876f52cb64a246c31ccec5d618e3e8049#npm:4.2.0"\
       ],\
       [\
         "growl",\
@@ -4176,6 +4176,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "ignore",\
         "npm:5.2.0"\
+      ],\
+      [\
+        "ignore-walk",\
+        "npm:3.0.4"\
       ],\
       [\
         "immediate",\
@@ -5340,6 +5344,18 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "normalize-url",\
         "npm:4.5.1"\
+      ],\
+      [\
+        "npm-bundled",\
+        "npm:1.1.2"\
+      ],\
+      [\
+        "npm-normalize-package-bin",\
+        "npm:1.0.1"\
+      ],\
+      [\
+        "npm-packlist",\
+        "npm:2.2.2"\
       ],\
       [\
         "npm-run-path",\
@@ -7237,6 +7253,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:0.0.6"\
       ],\
       [\
+        "yalc",\
+        "npm:1.0.0-pre.53"\
+      ],\
+      [\
         "yallist",\
         "npm:3.1.1"\
       ],\
@@ -7282,7 +7302,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=302b53&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=927425&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=b9c9a2&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
@@ -7358,7 +7378,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ts-node", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:10.7.0"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"],\
             ["wagmi", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.4.3"],\
-            ["wait-on", "npm:6.0.1"]\
+            ["wait-on", "npm:6.0.1"],\
+            ["yalc", "npm:1.0.0-pre.53"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -10630,10 +10651,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ensjs", [\
-        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=927425&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-2f0edc55d6-233d9c2c38.zip/node_modules/@ensdomains/ensjs/",\
+        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=b9c9a2&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-4d9679e015-0ebcc15350.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=927425&locator=ens-app-v2%40workspace%3A."]\
+            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=b9c9a2&locator=ens-app-v2%40workspace%3A."]\
           ],\
           "linkType": "SOFT"\
         }],\
@@ -10652,10 +10673,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=927425&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-7fa9ceebb3/0/cache/@ensdomains-ensjs-file-2f0edc55d6-233d9c2c38.zip/node_modules/@ensdomains/ensjs/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=b9c9a2&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-9e065b2cbd/0/cache/@ensdomains-ensjs-file-4d9679e015-0ebcc15350.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=927425&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=b9c9a2&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/content-hash", "npm:2.5.7"],\
             ["@ensdomains/ens-contracts", "npm:0.0.11"],\
@@ -10664,7 +10685,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dns-packet", "npm:5.3.1"],\
             ["ethers", "npm:5.6.5"],\
             ["graphql", "npm:16.3.0"],\
-            ["graphql-request", "virtual:7fa9ceebb30aa2eed5dd52be2873d2846a5583ddc79aaff05b1c36c957a6e1efb218c8750957b524e69c1fc7936b165f449dd99e4f38a45e92e4630379b9c705#npm:4.2.0"]\
+            ["graphql-request", "virtual:9e065b2cbd3deb646b62e4dc4d036e6465582bd7bdba5af06f259eb9b995d521ab29b79797dd339b9dee6ab56f8f4fa876f52cb64a246c31ccec5d618e3e8049#npm:4.2.0"]\
           ],\
           "packagePeers": [\
             "@types/ethers",\
@@ -20462,6 +20483,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["detect-indent", "npm:5.0.0"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:6.1.0", {\
+          "packageLocation": "./.yarn/cache/detect-indent-npm-6.1.0-d8c441ff7a-ab953a73c7.zip/node_modules/detect-indent/",\
+          "packageDependencies": [\
+            ["detect-indent", "npm:6.1.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["detect-newline", [\
@@ -20969,7 +20997,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=302b53&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=927425&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=b9c9a2&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.5.9"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
@@ -21045,7 +21073,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["ts-node", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:10.7.0"],\
             ["typescript", "patch:typescript@npm%3A4.6.4#~builtin<compat/typescript>::version=4.6.4&hash=bda367"],\
             ["wagmi", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.4.3"],\
-            ["wait-on", "npm:6.0.1"]\
+            ["wait-on", "npm:6.0.1"],\
+            ["yalc", "npm:1.0.0-pre.53"]\
           ],\
           "linkType": "SOFT"\
         }]\
@@ -24572,10 +24601,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:7fa9ceebb30aa2eed5dd52be2873d2846a5583ddc79aaff05b1c36c957a6e1efb218c8750957b524e69c1fc7936b165f449dd99e4f38a45e92e4630379b9c705#npm:4.2.0", {\
-          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-87e7c3a16a/0/cache/graphql-request-npm-4.2.0-95901c7d1b-c508705ebd.zip/node_modules/graphql-request/",\
+        ["virtual:9e065b2cbd3deb646b62e4dc4d036e6465582bd7bdba5af06f259eb9b995d521ab29b79797dd339b9dee6ab56f8f4fa876f52cb64a246c31ccec5d618e3e8049#npm:4.2.0", {\
+          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-f7b66d31c5/0/cache/graphql-request-npm-4.2.0-95901c7d1b-c508705ebd.zip/node_modules/graphql-request/",\
           "packageDependencies": [\
-            ["graphql-request", "virtual:7fa9ceebb30aa2eed5dd52be2873d2846a5583ddc79aaff05b1c36c957a6e1efb218c8750957b524e69c1fc7936b165f449dd99e4f38a45e92e4630379b9c705#npm:4.2.0"],\
+            ["graphql-request", "virtual:9e065b2cbd3deb646b62e4dc4d036e6465582bd7bdba5af06f259eb9b995d521ab29b79797dd339b9dee6ab56f8f4fa876f52cb64a246c31ccec5d618e3e8049#npm:4.2.0"],\
             ["@types/graphql", null],\
             ["cross-fetch", "npm:3.1.5"],\
             ["extract-files", "npm:9.0.0"],\
@@ -25329,6 +25358,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/ignore-npm-5.2.0-fc4b58a4f3-6b1f926792.zip/node_modules/ignore/",\
           "packageDependencies": [\
             ["ignore", "npm:5.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["ignore-walk", [\
+        ["npm:3.0.4", {\
+          "packageLocation": "./.yarn/cache/ignore-walk-npm-3.0.4-dc5095baa0-9e9c5ef6c3.zip/node_modules/ignore-walk/",\
+          "packageDependencies": [\
+            ["ignore-walk", "npm:3.0.4"],\
+            ["minimatch", "npm:3.1.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -29435,6 +29474,38 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/normalize-url-npm-6.1.0-b95bc12ece-4a49446311.zip/node_modules/normalize-url/",\
           "packageDependencies": [\
             ["normalize-url", "npm:6.1.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["npm-bundled", [\
+        ["npm:1.1.2", {\
+          "packageLocation": "./.yarn/cache/npm-bundled-npm-1.1.2-e299e533ef-6e599155ef.zip/node_modules/npm-bundled/",\
+          "packageDependencies": [\
+            ["npm-bundled", "npm:1.1.2"],\
+            ["npm-normalize-package-bin", "npm:1.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["npm-normalize-package-bin", [\
+        ["npm:1.0.1", {\
+          "packageLocation": "./.yarn/cache/npm-normalize-package-bin-npm-1.0.1-2cf38a5d95-ae7f15155a.zip/node_modules/npm-normalize-package-bin/",\
+          "packageDependencies": [\
+            ["npm-normalize-package-bin", "npm:1.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["npm-packlist", [\
+        ["npm:2.2.2", {\
+          "packageLocation": "./.yarn/cache/npm-packlist-npm-2.2.2-41e202d14a-799ce94b07.zip/node_modules/npm-packlist/",\
+          "packageDependencies": [\
+            ["npm-packlist", "npm:2.2.2"],\
+            ["glob", "npm:7.2.0"],\
+            ["ignore-walk", "npm:3.0.4"],\
+            ["npm-bundled", "npm:1.1.2"],\
+            ["npm-normalize-package-bin", "npm:1.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -36816,6 +36887,23 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/yaeti-npm-0.0.6-cffd01e35a-6db12c152f.zip/node_modules/yaeti/",\
           "packageDependencies": [\
             ["yaeti", "npm:0.0.6"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["yalc", [\
+        ["npm:1.0.0-pre.53", {\
+          "packageLocation": "./.yarn/cache/yalc-npm-1.0.0-pre.53-76a27bc263-3421e20039.zip/node_modules/yalc/",\
+          "packageDependencies": [\
+            ["yalc", "npm:1.0.0-pre.53"],\
+            ["chalk", "npm:4.1.2"],\
+            ["detect-indent", "npm:6.1.0"],\
+            ["fs-extra", "npm:8.1.0"],\
+            ["glob", "npm:7.2.0"],\
+            ["ignore", "npm:5.2.0"],\
+            ["ini", "npm:2.0.0"],\
+            ["npm-packlist", "npm:2.2.2"],\
+            ["yargs", "npm:16.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\

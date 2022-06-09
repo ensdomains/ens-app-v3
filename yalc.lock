@@ -2,13 +2,16 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "1a2b28ca2ea212f05e76ffa58fbedc13",
-      "pure": true,
+      "signature": "a70cc6457d1ab38475536f931b6b7666",
+      "file": true,
       "replaced": "portal:.yalc/@ensdomains/ensjs"
     },
     "@ensdomains/ens-test-env": {
       "signature": "6ea2ba482d204672c4e6660ebde0510d",
       "file": true
+    },
+    "@ensdomains/thorin": {
+      "signature": "4906cd741ecab65f0914675228959b66"
     }
   }
 }

@@ -28,5 +28,5 @@ export default function ({ getProfile }: ENSArgs<'getProfile'>, name: string, op
     } | undefined;
     resolverAddress?: string | undefined;
     reverseResolverAddress?: string | undefined;
-} | null>;
+} | undefined>;
 export {};

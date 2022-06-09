@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { useNetwork } from 'wagmi'
+import { useRouter } from 'next/router'
 
 import { useProfile } from '@app/hooks/useProfile'
 
@@ -35,9 +36,13 @@ const isResolverMigrated = (resolverAddress, networkId) =>
   ![...OLD_RESOLVERS, ...RESOLVERS[networkId].OLD].includes(resolverAddress)
 
 const ResolverDetails = () => {
-  const { profile } = useProfile('leon.eth')
+  const router = useRouter()
+  const { name } = router.query
+
+  const { profile: myProfile = { address: '' } } = useProfile(name)
   const { activeChain } = useNetwork()
-  const { address } = profile
+  console.log('profile: ', myProfile)
+  const { address = '' } = myProfile
 
   return (
     <div>

@@ -14,7 +14,7 @@ export const universalWrapper = {
         const universalResolver = await contracts?.getUniversalResolver();
         const response = universalResolver.interface.decodeFunctionResult('resolve', data);
         if (!response || !response[0]) {
-            return null;
+            return;
         }
         return { data: response[0], resolver: response[1] };
     },
@@ -34,7 +34,7 @@ export const resolverMulticallWrapper = {
         const publicResolver = await contracts?.getPublicResolver();
         const response = publicResolver.interface.decodeFunctionResult('multicall', data);
         if (!response) {
-            return null;
+            return;
         }
         return response;
     },
@@ -55,14 +55,14 @@ export const multicallWrapper = {
     },
     decode: async function ({ contracts }, data) {
         if (!data)
-            return null;
+            return;
         const multicall = await contracts?.getMulticall();
         try {
             const [result] = multicall.interface.decodeFunctionResult('tryAggregate', data);
             return result;
         }
         catch {
-            return null;
+            return;
         }
     },
 };

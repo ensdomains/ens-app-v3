@@ -47,10 +47,10 @@ const decode = async (
   { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   data: string,
   name: string,
-): Promise<Owner | null> => {
-  if (data === null) return null
+): Promise<Owner | undefined> => {
+  if (data === null) return
   const result = await multicallWrapper.decode(data)
-  if (result === null) return null
+  if (result === null) return
   const nameWrapper = await contracts?.getNameWrapper()!
 
   const decodedData = [result[0][1], result[1][1], result[2]?.[1]].map(
@@ -107,7 +107,7 @@ const decode = async (
       }
     }
     // .eth names with no registrar owner are either unregistered or expired
-    return null
+    return
   }
 
   // non .eth names inherit the owner from the registry
@@ -129,7 +129,7 @@ const decode = async (
     }
   }
 
-  // for anything else, return null
-  return null
+  // for anything else, return
+  return
 }
 export default { raw, decode }

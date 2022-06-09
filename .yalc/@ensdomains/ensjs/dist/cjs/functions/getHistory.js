@@ -80,7 +80,7 @@ const mapResultDetailDecode = (publicResolver) => (result) => {
             return publicResolver.interface.decodeFunctionData('setText(bytes32,string,string)', abi);
         }
         catch {
-            return null;
+            return;
         }
     });
 };
@@ -192,7 +192,7 @@ async function getHistory({ gqlInstance }, name) {
     const label = name.split('.')[0];
     const { domains } = await client.request(query, { name, label });
     if (!domains || domains.length === 0)
-        return null;
+        return;
     const [{ events: domainEvents, owner: { registrations: [{ events: registrationEvents }], }, resolver: { events: resolverEvents }, },] = domains;
     const domainHistory = mapEvents(domainEvents, 'Domain');
     const registrationHistory = mapEvents(registrationEvents, 'Registration');
@@ -209,7 +209,7 @@ exports.getHistory = getHistory;
 async function getHistoryWithDetail({ contracts, gqlInstance, provider, }, name) {
     const historyRes = await getHistory({ gqlInstance }, name);
     if (!historyRes)
-        return null;
+        return;
     const { domain, registration, resolver: resolverHistory } = historyRes;
     const textEvents = resolverHistory.filter((event) => event.type === 'TextChanged');
     const transactions = textEvents.reduce((prev, curr) => {
@@ -252,25 +252,25 @@ async function getHistoryDetailForTransactionHash({ contracts, provider }, hash,
     const publicResolver = await contracts?.getPublicResolver();
     const transaction = await provider.getTransaction(hash);
     if (!transaction)
-        return null;
+        return;
     const result = mapResultDetailDecode(publicResolver)({
         input: transaction.data,
     });
     if (!result || !result.length)
-        return null;
+        return;
     if (typeof indexInTransaction === 'number') {
         if (indexInTransaction + 1 > result.length)
-            return null;
+            return;
         const resultItem = result[indexInTransaction];
         if (!resultItem ||
             !resultItem.key ||
             (!resultItem.value && resultItem.value !== ''))
-            return null;
+            return;
         return { key: resultItem.key, value: resultItem.value };
     }
     return result.map((item) => {
         if (!item.key)
-            return null;
+            return;
         if (!item.value && item.value !== '')
             return { key: item.key, value: null };
         return { key: item.key, value: item.value };

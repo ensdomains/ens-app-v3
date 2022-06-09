@@ -14,6 +14,6 @@ declare const _default: {
         match: boolean;
         reverseResolverAddress?: undefined;
         resolverAddress?: undefined;
-    } | null>;
+    } | undefined>;
 };
 export default _default;
