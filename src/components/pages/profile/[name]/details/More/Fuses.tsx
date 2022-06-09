@@ -51,8 +51,6 @@ const Fuses = () => {
   const { name } = router.query
   const { fuseData } = useGetFuseData(name)
 
-  console.log('fuses: ', fuseData)
-
   return !fuseData ? (
     <Typography>Please wrap your name to unlock this feature</Typography>
   ) : (
@@ -67,7 +65,10 @@ const Fuses = () => {
             <Typography color="textSecondary" weight="bold">
               Can do everything
             </Typography>
-            <TrafficLight go={fuseData.fuseObj.canDoEverything} />
+            <TrafficLight
+              go={fuseData.fuseObj.canDoEverything}
+              data-testid="first-traffic-light"
+            />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
@@ -123,7 +124,7 @@ const Fuses = () => {
           <Typography color="textSecondary" weight="bold">
             Vulnerability
           </Typography>
-          <Typography color="textSecondary">
+          <Typography color="textSecondary" data-testid="vulnerability">
             {fuseData.vulnerability}
           </Typography>
         </FusesRow>
