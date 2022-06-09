@@ -1,6 +1,6 @@
 import React from 'react'
 import styled from 'styled-components'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'react-i18next'
 import { DynamicPopover, Typography } from '@ensdomains/thorin'
 import FilterIcon from '@app/assets/Filter.svg'
 import { SortValue } from '@app/components/@molecules/SortControl/SortControl'

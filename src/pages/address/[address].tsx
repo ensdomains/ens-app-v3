@@ -1,8 +1,7 @@
 import { useState } from 'react'
 import { GetStaticPaths, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'next-i18next'
-import { serverSideTranslations } from 'next-i18next/serverSideTranslations'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useNetwork } from 'wagmi'
 import { PageButtons, ExclamationSVG, Typography, mq } from '@ensdomains/thorin'
@@ -236,12 +235,9 @@ const AddressPage: NextPage = () => {
   )
 }
 
-export async function getStaticProps({ locale }: { locale: string }) {
+export async function getStaticProps() {
   return {
-    props: {
-      ...(await serverSideTranslations(locale)),
-      // Will be passed to the page component as props
-    },
+    props: {},
   }
 }
 

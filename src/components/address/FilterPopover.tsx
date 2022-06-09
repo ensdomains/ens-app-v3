@@ -1,7 +1,7 @@
 import React from 'react'
 import { Checkbox, Field } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'react-i18next'
 import SortControl, { SortValue } from '../@molecules/SortControl/SortControl'
 
 const PopoverContainer = styled.div(

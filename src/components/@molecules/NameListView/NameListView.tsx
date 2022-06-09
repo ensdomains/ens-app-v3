@@ -3,7 +3,7 @@ import { Heading, Tag, mq } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
-import { useTranslation } from 'next-i18next'
+import { useTranslation } from 'react-i18next'
 import { TabWrapper } from '../../profile/TabWrapper'
 
 const OtherItemsContainer = styled.div(
