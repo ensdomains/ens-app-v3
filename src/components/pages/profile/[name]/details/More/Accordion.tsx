@@ -78,32 +78,34 @@ const AccordionContainer = styled.div`
     height: 100%;
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0.3s color ease-in-out, 0.2s border-radius ease-in-out, 0s border-width 0.1s;
   
-    div:first-child > div {
-      border-radius: ${theme.radii['2xLarge']} ${
-    theme.radii['2xLarge']
-  } 0px 0px;
-    }
-
     border-radius: 16px;
 
-    & > div:not(:last-child) {
-        border-bottom: 
-        ${theme.borderWidths.px} 
-        ${theme.borderStyles.solid}
-        ${theme.colors.borderTertiary}
-        ;
-    }
+    
 
-    ${
-      activeItem + 1 !== totalItems
-        ? `
-        div:last-child > div {
-            border-radius: 0px 0px 16px 16px;
-        }
-    `
-        : ``
-    }
-    `}
+    & > div:not(:last-child) {
+      border-bottom: 
+      ${theme.borderWidths.px} 
+      ${theme.borderStyles.solid}
+      ${theme.colors.borderTertiary}
+      ;
+  }
+
+  & > div:first-child > div:first-child {
+    border-radius: ${theme.radii['2xLarge']} ${theme.radii['2xLarge']} 0px 0px;
+  }
+
+  ${
+    activeItem + 1 !== totalItems
+      ? `
+      
+      & > div:last-child > div:first-child {
+        border-radius: 0px 0px 16px 16px;
+      }
+  `
+      : ``
+  }
+
+  `}
 `
 
 export interface AccordionData {

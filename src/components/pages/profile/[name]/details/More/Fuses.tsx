@@ -1,69 +1,102 @@
-import { useQuery } from 'react-query'
-import { useEns } from '@app/utils/EnsProvider'
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
+import mq from '@app/mediaQuery'
+
 const FusesContainer = styled.div`
-  ${() => css``}
+  ${() => css`
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 20px 25px;
+
+    ${mq.sm.min`
+      max-width: 500px;
+   `}
+  `}
 `
 
 const FusesRow = styled.div`
   ${() => css`
     display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    &:not(:last-child) {
+      padding-bottom: 20px;
+    }
   `}
 `
 
-const FusesRowLabel = styled.div`
-  ${() => css``}
-`
-
-const FusesRowValue = styled.div`
-  ${() => css``}
+const TrafficLight = styled.div`
+  ${({ theme, go }) => css`
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background-color: ${go ? theme.colors.green : theme.colors.red};
+  `}
 `
 
 const Fuses = () => {
   const router = useRouter()
   const { name } = router.query
-  const ENSInstance = useEns()
-  console.log('ens: ', ENSInstance)
-  const { data: fuses } = useQuery('fuses', () =>
-    ENSInstance?.getFuses(name)!.then((rslt) => rslt),
-  )
+  const { fuseData } = useGetFuseData(name)
 
-  console.log('fuses: ', fuses)
+  console.log('fuses: ', fuseData)
 
-  return (
+  return !fuseData ? (
+    <Typography>Please wrap your name to unlock this feature</Typography>
+  ) : (
     <FusesContainer>
       <FusesRow>
         <Typography color="textSecondary" weight="bold">
-          Can be unwrapped
+          Can do everything
         </Typography>
-        <FusesRowValue />
+        <TrafficLight go={fuseData.fuseObj.canDoEverything} />
       </FusesRow>
       <FusesRow>
-        <FusesRowLabel />
-        <FusesRowValue />
+        <Typography color="textSecondary" weight="bold">
+          Can burn fuses
+        </Typography>
+        <TrafficLight go={!fuseData.fuseObj.cannotBurnFuses} />
       </FusesRow>
       <FusesRow>
-        <FusesRowLabel />
-        <FusesRowValue />
+        <Typography color="textSecondary" weight="bold">
+          Can create subdomains
+        </Typography>
+        <TrafficLight go={!fuseData.fuseObj.cannotCreateSubdomains} />
       </FusesRow>
       <FusesRow>
-        <FusesRowLabel />
-        <FusesRowValue />
+        <Typography color="textSecondary" weight="bold">
+          Can set resolver
+        </Typography>
+        <TrafficLight go={!fuseData.fuseObj.cannotSetResolver} />
       </FusesRow>
       <FusesRow>
-        <FusesRowLabel />
-        <FusesRowValue />
+        <Typography color="textSecondary" weight="bold">
+          Can set TTL
+        </Typography>
+        <TrafficLight go={!fuseData.fuseObj.cannotSetTTL} />
       </FusesRow>
       <FusesRow>
-        <FusesRowLabel />
-        <FusesRowValue />
+        <Typography color="textSecondary" weight="bold">
+          Can transfer
+        </Typography>
+        <TrafficLight go={!fuseData.fuseObj.cannotTransfer} />
       </FusesRow>
       <FusesRow>
-        <FusesRowLabel />
-        <FusesRowValue />
+        <Typography color="textSecondary" weight="bold">
+          Can unwrap
+        </Typography>
+        <TrafficLight go={!fuseData.fuseObj.cannotUnwrap} />
+      </FusesRow>
+      <FusesRow>
+        <Typography color="textSecondary" weight="bold">
+          Parent can control
+        </Typography>
+        <TrafficLight go={!fuseData.fuseObj.parentCannotControl} />
       </FusesRow>
     </FusesContainer>
   )
