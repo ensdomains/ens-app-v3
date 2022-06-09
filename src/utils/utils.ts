@@ -11,11 +11,16 @@ export const ROPSTEN_DNSREGISTRAR_ADDRESS =
   '0xdB328BA5FEcb432AF325Ca59E3778441eF5aa14F'
 
 export const networkName = {
-  main: 'mainnet',
-  goerli: 'goerli',
-  rinkeby: 'rinkeby',
-  ropsten: 'ropsten',
-  local: 'local',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1': 'mainnet',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '5': 'goerli',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '4': 'rinkeby',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '3': 'ropsten',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1337': 'local',
 }
 
 export const supportedAvatarProtocols = [
@@ -144,37 +149,33 @@ export function prependUrl(url: string) {
   return url
 }
 
+export const getSupportedNetworkName = (networkId: number) =>
+  networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
+
 // eslint-disable-next-line consistent-return
-export function imageUrl(url: string, name: any, network: string) {
-  const supported = Object.keys(networkName).includes(network?.toLowerCase())
+export function imageUrl(url: string, name: any, network: number) {
   // check if given uri is supported
   // provided network name is valid,
   // domain name is available
+  const supported = getSupportedNetworkName(network)
+
   if (supported && name) {
-    return `https://metadata.ens.domains/${network.toLowerCase()}/avatar/${name}`
+    return `https://metadata.ens.domains/${supported}/avatar/${name}`
   }
   console.warn('Unsupported avatar', network, name, url)
 }
 
 // eslint-disable-next-line consistent-return
-export function imageUrlUnknownRecord(name: string, network: string) {
-  const _network =
-    networkName[network?.toLowerCase() as keyof typeof networkName]
-  if (_network) {
-    return `https://metadata.ens.domains/${_network}/avatar/${name}`
-  }
-  return ''
+export function imageUrlUnknownRecord(name: string, network: number) {
+  const supported = getSupportedNetworkName(network)
+
+  return `https://metadata.ens.domains/${supported}/avatar/${name}`
 }
 
-export function ensNftImageUrl(
-  name: string,
-  _network: string,
-  regAddr: string,
-) {
-  const network =
-    networkName[_network?.toLowerCase() as keyof typeof networkName]
+export function ensNftImageUrl(name: string, network: number, regAddr: string) {
+  const supported = getSupportedNetworkName(network)
 
-  return `https://metadata.ens.domains/${network}/${regAddr}/${name}/image`
+  return `https://metadata.ens.domains/${supported}/${regAddr}/${name}/image`
 }
 
 export function isCID(hash: string | CID) {

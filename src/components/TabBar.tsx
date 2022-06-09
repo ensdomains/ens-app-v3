@@ -1,10 +1,9 @@
-import { useConnected } from '@app/hooks/useConnected'
 import { Avatar } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ComponentType, useMemo } from 'react'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import CogSVG from '../assets/Cog.svg'
 import GridSVG from '../assets/Grid.svg'
 import HeartSVG from '../assets/Heart.svg'
@@ -127,8 +126,8 @@ const TabWrapper = styled.div(
   `,
 )
 
-const TabContainer = styled.div<{ $connected: boolean }>(
-  ({ theme, $connected }) => css`
+const TabContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -139,16 +138,6 @@ const TabContainer = styled.div<{ $connected: boolean }>(
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
     padding: ${theme.space['2']} ${theme.space['6']};
-    ${!$connected &&
-    css`
-      padding-right: ${theme.space['2']};
-    `}
-  `,
-)
-
-const BottomPlaceholder = styled.div(
-  ({ theme }) => css`
-    height: ${theme.space['28']};
   `,
 )
 
@@ -156,49 +145,51 @@ export const TabBar = () => {
   const router = useRouter()
   const from = router.query.from as string
   const path = router.asPath
-  const connected = useConnected()
   const activeTab: AnyTab = useMemo(
     () =>
       tabs.find(({ href, name }) => href === path || from === name)?.name ||
       'unknown',
     [path, from],
   )
+  const { space } = useTheme()
 
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
 
   return (
     <>
-      <BottomPlaceholder />
       <TabWrapper>
-        <TabContainer $connected={connected}>
+        <TabContainer>
           <Icon activeTab={activeTab} tab={tabs[0]} as={MagnifyingGlassSVG} />
-          {!connected && (
-            <>
-              <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
-              <div />
-            </>
-          )}
           <ConnectButtonWrapper isTabBar>
-            {({ ensAvatar, zorb }) => (
-              <>
-                <Icon activeTab={activeTab} tab={tabs[1]} as={GridSVG} />
-                <Link href={tabs[2].href} passHref>
-                  <a>
-                    <AvatarWrapper $active={activeTab === tabs[2].name}>
-                      <Avatar label={tabs[2].label} src={ensAvatar || zorb} />
-                    </AvatarWrapper>
-                  </a>
-                </Link>
-                <Icon activeTab={activeTab} tab={tabs[3]} as={HeartSVG} />
-                <Icon
-                  activeTab={activeTab}
-                  tab={tabs[4]}
-                  as={CogSVG}
-                  hasNotification={pendingTransactions.length > 0}
-                />
-              </>
-            )}
+            {{
+              hasAccount: ({ ensAvatar, zorb }) => (
+                <>
+                  <Icon activeTab={activeTab} tab={tabs[1]} as={GridSVG} />
+                  <Link href={tabs[2].href} passHref>
+                    <a>
+                      <AvatarWrapper $active={activeTab === tabs[2].name}>
+                        <Avatar label={tabs[2].label} src={ensAvatar || zorb} />
+                      </AvatarWrapper>
+                    </a>
+                  </Link>
+                  <Icon activeTab={activeTab} tab={tabs[3]} as={HeartSVG} />
+                  <Icon
+                    activeTab={activeTab}
+                    tab={tabs[4]}
+                    as={CogSVG}
+                    hasNotification={pendingTransactions.length > 0}
+                  />
+                </>
+              ),
+              noAccountBefore: (
+                <>
+                  <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
+                  <div />
+                </>
+              ),
+              noAccountAfter: <div style={{ paddingRight: space['2'] }} />,
+            }}
           </ConnectButtonWrapper>
         </TabContainer>
       </TabWrapper>

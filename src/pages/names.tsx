@@ -277,9 +277,9 @@ const NamesPage: NextPage = () => {
           {currentPage &&
             pageLength > 0 &&
             (viewType === 'list' ? (
-              <NameListView currentPage={currentPage} network={chain?.name!} />
+              <NameListView currentPage={currentPage} network={chain?.id!} />
             ) : (
-              <NameGridView currentPage={currentPage} network={chain?.name!} />
+              <NameGridView currentPage={currentPage} network={chain?.id!} />
             ))}
           {pageLength < 1 && (!currentPage || currentPage.length === 0) && (
             <TabWrapper>

@@ -1,16 +1,7 @@
-import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
-import { Footer } from '@app/components/Footer'
-import { HeaderText } from '@app/components/HeaderText'
-import { LoadingOverlay } from '@app/components/LoadingOverlay'
-import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button, mq } from '@ensdomains/thorin'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import { mq } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
-import { Header } from '../components/Header'
-import { TabBar } from '../components/TabBar'
+import { Navigation } from './Navigation'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -28,23 +19,6 @@ const Container = styled.div(
   `,
 )
 
-const LoadingContainer = styled.div(
-  () => css`
-    flex-grow: 1;
-    display: flex;
-    flex-direction: column;
-  `,
-)
-
-const DesktopBackContainer = styled.div(
-  () => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  `,
-)
-
 const ContentWrapper = styled.div(
   ({ theme }) => css`
     max-width: ${theme.space['288']};
@@ -58,84 +32,20 @@ const ContentWrapper = styled.div(
   `,
 )
 
-const BackArrow = styled.div(
+const BottomPlaceholder = styled.div(
   ({ theme }) => css`
-    width: ${theme.space['6']};
-    height: ${theme.space['6']};
-    display: block;
+    height: ${theme.space['28']};
   `,
 )
 
-export const Basic = ({
-  loading = false,
-  children,
-  title,
-  heading,
-  subheading,
-}: {
-  loading?: boolean
-  children: React.ReactNode
-  title?: string
-  heading?: string
-  subheading?: string
-}) => {
-  const router = useRouter()
-  const initial = useInitial()
+export const Basic = ({ children }: { children: React.ReactNode }) => {
   const breakpoints = useBreakpoint()
-
-  const HeaderItems = useMemo(() => {
-    if (router.query.from) {
-      return {
-        leading: (
-          <div data-testid="back-button">
-            <Button
-              onClick={() => router.back()}
-              variant="transparent"
-              shadowless
-              size="extraSmall"
-            >
-              <BackArrow as={ArrowLeftSVG} />
-            </Button>
-          </div>
-        ),
-        trailing: heading && (
-          <HeaderText align="right" title={heading} subtitle={subheading} />
-        ),
-      }
-    }
-    return {
-      leading: heading && (
-        <HeaderText align="left" title={heading} subtitle={subheading} />
-      ),
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [router.query.from, heading, subheading])
 
   return (
     <Container>
-      <Head>
-        <title>{title ? `${title} ` : ''}ENS</title>
-      </Head>
-      <Header trailing={HeaderItems.trailing} leading={HeaderItems.leading} />
-      <ContentWrapper>
-        {!loading &&
-          breakpoints.sm &&
-          (HeaderItems.leading || HeaderItems.trailing) && (
-            <DesktopBackContainer>
-              {HeaderItems.leading}
-              <div style={{ flexGrow: 1 }} />
-              {HeaderItems.trailing}
-            </DesktopBackContainer>
-          )}
-        {(!router.isReady || loading) && router.asPath !== '/' ? (
-          <LoadingContainer>
-            <LoadingOverlay />
-          </LoadingContainer>
-        ) : (
-          children
-        )}
-      </ContentWrapper>
-      {!initial && (!breakpoints.sm ? <TabBar /> : <Footer />)}
+      <Navigation />
+      <ContentWrapper>{children}</ContentWrapper>
+      {!breakpoints.sm && <BottomPlaceholder />}
     </Container>
   )
 }

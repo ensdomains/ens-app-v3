@@ -56,7 +56,7 @@ const NameOwnerItem = ({
   network,
 }: {
   address: string
-  network: string
+  network: number
 }) => {
   const { getName } = useEns()
   const { data } = useQuery(['getName', address], () => getName(address), {
@@ -149,7 +149,7 @@ export const NameDetailSnippet = ({
     owner: string
     registrant?: string
   }
-  network: string
+  network: number
   showButton?: boolean
 }) => {
   const router = useRouter()
@@ -208,7 +208,7 @@ export const NameSnippet = ({
   showButton,
 }: {
   name: string
-  network: string
+  network: number
   expiryDate?: Date | null
   ownerData: {
     owner: string

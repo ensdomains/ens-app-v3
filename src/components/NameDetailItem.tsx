@@ -65,7 +65,7 @@ export const NameDetailItem = ({
   network,
   children,
 }: Name & {
-  network: string
+  network: number
   children: ReactNode
 }) => {
   const router = useRouter()

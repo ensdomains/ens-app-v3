@@ -1,4 +1,5 @@
 import { Notifications } from '@app/components/Notifications'
+import { Basic } from '@app/layouts/Basic'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import {
@@ -116,7 +117,9 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <GlobalStyle />
                   <ThorinGlobalStyles />
                   <Notifications />
-                  <Component {...pageProps} />
+                  <Basic>
+                    <Component {...pageProps} />
+                  </Basic>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>

@@ -1,9 +1,12 @@
+import { FilledHamburgerMenu } from '@app/components/@molecules/FilledHamburgerMenu'
+import { LeadingHeading } from '@app/components/LeadingHeading'
 import { SearchInput } from '@app/components/SearchInput'
-import { Basic } from '@app/layouts/Basic'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
 import type { NextPage } from 'next'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import ENSWithGradient from '../assets/ENSWithGradient.svg'
 
 const GradientTitle = styled.h1(
   ({ theme }) => css`
@@ -61,11 +64,24 @@ const Description = styled(Typography)(
   `,
 )
 
+const StyledENS = styled.div(
+  ({ theme }) => css`
+    height: ${theme.space['12']};
+  `,
+)
+
 const Home: NextPage = () => {
   const { t } = useTranslation('common')
+  const breakpoints = useBreakpoint()
 
   return (
-    <Basic>
+    <>
+      {!breakpoints.sm && (
+        <LeadingHeading>
+          <StyledENS as={ENSWithGradient} />
+          <FilledHamburgerMenu />
+        </LeadingHeading>
+      )}
       <Container>
         <Stack>
           <GradientTitle>{t('title')}</GradientTitle>
@@ -77,7 +93,7 @@ const Home: NextPage = () => {
           <SearchInput />
         </Stack>
       </Container>
-    </Basic>
+    </>
   )
 }
 
