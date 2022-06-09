@@ -6,10 +6,12 @@ import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
+import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
-import { GetStaticPaths, NextPage } from 'next'
+import { GetStaticPaths } from 'next'
 import { useRouter } from 'next/router'
+import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName, useNetwork } from 'wagmi'
@@ -41,7 +43,7 @@ const SelfButtons = styled.div(
   `,
 )
 
-const ProfilePage: NextPage = () => {
+export default function Page() {
   const router = useRouter()
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
@@ -154,6 +156,10 @@ const ProfilePage: NextPage = () => {
   )
 }
 
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <ContentGrid>{page}</ContentGrid>
+}
+
 export const getStaticProps = async () => {
   return {
     props: {},
@@ -166,5 +172,3 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
     fallback: 'blocking',
   }
 }
-
-export default ProfilePage

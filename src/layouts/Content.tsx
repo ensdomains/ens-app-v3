@@ -7,21 +7,6 @@ import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 
-const WrapperGrid = styled.div<{ $spacing: string }>(
-  ({ theme, $spacing }) => css`
-    flex-grow: 1;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(6, min-content);
-    gap: ${theme.space['5']};
-    align-self: center;
-    ${mq.md.min(css`
-      grid-template-columns: ${$spacing};
-    `)}
-  `,
-)
-
 const HeadingItems = styled.div<{ $spacing: string }>(
   ({ theme, $spacing }) => css`
     grid-column: span 1;
@@ -175,7 +160,7 @@ export const Content = ({
   const breakpoints = useBreakpoint()
 
   return (
-    <WrapperGrid $spacing={spacing}>
+    <>
       {!loading && children.warning && (
         <WarningWrapper>
           <ErrorContainer
@@ -237,6 +222,6 @@ export const Content = ({
           {children.trailing}
         </Skeleton>
       </ContentContainer>
-    </WrapperGrid>
+    </>
   )
 }

@@ -8,10 +8,10 @@ import { TabWrapper } from '@app/components/profile/TabWrapper'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
+import { ContentGrid } from '@app/layouts/ContentGrid'
 import { Button, mq, PageButtons, Select } from '@ensdomains/thorin'
-import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
@@ -109,12 +109,14 @@ const SortAndDirections = styled.div(
   `,
 )
 
+const spacing = '1fr 1fr'
+
 type SortType = 'expiryDate' | 'labelName' | 'creationDate'
 type SortDirection = 'asc' | 'desc'
 type ViewType = 'grid' | 'list'
 type FilterType = 'domain' | 'registration' | 'none'
 
-const NamesPage: NextPage = () => {
+export default function Page() {
   const { t } = useTranslation('names')
   const router = useRouter()
   const { data: addressData, isLoading, status } = useAccount()
@@ -160,7 +162,7 @@ const NamesPage: NextPage = () => {
       } ${t('subtitle.wallet')}`}
       alwaysShowSubtitle
       singleColumnContent
-      spacing="1fr 1fr"
+      spacing={spacing}
     >
       {{
         header: (
@@ -268,4 +270,6 @@ const NamesPage: NextPage = () => {
   )
 }
 
-export default NamesPage
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <ContentGrid $spacing={spacing}>{page}</ContentGrid>
+}

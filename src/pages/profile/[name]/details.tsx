@@ -6,11 +6,12 @@ import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/profile/OwnerButton'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Content } from '@app/layouts/Content'
+import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Card, mq, Typography } from '@ensdomains/thorin'
-import type { GetStaticPaths, NextPage } from 'next'
+import type { GetStaticPaths } from 'next'
 import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
+import { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
 
@@ -84,7 +85,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
-const NameDetails: NextPage = () => {
+export default function Page() {
   const breakpoints = useBreakpoint()
   const router = useRouter()
   const name = router.query.name as string
@@ -224,6 +225,10 @@ const NameDetails: NextPage = () => {
   )
 }
 
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <ContentGrid>{page}</ContentGrid>
+}
+
 export const getStaticProps = async () => {
   return {
     props: {},
@@ -236,5 +241,3 @@ export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
     fallback: 'blocking',
   }
 }
-
-export default NameDetails

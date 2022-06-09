@@ -3,7 +3,6 @@ import { LeadingHeading } from '@app/components/LeadingHeading'
 import { SearchInput } from '@app/components/SearchInput'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
-import type { NextPage } from 'next'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
@@ -70,7 +69,7 @@ const StyledENS = styled.div(
   `,
 )
 
-const Home: NextPage = () => {
+export default function Page() {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
 
@@ -96,5 +95,3 @@ const Home: NextPage = () => {
     </>
   )
 }
-
-export default Home

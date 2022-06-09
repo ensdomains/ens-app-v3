@@ -3,7 +3,8 @@ import { TransactionSection } from '@app/components/settings/TransactionSection'
 import { WalletSection } from '@app/components/settings/WalletSection'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
-import type { NextPage } from 'next'
+import { ContentGrid } from '@app/layouts/ContentGrid'
+import { ReactElement } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -19,13 +20,15 @@ const OtherWrapper = styled.div(
   `,
 )
 
-const SettingsPage: NextPage = () => {
+const spacing = '1fr 1fr'
+
+export default function Page() {
   const { data: addressData, isLoading } = useAccount()
 
   useProtectedRoute('/', isLoading ? true : addressData)
 
   return (
-    <Content title="Settings" spacing="1fr 1fr">
+    <Content title="Settings" spacing={spacing}>
       {{
         leading: <TransactionSection />,
         trailing: (
@@ -39,4 +42,6 @@ const SettingsPage: NextPage = () => {
   )
 }
 
-export default SettingsPage
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <ContentGrid $spacing={spacing}>{page}</ContentGrid>
+}
