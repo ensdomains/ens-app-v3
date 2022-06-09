@@ -194,12 +194,13 @@ export const Header = ({
   leading?: React.ReactNode
   trailing?: React.ReactNode
 }) => {
+  const { isReady } = useRouter()
   const breakpoints = useBreakpoint()
 
   return (
     <HeaderWrapper>
       <NavContainer>
-        {!breakpoints.sm ? (
+        {isReady && !breakpoints.sm ? (
           <MobileLayout leading={leading} trailing={trailing} />
         ) : (
           <DesktopLayout />
