@@ -265,7 +265,9 @@ const NameDetails: NextPage = () => {
 }
 
 export const getStaticProps = async () => {
-  return {}
+  return {
+    props: {},
+  }
 }
 
 export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
