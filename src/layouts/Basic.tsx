@@ -1,3 +1,4 @@
+import { Footer } from '@app/components/Footer'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
@@ -45,7 +46,7 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
     <Container>
       <Navigation />
       <ContentWrapper>{children}</ContentWrapper>
-      {!breakpoints.sm && <BottomPlaceholder />}
+      {breakpoints.sm ? <Footer /> : <BottomPlaceholder />}
     </Container>
   )
 }

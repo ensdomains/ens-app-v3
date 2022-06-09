@@ -7,8 +7,8 @@ import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 
-const WrapperGrid = styled.div(
-  ({ theme }) => css`
+const WrapperGrid = styled.div<{ $spacing: string }>(
+  ({ theme, $spacing }) => css`
     flex-grow: 1;
     width: 100%;
     display: grid;
@@ -17,13 +17,13 @@ const WrapperGrid = styled.div(
     gap: ${theme.space['5']};
     align-self: center;
     ${mq.md.min(css`
-      grid-template-columns: 270px 2fr;
+      grid-template-columns: ${$spacing};
     `)}
   `,
 )
 
-const HeadingItems = styled.div(
-  ({ theme }) => css`
+const HeadingItems = styled.div<{ $spacing: string }>(
+  ({ theme, $spacing }) => css`
     grid-column: span 1;
     width: 100%;
     display: grid;
@@ -35,17 +35,32 @@ const HeadingItems = styled.div(
     ${mq.md.min(css`
       height: ${theme.space['10']};
       grid-column: span 2;
-      grid-template-columns: 270px 2fr;
+      grid-template-columns: ${$spacing};
     `)}
   `,
 )
 
-const ContentContainer = styled.div(
-  () => css`
+const CustomLeadingHeading = styled(LeadingHeading)<{
+  $customSpacing: boolean
+}>(
+  ({ theme, $customSpacing }) =>
+    $customSpacing &&
+    mq.sm.min(css`
+      width: ${theme.space.full};
+      margin-left: 0;
+    `),
+)
+
+const ContentContainer = styled.div<{ $multiColumn?: boolean }>(
+  ({ $multiColumn }) => css`
     margin: 0;
     padding: 0;
     min-height: 0;
     height: min-content;
+    ${$multiColumn &&
+    mq.sm.min(css`
+      grid-column: span 2;
+    `)}
   `,
 )
 
@@ -134,19 +149,25 @@ export const Content = ({
   loading,
   title,
   subtitle,
+  alwaysShowSubtitle,
+  singleColumnContent,
   titleButton,
+  spacing = '270px 2fr',
 }: {
   title: string
   subtitle?: string
   titleButton?: React.ReactNode
+  alwaysShowSubtitle?: boolean
+  singleColumnContent?: boolean
   loading?: boolean
+  spacing?: string
   children: {
     warning?: {
       type: 'warning' | 'error' | 'info'
       message: string
     }
     header?: React.ReactNode
-    leading: React.ReactNode
+    leading?: React.ReactNode
     trailing: React.ReactNode
   }
 }) => {
@@ -154,7 +175,7 @@ export const Content = ({
   const breakpoints = useBreakpoint()
 
   return (
-    <WrapperGrid>
+    <WrapperGrid $spacing={spacing}>
       {!loading && children.warning && (
         <WarningWrapper>
           <ErrorContainer
@@ -163,9 +184,9 @@ export const Content = ({
           />
         </WarningWrapper>
       )}
-      <HeadingItems>
+      <HeadingItems $spacing={spacing}>
         <Skeleton loading={loading} as={FullWidthSkeleton as any}>
-          <LeadingHeading>
+          <CustomLeadingHeading $customSpacing={spacing !== '270px 2fr'}>
             {router.query.from && (
               <div data-testid="back-button">
                 <Button
@@ -183,14 +204,14 @@ export const Content = ({
                 {titleButton}
                 <TitleContainer>
                   <Title weight="bold">{title}</Title>
-                  {subtitle && !breakpoints.sm && (
+                  {subtitle && (!breakpoints.sm || alwaysShowSubtitle) && (
                     <Subtitle weight="bold">{subtitle}</Subtitle>
                   )}
                 </TitleContainer>
               </TitleWrapper>
             </ContentContainer>
             {!router.query.from && !breakpoints.sm && <FilledHamburgerMenu />}
-          </LeadingHeading>
+          </CustomLeadingHeading>
         </Skeleton>
         {children.header && breakpoints.sm && (
           <ContentContainer>
@@ -211,7 +232,7 @@ export const Content = ({
           <Skeleton loading={loading}>{children.header}</Skeleton>
         </ContentContainer>
       )}
-      <ContentContainer>
+      <ContentContainer $multiColumn={singleColumnContent}>
         <Skeleton loading={loading} as={FullWidthSkeleton as any}>
           {children.trailing}
         </Skeleton>

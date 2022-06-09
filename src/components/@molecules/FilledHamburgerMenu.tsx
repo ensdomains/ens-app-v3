@@ -2,8 +2,6 @@ import { useConnected } from '@app/hooks/useConnected'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useTranslation } from 'react-i18next'
 import { HamburgerMenu } from '../@atoms/HamburgerMenu'
-import { HeaderConnect } from '../ConnectButton'
-import { StyledNavLink } from '../StyledNavLink'
 
 const publicRoutes = [
   { href: '/', disabled: false, label: 'navigation.home' },
@@ -51,26 +49,13 @@ export const FilledHamburgerMenu = () => {
         ...publicRoutes.slice(1),
       ]
     : publicRoutes.slice(1)
-  const alwaysVisibleRoutes = breakpoints.lg ? dropdownRoutes.splice(0, 3) : []
 
   return (
-    <>
-      {alwaysVisibleRoutes.map((route) => (
-        <StyledNavLink
-          disabled={route.disabled}
-          key={route.href}
-          href={route.href}
-        >
-          {t(route.label)}
-        </StyledNavLink>
-      ))}
-      <HamburgerMenu
-        dropdownItems={dropdownRoutes.map((route) => ({
-          ...route,
-          label: t(route.label),
-        }))}
-      />
-      {breakpoints.sm && <HeaderConnect />}
-    </>
+    <HamburgerMenu
+      dropdownItems={dropdownRoutes.map((route) => ({
+        ...route,
+        label: t(route.label),
+      }))}
+    />
   )
 }

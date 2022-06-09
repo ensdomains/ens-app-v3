@@ -85,6 +85,7 @@ const ProfilePage: NextPage = () => {
   return (
     <Content
       title={isSelf ? 'Your profile' : normalisedName}
+      subtitle={isSelf ? normalisedName : 'Profile'}
       loading={isLoading}
     >
       {{
