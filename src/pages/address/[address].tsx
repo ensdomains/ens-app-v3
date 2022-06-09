@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { GetStaticPaths, NextPage } from 'next'
+import { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -233,19 +233,6 @@ const AddressPage: NextPage = () => {
       </WrapperGrid>
     </Basic>
   )
-}
-
-export async function getStaticProps() {
-  return {
-    props: {},
-  }
-}
-
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-  return {
-    paths: [],
-    fallback: false,
-  }
 }
 
 export default AddressPage
