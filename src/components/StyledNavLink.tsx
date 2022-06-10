@@ -1,32 +1,33 @@
 import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { ConditionalWrapper } from './ConditionalWrapper'
 
-const StyledAnchor = styled.a<{ isActive: boolean; disabled?: boolean }>`
-  ${({ theme, disabled, isActive }) => `
+const StyledAnchor = styled.a<{ $isActive: boolean; disabled?: boolean }>(
+  ({ theme, $isActive, disabled }) => css`
     white-space: nowrap;
     color: ${theme.colors.textTertiary};
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.fontSizes.large};
     cursor: pointer;
     transition: color 0.125s ease-in-out;
-    ${
-      disabled
-        ? `
-    color: ${theme.colors.textPlaceholder};
-    cursor: default;
-    `
-        : `
-    &:hover {
-      color: ${theme.colors.textSecondary};
-    }
-    `
-    }
-    ${isActive && `color: ${theme.colors.accent};`}
-  `}
-`
+    ${disabled
+      ? css`
+          color: ${theme.colors.textPlaceholder};
+          cursor: default;
+        `
+      : css`
+          &:hover {
+            color: ${theme.colors.textSecondary};
+          }
+        `}
+    ${$isActive &&
+    css`
+      color: ${theme.colors.accent};
+    `}
+  `,
+)
 
 export const StyledNavLink = ({
   children,
@@ -45,7 +46,10 @@ export const StyledNavLink = ({
         </Link>
       )}
     >
-      <StyledAnchor disabled={disabled} isActive={router.asPath === props.href}>
+      <StyledAnchor
+        disabled={disabled}
+        $isActive={router.asPath === props.href}
+      >
         {children}
       </StyledAnchor>
     </ConditionalWrapper>

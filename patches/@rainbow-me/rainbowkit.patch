@@ -1,0 +1,54 @@
+diff --git a/dist/chunk-BO2LWZIV.js b/dist/chunk-BO2LWZIV.js
+index e2dc71f136950626e746af3035d5ad4d711f7ab4..076617c38f955cb6247316e5f04ae3c0e1fe0948 100644
+--- a/dist/chunk-BO2LWZIV.js
++++ b/dist/chunk-BO2LWZIV.js
+@@ -3616,11 +3616,13 @@ export {
+   useAddress,
+   useChainId,
+   useTransactionStore,
++  useRecentTransactions,
+   cssObjectFromTheme,
+   cssStringFromTheme,
+   RainbowKitProvider,
+   dialogContent,
+   dialogContentMobile,
++  useClearRecentTransactions,
+   DesktopOptions,
+   MobileOptions,
+   ConnectButton
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index 35c97be30a2eb3b4210e27ea2deadae14bd87639..21ff6af56e17586f627a6ba237a8cdc7af329c93 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -3,6 +3,9 @@ export { wallet } from './wallets/walletConnectors';
+ export { getDefaultWallets } from './wallets/getDefaultWallets';
+ export { connectorsForWallets } from './wallets/connectorsForWallets';
+ export { useAddRecentTransaction } from './transactions/useAddRecentTransaction';
++export { useClearRecentTransactions } from './transactions/useClearRecentTransactions';
++export { useRecentTransactions } from './transactions/useRecentTransactions';
++export { useTransactionStore } from './transactions/TransactionStoreContext';
+ export type { Wallet, WalletList } from './wallets/Wallet';
+ export type { Chain } from './components/RainbowKitProvider/RainbowKitChainContext';
+ export type { Theme } from './components/RainbowKitProvider/RainbowKitProvider';
+diff --git a/dist/index.js b/dist/index.js
+index e794abcb0c838811630474df701caf4158ab4918..d8cf74564666effd7a06a3c2f52d31c802c25db3 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -18,6 +18,8 @@ import {
+   isMobile,
+   useAddress,
+   useChainId,
++  useClearRecentTransactions,
++  useRecentTransactions,
+   useTransactionStore
+ } from "./chunk-BO2LWZIV.js";
+ import {
+@@ -656,5 +658,8 @@ export {
+   lightTheme,
+   midnightTheme,
+   useAddRecentTransaction,
++  useClearRecentTransactions,
++  useRecentTransactions,
++  useTransactionStore,
+   wallet
+ };

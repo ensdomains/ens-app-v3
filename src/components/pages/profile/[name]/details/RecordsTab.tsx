@@ -1,7 +1,6 @@
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
-import mq from '@app/mediaQuery'
-import { Typography } from '@ensdomains/thorin'
+import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
@@ -26,8 +25,8 @@ type ContentHash =
   | null
   | string
 
-const TabWrapper = styled(OriginalTabWrapper)`
-  ${({ theme }) => css`
+const TabWrapper = styled(OriginalTabWrapper)(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: stretch;
@@ -35,61 +34,61 @@ const TabWrapper = styled(OriginalTabWrapper)`
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
     padding: ${theme.space['4.5']};
-    ${mq.md.min`
+    ${mq.md.min(css`
       padding: ${theme.space['6']};
       gap: ${theme.space['6']};
       flex-gap: ${theme.space['6']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const RecordSection = styled.div`
-  ${({ theme }) => `
+const RecordSection = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: stretch;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const SectionHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-  ${({ theme }) => `
+const SectionHeader = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
     width: ${theme.space.full};
     padding: 0 ${theme.radii.large};
-  `}
-`
+  `,
+)
 
-const SectionTitleContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: flex-start;
-  ${({ theme }) => `
+const SectionTitleContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const SectionTitle = styled(Typography)`
-  ${({ theme }) => `
+const SectionTitle = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.foreground};
-  `}
-`
+  `,
+)
 
-const SectionSubtitle = styled(Typography)`
-  ${({ theme }) => `
+const SectionSubtitle = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.textTertiary};
-  `}
-`
+  `,
+)
 
-const EditButton = styled.button`
-  ${({ theme }) => `
+const EditButton = styled.button(
+  ({ theme }) => css`
     display: block;
     outline: none;
     border: none;
@@ -98,11 +97,11 @@ const EditButton = styled.button`
     background: none;
     color: ${theme.colors.accent};
     font-size: ${theme.fontSizes.base};
-  `}
-`
+  `,
+)
 
-const RecordContainer = styled.button`
-  ${({ theme }) => css`
+const RecordContainer = styled.button(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -127,14 +126,14 @@ const RecordContainer = styled.button`
       transform: translateY(0);
     }
 
-    ${mq.md.min`
+    ${mq.md.min(css`
       font-size: ${theme.fontSizes.small};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const RecordKey = styled(Typography)`
-  ${({ theme }) => css`
+const RecordKey = styled(Typography)(
+  ({ theme }) => css`
     width: ${theme.space['20']};
     min-width: ${theme.space['20']};
     height: ${theme.space.full};
@@ -147,51 +146,54 @@ const RecordKey = styled(Typography)`
     overflow-wrap: break-word;
     word-break: break-all;
 
-    ${mq.md.min`
+    ${mq.md.min(css`
       width: ${theme.space['28']};
       min-width: ${theme.space['28']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const CopyButtonWrapper = styled.div`
-  flex-grow: 1;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-`
+const CopyButtonWrapper = styled.div(
+  () => css`
+    flex-grow: 1;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+  `,
+)
 
-const RecordValue = styled(Typography)<{ $fullWidth: boolean }>`
-  ${({ theme, $fullWidth }) => css`
+const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(
+  ({ theme, $fullWidth }) => css`
     max-width: calc(
       100% - ${$fullWidth ? '0px' : theme.space['20']} - ${theme.space['9']} -
         ${$fullWidth ? theme.space['2'] : theme.space['4']}
     );
 
-    ${mq.md.min`
-      max-width: calc(100% - ${$fullWidth ? '0px' : theme.space['28']} - ${
-      theme.space['9']
-    } - ${$fullWidth ? theme.space['2'] : theme.space['4']});
-    `}
-  `}
-  overflow-wrap: break-word;
-  text-align: left;
-`
+    ${mq.md.min(css`
+      max-width: calc(
+        100% - ${$fullWidth ? '0px' : theme.space['28']} - ${theme.space['9']} -
+          ${$fullWidth ? theme.space['2'] : theme.space['4']}
+      );
+    `)}
+    overflow-wrap: break-word;
+    text-align: left;
+  `,
+)
 
-const InnerCopyButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  ${({ theme }) => `
+const InnerCopyButton = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: ${theme.space['9']};
-  `}
-`
+  `,
+)
 
-const LegacyType = styled(Typography)`
-  ${({ theme }) => `
+const LegacyType = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.textTertiary};
-  `}
-`
+  `,
+)
 
 const RecordItem = ({
   itemKey,

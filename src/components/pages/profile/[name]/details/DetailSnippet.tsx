@@ -5,11 +5,11 @@ import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
-import { FavouriteButton } from '../../FavouriteButton'
+import styled, { css } from 'styled-components'
+import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
 
-const Container = styled(Card)`
-  ${({ theme }) => `
+const Container = styled(Card)(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -18,11 +18,11 @@ const Container = styled(Card)`
     & > div:first-of-type {
       margin-bottom: ${theme.space['3']};
     }
-  `}
-`
+  `,
+)
 
-const ExpiryContainer = styled.div`
-  ${({ theme }) => `
+const ExpiryContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -31,10 +31,11 @@ const ExpiryContainer = styled.div`
     & > div:first-of-type {
       color: ${theme.colors.textTertiary};
     }
-  `}
-`
-const Row = styled.div`
-  ${({ theme }) => `
+  `,
+)
+
+const Row = styled.div(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -42,33 +43,33 @@ const Row = styled.div`
     justify-content: space-between;
     gap: ${theme.space['1.5']};
     flex-gap: ${theme.space['1.5']};
-  `}
-`
+  `,
+)
 
-const FullWidthOutlinedButton = styled(OutlinedButton)`
-  ${({ theme }) => `
+const FullWidthOutlinedButton = styled(OutlinedButton)(
+  ({ theme }) => css`
     width: ${theme.space.full};
-  `}
-`
+  `,
+)
 
-const InnerButton = styled.div`
-  ${({ theme }) => `
+const InnerButton = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const ButtonIcon = styled.svg`
-  ${({ theme }) => `
+const ButtonIcon = styled.svg(
+  ({ theme }) => css`
     display: block;
     width: ${theme.space['4']};
     height: ${theme.space['4']};
-  `}
-`
+  `,
+)
 
 export const DetailSnippet = ({
   expiryDate,

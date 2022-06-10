@@ -37,19 +37,3 @@ describe('isCID', () => {
     expect(isCID(ipfsHash)).toBeTruthy()
   })
 })
-
-describe('normaliseOrMark', () => {
-  const invalidName = '🏳%EF%B8%8F%E2%80%8D🌈.eth'
-  const mockData = [{ name: 'ensfairy.eth' }, { name: invalidName }]
-
-  it('should return all names', () => {
-    const result = normaliseOrMark(mockData, 'name')
-    expect(result.length).toBe(2)
-  })
-  it('should return an invalid name with a warning indicator', () => {
-    const result = normaliseOrMark(mockData, 'name')
-    expect(
-      result.find((x: any) => x.name === invalidName).hasInvalidCharacter,
-    ).toBeTruthy()
-  })
-})

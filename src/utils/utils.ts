@@ -1,19 +1,9 @@
-import {
-  decodeLabelhash,
-  isEncodedLabelhash,
-  labelhash as keccak256,
-  saveName,
-} from '@ensdomains/ensjs/dist/cjs/utils/labels'
-import { normalize } from '@ensdomains/eth-ens-namehash'
 import throttle from 'lodash/throttle'
 import { CID } from 'multiformats'
 import { useEffect, useRef } from 'react'
 
 // From https://github.com/0xProject/0x-monorepo/blob/development/packages/utils/src/address_utils.ts
 
-const BASIC_ADDRESS_REGEX = /^(0x)?[0-9a-f]{40}$/i
-const SAME_CASE_ADDRESS_REGEX = /^(0x)?([0-9a-f]{40}|[0-9A-F]{40})$/
-const ADDRESS_LENGTH = 40
 export const emptyAddress = '0x0000000000000000000000000000000000000000'
 export const MAINNET_DNSREGISTRAR_ADDRESS =
   '0x58774Bb8acD458A640aF0B88238369A167546ef2'
@@ -34,76 +24,6 @@ export const supportedAvatarProtocols = [
   'ipfs://',
   'eip155',
 ]
-
-export function _validateName(name: string) {
-  const nameArray = name.split('.')
-  const hasEmptyLabels = nameArray.some((label) => label.length === 0)
-  if (hasEmptyLabels) throw new Error('Domain cannot have empty labels')
-  const normalizedArray = nameArray.map((label) => {
-    if (label === '[root]') {
-      return label
-    }
-    return isEncodedLabelhash(label) ? label : normalize(label)
-  })
-  return normalizedArray.join('.')
-}
-
-export function labelhash(unnormalisedLabelOrLabelhash: string) {
-  if (unnormalisedLabelOrLabelhash === '[root]') {
-    return ''
-  }
-  return isEncodedLabelhash(unnormalisedLabelOrLabelhash)
-    ? `0x${decodeLabelhash(unnormalisedLabelOrLabelhash)}`
-    : `0x${keccak256(normalize(unnormalisedLabelOrLabelhash))}`
-}
-
-export function _isLabelValid(name: string) {
-  try {
-    _validateName(name)
-    if (name.indexOf('.') === -1) {
-      return true
-    }
-  } catch (e) {
-    console.log(e)
-    return false
-  }
-}
-
-export const addressUtils = {
-  isChecksumAddress(address: any) {
-    // Check each case
-    const unprefixedAddress = address.replace('0x', '')
-    const addressHash = keccak256(unprefixedAddress.toLowerCase())
-
-    for (let i = 0; i < ADDRESS_LENGTH; i += 1) {
-      // The nth letter should be uppercase if the nth digit of casemap is 1
-      const hexBase = 16
-      const lowercaseRange = 7
-      if (
-        (parseInt(addressHash[i], hexBase) > lowercaseRange &&
-          unprefixedAddress[i].toUpperCase() !== unprefixedAddress[i]) ||
-        (parseInt(addressHash[i], hexBase) <= lowercaseRange &&
-          unprefixedAddress[i].toLowerCase() !== unprefixedAddress[i])
-      ) {
-        return false
-      }
-    }
-    return true
-  },
-  isAddress(address: any) {
-    if (!BASIC_ADDRESS_REGEX.test(address)) {
-      // Check if it has the basic requirements of an address
-      return false
-    }
-    if (SAME_CASE_ADDRESS_REGEX.test(address)) {
-      // If it's all small caps or all all caps, return true
-      return true
-    }
-    // Otherwise check each case
-    const isValidChecksummedAddress = addressUtils.isChecksumAddress(address)
-    return isValidChecksummedAddress
-  },
-}
 
 export const uniq = (a: any, param: any) =>
   a.filter(
@@ -130,85 +50,6 @@ export const uniq = (a: any, param: any) =>
 
 // export const checkLabels = (...labelHashes) =>
 //   labelHashes.map(labelHash => checkLabelHash(labelHash) || null)
-
-export const mergeLabels = (labels1: any, labels2: any) =>
-  labels1.map((label: any, index: number) => label || labels2[index])
-
-export function validateName(name: any) {
-  const normalisedName = _validateName(name)
-  saveName(normalisedName)
-  return normalisedName
-}
-
-export function isLabelValid(name: any) {
-  return _isLabelValid(name)
-}
-
-export const _parseSearchTerm = (term: string, validTld: any) => {
-  const regex = /[^.]+$/
-
-  try {
-    validateName(term)
-  } catch (e) {
-    return 'invalid'
-  }
-
-  if (term.indexOf('.') !== -1) {
-    const termArray = term.split('.')
-    const tld = term.match(regex) ? (term.match(regex) as any)[0] : ''
-    if (validTld) {
-      if (tld === 'eth' && [...termArray[termArray.length - 2]].length < 3) {
-        // code-point length
-        return 'short'
-      }
-      return 'supported'
-    }
-
-    return 'unsupported'
-  }
-  if (addressUtils.isAddress(term)) {
-    return 'address'
-  }
-  // check if the search term is actually a tld
-  if (validTld) {
-    return 'tld'
-  }
-  return 'search'
-}
-
-export const parseSearchTerm = async (term: any) => {
-  const domains = term.split('.')
-  const tld = domains[domains.length - 1]
-  try {
-    _validateName(tld)
-  } catch (e) {
-    return 'invalid'
-  }
-  return _parseSearchTerm(term, true)
-}
-
-export function encodeLabelhash(hash: string) {
-  if (!hash.startsWith('0x')) {
-    throw new Error('Expected label hash to start with 0x')
-  }
-
-  if (hash.length !== 66) {
-    throw new Error('Expected label hash to have a length of 66')
-  }
-
-  return `[${hash.slice(2)}]`
-}
-
-export function humaniseName(name: any) {
-  return name
-    .split('.')
-    .map((label: string | any[]) => {
-      return isEncodedLabelhash(label as string)
-        ? `[unknown${label.slice(1, 8)}]`
-        : label
-    })
-    .join('.')
-}
 
 export function modulate(
   value: number,
@@ -296,47 +137,6 @@ export function isOwnerOfParentDomain(domain: any, account: any) {
   return false
 }
 
-// eslint-disable-next-line consistent-return
-export function filterNormalised(data: any, name: any, nested = false) {
-  try {
-    // eslint-disable-next-line @typescript-eslint/no-shadow
-    return data?.filter((data: any) => {
-      const domain = nested ? data.domain : data
-      return domain[name] === normalize(domain[name])
-    })
-  } catch (e: any) {
-    if (e.message.match(/Illegal char/)) {
-      return {
-        invalidCharacter: 'Invalid character',
-      }
-    }
-  }
-}
-
-export function normaliseOrMark(data: any, name: any, nested = false) {
-  // eslint-disable-next-line @typescript-eslint/no-shadow
-  return data?.map((data: any) => {
-    const domain = nested ? data.domain : data
-    let normalised
-
-    try {
-      normalised = normalize(domain[name])
-    } catch (e: any) {
-      if (e.message.match(/Illegal char/)) {
-        console.log('domain: ', { ...domain, hasInvalidCharacter: true })
-        return { ...data, hasInvalidCharacter: true }
-      }
-      return { ...data, hasInvalidCharacter: true }
-    }
-
-    if (normalised === domain[name]) {
-      return data
-    }
-
-    return { ...data, hasInvalidCharacter: true }
-  })
-}
-
 export function prependUrl(url: string) {
   if (url && !url.match(/http[s]?:\/\//)) {
     return `https://${url}`
@@ -421,3 +221,8 @@ export const formatExpiry = (expiry: Date) => `
 ${expiry.toLocaleDateString(undefined, {
   month: 'long',
 })} ${expiry.getDate()}, ${expiry.getFullYear()}`
+
+export const makeEtherscanLink = (hash: string, network?: string) =>
+  `https://${
+    !network || network === 'mainnet' ? '' : `${network}.`
+  }etherscan.io/tx/${hash}`

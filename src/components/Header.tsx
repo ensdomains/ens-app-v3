@@ -1,9 +1,9 @@
 import { useConnected } from '@app/hooks/useConnected'
-import mq from '@app/mediaQuery'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useTranslation } from 'next-i18next'
+import { mq } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
@@ -49,46 +49,50 @@ const connectedRoutes = [
   { label: 'navigation.connected.myNames', disabled: false, href: '/names' },
 ]
 
-const HeaderWrapper = styled.header`
-  height: min-content;
-`
+const HeaderWrapper = styled.header(
+  () => css`
+    height: min-content;
+  `,
+)
 
-const LogoAnchor = styled.a`
-  cursor: pointer;
-  transition: all 0.15s ease-in-out;
+const LogoAnchor = styled.a(
+  () => css`
+    cursor: pointer;
+    transition: all 0.15s ease-in-out;
 
-  & > svg {
-    vertical-align: bottom;
-  }
+    & > svg {
+      vertical-align: bottom;
+    }
 
-  &:hover {
-    filter: brightness(1.05);
-    transform: translateY(-1px);
-  }
-`
+    &:hover {
+      filter: brightness(1.05);
+      transform: translateY(-1px);
+    }
+  `,
+)
 
-const VerticalLine = styled.div`
-  ${({ theme }) => `
-  width: 1px;
-  height: ${theme.space['14']};
-  background-color: ${theme.colors.borderSecondary};
-  `}
-`
+const VerticalLine = styled.div(
+  ({ theme }) => css`
+    width: 1px;
+    height: ${theme.space['14']};
+    background-color: ${theme.colors.borderSecondary};
+  `,
+)
 
-const NavContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  ${({ theme }) => css`
+const NavContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
-    ${mq.sm.min`
+    ${mq.sm.min(css`
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
 const DefaultLeadingItem = () => {
   const router = useRouter()
@@ -190,12 +194,13 @@ export const Header = ({
   leading?: React.ReactNode
   trailing?: React.ReactNode
 }) => {
+  const { isReady } = useRouter()
   const breakpoints = useBreakpoint()
 
   return (
     <HeaderWrapper>
       <NavContainer>
-        {!breakpoints.sm ? (
+        {isReady && !breakpoints.sm ? (
           <MobileLayout leading={leading} trailing={trailing} />
         ) : (
           <DesktopLayout />

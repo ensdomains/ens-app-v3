@@ -3,6 +3,7 @@ const { i18n } = require('./next-i18next.config')
 const { withPlugins } = require('next-compose-plugins')
 const withTM = require('next-transpile-modules')(['@ensdomains/ensjs'])
 const path = require('path')
+const StylelintPlugin = require('stylelint-webpack-plugin')
 
 /**
  * @type {import('next').NextConfig}
@@ -19,7 +20,6 @@ let nextConfig = {
   // change to true once infinite loop is fixed
   swcMinify: false,
   // @ts-ignore
-  i18n,
   images: {
     domains: ['metadata.ens.domains'],
   },
@@ -57,6 +57,14 @@ let nextConfig = {
         },
       ],
     })
+    config.plugins.push(
+      new StylelintPlugin({
+        files: './src/**/*.tsx',
+        extensions: ['tsx'],
+        failOnError: process.env.NODE_ENV !== 'development',
+        cache: false,
+      }),
+    )
 
     return config
   },

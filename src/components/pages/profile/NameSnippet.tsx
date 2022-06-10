@@ -3,40 +3,40 @@ import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { NFTWithPlaceholder } from '@app/components//NFTWithPlaceholder'
+import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 
-const Container = styled.div`
-  ${({ theme }) => `
+const Container = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-  `}
-`
+  `,
+)
 
-const OwnerContainer = styled.div`
-  ${({ theme }) => `
+const OwnerContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
     gap: ${theme.space['1.5']};
     flex-gap: ${theme.space['1.5']};
-  `}
-`
+  `,
+)
 
-const AvatarWrapper = styled.div`
-  ${({ theme }) => `
+const AvatarWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['5']};
     height: ${theme.space['5']};
-  `}
-`
+  `,
+)
 
-const OwnerWithEns = styled.div`
-  ${({ theme }) => `
+const OwnerWithEns = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-end;
@@ -48,8 +48,8 @@ const OwnerWithEns = styled.div`
       color: ${theme.colors.textTertiary};
       font-size: ${theme.fontSizes.label};
     }
-  `}
-`
+  `,
+)
 
 const NameOwnerItem = ({
   address,
@@ -96,15 +96,17 @@ const NameOwnerItem = ({
   )
 }
 
-const ItemContainer = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-between;
-`
+const ItemContainer = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  `,
+)
 
-const NameDetailContainer = styled.div`
-  ${({ theme }) => `
+const NameDetailContainer = styled.div(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: column;
@@ -115,24 +117,24 @@ const NameDetailContainer = styled.div`
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.borderTertiary};
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-  `}
-`
+  `,
+)
 
-const ButtonWrapper = styled.div`
-  ${({ theme }) => `
+const ButtonWrapper = styled.div(
+  ({ theme }) => css`
     margin-top: ${theme.space['2']};
     & > button {
       border: ${theme.space.px} solid ${theme.colors.borderSecondary};
       border-radius: ${theme.radii.extraLarge};
     }
-  `}
-`
+  `,
+)
 
-const LeftText = styled(Typography)`
-  ${({ theme }) => `
+const LeftText = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.textTertiary};
-  `}
-`
+  `,
+)
 
 export const NameDetailSnippet = ({
   name,

@@ -1,39 +1,43 @@
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Space } from '@ensdomains/thorin'
 import { ElementType } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-const SocialIconWrapper = styled.a<{ $boxSize: Space }>`
-  position: relative;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  ${({ theme, $boxSize }) => `
+const SocialIconWrapper = styled.a<{ $boxSize: Space }>(
+  ({ theme, $boxSize }) => css`
+    position: relative;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: ${theme.space[$boxSize]};
     min-height: ${theme.space[$boxSize]};
-  `}
-`
+  `,
+)
 
-const StyledIcon = styled.div<{ $iconColor?: string }>`
-  height: 80%;
-  position: absolute;
-  transition: 0.15s all ease-in-out;
-  fill: ${({ theme }) => theme.colors.backgroundHide};
-  ${SocialIconWrapper}:hover && {
-    ${({ $iconColor }) => `fill: ${$iconColor};`};
-  }
-`
+const StyledIcon = styled.div<{ $iconColor?: string }>(
+  ({ theme, $iconColor }) => css`
+    height: 80%;
+    position: absolute;
+    transition: 0.15s all ease-in-out;
+    fill: ${theme.colors.backgroundHide};
+    ${SocialIconWrapper}:hover && {
+      fill: ${$iconColor};
+    }
+  `,
+)
 
-const StyledColoredIcon = styled.div`
-  height: 80%;
-  position: absolute;
-  transition: 0.15s all ease-in-out;
-  opacity: 0;
-  ${SocialIconWrapper}:hover && {
-    opacity: 1;
-  }
-`
+const StyledColoredIcon = styled.div(
+  () => css`
+    height: 80%;
+    position: absolute;
+    transition: 0.15s all ease-in-out;
+    opacity: 0;
+    ${SocialIconWrapper}:hover && {
+      opacity: 1;
+    }
+  `,
+)
 
 export const SocialIcon = ({
   Icon,

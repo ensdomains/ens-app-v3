@@ -1,6 +1,8 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-export const VerticalLine = styled.div`
-  width: 1px;
-  background-color: ${({ theme }) => theme.colors.borderSecondary};
-`
+export const VerticalLine = styled.div(
+  ({ theme }) => css`
+    width: 1px;
+    background-color: ${theme.colors.borderSecondary};
+  `,
+)

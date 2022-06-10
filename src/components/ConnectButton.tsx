@@ -1,39 +1,43 @@
-import mq from '@app/mediaQuery'
 import { zorbImageDataURI } from '@app/utils/gradient'
-import { Button, EthTransparentInvertedSVG, Profile } from '@ensdomains/thorin'
+import {
+  Button,
+  EthTransparentInvertedSVG,
+  mq,
+  Profile,
+} from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
-import type { TFunction } from 'next-i18next'
-import { useTranslation } from 'next-i18next'
 import { useRouter } from 'next/router'
+import type { TFunction } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 
-const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)`
-  ${({ theme }) => css`
+const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)(
+  ({ theme }) => css`
     color: white;
     display: block;
     margin-right: calc(${theme.space['2']} * -1);
     margin-left: calc(${theme.space['2']} * -1);
     height: ${theme.space['5']};
     width: ${theme.space['5']};
-    ${mq.sm.min`
+    ${mq.sm.min(css`
       height: ${theme.space['6']};
       width: ${theme.space['6']};
-    `}
-  `}
-`
+    `)}
+  `,
+)
 
-const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>`
-  ${({ theme, $isTabBar }) =>
+const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(
+  ({ theme, $isTabBar }) =>
     $isTabBar &&
-    `
-    flex-grow: 1;
-    & button {
-      width: ${theme.space.full};
-      border-radius: ${theme.radii.full};
-    }
-  `}
-`
+    css`
+      flex-grow: 1;
+      & button {
+        width: ${theme.space.full};
+        border-radius: ${theme.radii.full};
+      }
+    `,
+)
 
 export type AccountRenderProps = {
   address: string
@@ -74,7 +78,7 @@ export const ConnectButtonWrapper = ({
               variant="action"
               size="medium"
             >
-              {t('profile.connect')}
+              {t('wallet.connect')}
             </Button>
           </StyledButtonWrapper>
         ) : (
@@ -100,11 +104,11 @@ export const HeaderConnect = () => {
           ensName={ensName}
           dropdownItems={[
             {
-              label: t('profile.myProfile'),
+              label: t('wallet.myProfile'),
               onClick: () => router.push('/my/profile'),
             },
             {
-              label: t('profile.disconnect'),
+              label: t('wallet.disconnect'),
               color: 'red',
               onClick: () => disconnect(),
             },

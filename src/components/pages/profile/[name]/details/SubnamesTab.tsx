@@ -1,8 +1,8 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { ArrowRightSVG, PageButtons } from '@ensdomains/thorin'
-import { useTranslation } from 'next-i18next'
 import { useState } from 'react'
-import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
 import { NameDetailItem } from '../../../../NameDetailItem'
 import { TabWrapper } from '../../TabWrapper'
@@ -13,41 +13,45 @@ type Subname = {
   truncatedName?: string
 }
 
-const EmptyDetailContainer = styled.div`
-  padding: ${({ theme }) => theme.space['4']};
-  display: flex;
-  justify-content: center;
-  align-items: center;
-`
+const EmptyDetailContainer = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['4']};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
 
-const RightArrow = styled.svg`
-  ${({ theme }) => `
-  stroke-width: ${theme.borderWidths['0.75']};
-  color: ${theme.colors.textTertiary};
-  display: block;
-  height: ${theme.space['6']};
-  width: ${theme.space['6']};
-  `}
-`
+const RightArrow = styled.svg(
+  ({ theme }) => css`
+    stroke-width: ${theme.borderWidths['0.75']};
+    color: ${theme.colors.textTertiary};
+    display: block;
+    height: ${theme.space['6']};
+    width: ${theme.space['6']};
+  `,
+)
 
-const PageButtonsContainer = styled.div`
-  ${({ theme }) => `
+const PageButtonsContainer = styled.div(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
     padding: ${theme.space['2']} ${theme.space['4']};
-  `}
-`
+  `,
+)
 
-const TabWrapperWithButtons = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: normal;
-  justify-content: flex-start;
-  width: 100%;
-`
+const TabWrapperWithButtons = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: column;
+    align-items: normal;
+    justify-content: flex-start;
+    width: 100%;
+  `,
+)
 
 export const SubnamesTab = ({
   name,

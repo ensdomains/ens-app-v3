@@ -1,0 +1,12 @@
+{
+  "title": "Settings",
+  "section": {
+    "wallet": {
+      "title": "Wallet"
+    },
+    "transaction": {
+      "title": "Transactions",
+      "clear": "Clear"
+    }
+  }
+}

@@ -1,40 +1,38 @@
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-const ExpiryWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  ${({ theme }) => `
-   gap: ${theme.space['1']};
-   flex-gap: ${theme.space['1']};
-   `}
-`
+const ExpiryWrapper = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: ${theme.space['1']};
+    flex-gap: ${theme.space['1']};
+  `,
+)
 
-const ClockIcon = styled.div<{ $color: 'red' | 'orange' | 'grey' }>`
-  ${({ theme, $color }) => `
-        width: ${theme.space['5']};
-        height: ${theme.space['5']};
-        color: ${theme.colors[$color]};
-    `}
-`
+const ClockIcon = styled.div<{ $color: 'red' | 'orange' | 'grey' }>(
+  ({ theme, $color }) => css`
+    width: ${theme.space['5']};
+    height: ${theme.space['5']};
+    color: ${theme.colors[$color]};
+  `,
+)
 
 const ExpiryText = styled(Typography)<{
   $color: 'red' | 'orange' | 'foreground'
-}>`
-  ${({ theme, $color }) => `
+}>(
+  ({ theme, $color }) => css`
     color: ${theme.colors[$color]};
-    ${
-      $color === 'foreground'
-        ? `
-      opacity: 0.4;
-    `
-        : ``
-    }
-  `}
-`
+    ${$color === 'foreground'
+      ? css`
+          opacity: 0.4;
+        `
+      : ``}
+  `,
+)
 
 export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()

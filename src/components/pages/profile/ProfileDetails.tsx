@@ -2,38 +2,40 @@ import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'next-i18next'
-import styled from 'styled-components'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 import {
   AddressProfileButton,
   OtherProfileButton,
   SocialProfileButton,
 } from './ProfileButton'
 
-const ProfileInfoBox = styled.div`
-  ${({ theme }) => `
-  padding: ${theme.space['6']} ${theme.space['4']};
-  background-color: ${theme.colors.background};
-  border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-  box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-  border-radius: ${theme.radii['2xLarge']};
-  `}
-`
+const ProfileInfoBox = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['6']} ${theme.space['4']};
+    background-color: ${theme.colors.background};
+    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    border-radius: ${theme.radii['2xLarge']};
+  `,
+)
 
-const Stack = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: row;
-  flex-gap: ${theme.space['2']};
-  gap: ${theme.space['2']};
-  flex-wrap: wrap;
-  margin-top: ${theme.space['2']};
-  `}
-`
+const Stack = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    flex-gap: ${theme.space['2']};
+    gap: ${theme.space['2']};
+    flex-wrap: wrap;
+    margin-top: ${theme.space['2']};
+  `,
+)
 
-const SectionTitle = styled(Typography)`
-  margin-left: ${({ theme }) => theme.space['4']};
-`
+const SectionTitle = styled(Typography)(
+  ({ theme }) => css`
+    margin-left: ${theme.space['4']};
+  `,
+)
 
 const ProfileSection = ({
   condition,
@@ -85,14 +87,14 @@ const ProfileSection = ({
   ) : null
 }
 
-const RecordsStack = styled.div`
-  ${({ theme }) => `
-  display: flex;
-  flex-direction: column;
-  flex-gap: ${theme.space['4']};
-  gap: ${theme.space['4']};
-  `}
-`
+const RecordsStack = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    flex-gap: ${theme.space['4']};
+    gap: ${theme.space['4']};
+  `,
+)
 
 export const ProfileDetails = ({
   textRecords = [],

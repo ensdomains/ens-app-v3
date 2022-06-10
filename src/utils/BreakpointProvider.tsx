@@ -1,11 +1,18 @@
 import React, { createContext, useContext, useEffect, useState } from 'react'
 
-const defaultValue = {}
-
-const BreakpointContext = createContext<Partial<Query>>(defaultValue)
-
 type QueryType = 'xs' | 'sm' | 'md' | 'lg' | 'xl'
+type QueryResult = Record<QueryType, boolean>
 type Query = Record<QueryType, string>
+
+const defaultValue = {
+  xs: false,
+  sm: false,
+  md: false,
+  lg: false,
+  xl: false,
+}
+
+const BreakpointContext = createContext<Partial<QueryResult>>(defaultValue)
 
 const BreakpointProvider = ({
   children,
@@ -32,13 +39,13 @@ const BreakpointProvider = ({
     }
 
     if (window && window.matchMedia) {
-      const matches: Record<string, any> = {}
+      const matches: Record<string, boolean> = {}
       keys.forEach((media) => {
         if (typeof queries[media] === 'string') {
           mediaQueryLists[media] = window.matchMedia(
             queries[media as QueryType],
           )
-          matches[media] = mediaQueryLists[media]?.matches
+          matches[media] = mediaQueryLists[media]?.matches || false
         } else {
           matches[media] = false
         }

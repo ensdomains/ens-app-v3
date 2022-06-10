@@ -1,3 +1,4 @@
+import { Notifications } from '@app/components/Notifications'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import {
@@ -11,13 +12,14 @@ import {
   Theme,
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
-import { appWithTranslation } from 'next-i18next'
 import type { AppProps } from 'next/app'
+import { I18nextProvider } from 'react-i18next'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import i18n from '../i18n'
 import '../styles.css'
 
 const rainbowKitTheme: Theme = {
@@ -55,6 +57,7 @@ a {
 * {
   box-sizing: border-box;
   font-feature-settings: "ss01" on, "ss03" on;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
   -moz-font-feature-settings: "ss01" on, "ss03" on;
 }
 `
@@ -103,22 +106,25 @@ const queryClient = new QueryClient({
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <QueryClientProvider client={queryClient}>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
-          <EnsProvider>
-            <ThemeProvider theme={thorinLightTheme}>
-              <BreakpointProvider queries={breakpoints}>
-                <GlobalStyle />
-                <ThorinGlobalStyles />
-                <Component {...pageProps} />
-              </BreakpointProvider>
-            </ThemeProvider>
-          </EnsProvider>
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </QueryClientProvider>
+    <I18nextProvider i18n={i18n}>
+      <QueryClientProvider client={queryClient}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+            <EnsProvider>
+              <ThemeProvider theme={thorinLightTheme}>
+                <BreakpointProvider queries={breakpoints}>
+                  <GlobalStyle />
+                  <ThorinGlobalStyles />
+                  <Notifications />
+                  <Component {...pageProps} />
+                </BreakpointProvider>
+              </ThemeProvider>
+            </EnsProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </QueryClientProvider>
+    </I18nextProvider>
   )
 }
 
-export default appWithTranslation(MyApp)
+export default MyApp

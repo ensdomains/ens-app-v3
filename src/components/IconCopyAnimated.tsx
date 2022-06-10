@@ -1,39 +1,40 @@
 import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
 import { memo } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 
-const IconWrapper = styled.div<{ $copied: boolean }>`
-  position: relative;
-  & > svg {
-    display: block;
-    transition: all 0.15s ease-in-out;
-  }
-  & > svg:first-child {
-    position: absolute;
-  }
-  ${(props) =>
-    props.$copied
-      ? `
-        & > svg:first-child {
+const IconWrapper = styled.div<{ $copied: boolean }>(
+  ({ $copied }) => css`
+    position: relative;
+    & > svg {
+      display: block;
+      transition: all 0.15s ease-in-out;
+    }
+    & > svg:first-child {
+      position: absolute;
+    }
+    ${$copied
+      ? css`
+          & > svg:first-child {
             opacity: 1;
             visibility: visible;
-        }
-        & > svg:last-child {
+          }
+          & > svg:last-child {
             opacity: 0;
             visibility: hidden;
-        }
-    `
-      : `
-        & > svg:first-child {
+          }
+        `
+      : css`
+          & > svg:first-child {
             opacity: 0;
             visibility: hidden;
-        }
-        & > svg:last-child {
+          }
+          & > svg:last-child {
             opacity: 1;
             visibility: visible;
-        }
-    `}
-`
+          }
+        `}
+  `,
+)
 
 type SVGProps = {
   checkStrokeWidth?: keyof typeof tokens.borderWidths
@@ -45,20 +46,23 @@ const SVGWrapper = styled.svg<{
   $checkStrokeWidth: SVGProps['checkStrokeWidth']
   $size: SVGProps['size']
   $color: SVGProps['color']
-}>`
-  ${({ theme, $checkStrokeWidth, $size, $color }) => `
-  ${
-    $checkStrokeWidth &&
-    `stroke-width: ${theme.borderWidths[$checkStrokeWidth]};`
-  }
-  ${
-    $size &&
-    `width: ${theme.space[$size]};
-    height: ${theme.space[$size]};`
-  }
-  ${$color && `color: ${theme.colors[$color]};`}
-  `}
-`
+}>(
+  ({ theme, $checkStrokeWidth, $size, $color }) => css`
+    ${$checkStrokeWidth &&
+    css`
+      stroke-width: ${theme.borderWidths[$checkStrokeWidth]};
+    `}
+    ${$size &&
+    css`
+      width: ${theme.space[$size]};
+      height: ${theme.space[$size]};
+    `}
+  ${$color &&
+    css`
+      color: ${theme.colors[$color]};
+    `}
+  `,
+)
 
 export const IconCopyAnimated = memo(
   ({
