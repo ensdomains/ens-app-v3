@@ -14,5 +14,6 @@
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
-  }
+  },
+  "jest.jestCommandLine": "yarn test"
 }
