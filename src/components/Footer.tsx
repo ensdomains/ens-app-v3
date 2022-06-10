@@ -60,7 +60,7 @@ export const Footer = () => {
 
   return (
     <Container>
-      <LanugageDropdown />
+      <LanugageDropdown invert />
       <TrailingStack>
         <LinkContainer>
           <StyledNavLink disabled href="/bug-bounty">
