@@ -1994,9 +1994,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.5.13":
-  version: 0.5.13
-  resolution: "@ensdomains/thorin@npm:0.5.13"
+"@ensdomains/thorin@npm:^0.5.16":
+  version: 0.5.16
+  resolution: "@ensdomains/thorin@npm:0.5.16"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2006,7 +2006,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 6672ee9d66daca9a839098cc7a0d05a702b28ad756ad4624d179e12358c98570b6f363caaba8606134b82b6ea9755ad89c95196824862666bc3659f517a4dfbe
+  checksum: 914828eeea3a31ce2e5ec6cb86a9cbd629aad52a04a8895b05b953294e0919b4b078a87f3e1a58b7591d44eab6d489e5dfac0703f347416cf1c50ef94d4c52fb
   languageName: node
   linkType: hard
 
@@ -10545,7 +10545,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.5.13
+    "@ensdomains/thorin": ^0.5.16
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5
@@ -10615,6 +10615,7 @@ __metadata:
     react: ^17.0.2
     react-dom: ^17.0.2
     react-ga: ^3.3.0
+    react-hook-form: ^7.31.3
     react-i18next: ^11.17.0
     react-is: ^17.0.2
     react-query: ^3.34.19
@@ -19799,6 +19800,15 @@ __metadata:
     prop-types: ^15.6.0
     react: ^15.6.2 || ^16.0 || ^17
   checksum: b4f5b0ed3a5d7ea781397d6a1f8dacae2284fe7f03f72dde330958dd0a64732f8766c6fa26cf0f1a8fb1303fa02aa51f23cf0b261e52981d0275262b831c7fea
+  languageName: node
+  linkType: hard
+
+"react-hook-form@npm:^7.31.3":
+  version: 7.31.3
+  resolution: "react-hook-form@npm:7.31.3"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18
+  checksum: 01601c904c39dea8f617d0fc35ff62ab6e8c4968b2007990ce88952f1c24063c025eb169703edcf596dc38439669268175b9f5fb7a5d553e46fdc8bb7523ed63
   languageName: node
   linkType: hard
 

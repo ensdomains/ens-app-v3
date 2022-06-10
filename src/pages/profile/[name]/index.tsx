@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NameSnippet } from '@app/components/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
+import ProfileEditor from '@app/components/profile/ProfileEditor'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -210,6 +211,7 @@ const ProfilePage: NextPage = () => {
           />
         </DetailsWrapper>
       </WrapperGrid>
+      <ProfileEditor />
     </Basic>
   )
 }
