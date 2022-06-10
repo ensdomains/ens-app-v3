@@ -3,6 +3,7 @@ import { LeadingHeading } from '@app/components/LeadingHeading'
 import { SearchInput } from '@app/components/SearchInput'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
@@ -70,12 +71,13 @@ const StyledENS = styled.div(
 )
 
 export default function Page() {
+  const { isReady } = useRouter()
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
 
   return (
     <>
-      {!breakpoints.sm && (
+      {isReady && !breakpoints.sm && (
         <LeadingHeading>
           <StyledENS as={ENSWithGradient} />
           <FilledHamburgerMenu />
