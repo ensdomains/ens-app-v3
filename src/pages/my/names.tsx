@@ -121,7 +121,7 @@ export default function Page() {
   const router = useRouter()
   const { data: addressData, isLoading, status } = useAccount()
   const address = (router.query.address as string) || addressData?.address
-  const isSelf = address === addressData?.address
+  const isSelf = true
   const { activeChain: chain } = useNetwork()
 
   const [viewType, setViewType] = useState<ViewType>('list')

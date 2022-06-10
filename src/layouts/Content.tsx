@@ -1,6 +1,6 @@
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
-import { FilledHamburgerMenu } from '@app/components/@molecules/FilledHamburgerMenu'
+import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
@@ -195,7 +195,7 @@ export const Content = ({
                 </TitleContainer>
               </TitleWrapper>
             </ContentContainer>
-            {!router.query.from && !breakpoints.sm && <FilledHamburgerMenu />}
+            {!router.query.from && !breakpoints.sm && <HamburgerRoutes />}
           </CustomLeadingHeading>
         </Skeleton>
         {children.header && breakpoints.sm && (

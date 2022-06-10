@@ -1,4 +1,4 @@
-import { FilledHamburgerMenu } from '@app/components/@molecules/FilledHamburgerMenu'
+import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { SearchInput } from '@app/components/SearchInput'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -80,7 +80,7 @@ export default function Page() {
       {isReady && !breakpoints.sm && (
         <LeadingHeading>
           <StyledENS as={ENSWithGradient} />
-          <FilledHamburgerMenu />
+          <HamburgerRoutes />
         </LeadingHeading>
       )}
       <Container>

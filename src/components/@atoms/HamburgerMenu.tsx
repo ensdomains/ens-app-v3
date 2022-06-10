@@ -1,5 +1,7 @@
 import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
+import { ComponentProps } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 export interface HamburgerItem {
@@ -21,9 +23,11 @@ const MenuIcon = styled(MenuSVG)(
 
 export const HamburgerMenu = ({
   dropdownItems,
+  ...props
 }: {
   dropdownItems: HamburgerItem[]
-}) => {
+} & Omit<Partial<ComponentProps<typeof Dropdown>>, 'isOpen' | 'setIsOpen'>) => {
+  const { t } = useTranslation('common')
   const router = useRouter()
 
   return (
@@ -39,6 +43,7 @@ export const HamburgerMenu = ({
       align="right"
       items={dropdownItems.map((item) => ({
         ...item,
+        label: t(item.label),
         color:
           item.color || router.asPath === item.href
             ? 'accent'
@@ -53,6 +58,7 @@ export const HamburgerMenu = ({
           (() => null),
       }))}
       label={<MenuIcon />}
+      {...props}
     />
   )
 }

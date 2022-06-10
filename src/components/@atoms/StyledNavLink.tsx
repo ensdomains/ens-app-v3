@@ -2,7 +2,7 @@ import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren } from 'react'
 import styled, { css } from 'styled-components'
-import { ConditionalWrapper } from './ConditionalWrapper'
+import { ConditionalWrapper } from '../ConditionalWrapper'
 
 const StyledAnchor = styled.a<{ $isActive: boolean; disabled?: boolean }>(
   ({ theme, $isActive, disabled }) => css`

@@ -122,6 +122,7 @@ export const HeaderConnect = () => {
             dropdownItems={[
               {
                 label: t('wallet.myProfile'),
+                color: 'text',
                 onClick: () => router.push('/my/profile'),
               },
               {
