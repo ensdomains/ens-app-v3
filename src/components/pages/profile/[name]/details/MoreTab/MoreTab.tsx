@@ -9,7 +9,7 @@ import Fuses from './Fuses'
 import { RegistrationDate } from './RegistrationDate'
 import Accordion, { AccordionData } from './Accordion'
 
-const TokenId = () => {
+export const TokenId = () => {
   const router = useRouter()
   const { name } = router.query
 
@@ -50,7 +50,7 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const More = () => {
+const MoreTab = () => {
   return (
     <MoreContainer>
       <Accordion data={data} />
@@ -58,4 +58,4 @@ const More = () => {
   )
 }
 
-export default More
+export default MoreTab
