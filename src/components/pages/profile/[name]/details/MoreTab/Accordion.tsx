@@ -1,61 +1,51 @@
 import React, { useState } from 'react'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
-const AccordionTitle = styled.div`
-  ${({ theme, isActive }) => `
-        padding: ${theme.space['4']} ${theme.space['6']};
-        background: ${theme.colors.white};  
+const AccordionTitle = styled.div<{ $isActive?: boolean }>`
+  ${({ theme, $isActive }) => css`
+    padding: ${theme.space['4']} ${theme.space['6']};
+    background: ${theme.colors.white};
 
-        ${
-          isActive
-            ? `
+    ${$isActive
+      ? `
         border-bottom: 
         ${theme.borderWidths.px} 
         ${theme.borderStyles.solid}
         ${theme.colors.borderTertiary}
         ;
         `
-            : ``
-        }
-    `}
+      : ``}
+  `}
 `
 
-const AccordionBodyContainer = styled.div`
-  ${({ theme, isActive }) => `
-    transition: all ${theme.transitionDuration['300']} ${
-    theme.transitionTimingFunction.out
-  };
+const AccordionBodyContainer = styled.div<{ $isActive: boolean }>`
+  ${({ theme, $isActive }) => css`
+    transition: all ${theme.transitionDuration['300']}
+      ${theme.transitionTimingFunction.out};
 
-      ${
-        isActive
-          ? `
-            padding: ${theme.space['4']} ${theme.space['6']};
-            opacity: 100%;
-            `
-          : `
-              height: 0;
-              padding: 0 ${theme.space['6']};
-              overflow: hidden;
-              opacity: 0%;
-              `
-      }
-`};
+    ${$isActive
+      ? `
+          padding: ${theme.space['4']} ${theme.space['6']};
+          opacity: 100%;
+        `
+      : `
+          height: 0;
+          padding: 0 ${theme.space['6']};
+          overflow: hidden;
+          opacity: 0%;
+        `}
+  `};
 `
 
 interface AccordionBodyProps {
   isActive: boolean
-  setIsActive: () => null
-  children: [React.ReactNode]
+  children: [React.ReactNode] | React.ReactNode
 }
 
-const AccordionBody = ({
-  isActive,
-  setIsActive,
-  children,
-}: AccordionBodyProps) => {
+const AccordionBody = ({ isActive, children }: AccordionBodyProps) => {
   return (
-    <AccordionBodyContainer {...{ isActive, onClick: setIsActive }}>
+    <AccordionBodyContainer {...{ $isActive: isActive }}>
       {children}
     </AccordionBodyContainer>
   )
@@ -67,8 +57,11 @@ const AccordionItem = styled.div`
   cursor: pointer;
 `
 
-const AccordionContainer = styled.div`
-  ${({ theme, activeItem, totalItems }) => `
+const AccordionContainer = styled.div<{
+  $activeItem: number
+  $totalItems: number
+}>`
+  ${({ theme, $activeItem, $totalItems }) => `
     box-shadow: ${theme.boxShadows['0.25']};
     display: flex;
     align-items: center;
@@ -95,7 +88,7 @@ const AccordionContainer = styled.div`
   }
 
   ${
-    activeItem + 1 !== totalItems
+    $activeItem + 1 !== $totalItems
       ? `
       
       & > div:last-child > div:first-child {
@@ -109,24 +102,28 @@ const AccordionContainer = styled.div`
 `
 
 export interface AccordionData {
-  title: 'string'
+  title: string
   body: React.ReactNode
 }
 
 interface AccordionProps {
-  data: [AccordionData]
+  data: AccordionData[]
 }
 
 const Accordion = ({ data }: AccordionProps) => {
   const [activeItem, setActiveItem] = useState(0)
 
   return (
-    <AccordionContainer {...{ activeItem, totalItems: data && data.length }}>
+    <AccordionContainer
+      {...{ $activeItem: activeItem, $totalItems: data && data.length }}
+    >
       {data &&
         data.map((item, idx) => {
           const isActive = activeItem === idx
           return (
-            <AccordionItem {...{ onClick: () => setActiveItem(idx) }}>
+            <AccordionItem
+              {...{ onClick: () => setActiveItem(idx), key: item.title }}
+            >
               <AccordionTitle {...{ isActive }}>
                 <Typography variant="extraLarge" weight="bold">
                   {item.title}

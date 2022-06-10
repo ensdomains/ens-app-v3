@@ -9,6 +9,16 @@ The all new, all cool version of the ENS manager.
 
 ## Usage
 
+### Quick start
+
+```bash
+yarn
+yarn env start
+yarn dev:glocal
+```
+
+Set your browser to ropsten
+
 ### Install
 
 ```bash
@@ -37,6 +47,8 @@ yarn test
 yarn test:watch
 yarn test:coverage
 ```
+
+We recommend installing [this](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) vscode plugin for a better unit testing experience.
 
 ### Test Environment
 
@@ -99,3 +111,9 @@ yarn publish:local:ensjs
 ```bash
 yarn
 ```
+
+## Architecture
+
+The strcutre of the `pages` folder is mimicked inside `components`. Components specific to a page can be found in the the `components` folder, in the folder corresponding to that page.
+
+Components that are used in multiple places will be found in the top level of the `components` folder.

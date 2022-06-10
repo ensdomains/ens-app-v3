@@ -13,7 +13,7 @@ export const TokenId = () => {
   const router = useRouter()
   const { name } = router.query
 
-  const label = name?.split('.')?.[0]
+  const label = (name as string)?.split('.')?.[0]
   const labelHash = utils.keccak256(utils.toUtf8Bytes(label))
   const tokenId = BigNumber.from(labelHash).toString()
 
@@ -25,7 +25,7 @@ export const TokenId = () => {
   )
 }
 
-const data: AccordionData = [
+const data: AccordionData[] = [
   {
     title: 'Resolver',
     body: <ResolverDetails />,

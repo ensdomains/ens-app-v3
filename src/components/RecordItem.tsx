@@ -6,7 +6,7 @@ import { useCopied } from '@app/hooks/useCopied'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import mq from '@app/mediaQuery'
 
-const RecordContainer = styled.button`
+const RecordContainer = styled.button<{ $hasBackground?: boolean }>`
   ${({ theme, $hasBackground }) => css`
     width: 100%;
     display: flex;
@@ -60,7 +60,7 @@ const RecordKey = styled(Typography)`
   `}
 `
 
-const CopyButtonWrapper = styled.div`
+const CopyButtonWrapper = styled.div<{ $hasBackground?: boolean }>`
   ${({ $hasBackground }) => css`
     flex-grow: 1;
     display: flex;

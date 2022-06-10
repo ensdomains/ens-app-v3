@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useEffect, useState } from 'react'
 import { useProvider, useNetwork } from 'wagmi'
 import { Typography, Button } from '@ensdomains/thorin'
@@ -7,7 +7,7 @@ import { useRouter } from 'next/router'
 import { useGetHistory } from '@app/hooks/useGetHistory'
 import mq from '@app/mediaQuery'
 
-function getEtherScanLink(networkId) {
+function getEtherScanLink(networkId?: number | string) {
   switch (networkId) {
     case 1:
     case '1':
@@ -27,27 +27,32 @@ function getEtherScanLink(networkId) {
 }
 
 const RegistrationDateContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  flex-direction: column;
-  gap: 10px;
+  ${({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-direction: column;
+    gap: ${theme.space['2.5']};
 
-  ${mq.sm.min`
-  flex-direction: row;
+    ${mq.sm.min`
+      flex-direction: row;
     `}
+  `}
 `
 
 export const RegistrationDate = () => {
   const router = useRouter()
   const { name } = router.query
-  const { history = {}, isLoading } = useGetHistory(name)
+  const { history = { registration: [] }, isLoading } = useGetHistory(
+    name as string,
+  )
   const provider = useProvider()
-  const {
-    activeChain: { id },
-  } = useNetwork()
+  const { activeChain } = useNetwork()
 
-  const [registrationData, setRegistrationData] = useState({
+  const [registrationData, setRegistrationData] = useState<{
+    registrationDate: string | null
+    transactionHash: string | null
+  }>({
     registrationDate: null,
     transactionHash: null,
   })
@@ -71,7 +76,6 @@ export const RegistrationDate = () => {
         }
       }
     }
-    console.log('name: ', name)
     getReigstartionData()
   }, [name, isLoading, history, provider])
 
@@ -81,7 +85,9 @@ export const RegistrationDate = () => {
       <div style={{ maxWidth: 300 }}>
         <Button
           as="a"
-          href={`${getEtherScanLink(id)}tx/${registrationData.transactionHash}`}
+          href={`${getEtherScanLink(activeChain?.id)}tx/${
+            registrationData.transactionHash
+          }`}
           target="_blank"
           size="small"
         >

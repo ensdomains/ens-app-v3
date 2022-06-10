@@ -1,10 +1,6 @@
 import { CID } from 'multiformats'
 import { isCID, isOwnerOfParentDomain, normaliseOrMark } from './utils'
 
-jest.mock('../apollo/reactiveVars', () => ({
-  __esModule: true,
-}))
-
 describe('isOwnerOfParentDomain', () => {
   it('should return false if address is not provided', () => {
     const mockDomain = {

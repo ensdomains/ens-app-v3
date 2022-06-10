@@ -1,55 +1,51 @@
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
-import { Typography } from '@ensdomains/thorin'
+import { Typography, Space } from '@ensdomains/thorin'
 
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import mq from '@app/mediaQuery'
 
 const FusesContainer = styled.div`
-  ${() => css`
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-    padding: 20px 25px;
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  padding: 20px 25px;
 
-    ${mq.sm.min`
+  ${mq.sm.min`
       max-width: 500px;
    `}
-  `}
 `
 
 const FusesRow = styled.div`
-  ${() => css`
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 
-    &:not(:last-child) {
-      padding-bottom: 20px;
-    }
-  `}
+  &:not(:last-child) {
+    padding-bottom: 20px;
+  }
 `
 
-const TrafficLight = styled.div`
-  ${({ theme, go }) => css`
+const TrafficLight = styled.div<{ $go: boolean }>`
+  ${({ theme, $go }) => css`
     width: 20px;
     height: 20px;
     border-radius: 50%;
-    background-color: ${go ? theme.colors.green : theme.colors.red};
+    background-color: ${$go ? theme.colors.green : theme.colors.red};
   `}
 `
 
-const Spacer = styled.div`
-  ${({ theme, height }) => `
+const Spacer = styled.div<{ $height: Space }>`
+  ${({ theme, $height }) => css`
     width: 100%;
-    height: ${theme.space[height]};
-    `}
+    height: ${theme.space[$height]};
+  `}
 `
 
 const Fuses = () => {
   const router = useRouter()
   const { name } = router.query
-  const { fuseData } = useGetFuseData(name)
+  const { fuseData } = useGetFuseData((name as string) || '')
 
   return !fuseData ? (
     <Typography>Please wrap your name to unlock this feature</Typography>
@@ -59,14 +55,14 @@ const Fuses = () => {
         <Typography weight="bold" color="textTertiary">
           Permissions
         </Typography>
-        <Spacer height={5} />
+        <Spacer $height="5" />
         <div>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
               Can do everything
             </Typography>
             <TrafficLight
-              go={fuseData.fuseObj.canDoEverything}
+              $go={fuseData.fuseObj.canDoEverything}
               data-testid="first-traffic-light"
             />
           </FusesRow>
@@ -74,52 +70,52 @@ const Fuses = () => {
             <Typography color="textSecondary" weight="bold">
               Can burn fuses
             </Typography>
-            <TrafficLight go={!fuseData.fuseObj.cannotBurnFuses} />
+            <TrafficLight $go={!fuseData.fuseObj.cannotBurnFuses} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
               Can create subdomains
             </Typography>
-            <TrafficLight go={!fuseData.fuseObj.cannotCreateSubdomains} />
+            <TrafficLight $go={!fuseData.fuseObj.cannotCreateSubdomains} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
               Can set resolver
             </Typography>
-            <TrafficLight go={!fuseData.fuseObj.cannotSetResolver} />
+            <TrafficLight $go={!fuseData.fuseObj.cannotSetResolver} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
               Can set TTL
             </Typography>
-            <TrafficLight go={!fuseData.fuseObj.cannotSetTTL} />
+            <TrafficLight $go={!fuseData.fuseObj.cannotSetTTL} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
               Can transfer
             </Typography>
-            <TrafficLight go={!fuseData.fuseObj.cannotTransfer} />
+            <TrafficLight $go={!fuseData.fuseObj.cannotTransfer} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
               Can unwrap
             </Typography>
-            <TrafficLight go={!fuseData.fuseObj.cannotUnwrap} />
+            <TrafficLight $go={!fuseData.fuseObj.cannotUnwrap} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
               Parent can control
             </Typography>
-            <TrafficLight go={!fuseData.fuseObj.parentCannotControl} />
+            <TrafficLight $go={!fuseData.fuseObj.parentCannotControl} />
           </FusesRow>
         </div>
       </div>
-      <Spacer height={10} />
+      <Spacer $height="10" />
       <div>
         <Typography weight="bold" color="textTertiary">
           Vulnerabilities
         </Typography>
-        <Spacer height={5} />
+        <Spacer $height="5" />
         <FusesRow>
           <Typography color="textSecondary" weight="bold">
             Vulnerability
@@ -133,7 +129,7 @@ const Fuses = () => {
             Vulnerable node
           </Typography>
           <Typography color="textSecondary">
-            {fuseData.vulerableNode ?? 'None'}
+            {fuseData.vulnerableNode ?? 'None'}
           </Typography>
         </FusesRow>
       </div>
