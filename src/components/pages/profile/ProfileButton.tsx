@@ -216,16 +216,16 @@ export const OtherProfileButton = ({
   type?: 'text' | 'address'
 }) => {
   const breakpoints = useBreakpoint()
-  const isLink = value.startsWith('http://') || value.startsWith('https://')
+  const isLink = value?.startsWith('http://') || value?.startsWith('https://')
 
   const formattedValue = useMemo(() => {
     if (breakpoints.sm) {
       if (type === 'address') {
         return shortenAddress(value)
       }
-      return value.length > 15 ? `${value.slice(0, 15)}...` : value
+      return value?.length > 15 ? `${value.slice(0, 15)}...` : value
     }
-    return value.length > 5 ? `${value.slice(0, 5)}...` : value
+    return value?.length > 5 ? `${value.slice(0, 5)}...` : value
   }, [type, value, breakpoints])
 
   return (

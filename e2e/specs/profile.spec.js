@@ -25,6 +25,7 @@ describe('Profile', () => {
     })
 
     it('should show the address records', () => {
+      cy.reload()
       cy.contains('Addresses').should('be.visible')
       cy.get('[data-testid="address-profile-button-eth"]', {
         timeout: 25000,
