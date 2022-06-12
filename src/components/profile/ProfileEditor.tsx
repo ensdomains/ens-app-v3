@@ -7,7 +7,7 @@ import {
   AddressIconType,
   DynamicAddressIcon,
 } from '@app/assets/address/DynamicAddressIcon'
-import * as Banner from '../@atoms/Banner/Banner'
+import { Banner } from '../@atoms/Banner/Banner'
 import { SelectableInput } from '../@molecules/SelectableInput/SelectableInput'
 
 const ACCCOUNT_OPTIONS: AddressIconType[] = [

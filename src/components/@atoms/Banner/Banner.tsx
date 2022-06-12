@@ -27,5 +27,3 @@ export const Banner = ({ children }: PropsWithChildren<{}>) => {
     </Container>
   )
 }
-
-export default Banner
