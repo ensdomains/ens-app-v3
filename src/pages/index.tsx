@@ -4,6 +4,7 @@ import { LeadingHeading } from '@app/components/LeadingHeading'
 import { SearchInput } from '@app/components/SearchInput'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -89,6 +90,9 @@ export default function Page() {
 
   return (
     <>
+      <Head>
+        <title>ENS</title>
+      </Head>
       {isReady && !breakpoints.md && (
         <LeadingHeading>
           <LogoAndLanguage>

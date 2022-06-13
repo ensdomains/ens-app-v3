@@ -4,6 +4,7 @@ import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 
@@ -161,6 +162,9 @@ export const Content = ({
 
   return (
     <>
+      <Head>
+        <title>{title} - ENS</title>
+      </Head>
       {!loading && children.warning && (
         <WarningWrapper>
           <ErrorContainer

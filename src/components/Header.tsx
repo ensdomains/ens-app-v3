@@ -117,6 +117,13 @@ export const Header = () => {
     initialEntered: true,
   })
 
+  // eslint-disable-next-line no-nested-ternary
+  const statefulRoutes = connected
+    ? dropdownRoutes
+    : breakpoints.lg
+    ? dropdownRoutes.slice(3)
+    : dropdownRoutes
+
   const toggleRoutesShowing = useCallback(
     (evt: FocusEvent) => {
       if (evt.type === 'focusout') {
@@ -159,7 +166,7 @@ export const Header = () => {
           )}
         </ConditionalWrapper>
         {connected && (
-          <HamburgerMenu align="left" dropdownItems={dropdownRoutes} />
+          <HamburgerMenu align="left" dropdownItems={statefulRoutes} />
         )}
         {router.asPath !== '/' && breakpoints.md && (
           <>
@@ -169,22 +176,33 @@ export const Header = () => {
             </SearchWrapper>
           </>
         )}
-        {breakpoints.lg && <div style={{ flexGrow: 1 }} />}
-        {connected && (
-          <RouteContainer ref={routeContainerRef} $state={state}>
-            {routesNoSearch.map((route) => (
-              <RouteItem
-                key={route.name}
-                route={route}
-                asText={breakpoints.lg}
-                hasNotification={
-                  route.name === 'settings' && pendingTransactions.length > 0
-                }
-              />
-            ))}
-          </RouteContainer>
-        )}
-        {!connected && <HamburgerMenu dropdownItems={dropdownRoutes} />}
+        {((connected && (breakpoints.lg || router.asPath === '/')) ||
+          !connected) && <div style={{ flexGrow: 1 }} />}
+        <RouteContainer
+          ref={routeContainerRef}
+          $state={breakpoints.lg ? 'entered' : state}
+        >
+          {/* eslint-disable-next-line no-nested-ternary */}
+          {connected
+            ? routesNoSearch.map((route) => (
+                <RouteItem
+                  key={route.name}
+                  route={route}
+                  asText={breakpoints.lg}
+                  hasNotification={
+                    route.name === 'settings' && pendingTransactions.length > 0
+                  }
+                />
+              ))
+            : breakpoints.lg
+            ? dropdownRoutes
+                .slice(0, 3)
+                .map((route) => (
+                  <RouteItem key={route.name} route={route} asText />
+                ))
+            : null}
+        </RouteContainer>
+        {!connected && <HamburgerMenu dropdownItems={statefulRoutes} />}
         {breakpoints.md && <HeaderConnect />}
       </NavContainer>
     </HeaderWrapper>
