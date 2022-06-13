@@ -189,16 +189,16 @@ export const Content = ({
                 {titleButton}
                 <TitleContainer>
                   <Title weight="bold">{title}</Title>
-                  {subtitle && (!breakpoints.sm || alwaysShowSubtitle) && (
+                  {subtitle && (!breakpoints.md || alwaysShowSubtitle) && (
                     <Subtitle weight="bold">{subtitle}</Subtitle>
                   )}
                 </TitleContainer>
               </TitleWrapper>
             </ContentContainer>
-            {!router.query.from && !breakpoints.sm && <HamburgerRoutes />}
+            {!router.query.from && !breakpoints.md && <HamburgerRoutes />}
           </CustomLeadingHeading>
         </Skeleton>
-        {children.header && breakpoints.sm && (
+        {children.header && breakpoints.md && (
           <ContentContainer>
             <Skeleton loading={loading}>{children.header}</Skeleton>
           </ContentContainer>
@@ -212,7 +212,7 @@ export const Content = ({
       ) : (
         <ContentPlaceholder />
       )}
-      {children.header && !breakpoints.sm && (
+      {children.header && !breakpoints.md && (
         <ContentContainer>
           <Skeleton loading={loading}>{children.header}</Skeleton>
         </ContentContainer>

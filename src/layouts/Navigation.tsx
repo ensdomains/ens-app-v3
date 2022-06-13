@@ -7,7 +7,7 @@ export const Navigation = () => {
   const { isReady } = useRouter()
   const breakpoints = useBreakpoint()
 
-  if (isReady && !breakpoints.sm) {
+  if (isReady && !breakpoints.md) {
     return <TabBar />
   }
 

@@ -114,7 +114,7 @@ export default function Page() {
               url={getTextRecord('url')?.value}
               description={getTextRecord('description')?.value}
               recordName={getTextRecord('name')?.value}
-              button={isSelf || breakpoints.sm ? undefined : 'viewDetails'}
+              button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
             />
             {isSelf && (
               <SelfButtons>

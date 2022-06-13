@@ -5,6 +5,8 @@ import { mq } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+import { useCallback, useEffect, useRef } from 'react'
+import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
@@ -52,10 +54,39 @@ const NavContainer = styled.div(
     justify-content: center;
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
-    ${mq.sm.min(css`
+    ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
     `)}
+  `,
+)
+
+const RouteContainer = styled.div<{ $state: TransitionState }>(
+  ({ theme, $state }) => css`
+    width: min-content;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    flex-gap: ${theme.space['1']};
+    gap: ${theme.space['1']};
+    transition: transform 0.15s ease-in-out, display 0s linear 0.16s;
+    display: none;
+
+    ${mq.lg.min(css`
+      flex-gap: ${theme.space['3']};
+      gap: ${theme.space['3']};
+    `)}
+
+    ${$state === 'entered' &&
+    css`
+      display: flex;
+    `}
+  `,
+)
+
+const SearchWrapper = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
   `,
 )
 
@@ -74,6 +105,41 @@ export const Header = () => {
   const breakpoints = useBreakpoint()
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
+  const searchWrapperRef = useRef<HTMLDivElement>(null)
+  const routeContainerRef = useRef<HTMLDivElement>(null)
+  const [state, toggle] = useTransition({
+    timeout: {
+      enter: 50,
+      exit: 300,
+    },
+    mountOnEnter: true,
+    unmountOnExit: true,
+    initialEntered: true,
+  })
+
+  const toggleRoutesShowing = useCallback(
+    (evt: FocusEvent) => {
+      if (evt.type === 'focusout') {
+        toggle(true)
+      } else {
+        toggle(false)
+      }
+    },
+    [toggle],
+  )
+
+  useEffect(() => {
+    const searchWrapper = searchWrapperRef.current
+    if (searchWrapper) {
+      searchWrapper?.addEventListener('focusin', toggleRoutesShowing, false)
+      searchWrapper?.addEventListener('focusout', toggleRoutesShowing, false)
+    }
+    return () => {
+      searchWrapper?.removeEventListener('focusin', toggleRoutesShowing, false)
+      searchWrapper?.addEventListener('focusout', toggleRoutesShowing, false)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchWrapperRef.current])
 
   return (
     <HeaderWrapper>
@@ -98,23 +164,28 @@ export const Header = () => {
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
-            <SearchInput size="large" />
+            <SearchWrapper ref={searchWrapperRef}>
+              <SearchInput size="large" />
+            </SearchWrapper>
           </>
         )}
-        <div style={{ flexGrow: 1 }} />
-        {connected &&
-          routesNoSearch.map((route) => (
-            <RouteItem
-              key={route.name}
-              route={route}
-              asText
-              hasNotification={
-                route.name === 'settings' && pendingTransactions.length > 0
-              }
-            />
-          ))}
+        {breakpoints.lg && <div style={{ flexGrow: 1 }} />}
+        {connected && (
+          <RouteContainer ref={routeContainerRef} $state={state}>
+            {routesNoSearch.map((route) => (
+              <RouteItem
+                key={route.name}
+                route={route}
+                asText={breakpoints.lg}
+                hasNotification={
+                  route.name === 'settings' && pendingTransactions.length > 0
+                }
+              />
+            ))}
+          </RouteContainer>
+        )}
         {!connected && <HamburgerMenu dropdownItems={dropdownRoutes} />}
-        {breakpoints.sm && <HeaderConnect />}
+        {breakpoints.md && <HeaderConnect />}
       </NavContainer>
     </HeaderWrapper>
   )

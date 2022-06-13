@@ -48,7 +48,7 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
     <Container>
       <Navigation />
       <ContentWrapper>{children}</ContentWrapper>
-      {isReady && !breakpoints.sm ? <BottomPlaceholder /> : <Footer />}
+      {isReady && !breakpoints.md ? <BottomPlaceholder /> : <Footer />}
     </Container>
   )
 }

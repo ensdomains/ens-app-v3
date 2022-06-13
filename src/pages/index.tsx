@@ -1,4 +1,5 @@
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import { LanugageDropdown } from '@app/components/LanguageDropdown'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { SearchInput } from '@app/components/SearchInput'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -70,6 +71,17 @@ const StyledENS = styled.div(
   `,
 )
 
+const LogoAndLanguage = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
+  `,
+)
+
 export default function Page() {
   const { isReady } = useRouter()
   const { t } = useTranslation('common')
@@ -77,9 +89,12 @@ export default function Page() {
 
   return (
     <>
-      {isReady && !breakpoints.sm && (
+      {isReady && !breakpoints.md && (
         <LeadingHeading>
-          <StyledENS as={ENSWithGradient} />
+          <LogoAndLanguage>
+            <StyledENS as={ENSWithGradient} />
+            <LanugageDropdown />
+          </LogoAndLanguage>
           <HamburgerRoutes />
         </LeadingHeading>
       )}
