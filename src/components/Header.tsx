@@ -73,8 +73,8 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     display: none;
 
     ${mq.lg.min(css`
-      flex-gap: ${theme.space['3']};
-      gap: ${theme.space['3']};
+      flex-gap: ${theme.space['6']};
+      gap: ${theme.space['6']};
     `)}
 
     ${$state === 'entered' &&
