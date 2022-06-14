@@ -1,6 +1,23 @@
 import { acceptMetamaskAccess } from '../setup'
 
 describe('Profile', () => {
+  before(() => {
+    cy.request(
+      'POST',
+      'http://localhost:8000/subgraphs/name/graphprotocol/ens',
+      {
+        query:
+          '\n query getRecords($name: String!) {\n domains(where: { name: $name }) {\n isMigrated\n createdAt\n resolver {\n texts\n coinTypes\n contentHash\n addr {\n id\n }\n }\n }\n }\n ',
+        variables: {
+          name: 'jefflau.eth',
+        },
+        operationName: 'getRecords',
+      },
+    ).then((response) => {
+      console.log('response; ', response)
+    })
+  })
+
   it('should allow user to connect', () => {
     acceptMetamaskAccess()
     // replace with data-testid when design system supports it
@@ -25,7 +42,7 @@ describe('Profile', () => {
     })
 
     it('should show the address records', () => {
-      cy.reload()
+      cy.visit('/profile/jefflau.eth')
       cy.contains('Addresses').should('be.visible')
       cy.get('[data-testid="address-profile-button-eth"]', {
         timeout: 25000,
