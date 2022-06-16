@@ -1,5 +1,5 @@
-import React from 'react'
-import { Checkbox, Field } from '@ensdomains/thorin'
+import React, { ComponentProps, ChangeEvent, Ref } from 'react'
+import { Field, RadioButton } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import SortControl, { SortValue } from '../@molecules/SortControl/SortControl'
@@ -10,8 +10,7 @@ const PopoverContainer = styled.div(
     flex-direction: column;
     gap: ${theme.space['3']};
     padding: ${theme.space['3']};
-    width: 90vw;
-    max-width: 310px;
+    width: 100%;
     background: ${theme.colors.white};
     border: 1px solid ${theme.colors.borderTertiary};
     box-shadow: ${theme.boxShadows['0.02']};
@@ -19,14 +18,7 @@ const PopoverContainer = styled.div(
   `,
 )
 
-const CheckBoxesWrapper = styled.div`
-  display: flex;
-  justify-content: flex-start;
-  flex-wrap: wrap;
-  gap: 10px;
-`
-
-const CheckBoxWrapper = styled.div`
+const RadioButtonContainer = styled.div`
   ${({ theme }) => `
     padding: ${theme.space['1']} ${theme.space['2']};
     background: ${theme.colors.backgroundSecondary};
@@ -35,7 +27,20 @@ const CheckBoxWrapper = styled.div`
   `}
 `
 
-const CheckBoxLabel = styled.span(
+const StyledRadioButton = React.forwardRef(
+  (
+    { onChange, onClick, ...props }: ComponentProps<typeof RadioButton>,
+    ref: Ref<HTMLInputElement>,
+  ) => {
+    return (
+      <RadioButtonContainer onClick={onClick}>
+        <RadioButton ref={ref} {...props} />
+      </RadioButtonContainer>
+    )
+  },
+)
+
+const RadioButtonLabel = styled.span(
   ({ theme }) => css`
     font-family: ${theme.fonts.sans};
     font-weight: ${theme.fontWeights.bold};
@@ -44,65 +49,77 @@ const CheckBoxLabel = styled.span(
     letter-spacing: ${theme.letterSpacings['-0.01']};
     color: ${theme.colors.black};
     text-transform: capitalize;
+    margin-left: -12px;
   `,
 )
 
 type PopoverProps = {
-  sort: SortValue
-  filter: 'none' | 'registration' | 'domain'
-  onChange?: (data: Omit<PopoverProps, 'onChange'>) => void
+  sort?: SortValue
+  filter?: 'none' | 'registration' | 'domain'
+  onSortChange?: (sort: SortValue) => void
+  onFilterChange?: (filter: 'none' | 'registration' | 'domain') => void
 }
 
-const FilterPopover = ({ sort, filter, onChange }: PopoverProps) => {
+const FilterPopover = ({
+  sort,
+  filter,
+  onSortChange,
+  onFilterChange,
+}: PopoverProps) => {
   const { t } = useTranslation('common')
 
-  const onSortChange = (newSort: SortValue) => {
-    if (newSort.type !== sort.type || newSort.direction !== sort.direction) {
-      if (onChange) onChange({ sort: newSort, filter })
-    }
+  const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const newFilter = e.target.value
+    if (
+      onFilterChange &&
+      ['none', 'registration', 'domain'].includes(newFilter)
+    )
+      onFilterChange(newFilter as 'none' | 'registration' | 'domain')
   }
 
-  const onFilterClick = (newFilter: PopoverProps['filter']) => () => {
-    if (filter !== newFilter) {
-      if (onChange)
-        onChange({
-          sort,
-          filter: newFilter,
-        })
+  const handleFilterClick =
+    (newFilter: 'none' | 'registration' | 'domain') => () => {
+      if (onFilterChange) onFilterChange(newFilter)
     }
-  }
-
   return (
     <PopoverContainer>
-      <SortControl value={sort} onChange={onSortChange} />
-      <Field label="Show">
-        <CheckBoxesWrapper>
-          <CheckBoxWrapper onClick={onFilterClick('registration')}>
-            <Checkbox
-              value="registration"
-              label={<CheckBoxLabel>{t('name.registrant')}</CheckBoxLabel>}
-              checked={filter === 'registration'}
-              readOnly
-            />
-          </CheckBoxWrapper>
-          <CheckBoxWrapper onClick={onFilterClick('domain')}>
-            <Checkbox
-              value="domain"
-              label={<CheckBoxLabel>{t('name.controller')}</CheckBoxLabel>}
-              checked={filter === 'domain'}
-              readOnly
-            />
-          </CheckBoxWrapper>
-          <CheckBoxWrapper onClick={onFilterClick('none')}>
-            <Checkbox
+      {sort && (
+        <SortControl
+          value={sort}
+          onChange={(_sort) => onSortChange && onSortChange(_sort)}
+        />
+      )}
+      {filter && (
+        <Field label="Show">
+          <>
+            <StyledRadioButton
+              name="filter"
               value="none"
-              label={<CheckBoxLabel>{t('name.all')}</CheckBoxLabel>}
-              checked={filter === 'none'}
-              readOnly
+              label={<RadioButtonLabel>{t('name.all')}</RadioButtonLabel>}
+              onChange={handleFilterChange}
+              onClick={handleFilterClick('none')}
             />
-          </CheckBoxWrapper>
-        </CheckBoxesWrapper>
-      </Field>
+            <StyledRadioButton
+              name="filter"
+              value="registration"
+              label={
+                <RadioButtonLabel>{t('name.registrant')}</RadioButtonLabel>
+              }
+              onChange={handleFilterChange}
+              onClick={handleFilterClick('registration')}
+            />
+            <StyledRadioButton
+              name="filter"
+              value="domain"
+              label={
+                <RadioButtonLabel>{t('name.controller')}</RadioButtonLabel>
+              }
+              onChange={handleFilterChange}
+              onClick={handleFilterClick('domain')}
+            />
+          </>
+        </Field>
+      )}
     </PopoverContainer>
   )
 }
