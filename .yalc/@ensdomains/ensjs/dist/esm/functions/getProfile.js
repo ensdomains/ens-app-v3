@@ -48,7 +48,8 @@ const getDataForName = async ({ contracts, _getAddr, _getContentHash, _getText, 
     try {
         resolver = await universalResolver?.resolve(hexEncodeName(name), data);
     }
-    catch {
+    catch (e) {
+        console.error('getDataforName error: ', e)
         return;
     }
     const [recordData] = await resolverMulticallWrapper.decode(resolver['0']);
