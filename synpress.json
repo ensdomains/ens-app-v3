@@ -1,7 +1,7 @@
 {
   "baseUrl": "http://localhost:3000",
   "userAgent": "synpress",
-  "retries": { "runMode": 0, "openMode": 0 },
+  "retries": { "runMode": 3, "openMode": 3 },
   "integrationFolder": "e2e/specs",
   "screenshotsFolder": "e2e/screenshots",
   "videosFolder": "e2e/videos",

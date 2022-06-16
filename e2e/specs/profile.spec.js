@@ -41,13 +41,22 @@ describe('Profile', () => {
       }).click()
     })
 
-    it('should show the address records', () => {
-      cy.visit('/profile/jefflau.eth')
-      cy.contains('Addresses').should('be.visible')
-      cy.get('[data-testid="address-profile-button-eth"]', {
-        timeout: 25000,
-      }).should('has.text', '0x866...95eEE')
-    })
+    it(
+      'should show the address records',
+      {
+        retries: {
+          runMode: 5,
+          openMode: 5,
+        },
+      },
+      () => {
+        cy.visit('/profile/jefflau.eth')
+        cy.contains('Addresses').should('be.visible')
+        cy.get('[data-testid="address-profile-button-eth"]', {
+          timeout: 25000,
+        }).should('has.text', '0x866...95eEE')
+      },
+    )
     it('should show profile data', () => {
       cy.contains('Hello2').should('be.visible')
       cy.contains('twitter.com').should('be.visible')
