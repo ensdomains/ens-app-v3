@@ -1,4 +1,8 @@
-import { DecodedContentHash } from '@ensdomains/ensjs/src/utils/contentHash'
+export type DecodedContentHash = {
+  protocolType?: any
+  decoded?: any
+  error?: any
+}
 
 export type Profile = {
   isMigrated: boolean | null

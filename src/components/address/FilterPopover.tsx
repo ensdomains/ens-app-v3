@@ -1,5 +1,5 @@
 import React, { ComponentProps, ChangeEvent, Ref } from 'react'
-import { Field, RadioButton } from '@ensdomains/thorin'
+import { Field, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import SortControl, { SortValue } from '../@molecules/SortControl/SortControl'
@@ -18,24 +18,28 @@ const PopoverContainer = styled.div(
   `,
 )
 
-const RadioButtonContainer = styled.div`
+const StyledRadioButtonContainer = styled.div`
   ${({ theme }) => `
     padding: ${theme.space['1']} ${theme.space['2']};
     background: ${theme.colors.backgroundSecondary};
     border: 1px solid ${theme.colors.borderSecondary};
     border-radius: ${theme.space['2.5']};
+    margin-bottom: ${theme.space['1.25']};
+    &:last-of-type {
+      margin-bottom: 0;
+    }
   `}
 `
 
 const StyledRadioButton = React.forwardRef(
   (
-    { onChange, onClick, ...props }: ComponentProps<typeof RadioButton>,
+    { onClick, ...props }: ComponentProps<typeof RadioButton>,
     ref: Ref<HTMLInputElement>,
   ) => {
     return (
-      <RadioButtonContainer onClick={onClick}>
+      <StyledRadioButtonContainer onClick={onClick}>
         <RadioButton ref={ref} {...props} />
-      </RadioButtonContainer>
+      </StyledRadioButtonContainer>
     )
   },
 )
@@ -81,6 +85,7 @@ const FilterPopover = ({
     (newFilter: 'none' | 'registration' | 'domain') => () => {
       if (onFilterChange) onFilterChange(newFilter)
     }
+
   return (
     <PopoverContainer>
       {sort && (
@@ -91,12 +96,11 @@ const FilterPopover = ({
       )}
       {filter && (
         <Field label="Show">
-          <>
+          <RadioButtonGroup value={filter} onChange={handleFilterChange}>
             <StyledRadioButton
               name="filter"
               value="none"
               label={<RadioButtonLabel>{t('name.all')}</RadioButtonLabel>}
-              onChange={handleFilterChange}
               onClick={handleFilterClick('none')}
             />
             <StyledRadioButton
@@ -105,7 +109,6 @@ const FilterPopover = ({
               label={
                 <RadioButtonLabel>{t('name.registrant')}</RadioButtonLabel>
               }
-              onChange={handleFilterChange}
               onClick={handleFilterClick('registration')}
             />
             <StyledRadioButton
@@ -114,10 +117,9 @@ const FilterPopover = ({
               label={
                 <RadioButtonLabel>{t('name.controller')}</RadioButtonLabel>
               }
-              onChange={handleFilterChange}
               onClick={handleFilterClick('domain')}
             />
-          </>
+          </RadioButtonGroup>
         </Field>
       )}
     </PopoverContainer>

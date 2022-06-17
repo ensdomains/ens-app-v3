@@ -114,7 +114,6 @@ const FilterControl = ({
   }
 
   const handleFilterChange = (newFilter: FilterControlProps['filter']) => {
-    console.log('>>> ', newFilter)
     if (onChange) onChange({ filter: newFilter, sort })
   }
 
@@ -146,6 +145,7 @@ const FilterControl = ({
                 }
                 placement="bottom-start"
                 open={showMenu}
+                onDismiss={() => setShowMenu(false)}
               >
                 <FilterButton pressed={showMenu} onClick={handleToggleShowMenu}>
                   {t('filter')}
@@ -161,16 +161,18 @@ const FilterControl = ({
           </>
         )}
       </ToolBar>
-      <CollapsibleContent expanded={showMobile && showMenu}>
-        <MobilePopoverWrapper>
-          <FilterPopover
-            sort={sort}
-            filter={filter}
-            onSortChange={handleSortChange}
-            onFilterChange={handleFilterChange}
-          />
-        </MobilePopoverWrapper>
-      </CollapsibleContent>
+      {showMobile && (
+        <CollapsibleContent expanded={showMobile && showMenu}>
+          <MobilePopoverWrapper>
+            <FilterPopover
+              sort={sort}
+              filter={filter}
+              onSortChange={handleSortChange}
+              onFilterChange={handleFilterChange}
+            />
+          </MobilePopoverWrapper>
+        </CollapsibleContent>
+      )}
     </Container>
   )
 }
