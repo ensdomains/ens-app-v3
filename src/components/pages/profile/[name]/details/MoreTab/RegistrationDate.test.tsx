@@ -84,11 +84,7 @@ describe('RegistrationDate', () => {
     })
     render(<RegistrationDate />)
 
-    await waitFor(() =>
-      screen.getByText(
-        'Thu Jun 09 2022 21:53:25 GMT+0800 (Taipei Standard Time)',
-      ),
-    )
+    await waitFor(() => screen.getByText('Thu Jun 09 2022', { exact: false }))
   })
   it('should have correct link to etherscan', async () => {
     useRouter.mockImplementation(() => {

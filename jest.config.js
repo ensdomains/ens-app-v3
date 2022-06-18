@@ -64,12 +64,13 @@ const customJestConfig = {
   ],
   coverageThreshold: {
     global: {
-      branches: 0,
-      functions: 0,
-      lines: 0,
-      statements: 0,
+      branches: 1.09,
+      functions: 1.7,
+      lines: 2.57,
+      statements: 2.29,
     },
   },
+  collectCoverage: true,
 }
 
 module.exports = createJestConfig(customJestConfig)

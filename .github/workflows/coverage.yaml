@@ -1,9 +1,8 @@
 name: Coverage
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
-  if: ${{ false }} # disable for now
   coverage:
     runs-on: ubuntu-latest
 
