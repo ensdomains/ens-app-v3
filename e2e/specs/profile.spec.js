@@ -61,10 +61,6 @@ describe('Profile', () => {
       cy.contains('Hello2').should('be.visible')
       cy.contains('twitter.com').should('be.visible')
     })
-    it('should show the back button, and allow user to go back', () => {
-      cy.findByTestId('back-button').click()
-      cy.url().should('eq', 'http://localhost:3000/')
-    })
   })
   describe('name details', () => {
     it('should go to the profile page', () => {
@@ -106,10 +102,6 @@ describe('Profile', () => {
     it('should show profile data', () => {
       cy.contains('Hello2').should('be.visible')
       cy.contains('twitter.com').should('be.visible')
-    })
-    it('should show the back button, and allow user to go back', () => {
-      cy.findByTestId('back-button').click()
-      cy.url().should('eq', 'http://localhost:3000/profile/jefflau.eth')
     })
   })
 })
