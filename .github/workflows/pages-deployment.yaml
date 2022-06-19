@@ -16,7 +16,7 @@ jobs:
           node-version: 16
 
       - name: Install Packages
-        run: yarn install --immutable --immutable-cache
+        run: yarn install --immutable --immutable-cache --check-cache
 
       - name: Build and Export
         run: yarn build:glocal && yarn export
