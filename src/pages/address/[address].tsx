@@ -191,11 +191,11 @@ const AddressPage: NextPage = () => {
           </ErrorContainer>
         )}
         <DetailsContainer $area="details">
-          {primaryProfile && primaryProfile.name && chain?.name ? (
+          {primaryProfile && primaryProfile.name ? (
             <>
               <ProfileSnippet
                 name={primaryProfile.name}
-                network={chain.name}
+                network={chain?.name!}
                 button="viewProfile"
                 description={getTextRecord('description')?.value}
                 recordName={getTextRecord('name')?.value}

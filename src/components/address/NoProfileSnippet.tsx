@@ -40,7 +40,7 @@ const ProfileTitle = styled.div`
 
 const NoProfileSnippet = () => {
   return (
-    <Container>
+    <Container data-testid="no-profile-snippet">
       <AvatarContainer>
         <Avatar label="profile-label" />
       </AvatarContainer>

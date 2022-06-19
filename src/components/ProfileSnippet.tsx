@@ -124,7 +124,7 @@ export const ProfileSnippet = ({
   const { avatar } = useAvatar(name, network)
 
   return (
-    <Container $banner={banner}>
+    <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
         <AvatarWrapper>
           <Avatar label={name} src={avatar || zorb} />
