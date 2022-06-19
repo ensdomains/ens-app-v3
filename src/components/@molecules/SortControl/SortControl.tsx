@@ -111,6 +111,7 @@ const SortControl = ({ value, onChange }: SortControlProps) => {
           variant="transparent"
           shadowless
           size="extraSmall"
+          data-testid="button-desc"
         >
           <div style={{ height: '24px' }}>
             <DownDirectionSVG width="24" height="24" />
@@ -124,6 +125,7 @@ const SortControl = ({ value, onChange }: SortControlProps) => {
           variant="transparent"
           shadowless
           size="extraSmall"
+          data-testid="button-asc"
         >
           <div style={{ height: '24px' }}>
             <UpDirectionSVG width="24" height="24" />
