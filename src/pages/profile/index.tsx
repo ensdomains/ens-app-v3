@@ -9,7 +9,6 @@ import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
-import { GetStaticPaths } from 'next'
 import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -72,14 +71,14 @@ export default function Page() {
   const isLoading =
     detailsLoading || primaryLoading || accountLoading || initial
 
-  useProtectedRoute(
-    '/',
-    // When anything is loading, return true
-    isLoading
-      ? // if is self, user must be connected
-        (isSelf ? address : true) && typeof name === 'string' && name.length > 0
-      : true,
-  )
+  // useProtectedRoute(
+  //   '/',
+  //   // When anything is loading, return true
+  //   isLoading
+  //     ? // if is self, user must be connected
+  //       (isSelf ? address : true) && typeof name === 'string' && name.length > 0
+  //     : true,
+  // )
 
   const getTextRecord = (key: string) =>
     profile?.records?.texts?.find((x) => x.key === key)
@@ -158,17 +157,4 @@ export default function Page() {
 
 Page.getLayout = function getLayout(page: ReactElement) {
   return <ContentGrid>{page}</ContentGrid>
-}
-
-export const getStaticProps = async () => {
-  return {
-    props: {},
-  }
-}
-
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
 }

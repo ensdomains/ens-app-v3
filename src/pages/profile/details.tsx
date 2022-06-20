@@ -9,7 +9,6 @@ import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Card, mq, Typography } from '@ensdomains/thorin'
-import type { GetStaticPaths } from 'next'
 import { useRouter } from 'next/router'
 import { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
@@ -227,17 +226,4 @@ export default function Page() {
 
 Page.getLayout = function getLayout(page: ReactElement) {
   return <ContentGrid>{page}</ContentGrid>
-}
-
-export const getStaticProps = async () => {
-  return {
-    props: {},
-  }
-}
-
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
 }
