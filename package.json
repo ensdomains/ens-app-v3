@@ -6,8 +6,8 @@
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 yarn dev",
     "dev:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens yarn dev:nlocal",
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.thegraph.com/subgraphs/name/ensdomains/ensropsten yarn dev:nlocal",
-    "build": "next build",
-    "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 next build",
+    "build": "next build && yarn cloudflare:integration",
+    "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 next build && yarn cloudflare:integration",
     "start": "next start",
     "buildandstart:glocal": "yarn build:glocal && yarn start",
     "env": "yarn ens-test-env",
@@ -22,7 +22,8 @@
     "synpress:ci": "yarn synpress:start",
     "e2e": "E2E=true yarn env start",
     "e2e:ci": "E2E=true CI=true yarn env start --no-reset",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "cloudflare:integration": "cp ./cloudflare/_redirects ./.next/_redirects" 
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.16",
