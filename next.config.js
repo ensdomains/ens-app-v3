@@ -23,18 +23,18 @@ let nextConfig = {
   images: {
     domains: ['metadata.ens.domains'],
   },
-  // async rewrites() {
-  //   return [
-  //     {
-  //       source: '/my/profile',
-  //       destination: '/profile/connected',
-  //     },
-  //     {
-  //       source: '/names/:address',
-  //       destination: '/names?address=:address',
-  //     },
-  //   ]
-  // },
+  async rewrites() {
+    return [
+      {
+        source: '/my/profile',
+        destination: '/my/settings',
+      },
+      {
+        source: '/names/:address',
+        destination: '/names?address=:address',
+      },
+    ]
+  },
   webpack: (config, options) => {
     config.module.rules.push({
       test: /ens.+\.json$/,
