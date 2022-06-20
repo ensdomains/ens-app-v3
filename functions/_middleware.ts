@@ -5,8 +5,6 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
 
   let rewrite = false
   if (paths[1] === 'my' && paths[2] === 'profile') {
-    console.log('HERE')
-
     url.pathname = '/my/settings'
     rewrite = true
   } else if (paths[0] === 'names' && !!paths[1]) {
@@ -16,8 +14,6 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
   }
 
   if (rewrite) {
-    console.log('>>>>>', url.toString())
-
     const rewriteRequest = new Request(url.toString(), request)
     const response = await fetch(rewriteRequest)
     return response
