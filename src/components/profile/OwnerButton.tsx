@@ -157,7 +157,7 @@ const OwnerButtonWithPopup = ({
 }: {
   address: string
   name?: string | null
-  network: string
+  network: number
   label: string
   description: string
   canTransfer: boolean
@@ -288,7 +288,7 @@ const OwnerButtonWithDropdown = ({
 }: {
   address: string
   name?: string | null
-  network: string
+  network: number
   label: string
   canTransfer: boolean
 }) => {
@@ -366,7 +366,7 @@ export const OwnerButton = ({
   description,
 }: {
   address: string
-  network: string
+  network: number
   label: string
   canTransfer: boolean
   type?: 'dropdown' | 'dialog'

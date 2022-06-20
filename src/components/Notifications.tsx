@@ -71,7 +71,7 @@ export const Notifications = () => {
         setTimeout(() => setNotificationQueue((prev) => prev.slice(1)), 300)
       }}
       open={open}
-      variant={breakpoints.sm ? 'desktop' : 'touch'}
+      variant={breakpoints.md ? 'desktop' : 'touch'}
       {...currentNotification}
     />
   )

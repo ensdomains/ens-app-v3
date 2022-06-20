@@ -7,18 +7,11 @@ import { NameListView } from '@app/components/names/NameListView'
 import { TabWrapper } from '@app/components/profile/TabWrapper'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
-import { Basic } from '@app/layouts/Basic'
-import {
-  Button,
-  Heading,
-  mq,
-  PageButtons,
-  Select,
-  Typography,
-} from '@ensdomains/thorin'
-import type { NextPage } from 'next'
+import { Content } from '@app/layouts/Content'
+import { ContentGrid } from '@app/layouts/ContentGrid'
+import { Button, mq, PageButtons, Select } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useNetwork } from 'wagmi'
@@ -57,13 +50,15 @@ const TabWrapperWithButtons = styled.div(
 
 const FilterContainer = styled.div(
   ({ theme }) => css`
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: flex-end;
-    justify-content: center;
+    justify-content: space-between;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
     ${mq.md.min(css`
+      justify-content: flex-end;
       gap: ${theme.space['8']};
       flex-gap: ${theme.space['8']};
     `)}
@@ -103,39 +98,6 @@ const FilterDropdownContainer = styled.div(
   `,
 )
 
-const Container = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: ${theme.space['320']};
-    margin: 0 auto;
-    gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
-  `,
-)
-
-const SectionHeader = styled.div(
-  () => css`
-    display: flex;
-    flex-direction: column;
-  `,
-)
-
-const TopContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: ${theme.space['4']};
-    flex-gap: ${theme.space['4']};
-    ${mq.md.min(css`
-      flex-direction: row;
-    `)}
-  `,
-)
-
 const SortAndDirections = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -147,17 +109,19 @@ const SortAndDirections = styled.div(
   `,
 )
 
+const spacing = '1fr 1fr'
+
 type SortType = 'expiryDate' | 'labelName' | 'creationDate'
 type SortDirection = 'asc' | 'desc'
 type ViewType = 'grid' | 'list'
 type FilterType = 'domain' | 'registration' | 'none'
 
-const NamesPage: NextPage = () => {
+export default function Page() {
   const { t } = useTranslation('names')
   const router = useRouter()
   const { data: addressData, isLoading, status } = useAccount()
   const address = (router.query.address as string) || addressData?.address
-  const isSelf = address === addressData?.address
+  const isSelf = true
   const { activeChain: chain } = useNetwork()
 
   const [viewType, setViewType] = useState<ViewType>('list')
@@ -191,17 +155,17 @@ const NamesPage: NextPage = () => {
   useProtectedRoute('/', loading ? true : address && address !== '')
 
   return (
-    <Basic title="Names -" loading={loading}>
-      <Container>
-        <TopContainer>
-          <SectionHeader>
-            <Heading>{t('title')}</Heading>
-            <Typography>
-              {`${t('subtitle.start')} ${
-                isSelf ? t('subtitle.your') : t('subtitle.this')
-              } ${t('subtitle.wallet')}`}
-            </Typography>
-          </SectionHeader>
+    <Content
+      title={t('title')}
+      subtitle={`${t('subtitle.start')} ${
+        isSelf ? t('subtitle.your') : t('subtitle.this')
+      } ${t('subtitle.wallet')}`}
+      alwaysShowSubtitle
+      singleColumnContent
+      spacing={spacing}
+    >
+      {{
+        header: (
           <FilterContainer>
             <SortAndDirections>
               <FilterDropdownContainer>
@@ -272,36 +236,40 @@ const NamesPage: NextPage = () => {
               </Button>
             </ViewButtons>
           </FilterContainer>
-        </TopContainer>
-        <TabWrapperWithButtons>
-          {currentPage &&
-            pageLength > 0 &&
-            (viewType === 'list' ? (
-              <NameListView currentPage={currentPage} network={chain?.name!} />
-            ) : (
-              <NameGridView currentPage={currentPage} network={chain?.name!} />
-            ))}
-          {pageLength < 1 && (!currentPage || currentPage.length === 0) && (
-            <TabWrapper>
-              <EmptyDetailContainer>{t('names.empty')}</EmptyDetailContainer>
-            </TabWrapper>
-          )}
-          {pageLength > 0 && (
-            <PageButtonsContainer>
-              <PageButtons
-                current={page}
-                onChange={(value) => setPage(value)}
-                total={pageLength}
-                max={5}
-                alwaysShowFirst
-                alwaysShowLast
-              />
-            </PageButtonsContainer>
-          )}
-        </TabWrapperWithButtons>
-      </Container>
-    </Basic>
+        ),
+        trailing: (
+          <TabWrapperWithButtons>
+            {currentPage &&
+              pageLength > 0 &&
+              (viewType === 'list' ? (
+                <NameListView currentPage={currentPage} network={chain?.id!} />
+              ) : (
+                <NameGridView currentPage={currentPage} network={chain?.id!} />
+              ))}
+            {pageLength < 1 && (!currentPage || currentPage.length === 0) && (
+              <TabWrapper>
+                <EmptyDetailContainer>{t('names.empty')}</EmptyDetailContainer>
+              </TabWrapper>
+            )}
+            {pageLength > 0 && (
+              <PageButtonsContainer>
+                <PageButtons
+                  current={page}
+                  onChange={(value) => setPage(value)}
+                  total={pageLength}
+                  max={5}
+                  alwaysShowFirst
+                  alwaysShowLast
+                />
+              </PageButtonsContainer>
+            )}
+          </TabWrapperWithButtons>
+        ),
+      }}
+    </Content>
   )
 }
 
-export default NamesPage
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <ContentGrid $spacing={spacing}>{page}</ContentGrid>
+}
