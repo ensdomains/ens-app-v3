@@ -28,7 +28,7 @@ type ResolvedProfile = {
   isMigrated: boolean | null
   createdAt: string | null
   address?: string
-  name?: string
+  name?: string | null
   match?: boolean
   message?: string
   records?: {
@@ -37,6 +37,7 @@ type ResolvedProfile = {
     coinTypes?: DataItem[]
   }
   resolverAddress?: string
+  reverseResolverAddress?: string
 }
 
 const makeMulticallData = async (
@@ -129,7 +130,7 @@ const getDataForName = async (
   try {
     resolver = await universalResolver?.resolve(hexEncodeName(name), data)
   } catch {
-    return null
+    return
   }
 
   const [recordData] = await resolverMulticallWrapper.decode(resolver['0'])
@@ -172,7 +173,7 @@ const formatRecords = async (
             item,
           )[0]
           if (ethers.utils.hexStripZeros(decodedFromAbi) === '0x') {
-            return null
+            return
           }
         }
         switch (calls[i].type) {
@@ -181,7 +182,7 @@ const formatRecords = async (
               ...itemRet,
               value: await _getText.decode(item),
             }
-            if (itemRet.value === '') return null
+            if (itemRet.value === '') return
             break
           case 'addr':
             try {
@@ -193,10 +194,10 @@ const formatRecords = async (
                 }
                 break
               } else {
-                return null
+                return
               }
             } catch {
-              return null
+              return
             }
           case 'contenthash':
             try {
@@ -205,7 +206,7 @@ const formatRecords = async (
                 value: await _getContentHash.decode(item),
               }
             } catch {
-              return null
+              return
             }
         }
         return itemRet
@@ -285,7 +286,7 @@ const graphFetch = async (
 
   const { domains } = await client.request(query, { name })
 
-  if (!domains || domains.length === 0) return null
+  if (!domains || domains.length === 0) return
 
   const [{ resolver: resolverResponse, isMigrated, createdAt }] = domains
 
@@ -337,7 +338,7 @@ const getProfileFromName = async (
       ? options || { contentHash: true, texts: true, coinTypes: true }
       : undefined
   const graphResult = await graphFetch({ gqlInstance }, name, usingOptions)
-  if (!graphResult) return null
+  if (!graphResult) return
   const {
     isMigrated,
     createdAt,
@@ -384,10 +385,10 @@ const getProfileFromAddress = async (
   let name
   try {
     name = await getName(address)
-  } catch {
-    return null
+  } catch (e) {
+    return
   }
-  if (!name || !name.name || name.name === '') return null
+  if (!name || !name.name || name.name === '') return
   if (!name.match) return { ...name, isMigrated: null, createdAt: null }
   const result = await getProfileFromName(
     {
@@ -401,7 +402,7 @@ const getProfileFromAddress = async (
     name.name,
     options,
   )
-  if (!result || result.message) return null
+  if (!result || result.message) return
   delete (result as any).address
   return {
     ...result,
@@ -430,7 +431,7 @@ export default async function (
   >,
   nameOrAddress: string,
   options?: ProfileOptions,
-): Promise<ResolvedProfile | null> {
+): Promise<ResolvedProfile | undefined> {
   if (options && options.coinTypes && typeof options.coinTypes !== 'boolean') {
     options.coinTypes = options.coinTypes.map((coin: string) => {
       if (!isNaN(parseInt(coin))) {

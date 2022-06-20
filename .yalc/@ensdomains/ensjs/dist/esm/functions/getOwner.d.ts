@@ -9,6 +9,6 @@ declare const _default: {
         to: string;
         data: string;
     }>;
-    decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<Owner | null>;
+    decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<Owner | undefined>;
 };
 export default _default;

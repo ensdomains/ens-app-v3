@@ -1,10 +1,10 @@
+import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Toast } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNetwork } from 'wagmi'
 
 type Notification = {
   title: string
@@ -16,7 +16,7 @@ export const Notifications = () => {
   const { t } = useTranslation()
   const breakpoints = useBreakpoint()
 
-  const { activeChain } = useNetwork()
+  const chainName = useChainName()
   const transactions = useRecentTransactions()
   const previousTransactions =
     useRef<ReturnType<typeof useRecentTransactions>>()
@@ -47,7 +47,7 @@ export const Notifications = () => {
       children: (
         <a
           target="_blank"
-          href={makeEtherscanLink(transaction.hash, activeChain?.name)}
+          href={makeEtherscanLink(transaction.hash, chainName)}
           rel="noreferrer"
         >
           <Button size="small">View on Etherscan</Button>

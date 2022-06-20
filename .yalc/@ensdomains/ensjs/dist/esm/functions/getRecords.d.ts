@@ -8,7 +8,7 @@ export default function ({ getProfile }: ENSArgs<'getProfile'>, name: string, op
     isMigrated: boolean | null;
     createdAt: string | null;
     address?: string | undefined;
-    name?: string | undefined;
+    name?: string | null | undefined;
     match?: boolean | undefined;
     message?: string | undefined;
     records?: {
@@ -27,5 +27,6 @@ export default function ({ getProfile }: ENSArgs<'getProfile'>, name: string, op
         }[] | undefined;
     } | undefined;
     resolverAddress?: string | undefined;
-} | null>;
+    reverseResolverAddress?: string | undefined;
+} | undefined>;
 export {};

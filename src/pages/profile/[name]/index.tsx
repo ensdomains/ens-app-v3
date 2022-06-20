@@ -2,6 +2,7 @@
 import { NameSnippet } from '@app/components/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
@@ -14,7 +15,7 @@ import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useEnsName, useNetwork } from 'wagmi'
+import { useAccount, useEnsName } from 'wagmi'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -51,7 +52,7 @@ export default function Page() {
   const isSelf = _name === 'connected'
 
   const initial = useInitial()
-  const { activeChain: chain } = useNetwork()
+  const chainId = useChainId()
 
   const { data: accountData, isLoading: accountLoading } = useAccount()
   const address = accountData?.address
@@ -100,7 +101,7 @@ export default function Page() {
         leading: breakpoints.md && ownerData && (
           <NameSnippet
             name={normalisedName}
-            network={chain?.id!}
+            network={chainId}
             ownerData={ownerData}
             expiryDate={expiryDate}
             showButton={!isSelf}
@@ -110,7 +111,7 @@ export default function Page() {
           <DetailsWrapper>
             <ProfileSnippet
               name={normalisedName}
-              network={chain?.id!}
+              network={chainId}
               url={getTextRecord('url')?.value}
               description={getTextRecord('description')?.value}
               recordName={getTextRecord('name')?.value}

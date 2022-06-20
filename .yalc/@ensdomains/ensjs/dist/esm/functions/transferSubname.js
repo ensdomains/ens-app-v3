@@ -15,7 +15,7 @@ export default async function ({ contracts, provider }, name, contract, address,
         }
         case 'nameWrapper': {
             const nameWrapper = (await contracts?.getNameWrapper()).connect(signer);
-            return nameWrapper.setSubnodeOwner(parentNodehash, labelhash, address);
+            return nameWrapper.setSubnodeOwner(parentNodehash, label, address, '0');
         }
         default: {
             throw new Error(`Unknown contract: ${contract}`);

@@ -17,7 +17,7 @@ const decode = async ({ contracts }, data) => {
     if (!response ||
         !response[0] ||
         ethers_1.ethers.utils.hexStripZeros(response[0]) === '0x') {
-        return null;
+        return;
     }
     return response[0];
 };

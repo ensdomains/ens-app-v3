@@ -18,14 +18,14 @@ exports._getContentHash = {
         const publicResolver = await contracts?.getPublicResolver();
         const [response] = publicResolver.interface.decodeFunctionResult('contenthash', data);
         if (!response) {
-            return null;
+            return;
         }
         const decodedContent = (0, contentHash_1.decodeContenthash)(response);
         if (!decodedContent ||
             (ethers_1.ethers.utils.isBytesLike(decodedContent.decoded) &&
                 ethers_1.ethers.utils.hexStripZeros(decodedContent.decoded) === '0x') ||
             Object.keys(decodedContent).length === 0) {
-            return null;
+            return;
         }
         return decodedContent;
     },
@@ -38,7 +38,7 @@ exports.getContentHash = {
     decode: async ({ contracts, universalWrapper }, data) => {
         const urData = await universalWrapper.decode(data);
         if (!urData)
-            return null;
+            return;
         return await exports._getContentHash.decode({ contracts }, urData.data);
     },
 };
@@ -57,7 +57,7 @@ exports._getText = {
         const publicResolver = await contracts?.getPublicResolver();
         const [response] = publicResolver.interface.decodeFunctionResult('text', data);
         if (!response) {
-            return null;
+            return;
         }
         return response;
     },
@@ -70,7 +70,7 @@ exports.getText = {
     decode: async ({ contracts, universalWrapper }, data) => {
         const urData = await universalWrapper.decode(data);
         if (!urData)
-            return null;
+            return;
         return await exports._getText.decode({ contracts }, urData.data);
     },
 };
@@ -109,13 +109,13 @@ exports._getAddr = {
             : address_encoder_1.formatsByCoinType[typeof coinType === 'number' ? coinType : parseInt(coinType)];
         const [response] = publicResolver.interface.decodeFunctionResult('addr(bytes32,uint256)', data);
         if (!response)
-            return null;
+            return;
         if (ethers_1.ethers.utils.hexStripZeros(response) === '0x') {
-            return null;
+            return;
         }
         const decodedAddr = formatter.encoder(Buffer.from(response.slice(2), 'hex'));
         if (!decodedAddr) {
-            return null;
+            return;
         }
         if (!returnCoinType) {
             return decodedAddr;
@@ -131,7 +131,7 @@ exports.getAddr = {
     decode: async ({ contracts, universalWrapper }, data, _name, coinType) => {
         const urData = await universalWrapper.decode(data);
         if (!urData)
-            return null;
+            return;
         return await exports._getAddr.decode({ contracts }, urData.data, _name, coinType);
     },
 };
@@ -162,13 +162,13 @@ exports.getAddr = {
 //     result['0'],
 //   )
 //   if (ethers.utils.hexStripZeros(encodedAddr) === '0x') {
-//     return null
+//     return
 //   }
 //   const decodedAddr = formatter.encoder(
 //     Buffer.from(encodedAddr.slice(2), 'hex'),
 //   )
 //   if (!decodedAddr) {
-//     return null
+//     return
 //   }
 //   return decodedAddr
 // }
@@ -197,14 +197,14 @@ exports.getAddr = {
 //       data,
 //     )
 //     if (!response || !response[1]) {
-//       return null
+//       return
 //     }
 //     const [encodedContentHash] = publicResolver.interface.decodeFunctionResult(
 //       'contenthash(bytes32)',
 //       response[0],
 //     )
 //     if (ethers.utils.hexStripZeros(encodedContentHash) === '0x') {
-//       return null
+//       return
 //     }
 //     return decodeContenthash(encodedContentHash)
 //   },
@@ -237,14 +237,14 @@ exports.getAddr = {
 //       data,
 //     )
 //     if (!response || !response[1]) {
-//       return null
+//       return
 //     }
 //     const [decodedText] = publicResolver.interface.decodeFunctionResult(
 //       'text(bytes32,string)',
 //       response[0],
 //     )
 //     if (decodedText === '') {
-//       return null
+//       return
 //     }
 //     return decodedText
 //   },

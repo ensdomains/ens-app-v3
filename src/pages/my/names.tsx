@@ -5,6 +5,7 @@ import UpDirectionSVG from '@app/assets/UpDirection.svg'
 import { NameGridView } from '@app/components/names/NameGridView'
 import { NameListView } from '@app/components/names/NameListView'
 import { TabWrapper } from '@app/components/profile/TabWrapper'
+import { useChainId } from '@app/hooks/useChainId'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
@@ -14,7 +15,7 @@ import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -122,7 +123,7 @@ export default function Page() {
   const { data: addressData, isLoading, status } = useAccount()
   const address = (router.query.address as string) || addressData?.address
   const isSelf = true
-  const { activeChain: chain } = useNetwork()
+  const chainId = useChainId()
 
   const [viewType, setViewType] = useState<ViewType>('list')
   const [sortType, setSortType] = useState<SortType>('expiryDate')
@@ -242,9 +243,9 @@ export default function Page() {
             {currentPage &&
               pageLength > 0 &&
               (viewType === 'list' ? (
-                <NameListView currentPage={currentPage} network={chain?.id!} />
+                <NameListView currentPage={currentPage} network={chainId} />
               ) : (
-                <NameGridView currentPage={currentPage} network={chain?.id!} />
+                <NameGridView currentPage={currentPage} network={chainId} />
               ))}
             {pageLength < 1 && (!currentPage || currentPage.length === 0) && (
               <TabWrapper>

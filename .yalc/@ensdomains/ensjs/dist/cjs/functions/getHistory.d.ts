@@ -21,7 +21,7 @@ export declare function getHistory({ gqlInstance }: ENSArgs<'gqlInstance'>, name
         id: any;
         data: Record<string, any>;
     }[];
-} | null>;
+} | undefined>;
 export declare function getHistoryWithDetail({ contracts, gqlInstance, provider, }: ENSArgs<'contracts' | 'gqlInstance' | 'provider'>, name: string): Promise<{
     domain: {
         type: any;
@@ -44,11 +44,11 @@ export declare function getHistoryWithDetail({ contracts, gqlInstance, provider,
         id: any;
         data: Record<string, any>;
     }[];
-} | null>;
+} | undefined>;
 export declare function getHistoryDetailForTransactionHash({ contracts, provider }: ENSArgs<'contracts' | 'provider'>, hash: string, indexInTransaction?: number): Promise<({
     key: any;
     value: any;
-} | null)[] | {
+} | undefined)[] | {
     key: any;
     value: any;
-} | null>;
+} | undefined>;
