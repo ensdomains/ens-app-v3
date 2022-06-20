@@ -1,4 +1,5 @@
 import { Notifications } from '@app/components/Notifications'
+import { Basic } from '@app/layouts/Basic'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import {
@@ -12,7 +13,9 @@ import {
   Theme,
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
+import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
@@ -104,7 +107,17 @@ const queryClient = new QueryClient({
   },
 })
 
-function MyApp({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page)
+
   return (
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
@@ -116,7 +129,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <GlobalStyle />
                   <ThorinGlobalStyles />
                   <Notifications />
-                  <Component {...pageProps} />
+                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>

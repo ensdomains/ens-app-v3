@@ -12,10 +12,11 @@ export const useNameDetails = (name: string) => {
 
   const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
 
-  const { profile, loading: profileLoading } = useProfile(
-    normalisedName,
-    !normalisedName,
-  )
+  const {
+    profile,
+    loading: profileLoading,
+    status,
+  } = useProfile(normalisedName, !normalisedName)
 
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
@@ -39,16 +40,22 @@ export const useNameDetails = (name: string) => {
   const truncatedName = truncateFormat(normalisedName)
 
   useEffect(() => {
-    if (valid && profile && profile.isMigrated && !profile.message) {
-      setError(null)
-    } else if (!valid) {
+    if (valid === false) {
       setError('This name is invalid.')
     } else if (profile && !profile.isMigrated) {
       setError('This name is not migrated to the new registry.')
     } else if (profile && profile.message) {
       setError(profile.message)
-    } else {
+    } else if (
+      !profile &&
+      !profileLoading &&
+      ready &&
+      status !== 'idle' &&
+      status !== 'loading'
+    ) {
       setError('Unknown error.')
+    } else {
+      setError(null)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valid, profile?.isMigrated, profile?.message])
