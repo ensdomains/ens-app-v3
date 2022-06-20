@@ -13,6 +13,7 @@ export interface ENSTestEnvConfig {
     key: string
   }
   archive: {
+    localSubgraphId?: string
     subgraphId: string
     epochTime: number
     blockNumber: number

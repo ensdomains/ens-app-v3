@@ -181,14 +181,16 @@ async function downloadFile() {
   })
 }
 
-export const main = async (arg, config) => {
+export const main = async (arg, config, local = false) => {
   let time = Date.now()
 
-  BLOCK_HEIGHT = config.archive.blockNumber
-  SUBGRAPH_ID = config.archive.subgraphId
+  BLOCK_HEIGHT = local ? '0' : config.archive.blockNumber
+  SUBGRAPH_ID = local
+    ? config.archive.localSubgraphId
+    : config.archive.subgraphId
   EPOCH_TIME = config.archive.epochTime
   BASE_URL = config.archive.baseUrl
-  NETWORK = config.archive.network
+  NETWORK = local ? 'local' : config.archive.network
 
   fileName = `data_${BLOCK_HEIGHT}_${SUBGRAPH_ID}_${EPOCH_TIME}_${NETWORK}.archive`
   URL = `${BASE_URL}/${fileName}.tar.lz4`
@@ -201,7 +203,7 @@ export const main = async (arg, config) => {
     console.log(`${message} ${(Date.now() - time) / 1000}s`)
 
   switch (arg) {
-    case '--load': {
+    case 'load': {
       if (!fs.existsSync(localURL + '.tar.lz4')) {
         console.log('Downloading archive...')
         await downloadFile(localURL + '.tar.lz4').then(() =>
@@ -216,9 +218,15 @@ export const main = async (arg, config) => {
       }
       return
     }
-    case '--compress': {
+    case 'compress': {
       console.log('Compressing /data to archive...')
       await compressToArchive().then(() => logTime('Compressed archive in'))
+      return
+    }
+    case 'clean': {
+      console.log('Cleaning data directory...')
+      await fs.rm(outPath, { force: true, recursive: true })
+      await fs.mkdir(outPath)
       return
     }
   }

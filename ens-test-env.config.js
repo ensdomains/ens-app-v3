@@ -16,6 +16,7 @@ console.log('block', process.env.BLOCK_HEIGHT)
 module.exports = {
   deployCommand: 'yarn hardhat deploy',
   archive: {
+    localSubgraphId: process.env.LOCAL_SUBGRAPH_ID,
     subgraphId: process.env.SUBGRAPH_ID,
     epochTime: process.env.EPOCH_TIME,
     blockNumber: parseInt(process.env.BLOCK_HEIGHT),

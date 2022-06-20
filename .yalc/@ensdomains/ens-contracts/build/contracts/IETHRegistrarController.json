@@ -1,0 +1,8 @@
+[
+  "function available(string) returns (bool)",
+  "function commit(bytes32)",
+  "function makeCommitment(string,address,uint256,bytes32,address,bytes[],bool,uint96) returns (bytes32)",
+  "function register(string,address,uint256,bytes32,address,bytes[],bool,uint96) payable",
+  "function renew(string,uint256) payable",
+  "function rentPrice(string,uint256) returns (tuple(uint256,uint256))"
+]

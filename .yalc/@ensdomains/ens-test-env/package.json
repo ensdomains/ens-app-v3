@@ -10,6 +10,7 @@
     "@ethersproject/wallet": "^5.6.0",
     "ansi-colors": "^4.1.1",
     "cli-progress": "^3.10.0",
+    "commander": "^9.3.0",
     "concurrently": "^7.1.0",
     "dotenv": "^16.0.0",
     "fs-extra": "^10.0.1",
@@ -23,5 +24,5 @@
   },
   "preferUnplugged": true,
   "bin": "./src/index.js",
-  "yalcSig": "6ea2ba482d204672c4e6660ebde0510d"
+  "yalcSig": "1610c37782f18af6360534e32f9ba707"
 }

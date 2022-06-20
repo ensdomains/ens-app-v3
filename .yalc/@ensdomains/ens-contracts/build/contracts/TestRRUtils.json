@@ -1,0 +1,10 @@
+[
+  "function testCheckTypeBitmap() pure",
+  "function testCheckTypeBitmapTextType() pure",
+  "function testCompareNames() pure",
+  "function testIterateRRs() pure",
+  "function testKeyTag() view",
+  "function testLabelCount() pure",
+  "function testNameLength() pure",
+  "function testSerialNumberGt() pure"
+]

@@ -1,0 +1,4 @@
+[
+  "event InterfaceChanged(bytes32 indexed,bytes4 indexed,address)",
+  "function interfaceImplementer(bytes32,bytes4) view returns (address)"
+]

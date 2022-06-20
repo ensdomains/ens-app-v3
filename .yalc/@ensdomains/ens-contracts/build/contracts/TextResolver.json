@@ -1,0 +1,6 @@
+[
+  "event TextChanged(bytes32 indexed,string indexed,string)",
+  "function setText(bytes32,string,string)",
+  "function supportsInterface(bytes4) view returns (bool)",
+  "function text(bytes32,string) view returns (string)"
+]

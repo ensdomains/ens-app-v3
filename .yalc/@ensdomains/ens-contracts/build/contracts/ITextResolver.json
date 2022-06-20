@@ -1,0 +1,4 @@
+[
+  "event TextChanged(bytes32 indexed,string indexed,string)",
+  "function text(bytes32,string) view returns (string)"
+]

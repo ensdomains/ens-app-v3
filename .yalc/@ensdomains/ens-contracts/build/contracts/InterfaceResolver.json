@@ -1,0 +1,12 @@
+[
+  "event AddrChanged(bytes32 indexed,address)",
+  "event AddressChanged(bytes32 indexed,uint256,bytes)",
+  "event InterfaceChanged(bytes32 indexed,bytes4 indexed,address)",
+  "function addr(bytes32) view returns (address)",
+  "function addr(bytes32,uint256) view returns (bytes)",
+  "function interfaceImplementer(bytes32,bytes4) view returns (address)",
+  "function setAddr(bytes32,uint256,bytes)",
+  "function setAddr(bytes32,address)",
+  "function setInterface(bytes32,bytes4,address)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]
