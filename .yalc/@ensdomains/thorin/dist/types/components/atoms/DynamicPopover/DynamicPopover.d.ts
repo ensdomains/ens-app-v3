@@ -1,9 +1,8 @@
 import * as React from 'react';
-import { Keyframes } from 'styled-components';
 export declare type DynamicPopoverSide = 'top' | 'right' | 'bottom' | 'left';
 export declare type DynamicPopoverAlignment = 'start' | 'center' | 'end';
 export declare type DynamicPopoverPlacement = 'top-start' | 'top-center' | 'top-end' | 'left-start' | 'left-center' | 'left-end' | 'right-start' | 'right-center' | 'right-end' | 'bottom-start' | 'bottom-center' | 'bottom-end';
-export declare type DynamicPopoverAnimationFunc = (side: DynamicPopoverSide, open?: boolean) => Keyframes;
+export declare type DynamicPopoverAnimationFunc = (side: DynamicPopoverSide, open?: boolean) => string;
 export declare type DynamicPopoverButtonProps = {
     pressed?: boolean;
     onClick?: React.MouseEventHandler<HTMLElement>;
@@ -23,7 +22,13 @@ export interface DynamicPopoverProps {
     flip?: boolean;
     /** If true, will shift the popover alignment to be remain visible. */
     shift?: boolean;
-    /** A function that returns a styled-components Keyframes object that controls the animation of the popover. */
+    /** If true, will prevent the popover from appearing */
+    disabled?: boolean;
+    /** If true, will display the popover */
+    open?: boolean;
+    /** The setter for the isOpen variable */
+    onDismiss?: () => void;
+    /** A function that returns string of the css state for open and closed popover. */
     animationFn?: DynamicPopoverAnimationFunc;
 }
 export declare const computeCoordsFromPlacement: (reference: DOMRect, floating: DOMRect, placement: DynamicPopoverPlacement, padding: number, offset: number, flip?: boolean, shift?: boolean) => {
@@ -32,6 +37,6 @@ export declare const computeCoordsFromPlacement: (reference: DOMRect, floating: 
     side: DynamicPopoverSide;
 };
 export declare const DynamicPopover: {
-    ({ popover, children, placement, offset, padding, flip, shift, animationFn, }: DynamicPopoverProps): JSX.Element;
+    ({ popover, children, placement, offset, padding, flip, shift, animationFn: _animationFn, disabled, open, onDismiss, }: DynamicPopoverProps): JSX.Element;
     displayName: string;
 };

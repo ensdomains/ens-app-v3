@@ -1,4 +1,5 @@
 export * from './components';
+export * as Icons from './icons';
 export * as Components from './components';
 export { tokens, baseTheme, lightTheme, darkTheme } from './tokens';
 export { mq } from './utils/responsiveHelpers';

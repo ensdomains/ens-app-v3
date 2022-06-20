@@ -7,9 +7,9 @@ export declare const RadioButton: React.ForwardRefExoticComponent<{
     /** The name attribute for input elements. */
     name: NativeInputProps['name'];
     /** The value attribute of input elements. */
-    value: string | number;
+    value: string;
     /** The inital value of input element */
-    defaultValue?: string | number | undefined;
+    defaultValue?: string | undefined;
     /** If true, the radio button is selected. */
     checked?: NativeInputProps['checked'];
     /** The id attribute of input element. */
@@ -24,5 +24,5 @@ export declare const RadioButton: React.ForwardRefExoticComponent<{
     onFocus?: NativeInputProps['onFocus'];
     /** The handler for blur events. */
     onBlur?: NativeInputProps['onBlur'];
-} & FieldBaseProps & Omit<NativeInputProps, "type" | "aria-invalid" | "children" | "defaultValue" | "value"> & React.RefAttributes<HTMLInputElement>>;
+} & FieldBaseProps & Omit<NativeInputProps, "type" | "role" | "aria-invalid" | "children" | "defaultValue" | "value"> & React.RefAttributes<HTMLInputElement>>;
 export {};

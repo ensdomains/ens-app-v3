@@ -19,8 +19,9 @@ export const TokenId = () => {
 
   return (
     <>
-      <RecordItem itemKey="hex" value={labelHash} hasBackground={false} />
-      <RecordItem itemKey="decimal" value={tokenId} hasBackground={false} />
+      <RecordItem itemKey="hex" value={labelHash} />
+      <div style={{ height: 10 }} />
+      <RecordItem itemKey="decimal" value={tokenId} />
     </>
   )
 }

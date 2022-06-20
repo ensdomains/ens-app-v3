@@ -11,7 +11,9 @@
       "file": true
     },
     "@ensdomains/thorin": {
-      "signature": "4906cd741ecab65f0914675228959b66"
+      "signature": "9dc6a16f68ab7f54d04e9cfc6cb3f915",
+      "file": true,
+      "replaced": "^0.5.13"
     }
   }
 }

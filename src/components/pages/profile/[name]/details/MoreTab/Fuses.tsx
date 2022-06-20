@@ -3,28 +3,28 @@ import styled, { css } from 'styled-components'
 import { Typography, Space } from '@ensdomains/thorin'
 
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
-import mq from '@app/mediaQuery'
 
 const FusesContainer = styled.div`
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   padding: 20px 25px;
-
-  ${mq.sm.min`
-      max-width: 500px;
-   `}
 `
 
-const FusesRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+const FusesRow = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
 
-  &:not(:last-child) {
-    padding-bottom: 20px;
-  }
-`
+    &:not(:last-child) {
+      margin-bottom: 10px;
+      padding-bottom: 10px;
+      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
+        ${theme.colors.borderTertiary};
+    }
+  `,
+)
 
 const TrafficLight = styled.div<{ $go: boolean }>(
   ({ theme, $go }) => css`

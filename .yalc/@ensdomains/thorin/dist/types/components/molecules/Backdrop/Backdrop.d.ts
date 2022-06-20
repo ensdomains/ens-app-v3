@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { TransitionState } from 'react-transition-state';
 declare type Props = {
+    /** A function that renders the children nodes */
     children: (renderProps: {
         state: TransitionState;
     }) => React.ReactNode;

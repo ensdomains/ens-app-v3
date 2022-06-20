@@ -1,11 +1,15 @@
 import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
-import { Typography } from '@ensdomains/thorin'
+import { Typography, DownIndicatorSVG } from '@ensdomains/thorin'
 
 const AccordionTitle = styled.div<{ $isActive?: boolean }>(
   ({ theme, $isActive }) => css`
     padding: ${theme.space['4']} ${theme.space['6']};
     background: ${theme.colors.white};
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
     ${$isActive
       ? `
@@ -54,7 +58,6 @@ const AccordionBody = ({ isActive, children }: AccordionBodyProps) => {
 const AccordionItem = styled.div`
   width: 100%;
   height: 100%;
-  cursor: pointer;
 `
 
 const AccordionContainer = styled.div<{
@@ -86,6 +89,33 @@ const AccordionContainer = styled.div<{
   `,
 )
 
+const Chevron = styled(DownIndicatorSVG)<{
+  $open?: boolean
+}>(
+  ({ theme, $open }) => css`
+    margin-left: ${theme.space['1']};
+    width: ${theme.space['3']};
+    margin-right: ${theme.space['0.5']};
+    transition-duration: ${theme.transitionDuration['200']};
+    transition-property: all;
+    transition-timing-function: ${theme.transitionTimingFunction.inOut};
+    opacity: 0.3;
+    transform: rotate(0deg);
+    display: flex;
+
+    & > svg {
+      fill: currentColor;
+    }
+    fill: currentColor;
+
+    ${$open &&
+    css`
+      opacity: 1;
+      transform: rotate(180deg);
+    `}
+  `,
+)
+
 export interface AccordionData {
   title: string
   body: React.ReactNode
@@ -113,6 +143,7 @@ const Accordion = ({ data }: AccordionProps) => {
                 <Typography variant="extraLarge" weight="bold">
                   {item.title}
                 </Typography>
+                <Chevron $open={isActive} />
               </AccordionTitle>
               <AccordionBody
                 {...{
