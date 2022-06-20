@@ -1,1 +1,1 @@
-/address / 302
+/names/:address /names?address=:address 302
