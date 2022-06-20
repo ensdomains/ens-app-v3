@@ -1,4 +1,3 @@
-/names/:address /names?address=:address 303
 /test1 / 301
 /test2 / 302
 /test3 / 303
