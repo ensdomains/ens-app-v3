@@ -26,21 +26,21 @@ const FusesRow = styled.div`
   }
 `
 
-const TrafficLight = styled.div<{ $go: boolean }>`
-  ${({ theme, $go }) => css`
+const TrafficLight = styled.div<{ $go: boolean }>(
+  ({ theme, $go }) => css`
     width: 20px;
     height: 20px;
     border-radius: 50%;
     background-color: ${$go ? theme.colors.green : theme.colors.red};
-  `}
-`
+  `,
+)
 
-const Spacer = styled.div<{ $height: Space }>`
-  ${({ theme, $height }) => css`
+const Spacer = styled.div<{ $height: Space }>(
+  ({ theme, $height }) => css`
     width: 100%;
     height: ${theme.space[$height]};
-  `}
-`
+  `,
+)
 
 const Fuses = () => {
   const router = useRouter()

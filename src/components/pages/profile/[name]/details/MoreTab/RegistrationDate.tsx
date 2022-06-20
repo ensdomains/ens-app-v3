@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components'
-import { useEffect, useState } from 'react'
 import { useProvider, useNetwork } from 'wagmi'
 import { Typography, Button } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
+import { useQuery } from 'react-query'
 
 import { useGetHistory } from '@app/hooks/useGetHistory'
 import mq from '@app/mediaQuery'
@@ -26,8 +26,8 @@ function getEtherScanLink(networkId?: number | string) {
   }
 }
 
-const RegistrationDateContainer = styled.div`
-  ${({ theme }) => css`
+const RegistrationDateContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -37,61 +37,44 @@ const RegistrationDateContainer = styled.div`
     ${mq.sm.min`
       flex-direction: row;
     `}
-  `}
-`
+  `,
+)
 
 export const RegistrationDate = () => {
   const router = useRouter()
   const { name } = router.query
-  const { history = { registration: [] }, isLoading } = useGetHistory(
-    name as string,
-  )
+  const { history = { registration: [] } } = useGetHistory(name as string)
   const provider = useProvider()
   const { activeChain } = useNetwork()
 
-  const [registrationData, setRegistrationData] = useState<{
-    registrationDate: string | null
-    transactionHash: string | null
-  }>({
-    registrationDate: null,
-    transactionHash: null,
-  })
+  const registration = history?.registration?.[0]
+  const registrationBlock = registration?.blockNumber
+  const { data: { registrationDate, transactionHash } = {} } = useQuery(
+    ['getRegistrationData'],
+    async () => {
+      const block = await provider.getBlock(registrationBlock)
+      const unixTimestamp = block.timestamp
+      const date = new Date(unixTimestamp * 1000)
 
-  useEffect(() => {
-    const getReigstartionData = async () => {
-      if (!isLoading) {
-        const registration = history?.registration?.[0]
-
-        if (registration) {
-          const registrationBlock = registration?.blockNumber
-          const block = await provider.getBlock(registrationBlock)
-          const unixTimestamp = block.timestamp
-
-          const date = new Date(unixTimestamp * 1000)
-
-          setRegistrationData({
-            registrationDate: date.toString(),
-            transactionHash: registration.transactionHash,
-          })
-        }
+      return {
+        registrationDate: date.toString(),
+        transactionHash: registration.transactionHash,
       }
-    }
-    getReigstartionData()
-  }, [name, isLoading, history, provider])
+    },
+    { enabled: !!(registration && registrationBlock && provider) },
+  )
 
   return (
     <RegistrationDateContainer>
-      <Typography>{registrationData.registrationDate}</Typography>
+      <Typography>{registrationDate}</Typography>
       <div style={{ maxWidth: 300 }}>
         <Button
           as="a"
-          href={`${getEtherScanLink(activeChain?.id)}tx/${
-            registrationData.transactionHash
-          }`}
+          href={`${getEtherScanLink(activeChain?.id)}tx/${transactionHash}`}
           target="_blank"
           size="small"
         >
-          View on etherscan
+          View on Etherscan
         </Button>
       </div>
     </RegistrationDateContainer>

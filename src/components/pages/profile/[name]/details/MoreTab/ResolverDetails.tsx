@@ -6,8 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 import { useProfile } from '@app/hooks/useProfile'
 import { RecordItem } from '@app/components/RecordItem'
 
-const MigratedContainer = styled.div`
-  ${({ theme }) => css`
+const MigratedContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     margin: 0 auto;
     width: 180px;
@@ -15,8 +15,8 @@ const MigratedContainer = styled.div`
     justify-content: space-between;
     padding-top: 10px;
     ${theme.space['2.5']}
-  `}
-`
+  `,
+)
 
 const ResolverDetails = () => {
   const router = useRouter()

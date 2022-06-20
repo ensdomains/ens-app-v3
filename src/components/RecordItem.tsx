@@ -101,14 +101,14 @@ const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(
   ],
 )
 
-const InnerCopyButton = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  ${({ theme }) => `
+const InnerCopyButton = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['9']};
-  `}
-`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `,
+)
 
 const LegacyType = styled(Typography)`
   ${({ theme }) => `
