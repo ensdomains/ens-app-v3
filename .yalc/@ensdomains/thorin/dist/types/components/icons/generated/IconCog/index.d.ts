@@ -1,1 +1,0 @@
-export { IconCog } from './IconCog';

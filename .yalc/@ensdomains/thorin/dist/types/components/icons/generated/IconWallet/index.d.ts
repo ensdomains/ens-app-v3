@@ -1,1 +1,0 @@
-export { IconWallet } from './IconWallet';

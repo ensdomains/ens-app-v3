@@ -1,10 +1,14 @@
 {
   "version": "v1",
   "packages": {
-    "@ensdomains/thorin": {
-      "signature": "1d659840745e4dafababc9cb2242587b",
+    "@ensdomains/ensjs": {
+      "signature": "89c74106aaee1f6d8fcd5b701020286c",
       "pure": true,
-      "replaced": "github:ensdomains/thorin#head=main&workspace=@ensdomains/thorin"
+      "replaced": "portal:.yalc/@ensdomains/ensjs"
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "6ea2ba482d204672c4e6660ebde0510d",
+      "file": true
     }
   }
 }

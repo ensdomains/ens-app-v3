@@ -12,16 +12,45 @@
     "docs": "Docs",
     "bugBounty": "Bug Bounty",
     "mediaKit": "Media Kit",
-    "back": "Back"
+    "back": "Back",
+    "connected": {
+      "favourites": "Favourites",
+      "myNames": "My Names"
+    }
   },
-  "profile": {
+  "wallet": {
     "myProfile": "My Profile",
     "disconnect": "Disconnect",
-    "connect": "Connect"
+    "connect": "Connect",
+    "noPrimaryName": "No Primary Name",
+    "viewProfile": "View Profile",
+    "viewDetails": "View Details"
   },
   "name": {
     "expires": "Expires",
     "registrant": "Registrant",
     "controller": "Controller"
+  },
+  "transaction": {
+    "description": {
+      "setName": "Set Name",
+      "setRecords": "Set Records",
+      "test": "Test Transaction"
+    },
+    "status": {
+      "pending": {
+        "regular": "Pending"
+      },
+      "confirmed": {
+        "regular": "Confirmed",
+        "notifyTitle": "Transaction Successful",
+        "notifyMessage": "Your \"%s\" transaction was successful"
+      },
+      "failed": {
+        "regular": "Failed",
+        "notifyTitle": "Transaction Failure",
+        "notifyMessage": "Your \"%s\" transaction failed and was reverted"
+      }
+    }
   }
 }

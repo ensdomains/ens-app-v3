@@ -1,1 +1,0 @@
-export { IconTrendingUp } from './IconTrendingUp';

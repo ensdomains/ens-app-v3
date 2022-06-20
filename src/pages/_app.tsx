@@ -1,20 +1,45 @@
-import { ApolloProvider } from "@apollo/client";
-import getClient, { setupClient } from "@app/apollo/apolloClient";
-import useReactiveVarListeners from "@app/hooks/useReactiveVarListeners";
-import { BreakpointProvider } from "@app/utils/BreakpointProvider";
-import { ThemeProvider } from "@ensdomains/thorin";
-import "@ensdomains/thorin/styles";
-import { appWithTranslation } from "next-i18next";
-import type { AppProps } from "next/app";
-import { useEffect } from "react";
-import { createGlobalStyle } from "styled-components";
-import "../styles.css";
+import { Notifications } from '@app/components/Notifications'
+import { BreakpointProvider } from '@app/utils/BreakpointProvider'
+import { EnsProvider } from '@app/utils/EnsProvider'
+import {
+  lightTheme as thorinLightTheme,
+  ThorinGlobalStyles,
+} from '@ensdomains/thorin'
+import {
+  getDefaultWallets,
+  lightTheme,
+  RainbowKitProvider,
+  Theme,
+} from '@rainbow-me/rainbowkit'
+import '@rainbow-me/rainbowkit/styles.css'
+import type { AppProps } from 'next/app'
+import { I18nextProvider } from 'react-i18next'
+import { QueryClient, QueryClientProvider } from 'react-query'
+import { createGlobalStyle, ThemeProvider } from 'styled-components'
+import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
+import { infuraProvider } from 'wagmi/providers/infura'
+import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+import i18n from '../i18n'
+import '../styles.css'
+
+const rainbowKitTheme: Theme = {
+  ...lightTheme({
+    accentColor: thorinLightTheme.colors.accent,
+    borderRadius: 'medium',
+  }),
+  fonts: {
+    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
+  },
+}
 
 const GlobalStyle = createGlobalStyle`
 html,
 body {
   padding: 0;
   margin: 0;
+}
+
+*, ::before, ::after {
   font-family: Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
@@ -32,49 +57,74 @@ a {
 * {
   box-sizing: border-box;
   font-feature-settings: "ss01" on, "ss03" on;
+  /* stylelint-disable-next-line property-no-vendor-prefix */
   -moz-font-feature-settings: "ss01" on, "ss03" on;
 }
-`;
+`
 
 const breakpoints = {
-  sm: "(min-width: 640px)",
-  md: "(min-width: 768px)",
-  lg: "(min-width: 1024px)",
-  xl: "(min-width: 1280px)",
-};
-
-const ApolloReactiveProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  useReactiveVarListeners();
-
-  return <>{children}</>;
-};
-
-function MyApp({ Component, pageProps }: AppProps) {
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      import("@app/setup").then((setup) => setup.default(false));
-    }
-  }, []);
-
-  setupClient();
-  return (
-    <>
-      <GlobalStyle />
-      <ApolloProvider {...{ client: getClient() }}>
-        <ApolloReactiveProvider>
-          <ThemeProvider>
-            <BreakpointProvider queries={breakpoints}>
-              <Component {...pageProps} />
-            </BreakpointProvider>
-          </ThemeProvider>
-        </ApolloReactiveProvider>
-      </ApolloProvider>
-    </>
-  );
+  xs: '(min-width: 360px)',
+  sm: '(min-width: 640px)',
+  md: '(min-width: 768px)',
+  lg: '(min-width: 1024px)',
+  xl: '(min-width: 1280px)',
 }
 
-export default appWithTranslation(MyApp);
+const { provider, chains } = configureChains(
+  [chain.mainnet, chain.ropsten],
+  [
+    ...(process.env.NEXT_PUBLIC_PROVIDER
+      ? [
+          jsonRpcProvider({
+            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+          }),
+        ]
+      : []),
+    infuraProvider({ infuraId: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
+    jsonRpcProvider({ rpc: () => ({ http: 'https://cloudflare-eth.com/' }) }),
+  ],
+)
+
+const { connectors } = getDefaultWallets({
+  appName: 'ENS',
+  chains,
+})
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+})
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+    },
+  },
+})
+
+function MyApp({ Component, pageProps }: AppProps) {
+  return (
+    <I18nextProvider i18n={i18n}>
+      <QueryClientProvider client={queryClient}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+            <EnsProvider>
+              <ThemeProvider theme={thorinLightTheme}>
+                <BreakpointProvider queries={breakpoints}>
+                  <GlobalStyle />
+                  <ThorinGlobalStyles />
+                  <Notifications />
+                  <Component {...pageProps} />
+                </BreakpointProvider>
+              </ThemeProvider>
+            </EnsProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </QueryClientProvider>
+    </I18nextProvider>
+  )
+}
+
+export default MyApp

@@ -1,0 +1,31 @@
+name: Cloudflare Pages
+
+on: [push]
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 16
+
+      - name: Install Packages
+        run: yarn install --immutable --immutable-cache
+
+      - name: Build and Export
+        run: yarn build:glocal && yarn export
+
+      - name: Publish
+        uses: cloudflare/pages-action@1
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          projectName: ens-app-v3
+          directory: out
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}

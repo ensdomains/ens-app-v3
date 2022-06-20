@@ -1,1 +1,0 @@
-export { IconUpload } from './IconUpload';

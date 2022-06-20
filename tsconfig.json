@@ -1,7 +1,25 @@
 {
+  "ts-node": {
+    "compilerOptions": {
+      "module": "CommonJS",
+      "target": "ESNext",
+      "moduleResolution": "node",
+      "strict": true,
+      "esModuleInterop": true,
+      "allowJs": true,
+      "checkJs": true,
+      "plugins": [
+        {
+          "name": "typescript-styled-plugin",
+          "tags": ["styled", "css", "mq"]
+        }
+      ]
+    }
+  },
   "compilerOptions": {
-    "target": "es5",
+    "target": "es6",
     "lib": ["dom", "dom.iterable", "esnext"],
+    "downlevelIteration": true,
     "allowJs": true,
     "skipLibCheck": true,
     "strict": true,
@@ -19,8 +37,29 @@
     "incremental": true,
     "paths": {
       "@app/*": ["./src/*"]
-    }
+    },
+    "plugins": [
+      {
+        "name": "typescript-styled-plugin",
+        "tags": ["styled", "css", "mq"],
+        "validate": false,
+        "lint": {
+          "validProperties": ["flex-gap"]
+        }
+      }
+    ]
   },
-  "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx"],
-  "exclude": ["node_modules", ".yarn", "custom-test-env.js", "cypress/**/*"]
+  "include": [
+    "next-env.d.ts",
+    "mdx.d.ts",
+    "**/*.ts",
+    "**/*.tsx",
+    "e2e/tsconfig.json"
+  ],
+  "exclude": [
+    "custom-test-env.js",
+    "e2e/**/*",
+    "**/*.ignore.ts",
+    "**/*.ignore.tsx"
+  ]
 }

@@ -33,30 +33,34 @@ yarn-error.log*
 # vercel
 .vercel
 
-/.yarn/*
-!/.yarn/patches
-!/.yarn/plugins
-!/.yarn/releases
-!/.yarn/sdks
-
-# Swap the comments on the following lines if you don't wish to use zero-installs
-# Documentation here: https://yarnpkg.com/features/zero-installs
-!/.yarn/cache
-#/.pnp.*
-
-# yalc cache
-.yalc/**/*.md
+.yarn/*
+!.yarn/cache
+!.yarn/patches
+!.yarn/plugins
+!.yarn/releases
+!.yarn/sdks
+!.yarn/versions
 
 # jest coverage
 /coverage
 
 # cypress
-/cypress/*
-!/cypress/fixtures
-!/cypress/integration
-!/cypress/plugins
-!/cypress/support
-
+/e2e/*
+!/e2e/specs
+!/e2e/.eslintrc.js
+!/e2e/tsconfig.json
+!/e2e/setup.js
 
 # IDEs
 .idea
+
+# test environment
+/subgraphs
+/archives
+/data
+/test-environment
+/ganache
+
+# hardhat
+/cache
+/artifacts

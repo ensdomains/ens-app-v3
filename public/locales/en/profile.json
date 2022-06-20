@@ -3,5 +3,15 @@
   "yourWallet": "Your wallet",
   "accounts": "Accounts",
   "addresses": "Addresses",
-  "otherRecords": "Other Records"
+  "otherRecords": "Other Records",
+  "tabs": {
+    "profile": {
+      "name": "Profile"
+    },
+    "subnames": {
+      "name": "Subnames",
+      "loading": "Loading subnames",
+      "empty": "No subnames have been added"
+    }
+  }
 }
