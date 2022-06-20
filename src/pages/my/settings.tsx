@@ -8,6 +8,7 @@ import type { NextPage } from 'next'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+import { useRouter } from 'next/router'
 
 const WrapperGrid = styled.div<{ $hasError?: boolean }>(
   ({ theme }) => css`
@@ -40,13 +41,15 @@ const OtherWrapper = styled.div(
 )
 
 const SettingsPage: NextPage = () => {
+  const { isReady } = useRouter()
   const { t } = useTranslation('settings')
   const { data: addressData, isLoading } = useAccount()
 
   useProtectedRoute('/', isLoading ? true : addressData)
 
+  const loading = !isReady || isLoading
   return (
-    <Basic title={`${t('title')} -`} heading={t('title')} loading={isLoading}>
+    <Basic title={`${t('title')} -`} heading={t('title')} loading={loading}>
       <WrapperGrid>
         <TransactionSection />
         <OtherWrapper>
