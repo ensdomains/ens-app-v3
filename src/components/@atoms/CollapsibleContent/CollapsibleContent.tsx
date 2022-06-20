@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import { PropsWithChildren } from 'react'
+import { HTMLAttributes } from 'react'
 
 const Container = styled.div<{
   $expanded: boolean
@@ -18,15 +18,16 @@ const Container = styled.div<{
 type Props = {
   expanded?: boolean
   maxHeight?: string
-}
+} & HTMLAttributes<HTMLDivElement>
 
 const CollapsibleContent = ({
   expanded = false,
   maxHeight = '100vh',
   children,
-}: PropsWithChildren<Props>) => {
+  ...props
+}: Props) => {
   return (
-    <Container $expanded={expanded} $maxHeight={maxHeight}>
+    <Container $expanded={expanded} $maxHeight={maxHeight} {...props}>
       {children}
     </Container>
   )
