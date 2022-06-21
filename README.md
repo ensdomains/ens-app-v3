@@ -9,6 +9,16 @@ The all new, all cool version of the ENS manager.
 
 ## Usage
 
+### Quick start
+
+```bash
+yarn
+yarn env start
+yarn dev:glocal
+```
+
+Set your browser to ropsten
+
 ### Install
 
 ```bash
@@ -37,6 +47,8 @@ yarn test
 yarn test:watch
 yarn test:coverage
 ```
+
+We recommend installing [this](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) vscode plugin for a better unit testing experience.
 
 ### Test Environment
 
@@ -99,3 +111,21 @@ yarn publish:local:ensjs
 ```bash
 yarn
 ```
+
+## Architecture
+
+The strcutre of the `pages` folder is mimicked inside `components`. Components specific to a page can be found in the the `components` folder, in the folder corresponding to that page.
+
+Components that are used in multiple places will be found in the top level of the `components` folder.
+
+## Testing philosophy
+
+Our testing philiosphy is user-centric, meaning we want to write out tests so that they resemble the way a user would use our app as much as possible. We've borrowed this from the excellent [testing-library](https://testing-library.com/docs/guiding-principles/).
+
+A user generally clicks, types and swipes, and so most tests should include one of these actions. A user may also load a page in a specific state (by clicking, typing or swiping outside of the app) so sometimes we just want to check a page renders correctly. The vast majority of our tests will be of these kinds.
+
+For deeper parts of the codebase that aren't directly related to a user interaction, such as utility functions, the user is the developer. So simply test the code in the way a developer would use it.
+
+We also primarily test for functionality, making sure the user is able to complete any action that we intend for them to be able to complete. This means we wouldn't write tests to ensure an animation occurs, as that would not stop a user completing an action, and would likeley be picked up druing the course of development.
+
+Writing out todo tests before implementing a test can help. If I want my form to submit the correct data when I click submit, then I should write `it.todo('should submit the correct data when submit is clicked')` before starting. This will prevent me from testing implementation details as I write out the component.

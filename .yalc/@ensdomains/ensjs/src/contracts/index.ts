@@ -1,13 +1,13 @@
 import { ethers } from 'ethers'
-import type { BaseRegistrarImplementation } from '../generated/BaseRegistrarImplementation'
-import type { ENSRegistry } from '../generated/ENSRegistry'
-import type { Multicall } from '../generated/Multicall'
-import type { NameWrapper } from '../generated/NameWrapper'
-import type { PublicResolver } from '../generated/PublicResolver'
-import type { ReverseRegistrar } from '../generated/ReverseRegistrar'
-import type { UniversalResolver } from '../generated/UniversalResolver'
+import getBaseRegistrar from './baseRegistrar'
 import { ContractAddressFetch } from './getContractAddress'
+import getMulticall from './multicall'
+import getNameWrapper from './nameWrapper'
+import getPublicResolver from './publicResolver'
+import getRegistry from './registry'
+import getReverseRegistrar from './reverseRegistrar'
 import { ContractName } from './types'
+import getUniversalResolver from './universalResolver'
 
 export default class ContractManager {
   private provider: ethers.providers.Provider
@@ -21,55 +21,43 @@ export default class ContractManager {
     this.fetchAddress = fetchAddress
   }
 
-  private generateContractGetter = <C>(path: string, name: ContractName) => {
-    let imported: any
-    let contract: C
-    return async (passedProvider?: any, address?: string): Promise<C> => {
-      if (!imported) {
-        imported = (
-          await import(
-            /* webpackMode: "lazy", webpackChunkName: "[request]", webpackPreload: true */
-            `./${path}`
-          )
-        ).default
-      }
-      if (passedProvider) {
-        return imported(passedProvider, address) as C
-      }
-      if (!contract) {
-        contract = imported(this.provider, this.fetchAddress(name)) as C
-      }
-      return contract as C
+  private generateContractGetter = <C extends (...args: any) => any>(
+    name: ContractName,
+    func: C,
+  ) => {
+    return async (
+      passedProvider?: any,
+      address?: string,
+    ): Promise<ReturnType<C>> => {
+      const inputAddress = address || this.fetchAddress(name)
+      const provider = passedProvider || this.provider
+      return func(provider, inputAddress)
     }
   }
 
-  public getPublicResolver = this.generateContractGetter<PublicResolver>(
-    'publicResolver',
+  public getPublicResolver = this.generateContractGetter(
     'PublicResolver',
+    getPublicResolver,
   )
-  public getUniversalResolver = this.generateContractGetter<UniversalResolver>(
-    'universalResolver',
+  public getUniversalResolver = this.generateContractGetter(
     'UniversalResolver',
+    getUniversalResolver,
   )
-  public getRegistry = this.generateContractGetter<ENSRegistry>(
-    'registry',
+  public getRegistry = this.generateContractGetter(
     'ENSRegistryWithFallback',
+    getRegistry,
   )
-  public getReverseRegistrar = this.generateContractGetter<ReverseRegistrar>(
-    'reverseRegistrar',
+  public getReverseRegistrar = this.generateContractGetter(
     'ReverseRegistrar',
+    getReverseRegistrar,
   )
-  public getNameWrapper = this.generateContractGetter<NameWrapper>(
-    'nameWrapper',
+  public getNameWrapper = this.generateContractGetter(
     'NameWrapper',
+    getNameWrapper,
   )
-  public getBaseRegistrar =
-    this.generateContractGetter<BaseRegistrarImplementation>(
-      'baseRegistrar',
-      'BaseRegistrarImplementation',
-    )
-  public getMulticall = this.generateContractGetter<Multicall>(
-    'multicall',
-    'Multicall',
+  public getBaseRegistrar = this.generateContractGetter(
+    'BaseRegistrarImplementation',
+    getBaseRegistrar,
   )
+  public getMulticall = this.generateContractGetter('Multicall', getMulticall)
 }
