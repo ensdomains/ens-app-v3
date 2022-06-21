@@ -123,7 +123,7 @@ const Chevron = styled(DownIndicatorSVG)<{
 const UnwrappedIndicator = styled(Typography)(
   ({ theme }) => `
     background: ${theme.colors.grey};
-    padding: 0 ${theme.space[3]};
+    padding: ${theme.space[1]} ${theme.space[3]};
     border-radius: ${theme.radii.almostExtraLarge};
 `,
 )
@@ -159,7 +159,7 @@ const Accordion = ({ data }: AccordionProps) => {
                 >
                   {item.title}
                 </Typography>
-                <UnwrappedIndicator variant="large" color="textSecondary">
+                <UnwrappedIndicator color="textSecondary">
                   Not wrapped
                 </UnwrappedIndicator>
               </AccordionTitle>

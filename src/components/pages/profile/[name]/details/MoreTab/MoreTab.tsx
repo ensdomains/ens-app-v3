@@ -33,7 +33,7 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const generateAccordionData = (fuseData): AccordionData[] => [
+const generateAccordionData = (fuseData: any): AccordionData[] => [
   {
     title: 'Resolver',
     body: <ResolverDetails />,

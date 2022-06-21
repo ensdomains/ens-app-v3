@@ -1,11 +1,10 @@
 import styled, { css } from 'styled-components'
 import { useProvider, useNetwork } from 'wagmi'
-import { Typography, Button } from '@ensdomains/thorin'
+import { Typography, Button, mq } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 
 import { useGetHistory } from '@app/hooks/useGetHistory'
-import mq from '@app/mediaQuery'
 
 function getEtherScanLink(networkId?: number | string) {
   switch (networkId) {
@@ -40,6 +39,16 @@ const RegistrationDateContainer = styled.div(
   `,
 )
 
+const ButtonContainer = styled.div(() => [
+  css`
+    width: 100%;
+  `,
+  mq.sm.min(css`
+    max-width: 170px;
+    text-align: center;
+  `),
+])
+
 export const RegistrationDate = () => {
   const router = useRouter()
   const { name } = router.query
@@ -67,7 +76,7 @@ export const RegistrationDate = () => {
   return (
     <RegistrationDateContainer>
       <Typography>{registrationDate}</Typography>
-      <div style={{ maxWidth: 300 }}>
+      <ButtonContainer>
         <Button
           as="a"
           href={`${getEtherScanLink(activeChain?.id)}tx/${transactionHash}`}
@@ -76,7 +85,7 @@ export const RegistrationDate = () => {
         >
           View on Etherscan
         </Button>
-      </div>
+      </ButtonContainer>
     </RegistrationDateContainer>
   )
 }

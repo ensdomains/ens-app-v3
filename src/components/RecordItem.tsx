@@ -83,7 +83,7 @@ const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(
         100% - ${$fullWidth ? '0px' : theme.space['20']} - ${theme.space['9']} -
           ${$fullWidth ? theme.space['2'] : theme.space['4']}
       );
-      overflow-wrap: break-word;
+      overflow-wrap: anywhere;
       text-align: left;
     `,
     mq.md.min(css`
@@ -142,7 +142,9 @@ export const RecordItem = ({
       <RecordValue $fullWidth={!itemKey}>{value}</RecordValue>
       <CopyButtonWrapper $hasBackground={hasBackground}>
         <InnerCopyButton>
-          <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
+          {value && (
+            <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
+          )}
         </InnerCopyButton>
       </CopyButtonWrapper>
     </RecordContainer>

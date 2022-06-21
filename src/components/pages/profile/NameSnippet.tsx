@@ -52,10 +52,10 @@ const OwnerWithEns = styled.div(
 )
 
 const NameOwnerItem = ({
-  address,
+  address = '',
   network,
 }: {
-  address: string
+  address?: string
   network: number
 }) => {
   const { getName } = useEns()
@@ -146,7 +146,7 @@ export const NameDetailSnippet = ({
   name: string
   expiryDate?: Date | null
   ownerData: {
-    owner: string
+    owner?: string
     registrant?: string
   }
   network: number
@@ -211,7 +211,7 @@ export const NameSnippet = ({
   network: number
   expiryDate?: Date | null
   ownerData: {
-    owner: string
+    owner?: string
     registrant?: string
   }
   showButton?: boolean
