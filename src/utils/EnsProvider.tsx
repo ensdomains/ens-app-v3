@@ -8,7 +8,8 @@ import React, {
 } from 'react'
 import { useProvider } from 'wagmi'
 
-const addresses = {
+// local addresses for test env
+const testAddresses = {
   BaseRegistrarImplementation: '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
   Multicall: '0xcA11bde05977b3631167028862bE2a173976CA11',
   NameWrapper: '0xD678D5259862431F17a556515948D450B5934773',
@@ -22,7 +23,7 @@ const defaultValue: ENS = process.env.NEXT_PUBLIC_GRAPH_URI
   ? new ENS({
       graphURI: process.env.NEXT_PUBLIC_GRAPH_URI,
       getContractAddress: () => (name: string) =>
-        addresses[name as keyof typeof addresses],
+        testAddresses[name as keyof typeof testAddresses],
     })
   : new ENS()
 
