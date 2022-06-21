@@ -73,7 +73,7 @@ export const TabBar = () => {
 
   return (
     <>
-      <TabWrapper>
+      <TabWrapper id="tabbar">
         <TabContainer>
           <ConnectButtonWrapper isTabBar>
             {{

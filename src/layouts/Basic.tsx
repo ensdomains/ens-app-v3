@@ -14,7 +14,6 @@ const Container = styled.div(
     flex-direction: column;
     align-items: stretch;
     min-width: 100%;
-    min-height: 100vh;
     ${mq.md.min(css`
       padding: ${theme.space['12']} ${theme.space['16']};
     `)}
@@ -36,7 +35,7 @@ const ContentWrapper = styled.div(
 
 const BottomPlaceholder = styled.div(
   ({ theme }) => css`
-    height: ${theme.space['28']};
+    height: ${theme.space['16']};
   `,
 )
 
@@ -45,7 +44,7 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
   const breakpoints = useBreakpoint()
 
   return (
-    <Container>
+    <Container className="min-safe">
       <Navigation />
       <ContentWrapper>{children}</ContentWrapper>
       {isReady && !breakpoints.md ? <BottomPlaceholder /> : <Footer />}
