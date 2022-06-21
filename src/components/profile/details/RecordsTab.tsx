@@ -176,9 +176,7 @@ const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(
       );
     `)}
     display: inline-block;
-    overflow-wrap: break-word;
-    word-break: break-all;
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
     text-align: left;
   `,
 )
