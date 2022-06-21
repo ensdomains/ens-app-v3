@@ -65,7 +65,7 @@ const decode = async (
       rawFuses: fuses as BigNumber,
     }
   } catch {
-    return null
+    return
   }
 }
 

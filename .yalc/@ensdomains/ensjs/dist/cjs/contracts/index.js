@@ -25,10 +25,12 @@ var __importStar = (this && this.__importStar) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 class ContractManager {
     provider;
-    constructor(provider) {
+    fetchAddress;
+    constructor(provider, fetchAddress) {
         this.provider = provider;
+        this.fetchAddress = fetchAddress;
     }
-    generateContractGetter = (path) => {
+    generateContractGetter = (path, name) => {
         let imported;
         let contract;
         return async (passedProvider, address) => {
@@ -41,18 +43,17 @@ class ContractManager {
                 return imported(passedProvider, address);
             }
             if (!contract) {
-                contract = imported(this.provider);
+                contract = imported(this.provider, this.fetchAddress(name));
             }
             return contract;
         };
     };
-    getPublicResolver = this.generateContractGetter('publicResolver');
-    getUniversalResolver = this.generateContractGetter('universalResolver');
-    getRegistry = this.generateContractGetter('registry');
-    getReverseRegistrar = this.generateContractGetter('reverseRegistrar');
-    getDNCOCURP = this.generateContractGetter('doNotCallOnChainUniversalResolverProxy');
-    getNameWrapper = this.generateContractGetter('nameWrapper');
-    getBaseRegistrar = this.generateContractGetter('baseRegistrar');
-    getMulticall = this.generateContractGetter('multicall');
+    getPublicResolver = this.generateContractGetter('publicResolver', 'PublicResolver');
+    getUniversalResolver = this.generateContractGetter('universalResolver', 'UniversalResolver');
+    getRegistry = this.generateContractGetter('registry', 'ENSRegistryWithFallback');
+    getReverseRegistrar = this.generateContractGetter('reverseRegistrar', 'ReverseRegistrar');
+    getNameWrapper = this.generateContractGetter('nameWrapper', 'NameWrapper');
+    getBaseRegistrar = this.generateContractGetter('baseRegistrar', 'BaseRegistrarImplementation');
+    getMulticall = this.generateContractGetter('multicall', 'Multicall');
 }
 exports.default = ContractManager;

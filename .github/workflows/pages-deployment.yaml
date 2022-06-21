@@ -19,7 +19,7 @@ jobs:
         run: yarn install --immutable --immutable-cache
 
       - name: Build and Export
-        run: yarn build:glocal && yarn export
+        run: yarn build && yarn export
 
       - name: Publish
         uses: cloudflare/pages-action@1

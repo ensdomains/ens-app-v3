@@ -1559,6 +1559,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/workers-types@npm:^3.13.0":
+  version: 3.13.0
+  resolution: "@cloudflare/workers-types@npm:3.13.0"
+  checksum: bd4b8c354f7bfed4cc24407d86ff4a686a1076a8637f5a483a0b107ccda6094cecdb70a5eb5308401014f82838fd796885d60832d1e3671bacf5d3ff5760585b
+  languageName: node
+  linkType: hard
+
+"@cloudflare/wrangler@npm:^1.19.12":
+  version: 1.19.12
+  resolution: "@cloudflare/wrangler@npm:1.19.12"
+  dependencies:
+    axios: ^0.21.1
+    rimraf: ^3.0.2
+    tar: ^6.1.10
+  bin:
+    wrangler: run-wrangler.js
+    wrangler1: run-wrangler.js
+  checksum: 40cbc1141046a4d7183a79ef61240065ee22d6f643b2a45e31c1e966b6da41e3b81e8a1e3745730a0f50123a0a2b863122e41f1c659e81fa3e67814410689af2
+  languageName: node
+  linkType: hard
+
 "@coinbase/wallet-sdk@npm:^3.1.0":
   version: 3.1.0
   resolution: "@coinbase/wallet-sdk@npm:3.1.0"
@@ -1939,19 +1960,19 @@ __metadata:
 
 "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
   version: 3.0.2
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=43f474&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
     "@ensdomains/ens-contracts": ^0.0.11
-    "@ensdomains/eth-ens-namehash": ^2.0.15
     dns-packet: ^5.3.1
     ethers: ^5.6.1
     graphql: ^16.3.0
     graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
   peerDependencies:
     ethers: "*"
-  checksum: 073a24b77876fe91620e83ba30678e42701f7da1869fcc0414793b9d806d05d424b3ed9c3545853c16f0c6a29b612202b3d4e779aae025fd4201a2201da1888e
+  checksum: 6257f46851f0448f2b26fc000918f683bc7fc359f5ae2029892d0b53500f6a3305ff142154c09a1dc00b5806ee99607d333cbea1bd3fd16c225f23b82edd8a64
   languageName: node
   linkType: hard
 
@@ -1994,9 +2015,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.5.19":
-  version: 0.5.19
-  resolution: "@ensdomains/thorin@npm:0.5.19"
+"@ensdomains/thorin@npm:^0.5.17":
+  version: 0.5.17
+  resolution: "@ensdomains/thorin@npm:0.5.17"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2006,7 +2027,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: b46aa49ab6a4d7e3cae568a1c9d3e4035c296bbfa663b2eb2f70c1f74cde242512943a2422f1c9ffb8f288d7b338b9ea5e8ac9d961217d8b432acfd97fb9b246
+  checksum: 1f8ef6b730b33f9f14e639e71814eefcc6157da7c0490139b6f8fe22827a03313c8ebde302ea4620e319ca7b83b51559b9080d57becdd060a037c1d9722f15e0
   languageName: node
   linkType: hard
 
@@ -10539,13 +10560,15 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ens-app-v2@workspace:."
   dependencies:
+    "@cloudflare/workers-types": ^3.13.0
+    "@cloudflare/wrangler": ^1.19.12
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-test-env": "file:.yalc/@ensdomains/ens-test-env"
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.5.19
+    "@ensdomains/thorin": ^0.5.17
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5
@@ -14332,6 +14355,15 @@ __metadata:
   dependencies:
     safer-buffer: ">= 2.1.2 < 3.0.0"
   checksum: 3f60d47a5c8fc3313317edfd29a00a692cc87a19cac0159e2ce711d0ebc9019064108323b5e493625e25594f11c6236647d8e256fbe7a58f4a3b33b89e6d30bf
+  languageName: node
+  linkType: hard
+
+"idna-uts46-hx@npm:3.4.0":
+  version: 3.4.0
+  resolution: "idna-uts46-hx@npm:3.4.0"
+  dependencies:
+    punycode: ^2.1.1
+  checksum: ef13b4c27f25dc1aad346bfb116255f9c1f3717297918c28e835151ebaa19ed526d52e3a70cd15547ef2270331f8425a27ea0297d8bf98a9bf541de4838d717c
   languageName: node
   linkType: hard
 
@@ -22350,7 +22382,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^6.1.11, tar@npm:^6.1.2":
+"tar@npm:^6.1.10, tar@npm:^6.1.11, tar@npm:^6.1.2":
   version: 6.1.11
   resolution: "tar@npm:6.1.11"
   dependencies:

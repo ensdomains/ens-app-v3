@@ -7,9 +7,9 @@ describe('Profile', () => {
     cy.contains('0x', {
       timeout: 15000,
     }).click()
-    cy.contains('My Profile').should('be.visible')
+    cy.contains('Profile').should('be.visible')
     cy.contains('0x').click()
-    cy.contains('My Profile').should('not.be.visible')
+    cy.contains('Profile').should('not.be.visible')
   })
 
   describe('profile', () => {

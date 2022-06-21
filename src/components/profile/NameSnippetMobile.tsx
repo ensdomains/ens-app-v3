@@ -92,7 +92,7 @@ export const NameSnippetMobile = ({
   canSend,
 }: {
   name: string
-  network: string
+  network: number
   expiryDate?: Date | null
   canSend?: boolean
 }) => {

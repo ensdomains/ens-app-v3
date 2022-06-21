@@ -34,7 +34,7 @@ export const NameListView = ({
   network,
 }: {
   currentPage: ReturnedName[]
-  network: string
+  network: number
 }) => {
   const { t } = useTranslation('common')
   if (!currentPage || currentPage.length === 0)

@@ -7,6 +7,13 @@ declare const _default: {
     decode: ({ contracts }: ENSArgs<"contracts">, data: string, address: string) => Promise<{
         name: any;
         match: boolean;
-    } | null>;
+        reverseResolverAddress: any;
+        resolverAddress: any;
+    } | {
+        name: null;
+        match: boolean;
+        reverseResolverAddress?: undefined;
+        resolverAddress?: undefined;
+    } | undefined>;
 };
 export default _default;

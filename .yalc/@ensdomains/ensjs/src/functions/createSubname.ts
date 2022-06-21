@@ -14,7 +14,6 @@ type BaseArgs = {
 type NameWrapperArgs = {
   contract: 'nameWrapper'
   fuses?: FuseOptions
-  shouldWrap?: boolean
 } & BaseArgs
 
 type Args = BaseArgs | NameWrapperArgs
@@ -67,24 +66,14 @@ export default async function (
           ? generateFuseInput(wrapperArgs.fuses)
           : '0'
 
-      if ('shouldWrap' in wrapperArgs && wrapperArgs.shouldWrap) {
-        return nameWrapper.setSubnodeRecordAndWrap(
-          parentNodehash,
-          label,
-          owner,
-          resolverAddress,
-          0,
-          generatedFuses,
-        )
-      } else {
-        return nameWrapper.setSubnodeRecord(
-          parentNodehash,
-          labelhash,
-          owner,
-          resolverAddress,
-          0,
-        )
-      }
+      return nameWrapper.setSubnodeRecord(
+        parentNodehash,
+        label,
+        owner,
+        resolverAddress,
+        0,
+        generatedFuses,
+      )
     }
     default: {
       throw new Error(`Unknown contract: ${contract}`)

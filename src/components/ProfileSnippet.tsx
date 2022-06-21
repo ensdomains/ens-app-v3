@@ -116,7 +116,7 @@ export const ProfileSnippet = ({
   description?: string
   url?: string
   button?: 'viewDetails' | 'viewProfile'
-  network: string
+  network: number
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')

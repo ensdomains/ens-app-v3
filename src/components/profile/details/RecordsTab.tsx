@@ -175,7 +175,10 @@ const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(
           ${$fullWidth ? theme.space['2'] : theme.space['4']}
       );
     `)}
+    display: inline-block;
     overflow-wrap: break-word;
+    word-break: break-all;
+    word-wrap: break-word;
     text-align: left;
   `,
 )

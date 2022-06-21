@@ -12,7 +12,7 @@ const fetchImg = async (url: string) => {
   return undefined
 }
 
-export const useAvatar = (name: string | undefined, network: string) => {
+export const useAvatar = (name: string | undefined, network: number) => {
   const { data, isLoading, status } = useQuery(
     ['getAvatar', name],
     () => fetchImg(imageUrlUnknownRecord(name!, network)),
@@ -24,7 +24,7 @@ export const useAvatar = (name: string | undefined, network: string) => {
   return { avatar: data, isLoading, status }
 }
 
-export const useNFTImage = (name: string | undefined, network: string) => {
+export const useNFTImage = (name: string | undefined, network: number) => {
   const { ready, contracts } = useEns()
   const { data: baseRegistrarAddress } = useQuery(
     'base-registrar-address',

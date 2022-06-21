@@ -24,7 +24,7 @@ const raw = async ({ contracts, multicallWrapper }, name) => {
 };
 const decode = async ({ contracts, multicallWrapper }, data) => {
     if (data === null)
-        return null;
+        return;
     const result = await multicallWrapper.decode(data);
     const baseRegistrar = await contracts?.getBaseRegistrar();
     try {
@@ -36,7 +36,7 @@ const decode = async ({ contracts, multicallWrapper }, data) => {
         };
     }
     catch {
-        return null;
+        return;
     }
 };
 exports.default = {

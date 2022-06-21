@@ -1,6 +1,6 @@
 export default class ContractManager {
-    constructor(provider) {
-        this.generateContractGetter = (path) => {
+    constructor(provider, fetchAddress) {
+        this.generateContractGetter = (path, name) => {
             let imported;
             let contract;
             return async (passedProvider, address) => {
@@ -13,19 +13,19 @@ export default class ContractManager {
                     return imported(passedProvider, address);
                 }
                 if (!contract) {
-                    contract = imported(this.provider);
+                    contract = imported(this.provider, this.fetchAddress(name));
                 }
                 return contract;
             };
         };
-        this.getPublicResolver = this.generateContractGetter('publicResolver');
-        this.getUniversalResolver = this.generateContractGetter('universalResolver');
-        this.getRegistry = this.generateContractGetter('registry');
-        this.getReverseRegistrar = this.generateContractGetter('reverseRegistrar');
-        this.getDNCOCURP = this.generateContractGetter('doNotCallOnChainUniversalResolverProxy');
-        this.getNameWrapper = this.generateContractGetter('nameWrapper');
-        this.getBaseRegistrar = this.generateContractGetter('baseRegistrar');
-        this.getMulticall = this.generateContractGetter('multicall');
+        this.getPublicResolver = this.generateContractGetter('publicResolver', 'PublicResolver');
+        this.getUniversalResolver = this.generateContractGetter('universalResolver', 'UniversalResolver');
+        this.getRegistry = this.generateContractGetter('registry', 'ENSRegistryWithFallback');
+        this.getReverseRegistrar = this.generateContractGetter('reverseRegistrar', 'ReverseRegistrar');
+        this.getNameWrapper = this.generateContractGetter('nameWrapper', 'NameWrapper');
+        this.getBaseRegistrar = this.generateContractGetter('baseRegistrar', 'BaseRegistrarImplementation');
+        this.getMulticall = this.generateContractGetter('multicall', 'Multicall');
         this.provider = provider;
+        this.fetchAddress = fetchAddress;
     }
 }

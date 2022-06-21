@@ -7,7 +7,7 @@ const CANNOT_TRANSFER = 4;
 const CANNOT_SET_RESOLVER = 8;
 const CANNOT_SET_TTL = 16;
 const CANNOT_CREATE_SUBDOMAIN = 32;
-const CANNOT_REPLACE_SUBDOMAIN = 64;
+const PARENT_CANNOT_CONTROL = 64;
 const CAN_DO_EVERYTHING = 0;
 exports.testable = {
     CANNOT_UNWRAP,
@@ -16,7 +16,7 @@ exports.testable = {
     CANNOT_SET_RESOLVER,
     CANNOT_SET_TTL,
     CANNOT_CREATE_SUBDOMAIN,
-    CANNOT_REPLACE_SUBDOMAIN,
+    PARENT_CANNOT_CONTROL,
 };
 exports.default = {
     ...exports.testable,

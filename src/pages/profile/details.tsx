@@ -4,40 +4,18 @@ import { RecordsTab } from '@app/components/profile/details/RecordsTab'
 import { SubnamesTab } from '@app/components/profile/details/SubnamesTab'
 import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/profile/OwnerButton'
+import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { Basic } from '@app/layouts/Basic'
+import { Content } from '@app/layouts/Content'
+import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Card, mq, Typography } from '@ensdomains/thorin'
-import type { GetStaticPaths, NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useMemo, useState } from 'react'
+import { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
-const GridItem = styled.div<{ $area: string }>(
-  ({ $area }) => css`
-    grid-area: ${$area};
-  `,
-)
-
-const WrapperGrid = styled.div<{ $hasError?: boolean }>(
-  ({ theme, $hasError }) => css`
-    flex-grow: 1;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: min-content;
-    gap: ${theme.space['5']};
-    align-self: center;
-    grid-template-areas: ${$hasError && "'error error'"} 'details details' 'content content';
-    ${mq.lg.min(css`
-      grid-template-areas: ${$hasError && "'error error'"} 'details content';
-      grid-template-columns: 270px 2fr;
-    `)}
-  `,
-)
-
-const DetailsContainer = styled(GridItem)(
+const DetailsContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -88,16 +66,6 @@ const TabButtonContainer = styled.div(
   `,
 )
 
-const TabContainer = styled(GridItem)(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    align-items: stretch;
-    gap: ${theme.space['3']};
-  `,
-)
-
 const TabButton = styled.button<{ $selected: boolean }>(
   ({ theme, $selected }) => css`
     display: block;
@@ -117,12 +85,12 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
-const NameDetails: NextPage = () => {
+export default function Page() {
   const breakpoints = useBreakpoint()
   const router = useRouter()
   const name = router.query.name as string
 
-  const { activeChain: chain } = useNetwork()
+  const chainId = useChainId()
   const { data: accountData, isLoading: accountLoading } = useAccount()
   const address = accountData?.address
 
@@ -162,66 +130,75 @@ const NameDetails: NextPage = () => {
   const [tab, setTab] = useState<'records' | 'subnames' | 'more'>('records')
 
   return (
-    <Basic
-      heading={normalisedName}
-      subheading="Name Details"
-      loading={isLoading}
-      title={`${normalisedName} - `}
-    >
-      <WrapperGrid>
-        <DetailsContainer $area="details">
-          {breakpoints.lg ? (
-            <NFTWithPlaceholder
-              name={normalisedName}
-              network={chain?.name!}
-              style={{ width: '270px', height: '270px' }}
-            />
-          ) : (
-            <NameSnippetMobile
-              expiryDate={expiryDate}
-              name={normalisedName}
-              network={chain?.name!}
-              canSend={selfAbilities.canSend}
-            />
-          )}
-          <OwnerButtons>
-            {ownerData?.owner && (
-              <OwnerButton
-                address={ownerData.owner}
-                network={chain?.name!}
-                label={
-                  ownerData.ownershipLevel === 'nameWrapper'
-                    ? 'Owner'
-                    : 'Controller'
-                }
-                type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                description={
-                  ownerData.ownershipLevel === 'nameWrapper'
-                    ? 'Owns and controls the name'
-                    : 'Controls all the records of the name'
-                }
-                canTransfer={selfAbilities.canChangeOwner}
+    <Content title={normalisedName} subtitle="Name Details" loading={isLoading}>
+      {{
+        leading: (
+          <DetailsContainer>
+            {breakpoints.lg ? (
+              <NFTWithPlaceholder
+                name={normalisedName}
+                network={chainId}
+                style={{ width: '270px', height: '270px' }}
+              />
+            ) : (
+              <NameSnippetMobile
+                expiryDate={expiryDate}
+                name={normalisedName}
+                network={chainId}
+                canSend={selfAbilities.canSend}
               />
             )}
-            {ownerData?.registrant && (
-              <OwnerButton
-                address={ownerData.registrant}
-                network={chain?.name!}
-                label="Registrant"
-                type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                description="The owner of the NFT"
-                canTransfer={selfAbilities.canChangeRegistrant}
+            <OwnerButtons>
+              {ownerData?.owner && (
+                <OwnerButton
+                  address={ownerData.owner}
+                  network={chainId}
+                  label={
+                    ownerData.ownershipLevel === 'nameWrapper'
+                      ? 'Owner'
+                      : 'Controller'
+                  }
+                  type={breakpoints.lg ? 'dropdown' : 'dialog'}
+                  description={
+                    ownerData.ownershipLevel === 'nameWrapper'
+                      ? 'Owns and controls the name'
+                      : 'Controls all the records of the name'
+                  }
+                  canTransfer={selfAbilities.canChangeOwner}
+                />
+              )}
+              {ownerData?.registrant && (
+                <OwnerButton
+                  address={ownerData.registrant}
+                  network={chainId}
+                  label="Registrant"
+                  type={breakpoints.lg ? 'dropdown' : 'dialog'}
+                  description="The owner of the NFT"
+                  canTransfer={selfAbilities.canChangeRegistrant}
+                />
+              )}
+            </OwnerButtons>
+            {breakpoints.lg && (
+              <DetailSnippet
+                canSend={selfAbilities.canSend}
+                expiryDate={expiryDate}
               />
             )}
-          </OwnerButtons>
-          {breakpoints.lg && (
-            <DetailSnippet
-              canSend={selfAbilities.canSend}
-              expiryDate={expiryDate}
+          </DetailsContainer>
+        ),
+        trailing: {
+          records: (
+            <RecordsTab
+              texts={(profile?.records?.texts as any) || []}
+              addresses={(profile?.records?.coinTypes as any) || []}
+              contentHash={profile?.records?.contentHash}
+              canEdit={selfAbilities.canEdit}
             />
-          )}
-        </DetailsContainer>
-        <TabContainer $area="content">
+          ),
+          subnames: <SubnamesTab name={normalisedName} network={chainId} />,
+          more: <Card>Test</Card>,
+        }[tab],
+        header: (
           <TabButtonContainer>
             <TabButton
               $selected={tab === 'records'}
@@ -242,39 +219,12 @@ const NameDetails: NextPage = () => {
               <Typography weight="bold">More</Typography>
             </TabButton>
           </TabButtonContainer>
-          {
-            {
-              records: (
-                <RecordsTab
-                  texts={(profile?.records?.texts as any) || []}
-                  addresses={(profile?.records?.coinTypes as any) || []}
-                  contentHash={profile?.records?.contentHash}
-                  canEdit={selfAbilities.canEdit}
-                />
-              ),
-              subnames: (
-                <SubnamesTab name={normalisedName} network={chain?.name!} />
-              ),
-              more: <Card>Test</Card>,
-            }[tab]
-          }
-        </TabContainer>
-      </WrapperGrid>
-    </Basic>
+        ),
+      }}
+    </Content>
   )
 }
 
-export const getStaticProps = async () => {
-  return {
-    props: {},
-  }
+Page.getLayout = function getLayout(page: ReactElement) {
+  return <ContentGrid>{page}</ContentGrid>
 }
-
-export const getStaticPaths: GetStaticPaths<{ slug: string }> = async () => {
-  return {
-    paths: [],
-    fallback: 'blocking',
-  }
-}
-
-export default NameDetails

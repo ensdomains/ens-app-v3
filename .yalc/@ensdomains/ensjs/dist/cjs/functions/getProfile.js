@@ -51,7 +51,7 @@ const getDataForName = async ({ contracts, _getAddr, _getContentHash, _getText, 
         resolver = await universalResolver?.resolve((0, hexEncodedName_1.hexEncodeName)(name), data);
     }
     catch {
-        return null;
+        return;
     }
     const [recordData] = await resolverMulticallWrapper.decode(resolver['0']);
     const matchAddress = recordData[calls.findIndex((x) => x.key === '60')];
@@ -71,7 +71,7 @@ const formatRecords = async ({ _getText, _getAddr, _getContentHash, }, data, cal
         if (itemRet.type === 'addr' || itemRet.type === 'contenthash') {
             decodedFromAbi = ethers_1.ethers.utils.defaultAbiCoder.decode(['bytes'], item)[0];
             if (ethers_1.ethers.utils.hexStripZeros(decodedFromAbi) === '0x') {
-                return null;
+                return;
             }
         }
         switch (calls[i].type) {
@@ -80,8 +80,8 @@ const formatRecords = async ({ _getText, _getAddr, _getContentHash, }, data, cal
                     ...itemRet,
                     value: await _getText.decode(item),
                 };
-                if (itemRet.value === '')
-                    return null;
+                if (itemRet.value === '' || itemRet.value === undefined)
+                    return;
                 break;
             case 'addr':
                 try {
@@ -94,11 +94,11 @@ const formatRecords = async ({ _getText, _getAddr, _getContentHash, }, data, cal
                         break;
                     }
                     else {
-                        return null;
+                        return;
                     }
                 }
                 catch {
-                    return null;
+                    return;
                 }
             case 'contenthash':
                 try {
@@ -108,7 +108,7 @@ const formatRecords = async ({ _getText, _getAddr, _getContentHash, }, data, cal
                     };
                 }
                 catch {
-                    return null;
+                    return;
                 }
         }
         return itemRet;
@@ -116,7 +116,7 @@ const formatRecords = async ({ _getText, _getAddr, _getContentHash, }, data, cal
         .filter((x) => {
         return typeof x === 'object';
     })
-        .filter((x) => x !== null);
+        .filter((x) => x);
     let returnedResponse = {};
     if (typeof options.contentHash === 'string' ||
         typeof options.contentHash === 'object') {
@@ -164,7 +164,7 @@ const graphFetch = async ({ gqlInstance }, name, wantedRecords) => {
     const client = gqlInstance.client;
     const { domains } = await client.request(query, { name });
     if (!domains || domains.length === 0)
-        return null;
+        return;
     const [{ resolver: resolverResponse, isMigrated, createdAt }] = domains;
     let returnedRecords = {};
     if (!wantedRecords)
@@ -188,7 +188,7 @@ const getProfileFromName = async ({ contracts, gqlInstance, _getAddr, _getConten
         : undefined;
     const graphResult = await graphFetch({ gqlInstance }, name, usingOptions);
     if (!graphResult)
-        return null;
+        return;
     const { isMigrated, createdAt, ...wantedRecords } = graphResult;
     const result = await getDataForName({
         contracts,
@@ -206,11 +206,11 @@ const getProfileFromAddress = async ({ contracts, gqlInstance, getName, _getAddr
     try {
         name = await getName(address);
     }
-    catch {
-        return null;
+    catch (e) {
+        return;
     }
     if (!name || !name.name || name.name === '')
-        return null;
+        return;
     if (!name.match)
         return { ...name, isMigrated: null, createdAt: null };
     const result = await getProfileFromName({
@@ -222,7 +222,7 @@ const getProfileFromAddress = async ({ contracts, gqlInstance, getName, _getAddr
         resolverMulticallWrapper,
     }, name.name, options);
     if (!result || result.message)
-        return null;
+        return;
     delete result.address;
     return {
         ...result,

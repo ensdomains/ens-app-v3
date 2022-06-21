@@ -28,12 +28,7 @@ export default async function ({ contracts, provider }, { name, owner, resolverA
             const generatedFuses = 'fuses' in wrapperArgs && wrapperArgs.fuses
                 ? generateFuseInput(wrapperArgs.fuses)
                 : '0';
-            if ('shouldWrap' in wrapperArgs && wrapperArgs.shouldWrap) {
-                return nameWrapper.setSubnodeRecordAndWrap(parentNodehash, label, owner, resolverAddress, 0, generatedFuses);
-            }
-            else {
-                return nameWrapper.setSubnodeRecord(parentNodehash, labelhash, owner, resolverAddress, 0);
-            }
+            return nameWrapper.setSubnodeRecord(parentNodehash, label, owner, resolverAddress, 0, generatedFuses);
         }
         default: {
             throw new Error(`Unknown contract: ${contract}`);

@@ -13,13 +13,12 @@
     "bugBounty": "Bug Bounty",
     "mediaKit": "Media Kit",
     "back": "Back",
-    "connected": {
-      "favourites": "Favourites",
-      "myNames": "My Names"
-    }
+    "names": "Names",
+    "favourites": "Favourites",
+    "settings": "Settings"
   },
   "wallet": {
-    "myProfile": "My Profile",
+    "myProfile": "Profile",
     "disconnect": "Disconnect",
     "connect": "Connect",
     "noPrimaryName": "No Primary Name",
