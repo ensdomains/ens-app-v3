@@ -28,10 +28,10 @@ const raw = async ({ contracts, multicallWrapper }, name) => {
 };
 const decode = async ({ contracts, multicallWrapper }, data, name) => {
     if (data === null)
-        return null;
+        return;
     const result = await multicallWrapper.decode(data);
     if (result === null)
-        return null;
+        return;
     const nameWrapper = await contracts?.getNameWrapper();
     const decodedData = [result[0][1], result[1][1], result[2]?.[1]].map((ret) => ret &&
         ret !== '0x' &&
@@ -77,7 +77,7 @@ const decode = async ({ contracts, multicallWrapper }, data, name) => {
             };
         }
         // .eth names with no registrar owner are either unregistered or expired
-        return null;
+        return;
     }
     // non .eth names inherit the owner from the registry
     // there will only ever be an owner for non .eth names, not a registrant
@@ -96,7 +96,7 @@ const decode = async ({ contracts, multicallWrapper }, data, name) => {
             ownershipLevel: 'registry',
         };
     }
-    // for anything else, return null
-    return null;
+    // for anything else, return
+    return;
 };
 export default { raw, decode };

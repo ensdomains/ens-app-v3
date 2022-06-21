@@ -4,6 +4,7 @@ import { RecordsTab } from '@app/components/profile/details/RecordsTab'
 import { SubnamesTab } from '@app/components/profile/details/SubnamesTab'
 import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/profile/OwnerButton'
+import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -12,7 +13,7 @@ import { Card, mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useAccount, useNetwork } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -89,7 +90,7 @@ export default function Page() {
   const router = useRouter()
   const name = router.query.name as string
 
-  const { activeChain: chain } = useNetwork()
+  const chainId = useChainId()
   const { data: accountData, isLoading: accountLoading } = useAccount()
   const address = accountData?.address
 
@@ -136,14 +137,14 @@ export default function Page() {
             {breakpoints.lg ? (
               <NFTWithPlaceholder
                 name={normalisedName}
-                network={chain?.id!}
+                network={chainId}
                 style={{ width: '270px', height: '270px' }}
               />
             ) : (
               <NameSnippetMobile
                 expiryDate={expiryDate}
                 name={normalisedName}
-                network={chain?.id!}
+                network={chainId}
                 canSend={selfAbilities.canSend}
               />
             )}
@@ -151,7 +152,7 @@ export default function Page() {
               {ownerData?.owner && (
                 <OwnerButton
                   address={ownerData.owner}
-                  network={chain?.id!}
+                  network={chainId}
                   label={
                     ownerData.ownershipLevel === 'nameWrapper'
                       ? 'Owner'
@@ -169,7 +170,7 @@ export default function Page() {
               {ownerData?.registrant && (
                 <OwnerButton
                   address={ownerData.registrant}
-                  network={chain?.id!}
+                  network={chainId}
                   label="Registrant"
                   type={breakpoints.lg ? 'dropdown' : 'dialog'}
                   description="The owner of the NFT"
@@ -194,7 +195,7 @@ export default function Page() {
               canEdit={selfAbilities.canEdit}
             />
           ),
-          subnames: <SubnamesTab name={normalisedName} network={chain?.id!} />,
+          subnames: <SubnamesTab name={normalisedName} network={chainId} />,
           more: <Card>Test</Card>,
         }[tab],
         header: (

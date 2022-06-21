@@ -45,21 +45,21 @@ export interface UniversalResolver extends BaseContract {
         registry(overrides?: CallOverrides): Promise<[string]>;
         resolve(name: BytesLike, data: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
         resolveCallback(response: BytesLike, extraData: BytesLike, overrides?: CallOverrides): Promise<[string]>;
-        reverse(reverseNode: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
+        reverse(reverseName: BytesLike, overrides?: CallOverrides): Promise<[string, string, string, string]>;
         supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<[boolean]>;
     };
     findResolver(name: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
     registry(overrides?: CallOverrides): Promise<string>;
     resolve(name: BytesLike, data: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
     resolveCallback(response: BytesLike, extraData: BytesLike, overrides?: CallOverrides): Promise<string>;
-    reverse(reverseNode: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
+    reverse(reverseName: BytesLike, overrides?: CallOverrides): Promise<[string, string, string, string]>;
     supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
     callStatic: {
         findResolver(name: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
         registry(overrides?: CallOverrides): Promise<string>;
         resolve(name: BytesLike, data: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
         resolveCallback(response: BytesLike, extraData: BytesLike, overrides?: CallOverrides): Promise<string>;
-        reverse(reverseNode: BytesLike, overrides?: CallOverrides): Promise<[string, string]>;
+        reverse(reverseName: BytesLike, overrides?: CallOverrides): Promise<[string, string, string, string]>;
         supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
     };
     filters: {};
@@ -68,7 +68,7 @@ export interface UniversalResolver extends BaseContract {
         registry(overrides?: CallOverrides): Promise<BigNumber>;
         resolve(name: BytesLike, data: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
         resolveCallback(response: BytesLike, extraData: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
-        reverse(reverseNode: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
+        reverse(reverseName: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
         supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<BigNumber>;
     };
     populateTransaction: {
@@ -76,7 +76,7 @@ export interface UniversalResolver extends BaseContract {
         registry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
         resolve(name: BytesLike, data: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         resolveCallback(response: BytesLike, extraData: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
-        reverse(reverseNode: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        reverse(reverseName: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<PopulatedTransaction>;
     };
 }

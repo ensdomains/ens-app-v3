@@ -7,6 +7,6 @@ declare const _default: {
     decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string) => Promise<{
         expiry: Date | null;
         gracePeriod: number;
-    } | null>;
+    } | undefined>;
 };
 export default _default;

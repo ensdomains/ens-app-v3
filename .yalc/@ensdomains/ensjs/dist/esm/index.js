@@ -1,4 +1,5 @@
 import ContractManager from './contracts';
+import { getContractAddress as _getContractAddress } from './contracts/getContractAddress';
 import GqlManager from './GqlManager';
 import singleCall from './utils/singleCall';
 const graphURIEndpoints = {
@@ -9,6 +10,7 @@ const graphURIEndpoints = {
 };
 export class ENS {
     constructor(options) {
+        this.getContractAddress = _getContractAddress;
         this.gqlInstance = new GqlManager();
         /**
          * Checks for an initial provider and if it exists, sets it as the provider
@@ -100,15 +102,15 @@ export class ENS {
          */
         this.setProvider = async (provider) => {
             this.provider = provider;
+            const network = (await this.provider.getNetwork()).chainId;
             if (this.options && this.options.graphURI) {
                 this.graphURI = this.options.graphURI;
             }
             else {
-                this.graphURI =
-                    graphURIEndpoints[(await this.provider.getNetwork()).chainId];
+                this.graphURI = graphURIEndpoints[network];
             }
             await this.gqlInstance.setUrl(this.graphURI);
-            this.contracts = new ContractManager(this.provider);
+            this.contracts = new ContractManager(this.provider, this.getContractAddress(String(network)));
             return;
         };
         /**
@@ -194,5 +196,6 @@ export class ENS {
         this.deleteSubname = this.generateFunction('deleteSubname', ['contracts', 'provider', 'transferSubname']);
         this.transferSubname = this.generateFunction('transferSubname', ['contracts', 'provider']);
         this.options = options;
+        this.getContractAddress = options?.getContractAddress || _getContractAddress;
     }
 }

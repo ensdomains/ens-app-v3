@@ -24,7 +24,7 @@ export const universalWrapper = {
       data,
     )
     if (!response || !response[0]) {
-      return null
+      return
     }
     return { data: response[0], resolver: response[1] }
   },
@@ -51,7 +51,7 @@ export const resolverMulticallWrapper = {
       data,
     )
     if (!response) {
-      return null
+      return
     }
     return response
   },
@@ -76,7 +76,7 @@ export const multicallWrapper = {
     }
   },
   decode: async function ({ contracts }: ENSArgs<'contracts'>, data: string) {
-    if (!data) return null
+    if (!data) return
     const multicall = await contracts?.getMulticall()!
     try {
       const [result] = multicall.interface.decodeFunctionResult(
@@ -85,7 +85,7 @@ export const multicallWrapper = {
       )
       return result
     } catch {
-      return null
+      return
     }
   },
 }

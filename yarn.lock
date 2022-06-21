@@ -1960,19 +1960,19 @@ __metadata:
 
 "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
   version: 3.0.2
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=618fa9&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=43f474&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
     "@ensdomains/ens-contracts": ^0.0.11
-    "@ensdomains/eth-ens-namehash": ^2.0.15
     dns-packet: ^5.3.1
     ethers: ^5.6.1
     graphql: ^16.3.0
     graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
   peerDependencies:
     ethers: "*"
-  checksum: 073a24b77876fe91620e83ba30678e42701f7da1869fcc0414793b9d806d05d424b3ed9c3545853c16f0c6a29b612202b3d4e779aae025fd4201a2201da1888e
+  checksum: 6257f46851f0448f2b26fc000918f683bc7fc359f5ae2029892d0b53500f6a3305ff142154c09a1dc00b5806ee99607d333cbea1bd3fd16c225f23b82edd8a64
   languageName: node
   linkType: hard
 
@@ -14355,6 +14355,15 @@ __metadata:
   dependencies:
     safer-buffer: ">= 2.1.2 < 3.0.0"
   checksum: 3f60d47a5c8fc3313317edfd29a00a692cc87a19cac0159e2ce711d0ebc9019064108323b5e493625e25594f11c6236647d8e256fbe7a58f4a3b33b89e6d30bf
+  languageName: node
+  linkType: hard
+
+"idna-uts46-hx@npm:3.4.0":
+  version: 3.4.0
+  resolution: "idna-uts46-hx@npm:3.4.0"
+  dependencies:
+    punycode: ^2.1.1
+  checksum: ef13b4c27f25dc1aad346bfb116255f9c1f3717297918c28e835151ebaa19ed526d52e3a70cd15547ef2270331f8425a27ea0297d8bf98a9bf541de4838d717c
   languageName: node
   linkType: hard
 

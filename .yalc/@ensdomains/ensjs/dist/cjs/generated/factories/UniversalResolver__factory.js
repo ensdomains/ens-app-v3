@@ -142,7 +142,7 @@ const _abi = [
         inputs: [
             {
                 internalType: "bytes",
-                name: "reverseNode",
+                name: "reverseName",
                 type: "bytes",
             },
         ],
@@ -154,9 +154,19 @@ const _abi = [
                 type: "string",
             },
             {
-                internalType: "bytes",
+                internalType: "address",
                 name: "",
-                type: "bytes",
+                type: "address",
+            },
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
+            },
+            {
+                internalType: "address",
+                name: "",
+                type: "address",
             },
         ],
         stateMutability: "view",

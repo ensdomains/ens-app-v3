@@ -20,7 +20,7 @@ export const _getContentHash = {
       data,
     )
     if (!response) {
-      return null
+      return
     }
 
     const decodedContent = decodeContenthash(response)
@@ -31,7 +31,7 @@ export const _getContentHash = {
         ethers.utils.hexStripZeros(decodedContent.decoded) === '0x') ||
       Object.keys(decodedContent).length === 0
     ) {
-      return null
+      return
     }
 
     return decodedContent
@@ -51,7 +51,7 @@ export const getContentHash = {
     data: string,
   ) => {
     const urData = await universalWrapper.decode(data)
-    if (!urData) return null
+    if (!urData) return
     return await _getContentHash.decode({ contracts }, urData.data)
   },
 }
@@ -78,7 +78,7 @@ export const _getText = {
       data,
     )
     if (!response) {
-      return null
+      return
     }
     return response
   },
@@ -98,7 +98,7 @@ export const getText = {
     data: string,
   ) => {
     const urData = await universalWrapper.decode(data)
-    if (!urData) return null
+    if (!urData) return
     return await _getText.decode({ contracts }, urData.data)
   },
 }
@@ -168,16 +168,16 @@ export const _getAddr = {
       data,
     )
 
-    if (!response) return null
+    if (!response) return
 
     if (ethers.utils.hexStripZeros(response) === '0x') {
-      return null
+      return
     }
 
     const decodedAddr = formatter.encoder(Buffer.from(response.slice(2), 'hex'))
 
     if (!decodedAddr) {
-      return null
+      return
     }
 
     if (!returnCoinType) {
@@ -204,7 +204,7 @@ export const getAddr = {
     coinType?: string | number,
   ) => {
     const urData = await universalWrapper.decode(data)
-    if (!urData) return null
+    if (!urData) return
     return await _getAddr.decode({ contracts }, urData.data, _name, coinType)
   },
 }
@@ -241,7 +241,7 @@ export const getAddr = {
 //   )
 
 //   if (ethers.utils.hexStripZeros(encodedAddr) === '0x') {
-//     return null
+//     return
 //   }
 
 //   const decodedAddr = formatter.encoder(
@@ -249,7 +249,7 @@ export const getAddr = {
 //   )
 
 //   if (!decodedAddr) {
-//     return null
+//     return
 //   }
 
 //   return decodedAddr
@@ -282,7 +282,7 @@ export const getAddr = {
 //     )
 
 //     if (!response || !response[1]) {
-//       return null
+//       return
 //     }
 
 //     const [encodedContentHash] = publicResolver.interface.decodeFunctionResult(
@@ -291,7 +291,7 @@ export const getAddr = {
 //     )
 
 //     if (ethers.utils.hexStripZeros(encodedContentHash) === '0x') {
-//       return null
+//       return
 //     }
 
 //     return decodeContenthash(encodedContentHash)
@@ -328,7 +328,7 @@ export const getAddr = {
 //     )
 
 //     if (!response || !response[1]) {
-//       return null
+//       return
 //     }
 
 //     const [decodedText] = publicResolver.interface.decodeFunctionResult(
@@ -337,7 +337,7 @@ export const getAddr = {
 //     )
 
 //     if (decodedText === '') {
-//       return null
+//       return
 //     }
 
 //     return decodedText

@@ -73,13 +73,7 @@ const _abi = [
         type: "error",
     },
     {
-        inputs: [
-            {
-                internalType: "string",
-                name: "label",
-                type: "string",
-            },
-        ],
+        inputs: [],
         name: "LabelTooShort",
         type: "error",
     },
@@ -113,22 +107,6 @@ const _abi = [
             },
         ],
         name: "Unauthorised",
-        type: "error",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes32",
-                name: "label",
-                type: "bytes32",
-            },
-            {
-                internalType: "address",
-                name: "addr",
-                type: "address",
-            },
-        ],
-        name: "UnauthorisedEthWrap",
         type: "error",
     },
     {
@@ -451,6 +429,29 @@ const _abi = [
         inputs: [
             {
                 internalType: "bytes32",
+                name: "parentNode",
+                type: "bytes32",
+            },
+            {
+                internalType: "bytes32",
+                name: "labelhash",
+                type: "bytes32",
+            },
+            {
+                internalType: "uint96",
+                name: "_fuses",
+                type: "uint96",
+            },
+        ],
+        name: "burnChildFuses",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "bytes32",
                 name: "node",
                 type: "bytes32",
             },
@@ -689,7 +690,7 @@ const _abi = [
         outputs: [
             {
                 internalType: "address",
-                name: "",
+                name: "owner",
                 type: "address",
             },
         ],
@@ -948,35 +949,6 @@ const _abi = [
                 type: "bytes32",
             },
             {
-                internalType: "bytes32",
-                name: "label",
-                type: "bytes32",
-            },
-            {
-                internalType: "address",
-                name: "owner",
-                type: "address",
-            },
-        ],
-        name: "setSubnodeOwner",
-        outputs: [
-            {
-                internalType: "bytes32",
-                name: "",
-                type: "bytes32",
-            },
-        ],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes32",
-                name: "parentNode",
-                type: "bytes32",
-            },
-            {
                 internalType: "string",
                 name: "label",
                 type: "string",
@@ -992,7 +964,7 @@ const _abi = [
                 type: "uint96",
             },
         ],
-        name: "setSubnodeOwnerAndWrap",
+        name: "setSubnodeOwner",
         outputs: [
             {
                 internalType: "bytes32",
@@ -1011,39 +983,6 @@ const _abi = [
                 type: "bytes32",
             },
             {
-                internalType: "bytes32",
-                name: "label",
-                type: "bytes32",
-            },
-            {
-                internalType: "address",
-                name: "owner",
-                type: "address",
-            },
-            {
-                internalType: "address",
-                name: "resolver",
-                type: "address",
-            },
-            {
-                internalType: "uint64",
-                name: "ttl",
-                type: "uint64",
-            },
-        ],
-        name: "setSubnodeRecord",
-        outputs: [],
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        inputs: [
-            {
-                internalType: "bytes32",
-                name: "parentNode",
-                type: "bytes32",
-            },
-            {
                 internalType: "string",
                 name: "label",
                 type: "string",
@@ -1069,7 +1008,7 @@ const _abi = [
                 type: "uint96",
             },
         ],
-        name: "setSubnodeRecordAndWrap",
+        name: "setSubnodeRecord",
         outputs: [],
         stateMutability: "nonpayable",
         type: "function",
@@ -1133,7 +1072,7 @@ const _abi = [
             },
             {
                 internalType: "bytes32",
-                name: "label",
+                name: "labelhash",
                 type: "bytes32",
             },
             {
@@ -1151,7 +1090,7 @@ const _abi = [
         inputs: [
             {
                 internalType: "bytes32",
-                name: "label",
+                name: "labelhash",
                 type: "bytes32",
             },
             {

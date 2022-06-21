@@ -1,5 +1,7 @@
 import { ethers } from 'ethers'
 import ContractManager from './contracts'
+import { getContractAddress as _getContractAddress } from './contracts/getContractAddress'
+import { SupportedNetworkId } from './contracts/types'
 import type batch from './functions/batch'
 import {
   multicallWrapper,
@@ -43,6 +45,7 @@ import singleCall from './utils/singleCall'
 
 type ENSOptions = {
   graphURI?: string | null
+  getContractAddress?: typeof _getContractAddress
 }
 
 export type InternalENS = {
@@ -121,10 +124,12 @@ export class ENS {
   protected graphURI?: string | null
   protected initialProvider?: ethers.providers.JsonRpcProvider
   contracts?: ContractManager
+  getContractAddress = _getContractAddress
   gqlInstance = new GqlManager()
 
   constructor(options?: ENSOptions) {
     this.options = options
+    this.getContractAddress = options?.getContractAddress || _getContractAddress
   }
 
   /**
@@ -277,14 +282,17 @@ export class ENS {
     provider: ethers.providers.JsonRpcProvider,
   ): Promise<void> => {
     this.provider = provider
+    const network = (await this.provider.getNetwork()).chainId
     if (this.options && this.options.graphURI) {
       this.graphURI = this.options.graphURI
     } else {
-      this.graphURI =
-        graphURIEndpoints[(await this.provider.getNetwork()).chainId]
+      this.graphURI = graphURIEndpoints[network]
     }
     await this.gqlInstance.setUrl(this.graphURI)
-    this.contracts = new ContractManager(this.provider)
+    this.contracts = new ContractManager(
+      this.provider,
+      this.getContractAddress(String(network) as SupportedNetworkId),
+    )
     return
   }
 

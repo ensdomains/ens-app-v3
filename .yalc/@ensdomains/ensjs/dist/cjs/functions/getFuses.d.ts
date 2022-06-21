@@ -12,6 +12,6 @@ declare const _default: {
         vulnerability: any;
         vulnerableNode: null;
         rawFuses: BigNumber;
-    } | null>;
+    } | undefined>;
 };
 export default _default;

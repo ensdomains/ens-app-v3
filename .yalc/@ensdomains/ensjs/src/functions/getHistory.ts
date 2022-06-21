@@ -106,7 +106,7 @@ const mapResultDetailDecode =
           abi,
         )
       } catch {
-        return null
+        return
       }
     })
   }
@@ -223,7 +223,7 @@ export async function getHistory(
 
   const { domains } = await client.request(query, { name, label })
 
-  if (!domains || domains.length === 0) return null
+  if (!domains || domains.length === 0) return
 
   const [
     {
@@ -262,7 +262,7 @@ export async function getHistoryWithDetail(
 ) {
   const historyRes = await getHistory({ gqlInstance }, name)
 
-  if (!historyRes) return null
+  if (!historyRes) return
 
   const { domain, registration, resolver: resolverHistory } = historyRes
 
@@ -323,24 +323,24 @@ export async function getHistoryDetailForTransactionHash(
 ) {
   const publicResolver = await contracts?.getPublicResolver()!
   const transaction = await provider!.getTransaction(hash)
-  if (!transaction) return null
+  if (!transaction) return
   const result = mapResultDetailDecode(publicResolver)({
     input: transaction.data,
   })
-  if (!result || !result.length) return null
+  if (!result || !result.length) return
   if (typeof indexInTransaction === 'number') {
-    if (indexInTransaction + 1 > result.length) return null
+    if (indexInTransaction + 1 > result.length) return
     const resultItem = result[indexInTransaction]
     if (
       !resultItem ||
       !resultItem.key ||
       (!resultItem.value && resultItem.value !== '')
     )
-      return null
+      return
     return { key: resultItem.key, value: resultItem.value }
   }
   return result.map((item: any) => {
-    if (!item.key) return null
+    if (!item.key) return
     if (!item.value && item.value !== '') return { key: item.key, value: null }
     return { key: item.key, value: item.value }
   })

@@ -28,6 +28,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ENS = void 0;
 const contracts_1 = __importDefault(require("./contracts"));
+const getContractAddress_1 = require("./contracts/getContractAddress");
 const GqlManager_1 = __importDefault(require("./GqlManager"));
 const singleCall_1 = __importDefault(require("./utils/singleCall"));
 const graphURIEndpoints = {
@@ -42,9 +43,11 @@ class ENS {
     graphURI;
     initialProvider;
     contracts;
+    getContractAddress = getContractAddress_1.getContractAddress;
     gqlInstance = new GqlManager_1.default();
     constructor(options) {
         this.options = options;
+        this.getContractAddress = options?.getContractAddress || getContractAddress_1.getContractAddress;
     }
     /**
      * Checks for an initial provider and if it exists, sets it as the provider
@@ -136,15 +139,15 @@ class ENS {
      */
     setProvider = async (provider) => {
         this.provider = provider;
+        const network = (await this.provider.getNetwork()).chainId;
         if (this.options && this.options.graphURI) {
             this.graphURI = this.options.graphURI;
         }
         else {
-            this.graphURI =
-                graphURIEndpoints[(await this.provider.getNetwork()).chainId];
+            this.graphURI = graphURIEndpoints[network];
         }
         await this.gqlInstance.setUrl(this.graphURI);
-        this.contracts = new contracts_1.default(this.provider);
+        this.contracts = new contracts_1.default(this.provider, this.getContractAddress(String(network)));
         return;
     };
     /**

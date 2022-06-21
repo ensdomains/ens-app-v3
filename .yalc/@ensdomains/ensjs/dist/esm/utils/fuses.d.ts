@@ -5,7 +5,7 @@ export declare const testable: {
     CANNOT_SET_RESOLVER: number;
     CANNOT_SET_TTL: number;
     CANNOT_CREATE_SUBDOMAIN: number;
-    CANNOT_REPLACE_SUBDOMAIN: number;
+    PARENT_CANNOT_CONTROL: number;
 };
 declare const _default: {
     CAN_DO_EVERYTHING: number;
@@ -15,6 +15,6 @@ declare const _default: {
     CANNOT_SET_RESOLVER: number;
     CANNOT_SET_TTL: number;
     CANNOT_CREATE_SUBDOMAIN: number;
-    CANNOT_REPLACE_SUBDOMAIN: number;
+    PARENT_CANNOT_CONTROL: number;
 };
 export default _default;
