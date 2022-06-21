@@ -3,15 +3,15 @@ import ContractManager from './contracts'
 import { getContractAddress as _getContractAddress } from './contracts/getContractAddress'
 import { SupportedNetworkId } from './contracts/types'
 import type batch from './functions/batch'
-import {
+import type {
   multicallWrapper,
   resolverMulticallWrapper,
   universalWrapper,
 } from './functions/batchWrappers'
 import type burnFuses from './functions/burnFuses'
 import type createSubname from './functions/createSubname'
-import deleteSubname from './functions/deleteSubname'
-import getExpiry from './functions/getExpiry'
+import type deleteSubname from './functions/deleteSubname'
+import type getExpiry from './functions/getExpiry'
 import type getFuses from './functions/getFuses'
 import type {
   getHistory,
@@ -32,7 +32,7 @@ import type {
   _getContentHash,
   _getText,
 } from './functions/getSpecificRecord'
-import getSubnames from './functions/getSubnames'
+import type getSubnames from './functions/getSubnames'
 import type setName from './functions/setName'
 import type setRecords from './functions/setRecords'
 import type setResolver from './functions/setResolver'
@@ -307,27 +307,37 @@ export class ENS {
     return newENS
   }
 
-  public batch = this.generateRawFunction<typeof batch>('batch', [
-    'multicallWrapper',
-  ])
+  public batch = this.generateRawFunction<typeof batch>(
+    'initialGetters',
+    ['multicallWrapper'],
+    'batch',
+  )
 
-  public getProfile = this.generateFunction<typeof getProfile>('getProfile', [
-    'contracts',
-    'gqlInstance',
-    'getName',
-    'resolverMulticallWrapper',
-    '_getAddr',
-    '_getContentHash',
-    '_getText',
-  ])
-
-  public getRecords = this.generateFunction<typeof getRecords>('getRecords', [
+  public getProfile = this.generateFunction<typeof getProfile>(
+    'initialGetters',
+    [
+      'contracts',
+      'gqlInstance',
+      'getName',
+      'resolverMulticallWrapper',
+      '_getAddr',
+      '_getContentHash',
+      '_getText',
+    ],
     'getProfile',
-  ])
+  )
 
-  public getName = this.generateRawFunction<typeof getName>('getName', [
-    'contracts',
-  ])
+  public getRecords = this.generateFunction<typeof getRecords>(
+    'initialGetters',
+    ['getProfile'],
+    'getRecords',
+  )
+
+  public getName = this.generateRawFunction<typeof getName>(
+    'initialGetters',
+    ['contracts'],
+    'getName',
+  )
 
   public getResolver = this.generateRawFunction<typeof getResolver>(
     'getResolver',
@@ -361,72 +371,77 @@ export class ENS {
   )
 
   public getContentHash = this.generateRawFunction<typeof getContentHash>(
-    'getSpecificRecord',
+    'initialGetters',
     ['contracts', 'universalWrapper'],
     'getContentHash',
   )
 
   public _getContentHash = this.generateRawFunction<typeof _getContentHash>(
-    'getSpecificRecord',
+    'initialGetters',
     ['contracts'],
     '_getContentHash',
   )
 
   public getAddr = this.generateRawFunction<typeof getAddr>(
-    'getSpecificRecord',
+    'initialGetters',
     ['contracts', 'universalWrapper'],
     'getAddr',
   )
 
   public _getAddr = this.generateRawFunction<typeof _getAddr>(
-    'getSpecificRecord',
+    'initialGetters',
     ['contracts'],
     '_getAddr',
   )
 
   public getText = this.generateRawFunction<typeof getText>(
-    'getSpecificRecord',
+    'initialGetters',
     ['contracts', 'universalWrapper'],
     'getText',
   )
 
   public _getText = this.generateRawFunction<typeof _getText>(
-    'getSpecificRecord',
+    'initialGetters',
     ['contracts'],
     '_getText',
   )
 
-  public getOwner = this.generateRawFunction<typeof getOwner>('getOwner', [
-    'contracts',
-    'multicallWrapper',
-  ])
-
-  public getExpiry = this.generateRawFunction<typeof getExpiry>('getExpiry', [
-    'contracts',
-    'multicallWrapper',
-  ])
-
-  public getSubnames = this.generateFunction<typeof getSubnames>(
-    'getSubnames',
-    ['gqlInstance'],
+  public getOwner = this.generateRawFunction<typeof getOwner>(
+    'initialGetters',
+    ['contracts', 'multicallWrapper'],
+    'getOwner',
   )
 
-  public getNames = this.generateFunction<typeof getNames>('getNames', [
-    'gqlInstance',
-  ])
+  public getExpiry = this.generateRawFunction<typeof getExpiry>(
+    'initialGetters',
+    ['contracts', 'multicallWrapper'],
+    'getExpiry',
+  )
+
+  public getSubnames = this.generateFunction<typeof getSubnames>(
+    'initialGetters',
+    ['gqlInstance'],
+    'getSubnames',
+  )
+
+  public getNames = this.generateFunction<typeof getNames>(
+    'initialGetters',
+    ['gqlInstance'],
+    'getNames',
+  )
 
   public universalWrapper = this.generateRawFunction<typeof universalWrapper>(
-    'batchWrappers',
+    'initialGetters',
     ['contracts'],
     'universalWrapper',
   )
 
   public resolverMulticallWrapper = this.generateRawFunction<
     typeof resolverMulticallWrapper
-  >('batchWrappers', ['contracts'], 'resolverMulticallWrapper')
+  >('initialGetters', ['contracts'], 'resolverMulticallWrapper')
 
   public multicallWrapper = this.generateRawFunction<typeof multicallWrapper>(
-    'batchWrappers',
+    'initialGetters',
     ['contracts'],
     'multicallWrapper',
   )

@@ -83,8 +83,10 @@ const { provider, chains } = configureChains(
           }),
         ]
       : []),
+    jsonRpcProvider({
+      rpc: () => ({ http: 'https://web3.ens.domains/v1/mainnet' }),
+    }),
     infuraProvider({ infuraId: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-    jsonRpcProvider({ rpc: () => ({ http: 'https://cloudflare-eth.com/' }) }),
   ],
 )
 

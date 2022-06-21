@@ -1,30 +1,26 @@
+import getBaseRegistrar from './baseRegistrar';
+import getMulticall from './multicall';
+import getNameWrapper from './nameWrapper';
+import getPublicResolver from './publicResolver';
+import getRegistry from './registry';
+import getReverseRegistrar from './reverseRegistrar';
+import getUniversalResolver from './universalResolver';
 export default class ContractManager {
     constructor(provider, fetchAddress) {
-        this.generateContractGetter = (path, name) => {
-            let imported;
-            let contract;
+        this.generateContractGetter = (name, func) => {
             return async (passedProvider, address) => {
-                if (!imported) {
-                    imported = (await import(
-                    /* webpackMode: "lazy", webpackChunkName: "[request]", webpackPreload: true */
-                    `./${path}`)).default;
-                }
-                if (passedProvider) {
-                    return imported(passedProvider, address);
-                }
-                if (!contract) {
-                    contract = imported(this.provider, this.fetchAddress(name));
-                }
-                return contract;
+                const inputAddress = address || this.fetchAddress(name);
+                const provider = passedProvider || this.provider;
+                return func(provider, inputAddress);
             };
         };
-        this.getPublicResolver = this.generateContractGetter('publicResolver', 'PublicResolver');
-        this.getUniversalResolver = this.generateContractGetter('universalResolver', 'UniversalResolver');
-        this.getRegistry = this.generateContractGetter('registry', 'ENSRegistryWithFallback');
-        this.getReverseRegistrar = this.generateContractGetter('reverseRegistrar', 'ReverseRegistrar');
-        this.getNameWrapper = this.generateContractGetter('nameWrapper', 'NameWrapper');
-        this.getBaseRegistrar = this.generateContractGetter('baseRegistrar', 'BaseRegistrarImplementation');
-        this.getMulticall = this.generateContractGetter('multicall', 'Multicall');
+        this.getPublicResolver = this.generateContractGetter('PublicResolver', getPublicResolver);
+        this.getUniversalResolver = this.generateContractGetter('UniversalResolver', getUniversalResolver);
+        this.getRegistry = this.generateContractGetter('ENSRegistryWithFallback', getRegistry);
+        this.getReverseRegistrar = this.generateContractGetter('ReverseRegistrar', getReverseRegistrar);
+        this.getNameWrapper = this.generateContractGetter('NameWrapper', getNameWrapper);
+        this.getBaseRegistrar = this.generateContractGetter('BaseRegistrarImplementation', getBaseRegistrar);
+        this.getMulticall = this.generateContractGetter('Multicall', getMulticall);
         this.provider = provider;
         this.fetchAddress = fetchAddress;
     }
