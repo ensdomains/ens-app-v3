@@ -1,69 +1,34 @@
 import { ethers } from 'ethers';
 import { labelhash } from '../utils/labels';
-const singleContractOwnerRaw = async ({ contracts }, contract, namehash, labels) => {
-    switch (contract) {
-        case 'nameWrapper': {
-            const nameWrapper = await contracts?.getNameWrapper();
-            return {
-                to: nameWrapper.address,
-                data: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
-            };
-        }
-        case 'registry': {
-            const registry = await contracts?.getRegistry();
-            return {
-                to: registry.address,
-                data: registry.interface.encodeFunctionData('owner', [namehash]),
-            };
-        }
-        case 'registrar': {
-            const registrar = await contracts?.getBaseRegistrar();
-            return {
-                to: registrar.address,
-                data: registrar.interface.encodeFunctionData('ownerOf', [
-                    labelhash(labels[0]),
-                ]),
-            };
-        }
-    }
-};
-const raw = async ({ contracts, multicallWrapper }, name, contract) => {
+const raw = async ({ contracts, multicallWrapper }, name) => {
+    const registry = await contracts?.getRegistry();
+    const baseRegistrar = await contracts?.getBaseRegistrar();
+    const nameWrapper = await contracts?.getNameWrapper();
     const namehash = ethers.utils.namehash(name);
     const labels = name.split('.');
-    if (contract) {
-        return await singleContractOwnerRaw({ contracts }, contract, namehash, labels);
-    }
-    const registryData = await singleContractOwnerRaw({ contracts }, 'registry', namehash, labels);
-    const nameWrapperData = await singleContractOwnerRaw({ contracts }, 'nameWrapper', namehash, labels);
-    const registrarData = await singleContractOwnerRaw({ contracts }, 'registrar', namehash, labels);
+    const registryData = {
+        to: registry.address,
+        data: registry.interface.encodeFunctionData('owner', [namehash]),
+    };
+    const nameWrapperData = {
+        to: nameWrapper.address,
+        data: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
+    };
+    const registrarData = {
+        to: baseRegistrar.address,
+        data: baseRegistrar.interface.encodeFunctionData('ownerOf', [
+            labelhash(labels[0]),
+        ]),
+    };
     const data = [registryData, nameWrapperData];
     if (labels.length == 2 && labels[1] === 'eth') {
         data.push(registrarData);
     }
     return multicallWrapper.raw(data);
 };
-const singleContractOwnerDecode = (data) => ethers.utils.defaultAbiCoder.decode(['address'], data)[0];
-const decode = async ({ contracts, multicallWrapper }, data, name, contract) => {
+const decode = async ({ contracts, multicallWrapper }, data, name) => {
     if (data === null)
         return;
-    if (contract) {
-        const singleOwner = singleContractOwnerDecode(data);
-        let obj = {
-            ownershipLevel: contract,
-        };
-        if (contract === 'registrar') {
-            return {
-                ...obj,
-                registrant: singleOwner,
-            };
-        }
-        else {
-            return {
-                ...obj,
-                owner: singleOwner,
-            };
-        }
-    }
     const result = await multicallWrapper.decode(data);
     if (result === null)
         return;

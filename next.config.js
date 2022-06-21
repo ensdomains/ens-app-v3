@@ -27,7 +27,7 @@ let nextConfig = {
     return [
       {
         source: '/my/profile',
-        destination: '/profile?name=connected',
+        destination: '/profile?connected=true',
       },
       {
         source: '/names/:address',
@@ -35,12 +35,12 @@ let nextConfig = {
       },
       {
         source: '/profile/:name/details',
-        destination: '/profile/details?name=:name'
+        destination: '/profile/details?name=:name',
       },
       {
         source: '/profile/:name',
-        destination: '/profile?name=:name'
-      }
+        destination: '/profile?name=:name',
+      },
     ]
   },
   webpack: (config, options) => {
