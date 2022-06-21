@@ -1,8 +1,11 @@
 import { ethers } from 'ethers';
 import ContractManager from './contracts';
+import { getContractAddress as _getContractAddress } from './contracts/getContractAddress';
+import { SupportedNetworkId } from './contracts/types';
 import GqlManager from './GqlManager';
 declare type ENSOptions = {
     graphURI?: string | null;
+    getContractAddress?: typeof _getContractAddress;
 };
 export declare type InternalENS = {
     options?: ENSOptions;
@@ -43,6 +46,7 @@ export declare class ENS {
     protected graphURI?: string | null;
     protected initialProvider?: ethers.providers.JsonRpcProvider;
     contracts?: ContractManager;
+    getContractAddress: (networkId: SupportedNetworkId) => import("./contracts/getContractAddress").ContractAddressFetch;
     gqlInstance: GqlManager;
     constructor(options?: ENSOptions);
     /**
@@ -98,7 +102,7 @@ export declare class ENS {
             to: string;
             data: string;
         }>;
-        decode: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, data: string, ...items: BatchFunctionResult<RawFunction>[]) => Promise<any[] | null>;
+        decode: ({ multicallWrapper }: ENSArgs<"multicallWrapper">, data: string, ...items: BatchFunctionResult<RawFunction>[]) => Promise<any[] | undefined>;
     }>;
     getProfile: (nameOrAddress: string, options?: {
         contentHash?: boolean | undefined;
@@ -108,26 +112,27 @@ export declare class ENS {
         isMigrated: boolean | null;
         createdAt: string | null;
         address?: string | undefined;
-        name?: string | undefined;
+        name?: string | null | undefined;
         match?: boolean | undefined;
         message?: string | undefined;
         records?: {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             texts?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
         } | undefined;
         resolverAddress?: string | undefined;
-    } | null>;
+        reverseResolverAddress?: string | undefined;
+    } | undefined>;
     getRecords: (name: string, options?: {
         contentHash?: boolean | undefined;
         texts?: boolean | string[] | undefined;
@@ -136,26 +141,27 @@ export declare class ENS {
         isMigrated: boolean | null;
         createdAt: string | null;
         address?: string | undefined;
-        name?: string | undefined;
+        name?: string | null | undefined;
         match?: boolean | undefined;
         message?: string | undefined;
         records?: {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             texts?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
         } | undefined;
         resolverAddress?: string | undefined;
-    } | null>;
+        reverseResolverAddress?: string | undefined;
+    } | undefined>;
     getName: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, address: string) => Promise<{
             to: string;
@@ -164,7 +170,14 @@ export declare class ENS {
         decode: ({ contracts }: ENSArgs<"contracts">, data: string, address: string) => Promise<{
             name: any;
             match: boolean;
-        } | null>;
+            reverseResolverAddress: any;
+            resolverAddress: any;
+        } | {
+            name: null;
+            match: boolean;
+            reverseResolverAddress?: undefined;
+            resolverAddress?: undefined;
+        } | undefined>;
     }>;
     getResolver: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string) => Promise<{
@@ -185,7 +198,7 @@ export declare class ENS {
             vulnerability: any;
             vulnerableNode: null;
             rawFuses: ethers.BigNumber;
-        } | null>;
+        } | undefined>;
     }>;
     getHistory: (name: string) => Promise<{
         domain: {
@@ -209,7 +222,7 @@ export declare class ENS {
             id: any;
             data: Record<string, any>;
         }[];
-    } | null>;
+    } | undefined>;
     getHistoryWithDetail: (name: string) => Promise<{
         domain: {
             type: any;
@@ -232,14 +245,14 @@ export declare class ENS {
             id: any;
             data: Record<string, any>;
         }[];
-    } | null>;
+    } | undefined>;
     getHistoryDetailForTransactionHash: (hash: string, indexInTransaction?: number | undefined) => Promise<({
         key: any;
         value: any;
-    } | null)[] | {
+    } | undefined)[] | {
         key: any;
         value: any;
-    } | null>;
+    } | undefined>;
     getContentHash: GeneratedRawFunction<{
         raw: ({ contracts, universalWrapper }: ENSArgs<"contracts" | "universalWrapper">, name: string) => Promise<{
             to: string;
@@ -257,7 +270,7 @@ export declare class ENS {
             protocolType: string | undefined;
             decoded: any;
             error: any;
-        } | null>;
+        } | undefined>;
     }>;
     _getContentHash: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string) => Promise<{
@@ -276,7 +289,7 @@ export declare class ENS {
             protocolType: string | undefined;
             decoded: any;
             error: any;
-        } | null>;
+        } | undefined>;
     }>;
     getAddr: GeneratedRawFunction<{
         raw: ({ contracts, universalWrapper }: ENSArgs<"contracts" | "universalWrapper">, name: string, coinType?: string | number | undefined) => Promise<{
@@ -286,7 +299,7 @@ export declare class ENS {
         decode: ({ contracts, universalWrapper }: ENSArgs<"contracts" | "universalWrapper">, data: string, _name: string, coinType?: string | number | undefined) => Promise<string | {
             coin: string;
             addr: string;
-        } | null>;
+        } | undefined>;
     }>;
     _getAddr: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string, coinType?: string | number | undefined, bypassFormat?: boolean | undefined) => Promise<{
@@ -296,7 +309,7 @@ export declare class ENS {
         decode: ({ contracts }: ENSArgs<"contracts">, data: string, _name: string, coinType?: string | number | undefined) => Promise<string | {
             coin: string;
             addr: string;
-        } | null>;
+        } | undefined>;
     }>;
     getText: GeneratedRawFunction<{
         raw: ({ contracts, universalWrapper }: ENSArgs<"contracts" | "universalWrapper">, name: string, key: string) => Promise<{
@@ -313,15 +326,15 @@ export declare class ENS {
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<any>;
     }>;
     getOwner: GeneratedRawFunction<{
-        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<{
             to: string;
             data: string;
         }>;
-        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<{
+        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<{
             registrant?: string | undefined;
-            owner: string;
+            owner?: string | undefined;
             ownershipLevel: "registrar" | "registry" | "nameWrapper";
-        } | null>;
+        } | undefined>;
     }>;
     getExpiry: GeneratedRawFunction<{
         raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
@@ -331,7 +344,7 @@ export declare class ENS {
         decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string) => Promise<{
             expiry: Date | null;
             gracePeriod: number;
-        } | null>;
+        } | undefined>;
     }>;
     getSubnames: (args_0: {
         name: string;
@@ -376,7 +389,7 @@ export declare class ENS {
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<{
             data: any;
             resolver: any;
-        } | null>;
+        } | undefined>;
     }>;
     resolverMulticallWrapper: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, data: {
@@ -386,7 +399,7 @@ export declare class ENS {
             to: string;
             data: string;
         }>;
-        decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<ethers.utils.Result | null>;
+        decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<ethers.utils.Result | undefined>;
     }>;
     multicallWrapper: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, transactions: ethers.providers.TransactionRequest[], requireSuccess?: boolean) => Promise<{
@@ -398,17 +411,7 @@ export declare class ENS {
     setName: (name: string, address?: string | undefined, resolver?: string | undefined, options?: {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction | undefined>;
-    setRecords: (name: string, records: {
-        contentHash?: string | undefined;
-        texts?: {
-            key: string;
-            value: string;
-        }[] | undefined;
-        coinTypes?: {
-            key: string;
-            value: string;
-        }[] | undefined;
-    }) => Promise<ethers.ContractTransaction | undefined>;
+    setRecords: (name: string, records: import("./utils/recordHelpers").RecordOptions) => Promise<ethers.ContractTransaction | undefined>;
     setResolver: (name: string, contract: "registry" | "nameWrapper", resolver?: string | undefined, options?: {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction>;
@@ -433,7 +436,6 @@ export declare class ENS {
     } | ({
         contract: "nameWrapper";
         fuses?: import("./@types/FuseOptions").FuseOptions | undefined;
-        shouldWrap?: boolean | undefined;
     } & {
         name: string;
         owner: string;

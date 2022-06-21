@@ -1,6 +1,6 @@
 name: Coverage
 
-on: [push, pull_request]
+on: [pull_request]
 
 jobs:
   if: ${{ false }} # disable for now
@@ -17,5 +17,5 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: yarn
-      - run: yarn install
+      - run: yarn install --check-cache
       - run: yarn test:coverage

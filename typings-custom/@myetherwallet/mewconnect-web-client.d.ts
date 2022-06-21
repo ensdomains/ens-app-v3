@@ -1,1 +1,1 @@
-declare module "@myetherwallet/mewconnect-web-client";
+declare module '@myetherwallet/mewconnect-web-client'

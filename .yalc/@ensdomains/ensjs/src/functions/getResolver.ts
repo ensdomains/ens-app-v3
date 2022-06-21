@@ -24,7 +24,7 @@ const decode = async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
     !response[0] ||
     ethers.utils.hexStripZeros(response[0]) === '0x'
   ) {
-    return null
+    return
   }
   return response[0]
 }

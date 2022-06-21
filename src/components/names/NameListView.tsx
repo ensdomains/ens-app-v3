@@ -2,7 +2,7 @@ import type { ReturnedName } from '@app/hooks/useNamesFromAddress'
 import { mq, Tag } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import { NameDetailItem } from '../NameDetailItem'
-import { TabWrapper } from '../profile/TabWrapper'
+import { TabWrapper } from '../pages/profile/TabWrapper'
 import { ShortExpiry } from './ExpiryComponents'
 
 const OtherItemsContainer = styled.div(
@@ -25,7 +25,7 @@ export const NameListView = ({
   network,
 }: {
   currentPage: ReturnedName[]
-  network: string
+  network: number
 }) => {
   return (
     <TabWrapper>

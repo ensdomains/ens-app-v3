@@ -124,9 +124,9 @@ export interface UniversalResolver extends BaseContract {
     ): Promise<[string]>;
 
     reverse(
-      reverseNode: BytesLike,
+      reverseName: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[string, string]>;
+    ): Promise<[string, string, string, string]>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -154,9 +154,9 @@ export interface UniversalResolver extends BaseContract {
   ): Promise<string>;
 
   reverse(
-    reverseNode: BytesLike,
+    reverseName: BytesLike,
     overrides?: CallOverrides
-  ): Promise<[string, string]>;
+  ): Promise<[string, string, string, string]>;
 
   supportsInterface(
     interfaceId: BytesLike,
@@ -184,9 +184,9 @@ export interface UniversalResolver extends BaseContract {
     ): Promise<string>;
 
     reverse(
-      reverseNode: BytesLike,
+      reverseName: BytesLike,
       overrides?: CallOverrides
-    ): Promise<[string, string]>;
+    ): Promise<[string, string, string, string]>;
 
     supportsInterface(
       interfaceId: BytesLike,
@@ -217,7 +217,7 @@ export interface UniversalResolver extends BaseContract {
     ): Promise<BigNumber>;
 
     reverse(
-      reverseNode: BytesLike,
+      reverseName: BytesLike,
       overrides?: CallOverrides
     ): Promise<BigNumber>;
 
@@ -248,7 +248,7 @@ export interface UniversalResolver extends BaseContract {
     ): Promise<PopulatedTransaction>;
 
     reverse(
-      reverseNode: BytesLike,
+      reverseName: BytesLike,
       overrides?: CallOverrides
     ): Promise<PopulatedTransaction>;
 

@@ -1,4 +1,3 @@
-import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { hexEncodeName } from '../utils/hexEncodedName'
 
@@ -18,21 +17,18 @@ const decode = async (
   data: string,
   address: string,
 ) => {
-  if (data === null) return null
+  if (data === null) return
   const universalResolver = await contracts?.getUniversalResolver()!
   try {
     const result = universalResolver.interface.decodeFunctionResult(
       'reverse',
       data,
     )
-    const decoded = ethers.utils.defaultAbiCoder.decode(
-      ['bytes', 'address'],
-      result['1'],
-    )
-    const [addr] = ethers.utils.defaultAbiCoder.decode(['address'], decoded[0])
     return {
       name: result['0'],
-      match: addr.toLowerCase() === address.toLowerCase(),
+      match: result['1'].toLowerCase() === address.toLowerCase(),
+      reverseResolverAddress: result['2'],
+      resolverAddress: result['3'],
     }
   } catch {
     return { name: null, match: false }

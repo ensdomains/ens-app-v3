@@ -1,3 +1,4 @@
+import { useChainName } from '@app/hooks/useChainName'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
 import {
@@ -7,7 +8,6 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useNetwork } from 'wagmi'
 import { Card } from '../Card'
 import { Outlink } from '../Outlink'
 import { SectionContainer, SectionHeading } from './Section'
@@ -130,7 +130,7 @@ export const TransactionSection = () => {
   const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
 
-  const { activeChain } = useNetwork()
+  const chainName = useChainName()
   const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
@@ -181,10 +181,7 @@ export const TransactionSection = () => {
                 </TransactionInfoContainer>
                 <ViewLinkContainer>
                   <Outlink
-                    href={makeEtherscanLink(
-                      transaction.hash,
-                      activeChain?.name,
-                    )}
+                    href={makeEtherscanLink(transaction.hash, chainName)}
                     target="_blank"
                   >
                     View on Etherscan

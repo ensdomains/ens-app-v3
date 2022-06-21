@@ -36,7 +36,7 @@ const decode = async (
   { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   data: string,
 ) => {
-  if (data === null) return null
+  if (data === null) return
   const result = await multicallWrapper.decode(data)
   const baseRegistrar = await contracts?.getBaseRegistrar()!
   try {
@@ -53,7 +53,7 @@ const decode = async (
       gracePeriod: (gracePeriod as BigNumber).toNumber() * 1000,
     }
   } catch {
-    return null
+    return
   }
 }
 
