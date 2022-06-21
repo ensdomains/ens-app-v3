@@ -24,10 +24,6 @@ const StyledRadioButtonContainer = styled.div`
     background: ${theme.colors.backgroundSecondary};
     border: 1px solid ${theme.colors.borderSecondary};
     border-radius: ${theme.space['2.5']};
-    margin-bottom: ${theme.space['1.25']};
-    &:last-of-type {
-      margin-bottom: 0;
-    }
   `}
 `
 
@@ -53,7 +49,6 @@ const RadioButtonLabel = styled.span(
     letter-spacing: ${theme.letterSpacings['-0.01']};
     color: ${theme.colors.black};
     text-transform: capitalize;
-    margin-left: -12px;
   `,
 )
 
@@ -95,8 +90,8 @@ const FilterPopover = ({
         />
       )}
       {filter && (
-        <Field label="Show">
-          <RadioButtonGroup value={filter} onChange={handleFilterChange}>
+        <Field label="Show" width="fit">
+          <RadioButtonGroup inline value={filter} onChange={handleFilterChange}>
             <StyledRadioButton
               name="filter"
               value="none"

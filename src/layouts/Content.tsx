@@ -17,9 +17,9 @@ const HeadingItems = styled.div<{ $spacing: string }>(
     gap: ${theme.space['5']};
     align-self: center;
     align-items: center;
-    height: ${theme.space['15']};
+    min-height: ${theme.space['15']};
     ${mq.md.min(css`
-      height: ${theme.space['10']};
+      min-height: ${theme.space['10']};
       grid-column: span 2;
       grid-template-columns: ${$spacing};
     `)}

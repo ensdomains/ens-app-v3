@@ -63,9 +63,10 @@ export type SortValue = {
 export type SortControlProps = {
   value: SortValue
   onChange?: (value: SortValue) => void
+  hideLabel?: boolean
 }
 
-const SortControl = ({ value, onChange }: SortControlProps) => {
+const SortControl = ({ value, hideLabel, onChange }: SortControlProps) => {
   const { t } = useTranslation('common')
 
   const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -92,6 +93,7 @@ const SortControl = ({ value, onChange }: SortControlProps) => {
             value={value.type}
             size="small"
             label="Sort by"
+            hideLabel={hideLabel}
             onChange={handleTypeChange}
             options={[
               { label: t('sortTypes.expiryDate'), value: 'expiryDate' },

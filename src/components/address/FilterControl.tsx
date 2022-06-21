@@ -19,10 +19,11 @@ const Container = styled.div(
 )
 
 const ToolBar = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: flex;
     align-items: flex-end;
     justify-content: space-between;
+    gap: ${theme.space[2]};
   `,
 )
 
@@ -67,6 +68,13 @@ const FilterButton = ({ pressed, children, ...props }: FilterButtonProps) => {
   )
 }
 
+const DesktopPopoverWrapper = styled.div(
+  () => css`
+    width: 90vw;
+    max-width: 300px;
+  `,
+)
+
 const MobilePopoverWrapper = styled.div(
   ({ theme }) => css`
     margin-top: ${theme.space['5']};
@@ -78,6 +86,7 @@ const NameCountWrapper = styled.div(
     display: flex;
     align-items: center;
     height: ${theme.space['10']};
+    white-space: nowrap;
   `,
 )
 
@@ -101,7 +110,7 @@ const FilterControl = ({
   const [showMenu, setShowMenu] = useState(false)
   const breakpoints = useBreakpoint()
   const { isReady } = useRouter()
-  const showMobile = isReady && !breakpoints.sm
+  const showMobile = isReady && !breakpoints.md
 
   const handleToggleShowMenu = () => setShowMenu((value) => !value)
 
@@ -138,12 +147,14 @@ const FilterControl = ({
               <SortControl value={sort} onChange={handleSortChange} />
               <DynamicPopover
                 popover={
-                  <FilterPopover
-                    filter={filter}
-                    onFilterChange={handleFilterChange}
-                  />
+                  <DesktopPopoverWrapper>
+                    <FilterPopover
+                      filter={filter}
+                      onFilterChange={handleFilterChange}
+                    />
+                  </DesktopPopoverWrapper>
                 }
-                placement="bottom-start"
+                placement="bottom-end"
                 open={showMenu}
                 onDismiss={() => setShowMenu(false)}
               >

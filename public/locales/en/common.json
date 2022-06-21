@@ -30,7 +30,7 @@
     "registrant": "Registrant",
     "controller": "Controller",
     "owner": "Owner",
-    "all": "All"
+    "all": "All Names"
   },
   "sortTypes": {
     "expiryDate": "Expiry Date",

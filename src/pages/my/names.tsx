@@ -8,13 +8,17 @@ import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { Button, mq, PageButtons, Select } from '@ensdomains/thorin'
+import { Button, mq, PageButtons } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
-import SortControl, {SortType, SortValue, SortDirection} from '@app/components/@molecules/SortControl/SortControl'
+import SortControl, {
+  SortType,
+  SortValue,
+  SortDirection,
+} from '@app/components/@molecules/SortControl/SortControl'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -76,44 +80,8 @@ const ViewButtons = styled.div(
   `,
 )
 
-const SelectWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['32']};
-    & [role='listbox'] {
-      background: ${theme.colors.background};
-      z-index: 5;
-    }
-    ${mq.md.min(css`
-      width: ${theme.space['48']};
-    `)}
-  `,
-)
-
-
-const FilterDropdownContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-  `,
-)
-
-const SortAndDirections = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: center;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-  `,
-)
-
 const spacing = '1fr 1fr'
 
-type SortType = 'expiryDate' | 'labelName' | 'creationDate'
-type SortDirection = 'asc' | 'desc'
 type ViewType = 'grid' | 'list'
 type FilterType = 'domain' | 'registration' | 'none'
 

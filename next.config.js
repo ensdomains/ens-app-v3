@@ -40,6 +40,10 @@ let nextConfig = {
       {
         source: '/profile/:name',
         destination: '/profile?name=:name'
+      },
+      {
+        source: '/address/:address',
+        destination: '/address?address=:address'
       }
     ]
   },
