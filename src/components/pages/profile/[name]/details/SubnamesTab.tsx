@@ -58,7 +58,7 @@ export const SubnamesTab = ({
   network,
 }: {
   name: string
-  network: string
+  network: number
 }) => {
   const { t } = useTranslation('profile')
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

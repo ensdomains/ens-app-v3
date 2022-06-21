@@ -97,7 +97,8 @@ const ProfileButton = ({
           onClick={link ? undefined : () => copy(value)}
           size="extraSmall"
           shape="circle"
-          variant="secondary"
+          variant="primary"
+          tone="grey"
           shadowless
         >
           <Container data-testid={testid}>

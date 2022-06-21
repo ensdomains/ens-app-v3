@@ -25,7 +25,7 @@ export const NameListView = ({
   network,
 }: {
   currentPage: ReturnedName[]
-  network: string
+  network: number
 }) => {
   return (
     <TabWrapper>

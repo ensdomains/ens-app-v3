@@ -1,6 +1,6 @@
-import { normalize } from '@ensdomains/eth-ens-namehash';
 import { isAddress } from 'ethers/lib/utils';
 import { isEncodedLabelhash, saveName } from './labels';
+import { normalise } from './normalise';
 export const validateName = (name) => {
     const nameArray = name.split('.');
     const hasEmptyLabels = nameArray.some((label) => label.length == 0);
@@ -11,7 +11,7 @@ export const validateName = (name) => {
             return label;
         }
         else {
-            return isEncodedLabelhash(label) ? label : normalize(label);
+            return isEncodedLabelhash(label) ? label : normalise(label);
         }
     });
     const normalizedName = normalizedArray.join('.');

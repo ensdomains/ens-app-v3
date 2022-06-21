@@ -80,7 +80,7 @@ const formatRecords = async ({ _getText, _getAddr, _getContentHash, }, data, cal
                     ...itemRet,
                     value: await _getText.decode(item),
                 };
-                if (itemRet.value === '')
+                if (itemRet.value === '' || itemRet.value === undefined)
                     return;
                 break;
             case 'addr':
@@ -116,7 +116,7 @@ const formatRecords = async ({ _getText, _getAddr, _getContentHash, }, data, cal
         .filter((x) => {
         return typeof x === 'object';
     })
-        .filter((x) => x !== null);
+        .filter((x) => x);
     let returnedResponse = {};
     if (typeof options.contentHash === 'string' ||
         typeof options.contentHash === 'object') {

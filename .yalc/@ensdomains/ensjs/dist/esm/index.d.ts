@@ -1,8 +1,11 @@
 import { ethers } from 'ethers';
 import ContractManager from './contracts';
+import { getContractAddress as _getContractAddress } from './contracts/getContractAddress';
+import { SupportedNetworkId } from './contracts/types';
 import GqlManager from './GqlManager';
 declare type ENSOptions = {
     graphURI?: string | null;
+    getContractAddress?: typeof _getContractAddress;
 };
 export declare type InternalENS = {
     options?: ENSOptions;
@@ -43,6 +46,7 @@ export declare class ENS {
     protected graphURI?: string | null;
     protected initialProvider?: ethers.providers.JsonRpcProvider;
     contracts?: ContractManager;
+    getContractAddress: (networkId: SupportedNetworkId) => import("./contracts/getContractAddress").ContractAddressFetch;
     gqlInstance: GqlManager;
     constructor(options?: ENSOptions);
     /**
@@ -115,13 +119,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             texts?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
@@ -144,13 +148,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             texts?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
@@ -322,13 +326,13 @@ export declare class ENS {
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<any>;
     }>;
     getOwner: GeneratedRawFunction<{
-        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<{
             to: string;
             data: string;
         }>;
-        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<{
+        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<{
             registrant?: string | undefined;
-            owner: string;
+            owner?: string | undefined;
             ownershipLevel: "registrar" | "registry" | "nameWrapper";
         } | undefined>;
     }>;

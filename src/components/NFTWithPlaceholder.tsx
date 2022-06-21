@@ -25,7 +25,7 @@ export const NFTWithPlaceholder = ({
   ...props
 }: {
   name: string
-  network: string
+  network: number
 } & ComponentProps<'img'> &
   ComponentProps<typeof StyledNftBox>) => {
   const { image, isLoading } = useNFTImage(name, network)

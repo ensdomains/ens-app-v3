@@ -110,7 +110,7 @@ const GridItem = ({
   expiry,
 }: {
   name: string
-  network: string
+  network: number
   expiry?: Date
 }) => {
   return (
@@ -134,7 +134,7 @@ export const NameGridView = ({
   network,
 }: {
   currentPage: ReturnedName[]
-  network: string
+  network: number
 }) => {
   return (
     <NameGrid>

@@ -1,4 +1,5 @@
 import ContractManager from './contracts';
+import { getContractAddress as _getContractAddress } from './contracts/getContractAddress';
 import GqlManager from './GqlManager';
 import singleCall from './utils/singleCall';
 const graphURIEndpoints = {
@@ -9,6 +10,7 @@ const graphURIEndpoints = {
 };
 export class ENS {
     constructor(options) {
+        this.getContractAddress = _getContractAddress;
         this.gqlInstance = new GqlManager();
         /**
          * Checks for an initial provider and if it exists, sets it as the provider
@@ -100,15 +102,15 @@ export class ENS {
          */
         this.setProvider = async (provider) => {
             this.provider = provider;
+            const network = (await this.provider.getNetwork()).chainId;
             if (this.options && this.options.graphURI) {
                 this.graphURI = this.options.graphURI;
             }
             else {
-                this.graphURI =
-                    graphURIEndpoints[(await this.provider.getNetwork()).chainId];
+                this.graphURI = graphURIEndpoints[network];
             }
             await this.gqlInstance.setUrl(this.graphURI);
-            this.contracts = new ContractManager(this.provider);
+            this.contracts = new ContractManager(this.provider, this.getContractAddress(String(network)));
             return;
         };
         /**
@@ -121,10 +123,8 @@ export class ENS {
             newENS.initialProvider = provider;
             return newENS;
         };
-        this.batch = this.generateRawFunction('batch', [
-            'multicallWrapper',
-        ]);
-        this.getProfile = this.generateFunction('getProfile', [
+        this.batch = this.generateRawFunction('initialGetters', ['multicallWrapper'], 'batch');
+        this.getProfile = this.generateFunction('initialGetters', [
             'contracts',
             'gqlInstance',
             'getName',
@@ -132,13 +132,9 @@ export class ENS {
             '_getAddr',
             '_getContentHash',
             '_getText',
-        ]);
-        this.getRecords = this.generateFunction('getRecords', [
-            'getProfile',
-        ]);
-        this.getName = this.generateRawFunction('getName', [
-            'contracts',
-        ]);
+        ], 'getProfile');
+        this.getRecords = this.generateFunction('initialGetters', ['getProfile'], 'getRecords');
+        this.getName = this.generateRawFunction('initialGetters', ['contracts'], 'getName');
         this.getResolver = this.generateRawFunction('getResolver', ['contracts']);
         this.getFuses = this.generateRawFunction('getFuses', [
             'contracts',
@@ -146,27 +142,19 @@ export class ENS {
         this.getHistory = this.generateFunction('getHistory', ['gqlInstance'], 'getHistory');
         this.getHistoryWithDetail = this.generateFunction('getHistory', ['contracts', 'gqlInstance', 'provider'], 'getHistoryWithDetail');
         this.getHistoryDetailForTransactionHash = this.generateFunction('getHistory', ['contracts', 'provider'], 'getHistoryDetailForTransactionHash');
-        this.getContentHash = this.generateRawFunction('getSpecificRecord', ['contracts', 'universalWrapper'], 'getContentHash');
-        this._getContentHash = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getContentHash');
-        this.getAddr = this.generateRawFunction('getSpecificRecord', ['contracts', 'universalWrapper'], 'getAddr');
-        this._getAddr = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getAddr');
-        this.getText = this.generateRawFunction('getSpecificRecord', ['contracts', 'universalWrapper'], 'getText');
-        this._getText = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getText');
-        this.getOwner = this.generateRawFunction('getOwner', [
-            'contracts',
-            'multicallWrapper',
-        ]);
-        this.getExpiry = this.generateRawFunction('getExpiry', [
-            'contracts',
-            'multicallWrapper',
-        ]);
-        this.getSubnames = this.generateFunction('getSubnames', ['gqlInstance']);
-        this.getNames = this.generateFunction('getNames', [
-            'gqlInstance',
-        ]);
-        this.universalWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'universalWrapper');
-        this.resolverMulticallWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'resolverMulticallWrapper');
-        this.multicallWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'multicallWrapper');
+        this.getContentHash = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getContentHash');
+        this._getContentHash = this.generateRawFunction('initialGetters', ['contracts'], '_getContentHash');
+        this.getAddr = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getAddr');
+        this._getAddr = this.generateRawFunction('initialGetters', ['contracts'], '_getAddr');
+        this.getText = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getText');
+        this._getText = this.generateRawFunction('initialGetters', ['contracts'], '_getText');
+        this.getOwner = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getOwner');
+        this.getExpiry = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getExpiry');
+        this.getSubnames = this.generateFunction('initialGetters', ['gqlInstance'], 'getSubnames');
+        this.getNames = this.generateFunction('initialGetters', ['gqlInstance'], 'getNames');
+        this.universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
+        this.resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
+        this.multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
         this.setName = this.generateFunction('setName', [
             'contracts',
             'provider',
@@ -194,5 +182,6 @@ export class ENS {
         this.deleteSubname = this.generateFunction('deleteSubname', ['contracts', 'provider', 'transferSubname']);
         this.transferSubname = this.generateFunction('transferSubname', ['contracts', 'provider']);
         this.options = options;
+        this.getContractAddress = options?.getContractAddress || _getContractAddress;
     }
 }
