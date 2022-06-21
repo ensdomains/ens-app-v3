@@ -33,6 +33,10 @@ export const main = async (config) => {
       ...config.ethereum.fork,
       blockNumber: config.archive.blockNumber,
     },
+    logging: {
+      debug: true,
+      verbose: true
+    }
   })
 
   server.listen(8545, '0.0.0.0', (err) => {

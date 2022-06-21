@@ -1,19 +1,22 @@
+import { useMemo, useState, ReactElement } from 'react'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
+
+import { mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
-import { DetailSnippet } from '@app/components/profile/details/DetailSnippet'
-import { RecordsTab } from '@app/components/profile/details/RecordsTab'
-import { SubnamesTab } from '@app/components/profile/details/SubnamesTab'
-import { NameSnippetMobile } from '@app/components/profile/NameSnippetMobile'
-import { OwnerButton } from '@app/components/profile/OwnerButton'
+import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
+import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
+import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
+import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
+import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Card, mq, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import More from '@app/components/pages/profile/[name]/details/MoreTab/MoreTab'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -196,7 +199,7 @@ export default function Page() {
             />
           ),
           subnames: <SubnamesTab name={normalisedName} network={chainId} />,
-          more: <Card>Test</Card>,
+          more: <More />,
         }[tab],
         header: (
           <TabButtonContainer>

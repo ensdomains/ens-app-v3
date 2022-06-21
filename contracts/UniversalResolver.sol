@@ -1,3 +1,3 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >0.0.0;
-import 'ens-contracts-universal/contracts/utils/UniversalResolver.sol';
+import 'ens-contracts/contracts/utils/UniversalResolver.sol';

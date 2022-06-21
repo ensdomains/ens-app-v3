@@ -9,6 +9,11 @@
     "@ensdomains/ens-test-env": {
       "signature": "6ea2ba482d204672c4e6660ebde0510d",
       "file": true
+    },
+    "@ensdomains/thorin": {
+      "signature": "9dc6a16f68ab7f54d04e9cfc6cb3f915",
+      "file": true,
+      "replaced": "^0.5.13"
     }
   }
 }

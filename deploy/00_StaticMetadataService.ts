@@ -1,24 +1,24 @@
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { deployContract } from './.utils'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
-  const { deployments, getNamedAccounts } = hre
-  const { deploy } = deployments
-
-  const { deployer } = await getNamedAccounts()
-
   const metadataHost = ''
   const metadataUrl = `${metadataHost}/name/0x{id}`
 
-  console.log('Deploying NameWrapper...')
+  console.log('Running Deployments...')
 
-  const StaticMetadataService = await deploy('StaticMetadataService', {
-    from: deployer,
-    args: [metadataUrl],
-  })
+  const StaticMetadataService = await deployContract(
+    'StaticMetadataService',
+    metadataUrl,
+  )
 
   const metadataAddress = StaticMetadataService.address
-  console.log('Deployed StaticMetadataService, address:', metadataAddress)
+  console.log(
+    'StaticMetadataService:',
+    'Deployed with address',
+    metadataAddress,
+  )
 }
 
 export default func
