@@ -182,7 +182,7 @@ const formatRecords = async (
               ...itemRet,
               value: await _getText.decode(item),
             }
-            if (itemRet.value === '') return
+            if (itemRet.value === '' || itemRet.value === undefined) return
             break
           case 'addr':
             try {
@@ -216,7 +216,7 @@ const formatRecords = async (
     .filter((x): x is DataItem => {
       return typeof x === 'object'
     })
-    .filter((x) => x !== null)
+    .filter((x) => x)
 
   let returnedResponse: {
     contentHash?: string | null | DecodedContentHash
