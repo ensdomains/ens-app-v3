@@ -24,9 +24,12 @@
     "synpress:ci": "yarn synpress:start",
     "e2e": "E2E=true yarn env start",
     "e2e:ci": "E2E=true CI=true yarn env start --no-reset",
-    "postinstall": "husky install"
+    "postinstall": "husky install",
+    "wrangle": "next build && next export && npx wrangler pages dev ./out",
+    "wrangle:dev": "npx wrangler pages dev ./next"
   },
   "dependencies": {
+    "@cloudflare/wrangler": "^1.19.12",
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs",
@@ -61,6 +64,7 @@
     "react-dom": "*"
   },
   "devDependencies": {
+    "@cloudflare/workers-types": "^3.13.0",
     "@ensdomains/buffer": "^0.1.0",
     "@ensdomains/ens-test-env": "file:.yalc/@ensdomains/ens-test-env",
     "@next/bundle-analyzer": "^12.0.10",

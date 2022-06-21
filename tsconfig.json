@@ -33,7 +33,7 @@
     "jsx": "preserve",
     "rootDir": ".",
     "baseUrl": ".",
-    "types": ["jest", "cypress"],
+    "types": ["jest", "cypress", "@cloudflare/workers-types"],
     "incremental": true,
     "paths": {
       "@app/*": ["./src/*"]

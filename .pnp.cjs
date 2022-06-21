@@ -495,6 +495,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         ]\
       ],\
       [\
+        "@cloudflare/workers-types",\
+        "npm:3.13.0"\
+      ],\
+      [\
+        "@cloudflare/wrangler",\
+        "npm:1.19.12"\
+      ],\
+      [\
         "@coinbase/wallet-sdk",\
         "npm:3.1.0"\
       ],\
@@ -2607,7 +2615,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "chownr",\
-        "npm:1.1.4"\
+        "npm:2.0.0"\
       ],\
       [\
         "chrome-trace-event",\
@@ -3843,7 +3851,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "follow-redirects",\
-        "virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9"\
+        "virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.9"\
       ],\
       [\
         "for-each",\
@@ -7498,6 +7506,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         [null, {\
           "packageLocation": "./",\
           "packageDependencies": [\
+            ["@cloudflare/workers-types", "npm:3.13.0"],\
+            ["@cloudflare/wrangler", "npm:1.19.12"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=f93350&locator=ens-app-v2%40workspace%3A."],\
@@ -10559,6 +10569,27 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@chainlink/contracts", "npm:0.0.10"],\
             ["@truffle/contract", "npm:4.5.6"],\
             ["ethers", "npm:4.0.49"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@cloudflare/workers-types", [\
+        ["npm:3.13.0", {\
+          "packageLocation": "./.yarn/cache/@cloudflare-workers-types-npm-3.13.0-f8b0629a45-bd4b8c354f.zip/node_modules/@cloudflare/workers-types/",\
+          "packageDependencies": [\
+            ["@cloudflare/workers-types", "npm:3.13.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["@cloudflare/wrangler", [\
+        ["npm:1.19.12", {\
+          "packageLocation": "./.yarn/unplugged/@cloudflare-wrangler-npm-1.19.12-b99e764659/node_modules/@cloudflare/wrangler/",\
+          "packageDependencies": [\
+            ["@cloudflare/wrangler", "npm:1.19.12"],\
+            ["axios", "npm:0.21.4"],\
+            ["rimraf", "npm:3.0.2"],\
+            ["tar", "npm:6.1.11"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -16378,7 +16409,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/axios-npm-0.21.4-e278873748-44245f24ac.zip/node_modules/axios/",\
           "packageDependencies": [\
             ["axios", "npm:0.21.4"],\
-            ["follow-redirects", "virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9"]\
+            ["follow-redirects", "virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.9"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -16386,7 +16417,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/axios-npm-0.25.0-a1c287d287-2a8a3787c0.zip/node_modules/axios/",\
           "packageDependencies": [\
             ["axios", "npm:0.25.0"],\
-            ["follow-redirects", "virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9"]\
+            ["follow-redirects", "virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.9"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -16394,7 +16425,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/axios-npm-0.26.1-a6641ce4e3-d9eb58ff4b.zip/node_modules/axios/",\
           "packageDependencies": [\
             ["axios", "npm:0.26.1"],\
-            ["follow-redirects", "virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9"]\
+            ["follow-redirects", "virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.9"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -21213,6 +21244,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["ens-app-v2", "workspace:."],\
+            ["@cloudflare/workers-types", "npm:3.13.0"],\
+            ["@cloudflare/wrangler", "npm:1.19.12"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=f93350&locator=ens-app-v2%40workspace%3A."],\
@@ -24112,10 +24145,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9", {\
-          "packageLocation": "./.yarn/__virtual__/follow-redirects-virtual-5bbc9bd0f6/0/cache/follow-redirects-npm-1.14.9-522f191631-f5982e0eb4.zip/node_modules/follow-redirects/",\
+        ["virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.9", {\
+          "packageLocation": "./.yarn/__virtual__/follow-redirects-virtual-9f13acb18d/0/cache/follow-redirects-npm-1.14.9-522f191631-f5982e0eb4.zip/node_modules/follow-redirects/",\
           "packageDependencies": [\
-            ["follow-redirects", "virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9"],\
+            ["follow-redirects", "virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.9"],\
             ["@types/debug", null],\
             ["debug", null]\
           ],\
@@ -33407,7 +33440,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["solc", "npm:0.7.3"],\
             ["command-exists", "npm:1.2.9"],\
             ["commander", "npm:3.0.2"],\
-            ["follow-redirects", "virtual:a1c287d287cceec925a9c0ff143359f3710be8008f8559da00a15e4d93f76849e9493b8b7760d073ae605ea56d1482d54174c007b28cbf6b38332d152576190f#npm:1.14.9"],\
+            ["follow-redirects", "virtual:e278873748b4e9d158db595d2f6cb0351c74052f52b53924aec4d9299e7b6babfb62aead374cf2f6e453bc8bea3b052380dc6b1137a162bbfc102bbb1c8cac42#npm:1.14.9"],\
             ["fs-extra", "npm:0.30.0"],\
             ["js-sha3", "npm:0.8.0"],\
             ["memorystream", "npm:0.3.1"],\
