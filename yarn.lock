@@ -1559,6 +1559,27 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@cloudflare/workers-types@npm:^3.13.0":
+  version: 3.13.0
+  resolution: "@cloudflare/workers-types@npm:3.13.0"
+  checksum: bd4b8c354f7bfed4cc24407d86ff4a686a1076a8637f5a483a0b107ccda6094cecdb70a5eb5308401014f82838fd796885d60832d1e3671bacf5d3ff5760585b
+  languageName: node
+  linkType: hard
+
+"@cloudflare/wrangler@npm:^1.19.12":
+  version: 1.19.12
+  resolution: "@cloudflare/wrangler@npm:1.19.12"
+  dependencies:
+    axios: ^0.21.1
+    rimraf: ^3.0.2
+    tar: ^6.1.10
+  bin:
+    wrangler: run-wrangler.js
+    wrangler1: run-wrangler.js
+  checksum: 40cbc1141046a4d7183a79ef61240065ee22d6f643b2a45e31c1e966b6da41e3b81e8a1e3745730a0f50123a0a2b863122e41f1c659e81fa3e67814410689af2
+  languageName: node
+  linkType: hard
+
 "@coinbase/wallet-sdk@npm:^3.1.0":
   version: 3.1.0
   resolution: "@coinbase/wallet-sdk@npm:3.1.0"
@@ -10539,6 +10560,8 @@ __metadata:
   version: 0.0.0-use.local
   resolution: "ens-app-v2@workspace:."
   dependencies:
+    "@cloudflare/workers-types": ^3.13.0
+    "@cloudflare/wrangler": ^1.19.12
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-test-env": "file:.yalc/@ensdomains/ens-test-env"
@@ -22350,7 +22373,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tar@npm:^6.1.11, tar@npm:^6.1.2":
+"tar@npm:^6.1.10, tar@npm:^6.1.11, tar@npm:^6.1.2":
   version: 6.1.11
   resolution: "tar@npm:6.1.11"
   dependencies:
