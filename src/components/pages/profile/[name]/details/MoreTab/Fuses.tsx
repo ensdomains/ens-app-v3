@@ -4,6 +4,8 @@ import { Typography, Space } from '@ensdomains/thorin'
 
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
+import { TrafficLight } from '@app/components/TrafficLight'
+
 const FusesContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -23,15 +25,6 @@ const FusesRow = styled.div(
       border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
         ${theme.colors.borderTertiary};
     }
-  `,
-)
-
-const TrafficLight = styled.div<{ $go: boolean }>(
-  ({ theme, $go }) => css`
-    width: 20px;
-    height: 20px;
-    border-radius: 50%;
-    background-color: ${$go ? theme.colors.green : theme.colors.red};
   `,
 )
 

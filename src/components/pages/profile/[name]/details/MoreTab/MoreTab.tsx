@@ -3,6 +3,7 @@ import { utils, BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 
 import { RecordItem } from '@app/components/RecordItem'
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
 import ResolverDetails from './ResolverDetails'
 import Fuses from './Fuses'
@@ -26,7 +27,13 @@ export const TokenId = () => {
   )
 }
 
-const data: AccordionData[] = [
+const MoreContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
+const generateAccordionData = (fuseData): AccordionData[] => [
   {
     title: 'Resolver',
     body: <ResolverDetails />,
@@ -34,6 +41,7 @@ const data: AccordionData[] = [
   {
     title: 'Fuses',
     body: <Fuses />,
+    disabled: !fuseData,
   },
   {
     title: 'Token ID',
@@ -45,16 +53,15 @@ const data: AccordionData[] = [
   },
 ]
 
-const MoreContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
 const MoreTab = () => {
+  const router = useRouter()
+  const { name } = router.query
+  const { fuseData } = useGetFuseData((name as string) || '')
+  const accordionData = generateAccordionData(fuseData)
+
   return (
     <MoreContainer>
-      <Accordion data={data} />
+      <Accordion data={accordionData} />
     </MoreContainer>
   )
 }

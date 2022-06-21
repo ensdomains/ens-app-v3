@@ -27,4 +27,7 @@ describe('Accordion', () => {
     fireEvent.click(screen.getByText('Item 2'))
     expect(screen.getByText('Body 1')).toHaveStyle('height: 0px')
   })
+
+  it.todo('should show disabled item correctly')
+  it.todo('should show enabled item correctly')
 })

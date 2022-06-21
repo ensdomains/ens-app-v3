@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { Typography, DownIndicatorSVG } from '@ensdomains/thorin'
 
-const AccordionTitle = styled.div<{ $isActive?: boolean }>(
-  ({ theme, $isActive }) => css`
+const AccordionTitle = styled.div<{
+  $isActive?: boolean
+  $isDisabled?: boolean
+}>(
+  ({ theme, $isActive, $isDisabled }) => css`
     padding: ${theme.space['4']} ${theme.space['6']};
     background: ${theme.colors.white};
-    cursor: pointer;
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    ${!$isDisabled ? 'cursor: pointer;' : ''}
 
     ${$isActive
       ? `
@@ -116,11 +120,19 @@ const Chevron = styled(DownIndicatorSVG)<{
   `,
 )
 
+const UnwrappedIndicator = styled(Typography)(
+  ({ theme }) => `
+    background: ${theme.colors.grey};
+    padding: 0 ${theme.space[3]};
+    border-radius: ${theme.radii.almostExtraLarge};
+`,
+)
+
 export interface AccordionData {
   title: string
   body: React.ReactNode
+  disabled?: boolean
 }
-
 interface AccordionProps {
   data: AccordionData[]
 }
@@ -128,12 +140,34 @@ interface AccordionProps {
 const Accordion = ({ data }: AccordionProps) => {
   const [activeItem, setActiveItem] = useState(0)
 
+  const disabled = data?.filter((x) => x.disabled) ?? []
+  const enabled = data?.filter((x) => !x.disabled) ?? []
+
   return (
     <AccordionContainer
       {...{ $activeItem: activeItem, $totalItems: data && data.length }}
     >
-      {data &&
-        data.map((item, idx) => {
+      {!!disabled.length &&
+        disabled.map((item) => {
+          return (
+            <AccordionItem key={item.title}>
+              <AccordionTitle $isDisabled>
+                <Typography
+                  variant="extraLarge"
+                  weight="bold"
+                  color="textTertiary"
+                >
+                  {item.title}
+                </Typography>
+                <UnwrappedIndicator variant="large" color="textSecondary">
+                  Not wrapped
+                </UnwrappedIndicator>
+              </AccordionTitle>
+            </AccordionItem>
+          )
+        })}
+      {!!enabled.length &&
+        enabled.map((item, idx) => {
           const isActive = activeItem === idx
           return (
             <AccordionItem
