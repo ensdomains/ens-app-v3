@@ -62,7 +62,7 @@ export type SortValue = {
 
 export type SortControlProps = {
   value: SortValue
-  onChange?: (value: SortValue) => void
+  onChange: (value: SortValue) => void
   hideLabel?: boolean
 }
 
@@ -76,13 +76,13 @@ const SortControl = ({ value, hideLabel, onChange }: SortControlProps) => {
         type: newType as SortType,
         direction: value.direction,
       }
-      if (onChange) onChange(newValue)
+      onChange(newValue)
     }
   }
 
   const handleDirectionClick = (_direction: SortDirection) => () => {
     const newValue = { ...value, direction: _direction }
-    if (onChange) onChange(newValue)
+    onChange(newValue)
   }
 
   return (

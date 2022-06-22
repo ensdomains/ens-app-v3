@@ -17,6 +17,8 @@ import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import FilterControl from '@app/components/address/FilterControl'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { Content } from '@app/layouts/Content'
+import { Name } from '@app/types'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useChainId } from '../../hooks/useChainId'
 
 const DetailsContainer = styled.div(
@@ -42,11 +44,14 @@ const PageButtonsWrapper = styled.div(
   `,
 )
 
+type FilterType = Name['type'] | 'none'
+
 const Page = () => {
   const { t } = useTranslation('address')
   const { query, isReady } = useRouter()
   const address = query.address as string
   const chainId = useChainId()
+  const breakpoints = useBreakpoint()
 
   const [page, setPage] = useState(1)
 
@@ -57,25 +62,23 @@ const Page = () => {
     direction: SortDirection.desc,
   })
 
-  const [filter, setFilter] = useState<'registration' | 'domain' | 'none'>(
-    'none',
-  )
+  const [filter, setFilter] = useState<FilterType>('none')
 
   const onFilterControlChange = (control: {
     sort: SortValue
-    filter: 'registration' | 'domain' | 'none'
+    filter: FilterType
   }) => {
-    const { sort: _sort, filter: _filter } = control
+    const { sort: newSort, filter: newFilter } = control
     let refresh = false
     if (
-      _sort.type !== sortValue.type ||
-      _sort.direction !== sortValue.direction
+      newSort.type !== sortValue.type ||
+      newSort.direction !== sortValue.direction
     ) {
       setSortValue(control.sort)
       refresh = true
     }
-    if (_filter !== filter) {
-      setFilter(_filter)
+    if (newFilter !== filter) {
+      setFilter(newFilter)
       refresh = true
     }
     if (refresh) setPage(1)
@@ -86,6 +89,8 @@ const Page = () => {
   const { profile: primaryProfile, loading: primaryProfileLoading } =
     usePrimaryProfile(address)
 
+  const profileButtonPlacement = breakpoints.md ? 'bottom' : 'inline'
+
   const getTextRecord = (key: string) =>
     primaryProfile?.records?.texts?.find((x) => x.key === key)
 
@@ -93,7 +98,7 @@ const Page = () => {
 
   const {
     currentPage = [],
-    isLoading: namesLoading,
+    isLoading: isNamesLoading,
     status: namesStatus,
     pageLength,
     nameCount,
@@ -104,11 +109,11 @@ const Page = () => {
       orderDirection: sortValue.direction,
     },
     page,
-    resultsPerPage: 10,
+    resultsPerPage: 25,
     filter: filter === 'none' ? undefined : filter,
   })
 
-  const loading = !isReady || namesLoading || primaryProfileLoading
+  const loading = !isReady || isNamesLoading || primaryProfileLoading
 
   const hasErrors = namesStatus === 'error'
 
@@ -138,21 +143,18 @@ const Page = () => {
           : undefined,
         leading: (
           <DetailsContainer>
-            {primaryProfile && primaryProfile.name ? (
-              <>
-                <ProfileSnippet
-                  name={primaryProfile.name}
-                  network={chainId}
-                  button="viewProfile"
-                  description={getTextRecord('description')?.value}
-                  recordName={getTextRecord('name')?.value}
-                  url={getTextRecord('url')?.value}
-                />
-              </>
+            {primaryProfile?.name ? (
+              <ProfileSnippet
+                name={primaryProfile.name}
+                network={chainId}
+                button="viewProfile"
+                buttonPlacement={profileButtonPlacement}
+                description={getTextRecord('description')?.value}
+                recordName={getTextRecord('name')?.value}
+                url={getTextRecord('url')?.value}
+              />
             ) : (
-              <>
-                <NoProfileSnippet />
-              </>
+              <NoProfileSnippet />
             )}
           </DetailsContainer>
         ),

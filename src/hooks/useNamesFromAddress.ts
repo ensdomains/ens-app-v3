@@ -31,7 +31,7 @@ export const useNamesFromAddress = ({
   }
   page: number
   resultsPerPage: number
-  filter?: 'registration' | 'domain'
+  filter?: Name['type']
 }) => {
   const { ready, getNames } = useEns()
 

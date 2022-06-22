@@ -19,6 +19,7 @@ import SortControl, {
   SortValue,
   SortDirection,
 } from '@app/components/@molecules/SortControl/SortControl'
+import { Name } from '@app/types'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -83,7 +84,7 @@ const ViewButtons = styled.div(
 const spacing = '1fr 1fr'
 
 type ViewType = 'grid' | 'list'
-type FilterType = 'domain' | 'registration' | 'none'
+type FilterType = Name['type'] | 'none'
 
 export default function Page() {
   const { t } = useTranslation('names')
@@ -113,7 +114,7 @@ export default function Page() {
       orderDirection: sortValue.direction,
     },
     page,
-    resultsPerPage: 10,
+    resultsPerPage: 25,
     filter: filter === 'none' ? undefined : filter,
   })
 

@@ -4,31 +4,34 @@ import { usePrimary } from './usePrimary'
 import { useProfile } from './useProfile'
 
 export const usePrimaryProfile = (address: string, skip?: any) => {
+  const [profile, setProfile] = useState<Profile | undefined>(undefined)
+
   const {
-    name: _name,
+    name: primaryName,
     loading: primaryLoading,
     status: primaryStatus,
   } = usePrimary(address || '', skip)
 
   const {
-    profile: _profile,
+    profile: primaryProfile,
     loading: profileLoading,
     status: profileStatus,
-  } = useProfile(_name || '', skip)
+  } = useProfile(primaryName || '', skip)
 
-  const [profile, setProfile] = useState<Profile | undefined>(undefined)
+  console.log(primaryName, primaryProfile)
+
   useEffect(() => {
     let mounted = true
-    if (_name && _profile && mounted) {
+    if (primaryName && primaryProfile && mounted) {
       setProfile({
-        ..._profile,
-        name: _name,
+        ...primaryProfile,
+        name: primaryName,
       })
     } else if (mounted) setProfile(undefined)
     return () => {
       mounted = false
     }
-  }, [_name, _profile])
+  }, [primaryName, primaryProfile])
 
   return {
     profile,

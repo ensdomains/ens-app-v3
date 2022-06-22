@@ -2,7 +2,10 @@ import React, { ComponentProps, ChangeEvent, Ref } from 'react'
 import { Field, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import SortControl, { SortValue } from '../@molecules/SortControl/SortControl'
+import SortControl, {
+  SortValue,
+} from '@app/components/@molecules/SortControl/SortControl'
+import { Name } from '@app/types'
 
 const PopoverContainer = styled.div(
   ({ theme }) => css`
@@ -52,11 +55,13 @@ const RadioButtonLabel = styled.span(
   `,
 )
 
+type FilterType = Name['type'] | 'none'
+
 type PopoverProps = {
   sort?: SortValue
-  filter?: 'none' | 'registration' | 'domain'
+  filter: FilterType
   onSortChange?: (sort: SortValue) => void
-  onFilterChange?: (filter: 'none' | 'registration' | 'domain') => void
+  onFilterChange: (filter: FilterType) => void
 }
 
 const FilterPopover = ({
@@ -68,18 +73,13 @@ const FilterPopover = ({
   const { t } = useTranslation('common')
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const newFilter = e.target.value
-    if (
-      onFilterChange &&
-      ['none', 'registration', 'domain'].includes(newFilter)
-    )
-      onFilterChange(newFilter as 'none' | 'registration' | 'domain')
+    const newFilter = e.target.value as FilterType
+    onFilterChange(newFilter)
   }
 
-  const handleFilterClick =
-    (newFilter: 'none' | 'registration' | 'domain') => () => {
-      if (onFilterChange) onFilterChange(newFilter)
-    }
+  const handleFilterClick = (newFilter: FilterType) => () => {
+    onFilterChange(newFilter)
+  }
 
   return (
     <PopoverContainer>
@@ -89,34 +89,28 @@ const FilterPopover = ({
           onChange={(_sort) => onSortChange && onSortChange(_sort)}
         />
       )}
-      {filter && (
-        <Field label="Show" width="fit">
-          <RadioButtonGroup inline value={filter} onChange={handleFilterChange}>
-            <StyledRadioButton
-              name="filter"
-              value="none"
-              label={<RadioButtonLabel>{t('name.all')}</RadioButtonLabel>}
-              onClick={handleFilterClick('none')}
-            />
-            <StyledRadioButton
-              name="filter"
-              value="registration"
-              label={
-                <RadioButtonLabel>{t('name.registrant')}</RadioButtonLabel>
-              }
-              onClick={handleFilterClick('registration')}
-            />
-            <StyledRadioButton
-              name="filter"
-              value="domain"
-              label={
-                <RadioButtonLabel>{t('name.controller')}</RadioButtonLabel>
-              }
-              onClick={handleFilterClick('domain')}
-            />
-          </RadioButtonGroup>
-        </Field>
-      )}
+      <Field label="Show" width="fit">
+        <RadioButtonGroup inline value={filter} onChange={handleFilterChange}>
+          <StyledRadioButton
+            name="filter"
+            value="none"
+            label={<RadioButtonLabel>{t('name.all')}</RadioButtonLabel>}
+            onClick={handleFilterClick('none')}
+          />
+          <StyledRadioButton
+            name="filter"
+            value="registration"
+            label={<RadioButtonLabel>{t('name.registrant')}</RadioButtonLabel>}
+            onClick={handleFilterClick('registration')}
+          />
+          <StyledRadioButton
+            name="filter"
+            value="domain"
+            label={<RadioButtonLabel>{t('name.controller')}</RadioButtonLabel>}
+            onClick={handleFilterClick('domain')}
+          />
+        </RadioButtonGroup>
+      </Field>
     </PopoverContainer>
   )
 }

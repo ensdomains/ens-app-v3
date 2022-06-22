@@ -1,9 +1,10 @@
 import { Avatar, Typography } from '@ensdomains/thorin'
-import styled from 'styled-components'
+import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
-const Container = styled.div`
-  box-sizing: border-box;
-  ${({ theme }) => `
+const Container = styled.div(
+  ({ theme }) => css`
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     gap: 20px;
@@ -12,42 +13,45 @@ const Container = styled.div`
     box-shadow: ${theme.boxShadows['0.02']};
     background: ${theme.colors.white};
     padding: ${theme.space['5']};
-  `}
-`
+  `,
+)
 
-const AvatarContainer = styled.div`
-  ${({ theme }) => `
+const AvatarContainer = styled.div(
+  ({ theme }) => css`
     flex: 0 0 ${theme.space['13']};
-  `}
-`
+  `,
+)
 
-const ProfileContent = styled.div`
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-`
+const ProfileContent = styled.div(
+  () => css`
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  `,
+)
 
-const ProfileTitle = styled.div`
-  ${({ theme }) => `
+const ProfileTitle = styled.div(
+  ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
     font-weight: ${theme.fontWeights.bold};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     line-height: ${theme.lineHeights['1.25']};
     margin-bottom: ${theme.space['1.5']};
-  `}
-`
+  `,
+)
 
 const NoProfileSnippet = () => {
+  const { t } = useTranslation('address')
   return (
     <Container data-testid="no-profile-snippet">
       <AvatarContainer>
         <Avatar label="profile-label" />
       </AvatarContainer>
       <ProfileContent>
-        <ProfileTitle>No primary name set</ProfileTitle>
+        <ProfileTitle>{t('noProfile.title')}</ProfileTitle>
         <Typography variant="small" color="text">
-          This wallet needs to set a primary name to create a profile
+          {t('noProfile.message')}
         </Typography>
       </ProfileContent>
     </Container>

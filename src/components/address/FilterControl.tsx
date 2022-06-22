@@ -9,6 +9,7 @@ import SortControl, {
 import FilterPopover from '@app/components/address/FilterPopover'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useRouter } from 'next/router'
+import { Name } from '@app/types'
 import CollapsibleContent from '../@atoms/CollapsibleContent/CollapsibleContent'
 
 const Container = styled.div(
@@ -92,12 +93,12 @@ const NameCountWrapper = styled.div(
 
 type FilterControlProps = {
   sort: SortValue
-  filter: 'none' | 'registration' | 'domain'
-  resultsCount?: number
-  onChange?: (data: {
+  filter: Name['type'] | 'none'
+  onChange: (data: {
     sort: FilterControlProps['sort']
     filter: FilterControlProps['filter']
   }) => void
+  resultsCount?: number
 }
 
 const FilterControl = ({
@@ -115,15 +116,14 @@ const FilterControl = ({
   const handleToggleShowMenu = () => setShowMenu((value) => !value)
 
   const handleSortChange = (newSort: FilterControlProps['sort']) => {
-    if (onChange)
-      onChange({
-        sort: newSort,
-        filter,
-      })
+    onChange({
+      sort: newSort,
+      filter,
+    })
   }
 
   const handleFilterChange = (newFilter: FilterControlProps['filter']) => {
-    if (onChange) onChange({ filter: newFilter, sort })
+    onChange({ filter: newFilter, sort })
   }
 
   return (
