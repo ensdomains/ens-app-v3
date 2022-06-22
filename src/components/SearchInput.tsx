@@ -1,6 +1,7 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import { isAddress } from 'ethers/lib/utils'
 import { useExists } from '@app/hooks/useExists'
 import { useInitial } from '@app/hooks/useInitial'
 import { useValidate } from '@app/hooks/useValidate'
@@ -107,10 +108,13 @@ export const SearchInput = ({
     status,
   } = useExists(name, !name || name === '')
 
+  const isValidAddress = isAddress(searchedVal)
+
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const buttonState: ButtonState = useMemo(() => {
     if (inputVal === '') return 'none'
+    if (isValidAddress) return 'success'
     if (nameExists && searchedVal === inputVal && !loading && valid)
       return 'success'
     if (
@@ -122,7 +126,15 @@ export const SearchInput = ({
     )
       return 'danger'
     return 'loading'
-  }, [inputVal, loading, nameExists, searchedVal, status, valid])
+  }, [
+    inputVal,
+    loading,
+    nameExists,
+    searchedVal,
+    status,
+    valid,
+    isValidAddress,
+  ])
 
   useEffect(() => {
     if (!initial) {
@@ -131,22 +143,29 @@ export const SearchInput = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputVal])
 
-  const handleSearch = () =>
-    router
-      .push(
-        {
+  const handleSearch = () => {
+    const pushObject: any = isValidAddress
+      ? {
+          pathname: `/address/${searchedVal}`,
+          query: {
+            from: router.asPath,
+          },
+        }
+      : {
           pathname: `/profile/${name}`,
           query: {
             from: router.asPath,
           },
-        },
-        `/profile/${name}`,
-      )
-      .then(() => {
-        setInputVal('')
-        _setSearchedVal('')
-        searchInputRef.current?.blur()
-      })
+        }
+    const pushAs = isValidAddress
+      ? `/address/${searchedVal}`
+      : `/profile/${name}`
+    router.push(pushObject, pushAs).then(() => {
+      setInputVal('')
+      _setSearchedVal('')
+      searchInputRef.current?.blur()
+    })
+  }
 
   const SuffixElement = () => {
     switch (buttonState) {
