@@ -1,3 +1,3 @@
 // SPDX-License-Identifier: UNLICENSED
 pragma solidity >0.0.0;
-import 'ens-contracts-namewrapper/contracts/wrapper/NameWrapper.sol';
+import 'ens-contracts/contracts/wrapper/NameWrapper.sol';

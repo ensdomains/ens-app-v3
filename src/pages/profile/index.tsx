@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { NameSnippet } from '@app/components/profile/NameSnippet'
-import { ProfileDetails } from '@app/components/profile/ProfileDetails'
+import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
+import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
@@ -48,7 +48,7 @@ export default function Page() {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const _name = router.query.name as string
-  const isSelf = _name === 'connected'
+  const isSelf = router.query.connected === 'true'
 
   const initial = useInitial()
   const chainId = useChainId()
@@ -72,14 +72,14 @@ export default function Page() {
   const isLoading =
     detailsLoading || primaryLoading || accountLoading || initial
 
-  // useProtectedRoute(
-  //   '/',
-  //   // When anything is loading, return true
-  //   isLoading
-  //     ? // if is self, user must be connected
-  //       (isSelf ? address : true) && typeof name === 'string' && name.length > 0
-  //     : true,
-  // )
+  useProtectedRoute(
+    '/',
+    // When anything is loading, return true
+    isLoading
+      ? // if is self, user must be connected
+        (isSelf ? address : true) && typeof name === 'string' && name.length > 0
+      : true,
+  )
 
   const getTextRecord = (key: string) =>
     profile?.records?.texts?.find((x) => x.key === key)

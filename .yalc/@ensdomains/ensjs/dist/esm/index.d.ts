@@ -119,13 +119,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             texts?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
@@ -148,13 +148,13 @@ export declare class ENS {
             contentHash?: string | import("./utils/contentHash").DecodedContentHash | null | undefined;
             texts?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;
             coinTypes?: {
                 key: string | number;
-                type: "text" | "addr" | "contentHash";
+                type: "addr" | "text" | "contentHash";
                 coin?: string | undefined;
                 value: string;
             }[] | undefined;

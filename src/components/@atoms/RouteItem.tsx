@@ -13,7 +13,8 @@ const LinkWrapper = styled.a<{ $hasNotification?: boolean; $asText?: boolean }>(
     justify-content: center;
     ${!$asText &&
     css`
-      width: ${theme.space['12']};
+      width: ${theme.space['9']};
+      height: ${theme.space['9']};
     `}
     ${$hasNotification &&
     css`

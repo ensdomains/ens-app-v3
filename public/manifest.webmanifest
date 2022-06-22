@@ -1,0 +1,31 @@
+{
+  "$schema": "https://json.schemastore.org/web-manifest-combined.json",
+  "name": "ENS App",
+  "short_name": "ENS",
+  "icons": [
+    {
+      "src": "icon/AppIcon@0.5x.png",
+      "sizes": "129x129",
+      "type": "image/png"
+    },
+    {
+      "src": "icon/AppIcon.png",
+      "sizes": "256x256",
+      "type": "image/png"
+    },
+    {
+      "src": "icon/AppIcon@2x.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icon/AppIcon@3x.png",
+      "sizes": "768x768",
+      "type": "image/png"
+    }
+  ],
+  "orientation": "portrait-primary",
+  "theme_color": "#5298FF",
+  "background_color": "#F7F7F7",
+  "display": "standalone"
+}

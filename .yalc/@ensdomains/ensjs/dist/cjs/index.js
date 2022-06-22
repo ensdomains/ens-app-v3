@@ -160,10 +160,8 @@ class ENS {
         newENS.initialProvider = provider;
         return newENS;
     };
-    batch = this.generateRawFunction('batch', [
-        'multicallWrapper',
-    ]);
-    getProfile = this.generateFunction('getProfile', [
+    batch = this.generateRawFunction('initialGetters', ['multicallWrapper'], 'batch');
+    getProfile = this.generateFunction('initialGetters', [
         'contracts',
         'gqlInstance',
         'getName',
@@ -171,13 +169,9 @@ class ENS {
         '_getAddr',
         '_getContentHash',
         '_getText',
-    ]);
-    getRecords = this.generateFunction('getRecords', [
-        'getProfile',
-    ]);
-    getName = this.generateRawFunction('getName', [
-        'contracts',
-    ]);
+    ], 'getProfile');
+    getRecords = this.generateFunction('initialGetters', ['getProfile'], 'getRecords');
+    getName = this.generateRawFunction('initialGetters', ['contracts'], 'getName');
     getResolver = this.generateRawFunction('getResolver', ['contracts']);
     getFuses = this.generateRawFunction('getFuses', [
         'contracts',
@@ -185,27 +179,19 @@ class ENS {
     getHistory = this.generateFunction('getHistory', ['gqlInstance'], 'getHistory');
     getHistoryWithDetail = this.generateFunction('getHistory', ['contracts', 'gqlInstance', 'provider'], 'getHistoryWithDetail');
     getHistoryDetailForTransactionHash = this.generateFunction('getHistory', ['contracts', 'provider'], 'getHistoryDetailForTransactionHash');
-    getContentHash = this.generateRawFunction('getSpecificRecord', ['contracts', 'universalWrapper'], 'getContentHash');
-    _getContentHash = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getContentHash');
-    getAddr = this.generateRawFunction('getSpecificRecord', ['contracts', 'universalWrapper'], 'getAddr');
-    _getAddr = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getAddr');
-    getText = this.generateRawFunction('getSpecificRecord', ['contracts', 'universalWrapper'], 'getText');
-    _getText = this.generateRawFunction('getSpecificRecord', ['contracts'], '_getText');
-    getOwner = this.generateRawFunction('getOwner', [
-        'contracts',
-        'multicallWrapper',
-    ]);
-    getExpiry = this.generateRawFunction('getExpiry', [
-        'contracts',
-        'multicallWrapper',
-    ]);
-    getSubnames = this.generateFunction('getSubnames', ['gqlInstance']);
-    getNames = this.generateFunction('getNames', [
-        'gqlInstance',
-    ]);
-    universalWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'universalWrapper');
-    resolverMulticallWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'resolverMulticallWrapper');
-    multicallWrapper = this.generateRawFunction('batchWrappers', ['contracts'], 'multicallWrapper');
+    getContentHash = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getContentHash');
+    _getContentHash = this.generateRawFunction('initialGetters', ['contracts'], '_getContentHash');
+    getAddr = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getAddr');
+    _getAddr = this.generateRawFunction('initialGetters', ['contracts'], '_getAddr');
+    getText = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getText');
+    _getText = this.generateRawFunction('initialGetters', ['contracts'], '_getText');
+    getOwner = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getOwner');
+    getExpiry = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getExpiry');
+    getSubnames = this.generateFunction('initialGetters', ['gqlInstance'], 'getSubnames');
+    getNames = this.generateFunction('initialGetters', ['gqlInstance'], 'getNames');
+    universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
+    resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
+    multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
     setName = this.generateFunction('setName', [
         'contracts',
         'provider',
