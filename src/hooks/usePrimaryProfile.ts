@@ -18,8 +18,6 @@ export const usePrimaryProfile = (address: string, skip?: any) => {
     status: profileStatus,
   } = useProfile(primaryName || '', skip)
 
-  console.log(primaryName, primaryProfile)
-
   useEffect(() => {
     let mounted = true
     if (primaryName && primaryProfile && mounted) {
