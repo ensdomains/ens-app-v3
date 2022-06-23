@@ -44,7 +44,7 @@ const StyledAnchor = styled.div<{ $isActive: boolean; disabled?: boolean }>(
     ${disabled
       ? css`
           color: ${theme.colors.textPlaceholder};
-          cursor: default;
+          cursor: not-allowed;
         `
       : css`
           &:hover {
