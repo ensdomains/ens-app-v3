@@ -178,7 +178,7 @@ const smallQuery =  async (
   }
 };
 
-const getSubnames = (injected : ENSArgs<'gqlInstance'>, functionArgs: Params) => {
+const getSubnames = (injected : ENSArgs<'gqlInstance'>, functionArgs: Params): Promise<{ subnames: Subname[], subnameCount: number}> => {
   if(functionArgs.isLargeQuery) {
     return largeQuery(injected, functionArgs)
   }  

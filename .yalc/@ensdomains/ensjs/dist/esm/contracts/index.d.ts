@@ -11,5 +11,6 @@ export default class ContractManager {
     getReverseRegistrar: (passedProvider?: any, address?: string | undefined) => Promise<import("../generated").ReverseRegistrar>;
     getNameWrapper: (passedProvider?: any, address?: string | undefined) => Promise<import("../generated").NameWrapper>;
     getBaseRegistrar: (passedProvider?: any, address?: string | undefined) => Promise<import("../generated/BaseRegistrarImplementation").BaseRegistrarImplementation>;
+    getEthRegistrarController: (passedProvider?: any, address?: string | undefined) => Promise<import("../generated").ETHRegistrarController>;
     getMulticall: (passedProvider?: any, address?: string | undefined) => Promise<import("../generated/Multicall").Multicall>;
 }

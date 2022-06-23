@@ -1,7 +1,7 @@
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LanugageDropdown } from '@app/components/LanguageDropdown'
 import { LeadingHeading } from '@app/components/LeadingHeading'
-import { SearchInput } from '@app/components/SearchInput'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
 import Head from 'next/head'

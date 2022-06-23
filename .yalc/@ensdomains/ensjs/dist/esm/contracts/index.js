@@ -1,4 +1,5 @@
 import getBaseRegistrar from './baseRegistrar';
+import getEthRegistrarController from './ethRegistrarController';
 import getMulticall from './multicall';
 import getNameWrapper from './nameWrapper';
 import getPublicResolver from './publicResolver';
@@ -20,6 +21,7 @@ export default class ContractManager {
         this.getReverseRegistrar = this.generateContractGetter('ReverseRegistrar', getReverseRegistrar);
         this.getNameWrapper = this.generateContractGetter('NameWrapper', getNameWrapper);
         this.getBaseRegistrar = this.generateContractGetter('BaseRegistrarImplementation', getBaseRegistrar);
+        this.getEthRegistrarController = this.generateContractGetter('ETHRegistrarController', getEthRegistrarController);
         this.getMulticall = this.generateContractGetter('Multicall', getMulticall);
         this.provider = provider;
         this.fetchAddress = fetchAddress;

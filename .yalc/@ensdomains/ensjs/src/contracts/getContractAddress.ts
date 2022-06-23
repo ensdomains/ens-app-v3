@@ -10,6 +10,12 @@ const addresses: Record<
     '4': '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
     '5': '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
   },
+  ETHRegistrarController: {
+    '1': '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5',
+    '3': '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5',
+    '4': '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5',
+    '5': '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5',
+  },
   Multicall: '0xcA11bde05977b3631167028862bE2a173976CA11',
   NameWrapper: '0x0000000000000000000000000000000000000000',
   PublicResolver: {

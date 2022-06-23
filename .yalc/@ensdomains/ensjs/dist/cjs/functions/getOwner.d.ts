@@ -5,10 +5,10 @@ declare type Owner = {
     ownershipLevel: 'nameWrapper' | 'registry' | 'registrar';
 };
 declare const _default: {
-    raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<{
+    raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, contract?: "nameWrapper" | "registrar" | "registry" | undefined) => Promise<{
         to: string;
         data: string;
     }>;
-    decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<Owner | undefined>;
+    decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string, contract?: "nameWrapper" | "registrar" | "registry" | undefined) => Promise<Owner | undefined>;
 };
 export default _default;
