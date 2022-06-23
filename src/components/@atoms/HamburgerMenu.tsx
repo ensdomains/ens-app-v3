@@ -30,23 +30,6 @@ export const HamburgerMenu = ({
   const { t } = useTranslation('common')
   const router = useRouter()
 
-  const getColorForItem = (item: HamburgerItem): string => {
-    if (item.disabled) return 'textTertiary'
-    if (item.color) return item.color
-    if (item.href === router.asPath) return 'accent'
-    return 'textSecondary'
-  }
-
-  const handleItemClick = (item: HamburgerItem) => () => {
-    if (item.onClick) item.onClick()
-    else if (item.disabled) {
-      // eslint-disable-next-line no-alert
-      alert('in development')
-    } else if (item.href && item.href.startsWith('https://'))
-      window.location.replace(item.href)
-    else if (item.href) router.push(item.href)
-  }
-
   return (
     <Dropdown
       chevron={false}
@@ -61,9 +44,18 @@ export const HamburgerMenu = ({
       items={dropdownItems.map((item) => ({
         ...item,
         label: t(item.label),
-        color: getColorForItem(item),
-        disabled: false,
-        onClick: handleItemClick(item),
+        color:
+          item.color || router.asPath === item.href
+            ? 'accent'
+            : 'textSecondary',
+        onClick:
+          item.onClick ||
+          (() =>
+            item.href &&
+            (item.href.startsWith('https://')
+              ? window.location.replace(item.href)
+              : router.push(item.href))) ||
+          (() => null),
       }))}
       label={<MenuIcon />}
       {...props}

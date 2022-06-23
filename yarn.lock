@@ -2015,9 +2015,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.5.17":
-  version: 0.5.17
-  resolution: "@ensdomains/thorin@npm:0.5.17"
+"@ensdomains/thorin@npm:^0.6.1":
+  version: 0.6.1
+  resolution: "@ensdomains/thorin@npm:0.6.1"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2027,7 +2027,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 1f8ef6b730b33f9f14e639e71814eefcc6157da7c0490139b6f8fe22827a03313c8ebde302ea4620e319ca7b83b51559b9080d57becdd060a037c1d9722f15e0
+  checksum: 2ffc3ca7a2ebbc4b7d79f7abb8609f8f0cf60daeb0f4c33e1001bb57bdf240800552025ff5ad15cc5b9192df98112ec44cb4aa00d6a999d3b096e48dd4792a91
   languageName: node
   linkType: hard
 
@@ -10959,7 +10959,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.5.17
+    "@ensdomains/thorin": ^0.6.1
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5
