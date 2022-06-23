@@ -83,6 +83,28 @@ export const RouteItem = ({
   const activeRoute = useActiveRoute()
   const isActive = activeRoute === route.name
 
+  if (route.disabled)
+    return (
+      <LinkWrapper $asText={asText} $hasNotification={hasNotification}>
+        {asText ? (
+          <StyledAnchor
+            $isActive={isActive}
+            onClick={() => {
+              // eslint-disable-next-line no-alert
+              alert('in development')
+            }}
+          >
+            {t(route.label)}
+          </StyledAnchor>
+        ) : (
+          <IconContainer
+            disabled={route.disabled}
+            $active={isActive}
+            as={route.icon}
+          />
+        )}
+      </LinkWrapper>
+    )
   return (
     <ConditionalWrapper
       condition={!route.disabled}
