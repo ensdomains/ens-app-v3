@@ -20,7 +20,7 @@
   "wallet": {
     "myProfile": "Profile",
     "disconnect": "Disconnect",
-    "connect": "Connect",
+    "connect": "Connect Wallet",
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
     "viewDetails": "View Details"
@@ -28,7 +28,17 @@
   "name": {
     "expires": "Expires",
     "registrant": "Registrant",
-    "controller": "Controller"
+    "controller": "Controller",
+    "owner": "Owner",
+    "all": "All Names"
+  },
+  "sortTypes": {
+    "expiryDate": "Expiry Date",
+    "labelName": "Name",
+    "creationDate": "Creation Date"
+  },
+  "errors": {
+    "noResults": "No results found"
   },
   "transaction": {
     "description": {

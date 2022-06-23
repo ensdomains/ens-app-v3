@@ -2,9 +2,9 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "2554e3c01fc4dbe6ba143946f7274e6e",
+      "signature": "2d35edf75749e7de400b771e5c488c74",
       "file": true,
-      "replaced": "^2.1.0"
+      "replaced": "portal:.yalc/@ensdomains/ensjs"
     },
     "@ensdomains/ens-test-env": {
       "signature": "6ea2ba482d204672c4e6660ebde0510d",

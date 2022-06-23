@@ -49,7 +49,15 @@ body {
 
 body {
   background: radial-gradient(50% 50% at 50% 50%, rgba(82, 152, 255, 0.062) 0%, rgba(255, 255, 255, 0) 100%), #F7F7F7;
+}
+
+body, .min-safe {
   min-height: 100vh;
+  /* stylelint-disable-next-line value-no-vendor-prefix */
+  @supports (-webkit-touch-callout: none) {
+    /* stylelint-disable-next-line value-no-vendor-prefix */
+    min-height: -webkit-fill-available;
+  }
 }
 
 a {
@@ -83,8 +91,10 @@ const { provider, chains } = configureChains(
           }),
         ]
       : []),
+    jsonRpcProvider({
+      rpc: () => ({ http: 'https://web3.ens.domains/v1/mainnet' }),
+    }),
     infuraProvider({ infuraId: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-    jsonRpcProvider({ rpc: () => ({ http: 'https://cloudflare-eth.com/' }) }),
   ],
 )
 

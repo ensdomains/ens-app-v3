@@ -31,6 +31,7 @@ export const useNFTImage = (name: string | undefined, network: number) => {
     () => contracts?.getBaseRegistrar()!.then((c) => c.address),
     {
       enabled: ready && !!name,
+      staleTime: 60000,
     },
   )
   const { data, isLoading, status } = useQuery(

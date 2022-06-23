@@ -3,7 +3,7 @@ import { getRoute } from '@app/routes'
 import { Avatar } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { RouteItem } from './@atoms/RouteItem'
 import { ConnectButtonWrapper } from './ConnectButton'
 
@@ -41,13 +41,25 @@ const TabContainer = styled.div(
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
-    gap: ${theme.space['6']};
+    justify-content: space-between;
+    gap: ${theme.space['3']};
     border-radius: ${theme.radii.full};
     background-color: ${theme.colors.background};
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
-    padding: ${theme.space['2']} ${theme.space['6']};
+    padding: ${theme.space['1.5']} ${theme.space['1.5']};
+  `,
+)
+
+const TabItems = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: ${theme.space['3']};
+    padding: 0 ${theme.space['1.5']};
   `,
 )
 
@@ -55,20 +67,19 @@ const profileRoute = getRoute('profile')
 
 export const TabBar = () => {
   const activeRoute = useActiveRoute()
-  const { space } = useTheme()
 
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
 
   return (
     <>
-      <TabWrapper>
+      <TabWrapper id="tabbar">
         <TabContainer>
-          <RouteItem route={getRoute('search')} />
           <ConnectButtonWrapper isTabBar>
             {{
               hasAccount: ({ ensAvatar, zorb }) => (
-                <>
+                <TabItems>
+                  <RouteItem route={getRoute('search')} />
                   <RouteItem route={getRoute('names')} />
                   <Link href={profileRoute.href} passHref>
                     <a>
@@ -85,15 +96,14 @@ export const TabBar = () => {
                     route={getRoute('settings')}
                     hasNotification={pendingTransactions.length > 0}
                   />
-                </>
+                </TabItems>
               ),
               noAccountBefore: (
-                <>
+                <TabItems>
+                  <RouteItem route={getRoute('search')} />
                   <RouteItem route={getRoute('settings')} />
-                  <div />
-                </>
+                </TabItems>
               ),
-              noAccountAfter: <div style={{ paddingRight: space['2'] }} />,
             }}
           </ConnectButtonWrapper>
         </TabContainer>

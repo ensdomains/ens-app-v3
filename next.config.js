@@ -4,6 +4,7 @@ const { withPlugins } = require('next-compose-plugins')
 const withTM = require('next-transpile-modules')(['@ensdomains/ensjs'])
 const path = require('path')
 const StylelintPlugin = require('stylelint-webpack-plugin')
+const { withSentryConfig } = require('@sentry/nextjs')
 
 /**
  * @type {import('next').NextConfig}
@@ -27,7 +28,7 @@ let nextConfig = {
     return [
       {
         source: '/my/profile',
-        destination: '/profile?name=connected',
+        destination: '/profile?connected=true',
       },
       {
         source: '/names/:address',
@@ -35,12 +36,16 @@ let nextConfig = {
       },
       {
         source: '/profile/:name/details',
-        destination: '/profile/details?name=:name'
+        destination: '/profile/details?name=:name',
       },
       {
         source: '/profile/:name',
-        destination: '/profile?name=:name'
-      }
+        destination: '/profile?name=:name',
+      },
+      {
+        source: '/address/:address',
+        destination: '/address?address=:address',
+      },
     ]
   },
   webpack: (config, options) => {
@@ -87,4 +92,19 @@ if (process.env.ANALYZE) {
   plugins.push([withBundleAnalyzer])
 }
 
-module.exports = withPlugins(plugins, nextConfig)
+const sentryWebpackPluginOptions = {
+  // Additional config options for the Sentry Webpack plugin. Keep in mind that
+  // the following options are set automatically, and overriding them is not
+  // recommended:
+  //   release, url, org, project, authToken, configFile, stripPrefix,
+  //   urlPrefix, include, ignore
+
+  silent: true, // Suppresses all logs
+  // For all available options, see:
+  // https://github.com/getsentry/sentry-webpack-plugin#options.
+}
+
+module.exports = withSentryConfig(
+  withPlugins(plugins, nextConfig),
+  sentryWebpackPluginOptions,
+)

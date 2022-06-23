@@ -6,7 +6,7 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
   let rewrite = false
   if (paths[1] === 'my' && paths[2] === 'profile') {
     url.pathname = '/profile'
-    url.searchParams.set('name', 'connected')
+    url.searchParams.set('connected', 'true')
     rewrite = true
   } else if (paths[1] === 'names' && !!paths[2]) {
     url.pathname = '/my/names'
@@ -19,6 +19,10 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
   } else if (paths[1] === 'profile' && !!paths[2]) {
     url.pathname = '/profile'
     url.searchParams.set('name', paths[2])
+    rewrite = true
+  } else if (paths[1] === 'address' && !!paths[2]) {
+    url.pathname = '/address'
+    url.searchParams.set('address', paths[2])
     rewrite = true
   }
 

@@ -1,7 +1,7 @@
 import TripleDot from '@app/assets/TripleDot.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, Typography } from '@ensdomains/thorin'
+import { Avatar, Button, Tooltip, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -73,8 +73,9 @@ const FirstItems = styled.div(
   `,
 )
 
-const DetailButtonWrapper = styled.div(
-  ({ theme }) => css`
+const DetailButtonWrapper = styled.div<{ $placement?: 'inline' | 'bottom' }>(
+  ({ theme, $placement }) => css`
+    ${$placement === 'bottom' && 'width: 100%;'}
     & > button {
       border: ${theme.space.px} solid ${theme.colors.borderSecondary};
       border-radius: ${theme.radii.extraLarge};
@@ -108,6 +109,7 @@ export const ProfileSnippet = ({
   description,
   url,
   button,
+  buttonPlacement = 'inline',
   network,
 }: {
   name: string
@@ -116,6 +118,7 @@ export const ProfileSnippet = ({
   description?: string
   url?: string
   button?: 'viewDetails' | 'viewProfile'
+  buttonPlacement?: 'inline' | 'bottom'
   network: number
 }) => {
   const router = useRouter()
@@ -124,14 +127,14 @@ export const ProfileSnippet = ({
   const { avatar } = useAvatar(name, network)
 
   return (
-    <Container $banner={banner}>
+    <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
         <AvatarWrapper>
           <Avatar label={name} src={avatar || zorb} />
         </AvatarWrapper>
         <ButtonStack>
-          {button && (
-            <DetailButtonWrapper>
+          {button && buttonPlacement === 'inline' && (
+            <DetailButtonWrapper $placement={buttonPlacement}>
               <Button
                 onClick={() =>
                   router.push({
@@ -152,9 +155,11 @@ export const ProfileSnippet = ({
               </Button>
             </DetailButtonWrapper>
           )}
-          <Button shadowless variant="transparent" size="extraSmall">
-            <TripleDotIcon as={TripleDot} />
-          </Button>
+          <Tooltip content="in development">
+            <Button shadowless variant="transparent" size="extraSmall">
+              <TripleDotIcon as={TripleDot} />
+            </Button>
+          </Tooltip>
         </ButtonStack>
       </FirstItems>
       <TextStack>
@@ -179,6 +184,28 @@ export const ProfileSnippet = ({
           </div>
         )}
       </TextStack>
+      {button && buttonPlacement === 'bottom' && (
+        <DetailButtonWrapper $placement={buttonPlacement}>
+          <Button
+            onClick={() =>
+              router.push({
+                pathname:
+                  button === 'viewDetails'
+                    ? `/profile/${name}/details`
+                    : `/profile/${name}`,
+                query: {
+                  from: router.asPath,
+                },
+              })
+            }
+            shadowless
+            variant="transparent"
+            size="extraSmall"
+          >
+            {t(`wallet.${button}`)}
+          </Button>
+        </DetailButtonWrapper>
+      )}
     </Container>
   )
 }

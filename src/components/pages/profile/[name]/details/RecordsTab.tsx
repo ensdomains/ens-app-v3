@@ -1,6 +1,6 @@
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
-import { mq, Typography } from '@ensdomains/thorin'
+import { mq, Tooltip, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
@@ -176,9 +176,7 @@ const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(
       );
     `)}
     display: inline-block;
-    overflow-wrap: break-word;
-    word-break: break-all;
-    word-wrap: break-word;
+    overflow-wrap: anywhere;
     text-align: left;
   `,
 )
@@ -271,9 +269,13 @@ export const RecordsTab = ({
               {filteredTexts ? filteredTexts.length : 0} Records
             </SectionSubtitle>
           </SectionTitleContainer>
-          <EditButton>
-            {canEdit && <Typography weight="bold">Edit</Typography>}
-          </EditButton>
+          {canEdit && (
+            <Tooltip content="in development">
+              <EditButton>
+                <Typography weight="bold">Edit</Typography>
+              </EditButton>
+            </Tooltip>
+          )}
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
