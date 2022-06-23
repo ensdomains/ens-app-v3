@@ -6,9 +6,6 @@ import { isAddress } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 
 export const useValidate = (input: string, skip?: any) => {
-  const _name =
-    input && (input.split('.').length === 1 ? `${input}.eth` : input)
-
   const [name, setNormalisedName] = useState('')
   const [valid, setValid] = useState<boolean | undefined>(undefined)
   const [type, setType] = useState<any>(undefined)
@@ -16,7 +13,7 @@ export const useValidate = (input: string, skip?: any) => {
   useEffect(() => {
     if (!skip) {
       try {
-        const normalisedName = validateName(_name)
+        const normalisedName = validateName(input)
         setNormalisedName(normalisedName)
 
         const inputType = parseInputType(normalisedName)
@@ -29,7 +26,7 @@ export const useValidate = (input: string, skip?: any) => {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_name, skip])
+  }, [input, skip])
 
   return { valid, type, name, labelCount: name.split('.').length }
 }
