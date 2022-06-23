@@ -326,14 +326,14 @@ export declare class ENS {
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<any>;
     }>;
     getOwner: GeneratedRawFunction<{
-        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, contract?: "nameWrapper" | "registrar" | "registry" | undefined) => Promise<{
             to: string;
             data: string;
         }>;
-        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<{
+        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string, contract?: "nameWrapper" | "registrar" | "registry" | undefined) => Promise<{
             registrant?: string | undefined;
-            owner: string;
-            ownershipLevel: "registrar" | "registry" | "nameWrapper";
+            owner?: string | undefined;
+            ownershipLevel: "nameWrapper" | "registrar" | "registry";
         } | undefined>;
     }>;
     getExpiry: GeneratedRawFunction<{
@@ -381,6 +381,16 @@ export declare class ENS {
         page?: undefined;
         pageSize?: undefined;
     })) => Promise<import("./functions/getNames").Name[]>;
+    getPrice: GeneratedRawFunction<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, duration: number, legacy?: boolean | undefined) => Promise<{
+            to: string;
+            data: string;
+        }>;
+        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, _name: string, _number: number, legacy?: boolean | undefined) => Promise<{
+            base: ethers.BigNumber;
+            premium: ethers.BigNumber;
+        } | undefined>;
+    }>;
     universalWrapper: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string, data: string) => Promise<{
             to: string;
@@ -412,10 +422,10 @@ export declare class ENS {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction | undefined>;
     setRecords: (name: string, records: import("./utils/recordHelpers").RecordOptions) => Promise<ethers.ContractTransaction | undefined>;
-    setResolver: (name: string, contract: "registry" | "nameWrapper", resolver?: string | undefined, options?: {
+    setResolver: (name: string, contract: "nameWrapper" | "registry", resolver?: string | undefined, options?: {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction>;
-    transferName: (name: string, newOwner: string, contract: "registry" | "nameWrapper" | "baseRegistrar", options?: {
+    transferName: (name: string, newOwner: string, contract: "nameWrapper" | "registry" | "baseRegistrar", options?: {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction>;
     wrapName: (name: string, wrappedOwner: string, fuseOptions?: string | number | import("./@types/FuseOptions").FuseOptions | undefined, resolverAddress?: string | undefined, options?: {
@@ -429,7 +439,7 @@ export declare class ENS {
         name: string;
         owner: string;
         resolverAddress?: string | undefined;
-        contract: "registry" | "nameWrapper";
+        contract: "nameWrapper" | "registry";
         options?: {
             addressOrIndex?: string | number | undefined;
         } | undefined;
@@ -440,15 +450,15 @@ export declare class ENS {
         name: string;
         owner: string;
         resolverAddress?: string | undefined;
-        contract: "registry" | "nameWrapper";
+        contract: "nameWrapper" | "registry";
         options?: {
             addressOrIndex?: string | number | undefined;
         } | undefined;
     })) => Promise<ethers.ContractTransaction>;
-    deleteSubname: (name: string, contract: "registry" | "nameWrapper", options?: {
+    deleteSubname: (name: string, contract: "nameWrapper" | "registry", options?: {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction>;
-    transferSubname: (name: string, contract: "registry" | "nameWrapper", address: string, options?: {
+    transferSubname: (name: string, contract: "nameWrapper" | "registry", address: string, options?: {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction>;
 }

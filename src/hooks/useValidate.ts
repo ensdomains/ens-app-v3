@@ -2,6 +2,7 @@ import {
   parseInputType,
   validateName,
 } from '@ensdomains/ensjs/dist/cjs/utils/validation'
+import { isAddress } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 
 export const useValidate = (input: string, skip?: any) => {
@@ -31,4 +32,25 @@ export const useValidate = (input: string, skip?: any) => {
   }, [_name, skip])
 
   return { valid, type, name, labelCount: name.split('.').length }
+}
+
+export const useValidateOrAddress = (input: string, skip?: any) => {
+  const [inputIsAddress, setIsAddress] = useState(false)
+  const { valid, type, name, labelCount } = useValidate(input, skip)
+
+  useEffect(() => {
+    if (!skip) {
+      if (isAddress(input)) {
+        setIsAddress(true)
+      } else {
+        setIsAddress(false)
+      }
+    }
+  }, [input, skip])
+
+  if (inputIsAddress) {
+    return { valid: true, type: 'address', output: input }
+  }
+
+  return { valid, type, output: name, labelCount }
 }

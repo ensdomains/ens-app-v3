@@ -21,6 +21,7 @@ import type {
 import type getName from './functions/getName'
 import type getNames from './functions/getNames'
 import type getOwner from './functions/getOwner'
+import type getPrice from './functions/getPrice'
 import type getProfile from './functions/getProfile'
 import type getRecords from './functions/getRecords'
 import type getResolver from './functions/getResolver'
@@ -428,6 +429,12 @@ export class ENS {
     'initialGetters',
     ['gqlInstance'],
     'getNames',
+  )
+
+  public getPrice = this.generateRawFunction<typeof getPrice>(
+    'initialGetters',
+    ['contracts', 'multicallWrapper'],
+    'getPrice',
   )
 
   public universalWrapper = this.generateRawFunction<typeof universalWrapper>(

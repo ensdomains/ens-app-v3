@@ -17,7 +17,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getSubnames = exports.getRecords = exports.getProfile = exports.getOwner = exports.getNames = exports.getName = exports.getExpiry = exports.batch = void 0;
+exports.getSubnames = exports.getRecords = exports.getProfile = exports.getPrice = exports.getOwner = exports.getNames = exports.getName = exports.getExpiry = exports.batch = void 0;
 var batch_1 = require("./batch");
 Object.defineProperty(exports, "batch", { enumerable: true, get: function () { return __importDefault(batch_1).default; } });
 __exportStar(require("./batchWrappers"), exports);
@@ -29,6 +29,8 @@ var getNames_1 = require("./getNames");
 Object.defineProperty(exports, "getNames", { enumerable: true, get: function () { return __importDefault(getNames_1).default; } });
 var getOwner_1 = require("./getOwner");
 Object.defineProperty(exports, "getOwner", { enumerable: true, get: function () { return __importDefault(getOwner_1).default; } });
+var getPrice_1 = require("./getPrice");
+Object.defineProperty(exports, "getPrice", { enumerable: true, get: function () { return __importDefault(getPrice_1).default; } });
 var getProfile_1 = require("./getProfile");
 Object.defineProperty(exports, "getProfile", { enumerable: true, get: function () { return __importDefault(getProfile_1).default; } });
 var getRecords_1 = require("./getRecords");

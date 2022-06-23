@@ -4,6 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const baseRegistrar_1 = __importDefault(require("./baseRegistrar"));
+const ethRegistrarController_1 = __importDefault(require("./ethRegistrarController"));
 const multicall_1 = __importDefault(require("./multicall"));
 const nameWrapper_1 = __importDefault(require("./nameWrapper"));
 const publicResolver_1 = __importDefault(require("./publicResolver"));
@@ -30,6 +31,7 @@ class ContractManager {
     getReverseRegistrar = this.generateContractGetter('ReverseRegistrar', reverseRegistrar_1.default);
     getNameWrapper = this.generateContractGetter('NameWrapper', nameWrapper_1.default);
     getBaseRegistrar = this.generateContractGetter('BaseRegistrarImplementation', baseRegistrar_1.default);
+    getEthRegistrarController = this.generateContractGetter('ETHRegistrarController', ethRegistrarController_1.default);
     getMulticall = this.generateContractGetter('Multicall', multicall_1.default);
 }
 exports.default = ContractManager;
