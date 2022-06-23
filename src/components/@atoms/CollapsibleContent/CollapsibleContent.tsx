@@ -9,7 +9,7 @@ const Container = styled.div<{
     max-height: ${$expanded ? $maxHeight : '0px'};
     opacity: ${$expanded ? '1' : '0'};
     visibility: ${$expanded ? 'visible' : 'hidden'};
-    transition: all 0.3s cubic-bezier(1, 0, 0.22, 1.6);
+    transition: all 0.3s ease-in-out;
     width: 100%;
     position: relative;
   `,

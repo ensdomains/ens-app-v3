@@ -45,6 +45,7 @@ const FilterButtonElement = styled.button<{ $pressed?: boolean }>(
     background: ${$pressed
       ? theme.colors.backgroundSecondary
       : theme.colors.white};
+    cursor: pointer;
     padding: ${theme.space['1.5']} ${theme.space['4']};
     border: 1px solid ${theme.colors.borderSecondary};
     border-radius: ${theme.space['3']};
@@ -157,6 +158,26 @@ const FilterControl = ({
                 placement="bottom-end"
                 open={showMenu}
                 onDismiss={() => setShowMenu(false)}
+                animationFn={(side, open) => {
+                  let translate = ''
+                  if (side === 'top') translate = `translate(0, 0.625rem)`
+                  else if (side === 'right')
+                    translate = `translate(-0.625rem, 0)`
+                  else if (side === 'bottom')
+                    translate = `translate(0, -0.625rem)`
+                  else translate = `translate(0.625rem, 0);`
+                  if (open)
+                    return `
+                      transform: translate(0, 0);
+                      opacity: 1;
+                      visibility: visible;
+                    `
+                  return `
+                    transform: ${translate};
+                    opacity: 0;
+                    visibility: hidden;
+                  `
+                }}
               >
                 <FilterButton pressed={showMenu} onClick={handleToggleShowMenu}>
                   {t('filter')}
