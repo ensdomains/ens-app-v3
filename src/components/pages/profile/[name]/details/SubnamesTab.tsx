@@ -7,6 +7,12 @@ import { useQuery, useQueryClient } from 'react-query'
 import { NameDetailItem } from '../../../../NameDetailItem'
 import { TabWrapper } from '../../TabWrapper'
 
+type Subname = {
+  id: string
+  name: string
+  truncatedName?: string
+}
+
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']};
@@ -47,14 +53,14 @@ const TabWrapperWithButtons = styled.div(
   `,
 )
 
-const maxCalc = (subnameCount, page) => {
+const maxCalc = (subnameCount: number, page: number) => {
   if (subnameCount > 5000) {
     return page + 1 === 1 ? 2 : 3
   }
   return 5
 }
 
-const usePagination = (name) => {
+const usePagination = (name: string) => {
   const { getSubnames } = useEns()
   const isLargeQueryRef = useRef(false)
   const lastSubnamesRef = useRef([])
@@ -109,7 +115,6 @@ const usePagination = (name) => {
     max,
     page,
     setPage,
-    isLoading,
     totalPages,
   }
 }
@@ -129,7 +134,7 @@ export const SubnamesTab = ({
     <TabWrapperWithButtons>
       <TabWrapper>
         {!isLoading && subnames?.length > 0 ? (
-          subnames.map((subname) => (
+          subnames.map((subname: Subname) => (
             <NameDetailItem key={subname.name} network={network} {...subname}>
               <RightArrow as={ArrowRightSVG} />
             </NameDetailItem>
@@ -146,7 +151,7 @@ export const SubnamesTab = ({
           <PageButtons
             current={page + 1}
             onChange={(value) => setPage(value - 1)}
-            total={totalPages}
+            total={totalPages || 1}
             max={max}
           />
         </PageButtonsContainer>
