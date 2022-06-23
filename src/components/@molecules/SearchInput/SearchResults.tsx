@@ -20,10 +20,11 @@ const SearchItem = styled.div<{
   $error?: boolean
 }>(
   ({ theme, $selected, $clickable, $error }) => css`
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: auto 1fr;
     align-items: center;
     justify-content: space-between;
+    gap: ${theme.space['2']};
     height: ${theme.space['14']};
     padding: 0 ${theme.space['4']};
     border-bottom: ${theme.borderWidths['0.375']} ${theme.borderStyles.solid}
@@ -73,8 +74,13 @@ const NoInputYetTypography = styled(Typography)(
 
 const AvatarWrapper = styled.div<{ $isPlaceholder?: boolean }>(
   ({ theme, $isPlaceholder }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
     width: ${theme.space['8']};
+    min-width: ${theme.space['8']};
     height: ${theme.space['8']};
+    flex-grow: 1;
     ${$isPlaceholder &&
     css`
       filter: grayscale(100%);
@@ -87,7 +93,11 @@ const LeadingSearchItem = styled.div(
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: center;
+    max-width: min-content;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
     gap: ${theme.space['4.5']};
     flex-gap: ${theme.space['4.5']};
   `,
@@ -105,6 +115,7 @@ const AddressAndName = styled.div(
 const StyledTag = styled(Tag)(
   () => css`
     width: max-content;
+    justify-self: flex-end;
     overflow-wrap: normal;
     word-break: keep-all;
     white-space: nowrap;
@@ -122,6 +133,13 @@ const AddressPrimary = styled.div(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.label};
     color: ${theme.colors.textSecondary};
+  `,
+)
+
+const SpinnerWrapper = styled.div(
+  () => css`
+    width: max-content;
+    justify-self: flex-end;
   `,
 )
 
@@ -192,8 +210,19 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
   }
 }
 
-const formatText = (text: string) =>
-  text.length > 28 ? `...${text.slice(-28)}` : text
+const TextWrapper = styled.div(
+  () => css`
+    overflow: hidden;
+    text-align: left;
+    & > div {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: clip;
+      text-align: left;
+      direction: rtl;
+    }
+  `,
+)
 
 const PlaceholderResultItem = ({ input }: { input: string }) => {
   const zorb = useZorb('placeholder', 'name')
@@ -204,9 +233,13 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
         <AvatarWrapper $isPlaceholder>
           <Avatar src={zorb} label="name" />
         </AvatarWrapper>
-        <Typography weight="bold">{formatText(input)}</Typography>
+        <TextWrapper>
+          <Typography weight="bold">{input}</Typography>
+        </TextWrapper>
       </LeadingSearchItem>
-      <Spinner color="accent" />
+      <SpinnerWrapper>
+        <Spinner color="accent" />
+      </SpinnerWrapper>
     </>
   )
 }
@@ -223,9 +256,17 @@ const NameResultItem = ({ name }: { name: string }) => {
         <AvatarWrapper>
           <Avatar src={avatar || zorb} label="name" />
         </AvatarWrapper>
-        <Typography weight="bold">{formatText(name)}</Typography>
+        <TextWrapper>
+          <Typography weight="bold">{name}</Typography>
+        </TextWrapper>
       </LeadingSearchItem>
-      {status ? <StatusTag status={status} /> : <Spinner color="accent" />}
+      {status ? (
+        <StatusTag status={status} />
+      ) : (
+        <SpinnerWrapper>
+          <Spinner color="accent" />
+        </SpinnerWrapper>
+      )}
     </>
   )
 }
@@ -254,7 +295,6 @@ export const SearchResult = ({
   const handleMouseDown = (e: MouseEvent) => e.preventDefault()
 
   const handleClick = useCallback(() => {
-    console.log('INNER CLICK')
     clickCallback(index)
   }, [index, clickCallback])
 
