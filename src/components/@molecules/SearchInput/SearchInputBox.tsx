@@ -2,7 +2,13 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { CancelCircleSVG, Input } from '@ensdomains/thorin'
-import { Dispatch, ForwardedRef, forwardRef, SetStateAction } from 'react'
+import {
+  Dispatch,
+  ForwardedRef,
+  forwardRef,
+  MouseEvent,
+  SetStateAction,
+} from 'react'
 import styled, { css } from 'styled-components'
 
 const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
@@ -94,6 +100,37 @@ export const SearchInputBox = forwardRef(
               </div>
             )
           }
+          autoComplete="off"
+          autoCorrect="off"
+          parentStyles={StyledInputParent()}
+          spellCheck="false"
+        />
+      </SearchInputWrapper>
+    )
+  },
+)
+
+export const FakeSearchInputBox = forwardRef(
+  (
+    {
+      size = 'extraLarge',
+      onClick,
+    }: {
+      size?: 'large' | 'extraLarge'
+      onClick: (e: MouseEvent<HTMLInputElement>) => void
+    },
+    ref,
+  ) => {
+    return (
+      <SearchInputWrapper $size={size}>
+        <Input
+          size={size}
+          label="Name search"
+          hideLabel
+          placeholder="Search for a name"
+          ref={ref as any}
+          onClick={onClick}
+          readOnly
           autoComplete="off"
           autoCorrect="off"
           parentStyles={StyledInputParent()}

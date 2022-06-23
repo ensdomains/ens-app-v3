@@ -2,17 +2,25 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import {
   parseInputType,
   validateName,
 } from '@ensdomains/ensjs/dist/cjs/utils/validation'
-import { mq } from '@ensdomains/thorin'
+import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
-import { SearchInputBox } from './SearchInputBox'
+import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResults'
 import { AnyItem, HistoryItem, SearchItem } from './types'
 
@@ -65,7 +73,98 @@ const SearchResultsContainer = styled.div<{
   `,
 )
 
+const FloatingSearchContainer = styled.div<{ $state: TransitionState }>(
+  ({ theme, $state }) => css`
+    width: 95%;
+
+    position: fixed;
+    left: 2.5%;
+    z-index: 9999;
+    top: ${theme.space['4']};
+
+    display: flex;
+    flex-direction: column;
+
+    opacity: 0;
+
+    & > div:nth-child(2) {
+      width: 95vw !important;
+    }
+
+    ${$state === 'entered' &&
+    css`
+      opacity: 1;
+    `}
+  `,
+)
+
+const InputAndCancel = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+  `,
+)
+
+const CancelButton = styled(Typography)(
+  ({ theme }) => css`
+    padding: ${theme.space['3']};
+  `,
+)
+
 const debouncer = debounce((setFunc: () => void) => setFunc(), 500)
+
+const MobileSearchInput = ({
+  state,
+  toggle,
+  searchInputRef,
+  SearchResultsElement,
+  SearchInputElement,
+}: {
+  state: TransitionState
+  toggle: (value: boolean) => void
+  searchInputRef: RefObject<HTMLInputElement>
+  SearchResultsElement: JSX.Element
+  SearchInputElement: JSX.Element
+}) => {
+  useEffect(() => {
+    if (state === 'entered') {
+      searchInputRef.current?.focus()
+    }
+  }, [searchInputRef, state])
+
+  return (
+    <>
+      <FakeSearchInputBox
+        onClick={(e) => {
+          ;(e.target as any).blur()
+          e.preventDefault()
+          toggle(true)
+          searchInputRef.current?.focus()
+        }}
+      />
+      {state !== 'unmounted' && (
+        <Portal>
+          <BackdropSurface
+            $empty={false}
+            onClick={() => toggle(false)}
+            $state={state}
+          />
+          <FloatingSearchContainer $state={state}>
+            <InputAndCancel>
+              {SearchInputElement}
+              <CancelButton as="button" onClick={() => toggle(false)}>
+                Cancel
+              </CancelButton>
+            </InputAndCancel>
+            {SearchResultsElement}
+          </FloatingSearchContainer>
+        </Portal>
+      )}
+    </>
+  )
+}
 
 export const SearchInput = ({
   size = 'extraLarge',
@@ -75,6 +174,7 @@ export const SearchInput = ({
   setSearchState?: (value: TransitionState) => void
 }) => {
   const router = useRouter()
+  const breakpoints = useBreakpoint()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -314,38 +414,60 @@ export const SearchInput = ({
     }
   }, [handleFocusIn, handleFocusOut, handleKeyDown, searchInputRef])
 
+  const SearchInputElement = (
+    <SearchInputBox
+      containerRef={searchInputContainerRef}
+      ref={searchInputRef}
+      input={inputVal}
+      setInput={setInputVal}
+      size={size}
+    />
+  )
+
+  const SearchResultsElement = (
+    <SearchResultsContainer
+      style={{
+        width: searchInputContainerRef.current?.offsetWidth,
+      }}
+      onMouseLeave={() => inputVal === '' && setSelected(-1)}
+      $state={state}
+      $error={!isValid && inputVal !== ''}
+    >
+      {searchItems.map((item, index) => (
+        <SearchResult
+          clickCallback={handleSearch}
+          hoverCallback={handleHover}
+          index={index}
+          selected={selected}
+          type={item.type}
+          usingPlaceholder={item.isHistory ? false : usingPlaceholder}
+          key={`${item.type}-${item.value}`}
+          value={item.value || normalisedName}
+        />
+      ))}
+    </SearchResultsContainer>
+  )
+
+  if (breakpoints.md) {
+    return (
+      <Container $size={size}>
+        {SearchInputElement}
+        {state !== 'unmounted' && SearchResultsElement}
+      </Container>
+    )
+  }
+
   return (
-    <Container $size={size}>
-      <SearchInputBox
-        containerRef={searchInputContainerRef}
-        ref={searchInputRef}
-        input={inputVal}
-        setInput={setInputVal}
-        size={size}
+    <Container $size="extraLarge">
+      <MobileSearchInput
+        {...{
+          SearchInputElement,
+          SearchResultsElement,
+          searchInputRef,
+          state,
+          toggle,
+        }}
       />
-      {state !== 'unmounted' && (
-        <SearchResultsContainer
-          style={{
-            width: searchInputContainerRef.current?.offsetWidth,
-          }}
-          onMouseLeave={() => inputVal === '' && setSelected(-1)}
-          $state={state}
-          $error={!isValid && inputVal !== ''}
-        >
-          {searchItems.map((item, index) => (
-            <SearchResult
-              clickCallback={handleSearch}
-              hoverCallback={handleHover}
-              index={index}
-              selected={selected}
-              type={item.type}
-              usingPlaceholder={item.isHistory ? false : usingPlaceholder}
-              key={`${item.type}-${item.value}`}
-              value={item.value || normalisedName}
-            />
-          ))}
-        </SearchResultsContainer>
-      )}
     </Container>
   )
 }
