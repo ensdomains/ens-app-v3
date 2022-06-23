@@ -228,6 +228,8 @@ const ProfileEditor = () => {
   const [newCoinRecords, setNewCoinRecords] = useState<CoinType[]>([])
 
   const handleRemoveCoinRecord = (coin: CoinType) => () => {
+    console.log('>>>>')
+
     setExistingCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
   }
 

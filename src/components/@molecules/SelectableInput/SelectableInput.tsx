@@ -124,6 +124,7 @@ export const SelectableInput = forwardRef(
       readOnly,
       error,
       hasChanges,
+      onDelete,
       ...props
     }: Props,
     ref: Ref<HTMLInputElement>,
@@ -162,7 +163,12 @@ export const SelectableInput = forwardRef(
           />
         </InputContainer>
         <ButtonContainer $readOnly={readOnly}>
-          <Button size="extraSmall" variant="transparent" shadowless>
+          <Button
+            size="extraSmall"
+            variant="transparent"
+            shadowless
+            onClick={onDelete}
+          >
             <CloseSVG />
           </Button>
         </ButtonContainer>
