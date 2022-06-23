@@ -326,13 +326,13 @@ export declare class ENS {
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<any>;
     }>;
     getOwner: GeneratedRawFunction<{
-        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string) => Promise<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<{
             to: string;
             data: string;
         }>;
-        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string) => Promise<{
+        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, name: string, contract?: "registrar" | "registry" | "nameWrapper" | undefined) => Promise<{
             registrant?: string | undefined;
-            owner: string;
+            owner?: string | undefined;
             ownershipLevel: "registrar" | "registry" | "nameWrapper";
         } | undefined>;
     }>;
@@ -346,23 +346,18 @@ export declare class ENS {
             gracePeriod: number;
         } | undefined>;
     }>;
-    getSubnames: (args_0: {
+    getSubnames: (functionArgs: {
         name: string;
         page?: number | undefined;
         pageSize?: number | undefined;
         orderDirection?: "asc" | "desc" | undefined;
         orderBy?: "labelName" | "createdAt" | undefined;
+        lastSubnames: any[];
+        isLargeQuery?: boolean | undefined;
     }) => Promise<{
-        id: string;
-        labelName: string | null;
-        truncatedName?: string | undefined;
-        labelhash: string;
-        isMigrated: boolean;
-        name: string;
-        owner: {
-            id: string;
-        };
-    }[]>;
+        subnames: any;
+        subnameCount: any;
+    }>;
     getNames: (args_0: {
         address: string;
         type: "owner" | "registrant" | "all";

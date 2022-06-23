@@ -1,17 +1,11 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { ArrowRightSVG, PageButtons } from '@ensdomains/thorin'
-import { useState } from 'react'
+import { ArrowRightSVG, PageButtons, Spinner } from '@ensdomains/thorin'
+import { useState, useRef, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery } from 'wagmi'
+import { useQuery, useQueryClient } from 'react-query'
 import { NameDetailItem } from '../../../../NameDetailItem'
 import { TabWrapper } from '../../TabWrapper'
-
-type Subname = {
-  id: string
-  name: string
-  truncatedName?: string
-}
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -53,6 +47,73 @@ const TabWrapperWithButtons = styled.div(
   `,
 )
 
+const maxCalc = (subnameCount, page) => {
+  if (subnameCount > 5000) {
+    return page + 1 === 1 ? 2 : 3
+  }
+  return 5
+}
+
+const usePagination = (name) => {
+  const { getSubnames } = useEns()
+  const isLargeQueryRef = useRef(false)
+  const lastSubnamesRef = useRef([])
+  const [page, setPage] = useState(0)
+  const queryClient = useQueryClient()
+  const resultsPerPage = 10
+
+  const {
+    data: { subnames, subnameCount, max, totalPages } = {
+      subnames: [],
+      subnameCount: 0,
+    },
+    isLoading,
+  } = useQuery(
+    ['getSubnames', name, 'createdAt', 'desc', page, resultsPerPage],
+    async () => {
+      const result = await getSubnames({
+        name,
+        orderBy: 'createdAt',
+        orderDirection: 'desc',
+        page,
+        pageSize: resultsPerPage,
+        isLargeQuery: isLargeQueryRef.current,
+        lastSubnames: lastSubnamesRef.current,
+      })
+
+      lastSubnamesRef.current = result.subnames
+
+      if (result.subnameCount > 5000) {
+        isLargeQueryRef.current = true
+      }
+
+      return {
+        ...result,
+        max: maxCalc(result.subnameCount, page),
+        totalPages: Math.ceil(result.subnameCount / resultsPerPage),
+      }
+    },
+    { staleTime: Infinity, cacheTime: Infinity },
+  )
+
+  useEffect(() => {
+    return () => {
+      queryClient.removeQueries('getSubnames')
+    }
+  }, [queryClient])
+
+  return {
+    subnames,
+    subnameCount,
+    isLoading,
+    max,
+    page,
+    setPage,
+    isLoading,
+    totalPages,
+  }
+}
+
 export const SubnamesTab = ({
   name,
   network,
@@ -61,29 +122,13 @@ export const SubnamesTab = ({
   network: number
 }) => {
   const { t } = useTranslation('profile')
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [page, setPage] = useState(0)
-  const resultsPerPage = 10
-
-  const { getSubnames } = useEns()
-  const { data: subnameData, isLoading: loading } = useQuery(
-    ['getSubnames', name, 'createdAt', 'desc', page, resultsPerPage],
-    () =>
-      getSubnames({
-        name,
-        orderBy: 'createdAt',
-        orderDirection: 'desc',
-        page,
-        pageSize: resultsPerPage,
-      }),
-  )
-
-  const subnames = (subnameData as Subname[]) || []
+  const { subnames, max, page, setPage, isLoading, totalPages } =
+    usePagination(name)
 
   return (
     <TabWrapperWithButtons>
       <TabWrapper>
-        {!loading && subnames.length > 0 ? (
+        {!isLoading && subnames?.length > 0 ? (
           subnames.map((subname) => (
             <NameDetailItem key={subname.name} network={network} {...subname}>
               <RightArrow as={ArrowRightSVG} />
@@ -91,20 +136,18 @@ export const SubnamesTab = ({
           ))
         ) : (
           <EmptyDetailContainer>
-            {loading ? t('tabs.subnames.loading') : t('tabs.subnames.empty')}
+            {isLoading ? <Spinner color="blue" /> : t('tabs.subnames.empty')}
           </EmptyDetailContainer>
         )}
       </TabWrapper>
       {/* Page buttons don't work yet, this is intended! */}
-      {!loading && subnames.length > 0 && (
+      {!isLoading && subnames?.length > 0 && (
         <PageButtonsContainer>
           <PageButtons
-            current={1}
-            onChange={() => {}}
-            total={2}
-            max={5}
-            alwaysShowFirst
-            alwaysShowLast
+            current={page + 1}
+            onChange={(value) => setPage(value - 1)}
+            total={totalPages}
+            max={max}
           />
         </PageButtonsContainer>
       )}

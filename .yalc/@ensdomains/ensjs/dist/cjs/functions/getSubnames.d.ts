@@ -1,21 +1,15 @@
 import { ENSArgs } from '..';
-declare type Subname = {
-    id: string;
-    labelName: string | null;
-    truncatedName?: string;
-    labelhash: string;
-    isMigrated: boolean;
-    name: string;
-    owner: {
-        id: string;
-    };
-};
 declare type Params = {
     name: string;
     page?: number;
     pageSize?: number;
     orderDirection?: 'asc' | 'desc';
     orderBy?: 'createdAt' | 'labelName';
+    lastSubnames: Array<any>;
+    isLargeQuery?: boolean;
 };
-declare const getSubnames: ({ gqlInstance }: ENSArgs<'gqlInstance'>, { name, page, pageSize, orderDirection, orderBy }: Params) => Promise<Subname[]>;
+declare const getSubnames: (injected: ENSArgs<'gqlInstance'>, functionArgs: Params) => Promise<{
+    subnames: any;
+    subnameCount: any;
+}>;
 export default getSubnames;
