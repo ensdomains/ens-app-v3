@@ -346,23 +346,28 @@ export declare class ENS {
             gracePeriod: number;
         } | undefined>;
     }>;
-    getSubnames: (args_0: {
+    getSubnames: (functionArgs: {
         name: string;
         page?: number | undefined;
         pageSize?: number | undefined;
         orderDirection?: "asc" | "desc" | undefined;
         orderBy?: "labelName" | "createdAt" | undefined;
+        lastSubnames: any[];
+        isLargeQuery?: boolean | undefined;
     }) => Promise<{
-        id: string;
-        labelName: string | null;
-        truncatedName?: string | undefined;
-        labelhash: string;
-        isMigrated: boolean;
-        name: string;
-        owner: {
+        subnames: {
             id: string;
-        };
-    }[]>;
+            labelName: string | null;
+            truncatedName?: string | undefined;
+            labelhash: string;
+            isMigrated: boolean;
+            name: string;
+            owner: {
+                id: string;
+            };
+        }[];
+        subnameCount: number;
+    }>;
     getNames: (args_0: {
         address: string;
         type: "owner" | "registrant" | "all";

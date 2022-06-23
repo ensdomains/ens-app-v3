@@ -22,8 +22,6 @@ const testAddresses = {
 const defaultValue: ENS = process.env.NEXT_PUBLIC_GRAPH_URI
   ? new ENS({
       graphURI: process.env.NEXT_PUBLIC_GRAPH_URI,
-      getContractAddress: () => (name: string) =>
-        testAddresses[name as keyof typeof testAddresses],
     })
   : new ENS()
 
