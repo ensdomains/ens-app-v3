@@ -1,7 +1,7 @@
 import TripleDot from '@app/assets/TripleDot.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, Typography } from '@ensdomains/thorin'
+import { Avatar, Button, Tooltip, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
@@ -152,9 +152,11 @@ export const ProfileSnippet = ({
               </Button>
             </DetailButtonWrapper>
           )}
-          <Button shadowless variant="transparent" size="extraSmall">
-            <TripleDotIcon as={TripleDot} />
-          </Button>
+          <Tooltip content="in development">
+            <Button shadowless variant="transparent" size="extraSmall">
+              <TripleDotIcon as={TripleDot} />
+            </Button>
+          </Tooltip>
         </ButtonStack>
       </FirstItems>
       <TextStack>

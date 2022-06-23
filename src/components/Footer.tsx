@@ -63,7 +63,11 @@ export const Footer = () => {
       <LanugageDropdown invert />
       <TrailingStack>
         <LinkContainer>
-          <StyledNavLink disabled href="/bug-bounty">
+          <StyledNavLink
+            disabled
+            href="/bug-bounty"
+            onClick={() => alert('hello')}
+          >
             {t('navigation.bugBounty')}
           </StyledNavLink>
           <StyledNavLink disabled href="/media-kit">
