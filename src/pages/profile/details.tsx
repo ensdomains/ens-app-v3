@@ -29,7 +29,7 @@ const DetailsContainer = styled.div(
       flex-direction: row;
       justify-content: center;
     `)}
-    ${mq.lg.min(css`
+    ${mq.md.min(css`
       flex-direction: column;
       justify-content: flex-start;
     `)}
@@ -137,7 +137,7 @@ export default function Page() {
       {{
         leading: (
           <DetailsContainer>
-            {breakpoints.lg ? (
+            {breakpoints.md ? (
               <NFTWithPlaceholder
                 name={normalisedName}
                 network={chainId}
@@ -181,7 +181,7 @@ export default function Page() {
                 />
               )}
             </OwnerButtons>
-            {breakpoints.lg && (
+            {breakpoints.md && (
               <DetailSnippet
                 canSend={selfAbilities.canSend}
                 expiryDate={expiryDate}
