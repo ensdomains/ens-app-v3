@@ -321,6 +321,13 @@ export const SearchInput = ({
     if (!selectedItem.value) {
       selectedItem.value = normalisedName
     }
+    if (selectedItem.type === 'name') {
+      const labels = selectedItem.value.split('.')
+      const isDotETH = labels.length === 2 && labels[1] === 'eth'
+      if (isDotETH && labels[0].length < 3) {
+        return
+      }
+    }
     const path =
       selectedItem.type === 'address'
         ? `/address/${selectedItem.value}`

@@ -183,6 +183,9 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
     case 'notImported': {
       return <StyledTag tone="blue">Not Imported</StyledTag>
     }
+    case 'short': {
+      return <StyledTag tone="red">Too Short</StyledTag>
+    }
     default: {
       return <StyledTag tone="red">Invalid</StyledTag>
     }
@@ -272,14 +275,25 @@ export const SearchResult = ({
     return value
   }, [type, value])
 
+  const clickable = useMemo(() => {
+    if (type === 'name' || type === 'nameWithDotEth') {
+      const labels = input.split('.')
+      const isDotETH = labels.length === 2 && labels[1] === 'eth'
+      if (isDotETH && labels[0].length < 3) {
+        return false
+      }
+    }
+    return true
+  }, [input, type])
+
   const props = useMemo(
     () => ({
       ref: wrapperRef,
       onMouseEnter: () => hoverCallback(index),
       $selected: index === selected,
-      $clickable: true,
+      $clickable: clickable,
     }),
-    [index, hoverCallback, selected],
+    [index, hoverCallback, selected, clickable],
   )
 
   if (usingPlaceholder && type !== 'error' && type !== 'text') {

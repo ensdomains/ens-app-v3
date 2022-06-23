@@ -9,6 +9,7 @@ export type RegistrationStatus =
   | 'gracePeriod'
   | 'premium'
   | 'available'
+  | 'short'
   | 'notImported'
   | 'notOwned'
 
@@ -21,6 +22,9 @@ export const useRegistrationStatus = (name: string) => {
       const labels = name.split('.')
       const isDotETH = labels[labels.length - 1] === 'eth'
       if (isDotETH && labels.length === 2) {
+        if (labels[0].length < 3) {
+          return 'short'
+        }
         const batchResults = await batch(
           getExpiry.batch(name),
           getPrice.batch(labels[0], yearsToSeconds(1), true),
