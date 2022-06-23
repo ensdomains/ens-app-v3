@@ -1,4 +1,4 @@
-import { Typography } from '@ensdomains/thorin'
+import { Tooltip, Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
@@ -86,6 +86,15 @@ const ButtonIcon = styled.svg(
   `,
 )
 
+const SendButtonContainer = styled.div(
+  () => css`
+    flex: 1;
+    > div {
+      width: 100%;
+    }
+  `,
+)
+
 export const NameSnippetMobile = ({
   name,
   network,
@@ -114,31 +123,39 @@ export const NameSnippetMobile = ({
           ) : (
             <Typography>No expiry</Typography>
           )}
-          <FavouriteButton />
+          <Tooltip content="in development">
+            <FavouriteButton />
+          </Tooltip>
         </ExpiryAndFavouriteRow>
         {expiryDate && (
-          <OutlinedButton size="small" shadowless variant="transparent">
-            <InnerButton>
-              {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
-              <Typography weight="bold">Extend</Typography>
-            </InnerButton>
-          </OutlinedButton>
+          <Tooltip content="in development">
+            <OutlinedButton size="small" shadowless variant="transparent">
+              <InnerButton>
+                {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
+                <Typography weight="bold">Extend</Typography>
+              </InnerButton>
+            </OutlinedButton>
+          </Tooltip>
         )}
         {canSend && (
           <RowWithGap>
-            <div style={{ flexGrow: 1 }}>
+            <SendButtonContainer>
+              <Tooltip content="in development" style={{ width: '100%' }}>
+                <OutlinedButton size="small" shadowless variant="transparent">
+                  <InnerButton>
+                    {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
+                    <Typography weight="bold">Send</Typography>
+                  </InnerButton>
+                </OutlinedButton>
+              </Tooltip>
+            </SendButtonContainer>
+            <Tooltip content="in development">
               <OutlinedButton size="small" shadowless variant="transparent">
                 <InnerButton>
-                  {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
-                  <Typography weight="bold">Send</Typography>
+                  <ButtonIcon as={TripleDotSVG} />
                 </InnerButton>
               </OutlinedButton>
-            </div>
-            <OutlinedButton size="small" shadowless variant="transparent">
-              <InnerButton>
-                <ButtonIcon as={TripleDotSVG} />
-              </InnerButton>
-            </OutlinedButton>
+            </Tooltip>
           </RowWithGap>
         )}
       </RightColumn>

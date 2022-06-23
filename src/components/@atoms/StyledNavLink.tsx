@@ -15,7 +15,7 @@ const StyledAnchor = styled.a<{ $isActive: boolean; disabled?: boolean }>(
     ${disabled
       ? css`
           color: ${theme.colors.textPlaceholder};
-          cursor: default;
+          cursor: not-allowed;
         `
       : css`
           &:hover {
@@ -37,6 +37,7 @@ export const StyledNavLink = ({
   disabled?: boolean
 }) => {
   const router = useRouter()
+
   return (
     <ConditionalWrapper
       condition={!disabled}

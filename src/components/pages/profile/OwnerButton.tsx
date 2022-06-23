@@ -8,6 +8,7 @@ import {
   Dialog,
   DownIndicatorSVG,
   Dropdown,
+  Tooltip,
   Typography,
 } from '@ensdomains/thorin'
 import { ReactNode, useMemo, useState } from 'react'
@@ -225,11 +226,13 @@ const OwnerButtonWithPopup = ({
             </AddressCopyContainer>
           </AddressCopyButton>
           {canTransfer && (
-            <TransferButton>
-              <Typography variant="large" weight="bold">
-                Transfer
-              </Typography>
-            </TransferButton>
+            <Tooltip content="in development">
+              <TransferButton>
+                <Typography variant="large" weight="bold">
+                  Transfer
+                </Typography>
+              </TransferButton>
+            </Tooltip>
           )}
         </InnerDialog>
       </Dialog>
