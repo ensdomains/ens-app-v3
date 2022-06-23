@@ -25,6 +25,8 @@ const defaultValue: ENS = process.env.NEXT_PUBLIC_GRAPH_URI
     })
   : new ENS()
 
+console.log('public graph uri: ', process.env.NEXT_PUBLIC_GRAPH_URI)
+
 const EnsContext = createContext({ ...defaultValue, ready: false })
 
 const EnsProvider = ({ children }: { children: React.ReactNode }) => {
