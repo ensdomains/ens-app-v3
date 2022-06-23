@@ -189,6 +189,7 @@ class ENS {
     getExpiry = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getExpiry');
     getSubnames = this.generateFunction('initialGetters', ['gqlInstance'], 'getSubnames');
     getNames = this.generateFunction('initialGetters', ['gqlInstance'], 'getNames');
+    getPrice = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getPrice');
     universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
     resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
     multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
