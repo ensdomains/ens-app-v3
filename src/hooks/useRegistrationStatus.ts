@@ -1,5 +1,5 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { yearsToSeconds } from '@app/utils/utils'
+import { emptyAddress, yearsToSeconds } from '@app/utils/utils'
 import type { BigNumber } from 'ethers'
 import { useQuery } from 'react-query'
 
@@ -42,7 +42,6 @@ export const useRegistrationStatus = (name: string) => {
           if (expiry.getTime() + gracePeriod > Date.now()) {
             return 'gracePeriod'
           }
-          console.log(priceData)
           const { premium } = priceData as {
             base: BigNumber
             premium: BigNumber
@@ -54,10 +53,7 @@ export const useRegistrationStatus = (name: string) => {
         return 'available'
       }
       const owner = await getOwner(name, 'registry')
-      if (
-        owner &&
-        owner.owner !== '0x0000000000000000000000000000000000000000'
-      ) {
+      if (owner && owner.owner !== emptyAddress) {
         return 'registered'
       }
       if (isDotETH) {
