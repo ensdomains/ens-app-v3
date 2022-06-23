@@ -1,4 +1,4 @@
-import { Typography } from '@ensdomains/thorin'
+import { Tooltip, Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
@@ -117,12 +117,14 @@ export const NameSnippetMobile = ({
           <FavouriteButton />
         </ExpiryAndFavouriteRow>
         {expiryDate && (
-          <OutlinedButton size="small" shadowless variant="transparent">
-            <InnerButton>
-              {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
-              <Typography weight="bold">Extend</Typography>
-            </InnerButton>
-          </OutlinedButton>
+          <Tooltip content="in development">
+            <OutlinedButton size="small" shadowless variant="transparent">
+              <InnerButton>
+                {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
+                <Typography weight="bold">Extend</Typography>
+              </InnerButton>
+            </OutlinedButton>
+          </Tooltip>
         )}
         {canSend && (
           <RowWithGap>
