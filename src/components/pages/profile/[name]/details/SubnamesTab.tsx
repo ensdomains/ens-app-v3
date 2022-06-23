@@ -4,8 +4,8 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
-import { NameDetailItem } from '../../../../NameDetailItem'
-import { TabWrapper } from '../../TabWrapper'
+import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 
 type Subname = {
   id: string

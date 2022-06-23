@@ -37,7 +37,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "^0.5.17",
+    "@ensdomains/thorin": "^0.5.21",
     "@rainbow-me/rainbowkit": "patch:@rainbow-me/rainbowkit@0.3.3#./patches/@rainbow-me/rainbowkit.patch",
     "@svgr/webpack": "^6.2.1",
     "ethers": "^5.6.5",
