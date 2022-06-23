@@ -103,6 +103,15 @@ const AddressAndName = styled.div(
 )
 
 const StyledTag = styled(Tag)(
+  () => css`
+    width: max-content;
+    overflow-wrap: normal;
+    word-break: keep-all;
+    white-space: nowrap;
+  `,
+)
+
+const AddressTag = styled(StyledTag)(
   ({ theme }) => css`
     border: ${theme.borderWidths['0.375']} solid ${theme.colors.borderSecondary};
     background-color: transparent;
@@ -135,19 +144,19 @@ const AddressResultItem = ({ address }: { address: string }) => {
           {primary.name && <AddressPrimary>{primary.name}</AddressPrimary>}
         </AddressAndName>
       </LeadingSearchItem>
-      <StyledTag>Address</StyledTag>
+      <AddressTag>Address</AddressTag>
     </>
   )
 }
 
-const GracePeriodTag = styled(Tag)(
+const GracePeriodTag = styled(StyledTag)(
   ({ theme }) => css`
     color: ${theme.colors.yellow};
     background-color: rgba(${theme.accentsRaw.yellow}, 0.1);
   `,
 )
 
-const PremiumTag = styled(Tag)(
+const PremiumTag = styled(StyledTag)(
   ({ theme }) => css`
     color: ${theme.colors.purple};
     background-color: rgba(${theme.accentsRaw.purple}, 0.1);
@@ -157,7 +166,7 @@ const PremiumTag = styled(Tag)(
 const StatusTag = ({ status }: { status: RegistrationStatus }) => {
   switch (status) {
     case 'registered': {
-      return <Tag>Registered</Tag>
+      return <StyledTag>Registered</StyledTag>
     }
     case 'gracePeriod': {
       return <GracePeriodTag>Grace Period</GracePeriodTag>
@@ -166,19 +175,22 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
       return <PremiumTag>Temporary Premium</PremiumTag>
     }
     case 'available': {
-      return <Tag tone="green">Available</Tag>
+      return <StyledTag tone="green">Available</StyledTag>
     }
     case 'notOwned': {
-      return <Tag tone="blue">Not Owned</Tag>
+      return <StyledTag tone="blue">Not Owned</StyledTag>
     }
     case 'notImported': {
-      return <Tag tone="blue">Not Imported</Tag>
+      return <StyledTag tone="blue">Not Imported</StyledTag>
     }
     default: {
-      return <Tag tone="red">Invalid</Tag>
+      return <StyledTag tone="red">Invalid</StyledTag>
     }
   }
 }
+
+const formatText = (text: string) =>
+  text.length > 28 ? `...${text.slice(-28)}` : text
 
 const PlaceholderResultItem = ({ input }: { input: string }) => {
   const zorb = useZorb('placeholder', 'name')
@@ -189,7 +201,7 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
         <AvatarWrapper $isPlaceholder>
           <Avatar src={zorb} label="name" />
         </AvatarWrapper>
-        <Typography weight="bold">{input}</Typography>
+        <Typography weight="bold">{formatText(input)}</Typography>
       </LeadingSearchItem>
       <Spinner color="accent" />
     </>
@@ -208,7 +220,7 @@ const NameResultItem = ({ name }: { name: string }) => {
         <AvatarWrapper>
           <Avatar src={avatar || zorb} label="name" />
         </AvatarWrapper>
-        <Typography weight="bold">{name}</Typography>
+        <Typography weight="bold">{formatText(name)}</Typography>
       </LeadingSearchItem>
       {status ? <StatusTag status={status} /> : <Spinner color="accent" />}
     </>

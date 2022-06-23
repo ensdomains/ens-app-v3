@@ -19,11 +19,7 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
     }
     ${$size === 'large' &&
     css`
-      transition: all 0.35s cubic-bezier(1, 0, 0.1, 1.6);
-      max-width: ${theme.space['80']};
-      &:focus-within {
-        max-width: calc(${theme.space['80']} + ${theme.space['24']});
-      }
+      max-width: ${theme.space['96']};
       box-shadow: ${theme.boxShadows['0.25']};
       & input::placeholder {
         color: ${theme.colors.textTertiary};

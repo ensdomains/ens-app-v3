@@ -38,7 +38,7 @@ const SearchResultsContainer = styled.div<{
     height: min-content;
     top: calc(100% + ${theme.space['3']});
 
-    background-color: rgba(${theme.shadesRaw.background}, 0.2);
+    background-color: #f7f7f7;
     box-shadow: 0px 2px 12px rgba(${theme.shadesRaw.foreground}, 0.04);
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
@@ -50,7 +50,7 @@ const SearchResultsContainer = styled.div<{
     z-index: 1;
     transform: translateY(-${theme.space['2']});
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6),
-      0s border-color linear 0s;
+      0s border-color linear 0s, 0s width linear 0s;
 
     ${$state === 'entered'
       ? css`
