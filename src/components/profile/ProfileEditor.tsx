@@ -12,6 +12,7 @@ import {
   PlusSVG,
 } from '@ensdomains/thorin'
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import _ from 'lodash'
 import { Banner } from '../@atoms/Banner/Banner'
 import { SelectableInput } from '../@molecules/SelectableInput/SelectableInput'
 import { validateCryptoAddress } from '../../utils/validate'
@@ -229,7 +230,9 @@ const ProfileEditor = () => {
 
   const handleRemoveCoinRecord = (coin: CoinType) => () => {
     console.log('>>>>')
-
+    const oldAddress = getValues('address')
+    const newAddress = { [coin]: _, ...oldAddress }
+    setValue('address', newAddress)
     setExistingCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
   }
 
