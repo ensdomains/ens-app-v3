@@ -108,7 +108,7 @@ export const SearchInput = ({
     status,
   } = useExists(name, !name || name === '')
 
-  const isValidAddress = isAddress(searchedVal)
+  const isValidAddress = useMemo(() => isAddress(searchedVal), [searchedVal])
 
   const searchInputRef = useRef<HTMLInputElement>(null)
 
@@ -199,22 +199,23 @@ export const SearchInput = ({
     }
   }
 
+  const isValidNameOrAddress = (nameExists && name) || isValidAddress
+
   return (
     <Container $size={size}>
       <SearchInputWrapper $size={size}>
         <Input
           size={size}
-          label="Name search"
+          label="Name and address search"
           hideLabel
-          placeholder="Search for a name"
+          placeholder="Search for a name or address"
           value={inputVal}
           onKeyDown={(e) =>
             e.key === 'Enter' &&
-            name &&
-            nameExists &&
+            isValidNameOrAddress &&
             searchedVal === inputVal &&
             !loading &&
-            handleSearch
+            handleSearch()
           }
           onChange={(e) => setInputVal(e.target.value)}
           ref={searchInputRef}
