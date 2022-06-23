@@ -45,19 +45,25 @@ export const NameListView = ({
     )
   return (
     <TabWrapper>
-      {currentPage.map((name) => (
-        <NameDetailItem key={name.name} network={network} {...name}>
-          <OtherItemsContainer>
-            {name.expiryDate && <ShortExpiry expiry={name.expiryDate} />}
-            <Tag tone={name.isController ? 'accent' : 'secondary'}>
-              Controller
-            </Tag>
-            <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>
-              Registrant
-            </Tag>
-          </OtherItemsContainer>
-        </NameDetailItem>
-      ))}
+      {currentPage.map((name) => {
+        const isNativeEthName =
+          /\.eth$/.test(name.name) && name.name.split('.').length === 2
+        return (
+          <NameDetailItem key={name.name} network={network} {...name}>
+            <OtherItemsContainer>
+              {name.expiryDate && <ShortExpiry expiry={name.expiryDate} />}
+              <Tag tone={name.isController ? 'accent' : 'secondary'}>
+                Controller
+              </Tag>
+              {isNativeEthName && (
+                <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>
+                  Registrant
+                </Tag>
+              )}
+            </OtherItemsContainer>
+          </NameDetailItem>
+        )
+      })}
     </TabWrapper>
   )
 }
