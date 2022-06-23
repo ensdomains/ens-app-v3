@@ -1,7 +1,7 @@
-import { namehash } from 'ethers/lib/utils'
+import { namehash } from 'ethers/lib/utils';
 import { ENSArgs } from '..'
-import { truncateFormat } from '../utils/format'
-import { decryptName } from '../utils/labels'
+import { truncateFormat } from '../utils/format';
+import { decryptName } from '../utils/labels';
 
 type Subname = {
   id: string
@@ -21,93 +21,168 @@ type Params = {
   pageSize?: number
   orderDirection?: 'asc' | 'desc'
   orderBy?: 'createdAt' | 'labelName'
+  lastSubnames: Array<any>
+  isLargeQuery?: boolean
 }
 
-const getSubnames = async (
-  { gqlInstance }: ENSArgs<'gqlInstance'>,
-  { name, page, pageSize = 10, orderDirection, orderBy }: Params,
-): Promise<Subname[]> => {
-  const client = gqlInstance.client!
-  const subdomainsGql = `
-    id
-    labelName
-    labelhash
-    isMigrated
-    name
-    owner {
-      id
-    }
-  `
-  let queryVars: object = {}
-  let finalQuery: string = ''
+const largeQuery = async (
+    { gqlInstance } : ENSArgs<'gqlInstance'>, 
+    { name, page, pageSize = 10, orderDirection, orderBy, lastSubnames }: Params
+  ) => {
+  const client = gqlInstance.client;
 
-  if (typeof page !== 'number') {
-    finalQuery = gqlInstance.gql`
-      query getSubnames(
-        $id: ID! 
-        $orderBy: Domain_orderBy 
-        $orderDirection: OrderDirection
+  let finalQuery = gqlInstance.gql `
+    query getSubnames(
+      $id: ID! 
+      $first: Int
+      $lastCreatedAt: BigInt
+      $orderBy: Domain_orderBy 
+      $orderDirection: OrderDirection
+    ) {
+      domain(
+        id: $id
       ) {
-        domain(
-          id: $id
+        subdomainCount
+        subdomains(
+          first: $first
+          orderBy: $orderBy
+          orderDirection: $orderDirection
+          where: { createdAt_lt: $lastCreatedAt }
         ) {
-          subdomains(
-            orderBy: $orderBy
-            orderDirection: $orderDirection
-          ) {
-            ${subdomainsGql}
+          id
+          labelName
+          labelhash
+          isMigrated
+          name
+          subdomainCount
+          createdAt
+          owner {
+            id
           }
         }
       }
-    `
-
-    queryVars = {
-      id: namehash(name),
-      orderBy,
-      orderDirection,
     }
-  } else {
-    finalQuery = gqlInstance.gql`
-      query getSubnames(
-        $id: ID! 
-        $first: Int
-        $skip: Int
-        $orderBy: Domain_orderBy 
-        $orderDirection: OrderDirection
-      ) {
-        domain(
-          id: $id
-        ) {
-          subdomains(
-            first: $first
-            skip: $skip
-            orderBy: $orderBy
-            orderDirection: $orderDirection
-          ) {
-            ${subdomainsGql}
-          }
-        }
-      }
-    `
+  `;
+     let queryVars = {
+          id: namehash(name),
+          first: pageSize,
+          lastCreatedAt: lastSubnames[lastSubnames.length - 1]?.createdAt,
+          orderBy,
+          orderDirection,
+      };
+  const { domain } = await client.request(finalQuery, queryVars);
+  const subdomains = domain.subdomains.map((subname: any) => {
+      const decrypted = decryptName(subname.name);
+      return {
+          ...subname,
+          name: decrypted,
+          truncatedName: truncateFormat(decrypted),
+      };
+  });
 
-    queryVars = {
-      id: namehash(name),
-      first: pageSize,
-      skip: (page || 0) * pageSize,
-      orderBy,
-      orderDirection,
-    }
+  return {
+    subnames: subdomains,
+    subnameCount: domain.subdomainCount
   }
+};
 
-  const { domain } = await client.request(finalQuery, queryVars)
-  return (domain.subdomains as Subname[]).map((subname) => {
-    const decrypted = decryptName(subname.name)
-    return {
-      ...subname,
-      name: decrypted,
-      truncatedName: truncateFormat(decrypted),
+const smallQuery =  async (
+  { gqlInstance } : ENSArgs<'gqlInstance'>, 
+  { name, page, pageSize = 10, orderDirection, orderBy } : Params
+  ) => {
+  const client = gqlInstance.client;
+  const subdomainsGql = `
+  id
+  labelName
+  labelhash
+  isMigrated
+  name
+  subdomainCount
+  createdAt
+  owner {
+    id
+  }
+`;
+  let queryVars = {};
+  let finalQuery = '';
+  if (typeof page !== 'number') {
+      finalQuery = gqlInstance.gql `
+    query getSubnames(
+      $id: ID! 
+      $orderBy: Domain_orderBy 
+      $orderDirection: OrderDirection
+    ) {
+      domain(
+        id: $id
+      ) {
+        subdomains(
+          orderBy: $orderBy
+          orderDirection: $orderDirection
+        ) {
+          ${subdomainsGql}
+        }
+      }
     }
-  })
+  `;
+      queryVars = {
+          id: namehash(name),
+          orderBy,
+          orderDirection,
+      };
+  }
+  else {
+      finalQuery = gqlInstance.gql `
+    query getSubnames(
+      $id: ID! 
+      $first: Int
+      $skip: Int
+      $orderBy: Domain_orderBy 
+      $orderDirection: OrderDirection
+    ) {
+      domain(
+        id: $id
+      ) {
+        subdomainCount
+        subdomains(
+          first: $first
+          skip: $skip
+          orderBy: $orderBy
+          orderDirection: $orderDirection
+        ) {
+          ${subdomainsGql}
+        }
+      }
+    }
+  `;
+      queryVars = {
+          id: namehash(name),
+          first: pageSize,
+          skip: (page || 0) * pageSize,
+          orderBy,
+          orderDirection,
+      };
+  }
+  const { domain } = await client.request(finalQuery, queryVars);
+  const subdomains = domain.subdomains.map((subname: any) => {
+      const decrypted = decryptName(subname.name);
+      return {
+          ...subname,
+          name: decrypted,
+          truncatedName: truncateFormat(decrypted),
+      };
+  });
+
+  return {
+    subnames: subdomains,
+    subnameCount: domain.subdomainCount
+  }
+};
+
+const getSubnames = (injected : ENSArgs<'gqlInstance'>, functionArgs: Params): Promise<{ subnames: Subname[], subnameCount: number}> => {
+  if(functionArgs.isLargeQuery) {
+    return largeQuery(injected, functionArgs)
+  }  
+  return smallQuery(injected, functionArgs)
 }
 
-export default getSubnames
+export default getSubnames;

@@ -76,9 +76,11 @@ export default function Page() {
     '/',
     // When anything is loading, return true
     isLoading
-      ? // if is self, user must be connected
-        (isSelf ? address : true) && typeof name === 'string' && name.length > 0
-      : true,
+      ? true
+      : // if is self, user must be connected
+        (isSelf ? address : true) &&
+          typeof name === 'string' &&
+          name.length > 0,
   )
 
   const getTextRecord = (key: string) =>

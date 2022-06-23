@@ -20,6 +20,10 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     url.pathname = '/profile'
     url.searchParams.set('name', paths[2])
     rewrite = true
+  } else if (paths[1] === 'address' && !!paths[2]) {
+    url.pathname = '/address'
+    url.searchParams.set('address', paths[2])
+    rewrite = true
   }
 
   if (rewrite) {

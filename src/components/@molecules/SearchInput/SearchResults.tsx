@@ -32,6 +32,7 @@ const SearchItem = styled.div<{
     &:last-of-type {
       border-bottom: 0;
     }
+    position: relative;
     opacity: 0.6;
     ${$clickable &&
     css`
