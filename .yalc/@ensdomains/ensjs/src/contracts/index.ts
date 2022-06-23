@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import getBaseRegistrar from './baseRegistrar'
+import getEthRegistrarController from './ethRegistrarController'
 import { ContractAddressFetch } from './getContractAddress'
 import getMulticall from './multicall'
 import getNameWrapper from './nameWrapper'
@@ -58,6 +59,10 @@ export default class ContractManager {
   public getBaseRegistrar = this.generateContractGetter(
     'BaseRegistrarImplementation',
     getBaseRegistrar,
+  )
+  public getEthRegistrarController = this.generateContractGetter(
+    'ETHRegistrarController',
+    getEthRegistrarController,
   )
   public getMulticall = this.generateContractGetter('Multicall', getMulticall)
 }

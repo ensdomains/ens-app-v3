@@ -12,9 +12,9 @@ import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import { HamburgerMenu } from './@atoms/HamburgerMenu'
 import { RouteItem } from './@atoms/RouteItem'
+import { SearchInput } from './@molecules/SearchInput/SearchInput'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { HeaderConnect } from './ConnectButton'
-import { SearchInput } from './SearchInput'
 
 const HeaderWrapper = styled.header(
   () => css`
