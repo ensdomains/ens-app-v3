@@ -1,3 +1,7 @@
+import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
+import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
+import { OutlinedButton } from '@app/components/OutlinedButton'
+import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useCopied } from '@app/hooks/useCopied'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfile } from '@app/hooks/useProfile'
@@ -8,15 +12,10 @@ import {
   Dialog,
   DownIndicatorSVG,
   Dropdown,
-  Tooltip,
   Typography,
 } from '@ensdomains/thorin'
 import { ReactNode, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
-import { OutlinedButton } from '@app/components/OutlinedButton'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
 
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
@@ -131,7 +130,7 @@ const InnerDialog = styled.div(
 )
 
 const TransferButton = styled.button(
-  ({ theme }) => css`
+  ({ theme, disabled }) => css`
     outline: none;
     padding: none;
     margin: none;
@@ -139,6 +138,11 @@ const TransferButton = styled.button(
     background-color: transparent;
     color: ${theme.colors.accent};
     margin-top: ${theme.space['4']};
+    ${disabled &&
+    css`
+      color: ${theme.colors.textTertiary};
+      pointer-events: none;
+    `}
   `,
 )
 
@@ -226,13 +230,11 @@ const OwnerButtonWithPopup = ({
             </AddressCopyContainer>
           </AddressCopyButton>
           {canTransfer && (
-            <Tooltip content="in development">
-              <TransferButton>
-                <Typography variant="large" weight="bold">
-                  Transfer
-                </Typography>
-              </TransferButton>
-            </Tooltip>
+            <TransferButton disabled>
+              <Typography variant="large" weight="bold">
+                Transfer
+              </Typography>
+            </TransferButton>
           )}
         </InnerDialog>
       </Dialog>

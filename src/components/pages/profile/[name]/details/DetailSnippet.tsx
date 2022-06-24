@@ -3,10 +3,10 @@ import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
 import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
-import { formatExpiry } from '@app/utils/utils'
-import { Tooltip, Typography } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
+import { formatExpiry } from '@app/utils/utils'
+import { Typography } from '@ensdomains/thorin'
+import styled, { css } from 'styled-components'
 
 const Container = styled(Card)(
   ({ theme }) => css`
@@ -87,46 +87,45 @@ export const DetailSnippet = ({
             <Typography weight="bold">{formatExpiry(expiryDate)}</Typography>
           </ExpiryContainer>
         )}
-        <Tooltip content="in development">
-          <FavouriteButton />
-        </Tooltip>
+        <FavouriteButton disabled />
       </Row>
       <Row>
         {expiryDate && (
-          <Tooltip content="in development">
-            <FullWidthOutlinedButton
-              size="small"
-              shadowless
-              variant="transparent"
-            >
-              <InnerButton>
-                <ButtonIcon as={FastForwardSVG} />
-                <Typography weight="bold">Extend</Typography>
-              </InnerButton>
-            </FullWidthOutlinedButton>
-          </Tooltip>
+          <FullWidthOutlinedButton
+            size="small"
+            shadowless
+            variant="transparent"
+            disabled
+          >
+            <InnerButton>
+              <ButtonIcon as={FastForwardSVG} />
+              <Typography weight="bold">Extend</Typography>
+            </InnerButton>
+          </FullWidthOutlinedButton>
         )}
         {canSend && (
-          <Tooltip content="in development">
-            <FullWidthOutlinedButton
-              size="small"
-              shadowless
-              variant="transparent"
-            >
-              <InnerButton>
-                <ButtonIcon as={PaperPlaneSVG} />
-                <Typography weight="bold">Send</Typography>
-              </InnerButton>
-            </FullWidthOutlinedButton>
-          </Tooltip>
-        )}
-        <Tooltip content="in development">
-          <OutlinedButton size="extraSmall" shadowless variant="transparent">
+          <FullWidthOutlinedButton
+            size="small"
+            shadowless
+            variant="transparent"
+            disabled
+          >
             <InnerButton>
-              <ButtonIcon as={TripleDotSVG} />
+              <ButtonIcon as={PaperPlaneSVG} />
+              <Typography weight="bold">Send</Typography>
             </InnerButton>
-          </OutlinedButton>
-        </Tooltip>
+          </FullWidthOutlinedButton>
+        )}
+        <OutlinedButton
+          disabled
+          size="extraSmall"
+          shadowless
+          variant="transparent"
+        >
+          <InnerButton>
+            <ButtonIcon as={TripleDotSVG} />
+          </InnerButton>
+        </OutlinedButton>
       </Row>
     </Container>
   )
