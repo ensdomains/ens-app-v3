@@ -1,14 +1,13 @@
-import { Tooltip, Typography } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
-
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { formatExpiry } from '@app/utils/utils'
 import { Card } from '@app/components//Card'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { formatExpiry } from '@app/utils/utils'
+import { Typography } from '@ensdomains/thorin'
+import styled, { css } from 'styled-components'
 import { FavouriteButton } from './FavouriteButton'
 
 const Container = styled(Card)(
@@ -123,39 +122,46 @@ export const NameSnippetMobile = ({
           ) : (
             <Typography>No expiry</Typography>
           )}
-          <Tooltip content="in development">
-            <FavouriteButton />
-          </Tooltip>
+          <FavouriteButton disabled />
         </ExpiryAndFavouriteRow>
         {expiryDate && (
-          <Tooltip content="in development">
-            <OutlinedButton size="small" shadowless variant="transparent">
-              <InnerButton>
-                {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
-                <Typography weight="bold">Extend</Typography>
-              </InnerButton>
-            </OutlinedButton>
-          </Tooltip>
+          <OutlinedButton
+            disabled
+            size="small"
+            shadowless
+            variant="transparent"
+          >
+            <InnerButton>
+              {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
+              <Typography weight="bold">Extend</Typography>
+            </InnerButton>
+          </OutlinedButton>
         )}
         {canSend && (
           <RowWithGap>
             <SendButtonContainer>
-              <Tooltip content="in development" style={{ width: '100%' }}>
-                <OutlinedButton size="small" shadowless variant="transparent">
-                  <InnerButton>
-                    {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
-                    <Typography weight="bold">Send</Typography>
-                  </InnerButton>
-                </OutlinedButton>
-              </Tooltip>
-            </SendButtonContainer>
-            <Tooltip content="in development">
-              <OutlinedButton size="small" shadowless variant="transparent">
+              <OutlinedButton
+                disabled
+                size="small"
+                shadowless
+                variant="transparent"
+              >
                 <InnerButton>
-                  <ButtonIcon as={TripleDotSVG} />
+                  {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
+                  <Typography weight="bold">Send</Typography>
                 </InnerButton>
               </OutlinedButton>
-            </Tooltip>
+            </SendButtonContainer>
+            <OutlinedButton
+              disabled
+              size="small"
+              shadowless
+              variant="transparent"
+            >
+              <InnerButton>
+                <ButtonIcon as={TripleDotSVG} />
+              </InnerButton>
+            </OutlinedButton>
           </RowWithGap>
         )}
       </RightColumn>

@@ -3,7 +3,7 @@ import type { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
 const FavouriteButtonContainer = styled.button(
-  ({ theme }) => css`
+  ({ theme, disabled }) => css`
     outline: none;
     background: none;
     border: none;
@@ -12,6 +12,11 @@ const FavouriteButtonContainer = styled.button(
     justify-content: center;
     width: ${theme.space['8']};
     height: ${theme.space['8']};
+    ${disabled &&
+    css`
+      opacity: 0.5;
+      pointer-events: none;
+    `}
   `,
 )
 

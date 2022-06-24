@@ -1,11 +1,12 @@
 import TripleDot from '@app/assets/TripleDot.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, Tooltip, Typography } from '@ensdomains/thorin'
+import { Avatar, Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { DisabledButton } from './@atoms/DisabledButton'
 
 const Container = styled.div<{ $banner?: string }>(
   ({ theme, $banner }) => css`
@@ -155,11 +156,9 @@ export const ProfileSnippet = ({
               </Button>
             </DetailButtonWrapper>
           )}
-          <Tooltip content="in development">
-            <Button shadowless variant="transparent" size="extraSmall">
-              <TripleDotIcon as={TripleDot} />
-            </Button>
-          </Tooltip>
+          <DisabledButton shadowless variant="transparent" size="extraSmall">
+            <TripleDotIcon as={TripleDot} />
+          </DisabledButton>
         </ButtonStack>
       </FirstItems>
       <TextStack>
