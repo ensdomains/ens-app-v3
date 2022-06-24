@@ -12,11 +12,8 @@ The all new, all cool version of the ENS manager.
 
 ```bash
 yarn
-yarn env start
-yarn dev:glocal
+yarn dev:gonline
 ```
-
-Set your browser to ropsten
 
 ### Install
 
@@ -58,6 +55,10 @@ cp .env.local.example .env.local
 ```
 
 2. Add archive node URL to env file
+
+```bash
+FORK_RPC_URL=http://example.com
+```
 
 3. Starting the environment:
 
