@@ -5,7 +5,6 @@ The all new, all cool version of the ENS manager.
 ## EXTERNAL CONTRIBUTOR NOTICE
 
 **Please note that everything within this repo is currently in alpha, and should only be run on local nodes or testnets.**
-**Any PR submitted may not be responded to for a while, since we are very actively implementing features.**
 
 ## Usage
 
@@ -126,6 +125,6 @@ A user generally clicks, types and swipes, and so most tests should include one 
 
 For deeper parts of the codebase that aren't directly related to a user interaction, such as utility functions, the user is the developer. So simply test the code in the way a developer would use it.
 
-We also primarily test for functionality, making sure the user is able to complete any action that we intend for them to be able to complete. This means we wouldn't write tests to ensure an animation occurs, as that would not stop a user completing an action, and would likeley be picked up druing the course of development.
+We also primarily test for functionality, making sure the user is able to complete any action that we intend for them to be able to complete. This means we wouldn't write tests to ensure an animation occurs, as that would not stop a user completing an action, and would likely be picked up during the course of development.
 
 Writing out todo tests before implementing a test can help. If I want my form to submit the correct data when I click submit, then I should write `it.todo('should submit the correct data when submit is clicked')` before starting. This will prevent me from testing implementation details as I write out the component.
