@@ -1,6 +1,6 @@
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
-import { mq, Tooltip, Typography } from '@ensdomains/thorin'
+import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
@@ -88,7 +88,7 @@ const SectionSubtitle = styled(Typography)(
 )
 
 const EditButton = styled.button(
-  ({ theme }) => css`
+  ({ theme, disabled }) => css`
     display: block;
     outline: none;
     border: none;
@@ -97,6 +97,11 @@ const EditButton = styled.button(
     background: none;
     color: ${theme.colors.accent};
     font-size: ${theme.fontSizes.base};
+    ${disabled &&
+    css`
+      color: ${theme.colors.textTertiary};
+      pointer-events: none;
+    `}
   `,
 )
 
@@ -270,11 +275,9 @@ export const RecordsTab = ({
             </SectionSubtitle>
           </SectionTitleContainer>
           {canEdit && (
-            <Tooltip content="in development">
-              <EditButton>
-                <Typography weight="bold">Edit</Typography>
-              </EditButton>
-            </Tooltip>
+            <EditButton disabled>
+              <Typography weight="bold">Edit</Typography>
+            </EditButton>
           )}
         </SectionHeader>
         {filteredTexts &&
