@@ -49,7 +49,7 @@ export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
           label: formatName(lang),
           onClick: () => i18n.changeLanguage(lang),
         }))}
-      menuLabelAlign="flex-start"
+      menuLabelAlign={isLarge ? 'flex-start' : 'center'}
       label={
         <MobileInnerDropdownButton $large={isLarge}>
           {formatName(i18n.language || 'en')}
