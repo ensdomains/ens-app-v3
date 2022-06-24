@@ -8,7 +8,7 @@ import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { Button, mq, PageButtons } from '@ensdomains/thorin'
+import { Button, mq, PageButtons, Spinner } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -180,7 +180,9 @@ export default function Page() {
               ))}
             {pageLength < 1 && (!currentPage || currentPage.length === 0) && (
               <TabWrapper>
-                <EmptyDetailContainer>{t('names.empty')}</EmptyDetailContainer>
+                <EmptyDetailContainer>
+                  <Spinner color="blue" />
+                </EmptyDetailContainer>
               </TabWrapper>
             )}
             {pageLength > 0 && (
