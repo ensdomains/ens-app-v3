@@ -8,7 +8,7 @@ import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { Button, mq, PageButtons } from '@ensdomains/thorin'
+import { Button, mq, PageButtons, Spinner } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -122,7 +122,8 @@ export default function Page() {
     isLoading ||
     status === 'loading' ||
     namesLoading ||
-    namesStatus === 'loading'
+    namesStatus === 'loading' ||
+    !router.isReady
 
   useProtectedRoute('/', loading ? true : address && address !== '')
 
@@ -171,18 +172,28 @@ export default function Page() {
         ),
         trailing: (
           <TabWrapperWithButtons>
-            {currentPage &&
+            {loading && (
+              <TabWrapper>
+                <EmptyDetailContainer>
+                  <Spinner color="accent" />
+                </EmptyDetailContainer>
+              </TabWrapper>
+            )}
+            {!loading &&
+              currentPage &&
               pageLength > 0 &&
               (viewType === 'list' ? (
                 <NameListView currentPage={currentPage} network={chainId} />
               ) : (
                 <NameGridView currentPage={currentPage} network={chainId} />
               ))}
-            {pageLength < 1 && (!currentPage || currentPage.length === 0) && (
-              <TabWrapper>
-                <EmptyDetailContainer>{t('names.empty')}</EmptyDetailContainer>
-              </TabWrapper>
-            )}
+            {!loading &&
+              pageLength < 1 &&
+              (!currentPage || currentPage.length === 0) && (
+                <TabWrapper>
+                  <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
+                </TabWrapper>
+              )}
             {pageLength > 0 && (
               <PageButtonsContainer>
                 <PageButtons
