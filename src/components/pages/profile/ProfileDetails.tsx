@@ -119,6 +119,8 @@ export const ProfileDetails = ({
       .map((x) => ({ ...x, type: 'text' })),
   ]
 
+  if (!textRecords.length && !addresses.length) return null
+
   return (
     <ProfileInfoBox>
       <RecordsStack>

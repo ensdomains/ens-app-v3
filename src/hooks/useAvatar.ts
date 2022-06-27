@@ -25,6 +25,11 @@ export const useAvatar = (name: string | undefined, network: number) => {
 }
 
 export const useNFTImage = (name: string | undefined, network: number) => {
+  const isCompatible = !!(
+    name &&
+    name.split('.').length === 2 &&
+    name.endsWith('.eth')
+  )
   const { ready, contracts } = useEns()
   const { data: baseRegistrarAddress } = useQuery(
     'base-registrar-address',
@@ -38,9 +43,9 @@ export const useNFTImage = (name: string | undefined, network: number) => {
     ['getNFTImage', name],
     () => fetchImg(ensNftImageUrl(name!, network, baseRegistrarAddress!)),
     {
-      enabled: ready && !!name && !!baseRegistrarAddress,
+      enabled: ready && !!name && !!baseRegistrarAddress && isCompatible,
     },
   )
 
-  return { image: data, isLoading, status }
+  return { image: data, isLoading, status, isCompatible }
 }
