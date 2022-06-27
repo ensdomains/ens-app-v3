@@ -1,5 +1,7 @@
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
+import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
+import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
@@ -233,11 +235,15 @@ const RecordItem = ({
 }
 
 export const RecordsTab = ({
+  name,
+  network,
   texts,
   addresses,
   contentHash,
   canEdit,
 }: {
+  name: string
+  network: number
   texts?: TextRecord[]
   addresses?: AddressRecord[]
   contentHash?: ContentHash
@@ -263,6 +269,12 @@ export const RecordsTab = ({
     }
     return undefined
   }, [contentHash])
+
+  const formattedContentHashLink = useMemo(() => {
+    if (contentHash) {
+      return getContentHashLink(name, network, contentHash as any)
+    }
+  }, [name, network, contentHash])
 
   return (
     <TabWrapper>
@@ -308,7 +320,12 @@ export const RecordsTab = ({
         <SectionHeader>
           <SectionTitleContainer>
             {formattedContentHash ? (
-              <SectionTitle weight="bold">Content Hash</SectionTitle>
+              <>
+                <SectionTitle weight="bold">Content Hash</SectionTitle>
+                {formattedContentHashLink && (
+                  <Outlink href={formattedContentHashLink}>View</Outlink>
+                )}
+              </>
             ) : (
               <SectionSubtitle weight="bold">No Content Hash</SectionSubtitle>
             )}
