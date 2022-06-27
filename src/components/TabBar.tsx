@@ -101,7 +101,8 @@ export const TabBar = () => {
               noAccountBefore: (
                 <TabItems>
                   <RouteItem route={getRoute('search')} />
-                  <RouteItem route={getRoute('settings')} />
+                  {/* Re-add when functionality for disconnected user settings */}
+                  {/* <RouteItem route={getRoute('settings')} /> */}
                 </TabItems>
               ),
             }}
