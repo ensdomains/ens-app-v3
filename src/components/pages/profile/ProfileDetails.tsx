@@ -10,15 +10,18 @@ import {
   SocialProfileButton,
 } from './ProfileButton'
 
-const ProfileInfoBox = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space['6']} ${theme.space['4']};
+const ProfileInfoBox = styled.div(({ theme }) => [
+  css`
+    padding: ${theme.space['4']} ${theme.space['4']};
     background-color: ${theme.colors.background};
     border: ${theme.space.px} solid ${theme.colors.borderTertiary};
     box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
     border-radius: ${theme.radii['2xLarge']};
   `,
-)
+  mq.md.min(css`
+    padding: ${theme.space['8']} ${theme.space['8']};
+  `),
+])
 
 const Stack = styled.div(
   ({ theme }) => css`

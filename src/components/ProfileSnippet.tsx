@@ -1,15 +1,15 @@
 import TripleDot from '@app/assets/TripleDot.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, Typography } from '@ensdomains/thorin'
+import { Avatar, Button, mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { DisabledButton } from './@atoms/DisabledButton'
 
-const Container = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) => css`
+const Container = styled.div<{ $banner?: string }>(({ theme, $banner }) => [
+  css`
     padding: ${theme.space['6']};
     padding-top: ${theme.space['16']};
     background-image: ${$banner
@@ -29,7 +29,11 @@ const Container = styled.div<{ $banner?: string }>(
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
   `,
-)
+  mq.md.min(css`
+    padding: ${theme.space['8']};
+    padding-top: ${theme.space['16']};
+  `),
+])
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
