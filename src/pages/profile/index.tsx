@@ -117,6 +117,7 @@ export default function Page() {
               description={getTextRecord('description')?.value}
               recordName={getTextRecord('name')?.value}
               button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
+              size={breakpoints.md ? 'medium' : 'small'}
             />
             {isSelf && (
               <SelfButtons>
