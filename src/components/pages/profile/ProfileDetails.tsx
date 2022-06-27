@@ -1,7 +1,7 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
-import { Typography } from '@ensdomains/thorin'
+import { Typography, mq } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import {
@@ -31,11 +31,14 @@ const Stack = styled.div(
   `,
 )
 
-const SectionTitle = styled(Typography)(
-  ({ theme }) => css`
-    margin-left: ${theme.space['4']};
+const SectionTitle = styled(Typography)(({ theme }) => [
+  css`
+    margin-left: ${theme.space['2']};
   `,
-)
+  mq.md.min(css`
+    margin-left: ${theme.space['3']};
+  `),
+])
 
 const ProfileSection = ({
   condition,
