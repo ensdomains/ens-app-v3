@@ -1,8 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const utils_1 = require("ethers/lib/utils");
 const format_1 = require("../utils/format");
 const labels_1 = require("../utils/labels");
+const normalise_1 = require("../utils/normalise");
 const largeQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDirection, orderBy, lastSubnames }) => {
     const client = gqlInstance.client;
     let finalQuery = gqlInstance.gql `
@@ -38,7 +38,7 @@ const largeQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDir
     }
   `;
     let queryVars = {
-        id: (0, utils_1.namehash)(name),
+        id: (0, normalise_1.namehash)(name),
         first: pageSize,
         lastCreatedAt: lastSubnames[lastSubnames.length - 1]?.createdAt,
         orderBy,
@@ -55,7 +55,7 @@ const largeQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDir
     });
     return {
         subnames: subdomains,
-        subnameCount: domain.subdomainCount
+        subnameCount: domain.subdomainCount,
     };
 };
 const smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDirection, orderBy }) => {
@@ -94,7 +94,7 @@ const smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDir
     }
   `;
         queryVars = {
-            id: (0, utils_1.namehash)(name),
+            id: (0, normalise_1.namehash)(name),
             orderBy,
             orderDirection,
         };
@@ -124,7 +124,7 @@ const smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDir
     }
   `;
         queryVars = {
-            id: (0, utils_1.namehash)(name),
+            id: (0, normalise_1.namehash)(name),
             first: pageSize,
             skip: (page || 0) * pageSize,
             orderBy,
@@ -142,7 +142,7 @@ const smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDir
     });
     return {
         subnames: subdomains,
-        subnameCount: domain.subdomainCount
+        subnameCount: domain.subdomainCount,
     };
 };
 const getSubnames = (injected, functionArgs) => {

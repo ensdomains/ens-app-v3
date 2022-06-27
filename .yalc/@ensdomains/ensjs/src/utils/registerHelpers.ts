@@ -3,6 +3,7 @@ import type { FuseOptions } from '../@types/FuseOptions'
 import type { PublicResolver } from '../generated'
 import generateFuseInput from './generateFuseInput'
 import { labelhash } from './labels'
+import { namehash } from './normalise'
 import { generateRecordCallArray, RecordOptions } from './recordHelpers'
 
 export const randomSecret = () => {
@@ -28,11 +29,9 @@ export const makeCommitment = ({
   fuses?: FuseOptions
 }) => {
   const label = labelhash(name.split('.')[0])
-  const namehash = utils.namehash(name)
+  const hash = namehash(name)
   const resolverAddress = resolver.address
-  const data = records
-    ? generateRecordCallArray(namehash, records, resolver)
-    : []
+  const data = records ? generateRecordCallArray(hash, records, resolver) : []
   const secret = randomSecret()
   const fuseData = fuses ? generateFuseInput(fuses) : '0'
 

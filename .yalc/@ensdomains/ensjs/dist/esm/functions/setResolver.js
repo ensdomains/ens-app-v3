@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { namehash } from '../utils/normalise';
 export default async function ({ contracts, provider }, name, contract, resolver, options) {
     const address = await provider
         ?.getSigner(options?.addressOrIndex)
@@ -12,11 +12,11 @@ export default async function ({ contracts, provider }, name, contract, resolver
     switch (contract) {
         case 'registry': {
             const registry = (await contracts?.getRegistry()).connect(provider?.getSigner(options?.addressOrIndex));
-            return registry.setResolver(ethers.utils.namehash(name), resolver);
+            return registry.setResolver(namehash(name), resolver);
         }
         case 'nameWrapper': {
             const nameWrapper = (await contracts?.getNameWrapper()).connect(provider?.getSigner(options?.addressOrIndex));
-            return nameWrapper.setResolver(ethers.utils.namehash(name), resolver);
+            return nameWrapper.setResolver(namehash(name), resolver);
         }
         default: {
             throw new Error(`Unknown contract: ${contract}`);

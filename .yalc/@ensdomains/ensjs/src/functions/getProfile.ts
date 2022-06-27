@@ -3,6 +3,7 @@ import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { decodeContenthash, DecodedContentHash } from '../utils/contentHash'
 import { hexEncodeName } from '../utils/hexEncodedName'
+import { namehash } from '../utils/normalise'
 import { parseInputType } from '../utils/validation'
 
 type InternalProfileOptions = {
@@ -97,7 +98,7 @@ const makeMulticallData = async (
 }
 
 const makeHashIndexes = (data: string, name: string) =>
-  [...data.matchAll(ethers.utils.namehash(name).substring(2) as any)].map(
+  [...data.matchAll(namehash(name).substring(2) as any)].map(
     (x: any) => x.index / 2 - 1,
   )
 

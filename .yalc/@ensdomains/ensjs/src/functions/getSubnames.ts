@@ -1,7 +1,7 @@
-import { namehash } from 'ethers/lib/utils';
 import { ENSArgs } from '..'
-import { truncateFormat } from '../utils/format';
-import { decryptName } from '../utils/labels';
+import { truncateFormat } from '../utils/format'
+import { decryptName } from '../utils/labels'
+import { namehash } from '../utils/normalise'
 
 type Subname = {
   id: string
@@ -26,12 +26,12 @@ type Params = {
 }
 
 const largeQuery = async (
-    { gqlInstance } : ENSArgs<'gqlInstance'>, 
-    { name, page, pageSize = 10, orderDirection, orderBy, lastSubnames }: Params
-  ) => {
-  const client = gqlInstance.client;
+  { gqlInstance }: ENSArgs<'gqlInstance'>,
+  { name, page, pageSize = 10, orderDirection, orderBy, lastSubnames }: Params,
+) => {
+  const client = gqlInstance.client
 
-  let finalQuery = gqlInstance.gql `
+  let finalQuery = gqlInstance.gql`
     query getSubnames(
       $id: ID! 
       $first: Int
@@ -62,35 +62,35 @@ const largeQuery = async (
         }
       }
     }
-  `;
-     let queryVars = {
-          id: namehash(name),
-          first: pageSize,
-          lastCreatedAt: lastSubnames[lastSubnames.length - 1]?.createdAt,
-          orderBy,
-          orderDirection,
-      };
-  const { domain } = await client.request(finalQuery, queryVars);
+  `
+  let queryVars = {
+    id: namehash(name),
+    first: pageSize,
+    lastCreatedAt: lastSubnames[lastSubnames.length - 1]?.createdAt,
+    orderBy,
+    orderDirection,
+  }
+  const { domain } = await client.request(finalQuery, queryVars)
   const subdomains = domain.subdomains.map((subname: any) => {
-      const decrypted = decryptName(subname.name);
-      return {
-          ...subname,
-          name: decrypted,
-          truncatedName: truncateFormat(decrypted),
-      };
-  });
+    const decrypted = decryptName(subname.name)
+    return {
+      ...subname,
+      name: decrypted,
+      truncatedName: truncateFormat(decrypted),
+    }
+  })
 
   return {
     subnames: subdomains,
-    subnameCount: domain.subdomainCount
+    subnameCount: domain.subdomainCount,
   }
-};
+}
 
-const smallQuery =  async (
-  { gqlInstance } : ENSArgs<'gqlInstance'>, 
-  { name, page, pageSize = 10, orderDirection, orderBy } : Params
-  ) => {
-  const client = gqlInstance.client;
+const smallQuery = async (
+  { gqlInstance }: ENSArgs<'gqlInstance'>,
+  { name, page, pageSize = 10, orderDirection, orderBy }: Params,
+) => {
+  const client = gqlInstance.client
   const subdomainsGql = `
   id
   labelName
@@ -102,11 +102,11 @@ const smallQuery =  async (
   owner {
     id
   }
-`;
-  let queryVars = {};
-  let finalQuery = '';
+`
+  let queryVars = {}
+  let finalQuery = ''
   if (typeof page !== 'number') {
-      finalQuery = gqlInstance.gql `
+    finalQuery = gqlInstance.gql`
     query getSubnames(
       $id: ID! 
       $orderBy: Domain_orderBy 
@@ -123,15 +123,14 @@ const smallQuery =  async (
         }
       }
     }
-  `;
-      queryVars = {
-          id: namehash(name),
-          orderBy,
-          orderDirection,
-      };
-  }
-  else {
-      finalQuery = gqlInstance.gql `
+  `
+    queryVars = {
+      id: namehash(name),
+      orderBy,
+      orderDirection,
+    }
+  } else {
+    finalQuery = gqlInstance.gql`
     query getSubnames(
       $id: ID! 
       $first: Int
@@ -153,36 +152,39 @@ const smallQuery =  async (
         }
       }
     }
-  `;
-      queryVars = {
-          id: namehash(name),
-          first: pageSize,
-          skip: (page || 0) * pageSize,
-          orderBy,
-          orderDirection,
-      };
+  `
+    queryVars = {
+      id: namehash(name),
+      first: pageSize,
+      skip: (page || 0) * pageSize,
+      orderBy,
+      orderDirection,
+    }
   }
-  const { domain } = await client.request(finalQuery, queryVars);
+  const { domain } = await client.request(finalQuery, queryVars)
   const subdomains = domain.subdomains.map((subname: any) => {
-      const decrypted = decryptName(subname.name);
-      return {
-          ...subname,
-          name: decrypted,
-          truncatedName: truncateFormat(decrypted),
-      };
-  });
+    const decrypted = decryptName(subname.name)
+    return {
+      ...subname,
+      name: decrypted,
+      truncatedName: truncateFormat(decrypted),
+    }
+  })
 
   return {
     subnames: subdomains,
-    subnameCount: domain.subdomainCount
+    subnameCount: domain.subdomainCount,
   }
-};
+}
 
-const getSubnames = (injected : ENSArgs<'gqlInstance'>, functionArgs: Params): Promise<{ subnames: Subname[], subnameCount: number}> => {
-  if(functionArgs.isLargeQuery) {
+const getSubnames = (
+  injected: ENSArgs<'gqlInstance'>,
+  functionArgs: Params,
+): Promise<{ subnames: Subname[]; subnameCount: number }> => {
+  if (functionArgs.isLargeQuery) {
     return largeQuery(injected, functionArgs)
-  }  
+  }
   return smallQuery(injected, functionArgs)
 }
 
-export default getSubnames;
+export default getSubnames

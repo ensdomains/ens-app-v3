@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { ENSArgs } from '..'
+import { namehash } from '../utils/normalise'
 
 export default async function (
   { contracts, provider }: ENSArgs<'contracts' | 'provider'>,
@@ -17,7 +18,7 @@ export default async function (
   const labels = name.split('.')
   const label = labels.shift() as string
   const labelhash = ethers.utils.solidityKeccak256(['string'], [label])
-  const parentNodehash = ethers.utils.namehash(labels.join('.'))
+  const parentNodehash = namehash(labels.join('.'))
 
   switch (contract) {
     case 'registry': {

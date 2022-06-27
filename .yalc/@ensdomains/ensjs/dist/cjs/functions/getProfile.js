@@ -4,6 +4,7 @@ const address_encoder_1 = require("@ensdomains/address-encoder");
 const ethers_1 = require("ethers");
 const contentHash_1 = require("../utils/contentHash");
 const hexEncodedName_1 = require("../utils/hexEncodedName");
+const normalise_1 = require("../utils/normalise");
 const validation_1 = require("../utils/validation");
 const makeMulticallData = async ({ _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }, name, options) => {
     let calls = [];
@@ -42,7 +43,7 @@ const makeMulticallData = async ({ _getAddr, _getContentHash, _getText, resolver
     const prRawData = await resolverMulticallWrapper.raw(calls.map((x) => x.data));
     return { data: prRawData.data, calls };
 };
-const makeHashIndexes = (data, name) => [...data.matchAll(ethers_1.ethers.utils.namehash(name).substring(2))].map((x) => x.index / 2 - 1);
+const makeHashIndexes = (data, name) => [...data.matchAll((0, normalise_1.namehash)(name).substring(2))].map((x) => x.index / 2 - 1);
 const getDataForName = async ({ contracts, _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }, name, options) => {
     const universalResolver = await contracts?.getUniversalResolver();
     const { data, calls } = await makeMulticallData({ _getAddr, _getContentHash, _getText, resolverMulticallWrapper }, name, options);

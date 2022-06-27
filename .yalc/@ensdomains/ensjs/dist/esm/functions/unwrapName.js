@@ -1,4 +1,5 @@
 import { utils } from 'ethers';
+import { namehash } from '../utils/normalise';
 export default async function ({ contracts, provider }, name, newController, newRegistrant, options) {
     const signer = provider?.getSigner(options?.addressOrIndex);
     const address = await signer?.getAddress();
@@ -7,7 +8,7 @@ export default async function ({ contracts, provider }, name, newController, new
     }
     const labels = name.split('.');
     const labelhash = utils.solidityKeccak256(['string'], [labels[0]]);
-    const parentNodehash = utils.namehash(labels.slice(1).join('.'));
+    const parentNodehash = namehash(labels.slice(1).join('.'));
     const nameWrapper = (await contracts?.getNameWrapper()).connect(signer);
     if (labels.length === 2 && labels[1] === 'eth') {
         if (!newRegistrant) {

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ethers_1 = require("ethers");
 const fuses_1 = require("../utils/fuses");
+const normalise_1 = require("../utils/normalise");
 const NameSafety = [
     'Safe',
     'RegistrantNotWrapped',
@@ -14,7 +15,7 @@ const raw = async ({ contracts }, name) => {
     return {
         to: nameWrapper.address,
         data: nameWrapper.interface.encodeFunctionData('getFuses', [
-            ethers_1.ethers.utils.namehash(name),
+            (0, normalise_1.namehash)(name),
         ]),
     };
 };
@@ -38,7 +39,7 @@ const decode = async ({ contracts }, data, name) => {
         if (ethers_1.utils.hexStripZeros(vulnerableNode) !== '0x') {
             name.split('.').forEach((label, index, arr) => {
                 const node = arr.slice(index).join('.');
-                const nodehash = ethers_1.utils.namehash(node);
+                const nodehash = (0, normalise_1.namehash)(node);
                 if (nodehash === vulnerableNode) {
                     returnVulnerableNode = node;
                 }

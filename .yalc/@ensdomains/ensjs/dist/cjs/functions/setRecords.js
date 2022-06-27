@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ethers_1 = require("ethers");
+const normalise_1 = require("../utils/normalise");
 const recordHelpers_1 = require("../utils/recordHelpers");
 async function default_1({ contracts, provider, getResolver, }, name, records) {
     if (!name.includes('.')) {
@@ -15,8 +15,8 @@ async function default_1({ contracts, provider, getResolver, }, name, records) {
         throw new Error('No signer found');
     }
     const resolver = (await contracts?.getPublicResolver(provider, resolverAddress))?.connect(provider?.getSigner());
-    const namehash = ethers_1.ethers.utils.namehash(name);
-    const calls = (0, recordHelpers_1.generateRecordCallArray)(namehash, records, resolver);
+    const hash = (0, normalise_1.namehash)(name);
+    const calls = (0, recordHelpers_1.generateRecordCallArray)(hash, records, resolver);
     return resolver?.multicall(calls);
 }
 exports.default = default_1;

@@ -4,13 +4,14 @@ exports.getAddr = exports._getAddr = exports.getText = exports._getText = export
 const address_encoder_1 = require("@ensdomains/address-encoder");
 const ethers_1 = require("ethers");
 const contentHash_1 = require("../utils/contentHash");
+const normalise_1 = require("../utils/normalise");
 exports._getContentHash = {
     raw: async ({ contracts }, name) => {
         const publicResolver = await contracts?.getPublicResolver();
         return {
             to: '0x0000000000000000000000000000000000000000',
             data: publicResolver.interface.encodeFunctionData('contenthash', [
-                ethers_1.ethers.utils.namehash(name),
+                (0, normalise_1.namehash)(name),
             ]),
         };
     },
@@ -48,7 +49,7 @@ exports._getText = {
         return {
             to: '0x0000000000000000000000000000000000000000',
             data: publicResolver.interface.encodeFunctionData('text', [
-                ethers_1.ethers.utils.namehash(name),
+                (0, normalise_1.namehash)(name),
                 key,
             ]),
         };
@@ -83,7 +84,7 @@ exports._getAddr = {
         if (bypassFormat) {
             return {
                 to: '0x0000000000000000000000000000000000000000',
-                data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [ethers_1.ethers.utils.namehash(name), coinType]),
+                data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [(0, normalise_1.namehash)(name), coinType]),
             };
         }
         const formatter = typeof coinType === 'string' && isNaN(parseInt(coinType))
@@ -94,7 +95,7 @@ exports._getAddr = {
         }
         return {
             to: '0x0000000000000000000000000000000000000000',
-            data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [ethers_1.ethers.utils.namehash(name), formatter.coinType]),
+            data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [(0, normalise_1.namehash)(name), formatter.coinType]),
         };
     },
     decode: async ({ contracts }, data, _name, coinType) => {

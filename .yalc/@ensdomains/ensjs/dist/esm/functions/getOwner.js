@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import { labelhash } from '../utils/labels';
+import { namehash as makeNamehash } from '../utils/normalise';
 const singleContractOwnerRaw = async ({ contracts }, contract, namehash, labels) => {
     switch (contract) {
         case 'nameWrapper': {
@@ -28,7 +29,7 @@ const singleContractOwnerRaw = async ({ contracts }, contract, namehash, labels)
     }
 };
 const raw = async ({ contracts, multicallWrapper }, name, contract) => {
-    const namehash = ethers.utils.namehash(name);
+    const namehash = makeNamehash(name);
     const labels = name.split('.');
     if (contract) {
         return await singleContractOwnerRaw({ contracts }, contract, namehash, labels);

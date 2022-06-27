@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { labelhash } from '../utils/labels'
+import { namehash as makeNamehash } from '../utils/normalise'
 
 type Owner = {
   registrant?: string
@@ -49,7 +50,7 @@ const raw = async (
   name: string,
   contract?: 'nameWrapper' | 'registry' | 'registrar',
 ) => {
-  const namehash = ethers.utils.namehash(name)
+  const namehash = makeNamehash(name)
   const labels = name.split('.')
 
   if (contract) {

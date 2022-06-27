@@ -1,13 +1,14 @@
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder';
 import { ethers } from 'ethers';
 import { decodeContenthash } from '../utils/contentHash';
+import { namehash } from '../utils/normalise';
 export const _getContentHash = {
     raw: async ({ contracts }, name) => {
         const publicResolver = await contracts?.getPublicResolver();
         return {
             to: '0x0000000000000000000000000000000000000000',
             data: publicResolver.interface.encodeFunctionData('contenthash', [
-                ethers.utils.namehash(name),
+                namehash(name),
             ]),
         };
     },
@@ -45,7 +46,7 @@ export const _getText = {
         return {
             to: '0x0000000000000000000000000000000000000000',
             data: publicResolver.interface.encodeFunctionData('text', [
-                ethers.utils.namehash(name),
+                namehash(name),
                 key,
             ]),
         };
@@ -80,7 +81,7 @@ export const _getAddr = {
         if (bypassFormat) {
             return {
                 to: '0x0000000000000000000000000000000000000000',
-                data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [ethers.utils.namehash(name), coinType]),
+                data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [namehash(name), coinType]),
             };
         }
         const formatter = typeof coinType === 'string' && isNaN(parseInt(coinType))
@@ -91,7 +92,7 @@ export const _getAddr = {
         }
         return {
             to: '0x0000000000000000000000000000000000000000',
-            data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [ethers.utils.namehash(name), formatter.coinType]),
+            data: publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [namehash(name), formatter.coinType]),
         };
     },
     decode: async ({ contracts }, data, _name, coinType) => {

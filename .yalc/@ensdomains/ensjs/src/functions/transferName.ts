@@ -1,5 +1,6 @@
 import { ethers } from 'ethers'
 import { ENSArgs } from '..'
+import { namehash } from '../utils/normalise'
 
 export default async function (
   { contracts, provider }: ENSArgs<'contracts' | 'provider'>,
@@ -21,7 +22,7 @@ export default async function (
       const registry = (await contracts?.getRegistry())!.connect(
         provider?.getSigner(options?.addressOrIndex)!,
       )
-      return registry.setOwner(ethers.utils.namehash(name), newOwner)
+      return registry.setOwner(namehash(name), newOwner)
     }
     case 'baseRegistrar': {
       const baseRegistrar = (await contracts?.getBaseRegistrar())!.connect(
@@ -44,7 +45,7 @@ export default async function (
       return nameWrapper.safeTransferFrom(
         address,
         newOwner,
-        ethers.utils.namehash(name),
+        namehash(name),
         1,
         '0x',
       )

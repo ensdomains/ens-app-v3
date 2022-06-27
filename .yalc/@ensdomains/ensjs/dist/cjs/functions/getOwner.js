@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ethers_1 = require("ethers");
 const labels_1 = require("../utils/labels");
+const normalise_1 = require("../utils/normalise");
 const singleContractOwnerRaw = async ({ contracts }, contract, namehash, labels) => {
     switch (contract) {
         case 'nameWrapper': {
@@ -30,7 +31,7 @@ const singleContractOwnerRaw = async ({ contracts }, contract, namehash, labels)
     }
 };
 const raw = async ({ contracts, multicallWrapper }, name, contract) => {
-    const namehash = ethers_1.ethers.utils.namehash(name);
+    const namehash = (0, normalise_1.namehash)(name);
     const labels = name.split('.');
     if (contract) {
         return await singleContractOwnerRaw({ contracts }, contract, namehash, labels);

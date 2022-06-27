@@ -20,6 +20,9 @@ const namehash = (inputName) => {
             result = (0, utils_1.keccak256)((0, utils_1.concat)([result, labelSha]));
         }
     }
+    else {
+        result = (0, utils_1.hexlify)(zeros);
+    }
     return result;
 };
 exports.namehash = namehash;

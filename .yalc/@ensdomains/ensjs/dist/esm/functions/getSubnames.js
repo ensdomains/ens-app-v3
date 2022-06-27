@@ -1,6 +1,6 @@
-import { namehash } from 'ethers/lib/utils';
 import { truncateFormat } from '../utils/format';
 import { decryptName } from '../utils/labels';
+import { namehash } from '../utils/normalise';
 const largeQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDirection, orderBy, lastSubnames }) => {
     const client = gqlInstance.client;
     let finalQuery = gqlInstance.gql `
@@ -53,7 +53,7 @@ const largeQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDir
     });
     return {
         subnames: subdomains,
-        subnameCount: domain.subdomainCount
+        subnameCount: domain.subdomainCount,
     };
 };
 const smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDirection, orderBy }) => {
@@ -140,7 +140,7 @@ const smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDir
     });
     return {
         subnames: subdomains,
-        subnameCount: domain.subdomainCount
+        subnameCount: domain.subdomainCount,
     };
 };
 const getSubnames = (injected, functionArgs) => {

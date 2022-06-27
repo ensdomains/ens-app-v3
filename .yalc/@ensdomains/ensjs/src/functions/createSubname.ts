@@ -2,6 +2,7 @@ import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { FuseOptions } from '../@types/FuseOptions'
 import generateFuseInput from '../utils/generateFuseInput'
+import { namehash } from '../utils/normalise'
 
 type BaseArgs = {
   name: string
@@ -44,7 +45,7 @@ export default async function (
 
   const label = labels.shift() as string
   const labelhash = ethers.utils.solidityKeccak256(['string'], [label])
-  const parentNodehash = ethers.utils.namehash(labels.join('.'))
+  const parentNodehash = namehash(labels.join('.'))
 
   switch (contract) {
     case 'registry': {

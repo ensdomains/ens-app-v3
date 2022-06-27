@@ -1,6 +1,7 @@
-import { BigNumber, ethers, utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { ENSArgs } from '..'
 import { testable as fuseEnums } from '../utils/fuses'
+import { namehash } from '../utils/normalise'
 
 const NameSafety = [
   'Safe',
@@ -15,7 +16,7 @@ const raw = async ({ contracts }: ENSArgs<'contracts'>, name: string) => {
   return {
     to: nameWrapper.address,
     data: nameWrapper.interface.encodeFunctionData('getFuses', [
-      ethers.utils.namehash(name),
+      namehash(name),
     ]),
   }
 }
@@ -51,7 +52,7 @@ const decode = async (
     if (utils.hexStripZeros(vulnerableNode) !== '0x') {
       name.split('.').forEach((label, index, arr) => {
         const node = arr.slice(index).join('.')
-        const nodehash = utils.namehash(node)
+        const nodehash = namehash(node)
         if (nodehash === vulnerableNode) {
           returnVulnerableNode = node
         }

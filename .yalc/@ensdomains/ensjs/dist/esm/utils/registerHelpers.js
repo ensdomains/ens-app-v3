@@ -1,6 +1,7 @@
 import { utils } from 'ethers';
 import generateFuseInput from './generateFuseInput';
 import { labelhash } from './labels';
+import { namehash } from './normalise';
 import { generateRecordCallArray } from './recordHelpers';
 export const randomSecret = () => {
     const bytes = Buffer.allocUnsafe(32);
@@ -8,11 +9,9 @@ export const randomSecret = () => {
 };
 export const makeCommitment = ({ name, owner, duration, resolver, records, reverseRecord, fuses, }) => {
     const label = labelhash(name.split('.')[0]);
-    const namehash = utils.namehash(name);
+    const hash = namehash(name);
     const resolverAddress = resolver.address;
-    const data = records
-        ? generateRecordCallArray(namehash, records, resolver)
-        : [];
+    const data = records ? generateRecordCallArray(hash, records, resolver) : [];
     const secret = randomSecret();
     const fuseData = fuses ? generateFuseInput(fuses) : '0';
     const commitment = _makeCommitment({

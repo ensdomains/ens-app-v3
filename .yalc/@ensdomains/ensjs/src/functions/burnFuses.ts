@@ -1,7 +1,7 @@
-import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { FuseOptions } from '../@types/FuseOptions'
 import generateFuseInput from '../utils/generateFuseInput'
+import { namehash } from '../utils/normalise'
 
 export default async function (
   { contracts, provider }: ENSArgs<'contracts' | 'provider'>,
@@ -15,9 +15,9 @@ export default async function (
   }
 
   const nameWrapper = (await contracts?.getNameWrapper()!).connect(signer)
-  const namehash = ethers.utils.namehash(name)
+  const hash = namehash(name)
 
   const encodedFuses = generateFuseInput(fusesToBurn)
 
-  return nameWrapper.burnFuses(namehash, encodedFuses)
+  return nameWrapper.burnFuses(hash, encodedFuses)
 }

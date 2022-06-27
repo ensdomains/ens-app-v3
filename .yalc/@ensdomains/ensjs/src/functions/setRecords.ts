@@ -1,5 +1,5 @@
-import { ethers } from 'ethers'
 import { ENSArgs } from '..'
+import { namehash } from '../utils/normalise'
 import { generateRecordCallArray, RecordOptions } from '../utils/recordHelpers'
 
 export default async function (
@@ -30,9 +30,9 @@ export default async function (
   const resolver = (
     await contracts?.getPublicResolver(provider, resolverAddress)
   )?.connect(provider?.getSigner()!)
-  const namehash = ethers.utils.namehash(name)
+  const hash = namehash(name)
 
-  const calls: string[] = generateRecordCallArray(namehash, records, resolver!)
+  const calls: string[] = generateRecordCallArray(hash, records, resolver!)
 
   return resolver?.multicall(calls)
 }

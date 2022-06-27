@@ -1,4 +1,4 @@
-import { ethers } from 'ethers';
+import { namehash } from '../utils/normalise';
 import { generateRecordCallArray } from '../utils/recordHelpers';
 export default async function ({ contracts, provider, getResolver, }, name, records) {
     if (!name.includes('.')) {
@@ -13,7 +13,7 @@ export default async function ({ contracts, provider, getResolver, }, name, reco
         throw new Error('No signer found');
     }
     const resolver = (await contracts?.getPublicResolver(provider, resolverAddress))?.connect(provider?.getSigner());
-    const namehash = ethers.utils.namehash(name);
-    const calls = generateRecordCallArray(namehash, records, resolver);
+    const hash = namehash(name);
+    const calls = generateRecordCallArray(hash, records, resolver);
     return resolver?.multicall(calls);
 }

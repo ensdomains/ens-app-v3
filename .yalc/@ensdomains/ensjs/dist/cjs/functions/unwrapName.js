@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 const ethers_1 = require("ethers");
+const normalise_1 = require("../utils/normalise");
 async function default_1({ contracts, provider }, name, newController, newRegistrant, options) {
     const signer = provider?.getSigner(options?.addressOrIndex);
     const address = await signer?.getAddress();
@@ -9,7 +10,7 @@ async function default_1({ contracts, provider }, name, newController, newRegist
     }
     const labels = name.split('.');
     const labelhash = ethers_1.utils.solidityKeccak256(['string'], [labels[0]]);
-    const parentNodehash = ethers_1.utils.namehash(labels.slice(1).join('.'));
+    const parentNodehash = (0, normalise_1.namehash)(labels.slice(1).join('.'));
     const nameWrapper = (await contracts?.getNameWrapper()).connect(signer);
     if (labels.length === 2 && labels[1] === 'eth') {
         if (!newRegistrant) {

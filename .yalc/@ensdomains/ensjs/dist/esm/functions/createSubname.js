@@ -1,5 +1,6 @@
 import { ethers } from 'ethers';
 import generateFuseInput from '../utils/generateFuseInput';
+import { namehash } from '../utils/normalise';
 export default async function ({ contracts, provider }, { name, owner, resolverAddress, contract, options, ...wrapperArgs }) {
     const signer = provider?.getSigner(options?.addressOrIndex);
     if (!signer) {
@@ -17,7 +18,7 @@ export default async function ({ contracts, provider }, { name, owner, resolverA
     }
     const label = labels.shift();
     const labelhash = ethers.utils.solidityKeccak256(['string'], [label]);
-    const parentNodehash = ethers.utils.namehash(labels.join('.'));
+    const parentNodehash = namehash(labels.join('.'));
     switch (contract) {
         case 'registry': {
             const registry = (await contracts?.getRegistry()).connect(signer);

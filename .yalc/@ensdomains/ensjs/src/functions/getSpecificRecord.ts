@@ -2,6 +2,7 @@ import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { decodeContenthash } from '../utils/contentHash'
+import { namehash } from '../utils/normalise'
 
 export const _getContentHash = {
   raw: async ({ contracts }: ENSArgs<'contracts'>, name: string) => {
@@ -9,7 +10,7 @@ export const _getContentHash = {
     return {
       to: '0x0000000000000000000000000000000000000000',
       data: publicResolver.interface.encodeFunctionData('contenthash', [
-        ethers.utils.namehash(name),
+        namehash(name),
       ]),
     }
   },
@@ -66,7 +67,7 @@ export const _getText = {
     return {
       to: '0x0000000000000000000000000000000000000000',
       data: publicResolver.interface.encodeFunctionData('text', [
-        ethers.utils.namehash(name),
+        namehash(name),
         key,
       ]),
     }
@@ -120,7 +121,7 @@ export const _getAddr = {
         to: '0x0000000000000000000000000000000000000000',
         data: publicResolver.interface.encodeFunctionData(
           'addr(bytes32,uint256)',
-          [ethers.utils.namehash(name), coinType],
+          [namehash(name), coinType],
         ),
       }
     }
@@ -139,7 +140,7 @@ export const _getAddr = {
       to: '0x0000000000000000000000000000000000000000',
       data: publicResolver.interface.encodeFunctionData(
         'addr(bytes32,uint256)',
-        [ethers.utils.namehash(name), formatter.coinType],
+        [namehash(name), formatter.coinType],
       ),
     }
   },

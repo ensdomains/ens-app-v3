@@ -166,7 +166,6 @@ export const zorbImageSVG = (
   type: 'name' | 'address' | 'hash',
 ) => {
   const bytes = type === 'name' ? namehash(input) : input
-  console.log(bytes)
   const gradientInfo = gradientForBytes(bytes)
   return `
   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 110 110">

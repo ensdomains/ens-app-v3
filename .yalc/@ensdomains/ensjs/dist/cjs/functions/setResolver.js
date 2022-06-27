@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-const ethers_1 = require("ethers");
+const normalise_1 = require("../utils/normalise");
 async function default_1({ contracts, provider }, name, contract, resolver, options) {
     const address = await provider
         ?.getSigner(options?.addressOrIndex)
@@ -14,11 +14,11 @@ async function default_1({ contracts, provider }, name, contract, resolver, opti
     switch (contract) {
         case 'registry': {
             const registry = (await contracts?.getRegistry()).connect(provider?.getSigner(options?.addressOrIndex));
-            return registry.setResolver(ethers_1.ethers.utils.namehash(name), resolver);
+            return registry.setResolver((0, normalise_1.namehash)(name), resolver);
         }
         case 'nameWrapper': {
             const nameWrapper = (await contracts?.getNameWrapper()).connect(provider?.getSigner(options?.addressOrIndex));
-            return nameWrapper.setResolver(ethers_1.ethers.utils.namehash(name), resolver);
+            return nameWrapper.setResolver((0, normalise_1.namehash)(name), resolver);
         }
         default: {
             throw new Error(`Unknown contract: ${contract}`);

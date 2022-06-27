@@ -2,6 +2,7 @@ import { formatsByName } from '@ensdomains/address-encoder';
 import { ethers } from 'ethers';
 import { decodeContenthash } from '../utils/contentHash';
 import { hexEncodeName } from '../utils/hexEncodedName';
+import { namehash } from '../utils/normalise';
 import { parseInputType } from '../utils/validation';
 const makeMulticallData = async ({ _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }, name, options) => {
     let calls = [];
@@ -40,7 +41,7 @@ const makeMulticallData = async ({ _getAddr, _getContentHash, _getText, resolver
     const prRawData = await resolverMulticallWrapper.raw(calls.map((x) => x.data));
     return { data: prRawData.data, calls };
 };
-const makeHashIndexes = (data, name) => [...data.matchAll(ethers.utils.namehash(name).substring(2))].map((x) => x.index / 2 - 1);
+const makeHashIndexes = (data, name) => [...data.matchAll(namehash(name).substring(2))].map((x) => x.index / 2 - 1);
 const getDataForName = async ({ contracts, _getAddr, _getContentHash, _getText, resolverMulticallWrapper, }, name, options) => {
     const universalResolver = await contracts?.getUniversalResolver();
     const { data, calls } = await makeMulticallData({ _getAddr, _getContentHash, _getText, resolverMulticallWrapper }, name, options);
