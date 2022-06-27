@@ -1,39 +1,37 @@
 import TripleDot from '@app/assets/TripleDot.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, mq, Typography } from '@ensdomains/thorin'
+import { Avatar, Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { DisabledButton } from './@atoms/DisabledButton'
 
-const Container = styled.div<{ $banner?: string }>(({ theme, $banner }) => [
-  css`
-    padding: ${theme.space['6']};
-    padding-top: ${theme.space['16']};
-    background-image: ${$banner
-      ? `url(${$banner})`
-      : theme.colors.gradients.blue};
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-size: 100% ${theme.space['28']};
-    background-color: ${theme.colors.background};
-    border-radius: ${theme.radii['2xLarge']};
-    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: ${theme.space['3']};
-    flex-gap: ${theme.space['3']};
-  `,
-  mq.md.min(css`
-    padding: ${theme.space['8']};
-    padding-top: ${theme.space['16']};
-  `),
-])
+const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
+  ({ theme, $banner, $size }) => [
+    css`
+      padding: ${$size === 'medium' ? theme.space['8'] : theme.space['6']};
+      padding-top: ${theme.space['16']};
+      background-image: ${$banner
+        ? `url(${$banner})`
+        : theme.colors.gradients.blue};
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      background-size: 100% ${theme.space['28']};
+      background-color: ${theme.colors.background};
+      border-radius: ${theme.radii['2xLarge']};
+      border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: ${theme.space['3']};
+      flex-gap: ${theme.space['3']};
+    `,
+  ],
+)
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
@@ -114,6 +112,7 @@ export const ProfileSnippet = ({
   description,
   url,
   button,
+  size = 'small',
   buttonPlacement = 'inline',
   network,
 }: {
@@ -123,6 +122,7 @@ export const ProfileSnippet = ({
   description?: string
   url?: string
   button?: 'viewDetails' | 'viewProfile'
+  size?: 'small' | 'medium'
   buttonPlacement?: 'inline' | 'bottom'
   network: number
 }) => {
@@ -132,7 +132,7 @@ export const ProfileSnippet = ({
   const { avatar } = useAvatar(name, network)
 
   return (
-    <Container $banner={banner} data-testid="profile-snippet">
+    <Container $banner={banner} $size={size} data-testid="profile-snippet">
       <FirstItems>
         <AvatarWrapper>
           <Avatar label={name} src={avatar || zorb} />
