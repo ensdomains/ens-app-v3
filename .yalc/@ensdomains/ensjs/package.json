@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/ensjs",
-  "version": "3.1.0",
+  "version": "3.0.0-alpha.1",
   "description": "ENS javascript library for contract interaction",
   "main": "./dist/cjs/index.js",
   "types": "./dist/cjs/index.d.ts",
@@ -29,7 +29,7 @@
     "start": "ts-node --files src/index.test.ts",
     "test": "jest --run-in-band src/tests",
     "test:specific": "ts-node --files ",
-    "clean": "rm -rf ./dist",
+    "clean": "rm -rf ./dist ./README.md ./LICENSE",
     "build:esm": "tsc --project tsconfig.esm.json",
     "build:cjs": "tsc --project tsconfig.cjs.json",
     "build": "yarn clean && yarn build:esm && yarn build:cjs"
@@ -48,5 +48,5 @@
   "peerDependencies": {
     "ethers": "*"
   },
-  "yalcSig": "2d35edf75749e7de400b771e5c488c74"
+  "yalcSig": "0e6951e89c17a2f32ad7c8bac8094008"
 }
