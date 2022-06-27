@@ -16,6 +16,13 @@ import _ from 'lodash'
 import { Banner } from '../@atoms/Banner/Banner'
 import { SelectableInput } from '../@molecules/SelectableInput/SelectableInput'
 import { validateCryptoAddress } from '../../utils/validate'
+import { useProfile } from '../../hooks/useProfile'
+
+// enum GeneralType {
+//   nickname = 'nickname',
+//   location = 'location',
+//   bio = 'bio',
+// }
 
 enum AccountType {
   twitter = 'twitter',
@@ -234,6 +241,7 @@ const ProfileEditor = () => {
     const newAddress = { [coin]: _, ...oldAddress }
     setValue('address', newAddress)
     setExistingCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
+    setNewCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
   }
 
   //
@@ -301,7 +309,11 @@ const ProfileEditor = () => {
   console.log('accounts.btc', watch('address.btc'))
   console.log('errors', formState.errors)
 
+  const { profile } = useProfile('nick.eth', false)
   useEffect(() => {
+    if (profile) {
+      console.log('profile', profile)
+    }
     setTimeout(() => {
       const resp = {
         general: {
@@ -320,7 +332,7 @@ const ProfileEditor = () => {
       reset(resp)
       setExistingCoinRecords(Object.keys(resp.address) as CoinType[])
     }, 1000)
-  }, [])
+  }, [profile])
 
   return (
     <>
