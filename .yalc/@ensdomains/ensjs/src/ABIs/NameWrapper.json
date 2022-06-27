@@ -69,13 +69,7 @@
     "type": "error"
   },
   {
-    "inputs": [
-      {
-        "internalType": "string",
-        "name": "label",
-        "type": "string"
-      }
-    ],
+    "inputs": [],
     "name": "LabelTooShort",
     "type": "error"
   },
@@ -109,22 +103,6 @@
       }
     ],
     "name": "Unauthorised",
-    "type": "error"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "label",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "addr",
-        "type": "address"
-      }
-    ],
-    "name": "UnauthorisedEthWrap",
     "type": "error"
   },
   {
@@ -447,6 +425,29 @@
     "inputs": [
       {
         "internalType": "bytes32",
+        "name": "parentNode",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "bytes32",
+        "name": "labelhash",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "uint96",
+        "name": "_fuses",
+        "type": "uint96"
+      }
+    ],
+    "name": "burnChildFuses",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
         "name": "node",
         "type": "bytes32"
       },
@@ -685,7 +686,7 @@
     "outputs": [
       {
         "internalType": "address",
-        "name": "",
+        "name": "owner",
         "type": "address"
       }
     ],
@@ -944,35 +945,6 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
-        "name": "label",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      }
-    ],
-    "name": "setSubnodeOwner",
-    "outputs": [
-      {
-        "internalType": "bytes32",
-        "name": "",
-        "type": "bytes32"
-      }
-    ],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "parentNode",
-        "type": "bytes32"
-      },
-      {
         "internalType": "string",
         "name": "label",
         "type": "string"
@@ -988,7 +960,7 @@
         "type": "uint96"
       }
     ],
-    "name": "setSubnodeOwnerAndWrap",
+    "name": "setSubnodeOwner",
     "outputs": [
       {
         "internalType": "bytes32",
@@ -1007,39 +979,6 @@
         "type": "bytes32"
       },
       {
-        "internalType": "bytes32",
-        "name": "label",
-        "type": "bytes32"
-      },
-      {
-        "internalType": "address",
-        "name": "owner",
-        "type": "address"
-      },
-      {
-        "internalType": "address",
-        "name": "resolver",
-        "type": "address"
-      },
-      {
-        "internalType": "uint64",
-        "name": "ttl",
-        "type": "uint64"
-      }
-    ],
-    "name": "setSubnodeRecord",
-    "outputs": [],
-    "stateMutability": "nonpayable",
-    "type": "function"
-  },
-  {
-    "inputs": [
-      {
-        "internalType": "bytes32",
-        "name": "parentNode",
-        "type": "bytes32"
-      },
-      {
         "internalType": "string",
         "name": "label",
         "type": "string"
@@ -1065,7 +1004,7 @@
         "type": "uint96"
       }
     ],
-    "name": "setSubnodeRecordAndWrap",
+    "name": "setSubnodeRecord",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -1129,7 +1068,7 @@
       },
       {
         "internalType": "bytes32",
-        "name": "label",
+        "name": "labelhash",
         "type": "bytes32"
       },
       {
@@ -1147,7 +1086,7 @@
     "inputs": [
       {
         "internalType": "bytes32",
-        "name": "label",
+        "name": "labelhash",
         "type": "bytes32"
       },
       {

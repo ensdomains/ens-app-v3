@@ -22,5 +22,5 @@ export const usePrimary = (address: string, skip?: any) => {
     }
   }, [_name])
 
-  return { name, loading, status }
+  return { name, loading: !ready || loading, status }
 }

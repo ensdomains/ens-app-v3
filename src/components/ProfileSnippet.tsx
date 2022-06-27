@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { DisabledButton } from './@atoms/DisabledButton'
 
 const Container = styled.div<{ $banner?: string }>(
   ({ theme, $banner }) => css`
@@ -73,8 +74,9 @@ const FirstItems = styled.div(
   `,
 )
 
-const DetailButtonWrapper = styled.div(
-  ({ theme }) => css`
+const DetailButtonWrapper = styled.div<{ $placement?: 'inline' | 'bottom' }>(
+  ({ theme, $placement }) => css`
+    ${$placement === 'bottom' && 'width: 100%;'}
     & > button {
       border: ${theme.space.px} solid ${theme.colors.borderSecondary};
       border-radius: ${theme.radii.extraLarge};
@@ -108,6 +110,7 @@ export const ProfileSnippet = ({
   description,
   url,
   button,
+  buttonPlacement = 'inline',
   network,
 }: {
   name: string
@@ -116,7 +119,8 @@ export const ProfileSnippet = ({
   description?: string
   url?: string
   button?: 'viewDetails' | 'viewProfile'
-  network: string
+  buttonPlacement?: 'inline' | 'bottom'
+  network: number
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
@@ -124,14 +128,14 @@ export const ProfileSnippet = ({
   const { avatar } = useAvatar(name, network)
 
   return (
-    <Container $banner={banner}>
+    <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
         <AvatarWrapper>
           <Avatar label={name} src={avatar || zorb} />
         </AvatarWrapper>
         <ButtonStack>
-          {button && (
-            <DetailButtonWrapper>
+          {button && buttonPlacement === 'inline' && (
+            <DetailButtonWrapper $placement={buttonPlacement}>
               <Button
                 onClick={() =>
                   router.push({
@@ -152,9 +156,9 @@ export const ProfileSnippet = ({
               </Button>
             </DetailButtonWrapper>
           )}
-          <Button shadowless variant="transparent" size="extraSmall">
+          <DisabledButton shadowless variant="transparent" size="extraSmall">
             <TripleDotIcon as={TripleDot} />
-          </Button>
+          </DisabledButton>
         </ButtonStack>
       </FirstItems>
       <TextStack>
@@ -179,6 +183,28 @@ export const ProfileSnippet = ({
           </div>
         )}
       </TextStack>
+      {button && buttonPlacement === 'bottom' && (
+        <DetailButtonWrapper $placement={buttonPlacement}>
+          <Button
+            onClick={() =>
+              router.push({
+                pathname:
+                  button === 'viewDetails'
+                    ? `/profile/${name}/details`
+                    : `/profile/${name}`,
+                query: {
+                  from: router.asPath,
+                },
+              })
+            }
+            shadowless
+            variant="transparent"
+            size="extraSmall"
+          >
+            {t(`wallet.${button}`)}
+          </Button>
+        </DetailButtonWrapper>
+      )}
     </Container>
   )
 }

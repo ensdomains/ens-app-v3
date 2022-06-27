@@ -4,35 +4,81 @@ import { labelhash } from '../utils/labels'
 
 type Owner = {
   registrant?: string
-  owner: string
+  owner?: string
   ownershipLevel: 'nameWrapper' | 'registry' | 'registrar'
+}
+
+const singleContractOwnerRaw = async (
+  { contracts }: ENSArgs<'contracts'>,
+  contract: 'nameWrapper' | 'registry' | 'registrar',
+  namehash: string,
+  labels: string[],
+) => {
+  switch (contract) {
+    case 'nameWrapper': {
+      const nameWrapper = await contracts?.getNameWrapper()!
+
+      return {
+        to: nameWrapper.address,
+        data: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
+      }
+    }
+    case 'registry': {
+      const registry = await contracts?.getRegistry()!
+
+      return {
+        to: registry.address,
+        data: registry.interface.encodeFunctionData('owner', [namehash]),
+      }
+    }
+    case 'registrar': {
+      const registrar = await contracts?.getBaseRegistrar()!
+
+      return {
+        to: registrar.address,
+        data: registrar.interface.encodeFunctionData('ownerOf', [
+          labelhash(labels[0]),
+        ]),
+      }
+    }
+  }
 }
 
 const raw = async (
   { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   name: string,
+  contract?: 'nameWrapper' | 'registry' | 'registrar',
 ) => {
-  const registry = await contracts?.getRegistry()!
-  const baseRegistrar = await contracts?.getBaseRegistrar()!
-  const nameWrapper = await contracts?.getNameWrapper()!
-
   const namehash = ethers.utils.namehash(name)
   const labels = name.split('.')
 
-  const registryData = {
-    to: registry.address,
-    data: registry.interface.encodeFunctionData('owner', [namehash]),
+  if (contract) {
+    return await singleContractOwnerRaw(
+      { contracts },
+      contract,
+      namehash,
+      labels,
+    )
   }
-  const nameWrapperData = {
-    to: nameWrapper.address,
-    data: nameWrapper.interface.encodeFunctionData('ownerOf', [namehash]),
-  }
-  const registrarData = {
-    to: baseRegistrar.address,
-    data: baseRegistrar.interface.encodeFunctionData('ownerOf', [
-      labelhash(labels[0]),
-    ]),
-  }
+
+  const registryData = await singleContractOwnerRaw(
+    { contracts },
+    'registry',
+    namehash,
+    labels,
+  )
+  const nameWrapperData = await singleContractOwnerRaw(
+    { contracts },
+    'nameWrapper',
+    namehash,
+    labels,
+  )
+  const registrarData = await singleContractOwnerRaw(
+    { contracts },
+    'registrar',
+    namehash,
+    labels,
+  )
 
   const data: { to: string; data: string }[] = [registryData, nameWrapperData]
 
@@ -43,14 +89,35 @@ const raw = async (
   return multicallWrapper.raw(data)
 }
 
+const singleContractOwnerDecode = (data: string) =>
+  ethers.utils.defaultAbiCoder.decode(['address'], data)[0]
+
 const decode = async (
   { contracts, multicallWrapper }: ENSArgs<'contracts' | 'multicallWrapper'>,
   data: string,
   name: string,
-): Promise<Owner | null> => {
-  if (data === null) return null
+  contract?: 'nameWrapper' | 'registry' | 'registrar',
+): Promise<Owner | undefined> => {
+  if (data === null) return
+  if (contract) {
+    const singleOwner = singleContractOwnerDecode(data)
+    let obj = {
+      ownershipLevel: contract,
+    }
+    if (contract === 'registrar') {
+      return {
+        ...obj,
+        registrant: singleOwner as string,
+      }
+    } else {
+      return {
+        ...obj,
+        owner: singleOwner as string,
+      }
+    }
+  }
   const result = await multicallWrapper.decode(data)
-  if (result === null) return null
+  if (result === null) return
   const nameWrapper = await contracts?.getNameWrapper()!
 
   const decodedData = [result[0][1], result[1][1], result[2]?.[1]].map(
@@ -107,7 +174,7 @@ const decode = async (
       }
     }
     // .eth names with no registrar owner are either unregistered or expired
-    return null
+    return
   }
 
   // non .eth names inherit the owner from the registry
@@ -129,7 +196,7 @@ const decode = async (
     }
   }
 
-  // for anything else, return null
-  return null
+  // for anything else, return
+  return
 }
 export default { raw, decode }

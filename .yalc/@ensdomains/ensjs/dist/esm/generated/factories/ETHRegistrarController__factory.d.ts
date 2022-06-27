@@ -8,12 +8,10 @@ export declare class ETHRegistrarController__factory {
             name: string;
             type: string;
         }[];
-        payable: boolean;
         stateMutability: string;
         type: string;
         anonymous?: undefined;
         name?: undefined;
-        constant?: undefined;
         outputs?: undefined;
     } | {
         anonymous: boolean;
@@ -25,12 +23,9 @@ export declare class ETHRegistrarController__factory {
         }[];
         name: string;
         type: string;
-        payable?: undefined;
         stateMutability?: undefined;
-        constant?: undefined;
         outputs?: undefined;
     } | {
-        constant: boolean;
         inputs: {
             internalType: string;
             name: string;
@@ -42,7 +37,26 @@ export declare class ETHRegistrarController__factory {
             name: string;
             type: string;
         }[];
-        payable: boolean;
+        stateMutability: string;
+        type: string;
+        anonymous?: undefined;
+    } | {
+        inputs: {
+            internalType: string;
+            name: string;
+            type: string;
+        }[];
+        name: string;
+        outputs: {
+            components: {
+                internalType: string;
+                name: string;
+                type: string;
+            }[];
+            internalType: string;
+            name: string;
+            type: string;
+        }[];
         stateMutability: string;
         type: string;
         anonymous?: undefined;

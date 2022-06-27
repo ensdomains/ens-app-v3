@@ -1,5 +1,5 @@
 export * as factories from "./factories";
-export { DoNotCallOnChainUniversalResolverProxy__factory } from "./factories/DoNotCallOnChainUniversalResolverProxy__factory";
+export { ETHRegistrarController__factory } from "./factories/ETHRegistrarController__factory";
 export { NameWrapper__factory } from "./factories/NameWrapper__factory";
 export { PublicResolver__factory } from "./factories/PublicResolver__factory";
 export { ReverseRegistrar__factory } from "./factories/ReverseRegistrar__factory";

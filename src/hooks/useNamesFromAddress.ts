@@ -31,7 +31,7 @@ export const useNamesFromAddress = ({
   }
   page: number
   resultsPerPage: number
-  filter?: 'registration' | 'domain'
+  filter?: Name['type']
 }) => {
   const { ready, getNames } = useEns()
 
@@ -48,7 +48,32 @@ export const useNamesFromAddress = ({
       enabled: ready && !!address,
     },
   )
+
+  const mergedData = useMemo(() => {
+    if (!data) return []
+    const nameMap = data.reduce((map, curr) => {
+      const existingEntry = map[curr.name] || {}
+      const isController = curr.type === 'domain'
+      const isRegistrant = curr.type === 'registration'
+      const newMap = map
+      newMap[curr.name] = {
+        ...existingEntry,
+        ...curr,
+        isController: existingEntry.isController || isController,
+        isRegistrant: existingEntry.isRegistrant || isRegistrant,
+      }
+      return newMap
+    }, {} as { [key: string]: ReturnedName })
+    return Object.values(nameMap)
+  }, [data])
+
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
+
+  const filterFunc = useMemo(() => {
+    if (filter === 'registration') return (n: ReturnedName) => n.isRegistrant
+    if (filter === 'domain') return (n: ReturnedName) => n.isController
+    return () => true
+  }, [filter])
 
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {
@@ -82,38 +107,10 @@ export const useNamesFromAddress = ({
   }, [sort.orderDirection, sort.type])
 
   useEffect(() => {
-    if (status === 'success' && data) {
-      setSortedData(
-        data
-          .sort(sortFunc)
-          .filter((x) => (filter ? x.type === filter : true))
-          .reduce((prev, curr) => {
-            const existingEntry = prev.findIndex((x) => x.name === curr.name)
-            const isController = curr.type === 'domain'
-            const isRegistrant = curr.type === 'registration'
-            const newArr = prev
-            if (existingEntry !== -1) {
-              newArr[existingEntry] = {
-                ...prev[existingEntry],
-                ...curr,
-                isController:
-                  newArr[existingEntry].isController || isController,
-                isRegistrant:
-                  newArr[existingEntry].isRegistrant || isRegistrant,
-              }
-            } else {
-              newArr.push({
-                ...curr,
-                isController,
-                isRegistrant,
-              })
-            }
-            return newArr
-          }, [] as ReturnedName[]),
-      )
+    if (status === 'success' && mergedData) {
+      setSortedData(mergedData.filter(filterFunc).sort(sortFunc))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [status, sort.type, sort.orderDirection, filter])
+  }, [status, mergedData, sortFunc, filterFunc])
 
   const pages = useMemo(
     () => sortedData && chunkArr(sortedData, resultsPerPage),
@@ -125,5 +122,11 @@ export const useNamesFromAddress = ({
     [pages, page],
   )
 
-  return { currentPage, isLoading, status, pageLength: pages?.length || 0 }
+  return {
+    currentPage,
+    isLoading,
+    status,
+    pageLength: pages?.length || 0,
+    nameCount: sortedData?.length || 0,
+  }
 }

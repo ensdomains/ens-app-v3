@@ -23,10 +23,10 @@ var __importStar = (this && this.__importStar) || function (mod) {
     return result;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.UniversalResolver__factory = exports.StaticMetadataService__factory = exports.ReverseRegistrar__factory = exports.PublicResolver__factory = exports.NameWrapper__factory = exports.DoNotCallOnChainUniversalResolverProxy__factory = exports.factories = void 0;
+exports.UniversalResolver__factory = exports.StaticMetadataService__factory = exports.ReverseRegistrar__factory = exports.PublicResolver__factory = exports.NameWrapper__factory = exports.ETHRegistrarController__factory = exports.factories = void 0;
 exports.factories = __importStar(require("./factories"));
-var DoNotCallOnChainUniversalResolverProxy__factory_1 = require("./factories/DoNotCallOnChainUniversalResolverProxy__factory");
-Object.defineProperty(exports, "DoNotCallOnChainUniversalResolverProxy__factory", { enumerable: true, get: function () { return DoNotCallOnChainUniversalResolverProxy__factory_1.DoNotCallOnChainUniversalResolverProxy__factory; } });
+var ETHRegistrarController__factory_1 = require("./factories/ETHRegistrarController__factory");
+Object.defineProperty(exports, "ETHRegistrarController__factory", { enumerable: true, get: function () { return ETHRegistrarController__factory_1.ETHRegistrarController__factory; } });
 var NameWrapper__factory_1 = require("./factories/NameWrapper__factory");
 Object.defineProperty(exports, "NameWrapper__factory", { enumerable: true, get: function () { return NameWrapper__factory_1.NameWrapper__factory; } });
 var PublicResolver__factory_1 = require("./factories/PublicResolver__factory");

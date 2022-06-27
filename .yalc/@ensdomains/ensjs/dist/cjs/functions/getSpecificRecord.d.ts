@@ -16,7 +16,7 @@ export declare const _getContentHash: {
         protocolType: string | undefined;
         decoded: any;
         error: any;
-    } | null>;
+    } | undefined>;
 };
 export declare const getContentHash: {
     raw: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, name: string) => Promise<{
@@ -35,7 +35,7 @@ export declare const getContentHash: {
         protocolType: string | undefined;
         decoded: any;
         error: any;
-    } | null>;
+    } | undefined>;
 };
 export declare const _getText: {
     raw: ({ contracts }: ENSArgs<'contracts'>, name: string, key: string) => Promise<{
@@ -59,7 +59,7 @@ export declare const _getAddr: {
     decode: ({ contracts }: ENSArgs<'contracts'>, data: string, _name: string, coinType?: string | number | undefined) => Promise<string | {
         coin: string;
         addr: string;
-    } | null>;
+    } | undefined>;
 };
 export declare const getAddr: {
     raw: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, name: string, coinType?: string | number | undefined) => Promise<{
@@ -69,5 +69,5 @@ export declare const getAddr: {
     decode: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, data: string, _name: string, coinType?: string | number | undefined) => Promise<string | {
         coin: string;
         addr: string;
-    } | null>;
+    } | undefined>;
 };

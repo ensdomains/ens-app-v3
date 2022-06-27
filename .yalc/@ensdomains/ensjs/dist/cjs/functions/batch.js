@@ -12,7 +12,7 @@ const raw = async ({ multicallWrapper }, ...items) => {
 const decode = async ({ multicallWrapper }, data, ...items) => {
     const response = await multicallWrapper.decode(data);
     if (!response)
-        return null;
+        return;
     return Promise.all(response.map((ret, i) => items[i].decode(ret.returnData, ...items[i].args)));
 };
 exports.default = {

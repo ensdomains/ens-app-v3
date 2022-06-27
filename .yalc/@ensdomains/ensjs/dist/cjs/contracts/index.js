@@ -1,58 +1,37 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const baseRegistrar_1 = __importDefault(require("./baseRegistrar"));
+const ethRegistrarController_1 = __importDefault(require("./ethRegistrarController"));
+const multicall_1 = __importDefault(require("./multicall"));
+const nameWrapper_1 = __importDefault(require("./nameWrapper"));
+const publicResolver_1 = __importDefault(require("./publicResolver"));
+const registry_1 = __importDefault(require("./registry"));
+const reverseRegistrar_1 = __importDefault(require("./reverseRegistrar"));
+const universalResolver_1 = __importDefault(require("./universalResolver"));
 class ContractManager {
     provider;
-    constructor(provider) {
+    fetchAddress;
+    constructor(provider, fetchAddress) {
         this.provider = provider;
+        this.fetchAddress = fetchAddress;
     }
-    generateContractGetter = (path) => {
-        let imported;
-        let contract;
+    generateContractGetter = (name, func) => {
         return async (passedProvider, address) => {
-            if (!imported) {
-                imported = (await Promise.resolve().then(() => __importStar(require(
-                /* webpackMode: "lazy", webpackChunkName: "[request]", webpackPreload: true */
-                `./${path}`)))).default;
-            }
-            if (passedProvider) {
-                return imported(passedProvider, address);
-            }
-            if (!contract) {
-                contract = imported(this.provider);
-            }
-            return contract;
+            const inputAddress = address || this.fetchAddress(name);
+            const provider = passedProvider || this.provider;
+            return func(provider, inputAddress);
         };
     };
-    getPublicResolver = this.generateContractGetter('publicResolver');
-    getUniversalResolver = this.generateContractGetter('universalResolver');
-    getRegistry = this.generateContractGetter('registry');
-    getReverseRegistrar = this.generateContractGetter('reverseRegistrar');
-    getDNCOCURP = this.generateContractGetter('doNotCallOnChainUniversalResolverProxy');
-    getNameWrapper = this.generateContractGetter('nameWrapper');
-    getBaseRegistrar = this.generateContractGetter('baseRegistrar');
-    getMulticall = this.generateContractGetter('multicall');
+    getPublicResolver = this.generateContractGetter('PublicResolver', publicResolver_1.default);
+    getUniversalResolver = this.generateContractGetter('UniversalResolver', universalResolver_1.default);
+    getRegistry = this.generateContractGetter('ENSRegistryWithFallback', registry_1.default);
+    getReverseRegistrar = this.generateContractGetter('ReverseRegistrar', reverseRegistrar_1.default);
+    getNameWrapper = this.generateContractGetter('NameWrapper', nameWrapper_1.default);
+    getBaseRegistrar = this.generateContractGetter('BaseRegistrarImplementation', baseRegistrar_1.default);
+    getEthRegistrarController = this.generateContractGetter('ETHRegistrarController', ethRegistrarController_1.default);
+    getMulticall = this.generateContractGetter('Multicall', multicall_1.default);
 }
 exports.default = ContractManager;

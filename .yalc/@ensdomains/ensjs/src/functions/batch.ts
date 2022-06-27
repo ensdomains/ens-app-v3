@@ -19,9 +19,9 @@ const decode = async (
   { multicallWrapper }: ENSArgs<'multicallWrapper'>,
   data: string,
   ...items: BatchFunctionResult<RawFunction>[]
-): Promise<any[] | null> => {
+): Promise<any[] | undefined> => {
   const response = await multicallWrapper.decode(data)
-  if (!response) return null
+  if (!response) return
 
   return Promise.all(
     response.map((ret: any, i: number) =>

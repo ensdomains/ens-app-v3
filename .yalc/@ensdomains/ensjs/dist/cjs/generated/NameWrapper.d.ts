@@ -8,6 +8,7 @@ export interface NameWrapperInterface extends utils.Interface {
         "allFusesBurned(bytes32,uint96)": FunctionFragment;
         "balanceOf(address,uint256)": FunctionFragment;
         "balanceOfBatch(address[],uint256[])": FunctionFragment;
+        "burnChildFuses(bytes32,bytes32,uint96)": FunctionFragment;
         "burnFuses(bytes32,uint96)": FunctionFragment;
         "controllers(address)": FunctionFragment;
         "ens()": FunctionFragment;
@@ -31,10 +32,8 @@ export interface NameWrapperInterface extends utils.Interface {
         "setMetadataService(address)": FunctionFragment;
         "setRecord(bytes32,address,address,uint64)": FunctionFragment;
         "setResolver(bytes32,address)": FunctionFragment;
-        "setSubnodeOwner(bytes32,bytes32,address)": FunctionFragment;
-        "setSubnodeOwnerAndWrap(bytes32,string,address,uint96)": FunctionFragment;
-        "setSubnodeRecord(bytes32,bytes32,address,address,uint64)": FunctionFragment;
-        "setSubnodeRecordAndWrap(bytes32,string,address,address,uint64,uint96)": FunctionFragment;
+        "setSubnodeOwner(bytes32,string,address,uint96)": FunctionFragment;
+        "setSubnodeRecord(bytes32,string,address,address,uint64,uint96)": FunctionFragment;
         "setTTL(bytes32,uint64)": FunctionFragment;
         "supportsInterface(bytes4)": FunctionFragment;
         "transferOwnership(address)": FunctionFragment;
@@ -44,11 +43,12 @@ export interface NameWrapperInterface extends utils.Interface {
         "wrap(bytes,address,uint96,address)": FunctionFragment;
         "wrapETH2LD(string,address,uint96,address)": FunctionFragment;
     };
-    getFunction(nameOrSignatureOrTopic: "_tokens" | "allFusesBurned" | "balanceOf" | "balanceOfBatch" | "burnFuses" | "controllers" | "ens" | "getData" | "getFuses" | "isApprovedForAll" | "isTokenOwnerOrApproved" | "metadataService" | "names" | "onERC721Received" | "owner" | "ownerOf" | "registerAndWrapETH2LD" | "registrar" | "renew" | "renounceOwnership" | "safeBatchTransferFrom" | "safeTransferFrom" | "setApprovalForAll" | "setController" | "setMetadataService" | "setRecord" | "setResolver" | "setSubnodeOwner" | "setSubnodeOwnerAndWrap" | "setSubnodeRecord" | "setSubnodeRecordAndWrap" | "setTTL" | "supportsInterface" | "transferOwnership" | "unwrap" | "unwrapETH2LD" | "uri" | "wrap" | "wrapETH2LD"): FunctionFragment;
+    getFunction(nameOrSignatureOrTopic: "_tokens" | "allFusesBurned" | "balanceOf" | "balanceOfBatch" | "burnChildFuses" | "burnFuses" | "controllers" | "ens" | "getData" | "getFuses" | "isApprovedForAll" | "isTokenOwnerOrApproved" | "metadataService" | "names" | "onERC721Received" | "owner" | "ownerOf" | "registerAndWrapETH2LD" | "registrar" | "renew" | "renounceOwnership" | "safeBatchTransferFrom" | "safeTransferFrom" | "setApprovalForAll" | "setController" | "setMetadataService" | "setRecord" | "setResolver" | "setSubnodeOwner" | "setSubnodeRecord" | "setTTL" | "supportsInterface" | "transferOwnership" | "unwrap" | "unwrapETH2LD" | "uri" | "wrap" | "wrapETH2LD"): FunctionFragment;
     encodeFunctionData(functionFragment: "_tokens", values: [BigNumberish]): string;
     encodeFunctionData(functionFragment: "allFusesBurned", values: [BytesLike, BigNumberish]): string;
     encodeFunctionData(functionFragment: "balanceOf", values: [string, BigNumberish]): string;
     encodeFunctionData(functionFragment: "balanceOfBatch", values: [string[], BigNumberish[]]): string;
+    encodeFunctionData(functionFragment: "burnChildFuses", values: [BytesLike, BytesLike, BigNumberish]): string;
     encodeFunctionData(functionFragment: "burnFuses", values: [BytesLike, BigNumberish]): string;
     encodeFunctionData(functionFragment: "controllers", values: [string]): string;
     encodeFunctionData(functionFragment: "ens", values?: undefined): string;
@@ -72,10 +72,8 @@ export interface NameWrapperInterface extends utils.Interface {
     encodeFunctionData(functionFragment: "setMetadataService", values: [string]): string;
     encodeFunctionData(functionFragment: "setRecord", values: [BytesLike, string, string, BigNumberish]): string;
     encodeFunctionData(functionFragment: "setResolver", values: [BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "setSubnodeOwner", values: [BytesLike, BytesLike, string]): string;
-    encodeFunctionData(functionFragment: "setSubnodeOwnerAndWrap", values: [BytesLike, string, string, BigNumberish]): string;
-    encodeFunctionData(functionFragment: "setSubnodeRecord", values: [BytesLike, BytesLike, string, string, BigNumberish]): string;
-    encodeFunctionData(functionFragment: "setSubnodeRecordAndWrap", values: [BytesLike, string, string, string, BigNumberish, BigNumberish]): string;
+    encodeFunctionData(functionFragment: "setSubnodeOwner", values: [BytesLike, string, string, BigNumberish]): string;
+    encodeFunctionData(functionFragment: "setSubnodeRecord", values: [BytesLike, string, string, string, BigNumberish, BigNumberish]): string;
     encodeFunctionData(functionFragment: "setTTL", values: [BytesLike, BigNumberish]): string;
     encodeFunctionData(functionFragment: "supportsInterface", values: [BytesLike]): string;
     encodeFunctionData(functionFragment: "transferOwnership", values: [string]): string;
@@ -88,6 +86,7 @@ export interface NameWrapperInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "allFusesBurned", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOf", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "balanceOfBatch", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "burnChildFuses", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "burnFuses", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "controllers", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "ens", data: BytesLike): Result;
@@ -112,9 +111,7 @@ export interface NameWrapperInterface extends utils.Interface {
     decodeFunctionResult(functionFragment: "setRecord", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setResolver", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setSubnodeOwner", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "setSubnodeOwnerAndWrap", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setSubnodeRecord", data: BytesLike): Result;
-    decodeFunctionResult(functionFragment: "setSubnodeRecordAndWrap", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "setTTL", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
     decodeFunctionResult(functionFragment: "transferOwnership", data: BytesLike): Result;
@@ -259,6 +256,9 @@ export interface NameWrapper extends BaseContract {
         allFusesBurned(node: BytesLike, fuseMask: BigNumberish, overrides?: CallOverrides): Promise<[boolean]>;
         balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<[BigNumber]>;
         balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<[BigNumber[]]>;
+        burnChildFuses(parentNode: BytesLike, labelhash: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
+            from?: string | Promise<string>;
+        }): Promise<ContractTransaction>;
         burnFuses(node: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
@@ -285,7 +285,9 @@ export interface NameWrapper extends BaseContract {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
         owner(overrides?: CallOverrides): Promise<[string]>;
-        ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
+        ownerOf(id: BigNumberish, overrides?: CallOverrides): Promise<[string] & {
+            owner: string;
+        }>;
         registerAndWrapETH2LD(label: string, wrappedOwner: string, duration: BigNumberish, resolver: string, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
@@ -317,16 +319,10 @@ export interface NameWrapper extends BaseContract {
         setResolver(node: BytesLike, resolver: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
-        setSubnodeOwner(parentNode: BytesLike, label: BytesLike, owner: string, overrides?: Overrides & {
+        setSubnodeOwner(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
-        setSubnodeOwnerAndWrap(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
-            from?: string | Promise<string>;
-        }): Promise<ContractTransaction>;
-        setSubnodeRecord(parentNode: BytesLike, label: BytesLike, owner: string, resolver: string, ttl: BigNumberish, overrides?: Overrides & {
-            from?: string | Promise<string>;
-        }): Promise<ContractTransaction>;
-        setSubnodeRecordAndWrap(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
+        setSubnodeRecord(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
         setTTL(node: BytesLike, ttl: BigNumberish, overrides?: Overrides & {
@@ -336,10 +332,10 @@ export interface NameWrapper extends BaseContract {
         transferOwnership(newOwner: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
-        unwrap(parentNode: BytesLike, label: BytesLike, newController: string, overrides?: Overrides & {
+        unwrap(parentNode: BytesLike, labelhash: BytesLike, newController: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
-        unwrapETH2LD(label: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
+        unwrapETH2LD(labelhash: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<ContractTransaction>;
         uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<[string]>;
@@ -354,6 +350,9 @@ export interface NameWrapper extends BaseContract {
     allFusesBurned(node: BytesLike, fuseMask: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
     balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
     balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]>;
+    burnChildFuses(parentNode: BytesLike, labelhash: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
+        from?: string | Promise<string>;
+    }): Promise<ContractTransaction>;
     burnFuses(node: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
@@ -412,16 +411,10 @@ export interface NameWrapper extends BaseContract {
     setResolver(node: BytesLike, resolver: string, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
-    setSubnodeOwner(parentNode: BytesLike, label: BytesLike, owner: string, overrides?: Overrides & {
+    setSubnodeOwner(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
-    setSubnodeOwnerAndWrap(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
-        from?: string | Promise<string>;
-    }): Promise<ContractTransaction>;
-    setSubnodeRecord(parentNode: BytesLike, label: BytesLike, owner: string, resolver: string, ttl: BigNumberish, overrides?: Overrides & {
-        from?: string | Promise<string>;
-    }): Promise<ContractTransaction>;
-    setSubnodeRecordAndWrap(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
+    setSubnodeRecord(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
     setTTL(node: BytesLike, ttl: BigNumberish, overrides?: Overrides & {
@@ -431,10 +424,10 @@ export interface NameWrapper extends BaseContract {
     transferOwnership(newOwner: string, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
-    unwrap(parentNode: BytesLike, label: BytesLike, newController: string, overrides?: Overrides & {
+    unwrap(parentNode: BytesLike, labelhash: BytesLike, newController: string, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
-    unwrapETH2LD(label: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
+    unwrapETH2LD(labelhash: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
         from?: string | Promise<string>;
     }): Promise<ContractTransaction>;
     uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
@@ -449,6 +442,7 @@ export interface NameWrapper extends BaseContract {
         allFusesBurned(node: BytesLike, fuseMask: BigNumberish, overrides?: CallOverrides): Promise<boolean>;
         balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
         balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber[]>;
+        burnChildFuses(parentNode: BytesLike, labelhash: BytesLike, _fuses: BigNumberish, overrides?: CallOverrides): Promise<void>;
         burnFuses(node: BytesLike, _fuses: BigNumberish, overrides?: CallOverrides): Promise<void>;
         controllers(arg0: string, overrides?: CallOverrides): Promise<boolean>;
         ens(overrides?: CallOverrides): Promise<string>;
@@ -483,15 +477,13 @@ export interface NameWrapper extends BaseContract {
         setMetadataService(_newMetadataService: string, overrides?: CallOverrides): Promise<void>;
         setRecord(node: BytesLike, owner: string, resolver: string, ttl: BigNumberish, overrides?: CallOverrides): Promise<void>;
         setResolver(node: BytesLike, resolver: string, overrides?: CallOverrides): Promise<void>;
-        setSubnodeOwner(parentNode: BytesLike, label: BytesLike, owner: string, overrides?: CallOverrides): Promise<string>;
-        setSubnodeOwnerAndWrap(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: CallOverrides): Promise<string>;
-        setSubnodeRecord(parentNode: BytesLike, label: BytesLike, owner: string, resolver: string, ttl: BigNumberish, overrides?: CallOverrides): Promise<void>;
-        setSubnodeRecordAndWrap(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: CallOverrides): Promise<void>;
+        setSubnodeOwner(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: CallOverrides): Promise<string>;
+        setSubnodeRecord(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: CallOverrides): Promise<void>;
         setTTL(node: BytesLike, ttl: BigNumberish, overrides?: CallOverrides): Promise<void>;
         supportsInterface(interfaceId: BytesLike, overrides?: CallOverrides): Promise<boolean>;
         transferOwnership(newOwner: string, overrides?: CallOverrides): Promise<void>;
-        unwrap(parentNode: BytesLike, label: BytesLike, newController: string, overrides?: CallOverrides): Promise<void>;
-        unwrapETH2LD(label: BytesLike, newRegistrant: string, newController: string, overrides?: CallOverrides): Promise<void>;
+        unwrap(parentNode: BytesLike, labelhash: BytesLike, newController: string, overrides?: CallOverrides): Promise<void>;
+        unwrapETH2LD(labelhash: BytesLike, newRegistrant: string, newController: string, overrides?: CallOverrides): Promise<void>;
         uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<string>;
         wrap(name: BytesLike, wrappedOwner: string, _fuses: BigNumberish, resolver: string, overrides?: CallOverrides): Promise<void>;
         wrapETH2LD(label: string, wrappedOwner: string, _fuses: BigNumberish, resolver: string, overrides?: CallOverrides): Promise<void>;
@@ -521,6 +513,9 @@ export interface NameWrapper extends BaseContract {
         allFusesBurned(node: BytesLike, fuseMask: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
         balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
         balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<BigNumber>;
+        burnChildFuses(parentNode: BytesLike, labelhash: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
+            from?: string | Promise<string>;
+        }): Promise<BigNumber>;
         burnFuses(node: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
@@ -568,16 +563,10 @@ export interface NameWrapper extends BaseContract {
         setResolver(node: BytesLike, resolver: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
-        setSubnodeOwner(parentNode: BytesLike, label: BytesLike, owner: string, overrides?: Overrides & {
+        setSubnodeOwner(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
-        setSubnodeOwnerAndWrap(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
-            from?: string | Promise<string>;
-        }): Promise<BigNumber>;
-        setSubnodeRecord(parentNode: BytesLike, label: BytesLike, owner: string, resolver: string, ttl: BigNumberish, overrides?: Overrides & {
-            from?: string | Promise<string>;
-        }): Promise<BigNumber>;
-        setSubnodeRecordAndWrap(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
+        setSubnodeRecord(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
         setTTL(node: BytesLike, ttl: BigNumberish, overrides?: Overrides & {
@@ -587,10 +576,10 @@ export interface NameWrapper extends BaseContract {
         transferOwnership(newOwner: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
-        unwrap(parentNode: BytesLike, label: BytesLike, newController: string, overrides?: Overrides & {
+        unwrap(parentNode: BytesLike, labelhash: BytesLike, newController: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
-        unwrapETH2LD(label: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
+        unwrapETH2LD(labelhash: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<BigNumber>;
         uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<BigNumber>;
@@ -606,6 +595,9 @@ export interface NameWrapper extends BaseContract {
         allFusesBurned(node: BytesLike, fuseMask: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balanceOf(account: string, id: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;
         balanceOfBatch(accounts: string[], ids: BigNumberish[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        burnChildFuses(parentNode: BytesLike, labelhash: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
+            from?: string | Promise<string>;
+        }): Promise<PopulatedTransaction>;
         burnFuses(node: BytesLike, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
@@ -653,16 +645,10 @@ export interface NameWrapper extends BaseContract {
         setResolver(node: BytesLike, resolver: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
-        setSubnodeOwner(parentNode: BytesLike, label: BytesLike, owner: string, overrides?: Overrides & {
+        setSubnodeOwner(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
-        setSubnodeOwnerAndWrap(parentNode: BytesLike, label: string, newOwner: string, _fuses: BigNumberish, overrides?: Overrides & {
-            from?: string | Promise<string>;
-        }): Promise<PopulatedTransaction>;
-        setSubnodeRecord(parentNode: BytesLike, label: BytesLike, owner: string, resolver: string, ttl: BigNumberish, overrides?: Overrides & {
-            from?: string | Promise<string>;
-        }): Promise<PopulatedTransaction>;
-        setSubnodeRecordAndWrap(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
+        setSubnodeRecord(parentNode: BytesLike, label: string, newOwner: string, resolver: string, ttl: BigNumberish, _fuses: BigNumberish, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
         setTTL(node: BytesLike, ttl: BigNumberish, overrides?: Overrides & {
@@ -672,10 +658,10 @@ export interface NameWrapper extends BaseContract {
         transferOwnership(newOwner: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
-        unwrap(parentNode: BytesLike, label: BytesLike, newController: string, overrides?: Overrides & {
+        unwrap(parentNode: BytesLike, labelhash: BytesLike, newController: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
-        unwrapETH2LD(label: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
+        unwrapETH2LD(labelhash: BytesLike, newRegistrant: string, newController: string, overrides?: Overrides & {
             from?: string | Promise<string>;
         }): Promise<PopulatedTransaction>;
         uri(tokenId: BigNumberish, overrides?: CallOverrides): Promise<PopulatedTransaction>;

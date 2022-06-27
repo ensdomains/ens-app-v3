@@ -8,7 +8,7 @@ export declare const universalWrapper: {
     decode: ({ contracts }: ENSArgs<'contracts'>, data: string) => Promise<{
         data: any;
         resolver: any;
-    } | null>;
+    } | undefined>;
 };
 export declare const resolverMulticallWrapper: {
     raw: ({ contracts }: ENSArgs<'contracts'>, data: {
@@ -18,7 +18,7 @@ export declare const resolverMulticallWrapper: {
         to: string;
         data: string;
     }>;
-    decode: ({ contracts }: ENSArgs<'contracts'>, data: string) => Promise<ethers.utils.Result | null>;
+    decode: ({ contracts }: ENSArgs<'contracts'>, data: string) => Promise<ethers.utils.Result | undefined>;
 };
 export declare const multicallWrapper: {
     raw: ({ contracts }: ENSArgs<'contracts'>, transactions: ethers.providers.TransactionRequest[], requireSuccess?: boolean) => Promise<{

@@ -1,9 +1,14 @@
-import { SearchInput } from '@app/components/SearchInput'
-import { Basic } from '@app/layouts/Basic'
+import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
+import { LanugageDropdown } from '@app/components/LanguageDropdown'
+import { LeadingHeading } from '@app/components/LeadingHeading'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
-import type { NextPage } from 'next'
+import Head from 'next/head'
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import ENSWithGradient from '../assets/ENSWithGradient.svg'
 
 const GradientTitle = styled.h1(
   ({ theme }) => css`
@@ -61,11 +66,42 @@ const Description = styled(Typography)(
   `,
 )
 
-const Home: NextPage = () => {
+const StyledENS = styled.div(
+  ({ theme }) => css`
+    height: ${theme.space['12']};
+  `,
+)
+
+const LogoAndLanguage = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
+  `,
+)
+
+export default function Page() {
+  const { isReady } = useRouter()
   const { t } = useTranslation('common')
+  const breakpoints = useBreakpoint()
 
   return (
-    <Basic>
+    <>
+      <Head>
+        <title>ENS</title>
+      </Head>
+      {isReady && !breakpoints.md && (
+        <LeadingHeading>
+          <LogoAndLanguage>
+            <StyledENS as={ENSWithGradient} />
+            <LanugageDropdown />
+          </LogoAndLanguage>
+          <HamburgerRoutes />
+        </LeadingHeading>
+      )}
       <Container>
         <Stack>
           <GradientTitle>{t('title')}</GradientTitle>
@@ -77,8 +113,6 @@ const Home: NextPage = () => {
           <SearchInput />
         </Stack>
       </Container>
-    </Basic>
+    </>
   )
 }
-
-export default Home

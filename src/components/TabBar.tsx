@@ -1,14 +1,10 @@
-import { useConnected } from '@app/hooks/useConnected'
+import { useActiveRoute } from '@app/hooks/useActiveRoute'
+import { getRoute } from '@app/routes'
 import { Avatar } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
-import { useRouter } from 'next/router'
-import { ComponentType, useMemo } from 'react'
 import styled, { css } from 'styled-components'
-import CogSVG from '../assets/Cog.svg'
-import GridSVG from '../assets/Grid.svg'
-import HeartSVG from '../assets/Heart.svg'
-import MagnifyingGlassSVG from '../assets/MagnifyingGlass.svg'
+import { RouteItem } from './@atoms/RouteItem'
 import { ConnectButtonWrapper } from './ConnectButton'
 
 const AvatarWrapper = styled.div<{ $active: boolean }>(
@@ -23,93 +19,6 @@ const AvatarWrapper = styled.div<{ $active: boolean }>(
     border-radius: ${theme.radii.full};
   `,
 )
-
-const LinkWrapper = styled.a<{ $hasNotification?: boolean }>(
-  ({ theme, $hasNotification }) => css`
-    position: relative;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    width: ${theme.space['12']};
-    ${$hasNotification &&
-    css`
-      &::after {
-        content: '';
-        position: absolute;
-        height: ${theme.space['4']};
-        width: ${theme.space['4']};
-        border: ${theme.space['0.5']} solid ${theme.colors.background};
-        background-color: ${theme.colors.red};
-        border-radius: ${theme.radii.full};
-        top: calc(-1 * ${theme.space['2']});
-        right: ${theme.space['0.5']};
-      }
-    `}
-  `,
-)
-
-const IconContainer = styled.div<{ $active: boolean }>(
-  ({ theme, $active }) => css`
-    color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
-    width: ${theme.space['6']};
-    height: ${theme.space['6']};
-  `,
-)
-
-const Icon = ({
-  as,
-  tab,
-  activeTab,
-  hasNotification,
-}: {
-  tab: TabItem
-  as: string | ComponentType<any>
-  activeTab: AnyTab
-  hasNotification?: boolean
-}) => {
-  return (
-    <Link href={tab.href} passHref>
-      <LinkWrapper $hasNotification={hasNotification}>
-        <IconContainer $active={activeTab === tab.name} as={as} />
-      </LinkWrapper>
-    </Link>
-  )
-}
-type TabItem = {
-  name: Tab
-  href: string
-  label: string
-}
-type Tab = 'search' | 'names' | 'profile' | 'favourites' | 'settings'
-type AnyTab = Tab | 'unknown'
-
-const tabs: TabItem[] = [
-  {
-    name: 'search',
-    href: '/',
-    label: 'tabs.search',
-  },
-  {
-    name: 'names',
-    href: '/names',
-    label: 'tabs.names',
-  },
-  {
-    name: 'profile',
-    href: '/my/profile',
-    label: 'tabs.profile',
-  },
-  {
-    name: 'favourites',
-    href: '/my/favourites',
-    label: 'tabs.favourites',
-  },
-  {
-    name: 'settings',
-    href: '/my/settings',
-    label: 'tabs.settings',
-  },
-]
 
 const TabWrapper = styled.div(
   ({ theme }) => css`
@@ -127,78 +36,75 @@ const TabWrapper = styled.div(
   `,
 )
 
-const TabContainer = styled.div<{ $connected: boolean }>(
-  ({ theme, $connected }) => css`
+const TabContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-evenly;
-    gap: ${theme.space['6']};
+    justify-content: space-between;
+    gap: ${theme.space['3']};
     border-radius: ${theme.radii.full};
     background-color: ${theme.colors.background};
     border: 1px solid rgba(0, 0, 0, 0.08);
     box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
-    padding: ${theme.space['2']} ${theme.space['6']};
-    ${!$connected &&
-    css`
-      padding-right: ${theme.space['2']};
-    `}
+    padding: ${theme.space['1.5']} ${theme.space['1.5']};
   `,
 )
 
-const BottomPlaceholder = styled.div(
+const TabItems = styled.div(
   ({ theme }) => css`
-    height: ${theme.space['28']};
+    display: flex;
+    flex-grow: 1;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-evenly;
+    gap: ${theme.space['3']};
+    padding: 0 ${theme.space['1.5']};
   `,
 )
+
+const profileRoute = getRoute('profile')
 
 export const TabBar = () => {
-  const router = useRouter()
-  const from = router.query.from as string
-  const path = router.asPath
-  const connected = useConnected()
-  const activeTab: AnyTab = useMemo(
-    () =>
-      tabs.find(({ href, name }) => href === path || from === name)?.name ||
-      'unknown',
-    [path, from],
-  )
+  const activeRoute = useActiveRoute()
 
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
 
   return (
     <>
-      <BottomPlaceholder />
-      <TabWrapper>
-        <TabContainer $connected={connected}>
-          <Icon activeTab={activeTab} tab={tabs[0]} as={MagnifyingGlassSVG} />
-          {!connected && (
-            <>
-              <Icon activeTab={activeTab} tab={tabs[4]} as={CogSVG} />
-              <div />
-            </>
-          )}
+      <TabWrapper id="tabbar">
+        <TabContainer>
           <ConnectButtonWrapper isTabBar>
-            {({ ensAvatar, zorb }) => (
-              <>
-                <Icon activeTab={activeTab} tab={tabs[1]} as={GridSVG} />
-                <Link href={tabs[2].href} passHref>
-                  <a>
-                    <AvatarWrapper $active={activeTab === tabs[2].name}>
-                      <Avatar label={tabs[2].label} src={ensAvatar || zorb} />
-                    </AvatarWrapper>
-                  </a>
-                </Link>
-                <Icon activeTab={activeTab} tab={tabs[3]} as={HeartSVG} />
-                <Icon
-                  activeTab={activeTab}
-                  tab={tabs[4]}
-                  as={CogSVG}
-                  hasNotification={pendingTransactions.length > 0}
-                />
-              </>
-            )}
+            {{
+              hasAccount: ({ ensAvatar, zorb }) => (
+                <TabItems>
+                  <RouteItem route={getRoute('search')} />
+                  <RouteItem route={getRoute('names')} />
+                  <Link href={profileRoute.href} passHref>
+                    <a>
+                      <AvatarWrapper $active={activeRoute === 'profile'}>
+                        <Avatar
+                          label={profileRoute.label}
+                          src={ensAvatar || zorb}
+                        />
+                      </AvatarWrapper>
+                    </a>
+                  </Link>
+                  <RouteItem route={getRoute('favourites')} />
+                  <RouteItem
+                    route={getRoute('settings')}
+                    hasNotification={pendingTransactions.length > 0}
+                  />
+                </TabItems>
+              ),
+              noAccountBefore: (
+                <TabItems>
+                  <RouteItem route={getRoute('search')} />
+                  <RouteItem route={getRoute('settings')} />
+                </TabItems>
+              ),
+            }}
           </ConnectButtonWrapper>
         </TabContainer>
       </TabWrapper>

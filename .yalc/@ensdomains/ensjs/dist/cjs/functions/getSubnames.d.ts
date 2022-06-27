@@ -16,6 +16,11 @@ declare type Params = {
     pageSize?: number;
     orderDirection?: 'asc' | 'desc';
     orderBy?: 'createdAt' | 'labelName';
+    lastSubnames: Array<any>;
+    isLargeQuery?: boolean;
 };
-declare const getSubnames: ({ gqlInstance }: ENSArgs<'gqlInstance'>, { name, page, pageSize, orderDirection, orderBy }: Params) => Promise<Subname[]>;
+declare const getSubnames: (injected: ENSArgs<'gqlInstance'>, functionArgs: Params) => Promise<{
+    subnames: Subname[];
+    subnameCount: number;
+}>;
 export default getSubnames;

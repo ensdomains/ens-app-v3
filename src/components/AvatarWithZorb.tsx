@@ -12,7 +12,7 @@ export const AvatarWithZorb = ({
 }: ComponentProps<typeof Avatar> & {
   name?: string
   address: string
-  network: string
+  network: number
 }) => {
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(address, 'address')

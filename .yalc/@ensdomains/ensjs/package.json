@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/ensjs",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "ENS javascript library for contract interaction",
   "main": "./dist/cjs/index.js",
   "types": "./dist/cjs/index.d.ts",
@@ -39,14 +39,14 @@
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/content-hash": "^2.5.7",
     "@ensdomains/ens-contracts": "^0.0.11",
-    "@ensdomains/eth-ens-namehash": "^2.0.15",
     "dns-packet": "^5.3.1",
     "ethers": "^5.6.1",
     "graphql": "^16.3.0",
-    "graphql-request": "^4.1.0"
+    "graphql-request": "^4.1.0",
+    "idna-uts46-hx": "3.4.0"
   },
   "peerDependencies": {
     "ethers": "*"
   },
-  "yalcSig": "89c74106aaee1f6d8fcd5b701020286c"
+  "yalcSig": "2d35edf75749e7de400b771e5c488c74"
 }

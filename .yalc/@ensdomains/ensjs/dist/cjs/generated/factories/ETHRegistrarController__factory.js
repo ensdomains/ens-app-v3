@@ -9,12 +9,12 @@ const _abi = [
     {
         inputs: [
             {
-                internalType: "contract BaseRegistrar",
+                internalType: "contract BaseRegistrarImplementation",
                 name: "_base",
                 type: "address",
             },
             {
-                internalType: "contract PriceOracle",
+                internalType: "contract IPriceOracle",
                 name: "_prices",
                 type: "address",
             },
@@ -28,8 +28,17 @@ const _abi = [
                 name: "_maxCommitmentAge",
                 type: "uint256",
             },
+            {
+                internalType: "contract ReverseRegistrar",
+                name: "_reverseRegistrar",
+                type: "address",
+            },
+            {
+                internalType: "contract INameWrapper",
+                name: "_nameWrapper",
+                type: "address",
+            },
         ],
-        payable: false,
         stateMutability: "nonpayable",
         type: "constructor",
     },
@@ -57,7 +66,13 @@ const _abi = [
             {
                 indexed: false,
                 internalType: "uint256",
-                name: "cost",
+                name: "baseCost",
+                type: "uint256",
+            },
+            {
+                indexed: false,
+                internalType: "uint256",
+                name: "premium",
                 type: "uint256",
             },
             {
@@ -107,19 +122,6 @@ const _abi = [
             {
                 indexed: true,
                 internalType: "address",
-                name: "oracle",
-                type: "address",
-            },
-        ],
-        name: "NewPriceOracle",
-        type: "event",
-    },
-    {
-        anonymous: false,
-        inputs: [
-            {
-                indexed: true,
-                internalType: "address",
                 name: "previousOwner",
                 type: "address",
             },
@@ -134,7 +136,6 @@ const _abi = [
         type: "event",
     },
     {
-        constant: true,
         inputs: [],
         name: "MIN_REGISTRATION_DURATION",
         outputs: [
@@ -144,12 +145,10 @@ const _abi = [
                 type: "uint256",
             },
         ],
-        payable: false,
         stateMutability: "view",
         type: "function",
     },
     {
-        constant: true,
         inputs: [
             {
                 internalType: "string",
@@ -165,12 +164,10 @@ const _abi = [
                 type: "bool",
             },
         ],
-        payable: false,
         stateMutability: "view",
         type: "function",
     },
     {
-        constant: false,
         inputs: [
             {
                 internalType: "bytes32",
@@ -180,12 +177,10 @@ const _abi = [
         ],
         name: "commit",
         outputs: [],
-        payable: false,
         stateMutability: "nonpayable",
         type: "function",
     },
     {
-        constant: true,
         inputs: [
             {
                 internalType: "bytes32",
@@ -201,27 +196,10 @@ const _abi = [
                 type: "uint256",
             },
         ],
-        payable: false,
         stateMutability: "view",
         type: "function",
     },
     {
-        constant: true,
-        inputs: [],
-        name: "isOwner",
-        outputs: [
-            {
-                internalType: "bool",
-                name: "",
-                type: "bool",
-            },
-        ],
-        payable: false,
-        stateMutability: "view",
-        type: "function",
-    },
-    {
-        constant: true,
         inputs: [
             {
                 internalType: "string",
@@ -234,9 +212,34 @@ const _abi = [
                 type: "address",
             },
             {
+                internalType: "uint256",
+                name: "duration",
+                type: "uint256",
+            },
+            {
                 internalType: "bytes32",
                 name: "secret",
                 type: "bytes32",
+            },
+            {
+                internalType: "address",
+                name: "resolver",
+                type: "address",
+            },
+            {
+                internalType: "bytes[]",
+                name: "data",
+                type: "bytes[]",
+            },
+            {
+                internalType: "bool",
+                name: "reverseRecord",
+                type: "bool",
+            },
+            {
+                internalType: "uint96",
+                name: "fuses",
+                type: "uint96",
             },
         ],
         name: "makeCommitment",
@@ -247,53 +250,10 @@ const _abi = [
                 type: "bytes32",
             },
         ],
-        payable: false,
         stateMutability: "pure",
         type: "function",
     },
     {
-        constant: true,
-        inputs: [
-            {
-                internalType: "string",
-                name: "name",
-                type: "string",
-            },
-            {
-                internalType: "address",
-                name: "owner",
-                type: "address",
-            },
-            {
-                internalType: "bytes32",
-                name: "secret",
-                type: "bytes32",
-            },
-            {
-                internalType: "address",
-                name: "resolver",
-                type: "address",
-            },
-            {
-                internalType: "address",
-                name: "addr",
-                type: "address",
-            },
-        ],
-        name: "makeCommitmentWithConfig",
-        outputs: [
-            {
-                internalType: "bytes32",
-                name: "",
-                type: "bytes32",
-            },
-        ],
-        payable: false,
-        stateMutability: "pure",
-        type: "function",
-    },
-    {
-        constant: true,
         inputs: [],
         name: "maxCommitmentAge",
         outputs: [
@@ -303,12 +263,10 @@ const _abi = [
                 type: "uint256",
             },
         ],
-        payable: false,
         stateMutability: "view",
         type: "function",
     },
     {
-        constant: true,
         inputs: [],
         name: "minCommitmentAge",
         outputs: [
@@ -318,12 +276,23 @@ const _abi = [
                 type: "uint256",
             },
         ],
-        payable: false,
         stateMutability: "view",
         type: "function",
     },
     {
-        constant: true,
+        inputs: [],
+        name: "nameWrapper",
+        outputs: [
+            {
+                internalType: "contract INameWrapper",
+                name: "",
+                type: "address",
+            },
+        ],
+        stateMutability: "view",
+        type: "function",
+    },
+    {
         inputs: [],
         name: "owner",
         outputs: [
@@ -333,42 +302,23 @@ const _abi = [
                 type: "address",
             },
         ],
-        payable: false,
         stateMutability: "view",
         type: "function",
     },
     {
-        constant: false,
-        inputs: [
+        inputs: [],
+        name: "prices",
+        outputs: [
             {
-                internalType: "string",
-                name: "name",
-                type: "string",
-            },
-            {
-                internalType: "address",
-                name: "owner",
+                internalType: "contract IPriceOracle",
+                name: "",
                 type: "address",
             },
-            {
-                internalType: "uint256",
-                name: "duration",
-                type: "uint256",
-            },
-            {
-                internalType: "bytes32",
-                name: "secret",
-                type: "bytes32",
-            },
         ],
-        name: "register",
-        outputs: [],
-        payable: true,
-        stateMutability: "payable",
+        stateMutability: "view",
         type: "function",
     },
     {
-        constant: false,
         inputs: [
             {
                 internalType: "string",
@@ -396,19 +346,27 @@ const _abi = [
                 type: "address",
             },
             {
-                internalType: "address",
-                name: "addr",
-                type: "address",
+                internalType: "bytes[]",
+                name: "data",
+                type: "bytes[]",
+            },
+            {
+                internalType: "bool",
+                name: "reverseRecord",
+                type: "bool",
+            },
+            {
+                internalType: "uint96",
+                name: "fuses",
+                type: "uint96",
             },
         ],
-        name: "registerWithConfig",
+        name: "register",
         outputs: [],
-        payable: true,
         stateMutability: "payable",
         type: "function",
     },
     {
-        constant: false,
         inputs: [
             {
                 internalType: "string",
@@ -423,21 +381,17 @@ const _abi = [
         ],
         name: "renew",
         outputs: [],
-        payable: true,
         stateMutability: "payable",
         type: "function",
     },
     {
-        constant: false,
         inputs: [],
         name: "renounceOwnership",
         outputs: [],
-        payable: false,
         stateMutability: "nonpayable",
         type: "function",
     },
     {
-        constant: true,
         inputs: [
             {
                 internalType: "string",
@@ -453,52 +407,40 @@ const _abi = [
         name: "rentPrice",
         outputs: [
             {
-                internalType: "uint256",
-                name: "",
-                type: "uint256",
+                components: [
+                    {
+                        internalType: "uint256",
+                        name: "base",
+                        type: "uint256",
+                    },
+                    {
+                        internalType: "uint256",
+                        name: "premium",
+                        type: "uint256",
+                    },
+                ],
+                internalType: "struct IPriceOracle.Price",
+                name: "price",
+                type: "tuple",
             },
         ],
-        payable: false,
         stateMutability: "view",
         type: "function",
     },
     {
-        constant: false,
-        inputs: [
+        inputs: [],
+        name: "reverseRegistrar",
+        outputs: [
             {
-                internalType: "uint256",
-                name: "_minCommitmentAge",
-                type: "uint256",
-            },
-            {
-                internalType: "uint256",
-                name: "_maxCommitmentAge",
-                type: "uint256",
-            },
-        ],
-        name: "setCommitmentAges",
-        outputs: [],
-        payable: false,
-        stateMutability: "nonpayable",
-        type: "function",
-    },
-    {
-        constant: false,
-        inputs: [
-            {
-                internalType: "contract PriceOracle",
-                name: "_prices",
+                internalType: "contract ReverseRegistrar",
+                name: "",
                 type: "address",
             },
         ],
-        name: "setPriceOracle",
-        outputs: [],
-        payable: false,
-        stateMutability: "nonpayable",
+        stateMutability: "view",
         type: "function",
     },
     {
-        constant: true,
         inputs: [
             {
                 internalType: "bytes4",
@@ -514,12 +456,10 @@ const _abi = [
                 type: "bool",
             },
         ],
-        payable: false,
         stateMutability: "pure",
         type: "function",
     },
     {
-        constant: false,
         inputs: [
             {
                 internalType: "address",
@@ -529,12 +469,10 @@ const _abi = [
         ],
         name: "transferOwnership",
         outputs: [],
-        payable: false,
         stateMutability: "nonpayable",
         type: "function",
     },
     {
-        constant: true,
         inputs: [
             {
                 internalType: "string",
@@ -550,16 +488,13 @@ const _abi = [
                 type: "bool",
             },
         ],
-        payable: false,
         stateMutability: "pure",
         type: "function",
     },
     {
-        constant: false,
         inputs: [],
         name: "withdraw",
         outputs: [],
-        payable: false,
         stateMutability: "nonpayable",
         type: "function",
     },

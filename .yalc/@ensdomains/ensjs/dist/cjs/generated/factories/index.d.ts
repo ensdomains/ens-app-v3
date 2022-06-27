@@ -1,4 +1,4 @@
-export { DoNotCallOnChainUniversalResolverProxy__factory } from "./DoNotCallOnChainUniversalResolverProxy__factory";
+export { ETHRegistrarController__factory } from "./ETHRegistrarController__factory";
 export { NameWrapper__factory } from "./NameWrapper__factory";
 export { PublicResolver__factory } from "./PublicResolver__factory";
 export { ReverseRegistrar__factory } from "./ReverseRegistrar__factory";

@@ -1,9 +1,9 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.parseInputType = exports.validateTLD = exports.validateName = void 0;
-const eth_ens_namehash_1 = require("@ensdomains/eth-ens-namehash");
 const utils_1 = require("ethers/lib/utils");
 const labels_1 = require("./labels");
+const normalise_1 = require("./normalise");
 const validateName = (name) => {
     const nameArray = name.split('.');
     const hasEmptyLabels = nameArray.some((label) => label.length == 0);
@@ -14,7 +14,7 @@ const validateName = (name) => {
             return label;
         }
         else {
-            return (0, labels_1.isEncodedLabelhash)(label) ? label : (0, eth_ens_namehash_1.normalize)(label);
+            return (0, labels_1.isEncodedLabelhash)(label) ? label : (0, normalise_1.normalise)(label);
         }
     });
     const normalizedName = normalizedArray.join('.');

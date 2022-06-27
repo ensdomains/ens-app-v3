@@ -1,0 +1,13 @@
+{
+  "addressDetails": "Address Details",
+  "nameCount": "{{count}} names",
+  "filter": "Filter",
+  "view": "View",
+  "noProfile": {
+    "title": "No primary name set",
+    "message": "This wallet needs to set a primary name to create a profile"
+  },
+  "errors": {
+    "names": "Could not find address"
+  }
+}

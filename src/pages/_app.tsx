@@ -1,4 +1,5 @@
 import { Notifications } from '@app/components/Notifications'
+import { Basic } from '@app/layouts/Basic'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import {
@@ -12,7 +13,9 @@ import {
   Theme,
 } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
+import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
+import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
@@ -46,7 +49,15 @@ body {
 
 body {
   background: radial-gradient(50% 50% at 50% 50%, rgba(82, 152, 255, 0.062) 0%, rgba(255, 255, 255, 0) 100%), #F7F7F7;
+}
+
+body, .min-safe {
   min-height: 100vh;
+  /* stylelint-disable-next-line value-no-vendor-prefix */
+  @supports (-webkit-touch-callout: none) {
+    /* stylelint-disable-next-line value-no-vendor-prefix */
+    min-height: -webkit-fill-available;
+  }
 }
 
 a {
@@ -80,8 +91,10 @@ const { provider, chains } = configureChains(
           }),
         ]
       : []),
+    jsonRpcProvider({
+      rpc: () => ({ http: 'https://web3.ens.domains/v1/mainnet' }),
+    }),
     infuraProvider({ infuraId: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-    jsonRpcProvider({ rpc: () => ({ http: 'https://cloudflare-eth.com/' }) }),
   ],
 )
 
@@ -104,7 +117,17 @@ const queryClient = new QueryClient({
   },
 })
 
-function MyApp({ Component, pageProps }: AppProps) {
+type NextPageWithLayout = NextPage & {
+  getLayout?: (page: ReactElement) => ReactNode
+}
+
+type AppPropsWithLayout = AppProps & {
+  Component: NextPageWithLayout
+}
+
+function MyApp({ Component, pageProps }: AppPropsWithLayout) {
+  const getLayout = Component.getLayout ?? ((page) => page)
+
   return (
     <I18nextProvider i18n={i18n}>
       <QueryClientProvider client={queryClient}>
@@ -116,7 +139,7 @@ function MyApp({ Component, pageProps }: AppProps) {
                   <GlobalStyle />
                   <ThorinGlobalStyles />
                   <Notifications />
-                  <Component {...pageProps} />
+                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>
