@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import ProfileEditor from '@app/components/pages/profile/ProfileEditor'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
@@ -154,6 +155,7 @@ export default function Page() {
           </DetailsWrapper>
         ),
       }}
+      <ProfileEditor />
     </Content>
   )
 }

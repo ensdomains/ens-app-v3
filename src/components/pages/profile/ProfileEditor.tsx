@@ -12,11 +12,10 @@ import {
   PlusSVG,
 } from '@ensdomains/thorin'
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
-import _ from 'lodash'
-import { Banner } from '../@atoms/Banner/Banner'
-import { SelectableInput } from '../@molecules/SelectableInput/SelectableInput'
-import { validateCryptoAddress } from '../../utils/validate'
-import { useProfile } from '../../hooks/useProfile'
+import { Banner } from '@app/components/@atoms/Banner/Banner'
+import { SelectableInput } from '../../@molecules/SelectableInput/SelectableInput'
+import { validateCryptoAddress } from '../../../utils/validate'
+import { useProfile } from '../../../hooks/useProfile'
 
 // enum GeneralType {
 //   nickname = 'nickname',
@@ -188,7 +187,7 @@ type ProfileType = {
     [key in AccountType]: string
   }
   address: {
-    [key in CoinType]: string
+    [key in CoinType]?: string
   }
   website: {
     ipfs?: string
@@ -238,7 +237,7 @@ const ProfileEditor = () => {
   const handleRemoveCoinRecord = (coin: CoinType) => () => {
     console.log('>>>>')
     const oldAddress = getValues('address')
-    const newAddress = { [coin]: _, ...oldAddress }
+    const { [coin]: _, ...newAddress } = oldAddress
     setValue('address', newAddress)
     setExistingCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
     setNewCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
@@ -332,12 +331,12 @@ const ProfileEditor = () => {
       reset(resp)
       setExistingCoinRecords(Object.keys(resp.address) as CoinType[])
     }, 1000)
-  }, [profile])
+  }, [profile, reset])
 
   return (
     <>
       <Modal open onDismiss={() => {}}>
-        <Container onSubmit={handleSubmit((data) => console.log(data))}>
+        <Container onSubmit={handleSubmit((data: any) => console.log(data))}>
           <Banner>
             <AvatarWrapper>
               <Avatar label="profile-avatar" src="" noBorder />
