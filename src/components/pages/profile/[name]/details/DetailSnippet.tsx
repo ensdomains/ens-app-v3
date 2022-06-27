@@ -78,6 +78,8 @@ export const DetailSnippet = ({
   expiryDate?: Date | null
   canSend: boolean
 }) => {
+  if (!expiryDate && !canSend) return null
+
   return (
     <Container>
       <Row>

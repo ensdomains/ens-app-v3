@@ -1,11 +1,11 @@
+import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
+import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 
 const Container = styled.div(
   ({ theme }) => css`

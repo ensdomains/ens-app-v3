@@ -21,12 +21,9 @@ export const useNameDetails = (name: string) => {
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
     () =>
-      labelCount > 2
-        ? Promise.all([getOwner(normalisedName)])
-        : batch(
-            getOwner.batch(normalisedName),
-            getExpiry.batch(normalisedName),
-          ),
+      labelCount === 2 && normalisedName.endsWith('.eth')
+        ? batch(getOwner.batch(normalisedName), getExpiry.batch(normalisedName))
+        : Promise.all([getOwner(normalisedName)]),
     {
       enabled: !!(normalisedName && valid),
     },
