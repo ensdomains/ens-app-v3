@@ -221,6 +221,9 @@ const TextWrapper = styled.div(
       text-overflow: clip;
       text-align: left;
       direction: rtl;
+      &::before {
+        content: '‎';
+      }
     }
   `,
 )
