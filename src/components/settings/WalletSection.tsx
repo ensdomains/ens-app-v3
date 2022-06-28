@@ -1,12 +1,11 @@
 import { Button } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
 import { SectionContainer, SectionHeading } from './Section'
+import { useLoadedTranslation } from '../../hooks/useLoadedTranslation'
 
 export const WalletSection = () => {
-  const { t: tc } = useTranslation()
-  const { t } = useTranslation('settings')
-
+  const { t: tc } = useLoadedTranslation()
+  const { t } = useLoadedTranslation('settings')
   const { disconnect } = useDisconnect()
 
   return (

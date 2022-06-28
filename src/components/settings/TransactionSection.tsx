@@ -6,11 +6,11 @@ import {
   useRecentTransactions,
 } from '@rainbow-me/rainbowkit'
 import { useState } from 'react'
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Card } from '../Card'
 import { Outlink } from '../Outlink'
 import { SectionContainer, SectionHeading } from './Section'
+import { useLoadedTranslation } from '../../hooks/useLoadedTranslation'
 
 const TransactionSectionHeadingContainer = styled.div(
   () => css`
@@ -127,8 +127,7 @@ const ViewMoreInner = styled(Typography)(
 )
 
 export const TransactionSection = () => {
-  const { t: tc } = useTranslation()
-  const { t } = useTranslation('settings')
+  const { t } = useLoadedTranslation(['common', 'settings'])
 
   const chainName = useChainName()
   const transactions = useRecentTransactions()
@@ -145,7 +144,7 @@ export const TransactionSection = () => {
           variant="large"
           weight="bold"
         >
-          {t('section.transaction.title')}
+          {t('section.transaction.title', 'Transactions', { ns: 'settings' })}
         </TransactionSectionHeading>
         <div>
           <Button
@@ -155,7 +154,7 @@ export const TransactionSection = () => {
             onClick={() => clearTransactions()}
             disabled={transactions.length === 0}
           >
-            {t('section.transaction.clear')}
+            {t('section.transaction.clear', 'Clear', { ns: 'settings' })}
           </Button>
         </div>
       </TransactionSectionHeadingContainer>
@@ -170,13 +169,13 @@ export const TransactionSection = () => {
                 {transaction.status === 'pending' && <Spinner color="accent" />}
                 <TransactionInfoContainer>
                   <Typography weight="bold">
-                    {tc(`transaction.description.${transaction.description}`)}
+                    {t(`transaction.description.${transaction.description}`)}
                   </Typography>
                   <TransactionStatus
                     $error={transaction.status === 'failed'}
                     variant="labelHeading"
                   >
-                    {tc(`transaction.status.${transaction.status}.regular`)}
+                    {t(`transaction.status.${transaction.status}.regular`)}
                   </TransactionStatus>
                 </TransactionInfoContainer>
                 <ViewLinkContainer>
