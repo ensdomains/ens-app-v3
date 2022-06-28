@@ -62,7 +62,7 @@ export const useRegistrationStatus = (name: string) => {
       return 'notImported'
     },
     {
-      enabled: ready,
+      enabled: ready && !!name,
     },
   )
 

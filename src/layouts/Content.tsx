@@ -150,7 +150,7 @@ export const Content = ({
   children: {
     warning?: {
       type: 'warning' | 'error' | 'info'
-      message: string
+      message: string | React.ReactNode
     }
     header?: React.ReactNode
     leading?: React.ReactNode

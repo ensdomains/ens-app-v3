@@ -1,12 +1,13 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useQuery } from 'react-query'
 import { useProfile } from './useProfile'
+import { useRegistrationStatus } from './useRegistrationStatus'
 import { useValidate } from './useValidate'
 
 export const useNameDetails = (name: string) => {
-  const [error, setError] = useState<string | null>(null)
+  const [error, setError] = useState<string | ReactNode | null>(null)
 
   const { ready, getOwner, getExpiry, batch } = useEns()
 
@@ -29,6 +30,9 @@ export const useNameDetails = (name: string) => {
     },
   )
 
+  const { data: registrationStatus, isLoading: registrationStatusLoading } =
+    useRegistrationStatus(normalisedName)
+
   const ownerData = batchData?.[0] as Awaited<ReturnType<typeof getOwner>>
   const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
 
@@ -44,6 +48,24 @@ export const useNameDetails = (name: string) => {
     } else if (profile && profile.message) {
       setError(profile.message)
     } else if (
+      registrationStatus === 'available' ||
+      registrationStatus === 'premium' ||
+      registrationStatus === 'notImported' ||
+      registrationStatus === 'notOwned'
+    ) {
+      setError(
+        <>
+          Some features are not yet available, but you can still{' '}
+          <a href={`https://app.ens.domains/name/${normalisedName}`}>
+            view this name in the old app.
+          </a>
+        </>,
+      )
+    } else if (registrationStatus === 'invalid') {
+      setError('This name is not valid.')
+    } else if (registrationStatus === 'gracePeriod') {
+      setError('This name is expiring soon.')
+    } else if (
       !profile &&
       !profileLoading &&
       ready &&
@@ -57,7 +79,8 @@ export const useNameDetails = (name: string) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valid, profile?.isMigrated, profile?.message])
 
-  const isLoading = !ready || profileLoading || batchLoading
+  const isLoading =
+    !ready || profileLoading || batchLoading || registrationStatusLoading
 
   return {
     error,
