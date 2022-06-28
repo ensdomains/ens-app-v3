@@ -34,7 +34,7 @@ jobs:
 
       - name: Check Yalc
         if: ${{ true }}
-        run: if [ ! ${{ needs.yalc_check.outputs.can_deploy }} ]; then exit 1; else exit 0; fi
+        run: if [ ${{ needs.yalc_check.outputs.can_deploy }} != true ]; then exit 1; else exit 0; fi
 
       - uses: actions/setup-node@v3
         with:
