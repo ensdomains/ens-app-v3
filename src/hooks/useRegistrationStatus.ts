@@ -56,7 +56,7 @@ export const useRegistrationStatus = (name: string) => {
       if (owner && owner.owner !== emptyAddress) {
         return 'registered'
       }
-      if (isDotETH) {
+      if (isDotETH || labels.length > 2) {
         return 'notOwned'
       }
       return 'notImported'
