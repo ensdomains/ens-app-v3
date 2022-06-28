@@ -1,4 +1,5 @@
 import { ExclamationSVG, Typography } from '@ensdomains/thorin'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 const ErrorIcon = styled.div(
@@ -31,6 +32,9 @@ const StyledErrorContainer = styled.div(
     color: ${theme.colors.textSecondary};
     & > div {
       line-height: ${theme.lineHeights.normal};
+      & > a {
+        color: ${theme.colors.blue};
+      }
     }
   `,
 )
@@ -39,7 +43,7 @@ export const ErrorContainer = ({
 }: {
   // eslint-disable-next-line react/no-unused-prop-types
   type: 'warning' | 'error' | 'info'
-  message: string
+  message: string | ReactNode
 }) => {
   return (
     <StyledErrorContainer>
