@@ -22,6 +22,7 @@ jobs:
           exit 1
 
   deploy:
+    if: ${{ always() }}
     runs-on: ubuntu-latest
     needs: [yalc_check]
     permissions:
