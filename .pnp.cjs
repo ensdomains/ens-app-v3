@@ -604,7 +604,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ens-test-env",\
-        "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=8679b9&locator=ens-app-v2%40workspace%3A."\
+        "npm:0.1.0"\
       ],\
       [\
         "@ensdomains/ens-validation",\
@@ -2687,7 +2687,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "cli-progress",\
-        "npm:3.10.0"\
+        "npm:3.11.2"\
       ],\
       [\
         "cli-table3",\
@@ -2811,7 +2811,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "compress-brotli",\
-        "npm:1.3.6"\
+        "npm:1.3.8"\
       ],\
       [\
         "compressible",\
@@ -4251,7 +4251,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "http2-wrapper",\
-        "npm:2.1.10"\
+        "npm:2.1.11"\
       ],\
       [\
         "https-browserify",\
@@ -7498,7 +7498,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "y18n",\
-        "npm:4.0.3"\
+        "npm:5.0.8"\
       ],\
       [\
         "yaeti",\
@@ -7554,7 +7554,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@cloudflare/wrangler", "npm:1.19.12"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
-            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=8679b9&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
@@ -11065,20 +11065,21 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ens-test-env", [\
-        ["file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=8679b9&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-file-d9f4a0a875/node_modules/@ensdomains/ens-test-env/",\
+        ["npm:0.1.0", {\
+          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-npm-0.1.0-d96ee2bd4d/node_modules/@ensdomains/ens-test-env/",\
           "packageDependencies": [\
-            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=8679b9&locator=ens-app-v2%40workspace%3A."],\
-            ["@ethersproject/wallet", "npm:5.6.0"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
+            ["@ethersproject/wallet", "npm:5.6.2"],\
             ["ansi-colors", "npm:4.1.1"],\
-            ["cli-progress", "npm:3.10.0"],\
-            ["concurrently", "npm:7.1.0"],\
+            ["cli-progress", "npm:3.11.2"],\
+            ["commander", "npm:9.3.0"],\
+            ["concurrently", "npm:7.2.2"],\
             ["dotenv", "npm:16.0.0"],\
-            ["fs-extra", "npm:10.0.1"],\
+            ["fs-extra", "npm:10.1.0"],\
             ["ganache", "npm:7.0.4"],\
-            ["got", "npm:12.0.3"],\
+            ["got", "npm:12.1.0"],\
             ["lz4", "npm:0.6.5"],\
-            ["node-fetch", "npm:3.2.3"],\
+            ["node-fetch", "npm:3.2.6"],\
             ["progress-stream", "npm:2.0.0"],\
             ["tar-fs", "npm:2.1.1"],\
             ["wait-on", "npm:6.0.1"]\
@@ -19103,7 +19104,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["clone-response", "npm:1.0.2"],\
             ["get-stream", "npm:5.2.0"],\
             ["http-cache-semantics", "npm:4.1.0"],\
-            ["keyv", "npm:4.2.2"],\
+            ["keyv", "npm:4.3.2"],\
             ["lowercase-keys", "npm:2.0.0"],\
             ["normalize-url", "npm:6.1.0"],\
             ["responselike", "npm:2.0.0"]\
@@ -19628,10 +19629,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["cli-progress", [\
-        ["npm:3.10.0", {\
-          "packageLocation": "./.yarn/cache/cli-progress-npm-3.10.0-a1609d715c-8e22c6265f.zip/node_modules/cli-progress/",\
+        ["npm:3.11.2", {\
+          "packageLocation": "./.yarn/cache/cli-progress-npm-3.11.2-6cecb7043d-147d26b80c.zip/node_modules/cli-progress/",\
           "packageDependencies": [\
-            ["cli-progress", "npm:3.10.0"],\
+            ["cli-progress", "npm:3.11.2"],\
             ["string-width", "npm:4.2.3"]\
           ],\
           "linkType": "HARD"\
@@ -20005,6 +20006,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["commander", "npm:9.1.0"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:9.3.0", {\
+          "packageLocation": "./.yarn/cache/commander-npm-9.3.0-1393a6e1f6-d421ce66fe.zip/node_modules/commander/",\
+          "packageDependencies": [\
+            ["commander", "npm:9.3.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["common-tags", [\
@@ -20035,10 +20043,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["compress-brotli", [\
-        ["npm:1.3.6", {\
-          "packageLocation": "./.yarn/cache/compress-brotli-npm-1.3.6-88880660b1-9db8e082a3.zip/node_modules/compress-brotli/",\
+        ["npm:1.3.8", {\
+          "packageLocation": "./.yarn/cache/compress-brotli-npm-1.3.8-9b6ceac281-de7589d692.zip/node_modules/compress-brotli/",\
           "packageDependencies": [\
-            ["compress-brotli", "npm:1.3.6"],\
+            ["compress-brotli", "npm:1.3.8"],\
             ["@types/json-buffer", "npm:3.0.0"],\
             ["json-buffer", "npm:3.0.1"]\
           ],\
@@ -20106,6 +20114,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["supports-color", "npm:8.1.1"],\
             ["tree-kill", "npm:1.2.2"],\
             ["yargs", "npm:16.2.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:7.2.2", {\
+          "packageLocation": "./.yarn/cache/concurrently-npm-7.2.2-acda7e7c25-ae9604032d.zip/node_modules/concurrently/",\
+          "packageDependencies": [\
+            ["concurrently", "npm:7.2.2"],\
+            ["chalk", "npm:4.1.2"],\
+            ["date-fns", "npm:2.28.0"],\
+            ["lodash", "npm:4.17.21"],\
+            ["rxjs", "npm:7.5.5"],\
+            ["shell-quote", "npm:1.7.3"],\
+            ["spawn-command", "npm:0.0.2"],\
+            ["supports-color", "npm:8.1.1"],\
+            ["tree-kill", "npm:1.2.2"],\
+            ["yargs", "npm:17.5.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -21854,7 +21878,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@cloudflare/wrangler", "npm:1.19.12"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
-            ["@ensdomains/ens-test-env", "file:.yalc/@ensdomains/ens-test-env#.yalc/@ensdomains/ens-test-env::hash=8679b9&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
@@ -24969,6 +24993,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
+        ["npm:10.1.0", {\
+          "packageLocation": "./.yarn/cache/fs-extra-npm-10.1.0-86573680ed-dc94ab3709.zip/node_modules/fs-extra/",\
+          "packageDependencies": [\
+            ["fs-extra", "npm:10.1.0"],\
+            ["graceful-fs", "npm:4.2.10"],\
+            ["jsonfile", "npm:6.1.0"],\
+            ["universalify", "npm:2.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:4.0.3", {\
           "packageLocation": "./.yarn/cache/fs-extra-npm-4.0.3-2a1f6bc181-c5ae3c7043.zip/node_modules/fs-extra/",\
           "packageDependencies": [\
@@ -25456,10 +25490,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["got", [\
-        ["npm:12.0.3", {\
-          "packageLocation": "./.yarn/cache/got-npm-12.0.3-9552354edc-69a5c625ff.zip/node_modules/got/",\
+        ["npm:12.1.0", {\
+          "packageLocation": "./.yarn/cache/got-npm-12.1.0-5d0f237e8e-1cc9af6ca5.zip/node_modules/got/",\
           "packageDependencies": [\
-            ["got", "npm:12.0.3"],\
+            ["got", "npm:12.1.0"],\
             ["@sindresorhus/is", "npm:4.6.0"],\
             ["@szmarczak/http-timer", "npm:5.0.1"],\
             ["@types/cacheable-request", "npm:6.0.2"],\
@@ -25469,7 +25503,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["decompress-response", "npm:6.0.0"],\
             ["form-data-encoder", "npm:1.7.1"],\
             ["get-stream", "npm:6.0.1"],\
-            ["http2-wrapper", "npm:2.1.10"],\
+            ["http2-wrapper", "npm:2.1.11"],\
             ["lowercase-keys", "npm:3.0.0"],\
             ["p-cancelable", "npm:3.0.0"],\
             ["responselike", "npm:2.0.0"]\
@@ -26185,10 +26219,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["http2-wrapper", [\
-        ["npm:2.1.10", {\
-          "packageLocation": "./.yarn/cache/http2-wrapper-npm-2.1.10-f431ef2ec8-54de295760.zip/node_modules/http2-wrapper/",\
+        ["npm:2.1.11", {\
+          "packageLocation": "./.yarn/cache/http2-wrapper-npm-2.1.11-a7577d6368-5da05aa2c7.zip/node_modules/http2-wrapper/",\
           "packageDependencies": [\
-            ["http2-wrapper", "npm:2.1.10"],\
+            ["http2-wrapper", "npm:2.1.11"],\
             ["quick-lru", "npm:5.1.1"],\
             ["resolve-alpn", "npm:1.2.1"]\
           ],\
@@ -28493,11 +28527,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:4.2.2", {\
-          "packageLocation": "./.yarn/cache/keyv-npm-4.2.2-d1668ef518-1d03674145.zip/node_modules/keyv/",\
+        ["npm:4.3.2", {\
+          "packageLocation": "./.yarn/cache/keyv-npm-4.3.2-036dc9c0ad-237952f5fa.zip/node_modules/keyv/",\
           "packageDependencies": [\
-            ["keyv", "npm:4.2.2"],\
-            ["compress-brotli", "npm:1.3.6"],\
+            ["keyv", "npm:4.3.2"],\
+            ["compress-brotli", "npm:1.3.8"],\
             ["json-buffer", "npm:3.0.1"]\
           ],\
           "linkType": "HARD"\
@@ -29276,7 +29310,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["lz4", "npm:0.6.5"],\
             ["buffer", "npm:5.7.1"],\
             ["cuint", "npm:0.2.2"],\
-            ["nan", "npm:2.15.0"],\
+            ["nan", "npm:2.16.0"],\
             ["node-gyp", "npm:9.0.0"],\
             ["xxhashjs", "npm:0.2.2"]\
           ],\
@@ -30186,6 +30220,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["node-gyp", "npm:9.0.0"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:2.16.0", {\
+          "packageLocation": "./.yarn/unplugged/nan-npm-2.16.0-cac314a230/node_modules/nan/",\
+          "packageDependencies": [\
+            ["nan", "npm:2.16.0"],\
+            ["node-gyp", "npm:9.0.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["nano-base32", [\
@@ -30440,10 +30482,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["npm:3.2.3", {\
-          "packageLocation": "./.yarn/cache/node-fetch-npm-3.2.3-0f62fc8780-6f702b2683.zip/node_modules/node-fetch/",\
+        ["npm:3.2.6", {\
+          "packageLocation": "./.yarn/cache/node-fetch-npm-3.2.6-6a8c53b796-ece307ace3.zip/node_modules/node-fetch/",\
           "packageDependencies": [\
-            ["node-fetch", "npm:3.2.3"],\
+            ["node-fetch", "npm:3.2.6"],\
             ["data-uri-to-buffer", "npm:4.0.0"],\
             ["fetch-blob", "npm:3.1.5"],\
             ["formdata-polyfill", "npm:4.0.10"]\
@@ -38530,6 +38572,20 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
+        ["npm:17.5.1", {\
+          "packageLocation": "./.yarn/cache/yargs-npm-17.5.1-0902fa46de-00d58a2c05.zip/node_modules/yargs/",\
+          "packageDependencies": [\
+            ["yargs", "npm:17.5.1"],\
+            ["cliui", "npm:7.0.4"],\
+            ["escalade", "npm:3.1.1"],\
+            ["get-caller-file", "npm:2.0.5"],\
+            ["require-directory", "npm:2.1.1"],\
+            ["string-width", "npm:4.2.3"],\
+            ["y18n", "npm:5.0.8"],\
+            ["yargs-parser", "npm:21.0.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["npm:4.8.1", {\
           "packageLocation": "./.yarn/cache/yargs-npm-4.8.1-3412e4101b-5d0a45dcea.zip/node_modules/yargs/",\
           "packageDependencies": [\
@@ -38591,6 +38647,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/yargs-parser-npm-20.2.9-a1d19e598d-8bb69015f2.zip/node_modules/yargs-parser/",\
           "packageDependencies": [\
             ["yargs-parser", "npm:20.2.9"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:21.0.1", {\
+          "packageLocation": "./.yarn/cache/yargs-parser-npm-21.0.1-b778fd3462-c3ea2ed12c.zip/node_modules/yargs-parser/",\
+          "packageDependencies": [\
+            ["yargs-parser", "npm:21.0.1"]\
           ],\
           "linkType": "HARD"\
         }]\
