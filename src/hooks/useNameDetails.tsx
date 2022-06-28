@@ -1,12 +1,14 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
 import { ReactNode, useEffect, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { useProfile } from './useProfile'
 import { useRegistrationStatus } from './useRegistrationStatus'
 import { useValidate } from './useValidate'
 
 export const useNameDetails = (name: string) => {
+  const { t } = useTranslation('profile')
   const { ready, getOwner, getExpiry, batch } = useEns()
 
   const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
@@ -56,9 +58,9 @@ export const useNameDetails = (name: string) => {
     ) {
       return (
         <>
-          Some features are not yet available, but you can still{' '}
+          {t('errors.featureNotAvailable')}
           <a href={`https://app.ens.domains/name/${normalisedName}`}>
-            view this name in the old app.
+            {t('errors.featureNotAvailableLink')}
           </a>
         </>
       )
@@ -86,6 +88,7 @@ export const useNameDetails = (name: string) => {
     ready,
     registrationStatus,
     status,
+    t,
     valid,
   ])
 
