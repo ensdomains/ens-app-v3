@@ -1,14 +1,12 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { ReactNode, useEffect, useState } from 'react'
+import { ReactNode, useEffect, useMemo } from 'react'
 import { useQuery } from 'react-query'
 import { useProfile } from './useProfile'
 import { useRegistrationStatus } from './useRegistrationStatus'
 import { useValidate } from './useValidate'
 
 export const useNameDetails = (name: string) => {
-  const [error, setError] = useState<string | ReactNode | null>(null)
-
   const { ready, getOwner, getExpiry, batch } = useEns()
 
   const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
@@ -40,42 +38,58 @@ export const useNameDetails = (name: string) => {
 
   const truncatedName = truncateFormat(normalisedName)
 
-  useEffect(() => {
+  const error: string | ReactNode | null = useMemo(() => {
     if (valid === false) {
-      setError('This name is invalid.')
-    } else if (profile && !profile.isMigrated) {
-      setError('This name is not migrated to the new registry.')
-    } else if (profile && profile.message) {
-      setError(profile.message)
-    } else if (
+      return 'This name is invalid.'
+    }
+    if (profile && !profile.isMigrated) {
+      return 'This name is not migrated to the new registry.'
+    }
+    if (profile && profile.message) {
+      return profile.message
+    }
+    if (
       registrationStatus === 'available' ||
       registrationStatus === 'premium' ||
       registrationStatus === 'notImported' ||
       registrationStatus === 'notOwned'
     ) {
-      setError(
+      return (
         <>
           Some features are not yet available, but you can still{' '}
           <a href={`https://app.ens.domains/name/${normalisedName}`}>
             view this name in the old app.
           </a>
-        </>,
+        </>
       )
-    } else if (registrationStatus === 'invalid') {
-      setError('This name is not valid.')
-    } else if (registrationStatus === 'gracePeriod') {
-      setError('This name is expiring soon.')
-    } else if (
+    }
+    if (registrationStatus === 'invalid') {
+      return 'This name is not valid.'
+    }
+    if (registrationStatus === 'gracePeriod') {
+      return 'This name is expiring soon.'
+    }
+    if (
       !profile &&
       !profileLoading &&
       ready &&
       status !== 'idle' &&
       status !== 'loading'
     ) {
-      setError('Unknown error.')
-    } else {
-      setError(null)
+      return 'Unknown error.'
     }
+    return null
+  }, [
+    normalisedName,
+    profile,
+    profileLoading,
+    ready,
+    registrationStatus,
+    status,
+    valid,
+  ])
+
+  useEffect(() => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [valid, profile?.isMigrated, profile?.message])
 
