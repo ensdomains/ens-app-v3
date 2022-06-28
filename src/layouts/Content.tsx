@@ -160,19 +160,23 @@ export const Content = ({
   const router = useRouter()
   const breakpoints = useBreakpoint()
 
+  const WarningComponent = !loading && children.warning && (
+    <WarningWrapper>
+      <ErrorContainer
+        message={children.warning.message}
+        type={children.warning.type}
+      />
+    </WarningWrapper>
+  )
+
   return (
     <>
       <Head>
         <title>{title} - ENS</title>
       </Head>
-      {!loading && children.warning && (
-        <WarningWrapper>
-          <ErrorContainer
-            message={children.warning.message}
-            type={children.warning.type}
-          />
-        </WarningWrapper>
-      )}
+
+      {breakpoints.md && WarningComponent}
+
       <HeadingItems $spacing={spacing}>
         <Skeleton loading={loading} as={FullWidthSkeleton as any}>
           <CustomLeadingHeading $customSpacing={spacing !== '270px 2fr'}>
@@ -208,6 +212,8 @@ export const Content = ({
           </ContentContainer>
         )}
       </HeadingItems>
+
+      {!breakpoints.md && WarningComponent}
 
       {children.leading ? (
         <ContentContainer>
