@@ -18,7 +18,8 @@ jobs:
         run: npm i -g yalc
 
       - id: has_yalc
-        run: ! yalc check | grep -qe .
+        run: |
+          ! yalc check | grep -qe .
 
   deploy:
     runs-on: ubuntu-latest
