@@ -1958,24 +1958,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
-  version: 3.1.0
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=a5b475&locator=ens-app-v2%40workspace%3A."
-  dependencies:
-    "@ensdomains/address-encoder": ^0.2.16
-    "@ensdomains/content-hash": ^2.5.7
-    "@ensdomains/ens-contracts": ^0.0.11
-    dns-packet: ^5.3.1
-    ethers: ^5.6.1
-    graphql: ^16.3.0
-    graphql-request: ^4.1.0
-    idna-uts46-hx: 3.4.0
-  peerDependencies:
-    ethers: "*"
-  checksum: 506a1c2198638c6f6f4dcb081e09d5948649d54e418046139bc16f8484045e969ccdf17c784efb75653a3349504fdf14f2e4a7af3206e61177b9794ac98c1bd0
-  languageName: node
-  linkType: hard
-
 "@ensdomains/ensjs@npm:^2.0.1":
   version: 2.1.0
   resolution: "@ensdomains/ensjs@npm:2.1.0"
@@ -1989,6 +1971,24 @@ __metadata:
     ethers: ^5.0.13
     js-sha3: ^0.8.0
   checksum: bc284cefea4959b9a9f55e84e281140d9c17ecca21be798f5a463a924a7c3f52ae0072d3e6c8c2eb23a7bd4df0f7597ded212a5f706d199f187c00bc6db5d076
+  languageName: node
+  linkType: hard
+
+"@ensdomains/ensjs@npm:^3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.2"
+  dependencies:
+    "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/content-hash": ^2.5.7
+    "@ensdomains/ens-contracts": ^0.0.11
+    dns-packet: ^5.3.1
+    ethers: ^5.6.1
+    graphql: ^16.3.0
+    graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
+  peerDependencies:
+    ethers: "*"
+  checksum: 817007463debbe30a85cc429c188fc7d89dcf051b795647a3218f4893a7268f75dfef67f284db487c656cf7c38194c5796faa91214beed97dd969be4780a4107
   languageName: node
   linkType: hard
 
@@ -11132,7 +11132,7 @@ __metadata:
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-test-env": "file:.yalc/@ensdomains/ens-test-env"
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
+    "@ensdomains/ensjs": ^3.0.0-alpha.2
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": ^0.6.1
     "@next/bundle-analyzer": ^12.0.10
