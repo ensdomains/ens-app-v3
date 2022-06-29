@@ -13,28 +13,11 @@ jobs:
         with:
           concurrent_skipping: 'same_content_newer'
 
-  yarn_check:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-
-      - run: yarn install --immutable --check-cache
-
-      - name: Zip .yarn for artifact upload
-        run: zip yarn.zip ./.yarn -r
-
-      - name: Upload .yarn
-        uses: actions/upload-artifact@v3
-        with:
-          name: yarn-${{ github.sha }}
-          path: yarn.zip
-          retention-days: 1
-
   stateful:
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     timeout-minutes: 10
     runs-on: ubuntu-latest
-    needs: [pre_job, yarn_check]
+    needs: [pre_job]
     strategy:
       matrix:
         node-version: [1, 2]
@@ -42,16 +25,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Download .yarn
-        uses: actions/download-artifact@v3
-        with:
-          name: yarn-${{ github.sha }}
-
-      - name: Remove existing .yarn folder
-        run: rm -rf ./.yarn
-
-      - name: Unzip .yarn from artifact download
-        run: unzip yarn.zip
+      - name: Install yarn packages
+        run: yarn
 
       - run: yarn buildandstart & yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
