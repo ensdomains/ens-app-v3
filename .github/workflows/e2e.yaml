@@ -20,11 +20,14 @@ jobs:
 
       - run: yarn install --immutable --check-cache
 
+      - name: Zip .yarn for artifact upload
+        run: zip yarn.zip ./.yarn -r
+
       - name: Upload .yarn
         uses: actions/upload-artifact@v3
         with:
           name: yarn-${{ github.sha }}
-          path: .yarn
+          path: yarn.zip
           retention-days: 1
 
   stateful:
@@ -43,6 +46,12 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: yarn-${{ github.sha }}
+
+      - name: Remove existing .yarn folder
+        run: rm -rf ./.yarn
+
+      - name: Unzip .yarn from artifact download
+        run: unzip yarn.zip
 
       - run: yarn buildandstart & yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
