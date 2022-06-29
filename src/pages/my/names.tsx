@@ -87,7 +87,7 @@ type ViewType = 'grid' | 'list'
 type FilterType = Name['type'] | 'none'
 
 export default function Page() {
-  const { t } = useTranslation('names')
+  const { t } = useTranslation()
   const router = useRouter()
   const { data: addressData, isLoading, status } = useAccount()
   const address = (router.query.address as string) || addressData?.address
@@ -129,10 +129,10 @@ export default function Page() {
 
   return (
     <Content
-      title={t('title')}
-      subtitle={`${t('subtitle.start')} ${
-        isSelf ? t('subtitle.your') : t('subtitle.this')
-      } ${t('subtitle.wallet')}`}
+      title={t('names.title')}
+      subtitle={`${t('names.subtitle.start')} ${
+        isSelf ? t('names.subtitle.your') : t('names.subtitle.this')
+      } ${t('names.subtitle.wallet')}`}
       alwaysShowSubtitle
       singleColumnContent
       spacing={spacing}

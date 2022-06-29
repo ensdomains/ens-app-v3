@@ -70,7 +70,7 @@ const FilterPopover = ({
   onSortChange,
   onFilterChange,
 }: PopoverProps) => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newFilter = e.target.value as FilterType

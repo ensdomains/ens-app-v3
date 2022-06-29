@@ -47,7 +47,7 @@ const PageButtonsWrapper = styled.div(
 type FilterType = Name['type'] | 'none'
 
 const Page = () => {
-  const { t } = useTranslation('address')
+  const { t } = useTranslation()
   const { query, isReady } = useRouter()
   const address = query.address as string
   const chainId = useChainId()
@@ -117,12 +117,12 @@ const Page = () => {
 
   const hasErrors = namesStatus === 'error'
 
-  const error = hasErrors ? t('errors.names') : ''
+  const error = hasErrors ? t('address.errors.names') : ''
 
   return (
     <Content
       alwaysShowSubtitle
-      subtitle={t('addressDetails')}
+      subtitle={t('address.addressDetails')}
       title={shortenAddress(address)}
       loading={loading}
     >

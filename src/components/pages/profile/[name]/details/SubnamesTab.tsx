@@ -126,7 +126,7 @@ export const SubnamesTab = ({
   name: string
   network: number
 }) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation()
   const { subnames, max, page, setPage, isLoading, totalPages } =
     usePagination(name)
 
@@ -141,7 +141,11 @@ export const SubnamesTab = ({
           ))
         ) : (
           <EmptyDetailContainer>
-            {isLoading ? <Spinner color="blue" /> : t('tabs.subnames.empty')}
+            {isLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              t('profile.tabs.subnames.empty')
+            )}
           </EmptyDetailContainer>
         )}
       </TabWrapper>

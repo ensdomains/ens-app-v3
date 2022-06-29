@@ -58,7 +58,7 @@ const ProfileSection = ({
   supported?: Array<string>
   type?: 'address' | 'text'
 }) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation()
   const Button = button
   const supportedArray = supported
     ? array.filter((x) => supported.includes(x.key.toLowerCase()))
@@ -72,7 +72,7 @@ const ProfileSection = ({
   return condition ? (
     <div>
       <SectionTitle color="textSecondary" weight="bold" size="base">
-        {t(label)}
+        {t(`profile.${label}`)}
       </SectionTitle>
       <Stack>
         {supportedArray.map(

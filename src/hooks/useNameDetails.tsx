@@ -8,7 +8,7 @@ import { useRegistrationStatus } from './useRegistrationStatus'
 import { useValidate } from './useValidate'
 
 export const useNameDetails = (name: string) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation()
   const { ready, getOwner, getExpiry, batch } = useEns()
 
   const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
@@ -58,9 +58,9 @@ export const useNameDetails = (name: string) => {
     ) {
       return (
         <>
-          {t('errors.featureNotAvailable')}
+          {t('profile.errors.featureNotAvailable')}
           <a href={`https://app.ens.domains/name/${normalisedName}`}>
-            {t('errors.featureNotAvailableLink')}
+            {t('profile.errors.featureNotAvailableLink')}
           </a>
         </>
       )

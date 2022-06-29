@@ -67,7 +67,7 @@ export type SortControlProps = {
 }
 
 const SortControl = ({ value, hideLabel, onChange }: SortControlProps) => {
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
 
   const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value: newType } = e.target

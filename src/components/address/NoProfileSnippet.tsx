@@ -42,16 +42,16 @@ const ProfileTitle = styled.div(
 )
 
 const NoProfileSnippet = () => {
-  const { t } = useTranslation('address')
+  const { t } = useTranslation()
   return (
     <Container data-testid="no-profile-snippet">
       <AvatarContainer>
         <Avatar label="profile-label" />
       </AvatarContainer>
       <ProfileContent>
-        <ProfileTitle>{t('noProfile.title')}</ProfileTitle>
+        <ProfileTitle>{t('address.noProfile.title')}</ProfileTitle>
         <Typography variant="small" color="text">
-          {t('noProfile.message')}
+          {t('address.noProfile.message')}
         </Typography>
       </ProfileContent>
     </Container>

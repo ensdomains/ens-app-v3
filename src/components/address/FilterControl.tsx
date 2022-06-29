@@ -108,7 +108,7 @@ const FilterControl = ({
   resultsCount = 0,
   onChange,
 }: FilterControlProps) => {
-  const { t } = useTranslation('address')
+  const { t } = useTranslation()
   const [showMenu, setShowMenu] = useState(false)
   const breakpoints = useBreakpoint()
   const { isReady } = useRouter()
@@ -180,14 +180,14 @@ const FilterControl = ({
                 }}
               >
                 <FilterButton pressed={showMenu} onClick={handleToggleShowMenu}>
-                  {t('filter')}
+                  {t('address.filter')}
                   <FilterIcon />
                 </FilterButton>
               </DynamicPopover>
             </ToolBarGroup>
             <NameCountWrapper>
               <Typography color="textTertiary" weight="bold">
-                {t('nameCount', { count: resultsCount })}
+                {t('address.nameCount', { count: resultsCount })}
               </Typography>
             </NameCountWrapper>
           </>

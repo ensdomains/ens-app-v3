@@ -85,7 +85,7 @@ const LogoAndLanguage = styled.div(
 
 export default function Page() {
   const { isReady } = useRouter()
-  const { t } = useTranslation('common')
+  const { t } = useTranslation()
   const breakpoints = useBreakpoint()
 
   return (
