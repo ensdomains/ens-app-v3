@@ -127,8 +127,7 @@ const ViewMoreInner = styled(Typography)(
 )
 
 export const TransactionSection = () => {
-  const { t: tc } = useTranslation()
-  const { t } = useTranslation('settings')
+  const { t } = useTranslation()
 
   const chainName = useChainName()
   const transactions = useRecentTransactions()
@@ -145,7 +144,7 @@ export const TransactionSection = () => {
           variant="large"
           weight="bold"
         >
-          {t('section.transaction.title')}
+          {t('settings.section.transaction.title')}
         </TransactionSectionHeading>
         <div>
           <Button
@@ -155,7 +154,7 @@ export const TransactionSection = () => {
             onClick={() => clearTransactions()}
             disabled={transactions.length === 0}
           >
-            {t('section.transaction.clear')}
+            {t('settings.section.transaction.clear')}
           </Button>
         </div>
       </TransactionSectionHeadingContainer>
@@ -170,13 +169,13 @@ export const TransactionSection = () => {
                 {transaction.status === 'pending' && <Spinner color="accent" />}
                 <TransactionInfoContainer>
                   <Typography weight="bold">
-                    {tc(`transaction.description.${transaction.description}`)}
+                    {t(`transaction.description.${transaction.description}`)}
                   </Typography>
                   <TransactionStatus
                     $error={transaction.status === 'failed'}
                     variant="labelHeading"
                   >
-                    {tc(`transaction.status.${transaction.status}.regular`)}
+                    {t(`transaction.status.${transaction.status}.regular`)}
                   </TransactionStatus>
                 </TransactionInfoContainer>
                 <ViewLinkContainer>
