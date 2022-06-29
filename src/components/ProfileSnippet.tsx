@@ -170,16 +170,24 @@ export const ProfileSnippet = ({
           <Name weight="bold">{name}</Name>
           {recordName && (
             <div style={{ marginTop: '4px' }}>
-              <Typography weight="bold" color="textTertiary">
+              <Typography
+                data-testid="profile-snippet-name"
+                weight="bold"
+                color="textTertiary"
+              >
                 {recordName}
               </Typography>
             </div>
           )}
         </DetailStack>
-        {description && <Typography>{description}</Typography>}
+        {description && (
+          <Typography data-testid="profile-snippet-description">
+            {description}
+          </Typography>
+        )}
         {url && (
           <div style={{ width: 'min-content' }}>
-            <a href={url}>
+            <a href={url} data-testid="profile-snippet-url">
               <Typography color="blue">
                 {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
               </Typography>
