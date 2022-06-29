@@ -13,6 +13,25 @@ jobs:
         with:
           concurrent_skipping: 'same_content_newer'
 
+  yarn_check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'yarn'
+
+      - run: yarn install --immutable --check-cache
+
+      - name: Upload .yarn
+        uses: actions/upload-artifact@v3
+        with:
+          name: yarn-${{ github.sha }}
+          path: .yarn
+          retention-days: 1
+
   stateful:
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
     timeout-minutes: 10
@@ -28,9 +47,11 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '16'
-          cache: 'yarn'
 
-      - run: yarn install --immutable --check-cache
+      - name: Download .yarn
+        uses: actions/download-artifact@v3
+        with:
+          name: yarn-${{ github.sha }}
 
       - run: yarn buildandstart & yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
