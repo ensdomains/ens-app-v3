@@ -3,7 +3,7 @@ import { Heading, Tag, mq } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 
 const OtherItemsContainer = styled.div(
@@ -36,7 +36,7 @@ export const NameListView = ({
   currentPage: ReturnedName[]
   network: number
 }) => {
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
   if (!currentPage || currentPage.length === 0)
     return (
       <NoResultsContianer>

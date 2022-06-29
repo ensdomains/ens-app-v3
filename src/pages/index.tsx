@@ -6,7 +6,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 
@@ -85,7 +85,7 @@ const LogoAndLanguage = styled.div(
 
 export default function Page() {
   const { isReady } = useRouter()
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
   const breakpoints = useBreakpoint()
 
   return (

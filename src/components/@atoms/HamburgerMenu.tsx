@@ -1,10 +1,10 @@
 import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 
-export interface HamburgerItem {
+export type HamburgerItem = {
   label: string
   onClick?: () => void
   color?: Colors
@@ -27,7 +27,7 @@ export const HamburgerMenu = ({
 }: {
   dropdownItems: HamburgerItem[]
 } & Omit<Partial<ComponentProps<typeof Dropdown>>, 'isOpen' | 'setIsOpen'>) => {
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
   const router = useRouter()
 
   return (
@@ -44,6 +44,7 @@ export const HamburgerMenu = ({
       items={dropdownItems.map((item) => ({
         ...item,
         label: t(item.label),
+        value: item.href,
         color:
           item.color || router.asPath === item.href
             ? 'accent'

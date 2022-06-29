@@ -4,7 +4,8 @@ import { Button, mq, Profile } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import type { TFunction } from 'react-i18next'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
+// import { useTranslation as useLoadedTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 
@@ -60,7 +61,7 @@ export const ConnectButtonWrapper = ({
   }
 }) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
   const breakpoints = useBreakpoint()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { disconnect } = useDisconnect()
@@ -114,11 +115,13 @@ export const HeaderConnect = () => {
             dropdownItems={[
               {
                 label: t('wallet.myProfile'),
+                value: 'profile',
                 color: 'text',
                 onClick: () => router.push('/my/profile'),
               },
               {
                 label: t('wallet.disconnect'),
+                value: 'disconnect',
                 color: 'red',
                 onClick: () => disconnect(),
               },

@@ -12,7 +12,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
 
@@ -45,7 +45,7 @@ const SelfButtons = styled.div(
 
 export default function Page() {
   const router = useRouter()
-  const { t } = useTranslation('profile')
+  const { t } = useLoadedTranslation('profile')
   const breakpoints = useBreakpoint()
   const _name = router.query.name as string
   const isSelf = router.query.connected === 'true'

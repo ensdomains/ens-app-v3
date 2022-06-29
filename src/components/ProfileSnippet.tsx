@@ -4,7 +4,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import { Avatar, Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import React from 'react'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import { DisabledButton } from './@atoms/DisabledButton'
 
@@ -127,7 +127,7 @@ export const ProfileSnippet = ({
   network: number
 }) => {
   const router = useRouter()
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
   const zorb = useZorb(name, 'name')
   const { avatar } = useAvatar(name, network)
 

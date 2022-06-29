@@ -1,7 +1,7 @@
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
 import { RouteItemObj } from '@app/routes'
 import Link from 'next/link'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import { ConditionalWrapper } from '../ConditionalWrapper'
 
@@ -79,7 +79,7 @@ export const RouteItem = ({
   hasNotification?: boolean
   asText?: boolean
 }) => {
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
   const activeRoute = useActiveRoute()
   const isActive = activeRoute === route.name
 

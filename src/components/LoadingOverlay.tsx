@@ -1,5 +1,5 @@
 import { Heading, Spinner } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div(
@@ -15,7 +15,7 @@ const Container = styled.div(
 )
 
 export const LoadingOverlay = () => {
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
 
   return (
     <Container>

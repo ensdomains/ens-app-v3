@@ -2,7 +2,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Dropdown, mq } from '@ensdomains/thorin'
 import ISO6391 from 'iso-639-1'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 
 const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
@@ -26,7 +26,7 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
 export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
   const breakpoints = useBreakpoint()
   const router = useRouter()
-  const { i18n } = useTranslation()
+  const { i18n } = useLoadedTranslation()
 
   const isLarge: boolean = router.asPath === '/' && !!breakpoints.sm
 

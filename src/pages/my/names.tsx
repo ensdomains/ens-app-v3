@@ -11,7 +11,7 @@ import { ContentGrid } from '@app/layouts/ContentGrid'
 import { Button, mq, PageButtons, Spinner } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 import SortControl, {
@@ -87,7 +87,7 @@ type ViewType = 'grid' | 'list'
 type FilterType = Name['type'] | 'none'
 
 export default function Page() {
-  const { t } = useTranslation('names')
+  const { t } = useLoadedTranslation('names')
   const router = useRouter()
   const { data: addressData, isLoading, status } = useAccount()
   const address = (router.query.address as string) || addressData?.address

@@ -1,5 +1,5 @@
 import { mq } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import SocialDiscord from '../assets/social/SocialDiscord.svg'
 import SocialDiscourse from '../assets/social/SocialDiscourse.svg'
@@ -56,7 +56,7 @@ const SocialIconContainer = styled.div(
 )
 
 export const Footer = () => {
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
 
   return (
     <Container>

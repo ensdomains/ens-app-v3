@@ -1,6 +1,6 @@
 import React, { ChangeEvent } from 'react'
 import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import { Button, Select, mq } from '@ensdomains/thorin'
 import UpDirectionSVG from '@app/assets/UpDirection.svg'
 import DownDirectionSVG from '@app/assets/DownDirection.svg'
@@ -67,7 +67,7 @@ export type SortControlProps = {
 }
 
 const SortControl = ({ value, hideLabel, onChange }: SortControlProps) => {
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
 
   const handleTypeChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { value: newType } = e.target

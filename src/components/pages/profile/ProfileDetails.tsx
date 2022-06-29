@@ -2,7 +2,7 @@ import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { Typography, mq } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import {
   AddressProfileButton,
@@ -58,7 +58,7 @@ const ProfileSection = ({
   supported?: Array<string>
   type?: 'address' | 'text'
 }) => {
-  const { t } = useTranslation('profile')
+  const { t } = useLoadedTranslation('profile')
   const Button = button
   const supportedArray = supported
     ? array.filter((x) => supported.includes(x.key.toLowerCase()))

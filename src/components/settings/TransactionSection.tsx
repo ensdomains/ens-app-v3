@@ -144,7 +144,7 @@ export const TransactionSection = () => {
           variant="large"
           weight="bold"
         >
-          {t('section.transaction.title', 'Transactions', { ns: 'settings' })}
+          {t('section.transaction.title', { ns: 'settings' })}
         </TransactionSectionHeading>
         <div>
           <Button
@@ -154,7 +154,10 @@ export const TransactionSection = () => {
             onClick={() => clearTransactions()}
             disabled={transactions.length === 0}
           >
-            {t('section.transaction.clear', 'Clear', { ns: 'settings' })}
+            {t('section.transaction.clear', {
+              ns: 'settings',
+              placeholder: 'clear',
+            })}
           </Button>
         </div>
       </TransactionSectionHeadingContainer>

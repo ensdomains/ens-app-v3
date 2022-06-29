@@ -1,6 +1,6 @@
 import { ReactElement, useState } from 'react'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import { PageButtons } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
@@ -47,7 +47,7 @@ const PageButtonsWrapper = styled.div(
 type FilterType = Name['type'] | 'none'
 
 const Page = () => {
-  const { t } = useTranslation('address')
+  const { t } = useLoadedTranslation('address')
   const { query, isReady } = useRouter()
   const address = query.address as string
   const chainId = useChainId()

@@ -1,7 +1,7 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { ArrowRightSVG, PageButtons, Spinner } from '@ensdomains/thorin'
 import { useState, useRef, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import styled, { css } from 'styled-components'
 import { useQuery, useQueryClient } from 'react-query'
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
@@ -126,7 +126,7 @@ export const SubnamesTab = ({
   name: string
   network: number
 }) => {
-  const { t } = useTranslation('profile')
+  const { t } = useLoadedTranslation('profile')
   const { subnames, max, page, setPage, isLoading, totalPages } =
     usePagination(name)
 

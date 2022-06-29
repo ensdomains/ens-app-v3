@@ -1,7 +1,7 @@
 import React, { ComponentProps, ChangeEvent, Ref } from 'react'
 import { Field, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import SortControl, {
   SortValue,
 } from '@app/components/@molecules/SortControl/SortControl'
@@ -70,7 +70,7 @@ const FilterPopover = ({
   onSortChange,
   onFilterChange,
 }: PopoverProps) => {
-  const { t } = useTranslation('common')
+  const { t } = useLoadedTranslation('common')
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
     const newFilter = e.target.value as FilterType

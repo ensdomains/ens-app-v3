@@ -1,6 +1,6 @@
 import { Avatar, Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -42,7 +42,7 @@ const ProfileTitle = styled.div(
 )
 
 const NoProfileSnippet = () => {
-  const { t } = useTranslation('address')
+  const { t } = useLoadedTranslation('address')
   return (
     <Container data-testid="no-profile-snippet">
       <AvatarContainer>

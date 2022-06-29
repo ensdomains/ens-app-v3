@@ -1,6 +1,6 @@
 import React, { ButtonHTMLAttributes, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 import { DynamicPopover, Typography } from '@ensdomains/thorin'
 import FilterIcon from '@app/assets/Filter.svg'
 import SortControl, {
@@ -108,7 +108,7 @@ const FilterControl = ({
   resultsCount = 0,
   onChange,
 }: FilterControlProps) => {
-  const { t } = useTranslation('address')
+  const { t } = useLoadedTranslation('address')
   const [showMenu, setShowMenu] = useState(false)
   const breakpoints = useBreakpoint()
   const { isReady } = useRouter()

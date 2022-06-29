@@ -4,7 +4,7 @@ import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Toast } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
+import { useLoadedTranslation } from '@app/hooks/useLoadedTranslation'
 
 type Notification = {
   title: string
@@ -13,7 +13,7 @@ type Notification = {
 }
 
 export const Notifications = () => {
-  const { t } = useTranslation()
+  const { t } = useLoadedTranslation()
   const breakpoints = useBreakpoint()
 
   const chainName = useChainName()
