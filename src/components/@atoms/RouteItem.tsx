@@ -95,7 +95,7 @@ export const RouteItem = ({
       <LinkWrapper $asText={asText} $hasNotification={hasNotification}>
         {asText ? (
           <StyledAnchor disabled={route.disabled} $isActive={isActive}>
-            {t(route.label)}
+            {t(route.label, { placeholder: route.label })}
           </StyledAnchor>
         ) : (
           <IconContainer
