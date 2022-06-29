@@ -1,4 +1,5 @@
 {
+  "projectId": "4zmgdz",
   "baseUrl": "http://localhost:3000",
   "userAgent": "synpress",
   "retries": { "runMode": 3, "openMode": 3 },
