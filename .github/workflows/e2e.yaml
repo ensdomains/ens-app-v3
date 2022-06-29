@@ -29,7 +29,9 @@ jobs:
         run: yarn
 
       - name: Run tests
-        run: yarn buildandstart & yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+        run: 'parallel --halt now,done=1 ::: \
+          "yarn buildandstart" \
+          "yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
         env:
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount

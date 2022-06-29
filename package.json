@@ -81,7 +81,7 @@
     "@nomiclabs/hardhat-ethers": "^2.0.5",
     "@openzeppelin/contracts": "^4.5.0",
     "@stylelint/postcss-css-in-js": "^0.38.0",
-    "@synthetixio/synpress": "^1.2.0",
+    "@synthetixio/synpress": "patch:@synthetixio/synpress@1.2.0#./patches/@synthetixio/synpress.patch",
     "@testing-library/cypress": "^8.0.2",
     "@testing-library/jest-dom": "^5.16.1",
     "@testing-library/react": "^12.1.2",
