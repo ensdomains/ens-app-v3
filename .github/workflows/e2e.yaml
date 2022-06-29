@@ -26,12 +26,10 @@ jobs:
       - uses: actions/checkout@v3
 
       - name: Install yarn packages
-        run: |
-          yarn
-          sudo apt-get install parallel
+        run: yarn
 
       - name: Run tests
-        run: 'parallel --halt now,done=1 ::: \
+        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
           "yarn buildandstart" \
           "yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
         env:
