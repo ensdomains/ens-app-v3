@@ -130,6 +130,7 @@ export const NameSnippetMobile = ({
             size="small"
             shadowless
             variant="transparent"
+            data-testid="extend-button"
           >
             <InnerButton>
               {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
@@ -145,6 +146,7 @@ export const NameSnippetMobile = ({
                 size="small"
                 shadowless
                 variant="transparent"
+                data-testid="send-button"
               >
                 <InnerButton>
                   {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}

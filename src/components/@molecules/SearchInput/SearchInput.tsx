@@ -21,7 +21,7 @@ import {
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
-import { SearchResult } from './SearchResults'
+import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'
 
 const Container = styled.div<{ $size: 'large' | 'extraLarge' }>(
@@ -150,6 +150,7 @@ const MobileSearchInput = ({
             $empty={false}
             onClick={() => toggle(false)}
             $state={state}
+            data-testid="search-input-backdrop"
           />
           <FloatingSearchContainer $state={state}>
             <InputAndCancel>
@@ -439,6 +440,7 @@ export const SearchInput = ({
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
       $error={!isValid && inputVal !== ''}
+      data-testid="search-input-results"
     >
       {searchItems.map((item, index) => (
         <SearchResult
@@ -457,7 +459,7 @@ export const SearchInput = ({
 
   if (breakpoints.md) {
     return (
-      <Container $size={size}>
+      <Container data-testid="search-input-desktop" $size={size}>
         {SearchInputElement}
         {state !== 'unmounted' && SearchResultsElement}
       </Container>
@@ -465,7 +467,7 @@ export const SearchInput = ({
   }
 
   return (
-    <Container $size="extraLarge">
+    <Container data-testid="search-input-mobile" $size="extraLarge">
       <MobileSearchInput
         {...{
           SearchInputElement,

@@ -104,6 +104,7 @@ export const SearchInputBox = forwardRef(
           autoCorrect="off"
           parentStyles={StyledInputParent()}
           spellCheck="false"
+          data-testid="search-input-box"
         />
       </SearchInputWrapper>
     )
@@ -135,6 +136,7 @@ export const FakeSearchInputBox = forwardRef(
           autoCorrect="off"
           parentStyles={StyledInputParent()}
           spellCheck="false"
+          data-testid="search-input-box-fake"
         />
       </SearchInputWrapper>
     )

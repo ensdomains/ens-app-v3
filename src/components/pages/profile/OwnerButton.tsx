@@ -176,7 +176,10 @@ const OwnerButtonWithPopup = ({
 
   return (
     <>
-      <OwnerButtonWrapper onClick={() => setOpen(true)}>
+      <OwnerButtonWrapper
+        data-testid="owner-button-popup-button"
+        onClick={() => setOpen(true)}
+      >
         <Content>
           <AvatarWrapper>
             <AvatarWithZorb
@@ -339,6 +342,7 @@ const OwnerButtonWithDropdown = ({
       setIsOpen={setIsOpen}
       keepMenuOnTop
       shortThrow
+      data-testid="owner-button-dropdown"
     >
       <OwnerButtonWrapperWithDropdown onClick={() => setIsOpen(true)}>
         <ContentWithDropdown>

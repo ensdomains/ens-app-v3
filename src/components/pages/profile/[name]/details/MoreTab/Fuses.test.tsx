@@ -1,12 +1,14 @@
-import { render, screen } from '@app/test-utils'
-
-import { useRouter } from 'next/router'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
-
+import { mockFunction, render, screen } from '@app/test-utils'
+import { BigNumber } from 'ethers'
+import { useRouter } from 'next/router'
 import Fuses from './Fuses'
 
 jest.mock('next/router')
 jest.mock('@app/hooks/useGetFuseData')
+
+const mockUseRouter = mockFunction(useRouter)
+const mockUseGetFuseData = mockFunction(useGetFuseData)
 
 const mockFusesResponse = {
   fuseObj: {
@@ -21,10 +23,7 @@ const mockFusesResponse = {
   },
   vulnerability: 'Safe',
   vulnerableNode: null,
-  rawFuses: {
-    type: 'BigNumber',
-    hex: '0x40',
-  },
+  rawFuses: BigNumber.from('0x40'),
 }
 
 describe('Fuses', () => {
@@ -33,31 +32,25 @@ describe('Fuses', () => {
   })
 
   it('should render', () => {
-    useRouter.mockImplementation(() => {
-      return {
-        query: {
-          name: 'nick.eth',
-        },
-      }
+    mockUseRouter.mockReturnValue({
+      query: {
+        name: 'nick.eth',
+      },
     })
-    useGetFuseData.mockImplementation(() => {
-      return {}
-    })
+    mockUseGetFuseData.mockReturnValue({})
     render(<Fuses />)
-    expect(screen.getByText('Please wrap your name to unlock this feature'))
+    expect(
+      screen.getByText('Please wrap your name to unlock this feature'),
+    ).toBeVisible()
   })
 
   it('should show fuses if wrapped name', () => {
-    useRouter.mockImplementation(() => {
-      return {
-        query: {
-          name: 'nick.eth',
-        },
-      }
+    mockUseRouter.mockReturnValue({
+      query: {
+        name: 'nick.eth',
+      },
     })
-    useGetFuseData.mockImplementation(() => {
-      return { fuseData: mockFusesResponse }
-    })
+    mockUseGetFuseData.mockReturnValue({ fuseData: mockFusesResponse })
     render(<Fuses />)
     expect(screen.getByTestId('first-traffic-light')).toHaveStyle(
       'background-color: rgb(213,85,85)',
@@ -65,17 +58,13 @@ describe('Fuses', () => {
   })
 
   it('should show vulerabilities', () => {
-    useRouter.mockImplementation(() => {
-      return {
-        query: {
-          name: 'nick.eth',
-        },
-      }
+    mockUseRouter.mockReturnValue({
+      query: {
+        name: 'nick.eth',
+      },
     })
-    useGetFuseData.mockImplementation(() => {
-      return { fuseData: mockFusesResponse }
-    })
+    mockUseGetFuseData.mockReturnValue({ fuseData: mockFusesResponse })
     render(<Fuses />)
-    expect(screen.getByText('Safe'))
+    expect(screen.getByText('Safe')).toBeVisible()
   })
 })

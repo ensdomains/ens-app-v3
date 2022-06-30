@@ -342,7 +342,7 @@ export const SearchResult = ({
 
   if (usingPlaceholder && type !== 'error' && type !== 'text') {
     return (
-      <SearchItem {...props}>
+      <SearchItem data-testid="search-result-placeholder" {...props}>
         <PlaceholderResultItem input={input} />
       </SearchItem>
     )
@@ -350,7 +350,7 @@ export const SearchResult = ({
 
   if (type === 'address') {
     return (
-      <SearchItem {...props}>
+      <SearchItem data-testid="search-result-address" {...props}>
         <AddressResultItem address={input} />
       </SearchItem>
     )
@@ -358,7 +358,7 @@ export const SearchResult = ({
 
   if (type === 'name' || type === 'nameWithDotEth') {
     return (
-      <SearchItem {...props}>
+      <SearchItem data-testid="search-result-name" {...props}>
         <NameResultItem name={input} />
       </SearchItem>
     )
@@ -366,14 +366,14 @@ export const SearchResult = ({
 
   if (type === 'error') {
     return (
-      <SearchItem $selected $error>
+      <SearchItem data-testid="search-result-error" $selected $error>
         <Typography weight="bold">{value}</Typography>
       </SearchItem>
     )
   }
 
   return (
-    <SearchItem>
+    <SearchItem data-testid="search-result-text">
       <NoInputYetTypography weight="bold">{value}</NoInputYetTypography>
     </SearchItem>
   )

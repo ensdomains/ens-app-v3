@@ -1,8 +1,7 @@
-import { render, screen, fireEvent } from '@app/test-utils'
-
+import { fireEvent, render, screen } from '@app/test-utils'
 import Accordion, { AccordionData } from './Accordion'
 
-const data: AccordionData = [
+const data: AccordionData[] = [
   {
     title: 'Item 1',
     body: 'Body 1',

@@ -25,7 +25,7 @@ describe('ResolverDetails', () => {
     }
     mockUseProfile.mockReturnValue(mockProfileResponse)
     render(<ResolverDetails />)
-    expect(screen.getByText('address'))
+    expect(screen.getByText('address')).toBeVisible()
   })
   it('should show green dot and latest text when resolver is up to date', () => {
     const mockProfileResponse = {

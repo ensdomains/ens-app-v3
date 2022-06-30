@@ -41,31 +41,47 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   )
 
   if (difference < 0) {
-    return <ClockIcon $color="red" as={ClockSVG} />
+    return (
+      <ClockIcon data-testid="expiry-clock-red" $color="red" as={ClockSVG} />
+    )
   }
   if (difference < 90) {
-    return <ClockIcon $color="orange" as={ClockSVG} />
+    return (
+      <ClockIcon
+        data-testid="expiry-clock-orange"
+        $color="orange"
+        as={ClockSVG}
+      />
+    )
   }
 
-  return <ClockIcon $color="grey" as={ClockSVG} />
+  return (
+    <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
+  )
 }
+
+const pluralise = (unit: string, count: number) =>
+  `${count} ${unit}${count > 1 ? 's' : ''}`
 
 export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()
   const difference = secondsToDays(
     (expiry.getTime() - currentDate.getTime()) / 1000,
   )
-  const months = Math.round(difference / 30)
-  const years = Math.round(difference / 365)
+  const months = Math.floor(difference / 30)
+  const years = Math.floor(difference / 365)
 
-  let text = `${years} year${years > 1 ? 's' : ''}`
+  let text = pluralise('year', years)
   let color: 'foreground' | 'red' | 'orange' = 'foreground'
 
   if (difference < 0) {
-    text = `${difference + 90} days`
+    text = pluralise('day', difference + 90)
     color = 'red'
+  } else if (difference < 30) {
+    text = pluralise('day', difference)
+    color = 'orange'
   } else if (difference < 90) {
-    text = `${months} months`
+    text = pluralise('month', months)
     color = 'orange'
   } else if (difference < 365) {
     text = `${months} months`
@@ -73,7 +89,11 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   }
 
   return (
-    <ExpiryText weight="bold" $color={color}>
+    <ExpiryText
+      data-testid={`short-expiry-${color}`}
+      weight="bold"
+      $color={color}
+    >
       Expires in {text}
     </ExpiryText>
   )
