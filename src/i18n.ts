@@ -2,7 +2,7 @@ import i18n from 'i18next'
 import LanguageDetector from 'i18next-browser-languagedetector'
 import Backend from 'i18next-http-backend'
 import { initReactI18next } from 'react-i18next'
-import en from '../public/locales/en/common.json'
+import * as en from '../public/locales/en'
 
 i18n
   .use(Backend)
@@ -15,6 +15,7 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    debug: true,
     defaultNS: 'common',
     ns: ['common'],
     react: {
@@ -23,6 +24,10 @@ i18n
   })
 
 // preload english
-i18n.addResourceBundle('en', 'common', en)
+const namespaces = Object.keys(en) as Array<keyof typeof en>
+for (const namespace of namespaces) {
+  const resource = en[namespace]
+  i18n.addResourceBundle('en', namespace, resource)
+}
 
 export default i18n

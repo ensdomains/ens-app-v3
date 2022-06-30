@@ -1,9 +1,12 @@
 {
   "title": "Profile",
   "yourWallet": "Your wallet",
+  "yourProfile": "Your profile",
   "accounts": "Accounts",
   "addresses": "Addresses",
   "otherRecords": "Other Records",
+  "editProfile": "Edit Profile",
+  "viewDetails": "View Details",
   "tabs": {
     "profile": {
       "name": "Profile"
@@ -15,6 +18,10 @@
     }
   },
   "errors": {
+    "invalidName": "This name is invalid.",
+    "expiringSoon": "This name is expiring soon.",
+    "unknown": "Unknown error",
+    "notMigrated": "This name is not migrated to the new registry.",
     "featureNotAvailable": "Some features are not yet available, but you can still ",
     "featureNotAvailableLink": "view this name in the old app."
   }

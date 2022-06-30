@@ -15,6 +15,7 @@ import { useRouter } from 'next/router'
 import { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+import { useTranslation } from 'react-i18next'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -87,6 +88,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
 )
 
 export default function Page() {
+  const { t } = useTranslation(['profileDetails'])
   const breakpoints = useBreakpoint()
   const router = useRouter()
   const name = router.query.name as string
@@ -131,7 +133,11 @@ export default function Page() {
   const [tab, setTab] = useState<'records' | 'subnames' | 'more'>('records')
 
   return (
-    <Content title={normalisedName} subtitle="Name Details" loading={isLoading}>
+    <Content
+      title={normalisedName}
+      subtitle={t('subtitle')}
+      loading={isLoading}
+    >
       {{
         leading: (
           <DetailsContainer>
@@ -156,14 +162,14 @@ export default function Page() {
                   network={chainId}
                   label={
                     ownerData.ownershipLevel === 'nameWrapper'
-                      ? 'Owner'
-                      : 'Controller'
+                      ? t('name.owner', { ns: 'common' })
+                      : t('name.controller', { ns: 'common' })
                   }
                   type={breakpoints.lg ? 'dropdown' : 'dialog'}
                   description={
                     ownerData.ownershipLevel === 'nameWrapper'
-                      ? 'Owns and controls the name'
-                      : 'Controls all the records of the name'
+                      ? t('descriptions.owner')
+                      : t('descriptions.controller')
                   }
                   canTransfer={selfAbilities.canChangeOwner}
                 />
@@ -172,9 +178,9 @@ export default function Page() {
                 <OwnerButton
                   address={ownerData.registrant}
                   network={chainId}
-                  label="Registrant"
+                  label={t('name.registrant', { ns: 'common' })}
                   type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                  description="The owner of the NFT"
+                  description={t('descriptions.registrant')}
                   canTransfer={selfAbilities.canChangeRegistrant}
                 />
               )}
@@ -207,19 +213,19 @@ export default function Page() {
               $selected={tab === 'records'}
               onClick={() => setTab('records')}
             >
-              <Typography weight="bold">Records</Typography>
+              <Typography weight="bold">{t('tabs.records.label')}</Typography>
             </TabButton>
             <TabButton
               $selected={tab === 'subnames'}
               onClick={() => setTab('subnames')}
             >
-              <Typography weight="bold">Subnames</Typography>
+              <Typography weight="bold">{t('tabs.subnames.label')}</Typography>
             </TabButton>
             <TabButton
               $selected={tab === 'more'}
               onClick={() => setTab('more')}
             >
-              <Typography weight="bold">More</Typography>
+              <Typography weight="bold">{t('tabs.more.label')}</Typography>
             </TabButton>
           </TabButtonContainer>
         ),

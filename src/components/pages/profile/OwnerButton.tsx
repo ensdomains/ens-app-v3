@@ -16,6 +16,7 @@ import {
 } from '@ensdomains/thorin'
 import { ReactNode, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { t } from 'i18next'
 
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
@@ -232,7 +233,7 @@ const OwnerButtonWithPopup = ({
           {canTransfer && (
             <TransferButton disabled>
               <Typography variant="large" weight="bold">
-                Transfer
+                {t('name.transfer')}
               </Typography>
             </TransferButton>
           )}
@@ -303,26 +304,26 @@ const OwnerButtonWithDropdown = ({
   const menuItems = useMemo(() => {
     const items: any[] = [
       {
-        label: 'View Address',
+        label: t('address.viewAddress'),
         color: 'text',
         onClick: () => router.push(`/address/${address}`),
       },
       {
-        label: 'Copy Address',
+        label: t('address.copyAddress'),
         color: 'text',
         onClick: () => navigator.clipboard.writeText(address),
       },
     ]
     if (name) {
       items[0] = {
-        label: 'View Profile',
+        label: t('wallet.viewProfile'),
         color: 'text',
         onClick: () => router.push(`/profile/${name}`),
       }
     }
     if (canTransfer) {
       items.push({
-        label: 'Transfer',
+        label: t('name.transfer'),
         color: 'accent',
         // eslint-disable-next-line no-alert
         onClick: () => alert('Not implemented'),

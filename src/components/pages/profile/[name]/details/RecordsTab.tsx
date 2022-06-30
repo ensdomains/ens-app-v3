@@ -5,6 +5,7 @@ import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {
@@ -249,6 +250,8 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   canEdit?: boolean
 }) => {
+  const { t } = useTranslation('profileDetails')
+
   const filteredTexts = useMemo(
     () => texts?.filter(({ value }) => value),
     [texts],
@@ -281,14 +284,17 @@ export const RecordsTab = ({
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">Text</SectionTitle>
+            <SectionTitle weight="bold">{t('tabs.records.text')}</SectionTitle>
             <SectionSubtitle weight="bold">
-              {filteredTexts ? filteredTexts.length : 0} Records
+              {filteredTexts ? filteredTexts.length : 0}{' '}
+              {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
           {canEdit && (
             <EditButton disabled>
-              <Typography weight="bold">Edit</Typography>
+              <Typography weight="bold">
+                {t('action.edit', { ns: 'common' })}
+              </Typography>
             </EditButton>
           )}
         </SectionHeader>
@@ -300,9 +306,12 @@ export const RecordsTab = ({
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">Address</SectionTitle>
+            <SectionTitle weight="bold">
+              {t('address.label', { ns: 'common' })}
+            </SectionTitle>
             <SectionSubtitle weight="bold">
-              {filteredAddresses ? filteredAddresses.length : 0} Records
+              {filteredAddresses ? filteredAddresses.length : 0}{' '}
+              {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
         </SectionHeader>
@@ -321,13 +330,19 @@ export const RecordsTab = ({
           <SectionTitleContainer>
             {formattedContentHash ? (
               <>
-                <SectionTitle weight="bold">Content Hash</SectionTitle>
+                <SectionTitle weight="bold">
+                  {t('tabs.records.contentHash')}
+                </SectionTitle>
                 {formattedContentHashLink && (
-                  <Outlink href={formattedContentHashLink}>View</Outlink>
+                  <Outlink href={formattedContentHashLink}>
+                    {t('action.view', { ns: 'common' })}
+                  </Outlink>
                 )}
               </>
             ) : (
-              <SectionSubtitle weight="bold">No Content Hash</SectionSubtitle>
+              <SectionSubtitle weight="bold">
+                {t('tabs.records.noContentHash')}
+              </SectionSubtitle>
             )}
           </SectionTitleContainer>
         </SectionHeader>

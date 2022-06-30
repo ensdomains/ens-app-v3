@@ -50,7 +50,7 @@ export const Notifications = () => {
           href={makeEtherscanLink(transaction.hash, chainName)}
           rel="noreferrer"
         >
-          <Button size="small">View on Etherscan</Button>
+          <Button size="small">{t('transaction.viewEtherscan')}</Button>
         </a>
       ),
     }))

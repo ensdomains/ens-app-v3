@@ -2,6 +2,13 @@
   "title": "Your web3 username",
   "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
   "loading": "Loading",
+  "action": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "view": "View",
+    "clear": "Clear"
+  },
   "navigation": {
     "home": "Home",
     "about": "About",
@@ -27,11 +34,24 @@
   },
   "name": {
     "expires": "Expires",
+    "noExpiry": "No expiry",
     "registrant": "Registrant",
     "controller": "Controller",
     "owner": "Owner",
-    "all": "All Names"
+    "all": "All Names",
+    "expiresIn": "Expires in {{time}}",
+    "extend": "Extend",
+    "send": "Send",
+    "transfer": "Transfer"
   },
+  "address": {
+    "label": "Address",
+    "viewAddress": "View Address",
+    "copyAddress": "Copy Address"
+  },
+  "records": {
+    "label": "Records"
+  },  
   "sortTypes": {
     "expiryDate": "Expiry Date",
     "labelName": "Name",
@@ -60,6 +80,28 @@
         "notifyTitle": "Transaction Failure",
         "notifyMessage": "Your \"%s\" transaction failed and was reverted"
       }
+    },
+    "viewEtherscan": "View on Etherscan",
+    "viewMore": "View More"
+  },
+  "search": {
+    "label": "Name search",
+    "placeholder": "Search for a name",
+    "emptyText": "Type a name or address to search...",
+    "address": "Address",
+    "errors": {
+      "tooShort": "Name too short",
+      "invalid": "Invalid format for name"
+    },
+    "status": {
+      "registered": "Registered",
+      "gracePeriod": "Grace Period",
+      "premium": "Temporary Premium",
+      "available": "Available",
+      "notOwned": "Not Owned",
+      "notImported": "Not Imported",
+      "short": "Too Short",
+      "default": "Invalid"
     }
   }
 }
