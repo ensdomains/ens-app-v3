@@ -18,6 +18,7 @@ export const useNameDetails = (name: string) => {
     loading: profileLoading,
     status,
   } = useProfile(normalisedName, !normalisedName)
+  console.log(profile)
 
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],

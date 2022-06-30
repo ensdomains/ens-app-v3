@@ -3,8 +3,9 @@ import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
+import ProfileEditor from '@app/components/pages/profile/ProfileEditor'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {
@@ -258,6 +259,9 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   canEdit?: boolean
 }) => {
+  const [showEditor, setShowEditor] = useState(true)
+  const onDismissEditor = () => setShowEditor(false)
+
   const filteredTexts = useMemo(
     () => texts?.filter(({ value }) => value),
     [texts],
@@ -358,6 +362,7 @@ export const RecordsTab = ({
           <RecordItem type="contentHash" value={formattedContentHash} />
         )}
       </RecordSection>
+      <ProfileEditor open={showEditor} onDismiss={onDismissEditor} />
     </TabWrapper>
   )
 }

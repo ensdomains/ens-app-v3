@@ -11,12 +11,16 @@ import {
   Button,
   PlusSVG,
 } from '@ensdomains/thorin'
-import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import {
+  DynamicAddressIcon,
+  addressIconTypes,
+  AddressIconType,
+} from '@app/assets/address/DynamicAddressIcon'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
+import COIN_LIST from '@app/constants/coinList'
 import { SelectableInput } from '../../@molecules/SelectableInput/SelectableInput'
-import { validateCryptoAddress } from '../../../utils/validate'
+// import { validateCryptoAddress } from '../../../utils/validate'
 import { useProfile } from '../../../hooks/useProfile'
-
 // enum GeneralType {
 //   nickname = 'nickname',
 //   location = 'location',
@@ -30,17 +34,8 @@ enum AccountType {
 
 // const ACCOUNT_LIST = Object.values(AccountType)
 
-enum CoinType {
-  bitcoin = 'btc',
-  binanceCoin = 'bnb',
-  ethereum = 'eth',
-  dogeCoin = 'doge',
-  litecoin = 'ltc',
-  polkadot = 'dot',
-  solana = 'sol',
-}
-
-const COIN_LIST = Object.values(CoinType)
+type CoinType = typeof COIN_LIST[number]
+console.log(COIN_LIST)
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -177,6 +172,21 @@ const IconWrapper = styled.div(
   `,
 )
 
+const RecordIcon = (key: any) => {
+  console.log(JSON.stringify(key))
+
+  console.log(addressIconTypes[key as AddressIconType])
+
+  if (addressIconTypes[key as AddressIconType]) {
+    return (
+      <IconWrapper>
+        <DynamicAddressIcon name={key as AddressIconType} />
+      </IconWrapper>
+    )
+  }
+  return null
+}
+
 type ProfileType = {
   general: {
     nickname?: string
@@ -196,7 +206,13 @@ type ProfileType = {
     [key: string]: string
   }
 }
-const ProfileEditor = () => {
+
+type Props = {
+  open: boolean
+  onDismiss?: () => void
+}
+
+const ProfileEditor = ({ open, onDismiss }: Props) => {
   const {
     register,
     formState,
@@ -248,11 +264,7 @@ const ProfileEditor = () => {
     return COIN_LIST.map((coin) => ({
       label: coin.toUpperCase(),
       value: coin,
-      prefix: (
-        <IconWrapper>
-          <DynamicAddressIcon name={coin} />
-        </IconWrapper>
-      ),
+      prefix: <RecordIcon key={coin} />,
     }))
   }, [])
 
@@ -266,11 +278,7 @@ const ProfileEditor = () => {
       {
         label: coin.toUpperCase(),
         value: coin,
-        prefix: (
-          <IconWrapper>
-            <DynamicAddressIcon name={coin} />
-          </IconWrapper>
-        ),
+        prefix: null,
       },
       ...unusedCoinOptions,
     ]
@@ -308,12 +316,20 @@ const ProfileEditor = () => {
   console.log('accounts.btc', watch('address.btc'))
   console.log('errors', formState.errors)
 
-  const { profile } = useProfile('nick.eth', false)
+  const { profile } = useProfile('khori.eth', false)
   useEffect(() => {
     if (profile) {
       console.log('profile', profile)
-    }
-    setTimeout(() => {
+      const profileAddress =
+        profile.records?.coinTypes?.reduce((map, record) => {
+          const { coin } = record
+          const { addr } = record as any
+          if (coin) {
+            const newMap = { ...map, [coin]: addr }
+            return newMap
+          }
+          return map
+        }, {}) || {}
       const resp = {
         general: {
           nickname: 'The fonz',
@@ -323,19 +339,16 @@ const ProfileEditor = () => {
         accounts: {
           twitter: 'yoyoyoyo',
         },
-        address: {
-          eth: 'ethaddress',
-          btc: 'btcaddress',
-        },
+        address: profileAddress,
       }
       reset(resp)
       setExistingCoinRecords(Object.keys(resp.address) as CoinType[])
-    }, 1000)
+    }
   }, [profile, reset])
 
   return (
     <>
-      <Modal open onDismiss={() => {}}>
+      <Modal open={open} onDismiss={onDismiss}>
         <Container onSubmit={handleSubmit((data: any) => console.log(data))}>
           <Banner>
             <AvatarWrapper>
@@ -415,9 +428,7 @@ const ProfileEditor = () => {
                           label="hello111"
                           options={coinOptions}
                           readOnly
-                          {...register(`address.${coin}`, {
-                            validate: validateCryptoAddress(coin),
-                          })}
+                          {...register(`address.${coin}`, {})}
                           onDelete={handleRemoveCoinRecord(coin)}
                         />
                       ))}
@@ -441,9 +452,7 @@ const ProfileEditor = () => {
                           autoCorrect="off"
                           spellCheck={false}
                           onDelete={handleRemoveCoinRecord(coin)}
-                          {...register(`address.${coin}`, {
-                            validate: validateCryptoAddress(coin),
-                          })}
+                          {...register(`address.${coin}`, {})}
                         />
                       ))}
                       {unusedCoinOptions.length > 0 && (

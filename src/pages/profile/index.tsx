@@ -156,7 +156,6 @@ export default function Page() {
           </DetailsWrapper>
         ),
       }}
-      <ProfileEditor />
     </Content>
   )
 }
