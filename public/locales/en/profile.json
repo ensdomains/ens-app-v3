@@ -62,8 +62,14 @@
             "none": "None"
           }
         },
-        "tokenId": "Token ID",
-        "registrationDate": "Registration Date"
+        "tokenId": {
+          "label": "Token ID",
+          "hex": "hex",
+          "decimal": "decimal"
+        },
+        "registrationDate": {
+          "label":"Registration Date"
+        }
       }
     }
   },

@@ -12,6 +12,7 @@ import { RegistrationDate } from './RegistrationDate'
 import Accordion, { AccordionData } from './Accordion'
 
 export const TokenId = () => {
+  const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
 
@@ -21,9 +22,15 @@ export const TokenId = () => {
 
   return (
     <>
-      <RecordItem itemKey="hex" value={labelHash} />
+      <RecordItem
+        itemKey={t('details.tabs.more.tokenId.hex')}
+        value={labelHash}
+      />
       <div style={{ height: 10 }} />
-      <RecordItem itemKey="decimal" value={tokenId} />
+      <RecordItem
+        itemKey={t('details.tabs.more.tokenId.decimal')}
+        value={tokenId}
+      />
     </>
   )
 }
@@ -48,11 +55,11 @@ const generateAccordionData = (
     disabled: !fuseData,
   },
   {
-    title: t('details.tabs.more.tokenId'),
+    title: t('details.tabs.more.tokenId.label'),
     body: <TokenId />,
   },
   {
-    title: t('details.tabs.more.registrationDate'),
+    title: t('details.tabs.more.registrationDate.label'),
     body: <RegistrationDate />,
   },
 ]
