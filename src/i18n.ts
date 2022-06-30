@@ -4,6 +4,8 @@ import Backend from 'i18next-http-backend'
 import { initReactI18next } from 'react-i18next'
 import * as en from '../public/locales/en'
 
+const namespaces = Object.keys(en) as Array<keyof typeof en>
+
 i18n
   .use(Backend)
   .use(LanguageDetector)
@@ -17,14 +19,13 @@ i18n
     },
     debug: true,
     defaultNS: 'common',
-    ns: ['common'],
+    ns: namespaces,
     react: {
       useSuspense: false,
     },
   })
 
 // preload english
-const namespaces = Object.keys(en) as Array<keyof typeof en>
 for (const namespace of namespaces) {
   const resource = en[namespace]
   i18n.addResourceBundle('en', namespace, resource)
