@@ -1,5 +1,7 @@
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
+import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
+import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
@@ -205,15 +207,24 @@ const RecordItem = ({
   itemKey,
   value,
   showLegacy,
+  type,
 }: {
   itemKey?: string
   value: string
   showLegacy?: boolean
+  type: 'text' | 'address' | 'contentHash'
 }) => {
   const { copy, copied } = useCopied()
 
   return (
-    <RecordContainer onClick={() => copy(value)}>
+    <RecordContainer
+      data-testid={
+        itemKey
+          ? `name-details-${type}-${itemKey.toLowerCase()}`
+          : `name-details-${type}`
+      }
+      onClick={() => copy(value)}
+    >
       {itemKey && (
         <RecordKey weight="bold">
           {showLegacy ? itemKey.replace('_LEGACY', '') : itemKey}
@@ -233,11 +244,15 @@ const RecordItem = ({
 }
 
 export const RecordsTab = ({
+  name,
+  network,
   texts,
   addresses,
   contentHash,
   canEdit,
 }: {
+  name: string
+  network: number
   texts?: TextRecord[]
   addresses?: AddressRecord[]
   contentHash?: ContentHash
@@ -264,12 +279,20 @@ export const RecordsTab = ({
     return undefined
   }, [contentHash])
 
+  const formattedContentHashLink = useMemo(() => {
+    if (contentHash) {
+      return getContentHashLink(name, network, contentHash as any)
+    }
+  }, [name, network, contentHash])
+
   return (
     <TabWrapper>
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">Text</SectionTitle>
+            <SectionTitle data-testid="text-heading" weight="bold">
+              Text
+            </SectionTitle>
             <SectionSubtitle weight="bold">
               {filteredTexts ? filteredTexts.length : 0} Records
             </SectionSubtitle>
@@ -282,13 +305,20 @@ export const RecordsTab = ({
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
-            <RecordItem key={text.key} itemKey={text.key} value={text.value} />
+            <RecordItem
+              key={text.key}
+              type="text"
+              itemKey={text.key}
+              value={text.value}
+            />
           ))}
       </RecordSection>
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">Address</SectionTitle>
+            <SectionTitle data-testid="address-heading" weight="bold">
+              Address
+            </SectionTitle>
             <SectionSubtitle weight="bold">
               {filteredAddresses ? filteredAddresses.length : 0} Records
             </SectionSubtitle>
@@ -297,6 +327,7 @@ export const RecordsTab = ({
         {filteredAddresses &&
           filteredAddresses.map((address) => (
             <RecordItem
+              type="address"
               key={address.key}
               itemKey={address.coin}
               value={address.addr}
@@ -308,13 +339,24 @@ export const RecordsTab = ({
         <SectionHeader>
           <SectionTitleContainer>
             {formattedContentHash ? (
-              <SectionTitle weight="bold">Content Hash</SectionTitle>
+              <>
+                <SectionTitle data-testid="content-hash-heading" weight="bold">
+                  Content Hash
+                </SectionTitle>
+                {formattedContentHashLink && (
+                  <Outlink href={formattedContentHashLink}>View</Outlink>
+                )}
+              </>
             ) : (
-              <SectionSubtitle weight="bold">No Content Hash</SectionSubtitle>
+              <SectionSubtitle data-testid="content-hash-heading" weight="bold">
+                No Content Hash
+              </SectionSubtitle>
             )}
           </SectionTitleContainer>
         </SectionHeader>
-        {formattedContentHash && <RecordItem value={formattedContentHash} />}
+        {formattedContentHash && (
+          <RecordItem type="contentHash" value={formattedContentHash} />
+        )}
       </RecordSection>
     </TabWrapper>
   )

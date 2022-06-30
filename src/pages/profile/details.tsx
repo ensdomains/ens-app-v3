@@ -1,22 +1,20 @@
-import { useMemo, useState, ReactElement } from 'react'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
-
-import { mq, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
-import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
-import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
-import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
+import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
+import More from '@app/components/pages/profile/[name]/details/MoreTab/MoreTab'
+import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
+import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import More from '@app/components/pages/profile/[name]/details/MoreTab/MoreTab'
+import { mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+import { ReactElement, useMemo, useState } from 'react'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -192,6 +190,8 @@ export default function Page() {
         trailing: {
           records: (
             <RecordsTab
+              network={chainId}
+              name={normalisedName}
               texts={(profile?.records?.texts as any) || []}
               addresses={(profile?.records?.coinTypes as any) || []}
               contentHash={profile?.records?.contentHash}

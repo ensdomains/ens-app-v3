@@ -13,5 +13,9 @@
       "loading": "Loading subnames",
       "empty": "No subnames have been added"
     }
+  },
+  "errors": {
+    "featureNotAvailable": "Some features are not yet available, but you can still ",
+    "featureNotAvailableLink": "view this name in the old app."
   }
 }
