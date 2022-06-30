@@ -1,4 +1,4 @@
-name: E2E
+name: Test
 
 on: [push, pull_request]
 
@@ -12,6 +12,18 @@ jobs:
         uses: fkirc/skip-duplicate-actions@master
         with:
           concurrent_skipping: 'same_content_newer'
+
+  coverage:
+    if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
+    runs-on: ubuntu-latest
+    needs: [pre_job]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: yarn
+
+      - run: yarn test:coverage
 
   stateful:
     if: ${{ needs.pre_job.outputs.should_skip != 'true' }}
