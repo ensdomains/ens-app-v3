@@ -1,11 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
-import { Typography, mq } from '@ensdomains/thorin'
-
-import { useProfile } from '@app/hooks/useProfile'
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
+import { useProfile } from '@app/hooks/useProfile'
+import { mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+import styled, { css } from 'styled-components'
 
 // Ordered by recency
 const RESOLVER_ADDRESSES = [
@@ -90,6 +89,9 @@ const ResolverDetails = () => {
         <VersionIndicator>
           {versionIndicatorText}
           <TrafficLight
+            data-testid={`version-indicator-dot-${
+              resolverAddressIndex === 0 ? 'latest' : 'outdated'
+            }`}
             $go={resolverAddressIndex === 0}
             $size="4"
             $color={resolverAddressIndex === -1 ? 'grey' : undefined}

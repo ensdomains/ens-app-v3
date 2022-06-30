@@ -286,14 +286,14 @@ export const RecordsTab = ({
   }, [name, network, contentHash])
 
   return (
-    <TabWrapper>
+    <TabWrapper data-testid="records-tab">
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
             <SectionTitle data-testid="text-heading" weight="bold">
               Text
             </SectionTitle>
-            <SectionSubtitle weight="bold">
+            <SectionSubtitle data-testid="text-amount" weight="bold">
               {filteredTexts ? filteredTexts.length : 0} Records
             </SectionSubtitle>
           </SectionTitleContainer>
@@ -319,7 +319,7 @@ export const RecordsTab = ({
             <SectionTitle data-testid="address-heading" weight="bold">
               Address
             </SectionTitle>
-            <SectionSubtitle weight="bold">
+            <SectionSubtitle data-testid="address-amount" weight="bold">
               {filteredAddresses ? filteredAddresses.length : 0} Records
             </SectionSubtitle>
           </SectionTitleContainer>

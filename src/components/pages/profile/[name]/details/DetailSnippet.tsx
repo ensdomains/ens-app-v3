@@ -98,6 +98,7 @@ export const DetailSnippet = ({
             shadowless
             variant="transparent"
             disabled
+            data-testid="extend-button"
           >
             <InnerButton>
               <ButtonIcon as={FastForwardSVG} />
@@ -111,6 +112,7 @@ export const DetailSnippet = ({
             shadowless
             variant="transparent"
             disabled
+            data-testid="send-button"
           >
             <InnerButton>
               <ButtonIcon as={PaperPlaneSVG} />

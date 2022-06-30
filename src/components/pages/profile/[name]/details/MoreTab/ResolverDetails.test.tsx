@@ -1,20 +1,19 @@
-import { render, screen } from '@app/test-utils'
-import { useRouter } from 'next/router'
-
 import { useProfile } from '@app/hooks/useProfile'
-
+import { mockFunction, render, screen } from '@app/test-utils'
+import { useRouter } from 'next/router'
 import ResolverDetails from './ResolverDetails'
 
 jest.mock('next/router')
 jest.mock('@app/hooks/useProfile')
 
+const mockUseRouter = mockFunction(useRouter)
+const mockUseProfile = mockFunction(useProfile)
+
 describe('ResolverDetails', () => {
-  useRouter.mockImplementation(() => {
-    return {
-      query: {
-        name: 'nick.eth',
-      },
-    }
+  mockUseRouter.mockReturnValue({
+    query: {
+      name: 'nick.eth',
+    },
   })
 
   it('should display the address', () => {
@@ -24,36 +23,30 @@ describe('ResolverDetails', () => {
         isMigrated: false,
       },
     }
-    useProfile.mockImplementation(() => {
-      return mockProfileResponse
-    })
+    mockUseProfile.mockReturnValue(mockProfileResponse)
     render(<ResolverDetails />)
     expect(screen.getByText('address'))
   })
-  it('should show green yes when resolver has been migrated', () => {
+  it('should show green dot and latest text when resolver is up to date', () => {
     const mockProfileResponse = {
       profile: {
-        resolverAddress: 'address',
-        isMigrated: true,
+        resolverAddress: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
       },
     }
-    useProfile.mockImplementation(() => {
-      return mockProfileResponse
-    })
+    mockUseProfile.mockReturnValue(mockProfileResponse)
     render(<ResolverDetails />)
-    expect(screen.getByText('Yes')).toHaveStyle('color: rgb(73, 179, 147)')
+    expect(screen.getByText('Latest')).toBeVisible()
+    expect(screen.getByTestId('version-indicator-dot-latest')).toBeVisible()
   })
   it('should show red no when resolver has not been migrated', () => {
     const mockProfileResponse = {
       profile: {
-        resolverAddress: 'address',
-        isMigrated: false,
+        resolverAddress: '0xdaaf96c344f63131acadd0ea35170e7892d3dfba',
       },
     }
-    useProfile.mockImplementation(() => {
-      return mockProfileResponse
-    })
+    mockUseProfile.mockReturnValue(mockProfileResponse)
     render(<ResolverDetails />)
-    expect(screen.getByText('No')).toHaveStyle('color: rgb(213,85,85)')
+    expect(screen.getByText('Outdated')).toBeVisible()
+    expect(screen.getByTestId('version-indicator-dot-outdated')).toBeVisible()
   })
 })

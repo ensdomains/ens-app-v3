@@ -5,7 +5,7 @@ const createJestConfig = nextJest({ dir: '.' })
 const customJestConfig = {
   testEnvironment: 'jest-environment-jsdom',
   collectCoverageFrom: [
-    '**/*.{js,jsx,ts,tsx}',
+    'src/**/*.{js,jsx,ts,tsx}',
     '!**/*.d.ts',
     '!**/node_modules/**',
     '!**/.yarn/**',
@@ -19,7 +19,7 @@ const customJestConfig = {
   moduleNameMapper: {
     // Handle image imports
     // https://jestjs.io/docs/webpack#handling-static-assets
-    "\\.svg$": "<rootDir>/__mocks__/svgMock.tsx",
+    '\\.svg$': '<rootDir>/__mocks__/svgMock.tsx',
     '^__tests__/(.*)$': '<rootDir>/__tests__/$1',
     '^@app/(.*)$': '<rootDir>/src/$1',
   },
