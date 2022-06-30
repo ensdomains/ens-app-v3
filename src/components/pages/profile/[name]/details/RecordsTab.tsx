@@ -208,15 +208,24 @@ const RecordItem = ({
   itemKey,
   value,
   showLegacy,
+  type,
 }: {
   itemKey?: string
   value: string
   showLegacy?: boolean
+  type: 'text' | 'address' | 'contentHash'
 }) => {
   const { copy, copied } = useCopied()
 
   return (
-    <RecordContainer onClick={() => copy(value)}>
+    <RecordContainer
+      data-testid={
+        itemKey
+          ? `name-details-${type}-${itemKey.toLowerCase()}`
+          : `name-details-${type}`
+      }
+      onClick={() => copy(value)}
+    >
       {itemKey && (
         <RecordKey weight="bold">
           {showLegacy ? itemKey.replace('_LEGACY', '') : itemKey}
@@ -284,7 +293,9 @@ export const RecordsTab = ({
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">{t('tabs.records.text')}</SectionTitle>
+            <SectionTitle data-testid="text-heading" weight="bold">
+              {t('tabs.records.text')}
+            </SectionTitle>
             <SectionSubtitle weight="bold">
               {filteredTexts ? filteredTexts.length : 0}{' '}
               {t('records.label', { ns: 'common' })}
@@ -300,13 +311,18 @@ export const RecordsTab = ({
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
-            <RecordItem key={text.key} itemKey={text.key} value={text.value} />
+            <RecordItem
+              key={text.key}
+              type="text"
+              itemKey={text.key}
+              value={text.value}
+            />
           ))}
       </RecordSection>
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">
+            <SectionTitle data-testid="address-heading" weight="bold">
               {t('address.label', { ns: 'common' })}
             </SectionTitle>
             <SectionSubtitle weight="bold">
@@ -318,6 +334,7 @@ export const RecordsTab = ({
         {filteredAddresses &&
           filteredAddresses.map((address) => (
             <RecordItem
+              type="address"
               key={address.key}
               itemKey={address.coin}
               value={address.addr}
@@ -330,7 +347,7 @@ export const RecordsTab = ({
           <SectionTitleContainer>
             {formattedContentHash ? (
               <>
-                <SectionTitle weight="bold">
+                <SectionTitle data-testid="content-hash-heading" weight="bold">
                   {t('tabs.records.contentHash')}
                 </SectionTitle>
                 {formattedContentHashLink && (
@@ -340,13 +357,15 @@ export const RecordsTab = ({
                 )}
               </>
             ) : (
-              <SectionSubtitle weight="bold">
+              <SectionSubtitle data-testid="content-hash-heading" weight="bold">
                 {t('tabs.records.noContentHash')}
               </SectionSubtitle>
             )}
           </SectionTitleContainer>
         </SectionHeader>
-        {formattedContentHash && <RecordItem value={formattedContentHash} />}
+        {formattedContentHash && (
+          <RecordItem type="contentHash" value={formattedContentHash} />
+        )}
       </RecordSection>
     </TabWrapper>
   )

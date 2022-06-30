@@ -4330,7 +4330,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@synthetixio/synpress@npm:^1.2.0":
+"@synthetixio/synpress@npm:1.2.0":
   version: 1.2.0
   resolution: "@synthetixio/synpress@npm:1.2.0"
   dependencies:
@@ -4377,6 +4377,56 @@ __metadata:
   bin:
     synpress: synpress.js
   checksum: 08c9c4ca1580ca67529308e09f13ed114497c6f4f5e14d1eca21e99b3cd3ce4682d4b3f72bde735a11dc6f8723219c204825801a9df0add6792971dc6a268c5d
+  languageName: node
+  linkType: hard
+
+"@synthetixio/synpress@patch:@synthetixio/synpress@1.2.0#./patches/@synthetixio/synpress.patch::locator=ens-app-v2%40workspace%3A.":
+  version: 1.2.0
+  resolution: "@synthetixio/synpress@patch:@synthetixio/synpress@npm%3A1.2.0#./patches/@synthetixio/synpress.patch::version=1.2.0&hash=64be01&locator=ens-app-v2%40workspace%3A."
+  dependencies:
+    "@cypress/code-coverage": 3.9.12
+    "@cypress/react": 5.12.4
+    "@cypress/webpack-dev-server": 1.8.4
+    "@drptbl/gremlins.js": 2.2.1
+    "@synthetixio/js": 2.41.0
+    "@testing-library/cypress": 8.0.2
+    "@testing-library/react": 13.0.0
+    "@types/puppeteer-core": 5.4.0
+    "@types/testing-library__cypress": 5.0.9
+    axios: 0.26.1
+    babel-plugin-istanbul: 6.1.1
+    babel-plugin-react-generate-property: 1.1.2
+    babel-plugin-react-remove-properties: 0.3.0
+    babel-plugin-transform-react-qa-classes: 1.6.0
+    babel-plugin-transform-react-styled-components-qa: 2.1.0
+    bytes32: 0.0.3
+    commander: 9.1.0
+    cross-zip: 4.0.0
+    cypress: 9.5.3
+    cypress-wait-until: 1.7.2
+    eslint: 7.32.0
+    eslint-config-prettier: 8.5.0
+    eslint-config-standard: 16.0.3
+    eslint-plugin-chai-friendly: 0.7.2
+    eslint-plugin-cypress: 2.12.1
+    eslint-plugin-import: 2.26.0
+    eslint-plugin-node: 11.1.0
+    eslint-plugin-prettier: 4.0.0
+    eslint-plugin-promise: 6.0.0
+    eslint-plugin-standard: 4.1.0
+    eslint-plugin-testing-library: 5.2.1
+    eslint-plugin-ui-testing: 2.0.1
+    eslint-plugin-unicorn: 42.0.0
+    etherscan-api: 10.0.5
+    node-fetch: 2.6.1
+    prettier: 2.6.2
+    puppeteer-core: 13.5.2
+    serve: 13.0.2
+    start-server-and-test: 1.14.0
+    synthetix-js: 2.66.0
+  bin:
+    synpress: synpress.js
+  checksum: e68ad5ed72b6276f47f20946970e775fc799226ba84fa2dc2a9169bb0172fd3666c128777b0666e67e135f5a8baeb13d3fbfae3c79ed3d0e2b926bb71cf98527
   languageName: node
   linkType: hard
 
@@ -11170,7 +11220,7 @@ __metadata:
     "@sentry/nextjs": ^7.2.0
     "@stylelint/postcss-css-in-js": ^0.38.0
     "@svgr/webpack": ^6.2.1
-    "@synthetixio/synpress": ^1.2.0
+    "@synthetixio/synpress": "patch:@synthetixio/synpress@1.2.0#./patches/@synthetixio/synpress.patch"
     "@testing-library/cypress": ^8.0.2
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
