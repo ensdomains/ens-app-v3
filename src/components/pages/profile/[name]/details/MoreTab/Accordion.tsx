@@ -154,7 +154,7 @@ const Accordion = ({ data }: AccordionProps) => {
         disabled.map((item) => {
           return (
             <AccordionItem key={item.title}>
-              <AccordionTitle>
+              <AccordionTitle $isDisabled>
                 <Typography
                   variant="extraLarge"
                   weight="bold"
