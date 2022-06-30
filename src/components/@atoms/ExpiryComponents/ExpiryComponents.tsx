@@ -60,23 +60,23 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   const months = Math.round(difference / 30)
   const years = Math.round(difference / 365)
 
-  let text = `${years} year${years > 1 ? 's' : ''}`
+  let text = t('name.expiresInYears', { count: years })
   let color: 'foreground' | 'red' | 'orange' = 'foreground'
 
   if (difference < 0) {
-    text = `${difference + 90} days`
+    text = t('name.expiresInDays', { count: difference + 90 })
     color = 'red'
   } else if (difference < 90) {
-    text = `${months} months`
+    text = t('name.expiresInMonths', { count: months })
     color = 'orange'
   } else if (difference < 365) {
-    text = `${months} months`
+    text = t('name.expiresInMonths', { count: months })
     color = 'foreground'
   }
 
   return (
     <ExpiryText weight="bold" $color={color}>
-      {t('name.expiresIn', { time: text })}
+      {text}
     </ExpiryText>
   )
 }

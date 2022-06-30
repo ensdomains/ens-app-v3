@@ -37,7 +37,7 @@ const Spacer = styled.div<{ $height: Space }>(
 )
 
 const Fuses = () => {
-  const { t } = useTranslation('profileDetails')
+  const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.more' })
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')

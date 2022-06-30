@@ -69,7 +69,7 @@ const AddressContainer = styled.div(
 )
 
 const ResolverDetails = () => {
-  const { t } = useTranslation('profileDetails')
+  const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
 
@@ -80,16 +80,20 @@ const ResolverDetails = () => {
 
   let versionIndicatorText = ''
   if (resolverAddressIndex === -1) {
-    versionIndicatorText = t('resolver.custom')
+    versionIndicatorText = t('details.tabs.more.resolver.custom')
   } else {
     versionIndicatorText =
-      resolverAddressIndex === 0 ? t('resolver.latest') : t('resolver.outdated')
+      resolverAddressIndex === 0
+        ? t('details.tabs.more.resolver.latest')
+        : t('details.tabs.more.resolver.outdated')
   }
 
   return (
     <ResolverDetailsContainer>
       <VersionContainer>
-        <Typography weight="bold">{t('resolver.version')}</Typography>
+        <Typography weight="bold">
+          {t('details.tabs.more.resolver.version')}
+        </Typography>
         <VersionIndicator>
           {versionIndicatorText}
           <TrafficLight

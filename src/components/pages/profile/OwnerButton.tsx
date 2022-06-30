@@ -16,7 +16,7 @@ import {
 } from '@ensdomains/thorin'
 import { ReactNode, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
@@ -168,6 +168,7 @@ const OwnerButtonWithPopup = ({
   description: string
   canTransfer: boolean
 }) => {
+  const { t } = useTranslation('common')
   const { copy, copied } = useCopied()
   const [open, setOpen] = useState(false)
   const { profile, loading } = useProfile(name!, !name)
@@ -298,6 +299,7 @@ const OwnerButtonWithDropdown = ({
   label: string
   canTransfer: boolean
 }) => {
+  const { t } = useTranslation('common')
   const router = useRouterWithHistory()
   const [isOpen, setIsOpen] = useState(false)
 

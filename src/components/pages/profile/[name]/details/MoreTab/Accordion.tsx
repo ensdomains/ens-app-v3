@@ -139,7 +139,7 @@ interface AccordionProps {
 }
 
 const Accordion = ({ data }: AccordionProps) => {
-  const { t } = useTranslation('profileDetails')
+  const { t } = useTranslation('profile')
 
   const [activeItem, setActiveItem] = useState(0)
 
@@ -154,7 +154,7 @@ const Accordion = ({ data }: AccordionProps) => {
         disabled.map((item) => {
           return (
             <AccordionItem key={item.title}>
-              <AccordionTitle $isDisabled>
+              <AccordionTitle $isDisabled={false}>
                 <Typography
                   variant="extraLarge"
                   weight="bold"
@@ -163,7 +163,7 @@ const Accordion = ({ data }: AccordionProps) => {
                   {item.title}
                 </Typography>
                 <UnwrappedIndicator color="textSecondary">
-                  {t('notWrapped')}
+                  {t('details.notWrapped')}
                 </UnwrappedIndicator>
               </AccordionTitle>
             </AccordionItem>

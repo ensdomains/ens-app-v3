@@ -259,7 +259,7 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   canEdit?: boolean
 }) => {
-  const { t } = useTranslation('profileDetails')
+  const { t } = useTranslation('profile')
 
   const filteredTexts = useMemo(
     () => texts?.filter(({ value }) => value),
@@ -294,7 +294,7 @@ export const RecordsTab = ({
         <SectionHeader>
           <SectionTitleContainer>
             <SectionTitle data-testid="text-heading" weight="bold">
-              {t('tabs.records.text')}
+              {t('details.tabs.records.text')}
             </SectionTitle>
             <SectionSubtitle weight="bold">
               {filteredTexts ? filteredTexts.length : 0}{' '}
@@ -348,7 +348,7 @@ export const RecordsTab = ({
             {formattedContentHash ? (
               <>
                 <SectionTitle data-testid="content-hash-heading" weight="bold">
-                  {t('tabs.records.contentHash')}
+                  {t('details.tabs.records.contentHash')}
                 </SectionTitle>
                 {formattedContentHashLink && (
                   <Outlink href={formattedContentHashLink}>
@@ -358,7 +358,7 @@ export const RecordsTab = ({
               </>
             ) : (
               <SectionSubtitle data-testid="content-hash-heading" weight="bold">
-                {t('tabs.records.noContentHash')}
+                {t('details.tabs.records.noContentHash')}
               </SectionSubtitle>
             )}
           </SectionTitleContainer>

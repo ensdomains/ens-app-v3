@@ -13,7 +13,7 @@ import { shortenAddress } from '@app/utils/utils'
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled, { css } from 'styled-components'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -146,6 +146,7 @@ const SpinnerWrapper = styled.div(
 )
 
 const AddressResultItem = ({ address }: { address: string }) => {
+  const { t } = useTranslation('common')
   const primary = usePrimary(address)
   const network = useChainId()
   const { avatar } = useAvatar(primary.name || undefined, network)
@@ -184,6 +185,7 @@ const PremiumTag = styled(StyledTag)(
 )
 
 const StatusTag = ({ status }: { status: RegistrationStatus }) => {
+  const { t } = useTranslation('common')
   switch (status) {
     case 'registered': {
       return <StyledTag>{t(`search.status.${status}`)}</StyledTag>

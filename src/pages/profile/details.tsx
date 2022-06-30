@@ -88,7 +88,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
 )
 
 export default function Page() {
-  const { t } = useTranslation(['profileDetails'])
+  const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const router = useRouter()
   const name = router.query.name as string
@@ -135,7 +135,7 @@ export default function Page() {
   return (
     <Content
       title={normalisedName}
-      subtitle={t('subtitle')}
+      subtitle={t('details.title')}
       loading={isLoading}
     >
       {{
@@ -168,8 +168,8 @@ export default function Page() {
                   type={breakpoints.lg ? 'dropdown' : 'dialog'}
                   description={
                     ownerData.ownershipLevel === 'nameWrapper'
-                      ? t('descriptions.owner')
-                      : t('descriptions.controller')
+                      ? t('details.descriptions.owner')
+                      : t('details.descriptions.controller')
                   }
                   canTransfer={selfAbilities.canChangeOwner}
                 />
@@ -180,7 +180,7 @@ export default function Page() {
                   network={chainId}
                   label={t('name.registrant', { ns: 'common' })}
                   type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                  description={t('descriptions.registrant')}
+                  description={t('details.descriptions.registrant')}
                   canTransfer={selfAbilities.canChangeRegistrant}
                 />
               )}
@@ -213,19 +213,25 @@ export default function Page() {
               $selected={tab === 'records'}
               onClick={() => setTab('records')}
             >
-              <Typography weight="bold">{t('tabs.records.label')}</Typography>
+              <Typography weight="bold">
+                {t('details.tabs.records.label')}
+              </Typography>
             </TabButton>
             <TabButton
               $selected={tab === 'subnames'}
               onClick={() => setTab('subnames')}
             >
-              <Typography weight="bold">{t('tabs.subnames.label')}</Typography>
+              <Typography weight="bold">
+                {t('details.tabs.subnames.label')}
+              </Typography>
             </TabButton>
             <TabButton
               $selected={tab === 'more'}
               onClick={() => setTab('more')}
             >
-              <Typography weight="bold">{t('tabs.more.label')}</Typography>
+              <Typography weight="bold">
+                {t('details.tabs.more.label')}
+              </Typography>
             </TabButton>
           </TabButtonContainer>
         ),

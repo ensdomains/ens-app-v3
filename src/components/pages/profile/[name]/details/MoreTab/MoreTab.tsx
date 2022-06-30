@@ -5,7 +5,7 @@ import { useRouter } from 'next/router'
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
-import { t } from 'i18next'
+import { TFunction, useTranslation } from 'react-i18next'
 import ResolverDetails from './ResolverDetails'
 import Fuses from './Fuses'
 import { RegistrationDate } from './RegistrationDate'
@@ -34,32 +34,36 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const generateAccordionData = (fuseData: any): AccordionData[] => [
+const generateAccordionData = (
+  fuseData: any,
+  t: TFunction,
+): AccordionData[] => [
   {
-    title: t('tabs.more.resolver', { ns: 'profileDetails' }),
+    title: t('details.tabs.more.resolver.label'),
     body: <ResolverDetails />,
   },
   {
-    title: t('tabs.more.fuses', { ns: 'profileDetails' }),
+    title: t('details.tabs.more.fuses.label'),
     body: <Fuses />,
     disabled: !fuseData,
   },
   {
-    title: t('tabs.more.tokenId', { ns: 'profileDetails' }),
+    title: t('details.tabs.more.tokenId'),
     body: <TokenId />,
   },
   {
-    title: t('tabs.more.registrationDate', { ns: 'profileDetails' }),
+    title: t('details.tabs.more.registrationDate'),
     body: <RegistrationDate />,
   },
 ]
 
 const MoreTab = () => {
+  const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
 
-  const accordionData = generateAccordionData(fuseData)
+  const accordionData = generateAccordionData(fuseData, t)
 
   return (
     <MoreContainer>

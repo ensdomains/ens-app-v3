@@ -141,7 +141,11 @@ export const SubnamesTab = ({
           ))
         ) : (
           <EmptyDetailContainer>
-            {isLoading ? <Spinner color="blue" /> : t('tabs.subnames.empty')}
+            {isLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              t('details.tabs.subnames.empty')
+            )}
           </EmptyDetailContainer>
         )}
       </TabWrapper>

@@ -20,7 +20,7 @@ import {
 } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
-import { t } from 'i18next'
+import { useTranslation } from 'react-i18next'
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResults'
 import { AnyItem, HistoryItem, SearchItem } from './types'
@@ -129,6 +129,8 @@ const MobileSearchInput = ({
   SearchResultsElement: JSX.Element
   SearchInputElement: JSX.Element
 }) => {
+  const { t } = useTranslation('common')
+
   useEffect(() => {
     if (state === 'entered') {
       searchInputRef.current?.focus()
@@ -174,6 +176,7 @@ export const SearchInput = ({
   size?: 'large' | 'extraLarge'
   setSearchState?: (value: TransitionState) => void
 }) => {
+  const { t } = useTranslation('common')
   const router = useRouter()
   const breakpoints = useBreakpoint()
 
@@ -266,7 +269,7 @@ export const SearchInput = ({
     return {
       type: 'name',
     }
-  }, [inputType.info, inputType.type, isValid, isEmpty, isTLD])
+  }, [inputType.info, inputType.type, isValid, isEmpty, isTLD, t])
 
   const extraItems = useMemo(() => {
     if (history.length > 0) {

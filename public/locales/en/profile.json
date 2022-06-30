@@ -10,11 +10,61 @@
   "tabs": {
     "profile": {
       "name": "Profile"
+    }
+  },
+  "details": {
+    "title": "Name Details",
+    "notWrapped": "Not wrapped",
+    "descriptions": {
+      "owner": "Owns and controls the name",
+      "controller": "Controls all the records of the name",
+      "registrant":  "The owner of the NFT"
     },
-    "subnames": {
-      "name": "Subnames",
-      "loading": "Loading subnames",
-      "empty": "No subnames have been added"
+    "tabs": {
+      "records": {
+        "label": "Records",
+        "text": "Text",
+        "contentHash": "Content Hash",
+        "noContentHash": "No Content Hash"
+      },
+      "subnames": {
+        "label": "Subnames",
+        "loading": "Loading subnames",
+        "empty": "No subnames have been added"
+      },
+      "more": {
+        "label": "More",
+        "resolver": {
+          "label": "Resolver",
+          "custom": "Custom",
+          "latest": "Latest",
+          "outdated": "Outdated",
+          "version": "Version"
+        },
+        "fuses": {
+          "label": "Fuses",
+          "callToAction": "Please wrap your name to unlock this feature",
+          "permissions": {
+            "label": "Permissions",
+            "canDoEverything": "Can do everything",
+            "canBurnFuses": "Can burn fuses",
+            "canCreateSubdomains": "Can create subdomains",
+            "canSetResolver": "Can set resolver",
+            "canSetTTL": "Can set TTL",
+            "canTransfer": "Can transfer",
+            "canUnwrap": "Can unwrap",
+            "parentCanControl": "Parent can control"
+          },
+          "vulnerabilities": {
+            "label": "Vulnerabilities",
+            "vulnerability": "Vulnerability",
+            "vulnerableNode": "Vulnerable node",
+            "none": "None"
+          }
+        },
+        "tokenId": "Token ID",
+        "registrationDate": "Registration Date"
+      }
     }
   },
   "errors": {

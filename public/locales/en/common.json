@@ -39,7 +39,12 @@
     "controller": "Controller",
     "owner": "Owner",
     "all": "All Names",
-    "expiresIn": "Expires in {{time}}",
+    "expiresInYears_one": "Expires in {{count}} year",
+    "expiresInYears_other": "Expires in {{count}} years",
+    "expiresInMonths_one": "Expires in {{count}} month",
+    "expiresInMonths_other": "Expires in {{count}} months",
+    "expiresInDays_one": "Expires in {{count}} day",
+    "expiresInDays_other": "Expires in {{count}} days",
     "extend": "Extend",
     "send": "Send",
     "transfer": "Transfer"
