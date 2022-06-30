@@ -11,7 +11,7 @@
       "label": "Records",
       "text": "Text",
       "contentHash": "Content Hash",
-      "noContentHash": "No content hash"
+      "noContentHash": "No Content Hash"
     },
     "subnames": {
       "label": "Subnames"
