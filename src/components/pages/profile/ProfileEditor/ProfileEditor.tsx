@@ -19,6 +19,7 @@ import { SelectableInput } from '../../../@molecules/SelectableInput/SelectableI
 import { useProfile } from '../../../../hooks/useProfile'
 import coinOptions from './coinOptions'
 import accountsOptions from './accountsOptions'
+import ScrollIndicatorContainer from './ScrollIndicatorContainer'
 
 const GENERAL_KEYS = ['name', 'description', 'location']
 
@@ -26,10 +27,12 @@ const Container = styled.form(({ theme }) => [
   css`
     width: 100%;
     height: content-height;
-    max-height: 95%;
+    max-height: 90vh;
     background: ${theme.colors.white};
     border-radius: ${theme.space['5']};
     overflow: hidden;
+    display: flex;
+    flex-direction: column;
   `,
   mq.sm.min`
     width: 95vw;
@@ -79,9 +82,12 @@ const NameContainer = styled.div(({ theme }) => [
 const ContentContainer = styled.div(
   () => css`
     padding: 16px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
   `,
 )
-const TabContainer = styled.div(() => css``)
 
 const TabButtonsContainer = styled.div(
   ({ theme }) => css`
@@ -368,49 +374,49 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
           </Banner>
           <NameContainer>yoginth.eth</NameContainer>
           <ContentContainer>
-            <TabContainer>
-              <TabButtonsContainer>
-                <TabButton
-                  $selected={tab === 'general'}
-                  $hasError={!!getFieldState('general', formState).error}
-                  $isDirty={getFieldState('general').isDirty}
-                  onClick={handleTabClick('general')}
-                >
-                  General
-                </TabButton>
-                <TabButton
-                  $selected={tab === 'accounts'}
-                  $hasError={!!getFieldState('accounts', formState).error}
-                  $isDirty={getFieldState('accounts').isDirty}
-                  onClick={handleTabClick('accounts')}
-                >
-                  Accounts
-                </TabButton>
-                <TabButton
-                  $selected={tab === 'address'}
-                  $hasError={!!getFieldState('address', formState).error}
-                  $isDirty={getFieldState('address').isDirty}
-                  onClick={handleTabClick('address')}
-                >
-                  Address
-                </TabButton>
-                <TabButton
-                  $selected={tab === 'website'}
-                  $hasError={!!getFieldState('website', formState).error}
-                  $isDirty={getFieldState('website').isDirty}
-                  onClick={handleTabClick('website')}
-                >
-                  Website
-                </TabButton>
-                <TabButton
-                  $selected={tab === 'other'}
-                  $hasError={!!getFieldState('other', formState).error}
-                  $isDirty={getFieldState('other').isDirty}
-                  onClick={handleTabClick('other')}
-                >
-                  Other
-                </TabButton>
-              </TabButtonsContainer>
+            <TabButtonsContainer>
+              <TabButton
+                $selected={tab === 'general'}
+                $hasError={!!getFieldState('general', formState).error}
+                $isDirty={getFieldState('general').isDirty}
+                onClick={handleTabClick('general')}
+              >
+                General
+              </TabButton>
+              <TabButton
+                $selected={tab === 'accounts'}
+                $hasError={!!getFieldState('accounts', formState).error}
+                $isDirty={getFieldState('accounts').isDirty}
+                onClick={handleTabClick('accounts')}
+              >
+                Accounts
+              </TabButton>
+              <TabButton
+                $selected={tab === 'address'}
+                $hasError={!!getFieldState('address', formState).error}
+                $isDirty={getFieldState('address').isDirty}
+                onClick={handleTabClick('address')}
+              >
+                Address
+              </TabButton>
+              <TabButton
+                $selected={tab === 'website'}
+                $hasError={!!getFieldState('website', formState).error}
+                $isDirty={getFieldState('website').isDirty}
+                onClick={handleTabClick('website')}
+              >
+                Website
+              </TabButton>
+              <TabButton
+                $selected={tab === 'other'}
+                $hasError={!!getFieldState('other', formState).error}
+                $isDirty={getFieldState('other').isDirty}
+                onClick={handleTabClick('other')}
+              >
+                Other
+              </TabButton>
+            </TabButtonsContainer>
+            <ScrollIndicatorContainer>
               {
                 {
                   general: (
@@ -516,7 +522,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                   other: <>other</>,
                 }[tab]
               }
-            </TabContainer>
+            </ScrollIndicatorContainer>
             <div style={{ display: 'flex', gap: '20px' }}>
               <Button tone="grey">Cancel</Button>
               <Button disabled={hasErrors} type="submit">
