@@ -19,7 +19,6 @@ i18n
     interpolation: {
       escapeValue: false,
     },
-    debug: true,
     defaultNS: 'common',
     ns: ['address', 'common', 'names', 'profile', 'settings'],
     react: {
