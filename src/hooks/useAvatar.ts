@@ -2,26 +2,10 @@ import { useEns } from '@app/utils/EnsProvider'
 import { ensNftImageUrl, imageUrlUnknownRecord } from '@app/utils/utils'
 import { useQuery } from 'react-query'
 
-const fetchImg = async (url: string) => {
-  const response = await fetch(url)
-  const imgBlob = response && (await response.blob())
-  const src = URL.createObjectURL(imgBlob)
-  if (imgBlob?.type.startsWith('image/')) {
-    return src
-  }
-  return undefined
-}
-
 export const useAvatar = (name: string | undefined, network: number) => {
-  const { data, isLoading, status } = useQuery(
-    ['getAvatar', name],
-    () => fetchImg(imageUrlUnknownRecord(name!, network)),
-    {
-      enabled: !!name,
-    },
-  )
+  const avatar = name ? imageUrlUnknownRecord(name, network) : undefined
 
-  return { avatar: data, isLoading, status }
+  return avatar
 }
 
 export const useNFTImage = (name: string | undefined, network: number) => {
@@ -39,13 +23,11 @@ export const useNFTImage = (name: string | undefined, network: number) => {
       staleTime: 60000,
     },
   )
-  const { data, isLoading, status } = useQuery(
-    ['getNFTImage', name],
-    () => fetchImg(ensNftImageUrl(name!, network, baseRegistrarAddress!)),
-    {
-      enabled: ready && !!name && !!baseRegistrarAddress && isCompatible,
-    },
-  )
 
-  return { image: data, isLoading, status, isCompatible }
+  const image =
+    name && baseRegistrarAddress
+      ? ensNftImageUrl(name, network, baseRegistrarAddress)
+      : undefined
+
+  return { image, isCompatible }
 }
