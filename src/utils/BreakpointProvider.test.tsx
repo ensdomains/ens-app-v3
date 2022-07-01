@@ -2,17 +2,6 @@ import { render, screen, mockFunction, waitFor } from '@app/test-utils'
 
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 
-/*
-
-
-  <BreakpointProvider queries={breakpoints}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <Notifications />
-                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                </BreakpointProvider>
-*/
-
 const breakpoints = {
   xs: '(min-width: 360px)',
   sm: '(min-width: 640px)',
