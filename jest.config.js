@@ -22,6 +22,7 @@ const customJestConfig = {
     '\\.svg$': '<rootDir>/__mocks__/svgMock.tsx',
     '^__tests__/(.*)$': '<rootDir>/__tests__/$1',
     '^@app/(.*)$': '<rootDir>/src/$1',
+    '^@rainbow-me/rainbowkit$': '<rootDir>/__mocks__/rainbowkitMock.js',
   },
   setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
   testPathIgnorePatterns: [

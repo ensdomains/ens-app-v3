@@ -136,7 +136,7 @@ export const TransactionSection = () => {
   const [viewAmt, setViewAmt] = useState(5)
 
   return (
-    <SectionContainer $name="transactions">
+    <SectionContainer data-testid="transaction-section" $name="transactions">
       <TransactionSectionHeadingContainer>
         <TransactionSectionHeading
           $hasTransactions={
@@ -154,6 +154,7 @@ export const TransactionSection = () => {
             variant="secondary"
             onClick={() => clearTransactions()}
             disabled={transactions.length === 0}
+            data-testid="transaction-clear-button"
           >
             {t('section.transaction.clear')}
           </Button>
@@ -167,7 +168,9 @@ export const TransactionSection = () => {
                 data-testid={`transaction-${transaction.status}`}
                 key={transaction.hash}
               >
-                {transaction.status === 'pending' && <Spinner color="accent" />}
+                {transaction.status === 'pending' && (
+                  <Spinner data-testid="pending-spinner" color="accent" />
+                )}
                 <TransactionInfoContainer>
                   <Typography weight="bold">
                     {tc(`transaction.description.${transaction.description}`)}
@@ -192,6 +195,7 @@ export const TransactionSection = () => {
             {transactions.length > viewAmt && (
               <TransactionContainer
                 onClick={() => setViewAmt((curr) => curr + 5)}
+                data-testid="transaction-view-more-button"
               >
                 <ViewMoreInner weight="bold">View More</ViewMoreInner>
               </TransactionContainer>

@@ -6,7 +6,7 @@ jest.mock('@app/utils/BreakpointProvider')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
-describe('DetailSnippet', () => {
+describe('NameSnippetMobile', () => {
   mockUseBreakpoint.mockReturnValue({
     xs: true,
     sm: false,

@@ -5,10 +5,8 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import { labelhash } from '@ensdomains/ensjs/dist/cjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
 import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
 import { SubnamesTab } from './SubnamesTab'
 
-jest.mock('react-i18next')
 jest.mock('@app/hooks/useSubnamePagination')
 jest.mock('@app/hooks/useZorb')
 jest.mock('@app/hooks/useAvatar')
@@ -16,7 +14,6 @@ jest.mock('next/router')
 
 const mockUseRouter = mockFunction(useRouter)
 const mockUseSubnamePagination = mockFunction(useSubnamePagination)
-const mockUseTranslation = mockFunction(useTranslation as any)
 const mockUseZorb = mockFunction(useZorb)
 const mockUseAvatar = mockFunction(useAvatar)
 
@@ -42,9 +39,6 @@ const makeSubname = (_: any, i: number) => {
 
 describe('SubnamesTab', () => {
   beforeAll(() => {
-    mockUseTranslation.mockReturnValue({
-      t: (key: string) => key,
-    })
     mockUseRouter.mockReturnValue({
       query: {
         name: 'nick.eth',

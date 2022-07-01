@@ -1,14 +1,9 @@
-import { render, screen, mockFunction, waitFor } from '@app/test-utils'
-
-import { useTranslation } from 'react-i18next'
+import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useRouter } from 'next/router'
-
 import { HamburgerMenu } from './HamburgerMenu'
 
 jest.mock('next/router')
-jest.mock('react-i18next')
 const mockUseRouter = mockFunction(useRouter)
-const mockUseTranslation = mockFunction(useTranslation)
 
 describe('HamburgerMenu', () => {
   const mockRouterObject = {
@@ -19,9 +14,6 @@ describe('HamburgerMenu', () => {
 
   it('should render the correct label', () => {
     mockUseRouter.mockReturnValue(mockRouterObject)
-    mockUseTranslation.mockReturnValue({
-      t: (key: string) => key,
-    })
 
     const dropdownItems = [
       {
@@ -35,9 +27,6 @@ describe('HamburgerMenu', () => {
   it('should use provided onClick if there is one', async () => {
     const mockOnClick = jest.fn()
     mockUseRouter.mockReturnValue(mockRouterObject)
-    mockUseTranslation.mockReturnValue({
-      t: (key: string) => key,
-    })
 
     const dropdownItems = [
       {
@@ -55,15 +44,12 @@ describe('HamburgerMenu', () => {
   })
   it('should redirect on click if https link', async () => {
     mockUseRouter.mockReturnValue(mockRouterObject)
-    mockUseTranslation.mockReturnValue({
-      t: (key: string) => key,
-    })
 
     const mockReplace = jest.fn()
 
     const { location } = window
-    delete window.location
-    window.location = { replace: mockReplace }
+    delete (window as any).location
+    window.location = { replace: mockReplace } as any
 
     const dropdownItems = [
       {
@@ -87,9 +73,7 @@ describe('HamburgerMenu', () => {
       push: mockPush,
     }
     mockUseRouter.mockReturnValue(mockRouterObjectLocal)
-    mockUseTranslation.mockReturnValue({
-      t: (key: string) => key,
-    })
+
     const dropdownItems = [
       {
         label: 'testLabel',

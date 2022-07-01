@@ -22,11 +22,38 @@ describe('Accordion', () => {
   })
   it('should show the correct body based on clicked item', () => {
     render(<Accordion data={data} />)
+    expect(screen.getByText('Body 1')).not.toHaveStyle('height: 0px')
     expect(screen.getByText('Body 2')).toHaveStyle('height: 0px')
-    fireEvent.click(screen.getByText('Item 2'))
-    expect(screen.getByText('Body 1')).toHaveStyle('height: 0px')
+    expect(
+      screen.queryByTestId('accordion-Item 2-body'),
+    ).not.toBeInTheDocument()
   })
 
-  it.todo('should show disabled item correctly')
-  it.todo('should show enabled item correctly')
+  it('should show a disabled item correctly', () => {
+    render(
+      <Accordion
+        data={[
+          ...data,
+          {
+            title: 'Item 3',
+            body: 'Body 3',
+            disabled: true,
+          },
+        ]}
+      />,
+    )
+    expect(screen.getByTestId('accordion-Item 3-disabled')).toBeVisible()
+    expect(screen.getByText('Not wrapped')).toBeVisible()
+    fireEvent.click(screen.getByTestId('accordion-Item 3-disabled'))
+    expect(screen.queryByText('Body 3')).not.toBeInTheDocument()
+  })
+  it('should show an enabled item correctly', () => {
+    render(<Accordion data={data} />)
+    fireEvent.click(screen.getByTestId('accordion-Item 2-enabled'))
+    expect(screen.getByText('Body 2')).not.toHaveStyle('height: 0px')
+    expect(
+      screen.queryByTestId('accordion-Item 1-body'),
+    ).not.toBeInTheDocument()
+    expect(screen.getByText('Body 1')).toHaveStyle('height: 0px')
+  })
 })
