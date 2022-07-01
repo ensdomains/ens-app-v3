@@ -1,20 +1,83 @@
 {
   "title": "Profile",
   "yourWallet": "Your wallet",
+  "yourProfile": "Your profile",
   "accounts": "Accounts",
   "addresses": "Addresses",
   "otherRecords": "Other Records",
+  "editProfile": "Edit Profile",
+  "viewDetails": "View Details",
   "tabs": {
     "profile": {
       "name": "Profile"
+    }
+  },
+  "details": {
+    "title": "Name Details",
+    "notWrapped": "Not wrapped",
+    "descriptions": {
+      "owner": "Owns and controls the name",
+      "controller": "Controls all the records of the name",
+      "registrant":  "The owner of the NFT"
     },
-    "subnames": {
-      "name": "Subnames",
-      "loading": "Loading subnames",
-      "empty": "No subnames have been added"
+    "tabs": {
+      "records": {
+        "label": "Records",
+        "text": "Text",
+        "contentHash": "Content Hash",
+        "noContentHash": "No Content Hash"
+      },
+      "subnames": {
+        "label": "Subnames",
+        "loading": "Loading subnames",
+        "empty": "No subnames have been added"
+      },
+      "more": {
+        "label": "More",
+        "resolver": {
+          "label": "Resolver",
+          "custom": "Custom",
+          "latest": "Latest",
+          "outdated": "Outdated",
+          "version": "Version"
+        },
+        "fuses": {
+          "label": "Fuses",
+          "callToAction": "Please wrap your name to unlock this feature",
+          "permissions": {
+            "label": "Permissions",
+            "canDoEverything": "Can do everything",
+            "canBurnFuses": "Can burn fuses",
+            "canCreateSubdomains": "Can create subdomains",
+            "canSetResolver": "Can set resolver",
+            "canSetTTL": "Can set TTL",
+            "canTransfer": "Can transfer",
+            "canUnwrap": "Can unwrap",
+            "parentCanControl": "Parent can control"
+          },
+          "vulnerabilities": {
+            "label": "Vulnerabilities",
+            "vulnerability": "Vulnerability",
+            "vulnerableNode": "Vulnerable node",
+            "none": "None"
+          }
+        },
+        "tokenId": {
+          "label": "Token ID",
+          "hex": "hex",
+          "decimal": "decimal"
+        },
+        "registrationDate": {
+          "label":"Registration Date"
+        }
+      }
     }
   },
   "errors": {
+    "invalidName": "This name is invalid.",
+    "expiringSoon": "This name is expiring soon.",
+    "unknown": "Unknown error",
+    "notMigrated": "This name is not migrated to the new registry.",
     "featureNotAvailable": "Some features are not yet available, but you can still ",
     "featureNotAvailableLink": "view this name in the old app."
   }

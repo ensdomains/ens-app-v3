@@ -6,6 +6,7 @@ import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import ProfileEditor from '@app/components/pages/profile/ProfileEditor/ProfileEditor'
+import { useTranslation } from 'react-i18next'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {
@@ -261,6 +262,7 @@ export const RecordsTab = ({
 }) => {
   const [showEditor, setShowEditor] = useState(true)
   const onDismissEditor = () => setShowEditor(false)
+  const { t } = useTranslation('profile')
 
   const filteredTexts = useMemo(
     () => texts?.filter(({ value }) => value),
@@ -295,18 +297,21 @@ export const RecordsTab = ({
         <SectionHeader>
           <SectionTitleContainer>
             <SectionTitle data-testid="text-heading" weight="bold">
-              Text
+              {t('details.tabs.records.text')}
             </SectionTitle>
             <SectionSubtitle weight="bold">
-              {filteredTexts ? filteredTexts.length : 0} Records
+              {filteredTexts ? filteredTexts.length : 0}{' '}
+              {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
-          {canEdit ||
-            (true && (
-              <EditButton onClick={() => setShowEditor(true)}>
-                <Typography weight="bold">Edit</Typography>
-              </EditButton>
-            ))}
+
+          {canEdit && (
+            <EditButton disabled>
+              <Typography weight="bold">
+                {t('action.edit', { ns: 'common' })}
+              </Typography>
+            </EditButton>
+          )}
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
@@ -322,10 +327,11 @@ export const RecordsTab = ({
         <SectionHeader>
           <SectionTitleContainer>
             <SectionTitle data-testid="address-heading" weight="bold">
-              Address
+              {t('address.label', { ns: 'common' })}
             </SectionTitle>
             <SectionSubtitle weight="bold">
-              {filteredAddresses ? filteredAddresses.length : 0} Records
+              {filteredAddresses ? filteredAddresses.length : 0}{' '}
+              {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
         </SectionHeader>
@@ -346,15 +352,17 @@ export const RecordsTab = ({
             {formattedContentHash ? (
               <>
                 <SectionTitle data-testid="content-hash-heading" weight="bold">
-                  Content Hash
+                  {t('details.tabs.records.contentHash')}
                 </SectionTitle>
                 {formattedContentHashLink && (
-                  <Outlink href={formattedContentHashLink}>View</Outlink>
+                  <Outlink href={formattedContentHashLink}>
+                    {t('action.view', { ns: 'common' })}
+                  </Outlink>
                 )}
               </>
             ) : (
               <SectionSubtitle data-testid="content-hash-heading" weight="bold">
-                No Content Hash
+                {t('details.tabs.records.noContentHash')}
               </SectionSubtitle>
             )}
           </SectionTitleContainer>

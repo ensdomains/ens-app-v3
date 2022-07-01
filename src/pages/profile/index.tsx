@@ -89,7 +89,7 @@ export default function Page() {
 
   return (
     <Content
-      title={isSelf ? 'Your profile' : normalisedName}
+      title={isSelf ? t('yourProfile') : normalisedName}
       subtitle={isSelf ? normalisedName : 'Profile'}
       loading={isLoading}
     >
@@ -123,7 +123,7 @@ export default function Page() {
             {isSelf && (
               <SelfButtons>
                 <Button shadowless variant="transparent" size="small">
-                  Edit Profile
+                  {t('editProfile')}
                 </Button>
                 <Button
                   onClick={() =>
@@ -138,7 +138,7 @@ export default function Page() {
                   variant="transparent"
                   size="small"
                 >
-                  View Details
+                  {t('viewDetails')}
                 </Button>
               </SelfButtons>
             )}

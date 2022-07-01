@@ -5,6 +5,7 @@ import { Typography, Space } from '@ensdomains/thorin'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
 import { TrafficLight } from '@app/components/TrafficLight'
+import { useTranslation } from 'react-i18next'
 
 const FusesContainer = styled.div`
   display: flex;
@@ -36,23 +37,24 @@ const Spacer = styled.div<{ $height: Space }>(
 )
 
 const Fuses = () => {
+  const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.more' })
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
 
   return !fuseData ? (
-    <Typography>Please wrap your name to unlock this feature</Typography>
+    <Typography>{t('fuses.callToAction')}</Typography>
   ) : (
     <FusesContainer>
       <div>
         <Typography weight="bold" color="textTertiary">
-          Permissions
+          {t('fuses.permissions.label')}
         </Typography>
         <Spacer $height="5" />
         <div>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Can do everything
+              {t('fuses.permissions.canDoEverything')}
             </Typography>
             <TrafficLight
               $go={fuseData.fuseObj.canDoEverything}
@@ -61,43 +63,43 @@ const Fuses = () => {
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Can burn fuses
+              {t('fuses.permissions.canBurnFuses')}
             </Typography>
             <TrafficLight $go={!fuseData.fuseObj.cannotBurnFuses} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Can create subdomains
+              {t('fuses.permissions.canCreateSubdomains')}
             </Typography>
             <TrafficLight $go={!fuseData.fuseObj.cannotCreateSubdomains} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Can set resolver
+              {t('fuses.permissions.canSetResolver')}
             </Typography>
             <TrafficLight $go={!fuseData.fuseObj.cannotSetResolver} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Can set TTL
+              {t('fuses.permissions.canSetTTL')}
             </Typography>
             <TrafficLight $go={!fuseData.fuseObj.cannotSetTTL} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Can transfer
+              {t('fuses.permissions.canTransfer')}
             </Typography>
             <TrafficLight $go={!fuseData.fuseObj.cannotTransfer} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Can unwrap
+              {t('fuses.permissions.canUnwrap')}
             </Typography>
             <TrafficLight $go={!fuseData.fuseObj.cannotUnwrap} />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              Parent can control
+              {t('fuses.permissions.parentCanControl')}
             </Typography>
             <TrafficLight $go={!fuseData.fuseObj.parentCannotControl} />
           </FusesRow>
@@ -106,12 +108,12 @@ const Fuses = () => {
       <Spacer $height="10" />
       <div>
         <Typography weight="bold" color="textTertiary">
-          Vulnerabilities
+          {t('fuses.vulnerabilities.label')}
         </Typography>
         <Spacer $height="5" />
         <FusesRow>
           <Typography color="textSecondary" weight="bold">
-            Vulnerability
+            {t('fuses.vulnerabilities.vulnerability')}
           </Typography>
           <Typography color="textSecondary" data-testid="vulnerability">
             {fuseData.vulnerability}
@@ -119,10 +121,10 @@ const Fuses = () => {
         </FusesRow>
         <FusesRow>
           <Typography color="textSecondary" weight="bold">
-            Vulnerable node
+            {t('fuses.vulnerabilities.vulnerableNode')}
           </Typography>
           <Typography color="textSecondary">
-            {fuseData.vulnerableNode ?? 'None'}
+            {fuseData.vulnerableNode ?? t('fuses.vulnerabilities.none')}
           </Typography>
         </FusesRow>
       </div>
