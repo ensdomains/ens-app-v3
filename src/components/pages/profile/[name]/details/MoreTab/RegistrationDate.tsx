@@ -5,6 +5,7 @@ import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 
 import { useGetHistory } from '@app/hooks/useGetHistory'
+import { useTranslation } from 'react-i18next'
 
 function getEtherScanLink(networkId?: number | string) {
   switch (networkId) {
@@ -50,6 +51,7 @@ const ButtonContainer = styled.div(() => [
 ])
 
 export const RegistrationDate = () => {
+  const { t } = useTranslation('common')
   const router = useRouter()
   const { name } = router.query
   const { history = { registration: [] } } = useGetHistory(name as string)
@@ -83,7 +85,7 @@ export const RegistrationDate = () => {
           target="_blank"
           size="small"
         >
-          View on Etherscan
+          {t('transaction.viewEtherscan')}
         </Button>
       </ButtonContainer>
     </RegistrationDateContainer>

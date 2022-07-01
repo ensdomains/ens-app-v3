@@ -6,6 +6,7 @@ import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -152,13 +153,14 @@ export const NameDetailSnippet = ({
   network: number
   showButton?: boolean
 }) => {
+  const { t } = useTranslation('common')
   const router = useRouter()
 
   return (
     <NameDetailContainer>
       {expiryDate && (
         <ItemContainer>
-          <LeftText weight="bold">Expires</LeftText>
+          <LeftText weight="bold">{t('name.expires')}</LeftText>
           <Typography weight="bold">{`${expiryDate.toLocaleDateString(
             undefined,
             {
@@ -168,12 +170,12 @@ export const NameDetailSnippet = ({
         </ItemContainer>
       )}
       <ItemContainer>
-        <LeftText weight="bold">Controller</LeftText>
+        <LeftText weight="bold">{t('name.controller')}</LeftText>
         <NameOwnerItem address={ownerData.owner} network={network} />
       </ItemContainer>
       {ownerData.registrant && (
         <ItemContainer>
-          <LeftText weight="bold">Registrant</LeftText>
+          <LeftText weight="bold">{t('name.registrant')}</LeftText>
           <NameOwnerItem address={ownerData.registrant} network={network} />
         </ItemContainer>
       )}
@@ -192,7 +194,7 @@ export const NameDetailSnippet = ({
             shadowless
             size="small"
           >
-            View Details
+            {t('wallet.viewDetails')}
           </Button>
         </ButtonWrapper>
       )}

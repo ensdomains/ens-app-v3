@@ -6,7 +6,7 @@
     },
     "transaction": {
       "title": "Transactions",
-      "clear": "Clear"
+      "noRecentTransactions": "No recent transactions"
     }
   }
 }

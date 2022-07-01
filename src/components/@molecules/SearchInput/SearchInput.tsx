@@ -20,6 +20,7 @@ import {
 } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResults'
 import { AnyItem, HistoryItem, SearchItem } from './types'
@@ -128,6 +129,8 @@ const MobileSearchInput = ({
   SearchResultsElement: JSX.Element
   SearchInputElement: JSX.Element
 }) => {
+  const { t } = useTranslation('common')
+
   useEffect(() => {
     if (state === 'entered') {
       searchInputRef.current?.focus()
@@ -155,7 +158,7 @@ const MobileSearchInput = ({
             <InputAndCancel>
               {SearchInputElement}
               <CancelButton as="button" onClick={() => toggle(false)}>
-                Cancel
+                {t('action.cancel')}
               </CancelButton>
             </InputAndCancel>
             {SearchResultsElement}
@@ -173,6 +176,7 @@ export const SearchInput = ({
   size?: 'large' | 'extraLarge'
   setSearchState?: (value: TransitionState) => void
 }) => {
+  const { t } = useTranslation('common')
   const router = useRouter()
   const breakpoints = useBreakpoint()
 
@@ -237,19 +241,19 @@ export const SearchInput = ({
     if (isEmpty) {
       return {
         type: 'text',
-        value: 'Type a name or address to search...',
+        value: t('search.emptyText'),
       }
     }
     if (!isValid) {
       if (inputType.info === 'short') {
         return {
           type: 'error',
-          value: 'Name too short',
+          value: t('search.errors.tooShort'),
         }
       }
       return {
         type: 'error',
-        value: 'Invalid format for name',
+        value: t('search.errors.invalid'),
       }
     }
     if (inputType.type === 'address') {
@@ -265,7 +269,7 @@ export const SearchInput = ({
     return {
       type: 'name',
     }
-  }, [inputType.info, inputType.type, isValid, isEmpty, isTLD])
+  }, [inputType.info, inputType.type, isValid, isEmpty, isTLD, t])
 
   const extraItems = useMemo(() => {
     if (history.length > 0) {

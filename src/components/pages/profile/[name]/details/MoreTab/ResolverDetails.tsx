@@ -6,6 +6,7 @@ import { Typography, mq } from '@ensdomains/thorin'
 import { useProfile } from '@app/hooks/useProfile'
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
+import { useTranslation } from 'react-i18next'
 
 // Ordered by recency
 const RESOLVER_ADDRESSES = [
@@ -68,6 +69,7 @@ const AddressContainer = styled.div(
 )
 
 const ResolverDetails = () => {
+  const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
 
@@ -78,15 +80,20 @@ const ResolverDetails = () => {
 
   let versionIndicatorText = ''
   if (resolverAddressIndex === -1) {
-    versionIndicatorText = 'Custom'
+    versionIndicatorText = t('details.tabs.more.resolver.custom')
   } else {
-    versionIndicatorText = resolverAddressIndex === 0 ? 'Latest' : 'Outdated'
+    versionIndicatorText =
+      resolverAddressIndex === 0
+        ? t('details.tabs.more.resolver.latest')
+        : t('details.tabs.more.resolver.outdated')
   }
 
   return (
     <ResolverDetailsContainer>
       <VersionContainer>
-        <Typography weight="bold">Version</Typography>
+        <Typography weight="bold">
+          {t('details.tabs.more.resolver.version')}
+        </Typography>
         <VersionIndicator>
           {versionIndicatorText}
           <TrafficLight
@@ -97,7 +104,9 @@ const ResolverDetails = () => {
         </VersionIndicator>
       </VersionContainer>
       <AddressContainer>
-        <Typography weight="bold">Address</Typography>
+        <Typography weight="bold">
+          {t('address.label', { ns: 'common' })}
+        </Typography>
         <RecordItem value={resolverAddress || ''} />
       </AddressContainer>
     </ResolverDetailsContainer>

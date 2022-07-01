@@ -5,12 +5,14 @@ import { useRouter } from 'next/router'
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
+import { TFunction, useTranslation } from 'react-i18next'
 import ResolverDetails from './ResolverDetails'
 import Fuses from './Fuses'
 import { RegistrationDate } from './RegistrationDate'
 import Accordion, { AccordionData } from './Accordion'
 
 export const TokenId = () => {
+  const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
 
@@ -20,9 +22,15 @@ export const TokenId = () => {
 
   return (
     <>
-      <RecordItem itemKey="hex" value={labelHash} />
+      <RecordItem
+        itemKey={t('details.tabs.more.tokenId.hex')}
+        value={labelHash}
+      />
       <div style={{ height: 10 }} />
-      <RecordItem itemKey="decimal" value={tokenId} />
+      <RecordItem
+        itemKey={t('details.tabs.more.tokenId.decimal')}
+        value={tokenId}
+      />
     </>
   )
 }
@@ -33,31 +41,36 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const generateAccordionData = (fuseData: any): AccordionData[] => [
+const generateAccordionData = (
+  fuseData: any,
+  t: TFunction,
+): AccordionData[] => [
   {
-    title: 'Resolver',
+    title: t('details.tabs.more.resolver.label'),
     body: <ResolverDetails />,
   },
   {
-    title: 'Fuses',
+    title: t('details.tabs.more.fuses.label'),
     body: <Fuses />,
     disabled: !fuseData,
   },
   {
-    title: 'Token ID',
+    title: t('details.tabs.more.tokenId.label'),
     body: <TokenId />,
   },
   {
-    title: 'Registration Date',
+    title: t('details.tabs.more.registrationDate.label'),
     body: <RegistrationDate />,
   },
 ]
 
 const MoreTab = () => {
+  const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
-  const accordionData = generateAccordionData(fuseData)
+
+  const accordionData = generateAccordionData(fuseData, t)
 
   return (
     <MoreContainer>

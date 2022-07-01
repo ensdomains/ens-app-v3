@@ -2,6 +2,7 @@ import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 const ExpiryWrapper = styled.div(
   ({ theme }) => css`
@@ -51,6 +52,7 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
 }
 
 export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
+  const { t } = useTranslation()
   const currentDate = new Date()
   const difference = secondsToDays(
     (expiry.getTime() - currentDate.getTime()) / 1000,
@@ -58,23 +60,23 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   const months = Math.round(difference / 30)
   const years = Math.round(difference / 365)
 
-  let text = `${years} year${years > 1 ? 's' : ''}`
+  let text = t('name.expiresInYears', { count: years })
   let color: 'foreground' | 'red' | 'orange' = 'foreground'
 
   if (difference < 0) {
-    text = `${difference + 90} days`
+    text = t('name.expiresInDays', { count: difference + 90 })
     color = 'red'
   } else if (difference < 90) {
-    text = `${months} months`
+    text = t('name.expiresInMonths', { count: months })
     color = 'orange'
   } else if (difference < 365) {
-    text = `${months} months`
+    text = t('name.expiresInMonths', { count: months })
     color = 'foreground'
   }
 
   return (
     <ExpiryText weight="bold" $color={color}>
-      Expires in {text}
+      {text}
     </ExpiryText>
   )
 }
