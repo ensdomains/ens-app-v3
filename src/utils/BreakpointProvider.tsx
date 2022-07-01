@@ -35,6 +35,7 @@ const BreakpointProvider = ({
         )
         return acc
       }, {} as Record<QueryType, boolean>)
+      console.log('updatedMatches: ', updatedMatches)
       setQueryMatch(updatedMatches)
     }
 
