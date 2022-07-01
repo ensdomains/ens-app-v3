@@ -1,4 +1,4 @@
-import { render, screen, mockFunction, waitFor } from '@app/test-utils'
+import { render, screen, waitFor } from '@app/test-utils'
 
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 
