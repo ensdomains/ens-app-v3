@@ -11,31 +11,16 @@ import {
   Button,
   PlusSVG,
 } from '@ensdomains/thorin'
-import {
-  DynamicAddressIcon,
-  addressIconTypes,
-  AddressIconType,
-} from '@app/assets/address/DynamicAddressIcon'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
-import COIN_LIST from '@app/constants/coinList'
-import { SelectableInput } from '../../@molecules/SelectableInput/SelectableInput'
+import SUPPORTED_COIN_KEYS from '@app/constants/supportedAddresses.json'
+import ACCOUNT_KEYS from '@app/constants/supportedTexts.json'
+import { SelectableInput } from '../../../@molecules/SelectableInput/SelectableInput'
 // import { validateCryptoAddress } from '../../../utils/validate'
-import { useProfile } from '../../../hooks/useProfile'
-// enum GeneralType {
-//   nickname = 'nickname',
-//   location = 'location',
-//   bio = 'bio',
-// }
+import { useProfile } from '../../../../hooks/useProfile'
+import coinOptions from './coinOptions'
+import accountsOptions from './accountsOptions'
 
-enum AccountType {
-  twitter = 'twitter',
-  opensea = 'opensea',
-}
-
-// const ACCOUNT_LIST = Object.values(AccountType)
-
-type CoinType = typeof COIN_LIST[number]
-console.log(COIN_LIST)
+const GENERAL_KEYS = ['name', 'description', 'location']
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -162,45 +147,35 @@ const TabButton = styled.button<{
 
 type TabType = 'general' | 'accounts' | 'address' | 'website' | 'other'
 
-const IconWrapper = styled.div(
-  () => css`
-    width: 22px;
-    margin-right: -8px;
-    margin-left: -8px;
-    display: flex;
-    align-items: center;
-  `,
-)
+// const RecordIcon = ({ record }: { record: string }) => {
+//   console.log(record)
 
-const RecordIcon = (key: any) => {
-  console.log(JSON.stringify(key))
-
-  console.log(addressIconTypes[key as AddressIconType])
-
-  if (addressIconTypes[key as AddressIconType]) {
-    return (
-      <IconWrapper>
-        <DynamicAddressIcon name={key as AddressIconType} />
-      </IconWrapper>
-    )
-  }
-  return null
-}
+//   console.log(addressIconTypes[record as AddressIconType])
+//   const addressIconKey = record?.toLowerCase() as AddressIconType
+//   if (addressIconTypes[addressIconKey]) {
+//     return (
+//       <IconWrapper>
+//         <DynamicAddressIcon name={addressIconKey} />
+//       </IconWrapper>
+//     )
+//   }
+//   return null
+// }
 
 type ProfileType = {
   general: {
-    nickname?: string
+    name?: string
     location?: string
-    bio?: string
+    description?: string
   }
   accounts: {
-    [key in AccountType]: string
+    [key: string]: string
   }
   address: {
-    [key in CoinType]?: string
+    [key: string]: string
   }
   website: {
-    ipfs?: string
+    url?: string
   }
   other: {
     [key: string]: string
@@ -247,10 +222,15 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
   const address = watch('address')
   console.log('address', address)
 
-  const [existingCoinRecords, setExistingCoinRecords] = useState<CoinType[]>([])
-  const [newCoinRecords, setNewCoinRecords] = useState<CoinType[]>([])
+  const [existingAccountsRecords, setExistingAccountsRecords] = useState<
+    string[]
+  >([])
+  // const [newAccountsRecords, setNewAccountsRecords] = useState<string[]>([])
+  const [existingCoinRecords, setExistingCoinRecords] = useState<string[]>([])
+  const [newCoinRecords, setNewCoinRecords] = useState<string[]>([])
+  // const [existingOtherRecords, setExistingOtherRecords] = useState<string[]>([])
 
-  const handleRemoveCoinRecord = (coin: CoinType) => () => {
+  const handleRemoveCoinRecord = (coin: string) => () => {
     console.log('>>>>')
     const oldAddress = getValues('address')
     const { [coin]: _, ...newAddress } = oldAddress
@@ -259,30 +239,33 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
     setNewCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
   }
 
-  //
-  const coinOptions = useMemo(() => {
-    return COIN_LIST.map((coin) => ({
-      label: coin.toUpperCase(),
-      value: coin,
-      prefix: <RecordIcon key={coin} />,
-    }))
-  }, [])
+  // //
+  // const coinOptions = useMemo(() => {
+  //   return SUPPORTED_COIN_KEYS.map((coin) => ({
+  //     label: coin.toUpperCase(),
+  //     value: coin,
+  //     prefix: <RecordIcon record={coin} />,
+  //   }))
+  // }, [])
 
   const unusedCoinOptions = useMemo(() => {
     const usedCoins = [...existingCoinRecords, ...newCoinRecords]
-    return coinOptions.filter((option) => !usedCoins.includes(option.value))
-  }, [coinOptions, existingCoinRecords, newCoinRecords])
+    const newOptions = coinOptions.filter(
+      (option) => !usedCoins.includes(option.value),
+    )
+    return newOptions
+  }, [existingCoinRecords, newCoinRecords])
 
-  const availableCoinOptions = (coin: CoinType) => {
-    return [
-      {
-        label: coin.toUpperCase(),
-        value: coin,
-        prefix: null,
-      },
-      ...unusedCoinOptions,
-    ]
-  }
+  // const availableCoinOptions = (coin: string) => {
+  //   return [
+  //     {
+  //       label: coin.toUpperCase(),
+  //       value: coin,
+  //       prefix: <RecordIcon record={coin} />,
+  //     },
+  //     ...unusedCoinOptions,
+  //   ]
+  // }
 
   const handleAddNewCoin = () => {
     if (unusedCoinOptions.length > 0) {
@@ -291,7 +274,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
     }
   }
 
-  const handleCoinChange = (index: number, newCoin: CoinType) => {
+  const handleCoinChange = (index: number, newCoin: string) => {
     const oldCoin = newCoinRecords[index]
     if (oldCoin) {
       const { [oldCoin]: oldCoinAddress, ...otherAddresses } =
@@ -324,25 +307,53 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
         profile.records?.coinTypes?.reduce((map, record) => {
           const { coin } = record
           const { addr } = record as any
+          if (coin && SUPPORTED_COIN_KEYS.includes(coin.toLowerCase())) {
+            const newMap = { [coin]: addr, ...map }
+            return newMap
+          }
           if (coin) {
             const newMap = { ...map, [coin]: addr }
             return newMap
           }
           return map
         }, {}) || {}
+
+      const textRecords = profile.records?.texts?.reduce<
+        Omit<ProfileType, 'address'>
+      >(
+        (map, record) => {
+          if (GENERAL_KEYS.includes(record.key.toString())) {
+            const newMap = {
+              ...map,
+              general: { ...map.general, [record.key]: record.value },
+            }
+            return newMap
+          }
+          if (ACCOUNT_KEYS.includes(record.key.toString())) {
+            const key = record.key.toString().replace(/\./g, '_')
+            return {
+              ...map,
+              accounts: { ...map.accounts, [key]: record.value },
+            }
+          }
+          if (record.key === 'url')
+            return { ...map, website: { url: record.value } }
+          return {
+            ...map,
+            other: { ...map.other, [record.key]: record.value },
+          }
+        },
+        { general: {}, accounts: {}, website: {}, other: {} },
+      ) || { general: {}, accounts: {}, website: {}, other: {} }
       const resp = {
-        general: {
-          nickname: 'The fonz',
-          location: 'old town america',
-          bio: 'HEEEEEEYYYYY',
-        },
-        accounts: {
-          twitter: 'yoyoyoyo',
-        },
+        ...textRecords,
         address: profileAddress,
       }
+      console.log('resp----------', resp)
+
       reset(resp)
-      setExistingCoinRecords(Object.keys(resp.address) as CoinType[])
+      setExistingCoinRecords(Object.keys(resp.address) as string[])
+      setExistingAccountsRecords(Object.keys(resp.accounts) as string[])
     }
   }, [profile, reset])
 
@@ -404,21 +415,32 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                 {
                   general: (
                     <>
-                      <Input
-                        label="Nickname"
-                        {...register('general.nickname')}
-                      />
+                      <Input label="Nickname" {...register('general.name')} />
                       <Input
                         label="Location"
                         {...register('general.location')}
                       />
                       <Textarea
                         label="Short Bio"
-                        {...register('general.bio')}
+                        {...register('general.description')}
                       />
                     </>
                   ),
-                  accounts: <>accounts</>,
+                  accounts: (
+                    <>
+                      {existingAccountsRecords.map((account) => (
+                        <SelectableInput
+                          key={account}
+                          selectValue={account}
+                          label="hello111"
+                          options={accountsOptions}
+                          readOnly
+                          {...register(`accounts.${account}`, {})}
+                          onDelete={handleRemoveCoinRecord(account)}
+                        />
+                      ))}{' '}
+                    </>
+                  ),
                   address: (
                     <>
                       {existingCoinRecords.map((coin) => (
@@ -437,7 +459,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                           key={coin}
                           selectValue={coin}
                           onSelectChange={(e) =>
-                            handleCoinChange(index, e.target.value as CoinType)
+                            handleCoinChange(index, e.target.value)
                           }
                           error={
                             getFieldState(`address.${coin}`, formState).error
@@ -447,7 +469,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                             getFieldState(`address.${coin}`, formState).isDirty
                           }
                           label={coin}
-                          options={availableCoinOptions(coin)}
+                          options={coinOptions}
                           autoComplete="off"
                           autoCorrect="off"
                           spellCheck={false}
@@ -468,7 +490,29 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                       )}
                     </>
                   ),
-                  website: <>website</>,
+                  website: (
+                    <>
+                      <SelectableInput
+                        selectValue="ipfs"
+                        onSelectChange={(e) =>
+                          handleCoinChange(0, e.target.value)
+                        }
+                        error={
+                          getFieldState(`website.url`, formState).error?.message
+                        }
+                        hasChanges={
+                          getFieldState(`website.url`, formState).isDirty
+                        }
+                        label="url"
+                        options={[{ value: 'ipfs', label: 'ipfs' }]}
+                        autoComplete="off"
+                        autoCorrect="off"
+                        spellCheck={false}
+                        onDelete={handleRemoveCoinRecord('url')}
+                        {...register(`website.url`, {})}
+                      />
+                    </>
+                  ),
                   other: <>other</>,
                 }[tab]
               }
@@ -480,7 +524,6 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
               </Button>
             </div>
           </ContentContainer>
-          <div style={{ height: '200px' }} />
         </Container>
       </Modal>
     </>

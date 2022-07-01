@@ -5,7 +5,7 @@ import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
-import ProfileEditor from '@app/components/pages/profile/ProfileEditor'
+import ProfileEditor from '@app/components/pages/profile/ProfileEditor/ProfileEditor'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {
@@ -301,11 +301,12 @@ export const RecordsTab = ({
               {filteredTexts ? filteredTexts.length : 0} Records
             </SectionSubtitle>
           </SectionTitleContainer>
-          {canEdit && (
-            <EditButton disabled>
-              <Typography weight="bold">Edit</Typography>
-            </EditButton>
-          )}
+          {canEdit ||
+            (true && (
+              <EditButton onClick={() => setShowEditor(true)}>
+                <Typography weight="bold">Edit</Typography>
+              </EditButton>
+            ))}
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
