@@ -2,15 +2,25 @@ import { useEns } from '@app/utils/EnsProvider'
 import { ensNftImageUrl, imageUrlUnknownRecord } from '@app/utils/utils'
 import { useQuery } from 'react-query'
 
-const fetchImg = async (url: string) => {
-  const response = await fetch(url)
-  const imgBlob = response && (await response.blob())
-  const src = URL.createObjectURL(imgBlob)
-  if (imgBlob?.type.startsWith('image/')) {
-    return src
-  }
-  return undefined
-}
+const fetchImg = async (url: string) =>
+  new Promise<string | undefined>((resolve) => {
+    const img = new Image()
+    img.src = url
+    const handleLoad = () => {
+      img.removeEventListener('load', handleLoad)
+      if (!img.complete) {
+        resolve(undefined)
+        return
+      }
+      if (!img.naturalWidth) {
+        resolve(undefined)
+        return
+      }
+      resolve(img.src)
+    }
+
+    img.addEventListener('load', handleLoad)
+  })
 
 export const useAvatar = (name: string | undefined, network: number) => {
   const { data, isLoading, status } = useQuery(
