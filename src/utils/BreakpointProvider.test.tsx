@@ -12,7 +12,7 @@ const breakpoints = {
 
 describe('BreakpointProvider', () => {
   afterEach(() => {
-    delete window.matchMedia
+    delete (window as any).matchMedia
   })
 
   it('should set a listener for each breakpoint', () => {
@@ -20,16 +20,16 @@ describe('BreakpointProvider', () => {
 
     const mockMatchMedia = () => {
       return {
-        addListener: (listener) => listeners.push(listener),
+        addListener: (listener: any) => listeners.push(listener),
         removeListener: jest.fn(),
         matches: false,
       }
     }
 
-    window.matchMedia = mockMatchMedia
+    ;(window as any).matchMedia = mockMatchMedia
 
     const TestComponent = () => {
-      const breakpoints = useBreakpoint()
+      useBreakpoint()
       return <div>TestComponent</div>
     }
 
@@ -43,20 +43,20 @@ describe('BreakpointProvider', () => {
   })
 
   it('should update the queryMatch state when the breakpoint changes', async () => {
-    const listeners = []
+    const listeners: any[] = []
     const returnObject = {
-      addListener: (listener) => listeners.push(listener),
+      addListener: (listener: any) => listeners.push(listener),
       removeListener: jest.fn(),
       matches: false,
     }
 
-    window.matchMedia = () => {
+    ;(window as any).matchMedia = () => {
       return returnObject
     }
 
     const TestComponent = () => {
-      const breakpoints = useBreakpoint()
-      return <div>{JSON.stringify(breakpoints)}</div>
+      const _breakpoints = useBreakpoint()
+      return <div>{JSON.stringify(_breakpoints)}</div>
     }
 
     const { rerender } = render(

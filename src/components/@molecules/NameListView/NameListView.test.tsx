@@ -1,14 +1,18 @@
 import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { mockFunction, render } from '@app/test-utils'
+import { ReactNode } from 'react'
 import { NameListView } from './NameListView'
 
 jest.mock('@app/components/@atoms/NameDetailItem/NameDetailItem')
-const mockNameDetailItem = mockFunction(NameDetailItem)
 jest.mock('@app/components/@atoms/ExpiryComponents/ExpiryComponents')
+
+const mockNameDetailItem = mockFunction(NameDetailItem)
 const mockShortExpiry = mockFunction(ShortExpiry)
 
-const mockComponent = ({ children }) => <div>{children}</div>
+const mockComponent = ({ children }: { children: ReactNode }) => (
+  <div>{children}</div>
+)
 
 describe('NameListView', () => {
   it('should render expiry date if name has expiry date', () => {
@@ -17,14 +21,16 @@ describe('NameListView', () => {
 
     const { getByText } = render(
       <NameListView
-        currentPage={[
-          {
-            name: 'name.eth',
-            expiryDate: '2020-01-01',
-            isController: true,
-            isRegistrant: true,
-          },
-        ]}
+        currentPage={
+          [
+            {
+              name: 'name.eth',
+              expiryDate: '2020-01-01',
+              isController: true,
+              isRegistrant: true,
+            },
+          ] as any
+        }
         network={1}
       />,
     )
@@ -33,14 +39,16 @@ describe('NameListView', () => {
   it('should render no expiry date if name has no expiry date', () => {
     const { queryByText } = render(
       <NameListView
-        currentPage={[
-          {
-            name: 'name.eth',
-            expiryDate: null,
-            isController: true,
-            isRegistrant: true,
-          },
-        ]}
+        currentPage={
+          [
+            {
+              name: 'name.eth',
+              expiryDate: null,
+              isController: true,
+              isRegistrant: true,
+            },
+          ] as any
+        }
         network={1}
       />,
     )
@@ -55,14 +63,16 @@ describe('NameListView', () => {
   it('should render registrant if .eth name', () => {
     const { queryByText } = render(
       <NameListView
-        currentPage={[
-          {
-            name: 'name.eth',
-            expiryDate: '2020-01-01',
-            isController: true,
-            isRegistrant: true,
-          },
-        ]}
+        currentPage={
+          [
+            {
+              name: 'name.eth',
+              expiryDate: '2020-01-01',
+              isController: true,
+              isRegistrant: true,
+            },
+          ] as any
+        }
         network={1}
       />,
     )
@@ -71,14 +81,16 @@ describe('NameListView', () => {
   it('should NOT render registrant if not a .eth name', () => {
     const { queryByText } = render(
       <NameListView
-        currentPage={[
-          {
-            name: 'name',
-            expiryDate: '2020-01-01',
-            isController: true,
-            isRegistrant: true,
-          },
-        ]}
+        currentPage={
+          [
+            {
+              name: 'name',
+              expiryDate: '2020-01-01',
+              isController: true,
+              isRegistrant: true,
+            },
+          ] as any
+        }
         network={1}
       />,
     )
