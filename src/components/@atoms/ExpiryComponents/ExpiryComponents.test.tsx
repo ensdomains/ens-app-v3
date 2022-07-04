@@ -40,14 +40,14 @@ describe('ShortExpiry', () => {
   })
   it('should show year units if expiry is more than a year away', () => {
     render(<ShortExpiry expiry={twoYearExpiry} />)
-    expect(screen.getByText('Expires in 2 years')).toBeVisible()
+    expect(screen.getByText('name.expiresInYears')).toBeVisible()
   })
   it('should show month units if expiry is less than 365 days away', () => {
     render(<ShortExpiry expiry={yearExpiry} />)
-    expect(screen.getByText('Expires in 12 months')).toBeVisible()
+    expect(screen.getByText('name.expiresInMonths')).toBeVisible()
   })
   it('should show day units if expiry is less than 90 days away', () => {
     render(<ShortExpiry expiry={monthExpiry} />)
-    expect(screen.getByText('Expires in 29 days')).toBeVisible()
+    expect(screen.getByText('name.expiresInDays')).toBeVisible()
   })
 })

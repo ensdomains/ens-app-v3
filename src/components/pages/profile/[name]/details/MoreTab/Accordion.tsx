@@ -1,5 +1,6 @@
 import { DownIndicatorSVG, Typography } from '@ensdomains/thorin'
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const AccordionTitle = styled.div<{
@@ -138,6 +139,8 @@ interface AccordionProps {
 }
 
 const Accordion = ({ data }: AccordionProps) => {
+  const { t } = useTranslation('profile')
+
   const [activeItem, setActiveItem] = useState(0)
 
   const disabled = data?.filter((x) => x.disabled) ?? []
@@ -163,7 +166,7 @@ const Accordion = ({ data }: AccordionProps) => {
                   {item.title}
                 </Typography>
                 <UnwrappedIndicator color="textSecondary">
-                  Not wrapped
+                  {t('details.notWrapped')}
                 </UnwrappedIndicator>
               </AccordionTitle>
             </AccordionItem>

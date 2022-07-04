@@ -1,5 +1,5 @@
 import { render, screen, waitFor } from '@app/test-utils'
-
+import { act } from '@testing-library/react'
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 
 const breakpoints = {
@@ -30,7 +30,6 @@ describe('BreakpointProvider', () => {
 
     const TestComponent = () => {
       const breakpoints = useBreakpoint()
-      console.log('breakpoints: ', breakpoints)
       return <div>TestComponent</div>
     }
 
@@ -67,7 +66,9 @@ describe('BreakpointProvider', () => {
     )
 
     returnObject.matches = true
-    listeners[0]()
+    act(() => {
+      listeners[0]()
+    })
 
     rerender(
       <BreakpointProvider queries={breakpoints}>

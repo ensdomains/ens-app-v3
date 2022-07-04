@@ -39,9 +39,7 @@ describe('Fuses', () => {
     })
     mockUseGetFuseData.mockReturnValue({})
     render(<Fuses />)
-    expect(
-      screen.getByText('Please wrap your name to unlock this feature'),
-    ).toBeVisible()
+    expect(screen.getByText('fuses.callToAction')).toBeVisible()
   })
 
   it('should show fuses if wrapped name', () => {

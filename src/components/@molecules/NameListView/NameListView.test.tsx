@@ -1,7 +1,6 @@
-import { render, screen, mockFunction } from '@app/test-utils'
-
-import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
+import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { mockFunction, render } from '@app/test-utils'
 import { NameListView } from './NameListView'
 
 jest.mock('@app/components/@atoms/NameDetailItem/NameDetailItem')
@@ -51,7 +50,6 @@ describe('NameListView', () => {
     const { queryByText } = render(
       <NameListView currentPage={[]} network={1} />,
     )
-    screen.debug()
     expect(queryByText('errors.noResults')).toBeInTheDocument()
   })
   it('should render registrant if .eth name', () => {
@@ -68,7 +66,7 @@ describe('NameListView', () => {
         network={1}
       />,
     )
-    expect(queryByText('Registrant')).toBeInTheDocument()
+    expect(queryByText('name.registrant')).toBeInTheDocument()
   })
   it('should NOT render registrant if not a .eth name', () => {
     const { queryByText } = render(
@@ -84,6 +82,6 @@ describe('NameListView', () => {
         network={1}
       />,
     )
-    expect(queryByText('Registrant')).not.toBeInTheDocument()
+    expect(queryByText('name.registrant')).not.toBeInTheDocument()
   })
 })

@@ -90,7 +90,7 @@ describe('OwnerButton', () => {
         screen.getByTestId('owner-button').click()
       })
 
-      await waitFor(() => screen.getByText('Transfer'), {
+      await waitFor(() => screen.getByText('name.transfer'), {
         timeout: 500,
       }).then((el) => expect(el).toBeVisible())
     })

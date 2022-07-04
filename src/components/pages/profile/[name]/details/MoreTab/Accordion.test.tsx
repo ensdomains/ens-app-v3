@@ -43,7 +43,7 @@ describe('Accordion', () => {
       />,
     )
     expect(screen.getByTestId('accordion-Item 3-disabled')).toBeVisible()
-    expect(screen.getByText('Not wrapped')).toBeVisible()
+    expect(screen.getByText('details.notWrapped')).toBeVisible()
     fireEvent.click(screen.getByTestId('accordion-Item 3-disabled'))
     expect(screen.queryByText('Body 3')).not.toBeInTheDocument()
   })

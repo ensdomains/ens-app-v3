@@ -42,6 +42,9 @@ describe('useNameDetails', () => {
     isLoading: false,
     status: 'success',
   })
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
   it('should return an error message for an invalid name', () => {
     mockUseValidate.mockReturnValue({
       valid: false,
@@ -49,7 +52,7 @@ describe('useNameDetails', () => {
     })
 
     const { result } = renderHook(() => useNameDetails('invalid'))
-    expect(result.current.error).toEqual('This name is invalid.')
+    expect(result.current.error).toEqual('errors.invalidName')
   })
   it('should query for the expiry if the name is a 2LD .eth', () => {
     mockUseValidate.mockReturnValue({

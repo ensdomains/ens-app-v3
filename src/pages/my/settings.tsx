@@ -5,6 +5,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { ReactElement } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -23,12 +24,13 @@ const OtherWrapper = styled.div(
 const spacing = '1fr 1fr'
 
 export default function Page() {
+  const { t } = useTranslation('settings')
   const { data: addressData, isLoading } = useAccount()
 
   useProtectedRoute('/', isLoading ? true : addressData)
 
   return (
-    <Content title="Settings" spacing={spacing}>
+    <Content title={t('title')} spacing={spacing}>
       {{
         leading: <TransactionSection />,
         trailing: (

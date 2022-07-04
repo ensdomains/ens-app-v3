@@ -156,7 +156,7 @@ export const TransactionSection = () => {
             disabled={transactions.length === 0}
             data-testid="transaction-clear-button"
           >
-            {t('section.transaction.clear')}
+            {tc('action.clear')}
           </Button>
         </div>
       </TransactionSectionHeadingContainer>
@@ -187,7 +187,7 @@ export const TransactionSection = () => {
                     href={makeEtherscanLink(transaction.hash, chainName)}
                     target="_blank"
                   >
-                    View on Etherscan
+                    {tc('transaction.viewEtherscan')}
                   </Outlink>
                 </ViewLinkContainer>
               </TransactionContainer>
@@ -197,13 +197,15 @@ export const TransactionSection = () => {
                 onClick={() => setViewAmt((curr) => curr + 5)}
                 data-testid="transaction-view-more-button"
               >
-                <ViewMoreInner weight="bold">View More</ViewMoreInner>
+                <ViewMoreInner weight="bold">
+                  {tc('transaction.viewMore')}
+                </ViewMoreInner>
               </TransactionContainer>
             )}
           </>
         ) : (
           <RecentTransactionsMessage weight="bold">
-            No recent transactions.
+            {t('section.transaction.noRecentTransactions')}
           </RecentTransactionsMessage>
         )}
       </TransactionSectionContainer>

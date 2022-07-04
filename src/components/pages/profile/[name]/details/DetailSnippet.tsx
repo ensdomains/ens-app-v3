@@ -6,6 +6,7 @@ import { OutlinedButton } from '@app/components/OutlinedButton'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const Container = styled(Card)(
@@ -78,14 +79,15 @@ export const DetailSnippet = ({
   expiryDate?: Date | null
   canSend: boolean
 }) => {
-  if (!expiryDate && !canSend) return null
+  const { t } = useTranslation('common')
 
+  if (!expiryDate && !canSend) return null
   return (
     <Container>
       <Row>
         {expiryDate && (
           <ExpiryContainer data-testid="expiry-data">
-            <Typography weight="bold">Expires</Typography>
+            <Typography weight="bold">{t('name.expires')}</Typography>
             <Typography weight="bold">{formatExpiry(expiryDate)}</Typography>
           </ExpiryContainer>
         )}
@@ -102,7 +104,7 @@ export const DetailSnippet = ({
           >
             <InnerButton>
               <ButtonIcon as={FastForwardSVG} />
-              <Typography weight="bold">Extend</Typography>
+              <Typography weight="bold">{t('name.extend')}</Typography>
             </InnerButton>
           </FullWidthOutlinedButton>
         )}
@@ -116,7 +118,7 @@ export const DetailSnippet = ({
           >
             <InnerButton>
               <ButtonIcon as={PaperPlaneSVG} />
-              <Typography weight="bold">Send</Typography>
+              <Typography weight="bold">{t('name.send')}</Typography>
             </InnerButton>
           </FullWidthOutlinedButton>
         )}

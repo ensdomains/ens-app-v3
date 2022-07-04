@@ -1,6 +1,7 @@
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const ExpiryWrapper = styled.div(
@@ -60,10 +61,8 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   )
 }
 
-const pluralise = (unit: string, count: number) =>
-  `${count} ${unit}${count > 1 ? 's' : ''}`
-
 export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
+  const { t } = useTranslation()
   const currentDate = new Date()
   const difference = secondsToDays(
     (expiry.getTime() - currentDate.getTime()) / 1000,
@@ -71,20 +70,20 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)
 
-  let text = pluralise('year', years)
+  let text = t('name.expiresInYears', { count: years })
   let color: 'foreground' | 'red' | 'orange' = 'foreground'
 
   if (difference < 0) {
-    text = pluralise('day', difference + 90)
+    text = t('name.expiresInDays', { count: difference + 90 })
     color = 'red'
   } else if (difference < 30) {
-    text = pluralise('day', difference)
+    text = t('name.expiresInDays', { count: difference })
     color = 'orange'
   } else if (difference < 90) {
-    text = pluralise('month', months)
+    text = t('name.expiresInMonths', { count: months })
     color = 'orange'
   } else if (difference < 365) {
-    text = `${months} months`
+    text = t('name.expiresInMonths', { count: months })
     color = 'foreground'
   }
 
@@ -94,7 +93,7 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
       weight="bold"
       $color={color}
     >
-      Expires in {text}
+      {text}
     </ExpiryText>
   )
 }

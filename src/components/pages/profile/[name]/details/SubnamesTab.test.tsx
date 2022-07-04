@@ -67,7 +67,7 @@ describe('SubnamesTab', () => {
     }
     mockUseSubnamePagination.mockReturnValue(subnamesMockData)
     render(<SubnamesTab {...baseMockData} />)
-    expect(screen.getByText('tabs.subnames.empty')).toBeVisible()
+    expect(screen.getByText('details.tabs.subnames.empty')).toBeVisible()
     expect(screen.queryByTestId('pagebutton')).not.toBeInTheDocument()
   })
   it('should show single page of subnames and 1 page button if subnamesCount is 10', () => {

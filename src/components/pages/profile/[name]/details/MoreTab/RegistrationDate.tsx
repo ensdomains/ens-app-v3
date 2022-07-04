@@ -1,6 +1,7 @@
 import { useGetHistory } from '@app/hooks/useGetHistory'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useNetwork, useProvider } from 'wagmi'
@@ -49,6 +50,7 @@ const ButtonContainer = styled.div(() => [
 ])
 
 export const RegistrationDate = () => {
+  const { t } = useTranslation('common')
   const router = useRouter()
   const { name } = router.query
   const { history = { registration: [] } } = useGetHistory(name as string)
@@ -90,7 +92,7 @@ export const RegistrationDate = () => {
           target="_blank"
           size="small"
         >
-          View on Etherscan
+          {t('transaction.viewEtherscan')}
         </Button>
       </ButtonContainer>
     </RegistrationDateContainer>

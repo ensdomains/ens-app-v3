@@ -30,12 +30,14 @@ describe('SearchResult', () => {
   it('should render with basic data', () => {
     render(<SearchResult {...baseMockData} />)
     expect(screen.getByText('nick.eth')).toBeVisible()
-    expect(screen.getByText('Available')).toBeVisible()
+    expect(screen.getByText('search.status.available')).toBeVisible()
   })
   it('should not use registration status if placeholder', () => {
     render(<SearchResult {...baseMockData} usingPlaceholder />)
     expect(screen.getByText('nick.eth')).toBeVisible()
-    expect(screen.queryByText('Available')).not.toBeInTheDocument()
+    expect(
+      screen.queryByText('search.status.available'),
+    ).not.toBeInTheDocument()
   })
   it('should correctly display an address without a primary name', () => {
     mockUsePrimary.mockReturnValue({

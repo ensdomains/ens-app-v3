@@ -71,9 +71,7 @@ describe('SearchInput', () => {
     })
     await waitFor(() => screen.getByTestId('search-input-results'), {
       timeout: 500,
-    }).then((el) =>
-      expect(el).toHaveTextContent('Type a name or address to search...'),
-    )
+    }).then((el) => expect(el).toHaveTextContent('search.emptyText'))
     expect(screen.getByTestId('search-input-box')).not.toHaveTextContent(
       'Search for a name',
     )

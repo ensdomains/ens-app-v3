@@ -36,7 +36,9 @@ describe('TransactionSection', () => {
     render(<TransactionSection />)
     expect(screen.getByTestId('transaction-section')).toBeVisible()
     expect(screen.getByText('section.transaction.title')).toBeVisible()
-    expect(screen.getByText('No recent transactions.')).toBeVisible()
+    expect(
+      screen.getByText('section.transaction.noRecentTransactions'),
+    ).toBeVisible()
   })
   it('should only show 4 transactions on initial render', () => {
     mockUseRecentTransactions.mockReturnValue(

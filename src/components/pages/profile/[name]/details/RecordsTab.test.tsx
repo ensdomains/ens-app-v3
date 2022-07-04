@@ -10,10 +10,14 @@ describe('RecordsTab', () => {
   it('should render if no records provided', () => {
     render(<RecordsTab {...baseMockData} />)
     expect(screen.getByTestId('records-tab')).toBeVisible()
-    expect(screen.getByTestId('text-amount')).toHaveTextContent('0 Records')
-    expect(screen.getByTestId('address-amount')).toHaveTextContent('0 Records')
+    expect(screen.getByTestId('text-amount')).toHaveTextContent(
+      '0 records.label',
+    )
+    expect(screen.getByTestId('address-amount')).toHaveTextContent(
+      '0 records.label',
+    )
     expect(screen.getByTestId('content-hash-heading')).toHaveTextContent(
-      'No Content Hash',
+      'details.tabs.records.noContentHash',
     )
   })
   it('should show the correct amount of records', () => {
@@ -47,8 +51,12 @@ describe('RecordsTab', () => {
       ],
     }
     render(<RecordsTab {...mockData} />)
-    expect(screen.getByTestId('text-amount')).toHaveTextContent('3 Records')
-    expect(screen.getByTestId('address-amount')).toHaveTextContent('2 Records')
+    expect(screen.getByTestId('text-amount')).toHaveTextContent(
+      '3 records.label',
+    )
+    expect(screen.getByTestId('address-amount')).toHaveTextContent(
+      '2 records.label',
+    )
   })
   it('should show all text and address records', () => {
     const mockData = {
@@ -103,7 +111,7 @@ describe('RecordsTab', () => {
 
     render(<RecordsTab {...mockData} />)
     expect(screen.getByTestId('content-hash-heading')).toHaveTextContent(
-      'Content Hash',
+      'details.tabs.records.contentHash',
     )
     expect(screen.getByTestId('name-details-contentHash')).toHaveTextContent(
       'ipfs://1234',
