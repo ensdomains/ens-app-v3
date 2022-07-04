@@ -5391,7 +5391,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "multiformats",\
-        "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."\
+        "npm:9.6.5"\
       ],\
       [\
         "multihashes",\
@@ -7638,7 +7638,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-jsdom", "npm:27.5.1"],\
             ["jest-localstorage-mock", "npm:2.4.19"],\
             ["lodash", "npm:4.17.21"],\
-            ["multiformats", "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."],\
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
@@ -22030,7 +22029,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-jsdom", "npm:27.5.1"],\
             ["jest-localstorage-mock", "npm:2.4.19"],\
             ["lodash", "npm:4.17.21"],\
-            ["multiformats", "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."],\
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
@@ -30261,13 +30259,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/multiformats-npm-9.6.5-aaf01c7e0a-f4fce459bf.zip/node_modules/multiformats/",\
           "packageDependencies": [\
             ["multiformats", "npm:9.6.5"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/multiformats-patch-d7f155653d-e10130e5df.zip/node_modules/multiformats/",\
-          "packageDependencies": [\
-            ["multiformats", "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."]\
           ],\
           "linkType": "HARD"\
         }]\

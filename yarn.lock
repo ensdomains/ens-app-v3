@@ -11327,7 +11327,6 @@ __metadata:
     jest-environment-jsdom: ^27.4.6
     jest-localstorage-mock: ^2.4.18
     lodash: ^4.17.21
-    multiformats: "patch:multiformats@9.6.4#./patches/multiformats.patch"
     next: ^12.0.8
     next-compose-plugins: ^2.2.1
     next-transpile-modules: ^9.0.0
@@ -18566,24 +18565,10 @@ __metadata:
   languageName: node
   linkType: hard
 
-"multiformats@npm:9.6.4":
-  version: 9.6.4
-  resolution: "multiformats@npm:9.6.4"
-  checksum: b3b8e481112379d6f3aace199a06e6974dfe3ed4e2100a0effe19fef936ba31704382356df6278a3922b5cb47fcfefe3e5bc54e5bebef35272e3503bad3c62ba
-  languageName: node
-  linkType: hard
-
 "multiformats@npm:^9.4.2":
   version: 9.6.5
   resolution: "multiformats@npm:9.6.5"
   checksum: f4fce459bf19e1c38e4daa0e6de3aeea55ab000620d23ef599943495ab65d1c0351c5aa53d15eb365181d30a4b0629785a0d8901d17b5d153c48f4f1a683cd47
-  languageName: node
-  linkType: hard
-
-"multiformats@patch:multiformats@9.6.4#./patches/multiformats.patch::locator=ens-app-v2%40workspace%3A.":
-  version: 9.6.4
-  resolution: "multiformats@patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."
-  checksum: e10130e5df59c60e95fe1a38816e4ce81f59c52572b337dd6397f899f535c799c7727afe8d6c840a480c9c5df55a4428d6ba0fb25882021d044a395a5cb2672c
   languageName: node
   linkType: hard
 
