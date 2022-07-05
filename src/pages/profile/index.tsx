@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
-import ProfileEditor from '@app/components/pages/profile/ProfileEditor'
+import ProfileEditor from '@app/components/pages/profile/ProfileEditor/ProfileEditor'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
@@ -12,7 +12,7 @@ import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
-import { ReactElement } from 'react'
+import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
@@ -87,6 +87,8 @@ export default function Page() {
   const getTextRecord = (key: string) =>
     profile?.records?.texts?.find((x) => x.key === key)
 
+  const [showEditor, setShowEditor] = useState(true)
+  const handleDismissEditor = () => setShowEditor(false)
   return (
     <Content
       title={isSelf ? t('yourProfile') : normalisedName}
@@ -153,6 +155,7 @@ export default function Page() {
                 .map((item: any) => ({ key: item.key, value: item.value }))
                 .filter((item: any) => item.value !== null)}
             />
+            <ProfileEditor open={showEditor} onDismiss={handleDismissEditor} />
           </DetailsWrapper>
         ),
       }}
