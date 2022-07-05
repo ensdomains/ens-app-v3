@@ -133,6 +133,7 @@ const Subtitle = styled(Typography)(
 export const Content = ({
   children,
   loading,
+  noTitle,
   title,
   subtitle,
   alwaysShowSubtitle,
@@ -140,6 +141,7 @@ export const Content = ({
   titleButton,
   spacing = '270px 2fr',
 }: {
+  noTitle?: boolean
   title: string
   subtitle?: string
   titleButton?: React.ReactNode
@@ -171,9 +173,11 @@ export const Content = ({
 
   return (
     <>
-      <Head>
-        <title>{title} - ENS</title>
-      </Head>
+      {!noTitle && (
+        <Head>
+          <title>{title} - ENS</title>
+        </Head>
+      )}
 
       {breakpoints.md && WarningComponent}
 

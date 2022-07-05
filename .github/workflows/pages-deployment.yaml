@@ -46,6 +46,12 @@ jobs:
       - name: Build and Export
         run: yarn build && yarn export
 
+      - name: Generate sitemap
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          mkdir -p ./out/sitemaps
+          yarn generate:sitemaps
+
       - name: Publish
         uses: cloudflare/pages-action@1
         with:
@@ -54,3 +60,7 @@ jobs:
           projectName: ens-app-v3
           directory: out
           gitHubToken: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Submit sitemap
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: ping https://www.google.com/ping?sitemap=https://alpha.ens.domains/sitemap.xml
