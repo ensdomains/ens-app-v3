@@ -1,4 +1,4 @@
-import { acceptMetamaskAccess } from '../setup'
+import { acceptMetamaskAccess } from '../../setup'
 
 describe('Settings', () => {
   it('should allow user to disconnect', () => {

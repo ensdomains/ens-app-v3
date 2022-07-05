@@ -13,6 +13,7 @@ import { shortenAddress } from '@app/utils/utils'
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -145,6 +146,7 @@ const SpinnerWrapper = styled.div(
 )
 
 const AddressResultItem = ({ address }: { address: string }) => {
+  const { t } = useTranslation('common')
   const primary = usePrimary(address)
   const network = useChainId()
   const { avatar } = useAvatar(primary.name || undefined, network)
@@ -163,7 +165,7 @@ const AddressResultItem = ({ address }: { address: string }) => {
           {primary.name && <AddressPrimary>{primary.name}</AddressPrimary>}
         </AddressAndName>
       </LeadingSearchItem>
-      <AddressTag>Address</AddressTag>
+      <AddressTag>{t('address.label')}</AddressTag>
     </>
   )
 }
@@ -183,30 +185,31 @@ const PremiumTag = styled(StyledTag)(
 )
 
 const StatusTag = ({ status }: { status: RegistrationStatus }) => {
+  const { t } = useTranslation('common')
   switch (status) {
     case 'registered': {
-      return <StyledTag>Registered</StyledTag>
+      return <StyledTag>{t(`search.status.${status}`)}</StyledTag>
     }
     case 'gracePeriod': {
-      return <GracePeriodTag>Grace Period</GracePeriodTag>
+      return <GracePeriodTag>{t(`search.status.${status}`)}</GracePeriodTag>
     }
     case 'premium': {
-      return <PremiumTag>Temporary Premium</PremiumTag>
+      return <PremiumTag>{t(`search.status.${status}`)}</PremiumTag>
     }
     case 'available': {
-      return <StyledTag tone="green">Available</StyledTag>
+      return <StyledTag tone="green">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'notOwned': {
-      return <StyledTag tone="blue">Not Owned</StyledTag>
+      return <StyledTag tone="blue">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'notImported': {
-      return <StyledTag tone="blue">Not Imported</StyledTag>
+      return <StyledTag tone="blue">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'short': {
-      return <StyledTag tone="red">Too Short</StyledTag>
+      return <StyledTag tone="red">{t(`search.status.${status}`)}</StyledTag>
     }
     default: {
-      return <StyledTag tone="red">Invalid</StyledTag>
+      return <StyledTag tone="red">{t(`search.status.${status}`)}</StyledTag>
     }
   }
 }
@@ -342,7 +345,7 @@ export const SearchResult = ({
 
   if (usingPlaceholder && type !== 'error' && type !== 'text') {
     return (
-      <SearchItem {...props}>
+      <SearchItem data-testid="search-result-placeholder" {...props}>
         <PlaceholderResultItem input={input} />
       </SearchItem>
     )
@@ -350,7 +353,7 @@ export const SearchResult = ({
 
   if (type === 'address') {
     return (
-      <SearchItem {...props}>
+      <SearchItem data-testid="search-result-address" {...props}>
         <AddressResultItem address={input} />
       </SearchItem>
     )
@@ -358,7 +361,7 @@ export const SearchResult = ({
 
   if (type === 'name' || type === 'nameWithDotEth') {
     return (
-      <SearchItem {...props}>
+      <SearchItem data-testid="search-result-name" {...props}>
         <NameResultItem name={input} />
       </SearchItem>
     )
@@ -366,14 +369,14 @@ export const SearchResult = ({
 
   if (type === 'error') {
     return (
-      <SearchItem $selected $error>
+      <SearchItem data-testid="search-result-error" $selected $error>
         <Typography weight="bold">{value}</Typography>
       </SearchItem>
     )
   }
 
   return (
-    <SearchItem>
+    <SearchItem data-testid="search-result-text">
       <NoInputYetTypography weight="bold">{value}</NoInputYetTypography>
     </SearchItem>
   )

@@ -1,0 +1,46 @@
+name: Test
+
+on: [push]
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - run: yarn
+
+      - run: yarn test:coverage
+
+  stateful:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [1, 2]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install yarn packages
+        run: yarn
+
+      - name: Run tests
+        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+          "yarn buildandstart" \
+          "yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
+        env:
+          SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+          NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
+
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: synpress-screenshots
+          path: e2e/screenshots
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: synpress-videos
+          path: e2e/videos

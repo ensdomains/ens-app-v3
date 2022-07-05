@@ -1,17 +1,9 @@
-import { useEns } from '@app/utils/EnsProvider'
-import { ArrowRightSVG, PageButtons, Spinner } from '@ensdomains/thorin'
-import { useState, useRef, useEffect } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useQuery, useQueryClient } from 'react-query'
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-
-type Subname = {
-  id: string
-  name: string
-  truncatedName?: string
-}
+import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
+import { ArrowRightSVG, PageButtons, Spinner } from '@ensdomains/thorin'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -53,72 +45,6 @@ const TabWrapperWithButtons = styled.div(
   `,
 )
 
-const maxCalc = (subnameCount: number, page: number) => {
-  if (subnameCount > 5000) {
-    return page + 1 === 1 ? 2 : 3
-  }
-  return 5
-}
-
-const usePagination = (name: string) => {
-  const { getSubnames } = useEns()
-  const isLargeQueryRef = useRef(false)
-  const lastSubnamesRef = useRef<Subname[]>([])
-  const [page, setPage] = useState(0)
-  const queryClient = useQueryClient()
-  const resultsPerPage = 10
-
-  const {
-    data: { subnames, subnameCount, max, totalPages } = {
-      subnames: [],
-      subnameCount: 0,
-    },
-    isLoading,
-  } = useQuery(
-    ['getSubnames', name, 'createdAt', 'desc', page, resultsPerPage],
-    async () => {
-      const result = await getSubnames({
-        name,
-        orderBy: 'createdAt',
-        orderDirection: 'desc',
-        page,
-        pageSize: resultsPerPage,
-        isLargeQuery: isLargeQueryRef.current,
-        lastSubnames: lastSubnamesRef.current,
-      })
-
-      lastSubnamesRef.current = result.subnames
-
-      if (result.subnameCount > 5000) {
-        isLargeQueryRef.current = true
-      }
-
-      return {
-        ...result,
-        max: maxCalc(result.subnameCount, page),
-        totalPages: Math.ceil(result.subnameCount / resultsPerPage),
-      }
-    },
-    { staleTime: Infinity, cacheTime: Infinity },
-  )
-
-  useEffect(() => {
-    return () => {
-      queryClient.removeQueries('getSubnames')
-    }
-  }, [queryClient])
-
-  return {
-    subnames,
-    subnameCount,
-    isLoading,
-    max,
-    page,
-    setPage,
-    totalPages,
-  }
-}
-
 export const SubnamesTab = ({
   name,
   network,
@@ -128,20 +54,24 @@ export const SubnamesTab = ({
 }) => {
   const { t } = useTranslation('profile')
   const { subnames, max, page, setPage, isLoading, totalPages } =
-    usePagination(name)
+    useSubnamePagination(name)
 
   return (
     <TabWrapperWithButtons>
       <TabWrapper>
         {!isLoading && subnames?.length > 0 ? (
-          subnames.map((subname: Subname) => (
+          subnames.map((subname) => (
             <NameDetailItem key={subname.name} network={network} {...subname}>
               <RightArrow as={ArrowRightSVG} />
             </NameDetailItem>
           ))
         ) : (
           <EmptyDetailContainer>
-            {isLoading ? <Spinner color="blue" /> : t('tabs.subnames.empty')}
+            {isLoading ? (
+              <Spinner color="blue" />
+            ) : (
+              t('details.tabs.subnames.empty')
+            )}
           </EmptyDetailContainer>
         )}
       </TabWrapper>

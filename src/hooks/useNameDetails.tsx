@@ -1,6 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { ReactNode, useEffect, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { useProfile } from './useProfile'
@@ -42,10 +42,10 @@ export const useNameDetails = (name: string) => {
 
   const error: string | ReactNode | null = useMemo(() => {
     if (valid === false) {
-      return 'This name is invalid.'
+      return t('errors.invalidName')
     }
     if (profile && !profile.isMigrated) {
-      return 'This name is not migrated to the new registry.'
+      return t('errors.notMigrated')
     }
     if (profile && profile.message) {
       return profile.message
@@ -66,10 +66,10 @@ export const useNameDetails = (name: string) => {
       )
     }
     if (registrationStatus === 'invalid') {
-      return 'This name is not valid.'
+      return t('errors.invalidName')
     }
     if (registrationStatus === 'gracePeriod') {
-      return 'This name is expiring soon.'
+      return t('errors.expiringSoon')
     }
     if (
       !profile &&
@@ -78,7 +78,7 @@ export const useNameDetails = (name: string) => {
       status !== 'idle' &&
       status !== 'loading'
     ) {
-      return 'Unknown error.'
+      return t('errors.unknown')
     }
     return null
   }, [
@@ -91,10 +91,6 @@ export const useNameDetails = (name: string) => {
     t,
     valid,
   ])
-
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valid, profile?.isMigrated, profile?.message])
 
   const isLoading =
     !ready || profileLoading || batchLoading || registrationStatusLoading

@@ -9,6 +9,7 @@ import {
   MouseEvent,
   SetStateAction,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
@@ -80,13 +81,14 @@ export const SearchInputBox = forwardRef(
     },
     ref,
   ) => {
+    const { t } = useTranslation('common')
     return (
       <SearchInputWrapper ref={containerRef} $size={size}>
         <Input
           size={size}
-          label="Name search"
+          label={t('search.label')}
           hideLabel
-          placeholder="Search for a name"
+          placeholder={t('search.placeholder')}
           value={input}
           onChange={(e) => setInput(e.target.value)}
           ref={ref as any}
@@ -104,6 +106,7 @@ export const SearchInputBox = forwardRef(
           autoCorrect="off"
           parentStyles={StyledInputParent()}
           spellCheck="false"
+          data-testid="search-input-box"
         />
       </SearchInputWrapper>
     )
@@ -121,13 +124,14 @@ export const FakeSearchInputBox = forwardRef(
     },
     ref,
   ) => {
+    const { t } = useTranslation('common')
     return (
       <SearchInputWrapper $size={size}>
         <Input
           size={size}
-          label="Name search"
+          label={t('search.label')}
           hideLabel
-          placeholder="Search for a name"
+          placeholder={t('search.placeholder')}
           ref={ref as any}
           onClick={onClick}
           readOnly
@@ -135,6 +139,7 @@ export const FakeSearchInputBox = forwardRef(
           autoCorrect="off"
           parentStyles={StyledInputParent()}
           spellCheck="false"
+          data-testid="search-input-box-fake"
         />
       </SearchInputWrapper>
     )

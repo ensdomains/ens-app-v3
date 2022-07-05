@@ -12,3 +12,9 @@ jest.mock('next/image', () => ({
   __esModule: true,
   default: () => 'Next image stub', // whatever
 }))
+
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (key: string) => key,
+  }),
+}))

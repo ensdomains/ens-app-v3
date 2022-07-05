@@ -1,6 +1,7 @@
+import { DownIndicatorSVG, Typography } from '@ensdomains/thorin'
 import React, { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { Typography, DownIndicatorSVG } from '@ensdomains/thorin'
 
 const AccordionTitle = styled.div<{
   $isActive?: boolean
@@ -138,6 +139,8 @@ interface AccordionProps {
 }
 
 const Accordion = ({ data }: AccordionProps) => {
+  const { t } = useTranslation('profile')
+
   const [activeItem, setActiveItem] = useState(0)
 
   const disabled = data?.filter((x) => x.disabled) ?? []
@@ -150,7 +153,10 @@ const Accordion = ({ data }: AccordionProps) => {
       {!!disabled.length &&
         disabled.map((item) => {
           return (
-            <AccordionItem key={item.title}>
+            <AccordionItem
+              data-testid={`accordion-${item.title}-disabled`}
+              key={item.title}
+            >
               <AccordionTitle $isDisabled>
                 <Typography
                   variant="extraLarge"
@@ -160,7 +166,7 @@ const Accordion = ({ data }: AccordionProps) => {
                   {item.title}
                 </Typography>
                 <UnwrappedIndicator color="textSecondary">
-                  Not wrapped
+                  {t('details.notWrapped')}
                 </UnwrappedIndicator>
               </AccordionTitle>
             </AccordionItem>
@@ -171,6 +177,7 @@ const Accordion = ({ data }: AccordionProps) => {
           const isActive = activeItem === idx
           return (
             <AccordionItem
+              data-testid={`accordion-${item.title}-enabled`}
               {...{ onClick: () => setActiveItem(idx), key: item.title }}
             >
               <AccordionTitle {...{ isActive }}>
@@ -180,6 +187,7 @@ const Accordion = ({ data }: AccordionProps) => {
                 <Chevron $open={isActive} />
               </AccordionTitle>
               <AccordionBody
+                data-testid={`accordion-${item.title}-body`}
                 {...{
                   key: idx,
                   isActive,

@@ -16,6 +16,7 @@ import {
 } from '@ensdomains/thorin'
 import { ReactNode, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
@@ -87,7 +88,7 @@ const OwnerButtonWrapper = ({
 }) => {
   return (
     <ButtonWrapper className={className}>
-      <Button onClick={onClick} size="extraSmall">
+      <Button onClick={onClick} data-testid="owner-button" size="extraSmall">
         {children}
       </Button>
     </ButtonWrapper>
@@ -167,6 +168,7 @@ const OwnerButtonWithPopup = ({
   description: string
   canTransfer: boolean
 }) => {
+  const { t } = useTranslation('common')
   const { copy, copied } = useCopied()
   const [open, setOpen] = useState(false)
   const { profile, loading } = useProfile(name!, !name)
@@ -188,7 +190,7 @@ const OwnerButtonWithPopup = ({
           </AvatarWrapper>
           <TextContainer>
             <Label ellipsis>{label}</Label>
-            <Name ellipsis>{name}</Name>
+            <Name ellipsis>{name || shortenAddress(address)}</Name>
           </TextContainer>
         </Content>
       </OwnerButtonWrapper>
@@ -199,7 +201,7 @@ const OwnerButtonWithPopup = ({
         variant="closable"
         onDismiss={() => setOpen(false)}
       >
-        <InnerDialog>
+        <InnerDialog data-testid="owner-button-inner-dialog">
           {name && !loading && (
             <ProfileSnippetWrapper>
               <ProfileSnippet
@@ -230,9 +232,9 @@ const OwnerButtonWithPopup = ({
             </AddressCopyContainer>
           </AddressCopyButton>
           {canTransfer && (
-            <TransferButton disabled>
+            <TransferButton data-testid="transfer-button" disabled>
               <Typography variant="large" weight="bold">
-                Transfer
+                {t('name.transfer')}
               </Typography>
             </TransferButton>
           )}
@@ -297,32 +299,33 @@ const OwnerButtonWithDropdown = ({
   label: string
   canTransfer: boolean
 }) => {
+  const { t } = useTranslation('common')
   const router = useRouterWithHistory()
   const [isOpen, setIsOpen] = useState(false)
 
   const menuItems = useMemo(() => {
     const items: any[] = [
       {
-        label: 'View Address',
+        label: t('address.viewAddress'),
         color: 'text',
         onClick: () => router.push(`/address/${address}`),
       },
       {
-        label: 'Copy Address',
+        label: t('address.copyAddress'),
         color: 'text',
         onClick: () => navigator.clipboard.writeText(address),
       },
     ]
     if (name) {
       items[0] = {
-        label: 'View Profile',
+        label: t('wallet.viewProfile'),
         color: 'text',
         onClick: () => router.push(`/profile/${name}`),
       }
     }
     if (canTransfer) {
       items.push({
-        label: 'Transfer',
+        label: t('name.transfer'),
         color: 'accent',
         // eslint-disable-next-line no-alert
         onClick: () => alert('Not implemented'),
@@ -339,6 +342,7 @@ const OwnerButtonWithDropdown = ({
       setIsOpen={setIsOpen}
       keepMenuOnTop
       shortThrow
+      data-testid="owner-button-dropdown"
     >
       <OwnerButtonWrapperWithDropdown onClick={() => setIsOpen(true)}>
         <ContentWithDropdown>

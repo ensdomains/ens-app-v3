@@ -8,6 +8,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
 import { FavouriteButton } from './FavouriteButton'
 
 const Container = styled(Card)(
@@ -105,6 +106,7 @@ export const NameSnippetMobile = ({
   expiryDate?: Date | null
   canSend?: boolean
 }) => {
+  const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
 
   return (
@@ -114,13 +116,15 @@ export const NameSnippetMobile = ({
         <ExpiryAndFavouriteRow>
           {expiryDate ? (
             <div>
-              <ExpiresHeading variant="label">Expires</ExpiresHeading>
+              <ExpiresHeading variant="label">
+                {t('name.expires')}
+              </ExpiresHeading>
               <Typography variant="small" weight="bold">
                 {formatExpiry(expiryDate)}
               </Typography>
             </div>
           ) : (
-            <Typography>No expiry</Typography>
+            <Typography>{t('name.noExpiry')}</Typography>
           )}
           <FavouriteButton disabled />
         </ExpiryAndFavouriteRow>
@@ -130,10 +134,11 @@ export const NameSnippetMobile = ({
             size="small"
             shadowless
             variant="transparent"
+            data-testid="extend-button"
           >
             <InnerButton>
               {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
-              <Typography weight="bold">Extend</Typography>
+              <Typography weight="bold">{t('name.extend')}</Typography>
             </InnerButton>
           </OutlinedButton>
         )}
@@ -145,10 +150,11 @@ export const NameSnippetMobile = ({
                 size="small"
                 shadowless
                 variant="transparent"
+                data-testid="send-button"
               >
                 <InnerButton>
                   {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
-                  <Typography weight="bold">Send</Typography>
+                  <Typography weight="bold">{t('name.send')}</Typography>
                 </InnerButton>
               </OutlinedButton>
             </SendButtonContainer>

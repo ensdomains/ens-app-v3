@@ -4,6 +4,7 @@ import { useCopied } from '@app/hooks/useCopied'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
@@ -207,15 +208,24 @@ const RecordItem = ({
   itemKey,
   value,
   showLegacy,
+  type,
 }: {
   itemKey?: string
   value: string
   showLegacy?: boolean
+  type: 'text' | 'address' | 'contentHash'
 }) => {
   const { copy, copied } = useCopied()
 
   return (
-    <RecordContainer onClick={() => copy(value)}>
+    <RecordContainer
+      data-testid={
+        itemKey
+          ? `name-details-${type}-${itemKey.toLowerCase()}`
+          : `name-details-${type}`
+      }
+      onClick={() => copy(value)}
+    >
       {itemKey && (
         <RecordKey weight="bold">
           {showLegacy ? itemKey.replace('_LEGACY', '') : itemKey}
@@ -249,6 +259,8 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   canEdit?: boolean
 }) => {
+  const { t } = useTranslation('profile')
+
   const filteredTexts = useMemo(
     () => texts?.filter(({ value }) => value),
     [texts],
@@ -277,38 +289,52 @@ export const RecordsTab = ({
   }, [name, network, contentHash])
 
   return (
-    <TabWrapper>
+    <TabWrapper data-testid="records-tab">
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">Text</SectionTitle>
-            <SectionSubtitle weight="bold">
-              {filteredTexts ? filteredTexts.length : 0} Records
+            <SectionTitle data-testid="text-heading" weight="bold">
+              {t('details.tabs.records.text')}
+            </SectionTitle>
+            <SectionSubtitle data-testid="text-amount" weight="bold">
+              {filteredTexts ? filteredTexts.length : 0}{' '}
+              {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
           {canEdit && (
             <EditButton disabled>
-              <Typography weight="bold">Edit</Typography>
+              <Typography weight="bold">
+                {t('action.edit', { ns: 'common' })}
+              </Typography>
             </EditButton>
           )}
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
-            <RecordItem key={text.key} itemKey={text.key} value={text.value} />
+            <RecordItem
+              key={text.key}
+              type="text"
+              itemKey={text.key}
+              value={text.value}
+            />
           ))}
       </RecordSection>
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
-            <SectionTitle weight="bold">Address</SectionTitle>
-            <SectionSubtitle weight="bold">
-              {filteredAddresses ? filteredAddresses.length : 0} Records
+            <SectionTitle data-testid="address-heading" weight="bold">
+              {t('address.label', { ns: 'common' })}
+            </SectionTitle>
+            <SectionSubtitle data-testid="address-amount" weight="bold">
+              {filteredAddresses ? filteredAddresses.length : 0}{' '}
+              {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
         </SectionHeader>
         {filteredAddresses &&
           filteredAddresses.map((address) => (
             <RecordItem
+              type="address"
               key={address.key}
               itemKey={address.coin}
               value={address.addr}
@@ -321,17 +347,25 @@ export const RecordsTab = ({
           <SectionTitleContainer>
             {formattedContentHash ? (
               <>
-                <SectionTitle weight="bold">Content Hash</SectionTitle>
+                <SectionTitle data-testid="content-hash-heading" weight="bold">
+                  {t('details.tabs.records.contentHash')}
+                </SectionTitle>
                 {formattedContentHashLink && (
-                  <Outlink href={formattedContentHashLink}>View</Outlink>
+                  <Outlink href={formattedContentHashLink}>
+                    {t('action.view', { ns: 'common' })}
+                  </Outlink>
                 )}
               </>
             ) : (
-              <SectionSubtitle weight="bold">No Content Hash</SectionSubtitle>
+              <SectionSubtitle data-testid="content-hash-heading" weight="bold">
+                {t('details.tabs.records.noContentHash')}
+              </SectionSubtitle>
             )}
           </SectionTitleContainer>
         </SectionHeader>
-        {formattedContentHash && <RecordItem value={formattedContentHash} />}
+        {formattedContentHash && (
+          <RecordItem type="contentHash" value={formattedContentHash} />
+        )}
       </RecordSection>
     </TabWrapper>
   )

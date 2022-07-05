@@ -1,10 +1,10 @@
-import styled, { css } from 'styled-components'
-import { useProvider, useNetwork } from 'wagmi'
-import { Typography, Button, mq } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { useQuery } from 'react-query'
-
 import { useGetHistory } from '@app/hooks/useGetHistory'
+import { Button, mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
+import styled, { css } from 'styled-components'
+import { useNetwork, useProvider } from 'wagmi'
 
 function getEtherScanLink(networkId?: number | string) {
   switch (networkId) {
@@ -50,6 +50,7 @@ const ButtonContainer = styled.div(() => [
 ])
 
 export const RegistrationDate = () => {
+  const { t } = useTranslation('common')
   const router = useRouter()
   const { name } = router.query
   const { history = { registration: [] } } = useGetHistory(name as string)
@@ -58,6 +59,7 @@ export const RegistrationDate = () => {
 
   const registration = history?.registration?.[0]
   const registrationBlock = registration?.blockNumber
+
   const { data: { registrationDate, transactionHash } = {} } = useQuery(
     ['getRegistrationData'],
     async () => {
@@ -70,7 +72,14 @@ export const RegistrationDate = () => {
         transactionHash: registration.transactionHash,
       }
     },
-    { enabled: !!(registration && registrationBlock && provider) },
+    {
+      enabled: !!(
+        registration &&
+        (typeof registrationBlock === 'number' ||
+          typeof registrationBlock === 'string') &&
+        Object.keys(provider || {}).length > 0
+      ),
+    },
   )
 
   return (
@@ -83,7 +92,7 @@ export const RegistrationDate = () => {
           target="_blank"
           size="small"
         >
-          View on Etherscan
+          {t('transaction.viewEtherscan')}
         </Button>
       </ButtonContainer>
     </RegistrationDateContainer>

@@ -10,8 +10,9 @@ import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
+import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement } from 'react'
+import { ReactElement, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
@@ -67,6 +68,7 @@ export default function Page() {
     ownerData,
     expiryDate,
     normalisedName,
+    valid,
   } = useNameDetails(name)
 
   const isLoading =
@@ -86,76 +88,110 @@ export default function Page() {
   const getTextRecord = (key: string) =>
     profile?.records?.texts?.find((x) => x.key === key)
 
+  const [titleContent, descriptionContent] = useMemo(() => {
+    if (isSelf) {
+      return [t('yourProfile'), '']
+    }
+    if (normalisedName) {
+      return [
+        t('meta.title', {
+          name: normalisedName,
+        }),
+        t('meta.description', {
+          name: normalisedName,
+        }),
+      ]
+    }
+    if (typeof valid === 'boolean' && valid === false) {
+      return [t('errors.invalidName'), t('errors.invalidName')]
+    }
+    return [
+      t('meta.title', {
+        name,
+      }),
+      t('meta.description', {
+        name,
+      }),
+    ]
+  }, [isSelf, normalisedName, valid, name, t])
+
   return (
-    <Content
-      title={isSelf ? 'Your profile' : normalisedName}
-      subtitle={isSelf ? normalisedName : 'Profile'}
-      loading={isLoading}
-    >
-      {{
-        warning: error
-          ? {
-              type: 'warning',
-              message: error,
-            }
-          : undefined,
-        leading: breakpoints.md && ownerData && (
-          <NameSnippet
-            name={normalisedName}
-            network={chainId}
-            ownerData={ownerData}
-            expiryDate={expiryDate}
-            showButton={!isSelf}
-          />
-        ),
-        trailing: (
-          <DetailsWrapper>
-            <ProfileSnippet
+    <>
+      <Head>
+        <title>{titleContent}</title>
+        <meta name="description" content={descriptionContent} />
+      </Head>
+      <Content
+        noTitle
+        title={isSelf ? t('yourProfile') : normalisedName}
+        subtitle={isSelf ? normalisedName : 'Profile'}
+        loading={isLoading}
+      >
+        {{
+          warning: error
+            ? {
+                type: 'warning',
+                message: error,
+              }
+            : undefined,
+          leading: breakpoints.md && ownerData && (
+            <NameSnippet
               name={normalisedName}
               network={chainId}
-              url={getTextRecord('url')?.value}
-              description={getTextRecord('description')?.value}
-              recordName={getTextRecord('name')?.value}
-              button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
-              size={breakpoints.md ? 'medium' : 'small'}
+              ownerData={ownerData}
+              expiryDate={expiryDate}
+              showButton={!isSelf}
             />
-            {isSelf && (
-              <SelfButtons>
-                <Button shadowless variant="transparent" size="small">
-                  Edit Profile
-                </Button>
-                <Button
-                  onClick={() =>
-                    router.push({
-                      pathname: `/profile/${normalisedName}/details`,
-                      query: {
-                        from: router.asPath,
-                      },
-                    })
-                  }
-                  shadowless
-                  variant="transparent"
-                  size="small"
-                >
-                  View Details
-                </Button>
-              </SelfButtons>
-            )}
-            <ProfileDetails
-              addresses={(profile?.records?.coinTypes || []).map(
-                (item: any) => ({
-                  key: item.coin,
-                  value: item.addr,
-                }),
+          ),
+          trailing: (
+            <DetailsWrapper>
+              <ProfileSnippet
+                name={normalisedName}
+                network={chainId}
+                url={getTextRecord('url')?.value}
+                description={getTextRecord('description')?.value}
+                recordName={getTextRecord('name')?.value}
+                button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
+                size={breakpoints.md ? 'medium' : 'small'}
+              />
+              {isSelf && (
+                <SelfButtons>
+                  <Button shadowless variant="transparent" size="small">
+                    {t('editProfile')}
+                  </Button>
+                  <Button
+                    onClick={() =>
+                      router.push({
+                        pathname: `/profile/${normalisedName}/details`,
+                        query: {
+                          from: router.asPath,
+                        },
+                      })
+                    }
+                    shadowless
+                    variant="transparent"
+                    size="small"
+                  >
+                    {t('viewDetails')}
+                  </Button>
+                </SelfButtons>
               )}
-              textRecords={(profile?.records?.texts || [])
-                .map((item: any) => ({ key: item.key, value: item.value }))
-                .filter((item: any) => item.value !== null)}
-            />
-          </DetailsWrapper>
-        ),
-      }}
-    </Content>
+              <ProfileDetails
+                addresses={(profile?.records?.coinTypes || []).map(
+                  (item: any) => ({
+                    key: item.coin,
+                    value: item.addr,
+                  }),
+                )}
+                textRecords={(profile?.records?.texts || [])
+                  .map((item: any) => ({ key: item.key, value: item.value }))
+                  .filter((item: any) => item.value !== null)}
+              />
+            </DetailsWrapper>
+          ),
+        }}
+      </Content>
+    </>
   )
 }
 

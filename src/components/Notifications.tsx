@@ -38,7 +38,7 @@ export const Notifications = () => {
       }
       return false
     })
-    previousTransactions.current = transactions
+    previousTransactions.current = JSON.parse(JSON.stringify(transactions))
     const transactionsToPush = updatedTransactions.map((transaction) => ({
       title: t(`transaction.status.${transaction.status}.notifyTitle`),
       description: t(
@@ -50,7 +50,7 @@ export const Notifications = () => {
           href={makeEtherscanLink(transaction.hash, chainName)}
           rel="noreferrer"
         >
-          <Button size="small">View on Etherscan</Button>
+          <Button size="small">{t('transaction.viewEtherscan')}</Button>
         </a>
       ),
     }))
@@ -68,7 +68,13 @@ export const Notifications = () => {
     <Toast
       onClose={() => {
         setOpen(false)
-        setTimeout(() => setNotificationQueue((prev) => prev.slice(1)), 300)
+        setTimeout(
+          () =>
+            setNotificationQueue((prev) => [
+              ...prev.filter((x) => x !== currentNotification),
+            ]),
+          300,
+        )
       }}
       open={open}
       variant={breakpoints.md ? 'desktop' : 'touch'}

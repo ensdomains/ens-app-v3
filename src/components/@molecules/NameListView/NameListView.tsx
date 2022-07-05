@@ -53,11 +53,11 @@ export const NameListView = ({
             <OtherItemsContainer>
               {name.expiryDate && <ShortExpiry expiry={name.expiryDate} />}
               <Tag tone={name.isController ? 'accent' : 'secondary'}>
-                Controller
+                {t('name.controller')}
               </Tag>
               {isNativeEthName && (
                 <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>
-                  Registrant
+                  {t('name.registrant')}
                 </Tag>
               )}
             </OtherItemsContainer>

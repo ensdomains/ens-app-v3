@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
-import { Typography, mq } from '@ensdomains/thorin'
-
-import { useProfile } from '@app/hooks/useProfile'
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
+import { useProfile } from '@app/hooks/useProfile'
+import { mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 // Ordered by recency
 const RESOLVER_ADDRESSES = [
@@ -68,6 +68,7 @@ const AddressContainer = styled.div(
 )
 
 const ResolverDetails = () => {
+  const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
 
@@ -78,18 +79,26 @@ const ResolverDetails = () => {
 
   let versionIndicatorText = ''
   if (resolverAddressIndex === -1) {
-    versionIndicatorText = 'Custom'
+    versionIndicatorText = t('details.tabs.more.resolver.custom')
   } else {
-    versionIndicatorText = resolverAddressIndex === 0 ? 'Latest' : 'Outdated'
+    versionIndicatorText =
+      resolverAddressIndex === 0
+        ? t('details.tabs.more.resolver.latest')
+        : t('details.tabs.more.resolver.outdated')
   }
 
   return (
     <ResolverDetailsContainer>
       <VersionContainer>
-        <Typography weight="bold">Version</Typography>
+        <Typography weight="bold">
+          {t('details.tabs.more.resolver.version')}
+        </Typography>
         <VersionIndicator>
           {versionIndicatorText}
           <TrafficLight
+            data-testid={`version-indicator-dot-${
+              resolverAddressIndex === 0 ? 'latest' : 'outdated'
+            }`}
             $go={resolverAddressIndex === 0}
             $size="4"
             $color={resolverAddressIndex === -1 ? 'grey' : undefined}
@@ -97,7 +106,9 @@ const ResolverDetails = () => {
         </VersionIndicator>
       </VersionContainer>
       <AddressContainer>
-        <Typography weight="bold">Address</Typography>
+        <Typography weight="bold">
+          {t('address.label', { ns: 'common' })}
+        </Typography>
         <RecordItem value={resolverAddress || ''} />
       </AddressContainer>
     </ResolverDetailsContainer>
