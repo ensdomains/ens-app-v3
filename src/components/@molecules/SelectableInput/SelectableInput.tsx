@@ -73,6 +73,7 @@ const ReadOnlySelect = styled.div<{ $size: string }>(
     justify-content: flex-start;
     z-index: 10;
     margin-left: -18px;
+    white-space: nowrap;
     ${$size === 'medium'
       ? css`
           border-radius: ${theme.radii.extraLarge};
@@ -107,20 +108,16 @@ const ButtonContainer = styled.div<{ $readOnly?: boolean }>(
 type ThorinInputProps = ComponentProps<typeof Input>
 type ThorinSelectProps = ComponentProps<typeof Select>
 type Props = {
-  selectValue: ThorinSelectProps['value']
-  options: ThorinSelectProps['options']
+  selectProps: Omit<ThorinSelectProps, 'label'>
   hasChanges?: boolean
-  onSelectChange?: ThorinSelectProps['onChange']
   onDelete?: () => void
 } & ThorinInputProps
 
 export const SelectableInput = forwardRef(
   (
     {
-      selectValue,
-      onSelectChange,
+      selectProps,
       value,
-      options,
       readOnly,
       error,
       hasChanges,
@@ -129,23 +126,22 @@ export const SelectableInput = forwardRef(
     }: Props,
     ref: Ref<HTMLInputElement>,
   ) => {
-    const selectedOption = options.find(
-      (option) => option.value === selectValue,
+    const selectedOption = selectProps?.options.find(
+      (option) => option.value === selectProps.value,
     )
+
     const prefix = readOnly ? (
       <ReadOnlySelect $size="medium">
-        <div>{selectedOption?.prefix}</div>
+        {selectedOption?.prefix && <div>{selectedOption?.prefix}</div>}
         <div>{selectedOption?.label}</div>
       </ReadOnlySelect>
     ) : (
       <Select
-        value={selectValue}
-        options={options}
-        label="hello"
+        label={props.label}
         size="medium"
         hideLabel
         style={{ marginLeft: '-18px' }}
-        onChange={onSelectChange}
+        {...selectProps}
       />
     )
     return (

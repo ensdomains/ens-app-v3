@@ -1,5 +1,5 @@
 import { validate } from '@ensdomains/ens-validation'
-import { AddressIconType } from '../assets/address/DynamicAddressIcon'
+import { isAddress } from 'ethers/lib/utils'
 
 export const hasNonAscii = () => {
   const strs = window.location.pathname.split('/')
@@ -12,13 +12,13 @@ export const hasNonAscii = () => {
 }
 
 export const validateCryptoAddress =
-  (coin: AddressIconType) =>
+  (coin: string) =>
   (address: string): string | boolean => {
-    switch (coin) {
+    const coinName = coin.toLowerCase()
+    console.log(coinName)
+    switch (coinName) {
       case 'eth':
-        return /0x[a-fA-F0-9]{40}/.test(address) ? 'Invalid Address format' : ''
-      case 'bnb':
-        return 'Invalid address format'
+        return isAddress(address) ? true : 'Invalid address format'
       default:
         return true
     }

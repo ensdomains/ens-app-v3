@@ -4,7 +4,10 @@ import {
 } from '@app/assets/social/DynamicSocialIcon'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import styled, { css } from 'styled-components'
+import { Select } from '@ensdomains/thorin'
+import { ComponentProps } from 'react'
 import { getSocialData } from '../../../../utils/getSocialData'
+import { formSafeKey } from './utils'
 
 const IconWrapper = styled.div(
   () => css`
@@ -22,8 +25,8 @@ const accountsOptions = supportedTexts.reduce((list, account) => {
   return [
     ...list,
     {
-      value: account,
-      label: socialData.icon,
+      value: formSafeKey(account),
+      label: socialData.label,
       prefix: (
         <IconWrapper>
           <DynamicSocialIcon
@@ -34,6 +37,6 @@ const accountsOptions = supportedTexts.reduce((list, account) => {
       ),
     },
   ]
-}, [] as { label: string; value: string; prefix: React.ReactNode }[])
+}, [] as ComponentProps<typeof Select>['options'])
 
 export default accountsOptions

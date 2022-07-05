@@ -5,6 +5,8 @@ import {
 import coinList from '@app/constants/coinList'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import styled, { css } from 'styled-components'
+import { Select } from '@ensdomains/thorin'
+import { ComponentProps } from 'react'
 
 const IconWrapper = styled.div(
   () => css`
@@ -16,7 +18,19 @@ const IconWrapper = styled.div(
   `,
 )
 
-const coinOptions = coinList.reduce((acc, coin) => {
+const UnsupportedAddressWrapper = styled.div(
+  ({ theme }) => css`
+    background-color: ${theme.colors.textTertiary};
+    color: ${theme.colors.white};
+    border-radius: ${theme.radii.large};
+    font-size: 1rem;
+    font-weight: ${theme.fontWeights.normal};
+    letter-spacing: ${theme.letterSpacings['-0.01']};
+    padding: ${theme.space['0.25']} ${theme.space['1.5']};
+  `,
+)
+
+const addressOptions = coinList.reduce((acc, coin) => {
   if (supportedAddresses.includes(coin.toLowerCase())) {
     return [
       {
@@ -36,7 +50,8 @@ const coinOptions = coinList.reduce((acc, coin) => {
     {
       value: coin,
       label: coin,
+      prefix: <UnsupportedAddressWrapper>{coin}</UnsupportedAddressWrapper>,
     },
   ]
-}, [] as { value: string; label: string; prefix?: React.ReactNode }[])
-export default coinOptions
+}, [] as ComponentProps<typeof Select>['options'])
+export default addressOptions

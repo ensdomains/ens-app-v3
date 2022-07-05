@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm } from 'react-hook-form'
@@ -12,16 +12,15 @@ import {
   PlusSVG,
 } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
-import SUPPORTED_COIN_KEYS from '@app/constants/supportedAddresses.json'
-import ACCOUNT_KEYS from '@app/constants/supportedTexts.json'
 import { SelectableInput } from '../../../@molecules/SelectableInput/SelectableInput'
-// import { validateCryptoAddress } from '../../../utils/validate'
 import { useProfile } from '../../../../hooks/useProfile'
-import coinOptions from './coinOptions'
+import addressOptions from './addressOptions'
 import accountsOptions from './accountsOptions'
+import otherOptions from './otherOptions'
 import ScrollIndicatorContainer from './ScrollIndicatorContainer'
-
-const GENERAL_KEYS = ['name', 'description', 'location']
+import { convertProfileToFormObject, formSafeKey, ProfileType } from './utils'
+import useExpandableRecordsGroup from './useExpandableRecordsGroup'
+import { validateCryptoAddress } from '../../../../utils/validate'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -80,11 +79,11 @@ const NameContainer = styled.div(({ theme }) => [
 ])
 
 const ContentContainer = styled.div(
-  () => css`
-    padding: 16px;
+  ({ theme }) => css`
     flex: 1;
     display: flex;
     flex-direction: column;
+    gap: ${theme.space['4']};
     overflow: hidden;
   `,
 )
@@ -94,6 +93,7 @@ const TabButtonsContainer = styled.div(
     display: flex;
     flex-wrap: wrap;
     gap: ${theme.space['1.25']} ${theme.space['3']};
+    padding: 0 ${theme.space['3']};
   `,
 )
 
@@ -151,41 +151,37 @@ const TabButton = styled.button<{
   `,
 )
 
+const TabContentsContainer = styled.div(
+  ({ theme }) => css`
+    position: relative;
+    padding: 0 ${theme.space['3']};
+    flex: 1;
+    overflow: hidden;
+    border-radius: ${theme.radii.large};
+  `,
+)
+
+const TabContentContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['3']};
+  `,
+)
+
+const FooterContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    gap: ${theme.space['3']};
+    padding: 0 ${theme.space['3']} ${theme.space['3']} ${theme.space['3']};
+  `,
+)
+
 type TabType = 'general' | 'accounts' | 'address' | 'website' | 'other'
 
-// const RecordIcon = ({ record }: { record: string }) => {
-//   console.log(record)
-
-//   console.log(addressIconTypes[record as AddressIconType])
-//   const addressIconKey = record?.toLowerCase() as AddressIconType
-//   if (addressIconTypes[addressIconKey]) {
-//     return (
-//       <IconWrapper>
-//         <DynamicAddressIcon name={addressIconKey} />
-//       </IconWrapper>
-//     )
-//   }
-//   return null
-// }
-
-type ProfileType = {
-  general: {
-    name?: string
-    location?: string
-    description?: string
-  }
-  accounts: {
-    [key: string]: string
-  }
-  address: {
-    [key: string]: string
-  }
-  website: {
-    url?: string
-  }
-  other: {
-    [key: string]: string
-  }
+type ExpandableRecordsGroup = 'accounts' | 'address' | 'other'
+type ExpandableRecordsState = {
+  [key in ExpandableRecordsGroup]: string[]
 }
 
 type Props = {
@@ -197,20 +193,19 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
   const {
     register,
     formState,
-    watch,
     reset,
     setValue,
     getValues,
     getFieldState,
     handleSubmit,
   } = useForm<ProfileType>({
-    mode: 'onSubmit',
-    reValidateMode: 'onChange',
+    mode: 'onBlur',
+    reValidateMode: 'onBlur',
     defaultValues: {
       general: {},
       accounts: {},
       address: {},
-      website: {},
+      website: '',
       other: {},
     },
   })
@@ -219,149 +214,78 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
-  /** * GENERAL TAB */
+  const [existingRecords, setExistingRecords] =
+    useState<ExpandableRecordsState>({
+      address: [],
+      other: [],
+      accounts: [],
+    })
 
-  /**
-   * ADDRESSES TAB
-   * */
+  const {
+    existingKeys: existingAccountKeys,
+    newKeys: newAccountKeys,
+    addKey: addAccountKey,
+    removeKey: removeAccountKey,
+    changeKey: changeAccountKey,
+    hasOptions: hasAccountOptions,
+    getOptions: getAccountOptions,
+  } = useExpandableRecordsGroup<ProfileType>({
+    group: 'accounts',
+    existingKeys: existingRecords.accounts,
+    options: accountsOptions,
+    setValue,
+    getValues,
+  })
 
-  const address = watch('address')
-  console.log('address', address)
+  const {
+    existingKeys: existingAddressKeys,
+    newKeys: newAddressKeys,
+    addKey: addAddressKey,
+    removeKey: removeAddressKey,
+    changeKey: changeAddressKey,
+    hasOptions: hasAddressOptions,
+    getOptions: getAddressOptions,
+  } = useExpandableRecordsGroup<ProfileType>({
+    group: 'address',
+    existingKeys: existingRecords.address,
+    options: addressOptions,
+    setValue,
+    getValues,
+  })
 
-  const [existingAccountsRecords, setExistingAccountsRecords] = useState<
-    string[]
-  >([])
-  // const [newAccountsRecords, setNewAccountsRecords] = useState<string[]>([])
-  const [existingCoinRecords, setExistingCoinRecords] = useState<string[]>([])
-  const [newCoinRecords, setNewCoinRecords] = useState<string[]>([])
-  // const [existingOtherRecords, setExistingOtherRecords] = useState<string[]>([])
-
-  const handleRemoveCoinRecord = (coin: string) => () => {
-    console.log('>>>>')
-    const oldAddress = getValues('address')
-    const { [coin]: _, ...newAddress } = oldAddress
-    setValue('address', newAddress)
-    setExistingCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
-    setNewCoinRecords((coins) => coins.filter((_coin) => _coin !== coin))
-  }
-
-  // //
-  // const coinOptions = useMemo(() => {
-  //   return SUPPORTED_COIN_KEYS.map((coin) => ({
-  //     label: coin.toUpperCase(),
-  //     value: coin,
-  //     prefix: <RecordIcon record={coin} />,
-  //   }))
-  // }, [])
-
-  const unusedCoinOptions = useMemo(() => {
-    const usedCoins = [...existingCoinRecords, ...newCoinRecords]
-    const newOptions = coinOptions.filter(
-      (option) => !usedCoins.includes(option.value),
-    )
-    return newOptions
-  }, [existingCoinRecords, newCoinRecords])
-
-  // const availableCoinOptions = (coin: string) => {
-  //   return [
-  //     {
-  //       label: coin.toUpperCase(),
-  //       value: coin,
-  //       prefix: <RecordIcon record={coin} />,
-  //     },
-  //     ...unusedCoinOptions,
-  //   ]
-  // }
-
-  const handleAddNewCoin = () => {
-    if (unusedCoinOptions.length > 0) {
-      const newAddress = unusedCoinOptions[0].value
-      setNewCoinRecords((addresses) => [...addresses, newAddress])
-    }
-  }
-
-  const handleCoinChange = (index: number, newCoin: string) => {
-    const oldCoin = newCoinRecords[index]
-    if (oldCoin) {
-      const { [oldCoin]: oldCoinAddress, ...otherAddresses } =
-        getValues('address')
-      const newAddress = { ...otherAddresses, [newCoin]: oldCoinAddress }
-      setValue(`address`, newAddress as any)
-      setNewCoinRecords((coins) =>
-        coins.map((coin, coinIndex) => (index === coinIndex ? newCoin : coin)),
-      )
-    }
-  }
-
-  console.log(formState)
-  console.log(
-    'accounts.eth',
-    watch('address.eth'),
-    getFieldState('address.eth', formState),
-  )
-  console.log('bnb', getFieldState('address.bnb', formState))
-  console.log('ltc', getFieldState('address.ltc', formState))
-
-  console.log('accounts.btc', watch('address.btc'))
-  console.log('errors', formState.errors)
+  const {
+    existingKeys: existingOtherKeys,
+    newKeys: newOtherKeys,
+    addKey: addOtherKey,
+    removeKey: removeOtherKey,
+    changeKey: changeOtherKey,
+    getOptions: getOtherOptions,
+  } = useExpandableRecordsGroup<ProfileType>({
+    group: 'other',
+    existingKeys: existingRecords.other,
+    options: otherOptions,
+    setValue,
+    getValues,
+  })
 
   const { profile } = useProfile('khori.eth', false)
   useEffect(() => {
     if (profile) {
-      console.log('profile', profile)
-      const profileAddress =
-        profile.records?.coinTypes?.reduce((map, record) => {
-          const { coin } = record
-          const { addr } = record as any
-          if (coin && SUPPORTED_COIN_KEYS.includes(coin.toLowerCase())) {
-            const newMap = { [coin]: addr, ...map }
-            return newMap
-          }
-          if (coin) {
-            const newMap = { ...map, [coin]: addr }
-            return newMap
-          }
-          return map
-        }, {}) || {}
-
-      const textRecords = profile.records?.texts?.reduce<
-        Omit<ProfileType, 'address'>
-      >(
-        (map, record) => {
-          if (GENERAL_KEYS.includes(record.key.toString())) {
-            const newMap = {
-              ...map,
-              general: { ...map.general, [record.key]: record.value },
-            }
-            return newMap
-          }
-          if (ACCOUNT_KEYS.includes(record.key.toString())) {
-            const key = record.key.toString().replace(/\./g, '_')
-            return {
-              ...map,
-              accounts: { ...map.accounts, [key]: record.value },
-            }
-          }
-          if (record.key === 'url')
-            return { ...map, website: { url: record.value } }
-          return {
-            ...map,
-            other: { ...map.other, [record.key]: record.value },
-          }
-        },
-        { general: {}, accounts: {}, website: {}, other: {} },
-      ) || { general: {}, accounts: {}, website: {}, other: {} }
-      const resp = {
-        ...textRecords,
-        address: profileAddress,
+      const defaultValues = convertProfileToFormObject(profile)
+      reset(defaultValues)
+      const newExistingRecords: ExpandableRecordsState = {
+        address: Object.keys(defaultValues.address) || [],
+        other: Object.keys(defaultValues.other) || [],
+        accounts: Object.keys(defaultValues.accounts) || [],
       }
-      console.log('resp----------', resp)
-
-      reset(resp)
-      setExistingCoinRecords(Object.keys(resp.address) as string[])
-      setExistingAccountsRecords(Object.keys(resp.accounts) as string[])
+      setExistingRecords(newExistingRecords)
     }
-  }, [profile, reset])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile])
+
+  console.log(getFieldState(`address.ETH`, formState).error)
+
+  console.log('rerender')
 
   return (
     <>
@@ -416,119 +340,210 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                 Other
               </TabButton>
             </TabButtonsContainer>
-            <ScrollIndicatorContainer>
-              {
-                {
-                  general: (
-                    <>
-                      <Input label="Nickname" {...register('general.name')} />
-                      <Input
-                        label="Location"
-                        {...register('general.location')}
-                      />
-                      <Textarea
-                        label="Short Bio"
-                        {...register('general.description')}
-                      />
-                    </>
-                  ),
-                  accounts: (
-                    <>
-                      {existingAccountsRecords.map((account) => (
-                        <SelectableInput
-                          key={account}
-                          selectValue={account}
-                          label="hello111"
-                          options={accountsOptions}
-                          readOnly
-                          {...register(`accounts.${account}`, {})}
-                          onDelete={handleRemoveCoinRecord(account)}
-                        />
-                      ))}{' '}
-                    </>
-                  ),
-                  address: (
-                    <>
-                      {existingCoinRecords.map((coin) => (
-                        <SelectableInput
-                          key={coin}
-                          selectValue={coin}
-                          label="hello111"
-                          options={coinOptions}
-                          readOnly
-                          {...register(`address.${coin}`, {})}
-                          onDelete={handleRemoveCoinRecord(coin)}
-                        />
-                      ))}
-                      {newCoinRecords.map((coin, index) => (
-                        <SelectableInput
-                          key={coin}
-                          selectValue={coin}
-                          onSelectChange={(e) =>
-                            handleCoinChange(index, e.target.value)
-                          }
-                          error={
-                            getFieldState(`address.${coin}`, formState).error
-                              ?.message
-                          }
-                          hasChanges={
-                            getFieldState(`address.${coin}`, formState).isDirty
-                          }
-                          label={coin}
-                          options={coinOptions}
-                          autoComplete="off"
-                          autoCorrect="off"
-                          spellCheck={false}
-                          onDelete={handleRemoveCoinRecord(coin)}
-                          {...register(`address.${coin}`, {})}
-                        />
-                      ))}
-                      {unusedCoinOptions.length > 0 && (
-                        <Button
-                          outlined
-                          prefix={<PlusSVG />}
-                          variant="transparent"
-                          shadowless
-                          onClick={handleAddNewCoin}
-                        >
-                          Add Address
-                        </Button>
-                      )}
-                    </>
-                  ),
-                  website: (
-                    <>
-                      <SelectableInput
-                        selectValue="ipfs"
-                        onSelectChange={(e) =>
-                          handleCoinChange(0, e.target.value)
-                        }
-                        error={
-                          getFieldState(`website.url`, formState).error?.message
-                        }
-                        hasChanges={
-                          getFieldState(`website.url`, formState).isDirty
-                        }
-                        label="url"
-                        options={[{ value: 'ipfs', label: 'ipfs' }]}
-                        autoComplete="off"
-                        autoCorrect="off"
-                        spellCheck={false}
-                        onDelete={handleRemoveCoinRecord('url')}
-                        {...register(`website.url`, {})}
-                      />
-                    </>
-                  ),
-                  other: <>other</>,
-                }[tab]
-              }
-            </ScrollIndicatorContainer>
-            <div style={{ display: 'flex', gap: '20px' }}>
+            <TabContentsContainer>
+              <ScrollIndicatorContainer>
+                <TabContentContainer>
+                  {
+                    {
+                      general: (
+                        <>
+                          <Input
+                            label="Nickname"
+                            {...register('general.name')}
+                          />
+                          <Input label="Website" {...register('general.url')} />
+                          <Input
+                            label="Location"
+                            {...register('general.location')}
+                          />
+                          <Textarea
+                            label="Short Bio"
+                            {...register('general.description')}
+                          />
+                        </>
+                      ),
+                      accounts: (
+                        <>
+                          {existingAccountKeys.map((account) => (
+                            <SelectableInput
+                              key={account}
+                              selectProps={{
+                                value: formSafeKey(account),
+                                options: accountsOptions,
+                              }}
+                              label={account}
+                              readOnly
+                              {...register(
+                                `accounts.${formSafeKey(account)}` as any,
+                                {},
+                              )}
+                              onDelete={() => removeAccountKey(account)}
+                            />
+                          ))}{' '}
+                          {newAccountKeys.map((key) => (
+                            <SelectableInput
+                              key={key}
+                              selectProps={{
+                                value: formSafeKey(key),
+                                options: getAccountOptions(key),
+                                onChange: (e) =>
+                                  changeAccountKey(key, e.target.value),
+                              }}
+                              error={
+                                getFieldState(
+                                  `accounts.${formSafeKey(key)}`,
+                                  formState,
+                                ).error?.message
+                              }
+                              hasChanges={
+                                getFieldState(
+                                  `accounts.${formSafeKey(key)}`,
+                                  formState,
+                                ).isDirty
+                              }
+                              label={key}
+                              autoComplete="off"
+                              autoCorrect="off"
+                              spellCheck={false}
+                              onDelete={() =>
+                                removeAccountKey(formSafeKey(key))
+                              }
+                              {...register(`accounts.${formSafeKey(key)}`, {})}
+                            />
+                          ))}
+                          {hasAccountOptions && (
+                            <Button
+                              outlined
+                              prefix={<PlusSVG />}
+                              variant="transparent"
+                              shadowless
+                              onClick={() => addAccountKey()}
+                            >
+                              Add Account
+                            </Button>
+                          )}
+                        </>
+                      ),
+                      address: (
+                        <>
+                          {existingAddressKeys.map((key) => (
+                            <SelectableInput
+                              key={key}
+                              selectProps={{
+                                value: key,
+                                options: addressOptions,
+                              }}
+                              label={key}
+                              readOnly
+                              {...register(`address.${key}`, {})}
+                              onDelete={() => removeAddressKey(key)}
+                            />
+                          ))}
+                          {newAddressKeys.map((key) => (
+                            <SelectableInput
+                              key={key}
+                              selectProps={{
+                                value: key,
+                                autocomplete: true,
+                                options: getAddressOptions(key),
+                                onChange: (e) =>
+                                  changeAddressKey(key, e.target.value),
+                              }}
+                              error={
+                                getFieldState(`address.${key}`, formState).error
+                                  ?.message
+                              }
+                              hasChanges={
+                                getFieldState(`address.${key}`, formState)
+                                  .isDirty
+                              }
+                              label={key}
+                              autoComplete="off"
+                              autoCorrect="off"
+                              spellCheck={false}
+                              onDelete={() => removeAddressKey(key)}
+                              {...register(`address.${key}`, {
+                                validate: validateCryptoAddress(key),
+                              })}
+                            />
+                          ))}
+                          {hasAddressOptions && (
+                            <Button
+                              outlined
+                              prefix={<PlusSVG />}
+                              variant="transparent"
+                              shadowless
+                              onClick={() => addAddressKey()}
+                            >
+                              Add Address
+                            </Button>
+                          )}
+                        </>
+                      ),
+                      website: <>website</>,
+                      other: (
+                        <>
+                          {existingOtherKeys.map((key) => (
+                            <SelectableInput
+                              key={key}
+                              selectProps={{
+                                value: formSafeKey(key),
+                                options: otherOptions,
+                              }}
+                              label={key}
+                              readOnly
+                              {...register(`other.${formSafeKey(key)}`, {})}
+                              onDelete={() => removeOtherKey(key)}
+                            />
+                          ))}
+                          {newOtherKeys.map((key) => (
+                            <SelectableInput
+                              key={key}
+                              selectProps={{
+                                value: formSafeKey(key),
+                                options: getOtherOptions(key),
+                                createable: true,
+                                onChange: (e) =>
+                                  changeOtherKey(key, e.target.value),
+                                onCreate: (value) => changeOtherKey(key, value),
+                              }}
+                              error={
+                                getFieldState(`other.${key}`, formState).error
+                                  ?.message
+                              }
+                              hasChanges={
+                                getFieldState(`other.${key}`, formState).isDirty
+                              }
+                              label={key}
+                              autoComplete="off"
+                              autoCorrect="off"
+                              spellCheck={false}
+                              onDelete={() => removeOtherKey(key)}
+                              {...register(`other.${formSafeKey(key)}`, {})}
+                            />
+                          ))}
+                          <Button
+                            outlined
+                            prefix={<PlusSVG />}
+                            variant="transparent"
+                            shadowless
+                            onClick={() => addOtherKey()}
+                          >
+                            Add Record
+                          </Button>
+                        </>
+                      ),
+                    }[tab]
+                  }
+                </TabContentContainer>
+              </ScrollIndicatorContainer>
+            </TabContentsContainer>
+            <FooterContainer>
               <Button tone="grey">Cancel</Button>
               <Button disabled={hasErrors} type="submit">
                 Save
               </Button>
-            </div>
+            </FooterContainer>
           </ContentContainer>
         </Container>
       </Modal>

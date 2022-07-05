@@ -7,6 +7,7 @@ const Container = styled.div(
     border-radius: ${theme.radii.large};
     flex: 1;
     overflow: hidden;
+    height: 100%;
   `,
 )
 
@@ -52,7 +53,7 @@ const ScrollIndicatorContainer = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     handleScroll()
-  }, [])
+  }, [children])
 
   return (
     <Container>
