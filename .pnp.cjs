@@ -839,6 +839,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "virtual:80bbf5e23f92138b79b7c26c48236daefc1ec3e9059262e92df36f91fe2c378631acd462f972b4ba52cd2bf3aa37ca7255dd2b7e0461ab649a75fbede50160f9#npm:27.5.1"\
       ],\
       [\
+        "@jest/schemas",\
+        "npm:28.0.2"\
+      ],\
+      [\
         "@jest/source-map",\
         "npm:27.5.1"\
       ],\
@@ -1118,6 +1122,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.0.0"\
       ],\
       [\
+        "@sinclair/typebox",\
+        "npm:0.23.5"\
+      ],\
+      [\
         "@sindresorhus/is",\
         "npm:0.14.0"\
       ],\
@@ -1220,6 +1228,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "@testing-library/react",\
         "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.4"\
+      ],\
+      [\
+        "@testing-library/react-hooks",\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.0.1"\
       ],\
       [\
         "@tootallnate/once",\
@@ -1367,7 +1379,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@types/jest",\
-        "npm:27.4.1"\
+        "npm:28.1.3"\
       ],\
       [\
         "@types/json-buffer",\
@@ -1839,7 +1851,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "ansi-regex",\
-        "npm:3.0.1"\
+        "npm:5.0.1"\
       ],\
       [\
         "ansi-styles",\
@@ -5379,7 +5391,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "multiformats",\
-        "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."\
+        "npm:9.6.5"\
       ],\
       [\
         "multihashes",\
@@ -6067,6 +6079,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "react-dom",\
         "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"\
+      ],\
+      [\
+        "react-error-boundary",\
+        "virtual:e18e81888b01a81fe1dd752d3b29801a535fe1c6e2aaef3cb5c09a0690d80bd234ec7eb8dd9ecbda990bd913136ba58232081ffb09303163e21cbb52ef6927fc#npm:3.1.4"\
       ],\
       [\
         "react-ga",\
@@ -7574,8 +7590,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/cypress", "virtual:2045c06b96acb5756377d51032e69013a097492742635f3db2d98ba9a98c59e17c24db2658f777cee454ccaa5859b0ff3db3678391defb54b1fb0459975d583f#npm:8.0.2"],\
             ["@testing-library/jest-dom", "npm:5.16.4"],\
             ["@testing-library/react", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.4"],\
+            ["@testing-library/react-hooks", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.0.1"],\
             ["@types/glob", "npm:7.2.0"],\
-            ["@types/jest", "npm:27.4.1"],\
+            ["@types/jest", "npm:28.1.3"],\
             ["@types/lodash", "npm:4.14.181"],\
             ["@types/node", "npm:16.11.26"],\
             ["@types/prettier", "npm:2.4.4"],\
@@ -7621,7 +7638,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-jsdom", "npm:27.5.1"],\
             ["jest-localstorage-mock", "npm:2.4.19"],\
             ["lodash", "npm:4.17.21"],\
-            ["multiformats", "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."],\
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
@@ -12422,6 +12438,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@jest/schemas", [\
+        ["npm:28.0.2", {\
+          "packageLocation": "./.yarn/cache/@jest-schemas-npm-28.0.2-482c1c45c3-6a177e97b1.zip/node_modules/@jest/schemas/",\
+          "packageDependencies": [\
+            ["@jest/schemas", "npm:28.0.2"],\
+            ["@sinclair/typebox", "npm:0.23.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@jest/source-map", [\
         ["npm:27.5.1", {\
           "packageLocation": "./.yarn/cache/@jest-source-map-npm-27.5.1-82cd2ed5c0-4fb1e743b6.zip/node_modules/@jest/source-map/",\
@@ -13412,6 +13438,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@sinclair/typebox", [\
+        ["npm:0.23.5", {\
+          "packageLocation": "./.yarn/cache/@sinclair-typebox-npm-0.23.5-10c003c068-c96056d35d.zip/node_modules/@sinclair/typebox/",\
+          "packageDependencies": [\
+            ["@sinclair/typebox", "npm:0.23.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@sindresorhus/is", [\
         ["npm:0.14.0", {\
           "packageLocation": "./.yarn/cache/@sindresorhus-is-npm-0.14.0-9f906ea34b-971e0441dd.zip/node_modules/@sindresorhus/is/",\
@@ -13988,6 +14023,38 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["@testing-library/react-hooks", [\
+        ["npm:8.0.1", {\
+          "packageLocation": "./.yarn/cache/@testing-library-react-hooks-npm-8.0.1-e0c7be6ffb-7fe44352e9.zip/node_modules/@testing-library/react-hooks/",\
+          "packageDependencies": [\
+            ["@testing-library/react-hooks", "npm:8.0.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.0.1", {\
+          "packageLocation": "./.yarn/__virtual__/@testing-library-react-hooks-virtual-e18e81888b/0/cache/@testing-library-react-hooks-npm-8.0.1-e0c7be6ffb-7fe44352e9.zip/node_modules/@testing-library/react-hooks/",\
+          "packageDependencies": [\
+            ["@testing-library/react-hooks", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.0.1"],\
+            ["@babel/runtime", "npm:7.17.9"],\
+            ["@types/react", "npm:17.0.30"],\
+            ["@types/react-dom", null],\
+            ["@types/react-test-renderer", null],\
+            ["react", "npm:17.0.2"],\
+            ["react-dom", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"],\
+            ["react-error-boundary", "virtual:e18e81888b01a81fe1dd752d3b29801a535fe1c6e2aaef3cb5c09a0690d80bd234ec7eb8dd9ecbda990bd913136ba58232081ffb09303163e21cbb52ef6927fc#npm:3.1.4"],\
+            ["react-test-renderer", null]\
+          ],\
+          "packagePeers": [\
+            "@types/react-dom",\
+            "@types/react-test-renderer",\
+            "@types/react",\
+            "react-dom",\
+            "react-test-renderer",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["@tootallnate/once", [\
         ["npm:1.1.2", {\
           "packageLocation": "./.yarn/cache/@tootallnate-once-npm-1.1.2-0517220057-e1fb1bbbc1.zip/node_modules/@tootallnate/once/",\
@@ -14496,6 +14563,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/jest", "npm:27.4.1"],\
             ["jest-matcher-utils", "npm:27.5.1"],\
             ["pretty-format", "npm:27.5.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:28.1.3", {\
+          "packageLocation": "./.yarn/cache/@types-jest-npm-28.1.3-4e0f1f0cb8-28141f2d5b.zip/node_modules/@types/jest/",\
+          "packageDependencies": [\
+            ["@types/jest", "npm:28.1.3"],\
+            ["jest-matcher-utils", "npm:28.1.1"],\
+            ["pretty-format", "npm:28.1.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -21418,6 +21494,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["diff-sequences", "npm:27.5.1"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:28.1.1", {\
+          "packageLocation": "./.yarn/cache/diff-sequences-npm-28.1.1-70eb43c727-e252903650.zip/node_modules/diff-sequences/",\
+          "packageDependencies": [\
+            ["diff-sequences", "npm:28.1.1"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["diffie-hellman", [\
@@ -21898,8 +21981,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/cypress", "virtual:2045c06b96acb5756377d51032e69013a097492742635f3db2d98ba9a98c59e17c24db2658f777cee454ccaa5859b0ff3db3678391defb54b1fb0459975d583f#npm:8.0.2"],\
             ["@testing-library/jest-dom", "npm:5.16.4"],\
             ["@testing-library/react", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.4"],\
+            ["@testing-library/react-hooks", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.0.1"],\
             ["@types/glob", "npm:7.2.0"],\
-            ["@types/jest", "npm:27.4.1"],\
+            ["@types/jest", "npm:28.1.3"],\
             ["@types/lodash", "npm:4.14.181"],\
             ["@types/node", "npm:16.11.26"],\
             ["@types/prettier", "npm:2.4.4"],\
@@ -21945,7 +22029,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-environment-jsdom", "npm:27.5.1"],\
             ["jest-localstorage-mock", "npm:2.4.19"],\
             ["lodash", "npm:4.17.21"],\
-            ["multiformats", "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."],\
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
@@ -22769,7 +22852,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["eslint-plugin-jest", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:25.7.0"],\
             ["@types/eslint", null],\
-            ["@types/jest", "npm:27.4.1"],\
+            ["@types/jest", "npm:28.1.3"],\
             ["@types/typescript-eslint__eslint-plugin", null],\
             ["@typescript-eslint/eslint-plugin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:5.18.0"],\
             ["@typescript-eslint/experimental-utils", "virtual:02683e7c577f92b496a1afe950c002ade2c2c701121af9540f7514ffedbf7e2951aa6c38f0da88ab7d179c4a8cc31019af45f76f34183b03efefbd36281d0986#npm:5.18.0"],\
@@ -27613,6 +27696,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["pretty-format", "npm:27.5.1"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:28.1.1", {\
+          "packageLocation": "./.yarn/cache/jest-diff-npm-28.1.1-42aa8732d8-d9e0355880.zip/node_modules/jest-diff/",\
+          "packageDependencies": [\
+            ["jest-diff", "npm:28.1.1"],\
+            ["chalk", "npm:4.1.2"],\
+            ["diff-sequences", "npm:28.1.1"],\
+            ["jest-get-type", "npm:28.0.2"],\
+            ["pretty-format", "npm:28.1.1"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["jest-docblock", [\
@@ -27675,6 +27769,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/jest-get-type-npm-27.5.1-980fbf7a43-63064ab701.zip/node_modules/jest-get-type/",\
           "packageDependencies": [\
             ["jest-get-type", "npm:27.5.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:28.0.2", {\
+          "packageLocation": "./.yarn/cache/jest-get-type-npm-28.0.2-00d0a81478-5281d7c89b.zip/node_modules/jest-get-type/",\
+          "packageDependencies": [\
+            ["jest-get-type", "npm:28.0.2"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -27756,6 +27857,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["jest-diff", "npm:27.5.1"],\
             ["jest-get-type", "npm:27.5.1"],\
             ["pretty-format", "npm:27.5.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:28.1.1", {\
+          "packageLocation": "./.yarn/cache/jest-matcher-utils-npm-28.1.1-43475d399c-cb73ccd347.zip/node_modules/jest-matcher-utils/",\
+          "packageDependencies": [\
+            ["jest-matcher-utils", "npm:28.1.1"],\
+            ["chalk", "npm:4.1.2"],\
+            ["jest-diff", "npm:28.1.1"],\
+            ["jest-get-type", "npm:28.0.2"],\
+            ["pretty-format", "npm:28.1.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -30149,13 +30261,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["multiformats", "npm:9.6.5"]\
           ],\
           "linkType": "HARD"\
-        }],\
-        ["patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/multiformats-patch-d7f155653d-e10130e5df.zip/node_modules/multiformats/",\
-          "packageDependencies": [\
-            ["multiformats", "patch:multiformats@npm%3A9.6.4#./patches/multiformats.patch::version=9.6.4&hash=79ae6d&locator=ens-app-v2%40workspace%3A."]\
-          ],\
-          "linkType": "HARD"\
         }]\
       ]],\
       ["multihashes", [\
@@ -31993,6 +32098,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-is", "npm:17.0.2"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:28.1.1", {\
+          "packageLocation": "./.yarn/cache/pretty-format-npm-28.1.1-0ea4ce5004-7fde4e2d6f.zip/node_modules/pretty-format/",\
+          "packageDependencies": [\
+            ["pretty-format", "npm:28.1.1"],\
+            ["@jest/schemas", "npm:28.0.2"],\
+            ["ansi-regex", "npm:5.0.1"],\
+            ["ansi-styles", "npm:5.2.0"],\
+            ["react-is", "npm:18.2.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["private", [\
@@ -32511,6 +32627,29 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["react-error-boundary", [\
+        ["npm:3.1.4", {\
+          "packageLocation": "./.yarn/cache/react-error-boundary-npm-3.1.4-2310dba89e-f36270a5d7.zip/node_modules/react-error-boundary/",\
+          "packageDependencies": [\
+            ["react-error-boundary", "npm:3.1.4"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:e18e81888b01a81fe1dd752d3b29801a535fe1c6e2aaef3cb5c09a0690d80bd234ec7eb8dd9ecbda990bd913136ba58232081ffb09303163e21cbb52ef6927fc#npm:3.1.4", {\
+          "packageLocation": "./.yarn/__virtual__/react-error-boundary-virtual-93c443a4a6/0/cache/react-error-boundary-npm-3.1.4-2310dba89e-f36270a5d7.zip/node_modules/react-error-boundary/",\
+          "packageDependencies": [\
+            ["react-error-boundary", "virtual:e18e81888b01a81fe1dd752d3b29801a535fe1c6e2aaef3cb5c09a0690d80bd234ec7eb8dd9ecbda990bd913136ba58232081ffb09303163e21cbb52ef6927fc#npm:3.1.4"],\
+            ["@babel/runtime", "npm:7.17.9"],\
+            ["@types/react", "npm:17.0.30"],\
+            ["react", "npm:17.0.2"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["react-ga", [\
         ["npm:3.3.0", {\
           "packageLocation": "./.yarn/cache/react-ga-npm-3.3.0-caa04fb49d-b4f5b0ed3a.zip/node_modules/react-ga/",\
@@ -32586,6 +32725,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/react-is-npm-17.0.2-091bbb8db6-9d6d111d89.zip/node_modules/react-is/",\
           "packageDependencies": [\
             ["react-is", "npm:17.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:18.2.0", {\
+          "packageLocation": "./.yarn/cache/react-is-npm-18.2.0-0cc5edb910-e72d0ba81b.zip/node_modules/react-is/",\
+          "packageDependencies": [\
+            ["react-is", "npm:18.2.0"]\
           ],\
           "linkType": "HARD"\
         }]\
