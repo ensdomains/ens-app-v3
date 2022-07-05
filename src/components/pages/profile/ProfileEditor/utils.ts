@@ -77,8 +77,8 @@ export const convertProfileToFormObject = (profile: Profile): ProfileType => {
         },
       }
     },
-    { general: {}, accounts: {}, website: {}, other: {} },
-  ) || { general: {}, accounts: {}, website: {}, other: {} }
+    { general: {}, accounts: {}, website: '', other: {} },
+  ) || { general: {}, accounts: {}, website: '', other: {} }
 
   return {
     ...textRecords,
