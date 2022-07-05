@@ -9,7 +9,7 @@ export type Subname = {
 }
 
 const maxCalc = (subnameCount: number, page: number) => {
-  if (subnameCount > 5000) {
+  if (subnameCount >= 5000) {
     return page + 1 === 1 ? 2 : 3
   }
   return 5
@@ -44,7 +44,7 @@ export const useSubnamePagination = (name: string) => {
 
       lastSubnamesRef.current = result.subnames
 
-      if (result.subnameCount > 5000) {
+      if (result.subnameCount >= 5000) {
         isLargeQueryRef.current = true
       }
 
