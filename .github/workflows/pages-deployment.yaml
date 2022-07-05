@@ -63,4 +63,4 @@ jobs:
 
       - name: Submit sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
-        run: ping https://www.google.com/ping?sitemap=https://alpha.ens.domains/sitemap.xml
+        run: curl https://www.google.com/ping\?sitemap=https://alpha.ens.domains/sitemap.xml
