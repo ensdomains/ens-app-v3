@@ -57,7 +57,6 @@ const getPreviousLast = async () => {
   const { domains } = await request(graphAPI, querySpecific, { previousName })
   const previousCreatedAt = domains[0].createdAt
 
-  console.log(previousCreatedAt)
   return previousCreatedAt
 }
 
