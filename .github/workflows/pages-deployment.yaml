@@ -47,7 +47,7 @@ jobs:
         run: yarn build && yarn export
 
       - name: Generate sitemap
-        if: ${{ true }} # ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ./out/sitemaps
           yarn generate:sitemaps
