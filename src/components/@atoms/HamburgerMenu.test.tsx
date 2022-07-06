@@ -69,7 +69,7 @@ describe('HamburgerMenu', () => {
       'https://test.com',
     )
   })
-  it('should redirect on click if http link', async () => {
+  it('should use next/link if http link', async () => {
     const dropdownItems = [
       {
         label: 'testLabel',
