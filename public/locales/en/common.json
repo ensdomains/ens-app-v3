@@ -56,7 +56,7 @@
   },
   "records": {
     "label": "Records"
-  },  
+  },
   "sortTypes": {
     "expiryDate": "Expiry Date",
     "labelName": "Name",
@@ -69,7 +69,9 @@
     "description": {
       "setName": "Set Name",
       "setRecords": "Set Records",
-      "test": "Test Transaction"
+      "test": "Test Transaction",
+      "addSuccess": "Add Success",
+      "sendName": "Send Name"
     },
     "status": {
       "pending": {
