@@ -2574,7 +2574,7 @@ const DropdownMenuContainer = styled.div(({
           visibility: visible;
           opacity: 1;
         ` : css`
-          z-index: 0;
+          z-index: 1;
           visibility: hidden;
           opacity: 0;
         `}
@@ -2642,7 +2642,8 @@ const MenuButton = styled.button(({
   theme,
   $inner,
   $hasColor,
-  $color
+  $color,
+  disabled
 }) => css`
     align-items: center;
     cursor: pointer;
@@ -2664,10 +2665,10 @@ const MenuButton = styled.button(({
 
     color: ${theme.colors[$color || "accent"]};
 
-    &:disabled {
+    ${disabled && css`
       color: ${theme.colors.textTertiary};
       cursor: not-allowed;
-    }
+    `}
 
     ${() => {
   if ($inner)
@@ -2696,6 +2697,26 @@ const MenuButton = styled.button(({
         `;
 }}
   `);
+const DropdownChild = ({
+  setIsOpen,
+  item
+}) => {
+  const ref = React.useRef(null);
+  const Item = React.cloneElement(item, __spreadProps(__spreadValues({}, item.props), {
+    ref
+  }));
+  const handleClick = React.useCallback(() => {
+    setIsOpen(false);
+  }, [setIsOpen]);
+  React.useEffect(() => {
+    const currentRef = ref.current;
+    currentRef == null ? void 0 : currentRef.addEventListener("click", handleClick);
+    return () => {
+      currentRef == null ? void 0 : currentRef.removeEventListener("click", handleClick);
+    };
+  }, [handleClick, item]);
+  return Item;
+};
 const DropdownMenu = ({
   items,
   setIsOpen,
@@ -2722,26 +2743,38 @@ const DropdownMenu = ({
     }
   }), items.map((item) => {
     if (React.isValidElement(item)) {
-      return /* @__PURE__ */ React.createElement("div", {
-        onClick: () => setIsOpen(false)
-      }, item);
+      return DropdownChild({
+        item,
+        setIsOpen
+      });
     }
     const {
       color,
       value,
       label,
       onClick,
-      disabled
+      disabled,
+      as,
+      wrapper
     } = item;
-    return /* @__PURE__ */ React.createElement(MenuButton, __spreadProps(__spreadValues({}, {
+    const props = {
       $inner: inner,
       $hasColor: !!color,
       $color: color,
-      disabled
-    }), {
-      key: value || label,
-      onClick: () => Promise.resolve(setIsOpen(false)).then(() => onClick(value))
-    }), label);
+      disabled,
+      onClick: () => {
+        setIsOpen(false);
+        onClick == null ? void 0 : onClick(value);
+      },
+      as,
+      children: label
+    };
+    if (wrapper) {
+      return wrapper(/* @__PURE__ */ React.createElement(MenuButton, __spreadValues({}, props)), value || label);
+    }
+    return /* @__PURE__ */ React.createElement(MenuButton, __spreadProps(__spreadValues({}, props), {
+      key: value || label
+    }));
   }));
 };
 const InnerMenuButton = styled.button(({

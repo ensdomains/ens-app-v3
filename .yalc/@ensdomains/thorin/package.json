@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/thorin",
-  "version": "0.6.2",
+  "version": "0.6.3",
   "description": "A web3 native design system",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.es.js",
@@ -44,5 +44,5 @@
     "react-transition-state": "^1.1.4",
     "styled-components": "^5.3.3"
   },
-  "yalcSig": "84782cef1a7cc0767629948df5a1f54b"
+  "yalcSig": "aece90c63515360094c57e3d382a2f68"
 }

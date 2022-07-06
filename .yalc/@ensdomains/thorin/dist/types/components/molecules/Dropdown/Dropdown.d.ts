@@ -7,12 +7,14 @@ declare type Direction = 'down' | 'up';
 declare type Size = 'small' | 'medium';
 declare type DropdownItemObject = {
     label: string;
-    onClick(value?: string): void;
+    onClick?: (value?: string) => void;
+    wrapper?: (children: React.ReactNode, key: React.Key) => JSX.Element;
+    as?: 'button' | 'a';
     value?: string;
     color?: Colors;
     disabled?: boolean;
 };
-export declare type DropdownItem = DropdownItemObject | React.ReactNode;
+export declare type DropdownItem = DropdownItemObject | React.ReactElement<React.PropsWithRef<any>>;
 declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
 declare type Props = {
     children?: React.ReactNode;
