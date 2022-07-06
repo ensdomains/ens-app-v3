@@ -38,7 +38,7 @@ export const Notifications = () => {
       }
       return false
     })
-    previousTransactions.current = transactions
+    previousTransactions.current = JSON.parse(JSON.stringify(transactions))
     const transactionsToPush = updatedTransactions.map((transaction) => ({
       title: t(`transaction.status.${transaction.status}.notifyTitle`),
       description: t(
@@ -68,7 +68,13 @@ export const Notifications = () => {
     <Toast
       onClose={() => {
         setOpen(false)
-        setTimeout(() => setNotificationQueue((prev) => prev.slice(1)), 300)
+        setTimeout(
+          () =>
+            setNotificationQueue((prev) => [
+              ...prev.filter((x) => x !== currentNotification),
+            ]),
+          300,
+        )
       }}
       open={open}
       variant={breakpoints.md ? 'desktop' : 'touch'}

@@ -1,13 +1,17 @@
-import { render, screen, waitFor } from '@app/test-utils'
-import { useProvider, useNetwork } from 'wagmi'
-import { useRouter } from 'next/router'
 import { useGetHistory } from '@app/hooks/useGetHistory'
-
+import { mockFunction, render, screen, waitFor } from '@app/test-utils'
+import { useRouter } from 'next/router'
+import { useNetwork, useProvider } from 'wagmi'
 import { RegistrationDate } from './RegistrationDate'
 
 jest.mock('next/router')
 jest.mock('wagmi')
 jest.mock('@app/hooks/useGetHistory')
+
+const mockUseRouter = mockFunction(useRouter)
+const mockUseProvider = mockFunction(useProvider)
+const mockUseNetwork = mockFunction(useNetwork)
+const mockUseGetHistory = mockFunction(useGetHistory)
 
 describe('RegistrationDate', () => {
   const routerObject = {
@@ -42,70 +46,46 @@ describe('RegistrationDate', () => {
   })
 
   it('should render', () => {
-    useRouter.mockImplementation(() => {
-      return {
-        query: {
-          name: 'nick.eth',
-        },
-      }
+    mockUseRouter.mockReturnValue({
+      query: {
+        name: 'nick.eth',
+      },
     })
-    useProvider.mockImplementation(() => {
-      return {}
-    })
-    useNetwork.mockImplementation(() => {
-      return { activeChain: { id: 3 } }
-    })
-    useGetHistory.mockImplementation(() => {
-      return {
+    mockUseProvider.mockReturnValue({})
+    mockUseNetwork.mockReturnValue({ activeChain: { id: 3 } })
+    mockUseGetHistory.mockReturnValue({
+      history: {
         registration: [
           {
             blockNumber: 0,
             transactionHash: 'transactionHash',
           },
         ],
-      }
+      },
     })
     render(<RegistrationDate />)
   })
   it('should render the correct registration date', async () => {
-    useRouter.mockImplementation(() => {
-      return routerObject
-    })
+    mockUseRouter.mockReturnValue(routerObject)
+    mockUseProvider.mockReturnValue(providerObject)
+    mockUseNetwork.mockReturnValue(networkObject)
+    mockUseGetHistory.mockReturnValue(historyObject)
 
-    useProvider.mockImplementation(() => {
-      return providerObject
-    })
-    useNetwork.mockImplementation(() => {
-      return networkObject
-    })
-
-    useGetHistory.mockImplementation(() => {
-      return historyObject
-    })
     render(<RegistrationDate />)
 
     await waitFor(() => screen.getByText('Thu Jun 09 2022', { exact: false }))
   })
   it('should have correct link to etherscan', async () => {
-    useRouter.mockImplementation(() => {
-      return routerObject
-    })
+    mockUseRouter.mockReturnValue(routerObject)
+    mockUseProvider.mockReturnValue(providerObject)
+    mockUseNetwork.mockReturnValue(networkObject)
+    mockUseGetHistory.mockReturnValue(historyObject)
 
-    useProvider.mockImplementation(() => {
-      return providerObject
-    })
-    useNetwork.mockImplementation(() => {
-      return networkObject
-    })
-
-    useGetHistory.mockImplementation(() => {
-      return historyObject
-    })
     render(<RegistrationDate />)
 
     await waitFor(() =>
       expect(
-        screen.getByText('View on Etherscan').closest('a'),
+        screen.getByText('transaction.viewEtherscan').closest('a'),
       ).toHaveAttribute(
         'href',
         'https://ropsten.etherscan.io/tx/transactionHash',

@@ -4,8 +4,8 @@ import { useCopied } from '@app/hooks/useCopied'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {
@@ -289,14 +289,14 @@ export const RecordsTab = ({
   }, [name, network, contentHash])
 
   return (
-    <TabWrapper>
+    <TabWrapper data-testid="records-tab">
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
             <SectionTitle data-testid="text-heading" weight="bold">
               {t('details.tabs.records.text')}
             </SectionTitle>
-            <SectionSubtitle weight="bold">
+            <SectionSubtitle data-testid="text-amount" weight="bold">
               {filteredTexts ? filteredTexts.length : 0}{' '}
               {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
@@ -326,7 +326,7 @@ export const RecordsTab = ({
             <SectionTitle data-testid="address-heading" weight="bold">
               {t('address.label', { ns: 'common' })}
             </SectionTitle>
-            <SectionSubtitle weight="bold">
+            <SectionSubtitle data-testid="address-amount" weight="bold">
               {filteredAddresses ? filteredAddresses.length : 0}{' '}
               {t('records.label', { ns: 'common' })}
             </SectionSubtitle>

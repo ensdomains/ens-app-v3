@@ -1,5 +1,5 @@
 import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
+import Link from 'next/link'
 import { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -28,7 +28,6 @@ export const HamburgerMenu = ({
   dropdownItems: HamburgerItem[]
 } & Omit<Partial<ComponentProps<typeof Dropdown>>, 'isOpen' | 'setIsOpen'>) => {
   const { t } = useTranslation('common')
-  const router = useRouter()
 
   return (
     <Dropdown
@@ -41,22 +40,24 @@ export const HamburgerMenu = ({
         size: 'extraSmall',
       }}
       align="right"
-      items={dropdownItems.map((item) => ({
-        ...item,
-        label: t(item.label),
-        color:
-          item.color || router.asPath === item.href
-            ? 'accent'
-            : 'textSecondary',
-        onClick:
-          item.onClick ||
-          (() =>
-            item.href &&
-            (item.href.startsWith('https://')
-              ? window.location.replace(item.href)
-              : router.push(item.href))) ||
-          (() => null),
-      }))}
+      items={dropdownItems.map((item) =>
+        item.href
+          ? {
+              ...item,
+              wrapper: (children, key) => (
+                <Link href={item.disabled ? '' : item.href!} key={key}>
+                  {children}
+                </Link>
+              ),
+              label: t(item.label),
+              as: 'a',
+              color: 'textSecondary',
+            }
+          : {
+              ...item,
+              label: t(item.label),
+            },
+      )}
       label={<MenuIcon />}
       {...props}
     />

@@ -88,7 +88,7 @@ const OwnerButtonWrapper = ({
 }) => {
   return (
     <ButtonWrapper className={className}>
-      <Button onClick={onClick} size="extraSmall">
+      <Button onClick={onClick} data-testid="owner-button" size="extraSmall">
         {children}
       </Button>
     </ButtonWrapper>
@@ -190,7 +190,7 @@ const OwnerButtonWithPopup = ({
           </AvatarWrapper>
           <TextContainer>
             <Label ellipsis>{label}</Label>
-            <Name ellipsis>{name}</Name>
+            <Name ellipsis>{name || shortenAddress(address)}</Name>
           </TextContainer>
         </Content>
       </OwnerButtonWrapper>
@@ -201,7 +201,7 @@ const OwnerButtonWithPopup = ({
         variant="closable"
         onDismiss={() => setOpen(false)}
       >
-        <InnerDialog>
+        <InnerDialog data-testid="owner-button-inner-dialog">
           {name && !loading && (
             <ProfileSnippetWrapper>
               <ProfileSnippet
@@ -232,7 +232,7 @@ const OwnerButtonWithPopup = ({
             </AddressCopyContainer>
           </AddressCopyButton>
           {canTransfer && (
-            <TransferButton disabled>
+            <TransferButton data-testid="transfer-button" disabled>
               <Typography variant="large" weight="bold">
                 {t('name.transfer')}
               </Typography>
@@ -342,6 +342,7 @@ const OwnerButtonWithDropdown = ({
       setIsOpen={setIsOpen}
       keepMenuOnTop
       shortThrow
+      data-testid="owner-button-dropdown"
     >
       <OwnerButtonWrapperWithDropdown onClick={() => setIsOpen(true)}>
         <ContentWithDropdown>

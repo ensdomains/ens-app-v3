@@ -1,7 +1,7 @@
+import { DownIndicatorSVG, Typography } from '@ensdomains/thorin'
 import React, { useState } from 'react'
-import styled, { css } from 'styled-components'
-import { Typography, DownIndicatorSVG } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 const AccordionTitle = styled.div<{
   $isActive?: boolean
@@ -153,7 +153,10 @@ const Accordion = ({ data }: AccordionProps) => {
       {!!disabled.length &&
         disabled.map((item) => {
           return (
-            <AccordionItem key={item.title}>
+            <AccordionItem
+              data-testid={`accordion-${item.title}-disabled`}
+              key={item.title}
+            >
               <AccordionTitle $isDisabled>
                 <Typography
                   variant="extraLarge"
@@ -174,6 +177,7 @@ const Accordion = ({ data }: AccordionProps) => {
           const isActive = activeItem === idx
           return (
             <AccordionItem
+              data-testid={`accordion-${item.title}-enabled`}
               {...{ onClick: () => setActiveItem(idx), key: item.title }}
             >
               <AccordionTitle {...{ isActive }}>
@@ -183,6 +187,7 @@ const Accordion = ({ data }: AccordionProps) => {
                 <Chevron $open={isActive} />
               </AccordionTitle>
               <AccordionBody
+                data-testid={`accordion-${item.title}-body`}
                 {...{
                   key: idx,
                   isActive,

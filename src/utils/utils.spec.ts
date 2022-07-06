@@ -1,39 +1,49 @@
-import { CID } from 'multiformats'
-import { isCID, isOwnerOfParentDomain, normaliseOrMark } from './utils'
+import {
+  shortenAddress,
+  secondsToDays,
+  yearsToSeconds,
+  formatExpiry,
+} from './utils'
 
-describe('isOwnerOfParentDomain', () => {
-  it('should return false if address is not provided', () => {
-    const mockDomain = {
-      parentOwner: '0xaddress',
-    }
-    expect(isOwnerOfParentDomain(mockDomain, null)).toBeFalsy()
+describe('shortenAddress', () => {
+  it('should NOT shorten address if it is below maxLength', () => {
+    const address = '0x0000'
+    const maxLength = 10
+    const leftSlice = 5
+    const rightSlice = 5
+    const result = shortenAddress(address, maxLength, leftSlice, rightSlice)
+    expect(result).toEqual(address)
+  })
+  it('should shorten address if it is above maxLength', () => {
+    const address = '0x0000000000000000000000000000000000000000'
+    const maxLength = 10
+    const leftSlice = 5
+    const rightSlice = 5
+    const result = shortenAddress(address, maxLength, leftSlice, rightSlice)
+    expect(result).toEqual('0x000...00000')
   })
 })
 
-describe('isCID', () => {
-  it('should return false if given hash is not ipfs hash', () => {
-    const ipfsHash = 'ENSbTVz1L4uEvAPg5QcSu8Pow1YdwshDJ8VbyYjWaJv4JP'
-    expect(isCID(ipfsHash)).toBeFalsy()
+describe('secondsToDays', () => {
+  it('should convert seconds to days', () => {
+    const seconds = 60 * 60 * 24 * 365
+    const result = secondsToDays(seconds)
+    expect(result).toEqual(365)
   })
-  it('should return true if given hash is ipfs hash (v0)', () => {
-    const ipfsHash = 'QmUbTVz1L4uEvAPg5QcSu8Pow1YdwshDJ8VbyYjWaJv4JP'
-    expect(isCID(ipfsHash)).toBeTruthy()
+})
+
+describe('yearsToSeconds', () => {
+  it('should convert years to seconds', () => {
+    const years = 1
+    const result = yearsToSeconds(years)
+    expect(result).toEqual(60 * 60 * 24 * 365)
   })
-  it('should return true if given hash is ipfs hash (v1)', () => {
-    const ipfsHash =
-      'bafybeic46eunzrhpspfvxeangbkazynleuzi4rimp5pzwotngofc7dassq'
-    expect(isCID(ipfsHash)).toBeTruthy()
-  })
-  it('should return false if given hash is ipfs hash with subpath', () => {
-    const ipfsHash = '/ipfs/QmUbTVz1L4uEvAPg5QcSu8Pow1YdwshDJ8VbyYjWaJv4JP'
-    expect(isCID(ipfsHash)).toBeFalsy()
-  })
-  it('should return false if given hash is ipfs hash with protocol', () => {
-    const ipfsHash = 'ipfs://QmUbTVz1L4uEvAPg5QcSu8Pow1YdwshDJ8VbyYjWaJv4JP'
-    expect(isCID(ipfsHash)).toBeFalsy()
-  })
-  it('should return true if given hash is CID', () => {
-    const ipfsHash = CID.parse('QmUbTVz1L4uEvAPg5QcSu8Pow1YdwshDJ8VbyYjWaJv4JP')
-    expect(isCID(ipfsHash)).toBeTruthy()
+})
+
+describe('formatExpiry', () => {
+  it('should format the date as expected', () => {
+    const expiry = new Date('2020-01-01')
+    const result = formatExpiry(expiry)
+    expect(result).toEqual('\nJanuary 1, 2020')
   })
 })

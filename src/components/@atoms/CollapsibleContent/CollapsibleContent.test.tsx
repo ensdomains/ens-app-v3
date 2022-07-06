@@ -17,7 +17,7 @@ describe('CollapsibleContent', () => {
     expect(style.maxHeight).toBe('0px')
   })
 
-  it('should have 0 height if not expanded', () => {
+  it('should have max height of 100vh if expanded', () => {
     render(
       <CollapsibleContent data-testid="collapsible-content" expanded>
         <div style={{ height: '100px' }} />
