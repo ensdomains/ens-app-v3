@@ -2,6 +2,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { zorbImageDataURI } from '@app/utils/gradient'
 import { Button, mq, Profile } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import type { TFunction } from 'react-i18next'
 import { useTranslation } from 'react-i18next'
@@ -99,23 +100,20 @@ export const HeaderConnect = () => {
   return (
     <ConnectButtonWrapper>
       {{
-        hasAccount: ({
-          address,
-          ensName,
-          ensAvatar,
-          router,
-          t,
-          disconnect,
-          zorb,
-        }) => (
+        hasAccount: ({ address, ensName, ensAvatar, t, disconnect, zorb }) => (
           <Profile
             address={address}
             ensName={ensName}
             dropdownItems={[
               {
                 label: t('wallet.myProfile'),
+                wrapper: (children, key) => (
+                  <Link href="/my/profile" key={key}>
+                    {children}
+                  </Link>
+                ),
+                as: 'a',
                 color: 'text',
-                onClick: () => router.push('/my/profile'),
               },
               {
                 label: t('wallet.disconnect'),
