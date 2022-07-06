@@ -1,15 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
-import { useForm } from 'react-hook-form'
+import { useForm, useWatch } from 'react-hook-form'
 import {
   mq,
   Modal,
-  Avatar,
   Input,
   Textarea,
   Button,
   PlusSVG,
+  Avatar,
 } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { SelectableInput } from '../../../@molecules/SelectableInput/SelectableInput'
@@ -40,17 +40,13 @@ const Container = styled.form(({ theme }) => [
 ])
 
 const AvatarWrapper = styled.div(
-  ({ theme }) => css`
+  () => css`
     position: absolute;
     left: 24px;
     bottom: 0;
     height: 90px;
     width: 90px;
-    border: 4px solid ${theme.colors.borderSecondary};
-    box-sizing: border-box;
-    border-radius: 50%;
     transform: translateY(50%);
-    background: white;
   `,
 )
 
@@ -142,6 +138,7 @@ const TabButton = styled.button<{
     font-size: 1.25rem;
     transition: all 0.15s ease-in-out;
     cursor: pointer;
+    font-weight: ${theme.fontWeights.bold};
 
     &:hover {
       color: ${$selected ? theme.colors.accent : theme.colors.textSecondary};
@@ -154,7 +151,7 @@ const TabButton = styled.button<{
 const TabContentsContainer = styled.div(
   ({ theme }) => css`
     position: relative;
-    padding: 0 ${theme.space['3']};
+    padding-left: ${theme.space['3']};
     flex: 1;
     overflow: hidden;
     border-radius: ${theme.radii.large};
@@ -166,6 +163,7 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
+    padding-right: ${theme.space['3']};
   `,
 )
 
@@ -197,6 +195,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
     setValue,
     getValues,
     getFieldState,
+    control,
     handleSubmit,
   } = useForm<ProfileType>({
     mode: 'onBlur',
@@ -268,7 +267,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
     getValues,
   })
 
-  const { profile } = useProfile('khori.eth', false)
+  const { profile } = useProfile('jefflau.eth', false)
   useEffect(() => {
     if (profile) {
       const defaultValues = convertProfileToFormObject(profile)
@@ -287,13 +286,19 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
 
   console.log('rerender')
 
+  const avatar = useWatch({
+    control,
+    name: 'avatar',
+  })
+  console.log('watch', avatar)
+
   return (
     <>
       <Modal open={open} onDismiss={onDismiss}>
         <Container onSubmit={handleSubmit((data: any) => console.log(data))}>
           <Banner>
             <AvatarWrapper>
-              <Avatar label="profile-avatar" src="" noBorder />
+              <Avatar src={avatar} label="profile-editor-avatar" />
             </AvatarWrapper>
           </Banner>
           <NameContainer>yoginth.eth</NameContainer>
@@ -539,8 +544,10 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
               </ScrollIndicatorContainer>
             </TabContentsContainer>
             <FooterContainer>
-              <Button tone="grey">Cancel</Button>
-              <Button disabled={hasErrors} type="submit">
+              <Button tone="grey" shadowless>
+                Cancel
+              </Button>
+              <Button disabled={hasErrors} type="submit" shadowless>
                 Save
               </Button>
             </FooterContainer>

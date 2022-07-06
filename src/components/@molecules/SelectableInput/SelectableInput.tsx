@@ -5,7 +5,7 @@ import React, { ComponentProps, forwardRef, Ref } from 'react'
 const Container = styled.div(
   () => css`
     display: flex;
-    align-items: flex-start;
+    align-items: flex-end;
     gap: 5px;
     position: relative;
   `,
@@ -14,8 +14,9 @@ const Container = styled.div(
 const InputContainer = styled.div<{
   $hasError?: boolean
   $hasChanges?: boolean
+  $size?: 'medium' | 'large' | 'extraLarge'
 }>(
-  ({ theme, $hasError, $hasChanges }) => css`
+  ({ theme, $hasError, $hasChanges, $size }) => css`
     position: relative;
     flex: 1;
     :after {
@@ -27,10 +28,28 @@ const InputContainer = styled.div<{
       border: 1px solid transparent;
       box-sizing: border-box;
       border-radius: 50%;
-      top: 0;
       right: 0;
-      transform: translate(20%, -20%) scale(0.2);
+      transform: translate(20%, 45%) scale(0.2);
       transition: all 0.3s ease-out;
+
+      ${() => {
+        switch ($size) {
+          case 'medium':
+            return css`
+              bottom: ${theme.space['14']};
+            `
+          case 'large':
+            return css`
+              bottom: ${theme.space['16']};
+            `
+          case 'extraLarge':
+            return css`
+              bottom: ${theme.space['18']};
+            `
+          default:
+            return ``
+        }
+      }}
     }
 
     ${$hasChanges &&
@@ -38,14 +57,14 @@ const InputContainer = styled.div<{
       :after {
         background-color: ${theme.colors.green};
         border-color: ${theme.colors.white};
-        transform: translate(20%, -20%) scale(1);
+        transform: translate(20%, 45%) scale(1);
       }
     `}
 
     &:focus-within::after {
       background-color: ${theme.colors.blue};
       border-color: ${theme.colors.white};
-      transform: translate(20%, -20%) scale(1);
+      transform: translate(20%, 45%) scale(1);
     }
 
     ${$hasError &&
@@ -54,7 +73,7 @@ const InputContainer = styled.div<{
       &:focus-within::after {
         background-color: ${theme.colors.red};
         border: 1px solid ${theme.colors.white};
-        transform: translate(20%, -20%) scale(1);
+        transform: translate(20%, 45%) scale(1);
       }
     `}
   `,
@@ -72,12 +91,11 @@ const ReadOnlySelect = styled.div<{ $size: string }>(
     align-items: center;
     justify-content: flex-start;
     z-index: 10;
-    margin-left: -18px;
     white-space: nowrap;
     ${$size === 'medium'
       ? css`
           border-radius: ${theme.radii.extraLarge};
-          padding: ${theme.space['4']};
+          padding: ${theme.space['3']};
           height: ${theme.space['14']};
         `
       : css`
@@ -88,11 +106,21 @@ const ReadOnlySelect = styled.div<{ $size: string }>(
   `,
 )
 
+const SelectWrapper = styled.div<{ $hasError: boolean }>(
+  ({ theme, $hasError }) => css`
+    ${$hasError && `border-right: 1px solid ${theme.colors.red};`}
+    border-radius: ${theme.radii['2xLarge']};
+  `,
+)
+
 const ButtonContainer = styled.div<{ $readOnly?: boolean }>(
   ({ theme, $readOnly }) => css`
-    width: 33px;
-    height: 33px;
-    margin-top: 10px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    width: ${theme.space['8']};
+    height: ${theme.space['8']};
+    margin-bottom: ${theme.space['3.5']};
     margin-right: -10px;
     svg {
       display: block;
@@ -133,20 +161,27 @@ export const SelectableInput = forwardRef(
     const prefix = readOnly ? (
       <ReadOnlySelect $size="medium">
         {selectedOption?.prefix && <div>{selectedOption?.prefix}</div>}
-        <div>{selectedOption?.label}</div>
+        <div>{selectedOption?.node || selectedOption?.label}</div>
       </ReadOnlySelect>
     ) : (
-      <Select
-        label={props.label}
-        size="medium"
-        hideLabel
-        style={{ marginLeft: '-18px' }}
-        {...selectProps}
-      />
+      <SelectWrapper $hasError={!!error}>
+        <Select
+          label={props.label}
+          size="medium"
+          hideLabel
+          padding="3"
+          rows={5}
+          {...selectProps}
+        />
+      </SelectWrapper>
     )
     return (
       <Container>
-        <InputContainer $hasError={!!error} $hasChanges={hasChanges}>
+        <InputContainer
+          $hasError={!!error}
+          $hasChanges={hasChanges}
+          $size="medium"
+        >
           <Input
             size="medium"
             value={value}
@@ -155,7 +190,9 @@ export const SelectableInput = forwardRef(
             readOnly={readOnly}
             {...props}
             hideLabel
+            padding={{ prefix: '0' }}
             error={error}
+            labelPlacement={{ error: 'top' }}
           />
         </InputContainer>
         <ButtonContainer $readOnly={readOnly}>

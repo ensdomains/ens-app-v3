@@ -11,10 +11,15 @@ import { ComponentProps } from 'react'
 const IconWrapper = styled.div(
   () => css`
     width: 22px;
-    margin-right: -8px;
-    margin-left: -8px;
     display: flex;
     align-items: center;
+    margin-right: -0.5rem;
+  `,
+)
+
+const AddressWrapper = styled.div(
+  ({ theme }) => css`
+    font-weight: ${theme.fontWeights.bold};
   `,
 )
 
@@ -36,6 +41,7 @@ const addressOptions = coinList.reduce((acc, coin) => {
       {
         value: coin,
         label: coin,
+        node: <AddressWrapper>{coin}</AddressWrapper>,
         prefix: (
           <IconWrapper>
             <DynamicAddressIcon name={coin.toLowerCase() as AddressIconType} />
@@ -50,7 +56,7 @@ const addressOptions = coinList.reduce((acc, coin) => {
     {
       value: coin,
       label: coin,
-      prefix: <UnsupportedAddressWrapper>{coin}</UnsupportedAddressWrapper>,
+      node: <UnsupportedAddressWrapper>{coin}</UnsupportedAddressWrapper>,
     },
   ]
 }, [] as ComponentProps<typeof Select>['options'])

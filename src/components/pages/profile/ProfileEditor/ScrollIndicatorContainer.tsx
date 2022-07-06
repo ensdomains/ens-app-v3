@@ -8,24 +8,61 @@ const Container = styled.div(
     flex: 1;
     overflow: hidden;
     height: 100%;
+    padding-right: ${theme.space['1']};
   `,
 )
 
 const OverflowContainer = styled.div(
-  () => css`
+  ({ theme }) => css`
     position: relative;
     overflow-y: scroll;
     overflow-x: hidden;
     height: 100%;
+    border-color: rgba(${theme.shadesRaw.foreground}, 0.05);
+    transition: border-color 0.15s ease-in-out;
+    padding-right: ${theme.space['1']};
+
+    /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar {
+      width: ${theme.space['1.5']};
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border: none;
+      border-radius: ${theme.radii.full};
+      border-right-style: inset;
+      border-right-width: calc(100vw + 100vh);
+      border-color: inherit;
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    &:hover {
+      border-color: rgba(${theme.shadesRaw.foreground}, 0.2);
+    }
+  `,
+)
+
+const OverflowContent = styled.div(
+  ({ theme }) => css`
+    position: relative;
+    border-radius: ${theme.radii.large};
   `,
 )
 
 const OverflowIndicator = styled.div<{ $show: boolean }>(
-  ({ $show }) => css`
+  ({ theme, $show }) => css`
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 100%;
+    width: calc(100% - ${theme.space['3.5']});
     height: 150px;
     pointer-events: none;
     background: linear-gradient(
@@ -36,6 +73,8 @@ const OverflowIndicator = styled.div<{ $show: boolean }>(
     z-index: 1000;
     opacity: ${$show ? 1 : 0};
     transition: opacity 0.3s ease-in-out;
+    border-bottom-left-radius: ${theme.radii.large};
+    border-bottom-right-radius: ${theme.radii.large};
   `,
 )
 
@@ -58,7 +97,7 @@ const ScrollIndicatorContainer = ({ children }: PropsWithChildren<{}>) => {
   return (
     <Container>
       <OverflowContainer ref={ref} onScroll={handleScroll}>
-        {children}
+        <OverflowContent>{children}</OverflowContent>
       </OverflowContainer>
       <OverflowIndicator $show={show} />
     </Container>
