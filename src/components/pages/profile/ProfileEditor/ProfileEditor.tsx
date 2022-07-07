@@ -2,25 +2,20 @@ import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm, useWatch } from 'react-hook-form'
-import {
-  mq,
-  Modal,
-  Input,
-  Textarea,
-  Button,
-  PlusSVG,
-  Avatar,
-} from '@ensdomains/thorin'
+import { mq, Modal, Input, Textarea, Button, PlusSVG } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
+import { useTranslation } from 'react-i18next'
 import { SelectableInput } from '../../../@molecules/SelectableInput/SelectableInput'
 import { useProfile } from '../../../../hooks/useProfile'
 import addressOptions from './addressOptions'
 import accountsOptions from './accountsOptions'
+import websiteOptions from './websiteOptions'
 import otherOptions from './otherOptions'
 import ScrollIndicatorContainer from './ScrollIndicatorContainer'
 import { convertProfileToFormObject, formSafeKey, ProfileType } from './utils'
 import useExpandableRecordsGroup from './useExpandableRecordsGroup'
 import { validateCryptoAddress } from '../../../../utils/validate'
+import AvatarButton from './AvatarButton'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -78,8 +73,9 @@ const ContentContainer = styled.div(
   ({ theme }) => css`
     flex: 1;
     display: flex;
+    margin-top: ${theme.space['4.5']};
     flex-direction: column;
-    gap: ${theme.space['4']};
+    gap: ${theme.space['2']};
     overflow: hidden;
   `,
 )
@@ -164,6 +160,7 @@ const TabContentContainer = styled.div(
     flex-direction: column;
     gap: ${theme.space['3']};
     padding-right: ${theme.space['3']};
+    margin: ${theme.space['2.5']} 0;
   `,
 )
 
@@ -183,11 +180,14 @@ type ExpandableRecordsState = {
 }
 
 type Props = {
+  name?: string
   open: boolean
   onDismiss?: () => void
 }
 
-const ProfileEditor = ({ open, onDismiss }: Props) => {
+const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
+  const { t } = useTranslation('profile')
+
   const {
     register,
     formState,
@@ -267,7 +267,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
     getValues,
   })
 
-  const { profile } = useProfile('jefflau.eth', false)
+  const { profile, loading } = useProfile(name, name !== '')
   useEffect(() => {
     if (profile) {
       const defaultValues = convertProfileToFormObject(profile)
@@ -282,26 +282,22 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
 
-  console.log(getFieldState(`address.ETH`, formState).error)
-
-  console.log('rerender')
-
   const avatar = useWatch({
     control,
     name: 'avatar',
   })
-  console.log('watch', avatar)
 
+  if (loading) return null
   return (
     <>
       <Modal open={open} onDismiss={onDismiss}>
         <Container onSubmit={handleSubmit((data: any) => console.log(data))}>
           <Banner>
             <AvatarWrapper>
-              <Avatar src={avatar} label="profile-editor-avatar" />
+              <AvatarButton src={avatar} />
             </AvatarWrapper>
           </Banner>
-          <NameContainer>yoginth.eth</NameContainer>
+          <NameContainer>{name}</NameContainer>
           <ContentContainer>
             <TabButtonsContainer>
               <TabButton
@@ -310,7 +306,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                 $isDirty={getFieldState('general').isDirty}
                 onClick={handleTabClick('general')}
               >
-                General
+                {t('profileEditor.tabs.general.label')}
               </TabButton>
               <TabButton
                 $selected={tab === 'accounts'}
@@ -318,7 +314,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                 $isDirty={getFieldState('accounts').isDirty}
                 onClick={handleTabClick('accounts')}
               >
-                Accounts
+                {t('profileEditor.tabs.accounts.label')}
               </TabButton>
               <TabButton
                 $selected={tab === 'address'}
@@ -326,7 +322,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                 $isDirty={getFieldState('address').isDirty}
                 onClick={handleTabClick('address')}
               >
-                Address
+                {t('profileEditor.tabs.address.label')}
               </TabButton>
               <TabButton
                 $selected={tab === 'website'}
@@ -334,7 +330,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                 $isDirty={getFieldState('website').isDirty}
                 onClick={handleTabClick('website')}
               >
-                Website
+                {t('profileEditor.tabs.contentHash.label')}
               </TabButton>
               <TabButton
                 $selected={tab === 'other'}
@@ -342,7 +338,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                 $isDirty={getFieldState('other').isDirty}
                 onClick={handleTabClick('other')}
               >
-                Other
+                {t('profileEditor.tabs.other.label')}
               </TabButton>
             </TabButtonsContainer>
             <TabContentsContainer>
@@ -353,16 +349,57 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                       general: (
                         <>
                           <Input
-                            label="Nickname"
+                            label={t('profileEditor.tabs.general.name.label')}
+                            placeholder={t(
+                              'profileEditor.tabs.general.name.placeholder',
+                            )}
+                            showDot
+                            validated={
+                              getFieldState('general.name', formState).isDirty
+                            }
+                            autoComplete="off"
                             {...register('general.name')}
                           />
-                          <Input label="Website" {...register('general.url')} />
                           <Input
-                            label="Location"
+                            label={t('profileEditor.tabs.general.url.label')}
+                            autoComplete="off"
+                            placeholder={t(
+                              'profileEditor.tabs.general.url.placeholder',
+                            )}
+                            showDot
+                            validated={
+                              getFieldState('general.url', formState).isDirty
+                            }
+                            {...register('general.url')}
+                          />
+                          <Input
+                            label={t(
+                              'profileEditor.tabs.general.location.label',
+                            )}
+                            autoComplete="off"
+                            placeholder={t(
+                              'profileEditor.tabs.general.location.placeholder',
+                            )}
+                            showDot
+                            validated={
+                              getFieldState('general.location', formState)
+                                .isDirty
+                            }
                             {...register('general.location')}
                           />
                           <Textarea
-                            label="Short Bio"
+                            label={t(
+                              'profileEditor.tabs.general.description.label',
+                            )}
+                            autoComplete="off"
+                            placeholder={t(
+                              'profileEditor.tabs.general.description.placeholder',
+                            )}
+                            showDot
+                            validated={
+                              getFieldState('general.description', formState)
+                                .isDirty
+                            }
                             {...register('general.description')}
                           />
                         </>
@@ -384,7 +421,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                               )}
                               onDelete={() => removeAccountKey(account)}
                             />
-                          ))}{' '}
+                          ))}
                           {newAccountKeys.map((key) => (
                             <SelectableInput
                               key={key}
@@ -424,7 +461,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                               shadowless
                               onClick={() => addAccountKey()}
                             >
-                              Add Account
+                              {t('profileEditor.tabs.accounts.addAccount')}
                             </Button>
                           )}
                         </>
@@ -458,10 +495,11 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                                 getFieldState(`address.${key}`, formState).error
                                   ?.message
                               }
-                              hasChanges={
+                              validated={
                                 getFieldState(`address.${key}`, formState)
                                   .isDirty
                               }
+                              showDot
                               label={key}
                               autoComplete="off"
                               autoCorrect="off"
@@ -480,12 +518,22 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                               shadowless
                               onClick={() => addAddressKey()}
                             >
-                              Add Address
+                              {t('profileEditor.tabs.address.addAddress')}
                             </Button>
                           )}
                         </>
                       ),
-                      website: <>website</>,
+                      website: (
+                        <SelectableInput
+                          selectProps={{
+                            value: 'ipfs',
+                            options: websiteOptions,
+                          }}
+                          label="contentHash"
+                          deletable={false}
+                          {...register('website', {})}
+                        />
+                      ),
                       other: (
                         <>
                           {existingOtherKeys.map((key) => (
@@ -493,7 +541,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                               key={key}
                               selectProps={{
                                 value: formSafeKey(key),
-                                options: otherOptions,
+                                options: getOtherOptions(key),
                               }}
                               label={key}
                               readOnly
@@ -534,7 +582,7 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
                             shadowless
                             onClick={() => addOtherKey()}
                           >
-                            Add Record
+                            {t('profileEditor.tabs.other.addRecord')}
                           </Button>
                         </>
                       ),
@@ -545,10 +593,10 @@ const ProfileEditor = ({ open, onDismiss }: Props) => {
             </TabContentsContainer>
             <FooterContainer>
               <Button tone="grey" shadowless>
-                Cancel
+                {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button disabled={hasErrors} type="submit" shadowless>
-                Save
+                {t('action.save', { ns: 'common' })}
               </Button>
             </FooterContainer>
           </ContentContainer>

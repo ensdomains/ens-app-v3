@@ -28,6 +28,10 @@ export declare const Textarea: React.ForwardRefExoticComponent<Omit<FieldBasePro
     tabIndex?: NativeTextareaProps['tabIndex'];
     /** The value attribute of textarea. */
     value?: string | number | undefined;
+    /** If true the value of the textarea has been validated */
+    validated?: boolean | undefined;
+    /** If true, shows a status dot of the current state of validation */
+    showDot?: boolean | undefined;
     /** The handler for change events. */
     onChange?: NativeTextareaProps['onChange'];
     /** The handler for blur events. */

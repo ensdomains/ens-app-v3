@@ -6,6 +6,8 @@ const fetchImg = async (url: string) =>
   new Promise<string | undefined>((resolve) => {
     const img = new Image()
     img.src = url
+    console.log('URL!!!!!!!', url)
+
     const handleLoad = () => {
       img.removeEventListener('load', handleLoad)
       if (!img.complete) {

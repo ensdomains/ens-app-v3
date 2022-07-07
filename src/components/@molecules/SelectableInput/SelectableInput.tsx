@@ -11,80 +11,12 @@ const Container = styled.div(
   `,
 )
 
-const InputContainer = styled.div<{
-  $hasError?: boolean
-  $hasChanges?: boolean
-  $size?: 'medium' | 'large' | 'extraLarge'
-}>(
-  ({ theme, $hasError, $hasChanges, $size }) => css`
-    position: relative;
-    flex: 1;
-    :after {
-      content: '';
-      position: absolute;
-      background-color: transparent;
-      width: 12px;
-      height: 12px;
-      border: 1px solid transparent;
-      box-sizing: border-box;
-      border-radius: 50%;
-      right: 0;
-      transform: translate(20%, 45%) scale(0.2);
-      transition: all 0.3s ease-out;
-
-      ${() => {
-        switch ($size) {
-          case 'medium':
-            return css`
-              bottom: ${theme.space['14']};
-            `
-          case 'large':
-            return css`
-              bottom: ${theme.space['16']};
-            `
-          case 'extraLarge':
-            return css`
-              bottom: ${theme.space['18']};
-            `
-          default:
-            return ``
-        }
-      }}
-    }
-
-    ${$hasChanges &&
-    css`
-      :after {
-        background-color: ${theme.colors.green};
-        border-color: ${theme.colors.white};
-        transform: translate(20%, 45%) scale(1);
-      }
-    `}
-
-    &:focus-within::after {
-      background-color: ${theme.colors.blue};
-      border-color: ${theme.colors.white};
-      transform: translate(20%, 45%) scale(1);
-    }
-
-    ${$hasError &&
-    css`
-      :after,
-      &:focus-within::after {
-        background-color: ${theme.colors.red};
-        border: 1px solid ${theme.colors.white};
-        transform: translate(20%, 45%) scale(1);
-      }
-    `}
-  `,
-)
-
 const ReadOnlySelect = styled.div<{ $size: string }>(
   ({ theme, $size }) => css`
     background: ${theme.colors.backgroundTertiary};
     border-color: ${theme.colors.backgroundHide};
     border-width: ${theme.space.px};
-    gap: ${theme.space['4']};
+    gap: ${theme.space['2']};
     position: relative;
     display: flex;
     flex-direction: row;
@@ -108,8 +40,10 @@ const ReadOnlySelect = styled.div<{ $size: string }>(
 
 const SelectWrapper = styled.div<{ $hasError: boolean }>(
   ({ theme, $hasError }) => css`
-    ${$hasError && `border-right: 1px solid ${theme.colors.red};`}
+    ${$hasError && `border: ${theme.space['0.75']} solid ${theme.colors.red};`}
+    border-left: none;
     border-radius: ${theme.radii['2xLarge']};
+    box-sizing: content-box;
   `,
 )
 
@@ -138,6 +72,7 @@ type ThorinSelectProps = ComponentProps<typeof Select>
 type Props = {
   selectProps: Omit<ThorinSelectProps, 'label'>
   hasChanges?: boolean
+  deletable?: boolean
   onDelete?: () => void
 } & ThorinInputProps
 
@@ -150,6 +85,7 @@ export const SelectableInput = forwardRef(
       error,
       hasChanges,
       onDelete,
+      deletable = true,
       ...props
     }: Props,
     ref: Ref<HTMLInputElement>,
@@ -169,42 +105,40 @@ export const SelectableInput = forwardRef(
           label={props.label}
           size="medium"
           hideLabel
-          padding="3"
-          rows={5}
+          padding={{ outer: '3', inner: '2' }}
+          rows={3}
+          inputSize={{ min: 8 }}
           {...selectProps}
         />
       </SelectWrapper>
     )
+
     return (
       <Container>
-        <InputContainer
-          $hasError={!!error}
-          $hasChanges={hasChanges}
-          $size="medium"
-        >
-          <Input
-            size="medium"
-            value={value}
-            ref={ref}
-            prefix={prefix}
-            readOnly={readOnly}
-            {...props}
-            hideLabel
-            padding={{ prefix: '0' }}
-            error={error}
-            labelPlacement={{ error: 'top' }}
-          />
-        </InputContainer>
-        <ButtonContainer $readOnly={readOnly}>
-          <Button
-            size="extraSmall"
-            variant="transparent"
-            shadowless
-            onClick={onDelete}
-          >
-            <CloseSVG />
-          </Button>
-        </ButtonContainer>
+        <Input
+          size="medium"
+          value={value}
+          ref={ref}
+          prefix={prefix}
+          readOnly={readOnly}
+          {...props}
+          hideLabel
+          padding={{ prefix: '0' }}
+          error={error}
+          labelPlacement={{ error: 'top' }}
+        />
+        {deletable && (
+          <ButtonContainer $readOnly={readOnly}>
+            <Button
+              size="extraSmall"
+              variant="transparent"
+              shadowless
+              onClick={onDelete}
+            >
+              <CloseSVG />
+            </Button>
+          </ButtonContainer>
+        )}
       </Container>
     )
   },

@@ -50,7 +50,10 @@ export declare type SelectProps = {
     /** Preset size spacing settings */
     size?: Size;
     /** Overide the padding setting of the element */
-    padding?: Space;
+    padding?: Space | {
+        outer?: Space;
+        inner?: Space;
+    };
     /** The size attribute for input element. Useful for controlling input size in flexboxes. */
     inputSize?: number | {
         max?: number;
@@ -95,7 +98,10 @@ export declare const Select: React.ForwardRefExoticComponent<{
     /** Preset size spacing settings */
     size?: Size | undefined;
     /** Overide the padding setting of the element */
-    padding?: any;
+    padding?: Space | {
+        outer?: Space;
+        inner?: Space;
+    };
     /** The size attribute for input element. Useful for controlling input size in flexboxes. */
     inputSize?: number | {
         max?: number | undefined;

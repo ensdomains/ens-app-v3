@@ -91,7 +91,7 @@ export default function Page() {
 
   const [showEditor, setShowEditor] = useState(true)
   const handleDismissEditor = () => setShowEditor(false)
-  
+
   const [titleContent, descriptionContent] = useMemo(() => {
     if (isSelf) {
       return [t('yourProfile'), '']
@@ -192,7 +192,11 @@ export default function Page() {
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
-                          <ProfileEditor open={showEditor} onDismiss={handleDismissEditor} />
+              <ProfileEditor
+                name={name}
+                open={showEditor}
+                onDismiss={handleDismissEditor}
+              />
             </DetailsWrapper>
           ),
         }}

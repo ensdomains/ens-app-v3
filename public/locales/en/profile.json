@@ -77,6 +77,44 @@
       }
     }
   },
+  "profileEditor": {
+    "tabs": {
+      "general": {
+        "label": "General",
+        "name": {
+          "label": "Nickname",
+          "placeholder": "John Smith"
+        },
+        "url": {
+          "label": "Website",
+          "placeholder": "https://ens.domains"
+        },
+        "location": {
+          "label": "Location",
+          "placeholder": "Metaverse"
+        },
+        "description": {
+          "label": "Short Bio",
+          "placeholder": "I'm a yield farmer from rural Tennessee."
+        }
+      },
+      "accounts": {
+        "label": "Accounts",
+        "addAccount": "Add Account"
+      },
+      "address": {
+        "label": "Address",
+        "addAddress": "Add Address"
+      },
+      "contentHash": {
+        "label": "Website"
+      },
+      "other": {
+        "label": "Other",
+        "addRecord": "Add Record"
+      }
+    }
+  },
   "errors": {
     "invalidName": "This name is invalid.",
     "expiringSoon": "This name is expiring soon.",

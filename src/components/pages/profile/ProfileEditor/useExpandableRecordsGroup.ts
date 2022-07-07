@@ -41,8 +41,8 @@ const useExpandableRecordsGroup = <T>({
 
   const getOptions = (value: string) => {
     const selectedOption = options.find((option) => option.value === value)
-    if (selectedOption) return [...availableOptions, selectedOption]
-    return [...availableOptions, { value, label: value }]
+    if (selectedOption) return [selectedOption, ...availableOptions]
+    return [{ value, label: value }, ...availableOptions]
   }
 
   const addKey = (key?: Path<T>) => {

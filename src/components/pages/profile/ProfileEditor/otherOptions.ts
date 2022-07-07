@@ -5,11 +5,14 @@ import { Select } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
 import { formSafeKey } from './utils'
 
+const excludedKeys = ['avatar', 'banner']
+
 const otherOptions = textRecords
   .filter(
     (record) =>
       !supportedTexts.includes(record) &&
-      !supportedProfileItems.includes(record),
+      !supportedProfileItems.includes(record) &&
+      !excludedKeys.includes(record),
   )
   .map((key) => ({
     label: key,

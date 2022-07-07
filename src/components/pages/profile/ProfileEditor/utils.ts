@@ -26,6 +26,8 @@ export type ProfileType = {
 }
 
 export const convertProfileToFormObject = (profile: Profile): ProfileType => {
+  console.log(profile)
+
   const address =
     profile.records?.coinTypes?.reduce((map, record) => {
       const { coin } = record
@@ -79,8 +81,6 @@ export const convertProfileToFormObject = (profile: Profile): ProfileType => {
     },
     { general: {}, accounts: {}, website: '', other: {} },
   ) || { general: {}, accounts: {}, website: '', other: {} }
-
-  console.log(textRecords)
 
   return {
     ...textRecords,

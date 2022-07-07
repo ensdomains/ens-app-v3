@@ -34,7 +34,7 @@ import { useEffect } from "react";
 import styled, { css, keyframes, useTheme, createGlobalStyle } from "styled-components";
 import * as ReactDOM from "react-dom";
 import { useTransition } from "react-transition-state";
-const Container$g = styled.div(({
+const Container$h = styled.div(({
   theme,
   $shape,
   $noBorder
@@ -114,7 +114,7 @@ const Avatar = (_a) => {
     "src"
   ]);
   const [showImage, setShowImage] = React.useState(!!src);
-  return /* @__PURE__ */ React.createElement(Container$g, {
+  return /* @__PURE__ */ React.createElement(Container$h, {
     $noBorder: !showImage || noBorder,
     $shape: shape
   }, showImage ? /* @__PURE__ */ React.createElement(Img, __spreadProps(__spreadValues({}, props), {
@@ -176,7 +176,7 @@ const rotate = keyframes`
     transform: rotate(1turn);
   }
 `;
-const Container$f = styled.div(({
+const Container$g = styled.div(({
   theme,
   $color,
   $size
@@ -215,7 +215,7 @@ const Spinner = React.forwardRef((_c, ref) => {
     "size",
     "color"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$f, __spreadValues({
+  return /* @__PURE__ */ React.createElement(Container$g, __spreadValues({
     $color: color,
     $size: size,
     ref
@@ -239,7 +239,7 @@ const Spinner = React.forwardRef((_c, ref) => {
   })));
 });
 Spinner.displayName = "Spinner";
-const Container$e = styled.div(({
+const Container$f = styled.div(({
   theme,
   $ellipsis,
   $variant,
@@ -337,7 +337,7 @@ const Typography = React.forwardRef((_e, ref) => {
     "color",
     "size"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$e, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$f, __spreadProps(__spreadValues({}, props), {
     $color: color,
     $ellipsis: ellipsis ? true : void 0,
     $font: font,
@@ -1093,7 +1093,7 @@ const mq = keys.reduce((acc, sizeLabel) => {
   }, {});
   return acc;
 }, {});
-const Container$d = styled.div(({
+const Container$e = styled.div(({
   theme,
   $shadow
 }) => css`
@@ -1121,7 +1121,7 @@ const Card = (_i) => {
     "children",
     "shadow"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$d, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$e, __spreadProps(__spreadValues({}, props), {
     $shadow: shadow
   }), children);
 };
@@ -1247,7 +1247,7 @@ const defaultAnimationFunc = (side, open = false) => {
     visibility: hidden;
   `;
 };
-const Container$c = styled.div(() => css`
+const Container$d = styled.div(() => css`
     position: relative;
     display: inline-block;
   `);
@@ -1320,7 +1320,7 @@ const DynamicPopover = ({
     }
   }, [open, disabled, setPopoverProps, computePopoverProps, animationFn]);
   useDocumentEvent(containerRef, "click", () => onDismiss && onDismiss(), open);
-  return /* @__PURE__ */ React.createElement(Container$c, {
+  return /* @__PURE__ */ React.createElement(Container$d, {
     "data-testid": "dynamicpopover",
     ref: containerRef
   }, children, /* @__PURE__ */ React.createElement(PopoverContainer, __spreadProps(__spreadValues({
@@ -1454,7 +1454,7 @@ const LabelContent = (_k) => {
     $inline
   }), label, " ", required && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(RequiredWrapper, null, "*"), /* @__PURE__ */ React.createElement(VisuallyHidden, null, "required"))), labelSecondary && /* @__PURE__ */ React.createElement(LabelSecondary, null, labelSecondary));
 };
-const Container$b = styled.div(({
+const Container$c = styled.div(({
   theme,
   $inline,
   $width
@@ -1534,7 +1534,7 @@ const Field = (_m) => {
     content = children;
   const descriptionPlacement = getPlacement("description", "bottom", labelPlacement);
   const errorPlacement = getPlacement("error", "bottom", labelPlacement);
-  return inline ? /* @__PURE__ */ React.createElement(Container$b, {
+  return inline ? /* @__PURE__ */ React.createElement(Container$c, {
     $inline: inline,
     $width: width
   }, /* @__PURE__ */ React.createElement(ContainerInner$2, null, hideLabel ? /* @__PURE__ */ React.createElement(VisuallyHidden, null, /* @__PURE__ */ React.createElement(LabelContent, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
@@ -1555,7 +1555,7 @@ const Field = (_m) => {
     "aria-live": "polite"
   }, ids.error), {
     $inline: inline
-  }), error)), /* @__PURE__ */ React.createElement("div", null, content)) : /* @__PURE__ */ React.createElement(Container$b, {
+  }), error)), /* @__PURE__ */ React.createElement("div", null, content)) : /* @__PURE__ */ React.createElement(Container$c, {
     $width: width
   }, hideLabel ? /* @__PURE__ */ React.createElement(VisuallyHidden, null, /* @__PURE__ */ React.createElement(LabelContent, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     ids,
@@ -1875,7 +1875,7 @@ const SkeletonGroup = ({
   }, children);
 };
 SkeletonGroup.displayName = "SkeletonGroup";
-const Container$a = styled.div(({
+const Container$b = styled.div(({
   theme,
   $active
 }) => css`
@@ -1905,7 +1905,7 @@ const Skeleton = (_s) => {
   ]);
   const groupLoading = React.useContext(Context);
   const active = loading != null ? loading : groupLoading;
-  return /* @__PURE__ */ React.createElement(Container$a, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$b, __spreadProps(__spreadValues({}, props), {
     $active: active,
     as
   }), /* @__PURE__ */ React.createElement(ContainerInner$1, {
@@ -1913,7 +1913,7 @@ const Skeleton = (_s) => {
   }, children));
 };
 Skeleton.displayName = "Skeleton";
-const Container$9 = styled.div(({
+const Container$a = styled.div(({
   theme,
   $hover,
   $size,
@@ -2065,7 +2065,7 @@ const Tag = (_u) => {
     "size",
     "tone"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$9, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$a, __spreadProps(__spreadValues({}, props), {
     $hover: hover,
     $size: size,
     $tone: tone,
@@ -2410,7 +2410,7 @@ const NumberBox = styled.div(({
   }
 }}
   `);
-const Container$8 = styled.div(({
+const Container$9 = styled.div(({
   theme,
   $disabled,
   $size,
@@ -2491,7 +2491,7 @@ const CountdownCircle = React.forwardRef((_A, ref) => {
   })), /* @__PURE__ */ React.createElement(NumberBox, __spreadValues({}, {
     $size: size,
     $disabled: disabled
-  }), disabled ? totalCount : currentCount), /* @__PURE__ */ React.createElement(Container$8, {
+  }), disabled ? totalCount : currentCount), /* @__PURE__ */ React.createElement(Container$9, {
     $color: color,
     $disabled: disabled,
     $size: size,
@@ -2541,7 +2541,7 @@ const ReactComponent$L = (_C) => {
     fill: "currentColor"
   }));
 };
-const Container$7 = styled.div(() => css`
+const Container$8 = styled.div(() => css`
     max-width: max-content;
     position: relative;
   `);
@@ -2922,7 +2922,7 @@ const Dropdown = (_E) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef, isOpen]);
-  return /* @__PURE__ */ React.createElement(Container$7, __spreadValues({
+  return /* @__PURE__ */ React.createElement(Container$8, __spreadValues({
     ref: dropdownRef
   }, __spreadProps(__spreadValues({}, props), {
     "data-testid": getTestId(props, "dropdown")
@@ -2962,7 +2962,7 @@ const Dropdown = (_E) => {
   }));
 };
 Dropdown.displayName = "Dropdown";
-const Container$6 = styled.fieldset(({
+const Container$7 = styled.fieldset(({
   theme
 }) => css`
     display: flex;
@@ -3040,7 +3040,7 @@ const FieldSet = (_G) => {
     statusText = status.name;
     statusTone = status.tone;
   }
-  return /* @__PURE__ */ React.createElement(Container$6, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$7, __spreadProps(__spreadValues({}, props), {
     disabled,
     form,
     name
@@ -3053,7 +3053,7 @@ const FieldSet = (_G) => {
   }, statusText)), /* @__PURE__ */ React.createElement(Description, null, description)), /* @__PURE__ */ React.createElement(ChildrenContainer, null, children));
 };
 FieldSet.displayName = "FieldSet";
-const getPadding = (key, fallback, padding) => {
+const getPadding$1 = (key, fallback, padding) => {
   if (typeof padding === "string")
     return padding;
   return (padding == null ? void 0 : padding[key]) || fallback;
@@ -3064,11 +3064,14 @@ const InputParent = styled.div(({
   $disabled,
   $error,
   $suffix,
-  $userStyles
+  $userStyles,
+  $validated,
+  $showDot
 }) => css`
+    position: relative;
     background-color: ${theme.colors.backgroundSecondary};
     border-radius: ${theme.radii["2xLarge"]};
-    border-width: 1px;
+    border-width: ${theme.space["0.75"]};
     border-color: ${theme.colors.transparent};
     color: ${theme.colors.text};
     display: flex;
@@ -3078,8 +3081,49 @@ const InputParent = styled.div(({
     box-sizing: content-box;
     background-clip: content-box;
 
+    :after {
+      content: '';
+      position: absolute;
+      width: ${theme.space["4"]};
+      height: ${theme.space["4"]};
+      box-sizing: border-box;
+      border-radius: 50%;
+      right: 0;
+      top: 0;
+      transition: all 0.3s ease-out;
+      ${() => {
+  if ($error && $showDot)
+    return css`
+            background-color: ${theme.colors.red};
+            border: 2px solid ${theme.colors.white};
+            transform: translate(50%, -50%) scale(1);
+          `;
+  if ($validated && $showDot)
+    return css`
+            background-color: ${theme.colors.green};
+            border: 2px solid ${theme.colors.white};
+            transform: translate(50%, -50%) scale(1);
+          `;
+  return css`
+          background-color: ${theme.colors.transparent};
+          border: 2px solid ${theme.colors.transparent};
+          transform: translate(50%, -50%) scale(0.2);
+        `;
+}}
+    }
+
     &:focus-within {
-      border-color: ${theme.colors.accentSecondary};
+      ${!$error && css`
+        border-color: ${theme.colors.accentSecondary};
+      `}
+    }
+
+    &:focus-within::after {
+      ${!$error && $showDot && css`
+        background-color: ${theme.colors.blue};
+        border-color: ${theme.colors.white};
+        transform: translate(50%, -50%) scale(1);
+      `}
     }
 
     ${$disabled && css`
@@ -3090,10 +3134,6 @@ const InputParent = styled.div(({
     ${$error && css`
       border-color: ${theme.colors.red};
       cursor: default;
-
-      &:focus-within {
-        border-color: ${theme.colors.red};
-      }
     `}
 
   ${$suffix && css`
@@ -3251,12 +3291,14 @@ const Units = styled.span(({
 const Input$1 = React.forwardRef((_I, ref) => {
   var _J = _I, {
     autoFocus,
-    autoComplete,
+    autoComplete = "off",
     autoCorrect,
     defaultValue,
     description,
     disabled,
     error,
+    validated,
+    showDot,
     hideLabel,
     id: id2,
     inputMode,
@@ -3290,6 +3332,8 @@ const Input$1 = React.forwardRef((_I, ref) => {
     "description",
     "disabled",
     "error",
+    "validated",
+    "showDot",
     "hideLabel",
     "id",
     "inputMode",
@@ -3343,9 +3387,9 @@ const Input$1 = React.forwardRef((_I, ref) => {
     var _a;
     (_a = event.target) == null ? void 0 : _a.blur();
   }, []);
-  const prefixPadding = getPadding("prefix", "4", padding);
-  const inputPadding = getPadding("input", size === "extraLarge" ? "6" : "4", padding);
-  const suffixPadding = getPadding("suffix", "2", padding);
+  const prefixPadding = getPadding$1("prefix", "4", padding);
+  const inputPadding = getPadding$1("input", size === "extraLarge" ? "6" : "4", padding);
+  const suffixPadding = getPadding$1("suffix", "2", padding);
   return /* @__PURE__ */ React.createElement(Field, {
     description,
     error,
@@ -3359,6 +3403,8 @@ const Input$1 = React.forwardRef((_I, ref) => {
   }, (ids) => /* @__PURE__ */ React.createElement(InputParent, __spreadValues({}, {
     $disabled: disabled,
     $error: hasError,
+    $validated: validated,
+    $showDot: showDot,
     $suffix: suffix !== void 0,
     $size: size,
     $userStyles: parentStyles
@@ -3408,7 +3454,7 @@ const Input$1 = React.forwardRef((_I, ref) => {
   }), suffix)));
 });
 Input$1.displayName = "Input";
-const Container$5 = styled.div(({
+const Container$6 = styled.div(({
   theme,
   $state
 }) => css`
@@ -3460,12 +3506,12 @@ const Modal = (_K) => {
     onDismiss
   }, ({
     state: state2
-  }) => /* @__PURE__ */ React.createElement(Container$5, __spreadValues({
+  }) => /* @__PURE__ */ React.createElement(Container$6, __spreadValues({
     $state: state2
   }, props), children));
 };
 Modal.displayName = "Modal";
-const Container$4 = styled.div(({
+const Container$5 = styled.div(({
   theme
 }) => css`
     display: flex;
@@ -3543,7 +3589,7 @@ const PageButtons = (_M) => {
       array.push(-1 * total);
     }
   }
-  return /* @__PURE__ */ React.createElement(Container$4, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$5, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     "data-testid": getTestId(props, "pagebuttons")
   })), array.map((value) => 0 > value ? /* @__PURE__ */ React.createElement(Dots, {
     "data-testid": "pagebutton-dots",
@@ -3555,7 +3601,7 @@ const PageButtons = (_M) => {
     onClick: () => onChange(value)
   }, value)));
 };
-const Container$3 = styled.div(({
+const Container$4 = styled.div(({
   theme,
   $size,
   $hasChevron,
@@ -3706,7 +3752,7 @@ const Profile = (_O) => {
       isOpen,
       setIsOpen,
       align: alignDropdown
-    }), /* @__PURE__ */ React.createElement(Container$3, __spreadProps(__spreadValues({}, props), {
+    }), /* @__PURE__ */ React.createElement(Container$4, __spreadProps(__spreadValues({}, props), {
       $hasChevron: true,
       $open: isOpen,
       $size: size,
@@ -3721,7 +3767,7 @@ const Profile = (_O) => {
       as: ReactComponent$L
     })));
   }
-  return /* @__PURE__ */ React.createElement(Container$3, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$4, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
     "data-testid": getTestId(props, "profile")
   })), {
     $open: isOpen,
@@ -3874,7 +3920,7 @@ const createSyntheticEvent = (event) => {
     type: event.type
   };
 };
-const Container$2 = styled.div(({
+const Container$3 = styled.div(({
   theme,
   $inline
 }) => css`
@@ -3937,7 +3983,7 @@ const RadioButtonGroup = React.forwardRef((_S, ref) => {
       onChange(syntheticEvent);
     }
   };
-  return /* @__PURE__ */ React.createElement(Container$2, __spreadProps(__spreadValues({
+  return /* @__PURE__ */ React.createElement(Container$3, __spreadProps(__spreadValues({
     $inline: inline
   }, props), {
     "data-testid": getTestId(props, "radiogroup"),
@@ -4101,13 +4147,14 @@ const SelectActionContainer = styled.div(() => css`
   `);
 const OptionElementContainer = styled.div(({
   theme,
-  $padding
+  $padding,
+  $gap
 }) => css`
     align-items: center;
     display: flex;
     flex-direction: row;
     flex-grow: 1;
-    gap: ${theme.space["4"]};
+    gap: ${theme.space[$gap]};
     padding: ${theme.space[$padding]};
     padding-right: 0;
   `);
@@ -4125,6 +4172,8 @@ const SelectInput = styled.input(({
 }) => css`
     padding: ${theme.space[$padding]};
     padding-right: 0;
+    width: 100%;
+    height: 100%;
   `);
 const SelectActionButton = styled.button(({
   theme,
@@ -4189,10 +4238,10 @@ const SelectOptionContainer = styled.div(({
     margin-top: ${theme.space["1.5"]};
     padding: ${theme.space["1.5"]};
     min-width: ${theme.space["full"]};
-    height: ${theme.space["fit"]};
     border-radius: ${theme.radii["medium"]};
     box-shadow: ${theme.boxShadows["0.02"]};
     background: ${theme.colors.background};
+    transition: all 0.3s cubic-bezier(1, 0, 0.22, 1.6), z-index 0.3s linear;
 
     ${$state === "entered" ? css`
           z-index: 20;
@@ -4200,16 +4249,12 @@ const SelectOptionContainer = styled.div(({
           top: ${$direction === "up" ? `auto` : `calc(100% + ${theme.space["1.5"]})`};
           bottom: ${$direction === "up" ? `calc(100% + ${theme.space["1.5"]})` : "auto"};
           opacity: ${theme.opacity["100"]};
-          transition: all 0.3s ${theme.transitionTimingFunction.popIn},
-            z-index 0s linear 0.3s;
         ` : css`
-          z-index: 0;
+          z-index: 1;
           visibility: hidden;
           top: ${$direction === "up" ? `auto` : `calc(100% - ${theme.space["12"]})`};
           bottom: ${$direction === "up" ? `calc(100% - ${theme.space["12"]})` : "auto"};
           opacity: 0;
-          transition: all 0.3s ${theme.transitionTimingFunction.popIn},
-            z-index 0s linear 0s;
         `}
 
     ${$rows && css`
@@ -4267,12 +4312,13 @@ const SelectOption = styled.div(({
   theme,
   $selected,
   $disabled,
-  $highlighted
+  $highlighted,
+  $gap
 }) => css`
     align-items: center;
     cursor: pointer;
     display: flex;
-    gap: ${theme.space["3"]};
+    gap: ${theme.space[$gap]};
     width: ${theme.space["full"]};
     height: ${theme.space["9"]};
     padding: ${theme.space["2.5"]} ${theme.space["2"]};
@@ -4328,6 +4374,7 @@ const NoResultsContainer = styled.div(({
     border-radius: ${theme.radii["medium"]};
     margin: ${theme.space["0.5"]} 0;
     font-style: italic;
+    white-space: nowrap;
 
     &:first-child {
       margin-top: ${theme.space["0"]};
@@ -4353,6 +4400,16 @@ var ReservedKeys;
   ReservedKeys2["ArrowDown"] = "ArrowDown";
   ReservedKeys2["Enter"] = "Enter";
 })(ReservedKeys || (ReservedKeys = {}));
+const getPadding = (key, fallback, padding) => {
+  if (typeof padding === "string")
+    return padding;
+  return (padding == null ? void 0 : padding[key]) || fallback;
+};
+const getSize = (key, fallback, size) => {
+  if (typeof size === "number")
+    return size;
+  return (size == null ? void 0 : size[key]) || fallback;
+};
 const Select = React.forwardRef((_U, ref) => {
   var _V = _U, {
     description,
@@ -4508,14 +4565,15 @@ const Select = React.forwardRef((_U, ref) => {
   const [menuOpen, setMenuOpen] = React.useState(false);
   const isOpen = !disabled && menuOpen;
   const showClearButton = queryValue !== "" && isAutocomplete;
-  const minInputSize = typeof inputSizeProps === "number" ? inputSizeProps : typeof (inputSizeProps == null ? void 0 : inputSizeProps.min) === "number" ? inputSizeProps.min : 4;
-  const maxInputSize = typeof inputSizeProps === "number" ? inputSizeProps : typeof (inputSizeProps == null ? void 0 : inputSizeProps.max) === "number" ? inputSizeProps.max : 20;
+  const minInputSize = getSize("min", 4, inputSizeProps);
+  const maxInputSize = getSize("max", 20, inputSizeProps);
   const inputSize = Math.min(Math.max(minInputSize, queryValue.length), maxInputSize);
   const [state2, toggle] = useTransition({
     timeout: {
-      enter: 300,
+      enter: 0,
       exit: 300
     },
+    preEnter: true,
     mountOnEnter: true,
     unmountOnExit: true
   });
@@ -4526,16 +4584,15 @@ const Select = React.forwardRef((_U, ref) => {
     if (!menuOpen && state2 === "unmounted")
       handleReset();
   }, [menuOpen, state2]);
-  const sizePadding = size === "medium" ? "4" : "2";
-  const padding = paddingProp || sizePadding;
+  const defaultPadding = size === "medium" ? "4" : "2";
+  const outerPadding = getPadding("outer", defaultPadding, paddingProp);
+  const innerPadding = getPadding("inner", defaultPadding, paddingProp);
   const handleReset = () => {
     setQueryValue("");
     setInputValue("");
     setHighlightedIndex(-1);
   };
-  const handleSelectContainerClick = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const handleSelectContainerClick = () => {
     if (isAutocomplete && !menuOpen)
       setMenuOpen(true);
     !isAutocomplete && setMenuOpen(!menuOpen);
@@ -4621,7 +4678,7 @@ const Select = React.forwardRef((_U, ref) => {
     onBlur,
     onFocus
   }), /* @__PURE__ */ React.createElement(SelectContentContainer, null, isAutocomplete && isOpen ? /* @__PURE__ */ React.createElement(SelectInput, {
-    $padding: padding,
+    $padding: outerPadding,
     autoCapitalize: "none",
     autoComplete: "off",
     autoFocus: true,
@@ -4638,17 +4695,18 @@ const Select = React.forwardRef((_U, ref) => {
     onChange: handleInputChange,
     onKeyDown: (e) => handleKeydown(e)
   }) : selectedOption ? /* @__PURE__ */ React.createElement(OptionElementContainer, {
-    $padding: padding,
+    $gap: innerPadding,
+    $padding: outerPadding,
     "data-testid": "selected"
   }, /* @__PURE__ */ React.createElement(OptionElement, {
     option: selectedOption
   })) : noSelectionMessage ? /* @__PURE__ */ React.createElement(NoOptionContainer, {
-    $padding: padding
+    $padding: outerPadding
   }, noSelectionMessage) : null), /* @__PURE__ */ React.createElement(SelectActionContainer, null, showClearButton ? /* @__PURE__ */ React.createElement(SelectActionButton, {
-    $padding: padding,
+    $padding: outerPadding,
     onClick: handleInputClear
   }, /* @__PURE__ */ React.createElement(ReactComponent$A, null)) : /* @__PURE__ */ React.createElement(SelectActionButton, {
-    $padding: padding
+    $padding: outerPadding
   }, /* @__PURE__ */ React.createElement(Chevron, {
     $direction: direction,
     $disabled: disabled,
@@ -4686,7 +4744,8 @@ const Select = React.forwardRef((_U, ref) => {
   }, visibleOptions.length === 0 && /* @__PURE__ */ React.createElement(NoResultsContainer, null, emptyListMessage), visibleOptions.map((option, index2) => /* @__PURE__ */ React.createElement(SelectOption, __spreadProps(__spreadValues({}, {
     $selected: (option == null ? void 0 : option.value) === value,
     $disabled: option.disabled,
-    $highlighted: index2 === highlightedIndex
+    $highlighted: index2 === highlightedIndex,
+    $gap: innerPadding
   }), {
     "data-option-index": index2,
     key: option.value,
@@ -4698,33 +4757,75 @@ const Select = React.forwardRef((_U, ref) => {
   })))))));
 });
 Select.displayName = "Select";
-const TextArea = styled.textarea(({
+const Container$2 = styled.div(({
   theme,
-  disabled,
-  $error
+  $error,
+  $validated,
+  $showDot,
+  $disabled
 }) => css`
-    background-color: ${theme.colors.transparent};
-    border-color: ${theme.colors.foregroundSecondary};
+    position: relative;
+    background-color: ${theme.colors.backgroundSecondary};
     border-radius: ${theme.radii["2xLarge"]};
-    border-width: ${theme.space["0.5"]};
+    border-width: ${theme.space["0.75"]};
+    border-color: ${theme.colors.transparent};
     color: ${theme.colors.text};
     display: flex;
-    font-family: ${theme.fonts["sans"]};
-    font-size: ${theme.fontSizes["base"]};
-    font-weight: ${theme.fontWeights["medium"]};
-    min-height: ${theme.space["14"]};
-    padding: ${theme.space["4"]};
     transition-duration: ${theme.transitionDuration["150"]};
     transition-property: color, border-color, background-color;
     transition-timing-function: ${theme.transitionTimingFunction["inOut"]};
-    width: ${theme.space["full"]};
-    resize: none;
+    box-sizing: content-box;
+    background-clip: content-box;
 
-    &:focus {
-      border-color: ${theme.colors.accent};
+    :after {
+      content: '';
+      position: absolute;
+      width: ${theme.space["4"]};
+      height: ${theme.space["4"]};
+      box-sizing: border-box;
+      border-radius: 50%;
+      right: 0;
+      top: 0;
+      transition: all 0.3s ease-out;
+      ${() => {
+  if ($error && $showDot)
+    return css`
+            background-color: ${theme.colors.red};
+            border: 2px solid ${theme.colors.white};
+            transform: translate(50%, -50%) scale(1);
+          `;
+  if ($validated && $showDot)
+    return css`
+            background-color: ${theme.colors.green};
+            border: 2px solid ${theme.colors.white};
+            transform: translate(50%, -50%) scale(1);
+          `;
+  return css`
+          background-color: ${theme.colors.transparent};
+          border: 2px solid ${theme.colors.transparent};
+          transform: translate(50%, -50%) scale(0.2);
+        `;
+}}
     }
 
-    ${disabled && css`
+    &:focus-within {
+      ${!$error && css`
+        border-color: ${theme.colors.accentSecondary};
+      `}
+    }
+
+    &:focus-within::after {
+      ${!$error && $showDot && css`
+        background-color: ${theme.colors.blue};
+        border-color: ${theme.colors.white};
+        transform: translate(50%, -50%) scale(1);
+      `}
+    }
+    &:focus {
+      border-color: ${theme.colors.accentSecondary};
+    }
+
+    ${$disabled && css`
       border-color: ${theme.colors.foregroundSecondary};
       cursor: not-allowed;
     `}
@@ -4738,6 +4839,27 @@ const TextArea = styled.textarea(({
       }
     `}
   `);
+const TextArea = styled.textarea(({
+  theme
+}) => css`
+    position: relative;
+    background-color: ${theme.colors.transparent};
+    color: ${theme.colors.text};
+    display: flex;
+    font-family: ${theme.fonts["sans"]};
+    font-size: ${theme.fontSizes["base"]};
+    font-weight: ${theme.fontWeights["medium"]};
+    min-height: ${theme.space["14"]};
+    padding: ${theme.space["4"]};
+    width: ${theme.space["full"]};
+    resize: none;
+    outline: none;
+
+    &::placeholder {
+      color: ${theme.colors.textPlaceholder};
+      font-weight: ${theme.fontWeights["medium"]};
+    }
+  `);
 const Textarea = React.forwardRef((_W, ref) => {
   var _X = _W, {
     autoCorrect,
@@ -4746,6 +4868,8 @@ const Textarea = React.forwardRef((_W, ref) => {
     description,
     disabled,
     error,
+    validated,
+    showDot,
     hideLabel,
     id: id2,
     label,
@@ -4770,6 +4894,8 @@ const Textarea = React.forwardRef((_W, ref) => {
     "description",
     "disabled",
     "error",
+    "validated",
+    "showDot",
     "hideLabel",
     "id",
     "label",
@@ -4800,10 +4926,17 @@ const Textarea = React.forwardRef((_W, ref) => {
     labelSecondary,
     required,
     width
-  }, /* @__PURE__ */ React.createElement(TextArea, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
+  }, (ids) => /* @__PURE__ */ React.createElement(Container$2, {
+    $disabled: disabled,
+    $error: !!error,
+    $showDot: showDot,
+    $validated: validated
+  }, /* @__PURE__ */ React.createElement(TextArea, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues(__spreadValues({}, props), ids == null ? void 0 : ids.content), {
     "aria-invalid": hasError
   })), {
     $error: hasError,
+    $showDot: showDot,
+    $validated: validated,
     autoCorrect,
     autoFocus,
     defaultValue,
@@ -4820,7 +4953,7 @@ const Textarea = React.forwardRef((_W, ref) => {
     onBlur,
     onChange,
     onFocus
-  })));
+  }))));
 });
 Textarea.displayName = "Textarea";
 const TooltipPopover = styled.div(({

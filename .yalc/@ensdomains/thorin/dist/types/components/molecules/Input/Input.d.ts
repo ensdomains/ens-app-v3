@@ -38,6 +38,10 @@ declare type BaseProps = Omit<FieldBaseProps, 'inline'> & {
     units?: string;
     /** The value attribute of the input element. */
     value?: string | number;
+    /** If true, the input has changes */
+    validated?: boolean;
+    /** If true, the value has been validated */
+    showDot?: boolean;
     /** A handler for blur events. */
     onBlur?: NativeInputProps['onBlur'];
     /** A handler for change events. */
