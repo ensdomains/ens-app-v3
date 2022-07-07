@@ -64,12 +64,18 @@ const StyledSpinner = styled(Spinner)(
 )
 
 const WaitingElement = () => {
+  const { t } = useTranslation()
+
   return (
-    <WaitingContainer>
+    <WaitingContainer data-testid="transaction-waiting-container">
       <StyledSpinner color="accent" />
       <WaitingTextContainer>
-        <Typography weight="bold">Awaiting wallet confirmation</Typography>
-        <Typography>This will incur network fees</Typography>
+        <Typography weight="bold">
+          {t('transaction.modal.confirm.waiting.title')}
+        </Typography>
+        <Typography>
+          {t('transaction.modal.confirm.waiting.subtitle')}
+        </Typography>
       </WaitingTextContainer>
     </WaitingContainer>
   )
@@ -135,21 +141,19 @@ export const TransactionModal = ({
       setStage('complete')
     } catch (e: any) {
       if (e && e.code === 4001) {
-        setError(
-          'You rejected the request. Try again or cancel the transaction.',
-        )
+        setError('transaction.modal.confirm.error.rejectedRequest')
       } else {
-        setError(e ? e.message : 'Unknown error')
+        setError(e ? e.message : 'transaction.modal.confirm.error.unknown')
       }
     }
-  }, [generateTx, actionName, addTransaction])
+  }, [generateTx, addTransaction, actionName])
 
   const FilledDisplayItems = useMemo(
     () => (
       <DisplayItems
         displayItems={[
           {
-            label: 'Action',
+            label: t('transaction.modal.actionLabel'),
             value: t(`transaction.description.${actionName}`),
           },
           ...(displayItems || []),
@@ -164,8 +168,7 @@ export const TransactionModal = ({
         <SuccessContent>
           <PaperPlaneColourSVG />
           <CompleteTypography>
-            Your transaction was sent to the network. You can close this now if
-            you&apos;d like.
+            {t('transaction.modal.complete.message')}
           </CompleteTypography>
         </SuccessContent>
       )
@@ -174,7 +177,7 @@ export const TransactionModal = ({
       return <WaitingElement />
     }
     return null
-  }, [stage])
+  }, [stage, t])
 
   const LeadingButton = useMemo(() => {
     if (stage !== 'complete') {
@@ -184,13 +187,14 @@ export const TransactionModal = ({
           variant="secondary"
           tone="grey"
           shadowless
+          data-testid="transaction-modal-dismiss-btn"
         >
-          {dismissBtnLabel || 'Cancel'}
+          {dismissBtnLabel || t('transaction.modal.leadingButton')}
         </ButtonShrinkwrap>
       )
     }
     return null
-  }, [stage, dismissBtnLabel, onDismiss])
+  }, [stage, dismissBtnLabel, t, onDismiss])
 
   const TrailingButton = useMemo(() => {
     if (stage === 'complete') {
@@ -202,8 +206,9 @@ export const TransactionModal = ({
             onSuccess?.()
             onDismiss?.()
           }}
+          data-testid="transaction-modal-complete-trailing-btn"
         >
-          {completeBtnLabel || 'Close'}
+          {completeBtnLabel || t('transaction.modal.complete.trailingButton')}
         </Button>
       )
     }
@@ -214,27 +219,32 @@ export const TransactionModal = ({
           shadowless
           variant="secondary"
           onClick={() => tryTransaction()}
+          data-testid="transaction-modal-confirm-trailing-btn"
         >
-          Try again
+          {t('transaction.modal.confirm.trailingButton')}
         </Button>
       )
     }
     return (
-      <Button shadowless onClick={() => setStage('confirm')}>
-        Confirm
+      <Button
+        data-testid="transaction-modal-request-trailing-btn"
+        shadowless
+        onClick={() => setStage('confirm')}
+      >
+        {t('transaction.modal.request.trailingButton')}
       </Button>
     )
-  }, [stage, completeBtnLabel, onSuccess, onDismiss, error, tryTransaction])
+  }, [stage, t, completeBtnLabel, onSuccess, onDismiss, error, tryTransaction])
 
   const title = useMemo(() => {
     if (stage === 'complete') {
-      return completeTitle || 'Transaction Sent'
+      return completeTitle || t('transaction.modal.complete.title')
     }
     if (stage === 'confirm') {
-      return 'Confirm in Wallet'
+      return t('transaction.modal.confirm.title')
     }
-    return 'Transaction Request'
-  }, [completeTitle, stage])
+    return t('transaction.modal.request.title')
+  }, [completeTitle, stage, t])
 
   useEffect(() => {
     if (open) {
@@ -255,25 +265,25 @@ export const TransactionModal = ({
       title={title}
       subtitle={
         stage === 'request'
-          ? 'Confirm the details of the transaction'
+          ? t('transaction.modal.request.subtitle')
           : undefined
       }
       variant="actionable"
       leading={LeadingButton}
       trailing={TrailingButton}
       open={open}
-      onDismiss={() => {}}
+      onDismiss={onDismiss}
     >
-      <InnerDialog>
+      <InnerDialog data-testid="transaction-modal-inner">
         {error ? (
-          <ErrorTypography color="red">{error}</ErrorTypography>
+          <ErrorTypography color="red">{t(error)}</ErrorTypography>
         ) : (
           MiddleContent
         )}
         {FilledDisplayItems}
         {stage === 'complete' && (
           <Outlink href={makeEtherscanLink(txHash!, chainName)}>
-            View on Etherscan
+            {t('transaction.viewEtherscan')}
           </Outlink>
         )}
       </InnerDialog>

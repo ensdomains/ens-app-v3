@@ -88,6 +88,32 @@
         "notifyMessage": "Your \"%s\" transaction failed and was reverted"
       }
     },
+    "modal": {
+      "leadingButton": "Cancel",
+      "actionLabel": "Action",
+      "request": {
+        "title": "Transaction Request",
+        "subtitle": "Confirm the details of the transaction",
+        "trailingButton": "Confirm"
+      },
+      "confirm": {
+        "title": "Confirm in Wallet",
+        "trailingButton": "Try again",
+        "waiting": {
+          "title": "Awaiting wallet confirmation",
+          "subtitle": "This will incur network fees"
+        },
+        "error": {
+          "rejectedRequest": "You rejected the request. Try again or cancel the transaction.",
+          "unknown": "An unknown error occurred."
+        }
+      },
+      "complete": {
+        "title": "Transaction Sent",
+        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
+        "trailingButton": "Close"
+      }
+    },
     "viewEtherscan": "View on Etherscan",
     "viewMore": "View More"
   },
