@@ -255,6 +255,10 @@ export const TransactionModal = ({
   }, [open])
 
   useEffect(() => {
+    setStage('request')
+  }, [actionName])
+
+  useEffect(() => {
     if (stage === 'confirm') {
       tryTransaction()
     }
