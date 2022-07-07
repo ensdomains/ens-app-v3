@@ -43,7 +43,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "^3.0.0-alpha.2",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "^0.6.3",
+    "@ensdomains/thorin": "^0.6.4",
     "@rainbow-me/rainbowkit": "patch:@rainbow-me/rainbowkit@0.3.3#./patches/@rainbow-me/rainbowkit.patch",
     "@sentry/nextjs": "^7.2.0",
     "@svgr/webpack": "^6.2.1",
