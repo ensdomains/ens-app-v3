@@ -1,4 +1,6 @@
-import { arrayify, namehash } from 'ethers/lib/utils'
+import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
+import { arrayify } from 'ethers/lib/utils'
+import { emptyAddress } from './utils'
 
 // original: https://github.com/ourzora/zorb/blob/main/packages/zorb-web-component/src
 
@@ -111,7 +113,7 @@ const lerpSaturationFn = (optionNum: number) => {
 }
 
 export const gradientForBytes = (address: string) => {
-  const bytes = arrayify(address).reverse()
+  const bytes = arrayify(address === '' ? emptyAddress : address).reverse()
   const hueShiftFn = lerpHueFn(bytes[3], bytes[6] % 2)
   const startHue = bscale(bytes[12], 360)
   const startLightness = bScaleRange(bytes[2], 32, 69.5)

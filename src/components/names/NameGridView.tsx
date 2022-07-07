@@ -70,7 +70,7 @@ const ExpiryText = styled.div<{ $primary: boolean }>(
   `,
 )
 
-const Expiry = ({ expiry }: { expiry: Date }) => {
+export const Expiry = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()
   const difference = secondsToDays(
     (expiry.getTime() - currentDate.getTime()) / 1000,
@@ -110,7 +110,7 @@ const GridItem = ({
   expiry,
 }: {
   name: string
-  network: string
+  network: number
   expiry?: Date
 }) => {
   return (
@@ -134,7 +134,7 @@ export const NameGridView = ({
   network,
 }: {
   currentPage: ReturnedName[]
-  network: string
+  network: number
 }) => {
   return (
     <NameGrid>

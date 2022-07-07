@@ -23,7 +23,7 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
   `,
 )
 
-export const LanugageDropdown = () => {
+export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
   const breakpoints = useBreakpoint()
   const router = useRouter()
   const { i18n } = useTranslation()
@@ -35,6 +35,7 @@ export const LanugageDropdown = () => {
 
   return i18n.options && router.isReady ? (
     <Dropdown
+      direction={invert ? 'up' : 'down'}
       inner
       shortThrow={!isLarge}
       chevron={isLarge}
@@ -48,7 +49,7 @@ export const LanugageDropdown = () => {
           label: formatName(lang),
           onClick: () => i18n.changeLanguage(lang),
         }))}
-      menuLabelAlign="flex-start"
+      menuLabelAlign={isLarge ? 'flex-start' : 'center'}
       label={
         <MobileInnerDropdownButton $large={isLarge}>
           {formatName(i18n.language || 'en')}

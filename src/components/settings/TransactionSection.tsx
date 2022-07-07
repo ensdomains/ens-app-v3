@@ -1,3 +1,4 @@
+import { useChainName } from '@app/hooks/useChainName'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
 import {
@@ -7,7 +8,6 @@ import {
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useNetwork } from 'wagmi'
 import { Card } from '../Card'
 import { Outlink } from '../Outlink'
 import { SectionContainer, SectionHeading } from './Section'
@@ -130,13 +130,13 @@ export const TransactionSection = () => {
   const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
 
-  const { activeChain } = useNetwork()
+  const chainName = useChainName()
   const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
 
   return (
-    <SectionContainer $name="transactions">
+    <SectionContainer data-testid="transaction-section" $name="transactions">
       <TransactionSectionHeadingContainer>
         <TransactionSectionHeading
           $hasTransactions={
@@ -154,8 +154,9 @@ export const TransactionSection = () => {
             variant="secondary"
             onClick={() => clearTransactions()}
             disabled={transactions.length === 0}
+            data-testid="transaction-clear-button"
           >
-            {t('section.transaction.clear')}
+            {tc('action.clear')}
           </Button>
         </div>
       </TransactionSectionHeadingContainer>
@@ -167,7 +168,9 @@ export const TransactionSection = () => {
                 data-testid={`transaction-${transaction.status}`}
                 key={transaction.hash}
               >
-                {transaction.status === 'pending' && <Spinner color="accent" />}
+                {transaction.status === 'pending' && (
+                  <Spinner data-testid="pending-spinner" color="accent" />
+                )}
                 <TransactionInfoContainer>
                   <Typography weight="bold">
                     {tc(`transaction.description.${transaction.description}`)}
@@ -181,13 +184,10 @@ export const TransactionSection = () => {
                 </TransactionInfoContainer>
                 <ViewLinkContainer>
                   <Outlink
-                    href={makeEtherscanLink(
-                      transaction.hash,
-                      activeChain?.name,
-                    )}
+                    href={makeEtherscanLink(transaction.hash, chainName)}
                     target="_blank"
                   >
-                    View on Etherscan
+                    {tc('transaction.viewEtherscan')}
                   </Outlink>
                 </ViewLinkContainer>
               </TransactionContainer>
@@ -195,14 +195,17 @@ export const TransactionSection = () => {
             {transactions.length > viewAmt && (
               <TransactionContainer
                 onClick={() => setViewAmt((curr) => curr + 5)}
+                data-testid="transaction-view-more-button"
               >
-                <ViewMoreInner weight="bold">View More</ViewMoreInner>
+                <ViewMoreInner weight="bold">
+                  {tc('transaction.viewMore')}
+                </ViewMoreInner>
               </TransactionContainer>
             )}
           </>
         ) : (
           <RecentTransactionsMessage weight="bold">
-            No recent transactions.
+            {t('section.transaction.noRecentTransactions')}
           </RecentTransactionsMessage>
         )}
       </TransactionSectionContainer>

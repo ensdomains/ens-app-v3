@@ -1,42 +1,36 @@
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { zorbImageDataURI } from '@app/utils/gradient'
-import {
-  Button,
-  EthTransparentInvertedSVG,
-  mq,
-  Profile,
-} from '@ensdomains/thorin'
+import { Button, mq, Profile } from '@ensdomains/thorin'
 import { ConnectButton } from '@rainbow-me/rainbowkit'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import type { TFunction } from 'react-i18next'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 
-const StyledIconEthTransparentInverted = styled(EthTransparentInvertedSVG)(
-  ({ theme }) => css`
-    color: white;
-    display: block;
-    margin-right: calc(${theme.space['2']} * -1);
-    margin-left: calc(${theme.space['2']} * -1);
-    height: ${theme.space['5']};
-    width: ${theme.space['5']};
-    ${mq.sm.min(css`
-      height: ${theme.space['6']};
-      width: ${theme.space['6']};
-    `)}
-  `,
-)
-
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(
   ({ theme, $isTabBar }) =>
-    $isTabBar &&
-    css`
-      flex-grow: 1;
-      & button {
-        width: ${theme.space.full};
-        border-radius: ${theme.radii.full};
-      }
-    `,
+    $isTabBar
+      ? css`
+          align-self: flex-end;
+          justify-self: flex-end;
+          & button {
+            padding: 0 ${theme.space['4']};
+            width: ${theme.space.full};
+            height: ${theme.space['12']};
+            border-radius: ${theme.radii.full};
+            font-size: ${theme.fontSizes.base};
+            ${mq.xs.min(css`
+              padding: 0 ${theme.space['8']};
+            `)}
+          }
+        `
+      : css`
+          & button {
+            border-radius: ${theme.radii['2xLarge']};
+          }
+        `,
 )
 
 export type AccountRenderProps = {
@@ -60,10 +54,15 @@ export const ConnectButtonWrapper = ({
   children,
 }: {
   isTabBar?: boolean
-  children: (renderProps: AccountRenderProps) => React.ReactNode
+  children: {
+    hasAccount: (renderProps: AccountRenderProps) => React.ReactNode
+    noAccountBefore?: React.ReactNode
+    noAccountAfter?: React.ReactNode
+  }
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
+  const breakpoints = useBreakpoint()
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { disconnect } = useDisconnect()
 
@@ -71,18 +70,20 @@ export const ConnectButtonWrapper = ({
     <ConnectButton.Custom>
       {({ account, openConnectModal }) =>
         !account ? (
-          <StyledButtonWrapper $isTabBar={isTabBar}>
-            <Button
-              onClick={() => openConnectModal()}
-              prefix={<StyledIconEthTransparentInverted />}
-              variant="action"
-              size="medium"
-            >
-              {t('wallet.connect')}
-            </Button>
-          </StyledButtonWrapper>
+          <>
+            {children.noAccountBefore}
+            <StyledButtonWrapper $isTabBar={isTabBar}>
+              <Button
+                onClick={() => openConnectModal()}
+                variant="primary"
+                size={breakpoints.md ? 'medium' : 'extraSmall'}
+              >
+                {t('wallet.connect')}
+              </Button>
+            </StyledButtonWrapper>
+          </>
         ) : (
-          children({
+          children.hasAccount({
             ...account,
             disconnect,
             router,
@@ -98,26 +99,34 @@ export const ConnectButtonWrapper = ({
 export const HeaderConnect = () => {
   return (
     <ConnectButtonWrapper>
-      {({ address, ensName, ensAvatar, router, t, disconnect, zorb }) => (
-        <Profile
-          address={address}
-          ensName={ensName}
-          dropdownItems={[
-            {
-              label: t('wallet.myProfile'),
-              onClick: () => router.push('/my/profile'),
-            },
-            {
-              label: t('wallet.disconnect'),
-              color: 'red',
-              onClick: () => disconnect(),
-            },
-          ]}
-          avatar={ensAvatar || zorb}
-          size="medium"
-          alignDropdown="right"
-        />
-      )}
+      {{
+        hasAccount: ({ address, ensName, ensAvatar, t, disconnect, zorb }) => (
+          <Profile
+            address={address}
+            ensName={ensName}
+            dropdownItems={[
+              {
+                label: t('wallet.myProfile'),
+                wrapper: (children, key) => (
+                  <Link href="/my/profile" key={key}>
+                    {children}
+                  </Link>
+                ),
+                as: 'a',
+                color: 'text',
+              },
+              {
+                label: t('wallet.disconnect'),
+                color: 'red',
+                onClick: () => disconnect(),
+              },
+            ]}
+            avatar={ensAvatar || zorb}
+            size="medium"
+            alignDropdown="right"
+          />
+        ),
+      }}
     </ConnectButtonWrapper>
   )
 }

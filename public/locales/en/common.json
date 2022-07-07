@@ -2,6 +2,13 @@
   "title": "Your web3 username",
   "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
   "loading": "Loading",
+  "action": {
+    "cancel": "Cancel",
+    "save": "Save",
+    "edit": "Edit",
+    "view": "View",
+    "clear": "Clear"
+  },
   "navigation": {
     "home": "Home",
     "about": "About",
@@ -13,29 +20,58 @@
     "bugBounty": "Bug Bounty",
     "mediaKit": "Media Kit",
     "back": "Back",
-    "connected": {
-      "favourites": "Favourites",
-      "myNames": "My Names"
-    }
+    "names": "Names",
+    "favourites": "Favourites",
+    "settings": "Settings"
   },
   "wallet": {
-    "myProfile": "My Profile",
+    "myProfile": "Profile",
     "disconnect": "Disconnect",
-    "connect": "Connect",
+    "connect": "Connect Wallet",
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
     "viewDetails": "View Details"
   },
   "name": {
     "expires": "Expires",
+    "noExpiry": "No expiry",
     "registrant": "Registrant",
-    "controller": "Controller"
+    "controller": "Controller",
+    "owner": "Owner",
+    "all": "All Names",
+    "expiresInYears_one": "Expires in {{count}} year",
+    "expiresInYears_other": "Expires in {{count}} years",
+    "expiresInMonths_one": "Expires in {{count}} month",
+    "expiresInMonths_other": "Expires in {{count}} months",
+    "expiresInDays_one": "Expires in {{count}} day",
+    "expiresInDays_other": "Expires in {{count}} days",
+    "extend": "Extend",
+    "send": "Send",
+    "transfer": "Transfer"
+  },
+  "address": {
+    "label": "Address",
+    "viewAddress": "View Address",
+    "copyAddress": "Copy Address"
+  },
+  "records": {
+    "label": "Records"
+  },
+  "sortTypes": {
+    "expiryDate": "Expiry Date",
+    "labelName": "Name",
+    "creationDate": "Creation Date"
+  },
+  "errors": {
+    "noResults": "No results found"
   },
   "transaction": {
     "description": {
       "setName": "Set Name",
       "setRecords": "Set Records",
-      "test": "Test Transaction"
+      "test": "Test Transaction",
+      "addSuccess": "Add Success",
+      "sendName": "Send Name"
     },
     "status": {
       "pending": {
@@ -51,6 +87,54 @@
         "notifyTitle": "Transaction Failure",
         "notifyMessage": "Your \"%s\" transaction failed and was reverted"
       }
+    },
+    "modal": {
+      "leadingButton": "Cancel",
+      "actionLabel": "Action",
+      "request": {
+        "title": "Transaction Request",
+        "subtitle": "Confirm the details of the transaction",
+        "trailingButton": "Confirm"
+      },
+      "confirm": {
+        "title": "Confirm in Wallet",
+        "trailingButton": "Try again",
+        "waiting": {
+          "title": "Awaiting wallet confirmation",
+          "subtitle": "This will incur network fees"
+        },
+        "error": {
+          "rejectedRequest": "You rejected the request. Try again or cancel the transaction.",
+          "unknown": "An unknown error occurred."
+        }
+      },
+      "complete": {
+        "title": "Transaction Sent",
+        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
+        "trailingButton": "Close"
+      }
+    },
+    "viewEtherscan": "View on Etherscan",
+    "viewMore": "View More"
+  },
+  "search": {
+    "label": "Name search",
+    "placeholder": "Search for a name",
+    "emptyText": "Type a name or address to search...",
+    "address": "Address",
+    "errors": {
+      "tooShort": "Name too short",
+      "invalid": "Invalid format for name"
+    },
+    "status": {
+      "registered": "Registered",
+      "gracePeriod": "Grace Period",
+      "premium": "Temporary Premium",
+      "available": "Available",
+      "notOwned": "Not Owned",
+      "notImported": "Not Imported",
+      "short": "Too Short",
+      "default": "Invalid"
     }
   }
 }

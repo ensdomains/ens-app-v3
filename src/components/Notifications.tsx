@@ -1,10 +1,10 @@
+import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Toast } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useNetwork } from 'wagmi'
 
 type Notification = {
   title: string
@@ -16,7 +16,7 @@ export const Notifications = () => {
   const { t } = useTranslation()
   const breakpoints = useBreakpoint()
 
-  const { activeChain } = useNetwork()
+  const chainName = useChainName()
   const transactions = useRecentTransactions()
   const previousTransactions =
     useRef<ReturnType<typeof useRecentTransactions>>()
@@ -38,7 +38,7 @@ export const Notifications = () => {
       }
       return false
     })
-    previousTransactions.current = transactions
+    previousTransactions.current = JSON.parse(JSON.stringify(transactions))
     const transactionsToPush = updatedTransactions.map((transaction) => ({
       title: t(`transaction.status.${transaction.status}.notifyTitle`),
       description: t(
@@ -47,10 +47,10 @@ export const Notifications = () => {
       children: (
         <a
           target="_blank"
-          href={makeEtherscanLink(transaction.hash, activeChain?.name)}
+          href={makeEtherscanLink(transaction.hash, chainName)}
           rel="noreferrer"
         >
-          <Button size="small">View on Etherscan</Button>
+          <Button size="small">{t('transaction.viewEtherscan')}</Button>
         </a>
       ),
     }))
@@ -68,10 +68,16 @@ export const Notifications = () => {
     <Toast
       onClose={() => {
         setOpen(false)
-        setTimeout(() => setNotificationQueue((prev) => prev.slice(1)), 300)
+        setTimeout(
+          () =>
+            setNotificationQueue((prev) => [
+              ...prev.filter((x) => x !== currentNotification),
+            ]),
+          300,
+        )
       }}
       open={open}
-      variant={breakpoints.sm ? 'desktop' : 'touch'}
+      variant={breakpoints.md ? 'desktop' : 'touch'}
       {...currentNotification}
     />
   )

@@ -12,5 +12,5 @@ export const useProfile = (name: string, skip?: any) => {
     enabled: ready && !skip && name !== '',
   })
 
-  return { profile, loading, status }
+  return { profile, loading: !ready || loading, status }
 }

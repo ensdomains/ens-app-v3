@@ -1,6 +1,0 @@
-[
-  "event ContenthashChanged(bytes32 indexed,bytes)",
-  "function contenthash(bytes32) view returns (bytes)",
-  "function setContenthash(bytes32,bytes)",
-  "function supportsInterface(bytes4) view returns (bool)"
-]

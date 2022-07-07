@@ -6,28 +6,31 @@ import { useRouter } from 'next/router'
 import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { DisabledButton } from './@atoms/DisabledButton'
 
-const Container = styled.div<{ $banner?: string }>(
-  ({ theme, $banner }) => css`
-    padding: ${theme.space['6']};
-    padding-top: ${theme.space['16']};
-    background-image: ${$banner
-      ? `url(${$banner})`
-      : theme.colors.gradients.blue};
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-size: 100% ${theme.space['28']};
-    background-color: ${theme.colors.background};
-    border-radius: ${theme.radii['2xLarge']};
-    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: ${theme.space['3']};
-    flex-gap: ${theme.space['3']};
-  `,
+const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
+  ({ theme, $banner, $size }) => [
+    css`
+      padding: ${$size === 'medium' ? theme.space['8'] : theme.space['6']};
+      padding-top: ${theme.space['16']};
+      background-image: ${$banner
+        ? `url(${$banner})`
+        : theme.colors.gradients.blue};
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      background-size: 100% ${theme.space['28']};
+      background-color: ${theme.colors.background};
+      border-radius: ${theme.radii['2xLarge']};
+      border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: ${theme.space['3']};
+      flex-gap: ${theme.space['3']};
+    `,
+  ],
 )
 
 const AvatarWrapper = styled.div(
@@ -73,8 +76,9 @@ const FirstItems = styled.div(
   `,
 )
 
-const DetailButtonWrapper = styled.div(
-  ({ theme }) => css`
+const DetailButtonWrapper = styled.div<{ $placement?: 'inline' | 'bottom' }>(
+  ({ theme, $placement }) => css`
+    ${$placement === 'bottom' && 'width: 100%;'}
     & > button {
       border: ${theme.space.px} solid ${theme.colors.borderSecondary};
       border-radius: ${theme.radii.extraLarge};
@@ -108,6 +112,8 @@ export const ProfileSnippet = ({
   description,
   url,
   button,
+  size = 'small',
+  buttonPlacement = 'inline',
   network,
 }: {
   name: string
@@ -116,7 +122,9 @@ export const ProfileSnippet = ({
   description?: string
   url?: string
   button?: 'viewDetails' | 'viewProfile'
-  network: string
+  size?: 'small' | 'medium'
+  buttonPlacement?: 'inline' | 'bottom'
+  network: number
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
@@ -124,14 +132,14 @@ export const ProfileSnippet = ({
   const { avatar } = useAvatar(name, network)
 
   return (
-    <Container $banner={banner}>
+    <Container $banner={banner} $size={size} data-testid="profile-snippet">
       <FirstItems>
         <AvatarWrapper>
           <Avatar label={name} src={avatar || zorb} />
         </AvatarWrapper>
         <ButtonStack>
-          {button && (
-            <DetailButtonWrapper>
+          {button && buttonPlacement === 'inline' && (
+            <DetailButtonWrapper $placement={buttonPlacement}>
               <Button
                 onClick={() =>
                   router.push({
@@ -152,9 +160,9 @@ export const ProfileSnippet = ({
               </Button>
             </DetailButtonWrapper>
           )}
-          <Button shadowless variant="transparent" size="extraSmall">
+          <DisabledButton shadowless variant="transparent" size="extraSmall">
             <TripleDotIcon as={TripleDot} />
-          </Button>
+          </DisabledButton>
         </ButtonStack>
       </FirstItems>
       <TextStack>
@@ -162,16 +170,24 @@ export const ProfileSnippet = ({
           <Name weight="bold">{name}</Name>
           {recordName && (
             <div style={{ marginTop: '4px' }}>
-              <Typography weight="bold" color="textTertiary">
+              <Typography
+                data-testid="profile-snippet-name"
+                weight="bold"
+                color="textTertiary"
+              >
                 {recordName}
               </Typography>
             </div>
           )}
         </DetailStack>
-        {description && <Typography>{description}</Typography>}
+        {description && (
+          <Typography data-testid="profile-snippet-description">
+            {description}
+          </Typography>
+        )}
         {url && (
           <div style={{ width: 'min-content' }}>
-            <a href={url}>
+            <a href={url} data-testid="profile-snippet-url">
               <Typography color="blue">
                 {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
               </Typography>
@@ -179,6 +195,28 @@ export const ProfileSnippet = ({
           </div>
         )}
       </TextStack>
+      {button && buttonPlacement === 'bottom' && (
+        <DetailButtonWrapper $placement={buttonPlacement}>
+          <Button
+            onClick={() =>
+              router.push({
+                pathname:
+                  button === 'viewDetails'
+                    ? `/profile/${name}/details`
+                    : `/profile/${name}`,
+                query: {
+                  from: router.asPath,
+                },
+              })
+            }
+            shadowless
+            variant="transparent"
+            size="extraSmall"
+          >
+            {t(`wallet.${button}`)}
+          </Button>
+        </DetailButtonWrapper>
+      )}
     </Container>
   )
 }
