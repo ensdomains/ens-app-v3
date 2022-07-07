@@ -3,7 +3,7 @@ import { RouteItemObj } from '@app/routes'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { ConditionalWrapper } from '../ConditionalWrapper'
+import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 
 const LinkWrapper = styled.a<{ $hasNotification?: boolean; $asText?: boolean }>(
   ({ theme, $hasNotification, $asText }) => css`
@@ -102,6 +102,7 @@ export const RouteItem = ({
             disabled={route.disabled}
             $active={isActive}
             as={route.icon}
+            data-testid="route-item-icon"
           />
         )}
       </LinkWrapper>

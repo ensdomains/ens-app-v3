@@ -1,4 +1,8 @@
 {
+  "meta": {
+    "title": "{{name}} on ENS",
+    "description": "{{name}}'s profile on the Ethereum Name Service"
+  },
   "title": "Profile",
   "yourWallet": "Your wallet",
   "yourProfile": "Your profile",
@@ -18,7 +22,7 @@
     "descriptions": {
       "owner": "Owns and controls the name",
       "controller": "Controls all the records of the name",
-      "registrant":  "The owner of the NFT"
+      "registrant": "The owner of the NFT"
     },
     "tabs": {
       "records": {
@@ -68,7 +72,7 @@
           "decimal": "decimal"
         },
         "registrationDate": {
-          "label":"Registration Date"
+          "label": "Registration Date"
         }
       }
     }

@@ -4,7 +4,7 @@ import { Avatar } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
-import { RouteItem } from './@atoms/RouteItem'
+import { RouteItem } from './@atoms/RouteItem/RouteItem'
 import { ConnectButtonWrapper } from './ConnectButton'
 
 const AvatarWrapper = styled.div<{ $active: boolean }>(

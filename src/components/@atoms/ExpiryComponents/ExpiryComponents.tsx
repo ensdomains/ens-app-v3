@@ -1,8 +1,8 @@
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 const ExpiryWrapper = styled.div(
   ({ theme }) => css`
@@ -42,13 +42,23 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   )
 
   if (difference < 0) {
-    return <ClockIcon $color="red" as={ClockSVG} />
+    return (
+      <ClockIcon data-testid="expiry-clock-red" $color="red" as={ClockSVG} />
+    )
   }
   if (difference < 90) {
-    return <ClockIcon $color="orange" as={ClockSVG} />
+    return (
+      <ClockIcon
+        data-testid="expiry-clock-orange"
+        $color="orange"
+        as={ClockSVG}
+      />
+    )
   }
 
-  return <ClockIcon $color="grey" as={ClockSVG} />
+  return (
+    <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
+  )
 }
 
 export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
@@ -57,8 +67,8 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   const difference = secondsToDays(
     (expiry.getTime() - currentDate.getTime()) / 1000,
   )
-  const months = Math.round(difference / 30)
-  const years = Math.round(difference / 365)
+  const months = Math.floor(difference / 30)
+  const years = Math.floor(difference / 365)
 
   let text = t('name.expiresInYears', { count: years })
   let color: 'foreground' | 'red' | 'orange' = 'foreground'
@@ -66,6 +76,9 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   if (difference < 0) {
     text = t('name.expiresInDays', { count: difference + 90 })
     color = 'red'
+  } else if (difference < 30) {
+    text = t('name.expiresInDays', { count: difference })
+    color = 'orange'
   } else if (difference < 90) {
     text = t('name.expiresInMonths', { count: months })
     color = 'orange'
@@ -75,7 +88,11 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   }
 
   return (
-    <ExpiryText weight="bold" $color={color}>
+    <ExpiryText
+      data-testid={`short-expiry-${color}`}
+      weight="bold"
+      $color={color}
+    >
       {text}
     </ExpiryText>
   )
