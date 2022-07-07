@@ -11,11 +11,11 @@ export const AvatarWithZorb = ({
   ...props
 }: ComponentProps<typeof Avatar> & {
   name?: string
-  address: string
+  address?: string
   network: number
 }) => {
   const { avatar } = useAvatar(name, network)
-  const zorb = useZorb(address, 'address')
+  const zorb = useZorb(address || '', 'address')
   return <Avatar {...props} src={avatar || zorb} />
 }
 

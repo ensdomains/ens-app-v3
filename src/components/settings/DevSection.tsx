@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { useTransaction } from '@app/utils/TransactionProvider'
 import { Button } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useSendTransaction } from 'wagmi'
@@ -6,19 +7,64 @@ import { SectionContainer, SectionHeading } from './Section'
 
 export const DevSection = () => {
   const addTransaction = useAddRecentTransaction()
+  const { setCurrentTransaction } = useTransaction()
   const { sendTransactionAsync } = useSendTransaction()
 
   const addSuccess = async () => {
-    const transaction = await sendTransactionAsync({
-      request: {
-        to: '0x0000000000000000000000000000000000000000',
-        value: '0',
-      },
+    setCurrentTransaction({
+      actionName: 'addSuccess',
+      generateTx: () =>
+        sendTransactionAsync({
+          request: {
+            to: '0x0000000000000000000000000000000000000000',
+            value: '0',
+          },
+        }),
+      displayItems: [
+        {
+          label: 'To',
+          value: '0x8e8db5ccef88cca9d624701db544989c996e3216',
+          type: 'address',
+        },
+        {
+          label: 'Name',
+          value: 'nick.eth',
+          type: 'name',
+        },
+        {
+          label: 'Info',
+          value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
+        },
+      ],
     })
-    addTransaction({
-      description: 'test',
-      hash: transaction.hash,
-      confirmations: transaction.confirmations || undefined,
+  }
+
+  const sendName = async () => {
+    setCurrentTransaction({
+      actionName: 'sendName',
+      generateTx: () =>
+        sendTransactionAsync({
+          request: {
+            to: '0x0000000000000000000000000000000000000000',
+            value: '0',
+          },
+        }),
+      displayItems: [
+        {
+          label: 'To',
+          value: '0x3F45BcB2DFBdF0AD173A9DfEe3b932aa2a31CeB3',
+          type: 'address',
+        },
+        {
+          label: 'Name',
+          value: 'taytems.eth',
+          type: 'name',
+        },
+        {
+          label: 'Info',
+          value: 'Set the controller and registrant of the name',
+        },
+      ],
     })
   }
 
@@ -73,6 +119,7 @@ export const DevSection = () => {
         Developer
       </SectionHeading>
       <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
+      <Button onClick={() => sendName()}>Test Send Name</Button>
       <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
       <Button onClick={() => startAutoMine()}>Start Automine</Button>
       <Button onClick={() => stopAutoMine()}>Stop Automine</Button>
