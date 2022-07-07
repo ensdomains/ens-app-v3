@@ -171,10 +171,12 @@ export const NameDetailSnippet = ({
           )} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
         </ItemContainer>
       )}
-      <ItemContainer>
-        <LeftText weight="bold">{t('name.controller')}</LeftText>
-        <NameOwnerItem address={ownerData.owner} network={network} />
-      </ItemContainer>
+      {ownerData.owner && (
+        <ItemContainer>
+          <LeftText weight="bold">{t('name.controller')}</LeftText>
+          <NameOwnerItem address={ownerData.owner} network={network} />
+        </ItemContainer>
+      )}
       {ownerData.registrant && (
         <ItemContainer>
           <LeftText weight="bold">{t('name.registrant')}</LeftText>
