@@ -102,6 +102,7 @@ export default function Page() {
     expiryDate,
     ownerData,
     profile,
+    dnsOwner,
     isLoading: detailsLoading,
   } = useNameDetails(name)
 
@@ -172,6 +173,15 @@ export default function Page() {
                       : t('details.descriptions.controller')
                   }
                   canTransfer={selfAbilities.canChangeOwner}
+                />
+              )}
+              {dnsOwner && (
+                <OwnerButton
+                  address={dnsOwner}
+                  network={chainId}
+                  label={t('name.dnsOwner', { ns: 'common' })}
+                  type={breakpoints.lg ? 'dropdown' : 'dialog'}
+                  description={t('details.descriptions.dnsOwner')}
                 />
               )}
               {ownerData?.registrant && (
