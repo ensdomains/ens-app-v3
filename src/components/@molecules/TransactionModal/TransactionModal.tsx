@@ -1,6 +1,9 @@
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
+import { Outlink } from '@app/components/Outlink'
+import { useChainName } from '@app/hooks/useChainName'
 import { TransactionSubmission } from '@app/types'
-import { Button, Dialog, Spinner, Typography } from '@ensdomains/thorin'
+import { makeEtherscanLink } from '@app/utils/utils'
+import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -16,6 +19,9 @@ const InnerDialog = styled.div(
     width: ${theme.space.full};
     padding: 0 ${theme.space['5']};
     gap: ${theme.space['4']};
+    ${mq.md.min(css`
+      min-width: ${theme.space['128']};
+    `)}
   `,
 )
 
@@ -23,6 +29,9 @@ const ButtonShrinkwrap = styled(Button)(
   () => css`
     width: 80%;
     flex-shrink: 1;
+    ${mq.md.min(css`
+      width: 100%;
+    `)}
   `,
 )
 
@@ -84,6 +93,12 @@ const SuccessContent = styled.div(
   `,
 )
 
+const CompleteTypography = styled(Typography)(
+  ({ theme }) => css`
+    max-width: ${theme.space['80']};
+  `,
+)
+
 type Stage = 'request' | 'confirm' | 'complete'
 
 export const TransactionModal = ({
@@ -93,14 +108,19 @@ export const TransactionModal = ({
   onSuccess,
   generateTx,
   actionName,
+  completeTitle,
+  dismissBtnLabel,
+  completeBtnLabel,
 }: TransactionSubmission & {
   open: boolean
 }) => {
   const { t } = useTranslation()
+  const chainName = useChainName()
 
   const [stage, setStage] = useState<Stage>('request')
   const addTransaction = useAddRecentTransaction()
   const [error, setError] = useState<string | null>(null)
+  const [txHash, setTxHash] = useState<string | null>(null)
 
   const tryTransaction = useCallback(async () => {
     setError(null)
@@ -111,6 +131,7 @@ export const TransactionModal = ({
         hash: tx.hash,
         confirmations: tx.confirmations || undefined,
       })
+      setTxHash(tx.hash)
       setStage('complete')
     } catch (e: any) {
       if (e && e.code === 4001) {
@@ -142,10 +163,10 @@ export const TransactionModal = ({
       return (
         <SuccessContent>
           <PaperPlaneColourSVG />
-          <Typography>
+          <CompleteTypography>
             Your transaction was sent to the network. You can close this now if
             you&apos;d like.
-          </Typography>
+          </CompleteTypography>
         </SuccessContent>
       )
     }
@@ -164,12 +185,12 @@ export const TransactionModal = ({
           tone="grey"
           shadowless
         >
-          Cancel
+          {dismissBtnLabel || 'Cancel'}
         </ButtonShrinkwrap>
       )
     }
     return null
-  }, [stage, onDismiss])
+  }, [stage, dismissBtnLabel, onDismiss])
 
   const TrailingButton = useMemo(() => {
     if (stage === 'complete') {
@@ -182,7 +203,7 @@ export const TransactionModal = ({
             onDismiss?.()
           }}
         >
-          Close
+          {completeBtnLabel || 'Close'}
         </Button>
       )
     }
@@ -203,22 +224,23 @@ export const TransactionModal = ({
         Confirm
       </Button>
     )
-  }, [stage, onSuccess, onDismiss, error, tryTransaction])
+  }, [stage, completeBtnLabel, onSuccess, onDismiss, error, tryTransaction])
 
   const title = useMemo(() => {
     if (stage === 'complete') {
-      return 'Transaction Sent'
+      return completeTitle || 'Transaction Sent'
     }
     if (stage === 'confirm') {
       return 'Confirm in Wallet'
     }
     return 'Transaction Request'
-  }, [stage])
+  }, [completeTitle, stage])
 
   useEffect(() => {
     if (open) {
       setStage('request')
       setError(null)
+      setTxHash(null)
     }
   }, [open])
 
@@ -249,6 +271,11 @@ export const TransactionModal = ({
           MiddleContent
         )}
         {FilledDisplayItems}
+        {stage === 'complete' && (
+          <Outlink href={makeEtherscanLink(txHash!, chainName)}>
+            View on Etherscan
+          </Outlink>
+        )}
       </InnerDialog>
     </Dialog>
   )

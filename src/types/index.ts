@@ -16,7 +16,7 @@ export type TransactionSubmission = {
   onDismiss?: () => void
   onSuccess?: () => void
   dismissBtnLabel?: string
-  submitBtnLabel?: string
+  completeBtnLabel?: string
   completeTitle?: string
   actionName: string
   displayItems: TransactionDisplayItem[]

@@ -56,5 +56,5 @@ ${expiry.toLocaleDateString(undefined, {
 
 export const makeEtherscanLink = (hash: string, network?: string) =>
   `https://${
-    !network || network === 'mainnet' ? '' : `${network}.`
+    !network || network === 'ethereum' ? '' : `${network}.`
   }etherscan.io/tx/${hash}`
