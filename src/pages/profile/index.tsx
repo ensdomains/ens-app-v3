@@ -67,6 +67,7 @@ export default function Page() {
     ownerData,
     expiryDate,
     normalisedName,
+    dnsOwner,
   } = useNameDetails(name)
 
   const isLoading =
@@ -106,6 +107,7 @@ export default function Page() {
             ownerData={ownerData}
             expiryDate={expiryDate}
             showButton={!isSelf}
+            dnsOwner={dnsOwner}
           />
         ),
         trailing: (

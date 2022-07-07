@@ -37,6 +37,7 @@
     "noExpiry": "No expiry",
     "registrant": "Registrant",
     "controller": "Controller",
+    "dnsOwner": "DNS Owner",
     "owner": "Owner",
     "all": "All Names",
     "expiresInYears_one": "Expires in {{count}} year",
@@ -56,7 +57,7 @@
   },
   "records": {
     "label": "Records"
-  },  
+  },
   "sortTypes": {
     "expiryDate": "Expiry Date",
     "labelName": "Name",

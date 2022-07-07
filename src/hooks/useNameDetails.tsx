@@ -1,6 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { ReactNode, useEffect, useMemo } from 'react'
+import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import { useProfile } from './useProfile'
@@ -9,7 +9,7 @@ import { useValidate } from './useValidate'
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
-  const { ready, getOwner, getExpiry, batch } = useEns()
+  const { ready, getOwner, getExpiry, batch, getDNSOwner } = useEns()
 
   const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
 
@@ -18,6 +18,14 @@ export const useNameDetails = (name: string) => {
     loading: profileLoading,
     status,
   } = useProfile(normalisedName, !normalisedName)
+
+  const { data: dnsOwner } = useQuery(
+    ['getDNSOwner', normalisedName],
+    () => getDNSOwner(normalisedName),
+    {
+      enabled: !!(normalisedName && valid) && !normalisedName?.endsWith('.eth'),
+    },
+  )
 
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
@@ -34,6 +42,7 @@ export const useNameDetails = (name: string) => {
     useRegistrationStatus(normalisedName)
 
   const ownerData = batchData?.[0] as Awaited<ReturnType<typeof getOwner>>
+
   const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
 
   const expiryDate = expiryData?.expiry
@@ -92,10 +101,6 @@ export const useNameDetails = (name: string) => {
     valid,
   ])
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [valid, profile?.isMigrated, profile?.message])
-
   const isLoading =
     !ready || profileLoading || batchLoading || registrationStatusLoading
 
@@ -109,5 +114,6 @@ export const useNameDetails = (name: string) => {
     expiryDate,
     isLoading,
     truncatedName,
+    dnsOwner,
   }
 }

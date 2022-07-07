@@ -143,6 +143,7 @@ export const NameDetailSnippet = ({
   ownerData,
   network,
   showButton,
+  dnsOwner,
 }: {
   name: string
   expiryDate?: Date | null
@@ -152,6 +153,7 @@ export const NameDetailSnippet = ({
   }
   network: number
   showButton?: boolean
+  dnsOwner?: string
 }) => {
   const { t } = useTranslation('common')
   const router = useRouter()
@@ -177,6 +179,12 @@ export const NameDetailSnippet = ({
         <ItemContainer>
           <LeftText weight="bold">{t('name.registrant')}</LeftText>
           <NameOwnerItem address={ownerData.registrant} network={network} />
+        </ItemContainer>
+      )}
+      {dnsOwner && (
+        <ItemContainer>
+          <LeftText weight="bold">{t('name.dnsOwner')}</LeftText>
+          <NameOwnerItem address={dnsOwner} network={network} />
         </ItemContainer>
       )}
       {showButton && (
@@ -208,6 +216,7 @@ export const NameSnippet = ({
   expiryDate,
   ownerData,
   showButton,
+  dnsOwner,
 }: {
   name: string
   network: number
@@ -217,6 +226,7 @@ export const NameSnippet = ({
     registrant?: string
   }
   showButton?: boolean
+  dnsOwner?: string
 }) => {
   return (
     <Container>
@@ -231,6 +241,7 @@ export const NameSnippet = ({
         ownerData={ownerData}
         network={network}
         showButton={showButton}
+        dnsOwner={dnsOwner}
       />
     </Container>
   )

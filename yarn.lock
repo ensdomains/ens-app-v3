@@ -1959,6 +1959,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
+  version: 3.0.0-alpha.2
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=c367ec&locator=ens-app-v2%40workspace%3A."
+  dependencies:
+    "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/content-hash": ^2.5.7
+    "@ensdomains/ens-contracts": ^0.0.11
+    dns-packet: ^5.3.1
+    ethers: ^5.6.1
+    graphql: ^16.3.0
+    graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
+  peerDependencies:
+    ethers: "*"
+  checksum: adb67d4209f52c9c2fef367e45e362d874957114ff871955ec1cb77c990478d8dc358781198faa3923b90f50d1398bcd4d0abc5aa12c2e2a2ba64698679927d0
+  languageName: node
+  linkType: hard
+
 "@ensdomains/ensjs@npm:^2.0.1":
   version: 2.1.0
   resolution: "@ensdomains/ensjs@npm:2.1.0"
@@ -1972,24 +1990,6 @@ __metadata:
     ethers: ^5.0.13
     js-sha3: ^0.8.0
   checksum: bc284cefea4959b9a9f55e84e281140d9c17ecca21be798f5a463a924a7c3f52ae0072d3e6c8c2eb23a7bd4df0f7597ded212a5f706d199f187c00bc6db5d076
-  languageName: node
-  linkType: hard
-
-"@ensdomains/ensjs@npm:^3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.2"
-  dependencies:
-    "@ensdomains/address-encoder": ^0.2.16
-    "@ensdomains/content-hash": ^2.5.7
-    "@ensdomains/ens-contracts": ^0.0.11
-    dns-packet: ^5.3.1
-    ethers: ^5.6.1
-    graphql: ^16.3.0
-    graphql-request: ^4.1.0
-    idna-uts46-hx: 3.4.0
-  peerDependencies:
-    ethers: "*"
-  checksum: 817007463debbe30a85cc429c188fc7d89dcf051b795647a3218f4893a7268f75dfef67f284db487c656cf7c38194c5796faa91214beed97dd969be4780a4107
   languageName: node
   linkType: hard
 
@@ -10835,7 +10835,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dns-packet@npm:^5.3.1":
+"dns-packet@npm:^5.3.1, dns-packet@npm:^5.4.0":
   version: 5.4.0
   resolution: "dns-packet@npm:5.4.0"
   dependencies:
@@ -11209,7 +11209,7 @@ __metadata:
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-test-env": ^0.1.0
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": ^3.0.0-alpha.2
+    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": ^0.6.1
     "@next/bundle-analyzer": ^12.0.10
@@ -11240,6 +11240,7 @@ __metadata:
     babel-loader: ^8.2.2
     concurrently: ^7.0.0
     cypress: 9.5.3
+    dns-packet: ^5.4.0
     dotenv: ^16.0.0
     ens-contracts: "github:ensdomains/ens-contracts#head=master&commit=a21f0b2a5e86005a60f568512d99a35116a8ed28"
     eslint: 7.32.0
