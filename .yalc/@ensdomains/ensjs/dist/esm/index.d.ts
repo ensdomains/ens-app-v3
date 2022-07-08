@@ -466,6 +466,6 @@ export declare class ENS {
     transferSubname: (name: string, contract: "nameWrapper" | "registry", address: string, options?: {
         addressOrIndex?: string | number | undefined;
     } | undefined) => Promise<ethers.ContractTransaction>;
-    getDNSOwner: () => Promise<any>;
+    getDNSOwner: (dnsName: string) => Promise<any>;
 }
 export {};

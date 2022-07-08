@@ -59,9 +59,6 @@ export class ENS {
                 if (subFunc !== 'combine') {
                     // get the function to call
                     const func = subFunc ? mod[exportName][subFunc] : mod[exportName];
-                    if (dependencies.length === 0) {
-                        return func(...args);
-                    }
                     // get the dependencies to forward to the function as the first arg
                     const dependenciesToForward = thisRef.forwardDependenciesFromArray(dependencies);
                     // return the function with the dependencies forwarded

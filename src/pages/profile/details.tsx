@@ -182,6 +182,7 @@ export default function Page() {
                   label={t('name.dnsOwner', { ns: 'common' })}
                   type={breakpoints.lg ? 'dropdown' : 'dialog'}
                   description={t('details.descriptions.dnsOwner')}
+                  canTransfer={false}
                 />
               )}
               {ownerData?.registrant && (

@@ -1,4 +1,3 @@
-//@ts-ignore
 import * as packet from 'dns-packet'
 import fetch from 'node-fetch'
 import nock from 'nock'

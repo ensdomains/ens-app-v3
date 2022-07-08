@@ -1959,9 +1959,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
-  version: 3.0.0-alpha.2
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=c367ec&locator=ens-app-v2%40workspace%3A."
+"@ensdomains/ensjs@npm:3.0.0-alpha.4":
+  version: 3.0.0-alpha.4
+  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.4"
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -1973,7 +1973,7 @@ __metadata:
     idna-uts46-hx: 3.4.0
   peerDependencies:
     ethers: "*"
-  checksum: adb67d4209f52c9c2fef367e45e362d874957114ff871955ec1cb77c990478d8dc358781198faa3923b90f50d1398bcd4d0abc5aa12c2e2a2ba64698679927d0
+  checksum: 1d286c4500712a632d270b98446c7cfa2c22e80ea8fc783f2477d382a33c6db645ae3b92054ee3f0c4a6502c81340e52a84b5f8271ee760304661a2862e8be33
   languageName: node
   linkType: hard
 
@@ -11287,7 +11287,7 @@ __metadata:
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-test-env": ^0.1.0
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
+    "@ensdomains/ensjs": 3.0.0-alpha.4
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": ^0.6.3
     "@next/bundle-analyzer": ^12.0.10

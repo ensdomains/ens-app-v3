@@ -44,7 +44,7 @@ export const dnsQuery = async (qtype, qname) => {
     }
     return response;
 };
-export default async function (dnsName) {
+export default async function (_, dnsName) {
     const result = await dnsQuery('TXT', `_ens.${dnsName}`);
     const address = result?.answers?.[0]?.data?.[0]?.toString()?.split('=')?.[1];
     return address;

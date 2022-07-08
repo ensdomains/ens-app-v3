@@ -73,7 +73,7 @@ const dnsQuery = async (qtype, qname) => {
     return response;
 };
 exports.dnsQuery = dnsQuery;
-async function default_1(dnsName) {
+async function default_1(_, dnsName) {
     const result = await (0, exports.dnsQuery)('TXT', `_ens.${dnsName}`);
     const address = result?.answers?.[0]?.data?.[0]?.toString()?.split('=')?.[1];
     return address;

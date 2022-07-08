@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/ensjs",
-  "version": "3.0.0-alpha.2",
+  "version": "1.0.1-0",
   "description": "ENS javascript library for contract interaction",
   "main": "./dist/cjs/index.js",
   "types": "./dist/cjs/index.d.ts",
@@ -27,8 +27,8 @@
     "generate-types": "ts-node scripts/runTypechain.ts",
     "generate-abis": "hardhat export-abi",
     "start": "ts-node --files src/index.test.ts",
-    "test": "jest --run-in-band src/tests",
-    "test:watch": "jest --watch --run-in-band src/tests",
+    "test": "jest --run-in-band",
+    "test:watch": "jest --watch --run-in-band",
     "test:specific": "ts-node --files ",
     "clean": "rm -rf ./dist ./README.md ./LICENSE",
     "build:esm": "tsc --project tsconfig.esm.json",
@@ -49,6 +49,6 @@
   "peerDependencies": {
     "ethers": "*"
   },
-  "stableVersion": "3.0.0-alpha.1",
-  "yalcSig": "cab598cc7bfde42a5db3d6c68223229e"
+  "stableVersion": "1.0.0",
+  "yalcSig": "02d70eed01797da75aae312a528f22b8"
 }
