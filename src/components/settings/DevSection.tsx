@@ -56,7 +56,7 @@ export const DevSection = () => {
   const addFailure = async () => {
     const transaction = await sendTransactionAsync({
       request: {
-        to: '0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e',
+        to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
         data: '0x1231237123423423',
         gasLimit: '1000000',
       },

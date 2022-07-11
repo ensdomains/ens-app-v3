@@ -24,7 +24,7 @@ describe('Settings', () => {
         'be.visible',
       )
       cy.findByTestId('transaction-modal-request-trailing-btn').click()
-      cy.contains('Awaiting network confirmation').should('be.visible')
+      cy.contains('Awaiting wallet confirmation').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-trailing-btn').should(
         'be.disabled',
       )
@@ -32,7 +32,7 @@ describe('Settings', () => {
       cy.contains(
         "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
       ).should('be.visible')
-      cy.findByTestId('transaction-modal-completed-trailing-btn').click()
+      cy.findByTestId('transaction-modal-complete-trailing-btn').click()
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
