@@ -2,6 +2,9 @@ name: Test
 
 on: [push]
 
+env:
+  SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
+
 jobs:
   coverage:
     runs-on: ubuntu-latest
