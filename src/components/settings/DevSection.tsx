@@ -11,31 +11,16 @@ export const DevSection = () => {
   const { sendTransactionAsync } = useSendTransaction()
 
   const addSuccess = async () => {
-    setCurrentTransaction({
-      actionName: 'addSuccess',
-      generateTx: () =>
-        sendTransactionAsync({
-          request: {
-            to: '0x0000000000000000000000000000000000000000',
-            value: '0',
-          },
-        }),
-      displayItems: [
-        {
-          label: 'To',
-          value: '0x8e8db5ccef88cca9d624701db544989c996e3216',
-          type: 'address',
-        },
-        {
-          label: 'Name',
-          value: 'nick.eth',
-          type: 'name',
-        },
-        {
-          label: 'Info',
-          value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-        },
-      ],
+    const transaction = await sendTransactionAsync({
+      request: {
+        to: '0x0000000000000000000000000000000000000000',
+        value: '0',
+      },
+    })
+    addTransaction({
+      description: 'test',
+      hash: transaction.hash,
+      confirmations: transaction.confirmations || undefined,
     })
   }
 

@@ -17,12 +17,34 @@ describe('Settings', () => {
       cy.wait(1000)
       cy.visit('/my/settings')
     })
+    it('should show the correct transaction details for a transaction modal', () => {
+      cy.contains('Test Send Name').click()
+      cy.contains('Send Name').should('be.visible')
+      cy.contains('Set the controller and registrant of the name').should(
+        'be.visible',
+      )
+      cy.findByTestId('transaction-modal-request-trailing-btn').click()
+      cy.contains('Awaiting network confirmation').should('be.visible')
+      cy.findByTestId('transaction-modal-confirm-trailing-btn').should(
+        'be.disabled',
+      )
+      cy.confirmMetamaskTransaction()
+      cy.contains(
+        "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
+      ).should('be.visible')
+      cy.findByTestId('transaction-modal-completed-trailing-btn').click()
+      cy.findByTestId('toast-desktop')
+        .should('be.visible')
+        .should('contain.text', 'Transaction Successful')
+        .should('contain.text', 'Your "Send Name" transaction was successful')
+    })
     it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-confirmed')
         .should('be.visible')
         .should('contain.text', 'Test Transaction')
+
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
