@@ -604,7 +604,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ens-test-env",\
-        "npm:0.1.0"\
+        "npm:0.1.1"\
       ],\
       [\
         "@ensdomains/ens-validation",\
@@ -612,7 +612,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ensjs",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.4"\
       ],\
       [\
         "@ensdomains/eth-ens-namehash",\
@@ -5479,7 +5479,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "node-fetch",\
-        "npm:3.2.6"\
+        "virtual:e414995db9c779306e687c7a7c66965e66d0cd7270f6b9fc4f00cc9772c5d50b305ab83e142e0e21dbf10968f7437cbdfcb170d05f4bde68707ac7d0082c9cca#npm:2.6.7"\
+      ],\
+      [\
+        "node-fetch-commonjs",\
+        "npm:3.1.1"\
       ],\
       [\
         "node-gyp",\
@@ -7579,9 +7583,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
-            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.1"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.4"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.4"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
@@ -7650,7 +7654,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
-            ["node-fetch", "npm:3.2.6"],\
+            ["node-fetch-commonjs", "npm:3.1.1"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
             ["react", "npm:17.0.2"],\
@@ -11103,10 +11107,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ens-test-env", [\
-        ["npm:0.1.0", {\
-          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-npm-0.1.0-d96ee2bd4d/node_modules/@ensdomains/ens-test-env/",\
+        ["npm:0.1.1", {\
+          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-npm-0.1.1-e0ecb52551/node_modules/@ensdomains/ens-test-env/",\
           "packageDependencies": [\
-            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.1"],\
             ["@ethersproject/wallet", "npm:5.6.2"],\
             ["ansi-colors", "npm:4.1.1"],\
             ["cli-progress", "npm:3.11.2"],\
@@ -11150,17 +11154,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:3.0.0-alpha.2", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-npm-3.0.0-alpha.2-aa3b2f1af7-817007463d.zip/node_modules/@ensdomains/ensjs/",\
+        ["npm:3.0.0-alpha.4", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-npm-3.0.0-alpha.4-7782ecc58d-1d286c4500.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "npm:3.0.0-alpha.2"]\
+            ["@ensdomains/ensjs", "npm:3.0.0-alpha.4"]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-9983249083/0/cache/@ensdomains-ensjs-npm-3.0.0-alpha.2-aa3b2f1af7-817007463d.zip/node_modules/@ensdomains/ensjs/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.4", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-80b8d022f6/0/cache/@ensdomains-ensjs-npm-3.0.0-alpha.4-7782ecc58d-1d286c4500.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.4"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/content-hash", "npm:2.5.7"],\
             ["@ensdomains/ens-contracts", "npm:0.0.11"],\
@@ -11168,7 +11172,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dns-packet", "npm:5.4.0"],\
             ["ethers", "npm:5.6.5"],\
             ["graphql", "npm:16.5.0"],\
-            ["graphql-request", "virtual:9983249083887d891d248115c39a7de8b695c8880f6c7f9e805811b72d8bda526ca2dafe98044370d8c4e89f2e9158efaee38576ccbb08250e1cd0339e68781e#npm:4.3.0"],\
+            ["graphql-request", "virtual:80b8d022f6b3d5cb52e484630321e38480b7720ef79e8614916412fd8702b0af5a2e0f4c2fd85a20e206938a129fb3894770fefd57d35f09a6e3d03f37b9d842#npm:4.3.0"],\
             ["idna-uts46-hx", "npm:3.4.0"]\
           ],\
           "packagePeers": [\
@@ -22008,9 +22012,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
-            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.1"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.4"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.4"],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
@@ -22079,7 +22083,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
-            ["node-fetch", "npm:3.2.6"],\
+            ["node-fetch-commonjs", "npm:3.1.1"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
             ["react", "npm:17.0.2"],\
@@ -25715,10 +25719,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:9983249083887d891d248115c39a7de8b695c8880f6c7f9e805811b72d8bda526ca2dafe98044370d8c4e89f2e9158efaee38576ccbb08250e1cd0339e68781e#npm:4.3.0", {\
-          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-ba9255a32b/0/cache/graphql-request-npm-4.3.0-dcf481b653-3124afd01a.zip/node_modules/graphql-request/",\
+        ["virtual:80b8d022f6b3d5cb52e484630321e38480b7720ef79e8614916412fd8702b0af5a2e0f4c2fd85a20e206938a129fb3894770fefd57d35f09a6e3d03f37b9d842#npm:4.3.0", {\
+          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-c1383ac448/0/cache/graphql-request-npm-4.3.0-dcf481b653-3124afd01a.zip/node_modules/graphql-request/",\
           "packageDependencies": [\
-            ["graphql-request", "virtual:9983249083887d891d248115c39a7de8b695c8880f6c7f9e805811b72d8bda526ca2dafe98044370d8c4e89f2e9158efaee38576ccbb08250e1cd0339e68781e#npm:4.3.0"],\
+            ["graphql-request", "virtual:80b8d022f6b3d5cb52e484630321e38480b7720ef79e8614916412fd8702b0af5a2e0f4c2fd85a20e206938a129fb3894770fefd57d35f09a6e3d03f37b9d842#npm:4.3.0"],\
             ["@types/graphql", null],\
             ["cross-fetch", "npm:3.1.5"],\
             ["extract-files", "npm:9.0.0"],\
@@ -30660,6 +30664,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [\
             "@types/encoding",\
             "encoding"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["node-fetch-commonjs", [\
+        ["npm:3.1.1", {\
+          "packageLocation": "./.yarn/cache/node-fetch-commonjs-npm-3.1.1-3cfb0c2921-a0d6b4ad0a.zip/node_modules/node-fetch-commonjs/",\
+          "packageDependencies": [\
+            ["node-fetch-commonjs", "npm:3.1.1"],\
+            ["formdata-polyfill", "npm:4.0.10"],\
+            ["web-streams-polyfill", "npm:3.2.1"]\
           ],\
           "linkType": "HARD"\
         }]\

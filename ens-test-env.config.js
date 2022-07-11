@@ -4,11 +4,8 @@ require('dotenv').config({
   override: true,
 })
 
-console.log('GOING TO LOG ENV VARS')
-console.log('chainid', process.env.CHAIN_ID)
-console.log('network', process.env.NETWORK)
-console.log('secretwords', process.env.SECRET_WORDS)
-console.log('block', process.env.BLOCK_HEIGHT)
+process.env.ADDRESS_ETH_REGISTRAR = '0xc5a5C42992dECbae36851359345FE25997F5C42d'
+process.env.ADDRESS_NAME_WRAPPER = '0x9E545E3C0baAB3E08CdfD552C960A1050f373042'
 
 /**
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}

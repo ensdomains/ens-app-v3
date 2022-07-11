@@ -1927,9 +1927,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ens-test-env@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@ensdomains/ens-test-env@npm:0.1.0"
+"@ensdomains/ens-test-env@npm:^0.1.1":
+  version: 0.1.1
+  resolution: "@ensdomains/ens-test-env@npm:0.1.1"
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1947,7 +1947,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 8591eaa887e787807037fd9ecfb6787173e440d69cca98ed073ddfa3c7776837d9a40bb3230065cd20a5cbdbc0b68932673acf6f16417a072dfbdc681f6bd836
+  checksum: 778b4f537751ebdfab4fcdd8f58acb24e4ee303879b73ba5de89478c38c377ffc594373f31ea02bf9ae3a7aca9249f5c2674f1e31170554ab2ffa08cc087de7c
   languageName: node
   linkType: hard
 
@@ -1988,8 +1988,8 @@ __metadata:
   linkType: hard
 
 "@ensdomains/ensjs@npm:^3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.2"
+  version: 3.0.0-alpha.4
+  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.4"
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -2001,7 +2001,7 @@ __metadata:
     idna-uts46-hx: 3.4.0
   peerDependencies:
     ethers: "*"
-  checksum: 817007463debbe30a85cc429c188fc7d89dcf051b795647a3218f4893a7268f75dfef67f284db487c656cf7c38194c5796faa91214beed97dd969be4780a4107
+  checksum: 1d286c4500712a632d270b98446c7cfa2c22e80ea8fc783f2477d382a33c6db645ae3b92054ee3f0c4a6502c81340e52a84b5f8271ee760304661a2862e8be33
   languageName: node
   linkType: hard
 
@@ -11298,7 +11298,7 @@ __metadata:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-contracts": ^0.0.12
-    "@ensdomains/ens-test-env": ^0.1.0
+    "@ensdomains/ens-test-env": ^0.1.1
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": ^3.0.0-alpha.2
     "@ensdomains/eth-ens-namehash": ^2.0.15
@@ -11366,7 +11366,7 @@ __metadata:
     next: ^12.0.8
     next-compose-plugins: ^2.2.1
     next-transpile-modules: ^9.0.0
-    node-fetch: ^3.2.6
+    node-fetch-commonjs: ^3.1.1
     postcss-syntax: ^0.36.2
     prettier: 2.6.2
     react: ^17.0.2
@@ -18885,6 +18885,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch-commonjs@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "node-fetch-commonjs@npm:3.1.1"
+  dependencies:
+    formdata-polyfill: ^4.0.10
+    web-streams-polyfill: ^3.1.1
+  checksum: a0d6b4ad0a94015ef636c45aaa0b3d07f3f08a9ffe8213cab59eb44375be67421e3286fc10840855a6fe4227362f905b26bb2bd85e06256ccce21cc134bcbf7f
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:2.6.1":
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
@@ -18906,7 +18916,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^3.2.3, node-fetch@npm:^3.2.6":
+"node-fetch@npm:^3.2.3":
   version: 3.2.6
   resolution: "node-fetch@npm:3.2.6"
   dependencies:
@@ -24616,7 +24626,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-streams-polyfill@npm:^3.0.3":
+"web-streams-polyfill@npm:^3.0.3, web-streams-polyfill@npm:^3.1.1":
   version: 3.2.1
   resolution: "web-streams-polyfill@npm:3.2.1"
   checksum: b119c78574b6d65935e35098c2afdcd752b84268e18746606af149e3c424e15621b6f1ff0b42b2676dc012fc4f0d313f964b41a4b5031e525faa03997457da02

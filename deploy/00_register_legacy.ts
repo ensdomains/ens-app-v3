@@ -5,7 +5,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 const names = [
   {
-    name: 'test123.eth',
+    label: 'test123',
     owner: 'owner',
     addr: 'owner',
   },
@@ -29,14 +29,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await Promise.all(
     names.map(async (nameObj) => {
       const secret = randomSecret()
-      const { name } = nameObj
+      const { label } = nameObj
       const registrant = allNamedAccts[nameObj.owner]
       const resolver = publicResolver.address
       const addr = allNamedAccts[nameObj.addr]
       const duration = 31536000
 
       const commitment = await controller.makeCommitmentWithConfig(
-        name,
+        label,
         registrant,
         secret,
         resolver,
@@ -44,7 +44,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       )
 
       const commitTx = await controller.commit(commitment)
-      console.log(`Commiting commitment for ${name} (tx: ${commitTx.hash})...`)
+      console.log(
+        `Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`,
+      )
       await commitTx.wait()
 
       await network.provider.send('evm_increaseTime', [60])
@@ -55,10 +57,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       //   Math.floor(Date.now() / 1000) + 60,
       // ])
 
-      const price = await controller.rentPrice(name, duration)
+      const price = await controller.rentPrice(label, duration)
 
       const registerTx = await controller.registerWithConfig(
-        name,
+        label,
         registrant,
         duration,
         secret,
@@ -69,7 +71,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
           value: price,
         },
       )
-      console.log(`Registering name ${name} (tx: ${registerTx.hash})...`)
+      console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
       await registerTx.wait()
     }),
   )

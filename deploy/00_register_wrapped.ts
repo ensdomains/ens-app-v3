@@ -5,7 +5,7 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 const names = [
   {
-    name: 'wrapped.eth',
+    label: 'wrapped',
     owner: 'owner',
     data: [],
     reverseRecord: true,
@@ -28,13 +28,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await Promise.all(
     names.map(async (nameObj) => {
       const secret = randomSecret()
-      const { name, data, reverseRecord, fuses } = nameObj
+      const { label, data, reverseRecord, fuses } = nameObj
       const ownerAddr = allNamedAccts[nameObj.owner]
       const resolver = publicResolver.address
       const duration = 31536000
+      const wrapperExpiry = 0
 
       const commitment = await controller.makeCommitment(
-        name,
+        label,
         ownerAddr,
         duration,
         secret,
@@ -42,10 +43,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         data,
         reverseRecord,
         fuses,
+        wrapperExpiry,
       )
 
       const commitTx = await controller.commit(commitment)
-      console.log(`Commiting commitment for ${name} (tx: ${commitTx.hash})...`)
+      console.log(
+        `Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`,
+      )
       await commitTx.wait()
 
       await network.provider.send('evm_increaseTime', [60])
@@ -56,10 +60,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       //   Math.floor(Date.now() / 1000) + 60,
       // ])
 
-      const [price] = await controller.rentPrice(name, duration)
+      const [price] = await controller.rentPrice(label, duration)
 
       const registerTx = await controller.register(
-        name,
+        label,
         ownerAddr,
         duration,
         secret,
@@ -67,12 +71,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         data,
         reverseRecord,
         fuses,
+        wrapperExpiry,
         {
           from: owner,
           value: price,
         },
       )
-      console.log(`Registering name ${name} (tx: ${registerTx.hash})...`)
+      console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
       await registerTx.wait()
     }),
   )

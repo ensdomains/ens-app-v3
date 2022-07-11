@@ -12,6 +12,30 @@ jobs:
 
       - run: yarn test:coverage
 
+  stateless:
+    timeout-minutes: 10
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install yarn packages
+        run: yarn
+
+      - name: Run tests
+        run: yarn e2e:ci
+
+      - uses: actions/upload-artifact@v2
+        if: failure()
+        with:
+          name: synpress-screenshots
+          path: e2e/screenshots
+
+      - uses: actions/upload-artifact@v2
+        if: always()
+        with:
+          name: synpress-videos
+          path: e2e/videos
+
   stateful:
     timeout-minutes: 10
     runs-on: ubuntu-latest
