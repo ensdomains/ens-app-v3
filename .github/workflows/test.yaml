@@ -21,6 +21,10 @@ jobs:
       - name: Install yarn packages
         run: yarn
 
+      - name: Pull metadata service image
+        run: |
+          docker pull ghcr.io/ensdomains/ens-metadata-service:latest
+
       - name: Run tests
         run: yarn e2e:ci
 
