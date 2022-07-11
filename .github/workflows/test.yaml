@@ -21,11 +21,6 @@ jobs:
       - name: Install yarn packages
         run: yarn
 
-      - name: Pull metadata service image
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $ --password-stdin
-          docker pull ghcr.io/ensdomains/ens-metadata-service:latest
-
       - name: Run tests
         run: yarn e2e:ci
 
