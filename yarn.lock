@@ -1927,9 +1927,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ens-test-env@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@ensdomains/ens-test-env@npm:0.1.1"
+"@ensdomains/ens-test-env@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@ensdomains/ens-test-env@npm:0.1.2"
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1947,7 +1947,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 778b4f537751ebdfab4fcdd8f58acb24e4ee303879b73ba5de89478c38c377ffc594373f31ea02bf9ae3a7aca9249f5c2674f1e31170554ab2ffa08cc087de7c
+  checksum: cbb8e3e969fdcb9b0c4d37ddfae0e79505cc07034067e7ec6483b75cb6dea1b1d703b09974639e697a81a5733dab6b7da67499c6ecdae2abb64882b20f69458e
   languageName: node
   linkType: hard
 
@@ -1971,6 +1971,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
+  version: 3.0.0-alpha.4
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=1df4fd&locator=ens-app-v2%40workspace%3A."
+  dependencies:
+    "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/content-hash": ^2.5.7
+    "@ensdomains/ens-contracts": ^0.0.11
+    dns-packet: ^5.3.1
+    ethers: ^5.6.1
+    graphql: ^16.3.0
+    graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
+  peerDependencies:
+    ethers: "*"
+  checksum: 04a84e49abbd0b7a86a4ea39285ac7dfa25f7a9ca3b81600b5c05b83cf3062cb2c5ca5df647552b1eff563e1535c075009e1ff32f765997a3b0ebbbaba321486
+  languageName: node
+  linkType: hard
+
 "@ensdomains/ensjs@npm:^2.0.1":
   version: 2.1.0
   resolution: "@ensdomains/ensjs@npm:2.1.0"
@@ -1984,24 +2002,6 @@ __metadata:
     ethers: ^5.0.13
     js-sha3: ^0.8.0
   checksum: bc284cefea4959b9a9f55e84e281140d9c17ecca21be798f5a463a924a7c3f52ae0072d3e6c8c2eb23a7bd4df0f7597ded212a5f706d199f187c00bc6db5d076
-  languageName: node
-  linkType: hard
-
-"@ensdomains/ensjs@npm:^3.0.0-alpha.2":
-  version: 3.0.0-alpha.4
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.4"
-  dependencies:
-    "@ensdomains/address-encoder": ^0.2.16
-    "@ensdomains/content-hash": ^2.5.7
-    "@ensdomains/ens-contracts": ^0.0.11
-    dns-packet: ^5.3.1
-    ethers: ^5.6.1
-    graphql: ^16.3.0
-    graphql-request: ^4.1.0
-    idna-uts46-hx: 3.4.0
-  peerDependencies:
-    ethers: "*"
-  checksum: 1d286c4500712a632d270b98446c7cfa2c22e80ea8fc783f2477d382a33c6db645ae3b92054ee3f0c4a6502c81340e52a84b5f8271ee760304661a2862e8be33
   languageName: node
   linkType: hard
 
@@ -2028,9 +2028,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.6.4":
+"@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
   version: 0.6.4
-  resolution: "@ensdomains/thorin@npm:0.6.4"
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=65fa19&locator=ens-app-v2%40workspace%3A."
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2040,7 +2040,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 2be56b5f51cccfe4d0a84038baa24c6ebe479a1d8eed450dc01f3157af3bef28451556def732edce75a568a534cda7098491952c50e074d4444439c24a4af034
+  checksum: f447a6145abe161d383cdf68280fc2d2445a40177abc1ef7521f06a8d41de13dfd49980f1657a51da9614789f6d4c31cc750ffd769782f3ab2d10b779b92d35b
   languageName: node
   linkType: hard
 
@@ -11298,11 +11298,11 @@ __metadata:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-contracts": ^0.0.12
-    "@ensdomains/ens-test-env": ^0.1.1
+    "@ensdomains/ens-test-env": ^0.1.2
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": ^3.0.0-alpha.2
+    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.6.4
+    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5

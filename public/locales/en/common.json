@@ -71,7 +71,9 @@
       "setRecords": "Set Records",
       "test": "Test Transaction",
       "addSuccess": "Add Success",
-      "sendName": "Send Name"
+      "sendName": "Send Name",
+      "migrateProfile": "Migrate Profile",
+      "wrapName": "Wrap Name"
     },
     "status": {
       "pending": {
@@ -110,8 +112,10 @@
       },
       "complete": {
         "title": "Transaction Sent",
+        "stepTitle": "Step {{step}} Complete",
         "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
-        "trailingButton": "Close"
+        "trailingButton": "Close",
+        "stepTrailingButton": "Continue"
       }
     },
     "viewEtherscan": "View on Etherscan",

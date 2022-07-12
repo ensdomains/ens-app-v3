@@ -119,8 +119,12 @@ export const TransactionModal = ({
   completeTitle,
   dismissBtnLabel,
   completeBtnLabel,
+  currentStep,
+  stepCount,
 }: TransactionSubmission & {
   open: boolean
+  currentStep: number
+  stepCount: number
 }) => {
   const { t } = useTranslation()
   const chainName = useChainName()
@@ -134,6 +138,7 @@ export const TransactionModal = ({
     setError(null)
     try {
       const tx = await generateTx()
+      if (!tx) throw new Error('No transaction generated')
       addTransaction({
         description: actionName,
         hash: tx.hash,
@@ -200,17 +205,22 @@ export const TransactionModal = ({
 
   const TrailingButton = useMemo(() => {
     if (stage === 'complete') {
+      const final = currentStep + 1 === stepCount
+
       return (
         <Button
-          variant="secondary"
+          variant={final ? 'secondary' : 'primary'}
           shadowless
           onClick={() => {
             onSuccess?.()
-            onDismiss?.()
+            if (final) onDismiss?.()
           }}
           data-testid="transaction-modal-complete-trailing-btn"
         >
-          {completeBtnLabel || t('transaction.modal.complete.trailingButton')}
+          {completeBtnLabel ||
+            (final
+              ? t('transaction.modal.complete.trailingButton')
+              : t('transaction.modal.complete.stepTrailingButton'))}
         </Button>
       )
     }
@@ -236,17 +246,33 @@ export const TransactionModal = ({
         {t('transaction.modal.request.trailingButton')}
       </Button>
     )
-  }, [stage, t, completeBtnLabel, onSuccess, onDismiss, error, tryTransaction])
+  }, [
+    stage,
+    t,
+    completeBtnLabel,
+    onSuccess,
+    currentStep,
+    stepCount,
+    onDismiss,
+    error,
+    tryTransaction,
+  ])
 
   const title = useMemo(() => {
     if (stage === 'complete') {
+      if (stepCount > 1) {
+        return (
+          completeTitle ||
+          t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
+        )
+      }
       return completeTitle || t('transaction.modal.complete.title')
     }
     if (stage === 'confirm') {
       return t('transaction.modal.confirm.title')
     }
     return t('transaction.modal.request.title')
-  }, [completeTitle, stage, t])
+  }, [completeTitle, currentStep, stage, stepCount, t])
 
   useEffect(() => {
     if (open) {
@@ -266,6 +292,13 @@ export const TransactionModal = ({
     }
   }, [stage, tryTransaction])
 
+  const stepStatus = useMemo(() => {
+    if (stage === 'complete') {
+      return 'completed'
+    }
+    return 'inProgress'
+  }, [stage])
+
   return (
     <Dialog
       title={title}
@@ -279,6 +312,9 @@ export const TransactionModal = ({
       trailing={TrailingButton}
       open={open}
       onDismiss={onDismiss}
+      currentStep={currentStep}
+      stepCount={stepCount > 1 ? stepCount : undefined}
+      stepStatus={stepStatus}
     >
       <InnerDialog data-testid="transaction-modal-inner">
         {error ? (

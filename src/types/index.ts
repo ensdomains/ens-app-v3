@@ -12,8 +12,8 @@ export type TransactionDisplayItem = {
 }
 
 export type TransactionSubmission = {
-  generateTx: () => Promise<ContractTransaction>
-  onDismiss?: () => void
+  generateTx: () => Promise<ContractTransaction | undefined>
+  onDismiss?: (success?: boolean) => void
   onSuccess?: () => void
   dismissBtnLabel?: string
   completeBtnLabel?: string

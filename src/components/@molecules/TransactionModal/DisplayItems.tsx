@@ -18,8 +18,8 @@ const Container = styled.div(
   `,
 )
 
-const DisplayItemContainer = styled.div(
-  ({ theme }) => css`
+const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
+  ({ theme, $shrink, $fade }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -30,6 +30,20 @@ const DisplayItemContainer = styled.div(
     min-height: ${theme.space['14']};
     padding: ${theme.space['2']} ${theme.space['5']};
     width: ${theme.space.full};
+
+    ${$shrink &&
+    css`
+      min-height: ${theme.space['12']};
+      div {
+        margin-top: 0;
+        align-self: center;
+      }
+    `}
+    ${$fade &&
+    css`
+      opacity: 0.5;
+      background-color: ${theme.colors.backgroundTertiary};
+    `}
   `,
 )
 
@@ -145,6 +159,25 @@ const DisplayItemValue = ({
   return <NormalValueTypography weight="bold">{value}</NormalValueTypography>
 }
 
+export const DisplayItem = ({
+  label,
+  value,
+  type,
+  shrink,
+  fade,
+}: TransactionDisplayItem & { shrink?: boolean; fade?: boolean }) => {
+  return (
+    <DisplayItemContainer
+      $fade={fade}
+      $shrink={shrink}
+      key={`${label}-${value}`}
+    >
+      <DisplayItemLabel>{label}</DisplayItemLabel>
+      <DisplayItemValue {...{ value, type }} />
+    </DisplayItemContainer>
+  )
+}
+
 export const DisplayItems = ({
   displayItems,
 }: {
@@ -152,14 +185,5 @@ export const DisplayItems = ({
 }) => {
   if (!displayItems || !displayItems.length) return null
 
-  return (
-    <Container>
-      {displayItems.map(({ label, value, type }) => (
-        <DisplayItemContainer key={`${label}-${value}`}>
-          <DisplayItemLabel>{label}</DisplayItemLabel>
-          <DisplayItemValue {...{ value, type }} />
-        </DisplayItemContainer>
-      ))}
-    </Container>
-  )
+  return <Container>{displayItems.map(DisplayItem)}</Container>
 }
