@@ -16,6 +16,7 @@ import { ReactElement, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 import { useTranslation } from 'react-i18next'
+import { ENS } from '@ensdomains/ensjs'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -87,6 +88,105 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
+export const calculateSelfAbilities = (
+  address: string | undefined,
+  ownerData: Awaited<ReturnType<ENS['getOwner']>>,
+) => {
+  const abilities = {
+    canEdit: false,
+    canSend: false,
+    canChangeOwner: false,
+    canChangeRegistrant: false,
+  }
+  if (!address || !ownerData) return abilities
+  if (
+    ownerData.registrant === address ||
+    (!ownerData.registrant && ownerData.owner === address)
+  ) {
+    abilities.canSend = true
+    abilities.canChangeOwner = true
+    abilities.canChangeRegistrant = true
+  }
+  if (ownerData.owner === address) {
+    abilities.canEdit = true
+    abilities.canChangeOwner = true
+  }
+  return abilities
+}
+
+export const Details = ({
+  expiryDate,
+  ownerData,
+  breakpoints,
+  normalisedName,
+  chainId,
+  selfAbilities,
+}: {
+  expiryDate: Date | null | undefined
+  ownerData: Awaited<ReturnType<ENS['getOwner']>>
+  breakpoints: ReturnType<typeof useBreakpoint>
+  normalisedName: string
+  chainId: number
+  selfAbilities: ReturnType<typeof calculateSelfAbilities>
+}) => {
+  const { t } = useTranslation('profile')
+
+  return (
+    <DetailsContainer>
+      {breakpoints.md ? (
+        <NFTWithPlaceholder
+          name={normalisedName}
+          network={chainId}
+          style={{ width: '270px', height: '270px' }}
+        />
+      ) : (
+        <NameSnippetMobile
+          expiryDate={expiryDate}
+          name={normalisedName}
+          network={chainId}
+          canSend={selfAbilities.canSend}
+        />
+      )}
+      <OwnerButtons>
+        {ownerData?.owner && (
+          <OwnerButton
+            address={ownerData.owner}
+            network={chainId}
+            label={
+              ownerData.ownershipLevel === 'nameWrapper'
+                ? t('name.owner', { ns: 'common' })
+                : t('name.controller', { ns: 'common' })
+            }
+            type={breakpoints.lg ? 'dropdown' : 'dialog'}
+            description={
+              ownerData.ownershipLevel === 'nameWrapper'
+                ? t('details.descriptions.owner')
+                : t('details.descriptions.controller')
+            }
+            canTransfer={selfAbilities.canChangeOwner}
+          />
+        )}
+        {ownerData?.registrant && (
+          <OwnerButton
+            address={ownerData.registrant}
+            network={chainId}
+            label={t('name.registrant', { ns: 'common' })}
+            type={breakpoints.lg ? 'dropdown' : 'dialog'}
+            description={t('details.descriptions.registrant')}
+            canTransfer={selfAbilities.canChangeRegistrant}
+          />
+        )}
+      </OwnerButtons>
+      {breakpoints.md && (
+        <DetailSnippet
+          canSend={selfAbilities.canSend}
+          expiryDate={expiryDate}
+        />
+      )}
+    </DetailsContainer>
+  )
+}
+
 export default function Page() {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
@@ -105,28 +205,10 @@ export default function Page() {
     isLoading: detailsLoading,
   } = useNameDetails(name)
 
-  const selfAbilities = useMemo(() => {
-    const abilities = {
-      canEdit: false,
-      canSend: false,
-      canChangeOwner: false,
-      canChangeRegistrant: false,
-    }
-    if (!address || !ownerData) return abilities
-    if (
-      ownerData.registrant === address ||
-      (!ownerData.registrant && ownerData.owner === address)
-    ) {
-      abilities.canSend = true
-      abilities.canChangeOwner = true
-      abilities.canChangeRegistrant = true
-    }
-    if (ownerData.owner === address) {
-      abilities.canEdit = true
-      abilities.canChangeOwner = true
-    }
-    return abilities
-  }, [address, ownerData])
+  const selfAbilities = useMemo(
+    () => calculateSelfAbilities(address, ownerData),
+    [address, ownerData],
+  )
 
   const isLoading = detailsLoading || accountLoading
 
@@ -140,58 +222,16 @@ export default function Page() {
     >
       {{
         leading: (
-          <DetailsContainer>
-            {breakpoints.md ? (
-              <NFTWithPlaceholder
-                name={normalisedName}
-                network={chainId}
-                style={{ width: '270px', height: '270px' }}
-              />
-            ) : (
-              <NameSnippetMobile
-                expiryDate={expiryDate}
-                name={normalisedName}
-                network={chainId}
-                canSend={selfAbilities.canSend}
-              />
-            )}
-            <OwnerButtons>
-              {ownerData?.owner && (
-                <OwnerButton
-                  address={ownerData.owner}
-                  network={chainId}
-                  label={
-                    ownerData.ownershipLevel === 'nameWrapper'
-                      ? t('name.owner', { ns: 'common' })
-                      : t('name.controller', { ns: 'common' })
-                  }
-                  type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                  description={
-                    ownerData.ownershipLevel === 'nameWrapper'
-                      ? t('details.descriptions.owner')
-                      : t('details.descriptions.controller')
-                  }
-                  canTransfer={selfAbilities.canChangeOwner}
-                />
-              )}
-              {ownerData?.registrant && (
-                <OwnerButton
-                  address={ownerData.registrant}
-                  network={chainId}
-                  label={t('name.registrant', { ns: 'common' })}
-                  type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                  description={t('details.descriptions.registrant')}
-                  canTransfer={selfAbilities.canChangeRegistrant}
-                />
-              )}
-            </OwnerButtons>
-            {breakpoints.md && (
-              <DetailSnippet
-                canSend={selfAbilities.canSend}
-                expiryDate={expiryDate}
-              />
-            )}
-          </DetailsContainer>
+          <Details
+            {...{
+              expiryDate,
+              ownerData,
+              breakpoints,
+              normalisedName,
+              chainId,
+              selfAbilities,
+            }}
+          />
         ),
         trailing: {
           records: (

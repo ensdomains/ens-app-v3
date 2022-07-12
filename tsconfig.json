@@ -60,6 +60,7 @@
     "custom-test-env.js",
     "e2e/**/*",
     "**/*.ignore.ts",
-    "**/*.ignore.tsx"
+    "**/*.ignore.tsx",
+    "src/**/*.test.ts"
   ]
 }
