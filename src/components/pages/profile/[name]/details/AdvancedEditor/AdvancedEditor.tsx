@@ -1,9 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
-import { useForm, useWatch } from 'react-hook-form'
-import { mq, Modal, Input, Textarea, Button, PlusSVG } from '@ensdomains/thorin'
-import { Banner } from '@app/components/@atoms/Banner/Banner'
+import { useForm } from 'react-hook-form'
+import { mq, Modal, Input, Button, PlusSVG } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { SelectableInput } from '@app/components/@molecules/SelectableInput/SelectableInput'
@@ -11,12 +10,9 @@ import { useProfile } from '@app/hooks/useProfile'
 import { validateCryptoAddress } from '@app/utils/validate'
 import { convertProfileToFormObject, formSafeKey } from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import addressOptions from './addressOptions'
-import accountsOptions from './accountsOptions'
-import websiteOptions from './websiteOptions'
-import otherOptions from './otherOptions'
-import ScrollIndicatorContainer from '../ScrollIndicatorContainer'
-import AvatarButton from './AvatarButton'
+import ScrollIndicatorContainer from '@app/components/pages/profile/ScrollIndicatorContainer'
+import addressOptions from '../../../ProfileEditor/addressOptions'
+import { textOptions } from './textOptions'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -34,17 +30,6 @@ const Container = styled.form(({ theme }) => [
     max-width: 600px;
   `,
 ])
-
-const AvatarWrapper = styled.div(
-  () => css`
-    position: absolute;
-    left: 24px;
-    bottom: 0;
-    height: 90px;
-    width: 90px;
-    transform: translateY(50%);
-  `,
-)
 
 const NameContainer = styled.div(({ theme }) => [
   css`
@@ -173,27 +158,23 @@ const FooterContainer = styled.div(
   `,
 )
 
-export type ProfileEditorType = {
-  avatar?: string
-  banner?: string
-  website?: string
-  general: {
-    [key: string]: string
-  }
-  accounts: {
+type AdvancedEditorType = {
+  text: {
     [key: string]: string
   }
   address: {
     [key: string]: string
   }
   other: {
-    [key: string]: string
+    contentHash?: string
+    publicKey?: string
+    abi?: string
   }
 }
 
-type TabType = 'general' | 'accounts' | 'address' | 'website' | 'other'
+type TabType = 'text' | 'address' | 'other'
 
-type ExpandableRecordsGroup = 'accounts' | 'address' | 'other'
+type ExpandableRecordsGroup = 'text' | 'address'
 type ExpandableRecordsState = {
   [key in ExpandableRecordsGroup]: string[]
 }
@@ -204,7 +185,7 @@ type Props = {
   onDismiss?: () => void
 }
 
-const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
+const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const isDesktop = breakpoints.sm
@@ -216,16 +197,13 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
     setValue,
     getValues,
     getFieldState,
-    control,
     handleSubmit,
-  } = useForm<ProfileEditorType>({
+  } = useForm<AdvancedEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
     defaultValues: {
-      general: {},
-      accounts: {},
+      text: {},
       address: {},
-      website: '',
       other: {},
     },
   })
@@ -237,22 +215,21 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   const [existingRecords, setExistingRecords] =
     useState<ExpandableRecordsState>({
       address: [],
-      other: [],
-      accounts: [],
+      text: [],
     })
 
   const {
-    existingKeys: existingAccountKeys,
-    newKeys: newAccountKeys,
-    addKey: addAccountKey,
-    removeKey: removeAccountKey,
+    existingKeys: existingTextKeys,
+    newKeys: newTextKeys,
+    addKey: addTextKey,
+    removeKey: removeTextKey,
     changeKey: changeAccountKey,
-    hasOptions: hasAccountOptions,
-    getOptions: getAccountOptions,
-  } = useExpandableRecordsGroup<ProfileEditorType>({
-    group: 'accounts',
-    existingKeys: existingRecords.accounts,
-    options: accountsOptions,
+    hasOptions: hasTextOptions,
+    getOptions: getTextOptions,
+  } = useExpandableRecordsGroup<AdvancedEditorType>({
+    group: 'text',
+    existingKeys: existingRecords.text,
+    options: textOptions,
     setValue,
     getValues,
   })
@@ -265,7 +242,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
     changeKey: changeAddressKey,
     hasOptions: hasAddressOptions,
     getOptions: getAddressOptions,
-  } = useExpandableRecordsGroup<ProfileEditorType>({
+  } = useExpandableRecordsGroup<AdvancedEditorType>({
     group: 'address',
     existingKeys: existingRecords.address,
     options: addressOptions,
@@ -273,42 +250,33 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
     getValues,
   })
 
-  const {
-    existingKeys: existingOtherKeys,
-    newKeys: newOtherKeys,
-    addKey: addOtherKey,
-    removeKey: removeOtherKey,
-    changeKey: changeOtherKey,
-    getOptions: getOtherOptions,
-  } = useExpandableRecordsGroup<ProfileEditorType>({
-    group: 'other',
-    existingKeys: existingRecords.other,
-    options: otherOptions,
-    setValue,
-    getValues,
-  })
-
   const { profile, loading } = useProfile(name, name !== '')
   useEffect(() => {
     if (profile) {
-      console.log(profile)
-
-      const defaultValues = convertProfileToFormObject(profile)
+      const formObject = convertProfileToFormObject(profile)
+      const defaultValues = {
+        text: {
+          avatar: formObject.avatar,
+          banner: formObject.banner,
+          ...formObject.accounts,
+          ...formObject.other,
+        },
+        address: formObject.address,
+        other: {
+          contentHash: '',
+          publicKey: '',
+          abi: '',
+        },
+      }
       reset(defaultValues)
       const newExistingRecords: ExpandableRecordsState = {
         address: Object.keys(defaultValues.address) || [],
-        other: Object.keys(defaultValues.other) || [],
-        accounts: Object.keys(defaultValues.accounts) || [],
+        text: Object.keys(defaultValues.text) || [],
       }
       setExistingRecords(newExistingRecords)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile])
-
-  const avatar = useWatch({
-    control,
-    name: 'avatar',
-  })
 
   const ref = useRef<HTMLDivElement>(null)
   const targetRef = useRef<HTMLFormElement>(null)
@@ -317,31 +285,17 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
     <>
       <Modal open={open} onDismiss={onDismiss}>
         <Container
-          data-testid="profile-editor"
           onSubmit={handleSubmit((data: any) => console.log(data))}
           ref={targetRef}
         >
-          <Banner>
-            <AvatarWrapper>
-              <AvatarButton src={avatar} />
-            </AvatarWrapper>
-          </Banner>
-          <NameContainer>{name}</NameContainer>
+          <NameContainer>{name}&apos; records</NameContainer>
           <ContentContainer>
             <TabButtonsContainer>
               <TabButton
-                $selected={tab === 'general'}
-                $hasError={!!getFieldState('general', formState).error}
-                $isDirty={getFieldState('general').isDirty}
-                onClick={handleTabClick('general')}
-              >
-                {t('profileEditor.tabs.general.label')}
-              </TabButton>
-              <TabButton
-                $selected={tab === 'accounts'}
-                $hasError={!!getFieldState('accounts', formState).error}
-                $isDirty={getFieldState('accounts').isDirty}
-                onClick={handleTabClick('accounts')}
+                $selected={tab === 'text'}
+                $hasError={!!getFieldState('text', formState).error}
+                $isDirty={getFieldState('text').isDirty}
+                onClick={handleTabClick('text')}
               >
                 {t('profileEditor.tabs.accounts.label')}
               </TabButton>
@@ -352,14 +306,6 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                 onClick={handleTabClick('address')}
               >
                 {t('profileEditor.tabs.address.label')}
-              </TabButton>
-              <TabButton
-                $selected={tab === 'website'}
-                $hasError={!!getFieldState('website', formState).error}
-                $isDirty={getFieldState('website').isDirty}
-                onClick={handleTabClick('website')}
-              >
-                {t('profileEditor.tabs.contentHash.label')}
               </TabButton>
               <TabButton
                 $selected={tab === 'other'}
@@ -375,88 +321,30 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                 <TabContentContainer>
                   {
                     {
-                      general: (
+                      text: (
                         <>
-                          <Input
-                            label={t('profileEditor.tabs.general.name.label')}
-                            placeholder={t(
-                              'profileEditor.tabs.general.name.placeholder',
-                            )}
-                            showDot
-                            validated={
-                              getFieldState('general.name', formState).isDirty
-                            }
-                            autoComplete="off"
-                            {...register('general.name')}
-                          />
-                          <Input
-                            label={t('profileEditor.tabs.general.url.label')}
-                            autoComplete="off"
-                            placeholder={t(
-                              'profileEditor.tabs.general.url.placeholder',
-                            )}
-                            showDot
-                            validated={
-                              getFieldState('general.url', formState).isDirty
-                            }
-                            {...register('general.url')}
-                          />
-                          <Input
-                            label={t(
-                              'profileEditor.tabs.general.location.label',
-                            )}
-                            autoComplete="off"
-                            placeholder={t(
-                              'profileEditor.tabs.general.location.placeholder',
-                            )}
-                            showDot
-                            validated={
-                              getFieldState('general.location', formState)
-                                .isDirty
-                            }
-                            {...register('general.location')}
-                          />
-                          <Textarea
-                            label={t(
-                              'profileEditor.tabs.general.description.label',
-                            )}
-                            autoComplete="off"
-                            placeholder={t(
-                              'profileEditor.tabs.general.description.placeholder',
-                            )}
-                            showDot
-                            validated={
-                              getFieldState('general.description', formState)
-                                .isDirty
-                            }
-                            {...register('general.description')}
-                          />
-                        </>
-                      ),
-                      accounts: (
-                        <>
-                          {existingAccountKeys.map((account) => (
-                            <SelectableInput
-                              key={account}
-                              selectProps={{
-                                value: formSafeKey(account),
-                                options: accountsOptions,
-                              }}
-                              label={account}
-                              readOnly
-                              {...register(
-                                `accounts.${formSafeKey(account)}` as any,
-                                {},
-                              )}
-                              onDelete={() => removeAccountKey(account)}
-                            />
-                          ))}
-                          {newAccountKeys.map((key) => (
+                          {existingTextKeys.map((key) => (
                             <SelectableInput
                               key={key}
                               selectProps={{
                                 value: formSafeKey(key),
-                                options: getAccountOptions(key),
+                                options: getTextOptions(key),
+                              }}
+                              label={key}
+                              readOnly
+                              {...register(
+                                `accounts.${formSafeKey(key)}` as any,
+                                {},
+                              )}
+                              onDelete={() => removeTextKey(key)}
+                            />
+                          ))}
+                          {newTextKeys.map((key) => (
+                            <SelectableInput
+                              key={key}
+                              selectProps={{
+                                value: formSafeKey(key),
+                                options: getTextOptions(key),
                                 onChange: (e) =>
                                   changeAccountKey(key, e.target.value),
                                 portal: {
@@ -468,13 +356,13 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                               }}
                               error={
                                 getFieldState(
-                                  `accounts.${formSafeKey(key)}`,
+                                  `text.${formSafeKey(key)}`,
                                   formState,
                                 ).error?.message
                               }
                               hasChanges={
                                 getFieldState(
-                                  `accounts.${formSafeKey(key)}`,
+                                  `text.${formSafeKey(key)}`,
                                   formState,
                                 ).isDirty
                               }
@@ -482,19 +370,17 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                               autoComplete="off"
                               autoCorrect="off"
                               spellCheck={false}
-                              onDelete={() =>
-                                removeAccountKey(formSafeKey(key))
-                              }
-                              {...register(`accounts.${formSafeKey(key)}`, {})}
+                              onDelete={() => removeTextKey(formSafeKey(key))}
+                              {...register(`text.${formSafeKey(key)}`, {})}
                             />
                           ))}
-                          {hasAccountOptions && (
+                          {hasTextOptions && (
                             <Button
                               outlined
                               prefix={<PlusSVG />}
                               variant="transparent"
                               shadowless
-                              onClick={() => addAccountKey()}
+                              onClick={() => addTextKey()}
                             >
                               {t('profileEditor.tabs.accounts.addAccount')}
                             </Button>
@@ -564,89 +450,40 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                           )}
                         </>
                       ),
-                      website: (
-                        <SelectableInput
-                          selectProps={{
-                            value: 'ipfs',
-                            options: websiteOptions,
-                            portal: {
-                              appendTo: targetRef.current,
-                              listenTo: ref.current,
-                            },
-                            autoDismiss: true,
-                            direction: isDesktop ? 'down' : 'up',
-                          }}
-                          label="contentHash"
-                          deletable={false}
-                          {...register('website', {})}
-                        />
-                      ),
                       other: (
                         <>
-                          {existingOtherKeys.map((key) => (
-                            <SelectableInput
-                              key={key}
-                              selectProps={{
-                                value: formSafeKey(key),
-                                options: getOtherOptions(key),
-                              }}
-                              label={key}
-                              readOnly
-                              {...register(`other.${formSafeKey(key)}`, {})}
-                              onDelete={() => removeOtherKey(key)}
-                            />
-                          ))}
-                          {newOtherKeys.map((key) => (
-                            <SelectableInput
-                              key={key}
-                              selectProps={{
-                                value: formSafeKey(key),
-                                options: getOtherOptions(key),
-                                createable: true,
-                                inputSize: {
-                                  min: 15,
-                                  max: 20,
-                                },
-                                onChange: (e) => {
-                                  console.log('onChange', key, e.target.value)
-
-                                  changeOtherKey(key, e.target.value)
-                                },
-                                onCreate: (value) => {
-                                  console.log('create', key, value)
-                                  changeOtherKey(key, value)
-                                },
-                                portal: {
-                                  appendTo: targetRef.current,
-                                  listenTo: ref.current,
-                                },
-                                autoDismiss: true,
-                                direction: isDesktop ? 'down' : 'up',
-                              }}
-                              error={
-                                getFieldState(`other.${key}`, formState).error
-                                  ?.message
-                              }
-                              hasChanges={
-                                getFieldState(`other.${key}`, formState).isDirty
-                              }
-                              label={key}
-                              autoComplete="off"
-                              autoCorrect="off"
-                              spellCheck={false}
-                              onDelete={() => removeOtherKey(key)}
-                              {...register(`other.${formSafeKey(key)}`, {})}
-                            />
-                          ))}
-                          <Button
-                            outlined
-                            prefix={<PlusSVG />}
-                            variant="transparent"
-                            shadowless
-                            onClick={() => addOtherKey()}
-                          >
-                            {t('profileEditor.tabs.other.addRecord')}
-                          </Button>
+                          <Input
+                            label="Content Hash"
+                            placeholder="e.g. ips"
+                            showDot
+                            validated={
+                              getFieldState('other.contentHash', formState)
+                                .isDirty
+                            }
+                            autoComplete="off"
+                            {...register('other.contentHash', {})}
+                          />
+                          <Input
+                            label="Public Key"
+                            placeholder="e.g. ips"
+                            showDot
+                            validated={
+                              getFieldState('other.publicKey', formState)
+                                .isDirty
+                            }
+                            autoComplete="off"
+                            {...register('other.publicKey', {})}
+                          />
+                          <Input
+                            label="ABI"
+                            placeholder="e.g. ips"
+                            showDot
+                            validated={
+                              getFieldState('other.abi', formState).isDirty
+                            }
+                            autoComplete="off"
+                            {...register('other.abi', {})}
+                          />
                         </>
                       ),
                     }[tab]
@@ -669,4 +506,4 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   )
 }
 
-export default ProfileEditor
+export default AdvancedEditor

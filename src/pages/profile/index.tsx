@@ -160,7 +160,12 @@ export default function Page() {
               />
               {isSelf && (
                 <SelfButtons>
-                  <Button shadowless variant="transparent" size="small">
+                  <Button
+                    shadowless
+                    variant="transparent"
+                    size="small"
+                    onClick={() => setShowEditor(true)}
+                  >
                     {t('editProfile')}
                   </Button>
                   <Button
@@ -192,11 +197,13 @@ export default function Page() {
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
+              {/* {isSelf && ( */}
               <ProfileEditor
                 name={name}
                 open={showEditor}
                 onDismiss={handleDismissEditor}
               />
+              {/* )} */}
             </DetailsWrapper>
           ),
         }}

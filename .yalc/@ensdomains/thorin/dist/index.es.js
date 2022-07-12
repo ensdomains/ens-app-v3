@@ -1848,6 +1848,87 @@ const Heading = React.forwardRef((_q, ref) => {
   }), children);
 });
 Heading.displayName = "Heading";
+const throttle = (callback) => {
+  let requestId = null;
+  let lastArgs;
+  const throttled = (...args) => {
+    lastArgs = args;
+    if (requestId)
+      return;
+    requestId = requestAnimationFrame(() => {
+      requestId = null;
+      callback(...lastArgs);
+    });
+  };
+  throttled.cancel = () => {
+    if (requestId)
+      cancelAnimationFrame(requestId);
+    requestId = null;
+  };
+  return throttled;
+};
+const MenuPortal = ({
+  appendTo,
+  control,
+  listenTo,
+  isListening = false,
+  children
+}) => {
+  const [placement, setPlacement] = React.useState({});
+  const calculatePlacement = React.useMemo(() => throttle(() => {
+    if (!appendTo || !control)
+      return;
+    const controlRect = control.getBoundingClientRect();
+    const containerRect = appendTo.getBoundingClientRect();
+    const top = controlRect.top - containerRect.top;
+    const left = controlRect.left - containerRect.left;
+    setPlacement({
+      position: "absolute",
+      top: `${top}px`,
+      left: `${left}px`,
+      width: `${controlRect.width}px`,
+      height: `${controlRect.height}px`
+    });
+  }), [control, appendTo]);
+  React.useEffect(() => {
+    return () => {
+      calculatePlacement.cancel();
+    };
+  }, []);
+  React.useEffect(() => {
+    calculatePlacement();
+  }, [isListening]);
+  React.useEffect(() => {
+    if (listenTo && isListening)
+      listenTo == null ? void 0 : listenTo.addEventListener("scroll", calculatePlacement);
+    return () => {
+      listenTo == null ? void 0 : listenTo.removeEventListener("scroll", calculatePlacement);
+    };
+  }, [listenTo, isListening]);
+  if (!appendTo || !control)
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, children);
+  const wrapper = /* @__PURE__ */ React.createElement("div", {
+    style: placement
+  }, children);
+  return ReactDOM.createPortal(wrapper, appendTo);
+};
+const MenuPlacement = ({
+  appendTo,
+  control,
+  listenTo,
+  isListening = true,
+  children
+}) => {
+  if (!appendTo || !control)
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, children);
+  return /* @__PURE__ */ React.createElement(MenuPortal, {
+    appendTo,
+    control,
+    isListening,
+    listenTo
+  }, children);
+};
+MenuPlacement.displayName = "MenuPlacement";
 const Portal = ({
   children,
   className,
@@ -3308,10 +3389,12 @@ const Input$1 = React.forwardRef((_I, ref) => {
     name,
     placeholder,
     prefix,
+    prefixAs,
     readOnly,
     required,
     spellCheck,
     suffix,
+    suffixAs,
     tabIndex,
     type = "text",
     units,
@@ -3343,10 +3426,12 @@ const Input$1 = React.forwardRef((_I, ref) => {
     "name",
     "placeholder",
     "prefix",
+    "prefixAs",
     "readOnly",
     "required",
     "spellCheck",
     "suffix",
+    "suffixAs",
     "tabIndex",
     "type",
     "units",
@@ -3409,7 +3494,8 @@ const Input$1 = React.forwardRef((_I, ref) => {
     $size: size,
     $userStyles: parentStyles
   }), prefix && /* @__PURE__ */ React.createElement(Prefix, __spreadProps(__spreadValues({
-    "aria-hidden": "true"
+    "aria-hidden": "true",
+    as: prefixAs
   }, ids == null ? void 0 : ids.label), {
     $padding: prefixPadding
   }), prefix), /* @__PURE__ */ React.createElement(InputContainer, null, /* @__PURE__ */ React.createElement(InputComponent, __spreadProps(__spreadValues({
@@ -3448,7 +3534,8 @@ const Input$1 = React.forwardRef((_I, ref) => {
       visibility: "hidden"
     }
   }, state2.ghostValue, " "), /* @__PURE__ */ React.createElement(Units, null, units))), suffix && /* @__PURE__ */ React.createElement(Suffix, __spreadProps(__spreadValues({
-    "aria-hidden": "true"
+    "aria-hidden": "true",
+    as: suffixAs
   }, ids == null ? void 0 : ids.label), {
     $padding: suffixPadding
   }), suffix)));
@@ -4107,6 +4194,20 @@ function uniqueId(prefix) {
   return toString(prefix) + id2;
 }
 var uniqueId_1 = uniqueId;
+const useIntersectionalObserver = (ref, callback, active = false, options = {}) => {
+  React.useEffect(() => {
+    let observer;
+    const target = ref.current;
+    if (target && active) {
+      observer = new IntersectionObserver((entries) => callback && callback(entries[0].isIntersecting), options);
+      observer.observe(target);
+    }
+    return () => {
+      if (observer && target)
+        observer.unobserve(target);
+    };
+  }, [ref, active]);
+};
 const CREATE_OPTION_VALUE = "CREATE_OPTION_VALUE";
 const SelectContainer = styled.div(({
   theme,
@@ -4144,6 +4245,7 @@ const SelectActionContainer = styled.div(() => css`
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
   `);
 const OptionElementContainer = styled.div(({
   theme,
@@ -4229,7 +4331,7 @@ const SelectOptionContainer = styled.div(({
   $direction,
   $rows
 }) => css`
-    display: block;
+    display: ${$state === "exited" ? "none" : "block"};
     position: absolute;
     visibility: hidden;
     opacity: 0;
@@ -4439,7 +4541,9 @@ const Select = React.forwardRef((_U, ref) => {
     value: _value,
     size = "medium",
     padding: paddingProp,
-    inputSize: inputSizeProps
+    inputSize: inputSizeProps,
+    portal,
+    autoDismiss = false
   } = _V, props = __objRest(_V, [
     "description",
     "disabled",
@@ -4468,7 +4572,9 @@ const Select = React.forwardRef((_U, ref) => {
     "value",
     "size",
     "padding",
-    "inputSize"
+    "inputSize",
+    "portal",
+    "autoDismiss"
   ]);
   const defaultRef = React.useRef(null);
   const inputRef = ref || defaultRef;
@@ -4558,7 +4664,7 @@ const Select = React.forwardRef((_U, ref) => {
     } while (visibleOptions[nextIndex]);
   };
   const selectHighlightedIndex = (event) => {
-    const option = options[highlightedIndex];
+    const option = visibleOptions[highlightedIndex];
     option && changeSelectedOption(option, event);
     handleReset();
   };
@@ -4573,12 +4679,10 @@ const Select = React.forwardRef((_U, ref) => {
       enter: 0,
       exit: 300
     },
-    preEnter: true,
-    mountOnEnter: true,
-    unmountOnExit: true
+    preEnter: true
   });
   useEffect(() => {
-    toggle(isOpen || false);
+    toggle(isOpen);
   }, [isOpen]);
   useEffect(() => {
     if (!menuOpen && state2 === "unmounted")
@@ -4595,7 +4699,8 @@ const Select = React.forwardRef((_U, ref) => {
   const handleSelectContainerClick = () => {
     if (isAutocomplete && !menuOpen)
       setMenuOpen(true);
-    !isAutocomplete && setMenuOpen(!menuOpen);
+    if (!isAutocomplete)
+      setMenuOpen(!menuOpen);
   };
   const handleKeydown = (e) => {
     if (!menuOpen) {
@@ -4612,6 +4717,7 @@ const Select = React.forwardRef((_U, ref) => {
     else if (e.key === ReservedKeys.ArrowDown)
       incrementHighlightIndex(direction === "up" ? "previous" : "next");
     if (e.key === ReservedKeys.Enter) {
+      console.log("enter", highlightedIndex, visibleOptions[highlightedIndex]);
       selectHighlightedIndex(e);
       setMenuOpen(false);
     }
@@ -4642,6 +4748,9 @@ const Select = React.forwardRef((_U, ref) => {
       changeHighlightIndex(index2);
   };
   useDocumentEvent(displayRef, "click", () => setMenuOpen(false), menuOpen);
+  useIntersectionalObserver(displayRef, (intersecting) => !intersecting && setMenuOpen(false), autoDismiss, {
+    threshold: 1
+  });
   const OptionElement = ({
     option
   }) => option ? /* @__PURE__ */ React.createElement(React.Fragment, null, option.prefix && /* @__PURE__ */ React.createElement("div", null, option.prefix), option.node ? option.node : option.label || option.value) : null;
@@ -4730,7 +4839,12 @@ const Select = React.forwardRef((_U, ref) => {
       var _a;
       searchInputRef.current ? searchInputRef.current.focus() : (_a = displayRef.current) == null ? void 0 : _a.focus();
     }
-  }))), state2 !== "unmounted" && /* @__PURE__ */ React.createElement(SelectOptionContainer, {
+  }))), /* @__PURE__ */ React.createElement(MenuPlacement, {
+    appendTo: portal == null ? void 0 : portal.appendTo,
+    control: displayRef.current,
+    isListening: state2 !== "exited",
+    listenTo: portal == null ? void 0 : portal.listenTo
+  }, /* @__PURE__ */ React.createElement(SelectOptionContainer, {
     $direction: direction,
     $rows: rows,
     $state: state2,
@@ -4754,7 +4868,7 @@ const Select = React.forwardRef((_U, ref) => {
     onMouseOver: handleOptionMouseover
   }), /* @__PURE__ */ React.createElement(OptionElement, {
     option
-  })))))));
+  }))))))));
 });
 Select.displayName = "Select";
 const Container$2 = styled.div(({
@@ -6787,6 +6901,7 @@ var index = /* @__PURE__ */ Object.freeze({
   Field,
   FileInput,
   Heading,
+  MenuPlacement,
   Portal,
   Skeleton,
   Spinner,
@@ -6993,4 +7108,4 @@ const GlobalStyle = createGlobalStyle(({
       color: ${theme.colors.inherit};
     }
   `);
-export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };
+export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, MenuPlacement, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };

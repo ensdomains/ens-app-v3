@@ -18,6 +18,7 @@ export const validateCryptoAddress =
     console.log(coinName)
     switch (coinName) {
       case 'eth':
+      case 'bnb':
         return isAddress(address) ? true : 'Invalid address format'
       default:
         return true

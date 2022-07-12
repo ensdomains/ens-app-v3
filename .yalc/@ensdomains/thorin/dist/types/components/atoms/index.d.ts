@@ -6,6 +6,7 @@ export { DynamicPopover } from './DynamicPopover';
 export { Field } from './Field';
 export { FileInput } from './FileInput';
 export { Heading } from './Heading';
+export { MenuPlacement } from './MenuPlacement';
 export { Portal } from './Portal';
 export { Skeleton } from './Skeleton';
 export { Spinner } from './Spinner';

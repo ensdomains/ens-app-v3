@@ -1,6 +1,7 @@
 import * as React from 'react';
 import { FieldBaseProps } from '../../atoms/Field';
 import { Space } from '@/src/tokens';
+import { MenuPlacement } from '../../atoms/MenuPlacement/MenuPlacement';
 declare type Size = 'small' | 'medium';
 declare type NativeSelectProps = React.InputHTMLAttributes<HTMLInputElement>;
 export declare type SelectOptionProps = {
@@ -12,6 +13,7 @@ export declare type SelectOptionProps = {
 };
 declare type Direction = 'up' | 'down';
 declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+declare type Portal = Omit<React.ComponentProps<typeof MenuPlacement>, 'control' | 'children'>;
 export declare type SelectProps = {
     /** The id attribute of div element. */
     id?: NativeSelectProps['id'];
@@ -59,6 +61,13 @@ export declare type SelectProps = {
         max?: number;
         min?: number;
     };
+    /** Menu portaling properties */
+    portal?: {
+        appendTo: Portal['appendTo'];
+        listenTo: Portal['listenTo'];
+    };
+    /** If true, will close menu if select element is not 100% visible on screen. This is useful for when select is using portal. */
+    autoDismiss?: boolean;
 } & FieldBaseProps & Omit<NativeDivProps, 'children' | 'id' | 'onChange' | 'tabIndex' | 'onFocus' | 'onBlur' | 'aria-controls' | 'aria-expanded' | 'role' | 'aria-haspopup' | 'aria-invalid' | 'onClick' | 'onKeyDown'>;
 export declare const Select: React.ForwardRefExoticComponent<{
     /** The id attribute of div element. */
@@ -107,5 +116,12 @@ export declare const Select: React.ForwardRefExoticComponent<{
         max?: number | undefined;
         min?: number | undefined;
     } | undefined;
+    /** Menu portaling properties */
+    portal?: {
+        appendTo: Portal['appendTo'];
+        listenTo: Portal['listenTo'];
+    } | undefined;
+    /** If true, will close menu if select element is not 100% visible on screen. This is useful for when select is using portal. */
+    autoDismiss?: boolean | undefined;
 } & FieldBaseProps & Omit<NativeDivProps, "id" | "role" | "tabIndex" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-invalid" | "children" | "onFocus" | "onBlur" | "onChange" | "onKeyDown" | "onClick"> & React.RefAttributes<HTMLInputElement>>;
 export {};

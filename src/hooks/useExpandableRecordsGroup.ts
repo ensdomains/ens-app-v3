@@ -59,7 +59,7 @@ const useExpandableRecordsGroup = <T>({
     const { [oldKey]: oldValue, ...otherRecords } = getValues(group)
     const newGroupRecords = {
       ...otherRecords,
-      [newKey]: oldValue,
+      [newKey]: oldValue || '',
     } as PathValue<T, Path<T>>
     setValue(group, newGroupRecords)
     setNewKeys((keys) => [...keys, newKey].filter((_key) => _key !== oldKey))

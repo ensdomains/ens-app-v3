@@ -24,12 +24,16 @@ declare type BaseProps = Omit<FieldBaseProps, 'inline'> & {
     placeholder?: NativeInputProps['placeholder'];
     /** A string or component inserted in front of the input element. */
     prefix?: React.ReactNode;
+    /** Set the element type that wraps the prefix. Useful when you do not want clicks on the prefix to cause the input to focus */
+    prefixAs?: 'div';
     /** Sets the input in read only mode. */
     readOnly?: NativeInputProps['readOnly'];
     /** If the input will mark spelling errors in the text. */
     spellCheck?: NativeInputProps['spellCheck'];
     /** A string or component inserted at the end of the input. */
     suffix?: React.ReactNode;
+    /** Set the element type that wraps the suffix. Useful when you do not want clicks on the suffix to cause the input to focus */
+    suffixAs?: 'div';
     /** The tabindex attribute of the input element. */
     tabIndex?: NativeInputProps['tabIndex'];
     /** The data type the input. */

@@ -7,7 +7,7 @@ export const formSafeKey = (key: string) => key.replace(/\./g, '\u2024')
 
 export const convertFormSafeKey = (key: string) => key.replace(/\u2024/g, '.')
 
-type ProfileObject = {
+type EditorObject = {
   avatar?: string
   banner?: string
   website?: string
@@ -25,9 +25,7 @@ type ProfileObject = {
   }
 }
 
-export const convertProfileToProfileObject = (
-  profile: Profile,
-): ProfileObject => {
+export const convertProfileToFormObject = (profile: Profile): EditorObject => {
   const address =
     profile.records?.coinTypes?.reduce((map, record) => {
       const { coin } = record
@@ -44,7 +42,7 @@ export const convertProfileToProfileObject = (
     }, {}) || {}
 
   const textRecords = profile.records?.texts?.reduce<
-    Omit<ProfileObject, 'address'>
+    Omit<EditorObject, 'address'>
   >(
     (map, record) => {
       if (record.key === 'avatar')

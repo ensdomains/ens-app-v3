@@ -1,4 +1,11 @@
-import { PropsWithChildren, useRef, useState, useEffect } from 'react'
+import {
+  PropsWithChildren,
+  useState,
+  useEffect,
+  forwardRef,
+  useRef,
+  RefObject,
+} from 'react'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div(
@@ -78,12 +85,22 @@ const OverflowIndicator = styled.div<{ $show: boolean }>(
   `,
 )
 
-const ScrollIndicatorContainer = ({ children }: PropsWithChildren<{}>) => {
-  const ref = useRef<HTMLDivElement>(null)
+type Props = {
+  page?: string
+}
+
+const ScrollIndicatorContainer = forwardRef<
+  HTMLDivElement,
+  PropsWithChildren<Props>
+>(({ page, children }, ref) => {
+  const defaultRef = useRef<HTMLDivElement>(null)
+  const scrollRef = (ref as RefObject<HTMLDivElement>) || defaultRef
+
   const [show, setShow] = useState(false)
+
   const handleScroll = () => {
-    if (ref.current) {
-      const { scrollTop, scrollHeight, clientHeight } = ref.current
+    if (scrollRef.current) {
+      const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
       const scrollPercent = scrollTop / (scrollHeight - clientHeight)
       if (scrollPercent < 0.9) setShow(true)
       else setShow(false)
@@ -92,16 +109,17 @@ const ScrollIndicatorContainer = ({ children }: PropsWithChildren<{}>) => {
 
   useEffect(() => {
     handleScroll()
-  }, [children])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [page])
 
   return (
     <Container>
-      <OverflowContainer ref={ref} onScroll={handleScroll}>
+      <OverflowContainer ref={scrollRef} onScroll={handleScroll}>
         <OverflowContent>{children}</OverflowContent>
       </OverflowContainer>
       <OverflowIndicator $show={show} />
     </Container>
   )
-}
+})
 
 export default ScrollIndicatorContainer

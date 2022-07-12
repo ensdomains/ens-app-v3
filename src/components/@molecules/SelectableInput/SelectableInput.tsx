@@ -1,6 +1,7 @@
 import { Button, Input, Select, CloseSVG } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import React, { ComponentProps, forwardRef, Ref } from 'react'
+import { useTranslation } from 'react-i18next'
 
 const Container = styled.div(
   () => css`
@@ -90,6 +91,8 @@ export const SelectableInput = forwardRef(
     }: Props,
     ref: Ref<HTMLInputElement>,
   ) => {
+    const { t } = useTranslation()
+
     const selectedOption = selectProps?.options.find(
       (option) => option.value === selectProps.value,
     )
@@ -108,6 +111,10 @@ export const SelectableInput = forwardRef(
           padding={{ outer: '3', inner: '2' }}
           rows={3}
           inputSize={{ min: 8 }}
+          direction="up"
+          emptyListMessage={t('selectableInput.empty')}
+          noSelectionMessage={t('selectableInput.placeholder')}
+          createablePrefix={t('selectableInput.add')}
           {...selectProps}
         />
       </SelectWrapper>
@@ -120,6 +127,7 @@ export const SelectableInput = forwardRef(
           value={value}
           ref={ref}
           prefix={prefix}
+          prefixAs="div"
           readOnly={readOnly}
           {...props}
           hideLabel

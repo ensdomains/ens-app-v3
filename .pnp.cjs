@@ -628,7 +628,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/thorin",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=97ac87&locator=ens-app-v2%40workspace%3A."\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@eslint/eslintrc",\
@@ -1463,7 +1463,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@types/react-dom",\
-        "npm:17.0.14"\
+        "npm:18.0.6"\
       ],\
       [\
         "@types/react-is",\
@@ -7590,7 +7590,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=97ac87&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A."],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -7614,6 +7614,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prettier", "npm:2.4.4"],\
             ["@types/puppeteer-core", "npm:5.4.0"],\
             ["@types/react", "npm:17.0.30"],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react-is", "npm:17.0.3"],\
             ["@types/styled-components", "npm:5.1.23"],\
             ["@types/testing-library__jest-dom", "npm:5.14.3"],\
@@ -11205,19 +11206,19 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/thorin", [\
-        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=97ac87&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-e17044caba-2d6bca02b3.zip/node_modules/@ensdomains/thorin/",\
+        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-9747505685-67060b7f01.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=97ac87&locator=ens-app-v2%40workspace%3A."]\
+            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A."]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=97ac87&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-f67d024a8b/0/cache/@ensdomains-thorin-file-e17044caba-2d6bca02b3.zip/node_modules/@ensdomains/thorin/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-87f76dbef2/0/cache/@ensdomains-thorin-file-9747505685-67060b7f01.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=97ac87&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A."],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react-transition-state", null],\
             ["@types/styled-components", "npm:5.1.23"],\
             ["clsx", "npm:1.1.1"],\
@@ -13123,7 +13124,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@rainbow-me/rainbowkit", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#patch:@rainbow-me/rainbowkit@npm%3A0.3.3#./patches/@rainbow-me/rainbowkit.patch::version=0.3.3&hash=03f60f&locator=ens-app-v2%40workspace%3A."],\
             ["@types/ethers", null],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/wagmi", null],\
             ["@vanilla-extract/css", "npm:1.7.0"],\
             ["@vanilla-extract/dynamic", "npm:2.0.2"],\
@@ -14031,11 +14032,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/runtime", "npm:7.17.9"],\
             ["@testing-library/dom", "npm:8.13.0"],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", "npm:17.0.14"],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"]\
           ],\
           "packagePeers": [\
+            "@types/react-dom",\
             "@types/react",\
             "react-dom",\
             "react"\
@@ -14057,7 +14059,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@testing-library/react-hooks", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.0.1"],\
             ["@babel/runtime", "npm:7.17.9"],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react-test-renderer", null],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"],\
@@ -14829,6 +14831,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./.yarn/cache/@types-react-dom-npm-17.0.14-d1c78a4e4e-b54cd0ef57.zip/node_modules/@types/react-dom/",\
           "packageDependencies": [\
             ["@types/react-dom", "npm:17.0.14"],\
+            ["@types/react", "npm:17.0.43"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:18.0.6", {\
+          "packageLocation": "./.yarn/cache/@types-react-dom-npm-18.0.6-55949dcf84-db571047af.zip/node_modules/@types/react-dom/",\
+          "packageDependencies": [\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react", "npm:17.0.43"]\
           ],\
           "linkType": "HARD"\
@@ -22009,7 +22019,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=97ac87&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A."],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -22033,6 +22043,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/prettier", "npm:2.4.4"],\
             ["@types/puppeteer-core", "npm:5.4.0"],\
             ["@types/react", "npm:17.0.30"],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react-is", "npm:17.0.3"],\
             ["@types/styled-components", "npm:5.1.23"],\
             ["@types/testing-library__jest-dom", "npm:5.14.3"],\
@@ -30534,7 +30545,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/fibers", null],\
             ["@types/node-sass", null],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/sass", null],\
             ["caniuse-lite", "npm:1.0.30001344"],\
             ["fibers", null],\
@@ -32777,7 +32788,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@babel/runtime", "npm:7.17.9"],\
             ["@types/i18next", null],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react-native", null],\
             ["html-escaper", "npm:2.0.2"],\
             ["html-parse-stringify", "npm:3.0.1"],\
@@ -32843,7 +32854,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["react-query", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.34.19"],\
             ["@babel/runtime", "npm:7.17.9"],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react-native", null],\
             ["broadcast-channel", "npm:3.7.0"],\
             ["match-sorter", "npm:6.3.1"],\
@@ -32977,7 +32988,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["react-transition-state", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:1.1.4"],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"]\
           ],\
@@ -35122,7 +35133,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@emotion/stylis", "npm:0.8.5"],\
             ["@emotion/unitless", "npm:0.7.5"],\
             ["@types/react", "npm:17.0.30"],\
-            ["@types/react-dom", null],\
+            ["@types/react-dom", "npm:18.0.6"],\
             ["@types/react-is", "npm:17.0.3"],\
             ["babel-plugin-styled-components", "virtual:d8f9812ff5a5996da39c8042f674700c36ee53d18e0968fc16f48d0d081c00327f6f60674abd755ac0498b10cac903206b50ae2fd273bcc301a6c73a70caa497#npm:2.0.6"],\
             ["css-to-react-native", "npm:3.0.0"],\

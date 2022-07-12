@@ -108,5 +108,10 @@
       "short": "Too Short",
       "default": "Invalid"
     }
+  },
+  "selectableInput": {
+    "add": "Add",
+    "placeholder": "Select an option",
+    "empty": "No options found"
   }
 }
