@@ -2,22 +2,10 @@ import { useProfile } from '@app/hooks/useProfile'
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { cleanup } from '@testing-library/react'
 import ProfileEditor from './ProfileEditor'
 
-const mockDismiss = jest.fn()
-jest.mock('@app/utils/BreakpointProvider')
-const mockUseBreakpoint = mockFunction(useBreakpoint)
-mockUseBreakpoint.mockReturnValue({
-  xs: true,
-  sm: false,
-  md: false,
-  lg: false,
-  xl: false,
-})
-
-jest.mock('@app/hooks/useProfile')
-const mockUseProfile = mockFunction(useProfile)
-mockUseProfile.mockReturnValue({
+const mockProfileData = {
   profile: {
     address: '0x9eddfE3A95AA77E4F6509927De67BB1EaAE3b382',
     records: {
@@ -125,13 +113,94 @@ mockUseProfile.mockReturnValue({
     createdAt: '1630553876',
   },
   loading: false,
-} as unknown as { profile: Profile; loading: boolean })
+}
+
+jest.mock('@app/utils/BreakpointProvider')
+const mockUseBreakpoint = mockFunction(useBreakpoint)
+mockUseBreakpoint.mockReturnValue({
+  xs: true,
+  sm: false,
+  md: false,
+  lg: false,
+  xl: false,
+})
+
+jest.mock('@app/hooks/useProfile')
+const mockUseProfile = mockFunction(useProfile)
+
+// const mockSubmit = jest.fn()
 
 describe('ProfileEditor', () => {
-  it('should render', () => {
-    render(<ProfileEditor open onDismiss={mockDismiss} name="khori.eth" />)
-    waitFor(() => {
+  beforeEach(() => {
+    mockUseProfile.mockReturnValue(
+      mockProfileData as unknown as { profile: Profile; loading: boolean },
+    )
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: false,
+      md: false,
+      lg: false,
+      xl: false,
+    })
+  })
+
+  afterEach(() => {
+    cleanup()
+  })
+
+  it('should render', async () => {
+    render(
+      <ProfileEditor
+        open
+        onDismiss={() => {}}
+        name="khori.eth"
+        onSubmit={() => Promise.resolve()}
+      />,
+    )
+    await waitFor(() => {
       expect(screen.getByTestId('profile-editor')).toBeVisible()
     })
+  })
+
+  it('should render profile data', async () => {
+    render(
+      <ProfileEditor
+        open
+        onDismiss={() => {}}
+        name="khori.eth"
+        onSubmit={() => Promise.resolve()}
+      />,
+    )
+    await waitFor(() => {
+      expect(screen.getByTestId('profile-editor')).toBeVisible()
+    })
+
+    await waitFor(() => {
+      expect(
+        screen.getByTestId('tab-container')?.children.length,
+      ).toBeGreaterThan(0)
+    })
+    const accountsTab = screen.getByTestId('tab-container')
+    console.log('accounts', accountsTab.children.length)
+  })
+
+  it('should return some data', async () => {
+    const mockSubmit = jest.fn()
+    render(
+      <ProfileEditor
+        open
+        onDismiss={() => {}}
+        name="khori.eth"
+        onSubmit={mockSubmit}
+      />,
+    )
+
+    await waitFor(() => {
+      console.log('waiting for profile to load')
+      expect(screen.getByTestId('profile-editor')).toBeVisible()
+    })
+
+    screen.getByTestId('profile-editor-submit').click()
+    console.log('>>>', mockSubmit.mock.calls)
   })
 })

@@ -202,9 +202,10 @@ type Props = {
   name?: string
   open: boolean
   onDismiss?: () => void
+  onSubmit: (profile: ProfileEditorType) => Promise<void>
 }
 
-const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
+const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const isDesktop = breakpoints.sm
@@ -318,7 +319,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
       <Modal open={open} onDismiss={onDismiss}>
         <Container
           data-testid="profile-editor"
-          onSubmit={handleSubmit((data: any) => console.log(data))}
+          onSubmit={handleSubmit(onSubmit)}
           ref={targetRef}
         >
           <Banner>
@@ -342,6 +343,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                 $hasError={!!getFieldState('accounts', formState).error}
                 $isDirty={getFieldState('accounts').isDirty}
                 onClick={handleTabClick('accounts')}
+                data-testid="accounts-tab"
               >
                 {t('profileEditor.tabs.accounts.label')}
               </TabButton>
@@ -372,7 +374,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
             </TabButtonsContainer>
             <TabContentsContainer>
               <ScrollIndicatorContainer ref={ref} page={tab}>
-                <TabContentContainer>
+                <TabContentContainer data-testid="tab-container">
                   {
                     {
                       general: (
@@ -658,7 +660,12 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
               <Button tone="grey" shadowless>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
-              <Button disabled={hasErrors} type="submit" shadowless>
+              <Button
+                disabled={hasErrors}
+                type="submit"
+                shadowless
+                data-testid="profile-editor-submit"
+              >
                 {t('action.save', { ns: 'common' })}
               </Button>
             </FooterContainer>
