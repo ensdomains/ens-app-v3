@@ -36,8 +36,8 @@
         "loading": "Loading subnames",
         "empty": "No subnames have been added"
       },
-      "more": {
-        "label": "More",
+      "advanced": {
+        "label": "Advanced",
         "resolver": {
           "label": "Resolver",
           "custom": "Custom",

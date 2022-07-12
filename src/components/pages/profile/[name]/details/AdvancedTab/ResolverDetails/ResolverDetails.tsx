@@ -79,19 +79,19 @@ const ResolverDetails = () => {
 
   let versionIndicatorText = ''
   if (resolverAddressIndex === -1) {
-    versionIndicatorText = t('details.tabs.more.resolver.custom')
+    versionIndicatorText = t('details.tabs.advanced.resolver.custom')
   } else {
     versionIndicatorText =
       resolverAddressIndex === 0
-        ? t('details.tabs.more.resolver.latest')
-        : t('details.tabs.more.resolver.outdated')
+        ? t('details.tabs.advanced.resolver.latest')
+        : t('details.tabs.advanced.resolver.outdated')
   }
 
   return (
     <ResolverDetailsContainer>
       <VersionContainer>
         <Typography weight="bold">
-          {t('details.tabs.more.resolver.version')}
+          {t('details.tabs.advanced.resolver.version')}
         </Typography>
         <VersionIndicator>
           {versionIndicatorText}

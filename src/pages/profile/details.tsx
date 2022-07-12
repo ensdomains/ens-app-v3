@@ -2,7 +2,7 @@ import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
 import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
-import More from '@app/components/pages/profile/[name]/details/MoreTab/MoreTab'
+import Advanced from '@app/components/pages/profile/[name]/details/AdvancedTab/AdvancedTab'
 import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
 import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
 import { useChainId } from '@app/hooks/useChainId'
@@ -212,7 +212,7 @@ export default function Page() {
 
   const isLoading = detailsLoading || accountLoading
 
-  const [tab, setTab] = useState<'records' | 'subnames' | 'more'>('records')
+  const [tab, setTab] = useState<'records' | 'subnames' | 'advanced'>('records')
 
   return (
     <Content
@@ -245,7 +245,7 @@ export default function Page() {
             />
           ),
           subnames: <SubnamesTab name={normalisedName} network={chainId} />,
-          more: <More />,
+          advanced: <Advanced />,
         }[tab],
         header: (
           <TabButtonContainer>
@@ -266,11 +266,11 @@ export default function Page() {
               </Typography>
             </TabButton>
             <TabButton
-              $selected={tab === 'more'}
-              onClick={() => setTab('more')}
+              $selected={tab === 'advanced'}
+              onClick={() => setTab('advanced')}
             >
               <Typography weight="bold">
-                {t('details.tabs.more.label')}
+                {t('details.tabs.advanced.label')}
               </Typography>
             </TabButton>
           </TabButtonContainer>

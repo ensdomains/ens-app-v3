@@ -5,7 +5,7 @@ import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import type { UrlObject } from 'url'
 
-const StyledAnchor = styled.a(
+export const StyledAnchor = styled.a(
   ({ theme }) => css`
     padding-right: ${theme.space['4']};
     position: relative;

@@ -6,7 +6,8 @@ import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
 import { TFunction, useTranslation } from 'react-i18next'
-import ResolverDetails from './ResolverDetails'
+import ResolverDetails from './ResolverDetails/ResolverDetails'
+import { ResolverDetailsEdit } from './ResolverDetails/ResolverDetailsEdit'
 import Fuses from './Fuses'
 import { RegistrationDate } from './RegistrationDate'
 import Accordion, { AccordionData } from './Accordion'
@@ -23,12 +24,12 @@ export const TokenId = () => {
   return (
     <>
       <RecordItem
-        itemKey={t('details.tabs.more.tokenId.hex')}
+        itemKey={t('details.tabs.advanced.tokenId.hex')}
         value={labelHash}
       />
       <div style={{ height: 10 }} />
       <RecordItem
-        itemKey={t('details.tabs.more.tokenId.decimal')}
+        itemKey={t('details.tabs.advanced.tokenId.decimal')}
         value={tokenId}
       />
     </>
@@ -46,21 +47,22 @@ const generateAccordionData = (
   t: TFunction,
 ): AccordionData[] => [
   {
-    title: t('details.tabs.more.resolver.label'),
-    body: <ResolverDetails />,
+    title: t('details.tabs.advanced.resolver.label'),
+    body: ResolverDetails,
+    dialog: ResolverDetailsEdit,
   },
   {
-    title: t('details.tabs.more.fuses.label'),
-    body: <Fuses />,
+    title: t('details.tabs.advanced.fuses.label'),
+    body: Fuses,
     disabled: !fuseData,
   },
   {
-    title: t('details.tabs.more.tokenId.label'),
-    body: <TokenId />,
+    title: t('details.tabs.advanced.tokenId.label'),
+    body: TokenId,
   },
   {
-    title: t('details.tabs.more.registrationDate.label'),
-    body: <RegistrationDate />,
+    title: t('details.tabs.advanced.registrationDate.label'),
+    body: RegistrationDate,
   },
 ]
 

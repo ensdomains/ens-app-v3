@@ -1,4 +1,4 @@
-import { DownIndicatorSVG, Typography } from '@ensdomains/thorin'
+import { DownIndicatorSVG, Typography, Button } from '@ensdomains/thorin'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -129,10 +129,26 @@ const UnwrappedIndicator = styled(Typography)(
 `,
 )
 
+const TitleAndButtonContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  height: 100%;
+`
+
+const EditButton = styled(Button)<{ $isEditing: boolean }>(
+  ({ theme, $isEditing }) => css`
+    color: ${$isEditing ? theme.colors.red : theme.colors.blue};
+    width: ${theme.space['24']};
+  `,
+)
+
 export interface AccordionData {
   title: string
   body: React.ReactNode
   disabled?: boolean
+  dialog?: React.ReactNode
 }
 interface AccordionProps {
   data: AccordionData[]
@@ -142,63 +158,95 @@ const Accordion = ({ data }: AccordionProps) => {
   const { t } = useTranslation('profile')
 
   const [activeItem, setActiveItem] = useState(0)
+  const [isDialogOpen, setIsDialogOpen] = useState(-1)
+
+  const handleEditClick = (idx) => {
+    setIsDialogOpen(idx)
+    setActiveItem(idx)
+  }
 
   const disabled = data?.filter((x) => x.disabled) ?? []
   const enabled = data?.filter((x) => !x.disabled) ?? []
 
   return (
-    <AccordionContainer
-      {...{ $activeItem: activeItem, $totalItems: data && data.length }}
-    >
-      {!!disabled.length &&
-        disabled.map((item) => {
-          return (
-            <AccordionItem
-              data-testid={`accordion-${item.title}-disabled`}
-              key={item.title}
-            >
-              <AccordionTitle $isDisabled>
-                <Typography
-                  variant="extraLarge"
-                  weight="bold"
-                  color="textTertiary"
-                >
-                  {item.title}
-                </Typography>
-                <UnwrappedIndicator color="textSecondary">
-                  {t('details.notWrapped')}
-                </UnwrappedIndicator>
-              </AccordionTitle>
-            </AccordionItem>
-          )
-        })}
-      {!!enabled.length &&
-        enabled.map((item, idx) => {
-          const isActive = activeItem === idx
-          return (
-            <AccordionItem
-              data-testid={`accordion-${item.title}-enabled`}
-              {...{ onClick: () => setActiveItem(idx), key: item.title }}
-            >
-              <AccordionTitle {...{ isActive }}>
-                <Typography variant="extraLarge" weight="bold">
-                  {item.title}
-                </Typography>
-                <Chevron $open={isActive} />
-              </AccordionTitle>
-              <AccordionBody
-                data-testid={`accordion-${item.title}-body`}
-                {...{
-                  key: idx,
-                  isActive,
-                }}
+    <>
+      <AccordionContainer
+        {...{ $activeItem: activeItem, $totalItems: data && data.length }}
+      >
+        {!!disabled.length &&
+          disabled.map((item) => {
+            return (
+              <AccordionItem
+                data-testid={`accordion-${item.title}-disabled`}
+                key={item.title}
               >
-                {item.body}
-              </AccordionBody>
-            </AccordionItem>
-          )
-        })}
-    </AccordionContainer>
+                <AccordionTitle $isDisabled>
+                  <Typography
+                    variant="extraLarge"
+                    weight="bold"
+                    color="textTertiary"
+                  >
+                    {item.title}
+                  </Typography>
+                  <UnwrappedIndicator color="textSecondary">
+                    {t('details.notWrapped')}
+                  </UnwrappedIndicator>
+                </AccordionTitle>
+              </AccordionItem>
+            )
+          })}
+        {!!enabled.length &&
+          enabled.map((item, idx) => {
+            const isActive = activeItem === idx
+            const isEditing = false
+            return (
+              <>
+                {item.dialog && (
+                  <item.dialog
+                    isOpen={isDialogOpen === idx}
+                    onDismiss={() => setIsDialogOpen(-1)}
+                  />
+                )}
+                <AccordionItem
+                  data-testid={`accordion-${item.title}-enabled`}
+                  {...{ onClick: () => setActiveItem(idx), key: item.title }}
+                >
+                  <AccordionTitle {...{ isActive }}>
+                    <TitleAndButtonContainer>
+                      <Typography variant="extraLarge" weight="bold">
+                        {item.title}
+                      </Typography>
+                      {item.dialog && (
+                        <EditButton
+                          shadowless
+                          variant="transparent"
+                          size="small"
+                          $isEditing={isEditing}
+                          onClick={() => handleEditClick(idx)}
+                        >
+                          {isEditing
+                            ? t('action.edit', { ns: 'common' })
+                            : t('action.cancel', { ns: 'common' })}
+                        </EditButton>
+                      )}
+                    </TitleAndButtonContainer>
+                    <Chevron $open={isActive} />
+                  </AccordionTitle>
+                  <AccordionBody
+                    data-testid={`accordion-${item.title}-body`}
+                    {...{
+                      key: idx,
+                      isActive,
+                    }}
+                  >
+                    <item.body />
+                  </AccordionBody>
+                </AccordionItem>
+              </>
+            )
+          })}
+      </AccordionContainer>
+    </>
   )
 }
 
