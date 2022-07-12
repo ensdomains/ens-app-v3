@@ -1,8 +1,21 @@
 import '@nomiclabs/hardhat-ethers'
 import 'dotenv/config'
-import 'hardhat-dependency-compiler'
 import 'hardhat-deploy'
 import { HardhatUserConfig } from 'hardhat/config'
+import nModule from 'module'
+import { resolve } from 'path'
+
+const pnpApi = (nModule as any).findPnpApi('.')
+
+const resolveToUnqualified = pnpApi.resolveToUnqualified as (
+  request: string,
+  issuer: string | null,
+  opts?: { considerBuiltins?: boolean },
+) => string
+
+const ensContractsPath = resolveToUnqualified('@ensdomains/ens-contracts', '.')
+
+console.log(resolve(ensContractsPath, 'artifacts'))
 
 const config: HardhatUserConfig = {
   solidity: {
@@ -20,6 +33,15 @@ const config: HardhatUserConfig = {
   },
   defaultNetwork: 'localhost',
   networks: {
+    hardhat: {
+      saveDeployments: false,
+      chainId: parseInt(process.env.CHAIN_ID!),
+      accounts: {
+        mnemonic: process.env.SECRET_WORDS!,
+      },
+      live: false,
+      tags: ['test', 'legacy', 'use_root'],
+    },
     localhost: {
       saveDeployments: false,
       url: process.env.RPC_URL,
@@ -28,15 +50,32 @@ const config: HardhatUserConfig = {
         mnemonic: process.env.SECRET_WORDS!,
       },
       live: false,
+      tags: ['test', 'legacy', 'use_root'],
     },
   },
+  // namedAccounts: {
+  //   deployer: {
+  //     default: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+  //   },
+  // },
   namedAccounts: {
     deployer: {
-      default: '0xa303ddC620aa7d1390BACcc8A495508B183fab59',
+      default: 0,
     },
-    user: {
-      default: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+    owner: {
+      default: 1,
     },
+  },
+  external: {
+    contracts: [
+      {
+        artifacts: [
+          resolve(ensContractsPath, 'artifacts'),
+          resolve(ensContractsPath, './deployments/archive'),
+        ],
+        deploy: resolve(ensContractsPath, './build/deploy'),
+      },
+    ],
   },
 }
 
