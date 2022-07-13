@@ -1,19 +1,13 @@
-/* eslint-disable @typescript-eslint/naming-convention */
+import { mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
+
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
 import { useProfile } from '@app/hooks/useProfile'
-import { mq, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
-// Ordered by recency
-const RESOLVER_ADDRESSES = [
-  '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
-  '0xdaaf96c344f63131acadd0ea35170e7892d3dfba',
-  '0x226159d592e2b063810a10ebf6dcbada94ed68b8',
-  '0x1da022710df5002339274aadee8d58218e9d6ab5',
-]
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 const ResolverDetailsContainer = styled.div(({ theme }) => [
   css`

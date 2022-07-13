@@ -628,7 +628,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/thorin",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.4"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@eslint/eslintrc",\
@@ -5709,6 +5709,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:4.0.0"\
       ],\
       [\
+        "p-memoize",\
+        "npm:7.1.0"\
+      ],\
+      [\
         "p-timeout",\
         "npm:1.2.1"\
       ],\
@@ -6091,6 +6095,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       [\
         "react-ga",\
         "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.3.0"\
+      ],\
+      [\
+        "react-hook-form",\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:7.33.1"\
       ],\
       [\
         "react-i18next",\
@@ -7586,7 +7594,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.4"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -7655,11 +7663,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
             ["node-fetch", "npm:3.2.6"],\
+            ["p-memoize", "npm:7.1.0"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"],\
             ["react-ga", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.3.0"],\
+            ["react-hook-form", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:7.33.1"],\
             ["react-i18next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:11.17.0"],\
             ["react-is", "npm:17.0.2"],\
             ["react-query", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.34.19"],\
@@ -11200,17 +11210,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/thorin", [\
-        ["npm:0.6.4", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-npm-0.6.4-61d191b41a-2be56b5f51.zip/node_modules/@ensdomains/thorin/",\
+        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-cb07c5805b-c293346117.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "npm:0.6.4"]\
+            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.4", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-1c0bc79a63/0/cache/@ensdomains-thorin-npm-0.6.4-61d191b41a-2be56b5f51.zip/node_modules/@ensdomains/thorin/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-a690d4be3f/0/cache/@ensdomains-thorin-file-cb07c5805b-c293346117.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.4"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."],\
             ["@types/react", "npm:17.0.30"],\
             ["@types/react-dom", null],\
             ["@types/react-transition-state", null],\
@@ -22004,7 +22014,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.4"],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -22073,11 +22083,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
             ["node-fetch", "npm:3.2.6"],\
+            ["p-memoize", "npm:7.1.0"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
             ["react", "npm:17.0.2"],\
             ["react-dom", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:17.0.2"],\
             ["react-ga", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.3.0"],\
+            ["react-hook-form", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:7.33.1"],\
             ["react-i18next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:11.17.0"],\
             ["react-is", "npm:17.0.2"],\
             ["react-query", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.34.19"],\
@@ -29885,6 +29897,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mimic-fn", "npm:2.1.0"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:4.0.0", {\
+          "packageLocation": "./.yarn/cache/mimic-fn-npm-4.0.0-feaeda79f7-995dcece15.zip/node_modules/mimic-fn/",\
+          "packageDependencies": [\
+            ["mimic-fn", "npm:4.0.0"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["mimic-response", [\
@@ -31418,6 +31437,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["p-memoize", [\
+        ["npm:7.1.0", {\
+          "packageLocation": "./.yarn/cache/p-memoize-npm-7.1.0-b17b82884b-41a9ffdedb.zip/node_modules/p-memoize/",\
+          "packageDependencies": [\
+            ["p-memoize", "npm:7.1.0"],\
+            ["mimic-fn", "npm:4.0.0"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["p-timeout", [\
         ["npm:1.2.1", {\
           "packageLocation": "./.yarn/cache/p-timeout-npm-1.2.1-2b480cb517-65a456f49c.zip/node_modules/p-timeout/",\
@@ -32729,6 +32758,28 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             "@types/prop-types",\
             "@types/react",\
             "prop-types",\
+            "react"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["react-hook-form", [\
+        ["npm:7.33.1", {\
+          "packageLocation": "./.yarn/cache/react-hook-form-npm-7.33.1-f1c46322f4-ec8f938b5a.zip/node_modules/react-hook-form/",\
+          "packageDependencies": [\
+            ["react-hook-form", "npm:7.33.1"]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:7.33.1", {\
+          "packageLocation": "./.yarn/__virtual__/react-hook-form-virtual-6faf662b9f/0/cache/react-hook-form-npm-7.33.1-f1c46322f4-ec8f938b5a.zip/node_modules/react-hook-form/",\
+          "packageDependencies": [\
+            ["react-hook-form", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:7.33.1"],\
+            ["@types/react", "npm:17.0.30"],\
+            ["react", "npm:17.0.2"]\
+          ],\
+          "packagePeers": [\
+            "@types/react",\
             "react"\
           ],\
           "linkType": "HARD"\

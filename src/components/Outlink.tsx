@@ -24,6 +24,12 @@ const OutlinkIcon = styled.div(
   `,
 )
 
+export const OutlinkTypography = styled.a(
+  ({ theme }) => css`
+    display: inline-block;
+  `,
+)
+
 export const Outlink = ({
   href,
   children,
@@ -35,9 +41,9 @@ export const Outlink = ({
   return (
     <Link href={href} passHref>
       <StyledAnchor {...props}>
-        <Typography variant="small" weight="bold">
+        <OutlinkTypography variant="small" weight="bold">
           {children}
-        </Typography>
+        </OutlinkTypography>
         <OutlinkIcon as={OutlinkSVG} />
       </StyledAnchor>
     </Link>

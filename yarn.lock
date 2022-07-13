@@ -2016,9 +2016,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.6.4":
+"@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
   version: 0.6.4
-  resolution: "@ensdomains/thorin@npm:0.6.4"
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2028,7 +2028,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 2be56b5f51cccfe4d0a84038baa24c6ebe479a1d8eed450dc01f3157af3bef28451556def732edce75a568a534cda7098491952c50e074d4444439c24a4af034
+  checksum: c2933461170925e17439695da06b680f9bc747b9c10f6ebcc53d0a11549a316b2163d17556dd3ef1f5f9d89ddc4ed428859dc246812b6c9001e813b939069bf6
   languageName: node
   linkType: hard
 
@@ -11289,7 +11289,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": ^3.0.0-alpha.2
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.6.4
+    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5
@@ -11355,11 +11355,13 @@ __metadata:
     next-compose-plugins: ^2.2.1
     next-transpile-modules: ^9.0.0
     node-fetch: ^3.2.6
+    p-memoize: ^7.1.0
     postcss-syntax: ^0.36.2
     prettier: 2.6.2
     react: ^17.0.2
     react-dom: ^17.0.2
     react-ga: ^3.3.0
+    react-hook-form: ^7.33.1
     react-i18next: ^11.17.0
     react-is: ^17.0.2
     react-query: ^3.34.19
@@ -18182,6 +18184,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mimic-fn@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "mimic-fn@npm:4.0.0"
+  checksum: 995dcece15ee29aa16e188de6633d43a3db4611bcf93620e7e62109ec41c79c0f34277165b8ce5e361205049766e371851264c21ac64ca35499acb5421c2ba56
+  languageName: node
+  linkType: hard
+
 "mimic-response@npm:^1.0.0, mimic-response@npm:^1.0.1":
   version: 1.0.1
   resolution: "mimic-response@npm:1.0.1"
@@ -19626,6 +19635,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"p-memoize@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "p-memoize@npm:7.1.0"
+  dependencies:
+    mimic-fn: ^4.0.0
+  checksum: 41a9ffdedb8f4805fa4fbe16eb205ce95494f758d24ddb31126ed18baa5a0dd1fbdbd12b52a5f2053953bf94886f2035debe826855439ee1f936b7c1f9266f9b
+  languageName: node
+  linkType: hard
+
 "p-timeout@npm:^1.1.1":
   version: 1.2.1
   resolution: "p-timeout@npm:1.2.1"
@@ -20707,6 +20725,15 @@ __metadata:
     prop-types: ^15.6.0
     react: ^15.6.2 || ^16.0 || ^17
   checksum: b4f5b0ed3a5d7ea781397d6a1f8dacae2284fe7f03f72dde330958dd0a64732f8766c6fa26cf0f1a8fb1303fa02aa51f23cf0b261e52981d0275262b831c7fea
+  languageName: node
+  linkType: hard
+
+"react-hook-form@npm:^7.33.1":
+  version: 7.33.1
+  resolution: "react-hook-form@npm:7.33.1"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18
+  checksum: ec8f938b5af32148956edc9a87b6a0a99cc305617925608961cf4352ad1a786daea9fdc4d15106aea2821937d27367a69ab525882f07c0bb7ea45fba5dbf8ff2
   languageName: node
   linkType: hard
 

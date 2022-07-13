@@ -43,7 +43,8 @@
           "custom": "Custom",
           "latest": "Latest",
           "outdated": "Outdated",
-          "version": "Version"
+          "version": "Version",
+          "etherscan": "Etherscan"
         },
         "fuses": {
           "label": "Fuses",
