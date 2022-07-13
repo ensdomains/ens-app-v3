@@ -1927,9 +1927,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ens-test-env@npm:^0.1.2":
-  version: 0.1.2
-  resolution: "@ensdomains/ens-test-env@npm:0.1.2"
+"@ensdomains/ens-test-env@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@ensdomains/ens-test-env@npm:0.1.4"
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1947,7 +1947,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: cbb8e3e969fdcb9b0c4d37ddfae0e79505cc07034067e7ec6483b75cb6dea1b1d703b09974639e697a81a5733dab6b7da67499c6ecdae2abb64882b20f69458e
+  checksum: d8a813f736984d82723a1497313d4697b1e7df4262477de3862ef86975cfd22aa4cd2c7c9b15306affa0e5edd62c03aa5ded8ed1349a9b1532441d16ad8f70e8
   languageName: node
   linkType: hard
 
@@ -11298,7 +11298,7 @@ __metadata:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-contracts": ^0.0.12
-    "@ensdomains/ens-test-env": ^0.1.2
+    "@ensdomains/ens-test-env": ^0.1.4
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": ^3.0.0-alpha.5
     "@ensdomains/eth-ens-namehash": ^2.0.15

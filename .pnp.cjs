@@ -604,7 +604,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ens-test-env",\
-        "npm:0.1.2"\
+        "npm:0.1.4"\
       ],\
       [\
         "@ensdomains/ens-validation",\
@@ -7583,7 +7583,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
-            ["@ensdomains/ens-test-env", "npm:0.1.2"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.5"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
@@ -11107,10 +11107,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ens-test-env", [\
-        ["npm:0.1.2", {\
-          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-npm-0.1.2-d711f6d9db/node_modules/@ensdomains/ens-test-env/",\
+        ["npm:0.1.4", {\
+          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-npm-0.1.4-adca43a636/node_modules/@ensdomains/ens-test-env/",\
           "packageDependencies": [\
-            ["@ensdomains/ens-test-env", "npm:0.1.2"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ethersproject/wallet", "npm:5.6.2"],\
             ["ansi-colors", "npm:4.1.1"],\
             ["cli-progress", "npm:3.11.2"],\
@@ -22012,7 +22012,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
-            ["@ensdomains/ens-test-env", "npm:0.1.2"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.5"],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
