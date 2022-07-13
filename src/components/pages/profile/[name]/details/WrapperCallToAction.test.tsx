@@ -3,7 +3,6 @@ import { useChainId } from '@app/hooks/useChainId'
 import { mockFunction, render, screen } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
 import { useTransaction } from '@app/utils/TransactionProvider'
-import { useAccount, useSigner } from 'wagmi'
 import { WrapperCallToAction } from './WrapperCallToAction'
 
 jest.mock('@app/hooks/useAvatar')
@@ -16,8 +15,6 @@ const mockUseNFTImage = mockFunction(useNFTImage)
 const mockUseTransaction = mockFunction(useTransaction)
 const mockUseEns = mockFunction(useEns)
 const mockUseChainId = mockFunction(useChainId)
-const mockUseAccount = mockFunction(useAccount)
-const mockUseSigner = mockFunction(useSigner)
 
 const mockWrapName = jest.fn()
 const mockSetRecords = jest.fn()
@@ -43,8 +40,6 @@ describe('WrapperCallToAction', () => {
     contracts: mockContracts,
   })
   mockUseChainId.mockReturnValue(1)
-  mockUseAccount.mockReturnValue({ data: {} })
-  mockUseSigner.mockReturnValue({ data: {} })
   it('should render', () => {
     mockGetCurrentStep.mockReturnValue(0)
     render(<WrapperCallToAction name="test123.eth" />)
@@ -67,7 +62,6 @@ describe('WrapperCallToAction', () => {
     ).rejects.toThrow('No profile found')
   })
   it('should create a setRecords transaction for the new resolver', async () => {
-    mockUseSigner.mockReturnValue({ data: 'signer123' as any })
     mockContracts.getPublicResolver.mockResolvedValue({ address: '0x123' })
     mockGetProfile.mockReturnValue({
       records: {
@@ -99,7 +93,9 @@ describe('WrapperCallToAction', () => {
     })
     render(<WrapperCallToAction name="test123.eth" />)
     screen.getByTestId('wrapper-cta-button').click()
-    await mockSetCurrentTransaction.mock.lastCall[0].data[0].generateTx()
+    await mockSetCurrentTransaction.mock.lastCall[0].data[0].generateTx(
+      'signer123',
+    )
     expect(mockSetRecords).toHaveBeenCalledWith('test123.eth', {
       records: {
         contentHash: 'ipfs://test-ipfs-hash',
@@ -129,11 +125,12 @@ describe('WrapperCallToAction', () => {
     })
   })
   it('should create a wrapName transaction', async () => {
-    mockUseSigner.mockReturnValue({ data: 'signer123' as any })
-    mockUseAccount.mockReturnValue({ data: { address: 'address123' } })
     render(<WrapperCallToAction name="test123.eth" />)
     screen.getByTestId('wrapper-cta-button').click()
-    await mockSetCurrentTransaction.mock.lastCall[0].data[1].generateTx()
+    await mockSetCurrentTransaction.mock.lastCall[0].data[1].generateTx(
+      'signer123',
+      'address123',
+    )
     expect(mockWrapName).toHaveBeenCalledWith('test123.eth', {
       wrappedOwner: 'address123',
       signer: 'signer123',

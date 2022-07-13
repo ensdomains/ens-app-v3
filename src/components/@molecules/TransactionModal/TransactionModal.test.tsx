@@ -9,13 +9,17 @@ import {
 } from '@app/test-utils'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
+import { useAccount, useSigner } from 'wagmi'
 import { TransactionModal } from './TransactionModal'
 
 jest.mock('@app/hooks/useChainName')
 jest.mock('@rainbow-me/rainbowkit')
+jest.mock('wagmi')
 
 const mockUseChainName = mockFunction(useChainName)
 const mockUseAddRecentTransaction = mockFunction(useAddRecentTransaction)
+const mockUseAccount = mockFunction(useAccount)
+const mockUseSigner = mockFunction(useSigner)
 
 const mockGenerateTx = jest.fn()
 
@@ -59,6 +63,8 @@ const goToConfirm = async () => {
 
 describe('TransactionModal', () => {
   mockUseChainName.mockReturnValue('ethereum')
+  mockUseAccount.mockReturnValue({ data: { address: 'mock-address' } })
+  mockUseSigner.mockReturnValue({ data: 'mock-signer' as any })
   it('should render on open', async () => {
     await renderHelper()
     expect(screen.getByText('transaction.modal.request.title')).toBeVisible()
@@ -209,6 +215,16 @@ describe('TransactionModal', () => {
         expect(
           screen.getByTestId('transaction-modal-confirm-trailing-btn'),
         ).toBeEnabled()
+      })
+      it('should pass the address and signer as arguments to generateTx', async () => {
+        mockGenerateTx.mockImplementation(async () => {})
+        mockUseAddRecentTransaction.mockReturnValue(() => {})
+        await renderHelper()
+        await goToConfirm()
+        expect(mockGenerateTx).toHaveBeenCalledWith(
+          'mock-signer',
+          'mock-address',
+        )
       })
       it('should go to the complete stage if there is no error from the transaction', async () => {
         mockGenerateTx.mockImplementation(async () => ({
