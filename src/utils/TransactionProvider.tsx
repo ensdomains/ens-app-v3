@@ -1,6 +1,6 @@
 import { TransactionModal } from '@app/components/@molecules/TransactionModal/TransactionModal'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { TransactionSubmission } from '@app/types'
+import { TransactionPreStepFunction, TransactionSubmission } from '@app/types'
 import {
   createContext,
   Dispatch,
@@ -14,7 +14,11 @@ import {
 } from 'react'
 import { useQueryClient } from 'react-query'
 
-type StateType = { data: TransactionSubmission[]; key: string } | null
+type StateType = {
+  data: TransactionSubmission[]
+  key: string
+  preSteps?: TransactionPreStepFunction
+} | null
 
 const TransactionContext = createContext<{
   setCurrentTransaction: Dispatch<SetStateAction<StateType>>
@@ -102,6 +106,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
             }
             queryClient.invalidateQueries()
           },
+          preSteps: currentTransaction?.preSteps?.(currentStep),
           currentStep,
           stepCount: currentTransaction?.data.length || 0,
           open: !!currentTransaction && !shouldClose,

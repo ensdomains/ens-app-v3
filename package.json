@@ -42,7 +42,7 @@
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/ens-contracts": "^0.0.12",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs",
+    "@ensdomains/ensjs": "^3.0.0-alpha.5",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin",
     "@rainbow-me/rainbowkit": "patch:@rainbow-me/rainbowkit@0.3.3#./patches/@rainbow-me/rainbowkit.patch",

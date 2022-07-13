@@ -1,14 +1,14 @@
 import SparklesSVG from '@app/assets/Sparkles.svg'
 import { WrapNameGift } from '@app/assets/WrapNameGift'
-import { DisplayItem } from '@app/components/@molecules/TransactionModal/DisplayItems'
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 import { useTransaction } from '@app/utils/TransactionProvider'
-import { Button, Dialog, mq, Typography } from '@ensdomains/thorin'
-import { useCallback, useState } from 'react'
+import { Button, mq, Typography } from '@ensdomains/thorin'
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useSigner } from 'wagmi'
 
@@ -81,33 +81,6 @@ const UpgradeButton = styled(Button)(
   `,
 )
 
-const ButtonShrinkwrap = styled(Button)(
-  () => css`
-    width: 80%;
-    flex-shrink: 1;
-    ${mq.md.min(css`
-      width: 100%;
-    `)}
-  `,
-)
-
-const InnerDialog = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: ${theme.space.full};
-    padding: 0 ${theme.space['5']};
-    gap: ${theme.space['2.5']};
-    max-height: 60vh;
-    overflow-y: auto;
-    ${mq.md.min(css`
-      min-width: ${theme.space['128']};
-    `)}
-  `,
-)
-
 const GiftWrapper = styled.div(
   ({ theme }) => css`
     width: 100%;
@@ -127,7 +100,8 @@ const DescriptionWrapper = styled(Typography)(
 )
 
 export const WrapperCallToAction = ({ name }: { name: string }) => {
-  const [dialogOpen, setDialogOpen] = useState(false)
+  const { t } = useTranslation('profile')
+
   const { setCurrentTransaction, getCurrentStep } = useTransaction()
   const currentStep = getCurrentStep(`wrapName-${name}`)
   const { wrapName, setRecords, getProfile, contracts } = useEns()
@@ -182,110 +156,88 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
     [accountData, name, signer, wrapName],
   )
 
+  const handleUpgradeClick = useCallback(
+    () =>
+      setCurrentTransaction({
+        data: [
+          {
+            actionName: 'migrateProfile',
+            displayItems: [
+              {
+                label: 'name',
+                value: name,
+                type: 'name',
+              },
+            ],
+            generateTx: migrateProfileGenerateTx,
+          },
+          {
+            actionName: 'wrapName',
+            displayItems: [
+              {
+                label: 'name',
+                value: name,
+                type: 'name',
+              },
+            ],
+            completeTitle: t('details.wrap.completeTitle'),
+            generateTx: wrapNameGenerateTx,
+          },
+        ],
+        key: `wrapName-${name}`,
+        preSteps: (resumeToStep) => ({
+          title:
+            resumeToStep > 0
+              ? t('details.wrap.resumeTitle')
+              : t('details.wrap.startTitle'),
+          steps: ['migrateProfile', 'wrapName'],
+          content: (
+            <>
+              <GiftWrapper>
+                <WrapNameGift
+                  imageSrc={nftUrl.image || '/other/TemplateNFTImage.svg'}
+                />
+              </GiftWrapper>
+              <DescriptionWrapper>
+                <Typography>
+                  {t('details.wrap.description')}
+                  <span>
+                    <Outlink href="#">
+                      {t('action.learnMore', { ns: 'common' })}
+                    </Outlink>
+                  </span>
+                </Typography>
+              </DescriptionWrapper>
+            </>
+          ),
+        }),
+      }),
+    [
+      setCurrentTransaction,
+      name,
+      migrateProfileGenerateTx,
+      t,
+      wrapNameGenerateTx,
+      nftUrl.image,
+    ],
+  )
+
   return (
     <Container>
       <InnerContainer>
         <TextContainer>
           <Heading variant="extraLarge" weight="bold">
-            Unlock new features
+            {t('details.wrap.boxTitle')}
           </Heading>
-          <Subheading>
-            Upgrading your name unlocks the latest functionality of ENS
-          </Subheading>
+          <Subheading>{t('details.wrap.boxDescription')}</Subheading>
         </TextContainer>
         <Sparkles as={SparklesSVG} />
       </InnerContainer>
-      <UpgradeButton shadowless onClick={() => setDialogOpen(true)}>
-        {resumable ? 'Resume Upgrade' : 'Upgrade'}
+      <UpgradeButton shadowless onClick={handleUpgradeClick}>
+        {resumable
+          ? t('details.wrap.resumeLabel')
+          : t('details.wrap.startLabel')}
       </UpgradeButton>
-      <Dialog
-        open={dialogOpen}
-        variant="actionable"
-        currentStep={currentStep}
-        stepCount={2}
-        stepStatus="notStarted"
-        title={resumable ? 'Resume your upgrade' : 'Upgrade your name'}
-        onDismiss={() => setDialogOpen(false)}
-        leading={
-          <ButtonShrinkwrap
-            onClick={() => setDialogOpen(false)}
-            variant="secondary"
-            tone="grey"
-            shadowless
-          >
-            Cancel
-          </ButtonShrinkwrap>
-        }
-        trailing={
-          <Button
-            onClick={() => {
-              setDialogOpen(false)
-              setCurrentTransaction({
-                data: [
-                  {
-                    actionName: 'migrateProfile',
-                    displayItems: [
-                      {
-                        label: 'Name',
-                        value: name,
-                        type: 'name',
-                      },
-                      {
-                        label: 'Info',
-                        value: 'Set existing records on new resolver',
-                      },
-                    ],
-                    generateTx: migrateProfileGenerateTx,
-                  },
-                  {
-                    actionName: 'wrapName',
-                    displayItems: [
-                      {
-                        label: 'Name',
-                        value: name,
-                        type: 'name',
-                      },
-                      {
-                        label: 'Info',
-                        value: 'Wrap name and set new resolver',
-                      },
-                    ],
-                    completeTitle: 'Upgrade Complete',
-                    generateTx: wrapNameGenerateTx,
-                  },
-                ],
-                key: `wrapName-${name}`,
-              })
-            }}
-            shadowless
-          >
-            {resumable ? 'Resume' : 'Start'}
-          </Button>
-        }
-      >
-        <InnerDialog>
-          <GiftWrapper>
-            <WrapNameGift
-              imageSrc={nftUrl.image || '/other/TemplateNFTImage.svg'}
-            />
-          </GiftWrapper>
-          <DescriptionWrapper>
-            <Typography>
-              Upgrading or &quot;wrapping&quot; your name gives it new features.{' '}
-              <span>
-                <Outlink href="#">Learn more</Outlink>
-              </span>
-            </Typography>
-          </DescriptionWrapper>
-          <DisplayItem
-            fade={currentStep > 0}
-            shrink
-            label="Step 1"
-            value="Migrate profile"
-          />
-          <DisplayItem shrink label="Step 2" value="Wrap name" />
-        </InnerDialog>
-      </Dialog>
     </Container>
   )
 }

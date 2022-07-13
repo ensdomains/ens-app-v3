@@ -1,7 +1,7 @@
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
-import { TransactionSubmission } from '@app/types'
+import { TransactionPreStepObject, TransactionSubmission } from '@app/types'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
@@ -107,7 +107,7 @@ const CompleteTypography = styled(Typography)(
   `,
 )
 
-type Stage = 'request' | 'confirm' | 'complete'
+type Stage = 'preSteps' | 'request' | 'confirm' | 'complete'
 
 export const TransactionModal = ({
   displayItems,
@@ -121,10 +121,12 @@ export const TransactionModal = ({
   completeBtnLabel,
   currentStep,
   stepCount,
+  preSteps,
 }: TransactionSubmission & {
   open: boolean
   currentStep: number
   stepCount: number
+  preSteps?: TransactionPreStepObject
 }) => {
   const { t } = useTranslation()
   const chainName = useChainName()
@@ -156,20 +158,40 @@ export const TransactionModal = ({
   }, [generateTx, addTransaction, actionName])
 
   const FilledDisplayItems = useMemo(
-    () => (
-      <DisplayItems
-        displayItems={[
-          {
-            label: t('transaction.modal.actionLabel'),
-            value: t(`transaction.description.${actionName}`),
-          },
-          ...(displayItems || []),
-        ]}
-      />
-    ),
-    [t, actionName, displayItems],
+    () =>
+      stage === 'preSteps' ? (
+        <DisplayItems
+          displayItems={
+            preSteps?.steps.map((step, index) => ({
+              fade: currentStep > index,
+              shrink: true,
+              label: t('transaction.modal.preSteps.step', { step: index + 1 }),
+              value: t(`transaction.description.${step}`),
+              useRawLabel: true,
+            })) || []
+          }
+        />
+      ) : (
+        <DisplayItems
+          displayItems={[
+            {
+              label: 'action',
+              value: t(`transaction.description.${actionName}`),
+            },
+            {
+              label: 'info',
+              value: t(`transaction.info.${actionName}`),
+            },
+            ...(displayItems || []),
+          ]}
+        />
+      ),
+    [stage, preSteps, t, actionName, displayItems, currentStep],
   )
   const MiddleContent = useMemo(() => {
+    if (stage === 'preSteps') {
+      return preSteps?.content
+    }
     if (stage === 'complete') {
       return (
         <SuccessContent>
@@ -184,10 +206,13 @@ export const TransactionModal = ({
       return <WaitingElement />
     }
     return null
-  }, [stage, t])
+  }, [preSteps, stage, t])
 
   const LeadingButton = useMemo(() => {
     if (stage !== 'complete') {
+      const customLabel =
+        stage === 'preSteps' ? preSteps?.leadingLabel : dismissBtnLabel
+
       return (
         <ButtonShrinkwrap
           onClick={() => onDismiss?.()}
@@ -196,14 +221,30 @@ export const TransactionModal = ({
           shadowless
           data-testid="transaction-modal-dismiss-btn"
         >
-          {dismissBtnLabel || t('transaction.modal.leadingButton')}
+          {customLabel || t('transaction.modal.leadingButton')}
         </ButtonShrinkwrap>
       )
     }
     return null
-  }, [stage, dismissBtnLabel, t, onDismiss])
+  }, [stage, preSteps, dismissBtnLabel, t, onDismiss])
 
   const TrailingButton = useMemo(() => {
+    if (stage === 'preSteps') {
+      const tLabel =
+        currentStep > 0
+          ? t('transaction.modal.preSteps.trailingButtonResume')
+          : t('transaction.modal.preSteps.trailingButton')
+      return (
+        <Button
+          shadowless
+          variant="primary"
+          onClick={() => setStage('request')}
+          data-testid="transaction-modal-preSteps-trailing-btn"
+        >
+          {preSteps?.trailingLabel || tLabel}
+        </Button>
+      )
+    }
     if (stage === 'complete') {
       const final = currentStep + 1 === stepCount
 
@@ -249,16 +290,20 @@ export const TransactionModal = ({
   }, [
     stage,
     t,
-    completeBtnLabel,
-    onSuccess,
+    preSteps,
     currentStep,
     stepCount,
+    completeBtnLabel,
+    onSuccess,
     onDismiss,
     error,
     tryTransaction,
   ])
 
   const title = useMemo(() => {
+    if (stage === 'preSteps') {
+      return preSteps?.title
+    }
     if (stage === 'complete') {
       if (stepCount > 1) {
         return (
@@ -272,18 +317,23 @@ export const TransactionModal = ({
       return t('transaction.modal.confirm.title')
     }
     return t('transaction.modal.request.title')
-  }, [completeTitle, currentStep, stage, stepCount, t])
+  }, [completeTitle, currentStep, preSteps, stage, stepCount, t])
 
   useEffect(() => {
     if (open) {
-      setStage('request')
+      if (preSteps) {
+        setStage('preSteps')
+      } else {
+        setStage('request')
+      }
       setError(null)
       setTxHash(null)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   useEffect(() => {
-    setStage('request')
+    setStage((prev) => (prev === 'preSteps' ? 'preSteps' : 'request'))
   }, [actionName])
 
   useEffect(() => {
@@ -293,6 +343,9 @@ export const TransactionModal = ({
   }, [stage, tryTransaction])
 
   const stepStatus = useMemo(() => {
+    if (stage === 'preSteps') {
+      return 'notStarted'
+    }
     if (stage === 'complete') {
       return 'completed'
     }

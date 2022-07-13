@@ -1971,24 +1971,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
-  version: 3.0.0-alpha.4
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=1df4fd&locator=ens-app-v2%40workspace%3A."
-  dependencies:
-    "@ensdomains/address-encoder": ^0.2.16
-    "@ensdomains/content-hash": ^2.5.7
-    "@ensdomains/ens-contracts": ^0.0.11
-    dns-packet: ^5.3.1
-    ethers: ^5.6.1
-    graphql: ^16.3.0
-    graphql-request: ^4.1.0
-    idna-uts46-hx: 3.4.0
-  peerDependencies:
-    ethers: "*"
-  checksum: 04a84e49abbd0b7a86a4ea39285ac7dfa25f7a9ca3b81600b5c05b83cf3062cb2c5ca5df647552b1eff563e1535c075009e1ff32f765997a3b0ebbbaba321486
-  languageName: node
-  linkType: hard
-
 "@ensdomains/ensjs@npm:^2.0.1":
   version: 2.1.0
   resolution: "@ensdomains/ensjs@npm:2.1.0"
@@ -2002,6 +1984,24 @@ __metadata:
     ethers: ^5.0.13
     js-sha3: ^0.8.0
   checksum: bc284cefea4959b9a9f55e84e281140d9c17ecca21be798f5a463a924a7c3f52ae0072d3e6c8c2eb23a7bd4df0f7597ded212a5f706d199f187c00bc6db5d076
+  languageName: node
+  linkType: hard
+
+"@ensdomains/ensjs@npm:^3.0.0-alpha.5":
+  version: 3.0.0-alpha.5
+  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.5"
+  dependencies:
+    "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/content-hash": ^2.5.7
+    "@ensdomains/ens-contracts": ^0.0.11
+    dns-packet: ^5.3.1
+    ethers: ^5.6.1
+    graphql: ^16.3.0
+    graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
+  peerDependencies:
+    ethers: "*"
+  checksum: da209f1875fe422ce54ad4ef5f63d2451c4a7e961448f0ff37b87d92e5753fff8f9e8a855846dc03a58d2789b06433f9134e203ac99ff64f7ad8a5f4dba1d107
   languageName: node
   linkType: hard
 
@@ -11300,7 +11300,7 @@ __metadata:
     "@ensdomains/ens-contracts": ^0.0.12
     "@ensdomains/ens-test-env": ^0.1.2
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
+    "@ensdomains/ensjs": ^3.0.0-alpha.5
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
     "@next/bundle-analyzer": ^12.0.10

@@ -7,7 +7,8 @@
     "save": "Save",
     "edit": "Edit",
     "view": "View",
-    "clear": "Clear"
+    "clear": "Clear",
+    "learnMore": "Learn more"
   },
   "navigation": {
     "home": "Home",
@@ -75,6 +76,16 @@
       "migrateProfile": "Migrate Profile",
       "wrapName": "Wrap Name"
     },
+    "info": {
+      "migrateProfile": "Set existing records on new resolver",
+      "wrapName": "Wrap name and set new resolver"
+    },
+    "itemLabel": {
+      "name": "Name",
+      "address": "Address",
+      "action": "Action",
+      "info": "Info"
+    },
     "status": {
       "pending": {
         "regular": "Pending"
@@ -92,7 +103,11 @@
     },
     "modal": {
       "leadingButton": "Cancel",
-      "actionLabel": "Action",
+      "preSteps": {
+        "trailingButton": "Start",
+        "trailingButtonResume": "Resume",
+        "step": "Step {{step}}"
+      },
       "request": {
         "title": "Transaction Request",
         "subtitle": "Confirm the details of the transaction",

@@ -5,6 +5,7 @@ import { TransactionDisplayItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
+import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div(
@@ -165,14 +166,18 @@ export const DisplayItem = ({
   type,
   shrink,
   fade,
-}: TransactionDisplayItem & { shrink?: boolean; fade?: boolean }) => {
+  useRawLabel,
+  t,
+}: TransactionDisplayItem & { t: TFunction }) => {
   return (
     <DisplayItemContainer
       $fade={fade}
       $shrink={shrink}
       key={`${label}-${value}`}
     >
-      <DisplayItemLabel>{label}</DisplayItemLabel>
+      <DisplayItemLabel>
+        {useRawLabel ? label : t(`transaction.itemLabel.${label}`)}
+      </DisplayItemLabel>
       <DisplayItemValue {...{ value, type }} />
     </DisplayItemContainer>
   )
@@ -183,7 +188,13 @@ export const DisplayItems = ({
 }: {
   displayItems: TransactionDisplayItem[]
 }) => {
+  const { t } = useTranslation()
+
   if (!displayItems || !displayItems.length) return null
 
-  return <Container>{displayItems.map(DisplayItem)}</Container>
+  return (
+    <Container>
+      {displayItems.map((props) => DisplayItem({ ...props, t }))}
+    </Container>
+  )
 }
