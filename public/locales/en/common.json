@@ -77,6 +77,7 @@
       "wrapName": "Wrap Name"
     },
     "info": {
+      "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
       "wrapName": "Wrap name and set new resolver"
     },

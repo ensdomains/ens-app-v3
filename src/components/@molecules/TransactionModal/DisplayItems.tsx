@@ -171,6 +171,7 @@ export const DisplayItem = ({
 }: TransactionDisplayItem & { t: TFunction }) => {
   return (
     <DisplayItemContainer
+      data-testid={`display-item-${label}-${fade ? 'fade' : 'normal'}`}
       $fade={fade}
       $shrink={shrink}
       key={`${label}-${value}`}

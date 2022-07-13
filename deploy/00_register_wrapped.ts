@@ -2,6 +2,7 @@ import crypto from 'crypto'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { getIndexForOwner, setOriginalNonces } from './00_register_legacy'
 
 const names = [
   {
@@ -19,13 +20,14 @@ const randomSecret = () => {
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
-  const { owner } = await getNamedAccounts()
   const allNamedAccts = await getNamedAccounts()
 
-  const controller = await ethers.getContract('ETHRegistrarController', owner)
+  const controller = await ethers.getContract('ETHRegistrarController')
   const publicResolver = await ethers.getContract('PublicResolver')
 
-  await Promise.all(
+  let originalNonces = await setOriginalNonces(allNamedAccts)
+
+  const partialCommitments = await Promise.all(
     names.map(async (nameObj) => {
       const secret = randomSecret()
       const { label, data, reverseRecord, fuses } = nameObj
@@ -34,35 +36,12 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       const duration = 31536000
       const wrapperExpiry = 0
 
-      const commitment = await controller.makeCommitment(
-        label,
-        ownerAddr,
-        duration,
-        secret,
-        resolver,
-        data,
-        reverseRecord,
-        fuses,
-        wrapperExpiry,
-      )
+      const nonceDiff = getIndexForOwner(label, nameObj.owner, names)
+      const nonce = originalNonces[ownerAddr] + nonceDiff
 
-      const commitTx = await controller.commit(commitment)
-      console.log(
-        `Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`,
-      )
-      await commitTx.wait()
+      const _controller = controller.connect(await ethers.getSigner(ownerAddr))
 
-      await network.provider.send('evm_increaseTime', [60])
-      await network.provider.send('evm_mine')
-
-      // for anvil:
-      // await network.provider.send('evm_setNextBlockTimestamp', [
-      //   Math.floor(Date.now() / 1000) + 60,
-      // ])
-
-      const [price] = await controller.rentPrice(label, duration)
-
-      const registerTx = await controller.register(
+      const commitment = await _controller.makeCommitment(
         label,
         ownerAddr,
         duration,
@@ -73,13 +52,77 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         fuses,
         wrapperExpiry,
         {
-          from: owner,
-          value: price,
+          nonce,
         },
       )
-      console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
-      await registerTx.wait()
+
+      const commitTx = await controller.commit(commitment)
+      console.log(
+        `Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`,
+      )
+      await commitTx.wait()
+
+      return {
+        label,
+        ownerAddr,
+        duration,
+        secret,
+        resolver,
+        data,
+        reverseRecord,
+        fuses,
+        wrapperExpiry,
+        nonceDiff,
+      }
     }),
+  )
+
+  await network.provider.send('evm_increaseTime', [60])
+  await network.provider.send('evm_mine')
+
+  originalNonces = await setOriginalNonces(allNamedAccts)
+
+  await Promise.all(
+    partialCommitments.map(
+      async ({
+        label,
+        ownerAddr,
+        duration,
+        secret,
+        resolver,
+        data,
+        reverseRecord,
+        fuses,
+        wrapperExpiry,
+        nonceDiff,
+      }) => {
+        const nonce = originalNonces[ownerAddr] + nonceDiff
+
+        const [price] = await controller.rentPrice(label, duration)
+
+        const _controller = controller.connect(
+          await ethers.getSigner(ownerAddr),
+        )
+
+        const registerTx = await _controller.register(
+          label,
+          ownerAddr,
+          duration,
+          secret,
+          resolver,
+          data,
+          reverseRecord,
+          fuses,
+          wrapperExpiry,
+          {
+            value: price,
+            nonce,
+          },
+        )
+        console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
+        await registerTx.wait()
+      },
+    ),
   )
 
   return true

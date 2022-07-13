@@ -1,5 +1,5 @@
 import type { ENS } from '@ensdomains/ensjs'
-import type { ContractTransaction } from 'ethers'
+import type { ContractTransaction, Signer } from 'ethers'
 import { ReactNode } from 'react'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
@@ -16,7 +16,10 @@ export type TransactionDisplayItem = {
 }
 
 export type TransactionSubmission = {
-  generateTx: () => Promise<ContractTransaction | undefined>
+  generateTx: (
+    signer: Signer,
+    address: string,
+  ) => Promise<ContractTransaction | undefined>
   onDismiss?: (success?: boolean) => void
   onSuccess?: () => void
   dismissBtnLabel?: string

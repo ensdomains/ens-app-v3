@@ -105,9 +105,11 @@ export default function Page() {
     ownerData,
     profile,
     isLoading: detailsLoading,
+    isWrapped,
   } = useNameDetails(name)
   const nameWrapperExists = useWrapperExists()
-  const canBeWrapped = nameWrapperExists && ownerData?.registrant === address
+  const canBeWrapped =
+    nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
   const selfAbilities = useMemo(() => {
     const abilities = {

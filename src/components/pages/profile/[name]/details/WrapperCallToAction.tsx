@@ -4,13 +4,13 @@ import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
+import { TransactionSubmission } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useSigner } from 'wagmi'
 
 const Container = styled(Card)(
   ({ theme }) => css`
@@ -105,55 +105,56 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   const { setCurrentTransaction, getCurrentStep } = useTransaction()
   const currentStep = getCurrentStep(`wrapName-${name}`)
   const { wrapName, setRecords, getProfile, contracts } = useEns()
-
-  const { data: accountData } = useAccount()
-  const { data: signer } = useSigner()
   const chainId = useChainId()
   const nftUrl = useNFTImage(name, chainId)
 
   const resumable = currentStep > 0
 
-  const migrateProfileGenerateTx = useCallback(async () => {
-    const profile = await getProfile(name)
-    if (!profile) throw new Error('No profile found')
-    if (!profile.records) throw new Error('No records found')
-    const { contentHash } = profile.records
-    const resolverAddress = (await contracts!.getPublicResolver()!).address
-    let migratableContentHash: string | undefined
-    if (contentHash) {
-      if (typeof contentHash === 'string') {
-        migratableContentHash = contentHash
-      } else if (typeof contentHash === 'object' && contentHash.decoded) {
-        migratableContentHash = `${contentHash.protocolType}://${contentHash.decoded}`
-      }
-    }
+  const migrateProfileGenerateTx: TransactionSubmission['generateTx'] =
+    useCallback(
+      async (signer) => {
+        const profile = await getProfile(name)
+        if (!profile) throw new Error('No profile found')
+        if (!profile.records) throw new Error('No records found')
+        const { contentHash } = profile.records
+        const resolverAddress = (await contracts!.getPublicResolver()!).address
+        let migratableContentHash: string | undefined
+        if (contentHash) {
+          if (typeof contentHash === 'string') {
+            migratableContentHash = contentHash
+          } else if (typeof contentHash === 'object' && contentHash.decoded) {
+            migratableContentHash = `${contentHash.protocolType}://${contentHash.decoded}`
+          }
+        }
 
-    const migratableProfile = {
-      contentHash: migratableContentHash,
-      texts: profile.records.texts as {
-        key: string
-        value: string
-      }[],
-      coinTypes: profile.records.coinTypes?.map((coinType) => ({
-        key: coinType.key as string,
-        value: (coinType as any).addr as string,
-      })),
-    }
+        const migratableProfile = {
+          contentHash: migratableContentHash,
+          texts: profile.records.texts as {
+            key: string
+            value: string
+          }[],
+          coinTypes: profile.records.coinTypes?.map((coinType) => ({
+            key: coinType.key as string,
+            value: (coinType as any).addr as string,
+          })),
+        }
 
-    return setRecords(name, {
-      records: migratableProfile,
-      resolverAddress,
-      signer: signer!,
-    })
-  }, [contracts, getProfile, name, setRecords, signer])
+        return setRecords(name, {
+          records: migratableProfile,
+          resolverAddress,
+          signer,
+        })
+      },
+      [contracts, getProfile, name, setRecords],
+    )
 
-  const wrapNameGenerateTx = useCallback(
-    async () =>
+  const wrapNameGenerateTx: TransactionSubmission['generateTx'] = useCallback(
+    async (signer, address) =>
       wrapName(name, {
-        wrappedOwner: accountData!.address!,
-        signer: signer!,
+        wrappedOwner: address,
+        signer,
       }),
-    [accountData, name, signer, wrapName],
+    [name, wrapName],
   )
 
   const handleUpgradeClick = useCallback(

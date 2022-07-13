@@ -8,6 +8,7 @@ import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount, useSigner } from 'wagmi'
 import { DisplayItems } from './DisplayItems'
 
 const InnerDialog = styled.div(
@@ -133,13 +134,15 @@ export const TransactionModal = ({
 
   const [stage, setStage] = useState<Stage>('request')
   const addTransaction = useAddRecentTransaction()
+  const { data: signer } = useSigner()
+  const { data: accountData } = useAccount()
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
 
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      const tx = await generateTx()
+      const tx = await generateTx(signer!, accountData!.address!)
       if (!tx) throw new Error('No transaction generated')
       addTransaction({
         description: actionName,
@@ -155,7 +158,7 @@ export const TransactionModal = ({
         setError(e ? e.message : 'transaction.modal.confirm.error.unknown')
       }
     }
-  }, [generateTx, addTransaction, actionName])
+  }, [generateTx, signer, accountData, addTransaction, actionName])
 
   const FilledDisplayItems = useMemo(
     () =>
