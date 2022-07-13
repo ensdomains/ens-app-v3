@@ -223,7 +223,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   )
 
   return (
-    <Container>
+    <Container data-testid="wrapper-cta-container">
       <InnerContainer>
         <TextContainer>
           <Heading variant="extraLarge" weight="bold">
@@ -233,7 +233,11 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
         </TextContainer>
         <Sparkles as={SparklesSVG} />
       </InnerContainer>
-      <UpgradeButton shadowless onClick={handleUpgradeClick}>
+      <UpgradeButton
+        data-testid="wrapper-cta-button"
+        shadowless
+        onClick={handleUpgradeClick}
+      >
         {resumable
           ? t('details.wrap.resumeLabel')
           : t('details.wrap.startLabel')}

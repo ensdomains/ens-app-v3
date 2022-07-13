@@ -14,24 +14,27 @@ import {
 } from 'react'
 import { useQueryClient } from 'react-query'
 
-type StateType = {
+export type TxStateType = {
   data: TransactionSubmission[]
   key: string
   preSteps?: TransactionPreStepFunction
 } | null
 
 const TransactionContext = createContext<{
-  setCurrentTransaction: Dispatch<SetStateAction<StateType>>
+  setCurrentTransaction: Dispatch<SetStateAction<TxStateType>>
+  setCurrentStep: (func: number | ((step: number) => number)) => void
   getCurrentStep: (key: string) => number
 }>({
   setCurrentTransaction: () => {},
+  setCurrentStep: () => {},
   getCurrentStep: () => 0,
 })
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient()
 
-  const [currentTransaction, setCurrentTransaction] = useState<StateType>(null)
+  const [currentTransaction, setCurrentTransaction] =
+    useState<TxStateType>(null)
   const [stepStorage, setStepStorage] = useLocalStorage<Record<string, number>>(
     'transaction-step',
     {},
@@ -92,17 +95,17 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
             setShouldClose(true)
           },
           onSuccess: () => {
-            setStepStorage((prevStepStorage) => {
-              const newStepStorage = { ...prevStepStorage }
-              delete newStepStorage[currentTransaction!.key]
-              return newStepStorage
-            })
             currentTransaction?.data[currentStep].onSuccess?.()
-            if (
-              currentTransaction &&
-              currentTransaction.data.length > currentStep + 1
-            ) {
-              setCurrentStep((step) => step + 1)
+            if (currentTransaction && currentTransaction.data.length > 1) {
+              if (currentStep + 1 < currentTransaction.data.length) {
+                setCurrentStep((step) => step + 1)
+              } else {
+                setStepStorage((prevStepStorage) => {
+                  const newStepStorage = { ...prevStepStorage }
+                  delete newStepStorage[currentTransaction!.key]
+                  return newStepStorage
+                })
+              }
             }
             queryClient.invalidateQueries()
           },
