@@ -367,7 +367,10 @@ export const TransactionModal = ({
       leading={LeadingButton}
       trailing={TrailingButton}
       open={open}
-      onDismiss={onDismiss}
+      onDismiss={() => {
+        onDismiss?.()
+        if (stage === 'complete') onSuccess?.()
+      }}
       currentStep={currentStep}
       stepCount={stepCount > 1 ? stepCount : undefined}
       stepStatus={stepStatus}
