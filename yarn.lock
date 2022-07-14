@@ -1927,9 +1927,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ens-test-env@npm:^0.1.1":
-  version: 0.1.1
-  resolution: "@ensdomains/ens-test-env@npm:0.1.1"
+"@ensdomains/ens-test-env@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@ensdomains/ens-test-env@npm:0.1.4"
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1947,7 +1947,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 778b4f537751ebdfab4fcdd8f58acb24e4ee303879b73ba5de89478c38c377ffc594373f31ea02bf9ae3a7aca9249f5c2674f1e31170554ab2ffa08cc087de7c
+  checksum: d8a813f736984d82723a1497313d4697b1e7df4262477de3862ef86975cfd22aa4cd2c7c9b15306affa0e5edd62c03aa5ded8ed1349a9b1532441d16ad8f70e8
   languageName: node
   linkType: hard
 
@@ -1987,9 +1987,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ensjs@npm:^3.0.0-alpha.2":
-  version: 3.0.0-alpha.4
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.4"
+"@ensdomains/ensjs@npm:^3.0.0-alpha.5":
+  version: 3.0.0-alpha.5
+  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.5"
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -2001,7 +2001,7 @@ __metadata:
     idna-uts46-hx: 3.4.0
   peerDependencies:
     ethers: "*"
-  checksum: 1d286c4500712a632d270b98446c7cfa2c22e80ea8fc783f2477d382a33c6db645ae3b92054ee3f0c4a6502c81340e52a84b5f8271ee760304661a2862e8be33
+  checksum: da209f1875fe422ce54ad4ef5f63d2451c4a7e961448f0ff37b87d92e5753fff8f9e8a855846dc03a58d2789b06433f9134e203ac99ff64f7ad8a5f4dba1d107
   languageName: node
   linkType: hard
 
@@ -2028,9 +2028,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.6.4":
-  version: 0.6.4
-  resolution: "@ensdomains/thorin@npm:0.6.4"
+"@ensdomains/thorin@npm:^0.6.5":
+  version: 0.6.5
+  resolution: "@ensdomains/thorin@npm:0.6.5"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2040,7 +2040,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 2be56b5f51cccfe4d0a84038baa24c6ebe479a1d8eed450dc01f3157af3bef28451556def732edce75a568a534cda7098491952c50e074d4444439c24a4af034
+  checksum: 8e4b975720eae2edc292ef2c4cbaba3ae8645c52a4498cf2870739bf46f6a2674735a89084a211e2ae3e6216d57ea6cdc98d7b5f359e83ebe646d7716fda4cb9
   languageName: node
   linkType: hard
 
@@ -11298,11 +11298,11 @@ __metadata:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-contracts": ^0.0.12
-    "@ensdomains/ens-test-env": ^0.1.1
+    "@ensdomains/ens-test-env": ^0.1.4
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": ^3.0.0-alpha.2
+    "@ensdomains/ensjs": ^3.0.0-alpha.5
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.6.4
+    "@ensdomains/thorin": ^0.6.5
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5

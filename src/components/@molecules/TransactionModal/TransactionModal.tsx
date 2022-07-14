@@ -1,13 +1,14 @@
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
-import { TransactionSubmission } from '@app/types'
+import { TransactionPreStepObject, TransactionSubmission } from '@app/types'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount, useSigner } from 'wagmi'
 import { DisplayItems } from './DisplayItems'
 
 const InnerDialog = styled.div(
@@ -107,7 +108,7 @@ const CompleteTypography = styled(Typography)(
   `,
 )
 
-type Stage = 'request' | 'confirm' | 'complete'
+type Stage = 'preSteps' | 'request' | 'confirm' | 'complete'
 
 export const TransactionModal = ({
   displayItems,
@@ -119,21 +120,30 @@ export const TransactionModal = ({
   completeTitle,
   dismissBtnLabel,
   completeBtnLabel,
+  currentStep,
+  stepCount,
+  preSteps,
 }: TransactionSubmission & {
   open: boolean
+  currentStep: number
+  stepCount: number
+  preSteps?: TransactionPreStepObject
 }) => {
   const { t } = useTranslation()
   const chainName = useChainName()
 
   const [stage, setStage] = useState<Stage>('request')
   const addTransaction = useAddRecentTransaction()
+  const { data: signer } = useSigner()
+  const { data: accountData } = useAccount()
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
 
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      const tx = await generateTx()
+      const tx = await generateTx(signer!, accountData!.address!)
+      if (!tx) throw new Error('No transaction generated')
       addTransaction({
         description: actionName,
         hash: tx.hash,
@@ -148,23 +158,43 @@ export const TransactionModal = ({
         setError(e ? e.message : 'transaction.modal.confirm.error.unknown')
       }
     }
-  }, [generateTx, addTransaction, actionName])
+  }, [generateTx, signer, accountData, addTransaction, actionName])
 
   const FilledDisplayItems = useMemo(
-    () => (
-      <DisplayItems
-        displayItems={[
-          {
-            label: t('transaction.modal.actionLabel'),
-            value: t(`transaction.description.${actionName}`),
-          },
-          ...(displayItems || []),
-        ]}
-      />
-    ),
-    [t, actionName, displayItems],
+    () =>
+      stage === 'preSteps' ? (
+        <DisplayItems
+          displayItems={
+            preSteps?.steps.map((step, index) => ({
+              fade: currentStep > index,
+              shrink: true,
+              label: t('transaction.modal.preSteps.step', { step: index + 1 }),
+              value: t(`transaction.description.${step}`),
+              useRawLabel: true,
+            })) || []
+          }
+        />
+      ) : (
+        <DisplayItems
+          displayItems={[
+            {
+              label: 'action',
+              value: t(`transaction.description.${actionName}`),
+            },
+            {
+              label: 'info',
+              value: t(`transaction.info.${actionName}`),
+            },
+            ...(displayItems || []),
+          ]}
+        />
+      ),
+    [stage, preSteps, t, actionName, displayItems, currentStep],
   )
   const MiddleContent = useMemo(() => {
+    if (stage === 'preSteps') {
+      return preSteps?.content
+    }
     if (stage === 'complete') {
       return (
         <SuccessContent>
@@ -179,10 +209,13 @@ export const TransactionModal = ({
       return <WaitingElement />
     }
     return null
-  }, [stage, t])
+  }, [preSteps, stage, t])
 
   const LeadingButton = useMemo(() => {
     if (stage !== 'complete') {
+      const customLabel =
+        stage === 'preSteps' ? preSteps?.leadingLabel : dismissBtnLabel
+
       return (
         <ButtonShrinkwrap
           onClick={() => onDismiss?.()}
@@ -191,26 +224,47 @@ export const TransactionModal = ({
           shadowless
           data-testid="transaction-modal-dismiss-btn"
         >
-          {dismissBtnLabel || t('transaction.modal.leadingButton')}
+          {customLabel || t('transaction.modal.leadingButton')}
         </ButtonShrinkwrap>
       )
     }
     return null
-  }, [stage, dismissBtnLabel, t, onDismiss])
+  }, [stage, preSteps, dismissBtnLabel, t, onDismiss])
 
   const TrailingButton = useMemo(() => {
-    if (stage === 'complete') {
+    if (stage === 'preSteps') {
+      const tLabel =
+        currentStep > 0
+          ? t('transaction.modal.preSteps.trailingButtonResume')
+          : t('transaction.modal.preSteps.trailingButton')
       return (
         <Button
-          variant="secondary"
+          shadowless
+          variant="primary"
+          onClick={() => setStage('request')}
+          data-testid="transaction-modal-preSteps-trailing-btn"
+        >
+          {preSteps?.trailingLabel || tLabel}
+        </Button>
+      )
+    }
+    if (stage === 'complete') {
+      const final = currentStep + 1 === stepCount
+
+      return (
+        <Button
+          variant={final ? 'secondary' : 'primary'}
           shadowless
           onClick={() => {
             onSuccess?.()
-            onDismiss?.()
+            if (final) onDismiss?.()
           }}
           data-testid="transaction-modal-complete-trailing-btn"
         >
-          {completeBtnLabel || t('transaction.modal.complete.trailingButton')}
+          {completeBtnLabel ||
+            (final
+              ? t('transaction.modal.complete.trailingButton')
+              : t('transaction.modal.complete.stepTrailingButton'))}
         </Button>
       )
     }
@@ -236,28 +290,53 @@ export const TransactionModal = ({
         {t('transaction.modal.request.trailingButton')}
       </Button>
     )
-  }, [stage, t, completeBtnLabel, onSuccess, onDismiss, error, tryTransaction])
+  }, [
+    stage,
+    t,
+    preSteps,
+    currentStep,
+    stepCount,
+    completeBtnLabel,
+    onSuccess,
+    onDismiss,
+    error,
+    tryTransaction,
+  ])
 
   const title = useMemo(() => {
+    if (stage === 'preSteps') {
+      return preSteps?.title
+    }
     if (stage === 'complete') {
+      if (stepCount > 1) {
+        return (
+          completeTitle ||
+          t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
+        )
+      }
       return completeTitle || t('transaction.modal.complete.title')
     }
     if (stage === 'confirm') {
       return t('transaction.modal.confirm.title')
     }
     return t('transaction.modal.request.title')
-  }, [completeTitle, stage, t])
+  }, [completeTitle, currentStep, preSteps, stage, stepCount, t])
 
   useEffect(() => {
     if (open) {
-      setStage('request')
+      if (preSteps) {
+        setStage('preSteps')
+      } else {
+        setStage('request')
+      }
       setError(null)
       setTxHash(null)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
   useEffect(() => {
-    setStage('request')
+    setStage((prev) => (prev === 'preSteps' ? 'preSteps' : 'request'))
   }, [actionName])
 
   useEffect(() => {
@@ -265,6 +344,16 @@ export const TransactionModal = ({
       tryTransaction()
     }
   }, [stage, tryTransaction])
+
+  const stepStatus = useMemo(() => {
+    if (stage === 'preSteps') {
+      return 'notStarted'
+    }
+    if (stage === 'complete') {
+      return 'completed'
+    }
+    return 'inProgress'
+  }, [stage])
 
   return (
     <Dialog
@@ -278,7 +367,13 @@ export const TransactionModal = ({
       leading={LeadingButton}
       trailing={TrailingButton}
       open={open}
-      onDismiss={onDismiss}
+      onDismiss={() => {
+        onDismiss?.()
+        if (stage === 'complete') onSuccess?.()
+      }}
+      currentStep={currentStep}
+      stepCount={stepCount > 1 ? stepCount : undefined}
+      stepStatus={stepStatus}
     >
       <InnerDialog data-testid="transaction-modal-inner">
         {error ? (

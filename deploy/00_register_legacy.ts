@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import crypto from 'crypto'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
@@ -6,8 +7,23 @@ import { HardhatRuntimeEnvironment } from 'hardhat/types'
 const names = [
   {
     label: 'test123',
-    owner: 'owner',
-    addr: 'owner',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+  },
+  {
+    label: 'to-be-wrapped',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+  },
+  {
+    label: 'resume-and-wrap',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+  },
+  {
+    label: 'other-registrant',
+    namedOwner: 'deployer',
+    namedAddr: 'deployer',
   },
 ]
 
@@ -17,64 +33,52 @@ const randomSecret = () => {
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
-  const { owner } = await getNamedAccounts()
   const allNamedAccts = await getNamedAccounts()
 
-  const controller = await ethers.getContract(
-    'LegacyETHRegistrarController',
-    owner,
-  )
+  const controller = await ethers.getContract('LegacyETHRegistrarController')
   const publicResolver = await ethers.getContract('LegacyPublicResolver')
 
-  await Promise.all(
-    names.map(async (nameObj) => {
-      const secret = randomSecret()
-      const { label } = nameObj
-      const registrant = allNamedAccts[nameObj.owner]
-      const resolver = publicResolver.address
-      const addr = allNamedAccts[nameObj.addr]
-      const duration = 31536000
+  for (const { label, namedOwner, namedAddr } of names) {
+    const secret = randomSecret()
+    const registrant = allNamedAccts[namedOwner]
+    const resolver = publicResolver.address
+    const addr = allNamedAccts[namedAddr]
+    const duration = 31536000
 
-      const commitment = await controller.makeCommitmentWithConfig(
-        label,
-        registrant,
-        secret,
-        resolver,
-        addr,
-      )
+    const commitment = await controller.makeCommitmentWithConfig(
+      label,
+      registrant,
+      secret,
+      resolver,
+      addr,
+    )
 
-      const commitTx = await controller.commit(commitment)
-      console.log(
-        `Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`,
-      )
-      await commitTx.wait()
+    const _controller = controller.connect(await ethers.getSigner(registrant))
+    const commitTx = await _controller.commit(commitment)
+    console.log(
+      `Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`,
+    )
+    await commitTx.wait()
 
-      await network.provider.send('evm_increaseTime', [60])
-      await network.provider.send('evm_mine')
+    await network.provider.send('evm_increaseTime', [60])
+    await network.provider.send('evm_mine')
 
-      // for anvil:
-      // await network.provider.send('evm_setNextBlockTimestamp', [
-      //   Math.floor(Date.now() / 1000) + 60,
-      // ])
+    const price = await controller.rentPrice(label, duration)
 
-      const price = await controller.rentPrice(label, duration)
-
-      const registerTx = await controller.registerWithConfig(
-        label,
-        registrant,
-        duration,
-        secret,
-        resolver,
-        addr,
-        {
-          from: owner,
-          value: price,
-        },
-      )
-      console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
-      await registerTx.wait()
-    }),
-  )
+    const registerTx = await _controller.registerWithConfig(
+      label,
+      registrant,
+      duration,
+      secret,
+      resolver,
+      addr,
+      {
+        value: price,
+      },
+    )
+    console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
+    await registerTx.wait()
+  }
 
   return true
 }

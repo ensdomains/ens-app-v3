@@ -5,17 +5,19 @@ import { DetailSnippet } from '@app/components/pages/profile/[name]/details/Deta
 import More from '@app/components/pages/profile/[name]/details/MoreTab/MoreTab'
 import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
 import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
+import { WrapperCallToAction } from '@app/components/pages/profile/[name]/details/WrapperCallToAction'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
-import { useTranslation } from 'react-i18next'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -103,7 +105,11 @@ export default function Page() {
     ownerData,
     profile,
     isLoading: detailsLoading,
+    isWrapped,
   } = useNameDetails(name)
+  const nameWrapperExists = useWrapperExists()
+  const canBeWrapped =
+    nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
   const selfAbilities = useMemo(() => {
     const abilities = {
@@ -139,6 +145,7 @@ export default function Page() {
       loading={isLoading}
     >
       {{
+        info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
         leading: (
           <DetailsContainer>
             {breakpoints.md ? (

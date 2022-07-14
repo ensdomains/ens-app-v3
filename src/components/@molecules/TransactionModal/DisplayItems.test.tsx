@@ -31,6 +31,13 @@ describe('DisplayItems', () => {
   mockUseChainId.mockReturnValue(1)
   it('should show a generic item', () => {
     render(<DisplayItems displayItems={[genericItem]} />)
+    expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()
+    expect(screen.getByText('GenericValue')).toBeVisible()
+  })
+  it('should show the raw label', () => {
+    render(
+      <DisplayItems displayItems={[{ ...genericItem, useRawLabel: true }]} />,
+    )
     expect(screen.getByText('GenericItem')).toBeVisible()
     expect(screen.getByText('GenericValue')).toBeVisible()
   })
@@ -41,7 +48,7 @@ describe('DisplayItems', () => {
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem]} />)
-    expect(screen.getByText('AddressItem')).toBeVisible()
+    expect(screen.getByText('transaction.itemLabel.AddressItem')).toBeVisible()
     expect(screen.getByText('0x123...67890')).toBeVisible()
     expect(screen.getByText('test.eth')).toBeVisible()
   })
@@ -52,13 +59,13 @@ describe('DisplayItems', () => {
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem]} />)
-    expect(screen.getByText('AddressItem')).toBeVisible()
+    expect(screen.getByText('transaction.itemLabel.AddressItem')).toBeVisible()
     expect(screen.getByText('0x123...67890')).toBeVisible()
     expect(screen.queryByText('test.eth')).not.toBeInTheDocument()
   })
   it('should show a name item', () => {
     render(<DisplayItems displayItems={[nameItem]} />)
-    expect(screen.getByText('NameItem')).toBeVisible()
+    expect(screen.getByText('transaction.itemLabel.NameItem')).toBeVisible()
     expect(screen.getByText('test.eth')).toBeVisible()
   })
   it('should render multiple items', () => {
@@ -68,11 +75,11 @@ describe('DisplayItems', () => {
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem, nameItem, genericItem]} />)
-    expect(screen.getByText('AddressItem')).toBeVisible()
+    expect(screen.getByText('transaction.itemLabel.AddressItem')).toBeVisible()
     expect(screen.getByText('0x123...67890')).toBeVisible()
-    expect(screen.getByText('NameItem')).toBeVisible()
+    expect(screen.getByText('transaction.itemLabel.NameItem')).toBeVisible()
     expect(screen.getByText('test.eth')).toBeVisible()
-    expect(screen.getByText('GenericItem')).toBeVisible()
+    expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()
     expect(screen.getByText('GenericValue')).toBeVisible()
   })
 })

@@ -105,5 +105,6 @@ export const useNameDetails = (name: string) => {
     expiryDate,
     isLoading,
     truncatedName,
+    isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
   }
 }

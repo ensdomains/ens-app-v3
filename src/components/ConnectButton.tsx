@@ -74,6 +74,7 @@ export const ConnectButtonWrapper = ({
             {children.noAccountBefore}
             <StyledButtonWrapper $isTabBar={isTabBar}>
               <Button
+                data-testid="connect-button"
                 onClick={() => openConnectModal()}
                 variant="primary"
                 size={breakpoints.md ? 'medium' : 'extraSmall'}
