@@ -1,4 +1,4 @@
-import { memo, ReactNode, useEffect, useRef } from 'react'
+import { ReactNode, useEffect, useRef } from 'react'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div(
@@ -24,7 +24,7 @@ const Container = styled.div(
   `,
 )
 
-const _NightSky = ({ children }: { children: ReactNode }) => {
+export const NightSky = ({ children }: { children: ReactNode }) => {
   const ref = useRef<HTMLCanvasElement>(null)
 
   useEffect(() => {
@@ -60,5 +60,3 @@ const _NightSky = ({ children }: { children: ReactNode }) => {
     </Container>
   )
 }
-
-export const NightSky = memo(_NightSky, () => true)
