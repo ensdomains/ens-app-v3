@@ -1,3 +1,4 @@
+import { NightSky } from '@app/assets/NightSky'
 import SparklesSVG from '@app/assets/Sparkles.svg'
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Card } from '@app/components/Card'
@@ -49,13 +50,15 @@ const InnerContainer = styled.div(
 
 const Heading = styled(Typography)(
   ({ theme }) => css`
+    color: ${theme.colors.background};
     line-height: ${theme.lineHeights.normal};
   `,
 )
 
 const Subheading = styled(Typography)(
   ({ theme }) => css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.background};
+    opacity: 0.8;
   `,
 )
 
@@ -74,8 +77,15 @@ const TextContainer = styled.div(
 
 const UpgradeButton = styled(Button)(
   ({ theme }) => css`
+    & {
+      background: ${theme.colors.backgroundTertiary};
+      color: ${theme.colors.foreground};
+    }
+    &:hover {
+      background: ${theme.colors.background};
+    }
     ${mq.md.min(css`
-      max-width: ${theme.space['80']};
+      max-width: ${theme.space['64']};
       height: ${theme.space.full};
     `)}
   `,
@@ -224,25 +234,27 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   )
 
   return (
-    <Container data-testid="wrapper-cta-container">
-      <InnerContainer>
-        <TextContainer>
-          <Heading variant="extraLarge" weight="bold">
-            {t('details.wrap.boxTitle')}
-          </Heading>
-          <Subheading>{t('details.wrap.boxDescription')}</Subheading>
-        </TextContainer>
-        <Sparkles as={SparklesSVG} />
-      </InnerContainer>
-      <UpgradeButton
-        data-testid="wrapper-cta-button"
-        shadowless
-        onClick={handleUpgradeClick}
-      >
-        {resumable
-          ? t('details.wrap.resumeLabel')
-          : t('details.wrap.startLabel')}
-      </UpgradeButton>
-    </Container>
+    <NightSky>
+      <Container data-testid="wrapper-cta-container">
+        <InnerContainer>
+          <TextContainer>
+            <Heading variant="extraLarge" weight="bold">
+              {t('details.wrap.boxTitle')}
+            </Heading>
+            <Subheading>{t('details.wrap.boxDescription')}</Subheading>
+          </TextContainer>
+          <Sparkles as={SparklesSVG} />
+        </InnerContainer>
+        <UpgradeButton
+          data-testid="wrapper-cta-button"
+          shadowless
+          onClick={handleUpgradeClick}
+        >
+          {resumable
+            ? t('details.wrap.resumeLabel')
+            : t('details.wrap.startLabel')}
+        </UpgradeButton>
+      </Container>
+    </NightSky>
   )
 }
