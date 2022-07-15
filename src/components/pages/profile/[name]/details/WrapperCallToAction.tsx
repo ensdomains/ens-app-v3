@@ -5,10 +5,10 @@ import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
-import { TransactionSubmission } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { Button, mq, Typography } from '@ensdomains/thorin'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -120,56 +120,46 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
 
   const resumable = currentStep > 0
 
-  const migrateProfileGenerateTx: TransactionSubmission['generateTx'] =
-    useCallback(
-      async (signer) => {
-        const profile = await getProfile(name)
-        if (!profile) throw new Error('No profile found')
-        if (!profile.records) throw new Error('No records found')
-        const { contentHash } = profile.records
-        const resolverAddress = (await contracts!.getPublicResolver()!).address
-        let migratableContentHash: string | undefined
-        if (contentHash) {
-          if (typeof contentHash === 'string') {
-            migratableContentHash = contentHash
-          } else if (typeof contentHash === 'object' && contentHash.decoded) {
-            migratableContentHash = `${contentHash.protocolType}://${contentHash.decoded}`
-          }
+  const migrateProfileGenerateTx = useCallback(
+    async (signer: JsonRpcSigner) => {
+      const profile = await getProfile(name)
+      if (!profile) throw new Error('No profile found')
+      if (!profile.records) throw new Error('No records found')
+      const { contentHash } = profile.records
+      const resolverAddress = (await contracts!.getPublicResolver()!).address
+      let migratableContentHash: string | undefined
+      if (contentHash) {
+        if (typeof contentHash === 'string') {
+          migratableContentHash = contentHash
+        } else if (typeof contentHash === 'object' && contentHash.decoded) {
+          migratableContentHash = `${contentHash.protocolType}://${contentHash.decoded}`
         }
+      }
 
-        const migratableProfile = {
-          contentHash: migratableContentHash,
-          texts: profile.records.texts as {
-            key: string
-            value: string
-          }[],
-          coinTypes: profile.records.coinTypes?.map((coinType) => ({
-            key: coinType.key as string,
-            value: (coinType as any).addr as string,
-          })),
-        }
+      const migratableProfile = {
+        contentHash: migratableContentHash,
+        texts: profile.records.texts as {
+          key: string
+          value: string
+        }[],
+        coinTypes: profile.records.coinTypes?.map((coinType) => ({
+          key: coinType.key as string,
+          value: (coinType as any).addr as string,
+        })),
+      }
 
-        return setRecords(name, {
-          records: migratableProfile,
-          resolverAddress,
-          signer,
-        })
-      },
-      [contracts, getProfile, name, setRecords],
-    )
-
-  const wrapNameGenerateTx: TransactionSubmission['generateTx'] = useCallback(
-    async (signer, address) =>
-      wrapName(name, {
-        wrappedOwner: address,
+      return setRecords.populateTransaction(name, {
+        records: migratableProfile,
+        resolverAddress,
         signer,
-      }),
-    [name, wrapName],
+      })
+    },
+    [contracts, getProfile, name, setRecords],
   )
 
   const handleUpgradeClick = useCallback(
     () =>
-      setCurrentTransaction({
+      setCurrentTransaction(`wrapName-${name}`, async (signer, address) => ({
         data: [
           {
             actionName: 'migrateProfile',
@@ -180,7 +170,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
                 type: 'name',
               },
             ],
-            generateTx: migrateProfileGenerateTx,
+            transaction: await migrateProfileGenerateTx(signer),
           },
           {
             actionName: 'wrapName',
@@ -192,10 +182,12 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
               },
             ],
             completeTitle: t('details.wrap.completeTitle'),
-            generateTx: wrapNameGenerateTx,
+            transaction: await wrapName.populateTransaction(name, {
+              wrappedOwner: address,
+              signer,
+            })!,
           },
         ],
-        key: `wrapName-${name}`,
         preSteps: (resumeToStep) => ({
           title:
             resumeToStep > 0
@@ -211,7 +203,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
               </GiftWrapper>
               <DescriptionWrapper>
                 <Typography>
-                  {t('details.wrap.description')}
+                  {t('details.wrap.description')}{' '}
                   <span>
                     <Outlink href="#">
                       {t('action.learnMore', { ns: 'common' })}
@@ -222,13 +214,13 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
             </>
           ),
         }),
-      }),
+      })),
     [
       setCurrentTransaction,
       name,
       migrateProfileGenerateTx,
       t,
-      wrapNameGenerateTx,
+      wrapName,
       nftUrl.image,
     ],
   )

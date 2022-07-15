@@ -2,13 +2,15 @@ import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
 import { TransactionPreStepObject, TransactionSubmission } from '@app/types'
+import { isIOS } from '@app/utils/isIOS'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
+import type { JsonRpcSigner } from '@ethersproject/providers'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useSigner } from 'wagmi'
+import { useSigner } from 'wagmi'
 import { DisplayItems } from './DisplayItems'
 
 const InnerDialog = styled.div(
@@ -115,7 +117,7 @@ export const TransactionModal = ({
   open,
   onDismiss,
   onSuccess,
-  generateTx,
+  transaction,
   actionName,
   completeTitle,
   dismissBtnLabel,
@@ -123,11 +125,15 @@ export const TransactionModal = ({
   currentStep,
   stepCount,
   preSteps,
+  onComplete,
+  txKey,
 }: TransactionSubmission & {
+  txKey: string | null
   open: boolean
   currentStep: number
   stepCount: number
   preSteps?: TransactionPreStepObject
+  onComplete: () => void
 }) => {
   const { t } = useTranslation()
   const chainName = useChainName()
@@ -135,22 +141,31 @@ export const TransactionModal = ({
   const [stage, setStage] = useState<Stage>('request')
   const addTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
-  const { data: accountData } = useAccount()
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
 
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      const tx = await generateTx(signer!, accountData!.address!)
-      if (!tx) throw new Error('No transaction generated')
+      const needsUnchecked = isIOS()
+      let hash: string
+      if (needsUnchecked) {
+        hash = await (signer as JsonRpcSigner).sendUncheckedTransaction(
+          transaction,
+        )
+      } else {
+        ;({ hash } = await (signer as JsonRpcSigner).sendTransaction(
+          transaction,
+        ))
+      }
+      if (!hash) throw new Error('No transaction generated')
       addTransaction({
-        description: actionName,
-        hash: tx.hash,
-        confirmations: tx.confirmations || undefined,
+        description: JSON.stringify({ action: actionName, key: txKey }),
+        hash,
       })
-      setTxHash(tx.hash)
+      setTxHash(hash)
       setStage('complete')
+      onComplete()
     } catch (e: any) {
       if (e && e.code === 4001) {
         setError('transaction.modal.confirm.error.rejectedRequest')
@@ -158,7 +173,7 @@ export const TransactionModal = ({
         setError(e ? e.message : 'transaction.modal.confirm.error.unknown')
       }
     }
-  }, [generateTx, signer, accountData, addTransaction, actionName])
+  }, [signer, transaction, addTransaction, actionName, txKey, onComplete])
 
   const FilledDisplayItems = useMemo(
     () =>
@@ -212,24 +227,41 @@ export const TransactionModal = ({
   }, [preSteps, stage, t])
 
   const LeadingButton = useMemo(() => {
-    if (stage !== 'complete') {
-      const customLabel =
-        stage === 'preSteps' ? preSteps?.leadingLabel : dismissBtnLabel
-
-      return (
-        <ButtonShrinkwrap
-          onClick={() => onDismiss?.()}
-          variant="secondary"
-          tone="grey"
-          shadowless
-          data-testid="transaction-modal-dismiss-btn"
-        >
-          {customLabel || t('transaction.modal.leadingButton')}
-        </ButtonShrinkwrap>
-      )
+    let label: string
+    if (stage === 'preSteps' && preSteps?.leadingLabel) {
+      label = preSteps.leadingLabel
+    } else if (stage === 'complete') {
+      if (currentStep + 1 === stepCount) return null
+      label = t('action.close')
+    } else if (dismissBtnLabel) {
+      label = dismissBtnLabel
+    } else {
+      label = t('action.cancel')
     }
-    return null
-  }, [stage, preSteps, dismissBtnLabel, t, onDismiss])
+    return (
+      <ButtonShrinkwrap
+        onClick={() => {
+          onDismiss?.()
+          if (stage === 'complete') onSuccess?.()
+        }}
+        variant="secondary"
+        tone="grey"
+        shadowless
+        data-testid="transaction-modal-dismiss-btn"
+      >
+        {label}
+      </ButtonShrinkwrap>
+    )
+  }, [
+    stage,
+    preSteps?.leadingLabel,
+    dismissBtnLabel,
+    currentStep,
+    stepCount,
+    t,
+    onDismiss,
+    onSuccess,
+  ])
 
   const TrailingButton = useMemo(() => {
     if (stage === 'preSteps') {
