@@ -22,7 +22,7 @@ const InnerDialog = styled.div(
     gap: ${theme.space['4']};
     max-height: 60vh;
     overflow-y: auto;
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       min-width: ${theme.space['128']};
     `)}
   `,

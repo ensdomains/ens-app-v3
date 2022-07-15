@@ -1,11 +1,12 @@
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
-import { Typography, Space } from '@ensdomains/thorin'
+import { useTranslation } from 'react-i18next'
+
+import { Typography } from '@ensdomains/thorin'
 
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
-
 import { TrafficLight } from '@app/components/TrafficLight'
-import { useTranslation } from 'react-i18next'
+import { Spacer } from '@app/components/@atoms/Spacer'
 
 const FusesContainer = styled.div`
   display: flex;
@@ -26,13 +27,6 @@ const FusesRow = styled.div(
       border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
         ${theme.colors.borderTertiary};
     }
-  `,
-)
-
-const Spacer = styled.div<{ $height: Space }>(
-  ({ theme, $height }) => css`
-    width: 100%;
-    height: ${theme.space[$height]};
   `,
 )
 

@@ -75,18 +75,21 @@
       "addSuccess": "Add Success",
       "sendName": "Send Name",
       "migrateProfile": "Migrate Profile",
-      "wrapName": "Wrap Name"
+      "wrapName": "Wrap Name",
+      "updateResolver": "Update Resolver"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
-      "wrapName": "Wrap name and set new resolver"
+      "wrapName": "Wrap name and set new resolver",
+      "updateResolver": "Change contract used to store records"
     },
     "itemLabel": {
       "name": "Name",
       "address": "Address",
       "action": "Action",
-      "info": "Info"
+      "info": "Info",
+      "to": "To"
     },
     "status": {
       "pending": {
