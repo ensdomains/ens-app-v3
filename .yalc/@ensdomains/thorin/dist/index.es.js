@@ -1423,6 +1423,7 @@ const Label = styled.label(({
     color: ${theme.colors.textTertiary};
     font-weight: ${theme.fontWeights["semiBold"]};
     display: flex;
+    cursor: pointer;
   `);
 const LabelSecondary = styled.span(({
   theme

@@ -321,6 +321,7 @@
     color: ${e.colors.textTertiary};
     font-weight: ${e.fontWeights.semiBold};
     display: flex;
+    cursor: pointer;
   `),Fn=g.default.span(({theme:e})=>s.css`
     margin-left: ${e.space["4"]};
   `),Dn=g.default.div(({theme:e,$inline:r})=>s.css`

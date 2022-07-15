@@ -2,9 +2,14 @@
   "version": "v1",
   "packages": {
     "@ensdomains/thorin": {
-      "signature": "a60adb4ef3474c7b867c0f39c501bb65",
+      "signature": "e92d02492ec191cd5a6e592694933d83",
       "file": true,
       "replaced": "^0.6.4"
+    },
+    "@ensdomains/ensjs": {
+      "signature": "02d70eed01797da75aae312a528f22b8",
+      "file": true,
+      "replaced": "^3.0.0-alpha.2"
     }
   }
 }

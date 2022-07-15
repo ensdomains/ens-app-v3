@@ -612,7 +612,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ensjs",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@ensdomains/eth-ens-namehash",\
@@ -628,7 +628,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/thorin",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@eslint/eslintrc",\
@@ -7592,9 +7592,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-test-env", "npm:0.1.0"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A."],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -11138,6 +11138,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ensjs", [\
+        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-d1450e4f21-1694c6eddf.zip/node_modules/@ensdomains/ensjs/",\
+          "packageDependencies": [\
+            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
         ["npm:2.1.0", {\
           "packageLocation": "./.yarn/cache/@ensdomains-ensjs-npm-2.1.0-a7323df016-bc284cefea.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
@@ -11153,17 +11160,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:3.0.0-alpha.2", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-npm-3.0.0-alpha.2-aa3b2f1af7-817007463d.zip/node_modules/@ensdomains/ensjs/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-5c8cb7e7a0/0/cache/@ensdomains-ensjs-file-d1450e4f21-1694c6eddf.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "npm:3.0.0-alpha.2"]\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-9983249083/0/cache/@ensdomains-ensjs-npm-3.0.0-alpha.2-aa3b2f1af7-817007463d.zip/node_modules/@ensdomains/ensjs/",\
-          "packageDependencies": [\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/content-hash", "npm:2.5.7"],\
             ["@ensdomains/ens-contracts", "npm:0.0.11"],\
@@ -11171,7 +11171,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dns-packet", "npm:5.4.0"],\
             ["ethers", "npm:5.6.5"],\
             ["graphql", "npm:16.5.0"],\
-            ["graphql-request", "virtual:9983249083887d891d248115c39a7de8b695c8880f6c7f9e805811b72d8bda526ca2dafe98044370d8c4e89f2e9158efaee38576ccbb08250e1cd0339e68781e#npm:4.3.0"],\
+            ["graphql-request", "virtual:5c8cb7e7a0a16faa032eb159e21e79d924ad38fcc31a10dfdafddea4ebe05752f48b9de9d6b463b26d5e533e02511fe5676de2f525966e4edef4bc5cd2afea63#npm:4.3.0"],\
             ["idna-uts46-hx", "npm:3.4.0"]\
           ],\
           "packagePeers": [\
@@ -11210,17 +11210,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/thorin", [\
-        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-cb07c5805b-c293346117.zip/node_modules/@ensdomains/thorin/",\
+        ["file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-thorin-file-88e22c329f-f3f0760bab.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."]\
+            ["@ensdomains/thorin", "file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A."]\
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-a690d4be3f/0/cache/@ensdomains-thorin-file-cb07c5805b-c293346117.zip/node_modules/@ensdomains/thorin/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-thorin-virtual-61ec851f3e/0/cache/@ensdomains-thorin-file-88e22c329f-f3f0760bab.zip/node_modules/@ensdomains/thorin/",\
           "packageDependencies": [\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A."],\
             ["@types/react", "npm:17.0.30"],\
             ["@types/react-dom", null],\
             ["@types/react-transition-state", null],\
@@ -22012,9 +22012,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/buffer", "npm:0.1.0"],\
             ["@ensdomains/ens-test-env", "npm:0.1.0"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.2"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
-            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A."],\
             ["@next/bundle-analyzer", "npm:12.1.4"],\
             ["@next/swc-linux-x64-gnu", "npm:12.1.4"],\
             ["@nomiclabs/hardhat-ethers", [\
@@ -25733,10 +25733,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:9983249083887d891d248115c39a7de8b695c8880f6c7f9e805811b72d8bda526ca2dafe98044370d8c4e89f2e9158efaee38576ccbb08250e1cd0339e68781e#npm:4.3.0", {\
-          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-ba9255a32b/0/cache/graphql-request-npm-4.3.0-dcf481b653-3124afd01a.zip/node_modules/graphql-request/",\
+        ["virtual:5c8cb7e7a0a16faa032eb159e21e79d924ad38fcc31a10dfdafddea4ebe05752f48b9de9d6b463b26d5e533e02511fe5676de2f525966e4edef4bc5cd2afea63#npm:4.3.0", {\
+          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-fd140354c7/0/cache/graphql-request-npm-4.3.0-dcf481b653-3124afd01a.zip/node_modules/graphql-request/",\
           "packageDependencies": [\
-            ["graphql-request", "virtual:9983249083887d891d248115c39a7de8b695c8880f6c7f9e805811b72d8bda526ca2dafe98044370d8c4e89f2e9158efaee38576ccbb08250e1cd0339e68781e#npm:4.3.0"],\
+            ["graphql-request", "virtual:5c8cb7e7a0a16faa032eb159e21e79d924ad38fcc31a10dfdafddea4ebe05752f48b9de9d6b463b26d5e533e02511fe5676de2f525966e4edef4bc5cd2afea63#npm:4.3.0"],\
             ["@types/graphql", null],\
             ["cross-fetch", "npm:3.1.5"],\
             ["extract-files", "npm:9.0.0"],\

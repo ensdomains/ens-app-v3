@@ -24,5 +24,5 @@ export const RESOLVER_ADDRESSES = [
 export const RESOLVER_INTERFACE_IDS = {
   addrInterfaceId: '0x3b3b57de',
   txtInterfaceId: '0x59d1d43c',
-  contentHashInterfaceId: '0x1b3faa08',
+  contentHashInterfaceId: '0xbc1c58d1',
 }

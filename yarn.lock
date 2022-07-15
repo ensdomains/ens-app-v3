@@ -1959,6 +1959,24 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
+  version: 1.0.1-0
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."
+  dependencies:
+    "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/content-hash": ^2.5.7
+    "@ensdomains/ens-contracts": ^0.0.11
+    dns-packet: ^5.3.1
+    ethers: ^5.6.1
+    graphql: ^16.3.0
+    graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
+  peerDependencies:
+    ethers: "*"
+  checksum: 1694c6eddfc973c12eb6864418c87fe761881a58a2df57f1526860beff6353377e456032e0c7f7a44229211b547c04998ca5b699ceec4fe62be5cfe739ee659b
+  languageName: node
+  linkType: hard
+
 "@ensdomains/ensjs@npm:^2.0.1":
   version: 2.1.0
   resolution: "@ensdomains/ensjs@npm:2.1.0"
@@ -1972,24 +1990,6 @@ __metadata:
     ethers: ^5.0.13
     js-sha3: ^0.8.0
   checksum: bc284cefea4959b9a9f55e84e281140d9c17ecca21be798f5a463a924a7c3f52ae0072d3e6c8c2eb23a7bd4df0f7597ded212a5f706d199f187c00bc6db5d076
-  languageName: node
-  linkType: hard
-
-"@ensdomains/ensjs@npm:^3.0.0-alpha.2":
-  version: 3.0.0-alpha.2
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.2"
-  dependencies:
-    "@ensdomains/address-encoder": ^0.2.16
-    "@ensdomains/content-hash": ^2.5.7
-    "@ensdomains/ens-contracts": ^0.0.11
-    dns-packet: ^5.3.1
-    ethers: ^5.6.1
-    graphql: ^16.3.0
-    graphql-request: ^4.1.0
-    idna-uts46-hx: 3.4.0
-  peerDependencies:
-    ethers: "*"
-  checksum: 817007463debbe30a85cc429c188fc7d89dcf051b795647a3218f4893a7268f75dfef67f284db487c656cf7c38194c5796faa91214beed97dd969be4780a4107
   languageName: node
   linkType: hard
 
@@ -2018,7 +2018,7 @@ __metadata:
 
 "@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
   version: 0.6.4
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6ace5d&locator=ens-app-v2%40workspace%3A."
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A."
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2028,7 +2028,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: c2933461170925e17439695da06b680f9bc747b9c10f6ebcc53d0a11549a316b2163d17556dd3ef1f5f9d89ddc4ed428859dc246812b6c9001e813b939069bf6
+  checksum: f3f0760babec4ffc7596eda3d81ecd93f009b80bb3cc953feef21106ced087e5c2f9e297eeb240539f80970443ab9822d547e122b3d6cc4dea6017a352aa9fd8
   languageName: node
   linkType: hard
 
@@ -11287,7 +11287,7 @@ __metadata:
     "@ensdomains/buffer": ^0.1.0
     "@ensdomains/ens-test-env": ^0.1.0
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": ^3.0.0-alpha.2
+    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
     "@next/bundle-analyzer": ^12.0.10

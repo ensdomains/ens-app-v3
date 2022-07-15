@@ -1,11 +1,13 @@
+import { useMemo } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { ethers } from 'ethers'
 import { useProvider } from 'wagmi'
 import pMemoize from 'p-memoize'
+import { useRouter } from 'next/router'
 
-import { Dialog, RadioButton, Input, mq } from '@ensdomains/thorin'
+import { Dialog, RadioButton, Input, mq, Button } from '@ensdomains/thorin'
 
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { Outlink } from '@app/components/Outlink'
@@ -13,6 +15,7 @@ import {
   RESOLVER_ADDRESSES,
   RESOLVER_INTERFACE_IDS,
 } from '@app/utils/constants'
+import { useProfile } from '@app/hooks/useProfile'
 
 const supportsInterfaceAbi = [
   {
@@ -37,15 +40,20 @@ const supportsInterfaceAbi = [
 ]
 
 const validateResolver = async (address: string, provider: any) => {
-  console.log('validateResolver')
   const maybeResolver = new ethers.Contract(
     '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
     supportsInterfaceAbi,
     provider,
   )
-  const supportsInterface = await maybeResolver.supportsInterface(
-    RESOLVER_INTERFACE_IDS.addrInterfaceId,
-  )
+  const results = await Promise.all([
+    maybeResolver.supportsInterface(RESOLVER_INTERFACE_IDS.addrInterfaceId),
+    maybeResolver.supportsInterface(
+      RESOLVER_INTERFACE_IDS.contentHashInterfaceId,
+    ),
+    maybeResolver.supportsInterface(RESOLVER_INTERFACE_IDS.txtInterfaceId),
+  ])
+  console.log('results: ', results)
+  return 'this is my message'
 }
 const validateResolverMem = pMemoize(validateResolver)
 
@@ -54,7 +62,7 @@ const EditResolverFormContainer = styled.div(({ theme }) => [
     width: 100%;
   `,
   mq.sm.min(css`
-    width: 500px;
+    width: 520px;
   `),
 ])
 
@@ -72,28 +80,56 @@ const InputContainer = styled.div(
   `,
 )
 
+const ButtonsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    gap: ${theme.space[4]};
+    margin-top: ${theme.space[4]};
+  `,
+)
+
 interface Props {
   isOpen: boolean
   onDismiss: () => null
 }
 
 const EditResolverForm = () => {
+  const router = useRouter()
+  const { name } = router.query
+
+  const { profile = { resolverAddress: '' } } = useProfile(name as string)
+  const { resolverAddress } = profile
+  const resolverAddressIndex = RESOLVER_ADDRESSES.indexOf(resolverAddress ?? '')
+
   const {
     register,
     handleSubmit,
     watch,
-    formState: { errors },
+    formState: { errors, isDirty },
   } = useForm({ mode: 'onChange' })
   const onSubmit = (data) => console.log(data)
   const { t } = useTranslation('profile')
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
-  const inputValue: any = watch('customResolver')
+  const customResolver = watch('customResolver')
   const provider = useProvider()
 
-  // useEffect(() => {
-  //   validateResolver(provider, '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41')
-  // }, [resolverChoice])
-  console.log('inputValue: ', inputValue)
+  const isValid = useMemo(() => {
+    if (resolverChoice === 'latest' && resolverAddressIndex === 0) {
+      return false
+    }
+    if (resolverChoice === 'latest') {
+      return true
+    }
+    if (resolverChoice === 'custom' && !customResolver?.length) {
+      return false
+    }
+    return !Object.keys(errors).length
+  }, [resolverChoice, customResolver, isDirty, errors, resolverAddressIndex])
+
+  const customResolverWarnings = useMemo(() => {
+    if (!customResolver) return []
+    if (customResolver.length !== 42) return []
+  }, [resolverChoice, customResolver])
 
   return (
     <EditResolverFormContainer>
@@ -104,7 +140,10 @@ const EditResolverForm = () => {
             value="latest"
             labelRight
             width={44}
-            {...register('resolverChoice')}
+            {...register('resolverChoice', {
+              required: true,
+            })}
+            defaultChecked
           />
           <Outlink
             href={`https://etherscan.io/address/${RESOLVER_ADDRESSES[0]}`}
@@ -132,18 +171,24 @@ const EditResolverForm = () => {
           />
         </InputContainer>
 
-        {/* include validation with required or other standard HTML validation rules */}
-        <input {...register('exampleRequired', { required: true })} />
-        {/* errors will return when field validation fails  */}
         {errors.customResolver && <span>This field is required</span>}
 
-        <input type="submit" />
+        <ButtonsContainer>
+          <Button onClick={handleSubmit(onSubmit)} tone="grey">
+            {t('action.cancel', { ns: 'common' })}
+          </Button>
+          <Button
+            type="submit"
+            onClick={handleSubmit(onSubmit)}
+            disabled={!isValid}
+          >
+            {t('action.update', { ns: 'common' })}
+          </Button>
+        </ButtonsContainer>
       </form>
     </EditResolverFormContainer>
   )
 }
-
-const submitTransaction = (setCurrentTransaction) => {}
 
 const ResolverDetailsEditDialog = styled(Dialog)(({ theme }) => css``)
 
@@ -159,7 +204,6 @@ const ResolverDetailsEdit = ({ isOpen, onDismiss }: Props) => {
       variant="closable"
     >
       <EditResolverForm />
-      <button>submit transaction</button>
     </ResolverDetailsEditDialog>
   )
 }
