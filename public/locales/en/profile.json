@@ -19,6 +19,16 @@
   "details": {
     "title": "Name Details",
     "notWrapped": "Not wrapped",
+    "wrap": {
+      "startTitle": "Upgrade your name",
+      "resumeTitle": "Resume your upgrade",
+      "completeTitle": "Upgrade complete",
+      "description": "Upgrading or \"wrapping\" your name gives it new features.",
+      "startLabel": "Upgrade",
+      "resumeLabel": "Resume Upgrade",
+      "boxTitle": "Unlock new features",
+      "boxDescription": "Upgrading your name unlocks the latest functionality of ENS"
+    },
     "descriptions": {
       "owner": "Owns and controls the name",
       "controller": "Controls all the records of the name",

@@ -5,6 +5,7 @@ import { TransactionDisplayItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
+import { TFunction, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div(
@@ -18,8 +19,8 @@ const Container = styled.div(
   `,
 )
 
-const DisplayItemContainer = styled.div(
-  ({ theme }) => css`
+const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
+  ({ theme, $shrink, $fade }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -30,6 +31,20 @@ const DisplayItemContainer = styled.div(
     min-height: ${theme.space['14']};
     padding: ${theme.space['2']} ${theme.space['5']};
     width: ${theme.space.full};
+
+    ${$shrink &&
+    css`
+      min-height: ${theme.space['12']};
+      div {
+        margin-top: 0;
+        align-self: center;
+      }
+    `}
+    ${$fade &&
+    css`
+      opacity: 0.5;
+      background-color: ${theme.colors.backgroundTertiary};
+    `}
   `,
 )
 
@@ -145,21 +160,42 @@ const DisplayItemValue = ({
   return <NormalValueTypography weight="bold">{value}</NormalValueTypography>
 }
 
+export const DisplayItem = ({
+  label,
+  value,
+  type,
+  shrink,
+  fade,
+  useRawLabel,
+  t,
+}: TransactionDisplayItem & { t: TFunction }) => {
+  return (
+    <DisplayItemContainer
+      data-testid={`display-item-${label}-${fade ? 'fade' : 'normal'}`}
+      $fade={fade}
+      $shrink={shrink}
+      key={`${label}-${value}`}
+    >
+      <DisplayItemLabel>
+        {useRawLabel ? label : t(`transaction.itemLabel.${label}`)}
+      </DisplayItemLabel>
+      <DisplayItemValue {...{ value, type }} />
+    </DisplayItemContainer>
+  )
+}
+
 export const DisplayItems = ({
   displayItems,
 }: {
   displayItems: TransactionDisplayItem[]
 }) => {
+  const { t } = useTranslation()
+
   if (!displayItems || !displayItems.length) return null
 
   return (
     <Container>
-      {displayItems.map(({ label, value, type }) => (
-        <DisplayItemContainer key={`${label}-${value}`}>
-          <DisplayItemLabel>{label}</DisplayItemLabel>
-          <DisplayItemValue {...{ value, type }} />
-        </DisplayItemContainer>
-      ))}
+      {displayItems.map((props) => DisplayItem({ ...props, t }))}
     </Container>
   )
 }

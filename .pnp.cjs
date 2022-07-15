@@ -600,11 +600,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ens-contracts",\
-        "npm:0.0.11"\
+        "npm:0.0.12"\
       ],\
       [\
         "@ensdomains/ens-test-env",\
-        "npm:0.1.0"\
+        "npm:0.1.4"\
       ],\
       [\
         "@ensdomains/ens-validation",\
@@ -3362,10 +3362,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:2.3.6"\
       ],\
       [\
-        "ens-contracts",\
-        "https://github.com/ensdomains/ens-contracts.git#commit=a21f0b2a5e86005a60f568512d99a35116a8ed28"\
-      ],\
-      [\
         "entities",\
         "npm:2.2.0"\
       ],\
@@ -5483,7 +5479,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "node-fetch",\
-        "npm:3.2.6"\
+        "npm:3.2.8"\
+      ],\
+      [\
+        "node-fetch-commonjs",\
+        "npm:3.1.1"\
       ],\
       [\
         "node-gyp",\
@@ -7590,7 +7590,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@cloudflare/wrangler", "npm:1.19.12"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
-            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
+            ["@ensdomains/ens-contracts", "npm:0.0.12"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
@@ -7628,7 +7629,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["concurrently", "npm:7.1.0"],\
             ["cypress", "npm:9.5.3"],\
             ["dotenv", "npm:16.0.0"],\
-            ["ens-contracts", "https://github.com/ensdomains/ens-contracts.git#commit=a21f0b2a5e86005a60f568512d99a35116a8ed28"],\
             ["eslint", "npm:7.32.0"],\
             ["eslint-config-airbnb", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:19.0.4"],\
             ["eslint-config-airbnb-base", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:15.0.0"],\
@@ -7662,7 +7662,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
-            ["node-fetch", "npm:3.2.6"],\
+            ["node-fetch", "npm:3.2.8"],\
+            ["node-fetch-commonjs", "npm:3.1.1"],\
             ["p-memoize", "npm:7.1.0"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
@@ -11103,13 +11104,24 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dns-packet", "npm:5.3.1"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:0.0.12", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-ens-contracts-npm-0.0.12-95e14f5d5b-ebadc111a7.zip/node_modules/@ensdomains/ens-contracts/",\
+          "packageDependencies": [\
+            ["@ensdomains/ens-contracts", "npm:0.0.12"],\
+            ["@ensdomains/buffer", "npm:0.0.13"],\
+            ["@ensdomains/solsha1", "npm:0.0.3"],\
+            ["@openzeppelin/contracts", "npm:4.5.0"],\
+            ["dns-packet", "npm:5.3.1"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["@ensdomains/ens-test-env", [\
-        ["npm:0.1.0", {\
-          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-npm-0.1.0-d96ee2bd4d/node_modules/@ensdomains/ens-test-env/",\
+        ["npm:0.1.4", {\
+          "packageLocation": "./.yarn/unplugged/@ensdomains-ens-test-env-npm-0.1.4-adca43a636/node_modules/@ensdomains/ens-test-env/",\
           "packageDependencies": [\
-            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ethersproject/wallet", "npm:5.6.2"],\
             ["ansi-colors", "npm:4.1.1"],\
             ["cli-progress", "npm:3.11.2"],\
@@ -22010,7 +22022,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@cloudflare/wrangler", "npm:1.19.12"],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/buffer", "npm:0.1.0"],\
-            ["@ensdomains/ens-test-env", "npm:0.1.0"],\
+            ["@ensdomains/ens-contracts", "npm:0.0.12"],\
+            ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
             ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
@@ -22048,7 +22061,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["concurrently", "npm:7.1.0"],\
             ["cypress", "npm:9.5.3"],\
             ["dotenv", "npm:16.0.0"],\
-            ["ens-contracts", "https://github.com/ensdomains/ens-contracts.git#commit=a21f0b2a5e86005a60f568512d99a35116a8ed28"],\
             ["eslint", "npm:7.32.0"],\
             ["eslint-config-airbnb", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:19.0.4"],\
             ["eslint-config-airbnb-base", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:15.0.0"],\
@@ -22082,7 +22094,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:12.1.6"],\
             ["next-compose-plugins", "npm:2.2.1"],\
             ["next-transpile-modules", "npm:9.0.0"],\
-            ["node-fetch", "npm:3.2.6"],\
+            ["node-fetch", "npm:3.2.8"],\
+            ["node-fetch-commonjs", "npm:3.1.1"],\
             ["p-memoize", "npm:7.1.0"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
@@ -22109,19 +22122,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yalc", "npm:1.0.0-pre.53"]\
           ],\
           "linkType": "SOFT"\
-        }]\
-      ]],\
-      ["ens-contracts", [\
-        ["https://github.com/ensdomains/ens-contracts.git#commit=a21f0b2a5e86005a60f568512d99a35116a8ed28", {\
-          "packageLocation": "./.yarn/cache/ens-contracts-https-5f193cbfbb-d3aeb0140f.zip/node_modules/ens-contracts/",\
-          "packageDependencies": [\
-            ["ens-contracts", "https://github.com/ensdomains/ens-contracts.git#commit=a21f0b2a5e86005a60f568512d99a35116a8ed28"],\
-            ["@ensdomains/buffer", "npm:0.0.13"],\
-            ["@ensdomains/solsha1", "npm:0.0.3"],\
-            ["@openzeppelin/contracts", "npm:4.5.0"],\
-            ["dns-packet", "npm:5.3.1"]\
-          ],\
-          "linkType": "HARD"\
         }]\
       ]],\
       ["entities", [\
@@ -30674,6 +30674,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
+        ["npm:3.2.8", {\
+          "packageLocation": "./.yarn/cache/node-fetch-npm-3.2.8-7236f5645b-2f7fc3e59f.zip/node_modules/node-fetch/",\
+          "packageDependencies": [\
+            ["node-fetch", "npm:3.2.8"],\
+            ["data-uri-to-buffer", "npm:4.0.0"],\
+            ["fetch-blob", "npm:3.1.5"],\
+            ["formdata-polyfill", "npm:4.0.10"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
         ["virtual:e414995db9c779306e687c7a7c66965e66d0cd7270f6b9fc4f00cc9772c5d50b305ab83e142e0e21dbf10968f7437cbdfcb170d05f4bde68707ac7d0082c9cca#npm:2.6.7", {\
           "packageLocation": "./.yarn/__virtual__/node-fetch-virtual-10f4bc17d9/0/cache/node-fetch-npm-2.6.7-777aa2a6df-8d816ffd1e.zip/node_modules/node-fetch/",\
           "packageDependencies": [\
@@ -30685,6 +30695,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packagePeers": [\
             "@types/encoding",\
             "encoding"\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["node-fetch-commonjs", [\
+        ["npm:3.1.1", {\
+          "packageLocation": "./.yarn/cache/node-fetch-commonjs-npm-3.1.1-3cfb0c2921-a0d6b4ad0a.zip/node_modules/node-fetch-commonjs/",\
+          "packageDependencies": [\
+            ["node-fetch-commonjs", "npm:3.1.1"],\
+            ["formdata-polyfill", "npm:4.0.10"],\
+            ["web-streams-polyfill", "npm:3.2.1"]\
           ],\
           "linkType": "HARD"\
         }]\

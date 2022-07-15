@@ -11,67 +11,53 @@ export const DevSection = () => {
   const { sendTransactionAsync } = useSendTransaction()
 
   const addSuccess = async () => {
-    setCurrentTransaction({
-      actionName: 'addSuccess',
-      generateTx: () =>
-        sendTransactionAsync({
-          request: {
-            to: '0x0000000000000000000000000000000000000000',
-            value: '0',
-          },
-        }),
-      displayItems: [
-        {
-          label: 'To',
-          value: '0x8e8db5ccef88cca9d624701db544989c996e3216',
-          type: 'address',
-        },
-        {
-          label: 'Name',
-          value: 'nick.eth',
-          type: 'name',
-        },
-        {
-          label: 'Info',
-          value: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit',
-        },
-      ],
+    const transaction = await sendTransactionAsync({
+      request: {
+        to: '0x0000000000000000000000000000000000000000',
+        value: '0',
+      },
+    })
+    addTransaction({
+      description: 'test',
+      hash: transaction.hash,
+      confirmations: transaction.confirmations || undefined,
     })
   }
 
   const sendName = async () => {
     setCurrentTransaction({
-      actionName: 'sendName',
-      generateTx: () =>
-        sendTransactionAsync({
-          request: {
-            to: '0x0000000000000000000000000000000000000000',
-            value: '0',
-          },
-        }),
-      displayItems: [
+      data: [
         {
-          label: 'To',
-          value: '0x3F45BcB2DFBdF0AD173A9DfEe3b932aa2a31CeB3',
-          type: 'address',
-        },
-        {
-          label: 'Name',
-          value: 'taytems.eth',
-          type: 'name',
-        },
-        {
-          label: 'Info',
-          value: 'Set the controller and registrant of the name',
+          actionName: 'sendName',
+          generateTx: () =>
+            sendTransactionAsync({
+              request: {
+                to: '0x0000000000000000000000000000000000000000',
+                value: '0',
+              },
+            }),
+          displayItems: [
+            {
+              label: 'To',
+              value: '0x3F45BcB2DFBdF0AD173A9DfEe3b932aa2a31CeB3',
+              type: 'address',
+            },
+            {
+              label: 'Name',
+              value: 'taytems.eth',
+              type: 'name',
+            },
+          ],
         },
       ],
+      key: 'dev-sendName',
     })
   }
 
   const addFailure = async () => {
     const transaction = await sendTransactionAsync({
       request: {
-        to: '0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e',
+        to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
         data: '0x1231237123423423',
         gasLimit: '1000000',
       },

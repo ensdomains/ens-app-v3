@@ -36,7 +36,7 @@ export default function Page() {
         trailing: (
           <OtherWrapper>
             <WalletSection />
-            {process.env.NODE_ENV === 'development' && <DevSection />}
+            {process.env.NEXT_PUBLIC_PROVIDER && <DevSection />}
           </OtherWrapper>
         ),
       }}
