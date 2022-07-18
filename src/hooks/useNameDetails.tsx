@@ -46,7 +46,14 @@ export const useNameDetails = (name: string) => {
       return t('errors.invalidName')
     }
     if (profile && !profile.isMigrated) {
-      return t('errors.notMigrated')
+      return (
+        <>
+          {t('errors.migrationNotAvailable')}
+          <a href={`https://app.ens.domains/name/${normalisedName}`}>
+            {t('errors.migrationNotAvailableLink')}
+          </a>
+        </>
+      )
     }
     if (profile && profile.message) {
       return profile.message
@@ -106,5 +113,6 @@ export const useNameDetails = (name: string) => {
     expiryDate,
     isLoading,
     truncatedName,
+    isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
   }
 }

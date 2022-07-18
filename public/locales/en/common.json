@@ -7,7 +7,8 @@
     "save": "Save",
     "edit": "Edit",
     "view": "View",
-    "clear": "Clear"
+    "clear": "Clear",
+    "learnMore": "Learn more"
   },
   "navigation": {
     "home": "Home",
@@ -71,7 +72,20 @@
       "setRecords": "Set Records",
       "test": "Test Transaction",
       "addSuccess": "Add Success",
-      "sendName": "Send Name"
+      "sendName": "Send Name",
+      "migrateProfile": "Migrate Profile",
+      "wrapName": "Wrap Name"
+    },
+    "info": {
+      "sendName": "Set the controller and registrant of the name",
+      "migrateProfile": "Set existing records on new resolver",
+      "wrapName": "Wrap name and set new resolver"
+    },
+    "itemLabel": {
+      "name": "Name",
+      "address": "Address",
+      "action": "Action",
+      "info": "Info"
     },
     "status": {
       "pending": {
@@ -90,7 +104,11 @@
     },
     "modal": {
       "leadingButton": "Cancel",
-      "actionLabel": "Action",
+      "preSteps": {
+        "trailingButton": "Start",
+        "trailingButtonResume": "Resume",
+        "step": "Step {{step}}"
+      },
       "request": {
         "title": "Transaction Request",
         "subtitle": "Confirm the details of the transaction",
@@ -110,8 +128,10 @@
       },
       "complete": {
         "title": "Transaction Sent",
+        "stepTitle": "Step {{step}} Complete",
         "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
-        "trailingButton": "Close"
+        "trailingButton": "Close",
+        "stepTrailingButton": "Continue"
       }
     },
     "viewEtherscan": "View on Etherscan",

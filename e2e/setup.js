@@ -1,6 +1,11 @@
-export const acceptMetamaskAccess = () => {
+export const acceptMetamaskAccess = (account = 1) => {
   cy.visit('/')
-  cy.contains('Connect').click()
+  cy.window().then(
+    (win) =>
+      win.ethereum.selectedAddress && cy.disconnectMetamaskWalletFromDapp(),
+  )
+  cy.switchMetamaskAccount(account)
+  cy.contains('Connect Wallet').click()
   cy.contains('MetaMask').click()
   cy.wait(1000)
   cy.window()
@@ -12,4 +17,16 @@ export const acceptMetamaskAccess = () => {
         cy.acceptMetamaskAccess()
       }
     })
+}
+
+export const connectFromExisting = () => {
+  cy.get('body', {
+    timeout: 250,
+  }).then(($body) => {
+    const button = $body.find('[data-testid="connect-button"]')
+    if (button.length) {
+      cy.wrap(button).click()
+      cy.contains('MetaMask').click()
+    }
+  })
 }

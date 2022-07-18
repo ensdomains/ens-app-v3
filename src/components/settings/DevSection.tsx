@@ -26,30 +26,31 @@ export const DevSection = () => {
 
   const sendName = async () => {
     setCurrentTransaction({
-      actionName: 'sendName',
-      generateTx: () =>
-        sendTransactionAsync({
-          request: {
-            to: '0x0000000000000000000000000000000000000000',
-            value: '0',
-          },
-        }),
-      displayItems: [
+      data: [
         {
-          label: 'To',
-          value: '0x3F45BcB2DFBdF0AD173A9DfEe3b932aa2a31CeB3',
-          type: 'address',
-        },
-        {
-          label: 'Name',
-          value: 'taytems.eth',
-          type: 'name',
-        },
-        {
-          label: 'Info',
-          value: 'Set the controller and registrant of the name',
+          actionName: 'sendName',
+          generateTx: () =>
+            sendTransactionAsync({
+              request: {
+                to: '0x0000000000000000000000000000000000000000',
+                value: '0',
+              },
+            }),
+          displayItems: [
+            {
+              label: 'To',
+              value: '0x3F45BcB2DFBdF0AD173A9DfEe3b932aa2a31CeB3',
+              type: 'address',
+            },
+            {
+              label: 'Name',
+              value: 'taytems.eth',
+              type: 'name',
+            },
+          ],
         },
       ],
+      key: 'dev-sendName',
     })
   }
 
