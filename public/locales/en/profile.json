@@ -93,6 +93,8 @@
     "unknown": "Unknown error",
     "notMigrated": "This name is not migrated to the new registry.",
     "featureNotAvailable": "Some features are not yet available, but you can still ",
-    "featureNotAvailableLink": "view this name in the old app."
+    "featureNotAvailableLink": "view this name in the old app.",
+    "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
+    "migrationNotAvailableLink": "migrate this name in the old app."
   }
 }
