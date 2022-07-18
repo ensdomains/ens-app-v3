@@ -21,7 +21,10 @@ import { useAccount, useSigner } from 'wagmi'
 
 type StepStorageItems = Record<string, StepStorageItem>
 
-type TxFunc = (signer: JsonRpcSigner, address: string) => Promise<TxStateType>
+export type TxFunc = (
+  signer: JsonRpcSigner,
+  address: string,
+) => Promise<TxStateType>
 
 const TransactionContext = createContext<{
   setCurrentTransaction: (key: string, tx?: TxFunc) => void

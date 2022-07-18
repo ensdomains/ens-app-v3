@@ -9,6 +9,7 @@ import type { JsonRpcSigner } from '@ethersproject/providers'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useSigner } from 'wagmi'
 import { DisplayItems } from './DisplayItems'
@@ -144,19 +145,35 @@ export const TransactionModal = ({
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
 
+  const { data: estimatedGas } = useQuery(
+    ['gas', txKey, currentStep],
+    async () => {
+      if (!transaction) {
+        return null
+      }
+      console.log('estimating gas')
+
+      const gas = await signer?.estimateGas(transaction)
+
+      return gas
+    },
+  )
+  const needsUnchecked = isIOS()
+
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      const needsUnchecked = isIOS()
       let hash: string
       if (needsUnchecked) {
-        hash = await (signer as JsonRpcSigner).sendUncheckedTransaction(
-          transaction,
-        )
+        hash = await (signer as JsonRpcSigner).sendUncheckedTransaction({
+          ...transaction,
+          gasLimit: estimatedGas!,
+        })
       } else {
-        ;({ hash } = await (signer as JsonRpcSigner).sendTransaction(
-          transaction,
-        ))
+        ;({ hash } = await (signer as JsonRpcSigner).sendTransaction({
+          ...transaction,
+          gasLimit: estimatedGas!,
+        }))
       }
       if (!hash) throw new Error('No transaction generated')
       addTransaction({
@@ -173,7 +190,16 @@ export const TransactionModal = ({
         setError(e ? e.message : 'transaction.modal.confirm.error.unknown')
       }
     }
-  }, [signer, transaction, addTransaction, actionName, txKey, onComplete])
+  }, [
+    signer,
+    transaction,
+    addTransaction,
+    actionName,
+    txKey,
+    onComplete,
+    estimatedGas,
+    needsUnchecked,
+  ])
 
   const FilledDisplayItems = useMemo(
     () =>
@@ -318,6 +344,7 @@ export const TransactionModal = ({
         data-testid="transaction-modal-request-trailing-btn"
         shadowless
         onClick={() => setStage('confirm')}
+        disabled={!estimatedGas}
       >
         {t('transaction.modal.request.trailingButton')}
       </Button>
@@ -333,6 +360,7 @@ export const TransactionModal = ({
     onDismiss,
     error,
     tryTransaction,
+    estimatedGas,
   ])
 
   const title = useMemo(() => {
