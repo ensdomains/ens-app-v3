@@ -124,11 +124,6 @@ const ButtonsContainer = styled.div(
   `,
 )
 
-interface Props {
-  isOpen: boolean
-  onDismiss: () => null
-}
-
 const EditResolverForm = ({ onSubmit }: { onSubmit: () => null }) => {
   const router = useRouter()
   const { name } = router.query
@@ -245,7 +240,13 @@ const EditResolverForm = ({ onSubmit }: { onSubmit: () => null }) => {
   )
 }
 
-const ResolverDetailsEdit = ({ isOpen, onDismiss }: Props) => {
+interface Props {
+  isOpen: boolean
+  handleClose: () => null
+  onDismiss: () => null
+}
+
+const ResolverDetailsEdit = ({ isOpen, onDismiss, handleClose }: Props) => {
   const router = useRouter()
   const { name } = router.query
   const { setCurrentTransaction } = useTransaction()
@@ -275,6 +276,10 @@ const ResolverDetailsEdit = ({ isOpen, onDismiss }: Props) => {
                 resolver: newResolver,
                 signer,
               })
+            },
+            onDismiss: () => console.log('dismiss'),
+            onSuccess: () => {
+              handleClose()
             },
             displayItems: [
               {

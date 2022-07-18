@@ -91,10 +91,12 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
         {...{
           ...(currentTransaction?.data[currentStep] as TransactionSubmission),
           onDismiss: () => {
+            console.log('onDismiss inside')
             currentTransaction?.data[currentStep].onDismiss?.()
             setShouldClose(true)
           },
           onSuccess: () => {
+            console.log('onSucess inside')
             currentTransaction?.data[currentStep].onSuccess?.()
             if (currentTransaction && currentTransaction.data.length > 1) {
               if (currentStep + 1 < currentTransaction.data.length) {

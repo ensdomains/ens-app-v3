@@ -133,6 +133,7 @@ export const TransactionModal = ({
   stepCount: number
   preSteps?: TransactionPreStepObject
 }) => {
+  console.log('TransactionModal')
   const { t } = useTranslation()
   const chainName = useChainName()
   const router = useRouter()
@@ -369,6 +370,8 @@ export const TransactionModal = ({
     return 'inProgress'
   }, [stage])
 
+  console.log('stage: ', stage)
+
   return (
     <Dialog
       title={title}
@@ -382,6 +385,8 @@ export const TransactionModal = ({
       trailing={TrailingButton}
       open={open}
       onDismiss={() => {
+        console.log('onDismiss in TransactionModal')
+
         onDismiss?.()
         if (stage === 'complete') onSuccess?.()
       }}

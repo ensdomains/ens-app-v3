@@ -137,9 +137,9 @@ const TitleAndButtonContainer = styled.div`
   height: 100%;
 `
 
-const EditButton = styled(Button)<{ $isEditing: boolean }>(
-  ({ theme, $isEditing }) => css`
-    color: ${$isEditing ? theme.colors.red : theme.colors.blue};
+const EditButton = styled(Button)(
+  ({ theme }) => css`
+    color: ${theme.colors.blue};
     width: ${theme.space['24']};
   `,
 )
@@ -167,6 +167,10 @@ const Accordion = ({ data }: AccordionProps) => {
 
   const disabled = data?.filter((x) => x.disabled) ?? []
   const enabled = data?.filter((x) => !x.disabled) ?? []
+
+  const handleClose = () => {
+    setIsDialogOpen(-1)
+  }
 
   return (
     <>
@@ -198,13 +202,13 @@ const Accordion = ({ data }: AccordionProps) => {
         {!!enabled.length &&
           enabled.map((item, idx) => {
             const isActive = activeItem === idx
-            const isEditing = false
             return (
               <>
                 {item.dialog && (
                   <item.dialog
                     isOpen={isDialogOpen === idx}
                     onDismiss={() => setIsDialogOpen(-1)}
+                    handleClose={handleClose}
                   />
                 )}
                 <AccordionItem
@@ -221,12 +225,9 @@ const Accordion = ({ data }: AccordionProps) => {
                           shadowless
                           variant="transparent"
                           size="small"
-                          $isEditing={isEditing}
                           onClick={() => handleEditClick(idx)}
                         >
-                          {isEditing
-                            ? t('action.edit', { ns: 'common' })
-                            : t('action.cancel', { ns: 'common' })}
+                          {t('action.edit', { ns: 'common' })}
                         </EditButton>
                       )}
                     </TitleAndButtonContainer>
