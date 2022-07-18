@@ -1,20 +1,20 @@
 import { useProfile } from '@app/hooks/useProfile'
-import { mockFunction, render, screen, waitFor } from '@app/test-utils'
+import { mockFunction, render, screen, waitFor, within } from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { cleanup } from '@testing-library/react'
+import { cleanup, fireEvent } from '@testing-library/react'
 import ProfileEditor from './ProfileEditor'
 
 const mockProfileData = {
   profile: {
-    address: '0x9eddfE3A95AA77E4F6509927De67BB1EaAE3b382',
+    address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd',
     records: {
       contentHash: {},
       texts: [
         {
           key: 'email',
           type: 'text',
-          value: 'khori@ens.domains',
+          value: 'test@ens.domains',
         },
         {
           key: 'url',
@@ -24,43 +24,42 @@ const mockProfileData = {
         {
           key: 'avatar',
           type: 'text',
-          value:
-            'eip155:1/erc721:0x93b40000888755AF12Be659D7337E2b592D205D9/878',
+          value: 'https://example.xyz/avatar/test.jpg',
         },
         {
           key: 'com.discord',
           type: 'text',
-          value: 'khori.eth#8064',
+          value: 'test#1234',
         },
         {
           key: 'com.github',
           type: 'text',
-          value: 'https://github.com/khori-eth',
+          value: 'https://github.com/test',
         },
         {
           key: 'com.reddit',
           type: 'text',
-          value: 'https://www.reddit.com/user/thebashabasha/',
+          value: 'https://www.reddit.com/user/test/',
         },
         {
           key: 'com.twitter',
           type: 'text',
-          value: 'https://twitter.com/KhoriWhittaker',
+          value: 'https://twitter.com/test',
         },
         {
           key: 'org.telegram',
           type: 'text',
-          value: '@KhoriWhittaker',
+          value: '@test',
         },
         {
           key: 'com.linkedin.com',
           type: 'text',
-          value: 'https://www.linkedin.com/in/khoriwhittaker/',
+          value: 'https://www.linkedin.com/in/test/',
         },
         {
           key: 'xyz.lensfrens',
           type: 'text',
-          value: 'https://www.lensfrens.xyz/khori.lens',
+          value: 'https://www.lensfrens.xyz/test.lens',
         },
       ],
       coinTypes: [
@@ -68,7 +67,7 @@ const mockProfileData = {
           key: '60',
           type: 'addr',
           coin: 'ETH',
-          addr: '0x9eddfE3A95AA77E4F6509927De67BB1EaAE3b382',
+          addr: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd',
         },
         {
           key: '0',
@@ -80,35 +79,35 @@ const mockProfileData = {
           key: '3030',
           type: 'addr',
           coin: 'HBAR',
-          addr: '0.0.281383',
+          addr: '0.0.123123',
         },
         {
           key: '148',
           type: 'addr',
           coin: 'XLM',
-          addr: 'GDBE75BSTZ7YQUPWUL4TWSBPBGJXZJC7YWAUW4OE6KAAWFYDASA42UC7',
+          addr: 'testxmladdress',
         },
         {
           key: '144',
           type: 'addr',
           coin: 'XRP',
-          addr: 'rMxZtU3UNyps94TgWcd1zyiwsfkFy9DTFM',
+          addr: 'testxrpaddress',
         },
         {
           key: '501',
           type: 'addr',
           coin: 'SOL',
-          addr: '63ghQsrGD6P78yaHGY7YGcyAjPLCfCCqXBmCTQxCX5SU',
+          addr: 'testsoladdress',
         },
         {
           key: '2147483785',
           type: 'addr',
           coin: 'MATIC',
-          addr: '0x9eddfE3A95AA77E4F6509927De67BB1EaAE3b382',
+          addr: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd',
         },
       ],
     },
-    resolverAddress: '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
+    resolverAddress: '0x0',
     isMigrated: true,
     createdAt: '1630553876',
   },
@@ -116,25 +115,19 @@ const mockProfileData = {
 }
 
 jest.mock('@app/utils/BreakpointProvider')
-const mockUseBreakpoint = mockFunction(useBreakpoint)
-mockUseBreakpoint.mockReturnValue({
-  xs: true,
-  sm: false,
-  md: false,
-  lg: false,
-  xl: false,
-})
-
 jest.mock('@app/hooks/useProfile')
-const mockUseProfile = mockFunction(useProfile)
 
-// const mockSubmit = jest.fn()
+const mockUseBreakpoint = mockFunction(useBreakpoint)
+const mockUseProfile = mockFunction(useProfile)
+const mockIntersectionObserver = jest.fn()
+const mockSubmit = jest.fn()
 
 describe('ProfileEditor', () => {
   beforeEach(() => {
     mockUseProfile.mockReturnValue(
       mockProfileData as unknown as { profile: Profile; loading: boolean },
     )
+
     mockUseBreakpoint.mockReturnValue({
       xs: true,
       sm: false,
@@ -142,10 +135,18 @@ describe('ProfileEditor', () => {
       lg: false,
       xl: false,
     })
+
+    mockIntersectionObserver.mockReturnValue({
+      observe: () => null,
+      unobserve: () => null,
+      disconnect: () => null,
+    })
+    window.IntersectionObserver = mockIntersectionObserver
   })
 
   afterEach(() => {
     cleanup()
+    jest.resetAllMocks()
   })
 
   it('should render', async () => {
@@ -153,7 +154,7 @@ describe('ProfileEditor', () => {
       <ProfileEditor
         open
         onDismiss={() => {}}
-        name="khori.eth"
+        name="test.eth"
         onSubmit={() => Promise.resolve()}
       />,
     )
@@ -162,45 +163,121 @@ describe('ProfileEditor', () => {
     })
   })
 
-  it('should render profile data', async () => {
+  it('should call onSubmit when data is submitted', async () => {
     render(
       <ProfileEditor
         open
         onDismiss={() => {}}
-        name="khori.eth"
-        onSubmit={() => Promise.resolve()}
-      />,
-    )
-    await waitFor(() => {
-      expect(screen.getByTestId('profile-editor')).toBeVisible()
-    })
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId('tab-container')?.children.length,
-      ).toBeGreaterThan(0)
-    })
-    const accountsTab = screen.getByTestId('tab-container')
-    console.log('accounts', accountsTab.children.length)
-  })
-
-  it('should return some data', async () => {
-    const mockSubmit = jest.fn()
-    render(
-      <ProfileEditor
-        open
-        onDismiss={() => {}}
-        name="khori.eth"
+        name="test.eth"
         onSubmit={mockSubmit}
       />,
     )
 
+    const submit = await screen.findByTestId('profile-editor-submit')
+    fireEvent.click(submit)
     await waitFor(() => {
-      console.log('waiting for profile to load')
-      expect(screen.getByTestId('profile-editor')).toBeVisible()
+      expect(mockSubmit).toHaveBeenCalled()
+    })
+  })
+
+  it('should delete address field when delete is pressed', async () => {
+    render(
+      <ProfileEditor
+        open
+        onDismiss={() => {}}
+        name="test.eth"
+        onSubmit={mockSubmit}
+      />,
+    )
+
+    const tab = await screen.findByTestId('address-tab')
+    fireEvent.click(tab)
+
+    const selectableInuput = await screen.findByTestId('selectable-input-eth')
+    const deleteButton = within(selectableInuput).getByTestId(
+      'selectable-input-delete',
+    )
+    fireEvent.click(deleteButton)
+    await waitFor(() => {
+      expect(selectableInuput).not.toBeVisible()
     })
 
     screen.getByTestId('profile-editor-submit').click()
-    console.log('>>>', mockSubmit.mock.calls)
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalled()
+      expect(mockSubmit.mock.calls[0][0].address.ETH).toBeUndefined()
+    })
+  })
+
+  it('should replace address field when changed', async () => {
+    render(
+      <ProfileEditor
+        open
+        onDismiss={() => {}}
+        name="test.eth"
+        onSubmit={mockSubmit}
+      />,
+    )
+
+    const tab = await screen.findByTestId('address-tab')
+    fireEvent.click(tab)
+
+    const addButton = await screen.findByTestId('add-address-button')
+    fireEvent.click(addButton)
+
+    const select = await screen.findByTestId('select-container')
+
+    fireEvent.click(select)
+
+    const listbox = await screen.findByRole('listbox')
+    const option = await within(listbox).findByText('DOT')
+    fireEvent.click(option)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('selectable-input-dot')).toBeVisible()
+    })
+
+    screen.getByTestId('profile-editor-submit').click()
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalled()
+      expect(mockSubmit.mock.calls[0][0].address.DOT).toBe('')
+      expect(mockSubmit.mock.calls[0][0].address.BNB).toBeUndefined()
+    })
+  })
+
+  it('should create address field when creating a field', async () => {
+    render(
+      <ProfileEditor
+        open
+        onDismiss={() => {}}
+        name="test.eth"
+        onSubmit={mockSubmit}
+      />,
+    )
+
+    const tab = await screen.findByTestId('address-tab')
+    fireEvent.click(tab)
+
+    const addButton = await screen.findByTestId('add-address-button')
+    fireEvent.click(addButton)
+
+    const select = await screen.findByTestId('select-container')
+
+    fireEvent.click(select)
+
+    const listbox = await screen.findByRole('listbox')
+    const option = await within(listbox).findByText('DOT')
+    fireEvent.click(option)
+
+    await waitFor(() => {
+      expect(screen.getByTestId('selectable-input-dot')).toBeVisible()
+    })
+
+    screen.getByTestId('profile-editor-submit').click()
+    await waitFor(() => {
+      expect(mockSubmit).toHaveBeenCalled()
+      expect(mockSubmit.mock.calls[0][0].address.DOT).toBe('')
+      expect(mockSubmit.mock.calls[0][0].address.BNB).toBeUndefined()
+    })
   })
 })

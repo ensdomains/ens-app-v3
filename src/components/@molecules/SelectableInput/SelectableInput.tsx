@@ -121,7 +121,9 @@ export const SelectableInput = forwardRef(
     )
 
     return (
-      <Container>
+      <Container
+        data-testid={`selectable-input-${selectProps.value?.toLowerCase()}`}
+      >
         <Input
           size="medium"
           value={value}
@@ -142,6 +144,7 @@ export const SelectableInput = forwardRef(
               variant="transparent"
               shadowless
               onClick={onDelete}
+              data-testid="selectable-input-delete"
             >
               <CloseSVG />
             </Button>

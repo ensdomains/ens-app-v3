@@ -331,6 +331,7 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
           <ContentContainer>
             <TabButtonsContainer>
               <TabButton
+                type="button"
                 $selected={tab === 'general'}
                 $hasError={!!getFieldState('general', formState).error}
                 $isDirty={getFieldState('general').isDirty}
@@ -339,6 +340,7 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                 {t('profileEditor.tabs.general.label')}
               </TabButton>
               <TabButton
+                type="button"
                 $selected={tab === 'accounts'}
                 $hasError={!!getFieldState('accounts', formState).error}
                 $isDirty={getFieldState('accounts').isDirty}
@@ -348,14 +350,17 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                 {t('profileEditor.tabs.accounts.label')}
               </TabButton>
               <TabButton
+                type="button"
                 $selected={tab === 'address'}
                 $hasError={!!getFieldState('address', formState).error}
                 $isDirty={getFieldState('address').isDirty}
                 onClick={handleTabClick('address')}
+                data-testid="address-tab"
               >
                 {t('profileEditor.tabs.address.label')}
               </TabButton>
               <TabButton
+                type="button"
                 $selected={tab === 'website'}
                 $hasError={!!getFieldState('website', formState).error}
                 $isDirty={getFieldState('website').isDirty}
@@ -364,6 +369,7 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                 {t('profileEditor.tabs.contentHash.label')}
               </TabButton>
               <TabButton
+                type="button"
                 $selected={tab === 'other'}
                 $hasError={!!getFieldState('other', formState).error}
                 $isDirty={getFieldState('other').isDirty}
@@ -560,6 +566,7 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                               variant="transparent"
                               shadowless
                               onClick={() => addAddressKey()}
+                              data-testid="add-address-button"
                             >
                               {t('profileEditor.tabs.address.addAddress')}
                             </Button>
@@ -645,7 +652,7 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                             prefix={<PlusSVG />}
                             variant="transparent"
                             shadowless
-                            onClick={() => addOtherKey()}
+                            onClick={() => addOtherKey('text')}
                           >
                             {t('profileEditor.tabs.other.addRecord')}
                           </Button>

@@ -45,12 +45,22 @@ const useExpandableRecordsGroup = <T>({
     return [{ value, label: value }, ...availableOptions]
   }
 
-  const addKey = (key?: Path<T>) => {
-    if (key) {
-      setNewKeys((keys) => [...keys, key])
-    } else if (hasOptions) {
-      const newKey = availableOptions[0].value
+  const addKey = (prefix?: string) => {
+    const newKey = availableOptions[0]?.value
+    if (newKey) {
       setNewKeys((keys) => [...keys, newKey])
+      setValue(group, { ...getValues(group), [newKey]: '' })
+    } else if (prefix) {
+      const currentPrefixIds = [...existingKeys, ...newKeys]
+        .filter((option) => option.startsWith(prefix))
+        .map((option) => parseInt(option.replace(prefix, '')))
+        .filter((id) => !Number.isNaN(id))
+
+      const maxId = Math.max(0, ...currentPrefixIds)
+      const newPrefixId = maxId + 1
+      const newPrefixKey = `${prefix}${newPrefixId}`
+      setNewKeys((keys) => [...keys, newPrefixKey])
+      setValue(group, { ...getValues(group), [newPrefixKey]: '' })
     }
   }
 
@@ -62,6 +72,7 @@ const useExpandableRecordsGroup = <T>({
       [newKey]: oldValue || '',
     } as PathValue<T, Path<T>>
     setValue(group, newGroupRecords)
+    setExistingKeys((keys) => keys.filter((key) => key !== oldKey))
     setNewKeys((keys) => [...keys, newKey].filter((_key) => _key !== oldKey))
   }
 
@@ -71,7 +82,6 @@ const useExpandableRecordsGroup = <T>({
     const oldValues = getValues(group)
     const { [key]: _, ...newValues } = oldValues
     setValue(group, newValues as PathValue<T, Path<T>>)
-    console.log(newValues)
   }
 
   return {
