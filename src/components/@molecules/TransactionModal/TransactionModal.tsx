@@ -151,7 +151,6 @@ export const TransactionModal = ({
       if (!transaction) {
         return null
       }
-      console.log('estimating gas')
 
       const gas = await signer?.estimateGas(transaction)
 
