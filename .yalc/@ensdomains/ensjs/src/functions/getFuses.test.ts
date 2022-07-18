@@ -12,7 +12,9 @@ let withWrappedSnapshot: any
 beforeAll(async () => {
   ;({ ENSInstance, revert, provider, createSnapshot } = await setup())
   accounts = await provider.listAccounts()
-  const tx = await ENSInstance.wrapName('parthtejpal.eth', accounts[0])
+  const tx = await ENSInstance.wrapName('parthtejpal.eth', {
+    wrappedOwner: accounts[0],
+  })
   await tx.wait()
 
   withWrappedSnapshot = await createSnapshot()
@@ -33,11 +35,10 @@ describe('getFuses', () => {
     expect(result).toBeUndefined()
   })
   it('should return with canDoEverything set to true for a name with no fuses burned', async () => {
-    const tx = await ENSInstance.createSubname({
+    const tx = await ENSInstance.createSubname('test.parthtejpal.eth', {
       contract: 'nameWrapper',
-      name: 'test.parthtejpal.eth',
       owner: accounts[0],
-      options: { addressOrIndex: 0 },
+      addressOrIndex: 0,
     })
     await tx.wait()
 
@@ -56,9 +57,11 @@ describe('getFuses', () => {
   })
   it('should return with other correct fuses', async () => {
     const tx = await ENSInstance.burnFuses('parthtejpal.eth', {
-      cannotUnwrap: true,
-      cannotSetTtl: true,
-      cannotCreateSubdomain: true,
+      fusesToBurn: {
+        cannotUnwrap: true,
+        cannotSetTtl: true,
+        cannotCreateSubdomain: true,
+      },
     })
     await tx.wait()
     const result = await ENSInstance.getFuses('parthtejpal.eth')
@@ -86,8 +89,7 @@ describe('getFuses', () => {
     }
   })
   it('should return correct vulnerability data for a vulnerable node', async () => {
-    const tx = await ENSInstance.createSubname({
-      name: 'test.parthtejpal.eth',
+    const tx = await ENSInstance.createSubname('test.parthtejpal.eth', {
       owner: accounts[0],
       contract: 'nameWrapper',
     })

@@ -1,14 +1,18 @@
-import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
-import { Outlink } from '@app/components/Outlink'
-import { useChainName } from '@app/hooks/useChainName'
-import { TransactionPreStepObject, TransactionSubmission } from '@app/types'
-import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useSigner } from 'wagmi'
+import { useRouter } from 'next/router'
+
+import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
+import { Outlink, StyledAnchor } from '@app/components/Outlink'
+import { useChainName } from '@app/hooks/useChainName'
+import { TransactionPreStepObject, TransactionSubmission } from '@app/types'
+import { makeEtherscanLink } from '@app/utils/utils'
+import { getRoute } from '@app/routes'
+
 import { DisplayItems } from './DisplayItems'
 
 const InnerDialog = styled.div(
@@ -131,6 +135,7 @@ export const TransactionModal = ({
 }) => {
   const { t } = useTranslation()
   const chainName = useChainName()
+  const router = useRouter()
 
   const [stage, setStage] = useState<Stage>('request')
   const addTransaction = useAddRecentTransaction()
@@ -138,6 +143,7 @@ export const TransactionModal = ({
   const { data: accountData } = useAccount()
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
+  const settingsRoute = getRoute('settings')
 
   const tryTransaction = useCallback(async () => {
     setError(null)
@@ -202,6 +208,14 @@ export const TransactionModal = ({
           <CompleteTypography>
             {t('transaction.modal.complete.message')}
           </CompleteTypography>
+          <StyledAnchor
+            onClick={() => {
+              onDismiss()
+              router.push(settingsRoute.href)
+            }}
+          >
+            View your transactions
+          </StyledAnchor>
         </SuccessContent>
       )
     }

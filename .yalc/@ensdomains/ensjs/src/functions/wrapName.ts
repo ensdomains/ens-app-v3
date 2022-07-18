@@ -19,16 +19,13 @@ async function wrapETH(
   const labelhash = ethers.utils.solidityKeccak256(['string'], [labels[0]])
 
   const data = ethers.utils.defaultAbiCoder.encode(
-    ['string', 'address', 'uint96', 'address'],
-    [labels[0], wrappedOwner, decodedFuses, resolverAddress],
+    ['string', 'address', 'uint32', 'uint64', 'address'],
+    [labels[0], wrappedOwner, '0x0', decodedFuses, resolverAddress],
   )
 
-  return baseRegistrar['safeTransferFrom(address,address,uint256,bytes)'](
-    address,
-    nameWrapper.address,
-    labelhash,
-    data,
-  )
+  return baseRegistrar.populateTransaction[
+    'safeTransferFrom(address,address,uint256,bytes)'
+  ](address, nameWrapper.address, labelhash, data)
 }
 
 async function wrapOther(
@@ -38,8 +35,9 @@ async function wrapOther(
   decodedFuses: string,
   resolverAddress: string,
   address: string,
+  signer: ethers.Signer,
 ) {
-  const nameWrapper = await contracts?.getNameWrapper()!
+  const nameWrapper = (await contracts?.getNameWrapper()!).connect(signer)
   const registry = await contracts?.getRegistry()!
 
   const hasApproval = await registry.isApprovedForAll(
@@ -53,7 +51,7 @@ async function wrapOther(
     )
   }
 
-  return nameWrapper.wrap(
+  return nameWrapper.populateTransaction.wrap(
     hexEncodeName(name),
     wrappedOwner,
     decodedFuses,
@@ -62,20 +60,19 @@ async function wrapOther(
 }
 
 export default async function (
-  { contracts, provider }: ENSArgs<'contracts' | 'provider'>,
+  { contracts, signer, populate }: ENSArgs<'contracts' | 'signer' | 'populate'>,
   name: string,
-  wrappedOwner: string,
-  fuseOptions?: FuseOptions | string | number,
-  resolverAddress?: string,
-  options?: { addressOrIndex?: string | number },
+  {
+    wrappedOwner,
+    fuseOptions,
+    resolverAddress,
+  }: {
+    wrappedOwner: string
+    fuseOptions?: FuseOptions | string | number
+    resolverAddress?: string
+  },
 ) {
-  const signer = provider?.getSigner(options?.addressOrIndex)
-
-  const address = await signer?.getAddress()
-
-  if (!signer || !address) {
-    throw new Error('No signer found')
-  }
+  const address = await signer.getAddress()
 
   let decodedFuses: string
 
@@ -123,6 +120,7 @@ export default async function (
       decodedFuses,
       resolverAddress,
       address,
+      signer,
     )
   }
 }

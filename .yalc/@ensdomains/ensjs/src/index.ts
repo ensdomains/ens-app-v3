@@ -1,4 +1,5 @@
-import { ethers } from 'ethers'
+import { JsonRpcSigner } from '@ethersproject/providers'
+import { ContractTransaction, ethers, PopulatedTransaction } from 'ethers'
 import ContractManager from './contracts'
 import { getContractAddress as _getContractAddress } from './contracts/getContractAddress'
 import { SupportedNetworkId } from './contracts/types'
@@ -11,6 +12,7 @@ import type {
 import type burnFuses from './functions/burnFuses'
 import type createSubname from './functions/createSubname'
 import type deleteSubname from './functions/deleteSubname'
+import type getDNSOwner from './functions/getDNSOwner'
 import type getExpiry from './functions/getExpiry'
 import type getFuses from './functions/getFuses'
 import type {
@@ -41,9 +43,9 @@ import type transferName from './functions/transferName'
 import type transferSubname from './functions/transferSubname'
 import type unwrapName from './functions/unwrapName'
 import type wrapName from './functions/wrapName'
-import type getDNSOwner from './functions/getDNSOwner'
 import GqlManager from './GqlManager'
 import singleCall from './utils/singleCall'
+import writeTx from './utils/writeTx'
 
 type ENSOptions = {
   graphURI?: string | null
@@ -53,6 +55,7 @@ type ENSOptions = {
 export type InternalENS = {
   options?: ENSOptions
   provider?: ethers.providers.Provider
+  signer: JsonRpcSigner
   graphURI?: string | null
 } & ENS
 
@@ -75,6 +78,28 @@ type OmitFirstTwoArgs<F> = F extends (
 type FirstArg<F> = F extends (x: infer A, ...args: any[]) => any ? A : never
 
 type FunctionDeps<F> = Extract<keyof FirstArg<F>, string>[]
+
+type WriteOptions = {
+  addressOrIndex?: string | number
+  signer?: JsonRpcSigner
+}
+
+type OptionalWriteOptions<F> = F extends (
+  x: any,
+  arg_0: infer Z,
+  options?: infer P,
+) => infer R
+  ? (name: Z, options?: P & WriteOptions) => R
+  : F extends (x: any, arg_0: infer Z, options: infer P) => infer R
+  ? (name: Z, options: P & WriteOptions) => R
+  : never
+
+interface WriteFunction<F extends (...args: any) => any> extends Function {
+  (...args: Parameters<OptionalWriteOptions<F>>): Promise<ContractTransaction>
+  populateTransaction: (
+    ...args: Parameters<OptionalWriteOptions<F>>
+  ) => Promise<PopulatedTransaction>
+}
 
 const graphURIEndpoints: Record<string, string> = {
   1: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
@@ -172,7 +197,13 @@ export class ENS {
     path: string,
     dependencies: FunctionDeps<F>,
     exportName: string = 'default',
-    subFunc?: 'raw' | 'decode' | 'combine' | 'batch',
+    subFunc?:
+      | 'raw'
+      | 'decode'
+      | 'combine'
+      | 'batch'
+      | 'write'
+      | 'populateTransaction',
     passthrough?: RawFunction,
   ): Function => {
     // if batch is specified, create batch func
@@ -193,11 +224,33 @@ export class ENS {
       // if combine isn't specified, run normally
       // otherwise, create a function from the raw and decode functions
       if (subFunc !== 'combine') {
+        const writeable =
+          subFunc === 'write' || subFunc === 'populateTransaction'
         // get the function to call
-        const func = subFunc ? mod[exportName][subFunc] : mod[exportName]
+        const func =
+          subFunc && !writeable ? mod[exportName][subFunc] : mod[exportName]
         // get the dependencies to forward to the function as the first arg
-        const dependenciesToForward =
+        let dependenciesToForward =
           thisRef.forwardDependenciesFromArray<F>(dependencies)
+
+        // if func is write func, inject signer into dependencies
+        if (writeable) {
+          const options = (args[1] || {}) as WriteOptions
+          const signer =
+            options.signer ||
+            thisRef.provider?.getSigner(options.addressOrIndex)
+          const populate = subFunc === 'populateTransaction'
+          if (!signer) {
+            throw new Error('No signer specified')
+          }
+          delete options.addressOrIndex
+          delete options.signer
+          dependenciesToForward = { ...dependenciesToForward, signer }
+          return func(dependenciesToForward, args[0], options).then(
+            writeTx(signer, populate),
+          )
+        }
+
         // return the function with the dependencies forwarded
         return func(dependenciesToForward, ...args)
       } else {
@@ -237,6 +290,13 @@ export class ENS {
         'batch',
         { raw: mainFunc.raw as any, decode: mainFunc.decode as any },
       )
+    } else if (subFunc === 'write') {
+      mainFunc.populateTransaction = this.importGenerator<F>(
+        path,
+        dependencies,
+        exportName,
+        'populateTransaction',
+      )
     }
 
     return mainFunc as Function
@@ -255,6 +315,25 @@ export class ENS {
     exportName: string = 'default',
   ): OmitFirstArg<F> =>
     this.importGenerator<F>(path, dependencies, exportName) as OmitFirstArg<F>
+
+  /**
+   * Generates a write wrapped function
+   * @param {string} path - The path of the exported function
+   * @param {FunctionDeps} dependencies - An array of ENS properties
+   * @param {string} exportName - The export name of the target function
+   * @returns {OmitFirstArg} - The generated wrapped function
+   */
+  private generateWriteFunction = <F extends (...args: any) => any>(
+    path: string,
+    dependencies: FunctionDeps<F>,
+    exportName: string = 'default',
+  ): WriteFunction<F> =>
+    this.importGenerator<F>(
+      path,
+      dependencies,
+      exportName,
+      'write',
+    ) as WriteFunction<F>
 
   /**
    * Generates a wrapped function from raw and decode exports
@@ -455,55 +534,51 @@ export class ENS {
     'multicallWrapper',
   )
 
-  public setName = this.generateFunction<typeof setName>('setName', [
+  public setName = this.generateWriteFunction<typeof setName>('setName', [
     'contracts',
-    'provider',
   ])
 
-  public setRecords = this.generateFunction<typeof setRecords>('setRecords', [
-    'contracts',
-    'provider',
-    'getResolver',
-  ])
+  public setRecords = this.generateWriteFunction<typeof setRecords>(
+    'setRecords',
+    ['contracts', 'provider', 'getResolver'],
+  )
 
-  public setResolver = this.generateFunction<typeof setResolver>(
+  public setResolver = this.generateWriteFunction<typeof setResolver>(
     'setResolver',
-    ['contracts', 'provider'],
+    ['contracts'],
   )
 
-  public transferName = this.generateFunction<typeof transferName>(
+  public transferName = this.generateWriteFunction<typeof transferName>(
     'transferName',
-    ['contracts', 'provider'],
+    ['contracts'],
   )
 
-  public wrapName = this.generateFunction<typeof wrapName>('wrapName', [
+  public wrapName = this.generateWriteFunction<typeof wrapName>('wrapName', [
     'contracts',
-    'provider',
   ])
 
-  public unwrapName = this.generateFunction<typeof unwrapName>('unwrapName', [
+  public unwrapName = this.generateWriteFunction<typeof unwrapName>(
+    'unwrapName',
+    ['contracts'],
+  )
+
+  public burnFuses = this.generateWriteFunction<typeof burnFuses>('burnFuses', [
     'contracts',
-    'provider',
   ])
 
-  public burnFuses = this.generateFunction<typeof burnFuses>('burnFuses', [
-    'contracts',
-    'provider',
-  ])
-
-  public createSubname = this.generateFunction<typeof createSubname>(
+  public createSubname = this.generateWriteFunction<typeof createSubname>(
     'createSubname',
-    ['contracts', 'provider'],
+    ['contracts'],
   )
 
-  public deleteSubname = this.generateFunction<typeof deleteSubname>(
+  public deleteSubname = this.generateWriteFunction<typeof deleteSubname>(
     'deleteSubname',
-    ['contracts', 'provider', 'transferSubname'],
+    ['transferSubname'],
   )
 
-  public transferSubname = this.generateFunction<typeof transferSubname>(
+  public transferSubname = this.generateWriteFunction<typeof transferSubname>(
     'transferSubname',
-    ['contracts', 'provider'],
+    ['contracts'],
   )
 
   public getDNSOwner = this.generateFunction<typeof getDNSOwner>(

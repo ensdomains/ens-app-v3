@@ -1,7 +1,18 @@
-import { ethers } from 'ethers';
+import { JsonRpcSigner } from '@ethersproject/providers';
+import { ContractTransaction, ethers, PopulatedTransaction } from 'ethers';
 import ContractManager from './contracts';
 import { getContractAddress as _getContractAddress } from './contracts/getContractAddress';
 import { SupportedNetworkId } from './contracts/types';
+import type burnFuses from './functions/burnFuses';
+import type createSubname from './functions/createSubname';
+import type deleteSubname from './functions/deleteSubname';
+import type setName from './functions/setName';
+import type setRecords from './functions/setRecords';
+import type setResolver from './functions/setResolver';
+import type transferName from './functions/transferName';
+import type transferSubname from './functions/transferSubname';
+import type unwrapName from './functions/unwrapName';
+import type wrapName from './functions/wrapName';
 import GqlManager from './GqlManager';
 declare type ENSOptions = {
     graphURI?: string | null;
@@ -10,6 +21,7 @@ declare type ENSOptions = {
 export declare type InternalENS = {
     options?: ENSOptions;
     provider?: ethers.providers.Provider;
+    signer: JsonRpcSigner;
     graphURI?: string | null;
 } & ENS;
 export declare type ENSArgs<K extends keyof InternalENS> = {
@@ -17,6 +29,15 @@ export declare type ENSArgs<K extends keyof InternalENS> = {
 };
 declare type OmitFirstArg<F> = F extends (x: any, ...args: infer P) => infer R ? (...args: P) => R : never;
 declare type OmitFirstTwoArgs<F> = F extends (x: any, y: any, ...args: infer P) => infer R ? (...args: P) => R : never;
+declare type WriteOptions = {
+    addressOrIndex?: string | number;
+    signer?: JsonRpcSigner;
+};
+declare type OptionalWriteOptions<F> = F extends (x: any, arg_0: infer Z, options?: infer P) => infer R ? (name: Z, options?: P & WriteOptions) => R : F extends (x: any, arg_0: infer Z, options: infer P) => infer R ? (name: Z, options: P & WriteOptions) => R : never;
+interface WriteFunction<F extends (...args: any) => any> extends Function {
+    (...args: Parameters<OptionalWriteOptions<F>>): Promise<ContractTransaction>;
+    populateTransaction: (...args: Parameters<OptionalWriteOptions<F>>) => Promise<PopulatedTransaction>;
+}
 export declare type RawFunction = {
     raw: (...args: any[]) => Promise<{
         to: string;
@@ -77,6 +98,14 @@ export declare class ENS {
      * @returns {OmitFirstArg} - The generated wrapped function
      */
     private generateFunction;
+    /**
+     * Generates a write wrapped function
+     * @param {string} path - The path of the exported function
+     * @param {FunctionDeps} dependencies - An array of ENS properties
+     * @param {string} exportName - The export name of the target function
+     * @returns {OmitFirstArg} - The generated wrapped function
+     */
+    private generateWriteFunction;
     /**
      * Generates a wrapped function from raw and decode exports
      * @param {string} path - The path of the exported function
@@ -423,49 +452,16 @@ export declare class ENS {
         }>;
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<any>;
     }>;
-    setName: (name: string, address?: string | undefined, resolver?: string | undefined, options?: {
-        addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<ethers.ContractTransaction | undefined>;
-    setRecords: (name: string, records: import("./utils/recordHelpers").RecordOptions) => Promise<ethers.ContractTransaction | undefined>;
-    setResolver: (name: string, contract: "nameWrapper" | "registry", resolver?: string | undefined, options?: {
-        addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<ethers.ContractTransaction>;
-    transferName: (name: string, newOwner: string, contract: "nameWrapper" | "registry" | "baseRegistrar", options?: {
-        addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<ethers.ContractTransaction>;
-    wrapName: (name: string, wrappedOwner: string, fuseOptions?: string | number | import("./@types/FuseOptions").FuseOptions | undefined, resolverAddress?: string | undefined, options?: {
-        addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<ethers.ContractTransaction>;
-    unwrapName: (name: string, newController: string, newRegistrant?: string | undefined, options?: {
-        addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<ethers.ContractTransaction>;
-    burnFuses: (name: string, fusesToBurn: import("./@types/FuseOptions").FuseOptions) => Promise<ethers.ContractTransaction>;
-    createSubname: (args_0: {
-        name: string;
-        owner: string;
-        resolverAddress?: string | undefined;
-        contract: "nameWrapper" | "registry";
-        options?: {
-            addressOrIndex?: string | number | undefined;
-        } | undefined;
-    } | ({
-        contract: "nameWrapper";
-        fuses?: import("./@types/FuseOptions").FuseOptions | undefined;
-    } & {
-        name: string;
-        owner: string;
-        resolverAddress?: string | undefined;
-        contract: "nameWrapper" | "registry";
-        options?: {
-            addressOrIndex?: string | number | undefined;
-        } | undefined;
-    })) => Promise<ethers.ContractTransaction>;
-    deleteSubname: (name: string, contract: "nameWrapper" | "registry", options?: {
-        addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<ethers.ContractTransaction>;
-    transferSubname: (name: string, contract: "nameWrapper" | "registry", address: string, options?: {
-        addressOrIndex?: string | number | undefined;
-    } | undefined) => Promise<ethers.ContractTransaction>;
+    setName: WriteFunction<typeof setName>;
+    setRecords: WriteFunction<typeof setRecords>;
+    setResolver: WriteFunction<typeof setResolver>;
+    transferName: WriteFunction<typeof transferName>;
+    wrapName: WriteFunction<typeof wrapName>;
+    unwrapName: WriteFunction<typeof unwrapName>;
+    burnFuses: WriteFunction<typeof burnFuses>;
+    createSubname: WriteFunction<typeof createSubname>;
+    deleteSubname: WriteFunction<typeof deleteSubname>;
+    transferSubname: WriteFunction<typeof transferSubname>;
     getDNSOwner: (dnsName: string) => Promise<any>;
 }
 export {};

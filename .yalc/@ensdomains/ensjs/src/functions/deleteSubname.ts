@@ -1,19 +1,16 @@
 import { ENSArgs } from '..'
 
 export default async function (
-  {
-    contracts,
-    provider,
-    transferSubname,
-  }: ENSArgs<'contracts' | 'provider' | 'transferSubname'>,
+  { transferSubname }: ENSArgs<'transferSubname'>,
   name: string,
-  contract: 'registry' | 'nameWrapper',
-  options?: { addressOrIndex?: string | number },
-) {
-  return transferSubname(
-    name,
+  {
     contract,
-    '0x0000000000000000000000000000000000000000',
-    options,
-  )
+  }: {
+    contract: 'registry' | 'nameWrapper'
+  },
+) {
+  return transferSubname.populateTransaction(name, {
+    contract,
+    address: '0x0000000000000000000000000000000000000000',
+  })
 }

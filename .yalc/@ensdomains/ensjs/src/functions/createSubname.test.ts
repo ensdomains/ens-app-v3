@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { ENS } from '..'
-import { namehash } from '../utils/normalise'
 import setup from '../tests/setup'
+import { namehash } from '../utils/normalise'
 
 let ENSInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -23,11 +23,10 @@ describe('createSubname', () => {
     await revert()
   })
   it('should allow creating a subname on the registry', async () => {
-    const tx = await ENSInstance.createSubname({
+    const tx = await ENSInstance.createSubname('test.parthtejpal.eth', {
       contract: 'registry',
-      name: 'test.parthtejpal.eth',
       owner: accounts[0],
-      options: { addressOrIndex: 0 },
+      addressOrIndex: 0,
     })
     expect(tx).toBeTruthy()
     await tx.wait()
@@ -37,16 +36,14 @@ describe('createSubname', () => {
     expect(result).toBe(accounts[0])
   })
   it('should allow creating a subname on the namewrapper', async () => {
-    const wrapNameTx = await ENSInstance.wrapName(
-      'parthtejpal.eth',
-      accounts[0],
-    )
+    const wrapNameTx = await ENSInstance.wrapName('parthtejpal.eth', {
+      wrappedOwner: accounts[0],
+    })
     await wrapNameTx.wait()
-    const tx = await ENSInstance.createSubname({
+    const tx = await ENSInstance.createSubname('test.parthtejpal.eth', {
       contract: 'nameWrapper',
-      name: 'test.parthtejpal.eth',
       owner: accounts[0],
-      options: { addressOrIndex: 0 },
+      addressOrIndex: 0,
     })
     expect(tx).toBeTruthy()
     await tx.wait()

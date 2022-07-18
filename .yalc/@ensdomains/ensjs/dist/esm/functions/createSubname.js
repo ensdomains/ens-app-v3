@@ -1,11 +1,7 @@
 import { ethers } from 'ethers';
 import generateFuseInput from '../utils/generateFuseInput';
 import { namehash } from '../utils/normalise';
-export default async function ({ contracts, provider }, { name, owner, resolverAddress, contract, options, ...wrapperArgs }) {
-    const signer = provider?.getSigner(options?.addressOrIndex);
-    if (!signer) {
-        throw new Error('No signer found');
-    }
+export default async function ({ contracts, signer }, name, { owner, resolverAddress, contract, ...wrapperArgs }) {
     const labels = name.split('.');
     if (labels.length === 1) {
         throw new Error('Subnames in ENS.js can only be created for 2LDs, not TLDs');
@@ -22,14 +18,14 @@ export default async function ({ contracts, provider }, { name, owner, resolverA
     switch (contract) {
         case 'registry': {
             const registry = (await contracts?.getRegistry()).connect(signer);
-            return registry.setSubnodeRecord(parentNodehash, labelhash, owner, resolverAddress, 0);
+            return registry.populateTransaction.setSubnodeRecord(parentNodehash, labelhash, owner, resolverAddress, 0);
         }
         case 'nameWrapper': {
             const nameWrapper = (await contracts?.getNameWrapper()).connect(signer);
             const generatedFuses = 'fuses' in wrapperArgs && wrapperArgs.fuses
                 ? generateFuseInput(wrapperArgs.fuses)
                 : '0';
-            return nameWrapper.setSubnodeRecord(parentNodehash, label, owner, resolverAddress, 0, generatedFuses);
+            return nameWrapper.populateTransaction.setSubnodeRecord(parentNodehash, label, owner, resolverAddress, 0, generatedFuses);
         }
         default: {
             throw new Error(`Unknown contract: ${contract}`);

@@ -1,7 +1,7 @@
 import { ENS } from '..'
+import setup from '../tests/setup'
 import { hexEncodeName } from '../utils/hexEncodedName'
 import { namehash } from '../utils/normalise'
-import setup from '../tests/setup'
 
 let ENSInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -17,10 +17,12 @@ afterAll(async () => {
 describe('setRecords', () => {
   it('should return a transaction to the resolver and set successfully', async () => {
     const tx = await ENSInstance.setRecords('parthtejpal.eth', {
-      coinTypes: [
-        { key: 'ETC', value: '0x42D63ae25990889E35F215bC95884039Ba354115' },
-      ],
-      texts: [{ key: 'foo', value: 'bar' }],
+      records: {
+        coinTypes: [
+          { key: 'ETC', value: '0x42D63ae25990889E35F215bC95884039Ba354115' },
+        ],
+        texts: [{ key: 'foo', value: 'bar' }],
+      },
     })
     expect(tx).toBeTruthy()
     await tx.wait()

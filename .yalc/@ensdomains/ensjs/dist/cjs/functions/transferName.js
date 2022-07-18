@@ -2,29 +2,24 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 const ethers_1 = require("ethers");
 const normalise_1 = require("../utils/normalise");
-async function default_1({ contracts, provider }, name, newOwner, contract, options) {
-    const address = await provider
-        ?.getSigner(options?.addressOrIndex)
-        .getAddress();
-    if (!address) {
-        throw new Error('No signer found');
-    }
+async function default_1({ contracts, signer }, name, { newOwner, contract, }) {
+    const address = await signer.getAddress();
     switch (contract) {
         case 'registry': {
-            const registry = (await contracts?.getRegistry()).connect(provider?.getSigner(options?.addressOrIndex));
-            return registry.setOwner((0, normalise_1.namehash)(name), newOwner);
+            const registry = (await contracts?.getRegistry()).connect(signer);
+            return registry.populateTransaction.setOwner((0, normalise_1.namehash)(name), newOwner);
         }
         case 'baseRegistrar': {
-            const baseRegistrar = (await contracts?.getBaseRegistrar()).connect(provider?.getSigner(options?.addressOrIndex));
+            const baseRegistrar = (await contracts?.getBaseRegistrar()).connect(signer);
             const labels = name.split('.');
             if (labels.length > 2 || labels[labels.length - 1] !== 'eth') {
                 throw new Error('Invalid name for baseRegistrar');
             }
-            return baseRegistrar['safeTransferFrom(address,address,uint256)'](address, newOwner, ethers_1.ethers.utils.solidityKeccak256(['string'], [labels[0]]));
+            return baseRegistrar.populateTransaction['safeTransferFrom(address,address,uint256)'](address, newOwner, ethers_1.ethers.utils.solidityKeccak256(['string'], [labels[0]]));
         }
         case 'nameWrapper': {
-            const nameWrapper = (await contracts?.getNameWrapper()).connect(provider?.getSigner(options?.addressOrIndex));
-            return nameWrapper.safeTransferFrom(address, newOwner, (0, normalise_1.namehash)(name), 1, '0x');
+            const nameWrapper = (await contracts?.getNameWrapper()).connect(signer);
+            return nameWrapper.populateTransaction.safeTransferFrom(address, newOwner, (0, normalise_1.namehash)(name), 1, '0x');
         }
         default: {
             throw new Error(`Unknown contract: ${contract}`);

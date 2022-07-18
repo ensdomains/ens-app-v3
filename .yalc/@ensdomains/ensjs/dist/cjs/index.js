@@ -31,6 +31,7 @@ const contracts_1 = __importDefault(require("./contracts"));
 const getContractAddress_1 = require("./contracts/getContractAddress");
 const GqlManager_1 = __importDefault(require("./GqlManager"));
 const singleCall_1 = __importDefault(require("./utils/singleCall"));
+const writeTx_1 = __importDefault(require("./utils/writeTx"));
 const graphURIEndpoints = {
     1: 'https://api.thegraph.com/subgraphs/name/ensdomains/ens',
     3: 'https://api.thegraph.com/subgraphs/name/ensdomains/ensropsten',
@@ -94,10 +95,25 @@ class ENS {
             // if combine isn't specified, run normally
             // otherwise, create a function from the raw and decode functions
             if (subFunc !== 'combine') {
+                const writeable = subFunc === 'write' || subFunc === 'populateTransaction';
                 // get the function to call
-                const func = subFunc ? mod[exportName][subFunc] : mod[exportName];
+                const func = subFunc && !writeable ? mod[exportName][subFunc] : mod[exportName];
                 // get the dependencies to forward to the function as the first arg
-                const dependenciesToForward = thisRef.forwardDependenciesFromArray(dependencies);
+                let dependenciesToForward = thisRef.forwardDependenciesFromArray(dependencies);
+                // if func is write func, inject signer into dependencies
+                if (writeable) {
+                    const options = (args[1] || {});
+                    const signer = options.signer ||
+                        thisRef.provider?.getSigner(options.addressOrIndex);
+                    const populate = subFunc === 'populateTransaction';
+                    if (!signer) {
+                        throw new Error('No signer specified');
+                    }
+                    delete options.addressOrIndex;
+                    delete options.signer;
+                    dependenciesToForward = { ...dependenciesToForward, signer };
+                    return func(dependenciesToForward, args[0], options).then((0, writeTx_1.default)(signer, populate));
+                }
                 // return the function with the dependencies forwarded
                 return func(dependenciesToForward, ...args);
             }
@@ -114,6 +130,9 @@ class ENS {
             mainFunc.decode = this.importGenerator(path, dependencies, exportName, 'decode');
             mainFunc.batch = this.importGenerator(path, dependencies, exportName, 'batch', { raw: mainFunc.raw, decode: mainFunc.decode });
         }
+        else if (subFunc === 'write') {
+            mainFunc.populateTransaction = this.importGenerator(path, dependencies, exportName, 'populateTransaction');
+        }
         return mainFunc;
     };
     /**
@@ -124,6 +143,14 @@ class ENS {
      * @returns {OmitFirstArg} - The generated wrapped function
      */
     generateFunction = (path, dependencies, exportName = 'default') => this.importGenerator(path, dependencies, exportName);
+    /**
+     * Generates a write wrapped function
+     * @param {string} path - The path of the exported function
+     * @param {FunctionDeps} dependencies - An array of ENS properties
+     * @param {string} exportName - The export name of the target function
+     * @returns {OmitFirstArg} - The generated wrapped function
+     */
+    generateWriteFunction = (path, dependencies, exportName = 'default') => this.importGenerator(path, dependencies, exportName, 'write');
     /**
      * Generates a wrapped function from raw and decode exports
      * @param {string} path - The path of the exported function
@@ -194,32 +221,22 @@ class ENS {
     universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
     resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
     multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
-    setName = this.generateFunction('setName', [
+    setName = this.generateWriteFunction('setName', [
         'contracts',
-        'provider',
     ]);
-    setRecords = this.generateFunction('setRecords', [
+    setRecords = this.generateWriteFunction('setRecords', ['contracts', 'provider', 'getResolver']);
+    setResolver = this.generateWriteFunction('setResolver', ['contracts']);
+    transferName = this.generateWriteFunction('transferName', ['contracts']);
+    wrapName = this.generateWriteFunction('wrapName', [
         'contracts',
-        'provider',
-        'getResolver',
     ]);
-    setResolver = this.generateFunction('setResolver', ['contracts', 'provider']);
-    transferName = this.generateFunction('transferName', ['contracts', 'provider']);
-    wrapName = this.generateFunction('wrapName', [
+    unwrapName = this.generateWriteFunction('unwrapName', ['contracts']);
+    burnFuses = this.generateWriteFunction('burnFuses', [
         'contracts',
-        'provider',
     ]);
-    unwrapName = this.generateFunction('unwrapName', [
-        'contracts',
-        'provider',
-    ]);
-    burnFuses = this.generateFunction('burnFuses', [
-        'contracts',
-        'provider',
-    ]);
-    createSubname = this.generateFunction('createSubname', ['contracts', 'provider']);
-    deleteSubname = this.generateFunction('deleteSubname', ['contracts', 'provider', 'transferSubname']);
-    transferSubname = this.generateFunction('transferSubname', ['contracts', 'provider']);
+    createSubname = this.generateWriteFunction('createSubname', ['contracts']);
+    deleteSubname = this.generateWriteFunction('deleteSubname', ['transferSubname']);
+    transferSubname = this.generateWriteFunction('transferSubname', ['contracts']);
     getDNSOwner = this.generateFunction('getDNSOwner', []);
 }
 exports.ENS = ENS;

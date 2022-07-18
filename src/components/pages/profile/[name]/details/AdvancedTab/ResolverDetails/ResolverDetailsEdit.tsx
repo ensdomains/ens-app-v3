@@ -3,7 +3,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { ethers } from 'ethers'
-import { useProvider, useSendTransaction } from 'wagmi'
+import { useProvider } from 'wagmi'
 import { useRouter } from 'next/router'
 import { useQuery } from 'react-query'
 
@@ -93,7 +93,7 @@ const customResolverErrorMessage = (errors) => {
   return undefined
 }
 
-const EditResolverFormContainer = styled.div(({ theme }) => [
+const EditResolverFormContainer = styled.div(() => [
   css`
     width: 100%;
   `,
@@ -116,20 +116,11 @@ const InputContainer = styled.div(
   `,
 )
 
-const InputErrorContainer = styled.div``
-
 const ButtonsContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     gap: ${theme.space[4]};
     margin-top: ${theme.space[4]};
-  `,
-)
-
-const ListItemSpan = styled.span(
-  ({ theme }) => css`
-    position: relative;
-    margin-left: -${theme.space[2]};
   `,
 )
 
@@ -150,7 +141,7 @@ const EditResolverForm = ({ onSubmit }: { onSubmit: () => null }) => {
     register,
     handleSubmit,
     watch,
-    formState: { errors, isDirty },
+    formState: { errors },
   } = useForm({ mode: 'onChange' })
 
   const { t } = useTranslation('profile')
@@ -255,41 +246,55 @@ const EditResolverForm = ({ onSubmit }: { onSubmit: () => null }) => {
 }
 
 const ResolverDetailsEdit = ({ isOpen, onDismiss }: Props) => {
-  const { sendTransactionAsync } = useSendTransaction()
+  const router = useRouter()
+  const { name } = router.query
   const { setCurrentTransaction } = useTransaction()
   const { setResolver } = useEns()
+  const { profile = { resolverAddress: '' } } = useProfile(name as string)
 
-  const handleSubmit = useCallback(() => {
-    const test = setResolver.populateTransaction()
-    console.log('test: ', test)
-    setCurrentTransaction({
-      data: [
-        {
-          actionName: 'updateResolver',
-          generateTx: () =>
-            sendTransactionAsync({
-              request: {
-                to: '0x0000000000000000000000000000000000000000',
-                value: '0',
+  const { resolverAddress } = profile
+
+  const handleSubmit = useCallback(
+    async ({ resolverChoice, customResolver }) => {
+      let newResolver
+
+      if (resolverChoice === 'latest') {
+        newResolver = RESOLVER_ADDRESSES[0]
+      }
+      if (resolverChoice === 'custom') {
+        newResolver = customResolver
+      }
+
+      setCurrentTransaction({
+        data: [
+          {
+            actionName: 'updateResolver',
+            generateTx: (signer) => {
+              return setResolver(name, {
+                contract: 'registry',
+                resolver: newResolver,
+                signer,
+              })
+            },
+            displayItems: [
+              {
+                label: 'currentResolver',
+                value: resolverAddress,
+                type: 'address',
               },
-            }),
-          displayItems: [
-            {
-              label: 'to',
-              value: '0x3F45BcB2DFBdF0AD173A9DfEe3b932aa2a31CeB3',
-              type: 'address',
-            },
-            {
-              label: 'name',
-              value: 'taytems.eth',
-              type: 'name',
-            },
-          ],
-        },
-      ],
-      key: 'updateResolver',
-    })
-  }, [setCurrentTransaction, sendTransactionAsync, setResolver])
+              {
+                label: 'newResolver',
+                value: newResolver,
+                type: 'address',
+              },
+            ],
+          },
+        ],
+        key: 'updateResolver',
+      })
+    },
+    [setCurrentTransaction, setResolver, name, resolverAddress],
+  )
 
   return (
     <Dialog

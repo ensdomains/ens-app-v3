@@ -7,7 +7,7 @@
       "replaced": "^0.6.4"
     },
     "@ensdomains/ensjs": {
-      "signature": "02d70eed01797da75aae312a528f22b8",
+      "signature": "136bf3fd821b54fe8fda05728ae4329e",
       "file": true,
       "replaced": "^3.0.0-alpha.2"
     }

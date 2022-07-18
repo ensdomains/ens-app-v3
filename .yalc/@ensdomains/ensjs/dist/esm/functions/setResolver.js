@@ -1,22 +1,16 @@
 import { namehash } from '../utils/normalise';
-export default async function ({ contracts, provider }, name, contract, resolver, options) {
-    const address = await provider
-        ?.getSigner(options?.addressOrIndex)
-        .getAddress();
-    if (!address) {
-        throw new Error('No signer found');
-    }
+export default async function ({ contracts, signer }, name, { contract, resolver, }) {
     if (!resolver) {
         resolver = (await contracts?.getPublicResolver()).address;
     }
     switch (contract) {
         case 'registry': {
-            const registry = (await contracts?.getRegistry()).connect(provider?.getSigner(options?.addressOrIndex));
-            return registry.setResolver(namehash(name), resolver);
+            const registry = (await contracts?.getRegistry()).connect(signer);
+            return registry.populateTransaction.setResolver(namehash(name), resolver);
         }
         case 'nameWrapper': {
-            const nameWrapper = (await contracts?.getNameWrapper()).connect(provider?.getSigner(options?.addressOrIndex));
-            return nameWrapper.setResolver(namehash(name), resolver);
+            const nameWrapper = (await contracts?.getNameWrapper()).connect(signer);
+            return nameWrapper.populateTransaction.setResolver(namehash(name), resolver);
         }
         default: {
             throw new Error(`Unknown contract: ${contract}`);

@@ -10,7 +10,9 @@ let accounts: string[]
 beforeAll(async () => {
   ;({ ENSInstance, revert, provider } = await setup())
   accounts = await provider.listAccounts()
-  const tx = await ENSInstance.wrapName('parthtejpal.eth', accounts[0])
+  const tx = await ENSInstance.wrapName('parthtejpal.eth', {
+    wrappedOwner: accounts[0],
+  })
   await tx.wait()
 })
 

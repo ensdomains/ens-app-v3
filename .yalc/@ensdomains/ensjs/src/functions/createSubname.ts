@@ -5,11 +5,9 @@ import generateFuseInput from '../utils/generateFuseInput'
 import { namehash } from '../utils/normalise'
 
 type BaseArgs = {
-  name: string
   owner: string
   resolverAddress?: string
   contract: 'registry' | 'nameWrapper'
-  options?: { addressOrIndex?: string | number }
 }
 
 type NameWrapperArgs = {
@@ -20,15 +18,10 @@ type NameWrapperArgs = {
 type Args = BaseArgs | NameWrapperArgs
 
 export default async function (
-  { contracts, provider }: ENSArgs<'contracts' | 'provider'>,
-  { name, owner, resolverAddress, contract, options, ...wrapperArgs }: Args,
+  { contracts, signer }: ENSArgs<'contracts' | 'signer'>,
+  name: string,
+  { owner, resolverAddress, contract, ...wrapperArgs }: Args,
 ) {
-  const signer = provider?.getSigner(options?.addressOrIndex)
-
-  if (!signer) {
-    throw new Error('No signer found')
-  }
-
   const labels = name.split('.')
 
   if (labels.length === 1) {
@@ -51,7 +44,7 @@ export default async function (
     case 'registry': {
       const registry = (await contracts?.getRegistry()!).connect(signer)
 
-      return registry.setSubnodeRecord(
+      return registry.populateTransaction.setSubnodeRecord(
         parentNodehash,
         labelhash,
         owner,
@@ -67,7 +60,7 @@ export default async function (
           ? generateFuseInput(wrapperArgs.fuses)
           : '0'
 
-      return nameWrapper.setSubnodeRecord(
+      return nameWrapper.populateTransaction.setSubnodeRecord(
         parentNodehash,
         label,
         owner,

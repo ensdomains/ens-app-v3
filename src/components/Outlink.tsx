@@ -10,6 +10,7 @@ export const StyledAnchor = styled.a(
     padding-right: ${theme.space['4']};
     position: relative;
     color: ${theme.colors.accent};
+    cursor: pointer;
   `,
 )
 

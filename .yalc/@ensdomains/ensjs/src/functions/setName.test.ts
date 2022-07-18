@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { ENS } from '..'
-import { hexEncodeName } from '../utils/hexEncodedName'
 import setup from '../tests/setup'
+import { hexEncodeName } from '../utils/hexEncodedName'
 
 let ENSInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -43,7 +43,8 @@ describe('setName', () => {
     )
     await setApprovedForAllTx?.wait()
 
-    const tx = await ENSInstance.setName('fleek.eth', accounts[0], undefined, {
+    const tx = await ENSInstance.setName('fleek.eth', {
+      address: accounts[0],
       addressOrIndex: 1,
     })
     expect(tx).toBeTruthy()

@@ -70,7 +70,7 @@ describe('getDNSOwner', () => {
           '726c2b1d3bab6b74-TPE',
         ],
       )
-    expect(await getDNSOwner(dnsName)).toEqual(
+    expect(await getDNSOwner({}, dnsName)).toEqual(
       '0x983110309620D911731Ac0932219af06091b6744',
     )
   })
@@ -114,7 +114,7 @@ describe('getDNSOwner', () => {
         ],
       )
     try {
-      await getDNSOwner(dnsName)
+      await getDNSOwner({}, dnsName)
     } catch (error) {
       expect(error.message).toEqual('DNS query failed: NXDOMAIN')
     }

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { ENS } from '..'
-import { namehash } from '../utils/normalise'
 import setup from '../tests/setup'
+import { namehash } from '../utils/normalise'
 
 let ENSInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -22,19 +22,20 @@ describe('deleteSubname', () => {
     await revert()
   })
   it('should allow deleting a subname on the registry', async () => {
-    const createSubnameTx = await ENSInstance.createSubname({
-      contract: 'registry',
-      name: 'test.parthtejpal.eth',
-      owner: accounts[0],
-      options: { addressOrIndex: 0 },
-    })
+    const createSubnameTx = await ENSInstance.createSubname(
+      'test.parthtejpal.eth',
+      {
+        contract: 'registry',
+        owner: accounts[0],
+        addressOrIndex: 0,
+      },
+    )
     await createSubnameTx.wait()
 
-    const tx = await ENSInstance.deleteSubname(
-      'test.parthtejpal.eth',
-      'registry',
-      { addressOrIndex: 0 },
-    )
+    const tx = await ENSInstance.deleteSubname('test.parthtejpal.eth', {
+      contract: 'registry',
+      addressOrIndex: 0,
+    })
     expect(tx).toBeTruthy()
     await tx.wait()
 
@@ -43,24 +44,24 @@ describe('deleteSubname', () => {
     expect(result).toBe('0x0000000000000000000000000000000000000000')
   })
   it('should allow deleting a subname on the nameWrapper', async () => {
-    const wrapNameTx = await ENSInstance.wrapName(
-      'parthtejpal.eth',
-      accounts[0],
-    )
-    await wrapNameTx.wait()
-    const createSubnameTx = await ENSInstance.createSubname({
-      contract: 'nameWrapper',
-      name: 'test.parthtejpal.eth',
-      owner: accounts[0],
-      options: { addressOrIndex: 0 },
+    const wrapNameTx = await ENSInstance.wrapName('parthtejpal.eth', {
+      wrappedOwner: accounts[0],
     })
+    await wrapNameTx.wait()
+    const createSubnameTx = await ENSInstance.createSubname(
+      'test.parthtejpal.eth',
+      {
+        contract: 'nameWrapper',
+        owner: accounts[0],
+        addressOrIndex: 0,
+      },
+    )
     await createSubnameTx.wait()
 
-    const tx = await ENSInstance.deleteSubname(
-      'test.parthtejpal.eth',
-      'nameWrapper',
-      { addressOrIndex: 0 },
-    )
+    const tx = await ENSInstance.deleteSubname('test.parthtejpal.eth', {
+      contract: 'nameWrapper',
+      addressOrIndex: 0,
+    })
     expect(tx).toBeTruthy()
     await tx.wait()
 

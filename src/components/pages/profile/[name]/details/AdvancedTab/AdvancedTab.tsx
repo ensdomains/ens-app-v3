@@ -18,7 +18,7 @@ export const TokenId = () => {
   const { name } = router.query
 
   const label = (name as string)?.split('.')?.[0]
-  const labelHash = utils.keccak256(utils.toUtf8Bytes(label))
+  const labelHash = utils.keccak256(utils.toUtf8Bytes(label) || '')
   const tokenId = BigNumber.from(labelHash).toString()
 
   return (

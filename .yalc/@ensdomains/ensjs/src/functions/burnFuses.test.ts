@@ -1,7 +1,7 @@
 import { BigNumber, ethers } from 'ethers'
 import { ENS } from '..'
-import { namehash } from '../utils/normalise'
 import setup from '../tests/setup'
+import { namehash } from '../utils/normalise'
 
 let ENSInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -22,16 +22,17 @@ describe('burnFuses', () => {
     await revert()
   })
   it('should return a burnFuses transaction and succeed', async () => {
-    const wrapNameTx = await ENSInstance.wrapName(
-      'parthtejpal.eth',
-      accounts[0],
-    )
+    const wrapNameTx = await ENSInstance.wrapName('parthtejpal.eth', {
+      wrappedOwner: accounts[0],
+    })
     await wrapNameTx.wait()
 
     const tx = await ENSInstance.burnFuses('parthtejpal.eth', {
-      cannotUnwrap: true,
-      cannotCreateSubdomain: true,
-      cannotSetTtl: true,
+      fusesToBurn: {
+        cannotUnwrap: true,
+        cannotCreateSubdomain: true,
+        cannotSetTtl: true,
+      },
     })
     expect(tx).toBeTruthy()
     await tx.wait()

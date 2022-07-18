@@ -1,34 +1,32 @@
 import { ENSArgs } from '..'
 
 export default async function (
-  { contracts, provider }: ENSArgs<'contracts' | 'provider'>,
+  { contracts, signer }: ENSArgs<'contracts' | 'signer'>,
   name: string,
-  address?: string,
-  resolver?: string,
-  options?: { addressOrIndex?: string | number },
+  {
+    address,
+    resolver,
+  }: {
+    address?: string
+    resolver?: string
+  } = {},
 ) {
-  const signerAddress = await provider
-    ?.getSigner(options?.addressOrIndex)
-    .getAddress()
-
-  if (!signerAddress) {
-    throw new Error('No signer found')
-  }
+  const signerAddress = await signer.getAddress()
 
   const reverseRegistrar = (await contracts?.getReverseRegistrar())?.connect(
-    provider?.getSigner()!,
-  )
+    signer,
+  )!
 
   if (address) {
-    const publicResolver = await contracts?.getPublicResolver()
+    const publicResolver = await contracts?.getPublicResolver()!
 
-    return reverseRegistrar?.setNameForAddr(
+    return reverseRegistrar.populateTransaction.setNameForAddr(
       address,
       signerAddress,
-      resolver || publicResolver!.address,
+      resolver || publicResolver.address,
       name,
     )
   }
 
-  return reverseRegistrar?.setName(name)
+  return reverseRegistrar.populateTransaction.setName(name)
 }

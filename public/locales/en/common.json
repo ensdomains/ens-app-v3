@@ -89,7 +89,9 @@
       "address": "Address",
       "action": "Action",
       "info": "Info",
-      "to": "To"
+      "to": "To",
+      "currentResolver": "Current Resolver",
+      "newResolver": "New Resolver"
     },
     "status": {
       "pending": {
@@ -133,7 +135,7 @@
       "complete": {
         "title": "Transaction Sent",
         "stepTitle": "Step {{step}} Complete",
-        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
+        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this dialog now if you'd like.",
         "trailingButton": "Close",
         "stepTrailingButton": "Continue"
       }

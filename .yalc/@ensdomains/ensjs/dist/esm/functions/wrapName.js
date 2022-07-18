@@ -5,24 +5,20 @@ async function wrapETH({ contracts }, labels, wrappedOwner, decodedFuses, resolv
     const nameWrapper = await contracts?.getNameWrapper();
     const baseRegistrar = (await contracts?.getBaseRegistrar()).connect(signer);
     const labelhash = ethers.utils.solidityKeccak256(['string'], [labels[0]]);
-    const data = ethers.utils.defaultAbiCoder.encode(['string', 'address', 'uint96', 'address'], [labels[0], wrappedOwner, decodedFuses, resolverAddress]);
-    return baseRegistrar['safeTransferFrom(address,address,uint256,bytes)'](address, nameWrapper.address, labelhash, data);
+    const data = ethers.utils.defaultAbiCoder.encode(['string', 'address', 'uint32', 'uint64', 'address'], [labels[0], wrappedOwner, '0x0', decodedFuses, resolverAddress]);
+    return baseRegistrar.populateTransaction['safeTransferFrom(address,address,uint256,bytes)'](address, nameWrapper.address, labelhash, data);
 }
-async function wrapOther({ contracts }, name, wrappedOwner, decodedFuses, resolverAddress, address) {
-    const nameWrapper = await contracts?.getNameWrapper();
+async function wrapOther({ contracts }, name, wrappedOwner, decodedFuses, resolverAddress, address, signer) {
+    const nameWrapper = (await contracts?.getNameWrapper()).connect(signer);
     const registry = await contracts?.getRegistry();
     const hasApproval = await registry.isApprovedForAll(address, nameWrapper.address);
     if (!hasApproval) {
         throw new Error('NameWrapper must have approval to wrap a name from this address.');
     }
-    return nameWrapper.wrap(hexEncodeName(name), wrappedOwner, decodedFuses, resolverAddress);
+    return nameWrapper.populateTransaction.wrap(hexEncodeName(name), wrappedOwner, decodedFuses, resolverAddress);
 }
-export default async function ({ contracts, provider }, name, wrappedOwner, fuseOptions, resolverAddress, options) {
-    const signer = provider?.getSigner(options?.addressOrIndex);
-    const address = await signer?.getAddress();
-    if (!signer || !address) {
-        throw new Error('No signer found');
-    }
+export default async function ({ contracts, signer, populate }, name, { wrappedOwner, fuseOptions, resolverAddress, }) {
+    const address = await signer.getAddress();
     let decodedFuses;
     switch (typeof fuseOptions) {
         case 'object': {
@@ -53,6 +49,6 @@ export default async function ({ contracts, provider }, name, wrappedOwner, fuse
         return wrapETH({ contracts }, labels, wrappedOwner, decodedFuses, resolverAddress, signer, address);
     }
     else {
-        return wrapOther({ contracts }, name, wrappedOwner, decodedFuses, resolverAddress, address);
+        return wrapOther({ contracts }, name, wrappedOwner, decodedFuses, resolverAddress, address, signer);
     }
 }

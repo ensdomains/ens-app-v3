@@ -1,7 +1,7 @@
 import { ethers, utils } from 'ethers'
 import { ENS } from '..'
-import { namehash } from '../utils/normalise'
 import setup from '../tests/setup'
+import { namehash } from '../utils/normalise'
 
 let ENSInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -22,17 +22,15 @@ describe('unwrapName', () => {
     await revert()
   })
   it('should return a .eth unwrap name transaction and succeed', async () => {
-    const wrapNameTx = await ENSInstance.wrapName(
-      'parthtejpal.eth',
-      accounts[0],
-    )
+    const wrapNameTx = await ENSInstance.wrapName('parthtejpal.eth', {
+      wrappedOwner: accounts[0],
+    })
     await wrapNameTx.wait()
 
-    const tx = await ENSInstance.unwrapName(
-      'parthtejpal.eth',
-      accounts[0],
-      accounts[0],
-    )
+    const tx = await ENSInstance.unwrapName('parthtejpal.eth', {
+      newController: accounts[0],
+      newRegistrant: accounts[0],
+    })
     expect(tx).toBeTruthy()
     await tx.wait()
 
@@ -43,21 +41,23 @@ describe('unwrapName', () => {
     expect(result).toBe(accounts[0])
   })
   it('should return a regular unwrap name transaction and succeed', async () => {
-    const wrapNameTx = await ENSInstance.wrapName(
-      'parthtejpal.eth',
-      accounts[0],
-    )
-    await wrapNameTx.wait()
-    const createSubnameTx = await ENSInstance.createSubname({
-      contract: 'nameWrapper',
-      name: 'test.parthtejpal.eth',
-      owner: accounts[0],
-      shouldWrap: true,
-      options: { addressOrIndex: 0 },
+    const wrapNameTx = await ENSInstance.wrapName('parthtejpal.eth', {
+      wrappedOwner: accounts[0],
     })
+    await wrapNameTx.wait()
+    const createSubnameTx = await ENSInstance.createSubname(
+      'test.parthtejpal.eth',
+      {
+        contract: 'nameWrapper',
+        owner: accounts[0],
+        addressOrIndex: 0,
+      },
+    )
     await createSubnameTx.wait()
 
-    const tx = await ENSInstance.unwrapName('test.parthtejpal.eth', accounts[0])
+    const tx = await ENSInstance.unwrapName('test.parthtejpal.eth', {
+      newController: accounts[0],
+    })
     expect(tx).toBeTruthy()
     await tx.wait()
 

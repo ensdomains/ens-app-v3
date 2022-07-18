@@ -1,4 +1,5 @@
 import { ENSArgs } from '..';
-export default function ({ contracts, provider }: ENSArgs<'contracts' | 'provider'>, name: string, contract: 'registry' | 'nameWrapper', resolver?: string, options?: {
-    addressOrIndex?: string | number;
-}): Promise<import("ethers").ContractTransaction>;
+export default function ({ contracts, signer }: ENSArgs<'contracts' | 'signer'>, name: string, { contract, resolver, }: {
+    contract: 'registry' | 'nameWrapper';
+    resolver?: string;
+}): Promise<import("ethers").PopulatedTransaction>;

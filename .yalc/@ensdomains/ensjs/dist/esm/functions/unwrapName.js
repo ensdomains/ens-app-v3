@@ -1,11 +1,6 @@
 import { utils } from 'ethers';
 import { namehash } from '../utils/normalise';
-export default async function ({ contracts, provider }, name, newController, newRegistrant, options) {
-    const signer = provider?.getSigner(options?.addressOrIndex);
-    const address = await signer?.getAddress();
-    if (!signer || !address) {
-        throw new Error('No signer found');
-    }
+export default async function ({ contracts, signer }, name, { newController, newRegistrant, }) {
     const labels = name.split('.');
     const labelhash = utils.solidityKeccak256(['string'], [labels[0]]);
     const parentNodehash = namehash(labels.slice(1).join('.'));
@@ -14,12 +9,12 @@ export default async function ({ contracts, provider }, name, newController, new
         if (!newRegistrant) {
             throw new Error('newRegistrant must be specified for .eth names');
         }
-        return nameWrapper.unwrapETH2LD(labelhash, newRegistrant, newController);
+        return nameWrapper.populateTransaction.unwrapETH2LD(labelhash, newRegistrant, newController);
     }
     else {
         if (newRegistrant) {
             throw new Error('newRegistrant can only be specified for .eth names');
         }
-        return nameWrapper.unwrap(parentNodehash, labelhash, newController);
+        return nameWrapper.populateTransaction.unwrap(parentNodehash, labelhash, newController);
     }
 }

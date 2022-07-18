@@ -1972,8 +1972,8 @@ __metadata:
   linkType: hard
 
 "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
-  version: 1.0.1-0
-  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=7c2458&locator=ens-app-v2%40workspace%3A."
+  version: 3.0.0-alpha.6
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=6bb24f&locator=ens-app-v2%40workspace%3A."
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -1985,7 +1985,7 @@ __metadata:
     idna-uts46-hx: 3.4.0
   peerDependencies:
     ethers: "*"
-  checksum: 1694c6eddfc973c12eb6864418c87fe761881a58a2df57f1526860beff6353377e456032e0c7f7a44229211b547c04998ca5b699ceec4fe62be5cfe739ee659b
+  checksum: a800f882897b0f2133a4b5abba011bcabc5fc5680c3a782fd7c78957666f729bf5a3a78038f373029099b746fdfeb8f6814686bafe9dfa27af7b2ae02af42973
   languageName: node
   linkType: hard
 

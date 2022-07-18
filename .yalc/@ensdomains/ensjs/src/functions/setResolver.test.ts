@@ -1,7 +1,7 @@
 import { ethers } from 'ethers'
 import { ENS } from '..'
-import { hexEncodeName } from '../utils/hexEncodedName'
 import setup from '../tests/setup'
+import { hexEncodeName } from '../utils/hexEncodedName'
 
 let ENSInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -20,11 +20,10 @@ describe('setResolver', () => {
     await revert()
   })
   it('should return a transaction to the registry and set successfully', async () => {
-    const tx = await ENSInstance.setResolver(
-      'parthtejpal.eth',
-      'registry',
-      '0xAEfF4f4d8e2cB51854BEa2244B3C5Fb36b41C7fC',
-    )
+    const tx = await ENSInstance.setResolver('parthtejpal.eth', {
+      contract: 'registry',
+      resolver: '0xAEfF4f4d8e2cB51854BEa2244B3C5Fb36b41C7fC',
+    })
     expect(tx).toBeTruthy()
     await tx.wait()
 
@@ -37,16 +36,14 @@ describe('setResolver', () => {
   })
   it('should return a transaction to the namewrapper and set successfully', async () => {
     const accounts = await provider.listAccounts()
-    const wrapNameTx = await ENSInstance.wrapName(
-      'parthtejpal.eth',
-      accounts[0],
-    )
+    const wrapNameTx = await ENSInstance.wrapName('parthtejpal.eth', {
+      wrappedOwner: accounts[0],
+    })
     await wrapNameTx.wait()
-    const tx = await ENSInstance.setResolver(
-      'parthtejpal.eth',
-      'nameWrapper',
-      '0xAEfF4f4d8e2cB51854BEa2244B3C5Fb36b41C7fC',
-    )
+    const tx = await ENSInstance.setResolver('parthtejpal.eth', {
+      contract: 'nameWrapper',
+      resolver: '0xAEfF4f4d8e2cB51854BEa2244B3C5Fb36b41C7fC',
+    })
     expect(tx).toBeTruthy()
     await tx.wait()
 
