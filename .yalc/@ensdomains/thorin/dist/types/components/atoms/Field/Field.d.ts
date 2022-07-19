@@ -22,8 +22,6 @@ export declare type FieldBaseProps = {
     inline?: boolean;
     /** A tokens space key value setting the width of the parent element. */
     width?: Space;
-    /** Have lavel appear on the right of the form element. */
-    labelRight?: boolean;
 };
 declare type Props = FieldBaseProps & {
     children: React.ReactElement | ((context: State) => ReactNodeNoStrings);
@@ -31,7 +29,7 @@ declare type Props = FieldBaseProps & {
     id?: NativeFormProps['id'];
 } & Omit<NativeLabelProps, 'id' | 'children'>;
 export declare const Field: {
-    ({ children, description, error, hideLabel, id, label, labelSecondary, required, inline, width, labelRight, ...props }: Props): JSX.Element;
+    ({ children, description, error, hideLabel, id, label, labelSecondary, required, inline, width, ...props }: Props): JSX.Element;
     displayName: string;
 };
 export {};

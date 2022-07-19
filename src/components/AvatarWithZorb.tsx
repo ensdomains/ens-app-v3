@@ -3,6 +3,20 @@ import { useZorb } from '@app/hooks/useZorb'
 import { Avatar } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
 
+export const NameAvatar = ({
+  src,
+  name,
+  network,
+  ...props
+}: ComponentProps<typeof Avatar> & {
+  name: string
+  network: number
+}) => {
+  const { avatar } = useAvatar(name, network)
+  const zorb = useZorb(name, 'name')
+  return <Avatar {...props} src={avatar || zorb} />
+}
+
 export const AvatarWithZorb = ({
   src,
   name,
@@ -15,7 +29,7 @@ export const AvatarWithZorb = ({
   network: number
 }) => {
   const { avatar } = useAvatar(name, network)
-  const zorb = useZorb(address || '', 'address')
+  const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return <Avatar {...props} src={avatar || zorb} />
 }
 

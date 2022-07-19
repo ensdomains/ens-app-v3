@@ -2,6 +2,7 @@
   "version": "v1",
   "packages": {
     "@ensdomains/thorin": {
+<<<<<<< HEAD
       "signature": "e92d02492ec191cd5a6e592694933d83",
       "file": true,
       "replaced": "^0.6.4"
@@ -10,6 +11,11 @@
       "signature": "136bf3fd821b54fe8fda05728ae4329e",
       "file": true,
       "replaced": "^3.0.0-alpha.2"
+=======
+      "signature": "d5332fbd98d1560c105dc276bc746ee7",
+      "file": true,
+      "replaced": "^0.6.5"
+>>>>>>> e463e7b8202128a94755329ef23eb513e2eef7b7
     }
   }
 }
