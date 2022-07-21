@@ -1,6 +1,6 @@
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { ReactNode } from 'react'
@@ -20,8 +20,12 @@ const mockUseTransaction = mockFunction(useTransaction)
 const mockUseEns = mockFunction(useEns)
 const mockUseChainId = mockFunction(useChainId)
 
-const mockWrapName = jest.fn()
-const mockSetRecords = jest.fn()
+const mockWrapName = {
+  populateTransaction: jest.fn(),
+}
+const mockSetRecords = {
+  populateTransaction: jest.fn(),
+}
 const mockGetProfile = jest.fn()
 const mockContracts = {
   getPublicResolver: jest.fn(),
@@ -57,14 +61,6 @@ describe('WrapperCallToAction', () => {
     screen.getByTestId('wrapper-cta-button').click()
     expect(mockSetCurrentTransaction).toHaveBeenCalled()
   })
-  it('should error on migrateProfile tx generation if getProfile returns undefined', async () => {
-    mockGetProfile.mockReturnValue(undefined)
-    render(<WrapperCallToAction name="test123.eth" />)
-    screen.getByTestId('wrapper-cta-button').click()
-    await expect(
-      mockSetCurrentTransaction.mock.lastCall[0].data[0].generateTx(),
-    ).rejects.toThrow('No profile found')
-  })
   it('should create a setRecords transaction for the new resolver', async () => {
     mockContracts.getPublicResolver.mockResolvedValue({ address: '0x123' })
     mockGetProfile.mockReturnValue({
@@ -97,48 +93,51 @@ describe('WrapperCallToAction', () => {
     })
     render(<WrapperCallToAction name="test123.eth" />)
     screen.getByTestId('wrapper-cta-button').click()
-    await mockSetCurrentTransaction.mock.lastCall[0].data[0].generateTx(
-      'signer123',
+    await mockSetCurrentTransaction.mock.lastCall[1]('signer123')
+    await waitFor(() =>
+      expect(mockSetRecords.populateTransaction).toHaveBeenCalledWith(
+        'test123.eth',
+        {
+          records: {
+            contentHash: 'ipfs://test-ipfs-hash',
+            texts: [
+              {
+                key: 'test1',
+                value: 'test1-value',
+              },
+              {
+                key: 'test2',
+                value: 'test2-value',
+              },
+            ],
+            coinTypes: [
+              {
+                key: 'coin1',
+                value: 'addr1',
+              },
+              {
+                key: 'coin2',
+                value: 'addr2',
+              },
+            ],
+          },
+          resolverAddress: '0x123',
+          signer: 'signer123',
+        },
+      ),
     )
-    expect(mockSetRecords).toHaveBeenCalledWith('test123.eth', {
-      records: {
-        contentHash: 'ipfs://test-ipfs-hash',
-        texts: [
-          {
-            key: 'test1',
-            value: 'test1-value',
-          },
-          {
-            key: 'test2',
-            value: 'test2-value',
-          },
-        ],
-        coinTypes: [
-          {
-            key: 'coin1',
-            value: 'addr1',
-          },
-          {
-            key: 'coin2',
-            value: 'addr2',
-          },
-        ],
-      },
-      resolverAddress: '0x123',
-      signer: 'signer123',
-    })
   })
   it('should create a wrapName transaction', async () => {
     render(<WrapperCallToAction name="test123.eth" />)
     screen.getByTestId('wrapper-cta-button').click()
-    await mockSetCurrentTransaction.mock.lastCall[0].data[1].generateTx(
-      'signer123',
-      'address123',
+    await mockSetCurrentTransaction.mock.lastCall[1]('signer123', 'address123')
+    expect(mockWrapName.populateTransaction).toHaveBeenCalledWith(
+      'test123.eth',
+      {
+        wrappedOwner: 'address123',
+        signer: 'signer123',
+      },
     )
-    expect(mockWrapName).toHaveBeenCalledWith('test123.eth', {
-      wrappedOwner: 'address123',
-      signer: 'signer123',
-    })
   })
   it('should show button as resumable if step is greater than 0', () => {
     mockGetCurrentStep.mockReturnValue(1)

@@ -1,4 +1,4 @@
-import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
+import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { TransactionDisplayItem } from '@app/types'
@@ -21,10 +21,9 @@ const Container = styled.div(
 
 const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
   ({ theme, $shrink, $fade }) => css`
-    display: flex;
-    flex-direction: row;
+    display: grid;
+    grid-template-columns: 1fr 2fr;
     align-items: center;
-    justify-content: space-between;
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
       rgba(${theme.shadesRaw.foreground}, 0.06);
@@ -51,14 +50,14 @@ const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
 const DisplayItemLabel = styled(Typography)(
   ({ theme }) => css`
     color: ${theme.colors.textSecondary};
-    align-self: flex-start;
-    margin-top: ${theme.space['2']};
+    justify-self: flex-start;
   `,
 )
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space['7']};
+    min-width: ${theme.space['7']};
     height: ${theme.space['7']};
   `,
 )
@@ -79,6 +78,13 @@ const InnerValueWrapper = styled.div(
     flex-direction: column;
     align-items: flex-end;
     justify-content: center;
+    text-align: right;
+  `,
+)
+
+const ValueTypography = styled(Typography)(
+  () => css`
+    text-align: right;
   `,
 )
 
@@ -100,7 +106,7 @@ const AddressValue = ({ value }: { value: string }) => {
           {shortenAddress(value)}
         </AddressSubtitle>
       ) : (
-        <Typography weight="bold">{shortenAddress(value)}</Typography>
+        <ValueTypography weight="bold">{shortenAddress(value)}</ValueTypography>
       ),
     [primary.name, value],
   )
@@ -108,7 +114,9 @@ const AddressValue = ({ value }: { value: string }) => {
   return (
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
-        {primary.name && <Typography weight="bold">{primary.name}</Typography>}
+        {primary.name && (
+          <ValueTypography weight="bold">{primary.name}</ValueTypography>
+        )}
         {AddressTypography}
       </InnerValueWrapper>
       <AvatarWrapper>
@@ -128,24 +136,13 @@ const NameValue = ({ value }: { value: string }) => {
 
   return (
     <ValueWithAvatarContainer>
-      <Typography weight="bold">{value}</Typography>
+      <ValueTypography weight="bold">{value}</ValueTypography>
       <AvatarWrapper>
-        <AvatarWithZorb
-          name={value}
-          label={`${value}-avatar`}
-          network={network}
-        />
+        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
       </AvatarWrapper>
     </ValueWithAvatarContainer>
   )
 }
-
-const NormalValueTypography = styled(Typography)(
-  () => css`
-    max-width: 60%;
-    text-align: right;
-  `,
-)
 
 const DisplayItemValue = ({
   value,
@@ -157,7 +154,7 @@ const DisplayItemValue = ({
   if (type === 'name') {
     return <NameValue value={value} />
   }
-  return <NormalValueTypography weight="bold">{value}</NormalValueTypography>
+  return <ValueTypography weight="bold">{value}</ValueTypography>
 }
 
 export const DisplayItem = ({

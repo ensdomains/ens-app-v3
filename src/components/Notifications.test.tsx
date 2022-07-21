@@ -22,7 +22,7 @@ const makeRecentTransaction =
     ({
       status,
       confirmations: 1,
-      description: `test description ${i}`,
+      description: JSON.stringify({ action: `test-action-${i}` }),
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     } as Transaction)
 

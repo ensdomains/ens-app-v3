@@ -2,6 +2,7 @@
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { Button } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { BigNumber } from 'ethers'
 import { useSendTransaction } from 'wagmi'
 import { SectionContainer, SectionHeading } from './Section'
 
@@ -18,24 +19,21 @@ export const DevSection = () => {
       },
     })
     addTransaction({
-      description: 'test',
+      description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
       confirmations: transaction.confirmations || undefined,
     })
   }
 
   const sendName = async () => {
-    setCurrentTransaction({
+    setCurrentTransaction('dev-sendName', async () => ({
       data: [
         {
           actionName: 'sendName',
-          generateTx: () =>
-            sendTransactionAsync({
-              request: {
-                to: '0x0000000000000000000000000000000000000000',
-                value: '0',
-              },
-            }),
+          transaction: {
+            to: '0x0000000000000000000000000000000000000000',
+            value: BigNumber.from('0'),
+          },
           displayItems: [
             {
               label: 'To',
@@ -50,8 +48,7 @@ export const DevSection = () => {
           ],
         },
       ],
-      key: 'dev-sendName',
-    })
+    }))
   }
 
   const addFailure = async () => {
@@ -63,7 +60,7 @@ export const DevSection = () => {
       },
     })
     addTransaction({
-      description: 'test',
+      description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
       confirmations: transaction.confirmations || undefined,
     })

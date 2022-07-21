@@ -1,11 +1,15 @@
 import { TransactionModal } from '@app/components/@molecules/TransactionModal/TransactionModal'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { TransactionPreStepFunction, TransactionSubmission } from '@app/types'
+import {
+  StepStorageItem,
+  TransactionPreStepFunction,
+  TransactionSubmission,
+  TxStateType,
+} from '@app/types'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import {
   createContext,
-  Dispatch,
   ReactNode,
-  SetStateAction,
   useCallback,
   useContext,
   useEffect,
@@ -13,64 +17,146 @@ import {
   useState,
 } from 'react'
 import { useQueryClient } from 'react-query'
+import { useAccount, useSigner } from 'wagmi'
 
-export type TxStateType = {
-  data: TransactionSubmission[]
-  key: string
-  preSteps?: TransactionPreStepFunction
-} | null
+type StepStorageItems = Record<string, StepStorageItem>
+
+export type TxFunc = (
+  signer: JsonRpcSigner,
+  address: string,
+) => Promise<TxStateType>
 
 const TransactionContext = createContext<{
-  setCurrentTransaction: Dispatch<SetStateAction<TxStateType>>
+  setCurrentTransaction: (key: string, tx?: TxFunc) => void
   setCurrentStep: (func: number | ((step: number) => number)) => void
   getCurrentStep: (key: string) => number
+  getResumable: (key: string) => boolean
 }>({
   setCurrentTransaction: () => {},
   setCurrentStep: () => {},
   getCurrentStep: () => 0,
+  getResumable: () => false,
 })
 
 export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient()
 
-  const [currentTransaction, setCurrentTransaction] =
-    useState<TxStateType>(null)
-  const [stepStorage, setStepStorage] = useLocalStorage<Record<string, number>>(
+  const [currentTxKey, setCurrentTxKey] = useState<string | null>(null)
+  const [stepStorage, setStepStorage] = useLocalStorage<StepStorageItems>(
     'transaction-step',
     {},
   )
   const [shouldClose, setShouldClose] = useState(false)
 
+  const { data: signerData } = useSigner()
+  const { data: addressData } = useAccount()
+  const setCurrentTransaction = useCallback(
+    async (key: string, tx?: TxFunc) => {
+      const resulted = tx
+        ? await tx(signerData as JsonRpcSigner, addressData?.address as string)
+        : undefined
+      setCurrentTxKey(key)
+      setStepStorage((prevStepStorage) => {
+        let data: TransactionSubmission[]
+        let preSteps: TransactionPreStepFunction | undefined
+        if (!tx) {
+          const fromStorage = prevStepStorage[key]
+          if (!fromStorage) return prevStepStorage
+          data = fromStorage.data
+          preSteps = fromStorage.preSteps
+        } else if (!resulted) {
+          return prevStepStorage
+        } else {
+          data = resulted.data
+          preSteps = resulted.preSteps
+        }
+        const { currentStep, currentStepComplete } = prevStepStorage[key] || {
+          currentStep: 0,
+        }
+        return {
+          ...prevStepStorage,
+          [key]: {
+            currentStep: currentStepComplete ? currentStep + 1 : currentStep,
+            currentStepComplete: false,
+            data,
+            preSteps,
+          },
+        }
+      })
+    },
+    [addressData, setStepStorage, signerData],
+  )
+
   const setCurrentStep = useCallback(
     (func: ((step: number) => number) | number) => {
-      if (!currentTransaction) return
-      const prev = stepStorage[currentTransaction.key]
-      const newStep = typeof func === 'number' ? func : func(prev || 0)
-      setStepStorage((prevStepStorage) => ({
-        ...prevStepStorage,
-        [currentTransaction.key]: newStep,
-      }))
+      if (!currentTxKey) return
+      setStepStorage((prevStepStorage) => {
+        const currentTx = prevStepStorage[currentTxKey]
+        const newStep =
+          typeof func === 'function' ? func(currentTx.currentStep || 0) : func
+        return {
+          ...prevStepStorage,
+          [currentTxKey]: {
+            ...currentTx,
+            currentStep: newStep,
+            currentStepComplete: false,
+          },
+        }
+      })
     },
-    [currentTransaction, stepStorage, setStepStorage],
+    [currentTxKey, setStepStorage],
   )
+
+  const setCurrentStepComplete = useCallback(() => {
+    if (!currentTxKey) return
+    setStepStorage((prevStepStorage) => ({
+      ...prevStepStorage,
+      [currentTxKey]: {
+        ...prevStepStorage[currentTxKey],
+        currentStep: prevStepStorage[currentTxKey]?.currentStep || 0,
+        currentStepComplete: true,
+      },
+    }))
+  }, [currentTxKey, setStepStorage])
 
   const getCurrentStep = useCallback(
     (key: string) => {
-      return stepStorage[key] || 0
+      return stepStorage[key]?.currentStep || 0
     },
     [stepStorage],
   )
 
-  const currentStep = useMemo(() => {
-    if (!currentTransaction) return 0
-    return stepStorage[currentTransaction.key] || 0
-  }, [currentTransaction, stepStorage])
+  const getResumable = useCallback(
+    (key: string) => {
+      const item = stepStorage[key]
+      console.log('has item', item)
+      if (!item) return false
+      if (item.currentStep + 1 >= item.data.length && item.currentStepComplete)
+        return false
+      return true
+    },
+    [stepStorage],
+  )
+
+  const { currentTx, currentStep, currentStepData, stepCount } = useMemo(() => {
+    if (!currentTxKey) return { currentTx: null, currentStep: 0, stepCount: 0 }
+    const _currentTx = stepStorage[currentTxKey]
+    const _currentStep = _currentTx?.currentStep || 0
+    const _currentStepData = _currentTx?.data[_currentStep] || null
+    const _stepCount = _currentTx?.data.length || 0
+    return {
+      currentTx: _currentTx,
+      currentStep: _currentStep,
+      currentStepData: _currentStepData,
+      stepCount: _stepCount,
+    }
+  }, [currentTxKey, stepStorage])
 
   useEffect(() => {
     let timeout: any
     if (shouldClose) {
       timeout = setTimeout(() => {
-        setCurrentTransaction(null)
+        setCurrentTxKey(null)
         setShouldClose(false)
       }, 350)
     }
@@ -79,40 +165,71 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [shouldClose])
 
+  useEffect(() => {
+    setStepStorage((prevStepStorage) => {
+      const _prev = prevStepStorage
+      Object.keys(_prev).forEach((key) => {
+        const item = _prev[key]
+        if (
+          item.currentStep + 1 >= item.data.length &&
+          item.currentStepComplete
+        ) {
+          delete _prev[key]
+        } else if (item.currentStepComplete) {
+          _prev[key] = {
+            ...item,
+            currentStep: item.currentStep + 1,
+            currentStepComplete: false,
+          }
+        }
+      })
+      return _prev
+    })
+  }, [setStepStorage])
+
   return (
     <TransactionContext.Provider
       value={useMemo(
-        () => ({ setCurrentTransaction, setCurrentStep, getCurrentStep }),
-        [setCurrentTransaction, setCurrentStep, getCurrentStep],
+        () => ({
+          setCurrentTransaction,
+          setCurrentStep,
+          getCurrentStep,
+          getResumable,
+        }),
+        [setCurrentTransaction, setCurrentStep, getCurrentStep, getResumable],
       )}
     >
       {children}
       <TransactionModal
         {...{
-          ...(currentTransaction?.data[currentStep] as TransactionSubmission),
+          ...(currentStepData as TransactionSubmission),
           onDismiss: () => {
-            currentTransaction?.data[currentStep].onDismiss?.()
+            currentStepData?.onDismiss?.()
             setShouldClose(true)
           },
           onSuccess: () => {
-            currentTransaction?.data[currentStep].onSuccess?.()
-            if (currentTransaction && currentTransaction.data.length > 1) {
-              if (currentStep + 1 < currentTransaction.data.length) {
+            currentStepData?.onSuccess?.()
+            if (currentTx && stepCount > 1) {
+              if (currentStep + 1 < stepCount) {
                 setCurrentStep((step) => step + 1)
               } else {
                 setStepStorage((prevStepStorage) => {
                   const newStepStorage = { ...prevStepStorage }
-                  delete newStepStorage[currentTransaction!.key]
+                  delete newStepStorage[currentTxKey!]
                   return newStepStorage
                 })
               }
             }
             queryClient.invalidateQueries()
           },
-          preSteps: currentTransaction?.preSteps?.(currentStep),
+          onComplete: () => {
+            setCurrentStepComplete()
+          },
+          preSteps: currentTx?.preSteps?.(currentStep),
           currentStep,
-          stepCount: currentTransaction?.data.length || 0,
-          open: !!currentTransaction && !shouldClose,
+          stepCount,
+          txKey: currentTxKey,
+          open: !!currentTx && !shouldClose,
         }}
       />
     </TransactionContext.Provider>
