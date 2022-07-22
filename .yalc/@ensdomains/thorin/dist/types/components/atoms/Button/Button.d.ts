@@ -41,9 +41,9 @@ declare type BaseProps = {
     onClick?: NativeButtonProps['onClick'];
 } & Omit<NativeButtonProps, 'prefix' | 'size'>;
 declare type WithTone = {
-    /** Sets the color scheme when variant is 'primary' or 'action' */
+    /** Sets the color scheme when variant is 'primary', 'action', or 'secondary' */
     tone?: Tone;
-    variant?: 'primary' | 'action';
+    variant?: 'primary' | 'action' | 'secondary';
 };
 declare type WithoutTone = {
     tone?: never;

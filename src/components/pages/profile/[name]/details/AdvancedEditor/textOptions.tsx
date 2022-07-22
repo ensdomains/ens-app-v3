@@ -1,6 +1,7 @@
 import textRecords from '@app/constants/textRecords.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import styled, { css } from 'styled-components'
+import { formSafeKey } from '../../../../../../utils/editor'
 
 const LabelWrapper = styled.div(
   ({ theme }) => css`
@@ -9,7 +10,7 @@ const LabelWrapper = styled.div(
 )
 
 export const textOptions = [...textRecords, ...supportedTexts].map((key) => ({
-  value: key,
+  value: formSafeKey(key),
   label: key,
   node: <LabelWrapper>{key}</LabelWrapper>,
 }))

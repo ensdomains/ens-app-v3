@@ -3,7 +3,7 @@ import supportedTexts from '@app/constants/supportedTexts.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import { Select } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
-import { formSafeKey } from './utils'
+import { formSafeKey } from '@app/utils/editor'
 
 const excludedKeys = ['avatar', 'banner']
 

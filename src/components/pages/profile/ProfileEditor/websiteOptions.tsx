@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { formSafeKey } from '@app/utils/editor'
 import { DynamicContentHashIcon } from '../../../../assets/contentHash/DynamicContentHashIcon'
 
 const IconWrapper = styled.div(
@@ -17,7 +18,7 @@ const LabelWrapper = styled.div(
 
 const websiteOptions = [
   {
-    value: 'ipfs',
+    value: formSafeKey('ipfs'),
     label: 'IPFS',
     node: <LabelWrapper>IPFS</LabelWrapper>,
     prefix: (

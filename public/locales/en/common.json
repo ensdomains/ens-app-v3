@@ -8,7 +8,9 @@
     "edit": "Edit",
     "view": "View",
     "clear": "Clear",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "add": "Add",
+    "search": "Search"
   },
   "navigation": {
     "home": "Home",

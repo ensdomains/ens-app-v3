@@ -1,22 +1,29 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect, useRef, ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm, useWatch } from 'react-hook-form'
-import { mq, Modal, Input, Textarea, Button, PlusSVG } from '@ensdomains/thorin'
+import { mq, Modal, Input, Textarea, Button } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { useTranslation } from 'react-i18next'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { SelectableInput } from '@app/components/@molecules/SelectableInput/SelectableInput'
+import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import { useProfile } from '@app/hooks/useProfile'
 import { validateCryptoAddress } from '@app/utils/validate'
-import { convertProfileToFormObject, formSafeKey } from '@app/utils/editor'
+import {
+  convertProfileToProfileFormObject,
+  formSafeKey,
+  getDirtyFields,
+  convertFormSafeKey,
+} from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
+import { useTransaction } from '@app/utils/TransactionProvider'
+import { useEns } from '@app/utils/EnsProvider'
 import addressOptions from './addressOptions'
 import accountsOptions from './accountsOptions'
 import websiteOptions from './websiteOptions'
 import otherOptions from './otherOptions'
 import ScrollIndicatorContainer from '../ScrollIndicatorContainer'
 import AvatarButton from './AvatarButton'
+import { AddRecordButton } from '../../../@molecules/AddRecordButton/AddRecordButton'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -165,6 +172,12 @@ const TabContentContainer = styled.div(
   `,
 )
 
+const AddRecordContainer = styled.div(
+  ({ theme }) => css`
+    padding: 0 ${theme.space['3']};
+  `,
+)
+
 const FooterContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -191,6 +204,92 @@ export type ProfileEditorType = {
   }
 }
 
+// const getDeletedFieldsByType = (
+//   type: 'text' | 'addr' | 'contentHash',
+//   originalData: ProfileEditorType,
+//   updatedData: ProfileEditorType,
+// ) => {
+//   const entries = []
+//   if (type === 'text') {
+//     if (originalData.avatar && !updatedData.avatar) entries.push(['avatar', ''])
+//     if (originalData.banner && !updatedData.banner) entries.push(['banner', ''])
+//     if (originalData.general)
+//       entries.push(
+//         ...Object.keys(originalData.general)
+//           .filter((key) => !updatedData.general[key])
+//           .map((key) => [convertFormSafeKey(key), '']),
+//       )
+//     if (originalData.accounts)
+//       entries.push(
+//         ...Object.keys(originalData.accounts)
+//           .filter((key) => !updatedData.accounts[key])
+//           .map((key) => [convertFormSafeKey(key), '']),
+//       )
+//     if (originalData.other)
+//       entries.push(
+//         ...Object.keys(originalData.other)
+//           .filter((key) => !updatedData.other[key])
+//           .map((key) => [convertFormSafeKey(key), '']),
+//       )
+//   } else if (type === 'addr') {
+//     if (originalData.address)
+//       entries.push(
+//         ...Object.keys(originalData.address)
+//           .filter((key) => !updatedData.address[key])
+//           .map((key) => [convertFormSafeKey(key), '']),
+//       )
+//   } else if (type === 'contentHash') {
+//     if (originalData.website && !updatedData.website)
+//       entries.push(['website', ''])
+//   }
+//   return Object.fromEntries(entries)
+// }
+
+const getFieldsByType = (
+  type: 'text' | 'addr' | 'contentHash',
+  data: ProfileEditorType,
+) => {
+  const entries = []
+  if (type === 'text') {
+    if (data.avatar) entries.push(['avatar', data.avatar])
+    if (data.banner) entries.push(['banner', data.banner])
+    if (data.general)
+      entries.push(
+        ...Object.entries(data.general).map(([key, value]) => [
+          convertFormSafeKey(key),
+          value,
+        ]),
+      )
+    if (data.accounts)
+      entries.push(
+        ...Object.entries(data.accounts).map(([key, value]) => [
+          convertFormSafeKey(key),
+          value,
+        ]),
+      )
+    if (data.other)
+      entries.push(
+        ...Object.entries(data.other).map(([key, value]) => [
+          convertFormSafeKey(key),
+          value,
+        ]),
+      )
+  } else if (type === 'addr') {
+    if (data.address)
+      entries.push(
+        ...Object.entries(data.address).map(([key, value]) => [
+          convertFormSafeKey(key),
+          value,
+        ]),
+      )
+  } else if (type === 'contentHash') {
+    if (data.website) entries.push(['website', data.website])
+  }
+  return Object.fromEntries(entries)
+}
+
+type RecordOption = ComponentProps<typeof RecordInput>['option']
+
 type TabType = 'general' | 'accounts' | 'address' | 'website' | 'other'
 
 type ExpandableRecordsGroup = 'accounts' | 'address' | 'other'
@@ -202,13 +301,12 @@ type Props = {
   name?: string
   open: boolean
   onDismiss?: () => void
-  onSubmit: (profile: ProfileEditorType) => Promise<void>
 }
 
-const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
+const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
-  const breakpoints = useBreakpoint()
-  const isDesktop = breakpoints.sm
+  const { setCurrentTransaction } = useTransaction()
+  const { setRecords } = useEns()
 
   const {
     register,
@@ -218,7 +316,9 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
     getValues,
     getFieldState,
     control,
+    setFocus,
     handleSubmit,
+    clearErrors,
   } = useForm<ProfileEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -229,9 +329,10 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
       website: '',
       other: {},
     },
+    shouldUnregister: false,
   })
 
-  const [tab, setTab] = useState<TabType>('address')
+  const [tab, setTab] = useState<TabType>('accounts')
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -247,9 +348,9 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
     newKeys: newAccountKeys,
     addKey: addAccountKey,
     removeKey: removeAccountKey,
-    changeKey: changeAccountKey,
     hasOptions: hasAccountOptions,
-    getOptions: getAccountOptions,
+    availableOptions: availableAccountOptions,
+    getSelectedOption: getSelectedAccountOption,
   } = useExpandableRecordsGroup<ProfileEditorType>({
     group: 'accounts',
     existingKeys: existingRecords.accounts,
@@ -263,9 +364,9 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
     newKeys: newAddressKeys,
     addKey: addAddressKey,
     removeKey: removeAddressKey,
-    changeKey: changeAddressKey,
     hasOptions: hasAddressOptions,
-    getOptions: getAddressOptions,
+    availableOptions: availableAddressOptions,
+    getSelectedOption: getSelectedAddressOption,
   } = useExpandableRecordsGroup<ProfileEditorType>({
     group: 'address',
     existingKeys: existingRecords.address,
@@ -274,13 +375,16 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
     getValues,
   })
 
+  const [hasExistingWebsite, setHasExistingWebsite] = useState(false)
+  const [websiteOption, setWebsiteOption] = useState<RecordOption | undefined>(
+    undefined,
+  )
+
   const {
     existingKeys: existingOtherKeys,
     newKeys: newOtherKeys,
     addKey: addOtherKey,
     removeKey: removeOtherKey,
-    changeKey: changeOtherKey,
-    getOptions: getOtherOptions,
   } = useExpandableRecordsGroup<ProfileEditorType>({
     group: 'other',
     existingKeys: existingRecords.other,
@@ -289,22 +393,157 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
     getValues,
   })
 
-  const { profile, loading } = useProfile(name, name !== '')
-  useEffect(() => {
-    if (profile) {
-      console.log(profile)
-
-      const defaultValues = convertProfileToFormObject(profile)
-      reset(defaultValues)
-      const newExistingRecords: ExpandableRecordsState = {
-        address: Object.keys(defaultValues.address) || [],
-        other: Object.keys(defaultValues.other) || [],
-        accounts: Object.keys(defaultValues.accounts) || [],
-      }
-      setExistingRecords(newExistingRecords)
+  const AddButtonProps = (() => {
+    switch (tab) {
+      case 'accounts':
+        if (!hasAccountOptions) return null
+        return {
+          autocomplete: true,
+          options: availableAccountOptions,
+          messages: {
+            addRecord: t('profileEditor.tabs.accounts.addAccount'),
+            noOptions: t('profileEditor.tabs.accounts.noOptions'),
+          },
+          onAddRecord: (key: string) => {
+            addAccountKey(key)
+            process.nextTick(() => {
+              setFocus(`accounts.${key}`)
+            })
+          },
+        }
+      case 'address':
+        if (!hasAddressOptions) return null
+        return {
+          autocomplete: true,
+          options: availableAddressOptions,
+          messages: {
+            addRecord: t('profileEditor.tabs.address.addAddress'),
+            noOptions: t('profileEditor.tabs.address.noOptions'),
+          },
+          onAddRecord: (key: string) => {
+            addAddressKey(key)
+            process.nextTick(() => {
+              setFocus(`address.${key}`)
+            })
+          },
+        }
+      case 'website':
+        if (websiteOption) return undefined
+        return {
+          options: websiteOptions,
+          onAddRecord: (key: string) => {
+            const option = websiteOptions.find(({ value }) => value === key)
+            if (!option) return
+            setWebsiteOption(option)
+            process.nextTick(() => {
+              setFocus('website')
+            })
+          },
+        }
+      case 'other':
+        return {
+          createable: true,
+          messages: {
+            addRecord: t('profileEditor.tabs.other.addRecord'),
+            createRecord: t('profileEditor.tabs.other.createRecord'),
+          },
+          onAddRecord: (record: string) => {
+            addOtherKey(record)
+            process.nextTick(() => {
+              setFocus(`other.${record}`)
+            })
+          },
+        }
+      default:
+        return null
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile])
+  })()
+
+  const { profile, loading } = useProfile(name, name !== '')
+  // const [setDefaultValues] = useState<ProfileEditorType>({
+  //   general: {},
+  //   accounts: {},
+  //   address: {},
+  //   other: {},
+  // })
+
+  useEffect(() => {
+    if (profile && open) {
+      const newDefaultValues = convertProfileToProfileFormObject(profile)
+      const newExistingRecords: ExpandableRecordsState = {
+        address: Object.keys(newDefaultValues.address) || [],
+        other: Object.keys(newDefaultValues.other) || [],
+        accounts: Object.keys(newDefaultValues.accounts) || [],
+      }
+      reset(newDefaultValues)
+      // setDefaultValues(newDefaultValues)
+      setExistingRecords(newExistingRecords)
+      setHasExistingWebsite(!!newDefaultValues.website)
+      const protocol = newDefaultValues.website
+        ?.match(/^[^:]+/)?.[0]
+        ?.toLowerCase()
+      console.log(protocol)
+      if (protocol) {
+        const option = websiteOptions.find(({ value }) => value === protocol)
+        console.log(websiteOptions, option)
+        setWebsiteOption(option || undefined)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile, open])
+
+  const handleCancel = () => {
+    if (onDismiss) onDismiss()
+  }
+
+  const handleTransaction = (profileData: ProfileEditorType) => {
+    const dirtyFields = getDirtyFields(
+      formState.dirtyFields,
+      profileData,
+    ) as ProfileEditorType
+
+    const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(
+      ([key, value]) => ({
+        key,
+        value,
+      }),
+    ) as { key: string; value: string }[]
+
+    const coinTypes = Object.entries(getFieldsByType('addr', dirtyFields)).map(
+      ([key, value]) => ({
+        key,
+        value,
+      }),
+    ) as { key: string; value: string }[]
+
+    const records = {
+      texts,
+      coinTypes,
+    }
+
+    setCurrentTransaction({
+      data: [
+        {
+          actionName: 'editProfile',
+          displayItems: [
+            {
+              label: 'name',
+              value: name,
+              type: 'name',
+            },
+          ],
+          generateTx: async (signer) => {
+            return setRecords(name, {
+              records,
+              signer,
+            })
+          },
+        },
+      ],
+      key: `editProfile-${name}`,
+    })
+  }
 
   const avatar = useWatch({
     control,
@@ -319,7 +558,7 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
       <Modal open={open} onDismiss={onDismiss}>
         <Container
           data-testid="profile-editor"
-          onSubmit={handleSubmit(onSubmit)}
+          onSubmit={handleSubmit(handleTransaction)}
           ref={targetRef}
         >
           <Banner>
@@ -374,6 +613,7 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                 $hasError={!!getFieldState('other', formState).error}
                 $isDirty={getFieldState('other').isDirty}
                 onClick={handleTabClick('other')}
+                data-testid="other-tab"
               >
                 {t('profileEditor.tabs.other.label')}
               </TabButton>
@@ -444,102 +684,120 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                       accounts: (
                         <>
                           {existingAccountKeys.map((account) => (
-                            <SelectableInput
+                            <RecordInput
                               key={account}
-                              selectProps={{
-                                value: formSafeKey(account),
-                                options: accountsOptions,
+                              option={getSelectedAccountOption(account)}
+                              placeholder={t([
+                                `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
+                                  account,
+                                )}`,
+                                `profileEditor.tabs.accounts.placeholder.default`,
+                              ])}
+                              showDot
+                              error={
+                                getFieldState(`accounts.${account}`, formState)
+                                  .error?.message
+                              }
+                              validated={
+                                getFieldState(`accounts.${account}`, formState)
+                                  .isDirty
+                              }
+                              onDelete={() => {
+                                removeAccountKey(account, false)
                               }}
-                              label={account}
-                              readOnly
-                              {...register(
-                                `accounts.${formSafeKey(account)}` as any,
-                                {},
-                              )}
-                              onDelete={() => removeAccountKey(account)}
+                              {...register(`accounts.${account}` as any, {})}
                             />
                           ))}
                           {newAccountKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: formSafeKey(key),
-                                options: getAccountOptions(key),
-                                onChange: (e) =>
-                                  changeAccountKey(key, e.target.value),
-                                portal: {
-                                  appendTo: targetRef.current,
-                                  listenTo: ref.current,
-                                },
-                                autoDismiss: true,
-                                direction: isDesktop ? 'down' : 'up',
-                              }}
+                              option={getSelectedAccountOption(key)}
+                              placeholder={t([
+                                `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `profileEditor.tabs.accounts.placeholder.default`,
+                              ])}
                               error={
-                                getFieldState(
-                                  `accounts.${formSafeKey(key)}`,
-                                  formState,
-                                ).error?.message
+                                getFieldState(`accounts.${key}`, formState)
+                                  .error?.message
                               }
-                              hasChanges={
+                              validated={
                                 getFieldState(
                                   `accounts.${formSafeKey(key)}`,
                                   formState,
                                 ).isDirty
                               }
-                              label={key}
+                              showDot
                               autoComplete="off"
                               autoCorrect="off"
                               spellCheck={false}
-                              onDelete={() =>
-                                removeAccountKey(formSafeKey(key))
-                              }
-                              {...register(`accounts.${formSafeKey(key)}`, {})}
+                              onDelete={() => {
+                                clearErrors([`accounts.${key}`])
+                                removeAccountKey(key)
+                              }}
+                              {...register(`accounts.${key}`, {})}
                             />
                           ))}
                           {hasAccountOptions && (
-                            <Button
-                              outlined
-                              prefix={<PlusSVG />}
-                              variant="transparent"
-                              shadowless
-                              onClick={() => addAccountKey()}
-                            >
-                              {t('profileEditor.tabs.accounts.addAccount')}
-                            </Button>
+                            <AddRecordButton
+                              autocomplete
+                              options={availableAccountOptions}
+                              messages={{
+                                addRecord: t(
+                                  'profileEditor.tabs.accounts.addAccount',
+                                ),
+                                noOptions: t(
+                                  'profileEditor.tabs.accounts.noOptions',
+                                ),
+                              }}
+                              onAddRecord={(key) => {
+                                addAccountKey(key)
+                                process.nextTick(() => {
+                                  setFocus(`accounts.${key}`)
+                                })
+                              }}
+                            />
                           )}
                         </>
                       ),
                       address: (
                         <>
                           {existingAddressKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: key,
-                                options: addressOptions,
+                              option={getSelectedAddressOption(key)}
+                              placeholder={t([
+                                `profileEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `profileEditor.tabs.address.placeholder.default`,
+                              ])}
+                              error={
+                                getFieldState(`address.${key}`, formState).error
+                                  ?.message
+                              }
+                              validated={
+                                getFieldState(`address.${key}`, formState)
+                                  .isDirty
+                              }
+                              onDelete={() => {
+                                removeAddressKey(key, false)
+                                clearErrors([`address.${key}`])
                               }}
-                              label={key}
-                              readOnly
                               {...register(`address.${key}`, {})}
-                              onDelete={() => removeAddressKey(key)}
                             />
                           ))}
                           {newAddressKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: key,
-                                autocomplete: true,
-                                options: getAddressOptions(key),
-                                onChange: (e) =>
-                                  changeAddressKey(key, e.target.value),
-                                portal: {
-                                  appendTo: targetRef.current,
-                                  listenTo: ref.current,
-                                },
-                                autoDismiss: true,
-                                direction: isDesktop ? 'down' : 'up',
-                              }}
+                              option={getSelectedAddressOption(key)}
+                              placeholder={t([
+                                `profileEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `profileEditor.tabs.address.placeholder.default`,
+                              ])}
                               error={
                                 getFieldState(`address.${key}`, formState).error
                                   ?.message
@@ -549,113 +807,150 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                                   .isDirty
                               }
                               showDot
-                              label={key}
                               autoComplete="off"
                               autoCorrect="off"
                               spellCheck={false}
-                              onDelete={() => removeAddressKey(key)}
+                              onDelete={() => {
+                                clearErrors([`address.${key}`])
+                                removeAddressKey(key)
+                              }}
                               {...register(`address.${key}`, {
                                 validate: validateCryptoAddress(key),
                               })}
                             />
                           ))}
                           {hasAddressOptions && (
-                            <Button
-                              outlined
-                              prefix={<PlusSVG />}
-                              variant="transparent"
-                              shadowless
-                              onClick={() => addAddressKey()}
-                              data-testid="add-address-button"
-                            >
-                              {t('profileEditor.tabs.address.addAddress')}
-                            </Button>
+                            <AddRecordButton
+                              autocomplete
+                              options={availableAddressOptions}
+                              messages={{
+                                addRecord: t(
+                                  'profileEditor.tabs.address.addAddress',
+                                ),
+                                noOptions: t(
+                                  'profileEditor.tabs.address.noOptions',
+                                ),
+                              }}
+                              onAddRecord={(key) => {
+                                addAddressKey(key)
+                                process.nextTick(() => {
+                                  setFocus(`address.${key}`)
+                                })
+                              }}
+                            />
                           )}
                         </>
                       ),
                       website: (
-                        <SelectableInput
-                          selectProps={{
-                            value: 'ipfs',
-                            options: websiteOptions,
-                            portal: {
-                              appendTo: targetRef.current,
-                              listenTo: ref.current,
-                            },
-                            autoDismiss: true,
-                            direction: isDesktop ? 'down' : 'up',
-                          }}
-                          label="contentHash"
-                          deletable={false}
-                          {...register('website', {})}
-                        />
+                        <>
+                          {websiteOption ? (
+                            <RecordInput
+                              option={websiteOption}
+                              placeholder={t([
+                                `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
+                                  websiteOption.value,
+                                )}`,
+                                `profileEditor.tabs.contentHash.placeholder.default`,
+                              ])}
+                              error={
+                                getFieldState(`website`, formState).error
+                                  ?.message
+                              }
+                              validated={
+                                getFieldState(`website`, formState).isDirty
+                              }
+                              onDelete={() => {
+                                setValue('website', '', {
+                                  shouldDirty: hasExistingWebsite,
+                                })
+                                setWebsiteOption(undefined)
+                              }}
+                              {...register('website', {})}
+                            />
+                          ) : (
+                            <AddRecordButton
+                              options={websiteOptions}
+                              onAddRecord={(key) => {
+                                const option = websiteOptions.find(
+                                  ({ value }) => value === key,
+                                )
+                                if (!option) return
+                                setWebsiteOption(option)
+                                process.nextTick(() => {
+                                  setFocus('website')
+                                })
+                              }}
+                            />
+                          )}
+                        </>
                       ),
                       other: (
                         <>
                           {existingOtherKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: formSafeKey(key),
-                                options: getOtherOptions(key),
-                              }}
                               label={key}
-                              readOnly
-                              {...register(`other.${formSafeKey(key)}`, {})}
-                              onDelete={() => removeOtherKey(key)}
-                            />
-                          ))}
-                          {newOtherKeys.map((key) => (
-                            <SelectableInput
-                              key={key}
-                              selectProps={{
-                                value: formSafeKey(key),
-                                options: getOtherOptions(key),
-                                createable: true,
-                                inputSize: {
-                                  min: 15,
-                                  max: 20,
-                                },
-                                onChange: (e) => {
-                                  console.log('onChange', key, e.target.value)
-
-                                  changeOtherKey(key, e.target.value)
-                                },
-                                onCreate: (value) => {
-                                  console.log('create', key, value)
-                                  changeOtherKey(key, value)
-                                },
-                                portal: {
-                                  appendTo: targetRef.current,
-                                  listenTo: ref.current,
-                                },
-                                autoDismiss: true,
-                                direction: isDesktop ? 'down' : 'up',
-                              }}
+                              placeholder={t([
+                                `profileEditor.tabs.other.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `profileEditor.tabs.other.placeholder.default`,
+                              ])}
                               error={
                                 getFieldState(`other.${key}`, formState).error
                                   ?.message
                               }
-                              hasChanges={
+                              validated={
+                                getFieldState(`other.${key}`, formState).isDirty
+                              }
+                              onDelete={() => removeOtherKey(key, false)}
+                              {...register(`other.${key}`, {})}
+                            />
+                          ))}
+                          {newOtherKeys.map((key) => (
+                            <RecordInput
+                              key={key}
+                              placeholder={t([
+                                `profileEditor.tabs.other.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `profileEditor.tabs.other.placeholder.default`,
+                              ])}
+                              error={
+                                getFieldState(`other.${key}`, formState).error
+                                  ?.message
+                              }
+                              validated={
                                 getFieldState(`other.${key}`, formState).isDirty
                               }
                               label={key}
                               autoComplete="off"
                               autoCorrect="off"
                               spellCheck={false}
-                              onDelete={() => removeOtherKey(key)}
-                              {...register(`other.${formSafeKey(key)}`, {})}
+                              onDelete={() => {
+                                clearErrors([`other.${key}`])
+                                removeOtherKey(key)
+                              }}
+                              {...register(`other.${key}`, {})}
                             />
                           ))}
-                          <Button
-                            outlined
-                            prefix={<PlusSVG />}
-                            variant="transparent"
-                            shadowless
-                            onClick={() => addOtherKey('text')}
-                          >
-                            {t('profileEditor.tabs.other.addRecord')}
-                          </Button>
+                          <AddRecordButton
+                            createable
+                            messages={{
+                              addRecord: t(
+                                'profileEditor.tabs.other.addRecord',
+                              ),
+                              createRecord: t(
+                                'profileEditor.tabs.other.createRecord',
+                              ),
+                            }}
+                            onAddRecord={(record) => {
+                              addOtherKey(record)
+                              process.nextTick(() => {
+                                setFocus(`other.${record}`)
+                              })
+                            }}
+                          />
                         </>
                       ),
                     }[tab]
@@ -663,8 +958,13 @@ const ProfileEditor = ({ name = '', open, onDismiss, onSubmit }: Props) => {
                 </TabContentContainer>
               </ScrollIndicatorContainer>
             </TabContentsContainer>
+            {AddButtonProps && (
+              <AddRecordContainer>
+                <AddRecordButton {...AddButtonProps} />
+              </AddRecordContainer>
+            )}
             <FooterContainer>
-              <Button tone="grey" shadowless>
+              <Button tone="grey" shadowless onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button

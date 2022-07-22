@@ -2,17 +2,24 @@ import React, { useState, useEffect, useRef } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm } from 'react-hook-form'
-import { mq, Modal, Input, Button, PlusSVG } from '@ensdomains/thorin'
+import { mq, Modal, Input, Button } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { SelectableInput } from '@app/components/@molecules/SelectableInput/SelectableInput'
+import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import { useProfile } from '@app/hooks/useProfile'
 import { validateCryptoAddress } from '@app/utils/validate'
-import { convertProfileToFormObject, formSafeKey } from '@app/utils/editor'
+import { useTransaction } from '@app/utils/TransactionProvider'
+import { useEns } from '@app/utils/EnsProvider'
+import {
+  convertFormSafeKey,
+  convertProfileToProfileFormObject,
+  formSafeKey,
+  getDirtyFields,
+} from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import ScrollIndicatorContainer from '@app/components/pages/profile/ScrollIndicatorContainer'
 import addressOptions from '../../../ProfileEditor/addressOptions'
 import { textOptions } from './textOptions'
+import { AddRecordButton } from '../../../../../@molecules/AddRecordButton/AddRecordButton'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -34,14 +41,14 @@ const Container = styled.form(({ theme }) => [
 const NameContainer = styled.div(({ theme }) => [
   css`
     display: block;
-    height: 45px;
     width: 100%;
-    padding-left: 134px;
-    padding-right: 16px;
+    padding-top: ${theme.space['6']};
+    padding-left: ${theme.space['4']};
+    padding-right: ${theme.space['4']};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     line-height: 45px;
     vertical-align: middle;
-    text-align: right;
+    text-align: center;
     font-feature-settings: 'ss01' on, 'ss03' on, 'ss04' on;
     font-weight: ${theme.fontWeights.bold};
     font-size: 1.25rem;
@@ -66,14 +73,17 @@ const ContentContainer = styled.div(
   `,
 )
 
-const TabButtonsContainer = styled.div(
-  ({ theme }) => css`
+const TabButtonsContainer = styled.div(({ theme }) => [
+  css`
     display: flex;
     flex-wrap: wrap;
     gap: ${theme.space['1.25']} ${theme.space['3']};
-    padding: 0 ${theme.space['3']};
+    padding: 0 ${theme.space['4']} 0 ${theme.space['7']};
   `,
-)
+  mq.sm.min(css`
+    padding: 0 ${theme.space['4']};
+  `),
+])
 
 const getIndicatorStyle = (
   theme: Theme,
@@ -150,6 +160,12 @@ const TabContentContainer = styled.div(
   `,
 )
 
+const AddRecordContainer = styled.div(
+  ({ theme }) => css`
+    padding: 0 ${theme.space['3']};
+  `,
+)
+
 const FooterContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -172,6 +188,61 @@ type AdvancedEditorType = {
   }
 }
 
+const getDeletedFieldsByType = (
+  type: 'text' | 'addr' | 'contentHash',
+  originalData: AdvancedEditorType,
+  updatedData: AdvancedEditorType,
+) => {
+  const entries = []
+  if (type === 'text') {
+    if (originalData.text)
+      entries.push(
+        ...Object.keys(originalData.text)
+          .filter((key) => !updatedData.text[key])
+          .map((key) => [convertFormSafeKey(key), '']),
+      )
+  } else if (type === 'addr') {
+    if (originalData.address)
+      entries.push(
+        ...Object.keys(originalData.address)
+          .filter((key) => !updatedData.address[key])
+          .map((key) => [convertFormSafeKey(key), '']),
+      )
+  } else if (type === 'contentHash') {
+    if (originalData.other.contentHash && !updatedData.other.contentHash)
+      entries.push(['website', ''])
+  }
+  return Object.fromEntries(entries)
+}
+
+const getFieldsByType = (
+  type: 'text' | 'addr' | 'contentHash',
+  data: AdvancedEditorType,
+) => {
+  const entries = []
+  if (type === 'text') {
+    if (data.text)
+      entries.push(
+        ...Object.entries(data.text).map(([key, value]) => [
+          convertFormSafeKey(key),
+          value,
+        ]),
+      )
+  } else if (type === 'addr') {
+    if (data.address)
+      entries.push(
+        ...Object.entries(data.address).map(([key, value]) => [
+          convertFormSafeKey(key),
+          value,
+        ]),
+      )
+  } else if (type === 'contentHash') {
+    if (data.other.contentHash)
+      entries.push(['website', data.other.contentHash])
+  }
+  return Object.fromEntries(entries)
+}
+
 type TabType = 'text' | 'address' | 'other'
 
 type ExpandableRecordsGroup = 'text' | 'address'
@@ -186,9 +257,9 @@ type Props = {
 }
 
 const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
+  const { setCurrentTransaction } = useTransaction()
+  const { setRecords } = useEns()
   const { t } = useTranslation('profile')
-  const breakpoints = useBreakpoint()
-  const isDesktop = breakpoints.sm
 
   const {
     register,
@@ -198,6 +269,8 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
     getValues,
     getFieldState,
     handleSubmit,
+    clearErrors,
+    setFocus,
   } = useForm<AdvancedEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -223,9 +296,6 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
     newKeys: newTextKeys,
     addKey: addTextKey,
     removeKey: removeTextKey,
-    changeKey: changeAccountKey,
-    hasOptions: hasTextOptions,
-    getOptions: getTextOptions,
   } = useExpandableRecordsGroup<AdvancedEditorType>({
     group: 'text',
     existingKeys: existingRecords.text,
@@ -239,9 +309,9 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
     newKeys: newAddressKeys,
     addKey: addAddressKey,
     removeKey: removeAddressKey,
-    changeKey: changeAddressKey,
     hasOptions: hasAddressOptions,
-    getOptions: getAddressOptions,
+    availableOptions: availableAddressOptions,
+    getSelectedOption: getSelectedAddressOption,
   } = useExpandableRecordsGroup<AdvancedEditorType>({
     group: 'address',
     existingKeys: existingRecords.address,
@@ -250,33 +320,133 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
     getValues,
   })
 
+  const AddButtonProps = (() => {
+    switch (tab) {
+      case 'text':
+        return {
+          createable: true,
+          messages: {
+            addRecord: t('advancedEditor.tabs.text.addRecord'),
+            createRecord: t('advancedEditor.tabs.text.createRecord'),
+          },
+          onAddRecord: (record: string) => {
+            addTextKey(record)
+            process.nextTick(() => {
+              setFocus(`text.${record}`)
+            })
+          },
+        }
+      case 'address':
+        if (!hasAddressOptions) return null
+        return {
+          autocomplete: true,
+          options: availableAddressOptions,
+          messages: {
+            addRecord: t('profileEditor.tabs.address.addAddress'),
+            noOptions: t('profileEditor.tabs.address.noOptions'),
+          },
+          onAddRecord: (key: string) => {
+            addAddressKey(key)
+            process.nextTick(() => {
+              setFocus(`address.${key}`)
+            })
+          },
+        }
+      default:
+        return null
+    }
+  })()
+
   const { profile, loading } = useProfile(name, name !== '')
+  const [defaultValue, setDefaultValue] = useState<AdvancedEditorType>({
+    text: {},
+    address: {},
+    other: {},
+  })
+
   useEffect(() => {
-    if (profile) {
-      const formObject = convertProfileToFormObject(profile)
-      const defaultValues = {
+    if (profile && open) {
+      const formObject = convertProfileToProfileFormObject(profile)
+      const newDefaultValues = {
         text: {
-          avatar: formObject.avatar,
-          banner: formObject.banner,
+          ...(formObject.avatar ? { avatar: formObject.avatar } : {}),
+          ...(formObject.banner ? { banner: formObject.banner } : {}),
           ...formObject.accounts,
           ...formObject.other,
         },
         address: formObject.address,
         other: {
-          contentHash: '',
+          contentHash: formObject.website,
           publicKey: '',
           abi: '',
         },
       }
-      reset(defaultValues)
+      reset(newDefaultValues)
+      setDefaultValue(newDefaultValues)
       const newExistingRecords: ExpandableRecordsState = {
-        address: Object.keys(defaultValues.address) || [],
-        text: Object.keys(defaultValues.text) || [],
+        address: Object.keys(newDefaultValues.address) || [],
+        text: Object.keys(newDefaultValues.text) || [],
       }
       setExistingRecords(newExistingRecords)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [profile])
+  }, [profile, open])
+
+  const handleCancel = () => {
+    if (onDismiss) onDismiss()
+  }
+
+  const handleTransaction = (data: AdvancedEditorType) => {
+    const dirtyFields = getDirtyFields(
+      formState.dirtyFields,
+      data,
+    ) as AdvancedEditorType
+
+    const textsObj = {
+      ...getDeletedFieldsByType('text', defaultValue, data),
+      ...getFieldsByType('text', dirtyFields),
+    }
+    const texts = Object.entries(textsObj).map(([key, value]) => ({
+      key,
+      value,
+    })) as { key: string; value: string }[]
+
+    const coinTypesObj = {
+      ...getDeletedFieldsByType('addr', defaultValue, data),
+      ...getFieldsByType('addr', dirtyFields),
+    }
+    const coinTypes = Object.entries(coinTypesObj).map(([key, value]) => ({
+      key,
+      value,
+    })) as { key: string; value: string }[]
+
+    const records = {
+      texts,
+      coinTypes,
+    }
+
+    setCurrentTransaction({
+      data: [
+        {
+          actionName: 'editRecords',
+          displayItems: [
+            {
+              label: 'name',
+              value: name,
+              type: 'name',
+            },
+          ],
+          generateTx: async (signer) => {
+            return setRecords(name, {
+              records,
+              signer,
+            })
+          },
+        },
+      ],
+      key: `editRecords-${name}`,
+    })
+  }
 
   const ref = useRef<HTMLDivElement>(null)
   const targetRef = useRef<HTMLFormElement>(null)
@@ -284,11 +454,8 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
   return (
     <>
       <Modal open={open} onDismiss={onDismiss}>
-        <Container
-          onSubmit={handleSubmit((data: any) => console.log(data))}
-          ref={targetRef}
-        >
-          <NameContainer>{name}&apos; records</NameContainer>
+        <Container onSubmit={handleSubmit(handleTransaction)} ref={targetRef}>
+          <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>
           <ContentContainer>
             <TabButtonsContainer>
               <TabButton
@@ -296,24 +463,29 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                 $hasError={!!getFieldState('text', formState).error}
                 $isDirty={getFieldState('text').isDirty}
                 onClick={handleTabClick('text')}
+                data-testid="text-tab"
+                type="button"
               >
-                {t('profileEditor.tabs.accounts.label')}
+                {t('advancedEditor.tabs.text.label')}
               </TabButton>
               <TabButton
                 $selected={tab === 'address'}
                 $hasError={!!getFieldState('address', formState).error}
                 $isDirty={getFieldState('address').isDirty}
                 onClick={handleTabClick('address')}
+                type="button"
+                data-testid="address-tab"
               >
-                {t('profileEditor.tabs.address.label')}
+                {t('advancedEditor.tabs.address.label')}
               </TabButton>
               <TabButton
                 $selected={tab === 'other'}
                 $hasError={!!getFieldState('other', formState).error}
                 $isDirty={getFieldState('other').isDirty}
                 onClick={handleTabClick('other')}
+                type="button"
               >
-                {t('profileEditor.tabs.other.label')}
+                {t('advancedEditor.tabs.other.label')}
               </TabButton>
             </TabButtonsContainer>
             <TabContentsContainer>
@@ -324,100 +496,87 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                       text: (
                         <>
                           {existingTextKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: formSafeKey(key),
-                                options: getTextOptions(key),
-                              }}
                               label={key}
-                              readOnly
-                              {...register(
-                                `accounts.${formSafeKey(key)}` as any,
-                                {},
-                              )}
-                              onDelete={() => removeTextKey(key)}
+                              placeholder={t([
+                                `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `advancedEditor.tabs.text.placeholder.default`,
+                              ])}
+                              error={
+                                getFieldState(`text.${key}`, formState).error
+                                  ?.message
+                              }
+                              validated={
+                                getFieldState(`text.${key}`, formState).isDirty
+                              }
+                              onDelete={() => removeTextKey(key, false)}
+                              {...register(`text.${key}`, {})}
                             />
                           ))}
                           {newTextKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: formSafeKey(key),
-                                options: getTextOptions(key),
-                                onChange: (e) =>
-                                  changeAccountKey(key, e.target.value),
-                                portal: {
-                                  appendTo: targetRef.current,
-                                  listenTo: ref.current,
-                                },
-                                autoDismiss: true,
-                                direction: isDesktop ? 'down' : 'up',
-                              }}
-                              error={
-                                getFieldState(
-                                  `text.${formSafeKey(key)}`,
-                                  formState,
-                                ).error?.message
-                              }
-                              hasChanges={
-                                getFieldState(
-                                  `text.${formSafeKey(key)}`,
-                                  formState,
-                                ).isDirty
-                              }
                               label={key}
+                              placeholder={t([
+                                `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `advancedEditor.tabs.text.placeholder.default`,
+                              ])}
+                              error={
+                                getFieldState(`text.${key}`, formState).error
+                                  ?.message
+                              }
+                              validated={
+                                getFieldState(`text.${key}`, formState).isDirty
+                              }
                               autoComplete="off"
                               autoCorrect="off"
                               spellCheck={false}
-                              onDelete={() => removeTextKey(formSafeKey(key))}
-                              {...register(`text.${formSafeKey(key)}`, {})}
+                              showDot
+                              onDelete={() => {
+                                removeTextKey(formSafeKey(key))
+                                clearErrors([`text.${key}`])
+                              }}
+                              {...register(`text.${key}`, {})}
                             />
                           ))}
-                          {hasTextOptions && (
-                            <Button
-                              outlined
-                              prefix={<PlusSVG />}
-                              variant="transparent"
-                              shadowless
-                              onClick={() => addTextKey()}
-                            >
-                              {t('profileEditor.tabs.accounts.addAccount')}
-                            </Button>
-                          )}
                         </>
                       ),
                       address: (
                         <>
                           {existingAddressKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: key,
-                                options: addressOptions,
+                              option={getSelectedAddressOption(key)}
+                              placeholder={t([
+                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `advancedEditor.tabs.address.placeholder.default`,
+                              ])}
+                              error={
+                                getFieldState(`address.${key}`, formState).error
+                                  ?.message
+                              }
+                              validated={
+                                getFieldState(`address.${key}`, formState)
+                                  .isDirty
+                              }
+                              onDelete={() => {
+                                removeAddressKey(key, false)
+                                clearErrors([`address.${key}`])
                               }}
-                              label={key}
-                              readOnly
                               {...register(`address.${key}`, {})}
-                              onDelete={() => removeAddressKey(key)}
                             />
                           ))}
                           {newAddressKeys.map((key) => (
-                            <SelectableInput
+                            <RecordInput
                               key={key}
-                              selectProps={{
-                                value: key,
-                                autocomplete: true,
-                                options: getAddressOptions(key),
-                                onChange: (e) =>
-                                  changeAddressKey(key, e.target.value),
-                                portal: {
-                                  appendTo: targetRef.current,
-                                  listenTo: ref.current,
-                                },
-                                autoDismiss: true,
-                                direction: isDesktop ? 'down' : 'up',
-                              }}
+                              option={getSelectedAddressOption(key)}
                               error={
                                 getFieldState(`address.${key}`, formState).error
                                   ?.message
@@ -427,34 +586,29 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                                   .isDirty
                               }
                               showDot
-                              label={key}
                               autoComplete="off"
                               autoCorrect="off"
                               spellCheck={false}
-                              onDelete={() => removeAddressKey(key)}
+                              onDelete={() => {
+                                removeAddressKey(key)
+                                clearErrors([`address.${key}`])
+                              }}
                               {...register(`address.${key}`, {
                                 validate: validateCryptoAddress(key),
                               })}
                             />
                           ))}
-                          {hasAddressOptions && (
-                            <Button
-                              outlined
-                              prefix={<PlusSVG />}
-                              variant="transparent"
-                              shadowless
-                              onClick={() => addAddressKey()}
-                            >
-                              {t('profileEditor.tabs.address.addAddress')}
-                            </Button>
-                          )}
                         </>
                       ),
                       other: (
                         <>
                           <Input
-                            label="Content Hash"
-                            placeholder="e.g. ips"
+                            label={t(
+                              'advancedEditor.tabs.other.contentHash.label',
+                            )}
+                            placeholder={t(
+                              'advancedEditor.tabs.other.contentHash.placeholder',
+                            )}
                             showDot
                             validated={
                               getFieldState('other.contentHash', formState)
@@ -464,8 +618,12 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                             {...register('other.contentHash', {})}
                           />
                           <Input
-                            label="Public Key"
-                            placeholder="e.g. ips"
+                            label={t(
+                              'advancedEditor.tabs.other.publicKey.label',
+                            )}
+                            placeholder={t(
+                              'advancedEditor.tabs.other.publicKey.placeholder',
+                            )}
                             showDot
                             validated={
                               getFieldState('other.publicKey', formState)
@@ -475,8 +633,10 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                             {...register('other.publicKey', {})}
                           />
                           <Input
-                            label="ABI"
-                            placeholder="e.g. ips"
+                            label={t('advancedEditor.tabs.other.abi.label')}
+                            placeholder={t(
+                              'advancedEditor.tabs.other.abi.placeholder',
+                            )}
                             showDot
                             validated={
                               getFieldState('other.abi', formState).isDirty
@@ -491,8 +651,13 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                 </TabContentContainer>
               </ScrollIndicatorContainer>
             </TabContentsContainer>
+            {AddButtonProps && (
+              <AddRecordContainer>
+                <AddRecordButton {...AddButtonProps} />
+              </AddRecordContainer>
+            )}
             <FooterContainer>
-              <Button tone="grey" shadowless>
+              <Button tone="grey" shadowless onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button disabled={hasErrors} type="submit" shadowless>

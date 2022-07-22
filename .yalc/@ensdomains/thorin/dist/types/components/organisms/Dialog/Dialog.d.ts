@@ -1,7 +1,13 @@
 import * as React from 'react';
+declare type StepType = 'notStarted' | 'inProgress' | 'completed';
 declare type TitleProps = {
     title?: string | React.ReactNode;
     subtitle?: string | React.ReactNode;
+};
+declare type StepProps = {
+    currentStep?: number;
+    stepCount?: number;
+    stepStatus?: StepType;
 };
 declare type BaseProps = {
     variant?: 'closable' | 'actionable' | 'blank';
@@ -17,7 +23,7 @@ declare type ActionableProps = {
     trailing?: React.ReactNode;
     leading?: React.ReactNode;
     center?: boolean;
-} & TitleProps;
+} & TitleProps & StepProps;
 declare type BlankProps = {
     variant: 'blank';
 };

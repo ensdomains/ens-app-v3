@@ -7,6 +7,7 @@ import supportedAddresses from '@app/constants/supportedAddresses.json'
 import styled, { css } from 'styled-components'
 import { Select } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
+import { formSafeKey } from '@app/utils/editor'
 
 const IconWrapper = styled.div(
   () => css`
@@ -38,7 +39,7 @@ const addressOptions = coinList.reduce((acc, coin) => {
   if (supportedAddresses.includes(coin.toLowerCase())) {
     return [
       {
-        value: coin,
+        value: formSafeKey(coin),
         label: coin,
         node: <AddressWrapper>{coin}</AddressWrapper>,
         prefix: (
@@ -53,7 +54,7 @@ const addressOptions = coinList.reduce((acc, coin) => {
   return [
     ...acc,
     {
-      value: coin,
+      value: formSafeKey(coin),
       label: coin,
       node: <UnsupportedAddressWrapper>{coin}</UnsupportedAddressWrapper>,
     },

@@ -202,10 +202,6 @@ export default function Page() {
                 name={name}
                 open={showEditor}
                 onDismiss={handleDismissEditor}
-                onSubmit={(data) => {
-                  console.log(data)
-                  return Promise.resolve()
-                }}
               />
               {/* )} */}
             </DetailsWrapper>

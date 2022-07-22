@@ -240,6 +240,7 @@ export declare const tokens: {
         '4': string;
         '4.5': string;
         '5': string;
+        '5.5': string;
         '6': string;
         '7': string;
         '8': string;
@@ -481,6 +482,7 @@ export declare const baseTheme: {
         '4': string;
         '4.5': string;
         '5': string;
+        '5.5': string;
         '6': string;
         '7': string;
         '8': string;
@@ -749,6 +751,7 @@ export declare const lightTheme: {
         '4': string;
         '4.5': string;
         '5': string;
+        '5.5': string;
         '6': string;
         '7': string;
         '8': string;
@@ -1017,6 +1020,7 @@ export declare const darkTheme: {
         '4': string;
         '4.5': string;
         '5': string;
+        '5.5': string;
         '6': string;
         '7': string;
         '8': string;

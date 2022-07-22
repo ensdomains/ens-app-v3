@@ -7,7 +7,7 @@ export const formSafeKey = (key: string) => key.replace(/\./g, '\u2024')
 
 export const convertFormSafeKey = (key: string) => key.replace(/\u2024/g, '.')
 
-type EditorObject = {
+type ProfileFormObject = {
   avatar?: string
   banner?: string
   website?: string
@@ -25,7 +25,9 @@ type EditorObject = {
   }
 }
 
-export const convertProfileToFormObject = (profile: Profile): EditorObject => {
+export const convertProfileToProfileFormObject = (
+  profile: Profile,
+): ProfileFormObject => {
   const address =
     profile.records?.coinTypes?.reduce((map, record) => {
       const { coin } = record
@@ -42,7 +44,7 @@ export const convertProfileToFormObject = (profile: Profile): EditorObject => {
     }, {}) || {}
 
   const textRecords = profile.records?.texts?.reduce<
-    Omit<EditorObject, 'address'>
+    Omit<ProfileFormObject, 'address' | 'website'>
   >(
     (map, record) => {
       if (record.key === 'avatar')
@@ -55,33 +57,74 @@ export const convertProfileToFormObject = (profile: Profile): EditorObject => {
           banner: record.value,
           ...map,
         }
-      if (supportedProfileItems.includes(record.key.toString())) {
+      const key = record.key.toString()
+      const safeKey = formSafeKey(key)
+      if (supportedProfileItems.includes(key)) {
         const newMap = {
           ...map,
-          general: { ...map.general, [record.key]: record.value },
+          general: { ...map.general, [safeKey]: record.value },
         }
         return newMap
       }
-      if (supportedAccounts.includes(record.key.toString())) {
-        const key = formSafeKey(record.key.toString())
+      if (supportedAccounts.includes(key)) {
         return {
           ...map,
-          accounts: { ...map.accounts, [key]: record.value },
+          accounts: { ...map.accounts, [safeKey]: record.value },
         }
       }
       return {
         ...map,
         other: {
           ...map.other,
-          [formSafeKey(record.key.toString())]: record.value,
+          [safeKey]: record.value,
         },
       }
     },
-    { general: {}, accounts: {}, website: '', other: {} },
-  ) || { general: {}, accounts: {}, website: '', other: {} }
+    { general: {}, accounts: {}, other: {} },
+  ) || { general: {}, accounts: {}, other: {} }
+
+  let website = ''
+  const contentHash = profile.records?.contentHash
+  if (contentHash) {
+    if (typeof contentHash === 'string') {
+      website = contentHash
+    } else if (typeof contentHash === 'object' && contentHash.decoded) {
+      website = `${contentHash.protocolType}://${contentHash.decoded}`
+    }
+  }
 
   return {
     ...textRecords,
     address,
+    website,
   }
+}
+
+// https://github.com/react-hook-form/react-hook-form/discussions/1991
+
+type UnknownArrayOrObject = unknown[] | Record<string, unknown>
+
+export const getDirtyFields = (
+  dirtyFields: UnknownArrayOrObject | boolean,
+  allValues: UnknownArrayOrObject,
+): UnknownArrayOrObject => {
+  if (dirtyFields === true || Array.isArray(dirtyFields)) {
+    return allValues
+  }
+
+  if (typeof dirtyFields === 'object' && typeof allValues === 'object') {
+    const dirtyFieldsObj = dirtyFields as Record<string, unknown>
+    const allValuesObj = allValues as Record<string, unknown>
+    return Object.fromEntries(
+      Object.keys(dirtyFieldsObj).map((key: keyof Record<string, unknown>) => {
+        const subDirtyFields = dirtyFields[key] as
+          | UnknownArrayOrObject
+          | boolean
+        const subAllValues = allValuesObj[key] as UnknownArrayOrObject
+        return [key, getDirtyFields(subDirtyFields, subAllValues)]
+      }),
+    )
+  }
+
+  return {}
 }

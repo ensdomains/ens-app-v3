@@ -102,13 +102,16 @@ const ScrollIndicatorContainer = forwardRef<
     if (scrollRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
       const scrollPercent = scrollTop / (scrollHeight - clientHeight)
-      if (scrollPercent < 0.9) setShow(true)
+      if (scrollPercent < 0.9) setShow(false)
       else setShow(false)
     }
   }
 
+  // use nextTick to wait for children to load before processing scroll
   useEffect(() => {
-    handleScroll()
+    process.nextTick(() => {
+      handleScroll()
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page])
 

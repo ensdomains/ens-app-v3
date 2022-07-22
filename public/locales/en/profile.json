@@ -110,18 +110,78 @@
       },
       "accounts": {
         "label": "Accounts",
-        "addAccount": "Add Account"
+        "addAccount": "Add account",
+        "noOptions": "No account options available",
+        "placeholder": {
+          "default": "Add username here",
+          "com.twitter": "e.g. yogicodes",
+          "com.github": "e.g. yogicodes",
+          "com.discord": "e.g. yogicodes#4323"
+        }
       },
       "address": {
         "label": "Address",
-        "addAddress": "Add Address"
+        "addAddress": "Add address",
+        "noOptions": "No address options available",
+        "placeholder": {
+          "default": "Add address here",
+          "ETH": "0xD9hbQK...",
+          "BNB": "0xD9hbQK...",
+          "BTC": "3FZbgi29...",
+          "LTC": "3FZbgi29...",
+          "SOL": "D4kA7VzHnmV...",
+          "DOT": "1D4kA7VxH...",
+          "DOGE": "DFabcd12..."
+        }
       },
       "contentHash": {
-        "label": "Website"
+        "label": "Website",
+        "addContentHash": "Add decentralized website",
+        "placeholder": {
+          "default": "Add url here",
+          "ipfs": "ipfs://"
+        }
       },
       "other": {
         "label": "Other",
-        "addRecord": "Add Record"
+        "addRecord": "Add record",
+        "createRecord": "Type a record name...",
+        "placeholder": {
+          "default": "Add a value here..."
+        }
+      }
+    }
+  },
+  "advancedEditor": {
+    "title": "{{name}}'s records",
+    "tabs": {
+      "text": {
+        "label": "Text",
+        "addRecord": "Add record",
+        "createRecord": "Type a record name...",
+        "placeholder": {
+          "default": "Add a value here..."
+        }
+      },
+      "address": {
+        "label": "Address",
+        "addAddressRecord": "Add address record"
+      },
+      "other": {
+        "label": "Other",
+        "contentHash": {
+          "label": "Content Hash",
+          "placeholder": "e.g. ipfs://"
+        },
+        "publicKey": {
+          "label": "Public Key",
+          "placeholder": "e.g. pub_1231231231231"
+        },
+        "abi": {
+          "label": "ABI",
+          "placeholder": "Enter an ABI here..."
+        }
+      
       }
     }
   },

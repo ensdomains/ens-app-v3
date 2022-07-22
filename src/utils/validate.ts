@@ -15,7 +15,6 @@ export const validateCryptoAddress =
   (coin: string) =>
   (address: string): string | boolean => {
     const coinName = coin.toLowerCase()
-    console.log(coinName)
     switch (coinName) {
       case 'eth':
       case 'bnb':

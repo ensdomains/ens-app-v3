@@ -1,8 +1,18 @@
 import { useProfile } from '@app/hooks/useProfile'
-import { mockFunction, render, screen, waitFor, within } from '@app/test-utils'
+import {
+  mockFunction,
+  render,
+  screen,
+  waitFor,
+  within,
+  userEvent,
+} from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useTransaction } from '@app/utils/TransactionProvider'
+import { useEns } from '@app/utils/EnsProvider'
 import { cleanup, fireEvent } from '@testing-library/react'
+import { formSafeKey } from '@app/utils/editor'
 import ProfileEditor from './ProfileEditor'
 
 const mockProfileData = {
@@ -116,11 +126,18 @@ const mockProfileData = {
 
 jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useProfile')
+jest.mock('@app/utils/EnsProvider')
+jest.mock('@app/utils/TransactionProvider')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
 const mockIntersectionObserver = jest.fn()
-const mockSubmit = jest.fn()
+const mockUseTransaction = mockFunction(useTransaction)
+const mockUseEns = mockFunction(useEns)
+
+const mockSetRecords = jest.fn()
+const mockSetCurrentTransaction = jest.fn()
+const mockGetCurrentStep = jest.fn()
 
 describe('ProfileEditor', () => {
   beforeEach(() => {
@@ -142,6 +159,15 @@ describe('ProfileEditor', () => {
       disconnect: () => null,
     })
     window.IntersectionObserver = mockIntersectionObserver
+
+    mockUseTransaction.mockReturnValue({
+      setCurrentTransaction: mockSetCurrentTransaction,
+      getCurrentStep: mockGetCurrentStep,
+    })
+
+    mockUseEns.mockReturnValue({
+      setRecords: mockSetRecords,
+    })
   })
 
   afterEach(() => {
@@ -150,45 +176,28 @@ describe('ProfileEditor', () => {
   })
 
   it('should render', async () => {
-    render(
-      <ProfileEditor
-        open
-        onDismiss={() => {}}
-        name="test.eth"
-        onSubmit={() => Promise.resolve()}
-      />,
-    )
+    render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
     await waitFor(() => {
       expect(screen.getByTestId('profile-editor')).toBeVisible()
     })
   })
 
-  it('should call onSubmit when data is submitted', async () => {
-    render(
-      <ProfileEditor
-        open
-        onDismiss={() => {}}
-        name="test.eth"
-        onSubmit={mockSubmit}
-      />,
-    )
+  it('should call setRecords when data is submitted', async () => {
+    render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
 
     const submit = await screen.findByTestId('profile-editor-submit')
     fireEvent.click(submit)
     await waitFor(() => {
-      expect(mockSubmit).toHaveBeenCalled()
+      expect(mockSetCurrentTransaction).toHaveBeenCalled()
+    })
+    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
+    await waitFor(() => {
+      expect(mockSetRecords).toHaveBeenCalled()
     })
   })
 
-  it('should delete address field when delete is pressed', async () => {
-    render(
-      <ProfileEditor
-        open
-        onDismiss={() => {}}
-        name="test.eth"
-        onSubmit={mockSubmit}
-      />,
-    )
+  it('should replace coinType with empty string when deleted', async () => {
+    render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
 
     const tab = await screen.findByTestId('address-tab')
     fireEvent.click(tab)
@@ -204,20 +213,22 @@ describe('ProfileEditor', () => {
 
     screen.getByTestId('profile-editor-submit').click()
     await waitFor(() => {
-      expect(mockSubmit).toHaveBeenCalled()
-      expect(mockSubmit.mock.calls[0][0].address.ETH).toBeUndefined()
+      expect(mockSetCurrentTransaction).toHaveBeenCalled()
     })
+    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
+    await waitFor(() => {
+      expect(mockSetRecords).toHaveBeenCalled()
+    })
+    expect(
+      mockSetRecords.mock.calls[0][1].records.coinTypes.find(
+        (record: any) => record.key === 'ETH',
+      ).value,
+    ).toBe('')
+    expect(mockSetRecords.mock.calls[0][1].records.coinTypes.length).toBe(1)
   })
 
-  it('should replace address field when changed', async () => {
-    render(
-      <ProfileEditor
-        open
-        onDismiss={() => {}}
-        name="test.eth"
-        onSubmit={mockSubmit}
-      />,
-    )
+  it('should', async () => {
+    render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
 
     const tab = await screen.findByTestId('address-tab')
     fireEvent.click(tab)
@@ -237,47 +248,70 @@ describe('ProfileEditor', () => {
       expect(screen.getByTestId('selectable-input-dot')).toBeVisible()
     })
 
+    await userEvent.type(
+      screen.getByTestId('selectable-input-dot-input'),
+      '0x123',
+    )
+
     screen.getByTestId('profile-editor-submit').click()
     await waitFor(() => {
-      expect(mockSubmit).toHaveBeenCalled()
-      expect(mockSubmit.mock.calls[0][0].address.DOT).toBe('')
-      expect(mockSubmit.mock.calls[0][0].address.BNB).toBeUndefined()
+      expect(mockSetCurrentTransaction).toHaveBeenCalled()
     })
+    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
+
+    await waitFor(() => {
+      expect(mockSetRecords).toHaveBeenCalled()
+    })
+    expect(
+      mockSetRecords.mock.calls[0][1].records.coinTypes.find(
+        (record: any) => record.key === 'DOT',
+      ).value,
+    ).toBe('0x123')
+    expect(mockSetRecords.mock.calls[0][1].records.coinTypes.length).toBe(1)
   })
 
   it('should create address field when creating a field', async () => {
-    render(
-      <ProfileEditor
-        open
-        onDismiss={() => {}}
-        name="test.eth"
-        onSubmit={mockSubmit}
-      />,
-    )
+    render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
 
-    const tab = await screen.findByTestId('address-tab')
+    const tab = await screen.findByTestId('other-tab')
     fireEvent.click(tab)
 
-    const addButton = await screen.findByTestId('add-address-button')
+    const addButton = await screen.findByTestId('add-other-button')
     fireEvent.click(addButton)
 
     const select = await screen.findByTestId('select-container')
-
     fireEvent.click(select)
 
+    await userEvent.type(screen.getByTestId('select-input'), 'test.key')
+
     const listbox = await screen.findByRole('listbox')
-    const option = await within(listbox).findByText('DOT')
+    const option = await within(listbox).findByRole('option')
     fireEvent.click(option)
 
     await waitFor(() => {
-      expect(screen.getByTestId('selectable-input-dot')).toBeVisible()
+      expect(
+        screen.getByTestId(formSafeKey('selectable-input-test.key')),
+      ).toBeVisible()
     })
 
+    await userEvent.type(
+      screen.getByTestId(formSafeKey('selectable-input-test.key-input')),
+      '0x123',
+    )
     screen.getByTestId('profile-editor-submit').click()
     await waitFor(() => {
-      expect(mockSubmit).toHaveBeenCalled()
-      expect(mockSubmit.mock.calls[0][0].address.DOT).toBe('')
-      expect(mockSubmit.mock.calls[0][0].address.BNB).toBeUndefined()
+      expect(mockSetCurrentTransaction).toHaveBeenCalled()
+    })
+    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
+    await waitFor(() => {
+      expect(mockSetRecords).toHaveBeenCalled()
+      console.log(mockSetRecords.mock.calls[0][1].records.texts)
+      expect(
+        mockSetRecords.mock.calls[0][1].records.texts.find(
+          (record: any) => record.key === 'test.key',
+        )?.value,
+      ).toBe('0x123')
+      expect(mockSetRecords.mock.calls[0][1].records.texts.length).toBe(1)
     })
   })
 })

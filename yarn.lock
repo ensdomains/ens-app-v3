@@ -2029,8 +2029,8 @@ __metadata:
   linkType: hard
 
 "@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
-  version: 0.6.3
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=836298&locator=ens-app-v2%40workspace%3A."
+  version: 0.6.6
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=4212e3&locator=ens-app-v2%40workspace%3A."
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2040,7 +2040,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 67060b7f01028f7b9e540c8b5ce6ba80e2b53428126ea6e95b632f35c6217470df55e7f4b003c7313b51fff5232a65c81bc77fee174f84e2f79644fe92ab47ae
+  checksum: a99a3634bf20e5cfbdc2f93ffb9bf4296a3db6fe08de38a6e8c0e740d3f95e742251565c99786a8fa45b9fbdb8897bec17c55d6e8dc8fec5091012f1ebe24f45
   languageName: node
   linkType: hard
 
@@ -4584,6 +4584,15 @@ __metadata:
     react: "*"
     react-dom: "*"
   checksum: 944c5f8d4abb22c0650c25c7ae499651828c37c0e741ff67a4635d4cd99b307d486dabec05b372aba638bd359d29cd2af97393b5055ea294a201d80b4bc384b8
+  languageName: node
+  linkType: hard
+
+"@testing-library/user-event@npm:^14.2.6":
+  version: 14.2.6
+  resolution: "@testing-library/user-event@npm:14.2.6"
+  peerDependencies:
+    "@testing-library/dom": ">=7.21.4"
+  checksum: 5de10c5a9580fa0dcfb0d97cff1327a6ea56c59c3fb6582cc85fcc592f966b6171eefe5841c22cae86f25ec2c66aa1ea216fd54bfa494b7fd33cbd930108dcc4
   languageName: node
   linkType: hard
 
@@ -11325,6 +11334,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^8.0.1
+    "@testing-library/user-event": ^14.2.6
     "@types/glob": ^7.2.0
     "@types/jest": ^28.1.3
     "@types/lodash": ^4
