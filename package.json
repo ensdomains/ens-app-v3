@@ -51,6 +51,7 @@
     "i18next": "^21.8.8",
     "i18next-browser-languagedetector": "^6.1.4",
     "i18next-http-backend": "^1.4.1",
+    "immer": "^9.0.15",
     "iso-639-1": "^2.1.13",
     "lodash": "^4.17.21",
     "next": "^12.0.8",
@@ -64,6 +65,7 @@
     "react-query": "^3.34.19",
     "react-transition-state": "^1.1.4",
     "styled-components": "^5.3.3",
+    "use-immer": "^0.7.0",
     "wagmi": "^0.4.3"
   },
   "peerDependencies": {

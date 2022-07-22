@@ -1,13 +1,13 @@
 import styled from 'styled-components'
 import { utils, BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
+import { TFunction, useTranslation } from 'react-i18next'
 
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
-import { TFunction, useTranslation } from 'react-i18next'
 import ResolverDetails from './ResolverDetails/ResolverDetails'
-import { ResolverDetailsEdit } from './ResolverDetails/ResolverDetailsEdit'
+import { EditResolverForm } from './ResolverDetails/EditResolverForm'
 import Fuses from './Fuses'
 import { RegistrationDate } from './RegistrationDate'
 import Accordion, { AccordionData } from './Accordion'
@@ -23,15 +23,9 @@ export const TokenId = () => {
 
   return (
     <>
-      <RecordItem
-        itemKey={t('details.tabs.advanced.tokenId.hex')}
-        value={labelHash}
-      />
+      <RecordItem itemKey={t('details.tabs.advanced.tokenId.hex')} value={labelHash} />
       <div style={{ height: 10 }} />
-      <RecordItem
-        itemKey={t('details.tabs.advanced.tokenId.decimal')}
-        value={tokenId}
-      />
+      <RecordItem itemKey={t('details.tabs.advanced.tokenId.decimal')} value={tokenId} />
     </>
   )
 }
@@ -42,14 +36,41 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const generateAccordionData = (
-  fuseData: any,
-  t: TFunction,
-): AccordionData[] => [
+const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => [
   {
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
-    dialog: ResolverDetailsEdit,
+    dialog: (transactionUtils) => {
+      transactionUtils.actions.setSteps([
+        {
+          type: 'info',
+          title: 'Update Resolver',
+          content: EditResolverForm,
+          stepStatus: 'inProgress',
+          buttons: {
+            leading: {
+              type: 'cancel',
+              clickHandler:
+                ({ actions }) =>
+                async () => {
+                  actions.cancelFlow()
+                },
+            },
+            trailing: {
+              type: 'update',
+              clickHandler:
+                ({ actions }) =>
+                async () => {
+                  actions.increaseStep()
+                },
+            },
+          },
+        },
+        transactionUtils.helpers.createUpdateResolverTransactionStep(),
+        transactionUtils.helpers.createUpdateResolverCompleteStep(),
+      ])
+      transactionUtils.actions.openModal()
+    },
   },
   {
     title: t('details.tabs.advanced.fuses.label'),

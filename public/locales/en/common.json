@@ -4,6 +4,7 @@
   "loading": "Loading",
   "action": {
     "cancel": "Cancel",
+    "back": "Back",
     "close": "Close",
     "save": "Save",
     "edit": "Edit",

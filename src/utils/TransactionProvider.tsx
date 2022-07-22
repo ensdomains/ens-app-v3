@@ -55,6 +55,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       const resulted = tx
         ? await tx(signerData as JsonRpcSigner, addressData?.address as string)
         : undefined
+      console.log('resulted: ', resulted)
       setCurrentTxKey(key)
       setStepStorage((prevStepStorage) => {
         let data: TransactionSubmission[]
@@ -186,6 +187,8 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       return _prev
     })
   }, [setStepStorage])
+
+  console.log('currentStepData: ', currentStepData)
 
   return (
     <TransactionContext.Provider

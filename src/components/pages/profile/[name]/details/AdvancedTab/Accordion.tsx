@@ -3,6 +3,8 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
+import { useTransactionTwo } from '@app/utils/TransactionProvider/TransactionProviderTwo'
+
 const AccordionTitle = styled.div<{
   $isActive?: boolean
   $isDisabled?: boolean
@@ -30,8 +32,7 @@ const AccordionTitle = styled.div<{
 
 const AccordionBodyContainer = styled.div<{ $isActive: boolean }>(
   ({ theme, $isActive }) => css`
-    transition: all ${theme.transitionDuration['300']}
-      ${theme.transitionTimingFunction.out};
+    transition: all ${theme.transitionDuration['300']} ${theme.transitionTimingFunction.out};
 
     ${$isActive
       ? `
@@ -53,11 +54,7 @@ interface AccordionBodyProps {
 }
 
 const AccordionBody = ({ isActive, children }: AccordionBodyProps) => {
-  return (
-    <AccordionBodyContainer {...{ $isActive: isActive }}>
-      {children}
-    </AccordionBodyContainer>
-  )
+  return <AccordionBodyContainer {...{ $isActive: isActive }}>{children}</AccordionBodyContainer>
 }
 
 const AccordionItem = styled.div`
@@ -156,40 +153,29 @@ interface AccordionProps {
 
 const Accordion = ({ data }: AccordionProps) => {
   const { t } = useTranslation('profile')
+  const transactionUtils = useTransactionTwo()
 
   const [activeItem, setActiveItem] = useState(0)
-  const [isDialogOpen, setIsDialogOpen] = useState(-1)
 
   const handleEditClick = (idx) => {
-    setIsDialogOpen(idx)
-    setActiveItem(idx)
+    // setIsDialogOpen(idx)
+    // setActiveItem(idx)
+    data[idx].dialog(transactionUtils)
+    transactionUtils.actions.openModal()
   }
 
   const disabled = data?.filter((x) => x.disabled) ?? []
   const enabled = data?.filter((x) => !x.disabled) ?? []
 
-  const handleClose = () => {
-    setIsDialogOpen(-1)
-  }
-
   return (
     <>
-      <AccordionContainer
-        {...{ $activeItem: activeItem, $totalItems: data && data.length }}
-      >
+      <AccordionContainer {...{ $activeItem: activeItem, $totalItems: data && data.length }}>
         {!!disabled.length &&
           disabled.map((item) => {
             return (
-              <AccordionItem
-                data-testid={`accordion-${item.title}-disabled`}
-                key={item.title}
-              >
+              <AccordionItem data-testid={`accordion-${item.title}-disabled`} key={item.title}>
                 <AccordionTitle $isDisabled>
-                  <Typography
-                    variant="extraLarge"
-                    weight="bold"
-                    color="textTertiary"
-                  >
+                  <Typography variant="extraLarge" weight="bold" color="textTertiary">
                     {item.title}
                   </Typography>
                   <UnwrappedIndicator color="textSecondary">
@@ -203,47 +189,38 @@ const Accordion = ({ data }: AccordionProps) => {
           enabled.map((item, idx) => {
             const isActive = activeItem === idx
             return (
-              <>
-                {item.dialog && (
-                  <item.dialog
-                    isOpen={isDialogOpen === idx}
-                    onDismiss={() => setIsDialogOpen(-1)}
-                    handleClose={handleClose}
-                  />
-                )}
-                <AccordionItem
-                  data-testid={`accordion-${item.title}-enabled`}
-                  {...{ onClick: () => setActiveItem(idx), key: item.title }}
+              <AccordionItem
+                data-testid={`accordion-${item.title}-enabled`}
+                {...{ onClick: () => setActiveItem(idx), key: item.title }}
+              >
+                <AccordionTitle {...{ isActive }}>
+                  <TitleAndButtonContainer>
+                    <Typography variant="extraLarge" weight="bold">
+                      {item.title}
+                    </Typography>
+                    {item.dialog && (
+                      <EditButton
+                        shadowless
+                        variant="transparent"
+                        size="small"
+                        onClick={() => handleEditClick(idx)}
+                      >
+                        {t('action.edit', { ns: 'common' })}
+                      </EditButton>
+                    )}
+                  </TitleAndButtonContainer>
+                  <Chevron $open={isActive} />
+                </AccordionTitle>
+                <AccordionBody
+                  data-testid={`accordion-${item.title}-body`}
+                  {...{
+                    key: idx,
+                    isActive,
+                  }}
                 >
-                  <AccordionTitle {...{ isActive }}>
-                    <TitleAndButtonContainer>
-                      <Typography variant="extraLarge" weight="bold">
-                        {item.title}
-                      </Typography>
-                      {item.dialog && (
-                        <EditButton
-                          shadowless
-                          variant="transparent"
-                          size="small"
-                          onClick={() => handleEditClick(idx)}
-                        >
-                          {t('action.edit', { ns: 'common' })}
-                        </EditButton>
-                      )}
-                    </TitleAndButtonContainer>
-                    <Chevron $open={isActive} />
-                  </AccordionTitle>
-                  <AccordionBody
-                    data-testid={`accordion-${item.title}-body`}
-                    {...{
-                      key: idx,
-                      isActive,
-                    }}
-                  >
-                    <item.body />
-                  </AccordionBody>
-                </AccordionItem>
-              </>
+                  <item.body />
+                </AccordionBody>
+              </AccordionItem>
             )
           })}
       </AccordionContainer>

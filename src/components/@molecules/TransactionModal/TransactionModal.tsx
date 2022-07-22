@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useSigner } from 'wagmi'
+import { useRouter } from 'next/router'
+import { getRoute } from '@app/routes'
 import { DisplayItems } from './DisplayItems'
 
 const InnerDialog = styled.div(
@@ -76,12 +78,8 @@ const WaitingElement = () => {
     <WaitingContainer data-testid="transaction-waiting-container">
       <StyledSpinner color="accent" />
       <WaitingTextContainer>
-        <Typography weight="bold">
-          {t('transaction.modal.confirm.waiting.title')}
-        </Typography>
-        <Typography>
-          {t('transaction.modal.confirm.waiting.subtitle')}
-        </Typography>
+        <Typography weight="bold">{t('transaction.modal.confirm.waiting.title')}</Typography>
+        <Typography>{t('transaction.modal.confirm.waiting.subtitle')}</Typography>
       </WaitingTextContainer>
     </WaitingContainer>
   )
@@ -148,23 +146,21 @@ export const TransactionModal = ({
   const [txHash, setTxHash] = useState<string | null>(null)
   const settingsRoute = getRoute('settings')
 
-  const { data: estimatedGas } = useQuery(
-    ['gas', txKey, currentStep],
-    async () => {
-      if (!transaction) {
-        return null
-      }
+  const { data: estimatedGas } = useQuery(['gas', txKey, currentStep], async () => {
+    if (!transaction) {
+      return null
+    }
 
-      const gas = await signer?.estimateGas(transaction)
+    const gas = await signer?.estimateGas(transaction)
 
-      return gas
-    },
-  )
+    return gas
+  })
   const needsUnchecked = isIOS()
 
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
+      console.log('transaction: ', transaction)
       let hash: string
       if (needsUnchecked) {
         hash = await (signer as JsonRpcSigner).sendUncheckedTransaction({
@@ -242,9 +238,7 @@ export const TransactionModal = ({
       return (
         <SuccessContent>
           <PaperPlaneColourSVG />
-          <CompleteTypography>
-            {t('transaction.modal.complete.message')}
-          </CompleteTypography>
+          <CompleteTypography>{t('transaction.modal.complete.message')}</CompleteTypography>
           <StyledAnchor
             onClick={() => {
               onDismiss()
@@ -379,10 +373,7 @@ export const TransactionModal = ({
     }
     if (stage === 'complete') {
       if (stepCount > 1) {
-        return (
-          completeTitle ||
-          t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
-        )
+        return completeTitle || t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
       }
       return completeTitle || t('transaction.modal.complete.title')
     }
@@ -425,23 +416,15 @@ export const TransactionModal = ({
     return 'inProgress'
   }, [stage])
 
-  console.log('stage: ', stage)
-
   return (
     <Dialog
       title={title}
-      subtitle={
-        stage === 'request'
-          ? t('transaction.modal.request.subtitle')
-          : undefined
-      }
+      subtitle={stage === 'request' ? t('transaction.modal.request.subtitle') : undefined}
       variant="actionable"
       leading={LeadingButton}
       trailing={TrailingButton}
       open={open}
       onDismiss={() => {
-        console.log('onDismiss in TransactionModal')
-
         onDismiss?.()
         if (stage === 'complete') onSuccess?.()
       }}
@@ -450,11 +433,7 @@ export const TransactionModal = ({
       stepStatus={stepStatus}
     >
       <InnerDialog data-testid="transaction-modal-inner">
-        {error ? (
-          <ErrorTypography color="red">{t(error)}</ErrorTypography>
-        ) : (
-          MiddleContent
-        )}
+        {error ? <ErrorTypography color="red">{t(error)}</ErrorTypography> : MiddleContent}
         {FilledDisplayItems}
         {stage === 'complete' && (
           <Outlink href={makeEtherscanLink(txHash!, chainName)}>

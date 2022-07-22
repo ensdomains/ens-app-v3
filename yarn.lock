@@ -2029,8 +2029,8 @@ __metadata:
   linkType: hard
 
 "@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
-  version: 0.6.5
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=6d4beb&locator=ens-app-v2%40workspace%3A."
+  version: 0.6.4
+  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=f8ff81&locator=ens-app-v2%40workspace%3A."
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2040,7 +2040,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: e902752027add1c3ddaeb3d7e875e7f38d3c3323bedcf03d0bae03153d3af405a71270efec1006da78f7c5da5220b0f9c9d480bb81bc01d9fd39f8a57f149830
+  checksum: f3f0760babec4ffc7596eda3d81ecd93f009b80bb3cc953feef21106ced087e5c2f9e297eeb240539f80970443ab9822d547e122b3d6cc4dea6017a352aa9fd8
   languageName: node
   linkType: hard
 
@@ -11359,6 +11359,7 @@ __metadata:
     i18next: ^21.8.8
     i18next-browser-languagedetector: ^6.1.4
     i18next-http-backend: ^1.4.1
+    immer: ^9.0.15
     iso-639-1: ^2.1.13
     jest: ^27.4.7
     jest-environment-jsdom: ^27.4.6
@@ -11390,6 +11391,7 @@ __metadata:
     ts-node: ^10.7.0
     typescript: ^4.6.4
     typescript-styled-plugin: ^0.18.2
+    use-immer: ^0.7.0
     wagmi: ^0.4.3
     wait-on: ^6.0.1
     yalc: ^1.0.0-pre.53
@@ -15181,6 +15183,13 @@ __metadata:
   version: 3.2.3
   resolution: "immediate@npm:3.2.3"
   checksum: 9867dc70794f3aa246a90afe8a0166607590b687e8c572839ff2342292ac2da4b1cdfd396d38f7b9e72625d817d601e73c33c2874e9c0b8e0f1d6658b3c03496
+  languageName: node
+  linkType: hard
+
+"immer@npm:^9.0.15":
+  version: 9.0.15
+  resolution: "immer@npm:9.0.15"
+  checksum: 92e3d63e810e3c3c2bb61b70c45443e37ef983ad12924e3edaf03725ae5979618f5b473439bb3bb4a8c4769f25132f18dec10ea15c40f0b20da5691ff96ff611
   languageName: node
   linkType: hard
 
@@ -24249,6 +24258,16 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 7913df383a5a6fcb399212eedefaac2e0c6f843555202d4e3010bac3848afe38ecaa3d0d6500ad1d936fbeffd637e6c517e68edb024af5e6beca7f27f3ce7b21
+  languageName: node
+  linkType: hard
+
+"use-immer@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "use-immer@npm:0.7.0"
+  peerDependencies:
+    immer: ">=2.0.0"
+    react: ^16.8.0 || ^17.0.1 || ^18.0.0
+  checksum: 4711403fa2c3648c06b8e6795433eb43adb2c6e9bd00f45971ce6948ba8fc1c3e3cf73820a8d597b22979caa6445d0b791508e147975c3cc435a1ec1e5ce47db
   languageName: node
   linkType: hard
 

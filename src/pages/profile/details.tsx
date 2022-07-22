@@ -1,3 +1,10 @@
+import { useRouter } from 'next/router'
+import { ReactElement, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
+import { ENS } from '@ensdomains/ensjs'
+
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
@@ -13,12 +20,6 @@ import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
-import { ENS } from '@ensdomains/ensjs'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -101,10 +102,7 @@ export const calculateSelfAbilities = (
     canChangeRegistrant: false,
   }
   if (!address || !ownerData) return abilities
-  if (
-    ownerData.registrant === address ||
-    (!ownerData.registrant && ownerData.owner === address)
-  ) {
+  if (ownerData.registrant === address || (!ownerData.registrant && ownerData.owner === address)) {
     abilities.canSend = true
     abilities.canChangeOwner = true
     abilities.canChangeRegistrant = true
@@ -179,12 +177,7 @@ export const Details = ({
           />
         )}
       </OwnerButtons>
-      {breakpoints.md && (
-        <DetailSnippet
-          canSend={selfAbilities.canSend}
-          expiryDate={expiryDate}
-        />
-      )}
+      {breakpoints.md && <DetailSnippet canSend={selfAbilities.canSend} expiryDate={expiryDate} />}
     </DetailsContainer>
   )
 }
@@ -208,8 +201,7 @@ export default function Page() {
     isWrapped,
   } = useNameDetails(name)
   const nameWrapperExists = useWrapperExists()
-  const canBeWrapped =
-    nameWrapperExists && ownerData?.registrant === address && !isWrapped
+  const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
   const selfAbilities = useMemo(
     () => calculateSelfAbilities(address, ownerData),
@@ -221,11 +213,7 @@ export default function Page() {
   const [tab, setTab] = useState<'records' | 'subnames' | 'advanced'>('records')
 
   return (
-    <Content
-      title={normalisedName}
-      subtitle={t('details.title')}
-      loading={isLoading}
-    >
+    <Content title={normalisedName} subtitle={t('details.title')} loading={isLoading}>
       {{
         info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
         leading: (
@@ -256,29 +244,14 @@ export default function Page() {
         }[tab],
         header: (
           <TabButtonContainer>
-            <TabButton
-              $selected={tab === 'records'}
-              onClick={() => setTab('records')}
-            >
-              <Typography weight="bold">
-                {t('details.tabs.records.label')}
-              </Typography>
+            <TabButton $selected={tab === 'records'} onClick={() => setTab('records')}>
+              <Typography weight="bold">{t('details.tabs.records.label')}</Typography>
             </TabButton>
-            <TabButton
-              $selected={tab === 'subnames'}
-              onClick={() => setTab('subnames')}
-            >
-              <Typography weight="bold">
-                {t('details.tabs.subnames.label')}
-              </Typography>
+            <TabButton $selected={tab === 'subnames'} onClick={() => setTab('subnames')}>
+              <Typography weight="bold">{t('details.tabs.subnames.label')}</Typography>
             </TabButton>
-            <TabButton
-              $selected={tab === 'advanced'}
-              onClick={() => setTab('advanced')}
-            >
-              <Typography weight="bold">
-                {t('details.tabs.advanced.label')}
-              </Typography>
+            <TabButton $selected={tab === 'advanced'} onClick={() => setTab('advanced')}>
+              <Typography weight="bold">{t('details.tabs.advanced.label')}</Typography>
             </TabButton>
           </TabButtonContainer>
         ),

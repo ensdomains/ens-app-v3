@@ -1423,6 +1423,7 @@ const Label = styled.label(({
     color: ${theme.colors.textTertiary};
     font-weight: ${theme.fontWeights["semiBold"]};
     display: flex;
+    cursor: pointer;
   `);
 const LabelSecondary = styled.span(({
   theme
@@ -1472,10 +1473,11 @@ const LabelContent = (_k) => {
 const Container$b = styled.div(({
   theme,
   $inline,
-  $width
+  $width,
+  $labelRight
 }) => css`
     display: flex;
-    flex-direction: ${$inline ? "row" : "column"};
+    flex-direction: ${$inline ? $labelRight ? "row-reverse" : "row" : "column"};
     align-items: ${$inline ? "center" : "normal"};
     gap: ${$inline ? theme.space["2.5"] : theme.space["2"]};
     width: ${theme.space[$width]};
@@ -1513,7 +1515,8 @@ const Field = (_m) => {
     labelSecondary,
     required,
     inline,
-    width = "full"
+    width = "full",
+    labelRight = false
   } = _n, props = __objRest(_n, [
     "children",
     "description",
@@ -1524,7 +1527,8 @@ const Field = (_m) => {
     "labelSecondary",
     "required",
     "inline",
-    "width"
+    "width",
+    "labelRight"
   ]);
   const ids = useFieldIds({
     id: id2,
@@ -1542,6 +1546,7 @@ const Field = (_m) => {
     content = children;
   return inline ? /* @__PURE__ */ React.createElement(Container$b, {
     $inline: inline,
+    $labelRight: labelRight,
     $width: width
   }, /* @__PURE__ */ React.createElement(ContainerInner$2, null, hideLabel ? /* @__PURE__ */ React.createElement(VisuallyHidden, null, /* @__PURE__ */ React.createElement(LabelContent, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     ids,
@@ -3777,7 +3782,8 @@ const RadioButton = React.forwardRef((_Q, ref) => {
     width,
     onBlur,
     onChange,
-    onFocus
+    onFocus,
+    labelRight
   } = _R, props = __objRest(_R, [
     "description",
     "disabled",
@@ -3795,11 +3801,14 @@ const RadioButton = React.forwardRef((_Q, ref) => {
     "width",
     "onBlur",
     "onChange",
-    "onFocus"
+    "onFocus",
+    "labelRight"
   ]);
   const defaultRef = React.useRef(null);
   const inputRef = ref || defaultRef;
-  return /* @__PURE__ */ React.createElement(Field, {
+  console.log("width: ", width);
+  console.log("props: ", props);
+  return /* @__PURE__ */ React.createElement(Field, __spreadValues({}, {
     description,
     error,
     hideLabel,
@@ -3808,8 +3817,9 @@ const RadioButton = React.forwardRef((_Q, ref) => {
     label,
     labelSecondary,
     required,
-    width
-  }, /* @__PURE__ */ React.createElement(Input, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
+    width,
+    labelRight
+  }), /* @__PURE__ */ React.createElement(Input, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
     "aria-invalid": error ? true : void 0,
     "aria-selected": checked ? true : void 0,
     "data-testid": getTestId(props, "radio"),
@@ -4961,7 +4971,7 @@ const Container = styled.div(({
   $popped
 }) => css`
     position: fixed;
-    z-index: 10000;
+    z-index: 1000;
 
     width: 92.5%;
     left: 3.75%;
