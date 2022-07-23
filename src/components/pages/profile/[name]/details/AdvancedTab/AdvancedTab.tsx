@@ -44,36 +44,39 @@ const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => 
   {
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
-    dialog: (transactionUtils) => {
-      transactionUtils.actions.setSteps([
-        {
-          type: 'info',
-          title: 'Update Resolver',
-          content: EditResolverForm,
-          stepStatus: 'inProgress',
-          buttons: {
-            leading: {
-              type: 'cancel',
-              clickHandler:
-                ({ actions }) =>
-                async () => {
-                  actions.cancelFlow()
-                },
-            },
-            trailing: {
-              type: 'update',
-              clickHandler:
-                ({ actions }) =>
-                async () => {
-                  actions.increaseStep()
-                },
+    dialog: ({ dispatch }) => {
+      dispatch({
+        type: 'setSteps',
+        payload: [
+          {
+            type: 'info',
+            title: 'Update Resolver',
+            content: EditResolverForm,
+            stepStatus: 'inProgress',
+            buttons: {
+              leading: {
+                type: 'cancel',
+                clickHandler:
+                  ({ dispatch }) =>
+                  async () => {
+                    dispatch({ type: 'cancelFlow' })
+                  },
+              },
+              trailing: {
+                type: 'update',
+                clickHandler:
+                  ({ dispatch }) =>
+                  async () => {
+                    dispatch({ type: 'increaseStep' })
+                  },
+              },
             },
           },
-        },
-        createTransactionStep(),
-        createMiningStep(),
-      ])
-      transactionUtils.actions.openModal()
+          createTransactionStep(),
+          createMiningStep(),
+        ],
+      })
+      dispatch({ type: 'openModal' })
     },
   },
   {

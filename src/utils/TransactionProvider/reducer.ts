@@ -63,6 +63,7 @@ export function reducer(draft, action) {
         (step) => step.transactionType === 'updateResolver',
       )
       draft.steps[transactionIndex + 1].infoItems = draft.steps[transactionIndex].infoItems
+      draft.steps[transactionIndex + 1].transaction.transactionHash = action.payload
       break
     }
     case 'setStepStatus': {

@@ -7,6 +7,9 @@ import { Typography } from '@ensdomains/thorin'
 
 import { DisplayItems } from '@app/components/@molecules/TransactionModal/DisplayItems'
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
+import { useChainName } from '@app/hooks/useChainName'
+import { Outlink } from '@app/components/Outlink'
+import { makeEtherscanLink } from '@app/utils/utils'
 
 import { WaitingElement } from './waitingElement'
 
@@ -78,26 +81,28 @@ export const createTransactionStep = () => ({
     leading: {
       type: 'back',
       clickHandler:
-        ({ actions, dispatch }) =>
+        ({ dispatch }) =>
         () => {
           dispatch({
             type: 'updateStep',
             payload: { error: null },
           })
-          actions.decreaseStep()
+          dispatch({
+            type: 'decreaseStep',
+          })
         },
     },
     trailing: {
       type: 'send',
       clickHandler:
-        ({ actions, signer, ens, transactionData, addTransaction, dispatch }) =>
+        ({ signer, ens, transactionData, addTransaction, dispatch, estimatedGas }) =>
         async () => {
           dispatch({
             type: 'updateStep',
             payload: { error: null, stepStatus: 'inProgress' },
           })
 
-          const transaction = await ens[transactionData.transactionExecutor].populateTransaction(
+          const transaction = await ens.setResolver.populateTransaction(
             transactionData.transactionInfo.name,
             {
               contract: 'registry',
@@ -105,15 +110,13 @@ export const createTransactionStep = () => ({
               signer,
             },
           )
-          const estimatedGas = await signer?.estimateGas(transaction)
 
           let transactionHash
           try {
-            const { hash } = await signer.sendTransaction({
+            transactionHash = await signer.sendUncheckedTransaction({
               ...transaction,
-              gasLimit: estimatedGas!,
+              gasLimit: estimatedGas,
             })
-            transactionHash = hash
           } catch (e) {
             dispatch({
               type: 'updateStep',
@@ -121,11 +124,10 @@ export const createTransactionStep = () => ({
             })
             return
           }
-
           if (!transactionHash) throw new Error('No transaction generated')
 
           addTransaction({
-            description: JSON.stringify({ action: 'updateResolver', hash: transactionHash }),
+            description: JSON.stringify({ action: 'updateResolver', key: transactionHash }),
             hash: transactionHash,
           })
 
@@ -133,29 +135,44 @@ export const createTransactionStep = () => ({
             type: 'updateStep',
             payload: { stepStatus: 'completed', error: null },
           })
-          actions.setUpdateResolverCompletionInfo()
+          dispatch({ type: 'setUpdateResolverCompletionInfo', payload: transaction })
           dispatch({ type: 'increaseStep' })
         },
     },
   },
   transaction: {
-    type: null,
-    transactionStatus: 'notStarted',
-    transactionExecutor: 'setResolver',
     transactionInfo: null,
+    gasEstimator: async ({ transactionData, signer, ens }) => {
+      const transaction = await ens.setResolver.populateTransaction(
+        transactionData.transactionInfo.name,
+        {
+          contract: 'registry',
+          resolver: transactionData.transactionInfo.newResolver,
+          signer,
+        },
+      )
+      const estimatedGas = await signer?.estimateGas(transaction)
+      return estimatedGas
+    },
   },
 })
 
-export const MiningStep = ({ state, actions }) => {
+export const MiningStep = ({ state, dispatch }) => {
   const currentStep = state.steps[state.currentStep]
   const transactions = useRecentTransactions()
+  const { transactionHash } = currentStep.transaction
+  const chainName = useChainName()
+  const { t } = useTranslation('common')
 
   useEffect(() => {
     const currentTransaction = transactions[0]
     if (currentTransaction.status === 'confirmed') {
-      actions.updateStep({
-        title: 'Transaction confirmed',
-        stepStatus: 'completed',
+      dispatch({
+        type: 'updateStep',
+        payload: {
+          title: 'Transaction confirmed',
+          stepStatus: 'completed',
+        },
       })
     }
   }, [transactions])
@@ -184,6 +201,9 @@ export const MiningStep = ({ state, actions }) => {
           <TextContainer>
             <Typography>Your transaction has been saved to the blockchain!</Typography>
           </TextContainer>
+          <Outlink href={makeEtherscanLink(transactionHash.data!, chainName)}>
+            {t('transaction.viewEtherscan')}
+          </Outlink>
         </>
       ) : null}
 
@@ -214,11 +234,12 @@ export const createMiningStep = () => ({
     leading: {
       type: 'close',
       clickHandler:
-        ({ actions }) =>
+        ({ dispatch }) =>
         () => {
-          actions.cancelFlow()
+          dispatch({ type: 'cancelFlow' })
         },
     },
     trailing: null,
   },
+  transaction: {},
 })

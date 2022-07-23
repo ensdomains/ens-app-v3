@@ -102,7 +102,7 @@ const InputContainer = styled.div(
   `,
 )
 
-const EditResolverForm = ({ onSubmit, actions }: { onSubmit: () => null }) => {
+const EditResolverForm = ({ onSubmit, dispatch }: { onSubmit: () => null }) => {
   const router = useRouter()
   const { name } = router.query
 
@@ -145,7 +145,9 @@ const EditResolverForm = ({ onSubmit, actions }: { onSubmit: () => null }) => {
     }
 
     const hasValidity = isValid()
-    actions.setCanAdvance(hasValidity)
+
+    dispatch({ type: 'setCanAdvance', payload: hasValidity })
+
     if (hasValidity) {
       let newResolver
       if (resolverChoice === 'latest') {
@@ -155,13 +157,16 @@ const EditResolverForm = ({ onSubmit, actions }: { onSubmit: () => null }) => {
         newResolver = customResolver
       }
 
-      actions.setUpdateResolverTransactionInfo({
-        currentResolver: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-        newResolver,
-        name,
+      dispatch({
+        type: 'setUpdateResolverTransactionInfo',
+        payload: {
+          currentResolver: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
+          newResolver,
+          name,
+        },
       })
     }
-  }, [resolverChoice, customResolver, errors, resolverAddressIndex, actions])
+  }, [resolverChoice, customResolver, errors, resolverAddressIndex])
 
   return (
     <EditResolverFormContainer>

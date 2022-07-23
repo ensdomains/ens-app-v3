@@ -136,11 +136,9 @@ export const TransactionSection = () => {
 
   return (
     <SectionContainer data-testid="transaction-section" $name="transactions">
-      {/* <TransactionSectionHeadingContainer>
+      <TransactionSectionHeadingContainer>
         <TransactionSectionHeading
-          $hasTransactions={
-            transactions.filter((x) => x.status === 'pending').length > 0
-          }
+          $hasTransactions={transactions.filter((x) => x.status === 'pending').length > 0}
           variant="large"
           weight="bold"
         >
@@ -174,9 +172,7 @@ export const TransactionSection = () => {
                     <Spinner data-testid="pending-spinner" color="accent" />
                   )}
                   <TransactionInfoContainer>
-                    <Typography weight="bold">
-                      {tc(`transaction.description.${action}`)}
-                    </Typography>
+                    <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
                     <StyledOutlink
                       $error={transaction.status === 'failed'}
                       href={makeEtherscanLink(transaction.hash, chainName)}
@@ -205,9 +201,7 @@ export const TransactionSection = () => {
                 onClick={() => setViewAmt((curr) => curr + 5)}
                 data-testid="transaction-view-more-button"
               >
-                <ViewMoreInner weight="bold">
-                  {tc('transaction.viewMore')}
-                </ViewMoreInner>
+                <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
               </TransactionContainer>
             )}
           </>
@@ -216,7 +210,7 @@ export const TransactionSection = () => {
             {t('section.transaction.noRecentTransactions')}
           </RecentTransactionsMessage>
         )}
-      </TransactionSectionContainer> */}
+      </TransactionSectionContainer>
     </SectionContainer>
   )
 }

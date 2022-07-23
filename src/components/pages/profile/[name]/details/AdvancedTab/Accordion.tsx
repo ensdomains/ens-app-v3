@@ -158,10 +158,8 @@ const Accordion = ({ data }: AccordionProps) => {
   const [activeItem, setActiveItem] = useState(0)
 
   const handleEditClick = (idx) => {
-    // setIsDialogOpen(idx)
-    // setActiveItem(idx)
     data[idx].dialog(transactionUtils)
-    transactionUtils.actions.openModal()
+    transactionUtils.dispatch({ type: 'openModal ' })
   }
 
   const disabled = data?.filter((x) => x.disabled) ?? []

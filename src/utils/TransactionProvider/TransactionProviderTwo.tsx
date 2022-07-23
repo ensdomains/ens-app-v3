@@ -1,16 +1,16 @@
-import React, { useContext, useMemo } from 'react'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useImmerReducer } from 'use-immer'
 import { useSigner } from 'wagmi'
 import { useTranslation } from 'react-i18next'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { useQuery } from 'react-query'
 
 import { Dialog, Button, mq } from '@ensdomains/thorin'
 
 import { useEns } from '@app/utils/EnsProvider'
 
 import { reducer, initialState } from './reducer'
-import { createDispatchers } from './actions'
 import * as selectors from './selectors'
 
 const TransactionContext = React.createContext()
@@ -60,6 +60,17 @@ const TrailingButton = ({ state, actions, dispatch }) => {
   const { data: signer } = useSigner()
   const transactionData = selectors.getCurrentTransactionData(state)
   const addTransaction = useAddRecentTransaction()
+  const gasKey = JSON.stringify(transactionData?.transactionInfo)
+
+  const { data: estimatedGas } = useQuery(
+    ['gas', gasKey],
+    () => {
+      return transactionData.gasEstimator({ transactionData, signer, ens })
+    },
+    {
+      enabled: !!transactionData?.transactionInfo,
+    },
+  )
 
   if (!currentStep?.buttons?.trailing) {
     return null
@@ -67,7 +78,7 @@ const TrailingButton = ({ state, actions, dispatch }) => {
 
   return (
     <ButtonShrinkwrap
-      disabled={!state.canAdvance}
+      disabled={!state.canAdvance || (currentStep.type === 'tranasaction' && !estimatedGas)}
       onClick={currentStep?.buttons.trailing.clickHandler({
         actions,
         signer,
@@ -75,6 +86,7 @@ const TrailingButton = ({ state, actions, dispatch }) => {
         transactionData,
         addTransaction,
         dispatch,
+        estimatedGas,
       })}
     >
       {t(`action.${currentStep?.buttons?.trailing?.type}`)}
@@ -90,7 +102,6 @@ const StyledDialog = styled(Dialog)(
 
 export const TransactionProviderTwo = ({ children }) => {
   const [state, dispatch] = useImmerReducer(reducer, initialState)
-  const actions = useMemo(() => createDispatchers(dispatch), [])
 
   const stepStatus = selectors.getCurrentStepStatus(state)
 
@@ -100,18 +111,17 @@ export const TransactionProviderTwo = ({ children }) => {
     return {
       state,
       dispatch,
-      actions,
       selectors,
     }
   }, [state])
 
   const LeadingButtonMem = useMemo(() => {
-    return <LeadingButton {...{ state, actions, dispatch }} />
-  }, [state, actions])
+    return <LeadingButton {...{ state, dispatch }} />
+  }, [state])
 
   const TrailingButtonMem = useMemo(() => {
-    return <TrailingButton {...{ state, actions, dispatch }} />
-  }, [state, actions])
+    return <TrailingButton {...{ state, dispatch }} />
+  }, [state])
 
   return (
     <TransactionContext.Provider value={providerValue}>
