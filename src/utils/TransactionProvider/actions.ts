@@ -26,10 +26,14 @@ export const createDispatchers = (dispatch) => ({
     dispatch({
       type: 'decreaseStep',
     }),
-  setUpdateResolverTransactionInfo: (payload, idx) =>
+  setUpdateResolverTransactionInfo: (payload) =>
     dispatch({
       type: 'setUpdateResolverTransactionInfo',
-      idx,
+      payload,
+    }),
+  setUpdateResolverCompletionInfo: (payload) =>
+    dispatch({
+      type: 'setUpdateResolverCompletionInfo',
       payload,
     }),
   setTransactionState: (payload) =>
@@ -45,5 +49,10 @@ export const createDispatchers = (dispatch) => ({
   cancelFlow: () =>
     dispatch({
       type: 'cancelFlow',
+    }),
+  updateStep: (payload) =>
+    dispatch({
+      type: 'updateStep',
+      payload,
     }),
 })

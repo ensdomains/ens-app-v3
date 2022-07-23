@@ -6,6 +6,10 @@ import { TFunction, useTranslation } from 'react-i18next'
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
+import {
+  createTransactionStep,
+  createMiningStep,
+} from '@app/utils/TransactionProvider/helpers/updateResolver'
 import ResolverDetails from './ResolverDetails/ResolverDetails'
 import { EditResolverForm } from './ResolverDetails/EditResolverForm'
 import Fuses from './Fuses'
@@ -66,8 +70,8 @@ const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => 
             },
           },
         },
-        transactionUtils.helpers.createUpdateResolverTransactionStep(),
-        transactionUtils.helpers.createUpdateResolverCompleteStep(),
+        createTransactionStep(),
+        createMiningStep(),
       ])
       transactionUtils.actions.openModal()
     },

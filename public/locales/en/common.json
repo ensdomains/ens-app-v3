@@ -11,7 +11,9 @@
     "view": "View",
     "clear": "Clear",
     "update": "Update",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "send": "Send",
+    "next": "Next"
   },
   "navigation": {
     "home": "Home",

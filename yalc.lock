@@ -4,6 +4,11 @@
     "@ensdomains/thorin": {
       "signature": "e92d02492ec191cd5a6e592694933d83",
       "file": true
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "7a155152d55acf98a1b3bd4981bbe71e",
+      "file": true,
+      "replaced": "^0.1.4"
     }
   }
 }

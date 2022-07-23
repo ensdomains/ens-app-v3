@@ -1,0 +1,29 @@
+{
+  "name": "@ensdomains/ens-test-env",
+  "type": "module",
+  "version": "0.1.4",
+  "files": [
+    "src"
+  ],
+  "types": "src/index.d.ts",
+  "scripts": {},
+  "dependencies": {
+    "@ethersproject/wallet": "^5.6.0",
+    "ansi-colors": "^4.1.1",
+    "cli-progress": "^3.10.0",
+    "commander": "^9.3.0",
+    "concurrently": "^7.1.0",
+    "dotenv": "^16.0.0",
+    "fs-extra": "^10.0.1",
+    "ganache": "^7.0.4",
+    "got": "^12.0.2",
+    "lz4": "^0.6.5",
+    "node-fetch": "^3.2.3",
+    "progress-stream": "^2.0.0",
+    "tar-fs": "^2.1.1",
+    "wait-on": "^6.0.1"
+  },
+  "preferUnplugged": true,
+  "bin": "./src/index.js",
+  "yalcSig": "7a155152d55acf98a1b3bd4981bbe71e"
+}

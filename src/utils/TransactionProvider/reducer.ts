@@ -24,7 +24,6 @@ export function reducer(draft, action) {
     }
     case 'increaseStep': {
       draft.currentStep += 1
-
       break
     }
     case 'decreaseStep': {
@@ -63,16 +62,7 @@ export function reducer(draft, action) {
       const transactionIndex = draft.steps.findIndex(
         (step) => step.transactionType === 'updateResolver',
       )
-      const newResolverInfoItemIdx = draft.steps[transactionIndex].infoItems.findIndex(
-        (infoItem) => infoItem.label === 'newResolver',
-      )
-      const newResolver = draft.steps[transactionIndex].infoItems[newResolverInfoItemIdx].value
-
-      draft.steps[transactionIndex + 1].infoItems.push({
-        label: 'newResolver',
-        value: newResolver,
-        type: 'address',
-      })
+      draft.steps[transactionIndex + 1].infoItems = draft.steps[transactionIndex].infoItems
       break
     }
     case 'setStepStatus': {
@@ -80,8 +70,22 @@ export function reducer(draft, action) {
       break
     }
     case 'cancelFlow': {
-      draft = initialState
+      return initialState
+    }
+    case 'updateStepTitle': {
+      draft.steps[draft.currentStep].title = action.payload
       break
+    }
+    case 'updateStep': {
+      draft.steps[draft.currentStep] = { ...draft.steps[draft.currentStep], ...action.payload }
+      break
+    }
+    case 'setStepError': {
+      draft.steps[draft.currentStep].error = action.payload
+      break
+    }
+    case 'updateState': {
+      return { ...draft, ...action.payload }
     }
     default: {
       console.error('default')

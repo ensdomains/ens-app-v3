@@ -2,10 +2,7 @@ import { useChainName } from '@app/hooks/useChainName'
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
-import {
-  useClearRecentTransactions,
-  useRecentTransactions,
-} from '@rainbow-me/rainbowkit'
+import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -54,8 +51,7 @@ const TransactionSectionContainer = styled.div<{ $transactionLength: number }>(
     height: ${theme.space['13']};
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
-    transition: 0.2s all ease-in-out, 0s justify-content 0s linear,
-      0s color 0s linear;
+    transition: 0.2s all ease-in-out, 0s justify-content 0s linear, 0s color 0s linear;
     ${$transactionLength &&
     css`
       ${TransactionSectionHeading} {
@@ -140,7 +136,7 @@ export const TransactionSection = () => {
 
   return (
     <SectionContainer data-testid="transaction-section" $name="transactions">
-      <TransactionSectionHeadingContainer>
+      {/* <TransactionSectionHeadingContainer>
         <TransactionSectionHeading
           $hasTransactions={
             transactions.filter((x) => x.status === 'pending').length > 0
@@ -220,7 +216,7 @@ export const TransactionSection = () => {
             {t('section.transaction.noRecentTransactions')}
           </RecentTransactionsMessage>
         )}
-      </TransactionSectionContainer>
+      </TransactionSectionContainer> */}
     </SectionContainer>
   )
 }

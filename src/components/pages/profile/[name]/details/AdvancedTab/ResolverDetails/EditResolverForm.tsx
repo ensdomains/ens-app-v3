@@ -155,9 +155,7 @@ const EditResolverForm = ({ onSubmit, actions }: { onSubmit: () => null }) => {
         newResolver = customResolver
       }
 
-      console.log('newResolver: ', newResolver)
-
-      actions.setTransactionInfo({
+      actions.setUpdateResolverTransactionInfo({
         currentResolver: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
         newResolver,
         name,
