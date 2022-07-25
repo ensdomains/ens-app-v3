@@ -11,6 +11,17 @@ import { useChainName } from '@app/hooks/useChainName'
 import { Outlink } from '@app/components/Outlink'
 import { makeEtherscanLink } from '@app/utils/utils'
 
+import { JsonRpcSigner } from '@ethersproject/providers'
+import { ENS } from '@ensdomains/ensjs'
+import { NewTransaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
+
+import {
+  DispatchFn,
+  MiningStep,
+  TransactionActionTypes,
+  TransactionState,
+  TransactionStep,
+} from '@app/types'
 import { WaitingElement } from './waitingElement'
 
 const TextContainer = styled.div(
@@ -20,7 +31,7 @@ const TextContainer = styled.div(
   `,
 )
 
-export const TransactionStep = ({ actions, state }) => {
+export const TransactionStepComponent = ({ state }: { state: TransactionState }) => {
   const { t } = useTranslation()
 
   const currentStep = state.steps[state.currentStep]
@@ -32,7 +43,7 @@ export const TransactionStep = ({ actions, state }) => {
         <WaitingElement
           {...{
             title: t('transaction.modal.confirm.waiting.title'),
-            subtitle: t('transaction.modal.confirm.waiting.subtitle'),
+            subTitle: t('transaction.modal.confirm.waiting.subtitle'),
           }}
         />
       ) : null}
@@ -49,13 +60,13 @@ export const TransactionStep = ({ actions, state }) => {
   )
 }
 
-export const createTransactionStep = () => ({
+export const createTransactionStep = (): TransactionStep => ({
   type: 'transaction',
   transactionType: 'updateResolver',
   title: 'Send Transaction',
   description: 'Confirm the details of the transaction',
   stepStatus: 'notStarted',
-  content: TransactionStep,
+  content: TransactionStepComponent,
   error: null,
   infoItems: [
     {
@@ -81,32 +92,46 @@ export const createTransactionStep = () => ({
     leading: {
       type: 'back',
       clickHandler:
-        ({ dispatch }) =>
+        ({ dispatch }: { dispatch: DispatchFn }) =>
         () => {
           dispatch({
-            type: 'updateStep',
+            type: TransactionActionTypes.updateStep,
             payload: { error: null },
           })
           dispatch({
-            type: 'decreaseStep',
+            type: TransactionActionTypes.decreaseStep,
           })
         },
     },
     trailing: {
       type: 'send',
       clickHandler:
-        ({ signer, ens, transactionData, addTransaction, dispatch, estimatedGas }) =>
+        ({
+          signer,
+          ens,
+          currentStep,
+          addTransaction,
+          dispatch,
+          estimatedGas,
+        }: {
+          signer: JsonRpcSigner
+          ens: ENS
+          currentStep: TransactionStep
+          addTransaction: (transaction: NewTransaction) => void
+          dispatch: DispatchFn
+          estimatedGas: number
+        }) =>
         async () => {
           dispatch({
-            type: 'updateStep',
+            type: TransactionActionTypes.updateStep,
             payload: { error: null, stepStatus: 'inProgress' },
           })
 
           const transaction = await ens.setResolver.populateTransaction(
-            transactionData.transactionInfo.name,
+            currentStep.transactionInfo.name,
             {
               contract: 'registry',
-              resolver: transactionData.transactionInfo.newResolver,
+              resolver: currentStep.transactionInfo.newResolver,
               signer,
             },
           )
@@ -117,10 +142,10 @@ export const createTransactionStep = () => ({
               ...transaction,
               gasLimit: estimatedGas,
             })
-          } catch (e) {
+          } catch (error: any) {
             dispatch({
-              type: 'updateStep',
-              payload: { error: e.message, stepStatus: 'notStarted' },
+              type: TransactionActionTypes.updateStep,
+              payload: { error: error.message, stepStatus: 'notStarted' },
             })
             return
           }
@@ -132,35 +157,49 @@ export const createTransactionStep = () => ({
           })
 
           dispatch({
-            type: 'updateStep',
+            type: TransactionActionTypes.updateStep,
             payload: { stepStatus: 'completed', error: null },
           })
-          dispatch({ type: 'setUpdateResolverCompletionInfo', payload: transaction })
-          dispatch({ type: 'increaseStep' })
+          dispatch({
+            type: TransactionActionTypes.setUpdateResolverCompletionInfo,
+            payload: transaction,
+          })
+          dispatch({ type: TransactionActionTypes.increaseStep })
         },
     },
   },
-  transaction: {
-    transactionInfo: null,
-    gasEstimator: async ({ transactionData, signer, ens }) => {
-      const transaction = await ens.setResolver.populateTransaction(
-        transactionData.transactionInfo.name,
-        {
-          contract: 'registry',
-          resolver: transactionData.transactionInfo.newResolver,
-          signer,
-        },
-      )
-      const estimatedGas = await signer?.estimateGas(transaction)
-      return estimatedGas
-    },
+  transactionInfo: null,
+  gasEstimator: async ({
+    currentStep,
+    signer,
+    ens,
+  }: {
+    currentStep: TransactionStep
+    signer: JsonRpcSigner
+    ens: ENS
+  }) => {
+    const transaction = await ens.setResolver.populateTransaction(
+      currentStep.transactionInfo.name,
+      {
+        contract: 'registry',
+        resolver: currentStep.transactionInfo.newResolver,
+        signer,
+      },
+    )
+    const estimatedGas = await signer?.estimateGas(transaction)
+    return estimatedGas
   },
 })
 
-export const MiningStep = ({ state, dispatch }) => {
+export const MiningStepComponent = ({
+  state,
+  dispatch,
+}: {
+  state: TransactionState
+  dispatch: DispatchFn
+}) => {
   const currentStep = state.steps[state.currentStep]
   const transactions = useRecentTransactions()
-  const { transactionHash } = currentStep.transaction
   const chainName = useChainName()
   const { t } = useTranslation('common')
 
@@ -168,14 +207,14 @@ export const MiningStep = ({ state, dispatch }) => {
     const currentTransaction = transactions[0]
     if (currentTransaction.status === 'confirmed') {
       dispatch({
-        type: 'updateStep',
+        type: TransactionActionTypes.updateStep,
         payload: {
           title: 'Transaction confirmed',
           stepStatus: 'completed',
         },
       })
     }
-  }, [transactions])
+  }, [transactions, dispatch])
 
   return (
     <>
@@ -190,7 +229,7 @@ export const MiningStep = ({ state, dispatch }) => {
           <TextContainer>
             <Typography>
               Your transaction has been sent to the network, but may take some time to confirm. You
-              may close this dialog and we'll send you a notification when it's ready.
+              may close this dialog and we will send you a notification when it is ready.
             </Typography>
           </TextContainer>
         </>
@@ -201,7 +240,7 @@ export const MiningStep = ({ state, dispatch }) => {
           <TextContainer>
             <Typography>Your transaction has been saved to the blockchain!</Typography>
           </TextContainer>
-          <Outlink href={makeEtherscanLink(transactionHash.data!, chainName)}>
+          <Outlink href={makeEtherscanLink(currentStep.transactionHash?.data!, chainName)}>
             {t('transaction.viewEtherscan')}
           </Outlink>
         </>
@@ -212,12 +251,11 @@ export const MiningStep = ({ state, dispatch }) => {
   )
 }
 
-export const createMiningStep = () => ({
-  type: 'completedTransaction',
-  transactionType: 'updateResolver',
+export const createMiningStep = (): MiningStep => ({
+  type: 'mining',
   title: 'Transaction confirmation',
   stepStatus: 'inProgress',
-  content: MiningStep,
+  content: MiningStepComponent,
   description: '',
   error: null,
   infoItems: [
@@ -234,12 +272,11 @@ export const createMiningStep = () => ({
     leading: {
       type: 'close',
       clickHandler:
-        ({ dispatch }) =>
+        ({ dispatch }: { dispatch: DispatchFn }) =>
         () => {
-          dispatch({ type: 'cancelFlow' })
+          dispatch({ type: TransactionActionTypes.cancelFlow })
         },
     },
     trailing: null,
   },
-  transaction: {},
 })

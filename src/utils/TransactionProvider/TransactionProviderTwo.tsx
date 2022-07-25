@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react'
+import React, { ReactNode, useContext, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 import { useImmerReducer } from 'use-immer'
 import { useSigner } from 'wagmi'
@@ -10,10 +10,16 @@ import { Dialog, Button, mq } from '@ensdomains/thorin'
 
 import { useEns } from '@app/utils/EnsProvider'
 
+import { DispatchFn, TransactionState } from '@app/types'
+import { JsonRpcSigner } from '@ethersproject/providers'
 import { reducer, initialState } from './reducer'
 import * as selectors from './selectors'
 
-const TransactionContext = React.createContext()
+type ProviderValue = {
+  state: TransactionState
+  dispatch: DispatchFn
+}
+const TransactionContext = React.createContext<ProviderValue | null>(null)
 
 const InnerDialog = styled.div(
   ({ theme }) => css`
@@ -42,33 +48,33 @@ const ButtonShrinkwrap = styled(Button)(
   `,
 )
 
-const LeadingButton = ({ state, actions, dispatch }) => {
+const LeadingButton = ({ state, dispatch }: { state: TransactionState; dispatch: DispatchFn }) => {
   const { t } = useTranslation('common')
   const currentStep = selectors.getCurrentStep(state)
 
   return (
-    <ButtonShrinkwrap onClick={currentStep?.buttons.leading.clickHandler({ actions, dispatch })}>
+    <ButtonShrinkwrap onClick={currentStep?.buttons.leading.clickHandler({ dispatch })}>
       {t(`action.${currentStep?.buttons?.leading?.type}`)}
     </ButtonShrinkwrap>
   )
 }
 
-const TrailingButton = ({ state, actions, dispatch }) => {
+const TrailingButton = ({ state, dispatch }: { state: TransactionState; dispatch: DispatchFn }) => {
   const { t } = useTranslation('common')
   const currentStep = selectors.getCurrentStep(state)
   const ens = useEns()
   const { data: signer } = useSigner()
-  const transactionData = selectors.getCurrentTransactionData(state)
   const addTransaction = useAddRecentTransaction()
-  const gasKey = JSON.stringify(transactionData?.transactionInfo)
+  const gasKey = JSON.stringify(currentStep?.transactionInfo)
 
   const { data: estimatedGas } = useQuery(
     ['gas', gasKey],
     () => {
-      return transactionData.gasEstimator({ transactionData, signer, ens })
+      if (!signer) return undefined
+      return currentStep.gasEstimator({ currentStep, signer: signer as JsonRpcSigner, ens })
     },
     {
-      enabled: !!transactionData?.transactionInfo,
+      enabled: !!currentStep?.transactionInfo && !!signer,
     },
   )
 
@@ -78,12 +84,11 @@ const TrailingButton = ({ state, actions, dispatch }) => {
 
   return (
     <ButtonShrinkwrap
-      disabled={!state.canAdvance || (currentStep.type === 'tranasaction' && !estimatedGas)}
+      disabled={!state.canAdvance || (currentStep.type === 'transaction' && !estimatedGas)}
       onClick={currentStep?.buttons.trailing.clickHandler({
-        actions,
-        signer,
+        signer: signer as JsonRpcSigner,
         ens,
-        transactionData,
+        currentStep,
         addTransaction,
         dispatch,
         estimatedGas,
@@ -100,10 +105,8 @@ const StyledDialog = styled(Dialog)(
   `,
 )
 
-export const TransactionProviderTwo = ({ children }) => {
+export const TransactionProviderTwo = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useImmerReducer(reducer, initialState)
-
-  const stepStatus = selectors.getCurrentStepStatus(state)
 
   const Content = state.steps[state.currentStep]?.content
 
@@ -111,17 +114,16 @@ export const TransactionProviderTwo = ({ children }) => {
     return {
       state,
       dispatch,
-      selectors,
     }
-  }, [state])
+  }, [state, dispatch])
 
   const LeadingButtonMem = useMemo(() => {
     return <LeadingButton {...{ state, dispatch }} />
-  }, [state])
+  }, [state, dispatch])
 
   const TrailingButtonMem = useMemo(() => {
     return <TrailingButton {...{ state, dispatch }} />
-  }, [state])
+  }, [state, dispatch])
 
   return (
     <TransactionContext.Provider value={providerValue}>
@@ -129,7 +131,7 @@ export const TransactionProviderTwo = ({ children }) => {
       <StyledDialog
         {...{
           title: state.steps[state.currentStep]?.title,
-          subtitle: stepStatus !== 'complete' && state.steps[state.currentStep]?.description,
+          subtitle: state.steps[state.currentStep]?.description,
           open: state.isOpen,
           variant: 'actionable',
           leading: LeadingButtonMem,

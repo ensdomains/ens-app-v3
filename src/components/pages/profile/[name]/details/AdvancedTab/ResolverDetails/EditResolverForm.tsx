@@ -14,6 +14,7 @@ import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants
 import { useProfile } from '@app/hooks/useProfile'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { DispatchFn, TransactionActionTypes } from '@app/types'
 
 const supportsInterfaceAbi = [
   {
@@ -61,7 +62,7 @@ const validateResolver = async (address: string, provider: any) => {
         return undefined
       })
       .filter((x) => x)
-  } catch (error) {
+  } catch (error: any) {
     if (error.method === 'supportsInterface(bytes4)') {
       return ['Cannot determine if address supports common resolver methods']
     }
@@ -69,7 +70,7 @@ const validateResolver = async (address: string, provider: any) => {
   }
 }
 
-const customResolverErrorMessage = (errors) => {
+const customResolverErrorMessage = (errors: any) => {
   if (errors.customResolver?.type === 'minLength' || errors.customResolver?.type === 'maxLength') {
     return 'Address should be 42 characters long'
   }
@@ -89,7 +90,7 @@ const EditResolverFormContainer = styled.div(() => [
 ])
 
 const LatestResolverContainer = styled.div(
-  ({ theme }) => css`
+  () => css`
     display: flex;
     align-items: center;
     justify-content: flex-start;
@@ -102,7 +103,7 @@ const InputContainer = styled.div(
   `,
 )
 
-const EditResolverForm = ({ onSubmit, dispatch }: { onSubmit: () => null }) => {
+const EditResolverForm = ({ dispatch }: { dispatch: DispatchFn }) => {
   const router = useRouter()
   const { name } = router.query
 
@@ -112,7 +113,6 @@ const EditResolverForm = ({ onSubmit, dispatch }: { onSubmit: () => null }) => {
 
   const {
     register,
-    handleSubmit,
     watch,
     formState: { errors },
   } = useForm({ mode: 'onChange' })
@@ -146,11 +146,12 @@ const EditResolverForm = ({ onSubmit, dispatch }: { onSubmit: () => null }) => {
 
     const hasValidity = isValid()
 
-    dispatch({ type: 'setCanAdvance', payload: hasValidity })
+    dispatch({ type: TransactionActionTypes.setCanAdvance, payload: hasValidity })
 
     if (hasValidity) {
       let newResolver
       if (resolverChoice === 'latest') {
+        // eslint-disable-next-line prefer-destructuring
         newResolver = RESOLVER_ADDRESSES[0]
       }
       if (resolverChoice === 'custom') {
@@ -158,11 +159,11 @@ const EditResolverForm = ({ onSubmit, dispatch }: { onSubmit: () => null }) => {
       }
 
       dispatch({
-        type: 'setUpdateResolverTransactionInfo',
+        type: TransactionActionTypes.setUpdateResolverTransactionInfo,
         payload: {
           currentResolver: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
           newResolver,
-          name,
+          name: name as string,
         },
       })
     }
@@ -182,10 +183,10 @@ const EditResolverForm = ({ onSubmit, dispatch }: { onSubmit: () => null }) => {
             }
             type="warning"
           />
-          <Spacer $height={4} />
+          <Spacer $height="4" />
         </>
       ) : null}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <form>
         <LatestResolverContainer>
           <RadioButton
             label="Use latest resolver"
@@ -223,7 +224,7 @@ const EditResolverForm = ({ onSubmit, dispatch }: { onSubmit: () => null }) => {
             error={customResolverErrorMessage(errors)}
           />
         </InputContainer>
-        <Spacer $height={4} />
+        <Spacer $height="4" />
       </form>
     </EditResolverFormContainer>
   )

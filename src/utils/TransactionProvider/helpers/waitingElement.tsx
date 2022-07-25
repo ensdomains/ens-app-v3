@@ -1,5 +1,4 @@
 import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
 
 import { Spinner, Typography } from '@ensdomains/thorin'
 
@@ -31,9 +30,7 @@ const StyledSpinner = styled(Spinner)(
   `,
 )
 
-export const WaitingElement = ({ title, subTitle }) => {
-  const { t } = useTranslation()
-
+export const WaitingElement = ({ title, subTitle }: { title: string; subTitle: string }) => {
   return (
     <WaitingContainer>
       <StyledSpinner color="accent" />

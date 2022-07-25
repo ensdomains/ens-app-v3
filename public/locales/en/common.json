@@ -97,6 +97,7 @@
       "currentResolver": "Current Resolver",
       "newResolver": "New Resolver"
     },
+    "itemValue": {},
     "status": {
       "pending": {
         "regular": "Pending"

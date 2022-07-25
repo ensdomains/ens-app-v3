@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { useTransactionTwo } from '@app/utils/TransactionProvider/TransactionProviderTwo'
+import { DispatchFn, TransactionActionTypes } from '@app/types'
 
 const AccordionTitle = styled.div<{
   $isActive?: boolean
@@ -143,9 +144,9 @@ const EditButton = styled(Button)(
 
 export interface AccordionData {
   title: string
-  body: React.ReactNode
+  body: React.FC
   disabled?: boolean
-  dialog?: React.ReactNode
+  dialog?: (arg: { dispatch: DispatchFn }) => void
 }
 interface AccordionProps {
   data: AccordionData[]
@@ -157,9 +158,13 @@ const Accordion = ({ data }: AccordionProps) => {
 
   const [activeItem, setActiveItem] = useState(0)
 
-  const handleEditClick = (idx) => {
-    data[idx].dialog(transactionUtils)
-    transactionUtils.dispatch({ type: 'openModal ' })
+  const handleEditClick = (idx: number) => {
+    if (transactionUtils) {
+      data[idx].dialog?.(transactionUtils)
+      transactionUtils?.dispatch({ type: TransactionActionTypes.openModal })
+    } else {
+      console.error('no transactionUtils')
+    }
   }
 
   const disabled = data?.filter((x) => x.disabled) ?? []

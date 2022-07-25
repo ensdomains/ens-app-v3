@@ -21,10 +21,7 @@ import { useAccount, useSigner } from 'wagmi'
 
 type StepStorageItems = Record<string, StepStorageItem>
 
-export type TxFunc = (
-  signer: JsonRpcSigner,
-  address: string,
-) => Promise<TxStateType>
+export type TxFunc = (signer: JsonRpcSigner, address: string) => Promise<TxStateType>
 
 const TransactionContext = createContext<{
   setCurrentTransaction: (key: string, tx?: TxFunc) => void
@@ -42,10 +39,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient()
 
   const [currentTxKey, setCurrentTxKey] = useState<string | null>(null)
-  const [stepStorage, setStepStorage] = useLocalStorage<StepStorageItems>(
-    'transaction-step',
-    {},
-  )
+  const [stepStorage, setStepStorage] = useLocalStorage<StepStorageItems>('transaction-step', {})
   const [shouldClose, setShouldClose] = useState(false)
 
   const { data: signerData } = useSigner()
@@ -93,8 +87,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       if (!currentTxKey) return
       setStepStorage((prevStepStorage) => {
         const currentTx = prevStepStorage[currentTxKey]
-        const newStep =
-          typeof func === 'function' ? func(currentTx.currentStep || 0) : func
+        const newStep = typeof func === 'function' ? func(currentTx.currentStep || 0) : func
         return {
           ...prevStepStorage,
           [currentTxKey]: {
@@ -132,8 +125,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       const item = stepStorage[key]
       console.log('has item', item)
       if (!item) return false
-      if (item.currentStep + 1 >= item.data.length && item.currentStepComplete)
-        return false
+      if (item.currentStep + 1 >= item.data.length && item.currentStepComplete) return false
       return true
     },
     [stepStorage],
@@ -171,10 +163,7 @@ export const TransactionProvider = ({ children }: { children: ReactNode }) => {
       const _prev = prevStepStorage
       Object.keys(_prev).forEach((key) => {
         const item = _prev[key]
-        if (
-          item.currentStep + 1 >= item.data.length &&
-          item.currentStepComplete
-        ) {
+        if (item.currentStep + 1 >= item.data.length && item.currentStepComplete) {
           delete _prev[key]
         } else if (item.currentStepComplete) {
           _prev[key] = {

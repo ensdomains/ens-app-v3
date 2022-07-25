@@ -10,6 +10,7 @@ import {
   createTransactionStep,
   createMiningStep,
 } from '@app/utils/TransactionProvider/helpers/updateResolver'
+import { DispatchFn, TransactionActionTypes } from '@app/types'
 import ResolverDetails from './ResolverDetails/ResolverDetails'
 import { EditResolverForm } from './ResolverDetails/EditResolverForm'
 import Fuses from './Fuses'
@@ -44,9 +45,9 @@ const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => 
   {
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
-    dialog: ({ dispatch }) => {
+    dialog: ({ dispatch }: { dispatch: DispatchFn }) => {
       dispatch({
-        type: 'setSteps',
+        type: TransactionActionTypes.setSteps,
         payload: [
           {
             type: 'info',
@@ -56,19 +57,15 @@ const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => 
             buttons: {
               leading: {
                 type: 'cancel',
-                clickHandler:
-                  ({ dispatch }) =>
-                  async () => {
-                    dispatch({ type: 'cancelFlow' })
-                  },
+                clickHandler: () => async () => {
+                  dispatch({ type: TransactionActionTypes.cancelFlow })
+                },
               },
               trailing: {
                 type: 'update',
-                clickHandler:
-                  ({ dispatch }) =>
-                  async () => {
-                    dispatch({ type: 'increaseStep' })
-                  },
+                clickHandler: () => async () => {
+                  dispatch({ type: TransactionActionTypes.increaseStep })
+                },
               },
             },
           },
@@ -76,7 +73,7 @@ const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => 
           createMiningStep(),
         ],
       })
-      dispatch({ type: 'openModal' })
+      dispatch({ type: TransactionActionTypes.openModal })
     },
   },
   {
