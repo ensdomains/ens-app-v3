@@ -1987,9 +1987,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ensjs@npm:^3.0.0-alpha.5":
-  version: 3.0.0-alpha.5
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.5"
+"@ensdomains/ensjs@npm:^3.0.0-alpha.6":
+  version: 3.0.0-alpha.6
+  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.6"
   dependencies:
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/content-hash": ^2.5.7
@@ -2001,7 +2001,7 @@ __metadata:
     idna-uts46-hx: 3.4.0
   peerDependencies:
     ethers: "*"
-  checksum: da209f1875fe422ce54ad4ef5f63d2451c4a7e961448f0ff37b87d92e5753fff8f9e8a855846dc03a58d2789b06433f9134e203ac99ff64f7ad8a5f4dba1d107
+  checksum: a3d7d6bd406730db5fc671e89bb2a718891fa9f2d96a2b54768e43649e50cac77340129b5706fd4c75707b3935190d456ec27ada1bed5a4108732eb34ba25b54
   languageName: node
   linkType: hard
 
@@ -2737,7 +2737,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.6.8":
+"@ethersproject/providers@npm:5.6.8, @ethersproject/providers@npm:^5.6.8":
   version: 5.6.8
   resolution: "@ethersproject/providers@npm:5.6.8"
   dependencies:
@@ -11318,9 +11318,10 @@ __metadata:
     "@ensdomains/ens-contracts": ^0.0.12
     "@ensdomains/ens-test-env": ^0.1.4
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": ^3.0.0-alpha.5
+    "@ensdomains/ensjs": ^3.0.0-alpha.6
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
+    "@ethersproject/providers": ^5.6.8
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5

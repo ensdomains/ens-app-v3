@@ -139,8 +139,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <BreakpointProvider queries={breakpoints}>
                   <GlobalStyle />
                   <ThorinGlobalStyles />
-                  <Notifications />
                   <TransactionProvider>
+                    <Notifications />
                     <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
                   </TransactionProvider>
                 </BreakpointProvider>

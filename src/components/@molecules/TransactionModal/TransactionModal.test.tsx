@@ -7,6 +7,7 @@ import {
   screen,
   waitFor,
 } from '@app/test-utils'
+import { isIOS } from '@app/utils/isIOS'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
 import { useAccount, useSigner } from 'wagmi'
@@ -15,20 +16,25 @@ import { TransactionModal } from './TransactionModal'
 jest.mock('@app/hooks/useChainName')
 jest.mock('@rainbow-me/rainbowkit')
 jest.mock('wagmi')
+jest.mock('@app/utils/isIOS')
 
 const mockUseChainName = mockFunction(useChainName)
 const mockUseAddRecentTransaction = mockFunction(useAddRecentTransaction)
 const mockUseAccount = mockFunction(useAccount)
 const mockUseSigner = mockFunction(useSigner)
+const mockIsIOS = mockFunction(isIOS)
 
-const mockGenerateTx = jest.fn()
+const mockOnComplete = jest.fn()
+const mockSendTransaction = jest.fn()
+const mockSendUncheckedTransaction = jest.fn()
+const mockEstimateGas = jest.fn()
 
 const renderHelper = async ({
   actionName,
   displayItems,
-  generateTx,
   currentStep,
   stepCount,
+  transaction,
   ...props
 }: Partial<ComponentProps<typeof TransactionModal>> = {}) => {
   render(
@@ -39,7 +45,9 @@ const renderHelper = async ({
       stepCount={stepCount || 1}
       actionName={actionName || 'test'}
       displayItems={displayItems || []}
-      generateTx={generateTx || mockGenerateTx}
+      transaction={transaction || ({} as any)}
+      onComplete={mockOnComplete}
+      txKey="test"
     />,
   )
   await waitFor(
@@ -57,14 +65,21 @@ const goToRequest = () => {
 const goToConfirm = async () => {
   fireEvent.click(screen.getByTestId('transaction-modal-request-trailing-btn'))
   await act(async () => {
-    await waitFor(() => expect(mockGenerateTx).toHaveBeenCalled())
+    await waitFor(() => expect(mockSendTransaction).toHaveBeenCalled())
   })
 }
 
 describe('TransactionModal', () => {
   mockUseChainName.mockReturnValue('ethereum')
   mockUseAccount.mockReturnValue({ data: { address: 'mock-address' } })
-  mockUseSigner.mockReturnValue({ data: 'mock-signer' as any })
+  mockUseSigner.mockReturnValue({
+    data: {
+      sendTransaction: mockSendTransaction,
+      sendUncheckedTransaction: mockSendUncheckedTransaction,
+      estimateGas: mockEstimateGas,
+    } as any,
+  })
+  mockIsIOS.mockReturnValue(false)
   it('should render on open', async () => {
     await renderHelper()
     expect(screen.getByText('transaction.modal.request.title')).toBeVisible()
@@ -141,11 +156,11 @@ describe('TransactionModal', () => {
         ).toHaveTextContent('trailingTest')
       })
       it('should only show preSteps on open', async () => {
-        mockGenerateTx.mockImplementation(async () => ({
-          hash: '0x123',
-          confirmations: 0,
-        }))
+        mockSendTransaction.mockResolvedValue({
+          hash: 'mock-hash',
+        })
         mockUseAddRecentTransaction.mockReturnValue(() => {})
+        mockEstimateGas.mockResolvedValue(1)
         await renderHelper({
           stepCount: 2,
           preSteps: {
@@ -165,8 +180,32 @@ describe('TransactionModal', () => {
       })
     })
     describe('request', () => {
+      it('should only show confirm button as disabled if gas is not estimated', async () => {
+        mockSendTransaction.mockImplementation(
+          async () => new Promise(() => {}),
+        )
+        mockUseAddRecentTransaction.mockReturnValue(() => {})
+        mockEstimateGas.mockResolvedValue(undefined)
+        await renderHelper()
+        expect(
+          screen.getByTestId('transaction-modal-request-trailing-btn'),
+        ).toBeDisabled()
+      })
+      it('should only show confirm button as enabled if gas is estimated', async () => {
+        mockSendTransaction.mockImplementation(
+          async () => new Promise(() => {}),
+        )
+        mockUseAddRecentTransaction.mockReturnValue(() => {})
+        mockEstimateGas.mockResolvedValue(1)
+        await renderHelper()
+        expect(
+          screen.getByTestId('transaction-modal-request-trailing-btn'),
+        ).toBeEnabled()
+      })
       it('should go to the confirm stage and run the transaction when the confirm button is clicked', async () => {
-        mockGenerateTx.mockImplementation(async () => new Promise(() => {}))
+        mockSendTransaction.mockImplementation(
+          async () => new Promise(() => {}),
+        )
         mockUseAddRecentTransaction.mockReturnValue(() => {})
         await renderHelper()
         await goToConfirm()
@@ -196,7 +235,9 @@ describe('TransactionModal', () => {
     })
     describe('confirm', () => {
       it('should show the try again button as disabled if there is no error', async () => {
-        mockGenerateTx.mockImplementation(async () => new Promise(() => {}))
+        mockSendTransaction.mockImplementation(
+          async () => new Promise(() => {}),
+        )
         mockUseAddRecentTransaction.mockReturnValue(() => {})
         await renderHelper()
         await goToConfirm()
@@ -205,7 +246,7 @@ describe('TransactionModal', () => {
         ).toBeDisabled()
       })
       it('should show the error message and enable the try again button if there is an error', async () => {
-        mockGenerateTx.mockImplementation(async () => {
+        mockSendTransaction.mockImplementation(async () => {
           throw new Error('error123')
         })
         mockUseAddRecentTransaction.mockReturnValue(() => {})
@@ -216,20 +257,37 @@ describe('TransactionModal', () => {
           screen.getByTestId('transaction-modal-confirm-trailing-btn'),
         ).toBeEnabled()
       })
-      it('should pass the address and signer as arguments to generateTx', async () => {
-        mockGenerateTx.mockImplementation(async () => {})
+      it('should pass the transaction to send transaction', async () => {
+        mockSendTransaction.mockImplementation(async () => {})
         mockUseAddRecentTransaction.mockReturnValue(() => {})
-        await renderHelper()
+        mockEstimateGas.mockResolvedValue(1)
+        await renderHelper({
+          transaction: { data: 'test123' },
+        })
         await goToConfirm()
-        expect(mockGenerateTx).toHaveBeenCalledWith(
-          'mock-signer',
-          'mock-address',
-        )
+        expect(mockSendTransaction).toHaveBeenCalledWith({
+          gasLimit: 1,
+          data: 'test123',
+        })
+      })
+      it('should pass the transaction to send unchecked transaction is iOS', async () => {
+        mockSendTransaction.mockImplementation(async () => {})
+        mockUseAddRecentTransaction.mockReturnValue(() => {})
+        mockEstimateGas.mockResolvedValue(1)
+        mockIsIOS.mockReturnValue(true)
+        await renderHelper({
+          transaction: { data: 'test123' },
+        })
+        await goToConfirm()
+        expect(mockSendTransaction).toHaveBeenCalledWith({
+          gasLimit: 1,
+          data: 'test123',
+        })
+        mockIsIOS.mockReturnValue(false)
       })
       it('should go to the complete stage if there is no error from the transaction', async () => {
-        mockGenerateTx.mockImplementation(async () => ({
+        mockSendTransaction.mockImplementation(async () => ({
           hash: '0x123',
-          confirmations: 0,
         }))
         mockUseAddRecentTransaction.mockReturnValue(() => {})
         await renderHelper()
@@ -239,9 +297,8 @@ describe('TransactionModal', () => {
         ).toBeVisible()
       })
       it('should add transaction to recent transactions on success', async () => {
-        mockGenerateTx.mockImplementation(async () => ({
+        mockSendTransaction.mockImplementation(async () => ({
           hash: '0x123',
-          confirmations: 0,
         }))
         const mockAddTransaction = jest.fn()
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
@@ -249,7 +306,7 @@ describe('TransactionModal', () => {
         await renderHelper()
         await goToConfirm()
         expect(mockAddTransaction).toHaveBeenCalledWith({
-          description: 'test',
+          description: JSON.stringify({ action: 'test', key: 'test' }),
           hash: '0x123',
           confirmations: undefined,
         })
@@ -257,9 +314,8 @@ describe('TransactionModal', () => {
     })
     describe('complete', () => {
       it('should run success callback and dismiss callback on success button click', async () => {
-        mockGenerateTx.mockImplementation(async () => ({
+        mockSendTransaction.mockImplementation(async () => ({
           hash: '0x123',
-          confirmations: 0,
         }))
         mockUseAddRecentTransaction.mockReturnValue(() => {})
 
@@ -278,9 +334,8 @@ describe('TransactionModal', () => {
         expect(onDismiss).toHaveBeenCalled()
       })
       it('should use the complete title if available', async () => {
-        mockGenerateTx.mockImplementation(async () => ({
+        mockSendTransaction.mockImplementation(async () => ({
           hash: '0x123',
-          confirmations: 0,
         }))
         mockUseAddRecentTransaction.mockReturnValue(() => {})
         await renderHelper({
@@ -290,9 +345,8 @@ describe('TransactionModal', () => {
         expect(screen.getByText('test-title-123')).toBeVisible()
       })
       it('should use the complete button label if available', async () => {
-        mockGenerateTx.mockImplementation(async () => ({
+        mockSendTransaction.mockImplementation(async () => ({
           hash: '0x123',
-          confirmations: 0,
         }))
         mockUseAddRecentTransaction.mockReturnValue(() => {})
         await renderHelper({

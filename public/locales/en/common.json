@@ -4,6 +4,7 @@
   "loading": "Loading",
   "action": {
     "cancel": "Cancel",
+    "close": "Close",
     "save": "Save",
     "edit": "Edit",
     "view": "View",
@@ -96,16 +97,15 @@
       "confirmed": {
         "regular": "Confirmed",
         "notifyTitle": "Transaction Successful",
-        "notifyMessage": "Your \"%s\" transaction was successful"
+        "notifyMessage": "Your \"{{action}}\" transaction was successful"
       },
       "failed": {
         "regular": "Failed",
         "notifyTitle": "Transaction Failure",
-        "notifyMessage": "Your \"%s\" transaction failed and was reverted"
+        "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
       }
     },
     "modal": {
-      "leadingButton": "Cancel",
       "preSteps": {
         "trailingButton": "Start",
         "trailingButtonResume": "Resume",
