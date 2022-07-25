@@ -1,6 +1,5 @@
 import { validate } from '@ensdomains/ens-validation'
 import { formatsByName } from '@ensdomains/address-encoder'
-import { isAddress } from 'ethers/lib/utils'
 
 export const hasNonAscii = () => {
   const strs = window.location.pathname.split('/')
@@ -19,9 +18,11 @@ export const validateCryptoAddress =
       const coinTypeInstance = formatsByName[coin.toUpperCase()]
       coinTypeInstance.decoder(address)
       return true
-    } catch (e) {
-      console.log(e)
-      const error = e?.message
-      return error
+    } catch (e: any) {
+      console.log(e, typeof e)
+      if (typeof e === 'string') return e
+      if (e.message) return e.message
+      if (e.toString) return e.toString()
+      return 'Invalid address'
     }
   }
