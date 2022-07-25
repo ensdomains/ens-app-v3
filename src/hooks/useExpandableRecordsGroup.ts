@@ -52,7 +52,9 @@ const useExpandableRecordsGroup = <T>({
     if (!oldValues[key]) return
     const { [key]: _, ...otherValues } = oldValues
     if (shouldRemove) {
-      setValue(group, otherValues as PathValue<T, Path<T>>)
+      setValue(group, otherValues as PathValue<T, Path<T>>, {
+        shouldDirty: true,
+      })
     } else {
       const newValues = { ...otherValues, [key]: '' }
       setValue(group, newValues as PathValue<T, Path<T>>, { shouldDirty: true })

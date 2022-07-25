@@ -1,4 +1,5 @@
 import { validate } from '@ensdomains/ens-validation'
+import { formatsByName } from '@ensdomains/address-encoder'
 import { isAddress } from 'ethers/lib/utils'
 
 export const hasNonAscii = () => {
@@ -13,13 +14,14 @@ export const hasNonAscii = () => {
 
 export const validateCryptoAddress =
   (coin: string) =>
-  (address: string): string | boolean => {
-    const coinName = coin.toLowerCase()
-    switch (coinName) {
-      case 'eth':
-      case 'bnb':
-        return isAddress(address) ? true : 'Invalid address format'
-      default:
-        return true
+  async (address: string): Promise<string | boolean> => {
+    try {
+      const coinTypeInstance = formatsByName[coin.toUpperCase()]
+      coinTypeInstance.decoder(address)
+      return true
+    } catch (e) {
+      console.log(e)
+      const error = e?.message
+      return error
     }
   }

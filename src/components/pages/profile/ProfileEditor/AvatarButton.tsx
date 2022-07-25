@@ -1,14 +1,13 @@
-import { Avatar } from '@ensdomains/thorin'
+import { Avatar, Dropdown } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import CameraIcon from '@app/assets/Camera.svg'
 import React from 'react'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`
-    width: 100%;
-    height: 100%;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
-    overflow: hidden;
     background-color: ${theme.colors.white};
 
     ::after {
@@ -71,18 +70,39 @@ type Props = {
   validated?: boolean
   error?: boolean
   src?: string
+  onSelectOption?: (value: string) => void
 }
 
-const AvatarButton = ({ validated, error, src }: Props) => {
+const AvatarButton = ({ validated, error, src, onSelectOption }: Props) => {
+  const handleSelectOption = (value: string) => () => {
+    if (onSelectOption) onSelectOption(value)
+  }
+
   return (
-    <Container $validated={validated} $error={error}>
-      <Avatar label="profile-button-avatar" src={src} noBorder />
-      {!validated && !error && (
-        <IconMask>
-          <CameraIcon />
-        </IconMask>
-      )}
-    </Container>
+    <Dropdown
+      items={[
+        {
+          label: 'Select NFT',
+          color: 'black',
+          onClick: handleSelectOption('nft'),
+        },
+        {
+          label: 'Upload Image',
+          color: 'black',
+          onClick: handleSelectOption('upload'),
+        },
+      ]}
+      keepMenuOnTop
+    >
+      <Container $validated={validated} $error={error} type="button">
+        <Avatar label="profile-button-avatar" src={src} noBorder />
+        {!validated && !error && (
+          <IconMask>
+            <CameraIcon />
+          </IconMask>
+        )}
+      </Container>
+    </Dropdown>
   )
 }
 

@@ -12,7 +12,6 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { cleanup, fireEvent } from '@testing-library/react'
-import { formSafeKey } from '@app/utils/editor'
 import ProfileEditor from './ProfileEditor'
 
 const mockProfileData = {
@@ -182,33 +181,17 @@ describe('ProfileEditor', () => {
     })
   })
 
-  it('should call setRecords when data is submitted', async () => {
-    render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
-
-    const submit = await screen.findByTestId('profile-editor-submit')
-    fireEvent.click(submit)
-    await waitFor(() => {
-      expect(mockSetCurrentTransaction).toHaveBeenCalled()
-    })
-    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
-    await waitFor(() => {
-      expect(mockSetRecords).toHaveBeenCalled()
-    })
-  })
-
-  it('should replace coinType with empty string when deleted', async () => {
+  it('should submit empty string when an existing record is deleted', async () => {
     render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
 
     const tab = await screen.findByTestId('address-tab')
     fireEvent.click(tab)
 
-    const selectableInuput = await screen.findByTestId('selectable-input-eth')
-    const deleteButton = within(selectableInuput).getByTestId(
-      'selectable-input-delete',
-    )
+    const recordInput = await screen.findByTestId('record-input-ETH')
+    const deleteButton = within(recordInput).getByTestId('record-input-delete')
     fireEvent.click(deleteButton)
     await waitFor(() => {
-      expect(selectableInuput).not.toBeVisible()
+      expect(recordInput).not.toBeVisible()
     })
 
     screen.getByTestId('profile-editor-submit').click()
@@ -227,30 +210,25 @@ describe('ProfileEditor', () => {
     expect(mockSetRecords.mock.calls[0][1].records.coinTypes.length).toBe(1)
   })
 
-  it('should', async () => {
+  it('should submit a key and value when a new record is created', async () => {
     render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
 
     const tab = await screen.findByTestId('address-tab')
     fireEvent.click(tab)
 
-    const addButton = await screen.findByTestId('add-address-button')
+    const addButton = await screen.findByTestId('add-record-button')
     fireEvent.click(addButton)
 
-    const select = await screen.findByTestId('select-container')
-
+    const select = await screen.findByTestId('add-record-button-option-DOT')
     fireEvent.click(select)
 
-    const listbox = await screen.findByRole('listbox')
-    const option = await within(listbox).findByText('DOT')
-    fireEvent.click(option)
-
-    await waitFor(() => {
-      expect(screen.getByTestId('selectable-input-dot')).toBeVisible()
-    })
+    const recordInput = await screen.findByTestId('record-input-DOT')
+    const recordInputInput =
+      within(recordInput).getByTestId('record-input-input')
 
     await userEvent.type(
-      screen.getByTestId('selectable-input-dot-input'),
-      '0x123',
+      recordInputInput,
+      '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
     )
 
     screen.getByTestId('profile-editor-submit').click()
@@ -266,52 +244,41 @@ describe('ProfileEditor', () => {
       mockSetRecords.mock.calls[0][1].records.coinTypes.find(
         (record: any) => record.key === 'DOT',
       ).value,
-    ).toBe('0x123')
+    ).toBe('5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
     expect(mockSetRecords.mock.calls[0][1].records.coinTypes.length).toBe(1)
   })
 
-  it('should create address field when creating a field', async () => {
+  it('should set submit button to disabled if new record is created an then deleted', async () => {
     render(<ProfileEditor open onDismiss={() => {}} name="test.eth" />)
 
-    const tab = await screen.findByTestId('other-tab')
+    const tab = await screen.findByTestId('address-tab')
     fireEvent.click(tab)
 
-    const addButton = await screen.findByTestId('add-other-button')
+    const addButton = await screen.findByTestId('add-record-button')
     fireEvent.click(addButton)
 
-    const select = await screen.findByTestId('select-container')
+    const select = await screen.findByTestId('add-record-button-option-DOT')
     fireEvent.click(select)
 
-    await userEvent.type(screen.getByTestId('select-input'), 'test.key')
-
-    const listbox = await screen.findByRole('listbox')
-    const option = await within(listbox).findByRole('option')
-    fireEvent.click(option)
-
-    await waitFor(() => {
-      expect(
-        screen.getByTestId(formSafeKey('selectable-input-test.key')),
-      ).toBeVisible()
-    })
+    const recordInput = await screen.findByTestId('record-input-DOT')
+    const recordInputInput =
+      within(recordInput).getByTestId('record-input-input')
 
     await userEvent.type(
-      screen.getByTestId(formSafeKey('selectable-input-test.key-input')),
-      '0x123',
+      recordInputInput,
+      '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
     )
-    screen.getByTestId('profile-editor-submit').click()
+
+    const deleteRecord = within(recordInput).getByTestId('record-input-delete')
+    fireEvent.click(deleteRecord)
+
+    const submitButton = screen.getByTestId('profile-editor-submit')
     await waitFor(() => {
-      expect(mockSetCurrentTransaction).toHaveBeenCalled()
+      expect(submitButton).toHaveAttribute('disabled')
     })
-    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
+    fireEvent.click(submitButton)
     await waitFor(() => {
-      expect(mockSetRecords).toHaveBeenCalled()
-      console.log(mockSetRecords.mock.calls[0][1].records.texts)
-      expect(
-        mockSetRecords.mock.calls[0][1].records.texts.find(
-          (record: any) => record.key === 'test.key',
-        )?.value,
-      ).toBe('0x123')
-      expect(mockSetRecords.mock.calls[0][1].records.texts.length).toBe(1)
+      expect(mockSetCurrentTransaction).not.toHaveBeenCalled()
     })
   })
 })

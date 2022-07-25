@@ -99,7 +99,7 @@ export const RecordInput = forwardRef(
     }
 
     return (
-      <Container data-testid="record-input">
+      <Container data-testid={`record-input-${label}`}>
         <InputWrapper $error={!!error}>
           <Input
             size="medium"

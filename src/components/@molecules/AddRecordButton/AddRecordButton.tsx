@@ -352,10 +352,21 @@ export const AddRecordButton = ({
       onAddRecord(inputValue)
     }
     toggle(false)
+    setInputValue('')
+  }
+
+  const handleSelectOption = (value: string) => () => {
+    if (onAddRecord) onAddRecord(value)
+    toggle(false)
+    setInputValue('')
   }
 
   return (
-    <Container $state={state} ref={containerRef}>
+    <Container
+      $state={state}
+      ref={containerRef}
+      data-testid="add-record-button"
+    >
       <ControlsContainer $state={state}>
         <ControlsHeader>
           <ControlsHeaderLeading>
@@ -405,7 +416,8 @@ export const AddRecordButton = ({
                     option={option}
                     inline={inline}
                     showUnsupportedPrefix={!inline}
-                    onClick={() => onAddRecord && onAddRecord(option.value)}
+                    onClick={handleSelectOption(option.value)}
+                    data-testid={`add-record-button-option-${option.value}`}
                   />
                 ))}
               </OptionsContainer>

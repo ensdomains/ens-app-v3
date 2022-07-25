@@ -59,7 +59,7 @@ const NameContainer = styled.div(({ theme }) => [
     height: 45px;
     width: 100%;
     padding-left: 134px;
-    padding-right: 16px;
+    padding-right: ${theme.space['8']};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     line-height: 45px;
     vertical-align: middle;
@@ -71,10 +71,6 @@ const NameContainer = styled.div(({ theme }) => [
     text-overflow: ellipsis;
     overflow: hidden;
   `,
-  mq.sm.min(css`
-    font-size: 1.5rem;
-    text-align: left;
-  `),
 ])
 
 const ContentContainer = styled.div(
@@ -85,6 +81,7 @@ const ContentContainer = styled.div(
     flex-direction: column;
     gap: ${theme.space['2']};
     overflow: hidden;
+    z-index: 1;
   `,
 )
 
@@ -93,7 +90,7 @@ const TabButtonsContainer = styled.div(
     display: flex;
     flex-wrap: wrap;
     gap: ${theme.space['1.25']} ${theme.space['3']};
-    padding: 0 ${theme.space['3']};
+    padding: 0 ${theme.space['6']};
   `,
 )
 
@@ -204,47 +201,6 @@ export type ProfileEditorType = {
   }
 }
 
-// const getDeletedFieldsByType = (
-//   type: 'text' | 'addr' | 'contentHash',
-//   originalData: ProfileEditorType,
-//   updatedData: ProfileEditorType,
-// ) => {
-//   const entries = []
-//   if (type === 'text') {
-//     if (originalData.avatar && !updatedData.avatar) entries.push(['avatar', ''])
-//     if (originalData.banner && !updatedData.banner) entries.push(['banner', ''])
-//     if (originalData.general)
-//       entries.push(
-//         ...Object.keys(originalData.general)
-//           .filter((key) => !updatedData.general[key])
-//           .map((key) => [convertFormSafeKey(key), '']),
-//       )
-//     if (originalData.accounts)
-//       entries.push(
-//         ...Object.keys(originalData.accounts)
-//           .filter((key) => !updatedData.accounts[key])
-//           .map((key) => [convertFormSafeKey(key), '']),
-//       )
-//     if (originalData.other)
-//       entries.push(
-//         ...Object.keys(originalData.other)
-//           .filter((key) => !updatedData.other[key])
-//           .map((key) => [convertFormSafeKey(key), '']),
-//       )
-//   } else if (type === 'addr') {
-//     if (originalData.address)
-//       entries.push(
-//         ...Object.keys(originalData.address)
-//           .filter((key) => !updatedData.address[key])
-//           .map((key) => [convertFormSafeKey(key), '']),
-//       )
-//   } else if (type === 'contentHash') {
-//     if (originalData.website && !updatedData.website)
-//       entries.push(['website', ''])
-//   }
-//   return Object.fromEntries(entries)
-// }
-
 const getFieldsByType = (
   type: 'text' | 'addr' | 'contentHash',
   data: ProfileEditorType,
@@ -310,8 +266,10 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
 
   const {
     register,
+    unregister,
     formState,
     reset,
+    resetField,
     setValue,
     getValues,
     getFieldState,
@@ -550,6 +508,11 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
     name: 'avatar',
   })
 
+  const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
+
+  console.log(formState.dirtyFields)
+  console.log(formState.isDirty)
+
   const ref = useRef<HTMLDivElement>(null)
   const targetRef = useRef<HTMLFormElement>(null)
   if (loading) return null
@@ -561,7 +524,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
           onSubmit={handleSubmit(handleTransaction)}
           ref={targetRef}
         >
-          <Banner>
+          <Banner zIndex={10}>
             <AvatarWrapper>
               <AvatarButton src={avatar} />
             </AvatarWrapper>
@@ -733,32 +696,16 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                               autoCorrect="off"
                               spellCheck={false}
                               onDelete={() => {
-                                clearErrors([`accounts.${key}`])
                                 removeAccountKey(key)
+                                resetField(`accounts.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
                               }}
                               {...register(`accounts.${key}`, {})}
                             />
                           ))}
-                          {hasAccountOptions && (
-                            <AddRecordButton
-                              autocomplete
-                              options={availableAccountOptions}
-                              messages={{
-                                addRecord: t(
-                                  'profileEditor.tabs.accounts.addAccount',
-                                ),
-                                noOptions: t(
-                                  'profileEditor.tabs.accounts.noOptions',
-                                ),
-                              }}
-                              onAddRecord={(key) => {
-                                addAccountKey(key)
-                                process.nextTick(() => {
-                                  setFocus(`accounts.${key}`)
-                                })
-                              }}
-                            />
-                          )}
                         </>
                       ),
                       address: (
@@ -811,78 +758,52 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                               autoCorrect="off"
                               spellCheck={false}
                               onDelete={() => {
-                                clearErrors([`address.${key}`])
                                 removeAddressKey(key)
+                                resetField(`address.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
+                                unregister(`address.${key}`)
                               }}
                               {...register(`address.${key}`, {
                                 validate: validateCryptoAddress(key),
                               })}
                             />
                           ))}
-                          {hasAddressOptions && (
-                            <AddRecordButton
-                              autocomplete
-                              options={availableAddressOptions}
-                              messages={{
-                                addRecord: t(
-                                  'profileEditor.tabs.address.addAddress',
-                                ),
-                                noOptions: t(
-                                  'profileEditor.tabs.address.noOptions',
-                                ),
-                              }}
-                              onAddRecord={(key) => {
-                                addAddressKey(key)
-                                process.nextTick(() => {
-                                  setFocus(`address.${key}`)
-                                })
-                              }}
-                            />
-                          )}
                         </>
                       ),
-                      website: (
-                        <>
-                          {websiteOption ? (
-                            <RecordInput
-                              option={websiteOption}
-                              placeholder={t([
-                                `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
-                                  websiteOption.value,
-                                )}`,
-                                `profileEditor.tabs.contentHash.placeholder.default`,
-                              ])}
-                              error={
-                                getFieldState(`website`, formState).error
-                                  ?.message
-                              }
-                              validated={
-                                getFieldState(`website`, formState).isDirty
-                              }
-                              onDelete={() => {
-                                setValue('website', '', {
-                                  shouldDirty: hasExistingWebsite,
-                                })
-                                setWebsiteOption(undefined)
-                              }}
-                              {...register('website', {})}
-                            />
-                          ) : (
-                            <AddRecordButton
-                              options={websiteOptions}
-                              onAddRecord={(key) => {
-                                const option = websiteOptions.find(
-                                  ({ value }) => value === key,
-                                )
-                                if (!option) return
-                                setWebsiteOption(option)
-                                process.nextTick(() => {
-                                  setFocus('website')
-                                })
-                              }}
-                            />
-                          )}
-                        </>
+                      website: websiteOption && (
+                        <RecordInput
+                          option={websiteOption}
+                          placeholder={t([
+                            `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
+                              websiteOption.value,
+                            )}`,
+                            `profileEditor.tabs.contentHash.placeholder.default`,
+                          ])}
+                          error={
+                            getFieldState(`website`, formState).error?.message
+                          }
+                          validated={
+                            getFieldState(`website`, formState).isDirty
+                          }
+                          onDelete={() => {
+                            if (hasExistingWebsite) {
+                              setValue('website', '', { shouldDirty: true })
+                            } else {
+                              setValue('website', undefined)
+                              resetField('website', {
+                                keepDirty: false,
+                                keepError: false,
+                                keepTouched: false,
+                              })
+                            }
+
+                            setWebsiteOption(undefined)
+                          }}
+                          {...register('website', {})}
+                        />
                       ),
                       other: (
                         <>
@@ -894,6 +815,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 `profileEditor.tabs.other.placeholder.${convertFormSafeKey(
                                   key,
                                 )}`,
+
                                 `profileEditor.tabs.other.placeholder.default`,
                               ])}
                               error={
@@ -928,29 +850,16 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                               autoCorrect="off"
                               spellCheck={false}
                               onDelete={() => {
-                                clearErrors([`other.${key}`])
                                 removeOtherKey(key)
+                                resetField(`other.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
                               }}
                               {...register(`other.${key}`, {})}
                             />
                           ))}
-                          <AddRecordButton
-                            createable
-                            messages={{
-                              addRecord: t(
-                                'profileEditor.tabs.other.addRecord',
-                              ),
-                              createRecord: t(
-                                'profileEditor.tabs.other.createRecord',
-                              ),
-                            }}
-                            onAddRecord={(record) => {
-                              addOtherKey(record)
-                              process.nextTick(() => {
-                                setFocus(`other.${record}`)
-                              })
-                            }}
-                          />
                         </>
                       ),
                     }[tab]
@@ -968,7 +877,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button
-                disabled={hasErrors}
+                disabled={hasErrors || !hasChanges}
                 type="submit"
                 shadowless
                 data-testid="profile-editor-submit"
