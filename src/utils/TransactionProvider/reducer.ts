@@ -39,7 +39,7 @@ export function reducer(draft: TransactionState, action: Action) {
     }
     case TransactionActionTypes.setUpdateResolverTransactionInfo: {
       const transactionIndex = draft.steps.findIndex(
-        (step) => step.transactionInfo.transactionType === 'updateResolver',
+        (step) => step.transactionType === 'updateResolver',
       )
 
       const currentTransactionInfo = draft.steps[transactionIndex].transactionInfo
@@ -64,10 +64,10 @@ export function reducer(draft: TransactionState, action: Action) {
     }
     case TransactionActionTypes.setUpdateResolverCompletionInfo: {
       const transactionIndex = draft.steps.findIndex(
-        (step) => step.transactionInfo.transactionType === 'updateResolver',
+        (step) => step.transactionType === 'updateResolver',
       )
       draft.steps[transactionIndex + 1].infoItems = draft.steps[transactionIndex].infoItems
-      draft.steps[transactionIndex + 1].transactionInfo.transactionHash = action.payload
+      draft.steps[transactionIndex + 1].transactionHash = action.payload
       break
     }
     case TransactionActionTypes.setStepStatus: {
