@@ -301,6 +301,7 @@ export const RecordsTab = ({
               {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
+
           {canEdit && (
             <EditButton disabled>
               <Typography weight="bold">

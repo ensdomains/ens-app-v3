@@ -18,6 +18,7 @@ import { ReactElement, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+import AdvancedEditor from '../../components/pages/profile/[name]/details/AdvancedEditor/AdvancedEditor'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -202,14 +203,17 @@ export default function Page() {
         ),
         trailing: {
           records: (
-            <RecordsTab
-              network={chainId}
-              name={normalisedName}
-              texts={(profile?.records?.texts as any) || []}
-              addresses={(profile?.records?.coinTypes as any) || []}
-              contentHash={profile?.records?.contentHash}
-              canEdit={selfAbilities.canEdit}
-            />
+            <>
+              <RecordsTab
+                network={chainId}
+                name={normalisedName}
+                texts={(profile?.records?.texts as any) || []}
+                addresses={(profile?.records?.coinTypes as any) || []}
+                contentHash={profile?.records?.contentHash}
+                canEdit={selfAbilities.canEdit}
+              />
+              <AdvancedEditor name={name} open onDismiss={() => {}} />
+            </>
           ),
           subnames: <SubnamesTab name={normalisedName} network={chainId} />,
           more: <More />,

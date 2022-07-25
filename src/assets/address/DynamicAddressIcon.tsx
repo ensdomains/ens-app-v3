@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic'
 
+export type AddressIconType = keyof typeof addressIconTypes
+
 export const addressIconTypes = {
   btc: dynamic(() => import('./AddressBitcoin.svg')),
   bnb: dynamic(() => import('./AddressBNB.svg')),
@@ -14,7 +16,7 @@ export const DynamicAddressIcon = ({
   name,
   ...props
 }: JSX.IntrinsicAttributes & {
-  name: keyof typeof addressIconTypes
+  name: AddressIconType
 }) => {
   const Icon = addressIconTypes[name]
   return <Icon {...props} />
