@@ -165,7 +165,11 @@
       },
       "address": {
         "label": "Address",
-        "addAddressRecord": "Add address record"
+        "addRecord": "Add address",
+        "noOptions": "No address options available",
+        "placeholder": {
+          "default": "Add address here..."
+        }
       },
       "other": {
         "label": "Other",

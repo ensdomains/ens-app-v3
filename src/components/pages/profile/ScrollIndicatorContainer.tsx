@@ -102,7 +102,7 @@ const ScrollIndicatorContainer = forwardRef<
     if (scrollRef.current) {
       const { scrollTop, scrollHeight, clientHeight } = scrollRef.current
       const scrollPercent = scrollTop / (scrollHeight - clientHeight)
-      if (scrollPercent < 0.9) setShow(false)
+      if (scrollPercent < 0.9) setShow(true)
       else setShow(false)
     }
   }

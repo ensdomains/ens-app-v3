@@ -19,7 +19,7 @@ const Container = styled.div<{ $state: TransitionState }>(
       ? theme.colors.white
       : theme.colors.foregroundTertiary};
     max-height: ${$state === 'exited' || $state === 'exiting'
-      ? theme.space['13']
+      ? theme.space['12']
       : theme.space['40']};
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
     overflow: hidden;
@@ -255,7 +255,7 @@ const ButtonContainer = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
     position: absolute;
-    bottom: 0;
+    bottom: -1px;
     left: 0;
     width: 100%;
     opacity: ${$state === 'entered' || $state === 'entering' ? 0 : 1};
@@ -391,6 +391,11 @@ export const AddRecordButton = ({
                   height: ${theme.space['10']};
                   border-radius: ${theme.radii.extraLarge};
                 `}
+                style={{
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden',
+                  whiteSpace: 'nowrap',
+                }}
                 padding="3.5"
                 onChange={(e) => setInputValue(e.target.value)}
               />
@@ -435,6 +440,7 @@ export const AddRecordButton = ({
           variant="transparent"
           shadowless
           onClick={handleButtonClick}
+          style={{ height: `${theme.space['12']}` }}
         >
           {addRecord}
         </Button>

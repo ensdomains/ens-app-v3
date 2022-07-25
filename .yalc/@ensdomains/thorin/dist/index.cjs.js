@@ -964,6 +964,7 @@
     height: ${e.space.full};
     padding: 0 ${e.space[n]};
     font-weight: ${e.fontWeights.medium};
+    text-overflow: ellipsis;
 
     &::placeholder {
       color: ${e.colors.textPlaceholder};

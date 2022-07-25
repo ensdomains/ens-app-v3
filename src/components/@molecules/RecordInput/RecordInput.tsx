@@ -1,5 +1,5 @@
 import { Button, Input, CloseSVG } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
+import styled, { css, useTheme } from 'styled-components'
 import React, { ComponentProps, forwardRef, Ref, ReactNode } from 'react'
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
 import { useDefaultRef } from '../../../hooks/useDefaultRef'
@@ -28,7 +28,7 @@ const ButtonContainer = styled.div<{ $readOnly?: boolean }>(
     justify-content: flex-end;
     width: ${theme.space['8']};
     height: ${theme.space['8']};
-    margin-bottom: ${theme.space['3.5']};
+    margin-bottom: ${theme.space['3']};
     margin-right: -10px;
     svg {
       display: block;
@@ -39,11 +39,25 @@ const ButtonContainer = styled.div<{ $readOnly?: boolean }>(
   `,
 )
 
+const LabelWrapper = styled.div(
+  ({ theme }) => css`
+    font-size: ${theme.space['3.5']};
+    line-height: 1.2;
+  `,
+)
+
 const ErrorWrapper = styled.div(
   ({ theme }) => css`
     position: absolute;
     right: ${theme.space['4']};
     top: 0;
+    font-size: ${theme.space['3.5']};
+    white-space: nowrap;
+    width: 80%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: right;
+    line-height: 1.2;
   `,
 )
 
@@ -82,6 +96,7 @@ export const RecordInput = forwardRef(
     ref: Ref<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
+    const theme = useTheme()
 
     const prefix =
       prefixProp ||
@@ -92,9 +107,10 @@ export const RecordInput = forwardRef(
       <ErrorWrapper>{errorProp}</ErrorWrapper>
     ) : undefined
 
-    const label = labelProp || option?.label || option?.value || ''
+    const labelText = labelProp || option?.label || option?.value || ''
+    const label = <LabelWrapper>{labelText}</LabelWrapper>
 
-    const handleButtonClick = () => {
+    const handleDelete = () => {
       if (onDelete) onDelete()
     }
 
@@ -114,6 +130,9 @@ export const RecordInput = forwardRef(
             labelPlacement={{ error: 'bottom' }}
             data-testid="record-input-input"
             validated={validated}
+            parentStyles={css`
+              height: ${theme.space['12']};
+            `}
             {...props}
           />
         </InputWrapper>
@@ -122,7 +141,8 @@ export const RecordInput = forwardRef(
             size="extraSmall"
             variant="transparent"
             shadowless
-            onClick={handleButtonClick}
+            onClick={handleDelete}
+            onMouseDown={(e) => e.preventDefault()}
             data-testid="record-input-delete"
           >
             <CloseSVG />

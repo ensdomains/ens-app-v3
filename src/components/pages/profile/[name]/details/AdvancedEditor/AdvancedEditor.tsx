@@ -43,7 +43,7 @@ const NameContainer = styled.div(({ theme }) => [
     display: block;
     width: 100%;
     padding-top: ${theme.space['6']};
-    padding-left: ${theme.space['4']};
+    padding-left: ${theme.space['7']};
     padding-right: ${theme.space['4']};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     line-height: 45px;
@@ -51,13 +51,12 @@ const NameContainer = styled.div(({ theme }) => [
     text-align: center;
     font-feature-settings: 'ss01' on, 'ss03' on, 'ss04' on;
     font-weight: ${theme.fontWeights.bold};
-    font-size: 1.25rem;
+    font-size: ${theme.space['6']};
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
   `,
   mq.sm.min(css`
-    font-size: 1.5rem;
     text-align: left;
   `),
 ])
@@ -81,7 +80,7 @@ const TabButtonsContainer = styled.div(({ theme }) => [
     padding: 0 ${theme.space['4']} 0 ${theme.space['7']};
   `,
   mq.sm.min(css`
-    padding: 0 ${theme.space['4']};
+    padding: 0 ${theme.space['7']};
   `),
 ])
 
@@ -162,7 +161,7 @@ const TabContentContainer = styled.div(
 
 const AddRecordContainer = styled.div(
   ({ theme }) => css`
-    padding: 0 ${theme.space['3']};
+    padding: ${theme.space['2']} ${theme.space['4']};
   `,
 )
 
@@ -170,7 +169,10 @@ const FooterContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     gap: ${theme.space['3']};
-    padding: 0 ${theme.space['3']} ${theme.space['3']} ${theme.space['3']};
+    padding: 0 ${theme.space['4']} ${theme.space['4']} ${theme.space['4']};
+    width: 100%;
+    max-width: ${theme.space['96']};
+    margin: 0 auto;
   `,
 )
 
@@ -186,33 +188,6 @@ type AdvancedEditorType = {
     publicKey?: string
     abi?: string
   }
-}
-
-const getDeletedFieldsByType = (
-  type: 'text' | 'addr' | 'contentHash',
-  originalData: AdvancedEditorType,
-  updatedData: AdvancedEditorType,
-) => {
-  const entries = []
-  if (type === 'text') {
-    if (originalData.text)
-      entries.push(
-        ...Object.keys(originalData.text)
-          .filter((key) => !updatedData.text[key])
-          .map((key) => [convertFormSafeKey(key), '']),
-      )
-  } else if (type === 'addr') {
-    if (originalData.address)
-      entries.push(
-        ...Object.keys(originalData.address)
-          .filter((key) => !updatedData.address[key])
-          .map((key) => [convertFormSafeKey(key), '']),
-      )
-  } else if (type === 'contentHash') {
-    if (originalData.other.contentHash && !updatedData.other.contentHash)
-      entries.push(['website', ''])
-  }
-  return Object.fromEntries(entries)
 }
 
 const getFieldsByType = (
@@ -258,7 +233,7 @@ type Props = {
 
 const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
   const { setCurrentTransaction } = useTransaction()
-  const { setRecords } = useEns()
+  const { setRecords, contracts } = useEns()
   const { t } = useTranslation('profile')
 
   const {
@@ -271,6 +246,7 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
     handleSubmit,
     clearErrors,
     setFocus,
+    resetField,
   } = useForm<AdvancedEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -342,8 +318,8 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
           autocomplete: true,
           options: availableAddressOptions,
           messages: {
-            addRecord: t('profileEditor.tabs.address.addAddress'),
-            noOptions: t('profileEditor.tabs.address.noOptions'),
+            addRecord: t('advancedEditor.tabs.address.addRecord'),
+            noOptions: t('advancedEditor.tabs.address.noOptions'),
           },
           onAddRecord: (key: string) => {
             addAddressKey(key)
@@ -358,11 +334,6 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
   })()
 
   const { profile, loading } = useProfile(name, name !== '')
-  const [defaultValue, setDefaultValue] = useState<AdvancedEditorType>({
-    text: {},
-    address: {},
-    other: {},
-  })
 
   useEffect(() => {
     if (profile && open) {
@@ -382,7 +353,6 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
         },
       }
       reset(newDefaultValues)
-      setDefaultValue(newDefaultValues)
       const newExistingRecords: ExpandableRecordsState = {
         address: Object.keys(newDefaultValues.address) || [],
         text: Object.keys(newDefaultValues.text) || [],
@@ -396,39 +366,40 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
     if (onDismiss) onDismiss()
   }
 
-  const handleTransaction = (data: AdvancedEditorType) => {
+  const handleTransaction = async (data: AdvancedEditorType) => {
     const dirtyFields = getDirtyFields(
       formState.dirtyFields,
       data,
     ) as AdvancedEditorType
 
-    const textsObj = {
-      ...getDeletedFieldsByType('text', defaultValue, data),
-      ...getFieldsByType('text', dirtyFields),
-    }
-    const texts = Object.entries(textsObj).map(([key, value]) => ({
-      key,
-      value,
-    })) as { key: string; value: string }[]
+    const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(
+      ([key, value]) => ({
+        key,
+        value,
+      }),
+    ) as { key: string; value: string }[]
 
-    const coinTypesObj = {
-      ...getDeletedFieldsByType('addr', defaultValue, data),
-      ...getFieldsByType('addr', dirtyFields),
-    }
-    const coinTypes = Object.entries(coinTypesObj).map(([key, value]) => ({
-      key,
-      value,
-    })) as { key: string; value: string }[]
+    const coinTypes = Object.entries(getFieldsByType('addr', dirtyFields)).map(
+      ([key, value]) => ({
+        key,
+        value,
+      }),
+    ) as { key: string; value: string }[]
+
+    const { contentHash } = dirtyFields.other
 
     const records = {
       texts,
       coinTypes,
+      contentHash,
     }
 
-    setCurrentTransaction({
+    const resolverAddress = (await contracts!.getPublicResolver()!).address
+
+    setCurrentTransaction(name, async (signer) => ({
       data: [
         {
-          actionName: 'editRecords',
+          actionName: 'setRecords',
           displayItems: [
             {
               label: 'name',
@@ -436,17 +407,17 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
               type: 'name',
             },
           ],
-          generateTx: async (signer) => {
-            return setRecords(name, {
-              records,
-              signer,
-            })
-          },
+          transaction: await setRecords.populateTransaction(name, {
+            records,
+            signer,
+            resolverAddress,
+          }),
         },
       ],
-      key: `editRecords-${name}`,
-    })
+    }))
   }
+
+  const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
   const ref = useRef<HTMLDivElement>(null)
   const targetRef = useRef<HTMLFormElement>(null)
@@ -505,6 +476,7 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                                 )}`,
                                 `advancedEditor.tabs.text.placeholder.default`,
                               ])}
+                              showDot
                               error={
                                 getFieldState(`text.${key}`, formState).error
                                   ?.message
@@ -512,7 +484,10 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               validated={
                                 getFieldState(`text.${key}`, formState).isDirty
                               }
-                              onDelete={() => removeTextKey(key, false)}
+                              onDelete={() => {
+                                removeTextKey(key, false)
+                                clearErrors([`text.${key}`])
+                              }}
                               {...register(`text.${key}`, {})}
                             />
                           ))}
@@ -539,7 +514,11 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               showDot
                               onDelete={() => {
                                 removeTextKey(formSafeKey(key))
-                                clearErrors([`text.${key}`])
+                                resetField(`text.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
                               }}
                               {...register(`text.${key}`, {})}
                             />
@@ -570,13 +549,21 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                                 removeAddressKey(key, false)
                                 clearErrors([`address.${key}`])
                               }}
-                              {...register(`address.${key}`, {})}
+                              {...register(`address.${key}`, {
+                                validate: validateCryptoAddress(key),
+                              })}
                             />
                           ))}
                           {newAddressKeys.map((key) => (
                             <RecordInput
                               key={key}
                               option={getSelectedAddressOption(key)}
+                              placeholder={t([
+                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `advancedEditor.tabs.address.placeholder.default`,
+                              ])}
                               error={
                                 getFieldState(`address.${key}`, formState).error
                                   ?.message
@@ -591,7 +578,11 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               spellCheck={false}
                               onDelete={() => {
                                 removeAddressKey(key)
-                                clearErrors([`address.${key}`])
+                                resetField(`address.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
                               }}
                               {...register(`address.${key}`, {
                                 validate: validateCryptoAddress(key),
@@ -660,7 +651,11 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
               <Button tone="grey" shadowless onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
-              <Button disabled={hasErrors} type="submit" shadowless>
+              <Button
+                disabled={hasErrors || !hasChanges}
+                type="submit"
+                shadowless
+              >
                 {t('action.save', { ns: 'common' })}
               </Button>
             </FooterContainer>

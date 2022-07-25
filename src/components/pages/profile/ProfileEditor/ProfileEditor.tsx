@@ -171,7 +171,7 @@ const TabContentContainer = styled.div(
 
 const AddRecordContainer = styled.div(
   ({ theme }) => css`
-    padding: 0 ${theme.space['3']};
+    padding: ${theme.space['2']} ${theme.space['3']};
   `,
 )
 
@@ -179,7 +179,10 @@ const FooterContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     gap: ${theme.space['3']};
-    padding: 0 ${theme.space['3']} ${theme.space['3']} ${theme.space['3']};
+    padding: 0 ${theme.space['4']} ${theme.space['4']} ${theme.space['4']};
+    width: 100%;
+    max-width: ${theme.space['96']};
+    margin: 0 auto;
   `,
 )
 
@@ -262,7 +265,7 @@ type Props = {
 const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const { setCurrentTransaction } = useTransaction()
-  const { setRecords } = useEns()
+  const { setRecords, contracts } = useEns()
 
   const {
     register,
@@ -389,6 +392,9 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
         if (websiteOption) return undefined
         return {
           options: websiteOptions,
+          messages: {
+            selectOption: t('profileEditor.tabs.contentHash.addContentHash'),
+          },
           onAddRecord: (key: string) => {
             const option = websiteOptions.find(({ value }) => value === key)
             if (!option) return
@@ -419,12 +425,6 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   })()
 
   const { profile, loading } = useProfile(name, name !== '')
-  // const [setDefaultValues] = useState<ProfileEditorType>({
-  //   general: {},
-  //   accounts: {},
-  //   address: {},
-  //   other: {},
-  // })
 
   useEffect(() => {
     if (profile && open) {
@@ -435,16 +435,14 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
         accounts: Object.keys(newDefaultValues.accounts) || [],
       }
       reset(newDefaultValues)
-      // setDefaultValues(newDefaultValues)
       setExistingRecords(newExistingRecords)
+
       setHasExistingWebsite(!!newDefaultValues.website)
       const protocol = newDefaultValues.website
         ?.match(/^[^:]+/)?.[0]
         ?.toLowerCase()
-      console.log(protocol)
       if (protocol) {
         const option = websiteOptions.find(({ value }) => value === protocol)
-        console.log(websiteOptions, option)
         setWebsiteOption(option || undefined)
       }
     }
@@ -455,7 +453,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
     if (onDismiss) onDismiss()
   }
 
-  const handleTransaction = (profileData: ProfileEditorType) => {
+  const handleTransaction = async (profileData: ProfileEditorType) => {
     const dirtyFields = getDirtyFields(
       formState.dirtyFields,
       profileData,
@@ -475,15 +473,20 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
       }),
     ) as { key: string; value: string }[]
 
+    const contentHash = dirtyFields.website
+
     const records = {
       texts,
       coinTypes,
+      contentHash,
     }
 
-    setCurrentTransaction({
+    const resolverAddress = (await contracts!.getPublicResolver()!).address
+
+    setCurrentTransaction(name, async (signer) => ({
       data: [
         {
-          actionName: 'editProfile',
+          actionName: 'setRecords',
           displayItems: [
             {
               label: 'name',
@@ -491,16 +494,14 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
               type: 'name',
             },
           ],
-          generateTx: async (signer) => {
-            return setRecords(name, {
-              records,
-              signer,
-            })
-          },
+          transaction: await setRecords.populateTransaction(name, {
+            records,
+            signer,
+            resolverAddress,
+          }),
         },
       ],
-      key: `editProfile-${name}`,
-    })
+    }))
   }
 
   const avatar = useWatch({
@@ -509,9 +510,6 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   })
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
-
-  console.log(formState.dirtyFields)
-  console.log(formState.isDirty)
 
   const ref = useRef<HTMLDivElement>(null)
   const targetRef = useRef<HTMLFormElement>(null)
@@ -720,6 +718,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 )}`,
                                 `profileEditor.tabs.address.placeholder.default`,
                               ])}
+                              showDot
                               error={
                                 getFieldState(`address.${key}`, formState).error
                                   ?.message
@@ -732,7 +731,9 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 removeAddressKey(key, false)
                                 clearErrors([`address.${key}`])
                               }}
-                              {...register(`address.${key}`, {})}
+                              {...register(`address.${key}`, {
+                                validate: validateCryptoAddress(key),
+                              })}
                             />
                           ))}
                           {newAddressKeys.map((key) => (

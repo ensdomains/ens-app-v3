@@ -3226,6 +3226,7 @@ const InputComponent = styled.input(({
     height: ${theme.space["full"]};
     padding: 0 ${theme.space[$padding]};
     font-weight: ${theme.fontWeights["medium"]};
+    text-overflow: ellipsis;
 
     &::placeholder {
       color: ${theme.colors.textPlaceholder};
