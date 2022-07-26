@@ -2,10 +2,7 @@ import { useChainName } from '@app/hooks/useChainName'
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
-import {
-  useClearRecentTransactions,
-  useRecentTransactions,
-} from '@rainbow-me/rainbowkit'
+import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -54,8 +51,7 @@ const TransactionSectionContainer = styled.div<{ $transactionLength: number }>(
     height: ${theme.space['13']};
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
-    transition: 0.2s all ease-in-out, 0s justify-content 0s linear,
-      0s color 0s linear;
+    transition: 0.2s all ease-in-out, 0s justify-content 0s linear, 0s color 0s linear;
     ${$transactionLength &&
     css`
       ${TransactionSectionHeading} {
@@ -142,9 +138,7 @@ export const TransactionSection = () => {
     <SectionContainer data-testid="transaction-section" $name="transactions">
       <TransactionSectionHeadingContainer>
         <TransactionSectionHeading
-          $hasTransactions={
-            transactions.filter((x) => x.status === 'pending').length > 0
-          }
+          $hasTransactions={transactions.filter((x) => x.status === 'pending').length > 0}
           variant="large"
           weight="bold"
         >
@@ -178,9 +172,7 @@ export const TransactionSection = () => {
                     <Spinner data-testid="pending-spinner" color="accent" />
                   )}
                   <TransactionInfoContainer>
-                    <Typography weight="bold">
-                      {tc(`transaction.description.${action}`)}
-                    </Typography>
+                    <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
                     <StyledOutlink
                       $error={transaction.status === 'failed'}
                       href={makeEtherscanLink(transaction.hash, chainName)}
@@ -209,9 +201,7 @@ export const TransactionSection = () => {
                 onClick={() => setViewAmt((curr) => curr + 5)}
                 data-testid="transaction-view-more-button"
               >
-                <ViewMoreInner weight="bold">
-                  {tc('transaction.viewMore')}
-                </ViewMoreInner>
+                <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
               </TransactionContainer>
             )}
           </>

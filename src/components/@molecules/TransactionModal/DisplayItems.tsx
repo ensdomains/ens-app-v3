@@ -102,9 +102,7 @@ const AddressValue = ({ value }: { value: string }) => {
   const AddressTypography = useMemo(
     () =>
       primary.name ? (
-        <AddressSubtitle variant="label">
-          {shortenAddress(value)}
-        </AddressSubtitle>
+        <AddressSubtitle variant="label">{shortenAddress(value)}</AddressSubtitle>
       ) : (
         <ValueTypography weight="bold">{shortenAddress(value)}</ValueTypography>
       ),
@@ -114,9 +112,7 @@ const AddressValue = ({ value }: { value: string }) => {
   return (
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
-        {primary.name && (
-          <ValueTypography weight="bold">{primary.name}</ValueTypography>
-        )}
+        {primary.name && <ValueTypography weight="bold">{primary.name}</ValueTypography>}
         {AddressTypography}
       </InnerValueWrapper>
       <AvatarWrapper>
@@ -144,10 +140,7 @@ const NameValue = ({ value }: { value: string }) => {
   )
 }
 
-const DisplayItemValue = ({
-  value,
-  type,
-}: Omit<TransactionDisplayItem, 'label'>) => {
+const DisplayItemValue = ({ value, type }: Omit<TransactionDisplayItem, 'label'>) => {
   if (type === 'address') {
     return <AddressValue value={value} />
   }
@@ -181,18 +174,10 @@ export const DisplayItem = ({
   )
 }
 
-export const DisplayItems = ({
-  displayItems,
-}: {
-  displayItems: TransactionDisplayItem[]
-}) => {
+export const DisplayItems = ({ displayItems }: { displayItems: TransactionDisplayItem[] }) => {
   const { t } = useTranslation()
 
   if (!displayItems || !displayItems.length) return null
 
-  return (
-    <Container>
-      {displayItems.map((props) => DisplayItem({ ...props, t }))}
-    </Container>
-  )
+  return <Container>{displayItems.map((props) => DisplayItem({ ...props, t }))}</Container>
 }

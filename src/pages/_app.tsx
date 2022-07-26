@@ -3,6 +3,7 @@ import { Basic } from '@app/layouts/Basic'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import { TransactionProvider } from '@app/utils/TransactionProvider'
+import { TransactionProviderTwo } from '@app/utils/TransactionProvider/TransactionProviderTwo'
 import {
   lightTheme as thorinLightTheme,
   ThorinGlobalStyles,
@@ -140,8 +141,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <GlobalStyle />
                   <ThorinGlobalStyles />
                   <TransactionProvider>
-                    <Notifications />
-                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                    <TransactionProviderTwo>
+                      <Notifications />
+                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                    </TransactionProviderTwo>
                   </TransactionProvider>
                 </BreakpointProvider>
               </ThemeProvider>

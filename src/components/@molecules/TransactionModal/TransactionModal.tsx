@@ -1,5 +1,5 @@
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
-import { Outlink } from '@app/components/Outlink'
+import { Outlink, StyledAnchor } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
 import { TransactionPreStepObject, TransactionSubmission } from '@app/types'
 import { isIOS } from '@app/utils/isIOS'
@@ -12,6 +12,8 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useSigner } from 'wagmi'
+import { useRouter } from 'next/router'
+import { getRoute } from '@app/routes'
 import { DisplayItems } from './DisplayItems'
 
 const InnerDialog = styled.div(
@@ -25,7 +27,7 @@ const InnerDialog = styled.div(
     gap: ${theme.space['4']};
     max-height: 60vh;
     overflow-y: auto;
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       min-width: ${theme.space['128']};
     `)}
   `,
@@ -76,12 +78,8 @@ const WaitingElement = () => {
     <WaitingContainer data-testid="transaction-waiting-container">
       <StyledSpinner color="accent" />
       <WaitingTextContainer>
-        <Typography weight="bold">
-          {t('transaction.modal.confirm.waiting.title')}
-        </Typography>
-        <Typography>
-          {t('transaction.modal.confirm.waiting.subtitle')}
-        </Typography>
+        <Typography weight="bold">{t('transaction.modal.confirm.waiting.title')}</Typography>
+        <Typography>{t('transaction.modal.confirm.waiting.subtitle')}</Typography>
       </WaitingTextContainer>
     </WaitingContainer>
   )
@@ -136,32 +134,33 @@ export const TransactionModal = ({
   preSteps?: TransactionPreStepObject
   onComplete: () => void
 }) => {
+  console.log('TransactionModal')
   const { t } = useTranslation()
   const chainName = useChainName()
+  const router = useRouter()
 
   const [stage, setStage] = useState<Stage>('request')
   const addTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
+  const settingsRoute = getRoute('settings')
 
-  const { data: estimatedGas } = useQuery(
-    ['gas', txKey, currentStep],
-    async () => {
-      if (!transaction) {
-        return null
-      }
+  const { data: estimatedGas } = useQuery(['gas', txKey, currentStep], async () => {
+    if (!transaction) {
+      return null
+    }
 
-      const gas = await signer?.estimateGas(transaction)
+    const gas = await signer?.estimateGas(transaction)
 
-      return gas
-    },
-  )
+    return gas
+  })
   const needsUnchecked = isIOS()
 
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
+      console.log('transaction: ', transaction)
       let hash: string
       if (needsUnchecked) {
         hash = await (signer as JsonRpcSigner).sendUncheckedTransaction({
@@ -239,9 +238,15 @@ export const TransactionModal = ({
       return (
         <SuccessContent>
           <PaperPlaneColourSVG />
-          <CompleteTypography>
-            {t('transaction.modal.complete.message')}
-          </CompleteTypography>
+          <CompleteTypography>{t('transaction.modal.complete.message')}</CompleteTypography>
+          <StyledAnchor
+            onClick={() => {
+              onDismiss()
+              router.push(settingsRoute.href)
+            }}
+          >
+            View your transactions
+          </StyledAnchor>
         </SuccessContent>
       )
     }
@@ -368,10 +373,7 @@ export const TransactionModal = ({
     }
     if (stage === 'complete') {
       if (stepCount > 1) {
-        return (
-          completeTitle ||
-          t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
-        )
+        return completeTitle || t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
       }
       return completeTitle || t('transaction.modal.complete.title')
     }
@@ -417,11 +419,7 @@ export const TransactionModal = ({
   return (
     <Dialog
       title={title}
-      subtitle={
-        stage === 'request'
-          ? t('transaction.modal.request.subtitle')
-          : undefined
-      }
+      subtitle={stage === 'request' ? t('transaction.modal.request.subtitle') : undefined}
       variant="actionable"
       leading={LeadingButton}
       trailing={TrailingButton}
@@ -435,11 +433,7 @@ export const TransactionModal = ({
       stepStatus={stepStatus}
     >
       <InnerDialog data-testid="transaction-modal-inner">
-        {error ? (
-          <ErrorTypography color="red">{t(error)}</ErrorTypography>
-        ) : (
-          MiddleContent
-        )}
+        {error ? <ErrorTypography color="red">{t(error)}</ErrorTypography> : MiddleContent}
         {FilledDisplayItems}
         {stage === 'complete' && (
           <Outlink href={makeEtherscanLink(txHash!, chainName)}>
