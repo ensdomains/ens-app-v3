@@ -3,10 +3,11 @@ import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
-import { useMemo } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
+import AdvancedEditor from './AdvancedEditor/AdvancedEditor'
 
 type TextRecord = {
   key: string
@@ -288,6 +289,9 @@ export const RecordsTab = ({
     }
   }, [name, network, contentHash])
 
+  const [showEditor, setShowEditor] = useState(true)
+  const handleDismissEditor = () => setShowEditor(false)
+
   return (
     <TabWrapper data-testid="records-tab">
       <RecordSection>
@@ -303,8 +307,8 @@ export const RecordsTab = ({
           </SectionTitleContainer>
 
           {canEdit && (
-            <EditButton disabled>
-              <Typography weight="bold">
+            <EditButton>
+              <Typography weight="bold" onClick={() => setShowEditor(true)}>
                 {t('action.edit', { ns: 'common' })}
               </Typography>
             </EditButton>
@@ -368,6 +372,13 @@ export const RecordsTab = ({
           <RecordItem type="contentHash" value={formattedContentHash} />
         )}
       </RecordSection>
+      {canEdit && (
+        <AdvancedEditor
+          name={name}
+          open={showEditor}
+          onDismiss={handleDismissEditor}
+        />
+      )}
     </TabWrapper>
   )
 }

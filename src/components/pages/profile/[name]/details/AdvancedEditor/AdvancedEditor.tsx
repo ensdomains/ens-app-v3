@@ -1,8 +1,8 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm } from 'react-hook-form'
-import { mq, Modal, Input, Button } from '@ensdomains/thorin'
+import { mq, Modal, Input, Button, ScrollBox } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import { useProfile } from '@app/hooks/useProfile'
@@ -16,7 +16,6 @@ import {
   getDirtyFields,
 } from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import ScrollIndicatorContainer from '@app/components/pages/profile/ScrollIndicatorContainer'
 import addressOptions from '../../../ProfileEditor/addressOptions'
 import { textOptions } from './textOptions'
 import { AddRecordButton } from '../../../../../@molecules/AddRecordButton/AddRecordButton'
@@ -142,10 +141,9 @@ const TabButton = styled.button<{
 const TabContentsContainer = styled.div(
   ({ theme }) => css`
     position: relative;
-    padding-left: ${theme.space['3']};
+    padding: 0 ${theme.space['1']};
     flex: 1;
     overflow: hidden;
-    border-radius: ${theme.radii.large};
   `,
 )
 
@@ -154,8 +152,14 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
-    padding-right: ${theme.space['3']};
+    padding: ${theme.space['2']};
     margin: ${theme.space['2.5']} 0;
+  `,
+)
+
+const ScrollBoxDecorator = styled(ScrollBox)(
+  () => css`
+    height: 100%;
   `,
 )
 
@@ -316,6 +320,7 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
         if (!hasAddressOptions) return null
         return {
           autocomplete: true,
+          inline: true,
           options: availableAddressOptions,
           messages: {
             addRecord: t('advancedEditor.tabs.address.addRecord'),
@@ -419,13 +424,11 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
-  const ref = useRef<HTMLDivElement>(null)
-  const targetRef = useRef<HTMLFormElement>(null)
   if (loading) return null
   return (
     <>
       <Modal open={open} onDismiss={onDismiss}>
-        <Container onSubmit={handleSubmit(handleTransaction)} ref={targetRef}>
+        <Container onSubmit={handleSubmit(handleTransaction)}>
           <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>
           <ContentContainer>
             <TabButtonsContainer>
@@ -460,7 +463,7 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
               </TabButton>
             </TabButtonsContainer>
             <TabContentsContainer>
-              <ScrollIndicatorContainer ref={ref} page={tab}>
+              <ScrollBoxDecorator>
                 <TabContentContainer>
                   {
                     {
@@ -640,7 +643,7 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                     }[tab]
                   }
                 </TabContentContainer>
-              </ScrollIndicatorContainer>
+              </ScrollBoxDecorator>
             </TabContentsContainer>
             {AddButtonProps && (
               <AddRecordContainer>
@@ -648,7 +651,12 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
               </AddRecordContainer>
             )}
             <FooterContainer>
-              <Button tone="grey" shadowless onClick={handleCancel}>
+              <Button
+                tone="grey"
+                variant="secondary"
+                shadowless
+                onClick={handleCancel}
+              >
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button

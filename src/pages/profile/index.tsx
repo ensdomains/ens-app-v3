@@ -185,7 +185,6 @@ export default function Page() {
                   </Button>
                 </SelfButtons>
               )}
-
               <ProfileDetails
                 addresses={(profile?.records?.coinTypes || []).map(
                   (item: any) => ({
@@ -200,7 +199,7 @@ export default function Page() {
               {/* {isSelf && ( */}
               <ProfileEditor
                 name={name}
-                open={showEditor}
+                open={showEditor || true}
                 onDismiss={handleDismissEditor}
               />
               {/* )} */}

@@ -18,7 +18,6 @@ import { ReactElement, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
-import AdvancedEditor from '../../components/pages/profile/[name]/details/AdvancedEditor/AdvancedEditor'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -212,7 +211,6 @@ export default function Page() {
                 contentHash={profile?.records?.contentHash}
                 canEdit={selfAbilities.canEdit}
               />
-              <AdvancedEditor name={name} open onDismiss={() => {}} />
             </>
           ),
           subnames: <SubnamesTab name={normalisedName} network={chainId} />,

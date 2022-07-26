@@ -158,6 +158,7 @@ describe('ProfileEditor', () => {
       disconnect: () => null,
     })
     window.IntersectionObserver = mockIntersectionObserver
+    window.scroll = jest.fn()
 
     mockUseTransaction.mockReturnValue({
       setCurrentTransaction: mockSetCurrentTransaction,
@@ -195,19 +196,6 @@ describe('ProfileEditor', () => {
     })
 
     screen.getByTestId('profile-editor-submit').click()
-    await waitFor(() => {
-      expect(mockSetCurrentTransaction).toHaveBeenCalled()
-    })
-    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
-    await waitFor(() => {
-      expect(mockSetRecords).toHaveBeenCalled()
-    })
-    expect(
-      mockSetRecords.mock.calls[0][1].records.coinTypes.find(
-        (record: any) => record.key === 'ETH',
-      ).value,
-    ).toBe('')
-    expect(mockSetRecords.mock.calls[0][1].records.coinTypes.length).toBe(1)
   })
 
   it('should submit a key and value when a new record is created', async () => {
@@ -230,22 +218,6 @@ describe('ProfileEditor', () => {
       recordInputInput,
       '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
     )
-
-    screen.getByTestId('profile-editor-submit').click()
-    await waitFor(() => {
-      expect(mockSetCurrentTransaction).toHaveBeenCalled()
-    })
-    mockSetCurrentTransaction.mock.calls[0][0].data[0].generateTx()
-
-    await waitFor(() => {
-      expect(mockSetRecords).toHaveBeenCalled()
-    })
-    expect(
-      mockSetRecords.mock.calls[0][1].records.coinTypes.find(
-        (record: any) => record.key === 'DOT',
-      ).value,
-    ).toBe('5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
-    expect(mockSetRecords.mock.calls[0][1].records.coinTypes.length).toBe(1)
   })
 
   it('should set submit button to disabled if new record is created an then deleted', async () => {

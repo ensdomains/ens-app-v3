@@ -1864,6 +1864,63 @@ const Heading = React.forwardRef((_q, ref) => {
   }), children);
 });
 Heading.displayName = "Heading";
+const MenuPortal = ({
+  appendTo,
+  control,
+  listenTo,
+  isListening = false,
+  children
+}) => {
+  const [placement, setPlacement] = React.useState({});
+  const calculatePlacement = React.useCallback(() => {
+    if (!appendTo || !control)
+      return;
+    const controlRect = control.getBoundingClientRect();
+    const containerRect = appendTo.getBoundingClientRect();
+    const top = controlRect.top - containerRect.top;
+    const left = controlRect.left - containerRect.left;
+    setPlacement({
+      position: "absolute",
+      top: `${top}px`,
+      left: `${left}px`,
+      width: `${controlRect.width}px`,
+      height: `${controlRect.height}px`
+    });
+  }, [control, appendTo]);
+  React.useEffect(() => {
+    calculatePlacement();
+  }, [isListening]);
+  React.useEffect(() => {
+    if (listenTo && isListening)
+      listenTo == null ? void 0 : listenTo.addEventListener("scroll", calculatePlacement);
+    return () => {
+      listenTo == null ? void 0 : listenTo.removeEventListener("scroll", calculatePlacement);
+    };
+  }, [listenTo, isListening]);
+  if (!appendTo || !control)
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, children);
+  const wrapper = /* @__PURE__ */ React.createElement("div", {
+    style: placement
+  }, children);
+  return ReactDOM.createPortal(wrapper, appendTo);
+};
+const MenuPlacement = ({
+  appendTo,
+  control,
+  listenTo,
+  isListening = true,
+  children
+}) => {
+  if (!appendTo || !control)
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, children);
+  return /* @__PURE__ */ React.createElement(MenuPortal, {
+    appendTo,
+    control,
+    isListening,
+    listenTo
+  }, children);
+};
+MenuPlacement.displayName = "MenuPlacement";
 const Portal = ({
   children,
   className,
@@ -1881,6 +1938,102 @@ const Portal = ({
   return ReactDOM.createPortal(children, container);
 };
 Portal.displayName = "Portal";
+const StyledScrollBox = styled.div(({
+  theme,
+  $showTop,
+  $showBottom
+}) => css`
+    overflow: auto;
+    position: relative;
+
+    border-color: rgba(${theme.shadesRaw.foreground}, 0.05);
+    transition: border-color 0.15s ease-in-out;
+
+    /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar {
+      width: ${theme.space["1.5"]};
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border: none;
+      border-radius: ${theme.radii.full};
+      border-right-style: inset;
+      border-right-width: calc(100vw + 100vh);
+      border-color: inherit;
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    &:hover {
+      border-color: rgba(${theme.shadesRaw.foreground}, 0.2);
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      position: sticky;
+      left: 0;
+      width: 100%;
+      display: block;
+      height: ${theme.space.px};
+      background-color: rgba(${theme.shadesRaw.foreground}, 0);
+      transition: background-color 0.15s ease-in-out;
+    }
+
+    &::before {
+      top: 0;
+      ${$showTop && css`
+        background-color: rgba(${theme.shadesRaw.foreground}, 0.1);
+      `}
+    }
+    &::after {
+      bottom: 0;
+      ${$showBottom && css`
+        background-color: rgba(${theme.shadesRaw.foreground}, 0.1);
+      `}
+    }
+  `);
+const ScrollBox = (props) => {
+  const ref = React.useRef(null);
+  const [showTop, setShowTop] = React.useState(false);
+  const [showBottom, setShowBottom] = React.useState(false);
+  const setScrollValues = (scrollTop, scrollHeight, clientHeight) => {
+    setShowTop(scrollTop > 16);
+    setShowBottom(scrollHeight - scrollTop > clientHeight + 16);
+  };
+  const handleScroll = (event) => {
+    const {
+      scrollTop,
+      scrollHeight,
+      clientHeight
+    } = event.currentTarget;
+    setScrollValues(scrollTop, scrollHeight, clientHeight);
+  };
+  React.useEffect(() => {
+    const _ref = ref.current;
+    if (_ref) {
+      const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+      } = _ref;
+      setScrollValues(scrollTop, scrollHeight, clientHeight);
+    }
+  }, []);
+  return /* @__PURE__ */ React.createElement(StyledScrollBox, __spreadValues({
+    $showBottom: showBottom,
+    $showTop: showTop,
+    ref,
+    onScroll: handleScroll
+  }, props));
+};
 const Context = React.createContext(void 0);
 const SkeletonGroup = ({
   children,
@@ -2112,7 +2265,29 @@ const Backdrop = ({
   const dismissClick = (e) => e.target === boxRef.current && onDismiss && onDismiss();
   React.useEffect(() => {
     toggle(open || false);
+    let top = 0;
+    if (typeof window !== "undefined" && open) {
+      top = window.scrollY;
+      document.body.style.position = "fixed";
+      document.body.style.top = `-${top}px`;
+    }
+    return () => {
+      if (typeof window !== "undefined" && open) {
+        document.body.style.position = "";
+        document.body.style.top = "";
+        if (window["scroll"])
+          window.scroll({
+            top
+          });
+      }
+    };
   }, [open]);
+  React.useEffect(() => {
+    return () => {
+      document.body.style.position = "";
+      document.body.style.top = "";
+    };
+  }, []);
   return state2 !== "unmounted" ? /* @__PURE__ */ React.createElement(Portal, {
     className
   }, onDismiss && /* @__PURE__ */ React.createElement(Background, {
@@ -4135,6 +4310,20 @@ function uniqueId(prefix) {
   return toString(prefix) + id2;
 }
 var uniqueId_1 = uniqueId;
+const useIntersectionalObserver = (ref, callback, active = false, options = {}) => {
+  React.useEffect(() => {
+    let observer;
+    const target = ref.current;
+    if (target && active) {
+      observer = new IntersectionObserver((entries) => callback && callback(entries[0].isIntersecting), options);
+      observer.observe(target);
+    }
+    return () => {
+      if (observer && target)
+        observer.unobserve(target);
+    };
+  }, [ref, active]);
+};
 const CREATE_OPTION_VALUE = "CREATE_OPTION_VALUE";
 const SelectContainer = styled.div(({
   theme,
@@ -4468,7 +4657,9 @@ const Select = React.forwardRef((_U, ref) => {
     value: _value,
     size = "medium",
     padding: paddingProp,
-    inputSize: inputSizeProps
+    inputSize: inputSizeProps,
+    portal,
+    autoDismiss = false
   } = _V, props = __objRest(_V, [
     "description",
     "disabled",
@@ -4497,7 +4688,9 @@ const Select = React.forwardRef((_U, ref) => {
     "value",
     "size",
     "padding",
-    "inputSize"
+    "inputSize",
+    "portal",
+    "autoDismiss"
   ]);
   const defaultRef = React.useRef(null);
   const inputRef = ref || defaultRef;
@@ -4670,6 +4863,9 @@ const Select = React.forwardRef((_U, ref) => {
       changeHighlightIndex(index2);
   };
   useDocumentEvent(displayRef, "click", () => setMenuOpen(false), menuOpen);
+  useIntersectionalObserver(displayRef, (intersecting) => !intersecting && setMenuOpen(false), autoDismiss, {
+    threshold: 1
+  });
   const OptionElement = ({
     option
   }) => option ? /* @__PURE__ */ React.createElement(React.Fragment, null, option.prefix && /* @__PURE__ */ React.createElement("div", null, option.prefix), option.node ? option.node : option.label || option.value) : null;
@@ -4732,7 +4928,6 @@ const Select = React.forwardRef((_U, ref) => {
     $padding: outerPadding
   }, noSelectionMessage) : null), /* @__PURE__ */ React.createElement(SelectActionContainer, null, showClearButton ? /* @__PURE__ */ React.createElement(SelectActionButton, {
     $padding: outerPadding,
-    type: "button",
     onClick: handleInputClear
   }, /* @__PURE__ */ React.createElement(ReactComponent$A, null)) : /* @__PURE__ */ React.createElement(SelectActionButton, {
     $padding: outerPadding,
@@ -4760,7 +4955,12 @@ const Select = React.forwardRef((_U, ref) => {
       var _a;
       searchInputRef.current ? searchInputRef.current.focus() : (_a = displayRef.current) == null ? void 0 : _a.focus();
     }
-  }))), /* @__PURE__ */ React.createElement(SelectOptionContainer, {
+  }))), /* @__PURE__ */ React.createElement(MenuPlacement, {
+    appendTo: portal == null ? void 0 : portal.appendTo,
+    control: displayRef.current,
+    isListening: state2 !== "exited",
+    listenTo: portal == null ? void 0 : portal.listenTo
+  }, /* @__PURE__ */ React.createElement(SelectOptionContainer, {
     $direction: direction,
     $rows: rows,
     $state: state2,
@@ -4784,7 +4984,7 @@ const Select = React.forwardRef((_U, ref) => {
     onMouseOver: handleOptionMouseover
   }), /* @__PURE__ */ React.createElement(OptionElement, {
     option
-  })))))));
+  }))))))));
 });
 Select.displayName = "Select";
 const Container$2 = styled.div(({
@@ -6874,7 +7074,9 @@ var index = /* @__PURE__ */ Object.freeze({
   Field,
   FileInput,
   Heading,
+  MenuPlacement,
   Portal,
+  ScrollBox,
   Skeleton,
   Spinner,
   Tag,
@@ -7080,4 +7282,4 @@ const GlobalStyle = createGlobalStyle(({
       color: ${theme.colors.inherit};
     }
   `);
-export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };
+export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, MenuPlacement, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ScrollBox, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };

@@ -9,6 +9,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     height: 90px;
     border-radius: 50%;
     background-color: ${theme.colors.white};
+    cursor: pointer;
 
     ::after {
       content: '';

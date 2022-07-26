@@ -19,7 +19,6 @@ export const validateCryptoAddress =
       coinTypeInstance.decoder(address)
       return true
     } catch (e: any) {
-      console.log(e, typeof e)
       if (typeof e === 'string') return e
       if (e.message) return e.message
       if (e.toString) return e.toString()

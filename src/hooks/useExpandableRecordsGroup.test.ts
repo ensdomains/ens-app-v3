@@ -23,7 +23,7 @@ describe('useExpandableRecordsGroup', () => {
       }),
     )
     act(() => {
-      result.current.addKey()
+      result.current.addKey('test')
     })
     expect(result.current.newKeys).toEqual(['test'])
     expect(mockSetValue.mock.calls[0][1]).toEqual({ test: '' })
@@ -45,74 +45,10 @@ describe('useExpandableRecordsGroup', () => {
     expect(hasOptions).toBe(false)
   })
 
-  it('should add key with prefix when addKey is called with no available options', async () => {
-    const options = [{ value: 'test', label: 'test' }]
-    const existingKeys: string[] = [
-      'test',
-      'prefix1',
-      'prefix2',
-      'prefix21',
-      'prefixNan',
-    ]
-    mockGetValues.mockReturnValue({
-      test: '',
-      prefix1: '',
-      prefix2: '',
-      prefix21: '',
-      prefixNan: '',
-    })
-    const { result } = renderHook(() =>
-      useExpandableRecordsGroup({
-        group: 'test',
-        options,
-        existingKeys,
-        getValues: mockGetValues,
-        setValue: mockSetValue,
-      }),
-    )
-    act(() => {
-      result.current.addKey('prefix')
-    })
-    expect(result.current.newKeys).toEqual(['prefix22'])
-    expect(mockSetValue.mock.calls[0][1]).toEqual({
-      test: '',
-      prefix1: '',
-      prefix2: '',
-      prefix21: '',
-      prefixNan: '',
-      prefix22: '',
-    })
-  })
-
-  it('should replace existing key with new key when changeKey is called', async () => {
-    const options = [{ value: 'test', label: 'test' }]
-    const existingKeys: string[] = ['test']
-    mockGetValues.mockReturnValue({
-      test: 'test',
-    })
-    const { result } = renderHook(() =>
-      useExpandableRecordsGroup({
-        group: 'test',
-        options,
-        existingKeys,
-        getValues: mockGetValues,
-        setValue: mockSetValue,
-      }),
-    )
-    act(() => {
-      result.current.changeKey('test', 'test2')
-    })
-    expect(result.current.existingKeys).toEqual([])
-    expect(result.current.newKeys).toEqual(['test2'])
-    expect(mockSetValue.mock.calls[0][1]).toEqual({
-      test2: 'test',
-    })
-  })
-
-  it('should replace old key in newKeys with new key when changeKey is called', async () => {
+  it('should return available options', async () => {
     const options = [{ value: 'test', label: 'test' }]
     const existingKeys: string[] = []
-    mockGetValues.mockReturnValue({})
+
     const { result } = renderHook(() =>
       useExpandableRecordsGroup({
         group: 'test',
@@ -122,19 +58,24 @@ describe('useExpandableRecordsGroup', () => {
         setValue: mockSetValue,
       }),
     )
-    act(() => {
-      result.current.addKey()
-    })
-    mockGetValues.mockReturnValue({
-      test: '',
-    })
-    act(() => {
-      result.current.changeKey('test', 'test2')
-    })
-    expect(result.current.newKeys).toEqual(['test2'])
-    expect(mockSetValue.mock.calls[1][1]).toEqual({
-      test2: '',
-    })
+    expect(result.current.availableOptions).toEqual(options)
+  })
+
+  it('should return selected option', async () => {
+    const options = [{ value: 'test', label: 'test' }]
+    const existingKeys: string[] = []
+
+    const { result } = renderHook(() =>
+      useExpandableRecordsGroup({
+        group: 'test',
+        options,
+        existingKeys,
+        getValues: mockGetValues,
+        setValue: mockSetValue,
+      }),
+    )
+
+    expect(result.current.getSelectedOption('test')).toEqual(options[0])
   })
 
   it('should remove key from existingKeys when removeKey is called', async () => {
@@ -174,7 +115,7 @@ describe('useExpandableRecordsGroup', () => {
       }),
     )
     act(() => {
-      result.current.addKey()
+      result.current.addKey('test')
     })
     expect(result.current.newKeys).toEqual(['test'])
     mockGetValues.mockReturnValue({
@@ -184,6 +125,5 @@ describe('useExpandableRecordsGroup', () => {
       result.current.removeKey('test')
     })
     expect(result.current.newKeys).toEqual([])
-    expect(mockSetValue.mock.calls[1][1]).toEqual({})
   })
 })

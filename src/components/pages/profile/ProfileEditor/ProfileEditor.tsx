@@ -1,8 +1,15 @@
-import React, { useState, useEffect, useRef, ComponentProps } from 'react'
+import React, { useState, useEffect, ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm, useWatch } from 'react-hook-form'
-import { mq, Modal, Input, Textarea, Button } from '@ensdomains/thorin'
+import {
+  mq,
+  Modal,
+  Input,
+  Textarea,
+  Button,
+  ScrollBox,
+} from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { useTranslation } from 'react-i18next'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
@@ -21,7 +28,6 @@ import addressOptions from './addressOptions'
 import accountsOptions from './accountsOptions'
 import websiteOptions from './websiteOptions'
 import otherOptions from './otherOptions'
-import ScrollIndicatorContainer from '../ScrollIndicatorContainer'
 import AvatarButton from './AvatarButton'
 import { AddRecordButton } from '../../../@molecules/AddRecordButton/AddRecordButton'
 
@@ -152,10 +158,9 @@ const TabButton = styled.button<{
 const TabContentsContainer = styled.div(
   ({ theme }) => css`
     position: relative;
-    padding-left: ${theme.space['3']};
+    padding: 0 ${theme.space['1']};
     flex: 1;
     overflow: hidden;
-    border-radius: ${theme.radii.large};
   `,
 )
 
@@ -164,8 +169,14 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
-    padding-right: ${theme.space['3']};
+    padding: 0 ${theme.space['2']};
     margin: ${theme.space['2.5']} 0;
+  `,
+)
+
+const ScrollBoxDecorator = styled(ScrollBox)(
+  () => css`
+    height: 100%;
   `,
 )
 
@@ -293,7 +304,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
     shouldUnregister: false,
   })
 
-  const [tab, setTab] = useState<TabType>('accounts')
+  const [tab, setTab] = useState<TabType>('address')
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -511,8 +522,6 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
-  const ref = useRef<HTMLDivElement>(null)
-  const targetRef = useRef<HTMLFormElement>(null)
   if (loading) return null
   return (
     <>
@@ -520,7 +529,6 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
         <Container
           data-testid="profile-editor"
           onSubmit={handleSubmit(handleTransaction)}
-          ref={targetRef}
         >
           <Banner zIndex={10}>
             <AvatarWrapper>
@@ -580,7 +588,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
               </TabButton>
             </TabButtonsContainer>
             <TabContentsContainer>
-              <ScrollIndicatorContainer ref={ref} page={tab}>
+              <ScrollBoxDecorator>
                 <TabContentContainer data-testid="tab-container">
                   {
                     {
@@ -866,7 +874,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                     }[tab]
                   }
                 </TabContentContainer>
-              </ScrollIndicatorContainer>
+              </ScrollBoxDecorator>
             </TabContentsContainer>
             {AddButtonProps && (
               <AddRecordContainer>
@@ -874,7 +882,12 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
               </AddRecordContainer>
             )}
             <FooterContainer>
-              <Button tone="grey" shadowless onClick={handleCancel}>
+              <Button
+                variant="secondary"
+                tone="grey"
+                shadowless
+                onClick={handleCancel}
+              >
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button

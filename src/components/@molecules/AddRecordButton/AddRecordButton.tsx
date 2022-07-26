@@ -119,10 +119,7 @@ const ControlsBody = styled.div(
     margin-bottom: ${theme.space['0.75']};
 
     /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
-    &::-webkit-scrollbar-track {
-      background-color: transparent;
-    }
-
+    /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
     &::-webkit-scrollbar-track {
       background-color: transparent;
       margin: 0 ${theme.space['3']};
@@ -391,11 +388,6 @@ export const AddRecordButton = ({
                   height: ${theme.space['10']};
                   border-radius: ${theme.radii.extraLarge};
                 `}
-                style={{
-                  textOverflow: 'ellipsis',
-                  overflow: 'hidden',
-                  whiteSpace: 'nowrap',
-                }}
                 padding="3.5"
                 onChange={(e) => setInputValue(e.target.value)}
               />

@@ -29,7 +29,6 @@ const ButtonContainer = styled.div<{ $readOnly?: boolean }>(
     width: ${theme.space['8']};
     height: ${theme.space['8']};
     margin-bottom: ${theme.space['3']};
-    margin-right: -10px;
     svg {
       display: block;
       path {
@@ -115,7 +114,7 @@ export const RecordInput = forwardRef(
     }
 
     return (
-      <Container data-testid={`record-input-${label}`}>
+      <Container data-testid={`record-input-${labelText}`}>
         <InputWrapper $error={!!error}>
           <Input
             size="medium"

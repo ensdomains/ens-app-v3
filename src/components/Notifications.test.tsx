@@ -26,6 +26,8 @@ const makeRecentTransaction =
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     } as Transaction)
 
+window.scroll = jest.fn()
+
 describe('Notifications', () => {
   mockUseBreakpoint.mockReturnValue({
     xs: true,
