@@ -116,9 +116,7 @@ export const NameSnippetMobile = ({
         <ExpiryAndFavouriteRow>
           {expiryDate ? (
             <div>
-              <ExpiresHeading variant="label">
-                {t('name.expires')}
-              </ExpiresHeading>
+              <ExpiresHeading variant="label">{t('name.expires')}</ExpiresHeading>
               <Typography variant="small" weight="bold">
                 {formatExpiry(expiryDate)}
               </Typography>
@@ -158,12 +156,7 @@ export const NameSnippetMobile = ({
                 </InnerButton>
               </OutlinedButton>
             </SendButtonContainer>
-            <OutlinedButton
-              disabled
-              size="small"
-              shadowless
-              variant="transparent"
-            >
+            <OutlinedButton disabled size="small" shadowless variant="transparent">
               <InnerButton>
                 <ButtonIcon as={TripleDotSVG} />
               </InnerButton>

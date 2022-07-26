@@ -52,13 +52,7 @@ const OwnerWithEns = styled.div(
   `,
 )
 
-const NameOwnerItem = ({
-  address = '',
-  network,
-}: {
-  address?: string
-  network: number
-}) => {
+const NameOwnerItem = ({ address = '', network }: { address?: string; network: number }) => {
   const { getName } = useEns()
   const { data } = useQuery(['getName', address], () => getName(address), {
     enabled: !!address,
@@ -76,12 +70,7 @@ const NameOwnerItem = ({
           <Typography weight="bold">{shortenAddress(address)}</Typography>
         </OwnerWithEns>
         <AvatarWrapper>
-          <AvatarWithZorb
-            label={data.name}
-            address={address}
-            name={data.name}
-            network={network}
-          />
+          <AvatarWithZorb label={data.name} address={address} name={data.name} network={network} />
         </AvatarWrapper>
       </OwnerContainer>
     )
@@ -161,12 +150,9 @@ export const NameDetailSnippet = ({
       {expiryDate && (
         <ItemContainer>
           <LeftText weight="bold">{t('name.expires')}</LeftText>
-          <Typography weight="bold">{`${expiryDate.toLocaleDateString(
-            undefined,
-            {
-              month: 'long',
-            },
-          )} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
+          <Typography weight="bold">{`${expiryDate.toLocaleDateString(undefined, {
+            month: 'long',
+          })} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
         </ItemContainer>
       )}
       <ItemContainer>

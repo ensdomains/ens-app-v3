@@ -31,8 +31,7 @@ const HeartIcon = styled.svg(
 )
 
 export const FavouriteButton = (
-  props: ComponentProps<'button'> &
-    ComponentProps<typeof FavouriteButtonContainer>,
+  props: ComponentProps<'button'> & ComponentProps<typeof FavouriteButtonContainer>,
 ) => {
   return (
     <FavouriteButtonContainer {...props}>

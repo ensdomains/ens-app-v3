@@ -36,9 +36,7 @@ describe('useWrapperExists', () => {
       ready: true,
       getContractAddress: mockGetContractAddress,
     })
-    mockGetContractAddress.mockReturnValue(
-      () => '0x0000000000000000000000000000000000000000',
-    )
+    mockGetContractAddress.mockReturnValue(() => '0x0000000000000000000000000000000000000000')
     const { result } = renderHook(() => useWrapperExists())
     expect(result.current).toBe(false)
   })

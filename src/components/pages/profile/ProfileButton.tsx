@@ -1,11 +1,5 @@
-import {
-  addressIconTypes,
-  DynamicAddressIcon,
-} from '@app/assets/address/DynamicAddressIcon'
-import {
-  DynamicSocialIcon,
-  socialIconTypes,
-} from '@app/assets/social/DynamicSocialIcon'
+import { addressIconTypes, DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
@@ -115,12 +109,7 @@ const ProfileButton = ({
               {link ? (
                 <RotatedIconArrowUp as={ArrowUpSVG} key={link} />
               ) : (
-                <IconCopyAnimated
-                  key={value}
-                  copied={copied}
-                  size="3"
-                  color="textTertiary"
-                />
+                <IconCopyAnimated key={value} copied={copied} size="3" color="textTertiary" />
               )}
             </Wrapper>
           </Container>
@@ -130,13 +119,7 @@ const ProfileButton = ({
   )
 }
 
-export const SocialProfileButton = ({
-  iconKey,
-  value,
-}: {
-  iconKey: string
-  value: string
-}) => {
+export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
   const socialData = getSocialData(iconKey, value)
 
   return socialData ? (
@@ -171,9 +154,7 @@ export const AddressProfileButton = ({
     <ProfileButton
       testid={`address-profile-button-${iconKey}`}
       prefixSize="5"
-      prefix={
-        <StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />
-      }
+      prefix={<StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />}
       value={value}
     >
       {shortenAddress(
@@ -237,14 +218,10 @@ export const OtherProfileButton = ({
       prefix={
         type === 'address' ? (
           <OtherContainer>
-            <OtherContainerAddressPrefix variant="label">
-              {iconKey}
-            </OtherContainerAddressPrefix>
+            <OtherContainerAddressPrefix variant="label">{iconKey}</OtherContainerAddressPrefix>
           </OtherContainer>
         ) : (
-          <OtherContainerTextPrefix color="textSecondary">
-            {iconKey}
-          </OtherContainerTextPrefix>
+          <OtherContainerTextPrefix color="textSecondary">{iconKey}</OtherContainerTextPrefix>
         )
       }
       testid={`other-profile-button-${iconKey}`}

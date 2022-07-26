@@ -189,25 +189,18 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           },
         ],
         preSteps: (resumeToStep) => ({
-          title:
-            resumeToStep > 0
-              ? t('details.wrap.resumeTitle')
-              : t('details.wrap.startTitle'),
+          title: resumeToStep > 0 ? t('details.wrap.resumeTitle') : t('details.wrap.startTitle'),
           steps: ['migrateProfile', 'wrapName'],
           content: (
             <>
               <GiftWrapper>
-                <WrapNameGift
-                  imageSrc={nftUrl.image || '/other/TemplateNFTImage.svg'}
-                />
+                <WrapNameGift imageSrc={nftUrl.image || '/other/TemplateNFTImage.svg'} />
               </GiftWrapper>
               <DescriptionWrapper>
                 <Typography>
                   {t('details.wrap.description')}{' '}
                   <span>
-                    <Outlink href="#">
-                      {t('action.learnMore', { ns: 'common' })}
-                    </Outlink>
+                    <Outlink href="#">{t('action.learnMore', { ns: 'common' })}</Outlink>
                   </span>
                 </Typography>
               </DescriptionWrapper>
@@ -215,14 +208,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           ),
         }),
       })),
-    [
-      setCurrentTransaction,
-      name,
-      migrateProfileGenerateTx,
-      t,
-      wrapName,
-      nftUrl.image,
-    ],
+    [setCurrentTransaction, name, migrateProfileGenerateTx, t, wrapName, nftUrl.image],
   )
 
   return (
@@ -237,14 +223,8 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           </TextContainer>
           <Sparkles as={SparklesSVG} />
         </InnerContainer>
-        <UpgradeButton
-          data-testid="wrapper-cta-button"
-          shadowless
-          onClick={handleUpgradeClick}
-        >
-          {resumable
-            ? t('details.wrap.resumeLabel')
-            : t('details.wrap.startLabel')}
+        <UpgradeButton data-testid="wrapper-cta-button" shadowless onClick={handleUpgradeClick}>
+          {resumable ? t('details.wrap.resumeLabel') : t('details.wrap.startLabel')}
         </UpgradeButton>
       </Container>
     </NightSky>

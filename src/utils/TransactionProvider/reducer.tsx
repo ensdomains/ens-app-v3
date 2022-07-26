@@ -1,7 +1,9 @@
 /* eslint-disable no-param-reassign */
 // import { current } from 'immer'
 
-import { Action, TransactionActionTypes, TransactionState } from '@app/types'
+import { Action, Step, TransactionActionTypes, TransactionState } from '@app/types'
+
+import set from 'lodash/set'
 
 export const initialState: TransactionState = {
   isOpen: false,
@@ -10,15 +12,36 @@ export const initialState: TransactionState = {
   canAdvance: true,
 }
 
+export const defaultStep: Step = {
+  type: 'info',
+  title: 'Step title',
+  description: 'Step description',
+  stepStatus: 'notStarted',
+  error: null,
+  content: () => <div>Step</div>,
+  buttons: {
+    leading: {
+      type: 'cancel',
+      clickHandler: () => () => {},
+    },
+    trailing: {
+      type: 'update',
+      clickHandler: () => () => {},
+    },
+  },
+  infoItems: [],
+}
+
 export function reducer(draft: TransactionState, action: Action) {
-  console.log('action: ', action)
   switch (action.type) {
     case TransactionActionTypes.openModal: {
       draft.isOpen = true
       break
     }
     case TransactionActionTypes.setSteps: {
-      draft.steps = action.payload
+      if (action.payload) {
+        draft.steps = action.payload || []
+      }
       break
     }
     case TransactionActionTypes.setCurrentStep: {
@@ -82,7 +105,11 @@ export function reducer(draft: TransactionState, action: Action) {
       break
     }
     case TransactionActionTypes.updateStep: {
-      draft.steps[draft.currentStep] = { ...draft.steps[draft.currentStep], ...action.payload }
+      const currentStepIdx = draft.currentStep
+      set(draft, `steps.[${currentStepIdx}]`, {
+        ...draft.steps[currentStepIdx],
+        ...action.payload,
+      })
       break
     }
     case TransactionActionTypes.setStepError: {

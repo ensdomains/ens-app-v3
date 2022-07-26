@@ -25,8 +25,7 @@ const ResolverDetailsContainer = styled.div(({ theme }) => [
 
 const VersionIndicator = styled.div(
   ({ theme }) => css`
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${theme.colors.borderTertiary};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.borderTertiary};
     border-radius: ${theme.radii.large};
     display: flex;
     align-items: center;
@@ -84,9 +83,7 @@ const ResolverDetails = () => {
   return (
     <ResolverDetailsContainer>
       <VersionContainer>
-        <Typography weight="bold">
-          {t('details.tabs.advanced.resolver.version')}
-        </Typography>
+        <Typography weight="bold">{t('details.tabs.advanced.resolver.version')}</Typography>
         <VersionIndicator>
           {versionIndicatorText}
           <TrafficLight
@@ -100,9 +97,7 @@ const ResolverDetails = () => {
         </VersionIndicator>
       </VersionContainer>
       <AddressContainer>
-        <Typography weight="bold">
-          {t('address.label', { ns: 'common' })}
-        </Typography>
+        <Typography weight="bold">{t('address.label', { ns: 'common' })}</Typography>
         <RecordItem value={resolverAddress || ''} />
       </AddressContainer>
     </ResolverDetailsContainer>

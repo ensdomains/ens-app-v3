@@ -1,10 +1,4 @@
-import {
-  fireEvent,
-  render,
-  screen,
-  mockFunction,
-  waitFor,
-} from '@app/test-utils'
+import { fireEvent, render, screen, mockFunction, waitFor } from '@app/test-utils'
 
 import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'

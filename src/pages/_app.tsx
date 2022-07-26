@@ -4,16 +4,8 @@ import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import { TransactionProvider } from '@app/utils/TransactionProvider'
 import { TransactionProviderTwo } from '@app/utils/TransactionProvider/TransactionProviderTwo'
-import {
-  lightTheme as thorinLightTheme,
-  ThorinGlobalStyles,
-} from '@ensdomains/thorin'
-import {
-  getDefaultWallets,
-  lightTheme,
-  RainbowKitProvider,
-  Theme,
-} from '@rainbow-me/rainbowkit'
+import { lightTheme as thorinLightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+import { getDefaultWallets, lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'

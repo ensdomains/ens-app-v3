@@ -84,9 +84,7 @@ describe('RegistrationDate', () => {
     render(<RegistrationDate />)
 
     await waitFor(() =>
-      expect(
-        screen.getByText('transaction.viewEtherscan').closest('a'),
-      ).toHaveAttribute(
+      expect(screen.getByText('transaction.viewEtherscan').closest('a')).toHaveAttribute(
         'href',
         'https://ropsten.etherscan.io/tx/transactionHash',
       ),

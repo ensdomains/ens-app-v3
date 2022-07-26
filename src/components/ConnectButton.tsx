@@ -9,28 +9,27 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useDisconnect } from 'wagmi'
 
-const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(
-  ({ theme, $isTabBar }) =>
-    $isTabBar
-      ? css`
-          align-self: flex-end;
-          justify-self: flex-end;
-          & button {
-            padding: 0 ${theme.space['4']};
-            width: ${theme.space.full};
-            height: ${theme.space['12']};
-            border-radius: ${theme.radii.full};
-            font-size: ${theme.fontSizes.base};
-            ${mq.xs.min(css`
-              padding: 0 ${theme.space['8']};
-            `)}
-          }
-        `
-      : css`
-          & button {
-            border-radius: ${theme.radii['2xLarge']};
-          }
-        `,
+const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(({ theme, $isTabBar }) =>
+  $isTabBar
+    ? css`
+        align-self: flex-end;
+        justify-self: flex-end;
+        & button {
+          padding: 0 ${theme.space['4']};
+          width: ${theme.space.full};
+          height: ${theme.space['12']};
+          border-radius: ${theme.radii.full};
+          font-size: ${theme.fontSizes.base};
+          ${mq.xs.min(css`
+            padding: 0 ${theme.space['8']};
+          `)}
+        }
+      `
+    : css`
+        & button {
+          border-radius: ${theme.radii['2xLarge']};
+        }
+      `,
 )
 
 export type AccountRenderProps = {

@@ -64,16 +64,10 @@ const Page = () => {
 
   const [filter, setFilter] = useState<FilterType>('none')
 
-  const onFilterControlChange = (control: {
-    sort: SortValue
-    filter: FilterType
-  }) => {
+  const onFilterControlChange = (control: { sort: SortValue; filter: FilterType }) => {
     const { sort: newSort, filter: newFilter } = control
     let refresh = false
-    if (
-      newSort.type !== sortValue.type ||
-      newSort.direction !== sortValue.direction
-    ) {
+    if (newSort.type !== sortValue.type || newSort.direction !== sortValue.direction) {
       setSortValue(control.sort)
       refresh = true
     }
@@ -86,13 +80,11 @@ const Page = () => {
 
   // Primary Profile
 
-  const { profile: primaryProfile, loading: primaryProfileLoading } =
-    usePrimaryProfile(address)
+  const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
 
   const profileButtonPlacement = breakpoints.md ? 'bottom' : 'inline'
 
-  const getTextRecord = (key: string) =>
-    primaryProfile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => primaryProfile?.records?.texts?.find((x) => x.key === key)
 
   // Names
 

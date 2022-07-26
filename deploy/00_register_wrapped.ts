@@ -46,9 +46,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     const _controller = controller.connect(await ethers.getSigner(owner))
     const commitTx = await controller.commit(commitment)
-    console.log(
-      `Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`,
-    )
+    console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`)
     await commitTx.wait()
 
     await network.provider.send('evm_increaseTime', [60])

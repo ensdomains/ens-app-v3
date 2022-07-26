@@ -24,10 +24,7 @@ describe('RouteItem', () => {
       label: 'test',
     }
     render(<RouteItem route={route} asText />)
-    expect(screen.getByText('test').closest('a')).toHaveAttribute(
-      'href',
-      '/test',
-    )
+    expect(screen.getByText('test').closest('a')).toHaveAttribute('href', '/test')
   })
   it('should NOT be a link if route is disabled', () => {
     mockUseActiveRoute.mockReturnValue({

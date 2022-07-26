@@ -2,13 +2,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { CancelCircleSVG, Input } from '@ensdomains/thorin'
-import {
-  Dispatch,
-  ForwardedRef,
-  forwardRef,
-  MouseEvent,
-  SetStateAction,
-} from 'react'
+import { Dispatch, ForwardedRef, forwardRef, MouseEvent, SetStateAction } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -95,10 +89,7 @@ export const SearchInputBox = forwardRef(
           suffix={
             input !== '' && (
               <div onClick={() => setInput('')}>
-                <ResetButton
-                  data-testid="search-invalid"
-                  as={CancelCircleSVG}
-                />
+                <ResetButton data-testid="search-invalid" as={CancelCircleSVG} />
               </div>
             )
           }

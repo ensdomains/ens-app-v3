@@ -25,8 +25,8 @@ const OutlinkIcon = styled.div(
   `,
 )
 
-export const OutlinkTypography = styled.a(
-  ({ theme }) => css`
+export const OutlinkTypography = styled(Typography)(
+  () => css`
     display: inline-block;
   `,
 )

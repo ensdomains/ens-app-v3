@@ -13,9 +13,7 @@ const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
     css`
       padding: ${$size === 'medium' ? theme.space['8'] : theme.space['6']};
       padding-top: ${theme.space['16']};
-      background-image: ${$banner
-        ? `url(${$banner})`
-        : theme.colors.gradients.blue};
+      background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
       background-repeat: no-repeat;
       background-attachment: scroll;
       background-size: 100% ${theme.space['28']};
@@ -144,9 +142,7 @@ export const ProfileSnippet = ({
                 onClick={() =>
                   router.push({
                     pathname:
-                      button === 'viewDetails'
-                        ? `/profile/${name}/details`
-                        : `/profile/${name}`,
+                      button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
                     query: {
                       from: router.asPath,
                     },
@@ -170,20 +166,14 @@ export const ProfileSnippet = ({
           <Name weight="bold">{name}</Name>
           {recordName && (
             <div style={{ marginTop: '4px' }}>
-              <Typography
-                data-testid="profile-snippet-name"
-                weight="bold"
-                color="textTertiary"
-              >
+              <Typography data-testid="profile-snippet-name" weight="bold" color="textTertiary">
                 {recordName}
               </Typography>
             </div>
           )}
         </DetailStack>
         {description && (
-          <Typography data-testid="profile-snippet-description">
-            {description}
-          </Typography>
+          <Typography data-testid="profile-snippet-description">{description}</Typography>
         )}
         {url && (
           <div style={{ width: 'min-content' }}>
@@ -201,9 +191,7 @@ export const ProfileSnippet = ({
             onClick={() =>
               router.push({
                 pathname:
-                  button === 'viewDetails'
-                    ? `/profile/${name}/details`
-                    : `/profile/${name}`,
+                  button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
                 query: {
                   from: router.asPath,
                 },

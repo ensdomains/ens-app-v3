@@ -92,12 +92,7 @@ export const NameDetailItem = ({
             />
           </AvatarWrapper>
           <TypeWrapper>
-            <Typography
-              color="text"
-              ellipsis
-              weight="bold"
-              variant="extraLarge"
-            >
+            <Typography color="text" ellipsis weight="bold" variant="extraLarge">
               {truncatedName}
             </Typography>
           </TypeWrapper>

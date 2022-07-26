@@ -47,10 +47,7 @@ export const StyledNavLink = ({
         </Link>
       )}
     >
-      <StyledAnchor
-        disabled={disabled}
-        $isActive={router.asPath === props.href}
-      >
+      <StyledAnchor disabled={disabled} $isActive={router.asPath === props.href}>
         {children}
       </StyledAnchor>
     </ConditionalWrapper>

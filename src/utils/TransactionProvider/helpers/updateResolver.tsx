@@ -12,8 +12,6 @@ import { Outlink } from '@app/components/Outlink'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { ENS } from '@ensdomains/ensjs'
-import { NewTransaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
 
 import {
   DispatchFn,
@@ -21,7 +19,9 @@ import {
   TransactionActionTypes,
   TransactionState,
   TransactionStep,
+  TransactionStepClickHandlerArgs,
 } from '@app/types'
+import { useEns } from '@app/utils/EnsProvider'
 import { WaitingElement } from './waitingElement'
 
 const TextContainer = styled.div(
@@ -113,14 +113,7 @@ export const createTransactionStep = (): TransactionStep => ({
           addTransaction,
           dispatch,
           estimatedGas,
-        }: {
-          signer: JsonRpcSigner
-          ens: ENS
-          currentStep: TransactionStep
-          addTransaction: (transaction: NewTransaction) => void
-          dispatch: DispatchFn
-          estimatedGas: number
-        }) =>
+        }: TransactionStepClickHandlerArgs) =>
         async () => {
           dispatch({
             type: TransactionActionTypes.updateStep,
@@ -176,7 +169,7 @@ export const createTransactionStep = (): TransactionStep => ({
   }: {
     currentStep: TransactionStep
     signer: JsonRpcSigner
-    ens: ENS
+    ens: ReturnType<typeof useEns>
   }) => {
     const transaction = await ens.setResolver.populateTransaction(
       currentStep.transactionInfo.name,

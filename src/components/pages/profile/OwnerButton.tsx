@@ -7,13 +7,7 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfile } from '@app/hooks/useProfile'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { shortenAddress } from '@app/utils/utils'
-import {
-  Button,
-  Dialog,
-  DownIndicatorSVG,
-  Dropdown,
-  Typography,
-} from '@ensdomains/thorin'
+import { Button, Dialog, DownIndicatorSVG, Dropdown, Typography } from '@ensdomains/thorin'
 import { ReactNode, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -173,8 +167,7 @@ const OwnerButtonWithPopup = ({
   const [open, setOpen] = useState(false)
   const { profile, loading } = useProfile(name!, !name)
 
-  const getTextRecord = (key: string) =>
-    profile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
   return (
     <>
@@ -224,11 +217,7 @@ const OwnerButtonWithPopup = ({
               <Typography variant="large" weight="bold">
                 {shortenAddress(address, 14, 8, 6)}
               </Typography>
-              <IconCopyAnimated
-                color="textTertiary"
-                copied={copied}
-                size="3.5"
-              />
+              <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
             </AddressCopyContainer>
           </AddressCopyButton>
           {canTransfer && (
@@ -384,11 +373,7 @@ export const OwnerButton = ({
   const { name } = usePrimary(address)
 
   if (type === 'dialog') {
-    return (
-      <OwnerButtonWithPopup
-        {...{ address, network, label, name, description, canTransfer }}
-      />
-    )
+    return <OwnerButtonWithPopup {...{ address, network, label, name, description, canTransfer }} />
   }
 
   return (

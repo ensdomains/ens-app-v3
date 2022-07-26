@@ -241,7 +241,7 @@ export const TransactionModal = ({
           <CompleteTypography>{t('transaction.modal.complete.message')}</CompleteTypography>
           <StyledAnchor
             onClick={() => {
-              onDismiss()
+              onDismiss?.()
               router.push(settingsRoute.href)
             }}
           >
@@ -254,7 +254,7 @@ export const TransactionModal = ({
       return <WaitingElement />
     }
     return null
-  }, [preSteps, stage, t])
+  }, [onDismiss, preSteps?.content, router, settingsRoute.href, stage, t])
 
   const LeadingButton = useMemo(() => {
     let label: string

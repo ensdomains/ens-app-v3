@@ -167,10 +167,7 @@ export const Content = ({
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
-      <ErrorContainer
-        message={children.warning.message}
-        type={children.warning.type}
-      />
+      <ErrorContainer message={children.warning.message} type={children.warning.type} />
     </WarningWrapper>
   )
 

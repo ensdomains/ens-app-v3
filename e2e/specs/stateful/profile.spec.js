@@ -120,8 +120,7 @@ const profiles = [
       },
     ],
     expiry: 'August 26, 2030',
-    contentHash:
-      'ipns://k51qzi5uqu5dgox2z23r6e99oqency055a6xt92xzmyvpz8mwz5ycjavm0u150',
+    contentHash: 'ipns://k51qzi5uqu5dgox2z23r6e99oqency055a6xt92xzmyvpz8mwz5ycjavm0u150',
   },
 ]
 
@@ -140,10 +139,7 @@ describe('Profile', () => {
     describe(profile.name, () => {
       describe('profile', () => {
         it('should go to the profile page', () => {
-          cy.get('[placeholder="Search for a name"]')
-            .type(profile.name)
-            .wait(1000)
-            .type('{enter}')
+          cy.get('[placeholder="Search for a name"]').type(profile.name).wait(1000).type('{enter}')
         })
 
         it('should show the name in the profile snippet', () => {
@@ -152,9 +148,7 @@ describe('Profile', () => {
           }).should('contain.text', profile.name)
         })
 
-        const snippetRecords = profile.records.filter(
-          (x) => x.type === 'snippet',
-        )
+        const snippetRecords = profile.records.filter((x) => x.type === 'snippet')
         const accounts = profile.records.filter((x) => x.type === 'account')
         const addresses = profile.records.filter((x) => x.type === 'address')
         const otherRecords = profile.records.filter((x) => x.type === 'other')
@@ -206,16 +200,11 @@ describe('Profile', () => {
       describe('name details', () => {
         it('should go to the name details page when clicking view details', () => {
           cy.contains('View Details').click()
-          cy.url().should(
-            'contain',
-            `http://localhost:3000/profile/${profile.name}/details`,
-          )
+          cy.url().should('contain', `http://localhost:3000/profile/${profile.name}/details`)
         })
 
         const textRecords = profile.records.filter((x) => x.type !== 'address')
-        const addressRecords = profile.records.filter(
-          (x) => x.type === 'address',
-        )
+        const addressRecords = profile.records.filter((x) => x.type === 'address')
 
         it('should show all text records, and show correct number of records', () => {
           cy.findByTestId('text-heading')
@@ -244,37 +233,22 @@ describe('Profile', () => {
 
         it('should show the contenthash if available', () => {
           if (profile.contentHash) {
-            cy.findByTestId('content-hash-heading').should(
-              'have.text',
-              'Content Hash',
-            )
-            cy.findByTestId('name-details-contentHash').should(
-              'contain.text',
-              profile.contentHash,
-            )
+            cy.findByTestId('content-hash-heading').should('have.text', 'Content Hash')
+            cy.findByTestId('name-details-contentHash').should('contain.text', profile.contentHash)
           } else {
-            cy.findAllByTestId('content-hash-heading').should(
-              'have.text',
-              'No Content Hash',
-            )
+            cy.findAllByTestId('content-hash-heading').should('have.text', 'No Content Hash')
           }
         })
 
         it('should have correct ownership data', () => {
           profile.owners.forEach((owner) => {
-            cy.findByTestId(`${owner.type}-data`).should(
-              'contain.text',
-              owner.value,
-            )
+            cy.findByTestId(`${owner.type}-data`).should('contain.text', owner.value)
           })
         })
 
         it('should show the expiry of the name if available', () => {
           if (profile.expiry) {
-            cy.findByTestId('expiry-data').should(
-              'contain.text',
-              profile.expiry,
-            )
+            cy.findByTestId('expiry-data').should('contain.text', profile.expiry)
           }
         })
       })

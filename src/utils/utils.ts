@@ -20,12 +20,7 @@ export function ensNftImageUrl(name: string, network: number, regAddr: string) {
   return `${baseMetadataURL}/${supported}/${regAddr}/${name}/image`
 }
 
-export const shortenAddress = (
-  address = '',
-  maxLength = 10,
-  leftSlice = 5,
-  rightSlice = 5,
-) => {
+export const shortenAddress = (address = '', maxLength = 10, leftSlice = 5, rightSlice = 5) => {
   if (address.length < maxLength) {
     return address
   }
@@ -33,8 +28,7 @@ export const shortenAddress = (
   return `${address.slice(0, leftSlice)}...${address.slice(-rightSlice)}`
 }
 
-export const secondsToDays = (seconds: number) =>
-  Math.floor(seconds / (60 * 60 * 24))
+export const secondsToDays = (seconds: number) => Math.floor(seconds / (60 * 60 * 24))
 
 export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
 
@@ -44,6 +38,4 @@ ${expiry.toLocaleDateString(undefined, {
 })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
 export const makeEtherscanLink = (hash: string, network?: string) =>
-  `https://${
-    !network || network === 'ethereum' ? '' : `${network}.`
-  }etherscan.io/tx/${hash}`
+  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`

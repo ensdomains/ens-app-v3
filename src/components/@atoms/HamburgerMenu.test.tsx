@@ -64,10 +64,7 @@ describe('HamburgerMenu', () => {
 
     render(<HamburgerMenu {...{ dropdownItems }} />)
     screen.getByTestId('dropdown').click()
-    expect(screen.getByText('testLabel')).toHaveAttribute(
-      'href',
-      'https://test.com',
-    )
+    expect(screen.getByText('testLabel')).toHaveAttribute('href', 'https://test.com')
   })
   it('should use next/link if http link', async () => {
     const dropdownItems = [
@@ -78,9 +75,6 @@ describe('HamburgerMenu', () => {
     ]
     render(<HamburgerMenu {...{ dropdownItems }} />)
     screen.getByTestId('dropdown').click()
-    expect(screen.getByText('testLabel')).toHaveAttribute(
-      'href',
-      'http://test.com',
-    )
+    expect(screen.getByText('testLabel')).toHaveAttribute('href', 'http://test.com')
   })
 })
