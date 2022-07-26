@@ -52,9 +52,7 @@ describe('WrapperCallToAction', () => {
     mockGetCurrentStep.mockReturnValue(0)
     render(<WrapperCallToAction name="test123.eth" />)
     expect(screen.getByTestId('wrapper-cta-container')).toBeVisible()
-    expect(screen.getByTestId('wrapper-cta-button')).toHaveTextContent(
-      'details.wrap.startLabel',
-    )
+    expect(screen.getByTestId('wrapper-cta-button')).toHaveTextContent('details.wrap.startLabel')
   })
   it('should set the current transaction on click', () => {
     render(<WrapperCallToAction name="test123.eth" />)
@@ -95,55 +93,47 @@ describe('WrapperCallToAction', () => {
     screen.getByTestId('wrapper-cta-button').click()
     await mockSetCurrentTransaction.mock.lastCall[1]('signer123')
     await waitFor(() =>
-      expect(mockSetRecords.populateTransaction).toHaveBeenCalledWith(
-        'test123.eth',
-        {
-          records: {
-            contentHash: 'ipfs://test-ipfs-hash',
-            texts: [
-              {
-                key: 'test1',
-                value: 'test1-value',
-              },
-              {
-                key: 'test2',
-                value: 'test2-value',
-              },
-            ],
-            coinTypes: [
-              {
-                key: 'coin1',
-                value: 'addr1',
-              },
-              {
-                key: 'coin2',
-                value: 'addr2',
-              },
-            ],
-          },
-          resolverAddress: '0x123',
-          signer: 'signer123',
+      expect(mockSetRecords.populateTransaction).toHaveBeenCalledWith('test123.eth', {
+        records: {
+          contentHash: 'ipfs://test-ipfs-hash',
+          texts: [
+            {
+              key: 'test1',
+              value: 'test1-value',
+            },
+            {
+              key: 'test2',
+              value: 'test2-value',
+            },
+          ],
+          coinTypes: [
+            {
+              key: 'coin1',
+              value: 'addr1',
+            },
+            {
+              key: 'coin2',
+              value: 'addr2',
+            },
+          ],
         },
-      ),
+        resolverAddress: '0x123',
+        signer: 'signer123',
+      }),
     )
   })
   it('should create a wrapName transaction', async () => {
     render(<WrapperCallToAction name="test123.eth" />)
     screen.getByTestId('wrapper-cta-button').click()
     await mockSetCurrentTransaction.mock.lastCall[1]('signer123', 'address123')
-    expect(mockWrapName.populateTransaction).toHaveBeenCalledWith(
-      'test123.eth',
-      {
-        wrappedOwner: 'address123',
-        signer: 'signer123',
-      },
-    )
+    expect(mockWrapName.populateTransaction).toHaveBeenCalledWith('test123.eth', {
+      wrappedOwner: 'address123',
+      signer: 'signer123',
+    })
   })
   it('should show button as resumable if step is greater than 0', () => {
     mockGetCurrentStep.mockReturnValue(1)
     render(<WrapperCallToAction name="test123.eth" />)
-    expect(screen.getByTestId('wrapper-cta-button')).toHaveTextContent(
-      'details.wrap.resumeLabel',
-    )
+    expect(screen.getByTestId('wrapper-cta-button')).toHaveTextContent('details.wrap.resumeLabel')
   })
 })

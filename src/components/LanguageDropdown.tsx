@@ -41,10 +41,7 @@ export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
       chevron={isLarge}
       size={isLarge ? 'medium' : 'small'}
       items={(i18n.options.supportedLngs || [])
-        .filter(
-          (lang: string) =>
-            lang && lang !== i18n.resolvedLanguage && lang !== 'cimode',
-        )
+        .filter((lang: string) => lang && lang !== i18n.resolvedLanguage && lang !== 'cimode')
         .map((lang: string) => ({
           label: formatName(lang),
           onClick: () => i18n.changeLanguage(lang),

@@ -1,10 +1,6 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 
-const isSSR = !!(
-  typeof window !== 'undefined' &&
-  window.document &&
-  window.document.createElement
-)
+const isSSR = !!(typeof window !== 'undefined' && window.document && window.document.createElement)
 
 const getStorageValue = <D>(key: string, defaultValue: D) => {
   // getting stored value

@@ -46,9 +46,7 @@ describe('ResolverDetails', () => {
     }
     mockUseProfile.mockReturnValue(mockProfileResponse)
     render(<ResolverDetails />)
-    expect(
-      screen.getByText('details.tabs.more.resolver.outdated'),
-    ).toBeVisible()
+    expect(screen.getByText('details.tabs.more.resolver.outdated')).toBeVisible()
     expect(screen.getByTestId('version-indicator-dot-outdated')).toBeVisible()
   })
 })

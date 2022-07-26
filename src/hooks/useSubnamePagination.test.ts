@@ -33,9 +33,7 @@ describe('useSubnamePagination', () => {
       subnameCount: 5000,
     }
     mockGetSubnames.mockResolvedValue(firstSubnames)
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useSubnamePagination('test.eth'),
-    )
+    const { result, waitForNextUpdate } = renderHook(() => useSubnamePagination('test.eth'))
     expect(mockGetSubnames).toBeCalledWith(
       expect.objectContaining({
         isLargeQuery: false,
@@ -58,9 +56,7 @@ describe('useSubnamePagination', () => {
         subnameCount: 5000,
       }
       mockGetSubnames.mockResolvedValue(firstSubnames)
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useSubnamePagination('test.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useSubnamePagination('test.eth'))
       await waitForNextUpdate()
       expect(result.current.max).toBe(2)
       expect(result.current.totalPages).toBe(500)
@@ -71,9 +67,7 @@ describe('useSubnamePagination', () => {
         subnameCount: 4999,
       }
       mockGetSubnames.mockResolvedValue(firstSubnames)
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useSubnamePagination('test.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useSubnamePagination('test.eth'))
       await waitForNextUpdate()
       expect(result.current.max).toBe(5)
       expect(result.current.totalPages).toBe(500)
@@ -83,8 +77,6 @@ describe('useSubnamePagination', () => {
     const { unmount } = renderHook(() => useSubnamePagination('test.eth'))
     const { result } = renderHook(() => useQueryClient())
     unmount()
-    expect(
-      result.current.getQueryCache().findAll({ active: true }),
-    ).toStrictEqual([])
+    expect(result.current.getQueryCache().findAll({ active: true })).toStrictEqual([])
   })
 })
