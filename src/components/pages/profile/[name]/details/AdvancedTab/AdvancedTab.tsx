@@ -1,21 +1,13 @@
-import styled from 'styled-components'
-import { utils, BigNumber } from 'ethers'
-import { useRouter } from 'next/router'
-import { TFunction, useTranslation } from 'react-i18next'
-
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
-
-import {
-  createTransactionStep,
-  createMiningStep,
-} from '@app/utils/TransactionProvider/helpers/updateResolver'
-import { DispatchFn, TransactionActionTypes } from '@app/types'
-import ResolverDetails from './ResolverDetails/ResolverDetails'
-import { EditResolverForm } from './ResolverDetails/EditResolverForm'
+import { BigNumber, utils } from 'ethers'
+import { useRouter } from 'next/router'
+import { TFunction, useTranslation } from 'react-i18next'
+import styled from 'styled-components'
+import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'
 import { RegistrationDate } from './RegistrationDate'
-import Accordion, { AccordionData } from './Accordion'
+import ResolverDetails from './ResolverDetails/ResolverDetails'
 
 export const TokenId = () => {
   const { t } = useTranslation('profile')
@@ -45,49 +37,24 @@ const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => 
   {
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
-    dialog: ({ dispatch }: { dispatch: DispatchFn }) => {
-      dispatch({
-        type: TransactionActionTypes.setSteps,
-        payload: [
-          {
-            type: 'info',
-            title: 'Update Resolver',
-            content: EditResolverForm,
-            stepStatus: 'inProgress',
-            buttons: {
-              leading: {
-                type: 'cancel',
-                clickHandler: () => async () => {
-                  dispatch({ type: TransactionActionTypes.cancelFlow })
-                },
-              },
-              trailing: {
-                type: 'update',
-                clickHandler: () => async () => {
-                  dispatch({ type: TransactionActionTypes.increaseStep })
-                },
-              },
-            },
-          },
-          createTransactionStep(),
-          createMiningStep(),
-        ],
-      })
-      dispatch({ type: TransactionActionTypes.openModal })
-    },
+    name: 'resolverDetails',
+    canEdit: true,
   },
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
     disabled: !fuseData,
+    name: 'fuses',
   },
   {
     title: t('details.tabs.advanced.tokenId.label'),
     body: TokenId,
+    name: 'tokenId',
   },
   {
     title: t('details.tabs.advanced.registrationDate.label'),
     body: RegistrationDate,
+    name: 'registrationDate',
   },
 ]
 
@@ -101,7 +68,7 @@ const MoreTab = () => {
 
   return (
     <MoreContainer>
-      <Accordion data={accordionData} />
+      <Accordion data={accordionData} name={name as string} />
     </MoreContainer>
   )
 }

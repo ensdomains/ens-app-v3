@@ -1,10 +1,8 @@
-import { DownIndicatorSVG, Typography, Button } from '@ensdomains/thorin'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { Button, DownIndicatorSVG, Typography } from '@ensdomains/thorin'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-
-import { useTransactionTwo } from '@app/utils/TransactionProvider/TransactionProviderTwo'
-import { DispatchFn, TransactionActionTypes } from '@app/types'
 
 const AccordionTitle = styled.div<{
   $isActive?: boolean
@@ -146,24 +144,25 @@ export interface AccordionData {
   title: string
   body: React.FC
   disabled?: boolean
-  dialog?: (arg: { dispatch: DispatchFn }) => void
+  name: string
+  canEdit?: boolean
 }
 interface AccordionProps {
   data: AccordionData[]
+  name: string
 }
 
-const Accordion = ({ data }: AccordionProps) => {
+const Accordion = ({ data, name }: AccordionProps) => {
   const { t } = useTranslation('profile')
-  const transactionUtils = useTransactionTwo()
+  const { showDataInput } = useTransactionFlow()
 
   const [activeItem, setActiveItem] = useState(0)
 
   const handleEditClick = (idx: number) => {
-    if (transactionUtils) {
-      data[idx].dialog?.(transactionUtils)
-      transactionUtils?.dispatch({ type: TransactionActionTypes.openModal })
-    } else {
-      console.error('no transactionUtils')
+    if (data[idx].name === 'resolverDetails') {
+      showDataInput(`resolver-upgrade-${name}`, 'EditResolver', {
+        name,
+      })
     }
   }
 
@@ -201,7 +200,7 @@ const Accordion = ({ data }: AccordionProps) => {
                     <Typography variant="extraLarge" weight="bold">
                       {item.title}
                     </Typography>
-                    {item.dialog && (
+                    {item.canEdit && (
                       <EditButton
                         shadowless
                         variant="transparent"
