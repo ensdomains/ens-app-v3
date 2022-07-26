@@ -1,4 +1,4 @@
-import { TransactionModal } from '@app/components/@molecules/TransactionModal/TransactionModal'
+import { TransactionModal } from '@app/components/@molecules/TransactionDialogManager/stage/Transaction'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import {
   StepStorageItem,

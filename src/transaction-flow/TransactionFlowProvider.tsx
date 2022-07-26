@@ -1,8 +1,8 @@
 import React, { ComponentProps, ReactNode, useContext, useMemo } from 'react'
 import { useImmerReducer } from 'use-immer'
+import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import { DataInputComponent } from './input'
 import { initialState, reducer } from './reducer'
-import { TransactionDialog } from './TransactionDialog'
 
 type ShowDataInput = <C extends keyof DataInputComponent>(
   key: string,
@@ -38,7 +38,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
   return (
     <TransactionContext.Provider value={providerValue}>
       {children}
-      <TransactionDialog {...{ state, dispatch }} />
+      <TransactionDialogManager {...{ state, dispatch }} />
     </TransactionContext.Provider>
   )
 }

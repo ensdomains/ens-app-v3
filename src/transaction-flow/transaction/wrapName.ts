@@ -1,21 +1,19 @@
-import type { ENS } from '@ensdomains/ensjs'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+import { PublicENS } from '../types'
 
-const infoItems = [
+type Data = {
+  name: string
+}
+
+const displayItems = ({ name }: Data) => [
   {
     label: 'name',
-    value: 'name',
+    value: name,
     type: 'name',
   },
 ]
 
-const transaction = async (
-  signer: JsonRpcSigner,
-  ens: ENS,
-  data: {
-    name: string
-  },
-) =>
+const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   ens.wrapName.populateTransaction(data.name, { wrappedOwner: await signer.getAddress(), signer })
 
-export default { infoItems, transaction }
+export default { displayItems, transaction }

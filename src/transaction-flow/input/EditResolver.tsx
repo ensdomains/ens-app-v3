@@ -4,7 +4,7 @@ import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { Outlink } from '@app/components/Outlink'
 import { useProfile } from '@app/hooks/useProfile'
 import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
-import { Input, mq, RadioButton } from '@ensdomains/thorin'
+import { Button, Dialog, Input, mq, RadioButton } from '@ensdomains/thorin'
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -108,8 +108,8 @@ type Data = {
 
 export const EditResolver = ({
   data,
-  dispatchDialog,
   dispatch,
+  onDismiss,
 }: {
   data: Data
 } & TransactionDialogPassthrough) => {
@@ -158,12 +158,12 @@ export const EditResolver = ({
 
     const hasValidity = isValid()
 
-    dispatchDialog({
-      name: 'addTrailingProps',
-      payload: {
-        disabled: !hasValidity,
-      },
-    })
+    // dispatchDialog({
+    //   name: 'addTrailingProps',
+    //   payload: {
+    //     disabled: !hasValidity,
+    //   },
+    // })
 
     if (hasValidity) {
       let newResolver
@@ -182,69 +182,95 @@ export const EditResolver = ({
             name,
             contract: 'registry',
             resolver: newResolver,
+            oldResolver: resolverAddress!,
           }),
         ],
       })
     }
-  }, [resolverChoice, customResolver, errors, resolverAddressIndex, dispatchDialog, dispatch, name])
+  }, [
+    resolverChoice,
+    customResolver,
+    errors,
+    resolverAddressIndex,
+    dispatch,
+    name,
+    resolverAddress,
+  ])
 
   return (
-    <EditResolverFormContainer>
-      {resolverChoice === 'custom' && validity?.length ? (
-        <>
-          <ErrorContainer
-            message={
-              <ul>
-                {validity?.map((message) => (
-                  <li key={message}>- {message}</li>
-                ))}
-              </ul>
-            }
-            type="warning"
-          />
-          <Spacer $height="4" />
-        </>
-      ) : null}
-      <form>
-        <LatestResolverContainer>
+    <>
+      <EditResolverFormContainer>
+        {resolverChoice === 'custom' && validity?.length ? (
+          <>
+            <ErrorContainer
+              message={
+                <ul>
+                  {validity?.map((message) => (
+                    <li key={message}>- {message}</li>
+                  ))}
+                </ul>
+              }
+              type="warning"
+            />
+            <Spacer $height="4" />
+          </>
+        ) : null}
+        <form>
+          <LatestResolverContainer>
+            <RadioButton
+              label="Use latest resolver"
+              value="latest"
+              labelRight
+              width={44}
+              {...register('resolverChoice', {
+                required: true,
+              })}
+              defaultChecked
+            />
+            <Outlink href={`https://etherscan.io/address/${RESOLVER_ADDRESSES[0]}`}>
+              {t('details.tabs.advanced.resolver.etherscan')}
+            </Outlink>
+          </LatestResolverContainer>
+
           <RadioButton
-            label="Use latest resolver"
-            value="latest"
+            label={t('details.tabs.advanced.resolver.custom')}
+            value="custom"
             labelRight
-            width={44}
-            {...register('resolverChoice', {
-              required: true,
-            })}
-            defaultChecked
+            {...register('resolverChoice')}
           />
-          <Outlink href={`https://etherscan.io/address/${RESOLVER_ADDRESSES[0]}`}>
-            {t('details.tabs.advanced.resolver.etherscan')}
-          </Outlink>
-        </LatestResolverContainer>
 
-        <RadioButton
-          label={t('details.tabs.advanced.resolver.custom')}
-          value="custom"
-          labelRight
-          {...register('resolverChoice')}
-        />
-
-        <InputContainer>
-          <Input
-            placeholder="Enter custom resolver address"
-            disabled={resolverChoice !== 'custom'}
-            {...register('customResolver', {
-              maxLength: 42,
-              minLength: 42,
-              validate: {
-                isCurrentResolver: (value) => !(value === resolverAddress),
-              },
-            })}
-            error={customResolverErrorMessage(errors)}
-          />
-        </InputContainer>
-        <Spacer $height="4" />
-      </form>
-    </EditResolverFormContainer>
+          <InputContainer>
+            <Input
+              placeholder="Enter custom resolver address"
+              disabled={resolverChoice !== 'custom'}
+              {...register('customResolver', {
+                maxLength: 42,
+                minLength: 42,
+                validate: {
+                  isCurrentResolver: (value) => !(value === resolverAddress),
+                },
+              })}
+              error={customResolverErrorMessage(errors)}
+            />
+          </InputContainer>
+          <Spacer $height="4" />
+        </form>
+      </EditResolverFormContainer>
+      <Dialog.Footer
+        leading={
+          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+            Cancel
+          </Button>
+        }
+        trailing={
+          <Button
+            shadowless
+            onClick={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}
+          >
+            Update
+          </Button>
+        }
+      />
+    </>
   )
 }

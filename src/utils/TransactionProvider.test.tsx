@@ -1,15 +1,11 @@
-import { TransactionModal } from '@app/components/@molecules/TransactionModal/TransactionModal'
+import { TransactionModal } from '@app/components/@molecules/TransactionDialogManager/stage/Transaction'
 import { useChainName } from '@app/hooks/useChainName'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { act, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { StepStorageItem } from '@app/types'
 import { useEffect } from 'react'
 import { useAccount, useSigner } from 'wagmi'
-import {
-  TransactionProvider,
-  TxFunc,
-  useTransaction,
-} from './TransactionProvider'
+import { TransactionProvider, TxFunc, useTransaction } from './TransactionProvider'
 
 jest.mock('@app/hooks/useChainName')
 jest.mock('@app/components/@molecules/TransactionModal/TransactionModal')
@@ -49,11 +45,7 @@ const mockOnSuccess = jest.fn()
 
 let mockStepStorage = {} as Record<string, StepStorageItem>
 const mockSetStepStorage = jest.fn(
-  (
-    func: (
-      prevStepStorage: Record<string, StepStorageItem>,
-    ) => Record<string, StepStorageItem>,
-  ) => {
+  (func: (prevStepStorage: Record<string, StepStorageItem>) => Record<string, StepStorageItem>) => {
     mockStepStorage = func(mockStepStorage)
   },
 )

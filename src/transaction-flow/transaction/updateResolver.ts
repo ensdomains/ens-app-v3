@@ -1,23 +1,22 @@
-import { ENS } from '@ensdomains/ensjs'
 import { JsonRpcSigner } from '@ethersproject/providers'
+import { PublicENS } from '../types'
 
-const infoItems = [
-  {
-    label: 'action',
-    value: 'Update Resolver',
-  },
-  {
-    label: 'info',
-    value: 'Update your current resolver to the new one you have selected',
-  },
+type Data = {
+  name: string
+  contract: 'registry' | 'nameWrapper'
+  resolver: string
+  oldResolver: string
+}
+
+const displayItems = ({ resolver, oldResolver }: Data) => [
   {
     label: 'currentResolver',
-    value: 'shouldGetUpdated',
+    value: oldResolver,
     type: 'address',
   },
   {
     label: 'newResolver',
-    value: 'shouldGetUpdated',
+    value: resolver,
     type: 'address',
   },
 ]
@@ -41,19 +40,11 @@ const pending = {
     'Your transaction has been sent to the network, and is waiting to be saved to the blockchain. You may close this dialog.',
 }
 
-const transaction = (
-  signer: JsonRpcSigner,
-  ens: ENS,
-  data: {
-    name: string
-    contract: 'registry' | 'nameWrapper'
-    resolver: string
-  },
-) =>
+const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   ens.setResolver.populateTransaction(data.name, {
     contract: data.contract,
     resolver: data.resolver,
     signer,
   })
 
-export default { infoItems, confirm, request, pending, transaction }
+export default { displayItems, confirm, request, pending, transaction }

@@ -1,7 +1,11 @@
+import { TransactionDisplayItem } from '@app/types'
+import { ENS } from '@ensdomains/ensjs'
 import { Button, Dialog } from '@ensdomains/thorin'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 import { DataInputComponent } from './input'
-import { makeTransactionItem } from './transaction'
+import { makeTransactionItem, TransactionName } from './transaction'
+
+export type PublicENS = Pick<ENS, keyof ENS>
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -12,11 +16,23 @@ type GenericDataInput = {
   data: any
 }
 
+type GenericTransaction = {
+  name: TransactionName
+  data: any
+}
+
+export type TransactionIntro = {
+  title: string
+  leadingLabel?: string
+  trailingLabel?: string
+  content: ReactNode
+}
+
 export type TransactionFlow = {
   key: string
   input?: GenericDataInput
-  intro?: any
-  transactions: ReturnType<typeof makeTransactionItem>[]
+  intro?: TransactionIntro
+  transactions: GenericTransaction[]
   resumable?: boolean
 }
 
@@ -63,39 +79,6 @@ export type TransactionFlowAction =
       name: 'stopFlow'
     }
 
-export type TransactionDialogAction =
-  | {
-      name: 'setLeadingProps'
-      payload: TransactionDialogProps['leading']
-    }
-  | {
-      name: 'setTrailingProps'
-      payload: TransactionDialogProps['trailing']
-    }
-  | {
-      name: 'setOpen'
-      payload: boolean
-    }
-  | {
-      name: 'setChildren'
-      payload: any
-    }
-  | {
-      name: 'addLeadingProps'
-      payload: Partial<TransactionDialogProps['leading']>
-    }
-  | {
-      name: 'addTrailingProps'
-      payload: Partial<TransactionDialogProps['trailing']>
-    }
-  | {
-      name: 'setupInputStage'
-      payload: {
-        children: () => ReactNode
-        trailing: () => void
-      }
-    }
-
 export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
   variant: 'actionable'
   children: () => ReactNode
@@ -105,5 +88,18 @@ export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
 
 export type TransactionDialogPassthrough = {
   dispatch: Dispatch<TransactionFlowAction>
-  dispatchDialog: Dispatch<TransactionDialogAction>
+  onDismiss: () => void
 }
+
+export type ManagedDialogProps = {
+  transaction: GenericTransaction
+  onDismiss?: (success?: boolean) => void
+  onSuccess?: () => void
+  dismissBtnLabel?: string
+  completeBtnLabel?: string
+  completeTitle?: string
+  actionName: string
+  displayItems: TransactionDisplayItem[]
+}
+
+export type TransactionIntroFunction = (resumeToStep: number) => TransactionIntro

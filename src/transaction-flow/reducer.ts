@@ -48,7 +48,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'stopFlow': {
-      draft = initialState
+      draft.key = null
       break
     }
   }

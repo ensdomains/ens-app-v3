@@ -1,21 +1,19 @@
-import type { ENS } from '@ensdomains/ensjs'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+import { PublicENS } from '../types'
 
-const infoItems = [
+type Data = {
+  name: string
+}
+
+const displayItems = ({ name }: Data) => [
   {
     label: 'name',
-    value: 'name',
+    value: name,
     type: 'name',
   },
 ]
 
-const transaction = async (
-  signer: JsonRpcSigner,
-  ens: ENS,
-  data: {
-    name: string
-  },
-) => {
+const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const profile = await ens.getProfile(data.name)
   if (!profile) throw new Error('No profile found')
   if (!profile.records) throw new Error('No records found')
@@ -49,4 +47,4 @@ const transaction = async (
   })
 }
 
-export default { infoItems, transaction }
+export default { displayItems, transaction }
