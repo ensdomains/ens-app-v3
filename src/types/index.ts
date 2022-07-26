@@ -1,5 +1,5 @@
 import type { ENS } from '@ensdomains/ensjs'
-import type { PopulatedTransaction } from 'ethers'
+import type { BigNumber, PopulatedTransaction } from 'ethers'
 import React, { ReactNode } from 'react'
 
 import common from '@public/locales/en/common.json'
@@ -61,12 +61,13 @@ export interface TransactionState {
 interface InfoItem {
   label: keyof typeof common.transaction.itemLabel
   value: string
+  type?: 'address'
 }
 
 type TransactionType = 'updateResolver'
 type StepStatus = 'notStarted' | 'inProgress' | 'completed'
 
-interface Step {
+export interface Step {
   type: 'transaction' | 'mining' | 'info'
   title: string
   description: string
@@ -87,22 +88,48 @@ interface Step {
         currentStep: Step
         addTransaction: (tx: NewTransaction) => void
         dispatch: DispatchFn
-        estimatedGas: number | undefined
       }) => () => void
     } | null
   }
   transactionHash?: PopulatedTransaction
   transactionInfo?: any
+  transactionType?: TransactionType
 }
 
-export interface TransactionStep extends Step {
+export interface TransactionStep extends Omit<Step, 'buttons'> {
   type: 'transaction'
   transactionType: TransactionType
+  buttons: {
+    trailing: {
+      type: string
+      clickHandler: (arg: {
+        signer: JsonRpcSigner
+        ens: ReturnType<typeof useEns>
+        currentStep: TransactionStep
+        addTransaction: (tx: NewTransaction) => void
+        dispatch: DispatchFn
+        estimatedGas: BigNumber
+      }) => () => void
+    }
+    leading: {
+      type: string
+      clickHandler: (arg: { dispatch: DispatchFn }) => () => void
+    }
+  }
   gasEstimator: (arg: {
-    currentStep: object
+    currentStep: TransactionStep
     signer: JsonRpcSigner
     ens: ReturnType<typeof useEns>
-  }) => number
+  }) => Promise<BigNumber>
+}
+
+export type TransactionStepClickHandlerArgs = {
+  signer: JsonRpcSigner
+  ens: ReturnType<typeof useEns>
+  currentStep: TransactionStep
+  addTransaction: (transaction: NewTransaction) => void
+  dispatch: DispatchFn
+  estimatedGas: BigNumber
 }
 
 export interface MiningStep extends Step {
@@ -128,13 +155,14 @@ export enum TransactionActionTypes {
   cancelFlow,
   updateStepTitle,
   updateStep,
+  updateTransactionStep,
   setStepError,
   updateState,
 }
 
 export type Action =
   | { type: TransactionActionTypes.openModal }
-  | { type: TransactionActionTypes.setSteps; payload: Array<Partial<FlowStep>> }
+  | { type: TransactionActionTypes.setSteps; payload: Array<FlowStep> }
   | { type: TransactionActionTypes.setCurrentStep; payload: number }
   | { type: TransactionActionTypes.increaseStep }
   | { type: TransactionActionTypes.decreaseStep }
@@ -160,7 +188,7 @@ export type Action =
     }
   | {
       type: TransactionActionTypes.updateStep
-      payload: Omit<Partial<Step>, 'type'>
+      payload: Partial<TransactionStep>
     }
   | {
       type: TransactionActionTypes.setStepError

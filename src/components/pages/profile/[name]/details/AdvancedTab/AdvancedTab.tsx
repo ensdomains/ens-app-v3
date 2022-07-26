@@ -5,12 +5,13 @@ import { TFunction, useTranslation } from 'react-i18next'
 
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
-
+import { defaultStep } from '@app/utils/TransactionProvider/reducer'
 import {
   createTransactionStep,
   createMiningStep,
 } from '@app/utils/TransactionProvider/helpers/updateResolver'
 import { DispatchFn, TransactionActionTypes } from '@app/types'
+
 import ResolverDetails from './ResolverDetails/ResolverDetails'
 import { EditResolverForm } from './ResolverDetails/EditResolverForm'
 import Fuses from './Fuses'
@@ -50,6 +51,7 @@ const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => 
         type: TransactionActionTypes.setSteps,
         payload: [
           {
+            ...defaultStep,
             type: 'info',
             title: 'Update Resolver',
             content: EditResolverForm,

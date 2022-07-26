@@ -71,10 +71,12 @@ const TrailingButton = ({ state, dispatch }: { state: TransactionState; dispatch
     ['gas', gasKey],
     () => {
       if (!signer) return undefined
-      return currentStep.gasEstimator({ currentStep, signer: signer as JsonRpcSigner, ens })
+      if (currentStep.type === 'transaction') {
+        return currentStep.gasEstimator({ currentStep, signer: signer as JsonRpcSigner, ens })
+      }
     },
     {
-      enabled: !!currentStep?.transactionInfo && !!signer,
+      enabled: !!currentStep?.transactionInfo && !!signer && currentStep.type === 'transaction',
     },
   )
 
@@ -82,16 +84,36 @@ const TrailingButton = ({ state, dispatch }: { state: TransactionState; dispatch
     return null
   }
 
+  if (currentStep.type === 'transaction') {
+    return (
+      <ButtonShrinkwrap
+        disabled={!state.canAdvance || !estimatedGas}
+        onClick={
+          estimatedGas &&
+          currentStep?.buttons.trailing.clickHandler({
+            signer: signer as JsonRpcSigner,
+            ens,
+            currentStep,
+            addTransaction,
+            dispatch,
+            estimatedGas,
+          })
+        }
+      >
+        {t(`action.${currentStep?.buttons?.trailing?.type}`)}
+      </ButtonShrinkwrap>
+    )
+  }
+
   return (
     <ButtonShrinkwrap
-      disabled={!state.canAdvance || (currentStep.type === 'transaction' && !estimatedGas)}
+      disabled={!state.canAdvance}
       onClick={currentStep?.buttons.trailing.clickHandler({
         signer: signer as JsonRpcSigner,
         ens,
         currentStep,
         addTransaction,
         dispatch,
-        estimatedGas,
       })}
     >
       {t(`action.${currentStep?.buttons?.trailing?.type}`)}

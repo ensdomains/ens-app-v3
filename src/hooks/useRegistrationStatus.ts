@@ -1,5 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { emptyAddress, yearsToSeconds } from '@app/utils/utils'
+import { yearsToSeconds } from '@app/utils/utils'
+import { emptyAddress } from '@app/utils/constants'
 import type { BigNumber } from 'ethers'
 import { useQuery } from 'react-query'
 

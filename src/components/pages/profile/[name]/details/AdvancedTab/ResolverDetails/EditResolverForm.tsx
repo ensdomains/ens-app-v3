@@ -167,7 +167,7 @@ const EditResolverForm = ({ dispatch }: { dispatch: DispatchFn }) => {
         },
       })
     }
-  }, [resolverChoice, customResolver, errors, resolverAddressIndex])
+  }, [resolverChoice, customResolver, errors, resolverAddressIndex, dispatch, name])
 
   return (
     <EditResolverFormContainer>
@@ -212,6 +212,7 @@ const EditResolverForm = ({ dispatch }: { dispatch: DispatchFn }) => {
 
         <InputContainer>
           <Input
+            label="input"
             placeholder="Enter custom resolver address"
             disabled={resolverChoice !== 'custom'}
             {...register('customResolver', {
