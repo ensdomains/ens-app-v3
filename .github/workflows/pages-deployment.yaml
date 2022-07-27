@@ -2,7 +2,7 @@ name: Cloudflare Pages
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
+  NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/ensdomains/ens
 
 on: [push]
 jobs:
@@ -41,7 +41,7 @@ jobs:
           node-version: 16
 
       - name: Install Packages
-        run: yarn install --immutable --immutable-cache --check-cache
+        run: yarn install
 
       - name: Build and Export
         run: yarn build && yarn export
