@@ -60,13 +60,22 @@ const ErrorWrapper = styled.div(
   `,
 )
 
+const IconWrapper = styled.div(
+  () => css`
+    svg {
+      display: block;
+      width: 22px;
+      height: 22px;
+    }
+  `,
+)
+
 type ThorinInputProps = ComponentProps<typeof Input>
 type Props = {
   validated?: boolean
   showDefaultPrefix?: boolean
   label?: string
   onDelete?: () => void
-  onClear?: () => void
   option?: {
     value: string
     label?: string
@@ -84,7 +93,6 @@ export const RecordInput = forwardRef(
       showDefaultPrefix = false,
       showDot,
       onDelete,
-      onClear,
       showDot: showDotProp,
       prefix: prefixProp,
       label: labelProp,
@@ -97,10 +105,16 @@ export const RecordInput = forwardRef(
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
     const theme = useTheme()
 
-    const prefix =
-      prefixProp ||
-      option?.prefix ||
-      (showDefaultPrefix ? <UnsupportedSVG /> : undefined)
+    const prefix = (() => {
+      if (prefixProp) return prefixProp
+      if (option?.prefix) return <IconWrapper>{option.prefix}</IconWrapper>
+      if (showDefaultPrefix)
+        return (
+          <IconWrapper>
+            <UnsupportedSVG />
+          </IconWrapper>
+        )
+    })()
 
     const error = errorProp ? (
       <ErrorWrapper>{errorProp}</ErrorWrapper>

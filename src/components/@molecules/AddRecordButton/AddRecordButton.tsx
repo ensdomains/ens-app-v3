@@ -69,7 +69,7 @@ const SearchIconWrapper = styled.div(
       height: 100%;
       path {
         stroke-width: 3;
-        color: ${theme.colors.textTertiary};
+        stroke: ${theme.colors.textTertiary};
       }
     }
   `,
@@ -223,14 +223,20 @@ const OptionButton = ({
   showUnsupportedPrefix = true,
   ...props
 }: OptionButtonProps) => {
+  const header = (() => {
+    if (option.prefix) return <OptionHeader>{option.prefix}</OptionHeader>
+    if (showUnsupportedPrefix)
+      return (
+        <OptionHeader>
+          <UnsupportedSVG />
+        </OptionHeader>
+      )
+    return null
+  })()
+
   return (
     <OptionContainer type="button" $inline={inline} {...props}>
-      {option.prefix ||
-        (showUnsupportedPrefix && (
-          <OptionHeader>
-            {option.prefix ? option.prefix : <UnsupportedSVG />}
-          </OptionHeader>
-        ))}
+      {header}
       <OptionBody>{option.label}</OptionBody>
     </OptionContainer>
   )
@@ -330,6 +336,7 @@ export const AddRecordButton = ({
         setInputValue('')
         inputRef.current?.focus()
       }}
+      data-testid="add-record-button-clear-button"
     >
       <div>
         <CloseSVG />
@@ -364,7 +371,10 @@ export const AddRecordButton = ({
       ref={containerRef}
       data-testid="add-record-button"
     >
-      <ControlsContainer $state={state}>
+      <ControlsContainer
+        $state={state}
+        data-testid="add-record-button-controls"
+      >
         <ControlsHeader>
           <ControlsHeaderLeading>
             {inputType === 'placeholder' ? (
@@ -390,6 +400,7 @@ export const AddRecordButton = ({
                 `}
                 padding="3.5"
                 onChange={(e) => setInputValue(e.target.value)}
+                data-testid="add-record-button-input"
               />
             )}
           </ControlsHeaderLeading>
@@ -433,6 +444,7 @@ export const AddRecordButton = ({
           shadowless
           onClick={handleButtonClick}
           style={{ height: `${theme.space['12']}` }}
+          data-testid="add-record-button-button"
         >
           {addRecord}
         </Button>

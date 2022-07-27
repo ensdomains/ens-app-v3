@@ -428,7 +428,10 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
   return (
     <>
       <Modal open={open} onDismiss={onDismiss}>
-        <Container onSubmit={handleSubmit(handleTransaction)}>
+        <Container
+          onSubmit={handleSubmit(handleTransaction)}
+          data-testid="advanced-editor"
+        >
           <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>
           <ContentContainer>
             <TabButtonsContainer>
