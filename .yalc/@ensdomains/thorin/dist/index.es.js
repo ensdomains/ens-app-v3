@@ -1423,7 +1423,6 @@ const Label = styled.label(({
     color: ${theme.colors.textTertiary};
     font-weight: ${theme.fontWeights["semiBold"]};
     display: flex;
-    cursor: pointer;
   `);
 const LabelSecondary = styled.span(({
   theme
@@ -1473,11 +1472,10 @@ const LabelContent = (_k) => {
 const Container$b = styled.div(({
   theme,
   $inline,
-  $width,
-  $labelRight
+  $width
 }) => css`
     display: flex;
-    flex-direction: ${$inline ? $labelRight ? "row-reverse" : "row" : "column"};
+    flex-direction: ${$inline ? "row" : "column"};
     align-items: ${$inline ? "center" : "normal"};
     gap: ${$inline ? theme.space["2.5"] : theme.space["2"]};
     width: ${theme.space[$width]};
@@ -1515,8 +1513,7 @@ const Field = (_m) => {
     labelSecondary,
     required,
     inline,
-    width = "full",
-    labelRight = false
+    width = "full"
   } = _n, props = __objRest(_n, [
     "children",
     "description",
@@ -1527,8 +1524,7 @@ const Field = (_m) => {
     "labelSecondary",
     "required",
     "inline",
-    "width",
-    "labelRight"
+    "width"
   ]);
   const ids = useFieldIds({
     id: id2,
@@ -1546,7 +1542,6 @@ const Field = (_m) => {
     content = children;
   return inline ? /* @__PURE__ */ React.createElement(Container$b, {
     $inline: inline,
-    $labelRight: labelRight,
     $width: width
   }, /* @__PURE__ */ React.createElement(ContainerInner$2, null, hideLabel ? /* @__PURE__ */ React.createElement(VisuallyHidden, null, /* @__PURE__ */ React.createElement(LabelContent, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     ids,
@@ -1825,7 +1820,7 @@ const HeadingContainer = styled.div(({
   
   font-family: ${theme.fonts["sans"]};
   `);
-const Heading = React.forwardRef((_q, ref) => {
+const Heading$1 = React.forwardRef((_q, ref) => {
   var _r = _q, {
     align,
     children,
@@ -1856,7 +1851,7 @@ const Heading = React.forwardRef((_q, ref) => {
     ref
   }), children);
 });
-Heading.displayName = "Heading";
+Heading$1.displayName = "Heading";
 const Portal = ({
   children,
   className,
@@ -1874,6 +1869,102 @@ const Portal = ({
   return ReactDOM.createPortal(children, container);
 };
 Portal.displayName = "Portal";
+const StyledScrollBox = styled.div(({
+  theme,
+  $showTop,
+  $showBottom
+}) => css`
+    overflow: auto;
+    position: relative;
+
+    border-color: rgba(${theme.shadesRaw.foreground}, 0.05);
+    transition: border-color 0.15s ease-in-out;
+
+    /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar {
+      width: ${theme.space["1.5"]};
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+      border: none;
+      border-radius: ${theme.radii.full};
+      border-right-style: inset;
+      border-right-width: calc(100vw + 100vh);
+      border-color: inherit;
+    }
+
+    &::-webkit-scrollbar-button {
+      display: none;
+    }
+
+    &:hover {
+      border-color: rgba(${theme.shadesRaw.foreground}, 0.2);
+    }
+
+    &::before,
+    &::after {
+      content: '';
+      position: sticky;
+      left: 0;
+      width: 100%;
+      display: block;
+      height: ${theme.space.px};
+      background-color: rgba(${theme.shadesRaw.foreground}, 0);
+      transition: background-color 0.15s ease-in-out;
+    }
+
+    &::before {
+      top: 0;
+      ${$showTop && css`
+        background-color: rgba(${theme.shadesRaw.foreground}, 0.1);
+      `}
+    }
+    &::after {
+      bottom: 0;
+      ${$showBottom && css`
+        background-color: rgba(${theme.shadesRaw.foreground}, 0.1);
+      `}
+    }
+  `);
+const ScrollBox = (props) => {
+  const ref = React.useRef(null);
+  const [showTop, setShowTop] = React.useState(false);
+  const [showBottom, setShowBottom] = React.useState(false);
+  const setScrollValues = (scrollTop, scrollHeight, clientHeight) => {
+    setShowTop(scrollTop > 16);
+    setShowBottom(scrollHeight - scrollTop > clientHeight + 16);
+  };
+  const handleScroll = (event) => {
+    const {
+      scrollTop,
+      scrollHeight,
+      clientHeight
+    } = event.currentTarget;
+    setScrollValues(scrollTop, scrollHeight, clientHeight);
+  };
+  React.useEffect(() => {
+    const _ref = ref.current;
+    if (_ref) {
+      const {
+        scrollTop,
+        scrollHeight,
+        clientHeight
+      } = _ref;
+      setScrollValues(scrollTop, scrollHeight, clientHeight);
+    }
+  }, []);
+  return /* @__PURE__ */ React.createElement(StyledScrollBox, __spreadValues({
+    $showBottom: showBottom,
+    $showTop: showTop,
+    ref,
+    onScroll: handleScroll
+  }, props));
+};
 const Context = React.createContext(void 0);
 const SkeletonGroup = ({
   children,
@@ -3053,7 +3144,7 @@ const FieldSet = (_G) => {
     disabled,
     form,
     name
-  }), /* @__PURE__ */ React.createElement(ContainerInner, null, /* @__PURE__ */ React.createElement(Row, null, /* @__PURE__ */ React.createElement(Heading, {
+  }), /* @__PURE__ */ React.createElement(ContainerInner, null, /* @__PURE__ */ React.createElement(Row, null, /* @__PURE__ */ React.createElement(Heading$1, {
     as: "legend",
     level: "2",
     responsive: true
@@ -3782,8 +3873,7 @@ const RadioButton = React.forwardRef((_Q, ref) => {
     width,
     onBlur,
     onChange,
-    onFocus,
-    labelRight
+    onFocus
   } = _R, props = __objRest(_R, [
     "description",
     "disabled",
@@ -3801,14 +3891,11 @@ const RadioButton = React.forwardRef((_Q, ref) => {
     "width",
     "onBlur",
     "onChange",
-    "onFocus",
-    "labelRight"
+    "onFocus"
   ]);
   const defaultRef = React.useRef(null);
   const inputRef = ref || defaultRef;
-  console.log("width: ", width);
-  console.log("props: ", props);
-  return /* @__PURE__ */ React.createElement(Field, __spreadValues({}, {
+  return /* @__PURE__ */ React.createElement(Field, {
     description,
     error,
     hideLabel,
@@ -3817,9 +3904,8 @@ const RadioButton = React.forwardRef((_Q, ref) => {
     label,
     labelSecondary,
     required,
-    width,
-    labelRight
-  }), /* @__PURE__ */ React.createElement(Input, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
+    width
+  }, /* @__PURE__ */ React.createElement(Input, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
     "aria-invalid": error ? true : void 0,
     "aria-selected": checked ? true : void 0,
     "data-testid": getTestId(props, "radio"),
@@ -4831,6 +4917,49 @@ const StepItem = styled.div(({
       background-color: ${theme.colors.accent};
     `}
   `);
+const Heading = ({
+  currentStep,
+  stepCount,
+  stepStatus,
+  title,
+  subtitle
+}) => {
+  const calcStepType = React.useCallback((step) => {
+    if (step === currentStep) {
+      return stepStatus || "inProgress";
+    }
+    if (step < (currentStep || 0)) {
+      return "completed";
+    }
+    return "notStarted";
+  }, [currentStep, stepStatus]);
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, stepCount && /* @__PURE__ */ React.createElement(StepContainer, {
+    "data-testid": "step-container"
+  }, Array.from({
+    length: stepCount
+  }, (_, i) => /* @__PURE__ */ React.createElement(StepItem, {
+    $type: calcStepType(i),
+    "data-testid": `step-item-${i}-${calcStepType(i)}`,
+    key: i
+  }))), /* @__PURE__ */ React.createElement(TitleContainer, {
+    $hasSteps: !!stepCount
+  }, title && (typeof title !== "string" && title || /* @__PURE__ */ React.createElement(Title$1, null, title)), subtitle && (typeof subtitle !== "string" && subtitle || /* @__PURE__ */ React.createElement(SubTitle, null, subtitle))));
+};
+const Footer = ({
+  leading,
+  trailing,
+  center
+}) => /* @__PURE__ */ React.createElement(Container$1, __spreadValues({}, {
+  $center: center
+}), leading || !center && /* @__PURE__ */ React.createElement("div", {
+  style: {
+    flexGrow: 1
+  }
+}), trailing || !center && /* @__PURE__ */ React.createElement("div", {
+  style: {
+    flexGrow: 1
+  }
+}));
 const ModalWithTitle = (__) => {
   var _$ = __, {
     open,
@@ -4851,29 +4980,16 @@ const ModalWithTitle = (__) => {
     "stepCount",
     "stepStatus"
   ]);
-  const calcStepType = React.useCallback((step) => {
-    if (step === currentStep) {
-      return stepStatus || "inProgress";
-    }
-    if (step < (currentStep || 0)) {
-      return "completed";
-    }
-    return "notStarted";
-  }, [currentStep, stepStatus]);
   return /* @__PURE__ */ React.createElement(Modal, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     open,
     onDismiss
-  })), /* @__PURE__ */ React.createElement(StyledCard, null, /* @__PURE__ */ React.createElement(ContentWrapper, null, stepCount && /* @__PURE__ */ React.createElement(StepContainer, {
-    "data-testid": "step-container"
-  }, Array.from({
-    length: stepCount
-  }, (_, i) => /* @__PURE__ */ React.createElement(StepItem, {
-    $type: calcStepType(i),
-    "data-testid": `step-item-${i}-${calcStepType(i)}`,
-    key: i
-  }))), /* @__PURE__ */ React.createElement(TitleContainer, {
-    $hasSteps: !!stepCount
-  }, title && (typeof title !== "string" && title || /* @__PURE__ */ React.createElement(Title$1, null, title)), subtitle && (typeof subtitle !== "string" && subtitle || /* @__PURE__ */ React.createElement(SubTitle, null, subtitle))), children)));
+  })), /* @__PURE__ */ React.createElement(StyledCard, null, /* @__PURE__ */ React.createElement(ContentWrapper, null, /* @__PURE__ */ React.createElement(Heading, __spreadValues({}, {
+    title,
+    subtitle,
+    currentStep,
+    stepCount,
+    stepStatus
+  })), children)));
 };
 const Dialog = (_aa) => {
   var _ba = _aa, {
@@ -4906,16 +5022,10 @@ const Dialog = (_aa) => {
       subtitle,
       title,
       onDismiss
-    }), children, (leading || trailing) && /* @__PURE__ */ React.createElement(Container$1, __spreadValues({}, {
-      $center: center
-    }), leading || !center && /* @__PURE__ */ React.createElement("div", {
-      style: {
-        flexGrow: 1
-      }
-    }), trailing || !center && /* @__PURE__ */ React.createElement("div", {
-      style: {
-        flexGrow: 1
-      }
+    }), children, (leading || trailing) && /* @__PURE__ */ React.createElement(Footer, __spreadValues({}, {
+      leading,
+      trailing,
+      center
     })));
   } else if (variant === "closable") {
     const _b = props, {
@@ -4939,9 +5049,11 @@ const Dialog = (_aa) => {
   return /* @__PURE__ */ React.createElement(Modal, __spreadValues({}, {
     onDismiss,
     open
-  }), /* @__PURE__ */ React.createElement(StyledCard, null, children));
+  }), /* @__PURE__ */ React.createElement(StyledCard, null, /* @__PURE__ */ React.createElement(ContentWrapper, null, children)));
 };
 Dialog.displayName = "Dialog";
+Dialog.Footer = Footer;
+Dialog.Heading = Heading;
 const IconCloseContainer = styled.div(({
   theme
 }) => css`
@@ -4971,7 +5083,7 @@ const Container = styled.div(({
   $popped
 }) => css`
     position: fixed;
-    z-index: 1000;
+    z-index: 10000;
 
     width: 92.5%;
     left: 3.75%;
@@ -6583,8 +6695,9 @@ var index = /* @__PURE__ */ Object.freeze({
   DynamicPopover,
   Field,
   FileInput,
-  Heading,
+  Heading: Heading$1,
   Portal,
+  ScrollBox,
   Skeleton,
   Spinner,
   Tag,
@@ -6790,4 +6903,4 @@ const GlobalStyle = createGlobalStyle(({
       color: ${theme.colors.inherit};
     }
   `);
-export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };
+export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading$1 as Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ScrollBox, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };

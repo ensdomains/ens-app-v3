@@ -31,5 +31,11 @@ declare type Props = BaseProps & (ClosableProps | ActionableProps | BlankProps);
 export declare const Dialog: {
     ({ children, onDismiss, open, variant, ...props }: Props): JSX.Element;
     displayName: string;
+    Footer: ({ leading, trailing, center, }: {
+        leading?: React.ReactNode;
+        trailing: React.ReactNode;
+        center?: boolean | undefined;
+    }) => JSX.Element;
+    Heading: ({ currentStep, stepCount, stepStatus, title, subtitle, }: TitleProps & StepProps) => JSX.Element;
 };
 export {};

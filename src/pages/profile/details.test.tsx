@@ -1,25 +1,15 @@
-import {
-  fireEvent,
-  render,
-  screen,
-  mockFunction,
-  waitFor,
-} from '@app/test-utils'
-
-import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
-
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
 import More from '@app/components/pages/profile/[name]/details/AdvancedTab/AdvancedTab'
 import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
 import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-
+import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
 import Page, { calculateSelfAbilities, Details } from './details'
 
 // setting up jest mocks

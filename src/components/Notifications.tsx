@@ -1,6 +1,6 @@
 import { useChainName } from '@app/hooks/useChainName'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useTransaction } from '@app/utils/TransactionProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Toast } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
@@ -30,12 +30,11 @@ export const Notifications = () => {
 
   const chainName = useChainName()
   const transactions = useRecentTransactions()
-  const previousTransactions =
-    useRef<ReturnType<typeof useRecentTransactions>>()
+  const previousTransactions = useRef<ReturnType<typeof useRecentTransactions>>()
 
   const [open, setOpen] = useState(false)
 
-  const { setCurrentTransaction, getResumable } = useTransaction()
+  const { resumeTransactionFlow, getResumable } = useTransactionFlow()
 
   const [notificationQueue, setNotificationQueue] = useState<Notification[]>([])
   const currentNotification = notificationQueue[0]
@@ -58,10 +57,9 @@ export const Notifications = () => {
       const resumable = key && getResumable(key)
       return {
         title: t(`transaction.status.${transaction.status}.notifyTitle`),
-        description: t(
-          `transaction.status.${transaction.status}.notifyMessage`,
-          { action: t(`transaction.description.${action}`) },
-        ),
+        description: t(`transaction.status.${transaction.status}.notifyMessage`, {
+          action: t(`transaction.description.${action}`),
+        }),
         children: resumable ? (
           <ButtonContainer>
             <a
@@ -77,17 +75,13 @@ export const Notifications = () => {
               shadowless
               size="small"
               variant="primary"
-              onClick={() => setCurrentTransaction(key)}
+              onClick={() => resumeTransactionFlow(key)}
             >
               Continue
             </Button>
           </ButtonContainer>
         ) : (
-          <a
-            target="_blank"
-            href={makeEtherscanLink(transaction.hash, chainName)}
-            rel="noreferrer"
-          >
+          <a target="_blank" href={makeEtherscanLink(transaction.hash, chainName)} rel="noreferrer">
             <Button shadowless size="small" variant="secondary">
               {t('transaction.viewEtherscan')}
             </Button>
@@ -110,10 +104,7 @@ export const Notifications = () => {
       onClose={() => {
         setOpen(false)
         setTimeout(
-          () =>
-            setNotificationQueue((prev) => [
-              ...prev.filter((x) => x !== currentNotification),
-            ]),
+          () => setNotificationQueue((prev) => [...prev.filter((x) => x !== currentNotification)]),
           300,
         )
       }}

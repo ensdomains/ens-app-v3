@@ -113,8 +113,8 @@
         "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
       }
     },
-    "modal": {
-      "preSteps": {
+    "dialog": {
+      "intro": {
         "trailingButton": "Start",
         "trailingButtonResume": "Resume",
         "step": "Step {{step}}"

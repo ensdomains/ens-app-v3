@@ -1,13 +1,11 @@
-import { mq, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
-
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
 import { useProfile } from '@app/hooks/useProfile'
-
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { mq, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 const ResolverDetailsContainer = styled.div(({ theme }) => [
   css`
@@ -25,8 +23,7 @@ const ResolverDetailsContainer = styled.div(({ theme }) => [
 
 const VersionIndicator = styled.div(
   ({ theme }) => css`
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${theme.colors.borderTertiary};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.borderTertiary};
     border-radius: ${theme.radii.large};
     display: flex;
     align-items: center;
@@ -84,9 +81,7 @@ const ResolverDetails = () => {
   return (
     <ResolverDetailsContainer>
       <VersionContainer>
-        <Typography weight="bold">
-          {t('details.tabs.advanced.resolver.version')}
-        </Typography>
+        <Typography weight="bold">{t('details.tabs.advanced.resolver.version')}</Typography>
         <VersionIndicator>
           {versionIndicatorText}
           <TrafficLight
@@ -100,9 +95,7 @@ const ResolverDetails = () => {
         </VersionIndicator>
       </VersionContainer>
       <AddressContainer>
-        <Typography weight="bold">
-          {t('address.label', { ns: 'common' })}
-        </Typography>
+        <Typography weight="bold">{t('address.label', { ns: 'common' })}</Typography>
         <RecordItem value={resolverAddress || ''} />
       </AddressContainer>
     </ResolverDetailsContainer>

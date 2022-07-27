@@ -1,20 +1,23 @@
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
 import { Outlink, StyledAnchor } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
-import { TransactionPreStepObject, TransactionSubmission } from '@app/types'
+import { getRoute } from '@app/routes'
+import { transactions } from '@app/transaction-flow/transaction'
+import { ManagedDialogProps } from '@app/transaction-flow/types'
+import { useEns } from '@app/utils/EnsProvider'
 import { isIOS } from '@app/utils/isIOS'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
+import { PopulatedTransaction } from 'ethers'
+import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useSigner } from 'wagmi'
-import { useRouter } from 'next/router'
-import { getRoute } from '@app/routes'
-import { DisplayItems } from './DisplayItems'
+import { DisplayItems } from '../DisplayItems'
 
 const InnerDialog = styled.div(
   ({ theme }) => css`
@@ -78,8 +81,8 @@ const WaitingElement = () => {
     <WaitingContainer data-testid="transaction-waiting-container">
       <StyledSpinner color="accent" />
       <WaitingTextContainer>
-        <Typography weight="bold">{t('transaction.modal.confirm.waiting.title')}</Typography>
-        <Typography>{t('transaction.modal.confirm.waiting.subtitle')}</Typography>
+        <Typography weight="bold">{t('transaction.dialog.confirm.waiting.title')}</Typography>
+        <Typography>{t('transaction.dialog.confirm.waiting.subtitle')}</Typography>
       </WaitingTextContainer>
     </WaitingContainer>
   )
@@ -111,9 +114,8 @@ const CompleteTypography = styled(Typography)(
 
 type Stage = 'preSteps' | 'request' | 'confirm' | 'complete'
 
-export const TransactionModal = ({
+export const TransactionStageModal = ({
   displayItems,
-  open,
   onDismiss,
   onSuccess,
   transaction,
@@ -123,55 +125,60 @@ export const TransactionModal = ({
   completeBtnLabel,
   currentStep,
   stepCount,
-  preSteps,
   onComplete,
   txKey,
-}: TransactionSubmission & {
+}: ManagedDialogProps & {
   txKey: string | null
-  open: boolean
   currentStep: number
   stepCount: number
-  preSteps?: TransactionPreStepObject
   onComplete: () => void
 }) => {
-  console.log('TransactionModal')
   const { t } = useTranslation()
   const chainName = useChainName()
   const router = useRouter()
 
-  const [stage, setStage] = useState<Stage>('request')
   const addTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
+  const ens = useEns()
+
+  const [stage, setStage] = useState<Stage>('request')
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
   const settingsRoute = getRoute('settings')
 
-  const { data: estimatedGas } = useQuery(['gas', txKey, currentStep], async () => {
-    if (!transaction) {
-      return null
-    }
+  const { data: populatedTransaction } = useQuery(
+    ['tx', txKey, currentStep],
+    async () => {
+      let _populatedTransaction: PopulatedTransaction
 
-    const gas = await signer?.estimateGas(transaction)
+      try {
+        _populatedTransaction = await transactions[transaction.name].transaction(
+          signer as JsonRpcSigner,
+          ens,
+          transaction.data,
+        )
+        _populatedTransaction.gasLimit = await signer!.estimateGas(_populatedTransaction)
+        return _populatedTransaction
+      } catch (e: any) {
+        setError(e.message || e)
+        return null
+      }
+    },
+    {
+      enabled: !!transaction && !!signer && !!ens,
+    },
+  )
 
-    return gas
-  })
   const needsUnchecked = isIOS()
 
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      console.log('transaction: ', transaction)
       let hash: string
       if (needsUnchecked) {
-        hash = await (signer as JsonRpcSigner).sendUncheckedTransaction({
-          ...transaction,
-          gasLimit: estimatedGas!,
-        })
+        hash = await (signer as JsonRpcSigner).sendUncheckedTransaction(populatedTransaction!)
       } else {
-        ;({ hash } = await (signer as JsonRpcSigner).sendTransaction({
-          ...transaction,
-          gasLimit: estimatedGas!,
-        }))
+        ;({ hash } = await (signer as JsonRpcSigner).sendTransaction(populatedTransaction!))
       }
       if (!hash) throw new Error('No transaction generated')
       addTransaction({
@@ -183,65 +190,40 @@ export const TransactionModal = ({
       onComplete()
     } catch (e: any) {
       if (e && e.code === 4001) {
-        setError('transaction.modal.confirm.error.rejectedRequest')
+        setError('transaction.dialog.confirm.error.rejectedRequest')
       } else {
-        setError(e ? e.message : 'transaction.modal.confirm.error.unknown')
+        setError(e ? e.message : 'transaction.dialog.confirm.error.unknown')
       }
     }
-  }, [
-    signer,
-    transaction,
-    addTransaction,
-    actionName,
-    txKey,
-    onComplete,
-    estimatedGas,
-    needsUnchecked,
-  ])
+  }, [needsUnchecked, addTransaction, actionName, txKey, onComplete, signer, populatedTransaction])
 
   const FilledDisplayItems = useMemo(
-    () =>
-      stage === 'preSteps' ? (
-        <DisplayItems
-          displayItems={
-            preSteps?.steps.map((step, index) => ({
-              fade: currentStep > index,
-              shrink: true,
-              label: t('transaction.modal.preSteps.step', { step: index + 1 }),
-              value: t(`transaction.description.${step}`),
-              useRawLabel: true,
-            })) || []
-          }
-        />
-      ) : (
-        <DisplayItems
-          displayItems={[
-            {
-              label: 'action',
-              value: t(`transaction.description.${actionName}`),
-            },
-            {
-              label: 'info',
-              value: t(`transaction.info.${actionName}`),
-            },
-            ...(displayItems || []),
-          ]}
-        />
-      ),
-    [stage, preSteps, t, actionName, displayItems, currentStep],
+    () => (
+      <DisplayItems
+        displayItems={[
+          {
+            label: 'action',
+            value: t(`transaction.description.${actionName}`),
+          },
+          {
+            label: 'info',
+            value: t(`transaction.info.${actionName}`),
+          },
+          ...(displayItems || []),
+        ]}
+      />
+    ),
+    [t, actionName, displayItems],
   )
   const MiddleContent = useMemo(() => {
-    if (stage === 'preSteps') {
-      return preSteps?.content
-    }
     if (stage === 'complete') {
       return (
         <SuccessContent>
           <PaperPlaneColourSVG />
-          <CompleteTypography>{t('transaction.modal.complete.message')}</CompleteTypography>
+          <CompleteTypography>{t('transaction.dialog.complete.message')}</CompleteTypography>
           <StyledAnchor
             onClick={() => {
-              onDismiss()
+              onDismiss?.()
               router.push(settingsRoute.href)
             }}
           >
@@ -254,13 +236,11 @@ export const TransactionModal = ({
       return <WaitingElement />
     }
     return null
-  }, [preSteps, stage, t])
+  }, [onDismiss, router, settingsRoute.href, stage, t])
 
   const LeadingButton = useMemo(() => {
     let label: string
-    if (stage === 'preSteps' && preSteps?.leadingLabel) {
-      label = preSteps.leadingLabel
-    } else if (stage === 'complete') {
+    if (stage === 'complete') {
       if (currentStep + 1 === stepCount) return null
       label = t('action.close')
     } else if (dismissBtnLabel) {
@@ -271,8 +251,8 @@ export const TransactionModal = ({
     return (
       <ButtonShrinkwrap
         onClick={() => {
-          onDismiss?.()
           if (stage === 'complete') onSuccess?.()
+          onDismiss?.()
         }}
         variant="secondary"
         tone="grey"
@@ -282,34 +262,9 @@ export const TransactionModal = ({
         {label}
       </ButtonShrinkwrap>
     )
-  }, [
-    stage,
-    preSteps?.leadingLabel,
-    dismissBtnLabel,
-    currentStep,
-    stepCount,
-    t,
-    onDismiss,
-    onSuccess,
-  ])
+  }, [stage, dismissBtnLabel, currentStep, stepCount, t, onDismiss, onSuccess])
 
   const TrailingButton = useMemo(() => {
-    if (stage === 'preSteps') {
-      const tLabel =
-        currentStep > 0
-          ? t('transaction.modal.preSteps.trailingButtonResume')
-          : t('transaction.modal.preSteps.trailingButton')
-      return (
-        <Button
-          shadowless
-          variant="primary"
-          onClick={() => setStage('request')}
-          data-testid="transaction-modal-preSteps-trailing-btn"
-        >
-          {preSteps?.trailingLabel || tLabel}
-        </Button>
-      )
-    }
     if (stage === 'complete') {
       const final = currentStep + 1 === stepCount
 
@@ -325,8 +280,8 @@ export const TransactionModal = ({
         >
           {completeBtnLabel ||
             (final
-              ? t('transaction.modal.complete.trailingButton')
-              : t('transaction.modal.complete.stepTrailingButton'))}
+              ? t('transaction.dialog.complete.trailingButton')
+              : t('transaction.dialog.complete.stepTrailingButton'))}
         </Button>
       )
     }
@@ -339,7 +294,7 @@ export const TransactionModal = ({
           onClick={() => tryTransaction()}
           data-testid="transaction-modal-confirm-trailing-btn"
         >
-          {t('transaction.modal.confirm.trailingButton')}
+          {t('transaction.dialog.confirm.trailingButton')}
         </Button>
       )
     }
@@ -348,15 +303,15 @@ export const TransactionModal = ({
         data-testid="transaction-modal-request-trailing-btn"
         shadowless
         onClick={() => setStage('confirm')}
-        disabled={!estimatedGas}
+        disabled={!populatedTransaction}
       >
-        {t('transaction.modal.request.trailingButton')}
+        {t('transaction.dialog.request.trailingButton')}
       </Button>
     )
   }, [
     stage,
+    populatedTransaction,
     t,
-    preSteps,
     currentStep,
     stepCount,
     completeBtnLabel,
@@ -364,41 +319,28 @@ export const TransactionModal = ({
     onDismiss,
     error,
     tryTransaction,
-    estimatedGas,
   ])
 
   const title = useMemo(() => {
-    if (stage === 'preSteps') {
-      return preSteps?.title
-    }
     if (stage === 'complete') {
       if (stepCount > 1) {
-        return completeTitle || t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
+        return (
+          completeTitle || t('transaction.dialog.complete.stepTitle', { step: currentStep + 1 })
+        )
       }
-      return completeTitle || t('transaction.modal.complete.title')
+      return completeTitle || t('transaction.dialog.complete.title')
     }
     if (stage === 'confirm') {
-      return t('transaction.modal.confirm.title')
+      return t('transaction.dialog.confirm.title')
     }
-    return t('transaction.modal.request.title')
-  }, [completeTitle, currentStep, preSteps, stage, stepCount, t])
+    return t('transaction.dialog.request.title')
+  }, [completeTitle, currentStep, stage, stepCount, t])
 
   useEffect(() => {
-    if (open) {
-      if (preSteps) {
-        setStage('preSteps')
-      } else {
-        setStage('request')
-      }
-      setError(null)
-      setTxHash(null)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [open])
-
-  useEffect(() => {
-    setStage((prev) => (prev === 'preSteps' ? 'preSteps' : 'request'))
-  }, [actionName])
+    setStage('request')
+    setError(null)
+    setTxHash(null)
+  }, [])
 
   useEffect(() => {
     if (stage === 'confirm') {
@@ -407,9 +349,6 @@ export const TransactionModal = ({
   }, [stage, tryTransaction])
 
   const stepStatus = useMemo(() => {
-    if (stage === 'preSteps') {
-      return 'notStarted'
-    }
     if (stage === 'complete') {
       return 'completed'
     }
@@ -417,21 +356,14 @@ export const TransactionModal = ({
   }, [stage])
 
   return (
-    <Dialog
-      title={title}
-      subtitle={stage === 'request' ? t('transaction.modal.request.subtitle') : undefined}
-      variant="actionable"
-      leading={LeadingButton}
-      trailing={TrailingButton}
-      open={open}
-      onDismiss={() => {
-        onDismiss?.()
-        if (stage === 'complete') onSuccess?.()
-      }}
-      currentStep={currentStep}
-      stepCount={stepCount > 1 ? stepCount : undefined}
-      stepStatus={stepStatus}
-    >
+    <>
+      <Dialog.Heading
+        title={title}
+        subtitle={stage === 'request' ? t('transaction.dialog.request.subtitle') : undefined}
+        currentStep={currentStep}
+        stepCount={stepCount > 1 ? stepCount : undefined}
+        stepStatus={stepStatus}
+      />
       <InnerDialog data-testid="transaction-modal-inner">
         {error ? <ErrorTypography color="red">{t(error)}</ErrorTypography> : MiddleContent}
         {FilledDisplayItems}
@@ -441,6 +373,7 @@ export const TransactionModal = ({
           </Outlink>
         )}
       </InnerDialog>
-    </Dialog>
+      <Dialog.Footer leading={LeadingButton} trailing={TrailingButton} />
+    </>
   )
 }
