@@ -9,7 +9,9 @@
     "edit": "Edit",
     "view": "View",
     "clear": "Clear",
-    "learnMore": "Learn more"
+    "learnMore": "Learn more",
+    "add": "Add",
+    "search": "Search"
   },
   "navigation": {
     "home": "Home",
@@ -156,5 +158,10 @@
       "short": "Too Short",
       "default": "Invalid"
     }
+  },
+  "selectableInput": {
+    "add": "Add",
+    "placeholder": "Select an option",
+    "empty": "No options found"
   }
 }

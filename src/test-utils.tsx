@@ -1,6 +1,7 @@
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 import { render, RenderOptions } from '@testing-library/react'
 import { renderHook, RenderHookOptions } from '@testing-library/react-hooks'
+import { default as userEvent } from '@testing-library/user-event'
 import React, { FC, ReactElement } from 'react'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { ThemeProvider } from 'styled-components'
@@ -44,3 +45,4 @@ export const mockFunction = <T extends (...args: any) => any>(func: T) =>
 export * from '@testing-library/react'
 export { customRender as render }
 export { customRenderHook as renderHook }
+export { userEvent }

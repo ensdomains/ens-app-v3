@@ -6,6 +6,8 @@ import { OwnerButton } from './OwnerButton'
 
 jest.mock('@app/hooks/usePrimary')
 
+window.scroll = jest.fn()
+
 const mockUsePrimary = mockFunction(usePrimary)
 
 const mockForNoPrimary = () =>

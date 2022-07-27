@@ -13,6 +13,8 @@ const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
 const mockUseChainId = mockFunction(useChainId)
 
+window.scroll = jest.fn()
+
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
   mockUseChainId.mockReturnValue(1)
