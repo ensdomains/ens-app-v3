@@ -289,7 +289,7 @@ export const RecordsTab = ({
     }
   }, [name, network, contentHash])
 
-  const [showEditor, setShowEditor] = useState(true)
+  const [showEditor, setShowEditor] = useState(false)
   const handleDismissEditor = () => setShowEditor(false)
 
   return (
