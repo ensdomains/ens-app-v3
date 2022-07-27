@@ -1,5 +1,5 @@
 import { useChainName } from '@app/hooks/useChainName'
-import { useTransaction } from '@app/utils/TransactionProvider'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
 import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
@@ -132,7 +132,7 @@ export const TransactionSection = () => {
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
 
-  const { getResumable, setCurrentTransaction } = useTransaction()
+  const { getResumable, resumeTransactionFlow } = useTransactionFlow()
 
   return (
     <SectionContainer data-testid="transaction-section" $name="transactions">
@@ -187,7 +187,7 @@ export const TransactionSection = () => {
                         shadowless
                         size="small"
                         variant="primary"
-                        onClick={() => setCurrentTransaction(key)}
+                        onClick={() => resumeTransactionFlow(key)}
                       >
                         Continue
                       </Button>

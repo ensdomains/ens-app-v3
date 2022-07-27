@@ -1,25 +1,23 @@
 /* eslint-disable default-case */
 /* eslint-disable no-param-reassign */
-import {
-  BaseInternalTransactionFlow,
-  InternalTransactionFlow,
-  TransactionFlowAction,
-  TransactionFlowStage,
-} from './types'
+import { InternalTransactionFlow, TransactionFlowAction, TransactionFlowStage } from './types'
 
 export const initialState: InternalTransactionFlow = {
-  key: null,
+  selectedKey: null,
+  items: {},
 }
 
 export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowAction) => {
   switch (action.name) {
     case 'showDataInput': {
-      draft = draft as BaseInternalTransactionFlow
-      draft.key = action.payload.key
-      draft.currentFlowStage = 'input'
-      draft.currentTransaction = 0
-      draft.input = action.payload.input
-      draft.transactions = []
+      draft.items[action.key] = {
+        currentFlowStage: 'input',
+        currentTransaction: 0,
+        currentTransactionComplete: false,
+        input: action.payload.input,
+        transactions: [],
+      }
+      draft.selectedKey = action.key
       break
     }
     case 'startFlow': {
@@ -30,25 +28,71 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       if (action.payload.input) {
         currentFlowStage = 'input'
       }
-      draft = {
+      draft.items[action.key] = {
         ...action.payload,
         currentTransaction: 0,
+        currentTransactionComplete: false,
         currentFlowStage,
       }
+      draft.selectedKey = action.key
+      break
+    }
+    case 'resumeFlow': {
+      const { key } = action
+      const item = draft.items[key]
+      if (item.currentTransactionComplete) {
+        item.currentTransaction += 1
+        item.currentTransactionComplete = false
+      }
+      if (item.intro) {
+        item.currentFlowStage = 'intro'
+      }
+      draft.items[key] = item
+      draft.selectedKey = key
       break
     }
     case 'setTransactions': {
-      draft = draft as BaseInternalTransactionFlow
-      draft.transactions = action.payload
+      draft.items[draft.selectedKey!] = {
+        ...draft.items[draft.selectedKey!],
+        transactions: action.payload,
+      }
       break
     }
     case 'setFlowStage': {
-      draft = draft as BaseInternalTransactionFlow
-      draft.currentFlowStage = action.payload
+      draft.items[draft.selectedKey!] = {
+        ...draft.items[draft.selectedKey!],
+        currentFlowStage: action.payload,
+      }
       break
     }
     case 'stopFlow': {
-      draft.key = null
+      const { resumable, currentTransaction, currentTransactionComplete, transactions } =
+        draft.items[draft.selectedKey!]
+      if (!resumable || (currentTransactionComplete && currentTransaction >= transactions.length)) {
+        delete draft.items[draft.selectedKey!]
+      } else if (currentTransactionComplete) {
+        draft.items[draft.selectedKey!] = {
+          ...draft.items[draft.selectedKey!],
+          currentTransaction: currentTransaction + 1,
+          currentTransactionComplete: false,
+        }
+      }
+      draft.selectedKey = null
+      break
+    }
+    case 'setTransactionComplete': {
+      draft.items[draft.selectedKey!] = {
+        ...draft.items[draft.selectedKey!],
+        currentTransactionComplete: true,
+      }
+      break
+    }
+    case 'incrementTransaction': {
+      draft.items[draft.selectedKey!] = {
+        ...draft.items[draft.selectedKey!],
+        currentTransaction: draft.items[draft.selectedKey!].currentTransaction + 1,
+        currentTransactionComplete: false,
+      }
       break
     }
   }

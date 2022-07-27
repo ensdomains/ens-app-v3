@@ -3,69 +3,77 @@
 import { transactions } from '@app/transaction-flow/transaction'
 import { Dialog } from '@ensdomains/thorin'
 import { Dispatch, useCallback, useMemo } from 'react'
+import { useQueryClient } from 'react-query'
 import { DataInputComponents } from '../../../transaction-flow/input'
-import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
+import {
+  InternalTransactionFlow,
+  InternalTransactionFlowItem,
+  TransactionFlowAction,
+} from '../../../transaction-flow/types'
 import { IntroStageModal } from './stage/Intro'
 import { TransactionStageModal } from './stage/Transaction'
 
 export const TransactionDialogManager = ({
   state,
   dispatch,
+  selectedFlowItem,
 }: {
   state: InternalTransactionFlow
   dispatch: Dispatch<TransactionFlowAction>
+  selectedFlowItem: InternalTransactionFlowItem | null
 }) => {
+  const queryClient = useQueryClient()
+
   const onDismiss = useCallback(() => {
-    console.log('dismissing')
     dispatch({
       name: 'stopFlow',
     })
   }, [dispatch])
 
   const InnerComponent = useMemo(() => {
-    if (state.key) {
-      if (state.input && state.currentFlowStage === 'input') {
-        const Component = DataInputComponents[state.input.name]
-        return <Component {...{ data: state.input.data, dispatch, onDismiss }} />
+    if (state.selectedKey && selectedFlowItem) {
+      if (selectedFlowItem.input && selectedFlowItem.currentFlowStage === 'input') {
+        const Component = DataInputComponents[selectedFlowItem.input.name]
+        return <Component {...{ data: selectedFlowItem.input.data, dispatch, onDismiss }} />
       }
-      if (state.intro && state.currentFlowStage === 'intro') {
+      if (selectedFlowItem.intro && selectedFlowItem.currentFlowStage === 'intro') {
         return (
           <IntroStageModal
-            currentStep={state.currentTransaction}
+            currentStep={selectedFlowItem.currentTransaction}
             onSuccess={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}
-            {...{ ...state.intro, onDismiss, transactions: state.transactions }}
+            {...{
+              ...selectedFlowItem.intro,
+              onDismiss,
+              transactions: selectedFlowItem.transactions,
+            }}
           />
         )
       }
 
-      const transactionItem = state.transactions[state.currentTransaction]
+      const transactionItem = selectedFlowItem.transactions[selectedFlowItem.currentTransaction]
       const transaction = transactions[transactionItem.name]
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
           displayItems={transaction.displayItems(transactionItem.data)}
-          currentStep={state.currentTransaction}
-          stepCount={state.transactions.length}
+          currentStep={selectedFlowItem.currentTransaction}
+          stepCount={selectedFlowItem.transactions.length}
           transaction={transactionItem}
-          txKey={state.key}
+          txKey={state.selectedKey}
           onDismiss={onDismiss}
+          onComplete={() => dispatch({ name: 'setTransactionComplete' })}
+          onSuccess={() => {
+            dispatch({ name: 'incrementTransaction' })
+            queryClient.invalidateQueries()
+          }}
         />
       )
     }
     return null
-  }, [
-    state.key,
-    state.input,
-    state.currentFlowStage,
-    state.intro,
-    state.currentTransaction,
-    state.transactions,
-    dispatch,
-    onDismiss,
-  ])
+  }, [state.selectedKey, selectedFlowItem, onDismiss, dispatch, queryClient])
 
   return (
-    <Dialog variant="blank" open={!!state.key} onDismiss={onDismiss}>
+    <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onDismiss}>
       {InnerComponent}
     </Dialog>
   )

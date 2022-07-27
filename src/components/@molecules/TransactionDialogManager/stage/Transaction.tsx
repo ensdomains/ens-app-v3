@@ -17,7 +17,7 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useSigner } from 'wagmi'
-import { DisplayItems } from '../../TransactionModal/DisplayItems'
+import { DisplayItems } from '../DisplayItems'
 
 const InnerDialog = styled.div(
   ({ theme }) => css`
@@ -81,8 +81,8 @@ const WaitingElement = () => {
     <WaitingContainer data-testid="transaction-waiting-container">
       <StyledSpinner color="accent" />
       <WaitingTextContainer>
-        <Typography weight="bold">{t('transaction.modal.confirm.waiting.title')}</Typography>
-        <Typography>{t('transaction.modal.confirm.waiting.subtitle')}</Typography>
+        <Typography weight="bold">{t('transaction.dialog.confirm.waiting.title')}</Typography>
+        <Typography>{t('transaction.dialog.confirm.waiting.subtitle')}</Typography>
       </WaitingTextContainer>
     </WaitingContainer>
   )
@@ -146,15 +146,13 @@ export const TransactionStageModal = ({
   const [txHash, setTxHash] = useState<string | null>(null)
   const settingsRoute = getRoute('settings')
 
-  console.log(signer)
-
   const { data: populatedTransaction } = useQuery(
     ['tx', txKey, currentStep],
     async () => {
       let _populatedTransaction: PopulatedTransaction
 
       try {
-        _populatedTransaction = transactions[transaction.name].transaction(
+        _populatedTransaction = await transactions[transaction.name].transaction(
           signer as JsonRpcSigner,
           ens,
           transaction.data,
@@ -170,8 +168,6 @@ export const TransactionStageModal = ({
       enabled: !!transaction && !!signer && !!ens,
     },
   )
-
-  console.log(populatedTransaction)
 
   const needsUnchecked = isIOS()
 
@@ -194,9 +190,9 @@ export const TransactionStageModal = ({
       onComplete()
     } catch (e: any) {
       if (e && e.code === 4001) {
-        setError('transaction.modal.confirm.error.rejectedRequest')
+        setError('transaction.dialog.confirm.error.rejectedRequest')
       } else {
-        setError(e ? e.message : 'transaction.modal.confirm.error.unknown')
+        setError(e ? e.message : 'transaction.dialog.confirm.error.unknown')
       }
     }
   }, [needsUnchecked, addTransaction, actionName, txKey, onComplete, signer, populatedTransaction])
@@ -224,7 +220,7 @@ export const TransactionStageModal = ({
       return (
         <SuccessContent>
           <PaperPlaneColourSVG />
-          <CompleteTypography>{t('transaction.modal.complete.message')}</CompleteTypography>
+          <CompleteTypography>{t('transaction.dialog.complete.message')}</CompleteTypography>
           <StyledAnchor
             onClick={() => {
               onDismiss?.()
@@ -255,8 +251,8 @@ export const TransactionStageModal = ({
     return (
       <ButtonShrinkwrap
         onClick={() => {
-          onDismiss?.()
           if (stage === 'complete') onSuccess?.()
+          onDismiss?.()
         }}
         variant="secondary"
         tone="grey"
@@ -284,8 +280,8 @@ export const TransactionStageModal = ({
         >
           {completeBtnLabel ||
             (final
-              ? t('transaction.modal.complete.trailingButton')
-              : t('transaction.modal.complete.stepTrailingButton'))}
+              ? t('transaction.dialog.complete.trailingButton')
+              : t('transaction.dialog.complete.stepTrailingButton'))}
         </Button>
       )
     }
@@ -298,7 +294,7 @@ export const TransactionStageModal = ({
           onClick={() => tryTransaction()}
           data-testid="transaction-modal-confirm-trailing-btn"
         >
-          {t('transaction.modal.confirm.trailingButton')}
+          {t('transaction.dialog.confirm.trailingButton')}
         </Button>
       )
     }
@@ -309,7 +305,7 @@ export const TransactionStageModal = ({
         onClick={() => setStage('confirm')}
         disabled={!populatedTransaction}
       >
-        {t('transaction.modal.request.trailingButton')}
+        {t('transaction.dialog.request.trailingButton')}
       </Button>
     )
   }, [
@@ -328,14 +324,16 @@ export const TransactionStageModal = ({
   const title = useMemo(() => {
     if (stage === 'complete') {
       if (stepCount > 1) {
-        return completeTitle || t('transaction.modal.complete.stepTitle', { step: currentStep + 1 })
+        return (
+          completeTitle || t('transaction.dialog.complete.stepTitle', { step: currentStep + 1 })
+        )
       }
-      return completeTitle || t('transaction.modal.complete.title')
+      return completeTitle || t('transaction.dialog.complete.title')
     }
     if (stage === 'confirm') {
-      return t('transaction.modal.confirm.title')
+      return t('transaction.dialog.confirm.title')
     }
-    return t('transaction.modal.request.title')
+    return t('transaction.dialog.request.title')
   }, [completeTitle, currentStep, stage, stepCount, t])
 
   useEffect(() => {
@@ -361,7 +359,7 @@ export const TransactionStageModal = ({
     <>
       <Dialog.Heading
         title={title}
-        subtitle={stage === 'request' ? t('transaction.modal.request.subtitle') : undefined}
+        subtitle={stage === 'request' ? t('transaction.dialog.request.subtitle') : undefined}
         currentStep={currentStep}
         stepCount={stepCount > 1 ? stepCount : undefined}
         stepStatus={stepStatus}

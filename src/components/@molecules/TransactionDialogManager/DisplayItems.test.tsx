@@ -35,9 +35,7 @@ describe('DisplayItems', () => {
     expect(screen.getByText('GenericValue')).toBeVisible()
   })
   it('should show the raw label', () => {
-    render(
-      <DisplayItems displayItems={[{ ...genericItem, useRawLabel: true }]} />,
-    )
+    render(<DisplayItems displayItems={[{ ...genericItem, useRawLabel: true }]} />)
     expect(screen.getByText('GenericItem')).toBeVisible()
     expect(screen.getByText('GenericValue')).toBeVisible()
   })

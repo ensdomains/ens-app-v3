@@ -75,8 +75,7 @@ export const RegistrationDate = () => {
     {
       enabled: !!(
         registration &&
-        (typeof registrationBlock === 'number' ||
-          typeof registrationBlock === 'string') &&
+        (typeof registrationBlock === 'number' || typeof registrationBlock === 'string') &&
         Object.keys(provider || {}).length > 0
       ),
     },

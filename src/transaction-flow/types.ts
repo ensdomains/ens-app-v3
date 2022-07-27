@@ -1,11 +1,9 @@
 import { TransactionDisplayItem } from '@app/types'
-import { ENS } from '@ensdomains/ensjs'
 import { Button, Dialog } from '@ensdomains/thorin'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 import { DataInputComponent } from './input'
+import { IntroComponentName } from './intro'
 import { makeTransactionItem, TransactionName } from './transaction'
-
-export type PublicENS = Pick<ENS, keyof ENS>
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -21,51 +19,59 @@ type GenericTransaction = {
   data: any
 }
 
+type GenericIntro = {
+  name: IntroComponentName
+  data: any
+}
+
 export type TransactionIntro = {
   title: string
   leadingLabel?: string
   trailingLabel?: string
-  content: ReactNode
+  content: GenericIntro
 }
 
-export type TransactionFlow = {
-  key: string
+export type TransactionFlowItem = {
   input?: GenericDataInput
   intro?: TransactionIntro
   transactions: GenericTransaction[]
   resumable?: boolean
 }
 
-export type BaseInternalTransactionFlow = TransactionFlow & {
+export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
   currentTransaction: number
+  currentTransactionComplete: boolean
   currentFlowStage: TransactionFlowStage
 }
 
-export type InternalTransactionFlow =
-  | BaseInternalTransactionFlow
-  | (BaseInternalTransactionFlow & {
+export type InternalTransactionFlowItem =
+  | BaseInternalTransactionFlowItem
+  | (BaseInternalTransactionFlowItem & {
       currentFlowStage: 'input'
       input: GenericDataInput
     })
-  | {
-      key: null
-    }
+
+export type InternalTransactionFlow = {
+  selectedKey: string | null
+  items: { [key: string]: InternalTransactionFlowItem }
+}
 
 export type TransactionFlowAction =
   | {
       name: 'showDataInput'
       payload: {
         input: GenericDataInput
-        key: string
       }
+      key: string
     }
   | {
       name: 'startFlow'
-      payload: TransactionFlow
+      payload: TransactionFlowItem
+      key: string
     }
   | {
       name: 'resumeFlow'
-      payload: string
+      key: string
     }
   | {
       name: 'setTransactions'
@@ -77,6 +83,12 @@ export type TransactionFlowAction =
     }
   | {
       name: 'stopFlow'
+    }
+  | {
+      name: 'setTransactionComplete'
+    }
+  | {
+      name: 'incrementTransaction'
     }
 
 export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
@@ -101,5 +113,3 @@ export type ManagedDialogProps = {
   actionName: string
   displayItems: TransactionDisplayItem[]
 }
-
-export type TransactionIntroFunction = (resumeToStep: number) => TransactionIntro

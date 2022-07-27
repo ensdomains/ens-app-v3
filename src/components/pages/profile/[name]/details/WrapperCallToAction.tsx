@@ -1,15 +1,10 @@
 import { NightSky } from '@app/assets/NightSky'
 import SparklesSVG from '@app/assets/Sparkles.svg'
-import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Card } from '@app/components/Card'
-import { Outlink } from '@app/components/Outlink'
-import { useNFTImage } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
-import { useEns } from '@app/utils/EnsProvider'
-import { useTransaction } from '@app/utils/TransactionProvider'
+import { makeIntroItem } from '@app/transaction-flow/intro'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { Button, mq, Typography } from '@ensdomains/thorin'
-import { JsonRpcSigner } from '@ethersproject/providers'
-import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -91,139 +86,30 @@ const UpgradeButton = styled(Button)(
   `,
 )
 
-const GiftWrapper = styled.div(
-  ({ theme }) => css`
-    width: 100%;
-    max-width: min(60vh, ${theme.space['52']});
-  `,
-)
-
-const DescriptionWrapper = styled(Typography)(
-  ({ theme }) => css`
-    display: inline;
-    text-align: center;
-    a {
-      display: inline-block;
-    }
-    margin-bottom: ${theme.space['2']};
-  `,
-)
-
 export const WrapperCallToAction = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
 
-  const { setCurrentTransaction, getCurrentStep } = useTransaction()
-  const currentStep = getCurrentStep(`wrapName-${name}`)
-  const { wrapName, setRecords, getProfile, contracts } = useEns()
-  const chainId = useChainId()
-  const nftUrl = useNFTImage(name, chainId)
+  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
+  const resumable = getResumable(`wrapName-${name}`)
 
-  const resumable = currentStep > 0
-
-  const migrateProfileGenerateTx = useCallback(
-    async (signer: JsonRpcSigner) => {
-      const profile = await getProfile(name)
-      if (!profile) throw new Error('No profile found')
-      if (!profile.records) throw new Error('No records found')
-      const { contentHash } = profile.records
-      const resolverAddress = (await contracts!.getPublicResolver()!).address
-      let migratableContentHash: string | undefined
-      if (contentHash) {
-        if (typeof contentHash === 'string') {
-          migratableContentHash = contentHash
-        } else if (typeof contentHash === 'object' && contentHash.decoded) {
-          migratableContentHash = `${contentHash.protocolType}://${contentHash.decoded}`
-        }
-      }
-
-      const migratableProfile = {
-        contentHash: migratableContentHash,
-        texts: profile.records.texts as {
-          key: string
-          value: string
-        }[],
-        coinTypes: profile.records.coinTypes?.map((coinType) => ({
-          key: coinType.key as string,
-          value: (coinType as any).addr as string,
-        })),
-      }
-
-      return setRecords.populateTransaction(name, {
-        records: migratableProfile,
-        resolverAddress,
-        signer,
-      })
-    },
-    [contracts, getProfile, name, setRecords],
-  )
-
-  const handleUpgradeClick = useCallback(
-    () =>
-      setCurrentTransaction(`wrapName-${name}`, async (signer, address) => ({
-        data: [
-          {
-            actionName: 'migrateProfile',
-            displayItems: [
-              {
-                label: 'name',
-                value: name,
-                type: 'name',
-              },
-            ],
-            transaction: await migrateProfileGenerateTx(signer),
+  const handleUpgradeClick = () =>
+    resumable
+      ? resumeTransactionFlow(`wrapName-${name}`)
+      : createTransactionFlow(`wrapName-${name}`, {
+          transactions: [
+            makeTransactionItem('migrateProfile', {
+              name,
+            }),
+            makeTransactionItem('wrapName', {
+              name,
+            }),
+          ],
+          resumable: true,
+          intro: {
+            title: t('details.wrap.startTitle'),
+            content: makeIntroItem('WrapName', { name }),
           },
-          {
-            actionName: 'wrapName',
-            displayItems: [
-              {
-                label: 'name',
-                value: name,
-                type: 'name',
-              },
-            ],
-            completeTitle: t('details.wrap.completeTitle'),
-            transaction: await wrapName.populateTransaction(name, {
-              wrappedOwner: address,
-              signer,
-            })!,
-          },
-        ],
-        preSteps: (resumeToStep) => ({
-          title:
-            resumeToStep > 0
-              ? t('details.wrap.resumeTitle')
-              : t('details.wrap.startTitle'),
-          steps: ['migrateProfile', 'wrapName'],
-          content: (
-            <>
-              <GiftWrapper>
-                <WrapNameGift
-                  imageSrc={nftUrl.image || '/other/TemplateNFTImage.svg'}
-                />
-              </GiftWrapper>
-              <DescriptionWrapper>
-                <Typography>
-                  {t('details.wrap.description')}{' '}
-                  <span>
-                    <Outlink href="#">
-                      {t('action.learnMore', { ns: 'common' })}
-                    </Outlink>
-                  </span>
-                </Typography>
-              </DescriptionWrapper>
-            </>
-          ),
-        }),
-      })),
-    [
-      setCurrentTransaction,
-      name,
-      migrateProfileGenerateTx,
-      t,
-      wrapName,
-      nftUrl.image,
-    ],
-  )
+        })
 
   return (
     <NightSky>
@@ -237,14 +123,8 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           </TextContainer>
           <Sparkles as={SparklesSVG} />
         </InnerContainer>
-        <UpgradeButton
-          data-testid="wrapper-cta-button"
-          shadowless
-          onClick={handleUpgradeClick}
-        >
-          {resumable
-            ? t('details.wrap.resumeLabel')
-            : t('details.wrap.startLabel')}
+        <UpgradeButton data-testid="wrapper-cta-button" shadowless onClick={handleUpgradeClick}>
+          {resumable ? t('details.wrap.resumeLabel') : t('details.wrap.startLabel')}
         </UpgradeButton>
       </Container>
     </NightSky>

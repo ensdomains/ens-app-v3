@@ -12,3 +12,7 @@ export type TransactionDisplayItem = {
   shrink?: boolean
   useRawLabel?: boolean
 }
+
+type PublicInterface<T> = { [K in keyof T]: T[K] }
+
+export type PublicENS = PublicInterface<ENS>

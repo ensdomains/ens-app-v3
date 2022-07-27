@@ -1,5 +1,5 @@
+import { PublicENS, TransactionDisplayItem } from '@app/types'
 import { JsonRpcSigner } from '@ethersproject/providers'
-import { PublicENS } from '../types'
 
 type Data = {
   name: string
@@ -8,7 +8,7 @@ type Data = {
   oldResolver: string
 }
 
-const displayItems = ({ resolver, oldResolver }: Data) => [
+const displayItems = ({ resolver, oldResolver }: Data): TransactionDisplayItem[] => [
   {
     label: 'currentResolver',
     value: oldResolver,

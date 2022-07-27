@@ -1,8 +1,9 @@
+import { intros } from '@app/transaction-flow/intro'
 import { TransactionIntro } from '@app/transaction-flow/types'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { DisplayItems } from '../../TransactionModal/DisplayItems'
+import { DisplayItems } from '../DisplayItems'
 
 const InnerDialog = styled.div(
   ({ theme }) => css`
@@ -66,8 +67,8 @@ export const IntroStageModal = ({
 
   const tLabel =
     currentStep > 0
-      ? t('transaction.modal.preSteps.trailingButtonResume')
-      : t('transaction.modal.preSteps.trailingButton')
+      ? t('transaction.dialog.intro.trailingButtonResume')
+      : t('transaction.dialog.intro.trailingButton')
 
   const TrailingButton = (
     <Button
@@ -82,6 +83,8 @@ export const IntroStageModal = ({
 
   const txCount = transactions.length
 
+  const Content = intros[content.name]
+
   return (
     <>
       <Dialog.Heading
@@ -91,7 +94,7 @@ export const IntroStageModal = ({
         title={title}
       />
       <InnerDialog data-testid="transaction-modal-inner">
-        {content}
+        <Content {...content.data} />
         <DisplayItems
           displayItems={
             transactions.map(({ name }, index) => ({
