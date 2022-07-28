@@ -47,3 +47,22 @@ export type StepStorageItem = {
   currentStep: number
   currentStepComplete: boolean
 } & TxStateType
+
+export type ProfileEditorType = {
+  _avatar?: File
+  avatar?: string
+  banner?: string
+  website?: string
+  general: {
+    [key: string]: string
+  }
+  accounts: {
+    [key: string]: string
+  }
+  address: {
+    [key: string]: string
+  }
+  other: {
+    [key: string]: string
+  }
+}

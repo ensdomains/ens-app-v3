@@ -8,13 +8,14 @@ import { SubnamesTab } from '@app/components/pages/profile/[name]/details/Subnam
 import { WrapperCallToAction } from '@app/components/pages/profile/[name]/details/WrapperCallToAction'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -111,28 +112,7 @@ export default function Page() {
   const canBeWrapped =
     nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
-  const selfAbilities = useMemo(() => {
-    const abilities = {
-      canEdit: false,
-      canSend: false,
-      canChangeOwner: false,
-      canChangeRegistrant: false,
-    }
-    if (!address || !ownerData) return abilities
-    if (
-      ownerData.registrant === address ||
-      (!ownerData.registrant && ownerData.owner === address)
-    ) {
-      abilities.canSend = true
-      abilities.canChangeOwner = true
-      abilities.canChangeRegistrant = true
-    }
-    if (ownerData.owner === address) {
-      abilities.canEdit = true
-      abilities.canChangeOwner = true
-    }
-    return abilities
-  }, [address, ownerData])
+  const selfAbilities = useSelfAbilities(address, ownerData)
 
   const isLoading = detailsLoading || accountLoading
 

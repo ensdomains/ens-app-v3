@@ -6,14 +6,14 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
+import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useState, useMemo } from 'react'
+import { ReactElement, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
@@ -72,19 +72,10 @@ export default function Page() {
     valid,
   } = useNameDetails(name)
 
+  const selfAbilities = useSelfAbilities(address, ownerData)
+
   const isLoading =
     detailsLoading || primaryLoading || accountLoading || initial
-
-  useProtectedRoute(
-    '/',
-    // When anything is loading, return true
-    isLoading
-      ? true
-      : // if is self, user must be connected
-        (isSelf ? address : true) &&
-          typeof name === 'string' &&
-          name.length > 0,
-  )
 
   const getTextRecord = (key: string) =>
     profile?.records?.texts?.find((x) => x.key === key)
@@ -144,7 +135,7 @@ export default function Page() {
               network={chainId}
               ownerData={ownerData}
               expiryDate={expiryDate}
-              showButton={!isSelf}
+              showButton={!selfAbilities.canEdit}
             />
           ),
           trailing: (
@@ -158,7 +149,7 @@ export default function Page() {
                 button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
                 size={breakpoints.md ? 'medium' : 'small'}
               />
-              {isSelf && (
+              {selfAbilities.canEdit && (
                 <SelfButtons>
                   <Button
                     shadowless
@@ -196,7 +187,7 @@ export default function Page() {
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
-              {isSelf && (
+              {selfAbilities.canEdit && (
                 <ProfileEditor
                   name={name}
                   open={showEditor}

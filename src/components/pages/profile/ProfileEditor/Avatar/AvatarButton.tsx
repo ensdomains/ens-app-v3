@@ -1,7 +1,9 @@
-import { Avatar, Dropdown } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
 import CameraIcon from '@app/assets/Camera.svg'
-import React from 'react'
+import { ProfileEditorType } from '@app/types'
+import { Avatar, Dropdown } from '@ensdomains/thorin'
+import React, { useRef } from 'react'
+import { UseFormSetValue } from 'react-hook-form'
+import styled, { css } from 'styled-components'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`
@@ -72,11 +74,24 @@ type Props = {
   error?: boolean
   src?: string
   onSelectOption?: (value: string) => void
+  setValue: UseFormSetValue<ProfileEditorType>
 }
 
-const AvatarButton = ({ validated, error, src, onSelectOption }: Props) => {
+const AvatarButton = ({
+  validated,
+  error,
+  src,
+  onSelectOption,
+  setValue,
+}: Props) => {
+  const fileInputRef = useRef<HTMLInputElement>(null)
+
   const handleSelectOption = (value: string) => () => {
-    if (onSelectOption) onSelectOption(value)
+    if (value === 'upload') {
+      fileInputRef.current?.click()
+    } else {
+      onSelectOption?.(value)
+    }
   }
 
   return (
@@ -94,6 +109,7 @@ const AvatarButton = ({ validated, error, src, onSelectOption }: Props) => {
         },
       ]}
       keepMenuOnTop
+      shortThrow
     >
       <Container $validated={validated} $error={error} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
@@ -102,6 +118,18 @@ const AvatarButton = ({ validated, error, src, onSelectOption }: Props) => {
             <CameraIcon />
           </IconMask>
         )}
+        <input
+          type="file"
+          style={{ display: 'none' }}
+          accept="image/*"
+          ref={fileInputRef}
+          onChange={(e) => {
+            if (e.target.files?.[0]) {
+              setValue('_avatar', e.target.files[0])
+              onSelectOption?.('upload')
+            }
+          }}
+        />
       </Container>
     </Dropdown>
   )
