@@ -34,7 +34,7 @@ import { useEffect } from "react";
 import styled, { css, keyframes, useTheme, createGlobalStyle } from "styled-components";
 import * as ReactDOM from "react-dom";
 import { useTransition } from "react-transition-state";
-const Container$h = styled.div(({
+const Container$i = styled.div(({
   theme,
   $shape,
   $noBorder
@@ -124,7 +124,7 @@ const Avatar = (_a) => {
   React.useEffect(() => {
     setShowImage(false);
   }, [src]);
-  return /* @__PURE__ */ React.createElement(Container$h, {
+  return /* @__PURE__ */ React.createElement(Container$i, {
     $noBorder: !showImage || noBorder,
     $shape: shape
   }, !showImage && /* @__PURE__ */ React.createElement(Placeholder, {
@@ -188,7 +188,7 @@ const rotate = keyframes`
     transform: rotate(1turn);
   }
 `;
-const Container$g = styled.div(({
+const Container$h = styled.div(({
   theme,
   $color,
   $size
@@ -227,7 +227,7 @@ const Spinner = React.forwardRef((_c, ref) => {
     "size",
     "color"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$g, __spreadValues({
+  return /* @__PURE__ */ React.createElement(Container$h, __spreadValues({
     $color: color,
     $size: size,
     ref
@@ -251,7 +251,7 @@ const Spinner = React.forwardRef((_c, ref) => {
   })));
 });
 Spinner.displayName = "Spinner";
-const Container$f = styled.div(({
+const Container$g = styled.div(({
   theme,
   $ellipsis,
   $variant,
@@ -349,7 +349,7 @@ const Typography = React.forwardRef((_e, ref) => {
     "color",
     "size"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$f, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$g, __spreadProps(__spreadValues({}, props), {
     $color: color,
     $ellipsis: ellipsis ? true : void 0,
     $font: font,
@@ -1109,7 +1109,7 @@ const mq = keys.reduce((acc, sizeLabel) => {
   }, {});
   return acc;
 }, {});
-const Container$e = styled.div(({
+const Container$f = styled.div(({
   theme,
   $shadow
 }) => css`
@@ -1137,7 +1137,7 @@ const Card = (_i) => {
     "children",
     "shadow"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$e, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$f, __spreadProps(__spreadValues({}, props), {
     $shadow: shadow
   }), children);
 };
@@ -1263,7 +1263,7 @@ const defaultAnimationFunc = (side, open = false) => {
     visibility: hidden;
   `;
 };
-const Container$d = styled.div(() => css`
+const Container$e = styled.div(() => css`
     position: relative;
     display: inline-block;
   `);
@@ -1336,7 +1336,7 @@ const DynamicPopover = ({
     }
   }, [open, disabled, setPopoverProps, computePopoverProps, animationFn]);
   useDocumentEvent(containerRef, "click", () => onDismiss && onDismiss(), open);
-  return /* @__PURE__ */ React.createElement(Container$d, {
+  return /* @__PURE__ */ React.createElement(Container$e, {
     "data-testid": "dynamicpopover",
     ref: containerRef
   }, children, /* @__PURE__ */ React.createElement(PopoverContainer, __spreadProps(__spreadValues({
@@ -1470,7 +1470,7 @@ const LabelContent = (_k) => {
     $inline
   }), label, " ", required && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(RequiredWrapper, null, "*"), /* @__PURE__ */ React.createElement(VisuallyHidden, null, "required"))), labelSecondary && /* @__PURE__ */ React.createElement(LabelSecondary, null, labelSecondary));
 };
-const Container$c = styled.div(({
+const Container$d = styled.div(({
   theme,
   $inline,
   $width
@@ -1550,7 +1550,7 @@ const Field = (_m) => {
     content = children;
   const descriptionPlacement = getPlacement("description", "bottom", labelPlacement);
   const errorPlacement = getPlacement("error", "bottom", labelPlacement);
-  return inline ? /* @__PURE__ */ React.createElement(Container$c, {
+  return inline ? /* @__PURE__ */ React.createElement(Container$d, {
     $inline: inline,
     $width: width
   }, /* @__PURE__ */ React.createElement(ContainerInner$2, null, hideLabel ? /* @__PURE__ */ React.createElement(VisuallyHidden, null, /* @__PURE__ */ React.createElement(LabelContent, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
@@ -1571,7 +1571,7 @@ const Field = (_m) => {
     "aria-live": "polite"
   }, ids.error), {
     $inline: inline
-  }), error)), /* @__PURE__ */ React.createElement("div", null, content)) : /* @__PURE__ */ React.createElement(Container$c, {
+  }), error)), /* @__PURE__ */ React.createElement("div", null, content)) : /* @__PURE__ */ React.createElement(Container$d, {
     $width: width
   }, hideLabel ? /* @__PURE__ */ React.createElement(VisuallyHidden, null, /* @__PURE__ */ React.createElement(LabelContent, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     ids,
@@ -1987,7 +1987,7 @@ const SkeletonGroup = ({
   }, children);
 };
 SkeletonGroup.displayName = "SkeletonGroup";
-const Container$b = styled.div(({
+const Container$c = styled.div(({
   theme,
   $active
 }) => css`
@@ -2017,7 +2017,7 @@ const Skeleton = (_s) => {
   ]);
   const groupLoading = React.useContext(Context);
   const active = loading != null ? loading : groupLoading;
-  return /* @__PURE__ */ React.createElement(Container$b, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$c, __spreadProps(__spreadValues({}, props), {
     $active: active,
     as
   }), /* @__PURE__ */ React.createElement(ContainerInner$1, {
@@ -2025,7 +2025,7 @@ const Skeleton = (_s) => {
   }, children));
 };
 Skeleton.displayName = "Skeleton";
-const Container$a = styled.div(({
+const Container$b = styled.div(({
   theme,
   $hover,
   $size,
@@ -2177,7 +2177,7 @@ const Tag = (_u) => {
     "size",
     "tone"
   ]);
-  return /* @__PURE__ */ React.createElement(Container$a, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$b, __spreadProps(__spreadValues({}, props), {
     $hover: hover,
     $size: size,
     $tone: tone,
@@ -2543,7 +2543,7 @@ const NumberBox = styled.div(({
   }
 }}
   `);
-const Container$9 = styled.div(({
+const Container$a = styled.div(({
   theme,
   $disabled,
   $size,
@@ -2624,7 +2624,7 @@ const CountdownCircle = React.forwardRef((_A, ref) => {
   })), /* @__PURE__ */ React.createElement(NumberBox, __spreadValues({}, {
     $size: size,
     $disabled: disabled
-  }), disabled ? totalCount : currentCount), /* @__PURE__ */ React.createElement(Container$9, {
+  }), disabled ? totalCount : currentCount), /* @__PURE__ */ React.createElement(Container$a, {
     $color: color,
     $disabled: disabled,
     $size: size,
@@ -2674,7 +2674,7 @@ const ReactComponent$L = (_C) => {
     fill: "currentColor"
   }));
 };
-const Container$8 = styled.div(() => css`
+const Container$9 = styled.div(() => css`
     max-width: max-content;
     position: relative;
   `);
@@ -3058,7 +3058,7 @@ const Dropdown = (_E) => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
   }, [dropdownRef, isOpen]);
-  return /* @__PURE__ */ React.createElement(Container$8, __spreadValues({
+  return /* @__PURE__ */ React.createElement(Container$9, __spreadValues({
     ref: dropdownRef
   }, __spreadProps(__spreadValues({}, props), {
     "data-testid": getTestId(props, "dropdown")
@@ -3099,7 +3099,7 @@ const Dropdown = (_E) => {
   }));
 };
 Dropdown.displayName = "Dropdown";
-const Container$7 = styled.fieldset(({
+const Container$8 = styled.fieldset(({
   theme
 }) => css`
     display: flex;
@@ -3177,7 +3177,7 @@ const FieldSet = (_G) => {
     statusText = status.name;
     statusTone = status.tone;
   }
-  return /* @__PURE__ */ React.createElement(Container$7, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$8, __spreadProps(__spreadValues({}, props), {
     disabled,
     form,
     name
@@ -3598,7 +3598,7 @@ const Input$1 = React.forwardRef((_I, ref) => {
   }), suffix)));
 });
 Input$1.displayName = "Input";
-const Container$6 = styled.div(({
+const Container$7 = styled.div(({
   theme,
   $state
 }) => css`
@@ -3650,12 +3650,12 @@ const Modal = (_K) => {
     onDismiss
   }, ({
     state: state2
-  }) => /* @__PURE__ */ React.createElement(Container$6, __spreadValues({
+  }) => /* @__PURE__ */ React.createElement(Container$7, __spreadValues({
     $state: state2
   }, props), children));
 };
 Modal.displayName = "Modal";
-const Container$5 = styled.div(({
+const Container$6 = styled.div(({
   theme
 }) => css`
     display: flex;
@@ -3733,7 +3733,7 @@ const PageButtons = (_M) => {
       array.push(-1 * total);
     }
   }
-  return /* @__PURE__ */ React.createElement(Container$5, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$6, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     "data-testid": getTestId(props, "pagebuttons")
   })), array.map((value) => 0 > value ? /* @__PURE__ */ React.createElement(Dots, {
     "data-testid": "pagebutton-dots",
@@ -3746,7 +3746,7 @@ const PageButtons = (_M) => {
     onClick: () => onChange(value)
   }, value)));
 };
-const Container$4 = styled.div(({
+const Container$5 = styled.div(({
   theme,
   $size,
   $hasChevron,
@@ -3897,7 +3897,7 @@ const Profile = (_O) => {
       isOpen,
       setIsOpen,
       align: alignDropdown
-    }), /* @__PURE__ */ React.createElement(Container$4, __spreadProps(__spreadValues({}, props), {
+    }), /* @__PURE__ */ React.createElement(Container$5, __spreadProps(__spreadValues({}, props), {
       $hasChevron: true,
       $open: isOpen,
       $size: size,
@@ -3912,7 +3912,7 @@ const Profile = (_O) => {
       as: ReactComponent$L
     })));
   }
-  return /* @__PURE__ */ React.createElement(Container$4, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
+  return /* @__PURE__ */ React.createElement(Container$5, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
     "data-testid": getTestId(props, "profile")
   })), {
     $open: isOpen,
@@ -4065,7 +4065,7 @@ const createSyntheticEvent = (event) => {
     type: event.type
   };
 };
-const Container$3 = styled.div(({
+const Container$4 = styled.div(({
   theme,
   $inline
 }) => css`
@@ -4128,7 +4128,7 @@ const RadioButtonGroup = React.forwardRef((_S, ref) => {
       onChange(syntheticEvent);
     }
   };
-  return /* @__PURE__ */ React.createElement(Container$3, __spreadProps(__spreadValues({
+  return /* @__PURE__ */ React.createElement(Container$4, __spreadProps(__spreadValues({
     $inline: inline
   }, props), {
     "data-testid": getTestId(props, "radiogroup"),
@@ -4904,6 +4904,138 @@ const Select = React.forwardRef((_U, ref) => {
   })))))));
 });
 Select.displayName = "Select";
+const Container$3 = styled.div(({
+  theme
+}) => css`
+    width: ${theme.space.full};
+  `);
+const thumbCss = ({
+  theme
+}) => css`
+  width: ${theme.space["4"]};
+  height: ${theme.space["4"]};
+  background: ${theme.colors.accent};
+  border-radius: ${theme.radii.full};
+  cursor: pointer;
+  transition: filter 0.15s ease-in-out;
+  filter: brightness(1);
+  &:hover {
+    filter: brightness(0.95);
+  }
+  &:active {
+    filter: brightness(0.875);
+  }
+`;
+const SliderComponent = styled.input(({
+  theme,
+  disabled
+}) => css`
+    appearance: none;
+    width: ${theme.space.full};
+    height: ${theme.space["1.5"]};
+    background: rgba(${theme.accentsRaw.blue}, 0.4);
+    border-radius: ${theme.radii.full};
+    outline: none;
+
+    &::-webkit-slider-thumb {
+      appearance: none;
+      ${thumbCss}
+    }
+
+    &::-moz-range-thumb {
+      ${thumbCss}
+    }
+
+    &:hover {
+      background: rgba(${theme.accentsRaw.blue}, 0.45);
+    }
+
+    ${disabled && css`
+      opacity: 0.5;
+      filter: grayscale(100%);
+      cursor: not-allowed;
+    `}
+  `);
+const Slider = React.forwardRef((_W, ref) => {
+  var _X = _W, {
+    label,
+    description,
+    error,
+    hideLabel,
+    inline,
+    labelPlacement,
+    labelSecondary,
+    required,
+    width,
+    defaultValue = 50,
+    disabled,
+    id: id2,
+    name,
+    readOnly,
+    tabIndex,
+    value,
+    min = 1,
+    max = 100,
+    onChange,
+    onBlur,
+    onFocus,
+    step = "any"
+  } = _X, nativeProps = __objRest(_X, [
+    "label",
+    "description",
+    "error",
+    "hideLabel",
+    "inline",
+    "labelPlacement",
+    "labelSecondary",
+    "required",
+    "width",
+    "defaultValue",
+    "disabled",
+    "id",
+    "name",
+    "readOnly",
+    "tabIndex",
+    "value",
+    "min",
+    "max",
+    "onChange",
+    "onBlur",
+    "onFocus",
+    "step"
+  ]);
+  const defaultRef = React.useRef(null);
+  const inputRef = ref || defaultRef;
+  return /* @__PURE__ */ React.createElement(Field, __spreadValues({}, {
+    label,
+    description,
+    error,
+    hideLabel,
+    inline,
+    labelPlacement,
+    labelSecondary,
+    required,
+    width
+  }), (ids) => /* @__PURE__ */ React.createElement(Container$3, null, /* @__PURE__ */ React.createElement(SliderComponent, __spreadValues({
+    ref: inputRef,
+    type: "range"
+  }, __spreadProps(__spreadValues(__spreadValues({}, nativeProps), ids == null ? void 0 : ids.content), {
+    defaultValue,
+    disabled,
+    id: id2,
+    name,
+    readOnly,
+    tabIndex,
+    value,
+    min,
+    max,
+    onChange,
+    onBlur,
+    onFocus,
+    step
+  })))));
+});
+Slider.displayName = "Slider";
 const Container$2 = styled.div(({
   theme,
   $error,
@@ -5007,8 +5139,8 @@ const TextArea = styled.textarea(({
       font-weight: ${theme.fontWeights["medium"]};
     }
   `);
-const Textarea = React.forwardRef((_W, ref) => {
-  var _X = _W, {
+const Textarea = React.forwardRef((_Y, ref) => {
+  var _Z = _Y, {
     autoCorrect,
     autoFocus,
     defaultValue,
@@ -5034,7 +5166,7 @@ const Textarea = React.forwardRef((_W, ref) => {
     onChange,
     onBlur,
     onFocus
-  } = _X, props = __objRest(_X, [
+  } = _Z, props = __objRest(_Z, [
     "autoCorrect",
     "autoFocus",
     "defaultValue",
@@ -5118,10 +5250,10 @@ const TooltipPopover = styled.div(({
     border-color: ${theme.colors.borderSecondary};
     background: ${theme.colors.background};
   `);
-const Tooltip = (_Y) => {
-  var _Z = _Y, {
+const Tooltip = (__) => {
+  var _$ = __, {
     content
-  } = _Z, props = __objRest(_Z, [
+  } = _$, props = __objRest(_$, [
     "content"
   ]);
   const popover = /* @__PURE__ */ React.createElement(TooltipPopover, null, content);
@@ -5281,8 +5413,8 @@ const Footer = ({
     flexGrow: 1
   }
 }));
-const ModalWithTitle = (__) => {
-  var _$ = __, {
+const ModalWithTitle = (_aa) => {
+  var _ba = _aa, {
     open,
     onDismiss,
     title,
@@ -5291,7 +5423,7 @@ const ModalWithTitle = (__) => {
     currentStep,
     stepCount,
     stepStatus
-  } = _$, props = __objRest(_$, [
+  } = _ba, props = __objRest(_ba, [
     "open",
     "onDismiss",
     "title",
@@ -5312,13 +5444,13 @@ const ModalWithTitle = (__) => {
     stepStatus
   })), children)));
 };
-const Dialog = (_aa) => {
-  var _ba = _aa, {
+const Dialog = (_ca) => {
+  var _da = _ca, {
     children,
     onDismiss,
     open,
     variant = "closable"
-  } = _ba, props = __objRest(_ba, [
+  } = _da, props = __objRest(_da, [
     "children",
     "onDismiss",
     "open",
@@ -5474,8 +5606,8 @@ const DraggableLine = styled.div(({
     background: ${theme.colors.border};
   `);
 const Draggable = () => /* @__PURE__ */ React.createElement(DraggableContainer, null, /* @__PURE__ */ React.createElement(DraggableLine, null));
-const DesktopToast = (_ca) => {
-  var _da = _ca, {
+const DesktopToast = (_ea) => {
+  var _fa = _ea, {
     onClose,
     title,
     description,
@@ -5485,7 +5617,7 @@ const DesktopToast = (_ca) => {
     bottom,
     state: state2,
     children
-  } = _da, props = __objRest(_da, [
+  } = _fa, props = __objRest(_fa, [
     "onClose",
     "title",
     "description",
@@ -5520,8 +5652,8 @@ const ActionWrapper = styled.div(({
     margin-top: ${theme.space["3"]};
     width: 100%;
   `);
-const TouchToast = (_ea) => {
-  var _fa = _ea, {
+const TouchToast = (_ga) => {
+  var _ha = _ga, {
     onClose,
     open,
     title,
@@ -5533,7 +5665,7 @@ const TouchToast = (_ea) => {
     children,
     popped,
     setPopped
-  } = _fa, props = __objRest(_fa, [
+  } = _ha, props = __objRest(_ha, [
     "onClose",
     "open",
     "title",
@@ -5658,13 +5790,13 @@ const TouchToast = (_ea) => {
     }
   })), !popped && /* @__PURE__ */ React.createElement(Draggable, null));
 };
-const Toast = (_ga) => {
-  var _ha = _ga, {
+const Toast = (_ia) => {
+  var _ja = _ia, {
     onClose,
     open,
     msToShow = 8e3,
     variant = "desktop"
-  } = _ha, props = __objRest(_ha, [
+  } = _ja, props = __objRest(_ja, [
     "onClose",
     "open",
     "msToShow",
@@ -5707,11 +5839,11 @@ const Toast = (_ga) => {
   })));
 };
 Toast.displayName = "Toast";
-const ReactComponent$K = (_ia) => {
-  var _ja = _ia, {
+const ReactComponent$K = (_ka) => {
+  var _la = _ka, {
     title,
     titleId
-  } = _ja, props = __objRest(_ja, [
+  } = _la, props = __objRest(_la, [
     "title",
     "titleId"
   ]);
@@ -5733,33 +5865,7 @@ const ReactComponent$K = (_ia) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$J = (_ka) => {
-  var _la = _ka, {
-    title,
-    titleId
-  } = _la, props = __objRest(_la, [
-    "title",
-    "titleId"
-  ]);
-  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
-    xmlns: "http://www.w3.org/2000/svg",
-    fill: "none",
-    viewBox: "0 0 24 24",
-    stroke: "currentColor",
-    width: "1em",
-    height: "1em",
-    focusable: "false",
-    shapeRendering: "geometricPrecision",
-    "aria-labelledby": titleId
-  }, props), title ? /* @__PURE__ */ React.createElement("title", {
-    id: titleId
-  }, title) : null, /* @__PURE__ */ React.createElement("path", {
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    d: "M14 5l7 7m0 0l-7 7m7-7H3"
-  }));
-};
-const ReactComponent$I = (_ma) => {
+const ReactComponent$J = (_ma) => {
   var _na = _ma, {
     title,
     titleId
@@ -5782,10 +5888,10 @@ const ReactComponent$I = (_ma) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M5 10l7-7m0 0l7 7m-7-7v18"
+    d: "M14 5l7 7m0 0l-7 7m7-7H3"
   }));
 };
-const ReactComponent$H = (_oa) => {
+const ReactComponent$I = (_oa) => {
   var _pa = _oa, {
     title,
     titleId
@@ -5808,14 +5914,40 @@ const ReactComponent$H = (_oa) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+    d: "M5 10l7-7m0 0l7 7m-7-7v18"
   }));
 };
-const ReactComponent$G = (_qa) => {
+const ReactComponent$H = (_qa) => {
   var _ra = _qa, {
     title,
     titleId
   } = _ra, props = __objRest(_ra, [
+    "title",
+    "titleId"
+  ]);
+  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    width: "1em",
+    height: "1em",
+    focusable: "false",
+    shapeRendering: "geometricPrecision",
+    "aria-labelledby": titleId
+  }, props), title ? /* @__PURE__ */ React.createElement("title", {
+    id: titleId
+  }, title) : null, /* @__PURE__ */ React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+  }));
+};
+const ReactComponent$G = (_sa) => {
+  var _ta = _sa, {
+    title,
+    titleId
+  } = _ta, props = __objRest(_ta, [
     "title",
     "titleId"
   ]);
@@ -5837,11 +5969,11 @@ const ReactComponent$G = (_qa) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$F = (_sa) => {
-  var _ta = _sa, {
+const ReactComponent$F = (_ua) => {
+  var _va = _ua, {
     title,
     titleId
-  } = _ta, props = __objRest(_ta, [
+  } = _va, props = __objRest(_va, [
     "title",
     "titleId"
   ]);
@@ -5863,33 +5995,7 @@ const ReactComponent$F = (_sa) => {
     strokeLinejoin: "round"
   }));
 };
-const ReactComponent$E = (_ua) => {
-  var _va = _ua, {
-    title,
-    titleId
-  } = _va, props = __objRest(_va, [
-    "title",
-    "titleId"
-  ]);
-  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
-    xmlns: "http://www.w3.org/2000/svg",
-    fill: "none",
-    viewBox: "0 0 24 24",
-    stroke: "currentColor",
-    width: "1em",
-    height: "1em",
-    focusable: "false",
-    shapeRendering: "geometricPrecision",
-    "aria-labelledby": titleId
-  }, props), title ? /* @__PURE__ */ React.createElement("title", {
-    id: titleId
-  }, title) : null, /* @__PURE__ */ React.createElement("path", {
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    d: "M19 9l-7 7-7-7"
-  }));
-};
-const ReactComponent$D = (_wa) => {
+const ReactComponent$E = (_wa) => {
   var _xa = _wa, {
     title,
     titleId
@@ -5912,10 +6018,10 @@ const ReactComponent$D = (_wa) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M15 19l-7-7 7-7"
+    d: "M19 9l-7 7-7-7"
   }));
 };
-const ReactComponent$C = (_ya) => {
+const ReactComponent$D = (_ya) => {
   var _za = _ya, {
     title,
     titleId
@@ -5938,10 +6044,10 @@ const ReactComponent$C = (_ya) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M9 5l7 7-7 7"
+    d: "M15 19l-7-7 7-7"
   }));
 };
-const ReactComponent$B = (_Aa) => {
+const ReactComponent$C = (_Aa) => {
   var _Ba = _Aa, {
     title,
     titleId
@@ -5964,14 +6070,40 @@ const ReactComponent$B = (_Aa) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M5 15l7-7 7 7"
+    d: "M9 5l7 7-7 7"
   }));
 };
-const ReactComponent$A = (_Ca) => {
+const ReactComponent$B = (_Ca) => {
   var _Da = _Ca, {
     title,
     titleId
   } = _Da, props = __objRest(_Da, [
+    "title",
+    "titleId"
+  ]);
+  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    width: "1em",
+    height: "1em",
+    focusable: "false",
+    shapeRendering: "geometricPrecision",
+    "aria-labelledby": titleId
+  }, props), title ? /* @__PURE__ */ React.createElement("title", {
+    id: titleId
+  }, title) : null, /* @__PURE__ */ React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M5 15l7-7 7 7"
+  }));
+};
+const ReactComponent$A = (_Ea) => {
+  var _Fa = _Ea, {
+    title,
+    titleId
+  } = _Fa, props = __objRest(_Fa, [
     "title",
     "titleId"
   ]);
@@ -5993,11 +6125,11 @@ const ReactComponent$A = (_Ca) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$z = (_Ea) => {
-  var _Fa = _Ea, {
+const ReactComponent$z = (_Ga) => {
+  var _Ha = _Ga, {
     title,
     titleId
-  } = _Fa, props = __objRest(_Fa, [
+  } = _Ha, props = __objRest(_Ha, [
     "title",
     "titleId"
   ]);
@@ -6019,11 +6151,11 @@ const ReactComponent$z = (_Ea) => {
     d: "M10 20l4-16m4 4l4 4-4 4M6 16l-4-4 4-4"
   }));
 };
-const ReactComponent$y = (_Ga) => {
-  var _Ha = _Ga, {
+const ReactComponent$y = (_Ia) => {
+  var _Ja = _Ia, {
     title,
     titleId
-  } = _Ha, props = __objRest(_Ha, [
+  } = _Ja, props = __objRest(_Ja, [
     "title",
     "titleId"
   ]);
@@ -6049,11 +6181,11 @@ const ReactComponent$y = (_Ga) => {
     d: "M15 12a3 3 0 11-6 0 3 3 0 016 0z"
   }));
 };
-const ReactComponent$x = (_Ia) => {
-  var _Ja = _Ia, {
+const ReactComponent$x = (_Ka) => {
+  var _La = _Ka, {
     title,
     titleId
-  } = _Ja, props = __objRest(_Ja, [
+  } = _La, props = __objRest(_La, [
     "title",
     "titleId"
   ]);
@@ -6075,11 +6207,11 @@ const ReactComponent$x = (_Ia) => {
     d: "M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"
   }));
 };
-const ReactComponent$w = (_Ka) => {
-  var _La = _Ka, {
+const ReactComponent$w = (_Ma) => {
+  var _Na = _Ma, {
     title,
     titleId
-  } = _La, props = __objRest(_La, [
+  } = _Na, props = __objRest(_Na, [
     "title",
     "titleId"
   ]);
@@ -6102,33 +6234,7 @@ const ReactComponent$w = (_Ka) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$v = (_Ma) => {
-  var _Na = _Ma, {
-    title,
-    titleId
-  } = _Na, props = __objRest(_Na, [
-    "title",
-    "titleId"
-  ]);
-  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
-    xmlns: "http://www.w3.org/2000/svg",
-    fill: "none",
-    viewBox: "0 0 24 24",
-    stroke: "currentColor",
-    width: "1em",
-    height: "1em",
-    focusable: "false",
-    shapeRendering: "geometricPrecision",
-    "aria-labelledby": titleId
-  }, props), title ? /* @__PURE__ */ React.createElement("title", {
-    id: titleId
-  }, title) : null, /* @__PURE__ */ React.createElement("path", {
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    d: "M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-  }));
-};
-const ReactComponent$u = (_Oa) => {
+const ReactComponent$v = (_Oa) => {
   var _Pa = _Oa, {
     title,
     titleId
@@ -6151,10 +6257,10 @@ const ReactComponent$u = (_Oa) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
+    d: "M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
   }));
 };
-const ReactComponent$t = (_Qa) => {
+const ReactComponent$u = (_Qa) => {
   var _Ra = _Qa, {
     title,
     titleId
@@ -6177,14 +6283,40 @@ const ReactComponent$t = (_Qa) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+    d: "M12 5v.01M12 12v.01M12 19v.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"
   }));
 };
-const ReactComponent$s = (_Sa) => {
+const ReactComponent$t = (_Sa) => {
   var _Ta = _Sa, {
     title,
     titleId
   } = _Ta, props = __objRest(_Ta, [
+    "title",
+    "titleId"
+  ]);
+  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    width: "1em",
+    height: "1em",
+    focusable: "false",
+    shapeRendering: "geometricPrecision",
+    "aria-labelledby": titleId
+  }, props), title ? /* @__PURE__ */ React.createElement("title", {
+    id: titleId
+  }, title) : null, /* @__PURE__ */ React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z"
+  }));
+};
+const ReactComponent$s = (_Ua) => {
+  var _Va = _Ua, {
+    title,
+    titleId
+  } = _Va, props = __objRest(_Va, [
     "title",
     "titleId"
   ]);
@@ -6206,11 +6338,11 @@ const ReactComponent$s = (_Sa) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$r = (_Ua) => {
-  var _Va = _Ua, {
+const ReactComponent$r = (_Wa) => {
+  var _Xa = _Wa, {
     title,
     titleId
-  } = _Va, props = __objRest(_Va, [
+  } = _Xa, props = __objRest(_Xa, [
     "title",
     "titleId"
   ]);
@@ -6250,11 +6382,11 @@ const ReactComponent$r = (_Ua) => {
     fillOpacity: 0.8
   }));
 };
-const ReactComponent$q = (_Wa) => {
-  var _Xa = _Wa, {
+const ReactComponent$q = (_Ya) => {
+  var _Za = _Ya, {
     title,
     titleId
-  } = _Xa, props = __objRest(_Xa, [
+  } = _Za, props = __objRest(_Za, [
     "title",
     "titleId"
   ]);
@@ -6293,11 +6425,11 @@ const ReactComponent$q = (_Wa) => {
     fillOpacity: 0.602
   }));
 };
-const ReactComponent$p = (_Ya) => {
-  var _Za = _Ya, {
+const ReactComponent$p = (__a) => {
+  var _$a = __a, {
     title,
     titleId
-  } = _Za, props = __objRest(_Za, [
+  } = _$a, props = __objRest(_$a, [
     "title",
     "titleId"
   ]);
@@ -6319,11 +6451,11 @@ const ReactComponent$p = (_Ya) => {
     d: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
   }));
 };
-const ReactComponent$o = (__a) => {
-  var _$a = __a, {
+const ReactComponent$o = (_ab) => {
+  var _bb = _ab, {
     title,
     titleId
-  } = _$a, props = __objRest(_$a, [
+  } = _bb, props = __objRest(_bb, [
     "title",
     "titleId"
   ]);
@@ -6351,11 +6483,11 @@ const ReactComponent$o = (__a) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$n = (_ab) => {
-  var _bb = _ab, {
+const ReactComponent$n = (_cb) => {
+  var _db = _cb, {
     title,
     titleId
-  } = _bb, props = __objRest(_bb, [
+  } = _db, props = __objRest(_db, [
     "title",
     "titleId"
   ]);
@@ -6377,11 +6509,11 @@ const ReactComponent$n = (_ab) => {
     d: "M3 21v-4m0 0V5a2 2 0 012-2h6.5l1 1H21l-3 6 3 6h-8.5l-1-1H5a2 2 0 00-2 2zm9-13.5V9"
   }));
 };
-const ReactComponent$m = (_cb) => {
-  var _db = _cb, {
+const ReactComponent$m = (_eb) => {
+  var _fb = _eb, {
     title,
     titleId
-  } = _db, props = __objRest(_db, [
+  } = _fb, props = __objRest(_fb, [
     "title",
     "titleId"
   ]);
@@ -6417,11 +6549,11 @@ const ReactComponent$m = (_cb) => {
     stopColor: "#A099FF"
   }))));
 };
-const ReactComponent$l = (_eb) => {
-  var _fb = _eb, {
+const ReactComponent$l = (_gb) => {
+  var _hb = _gb, {
     title,
     titleId
-  } = _fb, props = __objRest(_fb, [
+  } = _hb, props = __objRest(_hb, [
     "title",
     "titleId"
   ]);
@@ -6443,11 +6575,11 @@ const ReactComponent$l = (_eb) => {
     d: "M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"
   }));
 };
-const ReactComponent$k = (_gb) => {
-  var _hb = _gb, {
+const ReactComponent$k = (_ib) => {
+  var _jb = _ib, {
     title,
     titleId
-  } = _hb, props = __objRest(_hb, [
+  } = _jb, props = __objRest(_jb, [
     "title",
     "titleId"
   ]);
@@ -6467,33 +6599,7 @@ const ReactComponent$k = (_gb) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$j = (_ib) => {
-  var _jb = _ib, {
-    title,
-    titleId
-  } = _jb, props = __objRest(_jb, [
-    "title",
-    "titleId"
-  ]);
-  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
-    xmlns: "http://www.w3.org/2000/svg",
-    fill: "none",
-    viewBox: "0 0 24 24",
-    stroke: "currentColor",
-    width: "1em",
-    height: "1em",
-    focusable: "false",
-    shapeRendering: "geometricPrecision",
-    "aria-labelledby": titleId
-  }, props), title ? /* @__PURE__ */ React.createElement("title", {
-    id: titleId
-  }, title) : null, /* @__PURE__ */ React.createElement("path", {
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    d: "M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
-  }));
-};
-const ReactComponent$i = (_kb) => {
+const ReactComponent$j = (_kb) => {
   var _lb = _kb, {
     title,
     titleId
@@ -6516,10 +6622,10 @@ const ReactComponent$i = (_kb) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
+    d: "M7 11.5V14m0-2.5v-6a1.5 1.5 0 113 0m-3 6a1.5 1.5 0 00-3 0v2a7.5 7.5 0 0015 0v-5a1.5 1.5 0 00-3 0m-6-3V11m0-5.5v-1a1.5 1.5 0 013 0v1m0 0V11m0-5.5a1.5 1.5 0 013 0v3m0 0V11"
   }));
 };
-const ReactComponent$h = (_mb) => {
+const ReactComponent$i = (_mb) => {
   var _nb = _mb, {
     title,
     titleId
@@ -6542,10 +6648,10 @@ const ReactComponent$h = (_mb) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M4 6h16M4 10h16M4 14h16M4 18h16"
+    d: "M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"
   }));
 };
-const ReactComponent$g = (_ob) => {
+const ReactComponent$h = (_ob) => {
   var _pb = _ob, {
     title,
     titleId
@@ -6568,14 +6674,40 @@ const ReactComponent$g = (_ob) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+    d: "M4 6h16M4 10h16M4 14h16M4 18h16"
   }));
 };
-const ReactComponent$f = (_qb) => {
+const ReactComponent$g = (_qb) => {
   var _rb = _qb, {
     title,
     titleId
   } = _rb, props = __objRest(_rb, [
+    "title",
+    "titleId"
+  ]);
+  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    width: "1em",
+    height: "1em",
+    focusable: "false",
+    shapeRendering: "geometricPrecision",
+    "aria-labelledby": titleId
+  }, props), title ? /* @__PURE__ */ React.createElement("title", {
+    id: titleId
+  }, title) : null, /* @__PURE__ */ React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+  }));
+};
+const ReactComponent$f = (_sb) => {
+  var _tb = _sb, {
+    title,
+    titleId
+  } = _tb, props = __objRest(_tb, [
     "title",
     "titleId"
   ]);
@@ -6607,11 +6739,11 @@ const ReactComponent$f = (_qb) => {
     fill: "#5298FF"
   }));
 };
-const ReactComponent$e = (_sb) => {
-  var _tb = _sb, {
+const ReactComponent$e = (_ub) => {
+  var _vb = _ub, {
     title,
     titleId
-  } = _tb, props = __objRest(_tb, [
+  } = _vb, props = __objRest(_vb, [
     "title",
     "titleId"
   ]);
@@ -6640,33 +6772,7 @@ const ReactComponent$e = (_sb) => {
     strokeLinecap: "round"
   }));
 };
-const ReactComponent$d = (_ub) => {
-  var _vb = _ub, {
-    title,
-    titleId
-  } = _vb, props = __objRest(_vb, [
-    "title",
-    "titleId"
-  ]);
-  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
-    xmlns: "http://www.w3.org/2000/svg",
-    fill: "none",
-    viewBox: "0 0 24 24",
-    stroke: "currentColor",
-    width: "1em",
-    height: "1em",
-    focusable: "false",
-    shapeRendering: "geometricPrecision",
-    "aria-labelledby": titleId
-  }, props), title ? /* @__PURE__ */ React.createElement("title", {
-    id: titleId
-  }, title) : null, /* @__PURE__ */ React.createElement("path", {
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    d: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
-  }));
-};
-const ReactComponent$c = (_wb) => {
+const ReactComponent$d = (_wb) => {
   var _xb = _wb, {
     title,
     titleId
@@ -6689,10 +6795,10 @@ const ReactComponent$c = (_wb) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
+    d: "M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"
   }));
 };
-const ReactComponent$b = (_yb) => {
+const ReactComponent$c = (_yb) => {
   var _zb = _yb, {
     title,
     titleId
@@ -6715,10 +6821,10 @@ const ReactComponent$b = (_yb) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M12 4v16m8-8H4"
+    d: "M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z"
   }));
 };
-const ReactComponent$a = (_Ab) => {
+const ReactComponent$b = (_Ab) => {
   var _Bb = _Ab, {
     title,
     titleId
@@ -6741,10 +6847,10 @@ const ReactComponent$a = (_Ab) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M12 6v6m0 0v6m0-6h6m-6 0H6"
+    d: "M12 4v16m8-8H4"
   }));
 };
-const ReactComponent$9 = (_Cb) => {
+const ReactComponent$a = (_Cb) => {
   var _Db = _Cb, {
     title,
     titleId
@@ -6767,10 +6873,10 @@ const ReactComponent$9 = (_Cb) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
+    d: "M12 6v6m0 0v6m0-6h6m-6 0H6"
   }));
 };
-const ReactComponent$8 = (_Eb) => {
+const ReactComponent$9 = (_Eb) => {
   var _Fb = _Eb, {
     title,
     titleId
@@ -6793,14 +6899,40 @@ const ReactComponent$8 = (_Eb) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+    d: "M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"
   }));
 };
-const ReactComponent$7 = (_Gb) => {
+const ReactComponent$8 = (_Gb) => {
   var _Hb = _Gb, {
     title,
     titleId
   } = _Hb, props = __objRest(_Hb, [
+    "title",
+    "titleId"
+  ]);
+  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    width: "1em",
+    height: "1em",
+    focusable: "false",
+    shapeRendering: "geometricPrecision",
+    "aria-labelledby": titleId
+  }, props), title ? /* @__PURE__ */ React.createElement("title", {
+    id: titleId
+  }, title) : null, /* @__PURE__ */ React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+  }));
+};
+const ReactComponent$7 = (_Ib) => {
+  var _Jb = _Ib, {
+    title,
+    titleId
+  } = _Jb, props = __objRest(_Jb, [
     "title",
     "titleId"
   ]);
@@ -6826,11 +6958,11 @@ const ReactComponent$7 = (_Gb) => {
     strokeLinejoin: "round"
   }));
 };
-const ReactComponent$6 = (_Ib) => {
-  var _Jb = _Ib, {
+const ReactComponent$6 = (_Kb) => {
+  var _Lb = _Kb, {
     title,
     titleId
-  } = _Jb, props = __objRest(_Jb, [
+  } = _Lb, props = __objRest(_Lb, [
     "title",
     "titleId"
   ]);
@@ -6852,11 +6984,11 @@ const ReactComponent$6 = (_Ib) => {
     d: "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"
   }));
 };
-const ReactComponent$5 = (_Kb) => {
-  var _Lb = _Kb, {
+const ReactComponent$5 = (_Mb) => {
+  var _Nb = _Mb, {
     title,
     titleId
-  } = _Lb, props = __objRest(_Lb, [
+  } = _Nb, props = __objRest(_Nb, [
     "title",
     "titleId"
   ]);
@@ -6878,33 +7010,7 @@ const ReactComponent$5 = (_Kb) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$4 = (_Mb) => {
-  var _Nb = _Mb, {
-    title,
-    titleId
-  } = _Nb, props = __objRest(_Nb, [
-    "title",
-    "titleId"
-  ]);
-  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
-    xmlns: "http://www.w3.org/2000/svg",
-    fill: "none",
-    viewBox: "0 0 24 24",
-    stroke: "currentColor",
-    width: "1em",
-    height: "1em",
-    focusable: "false",
-    shapeRendering: "geometricPrecision",
-    "aria-labelledby": titleId
-  }, props), title ? /* @__PURE__ */ React.createElement("title", {
-    id: titleId
-  }, title) : null, /* @__PURE__ */ React.createElement("path", {
-    strokeLinecap: "round",
-    strokeLinejoin: "round",
-    d: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
-  }));
-};
-const ReactComponent$3 = (_Ob) => {
+const ReactComponent$4 = (_Ob) => {
   var _Pb = _Ob, {
     title,
     titleId
@@ -6927,14 +7033,40 @@ const ReactComponent$3 = (_Ob) => {
   }, title) : null, /* @__PURE__ */ React.createElement("path", {
     strokeLinecap: "round",
     strokeLinejoin: "round",
-    d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+    d: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
   }));
 };
-const ReactComponent$2 = (_Qb) => {
+const ReactComponent$3 = (_Qb) => {
   var _Rb = _Qb, {
     title,
     titleId
   } = _Rb, props = __objRest(_Rb, [
+    "title",
+    "titleId"
+  ]);
+  return /* @__PURE__ */ React.createElement("svg", __spreadValues({
+    xmlns: "http://www.w3.org/2000/svg",
+    fill: "none",
+    viewBox: "0 0 24 24",
+    stroke: "currentColor",
+    width: "1em",
+    height: "1em",
+    focusable: "false",
+    shapeRendering: "geometricPrecision",
+    "aria-labelledby": titleId
+  }, props), title ? /* @__PURE__ */ React.createElement("title", {
+    id: titleId
+  }, title) : null, /* @__PURE__ */ React.createElement("path", {
+    strokeLinecap: "round",
+    strokeLinejoin: "round",
+    d: "M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"
+  }));
+};
+const ReactComponent$2 = (_Sb) => {
+  var _Tb = _Sb, {
+    title,
+    titleId
+  } = _Tb, props = __objRest(_Tb, [
     "title",
     "titleId"
   ]);
@@ -6956,11 +7088,11 @@ const ReactComponent$2 = (_Qb) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent$1 = (_Sb) => {
-  var _Tb = _Sb, {
+const ReactComponent$1 = (_Ub) => {
+  var _Vb = _Ub, {
     title,
     titleId
-  } = _Tb, props = __objRest(_Tb, [
+  } = _Vb, props = __objRest(_Vb, [
     "title",
     "titleId"
   ]);
@@ -6980,11 +7112,11 @@ const ReactComponent$1 = (_Sb) => {
     fill: "currentColor"
   }));
 };
-const ReactComponent = (_Ub) => {
-  var _Vb = _Ub, {
+const ReactComponent = (_Wb) => {
+  var _Xb = _Wb, {
     title,
     titleId
-  } = _Vb, props = __objRest(_Vb, [
+  } = _Xb, props = __objRest(_Xb, [
     "title",
     "titleId"
   ]);
@@ -7037,6 +7169,7 @@ var index = /* @__PURE__ */ Object.freeze({
   RadioButtonGroup,
   Select,
   SkeletonGroup,
+  Slider,
   Textarea,
   Tooltip,
   Dialog,
@@ -7224,4 +7357,4 @@ const GlobalStyle = createGlobalStyle(({
       color: ${theme.colors.inherit};
     }
   `);
-export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading$1 as Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ScrollBox, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };
+export { ReactComponent$K as ArrowCircleSVG, ReactComponent$J as ArrowRightSVG, ReactComponent$I as ArrowUpSVG, Avatar, Backdrop, BackdropSurface, ReactComponent$H as BookOpenSVG, Button, ReactComponent$G as CancelCircleSVG, Card, ReactComponent$F as CheckSVG, Checkbox, ReactComponent$E as ChevronDownSVG, ReactComponent$D as ChevronLeftSVG, ReactComponent$C as ChevronRightSVG, ReactComponent$B as ChevronUpSVG, ReactComponent$A as CloseSVG, ReactComponent$z as CodeSVG, ReactComponent$y as CogSVG, ReactComponent$x as CollectionSVG, index as Components, ReactComponent$w as CopySVG, CountdownCircle, Dialog, ReactComponent$v as DocumentsSVG, ReactComponent$u as DotsVerticalSVG, ReactComponent$L as DownIndicatorSVG, Dropdown, ReactComponent$t as DuplicateSVG, DynamicPopover, ReactComponent$s as EthSVG, ReactComponent$q as EthTransparentInvertedSVG, ReactComponent$r as EthTransparentSVG, ReactComponent$p as ExclamationSVG, ReactComponent$o as ExitSVG, Field, FieldSet, FileInput, ReactComponent$n as FlagSVG, ReactComponent$m as GradientSVG, ReactComponent$l as GridSVG, ReactComponent$k as GridSolidSVG, ReactComponent$j as HandSVG, Heading$1 as Heading, Input$1 as Input, ReactComponent$i as LinkSVG, ReactComponent$h as ListSVG, ReactComponent$g as LockClosedSVG, ReactComponent$f as LogoSVG, ReactComponent$e as MenuSVG, Modal, ReactComponent$d as MoonSVG, PageButtons, ReactComponent$c as PencilSVG, ReactComponent$b as PlusSVG, ReactComponent$a as PlusSmallSVG, Portal, Profile, RadioButton, RadioButtonGroup, ReactComponent$9 as RefreshSVG, ScrollBox, ReactComponent$8 as SearchSVG, Select, Skeleton, SkeletonGroup, Slider, Spinner, ReactComponent$7 as SplitSVG, ReactComponent$6 as SunSVG, Tag, Textarea, GlobalStyle as ThorinGlobalStyles, Toast, ReactComponent$5 as TokensSVG, Tooltip, ReactComponent$4 as TrendingUpSVG, Typography, ReactComponent$3 as UploadSVG, ReactComponent$2 as UserSolidSVG, ReactComponent$1 as UsersSolidSVG, VisuallyHidden, ReactComponent as WalletSVG, baseTheme, darkTheme, lightTheme, mq, tokens };

@@ -27,15 +27,17 @@ const Card = styled.div(
 export const AvatarViewManager = ({
   handleCancel,
   avatar,
+  name,
 }: {
   handleCancel: () => void
+  name: string
   avatar?: File
 }) => {
   const Component = avatar ? AvatarUpload : AvatarNFT
 
   return (
     <Card>
-      <Component avatar={avatar!} handleCancel={handleCancel} />
+      <Component name={name} avatar={avatar!} handleCancel={handleCancel} />
     </Card>
   )
 }

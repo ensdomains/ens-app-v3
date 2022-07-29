@@ -8,6 +8,7 @@ import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 import { useTransaction } from '@app/utils/TransactionProvider'
 import { Button, mq, Typography } from '@ensdomains/thorin'
+// eslint-disable-next-line import/no-extraneous-dependencies
 import { JsonRpcSigner } from '@ethersproject/providers'
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'

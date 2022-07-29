@@ -522,6 +522,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
       <Modal open={open} onDismiss={onDismiss}>
         {currentContent === 'avatar' ? (
           <AvatarViewManager
+            name={name}
             avatar={_avatar}
             handleCancel={() => setCurrentContent('profile')}
           />
