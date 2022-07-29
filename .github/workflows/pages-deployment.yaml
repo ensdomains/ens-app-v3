@@ -41,16 +41,16 @@ jobs:
           node-version: 16
 
       - name: Install Packages
-        run: yarn install --immutable --immutable-cache --check-cache
+        run: pnpm install
 
       - name: Build and Export
-        run: yarn build && yarn export
+        run: pnpm build && pnpm export
 
       - name: Generate sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ./out/sitemaps
-          yarn generate:sitemaps
+          pnpm generate:sitemaps
 
       - name: Publish
         uses: cloudflare/pages-action@1
