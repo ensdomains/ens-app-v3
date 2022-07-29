@@ -173,6 +173,7 @@
       },
       "other": {
         "label": "Other",
+        "labelDisabled": "Not supported by current resolver",
         "contentHash": {
           "label": "Content Hash",
           "placeholder": "e.g. ipfs://"

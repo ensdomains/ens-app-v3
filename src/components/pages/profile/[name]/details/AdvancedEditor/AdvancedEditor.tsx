@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm } from 'react-hook-form'
-import { mq, Modal, Input, Button, ScrollBox } from '@ensdomains/thorin'
+import { mq, Modal, Button, ScrollBox } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import { useProfile } from '@app/hooks/useProfile'
@@ -16,6 +16,7 @@ import {
   getDirtyFields,
 } from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import addressOptions from '../../../ProfileEditor/addressOptions'
 import { textOptions } from './textOptions'
 import { AddRecordButton } from '../../../../../@molecules/AddRecordButton/AddRecordButton'
@@ -66,8 +67,8 @@ const ContentContainer = styled.div(
     display: flex;
     margin-top: ${theme.space['4.5']};
     flex-direction: column;
-    gap: ${theme.space['2']};
     overflow: hidden;
+    gap: ${theme.space['4']};
   `,
 )
 
@@ -152,8 +153,7 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
-    padding: ${theme.space['2']};
-    margin: ${theme.space['2.5']} 0;
+    padding: 0 ${theme.space['2']};
   `,
 )
 
@@ -165,7 +165,7 @@ const ScrollBoxDecorator = styled(ScrollBox)(
 
 const AddRecordContainer = styled.div(
   ({ theme }) => css`
-    padding: ${theme.space['2']} ${theme.space['4']};
+    padding: 0 ${theme.space['4']};
   `,
 )
 
@@ -342,6 +342,7 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
 
   useEffect(() => {
     if (profile && open) {
+      console.log(profile)
       const formObject = convertProfileToProfileFormObject(profile)
       const newDefaultValues = {
         text: {
@@ -366,6 +367,22 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [profile, open])
+
+  const { hasInterface: hasABIInterface, isLoading: isLoadingABIInterface } =
+    useResolverHasInterfaces(
+      ['IABIResolver'],
+      profile?.resolverAddress,
+      loading,
+    )
+
+  const {
+    hasInterface: hasPublicKeyInterface,
+    isLoading: isLoadingPublicKeyInterface,
+  } = useResolverHasInterfaces(
+    ['IPubkeyResolver'],
+    profile?.resolverAddress,
+    loading,
+  )
 
   const handleCancel = () => {
     if (onDismiss) onDismiss()
@@ -424,7 +441,8 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
-  if (loading) return null
+  if (loading || isLoadingABIInterface || isLoadingPublicKeyInterface)
+    return null
   return (
     <>
       <Modal open={open} onDismiss={onDismiss}>
@@ -599,7 +617,8 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                       ),
                       other: (
                         <>
-                          <Input
+                          <RecordInput
+                            deletable={false}
                             label={t(
                               'advancedEditor.tabs.other.contentHash.label',
                             )}
@@ -614,7 +633,12 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                             autoComplete="off"
                             {...register('other.contentHash', {})}
                           />
-                          <Input
+                          <RecordInput
+                            deletable={false}
+                            disabled={!hasPublicKeyInterface}
+                            labelDisabled={t(
+                              'advancedEditor.tabs.other.labelDisabled',
+                            )}
                             label={t(
                               'advancedEditor.tabs.other.publicKey.label',
                             )}
@@ -626,10 +650,19 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               getFieldState('other.publicKey', formState)
                                 .isDirty
                             }
+                            error={
+                              getFieldState('other.publicKey', formState).error
+                                ?.message
+                            }
                             autoComplete="off"
                             {...register('other.publicKey', {})}
                           />
-                          <Input
+                          <RecordInput
+                            deletable={false}
+                            disabled={!hasABIInterface}
+                            labelDisabled={t(
+                              'advancedEditor.tabs.other.labelDisabled',
+                            )}
                             label={t('advancedEditor.tabs.other.abi.label')}
                             placeholder={t(
                               'advancedEditor.tabs.other.abi.placeholder',

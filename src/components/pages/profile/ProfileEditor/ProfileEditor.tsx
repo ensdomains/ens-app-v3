@@ -2,14 +2,7 @@ import React, { useState, useEffect, ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
 import { useForm, useWatch } from 'react-hook-form'
-import {
-  mq,
-  Modal,
-  Input,
-  Textarea,
-  Button,
-  ScrollBox,
-} from '@ensdomains/thorin'
+import { mq, Modal, Textarea, Button, ScrollBox } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { useTranslation } from 'react-i18next'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
@@ -83,9 +76,9 @@ const ContentContainer = styled.div(
   ({ theme }) => css`
     flex: 1;
     display: flex;
+    gap: ${theme.space['4']};
     margin-top: ${theme.space['4.5']};
     flex-direction: column;
-    gap: ${theme.space['2']};
     overflow: hidden;
     z-index: 1;
   `,
@@ -168,9 +161,8 @@ const TabContentContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    gap: ${theme.space['3']};
     padding: 0 ${theme.space['2']};
-    margin: ${theme.space['2.5']} 0;
+    gap: ${theme.space['3']};
   `,
 )
 
@@ -182,7 +174,7 @@ const ScrollBoxDecorator = styled(ScrollBox)(
 
 const AddRecordContainer = styled.div(
   ({ theme }) => css`
-    padding: ${theme.space['2']} ${theme.space['3']};
+    padding: 0 ${theme.space['3']};
   `,
 )
 
@@ -194,6 +186,13 @@ const FooterContainer = styled.div(
     width: 100%;
     max-width: ${theme.space['96']};
     margin: 0 auto;
+  `,
+)
+
+const LabelWrapper = styled.div(
+  ({ theme }) => css`
+    font-size: ${theme.space['3.5']};
+    line-height: 1.2;
   `,
 )
 
@@ -594,7 +593,8 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                     {
                       general: (
                         <>
-                          <Input
+                          <RecordInput
+                            deletable={false}
                             label={t('profileEditor.tabs.general.name.label')}
                             placeholder={t(
                               'profileEditor.tabs.general.name.placeholder',
@@ -606,7 +606,8 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                             autoComplete="off"
                             {...register('general.name')}
                           />
-                          <Input
+                          <RecordInput
+                            deletable={false}
                             label={t('profileEditor.tabs.general.url.label')}
                             autoComplete="off"
                             placeholder={t(
@@ -618,7 +619,8 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                             }
                             {...register('general.url')}
                           />
-                          <Input
+                          <RecordInput
+                            deletable={false}
                             label={t(
                               'profileEditor.tabs.general.location.label',
                             )}
@@ -634,9 +636,13 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                             {...register('general.location')}
                           />
                           <Textarea
-                            label={t(
-                              'profileEditor.tabs.general.description.label',
-                            )}
+                            label={
+                              <LabelWrapper>
+                                {t(
+                                  'profileEditor.tabs.general.description.label',
+                                )}
+                              </LabelWrapper>
+                            }
                             autoComplete="off"
                             placeholder={t(
                               'profileEditor.tabs.general.description.placeholder',

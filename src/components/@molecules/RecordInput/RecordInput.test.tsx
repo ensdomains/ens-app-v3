@@ -32,14 +32,18 @@ describe('RecordInput', () => {
 
     const labelList = input.querySelectorAll('label')
     const labels = Array.from(labelList)
-    expect(
-      labels.some((label) => label.innerHTML.trim().startsWith('<svg')),
-    ).toBe(true)
+    labels.forEach((l) => console.log(l.innerHTML))
+    expect(labels.some((label) => /<svg/.test(label.innerHTML))).toBe(true)
   })
 
   it('should call onDelete when delete button clicked', () => {
     render(<RecordInput onDelete={mockCallback} />)
     fireEvent.click(screen.getByTestId('record-input-delete'))
     expect(mockCallback).toHaveBeenCalled()
+  })
+
+  it('should hide delete button if deleteable is set to false', () => {
+    render(<RecordInput onDelete={mockCallback} deletable={false} />)
+    expect(screen.queryByTestId('record-input-delete')).toBe(null)
   })
 })
