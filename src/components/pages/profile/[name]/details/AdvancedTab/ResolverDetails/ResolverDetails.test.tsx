@@ -35,7 +35,7 @@ describe('ResolverDetails', () => {
     }
     mockUseProfile.mockReturnValue(mockProfileResponse)
     render(<ResolverDetails />)
-    expect(screen.getByText('details.tabs.more.resolver.latest')).toBeVisible()
+    expect(screen.getByText('details.tabs.advanced.resolver.latest')).toBeVisible()
     expect(screen.getByTestId('version-indicator-dot-latest')).toBeVisible()
   })
   it('should show red no when resolver has not been migrated', () => {
@@ -46,7 +46,7 @@ describe('ResolverDetails', () => {
     }
     mockUseProfile.mockReturnValue(mockProfileResponse)
     render(<ResolverDetails />)
-    expect(screen.getByText('details.tabs.more.resolver.outdated')).toBeVisible()
+    expect(screen.getByText('details.tabs.advanced.resolver.outdated')).toBeVisible()
     expect(screen.getByTestId('version-indicator-dot-outdated')).toBeVisible()
   })
 })

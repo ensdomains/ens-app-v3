@@ -4,7 +4,7 @@ import { isIOS } from '@app/utils/isIOS'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
 import { useAccount, useSigner } from 'wagmi'
-import { TransactionModal } from '../TransactionDialogManager/stage/Transaction'
+import { TransactionStageModal } from './Transaction'
 
 jest.mock('@app/hooks/useChainName')
 jest.mock('@rainbow-me/rainbowkit')
@@ -29,11 +29,10 @@ const renderHelper = async ({
   stepCount,
   transaction,
   ...props
-}: Partial<ComponentProps<typeof TransactionModal>> = {}) => {
+}: Partial<ComponentProps<typeof TransactionStageModal>> = {}) => {
   render(
-    <TransactionModal
+    <TransactionStageModal
       {...props}
-      open
       currentStep={currentStep || 0}
       stepCount={stepCount || 1}
       actionName={actionName || 'test'}
@@ -54,9 +53,9 @@ const goToRequest = () => {
 
 const goToConfirm = async () => {
   fireEvent.click(screen.getByTestId('transaction-modal-request-trailing-btn'))
-  await act(async () => {
-    await waitFor(() => expect(mockSendTransaction).toHaveBeenCalled())
-  })
+  // await act(async () => {
+  //   await waitFor(() => expect(mockSendTransaction).toHaveBeenCalled())
+  // })
 }
 
 describe('TransactionModal', () => {
@@ -70,6 +69,7 @@ describe('TransactionModal', () => {
     } as any,
   })
   mockIsIOS.mockReturnValue(false)
+
   it('should render on open', async () => {
     await renderHelper()
     expect(screen.getByText('transaction.modal.request.title')).toBeVisible()
@@ -307,7 +307,9 @@ describe('TransactionModal', () => {
           completeBtnLabel: 'complete-button-test-123',
         })
         await goToConfirm()
-        expect(screen.getByText('complete-button-test-123')).toBeVisible()
+        await waitFor(() => {
+          expect(screen.getByText('complete-button-test-123')).toBeVisible()
+        })
       })
     })
   })

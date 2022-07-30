@@ -1,8 +1,8 @@
 import { TransactionDisplayItem } from '@app/types'
 import { Button, Dialog } from '@ensdomains/thorin'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
-import { DataInputComponent } from './input'
-import { IntroComponentName } from './intro'
+import type { DataInputComponent } from './input'
+import type { IntroComponentName } from './intro'
 import { makeTransactionItem, TransactionName } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'

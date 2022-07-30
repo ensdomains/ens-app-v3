@@ -91,10 +91,10 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
-export const calculateSelfAbilities = (
-  address: string | undefined,
-  ownerData: Awaited<ReturnType<ENS['getOwner']>>,
-) => {
+type OwnerData =
+  | Pick<NonNullable<Awaited<ReturnType<ENS['getOwner']>>>, 'registrant' | 'owner'>
+  | undefined
+export const calculateSelfAbilities = (address: string | undefined, ownerData: OwnerData) => {
   const abilities = {
     canEdit: false,
     canSend: false,

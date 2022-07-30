@@ -12,8 +12,8 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useProvider } from 'wagmi'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { makeTransactionItem } from '../transaction'
-import { TransactionDialogPassthrough } from '../types'
 
 const supportsInterfaceAbi = [
   {
@@ -215,7 +215,7 @@ export const EditResolver = ({
             <Spacer $height="4" />
           </>
         ) : null}
-        <form>
+        <form data-testid="edit-resolver-form">
           <LatestResolverContainer>
             <RadioButton
               label="Use latest resolver"
@@ -241,6 +241,8 @@ export const EditResolver = ({
 
           <InputContainer>
             <Input
+              label="Custom resolver"
+              hideLabel
               placeholder="Enter custom resolver address"
               disabled={resolverChoice !== 'custom'}
               {...register('customResolver', {

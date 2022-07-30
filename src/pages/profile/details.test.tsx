@@ -9,6 +9,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useRouter } from 'next/router'
+import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
 import Page, { calculateSelfAbilities, Details } from './details'
 
@@ -16,7 +17,7 @@ import Page, { calculateSelfAbilities, Details } from './details'
 jest.mock('@app/components/NFTWithPlaceholder')
 jest.mock('@app/components/pages/profile/NameSnippetMobile')
 jest.mock('@app/components/pages/profile/OwnerButton')
-jest.mock('@app/components/pages/profile/[name]/details/MoreTab/MoreTab')
+jest.mock('@app/components/pages/profile/[name]/details/AdvancedTab/AdvancedTab')
 jest.mock('@app/components/pages/profile/[name]/details/SubnamesTab')
 jest.mock('@app/components/pages/profile/[name]/details/RecordsTab')
 jest.mock('@app/utils/BreakpointProvider')
@@ -39,7 +40,7 @@ const mockUseAccount = mockFunction(useAccount)
 
 describe('calculateSelfAbilities', () => {
   it('should return all false if there is no address or ownerData', () => {
-    const result = calculateSelfAbilities()
+    const result = calculateSelfAbilities(undefined, undefined)
     expect(result).toEqual({
       canEdit: false,
       canSend: false,
@@ -96,9 +97,11 @@ describe('calculateSelfAbilities', () => {
   })
 })
 
+type DetailsProps = ComponentProps<typeof Details>
+
 describe('Details', () => {
   // default props for <Details /> component
-  const defaultProps = {
+  const defaultProps: DetailsProps = {
     expiryDate: new Date(),
     breakpoints: {
       xs: false,
@@ -107,7 +110,6 @@ describe('Details', () => {
       lg: false,
       xl: false,
     },
-    address: '0x123',
     ownerData: {
       registrant: '0xregistrant',
       owner: '0xowner',
@@ -133,18 +135,22 @@ describe('Details', () => {
 
   it('should display NFT on its own on larger screens', () => {
     // render Details component with breakpoint.md === true (larger than md)
-    const props = { ...defaultProps }
-    props.breakpoints.md = true
-    props.ownerData.registrant = ''
-    props.ownerData.owner = ''
+    const props: DetailsProps = {
+      ...defaultProps,
+      breakpoints: { md: true },
+      ownerData: { registrant: '', owner: '', ownershipLevel: 'registrar' },
+    }
 
     render(<Details {...props} />)
     expect(screen.getByText('NFTWithPlaceholder')).toBeInTheDocument()
   })
   it('should display mobile name snippet on smaller screens', () => {
     // render Details component with breakpoint.md === false (smaller than md)
-    const props = { ...defaultProps }
-    props.breakpoints.md = false
+    const props: DetailsProps = {
+      ...defaultProps,
+      breakpoints: { md: false },
+      ownerData: undefined,
+    }
 
     render(<Details {...props} />)
     expect(screen.getByText('NameSnippetMobile')).toBeInTheDocument()
@@ -201,14 +207,15 @@ describe('Page', () => {
       error: null,
     }))
     mockUseAccount.mockImplementation(() => ({
-      address: '0x123',
+      data: { address: '0x123' },
       isLoggedIn: true,
+      isLoading: false,
     }))
 
     render(<Page />)
 
     // click more tab on Page
-    fireEvent.click(screen.getByText('details.tabs.more.label'))
+    fireEvent.click(screen.getByText('details.tabs.advanced.label'))
 
     await waitFor(() => {
       expect(screen.getByText('MoreTab')).toBeInTheDocument()

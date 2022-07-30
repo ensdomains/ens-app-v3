@@ -4,11 +4,13 @@ import Accordion, { AccordionData } from './Accordion'
 const data: AccordionData[] = [
   {
     title: 'Item 1',
-    body: 'Body 1',
+    name: 'item1',
+    body: () => <>Body 1</>,
   },
   {
     title: 'Item 2',
-    body: 'Body 2',
+    name: 'item2',
+    body: () => <>Body 2</>,
   },
 ]
 
@@ -18,10 +20,10 @@ describe('Accordion', () => {
   })
 
   it('should render', () => {
-    render(<Accordion data={data} />)
+    render(<Accordion data={data} name="test" />)
   })
   it('should show the correct body based on clicked item', () => {
-    render(<Accordion data={data} />)
+    render(<Accordion data={data} name="test" />)
     expect(screen.getByText('Body 1')).not.toHaveStyle('height: 0px')
     expect(screen.getByText('Body 2')).toHaveStyle('height: 0px')
     expect(screen.queryByTestId('accordion-Item 2-body')).not.toBeInTheDocument()
@@ -30,11 +32,13 @@ describe('Accordion', () => {
   it('should show a disabled item correctly', () => {
     render(
       <Accordion
+        name="test"
         data={[
           ...data,
           {
             title: 'Item 3',
-            body: 'Body 3',
+            name: 'item3',
+            body: () => <>Body 3</>,
             disabled: true,
           },
         ]}
@@ -46,7 +50,7 @@ describe('Accordion', () => {
     expect(screen.queryByText('Body 3')).not.toBeInTheDocument()
   })
   it('should show an enabled item correctly', () => {
-    render(<Accordion data={data} />)
+    render(<Accordion data={data} name="test" />)
     fireEvent.click(screen.getByTestId('accordion-Item 2-enabled'))
     expect(screen.getByText('Body 2')).not.toHaveStyle('height: 0px')
     expect(screen.queryByTestId('accordion-Item 1-body')).not.toBeInTheDocument()
