@@ -11,9 +11,9 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: yarn
+      - run: pnpm install
 
-      - run: yarn test:coverage
+      - run: pnpm test:coverage
 
   stateless:
     timeout-minutes: 20
@@ -21,8 +21,8 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install yarn packages
-        run: yarn
+      - name: Install pnpm packages
+        run: pnpm install
 
       - name: Pull metadata service image
         run: |
@@ -30,7 +30,7 @@ jobs:
           docker pull ghcr.io/ensdomains/ens-metadata-service:latest
 
       - name: Run tests
-        run: yarn e2e:ci
+        run: pnpm e2e:ci
 
       - uses: actions/upload-artifact@v2
         if: failure()
@@ -54,13 +54,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install yarn packages
-        run: yarn
+      - name: Install pnpm packages
+        run: pnpm install
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "yarn buildandstart" \
-          "yarn wait-on http://localhost:3000 && yarn synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
+          "pnpm buildandstart" \
+          "pnpm wait-on http://localhost:3000 && pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
         env:
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
 

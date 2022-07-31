@@ -11,7 +11,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   let contractJson: any
 
-  const jsonPath = resolve(process.env.PROJECT_CWD!, './cache/multicall.json')
+  const jsonPath = resolve(
+    process.env.NODE_PATH!.split(':')[0],
+    '../../../',
+    './cache/multicall.json',
+  )
 
   if (existsSync(jsonPath)) {
     console.log('Multicall JSON file found, using it...')
