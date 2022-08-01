@@ -4,11 +4,7 @@ import supportedTexts from '@app/constants/supportedTexts.json'
 import { Typography, mq } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import {
-  AddressProfileButton,
-  OtherProfileButton,
-  SocialProfileButton,
-} from './ProfileButton'
+import { AddressProfileButton, OtherProfileButton, SocialProfileButton } from './ProfileButton'
 
 const ProfileInfoBox = styled.div(({ theme }) => [
   css`
@@ -64,9 +60,7 @@ const ProfileSection = ({
     ? array.filter((x) => supported.includes(x.key.toLowerCase()))
     : array
   const unsupportedArray = supported
-    ? array
-        .filter((x) => !supported.includes(x.key.toLowerCase()))
-        .map((x) => ({ ...x, type }))
+    ? array.filter((x) => !supported.includes(x.key.toLowerCase())).map((x) => ({ ...x, type }))
     : []
 
   return condition ? (
@@ -75,18 +69,14 @@ const ProfileSection = ({
         {t(label)}
       </SectionTitle>
       <Stack>
-        {supportedArray.map(
-          (item: { key: string; value: string; type?: 'text' | 'address' }) => (
-            <Button {...{ ...item, iconKey: item.key }} />
-          ),
-        )}
+        {supportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
+          <Button {...{ ...item, iconKey: item.key }} />
+        ))}
         {unsupportedArray.length > 0 &&
           unsupportedArray.map(
-            (item: {
-              key: string
-              value: string
-              type?: 'text' | 'address'
-            }) => <OtherProfileButton {...{ ...item, iconKey: item.key }} />,
+            (item: { key: string; value: string; type?: 'text' | 'address' }) => (
+              <OtherProfileButton {...{ ...item, iconKey: item.key }} />
+            ),
           )}
       </Stack>
     </div>
@@ -128,9 +118,7 @@ export const ProfileDetails = ({
           label="accounts"
           condition={
             textRecords &&
-            textRecords.filter((x) =>
-              supportedTexts.includes(x.key.toLowerCase()),
-            ).length > 0
+            textRecords.filter((x) => supportedTexts.includes(x.key.toLowerCase())).length > 0
           }
           array={textRecords}
           button={SocialProfileButton}

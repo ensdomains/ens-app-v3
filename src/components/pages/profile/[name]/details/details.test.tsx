@@ -11,7 +11,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
-import Page, { calculateSelfAbilities, Details } from './details'
+import Page, { calculateSelfAbilities, Details } from '@app/pages/profile/details'
 
 // setting up jest mocks
 jest.mock('@app/components/NFTWithPlaceholder')
@@ -161,6 +161,7 @@ describe('Details', () => {
     render(<Details {...props} />)
     expect(screen.getByText('name.owner')).toBeInTheDocument()
   })
+
   it('should display controller button if user is controller', () => {
     const props = { ...defaultProps }
     props.ownerData.ownershipLevel = 'controller'

@@ -35,9 +35,7 @@ describe('SearchResult', () => {
   it('should not use registration status if placeholder', () => {
     render(<SearchResult {...baseMockData} usingPlaceholder />)
     expect(screen.getByText('nick.eth')).toBeVisible()
-    expect(
-      screen.queryByText('search.status.available'),
-    ).not.toBeInTheDocument()
+    expect(screen.queryByText('search.status.available')).not.toBeInTheDocument()
   })
   it('should correctly display an address without a primary name', () => {
     mockUsePrimary.mockReturnValue({
