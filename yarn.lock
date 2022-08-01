@@ -10943,7 +10943,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"dns-packet@npm:^5.3.1":
+"dns-packet@npm:^5.3.1, dns-packet@npm:^5.4.0":
   version: 5.4.0
   resolution: "dns-packet@npm:5.4.0"
   dependencies:
@@ -11353,6 +11353,7 @@ __metadata:
     babel-loader: ^8.2.2
     concurrently: ^7.0.0
     cypress: 9.5.3
+    dns-packet: ^5.4.0
     dotenv: ^16.0.0
     eslint: 7.32.0
     eslint-config-airbnb: ^19.0.4

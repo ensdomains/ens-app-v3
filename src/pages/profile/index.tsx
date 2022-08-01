@@ -69,6 +69,7 @@ export default function Page() {
     ownerData,
     expiryDate,
     normalisedName,
+    dnsOwner,
     valid,
   } = useNameDetails(name)
 
@@ -141,6 +142,7 @@ export default function Page() {
               ownerData={ownerData}
               expiryDate={expiryDate}
               showButton={!isSelf}
+              dnsOwner={dnsOwner}
             />
           ),
           trailing: (

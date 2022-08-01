@@ -3227,7 +3227,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "dns-packet",\
-        "npm:5.3.1"\
+        "npm:5.4.0"\
       ],\
       [\
         "doctrine",\
@@ -7643,6 +7643,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.4"],\
             ["concurrently", "npm:7.1.0"],\
             ["cypress", "npm:9.5.3"],\
+            ["dns-packet", "npm:5.4.0"],\
             ["dotenv", "npm:16.0.0"],\
             ["eslint", "npm:7.32.0"],\
             ["eslint-config-airbnb", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:19.0.4"],\
@@ -22111,6 +22112,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["babel-loader", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:8.2.4"],\
             ["concurrently", "npm:7.1.0"],\
             ["cypress", "npm:9.5.3"],\
+            ["dns-packet", "npm:5.4.0"],\
             ["dotenv", "npm:16.0.0"],\
             ["eslint", "npm:7.32.0"],\
             ["eslint-config-airbnb", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:19.0.4"],\

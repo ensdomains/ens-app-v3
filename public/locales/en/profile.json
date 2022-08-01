@@ -32,7 +32,8 @@
     "descriptions": {
       "owner": "Owns and controls the name",
       "controller": "Controls all the records of the name",
-      "registrant": "The owner of the NFT"
+      "registrant": "The owner of the NFT",
+      "dnsOwner": "Owner of the DNS name"
     },
     "tabs": {
       "records": {

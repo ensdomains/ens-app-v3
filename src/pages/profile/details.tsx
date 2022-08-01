@@ -121,6 +121,7 @@ export const Details = ({
   normalisedName,
   chainId,
   selfAbilities,
+  dnsOwner,
 }: {
   expiryDate: Date | null | undefined
   ownerData: Awaited<ReturnType<ENS['getOwner']>>
@@ -128,6 +129,7 @@ export const Details = ({
   normalisedName: string
   chainId: number
   selfAbilities: ReturnType<typeof calculateSelfAbilities>
+  dnsOwner: string
 }) => {
   const { t } = useTranslation('profile')
 
@@ -166,6 +168,16 @@ export const Details = ({
             canTransfer={selfAbilities.canChangeOwner}
           />
         )}
+        {dnsOwner && (
+          <OwnerButton
+            address={dnsOwner}
+            network={chainId}
+            label={t('name.dnsOwner', { ns: 'common' })}
+            type={breakpoints.lg ? 'dropdown' : 'dialog'}
+            description={t('details.descriptions.dnsOwner')}
+            canTransfer={false}
+          />
+        )}
         {ownerData?.registrant && (
           <OwnerButton
             address={ownerData.registrant}
@@ -197,6 +209,7 @@ export default function Page() {
     expiryDate,
     ownerData,
     profile,
+    dnsOwner,
     isLoading: detailsLoading,
     isWrapped,
   } = useNameDetails(name)
@@ -225,6 +238,7 @@ export default function Page() {
               normalisedName,
               chainId,
               selfAbilities,
+              dnsOwner,
             }}
           />
         ),
