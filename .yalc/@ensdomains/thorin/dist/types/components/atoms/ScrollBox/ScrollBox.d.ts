@@ -1,2 +1,9 @@
 import * as React from 'react';
-export declare const ScrollBox: (props: React.HTMLAttributes<HTMLDivElement>) => JSX.Element;
+declare type Props = {
+    topTriggerPx: number;
+    bottomTriggerPx: number;
+    onReachedTop?: () => void;
+    onReachedBottom?: () => void;
+} & React.HTMLAttributes<HTMLDivElement>;
+export declare const ScrollBox: ({ topTriggerPx, bottomTriggerPx, onReachedTop, onReachedBottom, ...props }: Props) => JSX.Element;
+export {};

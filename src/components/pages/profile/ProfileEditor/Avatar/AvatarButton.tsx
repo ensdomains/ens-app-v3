@@ -75,6 +75,7 @@ type Props = {
   src?: string
   onSelectOption?: (value: string) => void
   setValue: UseFormSetValue<ProfileEditorType>
+  setDisplay: (display: string | null) => void
 }
 
 const AvatarButton = ({
@@ -83,12 +84,14 @@ const AvatarButton = ({
   src,
   onSelectOption,
   setValue,
+  setDisplay,
 }: Props) => {
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSelectOption = (value: string) => () => {
     if (value === 'remove') {
       setValue('avatar', undefined)
+      setDisplay(null)
     } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {

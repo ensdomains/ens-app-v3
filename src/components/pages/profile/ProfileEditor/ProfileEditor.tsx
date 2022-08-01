@@ -515,6 +515,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>(
     'profile',
   )
+  const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
   if (loading) return null
   return (
@@ -525,8 +526,13 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
             name={name}
             avatar={_avatar}
             handleCancel={() => setCurrentContent('profile')}
-            handleSubmit={(uri: string) => {
-              setValue('avatar', uri)
+            handleSubmit={(display: string, uri?: string) => {
+              if (uri) {
+                setValue('avatar', uri)
+                setAvatarDisplay(display)
+              } else {
+                setValue('avatar', display)
+              }
               setCurrentContent('profile')
             }}
           />
@@ -539,9 +545,10 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
               <AvatarWrapper>
                 <AvatarButton
                   validated={avatar !== undefined}
-                  src={avatar}
+                  src={avatarDisplay || avatar}
                   onSelectOption={() => setCurrentContent('avatar')}
                   setValue={setValue}
+                  setDisplay={setAvatarDisplay}
                 />
               </AvatarWrapper>
             </Banner>
