@@ -191,11 +191,7 @@ export default function Page() {
                   .filter((item: any) => item.value !== null)}
               />
               {isSelf && (
-                <ProfileEditor
-                  name={name}
-                  open={showEditor}
-                  onDismiss={handleDismissEditor}
-                />
+                <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />
               )}
             </DetailsWrapper>
           ),

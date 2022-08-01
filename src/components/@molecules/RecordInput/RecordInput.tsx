@@ -98,13 +98,9 @@ export const RecordInput = forwardRef(
     const theme = useTheme()
 
     const prefix =
-      prefixProp ||
-      option?.prefix ||
-      (showDefaultPrefix ? <UnsupportedSVG /> : undefined)
+      prefixProp || option?.prefix || (showDefaultPrefix ? <UnsupportedSVG /> : undefined)
 
-    const error = errorProp ? (
-      <ErrorWrapper>{errorProp}</ErrorWrapper>
-    ) : undefined
+    const error = errorProp ? <ErrorWrapper>{errorProp}</ErrorWrapper> : undefined
 
     const labelText = labelProp || option?.label || option?.value || ''
     const label = <LabelWrapper>{labelText}</LabelWrapper>
