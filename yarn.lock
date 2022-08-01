@@ -2028,9 +2028,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@file:.yalc/@ensdomains/thorin::locator=ens-app-v2%40workspace%3A.":
-  version: 0.6.7
-  resolution: "@ensdomains/thorin@file:.yalc/@ensdomains/thorin#.yalc/@ensdomains/thorin::hash=112cea&locator=ens-app-v2%40workspace%3A."
+"@ensdomains/thorin@npm:^0.6.9":
+  version: 0.6.9
+  resolution: "@ensdomains/thorin@npm:0.6.9"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2040,7 +2040,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: fbd3c7a0e00f4a9d35e3fc293e845b838e808b060328909c859216ff8fce0a325c7d4dcbc91eaea684eecf625feeabc477b5ebf226bbbee7e9792db984a023bd
+  checksum: b631d1b23249180cc2fe9b1c7ec5a236d4ec4fcf07669b02ed488ed6a3f827cc5b0584e107d8bfb1c80761904f0280ce9a58a074ea96b7f4a8a22f775885eb79
   languageName: node
   linkType: hard
 
@@ -11302,7 +11302,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": ^3.0.0-alpha.6
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin"
+    "@ensdomains/thorin": ^0.6.9
     "@ethersproject/providers": ^5.6.8
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
