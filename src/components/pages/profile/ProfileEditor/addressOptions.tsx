@@ -1,7 +1,4 @@
-import {
-  DynamicAddressIcon,
-  AddressIconType,
-} from '@app/assets/address/DynamicAddressIcon'
+import { DynamicAddressIcon, AddressIconType } from '@app/assets/address/DynamicAddressIcon'
 import coinList from '@app/constants/coinList'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import styled, { css } from 'styled-components'

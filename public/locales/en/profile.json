@@ -46,14 +46,15 @@
         "loading": "Loading subnames",
         "empty": "No subnames have been added"
       },
-      "more": {
-        "label": "More",
+      "advanced": {
+        "label": "Advanced",
         "resolver": {
           "label": "Resolver",
           "custom": "Custom",
           "latest": "Latest",
           "outdated": "Outdated",
-          "version": "Version"
+          "version": "Version",
+          "etherscan": "Etherscan"
         },
         "fuses": {
           "label": "Fuses",

@@ -1,14 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { useTransaction } from '@app/utils/TransactionProvider'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { Button } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { BigNumber } from 'ethers'
 import { useSendTransaction } from 'wagmi'
 import { SectionContainer, SectionHeading } from './Section'
 
 export const DevSection = () => {
   const addTransaction = useAddRecentTransaction()
-  const { setCurrentTransaction } = useTransaction()
+  const { createTransactionFlow } = useTransactionFlow()
   const { sendTransactionAsync } = useSendTransaction()
 
   const addSuccess = async () => {
@@ -26,29 +26,9 @@ export const DevSection = () => {
   }
 
   const sendName = async () => {
-    setCurrentTransaction('dev-sendName', async () => ({
-      data: [
-        {
-          actionName: 'sendName',
-          transaction: {
-            to: '0x0000000000000000000000000000000000000000',
-            value: BigNumber.from('0'),
-          },
-          displayItems: [
-            {
-              label: 'To',
-              value: '0x3F45BcB2DFBdF0AD173A9DfEe3b932aa2a31CeB3',
-              type: 'address',
-            },
-            {
-              label: 'Name',
-              value: 'taytems.eth',
-              type: 'name',
-            },
-          ],
-        },
-      ],
-    }))
+    createTransactionFlow('dev-sendName', {
+      transactions: [makeTransactionItem('testSendName', {})],
+    })
   }
 
   const addFailure = async () => {

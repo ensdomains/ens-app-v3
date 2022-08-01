@@ -2028,9 +2028,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.6.8":
-  version: 0.6.8
-  resolution: "@ensdomains/thorin@npm:0.6.8"
+"@ensdomains/thorin@npm:^0.6.9":
+  version: 0.6.9
+  resolution: "@ensdomains/thorin@npm:0.6.9"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2040,7 +2040,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 1d991163b08fb5a665e056501e18d64b428b12d11db036be8ef174cb81f6bc038a8298c60304709289bd2dbf06a9ecebab6588daeb96145b47d48939f4d03efd
+  checksum: b631d1b23249180cc2fe9b1c7ec5a236d4ec4fcf07669b02ed488ed6a3f827cc5b0584e107d8bfb1c80761904f0280ce9a58a074ea96b7f4a8a22f775885eb79
   languageName: node
   linkType: hard
 
@@ -11320,7 +11320,7 @@ __metadata:
     "@ensdomains/ens-validation": ^0.1.0
     "@ensdomains/ensjs": ^3.0.0-alpha.6
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.6.8
+    "@ensdomains/thorin": ^0.6.9
     "@ethersproject/providers": ^5.6.8
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
@@ -11379,6 +11379,7 @@ __metadata:
     i18next: ^21.8.8
     i18next-browser-languagedetector: ^6.1.4
     i18next-http-backend: ^1.4.1
+    immer: ^9.0.15
     iso-639-1: ^2.1.13
     jest: ^27.4.7
     jest-environment-jsdom: ^27.4.6
@@ -11387,13 +11388,15 @@ __metadata:
     next: ^12.0.8
     next-compose-plugins: ^2.2.1
     next-transpile-modules: ^9.0.0
+    node-fetch: ^3.2.6
     node-fetch-commonjs: ^3.1.1
+    p-memoize: ^7.1.0
     postcss-syntax: ^0.36.2
     prettier: 2.6.2
     react: ^17.0.2
     react-dom: ^17.0.2
     react-ga: ^3.3.0
-    react-hook-form: ^7.33.0
+    react-hook-form: ^7.33.1
     react-i18next: ^11.17.0
     react-is: ^17.0.2
     react-query: ^3.34.19
@@ -11408,6 +11411,7 @@ __metadata:
     ts-node: ^10.7.0
     typescript: ^4.6.4
     typescript-styled-plugin: ^0.18.2
+    use-immer: ^0.7.0
     wagmi: ^0.4.3
     wait-on: ^6.0.1
     yalc: ^1.0.0-pre.53
@@ -15202,6 +15206,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immer@npm:^9.0.15":
+  version: 9.0.15
+  resolution: "immer@npm:9.0.15"
+  checksum: 92e3d63e810e3c3c2bb61b70c45443e37ef983ad12924e3edaf03725ae5979618f5b473439bb3bb4a8c4769f25132f18dec10ea15c40f0b20da5691ff96ff611
+  languageName: node
+  linkType: hard
+
 "immutable@npm:^4.0.0-rc.12":
   version: 4.0.0
   resolution: "immutable@npm:4.0.0"
@@ -18204,6 +18215,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mimic-fn@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "mimic-fn@npm:4.0.0"
+  checksum: 995dcece15ee29aa16e188de6633d43a3db4611bcf93620e7e62109ec41c79c0f34277165b8ce5e361205049766e371851264c21ac64ca35499acb5421c2ba56
+  languageName: node
+  linkType: hard
+
 "mimic-response@npm:^1.0.0, mimic-response@npm:^1.0.1":
   version: 1.0.1
   resolution: "mimic-response@npm:1.0.1"
@@ -18949,6 +18967,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch@npm:^3.2.6":
+  version: 3.2.10
+  resolution: "node-fetch@npm:3.2.10"
+  dependencies:
+    data-uri-to-buffer: ^4.0.0
+    fetch-blob: ^3.1.4
+    formdata-polyfill: ^4.0.10
+  checksum: e65322431f4897ded04197aa5923eaec63a8d53e00432de4e70a4f7006625c8dc32629c5c35f4fe8ee719a4825544d07bf53f6e146a7265914262f493e8deac1
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:~1.7.1":
   version: 1.7.3
   resolution: "node-fetch@npm:1.7.3"
@@ -19655,6 +19684,15 @@ __metadata:
   dependencies:
     aggregate-error: ^3.0.0
   checksum: cb0ab21ec0f32ddffd31dfc250e3afa61e103ef43d957cc45497afe37513634589316de4eb88abdfd969fe6410c22c0b93ab24328833b8eb1ccc087fc0442a1c
+  languageName: node
+  linkType: hard
+
+"p-memoize@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "p-memoize@npm:7.1.0"
+  dependencies:
+    mimic-fn: ^4.0.0
+  checksum: 41a9ffdedb8f4805fa4fbe16eb205ce95494f758d24ddb31126ed18baa5a0dd1fbdbd12b52a5f2053953bf94886f2035debe826855439ee1f936b7c1f9266f9b
   languageName: node
   linkType: hard
 
@@ -20742,12 +20780,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:^7.33.0":
-  version: 7.33.0
-  resolution: "react-hook-form@npm:7.33.0"
+"react-hook-form@npm:^7.33.1":
+  version: 7.34.0
+  resolution: "react-hook-form@npm:7.34.0"
   peerDependencies:
     react: ^16.8.0 || ^17 || ^18
-  checksum: af64d1eeb4bf46c6fc6f43529fde9eb5992319af0a85814744b14c7dd4d51b1faec8c00c71c273258b6f607f2d0155485ca528fb78c9d2d9e65abcb3274f72c1
+  checksum: 2b4a6f6ca5b3f729b88aa14a1a8c47ba86405d9c5fef2560b1dc85ac6fe1b105326571b8e1e857f8d8f3449636062d2d6201809918b5bb37f6f8f0b9c6cd6e2c
   languageName: node
   linkType: hard
 
@@ -24240,6 +24278,16 @@ __metadata:
     "@types/react":
       optional: true
   checksum: 7913df383a5a6fcb399212eedefaac2e0c6f843555202d4e3010bac3848afe38ecaa3d0d6500ad1d936fbeffd637e6c517e68edb024af5e6beca7f27f3ce7b21
+  languageName: node
+  linkType: hard
+
+"use-immer@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "use-immer@npm:0.7.0"
+  peerDependencies:
+    immer: ">=2.0.0"
+    react: ^16.8.0 || ^17.0.1 || ^18.0.0
+  checksum: 4711403fa2c3648c06b8e6795433eb43adb2c6e9bd00f45971ce6948ba8fc1c3e3cf73820a8d597b22979caa6445d0b791508e147975c3cc435a1ec1e5ce47db
   languageName: node
   linkType: hard
 

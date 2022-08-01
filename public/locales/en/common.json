@@ -4,12 +4,16 @@
   "loading": "Loading",
   "action": {
     "cancel": "Cancel",
+    "back": "Back",
     "close": "Close",
     "save": "Save",
     "edit": "Edit",
     "view": "View",
     "clear": "Clear",
+    "update": "Update",
     "learnMore": "Learn more",
+    "send": "Send",
+    "next": "Next",
     "add": "Add",
     "search": "Search"
   },
@@ -77,19 +81,25 @@
       "addSuccess": "Add Success",
       "sendName": "Send Name",
       "migrateProfile": "Migrate Profile",
-      "wrapName": "Wrap Name"
+      "wrapName": "Wrap Name",
+      "updateResolver": "Update Resolver"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
-      "wrapName": "Wrap name and set new resolver"
+      "wrapName": "Wrap name and set new resolver",
+      "updateResolver": "Change contract used to store records"
     },
     "itemLabel": {
       "name": "Name",
       "address": "Address",
       "action": "Action",
-      "info": "Info"
+      "info": "Info",
+      "to": "To",
+      "currentResolver": "Current Resolver",
+      "newResolver": "New Resolver"
     },
+    "itemValue": {},
     "status": {
       "pending": {
         "regular": "Pending"
@@ -105,8 +115,8 @@
         "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
       }
     },
-    "modal": {
-      "preSteps": {
+    "dialog": {
+      "intro": {
         "trailingButton": "Start",
         "trailingButtonResume": "Resume",
         "step": "Step {{step}}"
@@ -131,7 +141,7 @@
       "complete": {
         "title": "Transaction Sent",
         "stepTitle": "Step {{step}} Complete",
-        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
+        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this dialog now if you'd like.",
         "trailingButton": "Close",
         "stepTrailingButton": "Continue"
       }

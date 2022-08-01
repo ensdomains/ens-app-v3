@@ -36,7 +36,8 @@
     "types": ["jest", "cypress", "@cloudflare/workers-types"],
     "incremental": true,
     "paths": {
-      "@app/*": ["./src/*"]
+      "@app/*": ["./src/*"],
+      "@public/*": ["./public/*"]
     },
     "plugins": [
       {
@@ -49,17 +50,12 @@
       }
     ]
   },
-  "include": [
-    "next-env.d.ts",
-    "mdx.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "e2e/tsconfig.json"
-  ],
+  "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx", "e2e/tsconfig.json"],
   "exclude": [
     "custom-test-env.js",
     "e2e/**/*",
     "**/*.ignore.ts",
-    "**/*.ignore.tsx"
+    "**/*.ignore.tsx",
+    "src/**/*.test.ts"
   ]
 }

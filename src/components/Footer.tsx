@@ -71,21 +71,9 @@ export const Footer = () => {
           </StyledNavLink>
         </LinkContainer>
         <SocialIconContainer>
-          <SocialIcon
-            Icon={SocialTwitter}
-            color="#5298FF"
-            href="https://twitter.com/ensdomains"
-          />
-          <SocialIcon
-            Icon={SocialGithub}
-            color="#0F0F0F"
-            href="https://github.com/ensdomains"
-          />
-          <SocialIcon
-            Icon={SocialDiscord}
-            color="#7F83FF"
-            href="https://chat.ens.domains"
-          />
+          <SocialIcon Icon={SocialTwitter} color="#5298FF" href="https://twitter.com/ensdomains" />
+          <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
+          <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
           <SocialIcon
             Icon={SocialMedium}
             color="#0F0F0F"
