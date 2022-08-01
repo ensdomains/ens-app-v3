@@ -22,9 +22,11 @@ const makeRecentTransaction =
     ({
       status,
       confirmations: 1,
-      description: `test description ${i}`,
+      description: JSON.stringify({ action: `test-action-${i}` }),
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     } as Transaction)
+
+window.scroll = jest.fn()
 
 describe('Notifications', () => {
   mockUseBreakpoint.mockReturnValue({
@@ -68,23 +70,17 @@ describe('Notifications', () => {
     ])
     rerender(<Notifications />)
 
-    await waitFor(
-      () => screen.queryByText('transaction.status.confirmed1.notifyTitle'),
-      {
-        timeout: 500,
-      },
-    ).then((el) => expect(el).toBeInTheDocument())
+    await waitFor(() => screen.queryByText('transaction.status.confirmed1.notifyTitle'), {
+      timeout: 500,
+    }).then((el) => expect(el).toBeInTheDocument())
 
     act(() => {
       jest.advanceTimersByTime(8350)
     })
 
-    await waitFor(
-      () => screen.queryByText('transaction.status.confirmed2.notifyTitle'),
-      {
-        timeout: 500,
-      },
-    ).then((el) => expect(el).toBeInTheDocument())
+    await waitFor(() => screen.queryByText('transaction.status.confirmed2.notifyTitle'), {
+      timeout: 500,
+    }).then((el) => expect(el).toBeInTheDocument())
   })
   it('should show the correct title and description for a notification', async () => {
     const mockData = makeRecentTransaction('pending')(null, 0)
@@ -100,11 +96,7 @@ describe('Notifications', () => {
       timeout: 500,
     }).then((el) => expect(el).toBeInTheDocument())
 
-    expect(
-      screen.getByText('transaction.status.confirmed.notifyTitle'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('transaction.status.confirmed.notifyMessage'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('transaction.status.confirmed.notifyTitle')).toBeInTheDocument()
+    expect(screen.getByText('transaction.status.confirmed.notifyMessage')).toBeInTheDocument()
   })
 })

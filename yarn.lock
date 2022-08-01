@@ -1915,9 +1915,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ens-test-env@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@ensdomains/ens-test-env@npm:0.1.0"
+"@ensdomains/ens-contracts@npm:^0.0.12":
+  version: 0.0.12
+  resolution: "@ensdomains/ens-contracts@npm:0.0.12"
+  dependencies:
+    "@ensdomains/buffer": ^0.0.13
+    "@ensdomains/solsha1": 0.0.3
+    "@openzeppelin/contracts": ^4.1.0
+    dns-packet: ^5.3.0
+  checksum: ebadc111a78afdd5368b7f38048db0460de49b71bccbbbcd02f85fb608d0f2a45ae5418f651cd653256d41ddf4b844d295693aae157fc74c3963c08c09b54bc9
+  languageName: node
+  linkType: hard
+
+"@ensdomains/ens-test-env@npm:^0.1.4":
+  version: 0.1.4
+  resolution: "@ensdomains/ens-test-env@npm:0.1.4"
   dependencies:
     "@ethersproject/wallet": ^5.6.0
     ansi-colors: ^4.1.1
@@ -1935,7 +1947,7 @@ __metadata:
     wait-on: ^6.0.1
   bin:
     ens-test-env: ./src/index.js
-  checksum: 8591eaa887e787807037fd9ecfb6787173e440d69cca98ed073ddfa3c7776837d9a40bb3230065cd20a5cbdbc0b68932673acf6f16417a072dfbdc681f6bd836
+  checksum: d8a813f736984d82723a1497313d4697b1e7df4262477de3862ef86975cfd22aa4cd2c7c9b15306affa0e5edd62c03aa5ded8ed1349a9b1532441d16ad8f70e8
   languageName: node
   linkType: hard
 
@@ -1959,24 +1971,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/ensjs@npm:3.0.0-alpha.4":
-  version: 3.0.0-alpha.4
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.4"
-  dependencies:
-    "@ensdomains/address-encoder": ^0.2.16
-    "@ensdomains/content-hash": ^2.5.7
-    "@ensdomains/ens-contracts": ^0.0.11
-    dns-packet: ^5.3.1
-    ethers: ^5.6.1
-    graphql: ^16.3.0
-    graphql-request: ^4.1.0
-    idna-uts46-hx: 3.4.0
-  peerDependencies:
-    ethers: "*"
-  checksum: 1d286c4500712a632d270b98446c7cfa2c22e80ea8fc783f2477d382a33c6db645ae3b92054ee3f0c4a6502c81340e52a84b5f8271ee760304661a2862e8be33
-  languageName: node
-  linkType: hard
-
 "@ensdomains/ensjs@npm:^2.0.1":
   version: 2.1.0
   resolution: "@ensdomains/ensjs@npm:2.1.0"
@@ -1990,6 +1984,24 @@ __metadata:
     ethers: ^5.0.13
     js-sha3: ^0.8.0
   checksum: bc284cefea4959b9a9f55e84e281140d9c17ecca21be798f5a463a924a7c3f52ae0072d3e6c8c2eb23a7bd4df0f7597ded212a5f706d199f187c00bc6db5d076
+  languageName: node
+  linkType: hard
+
+"@ensdomains/ensjs@npm:^3.0.0-alpha.6":
+  version: 3.0.0-alpha.6
+  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.6"
+  dependencies:
+    "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/content-hash": ^2.5.7
+    "@ensdomains/ens-contracts": ^0.0.11
+    dns-packet: ^5.3.1
+    ethers: ^5.6.1
+    graphql: ^16.3.0
+    graphql-request: ^4.1.0
+    idna-uts46-hx: 3.4.0
+  peerDependencies:
+    ethers: "*"
+  checksum: a3d7d6bd406730db5fc671e89bb2a718891fa9f2d96a2b54768e43649e50cac77340129b5706fd4c75707b3935190d456ec27ada1bed5a4108732eb34ba25b54
   languageName: node
   linkType: hard
 
@@ -2016,9 +2028,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ensdomains/thorin@npm:^0.6.3":
-  version: 0.6.3
-  resolution: "@ensdomains/thorin@npm:0.6.3"
+"@ensdomains/thorin@npm:^0.6.9":
+  version: 0.6.9
+  resolution: "@ensdomains/thorin@npm:0.6.9"
   dependencies:
     clsx: ^1.1.1
     focus-visible: ^5.2.0
@@ -2028,7 +2040,7 @@ __metadata:
     react-dom: ^17
     react-transition-state: ^1.1.4
     styled-components: ^5.3.3
-  checksum: 25d003dacada5a3b71a5b8b2fc438e59c0e0dc31c94d4ab3b782c3d1d3443d69eabdd2b4d8df4298cb8fb190a30e69bec0ee5c6bdb9b74146685a7e5f66bb456
+  checksum: b631d1b23249180cc2fe9b1c7ec5a236d4ec4fcf07669b02ed488ed6a3f827cc5b0584e107d8bfb1c80761904f0280ce9a58a074ea96b7f4a8a22f775885eb79
   languageName: node
   linkType: hard
 
@@ -2725,7 +2737,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethersproject/providers@npm:5.6.8":
+"@ethersproject/providers@npm:5.6.8, @ethersproject/providers@npm:^5.6.8":
   version: 5.6.8
   resolution: "@ethersproject/providers@npm:5.6.8"
   dependencies:
@@ -4575,6 +4587,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@testing-library/user-event@npm:^14.2.6":
+  version: 14.2.6
+  resolution: "@testing-library/user-event@npm:14.2.6"
+  peerDependencies:
+    "@testing-library/dom": ">=7.21.4"
+  checksum: 5de10c5a9580fa0dcfb0d97cff1327a6ea56c59c3fb6582cc85fcc592f966b6171eefe5841c22cae86f25ec2c66aa1ea216fd54bfa494b7fd33cbd930108dcc4
+  languageName: node
+  linkType: hard
+
 "@tootallnate/once@npm:1":
   version: 1.1.2
   resolution: "@tootallnate/once@npm:1.1.2"
@@ -5044,12 +5065,12 @@ __metadata:
   linkType: hard
 
 "@types/jest@npm:^28.1.3":
-  version: 28.1.3
-  resolution: "@types/jest@npm:28.1.3"
+  version: 28.1.4
+  resolution: "@types/jest@npm:28.1.4"
   dependencies:
     jest-matcher-utils: ^28.0.0
     pretty-format: ^28.0.0
-  checksum: 28141f2d5b3bafd063362de9790cb8f219488d9b0ad47524a84bef1142a4f0d9d35be0c56988d9f922205225cc83c986acd4be424bd8653b38dc27ab672455e2
+  checksum: 97e22c600397bb4f30e39b595f8285ae92e4eb29a1ef6d1689749e4a4da683d88ecfe717b64492f6adc4c17c1c989520c3546f938c84a7d435c6ac3acf1a2bdc
   languageName: node
   linkType: hard
 
@@ -5158,9 +5179,9 @@ __metadata:
   linkType: hard
 
 "@types/node@npm:^18.0.1":
-  version: 18.0.1
-  resolution: "@types/node@npm:18.0.1"
-  checksum: be14b251c54cc2b4ca78ac6eadf2fe5e831e487f2e17848f21d576295945b538271dcc674d0bba582b3f8d95b84f6826e99b6ba4710c76f165a8bdd4d4f0618e
+  version: 18.0.3
+  resolution: "@types/node@npm:18.0.3"
+  checksum: 5dec59fbbc1186c808b53df1ca717dad034dbd6a901c75f5b052c845618b531b05f27217122c6254db99529a68618e4cfc534ae3dbf4e88754e9e572df80defa
   languageName: node
   linkType: hard
 
@@ -5232,6 +5253,15 @@ __metadata:
   dependencies:
     "@types/react": "*"
   checksum: b54cd0ef573236b3d87fe7493e6d1c36d8b4ca37a3b46364272a5c91ac178e3296b68ea1aeb299ce68f12ad663c5720ee890d0539b14881c6754bdcbdb0befa0
+  languageName: node
+  linkType: hard
+
+"@types/react-dom@npm:^18.0.6":
+  version: 18.0.6
+  resolution: "@types/react-dom@npm:18.0.6"
+  dependencies:
+    "@types/react": "*"
+  checksum: db571047af1a567631758700b9f7d143e566df939cfe5fbf7535347cc0c726a1cdbb5e3f8566d076e54cf708b6c1166689de194a9ba09ee35efc9e1d45911685
   languageName: node
   linkType: hard
 
@@ -11285,11 +11315,13 @@ __metadata:
     "@cloudflare/wrangler": ^1.19.12
     "@ensdomains/address-encoder": ^0.2.16
     "@ensdomains/buffer": ^0.1.0
-    "@ensdomains/ens-test-env": ^0.1.0
+    "@ensdomains/ens-contracts": ^0.0.12
+    "@ensdomains/ens-test-env": ^0.1.4
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": 3.0.0-alpha.4
+    "@ensdomains/ensjs": ^3.0.0-alpha.6
     "@ensdomains/eth-ens-namehash": ^2.0.15
-    "@ensdomains/thorin": ^0.6.3
+    "@ensdomains/thorin": ^0.6.9
+    "@ethersproject/providers": ^5.6.8
     "@next/bundle-analyzer": ^12.0.10
     "@next/swc-linux-x64-gnu": ^12.1.4
     "@nomiclabs/hardhat-ethers": ^2.0.5
@@ -11303,6 +11335,7 @@ __metadata:
     "@testing-library/jest-dom": ^5.16.1
     "@testing-library/react": ^12.1.2
     "@testing-library/react-hooks": ^8.0.1
+    "@testing-library/user-event": ^14.2.6
     "@types/glob": ^7.2.0
     "@types/jest": ^28.1.3
     "@types/lodash": ^4
@@ -11310,6 +11343,7 @@ __metadata:
     "@types/prettier": ^2
     "@types/puppeteer-core": ^5.4.0
     "@types/react": 17.0.30
+    "@types/react-dom": ^18.0.6
     "@types/react-is": ^17
     "@types/styled-components": 5.1.23
     "@types/testing-library__jest-dom": ^5
@@ -11321,7 +11355,6 @@ __metadata:
     cypress: 9.5.3
     dns-packet: ^5.4.0
     dotenv: ^16.0.0
-    ens-contracts: "github:ensdomains/ens-contracts#head=master&commit=a21f0b2a5e86005a60f568512d99a35116a8ed28"
     eslint: 7.32.0
     eslint-config-airbnb: ^19.0.4
     eslint-config-airbnb-base: ^15.0.0
@@ -11347,6 +11380,7 @@ __metadata:
     i18next: ^21.8.8
     i18next-browser-languagedetector: ^6.1.4
     i18next-http-backend: ^1.4.1
+    immer: ^9.0.15
     iso-639-1: ^2.1.13
     jest: ^27.4.7
     jest-environment-jsdom: ^27.4.6
@@ -11356,11 +11390,14 @@ __metadata:
     next-compose-plugins: ^2.2.1
     next-transpile-modules: ^9.0.0
     node-fetch: ^3.2.6
+    node-fetch-commonjs: ^3.1.1
+    p-memoize: ^7.1.0
     postcss-syntax: ^0.36.2
     prettier: 2.6.2
     react: ^17.0.2
     react-dom: ^17.0.2
     react-ga: ^3.3.0
+    react-hook-form: ^7.33.1
     react-i18next: ^11.17.0
     react-is: ^17.0.2
     react-query: ^3.34.19
@@ -11375,6 +11412,7 @@ __metadata:
     ts-node: ^10.7.0
     typescript: ^4.6.4
     typescript-styled-plugin: ^0.18.2
+    use-immer: ^0.7.0
     wagmi: ^0.4.3
     wait-on: ^6.0.1
     yalc: ^1.0.0-pre.53
@@ -11390,18 +11428,6 @@ __metadata:
       unplugged: true
   languageName: unknown
   linkType: soft
-
-"ens-contracts@github:ensdomains/ens-contracts#head=master&commit=a21f0b2a5e86005a60f568512d99a35116a8ed28":
-  version: 0.0.9
-  resolution: "ens-contracts@https://github.com/ensdomains/ens-contracts.git#commit=a21f0b2a5e86005a60f568512d99a35116a8ed28"
-  dependencies:
-    "@ensdomains/buffer": ^0.0.13
-    "@ensdomains/solsha1": 0.0.3
-    "@openzeppelin/contracts": ^4.1.0
-    dns-packet: ^5.3.0
-  checksum: d3aeb0140f671d0a6d2d82b840d643e61b543e6e410d68c19cfb21b634b73b99291a7cc46d9d1861181483955ce14f48e3cc027f5cb06b9251a6b90e77259e5d
-  languageName: node
-  linkType: hard
 
 "entities@npm:^2.0.0":
   version: 2.2.0
@@ -15181,6 +15207,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"immer@npm:^9.0.15":
+  version: 9.0.15
+  resolution: "immer@npm:9.0.15"
+  checksum: 92e3d63e810e3c3c2bb61b70c45443e37ef983ad12924e3edaf03725ae5979618f5b473439bb3bb4a8c4769f25132f18dec10ea15c40f0b20da5691ff96ff611
+  languageName: node
+  linkType: hard
+
 "immutable@npm:^4.0.0-rc.12":
   version: 4.0.0
   resolution: "immutable@npm:4.0.0"
@@ -18183,6 +18216,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"mimic-fn@npm:^4.0.0":
+  version: 4.0.0
+  resolution: "mimic-fn@npm:4.0.0"
+  checksum: 995dcece15ee29aa16e188de6633d43a3db4611bcf93620e7e62109ec41c79c0f34277165b8ce5e361205049766e371851264c21ac64ca35499acb5421c2ba56
+  languageName: node
+  linkType: hard
+
 "mimic-response@npm:^1.0.0, mimic-response@npm:^1.0.1":
   version: 1.0.1
   resolution: "mimic-response@npm:1.0.1"
@@ -18886,6 +18926,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"node-fetch-commonjs@npm:^3.1.1":
+  version: 3.1.1
+  resolution: "node-fetch-commonjs@npm:3.1.1"
+  dependencies:
+    formdata-polyfill: ^4.0.10
+    web-streams-polyfill: ^3.1.1
+  checksum: a0d6b4ad0a94015ef636c45aaa0b3d07f3f08a9ffe8213cab59eb44375be67421e3286fc10840855a6fe4227362f905b26bb2bd85e06256ccce21cc134bcbf7f
+  languageName: node
+  linkType: hard
+
 "node-fetch@npm:2.6.1":
   version: 2.6.1
   resolution: "node-fetch@npm:2.6.1"
@@ -18907,7 +18957,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"node-fetch@npm:^3.2.3, node-fetch@npm:^3.2.6":
+"node-fetch@npm:^3.2.3":
   version: 3.2.6
   resolution: "node-fetch@npm:3.2.6"
   dependencies:
@@ -18915,6 +18965,17 @@ __metadata:
     fetch-blob: ^3.1.4
     formdata-polyfill: ^4.0.10
   checksum: ece307ace3a3ff28638ccb0fa0545bb5c0cfd673a9d06fc314d937a73ae6a55917d5bacd7f080f9a9f1449ca20a5c01b1281d0e616acb20315e5ac315971da46
+  languageName: node
+  linkType: hard
+
+"node-fetch@npm:^3.2.6":
+  version: 3.2.10
+  resolution: "node-fetch@npm:3.2.10"
+  dependencies:
+    data-uri-to-buffer: ^4.0.0
+    fetch-blob: ^3.1.4
+    formdata-polyfill: ^4.0.10
+  checksum: e65322431f4897ded04197aa5923eaec63a8d53e00432de4e70a4f7006625c8dc32629c5c35f4fe8ee719a4825544d07bf53f6e146a7265914262f493e8deac1
   languageName: node
   linkType: hard
 
@@ -19624,6 +19685,15 @@ __metadata:
   dependencies:
     aggregate-error: ^3.0.0
   checksum: cb0ab21ec0f32ddffd31dfc250e3afa61e103ef43d957cc45497afe37513634589316de4eb88abdfd969fe6410c22c0b93ab24328833b8eb1ccc087fc0442a1c
+  languageName: node
+  linkType: hard
+
+"p-memoize@npm:^7.1.0":
+  version: 7.1.0
+  resolution: "p-memoize@npm:7.1.0"
+  dependencies:
+    mimic-fn: ^4.0.0
+  checksum: 41a9ffdedb8f4805fa4fbe16eb205ce95494f758d24ddb31126ed18baa5a0dd1fbdbd12b52a5f2053953bf94886f2035debe826855439ee1f936b7c1f9266f9b
   languageName: node
   linkType: hard
 
@@ -20708,6 +20778,15 @@ __metadata:
     prop-types: ^15.6.0
     react: ^15.6.2 || ^16.0 || ^17
   checksum: b4f5b0ed3a5d7ea781397d6a1f8dacae2284fe7f03f72dde330958dd0a64732f8766c6fa26cf0f1a8fb1303fa02aa51f23cf0b261e52981d0275262b831c7fea
+  languageName: node
+  linkType: hard
+
+"react-hook-form@npm:^7.33.1":
+  version: 7.34.0
+  resolution: "react-hook-form@npm:7.34.0"
+  peerDependencies:
+    react: ^16.8.0 || ^17 || ^18
+  checksum: 2b4a6f6ca5b3f729b88aa14a1a8c47ba86405d9c5fef2560b1dc85ac6fe1b105326571b8e1e857f8d8f3449636062d2d6201809918b5bb37f6f8f0b9c6cd6e2c
   languageName: node
   linkType: hard
 
@@ -24203,6 +24282,16 @@ __metadata:
   languageName: node
   linkType: hard
 
+"use-immer@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "use-immer@npm:0.7.0"
+  peerDependencies:
+    immer: ">=2.0.0"
+    react: ^16.8.0 || ^17.0.1 || ^18.0.0
+  checksum: 4711403fa2c3648c06b8e6795433eb43adb2c6e9bd00f45971ce6948ba8fc1c3e3cf73820a8d597b22979caa6445d0b791508e147975c3cc435a1ec1e5ce47db
+  languageName: node
+  linkType: hard
+
 "use-sidecar@npm:^1.1.2":
   version: 1.1.2
   resolution: "use-sidecar@npm:1.1.2"
@@ -24617,7 +24706,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"web-streams-polyfill@npm:^3.0.3":
+"web-streams-polyfill@npm:^3.0.3, web-streams-polyfill@npm:^3.1.1":
   version: 3.2.1
   resolution: "web-streams-polyfill@npm:3.2.1"
   checksum: b119c78574b6d65935e35098c2afdcd752b84268e18746606af149e3c424e15621b6f1ff0b42b2676dc012fc4f0d313f964b41a4b5031e525faa03997457da02

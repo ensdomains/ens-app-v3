@@ -1,10 +1,8 @@
 import { useChainName } from '@app/hooks/useChainName'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
-import {
-  useClearRecentTransactions,
-  useRecentTransactions,
-} from '@rainbow-me/rainbowkit'
+import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -53,8 +51,7 @@ const TransactionSectionContainer = styled.div<{ $transactionLength: number }>(
     height: ${theme.space['13']};
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
-    transition: 0.2s all ease-in-out, 0s justify-content 0s linear,
-      0s color 0s linear;
+    transition: 0.2s all ease-in-out, 0s justify-content 0s linear, 0s color 0s linear;
     ${$transactionLength &&
     css`
       ${TransactionSectionHeading} {
@@ -80,7 +77,7 @@ const TransactionContainer = styled(Card)(
     min-height: ${theme.space['18']};
     padding: 0 ${theme.space['3']};
     flex-direction: row;
-    justify-content: flex-start;
+    justify-content: space-between;
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
     border: none;
@@ -99,22 +96,22 @@ const TransactionInfoContainer = styled.div(
     align-items: flex-start;
     justify-content: center;
     padding-left: ${theme.space['1']};
+    gap: ${theme.space['0.5']};
   `,
 )
 
-const TransactionStatus = styled(Typography)<{ $error: boolean }>(
-  ({ theme, $error }) => css`
-    color: ${$error ? theme.colors.red : theme.colors.textTertiary};
-  `,
+const StyledOutlink = styled(Outlink)<{ $error: boolean }>(
+  ({ theme, $error }) =>
+    $error &&
+    css`
+      color: ${theme.colors.red};
+    `,
 )
 
-const ViewLinkContainer = styled.div(
-  () => css`
-    flex-grow: 1;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
+const ContinueContainer = styled.div(
+  ({ theme }) => css`
+    max-width: ${theme.space['48']};
+    width: ${theme.space.full};
   `,
 )
 
@@ -135,13 +132,13 @@ export const TransactionSection = () => {
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
 
+  const { getResumable, resumeTransactionFlow } = useTransactionFlow()
+
   return (
     <SectionContainer data-testid="transaction-section" $name="transactions">
       <TransactionSectionHeadingContainer>
         <TransactionSectionHeading
-          $hasTransactions={
-            transactions.filter((x) => x.status === 'pending').length > 0
-          }
+          $hasTransactions={transactions.filter((x) => x.status === 'pending').length > 0}
           variant="large"
           weight="bold"
         >
@@ -163,43 +160,48 @@ export const TransactionSection = () => {
       <TransactionSectionContainer $transactionLength={transactions.length}>
         {transactions.length > 0 ? (
           <>
-            {transactions.slice(0, viewAmt - 1).map((transaction) => (
-              <TransactionContainer
-                data-testid={`transaction-${transaction.status}`}
-                key={transaction.hash}
-              >
-                {transaction.status === 'pending' && (
-                  <Spinner data-testid="pending-spinner" color="accent" />
-                )}
-                <TransactionInfoContainer>
-                  <Typography weight="bold">
-                    {tc(`transaction.description.${transaction.description}`)}
-                  </Typography>
-                  <TransactionStatus
-                    $error={transaction.status === 'failed'}
-                    variant="labelHeading"
-                  >
-                    {tc(`transaction.status.${transaction.status}.regular`)}
-                  </TransactionStatus>
-                </TransactionInfoContainer>
-                <ViewLinkContainer>
-                  <Outlink
-                    href={makeEtherscanLink(transaction.hash, chainName)}
-                    target="_blank"
-                  >
-                    {tc('transaction.viewEtherscan')}
-                  </Outlink>
-                </ViewLinkContainer>
-              </TransactionContainer>
-            ))}
+            {transactions.slice(0, viewAmt - 1).map((transaction) => {
+              const { action, key } = JSON.parse(transaction.description)
+              const resumable = key && getResumable(key)
+              return (
+                <TransactionContainer
+                  data-testid={`transaction-${transaction.status}`}
+                  key={transaction.hash}
+                >
+                  {transaction.status === 'pending' && (
+                    <Spinner data-testid="pending-spinner" color="accent" />
+                  )}
+                  <TransactionInfoContainer>
+                    <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
+                    <StyledOutlink
+                      $error={transaction.status === 'failed'}
+                      href={makeEtherscanLink(transaction.hash, chainName)}
+                      target="_blank"
+                    >
+                      {tc(`transaction.status.${transaction.status}.regular`)}
+                    </StyledOutlink>
+                  </TransactionInfoContainer>
+                  <ContinueContainer>
+                    {resumable && (
+                      <Button
+                        shadowless
+                        size="small"
+                        variant="primary"
+                        onClick={() => resumeTransactionFlow(key)}
+                      >
+                        Continue
+                      </Button>
+                    )}
+                  </ContinueContainer>
+                </TransactionContainer>
+              )
+            })}
             {transactions.length > viewAmt && (
               <TransactionContainer
                 onClick={() => setViewAmt((curr) => curr + 5)}
                 data-testid="transaction-view-more-button"
               >
-                <ViewMoreInner weight="bold">
-                  {tc('transaction.viewMore')}
-                </ViewMoreInner>
+                <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
               </TransactionContainer>
             )}
           </>

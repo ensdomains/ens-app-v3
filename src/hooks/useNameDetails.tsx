@@ -13,11 +13,7 @@ export const useNameDetails = (name: string) => {
 
   const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
 
-  const {
-    profile,
-    loading: profileLoading,
-    status,
-  } = useProfile(normalisedName, !normalisedName)
+  const { profile, loading: profileLoading, status } = useProfile(normalisedName, !normalisedName)
 
   const { data: dnsOwner } = useQuery(
     ['getDNSOwner', normalisedName],
@@ -54,7 +50,14 @@ export const useNameDetails = (name: string) => {
       return t('errors.invalidName')
     }
     if (profile && !profile.isMigrated) {
-      return t('errors.notMigrated')
+      return (
+        <>
+          {t('errors.migrationNotAvailable')}
+          <a href={`https://app.ens.domains/name/${normalisedName}`}>
+            {t('errors.migrationNotAvailableLink')}
+          </a>
+        </>
+      )
     }
     if (profile && profile.message) {
       return profile.message
@@ -80,29 +83,13 @@ export const useNameDetails = (name: string) => {
     if (registrationStatus === 'gracePeriod') {
       return t('errors.expiringSoon')
     }
-    if (
-      !profile &&
-      !profileLoading &&
-      ready &&
-      status !== 'idle' &&
-      status !== 'loading'
-    ) {
+    if (!profile && !profileLoading && ready && status !== 'idle' && status !== 'loading') {
       return t('errors.unknown')
     }
     return null
-  }, [
-    normalisedName,
-    profile,
-    profileLoading,
-    ready,
-    registrationStatus,
-    status,
-    t,
-    valid,
-  ])
+  }, [normalisedName, profile, profileLoading, ready, registrationStatus, status, t, valid])
 
-  const isLoading =
-    !ready || profileLoading || batchLoading || registrationStatusLoading
+  const isLoading = !ready || profileLoading || batchLoading || registrationStatusLoading
 
   return {
     error,
@@ -115,5 +102,6 @@ export const useNameDetails = (name: string) => {
     isLoading,
     truncatedName,
     dnsOwner,
+    isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
   }
 }

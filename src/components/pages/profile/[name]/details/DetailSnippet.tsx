@@ -122,12 +122,7 @@ export const DetailSnippet = ({
             </InnerButton>
           </FullWidthOutlinedButton>
         )}
-        <OutlinedButton
-          disabled
-          size="extraSmall"
-          shadowless
-          variant="transparent"
-        >
+        <OutlinedButton disabled size="extraSmall" shadowless variant="transparent">
           <InnerButton>
             <ButtonIcon as={TripleDotSVG} />
           </InnerButton>

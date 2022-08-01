@@ -37,36 +37,22 @@ const ExpiryText = styled(Typography)<{
 
 export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()
-  const difference = secondsToDays(
-    (expiry.getTime() - currentDate.getTime()) / 1000,
-  )
+  const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
 
   if (difference < 0) {
-    return (
-      <ClockIcon data-testid="expiry-clock-red" $color="red" as={ClockSVG} />
-    )
+    return <ClockIcon data-testid="expiry-clock-red" $color="red" as={ClockSVG} />
   }
   if (difference < 90) {
-    return (
-      <ClockIcon
-        data-testid="expiry-clock-orange"
-        $color="orange"
-        as={ClockSVG}
-      />
-    )
+    return <ClockIcon data-testid="expiry-clock-orange" $color="orange" as={ClockSVG} />
   }
 
-  return (
-    <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
-  )
+  return <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
 }
 
 export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   const { t } = useTranslation()
   const currentDate = new Date()
-  const difference = secondsToDays(
-    (expiry.getTime() - currentDate.getTime()) / 1000,
-  )
+  const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)
 
@@ -88,11 +74,7 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   }
 
   return (
-    <ExpiryText
-      data-testid={`short-expiry-${color}`}
-      weight="bold"
-      $color={color}
-    >
+    <ExpiryText data-testid={`short-expiry-${color}`} weight="bold" $color={color}>
       {text}
     </ExpiryText>
   )

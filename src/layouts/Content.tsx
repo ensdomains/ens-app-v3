@@ -1,12 +1,14 @@
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import styled, { css } from 'styled-components'
+
+import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
+
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
 
 const HeadingItems = styled.div<{ $spacing: string }>(
   ({ theme, $spacing }) => css`
@@ -154,6 +156,7 @@ export const Content = ({
       type: 'warning' | 'error' | 'info'
       message: string | React.ReactNode
     }
+    info?: React.ReactNode
     header?: React.ReactNode
     leading?: React.ReactNode
     trailing: React.ReactNode
@@ -171,6 +174,10 @@ export const Content = ({
     </WarningWrapper>
   )
 
+  const InfoComponent = !loading && children.info && (
+    <WarningWrapper>{children.info}</WarningWrapper>
+  )
+
   return (
     <>
       {!noTitle && (
@@ -180,6 +187,8 @@ export const Content = ({
       )}
 
       {breakpoints.md && WarningComponent}
+
+      {breakpoints.md && InfoComponent}
 
       <HeadingItems $spacing={spacing}>
         <Skeleton loading={loading} as={FullWidthSkeleton as any}>
@@ -218,6 +227,7 @@ export const Content = ({
       </HeadingItems>
 
       {!breakpoints.md && WarningComponent}
+      {!breakpoints.md && InfoComponent}
 
       {children.leading ? (
         <ContentContainer>

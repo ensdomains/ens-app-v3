@@ -1,9 +1,4 @@
-import {
-  shortenAddress,
-  secondsToDays,
-  yearsToSeconds,
-  formatExpiry,
-} from './utils'
+import { shortenAddress, secondsToDays, yearsToSeconds, formatExpiry } from './utils'
 
 describe('shortenAddress', () => {
   it('should NOT shorten address if it is below maxLength', () => {

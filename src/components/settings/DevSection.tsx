@@ -1,4 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { Button } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useSendTransaction } from 'wagmi'
@@ -6,6 +8,7 @@ import { SectionContainer, SectionHeading } from './Section'
 
 export const DevSection = () => {
   const addTransaction = useAddRecentTransaction()
+  const { createTransactionFlow } = useTransactionFlow()
   const { sendTransactionAsync } = useSendTransaction()
 
   const addSuccess = async () => {
@@ -16,22 +19,28 @@ export const DevSection = () => {
       },
     })
     addTransaction({
-      description: 'test',
+      description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
       confirmations: transaction.confirmations || undefined,
+    })
+  }
+
+  const sendName = async () => {
+    createTransactionFlow('dev-sendName', {
+      transactions: [makeTransactionItem('testSendName', {})],
     })
   }
 
   const addFailure = async () => {
     const transaction = await sendTransactionAsync({
       request: {
-        to: '0x00000000000c2e074ec69a0dfb2997ba6c7d2e1e',
+        to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
         data: '0x1231237123423423',
         gasLimit: '1000000',
       },
     })
     addTransaction({
-      description: 'test',
+      description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
       confirmations: transaction.confirmations || undefined,
     })
@@ -73,6 +82,7 @@ export const DevSection = () => {
         Developer
       </SectionHeading>
       <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
+      <Button onClick={() => sendName()}>Test Send Name</Button>
       <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
       <Button onClick={() => startAutoMine()}>Start Automine</Button>
       <Button onClick={() => stopAutoMine()}>Stop Automine</Button>

@@ -19,6 +19,16 @@
   "details": {
     "title": "Name Details",
     "notWrapped": "Not wrapped",
+    "wrap": {
+      "startTitle": "Upgrade your name",
+      "resumeTitle": "Resume your upgrade",
+      "completeTitle": "Upgrade complete",
+      "description": "Upgrading or \"wrapping\" your name gives it new features.",
+      "startLabel": "Upgrade",
+      "resumeLabel": "Resume Upgrade",
+      "boxTitle": "Unlock new features",
+      "boxDescription": "Upgrading your name unlocks the latest functionality of ENS"
+    },
     "descriptions": {
       "owner": "Owns and controls the name",
       "controller": "Controls all the records of the name",
@@ -37,14 +47,15 @@
         "loading": "Loading subnames",
         "empty": "No subnames have been added"
       },
-      "more": {
-        "label": "More",
+      "advanced": {
+        "label": "Advanced",
         "resolver": {
           "label": "Resolver",
           "custom": "Custom",
           "latest": "Latest",
           "outdated": "Outdated",
-          "version": "Version"
+          "version": "Version",
+          "etherscan": "Etherscan"
         },
         "fuses": {
           "label": "Fuses",
@@ -78,12 +89,116 @@
       }
     }
   },
+  "profileEditor": {
+    "tabs": {
+      "general": {
+        "label": "General",
+        "name": {
+          "label": "Nickname",
+          "placeholder": "John Smith"
+        },
+        "url": {
+          "label": "Website",
+          "placeholder": "https://ens.domains"
+        },
+        "location": {
+          "label": "Location",
+          "placeholder": "Metaverse"
+        },
+        "description": {
+          "label": "Short Bio",
+          "placeholder": "I'm a yield farmer from rural Tennessee."
+        }
+      },
+      "accounts": {
+        "label": "Accounts",
+        "addAccount": "Add account",
+        "noOptions": "No account options available",
+        "placeholder": {
+          "default": "Add username here",
+          "com.twitter": "e.g. yogicodes",
+          "com.github": "e.g. yogicodes",
+          "com.discord": "e.g. yogicodes#4323"
+        }
+      },
+      "address": {
+        "label": "Address",
+        "addAddress": "Add address",
+        "noOptions": "No address options available",
+        "placeholder": {
+          "default": "Add address here",
+          "ETH": "0xD9hbQK...",
+          "BNB": "0xD9hbQK...",
+          "BTC": "3FZbgi29...",
+          "LTC": "3FZbgi29...",
+          "SOL": "D4kA7VzHnmV...",
+          "DOT": "1D4kA7VxH...",
+          "DOGE": "DFabcd12..."
+        }
+      },
+      "contentHash": {
+        "label": "Website",
+        "addContentHash": "Add decentralized website",
+        "placeholder": {
+          "default": "Add url here",
+          "ipfs": "ipfs://"
+        }
+      },
+      "other": {
+        "label": "Other",
+        "addRecord": "Add record",
+        "createRecord": "Type a record name...",
+        "placeholder": {
+          "default": "Add a value here..."
+        }
+      }
+    }
+  },
+  "advancedEditor": {
+    "title": "{{name}}'s records",
+    "tabs": {
+      "text": {
+        "label": "Text",
+        "addRecord": "Add record",
+        "createRecord": "Type a record name...",
+        "placeholder": {
+          "default": "Add a value here..."
+        }
+      },
+      "address": {
+        "label": "Address",
+        "addRecord": "Add address",
+        "noOptions": "No address options available",
+        "placeholder": {
+          "default": "Add address here..."
+        }
+      },
+      "other": {
+        "label": "Other",
+        "contentHash": {
+          "label": "Content Hash",
+          "placeholder": "e.g. ipfs://"
+        },
+        "publicKey": {
+          "label": "Public Key",
+          "placeholder": "e.g. pub_1231231231231"
+        },
+        "abi": {
+          "label": "ABI",
+          "placeholder": "Enter an ABI here..."
+        }
+      
+      }
+    }
+  },
   "errors": {
     "invalidName": "This name is invalid.",
     "expiringSoon": "This name is expiring soon.",
     "unknown": "Unknown error",
     "notMigrated": "This name is not migrated to the new registry.",
     "featureNotAvailable": "Some features are not yet available, but you can still ",
-    "featureNotAvailableLink": "view this name in the old app."
+    "featureNotAvailableLink": "view this name in the old app.",
+    "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
+    "migrationNotAvailableLink": "migrate this name in the old app."
   }
 }

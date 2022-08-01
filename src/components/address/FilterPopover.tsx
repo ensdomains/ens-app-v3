@@ -1,6 +1,4 @@
-import SortControl, {
-  SortValue,
-} from '@app/components/@molecules/SortControl/SortControl'
+import SortControl, { SortValue } from '@app/components/@molecules/SortControl/SortControl'
 import { Name } from '@app/types'
 import { Field, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 import React, { ChangeEvent, ComponentProps, Ref } from 'react'
@@ -31,10 +29,7 @@ const StyledRadioButtonContainer = styled.div`
 `
 
 const StyledRadioButton = React.forwardRef(
-  (
-    { onClick, ...props }: ComponentProps<typeof RadioButton>,
-    ref: Ref<HTMLInputElement>,
-  ) => {
+  ({ onClick, ...props }: ComponentProps<typeof RadioButton>, ref: Ref<HTMLInputElement>) => {
     return (
       <StyledRadioButtonContainer onClick={onClick}>
         <RadioButton ref={ref} {...props} />
@@ -64,12 +59,7 @@ type PopoverProps = {
   onFilterChange: (filter: FilterType) => void
 }
 
-const FilterPopover = ({
-  sort,
-  filter,
-  onSortChange,
-  onFilterChange,
-}: PopoverProps) => {
+const FilterPopover = ({ sort, filter, onSortChange, onFilterChange }: PopoverProps) => {
   const { t } = useTranslation('common')
 
   const handleFilterChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -84,10 +74,7 @@ const FilterPopover = ({
   return (
     <PopoverContainer data-testid="filter-popover">
       {sort && (
-        <SortControl
-          value={sort}
-          onChange={(_sort) => onSortChange && onSortChange(_sort)}
-        />
+        <SortControl value={sort} onChange={(_sort) => onSortChange && onSortChange(_sort)} />
       )}
       <Field label="Show" width="fit">
         <RadioButtonGroup inline value={filter} onChange={handleFilterChange}>

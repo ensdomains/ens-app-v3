@@ -13,6 +13,8 @@ const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
 const mockUseChainId = mockFunction(useChainId)
 
+window.scroll = jest.fn()
+
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
   mockUseChainId.mockReturnValue(1)
@@ -72,9 +74,7 @@ describe('SearchInput', () => {
     await waitFor(() => screen.getByTestId('search-input-results'), {
       timeout: 500,
     }).then((el) => expect(el).toHaveTextContent('search.emptyText'))
-    expect(screen.getByTestId('search-input-box')).not.toHaveTextContent(
-      'Search for a name',
-    )
+    expect(screen.getByTestId('search-input-box')).not.toHaveTextContent('Search for a name')
   })
   it('should show history items if available', async () => {
     mockUseLocalStorage.mockReturnValue([

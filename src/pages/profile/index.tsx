@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import ProfileEditor from '@app/components/pages/profile/ProfileEditor/ProfileEditor'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
@@ -12,7 +13,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo } from 'react'
+import { ReactElement, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
@@ -72,8 +73,7 @@ export default function Page() {
     valid,
   } = useNameDetails(name)
 
-  const isLoading =
-    detailsLoading || primaryLoading || accountLoading || initial
+  const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
   useProtectedRoute(
     '/',
@@ -81,13 +81,13 @@ export default function Page() {
     isLoading
       ? true
       : // if is self, user must be connected
-        (isSelf ? address : true) &&
-          typeof name === 'string' &&
-          name.length > 0,
+        (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
   )
 
-  const getTextRecord = (key: string) =>
-    profile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
+
+  const [showEditor, setShowEditor] = useState(true)
+  const handleDismissEditor = () => setShowEditor(false)
 
   const [titleContent, descriptionContent] = useMemo(() => {
     if (isSelf) {
@@ -158,7 +158,12 @@ export default function Page() {
               />
               {isSelf && (
                 <SelfButtons>
-                  <Button shadowless variant="transparent" size="small">
+                  <Button
+                    shadowless
+                    variant="transparent"
+                    size="small"
+                    onClick={() => setShowEditor(true)}
+                  >
                     {t('editProfile')}
                   </Button>
                   <Button
@@ -179,16 +184,17 @@ export default function Page() {
                 </SelfButtons>
               )}
               <ProfileDetails
-                addresses={(profile?.records?.coinTypes || []).map(
-                  (item: any) => ({
-                    key: item.coin,
-                    value: item.addr,
-                  }),
-                )}
+                addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
+                  key: item.coin,
+                  value: item.addr,
+                }))}
                 textRecords={(profile?.records?.texts || [])
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
+              {isSelf && (
+                <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />
+              )}
             </DetailsWrapper>
           ),
         }}
