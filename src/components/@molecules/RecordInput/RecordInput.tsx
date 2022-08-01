@@ -129,16 +129,12 @@ export const RecordInput = forwardRef(
         )
     })()
 
-    const error = errorProp ? (
-      <ErrorWrapper>{errorProp}</ErrorWrapper>
-    ) : undefined
+    const error = errorProp ? <ErrorWrapper>{errorProp}</ErrorWrapper> : undefined
 
     const labelText = labelProp || option?.label || option?.value || ''
     const label = <LabelWrapper>{labelText}</LabelWrapper>
 
-    const labelSecondary = disabled ? (
-      <LabelSecondary>{labelDisabled}</LabelSecondary>
-    ) : undefined
+    const labelSecondary = disabled ? <LabelSecondary>{labelDisabled}</LabelSecondary> : undefined
 
     const handleDelete = () => {
       if (onDelete) onDelete()

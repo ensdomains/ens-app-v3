@@ -1,6 +1,4 @@
 import type { ENS } from '@ensdomains/ensjs'
-import type { PopulatedTransaction } from 'ethers'
-import { ReactNode } from 'react'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
 
@@ -15,35 +13,6 @@ export type TransactionDisplayItem = {
   useRawLabel?: boolean
 }
 
-export type TransactionSubmission = {
-  transaction: PopulatedTransaction
-  onDismiss?: (success?: boolean) => void
-  onSuccess?: () => void
-  dismissBtnLabel?: string
-  completeBtnLabel?: string
-  completeTitle?: string
-  actionName: string
-  displayItems: TransactionDisplayItem[]
-}
+type PublicInterface<T> = { [K in keyof T]: T[K] }
 
-export type TransactionPreStepObject = {
-  title: string
-  leadingLabel?: string
-  trailingLabel?: string
-  content: ReactNode
-  steps: string[]
-}
-
-export type TransactionPreStepFunction = (
-  resumeToStep: number,
-) => TransactionPreStepObject
-
-export type TxStateType = {
-  data: TransactionSubmission[]
-  preSteps?: TransactionPreStepFunction
-}
-
-export type StepStorageItem = {
-  currentStep: number
-  currentStepComplete: boolean
-} & TxStateType
+export type PublicENS = PublicInterface<ENS>

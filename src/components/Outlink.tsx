@@ -5,11 +5,12 @@ import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import type { UrlObject } from 'url'
 
-const StyledAnchor = styled.a(
+export const StyledAnchor = styled.a(
   ({ theme }) => css`
     padding-right: ${theme.space['4']};
     position: relative;
     color: ${theme.colors.accent};
+    cursor: pointer;
   `,
 )
 
@@ -24,6 +25,12 @@ const OutlinkIcon = styled.div(
   `,
 )
 
+export const OutlinkTypography = styled(Typography)(
+  () => css`
+    display: inline-block;
+  `,
+)
+
 export const Outlink = ({
   href,
   children,
@@ -35,9 +42,9 @@ export const Outlink = ({
   return (
     <Link href={href} passHref>
       <StyledAnchor {...props}>
-        <Typography variant="small" weight="bold">
+        <OutlinkTypography variant="small" weight="bold">
           {children}
-        </Typography>
+        </OutlinkTypography>
         <OutlinkIcon as={OutlinkSVG} />
       </StyledAnchor>
     </Link>

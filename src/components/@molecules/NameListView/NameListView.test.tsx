@@ -10,9 +10,7 @@ jest.mock('@app/components/@atoms/ExpiryComponents/ExpiryComponents')
 const mockNameDetailItem = mockFunction(NameDetailItem)
 const mockShortExpiry = mockFunction(ShortExpiry)
 
-const mockComponent = ({ children }: { children: ReactNode }) => (
-  <div>{children}</div>
-)
+const mockComponent = ({ children }: { children: ReactNode }) => <div>{children}</div>
 
 describe('NameListView', () => {
   it('should render expiry date if name has expiry date', () => {
@@ -55,9 +53,7 @@ describe('NameListView', () => {
     expect(queryByText('2020-01-01')).not.toBeInTheDocument()
   })
   it('should render no results if there are no results', () => {
-    const { queryByText } = render(
-      <NameListView currentPage={[]} network={1} />,
-    )
+    const { queryByText } = render(<NameListView currentPage={[]} network={1} />)
     expect(queryByText('errors.noResults')).toBeInTheDocument()
   })
   it('should render registrant if .eth name', () => {

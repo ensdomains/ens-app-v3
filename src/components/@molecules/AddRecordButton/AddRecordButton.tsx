@@ -1,10 +1,4 @@
-import {
-  useState,
-  ReactNode,
-  useMemo,
-  useRef,
-  ButtonHTMLAttributes,
-} from 'react'
+import { useState, ReactNode, useMemo, useRef, ButtonHTMLAttributes } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 import { Button, CloseSVG, Input, PlusSVG, SearchSVG } from '@ensdomains/thorin'
 import useTransition, { TransitionState } from 'react-transition-state'
@@ -176,8 +170,7 @@ const OptionContainer = styled.button<{ $inline: boolean }>(
     border: 1px solid ${theme.colors.borderTertiary};
     background: ${theme.colors.white};
     border-radius: ${theme.radii.extraLarge};
-    padding: ${theme.space['2']}
-      ${$inline ? theme.space['4'] : theme.space['2']};
+    padding: ${theme.space['2']} ${$inline ? theme.space['4'] : theme.space['2']};
     cursor: pointer;
   `,
 )
@@ -346,8 +339,7 @@ export const AddRecordButton = ({
 
   const options = useMemo(() => {
     return optionsProp?.filter(
-      (option) =>
-        option.label!.toLowerCase().indexOf(inputValue.toLowerCase()) > -1,
+      (option) => option.label!.toLowerCase().indexOf(inputValue.toLowerCase()) > -1,
     )
   }, [inputValue, optionsProp])
 
@@ -366,15 +358,8 @@ export const AddRecordButton = ({
   }
 
   return (
-    <Container
-      $state={state}
-      ref={containerRef}
-      data-testid="add-record-button"
-    >
-      <ControlsContainer
-        $state={state}
-        data-testid="add-record-button-controls"
-      >
+    <Container $state={state} ref={containerRef} data-testid="add-record-button">
+      <ControlsContainer $state={state} data-testid="add-record-button-controls">
         <ControlsHeader>
           <ControlsHeaderLeading>
             {inputType === 'placeholder' ? (
@@ -389,9 +374,7 @@ export const AddRecordButton = ({
                 label=""
                 hideLabel
                 placeholder={
-                  inputType === 'search'
-                    ? t('action.search', { ns: 'common' })
-                    : createRecord
+                  inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
                 }
                 parentStyles={css`
                   background: white;
@@ -430,9 +413,7 @@ export const AddRecordButton = ({
                 ))}
               </OptionsContainer>
             ) : (
-              <NoOptionsContainer $inline={inline}>
-                {noOptions}
-              </NoOptionsContainer>
+              <NoOptionsContainer $inline={inline}>{noOptions}</NoOptionsContainer>
             )}
           </ControlsBody>
         )}

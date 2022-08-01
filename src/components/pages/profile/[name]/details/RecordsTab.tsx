@@ -221,9 +221,7 @@ const RecordItem = ({
   return (
     <RecordContainer
       data-testid={
-        itemKey
-          ? `name-details-${type}-${itemKey.toLowerCase()}`
-          : `name-details-${type}`
+        itemKey ? `name-details-${type}-${itemKey.toLowerCase()}` : `name-details-${type}`
       }
       onClick={() => copy(value)}
     >
@@ -262,14 +260,8 @@ export const RecordsTab = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const filteredTexts = useMemo(
-    () => texts?.filter(({ value }) => value),
-    [texts],
-  )
-  const filteredAddresses = useMemo(
-    () => addresses?.filter(({ addr }) => addr),
-    [addresses],
-  )
+  const filteredTexts = useMemo(() => texts?.filter(({ value }) => value), [texts])
+  const filteredAddresses = useMemo(() => addresses?.filter(({ addr }) => addr), [addresses])
 
   const formattedContentHash = useMemo(() => {
     if (contentHash) {
@@ -301,8 +293,7 @@ export const RecordsTab = ({
               {t('details.tabs.records.text')}
             </SectionTitle>
             <SectionSubtitle data-testid="text-amount" weight="bold">
-              {filteredTexts ? filteredTexts.length : 0}{' '}
-              {t('records.label', { ns: 'common' })}
+              {filteredTexts ? filteredTexts.length : 0} {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
 
@@ -316,12 +307,7 @@ export const RecordsTab = ({
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
-            <RecordItem
-              key={text.key}
-              type="text"
-              itemKey={text.key}
-              value={text.value}
-            />
+            <RecordItem key={text.key} type="text" itemKey={text.key} value={text.value} />
           ))}
       </RecordSection>
       <RecordSection>
@@ -368,17 +354,9 @@ export const RecordsTab = ({
             )}
           </SectionTitleContainer>
         </SectionHeader>
-        {formattedContentHash && (
-          <RecordItem type="contentHash" value={formattedContentHash} />
-        )}
+        {formattedContentHash && <RecordItem type="contentHash" value={formattedContentHash} />}
       </RecordSection>
-      {canEdit && (
-        <AdvancedEditor
-          name={name}
-          open={showEditor}
-          onDismiss={handleDismissEditor}
-        />
-      )}
+      {canEdit && <AdvancedEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />}
     </TabWrapper>
   )
 }

@@ -1,8 +1,15 @@
+import { useRouter } from 'next/router'
+import { ReactElement, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
+import { ENS } from '@ensdomains/ensjs'
+
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
 import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
-import More from '@app/components/pages/profile/[name]/details/MoreTab/MoreTab'
+import Advanced from '@app/components/pages/profile/[name]/details/AdvancedTab/AdvancedTab'
 import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
 import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
 import { WrapperCallToAction } from '@app/components/pages/profile/[name]/details/WrapperCallToAction'
@@ -13,11 +20,6 @@ import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -89,6 +91,97 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
+type OwnerData =
+  | Pick<NonNullable<Awaited<ReturnType<ENS['getOwner']>>>, 'registrant' | 'owner'>
+  | undefined
+export const calculateSelfAbilities = (address: string | undefined, ownerData: OwnerData) => {
+  const abilities = {
+    canEdit: false,
+    canSend: false,
+    canChangeOwner: false,
+    canChangeRegistrant: false,
+  }
+  if (!address || !ownerData) return abilities
+  if (ownerData.registrant === address || (!ownerData.registrant && ownerData.owner === address)) {
+    abilities.canSend = true
+    abilities.canChangeOwner = true
+    abilities.canChangeRegistrant = true
+  }
+  if (ownerData.owner === address) {
+    abilities.canEdit = true
+    abilities.canChangeOwner = true
+  }
+  return abilities
+}
+
+export const Details = ({
+  expiryDate,
+  ownerData,
+  breakpoints,
+  normalisedName,
+  chainId,
+  selfAbilities,
+}: {
+  expiryDate: Date | null | undefined
+  ownerData: Awaited<ReturnType<ENS['getOwner']>>
+  breakpoints: ReturnType<typeof useBreakpoint>
+  normalisedName: string
+  chainId: number
+  selfAbilities: ReturnType<typeof calculateSelfAbilities>
+}) => {
+  const { t } = useTranslation('profile')
+
+  return (
+    <DetailsContainer>
+      {breakpoints.md ? (
+        <NFTWithPlaceholder
+          name={normalisedName}
+          network={chainId}
+          style={{ width: '270px', height: '270px' }}
+        />
+      ) : (
+        <NameSnippetMobile
+          expiryDate={expiryDate}
+          name={normalisedName}
+          network={chainId}
+          canSend={selfAbilities.canSend}
+        />
+      )}
+      <OwnerButtons>
+        {ownerData?.owner && (
+          <OwnerButton
+            address={ownerData.owner}
+            network={chainId}
+            label={
+              ownerData.ownershipLevel === 'nameWrapper'
+                ? t('name.owner', { ns: 'common' })
+                : t('name.controller', { ns: 'common' })
+            }
+            type={breakpoints.lg ? 'dropdown' : 'dialog'}
+            description={
+              ownerData.ownershipLevel === 'nameWrapper'
+                ? t('details.descriptions.owner')
+                : t('details.descriptions.controller')
+            }
+            canTransfer={selfAbilities.canChangeOwner}
+          />
+        )}
+        {ownerData?.registrant && (
+          <OwnerButton
+            address={ownerData.registrant}
+            network={chainId}
+            label={t('name.registrant', { ns: 'common' })}
+            type={breakpoints.lg ? 'dropdown' : 'dialog'}
+            description={t('details.descriptions.registrant')}
+            canTransfer={selfAbilities.canChangeRegistrant}
+          />
+        )}
+      </OwnerButtons>
+      {breakpoints.md && <DetailSnippet canSend={selfAbilities.canSend} expiryDate={expiryDate} />}
+    </DetailsContainer>
+  )
+}
+
 export default function Page() {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
@@ -108,97 +201,32 @@ export default function Page() {
     isWrapped,
   } = useNameDetails(name)
   const nameWrapperExists = useWrapperExists()
-  const canBeWrapped =
-    nameWrapperExists && ownerData?.registrant === address && !isWrapped
+  const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
-  const selfAbilities = useMemo(() => {
-    const abilities = {
-      canEdit: false,
-      canSend: false,
-      canChangeOwner: false,
-      canChangeRegistrant: false,
-    }
-    if (!address || !ownerData) return abilities
-    if (
-      ownerData.registrant === address ||
-      (!ownerData.registrant && ownerData.owner === address)
-    ) {
-      abilities.canSend = true
-      abilities.canChangeOwner = true
-      abilities.canChangeRegistrant = true
-    }
-    if (ownerData.owner === address) {
-      abilities.canEdit = true
-      abilities.canChangeOwner = true
-    }
-    return abilities
-  }, [address, ownerData])
+  const selfAbilities = useMemo(
+    () => calculateSelfAbilities(address, ownerData),
+    [address, ownerData],
+  )
 
   const isLoading = detailsLoading || accountLoading
 
-  const [tab, setTab] = useState<'records' | 'subnames' | 'more'>('records')
+  const [tab, setTab] = useState<'records' | 'subnames' | 'advanced'>('records')
 
   return (
-    <Content
-      title={normalisedName}
-      subtitle={t('details.title')}
-      loading={isLoading}
-    >
+    <Content title={normalisedName} subtitle={t('details.title')} loading={isLoading}>
       {{
         info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
         leading: (
-          <DetailsContainer>
-            {breakpoints.md ? (
-              <NFTWithPlaceholder
-                name={normalisedName}
-                network={chainId}
-                style={{ width: '270px', height: '270px' }}
-              />
-            ) : (
-              <NameSnippetMobile
-                expiryDate={expiryDate}
-                name={normalisedName}
-                network={chainId}
-                canSend={selfAbilities.canSend}
-              />
-            )}
-            <OwnerButtons>
-              {ownerData?.owner && (
-                <OwnerButton
-                  address={ownerData.owner}
-                  network={chainId}
-                  label={
-                    ownerData.ownershipLevel === 'nameWrapper'
-                      ? t('name.owner', { ns: 'common' })
-                      : t('name.controller', { ns: 'common' })
-                  }
-                  type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                  description={
-                    ownerData.ownershipLevel === 'nameWrapper'
-                      ? t('details.descriptions.owner')
-                      : t('details.descriptions.controller')
-                  }
-                  canTransfer={selfAbilities.canChangeOwner}
-                />
-              )}
-              {ownerData?.registrant && (
-                <OwnerButton
-                  address={ownerData.registrant}
-                  network={chainId}
-                  label={t('name.registrant', { ns: 'common' })}
-                  type={breakpoints.lg ? 'dropdown' : 'dialog'}
-                  description={t('details.descriptions.registrant')}
-                  canTransfer={selfAbilities.canChangeRegistrant}
-                />
-              )}
-            </OwnerButtons>
-            {breakpoints.md && (
-              <DetailSnippet
-                canSend={selfAbilities.canSend}
-                expiryDate={expiryDate}
-              />
-            )}
-          </DetailsContainer>
+          <Details
+            {...{
+              expiryDate,
+              ownerData,
+              breakpoints,
+              normalisedName,
+              chainId,
+              selfAbilities,
+            }}
+          />
         ),
         trailing: {
           records: (
@@ -214,33 +242,18 @@ export default function Page() {
             </>
           ),
           subnames: <SubnamesTab name={normalisedName} network={chainId} />,
-          more: <More />,
+          advanced: <Advanced />,
         }[tab],
         header: (
           <TabButtonContainer>
-            <TabButton
-              $selected={tab === 'records'}
-              onClick={() => setTab('records')}
-            >
-              <Typography weight="bold">
-                {t('details.tabs.records.label')}
-              </Typography>
+            <TabButton $selected={tab === 'records'} onClick={() => setTab('records')}>
+              <Typography weight="bold">{t('details.tabs.records.label')}</Typography>
             </TabButton>
-            <TabButton
-              $selected={tab === 'subnames'}
-              onClick={() => setTab('subnames')}
-            >
-              <Typography weight="bold">
-                {t('details.tabs.subnames.label')}
-              </Typography>
+            <TabButton $selected={tab === 'subnames'} onClick={() => setTab('subnames')}>
+              <Typography weight="bold">{t('details.tabs.subnames.label')}</Typography>
             </TabButton>
-            <TabButton
-              $selected={tab === 'more'}
-              onClick={() => setTab('more')}
-            >
-              <Typography weight="bold">
-                {t('details.tabs.more.label')}
-              </Typography>
+            <TabButton $selected={tab === 'advanced'} onClick={() => setTab('advanced')}>
+              <Typography weight="bold">{t('details.tabs.advanced.label')}</Typography>
             </TabButton>
           </TabButtonContainer>
         ),

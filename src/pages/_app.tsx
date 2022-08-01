@@ -1,18 +1,10 @@
 import { Notifications } from '@app/components/Notifications'
 import { Basic } from '@app/layouts/Basic'
+import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
-import { TransactionProvider } from '@app/utils/TransactionProvider'
-import {
-  lightTheme as thorinLightTheme,
-  ThorinGlobalStyles,
-} from '@ensdomains/thorin'
-import {
-  getDefaultWallets,
-  lightTheme,
-  RainbowKitProvider,
-  Theme,
-} from '@rainbow-me/rainbowkit'
+import { lightTheme as thorinLightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+import { getDefaultWallets, lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
@@ -139,10 +131,10 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                 <BreakpointProvider queries={breakpoints}>
                   <GlobalStyle />
                   <ThorinGlobalStyles />
-                  <TransactionProvider>
+                  <TransactionFlowProvider>
                     <Notifications />
                     <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                  </TransactionProvider>
+                  </TransactionFlowProvider>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>

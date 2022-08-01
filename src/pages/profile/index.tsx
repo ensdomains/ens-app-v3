@@ -72,8 +72,7 @@ export default function Page() {
     valid,
   } = useNameDetails(name)
 
-  const isLoading =
-    detailsLoading || primaryLoading || accountLoading || initial
+  const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
   useProtectedRoute(
     '/',
@@ -81,13 +80,10 @@ export default function Page() {
     isLoading
       ? true
       : // if is self, user must be connected
-        (isSelf ? address : true) &&
-          typeof name === 'string' &&
-          name.length > 0,
+        (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
   )
 
-  const getTextRecord = (key: string) =>
-    profile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
   const [showEditor, setShowEditor] = useState(true)
   const handleDismissEditor = () => setShowEditor(false)
@@ -186,22 +182,16 @@ export default function Page() {
                 </SelfButtons>
               )}
               <ProfileDetails
-                addresses={(profile?.records?.coinTypes || []).map(
-                  (item: any) => ({
-                    key: item.coin,
-                    value: item.addr,
-                  }),
-                )}
+                addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
+                  key: item.coin,
+                  value: item.addr,
+                }))}
                 textRecords={(profile?.records?.texts || [])
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
               {isSelf && (
-                <ProfileEditor
-                  name={name}
-                  open={showEditor}
-                  onDismiss={handleDismissEditor}
-                />
+                <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />
               )}
             </DetailsWrapper>
           ),

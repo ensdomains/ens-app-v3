@@ -7,9 +7,7 @@ export const useActiveRoute = () => {
   const from = router.query.from as string
   const path = router.asPath
   const activeTab: AnyRoute = useMemo(
-    () =>
-      routes.find(({ href, name }) => href === path || from === name)?.name ||
-      'unknown',
+    () => routes.find(({ href, name }) => href === path || from === name)?.name || 'unknown',
     [path, from],
   )
 

@@ -53,10 +53,7 @@ describe('NameDetailitem', () => {
         <div>child</div>
       </NameDetailItem>,
     )
-    expect(screen.getByTestId('name-detail-item-avatar')).toHaveAttribute(
-      'src',
-      'zorb',
-    )
+    expect(screen.getByTestId('name-detail-item-avatar')).toHaveAttribute('src', 'zorb')
   })
   it('should render truncated name', () => {
     mockUseZorb.mockReturnValue('zorb')

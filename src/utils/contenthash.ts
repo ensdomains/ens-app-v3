@@ -9,9 +9,7 @@ export const getContentHashLink = (
   const hash = decodedContentHash.decoded
 
   const useEthLink =
-    name.endsWith('.eth') &&
-    network === 1 &&
-    (protocol === 'ipfs' || protocol === 'ipns')
+    name.endsWith('.eth') && network === 1 && (protocol === 'ipfs' || protocol === 'ipns')
   if (useEthLink) {
     return `https://${name}.link`
   }
