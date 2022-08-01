@@ -1,7 +1,7 @@
 import CameraIcon from '@app/assets/Camera.svg'
 import { ProfileEditorType } from '@app/types'
 import { Avatar, Dropdown } from '@ensdomains/thorin'
-import React, { useRef } from 'react'
+import { useRef } from 'react'
 import { UseFormSetValue } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 
@@ -87,7 +87,9 @@ const AvatarButton = ({
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSelectOption = (value: string) => () => {
-    if (value === 'upload') {
+    if (value === 'remove') {
+      setValue('avatar', undefined)
+    } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {
       onSelectOption?.(value)
@@ -107,6 +109,15 @@ const AvatarButton = ({
           color: 'black',
           onClick: handleSelectOption('upload'),
         },
+        ...(validated
+          ? [
+              {
+                label: 'Remove',
+                color: 'red',
+                onClick: handleSelectOption('remove'),
+              },
+            ]
+          : []),
       ]}
       keepMenuOnTop
       shortThrow

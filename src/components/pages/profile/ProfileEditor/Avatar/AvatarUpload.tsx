@@ -3,11 +3,16 @@ import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
 import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
-import { Waiting } from '@app/components/@molecules/Waiting'
+import {
+  calcMomentum,
+  getVars,
+  resolutionMultiplier,
+} from '@app/utils/avatarUpload'
 import { Button, Dialog, Slider } from '@ensdomains/thorin'
-import { sha256, verifyTypedData } from 'ethers/lib/utils'
+import { sha256 } from 'ethers/lib/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { useMutation } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useSignTypedData } from 'wagmi'
 
@@ -88,46 +93,9 @@ const CancelButton = ({ handleCancel }: { handleCancel: () => void }) => {
 
   return (
     <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
-      {t('action.cancel')}
+      {t('action.back')}
     </Button>
   )
-}
-
-const imagePercent = 0.6875
-const resolutionMultiplier = 4
-const maxSpeed = 96
-
-const getVars = (canvas: HTMLCanvasElement) => {
-  const ctx = canvas.getContext('2d')!
-
-  const ip = imagePercent
-  const sz = canvas.width
-  const crpSz = sz * ip
-  const invSz = sz * (1 - ip)
-  return {
-    ip,
-    sz,
-    crpSz,
-    invSz,
-    ctx,
-    max: invSz / 2,
-  }
-}
-
-const distanceFromEdge = (n: number, max: number, s: number, crpSz: number) =>
-  n > max ? max - n : Math.max(max - (n + s) + crpSz, 0)
-
-const calcMomentum = (n: number, max: number, s: number, crpSz: number) => {
-  let momentum = 0
-  const sn = distanceFromEdge(n, max, s, crpSz)
-  if (sn > 0 || sn < 0) {
-    if (sn <= resolutionMultiplier * 2 && sn >= -resolutionMultiplier * 2) {
-      momentum = sn
-    } else {
-      momentum = Math.round(Math.min(Math.max(sn / 16, -maxSpeed), maxSpeed))
-    }
-  }
-  return momentum
 }
 
 const CropComponent = ({
@@ -181,7 +149,8 @@ const CropComponent = ({
 
   const draw = useCallback(() => {
     const image = imageRef.current
-    const canvas = canvasRef.current!
+    const canvas = canvasRef.current
+    if (!canvas) return
     const { max, crpSz } = getVars(canvas)
     // eslint-disable-next-line prefer-const
     let { x, y, w, h, mx, my, moving } = coordinatesRef.current
@@ -238,7 +207,7 @@ const CropComponent = ({
       // eslint-disable-next-line no-multi-assign
       x = y = max
     }
-    ctx.drawImage(image, x, y, w, h)
+    ctx!.drawImage(image, x, y, w, h)
     coordinatesRef.current = {
       x,
       y,
@@ -371,17 +340,19 @@ const CroppedImagePreview = styled.img(
 
 const dataURLToBytes = (dataURL: string) => {
   const base64 = dataURL.split(',')[1]
-  const bytes = new TextEncoder().encode(base64)
+  const bytes = Uint8Array.from(atob(base64), (c) => c.charCodeAt(0))
   return bytes
 }
 
 const UploadComponent = ({
   dataURL,
   handleCancel,
+  handleSubmit,
   name,
 }: {
   dataURL: string
   handleCancel: () => void
+  handleSubmit: (uri: string) => void
   name: string
 }) => {
   // const { t } = useTranslation('profile')
@@ -389,11 +360,7 @@ const UploadComponent = ({
   const urlHash = useMemo(() => sha256(dataURLToBytes(dataURL)), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
 
-  const {
-    signTypedDataAsync,
-    isLoading,
-    data: loaded,
-  } = useSignTypedData({
+  const { signTypedDataAsync } = useSignTypedData({
     domain: {
       name: 'Ethereum Name Service',
       version: '1',
@@ -414,100 +381,47 @@ const UploadComponent = ({
     },
   })
 
-  const signTypedData = async () => {
+  const { mutate: signAndUpload, isLoading } = useMutation(async () => {
+    const endpoint = `http://localhost:8787/${name}`
+
     const sig = await signTypedDataAsync()
-    console.log(sig)
-
-    const verifiedAddress = verifyTypedData(
-      {
-        name: 'Ethereum Name Service',
-        version: '1',
-      },
-      {
-        Upload: [
-          { name: 'upload', type: 'string' },
-          { name: 'expiry', type: 'string' },
-          { name: 'name', type: 'string' },
-          { name: 'hash', type: 'string' },
-        ],
-      },
-      {
-        upload: 'avatar',
-        expiry,
-        name,
-        hash: urlHash,
-      },
-      sig,
-    )
-
-    console.log(verifiedAddress)
-
-    // const valueItems = {
-    //   upload: 'avatar',
-    //   name,
-    //   expiry,
-    //   address: addressData!.address!,
-    //   hash: urlHash,
-    //   r,
-    //   s,
-    //   v,
-    // }
-
-    const fetched = (await fetch('/upload/avatar', {
-      method: 'POST',
+    const fetched = (await fetch(endpoint, {
+      method: 'PUT',
       headers: {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        name,
         expiry,
-        url: dataURL,
+        dataURL,
         sig,
       }),
     }).then((res) => res.json())) as any
 
-    console.log(fetched)
-
-    // Object.keys(fetched as any).forEach((key: string) => {
-    //   const one = fetched[key]
-    //   const two = valueItems[key as keyof typeof valueItems]
-    //   console.log(key, one, two, one === two)
-    // })
-  }
-
-  if (!loaded) {
-    return (
-      <>
-        <Dialog.Heading
-          title="Sign Message"
-          subtitle="You need to sign a message to upload an avatar. This won't cost anything."
-        />
-        <CroppedImagePreview src={dataURL} />
-        <Dialog.Footer
-          leading={<CancelButton handleCancel={handleCancel} />}
-          trailing={
-            <Button
-              disabled={isLoading}
-              onClick={() => signTypedData()}
-              shadowless
-            >
-              Sign
-            </Button>
-          }
-        />
-      </>
-    )
-  }
+    if (fetched.message === 'uploaded') {
+      return handleSubmit(endpoint)
+    }
+    throw new Error(fetched.message)
+  })
 
   return (
     <>
-      <Dialog.Heading title="Uploading..." />
-      <Waiting title="Uploading to IPFS" subtitle="This may take some time" />
+      <Dialog.Heading
+        title="Upload Avatar"
+        subtitle="You need to sign a message to upload an avatar. This won't cost anything."
+      />
       <CroppedImagePreview src={dataURL} />
       <Dialog.Footer
         leading={<CancelButton handleCancel={handleCancel} />}
-        trailing={null}
+        trailing={
+          <Button
+            disabled={isLoading}
+            onClick={() => signAndUpload()}
+            shadowless
+          >
+            Sign and Upload
+          </Button>
+        }
       />
     </>
   )
@@ -516,10 +430,12 @@ const UploadComponent = ({
 export const AvatarUpload = ({
   avatar,
   handleCancel,
+  handleSubmit,
   name,
 }: {
   avatar: File
   handleCancel: () => void
+  handleSubmit: (uri: string) => void
   name: string
 }) => {
   const [dataURL, setDataURL] = useState<string | null>(null)
@@ -528,5 +444,9 @@ export const AvatarUpload = ({
     return <CropComponent {...{ avatar, setDataURL, handleCancel }} />
   }
 
-  return <UploadComponent {...{ dataURL, handleCancel, name }} />
+  return (
+    <UploadComponent
+      {...{ dataURL, handleCancel: () => setDataURL(null), name, handleSubmit }}
+    />
+  )
 }

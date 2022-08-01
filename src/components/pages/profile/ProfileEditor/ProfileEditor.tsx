@@ -20,7 +20,7 @@ import {
   ScrollBox,
   Textarea,
 } from '@ensdomains/thorin'
-import React, { ComponentProps, useEffect, useState } from 'react'
+import { ComponentProps, useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -525,6 +525,10 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
             name={name}
             avatar={_avatar}
             handleCancel={() => setCurrentContent('profile')}
+            handleSubmit={(uri: string) => {
+              setValue('avatar', uri)
+              setCurrentContent('profile')
+            }}
           />
         ) : (
           <Container
@@ -534,6 +538,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
             <Banner zIndex={10}>
               <AvatarWrapper>
                 <AvatarButton
+                  validated={avatar !== undefined}
                   src={avatar}
                   onSelectOption={() => setCurrentContent('avatar')}
                   setValue={setValue}

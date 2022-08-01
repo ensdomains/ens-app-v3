@@ -26,10 +26,12 @@ const Card = styled.div(
 
 export const AvatarViewManager = ({
   handleCancel,
+  handleSubmit,
   avatar,
   name,
 }: {
   handleCancel: () => void
+  handleSubmit: (uri: string) => void
   name: string
   avatar?: File
 }) => {
@@ -37,7 +39,12 @@ export const AvatarViewManager = ({
 
   return (
     <Card>
-      <Component name={name} avatar={avatar!} handleCancel={handleCancel} />
+      <Component
+        name={name}
+        avatar={avatar!}
+        handleCancel={handleCancel}
+        handleSubmit={handleSubmit}
+      />
     </Card>
   )
 }
