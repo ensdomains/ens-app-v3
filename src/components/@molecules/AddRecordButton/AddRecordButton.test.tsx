@@ -38,27 +38,19 @@ describe('AddRecordButton', () => {
   })
 
   it('should display options on click', async () => {
-    render(
-      <AddRecordButton options={options} onAddRecord={mockHandleAddRecord} />,
-    )
+    render(<AddRecordButton options={options} onAddRecord={mockHandleAddRecord} />)
     fireEvent.click(screen.getByTestId('add-record-button-button'))
     await screen.findByTestId('add-record-button-controls')
     await waitFor(() => {
       expect(screen.getByTestId('add-record-button-option-test')).toBeVisible()
       expect(screen.getByTestId('add-record-button-option-test2')).toBeVisible()
-      expect(
-        screen.getByTestId('add-record-button-option-anotherTest'),
-      ).toBeVisible()
-      expect(
-        screen.getByTestId('add-record-button-option-anotherTest2'),
-      ).toBeVisible()
+      expect(screen.getByTestId('add-record-button-option-anotherTest')).toBeVisible()
+      expect(screen.getByTestId('add-record-button-option-anotherTest2')).toBeVisible()
     })
   })
 
   it('should call onAddRecord when option is selected', async () => {
-    render(
-      <AddRecordButton options={options} onAddRecord={mockHandleAddRecord} />,
-    )
+    render(<AddRecordButton options={options} onAddRecord={mockHandleAddRecord} />)
     fireEvent.click(screen.getByTestId('add-record-button-button'))
     await screen.findByTestId('add-record-button-controls')
     const option = await screen.findByTestId('add-record-button-option-test')
@@ -67,13 +59,7 @@ describe('AddRecordButton', () => {
   })
 
   it('should be searchable when autocomplete is set to true', async () => {
-    render(
-      <AddRecordButton
-        autocomplete
-        options={options}
-        onAddRecord={mockHandleAddRecord}
-      />,
-    )
+    render(<AddRecordButton autocomplete options={options} onAddRecord={mockHandleAddRecord} />)
     fireEvent.click(screen.getByTestId('add-record-button-button'))
     await screen.findByTestId('add-record-button-controls')
     const input = await screen.findByTestId('add-record-button-input')
@@ -81,23 +67,13 @@ describe('AddRecordButton', () => {
     await waitFor(() => {
       expect(screen.queryByTestId('add-record-button-option-test')).toBe(null)
       expect(screen.queryByTestId('add-record-button-option-test2')).toBe(null)
-      expect(
-        screen.getByTestId('add-record-button-option-anotherTest'),
-      ).toBeVisible()
-      expect(
-        screen.getByTestId('add-record-button-option-anotherTest2'),
-      ).toBeVisible()
+      expect(screen.getByTestId('add-record-button-option-anotherTest')).toBeVisible()
+      expect(screen.getByTestId('add-record-button-option-anotherTest2')).toBeVisible()
     })
   })
 
   it('should show clear button when input has content', async () => {
-    render(
-      <AddRecordButton
-        autocomplete
-        options={options}
-        onAddRecord={mockHandleAddRecord}
-      />,
-    )
+    render(<AddRecordButton autocomplete options={options} onAddRecord={mockHandleAddRecord} />)
     fireEvent.click(screen.getByTestId('add-record-button-button'))
     const input = await screen.findByTestId('add-record-button-input')
 
@@ -111,10 +87,7 @@ describe('AddRecordButton', () => {
 
     fireEvent.click(screen.getByTestId('add-record-button-clear-button'))
 
-    expect(screen.getByDisplayValue('')).toHaveAttribute(
-      'data-testid',
-      'add-record-button-input',
-    )
+    expect(screen.getByDisplayValue('')).toHaveAttribute('data-testid', 'add-record-button-input')
     expect(screen.queryByTestId('add-record-button-clear-button')).toBeNull()
   })
 
