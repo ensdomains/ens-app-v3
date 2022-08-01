@@ -230,14 +230,16 @@ export default function Page() {
         ),
         trailing: {
           records: (
-            <RecordsTab
-              network={chainId}
-              name={normalisedName}
-              texts={(profile?.records?.texts as any) || []}
-              addresses={(profile?.records?.coinTypes as any) || []}
-              contentHash={profile?.records?.contentHash}
-              canEdit={selfAbilities.canEdit}
-            />
+            <>
+              <RecordsTab
+                network={chainId}
+                name={normalisedName}
+                texts={(profile?.records?.texts as any) || []}
+                addresses={(profile?.records?.coinTypes as any) || []}
+                contentHash={profile?.records?.contentHash}
+                canEdit={selfAbilities.canEdit}
+              />
+            </>
           ),
           subnames: <SubnamesTab name={normalisedName} network={chainId} />,
           advanced: <Advanced />,

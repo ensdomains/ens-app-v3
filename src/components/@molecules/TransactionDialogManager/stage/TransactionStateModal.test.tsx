@@ -22,6 +22,8 @@ const mockSendTransaction = jest.fn()
 const mockSendUncheckedTransaction = jest.fn()
 const mockEstimateGas = jest.fn()
 
+window.scroll = jest.fn()
+
 const renderHelper = async ({
   actionName,
   displayItems,

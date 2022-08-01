@@ -371,7 +371,6 @@ export const OwnerButton = ({
   description: string
 }) => {
   const { name } = usePrimary(address)
-
   if (type === 'dialog') {
     return <OwnerButtonWithPopup {...{ address, network, label, name, description, canTransfer }} />
   }
