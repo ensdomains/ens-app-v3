@@ -45,12 +45,13 @@
     "dns-packet": "^5.3.1",
     "ethers": "^5.6.1",
     "graphql": "^16.3.0",
-    "graphql-request": "^4.1.0",
-    "idna-uts46-hx": "3.4.0"
+    "graphql-request": "next",
+    "idna-uts46-hx": "3.4.0",
+    "traverse": "^0.6.6"
   },
   "peerDependencies": {
     "ethers": "*"
   },
   "stableVersion": "3.0.0-alpha.5",
-  "yalcSig": "136bf3fd821b54fe8fda05728ae4329e"
+  "yalcSig": "0c75ff2d189bb8cc64885304fa5a6d70"
 }

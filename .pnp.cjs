@@ -612,7 +612,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ensjs",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.6"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@ensdomains/eth-ens-namehash",\
@@ -3907,7 +3907,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "form-data",\
-        "npm:2.3.3"\
+        "npm:3.0.1"\
       ],\
       [\
         "form-data-encoder",\
@@ -4091,7 +4091,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "graphql-request",\
-        "virtual:1bc4e28f6b0b0a1d7a59528ba199848e9c205e1a8a45e2d5483c04993de490f8a2ef6a5655339cb4d2918a0fefb5af9ca110d8aac84d264a15ee60de8be7696d#npm:4.3.0"\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:4.3.0"\
       ],\
       [\
         "growl",\
@@ -5717,10 +5717,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:4.0.0"\
       ],\
       [\
-        "p-memoize",\
-        "npm:7.1.0"\
-      ],\
-      [\
         "p-timeout",\
         "npm:1.2.1"\
       ],\
@@ -6957,6 +6953,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         "npm:0.0.3"\
       ],\
       [\
+        "traverse",\
+        "npm:0.6.6"\
+      ],\
+      [\
         "tree-kill",\
         "npm:1.2.2"\
       ],\
@@ -7605,7 +7605,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
             ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.6"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.9"],\
             ["@ethersproject/providers", "npm:5.6.8"],\
@@ -7681,7 +7681,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next-transpile-modules", "npm:9.0.0"],\
             ["node-fetch", "npm:3.2.10"],\
             ["node-fetch-commonjs", "npm:3.1.1"],\
-            ["p-memoize", "npm:7.1.0"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
             ["react", "npm:17.0.2"],\
@@ -11168,6 +11167,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ensjs", [\
+        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-d12c3c5db5-9673c5c2d7.zip/node_modules/@ensdomains/ensjs/",\
+          "packageDependencies": [\
+            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."]\
+          ],\
+          "linkType": "SOFT"\
+        }],\
         ["npm:2.1.0", {\
           "packageLocation": "./.yarn/cache/@ensdomains-ensjs-npm-2.1.0-a7323df016-bc284cefea.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
@@ -11183,17 +11189,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["npm:3.0.0-alpha.6", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-npm-3.0.0-alpha.6-b4d9dec7a3-a3d7d6bd40.zip/node_modules/@ensdomains/ensjs/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-48d8bd3405/0/cache/@ensdomains-ensjs-file-d12c3c5db5-9673c5c2d7.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "npm:3.0.0-alpha.6"]\
-          ],\
-          "linkType": "SOFT"\
-        }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.6", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-1bc4e28f6b/0/cache/@ensdomains-ensjs-npm-3.0.0-alpha.6-b4d9dec7a3-a3d7d6bd40.zip/node_modules/@ensdomains/ensjs/",\
-          "packageDependencies": [\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.6"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/content-hash", "npm:2.5.7"],\
             ["@ensdomains/ens-contracts", "npm:0.0.11"],\
@@ -11201,8 +11200,9 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dns-packet", "npm:5.4.0"],\
             ["ethers", "npm:5.6.5"],\
             ["graphql", "npm:16.5.0"],\
-            ["graphql-request", "virtual:1bc4e28f6b0b0a1d7a59528ba199848e9c205e1a8a45e2d5483c04993de490f8a2ef6a5655339cb4d2918a0fefb5af9ca110d8aac84d264a15ee60de8be7696d#npm:4.3.0"],\
-            ["idna-uts46-hx", "npm:3.4.0"]\
+            ["graphql-request", "virtual:48d8bd34058ef9c03ebddd661318dd81e196aa19a3ffbcb5736ff8562f34681bd99934134b104d2480020223c1967fbd90da825df0c4ec3b6ba25e7e5aac1ab7#npm:4.4.0-next.2"],\
+            ["idna-uts46-hx", "npm:3.4.0"],\
+            ["traverse", "npm:0.6.6"]\
           ],\
           "packagePeers": [\
             "@types/ethers",\
@@ -22074,7 +22074,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
             ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:3.0.0-alpha.6"],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.9"],\
             ["@ethersproject/providers", "npm:5.6.8"],\
@@ -22150,7 +22150,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["next-transpile-modules", "npm:9.0.0"],\
             ["node-fetch", "npm:3.2.10"],\
             ["node-fetch-commonjs", "npm:3.1.1"],\
-            ["p-memoize", "npm:7.1.0"],\
             ["postcss-syntax", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.36.2"],\
             ["prettier", "npm:2.6.2"],\
             ["react", "npm:17.0.2"],\
@@ -25772,21 +25771,12 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "SOFT"\
         }],\
-        ["virtual:1bc4e28f6b0b0a1d7a59528ba199848e9c205e1a8a45e2d5483c04993de490f8a2ef6a5655339cb4d2918a0fefb5af9ca110d8aac84d264a15ee60de8be7696d#npm:4.3.0", {\
-          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-b70ddbc75c/0/cache/graphql-request-npm-4.3.0-dcf481b653-3124afd01a.zip/node_modules/graphql-request/",\
+        ["npm:4.4.0-next.2", {\
+          "packageLocation": "./.yarn/cache/graphql-request-npm-4.4.0-next.2-d776c9f12d-035d990b96.zip/node_modules/graphql-request/",\
           "packageDependencies": [\
-            ["graphql-request", "virtual:1bc4e28f6b0b0a1d7a59528ba199848e9c205e1a8a45e2d5483c04993de490f8a2ef6a5655339cb4d2918a0fefb5af9ca110d8aac84d264a15ee60de8be7696d#npm:4.3.0"],\
-            ["@types/graphql", null],\
-            ["cross-fetch", "npm:3.1.5"],\
-            ["extract-files", "npm:9.0.0"],\
-            ["form-data", "npm:3.0.1"],\
-            ["graphql", "npm:16.5.0"]\
+            ["graphql-request", "npm:4.4.0-next.2"]\
           ],\
-          "packagePeers": [\
-            "@types/graphql",\
-            "graphql"\
-          ],\
-          "linkType": "HARD"\
+          "linkType": "SOFT"\
         }],\
         ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:4.3.0", {\
           "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-b621633e18/0/cache/graphql-request-npm-4.3.0-dcf481b653-3124afd01a.zip/node_modules/graphql-request/",\
@@ -25797,6 +25787,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["extract-files", "npm:9.0.0"],\
             ["form-data", "npm:3.0.1"],\
             ["graphql", null]\
+          ],\
+          "packagePeers": [\
+            "@types/graphql",\
+            "graphql"\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["virtual:48d8bd34058ef9c03ebddd661318dd81e196aa19a3ffbcb5736ff8562f34681bd99934134b104d2480020223c1967fbd90da825df0c4ec3b6ba25e7e5aac1ab7#npm:4.4.0-next.2", {\
+          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-ecaf91b082/0/cache/graphql-request-npm-4.4.0-next.2-d776c9f12d-035d990b96.zip/node_modules/graphql-request/",\
+          "packageDependencies": [\
+            ["graphql-request", "virtual:48d8bd34058ef9c03ebddd661318dd81e196aa19a3ffbcb5736ff8562f34681bd99934134b104d2480020223c1967fbd90da825df0c4ec3b6ba25e7e5aac1ab7#npm:4.4.0-next.2"],\
+            ["@types/graphql", null],\
+            ["cross-fetch", "npm:3.1.5"],\
+            ["extract-files", "npm:9.0.0"],\
+            ["form-data", "npm:3.0.1"],\
+            ["graphql", "npm:16.5.0"]\
           ],\
           "packagePeers": [\
             "@types/graphql",\
@@ -29961,13 +29967,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["mimic-fn", "npm:2.1.0"]\
           ],\
           "linkType": "HARD"\
-        }],\
-        ["npm:4.0.0", {\
-          "packageLocation": "./.yarn/cache/mimic-fn-npm-4.0.0-feaeda79f7-995dcece15.zip/node_modules/mimic-fn/",\
-          "packageDependencies": [\
-            ["mimic-fn", "npm:4.0.0"]\
-          ],\
-          "linkType": "HARD"\
         }]\
       ]],\
       ["mimic-response", [\
@@ -31518,16 +31517,6 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["p-map", "npm:4.0.0"],\
             ["aggregate-error", "npm:3.1.0"]\
-          ],\
-          "linkType": "HARD"\
-        }]\
-      ]],\
-      ["p-memoize", [\
-        ["npm:7.1.0", {\
-          "packageLocation": "./.yarn/cache/p-memoize-npm-7.1.0-b17b82884b-41a9ffdedb.zip/node_modules/p-memoize/",\
-          "packageDependencies": [\
-            ["p-memoize", "npm:7.1.0"],\
-            ["mimic-fn", "npm:4.0.0"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -36059,6 +36048,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["tr46", "npm:2.1.0"],\
             ["punycode", "npm:2.1.1"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
+      ["traverse", [\
+        ["npm:0.6.6", {\
+          "packageLocation": "./.yarn/cache/traverse-npm-0.6.6-584cfa4b5f-e2afa72f11.zip/node_modules/traverse/",\
+          "packageDependencies": [\
+            ["traverse", "npm:0.6.6"]\
           ],\
           "linkType": "HARD"\
         }]\

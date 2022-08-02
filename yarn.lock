@@ -1971,6 +1971,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs::locator=ens-app-v2%40workspace%3A.":
+  version: 3.0.0-alpha.6
+  resolution: "@ensdomains/ensjs@file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."
+  dependencies:
+    "@ensdomains/address-encoder": ^0.2.16
+    "@ensdomains/content-hash": ^2.5.7
+    "@ensdomains/ens-contracts": ^0.0.11
+    dns-packet: ^5.3.1
+    ethers: ^5.6.1
+    graphql: ^16.3.0
+    graphql-request: next
+    idna-uts46-hx: 3.4.0
+    traverse: ^0.6.6
+  peerDependencies:
+    ethers: "*"
+  checksum: 9673c5c2d749931388055860479d34b0d9fa76cddf1c66022b2fba2a8c23df5972b667026e6ad3ab6d90afa346132b4a6774b94dc8d1914b99a66299848c550e
+  languageName: node
+  linkType: hard
+
 "@ensdomains/ensjs@npm:^2.0.1":
   version: 2.1.0
   resolution: "@ensdomains/ensjs@npm:2.1.0"
@@ -1984,24 +2003,6 @@ __metadata:
     ethers: ^5.0.13
     js-sha3: ^0.8.0
   checksum: bc284cefea4959b9a9f55e84e281140d9c17ecca21be798f5a463a924a7c3f52ae0072d3e6c8c2eb23a7bd4df0f7597ded212a5f706d199f187c00bc6db5d076
-  languageName: node
-  linkType: hard
-
-"@ensdomains/ensjs@npm:^3.0.0-alpha.6":
-  version: 3.0.0-alpha.6
-  resolution: "@ensdomains/ensjs@npm:3.0.0-alpha.6"
-  dependencies:
-    "@ensdomains/address-encoder": ^0.2.16
-    "@ensdomains/content-hash": ^2.5.7
-    "@ensdomains/ens-contracts": ^0.0.11
-    dns-packet: ^5.3.1
-    ethers: ^5.6.1
-    graphql: ^16.3.0
-    graphql-request: ^4.1.0
-    idna-uts46-hx: 3.4.0
-  peerDependencies:
-    ethers: "*"
-  checksum: a3d7d6bd406730db5fc671e89bb2a718891fa9f2d96a2b54768e43649e50cac77340129b5706fd4c75707b3935190d456ec27ada1bed5a4108732eb34ba25b54
   languageName: node
   linkType: hard
 
@@ -11318,7 +11319,7 @@ __metadata:
     "@ensdomains/ens-contracts": ^0.0.12
     "@ensdomains/ens-test-env": ^0.1.4
     "@ensdomains/ens-validation": ^0.1.0
-    "@ensdomains/ensjs": ^3.0.0-alpha.6
+    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs"
     "@ensdomains/eth-ens-namehash": ^2.0.15
     "@ensdomains/thorin": ^0.6.9
     "@ethersproject/providers": ^5.6.8
@@ -11391,7 +11392,6 @@ __metadata:
     next-transpile-modules: ^9.0.0
     node-fetch: ^3.2.6
     node-fetch-commonjs: ^3.1.1
-    p-memoize: ^7.1.0
     postcss-syntax: ^0.36.2
     prettier: 2.6.2
     react: ^17.0.2
@@ -14472,7 +14472,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"graphql-request@npm:^4.1.0, graphql-request@npm:^4.3.0":
+"graphql-request@npm:^4.3.0":
   version: 4.3.0
   resolution: "graphql-request@npm:4.3.0"
   dependencies:
@@ -14482,6 +14482,19 @@ __metadata:
   peerDependencies:
     graphql: 14 - 16
   checksum: 3124afd01aee781cd5a2e9ac30063526b677a6754032566104fc36270b5f9be03f17a32e49f34c71ca968d533151550c37f7a0194d11c36ff59977bd73e2abc3
+  languageName: node
+  linkType: hard
+
+"graphql-request@npm:next":
+  version: 4.4.0-next.2
+  resolution: "graphql-request@npm:4.4.0-next.2"
+  dependencies:
+    cross-fetch: ^3.1.5
+    extract-files: ^9.0.0
+    form-data: ^3.0.0
+  peerDependencies:
+    graphql: 14 - 16
+  checksum: 035d990b961b8f3fed44e2ea43695ca7d03f2aff7b40b106efec02eb7e25c893dc0129aa94c50761e9d42659f3958172553ebfaa784e0ba2ef0246c26af7d376
   languageName: node
   linkType: hard
 
@@ -18216,13 +18229,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mimic-fn@npm:^4.0.0":
-  version: 4.0.0
-  resolution: "mimic-fn@npm:4.0.0"
-  checksum: 995dcece15ee29aa16e188de6633d43a3db4611bcf93620e7e62109ec41c79c0f34277165b8ce5e361205049766e371851264c21ac64ca35499acb5421c2ba56
-  languageName: node
-  linkType: hard
-
 "mimic-response@npm:^1.0.0, mimic-response@npm:^1.0.1":
   version: 1.0.1
   resolution: "mimic-response@npm:1.0.1"
@@ -19685,15 +19691,6 @@ __metadata:
   dependencies:
     aggregate-error: ^3.0.0
   checksum: cb0ab21ec0f32ddffd31dfc250e3afa61e103ef43d957cc45497afe37513634589316de4eb88abdfd969fe6410c22c0b93ab24328833b8eb1ccc087fc0442a1c
-  languageName: node
-  linkType: hard
-
-"p-memoize@npm:^7.1.0":
-  version: 7.1.0
-  resolution: "p-memoize@npm:7.1.0"
-  dependencies:
-    mimic-fn: ^4.0.0
-  checksum: 41a9ffdedb8f4805fa4fbe16eb205ce95494f758d24ddb31126ed18baa5a0dd1fbdbd12b52a5f2053953bf94886f2035debe826855439ee1f936b7c1f9266f9b
   languageName: node
   linkType: hard
 
@@ -23658,6 +23655,13 @@ __metadata:
   version: 0.0.3
   resolution: "tr46@npm:0.0.3"
   checksum: 726321c5eaf41b5002e17ffbd1fb7245999a073e8979085dacd47c4b4e8068ff5777142fc6726d6ca1fd2ff16921b48788b87225cbc57c72636f6efa8efbffe3
+  languageName: node
+  linkType: hard
+
+"traverse@npm:^0.6.6":
+  version: 0.6.6
+  resolution: "traverse@npm:0.6.6"
+  checksum: e2afa72f11efa9ba31ed763d2d9d2aa244612f22015d16c0ea3ba5f6ca8bf071de87f8108b721885cce06ea4a36ef4605d9228c67e431d9015ea4685cb364420
   languageName: node
   linkType: hard
 

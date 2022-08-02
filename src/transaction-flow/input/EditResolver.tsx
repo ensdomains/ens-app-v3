@@ -4,7 +4,7 @@ import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { Outlink } from '@app/components/Outlink'
 import { useProfile } from '@app/hooks/useProfile'
 import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
-import { Button, Dialog, Input, mq, RadioButton } from '@ensdomains/thorin'
+import { Button, Dialog, Input, mq, RadioButton, Typography } from '@ensdomains/thorin'
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
@@ -199,6 +199,9 @@ export const EditResolver = ({
 
   return (
     <>
+      <Typography variant="extraLarge" weight="bold">
+        Edit Resolver
+      </Typography>
       <EditResolverFormContainer>
         {resolverChoice === 'custom' && validity?.length ? (
           <>
