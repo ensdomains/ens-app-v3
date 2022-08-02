@@ -234,10 +234,15 @@ export const AvatarNFT = ({
         onChange={(e) => setSearchedInput(e.target.value)}
         placeholder="Search for an NFT"
       />
-      <ScrollBox style={{ width: '100%' }} onReachedBottom={fetchPage}>
+      <ScrollBox
+        data-testid="nft-scroll-box"
+        style={{ width: '100%' }}
+        onReachedBottom={fetchPage}
+      >
         <InnerScrollBox>
           {NFTs?.map((NFT, i) => (
             <NFTContainer
+              data-testid={`nft-${NFT.id.tokenId}-${NFT.contract.address}`}
               as="button"
               onClick={() => setSelectedNFT(i)}
               key={`${NFT.id.tokenId}-${NFT.contract.address}`}

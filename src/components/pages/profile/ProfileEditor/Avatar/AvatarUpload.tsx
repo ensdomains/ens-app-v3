@@ -92,7 +92,13 @@ const CancelButton = ({ handleCancel }: { handleCancel: () => void }) => {
   const { t } = useTranslation('common')
 
   return (
-    <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
+    <Button
+      data-testid="avatar-cancel-button"
+      variant="secondary"
+      tone="grey"
+      shadowless
+      onClick={handleCancel}
+    >
       {t('action.back')}
     </Button>
   )
@@ -298,7 +304,7 @@ const CropComponent = ({
   return (
     <>
       <Dialog.Heading title="Edit Image" />
-      <EditImageContainer>
+      <EditImageContainer data-testid="edit-image-container">
         <ImageContainer>
           <ImageCropBorder as={CropBorderSVG} />
           <ImageCropFrame as={CropFrameSVG} />
@@ -320,8 +326,12 @@ const CropComponent = ({
       <Dialog.Footer
         leading={<CancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button shadowless onClick={handleSubmit}>
-            {t('action.upload', { ns: 'common' })}
+          <Button
+            shadowless
+            onClick={handleSubmit}
+            data-testid="continue-button"
+          >
+            {t('action.continue', { ns: 'common' })}
           </Button>
         }
       />
@@ -410,7 +420,7 @@ const UploadComponent = ({
         title="Upload Avatar"
         subtitle="You need to sign a message to upload an avatar. This won't cost anything."
       />
-      <CroppedImagePreview src={dataURL} />
+      <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
       <Dialog.Footer
         leading={<CancelButton handleCancel={handleCancel} />}
         trailing={
@@ -418,6 +428,7 @@ const UploadComponent = ({
             disabled={isLoading}
             onClick={() => signAndUpload()}
             shadowless
+            data-testid="upload-button"
           >
             Sign and Upload
           </Button>
