@@ -11,7 +11,10 @@ import { useProvider } from 'wagmi'
 
 const opts: ConstructorParameters<typeof ENS>[0] = {}
 
-if (process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES) {
+if (
+  process.env.NEXT_PUBLIC_PROVIDER &&
+  process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES
+) {
   const deploymentAddresses = JSON.parse(
     process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES!,
   ) as Record<ContractName | 'ENSRegistry', string>
