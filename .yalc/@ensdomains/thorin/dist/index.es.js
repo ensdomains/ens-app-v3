@@ -1424,6 +1424,7 @@ const Label = styled.label(({
     color: ${theme.colors.textTertiary};
     font-weight: ${theme.fontWeights["semiBold"]};
     display: flex;
+    cursor: pointer;
   `);
 const LabelSecondary = styled.span(({
   theme
@@ -1473,10 +1474,11 @@ const LabelContent = (_k) => {
 const Container$d = styled.div(({
   theme,
   $inline,
-  $width
+  $width,
+  $labelRight
 }) => css`
     display: flex;
-    flex-direction: ${$inline ? "row" : "column"};
+    flex-direction: ${$inline ? $labelRight ? "row-reverse" : "row" : "column"};
     align-items: ${$inline ? "center" : "normal"};
     gap: ${$inline ? theme.space["2.5"] : theme.space["2"]};
     width: ${theme.space[$width]};
@@ -1520,6 +1522,7 @@ const Field = (_m) => {
     required,
     inline,
     width = "full",
+    labelRight = false,
     labelPlacement
   } = _n, props = __objRest(_n, [
     "children",
@@ -1532,6 +1535,7 @@ const Field = (_m) => {
     "required",
     "inline",
     "width",
+    "labelRight",
     "labelPlacement"
   ]);
   const ids = useFieldIds({
@@ -1552,6 +1556,7 @@ const Field = (_m) => {
   const errorPlacement = getPlacement("error", "bottom", labelPlacement);
   return inline ? /* @__PURE__ */ React.createElement(Container$d, {
     $inline: inline,
+    $labelRight: labelRight,
     $width: width
   }, /* @__PURE__ */ React.createElement(ContainerInner$2, null, hideLabel ? /* @__PURE__ */ React.createElement(VisuallyHidden, null, /* @__PURE__ */ React.createElement(LabelContent, __spreadValues({}, __spreadProps(__spreadValues({}, props), {
     ids,
@@ -1943,66 +1948,85 @@ const StyledScrollBox = styled.div(({
       `}
     }
   `);
+const IntersectElement = styled.div(() => css`
+    display: block;
+    height: 0px;
+  `);
 const ScrollBox = (_s) => {
   var _t = _s, {
     topTriggerPx = 16,
     bottomTriggerPx = 16,
     onReachedTop,
-    onReachedBottom
+    onReachedBottom,
+    children
   } = _t, props = __objRest(_t, [
     "topTriggerPx",
     "bottomTriggerPx",
     "onReachedTop",
-    "onReachedBottom"
+    "onReachedBottom",
+    "children"
   ]);
   const ref = React.useRef(null);
+  const topRef = React.useRef(null);
+  const bottomRef = React.useRef(null);
+  const funcRef = React.useRef({
+    onReachedTop,
+    onReachedBottom
+  });
   const [showTop, setShowTop] = React.useState(false);
   const [showBottom, setShowBottom] = React.useState(false);
-  const setScrollValues = React.useCallback((scrollTop, scrollHeight, clientHeight) => {
-    const _showTop = scrollTop > topTriggerPx;
-    const _showBottom = scrollHeight - scrollTop > clientHeight + bottomTriggerPx;
-    setShowTop((prev) => {
-      if (_showTop !== prev) {
-        if (!_showTop) {
-          onReachedTop == null ? void 0 : onReachedTop();
-        }
+  const handleIntersect = (entries) => {
+    var _a, _b, _c, _d;
+    const intersectingTop = [false, -1];
+    const intersectingBottom = [false, -1];
+    for (let i = 0; i < entries.length; i += 1) {
+      const entry = entries[i];
+      const iref = entry.target === topRef.current ? intersectingTop : intersectingBottom;
+      if (entry.time > iref[1]) {
+        iref[0] = entry.isIntersecting;
+        iref[1] = entry.time;
       }
-      return _showTop;
-    });
-    setShowBottom((prev) => {
-      if (_showBottom !== prev) {
-        if (!_showBottom) {
-          onReachedBottom == null ? void 0 : onReachedBottom();
-        }
-      }
-      return _showBottom;
-    });
-  }, [topTriggerPx, bottomTriggerPx, onReachedTop, onReachedBottom]);
-  const handleScroll = (event) => {
-    const {
-      scrollTop,
-      scrollHeight,
-      clientHeight
-    } = event.currentTarget;
-    setScrollValues(scrollTop, scrollHeight, clientHeight);
+    }
+    intersectingTop[1] !== -1 && setShowTop(!intersectingTop[0]);
+    intersectingBottom[1] !== -1 && setShowBottom(!intersectingBottom[0]);
+    intersectingTop[0] && ((_b = (_a = funcRef.current).onReachedTop) == null ? void 0 : _b.call(_a));
+    intersectingBottom[0] && ((_d = (_c = funcRef.current).onReachedBottom) == null ? void 0 : _d.call(_c));
   };
   React.useEffect(() => {
-    const _ref = ref.current;
-    if (_ref) {
-      const {
-        scrollTop,
-        scrollHeight,
-        clientHeight
-      } = _ref;
-      setScrollValues(scrollTop, scrollHeight, clientHeight);
+    const el = ref.current;
+    const topEl = topRef.current;
+    const bottomEl = bottomRef.current;
+    let observer;
+    if (el && topEl && bottomEl) {
+      observer = new IntersectionObserver(handleIntersect, {
+        root: el,
+        threshold: 1,
+        rootMargin: `${topTriggerPx}px 0px ${bottomTriggerPx}px 0px`
+      });
+      observer.observe(topEl);
+      observer.observe(bottomEl);
     }
-  }, [setScrollValues]);
+    return () => {
+      observer.disconnect();
+    };
+  }, [bottomTriggerPx, topTriggerPx]);
+  React.useEffect(() => {
+    funcRef.current = {
+      onReachedTop,
+      onReachedBottom
+    };
+  }, [onReachedTop, onReachedBottom]);
   return /* @__PURE__ */ React.createElement(StyledScrollBox, __spreadValues({
     $showBottom: showBottom,
     $showTop: showTop,
-    ref,
-    onScroll: handleScroll
-  }, props));
+    ref
+  }, props), /* @__PURE__ */ React.createElement(IntersectElement, {
+    "data-testid": "scrollbox-top-intersect",
+    ref: topRef
+  }), children, /* @__PURE__ */ React.createElement(IntersectElement, {
+    "data-testid": "scrollbox-bottom-intersect",
+    ref: bottomRef
+  }));
 };
 const Context = React.createContext(void 0);
 const SkeletonGroup = ({
@@ -2238,11 +2262,13 @@ const Backdrop = ({
     let top = 0;
     if (typeof window !== "undefined" && open) {
       top = window.scrollY;
+      document.body.style.width = `${document.body.clientWidth}px`;
       document.body.style.position = "fixed";
       document.body.style.top = `-${top}px`;
     }
     return () => {
       if (typeof window !== "undefined" && open) {
+        document.body.style.width = "";
         document.body.style.position = "";
         document.body.style.top = "";
         window.scroll({
@@ -4011,7 +4037,8 @@ const RadioButton = React.forwardRef((_S, ref) => {
     width,
     onBlur,
     onChange,
-    onFocus
+    onFocus,
+    labelRight
   } = _T, props = __objRest(_T, [
     "description",
     "disabled",
@@ -4029,11 +4056,12 @@ const RadioButton = React.forwardRef((_S, ref) => {
     "width",
     "onBlur",
     "onChange",
-    "onFocus"
+    "onFocus",
+    "labelRight"
   ]);
   const defaultRef = React.useRef(null);
   const inputRef = ref || defaultRef;
-  return /* @__PURE__ */ React.createElement(Field, {
+  return /* @__PURE__ */ React.createElement(Field, __spreadValues({}, {
     description,
     error,
     hideLabel,
@@ -4042,8 +4070,9 @@ const RadioButton = React.forwardRef((_S, ref) => {
     label,
     labelSecondary,
     required,
-    width
-  }, /* @__PURE__ */ React.createElement(Input, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
+    width,
+    labelRight
+  }), /* @__PURE__ */ React.createElement(Input, __spreadProps(__spreadValues({}, __spreadProps(__spreadValues({}, props), {
     "aria-invalid": error ? true : void 0,
     "aria-selected": checked ? true : void 0,
     "data-testid": getTestId(props, "radio"),
@@ -4994,7 +5023,7 @@ const Slider = React.forwardRef((_Y, ref) => {
     labelSecondary,
     required,
     width,
-    defaultValue = 50,
+    defaultValue,
     disabled,
     id: id2,
     name,
@@ -5332,6 +5361,9 @@ const SubTitle = styled(Typography)(({
     font-weight: ${theme.fontWeights["medium"]};
     color: ${theme.colors.textSecondary};
     text-align: center;
+
+    padding: 0 ${theme.space["4"]};
+    max-width: ${theme.space["72"]};
   `);
 const Container$1 = styled.div(({
   theme,

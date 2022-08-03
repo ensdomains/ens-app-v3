@@ -188,11 +188,13 @@ export default function Page() {
                   .filter((item: any) => item.value !== null)}
               />
 
-              <ProfileEditor
-                name={name}
-                open={showEditor}
-                onDismiss={handleDismissEditor}
-              />
+              {selfAbilities.canEdit && (
+                <ProfileEditor
+                  name={name}
+                  open={showEditor}
+                  onDismiss={handleDismissEditor}
+                />
+              )}
             </DetailsWrapper>
           ),
         }}

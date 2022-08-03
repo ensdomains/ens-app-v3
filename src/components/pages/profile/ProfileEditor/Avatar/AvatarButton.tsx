@@ -3,6 +3,7 @@ import { ProfileEditorType } from '@app/types'
 import { Avatar, Dropdown } from '@ensdomains/thorin'
 import { useRef } from 'react'
 import { UseFormSetValue } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
@@ -86,6 +87,8 @@ const AvatarButton = ({
   setValue,
   setDisplay,
 }: Props) => {
+  const { t } = useTranslation('profile')
+
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSelectOption = (value: string) => () => {
@@ -103,19 +106,19 @@ const AvatarButton = ({
     <Dropdown
       items={[
         {
-          label: 'Select NFT',
+          label: t('profileEditor.tabs.avatar.dropdown.selectNFT'),
           color: 'black',
           onClick: handleSelectOption('nft'),
         },
         {
-          label: 'Upload Image',
+          label: t('profileEditor.tabs.avatar.dropdown.uploadImage'),
           color: 'black',
           onClick: handleSelectOption('upload'),
         },
         ...(validated
           ? [
               {
-                label: 'Remove',
+                label: t('action.remove', { ns: 'common' }),
                 color: 'red',
                 onClick: handleSelectOption('remove'),
               },

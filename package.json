@@ -38,7 +38,9 @@
     "update:local:thorin": "yalc add @ensdomains/thorin && pnpm",
     "wrangle": "next build && next export && npx wrangler pages dev ./out",
     "wrangle:dev": "wrangler pages dev ./next",
-    "generate:sitemaps": "node ./generate-site-map.mjs"
+    "generate:sitemaps": "node ./generate-site-map.mjs",
+    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
+    "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.16",
@@ -46,7 +48,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "^3.0.0-alpha.6",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "file:.yalc/@ensdomains/thorin",
+    "@ensdomains/thorin": "link:.yalc/@ensdomains/thorin",
     "@rainbow-me/rainbowkit": "0.3.3",
     "@sentry/nextjs": "^7.2.0",
     "@svgr/webpack": "^6.2.1",

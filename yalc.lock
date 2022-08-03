@@ -7,8 +7,9 @@
       "replaced": "^0.1.4"
     },
     "@ensdomains/thorin": {
-      "signature": "ddc579d61d50355be0e4d50986499007",
-      "pure": true
+      "signature": "7d0f8d37648e72068b3fe3089df845c1",
+      "link": true,
+      "replaced": "0.6.9"
     }
   }
 }

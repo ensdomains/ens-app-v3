@@ -3,13 +3,14 @@ import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
 import {
   Button,
   Dialog,
+  Heading,
   Input,
   ScrollBox,
   Spinner,
   Typography,
 } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
-import { useCallback, useState } from 'react'
+import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useInfiniteQuery } from 'react-query'
 import styled, { css } from 'styled-components'
@@ -129,6 +130,36 @@ const SelectedNFTImage = styled.img(
   `,
 )
 
+const LoadingContainer = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+  `,
+)
+
+const SpinnerContainer = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
+    padding: ${theme.space['4']} 0;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  `,
+)
+
+const SpinnerRow = () => (
+  <SpinnerContainer>
+    <Spinner color="accent" size="large" />
+  </SpinnerContainer>
+)
+
 export const AvatarNFT = ({
   handleCancel,
   handleSubmit,
@@ -136,14 +167,18 @@ export const AvatarNFT = ({
   handleCancel: () => void
   handleSubmit: (display: string, uri: string) => void
 }) => {
-  const { t } = useTranslation()
+  const { t } = useTranslation('profile')
 
   const { data: addressData } = useAccount()
-  const { data: NFTPages, fetchNextPage } = useInfiniteQuery(
+  const {
+    data: NFTPages,
+    fetchNextPage,
+    isLoading,
+  } = useInfiniteQuery(
     [addressData?.address!, 'NFTs'],
     async ({ pageParam }: { pageParam?: string }) => {
       const urlParams = new URLSearchParams()
-      urlParams.append('owner', addressData!.address!)
+      urlParams.append('owner', '0x866B3c4994e1416B7C738B9818b31dC246b95eEE') // addressData!.address!)
       urlParams.append('filters[]', 'SPAM')
       if (pageParam) {
         urlParams.append('pageKey', pageParam)
@@ -192,13 +227,13 @@ export const AvatarNFT = ({
     return (
       <>
         <Dialog.Heading
-          title="Selected NFT"
-          subtitle="Are you sure you want to use this NFT?"
+          title={t('profileEditor.tabs.avatar.nft.selected.title')}
+          subtitle={t('profileEditor.tabs.avatar.nft.selected.subtitle')}
         />
         <SelectedNFTContainer>
           <SelectedNFTImage src={nftReference.media[0].gateway} />
           <Typography weight="bold">
-            {nftReference.title || 'Unknown NFT'}
+            {nftReference.title || t('profileEditor.tabs.avatar.nft.unknown')}
           </Typography>
           <Typography>{nftReference.description}</Typography>
         </SelectedNFTContainer>
@@ -210,12 +245,12 @@ export const AvatarNFT = ({
               shadowless
               onClick={() => setSelectedNFT(null)}
             >
-              {t('action.back')}
+              {t('action.back', { ns: 'common' })}
             </Button>
           }
           trailing={
             <Button shadowless onClick={handleConfirm}>
-              {t('action.confirm')}
+              {t('action.confirm', { ns: 'common' })}
             </Button>
           }
         />
@@ -223,40 +258,65 @@ export const AvatarNFT = ({
     )
   }
 
+  let innerContent: ReactNode
+
+  if (isLoading) {
+    innerContent = (
+      <LoadingContainer>
+        <Heading>{t('profileEditor.tabs.avatar.nft.loading')}</Heading>
+        <SpinnerRow />
+      </LoadingContainer>
+    )
+  } else if (NFTs && NFTs.length > 0) {
+    innerContent = (
+      <>
+        <Input
+          prefix={<MagnifyingGlassSVG />}
+          hideLabel
+          label="search"
+          value={searchedInput}
+          onChange={(e) => setSearchedInput(e.target.value)}
+          placeholder={t('profileEditor.tabs.avatar.nft.searchPlaceholder')}
+        />
+        <ScrollBox
+          data-testid="nft-scroll-box"
+          style={{ width: '100%' }}
+          onReachedBottom={fetchPage}
+        >
+          <InnerScrollBox>
+            {NFTs?.map((NFT, i) => (
+              <NFTContainer
+                data-testid={`nft-${NFT.id.tokenId}-${NFT.contract.address}`}
+                as="button"
+                onClick={() => setSelectedNFT(i)}
+                key={`${NFT.id.tokenId}-${NFT.contract.address}`}
+              >
+                <NFTImage
+                  src={NFT.media[0].thumbnail || NFT.media[0].gateway}
+                  loading="lazy"
+                />
+                <NFTName weight="bold">
+                  {NFT.title || t('profileEditor.tabs.avatar.nft.unknown')}
+                </NFTName>
+              </NFTContainer>
+            ))}
+          </InnerScrollBox>
+          {hasNextPage && <SpinnerRow />}
+        </ScrollBox>
+      </>
+    )
+  } else {
+    innerContent = (
+      <LoadingContainer>
+        <Heading>{t('profileEditor.tabs.avatar.nft.noNFTs')}</Heading>
+      </LoadingContainer>
+    )
+  }
+
   return (
     <>
-      <Dialog.Heading title="Select an NFT" />
-      <Input
-        prefix={<MagnifyingGlassSVG />}
-        hideLabel
-        label="search"
-        value={searchedInput}
-        onChange={(e) => setSearchedInput(e.target.value)}
-        placeholder="Search for an NFT"
-      />
-      <ScrollBox
-        data-testid="nft-scroll-box"
-        style={{ width: '100%' }}
-        onReachedBottom={fetchPage}
-      >
-        <InnerScrollBox>
-          {NFTs?.map((NFT, i) => (
-            <NFTContainer
-              data-testid={`nft-${NFT.id.tokenId}-${NFT.contract.address}`}
-              as="button"
-              onClick={() => setSelectedNFT(i)}
-              key={`${NFT.id.tokenId}-${NFT.contract.address}`}
-            >
-              <NFTImage
-                src={NFT.media[0].thumbnail || NFT.media[0].gateway}
-                loading="lazy"
-              />
-              <NFTName weight="bold">{NFT.title || 'Unknown NFT'}</NFTName>
-            </NFTContainer>
-          ))}
-        </InnerScrollBox>
-        {hasNextPage && <Spinner />}
-      </ScrollBox>
+      <Dialog.Heading title={t('profileEditor.tabs.avatar.nft.title')} />
+      {innerContent}
       <Dialog.Footer
         leading={
           <Button
@@ -265,7 +325,7 @@ export const AvatarNFT = ({
             shadowless
             onClick={handleCancel}
           >
-            {t('action.cancel')}
+            {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={null}

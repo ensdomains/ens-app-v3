@@ -14,7 +14,10 @@
     "add": "Add",
     "search": "Search",
     "back": "Back",
-    "continue": "Continue"
+    "continue": "Continue",
+    "confirm": "Confirm",
+    "remove": "Remove",
+    "sign": "Sign"
   },
   "navigation": {
     "home": "Home",

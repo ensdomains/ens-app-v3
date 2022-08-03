@@ -303,7 +303,7 @@ const CropComponent = ({
 
   return (
     <>
-      <Dialog.Heading title="Edit Image" />
+      <Dialog.Heading title={t('profileEditor.tabs.avatar.image.title')} />
       <EditImageContainer data-testid="edit-image-container">
         <ImageContainer>
           <ImageCropBorder as={CropBorderSVG} />
@@ -365,7 +365,7 @@ const UploadComponent = ({
   handleSubmit: (uri: string) => void
   name: string
 }) => {
-  // const { t } = useTranslation('profile')
+  const { t } = useTranslation('profile')
 
   const urlHash = useMemo(() => sha256(dataURLToBytes(dataURL)), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
@@ -417,8 +417,8 @@ const UploadComponent = ({
   return (
     <>
       <Dialog.Heading
-        title="Upload Avatar"
-        subtitle="You need to sign a message to upload an avatar. This won't cost anything."
+        title={t('profileEditor.tabs.avatar.image.upload.title')}
+        subtitle={t('profileEditor.tabs.avatar.image.upload.subtitle')}
       />
       <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
       <Dialog.Footer
@@ -430,7 +430,7 @@ const UploadComponent = ({
             shadowless
             data-testid="upload-button"
           >
-            Sign and Upload
+            {t('profileEditor.tabs.avatar.image.upload.action')}
           </Button>
         }
       />
