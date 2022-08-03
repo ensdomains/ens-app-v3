@@ -83,8 +83,8 @@ jobs:
           cache: 'pnpm'
 
       - run: pnpm install --frozen-lockfile
-        env:
-          CYPRESS_CACHE_FOLDER: ./tmp/Cypress
+
+      - run: pnpm rebuild -r
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -92,7 +92,6 @@ jobs:
           "pnpm wait-on http://localhost:3000 && pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
         env:
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
-          CYPRESS_CACHE_FOLDER: ./tmp/Cypress
 
       - uses: actions/upload-artifact@v2
         if: failure()
