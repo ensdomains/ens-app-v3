@@ -11,7 +11,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - run: pnpm install
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.8.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
 
       - run: pnpm test:coverage
 
@@ -20,9 +30,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.8.0
 
-      - name: Install pnpm packages
-        run: pnpm install
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
 
       - name: Pull metadata service image
         run: |
@@ -54,8 +72,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
 
-      - name: Install pnpm packages
-        run: pnpm install
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.8.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: "pnpm"
+
+      - run: pnpm install --frozen-lockfile
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
