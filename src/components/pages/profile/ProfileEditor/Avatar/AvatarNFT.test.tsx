@@ -58,6 +58,11 @@ const generateNFT =
     },
   })
 describe('<AvatarNFT />', () => {
+  window.IntersectionObserver = jest.fn()
+  ;(window.IntersectionObserver as jest.Mock).mockImplementation(() => ({
+    observe: jest.fn(),
+    disconnect: jest.fn(),
+  }))
   mockUseAccount.mockReturnValue({
     data: {
       address: '0x0000000000000000000000000000000000000001',

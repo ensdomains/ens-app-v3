@@ -77,6 +77,7 @@ describe('<AvatarUpload />', () => {
     await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalled())
   })
   it('does not call handleSubmit if upload is unsuccessful', async () => {
+    mockHandleSubmit.mockClear()
     global.fetch = jest.fn().mockImplementation(() =>
       Promise.resolve({
         json: () => ({ message: 'failed' }),

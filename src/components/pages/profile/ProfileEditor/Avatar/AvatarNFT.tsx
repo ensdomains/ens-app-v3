@@ -178,7 +178,7 @@ export const AvatarNFT = ({
     [addressData?.address!, 'NFTs'],
     async ({ pageParam }: { pageParam?: string }) => {
       const urlParams = new URLSearchParams()
-      urlParams.append('owner', '0x866B3c4994e1416B7C738B9818b31dC246b95eEE') // addressData!.address!)
+      urlParams.append('owner', addressData!.address!)
       urlParams.append('filters[]', 'SPAM')
       if (pageParam) {
         urlParams.append('pageKey', pageParam)
