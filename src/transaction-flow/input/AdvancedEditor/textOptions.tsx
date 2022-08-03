@@ -1,7 +1,7 @@
 import textRecords from '@app/constants/textRecords.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import styled, { css } from 'styled-components'
-import { formSafeKey } from '../../../../../../utils/editor'
+import { formSafeKey } from '@app/utils/editor'
 
 const LabelWrapper = styled.div(
   ({ theme }) => css`

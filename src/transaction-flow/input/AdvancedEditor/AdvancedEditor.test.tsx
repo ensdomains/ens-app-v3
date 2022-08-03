@@ -1,9 +1,7 @@
 import { useProfile } from '@app/hooks/useProfile'
-import { cleanup, mockFunction, render, screen } from '@app/test-utils'
-import { useEns } from '@app/utils/EnsProvider'
-import { useTransaction } from '@app/utils/TransactionProvider'
+import { cleanup, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { Profile } from '@app/types'
-import { waitFor } from '@testing-library/react'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import AdvancedEditor from './AdvancedEditor'
 
 const mockProfileData = {
@@ -115,24 +113,29 @@ const mockProfileData = {
   loading: false,
 }
 
-jest.mock('@app/hooks/useProfile')
 jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/utils/TransactionProvider')
+jest.mock('@app/hooks/useProfile')
+jest.mock('@app/transaction-flow/TransactionFlowProvider')
+jest.mock('@app/hooks/useResolverHasInterfaces')
 
 const mockUseProfile = mockFunction(useProfile)
-const mockIntersectionObserver = jest.fn()
-const mockUseTransaction = mockFunction(useTransaction)
-const mockUseEns = mockFunction(useEns)
+const mockUseResolverHasInterfaces = mockFunction(useResolverHasInterfaces)
 
-const mockSetRecords = jest.fn()
-const mockSetCurrentTransaction = jest.fn()
-const mockGetCurrentStep = jest.fn()
+const mockIntersectionObserver = jest.fn()
+
+const mockDispatch = jest.fn()
 
 describe('AdvancedEditor', () => {
   beforeEach(() => {
     mockUseProfile.mockReturnValue(
       mockProfileData as unknown as { profile: Profile; loading: boolean },
     )
+
+    mockUseResolverHasInterfaces.mockReturnValue({
+      hasInterface: true,
+      isLoading: false,
+      status: 'success',
+    })
 
     mockIntersectionObserver.mockReturnValue({
       observe: () => null,
@@ -141,15 +144,6 @@ describe('AdvancedEditor', () => {
     })
     window.IntersectionObserver = mockIntersectionObserver
     window.scroll = jest.fn()
-
-    mockUseTransaction.mockReturnValue({
-      setCurrentTransaction: mockSetCurrentTransaction,
-      getCurrentStep: mockGetCurrentStep,
-    })
-
-    mockUseEns.mockReturnValue({
-      setRecords: mockSetRecords,
-    })
   })
 
   afterEach(() => {
@@ -158,7 +152,9 @@ describe('AdvancedEditor', () => {
   })
 
   it('should render', async () => {
-    render(<AdvancedEditor open onDismiss={() => {}} name="test.eth" />)
+    render(
+      <AdvancedEditor dispatch={mockDispatch} onDismiss={() => {}} data={{ name: 'test.eth' }} />,
+    )
     await waitFor(() => {
       expect(screen.getByTestId('advanced-editor')).toBeVisible()
     })

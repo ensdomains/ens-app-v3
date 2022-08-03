@@ -1,8 +1,10 @@
 import { ComponentProps } from 'react'
 import { WrapName } from './WrapName'
+import { FriendlyResolverUpgrade } from './FriendlyResolverUpgrade'
 
 export const intros = {
   WrapName,
+  FriendlyResolverUpgrade,
 }
 
 export type IntroComponent = typeof intros

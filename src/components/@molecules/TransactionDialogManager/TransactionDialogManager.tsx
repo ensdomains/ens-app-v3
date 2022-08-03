@@ -52,6 +52,7 @@ export const TransactionDialogManager = ({
 
       const transactionItem = selectedFlowItem.transactions[selectedFlowItem.currentTransaction]
       const transaction = transactions[transactionItem.name]
+
       return (
         <TransactionStageModal
           actionName={transactionItem.name}

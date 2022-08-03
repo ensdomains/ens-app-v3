@@ -72,18 +72,12 @@ const validateContract = async (
   address: string,
   provider: any,
 ) => {
-  const maybeContract = new ethers.Contract(
-    address,
-    supportsInterfaceAbi,
-    provider,
-  )
+  const maybeContract = new ethers.Contract(address, supportsInterfaceAbi, provider)
   let results
   try {
     results = await Promise.all(
       interfaces.map((interfaceKey: ContractInterface) =>
-        maybeContract.supportsInterface(
-          CONTRACT_INTERFACES[interfaceKey].interfaceId,
-        ),
+        maybeContract.supportsInterface(CONTRACT_INTERFACES[interfaceKey].interfaceId),
       ),
     )
     return results

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Select } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
 import { formSafeKey } from '@app/utils/editor'
-import { getSocialData } from '../../../../utils/getSocialData'
+import { getSocialData } from '@app/utils/getSocialData'
 
 const IconWrapper = styled.div(
   () => css`

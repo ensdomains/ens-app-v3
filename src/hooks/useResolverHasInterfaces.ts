@@ -15,21 +15,11 @@ export const useResolverHasInterfaces = (
     isLoading,
     status,
   } = useQuery(
-    [
-      'validateResolver',
-      resolverAddress,
-      interfaceNames.join(','),
-      activeChain?.id,
-    ],
+    ['validateResolver', resolverAddress, interfaceNames.join(','), activeChain?.id],
     async () => {
-      const results = await validateResolver(
-        interfaceNames,
-        resolverAddress!,
-        provider,
-        {
-          networkId: activeChain!.id,
-        },
-      )
+      const results = await validateResolver(interfaceNames, resolverAddress!, provider, {
+        networkId: activeChain!.id,
+      })
       return results.length === 0
     },
     {

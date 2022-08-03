@@ -1,7 +1,7 @@
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import React, { ComponentProps, ReactNode, useCallback, useContext, useMemo } from 'react'
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
-import { DataInputComponent } from './input'
+import type { DataInputComponent } from './input'
 import { initialState, reducer } from './reducer'
 import { InternalTransactionFlow, TransactionFlowItem } from './types'
 import { getSelectedFlowItem } from './utils'

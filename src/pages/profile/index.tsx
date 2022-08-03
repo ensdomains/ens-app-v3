@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
-import ProfileEditor from '@app/components/pages/profile/ProfileEditor/ProfileEditor'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
@@ -17,6 +16,7 @@ import { ReactElement, useState, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -85,9 +85,6 @@ export default function Page() {
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
-  const [showEditor, setShowEditor] = useState(true)
-  const handleDismissEditor = () => setShowEditor(false)
-
   const [titleContent, descriptionContent] = useMemo(() => {
     if (isSelf) {
       return [t('yourProfile'), '']
@@ -114,6 +111,11 @@ export default function Page() {
       }),
     ]
   }, [isSelf, normalisedName, valid, name, t])
+
+  const { showDataInput } = useTransactionFlow()
+  const handleEditProfile = () => {
+    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
+  }
 
   return (
     <>
@@ -156,12 +158,7 @@ export default function Page() {
               />
               {isSelf && (
                 <SelfButtons>
-                  <Button
-                    shadowless
-                    variant="transparent"
-                    size="small"
-                    onClick={() => setShowEditor(true)}
-                  >
+                  <Button shadowless variant="transparent" size="small" onClick={handleEditProfile}>
                     {t('editProfile')}
                   </Button>
                   <Button
@@ -190,9 +187,6 @@ export default function Page() {
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
-              {isSelf && (
-                <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />
-              )}
             </DetailsWrapper>
           ),
         }}

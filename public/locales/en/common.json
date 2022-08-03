@@ -82,13 +82,15 @@
       "sendName": "Send Name",
       "migrateProfile": "Migrate Profile",
       "wrapName": "Wrap Name",
-      "updateResolver": "Update Resolver"
+      "updateResolver": "Update Resolver",
+      "updateProfile": "Update Profile"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
       "wrapName": "Wrap name and set new resolver",
-      "updateResolver": "Change contract used to store records"
+      "updateResolver": "Change contract used to store records",
+      "updateProfile": "Update records on existing resolver"
     },
     "itemLabel": {
       "name": "Name",
