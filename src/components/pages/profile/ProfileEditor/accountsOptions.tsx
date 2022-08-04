@@ -1,7 +1,4 @@
-import {
-  DynamicSocialIcon,
-  socialIconTypes,
-} from '@app/assets/social/DynamicSocialIcon'
+import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import styled, { css } from 'styled-components'
 import { Select } from '@ensdomains/thorin'
@@ -27,10 +24,7 @@ const accountsOptions = supportedTexts.reduce((list, account) => {
       label: socialData.label,
       prefix: (
         <IconWrapper>
-          <DynamicSocialIcon
-            name={socialData?.icon as keyof typeof socialIconTypes}
-            fill={socialData?.color}
-          />
+          <DynamicSocialIcon name={socialData?.icon as keyof typeof socialIconTypes} fill={socialData?.color} />
         </IconWrapper>
       ),
     },

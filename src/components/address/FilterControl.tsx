@@ -3,9 +3,7 @@ import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
 import { DynamicPopover, Typography } from '@ensdomains/thorin'
 import FilterIcon from '@app/assets/Filter.svg'
-import SortControl, {
-  SortValue,
-} from '@app/components/@molecules/SortControl/SortControl'
+import SortControl, { SortValue } from '@app/components/@molecules/SortControl/SortControl'
 import FilterPopover from '@app/components/address/FilterPopover'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useRouter } from 'next/router'
@@ -42,9 +40,7 @@ const FilterButtonElement = styled.button<{ $pressed?: boolean }>(
     display: flex;
     align-items: center;
     gap: ${theme.space['3']};
-    background: ${$pressed
-      ? theme.colors.backgroundSecondary
-      : theme.colors.white};
+    background: ${$pressed ? theme.colors.backgroundSecondary : theme.colors.white};
     cursor: pointer;
     padding: ${theme.space['1.5']} ${theme.space['4']};
     border: 1px solid ${theme.colors.borderSecondary};
@@ -95,19 +91,11 @@ const NameCountWrapper = styled.div(
 type FilterControlProps = {
   sort: SortValue
   filter: Name['type'] | 'none'
-  onChange: (data: {
-    sort: FilterControlProps['sort']
-    filter: FilterControlProps['filter']
-  }) => void
+  onChange: (data: { sort: FilterControlProps['sort']; filter: FilterControlProps['filter'] }) => void
   resultsCount?: number
 }
 
-const FilterControl = ({
-  sort,
-  filter,
-  resultsCount = 0,
-  onChange,
-}: FilterControlProps) => {
+const FilterControl = ({ sort, filter, resultsCount = 0, onChange }: FilterControlProps) => {
   const { t } = useTranslation('address')
   const [showMenu, setShowMenu] = useState(false)
   const breakpoints = useBreakpoint()
@@ -149,10 +137,7 @@ const FilterControl = ({
               <DynamicPopover
                 popover={
                   <DesktopPopoverWrapper>
-                    <FilterPopover
-                      filter={filter}
-                      onFilterChange={handleFilterChange}
-                    />
+                    <FilterPopover filter={filter} onFilterChange={handleFilterChange} />
                   </DesktopPopoverWrapper>
                 }
                 placement="bottom-end"
@@ -161,10 +146,8 @@ const FilterControl = ({
                 animationFn={(side, open) => {
                   let translate = ''
                   if (side === 'top') translate = `translate(0, 0.625rem)`
-                  else if (side === 'right')
-                    translate = `translate(-0.625rem, 0)`
-                  else if (side === 'bottom')
-                    translate = `translate(0, -0.625rem)`
+                  else if (side === 'right') translate = `translate(-0.625rem, 0)`
+                  else if (side === 'bottom') translate = `translate(0, -0.625rem)`
                   else translate = `translate(0.625rem, 0);`
                   if (open)
                     return `

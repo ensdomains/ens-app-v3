@@ -85,19 +85,10 @@ export const NameDetailItem = ({
       <NameItemWrapper as="a">
         <NameItemContainer>
           <AvatarWrapper>
-            <Avatar
-              label={truncatedName || name}
-              src={avatar || zorb}
-              data-testid="name-detail-item-avatar"
-            />
+            <Avatar label={truncatedName || name} src={avatar || zorb} data-testid="name-detail-item-avatar" />
           </AvatarWrapper>
           <TypeWrapper>
-            <Typography
-              color="text"
-              ellipsis
-              weight="bold"
-              variant="extraLarge"
-            >
+            <Typography color="text" ellipsis weight="bold" variant="extraLarge">
               {truncatedName}
             </Typography>
           </TypeWrapper>

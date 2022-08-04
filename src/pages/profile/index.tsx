@@ -6,6 +6,7 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -69,16 +70,24 @@ export default function Page() {
     ownerData,
     expiryDate,
     normalisedName,
+    dnsOwner,
     valid,
   } = useNameDetails(name)
 
   const selfAbilities = useSelfAbilities(address, ownerData)
 
-  const isLoading =
-    detailsLoading || primaryLoading || accountLoading || initial
+  const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
-  const getTextRecord = (key: string) =>
-    profile?.records?.texts?.find((x) => x.key === key)
+  useProtectedRoute(
+    '/',
+    // When anything is loading, return true
+    isLoading
+      ? true
+      : // if is self, user must be connected
+        (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
+  )
+
+  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
   const [showEditor, setShowEditor] = useState(true)
   const handleDismissEditor = () => setShowEditor(false)
@@ -136,6 +145,7 @@ export default function Page() {
               ownerData={ownerData}
               expiryDate={expiryDate}
               showButton={!selfAbilities.canEdit}
+              dnsOwner={dnsOwner}
             />
           ),
           trailing: (
@@ -151,12 +161,7 @@ export default function Page() {
               />
               {selfAbilities.canEdit && (
                 <SelfButtons>
-                  <Button
-                    shadowless
-                    variant="transparent"
-                    size="small"
-                    onClick={() => setShowEditor(true)}
-                  >
+                  <Button shadowless variant="transparent" size="small" onClick={() => setShowEditor(true)}>
                     {t('editProfile')}
                   </Button>
                   <Button
@@ -177,24 +182,16 @@ export default function Page() {
                 </SelfButtons>
               )}
               <ProfileDetails
-                addresses={(profile?.records?.coinTypes || []).map(
-                  (item: any) => ({
-                    key: item.coin,
-                    value: item.addr,
-                  }),
-                )}
+                addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
+                  key: item.coin,
+                  value: item.addr,
+                }))}
                 textRecords={(profile?.records?.texts || [])
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
 
-              {selfAbilities.canEdit && (
-                <ProfileEditor
-                  name={name}
-                  open={showEditor}
-                  onDismiss={handleDismissEditor}
-                />
-              )}
+              {selfAbilities.canEdit && <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />}
             </DetailsWrapper>
           ),
         }}

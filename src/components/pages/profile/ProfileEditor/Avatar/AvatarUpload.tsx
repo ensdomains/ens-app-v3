@@ -3,11 +3,7 @@ import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
 import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
-import {
-  calcMomentum,
-  getVars,
-  resolutionMultiplier,
-} from '@app/utils/avatarUpload'
+import { calcMomentum, getVars, resolutionMultiplier } from '@app/utils/avatarUpload'
 import { Button, Dialog, Slider } from '@ensdomains/thorin'
 import { sha256 } from 'ethers/lib/utils'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -92,13 +88,7 @@ const CancelButton = ({ handleCancel }: { handleCancel: () => void }) => {
   const { t } = useTranslation('common')
 
   return (
-    <Button
-      data-testid="avatar-cancel-button"
-      variant="secondary"
-      tone="grey"
-      shadowless
-      onClick={handleCancel}
-    >
+    <Button data-testid="avatar-cancel-button" variant="secondary" tone="grey" shadowless onClick={handleCancel}>
       {t('action.back')}
     </Button>
   )
@@ -139,17 +129,7 @@ const CropComponent = ({
     cropCanvas.width = crpSz
     cropCanvas.height = crpSz
 
-    cropCtx.drawImage(
-      canvasRef.current!,
-      max,
-      max,
-      crpSz,
-      crpSz,
-      0,
-      0,
-      crpSz,
-      crpSz,
-    )
+    cropCtx.drawImage(canvasRef.current!, max, max, crpSz, crpSz, 0, 0, crpSz, crpSz)
     setDataURL(cropCanvas.toDataURL('image/jpeg', 0.9))
   }
 
@@ -326,11 +306,7 @@ const CropComponent = ({
       <Dialog.Footer
         leading={<CancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button
-            shadowless
-            onClick={handleSubmit}
-            data-testid="continue-button"
-          >
+          <Button shadowless onClick={handleSubmit} data-testid="continue-button">
             {t('action.continue', { ns: 'common' })}
           </Button>
         }
@@ -392,9 +368,7 @@ const UploadComponent = ({
   })
 
   const { mutate: signAndUpload, isLoading } = useMutation(async () => {
-    const baseURL =
-      process.env.NEXT_PUBLIC_AVUP_ENDPOINT ||
-      'https://avatar-upload.ens-cf.workers.dev'
+    const baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || 'https://avatar-upload.ens-cf.workers.dev'
     const endpoint = `${baseURL}/${name}`
 
     const sig = await signTypedDataAsync()
@@ -427,12 +401,7 @@ const UploadComponent = ({
       <Dialog.Footer
         leading={<CancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button
-            disabled={isLoading}
-            onClick={() => signAndUpload()}
-            shadowless
-            data-testid="upload-button"
-          >
+          <Button disabled={isLoading} onClick={() => signAndUpload()} shadowless data-testid="upload-button">
             {t('profileEditor.tabs.avatar.image.upload.action')}
           </Button>
         }
@@ -458,9 +427,5 @@ export const AvatarUpload = ({
     return <CropComponent {...{ avatar, setDataURL, handleCancel }} />
   }
 
-  return (
-    <UploadComponent
-      {...{ dataURL, handleCancel: () => setDataURL(null), name, handleSubmit }}
-    />
-  )
+  return <UploadComponent {...{ dataURL, handleCancel: () => setDataURL(null), name, handleSubmit }} />
 }

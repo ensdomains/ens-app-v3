@@ -6,11 +6,7 @@ import { PageButtons } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
-import {
-  SortDirection,
-  SortType,
-  SortValue,
-} from '@app/components/@molecules/SortControl/SortControl'
+import { SortDirection, SortType, SortValue } from '@app/components/@molecules/SortControl/SortControl'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { shortenAddress } from '@app/utils/utils'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
@@ -64,16 +60,10 @@ const Page = () => {
 
   const [filter, setFilter] = useState<FilterType>('none')
 
-  const onFilterControlChange = (control: {
-    sort: SortValue
-    filter: FilterType
-  }) => {
+  const onFilterControlChange = (control: { sort: SortValue; filter: FilterType }) => {
     const { sort: newSort, filter: newFilter } = control
     let refresh = false
-    if (
-      newSort.type !== sortValue.type ||
-      newSort.direction !== sortValue.direction
-    ) {
+    if (newSort.type !== sortValue.type || newSort.direction !== sortValue.direction) {
       setSortValue(control.sort)
       refresh = true
     }
@@ -86,13 +76,11 @@ const Page = () => {
 
   // Primary Profile
 
-  const { profile: primaryProfile, loading: primaryProfileLoading } =
-    usePrimaryProfile(address)
+  const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
 
   const profileButtonPlacement = breakpoints.md ? 'bottom' : 'inline'
 
-  const getTextRecord = (key: string) =>
-    primaryProfile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => primaryProfile?.records?.texts?.find((x) => x.key === key)
 
   // Names
 
@@ -120,20 +108,10 @@ const Page = () => {
   const error = hasErrors ? t('errors.names') : ''
 
   return (
-    <Content
-      alwaysShowSubtitle
-      subtitle={t('addressDetails')}
-      title={shortenAddress(address)}
-      loading={loading}
-    >
+    <Content alwaysShowSubtitle subtitle={t('addressDetails')} title={shortenAddress(address)} loading={loading}>
       {{
         header: (
-          <FilterControl
-            sort={sortValue}
-            filter={filter}
-            resultsCount={nameCount}
-            onChange={onFilterControlChange}
-          />
+          <FilterControl sort={sortValue} filter={filter} resultsCount={nameCount} onChange={onFilterControlChange} />
         ),
         warning: error
           ? {

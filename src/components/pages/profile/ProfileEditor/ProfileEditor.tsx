@@ -1,25 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { ProfileEditorType } from '@app/types'
-import {
-  convertFormSafeKey,
-  convertProfileToProfileFormObject,
-  formSafeKey,
-  getDirtyFields,
-} from '@app/utils/editor'
+import { convertFormSafeKey, convertProfileToProfileFormObject, formSafeKey, getDirtyFields } from '@app/utils/editor'
 import { useEns } from '@app/utils/EnsProvider'
-import { useTransaction } from '@app/utils/TransactionProvider'
 import { validateCryptoAddress } from '@app/utils/validate'
-import {
-  Button,
-  Input,
-  Modal,
-  mq,
-  ScrollBox,
-  Textarea,
-} from '@ensdomains/thorin'
+import { Button, Input, Modal, mq, ScrollBox, Textarea } from '@ensdomains/thorin'
 import { ComponentProps, useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
@@ -102,12 +92,7 @@ const TabButtonsContainer = styled.div(
   `,
 )
 
-const getIndicatorStyle = (
-  theme: Theme,
-  $selected?: boolean,
-  $hasError?: boolean,
-  $isDirty?: boolean,
-) => {
+const getIndicatorStyle = (theme: Theme, $selected?: boolean, $hasError?: boolean, $isDirty?: boolean) => {
   let color = ''
   if ($hasError) color = theme.colors.red
   else if ($selected && $isDirty) color = theme.colors.accent
@@ -199,43 +184,19 @@ const FooterContainer = styled.div(
   `,
 )
 
-const getFieldsByType = (
-  type: 'text' | 'addr' | 'contentHash',
-  data: ProfileEditorType,
-) => {
+const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
   if (type === 'text') {
     if (data.avatar) entries.push(['avatar', data.avatar])
     if (data.banner) entries.push(['banner', data.banner])
     if (data.general)
-      entries.push(
-        ...Object.entries(data.general).map(([key, value]) => [
-          convertFormSafeKey(key),
-          value,
-        ]),
-      )
+      entries.push(...Object.entries(data.general).map(([key, value]) => [convertFormSafeKey(key), value]))
     if (data.accounts)
-      entries.push(
-        ...Object.entries(data.accounts).map(([key, value]) => [
-          convertFormSafeKey(key),
-          value,
-        ]),
-      )
-    if (data.other)
-      entries.push(
-        ...Object.entries(data.other).map(([key, value]) => [
-          convertFormSafeKey(key),
-          value,
-        ]),
-      )
+      entries.push(...Object.entries(data.accounts).map(([key, value]) => [convertFormSafeKey(key), value]))
+    if (data.other) entries.push(...Object.entries(data.other).map(([key, value]) => [convertFormSafeKey(key), value]))
   } else if (type === 'addr') {
     if (data.address)
-      entries.push(
-        ...Object.entries(data.address).map(([key, value]) => [
-          convertFormSafeKey(key),
-          value,
-        ]),
-      )
+      entries.push(...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]))
   } else if (type === 'contentHash') {
     if (data.website) entries.push(['website', data.website])
   }
@@ -260,7 +221,7 @@ type Props = {
 const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   console.log('open')
   const { t } = useTranslation('profile')
-  const { setCurrentTransaction } = useTransaction()
+  const { showDataInput } = useTransactionFlow()
   const { setRecords, contracts } = useEns()
 
   const {
@@ -293,12 +254,11 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
-  const [existingRecords, setExistingRecords] =
-    useState<ExpandableRecordsState>({
-      address: [],
-      other: [],
-      accounts: [],
-    })
+  const [existingRecords, setExistingRecords] = useState<ExpandableRecordsState>({
+    address: [],
+    other: [],
+    accounts: [],
+  })
 
   const {
     existingKeys: existingAccountKeys,
@@ -333,9 +293,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   })
 
   const [hasExistingWebsite, setHasExistingWebsite] = useState(false)
-  const [websiteOption, setWebsiteOption] = useState<RecordOption | undefined>(
-    undefined,
-  )
+  const [websiteOption, setWebsiteOption] = useState<RecordOption | undefined>(undefined)
 
   const {
     existingKeys: existingOtherKeys,
@@ -434,9 +392,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
       setExistingRecords(newExistingRecords)
 
       setHasExistingWebsite(!!newDefaultValues.website)
-      const protocol = newDefaultValues.website
-        ?.match(/^[^:]+/)?.[0]
-        ?.toLowerCase()
+      const protocol = newDefaultValues.website?.match(/^[^:]+/)?.[0]?.toLowerCase()
       if (protocol) {
         const option = websiteOptions.find(({ value }) => value === protocol)
         setWebsiteOption(option || undefined)
@@ -450,54 +406,28 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   }
 
   const handleTransaction = async (profileData: ProfileEditorType) => {
-    const dirtyFields = getDirtyFields(
-      formState.dirtyFields,
-      profileData,
-    ) as ProfileEditorType
+    const dirtyFields = getDirtyFields(formState.dirtyFields, profileData) as ProfileEditorType
 
-    const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(
-      ([key, value]) => ({
-        key,
-        value,
-      }),
-    ) as { key: string; value: string }[]
+    const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(([key, value]) => ({
+      key,
+      value,
+    })) as { key: string; value: string }[]
 
-    const coinTypes = Object.entries(getFieldsByType('addr', dirtyFields)).map(
-      ([key, value]) => ({
-        key,
-        value,
-      }),
-    ) as { key: string; value: string }[]
+    const coinTypes = Object.entries(getFieldsByType('addr', dirtyFields)).map(([key, value]) => ({
+      key,
+      value,
+    })) as { key: string; value: string }[]
 
     const contentHash = dirtyFields.website
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const records = {
       texts,
       coinTypes,
       contentHash,
     }
 
-    const resolverAddress = (await contracts!.getPublicResolver()!).address
-
-    setCurrentTransaction(name, async (signer) => ({
-      data: [
-        {
-          actionName: 'setRecords',
-          displayItems: [
-            {
-              label: 'name',
-              value: name,
-              type: 'name',
-            },
-          ],
-          transaction: await setRecords.populateTransaction(name, {
-            records,
-            signer,
-            resolverAddress,
-          }),
-        },
-      ],
-    }))
+    // const resolverAddress = (await contracts!.getPublicResolver()!).address
   }
 
   const avatar = useWatch({
@@ -512,9 +442,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
-  const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>(
-    'profile',
-  )
+  const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
   if (loading) return null
@@ -537,10 +465,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
             }}
           />
         ) : (
-          <Container
-            data-testid="profile-editor"
-            onSubmit={handleSubmit(handleTransaction)}
-          >
+          <Container data-testid="profile-editor" onSubmit={handleSubmit(handleTransaction)}>
             <Banner zIndex={10}>
               <AvatarWrapper>
                 <AvatarButton
@@ -613,56 +538,34 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                           <>
                             <Input
                               label={t('profileEditor.tabs.general.name.label')}
-                              placeholder={t(
-                                'profileEditor.tabs.general.name.placeholder',
-                              )}
+                              placeholder={t('profileEditor.tabs.general.name.placeholder')}
                               showDot
-                              validated={
-                                getFieldState('general.name', formState).isDirty
-                              }
+                              validated={getFieldState('general.name', formState).isDirty}
                               autoComplete="off"
                               {...register('general.name')}
                             />
                             <Input
                               label={t('profileEditor.tabs.general.url.label')}
                               autoComplete="off"
-                              placeholder={t(
-                                'profileEditor.tabs.general.url.placeholder',
-                              )}
+                              placeholder={t('profileEditor.tabs.general.url.placeholder')}
                               showDot
-                              validated={
-                                getFieldState('general.url', formState).isDirty
-                              }
+                              validated={getFieldState('general.url', formState).isDirty}
                               {...register('general.url')}
                             />
                             <Input
-                              label={t(
-                                'profileEditor.tabs.general.location.label',
-                              )}
+                              label={t('profileEditor.tabs.general.location.label')}
                               autoComplete="off"
-                              placeholder={t(
-                                'profileEditor.tabs.general.location.placeholder',
-                              )}
+                              placeholder={t('profileEditor.tabs.general.location.placeholder')}
                               showDot
-                              validated={
-                                getFieldState('general.location', formState)
-                                  .isDirty
-                              }
+                              validated={getFieldState('general.location', formState).isDirty}
                               {...register('general.location')}
                             />
                             <Textarea
-                              label={t(
-                                'profileEditor.tabs.general.description.label',
-                              )}
+                              label={t('profileEditor.tabs.general.description.label')}
                               autoComplete="off"
-                              placeholder={t(
-                                'profileEditor.tabs.general.description.placeholder',
-                              )}
+                              placeholder={t('profileEditor.tabs.general.description.placeholder')}
                               showDot
-                              validated={
-                                getFieldState('general.description', formState)
-                                  .isDirty
-                              }
+                              validated={getFieldState('general.description', formState).isDirty}
                               {...register('general.description')}
                             />
                           </>
@@ -674,24 +577,12 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={account}
                                 option={getSelectedAccountOption(account)}
                                 placeholder={t([
-                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
-                                    account,
-                                  )}`,
+                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(account)}`,
                                   `profileEditor.tabs.accounts.placeholder.default`,
                                 ])}
                                 showDot
-                                error={
-                                  getFieldState(
-                                    `accounts.${account}`,
-                                    formState,
-                                  ).error?.message
-                                }
-                                validated={
-                                  getFieldState(
-                                    `accounts.${account}`,
-                                    formState,
-                                  ).isDirty
-                                }
+                                error={getFieldState(`accounts.${account}`, formState).error?.message}
+                                validated={getFieldState(`accounts.${account}`, formState).isDirty}
                                 onDelete={() => {
                                   removeAccountKey(account, false)
                                 }}
@@ -703,21 +594,11 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={key}
                                 option={getSelectedAccountOption(key)}
                                 placeholder={t([
-                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
-                                    key,
-                                  )}`,
+                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(key)}`,
                                   `profileEditor.tabs.accounts.placeholder.default`,
                                 ])}
-                                error={
-                                  getFieldState(`accounts.${key}`, formState)
-                                    .error?.message
-                                }
-                                validated={
-                                  getFieldState(
-                                    `accounts.${formSafeKey(key)}`,
-                                    formState,
-                                  ).isDirty
-                                }
+                                error={getFieldState(`accounts.${key}`, formState).error?.message}
+                                validated={getFieldState(`accounts.${formSafeKey(key)}`, formState).isDirty}
                                 showDot
                                 autoComplete="off"
                                 autoCorrect="off"
@@ -742,20 +623,12 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={key}
                                 option={getSelectedAddressOption(key)}
                                 placeholder={t([
-                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(
-                                    key,
-                                  )}`,
+                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
                                   `profileEditor.tabs.address.placeholder.default`,
                                 ])}
                                 showDot
-                                error={
-                                  getFieldState(`address.${key}`, formState)
-                                    .error?.message
-                                }
-                                validated={
-                                  getFieldState(`address.${key}`, formState)
-                                    .isDirty
-                                }
+                                error={getFieldState(`address.${key}`, formState).error?.message}
+                                validated={getFieldState(`address.${key}`, formState).isDirty}
                                 onDelete={() => {
                                   removeAddressKey(key, false)
                                   clearErrors([`address.${key}`])
@@ -770,19 +643,11 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={key}
                                 option={getSelectedAddressOption(key)}
                                 placeholder={t([
-                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(
-                                    key,
-                                  )}`,
+                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
                                   `profileEditor.tabs.address.placeholder.default`,
                                 ])}
-                                error={
-                                  getFieldState(`address.${key}`, formState)
-                                    .error?.message
-                                }
-                                validated={
-                                  getFieldState(`address.${key}`, formState)
-                                    .isDirty
-                                }
+                                error={getFieldState(`address.${key}`, formState).error?.message}
+                                validated={getFieldState(`address.${key}`, formState).isDirty}
                                 showDot
                                 autoComplete="off"
                                 autoCorrect="off"
@@ -807,17 +672,11 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                           <RecordInput
                             option={websiteOption}
                             placeholder={t([
-                              `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
-                                websiteOption.value,
-                              )}`,
+                              `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(websiteOption.value)}`,
                               `profileEditor.tabs.contentHash.placeholder.default`,
                             ])}
-                            error={
-                              getFieldState(`website`, formState).error?.message
-                            }
-                            validated={
-                              getFieldState(`website`, formState).isDirty
-                            }
+                            error={getFieldState(`website`, formState).error?.message}
+                            validated={getFieldState(`website`, formState).isDirty}
                             onDelete={() => {
                               if (hasExistingWebsite) {
                                 setValue('website', '', { shouldDirty: true })
@@ -842,20 +701,12 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={key}
                                 label={key}
                                 placeholder={t([
-                                  `profileEditor.tabs.other.placeholder.${convertFormSafeKey(
-                                    key,
-                                  )}`,
+                                  `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
 
                                   `profileEditor.tabs.other.placeholder.default`,
                                 ])}
-                                error={
-                                  getFieldState(`other.${key}`, formState).error
-                                    ?.message
-                                }
-                                validated={
-                                  getFieldState(`other.${key}`, formState)
-                                    .isDirty
-                                }
+                                error={getFieldState(`other.${key}`, formState).error?.message}
+                                validated={getFieldState(`other.${key}`, formState).isDirty}
                                 onDelete={() => removeOtherKey(key, false)}
                                 {...register(`other.${key}`, {})}
                               />
@@ -864,19 +715,11 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                               <RecordInput
                                 key={key}
                                 placeholder={t([
-                                  `profileEditor.tabs.other.placeholder.${convertFormSafeKey(
-                                    key,
-                                  )}`,
+                                  `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
                                   `profileEditor.tabs.other.placeholder.default`,
                                 ])}
-                                error={
-                                  getFieldState(`other.${key}`, formState).error
-                                    ?.message
-                                }
-                                validated={
-                                  getFieldState(`other.${key}`, formState)
-                                    .isDirty
-                                }
+                                error={getFieldState(`other.${key}`, formState).error?.message}
+                                validated={getFieldState(`other.${key}`, formState).isDirty}
                                 label={key}
                                 autoComplete="off"
                                 autoCorrect="off"
@@ -905,12 +748,7 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                 </AddRecordContainer>
               )}
               <FooterContainer>
-                <Button
-                  variant="secondary"
-                  tone="grey"
-                  shadowless
-                  onClick={handleCancel}
-                >
+                <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
                   {t('action.cancel', { ns: 'common' })}
                 </Button>
                 <Button

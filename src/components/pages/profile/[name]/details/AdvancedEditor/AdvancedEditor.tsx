@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+
 import React, { useState, useEffect } from 'react'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
@@ -7,14 +9,9 @@ import { useTranslation } from 'react-i18next'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import { useProfile } from '@app/hooks/useProfile'
 import { validateCryptoAddress } from '@app/utils/validate'
-import { useTransaction } from '@app/utils/TransactionProvider'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useEns } from '@app/utils/EnsProvider'
-import {
-  convertFormSafeKey,
-  convertProfileToProfileFormObject,
-  formSafeKey,
-  getDirtyFields,
-} from '@app/utils/editor'
+import { convertFormSafeKey, convertProfileToProfileFormObject, formSafeKey, getDirtyFields } from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import addressOptions from '../../../ProfileEditor/addressOptions'
 import { textOptions } from './textOptions'
@@ -83,12 +80,7 @@ const TabButtonsContainer = styled.div(({ theme }) => [
   `),
 ])
 
-const getIndicatorStyle = (
-  theme: Theme,
-  $selected?: boolean,
-  $hasError?: boolean,
-  $isDirty?: boolean,
-) => {
+const getIndicatorStyle = (theme: Theme, $selected?: boolean, $hasError?: boolean, $isDirty?: boolean) => {
   let color = ''
   if ($hasError) color = theme.colors.red
   else if ($selected && $isDirty) color = theme.colors.accent
@@ -194,30 +186,15 @@ type AdvancedEditorType = {
   }
 }
 
-const getFieldsByType = (
-  type: 'text' | 'addr' | 'contentHash',
-  data: AdvancedEditorType,
-) => {
+const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
   if (type === 'text') {
-    if (data.text)
-      entries.push(
-        ...Object.entries(data.text).map(([key, value]) => [
-          convertFormSafeKey(key),
-          value,
-        ]),
-      )
+    if (data.text) entries.push(...Object.entries(data.text).map(([key, value]) => [convertFormSafeKey(key), value]))
   } else if (type === 'addr') {
     if (data.address)
-      entries.push(
-        ...Object.entries(data.address).map(([key, value]) => [
-          convertFormSafeKey(key),
-          value,
-        ]),
-      )
+      entries.push(...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]))
   } else if (type === 'contentHash') {
-    if (data.other.contentHash)
-      entries.push(['website', data.other.contentHash])
+    if (data.other.contentHash) entries.push(['website', data.other.contentHash])
   }
   return Object.fromEntries(entries)
 }
@@ -236,8 +213,6 @@ type Props = {
 }
 
 const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
-  const { setCurrentTransaction } = useTransaction()
-  const { setRecords, contracts } = useEns()
   const { t } = useTranslation('profile')
 
   const {
@@ -265,11 +240,10 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
-  const [existingRecords, setExistingRecords] =
-    useState<ExpandableRecordsState>({
-      address: [],
-      text: [],
-    })
+  const [existingRecords, setExistingRecords] = useState<ExpandableRecordsState>({
+    address: [],
+    text: [],
+  })
 
   const {
     existingKeys: existingTextKeys,
@@ -372,54 +346,26 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
   }
 
   const handleTransaction = async (data: AdvancedEditorType) => {
-    const dirtyFields = getDirtyFields(
-      formState.dirtyFields,
-      data,
-    ) as AdvancedEditorType
+    const dirtyFields = getDirtyFields(formState.dirtyFields, data) as AdvancedEditorType
 
-    const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(
-      ([key, value]) => ({
-        key,
-        value,
-      }),
-    ) as { key: string; value: string }[]
+    const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(([key, value]) => ({
+      key,
+      value,
+    })) as { key: string; value: string }[]
 
-    const coinTypes = Object.entries(getFieldsByType('addr', dirtyFields)).map(
-      ([key, value]) => ({
-        key,
-        value,
-      }),
-    ) as { key: string; value: string }[]
+    const coinTypes = Object.entries(getFieldsByType('addr', dirtyFields)).map(([key, value]) => ({
+      key,
+      value,
+    })) as { key: string; value: string }[]
 
     const { contentHash } = dirtyFields.other
 
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const records = {
       texts,
       coinTypes,
       contentHash,
     }
-
-    const resolverAddress = (await contracts!.getPublicResolver()!).address
-
-    setCurrentTransaction(name, async (signer) => ({
-      data: [
-        {
-          actionName: 'setRecords',
-          displayItems: [
-            {
-              label: 'name',
-              value: name,
-              type: 'name',
-            },
-          ],
-          transaction: await setRecords.populateTransaction(name, {
-            records,
-            signer,
-            resolverAddress,
-          }),
-        },
-      ],
-    }))
   }
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
@@ -474,19 +420,12 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               key={key}
                               label={key}
                               placeholder={t([
-                                `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(
-                                  key,
-                                )}`,
+                                `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(key)}`,
                                 `advancedEditor.tabs.text.placeholder.default`,
                               ])}
                               showDot
-                              error={
-                                getFieldState(`text.${key}`, formState).error
-                                  ?.message
-                              }
-                              validated={
-                                getFieldState(`text.${key}`, formState).isDirty
-                              }
+                              error={getFieldState(`text.${key}`, formState).error?.message}
+                              validated={getFieldState(`text.${key}`, formState).isDirty}
                               onDelete={() => {
                                 removeTextKey(key, false)
                                 clearErrors([`text.${key}`])
@@ -499,18 +438,11 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               key={key}
                               label={key}
                               placeholder={t([
-                                `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(
-                                  key,
-                                )}`,
+                                `advancedEditor.tabs.text.placeholder.${convertFormSafeKey(key)}`,
                                 `advancedEditor.tabs.text.placeholder.default`,
                               ])}
-                              error={
-                                getFieldState(`text.${key}`, formState).error
-                                  ?.message
-                              }
-                              validated={
-                                getFieldState(`text.${key}`, formState).isDirty
-                              }
+                              error={getFieldState(`text.${key}`, formState).error?.message}
+                              validated={getFieldState(`text.${key}`, formState).isDirty}
                               autoComplete="off"
                               autoCorrect="off"
                               spellCheck={false}
@@ -535,19 +467,11 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               key={key}
                               option={getSelectedAddressOption(key)}
                               placeholder={t([
-                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(
-                                  key,
-                                )}`,
+                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
                                 `advancedEditor.tabs.address.placeholder.default`,
                               ])}
-                              error={
-                                getFieldState(`address.${key}`, formState).error
-                                  ?.message
-                              }
-                              validated={
-                                getFieldState(`address.${key}`, formState)
-                                  .isDirty
-                              }
+                              error={getFieldState(`address.${key}`, formState).error?.message}
+                              validated={getFieldState(`address.${key}`, formState).isDirty}
                               onDelete={() => {
                                 removeAddressKey(key, false)
                                 clearErrors([`address.${key}`])
@@ -562,19 +486,11 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               key={key}
                               option={getSelectedAddressOption(key)}
                               placeholder={t([
-                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(
-                                  key,
-                                )}`,
+                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
                                 `advancedEditor.tabs.address.placeholder.default`,
                               ])}
-                              error={
-                                getFieldState(`address.${key}`, formState).error
-                                  ?.message
-                              }
-                              validated={
-                                getFieldState(`address.${key}`, formState)
-                                  .isDirty
-                              }
+                              error={getFieldState(`address.${key}`, formState).error?.message}
+                              validated={getFieldState(`address.${key}`, formState).isDirty}
                               showDot
                               autoComplete="off"
                               autoCorrect="off"
@@ -597,44 +513,26 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                       other: (
                         <>
                           <Input
-                            label={t(
-                              'advancedEditor.tabs.other.contentHash.label',
-                            )}
-                            placeholder={t(
-                              'advancedEditor.tabs.other.contentHash.placeholder',
-                            )}
+                            label={t('advancedEditor.tabs.other.contentHash.label')}
+                            placeholder={t('advancedEditor.tabs.other.contentHash.placeholder')}
                             showDot
-                            validated={
-                              getFieldState('other.contentHash', formState)
-                                .isDirty
-                            }
+                            validated={getFieldState('other.contentHash', formState).isDirty}
                             autoComplete="off"
                             {...register('other.contentHash', {})}
                           />
                           <Input
-                            label={t(
-                              'advancedEditor.tabs.other.publicKey.label',
-                            )}
-                            placeholder={t(
-                              'advancedEditor.tabs.other.publicKey.placeholder',
-                            )}
+                            label={t('advancedEditor.tabs.other.publicKey.label')}
+                            placeholder={t('advancedEditor.tabs.other.publicKey.placeholder')}
                             showDot
-                            validated={
-                              getFieldState('other.publicKey', formState)
-                                .isDirty
-                            }
+                            validated={getFieldState('other.publicKey', formState).isDirty}
                             autoComplete="off"
                             {...register('other.publicKey', {})}
                           />
                           <Input
                             label={t('advancedEditor.tabs.other.abi.label')}
-                            placeholder={t(
-                              'advancedEditor.tabs.other.abi.placeholder',
-                            )}
+                            placeholder={t('advancedEditor.tabs.other.abi.placeholder')}
                             showDot
-                            validated={
-                              getFieldState('other.abi', formState).isDirty
-                            }
+                            validated={getFieldState('other.abi', formState).isDirty}
                             autoComplete="off"
                             {...register('other.abi', {})}
                           />
@@ -651,19 +549,10 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
               </AddRecordContainer>
             )}
             <FooterContainer>
-              <Button
-                tone="grey"
-                variant="secondary"
-                shadowless
-                onClick={handleCancel}
-              >
+              <Button tone="grey" variant="secondary" shadowless onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
-              <Button
-                disabled={hasErrors || !hasChanges}
-                type="submit"
-                shadowless
-              >
+              <Button disabled={hasErrors || !hasChanges} type="submit" shadowless>
                 {t('action.save', { ns: 'common' })}
               </Button>
             </FooterContainer>

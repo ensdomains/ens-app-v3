@@ -79,14 +79,7 @@ type Props = {
   setDisplay: (display: string | null) => void
 }
 
-const AvatarButton = ({
-  validated,
-  error,
-  src,
-  onSelectOption,
-  setValue,
-  setDisplay,
-}: Props) => {
+const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisplay }: Props) => {
   const { t } = useTranslation('profile')
 
   const fileInputRef = useRef<HTMLInputElement>(null)

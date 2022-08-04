@@ -39,12 +39,7 @@ export const AvatarViewManager = ({
 
   return (
     <Card>
-      <Component
-        name={name}
-        avatar={avatar!}
-        handleCancel={handleCancel}
-        handleSubmit={handleSubmit}
-      />
+      <Component name={name} avatar={avatar!} handleCancel={handleCancel} handleSubmit={handleSubmit} />
     </Card>
   )
 }

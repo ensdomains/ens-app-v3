@@ -9,15 +9,15 @@ import { useValidate } from './useValidate'
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
-  const { ready, getOwner, getExpiry, batch } = useEns()
+  const { ready, getOwner, getExpiry, batch, getDNSOwner } = useEns()
 
   const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
 
-  const {
-    profile,
-    loading: profileLoading,
-    status,
-  } = useProfile(normalisedName, !normalisedName)
+  const { profile, loading: profileLoading, status } = useProfile(normalisedName, !normalisedName)
+
+  const { data: dnsOwner } = useQuery(['getDNSOwner', normalisedName], () => getDNSOwner(normalisedName), {
+    enabled: !!(normalisedName && valid) && !normalisedName?.endsWith('.eth'),
+  })
 
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
@@ -30,10 +30,10 @@ export const useNameDetails = (name: string) => {
     },
   )
 
-  const { data: registrationStatus, isLoading: registrationStatusLoading } =
-    useRegistrationStatus(normalisedName)
+  const { data: registrationStatus, isLoading: registrationStatusLoading } = useRegistrationStatus(normalisedName)
 
   const ownerData = batchData?.[0] as Awaited<ReturnType<typeof getOwner>>
+
   const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
 
   const expiryDate = expiryData?.expiry
@@ -48,9 +48,7 @@ export const useNameDetails = (name: string) => {
       return (
         <>
           {t('errors.migrationNotAvailable')}
-          <a href={`https://app.ens.domains/name/${normalisedName}`}>
-            {t('errors.migrationNotAvailableLink')}
-          </a>
+          <a href={`https://app.ens.domains/name/${normalisedName}`}>{t('errors.migrationNotAvailableLink')}</a>
         </>
       )
     }
@@ -66,9 +64,7 @@ export const useNameDetails = (name: string) => {
       return (
         <>
           {t('errors.featureNotAvailable')}
-          <a href={`https://app.ens.domains/name/${normalisedName}`}>
-            {t('errors.featureNotAvailableLink')}
-          </a>
+          <a href={`https://app.ens.domains/name/${normalisedName}`}>{t('errors.featureNotAvailableLink')}</a>
         </>
       )
     }
@@ -78,29 +74,13 @@ export const useNameDetails = (name: string) => {
     if (registrationStatus === 'gracePeriod') {
       return t('errors.expiringSoon')
     }
-    if (
-      !profile &&
-      !profileLoading &&
-      ready &&
-      status !== 'idle' &&
-      status !== 'loading'
-    ) {
+    if (!profile && !profileLoading && ready && status !== 'idle' && status !== 'loading') {
       return t('errors.unknown')
     }
     return null
-  }, [
-    normalisedName,
-    profile,
-    profileLoading,
-    ready,
-    registrationStatus,
-    status,
-    t,
-    valid,
-  ])
+  }, [normalisedName, profile, profileLoading, ready, registrationStatus, status, t, valid])
 
-  const isLoading =
-    !ready || profileLoading || batchLoading || registrationStatusLoading
+  const isLoading = !ready || profileLoading || batchLoading || registrationStatusLoading
 
   return {
     error,
@@ -112,6 +92,7 @@ export const useNameDetails = (name: string) => {
     expiryDate,
     isLoading,
     truncatedName,
+    dnsOwner,
     isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
   }
 }

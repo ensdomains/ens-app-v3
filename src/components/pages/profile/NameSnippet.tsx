@@ -4,9 +4,9 @@ import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -52,13 +52,7 @@ const OwnerWithEns = styled.div(
   `,
 )
 
-const NameOwnerItem = ({
-  address = '',
-  network,
-}: {
-  address?: string
-  network: number
-}) => {
+const NameOwnerItem = ({ address = '', network }: { address?: string; network: number }) => {
   const { getName } = useEns()
   const { data } = useQuery(['getName', address], () => getName(address), {
     enabled: !!address,
@@ -70,18 +64,11 @@ const NameOwnerItem = ({
     return (
       <OwnerContainer>
         <OwnerWithEns>
-          <Typography weight="bold">
-            {data.name.length > 12 ? `${data.name.slice(0, 12)}...` : data.name}
-          </Typography>
+          <Typography weight="bold">{data.name.length > 12 ? `${data.name.slice(0, 12)}...` : data.name}</Typography>
           <Typography weight="bold">{shortenAddress(address)}</Typography>
         </OwnerWithEns>
         <AvatarWrapper>
-          <AvatarWithZorb
-            label={data.name}
-            address={address}
-            name={data.name}
-            network={network}
-          />
+          <AvatarWithZorb label={data.name} address={address} name={data.name} network={network} />
         </AvatarWrapper>
       </OwnerContainer>
     )
@@ -143,6 +130,7 @@ export const NameDetailSnippet = ({
   ownerData,
   network,
   showButton,
+  dnsOwner,
 }: {
   name: string
   expiryDate?: Date | null
@@ -152,6 +140,7 @@ export const NameDetailSnippet = ({
   }
   network: number
   showButton?: boolean
+  dnsOwner?: string
 }) => {
   const { t } = useTranslation('common')
   const router = useRouter()
@@ -161,22 +150,27 @@ export const NameDetailSnippet = ({
       {expiryDate && (
         <ItemContainer>
           <LeftText weight="bold">{t('name.expires')}</LeftText>
-          <Typography weight="bold">{`${expiryDate.toLocaleDateString(
-            undefined,
-            {
-              month: 'long',
-            },
-          )} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
+          <Typography weight="bold">{`${expiryDate.toLocaleDateString(undefined, {
+            month: 'long',
+          })} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
         </ItemContainer>
       )}
-      <ItemContainer>
-        <LeftText weight="bold">{t('name.controller')}</LeftText>
-        <NameOwnerItem address={ownerData.owner} network={network} />
-      </ItemContainer>
+      {ownerData.owner && (
+        <ItemContainer>
+          <LeftText weight="bold">{t('name.controller')}</LeftText>
+          <NameOwnerItem address={ownerData.owner} network={network} />
+        </ItemContainer>
+      )}
       {ownerData.registrant && (
         <ItemContainer>
           <LeftText weight="bold">{t('name.registrant')}</LeftText>
           <NameOwnerItem address={ownerData.registrant} network={network} />
+        </ItemContainer>
+      )}
+      {dnsOwner && (
+        <ItemContainer>
+          <LeftText weight="bold">{t('name.dnsOwner')}</LeftText>
+          <NameOwnerItem address={dnsOwner} network={network} />
         </ItemContainer>
       )}
       {showButton && (
@@ -208,6 +202,7 @@ export const NameSnippet = ({
   expiryDate,
   ownerData,
   showButton,
+  dnsOwner,
 }: {
   name: string
   network: number
@@ -217,20 +212,18 @@ export const NameSnippet = ({
     registrant?: string
   }
   showButton?: boolean
+  dnsOwner?: string
 }) => {
   return (
     <Container>
-      <NFTWithPlaceholder
-        name={name}
-        network={network}
-        style={{ width: '270px', height: '270px' }}
-      />
+      <NFTWithPlaceholder name={name} network={network} style={{ width: '270px', height: '270px' }} />
       <NameDetailSnippet
         name={name}
         expiryDate={expiryDate}
         ownerData={ownerData}
         network={network}
         showButton={showButton}
+        dnsOwner={dnsOwner}
       />
     </Container>
   )

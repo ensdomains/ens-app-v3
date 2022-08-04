@@ -19,10 +19,8 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   )
 }
 
-const customRender = (
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
-) => render(ui, { wrapper: AllTheProviders, ...options })
+const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) =>
+  render(ui, { wrapper: AllTheProviders, ...options })
 
 const customRenderHook = <TProps, TResult>(
   callback: (props: TProps) => TResult,

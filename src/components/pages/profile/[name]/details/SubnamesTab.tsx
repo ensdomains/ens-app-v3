@@ -45,16 +45,9 @@ const TabWrapperWithButtons = styled.div(
   `,
 )
 
-export const SubnamesTab = ({
-  name,
-  network,
-}: {
-  name: string
-  network: number
-}) => {
+export const SubnamesTab = ({ name, network }: { name: string; network: number }) => {
   const { t } = useTranslation('profile')
-  const { subnames, max, page, setPage, isLoading, totalPages } =
-    useSubnamePagination(name)
+  const { subnames, max, page, setPage, isLoading, totalPages } = useSubnamePagination(name)
 
   return (
     <TabWrapperWithButtons>
@@ -67,23 +60,14 @@ export const SubnamesTab = ({
           ))
         ) : (
           <EmptyDetailContainer>
-            {isLoading ? (
-              <Spinner color="blue" />
-            ) : (
-              t('details.tabs.subnames.empty')
-            )}
+            {isLoading ? <Spinner color="blue" /> : t('details.tabs.subnames.empty')}
           </EmptyDetailContainer>
         )}
       </TabWrapper>
       {/* Page buttons don't work yet, this is intended! */}
       {!isLoading && subnames?.length > 0 && (
         <PageButtonsContainer>
-          <PageButtons
-            current={page + 1}
-            onChange={(value) => setPage(value - 1)}
-            total={totalPages || 1}
-            max={max}
-          />
+          <PageButtons current={page + 1} onChange={(value) => setPage(value - 1)} total={totalPages || 1} max={max} />
         </PageButtonsContainer>
       )}
     </TabWrapperWithButtons>

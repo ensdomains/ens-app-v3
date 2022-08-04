@@ -1,4 +1,4 @@
-import { mockFunction, renderHook } from '@app/test-utils'
+import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
 import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
@@ -24,12 +24,14 @@ const mockGetExpiry = {
   batch: jest.fn(),
 }
 const mockBatch = jest.fn()
+const mockGetDNSOwner = jest.fn(() => new Promise((resolve) => resolve('0xaddress')))
 
 describe('useNameDetails', () => {
   mockUseEns.mockReturnValue({
     ready: true,
     getOwner: mockGetOwner,
     getExpiry: mockGetExpiry,
+    getDNSOwner: mockGetDNSOwner,
     batch: mockBatch,
   })
   mockUseProfile.mockReturnValue({
@@ -62,7 +64,6 @@ describe('useNameDetails', () => {
     })
 
     renderHook(() => useNameDetails('test.eth'))
-
     expect(mockBatch).toHaveBeenCalled()
     expect(mockGetExpiry.batch).toHaveBeenCalled()
   })
@@ -74,7 +75,26 @@ describe('useNameDetails', () => {
     })
 
     renderHook(() => useNameDetails('test.com'))
-
     expect(mockGetExpiry.batch).not.toHaveBeenCalled()
+  })
+  it('should call getDNSOwner if TLD is not .eth', () => {
+    mockUseValidate.mockReturnValue({
+      valid: true,
+      name: 'test.com',
+      labelCount: 2,
+    })
+
+    renderHook(() => useNameDetails('test.com'))
+    expect(mockGetDNSOwner).toHaveBeenCalledWith('test.com')
+  })
+  it('should return dnsOwner if TLD is not .eth and there is an owner', async () => {
+    mockUseValidate.mockReturnValue({
+      valid: true,
+      name: 'test.com',
+      labelCount: 2,
+    })
+
+    const { result } = renderHook(() => useNameDetails('test.com'))
+    await waitFor(() => expect(result.current.dnsOwner).toEqual('0xaddress'))
   })
 })

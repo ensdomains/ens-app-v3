@@ -1,11 +1,6 @@
 export const WrapNameGift = ({ imageSrc }: { imageSrc: string }) => {
   return (
-    <svg
-      viewBox="0 0 200 147"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-      xmlnsXlink="http://www.w3.org/1999/xlink"
-    >
+    <svg viewBox="0 0 200 147" fill="none" xmlns="http://www.w3.org/2000/svg" xmlnsXlink="http://www.w3.org/1999/xlink">
       <g clipPath="url(#clip0_4121_5825)">
         <rect
           x="118.083"
@@ -19,13 +14,7 @@ export const WrapNameGift = ({ imageSrc }: { imageSrc: string }) => {
           d="M66.4411 131.223V67.8878C66.4411 63.4695 70.0228 59.8878 74.4411 59.8878H175.773C180.192 59.8878 183.773 63.4695 183.773 67.8878V131.223C183.773 140.16 176.523 147.43 167.611 147.43H82.6084C73.6936 147.43 66.4415 140.16 66.4411 131.223Z"
           fill="#EC5F5F"
         />
-        <rect
-          x="114.253"
-          y="59.8878"
-          width="20.8754"
-          height="87.5421"
-          fill="#FEBE44"
-        />
+        <rect x="114.253" y="59.8878" width="20.8754" height="87.5421" fill="#FEBE44" />
         <path
           d="M70.4411 131.223C70.4411 131.223 70.4411 131.223 70.4411 131.223V67.8878C70.4411 65.6787 72.2319 63.8878 74.4411 63.8878H175.773C177.982 63.8878 179.773 65.6787 179.773 67.8878V131.223C179.773 137.961 174.303 143.43 167.611 143.43H82.6084C75.9122 143.43 70.4415 137.96 70.4411 131.223Z"
           stroke="black"
@@ -49,10 +38,7 @@ export const WrapNameGift = ({ imageSrc }: { imageSrc: string }) => {
           d="M11.0111 95.6717C10.313 97.137 10.9417 98.8992 12.4131 99.6002L20.4949 103.45L32.1654 78.9533C25.25 78.9219 13.5475 90.3482 11.0111 95.6717Z"
           fill="#C99635"
         />
-        <path
-          d="M29.5363 84.4756L38.5147 65.6296L73.6196 82.3538L64.6412 101.2L29.5363 84.4756Z"
-          fill="#FEBE44"
-        />
+        <path d="M29.5363 84.4756L38.5147 65.6296L73.6196 82.3538L64.6412 101.2L29.5363 84.4756Z" fill="#FEBE44" />
         <path
           d="M20.4871 112.766L20.4871 112.766L55.3619 39.5589L57.7625 34.5199C60.6438 28.4719 67.9272 25.8886 73.992 28.7775L90.6277 36.7029C90.6971 36.736 90.7415 36.7835 90.7701 36.8487C90.7823 36.8765 90.7903 36.9046 90.7943 36.9323L87.361 44.2686L87.3551 44.2809L44.3095 134.635L40.7696 141.936C40.7456 141.95 40.7188 141.962 40.6895 141.97C40.6208 141.989 40.5559 141.984 40.4866 141.951L23.8508 134.026C17.7874 131.137 15.2049 123.854 18.0865 117.805L20.4871 112.766Z"
           stroke="black"
@@ -75,31 +61,16 @@ export const WrapNameGift = ({ imageSrc }: { imageSrc: string }) => {
         </g>
       </g>
       <defs>
-        <pattern
-          id="pattern0"
-          patternContentUnits="objectBoundingBox"
-          width="1"
-          height="1"
-        >
+        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
           <use xlinkHref="#image0_4121_5825" transform="scale(0.0037037)" />
         </pattern>
         <clipPath id="clip0_4121_5825">
           <rect width="200" height="147" fill="white" />
         </clipPath>
         <clipPath id="clip1_4121_5825">
-          <rect
-            width="32.3529"
-            height="32.3529"
-            fill="white"
-            transform="translate(165.035 11.4327)"
-          />
+          <rect width="32.3529" height="32.3529" fill="white" transform="translate(165.035 11.4327)" />
         </clipPath>
-        <image
-          id="image0_4121_5825"
-          width="270"
-          height="270"
-          xlinkHref={imageSrc}
-        />
+        <image id="image0_4121_5825" width="270" height="270" xlinkHref={imageSrc} />
       </defs>
     </svg>
   )

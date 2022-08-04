@@ -1,11 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import {
-  fireEvent,
-  mockFunction,
-  render,
-  screen,
-  waitFor,
-} from '@app/test-utils'
+import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import * as ThorinComponents from '@ensdomains/thorin'
 import { useAccount } from 'wagmi'
 import { AvatarNFT } from './AvatarNFT'
@@ -21,42 +15,41 @@ const props = {
   handleCancel: mockHandleCancel,
 }
 
-const generateNFT =
-  (withMedia: boolean, contractAddress?: string) => (_: any, i: number) => ({
-    contract: {
-      address: contractAddress || `0x${i.toString(16)}`,
+const generateNFT = (withMedia: boolean, contractAddress?: string) => (_: any, i: number) => ({
+  contract: {
+    address: contractAddress || `0x${i.toString(16)}`,
+  },
+  id: {
+    tokenId: String(i),
+    tokenMetadata: {
+      tokenType: Math.random() > 0.5 && i > 1 ? 'ERC721' : 'ERC1155',
     },
-    id: {
-      tokenId: String(i),
-      tokenMetadata: {
-        tokenType: Math.random() > 0.5 && i > 1 ? 'ERC721' : 'ERC1155',
-      },
-    },
-    balance: '1',
-    title: `NFT ${i}`,
+  },
+  balance: '1',
+  title: `NFT ${i}`,
+  description: `NFT ${i} description`,
+  tokenUri: {
+    raw: 'https://localhost/test-uri-raw.png',
+    gateway: 'https://localhost/test-uri-gateway.png',
+  },
+  media: withMedia
+    ? [
+        {
+          raw: 'https://localhost/test-media-raw.png',
+          gateway: 'https://localhost/test-media-gateway.png',
+          thumbnail: 'https://localhost/test-media-thumbnail.png',
+        },
+      ]
+    : [],
+  metadata: {
+    image: 'https://localhost/test-meta-image.png',
+    external_url: 'https://localhost/',
+    background_color: '#000000',
+    name: `NFT ${i}`,
     description: `NFT ${i} description`,
-    tokenUri: {
-      raw: 'https://localhost/test-uri-raw.png',
-      gateway: 'https://localhost/test-uri-gateway.png',
-    },
-    media: withMedia
-      ? [
-          {
-            raw: 'https://localhost/test-media-raw.png',
-            gateway: 'https://localhost/test-media-gateway.png',
-            thumbnail: 'https://localhost/test-media-thumbnail.png',
-          },
-        ]
-      : [],
-    metadata: {
-      image: 'https://localhost/test-meta-image.png',
-      external_url: 'https://localhost/',
-      background_color: '#000000',
-      name: `NFT ${i}`,
-      description: `NFT ${i} description`,
-      attributes: '{"test": "test"}',
-    },
-  })
+    attributes: '{"test": "test"}',
+  },
+})
 describe('<AvatarNFT />', () => {
   window.IntersectionObserver = jest.fn()
   ;(window.IntersectionObserver as jest.Mock).mockImplementation(() => ({
@@ -88,10 +81,7 @@ describe('<AvatarNFT />', () => {
   it('should not display ENS NFTs', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       json: () => ({
-        ownedNfts: Array.from(
-          { length: 5 },
-          generateNFT(true, '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
-        ),
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true, '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85')),
         totalCount: 5,
       }),
     })
@@ -99,11 +89,7 @@ describe('<AvatarNFT />', () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1))
     await waitFor(() =>
-      expect(
-        screen.queryByTestId(
-          'nft-0-0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
-        ),
-      ).not.toBeInTheDocument(),
+      expect(screen.queryByTestId('nft-0-0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85')).not.toBeInTheDocument(),
     )
   })
   it('should not display NFTs with no media', async () => {
@@ -116,9 +102,7 @@ describe('<AvatarNFT />', () => {
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1))
-    await waitFor(() =>
-      expect(screen.queryByTestId('nft-0-0x0')).not.toBeInTheDocument(),
-    )
+    await waitFor(() => expect(screen.queryByTestId('nft-0-0x0')).not.toBeInTheDocument())
   })
   it('show load more data on page load trigger', async () => {
     global.fetch = jest.fn()
@@ -133,12 +117,10 @@ describe('<AvatarNFT />', () => {
         }),
       }),
     )
-    jest
-      .spyOn(ThorinComponents, 'ScrollBox')
-      .mockImplementationOnce(({ children, onReachedBottom }) => {
-        onReachedBottom!()
-        return <div>{children}</div>
-      })
+    jest.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(({ children, onReachedBottom }) => {
+      onReachedBottom!()
+      return <div>{children}</div>
+    })
 
     render(<AvatarNFT {...props} />)
 
@@ -164,12 +146,10 @@ describe('<AvatarNFT />', () => {
         }),
       }),
     )
-    jest
-      .spyOn(ThorinComponents, 'ScrollBox')
-      .mockImplementationOnce(({ children, onReachedBottom }) => {
-        onReachedBottom!()
-        return <div>{children}</div>
-      })
+    jest.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(({ children, onReachedBottom }) => {
+      onReachedBottom!()
+      return <div>{children}</div>
+    })
 
     render(<AvatarNFT {...props} />)
 
@@ -186,9 +166,7 @@ describe('<AvatarNFT />', () => {
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
     fireEvent.click(screen.getByTestId('nft-0-0x0'))
-    await waitFor(() =>
-      expect(screen.getByText('NFT 0 description')).toBeVisible(),
-    )
+    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible())
   })
   it('should correctly call submit callback', async () => {
     const ownedNfts = Array.from({ length: 5 }, generateNFT(true))
@@ -203,9 +181,7 @@ describe('<AvatarNFT />', () => {
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
     fireEvent.click(screen.getByTestId('nft-0-0x0'))
-    await waitFor(() =>
-      expect(screen.getByText('NFT 0 description')).toBeVisible(),
-    )
+    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible())
     fireEvent.click(screen.getByText('action.confirm'))
     await waitFor(() =>
       expect(mockHandleSubmit).toHaveBeenCalledWith(

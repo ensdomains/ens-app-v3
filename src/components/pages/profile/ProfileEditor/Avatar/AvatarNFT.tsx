@@ -1,14 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
-import {
-  Button,
-  Dialog,
-  Heading,
-  Input,
-  ScrollBox,
-  Spinner,
-  Typography,
-} from '@ensdomains/thorin'
+import { Button, Dialog, Heading, Input, ScrollBox, Spinner, Typography } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -193,8 +185,7 @@ export const AvatarNFT = ({
         ownedNfts: response.ownedNfts.filter(
           (nft) =>
             (nft.media[0].thumbnail || nft.media[0].gateway) &&
-            nft.contract.address !==
-              '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
+            nft.contract.address !== '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
         ),
       } as NFTResponse
     },
@@ -232,19 +223,12 @@ export const AvatarNFT = ({
         />
         <SelectedNFTContainer>
           <SelectedNFTImage src={nftReference.media[0].gateway} />
-          <Typography weight="bold">
-            {nftReference.title || t('profileEditor.tabs.avatar.nft.unknown')}
-          </Typography>
+          <Typography weight="bold">{nftReference.title || t('profileEditor.tabs.avatar.nft.unknown')}</Typography>
           <Typography>{nftReference.description}</Typography>
         </SelectedNFTContainer>
         <Dialog.Footer
           leading={
-            <Button
-              variant="secondary"
-              tone="grey"
-              shadowless
-              onClick={() => setSelectedNFT(null)}
-            >
+            <Button variant="secondary" tone="grey" shadowless onClick={() => setSelectedNFT(null)}>
               {t('action.back', { ns: 'common' })}
             </Button>
           }
@@ -278,11 +262,7 @@ export const AvatarNFT = ({
           onChange={(e) => setSearchedInput(e.target.value)}
           placeholder={t('profileEditor.tabs.avatar.nft.searchPlaceholder')}
         />
-        <ScrollBox
-          data-testid="nft-scroll-box"
-          style={{ width: '100%' }}
-          onReachedBottom={fetchPage}
-        >
+        <ScrollBox data-testid="nft-scroll-box" style={{ width: '100%' }} onReachedBottom={fetchPage}>
           <InnerScrollBox>
             {NFTs?.map((NFT, i) => (
               <NFTContainer
@@ -291,13 +271,8 @@ export const AvatarNFT = ({
                 onClick={() => setSelectedNFT(i)}
                 key={`${NFT.id.tokenId}-${NFT.contract.address}`}
               >
-                <NFTImage
-                  src={NFT.media[0].thumbnail || NFT.media[0].gateway}
-                  loading="lazy"
-                />
-                <NFTName weight="bold">
-                  {NFT.title || t('profileEditor.tabs.avatar.nft.unknown')}
-                </NFTName>
+                <NFTImage src={NFT.media[0].thumbnail || NFT.media[0].gateway} loading="lazy" />
+                <NFTName weight="bold">{NFT.title || t('profileEditor.tabs.avatar.nft.unknown')}</NFTName>
               </NFTContainer>
             ))}
           </InnerScrollBox>
@@ -319,12 +294,7 @@ export const AvatarNFT = ({
       {innerContent}
       <Dialog.Footer
         leading={
-          <Button
-            variant="secondary"
-            tone="grey"
-            shadowless
-            onClick={handleCancel}
-          >
+          <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

@@ -77,9 +77,7 @@ describe('BreakpointProvider', () => {
     )
 
     await waitFor(() => {
-      expect(
-        screen.getByText('{"xs":true,"sm":true,"md":true,"lg":true,"xl":true}'),
-      ).toBeInTheDocument()
+      expect(screen.getByText('{"xs":true,"sm":true,"md":true,"lg":true,"xl":true}')).toBeInTheDocument()
     })
   })
 })

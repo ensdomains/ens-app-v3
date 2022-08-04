@@ -1,11 +1,5 @@
-import {
-  addressIconTypes,
-  DynamicAddressIcon,
-} from '@app/assets/address/DynamicAddressIcon'
-import {
-  DynamicSocialIcon,
-  socialIconTypes,
-} from '@app/assets/social/DynamicSocialIcon'
+import { addressIconTypes, DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
@@ -87,10 +81,7 @@ const ProfileButton = ({
   const { copy, copied } = useCopied()
 
   return (
-    <ConditionalWrapper
-      condition={link}
-      wrapper={(wrapperChildren) => <a href={link}>{wrapperChildren}</a>}
-    >
+    <ConditionalWrapper condition={link} wrapper={(wrapperChildren) => <a href={link}>{wrapperChildren}</a>}>
       <MinWidthWrapper>
         <Button
           onClick={link ? undefined : () => copy(value)}
@@ -115,12 +106,7 @@ const ProfileButton = ({
               {link ? (
                 <RotatedIconArrowUp as={ArrowUpSVG} key={link} />
               ) : (
-                <IconCopyAnimated
-                  key={value}
-                  copied={copied}
-                  size="3"
-                  color="textTertiary"
-                />
+                <IconCopyAnimated key={value} copied={copied} size="3" color="textTertiary" />
               )}
             </Wrapper>
           </Container>
@@ -130,24 +116,13 @@ const ProfileButton = ({
   )
 }
 
-export const SocialProfileButton = ({
-  iconKey,
-  value,
-}: {
-  iconKey: string
-  value: string
-}) => {
+export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
   const socialData = getSocialData(iconKey, value)
 
   return socialData ? (
     <ProfileButton
       prefixSize="4"
-      prefix={
-        <DynamicSocialIcon
-          fill={socialData.color}
-          name={socialData.icon as keyof typeof socialIconTypes}
-        />
-      }
+      prefix={<DynamicSocialIcon fill={socialData.color} name={socialData.icon as keyof typeof socialIconTypes} />}
       testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
       link={socialData.type === 'link' ? socialData.urlFormatter : undefined}
@@ -157,13 +132,7 @@ export const SocialProfileButton = ({
   ) : null
 }
 
-export const AddressProfileButton = ({
-  iconKey: _iconKey,
-  value,
-}: {
-  iconKey: string
-  value: string
-}) => {
+export const AddressProfileButton = ({ iconKey: _iconKey, value }: { iconKey: string; value: string }) => {
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
@@ -171,17 +140,10 @@ export const AddressProfileButton = ({
     <ProfileButton
       testid={`address-profile-button-${iconKey}`}
       prefixSize="5"
-      prefix={
-        <StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />
-      }
+      prefix={<StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />}
       value={value}
     >
-      {shortenAddress(
-        value,
-        undefined,
-        breakpoints.sm ? undefined : 4,
-        breakpoints.sm ? undefined : 3,
-      )}
+      {shortenAddress(value, undefined, breakpoints.sm ? undefined : 4, breakpoints.sm ? undefined : 3)}
     </ProfileButton>
   ) : null
 }
@@ -237,14 +199,10 @@ export const OtherProfileButton = ({
       prefix={
         type === 'address' ? (
           <OtherContainer>
-            <OtherContainerAddressPrefix variant="label">
-              {iconKey}
-            </OtherContainerAddressPrefix>
+            <OtherContainerAddressPrefix variant="label">{iconKey}</OtherContainerAddressPrefix>
           </OtherContainer>
         ) : (
-          <OtherContainerTextPrefix color="textSecondary">
-            {iconKey}
-          </OtherContainerTextPrefix>
+          <OtherContainerTextPrefix color="textSecondary">{iconKey}</OtherContainerTextPrefix>
         )
       }
       testid={`other-profile-button-${iconKey}`}

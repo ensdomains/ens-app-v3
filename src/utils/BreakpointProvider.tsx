@@ -14,13 +14,7 @@ const defaultValue = {
 
 const BreakpointContext = createContext<Partial<QueryResult>>(defaultValue)
 
-const BreakpointProvider = ({
-  children,
-  queries,
-}: {
-  children: React.ReactNode
-  queries: Query
-}) => {
+const BreakpointProvider = ({ children, queries }: { children: React.ReactNode; queries: Query }) => {
   const [queryMatch, setQueryMatch] = useState({})
 
   useEffect(() => {
@@ -30,9 +24,7 @@ const BreakpointProvider = ({
 
     const handleQueryListener = () => {
       const updatedMatches = keys.reduce((acc, media) => {
-        acc[media] = !!(
-          mediaQueryLists[media] && mediaQueryLists[media]?.matches
-        )
+        acc[media] = !!(mediaQueryLists[media] && mediaQueryLists[media]?.matches)
         return acc
       }, {} as Record<QueryType, boolean>)
       setQueryMatch(updatedMatches)
@@ -42,9 +34,7 @@ const BreakpointProvider = ({
       const matches: Record<string, boolean> = {}
       keys.forEach((media) => {
         if (typeof queries[media] === 'string') {
-          mediaQueryLists[media] = window.matchMedia(
-            queries[media as QueryType],
-          )
+          mediaQueryLists[media] = window.matchMedia(queries[media as QueryType])
           matches[media] = mediaQueryLists[media]?.matches || false
         } else {
           matches[media] = false
@@ -70,11 +60,7 @@ const BreakpointProvider = ({
     }
   }, [queries])
 
-  return (
-    <BreakpointContext.Provider value={queryMatch}>
-      {children}
-    </BreakpointContext.Provider>
-  )
+  return <BreakpointContext.Provider value={queryMatch}>{children}</BreakpointContext.Provider>
 }
 
 function useBreakpoint() {

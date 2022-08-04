@@ -30,19 +30,10 @@ export const getVars = (canvas: HTMLCanvasElement) => {
   }
 }
 
-export const distanceFromEdge = (
-  n: number,
-  max: number,
-  s: number,
-  crpSz: number,
-) => (n > max ? max - n : Math.max(max - (n + s) + crpSz, 0))
+export const distanceFromEdge = (n: number, max: number, s: number, crpSz: number) =>
+  n > max ? max - n : Math.max(max - (n + s) + crpSz, 0)
 
-export const calcMomentum = (
-  n: number,
-  max: number,
-  s: number,
-  crpSz: number,
-) => {
+export const calcMomentum = (n: number, max: number, s: number, crpSz: number) => {
   let momentum = 0
   const sn = distanceFromEdge(n, max, s, crpSz)
   if (sn > 0 || sn < 0) {

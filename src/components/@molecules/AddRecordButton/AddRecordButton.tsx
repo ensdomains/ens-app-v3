@@ -1,10 +1,4 @@
-import {
-  useState,
-  ReactNode,
-  useMemo,
-  useRef,
-  ButtonHTMLAttributes,
-} from 'react'
+import { useState, ReactNode, useMemo, useRef, ButtonHTMLAttributes } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 import { Button, CloseSVG, Input, PlusSVG, SearchSVG } from '@ensdomains/thorin'
 import useTransition, { TransitionState } from 'react-transition-state'
@@ -15,12 +9,8 @@ const Container = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     position: relative;
     border: 1px solid ${theme.colors.borderTertiary};
-    background: ${$state === 'exited' || $state === 'exiting'
-      ? theme.colors.white
-      : theme.colors.foregroundTertiary};
-    max-height: ${$state === 'exited' || $state === 'exiting'
-      ? theme.space['12']
-      : theme.space['40']};
+    background: ${$state === 'exited' || $state === 'exiting' ? theme.colors.white : theme.colors.foregroundTertiary};
+    max-height: ${$state === 'exited' || $state === 'exiting' ? theme.space['12'] : theme.space['40']};
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
     overflow: hidden;
     box-sizing: content-box;
@@ -176,8 +166,7 @@ const OptionContainer = styled.button<{ $inline: boolean }>(
     border: 1px solid ${theme.colors.borderTertiary};
     background: ${theme.colors.white};
     border-radius: ${theme.radii.extraLarge};
-    padding: ${theme.space['2']}
-      ${$inline ? theme.space['4'] : theme.space['2']};
+    padding: ${theme.space['2']} ${$inline ? theme.space['4'] : theme.space['2']};
     cursor: pointer;
   `,
 )
@@ -217,20 +206,11 @@ type OptionButtonProps = {
   showUnsupportedPrefix?: boolean
 } & ButtonHTMLAttributes<HTMLButtonElement>
 
-const OptionButton = ({
-  option,
-  inline = false,
-  showUnsupportedPrefix = true,
-  ...props
-}: OptionButtonProps) => {
+const OptionButton = ({ option, inline = false, showUnsupportedPrefix = true, ...props }: OptionButtonProps) => {
   return (
     <OptionContainer type="button" $inline={inline} {...props}>
       {option.prefix ||
-        (showUnsupportedPrefix && (
-          <OptionHeader>
-            {option.prefix ? option.prefix : <UnsupportedSVG />}
-          </OptionHeader>
-        ))}
+        (showUnsupportedPrefix && <OptionHeader>{option.prefix ? option.prefix : <UnsupportedSVG />}</OptionHeader>)}
       <OptionBody>{option.label}</OptionBody>
     </OptionContainer>
   )
@@ -338,10 +318,7 @@ export const AddRecordButton = ({
   ) : undefined
 
   const options = useMemo(() => {
-    return optionsProp?.filter(
-      (option) =>
-        option.label!.toLowerCase().indexOf(inputValue.toLowerCase()) > -1,
-    )
+    return optionsProp?.filter((option) => option.label!.toLowerCase().indexOf(inputValue.toLowerCase()) > -1)
   }, [inputValue, optionsProp])
 
   const handleInputAction = () => {
@@ -359,11 +336,7 @@ export const AddRecordButton = ({
   }
 
   return (
-    <Container
-      $state={state}
-      ref={containerRef}
-      data-testid="add-record-button"
-    >
+    <Container $state={state} ref={containerRef} data-testid="add-record-button">
       <ControlsContainer $state={state}>
         <ControlsHeader>
           <ControlsHeaderLeading>
@@ -378,11 +351,7 @@ export const AddRecordButton = ({
                 value={inputValue}
                 label=""
                 hideLabel
-                placeholder={
-                  inputType === 'search'
-                    ? t('action.search', { ns: 'common' })
-                    : createRecord
-                }
+                placeholder={inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord}
                 parentStyles={css`
                   background: white;
                   height: ${theme.space['10']};
@@ -393,14 +362,8 @@ export const AddRecordButton = ({
               />
             )}
           </ControlsHeaderLeading>
-          <ControlsHeaderTrailing
-            type="button"
-            $accented={inputActionType === 'create'}
-            onClick={handleInputAction}
-          >
-            {inputActionType === 'create'
-              ? t('action.add', { ns: 'common' })
-              : t('action.cancel', { ns: 'common' })}
+          <ControlsHeaderTrailing type="button" $accented={inputActionType === 'create'} onClick={handleInputAction}>
+            {inputActionType === 'create' ? t('action.add', { ns: 'common' }) : t('action.cancel', { ns: 'common' })}
           </ControlsHeaderTrailing>
         </ControlsHeader>
         {options && (
@@ -419,9 +382,7 @@ export const AddRecordButton = ({
                 ))}
               </OptionsContainer>
             ) : (
-              <NoOptionsContainer $inline={inline}>
-                {noOptions}
-              </NoOptionsContainer>
+              <NoOptionsContainer $inline={inline}>{noOptions}</NoOptionsContainer>
             )}
           </ControlsBody>
         )}

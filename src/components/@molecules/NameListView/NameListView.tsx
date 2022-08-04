@@ -29,13 +29,7 @@ const NoResultsContianer = styled.div(
   `,
 )
 
-export const NameListView = ({
-  currentPage,
-  network,
-}: {
-  currentPage: ReturnedName[]
-  network: number
-}) => {
+export const NameListView = ({ currentPage, network }: { currentPage: ReturnedName[]; network: number }) => {
   const { t } = useTranslation('common')
   if (!currentPage || currentPage.length === 0)
     return (
@@ -46,20 +40,13 @@ export const NameListView = ({
   return (
     <TabWrapper>
       {currentPage.map((name) => {
-        const isNativeEthName =
-          /\.eth$/.test(name.name) && name.name.split('.').length === 2
+        const isNativeEthName = /\.eth$/.test(name.name) && name.name.split('.').length === 2
         return (
           <NameDetailItem key={name.name} network={network} {...name}>
             <OtherItemsContainer>
               {name.expiryDate && <ShortExpiry expiry={name.expiryDate} />}
-              <Tag tone={name.isController ? 'accent' : 'secondary'}>
-                {t('name.controller')}
-              </Tag>
-              {isNativeEthName && (
-                <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>
-                  {t('name.registrant')}
-                </Tag>
-              )}
+              <Tag tone={name.isController ? 'accent' : 'secondary'}>{t('name.controller')}</Tag>
+              {isNativeEthName && <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>{t('name.registrant')}</Tag>}
             </OtherItemsContainer>
           </NameDetailItem>
         )

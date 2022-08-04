@@ -32,7 +32,8 @@
     "descriptions": {
       "owner": "Owns and controls the name",
       "controller": "Controls all the records of the name",
-      "registrant": "The owner of the NFT"
+      "registrant": "The owner of the NFT",
+      "dnsOwner": "Owner of the DNS name"
     },
     "tabs": {
       "records": {
@@ -46,14 +47,15 @@
         "loading": "Loading subnames",
         "empty": "No subnames have been added"
       },
-      "more": {
-        "label": "More",
+      "advanced": {
+        "label": "Advanced",
         "resolver": {
           "label": "Resolver",
           "custom": "Custom",
           "latest": "Latest",
           "outdated": "Outdated",
-          "version": "Version"
+          "version": "Version",
+          "etherscan": "Etherscan"
         },
         "fuses": {
           "label": "Fuses",

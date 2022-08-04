@@ -1,7 +1,4 @@
-import {
-  parseInputType,
-  validateName,
-} from '@ensdomains/ensjs/dist/cjs/utils/validation'
+import { parseInputType, validateName } from '@ensdomains/ensjs/dist/cjs/utils/validation'
 import { isAddress } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 
@@ -18,9 +15,7 @@ export const useValidate = (input: string, skip?: any) => {
 
         const inputType = parseInputType(normalisedName)
         setType(inputType.type)
-        setValid(
-          inputType.type !== 'unknown' && inputType.info !== 'unsupported',
-        )
+        setValid(inputType.type !== 'unknown' && inputType.info !== 'unsupported')
       } catch {
         setValid(false)
       }

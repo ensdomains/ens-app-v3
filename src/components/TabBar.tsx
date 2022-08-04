@@ -11,11 +11,8 @@ const AvatarWrapper = styled.div<{ $active: boolean }>(
   ({ theme, $active }) => css`
     position: relative;
     width: ${theme.space['10']};
-    border: 2px solid
-      ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
-    background-color: ${$active
-      ? theme.colors.accent
-      : 'rgba(196, 196, 196, 1)'};
+    border: 2px solid ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
+    background-color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
     border-radius: ${theme.radii.full};
   `,
 )
@@ -27,11 +24,7 @@ const TabWrapper = styled.div(
     left: 0;
     right: 0;
     z-index: 1;
-    background: linear-gradient(
-      180deg,
-      rgba(255, 255, 255, 0) 0%,
-      ${theme.colors.background} 60%
-    );
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, ${theme.colors.background} 60%);
     padding: ${theme.space['6']} ${theme.space['4']};
   `,
 )
@@ -84,18 +77,12 @@ export const TabBar = () => {
                   <Link href={profileRoute.href} passHref>
                     <a>
                       <AvatarWrapper $active={activeRoute === 'profile'}>
-                        <Avatar
-                          label={profileRoute.label}
-                          src={ensAvatar || zorb}
-                        />
+                        <Avatar label={profileRoute.label} src={ensAvatar || zorb} />
                       </AvatarWrapper>
                     </a>
                   </Link>
                   <RouteItem route={getRoute('favourites')} />
-                  <RouteItem
-                    route={getRoute('settings')}
-                    hasNotification={pendingTransactions.length > 0}
-                  />
+                  <RouteItem route={getRoute('settings')} hasNotification={pendingTransactions.length > 0} />
                 </TabItems>
               ),
               noAccountBefore: (

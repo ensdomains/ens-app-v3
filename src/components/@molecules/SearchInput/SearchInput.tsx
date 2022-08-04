@@ -3,21 +3,11 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import {
-  parseInputType,
-  validateName,
-} from '@ensdomains/ensjs/dist/cjs/utils/validation'
+import { parseInputType, validateName } from '@ensdomains/ensjs/dist/cjs/utils/validation'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
-import {
-  RefObject,
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -58,8 +48,7 @@ const SearchResultsContainer = styled.div<{
     opacity: 0;
     z-index: 1;
     transform: translateY(-${theme.space['2']});
-    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6),
-      0s border-color linear 0s, 0s width linear 0s;
+    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s, 0s width linear 0s;
 
     ${$state === 'entered'
       ? css`
@@ -202,10 +191,7 @@ export const SearchInput = ({
   const [selected, setSelected] = useState(0)
   const [usingPlaceholder, setUsingPlaceholder] = useState(false)
 
-  const [history, setHistory] = useLocalStorage<HistoryItem[]>(
-    'search-history',
-    [],
-  )
+  const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
 
   const [normalisedName, isValid, inputType, isEmpty, isTLD] = useMemo(() => {
     if (inputVal) {
@@ -226,10 +212,7 @@ export const SearchInput = ({
 
       return [
         _normalisedName,
-        _isValid &&
-          _inputType.type !== 'unknown' &&
-          _inputType.info !== 'unsupported' &&
-          _inputType.info !== 'short',
+        _isValid && _inputType.type !== 'unknown' && _inputType.info !== 'unsupported' && _inputType.info !== 'short',
         _inputType,
         false,
         !_normalisedName.includes('.'),
@@ -281,9 +264,7 @@ export const SearchInput = ({
         (item) =>
           item.value !== normalisedName &&
           item.value.includes(normalisedName) &&
-          (searchItem.type === 'nameWithDotEth'
-            ? item.value !== `${normalisedName}.eth`
-            : true),
+          (searchItem.type === 'nameWithDotEth' ? item.value !== `${normalisedName}.eth` : true),
       )
     }
     return []
@@ -302,9 +283,7 @@ export const SearchInput = ({
       return [_searchItem]
     }
     const _searchItems: SearchItem[] =
-      _searchItem.type === 'nameWithDotEth'
-        ? [_searchItem, { type: 'name', isHistory: false }]
-        : [_searchItem]
+      _searchItem.type === 'nameWithDotEth' ? [_searchItem, { type: 'name', isHistory: false }] : [_searchItem]
     return [
       ..._searchItems.map((item) => ({ ...item, isHistory: false })),
       ...extraItems.map((item) => ({ ...item, isHistory: true })),
@@ -333,19 +312,10 @@ export const SearchInput = ({
         return
       }
     }
-    const path =
-      selectedItem.type === 'address'
-        ? `/address/${selectedItem.value}`
-        : `/profile/${selectedItem.value}`
+    const path = selectedItem.type === 'address' ? `/address/${selectedItem.value}` : `/profile/${selectedItem.value}`
     setHistory((prev) =>
       [
-        ...prev.filter(
-          (item) =>
-            !(
-              item.value === selectedItem.value &&
-              item.type === selectedItem.type
-            ),
-        ),
+        ...prev.filter((item) => !(item.value === selectedItem.value && item.type === selectedItem.type)),
         selectedItem as HistoryItem,
       ]
         .reverse()
@@ -371,9 +341,7 @@ export const SearchInput = ({
       }
       if (e.key === 'ArrowUp') {
         e.preventDefault()
-        setSelected(
-          (prev) => (prev - 1 + searchItems.length) % searchItems.length,
-        )
+        setSelected((prev) => (prev - 1 + searchItems.length) % searchItems.length)
       }
       if (e.key === 'ArrowDown') {
         e.preventDefault()

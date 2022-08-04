@@ -1,12 +1,14 @@
+import Head from 'next/head'
+import { useRouter } from 'next/router'
+import styled, { css } from 'styled-components'
+
+import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
+
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
-import Head from 'next/head'
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
 
 const HeadingItems = styled.div<{ $spacing: string }>(
   ({ theme, $spacing }) => css`
@@ -165,16 +167,11 @@ export const Content = ({
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
-      <ErrorContainer
-        message={children.warning.message}
-        type={children.warning.type}
-      />
+      <ErrorContainer message={children.warning.message} type={children.warning.type} />
     </WarningWrapper>
   )
 
-  const InfoComponent = !loading && children.info && (
-    <WarningWrapper>{children.info}</WarningWrapper>
-  )
+  const InfoComponent = !loading && children.info && <WarningWrapper>{children.info}</WarningWrapper>
 
   return (
     <>
@@ -193,12 +190,7 @@ export const Content = ({
           <CustomLeadingHeading $customSpacing={spacing !== '270px 2fr'}>
             {router.query.from && (
               <div data-testid="back-button">
-                <Button
-                  onClick={() => router.back()}
-                  variant="transparent"
-                  shadowless
-                  size="extraSmall"
-                >
+                <Button onClick={() => router.back()} variant="transparent" shadowless size="extraSmall">
                   <BackArrow as={ArrowLeftSVG} />
                 </Button>
               </div>
@@ -208,9 +200,7 @@ export const Content = ({
                 {titleButton}
                 <TitleContainer>
                   <Title weight="bold">{title}</Title>
-                  {subtitle && (!breakpoints.md || alwaysShowSubtitle) && (
-                    <Subtitle weight="bold">{subtitle}</Subtitle>
-                  )}
+                  {subtitle && (!breakpoints.md || alwaysShowSubtitle) && <Subtitle weight="bold">{subtitle}</Subtitle>}
                 </TitleContainer>
               </TitleWrapper>
             </ContentContainer>

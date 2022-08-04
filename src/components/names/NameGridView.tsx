@@ -11,10 +11,7 @@ const NameGrid = styled.div(
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(${theme.space['32']}, 1fr));
     ${mq.md.min(css`
-      grid-template-columns: repeat(
-        auto-fit,
-        minmax(${theme.space['64']}, 1fr)
-      );
+      grid-template-columns: repeat(auto-fit, minmax(${theme.space['64']}, 1fr));
     `)}
     gap: ${theme.space['8']};
   `,
@@ -54,9 +51,7 @@ const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>(
     border-style: solid;
     border-width: 2px;
     border-color: rgba(
-      ${$color === 'foreground'
-        ? '0,0,0'
-        : theme.accentsRaw[$color as keyof typeof theme.accentsRaw]},
+      ${$color === 'foreground' ? '0,0,0' : theme.accentsRaw[$color as keyof typeof theme.accentsRaw]},
       ${$primary ? '0.2' : '0.42'}
     );
     color: rgb(${theme.colors[$color]});
@@ -72,9 +67,7 @@ const ExpiryText = styled.div<{ $primary: boolean }>(
 
 export const Expiry = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()
-  const difference = secondsToDays(
-    (expiry.getTime() - currentDate.getTime()) / 1000,
-  )
+  const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
   const months = Math.round(difference / 30)
   const years = Math.round(difference / 365)
   let text = `${years}y`
@@ -93,58 +86,30 @@ export const Expiry = ({ expiry }: { expiry: Date }) => {
 
   return (
     <ExpiryWrapper $primary={color === 'foreground'} $color={color}>
-      <ClockSVG
-        opacity={color === 'foreground' ? '0.2' : '0.8'}
-        color={color}
-        width="16"
-        height="16"
-      />
+      <ClockSVG opacity={color === 'foreground' ? '0.2' : '0.8'} color={color} width="16" height="16" />
       <ExpiryText $primary={color === 'foreground'}>{text}</ExpiryText>
     </ExpiryWrapper>
   )
 }
 
-const GridItem = ({
-  name,
-  network,
-  expiry,
-}: {
-  name: string
-  network: number
-  expiry?: Date
-}) => {
+const GridItem = ({ name, network, expiry }: { name: string; network: number; expiry?: Date }) => {
   return (
     <Link href={`/profile/${name}`} passHref>
       <a>
         <NameGridItem>
           {expiry && <Expiry expiry={expiry} />}
-          <NFTWithPlaceholder
-            name={name}
-            network={network}
-            style={{ width: 270, height: 270 }}
-          />
+          <NFTWithPlaceholder name={name} network={network} style={{ width: 270, height: 270 }} />
         </NameGridItem>
       </a>
     </Link>
   )
 }
 
-export const NameGridView = ({
-  currentPage,
-  network,
-}: {
-  currentPage: ReturnedName[]
-  network: number
-}) => {
+export const NameGridView = ({ currentPage, network }: { currentPage: ReturnedName[]; network: number }) => {
   return (
     <NameGrid>
       {currentPage.map((item) => (
-        <GridItem
-          key={item.name}
-          name={item.name}
-          expiry={item.expiryDate}
-          network={network}
-        />
+        <GridItem key={item.name} name={item.name} expiry={item.expiryDate} network={network} />
       ))}
     </NameGrid>
   )

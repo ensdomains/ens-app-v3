@@ -28,13 +28,7 @@ const StyledSpinner = styled(Spinner)(
   `,
 )
 
-export const Waiting = ({
-  title,
-  subtitle,
-}: {
-  title: string
-  subtitle: string
-}) => {
+export const Waiting = ({ title, subtitle }: { title: string; subtitle: string }) => {
   return (
     <WaitingContainer data-testid="waiting-container">
       <StyledSpinner color="accent" />

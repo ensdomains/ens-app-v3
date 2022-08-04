@@ -3,14 +3,7 @@ import GridSVG from './assets/Grid.svg'
 import HeartSVG from './assets/Heart.svg'
 import MagnifyingGlassSVG from './assets/MagnifyingGlass.svg'
 
-export type PublicRoute =
-  | 'search'
-  | 'about'
-  | 'developers'
-  | 'community'
-  | 'help'
-  | 'governance'
-  | 'docs'
+export type PublicRoute = 'search' | 'about' | 'developers' | 'community' | 'help' | 'governance' | 'docs'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 

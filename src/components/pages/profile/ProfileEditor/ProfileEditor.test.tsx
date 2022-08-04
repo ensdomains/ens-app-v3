@@ -1,15 +1,8 @@
 import { useProfile } from '@app/hooks/useProfile'
-import {
-  mockFunction,
-  render,
-  screen,
-  waitFor,
-  within,
-  userEvent,
-} from '@app/test-utils'
+import { mockFunction, render, screen, waitFor, within, userEvent } from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useTransaction } from '@app/utils/TransactionProvider'
+// import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { cleanup, fireEvent } from '@testing-library/react'
 import ProfileEditor from './ProfileEditor'
@@ -131,18 +124,15 @@ jest.mock('@app/utils/TransactionProvider')
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
 const mockIntersectionObserver = jest.fn()
-const mockUseTransaction = mockFunction(useTransaction)
+// const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 const mockUseEns = mockFunction(useEns)
 
 const mockSetRecords = jest.fn()
 const mockSetCurrentTransaction = jest.fn()
-const mockGetCurrentStep = jest.fn()
 
 describe('ProfileEditor', () => {
   beforeEach(() => {
-    mockUseProfile.mockReturnValue(
-      mockProfileData as unknown as { profile: Profile; loading: boolean },
-    )
+    mockUseProfile.mockReturnValue(mockProfileData as unknown as { profile: Profile; loading: boolean })
 
     mockUseBreakpoint.mockReturnValue({
       xs: true,
@@ -159,11 +149,6 @@ describe('ProfileEditor', () => {
     })
     window.IntersectionObserver = mockIntersectionObserver
     window.scroll = jest.fn()
-
-    mockUseTransaction.mockReturnValue({
-      setCurrentTransaction: mockSetCurrentTransaction,
-      getCurrentStep: mockGetCurrentStep,
-    })
 
     mockUseEns.mockReturnValue({
       setRecords: mockSetRecords,
@@ -211,13 +196,9 @@ describe('ProfileEditor', () => {
     fireEvent.click(select)
 
     const recordInput = await screen.findByTestId('record-input-DOT')
-    const recordInputInput =
-      within(recordInput).getByTestId('record-input-input')
+    const recordInputInput = within(recordInput).getByTestId('record-input-input')
 
-    await userEvent.type(
-      recordInputInput,
-      '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
-    )
+    await userEvent.type(recordInputInput, '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
   })
 
   it('should set submit button to disabled if new record is created an then deleted', async () => {
@@ -233,13 +214,9 @@ describe('ProfileEditor', () => {
     fireEvent.click(select)
 
     const recordInput = await screen.findByTestId('record-input-DOT')
-    const recordInputInput =
-      within(recordInput).getByTestId('record-input-input')
+    const recordInputInput = within(recordInput).getByTestId('record-input-input')
 
-    await userEvent.type(
-      recordInputInput,
-      '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
-    )
+    await userEvent.type(recordInputInput, '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
 
     const deleteRecord = within(recordInput).getByTestId('record-input-delete')
     fireEvent.click(deleteRecord)

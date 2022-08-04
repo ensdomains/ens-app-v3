@@ -4,10 +4,7 @@
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
-import {
-  RegistrationStatus,
-  useRegistrationStatus,
-} from '@app/hooks/useRegistrationStatus'
+import { RegistrationStatus, useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
 import { useZorb } from '@app/hooks/useZorb'
 import { shortenAddress } from '@app/utils/utils'
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
@@ -28,8 +25,7 @@ const SearchItem = styled.div<{
     gap: ${theme.space['2']};
     height: ${theme.space['14']};
     padding: 0 ${theme.space['4']};
-    border-bottom: ${theme.borderWidths['0.375']} ${theme.borderStyles.solid}
-      ${theme.colors.borderTertiary};
+    border-bottom: ${theme.borderWidths['0.375']} ${theme.borderStyles.solid} ${theme.colors.borderTertiary};
     &:last-of-type {
       border-bottom: 0;
     }
@@ -159,9 +155,7 @@ const AddressResultItem = ({ address }: { address: string }) => {
           <Avatar src={avatar || zorb} label="avatar" />
         </AvatarWrapper>
         <AddressAndName>
-          <Typography weight="bold">
-            {shortenAddress(address, undefined, 8, 6)}
-          </Typography>
+          <Typography weight="bold">{shortenAddress(address, undefined, 8, 6)}</Typography>
           {primary.name && <AddressPrimary>{primary.name}</AddressPrimary>}
         </AddressAndName>
       </LeadingSearchItem>

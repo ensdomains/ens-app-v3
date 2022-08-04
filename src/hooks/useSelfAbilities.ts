@@ -13,10 +13,7 @@ export const useSelfAbilities = (
       canChangeRegistrant: false,
     }
     if (!address || !ownerData) return abilities
-    if (
-      ownerData.registrant === address ||
-      (!ownerData.registrant && ownerData.owner === address)
-    ) {
+    if (ownerData.registrant === address || (!ownerData.registrant && ownerData.owner === address)) {
       abilities.canSend = true
       abilities.canChangeOwner = true
       abilities.canChangeRegistrant = true
