@@ -324,7 +324,9 @@ export const TransactionStageModal = ({
   const title = useMemo(() => {
     if (stage === 'complete') {
       if (stepCount > 1) {
-        return completeTitle || t('transaction.dialog.complete.stepTitle', { step: currentStep + 1 })
+        return (
+          completeTitle || t('transaction.dialog.complete.stepTitle', { step: currentStep + 1 })
+        )
       }
       return completeTitle || t('transaction.dialog.complete.title')
     }
@@ -366,7 +368,9 @@ export const TransactionStageModal = ({
         {error ? <ErrorTypography color="red">{t(error)}</ErrorTypography> : MiddleContent}
         {FilledDisplayItems}
         {stage === 'complete' && (
-          <Outlink href={makeEtherscanLink(txHash!, chainName)}>{t('transaction.viewEtherscan')}</Outlink>
+          <Outlink href={makeEtherscanLink(txHash!, chainName)}>
+            {t('transaction.viewEtherscan')}
+          </Outlink>
         )}
       </InnerDialog>
       <Dialog.Footer leading={LeadingButton} trailing={TrailingButton} />

@@ -14,7 +14,13 @@ const defaultValue = {
 
 const BreakpointContext = createContext<Partial<QueryResult>>(defaultValue)
 
-const BreakpointProvider = ({ children, queries }: { children: React.ReactNode; queries: Query }) => {
+const BreakpointProvider = ({
+  children,
+  queries,
+}: {
+  children: React.ReactNode
+  queries: Query
+}) => {
   const [queryMatch, setQueryMatch] = useState({})
 
   useEffect(() => {

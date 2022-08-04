@@ -50,7 +50,9 @@ describe('Fuses', () => {
     })
     mockUseGetFuseData.mockReturnValue({ fuseData: mockFusesResponse })
     render(<Fuses />)
-    expect(screen.getByTestId('first-traffic-light')).toHaveStyle('background-color: rgb(213,85,85)')
+    expect(screen.getByTestId('first-traffic-light')).toHaveStyle(
+      'background-color: rgb(213,85,85)',
+    )
   })
 
   it('should show vulerabilities', () => {

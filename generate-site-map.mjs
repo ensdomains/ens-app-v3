@@ -16,11 +16,7 @@ const queryAll = gql`
   query allNames($lastCreatedAt: String) {
     domains(
       first: 1000
-      where: {
-        createdAt_gt: $lastCreatedAt
-        name_not_ends_with: ".addr.reverse"
-        name_not: null
-      }
+      where: { createdAt_gt: $lastCreatedAt, name_not_ends_with: ".addr.reverse", name_not: null }
       orderBy: createdAt
       orderDirection: asc
     ) {
@@ -43,9 +39,7 @@ const getPreviousLast = async () => {
     return '0'
   }
 
-  const oldSiteMaps = await parseSitemapIndex(
-    createReadStream('./out/sitemap.xml'),
-  )
+  const oldSiteMaps = await parseSitemapIndex(createReadStream('./out/sitemap.xml'))
   const lastUrl = oldSiteMaps[oldSiteMaps.length - 1]
 
   const lastSiteMap = await parseSitemap(
@@ -82,9 +76,7 @@ const main = async () => {
     end: false,
   })
 
-  const oldSitemapIndexRes = await fetch(
-    new URL('/sitemap.xml', baseURL).toString(),
-  )
+  const oldSitemapIndexRes = await fetch(new URL('/sitemap.xml', baseURL).toString())
 
   if (oldSitemapIndexRes.ok) {
     const oldSitemapIndex = await parseSitemapIndex(oldSitemapIndexRes.body)

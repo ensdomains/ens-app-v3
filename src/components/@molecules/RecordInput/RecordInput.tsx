@@ -97,7 +97,8 @@ export const RecordInput = forwardRef(
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
     const theme = useTheme()
 
-    const prefix = prefixProp || option?.prefix || (showDefaultPrefix ? <UnsupportedSVG /> : undefined)
+    const prefix =
+      prefixProp || option?.prefix || (showDefaultPrefix ? <UnsupportedSVG /> : undefined)
 
     const error = errorProp ? <ErrorWrapper>{errorProp}</ErrorWrapper> : undefined
 

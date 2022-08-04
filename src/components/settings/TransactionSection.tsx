@@ -164,8 +164,13 @@ export const TransactionSection = () => {
               const { action, key } = JSON.parse(transaction.description)
               const resumable = key && getResumable(key)
               return (
-                <TransactionContainer data-testid={`transaction-${transaction.status}`} key={transaction.hash}>
-                  {transaction.status === 'pending' && <Spinner data-testid="pending-spinner" color="accent" />}
+                <TransactionContainer
+                  data-testid={`transaction-${transaction.status}`}
+                  key={transaction.hash}
+                >
+                  {transaction.status === 'pending' && (
+                    <Spinner data-testid="pending-spinner" color="accent" />
+                  )}
                   <TransactionInfoContainer>
                     <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
                     <StyledOutlink
@@ -178,7 +183,12 @@ export const TransactionSection = () => {
                   </TransactionInfoContainer>
                   <ContinueContainer>
                     {resumable && (
-                      <Button shadowless size="small" variant="primary" onClick={() => resumeTransactionFlow(key)}>
+                      <Button
+                        shadowless
+                        size="small"
+                        variant="primary"
+                        onClick={() => resumeTransactionFlow(key)}
+                      >
                         Continue
                       </Button>
                     )}

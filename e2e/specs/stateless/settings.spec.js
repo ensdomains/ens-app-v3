@@ -20,14 +20,10 @@ describe('Settings', () => {
     it('should show the correct transaction details for a transaction modal', () => {
       cy.contains('Test Send Name').click()
       cy.contains('Send Name').should('be.visible')
-      cy.contains('Set the controller and registrant of the name').should(
-        'be.visible',
-      )
+      cy.contains('Set the controller and registrant of the name').should('be.visible')
       cy.findByTestId('transaction-modal-request-trailing-btn').click()
       cy.contains('Awaiting wallet confirmation').should('be.visible')
-      cy.findByTestId('transaction-modal-confirm-trailing-btn').should(
-        'be.disabled',
-      )
+      cy.findByTestId('transaction-modal-confirm-trailing-btn').should('be.disabled')
       cy.confirmMetamaskTransaction()
       cy.contains(
         "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
@@ -48,10 +44,7 @@ describe('Settings', () => {
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
-        .should(
-          'contain.text',
-          'Your "Test Transaction" transaction was successful',
-        )
+        .should('contain.text', 'Your "Test Transaction" transaction was successful')
     })
 
     it('should add a failed transaction to the transaction list, and show the corresponding notification', () => {
@@ -63,10 +56,7 @@ describe('Settings', () => {
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Failure')
-        .should(
-          'contain.text',
-          'Your "Test Transaction" transaction failed and was reverted',
-        )
+        .should('contain.text', 'Your "Test Transaction" transaction failed and was reverted')
     })
 
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
@@ -80,10 +70,7 @@ describe('Settings', () => {
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
-        .should(
-          'contain.text',
-          'Your "Test Transaction" transaction was successful',
-        )
+        .should('contain.text', 'Your "Test Transaction" transaction was successful')
     })
 
     it('should clear transactions when clear is pressed', () => {

@@ -42,7 +42,9 @@ export const Notifications = () => {
   useEffect(() => {
     const updatedTransactions = transactions.filter((transaction) => {
       if (previousTransactions.current) {
-        const prevTransaction = previousTransactions.current.find((tr) => tr.hash === transaction.hash)
+        const prevTransaction = previousTransactions.current.find(
+          (tr) => tr.hash === transaction.hash,
+        )
         if (prevTransaction) {
           return prevTransaction.status !== transaction.status
         }
@@ -60,12 +62,21 @@ export const Notifications = () => {
         }),
         children: resumable ? (
           <ButtonContainer>
-            <a target="_blank" href={makeEtherscanLink(transaction.hash, chainName)} rel="noreferrer">
+            <a
+              target="_blank"
+              href={makeEtherscanLink(transaction.hash, chainName)}
+              rel="noreferrer"
+            >
               <Button shadowless size="small" variant="secondary">
                 {t('transaction.viewEtherscan')}
               </Button>
             </a>
-            <Button shadowless size="small" variant="primary" onClick={() => resumeTransactionFlow(key)}>
+            <Button
+              shadowless
+              size="small"
+              variant="primary"
+              onClick={() => resumeTransactionFlow(key)}
+            >
               Continue
             </Button>
           </ButtonContainer>
@@ -92,7 +103,10 @@ export const Notifications = () => {
     <Toast
       onClose={() => {
         setOpen(false)
-        setTimeout(() => setNotificationQueue((prev) => [...prev.filter((x) => x !== currentNotification)]), 300)
+        setTimeout(
+          () => setNotificationQueue((prev) => [...prev.filter((x) => x !== currentNotification)]),
+          300,
+        )
       }}
       open={open}
       variant={breakpoints.md ? 'desktop' : 'touch'}

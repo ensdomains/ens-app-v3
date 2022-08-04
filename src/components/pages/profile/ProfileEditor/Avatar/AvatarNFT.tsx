@@ -223,7 +223,9 @@ export const AvatarNFT = ({
         />
         <SelectedNFTContainer>
           <SelectedNFTImage src={nftReference.media[0].gateway} />
-          <Typography weight="bold">{nftReference.title || t('profileEditor.tabs.avatar.nft.unknown')}</Typography>
+          <Typography weight="bold">
+            {nftReference.title || t('profileEditor.tabs.avatar.nft.unknown')}
+          </Typography>
           <Typography>{nftReference.description}</Typography>
         </SelectedNFTContainer>
         <Dialog.Footer
@@ -262,7 +264,11 @@ export const AvatarNFT = ({
           onChange={(e) => setSearchedInput(e.target.value)}
           placeholder={t('profileEditor.tabs.avatar.nft.searchPlaceholder')}
         />
-        <ScrollBox data-testid="nft-scroll-box" style={{ width: '100%' }} onReachedBottom={fetchPage}>
+        <ScrollBox
+          data-testid="nft-scroll-box"
+          style={{ width: '100%' }}
+          onReachedBottom={fetchPage}
+        >
           <InnerScrollBox>
             {NFTs?.map((NFT, i) => (
               <NFTContainer
@@ -272,7 +278,9 @@ export const AvatarNFT = ({
                 key={`${NFT.id.tokenId}-${NFT.contract.address}`}
               >
                 <NFTImage src={NFT.media[0].thumbnail || NFT.media[0].gateway} loading="lazy" />
-                <NFTName weight="bold">{NFT.title || t('profileEditor.tabs.avatar.nft.unknown')}</NFTName>
+                <NFTName weight="bold">
+                  {NFT.title || t('profileEditor.tabs.avatar.nft.unknown')}
+                </NFTName>
               </NFTContainer>
             ))}
           </InnerScrollBox>

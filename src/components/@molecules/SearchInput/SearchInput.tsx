@@ -48,7 +48,8 @@ const SearchResultsContainer = styled.div<{
     opacity: 0;
     z-index: 1;
     transform: translateY(-${theme.space['2']});
-    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s, 0s width linear 0s;
+    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s,
+      0s width linear 0s;
 
     ${$state === 'entered'
       ? css`
@@ -212,7 +213,10 @@ export const SearchInput = ({
 
       return [
         _normalisedName,
-        _isValid && _inputType.type !== 'unknown' && _inputType.info !== 'unsupported' && _inputType.info !== 'short',
+        _isValid &&
+          _inputType.type !== 'unknown' &&
+          _inputType.info !== 'unsupported' &&
+          _inputType.info !== 'short',
         _inputType,
         false,
         !_normalisedName.includes('.'),
@@ -283,7 +287,9 @@ export const SearchInput = ({
       return [_searchItem]
     }
     const _searchItems: SearchItem[] =
-      _searchItem.type === 'nameWithDotEth' ? [_searchItem, { type: 'name', isHistory: false }] : [_searchItem]
+      _searchItem.type === 'nameWithDotEth'
+        ? [_searchItem, { type: 'name', isHistory: false }]
+        : [_searchItem]
     return [
       ..._searchItems.map((item) => ({ ...item, isHistory: false })),
       ...extraItems.map((item) => ({ ...item, isHistory: true })),
@@ -312,10 +318,15 @@ export const SearchInput = ({
         return
       }
     }
-    const path = selectedItem.type === 'address' ? `/address/${selectedItem.value}` : `/profile/${selectedItem.value}`
+    const path =
+      selectedItem.type === 'address'
+        ? `/address/${selectedItem.value}`
+        : `/profile/${selectedItem.value}`
     setHistory((prev) =>
       [
-        ...prev.filter((item) => !(item.value === selectedItem.value && item.type === selectedItem.type)),
+        ...prev.filter(
+          (item) => !(item.value === selectedItem.value && item.type === selectedItem.type),
+        ),
         selectedItem as HistoryItem,
       ]
         .reverse()

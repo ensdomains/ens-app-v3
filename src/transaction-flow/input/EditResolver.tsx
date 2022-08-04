@@ -187,7 +187,15 @@ export const EditResolver = ({
         ],
       })
     }
-  }, [resolverChoice, customResolver, errors, resolverAddressIndex, dispatch, name, resolverAddress])
+  }, [
+    resolverChoice,
+    customResolver,
+    errors,
+    resolverAddressIndex,
+    dispatch,
+    name,
+    resolverAddress,
+  ])
 
   return (
     <>
@@ -257,7 +265,10 @@ export const EditResolver = ({
           </Button>
         }
         trailing={
-          <Button shadowless onClick={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}>
+          <Button
+            shadowless
+            onClick={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}
+          >
             Update
           </Button>
         }

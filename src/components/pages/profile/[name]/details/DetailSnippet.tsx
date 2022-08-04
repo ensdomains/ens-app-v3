@@ -72,7 +72,13 @@ const ButtonIcon = styled.svg(
   `,
 )
 
-export const DetailSnippet = ({ expiryDate, canSend }: { expiryDate?: Date | null; canSend: boolean }) => {
+export const DetailSnippet = ({
+  expiryDate,
+  canSend,
+}: {
+  expiryDate?: Date | null
+  canSend: boolean
+}) => {
   const { t } = useTranslation('common')
 
   if (!expiryDate && !canSend) return null
@@ -89,7 +95,13 @@ export const DetailSnippet = ({ expiryDate, canSend }: { expiryDate?: Date | nul
       </Row>
       <Row>
         {expiryDate && (
-          <FullWidthOutlinedButton size="small" shadowless variant="transparent" disabled data-testid="extend-button">
+          <FullWidthOutlinedButton
+            size="small"
+            shadowless
+            variant="transparent"
+            disabled
+            data-testid="extend-button"
+          >
             <InnerButton>
               <ButtonIcon as={FastForwardSVG} />
               <Typography weight="bold">{t('name.extend')}</Typography>
@@ -97,7 +109,13 @@ export const DetailSnippet = ({ expiryDate, canSend }: { expiryDate?: Date | nul
           </FullWidthOutlinedButton>
         )}
         {canSend && (
-          <FullWidthOutlinedButton size="small" shadowless variant="transparent" disabled data-testid="send-button">
+          <FullWidthOutlinedButton
+            size="small"
+            shadowless
+            variant="transparent"
+            disabled
+            data-testid="send-button"
+          >
             <InnerButton>
               <ButtonIcon as={PaperPlaneSVG} />
               <Typography weight="bold">{t('name.send')}</Typography>

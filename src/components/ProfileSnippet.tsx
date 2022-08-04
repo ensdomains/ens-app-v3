@@ -8,26 +8,28 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { DisabledButton } from './@atoms/DisabledButton'
 
-const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(({ theme, $banner, $size }) => [
-  css`
-    padding: ${$size === 'medium' ? theme.space['8'] : theme.space['6']};
-    padding-top: ${theme.space['16']};
-    background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
-    background-repeat: no-repeat;
-    background-attachment: scroll;
-    background-size: 100% ${theme.space['28']};
-    background-color: ${theme.colors.background};
-    border-radius: ${theme.radii['2xLarge']};
-    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    gap: ${theme.space['3']};
-    flex-gap: ${theme.space['3']};
-  `,
-])
+const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
+  ({ theme, $banner, $size }) => [
+    css`
+      padding: ${$size === 'medium' ? theme.space['8'] : theme.space['6']};
+      padding-top: ${theme.space['16']};
+      background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
+      background-repeat: no-repeat;
+      background-attachment: scroll;
+      background-size: 100% ${theme.space['28']};
+      background-color: ${theme.colors.background};
+      border-radius: ${theme.radii['2xLarge']};
+      border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      justify-content: center;
+      gap: ${theme.space['3']};
+      flex-gap: ${theme.space['3']};
+    `,
+  ],
+)
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
@@ -139,7 +141,8 @@ export const ProfileSnippet = ({
               <Button
                 onClick={() =>
                   router.push({
-                    pathname: button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
+                    pathname:
+                      button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
                     query: {
                       from: router.asPath,
                     },
@@ -169,11 +172,15 @@ export const ProfileSnippet = ({
             </div>
           )}
         </DetailStack>
-        {description && <Typography data-testid="profile-snippet-description">{description}</Typography>}
+        {description && (
+          <Typography data-testid="profile-snippet-description">{description}</Typography>
+        )}
         {url && (
           <div style={{ width: 'min-content' }}>
             <a href={url} data-testid="profile-snippet-url">
-              <Typography color="blue">{url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}</Typography>
+              <Typography color="blue">
+                {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
+              </Typography>
             </a>
           </div>
         )}
@@ -183,7 +190,8 @@ export const ProfileSnippet = ({
           <Button
             onClick={() =>
               router.push({
-                pathname: button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
+                pathname:
+                  button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
                 query: {
                   from: router.asPath,
                 },

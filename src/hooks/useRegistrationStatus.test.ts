@@ -111,7 +111,9 @@ describe('useRegistrationStatus', () => {
   it('should return not owned if name has no owner, and has more than 2 labels', async () => {
     mockGetOwner.mockResolvedValue(undefined)
 
-    const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('test.example.com'))
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useRegistrationStatus('test.example.com'),
+    )
     await waitForNextUpdate()
 
     expect(result.current.data).toBe('notOwned')

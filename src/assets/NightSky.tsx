@@ -45,7 +45,8 @@ export const NightSky = ({ children }: { children: ReactNode }) => {
       ctx.beginPath()
       ctx.arc(x, y, 1, 0, Math.PI * 2, false)
       ctx.fillStyle = '#fff'
-      ctx.globalAlpha = Math.random() * ((x * y * 1.5) / (ctx.canvas.width * ctx.canvas.height)) + 0.2
+      ctx.globalAlpha =
+        Math.random() * ((x * y * 1.5) / (ctx.canvas.width * ctx.canvas.height)) + 0.2
       ctx.fill()
     }
   }, [])

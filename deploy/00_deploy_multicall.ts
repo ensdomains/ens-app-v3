@@ -22,9 +22,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     contractJson = JSON.parse(await readFile(jsonPath, { encoding: 'utf8' }))
   } else {
     console.log('Downloading Multicall JSON file...')
-    contractJson = await fetch('https://github.com/mds1/multicall/releases/latest/download/Multicall3.json').then(
-      (res) => res.json(),
-    )
+    contractJson = await fetch(
+      'https://github.com/mds1/multicall/releases/latest/download/Multicall3.json',
+    ).then((res) => res.json())
     await writeFile(jsonPath, JSON.stringify(contractJson))
   }
 

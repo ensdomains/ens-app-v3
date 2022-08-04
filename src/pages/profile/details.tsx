@@ -114,7 +114,11 @@ export const Details = ({
   return (
     <DetailsContainer>
       {breakpoints.md ? (
-        <NFTWithPlaceholder name={normalisedName} network={chainId} style={{ width: '270px', height: '270px' }} />
+        <NFTWithPlaceholder
+          name={normalisedName}
+          network={chainId}
+          style={{ width: '270px', height: '270px' }}
+        />
       ) : (
         <NameSnippetMobile
           expiryDate={expiryDate}

@@ -20,7 +20,12 @@ type Props = {
   maxHeight?: string
 } & HTMLAttributes<HTMLDivElement>
 
-const CollapsibleContent = ({ expanded = false, maxHeight = '100vh', children, ...props }: Props) => {
+const CollapsibleContent = ({
+  expanded = false,
+  maxHeight = '100vh',
+  children,
+  ...props
+}: Props) => {
   return (
     <Container $expanded={expanded} $maxHeight={maxHeight} {...props}>
       {children}

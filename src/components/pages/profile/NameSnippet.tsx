@@ -64,7 +64,9 @@ const NameOwnerItem = ({ address = '', network }: { address?: string; network: n
     return (
       <OwnerContainer>
         <OwnerWithEns>
-          <Typography weight="bold">{data.name.length > 12 ? `${data.name.slice(0, 12)}...` : data.name}</Typography>
+          <Typography weight="bold">
+            {data.name.length > 12 ? `${data.name.slice(0, 12)}...` : data.name}
+          </Typography>
           <Typography weight="bold">{shortenAddress(address)}</Typography>
         </OwnerWithEns>
         <AvatarWrapper>
@@ -216,7 +218,11 @@ export const NameSnippet = ({
 }) => {
   return (
     <Container>
-      <NFTWithPlaceholder name={name} network={network} style={{ width: '270px', height: '270px' }} />
+      <NFTWithPlaceholder
+        name={name}
+        network={network}
+        style={{ width: '270px', height: '270px' }}
+      />
       <NameDetailSnippet
         name={name}
         expiryDate={expiryDate}

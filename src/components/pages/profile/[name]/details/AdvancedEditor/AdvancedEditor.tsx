@@ -11,7 +11,12 @@ import { useProfile } from '@app/hooks/useProfile'
 import { validateCryptoAddress } from '@app/utils/validate'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useEns } from '@app/utils/EnsProvider'
-import { convertFormSafeKey, convertProfileToProfileFormObject, formSafeKey, getDirtyFields } from '@app/utils/editor'
+import {
+  convertFormSafeKey,
+  convertProfileToProfileFormObject,
+  formSafeKey,
+  getDirtyFields,
+} from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import addressOptions from '../../../ProfileEditor/addressOptions'
 import { textOptions } from './textOptions'
@@ -80,7 +85,12 @@ const TabButtonsContainer = styled.div(({ theme }) => [
   `),
 ])
 
-const getIndicatorStyle = (theme: Theme, $selected?: boolean, $hasError?: boolean, $isDirty?: boolean) => {
+const getIndicatorStyle = (
+  theme: Theme,
+  $selected?: boolean,
+  $hasError?: boolean,
+  $isDirty?: boolean,
+) => {
   let color = ''
   if ($hasError) color = theme.colors.red
   else if ($selected && $isDirty) color = theme.colors.accent
@@ -189,10 +199,15 @@ type AdvancedEditorType = {
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
   if (type === 'text') {
-    if (data.text) entries.push(...Object.entries(data.text).map(([key, value]) => [convertFormSafeKey(key), value]))
+    if (data.text)
+      entries.push(
+        ...Object.entries(data.text).map(([key, value]) => [convertFormSafeKey(key), value]),
+      )
   } else if (type === 'addr') {
     if (data.address)
-      entries.push(...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]))
+      entries.push(
+        ...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]),
+      )
   } else if (type === 'contentHash') {
     if (data.other.contentHash) entries.push(['website', data.other.contentHash])
   }
@@ -467,7 +482,9 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               key={key}
                               option={getSelectedAddressOption(key)}
                               placeholder={t([
-                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
                                 `advancedEditor.tabs.address.placeholder.default`,
                               ])}
                               error={getFieldState(`address.${key}`, formState).error?.message}
@@ -486,7 +503,9 @@ const AdvancedEditor = ({ name = '', open, onDismiss }: Props) => {
                               key={key}
                               option={getSelectedAddressOption(key)}
                               placeholder={t([
-                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                                `advancedEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
                                 `advancedEditor.tabs.address.placeholder.default`,
                               ])}
                               error={getFieldState(`address.${key}`, formState).error?.message}

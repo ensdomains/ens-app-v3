@@ -15,9 +15,13 @@ export const useNameDetails = (name: string) => {
 
   const { profile, loading: profileLoading, status } = useProfile(normalisedName, !normalisedName)
 
-  const { data: dnsOwner } = useQuery(['getDNSOwner', normalisedName], () => getDNSOwner(normalisedName), {
-    enabled: !!(normalisedName && valid) && !normalisedName?.endsWith('.eth'),
-  })
+  const { data: dnsOwner } = useQuery(
+    ['getDNSOwner', normalisedName],
+    () => getDNSOwner(normalisedName),
+    {
+      enabled: !!(normalisedName && valid) && !normalisedName?.endsWith('.eth'),
+    },
+  )
 
   const { data: batchData, isLoading: batchLoading } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
@@ -30,7 +34,8 @@ export const useNameDetails = (name: string) => {
     },
   )
 
-  const { data: registrationStatus, isLoading: registrationStatusLoading } = useRegistrationStatus(normalisedName)
+  const { data: registrationStatus, isLoading: registrationStatusLoading } =
+    useRegistrationStatus(normalisedName)
 
   const ownerData = batchData?.[0] as Awaited<ReturnType<typeof getOwner>>
 
@@ -48,7 +53,9 @@ export const useNameDetails = (name: string) => {
       return (
         <>
           {t('errors.migrationNotAvailable')}
-          <a href={`https://app.ens.domains/name/${normalisedName}`}>{t('errors.migrationNotAvailableLink')}</a>
+          <a href={`https://app.ens.domains/name/${normalisedName}`}>
+            {t('errors.migrationNotAvailableLink')}
+          </a>
         </>
       )
     }
@@ -64,7 +71,9 @@ export const useNameDetails = (name: string) => {
       return (
         <>
           {t('errors.featureNotAvailable')}
-          <a href={`https://app.ens.domains/name/${normalisedName}`}>{t('errors.featureNotAvailableLink')}</a>
+          <a href={`https://app.ens.domains/name/${normalisedName}`}>
+            {t('errors.featureNotAvailableLink')}
+          </a>
         </>
       )
     }

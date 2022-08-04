@@ -45,7 +45,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const addr = allNamedAccts[namedAddr]
     const duration = 31536000
 
-    const commitment = await controller.makeCommitmentWithConfig(label, registrant, secret, resolver, addr)
+    const commitment = await controller.makeCommitmentWithConfig(
+      label,
+      registrant,
+      secret,
+      resolver,
+      addr,
+    )
 
     const _controller = controller.connect(await ethers.getSigner(registrant))
     const commitTx = await _controller.commit(commitment)
@@ -57,9 +63,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     const price = await controller.rentPrice(label, duration)
 
-    const registerTx = await _controller.registerWithConfig(label, registrant, duration, secret, resolver, addr, {
-      value: price,
-    })
+    const registerTx = await _controller.registerWithConfig(
+      label,
+      registrant,
+      duration,
+      secret,
+      resolver,
+      addr,
+      {
+        value: price,
+      },
+    )
     console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
     await registerTx.wait()
   }
