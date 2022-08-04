@@ -47,7 +47,7 @@ type NFTResponse = {
   totalCount: number
 }
 
-const alchemyKey = 'sSpYuHmhlpuU7RVXq-IIdCdz4IuKF-gM'
+const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY
 const baseURL = `https://eth-mainnet.alchemyapi.io/nft/v2/${alchemyKey}/getNFTs/`
 
 const InnerScrollBox = styled.div(

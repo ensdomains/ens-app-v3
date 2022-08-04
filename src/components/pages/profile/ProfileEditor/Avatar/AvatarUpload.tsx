@@ -122,14 +122,14 @@ const CropComponent = ({
   const [zoom, setZoom] = useState(100)
 
   const handleSubmit = () => {
-    const { crpSz, max } = getVars(canvasRef.current!)
+    const { cropSize, max } = getVars(canvasRef.current!)
     const cropCanvas = document.createElement('canvas')
     const cropCtx = cropCanvas.getContext('2d')!
 
-    cropCanvas.width = crpSz
-    cropCanvas.height = crpSz
+    cropCanvas.width = cropSize
+    cropCanvas.height = cropSize
 
-    cropCtx.drawImage(canvasRef.current!, max, max, crpSz, crpSz, 0, 0, crpSz, crpSz)
+    cropCtx.drawImage(canvasRef.current!, max, max, cropSize, cropSize, 0, 0, cropSize, cropSize)
     setDataURL(cropCanvas.toDataURL('image/jpeg', 0.9))
   }
 
@@ -137,7 +137,7 @@ const CropComponent = ({
     const image = imageRef.current
     const canvas = canvasRef.current
     if (!canvas) return
-    const { max, crpSz } = getVars(canvas)
+    const { max, cropSize } = getVars(canvas)
     // eslint-disable-next-line prefer-const
     let { x, y, w, h, mx, my, moving } = coordinatesRef.current
     const ctx = canvas.getContext('2d')!
@@ -159,8 +159,8 @@ const CropComponent = ({
       moving,
     }
     if (!moving) {
-      coordinatesRef.current.mx = calcMomentum(x, max, w, crpSz)
-      coordinatesRef.current.my = calcMomentum(y, max, h, crpSz)
+      coordinatesRef.current.mx = calcMomentum(x, max, w, cropSize)
+      coordinatesRef.current.my = calcMomentum(y, max, h, cropSize)
       if (coordinatesRef.current.mx !== 0 || coordinatesRef.current.my !== 0) {
         window.requestAnimationFrame(draw)
       }
@@ -169,7 +169,7 @@ const CropComponent = ({
 
   const handleImageLoad = useCallback(() => {
     const image = imageRef.current
-    const { sz, crpSz, max, ctx } = getVars(canvasRef.current!)
+    const { size, cropSize, max, ctx } = getVars(canvasRef.current!)
     const { width: iw, height: ih } = image
     const ir = iw / ih
 
@@ -178,18 +178,18 @@ const CropComponent = ({
     let w: number
     let h: number
     if (ir > 1) {
-      h = crpSz
+      h = cropSize
       w = h * ir
-      x = (sz - w) / 2
+      x = (size - w) / 2
       y = max
     } else if (ir < 1) {
-      w = crpSz
+      w = cropSize
       h = w / ir
       x = max
-      y = (sz - h) / 2
+      y = (size - h) / 2
     } else {
       // eslint-disable-next-line no-multi-assign
-      w = h = crpSz
+      w = h = cropSize
       // eslint-disable-next-line no-multi-assign
       x = y = max
     }
@@ -228,7 +228,6 @@ const CropComponent = ({
       e.preventDefault()
 
       const { movementX, movementY } = e
-      console.log(movementX, movementY)
       coordinatesRef.current = {
         ...coordinatesRef.current,
         mx: movementX * resolutionMultiplier,
@@ -250,7 +249,6 @@ const CropComponent = ({
   useEffect(() => {
     const image = imageRef.current
     if (canvasRef && !image.src) {
-      console.log('creating')
       image.src = URL.createObjectURL(avatar)
       image.onload = handleImageLoad
     }

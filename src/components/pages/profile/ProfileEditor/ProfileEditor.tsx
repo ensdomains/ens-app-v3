@@ -219,7 +219,6 @@ type Props = {
 }
 
 const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
-  console.log('open')
   const { t } = useTranslation('profile')
   const { showDataInput } = useTransactionFlow()
   const { setRecords, contracts } = useEns()

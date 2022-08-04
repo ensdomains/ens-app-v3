@@ -5,10 +5,10 @@ export const maxSpeed = 96
 export const getVars = (canvas: HTMLCanvasElement) => {
   if (!canvas) {
     return {
-      ip: 0,
-      sz: 0,
-      crpSz: 0,
-      invSz: 0,
+      imagePercent,
+      size: 0,
+      cropSize: 0,
+      inverseCropSize: 0,
       ctx: null,
       max: 0,
     }
@@ -16,31 +16,30 @@ export const getVars = (canvas: HTMLCanvasElement) => {
 
   const ctx = canvas.getContext('2d')!
 
-  const ip = imagePercent
-  const sz = canvas.width
-  const crpSz = sz * ip
-  const invSz = sz * (1 - ip)
+  const size = canvas.width
+  const cropSize = size * imagePercent
+  const inverseCropSize = size * (1 - imagePercent)
   return {
-    ip,
-    sz,
-    crpSz,
-    invSz,
+    imagePercent,
+    size,
+    cropSize,
+    inverseCropSize,
     ctx,
-    max: invSz / 2,
+    max: inverseCropSize / 2,
   }
 }
 
-export const distanceFromEdge = (n: number, max: number, s: number, crpSz: number) =>
-  n > max ? max - n : Math.max(max - (n + s) + crpSz, 0)
+export const distanceFromEdge = (a: number, max: number, imgSize: number, cropSize: number) =>
+  a > max ? max - a : Math.max(max - (a + imgSize) + cropSize, 0)
 
-export const calcMomentum = (n: number, max: number, s: number, crpSz: number) => {
+export const calcMomentum = (a: number, max: number, imgSize: number, crpSz: number) => {
   let momentum = 0
-  const sn = distanceFromEdge(n, max, s, crpSz)
-  if (sn > 0 || sn < 0) {
-    if (sn <= resolutionMultiplier * 2 && sn >= -resolutionMultiplier * 2) {
-      momentum = sn
+  const distance = distanceFromEdge(a, max, imgSize, crpSz)
+  if (distance > 0 || distance < 0) {
+    if (distance <= resolutionMultiplier * 2 && distance >= -resolutionMultiplier * 2) {
+      momentum = distance
     } else {
-      momentum = Math.round(Math.min(Math.max(sn / 16, -maxSpeed), maxSpeed))
+      momentum = Math.round(Math.min(Math.max(distance / 16, -maxSpeed), maxSpeed))
     }
   }
   return momentum

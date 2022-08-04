@@ -17,8 +17,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const jsonPath = resolve(nodePath, '../../../', './cache/multicall.json')
 
-  console.log(process.env)
-
   if (existsSync(jsonPath)) {
     console.log('Multicall JSON file found, using it...')
     contractJson = JSON.parse(await readFile(jsonPath, { encoding: 'utf8' }))
