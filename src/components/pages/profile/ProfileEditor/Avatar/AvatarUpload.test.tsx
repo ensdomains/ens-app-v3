@@ -54,7 +54,7 @@ describe('<AvatarUpload />', () => {
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith(`http://localhost:8787/test.eth`, {
+      expect(global.fetch).toBeCalledWith('https://avatar-upload.ens-cf.workers.dev/test.eth', {
         method: 'PUT',
         headers: {
           // eslint-disable-next-line @typescript-eslint/naming-convention
