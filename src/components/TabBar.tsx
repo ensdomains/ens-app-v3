@@ -82,10 +82,7 @@ export const TabBar = () => {
                     </a>
                   </Link>
                   <RouteItem route={getRoute('favourites')} />
-                  <RouteItem
-                    route={getRoute('settings')}
-                    hasNotification={pendingTransactions.length > 0}
-                  />
+                  <RouteItem route={getRoute('settings')} hasNotification={pendingTransactions.length > 0} />
                 </TabItems>
               ),
               noAccountBefore: (

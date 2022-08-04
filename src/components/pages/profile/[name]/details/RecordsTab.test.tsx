@@ -12,9 +12,7 @@ describe('RecordsTab', () => {
     expect(screen.getByTestId('records-tab')).toBeVisible()
     expect(screen.getByTestId('text-amount')).toHaveTextContent('0 records.label')
     expect(screen.getByTestId('address-amount')).toHaveTextContent('0 records.label')
-    expect(screen.getByTestId('content-hash-heading')).toHaveTextContent(
-      'details.tabs.records.noContentHash',
-    )
+    expect(screen.getByTestId('content-hash-heading')).toHaveTextContent('details.tabs.records.noContentHash')
   })
   it('should show the correct amount of records', () => {
     const mockData = {
@@ -83,14 +81,12 @@ describe('RecordsTab', () => {
     render(<RecordsTab {...mockData} />)
 
     mockData.texts.forEach((text) => {
-      expect(screen.getByTestId(`name-details-text-${text.key}`)).toHaveTextContent(
-        `${text.key}${text.value}`,
-      )
+      expect(screen.getByTestId(`name-details-text-${text.key}`)).toHaveTextContent(`${text.key}${text.value}`)
     })
     mockData.addresses.forEach((address) => {
-      expect(
-        screen.getByTestId(`name-details-address-${address.coin.toLowerCase()}`),
-      ).toHaveTextContent(`${address.coin}${address.addr}`)
+      expect(screen.getByTestId(`name-details-address-${address.coin.toLowerCase()}`)).toHaveTextContent(
+        `${address.coin}${address.addr}`,
+      )
     })
   })
   it('should show the content hash', () => {
@@ -100,9 +96,7 @@ describe('RecordsTab', () => {
     }
 
     render(<RecordsTab {...mockData} />)
-    expect(screen.getByTestId('content-hash-heading')).toHaveTextContent(
-      'details.tabs.records.contentHash',
-    )
+    expect(screen.getByTestId('content-hash-heading')).toHaveTextContent('details.tabs.records.contentHash')
     expect(screen.getByTestId('name-details-contentHash')).toHaveTextContent('ipfs://1234')
   })
 })

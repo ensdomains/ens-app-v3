@@ -132,9 +132,7 @@ const mockSetCurrentTransaction = jest.fn()
 
 describe('ProfileEditor', () => {
   beforeEach(() => {
-    mockUseProfile.mockReturnValue(
-      mockProfileData as unknown as { profile: Profile; loading: boolean },
-    )
+    mockUseProfile.mockReturnValue(mockProfileData as unknown as { profile: Profile; loading: boolean })
 
     mockUseBreakpoint.mockReturnValue({
       xs: true,

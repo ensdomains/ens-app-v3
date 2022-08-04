@@ -67,12 +67,7 @@ export const SubnamesTab = ({ name, network }: { name: string; network: number }
       {/* Page buttons don't work yet, this is intended! */}
       {!isLoading && subnames?.length > 0 && (
         <PageButtonsContainer>
-          <PageButtons
-            current={page + 1}
-            onChange={(value) => setPage(value - 1)}
-            total={totalPages || 1}
-            max={max}
-          />
+          <PageButtons current={page + 1} onChange={(value) => setPage(value - 1)} total={totalPages || 1} max={max} />
         </PageButtonsContainer>
       )}
     </TabWrapperWithButtons>

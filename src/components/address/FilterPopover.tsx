@@ -73,9 +73,7 @@ const FilterPopover = ({ sort, filter, onSortChange, onFilterChange }: PopoverPr
 
   return (
     <PopoverContainer data-testid="filter-popover">
-      {sort && (
-        <SortControl value={sort} onChange={(_sort) => onSortChange && onSortChange(_sort)} />
-      )}
+      {sort && <SortControl value={sort} onChange={(_sort) => onSortChange && onSortChange(_sort)} />}
       <Field label="Show" width="fit">
         <RadioButtonGroup inline value={filter} onChange={handleFilterChange}>
           <StyledRadioButton

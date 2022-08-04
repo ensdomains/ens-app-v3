@@ -24,9 +24,7 @@ const mockGetExpiry = {
   batch: jest.fn(),
 }
 const mockBatch = jest.fn()
-const mockGetDNSOwner = jest.fn(
-  () => new Promise((resolve) => resolve('0xaddress')),
-)
+const mockGetDNSOwner = jest.fn(() => new Promise((resolve) => resolve('0xaddress')))
 
 describe('useNameDetails', () => {
   mockUseEns.mockReturnValue({

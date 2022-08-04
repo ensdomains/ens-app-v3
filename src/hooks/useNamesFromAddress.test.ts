@@ -82,12 +82,8 @@ describe('useNamesFromAddress', () => {
       await waitForNextUpdate()
       const first = result.current.currentPage![0]
       const last = result.current.currentPage![4]
-      expect(first.registrationDate?.getDate()).toBe(
-        new Date(Date.now() - 60 * 60 * 24 * 1000 * 9).getDate(),
-      )
-      expect(last.registrationDate?.getDate()).toBe(
-        new Date(Date.now() - 60 * 60 * 24 * 1000 * 5).getDate(),
-      )
+      expect(first.registrationDate?.getDate()).toBe(new Date(Date.now() - 60 * 60 * 24 * 1000 * 9).getDate())
+      expect(last.registrationDate?.getDate()).toBe(new Date(Date.now() - 60 * 60 * 24 * 1000 * 5).getDate())
     })
     it('should sort by expiry date', async () => {
       const names = Array.from({ length: 10 }, makeNameItem(false))
@@ -108,12 +104,8 @@ describe('useNamesFromAddress', () => {
       await waitForNextUpdate()
       const first = result.current.currentPage![0]
       const last = result.current.currentPage![4]
-      expect(first.expiryDate?.getDate()).toBe(
-        new Date(Date.now() + 60 * 60 * 24 * 1000 * 9).getDate(),
-      )
-      expect(last.expiryDate?.getDate()).toBe(
-        new Date(Date.now() + 60 * 60 * 24 * 1000 * 5).getDate(),
-      )
+      expect(first.expiryDate?.getDate()).toBe(new Date(Date.now() + 60 * 60 * 24 * 1000 * 9).getDate())
+      expect(last.expiryDate?.getDate()).toBe(new Date(Date.now() + 60 * 60 * 24 * 1000 * 5).getDate())
     })
     it('should sort by label name', async () => {
       const names = Array.from({ length: 10 }, makeNameItem(false))
@@ -161,9 +153,7 @@ describe('useNamesFromAddress', () => {
       expect(result.current.currentPage).toHaveLength(1)
     })
     it('should filter by domain', async () => {
-      const names = Array.from({ length: 10 }, makeNameItem(false)).map(
-        (name) => ({ ...name, type: 'registration' }),
-      )
+      const names = Array.from({ length: 10 }, makeNameItem(false)).map((name) => ({ ...name, type: 'registration' }))
       names[0].type = 'domain'
 
       mockGetNames.mockResolvedValue(names)

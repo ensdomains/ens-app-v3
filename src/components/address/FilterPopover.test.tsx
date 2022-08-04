@@ -19,12 +19,7 @@ describe('FilterPopover', () => {
     expect(screen.getByText('name.controller')).toBeVisible()
   })
   it('should show sort if specified', () => {
-    render(
-      <FilterPopover
-        {...baseMockData}
-        sort={{ direction: SortDirection.asc, type: SortType.labelName }}
-      />,
-    )
+    render(<FilterPopover {...baseMockData} sort={{ direction: SortDirection.asc, type: SortType.labelName }} />)
     expect(screen.getByText('Sort by')).toBeVisible()
   })
   it('should callback on filter change', () => {

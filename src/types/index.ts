@@ -15,4 +15,22 @@ export type TransactionDisplayItem = {
 
 type PublicInterface<T> = { [K in keyof T]: T[K] }
 
+export type ProfileEditorType = {
+  _avatar?: File
+  avatar?: string
+  banner?: string
+  website?: string
+  general: {
+    [key: string]: string
+  }
+  accounts: {
+    [key: string]: string
+  }
+  address: {
+    [key: string]: string
+  }
+  other: {
+    [key: string]: string
+  }
+}
 export type PublicENS = PublicInterface<ENS>

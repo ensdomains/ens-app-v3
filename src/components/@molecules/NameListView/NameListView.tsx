@@ -29,13 +29,7 @@ const NoResultsContianer = styled.div(
   `,
 )
 
-export const NameListView = ({
-  currentPage,
-  network,
-}: {
-  currentPage: ReturnedName[]
-  network: number
-}) => {
+export const NameListView = ({ currentPage, network }: { currentPage: ReturnedName[]; network: number }) => {
   const { t } = useTranslation('common')
   if (!currentPage || currentPage.length === 0)
     return (
@@ -52,9 +46,7 @@ export const NameListView = ({
             <OtherItemsContainer>
               {name.expiryDate && <ShortExpiry expiry={name.expiryDate} />}
               <Tag tone={name.isController ? 'accent' : 'secondary'}>{t('name.controller')}</Tag>
-              {isNativeEthName && (
-                <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>{t('name.registrant')}</Tag>
-              )}
+              {isNativeEthName && <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>{t('name.registrant')}</Tag>}
             </OtherItemsContainer>
           </NameDetailItem>
         )

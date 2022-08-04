@@ -91,10 +91,7 @@ const NameCountWrapper = styled.div(
 type FilterControlProps = {
   sort: SortValue
   filter: Name['type'] | 'none'
-  onChange: (data: {
-    sort: FilterControlProps['sort']
-    filter: FilterControlProps['filter']
-  }) => void
+  onChange: (data: { sort: FilterControlProps['sort']; filter: FilterControlProps['filter'] }) => void
   resultsCount?: number
 }
 

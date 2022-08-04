@@ -73,16 +73,15 @@ const AccordionContainer = styled.div<{
     flex-direction: column;
     width: 100%;
     height: 100%;
-    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0.3s color ease-in-out,
-      0.2s border-radius ease-in-out, 0s border-width 0.1s;
+    transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0.3s color ease-in-out, 0.2s border-radius ease-in-out,
+      0s border-width 0.1s;
 
     border-radius: ${theme.radii['2xLarge']};
 
     overflow: hidden;
 
     & > div {
-      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-        ${theme.colors.borderTertiary};
+      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.borderTertiary};
       &:last-of-type {
         border-bottom: none;
       }
@@ -180,9 +179,7 @@ const Accordion = ({ data, name }: AccordionProps) => {
                   <Typography variant="extraLarge" weight="bold" color="textTertiary">
                     {item.title}
                   </Typography>
-                  <UnwrappedIndicator color="textSecondary">
-                    {t('details.notWrapped')}
-                  </UnwrappedIndicator>
+                  <UnwrappedIndicator color="textSecondary">{t('details.notWrapped')}</UnwrappedIndicator>
                 </AccordionTitle>
               </AccordionItem>
             )
@@ -201,12 +198,7 @@ const Accordion = ({ data, name }: AccordionProps) => {
                       {item.title}
                     </Typography>
                     {item.canEdit && (
-                      <EditButton
-                        shadowless
-                        variant="transparent"
-                        size="small"
-                        onClick={() => handleEditClick(idx)}
-                      >
+                      <EditButton shadowless variant="transparent" size="small" onClick={() => handleEditClick(idx)}>
                         {t('action.edit', { ns: 'common' })}
                       </EditButton>
                     )}

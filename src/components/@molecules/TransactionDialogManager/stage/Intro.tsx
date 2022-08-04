@@ -66,9 +66,7 @@ export const IntroStageModal = ({
   )
 
   const tLabel =
-    currentStep > 0
-      ? t('transaction.dialog.intro.trailingButtonResume')
-      : t('transaction.dialog.intro.trailingButton')
+    currentStep > 0 ? t('transaction.dialog.intro.trailingButtonResume') : t('transaction.dialog.intro.trailingButton')
 
   const TrailingButton = (
     <Button
@@ -87,12 +85,7 @@ export const IntroStageModal = ({
 
   return (
     <>
-      <Dialog.Heading
-        currentStep={currentStep}
-        stepCount={txCount}
-        stepStatus="notStarted"
-        title={title}
-      />
+      <Dialog.Heading currentStep={currentStep} stepCount={txCount} stepStatus="notStarted" title={title} />
       <InnerDialog data-testid="transaction-modal-inner">
         <Content {...content.data} />
         <DisplayItems

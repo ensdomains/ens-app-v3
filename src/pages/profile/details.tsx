@@ -1,20 +1,21 @@
+import { ENS } from '@ensdomains/ensjs'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
+import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
-import { ENS } from '@ensdomains/ensjs'
 
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
-import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
 import Advanced from '@app/components/pages/profile/[name]/details/AdvancedTab/AdvancedTab'
+import { DetailSnippet } from '@app/components/pages/profile/[name]/details/DetailSnippet'
 import { RecordsTab } from '@app/components/pages/profile/[name]/details/RecordsTab'
 import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
 import { WrapperCallToAction } from '@app/components/pages/profile/[name]/details/WrapperCallToAction'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -91,29 +92,6 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
-type OwnerData =
-  | Pick<NonNullable<Awaited<ReturnType<ENS['getOwner']>>>, 'registrant' | 'owner'>
-  | undefined
-export const calculateSelfAbilities = (address: string | undefined, ownerData: OwnerData) => {
-  const abilities = {
-    canEdit: false,
-    canSend: false,
-    canChangeOwner: false,
-    canChangeRegistrant: false,
-  }
-  if (!address || !ownerData) return abilities
-  if (ownerData.registrant === address || (!ownerData.registrant && ownerData.owner === address)) {
-    abilities.canSend = true
-    abilities.canChangeOwner = true
-    abilities.canChangeRegistrant = true
-  }
-  if (ownerData.owner === address) {
-    abilities.canEdit = true
-    abilities.canChangeOwner = true
-  }
-  return abilities
-}
-
 export const Details = ({
   expiryDate,
   ownerData,
@@ -128,7 +106,7 @@ export const Details = ({
   breakpoints: ReturnType<typeof useBreakpoint>
   normalisedName: string
   chainId: number
-  selfAbilities: ReturnType<typeof calculateSelfAbilities>
+  selfAbilities: ReturnType<typeof useSelfAbilities>
   dnsOwner: string
 }) => {
   const { t } = useTranslation('profile')
@@ -136,11 +114,7 @@ export const Details = ({
   return (
     <DetailsContainer>
       {breakpoints.md ? (
-        <NFTWithPlaceholder
-          name={normalisedName}
-          network={chainId}
-          style={{ width: '270px', height: '270px' }}
-        />
+        <NFTWithPlaceholder name={normalisedName} network={chainId} style={{ width: '270px', height: '270px' }} />
       ) : (
         <NameSnippetMobile
           expiryDate={expiryDate}
@@ -216,10 +190,7 @@ export default function Page() {
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
-  const selfAbilities = useMemo(
-    () => calculateSelfAbilities(address, ownerData),
-    [address, ownerData],
-  )
+  const selfAbilities = useSelfAbilities(address, ownerData)
 
   const isLoading = detailsLoading || accountLoading
 

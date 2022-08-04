@@ -6,11 +6,7 @@ import { PageButtons } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
-import {
-  SortDirection,
-  SortType,
-  SortValue,
-} from '@app/components/@molecules/SortControl/SortControl'
+import { SortDirection, SortType, SortValue } from '@app/components/@molecules/SortControl/SortControl'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { shortenAddress } from '@app/utils/utils'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
@@ -112,20 +108,10 @@ const Page = () => {
   const error = hasErrors ? t('errors.names') : ''
 
   return (
-    <Content
-      alwaysShowSubtitle
-      subtitle={t('addressDetails')}
-      title={shortenAddress(address)}
-      loading={loading}
-    >
+    <Content alwaysShowSubtitle subtitle={t('addressDetails')} title={shortenAddress(address)} loading={loading}>
       {{
         header: (
-          <FilterControl
-            sort={sortValue}
-            filter={filter}
-            resultsCount={nameCount}
-            onChange={onFilterControlChange}
-          />
+          <FilterControl sort={sortValue} filter={filter} resultsCount={nameCount} onChange={onFilterControlChange} />
         ),
         warning: error
           ? {

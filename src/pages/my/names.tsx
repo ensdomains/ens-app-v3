@@ -14,11 +14,7 @@ import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
-import SortControl, {
-  SortType,
-  SortValue,
-  SortDirection,
-} from '@app/components/@molecules/SortControl/SortControl'
+import SortControl, { SortType, SortValue, SortDirection } from '@app/components/@molecules/SortControl/SortControl'
 import { Name } from '@app/types'
 
 const EmptyDetailContainer = styled.div(
@@ -118,21 +114,14 @@ export default function Page() {
     filter: filter === 'none' ? undefined : filter,
   })
 
-  const loading =
-    isLoading ||
-    status === 'loading' ||
-    namesLoading ||
-    namesStatus === 'loading' ||
-    !router.isReady
+  const loading = isLoading || status === 'loading' || namesLoading || namesStatus === 'loading' || !router.isReady
 
   useProtectedRoute('/', loading ? true : address && address !== '')
 
   return (
     <Content
       title={t('title')}
-      subtitle={`${t('subtitle.start')} ${isSelf ? t('subtitle.your') : t('subtitle.this')} ${t(
-        'subtitle.wallet',
-      )}`}
+      subtitle={`${t('subtitle.start')} ${isSelf ? t('subtitle.your') : t('subtitle.this')} ${t('subtitle.wallet')}`}
       alwaysShowSubtitle
       singleColumnContent
       spacing={spacing}

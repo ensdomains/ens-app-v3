@@ -25,8 +25,7 @@ const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
     grid-template-columns: 1fr 2fr;
     align-items: center;
     border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      rgba(${theme.shadesRaw.foreground}, 0.06);
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} rgba(${theme.shadesRaw.foreground}, 0.06);
     min-height: ${theme.space['14']};
     padding: ${theme.space['2']} ${theme.space['5']};
     width: ${theme.space.full};
@@ -116,12 +115,7 @@ const AddressValue = ({ value }: { value: string }) => {
         {AddressTypography}
       </InnerValueWrapper>
       <AvatarWrapper>
-        <AvatarWithZorb
-          address={value}
-          name={primary.name || undefined}
-          label={`${value}-avatar`}
-          network={network}
-        />
+        <AvatarWithZorb address={value} name={primary.name || undefined} label={`${value}-avatar`} network={network} />
       </AvatarWrapper>
     </ValueWithAvatarContainer>
   )
@@ -166,9 +160,7 @@ export const DisplayItem = ({
       $shrink={shrink}
       key={`${label}-${value}`}
     >
-      <DisplayItemLabel>
-        {useRawLabel ? label : t(`transaction.itemLabel.${label}`)}
-      </DisplayItemLabel>
+      <DisplayItemLabel>{useRawLabel ? label : t(`transaction.itemLabel.${label}`)}</DisplayItemLabel>
       <DisplayItemValue {...{ value, type }} />
     </DisplayItemContainer>
   )

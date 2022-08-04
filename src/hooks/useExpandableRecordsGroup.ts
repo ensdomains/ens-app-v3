@@ -1,12 +1,6 @@
 import { Select } from '@ensdomains/thorin'
 import { ComponentProps, useMemo, useState, useEffect } from 'react'
-import {
-  FieldValues,
-  Path,
-  PathValue,
-  UseFormGetValues,
-  UseFormSetValue,
-} from 'react-hook-form'
+import { FieldValues, Path, PathValue, UseFormGetValues, UseFormSetValue } from 'react-hook-form'
 
 type Option = ComponentProps<typeof Select>['options'][number]
 
@@ -61,8 +55,7 @@ const useExpandableRecordsGroup = <T>({
     }
   }
 
-  const getSelectedOption = (key: string) =>
-    options.find(({ value }) => value === key) || { label: key, value: key }
+  const getSelectedOption = (key: string) => options.find(({ value }) => value === key) || { label: key, value: key }
 
   return {
     existingKeys,

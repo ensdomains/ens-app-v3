@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { existsSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { DeployFunction } from 'hardhat-deploy/types'
@@ -11,16 +12,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   let contractJson: any
 
-  const jsonPath = resolve(process.env.PROJECT_CWD!, './cache/multicall.json')
+  const nodePaths = process.env.NODE_PATH!.split(':')
+  const nodePath = nodePaths[nodePaths.length - 1]
+
+  const jsonPath = resolve(nodePath, '../../../', './cache/multicall.json')
 
   if (existsSync(jsonPath)) {
     console.log('Multicall JSON file found, using it...')
     contractJson = JSON.parse(await readFile(jsonPath, { encoding: 'utf8' }))
   } else {
     console.log('Downloading Multicall JSON file...')
-    contractJson = await fetch(
-      'https://github.com/mds1/multicall/releases/latest/download/Multicall3.json',
-    ).then((res) => res.json())
+    contractJson = await fetch('https://github.com/mds1/multicall/releases/latest/download/Multicall3.json').then(
+      (res) => res.json(),
+    )
     await writeFile(jsonPath, JSON.stringify(contractJson))
   }
 

@@ -127,13 +127,7 @@ export const NameSnippetMobile = ({
           <FavouriteButton disabled />
         </ExpiryAndFavouriteRow>
         {expiryDate && (
-          <OutlinedButton
-            disabled
-            size="small"
-            shadowless
-            variant="transparent"
-            data-testid="extend-button"
-          >
+          <OutlinedButton disabled size="small" shadowless variant="transparent" data-testid="extend-button">
             <InnerButton>
               {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
               <Typography weight="bold">{t('name.extend')}</Typography>
@@ -143,13 +137,7 @@ export const NameSnippetMobile = ({
         {canSend && (
           <RowWithGap>
             <SendButtonContainer>
-              <OutlinedButton
-                disabled
-                size="small"
-                shadowless
-                variant="transparent"
-                data-testid="send-button"
-              >
+              <OutlinedButton disabled size="small" shadowless variant="transparent" data-testid="send-button">
                 <InnerButton>
                   {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
                   <Typography weight="bold">{t('name.send')}</Typography>

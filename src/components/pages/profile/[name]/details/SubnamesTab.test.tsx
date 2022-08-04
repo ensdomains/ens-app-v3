@@ -83,8 +83,6 @@ describe('SubnamesTab', () => {
     render(<SubnamesTab {...baseMockData} />)
     expect(screen.getAllByTestId('pagebutton')).toHaveLength(1)
     expect(screen.getByTestId('pagebutton')).toHaveTextContent('1')
-    subnamesMockData.subnames.forEach((subname) =>
-      expect(screen.getByText(subname.truncatedName)).toBeVisible(),
-    )
+    subnamesMockData.subnames.forEach((subname) => expect(screen.getByText(subname.truncatedName)).toBeVisible())
   })
 })

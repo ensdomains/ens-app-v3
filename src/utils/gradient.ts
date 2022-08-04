@@ -151,9 +151,7 @@ export const gradientForBytes = (address: string) => {
     },
   ]
 
-  return inputs.map(
-    (input: HSL) => `hsl(${Math.round(input.h)}, ${Math.round(input.s)}%, ${Math.round(input.l)}%)`,
-  )
+  return inputs.map((input: HSL) => `hsl(${Math.round(input.h)}, ${Math.round(input.s)}%, ${Math.round(input.l)}%)`)
 }
 
 export const zorbImageSVG = (input: string, type: 'name' | 'address' | 'hash') => {
@@ -179,7 +177,5 @@ export const zorbImageSVG = (input: string, type: 'name' | 'address' | 'hash') =
 }
 
 export const zorbImageDataURI = (input: string, type: 'name' | 'address' | 'hash') => {
-  return `data:image/svg+xml;base64,${Buffer.from(zorbImageSVG(input, type), 'utf-8').toString(
-    'base64',
-  )}`
+  return `data:image/svg+xml;base64,${Buffer.from(zorbImageSVG(input, type), 'utf-8').toString('base64')}`
 }

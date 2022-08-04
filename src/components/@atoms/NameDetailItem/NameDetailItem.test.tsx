@@ -33,10 +33,7 @@ describe('NameDetailitem', () => {
         <div>child</div>
       </NameDetailItem>,
     )
-    expect(screen.getByText('truncatedName').closest('a')).toHaveAttribute(
-      'href',
-      '/profile/name?from=',
-    )
+    expect(screen.getByText('truncatedName').closest('a')).toHaveAttribute('href', '/profile/name?from=')
   })
   it('should show zorb when there is no avatar', () => {
     mockUseZorb.mockReturnValue('zorb')

@@ -42,11 +42,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
         const item = updatedItems[key]
         const { length } = item.transactions
         const inx = item.currentTransaction
-        if (
-          inx + 1 > length ||
-          (inx + 1 === length && item.currentTransactionComplete) ||
-          !item.resumable
-        ) {
+        if (inx + 1 > length || (inx + 1 === length && item.currentTransactionComplete) || !item.resumable) {
           delete updatedItems[key]
         }
       }
@@ -58,10 +54,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
   )
   const selectedFlowItem = getSelectedFlowItem(state)
 
-  const getTransactionIndex = useCallback(
-    (key: string) => state.items[key]?.currentTransaction || 0,
-    [state.items],
-  )
+  const getTransactionIndex = useCallback((key: string) => state.items[key]?.currentTransaction || 0, [state.items])
 
   const getResumable = useCallback(
     (key: string) => {

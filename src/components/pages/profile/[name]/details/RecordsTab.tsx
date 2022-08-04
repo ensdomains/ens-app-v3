@@ -220,9 +220,7 @@ const RecordItem = ({
 
   return (
     <RecordContainer
-      data-testid={
-        itemKey ? `name-details-${type}-${itemKey.toLowerCase()}` : `name-details-${type}`
-      }
+      data-testid={itemKey ? `name-details-${type}-${itemKey.toLowerCase()}` : `name-details-${type}`}
       onClick={() => copy(value)}
     >
       {itemKey && (
@@ -306,9 +304,7 @@ export const RecordsTab = ({
           )}
         </SectionHeader>
         {filteredTexts &&
-          filteredTexts.map((text) => (
-            <RecordItem key={text.key} type="text" itemKey={text.key} value={text.value} />
-          ))}
+          filteredTexts.map((text) => <RecordItem key={text.key} type="text" itemKey={text.key} value={text.value} />)}
       </RecordSection>
       <RecordSection>
         <SectionHeader>
@@ -317,8 +313,7 @@ export const RecordsTab = ({
               {t('address.label', { ns: 'common' })}
             </SectionTitle>
             <SectionSubtitle data-testid="address-amount" weight="bold">
-              {filteredAddresses ? filteredAddresses.length : 0}{' '}
-              {t('records.label', { ns: 'common' })}
+              {filteredAddresses ? filteredAddresses.length : 0} {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
         </SectionHeader>
@@ -342,9 +337,7 @@ export const RecordsTab = ({
                   {t('details.tabs.records.contentHash')}
                 </SectionTitle>
                 {formattedContentHashLink && (
-                  <Outlink href={formattedContentHashLink}>
-                    {t('action.view', { ns: 'common' })}
-                  </Outlink>
+                  <Outlink href={formattedContentHashLink}>{t('action.view', { ns: 'common' })}</Outlink>
                 )}
               </>
             ) : (

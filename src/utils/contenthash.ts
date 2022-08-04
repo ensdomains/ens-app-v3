@@ -1,15 +1,10 @@
 import { DecodedContentHash } from '@ensdomains/ensjs/dist/cjs/utils/contentHash'
 
-export const getContentHashLink = (
-  name: string,
-  network: number,
-  decodedContentHash: DecodedContentHash,
-) => {
+export const getContentHashLink = (name: string, network: number, decodedContentHash: DecodedContentHash) => {
   const protocol = decodedContentHash.protocolType
   const hash = decodedContentHash.decoded
 
-  const useEthLink =
-    name.endsWith('.eth') && network === 1 && (protocol === 'ipfs' || protocol === 'ipns')
+  const useEthLink = name.endsWith('.eth') && network === 1 && (protocol === 'ipfs' || protocol === 'ipns')
   if (useEthLink) {
     return `https://${name}.link`
   }

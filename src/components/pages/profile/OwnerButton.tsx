@@ -174,12 +174,7 @@ const OwnerButtonWithPopup = ({
       <OwnerButtonWrapper onClick={() => setOpen(true)}>
         <Content>
           <AvatarWrapper>
-            <AvatarWithZorb
-              label={name || address}
-              address={address}
-              name={name || undefined}
-              network={network}
-            />
+            <AvatarWithZorb label={name || address} address={address} name={name || undefined} network={network} />
           </AvatarWrapper>
           <TextContainer>
             <Label ellipsis>{label}</Label>
@@ -187,13 +182,7 @@ const OwnerButtonWithPopup = ({
           </TextContainer>
         </Content>
       </OwnerButtonWrapper>
-      <Dialog
-        open={open}
-        subtitle={description}
-        title={label}
-        variant="closable"
-        onDismiss={() => setOpen(false)}
-      >
+      <Dialog open={open} subtitle={description} title={label} variant="closable" onDismiss={() => setOpen(false)}>
         <InnerDialog data-testid="owner-button-inner-dialog">
           {name && !loading && (
             <ProfileSnippetWrapper>
@@ -207,12 +196,7 @@ const OwnerButtonWithPopup = ({
               />
             </ProfileSnippetWrapper>
           )}
-          <AddressCopyButton
-            variant="transparent"
-            size="extraSmall"
-            shadowless
-            onClick={() => copy(address)}
-          >
+          <AddressCopyButton variant="transparent" size="extraSmall" shadowless onClick={() => copy(address)}>
             <AddressCopyContainer>
               <Typography variant="large" weight="bold">
                 {shortenAddress(address, 14, 8, 6)}
@@ -340,12 +324,7 @@ const OwnerButtonWithDropdown = ({
           <OwnerRow data-testid={`${label.toLowerCase()}-data`}>
             <Name ellipsis>{name || shortenAddress(address)}</Name>
             <AvatarWrapper>
-              <AvatarWithZorb
-                label={name || address}
-                address={address}
-                name={name || undefined}
-                network={network}
-              />
+              <AvatarWithZorb label={name || address} address={address} name={name || undefined} network={network} />
             </AvatarWrapper>
           </OwnerRow>
           <ChevronIcon $pressed={isOpen} as={DownIndicatorSVG} />
@@ -376,12 +355,6 @@ export const OwnerButton = ({
   }
 
   return (
-    <OwnerButtonWithDropdown
-      address={address}
-      canTransfer={canTransfer}
-      label={label}
-      network={network}
-      name={name}
-    />
+    <OwnerButtonWithDropdown address={address} canTransfer={canTransfer} label={label} network={network} name={name} />
   )
 }

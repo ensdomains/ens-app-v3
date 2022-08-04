@@ -78,11 +78,9 @@ export const useNamesFromAddress = ({
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {
       if (sort.orderDirection === 'asc') {
-        return (a: Name, b: Name) =>
-          (a.truncatedName || '').localeCompare(b.truncatedName || '')
+        return (a: Name, b: Name) => (a.truncatedName || '').localeCompare(b.truncatedName || '')
       }
-      return (a: Name, b: Name) =>
-        (b.truncatedName || '').localeCompare(a.truncatedName || '')
+      return (a: Name, b: Name) => (b.truncatedName || '').localeCompare(a.truncatedName || '')
     }
     if (sort.type === 'creationDate') {
       if (sort.orderDirection === 'asc') {
@@ -102,8 +100,7 @@ export const useNamesFromAddress = ({
         return (a.expiryDate?.getTime() || 0) - (b.expiryDate?.getTime() || 0)
       }
     }
-    return (a: Name, b: Name) =>
-      (b.expiryDate?.getTime() || 0) - (a.expiryDate?.getTime() || 0)
+    return (a: Name, b: Name) => (b.expiryDate?.getTime() || 0) - (a.expiryDate?.getTime() || 0)
   }, [sort.orderDirection, sort.type])
 
   useEffect(() => {
@@ -112,15 +109,9 @@ export const useNamesFromAddress = ({
     }
   }, [status, mergedData, sortFunc, filterFunc])
 
-  const pages = useMemo(
-    () => sortedData && chunkArr(sortedData, resultsPerPage),
-    [sortedData, resultsPerPage],
-  )
+  const pages = useMemo(() => sortedData && chunkArr(sortedData, resultsPerPage), [sortedData, resultsPerPage])
 
-  const currentPage: ReturnedName[] | null = useMemo(
-    () => pages && pages[page - 1],
-    [pages, page],
-  )
+  const currentPage: ReturnedName[] | null = useMemo(() => pages && pages[page - 1], [pages, page])
 
   return {
     currentPage,

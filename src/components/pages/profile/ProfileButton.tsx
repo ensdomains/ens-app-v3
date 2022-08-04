@@ -81,10 +81,7 @@ const ProfileButton = ({
   const { copy, copied } = useCopied()
 
   return (
-    <ConditionalWrapper
-      condition={link}
-      wrapper={(wrapperChildren) => <a href={link}>{wrapperChildren}</a>}
-    >
+    <ConditionalWrapper condition={link} wrapper={(wrapperChildren) => <a href={link}>{wrapperChildren}</a>}>
       <MinWidthWrapper>
         <Button
           onClick={link ? undefined : () => copy(value)}
@@ -125,12 +122,7 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
   return socialData ? (
     <ProfileButton
       prefixSize="4"
-      prefix={
-        <DynamicSocialIcon
-          fill={socialData.color}
-          name={socialData.icon as keyof typeof socialIconTypes}
-        />
-      }
+      prefix={<DynamicSocialIcon fill={socialData.color} name={socialData.icon as keyof typeof socialIconTypes} />}
       testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
       link={socialData.type === 'link' ? socialData.urlFormatter : undefined}
@@ -140,13 +132,7 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
   ) : null
 }
 
-export const AddressProfileButton = ({
-  iconKey: _iconKey,
-  value,
-}: {
-  iconKey: string
-  value: string
-}) => {
+export const AddressProfileButton = ({ iconKey: _iconKey, value }: { iconKey: string; value: string }) => {
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
@@ -157,12 +143,7 @@ export const AddressProfileButton = ({
       prefix={<StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />}
       value={value}
     >
-      {shortenAddress(
-        value,
-        undefined,
-        breakpoints.sm ? undefined : 4,
-        breakpoints.sm ? undefined : 3,
-      )}
+      {shortenAddress(value, undefined, breakpoints.sm ? undefined : 4, breakpoints.sm ? undefined : 3)}
     </ProfileButton>
   ) : null
 }

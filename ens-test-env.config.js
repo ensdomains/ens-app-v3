@@ -11,7 +11,7 @@ process.env.ADDRESS_NAME_WRAPPER = '0x9E545E3C0baAB3E08CdfD552C960A1050f373042'
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
  **/
 module.exports = {
-  deployCommand: 'yarn hardhat deploy',
+  deployCommand: 'pnpm hardhat deploy',
   archive: {
     localSubgraphId: process.env.LOCAL_SUBGRAPH_ID,
     subgraphId: process.env.SUBGRAPH_ID,
@@ -37,13 +37,13 @@ module.exports = {
     ...(process.env.E2E
       ? [
           {
-            command: 'yarn buildandstart:glocal',
+            command: 'pnpm buildandstart:glocal',
             name: 'nextjs',
             prefixColor: 'magenta.bold',
           },
           {
-            command: `yarn wait-on http://localhost:3000 && ${
-              process.env.CI ? 'yarn synpress:ci' : 'yarn synpress:start'
+            command: `pnpm wait-on http://localhost:3000 && ${
+              process.env.CI ? 'pnpm synpress:ci' : 'pnpm synpress:start'
             }`,
             name: 'synpress',
             prefixColor: 'yellow.bold',

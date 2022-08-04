@@ -4,7 +4,7 @@
   "loading": "Loading",
   "action": {
     "cancel": "Cancel",
-    "back": "Back",
+    "upload": "Upload",
     "close": "Close",
     "save": "Save",
     "edit": "Edit",
@@ -15,7 +15,12 @@
     "send": "Send",
     "next": "Next",
     "add": "Add",
-    "search": "Search"
+    "search": "Search",
+    "back": "Back",
+    "continue": "Continue",
+    "confirm": "Confirm",
+    "remove": "Remove",
+    "sign": "Sign"
   },
   "navigation": {
     "home": "Home",

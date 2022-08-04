@@ -26,10 +26,7 @@ export const useRegistrationStatus = (name: string) => {
         if (labels[0].length < 3) {
           return 'short'
         }
-        const batchResults = await batch(
-          getExpiry.batch(name),
-          getPrice.batch(labels[0], yearsToSeconds(1), true),
-        )
+        const batchResults = await batch(getExpiry.batch(name), getPrice.batch(labels[0], yearsToSeconds(1), true))
         if (!batchResults) return 'invalid'
         const [expiryData, priceData] = batchResults
         if (expiryData && expiryData.expiry) {
