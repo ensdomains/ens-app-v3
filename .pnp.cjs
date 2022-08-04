@@ -612,7 +612,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
       ],\
       [\
         "@ensdomains/ensjs",\
-        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."\
+        "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=acd9cf&locator=ens-app-v2%40workspace%3A."\
       ],\
       [\
         "@ensdomains/eth-ens-namehash",\
@@ -7605,7 +7605,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
             ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=acd9cf&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.9"],\
             ["@ethersproject/providers", "npm:5.6.8"],\
@@ -11167,10 +11167,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["@ensdomains/ensjs", [\
-        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-d12c3c5db5-9673c5c2d7.zip/node_modules/@ensdomains/ensjs/",\
+        ["file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=acd9cf&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/cache/@ensdomains-ensjs-file-9d410dd4ed-04e4f8f721.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."]\
+            ["@ensdomains/ensjs", "file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=acd9cf&locator=ens-app-v2%40workspace%3A."]\
           ],\
           "linkType": "SOFT"\
         }],\
@@ -11189,10 +11189,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A.", {\
-          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-48d8bd3405/0/cache/@ensdomains-ensjs-file-d12c3c5db5-9673c5c2d7.zip/node_modules/@ensdomains/ensjs/",\
+        ["virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=acd9cf&locator=ens-app-v2%40workspace%3A.", {\
+          "packageLocation": "./.yarn/__virtual__/@ensdomains-ensjs-virtual-b88f28f60b/0/cache/@ensdomains-ensjs-file-9d410dd4ed-04e4f8f721.zip/node_modules/@ensdomains/ensjs/",\
           "packageDependencies": [\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=acd9cf&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/address-encoder", "npm:0.2.17"],\
             ["@ensdomains/content-hash", "npm:2.5.7"],\
             ["@ensdomains/ens-contracts", "npm:0.0.11"],\
@@ -11200,7 +11200,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["dns-packet", "npm:5.4.0"],\
             ["ethers", "npm:5.6.5"],\
             ["graphql", "npm:16.5.0"],\
-            ["graphql-request", "virtual:48d8bd34058ef9c03ebddd661318dd81e196aa19a3ffbcb5736ff8562f34681bd99934134b104d2480020223c1967fbd90da825df0c4ec3b6ba25e7e5aac1ab7#npm:4.4.0-next.2"],\
+            ["graphql-request", "virtual:b88f28f60b7b1a7aaad6dbb3585268cb161578665f0a66a51792a69a34b87fb60f8235ec2f5207c27e89971431d7d773e2c348f283c2b3877f86a69918f612e2#npm:4.4.0-next.2"],\
             ["idna-uts46-hx", "npm:3.4.0"],\
             ["traverse", "npm:0.6.6"]\
           ],\
@@ -22074,7 +22074,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@ensdomains/ens-contracts", "npm:0.0.12"],\
             ["@ensdomains/ens-test-env", "npm:0.1.4"],\
             ["@ensdomains/ens-validation", "npm:0.1.0"],\
-            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=abfd01&locator=ens-app-v2%40workspace%3A."],\
+            ["@ensdomains/ensjs", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#file:.yalc/@ensdomains/ensjs#.yalc/@ensdomains/ensjs::hash=acd9cf&locator=ens-app-v2%40workspace%3A."],\
             ["@ensdomains/eth-ens-namehash", "npm:2.0.15"],\
             ["@ensdomains/thorin", "virtual:434009ab147582172feaa64e20b731038ede02acd075e91198a1cecad2f1b5b1059a8a3a8544da71e9e415e21d6a5faa7a16031b1f30c22c3ef651abd12163a3#npm:0.6.9"],\
             ["@ethersproject/providers", "npm:5.6.8"],\
@@ -25794,10 +25794,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:48d8bd34058ef9c03ebddd661318dd81e196aa19a3ffbcb5736ff8562f34681bd99934134b104d2480020223c1967fbd90da825df0c4ec3b6ba25e7e5aac1ab7#npm:4.4.0-next.2", {\
-          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-ecaf91b082/0/cache/graphql-request-npm-4.4.0-next.2-d776c9f12d-035d990b96.zip/node_modules/graphql-request/",\
+        ["virtual:b88f28f60b7b1a7aaad6dbb3585268cb161578665f0a66a51792a69a34b87fb60f8235ec2f5207c27e89971431d7d773e2c348f283c2b3877f86a69918f612e2#npm:4.4.0-next.2", {\
+          "packageLocation": "./.yarn/__virtual__/graphql-request-virtual-0105649400/0/cache/graphql-request-npm-4.4.0-next.2-d776c9f12d-035d990b96.zip/node_modules/graphql-request/",\
           "packageDependencies": [\
-            ["graphql-request", "virtual:48d8bd34058ef9c03ebddd661318dd81e196aa19a3ffbcb5736ff8562f34681bd99934134b104d2480020223c1967fbd90da825df0c4ec3b6ba25e7e5aac1ab7#npm:4.4.0-next.2"],\
+            ["graphql-request", "virtual:b88f28f60b7b1a7aaad6dbb3585268cb161578665f0a66a51792a69a34b87fb60f8235ec2f5207c27e89971431d7d773e2c348f283c2b3877f86a69918f612e2#npm:4.4.0-next.2"],\
             ["@types/graphql", null],\
             ["cross-fetch", "npm:3.1.5"],\
             ["extract-files", "npm:9.0.0"],\

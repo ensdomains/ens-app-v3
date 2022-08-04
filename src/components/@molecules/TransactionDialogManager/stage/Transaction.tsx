@@ -103,16 +103,16 @@ const Container = styled.div(
   `,
 )
 
-const WaitingElementMining = ({ txHash }: { txHash: string }) => {
+const WaitingElementMining = ({ txHash }: { txHash: string | null }) => {
   const recentTransactions = useRecentTransactions()
   const { t } = useTranslation()
 
   const { data: estimatedTime } = useQuery(['estimatedTransactionTime', txHash], async () => {
     const tx = recentTransactions.find((transaction) => transaction.hash === txHash)
-    const gasPrice = tx.gasPrice.toNumber()
+    const gasPrice = tx && JSON.parse(tx.description).gasPrice
     const response = await fetch(`https://confirmation-time.ens-cf.workers.dev/${gasPrice}`)
     if (response.ok) {
-      const estimation = await response.json()
+      const estimation: { result: string } = await response.json()
       return estimation.result
     }
     console.error('Error estimating mining time')
@@ -122,12 +122,12 @@ const WaitingElementMining = ({ txHash }: { txHash: string }) => {
     <WaitingContainer data-testid="transaction-waiting-container">
       <StyledSpinner color="accent" />
       <WaitingTextContainer>
-        <Typography weight="bold">{t('transaction.mining.title')}</Typography>
+        <Typography weight="bold">{t('transaction.dialog.mining.title')}</Typography>
         {estimatedTime && (
           <Container>
-            <Typography>{t('transaction.mining.estimationPre')}</Typography>
+            <Typography>{t('transaction.dialog.mining.estimationPre')}</Typography>
             <Seconds {...{ weight: 'bold', color: 'green' }}>{`${estimatedTime}`}</Seconds>
-            <Typography>{t('transaction.mining.estimationPost')}</Typography>
+            <Typography>{t('transaction.dialog.mining.estimationPost')}</Typography>
           </Container>
         )}
       </WaitingTextContainer>
@@ -195,7 +195,7 @@ export const TransactionStageModal = ({
   const settingsRoute = getRoute('settings')
 
   useEffect(() => {
-    const tx = recentTransactions.find((transaction) => transaction.hash === txHash)
+    const tx = recentTransactions.find((trx) => trx.hash === txHash)
     if (tx?.status === 'confirmed') {
       setStage('complete')
       onComplete()
@@ -233,9 +233,12 @@ export const TransactionStageModal = ({
       )
       if (!hash) throw new Error('No transaction generated')
       addTransaction({
-        description: JSON.stringify({ action: actionName, key: txKey }),
+        description: JSON.stringify({
+          action: actionName,
+          key: txKey,
+          gasPrice: gasPrice?.toNumber(),
+        }),
         hash,
-        gasPrice,
       })
       setTxHash(hash)
       setStage('mining')
