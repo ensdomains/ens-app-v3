@@ -270,6 +270,10 @@ describe('TransactionModal', () => {
         })
       })
     })
+    describe('mining', () => {
+      it.todo('should show mining step when mining')
+      it.todo('should only show close button when mining')
+    })
     describe('complete', () => {
       it('should run success callback and dismiss callback on success button click', async () => {
         mockSendTransaction.mockImplementation(async () => ({

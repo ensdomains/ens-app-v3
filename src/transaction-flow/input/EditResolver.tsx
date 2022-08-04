@@ -1,9 +1,4 @@
 /* eslint-disable no-param-reassign */
-import { Spacer } from '@app/components/@atoms/Spacer'
-import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
-import { Outlink } from '@app/components/Outlink'
-import { useProfile } from '@app/hooks/useProfile'
-import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
 import { Button, Dialog, Input, mq, RadioButton, Typography } from '@ensdomains/thorin'
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
@@ -12,6 +7,12 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useProvider } from 'wagmi'
+
+import { Spacer } from '@app/components/@atoms/Spacer'
+import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
+import { Outlink } from '@app/components/Outlink'
+import { useProfile } from '@app/hooks/useProfile'
+import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { makeTransactionItem } from '../transaction'
 

@@ -30,7 +30,7 @@ describe('Settings', () => {
       )
       cy.confirmMetamaskTransaction()
       cy.contains(
-        "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
+        "Your transaction has been saved to the blockchain!",
       ).should('be.visible')
       cy.findByTestId('transaction-modal-complete-trailing-btn').click()
       cy.findByTestId('toast-desktop')

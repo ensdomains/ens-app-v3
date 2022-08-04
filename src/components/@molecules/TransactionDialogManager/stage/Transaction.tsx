@@ -1,3 +1,14 @@
+import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
+import type { JsonRpcSigner } from '@ethersproject/providers'
+import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
+import { PopulatedTransaction } from 'ethers'
+import { useRouter } from 'next/router'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import { useQuery } from 'react-query'
+import styled, { css } from 'styled-components'
+import { useSigner } from 'wagmi'
+
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
 import { Outlink, StyledAnchor } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
@@ -6,16 +17,8 @@ import { transactions } from '@app/transaction-flow/transaction'
 import { ManagedDialogProps } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
-import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
-import type { JsonRpcSigner } from '@ethersproject/providers'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { PopulatedTransaction } from 'ethers'
-import { useRouter } from 'next/router'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
-import styled, { css } from 'styled-components'
-import { useSigner } from 'wagmi'
+import { Spacer } from '@app/components/@atoms/Spacer'
+
 import { DisplayItems } from '../DisplayItems'
 
 const InnerDialog = styled.div(
@@ -87,6 +90,51 @@ const WaitingElement = () => {
   )
 }
 
+const Seconds = styled(Typography)(
+  ({ theme }) => css`
+    margin: 0 ${theme.space['1']};
+  `,
+)
+
+const Container = styled.div(
+  () => css`
+    display: flex;
+    align-items: center;
+  `,
+)
+
+const WaitingElementMining = ({ txHash }: { txHash: string }) => {
+  const recentTransactions = useRecentTransactions()
+  const { t } = useTranslation()
+
+  const { data: estimatedTime } = useQuery(['estimatedTransactionTime', txHash], async () => {
+    const tx = recentTransactions.find((transaction) => transaction.hash === txHash)
+    const gasPrice = tx.gasPrice.toNumber()
+    const response = await fetch(`https://confirmation-time.ens-cf.workers.dev/${gasPrice}`)
+    if (response.ok) {
+      const estimation = await response.json()
+      return estimation.result
+    }
+    console.error('Error estimating mining time')
+  })
+
+  return (
+    <WaitingContainer data-testid="transaction-waiting-container">
+      <StyledSpinner color="accent" />
+      <WaitingTextContainer>
+        <Typography weight="bold">{t('transaction.mining.title')}</Typography>
+        {estimatedTime && (
+          <Container>
+            <Typography>{t('transaction.mining.estimationPre')}</Typography>
+            <Seconds {...{ weight: 'bold', color: 'green' }}>{`${estimatedTime}`}</Seconds>
+            <Typography>{t('transaction.mining.estimationPost')}</Typography>
+          </Container>
+        )}
+      </WaitingTextContainer>
+    </WaitingContainer>
+  )
+}
+
 const ErrorTypography = styled(Typography)(
   () => css`
     width: 100%;
@@ -111,7 +159,7 @@ const CompleteTypography = styled(Typography)(
   `,
 )
 
-type Stage = 'preSteps' | 'request' | 'confirm' | 'complete'
+type Stage = 'preSteps' | 'request' | 'confirm' | 'mining' | 'complete'
 
 export const TransactionStageModal = ({
   displayItems,
@@ -137,6 +185,7 @@ export const TransactionStageModal = ({
   const router = useRouter()
 
   const addTransaction = useAddRecentTransaction()
+  const recentTransactions = useRecentTransactions()
   const { data: signer } = useSigner()
   const ens = useEns()
 
@@ -144,6 +193,14 @@ export const TransactionStageModal = ({
   const [error, setError] = useState<string | null>(null)
   const [txHash, setTxHash] = useState<string | null>(null)
   const settingsRoute = getRoute('settings')
+
+  useEffect(() => {
+    const tx = recentTransactions.find((transaction) => transaction.hash === txHash)
+    if (tx?.status === 'confirmed') {
+      setStage('complete')
+      onComplete()
+    }
+  }, [recentTransactions, onComplete, txHash])
 
   const { data: populatedTransaction } = useQuery(
     ['tx', txKey, currentStep],
@@ -168,20 +225,20 @@ export const TransactionStageModal = ({
     },
   )
 
-  console.log('populatedTransaction: ', populatedTransaction)
-
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      const { hash } = await (signer as JsonRpcSigner).sendTransaction(populatedTransaction!)
+      const { hash, gasPrice } = await (signer as JsonRpcSigner).sendTransaction(
+        populatedTransaction!,
+      )
       if (!hash) throw new Error('No transaction generated')
       addTransaction({
         description: JSON.stringify({ action: actionName, key: txKey }),
         hash,
+        gasPrice,
       })
       setTxHash(hash)
-      setStage('complete')
-      onComplete()
+      setStage('mining')
     } catch (e: any) {
       if (e && e.code === 4001) {
         setError('transaction.dialog.confirm.error.rejectedRequest')
@@ -189,7 +246,7 @@ export const TransactionStageModal = ({
         setError(e ? e.message : 'transaction.dialog.confirm.error.unknown')
       }
     }
-  }, [addTransaction, actionName, txKey, onComplete, signer, populatedTransaction])
+  }, [addTransaction, actionName, txKey, signer, populatedTransaction])
 
   const FilledDisplayItems = useMemo(
     () => (
@@ -210,6 +267,18 @@ export const TransactionStageModal = ({
     [t, actionName, displayItems],
   )
   const MiddleContent = useMemo(() => {
+    if (stage === 'mining') {
+      return (
+        <SuccessContent>
+          <WaitingElementMining {...{ txHash }} />
+          <Spacer $height="1" />
+          <Typography>
+            Your transaction is being saved to the blockchain. You may close this window, we will
+            send you a notification when it is ready.
+          </Typography>
+        </SuccessContent>
+      )
+    }
     if (stage === 'complete') {
       return (
         <SuccessContent>
@@ -230,10 +299,11 @@ export const TransactionStageModal = ({
       return <WaitingElement />
     }
     return null
-  }, [onDismiss, router, settingsRoute.href, stage, t])
+  }, [onDismiss, router, settingsRoute.href, stage, t, txHash])
 
   const LeadingButton = useMemo(() => {
     let label: string
+    if (stage === 'mining') return null
     if (stage === 'complete') {
       if (currentStep + 1 === stepCount) return null
       label = t('action.close')
@@ -259,6 +329,23 @@ export const TransactionStageModal = ({
   }, [stage, dismissBtnLabel, currentStep, stepCount, t, onDismiss, onSuccess])
 
   const TrailingButton = useMemo(() => {
+    if (stage === 'mining') {
+      const final = currentStep + 1 === stepCount
+
+      return (
+        <Button
+          variant={final ? 'secondary' : 'primary'}
+          shadowless
+          onClick={() => {
+            onSuccess?.()
+            if (final) onDismiss?.()
+          }}
+          data-testid="transaction-modal-complete-trailing-btn"
+        >
+          Close
+        </Button>
+      )
+    }
     if (stage === 'complete') {
       const final = currentStep + 1 === stepCount
 
@@ -360,12 +447,13 @@ export const TransactionStageModal = ({
       />
       <InnerDialog data-testid="transaction-modal-inner">
         {error ? <ErrorTypography color="red">{t(error)}</ErrorTypography> : MiddleContent}
+        {stage === 'complete' ||
+          (stage === 'mining' && (
+            <Outlink href={makeEtherscanLink(txHash!, chainName)}>
+              {t('transaction.viewEtherscan')}
+            </Outlink>
+          ))}
         {FilledDisplayItems}
-        {stage === 'complete' && (
-          <Outlink href={makeEtherscanLink(txHash!, chainName)}>
-            {t('transaction.viewEtherscan')}
-          </Outlink>
-        )}
       </InnerDialog>
       <Dialog.Footer leading={LeadingButton} trailing={TrailingButton} />
     </>
