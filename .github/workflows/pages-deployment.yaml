@@ -36,21 +36,26 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/dev' }}
         run: if [ ${{ needs.yalc_check.outputs.can_deploy }} != true ]; then exit 1; else exit 0; fi
 
-      - uses: actions/setup-node@v3
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.8.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
         with:
           node-version: 16
+          cache: 'pnpm'
 
-      - name: Install Packages
-        run: yarn install --immutable --immutable-cache --check-cache
+      - run: pnpm install --frozen-lockfile
 
       - name: Build and Export
-        run: yarn build && yarn export
+        run: pnpm build && pnpm export
 
       - name: Generate sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ./out/sitemaps
-          yarn generate:sitemaps
+          pnpm generate:sitemaps
 
       - name: Publish
         uses: cloudflare/pages-action@1

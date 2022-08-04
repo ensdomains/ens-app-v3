@@ -67,3 +67,5 @@ yarn-error.log*
 
 # Sentry
 .sentryclirc
+
+.dev.vars

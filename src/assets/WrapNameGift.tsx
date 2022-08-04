@@ -19,13 +19,7 @@ export const WrapNameGift = ({ imageSrc }: { imageSrc: string }) => {
           d="M66.4411 131.223V67.8878C66.4411 63.4695 70.0228 59.8878 74.4411 59.8878H175.773C180.192 59.8878 183.773 63.4695 183.773 67.8878V131.223C183.773 140.16 176.523 147.43 167.611 147.43H82.6084C73.6936 147.43 66.4415 140.16 66.4411 131.223Z"
           fill="#EC5F5F"
         />
-        <rect
-          x="114.253"
-          y="59.8878"
-          width="20.8754"
-          height="87.5421"
-          fill="#FEBE44"
-        />
+        <rect x="114.253" y="59.8878" width="20.8754" height="87.5421" fill="#FEBE44" />
         <path
           d="M70.4411 131.223C70.4411 131.223 70.4411 131.223 70.4411 131.223V67.8878C70.4411 65.6787 72.2319 63.8878 74.4411 63.8878H175.773C177.982 63.8878 179.773 65.6787 179.773 67.8878V131.223C179.773 137.961 174.303 143.43 167.611 143.43H82.6084C75.9122 143.43 70.4415 137.96 70.4411 131.223Z"
           stroke="black"
@@ -75,12 +69,7 @@ export const WrapNameGift = ({ imageSrc }: { imageSrc: string }) => {
         </g>
       </g>
       <defs>
-        <pattern
-          id="pattern0"
-          patternContentUnits="objectBoundingBox"
-          width="1"
-          height="1"
-        >
+        <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
           <use xlinkHref="#image0_4121_5825" transform="scale(0.0037037)" />
         </pattern>
         <clipPath id="clip0_4121_5825">
@@ -94,12 +83,7 @@ export const WrapNameGift = ({ imageSrc }: { imageSrc: string }) => {
             transform="translate(165.035 11.4327)"
           />
         </clipPath>
-        <image
-          id="image0_4121_5825"
-          width="270"
-          height="270"
-          xlinkHref={imageSrc}
-        />
+        <image id="image0_4121_5825" width="270" height="270" xlinkHref={imageSrc} />
       </defs>
     </svg>
   )

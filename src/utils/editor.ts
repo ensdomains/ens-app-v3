@@ -25,9 +25,7 @@ type ProfileFormObject = {
   }
 }
 
-export const convertProfileToProfileFormObject = (
-  profile: Profile,
-): ProfileFormObject => {
+export const convertProfileToProfileFormObject = (profile: Profile): ProfileFormObject => {
   const address =
     profile.records?.coinTypes?.reduce((map, record) => {
       const { coin } = record
@@ -117,9 +115,7 @@ export const getDirtyFields = (
     const allValuesObj = allValues as Record<string, unknown>
     return Object.fromEntries(
       Object.keys(dirtyFieldsObj).map((key: keyof Record<string, unknown>) => {
-        const subDirtyFields = dirtyFields[key] as
-          | UnknownArrayOrObject
-          | boolean
+        const subDirtyFields = dirtyFields[key] as UnknownArrayOrObject | boolean
         const subAllValues = allValuesObj[key] as UnknownArrayOrObject
         return [key, getDirtyFields(subDirtyFields, subAllValues)]
       }),
