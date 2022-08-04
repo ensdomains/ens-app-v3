@@ -81,7 +81,10 @@ describe('<AvatarNFT />', () => {
   it('should not display ENS NFTs', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       json: () => ({
-        ownedNfts: Array.from({ length: 5 }, generateNFT(true, '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85')),
+        ownedNfts: Array.from(
+          { length: 5 },
+          generateNFT(true, '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
+        ),
         totalCount: 5,
       }),
     })
@@ -89,7 +92,9 @@ describe('<AvatarNFT />', () => {
 
     await waitFor(() => expect(global.fetch).toHaveBeenCalledTimes(1))
     await waitFor(() =>
-      expect(screen.queryByTestId('nft-0-0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85')).not.toBeInTheDocument(),
+      expect(
+        screen.queryByTestId('nft-0-0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85'),
+      ).not.toBeInTheDocument(),
     )
   })
   it('should not display NFTs with no media', async () => {
@@ -117,10 +122,12 @@ describe('<AvatarNFT />', () => {
         }),
       }),
     )
-    jest.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(({ children, onReachedBottom }) => {
-      onReachedBottom!()
-      return <div>{children}</div>
-    })
+    jest
+      .spyOn(ThorinComponents, 'ScrollBox')
+      .mockImplementationOnce(({ children, onReachedBottom }) => {
+        onReachedBottom!()
+        return <div>{children}</div>
+      })
 
     render(<AvatarNFT {...props} />)
 
@@ -146,10 +153,12 @@ describe('<AvatarNFT />', () => {
         }),
       }),
     )
-    jest.spyOn(ThorinComponents, 'ScrollBox').mockImplementationOnce(({ children, onReachedBottom }) => {
-      onReachedBottom!()
-      return <div>{children}</div>
-    })
+    jest
+      .spyOn(ThorinComponents, 'ScrollBox')
+      .mockImplementationOnce(({ children, onReachedBottom }) => {
+        onReachedBottom!()
+        return <div>{children}</div>
+      })
 
     render(<AvatarNFT {...props} />)
 

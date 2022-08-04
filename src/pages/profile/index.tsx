@@ -161,7 +161,12 @@ export default function Page() {
               />
               {selfAbilities.canEdit && (
                 <SelfButtons>
-                  <Button shadowless variant="transparent" size="small" onClick={() => setShowEditor(true)}>
+                  <Button
+                    shadowless
+                    variant="transparent"
+                    size="small"
+                    onClick={() => setShowEditor(true)}
+                  >
                     {t('editProfile')}
                   </Button>
                   <Button
@@ -191,7 +196,9 @@ export default function Page() {
                   .filter((item: any) => item.value !== null)}
               />
 
-              {selfAbilities.canEdit && <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />}
+              {selfAbilities.canEdit && (
+                <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />
+              )}
             </DetailsWrapper>
           ),
         }}

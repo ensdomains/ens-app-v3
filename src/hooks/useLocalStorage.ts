@@ -9,7 +9,10 @@ const getStorageValue = <D>(key: string, defaultValue: D) => {
   return saved ? JSON.parse(saved) : defaultValue
 }
 
-export const useLocalStorage = <D>(key: string, defaultValue: D): [D, Dispatch<SetStateAction<D>>] => {
+export const useLocalStorage = <D>(
+  key: string,
+  defaultValue: D,
+): [D, Dispatch<SetStateAction<D>>] => {
   const [value, setValue] = useState<D>(() => {
     return getStorageValue(key, defaultValue)
   })
@@ -30,7 +33,11 @@ export const useLocalStorageReducer = <S = any, A = any>(
   initialState: S,
   initialAction?: ((initial: any) => any) | undefined,
 ): [S, Dispatch<A>] => {
-  const [state, dispatch] = useImmerReducer(reducer, getStorageValue(key, initialState), initialAction)
+  const [state, dispatch] = useImmerReducer(
+    reducer,
+    getStorageValue(key, initialState),
+    initialAction,
+  )
 
   useEffect(() => {
     if (state !== initialState) {

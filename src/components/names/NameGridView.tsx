@@ -51,7 +51,9 @@ const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>(
     border-style: solid;
     border-width: 2px;
     border-color: rgba(
-      ${$color === 'foreground' ? '0,0,0' : theme.accentsRaw[$color as keyof typeof theme.accentsRaw]},
+      ${$color === 'foreground'
+        ? '0,0,0'
+        : theme.accentsRaw[$color as keyof typeof theme.accentsRaw]},
       ${$primary ? '0.2' : '0.42'}
     );
     color: rgb(${theme.colors[$color]});
@@ -86,7 +88,12 @@ export const Expiry = ({ expiry }: { expiry: Date }) => {
 
   return (
     <ExpiryWrapper $primary={color === 'foreground'} $color={color}>
-      <ClockSVG opacity={color === 'foreground' ? '0.2' : '0.8'} color={color} width="16" height="16" />
+      <ClockSVG
+        opacity={color === 'foreground' ? '0.2' : '0.8'}
+        color={color}
+        width="16"
+        height="16"
+      />
       <ExpiryText $primary={color === 'foreground'}>{text}</ExpiryText>
     </ExpiryWrapper>
   )
@@ -105,7 +112,13 @@ const GridItem = ({ name, network, expiry }: { name: string; network: number; ex
   )
 }
 
-export const NameGridView = ({ currentPage, network }: { currentPage: ReturnedName[]; network: number }) => {
+export const NameGridView = ({
+  currentPage,
+  network,
+}: {
+  currentPage: ReturnedName[]
+  network: number
+}) => {
   return (
     <NameGrid>
       {currentPage.map((item) => (

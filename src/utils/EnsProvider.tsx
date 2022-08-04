@@ -34,7 +34,9 @@ const EnsProvider = ({ children }: { children: React.ReactNode }) => {
   }, [provider])
 
   return (
-    <EnsContext.Provider value={useMemo(() => ({ ...ensWithCurrentProvider, ready }), [ensWithCurrentProvider, ready])}>
+    <EnsContext.Provider
+      value={useMemo(() => ({ ...ensWithCurrentProvider, ready }), [ensWithCurrentProvider, ready])}
+    >
       {children}
     </EnsContext.Provider>
   )

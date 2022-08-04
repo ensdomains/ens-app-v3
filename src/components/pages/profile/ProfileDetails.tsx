@@ -56,7 +56,9 @@ const ProfileSection = ({
 }) => {
   const { t } = useTranslation('profile')
   const Button = button
-  const supportedArray = supported ? array.filter((x) => supported.includes(x.key.toLowerCase())) : array
+  const supportedArray = supported
+    ? array.filter((x) => supported.includes(x.key.toLowerCase()))
+    : array
   const unsupportedArray = supported
     ? array.filter((x) => !supported.includes(x.key.toLowerCase())).map((x) => ({ ...x, type }))
     : []
@@ -71,9 +73,11 @@ const ProfileSection = ({
           <Button {...{ ...item, iconKey: item.key }} />
         ))}
         {unsupportedArray.length > 0 &&
-          unsupportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
-            <OtherProfileButton {...{ ...item, iconKey: item.key }} />
-          ))}
+          unsupportedArray.map(
+            (item: { key: string; value: string; type?: 'text' | 'address' }) => (
+              <OtherProfileButton {...{ ...item, iconKey: item.key }} />
+            ),
+          )}
       </Stack>
     </div>
   ) : null
@@ -98,7 +102,9 @@ export const ProfileDetails = ({
   const otherRecords = [
     ...textRecords
       .filter(
-        (x) => !supportedTexts.includes(x.key.toLowerCase()) && !supportedProfileItems.includes(x.key.toLowerCase()),
+        (x) =>
+          !supportedTexts.includes(x.key.toLowerCase()) &&
+          !supportedProfileItems.includes(x.key.toLowerCase()),
       )
       .map((x) => ({ ...x, type: 'text' })),
   ]
@@ -110,7 +116,10 @@ export const ProfileDetails = ({
       <RecordsStack>
         <ProfileSection
           label="accounts"
-          condition={textRecords && textRecords.filter((x) => supportedTexts.includes(x.key.toLowerCase())).length > 0}
+          condition={
+            textRecords &&
+            textRecords.filter((x) => supportedTexts.includes(x.key.toLowerCase())).length > 0
+          }
           array={textRecords}
           button={SocialProfileButton}
         />

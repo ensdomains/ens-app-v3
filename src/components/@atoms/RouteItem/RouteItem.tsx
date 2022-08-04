@@ -98,7 +98,12 @@ export const RouteItem = ({
             {t(route.label)}
           </StyledAnchor>
         ) : (
-          <IconContainer disabled={route.disabled} $active={isActive} as={route.icon} data-testid="route-item-icon" />
+          <IconContainer
+            disabled={route.disabled}
+            $active={isActive}
+            as={route.icon}
+            data-testid="route-item-icon"
+          />
         )}
       </LinkWrapper>
     </ConditionalWrapper>

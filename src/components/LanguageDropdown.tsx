@@ -30,7 +30,8 @@ export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
 
   const isLarge: boolean = router.asPath === '/' && !!breakpoints.sm
 
-  const formatName = (language: string) => (isLarge ? ISO6391.getNativeName(language) : language.toUpperCase())
+  const formatName = (language: string) =>
+    isLarge ? ISO6391.getNativeName(language) : language.toUpperCase()
 
   return i18n.options && router.isReady ? (
     <Dropdown
@@ -47,7 +48,9 @@ export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
         }))}
       menuLabelAlign={isLarge ? 'flex-start' : 'center'}
       label={
-        <MobileInnerDropdownButton $large={isLarge}>{formatName(i18n.language || 'en')}</MobileInnerDropdownButton>
+        <MobileInnerDropdownButton $large={isLarge}>
+          {formatName(i18n.language || 'en')}
+        </MobileInnerDropdownButton>
       }
     />
   ) : null

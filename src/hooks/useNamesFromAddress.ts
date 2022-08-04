@@ -109,7 +109,10 @@ export const useNamesFromAddress = ({
     }
   }, [status, mergedData, sortFunc, filterFunc])
 
-  const pages = useMemo(() => sortedData && chunkArr(sortedData, resultsPerPage), [sortedData, resultsPerPage])
+  const pages = useMemo(
+    () => sortedData && chunkArr(sortedData, resultsPerPage),
+    [sortedData, resultsPerPage],
+  )
 
   const currentPage: ReturnedName[] | null = useMemo(() => pages && pages[page - 1], [pages, page])
 

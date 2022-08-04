@@ -6,7 +6,11 @@ import { useProfile } from './useProfile'
 export const usePrimaryProfile = (address: string, skip?: any) => {
   const [profile, setProfile] = useState<Profile | undefined>(undefined)
 
-  const { name: primaryName, loading: primaryLoading, status: primaryStatus } = usePrimary(address || '', skip)
+  const {
+    name: primaryName,
+    loading: primaryLoading,
+    status: primaryStatus,
+  } = usePrimary(address || '', skip)
 
   const {
     profile: primaryProfile,

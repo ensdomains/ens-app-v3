@@ -10,7 +10,9 @@ const excludedKeys = ['avatar', 'banner']
 const otherOptions = textRecords
   .filter(
     (record) =>
-      !supportedTexts.includes(record) && !supportedProfileItems.includes(record) && !excludedKeys.includes(record),
+      !supportedTexts.includes(record) &&
+      !supportedProfileItems.includes(record) &&
+      !excludedKeys.includes(record),
   )
   .map((key) => ({
     label: key,

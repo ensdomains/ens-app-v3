@@ -133,7 +133,9 @@ describe('TransactionModal', () => {
           },
         })
         expect(screen.getByTestId('transaction-modal-dismiss-btn')).toHaveTextContent('leadingTest')
-        expect(screen.getByTestId('transaction-modal-preSteps-trailing-btn')).toHaveTextContent('trailingTest')
+        expect(screen.getByTestId('transaction-modal-preSteps-trailing-btn')).toHaveTextContent(
+          'trailingTest',
+        )
       })
       it('should only show preSteps on open', async () => {
         mockSendTransaction.mockResolvedValue({

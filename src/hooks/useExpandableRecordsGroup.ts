@@ -55,7 +55,8 @@ const useExpandableRecordsGroup = <T>({
     }
   }
 
-  const getSelectedOption = (key: string) => options.find(({ value }) => value === key) || { label: key, value: key }
+  const getSelectedOption = (key: string) =>
+    options.find(({ value }) => value === key) || { label: key, value: key }
 
   return {
     existingKeys,

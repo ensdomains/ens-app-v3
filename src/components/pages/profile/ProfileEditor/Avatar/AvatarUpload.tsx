@@ -88,7 +88,13 @@ const CancelButton = ({ handleCancel }: { handleCancel: () => void }) => {
   const { t } = useTranslation('common')
 
   return (
-    <Button data-testid="avatar-cancel-button" variant="secondary" tone="grey" shadowless onClick={handleCancel}>
+    <Button
+      data-testid="avatar-cancel-button"
+      variant="secondary"
+      tone="grey"
+      shadowless
+      onClick={handleCancel}
+    >
       {t('action.back')}
     </Button>
   )
@@ -366,7 +372,8 @@ const UploadComponent = ({
   })
 
   const { mutate: signAndUpload, isLoading } = useMutation(async () => {
-    const baseURL = process.env.NEXT_PUBLIC_AVUP_ENDPOINT || 'https://avatar-upload.ens-cf.workers.dev'
+    const baseURL =
+      process.env.NEXT_PUBLIC_AVUP_ENDPOINT || 'https://avatar-upload.ens-cf.workers.dev'
     const endpoint = `${baseURL}/${name}`
 
     const sig = await signTypedDataAsync()
@@ -399,7 +406,12 @@ const UploadComponent = ({
       <Dialog.Footer
         leading={<CancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button disabled={isLoading} onClick={() => signAndUpload()} shadowless data-testid="upload-button">
+          <Button
+            disabled={isLoading}
+            onClick={() => signAndUpload()}
+            shadowless
+            data-testid="upload-button"
+          >
             {t('profileEditor.tabs.avatar.image.upload.action')}
           </Button>
         }
@@ -425,5 +437,7 @@ export const AvatarUpload = ({
     return <CropComponent {...{ avatar, setDataURL, handleCancel }} />
   }
 
-  return <UploadComponent {...{ dataURL, handleCancel: () => setDataURL(null), name, handleSubmit }} />
+  return (
+    <UploadComponent {...{ dataURL, handleCancel: () => setDataURL(null), name, handleSubmit }} />
+  )
 }

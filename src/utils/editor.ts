@@ -41,7 +41,9 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
       return map
     }, {}) || {}
 
-  const textRecords = profile.records?.texts?.reduce<Omit<ProfileFormObject, 'address' | 'website'>>(
+  const textRecords = profile.records?.texts?.reduce<
+    Omit<ProfileFormObject, 'address' | 'website'>
+  >(
     (map, record) => {
       if (record.key === 'avatar')
         return {

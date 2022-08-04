@@ -24,7 +24,8 @@ const FusesRow = styled.div(
     &:not(:last-child) {
       margin-bottom: 10px;
       padding-bottom: 10px;
-      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.borderTertiary};
+      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
+        ${theme.colors.borderTertiary};
     }
   `,
 )
@@ -49,7 +50,10 @@ const Fuses = () => {
             <Typography color="textSecondary" weight="bold">
               {t('fuses.permissions.canDoEverything')}
             </Typography>
-            <TrafficLight $go={fuseData.fuseObj.canDoEverything} data-testid="first-traffic-light" />
+            <TrafficLight
+              $go={fuseData.fuseObj.canDoEverything}
+              data-testid="first-traffic-light"
+            />
           </FusesRow>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
@@ -113,7 +117,9 @@ const Fuses = () => {
           <Typography color="textSecondary" weight="bold">
             {t('fuses.vulnerabilities.vulnerableNode')}
           </Typography>
-          <Typography color="textSecondary">{fuseData.vulnerableNode ?? t('fuses.vulnerabilities.none')}</Typography>
+          <Typography color="textSecondary">
+            {fuseData.vulnerableNode ?? t('fuses.vulnerabilities.none')}
+          </Typography>
         </FusesRow>
       </div>
     </FusesContainer>

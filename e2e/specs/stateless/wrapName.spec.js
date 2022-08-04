@@ -46,10 +46,7 @@ describe('Wrap Name', () => {
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-trailing-btn').click()
     cy.findByTestId('transaction-modal-dismiss-btn').click()
-    cy.findByTestId('wrapper-cta-button').should(
-      'contain.text',
-      'Resume Upgrade',
-    )
+    cy.findByTestId('wrapper-cta-button').should('contain.text', 'Resume Upgrade')
   })
   it('should open to correctly resumed state', () => {
     cy.wait(1000)

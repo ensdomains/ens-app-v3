@@ -55,7 +55,9 @@ describe('TransactionSection', () => {
     expect(screen.getAllByTestId('transaction-confirmed')).toHaveLength(9)
   })
   it('should show a loading spinner for pending transactions', () => {
-    mockUseRecentTransactions.mockReturnValue(Array.from({ length: 1 }, makeRecentTransaction('pending')))
+    mockUseRecentTransactions.mockReturnValue(
+      Array.from({ length: 1 }, makeRecentTransaction('pending')),
+    )
     render(<TransactionSection />)
     expect(screen.getByTestId('pending-spinner')).toBeVisible()
   })

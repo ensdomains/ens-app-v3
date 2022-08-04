@@ -85,7 +85,12 @@ export const RegistrationDate = () => {
     <RegistrationDateContainer>
       <Typography>{registrationDate}</Typography>
       <ButtonContainer>
-        <Button as="a" href={`${getEtherScanLink(activeChain?.id)}tx/${transactionHash}`} target="_blank" size="small">
+        <Button
+          as="a"
+          href={`${getEtherScanLink(activeChain?.id)}tx/${transactionHash}`}
+          target="_blank"
+          size="small"
+        >
           {t('transaction.viewEtherscan')}
         </Button>
       </ButtonContainer>

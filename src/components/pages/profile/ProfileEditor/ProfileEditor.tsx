@@ -6,7 +6,12 @@ import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { ProfileEditorType } from '@app/types'
-import { convertFormSafeKey, convertProfileToProfileFormObject, formSafeKey, getDirtyFields } from '@app/utils/editor'
+import {
+  convertFormSafeKey,
+  convertProfileToProfileFormObject,
+  formSafeKey,
+  getDirtyFields,
+} from '@app/utils/editor'
 import { useEns } from '@app/utils/EnsProvider'
 import { validateCryptoAddress } from '@app/utils/validate'
 import { Button, Input, Modal, mq, ScrollBox, Textarea } from '@ensdomains/thorin'
@@ -92,7 +97,12 @@ const TabButtonsContainer = styled.div(
   `,
 )
 
-const getIndicatorStyle = (theme: Theme, $selected?: boolean, $hasError?: boolean, $isDirty?: boolean) => {
+const getIndicatorStyle = (
+  theme: Theme,
+  $selected?: boolean,
+  $hasError?: boolean,
+  $isDirty?: boolean,
+) => {
   let color = ''
   if ($hasError) color = theme.colors.red
   else if ($selected && $isDirty) color = theme.colors.accent
@@ -190,13 +200,22 @@ const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEdi
     if (data.avatar) entries.push(['avatar', data.avatar])
     if (data.banner) entries.push(['banner', data.banner])
     if (data.general)
-      entries.push(...Object.entries(data.general).map(([key, value]) => [convertFormSafeKey(key), value]))
+      entries.push(
+        ...Object.entries(data.general).map(([key, value]) => [convertFormSafeKey(key), value]),
+      )
     if (data.accounts)
-      entries.push(...Object.entries(data.accounts).map(([key, value]) => [convertFormSafeKey(key), value]))
-    if (data.other) entries.push(...Object.entries(data.other).map(([key, value]) => [convertFormSafeKey(key), value]))
+      entries.push(
+        ...Object.entries(data.accounts).map(([key, value]) => [convertFormSafeKey(key), value]),
+      )
+    if (data.other)
+      entries.push(
+        ...Object.entries(data.other).map(([key, value]) => [convertFormSafeKey(key), value]),
+      )
   } else if (type === 'addr') {
     if (data.address)
-      entries.push(...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]))
+      entries.push(
+        ...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]),
+      )
   } else if (type === 'contentHash') {
     if (data.website) entries.push(['website', data.website])
   }
@@ -576,11 +595,15 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={account}
                                 option={getSelectedAccountOption(account)}
                                 placeholder={t([
-                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(account)}`,
+                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
+                                    account,
+                                  )}`,
                                   `profileEditor.tabs.accounts.placeholder.default`,
                                 ])}
                                 showDot
-                                error={getFieldState(`accounts.${account}`, formState).error?.message}
+                                error={
+                                  getFieldState(`accounts.${account}`, formState).error?.message
+                                }
                                 validated={getFieldState(`accounts.${account}`, formState).isDirty}
                                 onDelete={() => {
                                   removeAccountKey(account, false)
@@ -593,11 +616,15 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={key}
                                 option={getSelectedAccountOption(key)}
                                 placeholder={t([
-                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(key)}`,
+                                  `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
+                                    key,
+                                  )}`,
                                   `profileEditor.tabs.accounts.placeholder.default`,
                                 ])}
                                 error={getFieldState(`accounts.${key}`, formState).error?.message}
-                                validated={getFieldState(`accounts.${formSafeKey(key)}`, formState).isDirty}
+                                validated={
+                                  getFieldState(`accounts.${formSafeKey(key)}`, formState).isDirty
+                                }
                                 showDot
                                 autoComplete="off"
                                 autoCorrect="off"
@@ -622,7 +649,9 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={key}
                                 option={getSelectedAddressOption(key)}
                                 placeholder={t([
-                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                    key,
+                                  )}`,
                                   `profileEditor.tabs.address.placeholder.default`,
                                 ])}
                                 showDot
@@ -642,7 +671,9 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                                 key={key}
                                 option={getSelectedAddressOption(key)}
                                 placeholder={t([
-                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                                  `profileEditor.tabs.address.placeholder.${convertFormSafeKey(
+                                    key,
+                                  )}`,
                                   `profileEditor.tabs.address.placeholder.default`,
                                 ])}
                                 error={getFieldState(`address.${key}`, formState).error?.message}
@@ -671,7 +702,9 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
                           <RecordInput
                             option={websiteOption}
                             placeholder={t([
-                              `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(websiteOption.value)}`,
+                              `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
+                                websiteOption.value,
+                              )}`,
                               `profileEditor.tabs.contentHash.placeholder.default`,
                             ])}
                             error={getFieldState(`website`, formState).error?.message}
