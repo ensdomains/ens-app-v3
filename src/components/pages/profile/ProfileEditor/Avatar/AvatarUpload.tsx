@@ -392,7 +392,10 @@ const UploadComponent = ({
   })
 
   const { mutate: signAndUpload, isLoading } = useMutation(async () => {
-    const endpoint = `http://localhost:8787/${name}`
+    const baseURL =
+      process.env.NEXT_PUBLIC_AVUP_ENDPOINT ||
+      'https://avatar-upload.ens-cf.workers.dev'
+    const endpoint = `${baseURL}/${name}`
 
     const sig = await signTypedDataAsync()
     const fetched = (await fetch(endpoint, {
