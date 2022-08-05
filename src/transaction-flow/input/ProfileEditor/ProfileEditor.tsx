@@ -4,10 +4,9 @@ import { Theme } from 'typings-custom/styled-components'
 import { useForm, useWatch } from 'react-hook-form'
 import { mq, Textarea, Button, ScrollBox } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
-import { useTranslation } from 'react-i18next'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import { useProfile } from '@app/hooks/useProfile'
-import { validateCryptoAddress } from '@app/utils/validate'
+import { ProfileEditorType } from '@app/types'
 import {
   convertProfileToProfileFormObject,
   formSafeKey,
@@ -15,17 +14,20 @@ import {
   convertFormSafeKey,
 } from '@app/utils/editor'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { RecordOptions } from '@ensdomains/ensjs/src/utils/recordHelpers'
 import { useEns } from '@app/utils/EnsProvider'
-import addressOptions from './addressOptions'
+import { validateCryptoAddress } from '@app/utils/validate'
+import { useTranslation } from 'react-i18next'
+import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import accountsOptions from './accountsOptions'
-import websiteOptions from './websiteOptions'
+import addressOptions from './addressOptions'
+import AvatarButton from './Avatar/AvatarButton'
+import { AvatarViewManager } from './Avatar/AvatarViewManager'
 import otherOptions from './otherOptions'
-import AvatarButton from './AvatarButton'
+import websiteOptions from './websiteOptions'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -204,23 +206,7 @@ const LabelWrapper = styled.div(
   `,
 )
 
-export type ProfileEditorType = {
-  avatar?: string
-  banner?: string
-  website?: string
-  general: {
-    [key: string]: string
-  }
-  accounts: {
-    [key: string]: string
-  }
-  address: {
-    [key: string]: string
-  }
-  other: {
-    [key: string]: string
-  }
-}
+
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -526,14 +512,43 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
     name: 'avatar',
   })
 
+  const _avatar = useWatch({
+    control,
+    name: '_avatar',
+  })
+
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
+  const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
+  const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
+
   if (loading) return null
-  return (
+  return ( 
+        <> { currentContent === 'avatar' ? (
+          <AvatarViewManager
+            name={name}
+            avatar={_avatar}
+            handleCancel={() => setCurrentContent('profile')}
+            handleSubmit={(display: string, uri?: string) => {
+              if (uri) {
+                setValue('avatar', uri)
+                setAvatarDisplay(display)
+              } else {
+                setValue('avatar', display)
+              }
+              setCurrentContent('profile')
+            }}
+          />) : (
     <Container data-testid="profile-editor" onSubmit={handleSubmit(handleTransaction)}>
       <Banner zIndex={10}>
         <AvatarWrapper>
-          <AvatarButton src={avatar} />
+        <AvatarButton
+                  validated={avatar !== undefined}
+                  src={avatarDisplay || avatar}
+                  onSelectOption={() => setCurrentContent('avatar')}
+                  setValue={setValue}
+                  setDisplay={setAvatarDisplay}
+                />
         </AvatarWrapper>
       </Banner>
       <NameContainer>{name}</NameContainer>
@@ -833,8 +848,11 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
           </Button>
         </FooterContainer>
       </ContentContainer>
+     
     </Container>
   )
-}
+  }
+  </>
+)}
 
 export default ProfileEditor

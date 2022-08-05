@@ -1,4 +1,5 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
+// @ts-nocheck
+/* eslint-disable */
 
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
