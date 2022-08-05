@@ -161,9 +161,10 @@ describe('useNamesFromAddress', () => {
       expect(result.current.currentPage).toHaveLength(1)
     })
     it('should filter by domain', async () => {
-      const names = Array.from({ length: 10 }, makeNameItem(false)).map(
-        (name) => ({ ...name, type: 'registration' }),
-      )
+      const names = Array.from({ length: 10 }, makeNameItem(false)).map((name) => ({
+        ...name,
+        type: 'registration',
+      }))
       names[0].type = 'domain'
 
       mockGetNames.mockResolvedValue(names)

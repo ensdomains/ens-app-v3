@@ -1,12 +1,6 @@
 import { Select } from '@ensdomains/thorin'
 import { ComponentProps, useMemo, useState, useEffect } from 'react'
-import {
-  FieldValues,
-  Path,
-  PathValue,
-  UseFormGetValues,
-  UseFormSetValue,
-} from 'react-hook-form'
+import { FieldValues, Path, PathValue, UseFormGetValues, UseFormSetValue } from 'react-hook-form'
 
 type Option = ComponentProps<typeof Select>['options'][number]
 

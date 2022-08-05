@@ -36,11 +36,7 @@ export const useAvatar = (name: string | undefined, network: number) => {
 }
 
 export const useNFTImage = (name: string | undefined, network: number) => {
-  const isCompatible = !!(
-    name &&
-    name.split('.').length === 2 &&
-    name.endsWith('.eth')
-  )
+  const isCompatible = !!(name && name.split('.').length === 2 && name.endsWith('.eth'))
   const { ready, contracts } = useEns()
   const { data: baseRegistrarAddress } = useQuery(
     'base-registrar-address',

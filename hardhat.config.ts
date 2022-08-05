@@ -2,18 +2,9 @@ import '@nomiclabs/hardhat-ethers'
 import 'dotenv/config'
 import 'hardhat-deploy'
 import { HardhatUserConfig } from 'hardhat/config'
-import nModule from 'module'
 import { resolve } from 'path'
 
-const pnpApi = (nModule as any).findPnpApi('.')
-
-const resolveToUnqualified = pnpApi.resolveToUnqualified as (
-  request: string,
-  issuer: string | null,
-  opts?: { considerBuiltins?: boolean },
-) => string
-
-const ensContractsPath = resolveToUnqualified('@ensdomains/ens-contracts', '.')
+const ensContractsPath = './node_modules/@ensdomains/ens-contracts'
 
 console.log(resolve(ensContractsPath, 'artifacts'))
 
