@@ -1,26 +1,7 @@
-import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-
-const ExpiryWrapper = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    gap: ${theme.space['1']};
-    flex-gap: ${theme.space['1']};
-  `,
-)
-
-const ClockIcon = styled.div<{ $color: 'red' | 'orange' | 'grey' }>(
-  ({ theme, $color }) => css`
-    width: ${theme.space['5']};
-    height: ${theme.space['5']};
-    color: ${theme.colors[$color]};
-  `,
-)
 
 const ExpiryText = styled(Typography)<{
   $color: 'red' | 'orange' | 'foreground'
@@ -34,20 +15,6 @@ const ExpiryText = styled(Typography)<{
       : ``}
   `,
 )
-
-export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
-  const currentDate = new Date()
-  const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
-
-  if (difference < 0) {
-    return <ClockIcon data-testid="expiry-clock-red" $color="red" as={ClockSVG} />
-  }
-  if (difference < 90) {
-    return <ClockIcon data-testid="expiry-clock-orange" $color="orange" as={ClockSVG} />
-  }
-
-  return <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
-}
 
 export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
   const { t } = useTranslation()
@@ -77,26 +44,5 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
     <ExpiryText data-testid={`short-expiry-${color}`} weight="bold" $color={color}>
       {text}
     </ExpiryText>
-  )
-}
-
-export const ReadableExpiry = ({ expiry }: { expiry: Date }) => {
-  return (
-    <ExpiryWrapper>
-      <ExpiryClock expiry={expiry} />
-      <Typography weight="bold" color="textSecondary">
-        {`${expiry.toLocaleDateString(undefined, {
-          month: 'short',
-          day: 'numeric',
-        })}, ${expiry.getFullYear()}`}
-      </Typography>
-      <Typography weight="bold" color="textTertiary">
-        {`at ${expiry.toLocaleTimeString(undefined, {
-          hour: '2-digit',
-          minute: '2-digit',
-          timeZoneName: 'short',
-        })}`}
-      </Typography>
-    </ExpiryWrapper>
   )
 }

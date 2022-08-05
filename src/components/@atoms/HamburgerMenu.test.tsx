@@ -6,17 +6,18 @@ import { HamburgerMenu } from './HamburgerMenu'
 
 jest.mock('next/router')
 jest.mock('next/link', () => {
-  const React = jest.requireActual('react')
-  const { UrlObject } = jest.requireActual('url')
+  // const React = jest.requireActual('react')
+  // const { UrlObject } = jest.requireActual('url')
 
-  type Url = string | typeof UrlObject
-  type LinkProps = {
-    href: Url
-    as?: Url
-  }
+  // type Url = string | typeof UrlObject
+  // type LinkProps = {
+  //   href: Url
+  //   as?: Url
+  // }
 
-  return ({ children, href }: React.PropsWithChildren<LinkProps>) =>
-    React.cloneElement(React.Children.only(children), { href })
+  // return ({ children, href }: React.PropsWithChildren<LinkProps>) =>
+  //   React.cloneElement(React.Children.only(children), { href })
+  return <div>div</div>
 })
 const mockUseRouter = mockFunction(useRouter)
 
