@@ -10,6 +10,10 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { makeIntroItem } from '@app/transaction-flow/intro'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import Head from 'next/head'
@@ -76,6 +80,8 @@ export default function Page() {
 
   const selfAbilities = useSelfAbilities(address, ownerData)
 
+  const { createTransactionFlow } = useTransactionFlow()
+
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
   useProtectedRoute(
@@ -119,6 +125,41 @@ export default function Page() {
     ]
   }, [isSelf, normalisedName, valid, name, t])
 
+  const profileActions = useMemo(() => {
+    if (isSelf || !selfAbilities.canEdit) return undefined
+    const setAsPrimaryTransactions: GenericTransaction[] = [
+      makeTransactionItem('setPrimaryName', {
+        name,
+        address: address!,
+      }),
+    ]
+    if (profile?.address !== address) {
+      setAsPrimaryTransactions.unshift(
+        makeTransactionItem('updateEthAddress', {
+          address: address!,
+          name,
+        }),
+      )
+    }
+    return [
+      {
+        label: t('tabs.profile.actions.setAsPrimaryName.label'),
+        onClick: () =>
+          createTransactionFlow(`setPrimaryName-${name}-${address}`, {
+            transactions: setAsPrimaryTransactions,
+            resumable: true,
+            intro:
+              setAsPrimaryTransactions.length > 1
+                ? {
+                    title: t('tabs.profile.actions.setAsPrimaryName.title'),
+                    content: makeIntroItem('ChangePrimaryName', undefined),
+                  }
+                : undefined,
+          }),
+      },
+    ]
+  }, [isSelf, selfAbilities.canEdit, name, address, profile?.address, t, createTransactionFlow])
+
   return (
     <>
       <Head>
@@ -158,6 +199,7 @@ export default function Page() {
                 recordName={getTextRecord('name')?.value}
                 button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
                 size={breakpoints.md ? 'medium' : 'small'}
+                actions={profileActions}
               />
               {selfAbilities.canEdit && (
                 <SelfButtons>

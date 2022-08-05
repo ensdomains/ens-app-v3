@@ -4,6 +4,7 @@
   "loading": "Loading",
   "action": {
     "cancel": "Cancel",
+    "change": "Change",
     "upload": "Upload",
     "close": "Close",
     "save": "Save",
@@ -88,13 +89,17 @@
       "sendName": "Send Name",
       "migrateProfile": "Migrate Profile",
       "wrapName": "Wrap Name",
-      "updateResolver": "Update Resolver"
+      "updateResolver": "Update Resolver",
+      "setPrimaryName": "Set primary name",
+      "updateEthAddress": "Update ETH address"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
       "wrapName": "Wrap name and set new resolver",
-      "updateResolver": "Change contract used to store records"
+      "updateResolver": "Change contract used to store records",
+      "setPrimaryName": "Set the primary name for your address",
+      "updateEthAddress": "Update ETH address to this address"
     },
     "itemLabel": {
       "name": "Name",

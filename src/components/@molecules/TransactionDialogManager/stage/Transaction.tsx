@@ -1,4 +1,5 @@
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink, StyledAnchor } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
 import { getRoute } from '@app/routes'
@@ -18,23 +19,6 @@ import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useSigner } from 'wagmi'
 import { DisplayItems } from '../DisplayItems'
-
-const InnerDialog = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: flex-start;
-    width: ${theme.space.full};
-    padding: 0 ${theme.space['5']};
-    gap: ${theme.space['4']};
-    max-height: 60vh;
-    overflow-y: auto;
-    ${mq.sm.min(css`
-      min-width: ${theme.space['128']};
-    `)}
-  `,
-)
 
 const ButtonShrinkwrap = styled(Button)(
   () => css`

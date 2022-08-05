@@ -7,6 +7,9 @@
     "transaction": {
       "title": "Transactions",
       "noRecentTransactions": "No recent transactions"
+    },
+    "primary": {
+      "title": "Primary Name"
     }
   }
 }
