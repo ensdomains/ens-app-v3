@@ -32,7 +32,6 @@ describe('RecordInput', () => {
 
     const labelList = input.querySelectorAll('label')
     const labels = Array.from(labelList)
-    labels.forEach((l) => console.log(l.innerHTML))
     expect(labels.some((label) => /<svg/.test(label.innerHTML))).toBe(true)
   })
 

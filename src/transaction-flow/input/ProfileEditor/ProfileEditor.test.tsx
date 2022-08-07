@@ -219,7 +219,6 @@ describe('ProfileEditor', () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      // console.log(mockDispatch.mock.calls[0])
       expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
         key: 'DOT',
         value: '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',

@@ -260,7 +260,7 @@ const AdvancedEditor = ({ data, dispatch, onDismiss }: Props) => {
     },
   })
 
-  const [tab, setTab] = useState<TabType>('address')
+  const [tab, setTab] = useState<TabType>('text')
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -340,7 +340,6 @@ const AdvancedEditor = ({ data, dispatch, onDismiss }: Props) => {
 
   useEffect(() => {
     if (profile) {
-      console.log(profile)
       const formObject = convertProfileToProfileFormObject(profile)
       const newDefaultValues = {
         text: {
