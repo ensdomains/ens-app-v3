@@ -11,7 +11,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
-import Page, { calculateSelfAbilities, Details } from '@app/pages/profile/details'
+import Page, { Details } from '@app/pages/profile/details'
 
 // setting up jest mocks
 jest.mock('@app/components/NFTWithPlaceholder')
@@ -37,65 +37,6 @@ const mockUseRouter = mockFunction(useRouter)
 const mockUseChainId = mockFunction(useChainId)
 const mockUseNameDetails = mockFunction(useNameDetails)
 const mockUseAccount = mockFunction(useAccount)
-
-describe('calculateSelfAbilities', () => {
-  it('should return all false if there is no address or ownerData', () => {
-    const result = calculateSelfAbilities(undefined, undefined)
-    expect(result).toEqual({
-      canEdit: false,
-      canSend: false,
-      canChangeOwner: false,
-      canChangeRegistrant: false,
-    })
-  })
-  it('should return true for all abilites is self is registrant AND owner', () => {
-    const result = calculateSelfAbilities('0x123', {
-      registrant: '0x123',
-      owner: '0x123',
-    })
-    expect(result).toEqual({
-      canEdit: true,
-      canSend: true,
-      canChangeOwner: true,
-      canChangeRegistrant: true,
-    })
-  })
-  it('should return correct values if self is registrant but NOT owner', () => {
-    const result = calculateSelfAbilities('0x123', {
-      registrant: '0x123',
-      owner: '0x456',
-    })
-    expect(result).toEqual({
-      canEdit: false,
-      canSend: true,
-      canChangeOwner: true,
-      canChangeRegistrant: true,
-    })
-  })
-  it('should return correct values if self is owner but NOT registrant', () => {
-    const result = calculateSelfAbilities('0x456', {
-      registrant: '0x123',
-      owner: '0x456',
-    })
-    expect(result).toEqual({
-      canEdit: true,
-      canSend: false,
-      canChangeOwner: true,
-      canChangeRegistrant: false,
-    })
-  })
-  it('should return correct values there is no registrant but the user is the owner', () => {
-    const result = calculateSelfAbilities('0x456', {
-      owner: '0x456',
-    })
-    expect(result).toEqual({
-      canEdit: true,
-      canSend: true,
-      canChangeOwner: true,
-      canChangeRegistrant: true,
-    })
-  })
-})
 
 type DetailsProps = ComponentProps<typeof Details>
 

@@ -2,7 +2,7 @@ import { useProfile } from '@app/hooks/useProfile'
 import { mockFunction, render, screen, waitFor, within, userEvent } from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-// import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useEns } from '@app/utils/EnsProvider'
 import { cleanup, fireEvent } from '@testing-library/react'
 import ProfileEditor from './ProfileEditor'
@@ -119,12 +119,12 @@ const mockProfileData = {
 jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useProfile')
 jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/utils/TransactionProvider')
+jest.mock('@app/transaction-flow/TransactionFlowProvider')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
 const mockIntersectionObserver = jest.fn()
-// const mockUseTransactionFlow = mockFunction(useTransactionFlow)
+const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 const mockUseEns = mockFunction(useEns)
 
 const mockSetRecords = jest.fn()
@@ -155,6 +155,8 @@ describe('ProfileEditor', () => {
     mockUseEns.mockReturnValue({
       setRecords: mockSetRecords,
     })
+
+    mockUseTransactionFlow.mockReturnValue('test')
   })
 
   afterEach(() => {

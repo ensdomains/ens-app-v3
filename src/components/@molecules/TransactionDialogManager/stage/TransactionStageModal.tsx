@@ -5,7 +5,6 @@ import { getRoute } from '@app/routes'
 import { transactions } from '@app/transaction-flow/transaction'
 import { ManagedDialogProps } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
-import { isIOS } from '@app/utils/isIOS'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
 import type { JsonRpcSigner } from '@ethersproject/providers'
@@ -112,7 +111,7 @@ const CompleteTypography = styled(Typography)(
   `,
 )
 
-type Stage = 'preSteps' | 'request' | 'confirm' | 'complete'
+type Stage = 'request' | 'confirm' | 'complete'
 
 export const TransactionStageModal = ({
   displayItems,
@@ -169,17 +168,10 @@ export const TransactionStageModal = ({
     },
   )
 
-  const needsUnchecked = isIOS()
-
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      let hash: string
-      if (needsUnchecked) {
-        hash = await (signer as JsonRpcSigner).sendUncheckedTransaction(populatedTransaction!)
-      } else {
-        ;({ hash } = await (signer as JsonRpcSigner).sendTransaction(populatedTransaction!))
-      }
+      const { hash } = await (signer as JsonRpcSigner).sendTransaction(populatedTransaction!)
       if (!hash) throw new Error('No transaction generated')
       addTransaction({
         description: JSON.stringify({ action: actionName, key: txKey }),
@@ -195,7 +187,7 @@ export const TransactionStageModal = ({
         setError(e ? e.message : 'transaction.dialog.confirm.error.unknown')
       }
     }
-  }, [needsUnchecked, addTransaction, actionName, txKey, onComplete, signer, populatedTransaction])
+  }, [addTransaction, actionName, txKey, onComplete, signer, populatedTransaction])
 
   const FilledDisplayItems = useMemo(
     () => (
@@ -291,7 +283,9 @@ export const TransactionStageModal = ({
           disabled={!error}
           shadowless
           variant="secondary"
-          onClick={() => tryTransaction()}
+          onClick={() => {
+            tryTransaction()
+          }}
           data-testid="transaction-modal-confirm-trailing-btn"
         >
           {t('transaction.dialog.confirm.trailingButton')}
@@ -302,7 +296,9 @@ export const TransactionStageModal = ({
       <Button
         data-testid="transaction-modal-request-trailing-btn"
         shadowless
-        onClick={() => setStage('confirm')}
+        onClick={() => {
+          setStage('confirm')
+        }}
         disabled={!populatedTransaction}
       >
         {t('transaction.dialog.request.trailingButton')}
