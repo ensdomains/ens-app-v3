@@ -5,7 +5,7 @@ export const maxSpeed = 96
 export const getVars = (canvas: HTMLCanvasElement) => {
   if (!canvas) {
     return {
-      imagePercent,
+      imagePercent: 0,
       size: 0,
       cropSize: 0,
       inverseCropSize: 0,

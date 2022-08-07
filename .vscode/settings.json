@@ -18,5 +18,5 @@
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },
-  "jest.jestCommandLine": "yarn test"
+  "jest.jestCommandLine": "pnpm run test"
 }

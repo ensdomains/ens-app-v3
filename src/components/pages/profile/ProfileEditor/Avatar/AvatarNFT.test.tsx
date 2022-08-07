@@ -133,7 +133,7 @@ describe('<AvatarNFT />', () => {
 
     await waitFor(() =>
       expect(mockedFetch.mock.lastCall).toEqual([
-        `https://eth-mainnet.alchemyapi.io/nft/v2/no-key/getNFTs/?owner=0x0000000000000000000000000000000000000001&filters%5B%5D=SPAM&pageKey=test123`,
+        `https://eth-mainnet.alchemyapi.io/nft/v2/alchemy-key/getNFTs/?owner=0x0000000000000000000000000000000000000001&filters%5B%5D=SPAM&pageKey=test123`,
         {
           method: 'GET',
           redirect: 'follow',
