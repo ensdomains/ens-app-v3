@@ -97,7 +97,6 @@ specifiers:
   next-transpile-modules: ^9.0.0
   node-fetch: ^3.2.6
   node-fetch-commonjs: ^3.1.1
-  p-memoize: ^7.1.0
   postcss-syntax: ^0.36.2
   prettier: 2.6.2
   react: ^17.0.2
@@ -119,7 +118,7 @@ specifiers:
   typescript: ^4.6.4
   typescript-styled-plugin: ^0.18.2
   use-immer: ^0.7.0
-  wagmi: ^0.4.3
+  wagmi: 0.4.3
   wait-on: ^6.0.1
   wrangler: ^2.0.23
   yalc: ^1.0.0-pre.53
@@ -143,7 +142,6 @@ dependencies:
   iso-639-1: 2.1.13
   lodash: 4.17.21
   next: 12.1.6_sfoxds7t5ydpegc3knd667wn6m
-  p-memoize: 7.1.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-ga: 3.3.0_react@17.0.2
@@ -4665,7 +4663,7 @@ packages:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.3.6
+      semver: 7.3.7
       tsutils: 3.21.0_typescript@4.6.4
       typescript: 4.6.4
     transitivePeerDependencies:
@@ -4686,7 +4684,7 @@ packages:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.3.6
+      semver: 7.3.7
       tsutils: 3.21.0_typescript@4.6.4
       typescript: 4.6.4
     transitivePeerDependencies:
@@ -4728,7 +4726,7 @@ packages:
       debug: 4.3.4
       globby: 11.1.0
       is-glob: 4.0.3
-      semver: 7.3.6
+      semver: 7.3.7
       tsutils: 3.21.0_typescript@4.6.4
       typescript: 4.6.4
     transitivePeerDependencies:
@@ -9688,7 +9686,7 @@ packages:
     resolution: {integrity: sha512-A8tG4Z4iNg4mw5tP1Vung9N9IjgMNqpiMoJ/FouSFwNCGHv2X0mmOYwtQOJzki6XN7r7Tyo01S29p7b224I4jw==}
     dependencies:
       '@babel/plugin-transform-runtime': 7.17.0
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       eth-query: 2.1.2
       json-rpc-random-id: 1.0.1
       pify: 3.0.0
@@ -12864,7 +12862,7 @@ packages:
       jest-util: 27.5.1
       natural-compare: 1.4.0
       pretty-format: 27.5.1
-      semver: 7.3.6
+      semver: 7.3.7
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -13975,11 +13973,6 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /mimic-fn/4.0.0:
-    resolution: {integrity: sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw==}
-    engines: {node: '>=12'}
-    dev: false
-
   /mimic-response/1.0.1:
     resolution: {integrity: sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ==}
     engines: {node: '>=4'}
@@ -14548,7 +14541,7 @@ packages:
     dependencies:
       hosted-git-info: 4.1.0
       is-core-module: 2.9.0
-      semver: 7.3.6
+      semver: 7.3.7
       validate-npm-package-license: 3.0.4
     dev: true
 
@@ -14962,13 +14955,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       aggregate-error: 3.1.0
-
-  /p-memoize/7.1.0:
-    resolution: {integrity: sha512-CvZTCSwDg0JBLhZtvY5jSfrHwNAFrQfL+0X0GPVgwtTpruhHGTmdGkx8NSA5WNkti9N8FrHfsseFX1GW4guLww==}
-    engines: {node: '>=14.16'}
-    dependencies:
-      mimic-fn: 4.0.0
-    dev: false
 
   /p-timeout/1.2.1:
     resolution: {integrity: sha512-gb0ryzr+K2qFqFv6qi3khoeqMZF/+ajxQipEF6NteZVnvz9tzdsfAVj3lYtn1gAXvH5lfLwfxEII799gt/mRIA==}
@@ -15789,7 +15775,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       '@types/use-sync-external-store': 0.0.3
       broadcast-channel: 3.7.0
       match-sorter: 6.3.1
@@ -16486,7 +16472,6 @@ packages:
     dependencies:
       lru-cache: 6.0.0
     dev: true
-    optional: true
 
   /send/0.18.0:
     resolution: {integrity: sha512-qqWzuOjSFOuqPjFe4NOsMLafToQQwBSOEpS+FwEt3A2V3vKubTquT3vmLTQpFgMXp8AlFWFuP1qKaJZOtPpVXg==}
@@ -17805,7 +17790,7 @@ packages:
   /trezor-connect/8.1.8:
     resolution: {integrity: sha512-ZTgKmSd5scbUAdHwz6DLwILVoNRe//6fQcuaVDL0tbWHvB5MNajGlLDzPG/TM7y156mzXmXF2Y4LJQqLDQhaIw==}
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       events: 3.3.0
       whatwg-fetch: 3.6.2
     dev: true
@@ -18101,7 +18086,7 @@ packages:
   /unload/2.2.0:
     resolution: {integrity: sha512-B60uB5TNBLtN6/LsgAf3udH9saB5p7gqJwcFfbOEZ8BcBHnGwCf6G/TGiEqkRAxX7zAFIUtzdrXQSdL3Q/wqNA==}
     dependencies:
-      '@babel/runtime': 7.17.9
+      '@babel/runtime': 7.18.9
       detect-node: 2.1.0
     dev: false
 
