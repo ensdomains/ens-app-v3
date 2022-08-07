@@ -1,10 +1,15 @@
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { NamePill } from '@app/components/@molecules/NamePill'
-import { ScrollBoxWithSpinner } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import {
+  LoadingContainer,
+  ScrollBoxWithSpinner,
+  SpinnerRow,
+} from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
-import { Button, Dialog, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
-import { useState } from 'react'
+import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
+import { ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useInfiniteQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { makeTransactionItem } from '../transaction'
@@ -12,6 +17,7 @@ import { TransactionDialogPassthrough } from '../types'
 
 type Data = {
   address: string
+  existingPrimary: string | null
 }
 
 type Domain = {
@@ -28,14 +34,16 @@ const StyledScrollBox = styled(ScrollBoxWithSpinner)(
 const querySize = 50
 
 export const SelectPrimaryName = ({
-  data: { address },
+  data: { address, existingPrimary },
   dispatch,
   onDismiss,
 }: { data: Data } & TransactionDialogPassthrough) => {
+  const { t } = useTranslation('settings')
+
   const chainId = useChainId()
   const { gqlInstance } = useEns()
 
-  const { data, fetchNextPage } = useInfiniteQuery(
+  const { data, fetchNextPage, isLoading } = useInfiniteQuery(
     [address, 'primaryNameOptions'],
     async ({ pageParam }: { pageParam?: string }) => {
       const { domains } = await gqlInstance.request(
@@ -85,13 +93,22 @@ export const SelectPrimaryName = ({
     })
   }
 
-  return (
-    <>
-      <Dialog.Heading title="Select a primary name" />
-      <InnerDialog>
-        <StyledScrollBox showSpinner={hasNextPage} onReachedBottom={() => fetchNextPage()}>
-          <RadioButtonGroup value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
-            {names?.map((name) => (
+  let Content: ReactNode
+
+  if (isLoading) {
+    Content = (
+      <LoadingContainer>
+        <Heading>{t('section.primary.input.loading')}</Heading>
+        <SpinnerRow />
+      </LoadingContainer>
+    )
+  } else if (names && names.length > 0) {
+    Content = (
+      <StyledScrollBox showSpinner={hasNextPage} onReachedBottom={() => fetchNextPage()}>
+        <RadioButtonGroup value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
+          {names
+            ?.filter((x) => x.name !== existingPrimary)
+            .map((name) => (
               <RadioButton
                 labelRight
                 label={<NamePill name={name.name} network={chainId} key={name.id} />}
@@ -100,18 +117,30 @@ export const SelectPrimaryName = ({
                 value={name.name}
               />
             ))}
-          </RadioButtonGroup>
-        </StyledScrollBox>
-      </InnerDialog>
+        </RadioButtonGroup>
+      </StyledScrollBox>
+    )
+  } else {
+    Content = (
+      <LoadingContainer>
+        <Heading>{t('section.primary.input.noNames')}</Heading>
+      </LoadingContainer>
+    )
+  }
+
+  return (
+    <>
+      <Dialog.Heading title="Select a primary name" />
+      <InnerDialog>{Content}</InnerDialog>
       <Dialog.Footer
         leading={
           <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
-            Cancel
+            {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
           <Button shadowless onClick={handleSubmit} disabled={!selectedName}>
-            Next
+            {t('action.next', { ns: 'common' })}
           </Button>
         }
       />

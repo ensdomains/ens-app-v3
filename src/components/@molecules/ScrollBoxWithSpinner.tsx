@@ -13,6 +13,21 @@ const SpinnerContainer = styled.div(
   `,
 )
 
+export const LoadingContainer = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
+    height: 100vh;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+
+    text-align: center;
+  `,
+)
+
 export const SpinnerRow = () => (
   <SpinnerContainer>
     <Spinner color="accent" size="large" />

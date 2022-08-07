@@ -36,13 +36,16 @@ export const PrimarySection = () => {
   const isLoading = basicLoading || primaryLoading
 
   const changePrimary = () =>
-    showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', { address })
+    showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', {
+      address,
+      existingPrimary: name,
+    })
 
   return (
     <SectionContainer
       title={t('section.primary.title')}
       action={
-        <Button shadowless onClick={() => changePrimary()}>
+        <Button size="small" shadowless onClick={() => changePrimary()}>
           {t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
         </Button>
       }

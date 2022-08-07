@@ -13,7 +13,7 @@ export const WalletSection = () => {
     <SectionContainer
       title={t('section.wallet.title')}
       action={
-        <Button tone="red" variant="secondary" shadowless onClick={() => disconnect()}>
+        <Button size="small" tone="red" variant="secondary" shadowless onClick={() => disconnect()}>
           {tc('wallet.disconnect')}
         </Button>
       }
