@@ -43,7 +43,7 @@ export const PrimarySection = () => {
       title={t('section.primary.title')}
       action={
         <Button shadowless onClick={() => changePrimary()}>
-          {t('action.change', { ns: 'common' })}
+          {t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
         </Button>
       }
       fill={!!name}
