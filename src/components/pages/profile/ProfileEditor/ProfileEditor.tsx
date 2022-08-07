@@ -240,8 +240,6 @@ type Props = {
 
 const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
-  const { showDataInput } = useTransactionFlow()
-  const { setRecords, contracts } = useEns()
 
   const {
     register,
@@ -445,8 +443,6 @@ const ProfileEditor = ({ name = '', open, onDismiss }: Props) => {
       coinTypes,
       contentHash,
     }
-
-    // const resolverAddress = (await contracts!.getPublicResolver()!).address
   }
 
   const avatar = useWatch({

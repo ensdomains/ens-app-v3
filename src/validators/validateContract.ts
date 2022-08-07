@@ -72,6 +72,10 @@ const validateContract = async (
   address: string,
   provider: any,
 ) => {
+  if (!ethers.utils.isAddress(address)) {
+    return ['Address is not a valid address']
+  }
+
   const maybeContract = new ethers.Contract(address, supportsInterfaceAbi, provider)
   let results
   try {

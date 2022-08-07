@@ -1,9 +1,6 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 
-import validateContract, {
-  CONTRACT_INTERFACES,
-  ContractInterface,
-} from './validateContract'
+import validateContract, { CONTRACT_INTERFACES, ContractInterface } from './validateContract'
 
 export const KnownResolveAddresses: {
   [key: string]: {
@@ -79,8 +76,7 @@ const validateResolver: ValidateResolver = async (
     return interfaces
       .map((interfaceName) => {
         if (supportedInterfaces.includes(interfaceName)) return undefined
-        if (CONTRACT_INTERFACES[interfaceName])
-          return CONTRACT_INTERFACES[interfaceName].error
+        if (CONTRACT_INTERFACES[interfaceName]) return CONTRACT_INTERFACES[interfaceName].error
         return 'Unknown interface'
       })
       .filter((x) => x)
