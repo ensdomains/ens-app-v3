@@ -97,7 +97,6 @@ specifiers:
   next-transpile-modules: ^9.0.0
   node-fetch: ^3.2.6
   node-fetch-commonjs: ^3.1.1
-  p-memoize: ^7.1.0
   postcss-syntax: ^0.36.2
   prettier: 2.6.2
   react: ^17.0.2
@@ -143,7 +142,6 @@ dependencies:
   iso-639-1: 2.1.13
   lodash: 4.17.21
   next: 12.1.6_noz7egsnsfdcs6s6px6pthieke
-  p-memoize: 7.1.0
   react: 17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-ga: 3.3.0_at7mkepldmzoo6silmqc5bca74
@@ -14206,11 +14204,6 @@ packages:
     engines: {node: '>=6'}
     dev: true
 
-  /mimic-fn/4.0.0:
-    resolution: {integrity: sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw==}
-    engines: {node: '>=12'}
-    dev: false
-
   /mimic-response/1.0.1:
     resolution: {integrity: sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ==}
     engines: {node: '>=4'}
@@ -15224,13 +15217,6 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       aggregate-error: 3.1.0
-
-  /p-memoize/7.1.0:
-    resolution: {integrity: sha512-CvZTCSwDg0JBLhZtvY5jSfrHwNAFrQfL+0X0GPVgwtTpruhHGTmdGkx8NSA5WNkti9N8FrHfsseFX1GW4guLww==}
-    engines: {node: '>=14.16'}
-    dependencies:
-      mimic-fn: 4.0.0
-    dev: false
 
   /p-retry/4.6.2:
     resolution: {integrity: sha512-312Id396EbJdvRONlngUx0NydfrIQ5lsYu0znKVUzVvArzEIt08V1qhtyESbGVd1FGX7UKtiFp5uwKZdM8wIuQ==}
