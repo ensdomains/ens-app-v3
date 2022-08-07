@@ -63,7 +63,9 @@ export const PrimarySection = () => {
           />
         </ItemWrapper>
       ) : (
-        <Typography>{isLoading ? 'Loading primary name...' : 'No primary name set.'}</Typography>
+        <Typography>
+          {isLoading ? t('section.primary.loading') : t('section.primary.noName')}
+        </Typography>
       )}
     </SectionContainer>
   )
