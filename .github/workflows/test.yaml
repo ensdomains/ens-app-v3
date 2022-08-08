@@ -42,6 +42,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
+      - name: Get contract addresses
+        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm enode" \
+          "pnpm hardhat deploy"'
+
       - name: Build stateless
         run: pnpm build:glocal
 
