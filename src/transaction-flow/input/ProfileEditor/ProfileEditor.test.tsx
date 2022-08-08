@@ -112,13 +112,50 @@ jest.mock('@app/transaction-flow/TransactionFlowProvider')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
-const mockIntersectionObserver = jest.fn()
 const mockUseEns = mockFunction(useEns)
 
 const mockSetRecords = jest.fn()
 const mockSetCurrentTransaction = jest.fn()
 
 const mockDispatch = jest.fn()
+
+export function setupIntersectionObserverMock({
+  root = null,
+  rootMargin = '',
+  thresholds = [],
+  disconnect = () => null,
+  observe = () => null,
+  takeRecords = () => [],
+  unobserve = () => null,
+} = {}): void {
+  class MockIntersectionObserver implements IntersectionObserver {
+    readonly root: Element | null = root
+
+    readonly rootMargin: string = rootMargin
+
+    readonly thresholds: ReadonlyArray<number> = thresholds
+
+    disconnect: () => void = disconnect
+
+    observe: (target: Element) => void = observe
+
+    takeRecords: () => IntersectionObserverEntry[] = takeRecords
+
+    unobserve: (target: Element) => void = unobserve
+  }
+
+  Object.defineProperty(window, 'IntersectionObserver', {
+    writable: true,
+    configurable: true,
+    value: MockIntersectionObserver,
+  })
+
+  Object.defineProperty(global, 'IntersectionObserver', {
+    writable: true,
+    configurable: true,
+    value: MockIntersectionObserver,
+  })
+}
 
 describe('ProfileEditor', () => {
   beforeEach(() => {
@@ -134,12 +171,7 @@ describe('ProfileEditor', () => {
       xl: false,
     })
 
-    mockIntersectionObserver.mockReturnValue({
-      observe: () => null,
-      unobserve: () => null,
-      disconnect: () => null,
-    })
-    window.IntersectionObserver = mockIntersectionObserver
+    setupIntersectionObserverMock()
     window.scroll = jest.fn()
 
     mockUseEns.mockReturnValue({
@@ -298,6 +330,7 @@ describe('ProfileEditor with old resolver', () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
+      console.log(mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.coinTypes)
       expect(mockDispatch.mock.calls[0][0].name).toBe('startFlow')
       expect(
         mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.coinTypes[0],

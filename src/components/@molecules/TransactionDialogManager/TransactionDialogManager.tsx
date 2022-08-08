@@ -11,7 +11,7 @@ import {
   TransactionFlowAction,
 } from '../../../transaction-flow/types'
 import { IntroStageModal } from './stage/Intro'
-import { TransactionStageModal } from './stage/Transaction'
+import { TransactionStageModal } from './stage/TransactionStageModal'
 
 export const TransactionDialogManager = ({
   state,

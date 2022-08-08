@@ -13,7 +13,14 @@
   "viewDetails": "View Details",
   "tabs": {
     "profile": {
-      "name": "Profile"
+      "name": "Profile",
+      "actions": {
+        "setAsPrimaryName": {
+          "label": "Set as primary name",
+          "title": "Set your primary name",
+          "description": "To set your primary name to this name, the ETH address must match this address."
+        }
+      }
     }
   },
   "details": {

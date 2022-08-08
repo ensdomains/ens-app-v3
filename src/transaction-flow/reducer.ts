@@ -88,10 +88,10 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'incrementTransaction': {
+      draft.items[draft.selectedKey!].currentTransactionComplete = false
       draft.items[draft.selectedKey!] = {
         ...draft.items[draft.selectedKey!],
         currentTransaction: draft.items[draft.selectedKey!].currentTransaction + 1,
-        currentTransactionComplete: false,
       }
       break
     }

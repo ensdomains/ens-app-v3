@@ -1,5 +1,7 @@
 import migrateProfile from './migrateProfile'
+import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
+import updateEthAddress from './updateEthAddress'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 import updateProfile from './updateProfile'
@@ -10,6 +12,8 @@ export const transactions = {
   wrapName,
   testSendName,
   updateProfile,
+  setPrimaryName,
+  updateEthAddress,
 }
 
 export type Transaction = typeof transactions
