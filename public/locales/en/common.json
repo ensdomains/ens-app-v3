@@ -144,12 +144,21 @@
           "unknown": "An unknown error occurred."
         }
       },
+      "mining": {
+        "title": "Saving transaction",
+        "estimationPre": "This will take around",
+        "estimationPost": "seconds",
+        "subtitle": "Your transaction is being mined",
+        "trailingButton": "Close",
+        "message": "Your transaction is being saved to the blockchain. You may close this window, we will send you a notification when it is ready."
+      },
       "complete": {
         "title": "Transaction Sent",
         "stepTitle": "Step {{step}} Complete",
-        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this dialog now if you'd like.",
+        "message": "Your transaction has been saved to the blockchain!",
         "trailingButton": "Close",
-        "stepTrailingButton": "Continue"
+        "stepTrailingButton": "Continue",
+        "viewTransactions": "View your transactions"
       }
     },
     "viewEtherscan": "View on Etherscan",
