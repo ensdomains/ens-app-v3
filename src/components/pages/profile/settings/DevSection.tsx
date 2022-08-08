@@ -4,7 +4,21 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { Button } from '@ensdomains/thorin'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { useSendTransaction } from 'wagmi'
-import { SectionContainer, SectionHeading } from './Section'
+import { SectionContainer } from './Section'
+
+const rpcSend = (method: string, params: any[]) =>
+  fetch('http://localhost:8545', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({
+      jsonrpc: '2.0',
+      method,
+      params,
+      id: 1,
+    }),
+  })
 
 export const DevSection = () => {
   const addTransaction = useAddRecentTransaction()
@@ -46,46 +60,32 @@ export const DevSection = () => {
     })
   }
 
-  const startAutoMine = async () => {
-    await fetch('http://localhost:8545', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        method: 'miner_start',
-        params: [],
-        id: 1,
-      }),
-    })
-  }
+  const startAutoMine = async () => rpcSend('miner_start', [])
 
-  const stopAutoMine = async () => {
-    await fetch('http://localhost:8545', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        jsonrpc: '2.0',
-        method: 'miner_stop',
-        params: [],
-        id: 1,
-      }),
-    })
-  }
+  const stopAutoMine = async () => rpcSend('miner_stop', [])
+
+  const revert = async () => rpcSend('evm_revert', [1]).then(() => rpcSend('evm_snapshot', []))
 
   return (
-    <SectionContainer>
-      <SectionHeading variant="large" weight="bold">
-        Developer
-      </SectionHeading>
-      <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
-      <Button onClick={() => sendName()}>Test Send Name</Button>
-      <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
-      <Button onClick={() => startAutoMine()}>Start Automine</Button>
-      <Button onClick={() => stopAutoMine()}>Stop Automine</Button>
+    <SectionContainer title="Developer">
+      <Button shadowless onClick={() => addSuccess()}>
+        Add Successful Transaction
+      </Button>
+      <Button shadowless onClick={() => sendName()}>
+        Test Send Name
+      </Button>
+      <Button shadowless onClick={() => addFailure()}>
+        Add Failing Transaction
+      </Button>
+      <Button shadowless onClick={() => startAutoMine()}>
+        Start Automine
+      </Button>
+      <Button shadowless onClick={() => stopAutoMine()}>
+        Stop Automine
+      </Button>
+      <Button shadowless onClick={() => revert()}>
+        Revert
+      </Button>
     </SectionContainer>
   )
 }

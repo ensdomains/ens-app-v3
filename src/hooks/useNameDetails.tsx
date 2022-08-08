@@ -1,17 +1,16 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
 import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
+import { useBasicName } from './useBasicName'
 import { useProfile } from './useProfile'
 import { useRegistrationStatus } from './useRegistrationStatus'
-import { useValidate } from './useValidate'
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
-  const { ready, getOwner, getExpiry, batch, getDNSOwner } = useEns()
+  const { ready, getDNSOwner } = useEns()
 
-  const { name: normalisedName, valid, labelCount } = useValidate(name, !name)
+  const { valid, normalisedName, isLoading: basicLoading, ...basicName } = useBasicName(name)
 
   const { profile, loading: profileLoading, status } = useProfile(normalisedName, !normalisedName)
 
@@ -23,27 +22,8 @@ export const useNameDetails = (name: string) => {
     },
   )
 
-  const { data: batchData, isLoading: batchLoading } = useQuery(
-    ['batch', 'getOwner', 'getExpiry', normalisedName],
-    () =>
-      labelCount === 2 && normalisedName.endsWith('.eth')
-        ? batch(getOwner.batch(normalisedName), getExpiry.batch(normalisedName))
-        : Promise.all([getOwner(normalisedName)]),
-    {
-      enabled: !!(normalisedName && valid),
-    },
-  )
-
   const { data: registrationStatus, isLoading: registrationStatusLoading } =
     useRegistrationStatus(normalisedName)
-
-  const ownerData = batchData?.[0] as Awaited<ReturnType<typeof getOwner>>
-
-  const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
-
-  const expiryDate = expiryData?.expiry
-
-  const truncatedName = truncateFormat(normalisedName)
 
   const error: string | ReactNode | null = useMemo(() => {
     if (valid === false) {
@@ -89,19 +69,15 @@ export const useNameDetails = (name: string) => {
     return null
   }, [normalisedName, profile, profileLoading, ready, registrationStatus, status, t, valid])
 
-  const isLoading = !ready || profileLoading || batchLoading || registrationStatusLoading
+  const isLoading = !ready || profileLoading || basicLoading || registrationStatusLoading
 
   return {
     error,
     normalisedName,
     valid,
-    labelCount,
     profile,
-    ownerData,
-    expiryDate,
     isLoading,
-    truncatedName,
     dnsOwner,
-    isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
+    ...basicName,
   }
 }

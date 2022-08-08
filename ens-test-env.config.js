@@ -11,7 +11,9 @@ process.env.ADDRESS_NAME_WRAPPER = '0x9E545E3C0baAB3E08CdfD552C960A1050f373042'
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
  **/
 module.exports = {
-  deployCommand: 'pnpm hardhat deploy',
+  deployCommand: `pnpm hardhat deploy${
+    !process.env.CI && process.env.E2E ? '&& pnpm build:glocal' : ''
+  }`,
   archive: {
     localSubgraphId: process.env.LOCAL_SUBGRAPH_ID,
     subgraphId: process.env.SUBGRAPH_ID,
@@ -23,7 +25,7 @@ module.exports = {
   ethereum: {
     chain: {
       chainId: parseInt(process.env.CHAIN_ID),
-      time: parseInt(process.env.EPOCH_TIME) * 1000,
+      time: 1659500634000,
     },
     fork: {
       url: process.env.FORK_RPC_URL,
@@ -37,7 +39,7 @@ module.exports = {
     ...(process.env.E2E
       ? [
           {
-            command: 'pnpm buildandstart:glocal',
+            command: 'pnpm start',
             name: 'nextjs',
             prefixColor: 'magenta.bold',
           },

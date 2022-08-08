@@ -46,7 +46,7 @@
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/ens-contracts": "^0.0.12",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "^3.0.0-alpha.7",
+    "@ensdomains/ensjs": "3.0.0-alpha.10",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "^0.6.10",
     "@rainbow-me/rainbowkit": "0.3.3",
