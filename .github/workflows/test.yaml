@@ -84,6 +84,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateless-build
+          path: .next
 
       - name: Pull metadata service image
         run: |
@@ -134,6 +135,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateful-build
+          path: .next
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
