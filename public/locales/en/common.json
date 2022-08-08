@@ -92,7 +92,8 @@
       "wrapName": "Wrap Name",
       "updateResolver": "Update Resolver",
       "setPrimaryName": "Set primary name",
-      "updateEthAddress": "Update ETH address"
+      "updateEthAddress": "Update ETH address",
+      "testSendName": "Send Name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -100,7 +101,8 @@
       "wrapName": "Wrap name and set new resolver",
       "updateResolver": "Change contract used to store records",
       "setPrimaryName": "Set the primary name for your address",
-      "updateEthAddress": "Update ETH address to this address"
+      "updateEthAddress": "Update ETH address to this address",
+      "testSendName": "Set the controller and registrant of the name"
     },
     "itemLabel": {
       "name": "Name",

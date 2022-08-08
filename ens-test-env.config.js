@@ -11,7 +11,9 @@ process.env.ADDRESS_NAME_WRAPPER = '0x9E545E3C0baAB3E08CdfD552C960A1050f373042'
  * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
  **/
 module.exports = {
-  deployCommand: `pnpm hardhat deploy${process.env.CI ? '' : '&& pnpm build:glocal'}`,
+  deployCommand: `pnpm hardhat deploy${
+    !process.env.CI && process.env.E2E ? '&& pnpm build:glocal' : ''
+  }`,
   archive: {
     localSubgraphId: process.env.LOCAL_SUBGRAPH_ID,
     subgraphId: process.env.SUBGRAPH_ID,
