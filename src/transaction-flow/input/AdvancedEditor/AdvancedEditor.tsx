@@ -341,10 +341,12 @@ const AdvancedEditor = ({ data, dispatch, onDismiss }: Props) => {
   useEffect(() => {
     if (profile) {
       const formObject = convertProfileToProfileFormObject(profile)
+
       const newDefaultValues = {
         text: {
           ...(formObject.avatar ? { avatar: formObject.avatar } : {}),
           ...(formObject.banner ? { banner: formObject.banner } : {}),
+          ...formObject.general,
           ...formObject.accounts,
           ...formObject.other,
         },
