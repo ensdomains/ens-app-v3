@@ -15,6 +15,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const nodePaths = process.env.NODE_PATH!.split(':')
   const nodePath = nodePaths[nodePaths.length - 1]
 
+  console.log(`nodePath: ${nodePath}`)
+  console.log('env', process.env)
+
   const jsonPath = resolve(nodePath, '../../../', './cache/multicall.json')
 
   if (existsSync(jsonPath)) {
