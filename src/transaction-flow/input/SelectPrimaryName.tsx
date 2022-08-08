@@ -139,7 +139,12 @@ export const SelectPrimaryName = ({
           </Button>
         }
         trailing={
-          <Button shadowless onClick={handleSubmit} disabled={!selectedName}>
+          <Button
+            data-testid="primary-next"
+            shadowless
+            onClick={handleSubmit}
+            disabled={!selectedName}
+          >
             {t('action.next', { ns: 'common' })}
           </Button>
         }
