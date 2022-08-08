@@ -3,6 +3,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { Outlink } from '@app/components/Outlink'
 import { useProfile } from '@app/hooks/useProfile'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
 import { Button, Dialog, Input, mq, RadioButton } from '@ensdomains/thorin'
 import { ethers } from 'ethers'
@@ -12,7 +13,6 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
 import { useProvider } from 'wagmi'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { makeTransactionItem } from '../transaction'
 
 const supportsInterfaceAbi = [
@@ -137,10 +137,6 @@ export const EditResolver = ({
       enabled: ethers.utils.isAddress(customResolver),
     },
   )
-
-  useEffect(() => {
-    console.log('RENDERING!!!')
-  }, [])
 
   useEffect(() => {
     const isValid = () => {

@@ -1,9 +1,8 @@
 import TripleDot from '@app/assets/TripleDot.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, Typography } from '@ensdomains/thorin'
+import { Avatar, Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
-import React from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { DisabledButton } from './@atoms/DisabledButton'
@@ -103,6 +102,17 @@ const TripleDotIcon = styled.div(
   `,
 )
 
+const DropdownWrapper = styled.div(
+  ({ theme }) => css`
+    & > div > div {
+      min-width: ${theme.space['48']};
+      button {
+        height: ${theme.space['10']};
+      }
+    }
+  `,
+)
+
 export const ProfileSnippet = ({
   banner,
   recordName,
@@ -113,6 +123,7 @@ export const ProfileSnippet = ({
   size = 'small',
   buttonPlacement = 'inline',
   network,
+  actions,
 }: {
   name: string
   banner?: string
@@ -123,11 +134,18 @@ export const ProfileSnippet = ({
   size?: 'small' | 'medium'
   buttonPlacement?: 'inline' | 'bottom'
   network: number
+  actions?: {
+    onClick: () => void
+    color?: Colors
+    label: string
+    disabled?: boolean
+  }[]
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
   const zorb = useZorb(name, 'name')
   const { avatar } = useAvatar(name, network)
+  const hasActions = actions && actions.length > 0 && actions.some(({ disabled }) => !disabled)
 
   return (
     <Container $banner={banner} $size={size} data-testid="profile-snippet">
@@ -156,9 +174,32 @@ export const ProfileSnippet = ({
               </Button>
             </DetailButtonWrapper>
           )}
-          <DisabledButton shadowless variant="transparent" size="extraSmall">
-            <TripleDotIcon as={TripleDot} />
-          </DisabledButton>
+          {hasActions ? (
+            <DropdownWrapper>
+              <Dropdown
+                items={actions.map((action) => ({
+                  ...action,
+                  color: action.color || 'text',
+                }))}
+                menuLabelAlign="flex-end"
+                align="right"
+                shortThrow
+              >
+                <Button
+                  data-testid="profile-actions"
+                  shadowless
+                  variant="transparent"
+                  size="extraSmall"
+                >
+                  <TripleDotIcon as={TripleDot} />
+                </Button>
+              </Dropdown>
+            </DropdownWrapper>
+          ) : (
+            <DisabledButton shadowless variant="transparent" size="extraSmall">
+              <TripleDotIcon as={TripleDot} />
+            </DisabledButton>
+          )}
         </ButtonStack>
       </FirstItems>
       <TextStack>

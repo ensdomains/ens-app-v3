@@ -53,13 +53,11 @@ const TypeWrapper = styled.div(
 )
 
 type Name = {
-  id: string
   name: string
   truncatedName?: string
 }
 
 export const NameDetailItem = ({
-  id,
   name,
   truncatedName,
   network,
@@ -70,7 +68,8 @@ export const NameDetailItem = ({
 }) => {
   const router = useRouter()
   const { avatar } = useAvatar(name, network)
-  const zorb = useZorb(id, 'hash')
+
+  const zorb = useZorb(name, 'name')
 
   return (
     <Link

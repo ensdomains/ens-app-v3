@@ -1,7 +1,7 @@
 import { zorbImageDataURI } from '@app/utils/gradient'
-import { useMemo } from 'react'
+import { useQuery } from 'react-query'
 
 export const useZorb = (input: string, type: 'address' | 'name' | 'hash') => {
-  const zorb = useMemo(() => zorbImageDataURI(input, type), [input, type])
+  const { data: zorb } = useQuery(['zorb', input, type], () => zorbImageDataURI(input, type))
   return zorb
 }

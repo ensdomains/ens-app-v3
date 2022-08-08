@@ -1,7 +1,7 @@
 import { Button } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
-import { SectionContainer, SectionHeading } from './Section'
+import { SectionContainer } from './Section'
 
 export const WalletSection = () => {
   const { t: tc } = useTranslation()
@@ -10,15 +10,23 @@ export const WalletSection = () => {
   const { disconnect } = useDisconnect()
 
   return (
-    <SectionContainer>
-      <SectionHeading variant="large" weight="bold">
-        {t('section.wallet.title')}
-      </SectionHeading>
-      <div data-testid="wallet-section-disconnect" style={{ width: '100%' }}>
-        <Button tone="red" onClick={() => disconnect()}>
+    <SectionContainer
+      title={t('section.wallet.title')}
+      action={
+        <Button
+          data-testid="wallet-section-disconnect"
+          size="small"
+          tone="red"
+          variant="secondary"
+          shadowless
+          onClick={() => disconnect()}
+        >
           {tc('wallet.disconnect')}
         </Button>
-      </div>
+      }
+      fill
+    >
+      {null}
     </SectionContainer>
   )
 }

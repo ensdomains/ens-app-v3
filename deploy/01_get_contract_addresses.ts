@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { writeFile } from 'fs/promises'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -14,6 +15,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     `NEXT_PUBLIC_DEPLOYMENT_ADDRESSES='${JSON.stringify(deploymentAddressMap)}'`,
   )
   console.log('Wrote contract addresses to .env.local')
+
+  await hre.ethers.provider.send('evm_snapshot', [])
 }
 
 func.runAtTheEnd = true
