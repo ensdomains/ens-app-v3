@@ -99,7 +99,7 @@ jobs:
           path: built-files
 
       - name: Untar files
-        run: tar -cvf ${{steps.download.outputs.download-path}}/stateless-build.tar
+        run: tar -xvf ${{steps.download.outputs.download-path}}/stateless-build.tar
 
       - name: Pull metadata service image
         run: |
@@ -154,7 +154,7 @@ jobs:
           path: built-files
 
       - name: Untar files
-        run: tar -cvf ${{steps.download.outputs.download-path}}/stateful-build.tar
+        run: tar -xvf ${{steps.download.outputs.download-path}}/stateful-build.tar
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
