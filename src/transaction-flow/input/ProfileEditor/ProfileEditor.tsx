@@ -206,8 +206,6 @@ const LabelWrapper = styled.div(
   `,
 )
 
-
-
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
   if (type === 'text') {
@@ -523,336 +521,340 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
   if (loading) return null
-  return ( 
-        <> { currentContent === 'avatar' ? (
-          <AvatarViewManager
-            name={name}
-            avatar={_avatar}
-            handleCancel={() => setCurrentContent('profile')}
-            handleSubmit={(display: string, uri?: string) => {
-              if (uri) {
-                setValue('avatar', uri)
-                setAvatarDisplay(display)
-              } else {
-                setValue('avatar', display)
-              }
-              setCurrentContent('profile')
-            }}
-          />) : (
-    <Container data-testid="profile-editor" onSubmit={handleSubmit(handleTransaction)}>
-      <Banner zIndex={10}>
-        <AvatarWrapper>
-        <AvatarButton
-                  validated={avatar !== undefined}
-                  src={avatarDisplay || avatar}
-                  onSelectOption={() => setCurrentContent('avatar')}
-                  setValue={setValue}
-                  setDisplay={setAvatarDisplay}
-                />
-        </AvatarWrapper>
-      </Banner>
-      <NameContainer>{name}</NameContainer>
-      <ContentContainer>
-        <TabButtonsContainer>
-          <TabButton
-            type="button"
-            $selected={tab === 'general'}
-            $hasError={!!getFieldState('general', formState).error}
-            $isDirty={getFieldState('general').isDirty}
-            onClick={handleTabClick('general')}
-          >
-            {t('profileEditor.tabs.general.label')}
-          </TabButton>
-          <TabButton
-            type="button"
-            $selected={tab === 'accounts'}
-            $hasError={!!getFieldState('accounts', formState).error}
-            $isDirty={getFieldState('accounts').isDirty}
-            onClick={handleTabClick('accounts')}
-            data-testid="accounts-tab"
-          >
-            {t('profileEditor.tabs.accounts.label')}
-          </TabButton>
-          <TabButton
-            type="button"
-            $selected={tab === 'address'}
-            $hasError={!!getFieldState('address', formState).error}
-            $isDirty={getFieldState('address').isDirty}
-            onClick={handleTabClick('address')}
-            data-testid="address-tab"
-          >
-            {t('profileEditor.tabs.address.label')}
-          </TabButton>
-          <TabButton
-            type="button"
-            $selected={tab === 'website'}
-            $hasError={!!getFieldState('website', formState).error}
-            $isDirty={getFieldState('website').isDirty}
-            onClick={handleTabClick('website')}
-          >
-            {t('profileEditor.tabs.contentHash.label')}
-          </TabButton>
-          <TabButton
-            type="button"
-            $selected={tab === 'other'}
-            $hasError={!!getFieldState('other', formState).error}
-            $isDirty={getFieldState('other').isDirty}
-            onClick={handleTabClick('other')}
-            data-testid="other-tab"
-          >
-            {t('profileEditor.tabs.other.label')}
-          </TabButton>
-        </TabButtonsContainer>
-        <TabContentsContainer>
-          <ScrollBoxDecorator>
-            <TabContentContainer data-testid="tab-container">
-              {
-                {
-                  general: (
-                    <>
-                      <RecordInput
-                        deletable={false}
-                        label={t('profileEditor.tabs.general.name.label')}
-                        placeholder={t('profileEditor.tabs.general.name.placeholder')}
-                        showDot
-                        validated={getFieldState('general.name', formState).isDirty}
-                        autoComplete="off"
-                        {...register('general.name')}
-                      />
-                      <RecordInput
-                        deletable={false}
-                        label={t('profileEditor.tabs.general.url.label')}
-                        autoComplete="off"
-                        placeholder={t('profileEditor.tabs.general.url.placeholder')}
-                        showDot
-                        validated={getFieldState('general.url', formState).isDirty}
-                        {...register('general.url')}
-                      />
-                      <RecordInput
-                        deletable={false}
-                        label={t('profileEditor.tabs.general.location.label')}
-                        autoComplete="off"
-                        placeholder={t('profileEditor.tabs.general.location.placeholder')}
-                        showDot
-                        validated={getFieldState('general.location', formState).isDirty}
-                        {...register('general.location')}
-                      />
-                      <Textarea
-                        label={
-                          <LabelWrapper>
-                            {t('profileEditor.tabs.general.description.label')}
-                          </LabelWrapper>
-                        }
-                        autoComplete="off"
-                        placeholder={t('profileEditor.tabs.general.description.placeholder')}
-                        showDot
-                        validated={getFieldState('general.description', formState).isDirty}
-                        {...register('general.description')}
-                      />
-                    </>
-                  ),
-                  accounts: (
-                    <>
-                      {existingAccountKeys.map((account) => (
+  return (
+    <>
+      {' '}
+      {currentContent === 'avatar' ? (
+        <AvatarViewManager
+          name={name}
+          avatar={_avatar}
+          handleCancel={() => setCurrentContent('profile')}
+          handleSubmit={(display: string, uri?: string) => {
+            if (uri) {
+              setValue('avatar', uri)
+              setAvatarDisplay(display)
+            } else {
+              setValue('avatar', display)
+            }
+            setCurrentContent('profile')
+          }}
+        />
+      ) : (
+        <Container data-testid="profile-editor" onSubmit={handleSubmit(handleTransaction)}>
+          <Banner zIndex={10}>
+            <AvatarWrapper>
+              <AvatarButton
+                validated={avatar !== undefined}
+                src={avatarDisplay || avatar}
+                onSelectOption={() => setCurrentContent('avatar')}
+                setValue={setValue}
+                setDisplay={setAvatarDisplay}
+              />
+            </AvatarWrapper>
+          </Banner>
+          <NameContainer>{name}</NameContainer>
+          <ContentContainer>
+            <TabButtonsContainer>
+              <TabButton
+                type="button"
+                $selected={tab === 'general'}
+                $hasError={!!getFieldState('general', formState).error}
+                $isDirty={getFieldState('general').isDirty}
+                onClick={handleTabClick('general')}
+              >
+                {t('profileEditor.tabs.general.label')}
+              </TabButton>
+              <TabButton
+                type="button"
+                $selected={tab === 'accounts'}
+                $hasError={!!getFieldState('accounts', formState).error}
+                $isDirty={getFieldState('accounts').isDirty}
+                onClick={handleTabClick('accounts')}
+                data-testid="accounts-tab"
+              >
+                {t('profileEditor.tabs.accounts.label')}
+              </TabButton>
+              <TabButton
+                type="button"
+                $selected={tab === 'address'}
+                $hasError={!!getFieldState('address', formState).error}
+                $isDirty={getFieldState('address').isDirty}
+                onClick={handleTabClick('address')}
+                data-testid="address-tab"
+              >
+                {t('profileEditor.tabs.address.label')}
+              </TabButton>
+              <TabButton
+                type="button"
+                $selected={tab === 'website'}
+                $hasError={!!getFieldState('website', formState).error}
+                $isDirty={getFieldState('website').isDirty}
+                onClick={handleTabClick('website')}
+              >
+                {t('profileEditor.tabs.contentHash.label')}
+              </TabButton>
+              <TabButton
+                type="button"
+                $selected={tab === 'other'}
+                $hasError={!!getFieldState('other', formState).error}
+                $isDirty={getFieldState('other').isDirty}
+                onClick={handleTabClick('other')}
+                data-testid="other-tab"
+              >
+                {t('profileEditor.tabs.other.label')}
+              </TabButton>
+            </TabButtonsContainer>
+            <TabContentsContainer>
+              <ScrollBoxDecorator>
+                <TabContentContainer data-testid="tab-container">
+                  {
+                    {
+                      general: (
+                        <>
+                          <RecordInput
+                            deletable={false}
+                            label={t('profileEditor.tabs.general.name.label')}
+                            placeholder={t('profileEditor.tabs.general.name.placeholder')}
+                            showDot
+                            validated={getFieldState('general.name', formState).isDirty}
+                            autoComplete="off"
+                            {...register('general.name')}
+                          />
+                          <RecordInput
+                            deletable={false}
+                            label={t('profileEditor.tabs.general.url.label')}
+                            autoComplete="off"
+                            placeholder={t('profileEditor.tabs.general.url.placeholder')}
+                            showDot
+                            validated={getFieldState('general.url', formState).isDirty}
+                            {...register('general.url')}
+                          />
+                          <RecordInput
+                            deletable={false}
+                            label={t('profileEditor.tabs.general.location.label')}
+                            autoComplete="off"
+                            placeholder={t('profileEditor.tabs.general.location.placeholder')}
+                            showDot
+                            validated={getFieldState('general.location', formState).isDirty}
+                            {...register('general.location')}
+                          />
+                          <Textarea
+                            label={
+                              <LabelWrapper>
+                                {t('profileEditor.tabs.general.description.label')}
+                              </LabelWrapper>
+                            }
+                            autoComplete="off"
+                            placeholder={t('profileEditor.tabs.general.description.placeholder')}
+                            showDot
+                            validated={getFieldState('general.description', formState).isDirty}
+                            {...register('general.description')}
+                          />
+                        </>
+                      ),
+                      accounts: (
+                        <>
+                          {existingAccountKeys.map((account) => (
+                            <RecordInput
+                              key={account}
+                              option={getSelectedAccountOption(account)}
+                              placeholder={t([
+                                `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
+                                  account,
+                                )}`,
+                                `profileEditor.tabs.accounts.placeholder.default`,
+                              ])}
+                              showDot
+                              error={getFieldState(`accounts.${account}`, formState).error?.message}
+                              validated={getFieldState(`accounts.${account}`, formState).isDirty}
+                              onDelete={() => {
+                                removeAccountKey(account, false)
+                              }}
+                              {...register(`accounts.${account}` as any, {})}
+                            />
+                          ))}
+                          {newAccountKeys.map((key) => (
+                            <RecordInput
+                              key={key}
+                              option={getSelectedAccountOption(key)}
+                              placeholder={t([
+                                `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
+                                  key,
+                                )}`,
+                                `profileEditor.tabs.accounts.placeholder.default`,
+                              ])}
+                              error={getFieldState(`accounts.${key}`, formState).error?.message}
+                              validated={
+                                getFieldState(`accounts.${formSafeKey(key)}`, formState).isDirty
+                              }
+                              showDot
+                              autoComplete="off"
+                              autoCorrect="off"
+                              spellCheck={false}
+                              onDelete={() => {
+                                removeAccountKey(key)
+                                resetField(`accounts.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
+                              }}
+                              {...register(`accounts.${key}`, {})}
+                            />
+                          ))}
+                        </>
+                      ),
+                      address: (
+                        <>
+                          {existingAddressKeys.map((key) => (
+                            <RecordInput
+                              key={key}
+                              option={getSelectedAddressOption(key)}
+                              placeholder={t([
+                                `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                                `profileEditor.tabs.address.placeholder.default`,
+                              ])}
+                              showDot
+                              error={getFieldState(`address.${key}`, formState).error?.message}
+                              validated={getFieldState(`address.${key}`, formState).isDirty}
+                              onDelete={() => {
+                                removeAddressKey(key, false)
+                                clearErrors([`address.${key}`])
+                              }}
+                              {...register(`address.${key}`, {
+                                validate: validateCryptoAddress(key),
+                              })}
+                            />
+                          ))}
+                          {newAddressKeys.map((key) => (
+                            <RecordInput
+                              key={key}
+                              option={getSelectedAddressOption(key)}
+                              placeholder={t([
+                                `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                                `profileEditor.tabs.address.placeholder.default`,
+                              ])}
+                              error={getFieldState(`address.${key}`, formState).error?.message}
+                              validated={getFieldState(`address.${key}`, formState).isDirty}
+                              showDot
+                              autoComplete="off"
+                              autoCorrect="off"
+                              spellCheck={false}
+                              onDelete={() => {
+                                removeAddressKey(key)
+                                resetField(`address.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
+                                unregister(`address.${key}`)
+                              }}
+                              {...register(`address.${key}`, {
+                                validate: validateCryptoAddress(key),
+                              })}
+                            />
+                          ))}
+                        </>
+                      ),
+                      website: websiteOption && (
                         <RecordInput
-                          key={account}
-                          option={getSelectedAccountOption(account)}
+                          option={websiteOption}
                           placeholder={t([
-                            `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
-                              account,
+                            `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
+                              websiteOption.value,
                             )}`,
-                            `profileEditor.tabs.accounts.placeholder.default`,
+                            `profileEditor.tabs.contentHash.placeholder.default`,
                           ])}
-                          showDot
-                          error={getFieldState(`accounts.${account}`, formState).error?.message}
-                          validated={getFieldState(`accounts.${account}`, formState).isDirty}
+                          error={getFieldState(`website`, formState).error?.message}
+                          validated={getFieldState(`website`, formState).isDirty}
                           onDelete={() => {
-                            removeAccountKey(account, false)
-                          }}
-                          {...register(`accounts.${account}` as any, {})}
-                        />
-                      ))}
-                      {newAccountKeys.map((key) => (
-                        <RecordInput
-                          key={key}
-                          option={getSelectedAccountOption(key)}
-                          placeholder={t([
-                            `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(key)}`,
-                            `profileEditor.tabs.accounts.placeholder.default`,
-                          ])}
-                          error={getFieldState(`accounts.${key}`, formState).error?.message}
-                          validated={
-                            getFieldState(`accounts.${formSafeKey(key)}`, formState).isDirty
-                          }
-                          showDot
-                          autoComplete="off"
-                          autoCorrect="off"
-                          spellCheck={false}
-                          onDelete={() => {
-                            removeAccountKey(key)
-                            resetField(`accounts.${key}`, {
-                              keepDirty: false,
-                              keepError: false,
-                              keepTouched: false,
-                            })
-                          }}
-                          {...register(`accounts.${key}`, {})}
-                        />
-                      ))}
-                    </>
-                  ),
-                  address: (
-                    <>
-                      {existingAddressKeys.map((key) => (
-                        <RecordInput
-                          key={key}
-                          option={getSelectedAddressOption(key)}
-                          placeholder={t([
-                            `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
-                            `profileEditor.tabs.address.placeholder.default`,
-                          ])}
-                          showDot
-                          error={getFieldState(`address.${key}`, formState).error?.message}
-                          validated={getFieldState(`address.${key}`, formState).isDirty}
-                          onDelete={() => {
-                            removeAddressKey(key, false)
-                            clearErrors([`address.${key}`])
-                          }}
-                          {...register(`address.${key}`, {
-                            validate: validateCryptoAddress(key),
-                          })}
-                        />
-                      ))}
-                      {newAddressKeys.map((key) => (
-                        <RecordInput
-                          key={key}
-                          option={getSelectedAddressOption(key)}
-                          placeholder={t([
-                            `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
-                            `profileEditor.tabs.address.placeholder.default`,
-                          ])}
-                          error={getFieldState(`address.${key}`, formState).error?.message}
-                          validated={getFieldState(`address.${key}`, formState).isDirty}
-                          showDot
-                          autoComplete="off"
-                          autoCorrect="off"
-                          spellCheck={false}
-                          onDelete={() => {
-                            removeAddressKey(key)
-                            resetField(`address.${key}`, {
-                              keepDirty: false,
-                              keepError: false,
-                              keepTouched: false,
-                            })
-                            unregister(`address.${key}`)
-                          }}
-                          {...register(`address.${key}`, {
-                            validate: validateCryptoAddress(key),
-                          })}
-                        />
-                      ))}
-                    </>
-                  ),
-                  website: websiteOption && (
-                    <RecordInput
-                      option={websiteOption}
-                      placeholder={t([
-                        `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
-                          websiteOption.value,
-                        )}`,
-                        `profileEditor.tabs.contentHash.placeholder.default`,
-                      ])}
-                      error={getFieldState(`website`, formState).error?.message}
-                      validated={getFieldState(`website`, formState).isDirty}
-                      onDelete={() => {
-                        if (hasExistingWebsite) {
-                          setValue('website', '', { shouldDirty: true })
-                        } else {
-                          setValue('website', undefined)
-                          resetField('website', {
-                            keepDirty: false,
-                            keepError: false,
-                            keepTouched: false,
-                          })
-                        }
+                            if (hasExistingWebsite) {
+                              setValue('website', '', { shouldDirty: true })
+                            } else {
+                              setValue('website', undefined)
+                              resetField('website', {
+                                keepDirty: false,
+                                keepError: false,
+                                keepTouched: false,
+                              })
+                            }
 
-                        setWebsiteOption(undefined)
-                      }}
-                      {...register('website', {})}
-                    />
-                  ),
-                  other: (
-                    <>
-                      {existingOtherKeys.map((key) => (
-                        <RecordInput
-                          key={key}
-                          label={key}
-                          placeholder={t([
-                            `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
-
-                            `profileEditor.tabs.other.placeholder.default`,
-                          ])}
-                          error={getFieldState(`other.${key}`, formState).error?.message}
-                          validated={getFieldState(`other.${key}`, formState).isDirty}
-                          onDelete={() => removeOtherKey(key, false)}
-                          {...register(`other.${key}`, {})}
-                        />
-                      ))}
-                      {newOtherKeys.map((key) => (
-                        <RecordInput
-                          key={key}
-                          placeholder={t([
-                            `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
-                            `profileEditor.tabs.other.placeholder.default`,
-                          ])}
-                          error={getFieldState(`other.${key}`, formState).error?.message}
-                          validated={getFieldState(`other.${key}`, formState).isDirty}
-                          label={key}
-                          autoComplete="off"
-                          autoCorrect="off"
-                          spellCheck={false}
-                          onDelete={() => {
-                            removeOtherKey(key)
-                            resetField(`other.${key}`, {
-                              keepDirty: false,
-                              keepError: false,
-                              keepTouched: false,
-                            })
+                            setWebsiteOption(undefined)
                           }}
-                          {...register(`other.${key}`, {})}
+                          {...register('website', {})}
                         />
-                      ))}
-                    </>
-                  ),
-                }[tab]
-              }
-            </TabContentContainer>
-          </ScrollBoxDecorator>
-        </TabContentsContainer>
-        {AddButtonProps && (
-          <AddRecordContainer>
-            <AddRecordButton {...AddButtonProps} />
-          </AddRecordContainer>
-        )}
-        <FooterContainer>
-          <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
-            {t('action.cancel', { ns: 'common' })}
-          </Button>
-          <Button
-            disabled={hasErrors || !hasChanges}
-            type="submit"
-            shadowless
-            data-testid="profile-editor-submit"
-          >
-            {t('action.save', { ns: 'common' })}
-          </Button>
-        </FooterContainer>
-      </ContentContainer>
-     
-    </Container>
+                      ),
+                      other: (
+                        <>
+                          {existingOtherKeys.map((key) => (
+                            <RecordInput
+                              key={key}
+                              label={key}
+                              placeholder={t([
+                                `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
+
+                                `profileEditor.tabs.other.placeholder.default`,
+                              ])}
+                              error={getFieldState(`other.${key}`, formState).error?.message}
+                              validated={getFieldState(`other.${key}`, formState).isDirty}
+                              onDelete={() => removeOtherKey(key, false)}
+                              {...register(`other.${key}`, {})}
+                            />
+                          ))}
+                          {newOtherKeys.map((key) => (
+                            <RecordInput
+                              key={key}
+                              placeholder={t([
+                                `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
+                                `profileEditor.tabs.other.placeholder.default`,
+                              ])}
+                              error={getFieldState(`other.${key}`, formState).error?.message}
+                              validated={getFieldState(`other.${key}`, formState).isDirty}
+                              label={key}
+                              autoComplete="off"
+                              autoCorrect="off"
+                              spellCheck={false}
+                              onDelete={() => {
+                                removeOtherKey(key)
+                                resetField(`other.${key}`, {
+                                  keepDirty: false,
+                                  keepError: false,
+                                  keepTouched: false,
+                                })
+                              }}
+                              {...register(`other.${key}`, {})}
+                            />
+                          ))}
+                        </>
+                      ),
+                    }[tab]
+                  }
+                </TabContentContainer>
+              </ScrollBoxDecorator>
+            </TabContentsContainer>
+            {AddButtonProps && (
+              <AddRecordContainer>
+                <AddRecordButton {...AddButtonProps} />
+              </AddRecordContainer>
+            )}
+            <FooterContainer>
+              <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
+                {t('action.cancel', { ns: 'common' })}
+              </Button>
+              <Button
+                disabled={hasErrors || !hasChanges}
+                type="submit"
+                shadowless
+                data-testid="profile-editor-submit"
+              >
+                {t('action.save', { ns: 'common' })}
+              </Button>
+            </FooterContainer>
+          </ContentContainer>
+        </Container>
+      )}
+    </>
   )
-  }
-  </>
-)}
+}
 
 export default ProfileEditor
