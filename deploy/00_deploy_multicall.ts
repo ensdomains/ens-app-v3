@@ -15,9 +15,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const nodePaths = process.env.NODE_PATH!.split(':')
   const nodePath = nodePaths[nodePaths.length - 1]
 
-  console.log(`nodePath: ${nodePath}`)
-  console.log('env', process.env)
-
   const jsonPath = resolve(nodePath, '../../../', './cache/multicall.json')
 
   if (existsSync(jsonPath)) {
@@ -28,7 +25,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     contractJson = await fetch(
       'https://github.com/mds1/multicall/releases/latest/download/Multicall3.json',
     ).then((res) => res.json())
-    await writeFile(jsonPath, JSON.stringify(contractJson))
+    await writeFile(jsonPath, JSON.stringify(contractJson)).catch((e) => console.error(e))
   }
 
   await hre.deployments.deploy('Multicall', {
