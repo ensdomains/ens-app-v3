@@ -100,6 +100,7 @@ export const TransactionSection = () => {
 
   return (
     <SectionContainer
+      data-testid="transaction-section"
       title={t('section.transaction.title')}
       action={
         <Button
@@ -118,7 +119,7 @@ export const TransactionSection = () => {
       <TransactionSectionContainer $transactionLength={transactions.length}>
         {transactions.length > 0 ? (
           <>
-            {transactions.slice(0, viewAmt).map((transaction) => {
+            {transactions.slice(0, viewAmt - 1).map((transaction) => {
               const { action, key } = JSON.parse(transaction.description)
               const resumable = key && getResumable(key)
               return (

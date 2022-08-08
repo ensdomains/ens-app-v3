@@ -1,6 +1,6 @@
 import { Card } from '@app/components/Card'
 import { Heading } from '@ensdomains/thorin'
-import { ReactNode } from 'react'
+import { ComponentProps, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 const StyledCard = styled(Card)(
@@ -53,14 +53,15 @@ export const SectionContainer = ({
   action,
   children,
   fill,
+  ...props
 }: {
   title: string
   action?: ReactNode
   children: ReactNode
   fill?: boolean
-}) => {
+} & Omit<ComponentProps<'div'>, 'ref'>) => {
   return (
-    <StyledCard>
+    <StyledCard {...props}>
       <SectionHeader>
         <Heading>{title}</Heading>
         <div>{action}</div>
