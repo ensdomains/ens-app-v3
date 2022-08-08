@@ -95,6 +95,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateless-build
+          path: stateless-build.tar
 
       - name: Untar files
         run: tar -cvf stateless-build.tar
@@ -148,6 +149,7 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateful-build
+          path: stateful-build.tar
 
       - name: Untar files
         run: tar -cvf stateful-build.tar
