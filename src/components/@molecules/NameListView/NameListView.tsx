@@ -1,4 +1,4 @@
-import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import type { ReturnedName } from '@app/hooks/useNamesFromAddress'
 import { Heading } from '@ensdomains/thorin'

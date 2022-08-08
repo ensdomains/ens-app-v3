@@ -1,4 +1,4 @@
-import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
