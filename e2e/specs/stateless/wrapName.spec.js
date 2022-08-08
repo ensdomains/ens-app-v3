@@ -51,8 +51,8 @@ describe('Wrap Name', () => {
   it('should open to correctly resumed state', () => {
     cy.wait(1000)
     cy.findByTestId('wrapper-cta-button').click()
-    cy.findByText('Resume your upgrade').should('be.visible')
     cy.findByTestId('display-item-Step 1-fade').should('be.visible')
+    cy.findByTestId('transaction-dialog-intro-trailing-btn').should('contain.text', 'Resume')
   })
   it('should allow resuming the steps', () => {
     cy.findByTestId('transaction-dialog-intro-trailing-btn').click()

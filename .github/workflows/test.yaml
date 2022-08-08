@@ -96,10 +96,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateless-build
-          path: built-files
 
       - name: Untar files
-        run: tar -xvf ${{steps.download.outputs.download-path}}/stateless-build.tar
+        run: tar -xvf stateless-build.tar
 
       - name: Pull metadata service image
         run: |
@@ -151,10 +150,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateful-build
-          path: built-files
 
       - name: Untar files
-        run: tar -xvf ${{steps.download.outputs.download-path}}/stateful-build.tar
+        run: tar -xvf stateful-build.tar
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
