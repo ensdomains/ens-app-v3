@@ -1,5 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { existsSync } from 'fs'
+import { existsSync, mkdirSync } from 'fs'
 import { readFile, writeFile } from 'fs/promises'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -13,6 +13,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   let contractJson: any
 
   const jsonPath = resolve(__dirname, '../node_modules/.cache/multicall.json')
+
+  if (!existsSync(resolve(jsonPath, '../'))) mkdirSync(resolve(jsonPath, '../'))
 
   if (existsSync(jsonPath)) {
     console.log('Multicall JSON file found, using it...')
