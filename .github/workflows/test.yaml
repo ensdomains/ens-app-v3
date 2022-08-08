@@ -50,20 +50,26 @@ jobs:
       - name: Build stateless
         run: pnpm build:glocal
 
+      - name: Tar stateless files
+        run: tar -cvf stateless-build.tar .next
+
       - name: Upload stateless
         uses: actions/upload-artifact@v3
         with:
           name: stateless-build
-          path: .next
+          path: stateless-build.tar
 
       - name: Build stateful
         run: pnpm build
+
+      - name: Tar stateful files
+        run: tar -cvf stateful-build.tar .next
 
       - name: Upload stateful
         uses: actions/upload-artifact@v3
         with:
           name: stateful-build
-          path: .next
+          path: stateful-build.tar
 
   stateless:
     needs: build
@@ -89,7 +95,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateless-build
-          path: .next
+
+      - name: Untar files
+        run: tar -cvf stateless-build.tar
 
       - name: Pull metadata service image
         run: |
@@ -140,7 +148,9 @@ jobs:
         uses: actions/download-artifact@v3
         with:
           name: stateful-build
-          path: .next
+
+      - name: Untar files
+        run: tar -cvf stateful-build.tar
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
