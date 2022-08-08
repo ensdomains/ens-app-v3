@@ -91,6 +91,7 @@
       "migrateProfile": "Migrate Profile",
       "wrapName": "Wrap Name",
       "updateResolver": "Update Resolver",
+      "updateProfile": "Update Profile",
       "setPrimaryName": "Set primary name",
       "updateEthAddress": "Update ETH address",
       "testSendName": "Send Name"
@@ -100,6 +101,7 @@
       "migrateProfile": "Set existing records on new resolver",
       "wrapName": "Wrap name and set new resolver",
       "updateResolver": "Change contract used to store records",
+      "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",
       "updateEthAddress": "Update ETH address to this address",
       "testSendName": "Set the controller and registrant of the name"

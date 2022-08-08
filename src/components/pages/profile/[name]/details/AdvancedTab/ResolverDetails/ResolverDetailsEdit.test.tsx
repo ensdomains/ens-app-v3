@@ -1,10 +1,11 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 import { EditResolver } from '@app/transaction-flow/input/EditResolver'
-import { useProvider } from 'wagmi'
+import { useProvider, useNetwork } from 'wagmi'
 
 jest.mock('wagmi')
 
 const mockUseProvider = mockFunction(useProvider)
+const mockUseNetwork = mockFunction(useNetwork)
 
 describe('valideResolver', () => {
   it.each`
@@ -19,7 +20,7 @@ describe('valideResolver', () => {
 
 describe('EditResolverForm', () => {
   mockUseProvider.mockReturnValue({})
-
+  mockUseNetwork.mockReturnValue({ activeChain: { id: 1 } })
   it('should render', () => {
     const data = {
       name: 'test',

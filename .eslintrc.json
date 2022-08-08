@@ -11,7 +11,7 @@
   "parser": "@typescript-eslint/parser",
   "overrides": [
     {
-      "files": ["src/**/*.test.[jt]s?(x)"],
+      "files": ["src/**/*.test.[jt]sx?"],
       "env": { "jest/globals": true },
       "globals": {
         "context": "readonly"

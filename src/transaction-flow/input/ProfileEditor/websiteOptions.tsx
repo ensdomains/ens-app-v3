@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 import { formSafeKey } from '@app/utils/editor'
-import { DynamicContentHashIcon } from '../../../../assets/contentHash/DynamicContentHashIcon'
+import { DynamicContentHashIcon } from '@app/assets/contentHash/DynamicContentHashIcon'
 
 const IconWrapper = styled.div(
   () => css`

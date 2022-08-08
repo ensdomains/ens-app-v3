@@ -1,83 +1,17 @@
-/* eslint-disable no-param-reassign */
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { Outlink } from '@app/components/Outlink'
 import { useProfile } from '@app/hooks/useProfile'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { Button, Dialog, Input, mq, RadioButton, Typography } from '@ensdomains/thorin'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
-import { Button, Dialog, Input, mq, RadioButton } from '@ensdomains/thorin'
 import { ethers } from 'ethers'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useProvider } from 'wagmi'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { makeTransactionItem } from '../transaction'
-
-const supportsInterfaceAbi = [
-  {
-    inputs: [
-      {
-        internalType: 'bytes4',
-        name: 'interfaceID',
-        type: 'bytes4',
-      },
-    ],
-    name: 'supportsInterface',
-    outputs: [
-      {
-        internalType: 'bool',
-        name: '',
-        type: 'bool',
-      },
-    ],
-    stateMutability: 'view',
-    type: 'function',
-  },
-]
-
-const validateResolver = async (address: string, provider: any) => {
-  const maybeResolver = new ethers.Contract(address, supportsInterfaceAbi, provider)
-  let results
-  try {
-    results = await Promise.all([
-      maybeResolver.supportsInterface(RESOLVER_INTERFACE_IDS.addrInterfaceId),
-      maybeResolver.supportsInterface(RESOLVER_INTERFACE_IDS.contentHashInterfaceId),
-      maybeResolver.supportsInterface(RESOLVER_INTERFACE_IDS.txtInterfaceId),
-    ])
-    return results
-      .map((result, idx) => {
-        if (result) return undefined
-        if (idx === 0 && !result) {
-          return 'addr method not supported'
-        }
-        if (idx === 1 && !result) {
-          return 'contentHash method not supported'
-        }
-        if (idx === 2 && !result) {
-          return 'txt method not supported'
-        }
-        return undefined
-      })
-      .filter((x) => x)
-  } catch (error: any) {
-    if (error.method === 'supportsInterface(bytes4)') {
-      return ['Cannot determine if address supports common resolver methods']
-    }
-    return []
-  }
-}
-
-const customResolverErrorMessage = (errors: any) => {
-  if (errors.customResolver?.type === 'minLength' || errors.customResolver?.type === 'maxLength') {
-    return 'Address should be 42 characters long'
-  }
-  if (errors.customResolver?.type === 'isCurrentResolver') {
-    return 'This is the current resolver'
-  }
-  return undefined
-}
 
 const EditResolverFormContainer = styled.div(() => [
   css`
@@ -88,22 +22,54 @@ const EditResolverFormContainer = styled.div(() => [
   `),
 ])
 
-const LatestResolverContainer = styled.div(
-  () => css`
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-  `,
-)
-
 const InputContainer = styled.div(
   ({ theme }) => css`
     margin-left: ${theme.space[8]};
   `,
 )
 
+const NegativeSpacer = styled.div(
+  ({ theme }) => css`
+    margin-top: -${theme.space['5.5']};
+  `,
+)
+
+const LatestResolverLabel = styled.div<{ $offset: boolean }>(
+  ({ theme, $offset }) => css`
+    display: flex;
+    flex-direction: column;
+    ${$offset && `padding-top: ${theme.space['5.5']};`}
+  `,
+)
+
+const LatestResolverTitleContainer = styled.div(
+  () => css`
+    display: flex;
+    align-items: center;
+  `,
+)
+
+const LatestResolverTitle = styled.span(
+  () => css`
+    :after {
+      content: '\xa0';
+    }
+  `,
+)
+
+const LatestResolverSubtitle = styled(Typography)(
+  ({ theme }) => css`
+    color: ${theme.colors.textSecondary};
+  `,
+)
+
 type Data = {
   name: string
+}
+
+type FormData = {
+  resolverChoice: 'latest' | 'custom'
+  customResolver: string
 }
 
 export const EditResolver = ({
@@ -114,94 +80,105 @@ export const EditResolver = ({
   data: Data
 } & TransactionDialogPassthrough) => {
   const { name } = data
+  const formRef = useRef<HTMLFormElement>(null)
 
   const { profile = { resolverAddress: '' } } = useProfile(name as string)
   const { resolverAddress } = profile
-  const resolverAddressIndex = RESOLVER_ADDRESSES.indexOf(resolverAddress ?? '')
+  const lastestResolverAddress = RESOLVER_ADDRESSES[0]
+  const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
   const {
     register,
-    watch,
     formState: { errors },
-  } = useForm({ mode: 'onChange' })
+    handleSubmit,
+    reset,
+    trigger,
+    watch,
+    getFieldState,
+  } = useForm<FormData>({
+    mode: 'onChange',
+    defaultValues: { resolverChoice: 'latest', customResolver: '' },
+  })
+
+  useEffect(() => {
+    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', customResolver: '' })
+  }, [isResolverAddressLatest, reset])
 
   const { t } = useTranslation('profile')
+
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
   const customResolver = watch('customResolver')
-  const provider = useProvider()
 
-  const { data: validity } = useQuery(
-    ['validateResolverInterfaces', customResolver],
-    () => validateResolver(customResolver, provider),
+  const { errors: resolverWarnings } = useResolverHasInterfaces(
+    ['IAddrResolver', 'ITextResolver', 'IContentHashResolver'],
+    customResolver,
+    resolverChoice !== 'custom',
     {
-      enabled: ethers.utils.isAddress(customResolver),
+      fallbackMsg: 'Cannot determine if address supports resolver methods',
     },
   )
 
-  useEffect(() => {
-    const isValid = () => {
-      if (resolverChoice === 'latest' && resolverAddressIndex === 0) {
-        return false
-      }
-      if (resolverChoice === 'latest') {
-        return true
-      }
-      if (resolverChoice === 'custom' && !customResolver?.length) {
-        return false
-      }
-      return !Object.keys(errors).length
+  const latestResolverLabel = (
+    <LatestResolverLabel $offset={isResolverAddressLatest}>
+      <LatestResolverTitleContainer>
+        <LatestResolverTitle>Use latest resolver</LatestResolverTitle>
+        <Outlink href={`https://etherscan.io/address/${lastestResolverAddress}`}>
+          {t('details.tabs.advanced.resolver.etherscan')}
+        </Outlink>
+      </LatestResolverTitleContainer>
+      {isResolverAddressLatest && (
+        <LatestResolverSubtitle weight="medium" variant="small">
+          You are on the latest resolver
+        </LatestResolverSubtitle>
+      )}
+    </LatestResolverLabel>
+  )
+
+  const handleTransaction = async (values: FormData) => {
+    const { resolverChoice: choice, customResolver: address } = values
+    let newResolver
+    if (choice === 'latest') {
+      newResolver = lastestResolverAddress
     }
-
-    const hasValidity = isValid()
-
-    // dispatchDialog({
-    //   name: 'addTrailingProps',
-    //   payload: {
-    //     disabled: !hasValidity,
-    //   },
-    // })
-
-    if (hasValidity) {
-      let newResolver
-      if (resolverChoice === 'latest') {
-        // eslint-disable-next-line prefer-destructuring
-        newResolver = RESOLVER_ADDRESSES[0]
-      }
-      if (resolverChoice === 'custom') {
-        newResolver = customResolver
-      }
-
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          makeTransactionItem('updateResolver', {
-            name,
-            contract: 'registry',
-            resolver: newResolver,
-            oldResolver: resolverAddress!,
-          }),
-        ],
-      })
+    if (choice === 'custom') {
+      newResolver = address
     }
-  }, [
-    resolverChoice,
-    customResolver,
-    errors,
-    resolverAddressIndex,
-    dispatch,
-    name,
-    resolverAddress,
-  ])
+    if (!newResolver) return
+    dispatch({
+      name: 'setTransactions',
+      payload: [
+        makeTransactionItem('updateResolver', {
+          name,
+          contract: 'registry',
+          resolver: newResolver,
+          oldResolver: resolverAddress!,
+        }),
+      ],
+    })
+    dispatch({ name: 'setFlowStage', payload: 'transaction' })
+  }
+
+  const handleSubmitForm = () => {
+    formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
+  }
+
+  const hasWarnings =
+    resolverChoice === 'custom' &&
+    customResolver.length === 42 &&
+    resolverWarnings &&
+    resolverWarnings.length > 0
+
+  const hasErrors = Object.keys(errors || {}).length > 0
 
   return (
     <>
       <EditResolverFormContainer>
-        {resolverChoice === 'custom' && validity?.length ? (
+        {hasWarnings && (
           <>
             <ErrorContainer
               message={
                 <ul>
-                  {validity?.map((message) => (
+                  {resolverWarnings?.map((message) => (
                     <li key={message}>- {message}</li>
                   ))}
                 </ul>
@@ -210,31 +187,33 @@ export const EditResolver = ({
             />
             <Spacer $height="4" />
           </>
-        ) : null}
-        <form data-testid="edit-resolver-form">
-          <LatestResolverContainer>
-            <RadioButton
-              label="Use latest resolver"
-              value="latest"
-              labelRight
-              width={44}
-              {...register('resolverChoice', {
-                required: true,
-              })}
-              defaultChecked
-            />
-            <Outlink href={`https://etherscan.io/address/${RESOLVER_ADDRESSES[0]}`}>
-              {t('details.tabs.advanced.resolver.etherscan')}
-            </Outlink>
-          </LatestResolverContainer>
-
+        )}
+        <form
+          data-testid="edit-resolver-form"
+          onSubmit={handleSubmit(handleTransaction)}
+          ref={formRef}
+        >
+          {isResolverAddressLatest && <NegativeSpacer />}
+          <RadioButton
+            label={latestResolverLabel}
+            value="latest"
+            labelRight
+            disabled={isResolverAddressLatest}
+            {...register('resolverChoice', {
+              required: true,
+              validate: {},
+              onChange: () => {
+                process.nextTick(() => trigger())
+                trigger()
+              },
+            })}
+          />
           <RadioButton
             label={t('details.tabs.advanced.resolver.custom')}
             value="custom"
             labelRight
             {...register('resolverChoice')}
           />
-
           <InputContainer>
             <Input
               label="Custom resolver"
@@ -242,13 +221,22 @@ export const EditResolver = ({
               placeholder="Enter custom resolver address"
               disabled={resolverChoice !== 'custom'}
               {...register('customResolver', {
-                maxLength: 42,
-                minLength: 42,
                 validate: {
-                  isCurrentResolver: (value) => !(value === resolverAddress),
+                  length: (value) =>
+                    resolverChoice === 'custom' && value.length !== 42
+                      ? 'Address should be 42 characters long'
+                      : undefined,
+                  isCurrentResolver: (value) =>
+                    resolverChoice === 'custom' && value === resolverAddress
+                      ? 'This is the current resolver'
+                      : undefined,
+                  isAddress: (value) =>
+                    resolverChoice === 'custom' && !ethers.utils.isAddress(value)
+                      ? 'Not a valid address'
+                      : undefined,
                 },
               })}
-              error={customResolverErrorMessage(errors)}
+              error={getFieldState('customResolver').error?.message}
             />
           </InputContainer>
           <Spacer $height="4" />
@@ -261,10 +249,7 @@ export const EditResolver = ({
           </Button>
         }
         trailing={
-          <Button
-            shadowless
-            onClick={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}
-          >
+          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors}>
             Update
           </Button>
         }

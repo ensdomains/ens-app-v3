@@ -4,12 +4,14 @@ import testSendName from './testSendName'
 import updateEthAddress from './updateEthAddress'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
+import updateProfile from './updateProfile'
 
 export const transactions = {
   updateResolver,
   migrateProfile,
   wrapName,
   testSendName,
+  updateProfile,
   setPrimaryName,
   updateEthAddress,
 }
