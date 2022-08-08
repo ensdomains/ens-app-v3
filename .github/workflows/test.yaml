@@ -25,7 +25,43 @@ jobs:
 
       - run: pnpm test:coverage
 
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.8.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
+      - name: Build stateless
+        run: pnpm build:glocal
+
+      - name: Upload stateless
+        uses: actions/upload-artifact@v3
+        with:
+          name: stateless-build
+          path: .next
+
+      - name: Build stateful
+        run: pnpm build
+
+      - name: Upload stateful
+        uses: actions/upload-artifact@v3
+        with:
+          name: stateful-build
+          path: .next
+
   stateless:
+    needs: build
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -43,6 +79,11 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - run: pnpm rebuild -r
+
+      - name: Download build
+        uses: actions/download-artifact@v3
+        with:
+          name: stateless-build
 
       - name: Pull metadata service image
         run: |
@@ -65,6 +106,7 @@ jobs:
           path: e2e/videos
 
   stateful:
+    needs: build
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -88,9 +130,14 @@ jobs:
 
       - run: pnpm rebuild -r
 
+      - name: Download build
+        uses: actions/download-artifact@v3
+        with:
+          name: stateful-build
+
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm buildandstart" \
+          "pnpm start" \
           "pnpm wait-on http://localhost:3000 && pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
         env:
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount

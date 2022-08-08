@@ -37,7 +37,7 @@ module.exports = {
     ...(process.env.E2E
       ? [
           {
-            command: 'pnpm buildandstart:glocal',
+            command: process.env.CI ? 'pnpm start' : 'pnpm buildandstart:glocal',
             name: 'nextjs',
             prefixColor: 'magenta.bold',
           },
