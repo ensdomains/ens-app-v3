@@ -95,7 +95,7 @@ export default function Page() {
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
-  const [showEditor, setShowEditor] = useState(true)
+  const [showEditor, setShowEditor] = useState(false)
   const handleDismissEditor = () => setShowEditor(false)
 
   const [titleContent, descriptionContent] = useMemo(() => {

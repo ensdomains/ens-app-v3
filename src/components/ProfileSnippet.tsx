@@ -185,7 +185,12 @@ export const ProfileSnippet = ({
                 align="right"
                 shortThrow
               >
-                <Button shadowless variant="transparent" size="extraSmall">
+                <Button
+                  data-testid="profile-actions"
+                  shadowless
+                  variant="transparent"
+                  size="extraSmall"
+                >
                   <TripleDotIcon as={TripleDot} />
                 </Button>
               </Dropdown>

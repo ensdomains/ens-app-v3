@@ -45,14 +45,19 @@ export const PrimarySection = () => {
     <SectionContainer
       title={t('section.primary.title')}
       action={
-        <Button size="small" shadowless onClick={() => changePrimary()}>
+        <Button
+          data-testid="primary-section-button"
+          size="small"
+          shadowless
+          onClick={() => changePrimary()}
+        >
           {t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
         </Button>
       }
       fill={!!name}
     >
       {name ? (
-        <ItemWrapper>
+        <ItemWrapper data-testid="primary-wrapper">
           <TaggedNameItem
             name={name}
             network={chainId}
@@ -63,7 +68,7 @@ export const PrimarySection = () => {
           />
         </ItemWrapper>
       ) : (
-        <Typography>
+        <Typography data-testid="primary-section-text">
           {isLoading ? t('section.primary.loading') : t('section.primary.noName')}
         </Typography>
       )}

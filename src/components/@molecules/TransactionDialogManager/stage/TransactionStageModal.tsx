@@ -320,7 +320,7 @@ export const TransactionStageModal = ({
     setStage('request')
     setError(null)
     setTxHash(null)
-  }, [])
+  }, [actionName])
 
   useEffect(() => {
     if (stage === 'confirm') {

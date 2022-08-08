@@ -23,7 +23,7 @@ module.exports = {
   ethereum: {
     chain: {
       chainId: parseInt(process.env.CHAIN_ID),
-      time: parseInt(process.env.EPOCH_TIME) * 1000,
+      time: 1659500634000,
     },
     fork: {
       url: process.env.FORK_RPC_URL,
