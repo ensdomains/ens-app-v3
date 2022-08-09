@@ -230,7 +230,7 @@ type Data = {
   name: string
 }
 
-type Props = {
+export type Props = {
   data?: Data
   onDismiss?: () => void
 } & TransactionDialogPassthrough
