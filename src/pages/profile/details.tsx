@@ -230,7 +230,14 @@ export default function Page() {
               />
             </>
           ),
-          subnames: <SubnamesTab name={normalisedName} network={chainId} />,
+          subnames: (
+            <SubnamesTab
+              name={normalisedName}
+              isWrapped={isWrapped}
+              canEdit={selfAbilities.canEdit}
+              network={chainId}
+            />
+          ),
           advanced: <Advanced />,
         }[tab],
         header: (

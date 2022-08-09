@@ -1,18 +1,20 @@
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { Card } from '@app/components/Card'
+import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
-import { ArrowRightSVG, PageButtons, Spinner } from '@ensdomains/thorin'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import {
+  ArrowRightSVG,
+  Button,
+  mq,
+  PageButtons,
+  PlusSVG,
+  Spinner,
+  Typography,
+} from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-
-const EmptyDetailContainer = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space['4']};
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  `,
-)
 
 const RightArrow = styled.svg(
   ({ theme }) => css`
@@ -36,35 +38,98 @@ const PageButtonsContainer = styled.div(
 )
 
 const TabWrapperWithButtons = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    align-items: normal;
+    align-items: stretch;
     justify-content: flex-start;
     width: 100%;
+    gap: ${theme.space['4']};
   `,
 )
 
-export const SubnamesTab = ({ name, network }: { name: string; network: number }) => {
+const StyledTabWrapper = styled(TabWrapper)(
+  () => css`
+    overflow: hidden;
+  `,
+)
+
+const AddSubnamesCard = styled(Card)(
+  ({ theme }) => css`
+    padding: ${theme.space['6']};
+    flex-direction: column;
+    text-align: center;
+    gap: ${theme.space['4']};
+
+    & > button {
+      width: 100%;
+    }
+
+    ${mq.md.min(css`
+      flex-direction: row;
+      text-align: left;
+      & > button {
+        width: min-content;
+      }
+    `)}
+  `,
+)
+
+const PlusPrefix = styled.svg(
+  ({ theme }) => css`
+    display: block;
+    stroke-width: ${theme.space['0.75']};
+    height: ${theme.space['5']};
+    width: ${theme.space['5']};
+  `,
+)
+
+export const SubnamesTab = ({
+  name,
+  network,
+  canEdit,
+  isWrapped,
+}: {
+  name: string
+  network: number
+  canEdit: boolean
+  isWrapped: boolean
+}) => {
   const { t } = useTranslation('profile')
+
+  const { showDataInput } = useTransactionFlow()
+
   const { subnames, max, page, setPage, isLoading, totalPages } = useSubnamePagination(name)
+
+  const createSubname = () =>
+    showDataInput(`make-subname-${name}`, 'CreateSubname', {
+      parent: name,
+      isWrapped,
+    })
 
   return (
     <TabWrapperWithButtons>
-      <TabWrapper>
-        {!isLoading && subnames?.length > 0 ? (
+      {canEdit && (
+        <AddSubnamesCard>
+          <Typography>
+            {t('details.tabs.subnames.addSubname.title')}{' '}
+            <Outlink href="#">{t('details.tabs.subnames.addSubname.learn')}</Outlink>
+          </Typography>
+          <Button shadowless onClick={createSubname} prefix={<PlusPrefix as={PlusSVG} />}>
+            {t('details.tabs.subnames.addSubname.action')}
+          </Button>
+        </AddSubnamesCard>
+      )}
+      <StyledTabWrapper>
+        {!isLoading &&
+          subnames?.length > 0 &&
           subnames.map((subname) => (
             <NameDetailItem key={subname.name} network={network} {...subname}>
               <RightArrow as={ArrowRightSVG} />
             </NameDetailItem>
-          ))
-        ) : (
-          <EmptyDetailContainer>
-            {isLoading ? <Spinner color="blue" /> : t('details.tabs.subnames.empty')}
-          </EmptyDetailContainer>
-        )}
-      </TabWrapper>
-      {/* Page buttons don't work yet, this is intended! */}
+          ))}
+      </StyledTabWrapper>
+      {isLoading && <Spinner color="blue" />}
       {!isLoading && subnames?.length > 0 && (
         <PageButtonsContainer>
           <PageButtons
