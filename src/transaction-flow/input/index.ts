@@ -1,4 +1,4 @@
-import { EditResolver } from './EditResolver'
+import { EditResolver } from './EditResolver/EditResolver'
 import ProfileEditor from './ProfileEditor/ProfileEditor'
 import AdvancedEditor from './AdvancedEditor/AdvancedEditor'
 import { SelectPrimaryName } from './SelectPrimaryName'
