@@ -72,13 +72,11 @@ type FormData = {
   customResolver: string
 }
 
-export const EditResolver = ({
-  data,
-  dispatch,
-  onDismiss,
-}: {
+export type Props = {
   data: Data
-} & TransactionDialogPassthrough) => {
+} & TransactionDialogPassthrough
+
+export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const formRef = useRef<HTMLFormElement>(null)
 

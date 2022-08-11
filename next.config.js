@@ -92,16 +92,20 @@ if (process.env.ANALYZE) {
   plugins.push([withBundleAnalyzer])
 }
 
-const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that
-  // the following options are set automatically, and overriding them is not
-  // recommended:
-  //   release, url, org, project, authToken, configFile, stripPrefix,
-  //   urlPrefix, include, ignore
-
-  silent: true, // Suppresses all logs
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
+const withSentry = (config) => {
+  const sentryWebpackPluginOptions = {
+    // Additional config options for the Sentry Webpack plugin. Keep in mind that
+    // the following options are set automatically, and overriding them is not
+    // recommended:
+    //   release, url, org, project, authToken, configFile, stripPrefix,
+    //   urlPrefix, include, ignore
+    silent: true, // Suppresses all logs
+    // For all available options, see:
+    // https://github.com/getsentry/sentry-webpack-plugin#options.
+  }
+  if (process.env.NODE_ENV === 'production') 
+    return withSentryConfig(config, sentryWebpackPluginOptions)
+  return config
 }
 
-module.exports = withSentryConfig(withPlugins(plugins, nextConfig), sentryWebpackPluginOptions)
+module.exports = withSentry(withPlugins(plugins, nextConfig))
