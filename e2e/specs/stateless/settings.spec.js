@@ -19,14 +19,17 @@ describe('Settings', () => {
     })
     it('should show the correct transaction details for a transaction modal', () => {
       cy.contains('Test Send Name').click()
-      cy.contains('Send Name').should('be.visible')
-      cy.contains('Set the controller and registrant of the name').should('be.visible')
+      cy.findByTestId('display-item-action-normal').should('contain.text', 'Send Name')
+      cy.findByTestId('display-item-info-normal').should(
+        'contain.text',
+        'Set the controller and registrant of the name',
+      )
       cy.findByTestId('transaction-modal-request-trailing-btn').click()
       cy.contains('Awaiting wallet confirmation').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-trailing-btn').should('be.disabled')
       cy.confirmMetamaskTransaction()
       cy.contains(
-        "Your transaction was sent to the network, but may take some time to confirm. You can close this now if you'd like.",
+        "Your transaction was sent to the network, but may take some time to confirm. You can close this dialog now if you'd like.",
       ).should('be.visible')
       cy.findByTestId('transaction-modal-complete-trailing-btn').click()
       cy.findByTestId('toast-desktop')

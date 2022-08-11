@@ -9,6 +9,7 @@ import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { ReactNode } from 'react'
 
 const HeadingItems = styled.div<{ $spacing: string }>(
   ({ theme, $spacing }) => css`
@@ -175,6 +176,16 @@ export const Content = ({
     <WarningWrapper>{children.info}</WarningWrapper>
   )
 
+  let LeadingComponent: ReactNode = children.leading ? (
+    <ContentContainer>
+      <Skeleton loading={loading}>{children.leading}</Skeleton>
+    </ContentContainer>
+  ) : (
+    <ContentPlaceholder />
+  )
+
+  if (!children.leading && singleColumnContent) LeadingComponent = null
+
   return (
     <>
       {!noTitle && (
@@ -226,13 +237,8 @@ export const Content = ({
       {!breakpoints.md && WarningComponent}
       {!breakpoints.md && InfoComponent}
 
-      {children.leading ? (
-        <ContentContainer>
-          <Skeleton loading={loading}>{children.leading}</Skeleton>
-        </ContentContainer>
-      ) : (
-        <ContentPlaceholder />
-      )}
+      {LeadingComponent}
+
       {children.header && !breakpoints.md && (
         <ContentContainer>
           <Skeleton loading={loading}>{children.header}</Skeleton>

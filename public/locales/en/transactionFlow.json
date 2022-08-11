@@ -1,0 +1,11 @@
+{
+  "input": {
+    "editResolver": {
+      "latestLabel": "Use latest resolver",
+      "etherscan": "Etherscan",
+      "latestMessage": "You are on the latest resolver",
+      "customLabel": "Custom resolver",
+      "customPlaceholder": "Enter custom resolver address"
+    }
+  }
+}

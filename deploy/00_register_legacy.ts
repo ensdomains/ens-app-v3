@@ -1,3 +1,4 @@
+/* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
 import crypto from 'crypto'
 import { ethers } from 'hardhat'
@@ -24,6 +25,16 @@ const names = [
     label: 'other-registrant',
     namedOwner: 'deployer',
     namedAddr: 'deployer',
+  },
+  {
+    label: 'other-eth-record',
+    namedOwner: 'owner',
+    namedAddr: 'deployer',
+  },
+  {
+    label: 'from-settings',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
   },
 ]
 

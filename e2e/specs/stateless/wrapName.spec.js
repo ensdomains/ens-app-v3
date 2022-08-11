@@ -23,7 +23,7 @@ describe('Wrap Name', () => {
   it('should migrate the profile', () => {
     cy.findByTestId('wrapper-cta-button').click()
     cy.findByTestId('transaction-modal-inner').should('be.visible')
-    cy.findByTestId('transaction-modal-preSteps-trailing-btn').click()
+    cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-request-trailing-btn').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-trailing-btn').click()
@@ -41,7 +41,7 @@ describe('Wrap Name', () => {
     cy.visit('/profile/resume-and-wrap.eth/details')
     connectFromExisting()
     cy.findByTestId('wrapper-cta-button').click()
-    cy.findByTestId('transaction-modal-preSteps-trailing-btn').click()
+    cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-request-trailing-btn').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-trailing-btn').click()
@@ -51,11 +51,11 @@ describe('Wrap Name', () => {
   it('should open to correctly resumed state', () => {
     cy.wait(1000)
     cy.findByTestId('wrapper-cta-button').click()
-    cy.findByText('Resume your upgrade').should('be.visible')
     cy.findByTestId('display-item-Step 1-fade').should('be.visible')
+    cy.findByTestId('transaction-dialog-intro-trailing-btn').should('contain.text', 'Resume')
   })
   it('should allow resuming the steps', () => {
-    cy.findByTestId('transaction-modal-preSteps-trailing-btn').click()
+    cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-request-trailing-btn').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-trailing-btn').click()

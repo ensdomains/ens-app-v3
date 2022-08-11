@@ -11,6 +11,7 @@
     "dev:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens pnpm dev:nlocal",
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount pnpm dev",
     "build": "next build",
+    "build:local": "NODE_ENV=development next build",
     "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 next build",
     "build:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm build",
     "start": "next start",
@@ -46,7 +47,7 @@
     "@ensdomains/address-encoder": "^0.2.16",
     "@ensdomains/ens-contracts": "^0.0.12",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "^3.0.0-alpha.7",
+    "@ensdomains/ensjs": "3.0.0-alpha.10",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "^0.6.10",
     "@rainbow-me/rainbowkit": "0.3.3",
@@ -61,7 +62,6 @@
     "iso-639-1": "^2.1.13",
     "lodash": "^4.17.21",
     "next": "^12.0.8",
-    "p-memoize": "^7.1.0",
     "react": "^17.0.2",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.0",
@@ -72,7 +72,7 @@
     "react-transition-state": "^1.1.4",
     "styled-components": "^5.3.3",
     "use-immer": "^0.7.0",
-    "wagmi": "^0.4.3"
+    "wagmi": "0.4.3"
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",

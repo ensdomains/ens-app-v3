@@ -62,7 +62,6 @@ export const ConnectButtonWrapper = ({
   const router = useRouter()
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { disconnect } = useDisconnect()
 
   return (

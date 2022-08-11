@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
-import { Button, Dialog, Heading, Input, ScrollBox, Spinner, Typography } from '@ensdomains/thorin'
+import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -135,23 +136,6 @@ const LoadingContainer = styled.div(
   `,
 )
 
-const SpinnerContainer = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space.full};
-    padding: ${theme.space['4']} 0;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  `,
-)
-
-const SpinnerRow = () => (
-  <SpinnerContainer>
-    <Spinner color="accent" size="large" />
-  </SpinnerContainer>
-)
-
 export const AvatarNFT = ({
   handleCancel,
   handleSubmit,
@@ -264,10 +248,11 @@ export const AvatarNFT = ({
           onChange={(e) => setSearchedInput(e.target.value)}
           placeholder={t('profileEditor.tabs.avatar.nft.searchPlaceholder')}
         />
-        <ScrollBox
+        <ScrollBoxWithSpinner
           data-testid="nft-scroll-box"
           style={{ width: '100%' }}
           onReachedBottom={fetchPage}
+          showSpinner={hasNextPage}
         >
           <InnerScrollBox>
             {NFTs?.map((NFT, i) => (
@@ -284,8 +269,7 @@ export const AvatarNFT = ({
               </NFTContainer>
             ))}
           </InnerScrollBox>
-          {hasNextPage && <SpinnerRow />}
-        </ScrollBox>
+        </ScrollBoxWithSpinner>
       </>
     )
   } else {

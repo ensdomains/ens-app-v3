@@ -6,39 +6,9 @@ import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/r
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { Card } from '../Card'
-import { Outlink } from '../Outlink'
-import { SectionContainer, SectionHeading } from './Section'
-
-const TransactionSectionHeadingContainer = styled.div(
-  () => css`
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  `,
-)
-
-const TransactionSectionHeading = styled(SectionHeading)<{
-  $hasTransactions: boolean
-}>(
-  ({ theme, $hasTransactions }) => css`
-    position: relative;
-    ${$hasTransactions &&
-    css`
-      &::after {
-        content: '';
-        position: absolute;
-        height: ${theme.space['3']};
-        width: ${theme.space['3']};
-        background-color: ${theme.colors.red};
-        border-radius: ${theme.radii.full};
-        top: ${theme.space['2']};
-      }
-    `}
-  `,
-)
+import { Card } from '../../../Card'
+import { Outlink } from '../../../Outlink'
+import { SectionContainer } from './Section'
 
 const TransactionSectionContainer = styled.div<{ $transactionLength: number }>(
   ({ theme, $transactionLength }) => css`
@@ -46,21 +16,15 @@ const TransactionSectionContainer = styled.div<{ $transactionLength: number }>(
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    background-color: ${theme.colors.foregroundSecondary};
     width: 100%;
     height: ${theme.space['13']};
-    border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
     transition: 0.2s all ease-in-out, 0s justify-content 0s linear, 0s color 0s linear;
     ${$transactionLength &&
     css`
-      ${TransactionSectionHeading} {
-        color: transparent;
-      }
       justify-content: flex-end;
       height: calc(${$transactionLength} * ${theme.space['18']});
       background-color: transparent;
-      border: 1px solid ${theme.colors.borderTertiary};
     `}
   `,
 )
@@ -135,28 +99,23 @@ export const TransactionSection = () => {
   const { getResumable, resumeTransactionFlow } = useTransactionFlow()
 
   return (
-    <SectionContainer data-testid="transaction-section" $name="transactions">
-      <TransactionSectionHeadingContainer>
-        <TransactionSectionHeading
-          $hasTransactions={transactions.filter((x) => x.status === 'pending').length > 0}
-          variant="large"
-          weight="bold"
+    <SectionContainer
+      data-testid="transaction-section"
+      title={t('section.transaction.title')}
+      action={
+        <Button
+          size="small"
+          shadowless
+          variant="secondary"
+          onClick={() => clearTransactions()}
+          disabled={transactions.length === 0}
+          data-testid="transaction-clear-button"
         >
-          {t('section.transaction.title')}
-        </TransactionSectionHeading>
-        <div>
-          <Button
-            size="small"
-            shadowless
-            variant="secondary"
-            onClick={() => clearTransactions()}
-            disabled={transactions.length === 0}
-            data-testid="transaction-clear-button"
-          >
-            {tc('action.clear')}
-          </Button>
-        </div>
-      </TransactionSectionHeadingContainer>
+          {tc('action.clear')}
+        </Button>
+      }
+      fill
+    >
       <TransactionSectionContainer $transactionLength={transactions.length}>
         {transactions.length > 0 ? (
           <>

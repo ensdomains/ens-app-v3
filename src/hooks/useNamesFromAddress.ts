@@ -30,7 +30,7 @@ export const useNamesFromAddress = ({
     orderDirection: 'asc' | 'desc'
   }
   page: number
-  resultsPerPage: number
+  resultsPerPage: number | 'all'
   filter?: Name['type']
 }) => {
   const { ready, getNames } = useEns()
@@ -110,7 +110,9 @@ export const useNamesFromAddress = ({
   }, [status, mergedData, sortFunc, filterFunc])
 
   const pages = useMemo(
-    () => sortedData && chunkArr(sortedData, resultsPerPage),
+    () =>
+      sortedData &&
+      (resultsPerPage === 'all' ? [sortedData] : chunkArr(sortedData, resultsPerPage)),
     [sortedData, resultsPerPage],
   )
 

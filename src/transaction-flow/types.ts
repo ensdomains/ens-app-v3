@@ -14,7 +14,7 @@ type GenericDataInput = {
   data: any
 }
 
-type GenericTransaction = {
+export type GenericTransaction = {
   name: TransactionName
   data: any
 }
