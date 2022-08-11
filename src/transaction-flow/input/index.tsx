@@ -2,11 +2,11 @@ import dynamic from 'next/dynamic'
 import TransactionLoader from '../TransactionLoader'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor'
-import type { Props as EditResolverProps } from './EditResolver'
+import type { Props as EditResolverProps } from './EditResolver/EditResolver'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName'
 
 const EditResolver = dynamic<EditResolverProps>(
-  () => import('./EditResolver').then((mod) => mod.EditResolver),
+  () => import('./EditResolver/EditResolver').then((mod) => mod.EditResolver),
   {
     loading: () => <TransactionLoader />,
   },

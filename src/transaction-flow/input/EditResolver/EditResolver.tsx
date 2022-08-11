@@ -11,7 +11,7 @@ import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { makeTransactionItem } from '../transaction'
+import { makeTransactionItem } from '../../transaction'
 
 const EditResolverFormContainer = styled.div(() => [
   css`
@@ -102,7 +102,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
     if (isResolverAddressLatest) reset({ resolverChoice: 'custom', customResolver: '' })
   }, [isResolverAddressLatest, reset])
 
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
 
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
   const customResolver = watch('customResolver')
@@ -119,14 +119,14 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const latestResolverLabel = (
     <LatestResolverLabel $offset={isResolverAddressLatest}>
       <LatestResolverTitleContainer>
-        <LatestResolverTitle>Use latest resolver</LatestResolverTitle>
+        <LatestResolverTitle>{t('input.editResolver.latestLabel')}</LatestResolverTitle>
         <Outlink href={`https://etherscan.io/address/${lastestResolverAddress}`}>
-          {t('details.tabs.advanced.resolver.etherscan')}
+          {t('input.editResolver.etherscan')}
         </Outlink>
       </LatestResolverTitleContainer>
       {isResolverAddressLatest && (
         <LatestResolverSubtitle weight="medium" variant="small">
-          You are on the latest resolver
+          {t('input.editResolver.latestMessage')}
         </LatestResolverSubtitle>
       )}
     </LatestResolverLabel>
@@ -207,16 +207,16 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
             })}
           />
           <RadioButton
-            label={t('details.tabs.advanced.resolver.custom')}
+            label={t('input.editResolver.customLabel')}
             value="custom"
             labelRight
             {...register('resolverChoice')}
           />
           <InputContainer>
             <Input
-              label="Custom resolver"
+              label="Custom resolver input"
               hideLabel
-              placeholder="Enter custom resolver address"
+              placeholder={t('input.editResolver.customPlaceholder')}
               disabled={resolverChoice !== 'custom'}
               {...register('customResolver', {
                 validate: {
@@ -243,12 +243,12 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
       <Dialog.Footer
         leading={
           <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
-            Cancel
+            {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
           <Button shadowless onClick={handleSubmitForm} disabled={hasErrors}>
-            Update
+            {t('action.update', { ns: 'common' })}
           </Button>
         }
       />
