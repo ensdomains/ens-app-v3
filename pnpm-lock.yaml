@@ -23,7 +23,7 @@ specifiers:
   '@ensdomains/ens-contracts': ^0.0.12
   '@ensdomains/ens-test-env': ^0.1.5
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.10
+  '@ensdomains/ensjs': 3.0.0-alpha.11
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': ^0.6.10
   '@ethersproject/providers': ^5.6.8
@@ -127,7 +127,7 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.17
   '@ensdomains/ens-contracts': 0.0.12_hardhat@2.9.3
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.10_hardhat@2.9.3
+  '@ensdomains/ensjs': 3.0.0-alpha.11
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.10_yfgnbxojpjyzegtmtl2rcejwea
   '@rainbow-me/rainbowkit': 0.3.3_irp6hzz44qhtps26wyshftrjz4_aays2jlhametwvc5w6cjgleq7i
@@ -1920,26 +1920,6 @@ packages:
       multihashes: 2.0.0
     dev: false
 
-  /@ensdomains/ens-contracts/0.0.11_hardhat@2.9.3:
-    resolution: {integrity: sha512-b74OlFcds9eyHy26uE2fGcM+ZCSFtPeRGVbUYWq3NRlf+9t8TIgPwF3rCNwpAFQG0B/AHb4C4hYX2BBJYR1zPg==}
-    dependencies:
-      '@ensdomains/buffer': 0.0.13_hardhat@2.9.3
-      '@ensdomains/solsha1': 0.0.3
-      '@openzeppelin/contracts': 4.5.0
-      dns-packet: 5.4.0
-    transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
-      - bufferutil
-      - hardhat
-      - supports-color
-      - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
-    dev: false
-
   /@ensdomains/ens-contracts/0.0.12_hardhat@2.9.3:
     resolution: {integrity: sha512-s6CCX/IsEF9R+dHb1vNLDPUAes07zvQFBIavXBest6Li8z1KFuFS+C+AlSA16SYtZ3LQieIBshzJgygYPM9Zog==}
     dependencies:
@@ -2015,30 +1995,21 @@ packages:
     dev: true
     optional: true
 
-  /@ensdomains/ensjs/3.0.0-alpha.10_hardhat@2.9.3:
-    resolution: {integrity: sha512-oKwBN6yV6iYa/xjBacSuMrESl35p4cN6PGFylC3IPT/0r/clbGJY7kZBCUOODogR1broSAybMMxxbvzRvYamDg==}
+  /@ensdomains/ensjs/3.0.0-alpha.11:
+    resolution: {integrity: sha512-hwQ3Du7sEm7cx2AJP3mAs3H4V3cJ9gTcKvgJjoP42TI+ItbsbICJK7Po5Duq8glMNu3xTjwqVqE9YccG7qPQAA==}
     dependencies:
       '@ensdomains/address-encoder': 0.2.17
       '@ensdomains/content-hash': 2.5.7
-      '@ensdomains/ens-contracts': 0.0.11_hardhat@2.9.3
       dns-packet: 5.4.0
       ethers: 5.6.9
       graphql: 16.5.0
-      graphql-request: 4.4.0-next.4_graphql@16.5.0
+      graphql-request: 5.0.0-next.5_graphql@16.5.0
       idna-uts46-hx: 3.4.0
       traverse: 0.6.6
     transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
       - bufferutil
       - encoding
-      - hardhat
-      - supports-color
       - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
     dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
@@ -11290,8 +11261,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/4.4.0-next.4_graphql@16.5.0:
-    resolution: {integrity: sha512-K/7bsPK2S3aoMR61aWw6cSHEP1BVzViJlYDDE9bi08TJWrAv2x9ec9PgkzrMe1uBDfc0z6nVdB++a2Hzf7t7zA==}
+  /graphql-request/5.0.0-next.5_graphql@16.5.0:
+    resolution: {integrity: sha512-4u6R6kyxi/w1z8+AtS67Wx3vWMPL0y3Y8FU76w4sM/vNVgLkWBPYTFwi9cVSSr00aHerV1XsfdOC8+VG1I+45Q==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:

@@ -31,7 +31,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const owner = allNamedAccts[namedOwner]
     const resolver = publicResolver.address
     const duration = 31536000
-    const wrapperExpiry = 0
+    const wrapperExpiry = Math.floor(Date.now() / 1000) + duration
 
     const commitment = await controller.makeCommitment(
       label,

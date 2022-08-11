@@ -22,6 +22,15 @@ type Data = {
   isWrapped: boolean
 }
 
+const ParentLabel = styled.div(
+  ({ theme }) => css`
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: ${theme.space['48']};
+  `,
+)
+
 export const CreateSubname = ({
   data: { parent, isWrapped },
   dispatch,
@@ -73,8 +82,9 @@ export const CreateSubname = ({
       <Dialog.Heading title={t('details.tabs.subnames.addSubname.dialog.title')} />
       <StyledInnerDialog>
         <Input
+          data-testid="add-subname-input"
           label="Label"
-          suffix={`.${parent}`}
+          suffix={<ParentLabel>.{parent}</ParentLabel>}
           value={_label}
           onChange={(e) => {
             _setLabel(e.target.value)

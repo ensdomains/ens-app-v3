@@ -1,6 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
 import crypto from 'crypto'
+import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -36,6 +37,12 @@ const names = [
     namedOwner: 'owner',
     namedAddr: 'owner',
   },
+  {
+    label: 'other-controller',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    namedController: 'deployer',
+  },
 ]
 
 const randomSecret = () => {
@@ -46,6 +53,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = await getNamedAccounts()
 
+  const registry = await ethers.getContract('ENSRegistry')
   const controller = await ethers.getContract('LegacyETHRegistrarController')
   const publicResolver = await ethers.getContract('LegacyPublicResolver')
 
@@ -87,6 +95,16 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     )
     console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
     await registerTx.wait()
+  }
+
+  for (const { label, namedController, namedOwner } of names.filter((n) => n.namedController)) {
+    const registrant = allNamedAccts[namedOwner]
+    const owner = allNamedAccts[namedController!]
+
+    const _registry = registry.connect(await ethers.getSigner(registrant))
+    const setControllerTx = await _registry.setOwner(namehash(`${label}.eth`), owner)
+    console.log(`Setting controller for ${label}.eth to ${owner} (tx: ${setControllerTx.hash})...`)
+    await setControllerTx.wait()
   }
 
   return true

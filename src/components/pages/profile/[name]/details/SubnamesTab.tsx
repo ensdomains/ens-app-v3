@@ -115,7 +115,12 @@ export const SubnamesTab = ({
             {t('details.tabs.subnames.addSubname.title')}{' '}
             <Outlink href="#">{t('details.tabs.subnames.addSubname.learn')}</Outlink>
           </Typography>
-          <Button shadowless onClick={createSubname} prefix={<PlusPrefix as={PlusSVG} />}>
+          <Button
+            data-testid="add-subname-action"
+            shadowless
+            onClick={createSubname}
+            prefix={<PlusPrefix as={PlusSVG} />}
+          >
             {t('details.tabs.subnames.addSubname.action')}
           </Button>
         </AddSubnamesCard>

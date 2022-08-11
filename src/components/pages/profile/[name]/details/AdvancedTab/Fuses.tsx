@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
 
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
-import { TrafficLight } from '@app/components/TrafficLight'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { TrafficLight } from '@app/components/TrafficLight'
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
 const FusesContainer = styled.div`
   display: flex;
@@ -99,7 +99,7 @@ const Fuses = () => {
           </FusesRow>
         </div>
       </div>
-      <Spacer $height="10" />
+      {/* <Spacer $height="10" />
       <div>
         <Typography weight="bold" color="textTertiary">
           {t('fuses.vulnerabilities.label')}
@@ -121,7 +121,7 @@ const Fuses = () => {
             {fuseData.vulnerableNode ?? t('fuses.vulnerabilities.none')}
           </Typography>
         </FusesRow>
-      </div>
+      </div> */}
     </FusesContainer>
   )
 }
