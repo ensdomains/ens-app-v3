@@ -247,7 +247,7 @@ type Data = {
   name?: string
 }
 
-type Props = {
+export type Props = {
   name?: string
   data?: Data
   onDismiss?: () => void

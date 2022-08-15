@@ -25,6 +25,10 @@ type Domain = {
   name: string
 }
 
+export type Props = {
+  data: Data
+} & TransactionDialogPassthrough
+
 const StyledScrollBox = styled(ScrollBoxWithSpinner)(
   ({ theme }) => css`
     width: ${theme.space.full};
@@ -37,7 +41,7 @@ export const SelectPrimaryName = ({
   data: { address, existingPrimary },
   dispatch,
   onDismiss,
-}: { data: Data } & TransactionDialogPassthrough) => {
+}: Props) => {
   const { t } = useTranslation('settings')
 
   const chainId = useChainId()
