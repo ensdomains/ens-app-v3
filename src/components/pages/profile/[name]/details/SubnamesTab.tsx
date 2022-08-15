@@ -1,18 +1,11 @@
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import {
-  ArrowRightSVG,
-  Button,
-  mq,
-  PageButtons,
-  PlusSVG,
-  Spinner,
-  Typography,
-} from '@ensdomains/thorin'
+import { ArrowRightSVG, Button, mq, PageButtons, PlusSVG, Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -134,7 +127,7 @@ export const SubnamesTab = ({
             </NameDetailItem>
           ))}
       </StyledTabWrapper>
-      {isLoading && <Spinner color="blue" />}
+      {isLoading && <SpinnerRow />}
       {!isLoading && subnames?.length > 0 && (
         <PageButtonsContainer>
           <PageButtons
