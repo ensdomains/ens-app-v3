@@ -106,7 +106,7 @@ jobs:
           docker pull ghcr.io/ensdomains/ens-metadata-service:latest
 
       - name: Run tests
-        run: pnpm e2e:ci
+        run: pnpm e2e:ci -nb
 
       - uses: actions/upload-artifact@v2
         if: failure()
