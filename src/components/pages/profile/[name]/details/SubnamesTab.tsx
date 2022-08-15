@@ -128,16 +128,21 @@ export const SubnamesTab = ({
           ))}
       </StyledTabWrapper>
       {isLoading && <SpinnerRow />}
-      {!isLoading && subnames?.length > 0 && (
-        <PageButtonsContainer>
-          <PageButtons
-            current={page + 1}
-            onChange={(value) => setPage(value - 1)}
-            total={totalPages || 1}
-            max={max}
-          />
-        </PageButtonsContainer>
-      )}
+      {!isLoading &&
+        (subnames?.length > 0 ? (
+          <PageButtonsContainer>
+            <PageButtons
+              current={page + 1}
+              onChange={(value) => setPage(value - 1)}
+              total={totalPages || 1}
+              max={max}
+            />
+          </PageButtonsContainer>
+        ) : (
+          <StyledTabWrapper>
+            <Typography>{t('details.tabs.subnames.empty')}</Typography>
+          </StyledTabWrapper>
+        ))}
     </TabWrapperWithButtons>
   )
 }
