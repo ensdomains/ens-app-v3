@@ -21,7 +21,7 @@ specifiers:
   '@ensdomains/address-encoder': ^0.2.16
   '@ensdomains/buffer': ^0.1.0
   '@ensdomains/ens-contracts': ^0.0.12
-  '@ensdomains/ens-test-env': ^0.2.0
+  '@ensdomains/ens-test-env': ^0.2.1
   '@ensdomains/ens-validation': ^0.1.0
   '@ensdomains/ensjs': 3.0.0-alpha.12
   '@ensdomains/eth-ens-namehash': ^2.0.15
@@ -158,7 +158,7 @@ devDependencies:
   '@cloudflare/workers-types': 3.13.0
   '@cloudflare/wrangler': 1.19.12
   '@ensdomains/buffer': 0.1.0_hardhat@2.9.3
-  '@ensdomains/ens-test-env': 0.2.0
+  '@ensdomains/ens-test-env': 0.2.1
   '@ethersproject/providers': 5.6.8
   '@next/bundle-analyzer': 12.1.4
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -1940,8 +1940,8 @@ packages:
       - web3-utils
     dev: false
 
-  /@ensdomains/ens-test-env/0.2.0:
-    resolution: {integrity: sha512-8hjv7YfUt5KoAKG5Tyoo5OS+EqFv72xbr/f4V9cgMNDntkfHjeQyoef0wWoRD8FAuv7peHSWDLSH8s5Uu9mKbQ==}
+  /@ensdomains/ens-test-env/0.2.1:
+    resolution: {integrity: sha512-8yXOmSDDCsVGw9TEoHmxINU3kmX3zGNnOe/LJ5rILaeUr+sC9zJdMD7854cllvFIkeCBa/jRAzqUr/4Z98UsZg==}
     hasBin: true
     dependencies:
       '@ethersproject/wallet': 5.6.2

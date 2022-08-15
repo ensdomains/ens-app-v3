@@ -29,4 +29,7 @@ module.exports = {
       finishOnExit: true,
     },
   ],
+  paths: {
+    data: './data',
+  },
 }

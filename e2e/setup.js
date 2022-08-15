@@ -1,7 +1,11 @@
-export const acceptMetamaskAccess = (account = 1) => {
+export const acceptMetamaskAccess = (account = 1, first = false) => {
   cy.visit('/')
   cy.window().then((win) => win.ethereum.selectedAddress && cy.disconnectMetamaskWalletFromDapp())
-  cy.switchMetamaskAccount(account)
+  if (account > 1 && first) {
+    cy.createMetamaskAccount()
+  } else {
+    cy.switchMetamaskAccount(account)
+  }
   cy.contains('Connect Wallet').click()
   cy.contains('MetaMask').click()
   cy.wait(1000)
