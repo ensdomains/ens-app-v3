@@ -3,7 +3,7 @@ import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Create Subname', () => {
   before(() => {
-    acceptMetamaskAccess(2, true)
+    acceptMetamaskAccess(2)
   })
   after(async () => {
     await revert()
