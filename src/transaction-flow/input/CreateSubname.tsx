@@ -22,6 +22,10 @@ type Data = {
   isWrapped: boolean
 }
 
+export type Props = {
+  data: Data
+} & TransactionDialogPassthrough
+
 const ParentLabel = styled.div(
   ({ theme }) => css`
     overflow: hidden;
@@ -31,11 +35,7 @@ const ParentLabel = styled.div(
   `,
 )
 
-export const CreateSubname = ({
-  data: { parent, isWrapped },
-  dispatch,
-  onDismiss,
-}: { data: Data } & TransactionDialogPassthrough) => {
+const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
 
   const [label, setLabel] = useState('')
@@ -113,3 +113,5 @@ export const CreateSubname = ({
     </>
   )
 }
+
+export default CreateSubname
