@@ -30,6 +30,8 @@ export const DevSection = () => {
   const { createTransactionFlow } = useTransactionFlow()
   const { sendTransactionAsync } = useSendTransaction()
 
+  console.log(provider)
+
   const addSuccess = async () => {
     const transaction = await sendTransactionAsync({
       request: {
@@ -65,9 +67,10 @@ export const DevSection = () => {
     })
   }
 
-  const startAutoMine = async () => provider.send('miner_start', [])
+  const startAutoMine = async () =>
+    provider.send('evm_setAutomine', [true]).then(() => provider.send('evm_mine', []))
 
-  const stopAutoMine = async () => provider.send('miner_stop', [])
+  const stopAutoMine = async () => provider.send('evm_setAutomine', [false])
 
   const revert = async () => {
     const currBlock = await provider.getBlockNumber()

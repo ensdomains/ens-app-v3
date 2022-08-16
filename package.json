@@ -84,7 +84,7 @@
     "@cloudflare/workers-types": "^3.13.0",
     "@cloudflare/wrangler": "^1.19.12",
     "@ensdomains/buffer": "^0.1.0",
-    "@ensdomains/ens-test-env": "^0.2.1",
+    "@ensdomains/ens-test-env": "^0.2.2",
     "@ethersproject/providers": "^5.6.8",
     "@next/bundle-analyzer": "^12.0.10",
     "@next/swc-linux-x64-gnu": "^12.1.4",
