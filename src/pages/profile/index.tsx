@@ -17,7 +17,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
+import { ReactElement, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
@@ -79,7 +79,7 @@ export default function Page() {
 
   const selfAbilities = useSelfAbilities(address, ownerData)
 
-  const { createTransactionFlow } = useTransactionFlow()
+  const { createTransactionFlow, showDataInput, getResumable } = useTransactionFlow()
 
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
@@ -121,9 +121,9 @@ export default function Page() {
     ]
   }, [isSelf, normalisedName, valid, name, t])
 
-  const { showDataInput } = useTransactionFlow()
   const handleEditProfile = () => {
-    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
+    const resumable = getResumable(`edit-profile-flow-${name}`)
+    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name, resumable })
   }
 
   const profileActions = useMemo(() => {

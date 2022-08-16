@@ -6,6 +6,18 @@
       "latestMessage": "You are on the latest resolver",
       "customLabel": "Custom resolver",
       "customPlaceholder": "Enter custom resolver address"
+    },
+    "transferProfile": {
+      "title": "Transfer Profile",
+      "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
+      "message2": "Would you like to transfer your current profile?"
+    }
+  },
+  "intro": {
+    "migrateAndUpdateResolver": {
+      "title": "The edits you want to save to your profile require that you upgrade your resolver.",
+      "link": "Learn more about resolver upgrades",
+      "warning": "Note that if you cancel this at any point your changes will not be saved."
     }
   }
 }

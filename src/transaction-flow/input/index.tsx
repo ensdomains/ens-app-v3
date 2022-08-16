@@ -4,6 +4,7 @@ import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName'
+import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile'
 
 const EditResolver = dynamic<EditResolverProps>(
   () => import('./EditResolver/EditResolver').then((mod) => mod.EditResolver),
@@ -27,11 +28,19 @@ const ProfileEditor = dynamic<ProfileEditorProps>(() => import('./ProfileEditor/
   loading: () => <TransactionLoader />,
 })
 
+const TransferProfile = dynamic<TransferProfileProps>(
+  () => import('./TransferProfile/TransferProfile'),
+  {
+    loading: () => <TransactionLoader />,
+  },
+)
+
 export const DataInputComponents = {
   EditResolver,
   ProfileEditor,
   AdvancedEditor,
   SelectPrimaryName,
+  TransferProfile,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

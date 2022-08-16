@@ -18,10 +18,10 @@ import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { RecordOptions } from '@ensdomains/ensjs/src/utils/recordHelpers'
-import { useEns } from '@app/utils/EnsProvider'
 import { validateCryptoAddress } from '@app/utils/validate'
 import { useTranslation } from 'react-i18next'
 import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import accountsOptions from './accountsOptions'
 import addressOptions from './addressOptions'
 import AvatarButton from './Avatar/AvatarButton'
@@ -29,6 +29,8 @@ import { AvatarViewManager } from './Avatar/AvatarViewManager'
 import otherOptions from './otherOptions'
 import websiteOptions from './websiteOptions'
 import ResolverWarningOverlay from './ResolverWarningOverlay'
+import { useResolverStatus } from '../../../hooks/useResolverStatus'
+import { usePublicResolverAddress } from '../../../hooks/usePublicResolverAddress'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -246,6 +248,7 @@ type ExpandableRecordsState = {
 
 type Data = {
   name?: string
+  resumable?: boolean
 }
 
 export type Props = {
@@ -254,11 +257,10 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
+const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
-  const { contracts } = useEns()
 
-  const name = data?.name || ''
+  const { name = '', resumable = false } = data
 
   const {
     register,
@@ -286,7 +288,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
     shouldUnregister: false,
   })
 
-  const [tab, setTab] = useState<TabType>('address')
+  const [tab, setTab] = useState<TabType>('general')
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -414,7 +416,13 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   })()
 
-  const { profile, loading } = useProfile(name, name !== '')
+  const { profile, loading: profileLoading } = useProfile(name, name !== '')
+
+  const { address: resolverAddress, loading: resolverLoading } = usePublicResolverAddress()
+
+  const { status, loading: statusLoading } = useResolverStatus(name, profileLoading, {
+    skipCompare: resumable,
+  })
 
   useEffect(() => {
     if (profile) {
@@ -443,11 +451,10 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
 
   const handleCreateTransaction = useCallback(
     async (records: RecordOptions) => {
-      const resolverAddress = (await contracts!.getPublicResolver()!).address
+      if (!profile?.resolverAddress || !resolverAddress) return
 
-      if (!profile?.resolverAddress) return
-      if (profile.resolverAddress === resolverAddress) {
-        await dispatch({
+      if (status.hasLatestResolver) {
+        dispatch({
           name: 'setTransactions',
           payload: [
             makeTransactionItem('updateProfile', {
@@ -460,26 +467,33 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
         dispatch({ name: 'setFlowStage', payload: 'transaction' })
         return
       }
+
       dispatch({
         name: 'startFlow',
-        key: `update-profile-${name}`,
+        key: `edit-profile-flow-${name}`,
         payload: {
           intro: {
             title: 'Action Required',
-            content: makeIntroItem('FriendlyResolverUpgrade', { name }),
+            content: makeIntroItem('MigrateAndUpdateResolver', { name }),
           },
           transactions: [
-            makeTransactionItem('updateProfile', {
+            makeTransactionItem('migrateProfileWithSync', {
               name,
-              resolver: profile!.resolverAddress!,
               records,
             }),
+            makeTransactionItem('updateResolver', {
+              name,
+              resolver: resolverAddress,
+              oldResolver: profile!.resolverAddress!,
+              contract: 'registry',
+            }),
           ],
+          resumable: true,
         },
       })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [profile],
+    [profile, status, resolverAddress],
   )
   const handleTransaction = async (profileData: ProfileEditorType) => {
     const dirtyFields = getDirtyFields(formState.dirtyFields, profileData) as ProfileEditorType
@@ -518,10 +532,17 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
+  console.log('--------')
+
+  console.log(profile)
+  console.log(status)
+
   const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
-  if (loading) return null
+  const [showOverlay, setShowOverlay] = useState(true)
+
+  if (profileLoading || statusLoading || resolverLoading) return <TransactionLoader />
   return (
     <>
       {' '}
@@ -852,7 +873,17 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
               </Button>
             </FooterContainer>
           </ContentContainer>
-          <ResolverWarningOverlay />
+          {showOverlay && (
+            <ResolverWarningOverlay
+              name={name}
+              resumable={resumable}
+              hasCreatedProfile={status.hasCreatedProfile}
+              latestResolver={resolverAddress!}
+              oldResolver={profile?.resolverAddress!}
+              dispatch={dispatch}
+              onDismiss={() => setShowOverlay(false)}
+            />
+          )}{' '}
         </Container>
       )}
     </>

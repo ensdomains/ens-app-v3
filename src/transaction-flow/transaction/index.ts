@@ -5,6 +5,7 @@ import updateEthAddress from './updateEthAddress'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 import updateProfile from './updateProfile'
+import migrateProfileWithSync from './migrateProfileWithSync'
 
 export const transactions = {
   updateResolver,
@@ -14,6 +15,7 @@ export const transactions = {
   updateProfile,
   setPrimaryName,
   updateEthAddress,
+  migrateProfileWithSync,
 }
 
 export type Transaction = typeof transactions

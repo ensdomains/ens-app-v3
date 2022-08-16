@@ -1,5 +1,5 @@
 import { PublicENS, TransactionDisplayItem } from '@app/types'
-import { JsonRpcSigner } from '@ethersproject/providers'
+import type { JsonRpcSigner } from '@ethersproject/providers'
 
 type Data = {
   name: string

@@ -12,6 +12,7 @@ import {
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
+import { usePublicResolverAddress } from '@app/hooks/usePublicResolverAddress'
 import ProfileEditor from './ProfileEditor'
 
 const mockProfileData = {
@@ -109,10 +110,12 @@ jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useProfile')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
+jest.mock('@app/hooks/usePublicResolverAddress')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseEns = mockFunction(useEns)
+const mockUsePublicResolverAddress = mockFunction(usePublicResolverAddress)
 
 const mockSetRecords = jest.fn()
 const mockSetCurrentTransaction = jest.fn()
@@ -179,6 +182,11 @@ describe('ProfileEditor', () => {
       contracts: {
         getPublicResolver: async () => ({ address: '0x0' }),
       },
+    })
+
+    mockUsePublicResolverAddress.mockReturnValue({
+      address: '0x123',
+      loading: false,
     })
   })
 
