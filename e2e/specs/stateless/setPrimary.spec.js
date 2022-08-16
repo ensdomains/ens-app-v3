@@ -2,7 +2,7 @@ import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Set Primary Name', () => {
   before(() => {
-    acceptMetamaskAccess(2)
+    acceptMetamaskAccess(2, true)
   })
   it('should show no primary message if no primary is set in settings', () => {
     cy.visit('/my/settings')

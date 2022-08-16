@@ -94,7 +94,8 @@
       "updateProfile": "Update Profile",
       "setPrimaryName": "Set primary name",
       "updateEthAddress": "Update ETH address",
-      "testSendName": "Send Name"
+      "testSendName": "Send Name",
+      "createSubname": "Create Subname"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -104,7 +105,8 @@
       "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",
       "updateEthAddress": "Update ETH address to this address",
-      "testSendName": "Set the controller and registrant of the name"
+      "testSendName": "Set the controller and registrant of the name",
+      "createSubname": "Create a new subname on the name"
     },
     "itemLabel": {
       "name": "Name",
@@ -113,7 +115,8 @@
       "info": "Info",
       "to": "To",
       "currentResolver": "Current Resolver",
-      "newResolver": "New Resolver"
+      "newResolver": "New Resolver",
+      "subname": "Subname"
     },
     "itemValue": {},
     "status": {

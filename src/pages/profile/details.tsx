@@ -230,18 +230,37 @@ export default function Page() {
               />
             </>
           ),
-          subnames: <SubnamesTab name={normalisedName} network={chainId} />,
+          subnames: (
+            <SubnamesTab
+              name={normalisedName}
+              isWrapped={isWrapped}
+              canEdit={selfAbilities.canEdit}
+              network={chainId}
+            />
+          ),
           advanced: <Advanced />,
         }[tab],
         header: (
           <TabButtonContainer>
-            <TabButton $selected={tab === 'records'} onClick={() => setTab('records')}>
+            <TabButton
+              data-testid="records-tab"
+              $selected={tab === 'records'}
+              onClick={() => setTab('records')}
+            >
               <Typography weight="bold">{t('details.tabs.records.label')}</Typography>
             </TabButton>
-            <TabButton $selected={tab === 'subnames'} onClick={() => setTab('subnames')}>
+            <TabButton
+              data-testid="subnames-tab"
+              $selected={tab === 'subnames'}
+              onClick={() => setTab('subnames')}
+            >
               <Typography weight="bold">{t('details.tabs.subnames.label')}</Typography>
             </TabButton>
-            <TabButton $selected={tab === 'advanced'} onClick={() => setTab('advanced')}>
+            <TabButton
+              data-testid="advanced-tab"
+              $selected={tab === 'advanced'}
+              onClick={() => setTab('advanced')}
+            >
               <Typography weight="bold">{t('details.tabs.advanced.label')}</Typography>
             </TabButton>
           </TabButtonContainer>
