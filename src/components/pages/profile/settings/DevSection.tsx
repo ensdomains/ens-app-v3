@@ -30,8 +30,6 @@ export const DevSection = () => {
   const { createTransactionFlow } = useTransactionFlow()
   const { sendTransactionAsync } = useSendTransaction()
 
-  console.log(provider)
-
   const addSuccess = async () => {
     const transaction = await sendTransactionAsync({
       request: {

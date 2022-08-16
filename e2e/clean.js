@@ -24,7 +24,8 @@ export const revert = async () => {
   await provider.send('evm_snapshot', [])
   const revertBlock = await provider.getBlockNumber()
   const blocksToMine = currBlock - revertBlock
-  await rpcSendBatch(
-    Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),
-  )
+  await rpcSendBatch([
+    ...Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),
+    { method: 'evm_setAutomine', params: [true] },
+  ])
 }
