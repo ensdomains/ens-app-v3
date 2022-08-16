@@ -61,17 +61,16 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   if (profile.resolverAddress !== resolverAddress) {
     resolverProfile = await ens.getProfile(data.name, {
       resolverAddress,
-      contentHash: true,
-      texts: true,
-      coinTypes: true,
     })
   }
 
   const contentHash = (() => {
     if (data.records?.contentHash || data.records?.contentHash === '')
       return contentHashToString(data.records.contentHash)
-    if (profile.records.contentHash || profile.records.contentHash === '')
-      return contentHashToString(profile.records.contentHash)
+    const afterCh = contentHashToString(profile.records.contentHash)
+    const beforeCh = contentHashToString(resolverProfile?.records?.contentHash)
+    if (beforeCh && !afterCh) return ''
+    if (afterCh) return afterCh
     return undefined
   })()
 
