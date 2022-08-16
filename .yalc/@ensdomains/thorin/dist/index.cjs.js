@@ -932,6 +932,7 @@
     justify-content: center;
     gap: ${e.space[2]};
     border-radius: ${e.radii.large};
+    text-align: center;
 
     ${o==="horizontal"&&n.css`
       flex-direction: row;

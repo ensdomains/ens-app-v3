@@ -4366,6 +4366,7 @@ const Container$8 = styled.div(({
     justify-content: center;
     gap: ${theme.space["2"]};
     border-radius: ${theme.radii.large};
+    text-align: center;
 
     ${$alignment === "horizontal" && css`
       flex-direction: row;

@@ -24,6 +24,8 @@ export const TransactionDialogManager = ({
 }) => {
   const queryClient = useQueryClient()
 
+  console.log('selectedFlowItem: ', selectedFlowItem)
+
   const onDismiss = useCallback(() => {
     dispatch({
       name: 'stopFlow',
@@ -36,6 +38,7 @@ export const TransactionDialogManager = ({
         const Component = DataInputComponents[selectedFlowItem.input.name]
         return <Component {...{ data: selectedFlowItem.input.data, dispatch, onDismiss }} />
       }
+
       if (selectedFlowItem.intro && selectedFlowItem.currentFlowStage === 'intro') {
         return (
           <IntroStageModal
@@ -52,6 +55,7 @@ export const TransactionDialogManager = ({
 
       const transactionItem = selectedFlowItem.transactions[selectedFlowItem.currentTransaction]
       const transaction = transactions[transactionItem.name]
+      console.log('transaction: ', transaction)
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
@@ -60,12 +64,13 @@ export const TransactionDialogManager = ({
           stepCount={selectedFlowItem.transactions.length}
           transaction={transactionItem}
           txKey={state.selectedKey}
-          onDismiss={onDismiss}
+          onDismiss={transaction.onDismiss ? transaction.onDismiss(dispatch) : onDismiss}
           onComplete={() => dispatch({ name: 'setTransactionComplete' })}
           onSuccess={() => {
             dispatch({ name: 'incrementTransaction' })
             queryClient.invalidateQueries()
           }}
+          dismissBtnLabel={transaction.dismissBtnLabel}
         />
       )
     }

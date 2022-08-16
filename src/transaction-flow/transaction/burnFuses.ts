@@ -43,6 +43,12 @@ const pending = {
     'Your transaction has been sent to the network, and is waiting to be saved to the blockchain. You may close this dialog.',
 }
 
+const onDismiss = (dispatch) => () => {
+  dispatch({ name: 'setFlowStage', payload: 'input' })
+}
+
+const dismissBtnLabel = 'Back'
+
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   console.log('data: ', data)
   const tx = ens.setFuses.populateTransaction('wrapped.eth', {
@@ -53,4 +59,4 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   return tx
 }
 
-export default { displayItems, confirm, request, pending, transaction }
+export default { displayItems, confirm, request, pending, transaction, onDismiss, dismissBtnLabel }
