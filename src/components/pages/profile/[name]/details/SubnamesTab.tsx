@@ -6,6 +6,7 @@ import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { ArrowRightSVG, Button, mq, PageButtons, PlusSVG, Typography } from '@ensdomains/thorin'
+import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -44,6 +45,15 @@ const TabWrapperWithButtons = styled.div(
 const StyledTabWrapper = styled(TabWrapper)(
   () => css`
     overflow: hidden;
+  `,
+)
+
+const NoneFoundContainer = styled(TabWrapper)(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: ${theme.space['2']};
   `,
 )
 
@@ -100,6 +110,40 @@ export const SubnamesTab = ({
       isWrapped,
     })
 
+  let InnerContent: ReactNode
+
+  if (isLoading) {
+    InnerContent = <SpinnerRow />
+  } else if (subnames.length > 0) {
+    InnerContent = (
+      <>
+        <StyledTabWrapper>
+          {subnames.map((subname) => (
+            <NameDetailItem key={subname.name} network={network} {...subname}>
+              <RightArrow as={ArrowRightSVG} />
+            </NameDetailItem>
+          ))}
+        </StyledTabWrapper>
+        <PageButtonsContainer>
+          <PageButtons
+            current={page + 1}
+            onChange={(value) => setPage(value - 1)}
+            total={totalPages || 1}
+            max={max}
+          />
+        </PageButtonsContainer>
+      </>
+    )
+  } else if (!canEdit) {
+    InnerContent = (
+      <NoneFoundContainer>
+        <Typography>{t('details.tabs.subnames.empty')}</Typography>
+      </NoneFoundContainer>
+    )
+  } else {
+    InnerContent = null
+  }
+
   return (
     <TabWrapperWithButtons>
       {canEdit && (
@@ -118,31 +162,7 @@ export const SubnamesTab = ({
           </Button>
         </AddSubnamesCard>
       )}
-      <StyledTabWrapper>
-        {!isLoading &&
-          subnames?.length > 0 &&
-          subnames.map((subname) => (
-            <NameDetailItem key={subname.name} network={network} {...subname}>
-              <RightArrow as={ArrowRightSVG} />
-            </NameDetailItem>
-          ))}
-      </StyledTabWrapper>
-      {isLoading && <SpinnerRow />}
-      {!isLoading &&
-        (subnames?.length > 0 ? (
-          <PageButtonsContainer>
-            <PageButtons
-              current={page + 1}
-              onChange={(value) => setPage(value - 1)}
-              total={totalPages || 1}
-              max={max}
-            />
-          </PageButtonsContainer>
-        ) : (
-          <StyledTabWrapper>
-            <Typography>{t('details.tabs.subnames.empty')}</Typography>
-          </StyledTabWrapper>
-        ))}
+      {InnerContent}
     </TabWrapperWithButtons>
   )
 }
