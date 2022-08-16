@@ -22,9 +22,18 @@ export const syncRecords = (
   after?: RecordItem[],
   overwrites?: { key: string; value: string }[],
 ) => {
+  const beforeArr = before ? before.map(recordItemToKeyValue) : []
+  const beforeHash =
+    beforeArr.reduce<{ [key: string]: string }>((hash, item) => {
+      const key = item.key as string
+      const value = item.value as string
+      const newHash = { ...hash, [key]: value }
+      return newHash
+    }, {}) || {}
+
   return Object.values(
     [
-      ...(before ? before.map(recordItemToKeyValue).map(({ key }) => ({ key, value: '' })) : []),
+      ...beforeArr.map(({ key }) => ({ key, value: '' })),
       ...(after ? after.map(recordItemToKeyValue) : []),
       ...(overwrites || []),
     ].reduce<{
@@ -32,7 +41,11 @@ export const syncRecords = (
     }>((acc, text) => {
       const key = text.key as string
       const value = text.value as string
-      acc[key] = { key, value }
+      if (beforeHash[key] === value) {
+        delete acc[key]
+      } else {
+        acc[key] = { key, value }
+      }
       return acc
     }, {}),
   )
@@ -46,7 +59,12 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
 
   let resolverProfile: Profile | undefined
   if (profile.resolverAddress !== resolverAddress) {
-    resolverProfile = await ens.getProfile(data.name, { resolverAddress })
+    resolverProfile = await ens.getProfile(data.name, {
+      resolverAddress,
+      contentHash: true,
+      texts: true,
+      coinTypes: true,
+    })
   }
 
   console.log('resolverProfile', resolverProfile)

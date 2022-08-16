@@ -532,15 +532,15 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
-  console.log('--------')
-
-  console.log(profile)
-  console.log(status)
-
   const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
-  const [showOverlay, setShowOverlay] = useState(true)
+  const [showOverlay, setShowOverlay] = useState(false)
+  useEffect(() => {
+    if ((!statusLoading && !status.hasLatestResolver) || resumable) {
+      setShowOverlay(true)
+    }
+  }, [status, statusLoading, resumable])
 
   if (profileLoading || statusLoading || resolverLoading) return <TransactionLoader />
   return (
