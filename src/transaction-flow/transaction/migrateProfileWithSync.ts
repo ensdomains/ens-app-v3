@@ -67,8 +67,6 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
     })
   }
 
-  console.log('resolverProfile', resolverProfile)
-
   const contentHash = (() => {
     if (data.records?.contentHash || data.records?.contentHash === '')
       return contentHashToString(data.records.contentHash)
@@ -93,8 +91,6 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
     texts,
     coinTypes,
   }
-
-  console.log(migratableProfile)
 
   return ens.setRecords.populateTransaction(data.name, {
     records: migratableProfile,

@@ -347,7 +347,6 @@ describe('ProfileEditor with old resolver', () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      console.log(mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.coinTypes)
       expect(mockDispatch.mock.calls[0][0].name).toBe('startFlow')
       expect(
         mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.coinTypes[0],
