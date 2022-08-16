@@ -1,8 +1,10 @@
 import { EditResolver } from './EditResolver'
+import { BurnFuses } from './BurnFuses'
 import { SelectPrimaryName } from './SelectPrimaryName'
 
 export const DataInputComponents = {
   EditResolver,
+  BurnFuses,
   SelectPrimaryName,
 }
 

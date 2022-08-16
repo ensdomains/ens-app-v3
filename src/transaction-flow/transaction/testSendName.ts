@@ -20,7 +20,7 @@ const displayItems = (): TransactionDisplayItem[] => [
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const transaction = async (_signer: JsonRpcSigner, _ens: PublicENS, _data: Data) => ({
   to: '0x0000000000000000000000000000000000000000',
-  value: BigNumber.from('0'),
+  data: BigNumber.from('0'),
 })
 
 export default { displayItems, transaction }

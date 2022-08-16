@@ -4,6 +4,7 @@ import testSendName from './testSendName'
 import updateEthAddress from './updateEthAddress'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
+import burnFuses from './burnFuses'
 
 export const transactions = {
   updateResolver,
@@ -12,6 +13,7 @@ export const transactions = {
   testSendName,
   setPrimaryName,
   updateEthAddress,
+  burnFuses,
 }
 
 export type Transaction = typeof transactions

@@ -55,14 +55,5 @@ describe('Fuses', () => {
     )
   })
 
-  it('should show vulerabilities', () => {
-    mockUseRouter.mockReturnValue({
-      query: {
-        name: 'nick.eth',
-      },
-    })
-    mockUseGetFuseData.mockReturnValue({ fuseData: mockFusesResponse })
-    render(<Fuses />)
-    expect(screen.getByText('Safe')).toBeVisible()
-  })
+  it.todo('should show warning if PCC has NOT been burned')
 })

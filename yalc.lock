@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/ensjs": {
+      "signature": "f61689fcbd148852ec3c4c3f5cbcc630",
+      "pure": true,
+      "replaced": "^3.0.0-alpha.10"
+    },
+    "@ensdomains/thorin": {
+      "signature": "273896ab95aff3a45b1ca76710c25678",
+      "pure": true,
+      "replaced": "^0.6.10"
+    }
+  }
+}

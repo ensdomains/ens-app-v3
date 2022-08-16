@@ -233,21 +233,7 @@ export const TransactionStageModal = ({
   }, [addTransaction, actionName, txKey, signer, populatedTransaction])
 
   const FilledDisplayItems = useMemo(
-    () => (
-      <DisplayItems
-        displayItems={[
-          {
-            label: 'action',
-            value: t(`transaction.description.${actionName}`),
-          },
-          {
-            label: 'info',
-            value: t(`transaction.info.${actionName}`),
-          },
-          ...(displayItems || []),
-        ]}
-      />
-    ),
+    () => <DisplayItems displayItems={displayItems || []} />,
     [t, actionName, displayItems],
   )
   const MiddleContent = useMemo(() => {

@@ -9,6 +9,7 @@ const isBrowser = !!(
 
 const getStorageValue = <D>(key: string, defaultValue: D) => {
   // getting stored value
+  // return {}
   const saved = isBrowser && localStorage.getItem(key)
   try {
     return saved && saved !== 'undefined' ? JSON.parse(saved) : defaultValue

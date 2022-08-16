@@ -164,6 +164,11 @@ const Accordion = ({ data, name }: AccordionProps) => {
         name,
       })
     }
+    if (data[idx].name === 'fuses') {
+      showDataInput(`burn-fuses-${name}`, 'BurnFuses', {
+        name,
+      })
+    }
   }
 
   const disabled = data?.filter((x) => x.disabled) ?? []

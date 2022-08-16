@@ -154,13 +154,6 @@ export const EditResolver = ({
 
     const hasValidity = isValid()
 
-    // dispatchDialog({
-    //   name: 'addTrailingProps',
-    //   payload: {
-    //     disabled: !hasValidity,
-    //   },
-    // })
-
     if (hasValidity) {
       let newResolver
       if (resolverChoice === 'latest') {

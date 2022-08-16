@@ -55,7 +55,7 @@ export const TransactionDialogManager = ({
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
-          displayItems={transaction.displayItems(transactionItem.data)}
+          displayItems={transaction?.displayItems(transactionItem.data)}
           currentStep={selectedFlowItem.currentTransaction}
           stepCount={selectedFlowItem.transactions.length}
           transaction={transactionItem}

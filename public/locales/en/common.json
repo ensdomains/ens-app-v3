@@ -93,7 +93,8 @@
       "updateResolver": "Update Resolver",
       "setPrimaryName": "Set primary name",
       "updateEthAddress": "Update ETH address",
-      "testSendName": "Send Name"
+      "testSendName": "Send Name",
+      "burnFuses": "Burn permissions"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -102,7 +103,8 @@
       "updateResolver": "Change contract used to store records",
       "setPrimaryName": "Set the primary name for your address",
       "updateEthAddress": "Update ETH address to this address",
-      "testSendName": "Set the controller and registrant of the name"
+      "testSendName": "Set the controller and registrant of the name",
+      "burnFuses": "Burn the chosen permissions until name expiry"
     },
     "itemLabel": {
       "name": "Name",

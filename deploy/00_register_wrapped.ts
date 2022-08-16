@@ -4,6 +4,7 @@ import crypto from 'crypto'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+import { namehash } from 'ethers/lib/utils'
 
 const names = [
   {
@@ -31,7 +32,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const owner = allNamedAccts[namedOwner]
     const resolver = publicResolver.address
     const duration = 31536000
-    const wrapperExpiry = 0
+    const wrapperExpiry = 1860342907
 
     const commitment = await controller.makeCommitment(
       label,
@@ -69,8 +70,28 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         value: price,
       },
     )
-    console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
+    console.log(`Registering namename ${label}.eth (tx: ${registerTx.hash})...`)
     await registerTx.wait()
+
+    const nameWrapper = await ethers.getContract('NameWrapper')
+    const _nameWrapper = nameWrapper.connect(await ethers.getSigner(owner))
+
+    //Register subname
+    console.log('sanity2')
+    try {
+      const subnameTx = await _nameWrapper.setSubnodeOwner(
+        namehash(`${label}.eth`),
+        'sub',
+        owner,
+        1860342907,
+        0,
+      )
+      await subnameTx.wait()
+      console.log(`Registering subname sub.${label}.eth (tx: ${subnameTx.hash})...`)
+    } catch (e) {
+      console.log('sanity Error registering subname', e)
+    }
+    console.log('sanity3')
   }
 
   return true
