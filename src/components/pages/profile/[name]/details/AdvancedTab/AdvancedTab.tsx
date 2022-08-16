@@ -2,9 +2,11 @@ import { BigNumber, utils } from 'ethers'
 import { useRouter } from 'next/router'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
+import { useProfile } from '@app/hooks/useProfile'
 
 import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'
@@ -67,6 +69,9 @@ const MoreTab = () => {
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
   const accordionData = generateAccordionData(fuseData, t)
+  const { data: addressData } = useAccount()
+  // const { profile, loading } = useProfile(name, !name)
+  console.log('address: ', addressData)
 
   return (
     <MoreContainer>
