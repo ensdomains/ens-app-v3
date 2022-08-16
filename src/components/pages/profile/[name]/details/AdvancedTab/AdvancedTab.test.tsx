@@ -26,3 +26,8 @@ describe('More', () => {
     })
   })
 })
+
+describe('generateAccordionData', () => {
+  it.todo('should not allow fuse editing if user account does not match connected account')
+  it.todo('should not allow resolver editing if user account does not match connected account')
+})

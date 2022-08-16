@@ -35,9 +35,11 @@ const decode = async ({ contracts }, data, name) => {
             fuseObj,
             expiryDate,
             rawFuses: fuses,
+            owner,
         };
     }
-    catch {
+    catch (e) {
+        console.error('Error decoding fuses data: ', e);
         return;
     }
 };

@@ -53,8 +53,10 @@ const decode = async (
       fuseObj,
       expiryDate,
       rawFuses: fuses,
+      owner,
     }
-  } catch {
+  } catch (e) {
+    console.error('Error decoding fuses data: ', e)
     return
   }
 }

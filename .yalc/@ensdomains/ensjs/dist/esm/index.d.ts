@@ -241,6 +241,7 @@ export declare class ENS {
             };
             expiryDate: Date;
             rawFuses: ethers.BigNumber;
+            owner: any;
         } | undefined>;
     }>;
     getHistory: (name: string) => Promise<{

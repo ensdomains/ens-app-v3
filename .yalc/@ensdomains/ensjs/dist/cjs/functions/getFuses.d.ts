@@ -11,6 +11,7 @@ declare const _default: {
         };
         expiryDate: Date;
         rawFuses: BigNumber;
+        owner: any;
     } | undefined>;
 };
 export default _default;

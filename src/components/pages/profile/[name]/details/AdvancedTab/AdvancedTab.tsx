@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 import { RecordItem } from '@app/components/RecordItem'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { useProfile } from '@app/hooks/useProfile'
+import { useBasicName } from '@app/hooks/useBasicName'
 
 import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'
@@ -37,19 +38,24 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => [
+const generateAccordionData = (
+  fuseData: any,
+  t: TFunction,
+  addressData: any,
+  ownerData: any,
+): AccordionData[] => [
   {
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
     name: 'resolverDetails',
-    canEdit: true,
+    canEdit: ownerData?.owner === addressData.address,
   },
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
     disabled: !fuseData,
     name: 'fuses',
-    canEdit: true,
+    canEdit: ownerData?.owner === addressData.address,
   },
   {
     title: t('details.tabs.advanced.tokenId.label'),
@@ -68,10 +74,14 @@ const MoreTab = () => {
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
-  const accordionData = generateAccordionData(fuseData, t)
   const { data: addressData } = useAccount()
-  // const { profile, loading } = useProfile(name, !name)
+  const { profile, loading } = useProfile(name, !name)
+  const { ownerData } = useBasicName(name)
   console.log('address: ', addressData)
+  console.log('fuseData: ', fuseData)
+  const accordionData = generateAccordionData(fuseData, t, addressData, ownerData)
+  console.log('profile: ', profile)
+  console.log('ownerData: ', ownerData)
 
   return (
     <MoreContainer>
