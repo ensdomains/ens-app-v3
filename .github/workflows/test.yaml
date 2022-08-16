@@ -44,8 +44,8 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm enode" \
-          "pnpm hardhat deploy"'
+          "pnpm tenv start -ng" \
+          "pnpm wait-on ./.env.local"'
 
       - name: Build stateless
         run: pnpm build:glocal
