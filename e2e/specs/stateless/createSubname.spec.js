@@ -1,12 +1,8 @@
-import { revert } from '../../clean'
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Create Subname', () => {
   before(() => {
-    acceptMetamaskAccess(2)
-  })
-  after(async () => {
-    await revert()
+    acceptMetamaskAccess(2, true)
   })
   it('should not show add subname button when the connected wallet is the registrant but not the controller', () => {
     cy.visit('/profile/other-controller.eth/details')
