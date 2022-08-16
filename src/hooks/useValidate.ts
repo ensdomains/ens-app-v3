@@ -10,7 +10,7 @@ export const useValidate = (input: string, skip?: any) => {
   useEffect(() => {
     if (!skip) {
       try {
-        const normalisedName = validateName(input)
+        const normalisedName = validateName(decodeURIComponent(input))
         setNormalisedName(normalisedName)
 
         const inputType = parseInputType(normalisedName)
