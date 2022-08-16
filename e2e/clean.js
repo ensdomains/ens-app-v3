@@ -28,5 +28,4 @@ export const revert = async () => {
     ...Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),
     { method: 'evm_setAutomine', params: [true] },
   ])
-  cy.resetMetamaskAccount()
 }
