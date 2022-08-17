@@ -179,8 +179,8 @@ export default function Page() {
   const name = router.query.name as string
 
   const chainId = useChainId()
-  const { data: accountData, isLoading: accountLoading } = useAccount()
-  const address = accountData?.address
+  const { address, isConnecting, isReconnecting } = useAccount()
+  const accountLoading = isConnecting || isReconnecting
 
   const {
     normalisedName,

@@ -1,7 +1,7 @@
-import { mockFunction, render, waitFor, screen, fireEvent, userEvent } from '@app/test-utils'
-import { useProvider, useNetwork } from 'wagmi'
 import { useProfile } from '@app/hooks/useProfile'
+import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { useNetwork, useProvider } from 'wagmi'
 import { EditResolver } from './EditResolver'
 
 jest.mock('@app/hooks/useProfile')
@@ -23,7 +23,7 @@ describe('EditResolver', () => {
   it('should render', async () => {
     mockUseProfile.mockReturnValue({ profile: { resolverAddress: '' } })
     mockUseProvider.mockReturnValue({})
-    mockUseNetwork.mockReturnValue({ activeChain: { id: 1 } })
+    mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
     render(
       <EditResolver data={{ name: 'user1.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
     )
@@ -49,7 +49,7 @@ describe('EditResolver', () => {
         loading: false,
       })
       mockUseProvider.mockReturnValue({})
-      mockUseNetwork.mockReturnValue({ activeChain: { id: 1 } })
+      mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
     })
 
     afterEach(() => {
@@ -165,7 +165,7 @@ describe('EditResolver', () => {
         loading: false,
       })
       mockUseProvider.mockReturnValue({})
-      mockUseNetwork.mockReturnValue({ activeChain: { id: 1 } })
+      mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
     })
 
     it('should disable the latest resolver button', async () => {

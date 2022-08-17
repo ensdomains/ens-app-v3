@@ -1,7 +1,7 @@
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { mockFunction, renderHook } from '@app/test-utils'
 import { KnownResolveAddresses } from '@app/validators/validateResolver'
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { useProvider, useNetwork } from 'wagmi'
+import { useNetwork, useProvider } from 'wagmi'
 
 jest.mock('wagmi')
 
@@ -14,7 +14,7 @@ describe('useRegistrationStatus', () => {
   beforeEach(() => {
     mockUseProvider.mockReturnValue({})
     mockUseNetwork.mockReturnValue({
-      activeChain: {
+      chain: {
         id: 1,
       },
     })

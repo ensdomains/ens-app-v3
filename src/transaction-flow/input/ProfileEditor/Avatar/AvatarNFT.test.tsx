@@ -57,9 +57,7 @@ describe('<AvatarNFT />', () => {
     disconnect: jest.fn(),
   }))
   mockUseAccount.mockReturnValue({
-    data: {
-      address: '0x0000000000000000000000000000000000000001',
-    },
+    address: '0x0000000000000000000000000000000000000001',
   })
   it('should display all NFTs', async () => {
     global.fetch = jest.fn().mockResolvedValue({

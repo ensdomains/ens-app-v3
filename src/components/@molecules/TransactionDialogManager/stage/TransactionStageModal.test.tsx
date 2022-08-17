@@ -1,10 +1,10 @@
 import { useChainName } from '@app/hooks/useChainName'
 import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+import { GenericTransaction } from '@app/transaction-flow/types'
 import { isIOS } from '@app/utils/isIOS'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
 import { useAccount, useSigner } from 'wagmi'
-import { GenericTransaction } from '@app/transaction-flow/types'
 import { TransactionStageModal } from './TransactionStageModal'
 
 jest.mock('@app/hooks/useChainName')
@@ -84,7 +84,7 @@ const renderHelper = async ({
 
 describe('TransactionStageModal', () => {
   mockUseChainName.mockReturnValue('ethereum')
-  mockUseAccount.mockReturnValue({ data: { address: 'mock-address' } })
+  mockUseAccount.mockReturnValue({ address: 'mock-address' })
   mockUseSigner.mockReturnValue({
     data: {
       sendTransaction: mockSendTransaction,

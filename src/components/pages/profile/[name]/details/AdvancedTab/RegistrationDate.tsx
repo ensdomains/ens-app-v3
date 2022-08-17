@@ -55,7 +55,7 @@ export const RegistrationDate = () => {
   const { name } = router.query
   const { history = { registration: [] } } = useGetHistory(name as string)
   const provider = useProvider()
-  const { activeChain } = useNetwork()
+  const { chain } = useNetwork()
 
   const registration = history?.registration?.[0]
   const registrationBlock = registration?.blockNumber
@@ -87,7 +87,7 @@ export const RegistrationDate = () => {
       <ButtonContainer>
         <Button
           as="a"
-          href={`${getEtherScanLink(activeChain?.id)}tx/${transactionHash}`}
+          href={`${getEtherScanLink(chain?.id)}tx/${transactionHash}`}
           target="_blank"
           size="small"
         >

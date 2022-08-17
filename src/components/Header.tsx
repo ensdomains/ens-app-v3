@@ -1,4 +1,3 @@
-import { useConnected } from '@app/hooks/useConnected'
 import { routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq } from '@ensdomains/thorin'
@@ -8,6 +7,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
+import { useAccount } from 'wagmi'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import { HamburgerMenu } from './@atoms/HamburgerMenu'
@@ -99,7 +99,7 @@ const dropdownRoutes = routes.filter(
 export const Header = () => {
   const { space } = useTheme()
   const router = useRouter()
-  const connected = useConnected()
+  const { isConnected } = useAccount()
   const breakpoints = useBreakpoint()
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
@@ -116,7 +116,7 @@ export const Header = () => {
   })
 
   // eslint-disable-next-line no-nested-ternary
-  const statefulRoutes = connected
+  const statefulRoutes = isConnected
     ? dropdownRoutes
     : breakpoints.lg
     ? dropdownRoutes.slice(3)
@@ -163,7 +163,7 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {connected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
+        {isConnected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
@@ -172,12 +172,12 @@ export const Header = () => {
             </SearchWrapper>
           </>
         )}
-        {((connected && (breakpoints.lg || router.asPath === '/')) || !connected) && (
+        {((isConnected && (breakpoints.lg || router.asPath === '/')) || !isConnected) && (
           <div style={{ flexGrow: 1 }} />
         )}
         <RouteContainer ref={routeContainerRef} $state={breakpoints.lg ? 'entered' : state}>
           {/* eslint-disable-next-line no-nested-ternary */}
-          {connected
+          {isConnected
             ? routesNoSearch.map((route) => (
                 <RouteItem
                   key={route.name}
@@ -192,7 +192,7 @@ export const Header = () => {
                 .map((route) => <RouteItem key={route.name} route={route} asText />)
             : null}
         </RouteContainer>
-        {!connected && <HamburgerMenu dropdownItems={statefulRoutes} />}
+        {!isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
         {breakpoints.md && <HeaderConnect />}
       </NavContainer>
     </HeaderWrapper>

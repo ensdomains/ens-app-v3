@@ -6,12 +6,12 @@ import { RecordsTab } from '@app/components/pages/profile/[name]/details/Records
 import { SubnamesTab } from '@app/components/pages/profile/[name]/details/SubnamesTab'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import Page, { Details } from '@app/pages/profile/details'
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
-import Page, { Details } from '@app/pages/profile/details'
 
 // setting up jest mocks
 jest.mock('@app/components/NFTWithPlaceholder')
@@ -149,7 +149,7 @@ describe('Page', () => {
       error: null,
     }))
     mockUseAccount.mockImplementation(() => ({
-      data: { address: '0x123' },
+      address: '0x123',
       isLoggedIn: true,
       isLoading: false,
     }))

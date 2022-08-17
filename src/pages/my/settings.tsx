@@ -24,9 +24,9 @@ const spacing = '1fr'
 
 export default function Page() {
   const { t } = useTranslation('settings')
-  const { data: addressData, isLoading } = useAccount()
+  const { address, isConnecting, isReconnecting } = useAccount()
 
-  useProtectedRoute('/', isLoading ? true : addressData)
+  useProtectedRoute('/', isConnecting || isReconnecting ? true : address)
 
   return (
     <Content singleColumnContent title={t('title')} spacing={spacing}>

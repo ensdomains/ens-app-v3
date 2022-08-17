@@ -17,7 +17,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
+import { ReactElement, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useEnsName } from 'wagmi'
@@ -59,8 +59,8 @@ export default function Page() {
   const initial = useInitial()
   const chainId = useChainId()
 
-  const { data: accountData, isLoading: accountLoading } = useAccount()
-  const address = accountData?.address
+  const { address, isConnecting, isReconnecting } = useAccount()
+  const accountLoading = isConnecting || isReconnecting
 
   const { data: ensName, isLoading: primaryLoading } = useEnsName({ address })
 

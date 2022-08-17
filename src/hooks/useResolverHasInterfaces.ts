@@ -1,9 +1,9 @@
-import { useState } from 'react'
 import { ContractInterface } from '@app/validators/validateContract'
+import { useState } from 'react'
 import { useQuery } from 'react-query'
-import { useProvider, useNetwork } from 'wagmi'
-import validateResolver from '../validators/validateResolver'
+import { useNetwork, useProvider } from 'wagmi'
 import { errorToString } from '../utils/errorToString'
+import validateResolver from '../validators/validateResolver'
 
 type Options = {
   fallbackMsg?: string
@@ -19,10 +19,10 @@ export const useResolverHasInterfaces = (
     options?.fallbackMsg || 'Cannot determine if address supports resolver methods'
 
   const provider = useProvider()
-  const { activeChain } = useNetwork()
+  const { chain } = useNetwork()
   const [errors, setErrors] = useState<string[]>([])
 
-  const isEnabled = !!activeChain && !skip && !!resolverAddress
+  const isEnabled = !!chain && !skip && !!resolverAddress
 
   const {
     data: hasInterface,
@@ -30,10 +30,10 @@ export const useResolverHasInterfaces = (
     status,
     error,
   } = useQuery(
-    ['validateResolver', resolverAddress, interfaceNames.join(','), activeChain?.id],
+    ['validateResolver', resolverAddress, interfaceNames.join(','), chain?.id],
     async () => {
       const results = await validateResolver(interfaceNames, resolverAddress!, provider, {
-        networkId: activeChain!.id,
+        networkId: chain!.id,
       })
       if (results.length === 0) {
         setErrors([])
