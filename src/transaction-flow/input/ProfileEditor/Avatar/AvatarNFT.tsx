@@ -5,9 +5,8 @@ import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useInfiniteQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useAccount, useInfiniteQuery } from 'wagmi'
 
 type OwnedNFT = {
   contract: {

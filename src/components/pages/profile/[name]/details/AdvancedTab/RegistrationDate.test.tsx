@@ -5,7 +5,6 @@ import { useNetwork, useProvider } from 'wagmi'
 import { RegistrationDate } from './RegistrationDate'
 
 jest.mock('next/router')
-jest.mock('wagmi')
 jest.mock('@app/hooks/useGetHistory')
 
 const mockUseRouter = mockFunction(useRouter)

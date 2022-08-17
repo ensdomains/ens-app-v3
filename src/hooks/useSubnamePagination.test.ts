@@ -1,7 +1,7 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryClient } from '@tanstack/react-query'
 import { act } from '@testing-library/react-hooks'
-import { useQueryClient } from 'react-query'
 import { useSubnamePagination } from './useSubnamePagination'
 
 jest.mock('@app/utils/EnsProvider')
@@ -77,6 +77,6 @@ describe('useSubnamePagination', () => {
     const { unmount } = renderHook(() => useSubnamePagination('test.eth'))
     const { result } = renderHook(() => useQueryClient())
     unmount()
-    expect(result.current.getQueryCache().findAll({ active: true })).toStrictEqual([])
+    expect(result.current.getQueryCache().findAll(['getSubnames'])).toStrictEqual([])
   })
 })

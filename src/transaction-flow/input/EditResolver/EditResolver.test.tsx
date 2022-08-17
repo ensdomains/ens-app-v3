@@ -5,7 +5,6 @@ import { useNetwork, useProvider } from 'wagmi'
 import { EditResolver } from './EditResolver'
 
 jest.mock('@app/hooks/useProfile')
-jest.mock('wagmi')
 
 const mockUseProfile = mockFunction(useProfile)
 const mockUseProvider = mockFunction(useProvider)

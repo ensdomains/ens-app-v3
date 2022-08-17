@@ -1,6 +1,7 @@
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery } from 'wagmi'
 
 export type Subname = {
   id: string
@@ -59,7 +60,10 @@ export const useSubnamePagination = (name: string) => {
 
   useEffect(() => {
     return () => {
-      queryClient.removeQueries('getSubnames')
+      queryClient.removeQueries({
+        exact: false,
+        queryKey: ['getSubnames'],
+      })
     }
   }, [queryClient])
 

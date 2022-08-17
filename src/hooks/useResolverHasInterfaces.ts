@@ -1,7 +1,6 @@
 import { ContractInterface } from '@app/validators/validateContract'
 import { useState } from 'react'
-import { useQuery } from 'react-query'
-import { useNetwork, useProvider } from 'wagmi'
+import { useNetwork, useProvider, useQuery } from 'wagmi'
 import { errorToString } from '../utils/errorToString'
 import validateResolver from '../validators/validateResolver'
 

@@ -1,5 +1,5 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
 
 export const useProfile = (name: string, skip?: any) => {
   const { ready, getProfile } = useEns()

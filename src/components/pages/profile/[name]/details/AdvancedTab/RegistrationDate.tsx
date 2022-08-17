@@ -2,9 +2,8 @@ import { useGetHistory } from '@app/hooks/useGetHistory'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useNetwork, useProvider } from 'wagmi'
+import { useNetwork, useProvider, useQuery } from 'wagmi'
 
 function getEtherScanLink(networkId?: number | string) {
   switch (networkId) {

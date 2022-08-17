@@ -1,7 +1,7 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
 import { useBasicName } from './useBasicName'
 import { useProfile } from './useProfile'
 import { useRegistrationStatus } from './useRegistrationStatus'

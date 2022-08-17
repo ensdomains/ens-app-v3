@@ -1,7 +1,7 @@
 import { useEns } from '@app/utils/EnsProvider'
 import type { Name } from '@ensdomains/ensjs/dist/cjs/functions/getNames'
 import { useEffect, useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
 
 export type ReturnedName = Name & {
   isController?: boolean
