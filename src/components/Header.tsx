@@ -1,3 +1,4 @@
+import { useInitial } from '@app/hooks/useInitial'
 import { routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq } from '@ensdomains/thorin'
@@ -19,6 +20,9 @@ import { HeaderConnect } from './ConnectButton'
 const HeaderWrapper = styled.header(
   () => css`
     height: min-content;
+    ${mq.md.max(css`
+      display: none;
+    `)}
   `,
 )
 
@@ -99,6 +103,7 @@ const dropdownRoutes = routes.filter(
 export const Header = () => {
   const { space } = useTheme()
   const router = useRouter()
+  const isInitial = useInitial()
   const { isConnected } = useAccount()
   const breakpoints = useBreakpoint()
   const transactions = useRecentTransactions()
@@ -163,7 +168,7 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {isConnected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
+        {!isInitial && isConnected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
@@ -177,7 +182,7 @@ export const Header = () => {
         )}
         <RouteContainer ref={routeContainerRef} $state={breakpoints.lg ? 'entered' : state}>
           {/* eslint-disable-next-line no-nested-ternary */}
-          {isConnected
+          {!isInitial && isConnected
             ? routesNoSearch.map((route) => (
                 <RouteItem
                   key={route.name}
