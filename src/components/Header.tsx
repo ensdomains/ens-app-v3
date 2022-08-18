@@ -5,7 +5,7 @@ import { mq } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useRef } from 'react'
+import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -127,6 +127,25 @@ export const Header = () => {
     ? dropdownRoutes.slice(3)
     : dropdownRoutes
 
+  let RouteItems: ReactNode
+
+  if (!isInitial && isConnected) {
+    RouteItems = routesNoSearch.map((route) => (
+      <RouteItem
+        key={route.name}
+        route={route}
+        asText={breakpoints.lg}
+        hasNotification={route.name === 'settings' && pendingTransactions.length > 0}
+      />
+    ))
+  } else if (breakpoints.lg) {
+    RouteItems = dropdownRoutes
+      .slice(0, 3)
+      .map((route) => <RouteItem key={route.name} route={route} asText />)
+  } else {
+    RouteItems = null
+  }
+
   const toggleRoutesShowing = useCallback(
     (evt: FocusEvent) => {
       if (evt.type === 'focusout') {
@@ -177,28 +196,14 @@ export const Header = () => {
             </SearchWrapper>
           </>
         )}
-        {((isConnected && (breakpoints.lg || router.asPath === '/')) || !isConnected) && (
-          <div style={{ flexGrow: 1 }} />
-        )}
+        {(isInitial ||
+          (isConnected && (breakpoints.lg || router.asPath === '/')) ||
+          !isConnected) && <div style={{ flexGrow: 1 }} />}
         <RouteContainer ref={routeContainerRef} $state={breakpoints.lg ? 'entered' : state}>
-          {/* eslint-disable-next-line no-nested-ternary */}
-          {!isInitial && isConnected
-            ? routesNoSearch.map((route) => (
-                <RouteItem
-                  key={route.name}
-                  route={route}
-                  asText={breakpoints.lg}
-                  hasNotification={route.name === 'settings' && pendingTransactions.length > 0}
-                />
-              ))
-            : breakpoints.lg
-            ? dropdownRoutes
-                .slice(0, 3)
-                .map((route) => <RouteItem key={route.name} route={route} asText />)
-            : null}
+          {RouteItems}
         </RouteContainer>
-        {!isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
-        {breakpoints.md && <HeaderConnect />}
+        {!isInitial && !isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
+        <HeaderConnect />
       </NavContainer>
     </HeaderWrapper>
   )

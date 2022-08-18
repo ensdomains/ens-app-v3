@@ -41,7 +41,7 @@ export const ConnectButton = ({ isTabBar }: { isTabBar?: boolean }) => {
   return (
     <StyledButtonWrapper $isTabBar={isTabBar}>
       <Button
-        data-testid="connect-button"
+        data-testid={isTabBar ? 'tabbar-connect-button' : 'connect-button'}
         onClick={() => openConnectModal?.()}
         variant="primary"
         size={breakpoints.md ? 'medium' : 'extraSmall'}
