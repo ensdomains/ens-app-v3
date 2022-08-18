@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
@@ -34,7 +35,7 @@ const DetailsWrapper = styled.div(
   `,
 )
 
-const SelfButtons = styled.div(
+const SelfButtons = styled(CacheableComponent)(
   ({ theme }) => css`
     display: flex;
     flex-direction: row;
@@ -76,6 +77,8 @@ export default function Page() {
     normalisedName,
     dnsOwner,
     valid,
+    basicIsCachedData,
+    profileIsCachedData,
   } = useNameDetails(name)
 
   const selfAbilities = useSelfAbilities(address, ownerData)
@@ -189,6 +192,7 @@ export default function Page() {
               expiryDate={expiryDate}
               showButton={!selfAbilities.canEdit}
               dnsOwner={dnsOwner}
+              isCached={basicIsCachedData}
             />
           ),
           trailing: (
@@ -204,7 +208,7 @@ export default function Page() {
                 actions={profileActions}
               />
               {selfAbilities.canEdit && (
-                <SelfButtons>
+                <SelfButtons $isCached={profileIsCachedData}>
                   <Button shadowless variant="transparent" size="small" onClick={handleEditProfile}>
                     {t('editProfile')}
                   </Button>
@@ -226,6 +230,7 @@ export default function Page() {
                 </SelfButtons>
               )}
               <ProfileDetails
+                isCached={profileIsCachedData}
                 addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
                   key: item.coin,
                   value: item.addr,

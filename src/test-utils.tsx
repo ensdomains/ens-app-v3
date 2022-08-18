@@ -7,14 +7,19 @@ import userEvent from '@testing-library/user-event'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
 
-jest.mock('wagmi', () => ({
-  ...jest.requireActual('@tanstack/react-query'),
-  useAccount: jest.fn(),
-  useNetwork: jest.fn(),
-  useProvider: jest.fn(),
-  useSigner: jest.fn(),
-  useSignTypedData: jest.fn(),
-}))
+jest.mock('wagmi', () => {
+  const { useQuery, useInfiniteQuery } = jest.requireActual('wagmi')
+
+  return {
+    useQuery,
+    useInfiniteQuery,
+    useAccount: jest.fn(),
+    useNetwork: jest.fn(),
+    useProvider: jest.fn(),
+    useSigner: jest.fn(),
+    useSignTypedData: jest.fn(),
+  }
+})
 
 const queryClient = new QueryClient({
   defaultOptions: {

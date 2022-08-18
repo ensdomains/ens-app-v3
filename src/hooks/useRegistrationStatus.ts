@@ -17,7 +17,13 @@ export type RegistrationStatus =
 export const useRegistrationStatus = (name: string) => {
   const { ready, getExpiry, getPrice, getOwner, batch } = useEns()
 
-  const { data, isLoading, status } = useQuery(
+  const {
+    data,
+    isLoading,
+    status,
+    isFetched,
+    internal: { isFetchedAfterMount },
+  } = useQuery(
     ['registrationStatus', name],
     async (): Promise<RegistrationStatus> => {
       const labels = name.split('.')
@@ -67,5 +73,10 @@ export const useRegistrationStatus = (name: string) => {
     },
   )
 
-  return { data, isLoading, status }
+  return {
+    data,
+    isLoading,
+    status,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+  }
 }

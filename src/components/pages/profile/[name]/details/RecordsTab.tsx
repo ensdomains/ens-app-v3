@@ -1,3 +1,4 @@
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
@@ -44,6 +45,7 @@ const TabWrapper = styled(OriginalTabWrapper)(
       flex-gap: ${theme.space['6']};
     `)}
   `,
+  cacheableComponentStyles,
 )
 
 const RecordSection = styled.div(
@@ -250,6 +252,7 @@ export const RecordsTab = ({
   addresses,
   contentHash,
   canEdit,
+  isCached,
 }: {
   name: string
   network: number
@@ -257,6 +260,7 @@ export const RecordsTab = ({
   addresses?: AddressRecord[]
   contentHash?: ContentHash
   canEdit?: boolean
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('profile')
 
@@ -285,7 +289,7 @@ export const RecordsTab = ({
   const handleShowEditor = () =>
     showDataInput(`advanced-editor-${name}`, `AdvancedEditor`, { name })
   return (
-    <TabWrapper data-testid="records-tab">
+    <TabWrapper $isCached={isCached} data-testid="records-tab">
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>

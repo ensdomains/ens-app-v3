@@ -1,3 +1,4 @@
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { useEns } from '@app/utils/EnsProvider'
@@ -8,7 +9,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
 
-const Container = styled.div(
+const Container = styled(CacheableComponent)(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -95,7 +96,7 @@ const ItemContainer = styled.div(
   `,
 )
 
-const NameDetailContainer = styled.div(
+const NameDetailContainer = styled(CacheableComponent)(
   ({ theme }) => css`
     width: 100%;
     display: flex;
@@ -133,6 +134,7 @@ export const NameDetailSnippet = ({
   network,
   showButton,
   dnsOwner,
+  isCached,
 }: {
   name: string
   expiryDate?: Date | null
@@ -143,12 +145,13 @@ export const NameDetailSnippet = ({
   network: number
   showButton?: boolean
   dnsOwner?: string
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
   const router = useRouter()
 
   return (
-    <NameDetailContainer>
+    <NameDetailContainer $isCached={isCached}>
       {expiryDate && (
         <ItemContainer>
           <LeftText weight="bold">{t('name.expires')}</LeftText>
@@ -205,6 +208,7 @@ export const NameSnippet = ({
   ownerData,
   showButton,
   dnsOwner,
+  isCached,
 }: {
   name: string
   network: number
@@ -215,6 +219,7 @@ export const NameSnippet = ({
   }
   showButton?: boolean
   dnsOwner?: string
+  isCached: boolean
 }) => {
   return (
     <Container>
@@ -224,6 +229,7 @@ export const NameSnippet = ({
         style={{ width: '270px', height: '270px' }}
       />
       <NameDetailSnippet
+        isCached={isCached}
         name={name}
         expiryDate={expiryDate}
         ownerData={ownerData}

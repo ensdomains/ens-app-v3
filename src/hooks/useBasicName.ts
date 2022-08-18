@@ -10,7 +10,13 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const normalisedName = normalised ? name! : _normalisedName
 
-  const { data: batchData, isLoading: batchLoading } = useQuery(
+  const {
+    data: batchData,
+    isLoading: batchLoading,
+    isFetched,
+    internal: { isFetchedAfterMount },
+    status,
+  } = useQuery(
     ['batch', 'getOwner', 'getExpiry', name],
     () =>
       labelCount === 2 && normalisedName.endsWith('.eth')
@@ -40,5 +46,6 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     isLoading,
     truncatedName,
     isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }
