@@ -1,17 +1,19 @@
 import dynamic from 'next/dynamic'
 import TransactionLoader from '../TransactionLoader'
-import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor'
-import type { Props as CreateSubnameProps } from './CreateSubname'
-import type { Props as EditResolverProps } from './EditResolver/EditResolver'
-import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor'
-import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName'
+import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
+import type { Props as CreateSubnameProps } from './CreateSubname-flow'
+import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
+import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
+import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
 
 const dynamicHelper = <P,>(name: string) =>
   dynamic<P>(
     () =>
       import(
+        /* webpackMode: "lazy" */
+        /* webpackPrefetch: true */
         /* webpackExclude: /\.test.tsx$/ */
-        `./${name}`
+        `./${name}-flow`
       ),
     { loading: () => <TransactionLoader /> },
   )

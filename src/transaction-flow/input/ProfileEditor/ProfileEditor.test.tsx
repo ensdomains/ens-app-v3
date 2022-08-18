@@ -12,7 +12,7 @@ import {
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
-import ProfileEditor from './ProfileEditor'
+import ProfileEditor from './ProfileEditor-flow'
 
 const mockProfileData = {
   profile: {
