@@ -75,7 +75,7 @@ const breakpoints = {
 }
 
 const { provider, chains } = configureChains(
-  [chain.mainnet, chain.ropsten],
+  [chain.mainnet, chain.localhost],
   [
     ...(process.env.NEXT_PUBLIC_PROVIDER
       ? [

@@ -81,8 +81,6 @@ const TabBarProfile = ({ address, isActive }: { address: string; isActive: boole
   const { avatar } = useAvatar(name, chainId)
   const zorb = useZorb(address, 'address')
 
-  console.log(avatar)
-
   return (
     <Link href={profileRoute.href} passHref>
       <a>

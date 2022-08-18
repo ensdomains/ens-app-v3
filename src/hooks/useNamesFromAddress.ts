@@ -62,6 +62,10 @@ export const useNamesFromAddress = ({
         isController: existingEntry.isController || isController,
         isRegistrant: existingEntry.isRegistrant || isRegistrant,
       }
+      const newItem = newMap[curr.name]
+      if (newItem.expiryDate) newItem.expiryDate = new Date(newItem.expiryDate)
+      if (newItem.createdAt) newItem.createdAt = new Date(newItem.createdAt)
+      if (newItem.registrationDate) newItem.registrationDate = new Date(newItem.registrationDate)
       return newMap
     }, {} as { [key: string]: ReturnedName })
     return Object.values(nameMap)

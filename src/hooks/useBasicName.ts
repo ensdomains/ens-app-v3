@@ -25,7 +25,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
 
-  const expiryDate = expiryData?.expiry
+  const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
