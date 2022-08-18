@@ -1,6 +1,6 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
-import crypto from 'crypto'
+
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -8,7 +8,7 @@ import { namehash } from 'ethers/lib/utils'
 
 const names = [
   {
-    label: 'resolver-migrated-not-updated',
+    label: 'migrated-resolver-to-be-updated',
     namedOwner: 'owner',
     namedAddr: 'owner',
     records: {
@@ -29,19 +29,18 @@ const names = [
   },
 ]
 
-const randomSecret = () => {
-  return `0x${crypto.randomBytes(32).toString('hex')}`
-}
-
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = await getNamedAccounts()
 
+  const registry = await ethers.getContract('ENSRegistry')
   const controller = await ethers.getContract('LegacyETHRegistrarController')
   const publicResolver = await ethers.getContract('LegacyPublicResolver')
 
+  await network.provider.send('anvil_setBlockTimestampInterval', [60])
+
   for (const { label, namedOwner, namedAddr, records, migrate } of names) {
-    const secret = randomSecret()
+    const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const registrant = allNamedAccts[namedOwner]
     const resolver = publicResolver.address
     const addr = allNamedAccts[namedAddr]
@@ -60,7 +59,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`)
     await commitTx.wait()
 
-    await network.provider.send('evm_increaseTime', [60])
     await network.provider.send('evm_mine')
 
     const price = await controller.rentPrice(label, duration)
@@ -112,16 +110,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       }
 
       if (migrate) {
-        const latestPublicResolver = await ethers.getContract('PublicResolver')
-        const _latestPublicResolver = latestPublicResolver.connect(
-          await ethers.getSigner(registrant),
-        )
+        const latestResolver = await ethers.getContract('PublicResolver')
+        const _latestResolver = latestResolver.connect(await ethers.getSigner(registrant))
 
-        console.log(`Setting records for ${label}.eth...`)
+        console.log(`Migrating records for ${label}.eth...`)
         if (records.text) {
           console.log('TEXT')
           for (const { key, value } of records.text) {
-            const setTextTx = await _latestPublicResolver.setText(hash, key, value)
+            const setTextTx = await _latestResolver.setText(hash, key, value)
             console.log(` - ${key} ${value} (tx: ${setTextTx.hash})...`)
             await setTextTx.wait()
           }
@@ -129,7 +125,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         if (records.addr) {
           console.log('ADDR')
           for (const { key, value } of records.addr) {
-            const setAddrTx = await _latestPublicResolver['setAddr(bytes32,uint256,bytes)'](
+            const setAddrTx = await _latestResolver['setAddr(bytes32,uint256,bytes)'](
               hash,
               key,
               value,
@@ -140,16 +136,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         }
         if (records.contenthash) {
           console.log('CONTENTHASH')
-          const setContenthashTx = await _latestPublicResolver.setContenthash(
-            hash,
-            records.contenthash,
-          )
+          const setContenthashTx = await _latestResolver.setContenthash(hash, records.contenthash)
           console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
           await setContenthashTx.wait()
         }
       }
     }
   }
+
+  await network.provider.send('anvil_setBlockTimestampInterval', [1])
 
   return true
 }
