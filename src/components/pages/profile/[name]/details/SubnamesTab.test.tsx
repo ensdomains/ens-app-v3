@@ -54,6 +54,8 @@ describe('SubnamesTab', () => {
   const baseMockData = {
     name: 'nick.eth',
     network: 1,
+    canEdit: false,
+    isWrapped: false,
   }
 
   it('should show message if no subnames are found', () => {
@@ -86,5 +88,9 @@ describe('SubnamesTab', () => {
     subnamesMockData.subnames.forEach((subname) =>
       expect(screen.getByText(subname.truncatedName)).toBeVisible(),
     )
+  })
+  it('should show create subname button if canEdit is true', () => {
+    render(<SubnamesTab {...baseMockData} canEdit />)
+    expect(screen.getByTestId('add-subname-action')).toBeVisible()
   })
 })

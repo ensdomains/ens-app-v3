@@ -1,10 +1,11 @@
+import createSubname from './createSubname'
 import migrateProfile from './migrateProfile'
 import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
 import updateEthAddress from './updateEthAddress'
+import updateProfile from './updateProfile'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
-import updateProfile from './updateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
 
 export const transactions = {
@@ -16,6 +17,7 @@ export const transactions = {
   setPrimaryName,
   updateEthAddress,
   migrateProfileWithSync,
+  createSubname,
 }
 
 export type Transaction = typeof transactions

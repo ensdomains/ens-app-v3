@@ -21,8 +21,6 @@ const mockFusesResponse = {
     parentCannotControl: true,
     canDoEverything: false,
   },
-  vulnerability: 'Safe',
-  vulnerableNode: null,
   rawFuses: BigNumber.from('0x40'),
 }
 
@@ -55,14 +53,14 @@ describe('Fuses', () => {
     )
   })
 
-  it('should show vulerabilities', () => {
-    mockUseRouter.mockReturnValue({
-      query: {
-        name: 'nick.eth',
-      },
-    })
-    mockUseGetFuseData.mockReturnValue({ fuseData: mockFusesResponse })
-    render(<Fuses />)
-    expect(screen.getByText('Safe')).toBeVisible()
-  })
+  // it('should show vulerabilities', () => {
+  //   mockUseRouter.mockReturnValue({
+  //     query: {
+  //       name: 'nick.eth',
+  //     },
+  //   })
+  //   mockUseGetFuseData.mockReturnValue({ fuseData: mockFusesResponse })
+  //   render(<Fuses />)
+  //   expect(screen.getByText('Safe')).toBeVisible()
+  // })
 })

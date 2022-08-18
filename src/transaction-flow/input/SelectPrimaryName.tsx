@@ -37,11 +37,7 @@ const StyledScrollBox = styled(ScrollBoxWithSpinner)(
 
 const querySize = 50
 
-export const SelectPrimaryName = ({
-  data: { address, existingPrimary },
-  dispatch,
-  onDismiss,
-}: Props) => {
+const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('settings')
 
   const chainId = useChainId()
@@ -156,3 +152,5 @@ export const SelectPrimaryName = ({
     </>
   )
 }
+
+export default SelectPrimaryName

@@ -44,8 +44,8 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm enode" \
-          "pnpm hardhat deploy"'
+          "pnpm tenv start -ng" \
+          "pnpm wait-on ./.env.local"'
 
       - name: Build stateless
         run: pnpm build:glocal
@@ -106,7 +106,7 @@ jobs:
           docker pull ghcr.io/ensdomains/ens-metadata-service:latest
 
       - name: Run tests
-        run: pnpm e2e:ci
+        run: pnpm e2e:ci -nb
 
       - uses: actions/upload-artifact@v2
         if: failure()

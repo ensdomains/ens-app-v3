@@ -1,6 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
 /* eslint-disable no-await-in-loop */
-import crypto from 'crypto'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -15,10 +14,6 @@ const names = [
   },
 ]
 
-const randomSecret = () => {
-  return `0x${crypto.randomBytes(32).toString('hex')}`
-}
-
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts, network } = hre
   const allNamedAccts = await getNamedAccounts()
@@ -27,11 +22,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const publicResolver = await ethers.getContract('PublicResolver')
 
   for (const { label, namedOwner, data, reverseRecord, fuses } of names) {
-    const secret = randomSecret()
+    const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const owner = allNamedAccts[namedOwner]
     const resolver = publicResolver.address
     const duration = 31536000
-    const wrapperExpiry = 0
+    // 1659467455 is the approximate time of the transaction, this is for keeping block hashes the same
+    const wrapperExpiry = 1659467455 + duration
+
+    await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
     const commitment = await controller.makeCommitment(
       label,
@@ -50,7 +48,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     console.log(`Commiting commitment for ${label}.eth (tx: ${commitTx.hash})...`)
     await commitTx.wait()
 
-    await network.provider.send('evm_increaseTime', [60])
     await network.provider.send('evm_mine')
 
     const [price] = await controller.rentPrice(label, duration)
@@ -72,6 +69,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
     await registerTx.wait()
   }
+
+  await network.provider.send('anvil_setBlockTimestampInterval', [1])
 
   return true
 }

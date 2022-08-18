@@ -2,25 +2,30 @@
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { Button } from '@ensdomains/thorin'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type { JsonRpcProvider } from '@ethersproject/providers'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { useSendTransaction } from 'wagmi'
+import { useProvider, useSendTransaction } from 'wagmi'
 import { SectionContainer } from './Section'
 
-const rpcSend = (method: string, params: any[]) =>
+const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
   fetch('http://localhost:8545', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      method,
-      params,
-      id: 1,
-    }),
+    body: JSON.stringify(
+      items.map(({ method, params }, i) => ({
+        jsonrpc: '2.0',
+        method,
+        params,
+        id: i + 1,
+      })),
+    ),
   })
 
 export const DevSection = () => {
+  const provider: JsonRpcProvider = useProvider()
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
   const { sendTransactionAsync } = useSendTransaction()
@@ -60,11 +65,21 @@ export const DevSection = () => {
     })
   }
 
-  const startAutoMine = async () => rpcSend('miner_start', [])
+  const startAutoMine = async () =>
+    provider.send('evm_setAutomine', [true]).then(() => provider.send('evm_mine', []))
 
-  const stopAutoMine = async () => rpcSend('miner_stop', [])
+  const stopAutoMine = async () => provider.send('evm_setAutomine', [false])
 
-  const revert = async () => rpcSend('evm_revert', [1]).then(() => rpcSend('evm_snapshot', []))
+  const revert = async () => {
+    const currBlock = await provider.getBlockNumber()
+    await provider.send('evm_revert', [1])
+    await provider.send('evm_snapshot', [])
+    const revertBlock = await provider.getBlockNumber()
+    const blocksToMine = currBlock - revertBlock
+    await rpcSendBatch(
+      Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),
+    )
+  }
 
   return (
     <SectionContainer title="Developer">
