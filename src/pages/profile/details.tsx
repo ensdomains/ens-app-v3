@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
@@ -40,7 +41,7 @@ const DetailsContainer = styled.div(
   `,
 )
 
-const OwnerButtons = styled.div(
+const OwnerButtons = styled(CacheableComponent)(
   ({ theme }) => css`
     width: 100%;
     display: flex;
@@ -100,6 +101,7 @@ export const Details = ({
   chainId,
   selfAbilities,
   dnsOwner,
+  isCached,
 }: {
   expiryDate: Date | null | undefined
   ownerData: Awaited<ReturnType<ENS['getOwner']>>
@@ -108,6 +110,7 @@ export const Details = ({
   chainId: number
   selfAbilities: ReturnType<typeof useSelfAbilities>
   dnsOwner: string
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('profile')
 
@@ -121,13 +124,14 @@ export const Details = ({
         />
       ) : (
         <NameSnippetMobile
+          isCached={isCached}
           expiryDate={expiryDate}
           name={normalisedName}
           network={chainId}
           canSend={selfAbilities.canSend}
         />
       )}
-      <OwnerButtons>
+      <OwnerButtons $isCached={isCached}>
         {ownerData?.owner && (
           <OwnerButton
             address={ownerData.owner}
@@ -167,7 +171,13 @@ export const Details = ({
           />
         )}
       </OwnerButtons>
-      {breakpoints.md && <DetailSnippet canSend={selfAbilities.canSend} expiryDate={expiryDate} />}
+      {breakpoints.md && (
+        <DetailSnippet
+          isCached={isCached}
+          canSend={selfAbilities.canSend}
+          expiryDate={expiryDate}
+        />
+      )}
     </DetailsContainer>
   )
 }
@@ -190,6 +200,8 @@ export default function Page() {
     dnsOwner,
     isLoading: detailsLoading,
     isWrapped,
+    basicIsCachedData,
+    profileIsCachedData,
   } = useNameDetails(name)
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
@@ -214,6 +226,7 @@ export default function Page() {
               chainId,
               selfAbilities,
               dnsOwner,
+              isCached: basicIsCachedData,
             }}
           />
         ),
@@ -227,6 +240,7 @@ export default function Page() {
                 addresses={(profile?.records?.coinTypes as any) || []}
                 contentHash={profile?.records?.contentHash}
                 canEdit={selfAbilities.canEdit}
+                isCached={profileIsCachedData}
               />
             </>
           ),

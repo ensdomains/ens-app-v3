@@ -1,3 +1,4 @@
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useGetHistory } from '@app/hooks/useGetHistory'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
@@ -24,7 +25,7 @@ function getEtherScanLink(networkId?: number | string) {
   }
 }
 
-const RegistrationDateContainer = styled.div(
+const RegistrationDateContainer = styled(CacheableComponent)(
   ({ theme }) => css`
     display: flex;
     align-items: center;
@@ -52,7 +53,7 @@ export const RegistrationDate = () => {
   const { t } = useTranslation('common')
   const router = useRouter()
   const { name } = router.query
-  const { history = { registration: [] } } = useGetHistory(name as string)
+  const { history = { registration: [] }, isCachedData } = useGetHistory(name as string)
   const provider = useProvider()
   const { chain } = useNetwork()
 
@@ -81,7 +82,7 @@ export const RegistrationDate = () => {
   )
 
   return (
-    <RegistrationDateContainer>
+    <RegistrationDateContainer $isCached={isCachedData}>
       <Typography>{registrationDate}</Typography>
       <ButtonContainer>
         <Button

@@ -2,13 +2,14 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
 import { Card } from '@app/components//Card'
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 import { FavouriteButton } from './FavouriteButton'
 
 const Container = styled(Card)(
@@ -18,6 +19,7 @@ const Container = styled(Card)(
     align-items: stretch;
     gap: ${theme.space['3']};
   `,
+  cacheableComponentStyles,
 )
 
 const ImageWrapper = styled(NFTWithPlaceholder)(
@@ -100,17 +102,19 @@ export const NameSnippetMobile = ({
   network,
   expiryDate,
   canSend,
+  isCached,
 }: {
   name: string
   network: number
   expiryDate?: Date | null
   canSend?: boolean
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
 
   return (
-    <Container>
+    <Container $isCached={isCached}>
       <ImageWrapper name={name} network={network} />
       <RightColumn>
         <ExpiryAndFavouriteRow>
