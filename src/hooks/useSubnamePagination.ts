@@ -1,7 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { useQueryClient } from '@tanstack/react-query'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
-import { useQuery } from 'wagmi'
 
 export type Subname = {
   id: string
@@ -59,8 +58,19 @@ export const useSubnamePagination = (name: string) => {
   )
 
   useEffect(() => {
+    if (queryClient) {
+      queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
     return () => {
       queryClient.removeQueries({
+        exact: false,
+        queryKey: ['getSubnames'],
+      })
+      queryClient.invalidateQueries({
         exact: false,
         queryKey: ['getSubnames'],
       })
