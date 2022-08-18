@@ -3,6 +3,7 @@ import { Button, Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { useTranslation } from 'react-i18next'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -62,41 +63,58 @@ const DismissButtonWrapper = styled.div(
     right: 0;
   `,
 )
+type SettingsDict = {
+  [key: string]: {
+    handler?: () => void
+    href?: string
+    as?: 'a'
+    dismissable: boolean
+  }
+}
 
 type Props = {
   name: string
   resumable?: boolean
-  hasCreatedProfile?: boolean
+  hasOldRegistry?: boolean
+  hasMigratedProfile?: boolean
+  hasNoResolver?: boolean
   latestResolver: string
   oldResolver: string
 } & TransactionDialogPassthrough
 
 const ResolverWarningOverlay = ({
   name,
+  hasOldRegistry = false,
   resumable = false,
-  hasCreatedProfile = false,
+  hasMigratedProfile = false,
+  hasNoResolver = false,
   latestResolver,
   oldResolver,
   dispatch,
   onDismiss,
 }: Props) => {
-  const handleUpgrade = () => {
-    if (resumable) return dispatch({ name: 'resumeFlow', key: `edit-profile-flow-${name}` })
-    if (hasCreatedProfile) {
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          makeTransactionItem('updateResolver', {
-            name,
-            contract: 'registry',
-            resolver: latestResolver,
-            oldResolver,
-          }),
-        ],
-      })
-      dispatch({ name: 'setFlowStage', payload: 'transaction' })
-      return
-    }
+  const { t } = useTranslation('transactionFlow')
+
+  const handleResumeTransaction = () => {
+    dispatch({ name: 'resumeFlow', key: `edit-profile-flow-${name}` })
+  }
+
+  const handleUpdateResolver = () => {
+    dispatch({
+      name: 'setTransactions',
+      payload: [
+        makeTransactionItem('updateResolver', {
+          name,
+          contract: 'registry',
+          resolver: latestResolver,
+          oldResolver,
+        }),
+      ],
+    })
+    dispatch({ name: 'setFlowStage', payload: 'transaction' })
+  }
+
+  const handleTransferProfile = () => {
     dispatch({
       name: 'showDataInput',
       payload: {
@@ -109,30 +127,56 @@ const ResolverWarningOverlay = ({
     })
   }
 
-  const title = (() => {
-    if (resumable) return 'Resume profile migration'
-    if (hasCreatedProfile) return 'Transfer profile'
-    return 'Your resolver is out of date'
-  })()
+  /* eslint-disable no-nested-ternary */
+  const settingsKey = hasOldRegistry
+    ? 'oldRegistry'
+    : resumable
+    ? 'resumable'
+    : hasMigratedProfile
+    ? 'migrate'
+    : hasNoResolver
+    ? 'noResolver'
+    : 'default'
 
-  const subtitle = (() => {
-    if (resumable) return 'You have previously started a transaction. Click resume to continue.'
-    if (hasCreatedProfile)
-      return 'You have migrated a profile to the latest resolver. Click upgrade to update to the latest resolver.'
-    return 'Profile editing is disabled until you upgrade your resolver.'
-  })()
+  const settingsDict: SettingsDict = {
+    resumable: {
+      handler: handleResumeTransaction,
+      dismissable: true,
+    },
+    migrate: {
+      handler: handleUpdateResolver,
+      dismissable: true,
+    },
+    noResolver: {
+      handler: handleUpdateResolver,
+      dismissable: false,
+    },
+    oldRegistry: {
+      dismissable: false,
+      as: 'a',
+      href: `https://app.ens.domains/name/${name}`,
+    },
+    default: {
+      handler: handleTransferProfile,
+      dismissable: true,
+    },
+  }
+  const { dismissable, handler, as, href } = settingsDict[settingsKey]
+  const title = t(`input.profileEditor.warningOverlay.${settingsKey}.title`)
+  const subtitle = t(`input.profileEditor.warningOverlay.${settingsKey}.subtitle`)
+  const action = t(`input.profileEditor.warningOverlay.${settingsKey}.action`)
 
-  const btnTitle = (() => {
-    if (resumable) return 'Resume'
-    if (hasCreatedProfile) return 'Upgrade'
-    return 'Upgrade'
-  })()
+  const handleUpgrade = () => {
+    handler?.()
+  }
 
   return (
-    <Container>
-      <DismissButtonWrapper>
-        <DismissDialogButton onClick={onDismiss} />
-      </DismissButtonWrapper>
+    <Container data-testid="warning-overlay">
+      {dismissable && (
+        <DismissButtonWrapper data-testid="warning-overlay-dismiss">
+          <DismissDialogButton onClick={onDismiss} />
+        </DismissButtonWrapper>
+      )}
       <Content>
         <Message>
           <Title variant="extraLarge">{title}</Title>
@@ -140,8 +184,8 @@ const ResolverWarningOverlay = ({
             {subtitle}
           </Subtitle>
         </Message>
-        <Button onClick={handleUpgrade} shadowless>
-          {btnTitle}
+        <Button as={as} href={href} target="_blank" onClick={handleUpgrade} shadowless>
+          {action}
         </Button>
       </Content>
     </Container>

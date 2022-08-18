@@ -1,14 +1,14 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 import { useProfile } from './useProfile'
-import { usePublicResolverAddress } from './usePublicResolverAddress'
 import { useResolverStatus } from './useResolverStatus'
 import { useEns } from '../utils/EnsProvider'
+import { useContractAddress } from './useContractAddress'
 
 jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/hooks/usePublicResolverAddress')
+jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/useProfile')
 
-const mockUsePublicResolver = mockFunction(usePublicResolverAddress)
+const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseEns = mockFunction(useEns)
 
@@ -42,12 +42,7 @@ const defaultProfile = {
 }
 
 const setup = (overrides?: any) => {
-  mockUsePublicResolver.mockReturnValue(
-    overrides?.usePublicResolver || {
-      loading: false,
-      address: 'latest_resolver' ,
-    },
-  )
+  mockUseContractAddress.mockReturnValue(overrides?.useContractAddress || 'latest_resolver')
 
   mockUseProfile.mockReturnValue(
     overrides?.useProfile || {
@@ -76,6 +71,27 @@ describe('useResolverStatus', () => {
     jest.resetAllMocks()
   })
 
+  it('should return hasResolver is false if profile does not have resolver', async () => {
+    setup({
+      useProfile: {
+        profile: { resolverAddress: undefined },
+        loading: false,
+      },
+    })
+
+    const { result, waitForNextUpdate } = renderHook(() => useResolverStatus('test.eth'))
+    await waitForNextUpdate()
+    expect(result.current).toEqual({
+      status: {
+        hasResolver: false,
+        hasLatestResolver: false,
+        hasMigratedProfile: false,
+        isMigratedProfileEqual: false,
+      },
+      loading: false,
+    })
+  })
+
   it('should return hasLatestResolver is true if profile has the latest resolver', async () => {
     setup({
       useProfile: {
@@ -84,12 +100,14 @@ describe('useResolverStatus', () => {
       },
     })
 
-    const { result } = renderHook(() => useResolverStatus('test.eth'))
+    const { result, waitForNextUpdate } = renderHook(() => useResolverStatus('test.eth'))
+    await waitForNextUpdate()
     expect(result.current).toEqual({
       status: {
+        hasResolver: true,
         hasLatestResolver: true,
         hasMigratedProfile: true,
-        hasCreatedProfile: true,
+        isMigratedProfileEqual: true,
       },
       loading: false,
     })
@@ -104,9 +122,10 @@ describe('useResolverStatus', () => {
       await waitForNextUpdate()
       expect(result.current).toEqual({
         status: {
+          hasResolver: true,
           hasLatestResolver: false,
           hasMigratedProfile: false,
-          hasCreatedProfile: false,
+          isMigratedProfileEqual: false,
         },
         loading: false,
       })
@@ -120,9 +139,10 @@ describe('useResolverStatus', () => {
       await waitForNextUpdate()
       expect(result.current).toEqual({
         status: {
+          hasResolver: true,
           hasLatestResolver: false,
           hasMigratedProfile: false,
-          hasCreatedProfile: false,
+          isMigratedProfileEqual: false,
         },
         loading: false,
       })
@@ -136,9 +156,10 @@ describe('useResolverStatus', () => {
       await waitForNextUpdate()
       expect(result.current).toEqual({
         status: {
+          hasResolver: true,
           hasLatestResolver: false,
-          hasMigratedProfile: false,
-          hasCreatedProfile: true,
+          hasMigratedProfile: true,
+          isMigratedProfileEqual: false,
         },
         loading: false,
       })
@@ -152,9 +173,10 @@ describe('useResolverStatus', () => {
       await waitForNextUpdate()
       expect(result.current).toEqual({
         status: {
+          hasResolver: true,
           hasLatestResolver: false,
           hasMigratedProfile: true,
-          hasCreatedProfile: true,
+          isMigratedProfileEqual: true,
         },
         loading: false,
       })
@@ -166,15 +188,16 @@ describe('useResolverStatus', () => {
       setup({
         getProfile: defaultProfile,
       })
-      const { result } = renderHook(() =>
+      const { result, waitForNextUpdate } = renderHook(() =>
         useResolverStatus('test.eth', false, { skipCompare: true }),
       )
-      // await waitForNextUpdate()
+      await waitForNextUpdate()
       expect(result.current).toEqual({
         status: {
+          hasResolver: true,
           hasLatestResolver: false,
           hasMigratedProfile: false,
-          hasCreatedProfile: false,
+          isMigratedProfileEqual: false,
         },
         loading: false,
       })
@@ -191,9 +214,10 @@ describe('useResolverStatus', () => {
     await waitForNextUpdate()
     expect(result.current).toEqual({
       status: {
+        hasResolver: true,
         hasLatestResolver: false,
         hasMigratedProfile: true,
-        hasCreatedProfile: true,
+        isMigratedProfileEqual: true,
       },
       loading: false,
     })

@@ -11,7 +11,7 @@ import {
 } from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { usePublicResolverAddress } from '@app/hooks/usePublicResolverAddress'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import ProfileEditor from './ProfileEditor'
 
@@ -110,12 +110,12 @@ jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useProfile')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
-jest.mock('@app/hooks/usePublicResolverAddress')
+jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/useResolverStatus')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
-const mockUsePublicResolverAddress = mockFunction(usePublicResolverAddress)
+const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
 
 const mockSetCurrentTransaction = jest.fn()
@@ -176,15 +176,13 @@ describe('ProfileEditor', () => {
     setupIntersectionObserverMock()
     window.scroll = jest.fn()
 
-    mockUsePublicResolverAddress.mockReturnValue({
-      address: '0x0',
-      loading: false,
-    })
+    mockUseContractAddress.mockReturnValue('0x0')
 
     mockUseResolverStatus.mockReturnValue({
       status: {
+        hasResolver: true,
         hasLatestResolver: true,
-        hasCreatedProfile: true,
+        isMigratedProfileEqual: true,
         hasMigratedProfile: true,
       },
       loading: false,
@@ -306,15 +304,13 @@ describe('ProfileEditor with old resolver', () => {
       mockProfileData as unknown as { profile: Profile; loading: boolean },
     )
 
-    mockUsePublicResolverAddress.mockReturnValue({
-      address: '0x123',
-      loading: false,
-    })
+    mockUseContractAddress.mockReturnValue('0x123')
 
     mockUseResolverStatus.mockReturnValue({
       status: {
+        hasResolver: true,
         hasLatestResolver: false,
-        hasCreatedProfile: true,
+        isMigratedProfileEqual: true,
         hasMigratedProfile: true,
       },
       loading: false,

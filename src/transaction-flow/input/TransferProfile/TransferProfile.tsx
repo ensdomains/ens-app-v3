@@ -2,12 +2,12 @@ import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/Dism
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import styled, { css } from 'styled-components'
 import { Button, Dialog } from '@ensdomains/thorin'
-import { usePublicResolverAddress } from '@app/hooks/usePublicResolverAddress'
 import { useProfile } from '@app/hooks/useProfile'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { useTranslation } from 'react-i18next'
 import { TransactionDialogPassthrough } from '../../types'
 import { makeTransactionItem } from '../../transaction/index'
+import { useContractAddress } from '../../../hooks/useContractAddress'
 
 const DismissButtonWrapper = styled.div(
   () => css`
@@ -25,13 +25,13 @@ export type Props = { data: Data } & TransactionDialogPassthrough
 
 const TransferProfile = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
-  const { address: resolverAddress, loading: resolverLoading } = usePublicResolverAddress()
+  const resolverAddress = useContractAddress('PublicResolver')
 
   const { profile, loading } = useProfile(data.name)
   const oldResolverAddress = profile?.resolverAddress
 
   const handleReset = () => {
-    if (!oldResolverAddress || !resolverAddress) return
+    if (!resolverAddress) return
     dispatch({
       name: 'setTransactions',
       payload: [
@@ -51,7 +51,7 @@ const TransferProfile = ({ data, dispatch, onDismiss }: Props) => {
   }
 
   const handleTransfer = () => {
-    if (!resolverAddress || !oldResolverAddress) return
+    if (!resolverAddress) return
     dispatch({
       name: 'startFlow',
       key: `edit-profile-flow-${data.name}`,
@@ -71,17 +71,17 @@ const TransferProfile = ({ data, dispatch, onDismiss }: Props) => {
   }
   const footerLeading = (
     <Button variant="secondary" shadowless tone="grey" onClick={handleReset}>
-      Reset
+      {t('action.reset', { ns: 'common' })}
     </Button>
   )
 
   const footerTrailing = (
     <Button onClick={handleTransfer} shadowless>
-      Transfer
+      {t('action.transfer', { ns: 'common' })}
     </Button>
   )
 
-  if (resolverLoading || loading) return <TransactionLoader />
+  if (loading) return <TransactionLoader />
   return (
     <>
       <DismissButtonWrapper>

@@ -5,15 +5,19 @@ type Data = {
   name: string
   contract: 'registry' | 'nameWrapper'
   resolver: string
-  oldResolver: string
+  oldResolver?: string
 }
 
 const displayItems = ({ resolver, oldResolver }: Data): TransactionDisplayItem[] => [
-  {
-    label: 'currentResolver',
-    value: oldResolver,
-    type: 'address',
-  },
+  ...(oldResolver
+    ? [
+        {
+          label: 'currentResolver',
+          value: oldResolver,
+          type: 'address',
+        } as TransactionDisplayItem,
+      ]
+    : []),
   {
     label: 'newResolver',
     value: resolver,

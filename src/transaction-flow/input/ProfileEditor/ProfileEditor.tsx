@@ -22,6 +22,8 @@ import { validateCryptoAddress } from '@app/utils/validate'
 import { useTranslation } from 'react-i18next'
 import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
+import { useResolverStatus } from '@app/hooks/useResolverStatus'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import accountsOptions from './accountsOptions'
 import addressOptions from './addressOptions'
 import AvatarButton from './Avatar/AvatarButton'
@@ -29,8 +31,6 @@ import { AvatarViewManager } from './Avatar/AvatarViewManager'
 import otherOptions from './otherOptions'
 import websiteOptions from './websiteOptions'
 import ResolverWarningOverlay from './ResolverWarningOverlay'
-import { useResolverStatus } from '../../../hooks/useResolverStatus'
-import { usePublicResolverAddress } from '../../../hooks/usePublicResolverAddress'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -258,7 +258,7 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
 
   const { name = '', resumable = false } = data
 
@@ -354,8 +354,8 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
           autocomplete: true,
           options: availableAccountOptions,
           messages: {
-            addRecord: t('profileEditor.tabs.accounts.addAccount'),
-            noOptions: t('profileEditor.tabs.accounts.noOptions'),
+            addRecord: t('input.profileEditor.tabs.accounts.addAccount'),
+            noOptions: t('input.profileEditor.tabs.accounts.noOptions'),
           },
           onAddRecord: (key: string) => {
             addAccountKey(key)
@@ -370,8 +370,8 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
           autocomplete: true,
           options: availableAddressOptions,
           messages: {
-            addRecord: t('profileEditor.tabs.address.addAddress'),
-            noOptions: t('profileEditor.tabs.address.noOptions'),
+            addRecord: t('input.profileEditor.tabs.address.addAddress'),
+            noOptions: t('input.profileEditor.tabs.address.noOptions'),
           },
           onAddRecord: (key: string) => {
             addAddressKey(key)
@@ -385,7 +385,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
         return {
           options: websiteOptions,
           messages: {
-            selectOption: t('profileEditor.tabs.contentHash.addContentHash'),
+            selectOption: t('input.profileEditor.tabs.contentHash.addContentHash'),
           },
           onAddRecord: (key: string) => {
             const option = websiteOptions.find(({ value }) => value === key)
@@ -400,8 +400,8 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
         return {
           createable: true,
           messages: {
-            addRecord: t('profileEditor.tabs.other.addRecord'),
-            createRecord: t('profileEditor.tabs.other.createRecord'),
+            addRecord: t('input.profileEditor.tabs.other.addRecord'),
+            createRecord: t('input.profileEditor.tabs.other.createRecord'),
           },
           onAddRecord: (record: string) => {
             addOtherKey(record)
@@ -418,7 +418,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
 
   const { profile, loading: profileLoading } = useProfile(name, name !== '')
 
-  const { address: resolverAddress, loading: resolverLoading } = usePublicResolverAddress()
+  const resolverAddress = useContractAddress('PublicResolver')
 
   const { status, loading: statusLoading } = useResolverStatus(name, profileLoading, {
     skipCompare: resumable,
@@ -453,7 +453,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
     async (records: RecordOptions) => {
       if (!profile?.resolverAddress || !resolverAddress) return
 
-      if (status.hasLatestResolver) {
+      if (status?.hasLatestResolver) {
         dispatch({
           name: 'setTransactions',
           payload: [
@@ -537,12 +537,12 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
 
   const [showOverlay, setShowOverlay] = useState(false)
   useEffect(() => {
-    if ((!statusLoading && !status.hasLatestResolver) || resumable) {
+    if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
       setShowOverlay(true)
     }
   }, [status, statusLoading, resumable])
 
-  if (profileLoading || statusLoading || resolverLoading) return <TransactionLoader />
+  if (profileLoading || statusLoading) return <TransactionLoader />
   return (
     <>
       {' '}
@@ -584,7 +584,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                 $isDirty={getFieldState('general').isDirty}
                 onClick={handleTabClick('general')}
               >
-                {t('profileEditor.tabs.general.label')}
+                {t('input.profileEditor.tabs.general.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -594,7 +594,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                 onClick={handleTabClick('accounts')}
                 data-testid="accounts-tab"
               >
-                {t('profileEditor.tabs.accounts.label')}
+                {t('input.profileEditor.tabs.accounts.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -604,7 +604,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                 onClick={handleTabClick('address')}
                 data-testid="address-tab"
               >
-                {t('profileEditor.tabs.address.label')}
+                {t('input.profileEditor.tabs.address.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -613,7 +613,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                 $isDirty={getFieldState('website').isDirty}
                 onClick={handleTabClick('website')}
               >
-                {t('profileEditor.tabs.contentHash.label')}
+                {t('input.profileEditor.tabs.contentHash.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -623,7 +623,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                 onClick={handleTabClick('other')}
                 data-testid="other-tab"
               >
-                {t('profileEditor.tabs.other.label')}
+                {t('input.profileEditor.tabs.other.label')}
               </TabButton>
             </TabButtonsContainer>
             <TabContentsContainer>
@@ -635,8 +635,8 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                         <>
                           <RecordInput
                             deletable={false}
-                            label={t('profileEditor.tabs.general.name.label')}
-                            placeholder={t('profileEditor.tabs.general.name.placeholder')}
+                            label={t('input.profileEditor.tabs.general.name.label')}
+                            placeholder={t('input.profileEditor.tabs.general.name.placeholder')}
                             showDot
                             validated={getFieldState('general.name', formState).isDirty}
                             autoComplete="off"
@@ -644,18 +644,18 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                           />
                           <RecordInput
                             deletable={false}
-                            label={t('profileEditor.tabs.general.url.label')}
+                            label={t('input.profileEditor.tabs.general.url.label')}
                             autoComplete="off"
-                            placeholder={t('profileEditor.tabs.general.url.placeholder')}
+                            placeholder={t('input.profileEditor.tabs.general.url.placeholder')}
                             showDot
                             validated={getFieldState('general.url', formState).isDirty}
                             {...register('general.url')}
                           />
                           <RecordInput
                             deletable={false}
-                            label={t('profileEditor.tabs.general.location.label')}
+                            label={t('input.profileEditor.tabs.general.location.label')}
                             autoComplete="off"
-                            placeholder={t('profileEditor.tabs.general.location.placeholder')}
+                            placeholder={t('input.profileEditor.tabs.general.location.placeholder')}
                             showDot
                             validated={getFieldState('general.location', formState).isDirty}
                             {...register('general.location')}
@@ -663,11 +663,13 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                           <Textarea
                             label={
                               <LabelWrapper>
-                                {t('profileEditor.tabs.general.description.label')}
+                                {t('input.profileEditor.tabs.general.description.label')}
                               </LabelWrapper>
                             }
                             autoComplete="off"
-                            placeholder={t('profileEditor.tabs.general.description.placeholder')}
+                            placeholder={t(
+                              'input.profileEditor.tabs.general.description.placeholder',
+                            )}
                             showDot
                             validated={getFieldState('general.description', formState).isDirty}
                             {...register('general.description')}
@@ -876,8 +878,10 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
           {showOverlay && (
             <ResolverWarningOverlay
               name={name}
+              hasOldRegistry={!profile?.isMigrated}
               resumable={resumable}
-              hasCreatedProfile={status.hasCreatedProfile}
+              hasNoResolver={!status?.hasResolver}
+              hasMigratedProfile={status?.hasMigratedProfile}
               latestResolver={resolverAddress!}
               oldResolver={profile?.resolverAddress!}
               dispatch={dispatch}

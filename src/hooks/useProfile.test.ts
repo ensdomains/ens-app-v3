@@ -13,7 +13,7 @@ describe('useProfile', () => {
     ready: true,
   })
 
-  it('should call setProfile with the name', async () => {
+  it('should call getProfile with the name', async () => {
     const { waitForNextUpdate } = renderHook(() => useProfile('0x123'))
     await waitForNextUpdate()
     expect(mockGetProfile).toHaveBeenCalledWith('0x123')

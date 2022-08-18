@@ -1,9 +1,9 @@
-import { usePublicResolverAddress } from '@app/hooks/usePublicResolverAddress'
-import { useState, useEffect } from 'react'
 import { useEns } from '@app/utils/EnsProvider'
 import { Profile } from '@app/types'
 import { contentHashToString } from '@app/utils/contenthash'
+import { useQuery } from 'react-query'
 import { useProfile } from './useProfile'
+import { useContractAddress } from './useContractAddress'
 
 const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
   const areTextsEqual = Object.values(
@@ -45,92 +45,74 @@ type Options = {
 }
 
 type Result = {
-  status: {
+  status?: {
+    hasResolver: boolean
     hasLatestResolver: boolean
     hasMigratedProfile: boolean
-    hasCreatedProfile: boolean
+    isMigratedProfileEqual: boolean
   }
   loading: boolean
 }
 
 export const useResolverStatus = (name: string, skip?: boolean, options?: Options): Result => {
-  // Profile resolver address check
-  const { loading: resolverLoading, address: latestResolverAddress } = usePublicResolverAddress()
+  const { ready, getProfile } = useEns()
 
-  const skipProfile = !name || skip
-  const { profile, loading: profileLoading } = useProfile(name, skipProfile)
+  // Profile resolver address check
+  const latestResolverAddress = useContractAddress('PublicResolver')
+
+  const { profile, loading: profileLoading } = useProfile(name, !name || skip)
   const profileResolverAddress = profile?.resolverAddress
 
-  const profileHasLatestResolverLoading = resolverLoading || profileLoading || !!skip
-  const profileHasLatestResolver =
-    !profileHasLatestResolverLoading && profileResolverAddress === latestResolverAddress
+  const { data: status, isLoading: loading } = useQuery(
+    ['resolverStatus', name, profileResolverAddress],
+    async () => {
+      if (!profileResolverAddress)
+        return {
+          hasResolver: false,
+          hasLatestResolver: false,
+          hasMigratedProfile: false,
+          isMigratedProfileEqual: false,
+        }
+      if (profileResolverAddress === latestResolverAddress)
+        return {
+          hasResolver: true,
+          hasLatestResolver: true,
+          hasMigratedProfile: true,
+          isMigratedProfileEqual: true,
+        }
+      if (options?.skipCompare)
+        return {
+          hasResolver: true,
+          hasLatestResolver: false,
+          hasMigratedProfile: false,
+          isMigratedProfileEqual: false,
+        }
 
-  // Compare to latest resolver
-  const { getProfile, ready } = useEns()
+      const resolverProfile = await getProfile(name, { resolverAddress: latestResolverAddress })
+      console.log('resolverProfile', resolverProfile)
 
-  const shouldCompareResolvers =
-    ready && !profileHasLatestResolverLoading && !profileHasLatestResolver
+      if (!resolverProfile)
+        return {
+          hasResolver: true,
+          hasLatestResolver: false,
+          hasMigratedProfile: false,
+          isMigratedProfileEqual: false,
+        }
 
-  const [compareResults, setCompareResults] = useState<Result['status']>({
-    hasLatestResolver: false,
-    hasMigratedProfile: false,
-    hasCreatedProfile: false,
-  })
-
-  const [compareLoading, setCompareLoading] = useState(true)
-
-  const compareResolvers = async () => {
-    if (options?.skipCompare) {
-      setCompareResults({
+      return {
+        hasResolver: true,
         hasLatestResolver: false,
-        hasMigratedProfile: false,
-        hasCreatedProfile: false,
-      })
-      setCompareLoading(false)
-      return
-    }
-
-    const resolverProfile = await getProfile(name, { resolverAddress: latestResolverAddress })
-    if (!resolverProfile) {
-      setCompareResults({
-        hasLatestResolver: false,
-        hasMigratedProfile: false,
-        hasCreatedProfile: false,
-      })
-      setCompareLoading(false)
-      return
-    }
-
-    const recordsEqual = areRecordsEqual(profile?.records, resolverProfile?.records)
-
-    setCompareResults({
-      hasLatestResolver: false,
-      hasMigratedProfile: recordsEqual,
-      hasCreatedProfile: true,
-    })
-    setCompareLoading(false)
-  }
-
-  useEffect(() => {
-    if (shouldCompareResolvers) {
-      compareResolvers()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldCompareResolvers])
-
-  // Set results
-  const status: Result['status'] = profileHasLatestResolver
-    ? { hasLatestResolver: true, hasMigratedProfile: true, hasCreatedProfile: true }
-    : compareResults
-
-  const loading = (() => {
-    if (profileHasLatestResolverLoading) return true
-    if (!profileHasLatestResolverLoading && profileHasLatestResolver) return false
-    return compareLoading
-  })()
+        hasMigratedProfile: true,
+        isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverProfile?.records),
+      }
+    },
+    {
+      enabled: !profileLoading && ready,
+    },
+  )
 
   return {
     status,
-    loading,
+    loading: profileLoading || loading,
   }
 }
