@@ -1,6 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
 import { useValidate } from './useValidate'
 
 export const useBasicName = (name?: string | null, normalised?: boolean) => {
@@ -25,7 +25,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const expiryData = batchData?.[1] as Awaited<ReturnType<typeof getExpiry>>
 
-  const expiryDate = expiryData?.expiry
+  const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 

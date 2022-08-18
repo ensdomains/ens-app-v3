@@ -5,8 +5,8 @@ import { shortenAddress } from '@app/utils/utils'
 import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
+import { useQuery } from 'wagmi'
 
 const Container = styled.div(
   ({ theme }) => css`

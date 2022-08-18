@@ -1,12 +1,36 @@
+/* eslint-disable import/no-extraneous-dependencies */
 import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { render, RenderOptions } from '@testing-library/react'
 import { renderHook, RenderHookOptions } from '@testing-library/react-hooks'
-import { default as userEvent } from '@testing-library/user-event'
+import userEvent from '@testing-library/user-event'
 import React, { FC, ReactElement } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { ThemeProvider } from 'styled-components'
 
-const queryClient = new QueryClient()
+jest.mock('wagmi', () => ({
+  ...jest.requireActual('@tanstack/react-query'),
+  useAccount: jest.fn(),
+  useNetwork: jest.fn(),
+  useProvider: jest.fn(),
+  useSigner: jest.fn(),
+  useSignTypedData: jest.fn(),
+}))
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: Infinity,
+      retry: false,
+    },
+  },
+  logger: {
+    log: console.log,
+    warn: console.warn,
+    error: () => {},
+  },
+})
+
+beforeEach(() => queryClient.clear())
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (

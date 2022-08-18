@@ -1,7 +1,5 @@
 import { Footer } from '@app/components/Footer'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 import { Navigation } from './Navigation'
 
@@ -36,18 +34,21 @@ const ContentWrapper = styled.div(
 const BottomPlaceholder = styled.div(
   ({ theme }) => css`
     height: ${theme.space['16']};
+    ${mq.md.min(
+      css`
+        display: none;
+      `,
+    )}
   `,
 )
 
 export const Basic = ({ children }: { children: React.ReactNode }) => {
-  const { isReady } = useRouter()
-  const breakpoints = useBreakpoint()
-
   return (
     <Container className="min-safe">
       <Navigation />
       <ContentWrapper>{children}</ContentWrapper>
-      {isReady && !breakpoints.md ? <BottomPlaceholder /> : <Footer />}
+      <BottomPlaceholder />
+      <Footer />
     </Container>
   )
 }

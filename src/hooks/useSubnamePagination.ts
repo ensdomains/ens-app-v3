@@ -1,6 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
-import { useQuery, useQueryClient } from 'react-query'
 
 export type Subname = {
   id: string
@@ -58,8 +58,22 @@ export const useSubnamePagination = (name: string) => {
   )
 
   useEffect(() => {
+    if (queryClient) {
+      queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
+  useEffect(() => {
     return () => {
-      queryClient.removeQueries('getSubnames')
+      queryClient.removeQueries({
+        exact: false,
+        queryKey: ['getSubnames'],
+      })
+      queryClient.invalidateQueries({
+        exact: false,
+        queryKey: ['getSubnames'],
+      })
     }
   }, [queryClient])
 

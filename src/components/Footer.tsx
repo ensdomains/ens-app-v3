@@ -14,12 +14,13 @@ import { SocialIcon } from './SocialIcon'
 
 const Container = styled.footer(
   ({ theme }) => css`
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     margin-top: ${theme.space['2.5']};
     ${mq.md.min(css`
+      display: flex;
       flex-direction: row;
     `)}
   `,

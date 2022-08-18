@@ -1,13 +1,13 @@
 import { useProfile } from '@app/hooks/useProfile'
 import {
+  cleanup,
+  fireEvent,
   mockFunction,
   render,
   screen,
+  userEvent,
   waitFor,
   within,
-  userEvent,
-  cleanup,
-  fireEvent,
 } from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -330,7 +330,6 @@ describe('ProfileEditor with old resolver', () => {
     fireEvent.click(submitButton)
 
     await waitFor(() => {
-      console.log(mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.coinTypes)
       expect(mockDispatch.mock.calls[0][0].name).toBe('startFlow')
       expect(
         mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.coinTypes[0],

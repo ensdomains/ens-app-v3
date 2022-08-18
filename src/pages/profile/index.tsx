@@ -5,6 +5,7 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
@@ -17,10 +18,10 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
+import { ReactElement, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useEnsName } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -59,10 +60,10 @@ export default function Page() {
   const initial = useInitial()
   const chainId = useChainId()
 
-  const { data: accountData, isLoading: accountLoading } = useAccount()
-  const address = accountData?.address
+  const { address, isConnecting, isReconnecting } = useAccount()
+  const accountLoading = isConnecting || isReconnecting
 
-  const { data: ensName, isLoading: primaryLoading } = useEnsName({ address })
+  const { name: ensName, loading: primaryLoading } = usePrimary(address as string, !address)
 
   const name = isSelf && ensName ? ensName : _name
 

@@ -1,9 +1,9 @@
-diff --git a/dist/chunk-S7EOD33A.js b/dist/chunk-S7EOD33A.js
-index 9dc793378a2d5ff3233f131a4e68a6f9a677e822..baa66bca403ae548045623a1f24157e9b050f548 100644
---- a/dist/chunk-S7EOD33A.js
-+++ b/dist/chunk-S7EOD33A.js
-@@ -3694,11 +3694,13 @@ export {
-   useAddress,
+diff --git a/dist/chunk-FBXPG3SN.js b/dist/chunk-FBXPG3SN.js
+index 8df7789139fc0f31b6b863d7590b278e2b50435b..ad275cff4cd46786aa0dc8a6c038222c5821de4e 100644
+--- a/dist/chunk-FBXPG3SN.js
++++ b/dist/chunk-FBXPG3SN.js
+@@ -4007,11 +4007,13 @@ export {
+   isMobile,
    useChainId,
    useTransactionStore,
 +  useRecentTransactions,
@@ -15,14 +15,14 @@ index 9dc793378a2d5ff3233f131a4e68a6f9a677e822..baa66bca403ae548045623a1f24157e9
 +  useClearRecentTransactions,
    DesktopOptions,
    MobileOptions,
-   ConnectButton
+   useAccountModal,
 diff --git a/dist/index.d.ts b/dist/index.d.ts
-index 3ac88fac1f5d7907f5c9896f56986d91d5971c4b..847618034559d368d9c8acff69c5dbb1fb7718b8 100644
+index ae0251b96118a437de2100fddd06b41c8908d0f3..f4ec066e3335ffa89dddfb34ea26132a5a4fc5d8 100644
 --- a/dist/index.d.ts
 +++ b/dist/index.d.ts
-@@ -4,6 +4,9 @@ export { getDefaultWallets } from './wallets/getDefaultWallets';
- export { getWalletConnectConnector } from './wallets/getWalletConnectConnector';
+@@ -5,6 +5,9 @@ export { getWalletConnectConnector } from './wallets/getWalletConnectConnector';
  export { connectorsForWallets } from './wallets/connectorsForWallets';
+ export { useAccountModal, useChainModal, useConnectModal, } from './components/RainbowKitProvider/ModalContext';
  export { useAddRecentTransaction } from './transactions/useAddRecentTransaction';
 +export { useClearRecentTransactions } from './transactions/useClearRecentTransactions';
 +export { useRecentTransactions } from './transactions/useRecentTransactions';
@@ -31,24 +31,25 @@ index 3ac88fac1f5d7907f5c9896f56986d91d5971c4b..847618034559d368d9c8acff69c5dbb1
  export type { Chain } from './components/RainbowKitProvider/RainbowKitChainContext';
  export type { Theme } from './components/RainbowKitProvider/RainbowKitProvider';
 diff --git a/dist/index.js b/dist/index.js
-index 70e35f87d052b107a7b48d7a410139cd1eac6402..b11edccd77eb5df2ceb3966feb8cd6e05c853638 100644
+index c2174ef3b40d352f55dd00cc0e656ffc7a75f0cc..fcc349bcab4f25ed885b32c5d17f6e4b98607164 100644
 --- a/dist/index.js
 +++ b/dist/index.js
-@@ -18,6 +18,8 @@ import {
-   isMobile,
-   useAddress,
+@@ -20,6 +20,8 @@ import {
    useChainId,
+   useChainModal,
+   useConnectModal,
 +  useClearRecentTransactions,
 +  useRecentTransactions,
    useTransactionStore
- } from "./chunk-S7EOD33A.js";
+ } from "./chunk-FBXPG3SN.js";
  import {
-@@ -611,5 +613,8 @@ export {
-   lightTheme,
+@@ -625,6 +627,9 @@ export {
    midnightTheme,
+   useAccountModal,
    useAddRecentTransaction,
 +  useClearRecentTransactions,
 +  useRecentTransactions,
 +  useTransactionStore,
+   useChainModal,
+   useConnectModal,
    wallet
- };

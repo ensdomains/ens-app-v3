@@ -5,9 +5,8 @@ import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useInfiniteQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useAccount, useInfiniteQuery } from 'wagmi'
 
 type OwnedNFT = {
   contract: {
@@ -145,16 +144,18 @@ export const AvatarNFT = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { data: addressData } = useAccount()
+  const { address: _address } = useAccount()
+  const address = _address!
+
   const {
     data: NFTPages,
     fetchNextPage,
     isLoading,
   } = useInfiniteQuery(
-    [addressData?.address!, 'NFTs'],
+    [address, 'NFTs'],
     async ({ pageParam }: { pageParam?: string }) => {
       const urlParams = new URLSearchParams()
-      urlParams.append('owner', addressData!.address!)
+      urlParams.append('owner', address)
       urlParams.append('filters[]', 'SPAM')
       if (pageParam) {
         urlParams.append('pageKey', pageParam)
