@@ -119,13 +119,14 @@ export const TransactionSection = () => {
       <TransactionSectionContainer $transactionLength={transactions.length}>
         {transactions.length > 0 ? (
           <>
-            {transactions.slice(0, viewAmt - 1).map((transaction) => {
+            {transactions.slice(0, viewAmt - 1).map((transaction, i) => {
               const { action, key } = JSON.parse(transaction.description)
               const resumable = key && getResumable(key)
               return (
                 <TransactionContainer
                   data-testid={`transaction-${transaction.status}`}
-                  key={transaction.hash}
+                  // eslint-disable-next-line react/no-array-index-key
+                  key={`${transaction.hash}-${i}`}
                 >
                   {transaction.status === 'pending' && (
                     <Spinner data-testid="pending-spinner" color="accent" />

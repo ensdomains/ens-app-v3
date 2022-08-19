@@ -25,7 +25,7 @@ specifiers:
   '@ensdomains/ens-validation': ^0.1.0
   '@ensdomains/ensjs': 3.0.0-alpha.12
   '@ensdomains/eth-ens-namehash': ^2.0.15
-  '@ensdomains/thorin': ^0.6.10
+  '@ensdomains/thorin': ^0.6.11
   '@ethersproject/providers': ^5.6.8
   '@next/bundle-analyzer': ^12.0.10
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -127,9 +127,9 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.17
   '@ensdomains/ens-contracts': 0.0.12_hardhat@2.9.3
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.12
+  '@ensdomains/ensjs': 3.0.0-alpha.12_ethers@5.6.9
   '@ensdomains/eth-ens-namehash': 2.0.15
-  '@ensdomains/thorin': 0.6.10_yfgnbxojpjyzegtmtl2rcejwea
+  '@ensdomains/thorin': 0.6.11_yfgnbxojpjyzegtmtl2rcejwea
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_kbzsuvt6g54soocujhbfmb2q3u
   '@sentry/nextjs': 7.2.0_next@12.1.6+react@17.0.2
   '@svgr/webpack': 6.2.1
@@ -1589,7 +1589,7 @@ packages:
   /@chainlink/contracts/0.0.10:
     resolution: {integrity: sha512-ok+ucSQ+3mrR+zjbi6zIrdd5M9XymcqVcnXGVyqBVRYZp97jS2/rt/glP320JmHxmi4pacgDOg0Ux11xIr1S8Q==}
     optionalDependencies:
-      '@truffle/contract': 4.5.21
+      '@truffle/contract': 4.5.22
       ethers: 4.0.49
     transitivePeerDependencies:
       - bufferutil
@@ -2002,8 +2002,10 @@ packages:
     dev: true
     optional: true
 
-  /@ensdomains/ensjs/3.0.0-alpha.12:
+  /@ensdomains/ensjs/3.0.0-alpha.12_ethers@5.6.9:
     resolution: {integrity: sha512-H3M/mJla2ihYM9fQmQWsD+arVPARM71NuXncEAlJIEI4x3yOdfckyHoVmQQgJryVRpM7EgVSM0ULloJibRPLVg==}
+    peerDependencies:
+      ethers: '*'
     dependencies:
       '@ensdomains/address-encoder': 0.2.17
       '@ensdomains/content-hash': 2.5.7
@@ -2014,9 +2016,7 @@ packages:
       idna-uts46-hx: 3.4.0
       traverse: 0.6.6
     transitivePeerDependencies:
-      - bufferutil
       - encoding
-      - utf-8-validate
     dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
@@ -2035,8 +2035,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.10_yfgnbxojpjyzegtmtl2rcejwea:
-    resolution: {integrity: sha512-3izWnAjQAKX72OGarAKxf38NiwzaWrwGZ7LNo3qbLNgKa03hqAaZVdJuaoRS+R6W1DE1FFmhFKpYXpAuP48Gvw==}
+  /@ensdomains/thorin/0.6.11_yfgnbxojpjyzegtmtl2rcejwea:
+    resolution: {integrity: sha512-sg6SFbXO5mzL/w3iwUc6qgS10MQ1C28uT5oySDNqv5YJp23yOyAL+bDef6BkBPBY2xWM643ykwpS/Xq3RpUkhw==}
     peerDependencies:
       react: ^17
       react-dom: ^17
@@ -3989,8 +3989,8 @@ packages:
     engines: {node: '>= 6'}
     dev: true
 
-  /@truffle/abi-utils/0.2.16:
-    resolution: {integrity: sha512-FCDANbJM5UJ0Mm61Z9MmQ3DVnMCCmMgOSFvGDORyYqHiXdS6uK0n77pN5tuUUCles8YIpgnCdijMWs8HoaRSMw==}
+  /@truffle/abi-utils/0.2.17:
+    resolution: {integrity: sha512-Lz8bDjEYInaesdpP3ENVnDkfSkEmrV2z9BNcIEQPQnqdB5x/H+rIrWGny7LV6rX3Kz3kAerF8eGBFh7Z/dEhZw==}
     dependencies:
       change-case: 3.0.2
       faker: 5.5.3
@@ -4003,16 +4003,16 @@ packages:
     dependencies:
       source-map-support: 0.5.21
 
-  /@truffle/blockchain-utils/0.1.3:
-    resolution: {integrity: sha512-K21Wf10u6VmS12/f9OrLN98f1RCqzrmuM2zlsly4b7BF/Xdh55Iq/jNSOnsNUJa+6Iaqqz6zeidquCYu9nTFng==}
+  /@truffle/blockchain-utils/0.1.4:
+    resolution: {integrity: sha512-HegAo5A8UX9vE8dtceBRgCY207gOb9wj54c8mNOOWHcFpkyJz7kZYGo44As6Imh10/0hD2j7vHQ56Jf+uszJ3A==}
     dev: true
     optional: true
 
-  /@truffle/codec/0.14.1:
-    resolution: {integrity: sha512-ULvtciwbdUANe7VNsPCAIWSrxm0CFu145VVVxJ+yE1xHY9TiLKHOf+CBH2sMW3mVkbt5HwVUF5DGm+uXngK19A==}
+  /@truffle/codec/0.14.2:
+    resolution: {integrity: sha512-rFyj/TnIZ3N9n6cTcaEUbOXktGqZH/Mk48VjN/NT7f585zpCP82YmGTAxJwn61HuT2Zan8bksSElMivjUHKHeg==}
     dependencies:
-      '@truffle/abi-utils': 0.2.16
-      '@truffle/compile-common': 0.7.33
+      '@truffle/abi-utils': 0.2.17
+      '@truffle/compile-common': 0.7.34
       big.js: 6.2.1
       bn.js: 5.2.1
       cbor: 5.2.0
@@ -4044,10 +4044,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@truffle/compile-common/0.7.33:
-    resolution: {integrity: sha512-LvZhDheDGqb+TScSRSYAFZQBRFEn+2ic/gtJIJXB2Rm1U6cS5GLdvWrEdPPIAwP+xt0xZ4ySI4mw2wBL8MUSRg==}
+  /@truffle/compile-common/0.7.34:
+    resolution: {integrity: sha512-NA8HuTCw6pgTpCyMd7M70Ii8AVD921R95UnXB3dwVWwEyV1OksaAsTKfdLxeLnFR4ISkK6o2NqpFb/lM3+V+9w==}
     dependencies:
-      '@truffle/error': 0.1.0
+      '@truffle/error': 0.1.1
       colors: 1.4.0
     dev: true
     optional: true
@@ -4070,16 +4070,16 @@ packages:
     dev: true
     optional: true
 
-  /@truffle/contract/4.5.21:
-    resolution: {integrity: sha512-9yNfTrSlsZix3vNO+J5PMJDHglm82KjMaU3TwN7HgdNgFLd/IY/5OpUjTanTQq/5Rr9kmAWgzYilNkkqLkiYaw==}
+  /@truffle/contract/4.5.22:
+    resolution: {integrity: sha512-yqv+dlLQsPLHS0qMVVMmB1mVw5KhHFLV6K0y+amcoZGACvoX8Q+oITUpYY1hqI8aTd7uQFsDAaVPJouZuyCwwA==}
     requiresBuild: true
     dependencies:
       '@ensdomains/ensjs': 2.1.0
-      '@truffle/blockchain-utils': 0.1.3
+      '@truffle/blockchain-utils': 0.1.4
       '@truffle/contract-schema': 3.4.9
-      '@truffle/debug-utils': 6.0.31
-      '@truffle/error': 0.1.0
-      '@truffle/interface-adapter': 0.5.20
+      '@truffle/debug-utils': 6.0.32
+      '@truffle/error': 0.1.1
+      '@truffle/interface-adapter': 0.5.21
       bignumber.js: 7.2.1
       debug: 4.3.4
       ethers: 4.0.49
@@ -4107,10 +4107,10 @@ packages:
     transitivePeerDependencies:
       - supports-color
 
-  /@truffle/debug-utils/6.0.31:
-    resolution: {integrity: sha512-DSWebZgzAHGYQpeSvnJRt5K05aWNT/PxEvLIvII4/WT4wChQ3+ARVF8n1mBoX7Eqk/yQ534bXJ+rG8eFnzh4AQ==}
+  /@truffle/debug-utils/6.0.32:
+    resolution: {integrity: sha512-q/fDMQwY2qxIYuJs0oIIBxS26GNfFl0m5TVwkjoUlcg18O7LwnrnSezXcZw+id4k90kKqWtnjXD0/ZXX/gyXyw==}
     dependencies:
-      '@truffle/codec': 0.14.1
+      '@truffle/codec': 0.14.2
       '@trufflesuite/chromafi': 3.0.0
       bn.js: 5.2.1
       chalk: 2.4.2
@@ -4124,8 +4124,8 @@ packages:
   /@truffle/error/0.0.11:
     resolution: {integrity: sha512-ju6TucjlJkfYMmdraYY/IBJaFb+Sa+huhYtOoyOJ+G29KcgytUVnDzKGwC7Kgk6IsxQMm62Mc1E0GZzFbGGipw==}
 
-  /@truffle/error/0.1.0:
-    resolution: {integrity: sha512-RbUfp5VreNhsa2Q4YbBjz18rOQI909pG32bghl1hulO7IpvcqTS+C3Ge5cNbiWQ1WGzy1wIeKLW0tmQtHFB7qg==}
+  /@truffle/error/0.1.1:
+    resolution: {integrity: sha512-sE7c9IHIGdbK4YayH4BC8i8qMjoAOeg6nUXUDZZp8wlU21/EMpaG+CLx+KqcIPyR+GSWIW3Dm0PXkr2nlggFDA==}
     dev: true
     optional: true
 
@@ -4140,8 +4140,8 @@ packages:
       - supports-color
       - utf-8-validate
 
-  /@truffle/interface-adapter/0.5.20:
-    resolution: {integrity: sha512-GL0pNZ8vshlU4SokKD0L7Pb/Vrxcb5ZALGhH9+uKvm6bXnY6XjnxvEYZ1KgK/p+uoYCLY53g9Sgn/CXvcWmGLg==}
+  /@truffle/interface-adapter/0.5.21:
+    resolution: {integrity: sha512-2ltbu3upsWS0TAQu1kLQc048XlXNmDkCzH6iebX4dg3VBB+l7oG/pu5+/kl8t+LRfzGoEMLKwOQt7vk0Vm3PNA==}
     dependencies:
       bn.js: 5.2.1
       ethers: 4.0.49
