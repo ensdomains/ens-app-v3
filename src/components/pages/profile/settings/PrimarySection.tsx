@@ -24,8 +24,8 @@ export const PrimarySection = () => {
 
   const chainId = useChainId()
 
-  const { data: addressData } = useAccount()
-  const address = addressData?.address!
+  const { address: _address } = useAccount()
+  const address = _address as string
 
   const { name, loading: primaryLoading } = usePrimary(address, !address)
 

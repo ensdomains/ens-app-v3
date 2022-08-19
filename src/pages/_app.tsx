@@ -6,11 +6,11 @@ import { EnsProvider } from '@app/utils/EnsProvider'
 import { lightTheme as thorinLightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 import { getDefaultWallets, lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
+import { QueryClient } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { createGlobalStyle, ThemeProvider } from 'styled-components'
 import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
@@ -75,7 +75,7 @@ const breakpoints = {
 }
 
 const { provider, chains } = configureChains(
-  [chain.mainnet, chain.ropsten],
+  [chain.mainnet, chain.localhost],
   [
     ...(process.env.NEXT_PUBLIC_PROVIDER
       ? [
@@ -87,7 +87,7 @@ const { provider, chains } = configureChains(
           jsonRpcProvider({
             rpc: () => ({ http: 'https://web3.ens.domains/v1/mainnet' }),
           }),
-          infuraProvider({ infuraId: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
+          infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
         ]),
   ],
 )
@@ -97,18 +97,19 @@ const { connectors } = getDefaultWallets({
   chains,
 })
 
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
-  provider,
-})
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
       refetchOnWindowFocus: false,
     },
   },
+})
+
+const wagmiClient = createClient({
+  autoConnect: true,
+  connectors,
+  provider,
+  queryClient,
 })
 
 type NextPageWithLayout = NextPage & {
@@ -124,24 +125,22 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
-      <QueryClientProvider client={queryClient}>
-        <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
-            <EnsProvider>
-              <ThemeProvider theme={thorinLightTheme}>
-                <BreakpointProvider queries={breakpoints}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <TransactionFlowProvider>
-                    <Notifications />
-                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                  </TransactionFlowProvider>
-                </BreakpointProvider>
-              </ThemeProvider>
-            </EnsProvider>
-          </RainbowKitProvider>
-        </WagmiConfig>
-      </QueryClientProvider>
+      <WagmiConfig client={wagmiClient}>
+        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+          <EnsProvider>
+            <ThemeProvider theme={thorinLightTheme}>
+              <BreakpointProvider queries={breakpoints}>
+                <GlobalStyle />
+                <ThorinGlobalStyles />
+                <TransactionFlowProvider>
+                  <Notifications />
+                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                </TransactionFlowProvider>
+              </BreakpointProvider>
+            </ThemeProvider>
+          </EnsProvider>
+        </RainbowKitProvider>
+      </WagmiConfig>
     </I18nextProvider>
   )
 }

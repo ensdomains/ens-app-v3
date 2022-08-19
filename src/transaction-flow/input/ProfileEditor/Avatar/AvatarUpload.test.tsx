@@ -2,8 +2,6 @@ import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-util
 import { useSignTypedData } from 'wagmi'
 import { AvatarUpload } from './AvatarUpload'
 
-jest.mock('wagmi')
-
 const mockHandleCancel = jest.fn()
 const mockHandleSubmit = jest.fn()
 const mockFile = new File([], 'avatar.png')

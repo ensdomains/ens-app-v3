@@ -14,9 +14,8 @@ import { PopulatedTransaction } from 'ethers'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useSigner } from 'wagmi'
+import { useQuery, useSigner } from 'wagmi'
 import { DisplayItems } from '../DisplayItems'
 
 const ButtonShrinkwrap = styled(Button)(

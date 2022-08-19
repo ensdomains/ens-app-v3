@@ -1,8 +1,8 @@
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
 import { mockFunction, render, screen } from '@app/test-utils'
-import { useEns } from '@app/utils/EnsProvider'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useEns } from '@app/utils/EnsProvider'
 import { ReactNode } from 'react'
 import { WrapperCallToAction } from './WrapperCallToAction'
 
@@ -10,7 +10,6 @@ jest.mock('@app/hooks/useAvatar')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/hooks/useChainId')
-jest.mock('wagmi')
 jest.mock('@app/assets/NightSky', () => ({
   NightSky: ({ children }: { children: ReactNode }) => <>{children}</>,
 }))

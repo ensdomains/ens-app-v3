@@ -4,8 +4,6 @@ import * as ThorinComponents from '@ensdomains/thorin'
 import { useAccount } from 'wagmi'
 import { AvatarNFT } from './AvatarNFT'
 
-jest.mock('wagmi')
-
 const mockUseAccount = mockFunction(useAccount)
 const mockHandleSubmit = jest.fn()
 const mockHandleCancel = jest.fn()
@@ -57,9 +55,7 @@ describe('<AvatarNFT />', () => {
     disconnect: jest.fn(),
   }))
   mockUseAccount.mockReturnValue({
-    data: {
-      address: '0x0000000000000000000000000000000000000001',
-    },
+    address: '0x0000000000000000000000000000000000000001',
   })
   it('should display all NFTs', async () => {
     global.fetch = jest.fn().mockResolvedValue({
@@ -175,7 +171,9 @@ describe('<AvatarNFT />', () => {
 
     await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
     fireEvent.click(screen.getByTestId('nft-0-0x0'))
-    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible())
+    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible(), {
+      timeout: 1000,
+    })
   })
   it('should correctly call submit callback', async () => {
     const ownedNfts = Array.from({ length: 5 }, generateNFT(true))

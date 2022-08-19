@@ -1,13 +1,14 @@
-import { useConnected } from '@app/hooks/useConnected'
+import { useInitial } from '@app/hooks/useInitial'
 import { routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { mq } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useCallback, useEffect, useRef } from 'react'
+import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
+import { useAccount } from 'wagmi'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import { HamburgerMenu } from './@atoms/HamburgerMenu'
@@ -19,6 +20,9 @@ import { HeaderConnect } from './ConnectButton'
 const HeaderWrapper = styled.header(
   () => css`
     height: min-content;
+    ${mq.md.max(css`
+      display: none;
+    `)}
   `,
 )
 
@@ -99,7 +103,8 @@ const dropdownRoutes = routes.filter(
 export const Header = () => {
   const { space } = useTheme()
   const router = useRouter()
-  const connected = useConnected()
+  const isInitial = useInitial()
+  const { isConnected } = useAccount()
   const breakpoints = useBreakpoint()
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
@@ -116,11 +121,30 @@ export const Header = () => {
   })
 
   // eslint-disable-next-line no-nested-ternary
-  const statefulRoutes = connected
+  const statefulRoutes = isConnected
     ? dropdownRoutes
     : breakpoints.lg
     ? dropdownRoutes.slice(3)
     : dropdownRoutes
+
+  let RouteItems: ReactNode
+
+  if (!isInitial && isConnected) {
+    RouteItems = routesNoSearch.map((route) => (
+      <RouteItem
+        key={route.name}
+        route={route}
+        asText={breakpoints.lg}
+        hasNotification={route.name === 'settings' && pendingTransactions.length > 0}
+      />
+    ))
+  } else if (breakpoints.lg) {
+    RouteItems = dropdownRoutes
+      .slice(0, 3)
+      .map((route) => <RouteItem key={route.name} route={route} asText />)
+  } else {
+    RouteItems = null
+  }
 
   const toggleRoutesShowing = useCallback(
     (evt: FocusEvent) => {
@@ -163,7 +187,7 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {connected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
+        {!isInitial && isConnected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
@@ -172,28 +196,14 @@ export const Header = () => {
             </SearchWrapper>
           </>
         )}
-        {((connected && (breakpoints.lg || router.asPath === '/')) || !connected) && (
-          <div style={{ flexGrow: 1 }} />
-        )}
+        {(isInitial ||
+          (isConnected && (breakpoints.lg || router.asPath === '/')) ||
+          !isConnected) && <div style={{ flexGrow: 1 }} />}
         <RouteContainer ref={routeContainerRef} $state={breakpoints.lg ? 'entered' : state}>
-          {/* eslint-disable-next-line no-nested-ternary */}
-          {connected
-            ? routesNoSearch.map((route) => (
-                <RouteItem
-                  key={route.name}
-                  route={route}
-                  asText={breakpoints.lg}
-                  hasNotification={route.name === 'settings' && pendingTransactions.length > 0}
-                />
-              ))
-            : breakpoints.lg
-            ? dropdownRoutes
-                .slice(0, 3)
-                .map((route) => <RouteItem key={route.name} route={route} asText />)
-            : null}
+          {RouteItems}
         </RouteContainer>
-        {!connected && <HamburgerMenu dropdownItems={statefulRoutes} />}
-        {breakpoints.md && <HeaderConnect />}
+        {!isInitial && !isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
+        <HeaderConnect />
       </NavContainer>
     </HeaderWrapper>
   )

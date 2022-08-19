@@ -1,19 +1,19 @@
 import { useProfile } from '@app/hooks/useProfile'
 import {
+  cleanup,
+  fireEvent,
   mockFunction,
   render,
   screen,
+  userEvent,
   waitFor,
   within,
-  userEvent,
-  cleanup,
-  fireEvent,
 } from '@app/test-utils'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
-import ProfileEditor from './ProfileEditor'
+import ProfileEditor from './ProfileEditor-flow'
 
 const mockProfileData = {
   profile: {

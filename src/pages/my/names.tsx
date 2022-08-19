@@ -1,25 +1,25 @@
 import GridSVG from '@app/assets/Grid.svg'
 import ListSVG from '@app/assets/List.svg'
-import { NameGridView } from '@app/components/names/NameGridView'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
+import SortControl, {
+  SortDirection,
+  SortType,
+  SortValue,
+} from '@app/components/@molecules/SortControl/SortControl'
+import { NameGridView } from '@app/components/names/NameGridView'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { Name } from '@app/types'
 import { Button, mq, PageButtons, Spinner } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
-import SortControl, {
-  SortType,
-  SortValue,
-  SortDirection,
-} from '@app/components/@molecules/SortControl/SortControl'
-import { Name } from '@app/types'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -89,8 +89,8 @@ type FilterType = Name['type'] | 'none'
 export default function Page() {
   const { t } = useTranslation('names')
   const router = useRouter()
-  const { data: addressData, isLoading, status } = useAccount()
-  const address = (router.query.address as string) || addressData?.address
+  const { address: _address, isConnecting, isReconnecting } = useAccount()
+  const address = (router.query.address as string) || (_address as string)
   const isSelf = true
   const chainId = useChainId()
 
@@ -119,11 +119,7 @@ export default function Page() {
   })
 
   const loading =
-    isLoading ||
-    status === 'loading' ||
-    namesLoading ||
-    namesStatus === 'loading' ||
-    !router.isReady
+    isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
 
   useProtectedRoute('/', loading ? true : address && address !== '')
 

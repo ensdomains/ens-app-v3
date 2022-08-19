@@ -1,4 +1,5 @@
 import { Card } from '@app/components/Card'
+import { useInitial } from '@app/hooks/useInitial'
 import { Heading } from '@ensdomains/thorin'
 import { ComponentProps, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
@@ -35,8 +36,8 @@ const SectionHeader = styled.div(
   `,
 )
 
-const ContentContainer = styled.div(
-  ({ theme }) => css`
+const ContentContainer = styled.div<{ $hide?: boolean }>(
+  ({ theme, $hide }) => css`
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
@@ -45,6 +46,11 @@ const ContentContainer = styled.div(
 
     padding: ${theme.space['4']};
     gap: ${theme.space['2']};
+
+    ${$hide &&
+    css`
+      display: none;
+    `}
   `,
 )
 
@@ -60,13 +66,23 @@ export const SectionContainer = ({
   children: ReactNode
   fill?: boolean
 } & Omit<ComponentProps<'div'>, 'ref'>) => {
+  const isInitial = useInitial()
+
+  let InnerContent: ReactNode
+
+  if (isInitial || !fill) {
+    InnerContent = <ContentContainer $hide={fill}>{children}</ContentContainer>
+  } else {
+    InnerContent = children
+  }
+
   return (
     <StyledCard {...props}>
       <SectionHeader>
         <Heading>{title}</Heading>
         <div>{action}</div>
       </SectionHeader>
-      {fill ? children : <ContentContainer>{children}</ContentContainer>}
+      {InnerContent}
     </StyledCard>
   )
 }

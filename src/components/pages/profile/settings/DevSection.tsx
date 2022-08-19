@@ -5,7 +5,7 @@ import { Button } from '@ensdomains/thorin'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { JsonRpcProvider } from '@ethersproject/providers'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { useProvider, useSendTransaction } from 'wagmi'
+import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
 import { SectionContainer } from './Section'
 
 const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
@@ -28,19 +28,27 @@ export const DevSection = () => {
   const provider: JsonRpcProvider = useProvider()
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
-  const { sendTransactionAsync } = useSendTransaction()
+  const { config: successConfig } = usePrepareSendTransaction({
+    request: {
+      to: '0x0000000000000000000000000000000000000000',
+      value: '0',
+    },
+  })
+  const { sendTransactionAsync: sendFailure } = useSendTransaction({
+    mode: 'prepared',
+    request: {
+      to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+      data: '0x1231237123423423',
+      gasLimit: '1000000',
+    },
+  })
+  const { sendTransactionAsync: sendSuccess } = useSendTransaction(successConfig)
 
   const addSuccess = async () => {
-    const transaction = await sendTransactionAsync({
-      request: {
-        to: '0x0000000000000000000000000000000000000000',
-        value: '0',
-      },
-    })
+    const transaction = await sendSuccess!()
     addTransaction({
       description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
-      confirmations: transaction.confirmations || undefined,
     })
   }
 
@@ -51,17 +59,10 @@ export const DevSection = () => {
   }
 
   const addFailure = async () => {
-    const transaction = await sendTransactionAsync({
-      request: {
-        to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-        data: '0x1231237123423423',
-        gasLimit: '1000000',
-      },
-    })
+    const transaction = await sendFailure!()
     addTransaction({
       description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
-      confirmations: transaction.confirmations || undefined,
     })
   }
 

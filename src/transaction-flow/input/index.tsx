@@ -1,18 +1,20 @@
 import dynamic from 'next/dynamic'
 import TransactionLoader from '../TransactionLoader'
-import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor'
-import type { Props as CreateSubnameProps } from './CreateSubname'
-import type { Props as EditResolverProps } from './EditResolver/EditResolver'
-import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor'
-import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName'
-import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile'
+import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
+import type { Props as CreateSubnameProps } from './CreateSubname-flow'
+import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
+import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
+import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
+import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile-flow'
 
 const dynamicHelper = <P,>(name: string) =>
   dynamic<P>(
     () =>
       import(
+        /* webpackMode: "lazy" */
+        /* webpackPrefetch: true */
         /* webpackExclude: /\.test.tsx$/ */
-        `./${name}`
+        `./${name}-flow`
       ),
     { loading: () => <TransactionLoader /> },
   )
@@ -22,13 +24,7 @@ const SelectPrimaryName = dynamicHelper<SelectPrimaryNameProps>('SelectPrimaryNa
 const AdvancedEditor = dynamicHelper<AdvancedEditorProps>('AdvancedEditor/AdvancedEditor')
 const ProfileEditor = dynamicHelper<ProfileEditorProps>('ProfileEditor/ProfileEditor')
 const CreateSubname = dynamicHelper<CreateSubnameProps>('CreateSubname')
-
-const TransferProfile = dynamic<TransferProfileProps>(
-  () => import('./TransferProfile/TransferProfile'),
-  {
-    loading: () => <TransactionLoader />,
-  },
-)
+const TransferProfile = dynamicHelper<TransferProfileProps>('TransferProfile/TransferProfile')
 
 export const DataInputComponents = {
   EditResolver,

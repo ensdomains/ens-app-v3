@@ -1,17 +1,17 @@
 import { useProfile } from '@app/hooks/useProfile'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import {
   cleanup,
   fireEvent,
   mockFunction,
   render,
   screen,
+  userEvent,
   waitFor,
   within,
-  userEvent,
 } from '@app/test-utils'
 import { Profile } from '@app/types'
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import AdvancedEditor from './AdvancedEditor'
+import AdvancedEditor from './AdvancedEditor-flow'
 
 const mockProfileData = {
   profile: {
