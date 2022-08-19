@@ -88,10 +88,13 @@ export const useResolverStatus = (name: string, skip?: boolean, options?: Option
           isMigratedProfileEqual: false,
         }
 
-      const resolverProfile = await getProfile(name, { resolverAddress: latestResolverAddress })
-      console.log('resolverProfile', resolverProfile)
+      const resolverProfile = await getProfile(name, {
+        resolverAddress: latestResolverAddress,
+      })
 
-      if (!resolverProfile)
+      const resolverRecords = resolverProfile?.records || {}
+
+      if (Object.keys(resolverRecords).length === 0)
         return {
           hasResolver: true,
           hasLatestResolver: false,
@@ -103,7 +106,7 @@ export const useResolverStatus = (name: string, skip?: boolean, options?: Option
         hasResolver: true,
         hasLatestResolver: false,
         hasMigratedProfile: true,
-        isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverProfile?.records),
+        isMigratedProfileEqual: areRecordsEqual(profile?.records, resolverRecords),
       }
     },
     {

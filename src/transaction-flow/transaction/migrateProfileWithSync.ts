@@ -64,15 +64,9 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
     })
   }
 
-  const contentHash = (() => {
-    if (data.records?.contentHash || data.records?.contentHash === '')
-      return contentHashToString(data.records.contentHash)
-    const afterCh = contentHashToString(profile.records.contentHash)
-    const beforeCh = contentHashToString(resolverProfile?.records?.contentHash)
-    if (beforeCh && !afterCh) return ''
-    if (afterCh) return afterCh
-    return undefined
-  })()
+  const contentHash = data.records?.contentHash
+    ? contentHashToString(data.records.contentHash)
+    : contentHashToString(profile.records.contentHash)
 
   const texts = syncRecords(
     resolverProfile?.records?.texts,

@@ -11,37 +11,37 @@ The all new, all cool version of the ENS manager.
 ### Quick start
 
 ```bash
-yarn
-yarn dev:gonline
+pnpm install
+pnpm dev:gonline
 ```
 
 ### Install
 
 ```bash
-yarn && yarn postinstall
+pnpm install && pnpm postinstall
 ```
 
 ### Running Dev Server
 
 ```bash
-yarn dev
+pnpm dev
 
 # Or with local provider set
-yarn dev:glocal
+pnpm dev:glocal
 ```
 
 ### Lint
 
 ```bash
-yarn lint
+pnpm lint
 ```
 
 ### Unit Test
 
 ```bash
-yarn test
-yarn test:watch
-yarn test:coverage
+pnpm test
+pnpm test:watch
+pnpm test:coverage
 ```
 
 We recommend installing [this](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) vscode plugin for a better unit testing experience.
@@ -63,7 +63,7 @@ FORK_RPC_URL=http://example.com
 3. Starting the environment:
 
 ```bash
-yarn env start
+pnpm tenv start -nb -ns
 ```
 
 For more information on the testing environment used, see [ens-test-env](https://github.com/ensdomains/ensjs-v3/tree/main/packages/ens-test-env/).
@@ -73,23 +73,23 @@ For more information on the testing environment used, see [ens-test-env](https:/
 **Note: You don't need to run the test environment command. It is all handled in the e2e script.**
 
 ```bash
-yarn e2e
+pnpm e2e
 ```
 
 ### Building and Starting
 
 ```bash
-yarn build
-yarn start
+pnpm build
+pnpm start
 
 # Or with local provider set
-yarn build:glocal
-yarn buildandstart:glocal
+pnpm build:glocal
+pnpm buildandstart:glocal
 ```
 
 ## PR builds
 
-Vercel will automatically build and deploy a test site when pushed to a new PR branch.
+Cloudflare will automatically build and deploy a test site when pushed to a new PR branch.
 
 ## External Package Local Development
 
@@ -103,13 +103,13 @@ npm i -g yalc
 
 ```bash
 # Example publish script for ENSjs, be aware this may have changed.
-yarn publish:local:ensjs
+pnpm publish:local:ensjs
 ```
 
-3. Run yarn within this repo:
+3. Run pnpm install within this repo:
 
 ```bash
-yarn
+pnpm install
 ```
 
 ## Architecture

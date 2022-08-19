@@ -148,9 +148,37 @@ describe('useResolverStatus', () => {
       })
     })
 
-    it('should return hasCreatedProfile is true if getProfile returns a value ', async () => {
+    it('should return hasCreatedProfile is false if getProfile returns records with an empty object ', async () => {
       setup({
-        getProfile: {},
+        getProfile: {
+          records: {},
+        },
+      })
+      const { result, waitForNextUpdate } = renderHook(() => useResolverStatus('test.eth'))
+      await waitForNextUpdate()
+      expect(result.current).toEqual({
+        status: {
+          hasResolver: true,
+          hasLatestResolver: false,
+          hasMigratedProfile: false,
+          isMigratedProfileEqual: false,
+        },
+        loading: false,
+      })
+    })
+
+    it('should return hasMigratedProfile is true if getProfile returns different records from useProfile ', async () => {
+      setup({
+        getProfile: {
+          records: {
+            texts: [
+              {
+                key: 'different',
+                value: 'value',
+              },
+            ],
+          },
+        },
       })
       const { result, waitForNextUpdate } = renderHook(() => useResolverStatus('test.eth'))
       await waitForNextUpdate()
@@ -165,7 +193,7 @@ describe('useResolverStatus', () => {
       })
     })
 
-    it('should return hasMigratedProfile is true if getProfile returns the same records as useProfile ', async () => {
+    it('should return isMigratedProfileEqual is true if getProfile returns the same records as useProfile ', async () => {
       setup({
         getProfile: defaultProfile,
       })

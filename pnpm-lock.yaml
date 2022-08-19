@@ -23,7 +23,7 @@ specifiers:
   '@ensdomains/ens-contracts': ^0.0.12
   '@ensdomains/ens-test-env': ^0.2.2
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.12
+  '@ensdomains/ensjs': 3.0.0-alpha.13
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': ^0.6.10
   '@ethersproject/providers': ^5.6.8
@@ -127,7 +127,7 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.17
   '@ensdomains/ens-contracts': 0.0.12_hardhat@2.9.3
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.12
+  '@ensdomains/ensjs': 3.0.0-alpha.13
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.10_yfgnbxojpjyzegtmtl2rcejwea
   '@rainbow-me/rainbowkit': 0.3.3_irp6hzz44qhtps26wyshftrjz4_aays2jlhametwvc5w6cjgleq7i
@@ -1861,6 +1861,22 @@ packages:
     dev: true
     optional: true
 
+  /@ensdomains/address-encoder/0.2.16:
+    resolution: {integrity: sha512-V9CmwUbJgCQb+WBW+dhZptuOwGY5AaFnDGZ6POOv+oMu8dZYuAz2BoBkX7XY9t/Nz+FvMz9CeOvM4uhy4v24Zw==}
+    dependencies:
+      bech32: 2.0.0
+      blakejs: 1.2.1
+      bn.js: 5.2.1
+      bs58: 4.0.1
+      crypto-addr-codec: 0.1.7
+      js-crc: 0.2.0
+      js-sha256: 0.9.0
+      js-sha512: 0.8.0
+      nano-base32: 1.0.1
+      ripemd160: 2.0.2
+      sha3: 2.1.4
+    dev: false
+
   /@ensdomains/address-encoder/0.2.17:
     resolution: {integrity: sha512-VsCcItOrZjTu7VB/+8g49DvyCR0f4ENfF8NjU5LHbbaJ44KKp4VoTI0b3cc7srf7Kq0spSao4Zfdn04n+6WWGA==}
     dependencies:
@@ -1996,10 +2012,10 @@ packages:
     dev: true
     optional: true
 
-  /@ensdomains/ensjs/3.0.0-alpha.12:
-    resolution: {integrity: sha512-H3M/mJla2ihYM9fQmQWsD+arVPARM71NuXncEAlJIEI4x3yOdfckyHoVmQQgJryVRpM7EgVSM0ULloJibRPLVg==}
+  /@ensdomains/ensjs/3.0.0-alpha.13:
+    resolution: {integrity: sha512-2BWO2H4t+71M6NUKk2GGNwJQOk4Xh0Y870HDZjjh7Oig5iUzR0FvplOOTsHvPApshFUpt7G8kxlUtpHEjz2DVg==}
     dependencies:
-      '@ensdomains/address-encoder': 0.2.17
+      '@ensdomains/address-encoder': 0.2.16
       '@ensdomains/content-hash': 2.5.7
       dns-packet: 5.4.0
       ethers: 5.6.9
@@ -6600,9 +6616,9 @@ packages:
     resolution: {integrity: sha512-erYug8XoqzU3IfcU8fUgyHqyOXqIE4tUTTQ+7mqUjQlvnXkOO6OlT9c/ZoJVHYoAaqGxr09CN53G7XIsO4KtWA==}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       combine-source-map: 0.8.0
       defined: 1.0.0
+      JSONStream: 1.3.5
       safe-buffer: 5.2.1
       through2: 2.0.5
       umd: 3.0.3
@@ -6676,7 +6692,6 @@ packages:
     engines: {node: '>= 0.8'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       assert: 1.5.0
       browser-pack: 6.1.0
       browser-resolve: 2.0.0
@@ -6698,6 +6713,7 @@ packages:
       https-browserify: 1.0.0
       inherits: 2.0.4
       insert-module-globals: 7.2.1
+      JSONStream: 1.3.5
       labeled-stream-splicer: 2.0.2
       mkdirp-classic: 0.5.3
       module-deps: 6.2.3
@@ -6731,7 +6747,6 @@ packages:
     engines: {node: '>= 0.8'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       assert: 1.5.0
       browser-pack: 6.1.0
       browser-resolve: 2.0.0
@@ -6753,6 +6768,7 @@ packages:
       https-browserify: 1.0.0
       inherits: 2.0.4
       insert-module-globals: 7.2.1
+      JSONStream: 1.3.5
       labeled-stream-splicer: 2.0.2
       mkdirp-classic: 0.5.3
       module-deps: 6.2.3
@@ -11911,11 +11927,11 @@ packages:
     resolution: {integrity: sha512-ufS5Qq9RZN+Bu899eA9QCAYThY+gGW7oRkmb0vC93Vlyu/CFGcH0OYPEjVkDXA5FEbTt1+VWzdoOD3Ny9N+8tg==}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       acorn-node: 1.8.2
       combine-source-map: 0.8.0
       concat-stream: 1.6.2
       is-buffer: 1.1.6
+      JSONStream: 1.3.5
       path-is-absolute: 1.0.1
       process: 0.11.10
       through2: 2.0.5
@@ -14161,7 +14177,6 @@ packages:
     engines: {node: '>= 0.8.0'}
     hasBin: true
     dependencies:
-      JSONStream: 1.3.5
       browser-resolve: 2.0.0
       cached-path-relative: 1.1.0
       concat-stream: 1.6.2
@@ -14169,6 +14184,7 @@ packages:
       detective: 5.2.0
       duplexer2: 0.1.4
       inherits: 2.0.4
+      JSONStream: 1.3.5
       parents: 1.0.1
       readable-stream: 2.3.7
       resolve: 1.22.0

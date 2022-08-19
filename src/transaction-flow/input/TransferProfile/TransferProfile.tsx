@@ -70,13 +70,19 @@ const TransferProfile = ({ data, dispatch, onDismiss }: Props) => {
     })
   }
   const footerLeading = (
-    <Button variant="secondary" shadowless tone="grey" onClick={handleReset}>
+    <Button
+      variant="secondary"
+      shadowless
+      tone="grey"
+      onClick={handleReset}
+      data-testid="transfer-profile-leading-btn"
+    >
       {t('action.reset', { ns: 'common' })}
     </Button>
   )
 
   const footerTrailing = (
-    <Button onClick={handleTransfer} shadowless>
+    <Button onClick={handleTransfer} shadowless data-testid="transfer-profile-trailing-btn">
       {t('action.transfer', { ns: 'common' })}
     </Button>
   )
