@@ -1,7 +1,7 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { Profile } from '@app/types'
 import { contentHashToString } from '@app/utils/contenthash'
-import { useQuery } from 'react-query'
+import { useQuery } from '@tanstack/react-query'
 import { useProfile } from './useProfile'
 import { useContractAddress } from './useContractAddress'
 

@@ -1,5 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { useQuery } from 'wagmi'
+import { Profile } from '@app/types'
 
 export const useProfile = (name: string, skip?: any) => {
   const { ready, getProfile } = useEns()
@@ -18,7 +19,7 @@ export const useProfile = (name: string, skip?: any) => {
   })
 
   return {
-    profile,
+    profile: profile as Profile | undefined,
     loading: !ready || loading,
     status,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
