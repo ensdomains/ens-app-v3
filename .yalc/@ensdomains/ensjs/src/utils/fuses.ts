@@ -7,7 +7,7 @@ const CANNOT_CREATE_SUBDOMAIN = 32
 const PARENT_CANNOT_CONTROL = 64
 const CAN_DO_EVERYTHING = 0
 
-export const fuseEnum = {
+export const fuseEnum: { [key: string]: number } = {
   CANNOT_UNWRAP,
   CANNOT_BURN_FUSES,
   CANNOT_TRANSFER,
@@ -17,7 +17,9 @@ export const fuseEnum = {
   PARENT_CANNOT_CONTROL,
 }
 
-export default {
+const fullFuseEnum: { [key: string]: number } = {
   ...fuseEnum,
   CAN_DO_EVERYTHING,
 }
+
+export default fullFuseEnum

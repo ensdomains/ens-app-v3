@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, Dispatch } from 'react'
 import isEqual from 'lodash/isEqual'
 
 import { Typography, Button, FlameSVG, FlameBurnedSVG, Helper } from '@ensdomains/thorin'
@@ -10,10 +10,34 @@ import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import mq from '@app/mediaQuery'
 import { useEns } from '@app/utils/EnsProvider'
+import { TransactionFlowAction } from '../types'
 
 import { makeTransactionItem } from '../transaction'
 
-const FusesContainer = styled.div(({ theme }) => [
+type FuseObj = {
+  [key: string]: boolean
+  CANNOT_UNWRAP: boolean
+  CANNOT_BURN_FUSES: boolean
+  CANNOT_TRANSFER: boolean
+  CANNOT_SET_RESOLVER: boolean
+  CANNOT_SET_TTL: boolean
+  CANNOT_CREATE_SUBDOMAIN: boolean
+  PARENT_CANNOT_CONTROL: boolean
+}
+
+const defaultFuseObj = {
+  CANNOT_UNWRAP: false,
+  CANNOT_BURN_FUSES: false,
+  CANNOT_TRANSFER: false,
+  CANNOT_SET_RESOLVER: false,
+  CANNOT_SET_TTL: false,
+  CANNOT_CREATE_SUBDOMAIN: false,
+  PARENT_CANNOT_CONTROL: false,
+}
+
+type FuseSelected = Omit<FuseObj, 'PARENT_CANNOT_CONTROL'>
+
+const FusesContainer = styled.div(() => [
   css`
     width: 100%;
     padding: 5px 15px;
@@ -24,7 +48,7 @@ const FusesContainer = styled.div(({ theme }) => [
 ])
 
 const BurnButtonsContainer = styled.div(
-  ({ theme }) => css`
+  () => css`
     display: flex;
     flex-direction: column;
     gap: 10px;
@@ -32,7 +56,7 @@ const BurnButtonsContainer = styled.div(
 )
 
 const ButtonInner = styled.div(
-  ({ theme }) => css`
+  () => css`
     display: flex;
     justify-content: space-between;
     width: 100%;
@@ -41,7 +65,7 @@ const ButtonInner = styled.div(
 )
 
 const StyledFlameSVG = styled(FlameSVG)(
-  ({ theme }) => css`
+  () => css`
     position: relative;
     bottom: -1px;
     right: 1px;
@@ -60,7 +84,7 @@ const BurnedFlameContainer = styled.div(
 )
 
 const BurnedStyledFlameSVG = styled(FlameSVG)(
-  ({ theme }) => css`
+  () => css`
     position: relative;
     right: -8px;
     bottom: -1px;
@@ -69,12 +93,22 @@ const BurnedStyledFlameSVG = styled(FlameSVG)(
 )
 
 const StyledButton = styled(Button)<{ isSelected: boolean }>(
-  ({ theme, isSelected }) => css`
+  () => css`
     padding: 0px 6px;
   `,
 )
 
-const BurnButton = ({ permission, isBurned, handleBurnClick, isSelected }) => {
+const BurnButton = ({
+  permission,
+  isBurned,
+  handleBurnClick,
+  isSelected,
+}: {
+  permission: string
+  isBurned: boolean
+  handleBurnClick: (permission: string) => void
+  isSelected: boolean
+}) => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
 
   return (
@@ -90,12 +124,13 @@ const BurnButton = ({ permission, isBurned, handleBurnClick, isSelected }) => {
     >
       <ButtonInner>
         <div>{t(`fuses.permissions.${permission}`)}</div>
-        {isBurned ? (
+        {isBurned && (
           <BurnedFlameContainer>
             <Typography>Burned</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
-        ) : isSelected ? (
+        )}
+        {isSelected ? (
           <FlameBurnedSVG width="24" height="24" />
         ) : (
           <StyledFlameSVG width="24" height="24" />
@@ -106,51 +141,58 @@ const BurnButton = ({ permission, isBurned, handleBurnClick, isSelected }) => {
 }
 
 const ButtonsContainer = styled.div(
-  ({ theme }) => css`
+  () => css`
     display: flex;
     gap: 15px;
   `,
 )
 
-const canContinue = (fuseData, fuseSelected) => {
-  const filteredInitialFuseData = { ...fuseData }
-  Object.keys(filteredInitialFuseData).forEach(function (key) {
-    if (filteredInitialFuseData[key]) {
-      delete filteredInitialFuseData[key]
-      return
+const canContinue = (fuseData: Partial<FuseObj>, fuseSelected: FuseSelected) => {
+  console.log('fuseData: ', fuseData)
+  console.log('fuseSelected: ', fuseSelected)
+  const filteredInitialFuseData: Partial<FuseObj> = { ...fuseData }
+  Object.keys(filteredInitialFuseData).forEach((key: string) => {
+    if (filteredInitialFuseData[key as keyof FuseObj]) {
+      delete filteredInitialFuseData[key as keyof FuseObj]
     }
   })
   const cannotUnwrap = !fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP
   return isEqual(filteredInitialFuseData, fuseSelected) || cannotUnwrap
 }
 
-export const BurnFuses = ({ onDismiss, dispatch }) => {
+export const BurnFuses = ({
+  onDismiss,
+  dispatch,
+}: {
+  onDismiss: () => void
+  dispatch: Dispatch<TransactionFlowAction>
+}) => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
+  const { t: tc } = useTranslation()
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
-  const [_fuseData, setFuseData] = useState({})
-  const [fuseSelected, setFuseSelected] = useState({})
+  const [_fuseData, setFuseData] = useState<FuseObj>(defaultFuseObj)
+  const [fuseSelected, setFuseSelected] = useState<FuseObj>(defaultFuseObj)
   const { fuses } = useEns()
 
-  const handleBurnClick = (permission) => {
-    const nextFuseSelected = { ...fuseSelected }
+  const handleBurnClick = (permission: keyof FuseObj) => {
+    const nextFuseSelected = { ...fuseSelected } as FuseObj
     nextFuseSelected[permission] = !nextFuseSelected[permission]
     setFuseSelected(nextFuseSelected)
   }
 
   const onSubmit = () => {
-    const selectedKeys = []
+    const selectedKeys: Array<keyof FuseObj> = []
     Object.keys(fuseSelected).forEach(function (key) {
-      if (fuseSelected[key]) {
-        selectedKeys.push(key)
+      if (fuseSelected[key as keyof FuseObj]) {
+        selectedKeys.push(key as keyof FuseObj)
       }
     })
 
-    const selectedFuses = selectedKeys.reduce(
-      (previousValue, currentValue) => previousValue + fuses[currentValue],
-      0,
-    )
+    const selectedFuses = selectedKeys.reduce((previousValue: number, currentValue): number => {
+      return previousValue + fuses[currentValue]
+    }, 0)
 
     const permissions = selectedKeys.map((key) => t(`fuses.permissions.${key}`))
 
@@ -158,7 +200,7 @@ export const BurnFuses = ({ onDismiss, dispatch }) => {
       name: 'setTransactions',
       payload: [
         makeTransactionItem('burnFuses', {
-          name,
+          name: name as string,
           selectedFuses,
           permissions,
         }),
@@ -167,19 +209,18 @@ export const BurnFuses = ({ onDismiss, dispatch }) => {
     dispatch({ name: 'setFlowStage', payload: 'transaction' })
   }
 
-  console.log('fuseData: ', _fuseData)
-  console.log('selected: ', fuseSelected)
-
   useEffect(() => {
     console.log('**rendered**')
     if (fuseData) {
-      const _fuseData = { ...fuseData.fuseObj }
-      delete _fuseData.canDoEverything
-      delete _fuseData.parentCannotControl
+      const initialFuseData = {
+        ...(fuseData.fuseObj as FuseObj),
+      }
+      delete initialFuseData.canDoEverything
+      delete initialFuseData.parentCannotControl
 
-      setFuseData({ ..._fuseData })
+      setFuseData({ ...initialFuseData })
 
-      const initialFusesSelected = { ..._fuseData }
+      const initialFusesSelected = { ...initialFuseData }
       Object.keys(initialFusesSelected).forEach(function (key) {
         if (initialFusesSelected[key]) {
           delete initialFusesSelected[key]
@@ -214,9 +255,9 @@ export const BurnFuses = ({ onDismiss, dispatch }) => {
           <BurnButton
             {...{
               permission: key,
-              isBurned: value,
+              isBurned: !!value,
               handleBurnClick,
-              isSelected: fuseSelected[key],
+              isSelected: !!fuseSelected[key as keyof FuseObj],
             }}
           />
         ))}
@@ -224,10 +265,10 @@ export const BurnFuses = ({ onDismiss, dispatch }) => {
       <Spacer $height="6" />
       <ButtonsContainer>
         <Button tone="grey" variant="secondary" onClick={onDismiss}>
-          Cancel
+          {tc('action.cancel')}
         </Button>
         <Button disabled={canContinue(_fuseData, fuseSelected)} onClick={onSubmit} tone="red">
-          Burn Selected
+          {tc('action.burnSelected')}
         </Button>
       </ButtonsContainer>
     </FusesContainer>

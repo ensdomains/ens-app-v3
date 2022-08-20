@@ -77,7 +77,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const _nameWrapper = nameWrapper.connect(await ethers.getSigner(owner))
 
     //Register subname
-    console.log('sanity2')
     try {
       const subnameTx = await _nameWrapper.setSubnodeOwner(
         namehash(`${label}.eth`),
@@ -91,7 +90,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     } catch (e) {
       console.log('sanity Error registering subname', e)
     }
-    console.log('sanity3')
   }
 
   return true

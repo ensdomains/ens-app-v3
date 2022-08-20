@@ -18,7 +18,8 @@ exports.fuseEnum = {
     CANNOT_CREATE_SUBDOMAIN,
     PARENT_CANNOT_CONTROL,
 };
-exports.default = {
+const fullFuseEnum = {
     ...exports.fuseEnum,
     CAN_DO_EVERYTHING,
 };
+exports.default = fullFuseEnum;

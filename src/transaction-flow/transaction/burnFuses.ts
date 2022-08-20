@@ -1,5 +1,7 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
-import { JsonRpcSigner } from '@ethersproject/providers'
+import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
+import type { JsonRpcSigner } from '@ethersproject/providers'
+import { Dispatch } from 'react'
+import { TransactionFlowAction } from '../types'
 
 type Data = {
   name: string
@@ -7,7 +9,7 @@ type Data = {
   selectedFuses: number
 }
 
-const displayItems = ({ name, permissions }: Data): TransactionDisplayItem[] => [
+const displayItems = ({ name, permissions }: Data): TransactionDisplayItem<'name' | 'list'>[] => [
   {
     label: 'name',
     value: name,
@@ -24,39 +26,25 @@ const displayItems = ({ name, permissions }: Data): TransactionDisplayItem[] => 
   },
 ]
 
-const confirm = {
-  type: 'confirm',
-  title: 'Transaction Request',
-  description: 'Confirm the details of the transaction',
-}
-
-const request = {
-  type: 'request',
-  title: 'Update Resolver',
-  description: 'Update your current resolver to the new one you have selected',
-}
-
-const pending = {
-  type: 'pending',
-  title: 'Transaction mining',
-  description:
-    'Your transaction has been sent to the network, and is waiting to be saved to the blockchain. You may close this dialog.',
-}
-
-const onDismiss = (dispatch) => () => {
+const onDismiss = (dispatch: Dispatch<TransactionFlowAction>) => () => {
   dispatch({ name: 'setFlowStage', payload: 'input' })
 }
 
 const dismissBtnLabel = 'Back'
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  console.log('data: ', data)
   const tx = ens.setFuses.populateTransaction('wrapped.eth', {
     fuses: data.selectedFuses,
     signer,
   })
-  console.log('tx: ', tx)
   return tx
 }
 
-export default { displayItems, confirm, request, pending, transaction, onDismiss, dismissBtnLabel }
+const exports: Transaction<Data> = {
+  displayItems,
+  transaction,
+  onDismiss,
+  dismissBtnLabel,
+}
+
+export default exports

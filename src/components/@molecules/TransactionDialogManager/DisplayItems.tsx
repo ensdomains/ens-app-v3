@@ -1,7 +1,7 @@
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
-import { TransactionDisplayItem } from '@app/types'
+import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 import { Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
@@ -165,7 +165,10 @@ const ListValue = ({ value }: { value: string[] }) => {
   )
 }
 
-const DisplayItemValue = ({ value, type }: Omit<TransactionDisplayItem, 'label'>) => {
+const DisplayItemValue = (
+  props: Omit<TransactionDisplayItem<TransactionDisplayItemTypes>, 'label'>,
+) => {
+  const { value, type } = props as TransactionDisplayItem<typeof props.type>
   if (type === 'address') {
     return <AddressValue value={value} />
   }
@@ -186,7 +189,7 @@ export const DisplayItem = ({
   fade,
   useRawLabel,
   t,
-}: TransactionDisplayItem & { t: TFunction }) => {
+}: TransactionDisplayItem<TransactionDisplayItemTypes> & { t: TFunction }) => {
   return (
     <DisplayItemContainer
       data-testid={`display-item-${label}-${fade ? 'fade' : 'normal'}`}
@@ -202,7 +205,11 @@ export const DisplayItem = ({
   )
 }
 
-export const DisplayItems = ({ displayItems }: { displayItems: TransactionDisplayItem[] }) => {
+export const DisplayItems = ({
+  displayItems,
+}: {
+  displayItems: TransactionDisplayItem<TransactionDisplayItemTypes>[]
+}) => {
   const { t } = useTranslation()
 
   if (!displayItems || !displayItems.length) return null

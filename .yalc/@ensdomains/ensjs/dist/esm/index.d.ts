@@ -72,14 +72,7 @@ export declare class ENS {
     getContractAddress: (networkId: SupportedNetworkId) => import("./contracts/getContractAddress").ContractAddressFetch;
     gqlInstance: GqlManager;
     fuses: {
-        CAN_DO_EVERYTHING: number;
-        CANNOT_UNWRAP: number;
-        CANNOT_BURN_FUSES: number;
-        CANNOT_TRANSFER: number;
-        CANNOT_SET_RESOLVER: number;
-        CANNOT_SET_TTL: number;
-        CANNOT_CREATE_SUBDOMAIN: number;
-        PARENT_CANNOT_CONTROL: number;
+        [key: string]: number;
     };
     constructor(options?: ENSOptions);
     /**

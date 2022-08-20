@@ -1,11 +1,19 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
+import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 
 type Data = {
   name: string
 }
 
-const displayItems = ({ name }: Data): TransactionDisplayItem[] => [
+const displayItems = ({ name }: Data): TransactionDisplayItem<'name'>[] => [
+  {
+    label: 'action',
+    value: `transaction.description.migrateProfile`,
+  },
+  {
+    label: 'info',
+    value: `transaction.info.migrateProfile`,
+  },
   {
     label: 'name',
     value: name,
@@ -47,4 +55,6 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   })
 }
 
-export default { displayItems, transaction }
+const exports: Transaction<Data> = { displayItems, transaction }
+
+export default exports

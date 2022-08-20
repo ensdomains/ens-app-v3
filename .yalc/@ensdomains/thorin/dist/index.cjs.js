@@ -932,7 +932,6 @@
     justify-content: center;
     gap: ${e.space[2]};
     border-radius: ${e.radii.large};
-    text-align: center;
 
     ${o==="horizontal"&&n.css`
       flex-direction: row;
@@ -942,13 +941,16 @@
     `}
 
     background-color: ${e.colors.lightBlue};
+    border: ${e.space.px} solid ${e.colors.blue};
 
     ${t==="warning"&&n.css`
       background-color: ${e.colors.lightYellow};
+      border: ${e.space.px} solid ${e.colors.yellow};
     `}
 
     ${t==="error"&&n.css`
       background-color: ${e.colors.lightRed};
+      border: ${e.space.px} solid ${e.colors.red};
     `}
   `),On=d.default.div(({theme:e,$type:t})=>n.css`
     width: ${e.space[6]};

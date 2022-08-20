@@ -22,7 +22,8 @@
     "continue": "Continue",
     "confirm": "Confirm",
     "remove": "Remove",
-    "sign": "Sign"
+    "sign": "Sign",
+    "burnSelected": "Burn Selected"
   },
   "navigation": {
     "home": "Home",

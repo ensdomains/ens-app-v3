@@ -24,8 +24,6 @@ export const TransactionDialogManager = ({
 }) => {
   const queryClient = useQueryClient()
 
-  console.log('selectedFlowItem: ', selectedFlowItem)
-
   const onDismiss = useCallback(() => {
     dispatch({
       name: 'stopFlow',
@@ -55,7 +53,7 @@ export const TransactionDialogManager = ({
 
       const transactionItem = selectedFlowItem.transactions[selectedFlowItem.currentTransaction]
       const transaction = transactions[transactionItem.name]
-      console.log('transaction: ', transaction)
+
       return (
         <TransactionStageModal
           actionName={transactionItem.name}

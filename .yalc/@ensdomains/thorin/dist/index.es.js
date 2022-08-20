@@ -4366,7 +4366,6 @@ const Container$8 = styled.div(({
     justify-content: center;
     gap: ${theme.space["2"]};
     border-radius: ${theme.radii.large};
-    text-align: center;
 
     ${$alignment === "horizontal" && css`
       flex-direction: row;
@@ -4376,13 +4375,16 @@ const Container$8 = styled.div(({
     `}
 
     background-color: ${theme.colors.lightBlue};
+    border: ${theme.space["px"]} solid ${theme.colors.blue};
 
     ${$type === "warning" && css`
       background-color: ${theme.colors.lightYellow};
+      border: ${theme.space["px"]} solid ${theme.colors.yellow};
     `}
 
     ${$type === "error" && css`
       background-color: ${theme.colors.lightRed};
+      border: ${theme.space["px"]} solid ${theme.colors.red};
     `}
   `);
 const IconElement = styled.div(({

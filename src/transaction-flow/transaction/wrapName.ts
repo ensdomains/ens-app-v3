@@ -1,11 +1,19 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
+import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 
 type Data = {
   name: string
 }
 
-const displayItems = ({ name }: Data): TransactionDisplayItem[] => [
+const displayItems = ({ name }: Data): TransactionDisplayItem<'name'>[] => [
+  {
+    label: 'action',
+    value: `transaction.description.wrapName`,
+  },
+  {
+    label: 'info',
+    value: `transaction.info.wrapName`,
+  },
   {
     label: 'name',
     value: name,
@@ -16,4 +24,6 @@ const displayItems = ({ name }: Data): TransactionDisplayItem[] => [
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   ens.wrapName.populateTransaction(data.name, { wrappedOwner: await signer.getAddress(), signer })
 
-export default { displayItems, transaction }
+const exports: Transaction<Data> = { displayItems, transaction }
+
+export default exports
