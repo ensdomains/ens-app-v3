@@ -234,7 +234,7 @@ export const TransactionStageModal = ({
 
   const FilledDisplayItems = useMemo(
     () => <DisplayItems displayItems={displayItems || []} />,
-    [t, actionName, displayItems],
+    [displayItems],
   )
   const MiddleContent = useMemo(() => {
     if (stage === 'mining') {

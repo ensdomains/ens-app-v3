@@ -10,7 +10,7 @@ import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import mq from '@app/mediaQuery'
 import { useEns } from '@app/utils/EnsProvider'
-import { TransactionFlowAction } from '../types'
+import { TransactionDialogPassthrough, TransactionFlowAction } from '../types'
 
 import { makeTransactionItem } from '../transaction'
 
@@ -148,8 +148,6 @@ const ButtonsContainer = styled.div(
 )
 
 const canContinue = (fuseData: Partial<FuseObj>, fuseSelected: FuseSelected) => {
-  console.log('fuseData: ', fuseData)
-  console.log('fuseSelected: ', fuseSelected)
   const filteredInitialFuseData: Partial<FuseObj> = { ...fuseData }
   Object.keys(filteredInitialFuseData).forEach((key: string) => {
     if (filteredInitialFuseData[key as keyof FuseObj]) {
@@ -160,13 +158,18 @@ const canContinue = (fuseData: Partial<FuseObj>, fuseSelected: FuseSelected) => 
   return isEqual(filteredInitialFuseData, fuseSelected) || cannotUnwrap
 }
 
+type Data = {
+  name: string
+}
+
 export const BurnFuses = ({
   onDismiss,
   dispatch,
 }: {
+  data: Data
   onDismiss: () => void
   dispatch: Dispatch<TransactionFlowAction>
-}) => {
+} & TransactionDialogPassthrough) => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
   const { t: tc } = useTranslation()
   const router = useRouter()

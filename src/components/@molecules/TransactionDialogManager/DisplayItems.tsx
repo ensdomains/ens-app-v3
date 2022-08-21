@@ -141,17 +141,16 @@ const NameValue = ({ value }: { value: string }) => {
 }
 
 const ListContainer = styled.div(
-  ({ theme }) => css`
+  () => css`
     display: flex;
     flex-direction: column;
     text-align: right;
   `,
 )
 
-const ListItemTypography = styled(Typography)(({ theme }) => css``)
+const ListItemTypography = styled(Typography)(() => css``)
 
 const ListValue = ({ value }: { value: string[] }) => {
-  const { t } = useTranslation()
   return (
     <ListContainer>
       {value.map((val, idx) => {

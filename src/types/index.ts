@@ -53,8 +53,6 @@ export type ProfileEditorType = {
 }
 export type PublicENS = PublicInterface<ENS>
 
-// export type OnDismissTranacation
-
 export interface Transaction<Data> {
   displayItems: (data: any) => TransactionDisplayItem<TransactionDisplayItemTypes>[]
   transaction: (signer: JsonRpcSigner, ens: PublicENS, data: Data) => Promise<PopulatedTransaction>

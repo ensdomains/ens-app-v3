@@ -1,4 +1,4 @@
-import { TransactionDisplayItem } from '@app/types'
+import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
 import { Button, Dialog } from '@ensdomains/thorin'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 import type { DataInputComponent } from './input'
@@ -111,5 +111,5 @@ export type ManagedDialogProps = {
   completeBtnLabel?: string
   completeTitle?: string
   actionName: string
-  displayItems: TransactionDisplayItem[]
+  displayItems: TransactionDisplayItem<TransactionDisplayItemTypes>[]
 }
