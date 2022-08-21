@@ -36,8 +36,6 @@ const Fuses = () => {
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
 
-  console.log('fuseData: ', fuseData)
-
   return !fuseData ? (
     <Typography>{t('fuses.callToAction')}</Typography>
   ) : (
