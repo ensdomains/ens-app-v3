@@ -1,11 +1,12 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
-import ProfileEditor from '@app/components/pages/profile/ProfileEditor/ProfileEditor'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { useChainId } from '@app/hooks/useChainId'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
@@ -18,10 +19,10 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { Button } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo, useState } from 'react'
+import { ReactElement, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useEnsName } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -34,7 +35,7 @@ const DetailsWrapper = styled.div(
   `,
 )
 
-const SelfButtons = styled.div(
+const SelfButtons = styled(CacheableComponent)(
   ({ theme }) => css`
     display: flex;
     flex-direction: row;
@@ -60,10 +61,10 @@ export default function Page() {
   const initial = useInitial()
   const chainId = useChainId()
 
-  const { data: accountData, isLoading: accountLoading } = useAccount()
-  const address = accountData?.address
+  const { address, isConnecting, isReconnecting } = useAccount()
+  const accountLoading = isConnecting || isReconnecting
 
-  const { data: ensName, isLoading: primaryLoading } = useEnsName({ address })
+  const { name: ensName, loading: primaryLoading } = usePrimary(address as string, !address)
 
   const name = isSelf && ensName ? ensName : _name
 
@@ -76,6 +77,8 @@ export default function Page() {
     normalisedName,
     dnsOwner,
     valid,
+    basicIsCachedData,
+    profileIsCachedData,
   } = useNameDetails(name)
 
   const selfAbilities = useSelfAbilities(address, ownerData)
@@ -94,9 +97,6 @@ export default function Page() {
   )
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
-
-  const [showEditor, setShowEditor] = useState(false)
-  const handleDismissEditor = () => setShowEditor(false)
 
   const [titleContent, descriptionContent] = useMemo(() => {
     if (isSelf) {
@@ -124,6 +124,11 @@ export default function Page() {
       }),
     ]
   }, [isSelf, normalisedName, valid, name, t])
+
+  const { showDataInput } = useTransactionFlow()
+  const handleEditProfile = () => {
+    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
+  }
 
   const profileActions = useMemo(() => {
     if (isSelf || (!selfAbilities.canEdit && profile?.address !== address)) return undefined
@@ -187,6 +192,7 @@ export default function Page() {
               expiryDate={expiryDate}
               showButton={!selfAbilities.canEdit}
               dnsOwner={dnsOwner}
+              isCached={basicIsCachedData}
             />
           ),
           trailing: (
@@ -202,13 +208,8 @@ export default function Page() {
                 actions={profileActions}
               />
               {selfAbilities.canEdit && (
-                <SelfButtons>
-                  <Button
-                    shadowless
-                    variant="transparent"
-                    size="small"
-                    onClick={() => setShowEditor(true)}
-                  >
+                <SelfButtons $isCached={profileIsCachedData}>
+                  <Button shadowless variant="transparent" size="small" onClick={handleEditProfile}>
                     {t('editProfile')}
                   </Button>
                   <Button
@@ -229,6 +230,7 @@ export default function Page() {
                 </SelfButtons>
               )}
               <ProfileDetails
+                isCached={profileIsCachedData}
                 addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
                   key: item.coin,
                   value: item.addr,
@@ -237,10 +239,6 @@ export default function Page() {
                   .map((item: any) => ({ key: item.key, value: item.value }))
                   .filter((item: any) => item.value !== null)}
               />
-
-              {selfAbilities.canEdit && (
-                <ProfileEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />
-              )}
             </DetailsWrapper>
           ),
         }}

@@ -1,8 +1,8 @@
+import { emptyAddress } from '@app/utils/constants'
 import { useEns } from '@app/utils/EnsProvider'
 import { yearsToSeconds } from '@app/utils/utils'
-import { emptyAddress } from '@app/utils/constants'
 import type { BigNumber } from 'ethers'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
 
 export type RegistrationStatus =
   | 'invalid'
@@ -17,7 +17,13 @@ export type RegistrationStatus =
 export const useRegistrationStatus = (name: string) => {
   const { ready, getExpiry, getPrice, getOwner, batch } = useEns()
 
-  const { data, isLoading, status } = useQuery(
+  const {
+    data,
+    isLoading,
+    status,
+    isFetched,
+    internal: { isFetchedAfterMount },
+  } = useQuery(
     ['registrationStatus', name],
     async (): Promise<RegistrationStatus> => {
       const labels = name.split('.')
@@ -67,5 +73,10 @@ export const useRegistrationStatus = (name: string) => {
     },
   )
 
-  return { data, isLoading, status }
+  return {
+    data,
+    isLoading,
+    status,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+  }
 }

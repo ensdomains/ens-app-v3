@@ -2,8 +2,8 @@
 /* eslint-disable no-param-reassign */
 import { transactions } from '@app/transaction-flow/transaction'
 import { Dialog } from '@ensdomains/thorin'
+import { useQueryClient } from '@tanstack/react-query'
 import { Dispatch, useCallback, useMemo } from 'react'
-import { useQueryClient } from 'react-query'
 import { DataInputComponents } from '../../../transaction-flow/input'
 import {
   InternalTransactionFlow,

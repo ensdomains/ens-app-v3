@@ -50,6 +50,7 @@ yarn-error.log*
 !/e2e/.eslintrc.js
 !/e2e/tsconfig.json
 !/e2e/setup.js
+!/e2e/clean.js
 
 # IDEs
 .idea

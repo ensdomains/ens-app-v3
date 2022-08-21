@@ -1,0 +1,55 @@
+diff --git a/dist/chunk-FBXPG3SN.js b/dist/chunk-FBXPG3SN.js
+index 8df7789139fc0f31b6b863d7590b278e2b50435b..ad275cff4cd46786aa0dc8a6c038222c5821de4e 100644
+--- a/dist/chunk-FBXPG3SN.js
++++ b/dist/chunk-FBXPG3SN.js
+@@ -4007,11 +4007,13 @@ export {
+   isMobile,
+   useChainId,
+   useTransactionStore,
++  useRecentTransactions,
+   cssObjectFromTheme,
+   cssStringFromTheme,
+   RainbowKitProvider,
+   dialogContent,
+   dialogContentMobile,
++  useClearRecentTransactions,
+   DesktopOptions,
+   MobileOptions,
+   useAccountModal,
+diff --git a/dist/index.d.ts b/dist/index.d.ts
+index ae0251b96118a437de2100fddd06b41c8908d0f3..f4ec066e3335ffa89dddfb34ea26132a5a4fc5d8 100644
+--- a/dist/index.d.ts
++++ b/dist/index.d.ts
+@@ -5,6 +5,9 @@ export { getWalletConnectConnector } from './wallets/getWalletConnectConnector';
+ export { connectorsForWallets } from './wallets/connectorsForWallets';
+ export { useAccountModal, useChainModal, useConnectModal, } from './components/RainbowKitProvider/ModalContext';
+ export { useAddRecentTransaction } from './transactions/useAddRecentTransaction';
++export { useClearRecentTransactions } from './transactions/useClearRecentTransactions';
++export { useRecentTransactions } from './transactions/useRecentTransactions';
++export { useTransactionStore } from './transactions/TransactionStoreContext';
+ export type { Wallet, WalletList } from './wallets/Wallet';
+ export type { Chain } from './components/RainbowKitProvider/RainbowKitChainContext';
+ export type { Theme } from './components/RainbowKitProvider/RainbowKitProvider';
+diff --git a/dist/index.js b/dist/index.js
+index c2174ef3b40d352f55dd00cc0e656ffc7a75f0cc..fcc349bcab4f25ed885b32c5d17f6e4b98607164 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -20,6 +20,8 @@ import {
+   useChainId,
+   useChainModal,
+   useConnectModal,
++  useClearRecentTransactions,
++  useRecentTransactions,
+   useTransactionStore
+ } from "./chunk-FBXPG3SN.js";
+ import {
+@@ -625,6 +627,9 @@ export {
+   midnightTheme,
+   useAccountModal,
+   useAddRecentTransaction,
++  useClearRecentTransactions,
++  useRecentTransactions,
++  useTransactionStore,
+   useChainModal,
+   useConnectModal,
+   wallet

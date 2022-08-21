@@ -1,19 +1,22 @@
 import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 import { Typography, Helper } from '@ensdomains/thorin'
 
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
-import { TrafficLight } from '@app/components/TrafficLight'
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { TrafficLight } from '@app/components/TrafficLight'
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
-const FusesContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  margin: 0 auto;
-  padding: 20px 25px;
-`
+const FusesContainer = styled(CacheableComponent)(
+  () => css`
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    padding: 20px 25px;
+  `,
+)
 
 const FusesRow = styled.div(
   ({ theme }) => css`
@@ -34,12 +37,12 @@ const Fuses = () => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
   const router = useRouter()
   const { name } = router.query
-  const { fuseData } = useGetFuseData((name as string) || '')
+  const { fuseData, isCachedData } = useGetFuseData((name as string) || '')
 
   return !fuseData ? (
     <Typography>{t('fuses.callToAction')}</Typography>
   ) : (
-    <FusesContainer>
+    <FusesContainer $isCached={isCachedData}>
       {!fuseData.fuseObj.PARENT_CANNOT_CONTROL && (
         <>
           <Helper type="warning">{t('fuses.permissions.warning')}</Helper>

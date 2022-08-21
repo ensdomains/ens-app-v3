@@ -21,8 +21,6 @@ const mockFusesResponse = {
     PARENT_CANNOT_CONTROL: true,
     canDoEverything: false,
   },
-  vulnerability: 'Safe',
-  vulnerableNode: null,
   rawFuses: BigNumber.from('0x40'),
 }
 

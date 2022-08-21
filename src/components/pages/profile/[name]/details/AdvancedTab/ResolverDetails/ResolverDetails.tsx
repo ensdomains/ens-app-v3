@@ -1,3 +1,4 @@
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
 import { useProfile } from '@app/hooks/useProfile'
@@ -7,7 +8,7 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-const ResolverDetailsContainer = styled.div(({ theme }) => [
+const ResolverDetailsContainer = styled(CacheableComponent)(({ theme }) => [
   css`
     display: flex;
     flex-direction: column;
@@ -63,7 +64,7 @@ const ResolverDetails = () => {
   const router = useRouter()
   const { name } = router.query
 
-  const { profile = { resolverAddress: '' } } = useProfile(name as string)
+  const { profile = { resolverAddress: '' }, isCachedData } = useProfile(name as string)
   const { resolverAddress } = profile
 
   const resolverAddressIndex = RESOLVER_ADDRESSES.indexOf(resolverAddress ?? '')
@@ -79,7 +80,7 @@ const ResolverDetails = () => {
   }
 
   return (
-    <ResolverDetailsContainer>
+    <ResolverDetailsContainer $isCached={isCachedData}>
       <VersionContainer>
         <Typography weight="bold">{t('details.tabs.advanced.resolver.version')}</Typography>
         <VersionIndicator>

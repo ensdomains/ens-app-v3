@@ -1,13 +1,14 @@
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { mq, Typography } from '@ensdomains/thorin'
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
-import AdvancedEditor from './AdvancedEditor/AdvancedEditor'
 
 type TextRecord = {
   key: string
@@ -44,6 +45,7 @@ const TabWrapper = styled(OriginalTabWrapper)(
       flex-gap: ${theme.space['6']};
     `)}
   `,
+  cacheableComponentStyles,
 )
 
 const RecordSection = styled.div(
@@ -250,6 +252,7 @@ export const RecordsTab = ({
   addresses,
   contentHash,
   canEdit,
+  isCached,
 }: {
   name: string
   network: number
@@ -257,6 +260,7 @@ export const RecordsTab = ({
   addresses?: AddressRecord[]
   contentHash?: ContentHash
   canEdit?: boolean
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('profile')
 
@@ -281,11 +285,11 @@ export const RecordsTab = ({
     }
   }, [name, network, contentHash])
 
-  const [showEditor, setShowEditor] = useState(false)
-  const handleDismissEditor = () => setShowEditor(false)
-
+  const { showDataInput } = useTransactionFlow()
+  const handleShowEditor = () =>
+    showDataInput(`advanced-editor-${name}`, `AdvancedEditor`, { name })
   return (
-    <TabWrapper data-testid="records-tab">
+    <TabWrapper $isCached={isCached} data-testid="records-tab">
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
@@ -299,7 +303,7 @@ export const RecordsTab = ({
 
           {canEdit && (
             <EditButton>
-              <Typography weight="bold" onClick={() => setShowEditor(true)}>
+              <Typography weight="bold" onClick={handleShowEditor}>
                 {t('action.edit', { ns: 'common' })}
               </Typography>
             </EditButton>
@@ -356,7 +360,6 @@ export const RecordsTab = ({
         </SectionHeader>
         {formattedContentHash && <RecordItem type="contentHash" value={formattedContentHash} />}
       </RecordSection>
-      {canEdit && <AdvancedEditor name={name} open={showEditor} onDismiss={handleDismissEditor} />}
     </TabWrapper>
   )
 }

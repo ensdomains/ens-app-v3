@@ -1,9 +1,9 @@
 import { useNetwork } from 'wagmi'
 
 export const useChainId = () => {
-  const { activeChain } = useNetwork()
-  if (activeChain) {
-    return activeChain.id ?? null
+  const { chain } = useNetwork()
+  if (chain) {
+    return chain.id ?? null
   }
   return 1
 }

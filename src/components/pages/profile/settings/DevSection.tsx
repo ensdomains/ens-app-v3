@@ -2,40 +2,53 @@
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { Button } from '@ensdomains/thorin'
+// eslint-disable-next-line import/no-extraneous-dependencies
+import type { JsonRpcProvider } from '@ethersproject/providers'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { useSendTransaction } from 'wagmi'
+import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
 import { SectionContainer } from './Section'
 
-const rpcSend = (method: string, params: any[]) =>
+const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
   fetch('http://localhost:8545', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
     },
-    body: JSON.stringify({
-      jsonrpc: '2.0',
-      method,
-      params,
-      id: 1,
-    }),
+    body: JSON.stringify(
+      items.map(({ method, params }, i) => ({
+        jsonrpc: '2.0',
+        method,
+        params,
+        id: i + 1,
+      })),
+    ),
   })
 
 export const DevSection = () => {
+  const provider: JsonRpcProvider = useProvider()
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
-  const { sendTransactionAsync } = useSendTransaction()
+  const { config: successConfig } = usePrepareSendTransaction({
+    request: {
+      to: '0x0000000000000000000000000000000000000000',
+      value: '0',
+    },
+  })
+  const { sendTransactionAsync: sendFailure } = useSendTransaction({
+    mode: 'prepared',
+    request: {
+      to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+      data: '0x1231237123423423',
+      gasLimit: '1000000',
+    },
+  })
+  const { sendTransactionAsync: sendSuccess } = useSendTransaction(successConfig)
 
   const addSuccess = async () => {
-    const transaction = await sendTransactionAsync({
-      request: {
-        to: '0x0000000000000000000000000000000000000000',
-        value: '0',
-      },
-    })
+    const transaction = await sendSuccess!()
     addTransaction({
       description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
-      confirmations: transaction.confirmations || undefined,
     })
   }
 
@@ -46,25 +59,28 @@ export const DevSection = () => {
   }
 
   const addFailure = async () => {
-    const transaction = await sendTransactionAsync({
-      request: {
-        to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
-        data: '0x1231237123423423',
-        gasLimit: '1000000',
-      },
-    })
+    const transaction = await sendFailure!()
     addTransaction({
       description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
-      confirmations: transaction.confirmations || undefined,
     })
   }
 
-  const startAutoMine = async () => rpcSend('miner_start', [])
+  const startAutoMine = async () =>
+    provider.send('evm_setAutomine', [true]).then(() => provider.send('evm_mine', []))
 
-  const stopAutoMine = async () => rpcSend('miner_stop', [])
+  const stopAutoMine = async () => provider.send('evm_setAutomine', [false])
 
-  const revert = async () => rpcSend('evm_revert', [1]).then(() => rpcSend('evm_snapshot', []))
+  const revert = async () => {
+    const currBlock = await provider.getBlockNumber()
+    await provider.send('evm_revert', [1])
+    await provider.send('evm_snapshot', [])
+    const revertBlock = await provider.getBlockNumber()
+    const blocksToMine = currBlock - revertBlock
+    await rpcSendBatch(
+      Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),
+    )
+  }
 
   return (
     <SectionContainer title="Developer">

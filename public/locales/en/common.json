@@ -92,19 +92,23 @@
       "migrateProfile": "Migrate Profile",
       "wrapName": "Wrap Name",
       "updateResolver": "Update Resolver",
+      "updateProfile": "Update Profile",
       "setPrimaryName": "Set primary name",
       "updateEthAddress": "Update ETH address",
       "testSendName": "Send Name",
-      "burnFuses": "Burn permissions"
+      "burnFuses": "Burn permissions",
+      "createSubname": "Create Subname"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
       "wrapName": "Wrap name and set new resolver",
       "updateResolver": "Change contract used to store records",
+      "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",
       "updateEthAddress": "Update ETH address to this address",
       "testSendName": "Set the controller and registrant of the name",
+      "createSubname": "Create a new subname on the name",
       "burnFuses": "Burn the chosen permissions until name expiry"
     },
     "itemLabel": {
@@ -114,7 +118,8 @@
       "info": "Info",
       "to": "To",
       "currentResolver": "Current Resolver",
-      "newResolver": "New Resolver"
+      "newResolver": "New Resolver",
+      "subname": "Subname"
     },
     "itemValue": {},
     "status": {

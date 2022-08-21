@@ -52,7 +52,19 @@
       "subnames": {
         "label": "Subnames",
         "loading": "Loading subnames",
-        "empty": "No subnames have been added"
+        "empty": "No subnames have been added",
+        "addSubname": {
+          "title": "Subnames let you create additional names from your existing name.",
+          "learn": "Learn about subnames",
+          "action": "New subname",
+          "dialog": {
+            "title": "Create Subname",
+            "error": {
+              "invalidCharacters": "Contains invalid characters",
+              "alreadyExists": "Name already exists"
+            }
+          }
+        }
       },
       "advanced": {
         "label": "Advanced",
@@ -210,6 +222,7 @@
       },
       "other": {
         "label": "Other",
+        "labelDisabled": "Not supported by current resolver",
         "contentHash": {
           "label": "Content Hash",
           "placeholder": "e.g. ipfs://"

@@ -2,7 +2,7 @@ import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Wrap Name', () => {
   before(() => {
-    acceptMetamaskAccess(2)
+    acceptMetamaskAccess(2, true)
   })
   it('should not show wrap notification if the connected wallet is not the registrant', () => {
     cy.visit('/profile/other-registrant.eth/details')

@@ -1,6 +1,7 @@
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
@@ -20,6 +21,7 @@ const Container = styled(Card)(
       margin-bottom: ${theme.space['3']};
     }
   `,
+  cacheableComponentStyles,
 )
 
 const ExpiryContainer = styled.div(
@@ -75,15 +77,17 @@ const ButtonIcon = styled.svg(
 export const DetailSnippet = ({
   expiryDate,
   canSend,
+  isCached,
 }: {
   expiryDate?: Date | null
   canSend: boolean
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
 
   if (!expiryDate && !canSend) return null
   return (
-    <Container>
+    <Container $isCached={isCached}>
       <Row>
         {expiryDate && (
           <ExpiryContainer data-testid="expiry-data">

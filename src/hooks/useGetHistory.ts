@@ -1,5 +1,5 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
 
 export const useGetHistory = (name: string, skip?: any) => {
   const { ready, getHistory } = useEns()
@@ -8,9 +8,16 @@ export const useGetHistory = (name: string, skip?: any) => {
     data: history,
     isLoading,
     status,
+    isFetched,
+    internal: { isFetchedAfterMount },
   } = useQuery(['getHistory', name], () => getHistory(name), {
     enabled: ready && !skip && name !== '',
   })
 
-  return { history, isLoading, status }
+  return {
+    history,
+    isLoading,
+    status,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+  }
 }

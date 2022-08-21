@@ -1,10 +1,10 @@
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useGetHistory } from '@app/hooks/useGetHistory'
 import { Button, mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useNetwork, useProvider } from 'wagmi'
+import { useNetwork, useProvider, useQuery } from 'wagmi'
 
 function getEtherScanLink(networkId?: number | string) {
   switch (networkId) {
@@ -25,7 +25,7 @@ function getEtherScanLink(networkId?: number | string) {
   }
 }
 
-const RegistrationDateContainer = styled.div(
+const RegistrationDateContainer = styled(CacheableComponent)(
   ({ theme }) => css`
     display: flex;
     align-items: center;
@@ -53,9 +53,9 @@ export const RegistrationDate = () => {
   const { t } = useTranslation('common')
   const router = useRouter()
   const { name } = router.query
-  const { history = { registration: [] } } = useGetHistory(name as string)
+  const { history = { registration: [] }, isCachedData } = useGetHistory(name as string)
   const provider = useProvider()
-  const { activeChain } = useNetwork()
+  const { chain } = useNetwork()
 
   const registration = history?.registration?.[0]
   const registrationBlock = registration?.blockNumber
@@ -82,12 +82,12 @@ export const RegistrationDate = () => {
   )
 
   return (
-    <RegistrationDateContainer>
+    <RegistrationDateContainer $isCached={isCachedData}>
       <Typography>{registrationDate}</Typography>
       <ButtonContainer>
         <Button
           as="a"
-          href={`${getEtherScanLink(activeChain?.id)}tx/${transactionHash}`}
+          href={`${getEtherScanLink(chain?.id)}tx/${transactionHash}`}
           target="_blank"
           size="small"
         >

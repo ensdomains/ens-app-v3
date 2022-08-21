@@ -1,5 +1,5 @@
 import { useEns } from '@app/utils/EnsProvider'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
 
 export const useGetFuseData = (name: string, skip?: any) => {
   const { ready, getFuses } = useEns()
@@ -8,9 +8,16 @@ export const useGetFuseData = (name: string, skip?: any) => {
     data: fuseData,
     isLoading,
     status,
+    isFetched,
+    internal: { isFetchedAfterMount },
   } = useQuery(['getFuseData', name], () => getFuses(name), {
     enabled: ready && !skip && name !== '',
   })
 
-  return { fuseData, isLoading, status }
+  return {
+    fuseData,
+    isLoading,
+    status,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+  }
 }

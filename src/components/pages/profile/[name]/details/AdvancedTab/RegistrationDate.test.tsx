@@ -5,7 +5,6 @@ import { useNetwork, useProvider } from 'wagmi'
 import { RegistrationDate } from './RegistrationDate'
 
 jest.mock('next/router')
-jest.mock('wagmi')
 jest.mock('@app/hooks/useGetHistory')
 
 const mockUseRouter = mockFunction(useRouter)
@@ -27,7 +26,7 @@ describe('RegistrationDate', () => {
       }),
   }
 
-  const networkObject = { activeChain: { id: 3 } }
+  const networkObject = { chain: { id: 3 } }
 
   const historyObject = {
     history: {
@@ -52,7 +51,7 @@ describe('RegistrationDate', () => {
       },
     })
     mockUseProvider.mockReturnValue({})
-    mockUseNetwork.mockReturnValue({ activeChain: { id: 3 } })
+    mockUseNetwork.mockReturnValue({ chain: { id: 3 } })
     mockUseGetHistory.mockReturnValue({
       history: {
         registration: [
