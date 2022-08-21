@@ -37,7 +37,7 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const generateAccordionData = (
+export const generateAccordionData = (
   fuseData: ReturnType<typeof useGetFuseData>['fuseData'],
   t: TFunction,
   addressData: ReturnType<typeof useAccount>['data'],
