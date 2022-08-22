@@ -52,21 +52,21 @@ export declare const getText: {
     decode: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, data: string) => Promise<any>;
 };
 export declare const _getAddr: {
-    raw: ({ contracts }: ENSArgs<'contracts'>, name: string, coinType?: string | number | undefined, bypassFormat?: boolean | undefined) => Promise<{
+    raw: ({ contracts }: ENSArgs<'contracts'>, name: string, coinType?: string | number, bypassFormat?: boolean) => Promise<{
         to: string;
         data: string;
     }>;
-    decode: ({ contracts }: ENSArgs<'contracts'>, data: string, _name: string, coinType?: string | number | undefined) => Promise<string | {
+    decode: ({ contracts }: ENSArgs<'contracts'>, data: string, _name: string, coinType?: string | number) => Promise<string | {
         coin: string;
         addr: string;
     } | undefined>;
 };
 export declare const getAddr: {
-    raw: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, name: string, coinType?: string | number | undefined) => Promise<{
+    raw: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, name: string, coinType?: string | number) => Promise<{
         to: string;
         data: string;
     }>;
-    decode: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, data: string, _name: string, coinType?: string | number | undefined) => Promise<string | {
+    decode: ({ contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>, data: string, _name: string, coinType?: string | number) => Promise<string | {
         coin: string;
         addr: string;
     } | undefined>;

@@ -1,7 +1,14 @@
-import { JsonRpcSigner } from '@ethersproject/providers';
-import type { PopulatedTransaction } from 'ethers';
-declare type CustomData = Record<string, any>;
-declare const _default: (signer: JsonRpcSigner, populate: boolean) => ({ customData, ...tx }: PopulatedTransaction) => {
+import { ENSArgs } from '..';
+import { CommitmentParams } from '../utils/registerHelpers';
+declare type Params = Omit<CommitmentParams, 'resolver' | 'name'> & {
+    resolverAddress?: string;
+};
+export default function ({ contracts }: ENSArgs<'contracts'>, name: string, { resolverAddress, ...params }: Params): Promise<{
+    customData: {
+        secret: string;
+        commitment: string;
+        wrapperExpiry: number;
+    };
     to?: string | undefined;
     from?: string | undefined;
     nonce?: number | undefined;
@@ -15,7 +22,5 @@ declare const _default: (signer: JsonRpcSigner, populate: boolean) => ({ customD
     maxFeePerGas?: import("ethers").BigNumber | undefined;
     maxPriorityFeePerGas?: import("ethers").BigNumber | undefined;
     ccipReadEnabled?: boolean | undefined;
-} | Promise<import("@ethersproject/providers").TransactionResponse | (import("@ethersproject/providers").TransactionResponse & {
-    customData: CustomData;
-})>;
-export default _default;
+}>;
+export {};

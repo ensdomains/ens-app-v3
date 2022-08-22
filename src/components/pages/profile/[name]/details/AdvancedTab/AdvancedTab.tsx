@@ -40,21 +40,21 @@ const MoreContainer = styled.div`
 export const generateAccordionData = (
   fuseData: ReturnType<typeof useGetFuseData>['fuseData'],
   t: TFunction,
-  addressData: ReturnType<typeof useAccount>['data'],
   ownerData: ReturnType<typeof useBasicName>['ownerData'],
+  address?: string,
 ): AccordionData[] => [
   {
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
     name: 'resolverDetails',
-    canEdit: ownerData?.owner === addressData?.address,
+    canEdit: ownerData?.owner === address,
   },
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
     disabled: !fuseData,
     name: 'fuses',
-    canEdit: ownerData?.owner === addressData?.address,
+    canEdit: ownerData?.owner === address,
   },
   {
     title: t('details.tabs.advanced.tokenId.label'),
@@ -73,9 +73,12 @@ const MoreTab = () => {
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
-  const { data: addressData } = useAccount()
+  const { address } = useAccount()
   const { ownerData } = useBasicName(name as string)
-  const accordionData = generateAccordionData(fuseData, t, addressData, ownerData)
+  const accordionData = generateAccordionData(fuseData, t, ownerData, address)
+
+  console.log('accordionDAta: ', accordionData)
+  console.log('ownerData: ', ownerData)
 
   return (
     <MoreContainer>

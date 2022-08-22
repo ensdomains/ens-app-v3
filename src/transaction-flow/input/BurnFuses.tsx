@@ -179,6 +179,8 @@ export const BurnFuses = ({
   const [fuseSelected, setFuseSelected] = useState<FuseObj>(defaultFuseObj)
   const { fuses } = useEns()
 
+  console.log('fuseData: ', fuseData)
+
   const handleBurnClick = (permission: keyof FuseObj) => {
     const nextFuseSelected = { ...fuseSelected } as FuseObj
     nextFuseSelected[permission] = !nextFuseSelected[permission]

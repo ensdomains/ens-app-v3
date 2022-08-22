@@ -10,16 +10,13 @@ import type {
   universalWrapper,
 } from './functions/batchWrappers'
 import type burnFuses from './functions/burnFuses'
+import type commitName from './functions/commitName'
 import type createSubname from './functions/createSubname'
 import type deleteSubname from './functions/deleteSubname'
 import type getDNSOwner from './functions/getDNSOwner'
 import type getExpiry from './functions/getExpiry'
 import type getFuses from './functions/getFuses'
-import type {
-  getHistory,
-  getHistoryDetailForTransactionHash,
-  getHistoryWithDetail,
-} from './functions/getHistory'
+import type { getHistory } from './functions/getHistory'
 import type getName from './functions/getName'
 import type getNames from './functions/getNames'
 import type getOwner from './functions/getOwner'
@@ -37,6 +34,8 @@ import type {
 } from './functions/getSpecificRecord'
 import type getSubnames from './functions/getSubnames'
 import type setFuses from './functions/setFuses'
+import registerName from './functions/registerName'
+import renewName from './functions/renewName'
 import type setName from './functions/setName'
 import type setRecord from './functions/setRecord'
 import type setRecords from './functions/setRecords'
@@ -98,7 +97,11 @@ type OptionalWriteOptions<F> = F extends (
   : never
 
 interface WriteFunction<F extends (...args: any) => any> extends Function {
-  (...args: Parameters<OptionalWriteOptions<F>>): Promise<ContractTransaction>
+  (...args: Parameters<OptionalWriteOptions<F>>): Promise<
+    ContractTransaction & {
+      customData?: Record<string, any>
+    }
+  >
   populateTransaction: (
     ...args: Parameters<OptionalWriteOptions<F>>
   ) => Promise<PopulatedTransaction>
@@ -440,22 +443,6 @@ export class ENS {
     'getHistory',
   )
 
-  public getHistoryWithDetail = this.generateFunction<
-    typeof getHistoryWithDetail
-  >(
-    'getHistory',
-    ['contracts', 'gqlInstance', 'provider'],
-    'getHistoryWithDetail',
-  )
-
-  public getHistoryDetailForTransactionHash = this.generateFunction<
-    typeof getHistoryDetailForTransactionHash
-  >(
-    'getHistory',
-    ['contracts', 'provider'],
-    'getHistoryDetailForTransactionHash',
-  )
-
   public getContentHash = this.generateRawFunction<typeof getContentHash>(
     'initialGetters',
     ['contracts', 'universalWrapper'],
@@ -520,6 +507,11 @@ export class ENS {
     'initialGetters',
     ['contracts', 'multicallWrapper'],
     'getPrice',
+  )
+
+  public getDNSOwner = this.generateFunction<typeof getDNSOwner>(
+    'getDNSOwner',
+    [],
   )
 
   public universalWrapper = this.generateRawFunction<typeof universalWrapper>(
@@ -596,8 +588,17 @@ export class ENS {
     ['contracts', 'getExpiry'],
   )
 
-  public getDNSOwner = this.generateFunction<typeof getDNSOwner>(
-    'getDNSOwner',
-    [],
+  public commitName = this.generateWriteFunction<typeof commitName>(
+    'commitName',
+    ['contracts'],
   )
+
+  public registerName = this.generateWriteFunction<typeof registerName>(
+    'registerName',
+    ['contracts'],
+  )
+
+  public renewName = this.generateWriteFunction<typeof renewName>('renewName', [
+    'contracts',
+  ])
 }

@@ -10,8 +10,8 @@ declare const _default: {
         reverseResolverAddress: any;
         resolverAddress: any;
     } | {
-        name: null;
-        match: boolean;
+        name: undefined;
+        match?: undefined;
         reverseResolverAddress?: undefined;
         resolverAddress?: undefined;
     } | undefined>;

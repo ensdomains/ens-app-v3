@@ -207,8 +207,6 @@ class ENS {
         'contracts',
     ]);
     getHistory = this.generateFunction('getHistory', ['gqlInstance'], 'getHistory');
-    getHistoryWithDetail = this.generateFunction('getHistory', ['contracts', 'gqlInstance', 'provider'], 'getHistoryWithDetail');
-    getHistoryDetailForTransactionHash = this.generateFunction('getHistory', ['contracts', 'provider'], 'getHistoryDetailForTransactionHash');
     getContentHash = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getContentHash');
     _getContentHash = this.generateRawFunction('initialGetters', ['contracts'], '_getContentHash');
     getAddr = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getAddr');
@@ -220,6 +218,7 @@ class ENS {
     getSubnames = this.generateFunction('initialGetters', ['gqlInstance'], 'getSubnames');
     getNames = this.generateFunction('initialGetters', ['gqlInstance'], 'getNames');
     getPrice = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getPrice');
+    getDNSOwner = this.generateFunction('getDNSOwner', []);
     universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
     resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
     multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
@@ -248,6 +247,10 @@ class ENS {
     createSubname = this.generateWriteFunction('createSubname', ['contracts', 'getExpiry']);
     deleteSubname = this.generateWriteFunction('deleteSubname', ['transferSubname']);
     transferSubname = this.generateWriteFunction('transferSubname', ['contracts', 'getExpiry']);
-    getDNSOwner = this.generateFunction('getDNSOwner', []);
+    commitName = this.generateWriteFunction('commitName', ['contracts']);
+    registerName = this.generateWriteFunction('registerName', ['contracts']);
+    renewName = this.generateWriteFunction('renewName', [
+        'contracts',
+    ]);
 }
 exports.ENS = ENS;

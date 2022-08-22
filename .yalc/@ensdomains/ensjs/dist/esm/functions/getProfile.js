@@ -215,7 +215,7 @@ const graphFetch = async ({ gqlInstance }, name, wantedRecords, resolverAddress)
         resolverResponse = domain?.resolver;
     }
     else {
-        const resolverId = `${resolverAddress}-${id}`;
+        const resolverId = `${resolverAddress.toLowerCase()}-${id}`;
         ({ resolver: resolverResponse, domain } = await client.request(customResolverQuery, { id, resolverId }));
     }
     if (!domain)

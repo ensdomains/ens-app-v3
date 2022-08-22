@@ -4,9 +4,12 @@ import ContractManager from './contracts';
 import { getContractAddress as _getContractAddress } from './contracts/getContractAddress';
 import { SupportedNetworkId } from './contracts/types';
 import type burnFuses from './functions/burnFuses';
+import type commitName from './functions/commitName';
 import type createSubname from './functions/createSubname';
 import type deleteSubname from './functions/deleteSubname';
 import type setFuses from './functions/setFuses';
+import registerName from './functions/registerName';
+import renewName from './functions/renewName';
 import type setName from './functions/setName';
 import type setRecord from './functions/setRecord';
 import type setRecords from './functions/setRecords';
@@ -37,7 +40,9 @@ declare type WriteOptions = {
 };
 declare type OptionalWriteOptions<F> = F extends (x: any, arg_0: infer Z, options?: infer P) => infer R ? (name: Z, options?: P & WriteOptions) => R : F extends (x: any, arg_0: infer Z, options: infer P) => infer R ? (name: Z, options: P & WriteOptions) => R : never;
 interface WriteFunction<F extends (...args: any) => any> extends Function {
-    (...args: Parameters<OptionalWriteOptions<F>>): Promise<ContractTransaction>;
+    (...args: Parameters<OptionalWriteOptions<F>>): Promise<ContractTransaction & {
+        customData?: Record<string, any>;
+    }>;
     populateTransaction: (...args: Parameters<OptionalWriteOptions<F>>) => Promise<PopulatedTransaction>;
 }
 export declare type RawFunction = {
@@ -210,8 +215,8 @@ export declare class ENS {
             reverseResolverAddress: any;
             resolverAddress: any;
         } | {
-            name: null;
-            match: boolean;
+            name: undefined;
+            match?: undefined;
             reverseResolverAddress?: undefined;
             resolverAddress?: undefined;
         } | undefined>;
@@ -259,36 +264,6 @@ export declare class ENS {
             id: any;
             data: Record<string, any>;
         }[];
-    } | undefined>;
-    getHistoryWithDetail: (name: string) => Promise<{
-        domain: {
-            type: any;
-            blockNumber: any;
-            transactionHash: any;
-            id: any;
-            data: Record<string, any>;
-        }[];
-        registration: {
-            type: any;
-            blockNumber: any;
-            transactionHash: any;
-            id: any;
-            data: Record<string, any>;
-        }[];
-        resolver: {
-            type: any;
-            blockNumber: any;
-            transactionHash: any;
-            id: any;
-            data: Record<string, any>;
-        }[];
-    } | undefined>;
-    getHistoryDetailForTransactionHash: (hash: string, indexInTransaction?: number | undefined) => Promise<({
-        key: any;
-        value: any;
-    } | undefined)[] | {
-        key: any;
-        value: any;
     } | undefined>;
     getContentHash: GeneratedRawFunction<{
         raw: ({ contracts, universalWrapper }: ENSArgs<"contracts" | "universalWrapper">, name: string) => Promise<{
@@ -440,6 +415,7 @@ export declare class ENS {
             premium: ethers.BigNumber;
         } | undefined>;
     }>;
+    getDNSOwner: (dnsName: string) => Promise<any>;
     universalWrapper: GeneratedRawFunction<{
         raw: ({ contracts }: ENSArgs<"contracts">, name: string, data: string) => Promise<{
             to: string;
@@ -479,6 +455,8 @@ export declare class ENS {
     createSubname: WriteFunction<typeof createSubname>;
     deleteSubname: WriteFunction<typeof deleteSubname>;
     transferSubname: WriteFunction<typeof transferSubname>;
-    getDNSOwner: (dnsName: string) => Promise<any>;
+    commitName: WriteFunction<typeof commitName>;
+    registerName: WriteFunction<typeof registerName>;
+    renewName: WriteFunction<typeof renewName>;
 }
 export {};

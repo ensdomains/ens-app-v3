@@ -31,7 +31,7 @@ describe('getName', () => {
     const result = await ENSInstance.getName(
       '0x8c5be1e5ebec7d5bd14f71427d1e84f3dd0314c0',
     )
-    expect(result).toBeUndefined()
+    expect(result?.name).toBeUndefined()
   })
   it('should return with a false match for a name with no forward resolution', async () => {
     const tx = await ENSInstance.setName('with-profile.eth')

@@ -7,37 +7,63 @@ export const randomSecret = () => {
     const bytes = Buffer.allocUnsafe(32);
     return '0x' + crypto.getRandomValues(bytes).toString('hex');
 };
-export const makeCommitment = ({ name, owner, duration, resolver, records, reverseRecord, fuses, }) => {
+export const makeCommitmentData = ({ name, owner, duration, resolver, records, reverseRecord, fuses, wrapperExpiry, secret, }) => {
     const label = labelhash(name.split('.')[0]);
     const hash = namehash(name);
     const resolverAddress = resolver.address;
-    const data = records ? generateRecordCallArray(hash, records, resolver) : [];
-    const secret = randomSecret();
     const fuseData = fuses ? generateFuseInput(fuses) : '0';
-    const commitment = _makeCommitment({
-        labelhash: label,
+    if (reverseRecord) {
+        if (!records) {
+            records = { coinTypes: [{ key: 'ETH', value: owner }] };
+        }
+        else if (!records.coinTypes?.find((c) => c.key === 'ETH')) {
+            if (!records.coinTypes)
+                records.coinTypes = [];
+            records.coinTypes.push({ key: 'ETH', value: owner });
+        }
+    }
+    const data = records ? generateRecordCallArray(hash, records, resolver) : [];
+    return [
+        label,
         owner,
         duration,
-        secret,
-        resolver: resolverAddress,
+        resolverAddress,
         data,
-        reverseRecord: !!reverseRecord,
-        fuses: fuseData,
+        secret,
+        !!reverseRecord,
+        fuseData,
+        wrapperExpiry || Math.floor(Date.now() / 1000) + duration,
+    ];
+};
+export const makeRegistrationData = (params) => {
+    const commitmentData = makeCommitmentData(params);
+    commitmentData[0] = params.name.split('.')[0];
+    const secret = commitmentData.splice(5, 1)[0];
+    commitmentData.splice(3, 0, secret);
+    return commitmentData;
+};
+export const makeCommitment = ({ secret = randomSecret(), ...inputParams }) => {
+    const generatedParams = makeCommitmentData({
+        ...inputParams,
+        secret,
     });
+    const commitment = _makeCommitment(generatedParams);
     return {
         secret,
         commitment,
+        wrapperExpiry: generatedParams[8],
     };
 };
-export const _makeCommitment = ({ labelhash, owner, duration, secret, resolver, data, reverseRecord, fuses, }) => {
-    return utils.solidityKeccak256([
+export const _makeCommitment = (params) => {
+    return utils.keccak256(utils.defaultAbiCoder.encode([
         'bytes32',
         'address',
         'uint256',
-        'bytes32',
         'address',
         'bytes[]',
+        'bytes32',
         'bool',
-        'uint96',
-    ], [labelhash, owner, duration, secret, resolver, data, reverseRecord, fuses]);
+        'uint32',
+        'uint64',
+    ], params));
 };

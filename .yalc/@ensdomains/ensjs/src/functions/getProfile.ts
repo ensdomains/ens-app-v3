@@ -362,7 +362,7 @@ const graphFetch = async (
     ;({ domain } = await client.request(query, { id }))
     resolverResponse = domain?.resolver
   } else {
-    const resolverId = `${resolverAddress}-${id}`
+    const resolverId = `${resolverAddress.toLowerCase()}-${id}`
     ;({ resolver: resolverResponse, domain } = await client.request(
       customResolverQuery,
       { id, resolverId },

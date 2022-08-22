@@ -2,7 +2,6 @@ import { formatsByCoinType } from '@ensdomains/address-encoder'
 import { ethers } from 'ethers'
 import { ENSArgs } from '..'
 import { decodeContenthash } from '../utils/contentHash'
-import { makeOtherIndexes } from '../utils/makeHashIndexes'
 
 type DomainEvent = 'NewOwner' | 'NewResolver' | 'Transfer' | 'NewTTL'
 type RegistrationEvent = 'NameRegistered' | 'NameRenewed' | 'NameTransferred'
@@ -63,7 +62,7 @@ const eventFormat: Record<
     NameChanged: (args: any) => ({ name: args.name }),
     AbiChanged: (args: any) => ({ contentType: args.contentType }),
     PubkeyChanged: (args: any) => ({ x: args.x, y: args.y }),
-    TextChanged: (args: any) => ({ key: args.key }),
+    TextChanged: (args: any) => ({ key: args.key, value: args.value }),
     ContenthashChanged: (args: any) => ({ hash: decodeContenthash(args.hash) }),
     InterfaceChanged: (args: any) => ({
       interfaceId: args.interfaceId,
@@ -85,37 +84,6 @@ const mapEvents = (eventArray: any[], type: EventTypes) =>
     id: event.id,
     data: eventFormat[type][event.__typename](event),
   }))
-
-const mapResultDetailDecode =
-  (publicResolver: ethers.Contract) => (result: any) => {
-    const hashIndexes = makeOtherIndexes(result.input, '10f13a8c')
-    const abiLengths = hashIndexes.map((x: number) => ({
-      index: x,
-      length:
-        x === 0
-          ? ethers.utils.hexDataLength(result.input)
-          : parseInt(ethers.utils.hexDataSlice(result.input, x - 32, x), 16),
-    }))
-    const ABIs = abiLengths.map(({ index, length }) =>
-      ethers.utils.hexDataSlice(result.input, index, index + length),
-    )
-    return ABIs.map((abi: string) => {
-      try {
-        return publicResolver.interface.decodeFunctionData(
-          'setText(bytes32,string,string)',
-          abi,
-        )
-      } catch {
-        return
-      }
-    })
-  }
-
-const expandDecode = (prev: any, curr: any) => {
-  if (!curr) return [...prev, { value: null }]
-  if (!curr.length) return [...prev, curr]
-  return [...prev, ...curr]
-}
 
 export async function getHistory(
   { gqlInstance }: ENSArgs<'gqlInstance'>,
@@ -200,6 +168,7 @@ export async function getHistory(
               }
               ...on TextChanged {
                 key
+                value
               }
               ...on ContenthashChanged {
                 hash
@@ -250,98 +219,4 @@ export async function getHistory(
     registration: registrationHistory,
     resolver: resolverHistory,
   }
-}
-
-export async function getHistoryWithDetail(
-  {
-    contracts,
-    gqlInstance,
-    provider,
-  }: ENSArgs<'contracts' | 'gqlInstance' | 'provider'>,
-  name: string,
-) {
-  const historyRes = await getHistory({ gqlInstance }, name)
-
-  if (!historyRes) return
-
-  const { domain, registration, resolver: resolverHistory } = historyRes
-
-  const textEvents = resolverHistory.filter(
-    (event) => event.type === 'TextChanged',
-  )
-
-  const transactions = textEvents.reduce((prev, curr) => {
-    if (prev.includes(curr.transactionHash)) {
-      return prev
-    }
-    return [...prev, curr.transactionHash]
-  }, [] as string[])
-
-  const publicResolver = await contracts?.getPublicResolver()!
-
-  const fetchResult = (
-    await ethers.utils.fetchJson(
-      provider!.connection,
-      JSON.stringify(
-        transactions.map((tx, i) => ({
-          jsonrpc: '2.0',
-          id: i,
-          method: 'eth_getTransactionByHash',
-          params: [tx],
-        })),
-      ),
-    )
-  )
-    .map((result: any) => result.result)
-    .map(mapResultDetailDecode(publicResolver))
-    .reduce(expandDecode, [])
-
-  const detailedResolverHistory = resolverHistory.map((event) => {
-    if (event.type !== 'TextChanged') return event
-    const { id } = event
-    const matchedTextInx = textEvents.findIndex((x) => x.id === id)
-    return {
-      ...event,
-      data: {
-        ...event.data,
-        value: fetchResult[matchedTextInx] && fetchResult[matchedTextInx].value,
-      },
-    }
-  })
-
-  return {
-    domain,
-    registration,
-    resolver: detailedResolverHistory,
-  }
-}
-
-export async function getHistoryDetailForTransactionHash(
-  { contracts, provider }: ENSArgs<'contracts' | 'provider'>,
-  hash: string,
-  indexInTransaction?: number,
-) {
-  const publicResolver = await contracts?.getPublicResolver()!
-  const transaction = await provider!.getTransaction(hash)
-  if (!transaction) return
-  const result = mapResultDetailDecode(publicResolver)({
-    input: transaction.data,
-  })
-  if (!result || !result.length) return
-  if (typeof indexInTransaction === 'number') {
-    if (indexInTransaction + 1 > result.length) return
-    const resultItem = result[indexInTransaction]
-    if (
-      !resultItem ||
-      !resultItem.key ||
-      (!resultItem.value && resultItem.value !== '')
-    )
-      return
-    return { key: resultItem.key, value: resultItem.value }
-  }
-  return result.map((item: any) => {
-    if (!item.key) return
-    if (!item.value && item.value !== '') return { key: item.key, value: null }
-    return { key: item.key, value: item.value }
-  })
 }

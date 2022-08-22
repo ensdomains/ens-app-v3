@@ -31,7 +31,7 @@ const decode = async (
       resolverAddress: result['3'],
     }
   } catch {
-    return { name: null, match: false }
+    return { name: undefined }
   }
 }
 

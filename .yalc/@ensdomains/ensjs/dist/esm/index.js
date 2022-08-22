@@ -170,8 +170,6 @@ export class ENS {
             'contracts',
         ]);
         this.getHistory = this.generateFunction('getHistory', ['gqlInstance'], 'getHistory');
-        this.getHistoryWithDetail = this.generateFunction('getHistory', ['contracts', 'gqlInstance', 'provider'], 'getHistoryWithDetail');
-        this.getHistoryDetailForTransactionHash = this.generateFunction('getHistory', ['contracts', 'provider'], 'getHistoryDetailForTransactionHash');
         this.getContentHash = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getContentHash');
         this._getContentHash = this.generateRawFunction('initialGetters', ['contracts'], '_getContentHash');
         this.getAddr = this.generateRawFunction('initialGetters', ['contracts', 'universalWrapper'], 'getAddr');
@@ -183,6 +181,7 @@ export class ENS {
         this.getSubnames = this.generateFunction('initialGetters', ['gqlInstance'], 'getSubnames');
         this.getNames = this.generateFunction('initialGetters', ['gqlInstance'], 'getNames');
         this.getPrice = this.generateRawFunction('initialGetters', ['contracts', 'multicallWrapper'], 'getPrice');
+        this.getDNSOwner = this.generateFunction('getDNSOwner', []);
         this.universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
         this.resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
         this.multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
@@ -211,7 +210,11 @@ export class ENS {
         this.createSubname = this.generateWriteFunction('createSubname', ['contracts', 'getExpiry']);
         this.deleteSubname = this.generateWriteFunction('deleteSubname', ['transferSubname']);
         this.transferSubname = this.generateWriteFunction('transferSubname', ['contracts', 'getExpiry']);
-        this.getDNSOwner = this.generateFunction('getDNSOwner', []);
+        this.commitName = this.generateWriteFunction('commitName', ['contracts']);
+        this.registerName = this.generateWriteFunction('registerName', ['contracts']);
+        this.renewName = this.generateWriteFunction('renewName', [
+            'contracts',
+        ]);
         this.options = options;
         this.getContractAddress = options?.getContractAddress || _getContractAddress;
     }

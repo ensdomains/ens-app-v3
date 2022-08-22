@@ -23,7 +23,7 @@ const decode = async ({ contracts }, data, address) => {
         };
     }
     catch {
-        return { name: null, match: false };
+        return { name: undefined };
     }
 };
 export default {

@@ -13,8 +13,6 @@ afterAll(async () => {
 })
 
 describe('getHistory', () => {
-  let textEventsWithValue: any[]
-
   it('should return null for a non-existent name', async () => {
     const result = await ENSInstance.getHistory('test123123cool.eth')
     expect(result).toBeUndefined()
@@ -27,87 +25,5 @@ describe('getHistory', () => {
       expect(result).toHaveProperty('resolver')
       expect(result).toHaveProperty('registration')
     }
-  })
-  describe('getHistoryWithDetail', () => {
-    it('should return null for a non-existent name', async () => {
-      const result = await ENSInstance.getHistoryWithDetail(
-        'test123123cool.eth',
-      )
-      expect(result).toBeUndefined()
-    })
-    it('should return the history of a name with TextChanged event detail', async () => {
-      const result = await ENSInstance.getHistoryWithDetail('with-profile.eth')
-      expect(result).toBeTruthy()
-      if (result) {
-        const textEvents = result.resolver.filter(
-          (x) => x.type === 'TextChanged',
-        )
-        textEvents.forEach((event) =>
-          expect(event.data).toHaveProperty('value'),
-        )
-        textEventsWithValue = textEvents
-      }
-    })
-  })
-  describe('getHistoryDetailForTransactionHash', () => {
-    it('should throw an error for an invalid transaction hash', async () => {
-      try {
-        await ENSInstance.getHistoryDetailForTransactionHash('0x234')
-        expect(false).toBeTruthy()
-      } catch (error) {
-        expect((error as any).message).toContain('invalid hash')
-      }
-    })
-    it('should return null for a transaction hash with no text events', async () => {
-      const result = await ENSInstance.getHistoryDetailForTransactionHash(
-        '0x0fd7b555e3076ef38dbbe2e40deefe44c9a0530d43f6b3f60dbed4ba49d229b7',
-      )
-      expect(result).toBeUndefined()
-    })
-    it('should return single item for a given transaction hash with one event', async () => {
-      const eventToUse = textEventsWithValue[0]
-      const result = (await ENSInstance.getHistoryDetailForTransactionHash(
-        eventToUse.transactionHash,
-      )) as { key: any; value: any }[]
-      expect(result).toHaveLength(1)
-      if (result) {
-        expect(result[0]).toMatchObject(eventToUse.data)
-      }
-    })
-    let hash: string = ''
-    it('should return multiple items for a given transaction hash with multiple events', async () => {
-      const dataArr = [
-        { key: 'foo', value: 'bar' },
-        { key: 'swag', value: 'cool' },
-      ]
-      const tx = await ENSInstance.setRecords('test123.eth', {
-        records: {
-          texts: dataArr,
-        },
-        addressOrIndex: 1,
-      })
-      await tx.wait()
-
-      hash = tx.hash
-
-      const result = (await ENSInstance.getHistoryDetailForTransactionHash(
-        hash,
-      )) as { key: any; value: any }[]
-      expect(result).toHaveLength(dataArr.length)
-      if (result) {
-        result.forEach((item, index) =>
-          expect(item).toMatchObject(dataArr[index]),
-        )
-      }
-    })
-    it('should return a single item when an index is specified for a hash', async () => {
-      const data = { key: 'swag', value: 'cool' }
-
-      const result = (await ENSInstance.getHistoryDetailForTransactionHash(
-        hash,
-        1,
-      )) as { key: any; value: any }
-      expect(result).toMatchObject(data)
-    })
   })
 })

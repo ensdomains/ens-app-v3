@@ -1,3 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.default = (signer, populate) => (tx) => populate ? tx : signer.sendTransaction(tx);
+const withCustomData = (tx, customData) => customData ? { ...tx, customData } : tx;
+exports.default = (signer, populate) => ({ customData, ...tx }) => populate
+    ? withCustomData(tx, customData)
+    : signer.sendTransaction(tx).then((r) => withCustomData(r, customData));
