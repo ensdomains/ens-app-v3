@@ -18,6 +18,7 @@ export type GenericTransaction = {
   name: TransactionName
   data: any
   hash?: string
+  sendTime?: number
   stage?: TransactionStage
 }
 

@@ -6,7 +6,7 @@ import { Dispatch, useCallback, useMemo } from 'react'
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
 import { IntroStageModal } from './stage/Intro'
-import { TransactionStageModalNew } from './stage/TransactionStageModalNew'
+import { TransactionStageModal } from './stage/TransactionStageModal'
 
 export const TransactionDialogManager = ({
   state,
@@ -35,9 +35,19 @@ export const TransactionDialogManager = ({
         return <Component {...{ data: selectedItem.input.data, dispatch, onDismiss }} />
       }
       if (selectedItem.intro && selectedItem.currentFlowStage === 'intro') {
+        const currentTx = selectedItem.transactions[selectedItem.currentTransaction]
+        const currentStep =
+          currentTx.stage === 'complete'
+            ? selectedItem.currentTransaction + 1
+            : selectedItem.currentTransaction
+
+        const stepStatus =
+          currentTx.stage === 'sent' || currentTx.stage === 'failed' ? 'inProgress' : 'notStarted'
+
         return (
           <IntroStageModal
-            currentStep={selectedItem.currentTransaction}
+            stepStatus={stepStatus}
+            currentStep={currentStep}
             onSuccess={() => dispatch({ name: 'setFlowStage', payload: 'transaction' })}
             {...{
               ...selectedItem.intro,
@@ -52,7 +62,7 @@ export const TransactionDialogManager = ({
       const transaction = transactions[transactionItem.name]
 
       return (
-        <TransactionStageModalNew
+        <TransactionStageModal
           actionName={transactionItem.name}
           displayItems={transaction.displayItems(transactionItem.data)}
           currentStep={selectedItem.currentTransaction}
@@ -70,6 +80,7 @@ export const TransactionDialogManager = ({
   return (
     <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onDismiss}>
       {InnerComponent}
+      <Dialog.CloseButton onClick={onDismiss} />
     </Dialog>
   )
 }

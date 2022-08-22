@@ -103,6 +103,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
 
       currentTransaction.hash = action.payload
       currentTransaction.stage = 'sent'
+      currentTransaction.sendTime = Date.now()
       break
     }
     case 'cleanupTransaction': {
