@@ -43,7 +43,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   const chainId = useChainId()
   const { gqlInstance } = useEns()
 
-  const { data, fetchNextPage, isLoading } = useInfiniteQuery(
+  const { data, fetchNextPage, isLoading, hasNextPage } = useInfiniteQuery(
     [address, 'primaryNameOptions'],
     async ({ pageParam }: { pageParam?: string }) => {
       const { domains } = await gqlInstance.request(
@@ -67,13 +67,14 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
     },
     {
       keepPreviousData: true,
+      refetchOnMount: true,
       getNextPageParam: (lastPage) => lastPage[lastPage.length - 1]?.id,
     },
   )
 
   const names = data?.pages?.reduce((prev, curr) => [...prev, ...curr], [] as Domain[])
 
-  const hasNextPage = data?.pages[data.pages.length - 1].length === querySize
+  // const hasNextPage = data?.pages[data.pages.length - 1].length === querySize
 
   const [selectedName, setSelectedName] = useState<string | undefined>(undefined)
 
