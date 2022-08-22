@@ -22,7 +22,9 @@
     "continue": "Continue",
     "confirm": "Confirm",
     "remove": "Remove",
-    "sign": "Sign"
+    "sign": "Sign",
+    "tryAgain": "Try Again",
+    "done": "Done"
   },
   "navigation": {
     "home": "Home",
@@ -140,29 +142,35 @@
         "trailingButtonResume": "Resume",
         "step": "Step {{step}}"
       },
-      "request": {
-        "title": "Transaction Request",
-        "subtitle": "Confirm the details of the transaction",
-        "trailingButton": "Confirm"
-      },
       "confirm": {
-        "title": "Confirm in Wallet",
-        "trailingButton": "Try again",
-        "waiting": {
-          "title": "Awaiting wallet confirmation",
-          "subtitle": "This will incur network fees"
-        },
-        "error": {
-          "rejectedRequest": "You rejected the request. Try again or cancel the transaction.",
-          "unknown": "An unknown error occurred."
+        "title": "Confirm Details",
+        "message": "Double check these details before confirming in your wallet.",
+        "waitingForWallet": "Waiting for Wallet",
+        "openWallet": "Open Wallet"
+      },
+      "sent": {
+        "title": "Transaction Sent",
+        "message": "Your transaction is now in progress, you can close this and come back later.",
+        "progress": {
+          "title": "Sent",
+          "message": "Taking longer than expected"
         }
       },
       "complete": {
-        "title": "Transaction Sent",
-        "stepTitle": "Step {{step}} Complete",
-        "message": "Your transaction was sent to the network, but may take some time to confirm. You can close this dialog now if you'd like.",
-        "trailingButton": "Close",
-        "stepTrailingButton": "Continue"
+        "title": "Transaction Complete",
+        "message": "Your transaction is now complete!",
+        "progress": {
+          "title": "Done"
+        }
+      },
+      "failed": {
+        "title": "Transaction Failed",
+        "progress": {
+          "title": "Failed"
+        }
+      },
+      "error": {
+        "gasLimit": "The gas limit on your transaction wasn't high enough, please try again."
       }
     },
     "viewEtherscan": "View on Etherscan",
