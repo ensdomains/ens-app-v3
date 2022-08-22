@@ -1,10 +1,17 @@
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
-import React, { ComponentProps, ReactNode, useCallback, useContext, useMemo } from 'react'
+import React, {
+  ComponentProps,
+  ReactNode,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import type { DataInputComponent } from './input'
-import { initialState, reducer } from './reducer'
+import { helpers, initialState, reducer } from './reducer'
 import { InternalTransactionFlow, TransactionFlowItem } from './types'
-import { getSelectedFlowItem } from './utils'
 
 type ShowDataInput = <C extends keyof DataInputComponent>(
   key: string,
@@ -37,16 +44,11 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     initialState,
     (current: InternalTransactionFlow) => {
       const updatedItems = current.items
+      const { getCanRemoveItem } = helpers(current)
       // eslint-disable-next-line guard-for-in
       for (const key in updatedItems) {
         const item = updatedItems[key]
-        const length = item?.transactions?.length || 0
-        const inx = item.currentTransaction
-        if (
-          inx + 1 > length ||
-          (inx + 1 === length && item.currentTransactionComplete) ||
-          !item.resumable
-        ) {
+        if (getCanRemoveItem(item)) {
           delete updatedItems[key]
         }
       }
@@ -56,7 +58,6 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       }
     },
   )
-  const selectedFlowItem = getSelectedFlowItem(state)
 
   const getTransactionIndex = useCallback(
     (key: string) => state.items[key]?.currentTransaction || 0,
@@ -65,13 +66,13 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const getResumable = useCallback(
     (key: string) => {
-      const item = state.items[key]
+      const { getSelectedItem, getCanRemoveItem } = helpers({
+        selectedKey: key,
+        items: state.items,
+      })
+      const item = getSelectedItem()
       if (!item) return false
-      if (!item.resumable) return false
-      const length = item?.transactions?.length || 0
-      const inx = item.currentTransaction
-      if (inx + 1 > length) return false
-      if (inx + 1 === length && item.currentTransactionComplete) return false
+      if (getCanRemoveItem(item)) return false
       return true
     },
     [state.items],
@@ -97,10 +98,29 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     }
   }, [dispatch, getResumable, getTransactionIndex])
 
+  const [selectedKey, setSelectedKey] = useState<string | null>(null)
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout
+    if (state.selectedKey) {
+      setSelectedKey(state.selectedKey)
+    } else {
+      timeout = setTimeout(() => {
+        setSelectedKey((prev) => {
+          if (prev) dispatch({ name: 'cleanupTransaction', payload: prev })
+          return null
+        })
+      }, 350)
+    }
+    return () => {
+      clearTimeout(timeout)
+    }
+  }, [state.selectedKey, dispatch])
+
   return (
     <TransactionContext.Provider value={providerValue}>
       {children}
-      <TransactionDialogManager {...{ state, dispatch, selectedFlowItem }} />
+      <TransactionDialogManager {...{ state, dispatch, selectedKey }} />
     </TransactionContext.Provider>
   )
 }

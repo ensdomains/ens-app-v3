@@ -1,0 +1,13 @@
+<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path fill-rule="evenodd" clip-rule="evenodd"
+    d="M20 6H2.25C1.83579 6 1.5 5.66421 1.5 5.25C1.5 4.83579 1.83579 4.5 2.25 4.5H16.5C16.9142 4.5 17.25 4.16421 17.25 3.75C17.25 3.33579 16.9142 3 16.5 3H2C0.895431 3 0 3.89543 0 5V6V17.5V18C0 20.2091 1.79086 22 4 22H20C22.2091 22 24 20.2091 24 18V10C24 7.79086 22.2091 6 20 6ZM20 16C21.1046 16 22 15.1046 22 14C22 12.8954 21.1046 12 20 12C18.8954 12 18 12.8954 18 14C18 15.1046 18.8954 16 20 16Z"
+    fill="url(#accentGradient)" />
+  <defs>
+    <linearGradient id="accentGradient" x1="15.986" y1="24.2519" x2="-0.0988177" y2="-11.51"
+      gradientUnits="userSpaceOnUse">
+      <stop stop-color="#44BCF0" />
+      <stop offset="0.378795" stop-color="#7298F8" />
+      <stop offset="1" stop-color="#A099FF" />
+    </linearGradient>
+  </defs>
+</svg>
