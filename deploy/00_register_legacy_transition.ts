@@ -148,9 +148,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   return true
 }
 
-func.id = 'register-other-names'
-func.tags = ['register-other-names']
-func.dependencies = ['LegacyETHRegistrarController']
+func.id = 'register-legacy-transition'
 func.runAtTheEnd = true
 
 export default func

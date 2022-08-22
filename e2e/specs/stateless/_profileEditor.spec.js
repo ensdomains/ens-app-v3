@@ -5,7 +5,7 @@ describe('Profile Editor', () => {
     acceptMetamaskAccess(2)
   })
 
-  it('should force a name on the old registry to ', () => {
+  it('should force a name on the old registry to go to update registry', () => {
     cy.visit('/profile/legacy.test')
     connectFromExisting()
     cy.contains('Edit Profile').click()
