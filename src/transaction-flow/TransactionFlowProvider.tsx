@@ -40,7 +40,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       // eslint-disable-next-line guard-for-in
       for (const key in updatedItems) {
         const item = updatedItems[key]
-        const { length = 0 } = item.transactions
+        const length = item?.transactions?.length || 0
         const inx = item.currentTransaction
         if (
           inx + 1 > length ||
@@ -68,7 +68,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       const item = state.items[key]
       if (!item) return false
       if (!item.resumable) return false
-      const { length = 0 } = item.transactions
+      const length = item?.transactions?.length || 0
       const inx = item.currentTransaction
       if (inx + 1 > length) return false
       if (inx + 1 === length && item.currentTransactionComplete) return false
