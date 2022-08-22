@@ -2,7 +2,7 @@ import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Profile Editor', () => {
   before(() => {
-    acceptMetamaskAccess(2)
+    acceptMetamaskAccess(2, true)
   })
 
   it('should force a name on the old registry to go to update registry', () => {
