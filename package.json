@@ -165,7 +165,8 @@
       "bn.js": "npm:bn.js@^5.2.0",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@next/swc-linux-x64-gnu": "12.1.4",
-      "cypress": "9.5.3"
+      "cypress": "9.5.3",
+      "@ensdomains/ensjs>ethers": "5.6.9"
     },
     "patchedDependencies": {
       "@synthetixio/synpress@1.2.0": "patches/@synthetixio/synpress.patch",
