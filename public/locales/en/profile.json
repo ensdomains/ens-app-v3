@@ -81,6 +81,7 @@
           "info": "You must burn 'Can unwrap' in order to burn other fuses",
           "callToAction": "Please wrap your name to unlock this feature",
           "burnFormTitle": "Burn Permissions",
+          "burned": "Burned",
           "permissions": {
             "label": "Permissions",
             "warning": "Fuses can be changed by the parent",

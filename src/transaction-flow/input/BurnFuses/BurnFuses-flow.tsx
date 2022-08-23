@@ -12,7 +12,7 @@ import mq from '@app/mediaQuery'
 import { useEns } from '@app/utils/EnsProvider'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '../types'
 
-import { makeTransactionItem } from '../transaction'
+import { makeTransactionItem } from '../../transaction'
 
 type FuseObj = {
   [key: string]: boolean
@@ -25,7 +25,7 @@ type FuseObj = {
   PARENT_CANNOT_CONTROL: boolean
 }
 
-const defaultFuseObj = {
+export const defaultFuseObj = {
   CANNOT_UNWRAP: false,
   CANNOT_BURN_FUSES: false,
   CANNOT_TRANSFER: false,
@@ -110,6 +110,7 @@ const BurnButton = ({
   isSelected: boolean
 }) => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
+  console.log('permission: ', permission)
 
   return (
     <StyledButton
@@ -122,16 +123,16 @@ const BurnButton = ({
       isSelected={isSelected}
       shadowless
     >
-      <ButtonInner>
+      <ButtonInner data-testid={`burn-button-${permission}`}>
         <div>{t(`fuses.permissions.${permission}`)}</div>
         {isBurned && (
           <BurnedFlameContainer>
-            <Typography>Burned</Typography>
+            <Typography>{t('fuses.burned')}</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
         )}
         {isSelected ? (
-          <FlameBurnedSVG width="24" height="24" />
+          <FlameBurnedSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
         ) : (
           <StyledFlameSVG width="24" height="24" />
         )}
@@ -162,26 +163,28 @@ type Data = {
   name: string
 }
 
-export const BurnFuses = ({
-  onDismiss,
-  dispatch,
-}: {
+export type Props = {
   data: Data
   onDismiss: () => void
   dispatch: Dispatch<TransactionFlowAction>
-} & TransactionDialogPassthrough) => {
+} & TransactionDialogPassthrough
+
+export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
   const { t: tc } = useTranslation()
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
-  const [_fuseData, setFuseData] = useState<FuseObj>(defaultFuseObj)
+  const [_fuseData, setFuseData] = useState<Omit<FuseObj, 'PARENT_CANNOT_CONTROL'>>(defaultFuseObj)
   const [fuseSelected, setFuseSelected] = useState<FuseObj>(defaultFuseObj)
   const { fuses } = useEns()
 
   console.log('fuseData: ', fuseData)
+  console.log('_fuseData: ', _fuseData)
+  console.log('fusesSelected: ', fuseSelected)
 
   const handleBurnClick = (permission: keyof FuseObj) => {
+    console.log('handleBurnClick: ', permission)
     const nextFuseSelected = { ...fuseSelected } as FuseObj
     nextFuseSelected[permission] = !nextFuseSelected[permission]
     setFuseSelected(nextFuseSelected)
@@ -215,13 +218,14 @@ export const BurnFuses = ({
   }
 
   useEffect(() => {
-    console.log('**rendered**')
     if (fuseData) {
       const initialFuseData = {
-        ...(fuseData.fuseObj as FuseObj),
+        ...(fuseData.fuseObj as Omit<FuseObj, 'PARENT_CANNOT_CONTROL'>),
       }
       delete initialFuseData.canDoEverything
-      delete initialFuseData.parentCannotControl
+      delete initialFuseData.PARENT_CANNOT_CONTROL
+
+      console.log('initialFuseData: ', initialFuseData)
 
       setFuseData({ ...initialFuseData })
 
@@ -272,10 +276,17 @@ export const BurnFuses = ({
         <Button tone="grey" variant="secondary" onClick={onDismiss}>
           {tc('action.cancel')}
         </Button>
-        <Button disabled={canContinue(_fuseData, fuseSelected)} onClick={onSubmit} tone="red">
+        <Button
+          disabled={canContinue(_fuseData, fuseSelected)}
+          onClick={onSubmit}
+          tone="red"
+          data-testid="burn-form-continue"
+        >
           {tc('action.burnSelected')}
         </Button>
       </ButtonsContainer>
     </FusesContainer>
   )
 }
+
+export default BurnFuses

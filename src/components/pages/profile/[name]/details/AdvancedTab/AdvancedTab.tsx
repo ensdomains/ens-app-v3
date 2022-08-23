@@ -41,6 +41,7 @@ export const generateAccordionData = (
   fuseData: ReturnType<typeof useGetFuseData>['fuseData'],
   t: TFunction,
   ownerData: ReturnType<typeof useBasicName>['ownerData'],
+  isWrapped: boolean,
   address?: string,
 ): AccordionData[] => [
   {
@@ -54,7 +55,7 @@ export const generateAccordionData = (
     body: Fuses,
     disabled: !fuseData,
     name: 'fuses',
-    canEdit: ownerData?.owner === address,
+    canEdit: ownerData?.owner === address && isWrapped,
   },
   {
     title: t('details.tabs.advanced.tokenId.label'),
@@ -74,11 +75,8 @@ const MoreTab = () => {
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
   const { address } = useAccount()
-  const { ownerData } = useBasicName(name as string)
-  const accordionData = generateAccordionData(fuseData, t, ownerData, address)
-
-  console.log('accordionDAta: ', accordionData)
-  console.log('ownerData: ', ownerData)
+  const { ownerData, isWrapped } = useBasicName(name as string)
+  const accordionData = generateAccordionData(fuseData, t, ownerData, isWrapped, address)
 
   return (
     <MoreContainer>

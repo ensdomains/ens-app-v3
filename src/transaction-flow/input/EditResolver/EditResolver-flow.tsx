@@ -77,7 +77,6 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
-  return <div>hi there</div>
   const { name } = data
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -256,3 +255,5 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
     </>
   )
 }
+
+export default EditResolver

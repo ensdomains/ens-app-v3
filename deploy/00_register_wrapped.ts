@@ -72,13 +72,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
     const nameWrapper = await ethers.getContract('NameWrapper')
     const _nameWrapper = nameWrapper.connect(await ethers.getSigner(owner))
+    const { deployer } = await getNamedAccounts()
 
-    //Register subname
+    // Register subname
     try {
       const subnameTx = await _nameWrapper.setSubnodeOwner(
         namehash(`${label}.eth`),
         'sub',
-        owner,
+        deployer,
         1860342907,
         0,
       )
