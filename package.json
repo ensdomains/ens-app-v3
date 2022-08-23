@@ -12,7 +12,7 @@
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount pnpm dev",
     "build": "next build",
     "build:local": "NODE_ENV=development next build",
-    "build:glocal": "NODE_ENV=development NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 next build",
+    "build:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens NEXT_PUBLIC_PROVIDER=http://localhost:8545 next build",
     "build:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm build",
     "start": "next start",
     "buildandstart": "pnpm build && pnpm start",
