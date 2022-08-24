@@ -9,21 +9,10 @@ import { Typography, Button, FlameSVG, FlameBurnedSVG, Helper } from '@ensdomain
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import mq from '@app/mediaQuery'
-import { useEns } from '@app/utils/EnsProvider'
-import { TransactionDialogPassthrough, TransactionFlowAction } from '../types'
+import { FuseObj } from '@app/types'
+import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
 
 import { makeTransactionItem } from '../../transaction'
-
-type FuseObj = {
-  [key: string]: boolean
-  CANNOT_UNWRAP: boolean
-  CANNOT_BURN_FUSES: boolean
-  CANNOT_TRANSFER: boolean
-  CANNOT_SET_RESOLVER: boolean
-  CANNOT_SET_TTL: boolean
-  CANNOT_CREATE_SUBDOMAIN: boolean
-  PARENT_CANNOT_CONTROL: boolean
-}
 
 export const defaultFuseObj = {
   CANNOT_UNWRAP: false,
@@ -110,7 +99,6 @@ const BurnButton = ({
   isSelected: boolean
 }) => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
-  console.log('permission: ', permission)
 
   return (
     <StyledButton
@@ -177,11 +165,6 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
   const { fuseData } = useGetFuseData((name as string) || '')
   const [_fuseData, setFuseData] = useState<Omit<FuseObj, 'PARENT_CANNOT_CONTROL'>>(defaultFuseObj)
   const [fuseSelected, setFuseSelected] = useState<FuseObj>(defaultFuseObj)
-  const { fuses } = useEns()
-
-  console.log('fuseData: ', fuseData)
-  console.log('_fuseData: ', _fuseData)
-  console.log('fusesSelected: ', fuseSelected)
 
   const handleBurnClick = (permission: keyof FuseObj) => {
     console.log('handleBurnClick: ', permission)
@@ -191,18 +174,15 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
   }
 
   const onSubmit = () => {
-    const selectedKeys: Array<keyof FuseObj> = []
+    const selectedFuses: Array<keyof FuseObj> = []
     Object.keys(fuseSelected).forEach(function (key) {
       if (fuseSelected[key as keyof FuseObj]) {
-        selectedKeys.push(key as keyof FuseObj)
+        selectedFuses.push(key as keyof FuseObj)
       }
     })
 
-    const selectedFuses = selectedKeys.reduce((previousValue: number, currentValue): number => {
-      return previousValue + fuses[currentValue]
-    }, 0)
-
-    const permissions = selectedKeys.map((key) => t(`fuses.permissions.${key}`))
+    console.log('selectedKeys: ', selectedFuses)
+    const permissions = selectedFuses.map((key) => t(`fuses.permissions.${key}`))
 
     dispatch({
       name: 'setTransactions',
@@ -224,8 +204,6 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
       }
       delete initialFuseData.canDoEverything
       delete initialFuseData.PARENT_CANNOT_CONTROL
-
-      console.log('initialFuseData: ', initialFuseData)
 
       setFuseData({ ...initialFuseData })
 

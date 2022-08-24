@@ -1,12 +1,14 @@
-import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
-import type { JsonRpcSigner } from '@ethersproject/providers'
 import { Dispatch } from 'react'
+import type { JsonRpcSigner } from '@ethersproject/providers'
+
+import { PublicENS, TransactionDisplayItem, Transaction, FuseObj } from '@app/types'
+
 import { TransactionFlowAction } from '../types'
 
 type Data = {
   name: string
   permissions: string[]
-  selectedFuses: number
+  selectedFuses: Array<keyof FuseObj>
 }
 
 const displayItems = ({ name, permissions }: Data): TransactionDisplayItem<'name' | 'list'>[] => [
@@ -33,8 +35,8 @@ const onDismiss = (dispatch: Dispatch<TransactionFlowAction>) => () => {
 const dismissBtnLabel = 'Back'
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const tx = ens.setFuses.populateTransaction('wrapped.eth', {
-    fuses: data.selectedFuses,
+  const tx = ens.burnFuses.populateTransaction(data.name, {
+    fusesToBurn: data.selectedFuses,
     signer,
   })
   return tx

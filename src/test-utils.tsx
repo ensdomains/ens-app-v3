@@ -18,6 +18,8 @@ jest.mock('wagmi', () => {
     useProvider: jest.fn(),
     useSigner: jest.fn(),
     useSignTypedData: jest.fn(),
+    useBlockNumber: jest.fn(),
+    useSendTransaction: jest.fn(),
   }
 })
 

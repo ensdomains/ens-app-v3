@@ -2,15 +2,15 @@
 import { useChainName } from '@app/hooks/useChainName'
 import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { GenericTransaction } from '@app/transaction-flow/types'
-import { isIOS } from '@app/utils/isIOS'
+import { useEns } from '@app/utils/EnsProvider'
 import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
-import { useAccount, useSigner } from 'wagmi'
+import { useSendTransaction, useSigner } from 'wagmi'
 import { TransactionStageModal } from './TransactionStageModal'
 
 jest.mock('@app/hooks/useChainName')
 jest.mock('@rainbow-me/rainbowkit')
-jest.mock('@app/utils/isIOS')
+jest.mock('@app/utils/EnsProvider')
 
 const mockPopulatedTransaction = {
   data: '0x1896f70a516f53deb2dac3f055f1db1fbd64c12640aa29059477103c3ef28806f15929250000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41',
@@ -44,38 +44,33 @@ jest.mock('@app/transaction-flow/transaction', () => {
   }
 })
 
-const mockUseChainName = mockFunction(useChainName)
+const mockUseEns = mockFunction(useEns)
 const mockUseAddRecentTransaction = mockFunction(useAddRecentTransaction)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
-const mockUseAccount = mockFunction(useAccount)
+const mockUseChainName = mockFunction(useChainName)
 const mockUseSigner = mockFunction(useSigner)
-const mockIsIOS = mockFunction(isIOS)
+const mockUseSendTransaction = mockFunction(useSendTransaction)
 
-const mockOnComplete = jest.fn()
-const mockSendTransaction = jest.fn()
-const mockSendUncheckedTransaction = jest.fn()
 const mockEstimateGas = jest.fn()
-
-window.scroll = jest.fn()
-global.fetch = jest.fn()
+const mockOnDismiss = jest.fn()
+const mockDispatch = jest.fn()
 
 const renderHelper = async ({
-  actionName,
-  displayItems,
   currentStep,
   stepCount,
+  actionName,
+  displayItems,
   transaction,
-  ...props
 }: Partial<ComponentProps<typeof TransactionStageModal>> = {}) => {
   const renderValue = render(
     <TransactionStageModal
-      {...props}
       currentStep={currentStep || 0}
       stepCount={stepCount || 1}
       actionName={actionName || 'test'}
       displayItems={displayItems || []}
       transaction={transaction || ({} as any)}
-      onComplete={mockOnComplete}
+      onDismiss={mockOnDismiss}
+      dispatch={mockDispatch}
       txKey="test"
     />,
   )
@@ -88,23 +83,22 @@ const renderHelper = async ({
 const clickRequest = async () => {
   await act(async () => {
     await waitFor(() =>
-      expect(screen.getByTestId('transaction-modal-request-trailing-btn')).toBeEnabled(),
+      expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
     )
-    fireEvent.click(screen.getByTestId('transaction-modal-request-trailing-btn'))
+    fireEvent.click(screen.getByTestId('transaction-modal-confirm-button'))
   })
 }
 
 describe('TransactionStageModal', () => {
   mockUseChainName.mockReturnValue('ethereum')
-  mockUseAccount.mockReturnValue({ address: 'mock-address' })
   mockUseSigner.mockReturnValue({
     data: {
-      sendTransaction: mockSendTransaction,
-      sendUncheckedTransaction: mockSendUncheckedTransaction,
       estimateGas: mockEstimateGas,
     } as any,
   })
-  mockIsIOS.mockReturnValue(false)
+  mockUseRecentTransactions.mockReturnValue([])
+  mockUseSendTransaction.mockReturnValue({})
+  mockUseEns.mockReturnValue({})
 
   beforeEach(() => {
     mockUseRecentTransactions.mockReturnValue([
@@ -118,7 +112,7 @@ describe('TransactionStageModal', () => {
 
   it('should render on open', async () => {
     await renderHelper()
-    expect(screen.getByText('transaction.dialog.request.title')).toBeVisible()
+    expect(screen.getByText('transaction.dialog.confirm.title')).toBeVisible()
   })
   it('should render display items, and the action/info items should be added automatically', async () => {
     await renderHelper({
@@ -136,6 +130,7 @@ describe('TransactionStageModal', () => {
     expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()
     expect(screen.getByText('GenericValue')).toBeVisible()
   })
+
   it('should not render steps if there is only 1 step', async () => {
     await renderHelper()
     expect(screen.queryByTestId('step-container')).not.toBeInTheDocument()
@@ -145,276 +140,176 @@ describe('TransactionStageModal', () => {
     expect(screen.getByTestId('step-container')).toBeVisible()
   })
   describe('stage', () => {
-    describe('request', () => {
-      it('should only show confirm button as disabled if gas is not estimated', async () => {
-        mockSendTransaction.mockImplementation(async () => new Promise(() => {}))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
-        mockEstimateGas.mockResolvedValue(undefined)
+    describe('confirm', () => {
+      it('should show confirm button as disabled if gas is not estimated', async () => {
         await renderHelper()
         await waitFor(() =>
-          expect(screen.getByTestId('transaction-modal-request-trailing-btn')).toBeDisabled(),
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
         )
       })
-      it('should only show confirm button as enabled if gas is estimated', async () => {
-        mockSendTransaction.mockImplementation(async () => new Promise(() => {}))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
+      it('should only show confirm button as enabled if gas is estimated and sendTransaction func is defined', async () => {
         mockEstimateGas.mockResolvedValue(1)
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: () => Promise.resolve(),
+        })
         await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(screen.getByTestId('transaction-modal-request-trailing-btn')).toBeEnabled(),
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
         )
       })
-      it('should go to the confirm stage and run the transaction when the confirm button is clicked', async () => {
-        mockSendTransaction.mockImplementation(async () => new Promise(() => {}))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
-        await renderHelper({ transaction: mockTransaction })
-        await clickRequest()
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.confirm.title')).toBeVisible(),
-        )
-        expect(screen.getByTestId('transaction-waiting-container')).toBeVisible()
-      })
-      it('should run dismiss callback on dismiss button click', async () => {
-        const onDismiss = jest.fn()
-        await renderHelper({
-          onDismiss,
+      it('should run set sendTransaction on action click', async () => {
+        mockEstimateGas.mockResolvedValue(1)
+        const mockSendTransaction = jest.fn()
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: mockSendTransaction,
         })
-        fireEvent.click(screen.getByTestId('transaction-modal-dismiss-btn'))
-        await waitFor(() => expect(onDismiss).toHaveBeenCalled())
-      })
-      it('should use the dismiss button label if available', async () => {
-        await renderHelper({
-          dismissBtnLabel: 'Dismiss123',
+        mockSendTransaction.mockResolvedValue({
+          hash: '0x0',
         })
-        expect(screen.getByText('Dismiss123')).toBeVisible()
-      })
-    })
-    describe('confirm', () => {
-      it('should show the try again button as disabled if there is no error', async () => {
-        mockSendTransaction.mockImplementation(async () => new Promise(() => {}))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
+        expect(mockSendTransaction).toHaveBeenCalled()
+      })
+      it('should show the waiting for wallet button if the transaction is loading', async () => {
+        mockEstimateGas.mockResolvedValue(1)
+        const mockSendTransaction = jest.fn()
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: mockSendTransaction,
+          isLoading: true,
+        })
+        mockSendTransaction.mockImplementation(async () => new Promise(() => {}))
+        await renderHelper({ transaction: mockTransaction })
         await waitFor(() =>
-          expect(screen.getByTestId('transaction-modal-confirm-trailing-btn')).toBeDisabled(),
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
         )
       })
-      it('should show the error message and enable the try again button if there is an error', async () => {
-        mockSendTransaction.mockImplementation(async () => {
-          throw new Error('error123')
+      it('should show the error message and reenable button if there is an error', async () => {
+        const mockSendTransaction = jest.fn()
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: mockSendTransaction,
+          error: new Error('error123'),
         })
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
         await renderHelper({ transaction: mockTransaction })
         await clickRequest()
         await waitFor(() => expect(screen.getByText('error123')).toBeVisible())
         await waitFor(() =>
-          expect(screen.getByTestId('transaction-modal-confirm-trailing-btn')).toBeEnabled(),
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
         )
       })
-      it('should pass the transaction to send transaction', async () => {
-        mockSendTransaction.mockImplementation(async () => {})
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
+      it('should pass the request to send transaction', async () => {
         mockEstimateGas.mockResolvedValue(1)
-        await renderHelper({
-          transaction: mockTransaction,
+        const mockSendTransaction = jest.fn()
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: mockSendTransaction,
         })
+        await renderHelper({ transaction: mockTransaction })
         await clickRequest()
         await waitFor(() =>
-          expect(mockSendTransaction).toHaveBeenCalledWith({
-            data: '0x1896f70a516f53deb2dac3f055f1db1fbd64c12640aa29059477103c3ef28806f15929250000000000000000000000004976fb03c32e5b8cfe2b6ccb31c09ba78ebaba41',
-            from: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-            to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
+          expect(mockUseSendTransaction.mock.lastCall[0].request).toStrictEqual({
+            ...mockPopulatedTransaction,
             gasLimit: 1,
           }),
         )
       })
-      it('should go to the mining stage if there is no error from the transaction', async () => {
-        mockSendTransaction.mockImplementation(async () => ({
-          hash: '0x123',
-        }))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
-        await renderHelper({
-          transaction: mockTransaction,
-        })
-        await clickRequest()
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.mining.title')).toBeVisible(),
-        )
-      })
-      it('should add transaction to recent transactions on success', async () => {
-        mockSendTransaction.mockImplementation(async () => ({
-          hash: '0x123',
-        }))
+      it('should add to recent transactions and run dispatch from success callback', async () => {
         const mockAddTransaction = jest.fn()
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
-
-        await renderHelper({
-          transaction: mockTransaction,
+        await renderHelper({ transaction: mockTransaction })
+        await waitFor(() => expect(mockUseSendTransaction.mock.lastCall[0].onSuccess).toBeDefined())
+        ;(mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({ hash: '0x123' })
+        expect(mockAddTransaction).toBeCalledWith({
+          hash: '0x123',
+          description: JSON.stringify({ action: 'test', key: 'test' }),
         })
-        await clickRequest()
-        await waitFor(() =>
-          expect(mockAddTransaction).toHaveBeenCalledWith({
-            description: JSON.stringify({ action: 'test', key: 'test' }),
+        expect(mockDispatch).toBeCalledWith({
+          name: 'setTransactionHash',
+          payload: '0x123',
+        })
+      })
+    })
+    describe('sent', () => {
+      it('should show load bar', async () => {
+        await renderHelper({
+          transaction: { ...mockTransaction, hash: '0x123', sendTime: Date.now(), stage: 'sent' },
+        })
+        await waitFor(() => expect(screen.getByTestId('load-bar-container')).toBeVisible())
+      })
+      it('should call onDismiss on close', async () => {
+        await renderHelper({
+          transaction: { ...mockTransaction, hash: '0x123', sendTime: Date.now(), stage: 'sent' },
+        })
+        fireEvent.click(screen.getByTestId('transaction-modal-sent-button'))
+        expect(mockOnDismiss).toHaveBeenCalled()
+      })
+      it('should show message if transaction is taking a long time', async () => {
+        await renderHelper({
+          transaction: {
+            ...mockTransaction,
             hash: '0x123',
-            confirmations: undefined,
+            sendTime: Date.now() - 45000,
+            stage: 'sent',
+          },
+        })
+        expect(screen.getByText('transaction.dialog.sent.progress.message')).toBeVisible()
+      })
+      it('should dispatch setTransactionStage if transaction state changes', async () => {
+        mockUseRecentTransactions.mockReturnValue([
+          {
+            hash: '0x123',
+            status: 'confirmed',
+          },
+        ])
+        await renderHelper({
+          transaction: {
+            ...mockTransaction,
+            hash: '0x123',
+            stage: 'sent',
+          },
+        })
+        await waitFor(() =>
+          expect(mockDispatch).toHaveBeenCalledWith({
+            name: 'setTransactionStage',
+            payload: 'complete',
           }),
         )
       })
     })
-    describe('mining', () => {
-      beforeEach(() => {
-        global.fetch.mockReturnValue({
-          ok: true,
-          json: () => new Promise((resolve) => resolve({ result: '42' })),
-        })
-        mockSendTransaction.mockImplementation(async () => ({
-          hash: '0x123',
-        }))
-        mockUseAddRecentTransaction.mockReturnValue(() => ({}))
-        mockUseRecentTransactions.mockReturnValue([
-          {
-            status: 'pending',
+    describe('complete', () => {
+      it('should call onDismiss on close', async () => {
+        await renderHelper({
+          transaction: {
+            ...mockTransaction,
             hash: '0x123',
-            description: JSON.stringify({ action: 'test', key: 'test', gasPrice: 42 }),
+            sendTime: Date.now(),
+            stage: 'complete',
           },
-        ])
-      })
-      afterEach(() => {
-        // @ts-ignore:next-line
-        global.fetch.mockClear()
-      })
-      it('should display estimated mining time', async () => {
-        await renderHelper({
-          transaction: mockTransaction,
         })
-        fireEvent.click(screen.getByTestId('transaction-modal-request-trailing-btn'))
-        await waitFor(() => expect(global.fetch).toHaveBeenCalled())
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.mining.title')).toBeVisible(),
-        )
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.mining.estimationPre')).toBeVisible(),
-        )
-      })
-      it('should show same info as request stage', async () => {
-        await renderHelper({
-          transaction: mockTransaction,
-          displayItems: [
-            {
-              label: 'GenericItem',
-              value: 'GenericValue',
-            },
-          ],
-        })
-        fireEvent.click(screen.getByTestId('transaction-modal-request-trailing-btn'))
-        await waitFor(() => expect(global.fetch).toHaveBeenCalled())
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.mining.title')).toBeVisible(),
-        )
-        expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()
-        expect(screen.getByText('GenericValue')).toBeVisible()
-      })
-      it('should show close button', async () => {
-        await renderHelper({
-          transaction: mockTransaction,
-        })
-        fireEvent.click(screen.getByTestId('transaction-modal-request-trailing-btn'))
-        await waitFor(() => expect(global.fetch).toHaveBeenCalled())
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.mining.trailingButton')).toBeVisible(),
-        )
-      })
-      it('should go to the complete stage once the transaction is mined', async () => {
-        const { rerender } = await renderHelper({
-          transaction: mockTransaction,
-        })
-        fireEvent.click(screen.getByTestId('transaction-modal-request-trailing-btn'))
-        await waitFor(() => expect(global.fetch).toHaveBeenCalled())
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.mining.trailingButton')).toBeVisible(),
-        )
-        mockUseRecentTransactions.mockReturnValue([
-          {
-            status: 'confirmed',
-            hash: '0x123',
-            description: JSON.stringify({ action: 'test', key: 'test', gasPrice: 42 }),
-          },
-        ])
-        rerender(
-          <TransactionStageModal
-            currentStep={0}
-            stepCount={1}
-            actionName="test"
-            displayItems={[]}
-            transaction={mockTransaction}
-            onComplete={mockOnComplete}
-            txKey="test"
-          />,
-        )
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.complete.title')).toBeVisible(),
-        )
+        fireEvent.click(screen.getByTestId('transaction-modal-complete-button'))
+        expect(mockOnDismiss).toHaveBeenCalled()
       })
     })
-    describe('complete', () => {
-      beforeEach(() => {
-        mockUseRecentTransactions.mockReturnValue([
-          {
-            status: 'confirmed',
-            hash: '0x123',
-            description: JSON.stringify({ action: 'test', key: 'test', gasPrice: 42 }),
-          },
-        ])
+    describe('failed', () => {
+      it('should show try again button', async () => {
+        await renderHelper({ transaction: { ...mockTransaction, hash: '0x123', stage: 'failed' } })
+        expect(screen.getByTestId('transaction-modal-failed-button')).toBeVisible()
       })
-      it('should run success callback and dismiss callback on success button click', async () => {
-        mockSendTransaction.mockImplementation(async () => ({
-          hash: '0x123',
-        }))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
-        const onSuccess = jest.fn()
-        const onDismiss = jest.fn()
-
-        await renderHelper({
-          transaction: mockTransaction,
-          onSuccess,
-          onDismiss,
+      it('should run sendTransaction on action click', async () => {
+        mockEstimateGas.mockResolvedValue(1)
+        const mockSendTransaction = jest.fn()
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: mockSendTransaction,
         })
-        await clickRequest()
-        await waitFor(() =>
-          expect(screen.getByText('transaction.dialog.complete.title')).toBeVisible(),
-        )
-
-        fireEvent.click(screen.getByTestId('transaction-modal-complete-trailing-btn'))
-        await waitFor(() => expect(onSuccess).toHaveBeenCalled())
-        expect(onDismiss).toHaveBeenCalled()
-      })
-      it('should use the complete title if available', async () => {
-        mockSendTransaction.mockImplementation(async () => ({
-          hash: '0x123',
-        }))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
-
-        await renderHelper({
-          transaction: mockTransaction,
-          completeTitle: 'test-title-123',
+        mockSendTransaction.mockResolvedValue({
+          hash: '0x0',
         })
-        await clickRequest()
-        await waitFor(() => expect(screen.getByText('test-title-123')).toBeVisible())
-      })
-      it('should use the complete button label if available', async () => {
-        mockSendTransaction.mockImplementation(async () => ({
-          hash: '0x123',
-        }))
-        mockUseAddRecentTransaction.mockReturnValue(() => {})
-
-        await renderHelper({
-          transaction: mockTransaction,
-          completeBtnLabel: 'complete-button-test-123',
+        await renderHelper({ transaction: { ...mockTransaction, hash: '0x123', stage: 'failed' } })
+        await act(async () => {
+          await waitFor(() =>
+            expect(screen.getByTestId('transaction-modal-failed-button')).toBeEnabled(),
+          )
+          fireEvent.click(screen.getByTestId('transaction-modal-failed-button'))
         })
-        await clickRequest()
-        await waitFor(() => {
-          expect(screen.getByText('complete-button-test-123')).toBeVisible()
-        })
+        expect(mockSendTransaction).toHaveBeenCalled()
       })
     })
   })

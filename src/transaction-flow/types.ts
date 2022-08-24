@@ -7,7 +7,7 @@ import type { makeTransactionItem, TransactionName } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
-export type TransactionStage = 'confirm' | 'wallet' | 'sent'
+export type TransactionStage = 'confirm' | 'sent' | 'complete' | 'failed'
 
 type GenericDataInput = {
   name: keyof DataInputComponent
@@ -17,6 +17,9 @@ type GenericDataInput = {
 export type GenericTransaction = {
   name: TransactionName
   data: any
+  hash?: string
+  sendTime?: number
+  stage?: TransactionStage
 }
 
 type GenericIntro = {
@@ -40,7 +43,6 @@ export type TransactionFlowItem = {
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
   currentTransaction: number
-  currentTransactionComplete: boolean
   currentFlowStage: TransactionFlowStage
 }
 
@@ -85,10 +87,19 @@ export type TransactionFlowAction =
       name: 'stopFlow'
     }
   | {
-      name: 'setTransactionComplete'
+      name: 'setTransactionStage'
+      payload: TransactionStage
+    }
+  | {
+      name: 'setTransactionHash'
+      payload: string
     }
   | {
       name: 'incrementTransaction'
+    }
+  | {
+      name: 'cleanupTransaction'
+      payload: string
     }
 
 export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
@@ -112,4 +123,15 @@ export type ManagedDialogProps = {
   completeTitle?: string
   actionName: string
   displayItems: TransactionDisplayItem<TransactionDisplayItemTypes>[]
+}
+
+export type ManagedDialogPropsTwo = {
+  dispatch: Dispatch<TransactionFlowAction>
+  onDismiss: () => void
+  transaction: GenericTransaction
+  actionName: string
+  txKey: string | null
+  currentStep: number
+  stepCount: number
+  displayItems: TransactionDisplayItem[]
 }

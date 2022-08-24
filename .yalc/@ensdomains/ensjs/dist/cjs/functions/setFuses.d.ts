@@ -1,4 +1,5 @@
 import { ENSArgs } from '..';
-export default function ({ contracts, signer }: ENSArgs<'contracts' | 'signer'>, name: string, { fuses }: {
-    fuses: number;
+import fuseEnum from '../utils/fuses';
+export default function ({ contracts, signer }: ENSArgs<'contracts' | 'signer'>, name: string, { selectedFuses }: {
+    selectedFuses: Array<keyof typeof fuseEnum>;
 }): Promise<import("ethers").PopulatedTransaction>;

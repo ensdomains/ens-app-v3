@@ -1,5 +1,5 @@
 import { ENSArgs } from '..';
-import { FuseOptions } from '../@types/FuseOptions';
+import { fuseEnum } from '../utils/fuses';
 export default function ({ contracts, signer }: ENSArgs<'contracts' | 'signer'>, name: string, { fusesToBurn, }: {
-    fusesToBurn: FuseOptions;
+    fusesToBurn: Partial<keyof typeof fuseEnum>[];
 }): Promise<import("ethers").PopulatedTransaction>;

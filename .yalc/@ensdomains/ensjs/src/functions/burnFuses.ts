@@ -1,7 +1,6 @@
 import { ENSArgs } from '..'
-import { FuseOptions } from '../@types/FuseOptions'
-import generateFuseInput from '../utils/generateFuseInput'
 import { namehash } from '../utils/normalise'
+import { fuseEnum } from '../utils/fuses'
 
 export default async function (
   { contracts, signer }: ENSArgs<'contracts' | 'signer'>,
@@ -9,13 +8,15 @@ export default async function (
   {
     fusesToBurn,
   }: {
-    fusesToBurn: FuseOptions
+    fusesToBurn: Partial<keyof typeof fuseEnum>[] 
   },
 ) {
   const nameWrapper = (await contracts?.getNameWrapper()!).connect(signer)
   const hash = namehash(name)
 
-  const encodedFuses = generateFuseInput(fusesToBurn)
+  const encodedFuses = fusesToBurn.reduce((previousValue: number, currentValue): number => {
+    return previousValue + fuseEnum[currentValue]
+  }, 0)
 
   return nameWrapper.populateTransaction.setFuses(hash, encodedFuses)
 }

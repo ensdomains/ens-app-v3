@@ -2,53 +2,28 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { intros } from '@app/transaction-flow/intro'
 import { TransactionIntro } from '@app/transaction-flow/types'
 import { TransactionDisplayItemSingle } from '@app/types'
-import { Button, Dialog, mq } from '@ensdomains/thorin'
+import { Button, Dialog } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 import { DisplayItems } from '../DisplayItems'
-
-const ButtonShrinkwrap = styled(Button)(
-  () => css`
-    width: 80%;
-    flex-shrink: 1;
-    ${mq.md.min(css`
-      width: 100%;
-    `)}
-  `,
-)
 
 export const IntroStageModal = ({
   transactions,
-  onDismiss,
   onSuccess,
   currentStep,
   content,
   title,
-  leadingLabel,
   trailingLabel,
+  stepStatus,
 }: TransactionIntro & {
   transactions: {
     name: string
   }[]
+  stepStatus: 'inProgress' | 'notStarted' | 'completed'
   currentStep: number
   onDismiss: () => void
   onSuccess: () => void
 }) => {
   const { t } = useTranslation()
-
-  const LeadingButton = (
-    <ButtonShrinkwrap
-      onClick={() => {
-        onDismiss?.()
-      }}
-      variant="secondary"
-      tone="grey"
-      shadowless
-      data-testid="transaction-modal-dismiss-btn"
-    >
-      {leadingLabel || t('action.cancel')}
-    </ButtonShrinkwrap>
-  )
 
   const tLabel =
     currentStep > 0
@@ -75,7 +50,7 @@ export const IntroStageModal = ({
       <Dialog.Heading
         currentStep={currentStep}
         stepCount={txCount}
-        stepStatus="notStarted"
+        stepStatus={stepStatus}
         title={title}
       />
       <InnerDialog data-testid="transaction-modal-inner">
@@ -95,7 +70,7 @@ export const IntroStageModal = ({
           }
         />
       </InnerDialog>
-      <Dialog.Footer leading={LeadingButton} trailing={TrailingButton} />
+      <Dialog.Footer center trailing={TrailingButton} />
     </>
   )
 }

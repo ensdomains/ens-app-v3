@@ -1,19 +1,47 @@
 /* eslint-disable default-case */
 /* eslint-disable no-param-reassign */
-import { InternalTransactionFlow, TransactionFlowAction, TransactionFlowStage } from './types'
+import {
+  InternalTransactionFlow,
+  InternalTransactionFlowItem,
+  TransactionFlowAction,
+  TransactionFlowStage,
+} from './types'
 
 export const initialState: InternalTransactionFlow = {
   selectedKey: null,
   items: {},
 }
 
+export const helpers = (draft: InternalTransactionFlow) => {
+  const getSelectedItem = () => draft.items[draft.selectedKey!]
+  const getCurrentTransaction = (item: InternalTransactionFlowItem) =>
+    item.transactions[item.currentTransaction]
+  const getAllTransactionsComplete = (item: InternalTransactionFlowItem) =>
+    item.transactions.every(({ hash, stage }) => hash && stage === 'complete')
+  const getNoTransactionsStarted = (item: InternalTransactionFlowItem) =>
+    item.transactions.every(({ stage }) => !stage || stage === 'confirm')
+  const getCanRemoveItem = (item: InternalTransactionFlowItem) =>
+    !item.transactions ||
+    !item.resumable ||
+    getAllTransactionsComplete(item) ||
+    getNoTransactionsStarted(item)
+
+  return {
+    getSelectedItem,
+    getCurrentTransaction,
+    getAllTransactionsComplete,
+    getCanRemoveItem,
+  }
+}
+
 export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowAction) => {
+  const { getSelectedItem, getCurrentTransaction, getAllTransactionsComplete } = helpers(draft)
+
   switch (action.name) {
     case 'showDataInput': {
       draft.items[action.key] = {
         currentFlowStage: 'input',
         currentTransaction: 0,
-        currentTransactionComplete: false,
         input: action.payload.input,
         transactions: [],
       }
@@ -31,7 +59,6 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       draft.items[action.key] = {
         ...action.payload,
         currentTransaction: 0,
-        currentTransactionComplete: false,
         currentFlowStage,
       }
       draft.selectedKey = action.key
@@ -40,10 +67,6 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     case 'resumeFlow': {
       const { key } = action
       const item = draft.items[key]
-      if (item.currentTransactionComplete) {
-        item.currentTransaction += 1
-        item.currentTransactionComplete = false
-      }
       if (item.intro) {
         item.currentFlowStage = 'intro'
       }
@@ -52,46 +75,41 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'setTransactions': {
-      draft.items[draft.selectedKey!] = {
-        ...draft.items[draft.selectedKey!],
-        transactions: action.payload,
-      }
+      getSelectedItem().transactions = action.payload
       break
     }
     case 'setFlowStage': {
-      draft.items[draft.selectedKey!] = {
-        ...draft.items[draft.selectedKey!],
-        currentFlowStage: action.payload,
-      }
+      getSelectedItem().currentFlowStage = action.payload
       break
     }
     case 'stopFlow': {
-      const { resumable, currentTransaction, currentTransactionComplete, transactions } =
-        draft.items[draft.selectedKey!]
-      if (!resumable || (currentTransactionComplete && currentTransaction >= transactions.length)) {
-        delete draft.items[draft.selectedKey!]
-      } else if (currentTransactionComplete) {
-        draft.items[draft.selectedKey!] = {
-          ...draft.items[draft.selectedKey!],
-          currentTransaction: currentTransaction + 1,
-          currentTransactionComplete: false,
-        }
-      }
       draft.selectedKey = null
       break
     }
-    case 'setTransactionComplete': {
-      draft.items[draft.selectedKey!] = {
-        ...draft.items[draft.selectedKey!],
-        currentTransactionComplete: true,
-      }
+    case 'incrementTransaction': {
+      getSelectedItem().currentTransaction += 1
       break
     }
-    case 'incrementTransaction': {
-      draft.items[draft.selectedKey!].currentTransactionComplete = false
-      draft.items[draft.selectedKey!] = {
-        ...draft.items[draft.selectedKey!],
-        currentTransaction: draft.items[draft.selectedKey!].currentTransaction + 1,
+    case 'setTransactionStage': {
+      const selectedItem = getSelectedItem()
+      const currentTransaction = getCurrentTransaction(selectedItem)
+
+      currentTransaction.stage = action.payload
+      break
+    }
+    case 'setTransactionHash': {
+      const selectedItem = getSelectedItem()
+      const currentTransaction = getCurrentTransaction(selectedItem)
+
+      currentTransaction.hash = action.payload
+      currentTransaction.stage = 'sent'
+      currentTransaction.sendTime = Date.now()
+      break
+    }
+    case 'cleanupTransaction': {
+      const selectedItem = draft.items[action.payload]
+      if (selectedItem && (!selectedItem.resumable || getAllTransactionsComplete(selectedItem))) {
+        delete draft.items[action.payload]
       }
       break
     }

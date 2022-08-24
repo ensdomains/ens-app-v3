@@ -23,12 +23,12 @@ describe('Settings', () => {
         'contain.text',
         'Set the controller and registrant of the name',
       )
-      cy.findByTestId('transaction-modal-request-trailing-btn').click()
-      cy.contains('Awaiting wallet confirmation').should('be.visible')
-      cy.findByTestId('transaction-modal-confirm-trailing-btn').should('be.disabled')
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.contains('Waiting for Wallet').should('be.visible')
+      cy.findByTestId('transaction-modal-confirm-button').should('be.disabled')
       cy.confirmMetamaskTransaction()
-      cy.contains('Your transaction has been saved to the blockchain!').should('be.visible')
-      cy.findByTestId('transaction-modal-complete-trailing-btn').click()
+      cy.contains('Your transaction is now complete!').should('be.visible')
+      cy.findByTestId('transaction-modal-complete-button').click()
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')

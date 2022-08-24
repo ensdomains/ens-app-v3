@@ -23,6 +23,8 @@
     "confirm": "Confirm",
     "remove": "Remove",
     "sign": "Sign",
+    "tryAgain": "Try Again",
+    "done": "Done",
     "burnSelected": "Burn Selected"
   },
   "navigation": {
@@ -143,21 +145,18 @@
         "trailingButtonResume": "Resume",
         "step": "Step {{step}}"
       },
-      "request": {
-        "title": "Transaction Request",
-        "subtitle": "Confirm the details of the transaction",
-        "trailingButton": "Confirm"
-      },
       "confirm": {
-        "title": "Confirm in Wallet",
-        "trailingButton": "Try again",
-        "waiting": {
-          "title": "Awaiting wallet confirmation",
-          "subtitle": "This will incur network fees"
-        },
-        "error": {
-          "rejectedRequest": "You rejected the request. Try again or cancel the transaction.",
-          "unknown": "An unknown error occurred."
+        "title": "Confirm Details",
+        "message": "Double check these details before confirming in your wallet.",
+        "waitingForWallet": "Waiting for Wallet",
+        "openWallet": "Open Wallet"
+      },
+      "sent": {
+        "title": "Transaction Sent",
+        "message": "Your transaction is now in progress, you can close this and come back later.",
+        "progress": {
+          "title": "Sent",
+          "message": "Taking longer than expected"
         }
       },
       "mining": {
@@ -169,12 +168,20 @@
         "message": "Your transaction is being saved to the blockchain. You may close this window, we will send you a notification when it is ready."
       },
       "complete": {
-        "title": "Transaction Sent",
-        "stepTitle": "Step {{step}} Complete",
-        "message": "Your transaction has been saved to the blockchain!",
-        "trailingButton": "Close",
-        "stepTrailingButton": "Continue",
-        "viewTransactions": "View your transactions"
+        "title": "Transaction Complete",
+        "message": "Your transaction is now complete!",
+        "progress": {
+          "title": "Done"
+        }
+      },
+      "failed": {
+        "title": "Transaction Failed",
+        "progress": {
+          "title": "Failed"
+        }
+      },
+      "error": {
+        "gasLimit": "The gas limit on your transaction wasn't high enough, please try again."
       }
     },
     "viewEtherscan": "View on Etherscan",

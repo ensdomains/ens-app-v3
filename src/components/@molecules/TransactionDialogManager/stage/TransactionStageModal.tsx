@@ -1,59 +1,65 @@
 import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
-import { Spacer } from '@app/components/@atoms/Spacer'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-import { Outlink, StyledAnchor } from '@app/components/Outlink'
+import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
-import { getRoute } from '@app/routes'
+import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { transactions } from '@app/transaction-flow/transaction'
-import { ManagedDialogProps } from '@app/transaction-flow/types'
+import { ManagedDialogPropsTwo, TransactionStage } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
-import { Button, Dialog, mq, Spinner, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
+import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { PopulatedTransaction } from 'ethers'
 import { useRouter } from 'next/router'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery, useSigner } from 'wagmi'
+import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 import { DisplayItems } from '../DisplayItems'
 
-const ButtonShrinkwrap = styled(Button)(
-  () => css`
-    width: 80%;
-    flex-shrink: 1;
-    ${mq.md.min(css`
-      width: 100%;
-    `)}
+const BarContainer = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: ${theme.space['1']};
   `,
 )
 
-const WaitingContainer = styled.div(
+const WalletIcon = styled.svg(
   ({ theme }) => css`
+    width: ${theme.space['12']};
+  `,
+)
+
+const Bar = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
+    height: ${theme.space['9']};
+    border-radius: ${theme.radii.full};
+    background-color: ${theme.colors.lightBlue};
+    overflow: hidden;
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: center;
-    gap: ${theme.space['3']};
+    justify-content: flex-start;
   `,
 )
 
-const WaitingTextContainer = styled.div(
+const BarTypography = styled(Typography)(
   ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    text-align: left;
-    color: ${theme.colors.textSecondary};
+    color: ${theme.colors.background};
+    font-weight: ${theme.fontWeights.bold};
   `,
 )
 
-const StyledSpinner = styled(Spinner)(
+const ProgressTypography = styled(Typography)(
   ({ theme }) => css`
-    width: ${theme.space['9']};
-    height: ${theme.space['9']};
+    color: ${theme.colors.accent};
+    font-weight: ${theme.fontWeights.bold};
+    text-align: center;
   `,
 )
 
@@ -71,65 +77,44 @@ const WaitingElement = () => {
   )
 }
 
-const Seconds = styled(Typography)(
-  ({ theme }) => css`
-    margin: 0 ${theme.space['1']};
-  `,
-)
-
-const Container = styled.div(
-  () => css`
-    display: flex;
-    align-items: center;
-  `,
-)
-
-const WaitingElementMining = ({ txHash }: { txHash: string | null }) => {
-  const recentTransactions = useRecentTransactions()
-  const { t } = useTranslation()
-
-  const { data: estimatedTime } = useQuery(['estimatedTransactionTime', txHash], async () => {
-    const tx = recentTransactions.find((transaction) => transaction.hash === txHash)
-    const gasPrice = tx && JSON.parse(tx.description).gasPrice
-    const response = await global.fetch(`https://confirmation-time.ens-cf.workers.dev/${gasPrice}`)
-    if (response.ok) {
-      const estimation: { result: string } = await response.json()
-      return estimation.result
-    }
-  })
-
-  return (
-    <WaitingContainer data-testid="transaction-waiting-container">
-      <StyledSpinner color="accent" />
-      <WaitingTextContainer>
-        <Typography weight="bold">{t('transaction.dialog.mining.title')}</Typography>
-        {estimatedTime && (
-          <Container>
-            <Typography>{t('transaction.dialog.mining.estimationPre')}</Typography>
-            <Seconds {...{ weight: 'bold', color: 'green' }}>{`${estimatedTime}`}</Seconds>
-            <Typography>{t('transaction.dialog.mining.estimationPost')}</Typography>
-          </Container>
-        )}
-      </WaitingTextContainer>
-    </WaitingContainer>
-  )
-}
-
 const ErrorTypography = styled(Typography)(
   () => css`
-    width: 100%;
     text-align: center;
   `,
 )
 
-const SuccessContent = styled.div(
-  ({ theme }) => css`
+type Status = Omit<TransactionStage, 'confirm'>
+
+const InnerBar = styled.div<{ $progress: number; $status: Status }>(
+  ({ theme, $progress, $status }) => css`
+    transition: 1s width linear;
+    width: calc(
+      calc(${$progress / 100} * calc(100% - ${theme.space['24']})) + ${theme.space['24']}
+    );
+    height: ${theme.space['9']};
+    border-radius: ${theme.radii.full};
+    padding: ${theme.space['2']} ${theme.space['4']};
+
+    ${$progress === 100 &&
+    css`
+      padding-right: ${theme.space['2']};
+      transition: 0.5s width ease-in-out;
+    `}
+
     display: flex;
-    flex-direction: column;
+    flex-direction: row;
     align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-    text-align: center;
+    justify-content: space-between;
+
+    background-color: ${theme.colors.blue};
+    ${$status === 'complete' &&
+    css`
+      background-color: ${theme.colors.green};
+    `}
+    ${$status === 'failed' &&
+    css`
+      background-color: ${theme.colors.red};
+    `}
   `,
 )
 
@@ -139,33 +124,22 @@ const CompleteTypography = styled(Typography)(
   `,
 )
 
-type Stage = 'request' | 'confirm' | 'mining' | 'complete'
+type Stage = 'request' | 'confirm' | 'complete'
 
 export const TransactionStageModal = ({
-  displayItems,
-  onDismiss,
-  onSuccess,
-  transaction,
   actionName,
-  completeTitle,
-  dismissBtnLabel,
-  completeBtnLabel,
   currentStep,
+  displayItems,
+  dispatch,
   stepCount,
-  onComplete,
+  transaction,
   txKey,
-}: ManagedDialogProps & {
-  txKey: string | null
-  currentStep: number
-  stepCount: number
-  onComplete: () => void
-}) => {
+  onDismiss,
+}: ManagedDialogPropsTwo) => {
   const { t } = useTranslation()
   const chainName = useChainName()
-  const router = useRouter()
 
   const addTransaction = useAddRecentTransaction()
-  const recentTransactions = useRecentTransactions()
   const { data: signer } = useSigner()
   const ens = useEns()
 
@@ -174,50 +148,39 @@ export const TransactionStageModal = ({
   const [txHash, setTxHash] = useState<string | null>(null)
   const settingsRoute = getRoute('settings')
 
-  useEffect(() => {
-    const tx = recentTransactions.find((trx) => trx.hash === txHash)
-    if (tx?.status === 'confirmed') {
-      setStage('complete')
-      onComplete()
-    }
-  }, [recentTransactions, onComplete, txHash])
-
   const { data: populatedTransaction } = useQuery(
     ['tx', txKey, currentStep],
     async () => {
-      let _populatedTransaction: PopulatedTransaction
+      const populatedTransaction = await transactions[transaction.name].transaction(
+        signer as JsonRpcSigner,
+        ens,
+        transaction.data,
+      )
+      const gasLimit = await signer!.estimateGas(populatedTransaction)
 
-      try {
-        _populatedTransaction = await transactions[transaction.name].transaction(
-          signer as JsonRpcSigner,
-          ens,
-          transaction.data,
-        )
-        _populatedTransaction.gasLimit = await signer!.estimateGas(_populatedTransaction)
-        return _populatedTransaction
-      } catch (e: any) {
-        setError(e.message || e)
-        return null
+      return {
+        ...populatedTransaction,
+        to: populatedTransaction.to as `0x${string}`,
+        gasLimit,
       }
     },
     {
       enabled: !!transaction && !!signer && !!ens,
     },
   )
+  const requestError = _requestError as Error | null
+  useInvalidateOnBlock({
+    enabled: !!transaction && !!signer && !!ens,
+    queryKey: ['prepareTx', txKey, currentStep],
+  })
 
   const tryTransaction = useCallback(async () => {
     setError(null)
     try {
-      const { hash, gasPrice } = await (signer as JsonRpcSigner).sendTransaction(
-        populatedTransaction!,
-      )
+      const { hash } = await (signer as JsonRpcSigner).sendTransaction(populatedTransaction!)
       if (!hash) throw new Error('No transaction generated')
       addTransaction({
-        description: JSON.stringify({
-          action: actionName,
-          key: txKey,
-          gasPrice: gasPrice?.toNumber(),
-        }),
+        description: JSON.stringify({ action: actionName, key: txKey }),
         hash,
       })
       setTxHash(hash)
@@ -256,7 +219,7 @@ export const TransactionStageModal = ({
               router.push(settingsRoute.href)
             }}
           >
-            {t('transaction.dialog.complete.viewTransactions')}
+            View your transactions
           </StyledAnchor>
         </SuccessContent>
       )
@@ -265,11 +228,10 @@ export const TransactionStageModal = ({
       return <WaitingElement />
     }
     return null
-  }, [onDismiss, router, settingsRoute.href, stage, t, txHash])
+  }, [onDismiss, router, settingsRoute.href, stage, t])
 
   const LeadingButton = useMemo(() => {
     let label: string
-    if (stage === 'mining') return null
     if (stage === 'complete') {
       if (currentStep + 1 === stepCount) return null
       label = t('action.close')
@@ -295,30 +257,28 @@ export const TransactionStageModal = ({
   }, [stage, dismissBtnLabel, currentStep, stepCount, t, onDismiss, onSuccess])
 
   const TrailingButton = useMemo(() => {
-    const final = currentStep + 1 === stepCount
     if (stage === 'complete') {
+      const final = currentStep + 1 === stepCount
+
       return (
         <Button
-          variant={final ? 'secondary' : 'primary'}
           shadowless
-          onClick={() => {
-            onSuccess?.()
-            if (final) onDismiss?.()
-          }}
-          data-testid="transaction-modal-complete-trailing-btn"
+          onClick={() => sendTransaction!()}
+          disabled={requestLoading || !sendTransaction}
+          tone="red"
+          variant="secondary"
+          data-testid="transaction-modal-failed-button"
         >
-          {completeBtnLabel ||
-            (final
-              ? t('transaction.dialog.complete.trailingButton')
-              : t('transaction.dialog.complete.stepTrailingButton'))}
+          {t('action.tryAgain')}
         </Button>
       )
     }
-    if (stage === 'confirm') {
+    if (stage === 'sent') {
       return (
         <Button
-          disabled={!error}
           shadowless
+          onClick={() => onDismiss()}
+          data-testid="transaction-modal-sent-button"
           variant="secondary"
           onClick={() => {
             tryTransaction()
@@ -329,72 +289,27 @@ export const TransactionStageModal = ({
         </Button>
       )
     }
-    if (stage === 'mining') {
-      return (
-        <Button
-          shadowless
-          variant="primary"
-          onClick={() => {
-            onSuccess?.()
-            if (final) onDismiss?.()
-          }}
-          data-testid="transaction-modal-confirm-trailing-btn"
-        >
-          {t('transaction.dialog.mining.trailingButton')}
-        </Button>
-      )
-    }
     return (
       <Button
-        data-testid="transaction-modal-request-trailing-btn"
         shadowless
-        onClick={() => {
-          setStage('confirm')
-        }}
-        disabled={!populatedTransaction}
+        disabled={requestLoading || !sendTransaction}
+        onClick={() => sendTransaction!()}
+        data-testid="transaction-modal-confirm-button"
       >
-        {t('transaction.dialog.request.trailingButton')}
+        {t('transaction.dialog.confirm.openWallet')}
       </Button>
     )
   }, [
-    stage,
-    populatedTransaction,
-    t,
     currentStep,
-    stepCount,
-    completeBtnLabel,
-    onSuccess,
+    dispatch,
     onDismiss,
-    error,
-    tryTransaction,
+    requestLoading,
+    sendTransaction,
+    stage,
+    stepCount,
+    t,
+    transactionLoading,
   ])
-
-  const title = useMemo(() => {
-    if (stage === 'complete') {
-      if (stepCount > 1) {
-        return (
-          completeTitle || t('transaction.dialog.complete.stepTitle', { step: currentStep + 1 })
-        )
-      }
-      return completeTitle || t('transaction.dialog.complete.title')
-    }
-    if (stage === 'confirm') {
-      return t('transaction.dialog.confirm.title')
-    }
-    return t('transaction.dialog.request.title')
-  }, [completeTitle, currentStep, stage, stepCount, t])
-
-  useEffect(() => {
-    setStage('request')
-    setError(null)
-    setTxHash(null)
-  }, [actionName])
-
-  useEffect(() => {
-    if (stage === 'confirm') {
-      tryTransaction()
-    }
-  }, [stage, tryTransaction])
 
   const stepStatus = useMemo(() => {
     if (stage === 'complete') {
@@ -403,24 +318,55 @@ export const TransactionStageModal = ({
     return 'inProgress'
   }, [stage])
 
+  const provider = useProvider()
+
+  const { data: upperError } = useQuery(
+    ['txError', transaction.hash],
+    async () => {
+      if (!transaction || !transaction.hash || transactionStatus !== 'failed') return null
+      const a = await provider.getTransaction(transaction.hash!)
+      try {
+        await provider.call(a as any, a.blockNumber)
+        return 'transaction.dialog.error.gasLimit'
+      } catch (err: any) {
+        const code = err.data.replace('Reverted ', '')
+        const reason = utils.toUtf8String(`0x${code.substr(138)}`)
+        return reason
+      }
+    },
+    {
+      enabled: !!transaction && !!transaction.hash && transactionStatus === 'failed',
+    },
+  )
+
+  const lowerError = useMemo(() => {
+    if (transactionError) {
+      return transactionError.message
+    }
+    if (requestError) {
+      return requestError.message
+    }
+    return null
+  }, [transactionError, requestError])
+
   return (
     <>
       <Dialog.Heading
-        title={title}
-        subtitle={stage === 'request' ? t('transaction.dialog.request.subtitle') : undefined}
+        title={t(`transaction.dialog.${stage}.title`)}
         currentStep={currentStep}
         stepCount={stepCount > 1 ? stepCount : undefined}
         stepStatus={stepStatus}
       />
       <InnerDialog data-testid="transaction-modal-inner">
-        {error ? <ErrorTypography color="red">{t(error)}</ErrorTypography> : MiddleContent}
+        {MiddleContent}
+        {upperError && <Helper type="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
+        {stage === 'complete' && (
+          <Outlink href={makeEtherscanLink(txHash!, chainName)}>
+            {t('transaction.viewEtherscan')}
+          </Outlink>
+        )}
       </InnerDialog>
-      {(stage === 'complete' || stage === 'mining') && (
-        <Outlink href={makeEtherscanLink(txHash!, chainName)}>
-          {t('transaction.viewEtherscan')}
-        </Outlink>
-      )}
       <Dialog.Footer leading={LeadingButton} trailing={TrailingButton} />
     </>
   )

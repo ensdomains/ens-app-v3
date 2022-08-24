@@ -59,3 +59,14 @@ export interface Transaction<Data> {
   onDismiss?: (dispatch: Dispatch<TransactionFlowAction>) => () => void
   dismissBtnLabel?: string
 }
+
+export type FuseObj = {
+  [key: string]: boolean
+  CANNOT_UNWRAP: boolean
+  CANNOT_BURN_FUSES: boolean
+  CANNOT_TRANSFER: boolean
+  CANNOT_SET_RESOLVER: boolean
+  CANNOT_SET_TTL: boolean
+  CANNOT_CREATE_SUBDOMAIN: boolean
+  PARENT_CANNOT_CONTROL: boolean
+}
