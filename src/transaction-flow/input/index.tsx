@@ -5,6 +5,7 @@ import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
+import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
 
 const dynamicHelper = <P,>(name: string) =>
   dynamic<P>(
@@ -23,6 +24,7 @@ const SelectPrimaryName = dynamicHelper<SelectPrimaryNameProps>('SelectPrimaryNa
 const AdvancedEditor = dynamicHelper<AdvancedEditorProps>('AdvancedEditor/AdvancedEditor')
 const ProfileEditor = dynamicHelper<ProfileEditorProps>('ProfileEditor/ProfileEditor')
 const CreateSubname = dynamicHelper<CreateSubnameProps>('CreateSubname')
+const ExtendNames = dynamicHelper<ExtendNamesProps>('ExtendNames/ExtendNames')
 
 export const DataInputComponents = {
   EditResolver,
@@ -30,6 +32,7 @@ export const DataInputComponents = {
   AdvancedEditor,
   SelectPrimaryName,
   CreateSubname,
+  ExtendNames,
 }
 
 export type DataInputName = keyof typeof DataInputComponents
