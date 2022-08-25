@@ -2,13 +2,13 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "db8250608bde8798a2248c00716eaaad",
+      "signature": "990bb82e0b58f6cedbde361e9c821301",
       "pure": true,
       "replaced": "^3.0.0-alpha.10"
     },
     "@ensdomains/thorin": {
-      "signature": "89aa8325c556cd9d4074ffff079774fd",
-      "pure": true,
+      "signature": "9cc6c0e633465e751b337ec73eac921d",
+      "file": true,
       "replaced": "^0.6.10"
     }
   }

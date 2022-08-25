@@ -185,9 +185,6 @@ export class ENS {
         this.universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
         this.resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
         this.multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
-        this.setFuses = this.generateWriteFunction('setFuses', [
-            'contracts',
-        ]);
         this.setName = this.generateWriteFunction('setName', [
             'contracts',
         ]);

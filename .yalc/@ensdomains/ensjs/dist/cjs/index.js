@@ -222,9 +222,6 @@ class ENS {
     universalWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'universalWrapper');
     resolverMulticallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'resolverMulticallWrapper');
     multicallWrapper = this.generateRawFunction('initialGetters', ['contracts'], 'multicallWrapper');
-    setFuses = this.generateWriteFunction('setFuses', [
-        'contracts',
-    ]);
     setName = this.generateWriteFunction('setName', [
         'contracts',
     ]);

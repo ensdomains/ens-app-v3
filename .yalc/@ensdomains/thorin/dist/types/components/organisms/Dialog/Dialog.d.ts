@@ -37,5 +37,8 @@ export declare const Dialog: {
         center?: boolean | undefined;
     }) => JSX.Element;
     Heading: ({ currentStep, stepCount, stepStatus, title, subtitle, }: TitleProps & StepProps) => JSX.Element;
+    CloseButton: ({ onClick }: {
+        onClick: () => void;
+    }) => JSX.Element;
 };
 export {};

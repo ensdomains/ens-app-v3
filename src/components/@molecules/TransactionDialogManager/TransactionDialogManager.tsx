@@ -31,6 +31,8 @@ export const TransactionDialogManager = ({
   const InnerComponent = useMemo(() => {
     if (selectedKey && selectedItem) {
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
+        console.log('probe: ', DataInputComponents)
+        console.log('probe: ', selectedItem)
         const Component = DataInputComponents[selectedItem.input.name]
         return <Component {...{ data: selectedItem.input.data, dispatch, onDismiss }} />
       }
@@ -81,7 +83,7 @@ export const TransactionDialogManager = ({
   return (
     <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onDismiss}>
       {InnerComponent}
-      <Dialog.CloseButton onClick={onDismiss} />
+      {/* <Dialog.CloseButton onClick={onDismiss} /> */}
     </Dialog>
   )
 }

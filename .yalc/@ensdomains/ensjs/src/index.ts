@@ -33,7 +33,6 @@ import type {
   _getText,
 } from './functions/getSpecificRecord'
 import type getSubnames from './functions/getSubnames'
-import type setFuses from './functions/setFuses'
 import registerName from './functions/registerName'
 import renewName from './functions/renewName'
 import type setName from './functions/setName'
@@ -529,10 +528,6 @@ export class ENS {
     ['contracts'],
     'multicallWrapper',
   )
-
-  public setFuses = this.generateWriteFunction<typeof setFuses>('setFuses', [
-    'contracts',
-  ])
 
   public setName = this.generateWriteFunction<typeof setName>('setName', [
     'contracts',

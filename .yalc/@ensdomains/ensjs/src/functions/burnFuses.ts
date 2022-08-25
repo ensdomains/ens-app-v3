@@ -8,13 +8,13 @@ export default async function (
   {
     fusesToBurn,
   }: {
-    fusesToBurn: Partial<keyof typeof fuseEnum>[] 
+    fusesToBurn: Set<Partial<keyof typeof fuseEnum>> 
   },
 ) {
   const nameWrapper = (await contracts?.getNameWrapper()!).connect(signer)
   const hash = namehash(name)
 
-  const encodedFuses = fusesToBurn.reduce((previousValue: number, currentValue): number => {
+  const encodedFuses = Array.from(fusesToBurn).reduce((previousValue: number, currentValue): number => {
     return previousValue + fuseEnum[currentValue]
   }, 0)
 

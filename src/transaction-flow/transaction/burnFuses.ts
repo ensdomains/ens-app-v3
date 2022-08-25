@@ -36,7 +36,7 @@ const dismissBtnLabel = 'Back'
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const tx = ens.burnFuses.populateTransaction(data.name, {
-    fusesToBurn: data.selectedFuses,
+    fusesToBurn: new Set(data.selectedFuses),
     signer,
   })
   return tx

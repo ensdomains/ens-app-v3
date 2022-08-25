@@ -1,13 +1,6 @@
 import { BigNumber } from 'ethers';
 import { fuseEnum } from '../utils/fuses';
 import { namehash } from '../utils/normalise';
-const NameSafety = [
-    'Safe',
-    'RegistrantNotWrapped',
-    'ControllerNotWrapped',
-    'SubdomainReplacementAllowed',
-    'Expired',
-];
 const raw = async ({ contracts }, name) => {
     const nameWrapper = await contracts?.getNameWrapper();
     return {
@@ -15,7 +8,7 @@ const raw = async ({ contracts }, name) => {
         data: nameWrapper.interface.encodeFunctionData('getData', [namehash(name)]),
     };
 };
-const decode = async ({ contracts }, data, name) => {
+const decode = async ({ contracts }, data) => {
     const nameWrapper = await contracts?.getNameWrapper();
     try {
         const { owner, fuses: _fuses, expiry, } = nameWrapper.interface.decodeFunctionResult('getData', data);

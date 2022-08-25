@@ -3,14 +3,6 @@ import { ENSArgs } from '..'
 import { fuseEnum } from '../utils/fuses'
 import { namehash } from '../utils/normalise'
 
-const NameSafety = [
-  'Safe',
-  'RegistrantNotWrapped',
-  'ControllerNotWrapped',
-  'SubdomainReplacementAllowed',
-  'Expired',
-]
-
 const raw = async ({ contracts }: ENSArgs<'contracts'>, name: string) => {
   const nameWrapper = await contracts?.getNameWrapper()!
   return {
@@ -22,7 +14,6 @@ const raw = async ({ contracts }: ENSArgs<'contracts'>, name: string) => {
 const decode = async (
   { contracts }: ENSArgs<'contracts'>,
   data: string,
-  name: string,
 ) => {
   const nameWrapper = await contracts?.getNameWrapper()!
   try {

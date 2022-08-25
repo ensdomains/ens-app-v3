@@ -5,7 +5,7 @@ declare const _default: {
         to: string;
         data: string;
     }>;
-    decode: ({ contracts }: ENSArgs<"contracts">, data: string, name: string) => Promise<{
+    decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<{
         fuseObj: {
             [k: string]: boolean;
         };

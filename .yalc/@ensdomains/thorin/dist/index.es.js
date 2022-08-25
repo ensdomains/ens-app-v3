@@ -4367,24 +4367,27 @@ const Container$8 = styled.div(({
     gap: ${theme.space["2"]};
     border-radius: ${theme.radii.large};
 
+    text-align: center;
+
     ${$alignment === "horizontal" && css`
       flex-direction: row;
       justify-content: flex-start;
       gap: ${theme.space["4"]};
       padding: ${theme.space["4"]};
+      text-align: left;
     `}
 
     background-color: ${theme.colors.lightBlue};
-    border: ${theme.space["px"]} solid ${theme.colors.blue};
+    border: ${theme.borderWidths.px} solid ${theme.colors.blue};
 
     ${$type === "warning" && css`
       background-color: ${theme.colors.lightYellow};
-      border: ${theme.space["px"]} solid ${theme.colors.yellow};
+      border-color: ${theme.colors.yellow};
     `}
 
     ${$type === "error" && css`
       background-color: ${theme.colors.lightRed};
-      border: ${theme.space["px"]} solid ${theme.colors.red};
+      border-color: ${theme.colors.red};
     `}
   `);
 const IconElement = styled.div(({
@@ -6370,10 +6373,10 @@ const IconCloseContainer$1 = styled.div(({
   theme
 }) => css`
     position: absolute;
-    top: ${theme.space["2.5"]};
-    right: ${theme.space["2.5"]};
-    height: ${theme.space["8"]};
-    width: ${theme.space["8"]};
+    top: ${theme.space["4"]};
+    right: ${theme.space["4"]};
+    height: ${theme.space["6"]};
+    width: ${theme.space["6"]};
     opacity: ${theme.opacity["50"]};
     cursor: pointer;
     transition-property: all;
@@ -6549,6 +6552,13 @@ const ModalWithTitle = ({
     }
   }), children)));
 };
+const CloseButton = ({
+  onClick
+}) => /* @__PURE__ */ React.createElement(IconCloseContainer$1, {
+  as: ReactComponent$J,
+  "data-testid": "close-icon",
+  onClick
+});
 const Dialog = ({
   children,
   onDismiss,
@@ -6590,9 +6600,7 @@ const Dialog = ({
       subtitle,
       title,
       onDismiss
-    }, children, onDismiss && /* @__PURE__ */ React.createElement(IconCloseContainer$1, {
-      as: ReactComponent$r,
-      "data-testid": "close-icon",
+    }, children, onDismiss && /* @__PURE__ */ React.createElement(CloseButton, {
       onClick: onDismiss
     }));
   }
@@ -6606,6 +6614,7 @@ const Dialog = ({
 Dialog.displayName = "Dialog";
 Dialog.Footer = Footer;
 Dialog.Heading = Heading;
+Dialog.CloseButton = CloseButton;
 const IconCloseContainer = styled.div(({
   theme
 }) => css`

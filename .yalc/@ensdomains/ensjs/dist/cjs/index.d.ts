@@ -7,7 +7,6 @@ import type burnFuses from './functions/burnFuses';
 import type commitName from './functions/commitName';
 import type createSubname from './functions/createSubname';
 import type deleteSubname from './functions/deleteSubname';
-import type setFuses from './functions/setFuses';
 import registerName from './functions/registerName';
 import renewName from './functions/renewName';
 import type setName from './functions/setName';
@@ -233,7 +232,7 @@ export declare class ENS {
             to: string;
             data: string;
         }>;
-        decode: ({ contracts }: ENSArgs<"contracts">, data: string, name: string) => Promise<{
+        decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<{
             fuseObj: {
                 [k: string]: boolean;
             };
@@ -443,7 +442,6 @@ export declare class ENS {
         }>;
         decode: ({ contracts }: ENSArgs<"contracts">, data: string) => Promise<any>;
     }>;
-    setFuses: WriteFunction<typeof setFuses>;
     setName: WriteFunction<typeof setName>;
     setRecords: WriteFunction<typeof setRecords>;
     setRecord: WriteFunction<typeof setRecord>;

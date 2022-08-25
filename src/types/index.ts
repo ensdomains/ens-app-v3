@@ -61,7 +61,6 @@ export interface Transaction<Data> {
 }
 
 export type FuseObj = {
-  [key: string]: boolean
   CANNOT_UNWRAP: boolean
   CANNOT_BURN_FUSES: boolean
   CANNOT_TRANSFER: boolean

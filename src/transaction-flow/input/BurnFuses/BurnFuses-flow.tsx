@@ -61,14 +61,21 @@ const StyledFlameSVG = styled(FlameSVG)(
   `,
 )
 
-const BurnedFlameContainer = styled.div(
-  ({ theme }) => css`
+const BurnedFlameContainer = styled.div<{ $isBurned: boolean }>(
+  ({ theme, $isBurned }) => css`
     background: ${theme.colors.backgroundTertiary};
     color: ${theme.colors.textSecondary};
     border-radius: 10px;
     display: flex;
     align-items: center;
     padding: 2px 10px;
+
+    ${$isBurned &&
+    `
+      position: absolute;
+      right: 6px;  
+      z-index: 1;
+    `}
   `,
 )
 
@@ -81,7 +88,7 @@ const BurnedStyledFlameSVG = styled(FlameSVG)(
   `,
 )
 
-const StyledButton = styled(Button)<{ isSelected: boolean }>(
+const StyledButton = styled(Button)(
   () => css`
     padding: 0px 6px;
   `,
@@ -108,13 +115,12 @@ const BurnButton = ({
       tone={isSelected ? 'red' : 'grey'}
       size="small"
       fullWidthContent
-      isSelected={isSelected}
       shadowless
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
-        <div>{t(`fuses.permissions.${permission}`)}</div>
+        <Typography>{t(`fuses.permissions.${permission}`)}</Typography>
         {isBurned && (
-          <BurnedFlameContainer>
+          <BurnedFlameContainer $isBurned={isBurned}>
             <Typography>{t('fuses.burned')}</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
@@ -181,7 +187,6 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
       }
     })
 
-    console.log('selectedKeys: ', selectedFuses)
     const permissions = selectedFuses.map((key) => t(`fuses.permissions.${key}`))
 
     dispatch({

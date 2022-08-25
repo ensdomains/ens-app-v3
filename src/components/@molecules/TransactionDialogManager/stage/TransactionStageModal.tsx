@@ -1,4 +1,7 @@
-import PaperPlaneColourSVG from '@app/assets/PaperPlaneColour.svg'
+import AeroplaneSVG from '@app/assets/Aeroplane.svg'
+import CircleCrossSVG from '@app/assets/CircleCross.svg'
+import CircleTickSVG from '@app/assets/CircleTick.svg'
+import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useChainName } from '@app/hooks/useChainName'
@@ -9,9 +12,8 @@ import { useEns } from '@app/utils/EnsProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
-import { PopulatedTransaction } from 'ethers'
-import { useRouter } from 'next/router'
+import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
+import { utils } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -63,21 +65,23 @@ const ProgressTypography = styled(Typography)(
   `,
 )
 
-const WaitingElement = () => {
-  const { t } = useTranslation()
+const AeroplaneIcon = styled.svg(
+  ({ theme }) => css`
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
+    color: ${theme.colors.background};
+  `,
+)
 
-  return (
-    <WaitingContainer data-testid="transaction-waiting-container">
-      <StyledSpinner color="accent" />
-      <WaitingTextContainer>
-        <Typography weight="bold">{t('transaction.dialog.confirm.waiting.title')}</Typography>
-        <Typography>{t('transaction.dialog.confirm.waiting.subtitle')}</Typography>
-      </WaitingTextContainer>
-    </WaitingContainer>
-  )
-}
+const CircleIcon = styled.svg(
+  ({ theme }) => css`
+    width: ${theme.space['6']};
+    height: ${theme.space['6']};
+    color: ${theme.colors.background};
+  `,
+)
 
-const ErrorTypography = styled(Typography)(
+const MessageTypography = styled(Typography)(
   () => css`
     text-align: center;
   `,
@@ -118,13 +122,74 @@ const InnerBar = styled.div<{ $progress: number; $status: Status }>(
   `,
 )
 
-const CompleteTypography = styled(Typography)(
-  ({ theme }) => css`
-    max-width: ${theme.space['80']};
-  `,
-)
+const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
+  const { t } = useTranslation()
 
-type Stage = 'request' | 'confirm' | 'complete'
+  const time = useMemo(() => ({ start: sendTime || Date.now(), ms: 45000 }), [sendTime])
+  const [{ progress }, setProgress] = useState({ progress: 0, timeLeft: 45 })
+
+  const intervalFunc = useCallback(
+    (interval?: NodeJS.Timeout) => {
+      const timeElapsed = Date.now() - time.start
+      const _timeLeft = time.ms - timeElapsed
+      const _progress = Math.min((timeElapsed / (timeElapsed + _timeLeft)) * 100, 100)
+      setProgress({ timeLeft: Math.floor(_timeLeft / 1000), progress: _progress })
+      if (_progress === 100) clearInterval(interval)
+    },
+    [time.ms, time.start],
+  )
+
+  useEffect(() => {
+    intervalFunc()
+    const interval = setInterval(intervalFunc, 1000)
+    return () => clearInterval(interval)
+  }, [intervalFunc])
+
+  const message = useMemo(() => {
+    if (status === 'complete') {
+      return t('transaction.dialog.complete.message')
+    }
+    if (status === 'failed') {
+      return null
+    }
+    return t('transaction.dialog.sent.message')
+  }, [status, t])
+
+  const progressMessage = useMemo(() => {
+    if (status === 'sent' && progress === 100) {
+      return t('transaction.dialog.sent.progress.message')
+    }
+    return null
+  }, [status, progress, t])
+
+  const EndElement = useMemo(() => {
+    if (status === 'complete') {
+      return <CircleIcon as={CircleTickSVG} />
+    }
+    if (status === 'failed') {
+      return <CircleIcon as={CircleCrossSVG} />
+    }
+    if (progress !== 100) {
+      return <AeroplaneIcon as={AeroplaneSVG} />
+    }
+    return <Spinner color="background" size="small" />
+  }, [progress, status])
+
+  return (
+    <>
+      <BarContainer data-testid="load-bar-container">
+        <Bar>
+          <InnerBar $progress={status !== 'sent' ? 100 : progress} $status={status}>
+            <BarTypography>{t(`transaction.dialog.${status}.progress.title`)}</BarTypography>
+            {EndElement}
+          </InnerBar>
+        </Bar>
+        {progressMessage && <ProgressTypography>{progressMessage}</ProgressTypography>}
+      </BarContainer>
+      {message && <MessageTypography>{message}</MessageTypography>}
+    </>
+  )
+}
 
 export const TransactionStageModal = ({
   actionName,
@@ -139,17 +204,32 @@ export const TransactionStageModal = ({
   const { t } = useTranslation()
   const chainName = useChainName()
 
-  const addTransaction = useAddRecentTransaction()
+  const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
   const ens = useEns()
 
-  const [stage, setStage] = useState<Stage>('request')
-  const [error, setError] = useState<string | null>(null)
-  const [txHash, setTxHash] = useState<string | null>(null)
-  const settingsRoute = getRoute('settings')
+  const stage = transaction.stage || 'confirm'
+  const recentTransactions = useRecentTransactions()
+  const transactionStatus = useMemo(
+    () => recentTransactions.find((tx) => tx.hash === transaction.hash)?.status,
+    [recentTransactions, transaction.hash],
+  )
 
-  const { data: populatedTransaction } = useQuery(
-    ['tx', txKey, currentStep],
+  useEffect(() => {
+    if (transactionStatus === 'confirmed') {
+      dispatch({ name: 'setTransactionStage', payload: 'complete' })
+    }
+    if (transactionStatus === 'failed') {
+      dispatch({ name: 'setTransactionStage', payload: 'failed' })
+    }
+  }, [dispatch, transactionStatus])
+
+  const {
+    data: request,
+    isLoading: requestLoading,
+    error: _requestError,
+  } = useQuery(
+    ['prepareTx', txKey, currentStep],
     async () => {
       const populatedTransaction = await transactions[transaction.name].transaction(
         signer as JsonRpcSigner,
@@ -174,92 +254,80 @@ export const TransactionStageModal = ({
     queryKey: ['prepareTx', txKey, currentStep],
   })
 
-  const tryTransaction = useCallback(async () => {
-    setError(null)
-    try {
-      const { hash } = await (signer as JsonRpcSigner).sendTransaction(populatedTransaction!)
-      if (!hash) throw new Error('No transaction generated')
-      addTransaction({
+  const {
+    isLoading: transactionLoading,
+    error: transactionError,
+    sendTransaction,
+  } = useSendTransaction({
+    mode: 'prepared',
+    request,
+    onSuccess: (tx) => {
+      addRecentTransaction({
+        hash: tx.hash,
         description: JSON.stringify({ action: actionName, key: txKey }),
-        hash,
       })
-      setTxHash(hash)
-      setStage('mining')
-    } catch (e: any) {
-      if (e && e.code === 4001) {
-        setError('transaction.dialog.confirm.error.rejectedRequest')
-      } else {
-        setError(e ? e.message : 'transaction.dialog.confirm.error.unknown')
-      }
-    }
-  }, [addTransaction, actionName, txKey, signer, populatedTransaction])
+      dispatch({ name: 'setTransactionHash', payload: tx.hash })
+    },
+  })
 
   const FilledDisplayItems = useMemo(
-    () => <DisplayItems displayItems={displayItems || []} />,
-    [displayItems],
+    () => (
+      <DisplayItems
+        displayItems={[
+          {
+            label: 'action',
+            value: t(`transaction.description.${actionName}`),
+          },
+          {
+            label: 'info',
+            value: t(`transaction.info.${actionName}`),
+          },
+          ...(displayItems || []),
+        ]}
+      />
+    ),
+    [actionName, displayItems, t],
   )
-  const MiddleContent = useMemo(() => {
-    if (stage === 'mining') {
-      return (
-        <SuccessContent>
-          <WaitingElementMining {...{ txHash }} />
-          <Spacer $height="1" />
-          <Typography>{t('transaction.dialog.mining.message')}</Typography>
-        </SuccessContent>
-      )
-    }
-    if (stage === 'complete') {
-      return (
-        <SuccessContent>
-          <PaperPlaneColourSVG />
-          <CompleteTypography>{t('transaction.dialog.complete.message')}</CompleteTypography>
-          <StyledAnchor
-            onClick={() => {
-              onDismiss?.()
-              router.push(settingsRoute.href)
-            }}
-          >
-            View your transactions
-          </StyledAnchor>
-        </SuccessContent>
-      )
-    }
-    if (stage === 'confirm') {
-      return <WaitingElement />
-    }
-    return null
-  }, [onDismiss, router, settingsRoute.href, stage, t])
 
-  const LeadingButton = useMemo(() => {
-    let label: string
-    if (stage === 'complete') {
-      if (currentStep + 1 === stepCount) return null
-      label = t('action.close')
-    } else if (dismissBtnLabel) {
-      label = dismissBtnLabel
-    } else {
-      label = t('action.cancel')
+  const MiddleContent = useMemo(() => {
+    if (stage !== 'confirm') {
+      return <LoadBar status={stage} sendTime={transaction.sendTime} />
     }
     return (
-      <ButtonShrinkwrap
-        onClick={() => {
-          if (stage === 'complete') onSuccess?.()
-          onDismiss?.()
-        }}
-        variant="secondary"
-        tone="grey"
-        shadowless
-        data-testid="transaction-modal-dismiss-btn"
-      >
-        {label}
-      </ButtonShrinkwrap>
+      <>
+        <WalletIcon as={WalletSVG} />
+        <MessageTypography>{t('transaction.dialog.confirm.message')}</MessageTypography>
+      </>
     )
-  }, [stage, dismissBtnLabel, currentStep, stepCount, t, onDismiss, onSuccess])
+  }, [stage, t, transaction.sendTime])
 
-  const TrailingButton = useMemo(() => {
+  const ActionButton = useMemo(() => {
     if (stage === 'complete') {
       const final = currentStep + 1 === stepCount
 
+      if (final) {
+        return (
+          <Button
+            data-testid="transaction-modal-complete-button"
+            onClick={() => onDismiss()}
+            shadowless
+            variant="secondary"
+          >
+            {t('action.done')}
+          </Button>
+        )
+      }
+      return (
+        <Button
+          data-testid="transaction-modal-complete-button"
+          onClick={() => dispatch({ name: 'incrementTransaction' })}
+          shadowless
+        >
+          {t('action.next')}
+        </Button>
+      )
+    }
+    if (stage === 'failed') {
       return (
         <Button
           shadowless
@@ -280,12 +348,20 @@ export const TransactionStageModal = ({
           onClick={() => onDismiss()}
           data-testid="transaction-modal-sent-button"
           variant="secondary"
-          onClick={() => {
-            tryTransaction()
-          }}
-          data-testid="transaction-modal-confirm-trailing-btn"
         >
-          {t('transaction.dialog.confirm.trailingButton')}
+          {t('action.close')}
+        </Button>
+      )
+    }
+    if (transactionLoading) {
+      return (
+        <Button
+          shadowless
+          disabled
+          suffix={<Spinner color="background" />}
+          data-testid="transaction-modal-confirm-button"
+        >
+          {t('transaction.dialog.confirm.waitingForWallet')}
         </Button>
       )
     }
@@ -361,13 +437,14 @@ export const TransactionStageModal = ({
         {MiddleContent}
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
-        {stage === 'complete' && (
-          <Outlink href={makeEtherscanLink(txHash!, chainName)}>
+        {transaction.hash && (
+          <Outlink href={makeEtherscanLink(transaction.hash!, chainName)}>
             {t('transaction.viewEtherscan')}
           </Outlink>
         )}
+        {lowerError && <Helper type="error">{lowerError}</Helper>}
       </InnerDialog>
-      <Dialog.Footer leading={LeadingButton} trailing={TrailingButton} />
+      <Dialog.Footer center trailing={ActionButton} />
     </>
   )
 }

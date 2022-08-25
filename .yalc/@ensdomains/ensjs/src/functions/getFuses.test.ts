@@ -1,4 +1,5 @@
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
+import { resolveRequestDocument } from 'graphql-request'
 import { ENS } from '..'
 import setup from '../tests/setup'
 
@@ -8,6 +9,22 @@ let createSnapshot: Awaited<ReturnType<typeof setup>>['createSnapshot']
 let provider: ethers.providers.JsonRpcProvider
 let accounts: string[]
 let withWrappedSnapshot: any
+
+const unwrappedNameDefault = {
+  expiryDate: new Date(0).toString(), 
+  fuseObj: {
+    CANNOT_BURN_FUSES: false, 
+    CANNOT_CREATE_SUBDOMAIN: false, 
+    CANNOT_SET_RESOLVER: false, 
+    CANNOT_SET_TTL: false, 
+    CANNOT_TRANSFER: false, 
+    CANNOT_UNWRAP: false, 
+    PARENT_CANNOT_CONTROL: false, 
+    canDoEverything: true
+  }, 
+  owner: "0x0000000000000000000000000000000000000000", 
+  rawFuses: BigNumber.from(0)
+}
 
 beforeAll(async () => {
   ;({ ENSInstance, revert, provider, createSnapshot } = await setup())
@@ -26,9 +43,9 @@ afterAll(async () => {
 })
 
 describe('getFuses', () => {
-  it('should return null for an unwrapped name', async () => {
+  it('should return default data for an unwrapped name', async () => {
     const result = await ENSInstance.getFuses('with-profile.eth')
-    expect(result).toBeUndefined()
+    expect({ ...result, expiryDate: result?.expiryDate.toString() }).toEqual(unwrappedNameDefault)
   })
   it('should return with canDoEverything set to true for a name with no fuses burned', async () => {
     const nameWrapper = await ENSInstance.contracts!.getNameWrapper()!
@@ -47,11 +64,7 @@ describe('getFuses', () => {
   })
   it('should return with other correct fuses', async () => {
     const tx = await ENSInstance.burnFuses('wrapped.eth', {
-      fusesToBurn: {
-        cannotUnwrap: true,
-        cannotSetTtl: true,
-        cannotCreateSubdomain: true,
-      },
+      fusesToBurn: ['CANNOT_UNWRAP', 'CANNOT_CREATE_SUBDOMAIN', 'CANNOT_SET_TTL'],
       addressOrIndex: 1,
     })
     await tx.wait()
@@ -60,13 +73,13 @@ describe('getFuses', () => {
     expect(result).toBeTruthy()
     if (result) {
       expect(result.fuseObj).toMatchObject({
-        cannotUnwrap: true,
-        cannotBurnFuses: false,
-        cannotTransfer: false,
-        cannotSetResolver: false,
-        cannotSetTtl: true,
-        cannotCreateSubdomain: true,
-        parentCannotControl: true,
+        CANNOT_UNWRAP: true,
+        CANNOT_BURN_FUSES: false,
+        CANNOT_TRANSFER: false,
+        CANNOT_SET_RESOLVER: false,
+        CANNOT_SET_TTL: true,
+        CANNOT_CREATE_SUBDOMAIN: true,
+        PARENT_CANNOT_CONTROL: true,
         canDoEverything: false,
       })
       expect(result.rawFuses.toHexString()).toBe('0x71')

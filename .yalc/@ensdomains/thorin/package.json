@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/thorin",
-  "version": "0.6.10",
+  "version": "0.6.12",
   "description": "A web3 native design system",
   "main": "./dist/index.cjs.js",
   "module": "./dist/index.es.js",
@@ -30,7 +30,6 @@
     "clean": "rimraf dist src/components/icons/generated/",
     "lint:types": "tsc --noEmit",
     "prepack": "pnpm build",
-    "publish": "pnpm npm publish",
     "test": "jest",
     "ver": "pnpm npm version"
   },
@@ -45,5 +44,5 @@
     "react-transition-state": "^1.1.4",
     "styled-components": "^5.3.3"
   },
-  "yalcSig": "89aa8325c556cd9d4074ffff079774fd"
+  "yalcSig": "9cc6c0e633465e751b337ec73eac921d"
 }
