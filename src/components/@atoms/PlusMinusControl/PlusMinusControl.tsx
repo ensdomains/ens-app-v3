@@ -2,8 +2,8 @@ import { useDefaultRef } from '@app/hooks/useDefaultRef'
 import { VisuallyHidden } from '@ensdomains/thorin'
 import { InputHTMLAttributes, forwardRef, ChangeEventHandler, useState, ForwardedRef } from 'react'
 import styled, { css } from 'styled-components'
-import PlusIcon from '@app/assets/plus.svg'
-import MinusIcon from '@app/assets/minus.svg'
+import PlusIcon from '@app/assets/Plus.svg'
+import MinusIcon from '@app/assets/Minus.svg'
 import { createChangeEvent } from '@app/utils/syntheticEvent'
 
 const Container = styled.div(

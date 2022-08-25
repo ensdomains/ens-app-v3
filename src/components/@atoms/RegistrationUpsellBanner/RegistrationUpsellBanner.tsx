@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import InfoIcon from '@app/assets/info.svg'
+import InfoIcon from '@app/assets/Info.svg'
 import mq from '@app/mediaQuery'
 
 const Container = styled.div(
