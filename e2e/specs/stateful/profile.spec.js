@@ -20,6 +20,11 @@ const profiles = [
         value: 'taytems.xyz',
       },
       {
+        type: 'snippet',
+        key: 'location',
+        value: 'australia',
+      },
+      {
         type: 'account',
         key: 'com.discord',
         value: 'taytems#0700',
@@ -51,11 +56,6 @@ const profiles = [
         type: 'other',
         key: 'email',
         value: 'yo@taytems.xyz',
-      },
-      {
-        type: 'other',
-        key: 'location',
-        value: 'australia',
       },
     ],
     owners: [

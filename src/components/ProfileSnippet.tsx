@@ -39,16 +39,23 @@ const AvatarWrapper = styled.div(
 const DetailStack = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: row;
-    flex-gap: ${theme.space['2']};
-    gap: ${theme.space['2']};
-    align-items: center;
+    flex-direction: column;
+    align-items: flex-start;
+    margin-bottom: ${theme.space['1']};
   `,
 )
 
 const Name = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
+  `,
+)
+
+const NameRecord = styled(Typography)(
+  ({ theme }) => css`
+    font-size: ${theme.fontSizes.large};
+    color: ${theme.colors.textTertiary};
+    margin-top: -${theme.space['0.5']};
   `,
 )
 
@@ -113,12 +120,27 @@ const DropdownWrapper = styled.div(
   `,
 )
 
+const LocationAndUrl = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+
+    #profile-loc {
+      color: ${theme.colors.textTertiary};
+    }
+
+    #profile-url {
+      font-weight: bold;
+    }
+  `,
+)
+
 export const ProfileSnippet = ({
-  banner,
-  recordName,
   name,
-  description,
-  url,
+  getTextRecord,
   button,
   size = 'small',
   buttonPlacement = 'inline',
@@ -126,10 +148,7 @@ export const ProfileSnippet = ({
   actions,
 }: {
   name: string
-  banner?: string
-  recordName?: string
-  description?: string
-  url?: string
+  getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewDetails' | 'viewProfile'
   size?: 'small' | 'medium'
   buttonPlacement?: 'inline' | 'bottom'
@@ -146,6 +165,12 @@ export const ProfileSnippet = ({
   const zorb = useZorb(name, 'name')
   const { avatar } = useAvatar(name, network)
   const hasActions = actions && actions.length > 0 && actions.some(({ disabled }) => !disabled)
+
+  const banner = getTextRecord?.('banner')?.value
+  const description = getTextRecord?.('description')?.value
+  const url = getTextRecord?.('url')?.value
+  const location = getTextRecord?.('location')?.value
+  const recordName = getTextRecord?.('name')?.value
 
   return (
     <Container $banner={banner} $size={size} data-testid="profile-snippet">
@@ -205,25 +230,26 @@ export const ProfileSnippet = ({
       <TextStack>
         <DetailStack>
           <Name weight="bold">{name}</Name>
-          {recordName && (
-            <div style={{ marginTop: '4px' }}>
-              <Typography data-testid="profile-snippet-name" weight="bold" color="textTertiary">
-                {recordName}
-              </Typography>
-            </div>
-          )}
+          {recordName && <NameRecord data-testid="profile-snippet-name">{recordName}</NameRecord>}
         </DetailStack>
         {description && (
           <Typography data-testid="profile-snippet-description">{description}</Typography>
         )}
-        {url && (
-          <div style={{ width: 'min-content' }}>
-            <a href={url} data-testid="profile-snippet-url">
-              <Typography color="blue">
-                {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
+        {(url || location) && (
+          <LocationAndUrl>
+            {location && (
+              <Typography id="profile-loc" data-testid="profile-snippet-location">
+                {location}
               </Typography>
-            </a>
-          </div>
+            )}
+            {url && (
+              <a href={url} data-testid="profile-snippet-url">
+                <Typography color="blue" id="profile-url">
+                  {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
+                </Typography>
+              </a>
+            )}
+          </LocationAndUrl>
         )}
       </TextStack>
       {button && buttonPlacement === 'bottom' && (

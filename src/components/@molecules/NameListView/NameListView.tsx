@@ -27,5 +27,11 @@ export const NameListView = ({
         <Heading as="h3">{t('errors.noResults')}</Heading>
       </NoResultsContianer>
     )
-  return <TabWrapper>{currentPage.map((name) => TaggedNameItem({ ...name, network }))}</TabWrapper>
+  return (
+    <TabWrapper>
+      {currentPage.map((name) => (
+        <TaggedNameItem key={name.id} {...{ ...name, network }} />
+      ))}
+    </TabWrapper>
+  )
 }

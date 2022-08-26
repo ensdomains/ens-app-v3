@@ -74,9 +74,11 @@ export const useNamesFromAddress = ({
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 
   const filterFunc = useMemo(() => {
-    if (filter === 'registration') return (n: ReturnedName) => n.isRegistrant
-    if (filter === 'domain') return (n: ReturnedName) => n.isController
-    return () => true
+    const baseFilter = (n: ReturnedName) => n.parent.name !== 'addr.reverse'
+    let secondaryFilter: (n: ReturnedName) => boolean = () => true
+    if (filter === 'registration') secondaryFilter = (n: ReturnedName) => !!n.isRegistrant
+    if (filter === 'domain') secondaryFilter = (n: ReturnedName) => !!n.isController
+    return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n)
   }, [filter])
 
   const sortFunc = useMemo(() => {
