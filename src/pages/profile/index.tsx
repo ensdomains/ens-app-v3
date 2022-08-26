@@ -131,7 +131,8 @@ export default function Page() {
   }
 
   const profileActions = useMemo(() => {
-    if (isSelf || (!selfAbilities.canEdit && profile?.address !== address)) return undefined
+    if (isSelf || (!selfAbilities.canEdit && profile?.address !== address) || ensName === _name)
+      return undefined
     const setAsPrimaryTransactions: GenericTransaction[] = [
       makeTransactionItem('setPrimaryName', {
         name,
@@ -163,7 +164,17 @@ export default function Page() {
           }),
       },
     ]
-  }, [isSelf, selfAbilities.canEdit, name, address, profile?.address, t, createTransactionFlow])
+  }, [
+    isSelf,
+    selfAbilities.canEdit,
+    profile?.address,
+    address,
+    ensName,
+    _name,
+    name,
+    t,
+    createTransactionFlow,
+  ])
 
   return (
     <>
