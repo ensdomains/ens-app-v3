@@ -1,13 +1,17 @@
-import { useEthPrice } from '../../../hooks/useEthPrice'
+import { BigNumber } from 'ethers'
+import { useEthPrice } from '@app/hooks/useEthPrice'
+import { formatUnits } from 'ethers/lib/utils'
 
 type Props = {
-  eth?: number
+  eth?: BigNumber
   currency: 'eth' | 'usd'
-  decimals?: number
 }
 
-export const CurrencyText = ({ eth = 0, currency = 'eth', decimals = 4 }: Props) => {
-  const { data = 0, loading } = useEthPrice()
-  if (loading) return null
-  return <>{currency === 'eth' ? `${eth.toFixed(decimals)} ETH` : `$${(eth * data).toFixed(2)}`}</>
+export const CurrencyText = ({ eth, currency = 'eth' }: Props) => {
+  const { data: ethPrice, loading } = useEthPrice()
+
+  if (loading || !eth || !ethPrice) return null
+  return (
+    <>{currency === 'eth' ? `${formatUnits(eth, 'ether')} ETH` : `$${formatUnits(eth, 'ether')}`}</>
+  )
 }

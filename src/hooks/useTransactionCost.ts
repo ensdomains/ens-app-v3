@@ -1,6 +1,5 @@
-import { useQuery } from '@tanstack/react-query'
-import { BigNumberish, ethers } from 'ethers'
-import { useProvider } from 'wagmi'
+import { useFeeData, useQuery } from 'wagmi'
+import { BigNumber } from 'ethers'
 
 const gasLimitDictionary = {
   REGISTER: 240000,
@@ -9,30 +8,47 @@ const gasLimitDictionary = {
 
 type TransactionType = keyof typeof gasLimitDictionary
 
-export const useEstimateTransactionCost = (
-  transactions: TransactionType[],
-  unitName: BigNumberish = 'gwei',
-) => {
-  const provider = useProvider()
-  const { data, isLoading: loading } = useQuery(
+type FeeData = {
+  maxFeePerGas: BigNumber
+  gasPrice: BigNumber
+  maxPriorityFeePerGas: BigNumber
+  formatted: {
+    gasPrice: string
+    maxFeePerGas: string
+    maxPriorityFeePerGas: string
+  }
+}
+
+type TransactionCost = {
+  transactionFee: BigNumber
+  gasPrice: BigNumber
+  gasLimit: number
+}
+
+export const useEstimateTransactionCost = (transactions: TransactionType[]) => {
+  const { data: feeData, isLoading: feeDataLoading } = useFeeData()
+
+  const {
+    data,
+    isLoading: loading,
+    isFetching: fetching,
+  } = useQuery(
     ['estimate-transaction-cost', ...transactions],
     async () => {
-      const { maxFeePerGas } = await provider.getFeeData()
-      if (!maxFeePerGas) throw new Error('Could not get feed data')
+      const { maxFeePerGas } = feeData as FeeData
+      // if (!maxFeePerGas) throw new Error('Fee data not found')
       const totalGasLimit = transactions
         .map((transaction) => gasLimitDictionary[transaction])
         .reduce((a, b) => a + b)
-      const feePerGasGwei = parseFloat(ethers.utils.formatUnits(maxFeePerGas, unitName))
-      if (Number.isNaN(feePerGasGwei)) throw new Error('Could not parse fee data')
-
+      const transactionFee = maxFeePerGas.mul(totalGasLimit)
       return {
-        transactionCost: feePerGasGwei * totalGasLimit,
-        gasPrice: feePerGasGwei,
+        transactionFee,
+        gasPrice: maxFeePerGas,
         gasLimit: totalGasLimit,
-      }
+      } as TransactionCost
     },
     {
-      enabled: !!provider,
+      enabled: true,
     },
   )
 

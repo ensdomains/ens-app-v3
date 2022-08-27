@@ -6,7 +6,7 @@ const Container = styled.div(
     position: relative;
     background: ${theme.colors.backgroundTertiary};
     border: ${theme.space['0.5']} solid ${theme.colors.backgroundTertiary};
-    border-radius: ${theme.space[4]};
+    border-radius: ${theme.radii.full};
     height: ${theme.space[8]};
     display: flex;
     box-sizing: content-box;
@@ -20,7 +20,7 @@ const Slider = styled.div<{ $side: 'left' | 'right' }>(
     background: ${theme.colors.accent};
     width: 50%;
     height: 100%;
-    border-radius: ${theme.space['3.5']};
+    border-radius: ${theme.radii.full};
     transition: left 0.3s ease-in-out;
   `,
 )

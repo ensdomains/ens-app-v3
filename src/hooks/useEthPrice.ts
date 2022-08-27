@@ -1,26 +1,22 @@
-import { useQuery } from '@tanstack/react-query'
-import { useProvider } from 'wagmi'
-import { ethers } from 'ethers'
+import { useProvider, useQuery } from 'wagmi'
+import { ethers, BigNumber } from 'ethers'
 import { useEns } from '@app/utils/EnsProvider'
 import AggregatorInterface from '@ensdomains/ens-contracts/build/contracts/AggregatorInterface.json'
 
+const ORACLE_ENS = 'eth-usd.data.eth'
+
 export const useEthPrice = () => {
-  const oracleens = 'eth-usd.data.eth'
   const provider = useProvider()
-  const { getProfile, ready } = useEns()
-  const {
-    data,
-    error,
-    isLoading: loading,
-    isFetching: fetching,
-  } = useQuery(
+  const { getAddr, ready } = useEns()
+  const { data, isLoading: loading } = useQuery(
     ['use-eth-price'],
     async () => {
-      const profile = await getProfile(oracleens, {})
-      if (!profile?.address) throw new Error('Contract address not found')
-      const oracle = new ethers.Contract(profile.address, AggregatorInterface, provider)
+      const address = await getAddr(ORACLE_ENS)
+      if (!address) throw new Error('Contract address not found')
+      if (typeof address !== 'string') throw new Error('Contract address is wrong type')
+      const oracle = new ethers.Contract(address, AggregatorInterface, provider)
       const latest = await oracle.latestAnswer()
-      return latest.toNumber() / 100000000
+      return latest.div(100000000)
     },
     {
       enabled: !!provider && ready,
@@ -28,8 +24,6 @@ export const useEthPrice = () => {
   )
   return {
     data,
-    error,
     loading,
-    fetching,
   }
 }

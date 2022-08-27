@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+import { BigNumber } from 'ethers'
 import { CurrencyText } from '../CurrencyText/CurrencyText'
 
 const Container = styled.div(
@@ -30,7 +31,7 @@ const Total = styled(LineItem)(
 
 type InvoiceItem = {
   label: string
-  value: number
+  value?: BigNumber
 }
 
 type Props = {
@@ -40,8 +41,11 @@ type Props = {
 }
 
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {
-  // eslint-disable-next-line react/destructuring-assignment
-  const total = items.map(({ value }) => value).reduce((a, b) => a + b) || 0
+  const total = items
+    .map(({ value }) => value)
+    .filter((x) => !!x)
+    .reduce((a, b) => a!.add(b!), BigNumber.from(0))
+
   return (
     <Container>
       {items.map(({ label, value }) => (

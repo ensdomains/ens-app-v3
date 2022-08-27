@@ -7,9 +7,11 @@ import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySw
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useState } from 'react'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
-import { RegistrationUpsellBanner } from '@app/components/@atoms/RegistrationUpsellBanner/RegistrationUpsellBanner'
+import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { useEthPrice } from '@app/hooks/useEthPrice'
+import { formatUnits } from 'ethers/lib/utils'
+import { BigNumber } from 'ethers'
 
 const Container = styled.form(
   ({ theme }) => css`
@@ -52,25 +54,30 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const [years, setYears] = useState(1)
   const [currencyUnit, setCurrencyUnit] = useState<'eth' | 'usd'>('eth')
 
-  const { data } = useEstimateTransactionCost(['REGISTER', 'COMMIT'], 'ether')
-  const { gasPrice, transactionCost } = data || {}
+  const { data: transactionData, isLoading: transactionDataLoading } = useEstimateTransactionCost([
+    'REGISTER',
+    'COMMIT',
+  ])
+  const { gasPrice, transactionFee } = transactionData || {}
 
-  const gasLabel = (gasPrice || 0) * 10 ** 9
+  const gasLabel = gasPrice ? `${formatUnits(gasPrice, 'gwei')} gwei` : '-'
 
-  const { data: ethPrice } = useEthPrice()
+  const { data: ethPrice, isLoading: ethPriceLoading } = useEthPrice()
 
-  const rentFee = 5 / (ethPrice || 1)
+  const rentFee = ethPrice ? BigNumber.from(5).div(ethPrice) : undefined
+  const totalRentFee = rentFee ? rentFee.mul(years) : undefined
 
   const items = [
     {
       label: `${years} year extension`,
-      value: rentFee * years,
+      value: totalRentFee,
     },
     {
       label: 'transaction fee',
-      value: transactionCost!,
+      value: transactionFee,
     },
   ]
+
   return (
     <>
       <Dialog.Heading title={t('Extend Names')} />
@@ -88,12 +95,12 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
         <OptionBar>
           <div>
             <GasIcon />
-            {gasLabel?.toFixed(0)}
+            {gasLabel}
           </div>
           <CurrencySwitch value={currencyUnit} onChange={(unit) => setCurrencyUnit(unit)} />
         </OptionBar>
-        {rentFee && transactionCost && (
-          <RegistrationUpsellBanner rentFee={rentFee} transactionFee={transactionCost} />
+        {rentFee && transactionFee && (
+          <RegistrationTimeComparisonBanner rentFee={rentFee} transactionFee={transactionFee} />
         )}
         <Invoice items={items} unit={currencyUnit} totalLabel="total" />
       </Container>

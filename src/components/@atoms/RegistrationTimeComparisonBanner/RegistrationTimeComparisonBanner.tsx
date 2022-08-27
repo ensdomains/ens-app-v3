@@ -1,5 +1,5 @@
 import styled, { css } from 'styled-components'
-import InfoIcon from '@app/assets/Info.svg'
+import { InfoSVG } from '@ensdomains/thorin'
 import mq from '@app/mediaQuery'
 
 const Container = styled.div(
@@ -19,6 +19,8 @@ const Container = styled.div(
 const IconWrapper = styled.div(
   ({ theme }) => css`
     svg {
+      width: ${theme.space['6']};
+      height: ${theme.space['6']};
       path {
         fill: ${theme.colors.accent};
       }
@@ -117,7 +119,7 @@ type Props = {
   gasLabel?: string
 }
 
-export const RegistrationUpsellBanner = ({
+export const RegistrationTimeComparisonBanner = ({
   message,
   rentFee,
   transactionFee,
@@ -140,7 +142,7 @@ export const RegistrationUpsellBanner = ({
   return (
     <Container>
       <IconWrapper>
-        <InfoIcon />
+        <InfoSVG />
       </IconWrapper>
       {message && <Message>{message}</Message>}
       <ChartContainer>
