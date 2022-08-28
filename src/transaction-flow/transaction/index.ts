@@ -20,7 +20,12 @@ export const transactions = {
   createSubname,
 }
 
-export type Transaction = typeof transactions
+export type Transaction = {
+  [Property in keyof typeof transactions]: typeof transactions[Property] & {
+    onDimiss?: () => void
+    dismissBtnLabel?: string
+  }
+}
 export type TransactionName = keyof Transaction
 
 export const makeTransactionItem = <T extends TransactionName>(

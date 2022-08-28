@@ -133,5 +133,6 @@ export type ManagedDialogPropsTwo = {
   txKey: string | null
   currentStep: number
   stepCount: number
-  displayItems: TransactionDisplayItem[]
+  displayItems: TransactionDisplayItem<'name' | 'address' | 'list'>[]
+  backToInput: boolean
 }

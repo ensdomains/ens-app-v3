@@ -1,6 +1,6 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
+import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
 import { RecordOptions } from '@ensdomains/ensjs/dist/cjs/utils/recordHelpers'
-import { JsonRpcSigner } from '@ethersproject/providers'
+import type { JsonRpcSigner } from '@ethersproject/providers'
 
 type Data = {
   name: string
@@ -8,7 +8,7 @@ type Data = {
   records: RecordOptions
 }
 
-const displayItems = ({ name }: Data): TransactionDisplayItem[] => [
+const displayItems = ({ name }: Data): TransactionDisplayItem<'name'>[] => [
   {
     label: 'name',
     value: name,
@@ -26,4 +26,4 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
 export default {
   displayItems,
   transaction,
-}
+} as Transaction<Data>

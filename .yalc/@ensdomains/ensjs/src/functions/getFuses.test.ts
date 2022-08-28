@@ -1,5 +1,4 @@
 import { BigNumber, ethers } from 'ethers'
-import { resolveRequestDocument } from 'graphql-request'
 import { ENS } from '..'
 import setup from '../tests/setup'
 
@@ -11,19 +10,19 @@ let accounts: string[]
 let withWrappedSnapshot: any
 
 const unwrappedNameDefault = {
-  expiryDate: new Date(0).toString(), 
+  expiryDate: new Date(0).toString(),
   fuseObj: {
-    CANNOT_BURN_FUSES: false, 
-    CANNOT_CREATE_SUBDOMAIN: false, 
-    CANNOT_SET_RESOLVER: false, 
-    CANNOT_SET_TTL: false, 
-    CANNOT_TRANSFER: false, 
-    CANNOT_UNWRAP: false, 
-    PARENT_CANNOT_CONTROL: false, 
-    canDoEverything: true
-  }, 
-  owner: "0x0000000000000000000000000000000000000000", 
-  rawFuses: BigNumber.from(0)
+    CANNOT_BURN_FUSES: false,
+    CANNOT_CREATE_SUBDOMAIN: false,
+    CANNOT_SET_RESOLVER: false,
+    CANNOT_SET_TTL: false,
+    CANNOT_TRANSFER: false,
+    CANNOT_UNWRAP: false,
+    PARENT_CANNOT_CONTROL: false,
+    canDoEverything: true,
+  },
+  owner: '0x0000000000000000000000000000000000000000',
+  rawFuses: BigNumber.from(0),
 }
 
 beforeAll(async () => {
@@ -45,7 +44,9 @@ afterAll(async () => {
 describe('getFuses', () => {
   it('should return default data for an unwrapped name', async () => {
     const result = await ENSInstance.getFuses('with-profile.eth')
-    expect({ ...result, expiryDate: result?.expiryDate.toString() }).toEqual(unwrappedNameDefault)
+    expect({ ...result, expiryDate: result?.expiryDate.toString() }).toEqual(
+      unwrappedNameDefault,
+    )
   })
   it('should return with canDoEverything set to true for a name with no fuses burned', async () => {
     const nameWrapper = await ENSInstance.contracts!.getNameWrapper()!
@@ -64,7 +65,11 @@ describe('getFuses', () => {
   })
   it('should return with other correct fuses', async () => {
     const tx = await ENSInstance.burnFuses('wrapped.eth', {
-      fusesToBurn: ['CANNOT_UNWRAP', 'CANNOT_CREATE_SUBDOMAIN', 'CANNOT_SET_TTL'],
+      namedFusesToBurn: [
+        'CANNOT_UNWRAP',
+        'CANNOT_CREATE_SUBDOMAIN',
+        'CANNOT_SET_TTL',
+      ],
       addressOrIndex: 1,
     })
     await tx.wait()

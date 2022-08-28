@@ -33,9 +33,9 @@ const decode = async (
     )
 
     if (fuses.eq(0)) {
-      fuseObj.canDoEverything = true
+      fuseObj.CAN_DO_EVERYTHING = true
     } else {
-      fuseObj.canDoEverything = false
+      fuseObj.CAN_DO_EVERYTHING = false
     }
 
     const expiryDate = new Date(expiry * 1000)

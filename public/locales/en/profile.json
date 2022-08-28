@@ -85,7 +85,7 @@
           "permissions": {
             "label": "Permissions",
             "warning": "Fuses can be changed by the parent",
-            "canDoEverything": "Can do everything",
+            "CAN_DO_EVERYTHING": "Can do everything",
             "CANNOT_BURN_FUSES": "Can burn fuses",
             "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
             "CANNOT_SET_RESOLVER": "Can set resolver",

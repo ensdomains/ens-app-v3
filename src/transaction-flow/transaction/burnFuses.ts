@@ -1,17 +1,19 @@
-import { Dispatch } from 'react'
+import type { TFunction } from 'react-i18next'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+import type { NamedFusesToBurn } from '@ensdomains/ensjs'
 
-import { PublicENS, TransactionDisplayItem, Transaction, FuseObj } from '@app/types'
-
-import { TransactionFlowAction } from '../types'
+import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
 
 type Data = {
   name: string
   permissions: string[]
-  selectedFuses: Array<keyof FuseObj>
+  selectedFuses: NamedFusesToBurn
 }
 
-const displayItems = ({ name, permissions }: Data): TransactionDisplayItem<'name' | 'list'>[] => [
+const displayItems = (
+  { name, permissions }: Data,
+  t: TFunction<'translation', undefined>,
+): TransactionDisplayItem<'name' | 'list'>[] => [
   {
     label: 'name',
     value: name,
@@ -19,7 +21,7 @@ const displayItems = ({ name, permissions }: Data): TransactionDisplayItem<'name
   },
   {
     label: 'action',
-    value: `transaction.description`,
+    value: t('transaction.description') as string,
   },
   {
     label: 'info',
@@ -28,25 +30,16 @@ const displayItems = ({ name, permissions }: Data): TransactionDisplayItem<'name
   },
 ]
 
-const onDismiss = (dispatch: Dispatch<TransactionFlowAction>) => () => {
-  dispatch({ name: 'setFlowStage', payload: 'input' })
-}
-
-const dismissBtnLabel = 'Back'
-
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const tx = ens.burnFuses.populateTransaction(data.name, {
-    fusesToBurn: new Set(data.selectedFuses),
+    namedFusesToBurn: data.selectedFuses,
     signer,
   })
   return tx
 }
 
-const exports: Transaction<Data> = {
+export default {
   displayItems,
   transaction,
-  onDismiss,
-  dismissBtnLabel,
-}
-
-export default exports
+  backToInput: true,
+} as Transaction<Data>

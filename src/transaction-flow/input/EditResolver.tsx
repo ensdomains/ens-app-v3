@@ -10,9 +10,8 @@ import { ethers } from 'ethers'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'react-query'
 import styled, { css } from 'styled-components'
-import { useProvider } from 'wagmi'
+import { useProvider, useQuery } from 'wagmi'
 import { makeTransactionItem } from '../transaction'
 
 const supportsInterfaceAbi = [
@@ -79,12 +78,12 @@ const customResolverErrorMessage = (errors: any) => {
   return undefined
 }
 
-const EditResolverFormContainer = styled.div(() => [
+const EditResolverFormContainer = styled.div(({ theme }) => [
   css`
     width: 100%;
   `,
   mq.sm.min(css`
-    width: 510px;
+    width: ${theme.space['128']};
   `),
 ])
 

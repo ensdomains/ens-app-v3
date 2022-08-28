@@ -200,6 +200,7 @@ export const TransactionStageModal = ({
   transaction,
   txKey,
   onDismiss,
+  backToInput,
 }: ManagedDialogPropsTwo) => {
   const { t } = useTranslation()
   const chainName = useChainName()
@@ -271,22 +272,8 @@ export const TransactionStageModal = ({
   })
 
   const FilledDisplayItems = useMemo(
-    () => (
-      <DisplayItems
-        displayItems={[
-          {
-            label: 'action',
-            value: t(`transaction.description.${actionName}`),
-          },
-          {
-            label: 'info',
-            value: t(`transaction.info.${actionName}`),
-          },
-          ...(displayItems || []),
-        ]}
-      />
-    ),
-    [actionName, displayItems, t],
+    () => <DisplayItems displayItems={[...(displayItems || [])]} />,
+    [displayItems],
   )
 
   const MiddleContent = useMemo(() => {
@@ -444,7 +431,18 @@ export const TransactionStageModal = ({
         )}
         {lowerError && <Helper type="error">{lowerError}</Helper>}
       </InnerDialog>
-      <Dialog.Footer center trailing={ActionButton} />
+      <Dialog.Footer
+        center
+        leading={ActionButton}
+        trailing={
+          backToInput &&
+          !(stage === 'sent' || stage === 'complete') && (
+            <Button onClick={() => dispatch({ name: 'setFlowStage', payload: 'input' })}>
+              {t('action.back')}
+            </Button>
+          )
+        }
+      />
     </>
   )
 }

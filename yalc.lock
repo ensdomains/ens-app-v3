@@ -2,9 +2,9 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "990bb82e0b58f6cedbde361e9c821301",
+      "signature": "5e0ea21c6ab45dce0251fcbcded01f81",
       "pure": true,
-      "replaced": "^3.0.0-alpha.10"
+      "replaced": "3.0.0-alpha.15"
     },
     "@ensdomains/thorin": {
       "signature": "9cc6c0e633465e751b337ec73eac921d",

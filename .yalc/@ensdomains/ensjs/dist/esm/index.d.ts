@@ -18,6 +18,9 @@ import type transferSubname from './functions/transferSubname';
 import type unwrapName from './functions/unwrapName';
 import type wrapName from './functions/wrapName';
 import GqlManager from './GqlManager';
+import fuseEnum from './utils/fuses';
+export type { FusePropsNamedArray, FusePropsUnnamedArray, FusePropsNumber, FuseProps, NamedFusesToBurn } from './functions/burnFuses';
+export declare type FuseEnum = typeof fuseEnum;
 declare type ENSOptions = {
     graphURI?: string | null;
     getContractAddress?: typeof _getContractAddress;
@@ -76,7 +79,14 @@ export declare class ENS {
     getContractAddress: (networkId: SupportedNetworkId) => import("./contracts/getContractAddress").ContractAddressFetch;
     gqlInstance: GqlManager;
     fuses: {
-        [key: string]: number;
+        CAN_DO_EVERYTHING: number;
+        CANNOT_UNWRAP: 1;
+        CANNOT_BURN_FUSES: 2;
+        CANNOT_TRANSFER: 4;
+        CANNOT_SET_RESOLVER: 8;
+        CANNOT_SET_TTL: 16;
+        CANNOT_CREATE_SUBDOMAIN: 32;
+        PARENT_CANNOT_CONTROL: 64;
     };
     constructor(options?: ENSOptions);
     /**
@@ -457,4 +467,3 @@ export declare class ENS {
     registerName: WriteFunction<typeof registerName>;
     renewName: WriteFunction<typeof renewName>;
 }
-export {};

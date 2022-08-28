@@ -1,3 +1,5 @@
+import type { NamedFusesToBurn } from '@ensdomains/ensjs'
+
 import { useRouter } from 'next/router'
 import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
@@ -10,8 +12,8 @@ import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import mq from '@app/mediaQuery'
 import { FuseObj } from '@app/types'
-import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
 
+import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
 import { makeTransactionItem } from '../../transaction'
 
 export const defaultFuseObj = {
@@ -24,23 +26,33 @@ export const defaultFuseObj = {
   PARENT_CANNOT_CONTROL: false,
 }
 
-type FuseSelected = Omit<FuseObj, 'PARENT_CANNOT_CONTROL'>
+export const defaultSelectableFuses = {
+  CANNOT_UNWRAP: false,
+  CANNOT_BURN_FUSES: false,
+  CANNOT_TRANSFER: false,
+  CANNOT_SET_RESOLVER: false,
+  CANNOT_SET_TTL: false,
+  CANNOT_CREATE_SUBDOMAIN: false,
+  PARENT_CANNOT_CONTROL: false,
+}
 
-const FusesContainer = styled.div(() => [
+type SelectableFuses = Omit<FuseObj, 'PARENT_CANNOT_CONTROL' | 'CAN_DO_EVERYTHING'>
+
+const FusesContainer = styled.div(({ theme }) => [
   css`
     width: 100%;
-    padding: 5px 15px;
+    padding: ${theme.space['1.25']} ${theme.space['4']};
   `,
   mq.md.min(css`
-    min-width: 400px;
+    min-width: ${theme.space['112']};
   `),
 ])
 
 const BurnButtonsContainer = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: ${theme.space['2.5']};
   `,
 )
 
@@ -54,10 +66,10 @@ const ButtonInner = styled.div(
 )
 
 const StyledFlameSVG = styled(FlameSVG)(
-  () => css`
+  ({ theme }) => css`
     position: relative;
-    bottom: -1px;
-    right: 1px;
+    bottom: -${theme.space.px};
+    right: ${theme.space.px};
   `,
 )
 
@@ -65,32 +77,32 @@ const BurnedFlameContainer = styled.div<{ $isBurned: boolean }>(
   ({ theme, $isBurned }) => css`
     background: ${theme.colors.backgroundTertiary};
     color: ${theme.colors.textSecondary};
-    border-radius: 10px;
+    border-radius: ${theme.space['2.5']};
     display: flex;
     align-items: center;
-    padding: 2px 10px;
+    padding: ${theme.space.px} ${theme.space['2.5']};
 
     ${$isBurned &&
     `
       position: absolute;
-      right: 6px;  
+      right: ${theme.space['1.5']};  
       z-index: 1;
     `}
   `,
 )
 
 const BurnedStyledFlameSVG = styled(FlameSVG)(
-  () => css`
+  ({ theme }) => css`
     position: relative;
-    right: -8px;
-    bottom: -1px;
+    right: -${theme.space['2']};
+    bottom: -${theme.space.px};
     color: black;
   `,
 )
 
 const StyledButton = styled(Button)(
-  () => css`
-    padding: 0px 6px;
+  ({ theme }) => css`
+    padding: ${theme.space['0']} -${theme.space['1.5']};
   `,
 )
 
@@ -100,9 +112,9 @@ const BurnButton = ({
   handleBurnClick,
   isSelected,
 }: {
-  permission: string
+  permission: keyof FuseObj
   isBurned: boolean
-  handleBurnClick: (permission: string) => void
+  handleBurnClick: (permission: keyof FuseObj) => void
   isSelected: boolean
 }) => {
   const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
@@ -136,13 +148,13 @@ const BurnButton = ({
 }
 
 const ButtonsContainer = styled.div(
-  () => css`
+  ({ theme }) => css`
     display: flex;
-    gap: 15px;
+    gap: ${theme.space['4']};
   `,
 )
 
-const canContinue = (fuseData: Partial<FuseObj>, fuseSelected: FuseSelected) => {
+const canContinue = (fuseData: Partial<FuseObj>, fuseSelected: Partial<SelectableFuses>) => {
   const filteredInitialFuseData: Partial<FuseObj> = { ...fuseData }
   Object.keys(filteredInitialFuseData).forEach((key: string) => {
     if (filteredInitialFuseData[key as keyof FuseObj]) {
@@ -169,21 +181,20 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
-  const [_fuseData, setFuseData] = useState<Omit<FuseObj, 'PARENT_CANNOT_CONTROL'>>(defaultFuseObj)
-  const [fuseSelected, setFuseSelected] = useState<FuseObj>(defaultFuseObj)
+  const [_fuseData, setFuseData] = useState<SelectableFuses>(defaultSelectableFuses)
+  const [fuseSelected, setFuseSelected] = useState<Partial<SelectableFuses>>(defaultSelectableFuses)
 
   const handleBurnClick = (permission: keyof FuseObj) => {
-    console.log('handleBurnClick: ', permission)
     const nextFuseSelected = { ...fuseSelected } as FuseObj
     nextFuseSelected[permission] = !nextFuseSelected[permission]
     setFuseSelected(nextFuseSelected)
   }
 
   const onSubmit = () => {
-    const selectedFuses: Array<keyof FuseObj> = []
+    const selectedFuses: Array<keyof SelectableFuses> = []
     Object.keys(fuseSelected).forEach(function (key) {
-      if (fuseSelected[key as keyof FuseObj]) {
-        selectedFuses.push(key as keyof FuseObj)
+      if (fuseSelected[key as keyof SelectableFuses]) {
+        selectedFuses.push(key as keyof SelectableFuses)
       }
     })
 
@@ -194,7 +205,7 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
       payload: [
         makeTransactionItem('burnFuses', {
           name: name as string,
-          selectedFuses,
+          selectedFuses: selectedFuses as NamedFusesToBurn,
           permissions,
         }),
       ],
@@ -204,22 +215,20 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
 
   useEffect(() => {
     if (fuseData) {
-      const initialFuseData = {
-        ...(fuseData.fuseObj as Omit<FuseObj, 'PARENT_CANNOT_CONTROL'>),
-      }
-      delete initialFuseData.canDoEverything
-      delete initialFuseData.PARENT_CANNOT_CONTROL
+      const initialFuseData = Object.fromEntries(
+        Object.entries({
+          ...(fuseData.fuseObj as FuseObj),
+        }).filter(([key]) => {
+          return !(key === 'PARENT_CANNOT_CONTROL' || key === 'CAN_DO_EVERYTHING')
+        }),
+      ) as SelectableFuses
+      setFuseData(initialFuseData)
 
-      setFuseData({ ...initialFuseData })
-
-      const initialFusesSelected = { ...initialFuseData }
-      Object.keys(initialFusesSelected).forEach(function (key) {
-        if (initialFusesSelected[key]) {
-          delete initialFusesSelected[key]
-          return
-        }
-        initialFusesSelected[key] = false
-      })
+      const initialFusesSelected = Object.fromEntries(
+        Object.entries({
+          ...initialFuseData,
+        }).filter(([, val]) => !val),
+      )
       setFuseSelected(initialFusesSelected)
     }
   }, [fuseData])
@@ -246,10 +255,10 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
         {Object.entries(_fuseData).map(([key, value]) => (
           <BurnButton
             {...{
-              permission: key,
+              permission: key as keyof FuseObj,
               isBurned: !!value,
               handleBurnClick,
-              isSelected: !!fuseSelected[key as keyof FuseObj],
+              isSelected: !!fuseSelected[key as keyof SelectableFuses],
             }}
           />
         ))}

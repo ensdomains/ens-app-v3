@@ -1,8 +1,8 @@
-import type { TransactionFlowAction } from '@app/transaction-flow/types'
+import type { TFunction } from 'react-i18next'
 import type { ENS } from '@ensdomains/ensjs'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+
 import { PopulatedTransaction } from 'ethers'
-import { Dispatch } from 'react'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
 
@@ -54,13 +54,16 @@ export type ProfileEditorType = {
 export type PublicENS = PublicInterface<ENS>
 
 export interface Transaction<Data> {
-  displayItems: (data: any) => TransactionDisplayItem<TransactionDisplayItemTypes>[]
+  displayItems: (
+    data: any,
+    t: TFunction<'translation', undefined>,
+  ) => TransactionDisplayItem<TransactionDisplayItemTypes>[]
   transaction: (signer: JsonRpcSigner, ens: PublicENS, data: Data) => Promise<PopulatedTransaction>
-  onDismiss?: (dispatch: Dispatch<TransactionFlowAction>) => () => void
-  dismissBtnLabel?: string
+  backToInput?: boolean
 }
 
 export type FuseObj = {
+  CAN_DO_EVERYTHING: boolean
   CANNOT_UNWRAP: boolean
   CANNOT_BURN_FUSES: boolean
   CANNOT_TRANSFER: boolean

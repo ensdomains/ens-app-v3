@@ -30,6 +30,4 @@ const displayItems = ({ address, name }: Data): TransactionDisplayItem<'name' | 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   ens.setName.populateTransaction(data.name, { signer })
 
-const exports = { displayItems, transaction } as Transaction<Data>
-
-export default exports
+export default { displayItems, transaction } as Transaction<Data>

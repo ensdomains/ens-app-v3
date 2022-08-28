@@ -48,6 +48,9 @@ import singleCall from './utils/singleCall'
 import writeTx from './utils/writeTx'
 import fuseEnum from './utils/fuses'
 
+export type { FusePropsNamedArray, FusePropsUnnamedArray, FusePropsNumber, FuseProps, NamedFusesToBurn } from './functions/burnFuses'
+export type FuseEnum = typeof fuseEnum 
+
 type ENSOptions = {
   graphURI?: string | null
   getContractAddress?: typeof _getContractAddress

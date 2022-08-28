@@ -36,6 +36,4 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
     signer,
   })
 
-const exports: Transaction<Data> = { displayItems, transaction }
-
-export default exports
+export default { displayItems, transaction } as Transaction<Data>

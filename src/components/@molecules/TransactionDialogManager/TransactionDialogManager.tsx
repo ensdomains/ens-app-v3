@@ -1,5 +1,6 @@
 /* eslint-disable default-case */
 /* eslint-disable no-param-reassign */
+import { useTranslation } from 'react-i18next'
 import { transactions } from '@app/transaction-flow/transaction'
 import { Dialog } from '@ensdomains/thorin'
 import { Dispatch, useCallback, useMemo } from 'react'
@@ -17,6 +18,7 @@ export const TransactionDialogManager = ({
   dispatch: Dispatch<TransactionFlowAction>
   selectedKey: string | null
 }) => {
+  const { t } = useTranslation()
   const selectedItem = useMemo(
     () => (selectedKey ? state.items[selectedKey] : null),
     [selectedKey, state.items],
@@ -31,8 +33,6 @@ export const TransactionDialogManager = ({
   const InnerComponent = useMemo(() => {
     if (selectedKey && selectedItem) {
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
-        console.log('probe: ', DataInputComponents)
-        console.log('probe: ', selectedItem)
         const Component = DataInputComponents[selectedItem.input.name]
         return <Component {...{ data: selectedItem.input.data, dispatch, onDismiss }} />
       }
@@ -66,24 +66,24 @@ export const TransactionDialogManager = ({
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
-          displayItems={transaction.displayItems(transactionItem.data)}
+          displayItems={transaction.displayItems(transactionItem.data, t)}
           currentStep={selectedItem.currentTransaction}
           stepCount={selectedItem.transactions.length}
           transaction={transactionItem}
           txKey={selectedKey}
           dispatch={dispatch}
-          onDismiss={transaction.onDismiss ? transaction.onDismiss(dispatch) : onDismiss}
-          dismissBtnLabel={transaction.dismissBtnLabel}
+          onDismiss={onDismiss}
+          backToInput={transaction.backToInput ?? false}
         />
       )
     }
     return null
-  }, [selectedKey, selectedItem, onDismiss, dispatch])
+  }, [selectedKey, selectedItem, onDismiss, dispatch, t])
 
   return (
     <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onDismiss}>
       {InnerComponent}
-      {/* <Dialog.CloseButton onClick={onDismiss} /> */}
+      <Dialog.CloseButton onClick={onDismiss} />
     </Dialog>
   )
 }
