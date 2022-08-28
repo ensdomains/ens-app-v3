@@ -25,6 +25,9 @@ describe('Accordion', () => {
   })
 
   it('should render', () => {
+    mockUseTransactionFlow.mockReturnValue({
+      showDataInput: jest.fn(),
+    })
     render(<Accordion data={data} name="test" />)
   })
   it('should show the correct body based on clicked item', () => {

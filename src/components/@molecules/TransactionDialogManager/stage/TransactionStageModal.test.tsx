@@ -114,7 +114,7 @@ describe('TransactionStageModal', () => {
     await renderHelper()
     expect(screen.getByText('transaction.dialog.confirm.title')).toBeVisible()
   })
-  it('should render display items, and the action/info items should be added automatically', async () => {
+  it('should render display items', async () => {
     await renderHelper({
       displayItems: [
         {
@@ -123,10 +123,6 @@ describe('TransactionStageModal', () => {
         },
       ],
     })
-    expect(screen.getByText('transaction.itemLabel.action')).toBeVisible()
-    expect(screen.getByText('transaction.description.test')).toBeVisible()
-    expect(screen.getByText('transaction.itemLabel.info')).toBeVisible()
-    expect(screen.getByText('transaction.info.test')).toBeVisible()
     expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()
     expect(screen.getByText('GenericValue')).toBeVisible()
   })

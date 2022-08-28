@@ -90,6 +90,15 @@ describe('SubnamesTab', () => {
     )
   })
   it('should show create subname button if canEdit is true', () => {
+    const subnamesMockData = {
+      subnames: Array.from({ length: 10 }, makeSubname),
+      subnameCount: 10,
+      isLoading: false,
+      max: 2,
+      page: 0,
+      totalPages: 1,
+    }
+    mockUseSubnamePagination.mockReturnValue(subnamesMockData)
     render(<SubnamesTab {...baseMockData} canEdit />)
     expect(screen.getByTestId('add-subname-action')).toBeVisible()
   })

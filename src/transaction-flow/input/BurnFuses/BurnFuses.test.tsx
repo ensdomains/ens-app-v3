@@ -63,9 +63,8 @@ describe('BurnFuses', () => {
     expect(screen.getByTestId('burn-button-CANNOT_CREATE_SUBDOMAIN')).not.toHaveTextContent(
       'fuses.burned',
     )
-    expect(screen.getByTestId('burn-button-PARENT_CANNOT_CONTROL')).not.toHaveTextContent(
-      'fuses.burned',
-    )
+    expect(screen.queryByTestId('burn-button-PARENT_CANNOT_CONTROL')).toBeNull()
+    expect(screen.queryByTestId('burn-button-CAN_DO_EVERYTHING')).toBeNull()
   })
   it('should allow user to select fuse to burn', () => {
     mockUseRouter.mockReturnValue({
@@ -135,7 +134,7 @@ describe('BurnFuses', () => {
                 'fuses.permissions.CANNOT_UNWRAP',
                 'fuses.permissions.CANNOT_BURN_FUSES',
               ],
-              selectedFuses: 3,
+              selectedFuses: ['CANNOT_UNWRAP', 'CANNOT_BURN_FUSES'],
             },
             name: 'burnFuses',
           },
