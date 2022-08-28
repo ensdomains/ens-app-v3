@@ -1,24 +1,24 @@
-import { ReactElement, useState } from 'react'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { PageButtons } from '@ensdomains/thorin'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
-import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import {
   SortDirection,
   SortType,
   SortValue,
 } from '@app/components/@molecules/SortControl/SortControl'
-import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
-import { shortenAddress } from '@app/utils/utils'
-import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import FilterControl from '@app/components/address/FilterControl'
-import { ContentGrid } from '@app/layouts/ContentGrid'
+import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
+import { ProfileSnippet } from '@app/components/ProfileSnippet'
+import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
+import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
+import { ContentGrid } from '@app/layouts/ContentGrid'
 import { Name } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { shortenAddress } from '@app/utils/utils'
+import { PageButtons } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
+import { ReactElement, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 import { useChainId } from '../../hooks/useChainId'
 
 const DetailsContainer = styled.div(
@@ -141,9 +141,7 @@ const Page = () => {
                 network={chainId}
                 button="viewProfile"
                 buttonPlacement={profileButtonPlacement}
-                description={getTextRecord('description')?.value}
-                recordName={getTextRecord('name')?.value}
-                url={getTextRecord('url')?.value}
+                getTextRecord={getTextRecord}
               />
             ) : (
               <NoProfileSnippet />

@@ -9,8 +9,8 @@ import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { shortenAddress } from '@app/utils/utils'
 import { Button, Dialog, DownIndicatorSVG, Dropdown, Typography } from '@ensdomains/thorin'
 import { ReactNode, useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
@@ -201,9 +201,7 @@ const OwnerButtonWithPopup = ({
                 name={name}
                 network={network}
                 button="viewProfile"
-                description={getTextRecord('description')?.value}
-                recordName={getTextRecord('name')?.value}
-                url={getTextRecord('url')?.value}
+                getTextRecord={getTextRecord}
               />
             </ProfileSnippetWrapper>
           )}
