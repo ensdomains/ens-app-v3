@@ -169,7 +169,7 @@
       "cypress": "9.5.3"
     },
     "patchedDependencies": {
-      "@synthetixio/synpress@1.2.0": "patches/@synthetixio/synpress.patch",
+      "@synthetixio/synpress@1.2.0": "patches/@synthetixio__synpress@1.2.0.patch",
       "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch"
     }
   }
