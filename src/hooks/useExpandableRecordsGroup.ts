@@ -12,7 +12,7 @@ interface Props<T extends FieldValues> {
   setValue: UseFormSetValue<T>
 }
 
-const useExpandableRecordsGroup = <T>({
+const useExpandableRecordsGroup = <T extends FieldValues>({
   group,
   options,
   existingKeys: initialExistingKeys,
