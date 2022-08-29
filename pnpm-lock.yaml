@@ -9,8 +9,8 @@ overrides:
 
 patchedDependencies:
   '@synthetixio/synpress@1.2.0':
-    hash: kehx45ckblikg65l7jm5kximxm
-    path: patches/@synthetixio/synpress.patch
+    hash: iyvdb2dn4ckblw6h2wfqulcif4
+    path: patches/@synthetixio__synpress@1.2.0.patch
   '@rainbow-me/rainbowkit@0.4.8':
     hash: zczigdeajjlj6h32kv7vfprn2y
     path: patches/@rainbow-me__rainbowkit@0.4.8.patch
@@ -165,7 +165,7 @@ devDependencies:
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_ethers@5.6.9+hardhat@2.9.3
   '@openzeppelin/contracts': 4.5.0
   '@stylelint/postcss-css-in-js': 0.38.0_postcss-syntax@0.36.2
-  '@synthetixio/synpress': 1.2.0_kehx45ckblikg65l7jm5kximxm_h3h3et4iyd7hudwhfnp3wxiopm
+  '@synthetixio/synpress': 1.2.0_iyvdb2dn4ckblw6h2wfqulcif4_h3h3et4iyd7hudwhfnp3wxiopm
   '@testing-library/cypress': 8.0.2_cypress@9.5.3
   '@testing-library/jest-dom': 5.16.4
   '@testing-library/react': 12.1.4_sfoxds7t5ydpegc3knd667wn6m
@@ -2028,7 +2028,7 @@ packages:
       dns-packet: 5.4.0
       ethers: 5.6.9
       graphql: 16.5.0
-      graphql-request: 5.0.0-next.5_graphql@16.5.0
+      graphql-request: 5.0.0_graphql@16.5.0
       idna-uts46-hx: 3.4.0
       traverse: 0.6.6
     transitivePeerDependencies:
@@ -4074,7 +4074,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@synthetixio/synpress/1.2.0_kehx45ckblikg65l7jm5kximxm_h3h3et4iyd7hudwhfnp3wxiopm:
+  /@synthetixio/synpress/1.2.0_iyvdb2dn4ckblw6h2wfqulcif4_h3h3et4iyd7hudwhfnp3wxiopm:
     resolution: {integrity: sha512-RnXAGPE1YUysxJHMNoHkt9tbaifaFFFxUr4okc5HDtDp6TT7blZ0hQEmh70aR/ml3xfQ2J0R3VFQZCMTWNVDJg==}
     engines: {node: '>=10'}
     hasBin: true
@@ -11840,8 +11840,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/5.0.0-next.5_graphql@16.5.0:
-    resolution: {integrity: sha512-4u6R6kyxi/w1z8+AtS67Wx3vWMPL0y3Y8FU76w4sM/vNVgLkWBPYTFwi9cVSSr00aHerV1XsfdOC8+VG1I+45Q==}
+  /graphql-request/5.0.0_graphql@16.5.0:
+    resolution: {integrity: sha512-SpVEnIo2J5k2+Zf76cUkdvIRaq5FMZvGQYnA4lUWYbc99m+fHh4CZYRRO/Ff4tCLQ613fzCm3SiDT64ubW5Gyw==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
