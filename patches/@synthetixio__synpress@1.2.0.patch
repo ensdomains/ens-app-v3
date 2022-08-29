@@ -1,0 +1,60 @@
+diff --git a/commands/metamask.js b/commands/metamask.js
+index e2af956145b2eea1e9df160f4366a6a112191eeb..61abdcf684f6e8f0cd19edb62b3c4c4c991e6414 100644
+--- a/commands/metamask.js
++++ b/commands/metamask.js
+@@ -167,6 +167,18 @@ module.exports = {
+     await puppeteer.waitAndClick(mainPageElements.accountMenu.button);
+ 
+     if (typeof accountNameOrAccountNumber === 'number') {
++      await puppeteer.waitFor(mainPageElements.accountMenu.accountButton(1));
++      const page = await puppeteer.metamaskWindow();
++      for (let i = 2; i <= accountNameOrAccountNumber; i++) {
++        if (!(await page.$(mainPageElements.accountMenu.accountButton(i)))) {
++          await puppeteer.waitAndClick(
++            mainPageElements.accountMenu.createAccountButton,
++          );
++          await puppeteer.waitAndClick(mainPageElements.createAccount.createButton);
++          await puppeteer.waitAndClick(mainPageElements.accountMenu.button);
++        }
++      }
++
+       await puppeteer.waitAndClick(
+         mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
+       );
+diff --git a/launcher.js b/launcher.js
+index 9a2df926cf442f1e14f58f6fed07c643eebb680a..2519ad1971507d080b06428b5e8f3f1817d0cfd7 100644
+--- a/launcher.js
++++ b/launcher.js
+@@ -67,6 +67,9 @@ const launcher = {
+     if (arguments_.parallel) {
+       defaultArguments.push('--parallel');
+     }
++    if (arguments_.ciBuildId) {
++      defaultArguments.push(`--ci-build-id=${arguments_.ciBuildId}`);
++    }
+     if (arguments_.group) {
+       defaultArguments.push(`--group=${arguments_.group}`);
+     }
+diff --git a/synpress.js b/synpress.js
+index b407e78daeba1f1663af59ff22bab8dfc1a0c5a7..c99c2362755935750bed963136de71a63327d237 100755
+--- a/synpress.js
++++ b/synpress.js
+@@ -79,6 +79,10 @@ program
+     '-p, --parallel',
+     '[dashboard] run recorded specs in parallel across multiple machines',
+   )
++  .option(
++    '--ci-build-id <id>',
++    '[dashboard] the unique identifier for a run on your CI provider. typically a "BUILD_ID" env var. this value is automatically detected for most CI providers'
++  )
+   .option(
+     '-g, --group <name>',
+     '[dashboard] group recorded tests together under a single run',
+@@ -100,6 +104,7 @@ program
+       record: options.record,
+       key: options.key,
+       parallel: options.parallel,
++      ciBuildId: options.ciBuildId,
+       group: options.group,
+       tag: options.tag,
+     });
