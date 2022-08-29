@@ -217,6 +217,7 @@ export const CropComponent = ({
     e.preventDefault()
     coordinatesRef.current.moving = true
     if ('targetTouches' in e) {
+      touchPoints.current = []
       for (let i = 0; i < e.targetTouches.length; i += 1) {
         touchPoints.current.push(e.targetTouches[i] as Touch)
       }
@@ -228,6 +229,7 @@ export const CropComponent = ({
       if (!coordinatesRef.current.moving) return
       e.preventDefault()
       coordinatesRef.current.moving = false
+      touchPoints.current = []
       window.requestAnimationFrame(draw)
     },
     [draw],
@@ -263,25 +265,24 @@ export const CropComponent = ({
           pointInxs.push(pointInx)
         }
       }
-      // for multi-touch zoom
+      // multi-touch pinch to zoom
       if (e.targetTouches.length === 2 && e.changedTouches.length > 0 && pointInxs.length === 2) {
-        const diff1 = e.targetTouches[0].clientX / tpCache[pointInxs[0]].clientX
-        const diff2 = e.targetTouches[1].clientX / tpCache[pointInxs[1]].clientX
+        const [touch1, touch2] = e.changedTouches
+        const diff1 = touch1.clientX / tpCache[pointInxs[0]].clientX
+        const diff2 = touch2.clientX / tpCache[pointInxs[1]].clientX
         const zoomDiff = 1 - diff1 * diff2
-        setZoom((z) => Math.max(Math.min(z + zoomDiff * 100, 200), 100))
 
-        touchPoints.current = {
-          ...touchPoints.current,
-          [pointInxs[0]]: e.targetTouches[0],
-          [pointInxs[1]]: e.targetTouches[1],
-        }
+        setZoom((z) => Math.max(Math.min(z + zoomDiff * 100, 200), 100))
+        tpCache[pointInxs[0]] = touch1
+        tpCache[pointInxs[1]] = touch2
       } else if (
         e.targetTouches.length === 1 &&
         e.changedTouches.length === 1 &&
         pointInxs.length === 1
       ) {
+        const [touch1] = e.changedTouches
         const { clientX: ogX, clientY: ogY } = tpCache[pointInxs[0]]
-        const { clientX: nx, clientY: ny } = e.changedTouches[0]
+        const { clientX: nx, clientY: ny } = touch1
         const { x, y } = coordinatesRef.current
         const mx = (ogX - nx) * -1 * resolutionMultiplier
         const my = (ogY - ny) * -1 * resolutionMultiplier
@@ -290,11 +291,7 @@ export const CropComponent = ({
           x: x + mx,
           y: y + my,
         }
-
-        touchPoints.current = {
-          ...touchPoints.current,
-          [pointInxs[0]]: e.changedTouches[0],
-        }
+        tpCache[pointInxs[0]] = touch1
         window.requestAnimationFrame(draw)
       } else {
         touchPoints.current = []
