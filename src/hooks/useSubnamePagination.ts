@@ -1,4 +1,5 @@
 import { useEns } from '@app/utils/EnsProvider'
+import { useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
@@ -10,10 +11,12 @@ export type Subname = {
 
 export const useSubnamePagination = (name: string, page: number) => {
   const _page = page - 1
-  const { getSubnames } = useEns()
   const resultsPerPage = 10
 
-  const { data, isLoading, fetchNextPage } = useInfiniteQuery(
+  const queryClient = useQueryClient()
+  const { getSubnames } = useEns()
+
+  const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(
     ['getSubnames', name],
     async ({ pageParam }) => {
       const result = await getSubnames({
@@ -32,8 +35,9 @@ export const useSubnamePagination = (name: string, page: number) => {
       }
     },
     {
-      getNextPageParam: (last) => last.subnames,
+      getNextPageParam: (last) => (last.subnames.length > 0 ? last.subnames : undefined),
       getPreviousPageParam: (_, all) => all[all.length - 2]?.subnames,
+      refetchOnMount: 'always',
     },
   )
 
@@ -42,10 +46,16 @@ export const useSubnamePagination = (name: string, page: number) => {
   const hasCurrentPage = (data?.pages[_page]?.subnames?.length || 0) > 0
 
   useEffect(() => {
-    if (!hasCurrentPage) {
+    if (queryClient) {
+      queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
+    }
+  }, [queryClient])
+
+  useEffect(() => {
+    if (!hasCurrentPage && hasNextPage) {
       fetchNextPage()
     }
-  }, [hasCurrentPage, fetchNextPage])
+  }, [hasCurrentPage, fetchNextPage, hasNextPage])
 
   return {
     subnames: currentPage,
