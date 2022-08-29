@@ -12,6 +12,7 @@ import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { formatUnits } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 
 const Container = styled.form(
   ({ theme }) => css`
@@ -54,17 +55,18 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const [years, setYears] = useState(1)
   const [currencyUnit, setCurrencyUnit] = useState<'eth' | 'usd'>('eth')
 
-  const { data: transactionData, isLoading: transactionDataLoading } = useEstimateTransactionCost([
+  const { data: transactionData, loading: transactionDataLoading } = useEstimateTransactionCost([
     'REGISTER',
     'COMMIT',
   ])
   const { gasPrice, transactionFee } = transactionData || {}
-
   const gasLabel = gasPrice ? `${formatUnits(gasPrice, 'gwei')} gwei` : '-'
 
-  const { data: ethPrice, isLoading: ethPriceLoading } = useEthPrice()
+  console.log('gasPrice', gasPrice?.toString())
 
-  const rentFee = ethPrice ? BigNumber.from(5).div(ethPrice) : undefined
+  const { data: ethPrice, loading: ethPriceLoading } = useEthPrice()
+
+  const rentFee = ethPrice ? BigNumber.from('5000000000000000000').div(ethPrice) : undefined
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
 
   const items = [
@@ -78,6 +80,9 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
     },
   ]
 
+  if (transactionDataLoading || ethPriceLoading) {
+    return <TransactionLoader />
+  }
   return (
     <>
       <Dialog.Heading title={t('Extend Names')} />
@@ -99,10 +104,15 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
           </div>
           <CurrencySwitch value={currencyUnit} onChange={(unit) => setCurrencyUnit(unit)} />
         </OptionBar>
-        {rentFee && transactionFee && (
-          <RegistrationTimeComparisonBanner rentFee={rentFee} transactionFee={transactionFee} />
+        {rentFee && transactionFee && gasPrice && (
+          <RegistrationTimeComparisonBanner
+            rentFee={rentFee}
+            transactionFee={transactionFee}
+            gasPrice={gasPrice}
+            message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
+          />
         )}
-        <Invoice items={items} unit={currencyUnit} totalLabel="total" />
+        <Invoice items={items} unit={currencyUnit} totalLabel="Estimated total" />
       </Container>
       <Dialog.Footer leading={<Button>Cancel</Button>} trailing={<Button>Save</Button>} />
     </>

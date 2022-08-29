@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import PlusIcon from '@app/assets/Plus.svg'
 import MinusIcon from '@app/assets/Minus.svg'
 import { createChangeEvent } from '@app/utils/syntheticEvent'
+import { useTranslation } from 'react-i18next'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -80,6 +81,7 @@ export const PlusMinusControl = forwardRef(
     }: Props,
     ref: ForwardedRef<HTMLInputElement>,
   ) => {
+    const { t } = useTranslation('common')
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
 
     const [value, setValue] = useState(_value || defaultValue || 1)
@@ -114,9 +116,7 @@ export const PlusMinusControl = forwardRef(
         <Button type="button" onClick={incrementHandler(-1)} data-testid="plus-minus-control-minus">
           <MinusIcon />
         </Button>
-        <Label>
-          {value} {unit}
-        </Label>
+        <Label>{t(`unit.${unit}`, { count: value })}</Label>
         <Button type="button" onClick={incrementHandler(1)} data-testid="plus-minus-control-plus">
           <PlusIcon />
         </Button>

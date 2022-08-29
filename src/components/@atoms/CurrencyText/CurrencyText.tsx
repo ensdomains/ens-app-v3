@@ -12,6 +12,10 @@ export const CurrencyText = ({ eth, currency = 'eth' }: Props) => {
 
   if (loading || !eth || !ethPrice) return null
   return (
-    <>{currency === 'eth' ? `${formatUnits(eth, 'ether')} ETH` : `$${formatUnits(eth, 'ether')}`}</>
+    <>
+      {currency === 'eth'
+        ? `${formatUnits(eth, 'ether').replace(/^(\d+\.\d{5})\d*/, '$1')} ETH`
+        : `$${formatUnits(eth.mul(ethPrice), 'ether').replace(/^(\d+\.\d{2})\d*/, '$1')}`}
+    </>
   )
 }
