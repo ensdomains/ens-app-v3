@@ -44,7 +44,7 @@ jobs:
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
-          "pnpm tenv start -ng" \
+          "pnpm tenv start -ng -ns -nb" \
           "pnpm wait-on ./.env.local"'
 
       - name: Build stateless
