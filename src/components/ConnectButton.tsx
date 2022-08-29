@@ -82,7 +82,11 @@ const HeaderProfile = ({ address }: { address: string }) => {
           onClick: () => disconnect(),
         },
       ]}
-      avatar={avatar || zorb}
+      avatar={{
+        src: avatar || zorb,
+        decoding: 'sync',
+        loading: 'eager',
+      }}
       size="medium"
       alignDropdown="right"
     />
