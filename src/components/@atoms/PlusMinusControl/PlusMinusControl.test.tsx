@@ -3,6 +3,12 @@ import { PlusMinusControl } from './PlusMinusControl'
 
 const mockChangeHandler = jest.fn()
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (value: string, opts: any) => `${opts.value || opts.count} ${value}`,
+  }),
+}))
+
 describe('PlusMinusControl', () => {
   afterEach(() => {
     jest.resetAllMocks()
@@ -12,7 +18,7 @@ describe('PlusMinusControl', () => {
     render(<PlusMinusControl value={2} />)
     expect(screen.getByTestId('plus-minus-control-plus')).toBeVisible()
     expect(screen.getByTestId('plus-minus-control-minus')).toBeVisible()
-    expect(screen.getByText('2 years')).toBeVisible()
+    expect(screen.getByText('2 unit.years')).toBeVisible()
   })
 
   it('should call onChange when value is incremented', async () => {
