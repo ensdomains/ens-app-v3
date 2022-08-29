@@ -62,8 +62,6 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const { gasPrice, transactionFee } = transactionData || {}
   const gasLabel = gasPrice ? `${formatUnits(gasPrice, 'gwei')} gwei` : '-'
 
-  console.log('gasPrice', gasPrice?.toString())
-
   const { data: ethPrice, loading: ethPriceLoading } = useEthPrice()
 
   const rentFee = ethPrice ? BigNumber.from('5000000000000000000').div(ethPrice) : undefined

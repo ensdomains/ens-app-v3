@@ -229,9 +229,6 @@ export const RegistrationTimeComparisonBanner = ({
     const handleResize = () => {
       const gp = parseInt(formatUnits(gasPrice, 'gwei'))
 
-      console.log('resize', containerRef.current?.clientWidth)
-      console.log('gp', gp)
-
       if (containerRef.current?.clientWidth && !Number.isNaN(gp)) {
         const width = containerRef.current.clientWidth
         if (gp >= 25) {
