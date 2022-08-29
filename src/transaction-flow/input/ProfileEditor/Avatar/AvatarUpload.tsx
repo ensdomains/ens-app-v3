@@ -1,4 +1,5 @@
 /* eslint-disable no-multi-assign */
+import { useChainName } from '@app/hooks/useChainName'
 import { Button, Dialog } from '@ensdomains/thorin'
 import { useMutation } from '@tanstack/react-query'
 import { sha256 } from 'ethers/lib/utils'
@@ -38,6 +39,7 @@ const UploadComponent = ({
 
   const urlHash = useMemo(() => sha256(dataURLToBytes(dataURL)), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
+  const network = useChainName()
 
   const { signTypedDataAsync } = useSignTypedData({
     domain: {
@@ -62,7 +64,7 @@ const UploadComponent = ({
 
   const { mutate: signAndUpload, isLoading } = useMutation(async () => {
     const baseURL =
-      process.env.NEXT_PUBLIC_AVUP_ENDPOINT || 'https://avatar-upload.ens-cf.workers.dev'
+      process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://avatar-upload.ens-cf.workers.dev/${network}`
     const endpoint = `${baseURL}/${name}`
 
     const sig = await signTypedDataAsync()
