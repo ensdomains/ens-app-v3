@@ -207,6 +207,7 @@ const Accordion = ({ data, name }: AccordionProps) => {
                     </Typography>
                     {item.canEdit && (
                       <EditButton
+                        data-testid={`accordion-${item.name}-edit`}
                         shadowless
                         variant="transparent"
                         size="small"

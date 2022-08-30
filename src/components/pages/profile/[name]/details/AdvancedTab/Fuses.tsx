@@ -57,10 +57,10 @@ const Fuses = () => {
         <div>
           <FusesRow>
             <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.canDoEverything')}
+              {t('fuses.permissions.CAN_DO_EVERYTHING')}
             </Typography>
             <TrafficLight
-              $go={fuseData.fuseObj.canDoEverything}
+              $go={fuseData.fuseObj.CAN_DO_EVERYTHING}
               data-testid="first-traffic-light"
             />
           </FusesRow>
