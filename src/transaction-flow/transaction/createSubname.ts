@@ -1,5 +1,6 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+
+import { PublicENS, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   parent: string

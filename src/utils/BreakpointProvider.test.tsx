@@ -1,5 +1,7 @@
-import { render, screen, waitFor } from '@app/test-utils'
 import { act } from '@testing-library/react'
+
+import { render, screen, waitFor } from '@app/test-utils'
+
 import { BreakpointProvider, useBreakpoint } from './BreakpointProvider'
 
 const breakpoints = {

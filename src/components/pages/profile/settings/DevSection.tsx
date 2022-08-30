@@ -1,11 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { Button } from '@ensdomains/thorin'
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { JsonRpcProvider } from '@ethersproject/providers'
 import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
+
+import { Button } from '@ensdomains/thorin'
+
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+
 import { SectionContainer } from './Section'
 
 const rpcSendBatch = (items: { method: string; params: any[] }[]) =>

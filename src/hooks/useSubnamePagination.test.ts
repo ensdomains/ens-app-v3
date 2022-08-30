@@ -1,7 +1,9 @@
-import { mockFunction, renderHook } from '@app/test-utils'
-import { useEns } from '@app/utils/EnsProvider'
 import { useQueryClient } from '@tanstack/react-query'
 import { act } from '@testing-library/react-hooks'
+
+import { mockFunction, renderHook } from '@app/test-utils'
+import { useEns } from '@app/utils/EnsProvider'
+
 import { useSubnamePagination } from './useSubnamePagination'
 
 jest.mock('@app/utils/EnsProvider')

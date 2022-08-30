@@ -1,3 +1,9 @@
+import { ReactNode } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { ArrowRightSVG, Button, PageButtons, PlusSVG, Typography, mq } from '@ensdomains/thorin'
+
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { Card } from '@app/components/Card'
@@ -5,10 +11,6 @@ import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { ArrowRightSVG, Button, mq, PageButtons, PlusSVG, Typography } from '@ensdomains/thorin'
-import { ReactNode } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const RightArrow = styled.svg(
   ({ theme }) => css`

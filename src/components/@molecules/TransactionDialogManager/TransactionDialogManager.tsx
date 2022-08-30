@@ -1,8 +1,12 @@
 /* eslint-disable default-case */
+
 /* eslint-disable no-param-reassign */
-import { transactions } from '@app/transaction-flow/transaction'
-import { Dialog } from '@ensdomains/thorin'
 import { Dispatch, useCallback, useMemo } from 'react'
+
+import { Dialog } from '@ensdomains/thorin'
+
+import { transactions } from '@app/transaction-flow/transaction'
+
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
 import { IntroStageModal } from './stage/Intro'

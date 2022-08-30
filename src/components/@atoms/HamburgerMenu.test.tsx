@@ -1,7 +1,10 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /* eslint-disable jsx-a11y/click-events-have-key-events */
-import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useRouter } from 'next/router'
+
+import { mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { HamburgerMenu } from './HamburgerMenu'
 
 jest.mock('next/router')

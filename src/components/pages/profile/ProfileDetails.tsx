@@ -1,10 +1,13 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography, mq } from '@ensdomains/thorin'
+
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
-import { mq, Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+
 import { AddressProfileButton, OtherProfileButton, SocialProfileButton } from './ProfileButton'
 
 const ProfileInfoBox = styled(CacheableComponent)(({ theme }) => [

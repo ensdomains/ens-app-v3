@@ -1,18 +1,20 @@
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { Dialog, Button } from '@ensdomains/thorin'
+import { BigNumber } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, Dialog } from '@ensdomains/thorin'
+
 import GasIcon from '@app/assets/Gas.svg'
 import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
-import { useState } from 'react'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
-import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { useEthPrice } from '@app/hooks/useEthPrice'
-import { formatUnits } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
+import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 const Container = styled.form(
   ({ theme }) => css`

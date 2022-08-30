@@ -1,8 +1,7 @@
-import { render, screen, mockFunction } from '@app/test-utils'
-
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
-
 import { RouteItemObj } from '@app/routes'
+import { mockFunction, render, screen } from '@app/test-utils'
+
 import { RouteItem } from './RouteItem'
 
 jest.mock('@app/hooks/useActiveRoute')

@@ -1,10 +1,13 @@
+import { useRouter } from 'next/router'
+
+import { labelhash } from '@ensdomains/ensjs/dist/cjs/utils/labels'
+import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
+
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
 import { useZorb } from '@app/hooks/useZorb'
 import { mockFunction, render, screen } from '@app/test-utils'
-import { labelhash } from '@ensdomains/ensjs/dist/cjs/utils/labels'
-import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
-import { useRouter } from 'next/router'
+
 import { SubnamesTab } from './SubnamesTab'
 
 jest.mock('@app/hooks/useSubnamePagination')

@@ -1,7 +1,8 @@
-import { ENS } from '@ensdomains/ensjs'
-import { ContractName } from '@ensdomains/ensjs/dist/cjs/contracts/types'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useProvider } from 'wagmi'
+
+import { ENS } from '@ensdomains/ensjs'
+import { ContractName } from '@ensdomains/ensjs/dist/cjs/contracts/types'
 
 const opts: ConstructorParameters<typeof ENS>[0] = {}
 

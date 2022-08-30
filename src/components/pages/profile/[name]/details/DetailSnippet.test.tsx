@@ -1,4 +1,5 @@
 import { render, screen } from '@app/test-utils'
+
 import { DetailSnippet } from './DetailSnippet'
 
 describe('DetailSnippet', () => {

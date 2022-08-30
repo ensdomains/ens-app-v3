@@ -1,5 +1,7 @@
-import { cleanup, render, fireEvent, screen, userEvent } from '@app/test-utils'
 import { waitFor } from '@testing-library/react'
+
+import { cleanup, fireEvent, render, screen, userEvent } from '@app/test-utils'
+
 import { AddRecordButton } from './AddRecordButton'
 
 const mockHandleAddRecord = jest.fn()

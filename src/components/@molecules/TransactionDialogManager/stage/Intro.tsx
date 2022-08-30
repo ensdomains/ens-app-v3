@@ -1,8 +1,11 @@
+import { useTranslation } from 'react-i18next'
+
+import { Button, Dialog } from '@ensdomains/thorin'
+
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { intros } from '@app/transaction-flow/intro'
 import { TransactionIntro } from '@app/transaction-flow/types'
-import { Button, Dialog } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
+
 import { DisplayItems } from '../DisplayItems'
 
 export const IntroStageModal = ({

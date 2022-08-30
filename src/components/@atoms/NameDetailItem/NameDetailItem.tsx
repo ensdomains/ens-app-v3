@@ -1,10 +1,12 @@
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, mq, Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
+
+import { Avatar, Typography, mq } from '@ensdomains/thorin'
+
+import { useAvatar } from '@app/hooks/useAvatar'
+import { useZorb } from '@app/hooks/useZorb'
 
 const NameItemWrapper = styled.div(
   ({ theme }) => css`

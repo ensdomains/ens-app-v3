@@ -11,6 +11,7 @@ import {
   within,
 } from '@app/test-utils'
 import { Profile } from '@app/types'
+
 import AdvancedEditor from './AdvancedEditor-flow'
 
 const mockProfileData = {

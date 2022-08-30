@@ -1,4 +1,5 @@
 import 'styled-components'
+
 import { DefaultTheme as ThorinDefaultTheme } from '@ensdomains/thorin'
 
 declare module 'styled-components' {

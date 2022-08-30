@@ -1,11 +1,13 @@
-import { useDefaultRef } from '@app/hooks/useDefaultRef'
-import { VisuallyHidden } from '@ensdomains/thorin'
-import { InputHTMLAttributes, forwardRef, ChangeEventHandler, useState, ForwardedRef } from 'react'
-import styled, { css } from 'styled-components'
-import PlusIcon from '@app/assets/Plus.svg'
-import MinusIcon from '@app/assets/Minus.svg'
-import { createChangeEvent } from '@app/utils/syntheticEvent'
+import { ChangeEventHandler, ForwardedRef, InputHTMLAttributes, forwardRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { VisuallyHidden } from '@ensdomains/thorin'
+
+import MinusIcon from '@app/assets/Minus.svg'
+import PlusIcon from '@app/assets/Plus.svg'
+import { useDefaultRef } from '@app/hooks/useDefaultRef'
+import { createChangeEvent } from '@app/utils/syntheticEvent'
 
 const Container = styled.div(
   ({ theme }) => css`

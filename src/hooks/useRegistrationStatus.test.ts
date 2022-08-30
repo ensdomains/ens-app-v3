@@ -1,6 +1,8 @@
+import { BigNumber } from 'ethers'
+
 import { mockFunction, renderHook } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
-import { BigNumber } from 'ethers'
+
 import { useRegistrationStatus } from './useRegistrationStatus'
 
 jest.mock('@app/utils/EnsProvider')

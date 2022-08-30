@@ -1,5 +1,7 @@
-import { render, screen, waitFor } from '@app/test-utils'
 import userEvent from '@testing-library/user-event'
+
+import { render, screen, waitFor } from '@app/test-utils'
+
 import { CurrencySwitch } from './CurrencySwitch'
 
 const mockChangeHandler = jest.fn()

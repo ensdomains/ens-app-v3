@@ -1,5 +1,6 @@
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { mockFunction, render } from '@app/test-utils'
+
 import { NameListView } from './NameListView'
 
 jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem')

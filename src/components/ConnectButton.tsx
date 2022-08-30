@@ -1,14 +1,16 @@
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
-import { usePrimary } from '@app/hooks/usePrimary'
-import { useZorb } from '@app/hooks/useZorb'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button, mq, Profile } from '@ensdomains/thorin'
 import { useConnectModal } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useDisconnect } from 'wagmi'
+
+import { Button, Profile, mq } from '@ensdomains/thorin'
+
+import { useAvatar } from '@app/hooks/useAvatar'
+import { useChainId } from '@app/hooks/useChainId'
+import { usePrimary } from '@app/hooks/usePrimary'
+import { useZorb } from '@app/hooks/useZorb'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(({ theme, $isTabBar }) =>
   $isTabBar

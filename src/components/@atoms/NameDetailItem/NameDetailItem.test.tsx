@@ -1,7 +1,7 @@
-import { render, screen, mockFunction } from '@app/test-utils'
 import { useRouter } from 'next/router'
 
 import { useZorb } from '@app/hooks/useZorb'
+import { mockFunction, render, screen } from '@app/test-utils'
 
 import { NameDetailItem } from './NameDetailItem'
 

@@ -1,6 +1,7 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
+
+import { PublicENS, TransactionDisplayItem } from '@app/types'
 
 type Data = {}
 

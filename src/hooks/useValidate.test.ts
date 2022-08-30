@@ -1,6 +1,9 @@
-import { mockFunction, renderHook } from '@app/test-utils'
-import { parseInputType, validateName } from '@ensdomains/ensjs/dist/cjs/utils/validation'
 import { isAddress } from 'ethers/lib/utils'
+
+import { parseInputType, validateName } from '@ensdomains/ensjs/dist/cjs/utils/validation'
+
+import { mockFunction, renderHook } from '@app/test-utils'
+
 import { useValidate, useValidateOrAddress } from './useValidate'
 
 jest.mock('@ensdomains/ensjs/dist/cjs/utils/validation')
