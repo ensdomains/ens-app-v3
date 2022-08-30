@@ -1,3 +1,4 @@
+import type { TFunction } from 'react-i18next'
 import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 
@@ -5,14 +6,17 @@ type Data = {
   name: string
 }
 
-const displayItems = ({ name }: Data): TransactionDisplayItem<'name'>[] => [
+const displayItems = (
+  { name }: Data,
+  t: TFunction<'translation', undefined>,
+): TransactionDisplayItem<'name'>[] => [
   {
     label: 'action',
-    value: `transaction.description.migrateProfile`,
+    value: t(`transaction.description.migrateProfile`),
   },
   {
     label: 'info',
-    value: `transaction.info.migrateProfile`,
+    value: t(`transaction.info.migrateProfile`),
   },
   {
     label: 'name',

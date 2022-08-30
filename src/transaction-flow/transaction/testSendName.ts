@@ -1,17 +1,22 @@
+import type { TFunction } from 'react-i18next'
 import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { BigNumber } from 'ethers'
 
 type Data = {}
 
-const displayItems = (): TransactionDisplayItem<'name' | 'address'>[] => [
+const displayItems = (
+  // eslint-disable-next-line no-empty-pattern
+  {}: any,
+  t: TFunction<'translation', undefined>,
+): TransactionDisplayItem<'name' | 'address'>[] => [
   {
     label: 'action',
-    value: `transaction.description.test`,
+    value: t(`transaction.description.testSendName`),
   },
   {
     label: 'info',
-    value: `transaction.info.test`,
+    value: t(`transaction.info.testSendName`),
   },
   {
     label: 'to',
