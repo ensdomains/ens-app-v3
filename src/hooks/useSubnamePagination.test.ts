@@ -1,7 +1,5 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
-import { useQueryClient } from '@tanstack/react-query'
-import { act } from '@testing-library/react-hooks'
 import { useSubnamePagination } from './useSubnamePagination'
 
 jest.mock('@app/utils/EnsProvider')
@@ -27,56 +25,25 @@ describe('useSubnamePagination', () => {
   mockUseEns.mockReturnValue({
     getSubnames: mockGetSubnames,
   })
-  it('should detect large queries', async () => {
+  it('should use page param', async () => {
     const firstSubnames = {
       subnames: Array.from({ length: 10 }, makeNameItem),
       subnameCount: 5000,
     }
     mockGetSubnames.mockResolvedValue(firstSubnames)
-    const { result, waitForNextUpdate } = renderHook(() => useSubnamePagination('test.eth'))
+    const { result, waitFor, rerender } = renderHook(
+      (page) => useSubnamePagination('test.eth', page),
+      {
+        initialProps: 1,
+      },
+    )
+    expect(mockGetSubnames).toBeCalled()
+    rerender(2)
+    await waitFor(() => !result.current.isFetching)
     expect(mockGetSubnames).toBeCalledWith(
       expect.objectContaining({
-        isLargeQuery: false,
+        lastSubnames: firstSubnames.subnames,
       }),
     )
-    await waitForNextUpdate()
-    act(() => {
-      result.current.setPage(1)
-    })
-    expect(mockGetSubnames).toBeCalledWith(
-      expect.objectContaining({
-        isLargeQuery: true,
-      }),
-    )
-  })
-  describe('should correctly calculate max and total pages', () => {
-    test('more than 4999 subnames', async () => {
-      const firstSubnames = {
-        subnames: Array.from({ length: 10 }, makeNameItem),
-        subnameCount: 5000,
-      }
-      mockGetSubnames.mockResolvedValue(firstSubnames)
-      const { result, waitForNextUpdate } = renderHook(() => useSubnamePagination('test.eth'))
-      await waitForNextUpdate()
-      expect(result.current.max).toBe(2)
-      expect(result.current.totalPages).toBe(500)
-    })
-    test('less than 5000 subnames', async () => {
-      const firstSubnames = {
-        subnames: Array.from({ length: 10 }, makeNameItem),
-        subnameCount: 4999,
-      }
-      mockGetSubnames.mockResolvedValue(firstSubnames)
-      const { result, waitForNextUpdate } = renderHook(() => useSubnamePagination('test.eth'))
-      await waitForNextUpdate()
-      expect(result.current.max).toBe(5)
-      expect(result.current.totalPages).toBe(500)
-    })
-  })
-  it('should remove queries on unmount', () => {
-    const { unmount } = renderHook(() => useSubnamePagination('test.eth'))
-    const { result } = renderHook(() => useQueryClient())
-    unmount()
-    expect(result.current.getQueryCache().findAll(['getSubnames'])).toStrictEqual([])
   })
 })

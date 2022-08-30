@@ -6,6 +6,7 @@ import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { ArrowRightSVG, Button, mq, PageButtons, PlusSVG, Typography } from '@ensdomains/thorin'
+import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -20,14 +21,20 @@ const RightArrow = styled.svg(
   `,
 )
 
-const PageButtonsContainer = styled.div(
-  ({ theme }) => css`
+const PageButtonsContainer = styled.div<{ $isFetching?: boolean }>(
+  ({ theme, $isFetching }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
     padding: ${theme.space['2']} ${theme.space['4']};
+
+    ${$isFetching &&
+    css`
+      pointer-events: none;
+      opacity: 0.5;
+    `}
   `,
 )
 
@@ -42,9 +49,16 @@ const TabWrapperWithButtons = styled.div(
   `,
 )
 
-const StyledTabWrapper = styled(TabWrapper)(
-  () => css`
+const StyledTabWrapper = styled(TabWrapper)<{ $isFetching?: boolean }>(
+  ({ $isFetching }) => css`
     overflow: hidden;
+    transition: opacity 0.15s ease-in-out;
+    opacity: 1;
+    ${$isFetching &&
+    css`
+      pointer-events: none;
+      opacity: 0.5;
+    `}
   `,
 )
 
@@ -98,11 +112,21 @@ export const SubnamesTab = ({
   canEdit: boolean
   isWrapped: boolean
 }) => {
+  const router = useRouter()
   const { t } = useTranslation('profile')
 
   const { showDataInput } = useTransactionFlow()
 
-  const { subnames, max, page, setPage, isLoading, totalPages } = useSubnamePagination(name)
+  const page = router.query.page ? parseInt(router.query.page as string) : 1
+  const { subnames, max, isLoading, totalPages, isFetching } = useSubnamePagination(name, page)
+
+  const setPage = (newPage: number) => {
+    const url = new URL(router.asPath, window.location.origin)
+    url.searchParams.set('page', newPage.toString())
+    router.push(url.toString(), undefined, {
+      shallow: true,
+    })
+  }
 
   const createSubname = () =>
     showDataInput(`make-subname-${name}`, 'CreateSubname', {
@@ -117,17 +141,17 @@ export const SubnamesTab = ({
   } else if (subnames.length > 0) {
     InnerContent = (
       <>
-        <StyledTabWrapper>
+        <StyledTabWrapper $isFetching={isFetching}>
           {subnames.map((subname) => (
             <NameDetailItem key={subname.name} network={network} {...subname}>
               <RightArrow as={ArrowRightSVG} />
             </NameDetailItem>
           ))}
         </StyledTabWrapper>
-        <PageButtonsContainer>
+        <PageButtonsContainer $isFetching={isFetching}>
           <PageButtons
-            current={page + 1}
-            onChange={(value) => setPage(value - 1)}
+            current={page}
+            onChange={(value) => setPage(value)}
             total={totalPages || 1}
             max={max}
           />

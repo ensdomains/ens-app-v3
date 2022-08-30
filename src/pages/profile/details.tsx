@@ -1,6 +1,6 @@
 import { ENS } from '@ensdomains/ensjs'
 import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
+import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -182,6 +182,8 @@ export const Details = ({
   )
 }
 
+type Tab = 'records' | 'subnames' | 'advanced'
+
 export default function Page() {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
@@ -210,7 +212,14 @@ export default function Page() {
 
   const isLoading = detailsLoading || accountLoading
 
-  const [tab, setTab] = useState<'records' | 'subnames' | 'advanced'>('records')
+  const tab = (router.query.tab as Tab) || 'records'
+  const setTab = (newTab: Tab) => {
+    const url = new URL(router.asPath, window.location.origin)
+    url.searchParams.set('tab', newTab)
+    router.push(url.toString(), undefined, {
+      shallow: true,
+    })
+  }
 
   return (
     <Content title={normalisedName} subtitle={t('details.title')} loading={isLoading}>
