@@ -26,6 +26,13 @@
     "tryAgain": "Try Again",
     "done": "Done"
   },
+  "unit": {
+    "years_one": "{{count}} year",
+    "years_other": "{{count}} years",
+    "yrs_one": "{{count}} yr",
+    "yrs_other": "{{count}} yrs",
+    "gas": "{{value}} gas"
+  },
   "navigation": {
     "home": "Home",
     "about": "About",
