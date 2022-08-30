@@ -1,7 +1,8 @@
+import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
+
 import { useNetwork, useProvider } from 'wagmi'
 
 import { useProfile } from '@app/hooks/useProfile'
-import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 import { EditResolver } from './EditResolver-flow'

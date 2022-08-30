@@ -1,9 +1,10 @@
+import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
 import { useSendTransaction, useSigner } from 'wagmi'
 
 import { useChainName } from '@app/hooks/useChainName'
-import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 

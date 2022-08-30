@@ -1,6 +1,7 @@
+import { mockFunction, render, screen } from '@app/test-utils'
+
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
-import { mockFunction, render, screen } from '@app/test-utils'
 import { TransactionDisplayItem } from '@app/types'
 
 import { DisplayItems } from './DisplayItems'

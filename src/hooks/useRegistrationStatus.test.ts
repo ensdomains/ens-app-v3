@@ -1,6 +1,7 @@
+import { mockFunction, renderHook } from '@app/test-utils'
+
 import { BigNumber } from 'ethers'
 
-import { mockFunction, renderHook } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { useRegistrationStatus } from './useRegistrationStatus'

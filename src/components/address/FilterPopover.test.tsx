@@ -1,6 +1,6 @@
-import { ComponentProps } from 'react'
-
 import { render, screen } from '@app/test-utils'
+
+import { ComponentProps } from 'react'
 
 import { SortDirection, SortType } from '../@molecules/SortControl/SortControl'
 import FilterPopover from './FilterPopover'

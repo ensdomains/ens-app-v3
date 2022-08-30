@@ -1,6 +1,7 @@
+import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { NamePill } from '@app/components/@molecules/NamePill'
 import { useChainId } from '@app/hooks/useChainId'
-import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
 
 import SelectPrimaryName from './SelectPrimaryName-flow'

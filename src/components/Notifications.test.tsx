@@ -1,9 +1,10 @@
+import { mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
 import { act } from '@testing-library/react'
 
 import { useChainName } from '@app/hooks/useChainName'
-import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { Notifications } from './Notifications'

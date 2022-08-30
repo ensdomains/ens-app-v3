@@ -1,4 +1,5 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
+
 import { useEns } from '@app/utils/EnsProvider'
 
 import { useNameDetails } from './useNameDetails'

@@ -1,6 +1,6 @@
-import { BigNumber } from 'ethers'
-
 import { render, screen, waitFor } from '@app/test-utils'
+
+import { BigNumber } from 'ethers'
 
 import { RegistrationTimeComparisonBanner } from './RegistrationTimeComparisonBanner'
 

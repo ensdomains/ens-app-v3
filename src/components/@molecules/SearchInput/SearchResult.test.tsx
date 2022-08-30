@@ -1,9 +1,10 @@
+import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
+
 import { ComponentProps } from 'react'
 
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
-import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
 
 import { SearchResult } from './SearchResult'
 

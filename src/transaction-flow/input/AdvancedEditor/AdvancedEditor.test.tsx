@@ -1,5 +1,3 @@
-import { useProfile } from '@app/hooks/useProfile'
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import {
   cleanup,
   fireEvent,
@@ -10,6 +8,9 @@ import {
   waitFor,
   within,
 } from '@app/test-utils'
+
+import { useProfile } from '@app/hooks/useProfile'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
 
 import AdvancedEditor from './AdvancedEditor-flow'

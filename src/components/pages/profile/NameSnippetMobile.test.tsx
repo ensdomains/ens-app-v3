@@ -1,4 +1,5 @@
 import { mockFunction, render, screen } from '@app/test-utils'
+
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { NameSnippetMobile } from './NameSnippetMobile'

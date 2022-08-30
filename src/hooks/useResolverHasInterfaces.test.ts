@@ -1,7 +1,8 @@
+import { mockFunction, renderHook } from '@app/test-utils'
+
 import { useNetwork, useProvider } from 'wagmi'
 
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { mockFunction, renderHook } from '@app/test-utils'
 import { KnownResolveAddresses } from '@app/validators/validateResolver'
 
 jest.mock('wagmi', () => ({

@@ -1,7 +1,8 @@
+import { mockFunction, render, screen } from '@app/test-utils'
+
 import { BigNumber } from 'ethers'
 
 import { useEthPrice } from '@app/hooks/useEthPrice'
-import { mockFunction, render, screen } from '@app/test-utils'
 
 import { CurrencyText } from './CurrencyText'
 

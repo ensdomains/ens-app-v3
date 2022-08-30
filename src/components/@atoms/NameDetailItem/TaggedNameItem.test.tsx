@@ -1,7 +1,8 @@
+import { mockFunction, render } from '@app/test-utils'
+
 import { ReactNode } from 'react'
 
 import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
-import { mockFunction, render } from '@app/test-utils'
 
 import { NameDetailItem } from './NameDetailItem'
 import { TaggedNameItem } from './TaggedNameItem'

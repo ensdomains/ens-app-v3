@@ -1,5 +1,6 @@
-import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { mockFunction, render } from '@app/test-utils'
+
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 
 import { NameListView } from './NameListView'
 

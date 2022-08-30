@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useAccount } from 'wagmi'
 
 import * as ThorinComponents from '@ensdomains/thorin'
-
-import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { AvatarNFT } from './AvatarNFT'
 

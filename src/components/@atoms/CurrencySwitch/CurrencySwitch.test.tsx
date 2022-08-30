@@ -1,6 +1,6 @@
-import userEvent from '@testing-library/user-event'
-
 import { render, screen, waitFor } from '@app/test-utils'
+
+import userEvent from '@testing-library/user-event'
 
 import { CurrencySwitch } from './CurrencySwitch'
 

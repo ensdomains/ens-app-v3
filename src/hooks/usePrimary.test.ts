@@ -1,4 +1,5 @@
 import { mockFunction, renderHook } from '@app/test-utils'
+
 import { useEns } from '@app/utils/EnsProvider'
 
 import { usePrimary } from './usePrimary'

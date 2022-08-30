@@ -1,7 +1,7 @@
+import { mockFunction } from '@app/test-utils'
+
 import { renderHook } from '@testing-library/react-hooks'
 import { useRouter } from 'next/router'
-
-import { mockFunction } from '@app/test-utils'
 
 import { useActiveRoute } from './useActiveRoute'
 

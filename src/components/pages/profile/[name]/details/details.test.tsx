@@ -1,3 +1,5 @@
+import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
 import { useAccount } from 'wagmi'
@@ -11,7 +13,6 @@ import { SubnamesTab } from '@app/components/pages/profile/[name]/details/Subnam
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import Page, { Details } from '@app/pages/profile/details'
-import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 // setting up jest mocks

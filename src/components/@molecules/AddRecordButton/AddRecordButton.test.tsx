@@ -1,6 +1,6 @@
-import { waitFor } from '@testing-library/react'
-
 import { cleanup, fireEvent, render, screen, userEvent } from '@app/test-utils'
+
+import { waitFor } from '@testing-library/react'
 
 import { AddRecordButton } from './AddRecordButton'
 
