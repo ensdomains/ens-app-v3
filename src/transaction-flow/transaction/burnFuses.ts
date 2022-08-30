@@ -21,7 +21,7 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: t('transaction.description') as string,
+    value: t('transaction.description.burnFuses') as string,
   },
   {
     label: 'info',

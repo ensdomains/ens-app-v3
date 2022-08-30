@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.fullFuseEnum = exports.unnamedFuses = exports.fuseEnum = void 0;
+exports.unnamedFuses = exports.fuseEnum = void 0;
 const CANNOT_UNWRAP = 1;
 const CANNOT_BURN_FUSES = 2;
 const CANNOT_TRANSFER = 4;
@@ -23,8 +23,8 @@ exports.unnamedFuses = [
     524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864,
     134217728, 268435456, 536870912, 1073741824, 2147483648, 4294967296,
 ];
-exports.fullFuseEnum = {
+const fullFuseEnum = {
     ...exports.fuseEnum,
     CAN_DO_EVERYTHING,
 };
-exports.default = exports.fullFuseEnum;
+exports.default = fullFuseEnum;

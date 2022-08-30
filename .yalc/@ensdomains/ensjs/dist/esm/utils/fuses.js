@@ -20,7 +20,7 @@ export const unnamedFuses = [
     524288, 1048576, 2097152, 4194304, 8388608, 16777216, 33554432, 67108864,
     134217728, 268435456, 536870912, 1073741824, 2147483648, 4294967296,
 ];
-export const fullFuseEnum = {
+const fullFuseEnum = {
     ...fuseEnum,
     CAN_DO_EVERYTHING,
 };

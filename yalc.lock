@@ -2,8 +2,8 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "5e0ea21c6ab45dce0251fcbcded01f81",
-      "file": true,
+      "signature": "678dbf0034d19b469d33bd3547faa071",
+      "pure": true,
       "replaced": "3.0.0-alpha.16"
     },
     "@ensdomains/thorin": {

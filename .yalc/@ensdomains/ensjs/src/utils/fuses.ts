@@ -23,7 +23,7 @@ export const unnamedFuses = [
   134217728, 268435456, 536870912, 1073741824, 2147483648, 4294967296,
 ] as const
 
-export const fullFuseEnum = {
+const fullFuseEnum = {
   ...fuseEnum,
   CAN_DO_EVERYTHING,
 }
