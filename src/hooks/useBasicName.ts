@@ -17,7 +17,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     internal: { isFetchedAfterMount },
     status,
   } = useQuery(
-    ['batch', 'getOwner', 'getExpiry', name],
+    ['batch', 'getOwner', 'getExpiry', normalisedName],
     () =>
       labelCount === 2 && normalisedName.endsWith('.eth')
         ? batch(getOwner.batch(normalisedName), getExpiry.batch(normalisedName))

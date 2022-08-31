@@ -1,11 +1,10 @@
 import TripleDot from '@app/assets/TripleDot.svg'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
+import { Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { DisabledButton } from './@atoms/DisabledButton'
+import { NameAvatar } from './AvatarWithZorb'
 
 const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
   ({ theme, $banner, $size }) => [
@@ -28,12 +27,6 @@ const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
       flex-gap: ${theme.space['3']};
     `,
   ],
-)
-
-const AvatarWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['24']};
-  `,
 )
 
 const DetailStack = styled.div(
@@ -162,8 +155,6 @@ export const ProfileSnippet = ({
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
-  const zorb = useZorb(name, 'name')
-  const { avatar } = useAvatar(name, network)
   const hasActions = actions && actions.length > 0 && actions.some(({ disabled }) => !disabled)
 
   const banner = getTextRecord?.('banner')?.value
@@ -175,9 +166,7 @@ export const ProfileSnippet = ({
   return (
     <Container $banner={banner} $size={size} data-testid="profile-snippet">
       <FirstItems>
-        <AvatarWrapper>
-          <Avatar label={name} src={avatar || zorb} />
-        </AvatarWrapper>
+        <NameAvatar size="24" label={name} name={name} network={network} />
         <ButtonStack>
           {button && buttonPlacement === 'inline' && (
             <DetailButtonWrapper $placement={buttonPlacement}>

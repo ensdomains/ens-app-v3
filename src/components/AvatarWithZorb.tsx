@@ -1,20 +1,43 @@
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar } from '@ensdomains/thorin'
+import { Avatar, Space } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
+import styled, { css } from 'styled-components'
+
+const Wrapper = styled.div<{ $size?: Space }>(
+  ({ theme, $size }) => css`
+    width: ${$size ? theme.space[$size] : theme.space.full};
+    height: ${$size ? theme.space[$size] : theme.space.full};
+  `,
+)
+
+type BaseProps = {
+  network: number
+  size?: Space
+}
+
+type Name = {
+  name?: string
+}
+
+type Address = {
+  address?: string
+}
 
 export const NameAvatar = ({
   src,
   name,
   network,
+  size,
   ...props
-}: ComponentProps<typeof Avatar> & {
-  name: string
-  network: number
-}) => {
+}: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
-  return <Avatar {...props} src={avatar || zorb} />
+  return (
+    <Wrapper $size={size}>
+      <Avatar {...props} src={avatar || zorb} />
+    </Wrapper>
+  )
 }
 
 export const AvatarWithZorb = ({
@@ -22,24 +45,28 @@ export const AvatarWithZorb = ({
   name,
   address,
   network,
+  size,
   ...props
-}: ComponentProps<typeof Avatar> & {
-  name?: string
-  address?: string
-  network: number
-}) => {
+}: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
-  return <Avatar {...props} src={avatar || zorb} />
+  return (
+    <Wrapper $size={size}>
+      <Avatar {...props} src={avatar || zorb} />
+    </Wrapper>
+  )
 }
 
 export const AddressAvatar = ({
   src,
   address,
+  size,
   ...props
-}: ComponentProps<typeof Avatar> & {
-  address: string
-}) => {
+}: ComponentProps<typeof Avatar> & Required<Address> & { size?: Space }) => {
   const zorb = useZorb(address, 'address')
-  return <Avatar {...props} src={zorb} />
+  return (
+    <Wrapper $size={size}>
+      <Avatar {...props} src={zorb} />
+    </Wrapper>
+  )
 }
