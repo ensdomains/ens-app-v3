@@ -133,12 +133,14 @@ describe('Page', () => {
       xl: false,
     }))
 
+    const mockPush = jest.fn()
+
     // mock implementation of useRouter that returns default data
     mockUseRouter.mockImplementation(() => ({
       query: {
         name: '',
       },
-      push: jest.fn(),
+      push: mockPush,
     }))
 
     // mock useChainId, useNameDetails and useAccount
@@ -156,13 +158,38 @@ describe('Page', () => {
       isLoading: false,
     }))
 
-    render(<Page />)
+    const { rerender } = render(<Page />)
 
     // click more tab on Page
     fireEvent.click(screen.getByText('details.tabs.advanced.label'))
 
+    expect(mockPush).toHaveBeenCalled()
+
+    mockUseRouter.mockImplementation(() => ({
+      query: {
+        name: '',
+        tab: 'advanced',
+      },
+      push: mockPush,
+    }))
+
+    rerender(<Page />)
+
     await waitFor(() => {
       expect(screen.getByText('MoreTab')).toBeInTheDocument()
     })
+  })
+  it('should set the correct tab based on router query', () => {
+    mockUseRouter.mockImplementation(() => ({
+      query: {
+        name: '',
+        tab: 'advanced',
+      },
+      push: jest.fn(),
+    }))
+
+    render(<Page />)
+
+    expect(screen.getByText('MoreTab')).toBeInTheDocument()
   })
 })

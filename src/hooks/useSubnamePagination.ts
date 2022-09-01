@@ -1,5 +1,6 @@
-import { useQuery, useQueryClient } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { useQueryClient } from '@tanstack/react-query'
+import { useEffect } from 'react'
+import { useInfiniteQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -9,82 +10,60 @@ export type Subname = {
   truncatedName?: string
 }
 
-const maxCalc = (subnameCount: number, page: number) => {
-  if (subnameCount >= 5000) {
-    return page + 1 === 1 ? 2 : 3
-  }
-  return 5
-}
-
-export const useSubnamePagination = (name: string) => {
-  const { getSubnames } = useEns()
-  const isLargeQueryRef = useRef(false)
-  const lastSubnamesRef = useRef<Subname[]>([])
-  const [page, setPage] = useState(0)
-  const queryClient = useQueryClient()
+export const useSubnamePagination = (name: string, page: number) => {
+  const _page = page - 1
   const resultsPerPage = 10
 
-  const {
-    data: { subnames, subnameCount, max, totalPages } = {
-      subnames: [],
-      subnameCount: 0,
-    },
-    isLoading,
-  } = useQuery(
-    ['getSubnames', name, 'createdAt', 'desc', page, resultsPerPage],
-    async () => {
+  const queryClient = useQueryClient()
+  const { getSubnames } = useEns()
+
+  const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(
+    ['getSubnames', name],
+    async ({ pageParam }) => {
       const result = await getSubnames({
         name,
+        page: 0,
+        isLargeQuery: true,
+        lastSubnames: pageParam || [{ createdAt: Math.floor(Date.now() / 1000) }],
         orderBy: 'createdAt',
         orderDirection: 'desc',
-        page,
-        pageSize: resultsPerPage,
-        isLargeQuery: isLargeQueryRef.current,
-        lastSubnames: lastSubnamesRef.current,
+        pageSize: 10,
       })
-
-      lastSubnamesRef.current = result.subnames
-
-      if (result.subnameCount >= 5000) {
-        isLargeQueryRef.current = true
-      }
 
       return {
         ...result,
-        max: maxCalc(result.subnameCount, page),
         totalPages: Math.ceil(result.subnameCount / resultsPerPage),
       }
     },
-    { staleTime: Infinity, cacheTime: Infinity },
+    {
+      getNextPageParam: (last) => (last.subnames.length > 0 ? last.subnames : undefined),
+      getPreviousPageParam: (_, all) => all[all.length - 2]?.subnames,
+      refetchOnMount: 'always',
+    },
   )
+
+  const latestPage = data?.pages && data.pages[data.pages.length - 1]
+  const currentPage = data?.pages[_page]?.subnames || latestPage?.subnames || []
+  const hasCurrentPage = (data?.pages[_page]?.subnames?.length || 0) > 0
 
   useEffect(() => {
     if (queryClient) {
       queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  useEffect(() => {
-    return () => {
-      queryClient.removeQueries({
-        exact: false,
-        queryKey: ['getSubnames'],
-      })
-      queryClient.invalidateQueries({
-        exact: false,
-        queryKey: ['getSubnames'],
-      })
-    }
   }, [queryClient])
 
+  useEffect(() => {
+    if (!hasCurrentPage && hasNextPage) {
+      fetchNextPage()
+    }
+  }, [hasCurrentPage, fetchNextPage, hasNextPage])
+
   return {
-    subnames,
-    subnameCount,
+    subnames: currentPage,
+    subnameCount: latestPage?.subnameCount || 0,
     isLoading,
-    max,
-    page,
-    setPage,
-    totalPages,
+    isFetching: !hasCurrentPage,
+    max: _page + 1 === 1 ? 2 : 3,
+    totalPages: latestPage?.totalPages || 0,
   }
 }
