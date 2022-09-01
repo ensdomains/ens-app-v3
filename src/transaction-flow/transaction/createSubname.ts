@@ -3,6 +3,8 @@ import type { TFunction } from 'react-i18next'
 
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
+import { PublicENS, TransactionDisplayItem } from '@app/types'
+
 type Data = {
   parent: string
   label: string

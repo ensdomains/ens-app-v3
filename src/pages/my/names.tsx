@@ -4,10 +4,8 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, PageButtons, Spinner, mq } from '@ensdomains/thorin'
+import { PageButtons, Spinner, mq } from '@ensdomains/thorin'
 
-import GridSVG from '@app/assets/Grid.svg'
-import ListSVG from '@app/assets/List.svg'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import SortControl, {
   SortDirection,
@@ -72,17 +70,6 @@ const FilterContainer = styled.div(
   `,
 )
 
-const ViewButtons = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-  `,
-)
-
 const spacing = '1fr 1fr'
 
 type ViewType = 'grid' | 'list'
@@ -96,7 +83,7 @@ export default function Page() {
   const isSelf = true
   const chainId = useChainId()
 
-  const [viewType, setViewType] = useState<ViewType>('list')
+  const [viewType] = useState<ViewType>('list')
   const [sortValue, setSortValue] = useState<SortValue>({
     type: SortType.expiryDate,
     direction: SortDirection.desc,
@@ -139,30 +126,6 @@ export default function Page() {
         header: (
           <FilterContainer>
             <SortControl value={sortValue} onChange={(_value) => setSortValue(_value)} />
-            <ViewButtons>
-              <Button
-                pressed={viewType === 'grid'}
-                onClick={() => setViewType('grid')}
-                variant="transparent"
-                shadowless
-                size="extraSmall"
-              >
-                <div style={{ height: '24px' }}>
-                  <GridSVG width="24" height="24" />
-                </div>
-              </Button>
-              <Button
-                pressed={viewType === 'list'}
-                onClick={() => setViewType('list')}
-                variant="transparent"
-                shadowless
-                size="extraSmall"
-              >
-                <div style={{ height: '24px' }}>
-                  <ListSVG width="24" height="24" />
-                </div>
-              </Button>
-            </ViewButtons>
           </FilterContainer>
         ),
         trailing: (
