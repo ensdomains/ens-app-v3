@@ -1,11 +1,14 @@
+import Head from 'next/head'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography, mq } from '@ensdomains/thorin'
+
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { SearchInput } from '@app/components/@molecules/SearchInput/SearchInput'
 import { LanugageDropdown } from '@app/components/LanguageDropdown'
 import { LeadingHeading } from '@app/components/LeadingHeading'
-import { mq, Typography } from '@ensdomains/thorin'
-import Head from 'next/head'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 
 const GradientTitle = styled.h1(

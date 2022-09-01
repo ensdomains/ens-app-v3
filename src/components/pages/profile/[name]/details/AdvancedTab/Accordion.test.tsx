@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@app/test-utils'
+
 import Accordion, { AccordionData } from './Accordion'
 
 const data: AccordionData[] = [

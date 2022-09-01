@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-
 import validateContract, { CONTRACT_INTERFACES, ContractInterface } from './validateContract'
 
 export const KnownResolveAddresses: {

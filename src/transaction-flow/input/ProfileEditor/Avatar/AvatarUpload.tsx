@@ -1,12 +1,15 @@
 /* eslint-disable no-multi-assign */
-import { useChainName } from '@app/hooks/useChainName'
-import { Button, Dialog } from '@ensdomains/thorin'
 import { useMutation } from '@tanstack/react-query'
 import { sha256 } from 'ethers/lib/utils'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useSignTypedData } from 'wagmi'
+
+import { Button, Dialog } from '@ensdomains/thorin'
+
+import { useChainName } from '@app/hooks/useChainName'
+
 import { AvCancelButton, CropComponent } from './AvatarCrop'
 
 const CroppedImagePreview = styled.img(

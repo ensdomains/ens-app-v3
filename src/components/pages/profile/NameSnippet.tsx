@@ -1,14 +1,16 @@
-import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
-import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
-import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
-import { useEns } from '@app/utils/EnsProvider'
-import { shortenAddress } from '@app/utils/utils'
-import { Button, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
+
+import { Button, Typography } from '@ensdomains/thorin'
+
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
+import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useEns } from '@app/utils/EnsProvider'
+import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled(CacheableComponent)(
   ({ theme }) => css`

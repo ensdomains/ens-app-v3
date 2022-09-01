@@ -1,9 +1,11 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Heading } from '@ensdomains/thorin'
+
 import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import type { ReturnedName } from '@app/hooks/useNamesFromAddress'
-import { Heading } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const NoResultsContianer = styled.div(
   ({ theme }) => css`

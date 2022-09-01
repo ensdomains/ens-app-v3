@@ -1,6 +1,7 @@
-import { Avatar, Typography } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Avatar, Typography } from '@ensdomains/thorin'
 
 const Container = styled.div(
   ({ theme }) => css`

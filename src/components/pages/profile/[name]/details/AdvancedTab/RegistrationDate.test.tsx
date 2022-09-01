@@ -1,7 +1,10 @@
-import { useGetHistory } from '@app/hooks/useGetHistory'
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useRouter } from 'next/router'
 import { useNetwork, useProvider } from 'wagmi'
+
+import { useGetHistory } from '@app/hooks/useGetHistory'
+
 import { RegistrationDate } from './RegistrationDate'
 
 jest.mock('next/router')

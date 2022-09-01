@@ -1,13 +1,16 @@
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
-import { useValidate } from '@app/hooks/useValidate'
-import { emptyAddress } from '@app/utils/constants'
-import { useEns } from '@app/utils/EnsProvider'
-import { Button, Dialog, Input } from '@ensdomains/thorin'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
+
+import { Button, Dialog, Input } from '@ensdomains/thorin'
+
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
+import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
+import { useValidate } from '@app/hooks/useValidate'
+import { useEns } from '@app/utils/EnsProvider'
+import { emptyAddress } from '@app/utils/constants'
+
 import { makeTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
 

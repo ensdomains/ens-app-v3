@@ -1,13 +1,15 @@
-import { useChainName } from '@app/hooks/useChainName'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { makeEtherscanLink } from '@app/utils/utils'
-import { Button, Toast } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, Toast } from '@ensdomains/thorin'
+
+import { useChainName } from '@app/hooks/useChainName'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { makeEtherscanLink } from '@app/utils/utils'
 
 type Notification = {
   title: string

@@ -1,9 +1,11 @@
-import { RecordItem } from '@app/components/RecordItem'
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { BigNumber, utils } from 'ethers'
 import { useRouter } from 'next/router'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+
+import { RecordItem } from '@app/components/RecordItem'
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
+
 import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'
 import { RegistrationDate } from './RegistrationDate'

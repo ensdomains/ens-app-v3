@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components'
+
 import { Spinner } from '@ensdomains/thorin'
 
 const Container = styled.div(

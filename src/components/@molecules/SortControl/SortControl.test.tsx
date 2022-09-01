@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@app/test-utils'
+
 import SortControl, { SortDirection, SortType, SortValue } from './SortControl'
 
 const sortValue: SortValue = {

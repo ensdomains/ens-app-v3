@@ -1,8 +1,10 @@
-import textRecords from '@app/constants/textRecords.json'
-import supportedTexts from '@app/constants/supportedTexts.json'
-import supportedProfileItems from '@app/constants/supportedProfileItems.json'
-import { Select } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
+
+import { Select } from '@ensdomains/thorin'
+
+import supportedProfileItems from '@app/constants/supportedProfileItems.json'
+import supportedTexts from '@app/constants/supportedTexts.json'
+import textRecords from '@app/constants/textRecords.json'
 import { formSafeKey } from '@app/utils/editor'
 
 const excludedKeys = ['avatar', 'banner']

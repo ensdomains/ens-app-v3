@@ -1,5 +1,7 @@
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useSignTypedData } from 'wagmi'
+
 import { AvatarUpload } from './AvatarUpload'
 
 jest.mock('@app/hooks/useChainName', () => ({

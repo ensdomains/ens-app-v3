@@ -1,7 +1,10 @@
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { mockFunction, render, screen } from '@app/test-utils'
+
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
+
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
+
 import Fuses from './Fuses'
 
 jest.mock('next/router')

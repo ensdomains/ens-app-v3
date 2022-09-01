@@ -1,5 +1,6 @@
-import { useEns } from '@app/utils/EnsProvider'
 import { useQuery } from 'wagmi'
+
+import { useEns } from '@app/utils/EnsProvider'
 
 export const usePrimary = (address: string, skip?: any) => {
   const { ready, getName } = useEns()

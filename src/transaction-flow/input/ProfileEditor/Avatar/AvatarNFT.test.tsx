@@ -1,7 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
-import * as ThorinComponents from '@ensdomains/thorin'
+
 import { useAccount } from 'wagmi'
+
+import * as ThorinComponents from '@ensdomains/thorin'
+
 import { AvatarNFT } from './AvatarNFT'
 
 const mockUseAccount = mockFunction(useAccount)

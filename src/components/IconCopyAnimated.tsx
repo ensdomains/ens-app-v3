@@ -1,6 +1,7 @@
-import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
 import { memo } from 'react'
 import styled, { css } from 'styled-components'
+
+import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
 
 const IconWrapper = styled.div<{ $copied: boolean }>(
   ({ $copied }) => css`
