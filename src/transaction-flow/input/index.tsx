@@ -1,12 +1,13 @@
 import dynamic from 'next/dynamic'
+
 import TransactionLoader from '../TransactionLoader'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
+import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
+import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
-import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
-import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
 
 const dynamicHelper = <P,>(name: string) =>
   dynamic<P>(

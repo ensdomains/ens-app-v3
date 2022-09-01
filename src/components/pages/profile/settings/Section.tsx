@@ -1,8 +1,10 @@
-import { Card } from '@app/components/Card'
-import { useInitial } from '@app/hooks/useInitial'
-import { Heading } from '@ensdomains/thorin'
 import { ComponentProps, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
+
+import { Heading } from '@ensdomains/thorin'
+
+import { Card } from '@app/components/Card'
+import { useInitial } from '@app/hooks/useInitial'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`

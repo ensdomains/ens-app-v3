@@ -1,13 +1,16 @@
+import { useRouter } from 'next/router'
 import React, { ButtonHTMLAttributes, useState } from 'react'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
 import { DynamicPopover, Typography } from '@ensdomains/thorin'
+
 import FilterIcon from '@app/assets/Filter.svg'
 import SortControl, { SortValue } from '@app/components/@molecules/SortControl/SortControl'
 import FilterPopover from '@app/components/address/FilterPopover'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useRouter } from 'next/router'
 import { Name } from '@app/types'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
 import CollapsibleContent from '../@atoms/CollapsibleContent/CollapsibleContent'
 
 const Container = styled.div(

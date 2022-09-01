@@ -1,7 +1,8 @@
 import { ComponentProps } from 'react'
+
 import { ChangePrimaryName } from './ChangePrimaryName'
-import { WrapName } from './WrapName'
 import { FriendlyResolverUpgrade } from './FriendlyResolverUpgrade'
+import { WrapName } from './WrapName'
 
 export const intros = {
   WrapName,

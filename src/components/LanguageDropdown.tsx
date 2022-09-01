@@ -1,9 +1,11 @@
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Dropdown, mq } from '@ensdomains/thorin'
 import ISO6391 from 'iso-639-1'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Dropdown, mq } from '@ensdomains/thorin'
+
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
   ({ theme, $large }) => css`

@@ -1,5 +1,6 @@
-import type { ENS } from '@ensdomains/ensjs'
 import { useMemo } from 'react'
+
+import type { ENS } from '@ensdomains/ensjs'
 
 export const useSelfAbilities = (
   address: string | undefined,

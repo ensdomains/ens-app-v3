@@ -1,16 +1,19 @@
-import { Spacer } from '@app/components/@atoms/Spacer'
-import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
-import { Outlink } from '@app/components/Outlink'
-import { useProfile } from '@app/hooks/useProfile'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
-import { Button, Dialog, Input, mq, RadioButton, Typography } from '@ensdomains/thorin'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ethers } from 'ethers'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, Dialog, Input, RadioButton, Typography, mq } from '@ensdomains/thorin'
+
+import { Spacer } from '@app/components/@atoms/Spacer'
+import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
+import { Outlink } from '@app/components/Outlink'
+import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+
 import { makeTransactionItem } from '../../transaction'
 
 const EditResolverFormContainer = styled.div(() => [

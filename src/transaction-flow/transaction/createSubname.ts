@@ -1,7 +1,7 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, TransactionDisplayItem, Transaction } from '@app/types'
+import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   parent: string

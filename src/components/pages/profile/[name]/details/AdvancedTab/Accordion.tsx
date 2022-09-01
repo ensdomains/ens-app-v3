@@ -1,8 +1,10 @@
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { Button, DownIndicatorSVG, Typography } from '@ensdomains/thorin'
 import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, DownIndicatorSVG, Typography } from '@ensdomains/thorin'
+
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 const AccordionTitle = styled.div<{
   $isActive?: boolean

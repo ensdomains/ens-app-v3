@@ -1,6 +1,7 @@
+import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useRouter } from 'next/router'
 
-import { mockFunction, render, screen, fireEvent, waitFor } from '@app/test-utils'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
 import { BurnFuses, defaultFuseObj } from './BurnFuses-flow'

@@ -1,8 +1,11 @@
+import { mockFunction, render, screen } from '@app/test-utils'
+
+import { act, waitFor } from '@testing-library/react'
+
 import { useChainId } from '@app/hooks/useChainId'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { mockFunction, render, screen } from '@app/test-utils'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { act, waitFor } from '@testing-library/react'
+
 import { SearchInput } from './SearchInput'
 
 jest.mock('@app/utils/BreakpointProvider')

@@ -1,7 +1,3 @@
-import { useInitial } from '@app/hooks/useInitial'
-import { routes } from '@app/routes'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { mq } from '@ensdomains/thorin'
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
@@ -9,6 +5,13 @@ import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
+
+import { mq } from '@ensdomains/thorin'
+
+import { useInitial } from '@app/hooks/useInitial'
+import { routes } from '@app/routes'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import { HamburgerMenu } from './@atoms/HamburgerMenu'

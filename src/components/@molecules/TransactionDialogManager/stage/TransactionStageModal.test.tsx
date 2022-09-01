@@ -1,11 +1,14 @@
 /* eslint-disable no-promise-executor-return */
-import { useChainName } from '@app/hooks/useChainName'
 import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
-import { GenericTransaction } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
+
 import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
 import { useSendTransaction, useSigner } from 'wagmi'
+
+import { useChainName } from '@app/hooks/useChainName'
+import { GenericTransaction } from '@app/transaction-flow/types'
+import { useEns } from '@app/utils/EnsProvider'
+
 import { TransactionStageModal } from './TransactionStageModal'
 
 jest.mock('@app/hooks/useChainName')

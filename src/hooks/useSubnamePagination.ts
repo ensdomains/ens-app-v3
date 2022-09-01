@@ -1,6 +1,7 @@
-import { useEns } from '@app/utils/EnsProvider'
 import { useQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect, useRef, useState } from 'react'
+
+import { useEns } from '@app/utils/EnsProvider'
 
 export type Subname = {
   id: string

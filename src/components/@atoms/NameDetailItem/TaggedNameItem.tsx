@@ -1,7 +1,10 @@
-import { ReturnedName } from '@app/hooks/useNamesFromAddress'
-import { mq, Tag } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Tag, mq } from '@ensdomains/thorin'
+
+import { ReturnedName } from '@app/hooks/useNamesFromAddress'
+
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { NameDetailItem } from './NameDetailItem'
 

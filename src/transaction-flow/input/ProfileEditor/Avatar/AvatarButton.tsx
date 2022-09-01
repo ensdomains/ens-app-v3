@@ -1,10 +1,12 @@
-import CameraIcon from '@app/assets/Camera.svg'
-import { ProfileEditorType } from '@app/types'
-import { Avatar, Dropdown } from '@ensdomains/thorin'
 import { useRef } from 'react'
 import { UseFormSetValue } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Avatar, Dropdown } from '@ensdomains/thorin'
+
+import CameraIcon from '@app/assets/Camera.svg'
+import { ProfileEditorType } from '@app/types'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`

@@ -1,6 +1,7 @@
-import { waitFor, mockFunction } from '@app/test-utils'
-import validateResolver, { KnownResolveAddresses } from './validateResolver'
+import { mockFunction, waitFor } from '@app/test-utils'
+
 import validateContract, { CONTRACT_INTERFACES } from './validateContract'
+import validateResolver, { KnownResolveAddresses } from './validateResolver'
 
 jest.mock('@app/validators/validateContract')
 

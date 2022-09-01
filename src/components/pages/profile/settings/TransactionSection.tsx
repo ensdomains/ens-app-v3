@@ -1,11 +1,14 @@
-import { useChainName } from '@app/hooks/useChainName'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { makeEtherscanLink } from '@app/utils/utils'
-import { Button, Spinner, Typography } from '@ensdomains/thorin'
 import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, Spinner, Typography } from '@ensdomains/thorin'
+
+import { useChainName } from '@app/hooks/useChainName'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { makeEtherscanLink } from '@app/utils/utils'
+
 import { Card } from '../../../Card'
 import { Outlink } from '../../../Outlink'
 import { SectionContainer } from './Section'

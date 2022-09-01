@@ -1,6 +1,8 @@
-import { Button } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import { useDisconnect } from 'wagmi'
+
+import { Button } from '@ensdomains/thorin'
+
 import { SectionContainer } from './Section'
 
 export const WalletSection = () => {

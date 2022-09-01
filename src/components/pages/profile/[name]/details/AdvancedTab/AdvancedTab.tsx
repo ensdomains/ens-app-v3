@@ -5,8 +5,8 @@ import styled from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { RecordItem } from '@app/components/RecordItem'
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { useBasicName } from '@app/hooks/useBasicName'
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
 import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'

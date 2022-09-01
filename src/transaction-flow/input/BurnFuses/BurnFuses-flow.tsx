@@ -1,20 +1,19 @@
-import type { NamedFusesToBurn } from '@ensdomains/ensjs'
-
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
-import { useEffect, useState, Dispatch } from 'react'
 import isEqual from 'lodash/isEqual'
+import { useRouter } from 'next/router'
+import { Dispatch, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
-import { Typography, Button, FlameSVG, FlameBurnedSVG, Helper } from '@ensdomains/thorin'
+import type { NamedFusesToBurn } from '@ensdomains/ensjs'
+import { Button, FlameBurnedSVG, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
 
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { useGetFuseData } from '@app/hooks/useGetFuseData'
 import mq from '@app/mediaQuery'
 import { FuseObj } from '@app/types'
 
-import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
 import { makeTransactionItem } from '../../transaction'
+import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
 
 export const defaultFuseObj = {
   CANNOT_UNWRAP: false,

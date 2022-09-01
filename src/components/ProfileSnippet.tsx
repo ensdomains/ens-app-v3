@@ -1,10 +1,13 @@
-import TripleDot from '@app/assets/TripleDot.svg'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Avatar, Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
+
+import TripleDot from '@app/assets/TripleDot.svg'
+import { useAvatar } from '@app/hooks/useAvatar'
+import { useZorb } from '@app/hooks/useZorb'
+
 import { DisabledButton } from './@atoms/DisabledButton'
 
 const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(

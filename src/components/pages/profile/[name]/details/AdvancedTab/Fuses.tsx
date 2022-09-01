@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography, Helper } from '@ensdomains/thorin'
+import { Helper, Typography } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'

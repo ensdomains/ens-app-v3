@@ -1,8 +1,11 @@
-import { useChainName } from '@app/hooks/useChainName'
 import { mockFunction, render, screen } from '@app/test-utils'
+
 import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import type { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
 import { act } from '@testing-library/react'
+
+import { useChainName } from '@app/hooks/useChainName'
+
 import { TransactionSection } from './TransactionSection'
 
 jest.mock('@app/hooks/useChainName')

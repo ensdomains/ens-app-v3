@@ -1,4 +1,5 @@
-import { fireEvent, render, screen, mockFunction } from '@app/test-utils'
+import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
+
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import Accordion, { AccordionData } from './Accordion'

@@ -1,17 +1,20 @@
 /* eslint-disable no-param-reassign */
-import { Spacer } from '@app/components/@atoms/Spacer'
-import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
-import { Outlink } from '@app/components/Outlink'
-import { useProfile } from '@app/hooks/useProfile'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
-import { Button, Dialog, Input, mq, RadioButton } from '@ensdomains/thorin'
 import { ethers } from 'ethers'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useProvider, useQuery } from 'wagmi'
+
+import { Button, Dialog, Input, RadioButton, mq } from '@ensdomains/thorin'
+
+import { Spacer } from '@app/components/@atoms/Spacer'
+import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
+import { Outlink } from '@app/components/Outlink'
+import { useProfile } from '@app/hooks/useProfile'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { RESOLVER_ADDRESSES, RESOLVER_INTERFACE_IDS } from '@app/utils/constants'
+
 import { makeTransactionItem } from '../transaction'
 
 const supportsInterfaceAbi = [

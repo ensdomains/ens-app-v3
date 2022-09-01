@@ -1,6 +1,9 @@
-import { useCopied } from '@app/hooks/useCopied'
-import { Button } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+
+import { Button } from '@ensdomains/thorin'
+
+import { useCopied } from '@app/hooks/useCopied'
+
 import { IconCopyAnimated } from './IconCopyAnimated'
 
 const Container = styled.div(

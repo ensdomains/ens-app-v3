@@ -1,12 +1,14 @@
+import { useMemo } from 'react'
+import { TFunction, useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
-import { Typography } from '@ensdomains/thorin'
-import { useMemo } from 'react'
-import { TFunction, useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const Container = styled.div(
   ({ theme }) => css`
