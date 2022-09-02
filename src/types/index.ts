@@ -34,3 +34,9 @@ export type ProfileEditorType = {
   }
 }
 export type PublicENS = PublicInterface<ENS>
+
+export type ReturnedENS = { [key in keyof PublicENS]: Awaited<ReturnType<PublicENS[key]>> }
+
+export type CurrencyUnit = 'eth' | 'fiat'
+export type FiatUnit = 'usd'
+export type CurrencyDisplay = 'eth' | FiatUnit

@@ -1,0 +1,4 @@
+[
+  "event DNSZonehashChanged(bytes32 indexed,bytes,bytes)",
+  "function zonehash(bytes32) view returns (bytes)"
+]

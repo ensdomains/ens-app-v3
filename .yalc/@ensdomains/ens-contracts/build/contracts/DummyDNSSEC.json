@@ -1,0 +1,4 @@
+[
+  "function rrdata(uint16,bytes) view returns (uint32, uint64, bytes20)",
+  "function setData(uint16,bytes,uint32,uint64,bytes)"
+]

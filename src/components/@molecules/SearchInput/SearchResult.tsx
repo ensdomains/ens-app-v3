@@ -2,15 +2,16 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useAvatar } from '@app/hooks/useAvatar'
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
-import { RegistrationStatus, useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
 import { useZorb } from '@app/hooks/useZorb'
+import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
 import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 import { useCallback, useEffect, useMemo, useRef } from 'react'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 
 const SearchItem = styled.div<{
   $selected?: boolean
@@ -250,7 +251,7 @@ const NameResultItem = ({ name }: { name: string }) => {
   const network = useChainId()
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
-  const { data: status } = useRegistrationStatus(name)
+  const { registrationStatus } = useBasicName(name)
 
   return (
     <>
@@ -262,8 +263,8 @@ const NameResultItem = ({ name }: { name: string }) => {
           <Typography weight="bold">{name}</Typography>
         </TextWrapper>
       </LeadingSearchItem>
-      {status ? (
-        <StatusTag status={status} />
+      {registrationStatus ? (
+        <StatusTag status={registrationStatus} />
       ) : (
         <SpinnerWrapper>
           <Spinner color="accent" />

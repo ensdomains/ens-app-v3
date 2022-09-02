@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { useQuery } from 'wagmi'
 import { useBasicName } from './useBasicName'
 import { useProfile } from './useProfile'
-import { useRegistrationStatus } from './useRegistrationStatus'
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
@@ -15,6 +14,7 @@ export const useNameDetails = (name: string) => {
     normalisedName,
     isLoading: basicLoading,
     isCachedData: basicIsCachedData,
+    registrationStatus,
     ...basicName
   } = useBasicName(name)
 
@@ -35,12 +35,6 @@ export const useNameDetails = (name: string) => {
   })
   const dnsOwnerIsCachedData =
     dnsOwnerStatus === 'success' && dnsOwnerIsFetched && !dnsOwnerIsFetchedAfterMount
-
-  const {
-    data: registrationStatus,
-    isLoading: registrationStatusLoading,
-    isCachedData: registrationStatusIsCachedData,
-  } = useRegistrationStatus(normalisedName)
 
   const error: string | ReactNode | null = useMemo(() => {
     if (valid === false) {
@@ -86,7 +80,7 @@ export const useNameDetails = (name: string) => {
     return null
   }, [normalisedName, profile, profileLoading, ready, registrationStatus, status, t, valid])
 
-  const isLoading = !ready || profileLoading || basicLoading || registrationStatusLoading
+  const isLoading = !ready || profileLoading || basicLoading
 
   return {
     error,
@@ -96,8 +90,8 @@ export const useNameDetails = (name: string) => {
     isLoading,
     dnsOwner,
     basicIsCachedData: basicIsCachedData || dnsOwnerIsCachedData,
-    registrationStatusIsCachedData,
     profileIsCachedData,
+    registrationStatus,
     ...basicName,
   }
 }

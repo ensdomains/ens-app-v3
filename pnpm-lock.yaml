@@ -20,7 +20,7 @@ specifiers:
   '@cloudflare/wrangler': ^1.19.12
   '@ensdomains/address-encoder': ^0.2.16
   '@ensdomains/buffer': ^0.1.0
-  '@ensdomains/ens-contracts': ^0.0.12
+  '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts
   '@ensdomains/ens-test-env': ^0.2.2
   '@ensdomains/ens-validation': ^0.1.0
   '@ensdomains/ensjs': 3.0.0-alpha.16
@@ -125,7 +125,7 @@ specifiers:
 
 dependencies:
   '@ensdomains/address-encoder': 0.2.17
-  '@ensdomains/ens-contracts': 0.0.12_hardhat@2.9.3
+  '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts_hardhat@2.9.3
   '@ensdomains/ens-validation': 0.1.0
   '@ensdomains/ensjs': 3.0.0-alpha.16_ethers@5.6.9
   '@ensdomains/eth-ens-namehash': 2.0.15
@@ -1940,26 +1940,6 @@ packages:
       js-base64: 3.7.2
       multicodec: 3.2.1
       multihashes: 2.0.0
-    dev: false
-
-  /@ensdomains/ens-contracts/0.0.12_hardhat@2.9.3:
-    resolution: {integrity: sha512-s6CCX/IsEF9R+dHb1vNLDPUAes07zvQFBIavXBest6Li8z1KFuFS+C+AlSA16SYtZ3LQieIBshzJgygYPM9Zog==}
-    dependencies:
-      '@ensdomains/buffer': 0.0.13_hardhat@2.9.3
-      '@ensdomains/solsha1': 0.0.3
-      '@openzeppelin/contracts': 4.5.0
-      dns-packet: 5.4.0
-    transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
-      - bufferutil
-      - hardhat
-      - supports-color
-      - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
     dev: false
 
   /@ensdomains/ens-test-env/0.2.2:
@@ -20526,6 +20506,29 @@ packages:
       immer: 9.0.15
       react: 17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
+    dev: false
+
+  file:.yalc/@ensdomains/ens-contracts_hardhat@2.9.3:
+    resolution: {directory: .yalc/@ensdomains/ens-contracts, type: directory}
+    id: file:.yalc/@ensdomains/ens-contracts
+    name: '@ensdomains/ens-contracts'
+    version: 0.0.9
+    dependencies:
+      '@ensdomains/buffer': 0.0.13_hardhat@2.9.3
+      '@ensdomains/solsha1': 0.0.3
+      '@openzeppelin/contracts': 4.5.0
+      dns-packet: 5.4.0
+    transitivePeerDependencies:
+      - '@nomiclabs/hardhat-web3'
+      - bufferutil
+      - hardhat
+      - supports-color
+      - utf-8-validate
+      - web3
+      - web3-core-helpers
+      - web3-core-promievent
+      - web3-eth-abi
+      - web3-utils
     dev: false
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:

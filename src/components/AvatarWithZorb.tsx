@@ -8,6 +8,9 @@ const Wrapper = styled.div<{ $size?: Space }>(
   ({ theme, $size }) => css`
     width: ${$size ? theme.space[$size] : theme.space.full};
     height: ${$size ? theme.space[$size] : theme.space.full};
+    img {
+      display: block;
+    }
   `,
 )
 

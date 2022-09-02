@@ -1,0 +1,6 @@
+[
+  "constructor()",
+  "function addr(bytes32) view returns (address)",
+  "function setAddr(bytes32,address)",
+  "function supportsInterface(bytes4) pure returns (bool)"
+]

@@ -20,7 +20,8 @@ const getEllipsis = (str: string) => {
 const getFontSize = (str: string) => {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')!
-  ctx.font = '20px Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
+  ctx.font =
+    '20px/34px normal Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
   const fontMetrics = ctx.measureText(str)
   const fontSize = Math.floor(20 * (200 / fontMetrics.width))
   return fontSize < 34 ? fontSize : 32
@@ -111,7 +112,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
   }
 
   return (
-    <svg viewBox="0 0 270 270" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <svg viewBox="0 0 270 270" display="block" fill="none" xmlns="http://www.w3.org/2000/svg">
       {background}
       <defs>
         <filter

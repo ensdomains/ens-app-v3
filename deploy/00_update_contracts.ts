@@ -1,7 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { ethers } from 'hardhat'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { getNamedAccounts } = hre
@@ -9,9 +9,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   const dummyOracale = await ethers.getContract('DummyOracle')
   const _dummyOracale = dummyOracale.connect(await ethers.getSigner(deployer))
-  const txHash = await _dummyOracale['set(int256)'](160000000000)
+  const txHash = await _dummyOracale['set(int256)']('156058000000')
 
-  console.log(`Setting dummy oracle to 160000000000 (tx: ${txHash.hash})...`)
+  console.log(`Setting dummy oracle to 156058000000 (tx: ${txHash.hash})...`)
   return true
 }
 

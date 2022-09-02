@@ -1,0 +1,15 @@
+[
+  "constructor(address,address,address)",
+  "event Claim(bytes32 indexed,address indexed,bytes)",
+  "event NewOracle(address)",
+  "event NewPublicSuffixList(address)",
+  "function claim(bytes,bytes)",
+  "function ens() view returns (address)",
+  "function oracle() view returns (address)",
+  "function proveAndClaim(bytes,tuple(bytes,bytes)[],bytes)",
+  "function proveAndClaimWithResolver(bytes,tuple(bytes,bytes)[],bytes,address,address)",
+  "function setOracle(address)",
+  "function setPublicSuffixList(address)",
+  "function suffixes() view returns (address)",
+  "function supportsInterface(bytes4) pure returns (bool)"
+]

@@ -1,4 +1,5 @@
-import { useEffect, useState } from 'react'
+import { CurrencyUnit, FiatUnit } from '@app/types'
+import { MouseEventHandler, useRef } from 'react'
 import styled, { css } from 'styled-components'
 
 const Container = styled.div(
@@ -38,27 +39,23 @@ const Label = styled.div<{ $active: boolean }>(
     align-items: center;
     justify-content: center;
     vertical-align: middle;
+    cursor: pointer;
   `,
 )
 
 type Props = {
-  value?: 'usd' | 'eth'
-  onChange?: (value: 'eth' | 'usd') => void
+  value?: CurrencyUnit
+  fiat?: FiatUnit
+  onChange: (value: CurrencyUnit) => void
 }
 
-export const CurrencySwitch = ({ value: _value, onChange }: Props) => {
-  const [value, setValue] = useState<Props['value']>(_value || 'eth')
-  useEffect(() => {
-    if (_value && _value !== value) {
-      setValue(_value)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_value])
+export const CurrencySwitch = ({ value, onChange, fiat = 'usd' }: Props) => {
+  const leftRef = useRef<HTMLDivElement>(null)
+  const rightRef = useRef<HTMLDivElement>(null)
 
-  const toggleHandler = () => {
-    const newValue = value === 'eth' ? 'usd' : 'eth'
-    setValue(newValue)
-    onChange?.(newValue)
+  const toggleHandler: MouseEventHandler<HTMLDivElement> = (e) => {
+    const newValue = e.target === leftRef.current ? 'eth' : 'fiat'
+    onChange(newValue)
   }
 
   const side = value === 'eth' ? 'left' : 'right'
@@ -66,8 +63,12 @@ export const CurrencySwitch = ({ value: _value, onChange }: Props) => {
   return (
     <Container onClick={toggleHandler}>
       <Slider $side={side} data-testid="currency-switch" />
-      <Label $active={value === 'eth'}>ETH</Label>
-      <Label $active={value === 'usd'}>USD</Label>
+      <Label ref={leftRef} $active={value === 'eth'}>
+        ETH
+      </Label>
+      <Label ref={rightRef} $active={value === 'fiat'}>
+        {fiat.toUpperCase()}
+      </Label>
     </Container>
   )
 }

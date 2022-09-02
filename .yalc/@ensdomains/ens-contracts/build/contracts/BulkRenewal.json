@@ -1,0 +1,7 @@
+[
+  "constructor(address)",
+  "function ens() view returns (address)",
+  "function renewAll(string[],uint256) payable",
+  "function rentPrice(string[],uint256) view returns (uint256)",
+  "function supportsInterface(bytes4) pure returns (bool)"
+]

@@ -1,5 +1,6 @@
-import styled, { css } from 'styled-components'
+import { CurrencyDisplay } from '@app/types'
 import { BigNumber } from 'ethers'
+import styled, { css } from 'styled-components'
 import { CurrencyText } from '../CurrencyText/CurrencyText'
 
 const Container = styled.div(
@@ -9,7 +10,7 @@ const Container = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['2']};
-    width: 90vw;
+    width: 100%;
     border-radius: ${theme.space['2']};
   `,
 )
@@ -37,7 +38,7 @@ type InvoiceItem = {
 type Props = {
   items: InvoiceItem[]
   totalLabel: string
-  unit?: 'eth' | 'usd'
+  unit?: CurrencyDisplay
 }
 
 export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }: Props) => {

@@ -1,338 +1,150 @@
-import styled, { css } from 'styled-components'
-import { InfoSVG } from '@ensdomains/thorin'
-import mq from '@app/mediaQuery'
+import { Helper, mq } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
-import { useTranslation } from 'react-i18next'
-import { useRef, useEffect, useState } from 'react'
-import { formatUnits } from 'ethers/lib/utils'
+import styled, { css } from 'styled-components'
 
-const Container = styled.div(
+const InnerContainer = styled.div(
   ({ theme }) => css`
-    width: 100%;
-    border: 1px solid ${theme.colors.accent};
-    background: ${theme.colors.accentSecondary};
-    padding: ${theme.space['4']};
-    border-radius: ${theme.space['2']};
+    position: relative;
+
     display: flex;
     flex-direction: column;
-    gap: ${theme.space['2']};
-    align-items: center;
-  `,
-)
-
-const IconWrapper = styled.div(
-  ({ theme }) => css`
-    svg {
-      width: ${theme.space['6']};
-      height: ${theme.space['6']};
-      path {
-        fill: ${theme.colors.accent};
-      }
-    }
-  `,
-)
-
-const Message = styled.div(
-  ({ theme }) => css`
-    line-height: ${theme.space['5']};
-    font-weight: ${theme.fontWeights.light};
-    color: ${theme.colors.text};
-    text-align: center;
-  `,
-)
-
-const ChartContainer = styled.div(
-  () => css`
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  `,
-)
-
-const ChartTop = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    position: relative;
-    height: ${theme.space['6']};
-  `,
-)
-
-const BarChart = styled.div<{
-  $flex: number
-  $highlight?: boolean
-}>(
-  ({ theme, $flex, $highlight }) => css`
-    flex: ${$flex};
-    background: ${$highlight ? theme.colors.accent : theme.colors.red};
-    height: ${theme.space['4']};
-    border-radius: ${theme.space['0.5']};
-    margin-top: ${theme.space['1']};
-  `,
-)
-
-const MarkerOverlay = styled.div(
-  () => css`
-    position: relative;
-    width: 100%;
-    display: flex;
-  `,
-)
-
-const ChartMarkerContainer = styled.div(
-  () => css`
-    position: relative;
-    width: 0;
-  `,
-)
-
-const ChartTickBackground = styled.div(
-  ({ theme }) => css`
-    position: relative;
-    background: rgb(229, 240, 255);
-    width: ${theme.space['2']};
-    height: ${theme.space['6']};
-    border-top-left-radius: ${theme.space['0.5']};
-    border-top-right-radius: ${theme.space['0.5']};
-    transform: translateX(-50%);
-    display: flex;
+    align-items: stretch;
     justify-content: center;
+    gap: ${theme.space['4']};
   `,
 )
 
-const ChartTick = styled.div<{ $highlight?: boolean }>(
-  ({ theme, $highlight }) => css`
-    position: relative;
-    background: ${$highlight ? theme.colors.accent : theme.colors.white};
-    width: ${theme.space['1']};
-    height: ${theme.space['6']};
-    border-top-left-radius: ${theme.space['0.5']};
-    border-top-right-radius: ${theme.space['0.5']};
+const calcPercent = (percent: number, order: number) => {
+  const padding = 10
+  const orderPercent = (1 / 3) * order
+  const minimumBarrier = Math.max(100 * ((1 / 3) * (order - 1)) + padding, padding)
+  const maximumBarrier = Math.min(100 * orderPercent - padding, 100 - padding)
+  return Math.min(Math.max((100 - percent * 0.9) * orderPercent, minimumBarrier), maximumBarrier)
+}
+
+const Bar = styled.div<{ $highlightPercent: number }>(
+  ({ theme, $highlightPercent }) => css`
+    --bar-width: calc(${$highlightPercent}% - ${theme.space['1']});
+    background: linear-gradient(
+      90deg,
+      ${theme.colors.blue} var(--bar-width),
+      ${theme.colors.red} var(--bar-width)
+    );
+    width: 100%;
+    height: ${theme.space['4']};
+    border-radius: ${theme.radii.medium};
+    margin-bottom: ${theme.space['11']};
   `,
 )
 
-const ChartTag = styled.div<{ $highlight?: boolean }>(({ theme, $highlight }) => [
-  css`
+const Marker = styled.div<{ $percent: number }>(
+  ({ theme, $percent }) => css`
     position: absolute;
-    top: 100%;
-    left: ${theme.space['0.5']};
-    background: ${$highlight ? theme.colors.accent : theme.colors.white};
-    padding: ${theme.space['1']} ${theme.space['2']};
+    transform-style: preserve-3d;
+    bottom: 0;
+    left: ${$percent}%;
     transform: translateX(-50%);
-    height: ${theme.space['10']};
-    line-height: ${theme.space['4']};
-    font-size: ${theme.space['3']};
-    border-radius: ${theme.space['1']};
-    color: ${$highlight ? theme.colors.white : theme.colors.text};
-    > div {
-      white-space: nowrap;
-      text-align: center;
-    }
-    > div:first-child {
-      font-weight: ${theme.fontWeights.bold};
-    }
-  `,
-  mq.sm.min(css`
-    padding: ${theme.space['1']} ${theme.space['2']};
-  `),
-])
 
-type ChartMarkerProps = {
-  highlight: boolean
-  duration: number
-  gasPercentage: number
-  shorten: boolean
-}
-
-const ChartMarker = ({ highlight, duration, gasPercentage, shorten }: ChartMarkerProps) => {
-  const { t } = useTranslation('common')
-
-  return (
-    <ChartMarkerContainer>
-      <ChartTickBackground>
-        <ChartTick $highlight={highlight}>
-          <ChartTag $highlight={highlight}>
-            <div>
-              {shorten ? t('unit.yrs', { count: duration }) : t('unit.years', { count: duration })}
-            </div>
-            <div>
-              {shorten ? `${gasPercentage}%` : t('unit.gas', { value: `${gasPercentage}%` })}
-            </div>
-          </ChartTag>
-        </ChartTick>
-      </ChartTickBackground>
-    </ChartMarkerContainer>
-  )
-}
-
-const ChartBottom = styled.div(
-  ({ theme }) => css`
     display: flex;
-    justify-content: flex-end;
-    gap: ${theme.space['1']};
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    width: ${theme.space['16']};
     height: ${theme.space['10']};
+    padding: 0 ${theme.space['2']};
+
+    border-radius: ${theme.radii.medium};
+    background-color: ${theme.colors.background};
+    &:last-of-type {
+      background-color: ${theme.colors.blue};
+      color: ${theme.colors.background};
+    }
+
+    font-size: ${theme.space['3']};
+    line-height: ${theme.lineHeights['1.25']};
+
+    b {
+      display: block;
+      white-space: nowrap;
+    }
+
+    :not(b) {
+      white-space: nowrap;
+    }
+
+    ${mq.xs.min(css`
+      width: ${theme.space['18']};
+      font-size: ${theme.fontSizes.label};
+    `)}
+    &::before {
+      content: '';
+
+      position: absolute;
+      transform: translateZ(-1px);
+      bottom: ${theme.space['9']};
+
+      height: ${theme.space['7']};
+      width: ${theme.space['1']};
+
+      outline: ${theme.space['0.5']} solid ${theme.colors.lightBlue};
+
+      border-radius: ${theme.radii.medium};
+      background-color: inherit;
+    }
   `,
 )
-
-const getYearForGasPercentage = (
-  transactionFee: BigNumber,
-  rentFee: BigNumber,
-  gasPercentage: number,
-): number => {
-  // years = (1 - gas%) * transactionFee / (rentFee * gas%)
-  return transactionFee
-    .mul(100 - gasPercentage)
-    .div(rentFee)
-    .div(gasPercentage)
-    .toNumber()
-}
-
-const getGasPercentage = (transactionFee: BigNumber, rentFee: BigNumber, years: number): number => {
-  // gas% = transactionFee / (transactionFee + rentFee * years)
-  const denominator = rentFee.mul(years).add(transactionFee)
-  return transactionFee.mul(100).div(denominator).toNumber()
-}
-
-type Marker = {
-  type: 'marker'
-  key: string
-  highlight: boolean
-  shorten: boolean
-  duration: number
-  gasPercentage: number
-}
-
-type Flex = {
-  type: 'flex'
-  key: string
-  value: number
-  highlight: boolean
-}
 
 type Props = {
   rentFee: BigNumber
   transactionFee: BigNumber
-  gasPrice: BigNumber
   message?: string
 }
 
-export const RegistrationTimeComparisonBanner = ({
-  message,
-  gasPrice,
-  rentFee,
-  transactionFee,
-}: Props) => {
-  const containerRef = useRef<HTMLDivElement>(null)
+const unit = 1e12
 
-  const [shortenMarkers, setShortenMarkers] = useState(false)
-  const [shortenTags, setShortenTags] = useState(false)
-  useEffect(() => {
-    const handleResize = () => {
-      const gp = parseInt(formatUnits(gasPrice, 'gwei'))
+const yearsToGasPercent = (targetYears: number, f: BigNumber, y: BigNumber) => {
+  const gasPercent = f.mul(unit).div(y.mul(targetYears).add(f))
+  return Math.round((gasPercent.toNumber() / unit) * 100)
+}
 
-      if (containerRef.current?.clientWidth && !Number.isNaN(gp)) {
-        const width = containerRef.current.clientWidth
-        if (gp >= 25) {
-          setShortenMarkers(false)
-          setShortenTags(width < 440)
-        } else if (gp >= 20) {
-          setShortenMarkers(width < 376)
-          setShortenTags(width < 480)
-        } else if (gp >= 15) {
-          setShortenMarkers(width < 410)
-          setShortenTags(width < 520)
-        } else {
-          setShortenMarkers(true)
-          setShortenTags(width < 400)
-        }
-      }
-    }
-    handleResize()
-    window.addEventListener('resize', handleResize)
-    return () => {
-      window.removeEventListener('resize', handleResize)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+const gasPercentToYears = (targetPercent: number, f: BigNumber, y: BigNumber, min: number) => {
+  const fp = f.div(100)
+  const yp = y.div(100)
+  const p = BigNumber.from(targetPercent)
+  const top = f.sub(fp.mul(p)).mul(unit)
+  const bottom = yp.mul(p)
+  const years = top.div(bottom).div(unit).toNumber()
+  const rounded = Math.max(Math.round(years), min)
+  const gasPercent = yearsToGasPercent(rounded, f, y)
+  return { gas: gasPercent, years: rounded }
+}
 
-  const markersAndFlex = (
-    shortenMarkers ? [1, getYearForGasPercentage(transactionFee, rentFee, 10)] : [1, 5, 15]
-  )
-    .map(
-      (duration, index) =>
-        ({
-          type: 'marker',
-          key: `marker-${index}`,
-          duration,
-          gasPercentage: getGasPercentage(transactionFee, rentFee, duration),
-          highlight: false,
-          shorten: shortenTags,
-        } as Marker),
-    )
-    .map((marker, index, markers) => {
-      const set = []
-      const gasPct = marker.gasPercentage
-      if (index === 0)
-        set.push({
-          type: 'flex',
-          key: `flex-start`,
-          value: 100 - gasPct,
-          highlight: true,
-        } as Flex)
-      else
-        set.push({
-          type: 'flex',
-          key: `flex-${index}`,
-          position: 'middle',
-          value: markers[index - 1].gasPercentage - gasPct,
-          highlight: true,
-        } as Flex)
-      if (index === markers.length - 1) {
-        set.push({
-          ...marker,
-          highlight: true,
-        })
-        set.push({
-          type: 'flex',
-          key: 'flex-end',
-          position: 'end',
-          value: gasPct,
-          highlight: false,
-        } as Flex)
-      } else {
-        set.push(marker)
-      }
-      return set
-    })
-    .flat()
+export const RegistrationTimeComparisonBanner = ({ message, rentFee, transactionFee }: Props) => {
+  const oneYearGasPercent = yearsToGasPercent(1, transactionFee, rentFee)
+  const forty = gasPercentToYears(40, transactionFee, rentFee, 2)
+  const twenty = gasPercentToYears(20, transactionFee, rentFee, 5)
+
+  const twentyRounded = calcPercent(twenty.gas, 3)
 
   return (
-    <Container ref={containerRef}>
-      <IconWrapper>
-        <InfoSVG />
-      </IconWrapper>
-      {message && <Message>{message}</Message>}
-      <ChartContainer>
-        <ChartTop>
-          <MarkerOverlay>
-            {markersAndFlex.map((item) => {
-              if (item.type === 'flex')
-                return <BarChart key={item.key} $flex={item.value} $highlight={item.highlight} />
-              if (item.type === 'marker')
-                return (
-                  <ChartMarker
-                    key={item.key}
-                    duration={item.duration}
-                    gasPercentage={item.gasPercentage}
-                    highlight={item.highlight}
-                    shorten={item.shorten}
-                  />
-                )
-              return null
-            })}
-          </MarkerOverlay>
-        </ChartTop>
-        <ChartBottom />
-      </ChartContainer>
-    </Container>
+    <Helper type="info">
+      <InnerContainer>
+        <div>{message}</div>
+        <Bar $highlightPercent={twentyRounded} />
+        <Marker $percent={calcPercent(oneYearGasPercent, 1)}>
+          <b>1 year</b>
+          {oneYearGasPercent}% gas
+        </Marker>
+        <Marker $percent={calcPercent(forty.gas, 2)}>
+          <b>{forty.years} years</b>
+          {forty.gas}% gas
+        </Marker>
+        <Marker $percent={twentyRounded}>
+          <b>{twenty.years} years</b>
+          {twenty.gas}% gas
+        </Marker>
+      </InnerContainer>
+    </Helper>
   )
 }

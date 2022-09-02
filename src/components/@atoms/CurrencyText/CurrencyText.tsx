@@ -1,23 +1,20 @@
-import { BigNumber } from 'ethers'
 import { useEthPrice } from '@app/hooks/useEthPrice'
-import { formatUnits } from 'ethers/lib/utils'
+import { CurrencyDisplay } from '@app/types'
+import { makeDisplay } from '@app/utils/currency'
+import { BigNumber } from 'ethers'
 
 type Props = {
   eth?: BigNumber
-  currency: 'eth' | 'usd'
+  currency: CurrencyDisplay
 }
 
 export const CurrencyText = ({ eth, currency = 'eth' }: Props) => {
   const { data: ethPrice, loading } = useEthPrice()
 
   if (loading || !eth || !ethPrice) return null
-  return (
-    <>
-      {currency === 'eth'
-        ? `${formatUnits(eth, 'ether').replace(/^(\d+\.\d{5})\d*/, '$1')} ETH`
-        : `$${formatUnits(eth.mul(ethPrice), 'ether')
-            .replace(/^(\d+\.\d{2})\d*/, '$1')
-            .replace(/^(\d+\.\d)$/, '$10')}`}
-    </>
-  )
+
+  if (currency === 'eth') {
+    return <>{makeDisplay(eth, 5, 'eth')}</>
+  }
+  return <>{makeDisplay(eth.mul(ethPrice), 2, '$')}</>
 }

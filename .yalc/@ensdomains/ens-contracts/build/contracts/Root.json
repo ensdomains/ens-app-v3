@@ -1,0 +1,17 @@
+[
+  "constructor(address)",
+  "event ControllerChanged(address indexed,bool)",
+  "event OwnershipTransferred(address indexed,address indexed)",
+  "event TLDLocked(bytes32 indexed)",
+  "function controllers(address) view returns (bool)",
+  "function ens() view returns (address)",
+  "function lock(bytes32)",
+  "function locked(bytes32) view returns (bool)",
+  "function owner() view returns (address)",
+  "function renounceOwnership()",
+  "function setController(address,bool)",
+  "function setResolver(address)",
+  "function setSubnodeOwner(bytes32,address)",
+  "function supportsInterface(bytes4) pure returns (bool)",
+  "function transferOwnership(address)"
+]

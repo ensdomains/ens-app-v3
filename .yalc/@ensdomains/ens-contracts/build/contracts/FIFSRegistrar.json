@@ -1,0 +1,4 @@
+[
+  "constructor(address,bytes32)",
+  "function register(bytes32,address)"
+]
