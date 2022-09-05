@@ -12,7 +12,7 @@ type Data = {
 const displayItems = (
   { parent, label }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem<'name'>[] => [
+): TransactionDisplayItem[] => [
   {
     label: 'action',
     value: t(`transaction.description.createSubname`),

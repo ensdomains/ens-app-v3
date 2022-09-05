@@ -13,7 +13,7 @@ type Data = {
 const displayItems = (
   { resolver, oldResolver }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem<'address'>[] => [
+): TransactionDisplayItem[] => [
   {
     label: 'action',
     value: t(`transaction.description.updateResolver`),

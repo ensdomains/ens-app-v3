@@ -125,7 +125,7 @@ export type ManagedDialogProps = {
   completeBtnLabel?: string
   completeTitle?: string
   actionName: string
-  displayItems: TransactionDisplayItem<TransactionDisplayItemTypes>[]
+  displayItems: TransactionDisplayItem[]
 }
 
 export type ManagedDialogPropsTwo = {
@@ -136,6 +136,6 @@ export type ManagedDialogPropsTwo = {
   txKey: string | null
   currentStep: number
   stepCount: number
-  displayItems: TransactionDisplayItem<'name' | 'address' | 'list'>[]
+  displayItems: TransactionDisplayItem[]
   backToInput: boolean
 }

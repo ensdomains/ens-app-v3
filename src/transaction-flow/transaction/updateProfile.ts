@@ -10,7 +10,7 @@ type Data = {
   records: RecordOptions
 }
 
-const displayItems = ({ name }: Data): TransactionDisplayItem<'name'>[] => [
+const displayItems = ({ name }: Data): TransactionDisplayItem[] => [
   {
     label: 'name',
     value: name,

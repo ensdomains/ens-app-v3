@@ -7,7 +7,7 @@ import { Typography } from '@ensdomains/thorin'
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
-import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
+import { TransactionDisplayItem } from '@app/types'
 import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled.div(
@@ -166,10 +166,8 @@ const ListValue = ({ value }: { value: string[] }) => {
   )
 }
 
-const DisplayItemValue = (
-  props: Omit<TransactionDisplayItem<TransactionDisplayItemTypes>, 'label'>,
-) => {
-  const { value, type } = props as TransactionDisplayItem<typeof props.type>
+const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
+  const { value, type } = props as TransactionDisplayItem
   if (type === 'address') {
     return <AddressValue value={value} />
   }
@@ -190,7 +188,7 @@ export const DisplayItem = ({
   fade,
   useRawLabel,
   t,
-}: TransactionDisplayItem<TransactionDisplayItemTypes> & { t: TFunction }) => {
+}: TransactionDisplayItem & { t: TFunction }) => {
   return (
     <DisplayItemContainer
       data-testid={`display-item-${label}-${fade ? 'fade' : 'normal'}`}
@@ -206,11 +204,7 @@ export const DisplayItem = ({
   )
 }
 
-export const DisplayItems = ({
-  displayItems,
-}: {
-  displayItems: TransactionDisplayItem<TransactionDisplayItemTypes>[]
-}) => {
+export const DisplayItems = ({ displayItems }: { displayItems: TransactionDisplayItem[] }) => {
   const { t } = useTranslation()
 
   if (!displayItems || !displayItems.length) return null

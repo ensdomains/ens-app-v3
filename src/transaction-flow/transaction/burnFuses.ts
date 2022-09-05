@@ -14,7 +14,7 @@ type Data = {
 const displayItems = (
   { name, permissions }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem<'name' | 'list'>[] => [
+): TransactionDisplayItem[] => [
   {
     label: 'name',
     value: name,

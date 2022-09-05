@@ -17,7 +17,7 @@ describe('Settings', () => {
       cy.visit('/my/settings')
     })
     it('should show the correct transaction details for a transaction modal', () => {
-      cy.contains('Test Send Name').click({ force: true })
+      cy.contains('Test Send Name').click()
       cy.findByTestId('display-item-action-normal').should('contain.text', 'Send Name')
       cy.findByTestId('display-item-info-normal').should(
         'contain.text',

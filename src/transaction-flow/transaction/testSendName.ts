@@ -10,7 +10,7 @@ const displayItems = (
   // eslint-disable-next-line no-empty-pattern
   {}: any,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem<'name' | 'address'>[] => [
+): TransactionDisplayItem[] => [
   {
     label: 'action',
     value: t(`transaction.description.testSendName`),

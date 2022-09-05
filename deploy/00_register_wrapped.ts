@@ -1,9 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 /* eslint-disable no-await-in-loop */
+import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { namehash } from 'ethers/lib/utils'
 
 const names = [
   {
@@ -67,7 +68,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         value: price,
       },
     )
-    console.log(`Registering namename ${label}.eth (tx: ${registerTx.hash})...`)
+    console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
     await registerTx.wait()
 
     const nameWrapper = await ethers.getContract('NameWrapper')
@@ -75,19 +76,15 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const { deployer } = await getNamedAccounts()
 
     // Register subname
-    try {
-      const subnameTx = await _nameWrapper.setSubnodeOwner(
-        namehash(`${label}.eth`),
-        'sub',
-        deployer,
-        1860342907,
-        0,
-      )
-      await subnameTx.wait()
-      console.log(`Registering subname sub.${label}.eth (tx: ${subnameTx.hash})...`)
-    } catch (e) {
-      console.log('sanity Error registering subname', e)
-    }
+    const subnameTx = await _nameWrapper.setSubnodeOwner(
+      namehash(`${label}.eth`),
+      'sub',
+      deployer,
+      1860342907,
+      0,
+    )
+    await subnameTx.wait()
+    console.log(`Registering subname sub.${label}.eth (tx: ${subnameTx.hash})...`)
   }
 
   await network.provider.send('anvil_setBlockTimestampInterval', [1])

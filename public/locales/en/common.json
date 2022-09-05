@@ -166,14 +166,6 @@
           "message": "Taking longer than expected"
         }
       },
-      "mining": {
-        "title": "Saving transaction",
-        "estimationPre": "This will take around",
-        "estimationPost": "seconds",
-        "subtitle": "Your transaction is being mined",
-        "trailingButton": "Close",
-        "message": "Your transaction is being saved to the blockchain. You may close this window, we will send you a notification when it is ready."
-      },
       "complete": {
         "title": "Transaction Complete",
         "message": "Your transaction is now complete!",

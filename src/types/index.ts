@@ -21,13 +21,11 @@ export interface TransactionDisplayItemSingle extends TransactionDisplayItemBase
 }
 
 export interface TransactionDisplayItemList extends TransactionDisplayItemBase {
-  type?: 'list'
+  type: 'list'
   value: string[]
 }
 
-export type TransactionDisplayItem<T> = T extends 'name' | 'address'
-  ? TransactionDisplayItemSingle
-  : TransactionDisplayItemList
+export type TransactionDisplayItem = TransactionDisplayItemSingle | TransactionDisplayItemList
 
 export type TransactionDisplayItemTypes = 'name' | 'address' | 'list'
 
@@ -54,10 +52,7 @@ export type ProfileEditorType = {
 export type PublicENS = PublicInterface<ENS>
 
 export interface Transaction<Data> {
-  displayItems: (
-    data: any,
-    t: TFunction<'translation', undefined>,
-  ) => TransactionDisplayItem<TransactionDisplayItemTypes>[]
+  displayItems: (data: any, t: TFunction<'translation', undefined>) => TransactionDisplayItem[]
   transaction: (signer: JsonRpcSigner, ens: PublicENS, data: Data) => Promise<PopulatedTransaction>
   backToInput?: boolean
 }

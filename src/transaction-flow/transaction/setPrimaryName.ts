@@ -11,7 +11,7 @@ type Data = {
 const displayItems = (
   { address, name }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem<'name' | 'address'>[] => [
+): TransactionDisplayItem[] => [
   {
     label: 'action',
     value: t(`transaction.description.setPrimaryName`),

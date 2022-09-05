@@ -10,7 +10,7 @@ type Data = {
 const displayItems = (
   { name }: Data,
   t: TFunction<'translation', undefined>,
-): TransactionDisplayItem<'name'>[] => [
+): TransactionDisplayItem[] => [
   {
     label: 'action',
     value: t(`transaction.description.migrateProfile`),
