@@ -20,6 +20,7 @@ specifiers:
   '@cloudflare/wrangler': ^1.19.12
   '@ensdomains/address-encoder': ^0.2.16
   '@ensdomains/buffer': ^0.1.0
+  '@ensdomains/dnsprovejs': ^0.4.1
   '@ensdomains/ens-contracts': ^0.0.12
   '@ensdomains/ens-test-env': ^0.2.2
   '@ensdomains/ens-validation': ^0.1.0
@@ -126,6 +127,7 @@ specifiers:
 
 dependencies:
   '@ensdomains/address-encoder': 0.2.17
+  '@ensdomains/dnsprovejs': 0.4.1
   '@ensdomains/ens-contracts': 0.0.12_dc2tfptt42fno6hcft2jr5vdvy
   '@ensdomains/ens-validation': 0.1.0
   '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs_ethers@5.6.9
@@ -1987,6 +1989,14 @@ packages:
       multihashes: 2.0.0
     dev: false
 
+  /@ensdomains/dnsprovejs/0.4.1:
+    resolution: {integrity: sha512-q1SiQeuV3dzYt4yS5/Ig1AIKEXqzLpI6RV/tvSdirKg0Y8VdsEag9gpKXu+SoTzmaXT8J+mB0ZPwrV5gb/SbaA==}
+    dependencies:
+      dns-packet: 5.4.0
+      ethereumjs-util: 7.1.5
+      typescript-logging: 1.0.1
+    dev: false
+
   /@ensdomains/ens-contracts/0.0.12_dc2tfptt42fno6hcft2jr5vdvy:
     resolution: {integrity: sha512-s6CCX/IsEF9R+dHb1vNLDPUAes07zvQFBIavXBest6Li8z1KFuFS+C+AlSA16SYtZ3LQieIBshzJgygYPM9Zog==}
     dependencies:
@@ -2154,7 +2164,7 @@ packages:
     dependencies:
       '@ethereumjs/common': 2.6.4
       '@ethereumjs/tx': 3.5.1
-      ethereumjs-util: 7.1.4
+      ethereumjs-util: 7.1.5
       merkle-patricia-tree: 4.2.4
 
   /@ethereumjs/blockchain/5.5.2:
@@ -2164,7 +2174,7 @@ packages:
       '@ethereumjs/common': 2.6.4
       '@ethereumjs/ethash': 1.1.0
       debug: 4.3.4
-      ethereumjs-util: 7.1.4
+      ethereumjs-util: 7.1.5
       level-mem: 5.0.1
       lru-cache: 5.1.1
       semaphore-async-await: 1.5.1
@@ -2175,7 +2185,7 @@ packages:
     resolution: {integrity: sha512-RDJh/R/EAr+B7ZRg5LfJ0BIpf/1LydFgYdvZEuTraojCbVypO2sQ+QnpP5u2wJf9DASyooKqu8O4FJEWUV6NXw==}
     dependencies:
       crc-32: 1.2.2
-      ethereumjs-util: 7.1.4
+      ethereumjs-util: 7.1.5
 
   /@ethereumjs/common/2.6.5:
     resolution: {integrity: sha512-lRyVQOeCDaIVtgfbowla32pzeDv2Obr8oR8Put5RdUBNRGr1VGPGQNGP6elWIpgK3YdpzqTOh4GyUGOureVeeA==}
@@ -2189,14 +2199,14 @@ packages:
       '@ethereumjs/block': 3.6.2
       '@types/levelup': 4.3.3
       buffer-xor: 2.0.2
-      ethereumjs-util: 7.1.4
+      ethereumjs-util: 7.1.5
       miller-rabin: 4.0.1
 
   /@ethereumjs/tx/3.5.1:
     resolution: {integrity: sha512-xzDrTiu4sqZXUcaBxJ4n4W5FrppwxLxZB4ZDGVLtxSQR4lVuOnFR6RcUHdg1mpUhAPVrmnzLJpxaeXnPxIyhWA==}
     dependencies:
       '@ethereumjs/common': 2.6.4
-      ethereumjs-util: 7.1.4
+      ethereumjs-util: 7.1.5
 
   /@ethereumjs/tx/3.5.2:
     resolution: {integrity: sha512-gQDNJWKrSDGu2w7w0PzVXVBNMzb7wwdDOmOqczmhNjqFxFuIbhVJDwiGEnxFNC2/b8ifcZzY7MLcluizohRzNw==}
@@ -2214,7 +2224,7 @@ packages:
       async-eventemitter: 0.2.4
       core-js-pure: 3.22.0
       debug: 4.3.4
-      ethereumjs-util: 7.1.4
+      ethereumjs-util: 7.1.5
       functional-red-black-tree: 1.0.1
       mcl-wasm: 0.7.9
       merkle-patricia-tree: 4.2.4
@@ -9893,6 +9903,12 @@ packages:
     dependencies:
       is-arrayish: 0.2.1
 
+  /error-stack-parser/1.3.6:
+    resolution: {integrity: sha512-xhuSYd8wLgOXwNgjcPeXMPL/IiiA1Huck+OPvClpJViVNNlJVtM41o+1emp7bPvlCJwCatFX2DWc05/DgfbWzA==}
+    dependencies:
+      stackframe: 0.3.1
+    dev: false
+
   /error-stack-parser/2.1.4:
     resolution: {integrity: sha512-Sk5V6wVazPhq5MhpO+AUxJn5x7XSXGl1R93Vn7i+zS15KDVxQijejNCrz8340/2bgLBjR9GtEG8ZVKONDjcqGQ==}
     dependencies:
@@ -15367,7 +15383,7 @@ packages:
     resolution: {integrity: sha512-eHbf/BG6eGNsqqfbLED9rIqbsF4+sykEaBn6OLNs71tjclbMcMOk1tEPmJKcNcNCLkvbpY/lwyOlizWsqPNo8w==}
     dependencies:
       '@types/levelup': 4.3.3
-      ethereumjs-util: 7.1.4
+      ethereumjs-util: 7.1.5
       level-mem: 5.0.1
       level-ws: 2.0.0
       readable-stream: 3.6.0
@@ -18911,6 +18927,11 @@ packages:
     resolution: {integrity: sha512-cPiFOTLUKvJFIg4SKVScy4ilPPW6rFgMgfuZJPNoDuMs3nC1HbMUycBoJw77xFIp6z1UJQJOfx6C9GMH80DiTw==}
     deprecated: See https://github.com/lydell/source-map-url#deprecated
 
+  /source-map/0.5.6:
+    resolution: {integrity: sha512-MjZkVp0NHr5+TPihLcadqnlVoGIoWo4IBHptutGh9wI3ttUYvCG26HkSuDi+K6lsZ25syXJXcctwgyVCt//xqA==}
+    engines: {node: '>=0.10.0'}
+    dev: false
+
   /source-map/0.5.7:
     resolution: {integrity: sha512-LbrmJOMUSdEVxIKvdcJzQC+nQhe8FUZQTXQy6+I75skNgn3OoQ0DZA8YnFa7gp8tqtL3KPf1kmo0R5DoApeSGQ==}
     engines: {node: '>=0.10.0'}
@@ -19039,6 +19060,12 @@ packages:
     deprecated: 'Modern JS already guarantees Array#sort() is a stable sort, so this library is deprecated. See the compatibility table on MDN: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort#browser_compatibility'
     dev: false
 
+  /stack-generator/1.1.0:
+    resolution: {integrity: sha512-sZDVjwC56vZoo+a5t0LH/1sMQLWYLi/r+Z2ztyCAOhOX3QBP34GWxK0FWf2eU1TIU2CJKCKBAtDZycUh/ZKMlw==}
+    dependencies:
+      stackframe: 1.3.4
+    dev: false
+
   /stack-trace/0.0.10:
     resolution: {integrity: sha512-KGzahc7puUKkzyMt+IqAep+TVNbKP+k2Lmwhub39m1AsTSkaDutx56aDCo+HLDzf/D26BIHTJWNiTG1KAJiQCg==}
     dev: true
@@ -19050,8 +19077,27 @@ packages:
       escape-string-regexp: 2.0.0
     dev: true
 
+  /stackframe/0.3.1:
+    resolution: {integrity: sha512-XmoiF4T5nuWEp2x2w92WdGjdHGY/cZa6LIbRsDRQR/Xlk4uW0PAUlH1zJYVffocwKpCdwyuypIp25xsSXEtZHw==}
+    dev: false
+
   /stackframe/1.3.4:
     resolution: {integrity: sha512-oeVtt7eWQS+Na6F//S4kJ2K2VbRlS9D43mAlMyVpVWovy9o+jfgH8O9agzANzaiLjclA0oYzUXEM4PurhSUChw==}
+    dev: false
+
+  /stacktrace-gps/2.4.4:
+    resolution: {integrity: sha512-msFhuMEEklQLUtaJ+GeCDjzUN+PamfHWQiK3C1LnbHjoxSeF5dAxiE+aJkptNMmMNOropGFJ7G3ZT7dPZHgDaQ==}
+    dependencies:
+      source-map: 0.5.6
+      stackframe: 0.3.1
+    dev: false
+
+  /stacktrace-js/1.3.1:
+    resolution: {integrity: sha512-b+5voFnXqg9TWdOE50soXL+WuOreYUm1Ukg9U7rzEWGL4+gcVxIcFasNBtOffVX0I1lYqVZj0PZXZvTt5e3YRQ==}
+    dependencies:
+      error-stack-parser: 1.3.6
+      stack-generator: 1.1.0
+      stacktrace-gps: 2.4.4
     dev: false
 
   /stacktrace-parser/0.1.10:
@@ -20110,6 +20156,12 @@ packages:
   /typedarray/0.0.6:
     resolution: {integrity: sha512-/aCDEGatGvZ2BIk+HmLf4ifCJFwvKFNb9/JeZPMulfgFracn9QFcAf5GO8B/mweUjSoblS5In0cWhqpfs/5PQA==}
     dev: true
+
+  /typescript-logging/1.0.1:
+    resolution: {integrity: sha512-zp28ABme0m5q/nXabBaY9Hv/35N8lMH4FsvhpUO0zVi4vFs3uKlb5br2it61HAZF5k+U0aP6E67j0VD0IzXGpQ==}
+    dependencies:
+      stacktrace-js: 1.3.1
+    dev: false
 
   /typescript-styled-plugin/0.18.2:
     resolution: {integrity: sha512-eBs898Zz5C+k59ZydKVYBHjw4dC5WRxidOT7wfGkjLRZHKL6zIl6xkjIHMuctDE9hctxTq+GJcaXgk30lKEM9A==}

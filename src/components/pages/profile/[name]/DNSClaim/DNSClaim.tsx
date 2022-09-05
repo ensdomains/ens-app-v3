@@ -1,13 +1,22 @@
+import * as packet from 'dns-packet'
+import { utils } from 'ethers'
 import { useRouter } from 'next/router'
+import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useState, useCallback } from 'react'
+import { useQuery } from 'wagmi'
 
-import { Button, Skeleton, mq, Typography, Card } from '@ensdomains/thorin'
+import { DNSProver } from '@ensdomains/dnsprovejs'
+import { Button, Card, Typography, mq } from '@ensdomains/thorin'
+
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
-import { LeadingHeading } from '@app/components/LeadingHeading'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import { LeadingHeading } from '@app/components/LeadingHeading'
+import { useNameDetails } from '@app/hooks/useNameDetails'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useEns } from '@app/utils/EnsProvider'
+
+import { EnableDNSSEC } from './EnableDNSSEC'
 
 const BackArrow = styled.div(
   ({ theme }) => css`
@@ -107,7 +116,8 @@ const alwaysShowSubtitle = false
 
 const Container = styled.div(
   ({ theme }) => css`
-    width: 500px;
+    width: 650px;
+    box-sizing: border-box;
     margin: 0 auto;
     grid-column: 1/-1;
     grid-auto-rows: 1fr;
@@ -117,6 +127,7 @@ const Container = styled.div(
 const MainContentContainer = styled(Card)(
   ({ theme }) => css`
     width: 100%;
+    padding: 25px 75px;
   `,
 )
 
@@ -128,39 +139,6 @@ const HeadingContainer = styled.div(
   `,
 )
 
-const StepContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-  `,
-)
-
-type StepType = 'notStarted' | 'inProgress' | 'completed'
-
-const StepItem = styled.div<{ $type: StepType }>(
-  ({ theme, $type }) => css`
-    border-radius: ${theme.radii.full};
-    width: ${theme.space['3.5']};
-    height: ${theme.space['3.5']};
-    ${$type === 'notStarted' &&
-    css`
-      border: ${theme.borderWidths['0.5']} ${theme.borderStyles.solid}
-        ${theme.colors.borderSecondary};
-    `}
-    ${$type === 'inProgress' &&
-    css`
-      border: ${theme.borderWidths['0.5']} ${theme.borderStyles.solid} ${theme.colors.accent};
-    `}
-    ${$type === 'completed' &&
-    css`
-      background-color: ${theme.colors.accent};
-    `}
-  `,
-)
-
 const AddTextRecord = ({ currentStep }) => {
   return <div>Add Text records</div>
 }
@@ -169,14 +147,6 @@ const ClaimDomain = ({ currentStep }) => {
   return <div>Claim Domain</div>
 }
 
-const ButtonContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  `,
-)
-
 export default () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
@@ -184,6 +154,51 @@ export default () => {
   const [currentStep, setCurrentStep] = useState(0)
 
   console.log('router:', router.query.name)
+
+  const {
+    isLoading: detailsLoading,
+    error,
+    profile,
+    ownerData,
+    expiryDate,
+    normalisedName,
+    dnsOwner,
+    valid,
+    basicIsCachedData,
+    profileIsCachedData,
+  } = useNameDetails(router.query.name as string)
+
+  const { getOwner } = useEns()
+  const { name } = router.query
+
+  const { data: ownership, isLoading } = useQuery([name, 'DNSClaim', 'getOwner'], () =>
+    getOwner(name as string),
+  )
+
+  const owner = ownership?.owner
+
+  useEffect(() => {
+    // const prover = DNSProver.create('https://cloudflare-dns.com/dns-query')
+    const textDomain = `_ens.${name}`
+    // const result = prover.queryWithProof('TXT', textDomain)
+    let dnsRegistrarState = 0
+
+    if (dnsOwner || parseInt(dnsOwner) === 0) {
+      // Empty
+      dnsRegistrarState = 8
+    } else if (!utils.isAddress(dnsOwner)) {
+      // Invalid record
+      dnsRegistrarState = 4
+    } else if (!owner || dnsOwner.toLowerCase() === owner.toLowerCase()) {
+      // Ready to register
+      dnsRegistrarState = 5
+    } else {
+      // Out of sync
+      dnsRegistrarState = 6
+    }
+
+    console.log('dnsRegistrarState:', dnsRegistrarState)
+  }, [dnsOwner])
 
   return (
     <Container>
