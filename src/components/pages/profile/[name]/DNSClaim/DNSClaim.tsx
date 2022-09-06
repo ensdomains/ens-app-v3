@@ -17,6 +17,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 
+import { AddTextRecord } from './AddTextRecord'
 import { EnableDNSSEC } from './EnableDNSSEC'
 import { isDnsSecEnabled } from './utils'
 
@@ -142,10 +143,6 @@ const HeadingContainer = styled.div(
     align-items: center;
   `,
 )
-
-const AddTextRecord = ({ currentStep }) => {
-  return <div>Add Text records</div>
-}
 
 const ClaimDomain = ({ currentStep }) => {
   return <div>Claim Domain</div>
@@ -279,6 +276,7 @@ export default () => {
           setCurrentStep(0)
           return
         }
+        setCurrentStep(1)
         /*
         const prover = DNSProver.create('https://cloudflare-dns.com/dns-query')
         const result = await prover.queryWithProof('TXT', textDomain)
