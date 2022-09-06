@@ -24,7 +24,7 @@ const Container = styled.div(
 const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
   ({ theme, $shrink, $fade }) => css`
     display: grid;
-    grid-template-columns: 1fr 2fr;
+    grid-template-columns: 0.5fr 2fr;
     align-items: center;
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
@@ -142,12 +142,40 @@ const NameValue = ({ value }: { value: string }) => {
   )
 }
 
-const DisplayItemValue = ({ value, type }: Omit<TransactionDisplayItem, 'label'>) => {
+const ListContainer = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+  `,
+)
+
+const ListItemTypography = styled(Typography)(() => css``)
+
+const ListValue = ({ value }: { value: string[] }) => {
+  return (
+    <ListContainer>
+      {value.map((val, idx) => {
+        const isLast = idx === value.length - 1
+        if (idx === 0) {
+          return <Typography weight="bold">{val}</Typography>
+        }
+        return <ListItemTypography>{`${val}${!isLast ? ',' : ''}`}</ListItemTypography>
+      })}
+    </ListContainer>
+  )
+}
+
+const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
+  const { value, type } = props as TransactionDisplayItem
   if (type === 'address') {
     return <AddressValue value={value} />
   }
   if (type === 'name') {
     return <NameValue value={value} />
+  }
+  if (type === 'list') {
+    return <ListValue value={value} />
   }
   return <ValueTypography weight="bold">{value}</ValueTypography>
 }

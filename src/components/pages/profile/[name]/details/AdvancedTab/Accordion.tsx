@@ -166,6 +166,11 @@ const Accordion = ({ data, name }: AccordionProps) => {
         name,
       })
     }
+    if (data[idx].name === 'fuses') {
+      showDataInput(`burn-fuses-${name}`, 'BurnFuses', {
+        name,
+      })
+    }
   }
 
   const disabled = data?.filter((x) => x.disabled) ?? []
@@ -204,6 +209,7 @@ const Accordion = ({ data, name }: AccordionProps) => {
                     </Typography>
                     {item.canEdit && (
                       <EditButton
+                        data-testid={`accordion-${item.name}-edit`}
                         shadowless
                         variant="transparent"
                         size="small"

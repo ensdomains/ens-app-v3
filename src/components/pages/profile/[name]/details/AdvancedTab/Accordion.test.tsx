@@ -1,6 +1,11 @@
-import { fireEvent, render, screen } from '@app/test-utils'
+import { fireEvent, mockFunction, render, screen } from '@app/test-utils'
+
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import Accordion, { AccordionData } from './Accordion'
+
+jest.mock('@app/transaction-flow/TransactionFlowProvider')
+const mockUseTransactionFlow = mockFunction(useTransactionFlow)
 
 const data: AccordionData[] = [
   {
@@ -21,13 +26,18 @@ describe('Accordion', () => {
   })
 
   it('should render', () => {
+    mockUseTransactionFlow.mockReturnValue({
+      showDataInput: jest.fn(),
+    })
     render(<Accordion data={data} name="test" />)
   })
   it('should show the correct body based on clicked item', () => {
     render(<Accordion data={data} name="test" />)
     expect(screen.getByText('Body 1')).not.toHaveStyle('height: 0px')
     expect(screen.getByText('Body 2')).toHaveStyle('height: 0px')
-    expect(screen.queryByTestId('accordion-Item 2-body')).not.toBeInTheDocument()
+    fireEvent.click(screen.getByText('Item 2'))
+    expect(screen.getByText('Body 2')).not.toHaveStyle('height: 0px')
+    expect(screen.getByText('Body 1')).toHaveStyle('height: 0px')
   })
 
   it('should show a disabled item correctly', () => {
@@ -57,9 +67,69 @@ describe('Accordion', () => {
     expect(screen.queryByTestId('accordion-Item 1-body')).not.toBeInTheDocument()
     expect(screen.getByText('Body 1')).toHaveStyle('height: 0px')
   })
-  it.todo('should render edit button if edit is enabled')
-  it.todo('should update edit state correctly')
-  it.todo('edit button should change to cancel if edit is enabled for that tab')
-  it.todo('if edit it clicked on a tab that is not active, that tab should become active')
-  it.todo('should display the correct dialog when edit is clicked')
+  it('should render edit button if edit is enabled', () => {
+    render(
+      <Accordion
+        name="test"
+        data={[
+          {
+            title: 'Item 3',
+            name: 'item3',
+            body: () => <>Body 3</>,
+            disabled: false,
+            canEdit: true,
+          },
+        ]}
+      />,
+    )
+    expect(screen.getByText('action.edit')).toBeVisible()
+  })
+  it('if edit is clicked on a tab that is not active, that tab should become active', () => {
+    render(
+      <Accordion
+        data={[
+          ...data,
+          {
+            title: 'Item 3',
+            name: 'item3',
+            body: () => <>Body 3</>,
+            disabled: false,
+            canEdit: true,
+          },
+        ]}
+        name="test"
+      />,
+    )
+    expect(screen.getByText('Body 1')).not.toHaveStyle('height: 0px')
+    expect(screen.getByText('Body 2')).toHaveStyle('height: 0px')
+    expect(screen.getByText('Body 3')).toHaveStyle('height: 0px')
+    fireEvent.click(screen.getByText('action.edit'))
+    expect(screen.getByText('Body 1')).toHaveStyle('height: 0px')
+    expect(screen.getByText('Body 2')).toHaveStyle('height: 0px')
+    expect(screen.getByText('Body 3')).not.toHaveStyle('height: 0px')
+  })
+  it('should display the correct dialog when edit is clicked', () => {
+    const mockShowDataInput = jest.fn()
+
+    mockUseTransactionFlow.mockReturnValue({
+      showDataInput: mockShowDataInput,
+    })
+    render(
+      <Accordion
+        data={[
+          ...data,
+          {
+            title: 'Item 3',
+            name: 'fuses',
+            body: () => <>Body 3</>,
+            disabled: false,
+            canEdit: true,
+          },
+        ]}
+        name="test"
+      />,
+    )
+    fireEvent.click(screen.getByText('action.edit'))
+    expect(mockShowDataInput).toHaveBeenCalledWith('burn-fuses-test', 'BurnFuses', { name: 'test' })
+  })
 })
