@@ -5,6 +5,7 @@ import { Button, Dialog } from '@ensdomains/thorin'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { intros } from '@app/transaction-flow/intro'
 import { TransactionIntro } from '@app/transaction-flow/types'
+import { TransactionDisplayItemSingle } from '@app/types'
 
 import { DisplayItems } from '../DisplayItems'
 
@@ -59,13 +60,16 @@ export const IntroStageModal = ({
         <Content {...content.data} />
         <DisplayItems
           displayItems={
-            transactions.map(({ name }, index) => ({
-              fade: currentStep > index,
-              shrink: true,
-              label: t('transaction.dialog.intro.step', { step: index + 1 }),
-              value: t(`transaction.description.${name}`),
-              useRawLabel: true,
-            })) || []
+            transactions.map(
+              ({ name }, index) =>
+                ({
+                  fade: currentStep > index,
+                  shrink: true,
+                  label: t('transaction.dialog.intro.step', { step: index + 1 }),
+                  value: t(`transaction.description.${name}`),
+                  useRawLabel: true,
+                } as TransactionDisplayItemSingle),
+            ) || []
           }
         />
       </InnerDialog>

@@ -1,3 +1,4 @@
+/* eslint-disable no-promise-executor-return */
 import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
@@ -64,7 +65,7 @@ const renderHelper = async ({
   displayItems,
   transaction,
 }: Partial<ComponentProps<typeof TransactionStageModal>> = {}) => {
-  render(
+  const renderValue = render(
     <TransactionStageModal
       currentStep={currentStep || 0}
       stepCount={stepCount || 1}
@@ -79,6 +80,7 @@ const renderHelper = async ({
   await waitFor(() => expect(screen.getByTestId('transaction-modal-inner')).toBeVisible(), {
     timeout: 350,
   })
+  return renderValue
 }
 
 const clickRequest = async () => {
@@ -101,11 +103,21 @@ describe('TransactionStageModal', () => {
   mockUseSendTransaction.mockReturnValue({})
   mockUseEns.mockReturnValue({})
 
+  beforeEach(() => {
+    mockUseRecentTransactions.mockReturnValue([
+      {
+        status: 'pending',
+        hash: '0x123',
+        description: JSON.stringify({ action: 'test', key: 'test', gasPrice: 42 }),
+      },
+    ])
+  })
+
   it('should render on open', async () => {
     await renderHelper()
     expect(screen.getByText('transaction.dialog.confirm.title')).toBeVisible()
   })
-  it('should render display items, and the action/info items should be added automatically', async () => {
+  it('should render display items', async () => {
     await renderHelper({
       displayItems: [
         {
@@ -114,10 +126,6 @@ describe('TransactionStageModal', () => {
         },
       ],
     })
-    expect(screen.getByText('transaction.itemLabel.action')).toBeVisible()
-    expect(screen.getByText('transaction.description.test')).toBeVisible()
-    expect(screen.getByText('transaction.itemLabel.info')).toBeVisible()
-    expect(screen.getByText('transaction.info.test')).toBeVisible()
     expect(screen.getByText('transaction.itemLabel.GenericItem')).toBeVisible()
     expect(screen.getByText('GenericValue')).toBeVisible()
   })

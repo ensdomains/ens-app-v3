@@ -78,17 +78,21 @@
         },
         "fuses": {
           "label": "Fuses",
+          "info": "You must burn 'Can unwrap' in order to burn other fuses",
           "callToAction": "Please wrap your name to unlock this feature",
+          "burnFormTitle": "Burn Permissions",
+          "burned": "Burned",
           "permissions": {
             "label": "Permissions",
-            "canDoEverything": "Can do everything",
-            "canBurnFuses": "Can burn fuses",
-            "canCreateSubdomains": "Can create subdomains",
-            "canSetResolver": "Can set resolver",
-            "canSetTTL": "Can set TTL",
-            "canTransfer": "Can transfer",
-            "canUnwrap": "Can unwrap",
-            "parentCanControl": "Parent can control"
+            "warning": "Fuses can be changed by the parent",
+            "CAN_DO_EVERYTHING": "Can do everything",
+            "CANNOT_BURN_FUSES": "Can burn fuses",
+            "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
+            "CANNOT_SET_RESOLVER": "Can set resolver",
+            "CANNOT_SET_TTL": "Can set TTL",
+            "CANNOT_TRANSFER": "Can transfer",
+            "CANNOT_UNWRAP": "Can unwrap",
+            "PARENT_CANNOT_CONTROL": "Parent can control"
           },
           "vulnerabilities": {
             "label": "Vulnerabilities",

@@ -2,6 +2,7 @@ import dynamic from 'next/dynamic'
 
 import TransactionLoader from '../TransactionLoader'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
+import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
 import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
@@ -26,6 +27,7 @@ const AdvancedEditor = dynamicHelper<AdvancedEditorProps>('AdvancedEditor/Advanc
 const ProfileEditor = dynamicHelper<ProfileEditorProps>('ProfileEditor/ProfileEditor')
 const CreateSubname = dynamicHelper<CreateSubnameProps>('CreateSubname')
 const ExtendNames = dynamicHelper<ExtendNamesProps>('ExtendNames/ExtendNames')
+const BurnFuses = dynamicHelper<BurnFusesProps>('BurnFuses/BurnFuses')
 
 export const DataInputComponents = {
   EditResolver,
@@ -34,6 +36,7 @@ export const DataInputComponents = {
   SelectPrimaryName,
   CreateSubname,
   ExtendNames,
+  BurnFuses,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

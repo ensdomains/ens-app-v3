@@ -1,5 +1,7 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 /* eslint-disable no-await-in-loop */
+import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
@@ -68,6 +70,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     )
     console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
     await registerTx.wait()
+
+    const nameWrapper = await ethers.getContract('NameWrapper')
+    const _nameWrapper = nameWrapper.connect(await ethers.getSigner(owner))
+    const { deployer } = await getNamedAccounts()
+
+    // Register subname
+    const subnameTx = await _nameWrapper.setSubnodeOwner(
+      namehash(`${label}.eth`),
+      'sub',
+      deployer,
+      1860342907,
+      0,
+    )
+    await subnameTx.wait()
+    console.log(`Registering subname sub.${label}.eth (tx: ${subnameTx.hash})...`)
   }
 
   await network.provider.send('anvil_setBlockTimestampInterval', [1])

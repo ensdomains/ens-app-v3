@@ -2,11 +2,11 @@ import { ComponentProps, Dispatch, ReactNode } from 'react'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import { TransactionDisplayItem } from '@app/types'
+import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
-import { TransactionName, makeTransactionItem } from './transaction'
+import type { TransactionName, makeTransactionItem } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -137,4 +137,5 @@ export type ManagedDialogPropsTwo = {
   currentStep: number
   stepCount: number
   displayItems: TransactionDisplayItem[]
+  backToInput: boolean
 }

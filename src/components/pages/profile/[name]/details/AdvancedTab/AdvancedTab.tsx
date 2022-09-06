@@ -2,8 +2,10 @@ import { BigNumber, utils } from 'ethers'
 import { useRouter } from 'next/router'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { RecordItem } from '@app/components/RecordItem'
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
 import Accordion, { AccordionData } from './Accordion'
@@ -35,18 +37,25 @@ const MoreContainer = styled.div`
   justify-content: center;
 `
 
-const generateAccordionData = (fuseData: any, t: TFunction): AccordionData[] => [
+export const generateAccordionData = (
+  fuseData: ReturnType<typeof useGetFuseData>['fuseData'],
+  t: TFunction,
+  ownerData: ReturnType<typeof useBasicName>['ownerData'],
+  isWrapped: boolean,
+  address?: string,
+): AccordionData[] => [
   {
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
     name: 'resolverDetails',
-    canEdit: true,
+    canEdit: ownerData?.owner === address,
   },
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
     disabled: !fuseData,
     name: 'fuses',
+    canEdit: ownerData?.owner === address && isWrapped,
   },
   {
     title: t('details.tabs.advanced.tokenId.label'),
@@ -65,8 +74,9 @@ const MoreTab = () => {
   const router = useRouter()
   const { name } = router.query
   const { fuseData } = useGetFuseData((name as string) || '')
-
-  const accordionData = generateAccordionData(fuseData, t)
+  const { address } = useAccount()
+  const { ownerData, isWrapped } = useBasicName(name as string)
+  const accordionData = generateAccordionData(fuseData, t, ownerData, isWrapped, address)
 
   return (
     <MoreContainer>

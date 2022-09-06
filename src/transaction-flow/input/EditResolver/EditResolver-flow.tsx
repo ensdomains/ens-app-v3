@@ -258,3 +258,5 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
     </>
   )
 }
+
+export default EditResolver
