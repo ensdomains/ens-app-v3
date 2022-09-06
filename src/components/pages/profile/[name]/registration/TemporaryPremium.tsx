@@ -1,7 +1,14 @@
-import ExponentialLineSVG from '@app/assets/ExponentialLine.svg'
 import { makeDisplay } from '@app/utils/currency'
-import { Helper, Input, Typography } from '@ensdomains/thorin'
-import { ChangeEventHandler, useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Helper, Input, mq, Typography } from '@ensdomains/thorin'
+import {
+  ChangeEventHandler,
+  RefObject,
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import styled, { css, DefaultTheme } from 'styled-components'
 
 const VAR_PREFIX = '--premium-chart-'
@@ -178,12 +185,16 @@ const HeadingContainer = styled.div(
 const InputContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: stretch;
     gap: ${theme.space['2']};
     margin-bottom: -${theme.space['2']};
     width: 100%;
+
+    ${mq.md.min(css`
+      flex-direction: row;
+    `)}
   `,
 )
 
@@ -213,25 +224,28 @@ const usePointVars = (
   getPos: (i: number) => { x: number; y: number },
   name: string,
   setProperty: PropertyFunc,
+  ref: RefObject<HTMLDivElement>,
 ) => {
   useEffect(() => {
     const set = setProperty(name)
-    if (chartPos !== undefined && chartPos !== -1) {
-      const { x, y } = getPos(chartPos)
-      set('x', x)
-      set('y', y)
-      set('display', 'block')
-    } else {
-      set('x', undefined)
-      set('y', undefined)
-      set('display', 'none')
+    if (ref.current) {
+      if (chartPos !== undefined && chartPos !== -1) {
+        const { x, y } = getPos(chartPos)
+        set('x', x)
+        set('y', y)
+        set('display', 'block')
+      } else {
+        set('x', undefined)
+        set('y', undefined)
+        set('display', 'none')
+      }
+      return () => {
+        set('x', undefined)
+        set('y', undefined)
+        set('display', undefined)
+      }
     }
-    return () => {
-      set('x', undefined)
-      set('y', undefined)
-      set('display', undefined)
-    }
-  }, [chartPos, getPos, name, setProperty])
+  }, [chartPos, getPos, name, setProperty, ref])
 }
 
 const TemporaryPremium = ({ startDate }: Props) => {
@@ -268,14 +282,11 @@ const TemporaryPremium = ({ startDate }: Props) => {
     return { nowPoint: _nowPoint, maxDate: _maxDate, nowDate: _nowDate }
   }, [startDate])
   const [selectedPoint, setSelectedPoint] = useState(-1)
+  const [{ width, height }, setDimensions] = useState({ width: 0, height: 0 })
 
-  const { clientWidth: width, clientHeight: height } = bgRef.current || {
-    clientWidth: 0,
-    clientHeight: 0,
-  }
-  const yChunk = startPrice / (height - padding * 2)
   const getPos = useCallback(
     (i: number) => {
+      const yChunk = startPrice / (height - padding * 2)
       const resAsDay = i / resolutionPerDay
       const x = (i * (width - padding * 2)) / chartResolution + padding
       const price = Math.max(startPrice * FACTOR ** resAsDay - 50, 0)
@@ -283,8 +294,9 @@ const TemporaryPremium = ({ startDate }: Props) => {
 
       return { x, y, price }
     },
-    [width, height, yChunk],
+    [width, height],
   )
+
   const getPointFromPrice = useCallback((price: number) => {
     const realX = Math.log((price + 50) / startPrice) / Math.log(FACTOR)
     return Math.floor(realX * resolutionPerDay)
@@ -313,17 +325,25 @@ const TemporaryPremium = ({ startDate }: Props) => {
 
   const nowPosition = useMemo(() => getPos(nowPoint), [getPos, nowPoint])
 
-  // use this to generate the SVG path
-  // const path = useMemo(() => {
-  //   let _path = `M ${padding} ${padding}`
+  const path = useMemo(() => {
+    let _path = `M ${padding} ${padding}`
 
-  //   for (let i = 0; i < chartResolution; i += 500) {
-  //     const { x, y } = getPos(i)
-  //     _path += `L ${x} ${y} `
-  //   }
+    for (let i = 0; i < chartResolution; i += 500) {
+      const { x, y } = getPos(i)
+      _path += `L ${x} ${y} `
+    }
 
-  //   return _path
-  // }, [getPos])
+    return _path
+  }, [getPos])
+
+  const handleResize = useCallback(() => {
+    const bg = bgRef.current
+    if (bg) {
+      const _width = bg.clientWidth
+      const _height = bg.clientHeight
+      setDimensions({ width: _width, height: _height })
+    }
+  }, [])
 
   const [selectedPrice, setSelectedPrice] = useState(nowPosition.price)
   const [selectedDate, setSelectedDate] = useState(nowDate)
@@ -415,8 +435,22 @@ const TemporaryPremium = ({ startDate }: Props) => {
     [getPointFromDate, setSelectedDate, setSelectedPoint, nowDate, maxDate],
   )
 
-  usePointVars(nowPoint, getPos, 'now', setProperty)
-  usePointVars(selectedPoint, getPos, 'selected', setProperty)
+  usePointVars(nowPoint, getPos, 'now', setProperty, bgRef)
+  usePointVars(selectedPoint, getPos, 'selected', setProperty, bgRef)
+
+  useEffect(() => {
+    handleResize()
+    window.addEventListener('resize', handleResize)
+    return () => {
+      window.removeEventListener('resize', handleResize)
+    }
+  }, [handleResize])
+
+  useEffect(() => {
+    if (bgRef.current) {
+      setProperty('hover')('display', 'none')
+    }
+  }, [bgRef, setProperty])
 
   return (
     <Helper type="info">
@@ -458,7 +492,9 @@ const TemporaryPremium = ({ startDate }: Props) => {
           onClick={handleClick}
           ref={bgRef}
         >
-          <ExponentialLineSVG />
+          <svg width="100%" height="200px">
+            <path d={path} />
+          </svg>
           <Tooltip />
         </ChartContainer>
         <TimezoneText>
