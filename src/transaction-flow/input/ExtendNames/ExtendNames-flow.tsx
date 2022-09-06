@@ -52,6 +52,7 @@ export type Props = {
 const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
+  const [view, setView] = useState<'name-list' | 'registration'>()
   const [years, setYears] = useState(1)
   const [currencyUnit, setCurrencyUnit] = useState<'eth' | 'usd'>('eth')
 
@@ -85,32 +86,38 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
     <>
       <Dialog.Heading title={t('Extend Names')} />
       <Container>
-        <PlusMinusWrapper>
-          <PlusMinusControl
-            minValue={1}
-            value={years}
-            onChange={(e) => {
-              const newYears = parseInt(e.target.value)
-              if (!Number.isNaN(newYears)) setYears(newYears)
-            }}
-          />
-        </PlusMinusWrapper>
-        <OptionBar>
-          <div>
-            <GasIcon />
-            {gasLabel}
-          </div>
-          <CurrencySwitch value={currencyUnit} onChange={(unit) => setCurrencyUnit(unit)} />
-        </OptionBar>
-        {rentFee && transactionFee && gasPrice && (
-          <RegistrationTimeComparisonBanner
-            rentFee={rentFee}
-            transactionFee={transactionFee}
-            gasPrice={gasPrice}
-            message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
-          />
+        {view === 'name-list' ? (
+          <>HELLO</>
+        ) : (
+          <>
+            <PlusMinusWrapper>
+              <PlusMinusControl
+                minValue={1}
+                value={years}
+                onChange={(e) => {
+                  const newYears = parseInt(e.target.value)
+                  if (!Number.isNaN(newYears)) setYears(newYears)
+                }}
+              />
+            </PlusMinusWrapper>
+            <OptionBar>
+              <div>
+                <GasIcon />
+                {gasLabel}
+              </div>
+              <CurrencySwitch value={currencyUnit} onChange={(unit) => setCurrencyUnit(unit)} />
+            </OptionBar>
+            {rentFee && transactionFee && gasPrice && (
+              <RegistrationTimeComparisonBanner
+                rentFee={rentFee}
+                transactionFee={transactionFee}
+                gasPrice={gasPrice}
+                message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
+              />
+            )}
+            <Invoice items={items} unit={currencyUnit} totalLabel="Estimated total" />
+          </>
         )}
-        <Invoice items={items} unit={currencyUnit} totalLabel="Estimated total" />
       </Container>
       <Dialog.Footer leading={<Button>Cancel</Button>} trailing={<Button>Save</Button>} />
     </>

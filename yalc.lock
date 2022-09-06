@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/ens-test-env": {
+      "signature": "8e4319103e8decde4138775b9d1f20f2",
+      "file": true,
+      "replaced": "^0.2.2"
+    },
+    "@ensdomains/ensjs": {
+      "signature": "fa5e41dd4256f6be5d7b0ac49adcd89f",
+      "file": true,
+      "replaced": "3.0.0-alpha.16"
+    }
+  }
+}
