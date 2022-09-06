@@ -1,0 +1,28 @@
+{
+  "name": "@ensdomains/dnsprovejs",
+  "version": "0.4.1",
+  "description": "A library to generate chains of trust proving DNS records via DNSSEC",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "dependencies": {
+    "dns-packet": "^5.2.1",
+    "ethereumjs-util": "^7.0.7",
+    "typescript-logging": "^1.0.0"
+  },
+  "scripts": {
+    "test": "mocha -r ts-node/register 'tests/**/*.ts'",
+    "build": "tsc",
+    "prepublishOnly": "npm run build"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ensdomains/dnsprovejs.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ensdomains/dnsprovejs/issues"
+  },
+  "homepage": "https://github.com/ensdomains/dnsprovejs#readme",
+  "yalcSig": "34c4f1b78f6b6b7e9e3e07aa354ff3dd"
+}

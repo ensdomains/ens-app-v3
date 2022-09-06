@@ -1,6 +1,7 @@
 import * as packet from 'dns-packet'
 import { utils } from 'ethers'
 import { useRouter } from 'next/router'
+// import { fetch } from 'node-fetch'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
@@ -17,6 +18,9 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { EnableDNSSEC } from './EnableDNSSEC'
+import { isDnsSecEnabled } from './utils'
+
+const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query?'
 
 const BackArrow = styled.div(
   ({ theme }) => css`
@@ -147,6 +151,92 @@ const ClaimDomain = ({ currentStep }) => {
   return <div>Claim Domain</div>
 }
 
+/*
+class DNSRegistrar {
+  constructor(oracleAddress, isOld = false) {
+    this.oracleAddress = oracleAddress
+    this.isOld = isOld
+    if (isOld) {
+      this.OracleClass = OldOracle
+    } else {
+      this.OracleClass = NewOracle
+    }
+  }
+   async claim(name) {
+    const encodedName = '0x' + packet.name.encode(name).toString('hex')
+    const textDomain = '_ens.' + name
+    const prover = DNSProver.create('https://cloudflare-dns.com/dns-query')
+    const provider = await getProvider()
+    return new Claim({
+      oracle: new this.OracleClass(this.oracleAddress, provider),
+      result: await prover.queryWithProof('TXT', textDomain),
+      isFound: true,
+      textDomain: textDomain,
+      encodedName: encodedName
+    })
+  }
+}
+*/
+
+const dnsSecModes = [
+  // 0
+  {
+    state: 'ENABLE_DNSSEC',
+    title: 'Problem fetching data from DNS',
+    displayError: true,
+  },
+  // 1
+  {
+    state: 'ENABLE_DNSSEC',
+    title: 'DNS entry does not exist.',
+    displayError: true,
+  },
+  // 2
+  {
+    state: 'ENABLE_DNSSEC',
+    title: 'Please enable DNSSEC',
+  },
+  // 3
+  {
+    state: 'ADD_TEXT',
+    title: 'Please add text record into _ens.name.tld',
+  },
+  // 4,
+  {
+    state: 'ADD_TEXT',
+    title: 'DNS Record is invalid',
+    displayError: true,
+  },
+  // 5,
+  {
+    state: 'SUBMIT_PROOF',
+    title: 'Ready to register',
+    explainer: "*Click 'refresh' if you make changes to the domain in the DNS Registrar.",
+  },
+  // 6,
+  {
+    state: 'SUBMIT_PROOF',
+    title: 'DNS is out of sync',
+    explainer:
+      "The Controller and DNS Owner are out of sync. Click 'sync' to make the DNS Owner the Controller. Click 'refresh' if you make changes to the domain in the DNS Registrar.",
+    outOfSync: true,
+  },
+  // 7,
+  {
+    state: 'SUBMIT_PROOF',
+    title: 'Registry is out of date',
+    explainer:
+      "Click 'sync' to make the DNS Owner the Controller. Click 'refresh' if you make changes to the domain in the DNS Registrar.",
+    outOfSync: true,
+  },
+  // 8,
+  {
+    state: 'ADD_TEXT',
+    title: 'DNS Record does not exist',
+    displayError: true,
+  },
+]
+
 export default () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
@@ -168,6 +258,8 @@ export default () => {
     profileIsCachedData,
   } = useNameDetails(router.query.name as string)
 
+  const [stepStatus, setStepStatus] = useState(['inProgress', 'notStarted', 'notStarted'])
+
   const { getOwner } = useEns()
   const { name } = router.query
 
@@ -178,24 +270,39 @@ export default () => {
   const owner = ownership?.owner
 
   useEffect(() => {
-    // const prover = DNSProver.create('https://cloudflare-dns.com/dns-query')
     const textDomain = `_ens.${name}`
-    // const result = prover.queryWithProof('TXT', textDomain)
     let dnsRegistrarState = 0
 
-    if (dnsOwner || parseInt(dnsOwner) === 0) {
-      // Empty
-      dnsRegistrarState = 8
-    } else if (!utils.isAddress(dnsOwner)) {
-      // Invalid record
-      dnsRegistrarState = 4
-    } else if (!owner || dnsOwner.toLowerCase() === owner.toLowerCase()) {
-      // Ready to register
-      dnsRegistrarState = 5
-    } else {
-      // Out of sync
-      dnsRegistrarState = 6
+    const init = async () => {
+      try {
+        if (await !isDnsSecEnabled(name)) {
+          setCurrentStep(0)
+          return
+        }
+        /*
+        const prover = DNSProver.create('https://cloudflare-dns.com/dns-query')
+        const result = await prover.queryWithProof('TXT', textDomain)
+        if (dnsOwner || parseInt(dnsOwner) === 0) {
+          // Empty
+          dnsRegistrarState = 8
+        } else if (!utils.isAddress(dnsOwner)) {
+          // Invalid record
+          dnsRegistrarState = 4
+        } else if (!owner || dnsOwner.toLowerCase() === owner.toLowerCase()) {
+          // Ready to register
+          dnsRegistrarState = 5
+        } else {
+          // Out of sync
+          dnsRegistrarState = 6
+        }
+        console.log('result: ', result)
+        */
+      } catch (e) {
+        console.error('caught error: ', e)
+        dnsRegistrarState = 0
+      }
     }
+    init()
 
     console.log('dnsRegistrarState:', dnsRegistrarState)
   }, [dnsOwner])
@@ -229,9 +336,9 @@ export default () => {
       </HeadingContainer>
       <Spacer $height={4} />
       <MainContentContainer>
-        {currentStep === 0 && <EnableDNSSEC {...{ currentStep }} />}
-        {currentStep === 1 && <AddTextRecord {...{ currentStep }} />}
-        {currentStep === 2 && <ClaimDomain {...{ currentStep }} />}
+        {currentStep === 0 && <EnableDNSSEC {...{ currentStep, stepStatus, setCurrentStep }} />}
+        {currentStep === 1 && <AddTextRecord {...{ currentStep, stepStatus, setCurrentStep }} />}
+        {currentStep === 2 && <ClaimDomain {...{ currentStep, stepStatus }} />}
       </MainContentContainer>
     </Container>
   )

@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -7,6 +8,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 
 import { Steps } from './Steps'
+import { isDnsSecEnabled } from './utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -133,8 +135,17 @@ async function getDNSEntryDetails(name) {
   }
 }
 
-export const EnableDNSSEC = ({ currentStep }) => {
-  const [stepStatus, setStepStatus] = useState(['inProgress', 'notStarted', 'notStarted'])
+export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
+  const router = useRouter()
+
+  const { name } = router.query
+
+  const handleCheck = async () => {
+    if (await isDnsSecEnabled(name)) {
+      setCurrentStep(2)
+    }
+    console.log('false')
+  }
 
   return (
     <Container>
@@ -153,7 +164,7 @@ export const EnableDNSSEC = ({ currentStep }) => {
       <Spacer $height={5} />
       <ButtonContainer>
         <CheckButton
-          onClick={() => setCurrentStep(currentStep + 1)}
+          onClick={handleCheck}
           variant="primary"
           size="small"
           disabled={currentStep === 2}
