@@ -1,5 +1,7 @@
+import CalendarSVG from '@app/assets/Calendar.svg'
 import { makeDisplay } from '@app/utils/currency'
-import { Helper, Input, mq, Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin'
+import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
 import {
   ChangeEventHandler,
   RefObject,
@@ -18,6 +20,33 @@ const FACTOR = 0.5
 const chartResolution = 65536
 const resolutionPerDay = chartResolution / 21
 const padding = 10
+const calendarOptions = [
+  {
+    value: 'google',
+    label: 'Google',
+    function: google,
+  },
+  {
+    value: 'outlook',
+    label: 'Outlook',
+    function: outlook,
+  },
+  {
+    value: 'office365',
+    label: 'Office 365',
+    function: office365,
+  },
+  {
+    value: 'yahoo',
+    label: 'Yahoo',
+    function: yahoo,
+  },
+  {
+    value: 'ics',
+    label: 'iCal',
+    function: ics,
+  },
+]
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -82,10 +111,6 @@ const ChartContainer = styled.div(
     }
   `,
 )
-
-type Props = {
-  startDate: Date
-}
 
 const InnerTooltip = styled.div(
   ({ theme }) => css`
@@ -212,6 +237,15 @@ const TimezoneText = styled(Typography)(
   `,
 )
 
+const CalendarIcon = styled.svg(
+  ({ theme }) => css`
+    color: ${theme.colors.background};
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
+    display: block;
+  `,
+)
+
 const dateToInput = (date: Date) =>
   new Date(date.getTime() - date.getTimezoneOffset() * 60000)
     .toISOString()
@@ -248,12 +282,17 @@ const usePointVars = (
   }, [chartPos, getPos, name, setProperty, ref])
 }
 
-const TemporaryPremium = ({ startDate }: Props) => {
+type Props = {
+  startDate: Date
+  name: string
+}
+
+const TemporaryPremium = ({ startDate, name }: Props) => {
   const bgRef = useRef<HTMLDivElement>(null)
   const dateInputRef = useRef<HTMLInputElement>(null)
 
   const setProperty: PropertyFunc = useCallback(
-    (name) => (property, value, toString) => {
+    (cname) => (property, value, toString) => {
       const bg = bgRef.current
       let str = value
       if (toString) {
@@ -261,7 +300,7 @@ const TemporaryPremium = ({ startDate }: Props) => {
       } else if (typeof str === 'number') {
         str = `${str}px`
       }
-      const propertyName = `${VAR_PREFIX}${name}-${property}`
+      const propertyName = `${VAR_PREFIX}${cname}-${property}`
       if (bg) {
         if (value === undefined) {
           bg.style.removeProperty(propertyName)
@@ -321,6 +360,16 @@ const TemporaryPremium = ({ startDate }: Props) => {
       return { ...getPos(point), date: getDateFromPoint(point) }
     },
     [getPos, getDateFromPoint],
+  )
+
+  const makeEvent: () => CalendarEvent = useCallback(
+    () => ({
+      title: `Register ${name}`,
+      start: getDateFromPoint(selectedPoint),
+      duration: [10, 'minute'],
+      url: window.location.href,
+    }),
+    [getDateFromPoint, name, selectedPoint],
   )
 
   const nowPosition = useMemo(() => getPos(nowPoint), [getPos, nowPoint])
@@ -501,6 +550,21 @@ const TemporaryPremium = ({ startDate }: Props) => {
           Date and time shown in local time zone (
           {nowDate.toLocaleString(undefined, { timeZoneName: 'longOffset' }).replace(/.* /g, '')})
         </TimezoneText>
+        <div>
+          <Dropdown
+            shortThrow
+            keepMenuOnTop
+            items={calendarOptions.map((opt) => ({
+              label: opt.label,
+              onClick: () => window.open(opt.function(makeEvent()), '_blank'),
+              color: 'text',
+            }))}
+          >
+            <Button prefix={<CalendarIcon as={CalendarSVG} />} shadowless>
+              Remind Me
+            </Button>
+          </Dropdown>
+        </div>
       </Container>
     </Helper>
   )

@@ -44,6 +44,7 @@ export const getRegistrationStatus = (
   name: string,
 ): RegistrationStatus => {
   const _batchResults = batchResults as BatchResult
+  if (!_batchResults) return 'invalid'
   const { labels, isDotETH } = start(name)
   const resLength = _batchResults?.length
   if (is2ldEth(isDotETH, labels, false)) {

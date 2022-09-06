@@ -184,7 +184,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
               </InvoiceContainer>
               {hasPremium && gracePeriodEndDate ? (
-                <TemporaryPremium startDate={gracePeriodEndDate} />
+                <TemporaryPremium startDate={gracePeriodEndDate} name={normalisedName} />
               ) : (
                 yearFee &&
                 transactionFee &&
