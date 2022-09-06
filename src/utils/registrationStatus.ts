@@ -29,7 +29,7 @@ export const addRegistrationStatusToBatch = (ens: PublicENS, name: string) => {
   const { getExpiry, getPrice, getOwner } = ens
   const { labels, isDotETH } = start(name)
   if (is2ldEth(isDotETH, labels, true)) {
-    return [getExpiry.batch(name), getPrice.batch(labels[0], yearsToSeconds(1), true)]
+    return [getExpiry.batch(name), getPrice.batch(labels[0], yearsToSeconds(1), false)]
   }
   return [getOwner.batch(name, 'registry')]
 }
@@ -63,7 +63,6 @@ export const getRegistrationStatus = (
       if (expiry.getTime() > Date.now()) {
         return 'registered'
       }
-      console.log(expiry.getTime() + gracePeriod - Date.now())
       if (expiry.getTime() + gracePeriod > Date.now()) {
         return 'gracePeriod'
       }

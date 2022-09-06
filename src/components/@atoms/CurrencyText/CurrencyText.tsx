@@ -16,5 +16,5 @@ export const CurrencyText = ({ eth, currency = 'eth' }: Props) => {
   if (currency === 'eth') {
     return <>{makeDisplay(eth, 5, 'eth')}</>
   }
-  return <>{makeDisplay(eth.mul(ethPrice), 2, '$')}</>
+  return <>{makeDisplay(eth.mul(ethPrice), 2, currency)}</>
 }

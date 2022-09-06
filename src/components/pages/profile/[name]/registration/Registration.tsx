@@ -12,11 +12,12 @@ import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { Content } from '@app/layouts/Content'
 import { CurrencyUnit } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Checkbox, Heading, mq, Typography } from '@ensdomains/thorin'
+import { Checkbox, Colors, Heading, mq, Typography } from '@ensdomains/thorin'
 import Head from 'next/head'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+import TemporaryPremium from './TemporaryPremium'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -106,7 +107,7 @@ type Props = {
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const network = useChainId()
   const breakpoints = useBreakpoint()
-  const { normalisedName, priceData } = nameDetails
+  const { normalisedName, priceData, gracePeriodEndDate } = nameDetails
 
   const { address } = useAccount()
 
@@ -123,7 +124,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { gasPrice, transactionFee } = transactionData || {}
 
   const yearFee = priceData?.base
+  const premiumFee = priceData?.premium
   const totalYearlyFee = yearFee?.mul(years)
+  const hasPremium = premiumFee?.gt(0)
 
   const items = [
     {
@@ -134,6 +137,15 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       label: 'Est. network fee',
       value: transactionFee,
     },
+    ...(hasPremium
+      ? [
+          {
+            label: 'Temporary premium',
+            value: premiumFee,
+            color: 'blue' as Colors,
+          },
+        ]
+      : []),
   ]
 
   return (
@@ -171,12 +183,18 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 </OptionBar>
                 <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
               </InvoiceContainer>
-              {yearFee && transactionFee && gasPrice && (
-                <RegistrationTimeComparisonBanner
-                  rentFee={yearFee}
-                  transactionFee={transactionFee}
-                  message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
-                />
+              {hasPremium && gracePeriodEndDate ? (
+                <TemporaryPremium startDate={gracePeriodEndDate} />
+              ) : (
+                yearFee &&
+                transactionFee &&
+                gasPrice && (
+                  <RegistrationTimeComparisonBanner
+                    rentFee={yearFee}
+                    transactionFee={transactionFee}
+                    message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
+                  />
+                )
               )}
               <OutlinedContainer>
                 <OutlinedContainerTitle $name="title">Use as primary name</OutlinedContainerTitle>

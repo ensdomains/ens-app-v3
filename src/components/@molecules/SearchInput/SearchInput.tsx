@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { parseInputType, validateName } from '@ensdomains/ensjs/dist/cjs/utils/validation'
+import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'

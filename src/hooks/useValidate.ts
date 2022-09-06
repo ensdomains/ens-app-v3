@@ -1,4 +1,4 @@
-import { parseInputType, validateName } from '@ensdomains/ensjs/dist/cjs/utils/validation'
+import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 import { isAddress } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
 

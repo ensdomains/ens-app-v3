@@ -19,9 +19,11 @@ const getEllipsis = (str: string) => {
 
 const getFontSize = (str: string) => {
   const canvas = document.createElement('canvas')
+  canvas.width = 270
+  canvas.height = 270
   const ctx = canvas.getContext('2d')!
   ctx.font =
-    '20px/34px normal Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
+    'normal normal bold 20px Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
   const fontMetrics = ctx.measureText(str)
   const fontSize = Math.floor(20 * (200 / fontMetrics.width))
   return fontSize < 34 ? fontSize : 32
@@ -51,7 +53,12 @@ const Text = styled.text(
 )
 
 const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
+  const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
+  const DejaVuSans = new FontFace('DejaVuSans', 'url(/fonts/sans-serif/DejaVuSans-Bold.ttf)')
+
   const elementData = useMemo(() => {
+    if (!Satoshi.loaded) return {}
+    if (!DejaVuSans.loaded) return {}
     const labels = name.split('.')
     const isSubdomain = labels.length > 2
 
@@ -88,7 +95,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
       domainFontSize *= 2
     }
     return { domainFontSize, subdomainText, isSubdomain, domain }
-  }, [name])
+  }, [name, Satoshi.loaded, DejaVuSans.loaded])
   const { domainFontSize, subdomainText, isSubdomain, domain } = elementData
 
   let background: ReactNode

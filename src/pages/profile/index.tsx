@@ -30,7 +30,7 @@ export default function Page() {
 
   return (
     <>
-      {registrationStatus === 'available' ? (
+      {registrationStatus === 'available' || registrationStatus === 'premium' ? (
         <Registration {...{ nameDetails, isLoading }} />
       ) : (
         <ProfileContent

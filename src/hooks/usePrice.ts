@@ -9,7 +9,7 @@ export const usePrice = (name: string) => {
     status,
     isFetched,
     internal: { isFetchedAfterMount },
-  } = useQuery(['getPrice', name], () => getPrice(name, yearsToSeconds(1), false), {
+  } = useQuery(['getPrice', name], async () => getPrice(name, yearsToSeconds(1), false), {
     enabled: !!(ready && name),
   })
 

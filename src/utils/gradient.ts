@@ -1,4 +1,4 @@
-import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { arrayify } from 'ethers/lib/utils'
 import { emptyAddress } from './constants'
 

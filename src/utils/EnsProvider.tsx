@@ -1,5 +1,5 @@
 import { ENS } from '@ensdomains/ensjs'
-import { ContractName } from '@ensdomains/ensjs/dist/cjs/contracts/types'
+import type { ContractName } from '@ensdomains/ensjs/contracts/types'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useProvider } from 'wagmi'
 

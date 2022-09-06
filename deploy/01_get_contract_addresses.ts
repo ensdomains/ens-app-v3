@@ -16,8 +16,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   )
   console.log('Wrote contract addresses to .env.local')
 
-  await hre.ethers.provider.send('evm_setNextBlockTimestamp', [Date.now() / 1000])
-  await hre.ethers.provider.send('evm_mine', [])
   await hre.ethers.provider.send('evm_snapshot', [])
 }
 

@@ -1,7 +1,7 @@
 import { ReturnedENS } from '@app/types/index'
 import { useEns } from '@app/utils/EnsProvider'
 import { addRegistrationStatusToBatch, getRegistrationStatus } from '@app/utils/registrationStatus'
-import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
+import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 import { useQuery } from 'wagmi'
 import { useValidate } from './useValidate'
 
@@ -42,6 +42,11 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
 
+  const gracePeriodEndDate =
+    expiryDate && expiryData?.gracePeriod
+      ? new Date(expiryDate.getTime() + expiryData.gracePeriod)
+      : undefined
+
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
   const isLoading = !ens.ready || batchLoading
@@ -53,6 +58,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     ownerData,
     priceData,
     expiryDate,
+    gracePeriodEndDate,
     isLoading,
     truncatedName,
     registrationStatus,
