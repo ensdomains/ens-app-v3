@@ -6,6 +6,7 @@ import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
+import extendNames from './extendNames'
 
 export const transactions = {
   updateResolver,
@@ -16,6 +17,7 @@ export const transactions = {
   setPrimaryName,
   updateEthAddress,
   createSubname,
+  extendNames,
 }
 
 export type Transaction = typeof transactions

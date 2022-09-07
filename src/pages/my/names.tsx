@@ -1,12 +1,5 @@
-import GridSVG from '@app/assets/Grid.svg'
-import ListSVG from '@app/assets/List.svg'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
-import SortControl, {
-  SortDirection,
-  SortType,
-  SortValue,
-} from '@app/components/@molecules/SortControl/SortControl'
-import { NameGridView } from '@app/components/names/NameGridView'
+import { SortDirection, SortType } from '@app/components/@molecules/SortControl/SortControl'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
@@ -14,12 +7,26 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { Name } from '@app/types'
-import { Button, mq, PageButtons, Spinner } from '@ensdomains/thorin'
+import {
+  Button,
+  Input,
+  mq,
+  PageButtons,
+  Select,
+  Spinner,
+  SearchSVG,
+  Typography,
+} from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { ReactElement, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+import UpDirectionSVG from '@app/assets/SortAscending.svg'
+import DownDirectionSVG from '@app/assets/SortDescending.svg'
+import FastForwardSVG from '@app/assets/FastForward.svg'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { CheckButton } from '../../components/@atoms/CheckButton/CheckButton'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -36,8 +43,8 @@ const PageButtonsContainer = styled.div(
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-end;
-    padding: ${theme.space['2']} ${theme.space['4']};
+    padding: ${theme.space['3']} ${theme.space['4.5']};
+    border-top: 1px solid ${theme.colors.borderTertiary};
   `,
 )
 
@@ -48,42 +55,126 @@ const TabWrapperWithButtons = styled.div(
     align-items: normal;
     justify-content: flex-start;
     width: 100%;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
+    max-width: 100%;
+    background: ${theme.colors.white};
+    background-color: ${theme.colors.background};
+    border-radius: ${theme.radii['2xLarge']};
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
   `,
 )
 
-const FilterContainer = styled.div(
+const TableHeader = styled.div(
   ({ theme }) => css`
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column-reverse;
     align-items: flex-end;
-    justify-content: space-between;
+    border-bottom: 1px solid ${theme.colors.borderTertiary};
+    padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
     ${mq.md.min(css`
-      justify-content: flex-end;
-      gap: ${theme.space['8']};
-      flex-gap: ${theme.space['8']};
+      flex-direction: row;
+      padding: ${theme.space['3']} ${theme.space['4.5']};
     `)}
   `,
 )
 
-const ViewButtons = styled.div(
+const TableHeaderLeading = styled.div(
+  () => css`
+    flex: 1;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+  `,
+)
+
+const TableHeaderLeadingLeft = styled.div(
   ({ theme }) => css`
+    display: flex;
+    gap: ${theme.space['2']};
+    align-items: center;
+    color: ${theme.colors.text};
+    ${mq.md.min(css`
+      gap: ${theme.space['4']};
+    `)}
+  `,
+)
+
+const TableHeaderLeftControlsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    gap: ${theme.space['2']};
+  `,
+)
+
+const TableHeaderLeadingRight = styled.div(() => css``)
+
+const TableHeaderTrailing = styled.div(
+  ({ theme }) => css`
+    width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
+    ${mq.md.min(css`
+      flex: 0 0 ${theme.space['32']};
+      width: ${theme.space['32']};
+    `)}
+  `,
+)
+
+const SearchIconWrapper = styled.div(
+  ({ theme }) => css`
+    svg {
+      display: block;
+      path {
+        stroke-width: 3px;
+        stroke: ${theme.colors.textTertiary};
+      }
+    }
+  `,
+)
+
+const DirectionButton = styled.button<{ $active: boolean }>(
+  ({ theme, $active }) => css`
+    width: ${theme.space['9']};
+    flex: 0 0 ${theme.space['9']};
+    height: ${theme.space['9']};
+    border: 1px solid ${theme.colors.borderSecondary};
+    border-radius: ${theme.space['2']};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    svg {
+      display: block;
+      width: ${theme.space['3']};
+      height: ${theme.space['3']};
+      path {
+        fill: ${$active ? theme.colors.accent : theme.colors.textTertiary};
+      }
+    }
+  `,
+)
+
+const ButtonInner = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
     gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
+  `,
+)
+
+const ButtonIcon = styled.svg(
+  ({ theme }) => css`
+    display: block;
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
   `,
 )
 
 const spacing = '1fr 1fr'
 
-type ViewType = 'grid' | 'list'
 type FilterType = Name['type'] | 'none'
 
 export default function Page() {
@@ -94,11 +185,14 @@ export default function Page() {
   const isSelf = true
   const chainId = useChainId()
 
-  const [viewType, setViewType] = useState<ViewType>('list')
-  const [sortValue, setSortValue] = useState<SortValue>({
-    type: SortType.expiryDate,
-    direction: SortDirection.desc,
-  })
+  const { showDataInput } = useTransactionFlow()
+
+  const [isSelectMode, setIsSelectMode] = useState(false)
+  const [selectedNames, setSelectedNames] = useState<string[]>([])
+
+  const [sortType, setSortType] = useState<SortType>(SortType.expiryDate)
+  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
+
   const [filter] = useState<FilterType>('none')
   const [page, setPage] = useState(1)
 
@@ -110,13 +204,19 @@ export default function Page() {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortValue.type,
-      orderDirection: sortValue.direction,
+      type: sortType,
+      orderDirection: sortDirection,
     },
     page,
     resultsPerPage: 25,
     filter: filter === 'none' ? undefined : filter,
   })
+
+  const handleExtend = () => {
+    showDataInput(`extend-names-${selectedNames.join('-')}`, 'ExtendNames', {
+      names: selectedNames,
+    })
+  }
 
   const loading =
     isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
@@ -134,37 +234,78 @@ export default function Page() {
       spacing={spacing}
     >
       {{
-        header: (
-          <FilterContainer>
-            <SortControl value={sortValue} onChange={(_value) => setSortValue(_value)} />
-            <ViewButtons>
-              <Button
-                pressed={viewType === 'grid'}
-                onClick={() => setViewType('grid')}
-                variant="transparent"
-                shadowless
-                size="extraSmall"
-              >
-                <div style={{ height: '24px' }}>
-                  <GridSVG width="24" height="24" />
-                </div>
-              </Button>
-              <Button
-                pressed={viewType === 'list'}
-                onClick={() => setViewType('list')}
-                variant="transparent"
-                shadowless
-                size="extraSmall"
-              >
-                <div style={{ height: '24px' }}>
-                  <ListSVG width="24" height="24" />
-                </div>
-              </Button>
-            </ViewButtons>
-          </FilterContainer>
-        ),
         trailing: (
           <TabWrapperWithButtons>
+            <TableHeader>
+              <TableHeaderLeading>
+                <TableHeaderLeadingLeft>
+                  <CheckButton active={isSelectMode} onChange={(value) => setIsSelectMode(value)} />
+                  {isSelectMode ? (
+                    <div>{selectedNames.length} selected</div>
+                  ) : (
+                    <TableHeaderLeftControlsContainer>
+                      <Select
+                        value={sortType}
+                        size="small"
+                        label="Sort by"
+                        hideLabel
+                        onChange={(e) => {
+                          setSortType(e.target.value as SortType)
+                        }}
+                        options={[
+                          { label: t('sortTypes.expiryDate'), value: 'expiryDate' },
+                          {
+                            label: t('sortTypes.creationDate'),
+                            value: 'creationDate',
+                          },
+                          { label: t('sortTypes.labelName'), value: 'labelName' },
+                        ]}
+                      />
+                      <DirectionButton
+                        $active={sortDirection === SortDirection.desc}
+                        onClick={() => setSortDirection(SortDirection.desc)}
+                      >
+                        <UpDirectionSVG />
+                      </DirectionButton>
+                      <DirectionButton
+                        $active={sortDirection === SortDirection.asc}
+                        onClick={() => setSortDirection(SortDirection.asc)}
+                      >
+                        <DownDirectionSVG />
+                      </DirectionButton>
+                    </TableHeaderLeftControlsContainer>
+                  )}
+                </TableHeaderLeadingLeft>
+                <TableHeaderLeadingRight>
+                  {isSelectMode && (
+                    <Button variant="primary" size="small" shadowless onClick={handleExtend}>
+                      <ButtonInner>
+                        <ButtonIcon as={FastForwardSVG} />
+                        <Typography weight="bold">{t('extend')}</Typography>
+                      </ButtonInner>
+                    </Button>
+                  )}
+                </TableHeaderLeadingRight>
+              </TableHeaderLeading>
+              <TableHeaderTrailing>
+                <Input
+                  size="medium"
+                  label="search"
+                  hideLabel
+                  prefix={
+                    <SearchIconWrapper>
+                      <SearchSVG />
+                    </SearchIconWrapper>
+                  }
+                  placeholder="Search"
+                  parentStyles={css`
+                    height: 36px;
+                    border-radius: 8px;
+                  `}
+                  padding="2"
+                />
+              </TableHeaderTrailing>
+            </TableHeader>
             {loading && (
               <TabWrapper>
                 <EmptyDetailContainer>
@@ -172,18 +313,18 @@ export default function Page() {
                 </EmptyDetailContainer>
               </TabWrapper>
             )}
-            {!loading &&
-              currentPage &&
-              pageLength > 0 &&
-              (viewType === 'list' ? (
-                <NameListView currentPage={currentPage} network={chainId} />
-              ) : (
-                <NameGridView currentPage={currentPage} network={chainId} />
-              ))}
+            {!loading && currentPage && pageLength > 0 && (
+              <NameListView
+                currentPage={currentPage}
+                network={chainId}
+                rowsOnly
+                mode={isSelectMode ? 'select' : 'view'}
+                selectedNames={selectedNames}
+                onSelectedNamesChange={setSelectedNames}
+              />
+            )}
             {!loading && pageLength < 1 && (!currentPage || currentPage.length === 0) && (
-              <TabWrapper>
-                <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
-              </TabWrapper>
+              <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
             )}
             {pageLength > 0 && (
               <PageButtonsContainer>

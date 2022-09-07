@@ -49,7 +49,7 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   return <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
 }
 
-export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
+export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOnly?: boolean }) => {
   const { t } = useTranslation()
   const currentDate = new Date()
   const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
@@ -73,6 +73,7 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
     color = 'foreground'
   }
 
+  if (textOnly) return <>{text}</>
   return (
     <ExpiryText data-testid={`short-expiry-${color}`} weight="bold" $color={color}>
       {text}

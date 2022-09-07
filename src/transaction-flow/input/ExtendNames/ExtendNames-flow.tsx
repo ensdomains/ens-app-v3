@@ -1,8 +1,7 @@
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { Dialog, Button } from '@ensdomains/thorin'
+import { Dialog, Button, Avatar } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import GasIcon from '@app/assets/Gas.svg'
 import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useState } from 'react'
@@ -13,10 +12,19 @@ import { useEthPrice } from '@app/hooks/useEthPrice'
 import { formatUnits } from 'ethers/lib/utils'
 import { BigNumber } from 'ethers'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
+import { useAvatar } from '@app/hooks/useAvatar'
+import { useZorb } from '@app/hooks/useZorb'
+import { useProfile } from '@app/hooks/useProfile'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import GasDisplay from '../../../components/@atoms/GasDisplay'
+import { useChainId } from '../../../hooks/useChainId'
+import { useExpiry } from '../../../hooks/useExpiry'
+import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 
 const Container = styled.form(
   ({ theme }) => css`
     display: flex;
+    width: 100%;
     flex-direction: column;
     gap: ${theme.space['4']};
     align-items: center;
@@ -41,6 +49,97 @@ const OptionBar = styled.div(
   `,
 )
 
+const NamesListItemContainer = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: ${theme.space['2']};
+    height: ${theme.space['16']};
+    border: 1px solid ${theme.colors.borderSecondary};
+    border-radius: ${theme.radii.full};
+    padding: ${theme.space['2']};
+    padding-right: ${theme.space['5']};
+  `,
+)
+
+const NamesListItemAvatarWrapper = styled.div(
+  ({ theme }) => css`
+    position: relative;
+    width: ${theme.space['12']};
+    height: ${theme.space['12']};
+  `,
+)
+
+const NamesListItemContent = styled.div(
+  ({ theme }) => css`
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+  `,
+)
+
+const NamesListItemTitle = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-weight: ${theme.fontWeights.bold};
+    font-size: ${theme.fontSizes.extraLarge};
+    line-height: 1.36;
+    color: ${theme.colors.text};
+  `,
+)
+
+const NamesListItemSubtitle = styled.div(
+  ({ theme }) => css`
+    font-weight: ${theme.fontWeights.normal};
+    font-size: ${theme.fontSizes.small};
+    line-height: 1.43;
+    color: ${theme.colors.textTertiary};
+  `,
+)
+
+const NamesListItem = ({ name }: { name: string }) => {
+  const chainId = useChainId()
+  const { avatar } = useAvatar(name, chainId)
+  const zorb = useZorb(name, 'name')
+  const { expiry, loading: expiryLoading } = useExpiry(name)
+  console.log(expiry, typeof expiry?.expiry)
+
+  if (expiryLoading) return null
+  return (
+    <NamesListItemContainer>
+      <NamesListItemAvatarWrapper>
+        <Avatar src={avatar || zorb} label={name} />
+      </NamesListItemAvatarWrapper>
+      <NamesListItemContent>
+        <NamesListItemTitle>{name} dasdfa asdfas</NamesListItemTitle>
+        {expiry?.expiry && (
+          <NamesListItemSubtitle>
+            <ShortExpiry expiry={expiry.expiry} textOnly />
+          </NamesListItemSubtitle>
+        )}
+      </NamesListItemContent>
+    </NamesListItemContainer>
+  )
+}
+
+type NamesListProps = {
+  names: string[]
+}
+
+const NamesList = ({ names }: NamesListProps) => {
+  return (
+    <>
+      {names.map((name) => (
+        <NamesListItem key={name} name={name} />
+      ))}
+    </>
+  )
+}
+
 type Data = {
   names: string[]
 }
@@ -52,7 +151,7 @@ export type Props = {
 const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
-  const [view, setView] = useState<'name-list' | 'registration'>()
+  const [view, setView] = useState<'name-list' | 'registration'>('name-list')
   const [years, setYears] = useState(1)
   const [currencyUnit, setCurrencyUnit] = useState<'eth' | 'usd'>('eth')
 
@@ -79,15 +178,36 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
     },
   ]
 
+  const title = view === 'name-list' ? 'Extend 3 Names' : 'Extend Names'
+
+  const trailingButtonProps =
+    view === 'name-list'
+      ? { onClick: () => setView('registration'), children: t('action.next', { ns: 'common' }) }
+      : {
+          onClick: () => {
+            dispatch({
+              name: 'setTransactions',
+              payload: [
+                makeTransactionItem('extendNames', {
+                  names,
+                  years,
+                }),
+              ],
+            })
+            dispatch({ name: 'setFlowStage', payload: 'transaction' })
+          },
+          children: t('action.save', { ns: 'common' }),
+        }
+
   if (transactionDataLoading || ethPriceLoading) {
     return <TransactionLoader />
   }
   return (
     <>
-      <Dialog.Heading title={t('Extend Names')} />
+      <Dialog.Heading title={title} />
       <Container>
         {view === 'name-list' ? (
-          <>HELLO</>
+          <NamesList names={names} />
         ) : (
           <>
             <PlusMinusWrapper>
@@ -101,10 +221,7 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
               />
             </PlusMinusWrapper>
             <OptionBar>
-              <div>
-                <GasIcon />
-                {gasLabel}
-              </div>
+              <GasDisplay gasPrice={gasPrice} />
               <CurrencySwitch value={currencyUnit} onChange={(unit) => setCurrencyUnit(unit)} />
             </OptionBar>
             {rentFee && transactionFee && gasPrice && (
@@ -119,7 +236,14 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
           </>
         )}
       </Container>
-      <Dialog.Footer leading={<Button>Cancel</Button>} trailing={<Button>Save</Button>} />
+      <Dialog.Footer
+        leading={
+          <Button shadowless tone="grey" variant="secondary" onClick={onDismiss}>
+            Back
+          </Button>
+        }
+        trailing={<Button shadowless {...trailingButtonProps} />}
+      />
     </>
   )
 }

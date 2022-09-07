@@ -63,6 +63,7 @@
     "controller": "Controller",
     "dnsOwner": "DNS Owner",
     "owner": "Owner",
+    "manager": "Manager",
     "all": "All Names",
     "expiresInYears_one": "Expires in {{count}} year",
     "expiresInYears_other": "Expires in {{count}} years",

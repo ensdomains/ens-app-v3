@@ -16,9 +16,17 @@ const NoResultsContianer = styled.div(
 export const NameListView = ({
   currentPage,
   network,
+  mode,
+  rowsOnly = false,
+  selectedNames = [],
+  onSelectedNamesChange,
 }: {
   currentPage: ReturnedName[]
   network: number
+  mode?: 'select' | 'view'
+  rowsOnly?: boolean
+  selectedNames?: string[]
+  onSelectedNamesChange?: (data: string[]) => void
 }) => {
   const { t } = useTranslation('common')
   if (!currentPage || currentPage.length === 0)
@@ -27,10 +35,41 @@ export const NameListView = ({
         <Heading as="h3">{t('errors.noResults')}</Heading>
       </NoResultsContianer>
     )
+
+  console.log(selectedNames)
+
+  const handleClickForName = (name: string) => () => {
+    if (selectedNames?.includes(name)) {
+      onSelectedNamesChange?.(selectedNames.filter((n) => n !== name))
+    } else {
+      onSelectedNamesChange?.([...selectedNames, name])
+    }
+  }
+
+  if (rowsOnly)
+    return (
+      <>
+        {currentPage.map((name) => (
+          <TaggedNameItem
+            key={name.id}
+            {...{ ...name, network }}
+            mode={mode}
+            selected={selectedNames?.includes(name.name)}
+            onClick={handleClickForName(name.name)}
+          />
+        ))}
+      </>
+    )
   return (
     <TabWrapper>
       {currentPage.map((name) => (
-        <TaggedNameItem key={name.id} {...{ ...name, network }} />
+        <TaggedNameItem
+          key={name.id}
+          {...{ ...name, network }}
+          mode={mode}
+          selected={selectedNames?.includes(name.name)}
+          onClick={handleClickForName(name.name)}
+        />
       ))}
     </TabWrapper>
   )

@@ -1,54 +1,113 @@
+import { useMemo, ReactNode } from 'react'
 import { useAvatar } from '@app/hooks/useAvatar'
+import { useExpiry } from '@app/hooks/useExpiry'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, mq, Typography } from '@ensdomains/thorin'
-import Link from 'next/link'
+import { Avatar, mq } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
-import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
+import CircleTick from '@app/assets/CircleTick.svg'
+import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
+import { StyledName } from '../StyledName/StyledName'
+import { OptionalLink } from '../OptionalLink/OptionalLink'
 
-const NameItemWrapper = styled.div(
-  ({ theme }) => css`
+const NameItemWrapper = styled.div<{ $highlight: boolean }>(
+  ({ theme, $highlight }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
     width: 100%;
-    padding: ${theme.space['3']} ${theme.space['4.5']};
+    overflow: hidden;
+    padding: ${theme.space['3']} ${theme.space['4']};
+    gap: ${theme.space['2']};
     border-bottom: 1px solid ${theme.colors.borderTertiary};
     transition: all 0.15s ease-in-out;
+    background: ${$highlight ? theme.colors.accentSecondary : theme.colors.white};
+    cursor: pointer;
     &:hover {
-      background-color: ${theme.colors.backgroundSecondary};
+      background: ${$highlight ? theme.colors.accentTertiary : theme.colors.backgroundSecondary};
     }
     &:last-of-type {
       border: none;
     }
+    ${mq.md.min(css`
+      padding: ${theme.space['3']} ${theme.space['4.5']};
+      gap: ${theme.space['4']};
+    `)}
   `,
 )
 
 const NameItemContainer = styled.div(
-  () => css`
+  ({ theme }) => css`
+    flex: 1;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    gap: 16px;
+    overflow: hidden;
+    min-width: 0;
+    gap: ${theme.space['2']};
     flex-gap: 16px;
   `,
 )
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
+    position: relative;
     width: ${theme.space['9']};
   `,
 )
 
-const TypeWrapper = styled.div(
+const NameItemContent = styled.div(
+  () => css`
+    flex: 1;
+    display: flex;
+    position: relative;
+    flex-direction: column;
+    overflow: hidden;
+    min-width: 0;
+    width: 0;
+  `,
+)
+
+const TitleWrapper = styled(StyledName)(
+  () => css`
+    font-size: 1rem;
+    ${mq.md.min(css``)}
+  `,
+)
+
+const SubtitleWrapper = styled.div(
   ({ theme }) => css`
-    max-width: ${theme.space['48']};
-    ${mq.md.min(css`
-      max-width: ${theme.space['96']};
-    `)}
+    font-size: ${theme.space['3.5']};
+    line-height: 1.43;
+    color: ${theme.colors.textTertiary};
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  `,
+)
+
+const DetailsContainer = styled.div(() => css``)
+
+const AvatarOverlay = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(82, 152, 255, 0.75);
+    border-radius: ${theme.radii.full};
+    svg {
+      path {
+        stroke: ${theme.colors.white};
+        stroke-width: 1px;
+      }
+      rect {
+        stroke: transparent;
+      }
+    }
   `,
 )
 
@@ -61,18 +120,31 @@ export const NameDetailItem = ({
   name,
   truncatedName,
   network,
+  mode,
+  selected = false,
+  onClick,
   children,
 }: Name & {
   network: number
+  mode?: 'view' | 'select'
+  selected?: boolean
+  onClick?: () => void
   children: ReactNode
 }) => {
   const router = useRouter()
   const { avatar } = useAvatar(name, network)
-
   const zorb = useZorb(name, 'name')
+  const { expiry } = useExpiry(name)
+
+  const isSelectable = useMemo(() => {
+    if (mode === 'view') return false
+    const labels = name?.split('.')
+    return labels?.length === 2 && labels[1] === 'eth'
+  }, [name, mode])
 
   return (
-    <Link
+    <OptionalLink
+      active={mode !== 'select'}
       href={{
         pathname: `/profile/${name}`,
         query: {
@@ -81,7 +153,13 @@ export const NameDetailItem = ({
       }}
       passHref
     >
-      <NameItemWrapper as="a">
+      <NameItemWrapper
+        $highlight={mode === 'select' && selected}
+        as={mode !== 'select' ? 'a' : 'div'}
+        onClick={() => {
+          if (isSelectable) onClick?.()
+        }}
+      >
         <NameItemContainer>
           <AvatarWrapper>
             <Avatar
@@ -89,15 +167,23 @@ export const NameDetailItem = ({
               src={avatar || zorb}
               data-testid="name-detail-item-avatar"
             />
+            {mode === 'select' && selected && (
+              <AvatarOverlay>
+                <CircleTick />
+              </AvatarOverlay>
+            )}
           </AvatarWrapper>
-          <TypeWrapper>
-            <Typography color="text" ellipsis weight="bold" variant="extraLarge">
-              {truncatedName}
-            </Typography>
-          </TypeWrapper>
+          <NameItemContent>
+            <TitleWrapper name={name} />
+            {expiry?.expiry && (
+              <SubtitleWrapper>
+                <ShortExpiry expiry={expiry.expiry} textOnly />
+              </SubtitleWrapper>
+            )}
+          </NameItemContent>
         </NameItemContainer>
-        {children}
+        <DetailsContainer>{children}</DetailsContainer>
       </NameItemWrapper>
-    </Link>
+    </OptionalLink>
   )
 }
