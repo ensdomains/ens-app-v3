@@ -1,6 +1,7 @@
+import { useQuery } from 'wagmi'
+
 import { useEns } from '@app/utils/EnsProvider'
 import { ensNftImageUrl, imageUrlUnknownRecord } from '@app/utils/utils'
-import { useQuery } from 'wagmi'
 
 const fetchImg = async (url: string) =>
   new Promise<string | undefined>((resolve) => {

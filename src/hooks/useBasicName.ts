@@ -1,6 +1,9 @@
-import { useEns } from '@app/utils/EnsProvider'
-import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
 import { useQuery } from 'wagmi'
+
+import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
+
+import { useEns } from '@app/utils/EnsProvider'
+
 import { useValidate } from './useValidate'
 
 export const useBasicName = (name?: string | null, normalised?: boolean) => {

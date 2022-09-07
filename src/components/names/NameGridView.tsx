@@ -1,9 +1,12 @@
+import Link from 'next/link'
+import styled, { css } from 'styled-components'
+
+import { Colors, mq } from '@ensdomains/thorin'
+
 import ClockSVG from '@app/assets/Clock.svg'
 import { ReturnedName } from '@app/hooks/useNamesFromAddress'
 import { secondsToDays } from '@app/utils/utils'
-import { Colors, mq } from '@ensdomains/thorin'
-import Link from 'next/link'
-import styled, { css } from 'styled-components'
+
 import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 
 const NameGrid = styled.div(

@@ -1,9 +1,11 @@
-import { ENS } from '@ensdomains/ensjs'
 import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
+import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+
+import { ENS } from '@ensdomains/ensjs'
+import { Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
@@ -21,7 +23,6 @@ import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { mq, Typography } from '@ensdomains/thorin'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -182,6 +183,8 @@ export const Details = ({
   )
 }
 
+type Tab = 'records' | 'subnames' | 'advanced'
+
 export default function Page() {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
@@ -210,7 +213,14 @@ export default function Page() {
 
   const isLoading = detailsLoading || accountLoading
 
-  const [tab, setTab] = useState<'records' | 'subnames' | 'advanced'>('records')
+  const tab = (router.query.tab as Tab) || 'records'
+  const setTab = (newTab: Tab) => {
+    const url = new URL(router.asPath, window.location.origin)
+    url.searchParams.set('tab', newTab)
+    router.push(url.toString(), undefined, {
+      shallow: true,
+    })
+  }
 
   return (
     <Content title={normalisedName} subtitle={t('details.title')} loading={isLoading}>

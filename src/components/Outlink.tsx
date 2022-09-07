@@ -1,9 +1,11 @@
-import OutlinkSVG from '@app/assets/Outlink.svg'
-import { Typography } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import type { UrlObject } from 'url'
+
+import { Typography } from '@ensdomains/thorin'
+
+import OutlinkSVG from '@app/assets/Outlink.svg'
 
 export const StyledAnchor = styled.a(
   ({ theme }) => css`

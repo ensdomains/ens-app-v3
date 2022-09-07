@@ -1,6 +1,7 @@
-import { waitFor, mockFunction } from '@app/test-utils'
-import validateResolver, { KnownResolveAddresses } from './validateResolver'
+import { mockFunction, waitFor } from '@app/test-utils'
+
 import validateContract, { CONTRACT_INTERFACES } from './validateContract'
+import validateResolver, { KnownResolveAddresses } from './validateResolver'
 
 jest.mock('@app/validators/validateContract')
 
@@ -17,20 +18,11 @@ const contractInterfaces = Object.keys(CONTRACT_INTERFACES) as Array<
 describe('validateResolver', () => {
   ResolverAddresses.forEach((address) => {
     it(`should return hard coded results for known resolver address: ${address}`, async () => {
-      const result = await validateResolver(
-        contractInterfaces,
-        address as string,
-        {},
-        undefined,
-      )
+      const result = await validateResolver(contractInterfaces, address as string, {}, undefined)
 
       const errors = contractInterfaces
         .map((interfaceName) => {
-          if (
-            KnownResolveAddresses[address].supportedInterfaces.includes(
-              interfaceName,
-            )
-          ) {
+          if (KnownResolveAddresses[address].supportedInterfaces.includes(interfaceName)) {
             return undefined
           }
           return CONTRACT_INTERFACES[interfaceName].error

@@ -1,10 +1,12 @@
-import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
-import { useGetHistory } from '@app/hooks/useGetHistory'
-import { Button, mq, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useNetwork, useProvider, useQuery } from 'wagmi'
+
+import { Button, Typography, mq } from '@ensdomains/thorin'
+
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { useGetHistory } from '@app/hooks/useGetHistory'
 
 function getEtherScanLink(networkId?: number | string) {
   switch (networkId) {

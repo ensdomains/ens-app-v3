@@ -1,6 +1,9 @@
-import { useProfile } from '@app/hooks/useProfile'
 import { mockFunction, render, screen } from '@app/test-utils'
+
 import { useRouter } from 'next/router'
+
+import { useProfile } from '@app/hooks/useProfile'
+
 import ResolverDetails from './ResolverDetails'
 
 jest.mock('next/router')

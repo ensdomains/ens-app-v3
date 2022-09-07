@@ -1,31 +1,34 @@
-import React, { useState, useEffect, ComponentProps, useCallback } from 'react'
+import React, { ComponentProps, useCallback, useEffect, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
-import { useForm, useWatch } from 'react-hook-form'
-import { mq, Textarea, Button, ScrollBox } from '@ensdomains/thorin'
+
+import { RecordOptions } from '@ensdomains/ensjs/src/utils/recordHelpers'
+import { Button, ScrollBox, Textarea, mq } from '@ensdomains/thorin'
+
 import { Banner } from '@app/components/@atoms/Banner/Banner'
+import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
+import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
+import { makeIntroItem } from '@app/transaction-flow/intro'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ProfileEditorType } from '@app/types'
 import {
+  convertFormSafeKey,
   convertProfileToProfileFormObject,
   formSafeKey,
   getDirtyFields,
-  convertFormSafeKey,
 } from '@app/utils/editor'
-import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { RecordOptions } from '@ensdomains/ensjs/src/utils/recordHelpers'
 import { validateCryptoAddress } from '@app/utils/validate'
-import { useTranslation } from 'react-i18next'
-import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import accountsOptions from './accountsOptions'
 import addressOptions from './addressOptions'
+
 import AvatarButton from './Avatar/AvatarButton'
 import { AvatarViewManager } from './Avatar/AvatarViewManager'
 import otherOptions from './otherOptions'

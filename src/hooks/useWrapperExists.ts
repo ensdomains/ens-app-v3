@@ -1,5 +1,6 @@
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
+
 import { useChainId } from './useChainId'
 
 export const useWrapperExists = (): boolean => {

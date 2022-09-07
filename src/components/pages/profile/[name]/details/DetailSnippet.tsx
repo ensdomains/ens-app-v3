@@ -1,3 +1,8 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
@@ -6,9 +11,6 @@ import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
 import { formatExpiry } from '@app/utils/utils'
-import { Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const Container = styled(Card)(
   ({ theme }) => css`

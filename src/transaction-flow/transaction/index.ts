@@ -1,3 +1,4 @@
+import burnFuses from './burnFuses'
 import createSubname from './createSubname'
 import migrateProfile from './migrateProfile'
 import setPrimaryName from './setPrimaryName'
@@ -17,6 +18,7 @@ export const transactions = {
   setPrimaryName,
   updateEthAddress,
   migrateProfileWithSync,
+  burnFuses,
   createSubname,
 }
 

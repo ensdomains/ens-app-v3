@@ -1,6 +1,7 @@
-import { Select } from '@ensdomains/thorin'
-import { ComponentProps, useMemo, useState, useEffect } from 'react'
+import { ComponentProps, useEffect, useMemo, useState } from 'react'
 import { FieldValues, Path, PathValue, UseFormGetValues, UseFormSetValue } from 'react-hook-form'
+
+import { Select } from '@ensdomains/thorin'
 
 type Option = ComponentProps<typeof Select>['options'][number]
 
@@ -12,7 +13,7 @@ interface Props<T extends FieldValues> {
   setValue: UseFormSetValue<T>
 }
 
-const useExpandableRecordsGroup = <T>({
+const useExpandableRecordsGroup = <T extends FieldValues>({
   group,
   options,
   existingKeys: initialExistingKeys,

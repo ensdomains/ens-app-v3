@@ -1,9 +1,11 @@
 import React, { ChangeEvent } from 'react'
-import styled, { css } from 'styled-components'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
 import { Button, Select, mq } from '@ensdomains/thorin'
-import UpDirectionSVG from '@app/assets/UpDirection.svg'
+
 import DownDirectionSVG from '@app/assets/DownDirection.svg'
+import UpDirectionSVG from '@app/assets/UpDirection.svg'
 
 const SortAndDirections = styled.div(
   ({ theme }) => css`

@@ -1,3 +1,9 @@
+import { ReactNode, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Button, Dialog, DownIndicatorSVG, Dropdown, Typography } from '@ensdomains/thorin'
+
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { OutlinedButton } from '@app/components/OutlinedButton'
@@ -7,10 +13,6 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfile } from '@app/hooks/useProfile'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { shortenAddress } from '@app/utils/utils'
-import { Button, Dialog, DownIndicatorSVG, Dropdown, Typography } from '@ensdomains/thorin'
-import { ReactNode, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const ButtonWrapper = styled.div(
   ({ theme }) => css`

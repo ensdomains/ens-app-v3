@@ -1,8 +1,9 @@
-import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
 import Link from 'next/link'
 import { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
 
 export interface HamburgerItem {
   label: string

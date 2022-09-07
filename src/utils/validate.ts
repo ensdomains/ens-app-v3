@@ -1,5 +1,5 @@
-import { validate } from '@ensdomains/ens-validation'
 import { formatsByName } from '@ensdomains/address-encoder'
+import { validate } from '@ensdomains/ens-validation'
 
 export const hasNonAscii = () => {
   const strs = window.location.pathname.split('/')

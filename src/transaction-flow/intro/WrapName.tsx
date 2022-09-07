@@ -1,10 +1,12 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
 import { WrapNameGift } from '@app/assets/WrapNameGift'
 import { Outlink } from '@app/components/Outlink'
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
-import { Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const GiftWrapper = styled.div(
   ({ theme }) => css`

@@ -1,7 +1,9 @@
+import { ComponentProps } from 'react'
+
+import { Avatar } from '@ensdomains/thorin'
+
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar } from '@ensdomains/thorin'
-import { ComponentProps } from 'react'
 
 export const NameAvatar = ({
   src,

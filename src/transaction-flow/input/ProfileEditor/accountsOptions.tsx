@@ -1,8 +1,10 @@
+import { ComponentProps } from 'react'
+import styled, { css } from 'styled-components'
+
+import { Select } from '@ensdomains/thorin'
+
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import supportedTexts from '@app/constants/supportedTexts.json'
-import styled, { css } from 'styled-components'
-import { Select } from '@ensdomains/thorin'
-import { ComponentProps } from 'react'
 import { formSafeKey } from '@app/utils/editor'
 import { getSocialData } from '@app/utils/getSocialData'
 

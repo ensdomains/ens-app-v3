@@ -1,3 +1,13 @@
+import type { JsonRpcSigner } from '@ethersproject/providers'
+import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
+import { utils } from 'ethers'
+import { useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
+
+import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
+
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import CircleCrossSVG from '@app/assets/CircleCross.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
@@ -10,14 +20,7 @@ import { transactions } from '@app/transaction-flow/transaction'
 import { ManagedDialogPropsTwo, TransactionStage } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
-import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
-import type { JsonRpcSigner } from '@ethersproject/providers'
-import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
-import { utils } from 'ethers'
-import { useCallback, useEffect, useMemo, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
+
 import { DisplayItems } from '../DisplayItems'
 
 const BarContainer = styled.div(
@@ -200,6 +203,7 @@ export const TransactionStageModal = ({
   transaction,
   txKey,
   onDismiss,
+  backToInput,
 }: ManagedDialogPropsTwo) => {
   const { t } = useTranslation()
   const chainName = useChainName()
@@ -271,22 +275,8 @@ export const TransactionStageModal = ({
   })
 
   const FilledDisplayItems = useMemo(
-    () => (
-      <DisplayItems
-        displayItems={[
-          {
-            label: 'action',
-            value: t(`transaction.description.${actionName}`),
-          },
-          {
-            label: 'info',
-            value: t(`transaction.info.${actionName}`),
-          },
-          ...(displayItems || []),
-        ]}
-      />
-    ),
-    [actionName, displayItems, t],
+    () => <DisplayItems displayItems={[...(displayItems || [])]} />,
+    [displayItems],
   )
 
   const MiddleContent = useMemo(() => {
@@ -444,7 +434,18 @@ export const TransactionStageModal = ({
         )}
         {lowerError && <Helper type="error">{lowerError}</Helper>}
       </InnerDialog>
-      <Dialog.Footer center trailing={ActionButton} />
+      <Dialog.Footer
+        center
+        leading={ActionButton}
+        trailing={
+          backToInput &&
+          !(stage === 'sent' || stage === 'complete') && (
+            <Button onClick={() => dispatch({ name: 'setFlowStage', payload: 'input' })}>
+              {t('action.back')}
+            </Button>
+          )
+        }
+      />
     </>
   )
 }

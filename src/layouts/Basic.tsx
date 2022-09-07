@@ -1,6 +1,9 @@
-import { Footer } from '@app/components/Footer'
-import { mq } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+
+import { mq } from '@ensdomains/thorin'
+
+import { Footer } from '@app/components/Footer'
+
 import { Navigation } from './Navigation'
 
 const Container = styled.div(

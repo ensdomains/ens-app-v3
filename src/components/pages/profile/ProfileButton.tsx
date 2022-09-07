@@ -1,4 +1,9 @@
-import { addressIconTypes, DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import React, { useMemo } from 'react'
+import styled, { css, useTheme } from 'styled-components'
+
+import { ArrowUpSVG, Button, Space, Typography, mq } from '@ensdomains/thorin'
+
+import { DynamicAddressIcon, addressIconTypes } from '@app/assets/address/DynamicAddressIcon'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -6,9 +11,6 @@ import { useCopied } from '@app/hooks/useCopied'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
-import { ArrowUpSVG, Button, mq, Space, Typography } from '@ensdomains/thorin'
-import React, { useMemo } from 'react'
-import styled, { css, useTheme } from 'styled-components'
 
 const Container = styled.div(
   ({ theme }) => css`
