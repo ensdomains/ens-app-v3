@@ -1,6 +1,7 @@
-import styled, { css } from 'styled-components'
-import { CloseSVG } from '@ensdomains/thorin'
 import { ButtonHTMLAttributes } from 'react'
+import styled, { css } from 'styled-components'
+
+import { CloseSVG } from '@ensdomains/thorin'
 
 const Container = styled.button(
   ({ theme }) => css`
