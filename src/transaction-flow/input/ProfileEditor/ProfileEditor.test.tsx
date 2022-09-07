@@ -9,11 +9,12 @@ import {
   within,
 } from '@app/test-utils'
 
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
+import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useContractAddress } from '@app/hooks/useContractAddress'
-import { useResolverStatus } from '@app/hooks/useResolverStatus'
+
 import ProfileEditor from './ProfileEditor-flow'
 
 const mockProfileData = {

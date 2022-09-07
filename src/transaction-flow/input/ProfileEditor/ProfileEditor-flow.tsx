@@ -10,8 +10,11 @@ import { Button, ScrollBox, Textarea, mq } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
+import { useResolverStatus } from '@app/hooks/useResolverStatus'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -23,17 +26,14 @@ import {
   getDirtyFields,
 } from '@app/utils/editor'
 import { validateCryptoAddress } from '@app/utils/validate'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { useResolverStatus } from '@app/hooks/useResolverStatus'
-import { useContractAddress } from '@app/hooks/useContractAddress'
-import accountsOptions from './accountsOptions'
-import addressOptions from './addressOptions'
 
 import AvatarButton from './Avatar/AvatarButton'
 import { AvatarViewManager } from './Avatar/AvatarViewManager'
+import ResolverWarningOverlay from './ResolverWarningOverlay'
+import accountsOptions from './accountsOptions'
+import addressOptions from './addressOptions'
 import otherOptions from './otherOptions'
 import websiteOptions from './websiteOptions'
-import ResolverWarningOverlay from './ResolverWarningOverlay'
 
 const Container = styled.form(({ theme }) => [
   css`

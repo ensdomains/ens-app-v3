@@ -1,7 +1,10 @@
-import { Profile, PublicENS, RecordItem, TransactionDisplayItem } from '@app/types'
-import { recordItemToKeyValue } from '@app/utils/editor'
-import { RecordOptions } from '@ensdomains/ensjs/dist/cjs/utils/recordHelpers'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+
+import { RecordOptions } from '@ensdomains/ensjs/dist/cjs/utils/recordHelpers'
+
+import { Profile, PublicENS, RecordItem, Transaction, TransactionDisplayItem } from '@app/types'
+import { recordItemToKeyValue } from '@app/utils/editor'
+
 import { contentHashToString } from '../../utils/contenthash'
 
 type Data = {
@@ -92,4 +95,4 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   })
 }
 
-export default { displayItems, transaction }
+export default { displayItems, transaction } as Transaction<Data>
