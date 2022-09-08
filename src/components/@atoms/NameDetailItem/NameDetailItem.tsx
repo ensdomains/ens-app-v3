@@ -1,14 +1,17 @@
-import { useMemo, ReactNode } from 'react'
+import { useRouter } from 'next/router'
+import { ReactNode, useMemo } from 'react'
+import styled, { css } from 'styled-components'
+
+import { Avatar, mq } from '@ensdomains/thorin'
+
+import CircleTick from '@app/assets/CircleTick.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useExpiry } from '@app/hooks/useExpiry'
 import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, mq } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import styled, { css } from 'styled-components'
-import CircleTick from '@app/assets/CircleTick.svg'
+
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
-import { StyledName } from '../StyledName/StyledName'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
+import { StyledName } from '../StyledName/StyledName'
 
 const NameItemWrapper = styled.div<{ $highlight: boolean }>(
   ({ theme, $highlight }) => css`

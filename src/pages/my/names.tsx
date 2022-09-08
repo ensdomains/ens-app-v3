@@ -1,3 +1,23 @@
+import { useRouter } from 'next/router'
+import { ReactElement, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
+
+import {
+  Button,
+  Input,
+  PageButtons,
+  SearchSVG,
+  Select,
+  Spinner,
+  Typography,
+  mq,
+} from '@ensdomains/thorin'
+
+import FastForwardSVG from '@app/assets/FastForward.svg'
+import UpDirectionSVG from '@app/assets/SortAscending.svg'
+import DownDirectionSVG from '@app/assets/SortDescending.svg'
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import { SortDirection, SortType } from '@app/components/@molecules/SortControl/SortControl'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
@@ -6,26 +26,9 @@ import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { Name } from '@app/types'
-import {
-  Button,
-  Input,
-  mq,
-  PageButtons,
-  Select,
-  Spinner,
-  SearchSVG,
-  Typography,
-} from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
-import UpDirectionSVG from '@app/assets/SortAscending.svg'
-import DownDirectionSVG from '@app/assets/SortDescending.svg'
-import FastForwardSVG from '@app/assets/FastForward.svg'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { Name } from '@app/types'
+
 import { CheckButton } from '../../components/@atoms/CheckButton/CheckButton'
 
 const EmptyDetailContainer = styled.div(

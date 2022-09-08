@@ -1,5 +1,5 @@
-import { ComponentProps } from 'react'
 import Link from 'next/link'
+import { ComponentProps } from 'react'
 
 type Props = ComponentProps<typeof Link> & { active?: boolean }
 

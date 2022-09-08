@@ -1,7 +1,8 @@
-import GasSVG from '@app/assets/Gas.svg'
-import { makeDisplay } from '@app/utils/currency'
 import { BigNumber } from 'ethers'
 import styled, { css } from 'styled-components'
+
+import GasSVG from '@app/assets/Gas.svg'
+import { makeDisplay } from '@app/utils/currency'
 
 const Container = styled.div(
   ({ theme }) => css`
