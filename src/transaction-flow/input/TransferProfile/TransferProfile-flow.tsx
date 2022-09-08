@@ -1,21 +1,14 @@
-import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
-import { InnerDialog } from '@app/components/@atoms/InnerDialog'
-import styled, { css } from 'styled-components'
+import { useTranslation } from 'react-i18next'
+
 import { Button, Dialog } from '@ensdomains/thorin'
+
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useProfile } from '@app/hooks/useProfile'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { useTranslation } from 'react-i18next'
-import { TransactionDialogPassthrough } from '../../types'
-import { makeTransactionItem } from '../../transaction/index'
-import { useContractAddress } from '../../../hooks/useContractAddress'
 
-const DismissButtonWrapper = styled.div(
-  () => css`
-    position: absolute;
-    top: 0;
-    right: 0;
-  `,
-)
+import { useContractAddress } from '../../../hooks/useContractAddress'
+import { makeTransactionItem } from '../../transaction/index'
+import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
   name: string
@@ -23,7 +16,7 @@ type Data = {
 
 export type Props = { data: Data } & TransactionDialogPassthrough
 
-const TransferProfile = ({ data, dispatch, onDismiss }: Props) => {
+const TransferProfile = ({ data, dispatch }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const resolverAddress = useContractAddress('PublicResolver')
 
@@ -90,9 +83,6 @@ const TransferProfile = ({ data, dispatch, onDismiss }: Props) => {
   if (loading) return <TransactionLoader />
   return (
     <>
-      <DismissButtonWrapper>
-        <DismissDialogButton onClick={onDismiss} />
-      </DismissButtonWrapper>
       <Dialog.Heading title={t('input.transferProfile.title')} />
       <InnerDialog>
         <p>{t('input.transferProfile.message1')}</p>
