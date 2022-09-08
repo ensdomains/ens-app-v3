@@ -1,12 +1,8 @@
-import * as packet from 'dns-packet'
-import { utils } from 'ethers'
 import { useRouter } from 'next/router'
-// import { fetch } from 'node-fetch'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
 
-import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Button, Card, Typography, mq } from '@ensdomains/thorin'
 
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
@@ -18,6 +14,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { AddTextRecord } from './AddTextRecord'
+import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
 import { isDnsSecEnabled } from './utils'
 
@@ -144,10 +141,6 @@ const HeadingContainer = styled.div(
   `,
 )
 
-const ClaimDomain = ({ currentStep }) => {
-  return <div>Claim Domain</div>
-}
-
 /*
 class DNSRegistrar {
   constructor(oracleAddress, isOld = false) {
@@ -272,7 +265,8 @@ export default () => {
 
     const init = async () => {
       try {
-        if (await !isDnsSecEnabled(name)) {
+        const hasDnsSecEnabled = await isDnsSecEnabled(name)
+        if (!hasDnsSecEnabled) {
           setCurrentStep(0)
           return
         }
@@ -304,6 +298,8 @@ export default () => {
 
     console.log('dnsRegistrarState:', dnsRegistrarState)
   }, [dnsOwner])
+
+  console.log('currentStep: ', currentStep)
 
   return (
     <Container>

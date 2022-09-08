@@ -1,9 +1,18 @@
+import { utils } from 'ethers'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
-import { Typography } from '@ensdomains/thorin'
+import { DNSProver } from '@ensdomains/dnsprovejs'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { Outlink } from '@app/components/Outlink'
+import { useCopied } from '@app/hooks/useCopied'
+
+import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner, isSubdomainSet } from './utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -11,7 +20,121 @@ const Container = styled.div(
   `,
 )
 
-export const AddTextRecord = ({ currentStep }) => {
+const StyledButton = styled(Button)(
+  ({ theme }) => css`
+    padding: ${theme.space['0']} -${theme.space['1.5']};
+  `,
+)
+
+const ButtonInner = styled.div(
+  () => css`
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+  `,
+)
+
+const ButtonRow = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+  `,
+)
+
+const CopyableRightContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 6px;
+  `,
+)
+
+const Copyable = ({ label, value }) => {
+  const { copy, copied } = useCopied()
+  return (
+    <StyledButton
+      outlined
+      fullWidthContent
+      shadowless
+      variant="transparent"
+      onClick={() => copy(value)}
+    >
+      <ButtonInner>
+        <Typography>{label}</Typography>
+        <CopyableRightContainer>
+          <Typography {...{ variant: 'small', color: 'foreground' }}>{value}</Typography>
+          <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
+        </CopyableRightContainer>
+      </ButtonInner>
+    </StyledButton>
+  )
+}
+
+//Remember to check if domain has been secured by DNSSEC
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+
+    & > button {
+      margin: 0;
+    }
+  `,
+)
+
+const CheckButton = styled(Button)(
+  ({ theme }) => css`
+    width: 150px;
+    margin: 0 auto;
+  `,
+)
+
+enum Errors {
+  NOT_CHECKED,
+  SUBDOMAIN_NOT_SET,
+  DNS_RECORD_DOES_NOT_EXIST,
+  DNS_RECORD_INVALID,
+}
+
+export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
+  const router = useRouter()
+  const { name } = router.query
+  const { address } = useAccount()
+  const { errorState, setErrorState } = useState<Errors>(Errors.NOT_CHECKED)
+
+  const handleCheck = async () => {
+    try {
+      let state = 0
+      isSubdomainSet(name as string)
+      const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
+      const result = await prover.queryWithProof('TXT', `_ens.${name}`)
+      const dnsOwner = getDnsOwner(result)
+      console.log('result: ', result)
+      console.log('dnsOwner: ', dnsOwner)
+
+      if (parseInt(dnsOwner) === 0) {
+        // State 8
+        setErrorState(Errors.DNS_RECORD_DOES_NOT_EXIST)
+      } else if (!utils.isAddress(dnsOwner)) {
+        // State 4
+        setErrorState(Errors.DNS_RECORD_INVALID)
+      } else if (dnsOwner.toLowerCase() === address?.toLowerCase()) {
+        // State 5
+        setCurrentStep(currentStep + 1)
+      } else {
+        // Out of sync (state 6)
+        console.log('Controllder and DNS Owner are out of sync')
+      }
+    } catch (e) {
+      console.error('_ens check error: ', e)
+    }
+  }
+
   return (
     <Container>
       <Typography>Add Text Records</Typography>
@@ -24,6 +147,37 @@ export const AddTextRecord = ({ currentStep }) => {
         It looks like your registrar is Namecheap, who have a guide available here.
       </Outlink>
       <Spacer $height={5} />
+      <ButtonRow>
+        <StyledButton outlined fullWidthContent shadowless variant="transparent">
+          <ButtonInner>
+            <Typography>{`Type`}</Typography>
+            <Typography {...{ variant: 'small', color: 'foreground' }}>{`TXT`}</Typography>
+          </ButtonInner>
+        </StyledButton>
+        <Copyable {...{ label: 'Name', value: '_ens' }} />
+      </ButtonRow>
+      <Spacer $height={2} />
+      <Copyable {...{ label: 'Value', value: address }} />
+      <Spacer $height={5} />
+      <ButtonContainer>
+        <CheckButton
+          onClick={() => {
+            setCurrentStep(currentStep - 1)
+          }}
+          variant="primary"
+          size="small"
+        >
+          Back
+        </CheckButton>
+        <CheckButton
+          onClick={handleCheck}
+          variant="primary"
+          size="small"
+          disabled={currentStep === 2}
+        >
+          Check
+        </CheckButton>
+      </ButtonContainer>
     </Container>
   )
 }

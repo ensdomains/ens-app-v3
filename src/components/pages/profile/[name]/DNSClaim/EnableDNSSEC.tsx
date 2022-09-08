@@ -2,7 +2,7 @@ import { useRouter } from 'next/router'
 import { useCallback, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
@@ -104,6 +104,11 @@ async function setDNSSECTldOwner(ens, tld, networkId) {
   }
 */
 
+enum Errors {
+  NOT_CHECKED,
+  DNSSEC_NOT_ENABLED,
+}
+
 async function getDNSEntryDetails(name) {
   const ens = getENS()
   const registrar = getRegistrar()
@@ -136,15 +141,20 @@ async function getDNSEntryDetails(name) {
 }
 
 export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
+  const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
+  const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-
   const { name } = router.query
 
   const handleCheck = async () => {
-    if (await isDnsSecEnabled(name)) {
-      setCurrentStep(2)
+    setIsLoading(true)
+    const hasDnsSecEnabled = await isDnsSecEnabled(name)
+    if (hasDnsSecEnabled) {
+      setCurrentStep(1)
+      return
     }
-    console.log('false')
+    setErrorState(Errors.DNSSEC_NOT_ENABLED)
+    setIsLoading(false)
   }
 
   return (
@@ -160,6 +170,12 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
         It looks like your registrar is Namecheap, who have a guide available here.
       </Outlink>
       <Spacer $height={1} />
+      {errorState === Errors.DNSSEC_NOT_ENABLED && (
+        <>
+          <Helper type="info">{`DNSSEC has not been enabled on this domain.`}</Helper>
+          <Spacer $height={6} />
+        </>
+      )}
       <Steps {...{ currentStep, stepStatus }} />
       <Spacer $height={5} />
       <ButtonContainer>
@@ -168,6 +184,7 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
           variant="primary"
           size="small"
           disabled={currentStep === 2}
+          loading={isLoading}
         >
           Check
         </CheckButton>
