@@ -20,6 +20,7 @@ const displayItems = ({ name }: Data): TransactionDisplayItem[] => [
   },
 ]
 
+// Returns the an array of record items where deleted records have value set to empty string.
 export const syncRecords = (
   before?: RecordItem[],
   after?: RecordItem[],
