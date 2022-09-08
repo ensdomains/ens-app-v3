@@ -1,9 +1,11 @@
+import { useEffect } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
+import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled.div(
@@ -76,7 +78,24 @@ export const NamePillWithAddress = ({
 const value = 'leontalbert.eth'
 const address = '0x70997970C51812dc3A010C7d01b50e0d17dc79C8'
 
+// const getDnsecTldOnwer = async (ens, tld, networkId) {
+//   const tldowner = (await ens.getOwner(tld)).toLocaleLowerCase()
+//   if (parseInt(tldowner) !== 0) return tldowner
+//   switch (networkId) {
+//     case 1:
+//       return MAINNET_DNSREGISTRAR_ADDRESS
+//     case 3:
+//       return ROPSTEN_DNSREGISTRAR_ADDRESS
+//     default:
+//       return emptyAddress
+//   }
+// }
+
 export const ClaimDomain = ({ currentStep }) => {
+  useEffect(() => {
+    const { ready, getOwner } = useEns()
+  }, [])
+
   return (
     <Container>
       <Typography>Claim your domain</Typography>
