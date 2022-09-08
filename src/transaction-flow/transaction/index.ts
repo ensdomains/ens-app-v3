@@ -1,5 +1,6 @@
 import burnFuses from './burnFuses'
 import createSubname from './createSubname'
+import extendNames from './extendNames'
 import migrateProfile from './migrateProfile'
 import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
@@ -7,7 +8,6 @@ import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
-import extendNames from './extendNames'
 
 export const transactions = {
   updateResolver,

@@ -1,6 +1,7 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
-import { yearsToSeconds } from '@app/utils/utils'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+
+import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { yearsToSeconds } from '@app/utils/utils'
 
 type Data = {
   names: string[]
@@ -30,4 +31,4 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   })
 }
 
-export default { transaction, displayItems }
+export default { transaction, displayItems } as Transaction<Data>
