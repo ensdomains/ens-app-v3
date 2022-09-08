@@ -1,3 +1,5 @@
+/* eslint-disable import/no-extraneous-dependencies, import/extensions */
+
 import { labelhash } from '@ensdomains/ensjs/dist/cjs/utils/labels.js'
 import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
