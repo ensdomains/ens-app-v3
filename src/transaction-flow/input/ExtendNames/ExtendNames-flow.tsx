@@ -1,25 +1,27 @@
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { Dialog, Button, Avatar } from '@ensdomains/thorin'
+import { BigNumber } from 'ethers'
+import { formatUnits } from 'ethers/lib/utils'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Avatar, Button, Dialog } from '@ensdomains/thorin'
+
 import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
-import { useState } from 'react'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
-import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
-import { useEthPrice } from '@app/hooks/useEthPrice'
-import { formatUnits } from 'ethers/lib/utils'
-import { BigNumber } from 'ethers'
-import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { useAvatar } from '@app/hooks/useAvatar'
+import { useEthPrice } from '@app/hooks/useEthPrice'
+import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { useZorb } from '@app/hooks/useZorb'
-import { useProfile } from '@app/hooks/useProfile'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+
+import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
 import { useChainId } from '../../../hooks/useChainId'
 import { useExpiry } from '../../../hooks/useExpiry'
-import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 
 const Container = styled.form(
   ({ theme }) => css`
