@@ -10,6 +10,7 @@ import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySw
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
+import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
@@ -81,23 +82,23 @@ const NamesListItemContent = styled.div(
   `,
 )
 
-const NamesListItemTitle = styled.div(
+const NamesListItemTitle = styled(StyledName)(
   ({ theme }) => css`
-    width: 100%;
+    /* width: 100%;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
-    font-weight: ${theme.fontWeights.bold};
+    font-weight: ${theme.fontWeights.bold}; */
     font-size: ${theme.fontSizes.extraLarge};
-    line-height: 1.36;
-    color: ${theme.colors.text};
+    /* line-height: 1.36; */
+    /* color: ${theme.colors.text}; */
   `,
 )
 
 const NamesListItemSubtitle = styled.div(
   ({ theme }) => css`
     font-weight: ${theme.fontWeights.normal};
-    font-size: ${theme.fontSizes.small};
+    font-size: ${theme.space['3.5']};
     line-height: 1.43;
     color: ${theme.colors.textTertiary};
   `,
@@ -117,7 +118,7 @@ const NamesListItem = ({ name }: { name: string }) => {
         <Avatar src={avatar || zorb} label={name} />
       </NamesListItemAvatarWrapper>
       <NamesListItemContent>
-        <NamesListItemTitle>{name} dasdfa asdfas</NamesListItemTitle>
+        <NamesListItemTitle name={name} />
         {expiry?.expiry && (
           <NamesListItemSubtitle>
             <ShortExpiry expiry={expiry.expiry} textOnly />

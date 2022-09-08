@@ -2,14 +2,19 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "678dbf0034d19b469d33bd3547faa071",
-      "pure": true,
-      "replaced": "3.0.0-alpha.16"
+      "signature": "fa5e41dd4256f6be5d7b0ac49adcd89f",
+      "file": true,
+      "replaced": "v3.0.0-alpha.17"
     },
     "@ensdomains/thorin": {
       "signature": "9cc6c0e633465e751b337ec73eac921d",
       "file": true,
       "replaced": "^0.6.10"
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "8e4319103e8decde4138775b9d1f20f2",
+      "file": true,
+      "replaced": "^0.2.2"
     }
   }
 }
