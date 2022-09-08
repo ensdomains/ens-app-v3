@@ -1,4 +1,3 @@
-import { useProfile } from '@app/hooks/useProfile'
 import {
   cleanup,
   fireEvent,
@@ -9,9 +8,12 @@ import {
   waitFor,
   within,
 } from '@app/test-utils'
+
+import { useProfile } from '@app/hooks/useProfile'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
+
 import ProfileEditor from './ProfileEditor-flow'
 
 const mockProfileData = {

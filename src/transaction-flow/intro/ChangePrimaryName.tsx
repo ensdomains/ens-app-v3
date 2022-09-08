@@ -1,7 +1,9 @@
-import { Outlink } from '@app/components/Outlink'
-import { Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
+import { Outlink } from '@app/components/Outlink'
 
 const DescriptionWrapper = styled(Typography)(
   ({ theme }) => css`

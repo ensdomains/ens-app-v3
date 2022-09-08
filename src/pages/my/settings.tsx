@@ -1,12 +1,13 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
+
 import { DevSection } from '@app/components/pages/profile/settings/DevSection'
 import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection'
 import { WalletSection } from '@app/components/pages/profile/settings/WalletSection'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 const OtherWrapper = styled.div(
   ({ theme }) => css`

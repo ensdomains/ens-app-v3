@@ -1,6 +1,7 @@
 import { BigNumber } from 'ethers'
-import { useEthPrice } from '@app/hooks/useEthPrice'
 import { formatUnits } from 'ethers/lib/utils'
+
+import { useEthPrice } from '@app/hooks/useEthPrice'
 
 type Props = {
   eth?: BigNumber

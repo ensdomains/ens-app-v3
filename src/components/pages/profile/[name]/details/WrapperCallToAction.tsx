@@ -1,12 +1,14 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Button, Typography, mq } from '@ensdomains/thorin'
+
 import { NightSky } from '@app/assets/NightSky'
 import SparklesSVG from '@app/assets/Sparkles.svg'
 import { Card } from '@app/components/Card'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { Button, mq, Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const Container = styled(Card)(
   ({ theme }) => css`

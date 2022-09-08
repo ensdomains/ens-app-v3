@@ -1,7 +1,9 @@
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { mockFunction, renderHook } from '@app/test-utils'
-import { KnownResolveAddresses } from '@app/validators/validateResolver'
+
 import { useNetwork, useProvider } from 'wagmi'
+
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { KnownResolveAddresses } from '@app/validators/validateResolver'
 
 jest.mock('wagmi', () => ({
   ...jest.requireActual('@tanstack/react-query'),

@@ -1,8 +1,9 @@
-import { emptyAddress } from '@app/utils/constants'
-import { useEns } from '@app/utils/EnsProvider'
-import { yearsToSeconds } from '@app/utils/utils'
 import type { BigNumber } from 'ethers'
 import { useQuery } from 'wagmi'
+
+import { useEns } from '@app/utils/EnsProvider'
+import { emptyAddress } from '@app/utils/constants'
+import { yearsToSeconds } from '@app/utils/utils'
 
 export type RegistrationStatus =
   | 'invalid'

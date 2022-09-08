@@ -1,5 +1,7 @@
 import { mockFunction, renderHook, waitFor } from '@app/test-utils'
+
 import { useEns } from '@app/utils/EnsProvider'
+
 import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
 import { useRegistrationStatus } from './useRegistrationStatus'
@@ -24,7 +26,12 @@ const mockGetExpiry = {
   batch: jest.fn(),
 }
 const mockBatch = jest.fn()
-const mockGetDNSOwner = jest.fn(() => new Promise((resolve) => resolve('0xaddress')))
+const mockGetDNSOwner = jest.fn(
+  () =>
+    new Promise((resolve) => {
+      resolve('0xaddress')
+    }),
+)
 
 describe('useNameDetails', () => {
   mockUseEns.mockReturnValue({

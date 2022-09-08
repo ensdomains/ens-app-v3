@@ -1,4 +1,5 @@
-import { renderHook, act } from '@app/test-utils'
+import { act, renderHook } from '@app/test-utils'
+
 import useExpandableRecordsGroup from './useExpandableRecordsGroup'
 
 const mockGetValues = jest.fn()

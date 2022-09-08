@@ -1,15 +1,15 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, mq, Skeleton, Typography } from '@ensdomains/thorin'
+import { Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
 
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { ReactNode } from 'react'
 
 const HeadingItems = styled.div<{ $spacing: string }>(
   ({ theme, $spacing }) => css`

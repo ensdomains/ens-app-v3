@@ -1,9 +1,12 @@
+import { mockFunction, render, screen } from '@app/test-utils'
+
+import { ReactNode } from 'react'
+
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
-import { mockFunction, render, screen } from '@app/test-utils'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useEns } from '@app/utils/EnsProvider'
-import { ReactNode } from 'react'
+
 import { WrapperCallToAction } from './WrapperCallToAction'
 
 jest.mock('@app/hooks/useAvatar')

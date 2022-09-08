@@ -1,6 +1,12 @@
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useSignTypedData } from 'wagmi'
+
 import { AvatarUpload } from './AvatarUpload'
+
+jest.mock('@app/hooks/useChainName', () => ({
+  useChainName: () => 'mainnet',
+}))
 
 const mockHandleCancel = jest.fn()
 const mockHandleSubmit = jest.fn()
@@ -52,18 +58,21 @@ describe('<AvatarUpload />', () => {
     fireEvent.click(screen.getByTestId('continue-button'))
     fireEvent.click(screen.getByTestId('upload-button'))
     await waitFor(() =>
-      expect(global.fetch).toBeCalledWith('https://avatar-upload.ens-cf.workers.dev/test.eth', {
-        method: 'PUT',
-        headers: {
-          // eslint-disable-next-line @typescript-eslint/naming-convention
-          'Content-Type': 'application/json',
+      expect(global.fetch).toBeCalledWith(
+        'https://avatar-upload.ens-cf.workers.dev/mainnet/test.eth',
+        {
+          method: 'PUT',
+          headers: {
+            // eslint-disable-next-line @typescript-eslint/naming-convention
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
+            dataURL: 'data:,',
+            sig: 'sig',
+          }),
         },
-        body: JSON.stringify({
-          expiry: `${1588994800000 + 1000 * 60 * 60 * 24 * 7}`,
-          dataURL: 'data:,',
-          sig: 'sig',
-        }),
-      }),
+      ),
     )
 
     await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalled())

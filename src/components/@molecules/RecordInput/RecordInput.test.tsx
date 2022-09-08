@@ -1,6 +1,9 @@
-import { render, screen, fireEvent } from '@app/test-utils'
-import AddressEthereumSVG from '@app/assets/address/AddressEthereum.svg'
+import { fireEvent, render, screen } from '@app/test-utils'
+
 import { cleanup } from '@testing-library/react'
+
+import AddressEthereumSVG from '@app/assets/address/AddressEthereum.svg'
+
 import { RecordInput } from './RecordInput'
 
 const mockCallback = jest.fn()

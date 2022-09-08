@@ -1,5 +1,7 @@
 import { render, screen, waitFor } from '@app/test-utils'
+
 import { BigNumber } from 'ethers'
+
 import { RegistrationTimeComparisonBanner } from './RegistrationTimeComparisonBanner'
 
 jest.mock('react-i18next', () => ({

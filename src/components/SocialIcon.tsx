@@ -1,7 +1,9 @@
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Space } from '@ensdomains/thorin'
 import { ElementType } from 'react'
 import styled, { css } from 'styled-components'
+
+import { Space } from '@ensdomains/thorin'
+
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const SocialIconWrapper = styled.a<{ $boxSize: Space }>(
   ({ theme, $boxSize }) => css`

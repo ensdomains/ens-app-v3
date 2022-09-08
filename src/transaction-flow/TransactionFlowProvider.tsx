@@ -1,4 +1,3 @@
-import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import React, {
   ComponentProps,
   ReactNode,
@@ -8,6 +7,9 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+
+import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import type { DataInputComponent } from './input'
 import { helpers, initialState, reducer } from './reducer'

@@ -1,12 +1,21 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { Reducer, useImmerReducer } from 'use-immer'
 
-const isSSR = !!(typeof window !== 'undefined' && window.document && window.document.createElement)
+const isBrowser = !!(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+)
 
 const getStorageValue = <D>(key: string, defaultValue: D) => {
   // getting stored value
-  const saved = isSSR && localStorage.getItem(key)
-  return saved ? JSON.parse(saved) : defaultValue
+  const saved = isBrowser && localStorage.getItem(key)
+  try {
+    return saved && saved !== 'undefined' ? JSON.parse(saved) : defaultValue
+  } catch (e) {
+    console.error('parse error ', e)
+    return defaultValue
+  }
 }
 
 export const useLocalStorage = <D>(

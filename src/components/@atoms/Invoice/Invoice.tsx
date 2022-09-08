@@ -1,5 +1,6 @@
-import styled, { css } from 'styled-components'
 import { BigNumber } from 'ethers'
+import styled, { css } from 'styled-components'
+
 import { CurrencyText } from '../CurrencyText/CurrencyText'
 
 const Container = styled.div(

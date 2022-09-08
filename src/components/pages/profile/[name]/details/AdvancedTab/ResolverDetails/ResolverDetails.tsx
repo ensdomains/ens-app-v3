@@ -1,12 +1,14 @@
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography, mq } from '@ensdomains/thorin'
+
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
 import { useProfile } from '@app/hooks/useProfile'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
-import { mq, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const ResolverDetailsContainer = styled(CacheableComponent)(({ theme }) => [
   css`

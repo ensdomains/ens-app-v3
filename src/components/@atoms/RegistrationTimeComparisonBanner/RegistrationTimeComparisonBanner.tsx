@@ -1,10 +1,12 @@
-import styled, { css } from 'styled-components'
-import { InfoSVG } from '@ensdomains/thorin'
-import mq from '@app/mediaQuery'
 import { BigNumber } from 'ethers'
-import { useTranslation } from 'react-i18next'
-import { useRef, useEffect, useState } from 'react'
 import { formatUnits } from 'ethers/lib/utils'
+import { useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { InfoSVG } from '@ensdomains/thorin'
+
+import mq from '@app/mediaQuery'
 
 const Container = styled.div(
   ({ theme }) => css`

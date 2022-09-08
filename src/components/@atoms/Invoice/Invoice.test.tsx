@@ -1,6 +1,9 @@
-import { render, mockFunction, screen } from '@app/test-utils'
-import { useEthPrice } from '@app/hooks/useEthPrice'
+import { mockFunction, render, screen } from '@app/test-utils'
+
 import { BigNumber } from 'ethers'
+
+import { useEthPrice } from '@app/hooks/useEthPrice'
+
 import { Invoice } from './Invoice'
 
 jest.mock('@app/hooks/useEthPrice')

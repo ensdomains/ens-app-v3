@@ -1,5 +1,7 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
-import { JsonRpcSigner } from '@ethersproject/providers'
+import type { JsonRpcSigner } from '@ethersproject/providers'
+import type { TFunction } from 'react-i18next'
+
+import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
@@ -8,7 +10,18 @@ type Data = {
   oldResolver: string
 }
 
-const displayItems = ({ resolver, oldResolver }: Data): TransactionDisplayItem[] => [
+const displayItems = (
+  { resolver, oldResolver }: Data,
+  t: TFunction<'translation', undefined>,
+): TransactionDisplayItem[] => [
+  {
+    label: 'action',
+    value: t(`transaction.description.updateResolver`),
+  },
+  {
+    label: 'info',
+    value: t(`transaction.info.updateResolver`),
+  },
   {
     label: 'currentResolver',
     value: oldResolver,
@@ -21,25 +34,6 @@ const displayItems = ({ resolver, oldResolver }: Data): TransactionDisplayItem[]
   },
 ]
 
-const confirm = {
-  type: 'confirm',
-  title: 'Transaction Request',
-  description: 'Confirm the details of the transaction',
-}
-
-const request = {
-  type: 'request',
-  title: 'Update Resolver',
-  description: 'Update your current resolver to the new one you have selected',
-}
-
-const pending = {
-  type: 'pending',
-  title: 'Transaction mining',
-  description:
-    'Your transaction has been sent to the network, and is waiting to be saved to the blockchain. You may close this dialog.',
-}
-
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   ens.setResolver.populateTransaction(data.name, {
     contract: data.contract,
@@ -47,4 +41,4 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
     signer,
   })
 
-export default { displayItems, confirm, request, pending, transaction }
+export default { displayItems, transaction } as Transaction<Data>

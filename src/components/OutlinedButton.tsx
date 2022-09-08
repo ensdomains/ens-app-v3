@@ -1,6 +1,8 @@
-import { Button } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+
+import { Button } from '@ensdomains/thorin'
+
 import { DisabledButton } from './@atoms/DisabledButton'
 
 const OutlinedButtonWrapper = styled.div(

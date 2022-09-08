@@ -1,6 +1,7 @@
-import { useNFTImage } from '@app/hooks/useAvatar'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+
+import { useNFTImage } from '@app/hooks/useAvatar'
 
 const StyledNftBox = styled.img<{ $loading: boolean }>(
   ({ theme, $loading }) => css`

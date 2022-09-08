@@ -24,7 +24,8 @@
     "remove": "Remove",
     "sign": "Sign",
     "tryAgain": "Try Again",
-    "done": "Done"
+    "done": "Done",
+    "burnSelected": "Burn Selected"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -105,6 +106,7 @@
       "setPrimaryName": "Set primary name",
       "updateEthAddress": "Update ETH address",
       "testSendName": "Send Name",
+      "burnFuses": "Burn permissions",
       "createSubname": "Create Subname"
     },
     "info": {
@@ -116,7 +118,8 @@
       "setPrimaryName": "Set the primary name for your address",
       "updateEthAddress": "Update ETH address to this address",
       "testSendName": "Set the controller and registrant of the name",
-      "createSubname": "Create a new subname on the name"
+      "createSubname": "Create a new subname on the name",
+      "burnFuses": "Burn the chosen permissions until name expiry"
     },
     "itemLabel": {
       "name": "Name",
