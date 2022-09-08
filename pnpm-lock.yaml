@@ -21,9 +21,9 @@ specifiers:
   '@ensdomains/address-encoder': ^0.2.16
   '@ensdomains/buffer': ^0.1.0
   '@ensdomains/ens-contracts': ^0.0.12
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-test-env': ^0.2.2
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
+  '@ensdomains/ensjs': 3.0.0-alpha.16
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': ^0.6.14
   '@ethersproject/providers': ^5.6.8
@@ -127,7 +127,7 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.17
   '@ensdomains/ens-contracts': 0.0.12_hardhat@2.9.3
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
+  '@ensdomains/ensjs': 3.0.0-alpha.16
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.14_yfgnbxojpjyzegtmtl2rcejwea
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_kbzsuvt6g54soocujhbfmb2q3u
@@ -158,7 +158,7 @@ devDependencies:
   '@cloudflare/workers-types': 3.13.0
   '@cloudflare/wrangler': 1.19.12
   '@ensdomains/buffer': 0.1.0_hardhat@2.9.3
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-test-env': 0.2.2
   '@ethersproject/providers': 5.6.8
   '@next/bundle-analyzer': 12.1.4
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -1962,6 +1962,29 @@ packages:
       - web3-utils
     dev: false
 
+  /@ensdomains/ens-test-env/0.2.2:
+    resolution: {integrity: sha512-UNPfEYMqOi0oEOwx7TNdwBYJJyQN0gUzHosa5MvON2MzXW4ok8Rx71/q/D82BZInE0cF9Xp2ed5LNVjtIhY4fw==}
+    hasBin: true
+    dependencies:
+      '@ethersproject/wallet': 5.7.0
+      ansi-colors: 4.1.1
+      cli-progress: 3.11.2
+      commander: 9.4.0
+      concurrently: 7.2.2
+      docker-compose: 0.23.17
+      dotenv: 16.0.0
+      fs-extra: 10.1.0
+      ganache: 7.0.4
+      got: 12.3.0
+      lz4: 0.6.5
+      node-fetch: 3.2.10
+      progress-stream: 2.0.0
+      tar-fs: 2.1.1
+      wait-on: 6.0.1
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
   /@ensdomains/ens-validation/0.1.0:
     resolution: {integrity: sha512-rbDh2K6GfqXvBcJUISaTTYEt3f079WA4ohTE5Lh4/8EaaPAk/9vk3EisMUQV2UVxeFIZQEEyRCIOmRTpqN0W7A==}
     dev: false
@@ -1994,6 +2017,23 @@ packages:
       - utf-8-validate
     dev: true
     optional: true
+
+  /@ensdomains/ensjs/3.0.0-alpha.16:
+    resolution: {integrity: sha512-OpzgFP5Ed4d2QEk37eFjVqTzSs4/3tC2OeTQTxEti0L9hzkKh9v5mkJ4gPiGUW3sfqKrFN8yzMBXKMnstfBOeA==}
+    dependencies:
+      '@ensdomains/address-encoder': 0.2.16
+      '@ensdomains/content-hash': 2.5.7
+      dns-packet: 5.4.0
+      ethers: 5.7.0
+      graphql: 16.5.0
+      graphql-request: 5.0.0_graphql@16.5.0
+      idna-uts46-hx: 3.4.0
+      traverse: 0.6.6
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
@@ -2794,7 +2834,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 18.6.3
+      '@types/node': 18.7.6
       chalk: 4.1.2
       jest-message-util: 27.5.1
       jest-util: 27.5.1
@@ -2891,7 +2931,7 @@ packages:
       '@jest/test-result': 27.5.1
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 18.6.3
+      '@types/node': 18.7.6
       chalk: 4.1.2
       collect-v8-coverage: 1.0.1
       exit: 0.1.2
@@ -4641,10 +4681,6 @@ packages:
 
   /@types/node/18.0.3:
     resolution: {integrity: sha512-HzNRZtp4eepNitP+BD6k2L6DROIDG4Q0fm4x+dwfsr6LGmROENnok75VGw40628xf+iR24WeMFcHuuBDUAzzsQ==}
-
-  /@types/node/18.6.3:
-    resolution: {integrity: sha512-6qKpDtoaYLM+5+AFChLhHermMQxc3TOEFIDzrZLPRGHPrLEwqFkkT5Kx3ju05g6X7uDPazz3jHbKPX0KzCjntg==}
-    dev: true
 
   /@types/node/18.7.6:
     resolution: {integrity: sha512-EdxgKRXgYsNITy5mjjXjVE/CS8YENSdhiagGrLqjG0pvA2owgJ6i4l7wy/PFZGC0B1/H20lWKN7ONVDNYDZm7A==}
@@ -13155,7 +13191,7 @@ packages:
     dependencies:
       '@jest/types': 27.5.1
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.6.3
+      '@types/node': 18.7.6
       anymatch: 3.1.2
       fb-watchman: 2.0.1
       graceful-fs: 4.2.10
@@ -13399,7 +13435,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 18.6.3
+      '@types/node': 18.7.6
       chalk: 4.1.2
       ci-info: 3.3.0
       graceful-fs: 4.2.10
@@ -13424,7 +13460,7 @@ packages:
     dependencies:
       '@jest/test-result': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 18.6.3
+      '@types/node': 18.7.6
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       jest-util: 27.5.1
@@ -20485,50 +20521,6 @@ packages:
       immer: 9.0.15
       react: 17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
-    dev: false
-
-  file:.yalc/@ensdomains/ens-test-env:
-    resolution: {directory: .yalc/@ensdomains/ens-test-env, type: directory}
-    name: '@ensdomains/ens-test-env'
-    version: 0.2.2
-    hasBin: true
-    dependencies:
-      '@ethersproject/wallet': 5.7.0
-      ansi-colors: 4.1.1
-      cli-progress: 3.11.2
-      commander: 9.4.0
-      concurrently: 7.2.2
-      docker-compose: 0.23.17
-      dotenv: 16.0.0
-      fs-extra: 10.1.0
-      ganache: 7.0.4
-      got: 12.3.0
-      lz4: 0.6.5
-      node-fetch: 3.2.10
-      progress-stream: 2.0.0
-      tar-fs: 2.1.1
-      wait-on: 6.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
-
-  file:.yalc/@ensdomains/ensjs:
-    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
-    name: '@ensdomains/ensjs'
-    version: 3.0.0-alpha.16
-    dependencies:
-      '@ensdomains/address-encoder': 0.2.16
-      '@ensdomains/content-hash': 2.5.7
-      dns-packet: 5.4.0
-      ethers: 5.7.0
-      graphql: 16.5.0
-      graphql-request: 5.0.0_graphql@16.5.0
-      idna-uts46-hx: 3.4.0
-      traverse: 0.6.6
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
     dev: false
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:
