@@ -15,6 +15,7 @@ import type createSubname from './functions/createSubname'
 import type deleteSubname from './functions/deleteSubname'
 import type getDNSOwner from './functions/getDNSOwner'
 import type getExpiry from './functions/getExpiry'
+// import type getDNSEntryDetails from './functions/getDNSEntryDetails'
 import type getFuses from './functions/getFuses'
 import type { getHistory } from './functions/getHistory'
 import type getName from './functions/getName'
@@ -48,8 +49,14 @@ import singleCall from './utils/singleCall'
 import writeTx from './utils/writeTx'
 import fuseEnum from './utils/fuses'
 
-export type { FusePropsNamedArray, FusePropsUnnamedArray, FusePropsNumber, FuseProps, NamedFusesToBurn } from './functions/burnFuses'
-export type FuseEnum = typeof fuseEnum 
+export type {
+  FusePropsNamedArray,
+  FusePropsUnnamedArray,
+  FusePropsNumber,
+  FuseProps,
+  NamedFusesToBurn,
+} from './functions/burnFuses'
+export type FuseEnum = typeof fuseEnum
 
 type ENSOptions = {
   graphURI?: string | null
@@ -434,6 +441,10 @@ export class ENS {
     'getResolver',
     ['contracts'],
   )
+
+  // public getDNSEntryDetails = this.generateRawFunction<
+  //   typeof getDNSEntryDetails
+  // >('getDNSEntryDetails', ['contracts', 'multicallWrapper'])
 
   public getFuses = this.generateRawFunction<typeof getFuses>('getFuses', [
     'contracts',

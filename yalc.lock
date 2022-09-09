@@ -1,0 +1,9 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/ensjs": {
+      "signature": "a34e0fc6f1cffd753ab927788c8a2086",
+      "file": true
+    }
+  }
+}

@@ -19,7 +19,7 @@ import type unwrapName from './functions/unwrapName';
 import type wrapName from './functions/wrapName';
 import GqlManager from './GqlManager';
 import fuseEnum from './utils/fuses';
-export type { FusePropsNamedArray, FusePropsUnnamedArray, FusePropsNumber, FuseProps, NamedFusesToBurn } from './functions/burnFuses';
+export type { FusePropsNamedArray, FusePropsUnnamedArray, FusePropsNumber, FuseProps, NamedFusesToBurn, } from './functions/burnFuses';
 export declare type FuseEnum = typeof fuseEnum;
 declare type ENSOptions = {
     graphURI?: string | null;

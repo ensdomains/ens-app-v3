@@ -84,8 +84,8 @@ export const multicallWrapper = {
         data,
       )
       return result
-    } catch {
-      return
+    } catch (e) {
+      return e
     }
   },
 }

@@ -203,6 +203,9 @@ class ENS {
     getRecords = this.generateFunction('initialGetters', ['getProfile'], 'getRecords');
     getName = this.generateRawFunction('initialGetters', ['contracts'], 'getName');
     getResolver = this.generateRawFunction('getResolver', ['contracts']);
+    // public getDNSEntryDetails = this.generateRawFunction<
+    //   typeof getDNSEntryDetails
+    // >('getDNSEntryDetails', ['contracts', 'multicallWrapper'])
     getFuses = this.generateRawFunction('getFuses', [
         'contracts',
     ]);

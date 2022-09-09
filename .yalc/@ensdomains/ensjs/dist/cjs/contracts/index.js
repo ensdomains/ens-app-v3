@@ -7,6 +7,7 @@ const baseRegistrar_1 = __importDefault(require("./baseRegistrar"));
 const ethRegistrarController_1 = __importDefault(require("./ethRegistrarController"));
 const multicall_1 = __importDefault(require("./multicall"));
 const nameWrapper_1 = __importDefault(require("./nameWrapper"));
+const dnsRegistrar_1 = __importDefault(require("./dnsRegistrar"));
 const publicResolver_1 = __importDefault(require("./publicResolver"));
 const registry_1 = __importDefault(require("./registry"));
 const reverseRegistrar_1 = __importDefault(require("./reverseRegistrar"));
@@ -30,6 +31,7 @@ class ContractManager {
     getRegistry = this.generateContractGetter('ENSRegistryWithFallback', registry_1.default);
     getReverseRegistrar = this.generateContractGetter('ReverseRegistrar', reverseRegistrar_1.default);
     getNameWrapper = this.generateContractGetter('NameWrapper', nameWrapper_1.default);
+    getDNSRegistrar = this.generateContractGetter('DNSRegistrar', dnsRegistrar_1.default);
     getBaseRegistrar = this.generateContractGetter('BaseRegistrarImplementation', baseRegistrar_1.default);
     getEthRegistrarController = this.generateContractGetter('ETHRegistrarController', ethRegistrarController_1.default);
     getMulticall = this.generateContractGetter('Multicall', multicall_1.default);

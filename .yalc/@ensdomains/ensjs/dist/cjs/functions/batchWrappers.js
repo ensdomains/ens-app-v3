@@ -64,8 +64,8 @@ exports.multicallWrapper = {
             const [result] = multicall.interface.decodeFunctionResult('tryAggregate', data);
             return result;
         }
-        catch {
-            return;
+        catch (e) {
+            return e;
         }
     },
 };

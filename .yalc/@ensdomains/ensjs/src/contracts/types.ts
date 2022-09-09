@@ -5,6 +5,7 @@ export type ContractName =
   | 'ETHRegistrarController'
   | 'Multicall'
   | 'NameWrapper'
+  | 'DNSRegistrar'
   | 'PublicResolver'
   | 'ENSRegistryWithFallback'
   | 'ReverseRegistrar'

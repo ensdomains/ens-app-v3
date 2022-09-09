@@ -2,6 +2,7 @@ import getBaseRegistrar from './baseRegistrar';
 import getEthRegistrarController from './ethRegistrarController';
 import getMulticall from './multicall';
 import getNameWrapper from './nameWrapper';
+import getDNSRegistrar from './dnsRegistrar';
 import getPublicResolver from './publicResolver';
 import getRegistry from './registry';
 import getReverseRegistrar from './reverseRegistrar';
@@ -20,6 +21,7 @@ export default class ContractManager {
         this.getRegistry = this.generateContractGetter('ENSRegistryWithFallback', getRegistry);
         this.getReverseRegistrar = this.generateContractGetter('ReverseRegistrar', getReverseRegistrar);
         this.getNameWrapper = this.generateContractGetter('NameWrapper', getNameWrapper);
+        this.getDNSRegistrar = this.generateContractGetter('DNSRegistrar', getDNSRegistrar);
         this.getBaseRegistrar = this.generateContractGetter('BaseRegistrarImplementation', getBaseRegistrar);
         this.getEthRegistrarController = this.generateContractGetter('ETHRegistrarController', getEthRegistrarController);
         this.getMulticall = this.generateContractGetter('Multicall', getMulticall);

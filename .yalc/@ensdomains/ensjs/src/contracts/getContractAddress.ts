@@ -10,6 +10,11 @@ const addresses: Record<
     '4': '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
     '5': '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
   },
+  DNSRegistrar: {
+    '1': '0x58774Bb8acD458A640aF0B88238369A167546ef2',
+    '3': '0xdB328BA5FEcb432AF325Ca59E3778441eF5aa14F',
+    '5': '0x8edc487D26F6c8Fa76e032066A3D4F87E273515d',
+  },
   ETHRegistrarController: {
     '1': '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5',
     '3': '0x283af0b28c62c092c9727f1ee09c02ca627eb7f5',

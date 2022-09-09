@@ -10,6 +10,7 @@ export default class ContractManager {
     getRegistry: (passedProvider?: any, address?: string) => Promise<import("../generated").ENSRegistry>;
     getReverseRegistrar: (passedProvider?: any, address?: string) => Promise<import("../generated").ReverseRegistrar>;
     getNameWrapper: (passedProvider?: any, address?: string) => Promise<import("../generated").NameWrapper>;
+    getDNSRegistrar: (passedProvider?: any, address?: string) => Promise<import("../generated").DNSRegistrar>;
     getBaseRegistrar: (passedProvider?: any, address?: string) => Promise<import("../generated").BaseRegistrarImplementation>;
     getEthRegistrarController: (passedProvider?: any, address?: string) => Promise<import("../generated").ETHRegistrarController>;
     getMulticall: (passedProvider?: any, address?: string) => Promise<import("../generated").Multicall>;

@@ -42,7 +42,6 @@ export const requestMiddleware = (visit, parse, print) => (request) => {
 };
 export const responseMiddleware = (traverse) => (response) => {
     traverse(response).forEach(function (responseItem) {
-        console.log('responseItem: ', responseItem)
         if (responseItem instanceof Object && responseItem.name) {
             //Name already in hashed form
             if (responseItem.name && responseItem.name.includes('[')) {
