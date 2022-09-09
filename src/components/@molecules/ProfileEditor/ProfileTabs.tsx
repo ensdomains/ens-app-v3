@@ -71,7 +71,7 @@ const TabButton = styled.button<{
 type Props = ReturnType<typeof useProfileEditor>
 
 const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Props) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
   return (
     <TabButtonsContainer>
       <TabButton
@@ -81,7 +81,7 @@ const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Pr
         $isDirty={getFieldState('general').isDirty}
         onClick={handleTabClick('general')}
       >
-        {t('profileEditor.tabs.general.label')}
+        {t('input.profileEditor.tabs.accounts.label')}
       </TabButton>
       <TabButton
         type="button"
@@ -91,7 +91,7 @@ const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Pr
         onClick={handleTabClick('accounts')}
         data-testid="accounts-tab"
       >
-        {t('profileEditor.tabs.accounts.label')}
+        {t('input.profileEditor.tabs.accounts.label')}
       </TabButton>
       <TabButton
         type="button"
@@ -101,7 +101,7 @@ const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Pr
         onClick={handleTabClick('address')}
         data-testid="address-tab"
       >
-        {t('profileEditor.tabs.address.label')}
+        {t('input.profileEditor.tabs.address.label')}
       </TabButton>
       <TabButton
         type="button"
@@ -110,7 +110,7 @@ const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Pr
         $isDirty={getFieldState('website').isDirty}
         onClick={handleTabClick('website')}
       >
-        {t('profileEditor.tabs.contentHash.label')}
+        {t('input.profileEditor.tabs.contentHash.label')}
       </TabButton>
       <TabButton
         type="button"
@@ -120,7 +120,7 @@ const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Pr
         onClick={handleTabClick('other')}
         data-testid="other-tab"
       >
-        {t('profileEditor.tabs.other.label')}
+        {t('input.profileEditor.tabs.other.label')}
       </TabButton>
     </TabButtonsContainer>
   )

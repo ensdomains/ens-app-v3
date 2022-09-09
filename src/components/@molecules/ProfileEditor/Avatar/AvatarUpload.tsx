@@ -38,7 +38,7 @@ const UploadComponent = ({
   handleSubmit: (uri: string) => void
   name: string
 }) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
 
   const urlHash = useMemo(() => sha256(dataURLToBytes(dataURL)), [dataURL])
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
@@ -93,8 +93,8 @@ const UploadComponent = ({
   return (
     <>
       <Dialog.Heading
-        title={t('profileEditor.tabs.avatar.image.upload.title')}
-        subtitle={t('profileEditor.tabs.avatar.image.upload.subtitle')}
+        title={t('input.profileEditor.tabs.avatar.image.upload.title')}
+        subtitle={t('input.profileEditor.tabs.avatar.image.upload.subtitle')}
       />
       <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
       <Dialog.Footer
@@ -106,7 +106,7 @@ const UploadComponent = ({
             shadowless
             data-testid="upload-button"
           >
-            {t('profileEditor.tabs.avatar.image.upload.action')}
+            {t('input.profileEditor.tabs.avatar.image.upload.action')}
           </Button>
         }
       />

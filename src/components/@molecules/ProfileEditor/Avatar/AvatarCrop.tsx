@@ -108,7 +108,7 @@ export const CropComponent = ({
   handleCancel: () => void
   setDataURL: (dataURL: string) => void
 }) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef(new Image())
 
@@ -356,7 +356,7 @@ export const CropComponent = ({
 
   return (
     <>
-      <Dialog.Heading title={t('profileEditor.tabs.avatar.image.title')} />
+      <Dialog.Heading title={t('input.profileEditor.tabs.avatar.image.title')} />
       <EditImageContainer data-testid="edit-image-container">
         <ImageContainer>
           <ImageCropBorder as={CropBorderSVG} />
