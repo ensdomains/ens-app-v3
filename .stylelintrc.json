@@ -17,6 +17,9 @@
       {
         "ignoreProperties": ["flex-gap", "webkit-appearance"]
       }
-    ]
+    ],
+    "color-function-notation": "legacy",
+    "alpha-value-notation": "number",
+    "scss/operator-no-newline-after": null
   }
 }

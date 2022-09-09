@@ -18,6 +18,7 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
       ? css`
           align-self: flex-end;
           justify-self: flex-end;
+
           & button {
             padding: 0 ${theme.space['4']};
             width: ${theme.space.full};

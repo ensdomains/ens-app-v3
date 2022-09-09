@@ -11,6 +11,7 @@ export const ContentGrid = styled.div<{ $spacing?: string }>(
     grid-template-rows: repeat(6, min-content);
     gap: ${theme.space['5']};
     align-self: center;
+
     & > div {
       overflow: hidden;
     }

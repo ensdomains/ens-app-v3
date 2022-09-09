@@ -21,7 +21,7 @@ const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii['2xLarge']};
       border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -79,6 +79,7 @@ const FirstItems = styled.div(
 const DetailButtonWrapper = styled.div<{ $placement?: 'inline' | 'bottom' }>(
   ({ theme, $placement }) => css`
     ${$placement === 'bottom' && 'width: 100%;'}
+
     & > button {
       border: ${theme.space.px} solid ${theme.colors.borderSecondary};
       border-radius: ${theme.radii.extraLarge};
@@ -109,6 +110,7 @@ const DropdownWrapper = styled.div(
   ({ theme }) => css`
     & > div > div {
       min-width: ${theme.space['48']};
+
       button {
         height: ${theme.space['10']};
       }

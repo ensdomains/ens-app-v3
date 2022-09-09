@@ -9,7 +9,7 @@ const StyledNftBox = styled.div(
   ({ theme }) => css`
     width: 100%;
     border-radius: ${theme.radii['2xLarge']};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
     overflow: hidden;
   `,
 )
