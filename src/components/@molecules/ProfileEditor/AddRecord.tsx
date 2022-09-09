@@ -8,7 +8,9 @@ const AddRecordContainer = styled.div(
   `,
 )
 
-type Props = ReturnType<typeof useProfileEditor>
+type Props = {
+  AddButtonProps: ReturnType<typeof useProfileEditor>['AddButtonProps']
+}
 
 const AddRecord = ({ AddButtonProps }: Props) => {
   if (!AddButtonProps) return null
