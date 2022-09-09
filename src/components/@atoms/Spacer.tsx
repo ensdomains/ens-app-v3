@@ -1,5 +1,6 @@
-import { Space } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+
+import { Space } from '@ensdomains/thorin'
 
 export const Spacer = styled.div<{ $height: Space }>(
   ({ theme, $height }) => css`

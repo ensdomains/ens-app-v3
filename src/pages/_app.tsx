@@ -1,20 +1,23 @@
-import { Notifications } from '@app/components/Notifications'
-import { Basic } from '@app/layouts/Basic'
-import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
-import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { EnsProvider } from '@app/utils/EnsProvider'
-import { lightTheme as thorinLightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
-import { getDefaultWallets, lightTheme, RainbowKitProvider, Theme } from '@rainbow-me/rainbowkit'
+import { RainbowKitProvider, Theme, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { QueryClient } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
-import { createGlobalStyle, ThemeProvider } from 'styled-components'
-import { chain, configureChains, createClient, WagmiConfig } from 'wagmi'
+import { ThemeProvider, createGlobalStyle } from 'styled-components'
+import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
+
+import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
+
+import { Notifications } from '@app/components/Notifications'
+import { Basic } from '@app/layouts/Basic'
+import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
+import { BreakpointProvider } from '@app/utils/BreakpointProvider'
+import { EnsProvider } from '@app/utils/EnsProvider'
+
 import i18n from '../i18n'
 import '../styles.css'
 
@@ -29,41 +32,53 @@ const rainbowKitTheme: Theme = {
 }
 
 const GlobalStyle = createGlobalStyle`
-html,
-body {
-  padding: 0;
-  margin: 0;
-}
-
-*, ::before, ::after {
-  font-family: Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
-    Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
-}
-
-body {
-  background: radial-gradient(50% 50% at 50% 50%, rgba(82, 152, 255, 0.062) 0%, rgba(255, 255, 255, 0) 100%), #F7F7F7;
-}
-
-body, .min-safe {
-  min-height: 100vh;
-  /* stylelint-disable-next-line value-no-vendor-prefix */
-  @supports (-webkit-touch-callout: none) {
-    /* stylelint-disable-next-line value-no-vendor-prefix */
-    min-height: -webkit-fill-available;
+  html,
+  body {
+    padding: 0;
+    margin: 0;
   }
-}
 
-a {
-  color: inherit;
-  text-decoration: none;
-}
+  *,
+  ::before,
+  ::after {
+    font-family: Satoshi,
+      -apple-system,
+      BlinkMacSystemFont,
+      "Segoe UI",
+      Roboto,
+      Oxygen,
+      Ubuntu,
+      Cantarell,
+      "Fira Sans",
+      "Droid Sans",
+      "Helvetica Neue",
+      sans-serif;
+  }
 
-* {
-  box-sizing: border-box;
-  font-feature-settings: "ss01" on, "ss03" on;
-  /* stylelint-disable-next-line property-no-vendor-prefix */
-  -moz-font-feature-settings: "ss01" on, "ss03" on;
-}
+  body {
+    background: radial-gradient(50% 50% at 50% 50%, rgba(82, 152, 255, 0.062) 0%, rgba(255, 255, 255, 0) 100%), #F7F7F7;
+  }
+
+  body, .min-safe {
+    min-height: 100vh;
+    /* stylelint-disable-next-line value-no-vendor-prefix */
+    @supports (-webkit-touch-callout: none) {
+      /* stylelint-disable-next-line value-no-vendor-prefix */
+      min-height: -webkit-fill-available;
+    }
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
+  * {
+    box-sizing: border-box;
+    font-feature-settings: "ss01" on, "ss03" on;
+    /* stylelint-disable-next-line property-no-vendor-prefix */
+    -moz-font-feature-settings: "ss01" on, "ss03" on;
+  }
 `
 
 const breakpoints = {

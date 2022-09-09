@@ -1,5 +1,7 @@
 import { mockFunction, renderHook } from '@app/test-utils'
+
 import { useEns } from '@app/utils/EnsProvider'
+
 import { useChainId } from './useChainId'
 import { useWrapperExists } from './useWrapperExists'
 

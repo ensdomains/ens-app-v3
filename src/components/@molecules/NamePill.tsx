@@ -1,5 +1,7 @@
-import { Typography } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
 import { NameAvatar } from '../AvatarWithZorb'
 
 const Container = styled.div(

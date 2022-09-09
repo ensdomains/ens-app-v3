@@ -1,13 +1,15 @@
 /* eslint-disable no-multi-assign */
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Button, Dialog, Slider } from '@ensdomains/thorin'
+
 import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
 import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
 import { calcMomentum, getVars, resolutionMultiplier } from '@app/utils/avatarUpload'
-import { Button, Dialog, Slider } from '@ensdomains/thorin'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const EditImageContainer = styled.div(
   ({ theme }) => css`

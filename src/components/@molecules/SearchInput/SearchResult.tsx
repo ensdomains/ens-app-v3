@@ -1,6 +1,14 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
+
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
@@ -8,10 +16,6 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import type { RegistrationStatus } from '@app/utils/registrationStatus'
 import { shortenAddress } from '@app/utils/utils'
-import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
-import { useCallback, useEffect, useMemo, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const SearchItem = styled.div<{
   $selected?: boolean

@@ -1,7 +1,7 @@
-import { Profile } from '@app/types/index'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
-import supportedAccounts from '@app/constants/supportedTexts.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
+import supportedAccounts from '@app/constants/supportedTexts.json'
+import { Profile, RecordItem } from '@app/types/index'
 
 export const formSafeKey = (key: string) => key.replace(/\./g, '\u2024')
 
@@ -123,4 +123,15 @@ export const getDirtyFields = (
   }
 
   return {}
+}
+
+export const recordItemToKeyValue = (recordItem: RecordItem): { key: string; value: string } => {
+  switch (recordItem.type) {
+    case 'text':
+      return { key: recordItem.key.toString(), value: recordItem.value }
+    case 'addr':
+      return { key: recordItem.coin!.toString(), value: (recordItem as any).addr }
+    default:
+      throw new Error(`Unsupported record type: ${recordItem.type}`)
+  }
 }

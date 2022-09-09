@@ -1,8 +1,10 @@
-import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
-import { mq } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
+
+import { mq } from '@ensdomains/thorin'
+
+import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 
 const TabButtonsContainer = styled.div(({ theme }) => [
   css`

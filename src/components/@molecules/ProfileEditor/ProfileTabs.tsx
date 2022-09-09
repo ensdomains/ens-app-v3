@@ -1,7 +1,8 @@
-import useProfileEditor from '@app/hooks/useProfileEditor'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { Theme } from 'typings-custom/styled-components'
+
+import useProfileEditor from '@app/hooks/useProfileEditor'
 
 const TabButtonsContainer = styled.div(
   ({ theme }) => css`

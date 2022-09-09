@@ -1,6 +1,7 @@
-import HeartSVG from '@app/assets/Heart.svg'
 import type { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+
+import HeartSVG from '@app/assets/Heart.svg'
 
 const FavouriteButtonContainer = styled.button(
   ({ theme, disabled }) => css`

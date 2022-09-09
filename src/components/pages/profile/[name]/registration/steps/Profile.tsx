@@ -1,3 +1,10 @@
+import { useMemo, useState } from 'react'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
+
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { Button, Dialog, DownIndicatorSVG, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
+
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
@@ -7,11 +14,6 @@ import ProfileTabContents from '@app/components/@molecules/ProfileEditor/Profile
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useProfileEditor from '@app/hooks/useProfileEditor'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { Button, Dialog, DownIndicatorSVG, Helper, mq, Tag, Typography } from '@ensdomains/thorin'
-import { useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 const StyledCard = styled.form(
   ({ theme }) => css`

@@ -1,6 +1,7 @@
-import { AnyRoute, routes } from '@app/routes'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
+
+import { AnyRoute, routes } from '@app/routes'
 
 export const useActiveRoute = () => {
   const router = useRouter()

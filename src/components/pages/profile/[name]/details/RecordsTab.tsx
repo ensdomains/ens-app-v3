@@ -1,13 +1,16 @@
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography, mq } from '@ensdomains/thorin'
+
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
-import { mq, Typography } from '@ensdomains/thorin'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {

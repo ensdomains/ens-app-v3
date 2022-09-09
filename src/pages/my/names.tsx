@@ -1,3 +1,11 @@
+import { useRouter } from 'next/router'
+import { ReactElement, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
+
+import { PageButtons, Spinner, mq } from '@ensdomains/thorin'
+
 import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
 import SortControl, {
   SortDirection,
@@ -12,12 +20,6 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { Name } from '@app/types'
-import { mq, PageButtons, Spinner } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`

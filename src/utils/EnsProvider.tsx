@@ -3,6 +3,7 @@ import type { ContractName } from '@ensdomains/ensjs/contracts/types'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 import { useProvider } from 'wagmi'
 
+
 const opts: ConstructorParameters<typeof ENS>[0] = {}
 
 if (process.env.NEXT_PUBLIC_PROVIDER && process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES) {

@@ -1,3 +1,8 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
@@ -7,9 +12,7 @@ import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
-import { Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+
 import { FavouriteButton } from './FavouriteButton'
 
 const Container = styled(Card)(

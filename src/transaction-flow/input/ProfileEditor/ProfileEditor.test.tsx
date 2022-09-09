@@ -1,4 +1,3 @@
-import { useProfile } from '@app/hooks/useProfile'
 import {
   cleanup,
   fireEvent,
@@ -9,9 +8,13 @@ import {
   waitFor,
   within,
 } from '@app/test-utils'
+
+import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useProfile } from '@app/hooks/useProfile'
+import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useEns } from '@app/utils/EnsProvider'
+
 import ProfileEditor from './ProfileEditor-flow'
 
 const mockProfileData = {
@@ -109,14 +112,15 @@ jest.mock('@app/utils/BreakpointProvider')
 jest.mock('@app/hooks/useProfile')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
+jest.mock('@app/hooks/useContractAddress')
+jest.mock('@app/hooks/useResolverStatus')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
-const mockUseEns = mockFunction(useEns)
+const mockUseContractAddress = mockFunction(useContractAddress)
+const mockUseResolverStatus = mockFunction(useResolverStatus)
 
-const mockSetRecords = jest.fn()
 const mockSetCurrentTransaction = jest.fn()
-
 const mockDispatch = jest.fn()
 
 export function setupIntersectionObserverMock({
@@ -174,11 +178,16 @@ describe('ProfileEditor', () => {
     setupIntersectionObserverMock()
     window.scroll = jest.fn()
 
-    mockUseEns.mockReturnValue({
-      setRecords: mockSetRecords,
-      contracts: {
-        getPublicResolver: async () => ({ address: '0x0' }),
+    mockUseContractAddress.mockReturnValue('0x0')
+
+    mockUseResolverStatus.mockReturnValue({
+      status: {
+        hasResolver: true,
+        hasLatestResolver: true,
+        isMigratedProfileEqual: true,
+        hasMigratedProfile: true,
       },
+      loading: false,
     })
   })
 
@@ -297,10 +306,16 @@ describe('ProfileEditor with old resolver', () => {
       mockProfileData as unknown as { profile: Profile; loading: boolean },
     )
 
-    mockUseEns.mockReturnValue({
-      contracts: {
-        getPublicResolver: async () => ({ address: '0x123' }),
+    mockUseContractAddress.mockReturnValue('0x123')
+
+    mockUseResolverStatus.mockReturnValue({
+      status: {
+        hasResolver: true,
+        hasLatestResolver: false,
+        isMigratedProfileEqual: true,
+        hasMigratedProfile: true,
       },
+      loading: false,
     })
   })
 

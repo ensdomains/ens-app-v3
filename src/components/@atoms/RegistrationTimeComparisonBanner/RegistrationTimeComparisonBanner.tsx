@@ -1,6 +1,7 @@
-import { Helper, mq } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
 import styled, { css } from 'styled-components'
+
+import { Helper, mq } from '@ensdomains/thorin'
 
 const InnerContainer = styled.div(
   ({ theme }) => css`

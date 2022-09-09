@@ -1,3 +1,9 @@
+import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+
+import { useRouter } from 'next/router'
+import { ComponentProps } from 'react'
+import { useAccount } from 'wagmi'
+
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
 import { OwnerButton } from '@app/components/pages/profile/OwnerButton'
@@ -7,11 +13,7 @@ import { SubnamesTab } from '@app/components/pages/profile/[name]/details/Subnam
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import Page, { Details } from '@app/pages/profile/details'
-import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useRouter } from 'next/router'
-import { ComponentProps } from 'react'
-import { useAccount } from 'wagmi'
 
 // setting up jest mocks
 jest.mock('@app/components/NFTWithPlaceholder')

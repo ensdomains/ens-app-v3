@@ -9,7 +9,6 @@ import useProfileEditor from '@app/hooks/useProfileEditor'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { Button, mq } from '@ensdomains/thorin'
 import { useCallback, useState } from 'react'
@@ -91,6 +90,7 @@ const FooterContainer = styled.div(
 
 type Data = {
   name?: string
+  resumable?: boolean
 }
 
 export type Props = {
@@ -99,11 +99,10 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
-  const { t } = useTranslation('profile')
-  const { contracts } = useEns()
+const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
+  const { t } = useTranslation('transactionFlow')
 
-  const name = data?.name || ''
+  const { name = '', resumable = false } = data
 
   const { profile, loading } = useProfile(name, name !== '')
 
@@ -113,7 +112,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
 
   const handleCreateTransaction = useCallback(
     async (records: RecordOptions) => {
-      const resolverAddress = (await contracts!.getPublicResolver()!).address
+      if (!profile?.resolverAddress || !resolverAddress) return
 
       if (!profile?.resolverAddress) return
       if (profile.resolverAddress === resolverAddress) {
@@ -130,26 +129,33 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
         dispatch({ name: 'setFlowStage', payload: 'transaction' })
         return
       }
+
       dispatch({
         name: 'startFlow',
-        key: `update-profile-${name}`,
+        key: `edit-profile-flow-${name}`,
         payload: {
           intro: {
             title: 'Action Required',
-            content: makeIntroItem('FriendlyResolverUpgrade', { name }),
+            content: makeIntroItem('MigrateAndUpdateResolver', { name }),
           },
           transactions: [
-            makeTransactionItem('updateProfile', {
+            makeTransactionItem('migrateProfileWithSync', {
               name,
-              resolver: profile!.resolverAddress!,
               records,
             }),
+            makeTransactionItem('updateResolver', {
+              name,
+              resolver: resolverAddress,
+              oldResolver: profile!.resolverAddress!,
+              contract: 'registry',
+            }),
           ],
+          resumable: true,
         },
       })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [profile],
+    [profile, status, resolverAddress],
   )
 
   const profileEditorForm = useProfileEditor({ callback: handleCreateTransaction, profile })
@@ -158,7 +164,14 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
   const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
-  if (loading) return null
+  const [showOverlay, setShowOverlay] = useState(false)
+  useEffect(() => {
+    if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
+      setShowOverlay(true)
+    }
+  }, [status, statusLoading, resumable])
+
+  if (profileLoading || statusLoading) return <TransactionLoader />
   return (
     <>
       {' '}
@@ -209,6 +222,19 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
               </Button>
             </FooterContainer>
           </ContentContainer>
+          {showOverlay && (
+            <ResolverWarningOverlay
+              name={name}
+              hasOldRegistry={!profile?.isMigrated}
+              resumable={resumable}
+              hasNoResolver={!status?.hasResolver}
+              hasMigratedProfile={status?.hasMigratedProfile}
+              latestResolver={resolverAddress!}
+              oldResolver={profile?.resolverAddress!}
+              dispatch={dispatch}
+              onDismiss={() => setShowOverlay(false)}
+            />
+          )}{' '}
         </Container>
       )}
     </>

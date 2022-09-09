@@ -1,9 +1,10 @@
-import { useActiveRoute } from '@app/hooks/useActiveRoute'
-import { RouteItemObj } from '@app/routes'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
+import { useActiveRoute } from '@app/hooks/useActiveRoute'
+import { RouteItemObj } from '@app/routes'
 
 const LinkWrapper = styled.a<{ $hasNotification?: boolean; $asText?: boolean }>(
   ({ theme, $hasNotification, $asText }) => css`

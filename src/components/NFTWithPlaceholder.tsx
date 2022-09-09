@@ -1,6 +1,8 @@
-import { useAvatar } from '@app/hooks/useAvatar'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+
+import { useAvatar } from '@app/hooks/useAvatar'
+
 import NFTTemplate from './@molecules/NFTTemplate'
 
 const StyledNftBox = styled.div(

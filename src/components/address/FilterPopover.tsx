@@ -1,9 +1,11 @@
-import SortControl, { SortValue } from '@app/components/@molecules/SortControl/SortControl'
-import { Name } from '@app/types'
-import { Field, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 import React, { ChangeEvent, ComponentProps, Ref } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Field, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
+
+import SortControl, { SortValue } from '@app/components/@molecules/SortControl/SortControl'
+import { Name } from '@app/types'
 
 const PopoverContainer = styled.div(
   ({ theme }) => css`

@@ -1,9 +1,11 @@
-import { DynamicAddressIcon, AddressIconType } from '@app/assets/address/DynamicAddressIcon'
+import { ComponentProps } from 'react'
+import styled, { css } from 'styled-components'
+
+import { Select } from '@ensdomains/thorin'
+
+import { AddressIconType, DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
 import coinList from '@app/constants/coinList'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
-import styled, { css } from 'styled-components'
-import { Select } from '@ensdomains/thorin'
-import { ComponentProps } from 'react'
 import { formSafeKey } from '@app/utils/editor'
 
 const IconWrapper = styled.div(

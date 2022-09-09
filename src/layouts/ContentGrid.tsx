@@ -1,5 +1,6 @@
-import { mq } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+
+import { mq } from '@ensdomains/thorin'
 
 export const ContentGrid = styled.div<{ $spacing?: string }>(
   ({ theme, $spacing = '270px 2fr' }) => css`

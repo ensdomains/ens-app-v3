@@ -1,3 +1,9 @@
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+
 import { textOptions } from '@app/components/@molecules/AdvancedEditor/textOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
@@ -8,10 +14,6 @@ import {
   convertProfileToProfileFormObject,
   getDirtyFields,
 } from '@app/utils/editor'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { useEffect, useState } from 'react'
-import { useForm } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []

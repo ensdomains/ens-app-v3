@@ -1,8 +1,10 @@
-import ClockSVG from '@app/assets/Clock.svg'
-import { secondsToDays } from '@app/utils/utils'
-import { Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
+import ClockSVG from '@app/assets/Clock.svg'
+import { secondsToDays } from '@app/utils/utils'
 
 const ExpiryWrapper = styled.div(
   ({ theme }) => css`

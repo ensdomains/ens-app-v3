@@ -1,6 +1,7 @@
+import styled, { css } from 'styled-components'
+
 import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import useProfileEditor from '@app/hooks/useProfileEditor'
-import styled, { css } from 'styled-components'
 
 const AddRecordContainer = styled.div(
   ({ theme }) => css`

@@ -1,8 +1,11 @@
-import TripleDot from '@app/assets/TripleDot.svg'
-import { Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
+
+import TripleDot from '@app/assets/TripleDot.svg'
+
 import { DisabledButton } from './@atoms/DisabledButton'
 import { NameAvatar } from './AvatarWithZorb'
 

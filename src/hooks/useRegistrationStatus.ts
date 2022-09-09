@@ -2,7 +2,7 @@ import { useEns } from '@app/utils/EnsProvider'
 import {
   addRegistrationStatusToBatch,
   getRegistrationStatus,
-  RegistrationStatus,
+  RegistrationStatus
 } from '@app/utils/registrationStatus'
 import { useQuery } from 'wagmi'
 

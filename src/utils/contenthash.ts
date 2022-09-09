@@ -34,3 +34,12 @@ export const getContentHashLink = (
   }
   return null
 }
+
+export const contentHashToString = (
+  contentHash: string | DecodedContentHash | undefined | null,
+): string => {
+  if (typeof contentHash === 'string') return contentHash
+  if (typeof contentHash === 'object' && contentHash?.decoded && contentHash?.protocolType)
+    return `${contentHash.protocolType}://${contentHash.decoded}`
+  return ''
+}

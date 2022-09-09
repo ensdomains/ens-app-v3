@@ -1,10 +1,10 @@
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
-import { useZorb } from '@app/hooks/useZorb'
 import { mockFunction, render, screen } from '@app/test-utils'
+
+import { useRouter } from 'next/router'
+
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
-import { useRouter } from 'next/router'
+
 import { SubnamesTab } from './SubnamesTab'
 
 jest.mock('@app/hooks/useSubnamePagination')
@@ -90,6 +90,15 @@ describe('SubnamesTab', () => {
     )
   })
   it('should show create subname button if canEdit is true', () => {
+    const subnamesMockData = {
+      subnames: Array.from({ length: 10 }, makeSubname),
+      subnameCount: 10,
+      isLoading: false,
+      max: 2,
+      page: 0,
+      totalPages: 1,
+    }
+    mockUseSubnamePagination.mockReturnValue(subnamesMockData)
     render(<SubnamesTab {...baseMockData} canEdit />)
     expect(screen.getByTestId('add-subname-action')).toBeVisible()
   })

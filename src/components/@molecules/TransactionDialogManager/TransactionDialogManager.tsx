@@ -1,8 +1,13 @@
 /* eslint-disable default-case */
+
 /* eslint-disable no-param-reassign */
-import { transactions } from '@app/transaction-flow/transaction'
-import { Dialog } from '@ensdomains/thorin'
 import { Dispatch, useCallback, useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+
+import { Dialog } from '@ensdomains/thorin'
+
+import { transactions } from '@app/transaction-flow/transaction'
+
 import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
 import { IntroStageModal } from './stage/Intro'
@@ -17,6 +22,7 @@ export const TransactionDialogManager = ({
   dispatch: Dispatch<TransactionFlowAction>
   selectedKey: string | null
 }) => {
+  const { t } = useTranslation()
   const selectedItem = useMemo(
     () => (selectedKey ? state.items[selectedKey] : null),
     [selectedKey, state.items],
@@ -64,18 +70,19 @@ export const TransactionDialogManager = ({
       return (
         <TransactionStageModal
           actionName={transactionItem.name}
-          displayItems={transaction.displayItems(transactionItem.data)}
+          displayItems={transaction.displayItems(transactionItem.data, t)}
           currentStep={selectedItem.currentTransaction}
           stepCount={selectedItem.transactions.length}
           transaction={transactionItem}
           txKey={selectedKey}
           dispatch={dispatch}
           onDismiss={onDismiss}
+          backToInput={transaction.backToInput ?? false}
         />
       )
     }
     return null
-  }, [selectedKey, selectedItem, onDismiss, dispatch])
+  }, [selectedKey, selectedItem, onDismiss, dispatch, t])
 
   return (
     <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onDismiss}>

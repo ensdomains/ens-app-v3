@@ -1,12 +1,15 @@
+import Head from 'next/head'
+import { useCallback, useRef, useState } from 'react'
+
+import { Colors } from '@ensdomains/thorin'
+
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { Content } from '@app/layouts/Content'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Colors } from '@ensdomains/thorin'
-import Head from 'next/head'
-import { useCallback, useRef, useState } from 'react'
+
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile'
 import { RegistrationData, RegistrationStep, RegistrationStepData } from './types'

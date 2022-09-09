@@ -1,7 +1,10 @@
-import { CurrencyDisplay } from '@app/types'
-import { Colors } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
 import styled, { css } from 'styled-components'
+
+import { Colors } from '@ensdomains/thorin'
+
+import { CurrencyDisplay } from '@app/types'
+
 import { CurrencyText } from '../CurrencyText/CurrencyText'
 
 const Container = styled.div(

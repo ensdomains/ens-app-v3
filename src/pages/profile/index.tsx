@@ -1,12 +1,13 @@
+import { useRouter } from 'next/router'
+import { ReactElement } from 'react'
+import { useAccount } from 'wagmi'
+
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
 import Registration from '@app/components/pages/profile/[name]/registration/Registration'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { useRouter } from 'next/router'
-import { ReactElement } from 'react'
-import { useAccount } from 'wagmi'
 
 export default function Page() {
   const router = useRouter()

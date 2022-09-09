@@ -1,7 +1,10 @@
-import { usePrimary } from '@app/hooks/usePrimary'
 import { mockFunction, render, screen } from '@app/test-utils'
+
 import { act, waitFor } from '@testing-library/react'
 import { ComponentProps } from 'react'
+
+import { usePrimary } from '@app/hooks/usePrimary'
+
 import { OwnerButton } from './OwnerButton'
 
 jest.mock('@app/hooks/usePrimary')

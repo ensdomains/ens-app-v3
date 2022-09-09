@@ -2,8 +2,8 @@ import styled, { css } from 'styled-components'
 
 import { Typography } from '@ensdomains/thorin'
 
-import { useCopied } from '@app/hooks/useCopied'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
+import { useCopied } from '@app/hooks/useCopied'
 import mq from '@app/mediaQuery'
 
 const RecordContainer = styled.button<{ $hasBackground?: boolean }>(({ theme, $hasBackground }) => [

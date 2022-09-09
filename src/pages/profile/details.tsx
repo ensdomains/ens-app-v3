@@ -1,9 +1,11 @@
-import { ENS } from '@ensdomains/ensjs'
 import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+
+import { ENS } from '@ensdomains/ensjs'
+import { Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
@@ -21,7 +23,6 @@ import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { mq, Typography } from '@ensdomains/thorin'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`

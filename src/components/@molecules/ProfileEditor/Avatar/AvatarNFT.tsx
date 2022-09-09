@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
-import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
-import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
 import { BigNumber } from 'ethers'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useInfiniteQuery } from 'wagmi'
+
+import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
+
+import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
+import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 
 type OwnedNFT = {
   contract: {

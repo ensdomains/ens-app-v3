@@ -1,3 +1,10 @@
+import { ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useInfiniteQuery } from 'wagmi'
+
+import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
+
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { NamePill } from '@app/components/@molecules/NamePill'
 import {
@@ -7,11 +14,7 @@ import {
 } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
-import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
-import { ReactNode, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
-import { useInfiniteQuery } from 'wagmi'
+
 import { makeTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
 

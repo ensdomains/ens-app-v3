@@ -1,7 +1,3 @@
-import CalendarSVG from '@app/assets/Calendar.svg'
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { makeDisplay } from '@app/utils/currency'
-import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin'
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
 import {
   ChangeEventHandler,
@@ -12,7 +8,13 @@ import {
   useRef,
   useState,
 } from 'react'
-import styled, { css, DefaultTheme } from 'styled-components'
+import styled, { DefaultTheme, css } from 'styled-components'
+
+import { Button, Dropdown, Helper, Input, Typography, mq } from '@ensdomains/thorin'
+
+import CalendarSVG from '@app/assets/Calendar.svg'
+import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
+import { makeDisplay } from '@app/utils/currency'
 
 const VAR_PREFIX = '--premium-chart-'
 const startPrice = 100000050.0

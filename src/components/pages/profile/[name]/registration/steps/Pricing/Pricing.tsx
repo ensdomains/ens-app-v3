@@ -1,3 +1,10 @@
+import { BigNumber } from 'ethers'
+import { ComponentProps, ReactNode, useState } from 'react'
+import styled, { css } from 'styled-components'
+import { useAccount, useBalance } from 'wagmi'
+
+import { Button, Checkbox, Heading, Typography, mq } from '@ensdomains/thorin'
+
 import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
@@ -10,11 +17,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { CurrencyUnit } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Button, Checkbox, Heading, mq, Typography } from '@ensdomains/thorin'
-import { BigNumber } from 'ethers'
-import { ComponentProps, ReactNode, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { useAccount, useBalance } from 'wagmi'
+
 import { RegistrationStepData } from '../../types'
 import TemporaryPremium from './TemporaryPremium'
 

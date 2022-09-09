@@ -1,9 +1,11 @@
-import UnsupportedSVG from '@app/assets/Unsupported.svg'
-import { Button, CloseSVG, Input, PlusSVG, SearchSVG } from '@ensdomains/thorin'
 import { ButtonHTMLAttributes, ReactNode, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
+
+import { Button, CloseSVG, Input, PlusSVG, SearchSVG } from '@ensdomains/thorin'
+
+import UnsupportedSVG from '@app/assets/Unsupported.svg'
 
 const Container = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`

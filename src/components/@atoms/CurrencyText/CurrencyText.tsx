@@ -1,7 +1,8 @@
+import { BigNumber } from 'ethers'
+
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { CurrencyDisplay } from '@app/types'
 import { makeDisplay } from '@app/utils/currency'
-import { BigNumber } from 'ethers'
 
 type Props = {
   eth?: BigNumber

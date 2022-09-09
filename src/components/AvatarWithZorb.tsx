@@ -1,8 +1,10 @@
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useZorb } from '@app/hooks/useZorb'
-import { Avatar, Space } from '@ensdomains/thorin'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
+
+import { Avatar, Space } from '@ensdomains/thorin'
+
+import { useAvatar } from '@app/hooks/useAvatar'
+import { useZorb } from '@app/hooks/useZorb'
 
 const Wrapper = styled.div<{ $size?: Space }>(
   ({ theme, $size }) => css`

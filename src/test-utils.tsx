@@ -1,11 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import { render, RenderOptions } from '@testing-library/react'
-import { renderHook, RenderHookOptions } from '@testing-library/react-hooks'
+import { RenderOptions, render } from '@testing-library/react'
+import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
 import userEvent from '@testing-library/user-event'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
+
+import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
 jest.mock('wagmi', () => {
   const { useQuery, useInfiniteQuery } = jest.requireActual('wagmi')

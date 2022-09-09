@@ -1,7 +1,9 @@
+import { BigNumber, ethers } from 'ethers'
 import { useProvider, useQuery } from 'wagmi'
-import { ethers, BigNumber } from 'ethers'
-import { useEns } from '@app/utils/EnsProvider'
+
 import AggregatorInterface from '@ensdomains/ens-contracts/build/contracts/AggregatorInterface.json'
+
+import { useEns } from '@app/utils/EnsProvider'
 
 const ORACLE_ENS = 'eth-usd.data.eth'
 

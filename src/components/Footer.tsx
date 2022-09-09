@@ -1,6 +1,8 @@
-import { mq } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { mq } from '@ensdomains/thorin'
+
 import SocialDiscord from '../assets/social/SocialDiscord.svg'
 import SocialDiscourse from '../assets/social/SocialDiscourse.svg'
 import SocialDiscourseColour from '../assets/social/SocialDiscourseColour.svg'

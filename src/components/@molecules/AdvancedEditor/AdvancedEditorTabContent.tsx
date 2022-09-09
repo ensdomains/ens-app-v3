@@ -1,10 +1,12 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { ScrollBox } from '@ensdomains/thorin'
+
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 import { validateCryptoAddress } from '@app/utils/validate'
-import { ScrollBox } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const TabContentsContainer = styled.div(
   ({ theme }) => css`

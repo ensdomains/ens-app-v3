@@ -1,16 +1,21 @@
 /* eslint-disable jsx-a11y/click-events-have-key-events */
+
 /* eslint-disable jsx-a11y/no-static-element-interactions */
+
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
-import { BackdropSurface, mq, Portal, Typography } from '@ensdomains/thorin'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+
+import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
+import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
+
+import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'

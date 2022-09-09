@@ -1,11 +1,13 @@
-import { Spacer } from '@app/components/@atoms/Spacer'
-import { Outlink } from '@app/components/Outlink'
-import useResolverEditor from '@app/hooks/useResolverEditor'
-import { Input, RadioButton, Typography } from '@ensdomains/thorin'
 import { ethers } from 'ethers'
 import { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Input, RadioButton, Typography } from '@ensdomains/thorin'
+
+import { Spacer } from '@app/components/@atoms/Spacer'
+import { Outlink } from '@app/components/Outlink'
+import useResolverEditor from '@app/hooks/useResolverEditor'
 
 const InputContainer = styled.div(
   ({ theme }) => css`

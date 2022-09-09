@@ -1,11 +1,13 @@
+import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { ScrollBox, Textarea } from '@ensdomains/thorin'
+
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 import { validateCryptoAddress } from '@app/utils/validate'
-import { ScrollBox, Textarea } from '@ensdomains/thorin'
-import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const TabContentsContainer = styled.div(
   () => css`

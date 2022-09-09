@@ -1,6 +1,7 @@
-import { CurrencyUnit, FiatUnit } from '@app/types'
 import { MouseEventHandler, useRef } from 'react'
 import styled, { css } from 'styled-components'
+
+import { CurrencyUnit, FiatUnit } from '@app/types'
 
 const Container = styled.div(
   ({ theme }) => css`
