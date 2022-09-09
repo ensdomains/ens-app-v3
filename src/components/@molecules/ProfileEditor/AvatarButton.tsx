@@ -8,8 +8,8 @@ import styled, { css } from 'styled-components'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`
-    width: 90px;
-    height: 90px;
+    width: ${theme.space['24']};
+    height: ${theme.space['24']};
     border-radius: 50%;
     background-color: ${theme.colors.white};
     cursor: pointer;

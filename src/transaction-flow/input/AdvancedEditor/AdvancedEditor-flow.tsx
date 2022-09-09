@@ -1,26 +1,26 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 
-import React, { useState, useEffect } from 'react'
-import styled, { css } from 'styled-components'
-import { Theme } from 'typings-custom/styled-components'
-import { useForm } from 'react-hook-form'
-import { mq, Button, ScrollBox } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
+import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
+import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
+import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
-import { validateCryptoAddress } from '@app/utils/validate'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
-import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import addressOptions from '../ProfileEditor/addressOptions'
+import { validateCryptoAddress } from '@app/utils/validate'
+import { Button, mq, ScrollBox } from '@ensdomains/thorin'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { Theme } from 'typings-custom/styled-components'
 import { textOptions } from './textOptions'
 
 const Container = styled.form(({ theme }) => [

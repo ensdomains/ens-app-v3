@@ -1,4 +1,5 @@
 import CalendarSVG from '@app/assets/Calendar.svg'
+import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { makeDisplay } from '@app/utils/currency'
 import { Button, Dropdown, Helper, Input, mq, Typography } from '@ensdomains/thorin'
 import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-link'
@@ -550,7 +551,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
           Date and time shown in local time zone (
           {nowDate.toLocaleString(undefined, { timeZoneName: 'longOffset' }).replace(/.* /g, '')})
         </TimezoneText>
-        <div>
+        <MobileFullWidth>
           <Dropdown
             shortThrow
             keepMenuOnTop
@@ -564,7 +565,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
               Remind Me
             </Button>
           </Dropdown>
-        </div>
+        </MobileFullWidth>
       </Container>
     </Helper>
   )

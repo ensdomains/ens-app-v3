@@ -1,7 +1,7 @@
-import { Button, Input, CloseSVG } from '@ensdomains/thorin'
-import styled, { css, useTheme } from 'styled-components'
-import React, { ComponentProps, forwardRef, Ref, ReactNode } from 'react'
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
+import { Button, CloseSVG, Input } from '@ensdomains/thorin'
+import { ComponentProps, forwardRef, ReactNode, Ref } from 'react'
+import styled, { css, useTheme } from 'styled-components'
 import { useDefaultRef } from '../../../hooks/useDefaultRef'
 
 const Container = styled.div(

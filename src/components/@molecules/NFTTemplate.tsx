@@ -23,7 +23,7 @@ const getFontSize = (str: string) => {
   canvas.height = 270
   const ctx = canvas.getContext('2d')!
   ctx.font =
-    'normal normal bold 20px Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
+    'normal normal bold 20px normal Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
   const fontMetrics = ctx.measureText(str)
   const fontSize = Math.floor(20 * (200 / fontMetrics.width))
   return fontSize < 34 ? fontSize : 32
