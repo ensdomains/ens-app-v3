@@ -78,7 +78,7 @@ const SliderContainer = styled.div(
     & > svg {
       width: ${theme.space['6']};
       height: ${theme.space['6']};
-      opacity: 15%;
+      opacity: 0.15;
     }
   `,
 )

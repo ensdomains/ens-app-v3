@@ -43,7 +43,7 @@ const SearchResultsContainer = styled.div<{
     top: calc(100% + ${theme.space['3']});
 
     background-color: #f7f7f7;
-    box-shadow: 0px 2px 12px rgba(${theme.shadesRaw.foreground}, 0.04);
+    box-shadow: 0 2px 12px rgba(${theme.shadesRaw.foreground}, 0.04);
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
       ${$error ? theme.colors.red : theme.colors.borderTertiary};

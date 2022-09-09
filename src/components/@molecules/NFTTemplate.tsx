@@ -42,7 +42,7 @@ const addSpan = (str: string, inx: number) => (
 
 const Text = styled.text(
   () => css`
-    font-family: Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif;
+    font-family: Satoshi, 'DejaVu Sans', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
     font-style: normal;
     font-variant-numeric: tabular-nums;
     font-weight: bold;

@@ -18,7 +18,7 @@ import useProfileEditor from '@app/hooks/useProfileEditor'
 const StyledCard = styled.form(
   ({ theme }) => css`
     border: 1px solid rgba(0, 0, 0, 0.06);
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
     border-radius: ${theme.radii['2xLarge']};
     background-color: ${theme.colors.background};
     overflow: hidden;

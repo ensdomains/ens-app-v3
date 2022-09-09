@@ -19,7 +19,7 @@
     "buildandstart:glocal": "pnpm build:glocal && pnpm start",
     "tenv": "ens-test-env -a",
     "denv": "pnpm tenv start -ns -nb",
-    "lint": "next lint && stylelint ./src/**/*.tsx",
+    "lint": "next lint && pnpm stylelint stylelint \"./src/**/*.tsx\"",
     "lint:fix": "next lint --fix",
     "export": "next export",
     "analyze": "ANALYZE=true pnpm build",

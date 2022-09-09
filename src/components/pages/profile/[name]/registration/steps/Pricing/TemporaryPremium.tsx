@@ -79,10 +79,11 @@ const dotStyle =
 
 const ChartContainer = styled.div(
   ({ theme }) => css`
-    position: relative;
     --space: ${theme.space['0.5']};
     --dist: calc(calc(100% - calc(var(--space) * 21)) / 21);
     --color: ${theme.colors.accent};
+
+    position: relative;
     width: 100%;
     height: 200px;
     border-radius: ${theme.radii.large};
@@ -144,7 +145,7 @@ const TooltipWrapper = styled.div(
     --y: var(--premium-chart-hover-y);
     --d: var(--premium-chart-hover-display);
     position: relative;
-    filter: drop-shadow(0px 0px 1px #e8e8e8) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 0 1px #e8e8e8) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     pointer-events: none;
     display: var(--d);
     z-index: 3;
