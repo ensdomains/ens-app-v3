@@ -1,0 +1,23 @@
+[
+  "constructor(bytes)",
+  "event AlgorithmUpdated(uint8,address)",
+  "event DigestUpdated(uint8,address)",
+  "event Marker()",
+  "event NSEC3DigestUpdated(uint8,address)",
+  "event RRSetUpdated(bytes,bytes)",
+  "event Test(uint256)",
+  "function algorithms(uint8) view returns (address)",
+  "function anchors() view returns (bytes)",
+  "function deleteRRSet(uint16,bytes,tuple(bytes,bytes),bytes)",
+  "function deleteRRSetNSEC3(uint16,bytes,tuple(bytes,bytes),tuple(bytes,bytes),bytes)",
+  "function digests(uint8) view returns (address)",
+  "function nsec3Digests(uint8) view returns (address)",
+  "function owner() view returns (address)",
+  "function rrdata(uint16,bytes) view returns (uint32, uint32, bytes20)",
+  "function setAlgorithm(uint8,address)",
+  "function setDigest(uint8,address)",
+  "function setNSEC3Digest(uint8,address)",
+  "function setOwner(address)",
+  "function submitRRSet(tuple(bytes,bytes),bytes) returns (bytes)",
+  "function submitRRSets(tuple(bytes,bytes)[],bytes) returns (bytes)"
+]

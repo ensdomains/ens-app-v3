@@ -73,7 +73,7 @@ const Copyable = ({ label, value }) => {
   )
 }
 
-//Remember to check if domain has been secured by DNSSEC
+// Remember to check if domain has been secured by DNSSEC
 const ButtonContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -109,7 +109,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
 
   const handleCheck = async () => {
     try {
-      let state = 0
+      const state = 0
       isSubdomainSet(name as string)
       const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
       const result = await prover.queryWithProof('TXT', `_ens.${name}`)
@@ -129,6 +129,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
       } else {
         // Out of sync (state 6)
         console.log('Controllder and DNS Owner are out of sync')
+        setCurrentStep(currentStep + 1)
       }
     } catch (e) {
       console.error('_ens check error: ', e)
@@ -150,8 +151,8 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
       <ButtonRow>
         <StyledButton outlined fullWidthContent shadowless variant="transparent">
           <ButtonInner>
-            <Typography>{`Type`}</Typography>
-            <Typography {...{ variant: 'small', color: 'foreground' }}>{`TXT`}</Typography>
+            <Typography>Type</Typography>
+            <Typography {...{ variant: 'small', color: 'foreground' }}>TXT</Typography>
           </ButtonInner>
         </StyledButton>
         <Copyable {...{ label: 'Name', value: '_ens' }} />

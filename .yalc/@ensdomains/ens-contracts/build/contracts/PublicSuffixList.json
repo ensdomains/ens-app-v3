@@ -1,0 +1,3 @@
+[
+  "function isPublicSuffix(bytes) view returns (bool)"
+]

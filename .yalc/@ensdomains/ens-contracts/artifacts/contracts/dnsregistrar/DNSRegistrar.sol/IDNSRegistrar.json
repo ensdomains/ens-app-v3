@@ -1,0 +1,109 @@
+{
+  "_format": "hh-sol-artifact-1",
+  "contractName": "IDNSRegistrar",
+  "sourceName": "contracts/dnsregistrar/DNSRegistrar.sol",
+  "abi": [
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "name",
+          "type": "bytes"
+        },
+        {
+          "internalType": "bytes",
+          "name": "proof",
+          "type": "bytes"
+        }
+      ],
+      "name": "claim",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "name",
+          "type": "bytes"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "rrset",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "sig",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct DNSSEC.RRSetWithSignature[]",
+          "name": "input",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "proof",
+          "type": "bytes"
+        }
+      ],
+      "name": "proveAndClaim",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes",
+          "name": "name",
+          "type": "bytes"
+        },
+        {
+          "components": [
+            {
+              "internalType": "bytes",
+              "name": "rrset",
+              "type": "bytes"
+            },
+            {
+              "internalType": "bytes",
+              "name": "sig",
+              "type": "bytes"
+            }
+          ],
+          "internalType": "struct DNSSEC.RRSetWithSignature[]",
+          "name": "input",
+          "type": "tuple[]"
+        },
+        {
+          "internalType": "bytes",
+          "name": "proof",
+          "type": "bytes"
+        },
+        {
+          "internalType": "address",
+          "name": "resolver",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "addr",
+          "type": "address"
+        }
+      ],
+      "name": "proveAndClaimWithResolver",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    }
+  ],
+  "bytecode": "0x",
+  "deployedBytecode": "0x",
+  "linkReferences": {},
+  "deployedLinkReferences": {}
+}

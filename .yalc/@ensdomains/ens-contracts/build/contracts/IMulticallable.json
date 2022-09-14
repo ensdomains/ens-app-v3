@@ -1,0 +1,3 @@
+[
+  "function multicall(bytes[]) returns (bytes[])"
+]

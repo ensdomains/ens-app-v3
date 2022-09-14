@@ -1,14 +1,22 @@
 import '@nomiclabs/hardhat-ethers'
+import * as tdly from '@tenderly/hardhat-tenderly'
 import 'dotenv/config'
 import 'hardhat-deploy'
-import { HardhatUserConfig } from 'hardhat/config'
 import { resolve } from 'path'
 
+tdly.setup({
+  automaticVerifications: false,
+})
+
 const ensContractsPath = './node_modules/@ensdomains/ens-contracts'
+BigInt.prototype.toJSON = function () {
+  return this.toString()
+}
 
-console.log(resolve(ensContractsPath, 'artifacts'))
-
-const config: HardhatUserConfig = {
+const config = {
+  tenderly: {
+    project: 'core',
+  },
   solidity: {
     compilers: [
       {
@@ -26,9 +34,9 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       saveDeployments: false,
-      chainId: parseInt(process.env.CHAIN_ID!),
+      chainId: parseInt(process.env.CHAIN_ID),
       accounts: {
-        mnemonic: process.env.SECRET_WORDS!,
+        mnemonic: process.env.SECRET_WORDS,
       },
       live: false,
       tags: ['test', 'legacy', 'use_root'],
@@ -36,19 +44,14 @@ const config: HardhatUserConfig = {
     localhost: {
       saveDeployments: false,
       url: process.env.RPC_URL,
-      chainId: parseInt(process.env.CHAIN_ID!),
+      chainId: parseInt(process.env.CHAIN_ID),
       accounts: {
-        mnemonic: process.env.SECRET_WORDS!,
+        mnemonic: process.env.SECRET_WORDS,
       },
       live: false,
       tags: ['test', 'legacy', 'use_root'],
     },
   },
-  // namedAccounts: {
-  //   deployer: {
-  //     default: '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266',
-  //   },
-  // },
   namedAccounts: {
     deployer: {
       default: 0,

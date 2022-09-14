@@ -122,6 +122,8 @@ const submitProof = async (dnsRegistrarContractAddress, provider, dnsRegistrarCo
   // const testOracleAddress = '0x09635F643e140090A9A8Dcd712eD6285858ceBef'
 
   const oracle = new NewOracle(registrarOracle, provider)
+  const anchors = await oracle.contract.anchors()
+  console.log('anchors: ', anchors)
   const proofData = await oracle.getProofData(result)
   // console.log('proofData: ', proofData)
 
@@ -139,29 +141,32 @@ const submitProof = async (dnsRegistrarContractAddress, provider, dnsRegistrarCo
   // const tx = await dnsRegistrarContract.connect(signer).proveAndClaim(encodedName, data, proof, {
   //   gasLimit: 10000000,
   // })
-  const tx = await dnsRegistrarContract
-    .connect(signer)
-    .proveAndClaimWithResolver(
-      encodedName,
-      data,
-      proof,
-      '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
-      '0xBe8563B89d31AD287c73da42848Bd7646172E0ba',
-    )
-
-  // testnet
   // const tx = await dnsRegistrarContract
   //   .connect(signer)
   //   .proveAndClaimWithResolver(
   //     encodedName,
   //     data,
   //     proof,
-  //     '0x9d4454B023096f34B160D6B654540c56A1F81688',
-  //     '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+  //     '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',
+  //     '0xBe8563B89d31AD287c73da42848Bd7646172E0ba',
   //     {
-  //       gasLimit: 1000000,
+  //       gasLimit: '10000000',
   //     },
   //   )
+
+  // testnet
+  const tx = await dnsRegistrarContract
+    .connect(signer)
+    .proveAndClaimWithResolver(
+      encodedName,
+      data,
+      proof,
+      '0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf',
+      '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+      {
+        gasLimit: 1000000,
+      },
+    )
   const receipt = await tx.wait()
   console.log('receipt: ', receipt)
 }
