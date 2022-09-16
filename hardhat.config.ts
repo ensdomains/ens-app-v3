@@ -4,9 +4,7 @@ import 'dotenv/config'
 import 'hardhat-deploy'
 import { resolve } from 'path'
 
-tdly.setup({
-  automaticVerifications: false,
-})
+tdly.setup()
 
 const ensContractsPath = './node_modules/@ensdomains/ens-contracts'
 BigInt.prototype.toJSON = function () {
@@ -34,12 +32,13 @@ const config = {
   networks: {
     hardhat: {
       saveDeployments: false,
-      chainId: parseInt(process.env.CHAIN_ID),
+      // chainId: parseInt(process.env.CHAIN_ID),
       accounts: {
         mnemonic: process.env.SECRET_WORDS,
       },
       live: false,
       tags: ['test', 'legacy', 'use_root'],
+      chainId: 1337,
     },
     localhost: {
       saveDeployments: false,

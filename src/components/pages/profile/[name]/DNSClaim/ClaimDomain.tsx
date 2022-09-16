@@ -118,12 +118,12 @@ const submitProof = async (dnsRegistrarContractAddress, provider, dnsRegistrarCo
   const registrarOracle = await dnsRegistrarContract.oracle()
   console.log('dnsRegistrarContractOracle: ', registrarOracle)
 
-  // const oracleAddress = '0x21745FF62108968fBf5aB1E07961CC0FCBeB2364'
-  // const testOracleAddress = '0x09635F643e140090A9A8Dcd712eD6285858ceBef'
+  const oracleAddress = '0x21745FF62108968fBf5aB1E07961CC0FCBeB2364'
+  const testOracleAddress = '0x09635F643e140090A9A8Dcd712eD6285858ceBef'
 
   const oracle = new NewOracle(registrarOracle, provider)
   const anchors = await oracle.contract.anchors()
-  console.log('anchors: ', anchors)
+  // console.log('anchors: ', anchors)
   const proofData = await oracle.getProofData(result)
   // console.log('proofData: ', proofData)
 
@@ -131,11 +131,12 @@ const submitProof = async (dnsRegistrarContractAddress, provider, dnsRegistrarCo
   const data = proofData.rrsets.map((x) => Object.values(x))
   const { proof } = proofData
 
+  // console.log('data: ', data)
+
   /*
   console.log('proof: ', proof)
   console.log('signer: ', signer)
   console.log('encodedName: ', encodedName)
-  console.log('data: ', data)
   */
 
   // const tx = await dnsRegistrarContract.connect(signer).proveAndClaim(encodedName, data, proof, {
@@ -155,18 +156,18 @@ const submitProof = async (dnsRegistrarContractAddress, provider, dnsRegistrarCo
   //   )
 
   // testnet
+  // const tx = await dnsRegistrarContract.connect(signer).proveAndClaim(encodedName, data, proof)
+
   const tx = await dnsRegistrarContract
     .connect(signer)
     .proveAndClaimWithResolver(
       encodedName,
       data,
       proof,
-      '0x99bbA657f2BbC93c02D617f8bA121cB8Fc104Acf',
+      '0x70e0ba845a1a0f2da3359c97e0285013525ffc49',
       '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
-      {
-        gasLimit: 1000000,
-      },
     )
+
   const receipt = await tx.wait()
   console.log('receipt: ', receipt)
 }

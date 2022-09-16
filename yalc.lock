@@ -6,7 +6,7 @@
       "pure": true
     },
     "@ensdomains/ens-contracts": {
-      "signature": "64fe33ed272ad05f89e127a11bf21852",
+      "signature": "7e37aae93e51c195b88ad86df57bdfc5",
       "pure": true,
       "replaced": "^0.0.12"
     }

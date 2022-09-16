@@ -81,15 +81,15 @@ const func = async function (hre) {
         log: true,
     });
     const dnssec = await hardhat_1.ethers.getContract('DNSSECImpl');
-    // @ts-ignore
-    await hre.tenderly.persistArtifacts({
-        name: 'DNSSECImpl',
-        address: dnssec.address,
-    });
-    // @ts-ignore
-    await hre.tenderly.push([
-        { name: 'DNSECImpl', address: dnssec.address, network: hre.network.name },
-    ]);
+    // // @ts-ignore
+    // await hre.tenderly.persistArtifacts({
+    //   name: 'DNSSECImpl',
+    //   address: dnssec.address,
+    // })
+    // // @ts-ignore
+    // await hre.tenderly.push([
+    //   { name: 'DNSECImpl', address: dnssec.address, network: hre.network.name },
+    // ])
     const transactions = [];
     for (const [id, alg] of Object.entries(algorithms)) {
         const address = (await deployments.get(alg)).address;

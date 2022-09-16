@@ -521,7 +521,7 @@ contract DNSSECImpl is DNSSEC, Owned {
         bytes memory proof
     ) internal view returns (RRUtils.SignedSet memory rrset) {
         rrset = input.rrset.readSignedSet();
-        // require(validProof(rrset.signerName, proof), "Invalid proof");
+        require(validProof(rrset.signerName, proof), "Invalid proof");
 
         // Do some basic checks on the RRs and extract the name
         // bytes memory name = validateRRs(rrset, rrset.typeCovered);
@@ -557,6 +557,10 @@ contract DNSSECImpl is DNSSEC, Owned {
         view
         returns (bool)
     {
+        console.log("validProof");
+        console.logBytes(name);
+        console.logBytes(proof);
+        console.log("validProof");
         uint16 dnstype = proof.readUint16(proof.nameLength(0));
         return
             rrsets[keccak256(name)][dnstype].hash == bytes20(keccak256(proof));
