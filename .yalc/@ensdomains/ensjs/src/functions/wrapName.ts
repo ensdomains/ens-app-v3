@@ -16,7 +16,7 @@ async function wrapETH(
   address: string,
 ) {
   const nameWrapper = await contracts?.getNameWrapper()!
-  const baseRegistrar = (await contracts?.getBaseRegistrar()!).connect(signer)
+  const baseRegistrar = (await contracts!.getBaseRegistrar()!).connect(signer)
 
   const labelhash = ethers.utils.solidityKeccak256(['string'], [labels[0]])
 
@@ -38,7 +38,7 @@ async function wrapOther(
   address: string,
   signer: ethers.Signer,
 ) {
-  const nameWrapper = (await contracts?.getNameWrapper()!).connect(signer)
+  const nameWrapper = (await contracts!.getNameWrapper()!).connect(signer)
   const registry = await contracts?.getRegistry()!
 
   const hasApproval = await registry.isApprovedForAll(
@@ -121,22 +121,21 @@ export default async function (
       signer,
       address,
     )
-  } else {
-    if (fuseOptions)
-      throw new Error(
-        'Fuses can not be initially set when wrapping a non .eth name',
-      )
-    if (expiry)
-      throw new Error(
-        'Expiry can not be initially set when wrapping a non .eth name',
-      )
-    return wrapOther(
-      { contracts },
-      name,
-      wrappedOwner,
-      resolverAddress,
-      address,
-      signer,
-    )
   }
+  if (fuseOptions)
+    throw new Error(
+      'Fuses can not be initially set when wrapping a non .eth name',
+    )
+  if (expiry)
+    throw new Error(
+      'Expiry can not be initially set when wrapping a non .eth name',
+    )
+  return wrapOther(
+    { contracts },
+    name,
+    wrappedOwner,
+    resolverAddress,
+    address,
+    signer,
+  )
 }

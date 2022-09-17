@@ -175,9 +175,8 @@ const getNames = async (
         orderDirection,
       }
     }
-  } else {
-    if (typeof page !== 'number') {
-      finalQuery = gqlInstance.gql`
+  } else if (typeof page !== 'number') {
+    finalQuery = gqlInstance.gql`
         query getNames(
           $id: ID!
           $orderBy: Registration_orderBy
@@ -200,14 +199,14 @@ const getNames = async (
         }
       `
 
-      queryVars = {
-        id: address,
-        orderBy,
-        orderDirection,
-        expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
-      }
-    } else {
-      finalQuery = gqlInstance.gql`
+    queryVars = {
+      id: address,
+      orderBy,
+      orderDirection,
+      expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
+    }
+  } else {
+    finalQuery = gqlInstance.gql`
         query getNames(
           $id: ID!
           $first: Int
@@ -234,14 +233,13 @@ const getNames = async (
         }
       `
 
-      queryVars = {
-        id: address,
-        first: pageSize,
-        skip: (page || 0) * pageSize,
-        orderBy: orderBy,
-        orderDirection: orderDirection,
-        expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
-      }
+    queryVars = {
+      id: address,
+      first: pageSize,
+      skip: (page || 0) * pageSize,
+      orderBy,
+      orderDirection,
+      expiryDate: Math.floor(Date.now() / 1000) - 90 * 24 * 60 * 60,
     }
   }
 
@@ -254,22 +252,19 @@ const getNames = async (
       if (orderDirection === 'desc') {
         if (orderBy === 'labelName') {
           return b.name.localeCompare(a.name)
-        } else {
-          return b.createdAt.getTime() - a.createdAt.getTime()
         }
-      } else {
-        if (orderBy === 'labelName') {
-          return a.name.localeCompare(b.name)
-        } else if (orderBy === 'creationDate') {
-          return a.createdAt.getTime() - b.createdAt.getTime()
-        }
+        return b.createdAt.getTime() - a.createdAt.getTime()
       }
+      if (orderBy === 'labelName') {
+        return a.name.localeCompare(b.name)
+      }
+      return a.createdAt.getTime() - b.createdAt.getTime()
     }) as Name[]
-  } else if (type === 'owner') {
-    return account.domains.map(mapDomain) as Name[]
-  } else {
-    return account.registrations.map(mapRegistration) as Name[]
   }
+  if (type === 'owner') {
+    return account.domains.map(mapDomain) as Name[]
+  }
+  return account.registrations.map(mapRegistration) as Name[]
 }
 
 export default getNames

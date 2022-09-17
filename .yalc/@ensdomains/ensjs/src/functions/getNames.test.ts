@@ -2,10 +2,10 @@ import { ENS } from '..'
 import setup from '../tests/setup'
 import { Name } from './getNames'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 
 beforeAll(async () => {
-  ;({ ENSInstance } = await setup())
+  ;({ ensInstance } = await setup())
 })
 
 const testProperties = (obj: object, ...properties: string[]) =>
@@ -30,9 +30,12 @@ const letterItems = [
 
 const domainLetterItems = [
   '[',
+  'x',
   'w',
   't',
   't',
+  'l',
+  'a',
   '9',
   '8',
   '7',
@@ -49,7 +52,7 @@ describe('getNames', () => {
   let totalRegistrations: number = 0
   let totalOwnedNames: number = 0
   it('should get the registrations for an address', async () => {
-    const result = await ENSInstance.getNames({
+    const result = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'registrant',
     })
@@ -69,7 +72,7 @@ describe('getNames', () => {
     )
   })
   it('should get the owned names for an address', async () => {
-    const result = await ENSInstance.getNames({
+    const result = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'owner',
     })
@@ -88,25 +91,25 @@ describe('getNames', () => {
     testNotProperties(result[0], 'expiryDate', 'registrationDate')
   })
   it('should get the registrations for an address with pagination', async () => {
-    const pageOne = await ENSInstance.getNames({
+    const pageOne = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'registrant',
       page: 0,
     })
     expect(pageOne).toHaveLength(10)
-    const pageTwo = await ENSInstance.getNames({
+    const pageTwo = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'registrant',
       page: 1,
     })
     expect(pageTwo).toHaveLength(10)
-    const pageThree = await ENSInstance.getNames({
+    const pageThree = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'registrant',
       page: 2,
     })
     expect(pageThree).toHaveLength(10)
-    const pageFour = await ENSInstance.getNames({
+    const pageFour = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'registrant',
       page: 3,
@@ -114,35 +117,41 @@ describe('getNames', () => {
     expect(pageFour).toHaveLength(totalRegistrations % 10)
   })
   it('should get the owned names for an address with pagination', async () => {
-    const pageOne = await ENSInstance.getNames({
+    const pageOne = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'owner',
       page: 0,
     })
     expect(pageOne).toHaveLength(10)
-    const pageTwo = await ENSInstance.getNames({
+    const pageTwo = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'owner',
       page: 1,
     })
     expect(pageTwo).toHaveLength(10)
-    const pageThree = await ENSInstance.getNames({
+    const pageThree = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'owner',
       page: 2,
     })
     expect(pageThree).toHaveLength(10)
-    const pageFour = await ENSInstance.getNames({
+    const pageFour = await ensInstance.getNames({
       address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
       type: 'owner',
       page: 3,
     })
-    expect(pageFour).toHaveLength(totalOwnedNames % 10)
+    expect(pageFour).toHaveLength(10)
+    const pageFive = await ensInstance.getNames({
+      address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+      type: 'owner',
+      page: 4,
+    })
+    expect(pageFive).toHaveLength(totalOwnedNames % 10)
   })
   describe('orderBy', () => {
     describe('registrations', () => {
       it('descending registrationDate', async () => {
-        const registrationDateOrderedDesc = (await ENSInstance.getNames({
+        const registrationDateOrderedDesc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'registrant',
           orderBy: 'registrationDate',
@@ -156,7 +165,7 @@ describe('getNames', () => {
         })
       })
       it('ascending registrationDate', async () => {
-        const registrationDateOrderedAsc = (await ENSInstance.getNames({
+        const registrationDateOrderedAsc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'registrant',
           orderBy: 'registrationDate',
@@ -170,7 +179,7 @@ describe('getNames', () => {
         })
       })
       it('descending expiryDate', async () => {
-        const expiryDateOrderedDesc = (await ENSInstance.getNames({
+        const expiryDateOrderedDesc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'registrant',
           orderBy: 'expiryDate',
@@ -184,7 +193,7 @@ describe('getNames', () => {
         })
       })
       it('ascending expiryDate', async () => {
-        const expiryDateOrderedAsc = (await ENSInstance.getNames({
+        const expiryDateOrderedAsc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'registrant',
           orderBy: 'expiryDate',
@@ -198,7 +207,7 @@ describe('getNames', () => {
         })
       })
       it('descending labelName', async () => {
-        const labelNameOrderedDesc = (await ENSInstance.getNames({
+        const labelNameOrderedDesc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'registrant',
           orderBy: 'labelName',
@@ -209,7 +218,7 @@ describe('getNames', () => {
         )
       })
       it('ascending labelName', async () => {
-        const labelNameOrderedAsc = (await ENSInstance.getNames({
+        const labelNameOrderedAsc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'registrant',
           orderBy: 'labelName',
@@ -222,7 +231,7 @@ describe('getNames', () => {
     })
     describe('owned names', () => {
       it('descending createdAt', async () => {
-        const createdAtOrderedDesc = (await ENSInstance.getNames({
+        const createdAtOrderedDesc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'owner',
           orderBy: 'createdAt',
@@ -236,7 +245,7 @@ describe('getNames', () => {
         })
       })
       it('ascending createdAt', async () => {
-        const createdAtOrderedAsc = (await ENSInstance.getNames({
+        const createdAtOrderedAsc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'owner',
           orderBy: 'createdAt',
@@ -250,7 +259,7 @@ describe('getNames', () => {
         })
       })
       it('descending labelName', async () => {
-        const labelNameOrderedDesc = (await ENSInstance.getNames({
+        const labelNameOrderedDesc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'owner',
           orderBy: 'labelName',
@@ -261,7 +270,7 @@ describe('getNames', () => {
         )
       })
       it('ascending labelName', async () => {
-        const labelNameOrderedAsc = (await ENSInstance.getNames({
+        const labelNameOrderedAsc = (await ensInstance.getNames({
           address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
           type: 'owner',
           orderBy: 'labelName',

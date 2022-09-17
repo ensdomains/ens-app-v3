@@ -54,8 +54,8 @@ const makeMulticallData = async (
   options: InternalProfileOptions,
 ) => {
   let calls: any[] = []
-  options.texts &&
-    (calls = [
+  if (options.texts)
+    calls = [
       ...calls,
       ...(await Promise.all(
         options.texts.map(async (x) => ({
@@ -64,9 +64,10 @@ const makeMulticallData = async (
           type: 'text',
         })),
       )),
-    ])
-  options.coinTypes &&
-    (calls = [
+    ]
+
+  if (options.coinTypes)
+    calls = [
       ...calls,
       ...(await Promise.all(
         options.coinTypes.map(async (x) => ({
@@ -75,7 +76,8 @@ const makeMulticallData = async (
           type: 'addr',
         })),
       )),
-    ])
+    ]
+
   if (typeof options.contentHash === 'boolean' && options.contentHash) {
     calls.push({
       key: 'contentHash',
@@ -117,6 +119,119 @@ const fetchWithoutResolverMulticall = async (
   return (await multicallWrapper(callsWithResolver)).map(
     (x: [boolean, string]) => x[1],
   )
+}
+
+const formatRecords = async (
+  {
+    _getText,
+    _getAddr,
+    _getContentHash,
+  }: ENSArgs<'_getText' | '_getAddr' | '_getContentHash'>,
+  data: any[],
+  calls: any[],
+  options: InternalProfileOptions,
+) => {
+  const returnedRecords: DataItem[] = (
+    await Promise.all(
+      data.map(async (item: string, i: number) => {
+        let decodedFromAbi: any
+        let itemRet: Record<string, any> = {
+          key: calls[i].key,
+          type: calls[i].type,
+        }
+        if (itemRet.type === 'contenthash') {
+          ;[decodedFromAbi] = ethers.utils.defaultAbiCoder.decode(
+            ['bytes'],
+            item,
+          )
+          if (ethers.utils.hexStripZeros(decodedFromAbi) === '0x') {
+            return
+          }
+        }
+        switch (calls[i].type) {
+          case 'text':
+            itemRet = {
+              ...itemRet,
+              value: await _getText.decode(item),
+            }
+            if (itemRet.value === '' || itemRet.value === undefined) return
+            break
+          case 'addr':
+            try {
+              const addr = await _getAddr.decode(item, '', calls[i].key)
+              if (addr) {
+                itemRet = {
+                  ...itemRet,
+                  ...addr,
+                }
+                break
+              } else {
+                return
+              }
+            } catch {
+              return
+            }
+          case 'contenthash':
+            try {
+              itemRet = {
+                ...itemRet,
+                value: await _getContentHash.decode(item),
+              }
+              break
+            } catch {
+              return
+            }
+          // no default
+        }
+        return itemRet
+      }),
+    )
+  )
+    .filter((x): x is DataItem => {
+      return typeof x === 'object'
+    })
+    .filter((x) => x)
+
+  const returnedResponse: {
+    contentHash?: string | null | DecodedContentHash
+    coinTypes?: DataItem[]
+    texts?: DataItem[]
+  } = {}
+
+  if (
+    typeof options.contentHash === 'string' ||
+    typeof options.contentHash === 'object'
+  ) {
+    if (
+      typeof options.contentHash === 'string' &&
+      ethers.utils.hexStripZeros(options.contentHash) === '0x'
+    ) {
+      returnedResponse.contentHash = null
+    } else if (
+      ethers.utils.isBytesLike((options.contentHash as any).decoded) &&
+      ethers.utils.hexStripZeros((options.contentHash as any).decoded) === '0x'
+    ) {
+      returnedResponse.contentHash = null
+    } else {
+      returnedResponse.contentHash = options.contentHash
+    }
+  } else if (options.contentHash) {
+    const foundRecord = returnedRecords.find(
+      (item: any) => item.type === 'contenthash',
+    )
+    returnedResponse.contentHash = foundRecord ? foundRecord.value : null
+  }
+  if (options.texts) {
+    returnedResponse.texts = returnedRecords.filter(
+      (x: any) => x.type === 'text',
+    )
+  }
+  if (options.coinTypes) {
+    returnedResponse.coinTypes = returnedRecords.filter(
+      (x: any) => x.type === 'addr',
+    )
+  }
+  return returnedResponse
 }
 
 const getDataForName = async (
@@ -199,117 +314,6 @@ const getDataForName = async (
   }
 }
 
-const formatRecords = async (
-  {
-    _getText,
-    _getAddr,
-    _getContentHash,
-  }: ENSArgs<'_getText' | '_getAddr' | '_getContentHash'>,
-  data: any[],
-  calls: any[],
-  options: InternalProfileOptions,
-) => {
-  let returnedRecords: DataItem[] = (
-    await Promise.all(
-      data.map(async (item: string, i: number) => {
-        let decodedFromAbi: any
-        let itemRet: Record<string, any> = {
-          key: calls[i].key,
-          type: calls[i].type,
-        }
-        if (itemRet.type === 'contenthash') {
-          decodedFromAbi = ethers.utils.defaultAbiCoder.decode(
-            ['bytes'],
-            item,
-          )[0]
-          if (ethers.utils.hexStripZeros(decodedFromAbi) === '0x') {
-            return
-          }
-        }
-        switch (calls[i].type) {
-          case 'text':
-            itemRet = {
-              ...itemRet,
-              value: await _getText.decode(item),
-            }
-            if (itemRet.value === '' || itemRet.value === undefined) return
-            break
-          case 'addr':
-            try {
-              const addr = await _getAddr.decode(item, '', calls[i].key)
-              if (addr) {
-                itemRet = {
-                  ...itemRet,
-                  ...addr,
-                }
-                break
-              } else {
-                return
-              }
-            } catch {
-              return
-            }
-          case 'contenthash':
-            try {
-              itemRet = {
-                ...itemRet,
-                value: await _getContentHash.decode(item),
-              }
-            } catch {
-              return
-            }
-        }
-        return itemRet
-      }),
-    )
-  )
-    .filter((x): x is DataItem => {
-      return typeof x === 'object'
-    })
-    .filter((x) => x)
-
-  let returnedResponse: {
-    contentHash?: string | null | DecodedContentHash
-    coinTypes?: DataItem[]
-    texts?: DataItem[]
-  } = {}
-
-  if (
-    typeof options.contentHash === 'string' ||
-    typeof options.contentHash === 'object'
-  ) {
-    if (
-      typeof options.contentHash === 'string' &&
-      ethers.utils.hexStripZeros(options.contentHash) === '0x'
-    ) {
-      returnedResponse.contentHash = null
-    } else if (
-      ethers.utils.isBytesLike((options.contentHash as any).decoded) &&
-      ethers.utils.hexStripZeros((options.contentHash as any).decoded) === '0x'
-    ) {
-      returnedResponse.contentHash = null
-    } else {
-      returnedResponse.contentHash = options.contentHash
-    }
-  } else if (options.contentHash) {
-    const foundRecord = returnedRecords.find(
-      (item: any) => item.type === 'contenthash',
-    )
-    returnedResponse.contentHash = foundRecord ? foundRecord.value : null
-  }
-  if (options.texts) {
-    returnedResponse.texts = returnedRecords.filter(
-      (x: any) => x.type === 'text',
-    )
-  }
-  if (options.coinTypes) {
-    returnedResponse.coinTypes = returnedRecords.filter(
-      (x: any) => x.type === 'addr',
-    )
-  }
-  return returnedResponse
-}
-
 const graphFetch = async (
   { gqlInstance }: ENSArgs<'gqlInstance'>,
   name: string,
@@ -351,7 +355,7 @@ const graphFetch = async (
     }
   `
 
-  const client = gqlInstance.client
+  const { client } = gqlInstance
 
   const id = namehash(name)
 
@@ -373,7 +377,7 @@ const graphFetch = async (
 
   const { isMigrated, createdAt } = domain
 
-  let returnedRecords: ProfileResponse = {}
+  const returnedRecords: ProfileResponse = {}
 
   if (!resolverResponse) return { isMigrated, createdAt }
 
@@ -436,12 +440,11 @@ const getProfileFromName = async (
 ) => {
   const { resolverAddress, ..._options } = options || {}
   const optsLength = Object.keys(_options).length
-  const usingOptions =
-    !optsLength || _options?.texts === true || _options?.coinTypes === true
-      ? optsLength
-        ? _options
-        : { contentHash: true, texts: true, coinTypes: true }
-      : undefined
+  let usingOptions: InputProfileOptions | undefined
+  if (!optsLength || _options?.texts === true || _options?.coinTypes === true) {
+    if (optsLength) usingOptions = _options
+    else usingOptions = { contentHash: true, texts: true, coinTypes: true }
+  }
 
   const graphResult = await graphFetch(
     { gqlInstance },
@@ -559,11 +562,10 @@ export default async function (
 ): Promise<ResolvedProfile | undefined> {
   if (options && options.coinTypes && typeof options.coinTypes !== 'boolean') {
     options.coinTypes = options.coinTypes.map((coin: string) => {
-      if (!isNaN(parseInt(coin))) {
+      if (!Number.isNaN(parseInt(coin))) {
         return coin
-      } else {
-        return `${formatsByName[coin.toUpperCase()].coinType}`
       }
+      return `${formatsByName[coin.toUpperCase()].coinType}`
     })
   }
 

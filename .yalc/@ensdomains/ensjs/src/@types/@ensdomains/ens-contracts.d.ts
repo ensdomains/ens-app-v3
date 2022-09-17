@@ -1,1 +1,1 @@
-declare module "@ensdomains/ens-contracts"
+declare module '@ensdomains/ens-contracts'

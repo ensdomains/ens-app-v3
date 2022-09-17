@@ -13,7 +13,7 @@ export default async function (
   },
 ) {
   if (!resolver) {
-    resolver = (await contracts?.getPublicResolver()!).address
+    resolver = (await contracts!.getPublicResolver()!).address
   }
 
   switch (contract) {

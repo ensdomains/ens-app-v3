@@ -14,7 +14,7 @@ export const namehash = (name: string): string => {
   if (name) {
     const labels = name.split('.')
 
-    for (var i = labels.length - 1; i >= 0; i--) {
+    for (let i = labels.length - 1; i >= 0; i -= 1) {
       let labelSha: string
       if (isEncodedLabelhash(labels[i])) {
         labelSha = decodeLabelhash(labels[i])

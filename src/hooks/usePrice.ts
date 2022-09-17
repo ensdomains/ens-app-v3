@@ -1,17 +1,34 @@
-import { useEns } from '@app/utils/EnsProvider'
 import { useQuery } from '@tanstack/react-query'
+
+import { useEns } from '@app/utils/EnsProvider'
 
 export const usePrice = (nameOrNames: string | string[], duration: number, skip?: boolean) => {
   const { ready, getPrice } = useEns()
   const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames]
 
+  console.log('usePrice', nameOrNames, names, duration)
   const {
     data: price,
     isLoading: loading,
     error,
-  } = useQuery(['usePrice', duration, ...names], async () => getPrice(nameOrNames, duration), {
-    enabled: !skip && ready,
-  })
+  } = useQuery(
+    ['usePrice', duration, ...names],
+    async () => {
+      try {
+        console.log('getPrice', nameOrNames, duration)
+        console.log('getPrice', getPrice)
+
+        return await getPrice(nameOrNames, duration)
+      } catch (e) {
+        console.error(e)
+      }
+    },
+    {
+      enabled: !skip && ready,
+    },
+  )
+
+  console.log(error)
 
   return {
     price,

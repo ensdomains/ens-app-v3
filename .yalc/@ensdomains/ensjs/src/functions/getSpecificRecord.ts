@@ -51,7 +51,7 @@ export const getContentHash = {
     name: string,
   ) => {
     const prData = await _getContentHash.raw({ contracts }, name)
-    return await universalWrapper.raw(name, prData.data)
+    return universalWrapper.raw(name, prData.data)
   },
   decode: async (
     { contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>,
@@ -59,7 +59,7 @@ export const getContentHash = {
   ) => {
     const urData = await universalWrapper.decode(data)
     if (!urData) return
-    return await _getContentHash.decode({ contracts }, urData.data)
+    return _getContentHash.decode({ contracts }, urData.data)
   },
 }
 
@@ -98,7 +98,7 @@ export const getText = {
     key: string,
   ) => {
     const prData = await _getText.raw({ contracts }, name, key)
-    return await universalWrapper.raw(name, prData.data)
+    return universalWrapper.raw(name, prData.data)
   },
   decode: async (
     { contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>,
@@ -106,7 +106,7 @@ export const getText = {
   ) => {
     const urData = await universalWrapper.decode(data)
     if (!urData) return
-    return await _getText.decode({ contracts }, urData.data)
+    return _getText.decode({ contracts }, urData.data)
   },
 }
 
@@ -142,7 +142,7 @@ export const _getAddr = {
       }
     }
     const formatter =
-      typeof coinType === 'string' && isNaN(parseInt(coinType))
+      typeof coinType === 'string' && Number.isNaN(parseInt(coinType))
         ? formatsByName[coinType]
         : formatsByCoinType[
             typeof coinType === 'number' ? coinType : parseInt(coinType)
@@ -174,7 +174,7 @@ export const _getAddr = {
 
     const publicResolver = await contracts?.getPublicResolver()!
     const formatter =
-      typeof coinType === 'string' && isNaN(parseInt(coinType))
+      typeof coinType === 'string' && Number.isNaN(parseInt(coinType))
         ? formatsByName[coinType]
         : formatsByCoinType[
             typeof coinType === 'number' ? coinType : parseInt(coinType)
@@ -221,7 +221,7 @@ export const getAddr = {
     coinType?: string | number,
   ) => {
     const prData = await _getAddr.raw({ contracts }, name, coinType)
-    return await universalWrapper.raw(name, prData.data)
+    return universalWrapper.raw(name, prData.data)
   },
   decode: async (
     { contracts, universalWrapper }: ENSArgs<'contracts' | 'universalWrapper'>,
@@ -231,141 +231,6 @@ export const getAddr = {
   ) => {
     const urData = await universalWrapper.decode(data)
     if (!urData) return
-    return await _getAddr.decode({ contracts }, urData.data, _name, coinType)
+    return _getAddr.decode({ contracts }, urData.data, _name, coinType)
   },
 }
-
-// export async function getAddr(
-//   { contracts }: ENSArgs<'contracts'>,
-//   name: string,
-//   coinType?: string | number,
-// ) {
-//   if (!coinType) {
-//     coinType = 60
-//   }
-
-//   const universalResolver = await contracts?.getUniversalResolver()
-//   const publicResolver = await contracts?.getPublicResolver()
-//   const formatter =
-//     typeof coinType === 'string'
-//       ? formatsByName[coinType]
-//       : formatsByCoinType[coinType]
-
-//   if (!formatter) {
-//     throw new Error(`Coin type ${coinType} is not supported`)
-//   }
-
-//   const data = publicResolver?.interface.encodeFunctionData(
-//     'addr(bytes32,uint256)',
-//     [ethers.utils.namehash(name), formatter.coinType],
-//   )
-//   const result = await universalResolver?.resolve(hexEncodeName(name), data)
-
-//   const [encodedAddr] = ethers.utils.defaultAbiCoder.decode(
-//     ['bytes'],
-//     result['0'],
-//   )
-
-//   if (ethers.utils.hexStripZeros(encodedAddr) === '0x') {
-//     return
-//   }
-
-//   const decodedAddr = formatter.encoder(
-//     Buffer.from(encodedAddr.slice(2), 'hex'),
-//   )
-
-//   if (!decodedAddr) {
-//     return
-//   }
-
-//   return decodedAddr
-// }
-
-// export const getContentHash = {
-//   raw: async ({ contracts }: ENSArgs<'contracts'>, name: string) => {
-//     const universalResolver = await contracts?.getUniversalResolver()!
-//     const publicResolver = await contracts?.getPublicResolver()!
-//     const prData = publicResolver.interface.encodeFunctionData(
-//       'contenthash(bytes32)',
-//       [ethers.utils.namehash(name)],
-//     )
-//     const urData = universalResolver.interface.encodeFunctionData(
-//       'resolve(bytes,bytes)',
-//       [hexEncodeName(name), prData],
-//     )
-
-//     return {
-//       to: universalResolver.address,
-//       data: urData,
-//     }
-//   },
-//   decode: async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
-//     const universalResolver = await contracts?.getUniversalResolver()!
-//     const publicResolver = await contracts?.getPublicResolver()!
-//     const response = universalResolver.interface.decodeFunctionResult(
-//       'resolve(bytes,bytes)',
-//       data,
-//     )
-
-//     if (!response || !response[1]) {
-//       return
-//     }
-
-//     const [encodedContentHash] = publicResolver.interface.decodeFunctionResult(
-//       'contenthash(bytes32)',
-//       response[0],
-//     )
-
-//     if (ethers.utils.hexStripZeros(encodedContentHash) === '0x') {
-//       return
-//     }
-
-//     return decodeContenthash(encodedContentHash)
-//   },
-// }
-
-// const getText = {
-//   raw: async (
-//     { contracts }: ENSArgs<'contracts'>,
-//     name: string,
-//     key: string,
-//   ) => {
-//     const universalResolver = await contracts?.getUniversalResolver()!
-//     const publicResolver = await contracts?.getPublicResolver()!
-//     const data = publicResolver.interface.encodeFunctionData(
-//       'text(bytes32,string)',
-//       [ethers.utils.namehash(name), key],
-//     )
-
-//     return {
-//       to: universalResolver.address,
-//       data: universalResolver.interface.encodeFunctionData(
-//         'resolve(bytes,bytes)',
-//         [hexEncodeName(name), data],
-//       ),
-//     }
-//   },
-//   decode: async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
-//     const universalResolver = await contracts?.getUniversalResolver()!
-//     const publicResolver = await contracts?.getPublicResolver()!
-//     const response = universalResolver.interface.decodeFunctionResult(
-//       'resolve(bytes,bytes)',
-//       data,
-//     )
-
-//     if (!response || !response[1]) {
-//       return
-//     }
-
-//     const [decodedText] = publicResolver.interface.decodeFunctionResult(
-//       'text(bytes32,string)',
-//       response[0],
-//     )
-
-//     if (decodedText === '') {
-//       return
-//     }
-
-//     return decodedText
-//   },
-// }

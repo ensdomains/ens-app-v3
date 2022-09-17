@@ -1,8 +1,10 @@
-import { labelhash } from '@ensdomains/ensjs/dist/cjs/utils/labels.js'
+/* eslint-disable import/no-extraneous-dependencies */
 import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+
+import { labelhash } from '@ensdomains/ensjs/utils/labels'
 
 const ZERO_HASH = '0x0000000000000000000000000000000000000000000000000000000000000000'
 

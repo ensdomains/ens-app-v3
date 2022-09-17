@@ -38,6 +38,7 @@ query getNames($id: ID!, $expiryDate: Int) {
   const mockRequest = {
     method: 'POST',
     headers: {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       'Content-Type': 'application/json',
     },
     body: JSON.stringify({ query: queryWithoutId }),
@@ -145,7 +146,8 @@ query getNames($id: ID!, $expiryDate: Int) {
     },
     headers: {
       map: {
-        'content-type': 'application/json',
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'Content-Type': 'application/json',
       },
     },
     status: 200,

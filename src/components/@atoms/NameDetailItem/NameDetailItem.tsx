@@ -1,12 +1,12 @@
 import { useRouter } from 'next/router'
-import { ReactNode, useMemo } from 'react'
+import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Avatar, mq } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
-import { useExpiry } from '@app/hooks/useExpiry'
+// import { useExpiry } from '@app/hooks/useExpiry'
 import { useZorb } from '@app/hooks/useZorb'
 
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
@@ -122,12 +122,14 @@ type Name = {
 export const NameDetailItem = ({
   name,
   truncatedName,
+  expiryDate,
   network,
   mode,
   selected = false,
   onClick,
   children,
 }: Name & {
+  expiryDate?: Date
   network: number
   mode?: 'view' | 'select'
   selected?: boolean
@@ -137,13 +139,6 @@ export const NameDetailItem = ({
   const router = useRouter()
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
-  const { expiry } = useExpiry(name)
-
-  const isSelectable = useMemo(() => {
-    if (mode === 'view') return false
-    const labels = name?.split('.')
-    return labels?.length === 2 && labels[1] === 'eth'
-  }, [name, mode])
 
   return (
     <OptionalLink
@@ -160,7 +155,7 @@ export const NameDetailItem = ({
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
         onClick={() => {
-          if (isSelectable) onClick?.()
+          onClick?.()
         }}
       >
         <NameItemContainer>
@@ -178,9 +173,9 @@ export const NameDetailItem = ({
           </AvatarWrapper>
           <NameItemContent>
             <TitleWrapper name={name} />
-            {expiry?.expiry && (
+            {expiryDate && (
               <SubtitleWrapper>
-                <ShortExpiry expiry={expiry.expiry} textOnly />
+                <ShortExpiry expiry={expiryDate} textOnly />
               </SubtitleWrapper>
             )}
           </NameItemContent>

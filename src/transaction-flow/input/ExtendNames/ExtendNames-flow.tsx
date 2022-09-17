@@ -1,5 +1,3 @@
-import { BigNumber } from 'ethers'
-import { formatUnits } from 'ethers/lib/utils'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -12,17 +10,19 @@ import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMi
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
 import { useAvatar } from '@app/hooks/useAvatar'
-import { useEthPrice } from '@app/hooks/useEthPrice'
 import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { useZorb } from '@app/hooks/useZorb'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { CurrencyUnit } from '@app/types'
+import { yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
 import GasDisplay from '../../../components/@atoms/GasDisplay'
 import { useChainId } from '../../../hooks/useChainId'
 import { useExpiry } from '../../../hooks/useExpiry'
+import { usePrice } from '../../../hooks/usePrice'
 
 const Container = styled.form(
   ({ theme }) => css`
@@ -75,23 +75,17 @@ const NamesListItemAvatarWrapper = styled.div(
 )
 
 const NamesListItemContent = styled.div(
-  ({ theme }) => css`
+  () => css`
     flex: 1;
     position: relative;
     overflow: hidden;
   `,
 )
 
-const NamesListItemTitle = styled(StyledName)(
+const NamesListItemTitle = styled.div(
   ({ theme }) => css`
-    /* width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-weight: ${theme.fontWeights.bold}; */
-    font-size: ${theme.fontSizes.extraLarge};
-    /* line-height: 1.36; */
-    /* color: ${theme.colors.text}; */
+    font-size: ${theme.space['5.5']};
+    background: 'red';
   `,
 )
 
@@ -118,7 +112,9 @@ const NamesListItem = ({ name }: { name: string }) => {
         <Avatar src={avatar || zorb} label={name} />
       </NamesListItemAvatarWrapper>
       <NamesListItemContent>
-        <NamesListItemTitle name={name} />
+        <NamesListItemTitle>
+          <StyledName name={name} />
+        </NamesListItemTitle>
         {expiry?.expiry && (
           <NamesListItemSubtitle>
             <ShortExpiry expiry={expiry.expiry} textOnly />
@@ -154,46 +150,53 @@ export type Props = {
 const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
-  const [view, setView] = useState<'name-list' | 'registration'>('name-list')
+  const [view, setView] = useState<'name-list' | 'registration'>(
+    names.length ? 'name-list' : 'registration',
+  )
   const [years, setYears] = useState(1)
-  const [currencyUnit, setCurrencyUnit] = useState<'eth' | 'usd'>('eth')
+  const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
+  const currencyDisplay = currencyUnit === 'fiat' ? 'usd' : 'eth'
 
   const { data: transactionData, loading: transactionDataLoading } = useEstimateTransactionCost([
-    'REGISTER',
-    'COMMIT',
+    {
+      key: 'RENEW',
+      args: [names.length],
+    },
   ])
   const { gasPrice, transactionFee } = transactionData || {}
-  const gasLabel = gasPrice ? `${formatUnits(gasPrice, 'gwei')} gwei` : '-'
 
-  const { data: ethPrice, loading: ethPriceLoading } = useEthPrice()
-
-  const rentFee = ethPrice ? BigNumber.from('5000000000000000000').div(ethPrice) : undefined
+  const { price, loading: priceLoading } = usePrice(names, yearsToSeconds(1))
+  const rentFee = price?.base
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
+
+  console.log('price', price?.base?.toNumber())
 
   const items = [
     {
-      label: `${years} year extension`,
+      label: t('input.extendNames.invoice.extension', { count: years }),
       value: totalRentFee,
     },
     {
-      label: 'transaction fee',
+      label: t('input.extendNames.invoice.transaction'),
       value: transactionFee,
     },
   ]
 
-  const title = view === 'name-list' ? 'Extend 3 Names' : 'Extend Names'
+  const title = t('input.extendNames.title', { count: names.length })
 
   const trailingButtonProps =
     view === 'name-list'
       ? { onClick: () => setView('registration'), children: t('action.next', { ns: 'common' }) }
       : {
           onClick: () => {
+            if (!totalRentFee) return
             dispatch({
               name: 'setTransactions',
               payload: [
                 makeTransactionItem('extendNames', {
                   names,
                   years,
+                  rentPrice: totalRentFee,
                 }),
               ],
             })
@@ -202,7 +205,7 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
           children: t('action.save', { ns: 'common' }),
         }
 
-  if (transactionDataLoading || ethPriceLoading) {
+  if (transactionDataLoading || priceLoading) {
     return <TransactionLoader />
   }
   return (
@@ -225,17 +228,20 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
             </PlusMinusWrapper>
             <OptionBar>
               <GasDisplay gasPrice={gasPrice} />
-              <CurrencySwitch value={currencyUnit} onChange={(unit) => setCurrencyUnit(unit)} />
+              <CurrencySwitch
+                fiat="usd"
+                value={currencyUnit}
+                onChange={(unit) => setCurrencyUnit(unit)}
+              />
             </OptionBar>
-            {rentFee && transactionFee && gasPrice && (
+            {rentFee && transactionFee && (
               <RegistrationTimeComparisonBanner
                 rentFee={rentFee}
                 transactionFee={transactionFee}
-                gasPrice={gasPrice}
                 message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
               />
             )}
-            <Invoice items={items} unit={currencyUnit} totalLabel="Estimated total" />
+            <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
           </>
         )}
       </Container>

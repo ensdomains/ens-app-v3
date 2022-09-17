@@ -1,8 +1,10 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { PopulatedTransaction } from 'ethers'
+import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
 import type { ENS } from '@ensdomains/ensjs'
+import { Helper } from '@ensdomains/thorin'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
 
@@ -51,9 +53,11 @@ export type ProfileEditorType = {
 }
 export type PublicENS = PublicInterface<ENS>
 
+export type HelperProps = ComponentProps<typeof Helper>
 export interface Transaction<Data> {
   displayItems: (data: any, t: TFunction<'translation', undefined>) => TransactionDisplayItem[]
   transaction: (signer: JsonRpcSigner, ens: PublicENS, data: Data) => Promise<PopulatedTransaction>
+  helper?: (data: any, t: TFunction<'translation', undefined>) => undefined | HelperProps
   backToInput?: boolean
 }
 
@@ -67,3 +71,7 @@ export type FuseObj = {
   CANNOT_CREATE_SUBDOMAIN: boolean
   PARENT_CANNOT_CONTROL: boolean
 }
+
+export type CurrencyUnit = 'eth' | 'fiat'
+export type FiatUnit = 'usd'
+export type CurrencyDisplay = 'eth' | FiatUnit

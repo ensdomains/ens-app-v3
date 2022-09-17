@@ -3,13 +3,13 @@ import { ENS } from '..'
 import setup from '../tests/setup'
 import { randomSecret } from '../utils/registerHelpers'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
 let provider: ethers.providers.JsonRpcProvider
 let accounts: string[]
 
 beforeAll(async () => {
-  ;({ ENSInstance, revert, provider } = await setup())
+  ;({ ensInstance, revert, provider } = await setup())
   accounts = await provider.listAccounts()
 })
 
@@ -23,7 +23,7 @@ describe('commitName', () => {
   })
   it('should return a populated commit transaction with extra data and succeed', async () => {
     const { customData, ...popTx } =
-      await ENSInstance.commitName.populateTransaction('commitment.eth', {
+      await ensInstance.commitName.populateTransaction('commitment.eth', {
         duration: 31536000,
         owner: accounts[1],
         addressOrIndex: accounts[1],
@@ -36,13 +36,13 @@ describe('commitName', () => {
     const tx = await provider.getSigner().sendTransaction(popTx)
     await tx.wait()
 
-    const controller = await ENSInstance.contracts!.getEthRegistrarController()!
+    const controller = await ensInstance.contracts!.getEthRegistrarController()!
     const commitment = await controller.commitments(customData!.commitment)
     expect(commitment).toBeTruthy()
   })
   it('should return a customised commmit transaction and succeed', async () => {
     const secret = randomSecret()
-    const tx = await ENSInstance.commitName('commitment.eth', {
+    const tx = await ensInstance.commitName('commitment.eth', {
       duration: 31536000,
       owner: accounts[1],
       addressOrIndex: accounts[1],
@@ -54,7 +54,7 @@ describe('commitName', () => {
     expect(tx.customData!.wrapperExpiry).toBe(100000)
     expect(tx.customData!.secret).toBe(secret)
 
-    const controller = await ENSInstance.contracts!.getEthRegistrarController()!
+    const controller = await ensInstance.contracts!.getEthRegistrarController()!
     const commitment = await controller.commitments(tx.customData!.commitment)
     expect(commitment).toBeTruthy()
   })

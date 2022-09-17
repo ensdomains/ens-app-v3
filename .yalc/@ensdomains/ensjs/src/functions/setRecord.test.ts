@@ -4,11 +4,11 @@ import { decodeContenthash } from '../utils/contentHash'
 import { hexEncodeName } from '../utils/hexEncodedName'
 import { namehash } from '../utils/normalise'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
 
 beforeAll(async () => {
-  ;({ ENSInstance, revert } = await setup())
+  ;({ ensInstance, revert } = await setup())
 })
 
 afterAll(async () => {
@@ -17,7 +17,7 @@ afterAll(async () => {
 
 describe('setRecord', () => {
   it('should allow a text record set', async () => {
-    const tx = await ENSInstance.setRecord('test123.eth', {
+    const tx = await ensInstance.setRecord('test123.eth', {
       type: 'text',
       record: { key: 'foo', value: 'bar' },
       addressOrIndex: 1,
@@ -26,8 +26,8 @@ describe('setRecord', () => {
     await tx.wait()
 
     const universalResolver =
-      await ENSInstance.contracts!.getUniversalResolver()!
-    const publicResolver = await ENSInstance.contracts!.getPublicResolver()!
+      await ensInstance.contracts!.getUniversalResolver()!
+    const publicResolver = await ensInstance.contracts!.getPublicResolver()!
     const encodedText = await universalResolver.resolve(
       hexEncodeName('test123.eth'),
       publicResolver.interface.encodeFunctionData('text', [
@@ -42,7 +42,7 @@ describe('setRecord', () => {
     expect(resultText).toBe('bar')
   })
   it('should allow an address record set', async () => {
-    const tx = await ENSInstance.setRecord('test123.eth', {
+    const tx = await ensInstance.setRecord('test123.eth', {
       type: 'addr',
       record: {
         key: 'ETC',
@@ -54,8 +54,8 @@ describe('setRecord', () => {
     await tx.wait()
 
     const universalResolver =
-      await ENSInstance.contracts!.getUniversalResolver()!
-    const publicResolver = await ENSInstance.contracts!.getPublicResolver()!
+      await ensInstance.contracts!.getUniversalResolver()!
+    const publicResolver = await ensInstance.contracts!.getPublicResolver()!
     const encodedAddr = await universalResolver.resolve(
       hexEncodeName('test123.eth'),
       publicResolver.interface.encodeFunctionData('addr(bytes32,uint256)', [
@@ -72,7 +72,7 @@ describe('setRecord', () => {
     )
   })
   it('should allow a contenthash record set', async () => {
-    const tx = await ENSInstance.setRecord('test123.eth', {
+    const tx = await ensInstance.setRecord('test123.eth', {
       type: 'contentHash',
       record:
         'ipns://k51qzi5uqu5dgox2z23r6e99oqency055a6xt92xzmyvpz8mwz5ycjavm0u150',
@@ -82,8 +82,8 @@ describe('setRecord', () => {
     await tx.wait()
 
     const universalResolver =
-      await ENSInstance.contracts!.getUniversalResolver()!
-    const publicResolver = await ENSInstance.contracts!.getPublicResolver()!
+      await ensInstance.contracts!.getUniversalResolver()!
+    const publicResolver = await ensInstance.contracts!.getPublicResolver()!
     const encodedContent = await universalResolver.resolve(
       hexEncodeName('test123.eth'),
       publicResolver.interface.encodeFunctionData('contenthash', [

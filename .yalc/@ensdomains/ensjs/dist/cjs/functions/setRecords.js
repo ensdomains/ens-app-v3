@@ -1,24 +1,51 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const normalise_1 = require("../utils/normalise");
-const recordHelpers_1 = require("../utils/recordHelpers");
-async function default_1({ contracts, provider, getResolver, signer, }, name, { records, resolverAddress, }) {
-    if (!name.includes('.')) {
-        throw new Error('Input is not an ENS name');
-    }
-    let resolverToUse;
-    if (resolverAddress) {
-        resolverToUse = resolverAddress;
-    }
-    else {
-        resolverToUse = await getResolver(name);
-    }
-    if (!resolverToUse) {
-        throw new Error('No resolver found for input address');
-    }
-    const resolver = (await contracts?.getPublicResolver(provider, resolverToUse))?.connect(signer);
-    const hash = (0, normalise_1.namehash)(name);
-    const calls = (0, recordHelpers_1.generateRecordCallArray)(hash, records, resolver);
-    return resolver.populateTransaction.multicall(calls);
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var setRecords_exports = {};
+__export(setRecords_exports, {
+  default: () => setRecords_default
+});
+module.exports = __toCommonJS(setRecords_exports);
+var import_normalise = require("../utils/normalise");
+var import_recordHelpers = require("../utils/recordHelpers");
+async function setRecords_default({
+  contracts,
+  provider,
+  getResolver,
+  signer
+}, name, {
+  records,
+  resolverAddress
+}) {
+  if (!name.includes(".")) {
+    throw new Error("Input is not an ENS name");
+  }
+  let resolverToUse;
+  if (resolverAddress) {
+    resolverToUse = resolverAddress;
+  } else {
+    resolverToUse = await getResolver(name);
+  }
+  if (!resolverToUse) {
+    throw new Error("No resolver found for input address");
+  }
+  const resolver = (await contracts?.getPublicResolver(provider, resolverToUse))?.connect(signer);
+  const hash = (0, import_normalise.namehash)(name);
+  const calls = (0, import_recordHelpers.generateRecordCallArray)(hash, records, resolver);
+  return resolver.populateTransaction.multicall(calls);
 }
-exports.default = default_1;

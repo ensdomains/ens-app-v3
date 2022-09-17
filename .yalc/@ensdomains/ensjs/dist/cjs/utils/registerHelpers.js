@@ -1,80 +1,120 @@
 "use strict";
-var __importDefault = (this && this.__importDefault) || function (mod) {
-    return (mod && mod.__esModule) ? mod : { "default": mod };
+var __create = Object.create;
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __getProtoOf = Object.getPrototypeOf;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
 };
-Object.defineProperty(exports, "__esModule", { value: true });
-exports._makeCommitment = exports.makeCommitment = exports.makeRegistrationData = exports.makeCommitmentData = exports.randomSecret = void 0;
-const ethers_1 = require("ethers");
-const generateFuseInput_1 = __importDefault(require("./generateFuseInput"));
-const labels_1 = require("./labels");
-const normalise_1 = require("./normalise");
-const recordHelpers_1 = require("./recordHelpers");
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
+  mod
+));
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var registerHelpers_exports = {};
+__export(registerHelpers_exports, {
+  _makeCommitment: () => _makeCommitment,
+  makeCommitment: () => makeCommitment,
+  makeCommitmentData: () => makeCommitmentData,
+  makeRegistrationData: () => makeRegistrationData,
+  randomSecret: () => randomSecret
+});
+module.exports = __toCommonJS(registerHelpers_exports);
+var import_ethers = require("ethers");
+var import_generateFuseInput = __toESM(require("./generateFuseInput"));
+var import_labels = require("./labels");
+var import_normalise = require("./normalise");
+var import_recordHelpers = require("./recordHelpers");
 const randomSecret = () => {
-    const bytes = Buffer.allocUnsafe(32);
-    return '0x' + crypto.getRandomValues(bytes).toString('hex');
+  const bytes = Buffer.allocUnsafe(32);
+  return `0x${crypto.getRandomValues(bytes).toString("hex")}`;
 };
-exports.randomSecret = randomSecret;
-const makeCommitmentData = ({ name, owner, duration, resolver, records, reverseRecord, fuses, wrapperExpiry, secret, }) => {
-    const label = (0, labels_1.labelhash)(name.split('.')[0]);
-    const hash = (0, normalise_1.namehash)(name);
-    const resolverAddress = resolver.address;
-    const fuseData = fuses ? (0, generateFuseInput_1.default)(fuses) : '0';
-    if (reverseRecord) {
-        if (!records) {
-            records = { coinTypes: [{ key: 'ETH', value: owner }] };
-        }
-        else if (!records.coinTypes?.find((c) => c.key === 'ETH')) {
-            if (!records.coinTypes)
-                records.coinTypes = [];
-            records.coinTypes.push({ key: 'ETH', value: owner });
-        }
+const makeCommitmentData = ({
+  name,
+  owner,
+  duration,
+  resolver,
+  records,
+  reverseRecord,
+  fuses,
+  wrapperExpiry,
+  secret
+}) => {
+  const label = (0, import_labels.labelhash)(name.split(".")[0]);
+  const hash = (0, import_normalise.namehash)(name);
+  const resolverAddress = resolver.address;
+  const fuseData = fuses ? (0, import_generateFuseInput.default)(fuses) : "0";
+  if (reverseRecord) {
+    if (!records) {
+      records = { coinTypes: [{ key: "ETH", value: owner }] };
+    } else if (!records.coinTypes?.find((c) => c.key === "ETH")) {
+      if (!records.coinTypes)
+        records.coinTypes = [];
+      records.coinTypes.push({ key: "ETH", value: owner });
     }
-    const data = records ? (0, recordHelpers_1.generateRecordCallArray)(hash, records, resolver) : [];
-    return [
-        label,
-        owner,
-        duration,
-        resolverAddress,
-        data,
-        secret,
-        !!reverseRecord,
-        fuseData,
-        wrapperExpiry || Math.floor(Date.now() / 1000) + duration,
-    ];
+  }
+  const data = records ? (0, import_recordHelpers.generateRecordCallArray)(hash, records, resolver) : [];
+  return [
+    label,
+    owner,
+    duration,
+    resolverAddress,
+    data,
+    secret,
+    !!reverseRecord,
+    fuseData,
+    wrapperExpiry || Math.floor(Date.now() / 1e3) + duration
+  ];
 };
-exports.makeCommitmentData = makeCommitmentData;
 const makeRegistrationData = (params) => {
-    const commitmentData = (0, exports.makeCommitmentData)(params);
-    commitmentData[0] = params.name.split('.')[0];
-    const secret = commitmentData.splice(5, 1)[0];
-    commitmentData.splice(3, 0, secret);
-    return commitmentData;
+  const commitmentData = makeCommitmentData(params);
+  const label = params.name.split(".")[0];
+  commitmentData[0] = label;
+  const secret = commitmentData.splice(5, 1)[0];
+  commitmentData.splice(3, 0, secret);
+  return commitmentData;
 };
-exports.makeRegistrationData = makeRegistrationData;
-const makeCommitment = ({ secret = (0, exports.randomSecret)(), ...inputParams }) => {
-    const generatedParams = (0, exports.makeCommitmentData)({
-        ...inputParams,
-        secret,
-    });
-    const commitment = (0, exports._makeCommitment)(generatedParams);
-    return {
-        secret,
-        commitment,
-        wrapperExpiry: generatedParams[8],
-    };
-};
-exports.makeCommitment = makeCommitment;
 const _makeCommitment = (params) => {
-    return ethers_1.utils.keccak256(ethers_1.utils.defaultAbiCoder.encode([
-        'bytes32',
-        'address',
-        'uint256',
-        'address',
-        'bytes[]',
-        'bytes32',
-        'bool',
-        'uint32',
-        'uint64',
-    ], params));
+  return import_ethers.utils.keccak256(
+    import_ethers.utils.defaultAbiCoder.encode(
+      [
+        "bytes32",
+        "address",
+        "uint256",
+        "address",
+        "bytes[]",
+        "bytes32",
+        "bool",
+        "uint32",
+        "uint64"
+      ],
+      params
+    )
+  );
 };
-exports._makeCommitment = _makeCommitment;
+const makeCommitment = ({
+  secret = randomSecret(),
+  ...inputParams
+}) => {
+  const generatedParams = makeCommitmentData({
+    ...inputParams,
+    secret
+  });
+  const commitment = _makeCommitment(generatedParams);
+  return {
+    secret,
+    commitment,
+    wrapperExpiry: generatedParams[8]
+  };
+};

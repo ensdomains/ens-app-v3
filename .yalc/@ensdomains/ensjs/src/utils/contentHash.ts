@@ -26,13 +26,16 @@ function matchProtocol(text: string) {
 }
 
 export function decodeContenthash(encoded: any) {
-  let decoded, protocolType, error
+  let decoded
+  let protocolType
+  let error
   if (!encoded || encoded === '0x') {
     return {}
   }
   if (encoded.error) {
     return { protocolType: null, decoded: encoded.error }
-  } else if (encoded === false) {
+  }
+  if (encoded === false) {
     return { protocolType: null, decoded: 'invalid value' }
   }
   if (encoded) {
@@ -80,12 +83,12 @@ export function isValidContenthash(encoded: any) {
 }
 
 export function getProtocolType(encoded: any) {
-  let protocolType, decoded
+  let protocolType
+  let decoded
   try {
-    let matched = matchProtocol(encoded)
+    const matched = matchProtocol(encoded)
     if (matched) {
-      protocolType = matched[1]
-      decoded = matched[2]
+      ;[, protocolType, decoded] = matched
     }
     return {
       protocolType,
@@ -101,38 +104,37 @@ export function encodeContenthash(text: string) {
   let contentType
   let encoded: string | boolean = false
   let error
-  if (!!text) {
-    let matched = matchProtocol(text)
+  if (text) {
+    const matched = matchProtocol(text)
     if (matched) {
-      contentType = matched[1]
-      content = matched[2]
+      ;[, contentType, content] = matched
     }
     try {
       if (contentType === 'ipfs') {
         if (content.length >= 4) {
-          encoded = '0x' + contentHash.encode('ipfs-ns', content)
+          encoded = `0x${contentHash.encode('ipfs-ns', content)}`
         }
       } else if (contentType === 'ipns') {
-        encoded = '0x' + contentHash.encode('ipns-ns', content)
+        encoded = `0x${contentHash.encode('ipns-ns', content)}`
       } else if (contentType === 'bzz') {
         if (content.length >= 4) {
-          encoded = '0x' + contentHash.fromSwarm(content)
+          encoded = `0x${contentHash.fromSwarm(content)}`
         }
       } else if (contentType === 'onion') {
-        if (content.length == 16) {
-          encoded = '0x' + contentHash.encode('onion', content)
+        if (content.length === 16) {
+          encoded = `0x${contentHash.encode('onion', content)}`
         }
       } else if (contentType === 'onion3') {
-        if (content.length == 56) {
-          encoded = '0x' + contentHash.encode('onion3', content)
+        if (content.length === 56) {
+          encoded = `0x${contentHash.encode('onion3', content)}`
         }
       } else if (contentType === 'sia') {
-        if (content.length == 46) {
-          encoded = '0x' + contentHash.encode('skynet-ns', content)
+        if (content.length === 46) {
+          encoded = `0x${contentHash.encode('skynet-ns', content)}`
         }
       } else if (contentType === 'arweave') {
-        if (content.length == 43) {
-          encoded = '0x' + contentHash.encode('arweave-ns', content)
+        if (content.length === 43) {
+          encoded = `0x${contentHash.encode('arweave-ns', content)}`
         }
       } else {
         console.warn('Unsupported protocol or invalid value', {
@@ -144,7 +146,7 @@ export function encodeContenthash(text: string) {
       const errorMessage = 'Error encoding content hash'
       console.warn(errorMessage, { text, encoded })
       error = errorMessage
-      //throw 'Error encoding content hash'
+      // throw 'Error encoding content hash'
     }
   }
   return { encoded, error }

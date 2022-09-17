@@ -1,22 +1,25 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const Multicall__factory_1 = require("../generated/factories/Multicall__factory");
-const ABI = [
-    'function aggregate(tuple(address target, bytes callData)[] calls) payable returns (uint256 blockNumber, bytes[] returnData)',
-    'function aggregate3(tuple(address target, bool allowFailure, bytes callData)[] calls) payable returns (tuple(bool success, bytes returnData)[] returnData)',
-    'function aggregate3Value(tuple(address target, bool allowFailure, uint256 value, bytes callData)[] calls) payable returns (tuple(bool success, bytes returnData)[] returnData)',
-    'function blockAndAggregate(tuple(address target, bytes callData)[] calls) payable returns (uint256 blockNumber, bytes32 blockHash, tuple(bool success, bytes returnData)[] returnData)',
-    'function getBasefee() view returns (uint256 basefee)',
-    'function getBlockHash(uint256 blockNumber) view returns (bytes32 blockHash)',
-    'function getBlockNumber() view returns (uint256 blockNumber)',
-    'function getChainId() view returns (uint256 chainid)',
-    'function getCurrentBlockCoinbase() view returns (address coinbase)',
-    'function getCurrentBlockDifficulty() view returns (uint256 difficulty)',
-    'function getCurrentBlockGasLimit() view returns (uint256 gaslimit)',
-    'function getCurrentBlockTimestamp() view returns (uint256 timestamp)',
-    'function getEthBalance(address addr) view returns (uint256 balance)',
-    'function getLastBlockHash() view returns (bytes32 blockHash)',
-    'function tryAggregate(bool requireSuccess, tuple(address target, bytes callData)[] calls) payable returns (tuple(bool success, bytes returnData)[] returnData)',
-    'function tryBlockAndAggregate(bool requireSuccess, tuple(address target, bytes callData)[] calls) payable returns (uint256 blockNumber, bytes32 blockHash, tuple(bool success, bytes returnData)[] returnData)',
-];
-exports.default = (provider, address) => Multicall__factory_1.Multicall__factory.connect(address, provider);
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var multicall_exports = {};
+__export(multicall_exports, {
+  default: () => multicall_default
+});
+module.exports = __toCommonJS(multicall_exports);
+var import_Multicall_factory = require("../generated/factories/Multicall__factory");
+var multicall_default = (provider, address) => import_Multicall_factory.Multicall__factory.connect(address, provider);

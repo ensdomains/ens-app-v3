@@ -1,18 +1,18 @@
 import { ENS } from '..'
 import setup from '../tests/setup'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 
 beforeAll(async () => {
-  ;({ ENSInstance } = await setup())
+  ;({ ensInstance } = await setup())
 })
 
 describe('batch', () => {
   it('should batch calls together', async () => {
-    const result = await ENSInstance.batch(
-      ENSInstance.getText.batch('with-profile.eth', 'description'),
-      ENSInstance.getAddr.batch('with-profile.eth'),
-      ENSInstance.getName.batch('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'),
+    const result = await ensInstance.batch(
+      ensInstance.getText.batch('with-profile.eth', 'description'),
+      ensInstance.getAddr.batch('with-profile.eth'),
+      ensInstance.getName.batch('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC'),
     )
     expect(result).toBeTruthy()
     if (result) {
@@ -25,8 +25,8 @@ describe('batch', () => {
     }
   })
   it('should batch a single call', async () => {
-    const result = await ENSInstance.batch(
-      ENSInstance.getText.batch('with-profile.eth', 'description'),
+    const result = await ensInstance.batch(
+      ensInstance.getText.batch('with-profile.eth', 'description'),
     )
     expect(result).toBeTruthy()
     if (result) {

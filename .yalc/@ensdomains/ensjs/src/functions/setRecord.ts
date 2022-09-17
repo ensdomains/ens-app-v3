@@ -1,10 +1,6 @@
 import { ENSArgs } from '..'
 import { namehash } from '../utils/normalise'
-import {
-  generateSingleRecordCall,
-  RecordInput,
-  RecordTypes,
-} from '../utils/recordHelpers'
+import { generateSingleRecordCall, RecordInput } from '../utils/recordHelpers'
 
 type BaseInput = {
   resolverAddress?: string
@@ -20,7 +16,7 @@ type AddrOrTextInput = {
   type: 'addr' | 'text'
 }
 
-export default async function <T extends RecordTypes>(
+export default async function (
   {
     contracts,
     provider,

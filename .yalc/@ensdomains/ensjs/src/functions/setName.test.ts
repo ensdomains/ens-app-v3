@@ -3,13 +3,13 @@ import { ENS } from '..'
 import setup from '../tests/setup'
 import { hexEncodeName } from '../utils/hexEncodedName'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
 let provider: ethers.providers.JsonRpcProvider
 let accounts: string[]
 
 beforeAll(async () => {
-  ;({ ENSInstance, revert, provider } = await setup())
+  ;({ ensInstance, revert, provider } = await setup())
   accounts = await provider.listAccounts()
 })
 
@@ -22,18 +22,18 @@ describe('setName', () => {
     await revert()
   })
   it('should return a transaction for a name and set successfully', async () => {
-    const tx = await ENSInstance.setName('test123.eth', { addressOrIndex: 1 })
+    const tx = await ensInstance.setName('test123.eth', { addressOrIndex: 1 })
     expect(tx).toBeTruthy()
     await tx?.wait()
 
     const universalResolver =
-      await ENSInstance.contracts!.getUniversalResolver()!
-    const reverseNode = accounts[1].toLowerCase().substring(2) + '.addr.reverse'
+      await ensInstance.contracts!.getUniversalResolver()!
+    const reverseNode = `${accounts[1].toLowerCase().substring(2)}.addr.reverse`
     const result = await universalResolver.reverse(hexEncodeName(reverseNode))
     expect(result[0]).toBe('test123.eth')
   })
   it("should return a transaction for setting another address' name", async () => {
-    const registry = (await ENSInstance.contracts!.getRegistry()!).connect(
+    const registry = (await ensInstance.contracts!.getRegistry()!).connect(
       provider.getSigner(1),
     )
     const setApprovedForAllTx = await registry.setApprovalForAll(
@@ -42,7 +42,7 @@ describe('setName', () => {
     )
     await setApprovedForAllTx?.wait()
 
-    const tx = await ENSInstance.setName('test123.eth', {
+    const tx = await ensInstance.setName('test123.eth', {
       address: accounts[1],
       addressOrIndex: 2,
     })
@@ -50,8 +50,8 @@ describe('setName', () => {
     await tx?.wait()
 
     const universalResolver =
-      await ENSInstance.contracts!.getUniversalResolver()!
-    const reverseNode = accounts[1].toLowerCase().substring(2) + '.addr.reverse'
+      await ensInstance.contracts!.getUniversalResolver()!
+    const reverseNode = `${accounts[1].toLowerCase().substring(2)}.addr.reverse`
     const result = await universalResolver.reverse(hexEncodeName(reverseNode))
     expect(result[0]).toBe('test123.eth')
   })

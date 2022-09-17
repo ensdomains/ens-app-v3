@@ -42,6 +42,7 @@ const singleContractOwnerRaw = async (
         ]),
       }
     }
+    // no default
   }
 }
 
@@ -54,7 +55,7 @@ const raw = async (
   const labels = name.split('.')
 
   if (contract || labels.length === 1) {
-    return await singleContractOwnerRaw(
+    return singleContractOwnerRaw(
       { contracts },
       contract || 'registry',
       namehash,
@@ -83,7 +84,7 @@ const raw = async (
 
   const data: { to: string; data: string }[] = [registryData, nameWrapperData]
 
-  if (labels.length == 2 && labels[1] === 'eth') {
+  if (labels.length === 2 && labels[1] === 'eth') {
     data.push(registrarData)
   }
 
@@ -103,7 +104,7 @@ const decode = async (
   const labels = name.split('.')
   if (contract || labels.length === 1) {
     const singleOwner = singleContractOwnerDecode(data)
-    let obj = {
+    const obj = {
       ownershipLevel: contract || 'registry',
     }
     if (contract === 'registrar') {
@@ -111,11 +112,10 @@ const decode = async (
         ...obj,
         registrant: singleOwner as string,
       }
-    } else {
-      return {
-        ...obj,
-        owner: singleOwner as string,
-      }
+    }
+    return {
+      ...obj,
+      owner: singleOwner as string,
     }
   }
   const result = await multicallWrapper.decode(data)
@@ -185,7 +185,7 @@ const decode = async (
   // this is because for unwrapped names, there is no associated NFT
   // and for wrapped names, owner and registrant are the same thing
   if (
-    registryOwner == nameWrapper.address &&
+    registryOwner === nameWrapper.address &&
     ethers.utils.hexStripZeros(nameWrapperOwner) !== '0x'
   ) {
     return {

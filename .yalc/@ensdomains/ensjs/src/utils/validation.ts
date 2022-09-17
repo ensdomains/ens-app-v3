@@ -4,14 +4,13 @@ import { normalise } from './normalise'
 
 export const validateName = (name: string) => {
   const nameArray = name.split('.')
-  const hasEmptyLabels = nameArray.some((label) => label.length == 0)
+  const hasEmptyLabels = nameArray.some((label) => label.length === 0)
   if (hasEmptyLabels) throw new Error('Name cannot have empty labels')
   const normalizedArray = nameArray.map((label) => {
     if (label === '[root]') {
       return label
-    } else {
-      return isEncodedLabelhash(label) ? label : normalise(label)
     }
+    return isEncodedLabelhash(label) ? label : normalise(label)
   })
   const normalizedName = normalizedArray.join('.')
   saveName(normalizedName)
@@ -30,7 +29,7 @@ type InputType = {
 
 export const parseInputType = (input: string): InputType => {
   const validTLD = validateTLD(input)
-  let regex = /[^.]+$/
+  const regex = /[^.]+$/
 
   try {
     validateName(input)
@@ -61,13 +60,13 @@ export const parseInputType = (input: string): InputType => {
       type: 'name',
       info: 'unsupported',
     }
-  } else if (isAddress(input)) {
+  }
+  if (isAddress(input)) {
     return {
       type: 'address',
     }
-  } else {
-    return {
-      type: 'label',
-    }
+  }
+  return {
+    type: 'label',
   }
 }

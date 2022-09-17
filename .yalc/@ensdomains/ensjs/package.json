@@ -1,17 +1,46 @@
 {
   "name": "@ensdomains/ensjs",
-  "version": "3.0.0-alpha.16",
+  "version": "3.0.0-alpha.20",
   "description": "ENS javascript library for contract interaction",
   "main": "./dist/cjs/index.js",
-  "types": "./dist/cjs/index.d.ts",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
   "exports": {
     ".": {
-      "import": "./dist/esm/index.js",
+      "import": "./dist/esm/index.mjs",
       "require": "./dist/cjs/index.js",
-      "default": "./dist/esm/index.js"
+      "default": "./dist/esm/index.mjs"
+    },
+    "./*.js": {
+      "import": "./dist/esm/*.mjs",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.mjs"
+    },
+    "./*.mjs": {
+      "import": "./dist/esm/*.mjs",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.mjs"
     },
     "./*": {
-      "default": "./*"
+      "import": "./dist/esm/*.mjs",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.mjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "contracts/*": [
+        "./dist/types/contracts/*"
+      ],
+      "functions/*": [
+        "./dist/types/functions/*"
+      ],
+      "utils/*": [
+        "./dist/types/utils/*"
+      ],
+      "generated/*": [
+        "./dist/types/generated/*"
+      ]
     }
   },
   "files": [
@@ -24,6 +53,7 @@
   "license": "MIT",
   "scripts": {
     "tenv": "ens-test-env -a",
+    "denv": "pnpm tenv start -ns -nb",
     "generate-types": "ts-node scripts/runTypechain.ts",
     "generate-abis": "hardhat export-abi",
     "start": "ts-node --files src/index.test.ts",
@@ -31,9 +61,9 @@
     "test:watch": "jest --watch --run-in-band",
     "test:specific": "ts-node --files ",
     "clean": "rm -rf ./dist ./README.md ./LICENSE",
-    "build:esm": "tsc --project tsconfig.esm.json",
-    "build:cjs": "tsc --project tsconfig.cjs.json",
-    "build": "pnpm clean && pnpm build:esm && pnpm build:cjs",
+    "lint": "eslint ./src/* --no-error-on-unmatched-pattern",
+    "build:types": "tsc --emitDeclarationOnly --project tsconfig.build.json",
+    "build": "pnpm clean && pnpm lint && pnpm build:types && pnpm node esbuild.js",
     "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
     "ver": "pnpm version --no-workspaces-update"
   },
@@ -50,5 +80,5 @@
   "peerDependencies": {
     "ethers": "*"
   },
-  "yalcSig": "fa5e41dd4256f6be5d7b0ac49adcd89f"
+  "yalcSig": "0c212b206aaa9bf97ad8798ea116cbfe"
 }

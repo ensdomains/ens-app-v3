@@ -6,6 +6,22 @@
       "latestMessage": "You are on the latest resolver",
       "customLabel": "Custom resolver",
       "customPlaceholder": "Enter custom resolver address"
+    },
+    "extendNames": {
+      "title_one": "Extend Name",
+      "title_other": "Extend {{count}} Names",
+      "invoice": {
+        "extension": "{{count}} year extension",
+        "transaction": "Transaction fee",
+        "total": "Estimated total"
+      }
+    }
+  },
+  "transaction": {
+    "extendNames": {
+      "actionValue": "Extend registration",
+      "costValue": "{{value}} ETH + fees",
+      "warning": "Extending this name will not give you ownership of it"
     }
   }
 }

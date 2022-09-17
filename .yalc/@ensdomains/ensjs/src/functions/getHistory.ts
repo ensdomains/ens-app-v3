@@ -17,11 +17,15 @@ type ResolverEvent =
   | 'AuthorisationChanged'
 
 type EventTypes = 'Domain' | 'Registration' | 'Resolver'
+type EventFormat = {
+  Domain: DomainEvent
+  Registration: RegistrationEvent
+  Resolver: ResolverEvent
+}
 
-const eventFormat: Record<
-  EventTypes,
-  Record<string, (args: any) => Record<string, any>>
-> = {
+const eventFormat: {
+  [key in EventTypes]: { [n in EventFormat[key]]: (args: any) => object }
+} = {
   Domain: {
     NewOwner: (args: any) => ({ owner: args.owner.id }),
     NewResolver: (args: any) => ({ resolver: args.resolver.id.split('-')[0] }),
@@ -76,20 +80,27 @@ const eventFormat: Record<
   },
 }
 
-const mapEvents = (eventArray: any[], type: EventTypes) =>
-  eventArray.map((event: any) => ({
-    type: event.__typename,
-    blockNumber: event.blockNumber,
-    transactionHash: event.transactionID,
-    id: event.id,
-    data: eventFormat[type][event.__typename](event),
-  }))
+const mapEvents = <T extends EventTypes>(eventArray: any[], type: T) =>
+  eventArray.map(
+    (event: {
+      __typename: EventFormat[T]
+      blockNumber: number
+      transactionID: string
+      id: string
+    }) => ({
+      type: event.__typename,
+      blockNumber: event.blockNumber,
+      transactionHash: event.transactionID,
+      id: event.id,
+      data: eventFormat[type][event.__typename](event),
+    }),
+  )
 
 export async function getHistory(
   { gqlInstance }: ENSArgs<'gqlInstance'>,
   name: string,
 ) {
-  const client = gqlInstance.client
+  const { client } = gqlInstance
   const query = gqlInstance.gql`
       query getHistory($name: String!, $label: String!) {
         domains(where: { name: $name }) {
@@ -206,7 +217,7 @@ export async function getHistory(
 
   const domainHistory = mapEvents(domainEvents, 'Domain')
   const registrationHistory = mapEvents(registrationEvents, 'Registration')
-  let resolverHistory = mapEvents(
+  const resolverHistory = mapEvents(
     // remove duplicate events for ETH cointype
     resolverEvents.filter(
       (event: any) => !event.coinType || event.coinType !== '60',

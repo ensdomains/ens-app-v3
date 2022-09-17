@@ -3,7 +3,7 @@ import { hexEncodeName } from '../utils/hexEncodedName'
 
 const raw = async ({ contracts }: ENSArgs<'contracts'>, address: string) => {
   const universalResolver = await contracts?.getUniversalResolver()!
-  const reverseNode = address.toLowerCase().substring(2) + '.addr.reverse'
+  const reverseNode = `${address.toLowerCase().substring(2)}.addr.reverse`
   return {
     to: universalResolver.address,
     data: universalResolver.interface.encodeFunctionData('reverse', [

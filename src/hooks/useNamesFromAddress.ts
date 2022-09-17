@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'wagmi'
 
-import type { Name } from '@ensdomains/ensjs/dist/cjs/functions/getNames'
+import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -25,6 +25,7 @@ export const useNamesFromAddress = ({
   resultsPerPage,
   page,
   filter,
+  search,
 }: {
   address?: string
   sort: {
@@ -34,6 +35,7 @@ export const useNamesFromAddress = ({
   page: number
   resultsPerPage: number | 'all'
   filter?: Name['type']
+  search?: string
 }) => {
   const { ready, getNames } = useEns()
 
@@ -78,10 +80,13 @@ export const useNamesFromAddress = ({
   const filterFunc = useMemo(() => {
     const baseFilter = (n: ReturnedName) => n.parent.name !== 'addr.reverse'
     let secondaryFilter: (n: ReturnedName) => boolean = () => true
+    let searchFilter: (n: ReturnedName) => boolean = () => true
     if (filter === 'registration') secondaryFilter = (n: ReturnedName) => !!n.isRegistrant
     if (filter === 'domain') secondaryFilter = (n: ReturnedName) => !!n.isController
-    return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n)
-  }, [filter])
+    if (search)
+      searchFilter = (n: ReturnedName) => n.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n) && searchFilter(n)
+  }, [filter, search])
 
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {

@@ -106,7 +106,7 @@ const decodeWrapperExpiry = async (
 ) => {
   const nameWrapper = await contracts?.getNameWrapper()!
   try {
-    const [_owner, _fuses, expiry] = nameWrapper.interface.decodeFunctionResult(
+    const [, , expiry] = nameWrapper.interface.decodeFunctionResult(
       'getData',
       data,
     )

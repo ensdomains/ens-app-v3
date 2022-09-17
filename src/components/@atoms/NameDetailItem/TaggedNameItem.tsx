@@ -28,6 +28,7 @@ export const TaggedNameItem = ({
   name,
   isController,
   isRegistrant,
+  expiryDate,
   network,
   truncatedName,
   mode,
@@ -48,6 +49,7 @@ export const TaggedNameItem = ({
       key={name}
       network={network}
       truncatedName={truncatedName}
+      expiryDate={expiryDate}
       name={name}
       mode={mode}
       selected={selected}

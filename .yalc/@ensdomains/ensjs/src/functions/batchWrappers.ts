@@ -58,7 +58,7 @@ export const resolverMulticallWrapper = {
 }
 
 export const multicallWrapper = {
-  raw: async function (
+  async raw(
     { contracts }: ENSArgs<'contracts'>,
     transactions: ethers.providers.TransactionRequest[],
     requireSuccess: boolean = false,
@@ -75,7 +75,7 @@ export const multicallWrapper = {
       ]),
     }
   },
-  decode: async function ({ contracts }: ENSArgs<'contracts'>, data: string) {
+  async decode({ contracts }: ENSArgs<'contracts'>, data: string) {
     if (!data) return
     const multicall = await contracts?.getMulticall()!
     try {

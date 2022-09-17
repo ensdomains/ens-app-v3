@@ -19,5 +19,5 @@ export default async function (
     throw new Error('Input must be an ENS name')
   }
 
-  return await getProfile(name, options)
+  return getProfile(name, options)
 }

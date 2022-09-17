@@ -3,13 +3,13 @@ import { ENS } from '..'
 import setup from '../tests/setup'
 import { namehash } from '../utils/normalise'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
 let provider: ethers.providers.JsonRpcProvider
 let accounts: string[]
 
 beforeAll(async () => {
-  ;({ ENSInstance, revert, provider } = await setup())
+  ;({ ensInstance, revert, provider } = await setup())
   accounts = await provider.listAccounts()
 })
 
@@ -23,7 +23,7 @@ describe('burnFuses', () => {
   })
   describe('Array', () => {
     it('should return a burnFuses transaction from a named fuse array and succeed', async () => {
-      const tx = await ENSInstance.burnFuses('wrapped.eth', {
+      const tx = await ensInstance.burnFuses('wrapped.eth', {
         namedFusesToBurn: [
           'CANNOT_UNWRAP',
           'CANNOT_CREATE_SUBDOMAIN',
@@ -34,31 +34,31 @@ describe('burnFuses', () => {
       expect(tx).toBeTruthy()
       await tx.wait()
 
-      const nameWrapper = await ENSInstance.contracts!.getNameWrapper()!
+      const nameWrapper = await ensInstance.contracts!.getNameWrapper()!
       const [fuses] = await nameWrapper.getFuses(namehash('wrapped.eth'))
       expect(fuses).toBe(113)
     })
     it('should return a burnFuses transaction from an unnamed fuse array and succeed', async () => {
-      const tx0 = await ENSInstance.burnFuses('wrapped.eth', {
+      const tx0 = await ensInstance.burnFuses('wrapped.eth', {
         namedFusesToBurn: ['CANNOT_UNWRAP'],
         addressOrIndex: accounts[1],
       })
       expect(tx0).toBeTruthy()
       await tx0.wait()
 
-      const tx = await ENSInstance.burnFuses('wrapped.eth', {
+      const tx = await ensInstance.burnFuses('wrapped.eth', {
         unnamedFusesToBurn: [128, 256, 512],
         addressOrIndex: accounts[1],
       })
       expect(tx).toBeTruthy()
       await tx.wait()
 
-      const nameWrapper = await ENSInstance.contracts!.getNameWrapper()!
+      const nameWrapper = await ensInstance.contracts!.getNameWrapper()!
       const [fuses] = await nameWrapper.getFuses(namehash('wrapped.eth'))
       expect(fuses).toBe(961)
     })
     it('should return a burnFuses transaction from both an unnamed and named fuse array and succeed', async () => {
-      const tx = await ENSInstance.burnFuses('wrapped.eth', {
+      const tx = await ensInstance.burnFuses('wrapped.eth', {
         namedFusesToBurn: [
           'CANNOT_UNWRAP',
           'CANNOT_CREATE_SUBDOMAIN',
@@ -70,13 +70,13 @@ describe('burnFuses', () => {
       expect(tx).toBeTruthy()
       await tx.wait()
 
-      const nameWrapper = await ENSInstance.contracts!.getNameWrapper()!
+      const nameWrapper = await ensInstance.contracts!.getNameWrapper()!
       const [fuses] = await nameWrapper.getFuses(namehash('wrapped.eth'))
       expect(fuses).toBe(1009)
     })
     it('should throw an error when trying to burn a named fuse in an unnamed fuse array', async () => {
       try {
-        await ENSInstance.burnFuses('wrapped.eth', {
+        await ensInstance.burnFuses('wrapped.eth', {
           unnamedFusesToBurn: [64] as any,
         })
         expect(false).toBeTruthy()
@@ -88,7 +88,7 @@ describe('burnFuses', () => {
     })
     it('should throw an error when trying to burn an unnamed fuse in a named fuse array', async () => {
       try {
-        await ENSInstance.burnFuses('wrapped.eth', {
+        await ensInstance.burnFuses('wrapped.eth', {
           namedFusesToBurn: ['COOL_SWAG_FUSE'] as any,
         })
         expect(false).toBeTruthy()
@@ -99,20 +99,20 @@ describe('burnFuses', () => {
   })
   describe('Number', () => {
     it('should return a burnFuses transaction from a number and succeed', async () => {
-      const tx = await ENSInstance.burnFuses('wrapped.eth', {
+      const tx = await ensInstance.burnFuses('wrapped.eth', {
         fuseNumberToBurn: 49,
         addressOrIndex: accounts[1],
       })
       expect(tx).toBeTruthy()
       await tx.wait()
 
-      const nameWrapper = await ENSInstance.contracts!.getNameWrapper()!
+      const nameWrapper = await ensInstance.contracts!.getNameWrapper()!
       const [fuses] = await nameWrapper.getFuses(namehash('wrapped.eth'))
       expect(fuses).toBe(113)
     })
     it('should throw an error if the number is too high', async () => {
       try {
-        await ENSInstance.burnFuses('wrapped.eth', {
+        await ensInstance.burnFuses('wrapped.eth', {
           fuseNumberToBurn: 4294967297,
         })
         expect(false).toBeTruthy()
@@ -124,7 +124,7 @@ describe('burnFuses', () => {
     })
     it('should throw an error if the number is too low', async () => {
       try {
-        await ENSInstance.burnFuses('wrapped.eth', {
+        await ensInstance.burnFuses('wrapped.eth', {
           fuseNumberToBurn: -1,
         })
         expect(false).toBeTruthy()
@@ -136,7 +136,7 @@ describe('burnFuses', () => {
     })
     it('should throw an error if the number is not an integer', async () => {
       try {
-        await ENSInstance.burnFuses('wrapped.eth', {
+        await ensInstance.burnFuses('wrapped.eth', {
           fuseNumberToBurn: 7.5,
         })
         expect(false).toBeTruthy()

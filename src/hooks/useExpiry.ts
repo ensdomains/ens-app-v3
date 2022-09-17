@@ -1,4 +1,5 @@
 import { useQuery } from 'wagmi'
+
 import { useEns } from '@app/utils/EnsProvider'
 
 export const useExpiry = (name: string, skip?: boolean) => {

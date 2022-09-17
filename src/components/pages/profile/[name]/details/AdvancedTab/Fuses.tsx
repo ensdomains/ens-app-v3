@@ -60,7 +60,7 @@ const Fuses = () => {
               {t('fuses.permissions.CAN_DO_EVERYTHING')}
             </Typography>
             <TrafficLight
-              $go={fuseData.fuseObj.CAN_DO_EVERYTHING}
+              $go={(fuseData.fuseObj as any).CAN_DO_EVERYTHING}
               data-testid="first-traffic-light"
             />
           </FusesRow>

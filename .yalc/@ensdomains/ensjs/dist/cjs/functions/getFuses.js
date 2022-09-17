@@ -1,44 +1,69 @@
 "use strict";
-Object.defineProperty(exports, "__esModule", { value: true });
-const ethers_1 = require("ethers");
-const fuses_1 = require("../utils/fuses");
-const normalise_1 = require("../utils/normalise");
+var __defProp = Object.defineProperty;
+var __getOwnPropDesc = Object.getOwnPropertyDescriptor;
+var __getOwnPropNames = Object.getOwnPropertyNames;
+var __hasOwnProp = Object.prototype.hasOwnProperty;
+var __export = (target, all) => {
+  for (var name in all)
+    __defProp(target, name, { get: all[name], enumerable: true });
+};
+var __copyProps = (to, from, except, desc) => {
+  if (from && typeof from === "object" || typeof from === "function") {
+    for (let key of __getOwnPropNames(from))
+      if (!__hasOwnProp.call(to, key) && key !== except)
+        __defProp(to, key, { get: () => from[key], enumerable: !(desc = __getOwnPropDesc(from, key)) || desc.enumerable });
+  }
+  return to;
+};
+var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: true }), mod);
+var getFuses_exports = {};
+__export(getFuses_exports, {
+  default: () => getFuses_default
+});
+module.exports = __toCommonJS(getFuses_exports);
+var import_ethers = require("ethers");
+var import_fuses = require("../utils/fuses");
+var import_normalise = require("../utils/normalise");
 const raw = async ({ contracts }, name) => {
-    const nameWrapper = await contracts?.getNameWrapper();
-    return {
-        to: nameWrapper.address,
-        data: nameWrapper.interface.encodeFunctionData('getData', [(0, normalise_1.namehash)(name)]),
-    };
+  const nameWrapper = await contracts?.getNameWrapper();
+  return {
+    to: nameWrapper.address,
+    data: nameWrapper.interface.encodeFunctionData("getData", [(0, import_normalise.namehash)(name)])
+  };
 };
 const decode = async ({ contracts }, data) => {
-    const nameWrapper = await contracts?.getNameWrapper();
-    try {
-        const { owner, fuses: _fuses, expiry, } = nameWrapper.interface.decodeFunctionResult('getData', data);
-        const fuses = ethers_1.BigNumber.from(_fuses);
-        const fuseObj = Object.fromEntries(Object.keys(fuses_1.fuseEnum).map((fuse) => [
-            fuse,
-            fuses.and(fuses_1.fuseEnum[fuse]).gt(0),
-        ]));
-        if (fuses.eq(0)) {
-            fuseObj.canDoEverything = true;
-        }
-        else {
-            fuseObj.canDoEverything = false;
-        }
-        const expiryDate = new Date(expiry * 1000);
-        return {
-            fuseObj,
-            expiryDate,
-            rawFuses: fuses,
-            owner,
-        };
+  const nameWrapper = await contracts?.getNameWrapper();
+  try {
+    const {
+      owner,
+      fuses: _fuses,
+      expiry
+    } = nameWrapper.interface.decodeFunctionResult("getData", data);
+    const fuses = import_ethers.BigNumber.from(_fuses);
+    const fuseObj = Object.fromEntries(
+      Object.keys(import_fuses.fuseEnum).map((fuse) => [
+        fuse,
+        fuses.and(import_fuses.fuseEnum[fuse]).gt(0)
+      ])
+    );
+    if (fuses.eq(0)) {
+      fuseObj.CAN_DO_EVERYTHING = true;
+    } else {
+      fuseObj.CAN_DO_EVERYTHING = false;
     }
-    catch (e) {
-        console.error('Error decoding fuses data: ', e);
-        return;
-    }
+    const expiryDate = new Date(expiry * 1e3);
+    return {
+      fuseObj,
+      expiryDate,
+      rawFuses: fuses,
+      owner
+    };
+  } catch (e) {
+    console.error("Error decoding fuses data: ", e);
+    return;
+  }
 };
-exports.default = {
-    raw,
-    decode,
+var getFuses_default = {
+  raw,
+  decode
 };

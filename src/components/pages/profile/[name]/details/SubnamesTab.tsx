@@ -1,16 +1,23 @@
 import { useRouter } from 'next/router'
-import { ReactNode } from 'react'
+import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { ArrowRightSVG, Button, PageButtons, PlusSVG, Typography, mq } from '@ensdomains/thorin'
+import { ArrowRightSVG, Button, CloseSVG, PlusSVG, Typography, mq } from '@ensdomains/thorin'
 
 import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
+import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
+import {
+  NameTableHeader,
+  NameTableMode,
+  SortDirection,
+  SortType,
+} from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
+import { SubnameSortType, useSubnamePagination } from '@app/hooks/useSubnamePagination'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 const RightArrow = styled.svg(
@@ -20,23 +27,6 @@ const RightArrow = styled.svg(
     display: block;
     height: ${theme.space['6']};
     width: ${theme.space['6']};
-  `,
-)
-
-const PageButtonsContainer = styled.div<{ $isFetching?: boolean }>(
-  ({ theme, $isFetching }) => css`
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    padding: ${theme.space['2']} ${theme.space['4']};
-
-    ${$isFetching &&
-    css`
-      pointer-events: none;
-      opacity: 0.5;
-    `}
   `,
 )
 
@@ -94,6 +84,23 @@ const AddSubnamesCard = styled(Card)(
   `,
 )
 
+const ButtonInner = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    gap: ${theme.space['2']};
+    font-size: ${theme.space['3.5']};
+    height: ${theme.space['5']};
+    padding: 0 ${theme.space['2']};
+
+    svg {
+      display: block;
+      width: ${theme.space['3']};
+      height: ${theme.space['3']};
+    }
+  `,
+)
+
 const PlusPrefix = styled.svg(
   ({ theme }) => css`
     display: block;
@@ -119,12 +126,37 @@ export const SubnamesTab = ({
 
   const { showDataInput } = useTransactionFlow()
 
+  const [mode, setMode] = useState<NameTableMode>('view')
+  const [selectedNames, setSelectedNames] = useState<string[]>([])
+  const handleSelectName = (subname: string) => () => {
+    if (selectedNames.includes(subname)) {
+      setSelectedNames(selectedNames.filter((n) => n !== subname))
+    } else {
+      setSelectedNames([...selectedNames, subname])
+    }
+  }
+
+  const [sortType, setSortType] = useState<SubnameSortType | undefined>()
+  const [sortDirection, setSortDirection] = useState(SortDirection.desc)
+  const [searchQuery, setSearchQuery] = useState('')
+
   const page = router.query.page ? parseInt(router.query.page as string) : 1
-  const { subnames, max, isLoading, totalPages, isFetching } = useSubnamePagination(name, page)
+  const pageSize = router.query.pageSize ? parseInt(router.query.pageSize as string) : 10
+  const { subnames, isLoading, totalPages, isFetching } = useSubnamePagination(name, page, sortType)
 
   const setPage = (newPage: number) => {
     const url = new URL(router.asPath, window.location.origin)
     url.searchParams.set('page', newPage.toString())
+    url.searchParams.set('pageSize', pageSize.toString())
+    router.push(url.toString(), undefined, {
+      shallow: true,
+    })
+  }
+
+  const setPageSize = (newPageSize: number) => {
+    const url = new URL(router.asPath, window.location.origin)
+    url.searchParams.set('page', page.toString())
+    url.searchParams.set('pageSize', newPageSize.toString())
     router.push(url.toString(), undefined, {
       shallow: true,
     })
@@ -144,20 +176,53 @@ export const SubnamesTab = ({
     InnerContent = (
       <>
         <StyledTabWrapper $isFetching={isFetching}>
-          {subnames.map((subname) => (
-            <NameDetailItem key={subname.name} network={network} {...subname}>
-              <RightArrow as={ArrowRightSVG} />
-            </NameDetailItem>
-          ))}
-        </StyledTabWrapper>
-        <PageButtonsContainer $isFetching={isFetching}>
-          <PageButtons
+          <NameTableHeader
+            selectable={canEdit}
+            sortType={sortType}
+            sortTypeOptionValues={[SortType.creationDate, SortType.labelName]}
+            sortDirection={sortDirection}
+            searchQuery={searchQuery}
+            mode={mode}
+            selectedCount={selectedNames.length}
+            onSortTypeChange={(value: SortType) => {
+              if (['creationDate', 'labelName'].includes(value))
+                setSortType(value as SubnameSortType)
+            }}
+            onSortDirectionChange={setSortDirection}
+            onModeChange={setMode}
+            onSearchChange={setSearchQuery}
+          >
+            {mode === 'select' && (
+              <Button shadowless size="extraSmall" tone="red" variant="secondary">
+                <ButtonInner>
+                  <CloseSVG />
+                  {t('action.delete', { ns: 'common' })}
+                </ButtonInner>
+              </Button>
+            )}
+          </NameTableHeader>
+          <div>
+            {subnames.map((subname) => (
+              <NameDetailItem
+                key={subname.name}
+                network={network}
+                {...subname}
+                mode={mode}
+                selected={selectedNames.includes(subname.name)}
+                onClick={handleSelectName(subname.name)}
+              >
+                <RightArrow as={ArrowRightSVG} />
+              </NameDetailItem>
+            ))}
+          </div>
+          <NameTableFooter
             current={page}
-            onChange={(value) => setPage(value)}
-            total={totalPages || 1}
-            max={max}
+            onChange={setPage}
+            total={totalPages}
+            pageSize={pageSize}
+            onPageSizeChange={setPageSize}
           />
-        </PageButtonsContainer>
+        </StyledTabWrapper>
       </>
     )
   } else if (!canEdit) {

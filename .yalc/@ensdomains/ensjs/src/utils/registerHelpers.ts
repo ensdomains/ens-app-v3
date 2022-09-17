@@ -52,7 +52,7 @@ export type CommitmentTuple = [
 
 export const randomSecret = () => {
   const bytes = Buffer.allocUnsafe(32)
-  return '0x' + crypto.getRandomValues(bytes).toString('hex')
+  return `0x${crypto.getRandomValues(bytes).toString('hex')}`
 }
 
 export const makeCommitmentData = ({
@@ -101,28 +101,11 @@ export const makeRegistrationData = (
   params: RegistrationParams,
 ): RegistrationTuple => {
   const commitmentData = makeCommitmentData(params)
-  commitmentData[0] = params.name.split('.')[0]
+  const label = params.name.split('.')[0]
+  commitmentData[0] = label
   const secret = commitmentData.splice(5, 1)[0]
   commitmentData.splice(3, 0, secret)
   return commitmentData as unknown as RegistrationTuple
-}
-
-export const makeCommitment = ({
-  secret = randomSecret(),
-  ...inputParams
-}: CommitmentParams) => {
-  const generatedParams = makeCommitmentData({
-    ...inputParams,
-    secret,
-  })
-
-  const commitment = _makeCommitment(generatedParams)
-
-  return {
-    secret,
-    commitment,
-    wrapperExpiry: generatedParams[8],
-  }
 }
 
 export const _makeCommitment = (params: CommitmentTuple) => {
@@ -142,4 +125,22 @@ export const _makeCommitment = (params: CommitmentTuple) => {
       params,
     ),
   )
+}
+
+export const makeCommitment = ({
+  secret = randomSecret(),
+  ...inputParams
+}: CommitmentParams) => {
+  const generatedParams = makeCommitmentData({
+    ...inputParams,
+    secret,
+  })
+
+  const commitment = _makeCommitment(generatedParams)
+
+  return {
+    secret,
+    commitment,
+    wrapperExpiry: generatedParams[8],
+  }
 }

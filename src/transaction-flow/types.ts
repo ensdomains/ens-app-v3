@@ -1,6 +1,6 @@
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 
-import { Button, Dialog } from '@ensdomains/thorin'
+import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
 
@@ -137,5 +137,6 @@ export type ManagedDialogPropsTwo = {
   currentStep: number
   stepCount: number
   displayItems: TransactionDisplayItem[]
+  helper?: ComponentProps<typeof Helper>
   backToInput: boolean
 }

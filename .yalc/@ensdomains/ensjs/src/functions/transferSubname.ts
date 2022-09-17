@@ -32,7 +32,7 @@ export default async function (
 
   switch (contract) {
     case 'registry': {
-      const registry = (await contracts?.getRegistry()!).connect(signer)
+      const registry = (await contracts!.getRegistry()!).connect(signer)
 
       return registry.populateTransaction.setSubnodeOwner(
         parentNodehash,
@@ -41,7 +41,7 @@ export default async function (
       )
     }
     case 'nameWrapper': {
-      const nameWrapper = (await contracts?.getNameWrapper()!).connect(signer)
+      const nameWrapper = (await contracts!.getNameWrapper()!).connect(signer)
       const expiry = await makeExpiry(
         { getExpiry },
         labels.join('.'),

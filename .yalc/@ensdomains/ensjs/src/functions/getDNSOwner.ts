@@ -16,7 +16,7 @@ export const getDNS = async (q: packet.Packet): Promise<packet.Packet> => {
   )
   const arrayBuffer = await response.arrayBuffer()
   // @ts-ignore:next-line
-  const fromArrayBuffer = Buffer.from(arrayBuffer);
+  const fromArrayBuffer = Buffer.from(arrayBuffer)
   return packet.decode(fromArrayBuffer)
 }
 

@@ -198,6 +198,7 @@ export const TransactionStageModal = ({
   actionName,
   currentStep,
   displayItems,
+  helper,
   dispatch,
   stepCount,
   transaction,
@@ -290,6 +291,11 @@ export const TransactionStageModal = ({
       </>
     )
   }, [stage, t, transaction.sendTime])
+
+  const HelperContent = useMemo(() => {
+    if (!helper) return null
+    return <Helper {...helper} />
+  }, [helper])
 
   const ActionButton = useMemo(() => {
     if (stage === 'complete') {
@@ -427,6 +433,7 @@ export const TransactionStageModal = ({
         {MiddleContent}
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
+        {HelperContent}
         {transaction.hash && (
           <Outlink href={makeEtherscanLink(transaction.hash!, chainName)}>
             {t('transaction.viewEtherscan')}

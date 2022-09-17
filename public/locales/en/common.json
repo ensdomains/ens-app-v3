@@ -25,14 +25,19 @@
     "sign": "Sign",
     "tryAgain": "Try Again",
     "done": "Done",
-    "burnSelected": "Burn Selected"
+    "burnSelected": "Burn Selected",
+    "extend": "Extend",
+    "delete": "Delete",
+    "sort": "Sort"
   },
   "unit": {
     "years_one": "{{count}} year",
     "years_other": "{{count}} years",
     "yrs_one": "{{count}} yr",
     "yrs_other": "{{count}} yrs",
-    "gas": "{{value}} gas"
+    "gas": "{{value}} gas",
+    "selected": "{{count}} selected",
+    "perPage": "{{count}} per page"
   },
   "navigation": {
     "home": "Home",
@@ -129,7 +134,9 @@
       "to": "To",
       "currentResolver": "Current Resolver",
       "newResolver": "New Resolver",
-      "subname": "Subname"
+      "subname": "Subname",
+      "duration": "Duration",
+      "cost": "Cost"
     },
     "itemValue": {},
     "status": {

@@ -3,13 +3,13 @@ import { ENS } from '..'
 import setup from '../tests/setup'
 import { namehash } from '../utils/normalise'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
 let provider: ethers.providers.JsonRpcProvider
 let accounts: string[]
 
 beforeAll(async () => {
-  ;({ ENSInstance, revert, provider } = await setup())
+  ;({ ensInstance, revert, provider } = await setup())
   accounts = await provider.listAccounts()
 })
 
@@ -26,7 +26,7 @@ describe('registerName', () => {
     const name = 'cool-swag.eth'
     const duration = 31536000
     const { customData, ...commitPopTx } =
-      await ENSInstance.commitName.populateTransaction(name, {
+      await ensInstance.commitName.populateTransaction(name, {
         duration,
         owner: accounts[1],
         addressOrIndex: accounts[1],
@@ -39,10 +39,10 @@ describe('registerName', () => {
 
     const { secret, wrapperExpiry } = customData!
 
-    const controller = await ENSInstance.contracts!.getEthRegistrarController()!
+    const controller = await ensInstance.contracts!.getEthRegistrarController()!
     const [price] = await controller.rentPrice(name, duration)
 
-    const tx = await ENSInstance.registerName(name, {
+    const tx = await ensInstance.registerName(name, {
       secret,
       wrapperExpiry,
       duration,
@@ -52,7 +52,7 @@ describe('registerName', () => {
     })
     await tx.wait()
 
-    const nameWrapper = await ENSInstance.contracts!.getNameWrapper()!
+    const nameWrapper = await ensInstance.contracts!.getNameWrapper()!
     const owner = await nameWrapper.ownerOf(namehash(name))
     expect(owner).toBe(accounts[1])
   })

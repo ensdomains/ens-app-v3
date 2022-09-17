@@ -5,11 +5,11 @@ const raw = async (
   ...items: BatchFunctionResult<RawFunction>[]
 ) => {
   const rawDataArr: { to: string; data: string }[] = await Promise.all(
-    items.map(({ args, raw }, i: number) => {
-      if (!raw) {
+    items.map(({ args, raw: rawRef }, i: number) => {
+      if (!rawRef) {
         throw new Error(`Function ${i} is not batchable`)
       }
-      return raw(...args)
+      return rawRef(...args)
     }),
   )
   return multicallWrapper.raw(rawDataArr)

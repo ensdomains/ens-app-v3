@@ -1,11 +1,11 @@
 import { ENS } from '..'
 import setup from '../tests/setup'
 
-let ENSInstance: ENS
+let ensInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
 
 beforeAll(async () => {
-  ;({ ENSInstance, revert } = await setup())
+  ;({ ensInstance, revert } = await setup())
 })
 
 afterAll(async () => {
@@ -14,11 +14,11 @@ afterAll(async () => {
 
 describe('getHistory', () => {
   it('should return null for a non-existent name', async () => {
-    const result = await ENSInstance.getHistory('test123123cool.eth')
+    const result = await ensInstance.getHistory('test123123cool.eth')
     expect(result).toBeUndefined()
   })
   it('should return the history of a name', async () => {
-    const result = await ENSInstance.getHistory('with-profile.eth')
+    const result = await ensInstance.getHistory('with-profile.eth')
     expect(result).toBeTruthy()
     if (result) {
       expect(result).toHaveProperty('domain')

@@ -32,6 +32,7 @@ export const enter = (node: SelectionSetNode) => {
   }
 
   if (hasName && !hasId) {
+    // eslint-disable-next-line no-param-reassign
     node.selections = [...node.selections, generateSelection('id')]
     return node
   }
@@ -44,6 +45,7 @@ export const requestMiddleware =
     const rawQuery = requestBody.query
     const parsedQuery = parse(rawQuery)
     const updatedQuery = visit(parsedQuery, {
+      // eslint-disable-next-line @typescript-eslint/naming-convention
       SelectionSet: {
         enter,
       },
@@ -57,9 +59,10 @@ export const requestMiddleware =
 
 export const responseMiddleware =
   (traverse: typeof Traverse) => (response: any) => {
+    // eslint-disable-next-line func-names
     traverse(response).forEach(function (responseItem: any) {
       if (responseItem instanceof Object && responseItem.name) {
-        //Name already in hashed form
+        // Name already in hashed form
         if (responseItem.name && responseItem.name.includes('[')) {
           return
         }
@@ -74,7 +77,9 @@ export const responseMiddleware =
   }
 
 export default class GqlManager {
+  // eslint-disable-next-line class-methods-use-this
   public gql: any = () => null
+
   public client?: any | null = null
 
   public setUrl = async (url: string | null) => {

@@ -1,4 +1,4 @@
-import { JsonRpcSigner } from '@ethersproject/providers'
+import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { PopulatedTransaction } from 'ethers'
 
 type CustomData = Record<string, any>

@@ -38,8 +38,6 @@ export const NameListView = ({
       </NoResultsContianer>
     )
 
-  console.log(selectedNames)
-
   const handleClickForName = (name: string) => () => {
     if (selectedNames?.includes(name)) {
       onSelectedNamesChange?.(selectedNames.filter((n) => n !== name))
