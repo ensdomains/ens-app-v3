@@ -1,5 +1,122 @@
 {
   "input": {
+    "profileEditor": {
+      "tabs": {
+        "avatar": {
+          "dropdown": {
+            "selectNFT": "Select NFT",
+            "uploadImage": "Upload Image"
+          },
+          "nft": {
+            "title": "Select an NFT",
+            "searchPlaceholder": "Search for an NFT",
+            "loading": "Loading your NFTs",
+            "unknown": "Unknown NFT",
+            "noNFTs": "No NFTs found for this address.",
+            "selected": {
+              "title": "Selected NFT",
+              "subtitle": "Are you sure you want to use this NFT?"
+            }
+          },
+          "image": {
+            "title": "Edit Image",
+            "upload": {
+              "title": "Upload Avatar",
+              "subtitle": "You need to sign a message to upload an avatar. This won't cost anything.",
+              "action": "Sign and Upload"
+            }
+          }
+        },
+        "general": {
+          "label": "General",
+          "name": {
+            "label": "Nickname",
+            "placeholder": "John Smith"
+          },
+          "url": {
+            "label": "Website",
+            "placeholder": "https://ens.domains"
+          },
+          "location": {
+            "label": "Location",
+            "placeholder": "Metaverse"
+          },
+          "description": {
+            "label": "Short Bio",
+            "placeholder": "I'm a yield farmer from rural Tennessee."
+          }
+        },
+        "accounts": {
+          "label": "Accounts",
+          "addAccount": "Add account",
+          "noOptions": "No account options available",
+          "placeholder": {
+            "default": "Add username here",
+            "com.twitter": "e.g. yogicodes",
+            "com.github": "e.g. yogicodes",
+            "com.discord": "e.g. yogicodes#4323"
+          }
+        },
+        "address": {
+          "label": "Address",
+          "addAddress": "Add address",
+          "noOptions": "No address options available",
+          "placeholder": {
+            "default": "Add address here",
+            "ETH": "0xD9hbQK...",
+            "BNB": "0xD9hbQK...",
+            "BTC": "3FZbgi29...",
+            "LTC": "3FZbgi29...",
+            "SOL": "D4kA7VzHnmV...",
+            "DOT": "1D4kA7VxH...",
+            "DOGE": "DFabcd12..."
+          }
+        },
+        "contentHash": {
+          "label": "Website",
+          "addContentHash": "Add decentralized website",
+          "placeholder": {
+            "default": "Add url here",
+            "ipfs": "ipfs://"
+          }
+        },
+        "other": {
+          "label": "Other",
+          "addRecord": "Add record",
+          "createRecord": "Type a record name...",
+          "placeholder": {
+            "default": "Add a value here..."
+          }
+        }
+      },
+      "warningOverlay": {
+        "resumable": {
+          "title": "Resumable transaction",
+          "subtitle": "You have previously started a transaction. Click resume to continue.",
+          "action": "Resume"
+        },
+        "migrate": {
+          "title": "Migrate resolver",
+          "subtitle": "You have migrated your profile but haven't updated your resolver. Click upgrade to update to the latest resolver.",
+          "action": "Update"
+        },
+        "noResolver": {
+          "title": "No resolver assigned",
+          "subtitle": "You need to set a resolver to edit your profile.",
+          "action": "Update"
+        },
+        "oldRegistry": {
+          "title": "Your registry is out of date",
+          "subtitle": "Migration to the new registry is not available, but you can still migrate this name in the old app.",
+          "action": "Migrate"
+        },
+        "default": {
+          "title": "Your resolver is out of date",
+          "subtitle": "Profile editing is disabled until you update your resolver.",
+          "action": "Update"
+        }
+      }
+    },
     "editResolver": {
       "latestLabel": "Use latest resolver",
       "etherscan": "Etherscan",
@@ -21,7 +138,19 @@
     "extendNames": {
       "actionValue": "Extend registration",
       "costValue": "{{value}} ETH + fees",
-      "warning": "Extending this name will not give you ownership of it"
+      "warning": "Extending this name will not give you ownership of it",
+    "transferProfile": {
+      "title": "Transfer Profile",
+      "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
+      "message2": "Would you like to transfer your current profile?"
+    }
+    }
+  },
+  "intro": {
+    "migrateAndUpdateResolver": {
+      "title": "The edits you want to save to your profile require that you upgrade your resolver.",
+      "link": "Learn more about resolver upgrades",
+      "warning": "Note that if you cancel this at any point your changes will not be saved."
     }
   }
 }

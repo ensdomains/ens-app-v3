@@ -85,7 +85,7 @@ export default function Page() {
 
   const selfAbilities = useSelfAbilities(address, ownerData)
 
-  const { createTransactionFlow } = useTransactionFlow()
+  const { createTransactionFlow, showDataInput, getResumable } = useTransactionFlow()
 
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
@@ -127,9 +127,9 @@ export default function Page() {
     ]
   }, [isSelf, normalisedName, valid, name, t])
 
-  const { showDataInput } = useTransactionFlow()
   const handleEditProfile = () => {
-    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
+    const resumable = getResumable(`edit-profile-flow-${name}`)
+    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name, resumable })
   }
 
   const profileActions = useMemo(() => {
