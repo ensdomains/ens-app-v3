@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -106,6 +106,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
   const { name } = router.query
   const { address } = useAccount()
   const { errorState, setErrorState } = useState<Errors>(Errors.NOT_CHECKED)
+  const [syncWarning, setSyncWarning] = useState(false)
 
   const handleCheck = async () => {
     try {
@@ -118,18 +119,25 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
       console.log('dnsOwner: ', dnsOwner)
 
       if (parseInt(dnsOwner) === 0) {
+        setSyncWarning(false)
         // State 8
         setErrorState(Errors.DNS_RECORD_DOES_NOT_EXIST)
       } else if (!utils.isAddress(dnsOwner)) {
+        setSyncWarning(false)
         // State 4
         setErrorState(Errors.DNS_RECORD_INVALID)
       } else if (dnsOwner.toLowerCase() === address?.toLowerCase()) {
+        setSyncWarning(false)
         // State 5
         setCurrentStep(currentStep + 1)
       } else {
         // Out of sync (state 6)
         console.log('Controllder and DNS Owner are out of sync')
-        setCurrentStep(currentStep + 1)
+        if (syncWarning) {
+          setCurrentStep(currentStep + 1)
+          return
+        }
+        setSyncWarning(true)
       }
     } catch (e) {
       console.error('_ens check error: ', e)
@@ -160,6 +168,21 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
       <Spacer $height={2} />
       <Copyable {...{ label: 'Value', value: address }} />
       <Spacer $height={5} />
+      {syncWarning && (
+        <>
+          <Helper type="warning" style={{ textAlign: 'center' }}>
+            <Typography>
+              You don't appear to be the DNS Owner of this domain, but anyone can add this domain to
+              the ENS Registry.
+            </Typography>
+            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+              If you know you own this domain change its _ens TXT record to contain your Ethereum
+              Address and click 'Check' again, otherwise click 'Claim' to proceed.
+            </Typography>
+          </Helper>
+          <Spacer $height={6} />
+        </>
+      )}
       <ButtonContainer>
         <CheckButton
           onClick={() => {
@@ -178,6 +201,16 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
         >
           Check
         </CheckButton>
+        {syncWarning && (
+          <CheckButton
+            onClick={handleCheck}
+            variant="primary"
+            size="small"
+            disabled={currentStep === 2}
+          >
+            Claim
+          </CheckButton>
+        )}
       </ButtonContainer>
     </Container>
   )
