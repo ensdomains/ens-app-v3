@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useMemo, ReactElement } from 'react'
+import { ReactElement, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -19,12 +19,12 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
+import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { ContentGrid } from '@app/layouts/ContentGrid'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`

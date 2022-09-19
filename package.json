@@ -18,7 +18,7 @@
     "buildandstart": "pnpm build && pnpm start",
     "buildandstart:glocal": "pnpm build:glocal && pnpm start",
     "tenv": "ens-test-env -a",
-    "denv": "pnpm tenv start -ns -nb",
+    "denv": "pnpm tenv start -ns -nb --verbose",
     "lint": "next lint && stylelint ./src/**/*.tsx",
     "lint:fix": "next lint --fix && stylelint --fix ./src/**/*.tsx",
     "export": "next export",
@@ -42,7 +42,7 @@
     "wrangle": "next build && next export && npx wrangler pages dev ./out",
     "wrangle:dev": "wrangler pages dev ./next",
     "generate:sitemaps": "node ./generate-site-map.mjs",
-    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
+    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1663311099000",
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
   },
   "dependencies": {
@@ -89,7 +89,7 @@
     "@cloudflare/workers-types": "^3.14.1",
     "@cloudflare/wrangler": "^1.19.12",
     "@ensdomains/buffer": "^0.1.0",
-    "@ensdomains/ens-test-env": "^0.2.2",
+    "@ensdomains/ens-test-env": "file:.yalc/@ensdomains/ens-test-env",
     "@ethersproject/providers": "^5.7.0",
     "@next/bundle-analyzer": "^12.2.5",
     "@next/swc-linux-x64-gnu": "12.1.4",

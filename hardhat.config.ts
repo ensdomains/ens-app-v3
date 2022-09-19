@@ -1,10 +1,7 @@
 import '@nomiclabs/hardhat-ethers'
-import * as tdly from '@tenderly/hardhat-tenderly'
 import 'dotenv/config'
 import 'hardhat-deploy'
 import { resolve } from 'path'
-
-tdly.setup()
 
 const ensContractsPath = './node_modules/@ensdomains/ens-contracts'
 BigInt.prototype.toJSON = function () {

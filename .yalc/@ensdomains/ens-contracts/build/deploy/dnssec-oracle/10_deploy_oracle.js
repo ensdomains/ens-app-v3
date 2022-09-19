@@ -69,27 +69,18 @@ const func = async function (hre) {
     const nsec_digests = {
         1: 'SHA1NSEC3Digest',
     };
-    // if (network.tags.test) {
-    // anchors.push(dummyAnchor)
-    // algorithms[253] = 'DummyAlgorithm'
-    // algorithms[254] = 'DummyAlgorithm'
-    // digests[253] = 'DummyDigest'
-    // }
+    if (network.tags.test) {
+        anchors.push(dummyAnchor);
+        algorithms[253] = 'DummyAlgorithm';
+        algorithms[254] = 'DummyAlgorithm';
+        digests[253] = 'DummyDigest';
+    }
     await deploy('DNSSECImpl', {
         from: deployer,
         args: [encodeAnchors(anchors)],
         log: true,
     });
     const dnssec = await hardhat_1.ethers.getContract('DNSSECImpl');
-    // // @ts-ignore
-    // await hre.tenderly.persistArtifacts({
-    //   name: 'DNSSECImpl',
-    //   address: dnssec.address,
-    // })
-    // // @ts-ignore
-    // await hre.tenderly.push([
-    //   { name: 'DNSECImpl', address: dnssec.address, network: hre.network.name },
-    // ])
     const transactions = [];
     for (const [id, alg] of Object.entries(algorithms)) {
         const address = (await deployments.get(alg)).address;

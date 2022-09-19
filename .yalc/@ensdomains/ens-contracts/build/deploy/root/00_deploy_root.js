@@ -16,15 +16,6 @@ const func = async function (hre) {
         log: true,
     });
     const root = await hardhat_1.ethers.getContract('Root');
-    // // @ts-ignore
-    // await hre.tenderly.persistArtifacts({
-    //   name: 'Root',
-    //   address: root.address,
-    // })
-    // // @ts-ignore
-    // await hre.tenderly.push([
-    //   { name: 'Root', address: root.address, network: hre.network.name },
-    // ])
     const tx1 = await registry.setOwner(ZERO_HASH, root.address);
     console.log(`Setting owner of root node to root contract (tx: ${tx1.hash})...`);
     await tx1.wait();

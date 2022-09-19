@@ -93,7 +93,7 @@ const config = {
     networks: {
         hardhat: {
             // Required for real DNS record tests
-            initialDate: '2019-03-15T14:06:45.000+13:00',
+            // initialDate: '2019-03-15T14:06:45.000+13:00',
             saveDeployments: false,
             tags: ['test', 'legacy', 'use_root'],
             chainId: 1337,

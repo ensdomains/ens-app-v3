@@ -2,13 +2,18 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "a34e0fc6f1cffd753ab927788c8a2086",
+      "signature": "ecff66e484c102bbe6b4446f05426292",
       "pure": true
     },
     "@ensdomains/ens-contracts": {
-      "signature": "7e37aae93e51c195b88ad86df57bdfc5",
+      "signature": "b7185b4d6de861a647fafc69160e8d48",
       "pure": true,
       "replaced": "^0.0.12"
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "4e77adb483d45feb4d8bdba113ffa773",
+      "pure": true,
+      "replaced": "^0.2.2"
     }
   }
 }

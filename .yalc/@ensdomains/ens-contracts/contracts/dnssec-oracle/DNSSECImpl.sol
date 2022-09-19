@@ -10,8 +10,6 @@ import "./digests/Digest.sol";
 import "./nsec3digests/NSEC3Digest.sol";
 import "@ensdomains/buffer/contracts/Buffer.sol";
 
-import "hardhat/console.sol";
-
 /*
  * @dev An oracle contract that verifies and stores DNSSEC-validated DNS records.
  *
@@ -477,29 +475,27 @@ contract DNSSECImpl is DNSSEC, Owned {
         internal
         returns (bytes memory)
     {
-        // console.logBytes(proof);
         RRUtils.SignedSet memory rrset;
         rrset = validateSignedSet(input, proof);
 
-        // RRSet storage storedSet = rrsets[keccak256(rrset.name)][
-        //     rrset.typeCovered
-        // ];
-        // if (storedSet.hash != bytes20(0)) {
-        //     // To replace an existing rrset, the signature must be at least as new
-        //     require(
-        //         RRUtils.serialNumberGte(rrset.inception, storedSet.inception)
-        //     );
-        // }
-        // rrsets[keccak256(rrset.name)][rrset.typeCovered] = RRSet({
-        //     inception: rrset.inception,
-        //     expiration: rrset.expiration,
-        //     hash: bytes20(keccak256(rrset.data))
-        // });
+        RRSet storage storedSet = rrsets[keccak256(rrset.name)][
+            rrset.typeCovered
+        ];
+        if (storedSet.hash != bytes20(0)) {
+            // To replace an existing rrset, the signature must be at least as new
+            require(
+                RRUtils.serialNumberGte(rrset.inception, storedSet.inception)
+            );
+        }
+        rrsets[keccak256(rrset.name)][rrset.typeCovered] = RRSet({
+            inception: rrset.inception,
+            expiration: rrset.expiration,
+            hash: bytes20(keccak256(rrset.data))
+        });
 
-        // emit RRSetUpdated(rrset.name, rrset.data);
+        emit RRSetUpdated(rrset.name, rrset.data);
 
-        // return rrset.data;
-        return "";
+        return rrset.data;
     }
 
     /**
@@ -521,12 +517,12 @@ contract DNSSECImpl is DNSSEC, Owned {
         bytes memory proof
     ) internal view returns (RRUtils.SignedSet memory rrset) {
         rrset = input.rrset.readSignedSet();
-        require(validProof(rrset.signerName, proof), "Invalid proof");
+        require(validProof(rrset.signerName, proof));
 
         // Do some basic checks on the RRs and extract the name
-        // bytes memory name = validateRRs(rrset, rrset.typeCovered);
-        // require(name.labelCount(0) == rrset.labels);
-        // rrset.name = name;
+        bytes memory name = validateRRs(rrset, rrset.typeCovered);
+        require(name.labelCount(0) == rrset.labels);
+        rrset.name = name;
 
         // All comparisons involving the Signature Expiration and
         // Inception fields MUST use "serial number arithmetic", as
@@ -534,22 +530,20 @@ contract DNSSECImpl is DNSSEC, Owned {
 
         // o  The validator's notion of the current time MUST be less than or
         //    equal to the time listed in the RRSIG RR's Expiration field.
-        // require(
-        //     RRUtils.serialNumberGte(rrset.expiration, uint32(block.timestamp))
-        // );
+        require(
+            RRUtils.serialNumberGte(rrset.expiration, uint32(block.timestamp))
+        );
 
         // o  The validator's notion of the current time MUST be greater than or
         //    equal to the time listed in the RRSIG RR's Inception field.
-        // require(
-        //     RRUtils.serialNumberGte(uint32(block.timestamp), rrset.inception)
-        // );
+        require(
+            RRUtils.serialNumberGte(uint32(block.timestamp), rrset.inception)
+        );
 
         // Validate the signature
-        // verifySignature(name, rrset, input, proof);
+        verifySignature(name, rrset, input, proof);
 
         return rrset;
-        // RRUtils.SignedSet memory rrsettwo;
-        // return rrsettwo;
     }
 
     function validProof(bytes memory name, bytes memory proof)
@@ -557,10 +551,6 @@ contract DNSSECImpl is DNSSEC, Owned {
         view
         returns (bool)
     {
-        console.log("validProof");
-        console.logBytes(name);
-        console.logBytes(proof);
-        console.log("validProof");
         uint16 dnstype = proof.readUint16(proof.nameLength(0));
         return
             rrsets[keccak256(name)][dnstype].hash == bytes20(keccak256(proof));

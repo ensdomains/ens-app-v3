@@ -2,9 +2,10 @@
 import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
 
-import { ContentGrid } from '@app/layouts/ContentGrid'
 import DNSClaim from '@app/components/pages/profile/[name]/DNSClaim/DNSClaim'
 import ProfilePage from '@app/components/pages/profile/[name]/Profile'
+import { useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
+import { ContentGrid } from '@app/layouts/ContentGrid'
 
 const isDNSName = (name: string): boolean => {
   const labels = name?.split('.')
@@ -15,10 +16,13 @@ const isDNSName = (name: string): boolean => {
 export default function Page() {
   const router = useRouter()
   const name = router.query.name as string
+  const { data: status } = useRegistrationStatus(name)
+
+  console.log('registration status: ', status)
 
   const isDNS = isDNSName(name)
 
-  return isDNS ? <DNSClaim /> : <ProfilePage />
+  return isDNS && status !== 'registered' ? <DNSClaim /> : <ProfilePage />
 }
 
 Page.getLayout = function getLayout(page: ReactElement) {

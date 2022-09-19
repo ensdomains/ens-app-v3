@@ -5,6 +5,7 @@ const tld_map = {
     mainnet: ['xyz'],
     ropsten: ['xyz'],
     localhost: ['xyz', 'com'],
+    hardhat: ['com'],
     goerli: [
         'exposed',
         'target',

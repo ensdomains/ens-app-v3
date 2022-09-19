@@ -23,7 +23,7 @@ specifiers:
   '@ensdomains/dnsprovejs': file:.yalc/@ensdomains/dnsprovejs
   '@ensdomains/dnssecoraclejs': ^0.2.7
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts
-  '@ensdomains/ens-test-env': ^0.2.2
+  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
   '@ensdomains/ens-validation': ^0.1.0
   '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
   '@ensdomains/eth-ens-namehash': ^2.0.15
@@ -165,7 +165,7 @@ devDependencies:
   '@cloudflare/workers-types': 3.16.0
   '@cloudflare/wrangler': 1.19.12
   '@ensdomains/buffer': 0.1.0_gpcgbpmafotg2c7ckpvjouw6xi
-  '@ensdomains/ens-test-env': 0.2.3
+  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
   '@ethersproject/providers': 5.7.0
   '@next/bundle-analyzer': 12.2.5
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -2075,29 +2075,6 @@ packages:
       - web3-eth-abi
       - web3-utils
     dev: false
-
-  /@ensdomains/ens-test-env/0.2.3:
-    resolution: {integrity: sha512-69z+SmQlmL3pqRGLl8ouYSVy/YRm9bVCmii65e8vAnkt902giAjW9MEGfnxztdsNP+HCfiSN4lt147tLdWgW1Q==}
-    hasBin: true
-    dependencies:
-      '@ethersproject/wallet': 5.7.0
-      ansi-colors: 4.1.3
-      cli-progress: 3.11.2
-      commander: 9.4.0
-      concurrently: 7.3.0
-      docker-compose: 0.23.17
-      dotenv: 16.0.2
-      fs-extra: 10.1.0
-      ganache: 7.4.1
-      got: 12.4.1
-      lz4: 0.6.5
-      node-fetch: 3.2.10
-      progress-stream: 2.0.0
-      tar-fs: 2.1.1
-      wait-on: 6.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
 
   /@ensdomains/ens-validation/0.1.0:
     resolution: {integrity: sha512-rbDh2K6GfqXvBcJUISaTTYEt3f079WA4ohTE5Lh4/8EaaPAk/9vk3EisMUQV2UVxeFIZQEEyRCIOmRTpqN0W7A==}
@@ -23461,6 +23438,31 @@ packages:
       - web3-eth-abi
       - web3-utils
     dev: false
+
+  file:.yalc/@ensdomains/ens-test-env:
+    resolution: {directory: .yalc/@ensdomains/ens-test-env, type: directory}
+    name: '@ensdomains/ens-test-env'
+    version: 0.2.2
+    hasBin: true
+    dependencies:
+      '@ethersproject/wallet': 5.7.0
+      ansi-colors: 4.1.3
+      cli-progress: 3.11.2
+      commander: 9.4.0
+      concurrently: 7.3.0
+      docker-compose: 0.23.17
+      dotenv: 16.0.2
+      fs-extra: 10.1.0
+      ganache: 7.4.1
+      got: 12.4.1
+      lz4: 0.6.5
+      node-fetch: 3.2.10
+      progress-stream: 2.0.0
+      tar-fs: 2.1.1
+      wait-on: 6.0.1
+    transitivePeerDependencies:
+      - debug
+    dev: true
 
   file:.yalc/@ensdomains/ensjs_ethers@5.7.0:
     resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
