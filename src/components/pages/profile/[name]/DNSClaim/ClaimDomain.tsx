@@ -6,7 +6,7 @@ import { useAccount, useProvider, useSigner } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Oracle as NewOracle } from '@ensdomains/dnssecoraclejs'
-import { Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
@@ -58,6 +58,26 @@ const AvatarWrapper = styled.div(
   `,
 )
 
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 10px;
+
+    & > button {
+      margin: 0;
+    }
+  `,
+)
+
+const CheckButton = styled(Button)(
+  ({ theme }) => css`
+    width: 150px;
+    margin: 0 auto;
+  `,
+)
+
 export const NamePillWithAddress = ({
   name,
   network,
@@ -82,43 +102,36 @@ export const NamePillWithAddress = ({
   )
 }
 
+const handleClaim = (contracts, name, provider, signer, address) => async () => {
+  const dnsRegistrarContract = await contracts.getDNSRegistrar()
+  const resolverContract = await contracts.getPublicResolver()
+  const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
+  const result = await prover.queryWithProof('TXT', `_ens.${name}`)
+  const registrarOracle = await dnsRegistrarContract.oracle()
+
+  const oracle = new NewOracle(registrarOracle, provider)
+  const proofData = await oracle.getProofData(result)
+
+  const encodedName = `0x${packet.name.encode(name).toString('hex')}`
+  const data = proofData.rrsets.map((x) => Object.values(x))
+  const { proof } = proofData
+
+  const tx = await dnsRegistrarContract
+    .connect(signer)
+    .proveAndClaimWithResolver(encodedName, data, proof, resolverContract.address, address)
+
+  const receipt = await tx.wait()
+  console.log('receipt: ', receipt)
+}
+
 export const ClaimDomain = ({ currentStep }) => {
-  const { ready, contracts } = useEns()
+  const { contracts } = useEns()
   const provider = useProvider()
   const { data: signer } = useSigner()
   const router = useRouter()
   const { address } = useAccount()
 
   const name = router.query.name as string
-
-  console.log('signer: ', signer)
-
-  useEffect(() => {
-    const run = async () => {
-      const dnsRegistrarContract = await contracts.getDNSRegistrar()
-      const resolverContract = await contracts.getPublicResolver()
-      const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
-      const result = await prover.queryWithProof('TXT', `_ens.${name}`)
-      const registrarOracle = await dnsRegistrarContract.oracle()
-
-      const oracle = new NewOracle(registrarOracle, provider)
-      const proofData = await oracle.getProofData(result)
-
-      const encodedName = `0x${packet.name.encode(name).toString('hex')}`
-      const data = proofData.rrsets.map((x) => Object.values(x))
-      const { proof } = proofData
-
-      const tx = await dnsRegistrarContract
-        .connect(signer)
-        .proveAndClaimWithResolver(encodedName, data, proof, resolverContract.address, address)
-
-      const receipt = await tx.wait()
-      console.log('receipt: ', receipt)
-    }
-    if (ready && signer) {
-      run()
-    }
-  }, [contracts, name, provider, ready, signer, address])
 
   return (
     <Container>
@@ -133,6 +146,19 @@ export const ClaimDomain = ({ currentStep }) => {
         <Typography>Estimated network cost</Typography>
         <Typography>000.4 ETH</Typography>
       </GreyBox>
+      <Spacer $height={5} />
+      <ButtonContainer>
+        <CheckButton variant="primary" size="small">
+          Back
+        </CheckButton>
+        <CheckButton
+          variant="primary"
+          size="small"
+          onClick={handleClaim(contracts, name, provider, signer, address)}
+        >
+          Check
+        </CheckButton>
+      </ButtonContainer>
     </Container>
   )
 }
