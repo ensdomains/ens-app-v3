@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Button, Dialog } from '@ensdomains/thorin'
+import { Avatar, Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
@@ -31,6 +31,12 @@ const Container = styled.form(
     flex-direction: column;
     gap: ${theme.space['4']};
     align-items: center;
+
+    ${mq.sm.min(
+      css`
+        min-width: 600px;
+      `,
+    )}
   `,
 )
 
@@ -165,11 +171,11 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   ])
   const { gasPrice, transactionFee } = transactionData || {}
 
-  const { price, loading: priceLoading } = usePrice(names, yearsToSeconds(1))
+  const { price, loading: priceLoading } = usePrice(names, yearsToSeconds(1), true)
   const rentFee = price?.base
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
 
-  console.log('price', price?.base?.toNumber())
+  console.log('price', price?.base?.toNumber(), price?.premium?.toNumber())
 
   const items = [
     {

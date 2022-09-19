@@ -6,7 +6,31 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
-const names = [
+import { labelhash } from '@ensdomains/ensjs/utils/labels'
+
+type Names = {
+  label: string
+  namedOwner: string
+  namedAddr: string
+  namedController?: string
+  records?: {
+    text?: {
+      key: string
+      value: string
+    }[]
+    addr?: {
+      key: number
+      value: string
+    }[]
+    contenthash?: string
+  }
+  subnames?: {
+    label: string
+    namedOwner: string
+  }[]
+}
+
+const names: Names[] = [
   {
     label: 'test123',
     namedOwner: 'owner',
@@ -62,6 +86,17 @@ const names = [
       contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
     },
   },
+  {
+    label: 'with-subnames',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    subnames: [
+      { label: 'test', namedOwner: 'owner' },
+      { label: 'legacy', namedOwner: 'owner' },
+      { label: 'xyz', namedOwner: 'owner' },
+      { label: 'addr', namedOwner: 'owner' },
+    ],
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -74,7 +109,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
-  for (const { label, namedOwner, namedAddr, records } of names) {
+  for (const { label, namedOwner, namedAddr, records, subnames } of names) {
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const registrant = allNamedAccts[namedOwner]
     const resolver = publicResolver.address
@@ -142,6 +177,23 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         const setContenthashTx = await _publicResolver.setContenthash(hash, records.contenthash)
         console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
         await setContenthashTx.wait()
+      }
+    }
+
+    if (subnames) {
+      console.log(`Setting subnames for ${label}.eth...`)
+      for (const { label: subnameLabel, namedOwner: subnameOwner } of subnames) {
+        const owner = allNamedAccts[subnameOwner]
+        const _registry = registry.connect(await ethers.getSigner(registrant))
+        const setSubnameTx = await _registry.setSubnodeRecord(
+          namehash(`${label}.eth`),
+          labelhash(subnameLabel),
+          owner,
+          resolver,
+          '0',
+        )
+        console.log(` - ${subnameLabel} (tx: ${setSubnameTx.hash})...`)
+        await setSubnameTx.wait()
       }
     }
   }

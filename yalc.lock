@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "0c212b206aaa9bf97ad8798ea116cbfe",
+      "signature": "6cbeb54fab3b2df6ca2939d4dbb41f39",
       "pure": true,
       "replaced": "v3.0.0-alpha.17"
     },
@@ -13,7 +13,7 @@
     },
     "@ensdomains/thorin": {
       "version": "0.6.15",
-      "signature": "9645a6cf39e943471ed31751407fe3c4",
+      "signature": "494d61029186429d73e8697c60a2e58a",
       "pure": true,
       "replaced": "^0.6.14"
     }

@@ -7,13 +7,26 @@ var raw = async ({ contracts, multicallWrapper }, nameOrNames, duration, legacy)
     const bulkRenewal = await contracts?.getBulkRenewal();
     console.log("bulkRenewal", bulkRenewal);
     console.log("names", names, "duration", duration);
-    return {
+    const baseCall2 = {
       to: bulkRenewal.address,
       data: bulkRenewal.interface.encodeFunctionData("rentPrice", [
         names,
         duration
       ])
     };
+    if (legacy) {
+      return multicallWrapper.raw([
+        baseCall2,
+        {
+          to: bulkRenewal.address,
+          data: bulkRenewal.interface.encodeFunctionData("rentPrice", [
+            names,
+            0
+          ])
+        }
+      ]);
+    }
+    return baseCall2;
   }
   const controller = await contracts?.getEthRegistrarController();
   const baseCall = {
@@ -45,7 +58,21 @@ var decode = async ({ contracts, multicallWrapper }, data, _nameOrNames, _durati
   try {
     let base;
     let premium;
-    if (Array.isArray(_nameOrNames) && _nameOrNames.length > 1) {
+    const isBulkRenewal = Array.isArray(_nameOrNames) && _nameOrNames.length > 1;
+    if (isBulkRenewal && legacy) {
+      console.log("isBulkRenewal && legacy");
+      const result = await multicallWrapper.decode(data);
+      console.log(result);
+      const [price] = utils.defaultAbiCoder.decode(
+        ["uint256"],
+        result[0].returnData
+      );
+      [premium] = utils.defaultAbiCoder.decode(
+        ["uint256"],
+        result[1].returnData
+      );
+      base = price.sub(premium);
+    } else if (isBulkRenewal) {
       const bulkRenewal = await contracts?.getBulkRenewal();
       const result = bulkRenewal.interface.decodeFunctionResult(
         "rentPrice",
@@ -54,7 +81,7 @@ var decode = async ({ contracts, multicallWrapper }, data, _nameOrNames, _durati
       console.log("result", result);
       [base] = result;
       premium = BigNumber.from(0);
-    } else if (legacy) {
+    } else if (!isBulkRenewal && legacy) {
       const result = await multicallWrapper.decode(data);
       const [price] = utils.defaultAbiCoder.decode(
         ["uint256"],

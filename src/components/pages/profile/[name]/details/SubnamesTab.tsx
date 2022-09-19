@@ -3,9 +3,8 @@ import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { ArrowRightSVG, Button, CloseSVG, PlusSVG, Typography, mq } from '@ensdomains/thorin'
+import { Button, CloseSVG, PlusSVG, Typography, mq } from '@ensdomains/thorin'
 
-import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
 import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
 import {
   NameTableHeader,
@@ -20,15 +19,7 @@ import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { SubnameSortType, useSubnamePagination } from '@app/hooks/useSubnamePagination'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-const RightArrow = styled.svg(
-  ({ theme }) => css`
-    stroke-width: ${theme.borderWidths['0.75']};
-    color: ${theme.colors.textTertiary};
-    display: block;
-    height: ${theme.space['6']};
-    width: ${theme.space['6']};
-  `,
-)
+import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
 const TabWrapperWithButtons = styled.div(
   ({ theme }) => css`
@@ -60,6 +51,15 @@ const NoneFoundContainer = styled(TabWrapper)(
     align-items: center;
     justify-content: center;
     padding: ${theme.space['2']};
+  `,
+)
+
+const NoMoreResultsContainer = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['2']};
+    display: flex;
+    align-items: center;
+    justify-content: center;
   `,
 )
 
@@ -140,18 +140,26 @@ export const SubnamesTab = ({
   const [sortDirection, setSortDirection] = useState(SortDirection.desc)
   const [searchQuery, setSearchQuery] = useState('')
 
-  const page = router.query.page ? parseInt(router.query.page as string) : 1
+  const [page, setPage] = useState(1)
+  // const page = router.query.page ? parseInt(router.query.page as string) : 1
   const pageSize = router.query.pageSize ? parseInt(router.query.pageSize as string) : 10
-  const { subnames, isLoading, totalPages, isFetching } = useSubnamePagination(name, page, sortType)
+  const { subnames, max, isLoading, totalPages, isFetching } = useSubnamePagination(
+    name,
+    page,
+    sortType,
+    sortDirection,
+    pageSize,
+    searchQuery,
+  )
 
-  const setPage = (newPage: number) => {
-    const url = new URL(router.asPath, window.location.origin)
-    url.searchParams.set('page', newPage.toString())
-    url.searchParams.set('pageSize', pageSize.toString())
-    router.push(url.toString(), undefined, {
-      shallow: true,
-    })
-  }
+  // const setPage = (newPage: number) => {
+  //   const url = new URL(router.asPath, window.location.origin)
+  //   url.searchParams.set('page', newPage.toString())
+  //   url.searchParams.set('pageSize', pageSize.toString())
+  //   router.push(url.toString(), undefined, {
+  //     shallow: true,
+  //   })
+  // }
 
   const setPageSize = (newPageSize: number) => {
     const url = new URL(router.asPath, window.location.origin)
@@ -172,7 +180,7 @@ export const SubnamesTab = ({
 
   if (isLoading) {
     InnerContent = <SpinnerRow />
-  } else if (subnames.length > 0) {
+  } else if (totalPages > 0) {
     InnerContent = (
       <>
         <StyledTabWrapper $isFetching={isFetching}>
@@ -202,21 +210,27 @@ export const SubnamesTab = ({
             )}
           </NameTableHeader>
           <div>
-            {subnames.map((subname) => (
-              <NameDetailItem
-                key={subname.name}
-                network={network}
-                {...subname}
-                mode={mode}
-                selected={selectedNames.includes(subname.name)}
-                onClick={handleSelectName(subname.name)}
-              >
-                <RightArrow as={ArrowRightSVG} />
-              </NameDetailItem>
-            ))}
+            {subnames.length > 0 ? (
+              subnames.map((subname) => (
+                <TaggedNameItem
+                  key={subname.name}
+                  name={subname.name}
+                  network={network}
+                  mode={mode}
+                  selected={selectedNames.includes(subname.name)}
+                  onClick={handleSelectName(subname.name)}
+                />
+              ))
+            ) : (
+              <NoMoreResultsContainer>
+                <Typography>{t('details.tabs.subnames.noMoreResults')}</Typography>
+              </NoMoreResultsContainer>
+            )}
           </div>
           <NameTableFooter
             current={page}
+            max={max}
+            alwaysShowLast={false}
             onChange={setPage}
             total={totalPages}
             pageSize={pageSize}

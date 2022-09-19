@@ -10,7 +10,8 @@ declare type Props = {
     size?: Size;
     alwaysShowFirst?: boolean;
     alwaysShowLast?: boolean;
+    showElipsis?: boolean;
     onChange: (value: number) => void;
 } & Omit<NativeDivProps, 'children' | 'onChange'>;
-export declare const PageButtons: ({ total, current, max, size, alwaysShowFirst, alwaysShowLast, onChange, ...props }: Props) => JSX.Element;
+export declare const PageButtons: ({ total, current, max, size, alwaysShowFirst, alwaysShowLast, showElipsis, onChange, ...props }: Props) => JSX.Element;
 export {};

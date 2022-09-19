@@ -4932,6 +4932,7 @@ const PageButtons = ({
   size = "medium",
   alwaysShowFirst,
   alwaysShowLast,
+  showElipsis = true,
   onChange,
   ...props
 }) => {
@@ -4942,15 +4943,23 @@ const PageButtons = ({
   }, (_, i) => start + i).filter((x) => x <= total);
   if (total > max) {
     if (alwaysShowFirst && start > 1) {
-      array[0] = -1;
-      array.unshift(1);
-    } else if (start > 1) {
+      if (showElipsis) {
+        array[0] = -1;
+        array.unshift(1);
+      } else {
+        array[0] = 1;
+      }
+    } else if (showElipsis && start > 1) {
       array.unshift(-1);
     }
     if (alwaysShowLast && total > current + maxPerSide) {
-      array[array.length - 1] = -1 * total;
-      array.push(total);
-    } else if (total > current + maxPerSide) {
+      if (showElipsis) {
+        array[array.length - 1] = -1 * total;
+        array.push(total);
+      } else {
+        array[array.length - 1] = total;
+      }
+    } else if (showElipsis && total > current + maxPerSide) {
       array.push(-1 * total);
     }
   }

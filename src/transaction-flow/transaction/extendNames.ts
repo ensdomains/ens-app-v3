@@ -59,7 +59,7 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
 
   // br!.connect(signer).renewAll(labels, duration, { value: p?.base })
 
-  const price = await ens.getPrice(labels, duration)
+  const price = await ens.getPrice(labels, duration, true)
   console.log('price', price, years, duration)
   const value = price?.base
   console.log('base', value?.toNumber())

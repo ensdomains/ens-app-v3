@@ -23,18 +23,28 @@ type PageButtonProps = ComponentProps<typeof PageButtons>
 type Props = {
   pageSize: number
   onPageSizeChange?: (results: number) => void
-} & Omit<PageButtonProps, 'size' | 'max' | 'alwaysShowFirst' | 'alwaysShowLast'>
+} & Omit<PageButtonProps, 'size'>
 
-export const NameTableFooter = ({ pageSize, onPageSizeChange, ...props }: Props) => {
+export const NameTableFooter = ({
+  pageSize,
+  onPageSizeChange,
+  max: _max,
+  alwaysShowFirst: _alwaysShowFirst,
+  alwaysShowLast: _alwaysShowLast,
+  ...props
+}: Props) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
 
   const pageSizeOptions = [1, 5, 10, 25, 50, 100].map((value) => ({
-    label: breakpoints.sm ? t('unit.perPage', { count: value }) : `${value}`,
+    label: t('unit.perPage', { count: value }),
     value: value.toString(),
   }))
 
-  const max = breakpoints.sm ? 5 : 3
+  /* eslint-disable no-nested-ternary */
+  const max = typeof _max === 'number' ? _max : breakpoints.sm ? 5 : 3
+  const alwaysShowFirst = typeof _alwaysShowFirst === 'boolean' ? _alwaysShowFirst : breakpoints.sm
+  const alwaysShowLast = typeof _alwaysShowLast === 'boolean' ? _alwaysShowLast : breakpoints.sm
 
   return (
     <Container>
@@ -42,8 +52,9 @@ export const NameTableFooter = ({ pageSize, onPageSizeChange, ...props }: Props)
         {...props}
         size="small"
         max={max}
-        alwaysShowFirst={breakpoints.sm}
-        alwaysShowLast={breakpoints.sm}
+        alwaysShowFirst={alwaysShowFirst}
+        alwaysShowLast={alwaysShowLast}
+        showElipsis={breakpoints.sm}
       />
       <div>
         <Select
