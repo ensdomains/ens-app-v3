@@ -1,0 +1,4 @@
+[
+  "event AddressChanged(bytes32 indexed,uint256,bytes)",
+  "function addr(bytes32,uint256) view returns (bytes)"
+]

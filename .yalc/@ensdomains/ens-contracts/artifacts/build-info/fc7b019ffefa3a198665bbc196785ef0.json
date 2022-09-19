@@ -1,0 +1,289 @@
+{
+  "id": "fc7b019ffefa3a198665bbc196785ef0",
+  "_format": "hh-sol-build-info-1",
+  "solcVersion": "0.8.13",
+  "solcLongVersion": "0.8.13+commit.abaa5c0e",
+  "input": {
+    "language": "Solidity",
+    "sources": {
+      "contracts/ethregistrar/ILinearPremiumPriceOracle.sol": {
+        "content": "interface ILinearPremiumPriceOracle {\n    function timeUntilPremium(uint256 expires, uint256 amount)\n        external\n        view\n        returns (uint256);\n}\n"
+      }
+    },
+    "settings": {
+      "optimizer": {
+        "enabled": true,
+        "runs": 10000
+      },
+      "outputSelection": {
+        "*": {
+          "*": [
+            "abi",
+            "evm.bytecode",
+            "evm.deployedBytecode",
+            "evm.methodIdentifiers",
+            "metadata",
+            "devdoc",
+            "userdoc",
+            "storageLayout",
+            "evm.gasEstimates"
+          ],
+          "": [
+            "ast"
+          ]
+        }
+      },
+      "metadata": {
+        "useLiteralContent": true
+      }
+    }
+  },
+  "output": {
+    "contracts": {
+      "contracts/ethregistrar/ILinearPremiumPriceOracle.sol": {
+        "ILinearPremiumPriceOracle": {
+          "abi": [
+            {
+              "inputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "expires",
+                  "type": "uint256"
+                },
+                {
+                  "internalType": "uint256",
+                  "name": "amount",
+                  "type": "uint256"
+                }
+              ],
+              "name": "timeUntilPremium",
+              "outputs": [
+                {
+                  "internalType": "uint256",
+                  "name": "",
+                  "type": "uint256"
+                }
+              ],
+              "stateMutability": "view",
+              "type": "function"
+            }
+          ],
+          "devdoc": {
+            "kind": "dev",
+            "methods": {},
+            "version": 1
+          },
+          "evm": {
+            "bytecode": {
+              "functionDebugData": {},
+              "generatedSources": [],
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "deployedBytecode": {
+              "functionDebugData": {},
+              "generatedSources": [],
+              "immutableReferences": {},
+              "linkReferences": {},
+              "object": "",
+              "opcodes": "",
+              "sourceMap": ""
+            },
+            "gasEstimates": null,
+            "methodIdentifiers": {
+              "timeUntilPremium(uint256,uint256)": "ed6c33ed"
+            }
+          },
+          "metadata": "{\"compiler\":{\"version\":\"0.8.13+commit.abaa5c0e\"},\"language\":\"Solidity\",\"output\":{\"abi\":[{\"inputs\":[{\"internalType\":\"uint256\",\"name\":\"expires\",\"type\":\"uint256\"},{\"internalType\":\"uint256\",\"name\":\"amount\",\"type\":\"uint256\"}],\"name\":\"timeUntilPremium\",\"outputs\":[{\"internalType\":\"uint256\",\"name\":\"\",\"type\":\"uint256\"}],\"stateMutability\":\"view\",\"type\":\"function\"}],\"devdoc\":{\"kind\":\"dev\",\"methods\":{},\"version\":1},\"userdoc\":{\"kind\":\"user\",\"methods\":{},\"version\":1}},\"settings\":{\"compilationTarget\":{\"contracts/ethregistrar/ILinearPremiumPriceOracle.sol\":\"ILinearPremiumPriceOracle\"},\"evmVersion\":\"london\",\"libraries\":{},\"metadata\":{\"bytecodeHash\":\"ipfs\",\"useLiteralContent\":true},\"optimizer\":{\"enabled\":true,\"runs\":10000},\"remappings\":[]},\"sources\":{\"contracts/ethregistrar/ILinearPremiumPriceOracle.sol\":{\"content\":\"interface ILinearPremiumPriceOracle {\\n    function timeUntilPremium(uint256 expires, uint256 amount)\\n        external\\n        view\\n        returns (uint256);\\n}\\n\",\"keccak256\":\"0xa74b7219a68c7708a33ca280d6cc75364669e845aea5c29580ac69d70eac181d\"}},\"version\":1}",
+          "storageLayout": {
+            "storage": [],
+            "types": null
+          },
+          "userdoc": {
+            "kind": "user",
+            "methods": {},
+            "version": 1
+          }
+        }
+      }
+    },
+    "errors": [
+      {
+        "component": "general",
+        "errorCode": "1878",
+        "formattedMessage": "Warning: SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing \"SPDX-License-Identifier: <SPDX-License>\" to each source file. Use \"SPDX-License-Identifier: UNLICENSED\" for non-open-source code. Please see https://spdx.org for more information.\n--> contracts/ethregistrar/ILinearPremiumPriceOracle.sol\n\n",
+        "message": "SPDX license identifier not provided in source file. Before publishing, consider adding a comment containing \"SPDX-License-Identifier: <SPDX-License>\" to each source file. Use \"SPDX-License-Identifier: UNLICENSED\" for non-open-source code. Please see https://spdx.org for more information.",
+        "severity": "warning",
+        "sourceLocation": {
+          "end": -1,
+          "file": "contracts/ethregistrar/ILinearPremiumPriceOracle.sol",
+          "start": -1
+        },
+        "type": "Warning"
+      },
+      {
+        "component": "general",
+        "errorCode": "3420",
+        "formattedMessage": "Warning: Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.8.13;\"\n--> contracts/ethregistrar/ILinearPremiumPriceOracle.sol\n\n",
+        "message": "Source file does not specify required compiler version! Consider adding \"pragma solidity ^0.8.13;\"",
+        "severity": "warning",
+        "sourceLocation": {
+          "end": -1,
+          "file": "contracts/ethregistrar/ILinearPremiumPriceOracle.sol",
+          "start": -1
+        },
+        "type": "Warning"
+      }
+    ],
+    "sources": {
+      "contracts/ethregistrar/ILinearPremiumPriceOracle.sol": {
+        "ast": {
+          "absolutePath": "contracts/ethregistrar/ILinearPremiumPriceOracle.sol",
+          "exportedSymbols": {
+            "ILinearPremiumPriceOracle": [
+              10
+            ]
+          },
+          "id": 11,
+          "nodeType": "SourceUnit",
+          "nodes": [
+            {
+              "abstract": false,
+              "baseContracts": [],
+              "canonicalName": "ILinearPremiumPriceOracle",
+              "contractDependencies": [],
+              "contractKind": "interface",
+              "fullyImplemented": false,
+              "id": 10,
+              "linearizedBaseContracts": [
+                10
+              ],
+              "name": "ILinearPremiumPriceOracle",
+              "nameLocation": "10:25:0",
+              "nodeType": "ContractDefinition",
+              "nodes": [
+                {
+                  "functionSelector": "ed6c33ed",
+                  "id": 9,
+                  "implemented": false,
+                  "kind": "function",
+                  "modifiers": [],
+                  "name": "timeUntilPremium",
+                  "nameLocation": "51:16:0",
+                  "nodeType": "FunctionDefinition",
+                  "parameters": {
+                    "id": 5,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 2,
+                        "mutability": "mutable",
+                        "name": "expires",
+                        "nameLocation": "76:7:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 9,
+                        "src": "68:15:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 1,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "68:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "visibility": "internal"
+                      },
+                      {
+                        "constant": false,
+                        "id": 4,
+                        "mutability": "mutable",
+                        "name": "amount",
+                        "nameLocation": "93:6:0",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 9,
+                        "src": "85:14:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 3,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "85:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "67:33:0"
+                  },
+                  "returnParameters": {
+                    "id": 8,
+                    "nodeType": "ParameterList",
+                    "parameters": [
+                      {
+                        "constant": false,
+                        "id": 7,
+                        "mutability": "mutable",
+                        "name": "",
+                        "nameLocation": "-1:-1:-1",
+                        "nodeType": "VariableDeclaration",
+                        "scope": 9,
+                        "src": "148:7:0",
+                        "stateVariable": false,
+                        "storageLocation": "default",
+                        "typeDescriptions": {
+                          "typeIdentifier": "t_uint256",
+                          "typeString": "uint256"
+                        },
+                        "typeName": {
+                          "id": 6,
+                          "name": "uint256",
+                          "nodeType": "ElementaryTypeName",
+                          "src": "148:7:0",
+                          "typeDescriptions": {
+                            "typeIdentifier": "t_uint256",
+                            "typeString": "uint256"
+                          }
+                        },
+                        "visibility": "internal"
+                      }
+                    ],
+                    "src": "147:9:0"
+                  },
+                  "scope": 10,
+                  "src": "42:115:0",
+                  "stateMutability": "view",
+                  "virtual": false,
+                  "visibility": "external"
+                }
+              ],
+              "scope": 11,
+              "src": "0:159:0",
+              "usedErrors": []
+            }
+          ],
+          "src": "0:160:0"
+        },
+        "id": 0
+      }
+    }
+  }
+}

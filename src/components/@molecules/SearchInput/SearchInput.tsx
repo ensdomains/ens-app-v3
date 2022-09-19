@@ -199,13 +199,13 @@ export const SearchInput = ({
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
 
-  const [normalisedName, isValid, inputType, isEmpty, isTLD] = useMemo(() => {
+  const [normalisedName, isValid, inputType, isEmpty, isTLD, hasNormalisedValue] = useMemo(() => {
     if (inputVal) {
       let _normalisedName: string
       let _inputType: any
       let _isValid = true
       try {
-        _normalisedName = validateName(inputVal)
+        _normalisedName = validateName(inputVal.replace(/ /g, ''))
         _inputType = parseInputType(_normalisedName)
       } catch (e) {
         _normalisedName = ''
@@ -225,6 +225,7 @@ export const SearchInput = ({
         _inputType,
         false,
         !_normalisedName.includes('.'),
+        !!_normalisedName,
       ]
     }
     return ['', true, { type: 'name', info: 'supported' }, true, false]
@@ -244,9 +245,11 @@ export const SearchInput = ({
           value: t('search.errors.tooShort'),
         }
       }
-      return {
-        type: 'error',
-        value: t('search.errors.invalid'),
+      if (!hasNormalisedValue) {
+        return {
+          type: 'error',
+          value: t('search.errors.invalid'),
+        }
       }
     }
     if (inputType.type === 'address') {
@@ -262,7 +265,7 @@ export const SearchInput = ({
     return {
       type: 'name',
     }
-  }, [inputType.info, inputType.type, isValid, isEmpty, isTLD, t])
+  }, [isEmpty, isValid, inputType.type, inputType.info, isTLD, t, hasNormalisedValue])
 
   const extraItems = useMemo(() => {
     if (history.length > 0) {

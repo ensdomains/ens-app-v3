@@ -1,0 +1,10 @@
+[
+  "constructor(address)",
+  "error OffchainLookup(address,string[],bytes,bytes4,bytes)",
+  "function findResolver(bytes) view returns (address, bytes32)",
+  "function registry() view returns (address)",
+  "function resolve(bytes,bytes) view returns (bytes, address)",
+  "function resolveCallback(bytes,bytes) view returns (bytes)",
+  "function reverse(bytes) view returns (string, address, address, address)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

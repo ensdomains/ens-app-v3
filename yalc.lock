@@ -1,21 +1,22 @@
 {
   "version": "v1",
   "packages": {
+<<<<<<< HEAD
+    "@ensdomains/ens-contracts": {
+      "signature": "fc8787aeb70abd607d8f2aba0b832885",
+      "file": true,
+      "replaced": "^0.0.12"
+=======
     "@ensdomains/ensjs": {
-      "signature": "6cbeb54fab3b2df6ca2939d4dbb41f39",
+      "signature": "678dbf0034d19b469d33bd3547faa071",
       "pure": true,
-      "replaced": "v3.0.0-alpha.17"
-    },
-    "@ensdomains/ens-test-env": {
-      "signature": "8e4319103e8decde4138775b9d1f20f2",
-      "pure": true,
-      "replaced": "^0.2.2"
+      "replaced": "3.0.0-alpha.16"
     },
     "@ensdomains/thorin": {
-      "version": "0.6.15",
-      "signature": "494d61029186429d73e8697c60a2e58a",
-      "pure": true,
-      "replaced": "^0.6.14"
+      "signature": "9cc6c0e633465e751b337ec73eac921d",
+      "file": true,
+      "replaced": "^0.6.10"
+>>>>>>> dev
     }
   }
 }

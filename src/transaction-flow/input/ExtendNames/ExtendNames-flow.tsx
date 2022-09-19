@@ -161,7 +161,9 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   )
   const [years, setYears] = useState(1)
   const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
-  const currencyDisplay = currencyUnit === 'fiat' ? 'usd' : 'eth'
+  const fiatUnit = 'usd'
+
+  const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
 
   const { data: transactionData, loading: transactionDataLoading } = useEstimateTransactionCost([
     {
@@ -171,11 +173,10 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   ])
   const { gasPrice, transactionFee } = transactionData || {}
 
-  const { price, loading: priceLoading } = usePrice(names, yearsToSeconds(1), true)
-  const rentFee = price?.base
+  const { base: rentFee, premium, loading: priceLoading } = usePrice(names, yearsToSeconds(1), true)
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
 
-  console.log('price', price?.base?.toNumber(), price?.premium?.toNumber())
+  console.log('price', rentFee?.toNumber(), premium?.toNumber())
 
   const items = [
     {

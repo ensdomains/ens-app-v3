@@ -27,7 +27,8 @@ type Names = {
   subnames?: {
     label: string
     namedOwner: string
-  }[]
+  }[],
+  customDuration?: number
 }
 
 const names: Names[] = [
@@ -96,6 +97,11 @@ const names: Names[] = [
       { label: 'xyz', namedOwner: 'owner' },
       { label: 'addr', namedOwner: 'owner' },
     ],
+  },{
+    label: 'name-with-premium',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 2419200,
   },
 ]
 
@@ -109,12 +115,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
-  for (const { label, namedOwner, namedAddr, records, subnames } of names) {
+
+  for (const { label, namedOwner, namedAddr, customDuration, records, subnames } of names) {
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const registrant = allNamedAccts[namedOwner]
     const resolver = publicResolver.address
     const addr = allNamedAccts[namedAddr]
-    const duration = 31536000
+    const duration = customDuration || 31536000
 
     const commitment = await controller.makeCommitmentWithConfig(
       label,
@@ -197,6 +204,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       }
     }
   }
+
+  // Skip forward 28 + 90 days so that minimum exp names go into premium
+  await network.provider.send('anvil_setBlockTimestampInterval', [2419200 + 7776000])
+  await network.provider.send('evm_mine')
 
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
 

@@ -1,0 +1,7 @@
+[
+  "constructor(address,bytes32)",
+  "function ens() view returns (address)",
+  "function expiryTimes(bytes32) view returns (uint256)",
+  "function register(bytes32,address)",
+  "function rootNode() view returns (bytes32)"
+]

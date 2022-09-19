@@ -1,14 +1,16 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { useNFTImage } from '@app/hooks/useAvatar'
+import { useAvatar } from '@app/hooks/useAvatar'
 
-const StyledNftBox = styled.img<{ $loading: boolean }>(
-  ({ theme, $loading }) => css`
+import NFTTemplate from './@molecules/NFTTemplate'
+
+const StyledNftBox = styled.div(
+  ({ theme }) => css`
     width: 100%;
-    background: ${$loading ? theme.colors.accentGradient : 'none'};
     border-radius: ${theme.radii['2xLarge']};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
+    overflow: hidden;
   `,
 )
 
@@ -27,15 +29,18 @@ export const NFTWithPlaceholder = ({
 }: {
   name: string
   network: number
-} & ComponentProps<'img'> &
-  ComponentProps<typeof StyledNftBox>) => {
-  const { image, isLoading, isCompatible } = useNFTImage(name, network)
+} & Omit<ComponentProps<'div'>, 'ref'>) => {
+  const { avatar } = useAvatar(name, network)
+
+  const isCompatible = !!(name && name.split('.').length === 2 && name.endsWith('.eth'))
 
   if (!isCompatible) return null
 
   return (
     <Container>
-      <StyledNftBox {...{ ...props, $loading: isLoading, src: image }} />
+      <StyledNftBox {...props}>
+        <NFTTemplate name={name} backgroundImage={avatar} isNormalised />
+      </StyledNftBox>
     </Container>
   )
 }

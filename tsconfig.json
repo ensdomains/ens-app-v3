@@ -51,10 +51,5 @@
     ]
   },
   "include": ["next-env.d.ts", "mdx.d.ts", "**/*.ts", "**/*.tsx", "e2e/tsconfig.json"],
-  "exclude": [
-    "custom-test-env.js",
-    "e2e/**/*",
-    "**/*.ignore.ts",
-    "**/*.ignore.tsx",
-  ]
+  "exclude": ["custom-test-env.js", "e2e/**/*", "**/*.ignore.ts", "**/*.ignore.tsx"]
 }

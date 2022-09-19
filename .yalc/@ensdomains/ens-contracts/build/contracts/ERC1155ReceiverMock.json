@@ -1,0 +1,8 @@
+[
+  "constructor(bytes4,bool,bytes4,bool)",
+  "event BatchReceived(address,address,uint256[],uint256[],bytes)",
+  "event Received(address,address,uint256,uint256,bytes)",
+  "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
+  "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

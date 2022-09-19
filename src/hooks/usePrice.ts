@@ -1,43 +1,36 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { yearsToSeconds } from '@app/utils/utils'
 
-export const usePrice = (
-  nameOrNames: string | string[],
-  duration: number,
-  legacy?: boolean,
-  skip?: boolean,
-) => {
+export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
   const { ready, getPrice } = useEns()
   const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames]
-
   const type = legacy ? 'legacy' : 'new'
-  console.log('usePrice', nameOrNames, names, duration)
   const {
-    data: price,
+    data,
+    status,
+    isFetched,
     isLoading: loading,
     error,
+    internal: { isFetchedAfterMount },
   } = useQuery(
-    ['usePrice', type, duration, ...names],
-    async () => {
-      try {
-        console.log('getPrice', nameOrNames, duration)
-        console.log('getPrice', getPrice)
-
-        return await getPrice(nameOrNames, duration, legacy)
-      } catch (e) {
-        console.error(e)
-      }
-    },
+    ['usePrice', type, ...names],
+    async () => getPrice(nameOrNames, yearsToSeconds(1), legacy),
     {
-      enabled: !skip && ready,
+      enabled: !!(ready && nameOrNames && nameOrNames.length > 0),
     },
   )
 
-  console.log(error)
+  const base = data?.base
+  const premium = data?.premium
+  const hasPremium = data?.premium.gt(0)
 
   return {
-    price,
+    base,
+    premium,
+    hasPremium,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
     loading,
     error,
   }

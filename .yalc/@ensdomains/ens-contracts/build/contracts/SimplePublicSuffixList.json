@@ -1,0 +1,8 @@
+[
+  "event OwnershipTransferred(address indexed,address indexed)",
+  "function addPublicSuffixes(bytes[])",
+  "function isOwner(address) view returns (bool)",
+  "function isPublicSuffix(bytes) view returns (bool)",
+  "function owner() view returns (address)",
+  "function transferOwnership(address)"
+]

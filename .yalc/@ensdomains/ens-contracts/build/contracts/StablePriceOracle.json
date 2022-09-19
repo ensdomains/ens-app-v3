@@ -1,0 +1,13 @@
+[
+  "constructor(address,uint256[])",
+  "event RentPriceChanged(uint256[])",
+  "function premium(string,uint256,uint256) view returns (uint256)",
+  "function price(string,uint256,uint256) view returns (tuple(uint256,uint256))",
+  "function price1Letter() view returns (uint256)",
+  "function price2Letter() view returns (uint256)",
+  "function price3Letter() view returns (uint256)",
+  "function price4Letter() view returns (uint256)",
+  "function price5Letter() view returns (uint256)",
+  "function supportsInterface(bytes4) view returns (bool)",
+  "function usdOracle() view returns (address)"
+]
