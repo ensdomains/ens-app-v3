@@ -1,7 +1,9 @@
 import burnFuses from './burnFuses'
+import commitName from './commitName'
 import createSubname from './createSubname'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
+import registerName from './registerName'
 import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
 import updateEthAddress from './updateEthAddress'
@@ -20,6 +22,8 @@ export const transactions = {
   migrateProfileWithSync,
   burnFuses,
   createSubname,
+  commitName,
+  registerName,
 }
 
 export type Transaction = typeof transactions

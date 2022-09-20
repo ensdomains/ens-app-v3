@@ -42,6 +42,10 @@ let nextConfig = {
         destination: '/profile?name=:name',
       },
       {
+        source: '/register/:name',
+        destination: '/register?name=:name',
+      },
+      {
         source: '/address/:address',
         destination: '/address?address=:address',
       },

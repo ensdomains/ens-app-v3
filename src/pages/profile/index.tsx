@@ -3,7 +3,6 @@ import { ReactElement } from 'react'
 import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
-import Registration from '@app/components/pages/profile/[name]/registration/Registration'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -29,23 +28,22 @@ export default function Page() {
 
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
+  if (registrationStatus === 'available' || registrationStatus === 'premium') {
+    router.push(`/register/${name}`)
+    return null
+  }
+
   return (
-    <>
-      {registrationStatus === 'available' || registrationStatus === 'premium' ? (
-        <Registration {...{ nameDetails, isLoading }} />
-      ) : (
-        <ProfileContent
-          {...{
-            nameDetails,
-            primary,
-            isSelf,
-            isLoading,
-            _name,
-            name,
-          }}
-        />
-      )}
-    </>
+    <ProfileContent
+      {...{
+        nameDetails,
+        primary,
+        isSelf,
+        isLoading,
+        _name,
+        name,
+      }}
+    />
   )
 }
 

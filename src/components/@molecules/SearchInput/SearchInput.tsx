@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import { useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -15,6 +16,7 @@ import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { getRegistrationStatus } from '@app/utils/registrationStatus'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
@@ -175,6 +177,7 @@ export const SearchInput = ({
   const { t } = useTranslation('common')
   const router = useRouter()
   const breakpoints = useBreakpoint()
+  const queryClient = useQueryClient()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -326,10 +329,24 @@ export const SearchInput = ({
         return
       }
     }
-    const path =
+    let path =
       selectedItem.type === 'address'
         ? `/address/${selectedItem.value}`
         : `/profile/${selectedItem.value}`
+    if (selectedItem.type === 'nameWithDotEth' || selectedItem.type === 'name') {
+      const currentQuery = queryClient.getQueryData<any[]>([
+        'batch',
+        'getOwner',
+        'getExpiry',
+        selectedItem.value,
+      ])
+      if (currentQuery) {
+        const registrationStatus = getRegistrationStatus(currentQuery, selectedItem.value)
+        if (registrationStatus === 'available') {
+          path = `/register/${selectedItem.value}`
+        }
+      }
+    }
     setHistory((prev) =>
       [
         ...prev.filter(
@@ -351,7 +368,7 @@ export const SearchInput = ({
       },
       path,
     )
-  }, [normalisedName, router, searchItems, selected, setHistory])
+  }, [normalisedName, queryClient, router, searchItems, selected, setHistory])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

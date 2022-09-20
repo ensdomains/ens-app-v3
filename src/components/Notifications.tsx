@@ -1,12 +1,14 @@
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useQueryClient } from '@tanstack/react-query'
-import { useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/useChainName'
+import useTransactionUpdateCallback, {
+  UpdateCallback,
+} from '@app/hooks/useTransactionUpdateCallback'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
@@ -32,8 +34,6 @@ export const Notifications = () => {
   const breakpoints = useBreakpoint()
 
   const chainName = useChainName()
-  const transactions = useRecentTransactions()
-  const previousTransactions = useRef<ReturnType<typeof useRecentTransactions>>()
 
   const [open, setOpen] = useState(false)
 
@@ -43,34 +43,18 @@ export const Notifications = () => {
   const [notificationQueue, setNotificationQueue] = useState<Notification[]>([])
   const currentNotification = notificationQueue[0]
 
-  useEffect(() => {
-    const updatedTransactions = transactions.filter((transaction) => {
-      if (previousTransactions.current) {
-        const prevTransaction = previousTransactions.current.find(
-          (tr) => tr.hash === transaction.hash,
-        )
-        if (prevTransaction) {
-          return prevTransaction.status !== transaction.status
-        }
-      }
-      return false
-    })
-    previousTransactions.current = JSON.parse(JSON.stringify(transactions))
-    const transactionsToPush = updatedTransactions.map((transaction) => {
-      const { action, key } = JSON.parse(transaction.description)
+  const updateCallback = useCallback<UpdateCallback>(
+    (action, key, status, hash) => {
+      if (status === 'pending') return
       const resumable = key && getResumable(key)
-      return {
-        title: t(`transaction.status.${transaction.status}.notifyTitle`),
-        description: t(`transaction.status.${transaction.status}.notifyMessage`, {
+      const item = {
+        title: t(`transaction.status.${status}.notifyTitle`),
+        description: t(`transaction.status.${status}.notifyMessage`, {
           action: t(`transaction.description.${action}`),
         }),
         children: resumable ? (
           <ButtonContainer>
-            <a
-              target="_blank"
-              href={makeEtherscanLink(transaction.hash, chainName)}
-              rel="noreferrer"
-            >
+            <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
               <Button shadowless size="small" variant="secondary">
                 {t('transaction.viewEtherscan')}
               </Button>
@@ -85,17 +69,20 @@ export const Notifications = () => {
             </Button>
           </ButtonContainer>
         ) : (
-          <a target="_blank" href={makeEtherscanLink(transaction.hash, chainName)} rel="noreferrer">
+          <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
             <Button shadowless size="small" variant="secondary">
               {t('transaction.viewEtherscan')}
             </Button>
           </a>
         ),
       }
-    })
-    setNotificationQueue((prev) => [...prev, ...transactionsToPush])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions])
+
+      setNotificationQueue((queue) => [...queue, item])
+    },
+    [chainName, getResumable, resumeTransactionFlow, t],
+  )
+
+  useTransactionUpdateCallback(updateCallback)
 
   useEffect(() => {
     if (currentNotification) {

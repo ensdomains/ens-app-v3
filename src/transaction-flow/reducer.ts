@@ -22,10 +22,12 @@ export const helpers = (draft: InternalTransactionFlow) => {
   const getNoTransactionsStarted = (item: InternalTransactionFlowItem) =>
     item.transactions.every(({ stage }) => !stage || stage === 'confirm')
   const getCanRemoveItem = (item: InternalTransactionFlowItem) =>
-    !item.transactions ||
-    !item.resumable ||
-    getAllTransactionsComplete(item) ||
-    getNoTransactionsStarted(item)
+    item.requiresManualCleanup
+      ? false
+      : !item.transactions ||
+        !item.resumable ||
+        getAllTransactionsComplete(item) ||
+        getNoTransactionsStarted(item)
 
   return {
     getSelectedItem,
@@ -107,9 +109,24 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       currentTransaction.sendTime = Date.now()
       break
     }
+    case 'setTransactionStageFromUpdate': {
+      const { hash, key, status } = action.payload
+      const selectedItem = draft.items[key]
+      const transaction = selectedItem.transactions.find((x) => x.hash === hash)
+      if (transaction) {
+        const stage = status === 'confirmed' ? 'complete' : 'failed'
+        transaction.stage = stage
+        transaction.finaliseTime = Date.now()
+      }
+      break
+    }
     case 'cleanupTransaction': {
       const selectedItem = draft.items[action.payload]
-      if (selectedItem && (!selectedItem.resumable || getAllTransactionsComplete(selectedItem))) {
+      if (
+        selectedItem &&
+        !selectedItem.requiresManualCleanup &&
+        (!selectedItem.resumable || getAllTransactionsComplete(selectedItem))
+      ) {
         delete draft.items[action.payload]
       }
       break

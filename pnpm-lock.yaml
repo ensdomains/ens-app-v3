@@ -14,6 +14,9 @@ patchedDependencies:
   '@rainbow-me/rainbowkit@0.4.8':
     hash: zczigdeajjlj6h32kv7vfprn2y
     path: patches/@rainbow-me__rainbowkit@0.4.8.patch
+  react-confetti@6.1.0:
+    hash: bbuxkxhxbyez4jmqgptuoucij4
+    path: patches/react-confetti@6.1.0.patch
 
 specifiers:
   '@cloudflare/workers-types': ^3.14.1
@@ -23,9 +26,9 @@ specifiers:
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts
   '@ensdomains/ens-test-env': ^0.2.3
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.19
+  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
   '@ensdomains/eth-ens-namehash': ^2.0.15
-  '@ensdomains/thorin': ^0.6.15
+  '@ensdomains/thorin': ^0.6.16
   '@ethersproject/providers': ^5.7.0
   '@next/bundle-analyzer': ^12.2.5
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -101,6 +104,7 @@ specifiers:
   postcss-scss: ^4.0.4
   prettier: 2.6.2
   react: ^17.0.2
+  react-confetti: ^6.1.0
   react-dom: ^17.0.2
   react-ga: ^3.3.1
   react-hook-form: ^7.34.2
@@ -128,9 +132,9 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.18
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts_hardhat@2.11.1
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.19_ethers@5.7.0
+  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs_ethers@5.7.0
   '@ensdomains/eth-ens-namehash': 2.0.15
-  '@ensdomains/thorin': 0.6.15_6ycby5qtikbhve4sxtfce3vpny
+  '@ensdomains/thorin': 0.6.16_6ycby5qtikbhve4sxtfce3vpny
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_fcsnifgkfb6ypkeqq3oellhnki
   '@sentry/nextjs': 7.12.1_next@12.1.6+react@17.0.2
   '@svgr/webpack': 6.3.1
@@ -146,6 +150,7 @@ dependencies:
   lodash: 4.17.21
   next: 12.1.6_sfoxds7t5ydpegc3knd667wn6m
   react: 17.0.2
+  react-confetti: 6.1.0_bbuxkxhxbyez4jmqgptuoucij4_react@17.0.2
   react-dom: 17.0.2_react@17.0.2
   react-ga: 3.3.1_react@17.0.2
   react-hook-form: 7.34.2_react@17.0.2
@@ -2226,23 +2231,6 @@ packages:
     dev: true
     optional: true
 
-  /@ensdomains/ensjs/3.0.0-alpha.19_ethers@5.7.0:
-    resolution: {integrity: sha512-NP2CIHhWWw44nHFl4Q7EbleE1IEoS/ZaWE7twLEXD358FSvLybWxgVtGpGlgonf2ljedz2pUoYIVhNriVXo0IA==}
-    peerDependencies:
-      ethers: '*'
-    dependencies:
-      '@ensdomains/address-encoder': 0.2.16
-      '@ensdomains/content-hash': 2.5.7
-      dns-packet: 5.4.0
-      ethers: 5.7.0
-      graphql: 16.5.0
-      graphql-request: 5.0.0_graphql@16.5.0
-      idna-uts46-hx: 3.4.0
-      traverse: 0.6.6
-    transitivePeerDependencies:
-      - encoding
-    dev: false
-
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
     dev: false
@@ -2259,8 +2247,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.15_6ycby5qtikbhve4sxtfce3vpny:
-    resolution: {integrity: sha512-FFJ1e4w7dbTmfuf9+IsotV+N13byyAFYO06cw8V0WOqs04JNf463auhrE3lPbpAiqusB344xiZjHcB+i5gtOIQ==}
+  /@ensdomains/thorin/0.6.16_6ycby5qtikbhve4sxtfce3vpny:
+    resolution: {integrity: sha512-I6R6QIHWAkW88dfjhXz6RUluHWtF/4/IY5Ph4Aa8ho1LPWlhIl2iyKKdmkO5KwlKZXaJECbwSIHJ4pn/DiUsXQ==}
     peerDependencies:
       react: ^17
       react-dom: ^17
@@ -7652,7 +7640,7 @@ packages:
     resolution: {integrity: sha512-7O+FbCihrB5WGbFYesctwmTKae6rOiIzmz1icreWJ+0aA7LJfuqhEso2T9ncpcFtzMQtzXf2QGGueWJGTYsqrA==}
     dependencies:
       function-bind: 1.1.1
-      get-intrinsic: 1.1.1
+      get-intrinsic: 1.1.2
 
   /callsites/3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
@@ -9357,7 +9345,7 @@ packages:
       call-bind: 1.0.2
       es-to-primitive: 1.2.1
       function-bind: 1.1.1
-      get-intrinsic: 1.1.1
+      get-intrinsic: 1.1.2
       get-symbol-description: 1.0.0
       has: 1.0.3
       has-symbols: 1.0.3
@@ -11715,6 +11703,7 @@ packages:
       function-bind: 1.1.1
       has: 1.0.3
       has-symbols: 1.0.3
+    dev: true
 
   /get-intrinsic/1.1.2:
     resolution: {integrity: sha512-Jfm3OyCxHh9DJyc28qGk+JmfkpO41A4XkneDSujN9MDXrm4oDKdHvndhZ2dN94+ERNfkYJWDclW6k2L/ZGHjXA==}
@@ -11759,7 +11748,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       call-bind: 1.0.2
-      get-intrinsic: 1.1.1
+      get-intrinsic: 1.1.2
 
   /get-value/2.0.6:
     resolution: {integrity: sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==}
@@ -12148,6 +12137,7 @@ packages:
 
   /has-bigints/1.0.1:
     resolution: {integrity: sha512-LSBS2LjbNBTf6287JEbEzvJgftkF5qFkmCo9hDRpAzKhUOlJ+hx8dd4USs00SgsUNwc4617J9ki5YtEClM2ffA==}
+    dev: true
 
   /has-bigints/1.0.2:
     resolution: {integrity: sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ==}
@@ -12653,7 +12643,7 @@ packages:
     resolution: {integrity: sha512-O0DB1JC/sPyZl7cIo78n5dR7eUSwwpYPiXRhTzNxZVAMUuB8vlnRFyLxdrVToks6XPLVnFfbzaVd5WLjhgg+vA==}
     engines: {node: '>= 0.4'}
     dependencies:
-      get-intrinsic: 1.1.1
+      get-intrinsic: 1.1.2
       has: 1.0.3
       side-channel: 1.0.4
 
@@ -12702,7 +12692,7 @@ packages:
   /is-bigint/1.0.4:
     resolution: {integrity: sha512-zB9CruMamjym81i2JZ3UMn54PKGsQzsJeo6xvN3HJJ4CAsQNB6iRutp2To77OfCNuoxspsIhzaPoO1zyCEhFOg==}
     dependencies:
-      has-bigints: 1.0.1
+      has-bigints: 1.0.2
 
   /is-binary-path/2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
@@ -16408,6 +16398,17 @@ packages:
       strip-json-comments: 2.0.1
     dev: true
 
+  /react-confetti/6.1.0_bbuxkxhxbyez4jmqgptuoucij4_react@17.0.2:
+    resolution: {integrity: sha512-7Ypx4vz0+g8ECVxr88W9zhcQpbeujJAVqL14ZnXJ3I23mOI9/oBVTQ3dkJhUmB0D6XOtCZEM6N0Gm9PMngkORw==}
+    engines: {node: '>=10.18'}
+    peerDependencies:
+      react: ^16.3.0 || ^17.0.1 || ^18.0.0
+    dependencies:
+      react: 17.0.2
+      tween-functions: 1.2.0
+    dev: false
+    patched: true
+
   /react-dom/17.0.2_react@17.0.2:
     resolution: {integrity: sha512-s4h96KtLDUQlsENhMn1ar8t2bEa+q/YAtj8pPPdIjPDGBDIVNsrD9aXNWqspUe6AzKCIG0C1HZZLqLV7qpOBGA==}
     peerDependencies:
@@ -17370,7 +17371,7 @@ packages:
     resolution: {integrity: sha512-q5XPytqFEIKHkGdiMIrY10mvLRvnQh42/+GoBlFW3b2LXLE2xxJpZFdm94we0BaoV3RwJyGqg5wS7epxTv0Zvw==}
     dependencies:
       call-bind: 1.0.2
-      get-intrinsic: 1.1.1
+      get-intrinsic: 1.1.2
       object-inspect: 1.12.0
 
   /signal-exit/3.0.7:
@@ -17816,7 +17817,7 @@ packages:
     resolution: {integrity: sha512-y9xCjw1P23Awk8EvTpcyL2NIr1j7wJ39f+k6lvRnSMz+mz9CGz9NYPelDk42kOz6+ql8xjfK8oYzy3jAP5QU5A==}
     dependencies:
       call-bind: 1.0.2
-      define-properties: 1.1.3
+      define-properties: 1.1.4
     dev: true
 
   /string.prototype.trimend/1.0.5:
@@ -17830,7 +17831,7 @@ packages:
     resolution: {integrity: sha512-jh6e984OBfvxS50tdY2nRZnoC5/mLFKOREQfw8t5yytkoUsJRNxvI/E39qu1sD0OtWI3OC0XgKSmcWwziwYuZw==}
     dependencies:
       call-bind: 1.0.2
-      define-properties: 1.1.3
+      define-properties: 1.1.4
     dev: true
 
   /string.prototype.trimstart/1.0.5:
@@ -18678,6 +18679,10 @@ packages:
     resolution: {integrity: sha512-McnNiV1l8RYeY8tBgEpuodCC1mLUdbSN+CYBL7kJsJNInOP8UjDDEwdk6Mw60vdLLrr5NHKZhMAOSrR2NZuQ+w==}
     dependencies:
       safe-buffer: 5.2.1
+
+  /tween-functions/1.2.0:
+    resolution: {integrity: sha512-PZBtLYcCLtEcjL14Fzb1gSxPBeL7nWvGhO5ZFPGqziCcr8uvHp0NDmdjBchp6KHL+tExcg0m3NISmKxhU394dA==}
+    dev: false
 
   /tweetnacl-util/0.15.1:
     resolution: {integrity: sha512-RKJBIj8lySrShN4w6i/BonWp2Z/uxwC3h4y7xsRrpP59ZboCd0GpEVsOnMDYLMmKBpYhb5TgHzZXy7wTfYFBRw==}
@@ -20811,6 +20816,26 @@ packages:
       - web3-core-promievent
       - web3-eth-abi
       - web3-utils
+    dev: false
+
+  file:.yalc/@ensdomains/ensjs_ethers@5.7.0:
+    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
+    id: file:.yalc/@ensdomains/ensjs
+    name: '@ensdomains/ensjs'
+    version: 3.0.0-alpha.19
+    peerDependencies:
+      ethers: '*'
+    dependencies:
+      '@ensdomains/address-encoder': 0.2.16
+      '@ensdomains/content-hash': 2.5.7
+      dns-packet: 5.4.0
+      ethers: 5.7.0
+      graphql: 16.5.0
+      graphql-request: 5.0.0_graphql@16.5.0
+      idna-uts46-hx: 3.4.0
+      traverse: 0.6.6
+    transitivePeerDependencies:
+      - encoding
     dev: false
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:

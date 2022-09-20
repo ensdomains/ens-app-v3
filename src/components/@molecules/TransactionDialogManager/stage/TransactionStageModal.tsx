@@ -358,7 +358,7 @@ export const TransactionStageModal = ({
     return (
       <Button
         shadowless
-        disabled={requestLoading || !sendTransaction}
+        disabled={requestLoading || !sendTransaction || !!requestError}
         onClick={() => sendTransaction!()}
         data-testid="transaction-modal-confirm-button"
       >
@@ -369,6 +369,7 @@ export const TransactionStageModal = ({
     currentStep,
     dispatch,
     onDismiss,
+    requestError,
     requestLoading,
     sendTransaction,
     stage,

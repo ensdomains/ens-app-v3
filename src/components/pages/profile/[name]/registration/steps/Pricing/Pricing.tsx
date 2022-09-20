@@ -1,23 +1,20 @@
-import { BigNumber } from 'ethers'
-import { ComponentProps, ReactNode, useState } from 'react'
+import { ReactNode, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount, useBalance } from 'wagmi'
 
 import { Button, Checkbox, Heading, Typography, mq } from '@ensdomains/thorin'
 
-import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
-import GasDisplay from '@app/components/@atoms/GasDisplay'
-import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
+import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
-import { CurrencyUnit } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
+import FullInvoice from '../../FullInvoice'
 import { RegistrationStepData } from '../../types'
 import TemporaryPremium from './TemporaryPremium'
 
@@ -34,28 +31,9 @@ const StyledCard = styled(Card)(
   `,
 )
 
-const OptionBar = styled.div(
-  () => css`
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  `,
-)
-
-const InvoiceContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    justify-content: center;
-    gap: ${theme.space['2']};
-    width: 100%;
-  `,
-)
-
 const OutlinedContainer = styled.div(
   ({ theme }) => css`
+    width: ${theme.space.full};
     display: grid;
     align-items: center;
     grid-template-areas: 'title checkbox' 'description description';
@@ -94,44 +72,37 @@ const OutlinedContainerTitle = styled(Typography)(
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
-  transactionData: ReturnType<typeof useEstimateTransactionCost>['data']
-  hasPremium: boolean | undefined
-  yearlyFee: BigNumber | undefined
-  premiumFee: BigNumber | undefined
   callback: (props: RegistrationStepData['pricing']) => void
-  makeInvoiceItems: (years: number) => ComponentProps<typeof Invoice>['items']
 }
 
-const Pricing = ({
-  nameDetails,
-  transactionData,
-  hasPremium,
-  premiumFee,
-  yearlyFee,
-  callback,
-  makeInvoiceItems,
-}: Props) => {
+const Pricing = ({ nameDetails, callback }: Props) => {
   const breakpoints = useBreakpoint()
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
   const { address } = useAccount()
   const { data: balance } = useBalance({ addressOrName: address })
-
-  const fiatUnit = 'usd'
+  const resolverAddress = useContractAddress('PublicResolver')
 
   const [years, setYears] = useState(1)
-  const [makePrimary, setMakePrimary] = useState(false)
+  const [reverseRecord, setReverseRecord] = useState(false)
 
-  const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
-  const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
+  const fullEstimate = useEstimateFullRegistration({
+    registration: {
+      permissions: {},
+      records: {
+        coinTypes: [{ key: 'ETH', value: resolverAddress }],
+      },
+      resolver: resolverAddress,
+      reverseRecord,
+      years,
+    },
+    price: nameDetails.priceData,
+  })
+  const { hasPremium, premiumFee, gasPrice, yearlyFee, totalYearlyFee, estimatedGasFee } =
+    fullEstimate
 
-  const { gasPrice, transactionFee } = transactionData || {}
-
-  const totalYearlyFee = yearlyFee?.mul(years)
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
   const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0)
-
-  const invoiceItems = makeInvoiceItems(years)
 
   let actionButton: ReactNode
 
@@ -151,7 +122,7 @@ const Pricing = ({
     )
   } else {
     actionButton = (
-      <Button shadowless onClick={() => callback({ makePrimary, years })}>
+      <Button shadowless onClick={() => callback({ reverseRecord, years })}>
         Next
       </Button>
     )
@@ -169,26 +140,16 @@ const Pricing = ({
         }}
         highlighted
       />
-      <InvoiceContainer>
-        <OptionBar>
-          <GasDisplay gasPrice={gasPrice} />
-          <CurrencySwitch
-            value={currencyUnit}
-            onChange={(unit) => setCurrencyUnit(unit)}
-            fiat={fiatUnit}
-          />
-        </OptionBar>
-        <Invoice items={invoiceItems} unit={currencyDisplay} totalLabel="Estimated total" />
-      </InvoiceContainer>
+      <FullInvoice {...fullEstimate} />
       {hasPremium && gracePeriodEndDate ? (
         <TemporaryPremium startDate={gracePeriodEndDate} name={normalisedName} />
       ) : (
         yearlyFee &&
-        transactionFee &&
+        estimatedGasFee &&
         gasPrice && (
           <RegistrationTimeComparisonBanner
             rentFee={yearlyFee}
-            transactionFee={transactionFee}
+            transactionFee={estimatedGasFee}
             message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
           />
         )
@@ -202,8 +163,8 @@ const Pricing = ({
             label="Use as primary name"
             disabled={!address}
             size={breakpoints.md ? 'large' : 'medium'}
-            checked={makePrimary}
-            onChange={(e) => setMakePrimary(e.target.checked)}
+            checked={reverseRecord}
+            onChange={(e) => setReverseRecord(e.target.checked)}
           />
         </CheckboxWrapper>
         <OutlinedContainerDescription $name="description">

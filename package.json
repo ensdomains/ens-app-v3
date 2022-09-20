@@ -49,9 +49,9 @@
     "@ensdomains/address-encoder": "^0.2.18",
     "@ensdomains/ens-contracts": "file:.yalc/@ensdomains/ens-contracts",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "3.0.0-alpha.19",
+    "@ensdomains/ensjs": "file:.yalc/@ensdomains/ensjs",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "^0.6.15",
+    "@ensdomains/thorin": "^0.6.16",
     "@rainbow-me/rainbowkit": "0.4.8",
     "@sentry/nextjs": "^7.11.1",
     "@svgr/webpack": "^6.3.1",
@@ -67,6 +67,7 @@
     "lodash": "^4.17.21",
     "next": "12.1.6",
     "react": "^17.0.2",
+    "react-confetti": "^6.1.0",
     "react-dom": "^17.0.2",
     "react-ga": "^3.3.1",
     "react-hook-form": "^7.34.2",
@@ -172,7 +173,8 @@
     },
     "patchedDependencies": {
       "@synthetixio/synpress@1.2.0": "patches/@synthetixio__synpress@1.2.0.patch",
-      "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch"
+      "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",
+      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch"
     }
   }
 }

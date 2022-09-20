@@ -1,3 +1,10 @@
+import { useCallback } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { Button, mq } from '@ensdomains/thorin'
+
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
@@ -5,11 +12,6 @@ import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { Button, mq } from '@ensdomains/thorin'
-import { useCallback } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const Container = styled.form(({ theme }) => [
   css`

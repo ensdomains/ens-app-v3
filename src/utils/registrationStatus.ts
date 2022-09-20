@@ -1,5 +1,7 @@
-import type { PublicENS, ReturnedENS } from '@app/types/index'
 import { BigNumber } from 'ethers'
+
+import type { PublicENS, ReturnedENS } from '@app/types/index'
+
 import { emptyAddress } from './constants'
 import { yearsToSeconds } from './utils'
 
@@ -44,7 +46,9 @@ export const getRegistrationStatus = (
   name: string,
 ): RegistrationStatus => {
   const _batchResults = batchResults as BatchResult
-  if (!_batchResults) return 'invalid'
+  if (!_batchResults) {
+    return 'invalid'
+  }
   const { labels, isDotETH } = start(name)
   const resLength = _batchResults?.length
   if (is2ldEth(isDotETH, labels, false)) {

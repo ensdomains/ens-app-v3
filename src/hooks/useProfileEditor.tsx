@@ -237,7 +237,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     }
   }, [profile, reset])
 
-  const handleProfileSubmit = async (profileData: ProfileEditorType) => {
+  const getValuesAsProfile = (profileData: ProfileEditorType) => {
     const dirtyFields = getDirtyFields(formState.dirtyFields, profileData) as ProfileEditorType
 
     const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(([key, value]) => ({
@@ -252,12 +252,15 @@ const useProfileEditor = ({ callback, profile }: Props) => {
 
     const contentHash = dirtyFields.website
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const records = {
+    return {
       texts,
       coinTypes,
       contentHash,
     }
+  }
+
+  const handleProfileSubmit = async (profileData: ProfileEditorType) => {
+    const records = getValuesAsProfile(profileData)
 
     callback(records)
   }
@@ -286,6 +289,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     control,
     setFocus,
     handleSubmit: handleSubmit(handleProfileSubmit),
+    getValuesAsProfile,
     clearErrors,
     tab,
     setTab,

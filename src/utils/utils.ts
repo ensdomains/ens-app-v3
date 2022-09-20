@@ -32,6 +32,8 @@ export const secondsToDays = (seconds: number) => Math.floor(seconds / (60 * 60 
 
 export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
 
+export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
+
 export const formatExpiry = (expiry: Date) => `
 ${expiry.toLocaleDateString(undefined, {
   month: 'long',
@@ -39,3 +41,9 @@ ${expiry.toLocaleDateString(undefined, {
 
 export const makeEtherscanLink = (hash: string, network?: string) =>
   `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
+
+export const isBrowser = !!(
+  typeof window !== 'undefined' &&
+  window.document &&
+  window.document.createElement
+)
