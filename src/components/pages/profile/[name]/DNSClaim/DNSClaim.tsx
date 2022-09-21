@@ -14,6 +14,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { AddTextRecord } from './AddTextRecord'
+import { ClaimComplete } from './ClaimComplete'
 import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
 import { isDnsSecEnabled } from './utils'
@@ -230,11 +231,8 @@ const dnsSecModes = [
 export default () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
-
   const [currentStep, setCurrentStep] = useState(0)
-
-  console.log('router:', router.query.name)
-
+  const [syncWarning, setSyncWarning] = useState(false)
   const {
     isLoading: detailsLoading,
     error,
@@ -247,15 +245,13 @@ export default () => {
     basicIsCachedData,
     profileIsCachedData,
   } = useNameDetails(router.query.name as string)
-
   const [stepStatus, setStepStatus] = useState(['inProgress', 'notStarted', 'notStarted'])
-
   const { getOwner } = useEns()
-  const { name } = router.query
-
   const { data: ownership, isLoading } = useQuery([name, 'DNSClaim', 'getOwner'], () =>
     getOwner(name as string),
   )
+
+  const { name } = router.query
 
   const owner = ownership?.owner
 
@@ -270,25 +266,7 @@ export default () => {
           setCurrentStep(0)
           return
         }
-        setCurrentStep(1)
-        /*
-        const prover = DNSProver.create('https://cloudflare-dns.com/dns-query')
-        const result = await prover.queryWithProof('TXT', textDomain)
-        if (dnsOwner || parseInt(dnsOwner) === 0) {
-          // Empty
-          dnsRegistrarState = 8
-        } else if (!utils.isAddress(dnsOwner)) {
-          // Invalid record
-          dnsRegistrarState = 4
-        } else if (!owner || dnsOwner.toLowerCase() === owner.toLowerCase()) {
-          // Ready to register
-          dnsRegistrarState = 5
-        } else {
-          // Out of sync
-          dnsRegistrarState = 6
-        }
-        console.log('result: ', result)
-        */
+        // setCurrentStep(3)
       } catch (e) {
         console.error('caught error: ', e)
         dnsRegistrarState = 0
@@ -331,8 +309,15 @@ export default () => {
       <Spacer $height={4} />
       <MainContentContainer>
         {currentStep === 0 && <EnableDNSSEC {...{ currentStep, stepStatus, setCurrentStep }} />}
-        {currentStep === 1 && <AddTextRecord {...{ currentStep, stepStatus, setCurrentStep }} />}
-        {currentStep === 2 && <ClaimDomain {...{ currentStep, stepStatus }} />}
+        {currentStep === 1 && (
+          <AddTextRecord
+            {...{ currentStep, stepStatus, setCurrentStep, syncWarning, setSyncWarning }}
+          />
+        )}
+        {currentStep === 2 && (
+          <ClaimDomain {...{ currentStep, stepStatus, setCurrentStep, syncWarning }} />
+        )}
+        {currentStep === 3 && <ClaimComplete {...{ currentStep, stepStatus, setCurrentStep }} />}
       </MainContentContainer>
     </Container>
   )

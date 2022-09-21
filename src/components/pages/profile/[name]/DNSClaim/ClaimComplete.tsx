@@ -1,15 +1,21 @@
 import packet from 'dns-packet'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
+import ReactConfetti from 'react-confetti'
+import useWindowSize from 'react-use/lib/useWindowSize'
 import styled, { css } from 'styled-components'
 import { useAccount, useProvider, useSigner } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Oracle as NewOracle } from '@ensdomains/dnssecoraclejs'
-import { Button, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
+import NFTTemplate from '@app/components/@molecules/NFTTemplate'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
+import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
+import { useNFTImage } from '@app/hooks/useAvatar'
+import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
 
@@ -102,70 +108,85 @@ export const NamePillWithAddress = ({
   )
 }
 
-const handleClaim = (contracts, name, provider, signer, address, setCurrentStep) => async () => {
-  const dnsRegistrarContract = await contracts.getDNSRegistrar()
-  const resolverContract = await contracts.getPublicResolver()
-  const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
-  const result = await prover.queryWithProof('TXT', `_ens.${name}`)
-  const registrarOracle = await dnsRegistrarContract.oracle()
+const Confetti = () => {
+  const { width, height } = useWindowSize()
+  const [hide, setHide] = useState(false)
 
-  const oracle = new NewOracle(registrarOracle, provider)
-  const proofData = await oracle.getProofData(result)
+  useEffect(() => {
+    setTimeout(() => {
+      setHide(true)
+    }, 5000)
+  }, [])
 
-  const encodedName = `0x${packet.name.encode(name).toString('hex')}`
-  const data = proofData.rrsets.map((x) => Object.values(x))
-  const { proof } = proofData
-
-  const tx = await dnsRegistrarContract
-    .connect(signer)
-    .proveAndClaimWithResolver(encodedName, data, proof, resolverContract.address, address)
-
-  const receipt = await tx.wait()
-  setCurrentStep((step: number) => step + 1)
-  console.log('receipt: ', receipt)
+  return <ReactConfetti width={width} height={height} numberOfPieces={hide ? 0 : 200} />
 }
 
-export const ClaimDomain = ({ currentStep, setCurrentStep, syncWarning }) => {
+const StyledNftBox = styled.img<{ $loading: boolean }>(
+  ({ theme, $loading }) => css`
+    width: 500px;
+    height: 500px;
+    background: ${$loading ? theme.colors.accentGradient : 'none'};
+    border-radius: ${theme.radii['2xLarge']};
+    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+  `,
+)
+
+const FunkyTypography = styled(Typography)(
+  ({ theme }) => css`
+    background: linear-gradient(330.4deg, #44bcf0 4.54%, #7298f8 59.2%, #a099ff 148.85%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+  `,
+)
+
+const DomainTextContainer = styled.div`
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+`
+
+const NFTTemplateContainer = styled.div(
+  ({ theme }) => css`
+    border-radius: ${theme.radii['2xLarge']};
+  `,
+)
+
+export const ClaimComplete = ({ currentStep }) => {
+  const chainId = useChainId()
   const { contracts } = useEns()
   const provider = useProvider()
   const { data: signer } = useSigner()
   const router = useRouter()
   const { address } = useAccount()
+  const { image, isLoading, isCompatible } = useNFTImage('leontalbert.eth', 1)
 
   const name = router.query.name as string
 
   return (
     <Container>
-      <Typography>Claim your domain</Typography>
-      <Spacer $height={4} />
-      {syncWarning ? (
-        <Helper type="warning" style={{ textAlign: 'center' }}>
-          <Typography>You are importing a DNS name that you appear to not own.</Typography>
-        </Helper>
-      ) : (
-        <Typography>You have verified your ownership and can claim this domain.</Typography>
-      )}
-      <Spacer $height={4} />
-      <GreyBox>
-        <Typography>DNS Owner</Typography>
-        <NamePillWithAddress name={name} label={`${name}-avatar`} network={1} address={address} />
-      </GreyBox>
-      <Spacer $height={4} />
-      <GreyBox>
-        <Typography>Estimated network cost</Typography>
-        <Typography>000.4 ETH</Typography>
-      </GreyBox>
+      <Confetti />
+      <NFTTemplateContainer>
+        <NFTTemplate name={name} isNormalised />
+      </NFTTemplateContainer>
+      <Spacer $height={5} />
+      <Typography {...{ weight: 'bold', variant: 'extraLarge' }}>Congratulations!</Typography>{' '}
+      <DomainTextContainer>
+        <Typography {...{ weight: 'bold', variant: 'large' }}>You are now the owner of</Typography>
+        <FunkyTypography {...{ weight: 'bold', variant: 'large' }}>{name}</FunkyTypography>
+      </DomainTextContainer>
+      <Typography {...{}}>
+        Your domain name was successfully imported into ENS. You can now view and manage your name.
+      </Typography>
       <Spacer $height={5} />
       <ButtonContainer>
-        <CheckButton variant="primary" size="small">
-          Back
-        </CheckButton>
         <CheckButton
           variant="primary"
           size="small"
-          onClick={handleClaim(contracts, name, provider, signer, address, setCurrentStep)}
+          onClick={() => {
+            router.push(`/profile/${name}`)
+          }}
         >
-          Claim
+          View name
         </CheckButton>
       </ButtonContainer>
     </Container>

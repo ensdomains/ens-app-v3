@@ -101,22 +101,18 @@ enum Errors {
   DNS_RECORD_INVALID,
 }
 
-export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
+export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyncWarning }) => {
   const router = useRouter()
   const { name } = router.query
   const { address } = useAccount()
   const { errorState, setErrorState } = useState<Errors>(Errors.NOT_CHECKED)
-  const [syncWarning, setSyncWarning] = useState(false)
 
   const handleCheck = async () => {
     try {
-      const state = 0
       isSubdomainSet(name as string)
       const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
       const result = await prover.queryWithProof('TXT', `_ens.${name}`)
       const dnsOwner = getDnsOwner(result)
-      console.log('result: ', result)
-      console.log('dnsOwner: ', dnsOwner)
 
       if (parseInt(dnsOwner) === 0) {
         setSyncWarning(false)
@@ -148,6 +144,21 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
     <Container>
       <Typography>Add Text Records</Typography>
       <Spacer $height={5} />
+      {syncWarning && (
+        <>
+          <Helper type="warning" style={{ textAlign: 'center' }}>
+            <Typography>
+              You don't appear to be the DNS Owner of this domain, but you can still add this name
+              to ENS Registry.
+            </Typography>
+            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+              If you own this domain change its _ens TXT record to contain your Ethereum Address and
+              click 'Check' again, otherwise click 'Claim' to proceed.
+            </Typography>
+          </Helper>
+          <Spacer $height={6} />
+        </>
+      )}
       <Typography>
         You need to create a new DNS record for your domain using these details. This will claim
         your Ethereum address as the owner of this domain.
@@ -167,22 +178,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
       </ButtonRow>
       <Spacer $height={2} />
       <Copyable {...{ label: 'Value', value: address }} />
-      <Spacer $height={5} />
-      {syncWarning && (
-        <>
-          <Helper type="warning" style={{ textAlign: 'center' }}>
-            <Typography>
-              You don't appear to be the DNS Owner of this domain, but anyone can add this domain to
-              the ENS Registry.
-            </Typography>
-            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
-              If you know you own this domain change its _ens TXT record to contain your Ethereum
-              Address and click 'Check' again, otherwise click 'Claim' to proceed.
-            </Typography>
-          </Helper>
-          <Spacer $height={6} />
-        </>
-      )}
+      <Spacer $height={6} />
       <ButtonContainer>
         <CheckButton
           onClick={() => {
@@ -208,7 +204,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep }) => {
             size="small"
             disabled={currentStep === 2}
           >
-            Claim
+            Continue
           </CheckButton>
         )}
       </ButtonContainer>
