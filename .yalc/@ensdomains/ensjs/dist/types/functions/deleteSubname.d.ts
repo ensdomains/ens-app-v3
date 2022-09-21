@@ -1,4 +1,7 @@
+import { ethers } from 'ethers';
 import { ENSArgs } from '..';
-export default function ({ transferSubname, signer }: ENSArgs<'transferSubname' | 'signer'>, name: string, { contract, }: {
+declare type Args = {
     contract: 'registry' | 'nameWrapper';
-}): Promise<import("ethers").PopulatedTransaction>;
+};
+export default function ({ contracts, signer }: ENSArgs<'contracts' | 'signer' | 'getExpiry'>, name: string, { contract }: Args): Promise<ethers.PopulatedTransaction>;
+export {};

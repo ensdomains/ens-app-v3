@@ -49,13 +49,13 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   const duration = yearsToSeconds(years)
   const labels = names.map((name) => name.replace('.eth', ''))
 
-  console.log(labels)
+  // console.log(labels)
 
-  const br = await ens.contracts?.getBulkRenewal()
-  console.log('br', br)
+  // const br = await ens.contracts?.getBulkRenewal()
+  // console.log('br', br)
 
-  const p = await br!.rentPrice(names, duration)
-  console.log('p', p)
+  // const p = await br!.rentPrice(names, duration)
+  // console.log('p', p)
 
   // br!.connect(signer).renewAll(labels, duration, { value: p?.base })
 

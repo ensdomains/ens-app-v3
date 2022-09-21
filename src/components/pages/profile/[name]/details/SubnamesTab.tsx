@@ -1,24 +1,25 @@
+/* eslint-disable no-nested-ternary */
 import { useRouter } from 'next/router'
-import { ReactNode, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, CloseSVG, PlusSVG, Typography, mq } from '@ensdomains/thorin'
+import { Button, CloseSVG, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
 
-import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
 import {
   NameTableHeader,
   NameTableMode,
   SortDirection,
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
-import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import { SubnameSortType, useSubnamePagination } from '@app/hooks/useSubnamePagination'
+import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameInfiniteQuery'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
+import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
+import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
 import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
 const TabWrapperWithButtons = styled.div(
@@ -32,25 +33,15 @@ const TabWrapperWithButtons = styled.div(
   `,
 )
 
-const StyledTabWrapper = styled(TabWrapper)<{ $isFetching?: boolean }>(
-  ({ $isFetching }) => css`
-    overflow: hidden;
-    transition: opacity 0.15s ease-in-out;
-    opacity: 1;
-    ${$isFetching &&
-    css`
-      pointer-events: none;
-      opacity: 0.5;
-    `}
-  `,
-)
+const StyledTabWrapper = styled(TabWrapper)(() => css``)
 
-const NoneFoundContainer = styled(TabWrapper)(
+const Footer = styled.div(
   ({ theme }) => css`
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: ${theme.space['2']};
+    height: ${theme.space['8']};
+    border-top: 1px solid ${theme.colors.borderTertiary};
   `,
 )
 
@@ -110,10 +101,20 @@ const PlusPrefix = styled.svg(
   `,
 )
 
+const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
+  ({ theme, $showBorder }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: ${theme.space['15']};
+    ${$showBorder && `border-top: 1px solid ${theme.colors.borderTertiary};`}
+  `,
+)
+
 export const SubnamesTab = ({
   name,
   network,
-  canEdit,
+  canEdit: _canEdit,
   isWrapped,
 }: {
   name: string
@@ -130,45 +131,42 @@ export const SubnamesTab = ({
   const [selectedNames, setSelectedNames] = useState<string[]>([])
   const handleSelectName = (subname: string) => () => {
     if (selectedNames.includes(subname)) {
-      setSelectedNames(selectedNames.filter((n) => n !== subname))
+      setSelectedNames([])
     } else {
-      setSelectedNames([...selectedNames, subname])
+      setSelectedNames([subname])
     }
   }
 
+  const canEdit = _canEdit && name.replace('.eth', '').indexOf('.') === -1
+
   const [sortType, setSortType] = useState<SubnameSortType | undefined>()
   const [sortDirection, setSortDirection] = useState(SortDirection.desc)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [searchInput, setSearchInput] = useState('')
 
-  const [page, setPage] = useState(1)
-  // const page = router.query.page ? parseInt(router.query.page as string) : 1
-  const pageSize = router.query.pageSize ? parseInt(router.query.pageSize as string) : 10
-  const { subnames, max, isLoading, totalPages, isFetching } = useSubnamePagination(
+  const searchQuery = (router.query.search as string) || ''
+  const [_searchQuery, setSearchQuery] = useState(searchQuery)
+  const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
+
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    url.searchParams.set('search', _searchQuery)
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_searchQuery])
+
+  const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
     name,
-    page,
     sortType,
     sortDirection,
-    pageSize,
     searchQuery,
   )
 
-  // const setPage = (newPage: number) => {
-  //   const url = new URL(router.asPath, window.location.origin)
-  //   url.searchParams.set('page', newPage.toString())
-  //   url.searchParams.set('pageSize', pageSize.toString())
-  //   router.push(url.toString(), undefined, {
-  //     shallow: true,
-  //   })
-  // }
-
-  const setPageSize = (newPageSize: number) => {
-    const url = new URL(router.asPath, window.location.origin)
-    url.searchParams.set('page', page.toString())
-    url.searchParams.set('pageSize', newPageSize.toString())
-    router.push(url.toString(), undefined, {
-      shallow: true,
-    })
-  }
+  const [isIntersecting, setIsIntersecting] = useState(false)
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetching) {
+      fetchNextPage()
+    }
+  }, [isIntersecting, fetchNextPage, hasNextPage, isFetching])
 
   const createSubname = () =>
     showDataInput(`make-subname-${name}`, 'CreateSubname', {
@@ -176,77 +174,47 @@ export const SubnamesTab = ({
       isWrapped,
     })
 
-  let InnerContent: ReactNode
+  const deleteSubname = () => {
+    const subname = selectedNames[0]
+    if (subname) {
+      showDataInput(`delete-subname-${subname}`, 'DeleteSubname', {
+        name: subname,
+        contract: isWrapped ? 'nameWrapper' : 'registry',
+      })
+    }
+  }
 
+  let InnerContent: ReactNode
   if (isLoading) {
-    InnerContent = <SpinnerRow />
-  } else if (totalPages > 0) {
     InnerContent = (
-      <>
-        <StyledTabWrapper $isFetching={isFetching}>
-          <NameTableHeader
-            selectable={canEdit}
-            sortType={sortType}
-            sortTypeOptionValues={[SortType.creationDate, SortType.labelName]}
-            sortDirection={sortDirection}
-            searchQuery={searchQuery}
-            mode={mode}
-            selectedCount={selectedNames.length}
-            onSortTypeChange={(value: SortType) => {
-              if (['creationDate', 'labelName'].includes(value))
-                setSortType(value as SubnameSortType)
-            }}
-            onSortDirectionChange={setSortDirection}
-            onModeChange={setMode}
-            onSearchChange={setSearchQuery}
-          >
-            {mode === 'select' && (
-              <Button shadowless size="extraSmall" tone="red" variant="secondary">
-                <ButtonInner>
-                  <CloseSVG />
-                  {t('action.delete', { ns: 'common' })}
-                </ButtonInner>
-              </Button>
-            )}
-          </NameTableHeader>
-          <div>
-            {subnames.length > 0 ? (
-              subnames.map((subname) => (
-                <TaggedNameItem
-                  key={subname.name}
-                  name={subname.name}
-                  network={network}
-                  mode={mode}
-                  selected={selectedNames.includes(subname.name)}
-                  onClick={handleSelectName(subname.name)}
-                />
-              ))
-            ) : (
-              <NoMoreResultsContainer>
-                <Typography>{t('details.tabs.subnames.noMoreResults')}</Typography>
-              </NoMoreResultsContainer>
-            )}
-          </div>
-          <NameTableFooter
-            current={page}
-            max={max}
-            alwaysShowLast={false}
-            onChange={setPage}
-            total={totalPages}
-            pageSize={pageSize}
-            onPageSizeChange={setPageSize}
-          />
-        </StyledTabWrapper>
-      </>
+      <SpinnerContainer>
+        <Spinner size="small" color="accent" />
+      </SpinnerContainer>
     )
-  } else if (!canEdit) {
+  } else if (subnames.length === 0) {
+    InnerContent = <NoMoreResultsContainer>No Results</NoMoreResultsContainer>
+  } else if (subnames.length > 0) {
     InnerContent = (
-      <NoneFoundContainer>
-        <Typography>{t('details.tabs.subnames.empty')}</Typography>
-      </NoneFoundContainer>
+      <InfiniteScrollContainer onIntersectingChange={setIsIntersecting}>
+        {subnames.map((subname) => (
+          <TaggedNameItem
+            key={subname.name}
+            name={subname.name}
+            network={network}
+            mode={mode}
+            selected={selectedNames.includes(subname.name)}
+            onClick={handleSelectName(subname.name)}
+          />
+        ))}
+        {isFetching && (
+          <SpinnerContainer $showBorder>
+            <Spinner size="small" color="accent" />
+          </SpinnerContainer>
+        )}
+      </InfiniteScrollContainer>
     )
   } else {
-    InnerContent = null
+    InnerContent = `${subnames.length}`
   }
 
   return (
@@ -267,7 +235,43 @@ export const SubnamesTab = ({
           </Button>
         </AddSubnamesCard>
       )}
-      {InnerContent}
+      <StyledTabWrapper>
+        <NameTableHeader
+          selectable={canEdit}
+          sortType={sortType}
+          sortTypeOptionValues={[SortType.creationDate, SortType.labelName]}
+          sortDirection={sortDirection}
+          searchQuery={searchInput}
+          mode={mode}
+          selectedCount={selectedNames.length}
+          onSortTypeChange={(value: SortType) => {
+            if (['creationDate', 'labelName'].includes(value)) setSortType(value as SubnameSortType)
+          }}
+          onSortDirectionChange={setSortDirection}
+          onModeChange={setMode}
+          onSearchChange={(s) => {
+            setSearchInput(s)
+            debouncedSetSearch(s)
+          }}
+        >
+          {mode === 'select' && (
+            <Button
+              shadowless
+              size="extraSmall"
+              tone="red"
+              variant="secondary"
+              onClick={deleteSubname}
+            >
+              <ButtonInner>
+                <CloseSVG />
+                {t('action.delete', { ns: 'common' })}
+              </ButtonInner>
+            </Button>
+          )}
+        </NameTableHeader>
+        {InnerContent}
+        <Footer />
+      </StyledTabWrapper>
     </TabWrapperWithButtons>
   )
 }

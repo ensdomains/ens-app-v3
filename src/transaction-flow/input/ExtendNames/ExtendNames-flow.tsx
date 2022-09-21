@@ -1,6 +1,8 @@
-import { useState } from 'react'
+import { BigNumber } from 'ethers'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useSigner } from 'wagmi'
 
 import { Avatar, Button, Dialog, mq } from '@ensdomains/thorin'
 
@@ -13,9 +15,10 @@ import { useAvatar } from '@app/hooks/useAvatar'
 import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import { useZorb } from '@app/hooks/useZorb'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { makeTransactionItem, transactions } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { CurrencyUnit } from '@app/types'
+import { useEns } from '@app/utils/EnsProvider'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
@@ -155,6 +158,8 @@ export type Props = {
 
 const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
+  const ens = useEns()
+  const { ready } = ens
 
   const [view, setView] = useState<'name-list' | 'registration'>(
     names.length ? 'name-list' : 'registration',
@@ -162,6 +167,24 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const [years, setYears] = useState(1)
   const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
   const fiatUnit = 'usd'
+
+  const { data: signer } = useSigner()
+  useEffect(() => {
+    ;(async () => {
+      if (!ready || !signer) return
+      const populatedTransaction = await transactions.extendNames.transaction(signer as any, ens, {
+        names,
+        years: 1,
+        rentPrice: BigNumber.from('0'),
+      })
+      const gasLimit = await signer!.estimateGas(populatedTransaction)
+      console.log('gas limit', gasLimit.toNumber())
+
+      // const br = await contracts?.getBulkRenewal()
+      // const cost = await br?.estimateGas.renewAll(names, yearsToSeconds(years))
+      // console.log('COST', cost)
+    })()
+  }, [ready, signer])
 
   const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
 

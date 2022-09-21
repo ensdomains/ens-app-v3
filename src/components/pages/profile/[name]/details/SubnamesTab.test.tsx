@@ -6,7 +6,7 @@ import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 import { useAvatar } from '@app/hooks/useAvatar'
-import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
+import { useSubnameInfiniteQuery } from '@app/hooks/useSubnameInfiniteQuery'
 import { useZorb } from '@app/hooks/useZorb'
 
 import { SubnamesTab } from './SubnamesTab'
@@ -17,7 +17,7 @@ jest.mock('@app/hooks/useAvatar')
 jest.mock('next/router')
 
 const mockUseRouter = mockFunction(useRouter)
-const mockUseSubnamePagination = mockFunction(useSubnamePagination)
+const mockUseSubnamePagination = mockFunction(useSubnameInfiniteQuery)
 const mockUseZorb = mockFunction(useZorb)
 const mockUseAvatar = mockFunction(useAvatar)
 

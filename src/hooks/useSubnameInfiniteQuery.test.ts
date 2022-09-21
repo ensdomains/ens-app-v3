@@ -2,7 +2,7 @@ import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useEns } from '@app/utils/EnsProvider'
 
-import { useSubnamePagination } from './useSubnamePagination'
+import { useSubnameInfiniteQuery } from './useSubnameInfiniteQuery'
 
 jest.mock('@app/utils/EnsProvider')
 
@@ -33,12 +33,9 @@ describe('useSubnamePagination', () => {
       subnameCount: 5000,
     }
     mockGetSubnames.mockResolvedValue(firstSubnames)
-    const { result, waitFor, rerender } = renderHook(
-      (page) => useSubnamePagination('test.eth', page),
-      {
-        initialProps: 1,
-      },
-    )
+    const { result, waitFor, rerender } = renderHook(() => useSubnameInfiniteQuery('test.eth'), {
+      initialProps: 1,
+    })
     expect(mockGetSubnames).toBeCalled()
     rerender(2)
     await waitFor(() => !result.current.isFetching)

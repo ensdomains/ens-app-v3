@@ -27,7 +27,7 @@ type Names = {
   subnames?: {
     label: string
     namedOwner: string
-  }[],
+  }[]
   customDuration?: number
 }
 
@@ -97,7 +97,8 @@ const names: Names[] = [
       { label: 'xyz', namedOwner: 'owner' },
       { label: 'addr', namedOwner: 'owner' },
     ],
-  },{
+  },
+  {
     label: 'name-with-premium',
     namedOwner: 'owner',
     namedAddr: 'owner',
@@ -114,7 +115,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const publicResolver = await ethers.getContract('LegacyPublicResolver')
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
-
 
   for (const { label, namedOwner, namedAddr, customDuration, records, subnames } of names) {
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'

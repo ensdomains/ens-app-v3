@@ -588,7 +588,7 @@ export class ENS {
 
   public deleteSubname = this.generateWriteFunction<typeof deleteSubname>(
     'deleteSubname',
-    ['transferSubname'],
+    ['contracts'],
   )
 
   public transferSubname = this.generateWriteFunction<typeof transferSubname>(

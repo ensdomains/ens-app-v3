@@ -21,12 +21,44 @@ __export(deleteSubname_exports, {
   default: () => deleteSubname_default
 });
 module.exports = __toCommonJS(deleteSubname_exports);
-async function deleteSubname_default({ transferSubname, signer }, name, {
-  contract
-}) {
-  return transferSubname.populateTransaction(name, {
-    contract,
-    owner: "0x0000000000000000000000000000000000000000",
-    signer
-  });
+var import_ethers = require("ethers");
+var import_normalise = require("../utils/normalise");
+async function deleteSubname_default({ contracts, signer }, name, { contract }) {
+  const labels = name.split(".");
+  if (labels.length !== 3) {
+    throw new Error("ENS.js currently only supports deleting 2LDs, not TLDs");
+  }
+  if (labels[2] !== "eth") {
+    throw new Error("ENS.js currently only supports deleting .eth 2LDs");
+  }
+  const label = labels.shift();
+  const labelhash = import_ethers.ethers.utils.solidityKeccak256(["string"], [label]);
+  const parentNodehash = (0, import_normalise.namehash)(labels.join("."));
+  switch (contract) {
+    case "registry": {
+      const registry = (await contracts.getRegistry()).connect(signer);
+      return registry.populateTransaction.setSubnodeRecord(
+        parentNodehash,
+        labelhash,
+        "0x0000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000",
+        0
+      );
+    }
+    case "nameWrapper": {
+      const nameWrapper = (await contracts.getNameWrapper()).connect(signer);
+      return nameWrapper.populateTransaction.setSubnodeRecord(
+        parentNodehash,
+        label,
+        "0x0000000000000000000000000000000000000000",
+        "0x0000000000000000000000000000000000000000",
+        0,
+        0,
+        0
+      );
+    }
+    default: {
+      throw new Error(`Unknown contract: ${contract}`);
+    }
+  }
 }

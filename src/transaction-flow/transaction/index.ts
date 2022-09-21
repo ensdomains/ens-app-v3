@@ -1,5 +1,6 @@
 import burnFuses from './burnFuses'
 import createSubname from './createSubname'
+import deleteSubname from './deleteSubname'
 import extendNames from './extendNames'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
@@ -22,6 +23,7 @@ export const transactions = {
   burnFuses,
   createSubname,
   extendNames,
+  deleteSubname,
 }
 
 export type Transaction = typeof transactions
