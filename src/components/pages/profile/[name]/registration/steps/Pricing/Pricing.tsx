@@ -73,9 +73,10 @@ const OutlinedContainerTitle = styled(Typography)(
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   callback: (props: RegistrationStepData['pricing']) => void
+  hasPrimaryName: boolean
 }
 
-const Pricing = ({ nameDetails, callback }: Props) => {
+const Pricing = ({ nameDetails, callback, hasPrimaryName }: Props) => {
   const breakpoints = useBreakpoint()
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
@@ -84,7 +85,7 @@ const Pricing = ({ nameDetails, callback }: Props) => {
   const resolverAddress = useContractAddress('PublicResolver')
 
   const [years, setYears] = useState(1)
-  const [reverseRecord, setReverseRecord] = useState(false)
+  const [reverseRecord, setReverseRecord] = useState(!hasPrimaryName)
 
   const fullEstimate = useEstimateFullRegistration({
     registration: {

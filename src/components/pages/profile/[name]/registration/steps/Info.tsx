@@ -93,7 +93,7 @@ const infoItems = [
 type Props = {
   registrationData: RegistrationReducerDataItem
   nameDetails: ReturnType<typeof useNameDetails>
-  callback: () => void
+  callback: (data: { back: boolean }) => void
 }
 
 const Info = ({ registrationData, nameDetails: { priceData }, callback }: Props) => {
@@ -114,12 +114,12 @@ const Info = ({ registrationData, nameDetails: { priceData }, callback }: Props)
       <FullInvoice {...estimate} />
       <ButtonContainer>
         <MobileFullWidth>
-          <Button shadowless variant="secondary">
+          <Button shadowless variant="secondary" onClick={() => callback({ back: true })}>
             Back
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
-          <Button shadowless onClick={callback}>
+          <Button shadowless onClick={() => callback({ back: false })}>
             Begin
           </Button>
         </MobileFullWidth>

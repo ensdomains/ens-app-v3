@@ -81,7 +81,7 @@ const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Pr
         $isDirty={getFieldState('general').isDirty}
         onClick={handleTabClick('general')}
       >
-        {t('input.profileEditor.tabs.accounts.label')}
+        {t('input.profileEditor.tabs.general.label')}
       </TabButton>
       <TabButton
         type="button"

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -13,12 +13,14 @@ import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avat
 import AvatarButton from '@app/components/@molecules/ProfileEditor/AvatarButton'
 import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
+import websiteOptions from '@app/components/@molecules/ProfileEditor/options/websiteOptions'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { FuseObj } from '@app/types'
+import { convertProfileToProfileFormObject } from '@app/utils/editor'
 
-import { RegistrationStepData } from '../../types'
+import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import Resolver from './Resolver'
 
 const StyledCard = styled.form(
@@ -160,7 +162,8 @@ type ModalOption = 'avatar' | 'permissions' | 'resolver'
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
-  callback: (data: RegistrationStepData['profile']) => void
+  registrationData: RegistrationReducerDataItem
+  callback: (data: RegistrationStepData['profile'] & BackObj) => void
 }
 
 const AdvancedOption = ({
@@ -203,9 +206,10 @@ const defaultFuses: Partial<FuseObj> = {
   CAN_DO_EVERYTHING: true,
 }
 
-const Profile = ({ nameDetails, callback }: Props) => {
+const Profile = ({ nameDetails, callback, registrationData }: Props) => {
   const { address } = useAccount()
   const defaultResolverAddress = useContractAddress('PublicResolver')
+  const backRef = useRef<HTMLButtonElement>(null)
 
   const { normalisedName: name } = nameDetails
 
@@ -213,14 +217,24 @@ const Profile = ({ nameDetails, callback }: Props) => {
     () => ({
       isMigrated: true,
       createdAt: `${Date.now()}`,
-      records: {},
+      records:
+        Object.keys(registrationData.records).length > 0
+          ? {
+              ...registrationData.records,
+              coinTypes: (registrationData.records.coinTypes || []).map((c) => ({
+                coin: c.key,
+                addr: c.value,
+              })),
+            }
+          : {
+              coinTypes: [{ coin: 'ETH', addr: address! } as any],
+            },
     }),
-    [],
+    [address, registrationData.records],
   )
 
-  const setAddrRef = useRef(false)
-  const [fuses, setFuses] = useState(defaultFuses)
-  const [resolver, setResolver] = useState(defaultResolverAddress)
+  const [fuses, setFuses] = useState(registrationData.permissions)
+  const [resolver, setResolver] = useState(registrationData.resolver || defaultResolverAddress)
 
   const isDefaultFuses = useMemo(() => !!fuses.CAN_DO_EVERYTHING, [fuses.CAN_DO_EVERYTHING])
   const isDefaultResolver = useMemo(
@@ -229,40 +243,86 @@ const Profile = ({ nameDetails, callback }: Props) => {
   )
 
   const _callback = useCallback(
-    (_profile: RecordOptions) => {
+    (_profile: RecordOptions, event?: React.BaseSyntheticEvent) => {
+      const nativeEvent = event?.nativeEvent as SubmitEvent | undefined
       const { CAN_DO_EVERYTHING: _, ...newFuses } = fuses
       callback({
         records: _profile,
         resolver,
         permissions: newFuses,
+        back: nativeEvent?.submitter === backRef.current,
       })
     },
     [callback, fuses, resolver],
   )
 
-  const profileEditorForm = useProfileEditor({ callback: _callback, profile })
+  const profileEditorForm = useProfileEditor({
+    callback: _callback,
+    profile: undefined,
+    returnAllFields: true,
+  })
   const {
     avatar,
     setValue,
     _avatar,
     hasErrors,
     hasChanges,
-    addAddressKey,
-    getValues,
     handleSubmit,
+    setExistingRecords,
+    newAccountKeys,
+    newAddressKeys,
+    newOtherKeys,
+    existingAccountKeys,
+    existingAddressKeys,
+    existingOtherKeys,
+    setHasExistingWebsite,
+    setWebsiteOption,
   } = profileEditorForm
 
+  const accountKeys = [...existingAccountKeys, ...newAccountKeys]
+  const addressKeys = [...existingAddressKeys, ...newAddressKeys]
+  const otherKeys = [...existingOtherKeys, ...newOtherKeys]
+
   useEffect(() => {
-    if (!setAddrRef.current && getValues('address.ETH') === undefined) {
-      setAddrRef.current = true
-      addAddressKey('ETH')
-      setValue('address.ETH', address!, {
-        shouldDirty: true,
-        shouldTouch: true,
-        shouldValidate: true,
-      })
+    const recordsAsReset = convertProfileToProfileFormObject(profile as any)
+    const newExistingRecords = {
+      address: Object.keys(recordsAsReset.address) || [],
+      other: Object.keys(recordsAsReset.other) || [],
+      accounts: Object.keys(recordsAsReset.accounts) || [],
     }
-  }, [addAddressKey, address, setValue, getValues])
+    setExistingRecords(newExistingRecords)
+    let valueKeys: [string, any, boolean][] = []
+    for (const [key, value] of Object.entries(recordsAsReset)) {
+      const valueKeysInner: [string, string, boolean][] = []
+      if (Object.keys(value).length > 0 && key !== 'website') {
+        for (const [k, v] of Object.entries(value)) {
+          valueKeysInner.push([
+            `${key}.${k}`,
+            v,
+            !(key === 'address' && k === 'ETH' && v === address),
+          ])
+        }
+        valueKeys = [
+          ...valueKeys,
+          [key, value, valueKeysInner.some(([, , dirty]) => dirty)],
+          ...valueKeysInner,
+        ]
+      } else if (key === 'website' && value) {
+        const protocol = recordsAsReset.website?.match(/^[^:]+/)?.[0]?.toLowerCase()
+        if (protocol) {
+          const option = websiteOptions.find(({ value: _val }) => _val === protocol)
+          setWebsiteOption(option || undefined)
+        }
+        setValue(key, value as string, { shouldDirty: true, shouldTouch: true })
+      }
+    }
+    valueKeys.forEach(([key, value, dirty]) =>
+      setValue(key as any, value, {
+        shouldDirty: dirty,
+        shouldTouch: key.includes('.') ? true : undefined,
+      }),
+    )
+  }, [address, profile, setExistingRecords, setHasExistingWebsite, setValue, setWebsiteOption])
 
   const trailingButton = useMemo(() => {
     if (hasChanges) {
@@ -366,7 +426,18 @@ const Profile = ({ nameDetails, callback }: Props) => {
         </Banner>
         <ContentContainer>
           <ProfileEditorTabs {...profileEditorForm} />
-          <ProfileTabContents removePadding {...profileEditorForm} />
+          <ProfileTabContents
+            removePadding
+            {...{
+              ...profileEditorForm,
+              existingAccountKeys: [],
+              existingAddressKeys: [],
+              existingOtherKeys: [],
+              newAccountKeys: accountKeys,
+              newAddressKeys: addressKeys,
+              newOtherKeys: otherKeys,
+            }}
+          />
           <AddRecord {...profileEditorForm} />
           <Helper type="info">
             Your profile information will be stored on the blockchain. Anything you add will be
@@ -406,7 +477,7 @@ const Profile = ({ nameDetails, callback }: Props) => {
           </AdvancedOptions>
           <ButtonContainer>
             <MobileFullWidth>
-              <Button shadowless variant="secondary">
+              <Button ref={backRef} type="submit" shadowless variant="secondary">
                 Back
               </Button>
             </MobileFullWidth>

@@ -30,7 +30,7 @@ const displayItems = (
 ]
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const price = await ens.getPrice(data.name, data.duration)
+  const price = await ens.getPrice(data.name.split('.')[0], data.duration)
   const value = price!.base.add(price!.premium)
 
   return ens.registerName.populateTransaction(data.name, {

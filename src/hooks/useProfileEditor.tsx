@@ -1,4 +1,4 @@
-import { ComponentProps, useEffect, useState } from 'react'
+import React, { ComponentProps, useEffect, useState } from 'react'
 import { useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
@@ -56,11 +56,12 @@ type ExpandableRecordsState = {
 }
 
 export type Props = {
-  callback: (data: RecordOptions) => void
+  callback: (data: RecordOptions, event?: React.BaseSyntheticEvent) => void
   profile: ReturnType<typeof useProfile>['profile']
+  returnAllFields?: boolean
 }
 
-const useProfileEditor = ({ callback, profile }: Props) => {
+const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const {
@@ -113,6 +114,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     options: accountsOptions,
     setValue,
     getValues,
+    returnAllFields,
   })
 
   const {
@@ -129,6 +131,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     options: addressOptions,
     setValue,
     getValues,
+    returnAllFields,
   })
 
   const [hasExistingWebsite, setHasExistingWebsite] = useState(false)
@@ -145,6 +148,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     options: otherOptions,
     setValue,
     getValues,
+    returnAllFields,
   })
 
   const AddButtonProps = (() => {
@@ -238,7 +242,11 @@ const useProfileEditor = ({ callback, profile }: Props) => {
   }, [profile, reset])
 
   const getValuesAsProfile = (profileData: ProfileEditorType) => {
-    const dirtyFields = getDirtyFields(formState.dirtyFields, profileData) as ProfileEditorType
+    console.log(formState.touchedFields)
+    const dirtyFields = getDirtyFields(
+      formState[returnAllFields ? 'touchedFields' : 'dirtyFields'],
+      profileData,
+    ) as ProfileEditorType
 
     const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(([key, value]) => ({
       key,
@@ -259,10 +267,13 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     }
   }
 
-  const handleProfileSubmit = async (profileData: ProfileEditorType) => {
+  const handleProfileSubmit = async (
+    profileData: ProfileEditorType,
+    event?: React.BaseSyntheticEvent,
+  ) => {
     const records = getValuesAsProfile(profileData)
 
-    callback(records)
+    callback(records, event)
   }
 
   const avatar = useWatch({

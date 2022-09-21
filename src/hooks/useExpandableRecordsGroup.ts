@@ -1,6 +1,7 @@
-import { Select } from '@ensdomains/thorin'
 import { ComponentProps, useEffect, useMemo, useState } from 'react'
 import { FieldValues, Path, PathValue, UseFormGetValues, UseFormSetValue } from 'react-hook-form'
+
+import { Select } from '@ensdomains/thorin'
 
 type Option = ComponentProps<typeof Select>['options'][number]
 
@@ -10,6 +11,7 @@ interface Props<T extends FieldValues> {
   options: Option[]
   getValues: UseFormGetValues<T>
   setValue: UseFormSetValue<T>
+  returnAllFields?: boolean
 }
 
 const useExpandableRecordsGroup = <T extends FieldValues>({
@@ -17,6 +19,7 @@ const useExpandableRecordsGroup = <T extends FieldValues>({
   options,
   existingKeys: initialExistingKeys,
   getValues,
+  returnAllFields,
   setValue,
 }: Props<T>) => {
   const [existingKeys, setExistingKeys] = useState(initialExistingKeys)
@@ -45,9 +48,11 @@ const useExpandableRecordsGroup = <T extends FieldValues>({
     const oldValues = getValues(group) as { [key: string]: string }
     if (!oldValues[key]) return
     const { [key]: _, ...otherValues } = oldValues
+    console.log(shouldRemove)
     if (shouldRemove) {
+      console.log(Object.keys(otherValues).length)
       setValue(group, otherValues as PathValue<T, Path<T>>, {
-        shouldDirty: true,
+        shouldDirty: returnAllFields ? Object.keys(otherValues).length > 0 : true,
       })
     } else {
       const newValues = { ...otherValues, [key]: '' }

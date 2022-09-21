@@ -57,20 +57,41 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     selectedItemInx = state.items.push(makeDefaultData(action.selected)) - 1
   }
 
+  const item = state.items[selectedItemInx]
+
   switch (action.name) {
-    case 'setStep': {
-      state.items[selectedItemInx].step = action.payload
-      break
-    }
     case 'clearItem': {
       state.items.splice(selectedItemInx, 1)
       break
     }
-    case 'setPricingData':
-    case 'setTransactionsData':
-    case 'setProfileData':
-      state.items[selectedItemInx] = { ...state.items[selectedItemInx], ...action.payload }
+    case 'resetItem': {
+      state.items[selectedItemInx] = makeDefaultData(action.selected)
       break
+    }
+    case 'setStep': {
+      item.step = action.payload
+      break
+    }
+    case 'setPricingData': {
+      item.years = action.payload.years
+      item.reverseRecord = action.payload.reverseRecord
+      break
+    }
+    case 'setTransactionsData': {
+      item.secret = action.payload.secret
+      item.started = action.payload.started
+      break
+    }
+    case 'setStarted': {
+      item.started = true
+      break
+    }
+    case 'setProfileData': {
+      item.records = action.payload.records
+      item.permissions = action.payload.permissions
+      item.resolver = action.payload.resolver
+      break
+    }
     // no default
   }
 }

@@ -66,10 +66,11 @@ const StyledCountdown = styled(CountdownCircle)(
 type Props = {
   registrationData: RegistrationReducerDataItem
   nameDetails: ReturnType<typeof useNameDetails>
-  callback: () => void
+  callback: (data: { back: boolean }) => void
+  onStart: () => void
 }
 
-const Transactions = ({ registrationData, nameDetails, callback }: Props) => {
+const Transactions = ({ registrationData, nameDetails, callback, onStart }: Props) => {
   const { address } = useAccount()
   const keySuffix = `${nameDetails.normalisedName}-${address}`
   const commitKey = `commit-${keySuffix}`
@@ -86,7 +87,7 @@ const Transactions = ({ registrationData, nameDetails, callback }: Props) => {
 
   useEffect(() => {
     if (registerTx?.stage === 'complete') {
-      callback()
+      callback({ back: false })
     }
   }, [callback, registerTx?.stage])
 
@@ -105,6 +106,7 @@ const Transactions = ({ registrationData, nameDetails, callback }: Props) => {
   )
 
   const makeCommitNameFlow = () => {
+    onStart()
     createTransactionFlow(commitKey, {
       transactions: [makeTransactionItem('commitName', registrationParams)],
       requiresManualCleanup: true,
@@ -125,7 +127,7 @@ const Transactions = ({ registrationData, nameDetails, callback }: Props) => {
   let Buttons: ReactNode = (
     <>
       <MobileFullWidth>
-        <Button shadowless variant="secondary">
+        <Button shadowless onClick={() => callback({ back: true })} variant="secondary">
           Back
         </Button>
       </MobileFullWidth>

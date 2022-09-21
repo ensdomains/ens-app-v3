@@ -26,6 +26,8 @@ export type RegistrationStepData = {
   complete: {}
 }
 
+export type BackObj = { back: boolean }
+
 export type RegistrationData = UnionToIntersection<RegistrationStepData[RegistrationStep]>
 
 export type SelectedItemProperties = { address: string; name: string }
@@ -61,5 +63,13 @@ export type RegistrationReducerAction =
     }
   | {
       name: 'clearItem'
+      selected: SelectedItemProperties
+    }
+  | {
+      name: 'setStarted'
+      selected: SelectedItemProperties
+    }
+  | {
+      name: 'resetItem'
       selected: SelectedItemProperties
     }
