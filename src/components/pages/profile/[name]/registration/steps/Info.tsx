@@ -84,6 +84,15 @@ const ButtonContainer = styled.div(
     gap: ${theme.space['2']};
   `,
 )
+
+const ProfileButton = styled.button(
+  ({ theme }) => css`
+    color: ${theme.colors.accent};
+    font-weight: bold;
+    cursor: pointer;
+  `,
+)
+
 const infoItems = [
   'Complete a transaction to begin the timer',
   'Wait 60 seconds for the timer to complete',
@@ -94,9 +103,15 @@ type Props = {
   registrationData: RegistrationReducerDataItem
   nameDetails: ReturnType<typeof useNameDetails>
   callback: (data: { back: boolean }) => void
+  onProfileClick: () => void
 }
 
-const Info = ({ registrationData, nameDetails: { priceData }, callback }: Props) => {
+const Info = ({
+  registrationData,
+  nameDetails: { priceData },
+  callback,
+  onProfileClick,
+}: Props) => {
   const estimate = useEstimateFullRegistration({ registration: registrationData, price: priceData })
 
   return (
@@ -112,6 +127,11 @@ const Info = ({ registrationData, nameDetails: { priceData }, callback }: Props)
         ))}
       </InfoItems>
       <FullInvoice {...estimate} />
+      {!registrationData.queue.includes('profile') && (
+        <ProfileButton onClick={onProfileClick}>
+          <Typography>I&apos;d like to set up my profile first</Typography>
+        </ProfileButton>
+      )}
       <ButtonContainer>
         <MobileFullWidth>
           <Button shadowless variant="secondary" onClick={() => callback({ back: true })}>

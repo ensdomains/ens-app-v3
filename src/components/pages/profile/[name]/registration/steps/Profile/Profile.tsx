@@ -217,20 +217,15 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
     () => ({
       isMigrated: true,
       createdAt: `${Date.now()}`,
-      records:
-        Object.keys(registrationData.records).length > 0
-          ? {
-              ...registrationData.records,
-              coinTypes: (registrationData.records.coinTypes || []).map((c) => ({
-                coin: c.key,
-                addr: c.value,
-              })),
-            }
-          : {
-              coinTypes: [{ coin: 'ETH', addr: address! } as any],
-            },
+      records: {
+        ...registrationData.records,
+        coinTypes: (registrationData.records.coinTypes || []).map((c) => ({
+          coin: c.key,
+          addr: c.value,
+        })),
+      },
     }),
-    [address, registrationData.records],
+    [registrationData.records],
   )
 
   const [fuses, setFuses] = useState(registrationData.permissions)

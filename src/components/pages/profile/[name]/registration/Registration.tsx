@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useAccount } from 'wagmi'
 
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
@@ -30,12 +31,34 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }
   const { normalisedName } = nameDetails
+  const defaultResolverAddress = useContractAddress('PublicResolver')
 
   const { dispatch, item } = useRegistrationReducer(selected)
+  const step = item.queue[item.stepIndex]
 
   const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
-    dispatch({ name: 'setStep', payload: 'profile', selected })
+    if (!item.queue.includes('profile')) {
+      // if profile is not in queue, set the default profile data
+      dispatch({
+        name: 'setProfileData',
+        payload: {
+          records: { coinTypes: [{ key: 'ETH', value: address! } as any] },
+          permissions: {},
+          resolver: defaultResolverAddress,
+        },
+        selected,
+      })
+      if (reverseRecord) {
+        // if reverse record is selected, add the profile step to the queue
+        dispatch({
+          name: 'setQueue',
+          payload: ['pricing', 'profile', 'info', 'transactions', 'complete'],
+          selected,
+        })
+      }
+    }
+    dispatch({ name: 'increaseStep', selected })
   }
 
   const profileCallback = ({
@@ -45,15 +68,19 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     back,
   }: RegistrationStepData['profile'] & BackObj) => {
     dispatch({ name: 'setProfileData', payload: { records, resolver, permissions }, selected })
-    dispatch({ name: 'setStep', payload: back ? 'pricing' : 'info', selected })
+    dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
-  const infoCallback = ({ back }: BackObj) => {
-    dispatch({ name: 'setStep', payload: back ? 'profile' : 'transactions', selected })
+  const genericCallback = ({ back }: BackObj) => {
+    dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
-  const transactionsCallback = ({ back }: BackObj) => {
-    dispatch({ name: 'setStep', payload: back ? 'info' : 'complete', selected })
+  const infoProfileCallback = () => {
+    dispatch({
+      name: 'setQueue',
+      payload: ['pricing', 'profile', 'info', 'transactions', 'complete'],
+      selected,
+    })
   }
 
   const onStart = () => {
@@ -66,7 +93,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   useEffect(() => {
     const handleRouteChange = (e: string) => {
-      if (e !== router.asPath && item.step === 'complete') {
+      if (e !== router.asPath && step === 'complete') {
         dispatch({ name: 'clearItem', selected })
       }
     }
@@ -75,7 +102,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       router.events.off('routeChangeStart', handleRouteChange)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dispatch, item.step, selected, router.asPath])
+  }, [dispatch, step, selected, router.asPath])
 
   return (
     <>
@@ -85,7 +112,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       <Content
         noTitle
         title={normalisedName}
-        hideHeading={item.step === 'complete'}
+        hideHeading={step === 'complete'}
         subtitle="Register"
         loading={isLoading || primaryLoading}
         singleColumnContent
@@ -108,18 +135,23 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               />
             ),
             info: (
-              <Info nameDetails={nameDetails} registrationData={item} callback={infoCallback} />
+              <Info
+                nameDetails={nameDetails}
+                registrationData={item}
+                callback={genericCallback}
+                onProfileClick={infoProfileCallback}
+              />
             ),
             transactions: (
               <Transactions
                 nameDetails={nameDetails}
                 registrationData={item}
                 onStart={onStart}
-                callback={transactionsCallback}
+                callback={genericCallback}
               />
             ),
             complete: <Complete nameDetails={nameDetails} callback={onComplete} />,
-          }[item.step],
+          }[step],
         }}
       </Content>
     </>

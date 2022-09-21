@@ -33,7 +33,8 @@ export type RegistrationData = UnionToIntersection<RegistrationStepData[Registra
 export type SelectedItemProperties = { address: string; name: string }
 
 export type RegistrationReducerDataItem = RegistrationData & {
-  step: RegistrationStep
+  stepIndex: number
+  queue: RegistrationStep[]
 } & SelectedItemProperties
 
 export type RegistrationReducerData = {
@@ -42,9 +43,17 @@ export type RegistrationReducerData = {
 
 export type RegistrationReducerAction =
   | {
-      name: 'setStep'
+      name: 'increaseStep'
       selected: SelectedItemProperties
-      payload: RegistrationStep
+    }
+  | {
+      name: 'decreaseStep'
+      selected: SelectedItemProperties
+    }
+  | {
+      name: 'setQueue'
+      selected: SelectedItemProperties
+      payload: RegistrationStep[]
     }
   | {
       name: 'setPricingData'

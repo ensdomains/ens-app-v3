@@ -15,7 +15,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import FullInvoice from '../../FullInvoice'
-import { RegistrationStepData } from '../../types'
+import { RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import TemporaryPremium from './TemporaryPremium'
 
 const StyledCard = styled(Card)(
@@ -74,9 +74,10 @@ type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   callback: (props: RegistrationStepData['pricing']) => void
   hasPrimaryName: boolean
+  registrationData: RegistrationReducerDataItem
 }
 
-const Pricing = ({ nameDetails, callback, hasPrimaryName }: Props) => {
+const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Props) => {
   const breakpoints = useBreakpoint()
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
@@ -84,8 +85,10 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName }: Props) => {
   const { data: balance } = useBalance({ addressOrName: address })
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const [years, setYears] = useState(1)
-  const [reverseRecord, setReverseRecord] = useState(!hasPrimaryName)
+  const [years, setYears] = useState(registrationData.years)
+  const [reverseRecord, setReverseRecord] = useState(
+    registrationData.reverseRecord || !hasPrimaryName,
+  )
 
   const fullEstimate = useEstimateFullRegistration({
     registration: {

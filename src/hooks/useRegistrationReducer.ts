@@ -12,7 +12,8 @@ const randomSecret = () => {
 }
 
 const defaultData: RegistrationReducerDataItem = {
-  step: 'pricing',
+  stepIndex: 0,
+  queue: ['pricing', 'info', 'transactions', 'complete'],
   years: 1,
   reverseRecord: false,
   records: {},
@@ -31,7 +32,8 @@ const isBrowser = !!(
 )
 
 const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerDataItem => ({
-  step: 'pricing',
+  stepIndex: 0,
+  queue: ['pricing', 'info', 'transactions', 'complete'],
   years: 1,
   reverseRecord: false,
   records: {},
@@ -68,8 +70,16 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       state.items[selectedItemInx] = makeDefaultData(action.selected)
       break
     }
-    case 'setStep': {
-      item.step = action.payload
+    case 'setQueue': {
+      item.queue = action.payload
+      break
+    }
+    case 'decreaseStep': {
+      item.stepIndex -= 1
+      break
+    }
+    case 'increaseStep': {
+      item.stepIndex += 1
       break
     }
     case 'setPricingData': {
