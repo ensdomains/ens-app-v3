@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "ecff66e484c102bbe6b4446f05426292",
+      "signature": "310595b27716122c8fb7598d63a2417f",
       "pure": true
     },
     "@ensdomains/ens-contracts": {

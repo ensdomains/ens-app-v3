@@ -1,5 +1,6 @@
 import burnFuses from './burnFuses'
 import createSubname from './createSubname'
+import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
 import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
@@ -18,6 +19,7 @@ export const transactions = {
   updateEthAddress,
   burnFuses,
   createSubname,
+  importDNSSECName,
 }
 
 export type Transaction = typeof transactions

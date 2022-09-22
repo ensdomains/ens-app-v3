@@ -1,19 +1,18 @@
-import packet from 'dns-packet'
+import { useRecentTransactions } from '@rainbow-me/rainbowkit'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useAccount, useProvider, useSigner } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
-import { Oracle as NewOracle } from '@ensdomains/dnssecoraclejs'
 import { Button, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
-import { useEns } from '@app/utils/EnsProvider'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { shortenAddress } from '@app/utils/utils'
-
-import { DNS_OVER_HTTP_ENDPOINT } from './utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -78,6 +77,14 @@ const CheckButton = styled(Button)(
   `,
 )
 
+const StyledTypography = styled(Typography)(
+  ({ theme }) => css`
+    a {
+      color: ${theme.colors.blue};
+    }
+  `,
+)
+
 export const NamePillWithAddress = ({
   name,
   network,
@@ -102,42 +109,47 @@ export const NamePillWithAddress = ({
   )
 }
 
-const handleClaim = (contracts, name, provider, signer, address, setCurrentStep) => async () => {
-  const dnsRegistrarContract = await contracts.getDNSRegistrar()
-  const resolverContract = await contracts.getPublicResolver()
+export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
+
+const handleClaim = (name, createTransactionFlow, address) => async () => {
   const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
   const result = await prover.queryWithProof('TXT', `_ens.${name}`)
-  const registrarOracle = await dnsRegistrarContract.oracle()
-
-  const oracle = new NewOracle(registrarOracle, provider)
-  const proofData = await oracle.getProofData(result)
-
-  const encodedName = `0x${packet.name.encode(name).toString('hex')}`
-  const data = proofData.rrsets.map((x) => Object.values(x))
-  const { proof } = proofData
-
-  const tx = await dnsRegistrarContract
-    .connect(signer)
-    .proveAndClaimWithResolver(encodedName, data, proof, resolverContract.address, address)
-
-  const receipt = await tx.wait()
-  setCurrentStep((step: number) => step + 1)
-  console.log('receipt: ', receipt)
+  createTransactionFlow(`importName-${name}`, {
+    transactions: [
+      makeTransactionItem('importDNSSECName', {
+        name,
+        proverResult: result,
+        address,
+      }),
+    ],
+  })
 }
 
-export const ClaimDomain = ({ currentStep, setCurrentStep, syncWarning }) => {
-  const { contracts } = useEns()
-  const provider = useProvider()
-  const { data: signer } = useSigner()
+export const ClaimDomain = ({ syncWarning }) => {
   const router = useRouter()
   const { address } = useAccount()
+  const { createTransactionFlow, getTransaction } = useTransactionFlow()
+  const transactions = useRecentTransactions()
+  const [pendingTransaction, setPendingTransaction] = useState(false)
 
   const name = router.query.name as string
+
+  useEffect(() => {
+    const transaction = transactions.find((transaction) => {
+      const description = JSON.parse(transaction.description)
+      return description.key === `importName-${name}` && transaction.status === 'pending'
+    })
+    if (transaction) {
+      setPendingTransaction(true)
+    } else {
+      setPendingTransaction(false)
+    }
+  }, [transactions])
 
   return (
     <Container>
       <Typography>Claim your domain</Typography>
-      <Spacer $height={4} />
+      <Spacer $height="4" />
       {syncWarning ? (
         <Helper type="warning" style={{ textAlign: 'center' }}>
           <Typography>You are importing a DNS name that you appear to not own.</Typography>
@@ -145,17 +157,27 @@ export const ClaimDomain = ({ currentStep, setCurrentStep, syncWarning }) => {
       ) : (
         <Typography>You have verified your ownership and can claim this domain.</Typography>
       )}
-      <Spacer $height={4} />
+      {pendingTransaction && (
+        <>
+          <Spacer $height="4" />
+          <Helper type="info" style={{ textAlign: 'center' }}>
+            <StyledTypography>
+              You already have a <Link href="/my/settings">pending transaction</Link> for this name
+            </StyledTypography>
+          </Helper>
+        </>
+      )}
+      <Spacer $height="4" />
       <GreyBox>
         <Typography>DNS Owner</Typography>
         <NamePillWithAddress name={name} label={`${name}-avatar`} network={1} address={address} />
       </GreyBox>
-      <Spacer $height={4} />
+      <Spacer $height="4" />
       <GreyBox>
         <Typography>Estimated network cost</Typography>
         <Typography>000.4 ETH</Typography>
       </GreyBox>
-      <Spacer $height={5} />
+      <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton variant="primary" size="small">
           Back
@@ -163,7 +185,7 @@ export const ClaimDomain = ({ currentStep, setCurrentStep, syncWarning }) => {
         <CheckButton
           variant="primary"
           size="small"
-          onClick={handleClaim(contracts, name, provider, signer, address, setCurrentStep)}
+          onClick={handleClaim(name, createTransactionFlow, syncWarning ? null : address)}
         >
           Claim
         </CheckButton>

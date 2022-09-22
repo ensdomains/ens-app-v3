@@ -1,0 +1,18 @@
+import { Oracle as NewOracle } from '@ensdomains/dnssecoraclejs';
+import packet from 'dns-packet';
+export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query';
+export default async function ({ contracts, provider }, name, { address, proverResult }) {
+    const dnsRegistrarContract = await contracts?.getDNSRegistrar();
+    const resolverContract = await contracts?.getPublicResolver();
+
+    const registrarOracle = await dnsRegistrarContract?.oracle();
+    if (!registrarOracle) {
+        throw new Error('No oracle found');
+    }
+    const oracle = new NewOracle(registrarOracle, provider);
+    const proofData = await oracle.getProofData(proverResult);
+    const encodedName = `0x${packet.name.encode(name).toString('hex')}`;
+    const data = proofData.rrsets.map((x) => Object.values(x));
+    const { proof } = proofData;
+    return dnsRegistrarContract?.populateTransaction.proveAndClaimWithResolver(encodedName, data, proof, resolverContract.address, address);
+}

@@ -19,6 +19,7 @@ import type unwrapName from './functions/unwrapName';
 import type wrapName from './functions/wrapName';
 import GqlManager from './GqlManager';
 import fuseEnum from './utils/fuses';
+import importDNSSECName from './functions/importDNSSECName';
 export type { FusePropsNamedArray, FusePropsUnnamedArray, FusePropsNumber, FuseProps, NamedFusesToBurn, } from './functions/burnFuses';
 export declare type FuseEnum = typeof fuseEnum;
 declare type ENSOptions = {
@@ -460,6 +461,7 @@ export declare class ENS {
     wrapName: WriteFunction<typeof wrapName>;
     unwrapName: WriteFunction<typeof unwrapName>;
     burnFuses: WriteFunction<typeof burnFuses>;
+    importDNSSECName: WriteFunction<typeof importDNSSECName>;
     createSubname: WriteFunction<typeof createSubname>;
     deleteSubname: WriteFunction<typeof deleteSubname>;
     transferSubname: WriteFunction<typeof transferSubname>;

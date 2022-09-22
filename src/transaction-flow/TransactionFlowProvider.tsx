@@ -62,7 +62,18 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
   )
 
   const getTransactionIndex = useCallback(
-    (key: string) => state.items[key]?.currentTransaction || 0,
+    (key: string) => {
+      console.log('state: ', state)
+      return state.items[key]?.currentTransaction || 0
+    },
+    [state.items],
+  )
+
+  const getTransaction = useCallback(
+    (key: string) => {
+      console.log('state: ', state)
+      return state.items[key]
+    },
     [state.items],
   )
 
@@ -96,6 +107,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
         })) as CreateTransactionFlow,
       resumeTransactionFlow: (key: string) => dispatch({ name: 'resumeFlow', key }),
       getTransactionIndex,
+      getTransaction,
       getResumable,
     }
   }, [dispatch, getResumable, getTransactionIndex])

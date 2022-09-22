@@ -244,6 +244,7 @@ class ENS {
     burnFuses = this.generateWriteFunction('burnFuses', [
         'contracts',
     ]);
+    importDNSSECName = this.generateWriteFunction('importDNSSECName', ['contracts', 'provider', 'signer']);
     createSubname = this.generateWriteFunction('createSubname', ['contracts', 'getExpiry']);
     deleteSubname = this.generateWriteFunction('deleteSubname', ['transferSubname']);
     transferSubname = this.generateWriteFunction('transferSubname', ['contracts', 'getExpiry']);
