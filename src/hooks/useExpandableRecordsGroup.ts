@@ -48,9 +48,7 @@ const useExpandableRecordsGroup = <T extends FieldValues>({
     const oldValues = getValues(group) as { [key: string]: string }
     if (!oldValues[key]) return
     const { [key]: _, ...otherValues } = oldValues
-    console.log(shouldRemove)
     if (shouldRemove) {
-      console.log(Object.keys(otherValues).length)
       setValue(group, otherValues as PathValue<T, Path<T>>, {
         shouldDirty: returnAllFields ? Object.keys(otherValues).length > 0 : true,
       })

@@ -8,6 +8,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { Content } from '@app/layouts/Content'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import Complete from './steps/Complete'
 import Info from './steps/Info'
@@ -35,6 +36,12 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
+
+  const keySuffix = `${nameDetails.normalisedName}-${address}`
+  const commitKey = `commit-${keySuffix}`
+  const registerKey = `register-${keySuffix}`
+
+  const { cleanupFlow } = useTransactionFlow()
 
   const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
@@ -88,13 +95,15 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   }
 
   const onComplete = (toProfile: boolean) => {
-    router.push(toProfile ? `/profile/${normalisedName}` : '')
+    router.push(toProfile ? `/profile/${normalisedName}` : '/')
   }
 
   useEffect(() => {
     const handleRouteChange = (e: string) => {
       if (e !== router.asPath && step === 'complete') {
         dispatch({ name: 'clearItem', selected })
+        cleanupFlow(commitKey)
+        cleanupFlow(registerKey)
       }
     }
     router.events.on('routeChangeStart', handleRouteChange)

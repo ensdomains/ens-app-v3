@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useMemo, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -70,6 +70,22 @@ type Props = {
   onStart: () => void
 }
 
+const FailedButton = ({ onClick }: { onClick: () => void }) => (
+  <MobileFullWidth>
+    <Button shadowless tone="red" onClick={onClick}>
+      Transaction Failed
+    </Button>
+  </MobileFullWidth>
+)
+
+const ProgressButton = ({ onClick }: { onClick: () => void }) => (
+  <MobileFullWidth>
+    <Button shadowless variant="secondary" onClick={onClick}>
+      Transaction in progress
+    </Button>
+  </MobileFullWidth>
+)
+
 const Transactions = ({ registrationData, nameDetails, callback, onStart }: Props) => {
   const { address } = useAccount()
   const keySuffix = `${nameDetails.normalisedName}-${address}`
@@ -85,12 +101,6 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     commitTimestamp && commitTimestamp + 60000 < Date.now(),
   )
 
-  useEffect(() => {
-    if (registerTx?.stage === 'complete') {
-      callback({ back: false })
-    }
-  }, [callback, registerTx?.stage])
-
   const registrationParams: BaseRegistrationParams & { name: string } = useMemo(
     () => ({
       name: nameDetails.normalisedName,
@@ -105,24 +115,42 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     [address, nameDetails, registrationData],
   )
 
-  const makeCommitNameFlow = () => {
+  const makeCommitNameFlow = useCallback(() => {
     onStart()
     createTransactionFlow(commitKey, {
       transactions: [makeTransactionItem('commitName', registrationParams)],
       requiresManualCleanup: true,
+      autoClose: true,
     })
-  }
+  }, [commitKey, createTransactionFlow, onStart, registrationParams])
 
   const makeRegisterNameFlow = () => {
     createTransactionFlow(registerKey, {
       transactions: [makeTransactionItem('registerName', registrationParams)],
       requiresManualCleanup: true,
+      autoClose: true,
     })
   }
 
   const showCommitTransaction = () => {
     resumeTransactionFlow(commitKey)
   }
+
+  const showRegisterTransaction = () => {
+    resumeTransactionFlow(registerKey)
+  }
+
+  useEffect(() => {
+    if (!commitTx) {
+      makeCommitNameFlow()
+    }
+  }, [commitTx, makeCommitNameFlow])
+
+  useEffect(() => {
+    if (registerTx?.stage === 'complete') {
+      callback({ back: false })
+    }
+  }, [callback, registerTx?.stage])
 
   let Buttons: ReactNode = (
     <>
@@ -140,30 +168,26 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   )
 
   if (commitComplete) {
-    Buttons = (
-      <MobileFullWidth>
-        <Button shadowless onClick={makeRegisterNameFlow}>
-          Finish
-        </Button>
-      </MobileFullWidth>
-    )
+    if (registerTx?.stage === 'failed') {
+      Buttons = <FailedButton onClick={showRegisterTransaction} />
+    } else if (registerTx?.stage === 'sent') {
+      Buttons = <ProgressButton onClick={showRegisterTransaction} />
+    } else if (!registerTx) {
+      Buttons = (
+        <MobileFullWidth>
+          <Button shadowless onClick={makeRegisterNameFlow}>
+            Finish
+          </Button>
+        </MobileFullWidth>
+      )
+    } else {
+      Buttons = null
+    }
   } else if (commitTx?.stage) {
     if (commitTx?.stage === 'failed') {
-      Buttons = (
-        <MobileFullWidth>
-          <Button shadowless tone="red" onClick={showCommitTransaction}>
-            Transaction Failed
-          </Button>
-        </MobileFullWidth>
-      )
+      Buttons = <FailedButton onClick={showCommitTransaction} />
     } else if (commitTx?.stage === 'sent') {
-      Buttons = (
-        <MobileFullWidth>
-          <Button shadowless variant="secondary" onClick={showCommitTransaction}>
-            Transaction in progress
-          </Button>
-        </MobileFullWidth>
-      )
+      Buttons = <ProgressButton onClick={showCommitTransaction} />
     } else if (commitTx?.stage === 'complete') {
       Buttons = (
         <MobileFullWidth>

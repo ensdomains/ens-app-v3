@@ -33,6 +33,8 @@ type ProviderValue = {
   getTransactionIndex: (key: string) => number
   getResumable: (key: string) => boolean
   getLatestTransaction: (key: string) => GenericTransaction | undefined
+  stopCurrentFlow: () => void
+  cleanupFlow: (key: string) => void
 }
 
 const TransactionContext = React.createContext<ProviderValue>({
@@ -42,6 +44,8 @@ const TransactionContext = React.createContext<ProviderValue>({
   getTransactionIndex: () => 0,
   getResumable: () => false,
   getLatestTransaction: () => undefined,
+  stopCurrentFlow: () => {},
+  cleanupFlow: () => {},
 })
 
 export const TransactionFlowProvider = ({ children }: { children: ReactNode }) => {
@@ -109,7 +113,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     [state.items],
   )
 
-  const providerValue = useMemo(() => {
+  const providerValue: ProviderValue = useMemo(() => {
     return {
       showDataInput: ((key, name, data) =>
         dispatch({
@@ -127,6 +131,8 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       getTransactionIndex,
       getResumable,
       getLatestTransaction,
+      stopCurrentFlow: () => dispatch({ name: 'stopFlow' }),
+      cleanupFlow: (key: string) => dispatch({ name: 'forceCleanupTransaction', payload: key }),
     }
   }, [dispatch, getResumable, getTransactionIndex, getLatestTransaction])
 

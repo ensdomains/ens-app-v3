@@ -117,14 +117,22 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
         transaction.finaliseTime = Date.now()
+        if (
+          key === draft.selectedKey &&
+          selectedItem.autoClose &&
+          getAllTransactionsComplete(selectedItem)
+        ) {
+          draft.selectedKey = null
+        }
       }
       break
     }
+    case 'forceCleanupTransaction':
     case 'cleanupTransaction': {
       const selectedItem = draft.items[action.payload]
       if (
         selectedItem &&
-        !selectedItem.requiresManualCleanup &&
+        (!selectedItem.requiresManualCleanup || action.name === 'forceCleanupTransaction') &&
         (!selectedItem.resumable || getAllTransactionsComplete(selectedItem))
       ) {
         delete draft.items[action.payload]

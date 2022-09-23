@@ -219,15 +219,6 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
-  useEffect(() => {
-    if (transactionStatus === 'confirmed') {
-      dispatch({ name: 'setTransactionStage', payload: 'complete' })
-    }
-    if (transactionStatus === 'failed') {
-      dispatch({ name: 'setTransactionStage', payload: 'failed' })
-    }
-  }, [dispatch, transactionStatus])
-
   const {
     data: request,
     isLoading: requestLoading,

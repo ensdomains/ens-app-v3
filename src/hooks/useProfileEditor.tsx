@@ -90,7 +90,7 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
     shouldUnregister: false,
   })
 
-  const [tab, setTab] = useState<TabType>('address')
+  const [tab, setTab] = useState<TabType>('general')
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -242,7 +242,6 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
   }, [profile, reset])
 
   const getValuesAsProfile = (profileData: ProfileEditorType) => {
-    console.log(formState.touchedFields)
     const dirtyFields = getDirtyFields(
       formState[returnAllFields ? 'touchedFields' : 'dirtyFields'],
       profileData,

@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi'
 import Registration from '@app/components/pages/profile/[name]/registration/Registration'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import useRegistrationReducer, { getSelectedIndex } from '@app/hooks/useRegistrationReducer'
+import { getSelectedIndex } from '@app/hooks/useRegistrationReducer'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 
 export default function Page() {
@@ -22,14 +22,7 @@ export default function Page() {
 
   const isLoading = detailsLoading || accountLoading || initial
 
-  const { item } = useRegistrationReducer({ address, name: nameDetails.normalisedName })
-
-  if (
-    !(nameDetails.ownerData?.owner === address && item.step === 'transactions') &&
-    !isLoading &&
-    registrationStatus !== 'available' &&
-    registrationStatus !== 'premium'
-  ) {
+  if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
     let redirect = true
 
     if (nameDetails.ownerData?.owner === address) {
@@ -41,7 +34,8 @@ export default function Page() {
         name: nameDetails.normalisedName,
       })
       if (index !== -1) {
-        const { step } = registrationData.items[index]
+        const { stepIndex, queue } = registrationData.items[index]
+        const step = queue[stepIndex]
         if (step === 'transactions' || step === 'complete') {
           redirect = false
         }

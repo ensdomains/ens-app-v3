@@ -408,7 +408,7 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
         {modalContent}
       </Dialog>
       <StyledCard onSubmit={handleSubmit}>
-        <Banner>
+        <Banner zIndex={2}>
           <AvatarWrapper>
             <AvatarButton
               validated={avatar !== undefined}

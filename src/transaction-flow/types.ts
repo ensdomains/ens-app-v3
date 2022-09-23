@@ -44,6 +44,7 @@ export type TransactionFlowItem = {
   transactions: GenericTransaction[]
   resumable?: boolean
   requiresManualCleanup?: boolean
+  autoClose?: boolean
 }
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
@@ -104,6 +105,10 @@ export type TransactionFlowAction =
     }
   | {
       name: 'cleanupTransaction'
+      payload: string
+    }
+  | {
+      name: 'forceCleanupTransaction'
       payload: string
     }
   | {
