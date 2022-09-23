@@ -6,7 +6,6 @@ import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
 import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
-import type { Props as ImportDNSSECNameProps } from './ImportDNSSECName/ImportDNSSECName-flow'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
 
@@ -29,7 +28,6 @@ const ProfileEditor = dynamicHelper<ProfileEditorProps>('ProfileEditor/ProfileEd
 const CreateSubname = dynamicHelper<CreateSubnameProps>('CreateSubname')
 const ExtendNames = dynamicHelper<ExtendNamesProps>('ExtendNames/ExtendNames')
 const BurnFuses = dynamicHelper<BurnFusesProps>('BurnFuses/BurnFuses')
-const ImportDNSSECName = dynamicHelper<ImportDNSSECNameProps>('ImportDNSSECName/ImportDNSSECName')
 
 export const DataInputComponents = {
   EditResolver,
@@ -39,7 +37,6 @@ export const DataInputComponents = {
   CreateSubname,
   ExtendNames,
   BurnFuses,
-  ImportDNSSECName,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

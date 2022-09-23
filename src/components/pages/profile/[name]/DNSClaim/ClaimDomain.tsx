@@ -14,6 +14,8 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { shortenAddress } from '@app/utils/utils'
 
+import { Steps } from './Steps'
+
 const Container = styled.div(
   ({ theme }) => css`
     text-align: center;
@@ -114,7 +116,9 @@ export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
 const handleClaim = (name, createTransactionFlow, address) => async () => {
   const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
   const result = await prover.queryWithProof('TXT', `_ens.${name}`)
-  createTransactionFlow(`importName-${name}`, {
+  const timestamp = new Date().getTime()
+  const transactionKey = `importName-${name}-${timestamp}`
+  createTransactionFlow(transactionKey, {
     transactions: [
       makeTransactionItem('importDNSSECName', {
         name,
@@ -123,9 +127,10 @@ const handleClaim = (name, createTransactionFlow, address) => async () => {
       }),
     ],
   })
+  localStorage.setItem('latestImportTransactionKey', transactionKey)
 }
 
-export const ClaimDomain = ({ syncWarning }) => {
+export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
   const router = useRouter()
   const { address } = useAccount()
   const { createTransactionFlow, getTransaction } = useTransactionFlow()
@@ -135,16 +140,29 @@ export const ClaimDomain = ({ syncWarning }) => {
   const name = router.query.name as string
 
   useEffect(() => {
+    const transactionKey = localStorage.getItem('latestImportTransactionKey')
+
     const transaction = transactions.find((transaction) => {
       const description = JSON.parse(transaction.description)
-      return description.key === `importName-${name}` && transaction.status === 'pending'
+      return description.key === transactionKey
     })
-    if (transaction) {
+
+    console.log('transaction*: ', transaction)
+    if (transaction && transaction.status === 'pending') {
       setPendingTransaction(true)
-    } else {
-      setPendingTransaction(false)
+      return
     }
+
+    if (transaction && transaction.status === 'confirmed') {
+      setPendingTransaction(false)
+      setCurrentStep((x) => x + 1)
+      return
+    }
+
+    setPendingTransaction(false)
   }, [transactions])
+
+  console.log('transactions: ', transactions)
 
   return (
     <Container>
@@ -177,6 +195,13 @@ export const ClaimDomain = ({ syncWarning }) => {
         <Typography>Estimated network cost</Typography>
         <Typography>000.4 ETH</Typography>
       </GreyBox>
+      <Spacer $height="5" />
+      <Steps
+        {...{
+          currentStep,
+          stepStatus: ['complete', 'complete', 'inProgress', 'notStarted'],
+        }}
+      />
       <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton variant="primary" size="small">

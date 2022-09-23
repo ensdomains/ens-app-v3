@@ -43,6 +43,10 @@ let nextConfig = {
         destination: '/profile?name=:name',
       },
       {
+        source: '/import/:name',
+        destination: '/import?name=:name',
+      },
+      {
         source: '/address/:address',
         destination: '/address?address=:address',
       },

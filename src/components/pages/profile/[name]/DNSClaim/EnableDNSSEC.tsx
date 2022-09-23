@@ -130,7 +130,12 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
           <Spacer $height={6} />
         </>
       )}
-      <Steps {...{ currentStep, stepStatus }} />
+      <Steps
+        {...{
+          currentStep: 0,
+          stepStatus: ['inProgress', 'notStarted', 'notStarted', 'notStarted'],
+        }}
+      />
       <Spacer $height={5} />
       <ButtonContainer>
         <CheckButton

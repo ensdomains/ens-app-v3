@@ -1,7 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
-import { useQuery } from 'wagmi'
 
 import { Button, Card, Typography, mq } from '@ensdomains/thorin'
 
@@ -11,15 +10,12 @@ import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useEns } from '@app/utils/EnsProvider'
 
 import { AddTextRecord } from './AddTextRecord'
 import { ClaimComplete } from './ClaimComplete'
 import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
 import { isDnsSecEnabled } from './utils'
-
-const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query?'
 
 const BackArrow = styled.div(
   ({ theme }) => css`
@@ -29,40 +25,12 @@ const BackArrow = styled.div(
   `,
 )
 
-const HeadingItems = styled.div<{ $spacing: string }>(
-  ({ theme, $spacing }) => css`
-    grid-column: span 1;
-    width: 100%;
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: ${theme.space['5']};
-    align-self: center;
-    align-items: center;
-    min-height: ${theme.space['15']};
-    ${mq.md.min(css`
-      min-height: ${theme.space['10']};
-      grid-column: span 2;
-      grid-template-columns: ${$spacing};
-    `)}
-  `,
-)
-
-const CustomLeadingHeading = styled(LeadingHeading)(
-  ({ theme }) => `
-    
-  `,
-)
-
-const ContentContainer = styled.div<{ $multiColumn?: boolean }>(
-  ({ $multiColumn }) => css`
+const ContentContainer = styled.div(
+  ({ theme }) => css`
     margin: 0;
     padding: 0;
     min-height: 0;
     height: min-content;
-    ${$multiColumn &&
-    mq.sm.min(css`
-      grid-column: span 2;
-    `)}
   `,
 )
 
@@ -148,7 +116,6 @@ export default () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [syncWarning, setSyncWarning] = useState(false)
   const { dnsOwner } = useNameDetails(router.query.name as string)
-  const [stepStatus, setStepStatus] = useState(['inProgress', 'notStarted', 'notStarted'])
 
   const { name } = router.query
 
@@ -165,8 +132,13 @@ export default () => {
         console.error('caught error: ', e)
       }
     }
-    init()
-  }, [dnsOwner])
+    const transactionKey = localStorage.getItem('latestImportTransactionKey')
+    if (transactionKey) {
+      setCurrentStep(3)
+    } else {
+      init()
+    }
+  }, [dnsOwner, name])
 
   return (
     <Container>
@@ -197,16 +169,12 @@ export default () => {
       </HeadingContainer>
       <Spacer $height={4} />
       <MainContentContainer>
-        {currentStep === 0 && <EnableDNSSEC {...{ currentStep, stepStatus, setCurrentStep }} />}
+        {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep }} />}
         {currentStep === 1 && (
-          <AddTextRecord
-            {...{ currentStep, stepStatus, setCurrentStep, syncWarning, setSyncWarning }}
-          />
+          <AddTextRecord {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning }} />
         )}
-        {currentStep === 2 && (
-          <ClaimDomain {...{ currentStep, stepStatus, setCurrentStep, syncWarning }} />
-        )}
-        {/* {currentStep === 3 && <ClaimComplete {...{ currentStep, stepStatus, setCurrentStep }} />} */}
+        {currentStep === 2 && <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning }} />}
+        {currentStep === 3 && <ClaimComplete {...{ currentStep, setCurrentStep }} />}
       </MainContentContainer>
     </Container>
   )

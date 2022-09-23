@@ -1,7 +1,6 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactElement, useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -13,13 +12,11 @@ import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
-import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
-import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -47,31 +44,31 @@ const SelfButtons = styled(CacheableComponent)(
     & > button {
       border-radius: ${theme.radii.extraLarge};
       border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
       background-color: ${theme.colors.background};
     }
   `,
 )
 
-export default function Page() {
+type Props = {
+  nameDetails: ReturnType<typeof useNameDetails>
+  primary: ReturnType<typeof usePrimary>
+  isSelf: boolean
+  isLoading: boolean
+  _name: string
+  name: string
+}
+
+const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }: Props) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
-  const _name = router.query.name as string
-  const isSelf = router.query.connected === 'true'
-
-  const initial = useInitial()
   const chainId = useChainId()
+  const { address } = useAccount()
 
-  const { address, isConnecting, isReconnecting } = useAccount()
-  const accountLoading = isConnecting || isReconnecting
-
-  const { name: ensName, loading: primaryLoading } = usePrimary(address as string, !address)
-
-  const name = isSelf && ensName ? ensName : _name
+  const { name: ensName } = primary
 
   const {
-    isLoading: detailsLoading,
     error,
     profile,
     ownerData,
@@ -81,13 +78,11 @@ export default function Page() {
     valid,
     basicIsCachedData,
     profileIsCachedData,
-  } = useNameDetails(name)
+  } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, ownerData)
 
   const { createTransactionFlow } = useTransactionFlow()
-
-  const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
   useProtectedRoute(
     '/',
@@ -178,6 +173,14 @@ export default function Page() {
     createTransactionFlow,
   ])
 
+  useEffect(() => {
+    const transactionKey = localStorage.getItem('latestImportTransactionKey')
+    console.log('profile transactionKey: ', transactionKey)
+    if (transactionKey) {
+      router.push(`/import/${name}`)
+    }
+  }, [])
+
   return (
     <>
       <Head>
@@ -258,6 +261,4 @@ export default function Page() {
   )
 }
 
-Page.getLayout = function getLayout(page: ReactElement) {
-  return <ContentGrid>{page}</ContentGrid>
-}
+export default ProfileContent

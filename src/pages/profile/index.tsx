@@ -1,9 +1,11 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
+import { useAccount } from 'wagmi'
 
-import DNSClaim from '@app/components/pages/profile/[name]/DNSClaim/DNSClaim'
-import ProfilePage from '@app/components/pages/profile/[name]/Profile'
+import ProfileContent from '@app/components/pages/profile/[name]/Profile'
+import { useInitial } from '@app/hooks/useInitial'
+import { useNameDetails } from '@app/hooks/useNameDetails'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 
@@ -15,14 +17,49 @@ const isDNSName = (name: string): boolean => {
 
 export default function Page() {
   const router = useRouter()
-  const name = router.query.name as string
-  const { data: status } = useRegistrationStatus(name)
+  const _name = router.query.name as string
+  const isSelf = router.query.connected === 'true'
 
-  console.log('registration status: ', status)
+  const { data: status } = useRegistrationStatus(_name)
+
+  const initial = useInitial()
+
+  const { address, isConnecting, isReconnecting } = useAccount()
+  const accountLoading = isConnecting || isReconnecting
+
+  const primary = usePrimary(address as string, !address)
+  const { name: ensName, loading: primaryLoading } = primary
+
+  const name = isSelf && ensName ? ensName : _name
+
+  const nameDetails = useNameDetails(name)
+  const { isLoading: detailsLoading, registrationStatus } = nameDetails
+
+  const isLoading = detailsLoading || primaryLoading || accountLoading || initial
+
+  if (registrationStatus === 'available' || registrationStatus === 'premium') {
+    router.push(`/register/${name}`)
+    return null
+  }
 
   const isDNS = isDNSName(name)
+  if (isDNS && status === 'notImported') {
+    router.push(`/import/${name}`)
+    return null
+  }
 
-  return isDNS && status !== 'registered' ? <DNSClaim /> : <ProfilePage />
+  return (
+    <ProfileContent
+      {...{
+        nameDetails,
+        primary,
+        isSelf,
+        isLoading,
+        _name,
+        name,
+      }}
+    />
+  )
 }
 
 Page.getLayout = function getLayout(page: ReactElement) {

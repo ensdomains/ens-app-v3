@@ -1,25 +1,15 @@
-import packet from 'dns-packet'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import ReactConfetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import styled, { css } from 'styled-components'
-import { useAccount, useProvider, useSigner } from 'wagmi'
 
-import { DNSProver } from '@ensdomains/dnsprovejs'
-import { Oracle as NewOracle } from '@ensdomains/dnssecoraclejs'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
-import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
-import { useNFTImage } from '@app/hooks/useAvatar'
-import { useChainId } from '@app/hooks/useChainId'
-import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
-
-import { DNS_OVER_HTTP_ENDPOINT } from './utils'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -148,19 +138,21 @@ const DomainTextContainer = styled.div`
 const NFTTemplateContainer = styled.div(
   ({ theme }) => css`
     border-radius: ${theme.radii['2xLarge']};
+    width: 260px;
+    margin: 0 auto;
   `,
 )
 
 export const ClaimComplete = ({ currentStep }) => {
-  const chainId = useChainId()
-  const { contracts } = useEns()
-  const provider = useProvider()
-  const { data: signer } = useSigner()
   const router = useRouter()
-  const { address } = useAccount()
-  const { image, isLoading, isCompatible } = useNFTImage('leontalbert.eth', 1)
 
   const name = router.query.name as string
+
+  useEffect(() => {
+    return () => {
+      localStorage.removeItem('latestImportTransactionKey')
+    }
+  }, [])
 
   return (
     <Container>
@@ -179,6 +171,15 @@ export const ClaimComplete = ({ currentStep }) => {
       </Typography>
       <Spacer $height={5} />
       <ButtonContainer>
+        <CheckButton
+          variant="primary"
+          size="small"
+          onClick={() => {
+            router.push(`/`)
+          }}
+        >
+          Claim another
+        </CheckButton>
         <CheckButton
           variant="primary"
           size="small"

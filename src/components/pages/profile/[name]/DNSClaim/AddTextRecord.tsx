@@ -12,6 +12,7 @@ import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
 
+import { Steps } from './Steps'
 import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner, isSubdomainSet } from './utils'
 
 const Container = styled.div(
@@ -178,6 +179,10 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
       </ButtonRow>
       <Spacer $height={2} />
       <Copyable {...{ label: 'Value', value: address }} />
+      <Spacer $height={6} />
+      <Steps
+        {...{ currentStep, stepStatus: ['complete', 'inProgress', 'notStarted', 'notStarted'] }}
+      />
       <Spacer $height={6} />
       <ButtonContainer>
         <CheckButton
