@@ -1,8 +1,8 @@
 import { useRouter } from 'next/router'
-import { useCallback, useState } from 'react'
+import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
@@ -13,6 +13,9 @@ import { isDnsSecEnabled } from './utils'
 const Container = styled.div(
   ({ theme }) => css`
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   `,
 )
 
@@ -31,113 +34,44 @@ const CheckButton = styled(Button)(
   `,
 )
 
-async function setDNSSECTldOwner(ens, tld, networkId) {
-  const tldowner = (await ens.getOwner(tld)).toLocaleLowerCase()
-  if (parseInt(tldowner) !== 0) return tldowner
-  switch (networkId) {
-    case 1:
-      return MAINNET_DNSREGISTRAR_ADDRESS
-    case 3:
-      return ROPSTEN_DNSREGISTRAR_ADDRESS
-    default:
-      return emptyAddress
-  }
-}
-
-/*
-  async getDNSEntry(name, parentOwner, owner) {
-    // Do not cache as it needs to be refetched on "Refresh"
-    const dnsRegistrar = { stateError: null }
-    const provider = await getProvider()
-    const { isOld, registrarContract } = await this.selectDnsRegistrarContract({
-      parentOwner,
-      provider
-    })
-    const oracleAddress = await registrarContract.oracle()
-    const registrarjs = new DNSRegistrarJS(oracleAddress, isOld)
-    try {
-      const claim = await registrarjs.claim(name)
-      const result = claim.getResult()
-      dnsRegistrar.claim = claim
-      dnsRegistrar.result = result
-      if (claim && claim.isFound) {
-        dnsRegistrar.dnsOwner = claim.getOwner()
-        if (!dnsRegistrar.dnsOwner || parseInt(dnsRegistrar.dnsOwner) === 0) {
-          // Empty
-          dnsRegistrar.state = 8
-        } else if (!utils.isAddress(dnsRegistrar.dnsOwner)) {
-          // Invalid record
-          dnsRegistrar.state = 4
-        } else if (
-          !owner ||
-          dnsRegistrar.dnsOwner.toLowerCase() === owner.toLowerCase()
-        ) {
-          // Ready to register
-          dnsRegistrar.state = 5
-        } else {
-          // Out of sync
-          dnsRegistrar.state = 6
-        }
-      } else {
-        if (claim && claim.nsec) {
-          if (result.results.length === 4) {
-            // DNS entry does not exist
-            dnsRegistrar.state = 1
-          } else if (result.results.length === 6) {
-            // DNS entry exists but _ens subdomain does not exist
-            dnsRegistrar.state = 3
-          } else {
-            throw `DNSSEC results cannot be ${result.results.length}`
-          }
-        } else {
-          // DNSSEC is not enabled
-          dnsRegistrar.state = 2
-        }
-      }
-    } catch (e) {
-      console.log('Problem fetching data from DNS', e)
-      // Problem fetching data from DNS
-      dnsRegistrar.stateError = e.message
-      dnsRegistrar.state = 0
-    }
-    return dnsRegistrar
-  }
-*/
+const HelperLinks = [
+  {
+    label: 'Namecheap',
+    href: 'https://www.namecheap.com/support/knowledgebase/article.aspx/9722/2232/managing-dnssec-for-domains-pointed-to-custom-dns/',
+  },
+  {
+    label: 'Domain.com',
+    href: 'https://manage.vip.domain.com/kb/answer/1909',
+  },
+  {
+    label: 'Google domains',
+    href: 'https://support.google.com/domains/answer/6387342',
+  },
+  {
+    label: 'Dreamhost',
+    href: 'https://help.dreamhost.com/hc/en-us/articles/219539467-DNSSEC-overview',
+  },
+  {
+    label: 'Hover',
+    href: 'https://help.hover.com/hc/en-us/articles/217281647-DNSSEC-services',
+  },
+  {
+    label: 'GoDaddy',
+    href: 'https://godaddy.com/help/enable-dnssec-on-my-domain-6420',
+  },
+  {
+    label: 'Bluehost',
+    href: 'https://cp.cn.bluehost.com/kb/answer/1909',
+  },
+  {
+    label: 'HostGator',
+    href: 'https://www.hostgator.com/help/article/resellerclub-dnssec-domain-name-system-security-extensions',
+  },
+]
 
 enum Errors {
   NOT_CHECKED,
   DNSSEC_NOT_ENABLED,
-}
-
-async function getDNSEntryDetails(name) {
-  const ens = getENS()
-  const registrar = getRegistrar()
-  const nameArray = name.split('.')
-  const networkId = await getNetworkId()
-  if (nameArray.length !== 2 || nameArray[1] === 'eth') return {}
-
-  const tld = nameArray[1]
-  let owner
-  const tldowner = await setDNSSECTldOwner(ens, tld, networkId)
-  try {
-    owner = (await ens.getOwner(name)).toLocaleLowerCase()
-  } catch {
-    return {}
-  }
-
-  // Do we really need to check if DNSRegsitrar is sypported?
-  // const isDNSRegistrarSupported = await registrar.isDNSRegistrar(tldowner)
-
-  if (isDNSRegistrarSupported && tldowner !== emptyAddress) {
-    const dnsEntry = await registrar.getDNSEntry(name, tldowner, owner)
-    return {
-      isDNSRegistrar: true,
-      dnsOwner: dnsEntry.claim?.result ? dnsEntry.claim.getOwner() : emptyAddress,
-      state: dnsEntry.state,
-      stateError: dnsEntry.stateError,
-      parentOwner: tldowner,
-    }
-  }
 }
 
 export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
@@ -159,20 +93,40 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
 
   return (
     <Container>
-      <Typography>Enable DNS SEC</Typography>
-      <Spacer $height={5} />
+      <Typography variant="extraLarge" weight="bold">
+        Enable DNS SEC
+      </Typography>
+      <Spacer $height={4} />
       <Typography>
-        You’ll need to visit your domain registrar to enable DNSSEC. Once enabled, click refresh to
-        move to the next step.
+        You’ll need to visit your domain registrar to enable DNSSEC. Once enabled, click 'Check' to
+        move to the next step.{' '}
+      </Typography>
+      <Spacer $height={3} />
+      <Typography>
+        Choose your registrar from the dropdown below for instructions on how to do this.{' '}
       </Typography>
       <Spacer $height={5} />
-      <Outlink href="https://google.com">
-        It looks like your registrar is Namecheap, who have a guide available here.
+      <Dropdown
+        align="left"
+        items={HelperLinks.map((link) => ({
+          label: link.label,
+          onClick: () => null,
+          wrapper: (children, key) => (
+            <a href={link.href} target="_blank" key={key} rel="noreferrer">
+              {children}
+            </a>
+          ),
+        }))}
+        label="Domain Registrar"
+      />
+      <Spacer $height={3} />
+      <Outlink target="_blank" href={`https://who.is/whois/${name}`}>
+        Find your registrar
       </Outlink>
-      <Spacer $height={1} />
+      <Spacer $height={5} />
       {errorState === Errors.DNSSEC_NOT_ENABLED && (
         <>
-          <Helper type="info">{`DNSSEC has not been enabled on this domain.`}</Helper>
+          <Helper type="info">DNSSEC has not been enabled on this domain.</Helper>
           <Spacer $height={6} />
         </>
       )}

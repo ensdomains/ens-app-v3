@@ -142,123 +142,17 @@ const HeadingContainer = styled.div(
   `,
 )
 
-/*
-class DNSRegistrar {
-  constructor(oracleAddress, isOld = false) {
-    this.oracleAddress = oracleAddress
-    this.isOld = isOld
-    if (isOld) {
-      this.OracleClass = OldOracle
-    } else {
-      this.OracleClass = NewOracle
-    }
-  }
-   async claim(name) {
-    const encodedName = '0x' + packet.name.encode(name).toString('hex')
-    const textDomain = '_ens.' + name
-    const prover = DNSProver.create('https://cloudflare-dns.com/dns-query')
-    const provider = await getProvider()
-    return new Claim({
-      oracle: new this.OracleClass(this.oracleAddress, provider),
-      result: await prover.queryWithProof('TXT', textDomain),
-      isFound: true,
-      textDomain: textDomain,
-      encodedName: encodedName
-    })
-  }
-}
-*/
-
-const dnsSecModes = [
-  // 0
-  {
-    state: 'ENABLE_DNSSEC',
-    title: 'Problem fetching data from DNS',
-    displayError: true,
-  },
-  // 1
-  {
-    state: 'ENABLE_DNSSEC',
-    title: 'DNS entry does not exist.',
-    displayError: true,
-  },
-  // 2
-  {
-    state: 'ENABLE_DNSSEC',
-    title: 'Please enable DNSSEC',
-  },
-  // 3
-  {
-    state: 'ADD_TEXT',
-    title: 'Please add text record into _ens.name.tld',
-  },
-  // 4,
-  {
-    state: 'ADD_TEXT',
-    title: 'DNS Record is invalid',
-    displayError: true,
-  },
-  // 5,
-  {
-    state: 'SUBMIT_PROOF',
-    title: 'Ready to register',
-    explainer: "*Click 'refresh' if you make changes to the domain in the DNS Registrar.",
-  },
-  // 6,
-  {
-    state: 'SUBMIT_PROOF',
-    title: 'DNS is out of sync',
-    explainer:
-      "The Controller and DNS Owner are out of sync. Click 'sync' to make the DNS Owner the Controller. Click 'refresh' if you make changes to the domain in the DNS Registrar.",
-    outOfSync: true,
-  },
-  // 7,
-  {
-    state: 'SUBMIT_PROOF',
-    title: 'Registry is out of date',
-    explainer:
-      "Click 'sync' to make the DNS Owner the Controller. Click 'refresh' if you make changes to the domain in the DNS Registrar.",
-    outOfSync: true,
-  },
-  // 8,
-  {
-    state: 'ADD_TEXT',
-    title: 'DNS Record does not exist',
-    displayError: true,
-  },
-]
-
 export default () => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
   const [currentStep, setCurrentStep] = useState(0)
   const [syncWarning, setSyncWarning] = useState(false)
-  const {
-    isLoading: detailsLoading,
-    error,
-    profile,
-    ownerData,
-    expiryDate,
-    normalisedName,
-    dnsOwner,
-    valid,
-    basicIsCachedData,
-    profileIsCachedData,
-  } = useNameDetails(router.query.name as string)
+  const { dnsOwner } = useNameDetails(router.query.name as string)
   const [stepStatus, setStepStatus] = useState(['inProgress', 'notStarted', 'notStarted'])
-  const { getOwner } = useEns()
-  const { data: ownership, isLoading } = useQuery([name, 'DNSClaim', 'getOwner'], () =>
-    getOwner(name as string),
-  )
 
   const { name } = router.query
 
-  const owner = ownership?.owner
-
   useEffect(() => {
-    const textDomain = `_ens.${name}`
-    let dnsRegistrarState = 0
-
     const init = async () => {
       try {
         const hasDnsSecEnabled = await isDnsSecEnabled(name)
@@ -266,18 +160,13 @@ export default () => {
           setCurrentStep(0)
           return
         }
-        // setCurrentStep(3)
+        setCurrentStep(1)
       } catch (e) {
         console.error('caught error: ', e)
-        dnsRegistrarState = 0
       }
     }
     init()
-
-    console.log('dnsRegistrarState:', dnsRegistrarState)
   }, [dnsOwner])
-
-  console.log('currentStep: ', currentStep)
 
   return (
     <Container>
@@ -317,7 +206,7 @@ export default () => {
         {currentStep === 2 && (
           <ClaimDomain {...{ currentStep, stepStatus, setCurrentStep, syncWarning }} />
         )}
-        {currentStep === 3 && <ClaimComplete {...{ currentStep, stepStatus, setCurrentStep }} />}
+        {/* {currentStep === 3 && <ClaimComplete {...{ currentStep, stepStatus, setCurrentStep }} />} */}
       </MainContentContainer>
     </Container>
   )
