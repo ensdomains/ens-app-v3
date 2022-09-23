@@ -12,6 +12,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
 
 import { Steps } from './Steps'
@@ -210,7 +211,7 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
         <CheckButton
           variant="primary"
           size="small"
-          onClick={handleClaim(name, createTransactionFlow, syncWarning ? null : address)}
+          onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address)}
         >
           Claim
         </CheckButton>

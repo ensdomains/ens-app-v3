@@ -7,7 +7,6 @@ import { Button, Card, Typography, mq } from '@ensdomains/thorin'
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
-import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 

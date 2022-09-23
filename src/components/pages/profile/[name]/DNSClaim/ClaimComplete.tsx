@@ -17,18 +17,6 @@ const Container = styled.div(
   `,
 )
 
-const GreyBox = styled.div(
-  ({ theme }) => css`
-    background: ${theme.colors.backgroundSecondary};
-    border-radius: 10px;
-    padding: 20px 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-direction: row;
-  `,
-)
-
 const TextContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -111,16 +99,6 @@ const Confetti = () => {
   return <ReactConfetti width={width} height={height} numberOfPieces={hide ? 0 : 200} />
 }
 
-const StyledNftBox = styled.img<{ $loading: boolean }>(
-  ({ theme, $loading }) => css`
-    width: 500px;
-    height: 500px;
-    background: ${$loading ? theme.colors.accentGradient : 'none'};
-    border-radius: ${theme.radii['2xLarge']};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
-  `,
-)
-
 const FunkyTypography = styled(Typography)(
   ({ theme }) => css`
     background: linear-gradient(330.4deg, #44bcf0 4.54%, #7298f8 59.2%, #a099ff 148.85%);
@@ -149,6 +127,9 @@ export const ClaimComplete = ({ currentStep }) => {
   const name = router.query.name as string
 
   useEffect(() => {
+    setTimeout(() => {
+      localStorage.removeItem('latestImportTransactionKey')
+    }, 3000)
     return () => {
       localStorage.removeItem('latestImportTransactionKey')
     }
@@ -158,7 +139,7 @@ export const ClaimComplete = ({ currentStep }) => {
     <Container>
       <Confetti />
       <NFTTemplateContainer>
-        <NFTTemplate name={name} isNormalised />
+        {name && <NFTTemplate name={name} isNormalised />}
       </NFTTemplateContainer>
       <Spacer $height={5} />
       <Typography {...{ weight: 'bold', variant: 'extraLarge' }}>Congratulations!</Typography>{' '}

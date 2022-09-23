@@ -25,6 +25,7 @@ const displayItems = (
 ]
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
+  console.log('data: ', data)
   const tx = ens.importDNSSECName.populateTransaction(data.name, {
     address: data.address,
     proverResult: data.proverResult,
