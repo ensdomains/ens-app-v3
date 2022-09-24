@@ -16,6 +16,7 @@ import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
 
 import { Steps } from './Steps'
+import { ButtonContainer, CheckButton } from './shared'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -57,26 +58,6 @@ const AvatarWrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space['7']};
     height: ${theme.space['7']};
-  `,
-)
-
-const ButtonContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-
-    & > button {
-      margin: 0;
-    }
-  `,
-)
-
-const CheckButton = styled(Button)(
-  ({ theme }) => css`
-    width: 150px;
-    margin: 0 auto;
   `,
 )
 
@@ -162,8 +143,6 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
     setPendingTransaction(false)
   }, [transactions])
 
-  console.log('transactions: ', transactions)
-
   return (
     <Container>
       <Typography>Claim your domain</Typography>
@@ -204,15 +183,15 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
       />
       <Spacer $height="5" />
       <ButtonContainer>
-        <CheckButton variant="primary" size="small">
-          Back
-        </CheckButton>
         <CheckButton
           variant="primary"
           size="small"
           onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address)}
         >
           Claim
+        </CheckButton>
+        <CheckButton variant="primary" size="small">
+          Back
         </CheckButton>
       </ButtonContainer>
     </Container>

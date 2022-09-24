@@ -1,3 +1,4 @@
+import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo } from 'react'
@@ -65,6 +66,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
   const breakpoints = useBreakpoint()
   const chainId = useChainId()
   const { address } = useAccount()
+  const transactions = useRecentTransactions()
 
   const { name: ensName } = primary
 
@@ -176,7 +178,12 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
   useEffect(() => {
     const transactionKey = localStorage.getItem('latestImportTransactionKey')
     console.log('profile transactionKey: ', transactionKey)
-    if (transactionKey) {
+    const transaction = transactions.find((transaction) => {
+      const description = JSON.parse(transaction.description)
+      return description.key === transactionKey
+    })
+
+    if (transaction && transaction.status === 'confirmed') {
       router.push(`/import/${name}`)
     }
   }, [])

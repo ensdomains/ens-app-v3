@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Card, Typography } from '@ensdomains/thorin'
+import { Button, Card, Typography, mq } from '@ensdomains/thorin'
 
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
@@ -85,7 +85,6 @@ const alwaysShowSubtitle = false
 
 const Container = styled.div(
   ({ theme }) => css`
-    width: 650px;
     box-sizing: border-box;
     margin: 0 auto;
     grid-column: 1/-1;
@@ -96,7 +95,9 @@ const Container = styled.div(
 const MainContentContainer = styled(Card)(
   ({ theme }) => css`
     width: 100%;
-    padding: 25px 75px;
+    ${mq.sm.min(css`
+      padding: 25px 75px;
+    `)}
   `,
 )
 
@@ -105,6 +106,7 @@ const HeadingContainer = styled.div(
     display: flex;
     flex-direction: row;
     align-items: center;
+    justify-content: space-between;
   `,
 )
 

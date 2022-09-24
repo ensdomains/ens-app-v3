@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
 
 import DNSClaim from '@app/components/pages/profile/[name]/DNSClaim/DNSClaim'

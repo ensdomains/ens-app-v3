@@ -2,12 +2,13 @@ import { useRouter } from 'next/router'
 import { useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Dropdown, Helper, Typography } from '@ensdomains/thorin'
+import { Dropdown, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 
 import { Steps } from './Steps'
+import { ButtonContainer, CheckButton } from './shared'
 import { isDnsSecEnabled } from './utils'
 
 const Container = styled.div(
@@ -16,21 +17,6 @@ const Container = styled.div(
     display: flex;
     flex-direction: column;
     align-items: center;
-  `,
-)
-
-const ButtonContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-  `,
-)
-
-const CheckButton = styled(Button)(
-  ({ theme }) => css`
-    width: 150px;
-    margin: 0 auto;
   `,
 )
 
@@ -96,16 +82,16 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
       <Typography variant="extraLarge" weight="bold">
         Enable DNS SEC
       </Typography>
-      <Spacer $height={4} />
+      <Spacer $height="4" />
       <Typography>
         You’ll need to visit your domain registrar to enable DNSSEC. Once enabled, click 'Check' to
         move to the next step.{' '}
       </Typography>
-      <Spacer $height={3} />
+      <Spacer $height="3" />
       <Typography>
         Choose your registrar from the dropdown below for instructions on how to do this.{' '}
       </Typography>
-      <Spacer $height={5} />
+      <Spacer $height="5" />
       <Dropdown
         align="left"
         items={HelperLinks.map((link) => ({
@@ -119,15 +105,15 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
         }))}
         label="Domain Registrar"
       />
-      <Spacer $height={3} />
+      <Spacer $height="3" />
       <Outlink target="_blank" href={`https://who.is/whois/${name}`}>
         Find your registrar
       </Outlink>
-      <Spacer $height={5} />
+      <Spacer $height="5" />
       {errorState === Errors.DNSSEC_NOT_ENABLED && (
         <>
           <Helper type="info">DNSSEC has not been enabled on this domain.</Helper>
-          <Spacer $height={6} />
+          <Spacer $height="6" />
         </>
       )}
       <Steps
@@ -136,7 +122,7 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
           stepStatus: ['inProgress', 'notStarted', 'notStarted', 'notStarted'],
         }}
       />
-      <Spacer $height={5} />
+      <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton
           onClick={handleCheck}

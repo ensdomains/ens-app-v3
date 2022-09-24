@@ -11,8 +11,11 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { Outlink } from '@app/components/Outlink'
 import { useCopied } from '@app/hooks/useCopied'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { shortenAddress } from '@app/utils/utils'
 
 import { Steps } from './Steps'
+import { ButtonContainer, CheckButton } from './shared'
 import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner, isSubdomainSet } from './utils'
 
 const HelperLinks = [
@@ -113,27 +116,6 @@ const Copyable = ({ label, value }) => {
   )
 }
 
-// Remember to check if domain has been secured by DNSSEC
-const ButtonContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-
-    & > button {
-      margin: 0;
-    }
-  `,
-)
-
-const CheckButton = styled(Button)(
-  ({ theme }) => css`
-    width: 150px;
-    margin: 0 auto;
-  `,
-)
-
 enum Errors {
   NOT_CHECKED,
   SUBDOMAIN_NOT_SET,
@@ -146,6 +128,9 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
   const { name } = router.query
   const { address } = useAccount()
   const { errorState, setErrorState } = useState<Errors>(Errors.NOT_CHECKED)
+  const breakpoints = useBreakpoint()
+
+  console.log('breakpoints: ', breakpoints)
 
   const handleCheck = async () => {
     try {
@@ -232,30 +217,18 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
         <Copyable {...{ label: 'Name', value: '_ens' }} />
       </ButtonRow>
       <Spacer $height={2} />
-      <Copyable {...{ label: 'Value', value: address }} />
+      <Copyable
+        {...{
+          label: 'Value',
+          value: breakpoints.sm ? address : shortenAddress(address, undefined, 7, 7),
+        }}
+      />
       <Spacer $height={6} />
       <Steps
         {...{ currentStep, stepStatus: ['complete', 'inProgress', 'notStarted', 'notStarted'] }}
       />
       <Spacer $height={6} />
       <ButtonContainer>
-        <CheckButton
-          onClick={() => {
-            setCurrentStep(currentStep - 1)
-          }}
-          variant="primary"
-          size="small"
-        >
-          Back
-        </CheckButton>
-        <CheckButton
-          onClick={handleCheck}
-          variant="primary"
-          size="small"
-          disabled={currentStep === 2}
-        >
-          Check
-        </CheckButton>
         {syncWarning && (
           <CheckButton
             onClick={handleCheck}
@@ -266,6 +239,23 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
             Continue
           </CheckButton>
         )}
+        <CheckButton
+          onClick={handleCheck}
+          variant="primary"
+          size="small"
+          disabled={currentStep === 2}
+        >
+          Check
+        </CheckButton>
+        <CheckButton
+          onClick={() => {
+            setCurrentStep(currentStep - 1)
+          }}
+          variant="primary"
+          size="small"
+        >
+          Back
+        </CheckButton>
       </ButtonContainer>
     </Container>
   )

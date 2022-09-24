@@ -38,32 +38,3 @@ export const NamePill = ({ name, network }: { name: string; network: number }) =
     </Container>
   )
 }
-
-const TextContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-  `,
-)
-
-export const NamePillWithAddress = ({
-  name,
-  network,
-  address,
-}: {
-  name: string
-  network: number
-  address: string
-}) => {
-  return (
-    <Container>
-      <AvatarWrapper>
-        <NameAvatar label={name} name={name} network={network} />
-      </AvatarWrapper>
-      <TextContainer>
-        <Typography>{name}</Typography>
-        <Typography>{address}</Typography>
-      </TextContainer>
-    </Container>
-  )
-}

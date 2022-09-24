@@ -4,87 +4,18 @@ import ReactConfetti from 'react-confetti'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography } from '@ensdomains/thorin'
+import { Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate'
-import { NameAvatar } from '@app/components/AvatarWithZorb'
-import { shortenAddress } from '@app/utils/utils'
+
+import { ButtonContainer, CheckButton } from './shared'
 
 const Container = styled.div(
   ({ theme }) => css`
     text-align: center;
   `,
 )
-
-const TextContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-  `,
-)
-
-const NamePillContainer = styled.div(
-  ({ theme }) => css`
-    height: ${theme.space['9']};
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-start;
-    gap: ${theme.space['2']};
-  `,
-)
-
-const AvatarWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['7']};
-    height: ${theme.space['7']};
-  `,
-)
-
-const ButtonContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-    gap: 10px;
-
-    & > button {
-      margin: 0;
-    }
-  `,
-)
-
-const CheckButton = styled(Button)(
-  ({ theme }) => css`
-    width: 150px;
-    margin: 0 auto;
-  `,
-)
-
-export const NamePillWithAddress = ({
-  name,
-  network,
-  address,
-}: {
-  name: string
-  network: number
-  address: string
-}) => {
-  return (
-    <NamePillContainer>
-      <TextContainer>
-        <Typography {...{ weight: 'bold' }}>{name}</Typography>
-        <Typography {...{ variant: 'small', weight: 'light', color: 'textTertiary' }}>
-          {shortenAddress(address)}
-        </Typography>
-      </TextContainer>
-      <AvatarWrapper>
-        <NameAvatar label={name} name={name} network={network} />
-      </AvatarWrapper>
-    </NamePillContainer>
-  )
-}
 
 const Confetti = () => {
   const { width, height } = useWindowSize()
@@ -109,14 +40,19 @@ const FunkyTypography = styled(Typography)(
 
 const DomainTextContainer = styled.div`
   display: flex;
-  gap: 8px;
+  flex-direction: column;
   justify-content: center;
+
+  ${mq.sm.min(css`
+    gap: 8px;
+    flex-direction: row;
+  `)}
 `
 
 const NFTTemplateContainer = styled.div(
   ({ theme }) => css`
     border-radius: ${theme.radii['2xLarge']};
-    width: 260px;
+    width: 240px;
     margin: 0 auto;
   `,
 )
@@ -144,9 +80,10 @@ export const ClaimComplete = ({ currentStep }) => {
       <Spacer $height={5} />
       <Typography {...{ weight: 'bold', variant: 'extraLarge' }}>Congratulations!</Typography>{' '}
       <DomainTextContainer>
-        <Typography {...{ weight: 'bold', variant: 'large' }}>You are now the owner of</Typography>
+        <Typography {...{ weight: 'bold', variant: 'large' }}>You are now the owner of:</Typography>
         <FunkyTypography {...{ weight: 'bold', variant: 'large' }}>{name}</FunkyTypography>
       </DomainTextContainer>
+      <Spacer $height={4} />
       <Typography {...{}}>
         Your domain name was successfully imported into ENS. You can now view and manage your name.
       </Typography>
@@ -156,19 +93,19 @@ export const ClaimComplete = ({ currentStep }) => {
           variant="primary"
           size="small"
           onClick={() => {
-            router.push(`/`)
+            router.push(`/profile/${name}`)
           }}
         >
-          Claim another
+          View name
         </CheckButton>
         <CheckButton
           variant="primary"
           size="small"
           onClick={() => {
-            router.push(`/profile/${name}`)
+            router.push(`/`)
           }}
         >
-          View name
+          Claim another
         </CheckButton>
       </ButtonContainer>
     </Container>
