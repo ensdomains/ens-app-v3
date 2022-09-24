@@ -1,8 +1,10 @@
+import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
-import { Button, Card, Typography, mq } from '@ensdomains/thorin'
+import { Button, Card, Typography } from '@ensdomains/thorin'
 
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
@@ -63,9 +65,6 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
   `,
 )
 
-const spacing = '270px 2fr'
-
-const title = 'title'
 const subtitle = 'subtitle'
 
 const Title = styled(Typography)(
@@ -115,6 +114,8 @@ export default () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [syncWarning, setSyncWarning] = useState(false)
   const { dnsOwner } = useNameDetails(router.query.name as string)
+  const transactions = useRecentTransactions()
+  const { isConnected } = useAccount()
 
   const { name } = router.query
 
@@ -132,12 +133,17 @@ export default () => {
       }
     }
     const transactionKey = localStorage.getItem('latestImportTransactionKey')
-    if (transactionKey) {
+    const transaction = transactions.find((transaction) => {
+      const description = JSON.parse(transaction.description)
+      return description.key === transactionKey
+    })
+
+    if (transaction && transaction.status === 'confirmed') {
       setCurrentStep(3)
     } else {
       init()
     }
-  }, [dnsOwner, name])
+  }, [dnsOwner, name, transactions])
 
   return (
     <Container>
@@ -166,14 +172,22 @@ export default () => {
         </ContentContainer>
         {!router.query.from && !breakpoints.md && <HamburgerRoutes />}
       </HeadingContainer>
-      <Spacer $height={4} />
+      <Spacer $height="4" />
       <MainContentContainer>
-        {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep }} />}
-        {currentStep === 1 && (
-          <AddTextRecord {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning }} />
+        {isConnected ? (
+          <>
+            {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep }} />}
+            {currentStep === 1 && (
+              <AddTextRecord {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning }} />
+            )}
+            {currentStep === 2 && <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning }} />}
+            {currentStep === 3 && <ClaimComplete {...{ currentStep, setCurrentStep }} />}
+          </>
+        ) : (
+          <Typography style={{ textAlign: 'center' }}>
+            Please connect your wallet to continue
+          </Typography>
         )}
-        {currentStep === 2 && <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning }} />}
-        {currentStep === 3 && <ClaimComplete {...{ currentStep, setCurrentStep }} />}
       </MainContentContainer>
     </Container>
   )

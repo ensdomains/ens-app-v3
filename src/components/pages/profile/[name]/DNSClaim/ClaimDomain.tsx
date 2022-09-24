@@ -148,7 +148,6 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
       return description.key === transactionKey
     })
 
-    console.log('transaction*: ', transaction)
     if (transaction && transaction.status === 'pending') {
       setPendingTransaction(true)
       return
