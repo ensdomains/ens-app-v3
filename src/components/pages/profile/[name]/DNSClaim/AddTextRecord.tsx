@@ -5,7 +5,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
-import { Button, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -15,9 +15,47 @@ import { useCopied } from '@app/hooks/useCopied'
 import { Steps } from './Steps'
 import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner, isSubdomainSet } from './utils'
 
+const HelperLinks = [
+  {
+    label: 'Namecheap',
+    href: 'https://www.namecheap.com/support/knowledgebase/article.aspx/317/2237/how-do-i-add-txtspfdkimdmarc-records-for-my-domain/',
+  },
+  {
+    label: 'Domain.com',
+    href: 'https://www.domain.com/help/article/dns-management-how-to-update-txt-spf-records',
+  },
+  {
+    label: 'Google domains',
+    href: 'https://support.google.com/domains/answer/3290350?hl=en',
+  },
+  {
+    label: 'Dreamhost',
+    href: 'https://help.dreamhost.com/hc/en-us/articles/360035516812-Adding-custom-DNS-records',
+  },
+  {
+    label: 'Hover',
+    href: 'https://help.hover.com/hc/en-us/articles/217282457-Managing-DNS-records-',
+  },
+  {
+    label: 'GoDaddy',
+    href: 'https://godaddy.com/help/manage-dns-records-680',
+  },
+  {
+    label: 'Bluehost',
+    href: 'https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries',
+  },
+  {
+    label: 'HostGator',
+    href: 'https://www.hostgator.com/help/article/changing-dns-records',
+  },
+]
+
 const Container = styled.div(
   ({ theme }) => css`
     text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
   `,
 )
 
@@ -41,6 +79,7 @@ const ButtonRow = styled.div(
     display: flex;
     flex-direction: row;
     gap: 10px;
+    width: 100%;
   `,
 )
 
@@ -164,8 +203,23 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
         You need to create a new DNS record for your domain using these details. This will claim
         your Ethereum address as the owner of this domain.
       </Typography>
-      <Outlink href="https://google.com">
-        It looks like your registrar is Namecheap, who have a guide available here.
+      <Spacer $height={3} />
+      <Dropdown
+        align="left"
+        items={HelperLinks.map((link) => ({
+          label: link.label,
+          onClick: () => null,
+          wrapper: (children, key) => (
+            <a href={link.href} target="_blank" key={key} rel="noreferrer">
+              {children}
+            </a>
+          ),
+        }))}
+        label="Domain Registrar"
+      />
+      <Spacer $height={3} />
+      <Outlink target="_blank" href={`https://who.is/whois/${name}`}>
+        Find your registrar
       </Outlink>
       <Spacer $height={5} />
       <ButtonRow>

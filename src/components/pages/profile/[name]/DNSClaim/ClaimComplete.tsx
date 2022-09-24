@@ -129,7 +129,7 @@ export const ClaimComplete = ({ currentStep }) => {
   useEffect(() => {
     setTimeout(() => {
       localStorage.removeItem('latestImportTransactionKey')
-    }, 3000)
+    }, 2000)
     return () => {
       localStorage.removeItem('latestImportTransactionKey')
     }
