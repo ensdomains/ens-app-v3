@@ -13,26 +13,20 @@ const displayItems = (
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
+    label: 'subname',
+    value: name,
+    type: 'subname',
+  },
+  {
     label: 'action',
     value: t(`transaction.description.deleteSubname`),
   },
   {
     label: 'info',
-    value: t(`transaction.info.deleteSubname`),
-  },
-  {
-    label: 'name',
-    value: name,
-    type: 'name',
+    value: [t('action.delete'), name],
+    type: 'list',
   },
 ]
-
-const helper = (_: Data, t: TFunction<'translation', undefined>) => {
-  return {
-    type: 'error',
-    children: t('transaction.deleteSubname.helper', { ns: 'transactionFlow' }),
-  }
-}
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   ens.deleteSubname.populateTransaction(data.name, {
@@ -43,5 +37,4 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
 export default {
   displayItems,
   transaction,
-  helper,
 } as Transaction<Data>

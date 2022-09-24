@@ -3,12 +3,13 @@ import { BigNumber } from 'ethers'
 import { TFunction } from 'react-i18next'
 
 import { HelperProps, PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
-import { yearsToSeconds } from '@app/utils/utils'
+import { makeDisplay } from '@app/utils/currency'
 
 type Data = {
   names: string[]
-  years: number
+  duration: number
   rentPrice: BigNumber
+  isSelf?: boolean
 }
 
 const displayItems = (
@@ -32,12 +33,13 @@ const displayItems = (
     label: 'cost',
     value: t('transaction.extendNames.costValue', {
       ns: 'transactionFlow',
-      value: rentPrice.toString(),
+      value: makeDisplay(rentPrice, 5, 'eth'),
     }),
   },
 ]
 
-const helper = (data: Data, t: TFunction<'translation', undefined>): HelperProps => {
+const helper = (data: Data, t: TFunction<'translation', undefined>): HelperProps | undefined => {
+  if (data.isSelf) return
   return {
     type: 'warning',
     children: t('transaction.extendNames.warning', { ns: 'transactionFlow' }),
@@ -45,31 +47,22 @@ const helper = (data: Data, t: TFunction<'translation', undefined>): HelperProps
 }
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const { names, years } = data
-  const duration = yearsToSeconds(years)
-  const labels = names.map((name) => name.replace('.eth', ''))
-
-  // console.log(labels)
-
-  // const br = await ens.contracts?.getBulkRenewal()
-  // console.log('br', br)
-
-  // const p = await br!.rentPrice(names, duration)
-  // console.log('p', p)
-
-  // br!.connect(signer).renewAll(labels, duration, { value: p?.base })
+  const { names, duration } = data
+  const labels = names.map((name) => {
+    const parts = name.split('.')
+    if (parts.length > 2) throw new Error('Currently only supports 1st level names')
+    if (parts[1] !== 'eth') throw new Error('Currently only supports .eth names')
+    return parts[0]
+  })
 
   const price = await ens.getPrice(labels, duration, true)
-  console.log('price', price, years, duration)
-  const value = price?.base
-  console.log('base', value?.toNumber())
+  const priceWithBuffer = price?.base.mul(110).div(100)
 
-  if (!value) throw new Error('No price found')
+  if (!priceWithBuffer) throw new Error('No price found')
   return ens.renewNames.populateTransaction(names, {
     duration,
-    value,
+    value: priceWithBuffer,
     signer,
   })
 }
-
 export default { transaction, displayItems, helper } as Transaction<Data>

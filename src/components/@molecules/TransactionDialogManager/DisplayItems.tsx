@@ -142,6 +142,23 @@ const NameValue = ({ value }: { value: string }) => {
   )
 }
 
+const SubnameValue = ({ value }: { value: string }) => {
+  const network = useChainId()
+  const [label, ...parentParts] = value.split('.')
+  const parent = parentParts.join('.')
+  return (
+    <ValueWithAvatarContainer>
+      <div>
+        <ValueTypography weight="bold">{label}.</ValueTypography>
+        <ValueTypography weight="bold">{parent}</ValueTypography>
+      </div>
+      <AvatarWrapper>
+        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
+      </AvatarWrapper>
+    </ValueWithAvatarContainer>
+  )
+}
+
 const ListContainer = styled.div(
   () => css`
     display: flex;
@@ -173,6 +190,9 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   }
   if (type === 'name') {
     return <NameValue value={value} />
+  }
+  if (type === 'subname') {
+    return <SubnameValue value={value} />
   }
   if (type === 'list') {
     return <ListValue value={value} />

@@ -10,6 +10,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { formatExpiry } from '@app/utils/utils'
 
 const Container = styled(Card)(
@@ -77,15 +78,24 @@ const ButtonIcon = styled.svg(
 )
 
 export const DetailSnippet = ({
+  name,
   expiryDate,
   canSend,
+  canEdit,
   isCached,
 }: {
+  name: string
   expiryDate?: Date | null
   canSend: boolean
+  canEdit?: boolean
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
+
+  const { showDataInput } = useTransactionFlow()
+  const handleExtend = () => {
+    showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
+  }
 
   if (!expiryDate && !canSend) return null
   return (
@@ -105,8 +115,8 @@ export const DetailSnippet = ({
             size="small"
             shadowless
             variant="transparent"
-            disabled
             data-testid="extend-button"
+            onClick={handleExtend}
           >
             <InnerButton>
               <ButtonIcon as={FastForwardSVG} />

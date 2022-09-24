@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query'
 import { useInfiniteQuery } from 'wagmi'
 
 import { SortDirection, SortType } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
@@ -11,6 +12,9 @@ export type Subname = {
   truncatedName?: string
   resultsPerPage?: number
   searchQuery?: string
+  owner?: {
+    id?: string
+  }
 }
 
 export type SubnameSortType = Exclude<SortType, SortType.expiryDate>
@@ -21,10 +25,11 @@ export const useSubnameInfiniteQuery = (
   orderDirection?: SortDirection,
   search?: string,
 ) => {
+  const queryClient = useQueryClient()
   const { getSubnames } = useEns()
 
-  const { data, isLoading, isFetching, fetchNextPage, hasNextPage } = useInfiniteQuery(
-    ['getSubnames', name, orderBy, orderDirection, search, 'ehldlos'],
+  const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
+    ['getSubnames', name, orderBy, orderDirection, search],
     async ({ pageParam }) => {
       const result = await getSubnames({
         name,
@@ -52,6 +57,10 @@ export const useSubnameInfiniteQuery = (
     },
   )
 
+  const reset = () => {
+    queryClient.invalidateQueries({ exact: false, queryKey: ['getSubnames'] })
+  }
+
   const subnames: Subname[] =
     data?.pages.reduce<Subname[]>((acc, curr) => {
       return [...acc, ...(curr.subnames || [])]
@@ -64,5 +73,7 @@ export const useSubnameInfiniteQuery = (
     isLoading,
     isFetching,
     hasResults: !!data?.pages[0].subnameCount,
+    reset,
+    refetch,
   }
 }

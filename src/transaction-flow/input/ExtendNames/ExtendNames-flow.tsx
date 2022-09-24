@@ -1,24 +1,24 @@
 import { BigNumber } from 'ethers'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useSigner } from 'wagmi'
+import { useFeeData } from 'wagmi'
 
-import { Avatar, Button, Dialog, mq } from '@ensdomains/thorin'
+import { Avatar, Button, Dialog, Helper, mq } from '@ensdomains/thorin'
 
 import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { StyledName } from '@app/components/@atoms/StyledName/StyledName'
+import gasLimitDictionary from '@app/constants/gasLimits'
 import { useAvatar } from '@app/hooks/useAvatar'
-import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
+import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 import { useZorb } from '@app/hooks/useZorb'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
-import { makeTransactionItem, transactions } from '@app/transaction-flow/transaction'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { CurrencyUnit } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
@@ -150,56 +150,44 @@ const NamesList = ({ names }: NamesListProps) => {
 
 type Data = {
   names: string[]
+  isSelf?: boolean
 }
 
 export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
+const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
-  const ens = useEns()
-  const { ready } = ens
 
   const [view, setView] = useState<'name-list' | 'registration'>(
-    names.length ? 'name-list' : 'registration',
+    names.length > 1 ? 'name-list' : 'registration',
   )
+
   const [years, setYears] = useState(1)
+  const duration = yearsToSeconds(years)
+
   const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
   const fiatUnit = 'usd'
-
-  const { data: signer } = useSigner()
-  useEffect(() => {
-    ;(async () => {
-      if (!ready || !signer) return
-      const populatedTransaction = await transactions.extendNames.transaction(signer as any, ens, {
-        names,
-        years: 1,
-        rentPrice: BigNumber.from('0'),
-      })
-      const gasLimit = await signer!.estimateGas(populatedTransaction)
-      console.log('gas limit', gasLimit.toNumber())
-
-      // const br = await contracts?.getBulkRenewal()
-      // const cost = await br?.estimateGas.renewAll(names, yearsToSeconds(years))
-      // console.log('COST', cost)
-    })()
-  }, [ready, signer])
-
   const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
 
-  const { data: transactionData, loading: transactionDataLoading } = useEstimateTransactionCost([
-    {
-      key: 'RENEW',
-      args: [names.length],
-    },
-  ])
-  const { gasPrice, transactionFee } = transactionData || {}
-
-  const { base: rentFee, premium, loading: priceLoading } = usePrice(names, yearsToSeconds(1), true)
+  const { base: rentFee, loading: priceLoading } = usePrice(names, true)
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
+  const transactions = [
+    makeTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
+  ]
 
-  console.log('price', rentFee?.toNumber(), premium?.toNumber())
+  const {
+    gasLimit: estimatedGasLimit,
+    error: estimateGasLimitError,
+    isLoading: isEstimateGasLoading,
+  } = useEstimateGasLimitForTransactions(transactions)
+  const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
+  const gasLimit = estimatedGasLimit || hardcodedGasLimit
+
+  const { data: feeData, isLoading: isFeeDataLoading } = useFeeData()
+  const gasPrice = feeData?.maxFeePerGas || undefined
+  const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
 
   const items = [
     {
@@ -218,25 +206,24 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
     view === 'name-list'
       ? { onClick: () => setView('registration'), children: t('action.next', { ns: 'common' }) }
       : {
+          disabled: !!estimateGasLimitError,
           onClick: () => {
             if (!totalRentFee) return
             dispatch({
               name: 'setTransactions',
-              payload: [
-                makeTransactionItem('extendNames', {
-                  names,
-                  years,
-                  rentPrice: totalRentFee,
-                }),
-              ],
+              payload: transactions,
             })
             dispatch({ name: 'setFlowStage', payload: 'transaction' })
           },
           children: t('action.save', { ns: 'common' }),
         }
 
-  if (transactionDataLoading || priceLoading) {
-    return <TransactionLoader />
+  if (isFeeDataLoading || isEstimateGasLoading || priceLoading) {
+    return (
+      <Container>
+        <TransactionLoader />
+      </Container>
+    )
   }
   return (
     <>
@@ -268,17 +255,20 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
               <RegistrationTimeComparisonBanner
                 rentFee={rentFee}
                 transactionFee={transactionFee}
-                message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
+                message={t('input.extendNames.bannerMsg')}
               />
             )}
             <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+            {!!estimateGasLimitError && (
+              <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+            )}
           </>
         )}
       </Container>
       <Dialog.Footer
         leading={
           <Button shadowless tone="grey" variant="secondary" onClick={onDismiss}>
-            Back
+            {t('action.back', { ns: 'common' })}
           </Button>
         }
         trailing={<Button shadowless {...trailingButtonProps} />}

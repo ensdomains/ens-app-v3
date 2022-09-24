@@ -116,7 +116,8 @@
       "testSendName": "Send Name",
       "burnFuses": "Burn permissions",
       "createSubname": "Create Subname",
-      "deleteSubname": "Delete Subname"
+      "deleteSubname": "Delete Subname",
+      "extendNames": "Extend Names"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -129,7 +130,6 @@
       "updateEthAddress": "Update ETH address to this address",
       "testSendName": "Set the controller and registrant of the name",
       "createSubname": "Create a new subname on the name",
-      "deleteSubname": "Delete a subname on the name",
       "burnFuses": "Burn the chosen permissions until name expiry"
     },
     "itemLabel": {

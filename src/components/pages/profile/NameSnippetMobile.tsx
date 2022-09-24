@@ -10,6 +10,7 @@ import { Card } from '@app/components//Card'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
 
@@ -105,16 +106,23 @@ export const NameSnippetMobile = ({
   network,
   expiryDate,
   canSend,
+  canEdit,
   isCached,
 }: {
   name: string
   network: number
   expiryDate?: Date | null
   canSend?: boolean
+  canEdit?: boolean
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
+
+  const { showDataInput } = useTransactionFlow()
+  const handleExtend = () => {
+    showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
+  }
 
   return (
     <Container $isCached={isCached}>
@@ -137,11 +145,11 @@ export const NameSnippetMobile = ({
         </ExpiryAndFavouriteRow>
         {expiryDate && (
           <OutlinedButton
-            disabled
             size="small"
             shadowless
             variant="transparent"
             data-testid="extend-button"
+            onClick={handleExtend}
           >
             <InnerButton>
               {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}

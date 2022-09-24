@@ -1,7 +1,8 @@
 import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
@@ -68,9 +69,11 @@ const ButtonInner = styled.div(
 const Page = () => {
   const { t } = useTranslation('address')
   const { query, isReady } = useRouter()
+  const { address: _address } = useAccount()
   const address = query.address as string
   const chainId = useChainId()
   const breakpoints = useBreakpoint()
+  const isSelf = _address === address
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<string[]>([])
@@ -93,6 +96,7 @@ const Page = () => {
     isLoading: isNamesLoading,
     status: namesStatus,
     pageLength,
+    refetch: refetchNames,
   } = useNamesFromAddress({
     address,
     sort: {
@@ -104,12 +108,26 @@ const Page = () => {
     search: searchQuery,
   })
 
-  const { showDataInput } = useTransactionFlow()
+  const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const transactionKey = `extend-names-${selectedNames.join('-')}`
   const handleExtend = () => {
-    showDataInput(`extend-names-${selectedNames.join('-')}`, 'ExtendNames', {
+    if (selectedNames.length === 0) return
+    showDataInput(transactionKey, 'ExtendNames', {
       names: selectedNames,
+      isSelf,
     })
   }
+
+  const stage = getTransactionFlowStage(transactionKey)
+  useEffect(() => {
+    if (stage === 'completed') {
+      setSelectedNames([])
+      setMode('view')
+      setPage(1)
+      refetchNames()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage])
 
   const loading = !isReady || isNamesLoading || primaryProfileLoading
 
@@ -159,7 +177,10 @@ const Page = () => {
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}
-              onModeChange={setMode}
+              onModeChange={(m) => {
+                setMode(m)
+                setSelectedNames([])
+              }}
               onSortTypeChange={setSortType}
               onSortDirectionChange={setSortDirection}
               onSearchChange={setSearchQuery}

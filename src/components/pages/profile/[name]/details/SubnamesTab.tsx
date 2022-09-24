@@ -3,6 +3,7 @@ import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button, CloseSVG, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
 
@@ -19,6 +20,7 @@ import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameI
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
+import { makeTransactionItem } from '../../../../../transaction-flow/transaction/index'
 import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
 import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
@@ -124,8 +126,10 @@ export const SubnamesTab = ({
 }) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
+  const { address } = useAccount()
+  console.log(address)
 
-  const { showDataInput } = useTransactionFlow()
+  const { showDataInput, createTransactionFlow, getTransactionFlowStage } = useTransactionFlow()
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<string[]>([])
@@ -154,12 +158,8 @@ export const SubnamesTab = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_searchQuery])
 
-  const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
-    name,
-    sortType,
-    sortDirection,
-    searchQuery,
-  )
+  const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage, reset, refetch } =
+    useSubnameInfiniteQuery(name, sortType, sortDirection, searchQuery)
 
   const [isIntersecting, setIsIntersecting] = useState(false)
   useEffect(() => {
@@ -174,15 +174,31 @@ export const SubnamesTab = ({
       isWrapped,
     })
 
+  const deleteSubnameTransitionKey = selectedNames[0] ? `delete-subname-${selectedNames[0]}` : ''
   const deleteSubname = () => {
     const subname = selectedNames[0]
     if (subname) {
-      showDataInput(`delete-subname-${subname}`, 'DeleteSubname', {
-        name: subname,
-        contract: isWrapped ? 'nameWrapper' : 'registry',
+      createTransactionFlow(deleteSubnameTransitionKey, {
+        transactions: [
+          makeTransactionItem('deleteSubname', {
+            name: subname,
+            contract: 'registry',
+          }),
+        ],
       })
     }
   }
+
+  const deleteSubnameTransitionStage = getTransactionFlowStage(deleteSubnameTransitionKey)
+  useEffect(() => {
+    if (deleteSubnameTransitionStage === 'completed') {
+      setSelectedNames([])
+      setMode('view')
+      reset()
+      refetch()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [deleteSubnameTransitionStage])
 
   let InnerContent: ReactNode
   if (isLoading) {
@@ -202,6 +218,7 @@ export const SubnamesTab = ({
             name={subname.name}
             network={network}
             mode={mode}
+            isController={subname.owner?.id === address?.toLowerCase()}
             selected={selectedNames.includes(subname.name)}
             onClick={handleSelectName(subname.name)}
           />
@@ -248,7 +265,10 @@ export const SubnamesTab = ({
             if (['creationDate', 'labelName'].includes(value)) setSortType(value as SubnameSortType)
           }}
           onSortDirectionChange={setSortDirection}
-          onModeChange={setMode}
+          onModeChange={(m) => {
+            setMode(m)
+            setSelectedNames([])
+          }}
           onSearchChange={(s) => {
             setSearchInput(s)
             debouncedSetSearch(s)

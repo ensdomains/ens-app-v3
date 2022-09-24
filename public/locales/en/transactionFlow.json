@@ -131,13 +131,15 @@
         "extension": "{{count}} year extension",
         "transaction": "Transaction fee",
         "total": "Estimated total"
-      }
+      },
+      "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
+      "gasLimitError": "Insufficient funds"
     }
   },
   "transaction": {
     "extendNames": {
       "actionValue": "Extend registration",
-      "costValue": "{{value}} ETH + fees",
+      "costValue": "{{value}} + fees",
       "warning": "Extending this name will not give you ownership of it"
     },
     "transferProfile": {

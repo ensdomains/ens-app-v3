@@ -39,7 +39,7 @@ export const useNamesFromAddress = ({
 }) => {
   const { ready, getNames } = useEns()
 
-  const { data, isLoading, status } = useQuery(
+  const { data, isLoading, status, refetch } = useQuery(
     ['names', address],
     () =>
       getNames({
@@ -135,6 +135,7 @@ export const useNamesFromAddress = ({
     currentPage,
     isLoading,
     status,
+    refetch,
     pageLength: pages?.length || 0,
     nameCount: sortedData?.length || 0,
   }

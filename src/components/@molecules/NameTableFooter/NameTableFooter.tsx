@@ -36,7 +36,7 @@ export const NameTableFooter = ({
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
 
-  const pageSizeOptions = [1, 5, 10, 25, 50, 100].map((value) => ({
+  const pageSizeOptions = [5, 10, 25, 50, 100].map((value) => ({
     label: t('unit.perPage', { count: value }),
     value: value.toString(),
   }))
@@ -65,7 +65,12 @@ export const NameTableFooter = ({
           value={pageSize?.toString()}
           size="small"
           options={pageSizeOptions}
-          onChange={(e) => onPageSizeChange?.(parseInt(e.target.value))}
+          onChange={(e) => {
+            if (onPageSizeChange) {
+              onPageSizeChange(parseInt(e.target.value))
+              props.onChange(1)
+            }
+          }}
         />
       </div>
     </Container>
