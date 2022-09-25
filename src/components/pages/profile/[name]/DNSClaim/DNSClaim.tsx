@@ -17,6 +17,7 @@ import { AddTextRecord } from './AddTextRecord'
 import { ClaimComplete } from './ClaimComplete'
 import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
+import { shouldShowSuccessPage } from './shared'
 import { isDnsSecEnabled } from './utils'
 
 const BackArrow = styled.div(
@@ -83,7 +84,7 @@ const MainContentContainer = styled(Card)(
     width: 100%;
     ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
-      width: 640px;
+      width: 620px;
     `)}
   `,
 )
@@ -94,6 +95,29 @@ const HeadingContainer = styled.div`
   align-items: center;
   justify-content: space-between;
 `
+
+const BackContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+`
+
+const StyledTitle = styled(Title)(
+  () => css`
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px;
+
+    ${mq.xs.min(css`
+      width: 250px;
+    `)}
+
+    ${mq.sm.min(css`
+      width: 500px;
+    `)}
+  `,
+)
 
 export default () => {
   const router = useRouter()
@@ -120,13 +144,8 @@ export default () => {
         console.error('caught error: ', e)
       }
     }
-    const transactionKey = localStorage.getItem('latestImportTransactionKey')
-    const transaction = transactions.find((transaction) => {
-      const description = JSON.parse(transaction.description)
-      return description.key === transactionKey
-    })
 
-    if (transaction && transaction.status === 'confirmed') {
+    if (shouldShowSuccessPage(transactions)) {
       setCurrentStep(3)
     } else {
       init()
@@ -136,27 +155,26 @@ export default () => {
   return (
     <Container>
       <HeadingContainer>
-        {router.query.from && (
-          <div data-testid="back-button">
-            <Button
-              onClick={() => router.back()}
-              variant="transparent"
-              shadowless
-              size="extraSmall"
-            >
-              <BackArrow as={ArrowLeftSVG} />
-            </Button>
-          </div>
-        )}
-        <ContentContainer>
-          <TitleWrapper $invert={!!router.query.from}>
-            <TitleContainer>
-              <Title weight="bold">
-                {t('action.claim', { ns: 'common' })} {router.query.name}
-              </Title>
-            </TitleContainer>
-          </TitleWrapper>
-        </ContentContainer>
+        <BackContainer>
+          <Button
+            onClick={() => router.push('/')}
+            variant="transparent"
+            shadowless
+            size="extraSmall"
+            style={{ width: 50 }}
+          >
+            <BackArrow as={ArrowLeftSVG} />
+          </Button>
+          <ContentContainer>
+            <TitleWrapper $invert={!!router.query.from}>
+              <TitleContainer>
+                <StyledTitle weight="bold">
+                  {t('action.claim', { ns: 'common' })} {router.query.name}
+                </StyledTitle>
+              </TitleContainer>
+            </TitleWrapper>
+          </ContentContainer>
+        </BackContainer>
         {!router.query.from && !breakpoints.md && <HamburgerRoutes />}
       </HeadingContainer>
       <Spacer $height="4" />

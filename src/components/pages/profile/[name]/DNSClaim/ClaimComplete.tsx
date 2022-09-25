@@ -65,7 +65,7 @@ export const ClaimComplete = () => {
   // Removing from local storage so that sucess page is not shown twice.
   useEffect(() => {
     setTimeout(() => {
-      localStorage.removeItem('latestImportTransactionKey')
+      // localStorage.removeItem('latestImportTransactionKey')
     }, 2000)
     return () => {
       localStorage.removeItem('latestImportTransactionKey')

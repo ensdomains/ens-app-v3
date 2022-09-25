@@ -24,6 +24,8 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
+import { shouldShowSuccessPage } from './DNSClaim/shared'
+
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -176,17 +178,10 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
   ])
 
   useEffect(() => {
-    const transactionKey = localStorage.getItem('latestImportTransactionKey')
-    console.log('profile transactionKey: ', transactionKey)
-    const transaction = transactions.find((transaction) => {
-      const description = JSON.parse(transaction.description)
-      return description.key === transactionKey
-    })
-
-    if (transaction && transaction.status === 'confirmed') {
+    if (shouldShowSuccessPage(transactions)) {
       router.push(`/import/${name}`)
     }
-  }, [])
+  }, [name, router, transactions])
 
   return (
     <>

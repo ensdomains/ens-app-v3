@@ -29,3 +29,12 @@ export const CheckButton = styled(Button)(
     `)}
   `,
 )
+
+export const shouldShowSuccessPage = (transactions) => {
+  const transactionKey = localStorage.getItem('latestImportTransactionKey')
+  const transaction = transactions.find((transaction) => {
+    const description = JSON.parse(transaction.description)
+    return description.key === transactionKey
+  })
+  return transaction && transaction.status === 'confirmed'
+}
