@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Dropdown, Helper, Typography } from '@ensdomains/thorin'
@@ -63,6 +64,7 @@ enum Errors {
 export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
   const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
   const [isLoading, setIsLoading] = useState(false)
+  const { t } = useTranslation('dnssec')
   const router = useRouter()
   const { name } = router.query
 
@@ -80,17 +82,12 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
   return (
     <Container>
       <Typography variant="extraLarge" weight="bold">
-        Enable DNS SEC
+        {t('enableDNSSEC.title')}
       </Typography>
       <Spacer $height="4" />
-      <Typography>
-        You’ll need to visit your domain registrar to enable DNSSEC. Once enabled, click 'Check' to
-        move to the next step.{' '}
-      </Typography>
+      <Typography>{t('enableDNSSEC.instruction')}</Typography>
       <Spacer $height="3" />
-      <Typography>
-        Choose your registrar from the dropdown below for instructions on how to do this.{' '}
-      </Typography>
+      <Typography>{t('enableDNSSEC.registrarHelp')}</Typography>
       <Spacer $height="5" />
       <Dropdown
         align="left"
@@ -107,12 +104,12 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
       />
       <Spacer $height="3" />
       <Outlink target="_blank" href={`https://who.is/whois/${name}`}>
-        Find your registrar
+        {t('enableDNSSEC.findRegistrar')}
       </Outlink>
       <Spacer $height="5" />
       {errorState === Errors.DNSSEC_NOT_ENABLED && (
         <>
-          <Helper type="info">DNSSEC has not been enabled on this domain.</Helper>
+          <Helper type="info">{t('enableDNSSEC.DNSSECNotEnabled')}</Helper>
           <Spacer $height="6" />
         </>
       )}
@@ -131,7 +128,7 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
           disabled={currentStep === 2}
           loading={isLoading}
         >
-          Check
+          {t('action.check', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>
     </Container>

@@ -14,18 +14,17 @@ const displayItems = (
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
-    label: 'dnsname',
+    label: 'name',
     value: name,
     type: 'name',
   },
   {
     label: 'action',
-    value: t('Import DNSSEC Name'),
+    value: t('general.importDNSSECName', { ns: 'dnssec' }),
   },
 ]
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  console.log('data: ', data)
   const tx = ens.importDNSSECName.populateTransaction(data.name, {
     address: data.address,
     proverResult: data.proverResult,

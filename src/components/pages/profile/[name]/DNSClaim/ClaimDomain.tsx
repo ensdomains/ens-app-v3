@@ -2,11 +2,12 @@ import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
-import { Button, Helper, Typography } from '@ensdomains/thorin'
+import { Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
@@ -115,9 +116,10 @@ const handleClaim = (name, createTransactionFlow, address) => async () => {
 export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
   const router = useRouter()
   const { address } = useAccount()
-  const { createTransactionFlow, getTransaction } = useTransactionFlow()
+  const { createTransactionFlow } = useTransactionFlow()
   const transactions = useRecentTransactions()
   const [pendingTransaction, setPendingTransaction] = useState(false)
+  const { t } = useTranslation('dnssec')
 
   const name = router.query.name as string
 
@@ -141,38 +143,42 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
     }
 
     setPendingTransaction(false)
-  }, [transactions])
+  }, [setCurrentStep, transactions])
 
   return (
     <Container>
-      <Typography>Claim your domain</Typography>
+      <Typography {...{ variant: 'extraLarge', weight: 'bold' }}>
+        {t('claimDomain.title')}
+      </Typography>
       <Spacer $height="4" />
       {syncWarning ? (
         <Helper type="warning" style={{ textAlign: 'center' }}>
-          <Typography>You are importing a DNS name that you appear to not own.</Typography>
+          <Typography>{t('claimDomain.syncWarning')}</Typography>
         </Helper>
       ) : (
-        <Typography>You have verified your ownership and can claim this domain.</Typography>
+        <Typography>{t('claimDomain.verifiedOwnership')}</Typography>
       )}
       {pendingTransaction && (
         <>
           <Spacer $height="4" />
           <Helper type="info" style={{ textAlign: 'center' }}>
             <StyledTypography>
-              You already have a <Link href="/my/settings">pending transaction</Link> for this name
+              {t('claimDomain.pendingTransactionPre')}{' '}
+              <Link href="/my/settings">{t('claimDomain.pendingTransactionLink')}</Link>{' '}
+              {t('claimDomain.pendingTransactionPost')}
             </StyledTypography>
           </Helper>
         </>
       )}
       <Spacer $height="4" />
       <GreyBox>
-        <Typography>DNS Owner</Typography>
+        <Typography>{t('claimDomain.dnsOwner')}</Typography>
         <NamePillWithAddress name={name} label={`${name}-avatar`} network={1} address={address} />
       </GreyBox>
       <Spacer $height="4" />
       <GreyBox>
-        <Typography>Estimated network cost</Typography>
-        <Typography>000.4 ETH</Typography>
+        <Typography>{t('claimDomain.networkEst')}</Typography>
+        <Typography>0.004 ETH</Typography>
       </GreyBox>
       <Spacer $height="5" />
       <Steps
@@ -188,10 +194,10 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
           size="small"
           onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address)}
         >
-          Claim
+          {t('action.claim', { ns: 'common' })}
         </CheckButton>
         <CheckButton variant="primary" size="small">
-          Back
+          {t('action.back', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>
     </Container>

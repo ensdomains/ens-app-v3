@@ -1,6 +1,7 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import ReactConfetti from 'react-confetti'
+import { useTranslation } from 'react-i18next'
 import useWindowSize from 'react-use/lib/useWindowSize'
 import styled, { css } from 'styled-components'
 
@@ -59,6 +60,7 @@ const NFTTemplateContainer = styled.div(
 
 export const ClaimComplete = ({ currentStep }) => {
   const router = useRouter()
+  const { t } = useTranslation()
 
   const name = router.query.name as string
 
@@ -77,17 +79,19 @@ export const ClaimComplete = ({ currentStep }) => {
       <NFTTemplateContainer>
         {name && <NFTTemplate name={name} isNormalised />}
       </NFTTemplateContainer>
-      <Spacer $height={5} />
-      <Typography {...{ weight: 'bold', variant: 'extraLarge' }}>Congratulations!</Typography>{' '}
+      <Spacer $height="5" />
+      <Typography {...{ weight: 'bold', variant: 'extraLarge' }}>
+        {t('claimComplete.title')}
+      </Typography>{' '}
       <DomainTextContainer>
-        <Typography {...{ weight: 'bold', variant: 'large' }}>You are now the owner of:</Typography>
+        <Typography {...{ weight: 'bold', variant: 'large' }}>
+          {t('claimComplete.ownerOf')}
+        </Typography>
         <FunkyTypography {...{ weight: 'bold', variant: 'large' }}>{name}</FunkyTypography>
       </DomainTextContainer>
-      <Spacer $height={4} />
-      <Typography {...{}}>
-        Your domain name was successfully imported into ENS. You can now view and manage your name.
-      </Typography>
-      <Spacer $height={5} />
+      <Spacer $height="4" />
+      <Typography {...{}}>{t('claimComplete.successMessage')}</Typography>
+      <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton
           variant="primary"
@@ -96,7 +100,7 @@ export const ClaimComplete = ({ currentStep }) => {
             router.push(`/profile/${name}`)
           }}
         >
-          View name
+          {t('claimComplete.viewName')}
         </CheckButton>
         <CheckButton
           variant="primary"
@@ -105,7 +109,7 @@ export const ClaimComplete = ({ currentStep }) => {
             router.push(`/`)
           }}
         >
-          Claim another
+          {t('claimComplete.claimAnother')}
         </CheckButton>
       </ButtonContainer>
     </Container>

@@ -25,7 +25,9 @@
     "sign": "Sign",
     "tryAgain": "Try Again",
     "done": "Done",
-    "burnSelected": "Burn Selected"
+    "burnSelected": "Burn Selected",
+    "check": "Check",
+    "claim": "Claim"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -106,7 +108,8 @@
       "updateEthAddress": "Update ETH address",
       "testSendName": "Send Name",
       "burnFuses": "Burn permissions",
-      "createSubname": "Create Subname"
+      "createSubname": "Create Subname",
+      "importDNSSECName": "Import DNSSEC name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",

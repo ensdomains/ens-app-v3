@@ -1,6 +1,7 @@
 import { utils } from 'ethers'
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -20,35 +21,35 @@ import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner, isSubdomainSet } from './utils'
 
 const HelperLinks = [
   {
-    label: 'Namecheap',
+    label: 'registrars.namecheap',
     href: 'https://www.namecheap.com/support/knowledgebase/article.aspx/317/2237/how-do-i-add-txtspfdkimdmarc-records-for-my-domain/',
   },
   {
-    label: 'Domain.com',
+    label: 'registrars.domaindotcom',
     href: 'https://www.domain.com/help/article/dns-management-how-to-update-txt-spf-records',
   },
   {
-    label: 'Google domains',
+    label: 'registrars.googledomains',
     href: 'https://support.google.com/domains/answer/3290350?hl=en',
   },
   {
-    label: 'Dreamhost',
+    label: 'registrars.dreamhost',
     href: 'https://help.dreamhost.com/hc/en-us/articles/360035516812-Adding-custom-DNS-records',
   },
   {
-    label: 'Hover',
+    label: 'registrars.hover',
     href: 'https://help.hover.com/hc/en-us/articles/217282457-Managing-DNS-records-',
   },
   {
-    label: 'GoDaddy',
+    label: 'registrars.godaddy',
     href: 'https://godaddy.com/help/manage-dns-records-680',
   },
   {
-    label: 'Bluehost',
+    label: 'registrars.bluehost',
     href: 'https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries',
   },
   {
-    label: 'HostGator',
+    label: 'registrars.hostgator',
     href: 'https://www.hostgator.com/help/article/changing-dns-records',
   },
 ]
@@ -129,8 +130,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
   const { address } = useAccount()
   const { errorState, setErrorState } = useState<Errors>(Errors.NOT_CHECKED)
   const breakpoints = useBreakpoint()
-
-  console.log('breakpoints: ', breakpoints)
+  const { t } = useTranslation('dnssec')
 
   const handleCheck = async () => {
     try {
@@ -167,32 +167,25 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
 
   return (
     <Container>
-      <Typography>Add Text Records</Typography>
-      <Spacer $height={5} />
+      <Typography {...{ variant: 'extraLarge' }}>{t('addTextRecord.title')}</Typography>
+      <Spacer $height="3" />
       {syncWarning && (
         <>
           <Helper type="warning" style={{ textAlign: 'center' }}>
-            <Typography>
-              You don't appear to be the DNS Owner of this domain, but you can still add this name
-              to ENS Registry.
-            </Typography>
+            <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
             <Typography {...{ variant: 'small', color: 'textSecondary' }}>
-              If you own this domain change its _ens TXT record to contain your Ethereum Address and
-              click 'Check' again, otherwise click 'Claim' to proceed.
+              {t('addTextRecord.syncWarningTwo')}
             </Typography>
           </Helper>
-          <Spacer $height={6} />
+          <Spacer $height="6" />
         </>
       )}
-      <Typography>
-        You need to create a new DNS record for your domain using these details. This will claim
-        your Ethereum address as the owner of this domain.
-      </Typography>
-      <Spacer $height={3} />
+      <Typography>{t('addTextRecord.explanation')}</Typography>
+      <Spacer $height="3" />
       <Dropdown
         align="left"
         items={HelperLinks.map((link) => ({
-          label: link.label,
+          label: t(link.label),
           onClick: () => null,
           wrapper: (children, key) => (
             <a href={link.href} target="_blank" key={key} rel="noreferrer">
@@ -202,32 +195,34 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
         }))}
         label="Domain Registrar"
       />
-      <Spacer $height={3} />
+      <Spacer $height="3" />
       <Outlink target="_blank" href={`https://who.is/whois/${name}`}>
-        Find your registrar
+        {t('registrars.findYourRegistrar')}
       </Outlink>
-      <Spacer $height={5} />
+      <Spacer $height="5" />
       <ButtonRow>
         <StyledButton outlined fullWidthContent shadowless variant="transparent">
           <ButtonInner>
-            <Typography>Type</Typography>
-            <Typography {...{ variant: 'small', color: 'foreground' }}>TXT</Typography>
+            <Typography>{t('addTextRecord.type')}</Typography>
+            <Typography {...{ variant: 'small', color: 'foreground' }}>
+              {t('addTextRecord.txt')}
+            </Typography>
           </ButtonInner>
         </StyledButton>
         <Copyable {...{ label: 'Name', value: '_ens' }} />
       </ButtonRow>
-      <Spacer $height={2} />
+      <Spacer $height="2" />
       <Copyable
         {...{
           label: 'Value',
           value: breakpoints.sm ? address : shortenAddress(address, undefined, 7, 7),
         }}
       />
-      <Spacer $height={6} />
+      <Spacer $height="6" />
       <Steps
         {...{ currentStep, stepStatus: ['complete', 'inProgress', 'notStarted', 'notStarted'] }}
       />
-      <Spacer $height={6} />
+      <Spacer $height="6" />
       <ButtonContainer>
         {syncWarning && (
           <CheckButton
@@ -236,7 +231,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
             size="small"
             disabled={currentStep === 2}
           >
-            Continue
+            {t('action.continue', { ns: 'common' })}
           </CheckButton>
         )}
         <CheckButton
@@ -245,7 +240,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
           size="small"
           disabled={currentStep === 2}
         >
-          Check
+          {t('action.check', { ns: 'common' })}
         </CheckButton>
         <CheckButton
           onClick={() => {
@@ -254,7 +249,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
           variant="primary"
           size="small"
         >
-          Back
+          {t('navigation.back', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>
     </Container>

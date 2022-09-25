@@ -1,6 +1,7 @@
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -97,6 +98,7 @@ const MainContentContainer = styled(Card)(
     width: 100%;
     ${mq.sm.min(css`
       padding: 25px 75px;
+      max-width: 650px;
     `)}
   `,
 )
@@ -118,6 +120,7 @@ export default () => {
   const { dnsOwner } = useNameDetails(router.query.name as string)
   const transactions = useRecentTransactions()
   const { isConnected } = useAccount()
+  const { t } = useTranslation('dnssec')
 
   const { name } = router.query
 
@@ -165,7 +168,9 @@ export default () => {
         <ContentContainer>
           <TitleWrapper $invert={!!router.query.from}>
             <TitleContainer>
-              <Title weight="bold">Claim {router.query.name}</Title>
+              <Title weight="bold">
+                {t('action.claim', { ns: 'common' })} {router.query.name}
+              </Title>
               {subtitle && (!breakpoints.md || alwaysShowSubtitle) && (
                 <Subtitle weight="bold">{subtitle}</Subtitle>
               )}
@@ -186,9 +191,7 @@ export default () => {
             {currentStep === 3 && <ClaimComplete {...{ currentStep, setCurrentStep }} />}
           </>
         ) : (
-          <Typography style={{ textAlign: 'center' }}>
-            Please connect your wallet to continue
-          </Typography>
+          <Typography style={{ textAlign: 'center' }}>{t('general.connectWallet')}</Typography>
         )}
       </MainContentContainer>
     </Container>

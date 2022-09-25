@@ -13,7 +13,6 @@ export const isDnsSecEnabled = async (name: string = '') => {
     },
   )
   const result = await response.json()
-  console.log('isDnsSecEnabled: ', result)
   return result.AD
 }
 
