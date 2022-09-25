@@ -27,14 +27,12 @@ const BackArrow = styled.div(
   `,
 )
 
-const ContentContainer = styled.div(
-  ({ theme }) => css`
-    margin: 0;
-    padding: 0;
-    min-height: 0;
-    height: min-content;
-  `,
-)
+const ContentContainer = styled.div`
+  margin: 0;
+  padding: 0;
+  min-height: 0;
+  height: min-content;
+`
 
 const TitleContainer = styled.div(
   () => css`
@@ -66,8 +64,6 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
   `,
 )
 
-const subtitle = 'subtitle'
-
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
@@ -75,42 +71,29 @@ const Title = styled(Typography)(
   `,
 )
 
-const Subtitle = styled(Typography)(
-  ({ theme }) => css`
-    line-height: ${theme.lineHeights.normal};
-    color: ${theme.colors.textTertiary};
-  `,
-)
-
-const alwaysShowSubtitle = false
-
-const Container = styled.div(
-  ({ theme }) => css`
-    box-sizing: border-box;
-    margin: 0 auto;
-    grid-column: 1/-1;
-    grid-auto-rows: 1fr;
-  `,
-)
+const Container = styled.div`
+  box-sizing: border-box;
+  margin: 0 auto;
+  grid-column: 1/-1;
+  grid-auto-rows: 1fr;
+`
 
 const MainContentContainer = styled(Card)(
   ({ theme }) => css`
     width: 100%;
     ${mq.sm.min(css`
-      padding: 25px 75px;
+      padding: ${theme.space['6']} ${theme.space['18']};
       max-width: 650px;
     `)}
   `,
 )
 
-const HeadingContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-  `,
-)
+const HeadingContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
 
 export default () => {
   const router = useRouter()
@@ -171,9 +154,6 @@ export default () => {
               <Title weight="bold">
                 {t('action.claim', { ns: 'common' })} {router.query.name}
               </Title>
-              {subtitle && (!breakpoints.md || alwaysShowSubtitle) && (
-                <Subtitle weight="bold">{subtitle}</Subtitle>
-              )}
             </TitleContainer>
           </TitleWrapper>
         </ContentContainer>

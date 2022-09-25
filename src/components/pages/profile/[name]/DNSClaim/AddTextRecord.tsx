@@ -54,14 +54,12 @@ const HelperLinks = [
   },
 ]
 
-const Container = styled.div(
-  ({ theme }) => css`
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  `,
-)
+const Container = styled.div`
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 const StyledButton = styled(Button)(
   ({ theme }) => css`
@@ -69,20 +67,18 @@ const StyledButton = styled(Button)(
   `,
 )
 
-const ButtonInner = styled.div(
-  () => css`
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    align-items: center;
-  `,
-)
+const ButtonInner = styled.div`
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  align-items: center;
+`
 
 const ButtonRow = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: row;
-    gap: 10px;
+    gap: ${theme.space['2.5']};
     width: 100%;
   `,
 )
@@ -92,7 +88,7 @@ const CopyableRightContainer = styled.div(
     display: flex;
     flex-direction: row;
     align-items: center;
-    gap: 6px;
+    gap: ${theme.space['1.5']};
   `,
 )
 
@@ -219,9 +215,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
         }}
       />
       <Spacer $height="6" />
-      <Steps
-        {...{ currentStep, stepStatus: ['complete', 'inProgress', 'notStarted', 'notStarted'] }}
-      />
+      <Steps {...{ stepStatus: ['completed', 'inProgress', 'notStarted', 'notStarted'] }} />
       <Spacer $height="6" />
       <ButtonContainer>
         {syncWarning && (

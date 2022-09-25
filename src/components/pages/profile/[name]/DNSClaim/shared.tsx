@@ -7,7 +7,7 @@ export const ButtonContainer = styled.div(
     display: flex;
     flex-direction: column;
     justify-content: center;
-    gap: 10px;
+    gap: ${theme.space['2.5']};
     width: 100%;
 
     & > button {
@@ -22,7 +22,7 @@ export const ButtonContainer = styled.div(
 )
 
 export const CheckButton = styled(Button)(
-  ({ theme }) => css`
+  () => css`
     margin: 0 auto;
     ${mq.sm.min(css`
       width: 150px;

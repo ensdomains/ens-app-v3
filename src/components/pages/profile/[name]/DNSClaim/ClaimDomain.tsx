@@ -19,17 +19,17 @@ import { shortenAddress } from '@app/utils/utils'
 import { Steps } from './Steps'
 import { ButtonContainer, CheckButton } from './shared'
 
-const Container = styled.div(
-  ({ theme }) => css`
-    text-align: center;
-  `,
-)
+const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
+
+const Container = styled.div`
+  text-align: center;
+`
 
 const GreyBox = styled.div(
   ({ theme }) => css`
     background: ${theme.colors.backgroundSecondary};
-    border-radius: 10px;
-    padding: 20px 15px;
+    border-radius: ${theme.radii.large};
+    padding: ${theme.space['5']} ${theme.space['3.5']};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -37,12 +37,10 @@ const GreyBox = styled.div(
   `,
 )
 
-const TextContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-  `,
-)
+const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 const NamePillContainer = styled.div(
   ({ theme }) => css`
@@ -93,8 +91,6 @@ export const NamePillWithAddress = ({
     </NamePillContainer>
   )
 }
-
-export const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
 
 const handleClaim = (name, createTransactionFlow, address) => async () => {
   const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)

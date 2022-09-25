@@ -1,4 +1,3 @@
-import { useCallback } from 'react'
 import styled, { css } from 'styled-components'
 
 type StepType = 'notStarted' | 'inProgress' | 'completed'
@@ -34,28 +33,11 @@ const StepItem = styled.div<{ $type: StepType }>(
   `,
 )
 
-export const Steps = ({ currentStep, stepStatus }) => {
-  const calcStepType = useCallback(
-    (step: number) => {
-      if (step === currentStep) {
-        return 'inProgress'
-      }
-      if (step < (currentStep || 0)) {
-        return 'completed'
-      }
-      return 'notStarted'
-    },
-    [currentStep, stepStatus],
-  )
-
+export const Steps = ({ stepStatus }) => {
   return (
     <StepContainer data-testid="step-container">
-      {stepStatus.map((_, i) => (
-        <StepItem
-          $type={calcStepType(i)}
-          data-testid={`step-item-${i}-${calcStepType(i)}`}
-          key={i}
-        />
+      {stepStatus.map((stepType, i) => (
+        <StepItem $type={stepType} data-testid={`step-item-${i}-${stepType}`} key={i} />
       ))}
     </StepContainer>
   )

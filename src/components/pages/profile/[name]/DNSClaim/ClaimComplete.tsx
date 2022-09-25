@@ -12,11 +12,9 @@ import NFTTemplate from '@app/components/@molecules/NFTTemplate'
 
 import { ButtonContainer, CheckButton } from './shared'
 
-const Container = styled.div(
-  ({ theme }) => css`
-    text-align: center;
-  `,
-)
+const Container = styled.div`
+  text-align: center;
+`
 
 const Confetti = () => {
   const { width, height } = useWindowSize()
@@ -31,24 +29,24 @@ const Confetti = () => {
   return <ReactConfetti width={width} height={height} numberOfPieces={hide ? 0 : 200} />
 }
 
-const FunkyTypography = styled(Typography)(
+const FunkyTypography = styled(Typography)`
+  background: linear-gradient(330.4deg, #44bcf0 4.54%, #7298f8 59.2%, #a099ff 148.85%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+`
+
+const DomainTextContainer = styled.div(
   ({ theme }) => css`
-    background: linear-gradient(330.4deg, #44bcf0 4.54%, #7298f8 59.2%, #a099ff 148.85%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    ${mq.sm.min(css`
+      gap: ${theme.space['2']};
+      flex-direction: row;
+    `)}
   `,
 )
-
-const DomainTextContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-
-  ${mq.sm.min(css`
-    gap: 8px;
-    flex-direction: row;
-  `)}
-`
 
 const NFTTemplateContainer = styled.div(
   ({ theme }) => css`
@@ -58,12 +56,13 @@ const NFTTemplateContainer = styled.div(
   `,
 )
 
-export const ClaimComplete = ({ currentStep }) => {
+export const ClaimComplete = () => {
   const router = useRouter()
   const { t } = useTranslation()
 
   const name = router.query.name as string
 
+  // Removing from local storage so that sucess page is not shown twice.
   useEffect(() => {
     setTimeout(() => {
       localStorage.removeItem('latestImportTransactionKey')
@@ -90,7 +89,7 @@ export const ClaimComplete = ({ currentStep }) => {
         <FunkyTypography {...{ weight: 'bold', variant: 'large' }}>{name}</FunkyTypography>
       </DomainTextContainer>
       <Spacer $height="4" />
-      <Typography {...{}}>{t('claimComplete.successMessage')}</Typography>
+      <Typography>{t('claimComplete.successMessage')}</Typography>
       <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton

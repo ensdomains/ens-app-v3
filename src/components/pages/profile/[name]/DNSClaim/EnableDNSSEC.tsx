@@ -1,7 +1,7 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled from 'styled-components'
 
 import { Dropdown, Helper, Typography } from '@ensdomains/thorin'
 
@@ -11,15 +11,6 @@ import { Outlink } from '@app/components/Outlink'
 import { Steps } from './Steps'
 import { ButtonContainer, CheckButton } from './shared'
 import { isDnsSecEnabled } from './utils'
-
-const Container = styled.div(
-  ({ theme }) => css`
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  `,
-)
 
 const HelperLinks = [
   {
@@ -60,6 +51,13 @@ enum Errors {
   NOT_CHECKED,
   DNSSEC_NOT_ENABLED,
 }
+
+const Container = styled.div`
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+`
 
 export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
   const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
