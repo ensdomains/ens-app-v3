@@ -30,11 +30,21 @@ export const CheckButton = styled(Button)(
   `,
 )
 
-export const shouldShowSuccessPage = (transactions) => {
+const latestTransaction = (transactions) => {
   const transactionKey = localStorage.getItem('latestImportTransactionKey')
   const transaction = transactions.find((transaction) => {
     const description = JSON.parse(transaction.description)
     return description.key === transactionKey
   })
+  return transaction
+}
+
+export const shouldShowSuccessPage = (transactions) => {
+  const transaction = latestTransaction(transactions)
   return transaction && transaction.status === 'confirmed'
+}
+
+export const hasPendingTransaction = (transactions) => {
+  const transaction = latestTransaction(transactions)
+  return transaction && transaction.status === 'pending'
 }

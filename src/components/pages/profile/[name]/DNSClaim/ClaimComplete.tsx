@@ -12,10 +12,6 @@ import NFTTemplate from '@app/components/@molecules/NFTTemplate'
 
 import { ButtonContainer, CheckButton } from './shared'
 
-const Container = styled.div`
-  text-align: center;
-`
-
 const Confetti = () => {
   const { width, height } = useWindowSize()
   const [hide, setHide] = useState(false)
@@ -28,6 +24,10 @@ const Confetti = () => {
 
   return <ReactConfetti width={width} height={height} numberOfPieces={hide ? 0 : 200} />
 }
+
+const Container = styled.div`
+  text-align: center;
+`
 
 const FunkyTypography = styled(Typography)`
   background: linear-gradient(330.4deg, #44bcf0 4.54%, #7298f8 59.2%, #a099ff 148.85%);

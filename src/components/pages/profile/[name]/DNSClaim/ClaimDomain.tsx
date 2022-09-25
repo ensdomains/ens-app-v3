@@ -17,7 +17,12 @@ import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
 
 import { Steps } from './Steps'
-import { ButtonContainer, CheckButton } from './shared'
+import {
+  ButtonContainer,
+  CheckButton,
+  hasPendingTransaction,
+  shouldShowSuccessPage,
+} from './shared'
 
 const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
 
@@ -120,19 +125,12 @@ export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
   const name = router.query.name as string
 
   useEffect(() => {
-    const transactionKey = localStorage.getItem('latestImportTransactionKey')
-
-    const transaction = transactions.find((transaction) => {
-      const description = JSON.parse(transaction.description)
-      return description.key === transactionKey
-    })
-
-    if (transaction && transaction.status === 'pending') {
+    if (hasPendingTransaction(transactions)) {
       setPendingTransaction(true)
       return
     }
 
-    if (transaction && transaction.status === 'confirmed') {
+    if (shouldShowSuccessPage(transactions)) {
       setPendingTransaction(false)
       setCurrentStep((x) => x + 1)
       return

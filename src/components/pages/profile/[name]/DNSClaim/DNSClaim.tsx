@@ -17,7 +17,7 @@ import { AddTextRecord } from './AddTextRecord'
 import { ClaimComplete } from './ClaimComplete'
 import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
-import { shouldShowSuccessPage } from './shared'
+import { hasPendingTransaction, shouldShowSuccessPage } from './shared'
 import { isDnsSecEnabled } from './utils'
 
 const BackArrow = styled.div(
@@ -137,6 +137,10 @@ export default () => {
         const hasDnsSecEnabled = await isDnsSecEnabled(name)
         if (!hasDnsSecEnabled) {
           setCurrentStep(0)
+          return
+        }
+        if (hasPendingTransaction(transactions)) {
+          setCurrentStep(2)
           return
         }
         setCurrentStep(1)

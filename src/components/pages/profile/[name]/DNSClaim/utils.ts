@@ -13,7 +13,7 @@ export const isDnsSecEnabled = async (name: string = '') => {
     },
   )
   const result = await response.json()
-  return result.AD
+  return result?.AD
 }
 
 export const isSubdomainSet = async (name: string = '') => {
@@ -29,7 +29,7 @@ export const isSubdomainSet = async (name: string = '') => {
     },
   )
   const result = await response.json()
-  return result.AD
+  return result?.AD
 }
 
 export const getDnsOwner = (dnsQueryResult) =>
