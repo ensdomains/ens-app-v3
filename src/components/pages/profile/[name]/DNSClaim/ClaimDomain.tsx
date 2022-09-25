@@ -109,7 +109,7 @@ const handleClaim = (name, createTransactionFlow, address) => async () => {
   localStorage.setItem('latestImportTransactionKey', transactionKey)
 }
 
-export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
+export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
   const router = useRouter()
   const { address } = useAccount()
   const { createTransactionFlow } = useTransactionFlow()
@@ -147,26 +147,6 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
         {t('claimDomain.title')}
       </Typography>
       <Spacer $height="4" />
-      {syncWarning ? (
-        <Helper type="warning" style={{ textAlign: 'center' }}>
-          <Typography>{t('claimDomain.syncWarning')}</Typography>
-        </Helper>
-      ) : (
-        <Typography>{t('claimDomain.verifiedOwnership')}</Typography>
-      )}
-      {pendingTransaction && (
-        <>
-          <Spacer $height="4" />
-          <Helper type="info" style={{ textAlign: 'center' }}>
-            <StyledTypography>
-              {t('claimDomain.pendingTransactionPre')}{' '}
-              <Link href="/my/settings">{t('claimDomain.pendingTransactionLink')}</Link>{' '}
-              {t('claimDomain.pendingTransactionPost')}
-            </StyledTypography>
-          </Helper>
-        </>
-      )}
-      <Spacer $height="4" />
       <GreyBox>
         <Typography>{t('claimDomain.dnsOwner')}</Typography>
         <NamePillWithAddress name={name} label={`${name}-avatar`} network={1} address={address} />
@@ -176,11 +156,30 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
         <Typography>{t('claimDomain.networkEst')}</Typography>
         <Typography>0.004 ETH</Typography>
       </GreyBox>
+      <Spacer $height="4" />
+      {syncWarning ? (
+        <Helper type="warning" style={{ textAlign: 'center' }}>
+          <Typography>{t('claimDomain.syncWarning')}</Typography>
+        </Helper>
+      ) : (
+        <Typography>{t('claimDomain.verifiedOwnership')}</Typography>
+      )}
+      {pendingTransaction && (
+        <>
+          <Spacer $height="5" />
+          <Helper type="info" style={{ textAlign: 'center' }}>
+            <StyledTypography>
+              {t('claimDomain.pendingTransactionPre')}{' '}
+              <Link href="/my/settings">{t('claimDomain.pendingTransactionLink')}</Link>{' '}
+              {t('claimDomain.pendingTransactionPost')}
+            </StyledTypography>
+          </Helper>
+        </>
+      )}
       <Spacer $height="5" />
       <Steps
         {...{
-          currentStep,
-          stepStatus: ['complete', 'complete', 'inProgress', 'notStarted'],
+          stepStatus: ['completed', 'completed', 'inProgress', 'notStarted'],
         }}
       />
       <Spacer $height="5" />
@@ -192,7 +191,7 @@ export const ClaimDomain = ({ syncWarning, currentStep, setCurrentStep }) => {
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>
-        <CheckButton variant="primary" size="small">
+        <CheckButton variant="primary" size="small" onClick={() => setCurrentStep((x) => x - 1)}>
           {t('action.back', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>

@@ -127,14 +127,18 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
   const { errorState, setErrorState } = useState<Errors>(Errors.NOT_CHECKED)
   const breakpoints = useBreakpoint()
   const { t } = useTranslation('dnssec')
+  const [isCheckLoading, setIsCheckLoading] = useState(false)
 
   const handleCheck = async () => {
     try {
+      setIsCheckLoading(true)
       isSubdomainSet(name as string)
       const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
       const result = await prover.queryWithProof('TXT', `_ens.${name}`)
       const dnsOwner = getDnsOwner(result)
 
+      setIsCheckLoading(false)
+      isSubdomainSet(name as string)
       if (parseInt(dnsOwner) === 0) {
         setSyncWarning(false)
         // State 8
@@ -149,15 +153,12 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
         setCurrentStep(currentStep + 1)
       } else {
         // Out of sync (state 6)
-        console.log('Controllder and DNS Owner are out of sync')
-        if (syncWarning) {
-          setCurrentStep(currentStep + 1)
-          return
-        }
         setSyncWarning(true)
+        return
       }
     } catch (e) {
       console.error('_ens check error: ', e)
+      setIsCheckLoading(false)
     }
   }
 
@@ -165,17 +166,6 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
     <Container>
       <Typography {...{ variant: 'extraLarge' }}>{t('addTextRecord.title')}</Typography>
       <Spacer $height="3" />
-      {syncWarning && (
-        <>
-          <Helper type="warning" style={{ textAlign: 'center' }}>
-            <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
-            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
-              {t('addTextRecord.syncWarningTwo')}
-            </Typography>
-          </Helper>
-          <Spacer $height="6" />
-        </>
-      )}
       <Typography>{t('addTextRecord.explanation')}</Typography>
       <Spacer $height="3" />
       <Dropdown
@@ -215,15 +205,27 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
         }}
       />
       <Spacer $height="6" />
+      {syncWarning && (
+        <>
+          <Helper type="warning" style={{ textAlign: 'center' }}>
+            <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
+            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+              {t('addTextRecord.syncWarningTwo')}
+            </Typography>
+          </Helper>
+          <Spacer $height="6" />
+        </>
+      )}
       <Steps {...{ stepStatus: ['completed', 'inProgress', 'notStarted', 'notStarted'] }} />
       <Spacer $height="6" />
       <ButtonContainer>
         {syncWarning && (
           <CheckButton
-            onClick={handleCheck}
+            onClick={() => {
+              setCurrentStep(currentStep + 1)
+            }}
             variant="primary"
             size="small"
-            disabled={currentStep === 2}
           >
             {t('action.continue', { ns: 'common' })}
           </CheckButton>
@@ -233,6 +235,7 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
           variant="primary"
           size="small"
           disabled={currentStep === 2}
+          loading={isCheckLoading}
         >
           {t('action.check', { ns: 'common' })}
         </CheckButton>

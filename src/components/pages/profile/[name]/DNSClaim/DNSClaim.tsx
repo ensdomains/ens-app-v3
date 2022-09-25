@@ -83,7 +83,7 @@ const MainContentContainer = styled(Card)(
     width: 100%;
     ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
-      max-width: 650px;
+      width: 640px;
     `)}
   `,
 )

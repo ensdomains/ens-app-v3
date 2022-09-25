@@ -59,7 +59,7 @@ const Container = styled.div`
   align-items: center;
 `
 
-export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
+export const EnableDNSSEC = ({ setCurrentStep }) => {
   const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
   const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation('dnssec')
@@ -119,13 +119,7 @@ export const EnableDNSSEC = ({ currentStep, stepStatus, setCurrentStep }) => {
       />
       <Spacer $height="5" />
       <ButtonContainer>
-        <CheckButton
-          onClick={handleCheck}
-          variant="primary"
-          size="small"
-          disabled={currentStep === 2}
-          loading={isLoading}
-        >
+        <CheckButton onClick={handleCheck} variant="primary" size="small" loading={isLoading}>
           {t('action.check', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>
