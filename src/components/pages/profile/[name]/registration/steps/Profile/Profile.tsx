@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -177,19 +178,21 @@ const AdvancedOption = ({
   onResetClick: () => void
   onClick: () => void
 }) => {
+  const { t } = useTranslation('register')
+
   return (
     <AdvancedOptionItem>
       <Typography>{name}</Typography>
       <AdvancedOptionTrailing>
         {isDefault ? (
-          <Tag tone="green">Default</Tag>
+          <Tag tone="green">{t('steps.profile.default')}</Tag>
         ) : (
           <Button onClick={onResetClick} size="small" shadowless variant="secondary">
-            Reset
+            {t('action.reset', { ns: 'common' })}
           </Button>
         )}
         <Button onClick={onClick} size="small" shadowless>
-          Edit
+          {t('action.edit', { ns: 'common' })}
         </Button>
       </AdvancedOptionTrailing>
     </AdvancedOptionItem>
@@ -207,6 +210,8 @@ const defaultFuses: Partial<FuseObj> = {
 }
 
 const Profile = ({ nameDetails, callback, registrationData }: Props) => {
+  const { t } = useTranslation('register')
+
   const { address } = useAccount()
   const defaultResolverAddress = useContractAddress('PublicResolver')
   const backRef = useRef<HTMLButtonElement>(null)
@@ -323,16 +328,16 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
     if (hasChanges) {
       return (
         <Button shadowless disabled={hasErrors} type="submit">
-          Next
+          {t('action.next', { ns: 'common' })}
         </Button>
       )
     }
     return (
       <Button shadowless variant="secondary" type="submit">
-        Skip
+        {t('action.skip', { ns: 'common' })}
       </Button>
     )
-  }, [hasChanges, hasErrors])
+  }, [t, hasChanges, hasErrors])
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOption, _setModalOption] = useState<ModalOption | null>(null)
@@ -434,10 +439,7 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
             }}
           />
           <AddRecord {...profileEditorForm} />
-          <Helper type="info">
-            Your profile information will be stored on the blockchain. Anything you add will be
-            publicly visible.
-          </Helper>
+          <Helper type="info">{t('steps.profile.visibilityMessage')}</Helper>
           <AdvancedOptions>
             <AdvancedOptionsButton
               $pressed={advancedOpen}
@@ -446,13 +448,13 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
                 setAdvancedOpen((prev) => !prev)
               }}
             >
-              <Typography>Advanced</Typography>
+              <Typography>{t('steps.profile.advanced')}</Typography>
               <DownIndicatorSVG />
             </AdvancedOptionsButton>
             {advancedOpen && (
               <AdvancedOptionsContent>
                 <AdvancedOption
-                  name="Permissions"
+                  name={t('steps.profile.permissions')}
                   isDefault={isDefaultFuses}
                   onClick={() => setModalOption('permissions')}
                   onResetClick={() => {
@@ -460,7 +462,7 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
                   }}
                 />
                 <AdvancedOption
-                  name="Resolver"
+                  name={t('steps.profile.resolver')}
                   isDefault={isDefaultResolver}
                   onClick={() => setModalOption('resolver')}
                   onResetClick={() => {
@@ -473,7 +475,7 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
           <ButtonContainer>
             <MobileFullWidth>
               <Button ref={backRef} type="submit" shadowless variant="secondary">
-                Back
+                {t('action.back', { ns: 'common' })}
               </Button>
             </MobileFullWidth>
             <MobileFullWidth>{trailingButton}</MobileFullWidth>

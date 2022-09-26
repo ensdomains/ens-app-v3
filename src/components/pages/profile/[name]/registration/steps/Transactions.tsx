@@ -1,4 +1,5 @@
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -70,23 +71,25 @@ type Props = {
   onStart: () => void
 }
 
-const FailedButton = ({ onClick }: { onClick: () => void }) => (
+const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
     <Button shadowless tone="red" onClick={onClick}>
-      Transaction Failed
+      {label}
     </Button>
   </MobileFullWidth>
 )
 
-const ProgressButton = ({ onClick }: { onClick: () => void }) => (
+const ProgressButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
     <Button shadowless variant="secondary" onClick={onClick}>
-      Transaction in progress
+      {label}
     </Button>
   </MobileFullWidth>
 )
 
 const Transactions = ({ registrationData, nameDetails, callback, onStart }: Props) => {
+  const { t } = useTranslation('register')
+
   const { address } = useAccount()
   const keySuffix = `${nameDetails.normalisedName}-${address}`
   const commitKey = `commit-${keySuffix}`
@@ -156,12 +159,12 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     <>
       <MobileFullWidth>
         <Button shadowless onClick={() => callback({ back: true })} variant="secondary">
-          Back
+          {t('action.back', { ns: 'common' })}
         </Button>
       </MobileFullWidth>
       <MobileFullWidth>
         <Button shadowless onClick={makeCommitNameFlow}>
-          Start timer
+          {t('steps.transactions.startTimer')}
         </Button>
       </MobileFullWidth>
     </>
@@ -169,14 +172,24 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
 
   if (commitComplete) {
     if (registerTx?.stage === 'failed') {
-      Buttons = <FailedButton onClick={showRegisterTransaction} />
+      Buttons = (
+        <FailedButton
+          label={t('steps.transactions.transactionFailed')}
+          onClick={showRegisterTransaction}
+        />
+      )
     } else if (registerTx?.stage === 'sent') {
-      Buttons = <ProgressButton onClick={showRegisterTransaction} />
+      Buttons = (
+        <ProgressButton
+          label={t('steps.transactions.transactionProgress')}
+          onClick={showRegisterTransaction}
+        />
+      )
     } else if (!registerTx) {
       Buttons = (
         <MobileFullWidth>
           <Button shadowless onClick={makeRegisterNameFlow}>
-            Finish
+            {t('action.finish', { ns: 'common' })}
           </Button>
         </MobileFullWidth>
       )
@@ -185,14 +198,24 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     }
   } else if (commitTx?.stage) {
     if (commitTx?.stage === 'failed') {
-      Buttons = <FailedButton onClick={showCommitTransaction} />
+      Buttons = (
+        <FailedButton
+          label={t('steps.transactions.transactionFailed')}
+          onClick={showCommitTransaction}
+        />
+      )
     } else if (commitTx?.stage === 'sent') {
-      Buttons = <ProgressButton onClick={showCommitTransaction} />
+      Buttons = (
+        <ProgressButton
+          label={t('steps.transactions.transactionProgress')}
+          onClick={showCommitTransaction}
+        />
+      )
     } else if (commitTx?.stage === 'complete') {
       Buttons = (
         <MobileFullWidth>
           <Button shadowless disabled suffix={<Spinner color="background" />}>
-            Wait
+            {t('steps.transactions.wait')}
           </Button>
         </MobileFullWidth>
       )
@@ -201,7 +224,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
 
   return (
     <StyledCard>
-      <Heading>Almost there</Heading>
+      <Heading>{t('steps.transactions.heading')}</Heading>
       <StyledCountdown
         countdownSeconds={60}
         disabled={!commitTimestamp}
@@ -209,7 +232,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
         size="large"
         callback={() => setCommitComplete(true)}
       />
-      <Typography>This timer prevents others from registering this name before you do.</Typography>
+      <Typography>{t('steps.transactions.subheading')}</Typography>
       <ButtonContainer>{Buttons}</ButtonContainer>
     </StyledCard>
   )

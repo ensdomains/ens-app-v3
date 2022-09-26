@@ -1,4 +1,5 @@
 import { ReactNode, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useBalance } from 'wagmi'
 
@@ -78,6 +79,8 @@ type Props = {
 }
 
 const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Props) => {
+  const { t } = useTranslation('register')
+
   const breakpoints = useBreakpoint()
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
@@ -115,26 +118,26 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Pr
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
       <Button shadowless disabled>
-        Loading
+        {t('action.loading', { ns: 'common' })}
       </Button>
     )
   } else if (balance?.value.lt(totalRequiredBalance)) {
     actionButton = (
       <Button shadowless disabled>
-        Insufficient Balance
+        {t('steps.pricing.insufficientBalance')}
       </Button>
     )
   } else {
     actionButton = (
       <Button shadowless onClick={() => callback({ reverseRecord, years })}>
-        Next
+        {t('action.next', { ns: 'common' })}
       </Button>
     )
   }
 
   return (
     <StyledCard>
-      <Heading>Register {normalisedName}</Heading>
+      <Heading>{t('heading', { name: normalisedName })}</Heading>
       <PlusMinusControl
         minValue={1}
         value={years}
@@ -154,17 +157,19 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Pr
           <RegistrationTimeComparisonBanner
             rentFee={yearlyFee}
             transactionFee={estimatedGasFee}
-            message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
+            message={t('steps.pricing.multipleYearsMessage')}
           />
         )
       )}
       <OutlinedContainer>
-        <OutlinedContainerTitle $name="title">Use as primary name</OutlinedContainerTitle>
+        <OutlinedContainerTitle $name="title">
+          {t('steps.pricing.primaryName')}
+        </OutlinedContainerTitle>
         <CheckboxWrapper $name="checkbox">
           <Checkbox
             variant="switch"
             hideLabel
-            label="Use as primary name"
+            label={t('steps.pricing.primaryName')}
             disabled={!address}
             size={breakpoints.md ? 'large' : 'medium'}
             checked={reverseRecord}
@@ -172,8 +177,7 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Pr
           />
         </CheckboxWrapper>
         <OutlinedContainerDescription $name="description">
-          This links your address to this name, allowing apps to display this name as your profile
-          when connected to them.
+          {t('steps.pricing.primaryNameMesssage')}
         </OutlinedContainerDescription>
       </OutlinedContainer>
       <MobileFullWidth>{actionButton}</MobileFullWidth>

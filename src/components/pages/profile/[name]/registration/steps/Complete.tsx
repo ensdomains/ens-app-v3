@@ -1,6 +1,7 @@
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 import type ConfettiT from 'react-confetti'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useWaitForTransaction } from 'wagmi'
 
@@ -102,6 +103,7 @@ type Props = {
 }
 
 const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) => {
+  const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
 
   const { address } = useAccount()
@@ -133,13 +135,13 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
     return (
       <Invoice
         items={[
-          { label: 'Registration', value },
-          { label: 'Network fee', value: totalNetFee },
+          { label: t('invoice.registration'), value },
+          { label: t('invoice.networkFee'), value: totalNetFee },
         ]}
-        totalLabel="Total Paid"
+        totalLabel={t('invoice.totalPaid')}
       />
     )
-  }, [registerResponse, commitReceipt, registerReceipt, isLoading])
+  }, [t, registerResponse, commitReceipt, registerReceipt, isLoading])
 
   return (
     <StyledCard>
@@ -168,24 +170,23 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
         <NFTTemplate backgroundImage={undefined} isNormalised name={name} />
       </NFTContainer>
       <TitleContainer>
-        <Title>Congratulations!</Title>
+        <Title>{t('steps.complete.heading')}</Title>
         <SubtitleWithGradient>
-          You are now the owner of <b>{name}</b>
+          {t('steps.complete.subheading')}
+          <b>{name}</b>
         </SubtitleWithGradient>
       </TitleContainer>
-      <Typography>
-        Your name was successfully registered. You can now view and manage your name.
-      </Typography>
+      <Typography>{t('steps.complete.description')}</Typography>
       {InvoiceFilled}
       <ButtonContainer>
         <MobileFullWidth>
           <Button shadowless variant="secondary" onClick={() => callback(false)}>
-            Register another
+            {t('steps.complete.registerAnother')}
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
           <Button shadowless onClick={() => callback(true)}>
-            View name
+            {t('steps.complete.viewName')}
           </Button>
         </MobileFullWidth>
       </ButtonContainer>

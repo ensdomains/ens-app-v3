@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useAccount } from 'wagmi'
 
 import { useContractAddress } from '@app/hooks/useContractAddress'
@@ -24,9 +25,10 @@ type Props = {
 
 // needed:
 // - clear existing records in profile (if setting)
-// - if not setting as primary name, dont show profile step unless specified
 
 const Registration = ({ nameDetails, isLoading }: Props) => {
+  const { t } = useTranslation('register')
+
   const router = useRouter()
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
@@ -116,13 +118,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   return (
     <>
       <Head>
-        <title>Register {normalisedName}</title>
+        <title>{t('title', { name: normalisedName })}</title>
       </Head>
       <Content
         noTitle
         title={normalisedName}
         hideHeading={step === 'complete'}
-        subtitle="Register"
+        subtitle={t('subtitle')}
         loading={isLoading || primaryLoading}
         singleColumnContent
       >

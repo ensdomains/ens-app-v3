@@ -37,7 +37,7 @@ const Resolver = ({ resolverAddress, onDismiss, onSubmit }: Props) => {
 
   return (
     <>
-      <Dialog.Heading title="Resolver" />
+      <Dialog.Heading title={t('steps.profile.resolver', { ns: 'register' })} />
       <EditResolverFormContainer>
         <EditResolverWarnings {...editResolverForm} />
         <EditResolverForm {...{ ...editResolverForm, resolverAddress, formRef }} />

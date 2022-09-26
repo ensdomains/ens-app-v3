@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Colors } from '@ensdomains/thorin'
@@ -40,6 +41,7 @@ const FullInvoice = ({
   estimatedGasLoading,
   gasPrice,
 }: Props) => {
+  const { t } = useTranslation('register')
   const fiatUnit = 'usd'
 
   const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
@@ -48,24 +50,24 @@ const FullInvoice = ({
   const invoiceItems = useMemo(
     () => [
       {
-        label: `${years} year registration`,
+        label: t('invoice.yearRegistration', { years }),
         value: totalYearlyFee,
       },
       {
-        label: 'Est. network fee',
+        label: t('invoice.estimatedNetworkFee'),
         value: estimatedGasFee,
       },
       ...(hasPremium
         ? [
             {
-              label: 'Temporary premium',
+              label: t('invoice.temporaryPremium'),
               value: premiumFee,
               color: 'blue' as Colors,
             },
           ]
         : []),
     ],
-    [years, totalYearlyFee, estimatedGasFee, hasPremium, premiumFee],
+    [t, years, totalYearlyFee, estimatedGasFee, hasPremium, premiumFee],
   )
 
   if (estimatedGasLoading) return null
@@ -80,7 +82,7 @@ const FullInvoice = ({
           fiat={fiatUnit}
         />
       </OptionBar>
-      <Invoice items={invoiceItems} unit={currencyDisplay} totalLabel="Estimated total" />
+      <Invoice items={invoiceItems} unit={currencyDisplay} totalLabel={t('invoice.total')} />
     </InvoiceContainer>
   )
 }

@@ -27,7 +27,10 @@
     "transfer": "Transfer",
     "tryAgain": "Try Again",
     "done": "Done",
-    "burnSelected": "Burn Selected"
+    "burnSelected": "Burn Selected",
+    "remindMe": "Remind Me",
+    "begin": "Begin",
+    "finish": "Finish"
   },
   "unit": {
     "years_one": "{{count}} year",

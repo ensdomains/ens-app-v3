@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Heading, Typography, mq } from '@ensdomains/thorin'
@@ -93,11 +94,7 @@ const ProfileButton = styled.button(
   `,
 )
 
-const infoItems = [
-  'Complete a transaction to begin the timer',
-  'Wait 60 seconds for the timer to complete',
-  'Complete a third transaction to secure your name',
-]
+const infoItemArr = Array.from({ length: 3 }, (_, i) => `steps.info.items.${i}`)
 
 type Props = {
   registrationData: RegistrationReducerDataItem
@@ -112,35 +109,37 @@ const Info = ({
   callback,
   onProfileClick,
 }: Props) => {
+  const { t } = useTranslation('register')
+
   const estimate = useEstimateFullRegistration({ registration: registrationData, price: priceData })
 
   return (
     <StyledCard>
-      <Heading>Before we start</Heading>
-      <Typography>Registering your name takes three steps</Typography>
+      <Heading>{t('steps.info.heading')}</Heading>
+      <Typography>{t('steps.info.subheading')}</Typography>
       <InfoItems>
-        {infoItems.map((item, inx) => (
+        {infoItemArr.map((item, inx) => (
           <InfoItem key={item}>
             <Typography>{inx + 1}</Typography>
-            <Typography>{item}</Typography>
+            <Typography>{t(item)}</Typography>
           </InfoItem>
         ))}
       </InfoItems>
       <FullInvoice {...estimate} />
       {!registrationData.queue.includes('profile') && (
         <ProfileButton onClick={onProfileClick}>
-          <Typography>I&apos;d like to set up my profile first</Typography>
+          <Typography>{t('steps.info.setupProfile')}</Typography>
         </ProfileButton>
       )}
       <ButtonContainer>
         <MobileFullWidth>
           <Button shadowless variant="secondary" onClick={() => callback({ back: true })}>
-            Back
+            {t('action.back', { ns: 'common' })}
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
           <Button shadowless onClick={() => callback({ back: false })}>
-            Begin
+            {t('action.begin', { ns: 'common' })}
           </Button>
         </MobileFullWidth>
       </ButtonContainer>
