@@ -4,13 +4,14 @@ import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
+import { useAccount, useQuery } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
+import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { emptyAddress } from '@app/utils/constants'
@@ -121,8 +122,27 @@ export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
   const transactions = useRecentTransactions()
   const [pendingTransaction, setPendingTransaction] = useState(false)
   const { t } = useTranslation('dnssec')
-
   const name = router.query.name as string
+
+  const { data: proverResult } = useQuery([`proverResult`, name, syncWarning], async () => {
+    if (name) {
+      const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
+      const result = await prover.queryWithProof('TXT', `_ens.${name}`)
+      return result
+    }
+  })
+
+  const gasEstimate = useEstimateGasLimitForTransactions(
+    [
+      makeTransactionItem(`importDNSSECName`, {
+        name,
+        proverResult,
+        address: syncWarning ? emptyAddress : address,
+      }),
+    ],
+    !!proverResult,
+    syncWarning?.toString(),
+  )
 
   useEffect(() => {
     if (hasPendingTransaction(transactions)) {
@@ -152,7 +172,7 @@ export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
       <Spacer $height="4" />
       <GreyBox>
         <Typography>{t('claimDomain.networkEst')}</Typography>
-        <Typography>0.004 ETH</Typography>
+        <Typography>{gasEstimate?.gasCostEth?.toString()?.substring(0, 6)} ETH</Typography>
       </GreyBox>
       <Spacer $height="4" />
       {syncWarning ? (
