@@ -1,6 +1,8 @@
-import { PublicENS, TransactionDisplayItem } from '@app/types'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import type { JsonRpcSigner } from '@ethersproject/providers'
+
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+
+import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string

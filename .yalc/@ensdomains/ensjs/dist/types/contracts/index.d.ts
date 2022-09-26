@@ -13,4 +13,5 @@ export default class ContractManager {
     getBaseRegistrar: (passedProvider?: any, address?: string) => Promise<import("../generated/BaseRegistrarImplementation").BaseRegistrarImplementation>;
     getEthRegistrarController: (passedProvider?: any, address?: string) => Promise<import("../generated/ETHRegistrarController").ETHRegistrarController>;
     getMulticall: (passedProvider?: any, address?: string) => Promise<import("../generated/Multicall").Multicall>;
+    getBulkRenewal: (passedProvider?: any, address?: string) => Promise<import("../generated/BulkRenewal").BulkRenewal>;
 }

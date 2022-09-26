@@ -17,7 +17,7 @@ declare type Params = {
     orderDirection?: 'asc' | 'desc';
     orderBy?: 'createdAt' | 'labelName';
     lastSubnames?: Array<any>;
-    isLargeQuery?: boolean;
+    search?: string;
 };
 declare const getSubnames: (injected: ENSArgs<'gqlInstance'>, functionArgs: Params) => Promise<{
     subnames: Subname[];

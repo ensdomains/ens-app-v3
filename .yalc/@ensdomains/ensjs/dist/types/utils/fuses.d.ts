@@ -21,6 +21,8 @@ declare const fullFuseEnum: {
 export declare type FuseObj = typeof fuseEnum;
 export declare type CurrentFuses = {
     [f in keyof FuseObj]: boolean;
+} & {
+    CAN_DO_EVERYTHING: boolean;
 };
 export declare type UnnamedFuseType = typeof unnamedFuses;
 export declare type Fuse = keyof FuseObj;

@@ -35,6 +35,7 @@ var import_publicResolver = __toESM(require("./publicResolver"));
 var import_registry = __toESM(require("./registry"));
 var import_reverseRegistrar = __toESM(require("./reverseRegistrar"));
 var import_universalResolver = __toESM(require("./universalResolver"));
+var import_bulkRenewal = __toESM(require("./bulkRenewal"));
 class ContractManager {
   provider;
   fetchAddress;
@@ -78,4 +79,8 @@ class ContractManager {
     import_ethRegistrarController.default
   );
   getMulticall = this.generateContractGetter("Multicall", import_multicall.default);
+  getBulkRenewal = this.generateContractGetter(
+    "BulkRenewal",
+    import_bulkRenewal.default
+  );
 }

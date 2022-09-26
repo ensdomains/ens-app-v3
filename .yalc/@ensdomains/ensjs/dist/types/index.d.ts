@@ -8,7 +8,7 @@ import type commitName from './functions/commitName';
 import type createSubname from './functions/createSubname';
 import type deleteSubname from './functions/deleteSubname';
 import type registerName from './functions/registerName';
-import type renewName from './functions/renewName';
+import type renewNames from './functions/renewNames';
 import type setName from './functions/setName';
 import type setRecord from './functions/setRecord';
 import type setRecords from './functions/setRecords';
@@ -367,7 +367,7 @@ export declare class ENS {
         orderDirection?: "asc" | "desc" | undefined;
         orderBy?: "labelName" | "createdAt" | undefined;
         lastSubnames?: any[] | undefined;
-        isLargeQuery?: boolean | undefined;
+        search?: string | undefined;
     }) => Promise<{
         subnames: {
             id: string;
@@ -401,11 +401,11 @@ export declare class ENS {
         pageSize?: undefined;
     })) => Promise<import("./functions/getNames").Name[]>;
     getPrice: GeneratedRawFunction<{
-        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, name: string, duration: number, legacy?: boolean | undefined) => Promise<{
+        raw: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, nameOrNames: string | string[], duration: number, legacy?: boolean | undefined) => Promise<{
             to: string;
             data: string;
         }>;
-        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, _name: string, _number: number, legacy?: boolean | undefined) => Promise<{
+        decode: ({ contracts, multicallWrapper }: ENSArgs<"contracts" | "multicallWrapper">, data: string, _nameOrNames: string | string[], _duration: number, legacy?: boolean | undefined) => Promise<{
             base: ethers.BigNumber;
             premium: ethers.BigNumber;
         } | undefined>;
@@ -451,5 +451,5 @@ export declare class ENS {
     transferSubname: WriteFunction<typeof transferSubname>;
     commitName: WriteFunction<typeof commitName>;
     registerName: WriteFunction<typeof registerName>;
-    renewName: WriteFunction<typeof renewName>;
+    renewNames: WriteFunction<typeof renewNames>;
 }

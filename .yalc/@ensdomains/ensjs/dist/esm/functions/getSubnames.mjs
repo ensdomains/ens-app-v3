@@ -2,15 +2,36 @@
 import { truncateFormat } from "../utils/format.mjs";
 import { decryptName } from "../utils/labels.mjs";
 import { namehash } from "../utils/normalise.mjs";
-var largeQuery = async ({ gqlInstance }, { name, pageSize = 10, orderDirection, orderBy, lastSubnames = [] }) => {
+var largeQuery = async ({ gqlInstance }, {
+  name,
+  pageSize = 10,
+  orderDirection,
+  orderBy,
+  lastSubnames = [],
+  search = ""
+}) => {
   const { client } = gqlInstance;
+  const lastSubname = lastSubnames?.[lastSubnames.length - 1];
+  const lastCreatedAt = lastSubname?.createdAt;
+  const lastLabelName = lastSubname?.labelName;
+  let whereFilter = "";
+  if (orderBy === "createdAt" && lastCreatedAt) {
+    whereFilter += orderDirection === "asc" ? "createdAt_gt: $lastCreatedAt" : "createdAt_lt: $lastCreatedAt";
+  } else if (orderBy === "labelName" && lastLabelName) {
+    whereFilter += orderDirection === "asc" ? "labelName_gt: $lastLabelName" : "labelName_lt: $lastLabelName";
+  }
+  if (search) {
+    whereFilter += " labelName_contains: $search";
+  }
   const finalQuery = gqlInstance.gql`
     query getSubnames(
       $id: ID! 
       $first: Int
       $lastCreatedAt: BigInt
+      $lastLabelName: String
       $orderBy: Domain_orderBy 
       $orderDirection: OrderDirection
+      $search: String
     ) {
       domain(
         id: $id
@@ -20,7 +41,9 @@ var largeQuery = async ({ gqlInstance }, { name, pageSize = 10, orderDirection, 
           first: $first
           orderBy: $orderBy
           orderDirection: $orderDirection
-          where: { createdAt_lt: $lastCreatedAt }
+          where: { 
+            ${whereFilter}
+          }
         ) {
           id
           labelName
@@ -39,96 +62,12 @@ var largeQuery = async ({ gqlInstance }, { name, pageSize = 10, orderDirection, 
   const queryVars = {
     id: namehash(name),
     first: pageSize,
-    lastCreatedAt: lastSubnames[lastSubnames.length - 1]?.createdAt,
+    lastCreatedAt,
+    lastLabelName,
     orderBy,
-    orderDirection
+    orderDirection,
+    search: search?.toLowerCase()
   };
-  const { domain } = await client.request(finalQuery, queryVars);
-  const subdomains = domain.subdomains.map((subname) => {
-    const decrypted = decryptName(subname.name);
-    return {
-      ...subname,
-      name: decrypted,
-      truncatedName: truncateFormat(decrypted)
-    };
-  });
-  return {
-    subnames: subdomains,
-    subnameCount: domain.subdomainCount
-  };
-};
-var smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDirection, orderBy }) => {
-  const { client } = gqlInstance;
-  const subdomainsGql = `
-  id
-  labelName
-  labelhash
-  isMigrated
-  name
-  subdomainCount
-  createdAt
-  owner {
-    id
-  }
-`;
-  let queryVars = {};
-  let finalQuery = "";
-  if (typeof page !== "number") {
-    finalQuery = gqlInstance.gql`
-    query getSubnames(
-      $id: ID! 
-      $orderBy: Domain_orderBy 
-      $orderDirection: OrderDirection
-    ) {
-      domain(
-        id: $id
-      ) {
-        subdomains(
-          orderBy: $orderBy
-          orderDirection: $orderDirection
-        ) {
-          ${subdomainsGql}
-        }
-      }
-    }
-  `;
-    queryVars = {
-      id: namehash(name),
-      orderBy,
-      orderDirection
-    };
-  } else {
-    finalQuery = gqlInstance.gql`
-    query getSubnames(
-      $id: ID! 
-      $first: Int
-      $skip: Int
-      $orderBy: Domain_orderBy 
-      $orderDirection: OrderDirection
-    ) {
-      domain(
-        id: $id
-      ) {
-        subdomainCount
-        subdomains(
-          first: $first
-          skip: $skip
-          orderBy: $orderBy
-          orderDirection: $orderDirection
-        ) {
-          ${subdomainsGql}
-        }
-      }
-    }
-  `;
-    queryVars = {
-      id: namehash(name),
-      first: pageSize,
-      skip: (page || 0) * pageSize,
-      orderBy,
-      orderDirection
-    };
-  }
   const { domain } = await client.request(finalQuery, queryVars);
   const subdomains = domain.subdomains.map((subname) => {
     const decrypted = decryptName(subname.name);
@@ -144,10 +83,7 @@ var smallQuery = async ({ gqlInstance }, { name, page, pageSize = 10, orderDirec
   };
 };
 var getSubnames = (injected, functionArgs) => {
-  if (functionArgs.isLargeQuery) {
-    return largeQuery(injected, functionArgs);
-  }
-  return smallQuery(injected, functionArgs);
+  return largeQuery(injected, functionArgs);
 };
 var getSubnames_default = getSubnames;
 export {

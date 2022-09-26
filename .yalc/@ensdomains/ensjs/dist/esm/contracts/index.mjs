@@ -7,6 +7,7 @@ import getPublicResolver from "./publicResolver.mjs";
 import getRegistry from "./registry.mjs";
 import getReverseRegistrar from "./reverseRegistrar.mjs";
 import getUniversalResolver from "./universalResolver.mjs";
+import getBulkRenewal from "./bulkRenewal.mjs";
 var ContractManager = class {
   provider;
   fetchAddress;
@@ -50,6 +51,10 @@ var ContractManager = class {
     getEthRegistrarController
   );
   getMulticall = this.generateContractGetter("Multicall", getMulticall);
+  getBulkRenewal = this.generateContractGetter(
+    "BulkRenewal",
+    getBulkRenewal
+  );
 };
 export {
   ContractManager as default

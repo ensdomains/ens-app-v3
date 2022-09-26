@@ -29,7 +29,8 @@ var addresses = {
   UniversalResolver: {
     "1": "0x580AF46E06DaaD47eb5940526FD64d95b815Cb70",
     "4": "0x74e20bd2a1fe0cdbe45b9a1d89cb7e0a45b36376"
-  }
+  },
+  BulkRenewal: "0xfF252725f6122A92551A5FA9a6b6bf10eb0Be035"
 };
 var getContractAddress = (networkId) => (contractName) => {
   try {

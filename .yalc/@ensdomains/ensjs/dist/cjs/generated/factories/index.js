@@ -19,6 +19,7 @@ var __toCommonJS = (mod) => __copyProps(__defProp({}, "__esModule", { value: tru
 var factories_exports = {};
 __export(factories_exports, {
   BaseRegistrarImplementation__factory: () => import_BaseRegistrarImplementation_factory.BaseRegistrarImplementation__factory,
+  BulkRenewal__factory: () => import_BulkRenewal_factory.BulkRenewal__factory,
   DNSRegistrar__factory: () => import_DNSRegistrar_factory.DNSRegistrar__factory,
   DNSSECImpl__factory: () => import_DNSSECImpl_factory.DNSSECImpl__factory,
   DefaultReverseResolver__factory: () => import_DefaultReverseResolver_factory.DefaultReverseResolver__factory,
@@ -41,6 +42,7 @@ __export(factories_exports, {
 });
 module.exports = __toCommonJS(factories_exports);
 var import_BaseRegistrarImplementation_factory = require("./BaseRegistrarImplementation__factory");
+var import_BulkRenewal_factory = require("./BulkRenewal__factory");
 var import_DNSRegistrar_factory = require("./DNSRegistrar__factory");
 var import_DNSSECImpl_factory = require("./DNSSECImpl__factory");
 var import_DefaultReverseResolver_factory = require("./DefaultReverseResolver__factory");

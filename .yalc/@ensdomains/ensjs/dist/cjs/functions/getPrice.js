@@ -22,12 +22,36 @@ __export(getPrice_exports, {
 });
 module.exports = __toCommonJS(getPrice_exports);
 var import_ethers = require("ethers");
-const raw = async ({ contracts, multicallWrapper }, name, duration, legacy) => {
+const raw = async ({ contracts, multicallWrapper }, nameOrNames, duration, legacy) => {
+  const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames];
+  if (names.length > 1) {
+    const bulkRenewal = await contracts?.getBulkRenewal();
+    const baseCall2 = {
+      to: bulkRenewal.address,
+      data: bulkRenewal.interface.encodeFunctionData("rentPrice", [
+        names,
+        duration
+      ])
+    };
+    if (legacy) {
+      return multicallWrapper.raw([
+        baseCall2,
+        {
+          to: bulkRenewal.address,
+          data: bulkRenewal.interface.encodeFunctionData("rentPrice", [
+            names,
+            0
+          ])
+        }
+      ]);
+    }
+    return baseCall2;
+  }
   const controller = await contracts?.getEthRegistrarController();
   const baseCall = {
     to: controller.address,
     data: controller.interface.encodeFunctionData("rentPrice", [
-      name,
+      names[0],
       duration
     ])
   };
@@ -36,20 +60,42 @@ const raw = async ({ contracts, multicallWrapper }, name, duration, legacy) => {
       baseCall,
       {
         to: controller.address,
-        data: controller.interface.encodeFunctionData("rentPrice", [name, 0])
+        data: controller.interface.encodeFunctionData("rentPrice", [
+          names[0],
+          0
+        ])
       }
     ]);
   }
   return baseCall;
 };
-const decode = async ({ contracts, multicallWrapper }, data, _name, _number, legacy) => {
+const decode = async ({ contracts, multicallWrapper }, data, _nameOrNames, _duration, legacy) => {
   if (data === null)
     return;
-  const controller = await contracts?.getEthRegistrarController();
   try {
     let base;
     let premium;
-    if (legacy) {
+    const isBulkRenewal = Array.isArray(_nameOrNames) && _nameOrNames.length > 1;
+    if (isBulkRenewal && legacy) {
+      const result = await multicallWrapper.decode(data);
+      const [price] = import_ethers.utils.defaultAbiCoder.decode(
+        ["uint256"],
+        result[0].returnData
+      );
+      [premium] = import_ethers.utils.defaultAbiCoder.decode(
+        ["uint256"],
+        result[1].returnData
+      );
+      base = price.sub(premium);
+    } else if (isBulkRenewal) {
+      const bulkRenewal = await contracts?.getBulkRenewal();
+      const result = bulkRenewal.interface.decodeFunctionResult(
+        "rentPrice",
+        data
+      );
+      [base] = result;
+      premium = import_ethers.BigNumber.from(0);
+    } else if (!isBulkRenewal && legacy) {
       const result = await multicallWrapper.decode(data);
       const [price] = import_ethers.utils.defaultAbiCoder.decode(
         ["uint256"],
@@ -61,11 +107,12 @@ const decode = async ({ contracts, multicallWrapper }, data, _name, _number, leg
       );
       base = price.sub(premium);
     } else {
-      ;
-      [[base, premium]] = controller.interface.decodeFunctionResult(
+      const controller = await contracts?.getEthRegistrarController();
+      const result = controller.interface.decodeFunctionResult(
         "rentPrice",
         data
       );
+      [base, premium] = result[0];
     }
     return {
       base,

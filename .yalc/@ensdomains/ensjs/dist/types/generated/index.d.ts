@@ -1,4 +1,5 @@
 export type { BaseRegistrarImplementation } from "./BaseRegistrarImplementation";
+export type { BulkRenewal } from "./BulkRenewal";
 export type { DNSRegistrar } from "./DNSRegistrar";
 export type { DNSSECImpl } from "./DNSSECImpl";
 export type { DefaultReverseResolver } from "./DefaultReverseResolver";
@@ -39,3 +40,4 @@ export { Multicall__factory } from "./factories/Multicall__factory";
 export { NameWrapper__factory } from "./factories/NameWrapper__factory";
 export { StaticMetadataService__factory } from "./factories/StaticMetadataService__factory";
 export { UniversalResolver__factory } from "./factories/UniversalResolver__factory";
+export { BulkRenewal__factory } from "./factories/BulkRenewal__factory";

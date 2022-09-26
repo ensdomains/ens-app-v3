@@ -34,7 +34,7 @@ import type {
 } from './functions/getSpecificRecord'
 import type getSubnames from './functions/getSubnames'
 import type registerName from './functions/registerName'
-import type renewName from './functions/renewName'
+import type renewNames from './functions/renewNames'
 import type setName from './functions/setName'
 import type setRecord from './functions/setRecord'
 import type setRecords from './functions/setRecords'
@@ -588,7 +588,7 @@ export class ENS {
 
   public deleteSubname = this.generateWriteFunction<typeof deleteSubname>(
     'deleteSubname',
-    ['transferSubname'],
+    ['contracts'],
   )
 
   public transferSubname = this.generateWriteFunction<typeof transferSubname>(
@@ -606,7 +606,8 @@ export class ENS {
     ['contracts'],
   )
 
-  public renewName = this.generateWriteFunction<typeof renewName>('renewName', [
-    'contracts',
-  ])
+  public renewNames = this.generateWriteFunction<typeof renewNames>(
+    'renewNames',
+    ['contracts'],
+  )
 }

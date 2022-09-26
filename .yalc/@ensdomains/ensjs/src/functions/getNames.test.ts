@@ -30,9 +30,12 @@ const letterItems = [
 
 const domainLetterItems = [
   '[',
+  'x',
   'w',
   't',
   't',
+  'l',
+  'a',
   '9',
   '8',
   '7',
@@ -137,7 +140,13 @@ describe('getNames', () => {
       type: 'owner',
       page: 3,
     })
-    expect(pageFour).toHaveLength(totalOwnedNames % 10)
+    expect(pageFour).toHaveLength(10)
+    const pageFive = await ensInstance.getNames({
+      address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
+      type: 'owner',
+      page: 4,
+    })
+    expect(pageFive).toHaveLength(totalOwnedNames % 10)
   })
   describe('orderBy', () => {
     describe('registrations', () => {

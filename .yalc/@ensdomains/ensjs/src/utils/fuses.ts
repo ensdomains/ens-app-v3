@@ -29,7 +29,9 @@ const fullFuseEnum = {
 }
 
 export type FuseObj = typeof fuseEnum
-export type CurrentFuses = { [f in keyof FuseObj]: boolean }
+export type CurrentFuses = { [f in keyof FuseObj]: boolean } & {
+  CAN_DO_EVERYTHING: boolean
+}
 export type UnnamedFuseType = typeof unnamedFuses
 export type Fuse = keyof FuseObj
 export type UnnamedFuseValues = UnnamedFuseType[number]

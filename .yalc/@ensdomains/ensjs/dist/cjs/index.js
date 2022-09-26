@@ -308,7 +308,7 @@ class ENS {
   );
   deleteSubname = this.generateWriteFunction(
     "deleteSubname",
-    ["transferSubname"]
+    ["contracts"]
   );
   transferSubname = this.generateWriteFunction(
     "transferSubname",
@@ -322,7 +322,8 @@ class ENS {
     "registerName",
     ["contracts"]
   );
-  renewName = this.generateWriteFunction("renewName", [
-    "contracts"
-  ]);
+  renewNames = this.generateWriteFunction(
+    "renewNames",
+    ["contracts"]
+  );
 }

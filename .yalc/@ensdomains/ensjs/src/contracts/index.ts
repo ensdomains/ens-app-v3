@@ -9,6 +9,7 @@ import getRegistry from './registry'
 import getReverseRegistrar from './reverseRegistrar'
 import { ContractName } from './types'
 import getUniversalResolver from './universalResolver'
+import getBulkRenewal from './bulkRenewal'
 
 export default class ContractManager {
   private provider: ethers.providers.Provider
@@ -73,4 +74,9 @@ export default class ContractManager {
   )
 
   public getMulticall = this.generateContractGetter('Multicall', getMulticall)
+
+  public getBulkRenewal = this.generateContractGetter(
+    'BulkRenewal',
+    getBulkRenewal,
+  )
 }

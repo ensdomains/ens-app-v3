@@ -1,9 +1,7 @@
 import { BigNumber } from 'ethers';
 import { ENSArgs } from '..';
-import { CommitmentParams } from '../utils/registerHelpers';
-declare type Params = Omit<CommitmentParams, 'name' | 'resolver'> & {
-    resolverAddress?: string;
-    secret: string;
+import { BaseRegistrationParams } from '../utils/registerHelpers';
+declare type Params = BaseRegistrationParams & {
     value: BigNumber;
 };
 export default function ({ contracts }: ENSArgs<'contracts'>, name: string, { resolverAddress, value, ...params }: Params): Promise<import("ethers").PopulatedTransaction>;

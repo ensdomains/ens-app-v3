@@ -1,4 +1,5 @@
 export { BaseRegistrarImplementation__factory } from "./BaseRegistrarImplementation__factory";
+export { BulkRenewal__factory } from "./BulkRenewal__factory";
 export { DNSRegistrar__factory } from "./DNSRegistrar__factory";
 export { DNSSECImpl__factory } from "./DNSSECImpl__factory";
 export { DefaultReverseResolver__factory } from "./DefaultReverseResolver__factory";

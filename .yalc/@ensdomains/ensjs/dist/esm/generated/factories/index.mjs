@@ -1,5 +1,6 @@
 // src/generated/factories/index.ts
 import { BaseRegistrarImplementation__factory } from "./BaseRegistrarImplementation__factory.mjs";
+import { BulkRenewal__factory } from "./BulkRenewal__factory.mjs";
 import { DNSRegistrar__factory } from "./DNSRegistrar__factory.mjs";
 import { DNSSECImpl__factory } from "./DNSSECImpl__factory.mjs";
 import { DefaultReverseResolver__factory } from "./DefaultReverseResolver__factory.mjs";
@@ -21,6 +22,7 @@ import { TLDPublicSuffixList__factory } from "./TLDPublicSuffixList__factory.mjs
 import { UniversalResolver__factory } from "./UniversalResolver__factory.mjs";
 export {
   BaseRegistrarImplementation__factory,
+  BulkRenewal__factory,
   DNSRegistrar__factory,
   DNSSECImpl__factory,
   DefaultReverseResolver__factory,

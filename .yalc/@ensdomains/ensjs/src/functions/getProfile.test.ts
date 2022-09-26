@@ -1,6 +1,9 @@
 import { ethers } from 'ethers'
+import dotenv from 'dotenv'
 import { ENS } from '..'
 import setup from '../tests/setup'
+
+dotenv.config()
 
 let ensInstance: ENS
 let revert: Awaited<ReturnType<typeof setup>>['revert']
@@ -120,13 +123,14 @@ describe('getProfile', () => {
   describe('with an old resolver', () => {
     it('should use fallback methods for a name with an older resolver (no multicall)', async () => {
       const result = await ensInstance.getProfile('with-legacy-resolver.eth')
+      const deploymentAddresses = JSON.parse(process.env.DEPLOYMENT_ADDRESSES!)
       expect(result).toBeDefined()
       if (result) {
         expect(result.address).toBe(
           '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
         )
         expect(result.resolverAddress).toBe(
-          '0x5f3f1dbd7b74c6b46e8c44f98792a1daf8d69154',
+          deploymentAddresses.NoMulticallResolver.toLowerCase(),
         )
       }
     })

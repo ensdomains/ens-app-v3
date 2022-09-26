@@ -20,8 +20,10 @@ import { Multicall__factory } from "./factories/Multicall__factory.mjs";
 import { NameWrapper__factory } from "./factories/NameWrapper__factory.mjs";
 import { StaticMetadataService__factory } from "./factories/StaticMetadataService__factory.mjs";
 import { UniversalResolver__factory } from "./factories/UniversalResolver__factory.mjs";
+import { BulkRenewal__factory } from "./factories/BulkRenewal__factory.mjs";
 export {
   BaseRegistrarImplementation__factory,
+  BulkRenewal__factory,
   DNSRegistrar__factory,
   DNSSECImpl__factory,
   DefaultReverseResolver__factory,

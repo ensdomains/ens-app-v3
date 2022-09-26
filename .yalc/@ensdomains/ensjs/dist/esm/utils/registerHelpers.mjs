@@ -1,9 +1,9 @@
 // src/utils/registerHelpers.ts
-import { utils } from "ethers"
-import generateFuseInput from "./generateFuseInput.mjs"
-import { labelhash } from "./labels.mjs"
-import { namehash } from "./normalise.mjs"
-import { generateRecordCallArray } from "./recordHelpers.mjs"
+import { utils } from "ethers";
+import generateFuseInput from "./generateFuseInput.mjs";
+import { labelhash } from "./labels.mjs";
+import { namehash } from "./normalise.mjs";
+import { generateRecordCallArray } from "./recordHelpers.mjs";
 var MAX_INT_64 = 2n ** 64n - 1n;
 var randomSecret = () => {
   const bytes = Buffer.allocUnsafe(32);
@@ -93,5 +93,4 @@ export {
   makeCommitmentData,
   makeRegistrationData,
   randomSecret
-}
-
+};
