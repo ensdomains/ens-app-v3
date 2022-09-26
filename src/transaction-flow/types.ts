@@ -2,7 +2,7 @@ import { ComponentProps, Dispatch, ReactNode } from 'react'
 
 import { Button, Dialog } from '@ensdomains/thorin'
 
-import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
+import { TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'

@@ -30,6 +30,7 @@ const Container = styled.div`
 `
 
 const FunkyTypography = styled(Typography)`
+  /* stylelint-disable */
   background: linear-gradient(330.4deg, #44bcf0 4.54%, #7298f8 59.2%, #a099ff 148.85%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
@@ -65,7 +66,7 @@ export const ClaimComplete = () => {
   // Removing from local storage so that sucess page is not shown twice.
   useEffect(() => {
     setTimeout(() => {
-      // localStorage.removeItem('latestImportTransactionKey')
+      localStorage.removeItem('latestImportTransactionKey')
     }, 2000)
     return () => {
       localStorage.removeItem('latestImportTransactionKey')

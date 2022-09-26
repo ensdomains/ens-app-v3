@@ -134,7 +134,7 @@ export default () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const hasDnsSecEnabled = await isDnsSecEnabled(name)
+        const hasDnsSecEnabled = await isDnsSecEnabled(name as string)
         if (!hasDnsSecEnabled) {
           setCurrentStep(0)
           return
@@ -190,7 +190,7 @@ export default () => {
               <AddTextRecord {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning }} />
             )}
             {currentStep === 2 && <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning }} />}
-            {currentStep === 3 && <ClaimComplete {...{ currentStep, setCurrentStep }} />}
+            {currentStep === 3 && <ClaimComplete />}
           </>
         ) : (
           <Typography style={{ textAlign: 'center' }}>{t('general.connectWallet')}</Typography>

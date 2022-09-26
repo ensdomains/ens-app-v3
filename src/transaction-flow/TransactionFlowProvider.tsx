@@ -21,7 +21,7 @@ type ShowDataInput = <C extends keyof DataInputComponent>(
   data: ComponentProps<DataInputComponent[C]>['data'],
 ) => void
 
-type CreateTransactionFlow = (key: string, flow: TransactionFlowItem) => void
+export type CreateTransactionFlow = (key: string, flow: TransactionFlowItem) => void
 
 type ProviderValue = {
   showDataInput: ShowDataInput
@@ -63,7 +63,6 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const getTransactionIndex = useCallback(
     (key: string) => {
-      console.log('state: ', state)
       return state.items[key]?.currentTransaction || 0
     },
     [state.items],
@@ -71,7 +70,6 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const getTransaction = useCallback(
     (key: string) => {
-      console.log('state: ', state)
       return state.items[key]
     },
     [state.items],
@@ -110,7 +108,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       getTransaction,
       getResumable,
     }
-  }, [dispatch, getResumable, getTransactionIndex])
+  }, [dispatch, getResumable, getTransaction, getTransactionIndex])
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
 

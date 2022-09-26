@@ -1,3 +1,4 @@
+import type { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
 import styled, { css } from 'styled-components'
 
 import { Button, mq } from '@ensdomains/thorin'
@@ -30,21 +31,21 @@ export const CheckButton = styled(Button)(
   `,
 )
 
-const latestTransaction = (transactions) => {
+const latestTransaction = (transactions: Transaction[]) => {
   const transactionKey = localStorage.getItem('latestImportTransactionKey')
-  const transaction = transactions.find((transaction) => {
-    const description = JSON.parse(transaction.description)
+  const transaction = transactions.find((transactionInner) => {
+    const description = JSON.parse(transactionInner.description)
     return description.key === transactionKey
   })
   return transaction
 }
 
-export const shouldShowSuccessPage = (transactions) => {
+export const shouldShowSuccessPage = (transactions: Transaction[]) => {
   const transaction = latestTransaction(transactions)
   return transaction && transaction.status === 'confirmed'
 }
 
-export const hasPendingTransaction = (transactions) => {
+export const hasPendingTransaction = (transactions: Transaction[]) => {
   const transaction = latestTransaction(transactions)
   return transaction && transaction.status === 'pending'
 }

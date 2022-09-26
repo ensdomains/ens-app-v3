@@ -51,7 +51,7 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
+const ExtendNames = () => {
   const { t } = useTranslation('transactionFlow')
 
   const [years, setYears] = useState(1)

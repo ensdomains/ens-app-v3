@@ -1,6 +1,6 @@
 import { utils } from 'ethers'
 import { useRouter } from 'next/router'
-import { useState } from 'react'
+import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -17,7 +17,7 @@ import { shortenAddress } from '@app/utils/utils'
 
 import { Steps } from './Steps'
 import { ButtonContainer, CheckButton } from './shared'
-import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner, isSubdomainSet } from './utils'
+import { DNS_OVER_HTTP_ENDPOINT, getDnsOwner } from './utils'
 
 const HelperLinks = [
   {
@@ -92,7 +92,7 @@ const CopyableRightContainer = styled.div(
   `,
 )
 
-const Copyable = ({ label, value }) => {
+const Copyable = ({ label, value }: { label: string; value: string }) => {
   const { copy, copied } = useCopied()
   return (
     <StyledButton
@@ -120,39 +120,49 @@ enum Errors {
   DNS_RECORD_INVALID,
 }
 
-export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyncWarning }) => {
+export const AddTextRecord = ({
+  currentStep,
+  setCurrentStep,
+  syncWarning,
+  setSyncWarning,
+}: {
+  currentStep: number
+  setCurrentStep: Dispatch<SetStateAction<number>>
+  syncWarning: boolean
+  setSyncWarning: Dispatch<SetStateAction<boolean>>
+}) => {
   const router = useRouter()
   const { name } = router.query
   const { address } = useAccount()
-  const { errorState, setErrorState } = useState<Errors>(Errors.NOT_CHECKED)
+  const [errorState, setErrorState] = useState<Errors>(Errors.NOT_CHECKED)
   const breakpoints = useBreakpoint()
   const { t } = useTranslation('dnssec')
   const [isCheckLoading, setIsCheckLoading] = useState(false)
 
   const handleCheck = async () => {
     try {
+      setErrorState(Errors.NOT_CHECKED)
       setIsCheckLoading(true)
-      isSubdomainSet(name as string)
+      // isSubdomainSet(name as string)
       const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
       const result = await prover.queryWithProof('TXT', `_ens.${name}`)
       const dnsOwner = getDnsOwner(result)
-
       setIsCheckLoading(false)
-      isSubdomainSet(name as string)
+
       if (parseInt(dnsOwner) === 0) {
+        // DNS record is not set
         setSyncWarning(false)
-        // State 8
         setErrorState(Errors.DNS_RECORD_DOES_NOT_EXIST)
       } else if (!utils.isAddress(dnsOwner)) {
+        // Invalid DNS record
         setSyncWarning(false)
-        // State 4
         setErrorState(Errors.DNS_RECORD_INVALID)
       } else if (dnsOwner.toLowerCase() === address?.toLowerCase()) {
+        // DNS record is set and matches the address
         setSyncWarning(false)
-        // State 5
         setCurrentStep(currentStep + 1)
       } else {
-        // Out of sync (state 6)
+        // Out of sync
         setSyncWarning(true)
         return
       }
@@ -198,16 +208,29 @@ export const AddTextRecord = ({ currentStep, setCurrentStep, syncWarning, setSyn
         <Copyable {...{ label: 'Name', value: '_ens' }} />
       </ButtonRow>
       <Spacer $height="2" />
-      <Copyable
-        {...{
-          label: 'Value',
-          value: breakpoints.sm ? address : shortenAddress(address, undefined, 7, 7),
-        }}
-      />
+      {address && (
+        <Copyable
+          {...{
+            label: 'Value',
+            value: breakpoints.sm ? address : shortenAddress(address, undefined, 7, 7),
+          }}
+        />
+      )}
       <Spacer $height="6" />
       {syncWarning && (
         <>
           <Helper type="warning" style={{ textAlign: 'center' }}>
+            <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
+            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+              {t('addTextRecord.syncWarningTwo')}
+            </Typography>
+          </Helper>
+          <Spacer $height="6" />
+        </>
+      )}
+      {errorState !== Errors.NOT_CHECKED && (
+        <>
+          <Helper type="error" style={{ textAlign: 'center' }}>
             <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
             <Typography {...{ variant: 'small', color: 'textSecondary' }}>
               {t('addTextRecord.syncWarningTwo')}

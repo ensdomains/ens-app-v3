@@ -1,7 +1,7 @@
 import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useQuery } from 'wagmi'
@@ -12,7 +12,10 @@ import { Helper, Typography } from '@ensdomains/thorin'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
 import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import {
+  CreateTransactionFlow,
+  useTransactionFlow,
+} from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { emptyAddress } from '@app/utils/constants'
 import { shortenAddress } from '@app/utils/utils'
@@ -98,24 +101,31 @@ export const NamePillWithAddress = ({
   )
 }
 
-const handleClaim = (name, createTransactionFlow, address) => async () => {
-  const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
-  const result = await prover.queryWithProof('TXT', `_ens.${name}`)
-  const timestamp = new Date().getTime()
-  const transactionKey = `importName-${name}-${timestamp}`
-  createTransactionFlow(transactionKey, {
-    transactions: [
-      makeTransactionItem('importDNSSECName', {
-        name,
-        proverResult: result,
-        address,
-      }),
-    ],
-  })
-  localStorage.setItem('latestImportTransactionKey', transactionKey)
-}
+const handleClaim =
+  (name: string, createTransactionFlow: CreateTransactionFlow, address: string) => async () => {
+    const prover = DNSProver.create(DNS_OVER_HTTP_ENDPOINT)
+    const result = await prover.queryWithProof('TXT', `_ens.${name}`)
+    const timestamp = new Date().getTime()
+    const transactionKey = `importName-${name}-${timestamp}`
+    createTransactionFlow(transactionKey, {
+      transactions: [
+        makeTransactionItem('importDNSSECName', {
+          name,
+          proverResult: result,
+          address,
+        }),
+      ],
+    })
+    localStorage.setItem('latestImportTransactionKey', transactionKey)
+  }
 
-export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
+export const ClaimDomain = ({
+  syncWarning,
+  setCurrentStep,
+}: {
+  syncWarning: boolean
+  setCurrentStep: Dispatch<SetStateAction<number>>
+}) => {
   const router = useRouter()
   const { address } = useAccount()
   const { createTransactionFlow } = useTransactionFlow()
@@ -137,11 +147,11 @@ export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
       makeTransactionItem(`importDNSSECName`, {
         name,
         proverResult,
-        address: syncWarning ? emptyAddress : address,
+        address: syncWarning ? emptyAddress : address!,
       }),
     ],
     !!proverResult,
-    syncWarning?.toString(),
+    [syncWarning?.toString()],
   )
 
   useEffect(() => {
@@ -152,7 +162,7 @@ export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
 
     if (shouldShowSuccessPage(transactions)) {
       setPendingTransaction(false)
-      setCurrentStep((x) => x + 1)
+      setCurrentStep((x: number) => x + 1)
       return
     }
 
@@ -167,7 +177,7 @@ export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
       <Spacer $height="4" />
       <GreyBox>
         <Typography>{t('claimDomain.dnsOwner')}</Typography>
-        <NamePillWithAddress name={name} label={`${name}-avatar`} network={1} address={address} />
+        <NamePillWithAddress name={name} network={1} address={address || ''} />
       </GreyBox>
       <Spacer $height="4" />
       <GreyBox>
@@ -205,7 +215,7 @@ export const ClaimDomain = ({ syncWarning, setCurrentStep }) => {
         <CheckButton
           variant="primary"
           size="small"
-          onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address)}
+          onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address!)}
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>

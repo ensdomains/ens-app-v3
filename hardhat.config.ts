@@ -4,6 +4,8 @@ import 'hardhat-deploy'
 import { resolve } from 'path'
 
 const ensContractsPath = './node_modules/@ensdomains/ens-contracts'
+// @ts-ignore: next-line
+// eslint-disable-next-line no-extend-native, func-names
 BigInt.prototype.toJSON = function () {
   return this.toString()
 }
@@ -29,18 +31,17 @@ const config = {
   networks: {
     hardhat: {
       saveDeployments: false,
-      // chainId: parseInt(process.env.CHAIN_ID),
+      chainId: parseInt(process.env.CHAIN_ID || '1337'),
       accounts: {
         mnemonic: process.env.SECRET_WORDS,
       },
       live: false,
       tags: ['test', 'legacy', 'use_root'],
-      chainId: 1337,
     },
     localhost: {
       saveDeployments: false,
       url: process.env.RPC_URL,
-      chainId: parseInt(process.env.CHAIN_ID),
+      chainId: parseInt(process.env.CHAIN_ID || '1337'),
       accounts: {
         mnemonic: process.env.SECRET_WORDS,
       },

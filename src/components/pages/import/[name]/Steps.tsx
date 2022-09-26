@@ -33,10 +33,11 @@ const StepItem = styled.div<{ $type: StepType }>(
   `,
 )
 
-export const Steps = ({ stepStatus }) => {
+export const Steps = ({ stepStatus }: { stepStatus: StepType[] }) => {
   return (
     <StepContainer data-testid="step-container">
       {stepStatus.map((stepType, i) => (
+        // eslint-disable-next-line react/no-array-index-key
         <StepItem $type={stepType} data-testid={`step-item-${i}-${stepType}`} key={i} />
       ))}
     </StepContainer>

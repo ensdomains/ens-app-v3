@@ -100,6 +100,7 @@ export const useNameDetails = (name: string) => {
     basicIsCachedData: basicIsCachedData || dnsOwnerIsCachedData,
     registrationStatusIsCachedData,
     profileIsCachedData,
+    registrationStatus,
     ...basicName,
   }
 }

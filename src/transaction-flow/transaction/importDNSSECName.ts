@@ -5,7 +5,7 @@ import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
-  address?: string
+  address: string
   proverResult: any
 }
 

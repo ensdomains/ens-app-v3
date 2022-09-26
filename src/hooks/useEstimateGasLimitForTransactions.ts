@@ -31,8 +31,8 @@ export const fetchEstimateWithConfig =
 
 export const useEstimateGasLimitForTransactions = (
   transactions: TransactionItem[],
-  isEnabled = true,
-  extraKeys = [],
+  isEnabled: boolean = true,
+  extraKeys: string[] = [],
 ) => {
   const keys = transactions.map((t) => t.name)
 
@@ -41,7 +41,7 @@ export const useEstimateGasLimitForTransactions = (
   const { data: signer, isLoading: isSignerLoading } = useSigner()
 
   const { data, ...results } = useQuery(
-    ['use-estimate-gas-limit-for-transactions', ...keys],
+    ['use-estimate-gas-limit-for-transactions', ...keys, ...extraKeys],
     async () => {
       if (!signer) throw new Error('No signer available')
       if (!ens) throw new Error('ensjs did not load')

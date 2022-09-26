@@ -191,7 +191,7 @@ export const BurnFuses = ({ onDismiss, dispatch }: Props) => {
 
   const onSubmit = () => {
     const selectedFuses: Array<keyof SelectableFuses> = []
-    Object.keys(fuseSelected).forEach(function (key) {
+    Object.keys(fuseSelected).forEach((key) => {
       if (fuseSelected[key as keyof SelectableFuses]) {
         selectedFuses.push(key as keyof SelectableFuses)
       }

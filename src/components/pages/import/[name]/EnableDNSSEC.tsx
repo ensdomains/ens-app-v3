@@ -59,7 +59,7 @@ const Container = styled.div`
   align-items: center;
 `
 
-export const EnableDNSSEC = ({ setCurrentStep }) => {
+export const EnableDNSSEC = ({ setCurrentStep }: { setCurrentStep: (arg: number) => void }) => {
   const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
   const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation('dnssec')
@@ -68,7 +68,7 @@ export const EnableDNSSEC = ({ setCurrentStep }) => {
 
   const handleCheck = async () => {
     setIsLoading(true)
-    const hasDnsSecEnabled = await isDnsSecEnabled(name)
+    const hasDnsSecEnabled = await isDnsSecEnabled(name as string)
     if (hasDnsSecEnabled) {
       setCurrentStep(1)
       return
