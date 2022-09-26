@@ -24,7 +24,7 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-import { shouldShowSuccessPage } from './DNSClaim/shared'
+import { shouldShowSuccessPage } from '../../import/[name]/shared'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
