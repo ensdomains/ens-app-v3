@@ -112,6 +112,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     case 'setTransactionStageFromUpdate': {
       const { hash, key, status } = action.payload
       const selectedItem = draft.items[key]
+      if (!selectedItem) break
       const transaction = selectedItem.transactions.find((x) => x.hash === hash)
       if (transaction) {
         const stage = status === 'confirmed' ? 'complete' : 'failed'
