@@ -6,6 +6,10 @@ import type { ENS } from '@ensdomains/ensjs'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
 
+export type ProfileRecords = NonNullable<Profile['records']>
+
+export type RecordItem = NonNullable<ProfileRecords['texts']>[number]
+
 export type Name = NonNullable<Awaited<ReturnType<ENS['getNames']>>>[0]
 
 interface TransactionDisplayItemBase {

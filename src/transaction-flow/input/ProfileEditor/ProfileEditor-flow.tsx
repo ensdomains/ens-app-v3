@@ -10,13 +10,15 @@ import { Button, ScrollBox, Textarea, mq } from '@ensdomains/thorin'
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
+import { useResolverStatus } from '@app/hooks/useResolverStatus'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { ProfileEditorType } from '@app/types'
-import { useEns } from '@app/utils/EnsProvider'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
@@ -27,6 +29,7 @@ import { validateCryptoAddress } from '@app/utils/validate'
 
 import AvatarButton from './Avatar/AvatarButton'
 import { AvatarViewManager } from './Avatar/AvatarViewManager'
+import ResolverWarningOverlay from './ResolverWarningOverlay'
 import accountsOptions from './accountsOptions'
 import addressOptions from './addressOptions'
 import otherOptions from './otherOptions'
@@ -248,6 +251,7 @@ type ExpandableRecordsState = {
 
 type Data = {
   name?: string
+  resumable?: boolean
 }
 
 export type Props = {
@@ -256,11 +260,10 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
-  const { t } = useTranslation('profile')
-  const { contracts } = useEns()
+const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
+  const { t } = useTranslation('transactionFlow')
 
-  const name = data?.name || ''
+  const { name = '', resumable = false } = data
 
   const {
     register,
@@ -288,7 +291,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
     shouldUnregister: false,
   })
 
-  const [tab, setTab] = useState<TabType>('address')
+  const [tab, setTab] = useState<TabType>('general')
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -354,8 +357,8 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
           autocomplete: true,
           options: availableAccountOptions,
           messages: {
-            addRecord: t('profileEditor.tabs.accounts.addAccount'),
-            noOptions: t('profileEditor.tabs.accounts.noOptions'),
+            addRecord: t('input.profileEditor.tabs.accounts.addAccount'),
+            noOptions: t('input.profileEditor.tabs.accounts.noOptions'),
           },
           onAddRecord: (key: string) => {
             addAccountKey(key)
@@ -370,8 +373,8 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
           autocomplete: true,
           options: availableAddressOptions,
           messages: {
-            addRecord: t('profileEditor.tabs.address.addAddress'),
-            noOptions: t('profileEditor.tabs.address.noOptions'),
+            addRecord: t('input.profileEditor.tabs.address.addAddress'),
+            noOptions: t('input.profileEditor.tabs.address.noOptions'),
           },
           onAddRecord: (key: string) => {
             addAddressKey(key)
@@ -385,7 +388,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
         return {
           options: websiteOptions,
           messages: {
-            selectOption: t('profileEditor.tabs.contentHash.addContentHash'),
+            selectOption: t('input.profileEditor.tabs.contentHash.addContentHash'),
           },
           onAddRecord: (key: string) => {
             const option = websiteOptions.find(({ value }) => value === key)
@@ -400,8 +403,8 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
         return {
           createable: true,
           messages: {
-            addRecord: t('profileEditor.tabs.other.addRecord'),
-            createRecord: t('profileEditor.tabs.other.createRecord'),
+            addRecord: t('input.profileEditor.tabs.other.addRecord'),
+            createRecord: t('input.profileEditor.tabs.other.createRecord'),
           },
           onAddRecord: (record: string) => {
             addOtherKey(record)
@@ -416,7 +419,13 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   })()
 
-  const { profile, loading } = useProfile(name, name !== '')
+  const { profile, loading: profileLoading } = useProfile(name, name !== '')
+
+  const resolverAddress = useContractAddress('PublicResolver')
+
+  const { status, loading: statusLoading } = useResolverStatus(name, profileLoading, {
+    skipCompare: resumable,
+  })
 
   useEffect(() => {
     if (profile) {
@@ -445,11 +454,10 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
 
   const handleCreateTransaction = useCallback(
     async (records: RecordOptions) => {
-      const resolverAddress = (await contracts!.getPublicResolver()!).address
+      if (!profile?.resolverAddress || !resolverAddress) return
 
-      if (!profile?.resolverAddress) return
-      if (profile.resolverAddress === resolverAddress) {
-        await dispatch({
+      if (status?.hasLatestResolver) {
+        dispatch({
           name: 'setTransactions',
           payload: [
             makeTransactionItem('updateProfile', {
@@ -462,26 +470,33 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
         dispatch({ name: 'setFlowStage', payload: 'transaction' })
         return
       }
+
       dispatch({
         name: 'startFlow',
-        key: `update-profile-${name}`,
+        key: `edit-profile-flow-${name}`,
         payload: {
           intro: {
             title: 'Action Required',
-            content: makeIntroItem('FriendlyResolverUpgrade', { name }),
+            content: makeIntroItem('MigrateAndUpdateResolver', { name }),
           },
           transactions: [
-            makeTransactionItem('updateProfile', {
+            makeTransactionItem('migrateProfileWithSync', {
               name,
-              resolver: profile!.resolverAddress!,
               records,
             }),
+            makeTransactionItem('updateResolver', {
+              name,
+              resolver: resolverAddress,
+              oldResolver: profile!.resolverAddress!,
+              contract: 'registry',
+            }),
           ],
+          resumable: true,
         },
       })
     },
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [profile],
+    [profile, status, resolverAddress],
   )
   const handleTransaction = async (profileData: ProfileEditorType) => {
     const dirtyFields = getDirtyFields(formState.dirtyFields, profileData) as ProfileEditorType
@@ -523,7 +538,14 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
   const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
-  if (loading) return null
+  const [showOverlay, setShowOverlay] = useState(false)
+  useEffect(() => {
+    if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
+      setShowOverlay(true)
+    }
+  }, [status, statusLoading, resumable])
+
+  if (profileLoading || statusLoading) return <TransactionLoader />
   return (
     <>
       {' '}
@@ -565,7 +587,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                 $isDirty={getFieldState('general').isDirty}
                 onClick={handleTabClick('general')}
               >
-                {t('profileEditor.tabs.general.label')}
+                {t('input.profileEditor.tabs.general.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -575,7 +597,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                 onClick={handleTabClick('accounts')}
                 data-testid="accounts-tab"
               >
-                {t('profileEditor.tabs.accounts.label')}
+                {t('input.profileEditor.tabs.accounts.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -585,7 +607,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                 onClick={handleTabClick('address')}
                 data-testid="address-tab"
               >
-                {t('profileEditor.tabs.address.label')}
+                {t('input.profileEditor.tabs.address.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -594,7 +616,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                 $isDirty={getFieldState('website').isDirty}
                 onClick={handleTabClick('website')}
               >
-                {t('profileEditor.tabs.contentHash.label')}
+                {t('input.profileEditor.tabs.contentHash.label')}
               </TabButton>
               <TabButton
                 type="button"
@@ -604,7 +626,7 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                 onClick={handleTabClick('other')}
                 data-testid="other-tab"
               >
-                {t('profileEditor.tabs.other.label')}
+                {t('input.profileEditor.tabs.other.label')}
               </TabButton>
             </TabButtonsContainer>
             <TabContentsContainer>
@@ -616,8 +638,8 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                         <>
                           <RecordInput
                             deletable={false}
-                            label={t('profileEditor.tabs.general.name.label')}
-                            placeholder={t('profileEditor.tabs.general.name.placeholder')}
+                            label={t('input.profileEditor.tabs.general.name.label')}
+                            placeholder={t('input.profileEditor.tabs.general.name.placeholder')}
                             showDot
                             validated={getFieldState('general.name', formState).isDirty}
                             autoComplete="off"
@@ -625,18 +647,18 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                           />
                           <RecordInput
                             deletable={false}
-                            label={t('profileEditor.tabs.general.url.label')}
+                            label={t('input.profileEditor.tabs.general.url.label')}
                             autoComplete="off"
-                            placeholder={t('profileEditor.tabs.general.url.placeholder')}
+                            placeholder={t('input.profileEditor.tabs.general.url.placeholder')}
                             showDot
                             validated={getFieldState('general.url', formState).isDirty}
                             {...register('general.url')}
                           />
                           <RecordInput
                             deletable={false}
-                            label={t('profileEditor.tabs.general.location.label')}
+                            label={t('input.profileEditor.tabs.general.location.label')}
                             autoComplete="off"
-                            placeholder={t('profileEditor.tabs.general.location.placeholder')}
+                            placeholder={t('input.profileEditor.tabs.general.location.placeholder')}
                             showDot
                             validated={getFieldState('general.location', formState).isDirty}
                             {...register('general.location')}
@@ -644,11 +666,13 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
                           <Textarea
                             label={
                               <LabelWrapper>
-                                {t('profileEditor.tabs.general.description.label')}
+                                {t('input.profileEditor.tabs.general.description.label')}
                               </LabelWrapper>
                             }
                             autoComplete="off"
-                            placeholder={t('profileEditor.tabs.general.description.placeholder')}
+                            placeholder={t(
+                              'input.profileEditor.tabs.general.description.placeholder',
+                            )}
                             showDot
                             validated={getFieldState('general.description', formState).isDirty}
                             {...register('general.description')}
@@ -854,6 +878,19 @@ const ProfileEditor = ({ data, dispatch, onDismiss }: Props) => {
               </Button>
             </FooterContainer>
           </ContentContainer>
+          {showOverlay && (
+            <ResolverWarningOverlay
+              name={name}
+              hasOldRegistry={!profile?.isMigrated}
+              resumable={resumable}
+              hasNoResolver={!status?.hasResolver}
+              hasMigratedProfile={status?.hasMigratedProfile}
+              latestResolver={resolverAddress!}
+              oldResolver={profile?.resolverAddress!}
+              dispatch={dispatch}
+              onDismiss={() => setShowOverlay(false)}
+            />
+          )}{' '}
         </Container>
       )}
     </>

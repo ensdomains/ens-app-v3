@@ -168,7 +168,7 @@ export const AddTextRecord = ({
       }
     } catch (e) {
       console.error('_ens check error: ', e)
-      if (e.message.includes('NXDOMAIN')) {
+      if ((e as Error).message.includes('NXDOMAIN')) {
         setErrorState(Errors.SUBDOMAIN_NOT_SET)
       }
       setSyncWarning(false)
