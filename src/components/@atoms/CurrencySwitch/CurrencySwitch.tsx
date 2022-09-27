@@ -64,10 +64,10 @@ export const CurrencySwitch = ({ value, onChange, fiat = 'usd' }: Props) => {
   return (
     <Container onClick={toggleHandler}>
       <Slider $side={side} data-testid="currency-switch" />
-      <Label ref={leftRef} $active={value === 'eth'}>
+      <Label ref={leftRef} data-testid="currency-eth" $active={value === 'eth'}>
         ETH
       </Label>
-      <Label ref={rightRef} $active={value === 'fiat'}>
+      <Label ref={rightRef} data-testid="currency-fiat" $active={value === 'fiat'}>
         {fiat.toUpperCase()}
       </Label>
     </Container>

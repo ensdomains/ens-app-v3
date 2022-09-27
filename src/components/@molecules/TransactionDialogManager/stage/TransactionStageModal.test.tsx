@@ -74,6 +74,7 @@ const renderHelper = async ({
       transaction={transaction || ({} as any)}
       onDismiss={mockOnDismiss}
       dispatch={mockDispatch}
+      backToInput={false}
       txKey="test"
     />,
   )
@@ -250,27 +251,6 @@ describe('TransactionStageModal', () => {
           },
         })
         expect(screen.getByText('transaction.dialog.sent.progress.message')).toBeVisible()
-      })
-      it('should dispatch setTransactionStage if transaction state changes', async () => {
-        mockUseRecentTransactions.mockReturnValue([
-          {
-            hash: '0x123',
-            status: 'confirmed',
-          },
-        ])
-        await renderHelper({
-          transaction: {
-            ...mockTransaction,
-            hash: '0x123',
-            stage: 'sent',
-          },
-        })
-        await waitFor(() =>
-          expect(mockDispatch).toHaveBeenCalledWith({
-            name: 'setTransactionStage',
-            payload: 'complete',
-          }),
-        )
       })
     })
     describe('complete', () => {

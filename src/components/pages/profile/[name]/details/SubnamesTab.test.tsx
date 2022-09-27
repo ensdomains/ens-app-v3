@@ -5,6 +5,10 @@ import { useRouter } from 'next/router'
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
+import { useAvatar } from '@app/hooks/useAvatar'
+import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
+import { useZorb } from '@app/hooks/useZorb'
+
 import { SubnamesTab } from './SubnamesTab'
 
 jest.mock('@app/hooks/useSubnamePagination')

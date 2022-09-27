@@ -31,6 +31,9 @@ export const addRegistrationStatusToBatch = (ens: PublicENS, name: string) => {
   const { getExpiry, getPrice, getOwner } = ens
   const { labels, isDotETH } = start(name)
   if (is2ldEth(isDotETH, labels, true)) {
+    if (labels[0].length < 3) {
+      return []
+    }
     return [getExpiry.batch(name), getPrice.batch(labels[0], yearsToSeconds(1), false)]
   }
   return [getOwner.batch(name, 'registry')]
@@ -46,15 +49,16 @@ export const getRegistrationStatus = (
   name: string,
 ): RegistrationStatus => {
   const _batchResults = batchResults as BatchResult
+  const { labels, isDotETH } = start(name)
+  const isDotEth2ld = is2ldEth(isDotETH, labels, false)
+  if (isDotEth2ld && labels[0].length < 3) {
+    return 'short'
+  }
   if (!_batchResults) {
     return 'invalid'
   }
-  const { labels, isDotETH } = start(name)
   const resLength = _batchResults?.length
-  if (is2ldEth(isDotETH, labels, false)) {
-    if (labels[0].length < 3) {
-      return 'short'
-    }
+  if (isDotEth2ld) {
     if (!resLength) return 'invalid'
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const expiryData = _batchResults[resLength - 2]
