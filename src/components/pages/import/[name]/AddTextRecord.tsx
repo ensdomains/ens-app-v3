@@ -114,10 +114,10 @@ const Copyable = ({ label, value }: { label: string; value: string }) => {
 }
 
 enum Errors {
-  NOT_CHECKED,
-  SUBDOMAIN_NOT_SET,
-  DNS_RECORD_DOES_NOT_EXIST,
-  DNS_RECORD_INVALID,
+  NOT_CHECKED = 'NOT_CHECKED',
+  SUBDOMAIN_NOT_SET = 'SUBDOMAIN_NOT_SET',
+  DNS_RECORD_DOES_NOT_EXIST = 'DNS_RECORD_DOES_NOT_EXIST',
+  DNS_RECORD_INVALID = 'DNS_RECORD_INVALID',
 }
 
 export const AddTextRecord = ({
@@ -168,6 +168,10 @@ export const AddTextRecord = ({
       }
     } catch (e) {
       console.error('_ens check error: ', e)
+      if (e.message.includes('NXDOMAIN')) {
+        setErrorState(Errors.SUBDOMAIN_NOT_SET)
+      }
+      setSyncWarning(false)
       setIsCheckLoading(false)
     }
   }
@@ -231,9 +235,9 @@ export const AddTextRecord = ({
       {errorState !== Errors.NOT_CHECKED && (
         <>
           <Helper type="error" style={{ textAlign: 'center' }}>
-            <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
+            <Typography>{t(`addTextRecord.errors.${errorState}.title`)}</Typography>
             <Typography {...{ variant: 'small', color: 'textSecondary' }}>
-              {t('addTextRecord.syncWarningTwo')}
+              {t(`addTextRecord.errors.${errorState}.content`)}
             </Typography>
           </Helper>
           <Spacer $height="6" />

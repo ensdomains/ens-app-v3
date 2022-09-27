@@ -27,8 +27,7 @@ import {
   hasPendingTransaction,
   shouldShowSuccessPage,
 } from './shared'
-
-const DNS_OVER_HTTP_ENDPOINT = 'https://1.1.1.1/dns-query'
+import { DNS_OVER_HTTP_ENDPOINT } from './utils'
 
 const Container = styled.div`
   text-align: center;

@@ -52,6 +52,7 @@ const DomainTextContainer = styled.div(
 const NFTTemplateContainer = styled.div(
   ({ theme }) => css`
     border-radius: ${theme.radii['2xLarge']};
+    overflow: hidden;
     width: 240px;
     margin: 0 auto;
   `,

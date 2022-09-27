@@ -20,7 +20,22 @@
     "syncWarningOne": "You don't appear to be the DNS Owner of this domain, but you can still add this name to ENS Registry.",
     "syncWarningTwo": "If you own this domain change its _ens TXT record to contain your Ethereum Address and click 'Check' again, otherwise click 'Claim' to proceed.",
     "type": "Type",
-    "txt": "TXT"
+    "txt": "TXT",
+    "errors": {
+      "SUBDOMAIN_NOT_SET": {
+        "title": "Subdomain not set",
+        "content": "Please set your _ens subdomain with the value shown above."
+      },
+      "DNS_RECORD_DOES_NOT_EXIST": {
+        "title": "Record does not exist",
+        "content": "DNS Record is not set"
+      },
+      "DNS_RECORD_INVALID": {
+        "title": "Record Invalid",
+        "content": "Please set the record with the value above."
+      },
+      } 
+    }
   },
   "claimComplete": {
     "title": "Congratulations!",
