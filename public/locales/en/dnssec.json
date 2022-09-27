@@ -59,6 +59,6 @@
     "instruction": "You’ll need to visit your domain registrar to enable DNSSEC. Once enabled, click 'Check' to move to the next step.",
     "registrarHelp": "Choose your registrar from the dropdown below for instructions on how to do this.",
     "findRegistrar": "Find your registrar",
-    "DNSSECNotEnabled": "DNSEC has not been enabled on this domain."
+    "DNSSECNotEnabled": "DNSSEC has not been enabled on this domain."
   }
 }
