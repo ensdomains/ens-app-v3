@@ -98,7 +98,7 @@ export const EnableDNSSEC = ({ setCurrentStep }: { setCurrentStep: (arg: number)
             </a>
           ),
         }))}
-        label="Domain Registrar"
+        label={t('general.domainRegistrar')}
       />
       <Spacer $height="3" />
       <Outlink target="_blank" href={`https://who.is/whois/${name}`}>

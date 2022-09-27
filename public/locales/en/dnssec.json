@@ -1,7 +1,8 @@
 {
   "general": {
     "connectWallet": "Please connect your wallet to continue",
-    "importDNSSECName": "Import DNSSEC Name"
+    "importDNSSECName": "Import DNSSEC Name",
+    "domainRegistrar": "Domain Registrar"
   },
   "registrars": {
     "namecheap": "Namecheap",
@@ -33,8 +34,7 @@
       "DNS_RECORD_INVALID": {
         "title": "Record Invalid",
         "content": "Please set the record with the value above."
-      },
-      } 
+      }
     }
   },
   "claimComplete": {
