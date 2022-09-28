@@ -7,7 +7,7 @@
       "replaced": "3.0.0-alpha.20"
     },
     "@ensdomains/ens-test-env": {
-      "signature": "21191b84e11fe1c4ea40a22fb1913ad5",
+      "signature": "7df67350a2110d0037e7646c97101614",
       "pure": true,
       "replaced": "^0.2.3"
     }
