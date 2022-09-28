@@ -163,7 +163,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
         </Button>
       </MobileFullWidth>
       <MobileFullWidth>
-        <Button shadowless onClick={makeCommitNameFlow}>
+        <Button data-testid="start-timer-button" shadowless onClick={makeCommitNameFlow}>
           {t('steps.transactions.startTimer')}
         </Button>
       </MobileFullWidth>
@@ -188,7 +188,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     } else if (!registerTx) {
       Buttons = (
         <MobileFullWidth>
-          <Button shadowless onClick={makeRegisterNameFlow}>
+          <Button data-testid="finish-button" shadowless onClick={makeRegisterNameFlow}>
             {t('action.finish', { ns: 'common' })}
           </Button>
         </MobileFullWidth>
@@ -214,7 +214,12 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     } else if (commitTx?.stage === 'complete') {
       Buttons = (
         <MobileFullWidth>
-          <Button shadowless disabled suffix={<Spinner color="background" />}>
+          <Button
+            data-testid="wait-button"
+            shadowless
+            disabled
+            suffix={<Spinner color="background" />}
+          >
             {t('steps.transactions.wait')}
           </Button>
         </MobileFullWidth>

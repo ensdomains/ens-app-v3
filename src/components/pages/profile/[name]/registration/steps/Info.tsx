@@ -127,7 +127,7 @@ const Info = ({
       </InfoItems>
       <FullInvoice {...estimate} />
       {!registrationData.queue.includes('profile') && (
-        <ProfileButton onClick={onProfileClick}>
+        <ProfileButton data-testid="setup-profile-button" onClick={onProfileClick}>
           <Typography>{t('steps.info.setupProfile')}</Typography>
         </ProfileButton>
       )}
@@ -138,7 +138,7 @@ const Info = ({
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
-          <Button shadowless onClick={() => callback({ back: false })}>
+          <Button data-testid="next-button" shadowless onClick={() => callback({ back: false })}>
             {t('action.begin', { ns: 'common' })}
           </Button>
         </MobileFullWidth>

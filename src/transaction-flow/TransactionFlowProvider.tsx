@@ -8,10 +8,10 @@ import React, {
   useState,
 } from 'react'
 
-import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
-import useTransactionUpdateCallback, {
+import useCallbackOnTransaction, {
   UpdateCallback,
-} from '@app/hooks/useTransactionUpdateCallback'
+} from '@app/hooks/transactions/useCallbackOnTransaction'
+import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import type { DataInputComponent } from './input'
@@ -90,15 +90,18 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
   )
 
   const updateCallback = useCallback<UpdateCallback>(
-    (_, key, status, hash) => {
-      if (status !== 'pending') {
-        dispatch({ name: 'setTransactionStageFromUpdate', payload: { key, status, hash } })
+    ({ key, status, hash, minedData }) => {
+      if (status !== 'pending' && key) {
+        dispatch({
+          name: 'setTransactionStageFromUpdate',
+          payload: { key, status, hash, timestamp: minedData.timestamp * 1000 },
+        })
       }
     },
     [dispatch],
   )
 
-  useTransactionUpdateCallback(updateCallback)
+  useCallbackOnTransaction(updateCallback)
 
   const getLatestTransaction = useCallback(
     (key: string) => {

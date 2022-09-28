@@ -117,6 +117,7 @@ export type TransactionFlowAction =
         key: string
         hash: string
         status: 'confirmed' | 'failed'
+        timestamp: number
       }
     }
 

@@ -14,7 +14,7 @@
   "steps": {
     "pricing": {
       "insufficientBalance": "Insufficient Balance",
-      "mutlipleYearsMessage": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
+      "multipleYearsMessage": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
       "primaryName": "Use as primary name",
       "primaryNameMessage": "This links your address to this name, allowing apps to display this name as your profile when connected to them.",
       "premium": {

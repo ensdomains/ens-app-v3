@@ -29,3 +29,23 @@ export const revert = async () => {
     { method: 'evm_setAutomine', params: [true] },
   ])
 }
+
+export const increaseTime = async (seconds) => {
+  await provider.send('evm_increaseTime', [seconds])
+  await provider.send('evm_mine', [])
+}
+
+export const getTime = async () => {
+  const currTime = (await provider.getBlock()).timestamp
+  return currTime * 1000
+}
+
+export const syncTime = async (difference) => {
+  await provider.send('anvil_setNextBlockTimestamp', [Math.floor(Date.now() / 1000) - difference])
+  await provider.send('evm_mine', [])
+}
+
+export const globalIncreaseTime = async (seconds) => {
+  await provider.send('evm_increaseTime', [seconds])
+  await provider.send('evm_mine', [])
+}

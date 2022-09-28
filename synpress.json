@@ -8,7 +8,7 @@
   "videosFolder": "e2e/videos",
   "video": true,
   "screenshotOnRunFailure": true,
-  "chromeWebSecurity": true,
+  "chromeWebSecurity": false,
   "viewportWidth": 1366,
   "viewportHeight": 768,
   "component": {

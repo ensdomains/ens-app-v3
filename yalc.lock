@@ -5,6 +5,11 @@
       "signature": "7a5d38c5d8886ee99c3e090ccddf1334",
       "pure": true,
       "replaced": "3.0.0-alpha.20"
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "4e8b75d6bf36b0cd24751bc8dd72ac3a",
+      "pure": true,
+      "replaced": "^0.2.3"
     }
   }
 }

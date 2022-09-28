@@ -135,15 +135,15 @@ export const RegistrationTimeComparisonBanner = ({ message, rentFee, transaction
       <InnerContainer>
         <div>{message}</div>
         <Bar $highlightPercent={twentyRounded} />
-        <Marker $percent={calcPercent(oneYearGasPercent, 1)}>
+        <Marker data-testid="year-marker-0" $percent={calcPercent(oneYearGasPercent, 1)}>
           <b>{t('unit.years', { count: 1 })}</b>
           {t('unit.gas', { value: `${oneYearGasPercent}%` })}
         </Marker>
-        <Marker $percent={calcPercent(forty.gas, 2)}>
+        <Marker data-testid="year-marker-1" $percent={calcPercent(forty.gas, 2)}>
           <b>{t('unit.years', { count: forty.years })}</b>
           {t('unit.gas', { value: `${forty.gas}%` })}
         </Marker>
-        <Marker $percent={twentyRounded}>
+        <Marker data-testid="year-marker-2" $percent={twentyRounded}>
           <b>{t('unit.years', { count: twenty.years })}</b>
           {t('unit.gas', { value: `${twenty.gas}%` })}
         </Marker>

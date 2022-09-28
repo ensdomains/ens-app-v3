@@ -24,7 +24,7 @@ specifiers:
   '@ensdomains/address-encoder': ^0.2.18
   '@ensdomains/buffer': ^0.1.0
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts
-  '@ensdomains/ens-test-env': ^0.2.3
+  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
   '@ensdomains/ens-validation': ^0.1.0
   '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
   '@ensdomains/eth-ens-namehash': ^2.0.15
@@ -165,7 +165,7 @@ devDependencies:
   '@cloudflare/workers-types': 3.16.0
   '@cloudflare/wrangler': 1.19.12
   '@ensdomains/buffer': 0.1.0_hardhat@2.11.1
-  '@ensdomains/ens-test-env': 0.2.3
+  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
   '@ethersproject/providers': 5.7.0
   '@next/bundle-analyzer': 12.3.0
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -213,7 +213,7 @@ devDependencies:
   eslint-plugin-react-hooks: 4.6.0_eslint@7.32.0
   eslint-plugin-testing-library: 4.12.4_td6yqss6ra3qoebludh4ctrhym
   ganache: 7.4.3
-  graphql-request: 5.0.0
+  graphql-request: 5.0.1-next.1
   hardhat: 2.11.1_s5ojjbx2isjkawqptqpitvy25q
   hardhat-dependency-compiler: 1.1.3_hardhat@2.11.1
   hardhat-deploy: 0.11.14
@@ -2174,29 +2174,6 @@ packages:
       multicodec: 3.2.1
       multihashes: 2.0.0
     dev: false
-
-  /@ensdomains/ens-test-env/0.2.3:
-    resolution: {integrity: sha512-69z+SmQlmL3pqRGLl8ouYSVy/YRm9bVCmii65e8vAnkt902giAjW9MEGfnxztdsNP+HCfiSN4lt147tLdWgW1Q==}
-    hasBin: true
-    dependencies:
-      '@ethersproject/wallet': 5.7.0
-      ansi-colors: 4.1.1
-      cli-progress: 3.11.2
-      commander: 9.4.0
-      concurrently: 7.4.0
-      docker-compose: 0.23.17
-      dotenv: 16.0.2
-      fs-extra: 10.1.0
-      ganache: 7.4.3
-      got: 12.3.1
-      lz4: 0.6.5
-      node-fetch: 3.2.10
-      progress-stream: 2.0.0
-      tar-fs: 2.1.1
-      wait-on: 6.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
 
   /@ensdomains/ens-validation/0.1.0:
     resolution: {integrity: sha512-rbDh2K6GfqXvBcJUISaTTYEt3f079WA4ohTE5Lh4/8EaaPAk/9vk3EisMUQV2UVxeFIZQEEyRCIOmRTpqN0W7A==}
@@ -11961,8 +11938,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /graphql-request/5.0.0:
-    resolution: {integrity: sha512-SpVEnIo2J5k2+Zf76cUkdvIRaq5FMZvGQYnA4lUWYbc99m+fHh4CZYRRO/Ff4tCLQ613fzCm3SiDT64ubW5Gyw==}
+  /graphql-request/5.0.1-next.1:
+    resolution: {integrity: sha512-yo7HvMp12X9UX88PdtNGD2b6hZH553uLNb6mUByxt+QTC5HagG24qndfvpFy9+aVeKTQ6RtNHYhjw1lLDmqBQg==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -11974,8 +11951,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/5.0.0_graphql@16.5.0:
-    resolution: {integrity: sha512-SpVEnIo2J5k2+Zf76cUkdvIRaq5FMZvGQYnA4lUWYbc99m+fHh4CZYRRO/Ff4tCLQ613fzCm3SiDT64ubW5Gyw==}
+  /graphql-request/5.0.1-next.1_graphql@16.5.0:
+    resolution: {integrity: sha512-yo7HvMp12X9UX88PdtNGD2b6hZH553uLNb6mUByxt+QTC5HagG24qndfvpFy9+aVeKTQ6RtNHYhjw1lLDmqBQg==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -20818,11 +20795,36 @@ packages:
       - web3-utils
     dev: false
 
+  file:.yalc/@ensdomains/ens-test-env:
+    resolution: {directory: .yalc/@ensdomains/ens-test-env, type: directory}
+    name: '@ensdomains/ens-test-env'
+    version: 0.2.3
+    hasBin: true
+    dependencies:
+      '@ethersproject/wallet': 5.7.0
+      ansi-colors: 4.1.1
+      cli-progress: 3.11.2
+      commander: 9.4.0
+      concurrently: 7.4.0
+      docker-compose: 0.23.17
+      dotenv: 16.0.2
+      fs-extra: 10.1.0
+      ganache: 7.4.3
+      got: 12.3.1
+      lz4: 0.6.5
+      node-fetch: 3.2.10
+      progress-stream: 2.0.0
+      tar-fs: 2.1.1
+      wait-on: 6.0.1
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
   file:.yalc/@ensdomains/ensjs_ethers@5.7.0:
     resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
     id: file:.yalc/@ensdomains/ensjs
     name: '@ensdomains/ensjs'
-    version: 3.0.0-alpha.19
+    version: 3.0.0-alpha.21
     peerDependencies:
       ethers: '*'
     dependencies:
@@ -20831,7 +20833,7 @@ packages:
       dns-packet: 5.4.0
       ethers: 5.7.0
       graphql: 16.5.0
-      graphql-request: 5.0.0_graphql@16.5.0
+      graphql-request: 5.0.1-next.1_graphql@16.5.0
       idna-uts46-hx: 3.4.0
       traverse: 0.6.6
     transitivePeerDependencies:

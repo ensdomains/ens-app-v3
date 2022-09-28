@@ -185,7 +185,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
-          <Button shadowless onClick={() => callback(true)}>
+          <Button data-testid="view-name" shadowless onClick={() => callback(true)}>
             {t('steps.complete.viewName')}
           </Button>
         </MobileFullWidth>

@@ -327,13 +327,13 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
   const trailingButton = useMemo(() => {
     if (hasChanges) {
       return (
-        <Button shadowless disabled={hasErrors} type="submit">
+        <Button data-testid="next-button" shadowless disabled={hasErrors} type="submit">
           {t('action.next', { ns: 'common' })}
         </Button>
       )
     }
     return (
-      <Button shadowless variant="secondary" type="submit">
+      <Button data-testid="next-button" shadowless variant="secondary" type="submit">
         {t('action.skip', { ns: 'common' })}
       </Button>
     )

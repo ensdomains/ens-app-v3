@@ -13,6 +13,7 @@ import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
 import { Notifications } from '@app/components/Notifications'
+import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionStoreContext'
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
@@ -142,18 +143,20 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     <I18nextProvider i18n={i18n}>
       <WagmiConfig client={wagmiClient}>
         <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
-          <EnsProvider>
-            <ThemeProvider theme={thorinLightTheme}>
-              <BreakpointProvider queries={breakpoints}>
-                <GlobalStyle />
-                <ThorinGlobalStyles />
-                <TransactionFlowProvider>
-                  <Notifications />
-                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                </TransactionFlowProvider>
-              </BreakpointProvider>
-            </ThemeProvider>
-          </EnsProvider>
+          <TransactionStoreProvider>
+            <EnsProvider>
+              <ThemeProvider theme={thorinLightTheme}>
+                <BreakpointProvider queries={breakpoints}>
+                  <GlobalStyle />
+                  <ThorinGlobalStyles />
+                  <TransactionFlowProvider>
+                    <Notifications />
+                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                  </TransactionFlowProvider>
+                </BreakpointProvider>
+              </ThemeProvider>
+            </EnsProvider>
+          </TransactionStoreProvider>
         </RainbowKitProvider>
       </WagmiConfig>
     </I18nextProvider>

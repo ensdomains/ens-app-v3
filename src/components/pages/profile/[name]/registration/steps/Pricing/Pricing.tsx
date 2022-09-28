@@ -117,19 +117,23 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Pr
     actionButton = <ConnectButton large />
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
-      <Button shadowless disabled>
+      <Button data-testid="next-button" shadowless disabled>
         {t('action.loading', { ns: 'common' })}
       </Button>
     )
   } else if (balance?.value.lt(totalRequiredBalance)) {
     actionButton = (
-      <Button shadowless disabled>
+      <Button data-testid="next-button" shadowless disabled>
         {t('steps.pricing.insufficientBalance')}
       </Button>
     )
   } else {
     actionButton = (
-      <Button shadowless onClick={() => callback({ reverseRecord, years })}>
+      <Button
+        data-testid="next-button"
+        shadowless
+        onClick={() => callback({ reverseRecord, years })}
+      >
         {t('action.next', { ns: 'common' })}
       </Button>
     )
@@ -177,7 +181,7 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Pr
           />
         </CheckboxWrapper>
         <OutlinedContainerDescription $name="description">
-          {t('steps.pricing.primaryNameMesssage')}
+          {t('steps.pricing.primaryNameMessage')}
         </OutlinedContainerDescription>
       </OutlinedContainer>
       <MobileFullWidth>{actionButton}</MobileFullWidth>

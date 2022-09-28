@@ -30,7 +30,8 @@
     "burnSelected": "Burn Selected",
     "remindMe": "Remind Me",
     "begin": "Begin",
-    "finish": "Finish"
+    "finish": "Finish",
+    "skip": "Skip"
   },
   "unit": {
     "years_one": "{{count}} year",

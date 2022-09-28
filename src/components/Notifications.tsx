@@ -5,10 +5,10 @@ import styled, { css } from 'styled-components'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
-import { useChainName } from '@app/hooks/useChainName'
-import useTransactionUpdateCallback, {
+import useCallbackOnTransaction, {
   UpdateCallback,
-} from '@app/hooks/useTransactionUpdateCallback'
+} from '@app/hooks/transactions/useCallbackOnTransaction'
+import { useChainName } from '@app/hooks/useChainName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
@@ -44,7 +44,7 @@ export const Notifications = () => {
   const currentNotification = notificationQueue[0]
 
   const updateCallback = useCallback<UpdateCallback>(
-    (action, key, status, hash) => {
+    ({ action, key, status, hash }) => {
       if (status === 'pending') return
       const resumable = key && getResumable(key)
       const item = {
@@ -82,7 +82,7 @@ export const Notifications = () => {
     [chainName, getResumable, resumeTransactionFlow, t],
   )
 
-  useTransactionUpdateCallback(updateCallback)
+  useCallbackOnTransaction(updateCallback)
 
   useEffect(() => {
     if (currentNotification) {
