@@ -311,6 +311,28 @@ export const main = async (_config, _options, justKill) => {
   }
 
   if (!options.save && cmdsToRun.length > 0 && options.scripts) {
+    const blocks = parseInt((await rpcFetch('eth_blockNumber', [])).result, 16)
+    const getCurrentGraphBlock = async () =>
+      fetch('http://localhost:8000/subgraphs/name/graphprotocol/ens', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: `
+        {
+          _meta {
+            block {
+              number
+            }
+          }
+        }
+      `,
+      })
+        .then((res) => res.json())
+        .then((res) => res.data._meta.block.number)
+    while (getCurrentGraphBlock() < blocks) {
+      await new Promise((resolve) => setTimeout(resolve, 100))
+    }
     /**
      * @type {import('concurrently').ConcurrentlyResult['result']}
      **/
