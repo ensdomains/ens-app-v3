@@ -312,11 +312,8 @@ export const main = async (_config, _options, justKill) => {
 
   if (!options.save && cmdsToRun.length > 0 && options.scripts) {
     if (options.graph) {
-      const blocks = parseInt(
-        (await rpcFetch('eth_blockNumber', [])).result,
-        16,
-      )
-      const getCurrentGraphBlock = async () =>
+      let indexArray = []
+      const getCurrentIndex = async () =>
         fetch('http://localhost:8000/subgraphs/name/graphprotocol/ens', {
           method: 'POST',
           headers: {
@@ -336,10 +333,20 @@ export const main = async (_config, _options, justKill) => {
           }),
         })
           .then((res) => res.json())
-          .then((res) => res._meta.block.number)
-      while (getCurrentGraphBlock() < blocks + 1) {
-        await new Promise((resolve) => setTimeout(resolve, 1000))
-      }
+          .then((res) => {
+            if (res.errors) return 0
+            return res.data._meta.block.number
+          })
+          .catch(() => 0)
+      do {
+        indexArray.push(await getCurrentIndex())
+        if (indexArray.length > 10) indexArray.shift()
+        await new Promise((resolve) => setTimeout(resolve, 100))
+      } while (
+        !indexArray.every((i) => i === indexArray[0]) ||
+        indexArray.length < 2 ||
+        indexArray[0] === 0
+      )
     }
     /**
      * @type {import('concurrently').ConcurrentlyResult['result']}
