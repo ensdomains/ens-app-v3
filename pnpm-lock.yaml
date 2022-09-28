@@ -62,6 +62,7 @@ specifiers:
   calendar-link: ^2.2.0
   canvas: ^2.9.3
   concurrently: ^7.3.0
+  cypress: 10.9.0
   cypress-localstorage-commands: ^2.2.1
   dns-packet: ^5.4.0
   dotenv: ^16.0.1
@@ -171,7 +172,7 @@ devDependencies:
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_niamqnp2kmjo6tv45x3e7iqytu
   '@openzeppelin/contracts': 4.7.3
   '@synthetixio/synpress': 2.3.3_ygty2mbm5e5tovpidraxa55v2m_2436jjjjhvz5zsjaubwgmebn5m
-  '@testing-library/cypress': 8.0.3
+  '@testing-library/cypress': 8.0.3_cypress@10.9.0
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
   '@testing-library/react-hooks': 8.0.1_ouinwtwbn2kx2p2ceiphazvw6y
@@ -194,7 +195,8 @@ devDependencies:
   babel-loader: 8.2.5
   canvas: 2.9.3
   concurrently: 7.4.0
-  cypress-localstorage-commands: 2.2.1
+  cypress: 10.9.0
+  cypress-localstorage-commands: 2.2.1_cypress@10.9.0
   dotenv: 16.0.2
   eslint: 7.32.0
   eslint-config-airbnb: 19.0.4_q3zgu3dvmqz3anpperelsmig24
@@ -4362,16 +4364,6 @@ packages:
       use-sync-external-store: 1.2.0_react@17.0.2
     dev: false
 
-  /@testing-library/cypress/8.0.3:
-    resolution: {integrity: sha512-nY2YaSbmuPo5k6kL0iLj/pGPPfka3iwb3kpTx8QN/vOCns92Saz9wfACqB8FJzcR7+lfA4d5HUOWqmTddBzczg==}
-    engines: {node: '>=12', npm: '>=6'}
-    peerDependencies:
-      cypress: ^2.1.0 || ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0 || ^9.0.0 || ^10.0.0
-    dependencies:
-      '@babel/runtime': 7.18.9
-      '@testing-library/dom': 8.13.0
-    dev: true
-
   /@testing-library/cypress/8.0.3_cypress@10.9.0:
     resolution: {integrity: sha512-nY2YaSbmuPo5k6kL0iLj/pGPPfka3iwb3kpTx8QN/vOCns92Saz9wfACqB8FJzcR7+lfA4d5HUOWqmTddBzczg==}
     engines: {node: '>=12', npm: '>=6'}
@@ -8515,11 +8507,13 @@ packages:
     resolution: {integrity: sha512-d4ZVpCW31eWwCMe1YT3ur7mUDnTXbgwyzaL320DrcRT45rfjYxkt5QWLrmOJ+/UEAI2+fQgKe/fCjR8l4TpRgw==}
     dev: true
 
-  /cypress-localstorage-commands/2.2.1:
+  /cypress-localstorage-commands/2.2.1_cypress@10.9.0:
     resolution: {integrity: sha512-m7IwoM+BMOJj7FzzN4It268c/i/Ur72CQX8JwLICkQ6ZgF1XNJOIKlQ7Rszg45ATLTjVTL1QElKCZECoU8cthQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       cypress: '>=2.1.0'
+    dependencies:
+      cypress: 10.9.0
     dev: true
 
   /cypress-wait-until/1.7.2:

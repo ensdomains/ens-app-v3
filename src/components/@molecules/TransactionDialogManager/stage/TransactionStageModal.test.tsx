@@ -111,7 +111,8 @@ describe('TransactionStageModal', () => {
       {
         status: 'pending',
         hash: '0x123',
-        description: JSON.stringify({ action: 'test', key: 'test', gasPrice: 42 }),
+        action: 'test',
+        key: 'test',
       },
     ])
   })
@@ -221,7 +222,8 @@ describe('TransactionStageModal', () => {
         ;(mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({ hash: '0x123' })
         expect(mockAddTransaction).toBeCalledWith({
           hash: '0x123',
-          description: JSON.stringify({ action: 'test', key: 'test' }),
+          action: 'test',
+          key: 'test',
         })
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',

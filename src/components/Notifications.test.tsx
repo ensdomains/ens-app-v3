@@ -4,16 +4,19 @@ import { act } from '@testing-library/react'
 
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useChainId } from '@app/hooks/useChainId'
 import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { Notifications } from './Notifications'
 
 jest.mock('@app/hooks/useChainName')
+jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/utils/BreakpointProvider')
 
 const mockUseChainName = mockFunction(useChainName)
+const mockUseChainId = mockFunction(useChainId)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
@@ -40,6 +43,7 @@ describe('Notifications', () => {
     xl: false,
   })
   mockUseChainName.mockReturnValue('mainnet')
+  mockUseChainId.mockReturnValue(1)
   it('should not render a toast if there is no transactions', () => {
     mockUseRecentTransactions.mockReturnValue([])
     render(<Notifications />)

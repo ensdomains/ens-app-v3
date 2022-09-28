@@ -162,7 +162,8 @@
     "typescript-styled-plugin": "^0.18.2",
     "wait-on": "^6.0.1",
     "wrangler": "^2.0.27",
-    "yalc": "^1.0.0-pre.53"
+    "yalc": "^1.0.0-pre.53",
+    "cypress": "10.9.0"
   },
   "pnpm": {
     "overrides": {
