@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useProvider, useQuery } from 'wagmi'
 
-import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
+import { Button, Checkbox, Dialog, Helper, Input, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
@@ -57,16 +57,37 @@ const ValueWithAvatarContainer = styled.div(
     align-items: center;
     justify-content: flex-end;
     gap: ${theme.space['4']};
-    border: 1px solid grey;
     padding: 20px;
-    border-radius: 15px;
     width: 100%;
+    border-radius: ${theme.radii.extraLarge};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
+      rgba(${theme.shadesRaw.foreground}, 0.06);
+  `,
+)
+
+const SwitchBox = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: ${theme.space['4']};
+    padding: 20px;
+    width: 100%;
+    border-radius: ${theme.radii.extraLarge};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
+      rgba(${theme.shadesRaw.foreground}, 0.06);
+  `,
+)
+
+const TextContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
   `,
 )
 
 const InnerContainer = styled.div(() => [
   css`
-    padding: 0 20px;
     width: 100%;
   `,
   mq.sm.min(css`
@@ -123,6 +144,8 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
     defaultValues: { resolverChoice: 'latest', customResolver: '' },
   })
 
+  const managerChoiceWatch = watch('managerChoice')
+  const ownerChoiceWatch = watch('ownerChoice')
   const sendNameWatch = watch('sendName')
   const { data: ethNameValidation, isLoading } = useQuery(
     ['ethNameValidation', sendNameWatch],
@@ -188,6 +211,11 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   }
 
   const hasErrors = () => {
+    //   const managerChoiceWatch = watch('managerChoice')
+    //   const ownerChoiceWatch = watch('ownerChoice')
+    if (!managerChoiceWatch && !ownerChoiceWatch) {
+      return { formMessage: 'Must choose either Manager or Owner to send' }
+    }
     if (getFieldState('sendName').error) return {}
     if (isLoading) return {}
     if (sendNameWatch?.includes('.') && !ethNameValidation)
@@ -205,6 +233,24 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
         Sending this name will make the  new address both the owner and manager.
       </Typography>
       <Outlink href="">Learn more about name ownership.</Outlink>
+      <SwitchBox>
+        <TextContainer>
+          <Typography weight="bold">Make Manager</Typography>
+          <Typography weight="light" variant="small">
+            The Manager can change and set records
+          </Typography>
+        </TextContainer>
+        <Checkbox {...register('managerChoice')} size="large" variant="switch" value="manager" />
+      </SwitchBox>
+      <SwitchBox>
+        <TextContainer>
+          <Typography weight="bold">Make Owner</Typography>
+          <Typography weight="light" variant="small">
+            The owner can send to a new manager
+          </Typography>
+        </TextContainer>
+        <Checkbox {...register('ownerChoice')} size="large" variant="switch" value="owner" />
+      </SwitchBox>
       <InnerContainer>
         <form
           data-testid="edit-resolver-form"
@@ -232,6 +278,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
         </form>
         {primaryName && <NameValue value={primaryName} />}
       </InnerContainer>
+      {hasErrors()?.formMessage && <Helper type="error">Must send Owner or Manager</Helper>}
       <Dialog.Footer
         leading={
           <Button
