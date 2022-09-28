@@ -14,7 +14,7 @@ patchedDependencies:
     hash: bbuxkxhxbyez4jmqgptuoucij4
     path: patches/react-confetti@6.1.0.patch
   '@synthetixio/synpress@2.3.3':
-    hash: krtld7mzhns4ye5zxcv33vlqp4
+    hash: 3ethcigbszvys46nn2fmbssqwa
     path: patches/@synthetixio__synpress@2.3.3.patch
 
 specifiers:
@@ -171,7 +171,7 @@ devDependencies:
   '@next/swc-linux-x64-gnu': 12.1.4
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_niamqnp2kmjo6tv45x3e7iqytu
   '@openzeppelin/contracts': 4.7.3
-  '@synthetixio/synpress': 2.3.3_krtld7mzhns4ye5zxcv33vlqp4_2436jjjjhvz5zsjaubwgmebn5m
+  '@synthetixio/synpress': 2.3.3_3ethcigbszvys46nn2fmbssqwa_2436jjjjhvz5zsjaubwgmebn5m
   '@testing-library/cypress': 8.0.3_cypress@10.9.0
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
@@ -4251,7 +4251,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@synthetixio/synpress/2.3.3_krtld7mzhns4ye5zxcv33vlqp4_2436jjjjhvz5zsjaubwgmebn5m:
+  /@synthetixio/synpress/2.3.3_3ethcigbszvys46nn2fmbssqwa_2436jjjjhvz5zsjaubwgmebn5m:
     resolution: {integrity: sha512-C09XRLUc2dfckTjkPAbR0X2hXTkqyYca+kLF/TWK9DXDRrDy0tzj1CpmmQZ6YnVcpeLgMMqpPIFK1Qa84w9bNw==}
     engines: {node: '>=10'}
     hasBin: true

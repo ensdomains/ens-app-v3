@@ -69,14 +69,15 @@ index 241620882904bc7a007d52dc0bde16b2f20725ce..2421a8236b71188ec5ec2f57835a4b6d
        defaultArguments.push(`--group=${arguments_.group}`);
      }
 diff --git a/plugins/index.js b/plugins/index.js
-index e99b812eb8ce1b28295bd53d84699dd442e83e98..569d7524de6a0bf1fc368880c64b38c0a045e267 100644
+index e99b812eb8ce1b28295bd53d84699dd442e83e98..b4146b51c597316ad64d35b8e71395a94bd5019e 100644
 --- a/plugins/index.js
 +++ b/plugins/index.js
-@@ -31,6 +31,7 @@ module.exports = (on, config) => {
+@@ -30,7 +30,7 @@ module.exports = (on, config) => {
+       arguments_.args.push(
          '--disable-background-timer-throttling',
          '--disable-backgrounding-occluded-windows',
-         '--disable-renderer-backgrounding',
-+        '--window-size=1936,1056'
+-        '--disable-renderer-backgrounding',
++        '--disable-renderer-backgrounding'
        );
      }
      if (!process.env.SKIP_METAMASK_INSTALL) {
