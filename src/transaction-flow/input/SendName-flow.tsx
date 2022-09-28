@@ -9,7 +9,10 @@ import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
+import { NameAvatar } from '@app/components/AvatarWithZorb'
 import { Outlink } from '@app/components/Outlink'
+import { useChainId } from '@app/hooks/useChainId'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
@@ -33,40 +36,56 @@ const InputContainer = styled.div(
   `,
 )
 
-const NegativeSpacer = styled.div(
+const AvatarWrapper = styled.div(
   ({ theme }) => css`
-    margin-top: -${theme.space['5.5']};
+    width: ${theme.space['7']};
+    min-width: ${theme.space['7']};
+    height: ${theme.space['7']};
   `,
 )
 
-const LatestResolverLabel = styled.div<{ $offset: boolean }>(
-  ({ theme, $offset }) => css`
-    display: flex;
-    flex-direction: column;
-    ${$offset && `padding-top: ${theme.space['5.5']};`}
-  `,
-)
-
-const LatestResolverTitleContainer = styled.div(
+const ValueTypography = styled(Typography)(
   () => css`
+    text-align: right;
+  `,
+)
+
+const ValueWithAvatarContainer = styled.div(
+  ({ theme }) => css`
     display: flex;
+    flex-direction: row-reverse;
     align-items: center;
+    justify-content: flex-end;
+    gap: ${theme.space['4']};
+    border: 1px solid grey;
+    padding: 20px;
+    border-radius: 15px;
+    width: 100%;
   `,
 )
 
-const LatestResolverTitle = styled.span(
-  () => css`
-    :after {
-      content: '\xa0';
-    }
+const InnerContainer = styled.div(() => [
+  css`
+    padding: 0 20px;
+    width: 100%;
   `,
-)
+  mq.sm.min(css`
+    width: 510px;
+  `),
+])
 
-const LatestResolverSubtitle = styled(Typography)(
-  ({ theme }) => css`
-    color: ${theme.colors.textSecondary};
-  `,
-)
+const NameValue = ({ value }: { value: string }) => {
+  const network = useChainId()
+
+  return (
+    <ValueWithAvatarContainer>
+      <ValueTypography weight="bold">{value}</ValueTypography>
+      <AvatarWrapper>
+        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
+      </AvatarWrapper>
+    </ValueWithAvatarContainer>
+  )
+}
 
 type Data = {
   name: string
@@ -84,8 +103,6 @@ export type Props = {
 export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const formRef = useRef<HTMLFormElement>(null)
-  const provider = useProvider({ chainId: 1 })
-  const providerRef = useRef(new ethers.getDefaultProvider())
   const { ready, getRecords } = useEns()
 
   const { profile = { resolverAddress: '' } } = useProfile(name as string)
@@ -116,7 +133,13 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
     { enabled: sendNameWatch?.includes('.eth') },
   )
 
+  const { name: primaryName, loading: isLoadingPrimaryName } = usePrimary(
+    '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
+  )
+
   console.log('ethNameValidation: ', ethNameValidation)
+  console.log('sendNameWatch: ', sendNameWatch)
+  console.log('primaryName: ', primaryName)
 
   useEffect(() => {
     if (isResolverAddressLatest) reset({ resolverChoice: 'custom', customResolver: '' })
@@ -182,34 +205,33 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
         Sending this name will make the  new address both the owner and manager.
       </Typography>
       <Outlink href="">Learn more about name ownership.</Outlink>
-      <EditResolverFormContainer>
+      <InnerContainer>
         <form
           data-testid="edit-resolver-form"
           onSubmit={handleSubmit(handleTransaction)}
           ref={formRef}
         >
-          <InputContainer>
-            <Input
-              label="Send to"
-              placeholder="Enter an Ethereum address or ENS name"
-              {...register('sendName', {
-                validate: {
-                  length: (value) =>
-                    !value.includes('.eth') && value.length !== 42
-                      ? 'If address it should be 42 characters long'
-                      : undefined,
-                  isAddress: (value) =>
-                    !value.includes('.eth') && !ethers.utils.isAddress(value)
-                      ? 'Not a valid address'
-                      : undefined,
-                },
-              })}
-              error={getFieldState('sendName').error?.message || hasErrors()?.message}
-            />
-          </InputContainer>
+          <Input
+            label="Send to"
+            placeholder="Enter an Ethereum address or ENS name"
+            {...register('sendName', {
+              validate: {
+                length: (value) =>
+                  !value.includes('.eth') && value.length !== 42
+                    ? 'If address it should be 42 characters long'
+                    : undefined,
+                isAddress: (value) =>
+                  !value.includes('.eth') && !ethers.utils.isAddress(value)
+                    ? 'Not a valid address'
+                    : undefined,
+              },
+            })}
+            error={getFieldState('sendName').error?.message || hasErrors()?.message}
+          />
           <Spacer $height="4" />
         </form>
-      </EditResolverFormContainer>
+        {primaryName && <NameValue value={primaryName} />}
+      </InnerContainer>
       <Dialog.Footer
         leading={
           <Button
@@ -224,7 +246,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
         }
         trailing={
           <Button shadowless onClick={handleSubmitForm} disabled={hasErrors()}>
-            {t('action.update', { ns: 'common' })}
+            {t('action.next', { ns: 'common' })}
           </Button>
         }
       />
