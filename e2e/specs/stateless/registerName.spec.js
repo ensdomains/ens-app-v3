@@ -11,8 +11,6 @@ describe('Register Name', () => {
     })
     it('should redirect to the registration page on search', () => {
       cy.visit('/')
-      cy.wrap(syncTime)
-      cy.reload()
       cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
       cy.findByText('Register registration-normal.eth').should('be.visible')
     })
@@ -66,20 +64,19 @@ describe('Register Name', () => {
       cy.findByTestId('next-button').should('contain.text', 'Begin').click()
       cy.findByText('Confirm Details').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').click()
-      cy.confirmMetamaskTransaction().then(() => increaseTime(60))
+      cy.confirmMetamaskTransaction()
     })
     it('should show countdown', () => {
       cy.findByTestId('countdown-circle').should('be.visible')
+      cy.findByTestId('countdown-complete-check')
+        .should('be.visible')
+        .then(() => increaseTime(60))
       cy.findByTestId('finish-button').should('exist').should('be.enabled')
     })
-
-    // NOTE: this doesn't work at the moment because cypress doesn't save local storage on reload
-    // it('should save the registration state, and the transaction status', () => {
-    //   cy.reload()
-    //   connectFromExisting()
-    //   cy.findByTestId('finish-button').should('exist').should('be.enabled')
-    // })
-
+    it('should save the registration state, and the transaction status', () => {
+      cy.reload()
+      cy.findByTestId('finish-button').should('exist').should('be.enabled')
+    })
     it('should allow finalising registration and automatically go to the complete step', () => {
       cy.findByTestId('finish-button').click()
       cy.findByText('Confirm Details').should('be.visible')
@@ -94,7 +91,7 @@ describe('Register Name', () => {
       cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
       cy.url().should('eq', 'http://localhost:3000/profile/registration-normal.eth')
     })
-    it('should show all records from registration', async () => {
+    it('should show all records from registration', () => {
       cy.findByTestId('profile-snippet-name').should('contain.text', 'Test Name')
       cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
     })
@@ -105,7 +102,6 @@ describe('Register Name', () => {
     })
     it('should show primary name setting as unchecked if primary already set', () => {
       cy.visit('/register/registration-not-primary.eth')
-      connectFromExisting()
       cy.findByTestId('checkbox').should('not.be.checked')
     })
     it('should show set profile button on info step', () => {
@@ -115,7 +111,10 @@ describe('Register Name', () => {
     it('should allow registering a name without setting primary name', () => {
       cy.findByTestId('next-button').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
-      cy.confirmMetamaskTransaction().then(() => increaseTime(60))
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('countdown-complete-check')
+        .should('be.visible')
+        .then(() => increaseTime(60))
       cy.findByTestId('finish-button').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
@@ -134,7 +133,10 @@ describe('Register Name', () => {
       cy.findByTestId('next-button').click()
       cy.findByTestId('next-button').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
-      cy.confirmMetamaskTransaction().then(() => increaseTime(60))
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('countdown-complete-check')
+        .should('be.visible')
+        .then(() => increaseTime(60))
       cy.findByTestId('finish-button').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
@@ -142,55 +144,4 @@ describe('Register Name', () => {
       cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
     })
   })
-  // it('should not show add subname button when the connected wallet is the registrant but not the controller', () => {
-  //   cy.visit('/profile/other-controller.eth/details')
-  //   cy.findByTestId('subnames-tab').click()
-  //   cy.findByTestId('add-subname-action', { timeout: 2000 }).should('not.exist')
-  // })
-  // it('should not show add subname button when the connected wallet does not own the name', () => {
-  //   cy.visit('/profile/other-registrant.eth/details')
-  //   connectFromExisting()
-  //   cy.findByTestId('subnames-tab').click()
-  //   cy.findByTestId('add-subname-action', { timeout: 2000 }).should('not.exist')
-  // })
-  // it('should show add subname button when the connected wallet owns the name', () => {
-  //   cy.visit('/profile/test123.eth/details')
-  //   connectFromExisting()
-  //   cy.findByTestId('subnames-tab').click()
-  //   cy.findByTestId('add-subname-action').click()
-  // })
-  // it('should not allow creating a subname with invalid characters', () => {
-  //   cy.findByTestId('add-subname-input').type('test ')
-  //   cy.findByTestId('create-subname-next').should('be.disabled')
-  //   cy.findByText('Contains invalid characters').should('be.visible')
-  // })
-  // it('should allow creating a subname', () => {
-  //   cy.findByTestId('add-subname-input').clear().type('test')
-  //   cy.findByTestId('create-subname-next').click()
-  //   cy.findByTestId('transaction-modal-confirm-button').click()
-  //   cy.confirmMetamaskTransaction()
-  //   cy.findByTestId('transaction-modal-complete-button').click()
-  //   cy.reload()
-  //   cy.findByTestId('subnames-tab').click()
-  //   cy.findByText('test.test123.eth').should('be.visible')
-  // })
-  // it('should allow creating a subnames if the user is the wrapped owner', () => {
-  //   cy.visit('/profile/wrapped.eth/details')
-  //   connectFromExisting()
-  //   cy.findByTestId('subnames-tab').click()
-  //   cy.findByTestId('add-subname-action').click()
-  //   cy.findByTestId('add-subname-input').clear().type('test')
-  //   cy.findByTestId('create-subname-next').click()
-  //   cy.findByTestId('transaction-modal-confirm-button').click()
-  //   cy.confirmMetamaskTransaction()
-  //   cy.findByTestId('transaction-modal-complete-button').click()
-  //   cy.reload()
-  //   cy.findByTestId('subnames-tab').click()
-  //   cy.findByText('test.wrapped.eth').should('be.visible')
-  // })
-  // it('should not allow adding a subname that already exists', () => {
-  //   cy.findByTestId('add-subname-action').click()
-  //   cy.findByTestId('add-subname-input').clear().type('test')
-  //   cy.findByTestId('create-subname-next').should('be.disabled')
-  // })
 })

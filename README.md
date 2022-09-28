@@ -58,46 +58,6 @@ Once installed, you can run:
 pnpm denv
 ```
 
-#### **If you have modified the deploy scripts**
-
-The following process needs to be done in order to update the graph-node dataset.
-
-1. Start the test environment
-
-```bash
-# The --kill-gracefully flag is required to ensure the data is properly stored on exit.
-pnpm denv --kill-gracefully
-```
-
-2. Wait for the subgraph to update
-
-The subgraph needs to have synced with the new data, a good indicator of sync status is if you see this message:
-
-```
-no chain head update for 30 seconds, polling for update, component: BlockStream
-```
-
-**Note:** If you have **removed items from the deploy script**, or done anything to decrease the total amount of blocks mined by the deploy scripts, the graph-node will not sync initially. You need to manually mine extra blocks up to where the deploy scripts previously ended + 1.
-
-For example, this can be done with [Cast](https://github.com/foundry-rs/foundry/tree/master/cast) by running:
-
-```bash
-cast rpc evm_mine
-```
-
-3. Save the data
-
-Once the graph-node is synced, you can exit out of the test environment using `Ctrl+C`.
-
-After exiting, run the following command to save the data:
-
-```bash
-# This is not a typo, tenv and denv are different things.
-pnpm tenv save
-```
-
-Once saved, you can commit the data to your branch.
-
 #### **If you need to deploy a new subgraph**
 
 You shouldn't deploy the subgraph ontop of the existing dataset, instead you should create a clean dataset (explained below).

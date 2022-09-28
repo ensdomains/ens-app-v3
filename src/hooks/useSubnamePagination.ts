@@ -18,7 +18,7 @@ export const useSubnamePagination = (name: string, page: number) => {
   const { getSubnames } = useEns()
 
   const { data, isLoading, fetchNextPage, hasNextPage } = useInfiniteQuery(
-    ['getSubnames', name],
+    ['getSubnames', name, 'graph'],
     async ({ pageParam }) => {
       const result = await getSubnames({
         name,

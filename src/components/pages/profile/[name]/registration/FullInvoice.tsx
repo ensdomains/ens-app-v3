@@ -70,7 +70,7 @@ const FullInvoice = ({
     [t, years, totalYearlyFee, estimatedGasFee, hasPremium, premiumFee],
   )
 
-  if (estimatedGasLoading) return null
+  if (estimatedGasLoading) return <InvoiceContainer />
 
   return (
     <InvoiceContainer>

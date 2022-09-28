@@ -27,13 +27,14 @@
     "test": "jest --env=./custom-test-env.js",
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
-    "synpress:start": "SECRET_WORDS=\"test test test test test test test test test test test junk\" RPC_URL=http://127.0.0.1:8545 PASSWORD=TestMetaMask NETWORK_NAME=localhost CHAIN_ID=1337 synpress run -cf ./synpress.json --spec ./e2e/specs/stateless/registerName.spec.js",
-    "synpress:local": "synpress run -ne -cf ./synpress.json",
-    "synpress:stateful": "SECRET_WORDS=\"test test test test test test test test test test test junk\" NETWORK_NAME=mainnet synpress run -cf ./synpress-stateful.json",
+    "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
+    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" RPC_URL=http://127.0.0.1:8545 PASSWORD=TestMetaMask NETWORK_NAME=localhost CHAIN_ID=1337 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/registerName.spec.js",
+    "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
+    "synpress:stateful": "SECRET_WORDS=\"test test test test test test test test test test test junk\" NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2",
     "synpress:ci:stateful": "pnpm synpress:stateful --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2",
     "e2e": "E2E=true pnpm tenv start --extra-time 11368000",
-    "e2e:ci": "E2E=true CI=true pnpm tenv start",
+    "e2e:ci": "E2E=true CI=true pnpm tenv start --extra-time 11368000",
     "e2e:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:stateful",
     "e2e:ci:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:ci:stateful",
     "postinstall": "husky install",
@@ -94,7 +95,7 @@
     "@next/swc-linux-x64-gnu": "12.1.4",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
-    "@synthetixio/synpress": "1.2.0",
+    "@synthetixio/synpress": "2.3.3",
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
@@ -118,7 +119,7 @@
     "babel-loader": "^8.2.5",
     "canvas": "^2.9.3",
     "concurrently": "^7.3.0",
-    "cypress": "9.5.3",
+    "cypress-localstorage-commands": "^2.2.1",
     "dotenv": "^16.0.1",
     "eslint": "7.32.0",
     "eslint-config-airbnb": "^19.0.4",
@@ -168,13 +169,12 @@
       "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz",
       "bn.js": "npm:bn.js@^5.2.0",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
-      "@next/swc-linux-x64-gnu": "12.1.4",
-      "cypress": "9.5.3"
+      "@next/swc-linux-x64-gnu": "12.1.4"
     },
     "patchedDependencies": {
-      "@synthetixio/synpress@1.2.0": "patches/@synthetixio__synpress@1.2.0.patch",
       "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",
-      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch"
+      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
+      "@synthetixio/synpress@2.3.3": "patches/@synthetixio__synpress@2.3.3.patch"
     }
   }
 }

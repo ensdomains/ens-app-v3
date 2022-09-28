@@ -1,31 +1,32 @@
 diff --git a/commands/metamask.js b/commands/metamask.js
-index e2af956145b2eea1e9df160f4366a6a112191eeb..61abdcf684f6e8f0cd19edb62b3c4c4c991e6414 100644
+index cfbf01abf5cd82f51c8e2b5ededee45008f29037..32167a22b52d0768203c47824c15c4dafdd6d670 100644
 --- a/commands/metamask.js
 +++ b/commands/metamask.js
-@@ -167,6 +167,18 @@ module.exports = {
-     await puppeteer.waitAndClick(mainPageElements.accountMenu.button);
+@@ -243,6 +243,19 @@ module.exports = {
+     await playwright.waitAndClick(mainPageElements.accountMenu.button);
  
      if (typeof accountNameOrAccountNumber === 'number') {
-+      await puppeteer.waitFor(mainPageElements.accountMenu.accountButton(1));
-+      const page = await puppeteer.metamaskWindow();
++      const page = await playwright.metamaskWindow();
++      await playwright.waitFor(mainPageElements.accountMenu.accountButton(1), page);
++
 +      for (let i = 2; i <= accountNameOrAccountNumber; i++) {
-+        if (!(await page.$(mainPageElements.accountMenu.accountButton(i)))) {
-+          await puppeteer.waitAndClick(
++        if (!(await page.locator(mainPageElements.accountMenu.accountButton(i)).count())) {
++          await playwright.waitAndClick(
 +            mainPageElements.accountMenu.createAccountButton,
 +          );
-+          await puppeteer.waitAndClick(mainPageElements.createAccount.createButton);
-+          await puppeteer.waitAndClick(mainPageElements.accountMenu.button);
++          await playwright.waitAndClick(mainPageElements.createAccount.createButton);
++          await playwright.waitAndClick(mainPageElements.accountMenu.button);
 +        }
 +      }
 +
-       await puppeteer.waitAndClick(
+       await playwright.waitAndClick(
          mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
        );
 diff --git a/launcher.js b/launcher.js
-index 9a2df926cf442f1e14f58f6fed07c643eebb680a..2519ad1971507d080b06428b5e8f3f1817d0cfd7 100644
+index 241620882904bc7a007d52dc0bde16b2f20725ce..2421a8236b71188ec5ec2f57835a4b6df48b34d0 100644
 --- a/launcher.js
 +++ b/launcher.js
-@@ -67,6 +67,9 @@ const launcher = {
+@@ -63,6 +63,9 @@ const launcher = {
      if (arguments_.parallel) {
        defaultArguments.push('--parallel');
      }
@@ -36,10 +37,10 @@ index 9a2df926cf442f1e14f58f6fed07c643eebb680a..2519ad1971507d080b06428b5e8f3f18
        defaultArguments.push(`--group=${arguments_.group}`);
      }
 diff --git a/synpress.js b/synpress.js
-index b407e78daeba1f1663af59ff22bab8dfc1a0c5a7..c99c2362755935750bed963136de71a63327d237 100755
+index 5237f37865a8b70cbd75a130ddc5ca5bd72ace78..2ff1762a9d668446f731a631aeb07a4e20da56bd 100755
 --- a/synpress.js
 +++ b/synpress.js
-@@ -79,6 +79,10 @@ program
+@@ -93,6 +93,10 @@ program
      '-p, --parallel',
      '[dashboard] run recorded specs in parallel across multiple machines',
    )
@@ -50,7 +51,7 @@ index b407e78daeba1f1663af59ff22bab8dfc1a0c5a7..c99c2362755935750bed963136de71a6
    .option(
      '-g, --group <name>',
      '[dashboard] group recorded tests together under a single run',
-@@ -100,6 +104,7 @@ program
+@@ -114,6 +118,7 @@ program
        record: options.record,
        key: options.key,
        parallel: options.parallel,
