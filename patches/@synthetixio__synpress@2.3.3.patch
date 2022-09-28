@@ -68,6 +68,18 @@ index 241620882904bc7a007d52dc0bde16b2f20725ce..2421a8236b71188ec5ec2f57835a4b6d
      if (arguments_.group) {
        defaultArguments.push(`--group=${arguments_.group}`);
      }
+diff --git a/plugins/index.js b/plugins/index.js
+index e99b812eb8ce1b28295bd53d84699dd442e83e98..569d7524de6a0bf1fc368880c64b38c0a045e267 100644
+--- a/plugins/index.js
++++ b/plugins/index.js
+@@ -31,6 +31,7 @@ module.exports = (on, config) => {
+         '--disable-background-timer-throttling',
+         '--disable-backgrounding-occluded-windows',
+         '--disable-renderer-backgrounding',
++        '--window-size=1936,1056'
+       );
+     }
+     if (!process.env.SKIP_METAMASK_INSTALL) {
 diff --git a/synpress.js b/synpress.js
 index 5237f37865a8b70cbd75a130ddc5ca5bd72ace78..2ff1762a9d668446f731a631aeb07a4e20da56bd 100755
 --- a/synpress.js
