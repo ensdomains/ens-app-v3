@@ -6,14 +6,9 @@
       "file": true,
       "replaced": "^0.2.3"
     },
-    "@ensdomains/ensjs": {
-      "signature": "aa8464adad8fd10df42f10999d2ad708",
-      "pure": true,
-      "replaced": "3.0.0-alpha.19"
-    },
     "@ensdomains/thorin": {
-      "signature": "494d61029186429d73e8697c60a2e58a",
-      "file": true,
+      "signature": "39b33ffc3bf11225a979ffd708625e88",
+      "pure": true,
       "replaced": "^0.6.15"
     }
   }

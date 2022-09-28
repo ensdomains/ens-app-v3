@@ -23,7 +23,7 @@ specifiers:
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts
   '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
+  '@ensdomains/ensjs': 3.0.0-alpha.21
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': file:.yalc/@ensdomains/thorin
   '@ethersproject/providers': ^5.7.0
@@ -128,7 +128,7 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.18
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts_hardhat@2.11.1
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
+  '@ensdomains/ensjs': 3.0.0-alpha.21
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': file:.yalc/@ensdomains/thorin_6ycby5qtikbhve4sxtfce3vpny
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_fcsnifgkfb6ypkeqq3oellhnki
@@ -208,7 +208,7 @@ devDependencies:
   eslint-plugin-react-hooks: 4.6.0_eslint@7.32.0
   eslint-plugin-testing-library: 4.12.4_td6yqss6ra3qoebludh4ctrhym
   ganache: 7.4.3
-  graphql-request: 5.0.0
+  graphql-request: 5.0.1-next.1
   hardhat: 2.11.1_s5ojjbx2isjkawqptqpitvy25q
   hardhat-dependency-compiler: 1.1.3_hardhat@2.11.1
   hardhat-deploy: 0.11.14
@@ -2202,6 +2202,23 @@ packages:
       - utf-8-validate
     dev: true
     optional: true
+
+  /@ensdomains/ensjs/3.0.0-alpha.21:
+    resolution: {integrity: sha512-T/YQpuFi4ws4gpEyi6XXJyJTiN9VYc9uWh+VtzMQMaF7rZWvrCnAZ14SedCQ8cxs+J61woq99ui+gxXYX0xiYA==}
+    dependencies:
+      '@ensdomains/address-encoder': 0.2.16
+      '@ensdomains/content-hash': 2.5.7
+      dns-packet: 5.4.0
+      ethers: 5.7.0
+      graphql: 16.5.0
+      graphql-request: 5.0.1-next.1_graphql@16.5.0
+      idna-uts46-hx: 3.4.0
+      traverse: 0.6.6
+    transitivePeerDependencies:
+      - bufferutil
+      - encoding
+      - utf-8-validate
+    dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
@@ -11702,7 +11719,7 @@ packages:
     engines: {node: '>= 0.4'}
     dependencies:
       call-bind: 1.0.2
-      get-intrinsic: 1.1.1
+      get-intrinsic: 1.1.2
 
   /get-value/2.0.6:
     resolution: {integrity: sha512-Ln0UQDlxH1BapMu3GPtf7CuYNwRZf2gwCuPqbyG6pB8WfmFpzqcy4xtAaAMUhnNqjMKTiCPZG2oMT3YSx8U2NA==}
@@ -11915,8 +11932,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /graphql-request/5.0.0:
-    resolution: {integrity: sha512-SpVEnIo2J5k2+Zf76cUkdvIRaq5FMZvGQYnA4lUWYbc99m+fHh4CZYRRO/Ff4tCLQ613fzCm3SiDT64ubW5Gyw==}
+  /graphql-request/5.0.1-next.1:
+    resolution: {integrity: sha512-yo7HvMp12X9UX88PdtNGD2b6hZH553uLNb6mUByxt+QTC5HagG24qndfvpFy9+aVeKTQ6RtNHYhjw1lLDmqBQg==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -11928,8 +11945,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/5.0.0_graphql@16.5.0:
-    resolution: {integrity: sha512-SpVEnIo2J5k2+Zf76cUkdvIRaq5FMZvGQYnA4lUWYbc99m+fHh4CZYRRO/Ff4tCLQ613fzCm3SiDT64ubW5Gyw==}
+  /graphql-request/5.0.1-next.1_graphql@16.5.0:
+    resolution: {integrity: sha512-yo7HvMp12X9UX88PdtNGD2b6hZH553uLNb6mUByxt+QTC5HagG24qndfvpFy9+aVeKTQ6RtNHYhjw1lLDmqBQg==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -12088,9 +12105,6 @@ packages:
     dependencies:
       ansi-regex: 2.1.1
     dev: true
-
-  /has-bigints/1.0.1:
-    resolution: {integrity: sha512-LSBS2LjbNBTf6287JEbEzvJgftkF5qFkmCo9hDRpAzKhUOlJ+hx8dd4USs00SgsUNwc4617J9ki5YtEClM2ffA==}
 
   /has-bigints/1.0.2:
     resolution: {integrity: sha512-tSvCKtBr9lkF0Ex0aQiP9N+OpV4zi2r/Nee5VkRDbaqv35RLYMzbwQfFSZZH0kR+Rd6302UJZ2p/bJCEoR3VoQ==}
@@ -12596,7 +12610,7 @@ packages:
     resolution: {integrity: sha512-O0DB1JC/sPyZl7cIo78n5dR7eUSwwpYPiXRhTzNxZVAMUuB8vlnRFyLxdrVToks6XPLVnFfbzaVd5WLjhgg+vA==}
     engines: {node: '>= 0.4'}
     dependencies:
-      get-intrinsic: 1.1.1
+      get-intrinsic: 1.1.2
       has: 1.0.3
       side-channel: 1.0.4
 
@@ -12645,7 +12659,7 @@ packages:
   /is-bigint/1.0.4:
     resolution: {integrity: sha512-zB9CruMamjym81i2JZ3UMn54PKGsQzsJeo6xvN3HJJ4CAsQNB6iRutp2To77OfCNuoxspsIhzaPoO1zyCEhFOg==}
     dependencies:
-      has-bigints: 1.0.1
+      has-bigints: 1.0.2
 
   /is-binary-path/2.1.0:
     resolution: {integrity: sha512-ZMERYes6pDydyuGidse7OsHxtbI7WVeUEozgR/g7rd0xUimYNlvZRE/K2MgZTjWy725IfelLeVcEM97mmtRGXw==}
@@ -17759,7 +17773,7 @@ packages:
     resolution: {integrity: sha512-y9xCjw1P23Awk8EvTpcyL2NIr1j7wJ39f+k6lvRnSMz+mz9CGz9NYPelDk42kOz6+ql8xjfK8oYzy3jAP5QU5A==}
     dependencies:
       call-bind: 1.0.2
-      define-properties: 1.1.3
+      define-properties: 1.1.4
     dev: true
 
   /string.prototype.trimend/1.0.5:
@@ -17773,7 +17787,7 @@ packages:
     resolution: {integrity: sha512-jh6e984OBfvxS50tdY2nRZnoC5/mLFKOREQfw8t5yytkoUsJRNxvI/E39qu1sD0OtWI3OC0XgKSmcWwziwYuZw==}
     dependencies:
       call-bind: 1.0.2
-      define-properties: 1.1.3
+      define-properties: 1.1.4
     dev: true
 
   /string.prototype.trimstart/1.0.5:
@@ -18740,7 +18754,7 @@ packages:
     resolution: {integrity: sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw==}
     dependencies:
       function-bind: 1.1.1
-      has-bigints: 1.0.1
+      has-bigints: 1.0.2
       has-symbols: 1.0.3
       which-boxed-primitive: 1.0.2
     dev: true
@@ -20780,25 +20794,6 @@ packages:
     transitivePeerDependencies:
       - debug
     dev: true
-
-  file:.yalc/@ensdomains/ensjs:
-    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
-    name: '@ensdomains/ensjs'
-    version: 3.0.0-alpha.20
-    dependencies:
-      '@ensdomains/address-encoder': 0.2.16
-      '@ensdomains/content-hash': 2.5.7
-      dns-packet: 5.4.0
-      ethers: 5.7.0
-      graphql: 16.5.0
-      graphql-request: 5.0.0_graphql@16.5.0
-      idna-uts46-hx: 3.4.0
-      traverse: 0.6.6
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: false
 
   file:.yalc/@ensdomains/thorin_6ycby5qtikbhve4sxtfce3vpny:
     resolution: {directory: .yalc/@ensdomains/thorin, type: directory}

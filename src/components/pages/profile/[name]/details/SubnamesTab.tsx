@@ -53,6 +53,7 @@ const NoMoreResultsContainer = styled.div(
     display: flex;
     align-items: center;
     justify-content: center;
+    height: ${theme.space['15']};
   `,
 )
 
@@ -127,8 +128,6 @@ export const SubnamesTab = ({
   const router = useRouter()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  console.log(address)
-
   const { showDataInput, createTransactionFlow, getTransactionFlowStage } = useTransactionFlow()
 
   const [mode, setMode] = useState<NameTableMode>('view')
@@ -140,12 +139,15 @@ export const SubnamesTab = ({
       setSelectedNames([subname])
     }
   }
+  const [deletedNames, setDeletedNames] = useState<string[]>([])
 
-  const canEdit = _canEdit && name.replace('.eth', '').indexOf('.') === -1
+  const nameParts = name.split('.')
+  const isFirstLevelDomain = nameParts.length === 2 && nameParts[1] === 'eth'
+  const canEdit = _canEdit && isFirstLevelDomain
 
   const [sortType, setSortType] = useState<SubnameSortType | undefined>()
   const [sortDirection, setSortDirection] = useState(SortDirection.desc)
-  const [searchInput, setSearchInput] = useState('')
+  const [searchInput, setSearchInput] = useState((router.query.search as string) || '')
 
   const searchQuery = (router.query.search as string) || ''
   const [_searchQuery, setSearchQuery] = useState(searchQuery)
@@ -158,8 +160,13 @@ export const SubnamesTab = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [_searchQuery])
 
-  const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage, reset, refetch } =
-    useSubnameInfiniteQuery(name, sortType, sortDirection, searchQuery)
+  const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
+    name,
+    sortType,
+    sortDirection,
+    searchQuery,
+    deletedNames,
+  )
 
   const [isIntersecting, setIsIntersecting] = useState(false)
   useEffect(() => {
@@ -175,27 +182,26 @@ export const SubnamesTab = ({
     })
 
   const deleteSubnameTransitionKey = selectedNames[0] ? `delete-subname-${selectedNames[0]}` : ''
-  const deleteSubname = () => {
+  const deleteSubname = async () => {
     const subname = selectedNames[0]
-    if (subname) {
-      createTransactionFlow(deleteSubnameTransitionKey, {
-        transactions: [
-          makeTransactionItem('deleteSubname', {
-            name: subname,
-            contract: 'registry',
-          }),
-        ],
-      })
-    }
+    if (!subname) return
+
+    createTransactionFlow(deleteSubnameTransitionKey, {
+      transactions: [
+        makeTransactionItem('deleteSubname', {
+          name: subname,
+          contract: isWrapped ? 'nameWrapper' : 'registry',
+        }),
+      ],
+    })
   }
 
   const deleteSubnameTransitionStage = getTransactionFlowStage(deleteSubnameTransitionKey)
   useEffect(() => {
     if (deleteSubnameTransitionStage === 'completed') {
-      setSelectedNames([])
+      setDeletedNames([...deletedNames, selectedNames[0]])
       setMode('view')
-      reset()
-      refetch()
+      setSelectedNames([])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deleteSubnameTransitionStage])
@@ -212,17 +218,20 @@ export const SubnamesTab = ({
   } else if (subnames.length > 0) {
     InnerContent = (
       <InfiniteScrollContainer onIntersectingChange={setIsIntersecting}>
-        {subnames.map((subname) => (
-          <TaggedNameItem
-            key={subname.name}
-            name={subname.name}
-            network={network}
-            mode={mode}
-            isController={subname.owner?.id === address?.toLowerCase()}
-            selected={selectedNames.includes(subname.name)}
-            onClick={handleSelectName(subname.name)}
-          />
-        ))}
+        <div>
+          {subnames.map((subname) => (
+            <TaggedNameItem
+              key={subname.name}
+              name={subname.name}
+              network={network}
+              mode={mode}
+              disabled={mode === 'select' && !canEdit}
+              isController={subname.owner?.id === address?.toLowerCase()}
+              selected={selectedNames.includes(subname.name)}
+              onClick={handleSelectName(subname.name)}
+            />
+          ))}
+        </div>
         {isFetching && (
           <SpinnerContainer $showBorder>
             <Spinner size="small" color="accent" />
@@ -254,21 +263,17 @@ export const SubnamesTab = ({
       )}
       <StyledTabWrapper>
         <NameTableHeader
-          selectable={canEdit}
+          selectable={false}
           sortType={sortType}
           sortTypeOptionValues={[SortType.creationDate, SortType.labelName]}
           sortDirection={sortDirection}
           searchQuery={searchInput}
-          mode={mode}
+          mode="view"
           selectedCount={selectedNames.length}
           onSortTypeChange={(value: SortType) => {
             if (['creationDate', 'labelName'].includes(value)) setSortType(value as SubnameSortType)
           }}
           onSortDirectionChange={setSortDirection}
-          onModeChange={(m) => {
-            setMode(m)
-            setSelectedNames([])
-          }}
           onSearchChange={(s) => {
             setSearchInput(s)
             debouncedSetSearch(s)
@@ -289,7 +294,7 @@ export const SubnamesTab = ({
             </Button>
           )}
         </NameTableHeader>
-        {InnerContent}
+        <div>{InnerContent}</div>
         <Footer />
       </StyledTabWrapper>
     </TabWrapperWithButtons>

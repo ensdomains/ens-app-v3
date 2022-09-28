@@ -12,9 +12,11 @@ export declare type Props = {
     shape?: Shape;
     /** A placeholder for the image to use when not loaded, in css format (e.g. url("https://example.com")) */
     placeholder?: string;
+    /** If true sets the component into disabled format. */
+    disabled?: boolean;
 } & Omit<NativeImgAttributes, 'alt' | 'onError' | 'children' | 'onError'>;
 export declare const Avatar: {
-    ({ label, noBorder, shape, src, placeholder, decoding, ...props }: Props): JSX.Element;
+    ({ label, noBorder, shape, src, placeholder, decoding, disabled, ...props }: Props): JSX.Element;
     displayName: string;
 };
 export {};

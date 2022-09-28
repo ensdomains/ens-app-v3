@@ -6,6 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays } from '@app/utils/utils'
 
+import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
+
 const ExpiryWrapper = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -53,7 +55,11 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
 
 export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOnly?: boolean }) => {
   const { t } = useTranslation()
-  const currentDate = new Date()
+  const blockTimestamp = useBlockTimestamp()
+  console.log(blockTimestamp.data! * 1000)
+  console.log(Date.now())
+
+  const currentDate = new Date(blockTimestamp.data!)
   const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)

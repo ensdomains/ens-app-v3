@@ -56,7 +56,8 @@ const Container$j = styled.div(({
   `);
 const Placeholder = styled.div(({
   theme,
-  $url
+  $url,
+  $disabled
 }) => css`
     background: ${$url || theme.colors.gradients.blue};
 
@@ -65,9 +66,14 @@ const Placeholder = styled.div(({
     justify-content: center;
     width: 100%;
     height: 100%;
+
+    ${$disabled && css`
+      filter: grayscale(1);
+    `}
   `);
 const Img = styled.img(({
-  $shown
+  $shown,
+  $disabled
 }) => css`
     height: 100%;
     width: 100%;
@@ -77,6 +83,10 @@ const Img = styled.img(({
     ${$shown && css`
       display: block;
     `}
+
+    ${$disabled && css`
+      filter: grayscale(1);
+    `}
   `);
 const Avatar = ({
   label,
@@ -85,6 +95,7 @@ const Avatar = ({
   src,
   placeholder,
   decoding = "async",
+  disabled = false,
   ...props
 }) => {
   const ref = React.useRef(null);
@@ -114,10 +125,12 @@ const Avatar = ({
     $noBorder: !showImage || noBorder,
     $shape: shape
   }, !showImage && /* @__PURE__ */ React.createElement(Placeholder, {
+    $disabled: disabled,
     $url: placeholder,
     "aria-label": label
   }), /* @__PURE__ */ React.createElement(Img, {
     ...props,
+    $disabled: disabled,
     $shown: showImage,
     alt: label,
     decoding,

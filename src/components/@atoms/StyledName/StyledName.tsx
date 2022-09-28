@@ -10,9 +10,9 @@ const Container = styled.div(
   `,
 )
 
-const Name = styled.span(
-  ({ theme }) => css`
-    color: ${theme.colors.text};
+const Name = styled.span<{ $disabled?: boolean }>(
+  ({ theme, $disabled }) => css`
+    color: ${$disabled ? theme.colors.textTertiary : theme.colors.text};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -33,14 +33,14 @@ const Tld = styled.span(
   `,
 )
 
-export const StyledName = ({ name }: { name: string }) => {
+export const StyledName = ({ name, disabled = false }: { name: string; disabled?: boolean }) => {
   const labels = name.split('.')
   const tld = labels.length > 1 ? `${labels[labels.length - 1]}` : ''
   const nameWithoutTld = labels.length > 1 ? labels.slice(0, -1).join('.') : name
 
   return (
     <Container>
-      <Name>
+      <Name $disabled={disabled}>
         {nameWithoutTld}
         {labels.length > 1 && <Dot>.</Dot>}
       </Name>

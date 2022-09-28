@@ -31,12 +31,6 @@ export const NameListView = ({
   onSelectedNamesChange?: (data: string[]) => void
 }) => {
   const { t } = useTranslation('common')
-  if (!currentPage || currentPage.length === 0)
-    return (
-      <NoResultsContianer>
-        <Heading as="h3">{t('errors.noResults')}</Heading>
-      </NoResultsContianer>
-    )
 
   const handleClickForName = (name: string) => () => {
     if (selectedNames?.includes(name)) {
@@ -46,23 +40,13 @@ export const NameListView = ({
     }
   }
 
-  if (rowsOnly)
-    return (
-      <>
-        {currentPage.map((name) => (
-          <TaggedNameItem
-            key={name.id}
-            {...{ ...name, network }}
-            mode={mode}
-            selected={selectedNames?.includes(name.name)}
-            onClick={handleClickForName(name.name)}
-          />
-        ))}
-      </>
-    )
-  return (
-    <TabWrapper>
-      {currentPage.map((name) => (
+  const InnerContent =
+    !currentPage || currentPage.length === 0 ? (
+      <NoResultsContianer>
+        <Heading as="h3">{t('errors.noResults')}</Heading>
+      </NoResultsContianer>
+    ) : (
+      currentPage.map((name) => (
         <TaggedNameItem
           key={name.id}
           {...{ ...name, network }}
@@ -70,7 +54,9 @@ export const NameListView = ({
           selected={selectedNames?.includes(name.name)}
           onClick={handleClickForName(name.name)}
         />
-      ))}
-    </TabWrapper>
-  )
+      ))
+    )
+
+  if (rowsOnly) return <>{InnerContent}</>
+  return <TabWrapper>{InnerContent}</TabWrapper>
 }

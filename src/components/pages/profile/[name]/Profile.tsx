@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button } from '@ensdomains/thorin'
+import { Button, Colors } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
@@ -22,6 +22,8 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
+import { useSubnameAbilities } from '../../../../hooks/useSubnameAbilities'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -81,6 +83,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, ownerData)
+  const subNameAbilities = useSubnameAbilities(name, ownerData)
 
   const { createTransactionFlow } = useTransactionFlow()
 
@@ -128,24 +131,25 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
   }
 
   const profileActions = useMemo(() => {
-    if (isSelf || (!selfAbilities.canEdit && profile?.address !== address) || ensName === _name)
-      return undefined
-    const setAsPrimaryTransactions: GenericTransaction[] = [
-      makeTransactionItem('setPrimaryName', {
-        name,
-        address: address!,
-      }),
-    ]
-    if (profile?.address !== address) {
-      setAsPrimaryTransactions.unshift(
-        makeTransactionItem('updateEthAddress', {
-          address: address!,
+    const actions: { onClick: () => void; color?: Colors; label: string; disabled?: boolean }[] = []
+    // if (isSelf || (!selfAbilities.canEdit && profile?.address !== address) || ensName === _name)
+    //   return undefined
+    if (!isSelf && (selfAbilities.canEdit || profile?.address === address) && ensName !== _name) {
+      const setAsPrimaryTransactions: GenericTransaction[] = [
+        makeTransactionItem('setPrimaryName', {
           name,
+          address: address!,
         }),
-      )
-    }
-    return [
-      {
+      ]
+      if (profile?.address !== address) {
+        setAsPrimaryTransactions.unshift(
+          makeTransactionItem('updateEthAddress', {
+            address: address!,
+            name,
+          }),
+        )
+      }
+      actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
         onClick: () =>
           createTransactionFlow(`setPrimaryName-${name}-${address}`, {
@@ -159,12 +163,33 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
                   }
                 : undefined,
           }),
-      },
-    ]
+      })
+    }
+
+    if (subNameAbilities.canDelete && subNameAbilities.canDeleteContract) {
+      actions.push({
+        label: t('tabs.profile.actions.deleteSubname.label'),
+        onClick: () =>
+          createTransactionFlow(`deleteSubname-${name}`, {
+            transactions: [
+              makeTransactionItem('deleteSubname', {
+                name,
+                contract: subNameAbilities.canDeleteContract!,
+              }),
+            ],
+          }),
+        color: 'red',
+      })
+    }
+
+    if (actions.length === 0) return undefined
+    return actions
   }, [
     isSelf,
     selfAbilities.canEdit,
     profile?.address,
+    subNameAbilities.canDelete,
+    subNameAbilities.canDeleteContract,
     address,
     ensName,
     _name,

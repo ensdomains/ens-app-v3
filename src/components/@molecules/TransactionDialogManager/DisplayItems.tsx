@@ -174,10 +174,15 @@ const ListValue = ({ value }: { value: string[] }) => {
     <ListContainer>
       {value.map((val, idx) => {
         const isLast = idx === value.length - 1
+        const key = idx
         if (idx === 0) {
-          return <Typography weight="bold">{val}</Typography>
+          return (
+            <Typography key={key} weight="bold">
+              {val}
+            </Typography>
+          )
         }
-        return <ListItemTypography>{`${val}${!isLast ? ',' : ''}`}</ListItemTypography>
+        return <ListItemTypography key={key}>{`${val}${!isLast ? ',' : ''}`}</ListItemTypography>
       })}
     </ListContainer>
   )

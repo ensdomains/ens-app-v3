@@ -85,6 +85,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     )
     await subnameTx.wait()
     console.log(`Registering subname sub.${label}.eth (tx: ${subnameTx.hash})...`)
+
+    // Register subname
+    const subnameTx2 = await _nameWrapper.setSubnodeOwner(
+      namehash(`${label}.eth`),
+      'test',
+      owner,
+      1860342907,
+      0,
+    )
+    await subnameTx2.wait()
+    console.log(`Registering subname test.${label}.eth (tx: ${subnameTx.hash})...`)
   }
 
   await network.provider.send('anvil_setBlockTimestampInterval', [1])

@@ -1,5 +1,5 @@
 import { useRouter } from 'next/router'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -7,12 +7,12 @@ import { useAccount } from 'wagmi'
 import { Button, Spinner } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
-import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
 import { SortDirection, SortType } from '@app/components/@molecules/SortControl/SortControl'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
-import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
+import { ReturnedName, useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -22,6 +22,7 @@ import {
   NameTableHeader,
   NameTableMode,
 } from '../../components/@molecules/NameTableHeader/NameTableHeader'
+import { useBlockTimestamp } from '../../hooks/useBlockTimestamp'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -73,7 +74,13 @@ export default function Page() {
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<string[]>([])
-
+  const handleClickName = (name: string) => () => {
+    if (selectedNames.includes(name)) {
+      setSelectedNames(selectedNames.filter((n) => n !== name))
+    } else {
+      setSelectedNames([...selectedNames, name])
+    }
+  }
   const [sortType, setSortType] = useState<SortType | undefined>()
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
   const [searchQuery, setSearchQuery] = useState('')
@@ -119,6 +126,18 @@ export default function Page() {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
+
+  const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
+  const isNameDisabled = useCallback(
+    (name: ReturnedName) => {
+      if (isBlockTimestampLoading) return false
+      if (mode !== 'select') return false
+      if (!name.expiryDate || !blockTimestamp) return true
+      if (name?.expiryDate.getTime() > blockTimestamp) return false
+      return true
+    },
+    [mode, isBlockTimestampLoading, blockTimestamp],
+  )
 
   const loading =
     isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
@@ -166,24 +185,28 @@ export default function Page() {
                 </Button>
               )}
             </NameTableHeader>
-            {loading && (
-              <EmptyDetailContainer>
-                <Spinner color="accent" />
-              </EmptyDetailContainer>
-            )}
-            {!loading && currentPage && pageLength > 0 && (
-              <NameListView
-                currentPage={currentPage}
-                network={chainId}
-                rowsOnly
-                mode={mode}
-                selectedNames={selectedNames}
-                onSelectedNamesChange={setSelectedNames}
-              />
-            )}
-            {!loading && pageLength < 1 && (!currentPage || currentPage.length === 0) && (
-              <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
-            )}
+            <div>
+              {/* eslint-disable no-nested-ternary */}
+              {loading ? (
+                <EmptyDetailContainer>
+                  <Spinner color="accent" />
+                </EmptyDetailContainer>
+              ) : pageLength === 0 ? (
+                <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
+              ) : currentPage ? (
+                currentPage.map((name) => (
+                  <TaggedNameItem
+                    key={name.id}
+                    {...name}
+                    network={chainId}
+                    mode={mode}
+                    selected={selectedNames?.includes(name.name)}
+                    disabled={isNameDisabled(name)}
+                    onClick={handleClickName(name.name)}
+                  />
+                ))
+              ) : null}
+            </div>
             <NameTableFooter
               current={page}
               onChange={(value) => setPage(value)}

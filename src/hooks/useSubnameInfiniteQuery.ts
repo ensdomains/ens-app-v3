@@ -1,4 +1,4 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useMemo } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
 import { SortDirection, SortType } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
@@ -24,12 +24,14 @@ export const useSubnameInfiniteQuery = (
   orderBy?: SubnameSortType,
   orderDirection?: SortDirection,
   search?: string,
+  exclude?: string[],
 ) => {
-  const queryClient = useQueryClient()
   const { getSubnames } = useEns()
 
+  const queryKey = ['getSubnames', name, orderBy, orderDirection, search]
+  console.log('queryKey', queryKey)
   const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
-    ['getSubnames', name, orderBy, orderDirection, search],
+    queryKey,
     async ({ pageParam }) => {
       const result = await getSubnames({
         name,
@@ -40,10 +42,12 @@ export const useSubnameInfiniteQuery = (
         search,
       })
 
+      console.log('result', result)
+
       const ownedSubnames = result.subnames.filter(
         (subname) => subname.owner.id !== '0x0000000000000000000000000000000000000000',
       )
-      const isPageSize = result.subnames.length === PAGE_SIZE
+      const isPageSize = result.subnames.length >= PAGE_SIZE
       const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
       return {
         subnames: ownedSubnames,
@@ -54,17 +58,21 @@ export const useSubnameInfiniteQuery = (
     {
       getNextPageParam: (last) => (last.lastSubname ? [last.lastSubname] : undefined),
       refetchOnMount: 'always',
+      enabled: !!name,
     },
   )
 
-  const reset = () => {
-    queryClient.invalidateQueries({ exact: false, queryKey: ['getSubnames'] })
-  }
-
-  const subnames: Subname[] =
-    data?.pages.reduce<Subname[]>((acc, curr) => {
-      return [...acc, ...(curr.subnames || [])]
-    }, []) || ([] as Subname[])
+  /**
+   * Since we don't have an event to know when graph-node has updated, we won't know when to refetch to update the list.
+   * Instead I use a filter to exclude subnames that have been deleted.
+   */
+  const subnames: Subname[] = useMemo(() => {
+    return (
+      data?.pages.reduce<Subname[]>((acc, curr) => {
+        return [...acc, ...(curr.subnames.filter((s) => !exclude?.includes(s.name)) || [])]
+      }, []) || ([] as Subname[])
+    )
+  }, [data, exclude])
 
   return {
     subnames,
@@ -73,7 +81,6 @@ export const useSubnameInfiniteQuery = (
     isLoading,
     isFetching,
     hasResults: !!data?.pages[0].subnameCount,
-    reset,
     refetch,
   }
 }

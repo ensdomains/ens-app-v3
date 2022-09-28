@@ -33,11 +33,13 @@ export const TaggedNameItem = ({
   truncatedName,
   mode,
   selected,
+  disabled = false,
   onClick,
 }: Omit<ReturnedName, 'labelName' | 'labelhash' | 'isMigrated' | 'parent' | 'type' | 'id'> & {
   network: number
   selected?: boolean
   mode?: 'select' | 'view'
+  disabled?: boolean
   onClick?: () => void
 }) => {
   const { t } = useTranslation('common')
@@ -53,12 +55,13 @@ export const TaggedNameItem = ({
       name={name}
       mode={mode}
       selected={selected}
+      disabled={disabled}
       onClick={onClick}
     >
       <OtherItemsContainer>
-        <Tag tone={isController ? 'accent' : 'secondary'}>{t('name.manager')}</Tag>
+        <Tag tone={isController && !disabled ? 'accent' : 'secondary'}>{t('name.manager')}</Tag>
         {isNativeEthName && (
-          <Tag tone={isRegistrant ? 'accent' : 'secondary'}>{t('name.owner')}</Tag>
+          <Tag tone={isRegistrant && !disabled ? 'accent' : 'secondary'}>{t('name.owner')}</Tag>
         )}
       </OtherItemsContainer>
     </NameDetailItem>

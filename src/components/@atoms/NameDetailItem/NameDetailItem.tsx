@@ -13,8 +13,8 @@ import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
 import { StyledName } from '../StyledName/StyledName'
 
-const NameItemWrapper = styled.div<{ $highlight: boolean }>(
-  ({ theme, $highlight }) => css`
+const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
+  ({ theme, $highlight, $disabled }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -26,7 +26,7 @@ const NameItemWrapper = styled.div<{ $highlight: boolean }>(
     border-bottom: 1px solid ${theme.colors.borderTertiary};
     transition: all 0.15s ease-in-out;
     background: ${$highlight ? theme.colors.accentSecondary : theme.colors.white};
-    cursor: pointer;
+    cursor: ${$disabled ? 'not-allowed' : 'pointer'};
     &:hover {
       background: ${$highlight ? theme.colors.accentTertiary : theme.colors.backgroundSecondary};
     }
@@ -126,6 +126,7 @@ export const NameDetailItem = ({
   network,
   mode,
   selected = false,
+  disabled = false,
   onClick,
   children,
 }: Name & {
@@ -133,12 +134,18 @@ export const NameDetailItem = ({
   network: number
   mode?: 'view' | 'select'
   selected?: boolean
+  disabled?: boolean
   onClick?: () => void
   children: ReactNode
 }) => {
   const router = useRouter()
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
+
+  const handleClick = () => {
+    if (disabled) return
+    onClick?.()
+  }
 
   return (
     <OptionalLink
@@ -152,11 +159,10 @@ export const NameDetailItem = ({
       passHref
     >
       <NameItemWrapper
+        $disabled={disabled}
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
-        onClick={() => {
-          onClick?.()
-        }}
+        onClick={handleClick}
       >
         <NameItemContainer>
           <AvatarWrapper>
@@ -164,6 +170,7 @@ export const NameDetailItem = ({
               label={truncatedName || name}
               src={avatar || zorb}
               data-testid="name-detail-item-avatar"
+              disabled={disabled}
             />
             {mode === 'select' && selected && (
               <AvatarOverlay>
@@ -172,7 +179,7 @@ export const NameDetailItem = ({
             )}
           </AvatarWrapper>
           <NameItemContent>
-            <TitleWrapper name={name} />
+            <TitleWrapper name={name} disabled={disabled} />
             {expiryDate && (
               <SubtitleWrapper>
                 <ShortExpiry expiry={expiryDate} textOnly />

@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useFeeData } from 'wagmi'
 
-import { Avatar, Button, Dialog, Helper, mq } from '@ensdomains/thorin'
+import { Avatar, Button, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
 import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
@@ -31,7 +31,9 @@ const Container = styled.form(
   ({ theme }) => css`
     display: flex;
     width: 100%;
+    max-height: 90vh;
     flex-direction: column;
+    align-items: center;
     gap: ${theme.space['4']};
     align-items: center;
 
@@ -40,6 +42,23 @@ const Container = styled.form(
         min-width: 600px;
       `,
     )}
+  `,
+)
+
+const ScrollBoxWrapper = styled(ScrollBox)(
+  ({ theme }) => css`
+    width: 100%;
+    padding-right: ${theme.space['2']};
+    margin-right: -${theme.space['2']};
+  `,
+)
+
+const InnerContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: ${theme.space['4']};
   `,
 )
 
@@ -134,17 +153,26 @@ const NamesListItem = ({ name }: { name: string }) => {
   )
 }
 
+const NamesListContainer = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['2']};
+  `,
+)
+
 type NamesListProps = {
   names: string[]
 }
 
 const NamesList = ({ names }: NamesListProps) => {
   return (
-    <>
+    <NamesListContainer>
       {names.map((name) => (
         <NamesListItem key={name} name={name} />
       ))}
-    </>
+    </NamesListContainer>
   )
 }
 
@@ -182,6 +210,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
   } = useEstimateGasLimitForTransactions(transactions)
+  console.log(estimateGasLimitError)
+
   const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
 
@@ -226,45 +256,47 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     )
   }
   return (
-    <>
+    <Container>
       <Dialog.Heading title={title} />
-      <Container>
-        {view === 'name-list' ? (
-          <NamesList names={names} />
-        ) : (
-          <>
-            <PlusMinusWrapper>
-              <PlusMinusControl
-                minValue={1}
-                value={years}
-                onChange={(e) => {
-                  const newYears = parseInt(e.target.value)
-                  if (!Number.isNaN(newYears)) setYears(newYears)
-                }}
-              />
-            </PlusMinusWrapper>
-            <OptionBar>
-              <GasDisplay gasPrice={gasPrice} />
-              <CurrencySwitch
-                fiat="usd"
-                value={currencyUnit}
-                onChange={(unit) => setCurrencyUnit(unit)}
-              />
-            </OptionBar>
-            {rentFee && transactionFee && (
-              <RegistrationTimeComparisonBanner
-                rentFee={rentFee}
-                transactionFee={transactionFee}
-                message={t('input.extendNames.bannerMsg')}
-              />
-            )}
-            <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
-            {!!estimateGasLimitError && (
-              <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
-            )}
-          </>
-        )}
-      </Container>
+      <ScrollBoxWrapper>
+        <InnerContainer>
+          {view === 'name-list' ? (
+            <NamesList names={names} />
+          ) : (
+            <>
+              <PlusMinusWrapper>
+                <PlusMinusControl
+                  minValue={1}
+                  value={years}
+                  onChange={(e) => {
+                    const newYears = parseInt(e.target.value)
+                    if (!Number.isNaN(newYears)) setYears(newYears)
+                  }}
+                />
+              </PlusMinusWrapper>
+              <OptionBar>
+                <GasDisplay gasPrice={gasPrice} />
+                <CurrencySwitch
+                  fiat="usd"
+                  value={currencyUnit}
+                  onChange={(unit) => setCurrencyUnit(unit)}
+                />
+              </OptionBar>
+              {rentFee && transactionFee && (
+                <RegistrationTimeComparisonBanner
+                  rentFee={rentFee}
+                  transactionFee={transactionFee}
+                  message={t('input.extendNames.bannerMsg')}
+                />
+              )}
+              <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
+              {!!estimateGasLimitError && (
+                <Helper type="warning">{t('input.extendNames.gasLimitError')}</Helper>
+              )}
+            </>
+          )}
+        </InnerContainer>
+      </ScrollBoxWrapper>
       <Dialog.Footer
         leading={
           <Button shadowless tone="grey" variant="secondary" onClick={onDismiss}>
@@ -273,7 +305,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
         }
         trailing={<Button shadowless {...trailingButtonProps} />}
       />
-    </>
+    </Container>
   )
 }
 

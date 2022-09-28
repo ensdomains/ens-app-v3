@@ -93,7 +93,7 @@ const names: Names[] = [
     namedAddr: 'owner',
     subnames: [
       { label: 'test', namedOwner: 'owner' },
-      { label: 'legacy', namedOwner: 'owner' },
+      { label: 'legacy', namedOwner: 'deployer' },
       { label: 'xyz', namedOwner: 'owner' },
       { label: 'addr', namedOwner: 'owner' },
     ],
