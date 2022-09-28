@@ -163,14 +163,15 @@
     "wait-on": "^6.0.1",
     "wrangler": "^2.0.27",
     "yalc": "^1.0.0-pre.53",
-    "cypress": "10.9.0"
+    "cypress": "10.8.0"
   },
   "pnpm": {
     "overrides": {
       "wrtc": "https://registry.npmjs.org/@koush/wrtc/-/wrtc-0.5.2.tgz",
       "bn.js": "npm:bn.js@^5.2.0",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
-      "@next/swc-linux-x64-gnu": "12.1.4"
+      "@next/swc-linux-x64-gnu": "12.1.4",
+      "cypress": "10.8.0"
     },
     "patchedDependencies": {
       "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",

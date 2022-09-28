@@ -5,6 +5,7 @@ overrides:
   bn.js: npm:bn.js@^5.2.0
   '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
   '@next/swc-linux-x64-gnu': 12.1.4
+  cypress: 10.8.0
 
 patchedDependencies:
   '@rainbow-me/rainbowkit@0.4.8':
@@ -62,7 +63,7 @@ specifiers:
   calendar-link: ^2.2.0
   canvas: ^2.9.3
   concurrently: ^7.3.0
-  cypress: 10.9.0
+  cypress: 10.8.0
   cypress-localstorage-commands: ^2.2.1
   dns-packet: ^5.4.0
   dotenv: ^16.0.1
@@ -172,7 +173,7 @@ devDependencies:
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_niamqnp2kmjo6tv45x3e7iqytu
   '@openzeppelin/contracts': 4.7.3
   '@synthetixio/synpress': 2.3.3_3ethcigbszvys46nn2fmbssqwa_2436jjjjhvz5zsjaubwgmebn5m
-  '@testing-library/cypress': 8.0.3_cypress@10.9.0
+  '@testing-library/cypress': 8.0.3_cypress@10.8.0
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
   '@testing-library/react-hooks': 8.0.1_ouinwtwbn2kx2p2ceiphazvw6y
@@ -195,8 +196,8 @@ devDependencies:
   babel-loader: 8.2.5
   canvas: 2.9.3
   concurrently: 7.4.0
-  cypress: 10.9.0
-  cypress-localstorage-commands: 2.2.1_cypress@10.9.0
+  cypress: 10.8.0
+  cypress-localstorage-commands: 2.2.1_cypress@10.8.0
   dotenv: 16.0.2
   eslint: 7.32.0
   eslint-config-airbnb: 19.0.4_q3zgu3dvmqz3anpperelsmig24
@@ -1959,14 +1960,14 @@ packages:
       postcss-selector-parser: 6.0.10
     dev: true
 
-  /@cypress/code-coverage/3.10.0_v2ugq3bxhfbrigjd2av6bthyo4:
+  /@cypress/code-coverage/3.10.0_rfzwbafsewngadleg5nrnid3xi:
     resolution: {integrity: sha512-K5pW2KPpK4vKMXqxd6vuzo6m9BNgpAv1LcrrtmqAtOJ1RGoEILXYZVost0L6Q+V01NyY7n7jXIIfS7LR3nP6YA==}
     peerDependencies:
       cypress: '*'
     dependencies:
       '@cypress/webpack-preprocessor': 5.12.2_babel-loader@8.2.5
       chalk: 4.1.2
-      cypress: 10.9.0
+      cypress: 10.8.0
       dayjs: 1.10.7
       debug: 4.3.4
       execa: 4.1.0
@@ -1982,7 +1983,7 @@ packages:
       - webpack
     dev: true
 
-  /@cypress/react/6.2.0_qvfgchh5vqfz37bagp2rhda7ua:
+  /@cypress/react/6.2.0_jdhvrb4ifkei45dhr3opu2kpmu:
     resolution: {integrity: sha512-arBO5/ed5MM56ypgmMugCOZoAIHH9e+7NH98oF2LCEffr8qkAV4WG5o4S+fqDjFPFP5WNZoKtPC7DEkxOm6kFA==}
     peerDependencies:
       '@types/react': ^16.9.16 || ^17.0.0
@@ -1994,7 +1995,7 @@ packages:
         optional: true
     dependencies:
       '@types/react': 17.0.30
-      cypress: 10.9.0
+      cypress: 10.8.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
     dev: true
@@ -3803,7 +3804,7 @@ packages:
     hasBin: true
     requiresBuild: true
     dependencies:
-      https-proxy-agent: 5.0.0
+      https-proxy-agent: 5.0.1
       mkdirp: 0.5.6
       node-fetch: 2.6.7
       npmlog: 4.1.2
@@ -4256,13 +4257,13 @@ packages:
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
-      '@cypress/code-coverage': 3.10.0_v2ugq3bxhfbrigjd2av6bthyo4
-      '@cypress/react': 6.2.0_qvfgchh5vqfz37bagp2rhda7ua
+      '@cypress/code-coverage': 3.10.0_rfzwbafsewngadleg5nrnid3xi
+      '@cypress/react': 6.2.0_jdhvrb4ifkei45dhr3opu2kpmu
       '@cypress/webpack-dev-server': 2.3.0
       '@drptbl/gremlins.js': 2.2.1
       '@playwright/test': 1.26.1
       '@synthetixio/js': 2.41.0
-      '@testing-library/cypress': 8.0.3_cypress@10.9.0
+      '@testing-library/cypress': 8.0.3_cypress@10.8.0
       '@testing-library/react': 13.4.0_sfoxds7t5ydpegc3knd667wn6m
       '@types/testing-library__cypress': 5.0.9
       axios: 0.27.2
@@ -4273,7 +4274,7 @@ packages:
       babel-plugin-transform-react-styled-components-qa: 2.1.0
       bytes32: 0.0.3
       commander: 9.4.0
-      cypress: 10.9.0
+      cypress: 10.8.0
       cypress-wait-until: 1.7.2
       dotenv: 16.0.2
       dotenv-parse-variables: 2.0.0
@@ -4364,7 +4365,7 @@ packages:
       use-sync-external-store: 1.2.0_react@17.0.2
     dev: false
 
-  /@testing-library/cypress/8.0.3_cypress@10.9.0:
+  /@testing-library/cypress/8.0.3_cypress@10.8.0:
     resolution: {integrity: sha512-nY2YaSbmuPo5k6kL0iLj/pGPPfka3iwb3kpTx8QN/vOCns92Saz9wfACqB8FJzcR7+lfA4d5HUOWqmTddBzczg==}
     engines: {node: '>=12', npm: '>=6'}
     peerDependencies:
@@ -4372,7 +4373,7 @@ packages:
     dependencies:
       '@babel/runtime': 7.18.9
       '@testing-library/dom': 8.13.0
-      cypress: 10.9.0
+      cypress: 10.8.0
     dev: true
 
   /@testing-library/dom/7.31.2:
@@ -5084,7 +5085,7 @@ packages:
     resolution: {integrity: sha512-WTiIZhZKWDnV+Tgo42pxff8YfHdmaNFQz/bFoTlmfw2vbXcstCcb39VRaRi5yFHj/lb7t3K47btKYEbR1fci+Q==}
     dependencies:
       '@testing-library/dom': 7.31.2
-      cypress: 10.9.0
+      cypress: 10.8.0
     dev: true
 
   /@types/testing-library__jest-dom/5.14.5:
@@ -8507,21 +8508,21 @@ packages:
     resolution: {integrity: sha512-d4ZVpCW31eWwCMe1YT3ur7mUDnTXbgwyzaL320DrcRT45rfjYxkt5QWLrmOJ+/UEAI2+fQgKe/fCjR8l4TpRgw==}
     dev: true
 
-  /cypress-localstorage-commands/2.2.1_cypress@10.9.0:
+  /cypress-localstorage-commands/2.2.1_cypress@10.8.0:
     resolution: {integrity: sha512-m7IwoM+BMOJj7FzzN4It268c/i/Ur72CQX8JwLICkQ6ZgF1XNJOIKlQ7Rszg45ATLTjVTL1QElKCZECoU8cthQ==}
     engines: {node: '>=14.0.0'}
     peerDependencies:
       cypress: '>=2.1.0'
     dependencies:
-      cypress: 10.9.0
+      cypress: 10.8.0
     dev: true
 
   /cypress-wait-until/1.7.2:
     resolution: {integrity: sha512-uZ+M8/MqRcpf+FII/UZrU7g1qYZ4aVlHcgyVopnladyoBrpoaMJ4PKZDrdOJ05H5RHbr7s9Tid635X3E+ZLU/Q==}
     dev: true
 
-  /cypress/10.9.0:
-    resolution: {integrity: sha512-MjIWrRpc+bQM9U4kSSdATZWZ2hUqHGFEQTF7dfeZRa4MnalMtc88FIE49USWP2ZVtfy5WPBcgfBX+YorFqGElA==}
+  /cypress/10.8.0:
+    resolution: {integrity: sha512-QVse0dnLm018hgti2enKMVZR9qbIO488YGX06nH5j3Dg1isL38DwrBtyrax02CANU6y8F4EJUuyW6HJKw1jsFA==}
     engines: {node: '>=12.0.0'}
     hasBin: true
     requiresBuild: true
@@ -12576,6 +12577,16 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+
+  /https-proxy-agent/5.0.1:
+    resolution: {integrity: sha512-dFcAjpTQFgoLMzC2VwU+C/CbS7uRL0lWmxDITmqm7C+7F0Odmj6s9l6alZc6AELXhrnggM2CeWSXHGOdX2YtwA==}
+    engines: {node: '>= 6'}
+    dependencies:
+      agent-base: 6.0.2
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
+    dev: false
 
   /human-signals/1.1.1:
     resolution: {integrity: sha512-SEQu7vl8KjNL2eoGBLF3+wAjpsNfA9XMlXAYj/3EdaNfAlxKthD1xjEQfGOUhllCGGJVNY34bRr6lPINhNjyZw==}
