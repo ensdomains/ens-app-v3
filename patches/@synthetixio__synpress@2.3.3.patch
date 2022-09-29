@@ -1,8 +1,16 @@
 diff --git a/commands/metamask.js b/commands/metamask.js
-index cfbf01abf5cd82f51c8e2b5ededee45008f29037..32167a22b52d0768203c47824c15c4dafdd6d670 100644
+index cfbf01abf5cd82f51c8e2b5ededee45008f29037..e2bac164e8b66a0560f393d85723f198260be2f5 100644
 --- a/commands/metamask.js
 +++ b/commands/metamask.js
-@@ -243,6 +243,19 @@ module.exports = {
+@@ -31,6 +31,7 @@ const {
+   confirmationPageElements,
+ } = require('../pages/metamask/confirmation-page');
+ const { setNetwork, getNetwork } = require('../helpers');
++const sleep = require('util').promisify(setTimeout);
+ 
+ let walletAddress;
+ let switchBackToCypressWindow;
+@@ -243,6 +244,19 @@ module.exports = {
      await playwright.waitAndClick(mainPageElements.accountMenu.button);
  
      if (typeof accountNameOrAccountNumber === 'number') {
@@ -22,6 +30,14 @@ index cfbf01abf5cd82f51c8e2b5ededee45008f29037..32167a22b52d0768203c47824c15c4da
        await playwright.waitAndClick(
          mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
        );
+@@ -612,6 +626,7 @@ module.exports = {
+     return true;
+   },
+   confirmTransaction: async gasConfig => {
++    if (process.env.TRANSACTION_WAIT_TIME) await sleep(parseInt(process.env.TRANSACTION_WAIT_TIME));
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (gasConfig && gasConfig.gasFee) {
+       await playwright.waitAndSetValue(
 diff --git a/commands/playwright.js b/commands/playwright.js
 index 11e031f8eee2a0721e0d0d235c3bc7ac26f6fb18..bee4e6ab555fe042f8f605d3dc4725445ce30ce3 100644
 --- a/commands/playwright.js
@@ -68,19 +84,6 @@ index 241620882904bc7a007d52dc0bde16b2f20725ce..2421a8236b71188ec5ec2f57835a4b6d
      if (arguments_.group) {
        defaultArguments.push(`--group=${arguments_.group}`);
      }
-diff --git a/plugins/index.js b/plugins/index.js
-index e99b812eb8ce1b28295bd53d84699dd442e83e98..b4146b51c597316ad64d35b8e71395a94bd5019e 100644
---- a/plugins/index.js
-+++ b/plugins/index.js
-@@ -30,7 +30,7 @@ module.exports = (on, config) => {
-       arguments_.args.push(
-         '--disable-background-timer-throttling',
-         '--disable-backgrounding-occluded-windows',
--        '--disable-renderer-backgrounding',
-+        '--disable-renderer-backgrounding'
-       );
-     }
-     if (!process.env.SKIP_METAMASK_INSTALL) {
 diff --git a/synpress.js b/synpress.js
 index 5237f37865a8b70cbd75a130ddc5ca5bd72ace78..2ff1762a9d668446f731a631aeb07a4e20da56bd 100755
 --- a/synpress.js
