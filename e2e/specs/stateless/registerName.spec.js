@@ -88,6 +88,7 @@ describe('Register Name', () => {
     })
     it('should not direct to the registration page on search', () => {
       cy.findByTestId('home-button').click()
+      cy.wait(1000)
       cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
       cy.url().should('eq', 'http://localhost:3000/profile/registration-normal.eth')
     })
