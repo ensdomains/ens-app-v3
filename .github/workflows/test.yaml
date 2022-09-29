@@ -25,7 +25,7 @@ jobs:
 
       - run: pnpm test:coverage
 
-  build:
+  build-stateless:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
@@ -59,6 +59,23 @@ jobs:
           name: stateless-build
           path: stateless-build.tar
 
+  build-stateful:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: pnpm/action-setup@v2.2.2
+        with:
+          version: 7.8.0
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16
+          cache: 'pnpm'
+
+      - run: pnpm install --frozen-lockfile
+
       - name: Build stateful
         run: pnpm build
 
@@ -72,7 +89,7 @@ jobs:
           path: stateful-build.tar
 
   stateless:
-    needs: build
+    needs: build-stateless
     timeout-minutes: 20
     runs-on: ubuntu-latest
     steps:
@@ -100,13 +117,15 @@ jobs:
       - name: Untar files
         run: tar -xvf stateless-build.tar
 
-      - name: Pull metadata service image
-        run: |
-          echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u $ --password-stdin
-          docker pull ghcr.io/ensdomains/ens-metadata-service:latest
+      - name: Install window server
+        run: sudo apt-get install -y fluxbox
 
       - name: Run tests
-        run: pnpm e2e:ci -nb
+        run: |
+          Xvfb :20 -screen 0 1366x768x16 &
+          sleep 1 &&
+          DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
+          DISPLAY=:20 pnpm e2e:ci -nb
 
       - uses: actions/upload-artifact@v2
         if: failure()
@@ -121,7 +140,7 @@ jobs:
           path: e2e/videos
 
   stateful:
-    needs: build
+    needs: build-stateful
     timeout-minutes: 10
     runs-on: ubuntu-latest
     strategy:
@@ -154,10 +173,17 @@ jobs:
       - name: Untar files
         run: tar -xvf stateful-build.tar
 
+      - name: Install window server
+        run: sudo apt-get install -y fluxbox
+
       - name: Run tests
-        run: 'parallel --lb --halt now,success=1,fail=1 ::: \
+        run: |
+          Xvfb :20 -screen 0 1366x768x16 &
+          sleep 1 &&
+          DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
+          parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm start" \
-          "pnpm wait-on http://localhost:3000 && pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"'
+          "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
         env:
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
 

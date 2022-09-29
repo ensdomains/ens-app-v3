@@ -1,10 +1,11 @@
+import { useQuery } from 'wagmi'
+
 import { useEns } from '@app/utils/EnsProvider'
 import {
+  RegistrationStatus,
   addRegistrationStatusToBatch,
   getRegistrationStatus,
-  RegistrationStatus
 } from '@app/utils/registrationStatus'
-import { useQuery } from 'wagmi'
 
 export const useRegistrationStatus = (name?: string) => {
   const ens = useEns()
@@ -19,8 +20,9 @@ export const useRegistrationStatus = (name?: string) => {
     ['registrationStatus', name],
     async (): Promise<RegistrationStatus> => {
       const _name = name as string
+      const batchQueries = addRegistrationStatusToBatch(ens, _name)
       return getRegistrationStatus(
-        await ens.batch(...addRegistrationStatusToBatch(ens, _name)),
+        batchQueries.length ? await ens.batch(...addRegistrationStatusToBatch(ens, _name)) : [],
         _name,
       )
     },

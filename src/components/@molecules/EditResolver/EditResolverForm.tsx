@@ -38,7 +38,7 @@ const LatestResolverTitleContainer = styled.div(
 
 const LatestResolverTitle = styled.span(
   () => css`
-    :after {
+    &::after {
       content: '\xa0';
     }
   `,

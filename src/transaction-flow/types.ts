@@ -2,7 +2,7 @@ import { ComponentProps, Dispatch, ReactNode } from 'react'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
-import { TransactionDisplayItem, TransactionDisplayItemTypes } from '@app/types'
+import { TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
@@ -22,6 +22,7 @@ export type GenericTransaction = {
   data: any
   hash?: string
   sendTime?: number
+  finaliseTime?: number
   stage?: TransactionStage
 }
 
@@ -42,6 +43,8 @@ export type TransactionFlowItem = {
   intro?: TransactionIntro
   transactions: GenericTransaction[]
   resumable?: boolean
+  requiresManualCleanup?: boolean
+  autoClose?: boolean
 }
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
@@ -103,6 +106,19 @@ export type TransactionFlowAction =
   | {
       name: 'cleanupTransaction'
       payload: string
+    }
+  | {
+      name: 'forceCleanupTransaction'
+      payload: string
+    }
+  | {
+      name: 'setTransactionStageFromUpdate'
+      payload: {
+        key: string
+        hash: string
+        status: 'confirmed' | 'failed'
+        timestamp: number
+      }
     }
 
 export type TransactionDialogProps = ComponentProps<typeof Dialog> & {

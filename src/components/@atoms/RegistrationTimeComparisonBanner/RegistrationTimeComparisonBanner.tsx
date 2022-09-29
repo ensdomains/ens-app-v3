@@ -1,4 +1,5 @@
 import { BigNumber } from 'ethers'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Helper, mq } from '@ensdomains/thorin'
@@ -122,6 +123,7 @@ const gasPercentToYears = (targetPercent: number, f: BigNumber, y: BigNumber, mi
 }
 
 export const RegistrationTimeComparisonBanner = ({ message, rentFee, transactionFee }: Props) => {
+  const { t } = useTranslation('common')
   const oneYearGasPercent = yearsToGasPercent(1, transactionFee, rentFee)
   const forty = gasPercentToYears(40, transactionFee, rentFee, 2)
   const twenty = gasPercentToYears(20, transactionFee, rentFee, 5)
@@ -133,17 +135,17 @@ export const RegistrationTimeComparisonBanner = ({ message, rentFee, transaction
       <InnerContainer>
         <div>{message}</div>
         <Bar $highlightPercent={twentyRounded} />
-        <Marker $percent={calcPercent(oneYearGasPercent, 1)}>
-          <b>1 year</b>
-          {oneYearGasPercent}% gas
+        <Marker data-testid="year-marker-0" $percent={calcPercent(oneYearGasPercent, 1)}>
+          <b>{t('unit.years', { count: 1 })}</b>
+          {t('unit.gas', { value: `${oneYearGasPercent}%` })}
         </Marker>
-        <Marker $percent={calcPercent(forty.gas, 2)}>
-          <b>{forty.years} years</b>
-          {forty.gas}% gas
+        <Marker data-testid="year-marker-1" $percent={calcPercent(forty.gas, 2)}>
+          <b>{t('unit.years', { count: forty.years })}</b>
+          {t('unit.gas', { value: `${forty.gas}%` })}
         </Marker>
-        <Marker $percent={twentyRounded}>
-          <b>{twenty.years} years</b>
-          {twenty.gas}% gas
+        <Marker data-testid="year-marker-2" $percent={twentyRounded}>
+          <b>{t('unit.years', { count: twenty.years })}</b>
+          {t('unit.gas', { value: `${twenty.gas}%` })}
         </Marker>
       </InnerContainer>
     </Helper>

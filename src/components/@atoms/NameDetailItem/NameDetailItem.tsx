@@ -16,7 +16,7 @@ import { StyledName } from '../StyledName/StyledName'
 const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
   ({ theme, $highlight, $disabled }) => css`
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
     align-items: center;
     justify-content: space-between;
     width: 100%;

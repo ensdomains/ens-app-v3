@@ -108,7 +108,7 @@ const NameDetailContainer = styled(CacheableComponent)(
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
   `,
 )
 

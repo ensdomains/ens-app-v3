@@ -9,7 +9,7 @@
   "rules": {
     "selector-type-case": ["lower", { "ignoreTypes": ["/^\\$\\w+/"] }],
     "selector-type-no-unknown": [true, { "ignoreTypes": ["/-styled-mixin/", "/^\\$\\w+/"] }],
-    "value-keyword-case": ["lower", { "ignoreKeywords": ["dummyValue"] }],
+    "value-keyword-case": ["lower", { "ignoreKeywords": ["dummyValue", "currentColor"] }],
     "declaration-colon-newline-after": null,
     "declaration-empty-line-before": null,
     "property-no-unknown": [
@@ -20,6 +20,11 @@
     ],
     "color-function-notation": "legacy",
     "alpha-value-notation": "number",
-    "scss/operator-no-newline-after": null
+    "scss/operator-no-newline-after": null,
+    "scss/operator-no-unspaced": null,
+    "custom-property-pattern": null,
+    "rule-empty-line-before": null,
+    "keyframes-name-pattern": null,
+    "keyframe-block-no-duplicate-selectors": null
   }
 }

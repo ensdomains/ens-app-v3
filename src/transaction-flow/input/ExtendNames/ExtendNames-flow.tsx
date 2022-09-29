@@ -200,6 +200,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
 
   const { base: rentFee, loading: priceLoading } = usePrice(names, true)
+
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
   const transactions = [
     makeTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),

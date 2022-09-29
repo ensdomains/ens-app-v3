@@ -75,7 +75,7 @@ const ProfileTabContents = ({
   removeOtherKey,
   removePadding = false,
 }: Props) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
   const hasKeys = useMemo(() => {
     if (tab === 'general') return true
     if (tab === 'accounts') return existingAccountKeys.length > 0 || newAccountKeys.length > 0
@@ -105,8 +105,8 @@ const ProfileTabContents = ({
                 <>
                   <RecordInput
                     deletable={false}
-                    label={t('profileEditor.tabs.general.name.label')}
-                    placeholder={t('profileEditor.tabs.general.name.placeholder')}
+                    label={t('input.profileEditor.tabs.general.name.label')}
+                    placeholder={t('input.profileEditor.tabs.general.name.placeholder')}
                     showDot
                     validated={getFieldState('general.name', formState).isDirty}
                     autoComplete="off"
@@ -114,18 +114,18 @@ const ProfileTabContents = ({
                   />
                   <RecordInput
                     deletable={false}
-                    label={t('profileEditor.tabs.general.url.label')}
+                    label={t('input.profileEditor.tabs.general.url.label')}
                     autoComplete="off"
-                    placeholder={t('profileEditor.tabs.general.url.placeholder')}
+                    placeholder={t('input.profileEditor.tabs.general.url.placeholder')}
                     showDot
                     validated={getFieldState('general.url', formState).isDirty}
                     {...register('general.url')}
                   />
                   <RecordInput
                     deletable={false}
-                    label={t('profileEditor.tabs.general.location.label')}
+                    label={t('input.profileEditor.tabs.general.location.label')}
                     autoComplete="off"
-                    placeholder={t('profileEditor.tabs.general.location.placeholder')}
+                    placeholder={t('input.profileEditor.tabs.general.location.placeholder')}
                     showDot
                     validated={getFieldState('general.location', formState).isDirty}
                     {...register('general.location')}
@@ -133,11 +133,11 @@ const ProfileTabContents = ({
                   <Textarea
                     label={
                       <LabelWrapper>
-                        {t('profileEditor.tabs.general.description.label')}
+                        {t('input.profileEditor.tabs.general.description.label')}
                       </LabelWrapper>
                     }
                     autoComplete="off"
-                    placeholder={t('profileEditor.tabs.general.description.placeholder')}
+                    placeholder={t('input.profileEditor.tabs.general.description.placeholder')}
                     showDot
                     validated={getFieldState('general.description', formState).isDirty}
                     {...register('general.description')}
@@ -151,8 +151,10 @@ const ProfileTabContents = ({
                       key={account}
                       option={getSelectedAccountOption(account)}
                       placeholder={t([
-                        `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(account)}`,
-                        `profileEditor.tabs.accounts.placeholder.default`,
+                        `input.profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(
+                          account,
+                        )}`,
+                        `input.profileEditor.tabs.accounts.placeholder.default`,
                       ])}
                       showDot
                       error={getFieldState(`accounts.${account}`, formState).error?.message}
@@ -168,8 +170,8 @@ const ProfileTabContents = ({
                       key={key}
                       option={getSelectedAccountOption(key)}
                       placeholder={t([
-                        `profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(key)}`,
-                        `profileEditor.tabs.accounts.placeholder.default`,
+                        `input.profileEditor.tabs.accounts.placeholder.${convertFormSafeKey(key)}`,
+                        `input.profileEditor.tabs.accounts.placeholder.default`,
                       ])}
                       error={getFieldState(`accounts.${key}`, formState).error?.message}
                       validated={getFieldState(`accounts.${formSafeKey(key)}`, formState).isDirty}
@@ -197,8 +199,8 @@ const ProfileTabContents = ({
                       key={key}
                       option={getSelectedAddressOption(key)}
                       placeholder={t([
-                        `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
-                        `profileEditor.tabs.address.placeholder.default`,
+                        `input.profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                        `input.profileEditor.tabs.address.placeholder.default`,
                       ])}
                       showDot
                       error={getFieldState(`address.${key}`, formState).error?.message}
@@ -217,8 +219,8 @@ const ProfileTabContents = ({
                       key={key}
                       option={getSelectedAddressOption(key)}
                       placeholder={t([
-                        `profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
-                        `profileEditor.tabs.address.placeholder.default`,
+                        `input.profileEditor.tabs.address.placeholder.${convertFormSafeKey(key)}`,
+                        `input.profileEditor.tabs.address.placeholder.default`,
                       ])}
                       error={getFieldState(`address.${key}`, formState).error?.message}
                       validated={getFieldState(`address.${key}`, formState).isDirty}
@@ -246,10 +248,10 @@ const ProfileTabContents = ({
                 <RecordInput
                   option={websiteOption}
                   placeholder={t([
-                    `profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
+                    `input.profileEditor.tabs.contentHash.placeholder.${convertFormSafeKey(
                       websiteOption.value,
                     )}`,
-                    `profileEditor.tabs.contentHash.placeholder.default`,
+                    `input.profileEditor.tabs.contentHash.placeholder.default`,
                   ])}
                   error={getFieldState(`website`, formState).error?.message}
                   validated={getFieldState(`website`, formState).isDirty}
@@ -277,9 +279,9 @@ const ProfileTabContents = ({
                       key={key}
                       label={key}
                       placeholder={t([
-                        `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
+                        `input.profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
 
-                        `profileEditor.tabs.other.placeholder.default`,
+                        `input.profileEditor.tabs.other.placeholder.default`,
                       ])}
                       error={getFieldState(`other.${key}`, formState).error?.message}
                       validated={getFieldState(`other.${key}`, formState).isDirty}
@@ -291,8 +293,8 @@ const ProfileTabContents = ({
                     <RecordInput
                       key={key}
                       placeholder={t([
-                        `profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
-                        `profileEditor.tabs.other.placeholder.default`,
+                        `input.profileEditor.tabs.other.placeholder.${convertFormSafeKey(key)}`,
+                        `input.profileEditor.tabs.other.placeholder.default`,
                       ])}
                       error={getFieldState(`other.${key}`, formState).error?.message}
                       validated={getFieldState(`other.${key}`, formState).isDirty}

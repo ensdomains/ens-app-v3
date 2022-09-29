@@ -30,7 +30,11 @@
     "burnSelected": "Burn Selected",
     "extend": "Extend",
     "delete": "Delete",
-    "sort": "Sort"
+    "sort": "Sort",
+    "remindMe": "Remind Me",
+    "begin": "Begin",
+    "finish": "Finish",
+    "skip": "Skip"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -117,7 +121,9 @@
       "burnFuses": "Burn permissions",
       "createSubname": "Create Subname",
       "deleteSubname": "Delete Subname",
-      "extendNames": "Extend Names"
+      "extendNames": "Extend Names",
+      "commitName": "Start countdown",
+      "registerName": "Register Name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -130,7 +136,8 @@
       "updateEthAddress": "Update ETH address to this address",
       "testSendName": "Set the controller and registrant of the name",
       "createSubname": "Create a new subname on the name",
-      "burnFuses": "Burn the chosen permissions until name expiry"
+      "burnFuses": "Burn the chosen permissions until name expiry",
+      "commitName": "Start countdown to register name"
     },
     "itemLabel": {
       "name": "Name",

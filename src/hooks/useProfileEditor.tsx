@@ -1,3 +1,9 @@
+import React, { ComponentProps, useEffect, useState } from 'react'
+import { useForm, useWatch } from 'react-hook-form'
+import { useTranslation } from 'react-i18next'
+
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+
 import accountsOptions from '@app/components/@molecules/ProfileEditor/options/accountsOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import otherOptions from '@app/components/@molecules/ProfileEditor/options/otherOptions'
@@ -11,10 +17,6 @@ import {
   convertProfileToProfileFormObject,
   getDirtyFields,
 } from '@app/utils/editor'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { ComponentProps, useEffect, useState } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
-import { useTranslation } from 'react-i18next'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -54,12 +56,13 @@ type ExpandableRecordsState = {
 }
 
 export type Props = {
-  callback: (data: RecordOptions) => void
+  callback: (data: RecordOptions, event?: React.BaseSyntheticEvent) => void
   profile: ReturnType<typeof useProfile>['profile']
+  returnAllFields?: boolean
 }
 
-const useProfileEditor = ({ callback, profile }: Props) => {
-  const { t } = useTranslation('profile')
+const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
+  const { t } = useTranslation('transactionFlow')
 
   const {
     register,
@@ -87,7 +90,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     shouldUnregister: false,
   })
 
-  const [tab, setTab] = useState<TabType>('address')
+  const [tab, setTab] = useState<TabType>('general')
   const handleTabClick = (_tab: TabType) => () => setTab(_tab)
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -111,6 +114,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     options: accountsOptions,
     setValue,
     getValues,
+    returnAllFields,
   })
 
   const {
@@ -127,6 +131,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     options: addressOptions,
     setValue,
     getValues,
+    returnAllFields,
   })
 
   const [hasExistingWebsite, setHasExistingWebsite] = useState(false)
@@ -143,6 +148,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     options: otherOptions,
     setValue,
     getValues,
+    returnAllFields,
   })
 
   const AddButtonProps = (() => {
@@ -153,8 +159,8 @@ const useProfileEditor = ({ callback, profile }: Props) => {
           autocomplete: true,
           options: availableAccountOptions,
           messages: {
-            addRecord: t('profileEditor.tabs.accounts.addAccount'),
-            noOptions: t('profileEditor.tabs.accounts.noOptions'),
+            addRecord: t('input.profileEditor.tabs.accounts.addAccount'),
+            noOptions: t('input.profileEditor.tabs.accounts.noOptions'),
           },
           onAddRecord: (key: string) => {
             addAccountKey(key)
@@ -169,8 +175,8 @@ const useProfileEditor = ({ callback, profile }: Props) => {
           autocomplete: true,
           options: availableAddressOptions,
           messages: {
-            addRecord: t('profileEditor.tabs.address.addAddress'),
-            noOptions: t('profileEditor.tabs.address.noOptions'),
+            addRecord: t('input.profileEditor.tabs.address.addAddress'),
+            noOptions: t('input.profileEditor.tabs.address.noOptions'),
           },
           onAddRecord: (key: string) => {
             addAddressKey(key)
@@ -184,7 +190,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
         return {
           options: websiteOptions,
           messages: {
-            selectOption: t('profileEditor.tabs.contentHash.addContentHash'),
+            selectOption: t('input.profileEditor.tabs.contentHash.addContentHash'),
           },
           onAddRecord: (key: string) => {
             const option = websiteOptions.find(({ value }) => value === key)
@@ -199,8 +205,8 @@ const useProfileEditor = ({ callback, profile }: Props) => {
         return {
           createable: true,
           messages: {
-            addRecord: t('profileEditor.tabs.other.addRecord'),
-            createRecord: t('profileEditor.tabs.other.createRecord'),
+            addRecord: t('input.profileEditor.tabs.other.addRecord'),
+            createRecord: t('input.profileEditor.tabs.other.createRecord'),
           },
           onAddRecord: (record: string) => {
             addOtherKey(record)
@@ -235,8 +241,11 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     }
   }, [profile, reset])
 
-  const handleProfileSubmit = async (profileData: ProfileEditorType) => {
-    const dirtyFields = getDirtyFields(formState.dirtyFields, profileData) as ProfileEditorType
+  const getValuesAsProfile = (profileData: ProfileEditorType) => {
+    const dirtyFields = getDirtyFields(
+      formState[returnAllFields ? 'touchedFields' : 'dirtyFields'],
+      profileData,
+    ) as ProfileEditorType
 
     const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(([key, value]) => ({
       key,
@@ -250,14 +259,20 @@ const useProfileEditor = ({ callback, profile }: Props) => {
 
     const contentHash = dirtyFields.website
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const records = {
+    return {
       texts,
       coinTypes,
       contentHash,
     }
+  }
 
-    callback(records)
+  const handleProfileSubmit = async (
+    profileData: ProfileEditorType,
+    event?: React.BaseSyntheticEvent,
+  ) => {
+    const records = getValuesAsProfile(profileData)
+
+    callback(records, event)
   }
 
   const avatar = useWatch({
@@ -284,6 +299,7 @@ const useProfileEditor = ({ callback, profile }: Props) => {
     control,
     setFocus,
     handleSubmit: handleSubmit(handleProfileSubmit),
+    getValuesAsProfile,
     clearErrors,
     tab,
     setTab,

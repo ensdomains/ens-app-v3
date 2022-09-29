@@ -54,17 +54,17 @@ export const Invoice = ({ totalLabel = 'Estimated total', unit = 'eth', items }:
 
   return (
     <Container>
-      {items.map(({ label, value, color }) => (
-        <LineItem $color={color} key={label}>
+      {items.map(({ label, value, color }, inx) => (
+        <LineItem data-testid={`invoice-item-${inx}`} $color={color} key={label}>
           <div>{label}</div>
-          <div>
+          <div data-testid={`invoice-item-${inx}-amount`}>
             <CurrencyText eth={value} currency={unit} />
           </div>
         </LineItem>
       ))}
       <Total>
         <div>{totalLabel}</div>
-        <div>
+        <div data-testid="invoice-total">
           <CurrencyText eth={total} currency={unit} />
         </div>
       </Total>

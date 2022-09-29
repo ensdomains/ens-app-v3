@@ -4,6 +4,14 @@ import { NameDetailSnippet } from './NameSnippet'
 
 jest.mock('@app/utils/BreakpointProvider')
 
+jest.setTimeout(5000)
+
+jest.mock('@app/utils/EnsProvider', () => ({
+  useEns: () => ({
+    getName: jest.fn(),
+  }),
+}))
+
 describe('NameSnippetMobile', () => {
   const baseMockData = {
     name: 'nick.eth',

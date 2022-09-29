@@ -8,12 +8,15 @@ import React, {
   useState,
 } from 'react'
 
+import useCallbackOnTransaction, {
+  UpdateCallback,
+} from '@app/hooks/transactions/useCallbackOnTransaction'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import type { DataInputComponent } from './input'
 import { helpers, initialState, reducer } from './reducer'
-import { InternalTransactionFlow, TransactionFlowItem } from './types'
+import { GenericTransaction, InternalTransactionFlow, TransactionFlowItem } from './types'
 
 type ShowDataInput = <C extends keyof DataInputComponent>(
   key: string,
@@ -32,6 +35,9 @@ type ProviderValue = {
   getTransactionFlowStage: (
     key: string,
   ) => 'undefined' | 'input' | 'intro' | 'transaction' | 'completed'
+  getLatestTransaction: (key: string) => GenericTransaction | undefined
+  stopCurrentFlow: () => void
+  cleanupFlow: (key: string) => void
 }
 
 const TransactionContext = React.createContext<ProviderValue>({
@@ -41,6 +47,9 @@ const TransactionContext = React.createContext<ProviderValue>({
   getTransactionIndex: () => 0,
   getResumable: () => false,
   getTransactionFlowStage: () => 'undefined',
+  getLatestTransaction: () => undefined,
+  stopCurrentFlow: () => {},
+  cleanupFlow: () => {},
 })
 
 export const TransactionFlowProvider = ({ children }: { children: ReactNode }) => {
@@ -98,7 +107,34 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     [state.items],
   )
 
-  const providerValue = useMemo(() => {
+  const updateCallback = useCallback<UpdateCallback>(
+    ({ key, status, hash, minedData }) => {
+      if (status !== 'pending' && key) {
+        dispatch({
+          name: 'setTransactionStageFromUpdate',
+          payload: { key, status, hash, timestamp: minedData.timestamp * 1000 },
+        })
+      }
+    },
+    [dispatch],
+  )
+
+  useCallbackOnTransaction(updateCallback)
+
+  const getLatestTransaction = useCallback(
+    (key: string) => {
+      const { getSelectedItem } = helpers({
+        selectedKey: key,
+        items: state.items,
+      })
+      const item = getSelectedItem()
+      if (!item) return undefined
+      return item.transactions[item.currentTransaction]
+    },
+    [state.items],
+  )
+
+  const providerValue: ProviderValue = useMemo(() => {
     return {
       showDataInput: ((key, name, data) =>
         dispatch({
@@ -116,8 +152,11 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       getTransactionIndex,
       getResumable,
       getTransactionFlowStage,
+      getLatestTransaction,
+      stopCurrentFlow: () => dispatch({ name: 'stopFlow' }),
+      cleanupFlow: (key: string) => dispatch({ name: 'forceCleanupTransaction', payload: key }),
     }
-  }, [dispatch, getResumable, getTransactionIndex, getTransactionFlowStage])
+  }, [dispatch, getResumable, getTransactionIndex, getLatestTransaction, getTransactionFlowStage])
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
 

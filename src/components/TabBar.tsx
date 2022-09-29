@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'

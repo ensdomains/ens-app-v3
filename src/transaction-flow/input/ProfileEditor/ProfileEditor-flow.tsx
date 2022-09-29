@@ -1,19 +1,26 @@
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import { Button, mq } from '@ensdomains/thorin'
+
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
 import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
 import useProfileEditor from '@app/hooks/useProfileEditor'
+import { useResolverStatus } from '@app/hooks/useResolverStatus'
+import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { Button, mq } from '@ensdomains/thorin'
-import { useCallback, useState } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+
+import ResolverWarningOverlay from './ResolverWarningOverlay'
 
 const Container = styled.form(({ theme }) => [
   css`
@@ -104,7 +111,13 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
 
   const { name = '', resumable = false } = data
 
-  const { profile, loading } = useProfile(name, name !== '')
+  const { profile, loading: profileLoading } = useProfile(name, name !== '')
+
+  const resolverAddress = useContractAddress('PublicResolver')
+
+  const { status, loading: statusLoading } = useResolverStatus(name, profileLoading, {
+    skipCompare: resumable,
+  })
 
   const handleCancel = () => {
     if (onDismiss) onDismiss()
@@ -113,9 +126,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
   const handleCreateTransaction = useCallback(
     async (records: RecordOptions) => {
       if (!profile?.resolverAddress || !resolverAddress) return
-
-      if (!profile?.resolverAddress) return
-      if (profile.resolverAddress === resolverAddress) {
+      if (status?.hasLatestResolver) {
         dispatch({
           name: 'setTransactions',
           payload: [
@@ -165,6 +176,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
   const [showOverlay, setShowOverlay] = useState(false)
+
   useEffect(() => {
     if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
       setShowOverlay(true)

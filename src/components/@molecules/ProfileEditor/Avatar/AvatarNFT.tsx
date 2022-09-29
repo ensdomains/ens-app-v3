@@ -144,7 +144,7 @@ export const AvatarNFT = ({
   handleCancel: () => void
   handleSubmit: (display: string, uri: string) => void
 }) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
 
   const { address: _address } = useAccount()
   const address = _address!
@@ -205,13 +205,13 @@ export const AvatarNFT = ({
     return (
       <>
         <Dialog.Heading
-          title={t('profileEditor.tabs.avatar.nft.selected.title')}
-          subtitle={t('profileEditor.tabs.avatar.nft.selected.subtitle')}
+          title={t('input.profileEditor.tabs.avatar.nft.selected.title')}
+          subtitle={t('input.profileEditor.tabs.avatar.nft.selected.subtitle')}
         />
         <SelectedNFTContainer>
           <SelectedNFTImage src={nftReference.media[0].gateway} />
           <Typography weight="bold">
-            {nftReference.title || t('profileEditor.tabs.avatar.nft.unknown')}
+            {nftReference.title || t('input.profileEditor.tabs.avatar.nft.unknown')}
           </Typography>
           <Typography>{nftReference.description}</Typography>
         </SelectedNFTContainer>
@@ -236,7 +236,7 @@ export const AvatarNFT = ({
   if (isLoading) {
     innerContent = (
       <LoadingContainer>
-        <Heading>{t('profileEditor.tabs.avatar.nft.loading')}</Heading>
+        <Heading>{t('input.profileEditor.tabs.avatar.nft.loading')}</Heading>
         <SpinnerRow />
       </LoadingContainer>
     )
@@ -249,7 +249,7 @@ export const AvatarNFT = ({
           label="search"
           value={searchedInput}
           onChange={(e) => setSearchedInput(e.target.value)}
-          placeholder={t('profileEditor.tabs.avatar.nft.searchPlaceholder')}
+          placeholder={t('input.profileEditor.tabs.avatar.nft.searchPlaceholder')}
         />
         <ScrollBoxWithSpinner
           data-testid="nft-scroll-box"
@@ -267,7 +267,7 @@ export const AvatarNFT = ({
               >
                 <NFTImage src={NFT.media[0].thumbnail || NFT.media[0].gateway} loading="lazy" />
                 <NFTName weight="bold">
-                  {NFT.title || t('profileEditor.tabs.avatar.nft.unknown')}
+                  {NFT.title || t('input.profileEditor.tabs.avatar.nft.unknown')}
                 </NFTName>
               </NFTContainer>
             ))}
@@ -278,14 +278,14 @@ export const AvatarNFT = ({
   } else {
     innerContent = (
       <LoadingContainer>
-        <Heading>{t('profileEditor.tabs.avatar.nft.noNFTs')}</Heading>
+        <Heading>{t('input.profileEditor.tabs.avatar.nft.noNFTs')}</Heading>
       </LoadingContainer>
     )
   }
 
   return (
     <>
-      <Dialog.Heading title={t('profileEditor.tabs.avatar.nft.title')} />
+      <Dialog.Heading title={t('input.profileEditor.tabs.avatar.nft.title')} />
       {innerContent}
       <Dialog.Footer
         leading={

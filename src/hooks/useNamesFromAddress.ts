@@ -40,7 +40,7 @@ export const useNamesFromAddress = ({
   const { ready, getNames } = useEns()
 
   const { data, isLoading, status, refetch } = useQuery(
-    ['names', address],
+    ['names', address, 'graph'],
     () =>
       getNames({
         address: address!,

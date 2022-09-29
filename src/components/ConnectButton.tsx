@@ -44,7 +44,23 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
         `,
 )
 
-export const ConnectButton = ({ isTabBar, large }: { isTabBar?: boolean; large?: boolean }) => {
+type Props = {
+  isTabBar?: boolean
+  large?: boolean
+  inHeader?: boolean
+}
+
+const calculateTestId = (isTabBar: boolean | undefined, inHeader: boolean | undefined) => {
+  if (isTabBar) {
+    return 'tabbar-connect-button'
+  }
+  if (!inHeader) {
+    return 'body-connect-button'
+  }
+  return 'connect-button'
+}
+
+export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
   const { openConnectModal } = useConnectModal()
@@ -52,7 +68,7 @@ export const ConnectButton = ({ isTabBar, large }: { isTabBar?: boolean; large?:
   return (
     <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
       <Button
-        data-testid={isTabBar ? 'tabbar-connect-button' : 'connect-button'}
+        data-testid={calculateTestId(isTabBar, inHeader)}
         onClick={() => openConnectModal?.()}
         variant="primary"
         size={breakpoints.md || large ? 'medium' : 'extraSmall'}
@@ -109,7 +125,7 @@ export const HeaderConnect = () => {
   const { address } = useAccount()
 
   if (!address) {
-    return <ConnectButton />
+    return <ConnectButton inHeader />
   }
 
   return <HeaderProfile address={address} />

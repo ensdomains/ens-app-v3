@@ -37,7 +37,9 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const ownerData = batchData?.[0] as ReturnedENS['getOwner']
 
-  const registrationStatus = getRegistrationStatus(batchData, normalisedName)
+  const registrationStatus = batchData
+    ? getRegistrationStatus(batchData, normalisedName)
+    : undefined
 
   const expiryData = batchData?.[1] as ReturnedENS['getExpiry']
 

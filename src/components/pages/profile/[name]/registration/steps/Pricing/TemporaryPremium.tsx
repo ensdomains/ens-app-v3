@@ -8,6 +8,7 @@ import {
   useRef,
   useState,
 } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { DefaultTheme, css } from 'styled-components'
 
 import { Button, Dropdown, Helper, Input, Typography, mq } from '@ensdomains/thorin'
@@ -79,10 +80,11 @@ const dotStyle =
 
 const ChartContainer = styled.div(
   ({ theme }) => css`
-    position: relative;
     --space: ${theme.space['0.5']};
     --dist: calc(calc(100% - calc(var(--space) * 21)) / 21);
     --color: ${theme.colors.accent};
+
+    position: relative;
     width: 100%;
     height: 200px;
     border-radius: ${theme.radii.large};
@@ -144,7 +146,7 @@ const TooltipWrapper = styled.div(
     --y: var(--premium-chart-hover-y);
     --d: var(--premium-chart-hover-display);
     position: relative;
-    filter: drop-shadow(0px 0px 1px #e8e8e8) drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 0 1px #e8e8e8) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
     pointer-events: none;
     display: var(--d);
     z-index: 3;
@@ -291,6 +293,8 @@ type Props = {
 }
 
 const TemporaryPremium = ({ startDate, name }: Props) => {
+  const { t } = useTranslation('register')
+
   const bgRef = useRef<HTMLDivElement>(null)
   const dateInputRef = useRef<HTMLInputElement>(null)
 
@@ -508,15 +512,12 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
     <Helper type="info">
       <Container>
         <HeadingContainer>
-          <Typography weight="bold">This name has a temporary premium</Typography>
-          <Typography>
-            To give fair opportunity to recently expired names, the premium starts at $100,000,000
-            and reduces to $0 over 21 days. You can calculate the premium on a date below.
-          </Typography>
+          <Typography weight="bold">{t('steps.pricing.premium.heading')}</Typography>
+          <Typography>{t('steps.pricing.premium.subheading')}</Typography>
         </HeadingContainer>
         <InputContainer>
           <Input
-            label="Target price"
+            label={t('steps.pricing.premium.targetPrice')}
             value={makeDisplay(selectedPrice, 2, 'usd').split('$')[1]}
             onChange={handleCurrencyInput}
             type="text"
@@ -526,7 +527,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
           />
           <Input
             size="medium"
-            label="Target date"
+            label={t('steps.pricing.premium.targetDate')}
             value={dateToInput(selectedDate)}
             min={dateToInput(nowDate)}
             step={60}
@@ -550,8 +551,11 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
           <Tooltip />
         </ChartContainer>
         <TimezoneText>
-          Date and time shown in local time zone (
-          {nowDate.toLocaleString(undefined, { timeZoneName: 'longOffset' }).replace(/.* /g, '')})
+          {t('steps.pricing.premium.timezone', {
+            timezone: nowDate
+              .toLocaleString(undefined, { timeZoneName: 'longOffset' })
+              .replace(/.* /g, ''),
+          })}
         </TimezoneText>
         <MobileFullWidth>
           <Dropdown
@@ -564,7 +568,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             }))}
           >
             <Button prefix={<CalendarIcon as={CalendarSVG} />} shadowless>
-              Remind Me
+              {t('action.remindMe', { ns: 'common' })}
             </Button>
           </Dropdown>
         </MobileFullWidth>
