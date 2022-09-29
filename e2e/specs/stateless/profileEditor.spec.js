@@ -61,6 +61,8 @@ describe('Profile Editor', () => {
     cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(1000)
+    cy.reload()
     cy.contains('Test Name').should('be.visible')
   })
 })
