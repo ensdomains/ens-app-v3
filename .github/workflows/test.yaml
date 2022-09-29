@@ -106,7 +106,7 @@ jobs:
           docker pull ghcr.io/ensdomains/ens-metadata-service:latest
 
       - name: Configure display
-        run: Xvfb :20 -extension GLX -screen 0 1920x1080x16 &
+        run: Xvfb :20 -screen 0 1920x1080x16 &
 
       - name: Run tests
         run: DISPLAY=:20 pnpm e2e:ci -nb
@@ -158,7 +158,7 @@ jobs:
         run: tar -xvf stateful-build.tar
 
       - name: Configure display
-        run: Xvfb :20 -extension GLX -screen 0 1920x1080x16 &
+        run: Xvfb :20 -screen 0 1920x1080x16 &
 
       - name: Run tests
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
