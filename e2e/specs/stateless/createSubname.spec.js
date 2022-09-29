@@ -30,8 +30,6 @@ describe('Create Subname', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.reload()
-    cy.findByTestId('subnames-tab').click()
     cy.findByText('test.test123.eth').should('be.visible')
   })
   it('should allow creating a subnames if the user is the wrapped owner', () => {
@@ -43,8 +41,6 @@ describe('Create Subname', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.reload()
-    cy.findByTestId('subnames-tab').click()
     cy.findByText('test.wrapped.eth').should('be.visible')
   })
   it('should not allow adding a subname that already exists', () => {
