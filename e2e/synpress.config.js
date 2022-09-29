@@ -13,8 +13,8 @@ module.exports = defineConfig({
   screenshotsFolder: 'e2e/screenshots',
   videosFolder: 'e2e/videos',
   chromeWebSecurity: true,
-  viewportWidth: 1920,
-  viewportHeight: 1080,
+  viewportWidth: 1366,
+  viewportHeight: 768,
   env: {
     coverage: false,
   },
