@@ -60,7 +60,6 @@ describe('Settings', () => {
         .should('contain.text', 'Your "Test Transaction" transaction failed and was reverted')
       cy.findByTestId('close-icon').click()
     })
-
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
       cy.contains('Stop Automine').click()
       cy.contains('Add Successful Transaction').click()
@@ -75,6 +74,10 @@ describe('Settings', () => {
         .should('contain.text', 'Transaction Successful')
         .should('contain.text', 'Your "Test Transaction" transaction was successful')
       cy.findByTestId('close-icon').click()
+    })
+    it('should clear transactions when clear is pressed', () => {
+      cy.contains('Clear').click()
+      cy.findByTestId('transaction-confirmed').should('not.exist')
     })
   })
 })
