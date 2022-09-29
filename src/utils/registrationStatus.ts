@@ -1,5 +1,7 @@
-import type { PublicENS, ReturnedENS } from '@app/types/index'
 import { BigNumber } from 'ethers'
+
+import type { PublicENS, ReturnedENS } from '@app/types/index'
+
 import { emptyAddress } from './constants'
 import { yearsToSeconds } from './utils'
 

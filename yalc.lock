@@ -1,11 +1,6 @@
 {
   "version": "v1",
   "packages": {
-    "@ensdomains/ens-test-env": {
-      "signature": "8e4319103e8decde4138775b9d1f20f2",
-      "file": true,
-      "replaced": "^0.2.3"
-    },
     "@ensdomains/thorin": {
       "signature": "39b33ffc3bf11225a979ffd708625e88",
       "pure": true,
