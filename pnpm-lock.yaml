@@ -24,9 +24,9 @@ specifiers:
   '@ensdomains/address-encoder': ^0.2.18
   '@ensdomains/buffer': ^0.1.0
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-test-env': ^0.3.0
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
+  '@ensdomains/ensjs': 3.0.0-alpha.22
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': ^0.6.16
   '@ethersproject/providers': ^5.7.0
@@ -133,7 +133,7 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.18
   '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts_hardhat@2.11.1
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs_ethers@5.7.0
+  '@ensdomains/ensjs': 3.0.0-alpha.22_ethers@5.7.0
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.16_6ycby5qtikbhve4sxtfce3vpny
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_fcsnifgkfb6ypkeqq3oellhnki
@@ -166,7 +166,7 @@ devDependencies:
   '@cloudflare/workers-types': 3.16.0
   '@cloudflare/wrangler': 1.19.12
   '@ensdomains/buffer': 0.1.0_hardhat@2.11.1
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-test-env': 0.3.0
   '@ethersproject/providers': 5.7.0
   '@next/bundle-analyzer': 12.3.0
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -2203,6 +2203,29 @@ packages:
       multihashes: 2.0.0
     dev: false
 
+  /@ensdomains/ens-test-env/0.3.0:
+    resolution: {integrity: sha512-R3VKPz4ZInKPl61dscq/lqMHqGruPf9srd9CG4Oz2YyA8iEpQ76Ndt3+PFyteOaULZDUroPrY3UfZOr+EQ7Tlw==}
+    hasBin: true
+    dependencies:
+      '@ethersproject/wallet': 5.7.0
+      ansi-colors: 4.1.1
+      cli-progress: 3.11.2
+      commander: 9.4.0
+      concurrently: 7.4.0
+      docker-compose: 0.23.17
+      dotenv: 16.0.2
+      fs-extra: 10.1.0
+      ganache: 7.4.3
+      got: 12.3.1
+      lz4: 0.6.5
+      node-fetch: 3.2.10
+      progress-stream: 2.0.0
+      tar-fs: 2.1.1
+      wait-on: 6.0.1
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
   /@ensdomains/ens-validation/0.1.0:
     resolution: {integrity: sha512-rbDh2K6GfqXvBcJUISaTTYEt3f079WA4ohTE5Lh4/8EaaPAk/9vk3EisMUQV2UVxeFIZQEEyRCIOmRTpqN0W7A==}
     dev: false
@@ -2235,6 +2258,23 @@ packages:
       - utf-8-validate
     dev: true
     optional: true
+
+  /@ensdomains/ensjs/3.0.0-alpha.22_ethers@5.7.0:
+    resolution: {integrity: sha512-yLNN5BJw7W4Nc1SpKaInYdAukKvTm+eMn+N7yFmKfXSNOXxslhtHHrlSL/HIIgXooZUFy/QNaI8GiZW3dbFUfA==}
+    peerDependencies:
+      ethers: '*'
+    dependencies:
+      '@ensdomains/address-encoder': 0.2.16
+      '@ensdomains/content-hash': 2.5.7
+      dns-packet: 5.4.0
+      ethers: 5.7.0
+      graphql: 16.5.0
+      graphql-request: 5.0.1-next.1_graphql@16.5.0
+      idna-uts46-hx: 3.4.0
+      traverse: 0.6.6
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
@@ -21192,51 +21232,6 @@ packages:
       - web3-core-promievent
       - web3-eth-abi
       - web3-utils
-    dev: false
-
-  file:.yalc/@ensdomains/ens-test-env:
-    resolution: {directory: .yalc/@ensdomains/ens-test-env, type: directory}
-    name: '@ensdomains/ens-test-env'
-    version: 0.2.3
-    hasBin: true
-    dependencies:
-      '@ethersproject/wallet': 5.7.0
-      ansi-colors: 4.1.1
-      cli-progress: 3.11.2
-      commander: 9.4.0
-      concurrently: 7.4.0
-      docker-compose: 0.23.17
-      dotenv: 16.0.2
-      fs-extra: 10.1.0
-      ganache: 7.4.3
-      got: 12.3.1
-      lz4: 0.6.5
-      node-fetch: 3.2.10
-      progress-stream: 2.0.0
-      tar-fs: 2.1.1
-      wait-on: 6.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
-
-  file:.yalc/@ensdomains/ensjs_ethers@5.7.0:
-    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
-    id: file:.yalc/@ensdomains/ensjs
-    name: '@ensdomains/ensjs'
-    version: 3.0.0-alpha.21
-    peerDependencies:
-      ethers: '*'
-    dependencies:
-      '@ensdomains/address-encoder': 0.2.16
-      '@ensdomains/content-hash': 2.5.7
-      dns-packet: 5.4.0
-      ethers: 5.7.0
-      graphql: 16.5.0
-      graphql-request: 5.0.1-next.1_graphql@16.5.0
-      idna-uts46-hx: 3.4.0
-      traverse: 0.6.6
-    transitivePeerDependencies:
-      - encoding
     dev: false
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:
