@@ -45,7 +45,7 @@
       "items": [
         "Complete a transaction to begin the timer",
         "Wait 60 seconds for the timer to complete",
-        "Complete a third transaction to secure your name"
+        "Complete a second transaction to secure your name"
       ],
       "setupProfile": "I'd like to set up my profile first"
     },
