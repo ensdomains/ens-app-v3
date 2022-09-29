@@ -61,6 +61,8 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     },
   )
 
+  console.log('state: ', state)
+
   const getTransactionIndex = useCallback(
     (key: string) => state.items[key]?.currentTransaction || 0,
     [state.items],
@@ -118,6 +120,8 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       clearTimeout(timeout)
     }
   }, [state.selectedKey, dispatch])
+
+  console.log('providervalue: ', providerValue)
 
   return (
     <TransactionContext.Provider value={providerValue}>

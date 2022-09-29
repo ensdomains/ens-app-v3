@@ -1,6 +1,6 @@
 import { useQuery } from 'wagmi'
 
-import { truncateFormat } from '@ensdomains/ensjs/dist/cjs/utils/format'
+import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
 import { useEns } from '@app/utils/EnsProvider'
 

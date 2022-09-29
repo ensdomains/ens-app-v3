@@ -10,7 +10,7 @@ import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 
-import { parseInputType, validateName } from '@ensdomains/ensjs/dist/cjs/utils/validation'
+import { parseInputType, validateName } from '@ensdomains/ensjs'
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'

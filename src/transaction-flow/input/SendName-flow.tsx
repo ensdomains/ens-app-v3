@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useProvider, useQuery } from 'wagmi'
+import { useAccount, useProvider, useQuery } from 'wagmi'
 
 import { Button, Checkbox, Dialog, Helper, Input, Typography, mq } from '@ensdomains/thorin'
 
@@ -11,10 +11,13 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
 import { Outlink } from '@app/components/Outlink'
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
@@ -121,15 +124,16 @@ export type Props = {
   data: Data
 } & TransactionDialogPassthrough
 
-export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
+export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const formRef = useRef<HTMLFormElement>(null)
   const { ready, getRecords } = useEns()
+  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
+  const { ownerData, isWrapped } = useBasicName(name as string)
+  const { address } = useAccount()
+  const { canChangeOwner, canChangeRegistrant } = useSelfAbilities(address, ownerData)
 
   const { profile = { resolverAddress: '' } } = useProfile(name as string)
-  const { resolverAddress } = profile
-  const lastestResolverAddress = RESOLVER_ADDRESSES[0]
-  const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
   const {
     register,
@@ -160,59 +164,97 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
     ethNameValidation || sendNameWatch,
   )
 
-  console.log('ethNameValidation: ', ethNameValidation)
-  console.log('sendNameWatch: ', sendNameWatch)
-  console.log('primaryName: ', primaryName)
-
-  useEffect(() => {
-    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', customResolver: '' })
-  }, [isResolverAddressLatest, reset])
-
   const { t } = useTranslation('transactionFlow')
 
-  const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
-  const customResolver = watch('customResolver')
-
-  const { errors: resolverWarnings } = useResolverHasInterfaces(
-    ['IAddrResolver', 'ITextResolver', 'IContentHashResolver'],
-    customResolver,
-    resolverChoice !== 'custom',
-    {
-      fallbackMsg: 'Cannot determine if address supports resolver methods',
-    },
-  )
-
-  const handleTransaction = async (values: FormData) => {
-    const { resolverChoice: choice, customResolver: address } = values
-    let newResolver
-    if (choice === 'latest') {
-      newResolver = lastestResolverAddress
-    }
-    if (choice === 'custom') {
-      newResolver = address
-    }
-    if (!newResolver) return
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        makeTransactionItem('updateResolver', {
-          name,
-          contract: 'registry',
-          resolver: newResolver,
-          oldResolver: resolverAddress!,
-        }),
-      ],
-    })
-    dispatch({ name: 'setFlowStage', payload: 'transaction' })
-  }
+  console.log('ownerData: ', ownerData)
 
   const handleSubmitForm = () => {
-    formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
+    console.log('handleSubmitForm')
+    const isController = ownerData?.owner === address
+
+    if (managerChoiceWatch && !ownerChoiceWatch) {
+      dispatch({
+        name: 'setTransactions',
+        payload: [
+          makeTransactionItem('transferController', {
+            name,
+            newOwner: sendNameWatch,
+          }),
+        ],
+      })
+      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      return
+    }
+
+    if (!managerChoiceWatch && ownerChoiceWatch) {
+      if (isWrapped) {
+        dispatch({
+          name: 'setTransactions',
+          payload: [
+            makeTransactionItem('transferName', {
+              name,
+              newOwner: sendNameWatch,
+              contract: 'nameWrapper',
+            }),
+          ],
+        })
+        dispatch({ name: 'setFlowStage', payload: 'transaction' })
+        return
+      }
+
+      //subname
+      if (name.split('.').length > 2) {
+        dispatch({
+          name: 'setTransactions',
+          payload: [
+            makeTransactionItem('transferName', {
+              name,
+              newOwner: sendNameWatch,
+              contract: 'registry',
+            }),
+          ],
+        })
+        dispatch({ name: 'setFlowStage', payload: 'transaction' })
+        return
+      }
+
+      //.eth name
+      dispatch({
+        name: 'setTransactions',
+        payload: [
+          makeTransactionItem('transferName', {
+            name,
+            newOwner: sendNameWatch,
+            contract: 'baseRegistrar',
+          }),
+        ],
+      })
+      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      return
+    }
+
+    if (managerChoiceWatch && ownerChoiceWatch) {
+      //.eth name
+      dispatch({
+        name: 'setTransactions',
+        payload: [
+          makeTransactionItem('transferName', {
+            name,
+            newOwner: sendNameWatch,
+            contract: 'baseRegistrar',
+          }),
+          makeTransactionItem('transferController', {
+            name,
+            newOwner: sendNameWatch,
+          }),
+        ],
+      })
+      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      return
+    }
   }
 
   const hasErrors = () => {
-    //   const managerChoiceWatch = watch('managerChoice')
-    //   const ownerChoiceWatch = watch('ownerChoice')
     if (!managerChoiceWatch && !ownerChoiceWatch) {
       return { formMessage: 'Must choose either Manager or Owner to send' }
     }
@@ -252,11 +294,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
         <Checkbox {...register('ownerChoice')} size="large" variant="switch" value="owner" />
       </SwitchBox>
       <InnerContainer>
-        <form
-          data-testid="edit-resolver-form"
-          onSubmit={handleSubmit(handleTransaction)}
-          ref={formRef}
-        >
+        <form data-testid="edit-resolver-form" ref={formRef}>
           <Input
             label="Send to"
             placeholder="Enter an Ethereum address or ENS name"
@@ -301,4 +339,4 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   )
 }
 
-export default EditResolver
+export default SendName

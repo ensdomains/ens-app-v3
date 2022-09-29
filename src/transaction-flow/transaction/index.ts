@@ -4,6 +4,8 @@ import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
 import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
+import transferController from './transferController'
+import transferName from './transferName'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateResolver from './updateResolver'
@@ -20,6 +22,8 @@ export const transactions = {
   migrateProfileWithSync,
   burnFuses,
   createSubname,
+  transferName,
+  transferController,
 }
 
 export type Transaction = typeof transactions

@@ -1,6 +1,6 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 
-import { RecordOptions } from '@ensdomains/ensjs/dist/cjs/utils/recordHelpers'
+import { RecordOptions } from '@ensdomains/ensjs//utils/recordHelpers'
 
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 

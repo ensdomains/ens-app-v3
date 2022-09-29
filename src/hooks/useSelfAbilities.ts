@@ -9,7 +9,7 @@ export const useSelfAbilities = (
   return useMemo(() => {
     const abilities = {
       canEdit: false,
-      canSend: false,
+      canSend: true,
       canChangeOwner: false,
       canChangeRegistrant: false,
     }

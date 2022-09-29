@@ -1,4 +1,4 @@
-import { DecodedContentHash } from '@ensdomains/ensjs/dist/cjs/utils/contentHash'
+import { DecodedContentHash } from '@ensdomains/ensjs//utils/contentHash'
 
 export const getContentHashLink = (
   name: string,
