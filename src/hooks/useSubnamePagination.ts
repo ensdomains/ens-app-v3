@@ -23,7 +23,6 @@ export const useSubnamePagination = (name: string, page: number) => {
       const result = await getSubnames({
         name,
         page: 0,
-        isLargeQuery: true,
         lastSubnames: pageParam || [{ createdAt: Math.floor(Date.now() / 1000) }],
         orderBy: 'createdAt',
         orderDirection: 'desc',

@@ -1,6 +1,6 @@
 import { arrayify } from 'ethers/lib/utils'
 
-import { namehash } from '@ensdomains/ensjs//utils/normalise'
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 import { emptyAddress } from './constants'
 

@@ -2,8 +2,8 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { useRouter } from 'next/router'
 
-import { labelhash } from '@ensdomains/ensjs//utils/labels'
-import { namehash } from '@ensdomains/ensjs//utils/normalise'
+import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useSubnamePagination } from '@app/hooks/useSubnamePagination'

@@ -1,23 +1,18 @@
 import { ethers } from 'ethers'
-import { useEffect, useRef, useState } from 'react'
+import { useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useProvider, useQuery } from 'wagmi'
+import { useAccount, useQuery } from 'wagmi'
 
 import { Button, Checkbox, Dialog, Helper, Input, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
 import { Outlink } from '@app/components/Outlink'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
-import { useProfile } from '@app/hooks/useProfile'
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -100,8 +95,9 @@ type Data = {
 }
 
 type FormData = {
-  resolverChoice: 'latest' | 'custom'
-  customResolver: string
+  managerChoice: string
+  ownerChoice: string
+  sendName: string
 }
 
 export type Props = {
@@ -111,29 +107,13 @@ export type Props = {
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const formRef = useRef<HTMLFormElement>(null)
-  const { ready, getRecords } = useEns()
-  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
+  const { getRecords } = useEns()
   const { ownerData, isWrapped } = useBasicName(name as string)
   const parentName = name.split('.').slice(1).join('.')
   const parentNameOwnerData = useBasicName(parentName)
   const { address } = useAccount()
-  const { canChangeOwner, canChangeRegistrant } = useSelfAbilities(address, ownerData)
-
-  const { profile = { resolverAddress: '' } } = useProfile(name as string)
-
-  console.log('parentNameOwnerData: ', parentNameOwnerData)
-
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    trigger,
-    watch,
-    getFieldState,
-  } = useForm<FormData>({
+  const { register, watch, getFieldState } = useForm<FormData>({
     mode: 'onChange',
-    defaultValues: { resolverChoice: 'latest', customResolver: '' },
   })
 
   const managerChoiceWatch = watch('managerChoice')
@@ -148,23 +128,19 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     { enabled: sendNameWatch?.includes('.eth') },
   )
 
-  const { name: primaryName, loading: isLoadingPrimaryName } = usePrimary(
-    ethNameValidation || sendNameWatch,
-  )
-
-  console.log('ownerData: ', ownerData)
+  const { name: primaryName } = usePrimary(ethNameValidation || sendNameWatch)
 
   const { data: canModify } = useQuery(['resolver', ownerData?.toString()], () => {
-    const { ownershipLevel, owner } = ownerData
     let _canModifyOwner = false
     const _canModifyManager = false
 
-    if (ownershipLevel === 'nameWrapper') {
-      _canModifyOwner = address === owner
+    if (ownerData?.ownershipLevel === 'nameWrapper') {
+      _canModifyOwner = address === ownerData?.owner
     }
 
-    if (ownershipLevel === 'registry') {
-      _canModifyOwner = address === owner || address === parentNameOwnerData?.ownerData?.owner
+    if (ownerData?.ownershipLevel === 'registry') {
+      _canModifyOwner =
+        address === ownerData?.owner || address === parentNameOwnerData?.ownerData?.owner
     }
 
     return {
@@ -173,16 +149,11 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     }
   })
 
-  console.log('data: ', canModify)
-
   const { t } = useTranslation('transactionFlow')
 
-  const isController = ownerData?.owner === address
-  const isRegistrant = ownerData?.registrant === address
   const ownershipLevel = ownerData?.ownershipLevel
 
   const handleSubmitForm = () => {
-    console.log('handleSubmitForm')
     const isController = ownerData?.owner === address
     const isRegistrant = ownerData?.registrant === address
 
@@ -250,7 +221,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
       // subname
       if (name.split('.').length > 2) {
-        if (address === ownerData.owner) {
+        if (address === ownerData?.owner) {
           dispatch({
             name: 'setTransactions',
             payload: [
@@ -326,14 +297,11 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     return false
   }
 
-  console.log('fieldstate: ', getFieldState('sendName'))
-  console.log('hasErrors: ', hasErrors())
-
   return (
     <>
       <Typography variant="extraLarge">Send Name</Typography>
       <Typography style={{ textAlign: 'center' }}>
-        Sending this name will make the  new address both the owner and manager.
+        Sending this name will make the new address both the owner and manager.
       </Typography>
       <Outlink href="">Learn more about name ownership.</Outlink>
       {canModify?.canModifyOwner && (
@@ -345,12 +313,13 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             </Typography>
           </TextContainer>
           <Checkbox
-            {...register('ownerChoice')}
+            label=""
             size="large"
             variant="switch"
             value="owner"
             defaultChecked
             data-testid="owner-checkbox"
+            {...register('ownerChoice')}
           />
         </SwitchBox>
       )}
@@ -363,12 +332,13 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             </Typography>
           </TextContainer>
           <Checkbox
-            {...register('managerChoice')}
             size="large"
+            label=""
             variant="switch"
             value="manager"
             defaultChecked
             data-testid="manager-checkbox"
+            {...register('managerChoice')}
           />
         </SwitchBox>
       )}

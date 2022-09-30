@@ -78,12 +78,12 @@ const ButtonIcon = styled.svg(
   `,
 )
 
-const handleSend = (showDataInput, name) => () => {
-  console.log('send')
-  showDataInput(`send-name-${name}`, 'SendName', {
-    name,
-  })
-}
+const handleSend =
+  (showDataInput: ReturnType<typeof useTransactionFlow>['showDataInput'], name: string) => () => {
+    showDataInput(`send-name-${name}`, 'SendName', {
+      name,
+    })
+  }
 
 export const DetailSnippet = ({
   expiryDate,
