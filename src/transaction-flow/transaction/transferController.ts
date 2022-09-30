@@ -6,6 +6,7 @@ import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 type Data = {
   name: string
   newOwner: string
+  isOwner: boolean
 }
 
 const displayItems = (
@@ -26,6 +27,7 @@ const displayItems = (
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const tx = ens.transferController.populateTransaction(data.name, {
     newOwner: data.newOwner,
+    isOwner: data.isOwner,
     signer,
   })
   return tx

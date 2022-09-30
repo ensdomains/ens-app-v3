@@ -19,7 +19,7 @@ export const useSelfAbilities = (
       (!ownerData.registrant && ownerData.owner === address)
     ) {
       abilities.canSend = true
-      abilities.canChangeOwner = true
+      abilities.canChangeOwner = false
       abilities.canChangeRegistrant = true
     }
     if (ownerData.owner === address) {

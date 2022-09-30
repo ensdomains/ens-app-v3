@@ -20,24 +20,8 @@ import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 import { makeTransactionItem } from '../transaction'
-
-const EditResolverFormContainer = styled.div(() => [
-  css`
-    width: 100%;
-  `,
-  mq.sm.min(css`
-    width: 510px;
-  `),
-])
-
-const InputContainer = styled.div(
-  ({ theme }) => css`
-    margin-left: ${theme.space[8]};
-  `,
-)
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
@@ -164,21 +148,76 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     ethNameValidation || sendNameWatch,
   )
 
+  const {
+    data: { canModifyManager, canModifyOwner },
+  } = useQuery(['resolver', ownerData?.toString()], async () => {
+    const { ownershipLevel, owner } = ownerData
+    let _canModifyOwner = false
+    let _canModifyManager = false
+
+    if (ownershipLevel === 'nameWrapper') {
+      _canModifyOwner = address === owner
+      _canModifyManager = false
+    }
+
+    return {
+      canModifyOwner: _canModifyOwner,
+      canModifyManager: _canModifyManager,
+    }
+  })
+
   const { t } = useTranslation('transactionFlow')
 
   console.log('ownerData: ', ownerData)
+  const isController = ownerData?.owner === address
+  const isRegistrant = ownerData?.registrant === address
+  const ownershipLevel = ownerData?.ownershipLevel
+  const canSetManager = isController || isRegistrant
 
   const handleSubmitForm = () => {
     console.log('handleSubmitForm')
     const isController = ownerData?.owner === address
+    const isRegistrant = ownerData?.registrant === address
 
-    if (managerChoiceWatch && !ownerChoiceWatch) {
+    if (ownershipLevel === 'nameWrapper') {
       dispatch({
         name: 'setTransactions',
         payload: [
-          makeTransactionItem('transferController', {
+          makeTransactionItem('transferName', {
             name,
             newOwner: sendNameWatch,
+            contract: 'nameWrapper',
+          }),
+        ],
+      })
+      dispatch({ name: 'setFlowStage', payload: 'transaction' })
+      return
+    }
+
+    if (managerChoiceWatch && !ownerChoiceWatch) {
+      // if is owner but not manager then need to reclaim
+      if (!isController && isRegistrant) {
+        dispatch({
+          name: 'setTransactions',
+          payload: [
+            makeTransactionItem('transferController', {
+              name,
+              newOwner: sendNameWatch,
+              isOwner: false,
+            }),
+          ],
+        })
+        dispatch({ name: 'setFlowStage', payload: 'transaction' })
+        return
+      }
+
+      dispatch({
+        name: 'setTransactions',
+        payload: [
+          makeTransactionItem('transferName', {
+            name,
+            newOwner: sendNameWatch,
+            contract: 'registry',
           }),
         ],
       })
@@ -202,7 +241,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         return
       }
 
-      //subname
+      // subname
       if (name.split('.').length > 2) {
         dispatch({
           name: 'setTransactions',
@@ -218,7 +257,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         return
       }
 
-      //.eth name
+      // .eth name
       dispatch({
         name: 'setTransactions',
         payload: [
@@ -234,7 +273,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     }
 
     if (managerChoiceWatch && ownerChoiceWatch) {
-      //.eth name
+      // .eth name
       dispatch({
         name: 'setTransactions',
         payload: [
@@ -243,14 +282,14 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             newOwner: sendNameWatch,
             contract: 'baseRegistrar',
           }),
-          makeTransactionItem('transferController', {
+          makeTransactionItem('transferName', {
             name,
             newOwner: sendNameWatch,
+            contract: 'registry',
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
-      return
     }
   }
 
@@ -275,27 +314,46 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         Sending this name will make the  new address both the owner and manager.
       </Typography>
       <Outlink href="">Learn more about name ownership.</Outlink>
-      <SwitchBox>
-        <TextContainer>
-          <Typography weight="bold">Make Manager</Typography>
-          <Typography weight="light" variant="small">
-            The Manager can change and set records
-          </Typography>
-        </TextContainer>
-        <Checkbox {...register('managerChoice')} size="large" variant="switch" value="manager" />
-      </SwitchBox>
-      <SwitchBox>
-        <TextContainer>
-          <Typography weight="bold">Make Owner</Typography>
-          <Typography weight="light" variant="small">
-            The owner can send to a new manager
-          </Typography>
-        </TextContainer>
-        <Checkbox {...register('ownerChoice')} size="large" variant="switch" value="owner" />
-      </SwitchBox>
+      {canModifyOwner && (
+        <SwitchBox>
+          <TextContainer>
+            <Typography weight="bold">Make Owner</Typography>
+            <Typography weight="light" variant="small">
+              The owner can send to a new manager
+            </Typography>
+          </TextContainer>
+          <Checkbox
+            {...register('ownerChoice')}
+            size="large"
+            variant="switch"
+            value="owner"
+            defaultChecked
+            data-testid="owner-checkbox"
+          />
+        </SwitchBox>
+      )}
+      {canModifyManager && (
+        <SwitchBox>
+          <TextContainer>
+            <Typography weight="bold">Make Manager</Typography>
+            <Typography weight="light" variant="small">
+              The Manager can change and set records
+            </Typography>
+          </TextContainer>
+          <Checkbox
+            {...register('managerChoice')}
+            size="large"
+            variant="switch"
+            value="manager"
+            defaultChecked
+            data-testid="manager-checkbox"
+          />
+        </SwitchBox>
+      )}
       <InnerContainer>
         <form data-testid="edit-resolver-form" ref={formRef}>
           <Input
+            data-testid="send-name-input"
             label="Send to"
             placeholder="Enter an Ethereum address or ENS name"
             {...register('sendName', {

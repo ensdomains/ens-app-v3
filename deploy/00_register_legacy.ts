@@ -1,4 +1,5 @@
 /* eslint-disable import/no-extraneous-dependencies */
+
 /* eslint-disable no-await-in-loop */
 import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
@@ -10,6 +11,7 @@ const names = [
     label: 'test123',
     namedOwner: 'owner',
     namedAddr: 'owner',
+    subname: 'sub',
   },
   {
     label: 'to-be-wrapped',
@@ -73,7 +75,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
   await network.provider.send('anvil_setBlockTimestampInterval', [60])
 
-  for (const { label, namedOwner, namedAddr, records } of names) {
+  for (const { label, namedOwner, namedAddr, records, subname } of names) {
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const registrant = allNamedAccts[namedOwner]
     const resolver = publicResolver.address
@@ -110,6 +112,21 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     )
     console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
     await registerTx.wait()
+
+    if (subname) {
+      const labelhash = ethers.utils.solidityKeccak256(['string'], [subname])
+      const registerer = allNamedAccts[namedOwner]
+
+      const _registry = registry.connect(await ethers.getSigner(registerer))
+      const subnameTx = await _registry.setSubnodeRecord(
+        namehash('test123.eth'),
+        labelhash,
+        registerer,
+        publicResolver.address,
+        0,
+      )
+      await subnameTx.wait()
+    }
 
     if (records) {
       const _publicResolver = publicResolver.connect(await ethers.getSigner(registrant))
