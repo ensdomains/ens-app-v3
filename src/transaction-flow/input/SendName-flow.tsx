@@ -114,10 +114,14 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { ready, getRecords } = useEns()
   const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
   const { ownerData, isWrapped } = useBasicName(name as string)
+  const parentName = name.split('.').slice(1).join('.')
+  const parentNameOwnerData = useBasicName(parentName)
   const { address } = useAccount()
   const { canChangeOwner, canChangeRegistrant } = useSelfAbilities(address, ownerData)
 
   const { profile = { resolverAddress: '' } } = useProfile(name as string)
+
+  console.log('parentNameOwnerData: ', parentNameOwnerData)
 
   const {
     register,
@@ -148,16 +152,19 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     ethNameValidation || sendNameWatch,
   )
 
-  const {
-    data: { canModifyManager, canModifyOwner },
-  } = useQuery(['resolver', ownerData?.toString()], async () => {
+  console.log('ownerData: ', ownerData)
+
+  const { data: canModify } = useQuery(['resolver', ownerData?.toString()], () => {
     const { ownershipLevel, owner } = ownerData
     let _canModifyOwner = false
-    let _canModifyManager = false
+    const _canModifyManager = false
 
     if (ownershipLevel === 'nameWrapper') {
       _canModifyOwner = address === owner
-      _canModifyManager = false
+    }
+
+    if (ownershipLevel === 'registry') {
+      _canModifyOwner = address === owner || address === parentNameOwnerData?.ownerData?.owner
     }
 
     return {
@@ -166,13 +173,13 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     }
   })
 
+  console.log('data: ', canModify)
+
   const { t } = useTranslation('transactionFlow')
 
-  console.log('ownerData: ', ownerData)
   const isController = ownerData?.owner === address
   const isRegistrant = ownerData?.registrant === address
   const ownershipLevel = ownerData?.ownershipLevel
-  const canSetManager = isController || isRegistrant
 
   const handleSubmitForm = () => {
     console.log('handleSubmitForm')
@@ -243,10 +250,25 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
       // subname
       if (name.split('.').length > 2) {
+        if (address === ownerData.owner) {
+          dispatch({
+            name: 'setTransactions',
+            payload: [
+              makeTransactionItem('transferName', {
+                name,
+                newOwner: sendNameWatch,
+                contract: 'registry',
+              }),
+            ],
+          })
+          dispatch({ name: 'setFlowStage', payload: 'transaction' })
+          return
+        }
+
         dispatch({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('transferName', {
+            makeTransactionItem('transferSubname', {
               name,
               newOwner: sendNameWatch,
               contract: 'registry',
@@ -314,7 +336,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         Sending this name will make the  new address both the owner and manager.
       </Typography>
       <Outlink href="">Learn more about name ownership.</Outlink>
-      {canModifyOwner && (
+      {canModify?.canModifyOwner && (
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">Make Owner</Typography>
@@ -332,7 +354,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
           />
         </SwitchBox>
       )}
-      {canModifyManager && (
+      {canModify?.canModifyManager && (
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">Make Manager</Typography>

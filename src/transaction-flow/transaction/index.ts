@@ -6,6 +6,7 @@ import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
 import transferController from './transferController'
 import transferName from './transferName'
+import transferSubname from './transferSubname'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateResolver from './updateResolver'
@@ -23,6 +24,7 @@ export const transactions = {
   burnFuses,
   createSubname,
   transferName,
+  transferSubname,
   transferController,
 }
 
