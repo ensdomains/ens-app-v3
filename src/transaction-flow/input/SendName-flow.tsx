@@ -287,14 +287,25 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   }
 
   const hasErrors = () => {
-    if (!managerChoiceWatch && !ownerChoiceWatch) {
-      return { formMessage: 'Must choose either Manager or Owner to send' }
+    const errorData = {
+      formMessage: '',
+      fieldMessage: '',
+      hasError: false,
     }
-    if (getFieldState('sendName').error) return {}
-    if (isLoading) return {}
+
+    if (!managerChoiceWatch && !ownerChoiceWatch) {
+      return {
+        ...errorData,
+        formMessage: 'Must choose either Manager or Owner to send',
+        hasError: true,
+      }
+    }
+    if (getFieldState('sendName').error) return errorData
+    if (isLoading) return errorData
     if (sendNameWatch?.includes('.') && !ethNameValidation)
-      return { message: 'No address set on name' }
-    return false
+      return { ...errorData, message: 'No address set on name', hasError: true }
+
+    return errorData
   }
 
   return (
@@ -360,7 +371,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
                     : undefined,
               },
             })}
-            error={getFieldState('sendName').error?.message || hasErrors()?.message}
+            error={getFieldState('sendName').error?.message || hasErrors()?.fieldMessage}
           />
           <Spacer $height="4" />
         </form>
@@ -380,7 +391,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
           </Button>
         }
         trailing={
-          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors()}>
+          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors().hasError}>
             {t('action.next', { ns: 'common' })}
           </Button>
         }

@@ -71,3 +71,5 @@ export type FuseObj = {
   CANNOT_CREATE_SUBDOMAIN: boolean
   PARENT_CANNOT_CONTROL: boolean
 }
+
+export type EthAddress = string

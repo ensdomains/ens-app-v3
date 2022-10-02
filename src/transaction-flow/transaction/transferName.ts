@@ -1,11 +1,11 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
+import { EthAddress, PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
-  newOwner: address
+  newOwner: EthAddress
   contract: 'registry' | 'baseRegistrar' | 'nameWrapper'
 }
 
@@ -20,7 +20,7 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: 'Transfer name' as string,
+    value: t('name.transferName'),
   },
 ]
 
