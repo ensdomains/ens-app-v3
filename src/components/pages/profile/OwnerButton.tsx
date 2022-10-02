@@ -185,7 +185,9 @@ const OwnerButtonWithPopup = ({
           </AvatarWrapper>
           <TextContainer>
             <Label ellipsis>{label}</Label>
-            <Name ellipsis>{name || shortenAddress(address)}</Name>
+            <Name ellipsis data-testid={`owner-button-name-${label}`}>
+              {name || shortenAddress(address)}
+            </Name>
           </TextContainer>
         </Content>
       </OwnerButtonWrapper>
@@ -338,7 +340,9 @@ const OwnerButtonWithDropdown = ({
           <Label ellipsis>{label}</Label>
           <div style={{ flexGrow: 1 }} />
           <OwnerRow data-testid={`${label.toLowerCase()}-data`}>
-            <Name ellipsis>{name || shortenAddress(address)}</Name>
+            <Name ellipsis data-testid={`owner-button-name-${label}`}>
+              {name || shortenAddress(address)}
+            </Name>
             <AvatarWrapper>
               <AvatarWithZorb
                 label={name || address}

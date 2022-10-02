@@ -149,6 +149,7 @@ export const Details = ({
                 : t('details.descriptions.controller')
             }
             canTransfer={selfAbilities.canChangeOwner}
+            data-testid="owner-button-owner"
           />
         )}
         {dnsOwner && (
@@ -169,6 +170,7 @@ export const Details = ({
             type={breakpoints.lg ? 'dropdown' : 'dialog'}
             description={t('details.descriptions.registrant')}
             canTransfer={selfAbilities.canChangeRegistrant}
+            data-testid="owner-button-registrant"
           />
         )}
       </OwnerButtons>

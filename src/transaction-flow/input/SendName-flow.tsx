@@ -61,12 +61,10 @@ const SwitchBox = styled.div(
   `,
 )
 
-const TextContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-  `,
-)
+const TextContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+`
 
 const InnerContainer = styled.div(() => [
   css`
@@ -132,7 +130,18 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
   const { data: canModify } = useQuery(['resolver', ownerData?.toString()], () => {
     let _canModifyOwner = false
-    const _canModifyManager = false
+    let _canModifyManager = false
+
+    console.log('ownerData: ', ownerData)
+
+    if (ownerData?.ownershipLevel === 'registrar') {
+      if (address === ownerData?.registrant) {
+        _canModifyOwner = address === ownerData?.registrant
+        _canModifyManager = true
+      } else {
+        _canModifyManager = address === ownerData?.owner
+      }
+    }
 
     if (ownerData?.ownershipLevel === 'nameWrapper') {
       _canModifyOwner = address === ownerData?.owner
