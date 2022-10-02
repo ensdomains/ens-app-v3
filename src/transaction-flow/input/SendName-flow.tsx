@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -295,7 +295,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     }
   }
 
-  const hasErrors = () => {
+  const hasErrors = useMemo(() => {
     const errorData = {
       formMessage: '',
       fieldMessage: '',
@@ -315,7 +315,14 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       return { ...errorData, message: 'No address set on name', hasError: true }
 
     return errorData
-  }
+  }, [
+    ethNameValidation,
+    getFieldState,
+    isLoading,
+    managerChoiceWatch,
+    ownerChoiceWatch,
+    sendNameWatch,
+  ])
 
   return (
     <>
@@ -380,13 +387,13 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
                     : undefined,
               },
             })}
-            error={getFieldState('sendName').error?.message || hasErrors()?.fieldMessage}
+            error={getFieldState('sendName').error?.message || hasErrors.fieldMessage}
           />
           <Spacer $height="4" />
         </form>
         {primaryName && <NameValue value={primaryName} />}
       </InnerContainer>
-      {hasErrors()?.formMessage && <Helper type="error">Must send Owner or Manager</Helper>}
+      {hasErrors.formMessage && <Helper type="error">Must send Owner or Manager</Helper>}
       <Dialog.Footer
         leading={
           <Button
@@ -400,7 +407,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
           </Button>
         }
         trailing={
-          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors().hasError}>
+          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors.hasError}>
             {t('action.next', { ns: 'common' })}
           </Button>
         }

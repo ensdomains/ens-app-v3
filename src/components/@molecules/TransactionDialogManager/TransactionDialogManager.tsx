@@ -28,9 +28,6 @@ export const TransactionDialogManager = ({
     [selectedKey, state.items],
   )
 
-  console.log('selectedKey: ', selectedKey)
-  console.log('selectedItem: ', selectedItem)
-
   const onDismiss = useCallback(() => {
     dispatch({
       name: 'stopFlow',
@@ -69,10 +66,6 @@ export const TransactionDialogManager = ({
 
       const transactionItem = selectedItem.transactions[selectedItem.currentTransaction]
       const transaction = transactions[transactionItem.name]
-
-      console.log('transaction: ', transaction)
-      console.log('transactions: ', transactions)
-      console.log('transactionItem: ', transactionItem)
 
       return (
         <TransactionStageModal

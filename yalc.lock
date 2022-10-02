@@ -7,9 +7,9 @@
       "replaced": "v3.0.0-alpha.17"
     },
     "@ensdomains/thorin": {
-      "signature": "9cc6c0e633465e751b337ec73eac921d",
+      "signature": "68820abb25c75bd3f1fd4654113317b9",
       "file": true,
-      "replaced": "^0.6.10"
+      "replaced": "^0.6.14"
     }
   }
 }
