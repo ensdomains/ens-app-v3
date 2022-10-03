@@ -1,11 +1,11 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // eslint-disable-next-line import/no-extraneous-dependencies
 import type { JsonRpcProvider } from '@ethersproject/providers'
-import { useAddRecentTransaction } from '@rainbow-me/rainbowkit'
 import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
+import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 
@@ -50,8 +50,8 @@ export const DevSection = () => {
   const addSuccess = async () => {
     const transaction = await sendSuccess!()
     addTransaction({
-      description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
+      action: 'test',
     })
   }
 
@@ -64,8 +64,8 @@ export const DevSection = () => {
   const addFailure = async () => {
     const transaction = await sendFailure!()
     addTransaction({
-      description: JSON.stringify({ action: 'test' }),
       hash: transaction.hash,
+      action: 'test',
     })
   }
 

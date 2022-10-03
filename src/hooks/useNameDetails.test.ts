@@ -63,27 +63,6 @@ describe('useNameDetails', () => {
     const { result } = renderHook(() => useNameDetails('invalid'))
     expect(result.current.error).toEqual('errors.invalidName')
   })
-  it('should query for the expiry if the name is a 2LD .eth', () => {
-    mockUseValidate.mockReturnValue({
-      valid: true,
-      name: 'test.eth',
-      labelCount: 2,
-    })
-
-    renderHook(() => useNameDetails('test.eth'))
-    expect(mockBatch).toHaveBeenCalled()
-    expect(mockGetExpiry.batch).toHaveBeenCalled()
-  })
-  it('should not query for the expiry if not a 2LD .eth', () => {
-    mockUseValidate.mockReturnValue({
-      valid: true,
-      name: 'test.com',
-      labelCount: 2,
-    })
-
-    renderHook(() => useNameDetails('test.com'))
-    expect(mockGetExpiry.batch).not.toHaveBeenCalled()
-  })
   it('should call getDNSOwner if TLD is not .eth', () => {
     mockUseValidate.mockReturnValue({
       valid: true,

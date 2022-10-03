@@ -1,19 +1,22 @@
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
-import { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
 import { act } from '@testing-library/react'
 
+import { Transaction } from '@app/hooks/transactions/transactionStore'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useChainId } from '@app/hooks/useChainId'
 import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { Notifications } from './Notifications'
 
 jest.mock('@app/hooks/useChainName')
-jest.mock('@rainbow-me/rainbowkit')
+jest.mock('@app/hooks/useChainId')
+jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/utils/BreakpointProvider')
 
 const mockUseChainName = mockFunction(useChainName)
+const mockUseChainId = mockFunction(useChainId)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
@@ -24,8 +27,8 @@ const makeRecentTransaction =
   (_: any, i: number) =>
     ({
       status,
-      confirmations: 1,
-      description: JSON.stringify({ action: `test-action-${i}` }),
+      action: `test-action-${i}`,
+      key: 'any',
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     } as Transaction)
 
@@ -40,6 +43,7 @@ describe('Notifications', () => {
     xl: false,
   })
   mockUseChainName.mockReturnValue('mainnet')
+  mockUseChainId.mockReturnValue(1)
   it('should not render a toast if there is no transactions', () => {
     mockUseRecentTransactions.mockReturnValue([])
     render(<Notifications />)

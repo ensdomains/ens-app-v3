@@ -1,4 +1,4 @@
-import { acceptMetamaskAccess } from '../../setup'
+import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Settings', () => {
   it('should allow user to disconnect', () => {
@@ -11,9 +11,7 @@ describe('Settings', () => {
   describe('Transactions', () => {
     before(() => {
       cy.visit('/')
-      cy.contains('Connect').click()
-      cy.contains('MetaMask').click()
-      cy.wait(1000)
+      connectFromExisting()
       cy.visit('/my/settings')
     })
     it('should show the correct transaction details for a transaction modal', () => {
@@ -33,11 +31,13 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
         .should('contain.text', 'Your "Send Name" transaction was successful')
+      cy.findByTestId('close-icon').click()
     })
     it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
-      cy.findByTestId('transaction-confirmed')
+      cy.wait(500)
+      cy.findAllByTestId('transaction-confirmed')
         .should('be.visible')
         .should('contain.text', 'Test Transaction')
 
@@ -45,11 +45,12 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
         .should('contain.text', 'Your "Test Transaction" transaction was successful')
+      cy.findByTestId('close-icon').click()
     })
-
     it('should add a failed transaction to the transaction list, and show the corresponding notification', () => {
       cy.contains('Add Failing Transaction').click()
       cy.confirmMetamaskTransaction()
+      cy.wait(500)
       cy.findByTestId('transaction-failed')
         .should('be.visible')
         .should('contain.text', 'Test Transaction')
@@ -57,12 +58,13 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Failure')
         .should('contain.text', 'Your "Test Transaction" transaction failed and was reverted')
+      cy.findByTestId('close-icon').click()
     })
-
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
       cy.contains('Stop Automine').click()
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
+      cy.wait(500)
       cy.findByTestId('transaction-pending')
         .should('be.visible')
         .should('contain.text', 'Test Transaction')
@@ -71,17 +73,9 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
         .should('contain.text', 'Your "Test Transaction" transaction was successful')
+      cy.findByTestId('close-icon').click()
     })
-
     it('should clear transactions when clear is pressed', () => {
-      cy.visit('/')
-      cy.contains('Connect').click()
-      cy.contains('MetaMask').click()
-      cy.wait(1000)
-
-      cy.visit('/my/settings')
-      cy.contains('Add Successful Transaction').click()
-      cy.confirmMetamaskTransaction()
       cy.contains('Clear').click()
       cy.findByTestId('transaction-confirmed').should('not.exist')
     })

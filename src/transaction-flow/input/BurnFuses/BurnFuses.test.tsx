@@ -2,9 +2,22 @@ import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-util
 
 import { useRouter } from 'next/router'
 
+import { CurrentFuses } from '@ensdomains/ensjs/utils/fuses'
+
 import { useGetFuseData } from '@app/hooks/useGetFuseData'
 
-import { BurnFuses, defaultFuseObj } from './BurnFuses-flow'
+import { BurnFuses } from './BurnFuses-flow'
+
+const defaultFuseObj: CurrentFuses = {
+  CAN_DO_EVERYTHING: true,
+  CANNOT_BURN_FUSES: false,
+  CANNOT_CREATE_SUBDOMAIN: false,
+  CANNOT_SET_RESOLVER: false,
+  CANNOT_SET_TTL: false,
+  CANNOT_TRANSFER: false,
+  CANNOT_UNWRAP: false,
+  PARENT_CANNOT_CONTROL: false,
+}
 
 jest.mock('next/router')
 jest.mock('@app/hooks/useGetFuseData')
@@ -132,10 +145,10 @@ describe('BurnFuses', () => {
             data: {
               name: 'nick.eth',
               permissions: [
-                'fuses.permissions.CANNOT_UNWRAP',
                 'fuses.permissions.CANNOT_BURN_FUSES',
+                'fuses.permissions.CANNOT_UNWRAP',
               ],
-              selectedFuses: ['CANNOT_UNWRAP', 'CANNOT_BURN_FUSES'],
+              selectedFuses: ['CANNOT_BURN_FUSES', 'CANNOT_UNWRAP'],
             },
             name: 'burnFuses',
           },

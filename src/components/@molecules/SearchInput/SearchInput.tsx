@@ -3,6 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
+import { useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
@@ -15,6 +16,7 @@ import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { getRegistrationStatus } from '@app/utils/registrationStatus'
 
 import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
@@ -43,7 +45,7 @@ const SearchResultsContainer = styled.div<{
     top: calc(100% + ${theme.space['3']});
 
     background-color: #f7f7f7;
-    box-shadow: 0px 2px 12px rgba(${theme.shadesRaw.foreground}, 0.04);
+    box-shadow: 0 2px 12px rgba(${theme.shadesRaw.foreground}, 0.04);
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
       ${$error ? theme.colors.red : theme.colors.borderTertiary};
@@ -175,6 +177,7 @@ export const SearchInput = ({
   const { t } = useTranslation('common')
   const router = useRouter()
   const breakpoints = useBreakpoint()
+  const queryClient = useQueryClient()
 
   const [inputVal, setInputVal] = useState('')
 
@@ -199,13 +202,13 @@ export const SearchInput = ({
 
   const [history, setHistory] = useLocalStorage<HistoryItem[]>('search-history', [])
 
-  const [normalisedName, isValid, inputType, isEmpty, isTLD] = useMemo(() => {
+  const [normalisedName, isValid, inputType, isEmpty, isTLD, hasNormalisedValue] = useMemo(() => {
     if (inputVal) {
       let _normalisedName: string
       let _inputType: any
       let _isValid = true
       try {
-        _normalisedName = validateName(inputVal)
+        _normalisedName = validateName(inputVal.replace(/ /g, ''))
         _inputType = parseInputType(_normalisedName)
       } catch (e) {
         _normalisedName = ''
@@ -225,6 +228,7 @@ export const SearchInput = ({
         _inputType,
         false,
         !_normalisedName.includes('.'),
+        !!_normalisedName,
       ]
     }
     return ['', true, { type: 'name', info: 'supported' }, true, false]
@@ -244,9 +248,11 @@ export const SearchInput = ({
           value: t('search.errors.tooShort'),
         }
       }
-      return {
-        type: 'error',
-        value: t('search.errors.invalid'),
+      if (!hasNormalisedValue) {
+        return {
+          type: 'error',
+          value: t('search.errors.invalid'),
+        }
       }
     }
     if (inputType.type === 'address') {
@@ -262,7 +268,7 @@ export const SearchInput = ({
     return {
       type: 'name',
     }
-  }, [inputType.info, inputType.type, isValid, isEmpty, isTLD, t])
+  }, [isEmpty, isValid, inputType.type, inputType.info, isTLD, t, hasNormalisedValue])
 
   const extraItems = useMemo(() => {
     if (history.length > 0) {
@@ -323,10 +329,24 @@ export const SearchInput = ({
         return
       }
     }
-    const path =
+    let path =
       selectedItem.type === 'address'
         ? `/address/${selectedItem.value}`
         : `/profile/${selectedItem.value}`
+    if (selectedItem.type === 'nameWithDotEth' || selectedItem.type === 'name') {
+      const currentQuery = queryClient.getQueryData<any[]>([
+        'batch',
+        'getOwner',
+        'getExpiry',
+        selectedItem.value,
+      ])
+      if (currentQuery) {
+        const registrationStatus = getRegistrationStatus(currentQuery, selectedItem.value)
+        if (registrationStatus === 'available') {
+          path = `/register/${selectedItem.value}`
+        }
+      }
+    }
     setHistory((prev) =>
       [
         ...prev.filter(
@@ -348,7 +368,7 @@ export const SearchInput = ({
       },
       path,
     )
-  }, [normalisedName, router, searchItems, selected, setHistory])
+  }, [normalisedName, queryClient, router, searchItems, selected, setHistory])
 
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {

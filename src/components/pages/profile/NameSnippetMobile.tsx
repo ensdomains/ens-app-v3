@@ -26,7 +26,7 @@ const Container = styled(Card)(
   cacheableComponentStyles,
 )
 
-const ImageWrapper = styled(NFTWithPlaceholder)(
+const ImageWrapper = styled.div(
   ({ theme }) => css`
     border-radius: ${theme.radii.extraLarge};
     width: 35vw;
@@ -127,7 +127,9 @@ export const NameSnippetMobile = ({
 
   return (
     <Container $isCached={isCached}>
-      <ImageWrapper name={name} network={network} />
+      <ImageWrapper>
+        <NFTWithPlaceholder name={name} network={network} />
+      </ImageWrapper>
       <RightColumn>
         <ExpiryAndFavouriteRow>
           {expiryDate ? (

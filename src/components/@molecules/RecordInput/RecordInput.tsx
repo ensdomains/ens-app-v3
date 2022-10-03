@@ -1,4 +1,4 @@
-import React, { ComponentProps, ReactNode, Ref, forwardRef } from 'react'
+import { ComponentProps, ReactNode, Ref, forwardRef } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 
 import { Button, CloseSVG, Input } from '@ensdomains/thorin'

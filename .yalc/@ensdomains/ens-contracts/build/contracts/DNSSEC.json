@@ -1,0 +1,12 @@
+[
+  "event AlgorithmUpdated(uint8,address)",
+  "event DigestUpdated(uint8,address)",
+  "event NSEC3DigestUpdated(uint8,address)",
+  "event RRSetUpdated(bytes,bytes)",
+  "function anchors() view returns (bytes)",
+  "function deleteRRSet(uint16,bytes,tuple(bytes,bytes),bytes)",
+  "function deleteRRSetNSEC3(uint16,bytes,tuple(bytes,bytes),tuple(bytes,bytes),bytes)",
+  "function rrdata(uint16,bytes) view returns (uint32, uint32, bytes20)",
+  "function submitRRSet(tuple(bytes,bytes),bytes) returns (bytes)",
+  "function submitRRSets(tuple(bytes,bytes)[],bytes) returns (bytes)"
+]

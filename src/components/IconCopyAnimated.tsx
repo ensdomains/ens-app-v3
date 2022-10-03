@@ -6,10 +6,12 @@ import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
 const IconWrapper = styled.div<{ $copied: boolean }>(
   ({ $copied }) => css`
     position: relative;
+
     & > svg {
       display: block;
       transition: all 0.15s ease-in-out;
     }
+
     & > svg:first-child {
       position: absolute;
     }

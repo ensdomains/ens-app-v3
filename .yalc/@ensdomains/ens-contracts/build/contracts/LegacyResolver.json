@@ -1,0 +1,3 @@
+[
+  "function addr(bytes32) view returns (address)"
+]

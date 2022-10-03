@@ -1,0 +1,61 @@
+{
+  "title": "Register {{name}} on ENS",
+  "subtitle": "Register",
+  "heading": "Register {{name}}",
+  "invoice": {
+    "yearRegistration": "{{years}} year registration",
+    "registration": "Registration",
+    "estimatedNetworkFee": "Est. network fee",
+    "networkFee": "Network fee",
+    "temporaryPremium": "Temporary premium",
+    "total": "Estimated total",
+    "totalPaid": "Total paid"
+  },
+  "steps": {
+    "pricing": {
+      "insufficientBalance": "Insufficient Balance",
+      "multipleYearsMessage": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
+      "primaryName": "Use as primary name",
+      "primaryNameMessage": "This links your address to this name, allowing apps to display this name as your profile when connected to them.",
+      "premium": {
+        "heading": "This name has a temporary premium",
+        "subheading": "To give fair opportunity to recently expired names, the premium starts at $100,000,000 and reduces to $0 over 21 days. You can calculate the premium on a date below.",
+        "targetPrice": "Target price",
+        "targetDate": "Target date",
+        "timezone": "Date and time shown in local time zone ({{timezone}})"
+      }
+    },
+    "profile": {
+      "default": "Default",
+      "advanced": "Advanced",
+      "permissions": "Permissions",
+      "resolver": "Resolver",
+      "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible."
+    },
+    "complete": {
+      "heading": "Congratulations!",
+      "subheading": "You are now the owner of ",
+      "description": "Your name was successfully registered. You can now view and manage your name.",
+      "registerAnother": "Register another",
+      "viewName": "View name"
+    },
+    "info": {
+      "heading": "Before we start",
+      "subheading": "Registering your name takes three steps",
+      "items": [
+        "Complete a transaction to begin the timer",
+        "Wait 60 seconds for the timer to complete",
+        "Complete a second transaction to secure your name"
+      ],
+      "setupProfile": "I'd like to set up my profile first"
+    },
+    "transactions": {
+      "heading": "Almost there",
+      "subheading": "This timer prevents others from registering this name before you do.",
+      "startTimer": "Start timer",
+      "wait": "Wait",
+      "transactionFailed": "Transaction Failed",
+      "transactionProgress": "Transaction in progress"
+    }
+  }
+}

@@ -8,11 +8,13 @@ const Container = styled.div(
     height: 100%;
     overflow: hidden;
     border-radius: ${theme.radii['2xLarge']};
+
     & > * {
       position: relative;
       z-index: 1;
       background: transparent !important;
     }
+
     canvas {
       width: 100%;
       height: 100%;

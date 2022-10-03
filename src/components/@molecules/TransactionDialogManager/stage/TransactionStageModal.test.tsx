@@ -1,10 +1,11 @@
 /* eslint-disable no-promise-executor-return */
 import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
-import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { ComponentProps } from 'react'
 import { useSendTransaction, useSigner } from 'wagmi'
 
+import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
@@ -12,7 +13,8 @@ import { useEns } from '@app/utils/EnsProvider'
 import { TransactionStageModal } from './TransactionStageModal'
 
 jest.mock('@app/hooks/useChainName')
-jest.mock('@rainbow-me/rainbowkit')
+jest.mock('@app/hooks/transactions/useAddRecentTransaction')
+jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/utils/EnsProvider')
 
 const mockPopulatedTransaction = {
@@ -74,6 +76,7 @@ const renderHelper = async ({
       transaction={transaction || ({} as any)}
       onDismiss={mockOnDismiss}
       dispatch={mockDispatch}
+      backToInput={false}
       txKey="test"
     />,
   )
@@ -108,7 +111,8 @@ describe('TransactionStageModal', () => {
       {
         status: 'pending',
         hash: '0x123',
-        description: JSON.stringify({ action: 'test', key: 'test', gasPrice: 42 }),
+        action: 'test',
+        key: 'test',
       },
     ])
   })
@@ -218,7 +222,8 @@ describe('TransactionStageModal', () => {
         ;(mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({ hash: '0x123' })
         expect(mockAddTransaction).toBeCalledWith({
           hash: '0x123',
-          description: JSON.stringify({ action: 'test', key: 'test' }),
+          action: 'test',
+          key: 'test',
         })
         expect(mockDispatch).toBeCalledWith({
           name: 'setTransactionHash',
@@ -250,27 +255,6 @@ describe('TransactionStageModal', () => {
           },
         })
         expect(screen.getByText('transaction.dialog.sent.progress.message')).toBeVisible()
-      })
-      it('should dispatch setTransactionStage if transaction state changes', async () => {
-        mockUseRecentTransactions.mockReturnValue([
-          {
-            hash: '0x123',
-            status: 'confirmed',
-          },
-        ])
-        await renderHelper({
-          transaction: {
-            ...mockTransaction,
-            hash: '0x123',
-            stage: 'sent',
-          },
-        })
-        await waitFor(() =>
-          expect(mockDispatch).toHaveBeenCalledWith({
-            name: 'setTransactionStage',
-            payload: 'complete',
-          }),
-        )
       })
     })
     describe('complete', () => {
