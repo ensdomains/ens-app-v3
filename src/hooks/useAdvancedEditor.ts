@@ -17,18 +17,16 @@ import {
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEditorType) => {
   const entries = []
-  if (type === 'text') {
-    if (data.text)
-      entries.push(
-        ...Object.entries(data.text).map(([key, value]) => [convertFormSafeKey(key), value]),
-      )
-  } else if (type === 'addr') {
-    if (data.address)
-      entries.push(
-        ...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]),
-      )
-  } else if (type === 'contentHash') {
-    if (data.other.contentHash) entries.push(['website', data.other.contentHash])
+  if (type === 'text' && data.text) {
+    entries.push(
+      ...Object.entries(data.text).map(([key, value]) => [convertFormSafeKey(key), value]),
+    )
+  } else if (type === 'addr' && data.address) {
+    entries.push(
+      ...Object.entries(data.address).map(([key, value]) => [convertFormSafeKey(key), value]),
+    )
+  } else if (type === 'contentHash' && data.other.contentHash) {
+    entries.push(['website', data.other.contentHash])
   }
   return Object.fromEntries(entries)
 }
@@ -210,7 +208,6 @@ const useAdvancedEditor = ({ profile, loading, callback }: Props) => {
 
     const contentHash = dirtyFields.other?.contentHash
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const records = {
       texts,
       coinTypes,

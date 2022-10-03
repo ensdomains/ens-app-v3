@@ -19,7 +19,7 @@ import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { FuseObj } from '@app/types'
-import { convertProfileToProfileFormObject } from '@app/utils/editor'
+import { ProfileFormObject, convertProfileToProfileFormObject } from '@app/utils/editor'
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import Resolver from './Resolver'
@@ -208,6 +208,11 @@ const defaultFuses: Partial<FuseObj> = {
   CANNOT_TRANSFER: false,
   CAN_DO_EVERYTHING: true,
 }
+type ValueItem = {
+  key: string
+  value: any
+  dirty: boolean
+}
 
 const Profile = ({ nameDetails, callback, registrationData }: Props) => {
   const { t } = useTranslation('register')
@@ -283,46 +288,69 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
   const addressKeys = [...existingAddressKeys, ...newAddressKeys]
   const otherKeys = [...existingOtherKeys, ...newOtherKeys]
 
+  const checkForDirtyTab = useCallback(
+    (recordsAsTabs: ProfileFormObject) =>
+      (curr: ValueItem[], [tabKey, tabValue]: [string, any]) => {
+        // if the tab has no records, skip
+        if (Object.keys(tabValue).length > 0 && tabKey !== 'website') {
+          const subKeys = Object.entries(tabValue).map(([k, v]) => ({
+            key: `${tabKey}.${k}`,
+            value: v,
+            dirty: !(tabKey === 'address' && k === 'ETH' && v === address),
+          }))
+          return [
+            ...curr,
+            {
+              key: tabKey,
+              value: tabValue,
+              dirty: subKeys.some(({ dirty }) => dirty), // if any of the individual keys are dirty, then the whole tab is dirty
+            },
+            ...subKeys,
+          ]
+        }
+        // if key is website, set the website option
+        if (tabKey === 'website' && tabValue) {
+          const protocol = recordsAsTabs.website?.match(/^[^:]+/)?.[0]?.toLowerCase()
+          if (protocol) {
+            const option = websiteOptions.find(({ value: _val }) => _val === protocol)
+            setWebsiteOption(option || undefined)
+          }
+          setValue(tabKey, tabValue as string, { shouldDirty: true, shouldTouch: true })
+        }
+        // dont touch the tab if no sub-keys are dirty
+        return curr
+      },
+    [address, setValue, setWebsiteOption],
+  )
+
   useEffect(() => {
-    const recordsAsReset = convertProfileToProfileFormObject(profile as any)
+    const recordsAsTabs = convertProfileToProfileFormObject(profile as any)
     const newExistingRecords = {
-      address: Object.keys(recordsAsReset.address) || [],
-      other: Object.keys(recordsAsReset.other) || [],
-      accounts: Object.keys(recordsAsReset.accounts) || [],
+      address: Object.keys(recordsAsTabs.address) || [],
+      other: Object.keys(recordsAsTabs.other) || [],
+      accounts: Object.keys(recordsAsTabs.accounts) || [],
     }
     setExistingRecords(newExistingRecords)
-    let valueKeys: [string, any, boolean][] = []
-    for (const [key, value] of Object.entries(recordsAsReset)) {
-      const valueKeysInner: [string, string, boolean][] = []
-      if (Object.keys(value).length > 0 && key !== 'website') {
-        for (const [k, v] of Object.entries(value)) {
-          valueKeysInner.push([
-            `${key}.${k}`,
-            v,
-            !(key === 'address' && k === 'ETH' && v === address),
-          ])
-        }
-        valueKeys = [
-          ...valueKeys,
-          [key, value, valueKeysInner.some(([, , dirty]) => dirty)],
-          ...valueKeysInner,
-        ]
-      } else if (key === 'website' && value) {
-        const protocol = recordsAsReset.website?.match(/^[^:]+/)?.[0]?.toLowerCase()
-        if (protocol) {
-          const option = websiteOptions.find(({ value: _val }) => _val === protocol)
-          setWebsiteOption(option || undefined)
-        }
-        setValue(key, value as string, { shouldDirty: true, shouldTouch: true })
-      }
-    }
-    valueKeys.forEach(([key, value, dirty]) =>
-      setValue(key as any, value, {
-        shouldDirty: dirty,
-        shouldTouch: key.includes('.') ? true : undefined,
-      }),
-    )
-  }, [address, profile, setExistingRecords, setHasExistingWebsite, setValue, setWebsiteOption])
+
+    // iterate over record tabs
+    Object.entries(recordsAsTabs)
+      .reduce(checkForDirtyTab(recordsAsTabs), [] as { key: string; value: any; dirty: boolean }[])
+      .forEach(({ key, value, dirty }) => {
+        console.log(key, value, dirty)
+        setValue(key as any, value, {
+          shouldDirty: dirty,
+          shouldTouch: key.includes('.') ? true : undefined,
+        })
+      })
+  }, [
+    address,
+    checkForDirtyTab,
+    profile,
+    setExistingRecords,
+    setHasExistingWebsite,
+    setValue,
+    setWebsiteOption,
+  ])
 
   const trailingButton = useMemo(() => {
     if (hasChanges) {

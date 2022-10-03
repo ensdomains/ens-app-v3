@@ -20,6 +20,8 @@ type RegistrationProps = {
 }
 type GasCostData = [index: number, gas: number]
 
+const BASE_LIMIT = 240664
+
 const byteLengthToDataInx = (byteLength: number) =>
   byteLength > 1 ? Math.ceil(byteLength / 32) + 1 : byteLength
 
@@ -40,7 +42,7 @@ const useEstimateRegistration = (data: RegistrationProps | undefined) => {
     const { addr, text } = gasCosts
     const { reverseRecord, hasResolverSet, textRecords, addressRecords } = data
 
-    let limit = 240664
+    let limit = BASE_LIMIT
 
     if (hasResolverSet) {
       limit += 24764
