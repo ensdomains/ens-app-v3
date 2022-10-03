@@ -1,6 +1,7 @@
 [
   "constructor(address)",
   "event ControllerChanged(address indexed,bool)",
+  "event DefaultResolverChanged(address indexed)",
   "event OwnershipTransferred(address indexed,address indexed)",
   "event ReverseClaimed(address indexed,bytes32 indexed)",
   "function claim(address) returns (bytes32)",

@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/ens-contracts",
-  "version": "0.0.9",
+  "version": "0.0.13",
   "description": "ENS contracts",
   "scripts": {
     "test": "hardhat test",
@@ -41,5 +41,5 @@
     "url": "https://github.com/ensdomains/ens-contracts/issues"
   },
   "homepage": "https://github.com/ensdomains/ens-contracts#readme",
-  "yalcSig": "fc8787aeb70abd607d8f2aba0b832885"
+  "yalcSig": "dfdc59a87a93f674bd5967963ff2dfb0"
 }

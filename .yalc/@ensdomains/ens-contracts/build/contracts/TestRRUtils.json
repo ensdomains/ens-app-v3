@@ -1,6 +1,4 @@
 [
-  "function testCheckTypeBitmap() pure",
-  "function testCheckTypeBitmapTextType() pure",
   "function testCompareNames() pure",
   "function testIterateRRs() pure",
   "function testKeyTag() view",

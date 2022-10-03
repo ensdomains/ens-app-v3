@@ -35,7 +35,6 @@ const Container = styled.form(
     flex-direction: column;
     align-items: center;
     gap: ${theme.space['4']};
-    align-items: center;
 
     ${mq.sm.min(
       css`

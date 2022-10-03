@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.18",
-    "@ensdomains/ens-contracts": "file:.yalc/@ensdomains/ens-contracts",
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "3.0.0-alpha.22",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
@@ -95,6 +94,7 @@
     "@next/swc-linux-x64-gnu": "12.1.4",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
+    "@openzeppelin/test-helpers": "^0.5.16",
     "@synthetixio/synpress": "2.3.3",
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.5",

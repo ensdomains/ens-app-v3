@@ -60,19 +60,6 @@
       "type": "event"
     },
     {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "bytes32",
-          "name": "node",
-          "type": "bytes32"
-        }
-      ],
-      "name": "DNSZoneCleared",
-      "type": "event"
-    },
-    {
       "inputs": [
         {
           "internalType": "bytes32",

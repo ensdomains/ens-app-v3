@@ -1,0 +1,7 @@
+[
+  "constructor(address,address,bytes32,bytes32)",
+  "function claimToOwner()",
+  "function onERC1155BatchReceived(address,address,uint256[],uint256[],bytes) returns (bytes4)",
+  "function onERC1155Received(address,address,uint256,uint256,bytes) returns (bytes4)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

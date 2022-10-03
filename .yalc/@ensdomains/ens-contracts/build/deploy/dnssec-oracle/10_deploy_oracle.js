@@ -54,7 +54,7 @@ function encodeAnchors(anchors) {
 const func = async function (hre) {
     const { getNamedAccounts, deployments, network } = hre;
     const { deploy } = deployments;
-    const { deployer, owner } = await getNamedAccounts();
+    const { deployer } = await getNamedAccounts();
     const anchors = realAnchors.slice();
     let algorithms = {
         5: 'RSASHA1Algorithm',
@@ -65,9 +65,6 @@ const func = async function (hre) {
     const digests = {
         1: 'SHA1Digest',
         2: 'SHA256Digest',
-    };
-    const nsec_digests = {
-        1: 'SHA1NSEC3Digest',
     };
     if (network.tags.test) {
         anchors.push(dummyAnchor);
@@ -94,19 +91,9 @@ const func = async function (hre) {
             transactions.push(await dnssec.setDigest(id, address));
         }
     }
-    for (const [id, digest] of Object.entries(nsec_digests)) {
-        const address = (await deployments.get(digest)).address;
-        if (address != (await dnssec.nsec3Digests(id))) {
-            transactions.push(await dnssec.setNSEC3Digest(id, address));
-        }
-    }
     console.log(`Waiting on ${transactions.length} transactions setting DNSSEC parameters`);
     await Promise.all(transactions.map((tx) => tx.wait()));
 };
 func.tags = ['dnssec-oracle'];
-func.dependencies = [
-    'dnssec-algorithms',
-    'dnssec-digests',
-    'dnssec-nsec3-digests',
-];
+func.dependencies = ['dnssec-algorithms', 'dnssec-digests'];
 exports.default = func;

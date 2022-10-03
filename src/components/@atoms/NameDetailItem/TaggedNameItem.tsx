@@ -10,8 +10,7 @@ import { NameDetailItem } from './NameDetailItem'
 const OtherItemsContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: column;
-    flex-wrap: wrap;
+    flex-flow: column wrap;
     align-items: flex-end;
     justify-content: center;
     gap: ${theme.space['2']};
