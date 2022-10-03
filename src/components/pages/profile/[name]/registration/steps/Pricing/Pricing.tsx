@@ -109,7 +109,7 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Pr
     fullEstimate
 
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
-  const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0)
+  const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
 
   let actionButton: ReactNode
 

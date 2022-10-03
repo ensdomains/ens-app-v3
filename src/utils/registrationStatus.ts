@@ -30,7 +30,7 @@ const is2ldEth = (isDotEth: boolean, labels: string[], requireValid?: boolean) =
 export const addRegistrationStatusToBatch = (ens: PublicENS, name: string) => {
   const { getExpiry, getPrice, getOwner } = ens
   const { labels, isDotETH } = start(name)
-  if (is2ldEth(isDotETH, labels, true)) {
+  if (is2ldEth(isDotETH, labels, false)) {
     if (labels[0].length < 3) {
       return []
     }

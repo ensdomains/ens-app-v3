@@ -7,7 +7,7 @@ export const formSafeKey = (key: string) => key.replace(/\./g, '\u2024')
 
 export const convertFormSafeKey = (key: string) => key.replace(/\u2024/g, '.')
 
-type ProfileFormObject = {
+export type ProfileFormObject = {
   avatar?: string
   banner?: string
   website?: string
