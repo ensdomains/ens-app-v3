@@ -26,6 +26,15 @@
   "details": {
     "title": "Name Details",
     "notWrapped": "Not wrapped",
+    "sendName": {
+      "title": "Send Name",
+      "description": "Sending this name will the new address the owner and/or the manager.",
+      "learnMore": "Learn more about name ownership.",
+      "makeOwner": "Make owner",
+      "makeOwnerDescription": "The owner can send to a new owner and change the manager",
+      "makeManager": "Make Manager",
+      "makeManagerDescription": "The manager can change and set records."
+    },
     "wrap": {
       "startTitle": "Upgrade your name",
       "resumeTitle": "Resume your upgrade",
@@ -112,7 +121,7 @@
       }
     }
   },
-  
+
   "advancedEditor": {
     "title": "{{name}}'s records",
     "tabs": {

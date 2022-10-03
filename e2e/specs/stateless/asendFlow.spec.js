@@ -122,5 +122,4 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('owner-button-name-Controller').should('have.text', '0x709...c79C8')
   })
-  it.todo('should be able to tranasfer to ENS name')
 })

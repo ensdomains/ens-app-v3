@@ -104,6 +104,7 @@ export type Props = {
 
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
+  const { t } = useTranslation('profile')
   const formRef = useRef<HTMLFormElement>(null)
   const { getRecords } = useEns()
   const { ownerData, isWrapped } = useBasicName(name as string)
@@ -132,8 +133,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     let _canModifyOwner = false
     let _canModifyManager = false
 
-    console.log('ownerData: ', ownerData)
-
     if (ownerData?.ownershipLevel === 'registrar') {
       if (address === ownerData?.registrant) {
         _canModifyOwner = address === ownerData?.registrant
@@ -157,8 +156,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       canModifyManager: _canModifyManager,
     }
   })
-
-  const { t } = useTranslation('transactionFlow')
 
   const ownershipLevel = ownerData?.ownershipLevel
 
@@ -326,17 +323,15 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
   return (
     <>
-      <Typography variant="extraLarge">Send Name</Typography>
-      <Typography style={{ textAlign: 'center' }}>
-        Sending this name will make the new address both the owner and manager.
-      </Typography>
-      <Outlink href="">Learn more about name ownership.</Outlink>
+      <Typography variant="extraLarge">{t('details.sendName.title')}</Typography>
+      <Typography style={{ textAlign: 'center' }}>{t('details.sendName.description')}</Typography>
+      <Outlink href="">{t('details.sendName.learnMore')}</Outlink>
       {canModify?.canModifyOwner && (
         <SwitchBox>
           <TextContainer>
-            <Typography weight="bold">Make Owner</Typography>
+            <Typography weight="bold">{t('details.sendName.makeOwner')}</Typography>
             <Typography weight="light" variant="small">
-              The owner can send to a new manager
+              {t('details.sendName.makeOwnerDescription')}
             </Typography>
           </TextContainer>
           <Checkbox
@@ -353,9 +348,9 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       {canModify?.canModifyManager && (
         <SwitchBox>
           <TextContainer>
-            <Typography weight="bold">Make Manager</Typography>
+            <Typography weight="bold">{t('details.sendName.makeManager')}</Typography>
             <Typography weight="light" variant="small">
-              The Manager can change and set records
+              {t('details.sendName.makeManagerDescription')}
             </Typography>
           </TextContainer>
           <Checkbox
