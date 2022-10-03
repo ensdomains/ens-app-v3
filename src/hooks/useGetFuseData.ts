@@ -3,7 +3,7 @@ import { useQuery } from 'wagmi'
 import { useEns } from '@app/utils/EnsProvider'
 
 export const useGetFuseData = (name: string, skip?: any) => {
-  const { ready, getData } = useEns()
+  const { ready, getWrapperData } = useEns()
 
   const {
     data: fuseData,
@@ -11,7 +11,7 @@ export const useGetFuseData = (name: string, skip?: any) => {
     status,
     isFetched,
     internal: { isFetchedAfterMount },
-  } = useQuery(['getFuseData', name], () => getData(name), {
+  } = useQuery(['getWrapperData', name], () => getWrapperData(name), {
     enabled: ready && !skip && name !== '',
   })
 
