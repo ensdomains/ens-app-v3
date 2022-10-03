@@ -9,7 +9,7 @@ export const useSelfAbilities = (
   return useMemo(() => {
     const abilities = {
       canEdit: false,
-      canSend: true,
+      canSend: false,
       canChangeOwner: false,
       canChangeRegistrant: false,
     }
@@ -19,7 +19,7 @@ export const useSelfAbilities = (
       (!ownerData.registrant && ownerData.owner === address)
     ) {
       abilities.canSend = true
-      abilities.canChangeOwner = false
+      abilities.canChangeOwner = true
       abilities.canChangeRegistrant = true
     }
     if (ownerData.owner === address) {

@@ -33,7 +33,8 @@
       "makeOwner": "Make owner",
       "makeOwnerDescription": "The owner can send to a new owner and change the manager",
       "makeManager": "Make Manager",
-      "makeManagerDescription": "The manager can change and set records."
+      "makeManagerDescription": "The manager can change and set records.",
+      "inputPlaceholder": "Enter an Ethereum address or ENS name"
     },
     "wrap": {
       "startTitle": "Upgrade your name",
@@ -161,12 +162,15 @@
   },
   "errors": {
     "invalidName": "This name is invalid.",
+    "invalidAddress": "Not a valid address",
     "expiringSoon": "This name is expiring soon.",
+    "ownerManagerChoice": "Must send owner or manager",
     "unknown": "Unknown error",
     "notMigrated": "This name is not migrated to the new registry.",
     "featureNotAvailable": "Some features are not yet available, but you can still ",
     "featureNotAvailableLink": "view this name in the old app.",
     "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
-    "migrationNotAvailableLink": "migrate this name in the old app."
+    "migrationNotAvailableLink": "migrate this name in the old app.",
+    "addressLength": "If address it should be 42 characters long"
   }
 }

@@ -179,7 +179,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     }
 
     if (managerChoiceWatch && !ownerChoiceWatch) {
-      // if is owner but not manager then need to reclaim
       if (!isController && isRegistrant) {
         dispatch({
           name: 'setTransactions',
@@ -369,16 +368,16 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
           <Input
             data-testid="send-name-input"
             label="Send to"
-            placeholder="Enter an Ethereum address or ENS name"
+            placeholder={t('details.sendName.inputPlaceholder')}
             {...register('sendName', {
               validate: {
                 length: (value) =>
                   !value.includes('.eth') && value.length !== 42
-                    ? 'If address it should be 42 characters long'
+                    ? t('errors.addressLength')
                     : undefined,
                 isAddress: (value) =>
                   !value.includes('.eth') && !ethers.utils.isAddress(value)
-                    ? 'Not a valid address'
+                    ? t('errors.invalidAddress')
                     : undefined,
               },
             })}
@@ -388,7 +387,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         </form>
         {primaryName && <NameValue value={primaryName} />}
       </InnerContainer>
-      {hasErrors.formMessage && <Helper type="error">Must send Owner or Manager</Helper>}
+      {hasErrors.formMessage && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
       <Dialog.Footer
         leading={
           <Button
