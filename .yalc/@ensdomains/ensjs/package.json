@@ -1,6 +1,6 @@
 {
   "name": "@ensdomains/ensjs",
-  "version": "3.0.0-alpha.21",
+  "version": "3.0.0-alpha.22",
   "description": "ENS javascript library for contract interaction",
   "main": "./dist/cjs/index.js",
   "module": "./dist/esm/index.mjs",
@@ -80,5 +80,5 @@
   "peerDependencies": {
     "ethers": "*"
   },
-  "yalcSig": "32fd784335a437d060ca7dbb898d3d39"
+  "yalcSig": "5035db6593d1a6900c6e4b5a9e690522"
 }
