@@ -8,6 +8,7 @@ import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
+import useResolverExists from '@app/hooks/useResolverExists'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -15,6 +16,7 @@ import Complete from './steps/Complete'
 import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
+import { defaultFuses } from './steps/Profile/fuses'
 import Transactions from './steps/Transactions'
 import { BackObj, RegistrationStepData } from './types'
 
@@ -35,6 +37,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const selected = { name: nameDetails.normalisedName, address: address! }
   const { normalisedName } = nameDetails
   const defaultResolverAddress = useContractAddress('PublicResolver')
+  const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists(
+    normalisedName,
+    defaultResolverAddress,
+  )
 
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
@@ -52,8 +58,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       dispatch({
         name: 'setProfileData',
         payload: {
-          records: { coinTypes: [{ key: 'ETH', value: address! } as any] },
-          permissions: {},
+          records: {
+            coinTypes: [{ key: 'ETH', value: address! } as any],
+            clearRecords: resolverExists,
+          },
+          permissions: defaultFuses,
           resolver: defaultResolverAddress,
         },
         selected,
@@ -125,13 +134,14 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         title={normalisedName}
         hideHeading={step === 'complete'}
         subtitle={t('subtitle')}
-        loading={isLoading || primaryLoading}
+        loading={isLoading || primaryLoading || resolverExistsLoading}
         singleColumnContent
       >
         {{
           trailing: {
             pricing: (
               <Pricing
+                resolverExists={resolverExists}
                 nameDetails={nameDetails}
                 callback={pricingCallback}
                 hasPrimaryName={!!primaryName}
@@ -140,6 +150,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
             ),
             profile: (
               <Profile
+                resolverExists={resolverExists}
                 nameDetails={nameDetails}
                 registrationData={item}
                 callback={profileCallback}

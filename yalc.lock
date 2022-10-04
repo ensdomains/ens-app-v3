@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/ens-test-env": {
+      "signature": "75b116a1462e786d9b8f2b4662872cf5",
+      "pure": true,
+      "replaced": "^0.3.1"
+    }
+  }
+}

@@ -17,6 +17,7 @@ type RegistrationProps = {
   hasResolverSet: boolean
   textRecords: RecordItem[]
   addressRecords: RecordItem[]
+  clearRecords: boolean
 }
 type GasCostData = [index: number, gas: number]
 
@@ -40,7 +41,7 @@ const useEstimateRegistration = (data: RegistrationProps | undefined) => {
     if (!feeData || !gasCosts || !data) return BigNumber.from(0)
 
     const { addr, text } = gasCosts
-    const { reverseRecord, hasResolverSet, textRecords, addressRecords } = data
+    const { reverseRecord, hasResolverSet, textRecords, addressRecords, clearRecords } = data
 
     let limit = BASE_LIMIT
 
@@ -49,6 +50,9 @@ const useEstimateRegistration = (data: RegistrationProps | undefined) => {
     }
     if (reverseRecord) {
       limit += 116396
+    }
+    if (clearRecords) {
+      limit += 26191
     }
     for (const { value } of textRecords) {
       const { byteLength } = toUtf8Bytes(value)
@@ -91,6 +95,7 @@ export const useEstimateFullRegistration = ({
       addressRecords: records.coinTypes || [],
       textRecords: records.texts || [],
       hasResolverSet: resolver !== emptyAddress,
+      clearRecords: !!records.clearRecords,
     })
   const estimatedGasLoading = commitGasLoading || registrationGasLoading
   const estimatedGasFee = useMemo(() => {

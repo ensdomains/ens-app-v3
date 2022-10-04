@@ -1,4 +1,0 @@
-[
-  "event PubkeyChanged(bytes32 indexed,bytes32,bytes32)",
-  "function pubkey(bytes32) view returns (bytes32, bytes32)"
-]

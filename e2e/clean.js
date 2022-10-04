@@ -18,9 +18,9 @@ const rpcSendBatch = (items) =>
     ),
   })
 
-export const revert = async () => {
+export const revert = async (toSnapshot = 2) => {
   const currBlock = await provider.getBlockNumber()
-  await provider.send('evm_revert', [1])
+  await provider.send('evm_revert', [toSnapshot - 1])
   await provider.send('evm_snapshot', [])
   const revertBlock = await provider.getBlockNumber()
   const blocksToMine = currBlock - revertBlock
@@ -40,9 +40,12 @@ export const getTime = async () => {
   return currTime * 1000
 }
 
-export const syncTime = async (difference) => {
-  await provider.send('anvil_setNextBlockTimestamp', [Math.floor(Date.now() / 1000) - difference])
-  await provider.send('evm_mine', [])
+export const syncTime = (difference) => {
+  cy.wrap(revert(1))
+    .then(() =>
+      provider.send('anvil_setNextBlockTimestamp', [Math.floor(Date.now() / 1000) - difference]),
+    )
+    .then(() => provider.send('evm_mine', []))
 }
 
 export const globalIncreaseTime = async (seconds) => {
