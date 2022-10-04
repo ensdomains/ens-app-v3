@@ -24,7 +24,7 @@ specifiers:
   '@ensdomains/address-encoder': ^0.2.18
   '@ensdomains/buffer': ^0.1.0
   '@ensdomains/ens-contracts': 0.0.14
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-test-env': ^0.3.2
   '@ensdomains/ens-validation': ^0.1.0
   '@ensdomains/ensjs': 3.0.0-alpha.23
   '@ensdomains/eth-ens-namehash': ^2.0.15
@@ -167,7 +167,7 @@ devDependencies:
   '@cloudflare/wrangler': 1.19.12
   '@ensdomains/buffer': 0.1.0_hardhat@2.11.1
   '@ensdomains/ens-contracts': 0.0.14_hardhat@2.11.1
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-test-env': 0.3.2
   '@ethersproject/providers': 5.7.0
   '@next/bundle-analyzer': 12.3.0
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -2223,6 +2223,29 @@ packages:
       - web3-core-promievent
       - web3-eth-abi
       - web3-utils
+    dev: true
+
+  /@ensdomains/ens-test-env/0.3.2:
+    resolution: {integrity: sha512-01K+YXFA6ZF07KBo6ZiQ45crAf6JHVqKddZxazvq/5iisiQxUDXYBgBrjXbwq5f/hgmzU/TfB8RqZ7SFeBxSNA==}
+    hasBin: true
+    dependencies:
+      '@ethersproject/wallet': 5.7.0
+      ansi-colors: 4.1.1
+      cli-progress: 3.11.2
+      commander: 9.4.0
+      concurrently: 7.4.0
+      docker-compose: 0.23.17
+      dotenv: 16.0.2
+      fs-extra: 10.1.0
+      ganache: 7.4.3
+      got: 12.3.1
+      lz4: 0.6.5
+      node-fetch: 3.2.10
+      progress-stream: 2.0.0
+      tar-fs: 2.1.1
+      wait-on: 6.0.1
+    transitivePeerDependencies:
+      - debug
     dev: true
 
   /@ensdomains/ens-validation/0.1.0:
@@ -21408,31 +21431,6 @@ packages:
       react: 17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
     dev: false
-
-  file:.yalc/@ensdomains/ens-test-env:
-    resolution: {directory: .yalc/@ensdomains/ens-test-env, type: directory}
-    name: '@ensdomains/ens-test-env'
-    version: 0.3.1
-    hasBin: true
-    dependencies:
-      '@ethersproject/wallet': 5.7.0
-      ansi-colors: 4.1.1
-      cli-progress: 3.11.2
-      commander: 9.4.0
-      concurrently: 7.4.0
-      docker-compose: 0.23.17
-      dotenv: 16.0.2
-      fs-extra: 10.1.0
-      ganache: 7.4.3
-      got: 12.3.1
-      lz4: 0.6.5
-      node-fetch: 3.2.10
-      progress-stream: 2.0.0
-      tar-fs: 2.1.1
-      wait-on: 6.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:
     resolution: {tarball: https://codeload.github.com/ethereumjs/ethereumjs-abi/tar.gz/ee3994657fa7a427238e6ba92a84d0b529bbcde0}
