@@ -35,12 +35,13 @@ describe('Settings', () => {
       cy.findByTestId('close-icon').click()
     })
     it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
-      cy.contains('Add Successful Transaction').click()
+      acceptMetamaskAccess(2)
+      cy.visit('/my/settings')
+      cy.wait(5000)
+      cy.contains('Add Successful Transaction').click({ force: true })
+      cy.wait(5000)
       cy.confirmMetamaskTransaction()
-      cy.wait(500)
-      cy.findAllByTestId('transaction-confirmed')
-        .should('be.visible')
-        .should('contain.text', 'Test Transaction')
+      cy.contains('Test Transaction').should('be.visible')
 
       cy.findByTestId('toast-desktop')
         .should('be.visible')
