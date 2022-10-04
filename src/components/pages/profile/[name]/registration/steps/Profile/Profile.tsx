@@ -8,7 +8,9 @@ import { Button, Dialog, DownIndicatorSVG, Helper, Tag, Typography, mq } from '@
 
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import BurnFusesContent from '@app/components/@molecules/BurnFuses/BurnFusesContent'
+import BurnFusesContent, {
+  baseFuseObj,
+} from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import AvatarButton from '@app/components/@molecules/ProfileEditor/AvatarButton'
@@ -23,7 +25,6 @@ import { ProfileFormObject, convertProfileToProfileFormObject } from '@app/utils
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import Resolver from './Resolver'
-import { defaultFuses } from './fuses'
 
 const StyledCard = styled.form(
   ({ theme }) => css`
@@ -476,7 +477,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
                   isDefault={isDefaultFuses}
                   onClick={() => setModalOption('permissions')}
                   onResetClick={() => {
-                    setFuses({ ...defaultFuses })
+                    setFuses({ ...baseFuseObj })
                   }}
                 />
                 <AdvancedOption

@@ -4,6 +4,7 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAccount } from 'wagmi'
 
+import { baseFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -16,7 +17,6 @@ import Complete from './steps/Complete'
 import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
-import { defaultFuses } from './steps/Profile/fuses'
 import Transactions from './steps/Transactions'
 import { BackObj, RegistrationStepData } from './types'
 
@@ -24,9 +24,6 @@ type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   isLoading: boolean
 }
-
-// needed:
-// - clear existing records in profile (if setting)
 
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
@@ -62,7 +59,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
             coinTypes: [{ key: 'ETH', value: address! } as any],
             clearRecords: resolverExists,
           },
-          permissions: defaultFuses,
+          permissions: baseFuseObj,
           resolver: defaultResolverAddress,
         },
         selected,
