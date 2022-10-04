@@ -26,7 +26,7 @@ specifiers:
   '@ensdomains/ens-contracts': 0.0.14
   '@ensdomains/ens-test-env': ^0.3.2
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.23
+  '@ensdomains/ensjs': 3.0.0-alpha.24
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': ^0.6.16
   '@ethersproject/providers': ^5.7.0
@@ -134,7 +134,7 @@ dependencies:
   '@ensdomains/address-encoder': 0.2.18
   '@ensdomains/ens-contracts': 0.0.14_hardhat@2.11.1
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.23_ethers@5.7.0
+  '@ensdomains/ensjs': 3.0.0-alpha.24_ethers@5.7.0
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.16_6ycby5qtikbhve4sxtfce3vpny
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_fcsnifgkfb6ypkeqq3oellhnki
@@ -2278,8 +2278,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@ensdomains/ensjs/3.0.0-alpha.23_ethers@5.7.0:
-    resolution: {integrity: sha512-xv/0sEpvV4SE/7A/G8ohaMHGY+GdSpt/ASVHB7Zcq4IG206jfAEzWYej065wfajCdT4SSxtsOrf4rQYHmEF4+A==}
+  /@ensdomains/ensjs/3.0.0-alpha.24_ethers@5.7.0:
+    resolution: {integrity: sha512-qWC33DwbaW1NB6C4CpRfkJcJuU/N4dM9Idhb1nyH5O1fr/0ftRQRuL1yFdPOeBxfSK6tUbCzLUSsxJ5NdvxkIg==}
     peerDependencies:
       ethers: '*'
     dependencies:

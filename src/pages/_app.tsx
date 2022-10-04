@@ -91,7 +91,7 @@ const breakpoints = {
 }
 
 const { provider, chains } = configureChains(
-  [chain.mainnet, chain.localhost],
+  [chain.goerli, chain.localhost],
   [
     ...(process.env.NEXT_PUBLIC_PROVIDER
       ? [
@@ -101,7 +101,11 @@ const { provider, chains } = configureChains(
         ]
       : [
           jsonRpcProvider({
-            rpc: () => ({ http: 'https://web3.ens.domains/v1/mainnet' }),
+            rpc: (c) => ({
+              http: `https://web3.ens.domains/v1/${
+                c.network === 'homestead' ? 'mainnet' : c.network
+              }`,
+            }),
           }),
           infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
         ]),
