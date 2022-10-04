@@ -48,7 +48,6 @@
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.18",
-    "@ensdomains/ens-contracts": "file:.yalc/@ensdomains/ens-contracts",
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "3.0.0-alpha.23",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
@@ -89,7 +88,8 @@
     "@cloudflare/workers-types": "^3.14.1",
     "@cloudflare/wrangler": "^1.19.12",
     "@ensdomains/buffer": "^0.1.0",
-    "@ensdomains/ens-test-env": "^0.3.0",
+    "@ensdomains/ens-contracts": "0.0.14",
+    "@ensdomains/ens-test-env": "^0.3.2",
     "@ethersproject/providers": "^5.7.0",
     "@next/bundle-analyzer": "^12.2.5",
     "@next/swc-linux-x64-gnu": "12.1.4",

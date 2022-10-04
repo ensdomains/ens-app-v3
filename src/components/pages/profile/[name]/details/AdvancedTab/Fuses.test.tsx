@@ -3,15 +3,15 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
+import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
 
 import Fuses from './Fuses'
 
 jest.mock('next/router')
-jest.mock('@app/hooks/useGetFuseData')
+jest.mock('@app/hooks/useGetWrapperData')
 
 const mockUseRouter = mockFunction(useRouter)
-const mockUseGetFuseData = mockFunction(useGetFuseData)
+const mockUseGetWrapperData = mockFunction(useGetWrapperData)
 
 const mockFusesResponse = {
   fuseObj: {
@@ -38,7 +38,7 @@ describe('Fuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({})
+    mockUseGetWrapperData.mockReturnValue({})
     render(<Fuses />)
     expect(screen.getByText('fuses.callToAction')).toBeVisible()
   })
@@ -49,7 +49,7 @@ describe('Fuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({ fuseData: mockFusesResponse })
+    mockUseGetWrapperData.mockReturnValue({ wrapperData: mockFusesResponse })
     render(<Fuses />)
     expect(screen.getByTestId('first-traffic-light')).toHaveStyle(
       'background-color: rgb(213,85,85)',
@@ -62,8 +62,8 @@ describe('Fuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: {
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: {
         ...mockFusesResponse,
         fuseObj: { ...mockFusesResponse.fuseObj, PARENT_CANNOT_CONTROL: false },
       },

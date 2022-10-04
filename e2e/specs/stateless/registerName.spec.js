@@ -3,12 +3,9 @@ import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Register Name', () => {
   before(() => {
-    acceptMetamaskAccess(3, true)
+    cy.wrap(acceptMetamaskAccess(3, true)).then(() => syncTime(180))
   })
   describe('normal registration', () => {
-    before(() => {
-      cy.wrap(syncTime(60))
-    })
     it('should redirect to the registration page on search', () => {
       cy.visit('/')
       cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
@@ -98,9 +95,6 @@ describe('Register Name', () => {
     })
   })
   describe('not primary', () => {
-    before(() => {
-      cy.wrap(syncTime(60))
-    })
     it('should show primary name setting as unchecked if primary already set', () => {
       cy.visit('/register/registration-not-primary.eth')
       cy.findByTestId('checkbox').should('not.be.checked')
@@ -124,9 +118,6 @@ describe('Register Name', () => {
     })
   })
   describe('premium', () => {
-    before(() => {
-      cy.wrap(syncTime(60))
-    })
     it('should allow registration', () => {
       cy.visit('/register/name-with-premium.eth')
       connectFromExisting()

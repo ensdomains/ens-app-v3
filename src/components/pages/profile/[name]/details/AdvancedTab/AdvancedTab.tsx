@@ -6,7 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { RecordItem } from '@app/components/RecordItem'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
+import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
 
 import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'
@@ -38,7 +38,7 @@ const MoreContainer = styled.div`
 `
 
 export const generateAccordionData = (
-  fuseData: ReturnType<typeof useGetFuseData>['fuseData'],
+  wrapperData: ReturnType<typeof useGetWrapperData>['wrapperData'],
   t: TFunction,
   ownerData: ReturnType<typeof useBasicName>['ownerData'],
   isWrapped: boolean,
@@ -53,7 +53,7 @@ export const generateAccordionData = (
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
-    disabled: !fuseData,
+    disabled: !wrapperData,
     name: 'fuses',
     canEdit: ownerData?.owner === address && isWrapped,
   },
@@ -73,10 +73,10 @@ const MoreTab = () => {
   const { t } = useTranslation('profile')
   const router = useRouter()
   const { name } = router.query
-  const { fuseData } = useGetFuseData((name as string) || '')
+  const { wrapperData } = useGetWrapperData((name as string) || '')
   const { address } = useAccount()
   const { ownerData, isWrapped } = useBasicName(name as string)
-  const accordionData = generateAccordionData(fuseData, t, ownerData, isWrapped, address)
+  const accordionData = generateAccordionData(wrapperData, t, ownerData, isWrapped, address)
 
   return (
     <MoreContainer>

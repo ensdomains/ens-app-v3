@@ -23,6 +23,7 @@ import { ProfileFormObject, convertProfileToProfileFormObject } from '@app/utils
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import Resolver from './Resolver'
+import { defaultFuses } from './fuses'
 
 const StyledCard = styled.form(
   ({ theme }) => css`
@@ -164,6 +165,7 @@ type ModalOption = 'avatar' | 'permissions' | 'resolver'
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   registrationData: RegistrationReducerDataItem
+  resolverExists: boolean | undefined
   callback: (data: RegistrationStepData['profile'] & BackObj) => void
 }
 
@@ -199,22 +201,13 @@ const AdvancedOption = ({
   )
 }
 
-const defaultFuses: Partial<FuseObj> = {
-  CANNOT_BURN_FUSES: false,
-  CANNOT_UNWRAP: false,
-  CANNOT_CREATE_SUBDOMAIN: false,
-  CANNOT_SET_RESOLVER: false,
-  CANNOT_SET_TTL: false,
-  CANNOT_TRANSFER: false,
-  CAN_DO_EVERYTHING: true,
-}
 type ValueItem = {
   key: string
   value: any
   dirty: boolean
 }
 
-const Profile = ({ nameDetails, callback, registrationData }: Props) => {
+const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Props) => {
   const { t } = useTranslation('register')
 
   const { address } = useAccount()
@@ -241,7 +234,7 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
   const [fuses, setFuses] = useState(registrationData.permissions)
   const [resolver, setResolver] = useState(registrationData.resolver || defaultResolverAddress)
 
-  const isDefaultFuses = useMemo(() => !!fuses.CAN_DO_EVERYTHING, [fuses.CAN_DO_EVERYTHING])
+  const isDefaultFuses = Object.values(fuses).every((fuse) => !fuse)
   const isDefaultResolver = useMemo(
     () => resolver === defaultResolverAddress,
     [resolver, defaultResolverAddress],
@@ -250,15 +243,17 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
   const _callback = useCallback(
     (_profile: RecordOptions, event?: React.BaseSyntheticEvent) => {
       const nativeEvent = event?.nativeEvent as SubmitEvent | undefined
-      const { CAN_DO_EVERYTHING: _, ...newFuses } = fuses
       callback({
-        records: _profile,
+        records: {
+          ..._profile,
+          clearRecords: resolver === defaultResolverAddress ? resolverExists : false,
+        },
         resolver,
-        permissions: newFuses,
+        permissions: fuses,
         back: nativeEvent?.submitter === backRef.current,
       })
     },
-    [callback, fuses, resolver],
+    [fuses, callback, resolver, defaultResolverAddress, resolverExists],
   )
 
   const profileEditorForm = useProfileEditor({
@@ -336,7 +331,6 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
     Object.entries(recordsAsTabs)
       .reduce(checkForDirtyTab(recordsAsTabs), [] as { key: string; value: any; dirty: boolean }[])
       .forEach(({ key, value, dirty }) => {
-        console.log(key, value, dirty)
         setValue(key as any, value, {
           shouldDirty: dirty,
           shouldTouch: key.includes('.') ? true : undefined,
@@ -405,14 +399,10 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
             canUnsetFuse
             onSubmit={(newFuses) => {
               const _newFuses = newFuses as unknown as keyof FuseObj
-              const currFuses = { ...fuses, CAN_DO_EVERYTHING: false }
-              const newFuseObj = Object.keys(currFuses)
-                .filter((x) => x !== 'CAN_DO_EVERYTHING')
-                .reduce((acc, key) => {
-                  acc[key as keyof FuseObj] = _newFuses.includes(key)
-                  return acc
-                }, currFuses)
-              newFuseObj.CAN_DO_EVERYTHING = Object.values(newFuseObj).every((fuse) => !fuse)
+              const newFuseObj = Object.keys(fuses).reduce((acc, key) => {
+                acc[key as keyof FuseObj] = _newFuses.includes(key)
+                return acc
+              }, fuses)
               setFuses(newFuseObj)
               setModalOpen(false)
             }}
@@ -486,7 +476,7 @@ const Profile = ({ nameDetails, callback, registrationData }: Props) => {
                   isDefault={isDefaultFuses}
                   onClick={() => setModalOption('permissions')}
                   onResetClick={() => {
-                    setFuses(defaultFuses)
+                    setFuses({ ...defaultFuses })
                   }}
                 />
                 <AdvancedOption
