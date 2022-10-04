@@ -25,6 +25,7 @@ describe('Settings', () => {
       cy.contains('Waiting for Wallet').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').should('be.disabled')
       cy.confirmMetamaskTransaction()
+      cy.wait(500)
       cy.contains('Your transaction is now complete!').should('be.visible')
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.findByTestId('toast-desktop')

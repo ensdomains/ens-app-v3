@@ -38,6 +38,7 @@ describe('Create Subname', () => {
     cy.findByTestId('add-subname-action').click()
     cy.findByTestId('add-subname-input').clear().type('test')
     cy.findByTestId('create-subname-next').click()
+    cy.wait(1000)
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()

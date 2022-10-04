@@ -126,6 +126,7 @@ describe('Register Name', () => {
       cy.findByTestId('next-button').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
+      cy.wait(500)
       cy.findByTestId('countdown-complete-check')
         .should('be.visible')
         .then(() => increaseTime(60))
