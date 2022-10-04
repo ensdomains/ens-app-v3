@@ -4,5 +4,9 @@ module.exports = function (on, config) {
       console.log(message)
       return null
     },
+    setTransactionWaitTime(waitTime) {
+      process.env.TRANSACTION_WAIT_TIME = String(waitTime)
+      return null
+    },
   })
 }
