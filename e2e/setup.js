@@ -5,7 +5,8 @@ export const acceptMetamaskAccess = (account = 1, runRevert = false) => {
   cy.visit('/')
   cy.window().then((win) => win.ethereum.selectedAddress && cy.disconnectMetamaskWalletFromDapp())
   cy.switchMetamaskAccount(account).then(() => {
-    runRevert && cy.wrap(revert())
+    runRevert &&
+      cy.wrap(revert()).then(([currBlock, revertBlock]) => cy.task('log', [currBlock, revertBlock]))
   })
   cy.resetMetamaskAccount()
   cy.contains('Connect Wallet').click()

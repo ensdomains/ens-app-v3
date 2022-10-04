@@ -19,15 +19,18 @@ const rpcSendBatch = (items) =>
   })
 
 export const revert = async (toSnapshot = 2) => {
-  const currBlock = await provider.getBlockNumber()
+  const currBlock = parseInt(await provider.send('eth_blockNumber', []), 16)
   await provider.send('evm_revert', [toSnapshot - 1])
   await provider.send('evm_snapshot', [])
-  const revertBlock = await provider.getBlockNumber()
+  await new Promise((resolve) => setTimeout(resolve, 1000))
+  const revertBlock = parseInt(await provider.send('eth_blockNumber', []), 16)
   const blocksToMine = currBlock - revertBlock
   await rpcSendBatch([
     { method: 'anvil_mine', params: [blocksToMine + 1] },
     { method: 'evm_setAutomine', params: [true] },
   ])
+
+  return [currBlock, revertBlock]
 }
 
 export const increaseTime = async (seconds) => {
