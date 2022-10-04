@@ -74,10 +74,8 @@ const TextContainer = styled.div(
 
 const UpgradeButton = styled(Button)(
   ({ theme }) => css`
-    & {
-      background: ${theme.colors.backgroundTertiary};
-      color: ${theme.colors.foreground};
-    }
+    background: ${theme.colors.backgroundTertiary};
+    color: ${theme.colors.foreground};
     &:hover {
       background: ${theme.colors.background};
     }

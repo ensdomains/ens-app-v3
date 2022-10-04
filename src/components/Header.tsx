@@ -1,4 +1,3 @@
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
@@ -8,6 +7,7 @@ import { useAccount } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
 import { routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -180,7 +180,7 @@ export const Header = () => {
           condition={router.asPath !== '/'}
           wrapper={(children) => (
             <Link passHref href="/">
-              <LogoAnchor>{children}</LogoAnchor>
+              <LogoAnchor data-testid="home-button">{children}</LogoAnchor>
             </Link>
           )}
         >

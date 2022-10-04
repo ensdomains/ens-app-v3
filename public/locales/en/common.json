@@ -27,7 +27,11 @@
     "transfer": "Transfer",
     "tryAgain": "Try Again",
     "done": "Done",
-    "burnSelected": "Burn Selected"
+    "burnSelected": "Burn Selected",
+    "remindMe": "Remind Me",
+    "begin": "Begin",
+    "finish": "Finish",
+    "skip": "Skip"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -109,7 +113,9 @@
       "updateEthAddress": "Update ETH address",
       "testSendName": "Send Name",
       "burnFuses": "Burn permissions",
-      "createSubname": "Create Subname"
+      "createSubname": "Create Subname",
+      "commitName": "Start countdown",
+      "registerName": "Register Name"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -122,7 +128,8 @@
       "updateEthAddress": "Update ETH address to this address",
       "testSendName": "Set the controller and registrant of the name",
       "createSubname": "Create a new subname on the name",
-      "burnFuses": "Burn the chosen permissions until name expiry"
+      "burnFuses": "Burn the chosen permissions until name expiry",
+      "commitName": "Start countdown to register name"
     },
     "itemLabel": {
       "name": "Name",
@@ -132,7 +139,8 @@
       "to": "To",
       "currentResolver": "Current Resolver",
       "newResolver": "New Resolver",
-      "subname": "Subname"
+      "subname": "Subname",
+      "duration": "Duration"
     },
     "itemValue": {},
     "status": {

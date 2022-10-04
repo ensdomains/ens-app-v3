@@ -1,5 +1,4 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { useAddRecentTransaction, useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { utils } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -14,6 +13,8 @@ import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
+import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { transactions } from '@app/transaction-flow/transaction'
@@ -219,15 +220,6 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
-  useEffect(() => {
-    if (transactionStatus === 'confirmed') {
-      dispatch({ name: 'setTransactionStage', payload: 'complete' })
-    }
-    if (transactionStatus === 'failed') {
-      dispatch({ name: 'setTransactionStage', payload: 'failed' })
-    }
-  }, [dispatch, transactionStatus])
-
   const {
     data: request,
     isLoading: requestLoading,
@@ -268,7 +260,8 @@ export const TransactionStageModal = ({
     onSuccess: (tx) => {
       addRecentTransaction({
         hash: tx.hash,
-        description: JSON.stringify({ action: actionName, key: txKey }),
+        action: actionName,
+        key: txKey!,
       })
       dispatch({ name: 'setTransactionHash', payload: tx.hash })
     },
@@ -358,7 +351,7 @@ export const TransactionStageModal = ({
     return (
       <Button
         shadowless
-        disabled={requestLoading || !sendTransaction}
+        disabled={requestLoading || !sendTransaction || !!requestError}
         onClick={() => sendTransaction!()}
         data-testid="transaction-modal-confirm-button"
       >
@@ -369,6 +362,7 @@ export const TransactionStageModal = ({
     currentStep,
     dispatch,
     onDismiss,
+    requestError,
     requestLoading,
     sendTransaction,
     stage,

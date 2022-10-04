@@ -41,8 +41,7 @@ const SectionHeader = styled.div(
 const ContentContainer = styled.div<{ $hide?: boolean }>(
   ({ theme, $hide }) => css`
     display: flex;
-    flex-direction: row;
-    flex-wrap: wrap;
+    flex-flow: row wrap;
     align-items: flex-start;
     justify-content: center;
 

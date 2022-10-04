@@ -6,7 +6,8 @@
       "@types/puppeteer-core",
       "@synthetixio/synpress/support",
       "cypress-wait-until",
-      "@testing-library/cypress"
+      "@testing-library/cypress",
+      "cypress-localstorage-commands"
     ],
     "outDir": "./output"
   },

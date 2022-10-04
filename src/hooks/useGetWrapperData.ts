@@ -2,21 +2,21 @@ import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
 
-export const useGetFuseData = (name: string, skip?: any) => {
-  const { ready, getFuses } = useEns()
+export const useGetWrapperData = (name: string, skip?: any) => {
+  const { ready, getWrapperData } = useEns()
 
   const {
-    data: fuseData,
+    data: wrapperData,
     isLoading,
     status,
     isFetched,
     internal: { isFetchedAfterMount },
-  } = useQuery(['getFuseData', name], () => getFuses(name), {
+  } = useQuery(['getFuseData', name], () => getWrapperData(name), {
     enabled: ready && !skip && name !== '',
   })
 
   return {
-    fuseData,
+    wrapperData,
     isLoading,
     status,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,

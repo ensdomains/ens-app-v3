@@ -11,10 +11,11 @@ import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySw
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
+import useEstimateTransactionCost from '@app/hooks/useEstimateTransactionCost'
 import { useEthPrice } from '@app/hooks/useEthPrice'
-import { useEstimateTransactionCost } from '@app/hooks/useTransactionCost'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { CurrencyUnit } from '@app/types'
 
 const Container = styled.form(
   ({ theme }) => css`
@@ -54,19 +55,22 @@ export type Props = {
 const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
-  const [years, setYears] = useState(1)
-  const [currencyUnit, setCurrencyUnit] = useState<'eth' | 'usd'>('eth')
+  const fiatUnit = 'usd'
 
-  const { data: transactionData, loading: transactionDataLoading } = useEstimateTransactionCost([
-    'REGISTER',
-    'COMMIT',
-  ])
+  const [years, setYears] = useState(1)
+  const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
+  const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
+
+  const { data: transactionData, isLoading: transactionDataLoading } =
+    useEstimateTransactionCost('RENEW')
   const { gasPrice, transactionFee } = transactionData || {}
   const gasLabel = gasPrice ? `${formatUnits(gasPrice, 'gwei')} gwei` : '-'
 
   const { data: ethPrice, loading: ethPriceLoading } = useEthPrice()
 
-  const rentFee = ethPrice ? BigNumber.from('5000000000000000000').div(ethPrice) : undefined
+  const rentFee = ethPrice
+    ? BigNumber.from('5000000000000000000').div(ethPrice).div(1e8)
+    : undefined
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
 
   const items = [
@@ -108,11 +112,10 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
           <RegistrationTimeComparisonBanner
             rentFee={rentFee}
             transactionFee={transactionFee}
-            gasPrice={gasPrice}
             message="Extending for multiple years will save money on network costs by avoiding yearly transactions."
           />
         )}
-        <Invoice items={items} unit={currencyUnit} totalLabel="Estimated total" />
+        <Invoice items={items} unit={currencyDisplay} totalLabel="Estimated total" />
       </Container>
       <Dialog.Footer leading={<Button>Cancel</Button>} trailing={<Button>Save</Button>} />
     </>

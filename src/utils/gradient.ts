@@ -1,7 +1,5 @@
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { arrayify } from 'ethers/lib/utils'
-
-import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
-
 import { emptyAddress } from './constants'
 
 // original: https://github.com/ourzora/zorb/blob/main/packages/zorb-web-component/src

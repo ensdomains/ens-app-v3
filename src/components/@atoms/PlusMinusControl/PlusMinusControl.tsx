@@ -9,13 +9,12 @@ import PlusIcon from '@app/assets/Plus.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
 import { createChangeEvent } from '@app/utils/syntheticEvent'
 
-const Container = styled.div(
-  ({ theme }) => css`
+const Container = styled.div<{ $highlighted?: boolean }>(
+  ({ theme, $highlighted }) => css`
     width: 100%;
-    padding: ${theme.space['1']};
+    padding: ${$highlighted ? theme.space['4'] : theme.space['1']};
     border: 1px solid ${theme.colors.borderSecondary};
-    height: ${theme.space['13']};
-    border-radius: calc(${theme.space['13']} / 2);
+    border-radius: ${theme.radii.full};
     display: flex;
     align-items: center;
     gap: ${theme.space['4']};
@@ -43,23 +42,24 @@ const Button = styled.button(
   `,
 )
 
-const Label = styled.div(
-  ({ theme }) => css`
+const Label = styled.div<{ $highlighted?: boolean }>(
+  ({ theme, $highlighted }) => css`
     flex: 1;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
     font-style: normal;
     font-weight: ${theme.fontWeights.bold};
-    font-size: ${theme.space['5']};
-    line-height: ${theme.space['7']};
+    font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
+    line-height: ${theme.lineHeights.normal};
     text-align: center;
-    color: ${theme.colors.text};
+    color: ${$highlighted ? theme.colors.accent : theme.colors.text};
   `,
 )
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>
 type Props = {
+  highlighted?: boolean
   value?: number
   minValue?: number
   maxValue?: number
@@ -79,6 +79,7 @@ export const PlusMinusControl = forwardRef(
       name = 'plus-minus-control',
       unit = 'years',
       onChange,
+      highlighted,
       ...props
     }: Props,
     ref: ForwardedRef<HTMLInputElement>,
@@ -114,11 +115,11 @@ export const PlusMinusControl = forwardRef(
     }
 
     return (
-      <Container>
+      <Container $highlighted={highlighted}>
         <Button type="button" onClick={incrementHandler(-1)} data-testid="plus-minus-control-minus">
           <MinusIcon />
         </Button>
-        <Label>{t(`unit.${unit}`, { count: value })}</Label>
+        <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
         <Button type="button" onClick={incrementHandler(1)} data-testid="plus-minus-control-plus">
           <PlusIcon />
         </Button>

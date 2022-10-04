@@ -142,6 +142,8 @@ export const Content = ({
   alwaysShowSubtitle,
   singleColumnContent,
   titleButton,
+  hideBack,
+  hideHeading,
   spacing = '270px 2fr',
 }: {
   noTitle?: boolean
@@ -152,6 +154,8 @@ export const Content = ({
   singleColumnContent?: boolean
   loading?: boolean
   spacing?: string
+  hideBack?: boolean
+  hideHeading?: boolean
   children: {
     warning?: {
       type: 'warning' | 'error' | 'info'
@@ -165,6 +169,8 @@ export const Content = ({
 }) => {
   const router = useRouter()
   const breakpoints = useBreakpoint()
+
+  const hasBack = router.query.from && !hideBack
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
@@ -198,41 +204,43 @@ export const Content = ({
 
       {breakpoints.md && InfoComponent}
 
-      <HeadingItems $spacing={spacing}>
-        <Skeleton loading={loading} as={FullWidthSkeleton as any}>
-          <CustomLeadingHeading $customSpacing={spacing !== '270px 2fr'}>
-            {router.query.from && (
-              <div data-testid="back-button">
-                <Button
-                  onClick={() => router.back()}
-                  variant="transparent"
-                  shadowless
-                  size="extraSmall"
-                >
-                  <BackArrow as={ArrowLeftSVG} />
-                </Button>
-              </div>
-            )}
+      {!hideHeading && (
+        <HeadingItems $spacing={spacing}>
+          <Skeleton loading={loading} as={FullWidthSkeleton as any}>
+            <CustomLeadingHeading $customSpacing={spacing !== '270px 2fr'}>
+              {hasBack && (
+                <div data-testid="back-button">
+                  <Button
+                    onClick={() => router.back()}
+                    variant="transparent"
+                    shadowless
+                    size="extraSmall"
+                  >
+                    <BackArrow as={ArrowLeftSVG} />
+                  </Button>
+                </div>
+              )}
+              <ContentContainer>
+                <TitleWrapper $invert={!!hasBack}>
+                  {titleButton}
+                  <TitleContainer>
+                    <Title weight="bold">{title}</Title>
+                    {subtitle && (!breakpoints.md || alwaysShowSubtitle) && (
+                      <Subtitle weight="bold">{subtitle}</Subtitle>
+                    )}
+                  </TitleContainer>
+                </TitleWrapper>
+              </ContentContainer>
+              {!hasBack && !breakpoints.md && <HamburgerRoutes />}
+            </CustomLeadingHeading>
+          </Skeleton>
+          {children.header && breakpoints.md && (
             <ContentContainer>
-              <TitleWrapper $invert={!!router.query.from}>
-                {titleButton}
-                <TitleContainer>
-                  <Title weight="bold">{title}</Title>
-                  {subtitle && (!breakpoints.md || alwaysShowSubtitle) && (
-                    <Subtitle weight="bold">{subtitle}</Subtitle>
-                  )}
-                </TitleContainer>
-              </TitleWrapper>
+              <Skeleton loading={loading}>{children.header}</Skeleton>
             </ContentContainer>
-            {!router.query.from && !breakpoints.md && <HamburgerRoutes />}
-          </CustomLeadingHeading>
-        </Skeleton>
-        {children.header && breakpoints.md && (
-          <ContentContainer>
-            <Skeleton loading={loading}>{children.header}</Skeleton>
-          </ContentContainer>
-        )}
-      </HeadingItems>
+          )}
+        </HeadingItems>
+      )}
 
       {!breakpoints.md && WarningComponent}
       {!breakpoints.md && InfoComponent}

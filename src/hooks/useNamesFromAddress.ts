@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useQuery } from 'wagmi'
 
-import type { Name } from '@ensdomains/ensjs/dist/cjs/functions/getNames'
+import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -38,7 +38,7 @@ export const useNamesFromAddress = ({
   const { ready, getNames } = useEns()
 
   const { data, isLoading, status } = useQuery(
-    ['names', address],
+    ['names', address, 'graph'],
     () =>
       getNames({
         address: address!,

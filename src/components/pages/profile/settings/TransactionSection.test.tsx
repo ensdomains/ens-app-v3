@@ -1,15 +1,17 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
-import type { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
 import { act } from '@testing-library/react'
 
+import type { Transaction } from '@app/hooks/transactions/transactionStore'
+import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 
 import { TransactionSection } from './TransactionSection'
 
 jest.mock('@app/hooks/useChainName')
-jest.mock('@rainbow-me/rainbowkit')
+jest.mock('@app/hooks/transactions/useClearRecentTransactions')
+jest.mock('@app/hooks/transactions/useRecentTransactions')
 
 const mockUseChainName = mockFunction(useChainName)
 const mockUseClearRecentTransactions = mockFunction(useClearRecentTransactions)
@@ -22,8 +24,7 @@ const makeRecentTransaction =
   (_: any, i: number) =>
     ({
       status,
-      confirmations: 1,
-      description: JSON.stringify({ action: `test-action-${i}` }),
+      action: `test-action-${i}`,
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     } as Transaction)
 

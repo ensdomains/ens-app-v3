@@ -15,7 +15,7 @@ const ProfileInfoBox = styled(CacheableComponent)(({ theme }) => [
     padding: ${theme.space['4']} ${theme.space['4']};
     background-color: ${theme.colors.background};
     border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
     border-radius: ${theme.radii['2xLarge']};
   `,
   mq.md.min(css`
@@ -26,10 +26,9 @@ const ProfileInfoBox = styled(CacheableComponent)(({ theme }) => [
 const Stack = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
     flex-gap: ${theme.space['2']};
     gap: ${theme.space['2']};
-    flex-wrap: wrap;
     margin-top: ${theme.space['2']};
   `,
 )

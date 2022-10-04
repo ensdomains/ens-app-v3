@@ -1,7 +1,6 @@
 // @ts-check
 const { i18n } = require('./next-i18next.config')
 const { withPlugins } = require('next-compose-plugins')
-const withTM = require('next-transpile-modules')(['@ensdomains/ensjs'])
 const path = require('path')
 const StylelintPlugin = require('stylelint-webpack-plugin')
 const { withSentryConfig } = require('@sentry/nextjs')
@@ -41,6 +40,10 @@ let nextConfig = {
       {
         source: '/profile/:name',
         destination: '/profile?name=:name',
+      },
+      {
+        source: '/register/:name',
+        destination: '/register?name=:name',
       },
       {
         source: '/address/:address',
@@ -83,7 +86,7 @@ let nextConfig = {
   },
 }
 
-let plugins = [[withTM]]
+let plugins = []
 
 if (process.env.ANALYZE) {
   const withBundleAnalyzer = require('@next/bundle-analyzer')({

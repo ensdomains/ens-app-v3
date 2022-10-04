@@ -1,10 +1,11 @@
-import { useClearRecentTransactions, useRecentTransactions } from '@rainbow-me/rainbowkit'
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Spinner, Typography } from '@ensdomains/thorin'
 
+import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
@@ -98,6 +99,11 @@ export const TransactionSection = () => {
   const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
+  const visibleTransactions = transactions.slice(0, viewAmt - 1)
+
+  const canClear = useMemo(() => {
+    return transactions.length > 0
+  }, [transactions.length])
 
   const { getResumable, resumeTransactionFlow } = useTransactionFlow()
 
@@ -111,7 +117,7 @@ export const TransactionSection = () => {
           shadowless
           variant="secondary"
           onClick={() => clearTransactions()}
-          disabled={transactions.length === 0}
+          disabled={!canClear}
           data-testid="transaction-clear-button"
         >
           {tc('action.clear')}
@@ -119,29 +125,26 @@ export const TransactionSection = () => {
       }
       fill
     >
-      <TransactionSectionContainer $transactionLength={transactions.length}>
+      <TransactionSectionContainer $transactionLength={visibleTransactions.length}>
         {transactions.length > 0 ? (
           <>
-            {transactions.slice(0, viewAmt - 1).map((transaction, i) => {
-              const { action, key } = JSON.parse(transaction.description)
+            {visibleTransactions.map(({ hash, status, action, key }, i) => {
               const resumable = key && getResumable(key)
               return (
                 <TransactionContainer
-                  data-testid={`transaction-${transaction.status}`}
+                  data-testid={`transaction-${status}`}
                   // eslint-disable-next-line react/no-array-index-key
-                  key={`${transaction.hash}-${i}`}
+                  key={`${hash}-${i}`}
                 >
-                  {transaction.status === 'pending' && (
-                    <Spinner data-testid="pending-spinner" color="accent" />
-                  )}
+                  {status === 'pending' && <Spinner data-testid="pending-spinner" color="accent" />}
                   <TransactionInfoContainer>
                     <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
                     <StyledOutlink
-                      $error={transaction.status === 'failed'}
-                      href={makeEtherscanLink(transaction.hash, chainName)}
+                      $error={status === 'failed'}
+                      href={makeEtherscanLink(hash, chainName)}
                       target="_blank"
                     >
-                      {tc(`transaction.status.${transaction.status}.regular`)}
+                      {tc(`transaction.status.${status}.regular`)}
                     </StyledOutlink>
                   </TransactionInfoContainer>
                   <ContinueContainer>

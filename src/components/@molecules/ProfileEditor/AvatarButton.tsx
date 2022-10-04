@@ -10,8 +10,8 @@ import { ProfileEditorType } from '@app/types'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`
-    width: 90px;
-    height: 90px;
+    width: ${theme.space['24']};
+    height: ${theme.space['24']};
     border-radius: 50%;
     background-color: ${theme.colors.white};
     cursor: pointer;
@@ -82,7 +82,7 @@ type Props = {
 }
 
 const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisplay }: Props) => {
-  const { t } = useTranslation('profile')
+  const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
@@ -101,12 +101,12 @@ const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisp
     <Dropdown
       items={[
         {
-          label: t('profileEditor.tabs.avatar.dropdown.selectNFT'),
+          label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
           color: 'black',
           onClick: handleSelectOption('nft'),
         },
         {
-          label: t('profileEditor.tabs.avatar.dropdown.uploadImage'),
+          label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
           color: 'black',
           onClick: handleSelectOption('upload'),
         },

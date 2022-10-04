@@ -11,6 +11,7 @@ interface Props<T extends FieldValues> {
   options: Option[]
   getValues: UseFormGetValues<T>
   setValue: UseFormSetValue<T>
+  returnAllFields?: boolean
 }
 
 const useExpandableRecordsGroup = <T extends FieldValues>({
@@ -18,6 +19,7 @@ const useExpandableRecordsGroup = <T extends FieldValues>({
   options,
   existingKeys: initialExistingKeys,
   getValues,
+  returnAllFields,
   setValue,
 }: Props<T>) => {
   const [existingKeys, setExistingKeys] = useState(initialExistingKeys)
@@ -48,7 +50,7 @@ const useExpandableRecordsGroup = <T extends FieldValues>({
     const { [key]: _, ...otherValues } = oldValues
     if (shouldRemove) {
       setValue(group, otherValues as PathValue<T, Path<T>>, {
-        shouldDirty: true,
+        shouldDirty: returnAllFields ? Object.keys(otherValues).length > 0 : true,
       })
     } else {
       const newValues = { ...otherValues, [key]: '' }

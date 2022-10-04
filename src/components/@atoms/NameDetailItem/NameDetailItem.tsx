@@ -11,10 +11,9 @@ import { useZorb } from '@app/hooks/useZorb'
 const NameItemWrapper = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: row;
+    flex-flow: row wrap;
     align-items: center;
     justify-content: space-between;
-    flex-wrap: wrap;
     width: 100%;
     padding: ${theme.space['3']} ${theme.space['4.5']};
     border-bottom: 1px solid ${theme.colors.borderTertiary};
