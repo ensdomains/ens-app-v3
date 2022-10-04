@@ -6,6 +6,8 @@ import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
+import { labelhash } from '@ensdomains/ensjs/utils/labels'
+
 type Name = {
   label: string
   namedOwner: string
@@ -25,7 +27,6 @@ const names = [
     label: 'test123',
     namedOwner: 'owner',
     namedAddr: 'owner',
-    subname: 'sub',
   },
   {
     label: 'to-be-wrapped',
@@ -157,20 +158,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       )
       console.log(`Registering name ${label}.eth (tx: ${registerTx.hash})...`)
 
-      if (subname) {
-        const labelhash = ethers.utils.solidityKeccak256(['string'], [subname])
-  
-        const _registry = registry.connect(await ethers.getSigner(registrant))
-        const subnameTx = await _registry.setSubnodeRecord(
-          namehash('test123.eth'),
-          labelhash,
-          registrant,
-          publicResolver.address,
-          0,
-        )
-        await subnameTx.wait()
-      }
-
       return 1
     }
 
@@ -282,6 +269,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
+
+  //register subname
+  const resolver = publicResolver.address
+  const registrant = allNamedAccts['owner']
+  const _registry = registry.connect(await ethers.getSigner(registrant))
+  const subnameTx = await _registry.setSubnodeRecord(
+    namehash('test123.eth'),
+    labelhash('sub'),
+    registrant,
+    resolver,
+    0,
+  )
+  await subnameTx.wait()
 
   return true
 }

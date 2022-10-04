@@ -34,6 +34,7 @@ specifiers:
   '@next/swc-linux-x64-gnu': 12.1.4
   '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
   '@openzeppelin/contracts': ^4.7.3
+  '@openzeppelin/test-helpers': ^0.5.16
   '@rainbow-me/rainbowkit': 0.4.8
   '@sentry/nextjs': ^7.11.1
   '@svgr/webpack': ^6.3.1
@@ -172,6 +173,7 @@ devDependencies:
   '@next/swc-linux-x64-gnu': 12.1.4
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_liuail6phkx7un26teqxcf6yx4
   '@openzeppelin/contracts': 4.7.3
+  '@openzeppelin/test-helpers': 0.5.16_bn.js@4.12.0
   '@synthetixio/synpress': 2.3.3_z27nlp4xg6g3debjpthdaa2vxe_sueclkpmdu562bpoy4x6yfop34
   '@testing-library/cypress': 8.0.3_cypress@10.8.0
   '@testing-library/jest-dom': 5.16.5
@@ -3492,8 +3494,36 @@ packages:
       - supports-color
       - utf-8-validate
 
+  /@openzeppelin/contract-loader/0.6.3:
+    resolution: {integrity: sha512-cOFIjBjwbGgZhDZsitNgJl0Ye1rd5yu/Yx5LMgeq3u0ZYzldm4uObzHDFq4gjDdoypvyORjjJa3BlFA7eAnVIg==}
+    dependencies:
+      find-up: 4.1.0
+      fs-extra: 8.1.0
+    dev: true
+
   /@openzeppelin/contracts/4.7.3:
     resolution: {integrity: sha512-dGRS0agJzu8ybo44pCIf3xBaPQN/65AIXNgK8+4gzKd5kbvlqyxryUYVLJv7fK98Seyd2hDZzVEHSWAh0Bt1Yw==}
+
+  /@openzeppelin/test-helpers/0.5.16_bn.js@4.12.0:
+    resolution: {integrity: sha512-T1EvspSfH1qQO/sgGlskLfYVBbqzJR23SZzYl/6B2JnT4EhThcI85UpvDk0BkLWKaDScQTabGHt4GzHW+3SfZg==}
+    dependencies:
+      '@openzeppelin/contract-loader': 0.6.3
+      '@truffle/contract': 4.6.2
+      ansi-colors: 3.2.4
+      chai: 4.3.6
+      chai-bn: 0.2.2_bn.js@4.12.0+chai@4.3.6
+      ethjs-abi: 0.2.1
+      lodash.flatten: 4.4.0
+      semver: 5.7.1
+      web3: 1.8.0
+      web3-utils: 1.8.0
+    transitivePeerDependencies:
+      - bn.js
+      - bufferutil
+      - encoding
+      - supports-color
+      - utf-8-validate
+    dev: true
 
   /@pedrouid/environment/1.0.1:
     resolution: {integrity: sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==}
@@ -3526,7 +3556,7 @@ packages:
       eth-sig-util: 2.5.3
       ethereumjs-block: 1.7.1
       ethereumjs-tx: 1.3.7
-      ethereumjs-util: 5.2.0
+      ethereumjs-util: 5.2.1
       ethereumjs-vm: 2.6.0
       json-rpc-error: 2.0.0
       json-stable-stringify: 1.0.1
@@ -4616,7 +4646,6 @@ packages:
       - supports-color
       - utf-8-validate
     dev: true
-    optional: true
 
   /@truffle/debug-utils/6.0.35:
     resolution: {integrity: sha512-GuLsc+GFEYiUM683GWh4/ol3jkBts5a601detVWu1Xo5/bSL5gxooOjgOTovjA8dimCjkyi/DnK2yHHC+q+g0g==}
@@ -4637,7 +4666,7 @@ packages:
     resolution: {integrity: sha512-Bgl5Afb1mPVNedI8CJzZQzVIdrZWSXISTBrXPZmppD4Q+6V1RUzlLxiaGGB4gYHOA+U0pBzD8MCcSycPAD9RsA==}
     dependencies:
       bn.js: 5.2.1
-      ethers: 4.0.44
+      ethers: 4.0.49
       web3: 1.7.4
     transitivePeerDependencies:
       - bufferutil
@@ -5710,7 +5739,7 @@ packages:
     resolution: {integrity: sha512-RZXG5mo1JhJjTBg/4NXlS8hyTr2fxiuFaz3UveRpoX9IIc3LPHmWz89dFqTHNQVbWi3VZqxSJqfUwWpb/mCHxA==}
     dependencies:
       web3-eth-abi: 1.8.0
-      web3-utils: 1.2.11
+      web3-utils: 1.8.0
     dev: true
 
   /abi-decoder/2.4.0:
@@ -5895,6 +5924,11 @@ packages:
     resolution: {integrity: sha512-IOfwwBF5iczOjp/WeY4YxyjqAFMQoZufdQWDd19SEExbVLNXqvpzSJ/M7Za4/sCPmQ0+GRquoA7bGcINcxew6w==}
     dependencies:
       string-width: 4.2.3
+    dev: true
+
+  /ansi-colors/3.2.4:
+    resolution: {integrity: sha512-hHUXGagefjN2iRrID63xckIvotOXOojhQKWIPUZ4mNUZ9nLZW+7FMNoE1lOkEhNWYsx/7ysGIuJYCiMAA9FnrA==}
+    engines: {node: '>=6'}
     dev: true
 
   /ansi-colors/4.1.1:
@@ -7190,6 +7224,10 @@ packages:
   /bluebird/3.7.2:
     resolution: {integrity: sha512-XpNj6GDQzdfW+r2Wnn7xiSAd7TM3jzkxGXBGTtWKuSXv1xUV+azxAm8jdWZN06QTQk+2N2XB9jRDkvbmQmcRtg==}
 
+  /bn.js/4.12.0:
+    resolution: {integrity: sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==}
+    dev: true
+
   /bn.js/5.2.1:
     resolution: {integrity: sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==}
 
@@ -7682,6 +7720,16 @@ packages:
     dependencies:
       bignumber.js: 9.1.0
       nofilter: 1.0.4
+
+  /chai-bn/0.2.2_bn.js@4.12.0+chai@4.3.6:
+    resolution: {integrity: sha512-MzjelH0p8vWn65QKmEq/DLBG1Hle4WeyqT79ANhXZhn/UxRWO0OogkAxi5oGGtfzwU9bZR8mvbvYdoqNVWQwFg==}
+    peerDependencies:
+      bn.js: ^4.11.0
+      chai: ^4.0.0
+    dependencies:
+      bn.js: 4.12.0
+      chai: 4.3.6
+    dev: true
 
   /chai/4.3.6:
     resolution: {integrity: sha512-bbcp3YfHCUzMOvKqsztczerVgBKSsEijCySNlHHbX3VG1nskvqjz5Rfso1gGwD6w6oOV3eI60pKuMOV5MV7p3Q==}
@@ -10577,7 +10625,7 @@ packages:
     resolution: {integrity: sha512-VWEI1+KJfz4Km//dadyvBBoBeSQ0MHTXPvr8UIXiLW6IanxvAV+DmlZAijZwAyggqGUfwQBeHf7tc9wzc1piSw==}
     dependencies:
       idna-uts46-hx: 2.3.1
-      js-sha3: 0.5.7
+      js-sha3: 0.8.0
 
   /eth-json-rpc-filters/4.2.2:
     resolution: {integrity: sha512-DGtqpLU7bBg63wPMWg1sCpkKCf57dJ+hj/k3zF26anXMzkmtSBDExL8IhUu7LUd34f0Zsce3PYNO2vV2GaTzaw==}
@@ -10859,7 +10907,7 @@ packages:
     deprecated: 'New package name format for new versions: @ethereumjs/tx. Please update.'
     dependencies:
       ethereum-common: 0.0.18
-      ethereumjs-util: 5.2.0
+      ethereumjs-util: 5.2.1
     dev: true
 
   /ethereumjs-tx/2.1.2:
@@ -10966,8 +11014,6 @@ packages:
       setimmediate: 1.0.4
       uuid: 2.0.1
       xmlhttprequest: 1.8.0
-    dev: true
-    optional: true
 
   /ethers/5.0.0:
     resolution: {integrity: sha512-uOSACd2E8dg8XuiOewpL42uFH7SvrkA5k0oGkHoqSJl2lflrMPV+7ciWzyuPBjyHnOFvAPPJUpsXrwpFKaLFww==}
@@ -11088,6 +11134,15 @@ packages:
       querystring: 0.2.1
     transitivePeerDependencies:
       - debug
+    dev: true
+
+  /ethjs-abi/0.2.1:
+    resolution: {integrity: sha512-g2AULSDYI6nEJyJaEVEXtTimRY2aPC2fi7ddSy0W+LXvEVL8Fe1y76o43ecbgdUKwZD+xsmEgX1yJr1Ia3r1IA==}
+    engines: {node: '>=6.5.0', npm: '>=3'}
+    dependencies:
+      bn.js: 5.2.1
+      js-sha3: 0.5.5
+      number-to-bn: 1.7.0
     dev: true
 
   /ethjs-unit/0.1.6:
@@ -14236,6 +14291,10 @@ packages:
     resolution: {integrity: sha512-sga3MHh9sgQN2+pJ9VYZ+1LPwXOxuBJBA5nrR5/ofPfuiJBE2hnjsaN8se8JznOmGLN2p49Pe5U/ttafcs/apA==}
     dev: false
 
+  /js-sha3/0.5.5:
+    resolution: {integrity: sha512-yLLwn44IVeunwjpDVTDZmQeVbB0h+dZpY2eO68B/Zik8hu6dH+rKeLxwua79GGIvW6xr8NBAcrtiUbYrTjEFTA==}
+    dev: true
+
   /js-sha3/0.5.7:
     resolution: {integrity: sha512-GII20kjaPX0zJ8wzkTbNDYMY7msuZcTWk8S5UOh6806Jq/wz1J8/bnr8uGU0DAUmYDjj2Mr4X1cW8v/GLYnR+g==}
 
@@ -14817,6 +14876,10 @@ packages:
 
   /lodash.debounce/4.0.8:
     resolution: {integrity: sha512-FT1yDzDYEoYWhnSGnpE/4Kj1fLZkDFyqRb7fNt6FdYOSxlUWAtp42Eh6Wb0rGIv/m9Bgo7x4GhQbm5Ys4SG5ow==}
+
+  /lodash.flatten/4.4.0:
+    resolution: {integrity: sha512-C5N2Z3DgnnKr0LOpv/hKCgKdb7ZZwafIrsesve6lmzvZIRZRGaZ/l6Q8+2W7NaT+ZwO3fFlSCzCzrDCFdJfZ4g==}
+    dev: true
 
   /lodash.flattendeep/4.4.0:
     resolution: {integrity: sha512-uHaJFihxmJcEX3kT4I23ABqKKalJ/zDrDg0lsFtc1h+3uw49SIJ5beyhx5ExVRti3AvKoOJngIj7xz3oylPdWQ==}
@@ -18105,7 +18168,7 @@ packages:
     resolution: {integrity: sha512-uWjbaKIK3T1OSVptzX7Nl6PvQ3qAGtKEtVRjRuazjfL3Bx5eI409VZSqgND+4UNnmzLVdPj9FqFJNPqBZFve4w==}
     hasBin: true
     dependencies:
-      glob: 7.2.0
+      glob: 7.2.3
 
   /rimraf/3.0.2:
     resolution: {integrity: sha512-JZkJMZkAGFFPP2YqXZXPbMlMBgsxzE8ILs4lMIX/2o0L9UBw9O/Y3o6wFw/i9YLapcUJWwqbi3kdxIPdC62TIA==}
@@ -20967,7 +21030,7 @@ packages:
       eth-sig-util: 1.4.2
       ethereumjs-block: 1.7.1
       ethereumjs-tx: 1.3.7
-      ethereumjs-util: 5.2.0
+      ethereumjs-util: 5.2.1
       ethereumjs-vm: 2.6.0
       json-stable-stringify: 1.0.1
       promise-to-callback: 1.0.0
@@ -21911,7 +21974,7 @@ packages:
     resolution: {directory: .yalc/@ensdomains/ens-contracts, type: directory}
     id: file:.yalc/@ensdomains/ens-contracts
     name: '@ensdomains/ens-contracts'
-    version: 0.0.9
+    version: 0.0.13
     dependencies:
       '@ensdomains/buffer': 0.0.13_uhtqcqloeksov7aucejb2ltlwi
       '@ensdomains/solsha1': 0.0.3

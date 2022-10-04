@@ -4,8 +4,8 @@ const utils_1 = require("ethers/lib/utils");
 const hardhat_1 = require("hardhat");
 const js_sha3_1 = require("js-sha3");
 const func = async function (hre) {
-    const { getNamedAccounts, deployments } = hre;
-    const { deploy, fetchIfDifferent } = deployments;
+    const { getNamedAccounts, deployments, network } = hre;
+    const { deploy } = deployments;
     const { deployer, owner } = await getNamedAccounts();
     const registry = await hardhat_1.ethers.getContract('ENSRegistry');
     const deployArgs = {
@@ -13,10 +13,18 @@ const func = async function (hre) {
         args: [registry.address],
         log: true,
     };
-    const { differences } = await fetchIfDifferent('ReverseRegistrar', deployArgs);
-    if (!differences)
-        return;
     const reverseRegistrar = await deploy('ReverseRegistrar', deployArgs);
+    if (!reverseRegistrar.newlyDeployed)
+        return;
+    if (owner !== deployer) {
+        const r = await hardhat_1.ethers.getContract('ReverseRegistrar', deployer);
+        const tx = await r.transferOwnership(owner);
+        console.log(`Transferring ownership of ReverseRegistrar to ${owner} (tx: ${tx.hash})...`);
+        await tx.wait();
+    }
+    // Only attempt to make controller etc changes directly on testnets
+    if (network.name === 'mainnet')
+        return;
     const root = await hardhat_1.ethers.getContract('Root');
     const tx1 = await root
         .connect(await hardhat_1.ethers.getSigner(owner))
@@ -30,6 +38,6 @@ const func = async function (hre) {
     await tx2.wait();
 };
 func.id = 'reverse-registrar';
-func.tags = ['registry', 'ReverseRegistrar'];
+func.tags = ['ReverseRegistrar'];
 func.dependencies = ['root'];
 exports.default = func;

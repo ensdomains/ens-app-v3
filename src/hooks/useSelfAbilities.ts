@@ -2,10 +2,19 @@ import { useMemo } from 'react'
 
 import type { ENS } from '@ensdomains/ensjs'
 
+import { useBasicName } from '@app/hooks/useBasicName'
+
 export const useSelfAbilities = (
   address: string | undefined,
   ownerData: Awaited<ReturnType<ENS['getOwner']>> | undefined,
+  name?: string,
 ) => {
+  const parent = name?.split('.')?.slice(1)?.join('.')
+  const { ownerData: parentOwnerData } = useBasicName(parent)
+
+  console.log('parent: ', parent)
+  console.log('parentOwnerData: ', parentOwnerData)
+
   return useMemo(() => {
     const abilities = {
       canEdit: false,
@@ -13,7 +22,15 @@ export const useSelfAbilities = (
       canChangeOwner: false,
       canChangeRegistrant: false,
     }
+    console.log('address: ', address)
+    console.log('ownerData: ', ownerData)
     if (!address || !ownerData) return abilities
+    if (address === ownerData.owner) {
+      abilities.canSend = true
+    }
+    if (address === parentOwnerData?.registrant || address === parentOwnerData?.owner) {
+      abilities.canSend = true
+    }
     if (
       ownerData.registrant === address ||
       (!ownerData.registrant && ownerData.owner === address)
@@ -27,5 +44,5 @@ export const useSelfAbilities = (
       abilities.canChangeOwner = true
     }
     return abilities
-  }, [address, ownerData])
+  }, [address, ownerData, parentOwnerData])
 }

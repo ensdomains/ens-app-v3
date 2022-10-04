@@ -211,7 +211,7 @@ export default function Page() {
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
-  const selfAbilities = useSelfAbilities(address, ownerData)
+  const selfAbilities = useSelfAbilities(address, ownerData, name)
 
   const isLoading = detailsLoading || accountLoading
 

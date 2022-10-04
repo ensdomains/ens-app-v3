@@ -87,15 +87,19 @@ dotenv_1.default.config({ debug: false });
 });
 let real_accounts = undefined;
 if (process.env.DEPLOYER_KEY) {
-    real_accounts = [process.env.DEPLOYER_KEY, process.env.OWNER_KEY || process.env.DEPLOYER_KEY];
+    real_accounts = [
+        process.env.DEPLOYER_KEY,
+        process.env.OWNER_KEY || process.env.DEPLOYER_KEY,
+    ];
 }
 const config = {
     networks: {
         hardhat: {
             // Required for real DNS record tests
-            initialDate: '2019-03-15T14:06:45.000+13:00',
+            // initialDate: '2019-03-15T14:06:45.000+13:00',
             saveDeployments: false,
             tags: ['test', 'legacy', 'use_root'],
+            chainId: 1337,
         },
         localhost: {
             url: 'http://127.0.0.1:8545',
@@ -125,7 +129,7 @@ const config = {
     solidity: {
         compilers: [
             {
-                version: '0.8.13',
+                version: '0.8.17',
                 settings: {
                     optimizer: {
                         enabled: true,
@@ -158,8 +162,6 @@ const config = {
         },
         owner: {
             default: 1,
-            goerli: 0,
-            ropsten: 0,
         },
     },
     external: {

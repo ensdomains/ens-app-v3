@@ -5,19 +5,17 @@ const func = async function (hre) {
     const { getNamedAccounts, deployments } = hre;
     const { deploy, run } = deployments;
     const { deployer, owner } = await getNamedAccounts();
-    const registrar = await hardhat_1.ethers.getContract('BaseRegistrarImplementation');
+    const registrar = await hardhat_1.ethers.getContract('BaseRegistrarImplementation', owner);
     const priceOracle = await hardhat_1.ethers.getContract('ExponentialPremiumPriceOracle');
-    const reverseRegistrar = await hardhat_1.ethers.getContract('ReverseRegistrar');
+    const reverseRegistrar = await hardhat_1.ethers.getContract('ReverseRegistrar', owner);
     await deploy('LegacyETHRegistrarController', {
         from: deployer,
         args: [registrar.address, priceOracle.address, 60, 86400],
         log: true,
         contract: await deployments.getArtifact('ETHRegistrarController_mainnet_9380471'),
     });
-    const controller = await hardhat_1.ethers.getContract('LegacyETHRegistrarController', await hardhat_1.ethers.getSigner(owner));
-    const tx1 = await registrar.addController(controller.address, {
-        from: deployer,
-    });
+    const controller = await hardhat_1.ethers.getContract('LegacyETHRegistrarController', owner);
+    const tx1 = await registrar.addController(controller.address);
     console.log(`Adding controller as controller on registrar (tx: ${tx1.hash})...`);
     await tx1.wait();
     const tx3 = await reverseRegistrar.setController(controller.address, {
@@ -34,5 +32,10 @@ const func = async function (hre) {
 };
 func.id = 'legacy-controller';
 func.tags = ['LegacyETHRegistrarController'];
-func.dependencies = ['registry', 'wrapper', 'LegacyPublicResolver'];
+func.dependencies = [
+    'registry',
+    'wrapper',
+    'LegacyPublicResolver',
+    'ReverseRegistrar',
+];
 exports.default = func;

@@ -67,19 +67,6 @@
           "internalType": "bytes32",
           "name": "node",
           "type": "bytes32"
-        }
-      ],
-      "name": "DNSZoneCleared",
-      "type": "event"
-    },
-    {
-      "anonymous": false,
-      "inputs": [
-        {
-          "indexed": true,
-          "internalType": "bytes32",
-          "name": "node",
-          "type": "bytes32"
         },
         {
           "indexed": false,
@@ -98,6 +85,25 @@
       "type": "event"
     },
     {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "bytes32",
+          "name": "node",
+          "type": "bytes32"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint64",
+          "name": "newVersion",
+          "type": "uint64"
+        }
+      ],
+      "name": "VersionChanged",
+      "type": "event"
+    },
+    {
       "inputs": [
         {
           "internalType": "bytes32",
@@ -105,7 +111,7 @@
           "type": "bytes32"
         }
       ],
-      "name": "clearDNSZone",
+      "name": "clearRecords",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -158,6 +164,25 @@
           "internalType": "bool",
           "name": "",
           "type": "bool"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "",
+          "type": "bytes32"
+        }
+      ],
+      "name": "recordVersions",
+      "outputs": [
+        {
+          "internalType": "uint64",
+          "name": "",
+          "type": "uint64"
         }
       ],
       "stateMutability": "view",

@@ -20,13 +20,12 @@ const func = async function (hre) {
         args: [registry.address, eth_ens_namehash_1.default.hash('eth')],
         log: true,
     };
-    const { differences } = await fetchIfDifferent('BaseRegistrarImplementation', deployArgs);
-    if (!differences)
+    const bri = await deploy('BaseRegistrarImplementation', deployArgs);
+    if (!bri.newlyDeployed)
         return;
-    await deploy('BaseRegistrarImplementation', deployArgs);
     const registrar = await hardhat_1.ethers.getContract('BaseRegistrarImplementation');
-    const tx1 = await registrar.addController(owner, { from: deployer });
-    console.log(`Adding owner as controller to registrar (tx: ${tx1.hash})...`);
+    const tx1 = await registrar.transferOwnership(owner, { from: deployer });
+    console.log(`Transferring ownership of registrar to owner (tx: ${tx1.hash})...`);
     await tx1.wait();
     const tx2 = await root
         .connect(await hardhat_1.ethers.getSigner(owner))
