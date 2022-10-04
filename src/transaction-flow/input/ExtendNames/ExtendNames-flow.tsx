@@ -68,7 +68,9 @@ const ExtendNames = ({ data: { names }, dispatch, onDismiss }: Props) => {
 
   const { data: ethPrice, loading: ethPriceLoading } = useEthPrice()
 
-  const rentFee = ethPrice ? BigNumber.from('5000000000000000000').div(ethPrice) : undefined
+  const rentFee = ethPrice
+    ? BigNumber.from('5000000000000000000').div(ethPrice).div(1e8)
+    : undefined
   const totalRentFee = rentFee ? rentFee.mul(years) : undefined
 
   const items = [

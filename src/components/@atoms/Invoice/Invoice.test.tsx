@@ -9,7 +9,7 @@ import { Invoice } from './Invoice'
 jest.mock('@app/hooks/useEthPrice')
 
 const mockUseEthPrice = mockFunction(useEthPrice)
-mockUseEthPrice.mockReturnValue({ data: 1, loading: false })
+mockUseEthPrice.mockReturnValue({ data: 1e8, loading: false })
 
 const items = [
   {

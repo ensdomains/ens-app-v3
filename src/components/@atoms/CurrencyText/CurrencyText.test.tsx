@@ -9,7 +9,7 @@ import { CurrencyText } from './CurrencyText'
 jest.mock('@app/hooks/useEthPrice')
 
 const mockUseEthPrice = mockFunction(useEthPrice)
-mockUseEthPrice.mockReturnValue({ data: 1, loading: false })
+mockUseEthPrice.mockReturnValue({ data: 1e8, loading: false })
 
 describe('CurrencyText', () => {
   it('should render correctly', async () => {
