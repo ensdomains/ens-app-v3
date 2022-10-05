@@ -18,5 +18,8 @@
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },
-  "jest.jestCommandLine": "pnpm run test"
+  "jest.jestCommandLine": "pnpm run test",
+  "[typescriptreact]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  }
 }
