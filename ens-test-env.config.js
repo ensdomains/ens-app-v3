@@ -25,7 +25,7 @@ module.exports = {
     },
     {
       command: `pnpm wait-on http://localhost:3000 && ${
-        process.env.CI ? 'pnpm synpress:ci --parallel' : 'pnpm synpress:start'
+        process.env.CI ? 'pnpm synpress:ci' : 'pnpm synpress:start'
       }`,
       name: 'synpress',
       prefixColor: 'yellow.bold',
