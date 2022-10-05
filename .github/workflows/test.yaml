@@ -126,7 +126,7 @@ jobs:
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           parallel --lb --halt now,success=1,fail=1 ::: \
-          DISPLAY=:20 pnpm e2e:ci -nb --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+          DISPLAY=:20 pnpm e2e:ci -nb --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
