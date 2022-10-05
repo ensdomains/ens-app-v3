@@ -92,6 +92,9 @@ jobs:
     needs: build-stateless
     timeout-minutes: 20
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [1, 2, 3, 4, 5, 6]
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.2
@@ -127,7 +130,7 @@ jobs:
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           DISPLAY=:20 pnpm e2e:ci -nb
         env:
-          CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+          CI_BUILD_ID: stateless-${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
