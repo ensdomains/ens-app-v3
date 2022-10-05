@@ -1,10 +1,10 @@
-import { useTransaction, useWaitForTransaction } from 'wagmi'
+import { useTransaction, useWaitForTransaction } from '@web3modal/react'
 
 const useTransactionResponseReceipt = (hash: string) => {
   const { data: responseData, isLoading: responseLoading } = useTransaction({
     hash: hash as `0x${string}`,
   })
-  const { data: receiptData, isLoading: receiptLoading } = useWaitForTransaction({ hash })
+  const { receipt: receiptData, isWaiting: receiptLoading } = useWaitForTransaction({ hash })
 
   const isLoading = responseLoading || receiptLoading
 

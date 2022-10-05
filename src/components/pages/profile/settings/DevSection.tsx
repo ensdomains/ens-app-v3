@@ -1,7 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 // eslint-disable-next-line import/no-extraneous-dependencies
-import type { JsonRpcProvider } from '@ethersproject/providers'
-import { usePrepareSendTransaction, useProvider, useSendTransaction } from 'wagmi'
+// import type { JsonRpcProvider } from '@ethersproject/providers'
+import { chains } from '@web3modal/ethereum'
+import { useProvider, useSendTransaction } from '@web3modal/react'
 
 import { Button } from '@ensdomains/thorin'
 
@@ -28,29 +29,37 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
   })
 
 export const DevSection = () => {
-  const provider: JsonRpcProvider = useProvider()
+  const provider = useProvider()
+  const { id: chainId } = chains.goerli
+
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
-  const { config: successConfig } = usePrepareSendTransaction({
-    request: {
-      to: '0x0000000000000000000000000000000000000000',
-      value: '0',
-    },
-  })
-  const { sendTransactionAsync: sendFailure } = useSendTransaction({
-    mode: 'prepared',
+
+  // ToDo: Add in usePrepareSendTransaction
+  // const { config: successConfig } = usePrepareSendTransaction({
+  //   request: {
+  //     to: '0x0000000000000000000000000000000000000000',
+  //     value: '0',
+  //   },
+  // })
+
+  const transactionOptions = {
     request: {
       to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
       data: '0x1231237123423423',
       gasLimit: '1000000',
     },
-  })
-  const { sendTransactionAsync: sendSuccess } = useSendTransaction(successConfig)
+    chainId,
+  }
+
+  const { data: failureData, sendTransaction: sendFailure } = useSendTransaction(transactionOptions)
+
+  const { data: successData, sendTransaction: sendSuccess } = useSendTransaction(transactionOptions)
 
   const addSuccess = async () => {
-    const transaction = await sendSuccess!()
+    await sendSuccess!()
     addTransaction({
-      hash: transaction.hash,
+      hash: successData!.hash,
       action: 'test',
     })
   }
@@ -62,9 +71,9 @@ export const DevSection = () => {
   }
 
   const addFailure = async () => {
-    const transaction = await sendFailure!()
+    await sendFailure!()
     addTransaction({
-      hash: transaction.hash,
+      hash: failureData!.hash,
       action: 'test',
     })
   }

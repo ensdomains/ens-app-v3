@@ -1,8 +1,8 @@
+import { useAccount } from '@web3modal/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
 
 import { baseFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { useContractAddress } from '@app/hooks/useContractAddress'

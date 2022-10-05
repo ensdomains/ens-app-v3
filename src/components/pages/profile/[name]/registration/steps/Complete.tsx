@@ -1,9 +1,9 @@
+import { useAccount, useWaitForTransaction } from '@web3modal/react'
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useWaitForTransaction } from 'wagmi'
 
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
@@ -115,7 +115,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const commitTxFlow = getLatestTransaction(commitKey)
   const registerTxFlow = getLatestTransaction(registerKey)
 
-  const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
+  const { receipt: commitReceipt, isWaiting: commitLoading } = useWaitForTransaction({
     hash: commitTxFlow!.hash,
   })
   const {

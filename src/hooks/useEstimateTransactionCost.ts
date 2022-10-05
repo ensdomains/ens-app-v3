@@ -1,5 +1,5 @@
+import { useFeeData } from '@web3modal/react'
 import { useMemo } from 'react'
-import { useFeeData } from 'wagmi'
 
 const gasLimitDictionary = {
   COMMIT: 42000,

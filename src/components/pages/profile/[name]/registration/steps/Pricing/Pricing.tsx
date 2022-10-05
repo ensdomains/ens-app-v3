@@ -1,7 +1,7 @@
+import { useAccount, useBalance } from '@web3modal/react'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useBalance } from 'wagmi'
 
 import { Button, Checkbox, Heading, Typography, mq } from '@ensdomains/thorin'
 

@@ -148,7 +148,6 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
           </EnsProvider>
         </TransactionStoreProvider>
       </QueryClientProvider>
-      {/* </WagmiConfig> */}
     </I18nextProvider>
   )
 }

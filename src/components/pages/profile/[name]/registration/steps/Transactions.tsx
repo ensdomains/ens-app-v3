@@ -1,7 +1,7 @@
+import { useAccount } from '@web3modal/react'
 import { ReactNode, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
 import { Button, CountdownCircle, Heading, Spinner, Typography, mq } from '@ensdomains/thorin'

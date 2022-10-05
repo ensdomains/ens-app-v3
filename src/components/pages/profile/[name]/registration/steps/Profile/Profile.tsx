@@ -1,7 +1,7 @@
+import { useAccount } from '@web3modal/react'
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { Button, Dialog, DownIndicatorSVG, Helper, Tag, Typography, mq } from '@ensdomains/thorin'

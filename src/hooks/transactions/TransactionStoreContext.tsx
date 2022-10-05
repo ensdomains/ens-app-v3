@@ -20,7 +20,9 @@ export function TransactionStoreProvider({ children }: { children: React.ReactNo
 
   // Use existing store if it exists, or lazily create one
   const [store] = useState(
-    () => storeSingleton ?? (storeSingleton = createTransactionStore({ provider })),
+    () =>
+      storeSingleton ??
+      (storeSingleton = createTransactionStore({ provider: providers.BaseProvider })),
   )
 
   // Keep store provider up to date with any wagmi changes

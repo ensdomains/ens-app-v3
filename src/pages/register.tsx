@@ -1,6 +1,6 @@
+import { useAccount } from '@web3modal/react'
 import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
-import { useAccount } from 'wagmi'
 
 import Registration from '@app/components/pages/profile/[name]/registration/Registration'
 import { useInitial } from '@app/hooks/useInitial'

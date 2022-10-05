@@ -1,4 +1,4 @@
-import { useNetwork } from 'wagmi'
+import { useNetwork } from '@web3modal/react'
 
 export const useChainName = () => {
   const { chain } = useNetwork()

@@ -1,5 +1,6 @@
+import { useNetwork, useProvider } from '@web3modal/react'
 import { useState } from 'react'
-import { useNetwork, useProvider, useQuery } from 'wagmi'
+import { useQuery } from 'wagmi'
 
 import { ContractInterface } from '@app/validators/validateContract'
 

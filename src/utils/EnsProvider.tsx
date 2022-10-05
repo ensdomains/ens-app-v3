@@ -1,5 +1,5 @@
+import { useProvider } from '@web3modal/react'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
-import { useProvider } from 'wagmi'
 
 import { ENS } from '@ensdomains/ensjs'
 import type { ContractName } from '@ensdomains/ensjs/contracts/types'
@@ -30,6 +30,7 @@ const EnsProvider = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     setReady(false)
+    // Here is where there is some issues with setProvider with our useProvider...
     ensWithCurrentProvider.setProvider(provider as any).then(() => setReady(true))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider])

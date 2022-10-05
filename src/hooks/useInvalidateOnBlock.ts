@@ -1,5 +1,5 @@
 import { QueryKey, useQueryClient } from '@tanstack/react-query'
-import { useBlockNumber } from 'wagmi'
+import { useBlockNumber } from '@web3modal/react'
 
 export function useInvalidateOnBlock({
   enabled,
