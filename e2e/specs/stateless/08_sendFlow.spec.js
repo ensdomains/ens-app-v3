@@ -6,7 +6,6 @@ describe('Send Flow', () => {
   })
   it('Should allow owner to change manager', () => {
     cy.visit('/profile/test123.eth')
-    // connectFromExisting()
     cy.findByText('View Details').click()
     cy.findByText('Send').click()
     cy.findByTestId('send-name-input').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -89,6 +88,7 @@ describe('Send Flow', () => {
     cy.findByText('Next').click()
     cy.wait(1000)
     cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.wait(1000)
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('owner-button-name-Owner').should('have.text', '0xf39...92266')
