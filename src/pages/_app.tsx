@@ -1,6 +1,8 @@
 import { RainbowKitProvider, Theme, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { QueryClient } from '@tanstack/react-query'
+// import type { ConfigOptions } from '@web3modal/react'
+// import { Web3Modal } from '@web3modal/react'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -132,6 +134,16 @@ const wagmiClient = createClient({
   queryClient,
 })
 
+// ------- web3 Modal Config -----------------------/
+// const config: ConfigOptions = {
+//   projectId: '<YOUR_PROJECT_ID>',
+//   theme: 'dark',
+//   accentColor: 'default',
+//   ethereum: {
+//     appName: 'web3Modal'
+//   }
+// }
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
 }
@@ -156,6 +168,7 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <TransactionFlowProvider>
                     <Notifications />
                     <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                    {/* <Web3Modal config={config} /> */}
                   </TransactionFlowProvider>
                 </BreakpointProvider>
               </ThemeProvider>
