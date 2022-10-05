@@ -1,4 +1,4 @@
-import { useConnectModal } from '@rainbow-me/rainbowkit'
+import { useConnectModal } from '@web3modal/react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -63,7 +63,7 @@ const calculateTestId = (isTabBar: boolean | undefined, inHeader: boolean | unde
 export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
-  const { openConnectModal } = useConnectModal()
+  const { open } = useConnectModal()
   /* 
     ToDo: 
     - Swap this out with Web3Modal useConnectModal() and its open() function
@@ -74,7 +74,7 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
     <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
       <Button
         data-testid={calculateTestId(isTabBar, inHeader)}
-        onClick={() => openConnectModal?.()}
+        onClick={() => open?.()}
         variant="primary"
         size={breakpoints.md || large ? 'medium' : 'extraSmall'}
         shadowless={large}

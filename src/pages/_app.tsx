@@ -1,8 +1,7 @@
-import { RainbowKitProvider, Theme, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit'
-import '@rainbow-me/rainbowkit/styles.css'
-import { QueryClient } from '@tanstack/react-query'
-// import type { ConfigOptions } from '@web3modal/react'
-// import { Web3Modal } from '@web3modal/react'
+import { getDefaultWallets } from '@rainbow-me/rainbowkit'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import type { ConfigOptions } from '@web3modal/react'
+import { Web3Modal } from '@web3modal/react'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -23,16 +22,6 @@ import { EnsProvider } from '@app/utils/EnsProvider'
 
 import i18n from '../i18n'
 import '../styles.css'
-
-const rainbowKitTheme: Theme = {
-  ...lightTheme({
-    accentColor: thorinLightTheme.colors.accent,
-    borderRadius: 'medium',
-  }),
-  fonts: {
-    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
-  },
-}
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -135,14 +124,15 @@ const wagmiClient = createClient({
 })
 
 // ------- web3 Modal Config -----------------------/
-// const config: ConfigOptions = {
-//   projectId: '<YOUR_PROJECT_ID>',
-//   theme: 'dark',
-//   accentColor: 'default',
-//   ethereum: {
-//     appName: 'web3Modal'
-//   }
-// }
+// ToDo: Init and go from top Down to swap all @wagmi hooks
+const config: ConfigOptions = {
+  projectId: '26ee9facbe4cbc407218b99540bc8053',
+  theme: 'light',
+  accentColor: 'default',
+  ethereum: {
+    appName: 'web3Modal',
+  },
+}
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
@@ -157,8 +147,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <I18nextProvider i18n={i18n}>
+      <Web3Modal config={config} />
       <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+        <QueryClientProvider client={queryClient}>
           <TransactionStoreProvider>
             <EnsProvider>
               <ThemeProvider theme={thorinLightTheme}>
@@ -168,13 +159,12 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
                   <TransactionFlowProvider>
                     <Notifications />
                     <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                    {/* <Web3Modal config={config} /> */}
                   </TransactionFlowProvider>
                 </BreakpointProvider>
               </ThemeProvider>
             </EnsProvider>
           </TransactionStoreProvider>
-        </RainbowKitProvider>
+        </QueryClientProvider>
       </WagmiConfig>
     </I18nextProvider>
   )
