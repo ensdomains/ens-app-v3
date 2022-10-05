@@ -242,15 +242,11 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       { label, subnames, registrant, resolver }: ReturnType<typeof makeData>,
       index: number,
     ) => {
-      return 1
       if (!subnames) return 0
       for (let i = 0; i < subnames.length; i += 1) {
         const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
         const subOwner = allNamedAccts[namedSubOwner]
         const _registry = registry.connect(await ethers.getSigner(registrant))
-
-<<<<<<< Updated upstream
-        try {
           const subnameTx = await _registry.setSubnodeRecord(
             namehash(`${label}.eth`),
             labelhash(subnameLabel),
@@ -262,23 +258,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
             },
           )
           console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
-        } catch (e) {
-          console.log(e)
-        }
-=======
-        const subnameTx = await _registry.setSubnodeRecord(
-          namehash(`${label}.eth`),
-          labelhash(subnameLabel),
-          subOwner,
-          resolver,
-          0,
-          {
-            nonce: nonce + index + i,
-          },
-        )
-        console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
-        await subnameTx.wait()
->>>>>>> Stashed changes
       }
       return subnames.length
     }
