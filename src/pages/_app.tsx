@@ -126,7 +126,7 @@ const wagmiClient = createClient({
 // ------- web3 Modal Config -----------------------/
 // ToDo: Init and go from top Down to swap all @wagmi hooks
 const config: ConfigOptions = {
-  projectId: '26ee9facbe4cbc407218b99540bc8053',
+  projectId: process.env.NEXT_PUBLIC__PROJECT_ID!,
   theme: 'light',
   accentColor: 'default',
   ethereum: {
