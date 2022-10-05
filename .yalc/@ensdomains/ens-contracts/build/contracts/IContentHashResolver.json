@@ -1,4 +1,0 @@
-[
-  "event ContenthashChanged(bytes32 indexed,bytes)",
-  "function contenthash(bytes32) view returns (bytes)"
-]

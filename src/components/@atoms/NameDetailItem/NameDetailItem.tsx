@@ -6,7 +6,6 @@ import { Avatar, mq } from '@ensdomains/thorin'
 
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
-// import { useExpiry } from '@app/hooks/useExpiry'
 import { useZorb } from '@app/hooks/useZorb'
 
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
@@ -24,7 +23,7 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
     border-bottom: 1px solid ${theme.colors.borderTertiary};
-    transition: all 0.15s ease-in-out;
+    transition: all 0.15s ease-in-out, border 0s;
     background: ${$highlight ? theme.colors.accentSecondary : theme.colors.white};
     cursor: ${$disabled ? 'not-allowed' : 'pointer'};
     &:hover {
@@ -162,6 +161,7 @@ export const NameDetailItem = ({
         $disabled={disabled}
         $highlight={mode === 'select' && selected}
         as={mode !== 'select' ? 'a' : 'div'}
+        data-testid={`name-item-${name}`}
         onClick={handleClick}
       >
         <NameItemContainer>
@@ -182,7 +182,7 @@ export const NameDetailItem = ({
             <TitleWrapper name={name} disabled={disabled} />
             {expiryDate && (
               <SubtitleWrapper>
-                <ShortExpiry expiry={expiryDate} textOnly />
+                <ShortExpiry expiry={expiryDate} />
               </SubtitleWrapper>
             )}
           </NameItemContent>

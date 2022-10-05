@@ -5,6 +5,8 @@ import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
 
+import { useBlockTimestamp } from './useBlockTimestamp'
+
 export type ReturnedName = Name & {
   isController?: boolean
   isRegistrant?: boolean
@@ -39,8 +41,10 @@ export const useNamesFromAddress = ({
 }) => {
   const { ready, getNames } = useEns()
 
+  const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
+
   const { data, isLoading, status, refetch } = useQuery(
-    ['names', address, 'graph'],
+    ['graph', 'names', address],
     () =>
       getNames({
         address: address!,
@@ -49,7 +53,7 @@ export const useNamesFromAddress = ({
         orderDirection: 'desc',
       }),
     {
-      enabled: ready && !!address,
+      enabled: ready && !!address && !isBlockTimestampLoading,
     },
   )
 
@@ -78,7 +82,10 @@ export const useNamesFromAddress = ({
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 
   const filterFunc = useMemo(() => {
-    const baseFilter = (n: ReturnedName) => n.parent.name !== 'addr.reverse'
+    const baseFilter = (n: ReturnedName) => {
+      if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp) return false
+      return n.parent.name !== 'addr.reverse'
+    }
     let secondaryFilter: (n: ReturnedName) => boolean = () => true
     let searchFilter: (n: ReturnedName) => boolean = () => true
     if (filter === 'registration') secondaryFilter = (n: ReturnedName) => !!n.isRegistrant
@@ -86,7 +93,7 @@ export const useNamesFromAddress = ({
     if (search)
       searchFilter = (n: ReturnedName) => n.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
     return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n) && searchFilter(n)
-  }, [filter, search])
+  }, [filter, search, blockTimestamp])
 
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {

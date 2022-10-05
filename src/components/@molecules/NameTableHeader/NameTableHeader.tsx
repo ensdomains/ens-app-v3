@@ -35,23 +35,33 @@ const TableHeaderLeading = styled.div(
   `,
 )
 
-const TableHeaderLeadingLeft = styled.div(
-  ({ theme }) => css`
+const TableHeaderLeadingLeft = styled.div<{ $isFullWidth: boolean }>(
+  ({ theme, $isFullWidth }) => css`
     display: flex;
     gap: ${theme.space['2']};
     align-items: center;
     color: ${theme.colors.text};
+    ${$isFullWidth && `flex: 1;`}
     ${mq.md.min(css`
       gap: ${theme.space['4']};
+      flex-basis: auto;
+      flex-grow: 0;
+      flex-shrink: 0;
     `)}
   `,
 )
 
-const TableHeaderLeftControlsContainer = styled.div(
-  ({ theme }) => css`
+const TableHeaderLeftControlsContainer = styled.div<{
+  $isFullWidth?: boolean
+}>(
+  ({ theme, $isFullWidth }) => css`
     display: flex;
     gap: ${theme.space['2']};
     align-items: center;
+    ${$isFullWidth &&
+    css`
+      flex: 1;
+    `}
   `,
 )
 
@@ -162,7 +172,7 @@ export const NameTableHeader = ({
   return (
     <TableHeader>
       <TableHeaderLeading>
-        <TableHeaderLeadingLeft>
+        <TableHeaderLeadingLeft $isFullWidth={!selectable}>
           {selectable && (
             <CheckButton
               active={mode === 'select'}
@@ -172,7 +182,7 @@ export const NameTableHeader = ({
           {inSelectMode ? (
             <div>{t('unit.selected', { count: selectedCount })}</div>
           ) : (
-            <TableHeaderLeftControlsContainer>
+            <TableHeaderLeftControlsContainer $isFullWidth={!selectable}>
               <Select
                 value={sortType}
                 size="small"

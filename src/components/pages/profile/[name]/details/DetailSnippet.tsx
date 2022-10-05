@@ -82,12 +82,14 @@ export const DetailSnippet = ({
   expiryDate,
   canSend,
   canEdit,
+  canExtend,
   isCached,
 }: {
   name: string
   expiryDate?: Date | null
   canSend: boolean
   canEdit?: boolean
+  canExtend?: boolean
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
@@ -104,7 +106,13 @@ export const DetailSnippet = ({
         {expiryDate && (
           <ExpiryContainer data-testid="expiry-data">
             <Typography weight="bold">{t('name.expires')}</Typography>
-            <Typography weight="bold">{formatExpiry(expiryDate)}</Typography>
+            <Typography
+              weight="bold"
+              data-testid="expiry-label"
+              data-timestamp={expiryDate.getTime()}
+            >
+              {formatExpiry(expiryDate)}
+            </Typography>
           </ExpiryContainer>
         )}
         <FavouriteButton disabled />
@@ -114,6 +122,7 @@ export const DetailSnippet = ({
           <FullWidthOutlinedButton
             size="small"
             shadowless
+            disabled={!canExtend}
             variant="transparent"
             data-testid="extend-button"
             onClick={handleExtend}

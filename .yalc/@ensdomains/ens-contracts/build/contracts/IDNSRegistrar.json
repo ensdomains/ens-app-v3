@@ -1,4 +1,0 @@
-[
-  "function proveAndClaim(bytes,tuple(bytes,bytes)[])",
-  "function proveAndClaimWithResolver(bytes,tuple(bytes,bytes)[],address,address)"
-]

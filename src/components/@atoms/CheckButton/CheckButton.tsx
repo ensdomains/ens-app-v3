@@ -25,7 +25,12 @@ type Props = {
 
 export const CheckButton = ({ active = false, onChange }: Props) => {
   return (
-    <Container type="button" $active={active} onClick={() => onChange?.(!active)}>
+    <Container
+      type="button"
+      $active={active}
+      onClick={() => onChange?.(!active)}
+      data-testid="check-button"
+    >
       <CircleTick />
     </Container>
   )

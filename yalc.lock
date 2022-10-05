@@ -1,9 +1,27 @@
 {
   "version": "v1",
   "packages": {
+    "@ensdomains/thorin": {
+      "signature": "30e72ce6fbbbaa219741df4c5adb6b50",
+      "file": true,
+      "replaced": "^0.6.16"
+<<<<<<< Updated upstream
+=======
+    },
     "@ensdomains/ens-contracts": {
       "signature": "dfdc59a87a93f674bd5967963ff2dfb0",
       "pure": true
+    },
+    "@ensdomains/ensjs": {
+      "signature": "0414a0a509c3b15a5d2afbde52c38254",
+      "file": true,
+      "replaced": "3.0.0-alpha.22"
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "f098ad24e965896d068d98357699fc2b",
+      "file": true,
+      "replaced": "^0.3.0"
+>>>>>>> Stashed changes
     }
   }
 }

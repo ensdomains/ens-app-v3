@@ -11,6 +11,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const { deploy } = deployments
   const { deployer, owner } = await getNamedAccounts()
 
+  return true
   if (!network.tags.use_root) {
     return true
   }
@@ -59,7 +60,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 }
 
 func.id = 'bulk-renewal'
-func.tags = ['ethregistrar', 'BulkRenewal']
+func.tags = ['ethregistrar', 'BulkRenewal', 'Root']
 func.dependencies = [
   'root',
   'registry',

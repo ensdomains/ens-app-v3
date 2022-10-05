@@ -1,18 +1,18 @@
 import { useRouter } from 'next/router'
-import { ReactElement, useEffect, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button } from '@ensdomains/thorin'
+import { Button, Spinner } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
-import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import NoProfileSnippet from '@app/components/address/NoProfileSnippet'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
+import { ReturnedName, useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
@@ -66,6 +66,15 @@ const ButtonInner = styled.div(
   `,
 )
 
+const EmptyDetailContainer = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['4']};
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
+
 const Page = () => {
   const { t } = useTranslation('address')
   const { query, isReady } = useRouter()
@@ -77,6 +86,13 @@ const Page = () => {
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<string[]>([])
+  const handleClickName = (name: string) => () => {
+    if (selectedNames.includes(name)) {
+      setSelectedNames(selectedNames.filter((n) => n !== name))
+    } else {
+      setSelectedNames([...selectedNames, name])
+    }
+  }
 
   const [sortType, setSortType] = useState<SortType | undefined>()
   const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
@@ -107,6 +123,14 @@ const Page = () => {
     resultsPerPage: pageSize,
     search: searchQuery,
   })
+
+  const isNameDisabled = useCallback(
+    (name: ReturnedName) => {
+      if (mode !== 'select') return false
+      return !name.expiryDate
+    },
+    [mode],
+  )
 
   const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
   const transactionKey = `extend-names-${selectedNames.join('-')}`
@@ -167,6 +191,7 @@ const Page = () => {
         trailing: (
           <TabWrapperWithButtons>
             <NameTableHeader
+              selectable={!!_address}
               mode={mode}
               sortType={sortType}
               sortTypeOptionValues={[
@@ -186,7 +211,12 @@ const Page = () => {
               onSearchChange={setSearchQuery}
             >
               {mode === 'select' && (
-                <Button size="extraSmall" shadowless onClick={handleExtend}>
+                <Button
+                  size="extraSmall"
+                  shadowless
+                  onClick={handleExtend}
+                  data-testid="extend-names-button"
+                >
                   <ButtonInner>
                     <FastForwardSVG />
                     {t('action.extend', { ns: 'common' })}
@@ -194,14 +224,28 @@ const Page = () => {
                 </Button>
               )}
             </NameTableHeader>
-            <NameListView
-              currentPage={currentPage || []}
-              network={chainId}
-              rowsOnly
-              mode={mode}
-              selectedNames={selectedNames}
-              onSelectedNamesChange={setSelectedNames}
-            />
+            <div>
+              {/* eslint-disable no-nested-ternary */}
+              {loading ? (
+                <EmptyDetailContainer>
+                  <Spinner color="accent" />
+                </EmptyDetailContainer>
+              ) : pageLength === 0 ? (
+                <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
+              ) : currentPage ? (
+                currentPage.map((name) => (
+                  <TaggedNameItem
+                    key={name.id}
+                    {...name}
+                    network={chainId}
+                    mode={mode}
+                    selected={selectedNames?.includes(name.name)}
+                    disabled={isNameDisabled(name)}
+                    onClick={handleClickName(name.name)}
+                  />
+                ))
+              ) : null}
+            </div>
             <NameTableFooter
               current={page}
               onChange={setPage}

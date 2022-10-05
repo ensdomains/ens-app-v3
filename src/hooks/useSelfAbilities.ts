@@ -10,10 +10,12 @@ export const useSelfAbilities = (
     const abilities = {
       canEdit: false,
       canSend: false,
+      canExtend: false,
       canChangeOwner: false,
       canChangeRegistrant: false,
     }
     if (!address || !ownerData) return abilities
+    abilities.canExtend = true
     if (
       ownerData.registrant === address ||
       (!ownerData.registrant && ownerData.owner === address)

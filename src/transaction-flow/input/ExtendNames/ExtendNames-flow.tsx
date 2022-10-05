@@ -167,7 +167,7 @@ type NamesListProps = {
 
 const NamesList = ({ names }: NamesListProps) => {
   return (
-    <NamesListContainer>
+    <NamesListContainer data-testid="extend-names-names-list">
       {names.map((name) => (
         <NamesListItem key={name} name={name} />
       ))}
@@ -256,7 +256,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     )
   }
   return (
-    <Container>
+    <Container data-testid="extend-names-modal">
       <Dialog.Heading title={title} />
       <ScrollBoxWrapper>
         <InnerContainer>

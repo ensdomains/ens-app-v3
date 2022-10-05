@@ -1,6 +1,0 @@
-[
-  "error OffchainLookup(address,string[],bytes,bytes4,bytes)",
-  "function resolve(bytes,bytes) view returns (bytes, address)",
-  "function resolveCallback(bytes,bytes) view returns (bytes)",
-  "function supportsInterface(bytes4) view returns (bool)"
-]

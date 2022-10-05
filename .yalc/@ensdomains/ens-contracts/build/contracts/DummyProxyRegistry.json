@@ -1,4 +1,0 @@
-[
-  "constructor(address)",
-  "function proxies(address) view returns (address)"
-]

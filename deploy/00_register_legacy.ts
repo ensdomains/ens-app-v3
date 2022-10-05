@@ -236,49 +236,52 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       return nonceRef - nonce
     }
 
-  const makeSubname =
+  const makeSubnames =
     (nonce: number) =>
     async (
       { label, subnames, registrant, resolver }: ReturnType<typeof makeData>,
       index: number,
     ) => {
+      return 1
       if (!subnames) return 0
       for (let i = 0; i < subnames.length; i += 1) {
-        const { label: subnameLabel, namedOwner: subOwner } = subnames[i]
+        const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
+        const subOwner = allNamedAccts[namedSubOwner]
         const _registry = registry.connect(await ethers.getSigner(registrant))
-        console.log(subnameLabel, subOwner, resolver, label, index, i, nonce)
 
+<<<<<<< Updated upstream
+        try {
+          const subnameTx = await _registry.setSubnodeRecord(
+            namehash(`${label}.eth`),
+            labelhash(subnameLabel),
+            subOwner,
+            resolver,
+            0,
+            {
+              nonce: nonce + index + i,
+            },
+          )
+          console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
+        } catch (e) {
+          console.log(e)
+        }
+=======
         const subnameTx = await _registry.setSubnodeRecord(
           namehash(`${label}.eth`),
           labelhash(subnameLabel),
           subOwner,
           resolver,
-          '0',
+          0,
           {
             nonce: nonce + index + i,
           },
         )
         console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
-        // await subnameTx.wait()
+        await subnameTx.wait()
+>>>>>>> Stashed changes
       }
       return subnames.length
     }
-  // const makeSubnames = async (subnames: Name['subnames'], registrant) => {
-  //   console.log(`Setting subnames for ${label}.eth...`)
-  //   for (const { label: subnameLabel, namedOwner: subnameOwner } of subnames) {
-  //     const owner = allNamedAccts[subnameOwner]
-  //     const _registry = registry.connect(await ethers.getSigner(registrant))
-  //     const setSubnameTx = await _registry.setSubnodeRecord(
-  //       namehash(`${label}.eth`),
-  //       labelhash(subnameLabel),
-  //       owner,
-  //       resolver,
-  //       '0',
-  //     )
-  //     console.log(` - ${subnameLabel} (tx: ${setSubnameTx.hash})...`)
-  //     await setSubnameTx.wait()
-  //   }
-  // }
 
   const makeController =
     (nonce: number) =>
@@ -331,9 +334,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await getNonceAndApply('registrant', makeRegistration)
   await network.provider.send('evm_mine')
   const tempNonces = await getNonceAndApply('registrant', makeRecords, (data) => !!data.records)
-  await getNonceAndApply('registrant', makeController, (data) => !!data.owner, tempNonces)
-  await network.provider.send('evm_mine')
-  await getNonceAndApply('registrant', makeSubname, (data) => !!data.subnames)
+  const tempNonces2 = await getNonceAndApply(
+    'registrant',
+    makeController,
+    (data) => !!data.owner,
+    tempNonces,
+  )
+  await getNonceAndApply('registrant', makeSubnames, (data) => !!data.subnames, tempNonces2)
   await network.provider.send('evm_mine')
 
   // Skip forward 28 + 90 days so that minimum exp names go into premium
@@ -343,6 +350,32 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
+
+<<<<<<< Updated upstream
+  const resolver = publicResolver.address
+  const registrant = allNamedAccts.owner
+  const _registry = registry.connect(await ethers.getSigner(registrant))
+  const subnameTx = await _registry.setSubnodeRecord(
+    namehash(`test123.eth`),
+    labelhash('sub'),
+    registrant,
+    resolver,
+    0,
+  )
+  await subnameTx.wait()
+=======
+  // const resolver = publicResolver.address
+  // const registrant = allNamedAccts.owner
+  // const _registry = registry.connect(await ethers.getSigner(registrant))
+  // const tx = await _registry.setSubnodeRecord(
+  //   namehash('test123.eth'),
+  //   labelhash('sub'),
+  //   registrant,
+  //   resolver,
+  //   0,
+  // )
+  // await tx.wait()
+>>>>>>> Stashed changes
 
   return true
 }

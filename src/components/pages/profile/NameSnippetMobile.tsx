@@ -107,6 +107,7 @@ export const NameSnippetMobile = ({
   expiryDate,
   canSend,
   canEdit,
+  canExtend,
   isCached,
 }: {
   name: string
@@ -114,6 +115,7 @@ export const NameSnippetMobile = ({
   expiryDate?: Date | null
   canSend?: boolean
   canEdit?: boolean
+  canExtend?: boolean
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
@@ -134,7 +136,12 @@ export const NameSnippetMobile = ({
           {expiryDate ? (
             <div>
               <ExpiresHeading variant="label">{t('name.expires')}</ExpiresHeading>
-              <Typography variant="small" weight="bold">
+              <Typography
+                variant="small"
+                weight="bold"
+                data-testid="expiry-label"
+                data-timestamp={expiryDate.getTime()}
+              >
                 {formatExpiry(expiryDate)}
               </Typography>
             </div>
@@ -149,6 +156,7 @@ export const NameSnippetMobile = ({
             shadowless
             variant="transparent"
             data-testid="extend-button"
+            disabled={!canExtend}
             onClick={handleExtend}
           >
             <InnerButton>

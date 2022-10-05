@@ -2,7 +2,7 @@ import { useProvider, useQuery } from 'wagmi'
 
 export const useBlockTimestamp = () => {
   const provider = useProvider()
-  const results = useQuery(
+  return useQuery(
     ['use-block-timestamp'],
     async () => {
       const block = await provider.getBlock('latest')
@@ -13,5 +13,4 @@ export const useBlockTimestamp = () => {
       staleTime: 1000 * 60 * 60, // 1 hour
     },
   )
-  return results
 }

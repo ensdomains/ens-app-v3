@@ -22,7 +22,6 @@ import {
   NameTableHeader,
   NameTableMode,
 } from '../../components/@molecules/NameTableHeader/NameTableHeader'
-import { useBlockTimestamp } from '../../hooks/useBlockTimestamp'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -93,7 +92,6 @@ export default function Page() {
     isLoading: namesLoading,
     status: namesStatus,
     pageLength,
-    refetch: refetchNames,
   } = useNamesFromAddress({
     address,
     sort: {
@@ -104,8 +102,6 @@ export default function Page() {
     resultsPerPage: pageSize,
     search: searchQuery,
   })
-
-  console.log(currentPage)
 
   const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
   const handleExtend = () => {
@@ -122,21 +118,16 @@ export default function Page() {
       setSelectedNames([])
       setMode('view')
       setPage(1)
-      refetchNames()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])
 
-  const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
   const isNameDisabled = useCallback(
     (name: ReturnedName) => {
-      if (isBlockTimestampLoading) return false
       if (mode !== 'select') return false
-      if (!name.expiryDate || !blockTimestamp) return true
-      if (name?.expiryDate.getTime() > blockTimestamp) return false
-      return true
+      return !name.expiryDate
     },
-    [mode, isBlockTimestampLoading, blockTimestamp],
+    [mode],
   )
 
   const loading =
@@ -177,7 +168,12 @@ export default function Page() {
               onSearchChange={setSearchQuery}
             >
               {mode === 'select' && (
-                <Button size="extraSmall" shadowless onClick={handleExtend}>
+                <Button
+                  size="extraSmall"
+                  shadowless
+                  onClick={handleExtend}
+                  data-testid="extend-names-button"
+                >
                   <ButtonInner>
                     <FastForwardSVG />
                     {t('action.extend', { ns: 'common' })}
@@ -185,7 +181,7 @@ export default function Page() {
                 </Button>
               )}
             </NameTableHeader>
-            <div>
+            <div data-testid="names-list">
               {/* eslint-disable no-nested-ternary */}
               {loading ? (
                 <EmptyDetailContainer>
