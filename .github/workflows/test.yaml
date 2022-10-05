@@ -125,7 +125,9 @@ jobs:
           Xvfb :20 -screen 0 1366x768x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
-          DISPLAY=:20 pnpm e2e:ci -nb --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+          DISPLAY=:20 pnpm e2e:ci -nb
+        env:
+          CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
