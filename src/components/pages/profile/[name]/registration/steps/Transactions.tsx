@@ -185,16 +185,18 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
           onClick={showRegisterTransaction}
         />
       )
-    } else if (!registerTx) {
+    } else {
       Buttons = (
         <MobileFullWidth>
-          <Button data-testid="finish-button" shadowless onClick={makeRegisterNameFlow}>
+          <Button
+            data-testid="finish-button"
+            shadowless
+            onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
+          >
             {t('action.finish', { ns: 'common' })}
           </Button>
         </MobileFullWidth>
       )
-    } else {
-      Buttons = null
     }
   } else if (commitTx?.stage) {
     if (commitTx?.stage === 'failed') {

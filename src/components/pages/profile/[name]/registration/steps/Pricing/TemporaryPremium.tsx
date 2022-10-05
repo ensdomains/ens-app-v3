@@ -15,10 +15,12 @@ import { Button, Dropdown, Helper, Input, Typography, mq } from '@ensdomains/tho
 
 import CalendarSVG from '@app/assets/Calendar.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
+import useCurrentBlockTimestamp from '@app/hooks/useCurrentBlockTimestamp'
 import { makeDisplay } from '@app/utils/currency'
 
 const VAR_PREFIX = '--premium-chart-'
-const startPrice = 100000050.0
+const startPrice = 100000000.0
+const offset = 47.6837158203125
 const duration = 21 * 24 * 60 * 60 * 1000
 const FACTOR = 0.5
 const chartResolution = 65536
@@ -319,14 +321,16 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
     [],
   )
 
+  const currentBlockTimestamp = useCurrentBlockTimestamp()
+
   const { nowPoint, maxDate, nowDate } = useMemo(() => {
-    const _nowDate = new Date()
+    const _nowDate = new Date(currentBlockTimestamp ? currentBlockTimestamp * 1000 : Date.now())
     const now = _nowDate.getTime()
     const relativeDate = now - startDate.getTime()
-    const _nowPoint = Math.floor((relativeDate / duration) * chartResolution)
+    const _nowPoint = (((relativeDate * 1e18) / duration) * chartResolution) / 1e18
     const _maxDate = new Date(startDate.getTime() + duration)
     return { nowPoint: _nowPoint, maxDate: _maxDate, nowDate: _nowDate }
-  }, [startDate])
+  }, [currentBlockTimestamp, startDate])
   const [selectedPoint, setSelectedPoint] = useState(-1)
   const [{ width, height }, setDimensions] = useState({ width: 0, height: 0 })
 
@@ -335,7 +339,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
       const yChunk = startPrice / (height - padding * 2)
       const resAsDay = i / resolutionPerDay
       const x = (i * (width - padding * 2)) / chartResolution + padding
-      const price = Math.max(startPrice * FACTOR ** resAsDay - 50, 0)
+      const price = Math.max(startPrice * FACTOR ** resAsDay - offset, 0)
       const y = (price / yChunk) * -1 + height - padding
 
       return { x, y, price }
@@ -344,13 +348,13 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   )
 
   const getPointFromPrice = useCallback((price: number) => {
-    const realX = Math.log((price + 50) / startPrice) / Math.log(FACTOR)
+    const realX = Math.log((price + offset) / startPrice) / Math.log(FACTOR)
     return Math.floor(realX * resolutionPerDay)
   }, [])
   const getPointFromDate = useCallback(
     (date: Date) => {
       const relativeDate = date.getTime() - startDate.getTime()
-      return Math.floor((relativeDate / duration) * chartResolution)
+      return Math.round((relativeDate / duration) * chartResolution)
     },
     [startDate],
   )
@@ -407,8 +411,8 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
   const getPointFromX = useCallback(
     (x: number) => {
       let point = Math.round((x / (width - padding * 2)) * chartResolution)
-      if (x < padding || x > width - padding * 2) {
-        if (x < padding) point = 0
+      if (x < 0 || x > width - padding * 2) {
+        if (x < 0) point = 0
         else point = chartResolution
       }
       return point

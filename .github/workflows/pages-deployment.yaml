@@ -49,7 +49,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Build and Export
-        run: pnpm build && pnpm export
+        run: pnpm build:alt && pnpm export
 
       - name: Generate sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
