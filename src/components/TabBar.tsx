@@ -1,7 +1,7 @@
 /* eslint-disable @next/next/no-img-element */
+import { useAccount } from '@web3modal/react'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 

@@ -1,6 +1,6 @@
+import { useAccount } from '@web3modal/react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, Typography } from '@ensdomains/thorin'
 

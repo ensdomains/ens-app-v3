@@ -1,8 +1,7 @@
-import { useConnectModal } from '@web3modal/react'
+import { useAccount, useConnectModal, useDisconnect } from '@web3modal/react'
 import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useDisconnect } from 'wagmi'
 
 import { Button, Profile, mq } from '@ensdomains/thorin'
 
@@ -92,7 +91,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
   const chainId = useChainId()
   const { avatar } = useAvatar(name || undefined, chainId)
   const zorb = useZorb(address, 'address')
-  const { disconnect } = useDisconnect()
+  const disconnect = useDisconnect()
 
   return (
     <Profile

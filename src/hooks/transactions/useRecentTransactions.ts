@@ -1,5 +1,5 @@
+import { useAccount } from '@web3modal/react'
 import { useEffect, useState } from 'react'
-import { useAccount } from 'wagmi'
 
 import { useChainId } from '../useChainId'
 import { useTransactionStore } from './TransactionStoreContext'

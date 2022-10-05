@@ -1,4 +1,3 @@
-import { getDefaultWallets } from '@rainbow-me/rainbowkit'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import type { ConfigOptions } from '@web3modal/react'
 import { Web3Modal } from '@web3modal/react'
@@ -7,7 +6,7 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
+import { chain } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
@@ -81,33 +80,6 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const { provider, chains } = configureChains(
-  [chain.goerli, chain.mainnet, chain.localhost],
-  [
-    ...(process.env.NEXT_PUBLIC_PROVIDER
-      ? [
-          jsonRpcProvider({
-            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
-          }),
-        ]
-      : [
-          jsonRpcProvider({
-            rpc: (c) => ({
-              http: `https://web3.ens.domains/v1/${
-                c.network === 'homestead' ? 'mainnet' : c.network
-              }`,
-            }),
-          }),
-          infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-        ]),
-  ],
-)
-
-const { connectors } = getDefaultWallets({
-  appName: 'ENS',
-  chains,
-})
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -116,21 +88,33 @@ const queryClient = new QueryClient({
   },
 })
 
-const wagmiClient = createClient({
-  autoConnect: true,
-  connectors,
-  provider,
-  queryClient,
-})
-
 // ------- web3 Modal Config -----------------------/
 // ToDo: Init and go from top Down to swap all @wagmi hooks
 const config: ConfigOptions = {
-  projectId: process.env.NEXT_PUBLIC__PROJECT_ID!,
+  projectId: '26ee9facbe4cbc407218b99540bc8053',
   theme: 'light',
   accentColor: 'default',
   ethereum: {
-    appName: 'web3Modal',
+    appName: 'ENS',
+    chains: [chain.goerli, chain.mainnet, chain.localhost],
+    providers: [
+      ...(process.env.NEXT_PUBLIC_PROVIDER
+        ? [
+            jsonRpcProvider({
+              rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+            }),
+          ]
+        : [
+            jsonRpcProvider({
+              rpc: (c) => ({
+                http: `https://web3.ens.domains/v1/${
+                  c.network === 'homestead' ? 'mainnet' : c.network
+                }`,
+              }),
+            }),
+            infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
+          ]),
+    ],
   },
 }
 
@@ -148,24 +132,23 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   return (
     <I18nextProvider i18n={i18n}>
       <Web3Modal config={config} />
-      <WagmiConfig client={wagmiClient}>
-        <QueryClientProvider client={queryClient}>
-          <TransactionStoreProvider>
-            <EnsProvider>
-              <ThemeProvider theme={thorinLightTheme}>
-                <BreakpointProvider queries={breakpoints}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <TransactionFlowProvider>
-                    <Notifications />
-                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                  </TransactionFlowProvider>
-                </BreakpointProvider>
-              </ThemeProvider>
-            </EnsProvider>
-          </TransactionStoreProvider>
-        </QueryClientProvider>
-      </WagmiConfig>
+      <QueryClientProvider client={queryClient}>
+        <TransactionStoreProvider>
+          <EnsProvider>
+            <ThemeProvider theme={thorinLightTheme}>
+              <BreakpointProvider queries={breakpoints}>
+                <GlobalStyle />
+                <ThorinGlobalStyles />
+                <TransactionFlowProvider>
+                  <Notifications />
+                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                </TransactionFlowProvider>
+              </BreakpointProvider>
+            </ThemeProvider>
+          </EnsProvider>
+        </TransactionStoreProvider>
+      </QueryClientProvider>
+      {/* </WagmiConfig> */}
     </I18nextProvider>
   )
 }

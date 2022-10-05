@@ -1,9 +1,9 @@
+import { useAccount } from '@web3modal/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 

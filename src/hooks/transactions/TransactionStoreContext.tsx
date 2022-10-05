@@ -1,6 +1,6 @@
+import { useAccount, useProvider } from '@web3modal/react'
 import { providers } from 'ethers'
 import React, { createContext, useContext, useEffect, useState } from 'react'
-import { useAccount, useProvider } from 'wagmi'
 
 import { useChainId } from '../useChainId'
 import { TransactionStore, createTransactionStore } from './transactionStore'

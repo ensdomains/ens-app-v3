@@ -1,9 +1,9 @@
+import { useAccount } from '@web3modal/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
