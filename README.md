@@ -12,7 +12,8 @@ The all new, all cool version of the ENS manager.
 
 ```bash
 pnpm install
-pnpm dev
+pnpm denv
+pnpm dev:glocal
 ```
 
 ### Install

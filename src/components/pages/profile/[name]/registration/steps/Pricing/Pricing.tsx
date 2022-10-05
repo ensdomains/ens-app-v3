@@ -73,12 +73,19 @@ const OutlinedContainerTitle = styled(Typography)(
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
+  resolverExists: boolean | undefined
   callback: (props: RegistrationStepData['pricing']) => void
   hasPrimaryName: boolean
   registrationData: RegistrationReducerDataItem
 }
 
-const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Props) => {
+const Pricing = ({
+  nameDetails,
+  callback,
+  hasPrimaryName,
+  registrationData,
+  resolverExists,
+}: Props) => {
   const { t } = useTranslation('register')
 
   const breakpoints = useBreakpoint()
@@ -98,6 +105,7 @@ const Pricing = ({ nameDetails, callback, hasPrimaryName, registrationData }: Pr
       permissions: {},
       records: {
         coinTypes: [{ key: 'ETH', value: resolverAddress }],
+        clearRecords: resolverExists,
       },
       resolver: resolverAddress,
       reverseRecord,

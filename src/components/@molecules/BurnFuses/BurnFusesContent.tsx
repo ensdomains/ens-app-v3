@@ -10,24 +10,22 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import mq from '@app/mediaQuery'
 import { FuseObj } from '@app/types'
 
-export const defaultFuseObj = {
+export const baseFuseObj = {
   CANNOT_UNWRAP: false,
   CANNOT_BURN_FUSES: false,
   CANNOT_TRANSFER: false,
   CANNOT_SET_RESOLVER: false,
   CANNOT_SET_TTL: false,
   CANNOT_CREATE_SUBDOMAIN: false,
+}
+
+export const defaultFuseObj = {
+  ...baseFuseObj,
   PARENT_CANNOT_CONTROL: false,
 }
 
 export const defaultSelectableFuses = {
-  CANNOT_UNWRAP: false,
-  CANNOT_BURN_FUSES: false,
-  CANNOT_TRANSFER: false,
-  CANNOT_SET_RESOLVER: false,
-  CANNOT_SET_TTL: false,
-  CANNOT_CREATE_SUBDOMAIN: false,
-  PARENT_CANNOT_CONTROL: false,
+  ...defaultFuseObj,
 }
 
 type SelectableFuses = Omit<FuseObj, 'PARENT_CANNOT_CONTROL' | 'CAN_DO_EVERYTHING'>

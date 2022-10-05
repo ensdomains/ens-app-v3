@@ -23,10 +23,10 @@ specifiers:
   '@cloudflare/wrangler': ^1.19.12
   '@ensdomains/address-encoder': ^0.2.18
   '@ensdomains/buffer': ^0.1.0
-  '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-contracts': 0.0.14
+  '@ensdomains/ens-test-env': ^0.3.2
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
+  '@ensdomains/ensjs': 3.0.0-alpha.24
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': ^0.6.16
   '@ethersproject/providers': ^5.7.0
@@ -132,9 +132,9 @@ specifiers:
 
 dependencies:
   '@ensdomains/address-encoder': 0.2.18
-  '@ensdomains/ens-contracts': file:.yalc/@ensdomains/ens-contracts_hardhat@2.11.1
+  '@ensdomains/ens-contracts': 0.0.14_hardhat@2.11.1
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
+  '@ensdomains/ensjs': 3.0.0-alpha.24_ethers@5.7.0
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.16_6ycby5qtikbhve4sxtfce3vpny
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_fcsnifgkfb6ypkeqq3oellhnki
@@ -167,7 +167,7 @@ devDependencies:
   '@cloudflare/workers-types': 3.16.0
   '@cloudflare/wrangler': 1.19.12
   '@ensdomains/buffer': 0.1.0_hardhat@2.11.1
-  '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
+  '@ensdomains/ens-test-env': 0.3.2
   '@ethersproject/providers': 5.7.0
   '@next/bundle-analyzer': 12.3.0
   '@next/swc-linux-x64-gnu': 12.1.4
@@ -2204,6 +2204,49 @@ packages:
       multihashes: 2.0.0
     dev: false
 
+  /@ensdomains/ens-contracts/0.0.14_hardhat@2.11.1:
+    resolution: {integrity: sha512-a56QCIZyPPLcScJ/aW2pSOddbMoFiREUOArNwbtqPgWK0oHvAzuoMs9uKTUYIqDLG20nMhbTRuigdpN7gPUeJg==}
+    dependencies:
+      '@ensdomains/buffer': 0.0.13_hardhat@2.11.1
+      '@ensdomains/solsha1': 0.0.3
+      '@openzeppelin/contracts': 4.7.3
+      dns-packet: 5.4.0
+    transitivePeerDependencies:
+      - '@nomiclabs/hardhat-web3'
+      - bufferutil
+      - hardhat
+      - supports-color
+      - utf-8-validate
+      - web3
+      - web3-core-helpers
+      - web3-core-promievent
+      - web3-eth-abi
+      - web3-utils
+    dev: false
+
+  /@ensdomains/ens-test-env/0.3.2:
+    resolution: {integrity: sha512-01K+YXFA6ZF07KBo6ZiQ45crAf6JHVqKddZxazvq/5iisiQxUDXYBgBrjXbwq5f/hgmzU/TfB8RqZ7SFeBxSNA==}
+    hasBin: true
+    dependencies:
+      '@ethersproject/wallet': 5.7.0
+      ansi-colors: 4.1.1
+      cli-progress: 3.11.2
+      commander: 9.4.0
+      concurrently: 7.4.0
+      docker-compose: 0.23.17
+      dotenv: 16.0.2
+      fs-extra: 10.1.0
+      ganache: 7.4.3
+      got: 12.3.1
+      lz4: 0.6.5
+      node-fetch: 3.2.10
+      progress-stream: 2.0.0
+      tar-fs: 2.1.1
+      wait-on: 6.0.1
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
   /@ensdomains/ens-validation/0.1.0:
     resolution: {integrity: sha512-rbDh2K6GfqXvBcJUISaTTYEt3f079WA4ohTE5Lh4/8EaaPAk/9vk3EisMUQV2UVxeFIZQEEyRCIOmRTpqN0W7A==}
     dev: false
@@ -2234,6 +2277,23 @@ packages:
       - bufferutil
       - utf-8-validate
     dev: true
+
+  /@ensdomains/ensjs/3.0.0-alpha.24_ethers@5.7.0:
+    resolution: {integrity: sha512-qWC33DwbaW1NB6C4CpRfkJcJuU/N4dM9Idhb1nyH5O1fr/0ftRQRuL1yFdPOeBxfSK6tUbCzLUSsxJ5NdvxkIg==}
+    peerDependencies:
+      ethers: '*'
+    dependencies:
+      '@ensdomains/address-encoder': 0.2.16
+      '@ensdomains/content-hash': 2.5.7
+      dns-packet: 5.4.0
+      ethers: 5.7.0
+      graphql: 16.5.0
+      graphql-request: 5.0.1-next.1_graphql@16.5.0
+      idna-uts46-hx: 3.4.0
+      traverse: 0.6.6
+    transitivePeerDependencies:
+      - encoding
+    dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
@@ -3051,7 +3111,7 @@ packages:
       nopt: 5.0.0
       npmlog: 5.0.1
       rimraf: 3.0.2
-      semver: 7.3.7
+      semver: 7.3.6
       tar: 6.1.11
     transitivePeerDependencies:
       - encoding
@@ -3620,7 +3680,7 @@ packages:
       '@nomiclabs/truffle-contract': 4.2.24
       '@types/chai': 4.3.0
       chai: 4.3.6
-      ethereumjs-util: 7.1.5
+      ethereumjs-util: 7.1.4
       fs-extra: 7.0.1
       hardhat: 2.11.1_s5ojjbx2isjkawqptqpitvy25q
     transitivePeerDependencies:
@@ -3642,7 +3702,7 @@ packages:
       web3-utils: ^1.2.1
     dependencies:
       '@truffle/blockchain-utils': 0.0.25
-      '@truffle/contract-schema': 3.4.9
+      '@truffle/contract-schema': 3.4.7
       '@truffle/debug-utils': 4.2.14
       '@truffle/error': 0.0.11
       '@truffle/interface-adapter': 0.4.24
@@ -4583,6 +4643,14 @@ packages:
       colors: 1.4.0
     dev: true
 
+  /@truffle/contract-schema/3.4.7:
+    resolution: {integrity: sha512-vbOHMq/a8rVPh+cFMBDDGPqqiKrXXOc+f1kB4znfh3ewOX8rJxZhGJvdMm3WNMJHR5RstqDV7ZIZ7ePwtSXH8Q==}
+    dependencies:
+      ajv: 6.12.6
+      debug: 4.3.4
+    transitivePeerDependencies:
+      - supports-color
+
   /@truffle/contract-schema/3.4.9:
     resolution: {integrity: sha512-nhYMXWbUs6dMYHL1f8DTkRk/uo1sADK0yeSYXo/p/7nqnjlHzqrr75BBsKbB7OFIVT05des+GFNQJqBaRZVdxQ==}
     dependencies:
@@ -4590,6 +4658,7 @@ packages:
       debug: 4.3.4
     transitivePeerDependencies:
       - supports-color
+    dev: true
 
   /@truffle/contract/4.5.22:
     resolution: {integrity: sha512-yqv+dlLQsPLHS0qMVVMmB1mVw5KhHFLV6K0y+amcoZGACvoX8Q+oITUpYY1hqI8aTd7uQFsDAaVPJouZuyCwwA==}
@@ -9348,12 +9417,12 @@ packages:
       is-shared-array-buffer: 1.0.2
       is-string: 1.0.7
       is-weakref: 1.0.2
-      object-inspect: 1.12.2
+      object-inspect: 1.12.0
       object-keys: 1.1.1
-      object.assign: 4.1.4
-      string.prototype.trimend: 1.0.5
-      string.prototype.trimstart: 1.0.5
-      unbox-primitive: 1.0.2
+      object.assign: 4.1.2
+      string.prototype.trimend: 1.0.4
+      string.prototype.trimstart: 1.0.4
+      unbox-primitive: 1.0.1
     dev: true
 
   /es-abstract/1.20.2:
@@ -10648,6 +10717,16 @@ packages:
       elliptic: 6.5.4
       ethereum-cryptography: 0.1.3
       ethjs-util: 0.1.6
+      rlp: 2.2.7
+
+  /ethereumjs-util/7.1.4:
+    resolution: {integrity: sha512-p6KmuPCX4mZIqsQzXfmSx9Y0l2hqf+VkAiwSisW3UKUFdk8ZkAt+AYaor83z2nSi6CU2zSsXMlD80hAbNEGM0A==}
+    engines: {node: '>=10.0.0'}
+    dependencies:
+      '@types/bn.js': 5.1.0
+      bn.js: 5.2.1
+      create-hash: 1.2.0
+      ethereum-cryptography: 0.1.3
       rlp: 2.2.7
 
   /ethereumjs-util/7.1.5:
@@ -13314,13 +13393,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
+      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
-      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9
@@ -15574,6 +15653,9 @@ packages:
       kind-of: 3.2.2
     dev: false
 
+  /object-inspect/1.12.0:
+    resolution: {integrity: sha512-Ho2z80bVIvJloH+YzRmpZVQe87+qASmBUKZDWgx9cu+KDrX2ZDH/3tMy+gXbZETVGs2M8YdxObOh7XAtim9Y0g==}
+
   /object-inspect/1.12.2:
     resolution: {integrity: sha512-z+cPxW0QGUp0mcqcsgQyLVRDoXFQbXOwBaqyF7VIgI4TWNQsDHrBpUQslRmIfAoYWdYzs6UlKJtB2XJpTaNSpQ==}
 
@@ -17621,7 +17703,7 @@ packages:
     dependencies:
       call-bind: 1.0.2
       get-intrinsic: 1.1.2
-      object-inspect: 1.12.2
+      object-inspect: 1.12.0
 
   /signal-exit/3.0.7:
     resolution: {integrity: sha512-wnD2ZE+l+SPC/uoS0vXeE9L1+0wuaMqKlfz9AMUo38JsyLSBWSFcHR1Rri62LZc12vLr1gb3jl7iwQhgwpAbGQ==}
@@ -18109,12 +18191,26 @@ packages:
       es-abstract: 1.20.2
     dev: true
 
+  /string.prototype.trimend/1.0.4:
+    resolution: {integrity: sha512-y9xCjw1P23Awk8EvTpcyL2NIr1j7wJ39f+k6lvRnSMz+mz9CGz9NYPelDk42kOz6+ql8xjfK8oYzy3jAP5QU5A==}
+    dependencies:
+      call-bind: 1.0.2
+      define-properties: 1.1.4
+    dev: true
+
   /string.prototype.trimend/1.0.5:
     resolution: {integrity: sha512-I7RGvmjV4pJ7O3kdf+LXFpVfdNOxtCW/2C8f6jNiW4+PQchwxkCDzlk1/7p+Wl4bqFIZeF47qAHXLuHHWKAxog==}
     dependencies:
       call-bind: 1.0.2
       define-properties: 1.1.4
       es-abstract: 1.20.2
+
+  /string.prototype.trimstart/1.0.4:
+    resolution: {integrity: sha512-jh6e984OBfvxS50tdY2nRZnoC5/mLFKOREQfw8t5yytkoUsJRNxvI/E39qu1sD0OtWI3OC0XgKSmcWwziwYuZw==}
+    dependencies:
+      call-bind: 1.0.2
+      define-properties: 1.1.4
+    dev: true
 
   /string.prototype.trimstart/1.0.5:
     resolution: {integrity: sha512-THx16TJCGlsN0o6dl2o6ncWUsdgnLRSA23rRE5pyGBw/mLr3Ej/R2LaqCtgP8VNMGZsvMWnf9ooZPyY2bHvUFg==}
@@ -19106,6 +19202,15 @@ packages:
 
   /ultron/1.1.1:
     resolution: {integrity: sha512-UIEXBNeYmKptWH6z8ZnqTeS8fV74zG0/eRU9VGkpzz+LIJNs8W/zM/L+7ctCkRrgbNnnR0xxw4bKOr0cW0N0Og==}
+
+  /unbox-primitive/1.0.1:
+    resolution: {integrity: sha512-tZU/3NqK3dA5gpE1KtyiJUrEB0lxnGkMFHptJ7q6ewdZ8s12QrODwNbhIJStmJkd1QDXa1NRA8aF2A1zk/Ypyw==}
+    dependencies:
+      function-bind: 1.1.1
+      has-bigints: 1.0.2
+      has-symbols: 1.0.3
+      which-boxed-primitive: 1.0.2
+    dev: true
 
   /unbox-primitive/1.0.2:
     resolution: {integrity: sha512-61pPlCD9h51VoreyJ0BReideM3MDKMKnh6+V9L08331ipq6Q8OFXZYiqP6n/tbHx4s5I9uRhcye6BrbkizkBDw==}
@@ -20839,125 +20944,6 @@ packages:
       immer: 9.0.15
       react: 17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
-    dev: false
-
-  file:.yalc/@ensdomains/ens-contracts_hardhat@2.11.1:
-    resolution: {directory: .yalc/@ensdomains/ens-contracts, type: directory}
-    id: file:.yalc/@ensdomains/ens-contracts
-    name: '@ensdomains/ens-contracts'
-    version: 0.0.13
-    dependencies:
-      '@ensdomains/buffer': 0.0.13_hardhat@2.11.1
-      '@ensdomains/solsha1': 0.0.3
-      '@openzeppelin/contracts': 4.7.3
-      dns-packet: 5.4.0
-    transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
-      - bufferutil
-      - hardhat
-      - supports-color
-      - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
-    dev: false
-
-  file:.yalc/@ensdomains/ens-test-env:
-    resolution: {directory: .yalc/@ensdomains/ens-test-env, type: directory}
-    name: '@ensdomains/ens-test-env'
-    version: 0.3.0
-    hasBin: true
-<<<<<<< Updated upstream
-=======
-    dependencies:
-      '@ethersproject/wallet': 5.7.0
-      ansi-colors: 4.1.1
-      cli-progress: 3.11.2
-      commander: 9.4.0
-      concurrently: 7.4.0
-      docker-compose: 0.23.17
-      dotenv: 16.0.2
-      fs-extra: 10.1.0
-      ganache: 7.4.3
-      got: 12.3.1
-      lz4: 0.6.5
-      node-fetch: 3.2.10
-      progress-stream: 2.0.0
-      tar-fs: 2.1.1
-      wait-on: 6.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
-
-  file:.yalc/@ensdomains/ensjs:
-    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
-    name: '@ensdomains/ensjs'
-    version: 3.0.0-alpha.22
-    dependencies:
-      '@ensdomains/address-encoder': 0.2.16
-      '@ensdomains/content-hash': 2.5.7
-      dns-packet: 5.4.0
-      ethers: 5.7.0
-      graphql: 16.5.0
-      graphql-request: 5.0.1-next.1_graphql@16.5.0
-      idna-uts46-hx: 3.4.0
-      traverse: 0.6.6
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
-    dev: false
-
-  file:.yalc/@ensdomains/thorin_6ycby5qtikbhve4sxtfce3vpny:
-    resolution: {directory: .yalc/@ensdomains/thorin, type: directory}
-    id: file:.yalc/@ensdomains/thorin
-    name: '@ensdomains/thorin'
-    version: 0.6.16
-    peerDependencies:
-      react: ^17
-      react-dom: ^17
-      react-transition-state: ^1.1.4
-      styled-components: ^5.3.3
->>>>>>> Stashed changes
-    dependencies:
-      '@ethersproject/wallet': 5.7.0
-      ansi-colors: 4.1.1
-      cli-progress: 3.11.2
-      commander: 9.4.0
-      concurrently: 7.4.0
-      docker-compose: 0.23.17
-      dotenv: 16.0.2
-      fs-extra: 10.1.0
-      ganache: 7.4.3
-      got: 12.3.1
-      lz4: 0.6.5
-      node-fetch: 3.2.10
-      progress-stream: 2.0.0
-      tar-fs: 2.1.1
-      wait-on: 6.0.1
-    transitivePeerDependencies:
-      - debug
-    dev: true
-
-  file:.yalc/@ensdomains/ensjs:
-    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
-    name: '@ensdomains/ensjs'
-    version: 3.0.0-alpha.22
-    dependencies:
-      '@ensdomains/address-encoder': 0.2.16
-      '@ensdomains/content-hash': 2.5.7
-      dns-packet: 5.4.0
-      ethers: 5.7.0
-      graphql: 16.5.0
-      graphql-request: 5.0.1-next.1_graphql@16.5.0
-      idna-uts46-hx: 3.4.0
-      traverse: 0.6.6
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - utf-8-validate
     dev: false
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:

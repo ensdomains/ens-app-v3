@@ -11,20 +11,20 @@ const displayItems = (
   { name }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
-    {
-      label: 'name',
-      value: name,
-      type: 'name',
-    },
-    {
-      label: 'action',
-      value: t('transaction.description.commitName'),
-    },
-    {
-      label: 'info',
-      value: t('transaction.info.commitName'),
-    },
-  ]
+  {
+    label: 'name',
+    value: name,
+    type: 'name',
+  },
+  {
+    label: 'action',
+    value: t('transaction.description.commitName'),
+  },
+  {
+    label: 'info',
+    value: t('transaction.info.commitName'),
+  },
+]
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const { customData: _, ...tx } = await ens.commitName.populateTransaction(data.name, {

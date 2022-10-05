@@ -18,7 +18,7 @@ export const useEthPrice = () => {
       if (typeof address !== 'string') throw new Error('Contract address is wrong type')
       const oracle = new ethers.Contract(address, AggregatorInterface, provider)
       const latest = (await oracle.latestAnswer()) as BigNumber
-      return latest.div(100000000)
+      return latest
     },
     {
       enabled: !!provider && ready,
