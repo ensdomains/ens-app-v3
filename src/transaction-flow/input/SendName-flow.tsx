@@ -163,8 +163,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     const isController = ownerData?.owner === address
     const isRegistrant = ownerData?.registrant === address
 
-    console.log('**handleSubmit: ', ownerData, managerChoiceWatch, ownerChoiceWatch, ownershipLevel)
-
     if (ownershipLevel === 'nameWrapper') {
       dispatch({
         name: 'setTransactions',

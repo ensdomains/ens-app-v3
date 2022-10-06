@@ -132,8 +132,6 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
 
   const profileActions = useMemo(() => {
     const actions: { onClick: () => void; color?: Colors; label: string; disabled?: boolean }[] = []
-    // if (isSelf || (!selfAbilities.canEdit && profile?.address !== address) || ensName === _name)
-    //   return undefined
     if (!isSelf && (selfAbilities.canEdit || profile?.address === address) && ensName !== _name) {
       const setAsPrimaryTransactions: GenericTransaction[] = [
         makeTransactionItem('setPrimaryName', {

@@ -90,8 +90,6 @@ const SubtitleWrapper = styled.div(
   `,
 )
 
-const DetailsContainer = styled.div(() => css``)
-
 const AvatarOverlay = styled.div(
   ({ theme }) => css`
     position: absolute;
@@ -179,7 +177,7 @@ export const NameDetailItem = ({
             )}
           </AvatarWrapper>
           <NameItemContent>
-            <TitleWrapper name={name} disabled={disabled} />
+            <TitleWrapper name={truncatedName || name} disabled={disabled} />
             {expiryDate && (
               <SubtitleWrapper>
                 <ShortExpiry expiry={expiryDate} />
@@ -187,7 +185,7 @@ export const NameDetailItem = ({
             )}
           </NameItemContent>
         </NameItemContainer>
-        <DetailsContainer>{children}</DetailsContainer>
+        <div>{children}</div>
       </NameItemWrapper>
     </OptionalLink>
   )

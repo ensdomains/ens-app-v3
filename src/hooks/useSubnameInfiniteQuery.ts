@@ -24,12 +24,10 @@ export const useSubnameInfiniteQuery = (
   orderBy?: SubnameSortType,
   orderDirection?: SortDirection,
   search?: string,
-  exclude?: string[],
 ) => {
   const { getSubnames } = useEns()
 
   const queryKey = ['getSubnames', name, orderBy, orderDirection, search]
-  console.log('queryKey', queryKey)
   const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
     queryKey,
     async ({ pageParam }) => {
@@ -41,8 +39,6 @@ export const useSubnameInfiniteQuery = (
         pageSize: PAGE_SIZE,
         search,
       })
-
-      console.log('result', result)
 
       const ownedSubnames = result.subnames.filter(
         (subname) => subname.owner.id !== '0x0000000000000000000000000000000000000000',
@@ -62,17 +58,13 @@ export const useSubnameInfiniteQuery = (
     },
   )
 
-  /**
-   * Since we don't have an event to know when graph-node has updated, we won't know when to refetch to update the list.
-   * Instead I use a filter to exclude subnames that have been deleted.
-   */
   const subnames: Subname[] = useMemo(() => {
     return (
       data?.pages.reduce<Subname[]>((acc, curr) => {
-        return [...acc, ...(curr.subnames.filter((s) => !exclude?.includes(s.name)) || [])]
+        return [...acc, ...curr.subnames]
       }, []) || ([] as Subname[])
     )
-  }, [data, exclude])
+  }, [data])
 
   return {
     subnames,

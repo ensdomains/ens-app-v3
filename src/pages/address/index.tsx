@@ -112,7 +112,6 @@ const Page = () => {
     isLoading: isNamesLoading,
     status: namesStatus,
     pageLength,
-    refetch: refetchNames,
   } = useNamesFromAddress({
     address,
     sort: {
@@ -148,7 +147,6 @@ const Page = () => {
       setSelectedNames([])
       setMode('view')
       setPage(1)
-      refetchNames()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [stage])

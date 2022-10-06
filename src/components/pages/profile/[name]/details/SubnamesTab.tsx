@@ -1,15 +1,13 @@
-/* eslint-disable no-nested-ternary */
 import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, CloseSVG, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
+import { Button, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
 
 import {
   NameTableHeader,
-  NameTableMode,
   SortDirection,
   SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
@@ -20,7 +18,6 @@ import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameI
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
-import { makeTransactionItem } from '../../../../../transaction-flow/transaction/index'
 import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
 import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
@@ -78,23 +75,6 @@ const AddSubnamesCard = styled(Card)(
   `,
 )
 
-const ButtonInner = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    align-items: center;
-    gap: ${theme.space['2']};
-    font-size: ${theme.space['3.5']};
-    height: ${theme.space['5']};
-    padding: 0 ${theme.space['2']};
-
-    svg {
-      display: block;
-      width: ${theme.space['3']};
-      height: ${theme.space['3']};
-    }
-  `,
-)
-
 const PlusPrefix = styled.svg(
   ({ theme }) => css`
     display: block;
@@ -117,7 +97,7 @@ const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
 export const SubnamesTab = ({
   name,
   network,
-  canEdit: _canEdit,
+  canEdit,
   isWrapped,
 }: {
   name: string
@@ -128,22 +108,7 @@ export const SubnamesTab = ({
   const router = useRouter()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
-  const { showDataInput, createTransactionFlow, getTransactionFlowStage } = useTransactionFlow()
-
-  const [mode, setMode] = useState<NameTableMode>('view')
-  const [selectedNames, setSelectedNames] = useState<string[]>([])
-  const handleSelectName = (subname: string) => () => {
-    if (selectedNames.includes(subname)) {
-      setSelectedNames([])
-    } else {
-      setSelectedNames([subname])
-    }
-  }
-  const [deletedNames, setDeletedNames] = useState<string[]>([])
-
-  const nameParts = name.split('.')
-  const isFirstLevelDomain = nameParts.length === 2 && nameParts[1] === 'eth'
-  const canEdit = _canEdit && isFirstLevelDomain
+  const { showDataInput } = useTransactionFlow()
 
   const [sortType, setSortType] = useState<SubnameSortType | undefined>()
   const [sortDirection, setSortDirection] = useState(SortDirection.desc)
@@ -165,7 +130,6 @@ export const SubnamesTab = ({
     sortType,
     sortDirection,
     searchQuery,
-    deletedNames,
   )
 
   const [isIntersecting, setIsIntersecting] = useState(false)
@@ -181,31 +145,6 @@ export const SubnamesTab = ({
       isWrapped,
     })
 
-  const deleteSubnameTransitionKey = selectedNames[0] ? `delete-subname-${selectedNames[0]}` : ''
-  const deleteSubname = async () => {
-    const subname = selectedNames[0]
-    if (!subname) return
-
-    createTransactionFlow(deleteSubnameTransitionKey, {
-      transactions: [
-        makeTransactionItem('deleteSubname', {
-          name: subname,
-          contract: isWrapped ? 'nameWrapper' : 'registry',
-        }),
-      ],
-    })
-  }
-
-  const deleteSubnameTransitionStage = getTransactionFlowStage(deleteSubnameTransitionKey)
-  useEffect(() => {
-    if (deleteSubnameTransitionStage === 'completed') {
-      setDeletedNames([...deletedNames, selectedNames[0]])
-      setMode('view')
-      setSelectedNames([])
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [deleteSubnameTransitionStage])
-
   let InnerContent: ReactNode
   if (isLoading) {
     InnerContent = (
@@ -214,7 +153,9 @@ export const SubnamesTab = ({
       </SpinnerContainer>
     )
   } else if (subnames.length === 0) {
-    InnerContent = <NoMoreResultsContainer>No Results</NoMoreResultsContainer>
+    InnerContent = (
+      <NoMoreResultsContainer>{t('details.tabs.subnames.empty')}</NoMoreResultsContainer>
+    )
   } else if (subnames.length > 0) {
     InnerContent = (
       <InfiniteScrollContainer onIntersectingChange={setIsIntersecting}>
@@ -222,13 +163,10 @@ export const SubnamesTab = ({
           {subnames.map((subname) => (
             <TaggedNameItem
               key={subname.name}
-              name={subname.name}
+              name={subname.truncatedName || subname.name}
               network={network}
-              mode={mode}
-              disabled={mode === 'select' && !canEdit}
+              mode="view"
               isController={subname.owner?.id === address?.toLowerCase()}
-              selected={selectedNames.includes(subname.name)}
-              onClick={handleSelectName(subname.name)}
             />
           ))}
         </div>
@@ -269,7 +207,6 @@ export const SubnamesTab = ({
           sortDirection={sortDirection}
           searchQuery={searchInput}
           mode="view"
-          selectedCount={selectedNames.length}
           onSortTypeChange={(value: SortType) => {
             if (['creationDate', 'labelName'].includes(value)) setSortType(value as SubnameSortType)
           }}
@@ -278,22 +215,7 @@ export const SubnamesTab = ({
             setSearchInput(s)
             debouncedSetSearch(s)
           }}
-        >
-          {mode === 'select' && (
-            <Button
-              shadowless
-              size="extraSmall"
-              tone="red"
-              variant="secondary"
-              onClick={deleteSubname}
-            >
-              <ButtonInner>
-                <CloseSVG />
-                {t('action.delete', { ns: 'common' })}
-              </ButtonInner>
-            </Button>
-          )}
-        </NameTableHeader>
+        />
         <div>{InnerContent}</div>
         <Footer />
       </StyledTabWrapper>
