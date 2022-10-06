@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
@@ -9,6 +10,8 @@ import { Card } from '@app/components/Card'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+
+import { useNameDetails } from '../../../../../hooks/useNameDetails'
 
 const Container = styled(Card)(
   ({ theme }) => css`
@@ -89,27 +92,46 @@ const UpgradeButton = styled(Button)(
 export const WrapperCallToAction = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
 
+  const { address } = useAccount()
+  const { ownerData, profile, isLoading: isNameDetailsLoading } = useNameDetails(name)
+  const isOwner = ownerData?.owner === address
+  const resolverAddress = profile?.resolverAddress
+
   const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
   const resumable = getResumable(`wrapName-${name}`)
 
-  const handleUpgradeClick = () =>
-    resumable
+  const handleUpgradeClick = () => {
+    if (isNameDetailsLoading || !ownerData?.owner || !resolverAddress) return
+    const transactions = isOwner
+      ? [
+          makeTransactionItem('migrateProfile', {
+            name,
+          }),
+          makeTransactionItem('wrapName', {
+            name,
+          }),
+        ]
+      : [
+          makeTransactionItem('wrapName', {
+            name,
+            owner: ownerData?.owner,
+          }),
+          makeTransactionItem('migrateProfile', {
+            name,
+            resolverAddress,
+          }),
+        ]
+    return resumable
       ? resumeTransactionFlow(`wrapName-${name}`)
       : createTransactionFlow(`wrapName-${name}`, {
-          transactions: [
-            makeTransactionItem('migrateProfile', {
-              name,
-            }),
-            makeTransactionItem('wrapName', {
-              name,
-            }),
-          ],
+          transactions,
           resumable: true,
           intro: {
             title: t('details.wrap.startTitle'),
             content: makeIntroItem('WrapName', { name }),
           },
         })
+  }
 
   return (
     <NightSky>
