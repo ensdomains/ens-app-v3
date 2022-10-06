@@ -79,7 +79,8 @@
     "expiresInDays_other": "Expires in {{count}} days",
     "extend": "Extend",
     "send": "Send",
-    "transfer": "Transfer"
+    "transfer": "Transfer",
+    "transferName": "Transfer Name"
   },
   "address": {
     "label": "Address",

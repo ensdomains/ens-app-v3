@@ -33,6 +33,7 @@ describe('Create Subname', () => {
     cy.findByText('test.test123.eth').should('be.visible')
   })
   it('should allow creating a subnames if the user is the wrapped owner', () => {
+    acceptMetamaskAccess(2)
     cy.visit('/profile/wrapped.eth/details')
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('add-subname-action').click()

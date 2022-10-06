@@ -130,9 +130,9 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <Web3Modal config={config} />
-      <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <I18nextProvider i18n={i18n}>
+        <Web3Modal config={config} />
         <TransactionStoreProvider>
           <EnsProvider>
             <ThemeProvider theme={thorinLightTheme}>
@@ -147,8 +147,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
             </ThemeProvider>
           </EnsProvider>
         </TransactionStoreProvider>
-      </QueryClientProvider>
-    </I18nextProvider>
+      </I18nextProvider>
+    </QueryClientProvider>
   )
 }
 

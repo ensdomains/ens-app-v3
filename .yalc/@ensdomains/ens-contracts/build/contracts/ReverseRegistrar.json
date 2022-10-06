@@ -1,0 +1,21 @@
+[
+  "constructor(address)",
+  "event ControllerChanged(address indexed,bool)",
+  "event DefaultResolverChanged(address indexed)",
+  "event OwnershipTransferred(address indexed,address indexed)",
+  "event ReverseClaimed(address indexed,bytes32 indexed)",
+  "function claim(address) returns (bytes32)",
+  "function claimForAddr(address,address,address) returns (bytes32)",
+  "function claimWithResolver(address,address) returns (bytes32)",
+  "function controllers(address) view returns (bool)",
+  "function defaultResolver() view returns (address)",
+  "function ens() view returns (address)",
+  "function node(address) pure returns (bytes32)",
+  "function owner() view returns (address)",
+  "function renounceOwnership()",
+  "function setController(address,bool)",
+  "function setDefaultResolver(address)",
+  "function setName(string) returns (bytes32)",
+  "function setNameForAddr(address,address,address,string) returns (bytes32)",
+  "function transferOwnership(address)"
+]

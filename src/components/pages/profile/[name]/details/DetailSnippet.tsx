@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -10,6 +11,7 @@ import { cacheableComponentStyles } from '@app/components/@atoms/CacheableCompon
 import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { formatExpiry } from '@app/utils/utils'
 
 const Container = styled(Card)(
@@ -76,6 +78,13 @@ const ButtonIcon = styled.svg(
   `,
 )
 
+const handleSend =
+  (showDataInput: ReturnType<typeof useTransactionFlow>['showDataInput'], name: string) => () => {
+    showDataInput(`send-name-${name}`, 'SendName', {
+      name,
+    })
+  }
+
 export const DetailSnippet = ({
   expiryDate,
   canSend,
@@ -86,6 +95,9 @@ export const DetailSnippet = ({
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
+  const { showDataInput } = useTransactionFlow()
+  const router = useRouter()
+  const name = router.query.name as string
 
   if (!expiryDate && !canSend) return null
   return (
@@ -119,8 +131,8 @@ export const DetailSnippet = ({
             size="small"
             shadowless
             variant="transparent"
-            disabled
             data-testid="send-button"
+            onClick={handleSend(showDataInput, name)}
           >
             <InnerButton>
               <ButtonIcon as={PaperPlaneSVG} />

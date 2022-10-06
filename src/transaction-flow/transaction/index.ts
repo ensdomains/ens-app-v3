@@ -6,6 +6,9 @@ import migrateProfileWithSync from './migrateProfileWithSync'
 import registerName from './registerName'
 import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
+import transferController from './transferController'
+import transferName from './transferName'
+import transferSubname from './transferSubname'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateResolver from './updateResolver'
@@ -24,6 +27,9 @@ export const transactions = {
   createSubname,
   commitName,
   registerName,
+  transferName,
+  transferSubname,
+  transferController,
 }
 
 export type Transaction = typeof transactions

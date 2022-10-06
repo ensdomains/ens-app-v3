@@ -43,6 +43,12 @@ const mockUseAccount = mockFunction(useAccount)
 type DetailsProps = ComponentProps<typeof Details>
 
 describe('Details', () => {
+  const mockRouterObject = {
+    query: {
+      name: 'nick.eth',
+    },
+  }
+
   // default props for <Details /> component
   const defaultProps: DetailsProps = {
     expiryDate: new Date(),
@@ -83,6 +89,7 @@ describe('Details', () => {
       breakpoints: { md: true },
       ownerData: { registrant: '', owner: '', ownershipLevel: 'registrar' },
     }
+    mockUseRouter.mockReturnValue(mockRouterObject)
 
     render(<Details {...props} />)
     expect(screen.getByText('NFTWithPlaceholder')).toBeInTheDocument()

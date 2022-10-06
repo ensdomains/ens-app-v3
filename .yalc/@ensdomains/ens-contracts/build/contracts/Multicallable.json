@@ -1,0 +1,5 @@
+[
+  "function multicall(bytes[]) returns (bytes[])",
+  "function multicallWithNodeCheck(bytes32,bytes[]) returns (bytes[])",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

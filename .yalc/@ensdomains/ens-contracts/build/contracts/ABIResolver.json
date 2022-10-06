@@ -1,0 +1,9 @@
+[
+  "event ABIChanged(bytes32 indexed,uint256 indexed)",
+  "event VersionChanged(bytes32 indexed,uint64)",
+  "function ABI(bytes32,uint256) view returns (uint256, bytes)",
+  "function clearRecords(bytes32)",
+  "function recordVersions(bytes32) view returns (uint64)",
+  "function setABI(bytes32,uint256,bytes)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

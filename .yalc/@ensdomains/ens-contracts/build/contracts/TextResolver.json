@@ -1,0 +1,9 @@
+[
+  "event TextChanged(bytes32 indexed,string indexed,string,string)",
+  "event VersionChanged(bytes32 indexed,uint64)",
+  "function clearRecords(bytes32)",
+  "function recordVersions(bytes32) view returns (uint64)",
+  "function setText(bytes32,string,string)",
+  "function supportsInterface(bytes4) view returns (bool)",
+  "function text(bytes32,string) view returns (string)"
+]
