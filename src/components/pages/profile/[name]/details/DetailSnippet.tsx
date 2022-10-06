@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -101,9 +100,6 @@ export const DetailSnippet = ({
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
-  const { showDataInput } = useTransactionFlow()
-  const router = useRouter()
-  const name = router.query.name as string
 
   const { showDataInput } = useTransactionFlow()
   const handleExtend = () => {

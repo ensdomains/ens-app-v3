@@ -127,7 +127,6 @@ export const NameSnippetMobile = ({
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
-  const { showDataInput } = useTransactionFlow()
 
   const { showDataInput } = useTransactionFlow()
   const handleExtend = () => {
