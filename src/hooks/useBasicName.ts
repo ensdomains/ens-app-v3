@@ -1,4 +1,4 @@
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
@@ -19,7 +19,6 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     data: batchData,
     isLoading: batchLoading,
     isFetched,
-    internal: { isFetchedAfterMount },
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
@@ -68,6 +67,6 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     truncatedName,
     registrationStatus,
     isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: status === 'success' && isFetched,
   }
 }

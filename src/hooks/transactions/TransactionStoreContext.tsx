@@ -16,6 +16,7 @@ const TransactionStoreContext = createContext<TransactionStore | null>(null)
 export function TransactionStoreProvider({ children }: { children: React.ReactNode }) {
   const provider = useProvider<providers.BaseProvider>()
   const { address } = useAccount()
+
   const chainId = useChainId()
 
   // Use existing store if it exists, or lazily create one
@@ -27,7 +28,9 @@ export function TransactionStoreProvider({ children }: { children: React.ReactNo
 
   // Keep store provider up to date with any wagmi changes
   useEffect(() => {
-    store.setProvider(provider)
+    if (provider) {
+      store.setProvider(provider)
+    }
   }, [store, provider])
 
   // Wait for pending transactions whenever address or chainId changes

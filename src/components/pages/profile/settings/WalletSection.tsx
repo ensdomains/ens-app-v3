@@ -1,5 +1,5 @@
+import { useDisconnect } from '@web3modal/react'
 import { useTranslation } from 'react-i18next'
-import { useDisconnect } from 'wagmi'
 
 import { Button } from '@ensdomains/thorin'
 
@@ -9,7 +9,7 @@ export const WalletSection = () => {
   const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
 
-  const { disconnect } = useDisconnect()
+  const disconnect = useDisconnect()
 
   return (
     <SectionContainer

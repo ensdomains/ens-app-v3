@@ -16,7 +16,6 @@ import { NameGridView } from '@app/components/names/NameGridView'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
-import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { Name } from '@app/types'
@@ -110,7 +109,8 @@ export default function Page() {
   const loading =
     isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
 
-  useProtectedRoute('/', loading ? true : address && address !== '')
+  // ToDo: Had to comment out due to our wagmi rendering
+  // useProtectedRoute('/', loading ? true : address && address !== '')
 
   return (
     <Content

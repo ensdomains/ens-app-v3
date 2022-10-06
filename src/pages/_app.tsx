@@ -1,4 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { chains, providers } from '@web3modal/ethereum'
 import type { ConfigOptions } from '@web3modal/react'
 import { Web3Modal } from '@web3modal/react'
 import { NextPage } from 'next'
@@ -6,9 +7,6 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import { chain } from 'wagmi'
-import { infuraProvider } from 'wagmi/providers/infura'
-import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
 
@@ -89,31 +87,15 @@ const queryClient = new QueryClient({
 })
 
 // ------- web3 Modal Config -----------------------/
-// ToDo: Init and go from top Down to swap all @wagmi hooks
 const config: ConfigOptions = {
-  projectId: '26ee9facbe4cbc407218b99540bc8053',
+  projectId: process.env.NEXT_PUBLIC_PROJECT_ID!,
   theme: 'light',
   accentColor: 'default',
   ethereum: {
     appName: 'ENS',
-    chains: [chain.goerli, chain.mainnet, chain.localhost],
+    chains: [chains.goerli, chains.mainnet, chains.localhost],
     providers: [
-      ...(process.env.NEXT_PUBLIC_PROVIDER
-        ? [
-            jsonRpcProvider({
-              rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
-            }),
-          ]
-        : [
-            jsonRpcProvider({
-              rpc: (c) => ({
-                http: `https://web3.ens.domains/v1/${
-                  c.network === 'homestead' ? 'mainnet' : c.network
-                }`,
-              }),
-            }),
-            infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-          ]),
+      providers.walletConnectProvider({ projectId: process.env.NEXT_PUBLIC_PROJECT_ID! }),
     ],
   },
 }
@@ -131,8 +113,8 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
 
   return (
     <QueryClientProvider client={queryClient}>
+      <Web3Modal config={config} />
       <I18nextProvider i18n={i18n}>
-        <Web3Modal config={config} />
         <TransactionStoreProvider>
           <EnsProvider>
             <ThemeProvider theme={thorinLightTheme}>
