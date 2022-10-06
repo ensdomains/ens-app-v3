@@ -1,4 +1,0 @@
-[
-  "function name(bytes32) view returns (string)",
-  "function setName(bytes32,string)"
-]

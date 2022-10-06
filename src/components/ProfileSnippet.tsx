@@ -2,13 +2,12 @@ import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
+import { Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
 
 import TripleDot from '@app/assets/TripleDot.svg'
-import { useAvatar } from '@app/hooks/useAvatar'
-import { useZorb } from '@app/hooks/useZorb'
 
 import { DisabledButton } from './@atoms/DisabledButton'
+import { NameAvatar } from './AvatarWithZorb'
 
 const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
   ({ theme, $banner, $size }) => [
@@ -22,7 +21,7 @@ const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii['2xLarge']};
       border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -31,12 +30,6 @@ const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
       flex-gap: ${theme.space['3']};
     `,
   ],
-)
-
-const AvatarWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['24']};
-  `,
 )
 
 const DetailStack = styled.div(
@@ -86,6 +79,7 @@ const FirstItems = styled.div(
 const DetailButtonWrapper = styled.div<{ $placement?: 'inline' | 'bottom' }>(
   ({ theme, $placement }) => css`
     ${$placement === 'bottom' && 'width: 100%;'}
+
     & > button {
       border: ${theme.space.px} solid ${theme.colors.borderSecondary};
       border-radius: ${theme.radii.extraLarge};
@@ -116,6 +110,7 @@ const DropdownWrapper = styled.div(
   ({ theme }) => css`
     & > div > div {
       min-width: ${theme.space['48']};
+
       button {
         height: ${theme.space['10']};
       }
@@ -165,8 +160,6 @@ export const ProfileSnippet = ({
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
-  const zorb = useZorb(name, 'name')
-  const { avatar } = useAvatar(name, network)
   const hasActions = actions && actions.length > 0 && actions.some(({ disabled }) => !disabled)
 
   const banner = getTextRecord?.('banner')?.value
@@ -178,9 +171,7 @@ export const ProfileSnippet = ({
   return (
     <Container $banner={banner} $size={size} data-testid="profile-snippet">
       <FirstItems>
-        <AvatarWrapper>
-          <Avatar label={name} src={avatar || zorb} />
-        </AvatarWrapper>
+        <NameAvatar size="24" label={name} name={name} network={network} />
         <ButtonStack>
           {button && buttonPlacement === 'inline' && (
             <DetailButtonWrapper $placement={buttonPlacement}>

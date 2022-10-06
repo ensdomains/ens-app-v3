@@ -16,7 +16,7 @@ const Container = styled.div(
     height: 100%;
     background: radial-gradient(
       41.95% 17.64% at 50.14% 50.08%,
-      #ffffff 0%,
+      #fff 0%,
       rgba(255, 255, 255, 0.81) 100%
     );
     backdrop-filter: blur(8px);

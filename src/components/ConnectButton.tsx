@@ -12,41 +12,67 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(({ theme, $isTabBar }) =>
-  $isTabBar
-    ? css`
-        align-self: flex-end;
-        justify-self: flex-end;
-        & button {
-          padding: 0 ${theme.space['4']};
-          width: ${theme.space.full};
-          height: ${theme.space['12']};
-          border-radius: ${theme.radii.full};
-          font-size: ${theme.fontSizes.base};
-          ${mq.xs.min(css`
-            padding: 0 ${theme.space['8']};
-          `)}
-        }
-      `
-    : css`
-        & button {
-          border-radius: ${theme.radii['2xLarge']};
-        }
-      `,
+const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }>(
+  ({ theme, $isTabBar, $large }) =>
+    $isTabBar
+      ? css`
+          align-self: flex-end;
+          justify-self: flex-end;
+
+          & button {
+            padding: 0 ${theme.space['4']};
+            width: ${theme.space.full};
+            height: ${theme.space['12']};
+            border-radius: ${theme.radii.full};
+            font-size: ${theme.fontSizes.base};
+            ${mq.xs.min(css`
+              padding: 0 ${theme.space['8']};
+            `)}
+          }
+        `
+      : css`
+          & button {
+            border-radius: ${theme.radii['2xLarge']};
+          }
+          ${$large &&
+          css`
+            width: 100%;
+            & button {
+              border-radius: ${theme.radii.large};
+            }
+          `}
+        `,
 )
 
-export const ConnectButton = ({ isTabBar }: { isTabBar?: boolean }) => {
+type Props = {
+  isTabBar?: boolean
+  large?: boolean
+  inHeader?: boolean
+}
+
+const calculateTestId = (isTabBar: boolean | undefined, inHeader: boolean | undefined) => {
+  if (isTabBar) {
+    return 'tabbar-connect-button'
+  }
+  if (!inHeader) {
+    return 'body-connect-button'
+  }
+  return 'connect-button'
+}
+
+export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
   const { openConnectModal } = useConnectModal()
 
   return (
-    <StyledButtonWrapper $isTabBar={isTabBar}>
+    <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
       <Button
-        data-testid={isTabBar ? 'tabbar-connect-button' : 'connect-button'}
+        data-testid={calculateTestId(isTabBar, inHeader)}
         onClick={() => openConnectModal?.()}
         variant="primary"
-        size={breakpoints.md ? 'medium' : 'extraSmall'}
+        size={breakpoints.md || large ? 'medium' : 'extraSmall'}
+        shadowless={large}
       >
         {t('wallet.connect')}
       </Button>
@@ -99,7 +125,7 @@ export const HeaderConnect = () => {
   const { address } = useAccount()
 
   if (!address) {
-    return <ConnectButton />
+    return <ConnectButton inHeader />
   }
 
   return <HeaderProfile address={address} />

@@ -1,23 +1,30 @@
 {
+  "processors": ["stylelint-processor-styled-components"],
   "extends": [
-    "stylelint-config-recommended",
+    "stylelint-config-standard-scss",
     "stylelint-config-styled-components",
     "stylelint-config-prettier"
   ],
-  "overrides": [
-    {
-      "files": ["**/*.tsx"],
-      "customSyntax": "@stylelint/postcss-css-in-js"
-    }
-  ],
+  "customSyntax": "postcss-scss",
   "rules": {
+    "selector-type-case": ["lower", { "ignoreTypes": ["/^\\$\\w+/"] }],
+    "selector-type-no-unknown": [true, { "ignoreTypes": ["/-styled-mixin/", "/^\\$\\w+/"] }],
+    "value-keyword-case": ["lower", { "ignoreKeywords": ["dummyValue", "currentColor"] }],
+    "declaration-colon-newline-after": null,
+    "declaration-empty-line-before": null,
     "property-no-unknown": [
       true,
       {
         "ignoreProperties": ["flex-gap", "webkit-appearance"]
       }
     ],
-    "no-duplicate-selectors": null,
-    "function-no-unknown": null
+    "color-function-notation": "legacy",
+    "alpha-value-notation": "number",
+    "scss/operator-no-newline-after": null,
+    "scss/operator-no-unspaced": null,
+    "custom-property-pattern": null,
+    "rule-empty-line-before": null,
+    "keyframes-name-pattern": null,
+    "keyframe-block-no-duplicate-selectors": null
   }
 }

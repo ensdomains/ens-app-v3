@@ -1,4 +1,0 @@
-[
-  "function renewAll(string[],uint256) payable",
-  "function rentPrice(string[],uint256) view returns (uint256)"
-]

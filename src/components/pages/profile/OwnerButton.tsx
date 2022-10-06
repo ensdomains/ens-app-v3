@@ -19,7 +19,7 @@ const ButtonWrapper = styled.div(
     width: 100%;
     & > button {
       border: 1px solid rgba(0, 0, 0, 0.06);
-      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii.extraLarge};
       & > div {
@@ -185,7 +185,9 @@ const OwnerButtonWithPopup = ({
           </AvatarWrapper>
           <TextContainer>
             <Label ellipsis>{label}</Label>
-            <Name ellipsis>{name || shortenAddress(address)}</Name>
+            <Name ellipsis data-testid={`owner-button-name-${label}`}>
+              {name || shortenAddress(address)}
+            </Name>
           </TextContainer>
         </Content>
       </OwnerButtonWrapper>
@@ -338,7 +340,9 @@ const OwnerButtonWithDropdown = ({
           <Label ellipsis>{label}</Label>
           <div style={{ flexGrow: 1 }} />
           <OwnerRow data-testid={`${label.toLowerCase()}-data`}>
-            <Name ellipsis>{name || shortenAddress(address)}</Name>
+            <Name ellipsis data-testid={`owner-button-name-${label}`}>
+              {name || shortenAddress(address)}
+            </Name>
             <AvatarWrapper>
               <AvatarWithZorb
                 label={name || address}

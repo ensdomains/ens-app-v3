@@ -22,6 +22,7 @@ export type GenericTransaction = {
   data: any
   hash?: string
   sendTime?: number
+  finaliseTime?: number
   stage?: TransactionStage
 }
 
@@ -42,6 +43,8 @@ export type TransactionFlowItem = {
   intro?: TransactionIntro
   transactions: GenericTransaction[]
   resumable?: boolean
+  requiresManualCleanup?: boolean
+  autoClose?: boolean
 }
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
@@ -103,6 +106,19 @@ export type TransactionFlowAction =
   | {
       name: 'cleanupTransaction'
       payload: string
+    }
+  | {
+      name: 'forceCleanupTransaction'
+      payload: string
+    }
+  | {
+      name: 'setTransactionStageFromUpdate'
+      payload: {
+        key: string
+        hash: string
+        status: 'confirmed' | 'failed'
+        timestamp: number
+      }
     }
 
 export type TransactionDialogProps = ComponentProps<typeof Dialog> & {

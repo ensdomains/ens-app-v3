@@ -2,15 +2,28 @@ import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-util
 
 import { useRouter } from 'next/router'
 
-import { useGetFuseData } from '@app/hooks/useGetFuseData'
+import { CurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { BurnFuses, defaultFuseObj } from './BurnFuses-flow'
+import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
+
+import { BurnFuses } from './BurnFuses-flow'
+
+const defaultFuseObj: CurrentFuses = {
+  CAN_DO_EVERYTHING: true,
+  CANNOT_BURN_FUSES: false,
+  CANNOT_CREATE_SUBDOMAIN: false,
+  CANNOT_SET_RESOLVER: false,
+  CANNOT_SET_TTL: false,
+  CANNOT_TRANSFER: false,
+  CANNOT_UNWRAP: false,
+  PARENT_CANNOT_CONTROL: false,
+}
 
 jest.mock('next/router')
-jest.mock('@app/hooks/useGetFuseData')
+jest.mock('@app/hooks/useGetWrapperData')
 
 const mockUseRouter = mockFunction(useRouter)
-const mockUseGetFuseData = mockFunction(useGetFuseData)
+const mockUseGetWrapperData = mockFunction(useGetWrapperData)
 
 const burnFusesProps = {
   onDismiss: () => null,
@@ -27,7 +40,7 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({})
+    mockUseGetWrapperData.mockReturnValue({})
     render(<BurnFuses {...burnFusesProps} />)
     expect(screen.getByText('action.burnSelected')).toBeVisible()
   })
@@ -37,8 +50,8 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
     })
     render(<BurnFuses {...burnFusesProps} />)
     fireEvent.click(screen.getByText('fuses.permissions.CANNOT_BURN_FUSES'))
@@ -50,8 +63,8 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
     })
     render(<BurnFuses {...burnFusesProps} />)
     expect(screen.getByTestId('burn-button-CANNOT_UNWRAP')).not.toHaveTextContent('fuses.burned')
@@ -73,8 +86,8 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
     })
     render(<BurnFuses {...burnFusesProps} />)
     fireEvent.click(screen.getByText('fuses.permissions.CANNOT_TRANSFER'))
@@ -86,8 +99,8 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
     })
     render(<BurnFuses {...burnFusesProps} />)
     expect(screen.getByTestId('burn-form-continue')).toBeDisabled()
@@ -98,12 +111,12 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
     })
     const { rerender } = render(<BurnFuses {...burnFusesProps} />)
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: false } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: false } },
     })
     rerender(<BurnFuses {...burnFusesProps} />)
     expect(screen.getByTestId('burn-button-CANNOT_BURN_FUSES')).not.toHaveTextContent(
@@ -116,8 +129,8 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: false } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: false } },
     })
     const mockDispatch = jest.fn()
     render(<BurnFuses {...{ ...burnFusesProps, dispatch: mockDispatch }} />)
@@ -132,10 +145,10 @@ describe('BurnFuses', () => {
             data: {
               name: 'nick.eth',
               permissions: [
-                'fuses.permissions.CANNOT_UNWRAP',
                 'fuses.permissions.CANNOT_BURN_FUSES',
+                'fuses.permissions.CANNOT_UNWRAP',
               ],
-              selectedFuses: ['CANNOT_UNWRAP', 'CANNOT_BURN_FUSES'],
+              selectedFuses: ['CANNOT_BURN_FUSES', 'CANNOT_UNWRAP'],
             },
             name: 'burnFuses',
           },
@@ -149,8 +162,8 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj, CANNOT_BURN_FUSES: true } },
     })
     render(<BurnFuses {...burnFusesProps} />)
     expect(screen.queryByText('Parent can control')).toBeNull()
@@ -162,8 +175,8 @@ describe('BurnFuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetFuseData.mockReturnValue({
-      fuseData: { fuseObj: { ...defaultFuseObj } },
+    mockUseGetWrapperData.mockReturnValue({
+      wrapperData: { fuseObj: { ...defaultFuseObj } },
     })
     const mockDispatch = jest.fn()
     render(<BurnFuses {...{ ...burnFusesProps, dispatch: mockDispatch }} />)

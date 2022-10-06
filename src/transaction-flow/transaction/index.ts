@@ -1,10 +1,15 @@
 import burnFuses from './burnFuses'
+import commitName from './commitName'
 import createSubname from './createSubname'
 import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
+import registerName from './registerName'
 import setPrimaryName from './setPrimaryName'
 import testSendName from './testSendName'
+import transferController from './transferController'
+import transferName from './transferName'
+import transferSubname from './transferSubname'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
 import updateResolver from './updateResolver'
@@ -21,6 +26,11 @@ export const transactions = {
   migrateProfileWithSync,
   burnFuses,
   createSubname,
+  commitName,
+  registerName,
+  transferName,
+  transferSubname,
+  transferController,
   importDNSSECName,
 }
 

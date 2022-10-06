@@ -1,11 +1,11 @@
 /* eslint-disable @next/next/no-img-element */
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
@@ -25,6 +25,7 @@ const AvatarWrapper = styled.div<{ $active: boolean }>(
     border: 2px solid ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
     background-color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
     border-radius: ${theme.radii.full};
+
     img {
       width: calc(${theme.space['10']} - 2px);
       height: calc(${theme.space['10']} - 2px);
@@ -59,7 +60,7 @@ const TabContainer = styled.div(
     border-radius: ${theme.radii.full};
     background-color: ${theme.colors.background};
     border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0px 3px 24px ${theme.colors.borderTertiary};
+    box-shadow: 0 3px 24px ${theme.colors.borderTertiary};
     padding: ${theme.space['1.5']} ${theme.space['1.5']};
   `,
 )

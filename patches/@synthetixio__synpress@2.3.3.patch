@@ -1,0 +1,109 @@
+diff --git a/commands/metamask.js b/commands/metamask.js
+index cfbf01abf5cd82f51c8e2b5ededee45008f29037..e2bac164e8b66a0560f393d85723f198260be2f5 100644
+--- a/commands/metamask.js
++++ b/commands/metamask.js
+@@ -31,6 +31,7 @@ const {
+   confirmationPageElements,
+ } = require('../pages/metamask/confirmation-page');
+ const { setNetwork, getNetwork } = require('../helpers');
++const sleep = require('util').promisify(setTimeout);
+ 
+ let walletAddress;
+ let switchBackToCypressWindow;
+@@ -243,6 +244,19 @@ module.exports = {
+     await playwright.waitAndClick(mainPageElements.accountMenu.button);
+ 
+     if (typeof accountNameOrAccountNumber === 'number') {
++      const page = await playwright.metamaskWindow();
++      await playwright.waitFor(mainPageElements.accountMenu.accountButton(1), page);
++
++      for (let i = 2; i <= accountNameOrAccountNumber; i++) {
++        if (!(await page.locator(mainPageElements.accountMenu.accountButton(i)).count())) {
++          await playwright.waitAndClick(
++            mainPageElements.accountMenu.createAccountButton,
++          );
++          await playwright.waitAndClick(mainPageElements.createAccount.createButton);
++          await playwright.waitAndClick(mainPageElements.accountMenu.button);
++        }
++      }
++
+       await playwright.waitAndClick(
+         mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
+       );
+@@ -612,6 +626,7 @@ module.exports = {
+     return true;
+   },
+   confirmTransaction: async gasConfig => {
++    if (process.env.TRANSACTION_WAIT_TIME) await sleep(parseInt(process.env.TRANSACTION_WAIT_TIME));
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (gasConfig && gasConfig.gasFee) {
+       await playwright.waitAndSetValue(
+diff --git a/commands/playwright.js b/commands/playwright.js
+index 11e031f8eee2a0721e0d0d235c3bc7ac26f6fb18..bee4e6ab555fe042f8f605d3dc4725445ce30ce3 100644
+--- a/commands/playwright.js
++++ b/commands/playwright.js
+@@ -152,21 +152,15 @@ module.exports = {
+         force: args.force,
+       });
+     } else if (args.numberOfClicks && args.waitForEvent) {
+-      await Promise.all([
+-        page.waitForEvent(args.waitForEvent),
+-        element.click({ clickCount: args.numberOfClicks, force: args.force }),
+-      ]);
++      element.click({ clickCount: args.numberOfClicks, force: args.force })
++      await page.waitForEvent(args.waitForEvent)
+     } else if (args.waitForEvent) {
+       if (args.waitForEvent.includes('navi')) {
+-        await Promise.all([
+-          page.waitForNavigation(),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force })
++        await page.waitForNavigation();
+       } else {
+-        await Promise.all([
+-          page.waitForEvent(args.waitForEvent),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force });
++        await page.waitForEvent(args.waitForEvent);
+       }
+     } else {
+       await element.click({ force: args.force });
+diff --git a/launcher.js b/launcher.js
+index 241620882904bc7a007d52dc0bde16b2f20725ce..2421a8236b71188ec5ec2f57835a4b6df48b34d0 100644
+--- a/launcher.js
++++ b/launcher.js
+@@ -63,6 +63,9 @@ const launcher = {
+     if (arguments_.parallel) {
+       defaultArguments.push('--parallel');
+     }
++    if (arguments_.ciBuildId) {
++      defaultArguments.push(`--ci-build-id=${arguments_.ciBuildId}`);
++    }
+     if (arguments_.group) {
+       defaultArguments.push(`--group=${arguments_.group}`);
+     }
+diff --git a/synpress.js b/synpress.js
+index 5237f37865a8b70cbd75a130ddc5ca5bd72ace78..2ff1762a9d668446f731a631aeb07a4e20da56bd 100755
+--- a/synpress.js
++++ b/synpress.js
+@@ -93,6 +93,10 @@ program
+     '-p, --parallel',
+     '[dashboard] run recorded specs in parallel across multiple machines',
+   )
++  .option(
++    '--ci-build-id <id>',
++    '[dashboard] the unique identifier for a run on your CI provider. typically a "BUILD_ID" env var. this value is automatically detected for most CI providers'
++  )
+   .option(
+     '-g, --group <name>',
+     '[dashboard] group recorded tests together under a single run',
+@@ -114,6 +118,7 @@ program
+       record: options.record,
+       key: options.key,
+       parallel: options.parallel,
++      ciBuildId: options.ciBuildId,
+       group: options.group,
+       tag: options.tag,
+     });

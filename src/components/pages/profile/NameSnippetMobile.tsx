@@ -10,6 +10,7 @@ import { Card } from '@app/components//Card'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry } from '@app/utils/utils'
 
@@ -25,7 +26,7 @@ const Container = styled(Card)(
   cacheableComponentStyles,
 )
 
-const ImageWrapper = styled(NFTWithPlaceholder)(
+const ImageWrapper = styled.div(
   ({ theme }) => css`
     border-radius: ${theme.radii.extraLarge};
     width: 35vw;
@@ -100,6 +101,13 @@ const SendButtonContainer = styled.div(
   `,
 )
 
+const handleSend =
+  (showDataInput: ReturnType<typeof useTransactionFlow>['showDataInput'], name: string) => () => {
+    showDataInput(`send-name-${name}`, 'SendName', {
+      name,
+    })
+  }
+
 export const NameSnippetMobile = ({
   name,
   network,
@@ -115,10 +123,13 @@ export const NameSnippetMobile = ({
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
+  const { showDataInput } = useTransactionFlow()
 
   return (
     <Container $isCached={isCached}>
-      <ImageWrapper name={name} network={network} />
+      <ImageWrapper>
+        <NFTWithPlaceholder name={name} network={network} />
+      </ImageWrapper>
       <RightColumn>
         <ExpiryAndFavouriteRow>
           {expiryDate ? (
@@ -151,11 +162,11 @@ export const NameSnippetMobile = ({
           <RowWithGap>
             <SendButtonContainer>
               <OutlinedButton
-                disabled
                 size="small"
                 shadowless
                 variant="transparent"
                 data-testid="send-button"
+                onClick={handleSend(showDataInput, name)}
               >
                 <InnerButton>
                   {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}

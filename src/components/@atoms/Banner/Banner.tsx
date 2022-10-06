@@ -4,8 +4,8 @@ import styled, { css } from 'styled-components'
 const Container = styled.div<{ $zIndex?: number }>(
   ({ $zIndex }) => css`
     width: 100%;
+    aspect-ratio: 6/1;
     position: relative;
-    padding-bottom: 25%;
     ${$zIndex && `z-index: ${$zIndex};`}
   `,
 )
