@@ -12,6 +12,7 @@ type Name = {
   label: string
   namedOwner: string
   namedAddr: string
+  subname?: string
   namedController?: string
   records?: {
     text?: {
@@ -165,7 +166,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const makeRegistration =
     (nonce: number) =>
     async (
-      { label, registrant, secret, resolver, addr, duration }: ReturnType<typeof makeData>,
+      { label, registrant, secret, resolver, addr, duration, subname }: ReturnType<typeof makeData>,
       index: number,
     ) => {
       const price = await controller.rentPrice(label, duration)
@@ -329,6 +330,19 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
+
+  //register subname
+  const resolver = publicResolver.address
+  const registrant = allNamedAccts['owner']
+  const _registry = registry.connect(await ethers.getSigner(registrant))
+  const subnameTx = await _registry.setSubnodeRecord(
+    namehash('test123.eth'),
+    labelhash('sub'),
+    registrant,
+    resolver,
+    0,
+  )
+  await subnameTx.wait()
 
   return true
 }

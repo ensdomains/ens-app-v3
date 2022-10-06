@@ -151,6 +151,7 @@ export const Details = ({
                 : t('details.descriptions.controller')
             }
             canTransfer={selfAbilities.canChangeOwner}
+            data-testid="owner-button-owner"
           />
         )}
         {dnsOwner && (
@@ -171,6 +172,7 @@ export const Details = ({
             type={breakpoints.lg ? 'dropdown' : 'dialog'}
             description={t('details.descriptions.registrant')}
             canTransfer={selfAbilities.canChangeRegistrant}
+            data-testid="owner-button-registrant"
           />
         )}
       </OwnerButtons>
@@ -214,7 +216,7 @@ export default function Page() {
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
-  const selfAbilities = useSelfAbilities(address, ownerData)
+  const selfAbilities = useSelfAbilities(address, ownerData, name)
 
   const isLoading = detailsLoading || accountLoading
 

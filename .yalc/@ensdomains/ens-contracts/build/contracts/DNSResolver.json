@@ -1,0 +1,14 @@
+[
+  "event DNSRecordChanged(bytes32 indexed,bytes,uint16,bytes)",
+  "event DNSRecordDeleted(bytes32 indexed,bytes,uint16)",
+  "event DNSZonehashChanged(bytes32 indexed,bytes,bytes)",
+  "event VersionChanged(bytes32 indexed,uint64)",
+  "function clearRecords(bytes32)",
+  "function dnsRecord(bytes32,bytes32,uint16) view returns (bytes)",
+  "function hasDNSRecords(bytes32,bytes32) view returns (bool)",
+  "function recordVersions(bytes32) view returns (uint64)",
+  "function setDNSRecords(bytes32,bytes)",
+  "function setZonehash(bytes32,bytes)",
+  "function supportsInterface(bytes4) view returns (bool)",
+  "function zonehash(bytes32) view returns (bytes)"
+]

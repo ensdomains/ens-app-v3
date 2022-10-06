@@ -1,0 +1,7 @@
+[
+  "event AlgorithmUpdated(uint8,address)",
+  "event DigestUpdated(uint8,address)",
+  "function anchors() view returns (bytes)",
+  "function verifyRRSet(tuple(bytes,bytes)[],uint256) view returns (bytes, uint32)",
+  "function verifyRRSet(tuple(bytes,bytes)[]) view returns (bytes, uint32)"
+]

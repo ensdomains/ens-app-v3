@@ -1,0 +1,6 @@
+[
+  "event VersionChanged(bytes32 indexed,uint64)",
+  "function clearRecords(bytes32)",
+  "function recordVersions(bytes32) view returns (uint64)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

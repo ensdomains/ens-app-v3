@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -77,6 +78,13 @@ const ButtonIcon = styled.svg(
   `,
 )
 
+const handleSend =
+  (showDataInput: ReturnType<typeof useTransactionFlow>['showDataInput'], name: string) => () => {
+    showDataInput(`send-name-${name}`, 'SendName', {
+      name,
+    })
+  }
+
 export const DetailSnippet = ({
   name,
   expiryDate,
@@ -93,6 +101,9 @@ export const DetailSnippet = ({
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
+  const { showDataInput } = useTransactionFlow()
+  const router = useRouter()
+  const name = router.query.name as string
 
   const { showDataInput } = useTransactionFlow()
   const handleExtend = () => {
@@ -138,8 +149,8 @@ export const DetailSnippet = ({
             size="small"
             shadowless
             variant="transparent"
-            disabled
             data-testid="send-button"
+            onClick={handleSend(showDataInput, name)}
           >
             <InnerButton>
               <ButtonIcon as={PaperPlaneSVG} />

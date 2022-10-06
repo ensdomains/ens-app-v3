@@ -1,0 +1,9 @@
+[
+  "event ContenthashChanged(bytes32 indexed,bytes)",
+  "event VersionChanged(bytes32 indexed,uint64)",
+  "function clearRecords(bytes32)",
+  "function contenthash(bytes32) view returns (bytes)",
+  "function recordVersions(bytes32) view returns (uint64)",
+  "function setContenthash(bytes32,bytes)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

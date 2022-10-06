@@ -1,0 +1,16 @@
+[
+  "constructor(address,address,address)",
+  "error NoOwnerRecordFound()",
+  "error StaleProof()",
+  "event Claim(bytes32 indexed,address indexed,bytes,uint32)",
+  "event NewOracle(address)",
+  "event NewPublicSuffixList(address)",
+  "function ens() view returns (address)",
+  "function inceptions(bytes32) view returns (uint32)",
+  "function oracle() view returns (address)",
+  "function proveAndClaim(bytes,tuple(bytes,bytes)[])",
+  "function proveAndClaimWithResolver(bytes,tuple(bytes,bytes)[],address,address)",
+  "function setPublicSuffixList(address)",
+  "function suffixes() view returns (address)",
+  "function supportsInterface(bytes4) pure returns (bool)"
+]

@@ -1,0 +1,7 @@
+[
+  "event OwnershipTransferred(address indexed,address indexed)",
+  "function owner() view returns (address)",
+  "function recoverFunds(address,address,uint256)",
+  "function renounceOwnership()",
+  "function transferOwnership(address)"
+]

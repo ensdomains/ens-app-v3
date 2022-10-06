@@ -101,6 +101,13 @@ const SendButtonContainer = styled.div(
   `,
 )
 
+const handleSend =
+  (showDataInput: ReturnType<typeof useTransactionFlow>['showDataInput'], name: string) => () => {
+    showDataInput(`send-name-${name}`, 'SendName', {
+      name,
+    })
+  }
+
 export const NameSnippetMobile = ({
   name,
   network,
@@ -120,6 +127,7 @@ export const NameSnippetMobile = ({
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
+  const { showDataInput } = useTransactionFlow()
 
   const { showDataInput } = useTransactionFlow()
   const handleExtend = () => {
@@ -169,11 +177,11 @@ export const NameSnippetMobile = ({
           <RowWithGap>
             <SendButtonContainer>
               <OutlinedButton
-                disabled
                 size="small"
                 shadowless
                 variant="transparent"
                 data-testid="send-button"
+                onClick={handleSend(showDataInput, name)}
               >
                 <InnerButton>
                   {breakpoints.xs && <ButtonIcon as={PaperPlaneSVG} />}
