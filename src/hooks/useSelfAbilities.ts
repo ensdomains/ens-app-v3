@@ -12,9 +12,6 @@ export const useSelfAbilities = (
   const parent = name?.split('.')?.slice(1)?.join('.')
   const { ownerData: parentOwnerData } = useBasicName(parent)
 
-  console.log('parent: ', parent)
-  console.log('parentOwnerData: ', parentOwnerData)
-
   return useMemo(() => {
     const abilities = {
       canEdit: false,
@@ -22,8 +19,6 @@ export const useSelfAbilities = (
       canChangeOwner: false,
       canChangeRegistrant: false,
     }
-    console.log('address: ', address)
-    console.log('ownerData: ', ownerData)
     if (!address || !ownerData) return abilities
     if (address === ownerData.owner) {
       abilities.canSend = true
