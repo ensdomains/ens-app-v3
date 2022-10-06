@@ -6,7 +6,7 @@ describe('Delete subnames', () => {
   })
 
   it('should be able to delete subname', () => {
-    cy.visit('/profile/with-subnames.eth?tab=subnames')
+    cy.visit('/profile/with-subnames.eth/details?tab=subnames')
     connectFromExisting()
     cy.findByTestId('name-item-xyz.with-subnames.eth').click()
     cy.findByTestId('profile-actions').click()
@@ -16,9 +16,9 @@ describe('Delete subnames', () => {
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
 
-    cy.queryByTestId('profile-actions').should('not.exist')
+    cy.findByTestId('profile-actions').should('not.exist')
     cy.go('back')
 
-    cy.queryByTestId('name-item-xyz.with-subnames.eth').should('not.exist')
+    cy.findByTestId('name-item-xyz.with-subnames.eth').should('not.exist')
   })
 })

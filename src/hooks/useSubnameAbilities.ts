@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 import { useAccount } from 'wagmi'
 
-import { useGetFuseData } from './useGetFuseData'
+import { useGetWrapperData } from './useGetWrapperData'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 
@@ -29,7 +29,7 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
   const baseSelfAbilities = useSelfAbilities(address, baseOwnerData)
 
   const skipFuseData = isNameDetailsLoading || !isWrapped
-  const { fuseData, isLoading: isFuseDataLoading } = useGetFuseData(name, skipFuseData)
+  const { wrapperData, isLoading: isFuseDataLoading } = useGetWrapperData(name, skipFuseData)
 
   return useMemo(() => {
     const abilities = {
@@ -42,13 +42,12 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
         canDeleteContract: 'registry',
       }
     if (isFuseDataLoading) return abilities
-    if (isWrapped && baseSelfAbilities.canEdit && fuseData) {
-      console.log('fuseData', fuseData)
+    if (isWrapped && baseSelfAbilities.canEdit && wrapperData) {
       return {
         canDelete:
-          !fuseData.fuseObj.CANNOT_TRANSFER &&
-          !fuseData.fuseObj.CANNOT_SET_RESOLVER &&
-          !fuseData.fuseObj.PARENT_CANNOT_CONTROL,
+          !wrapperData.fuseObj.CANNOT_TRANSFER &&
+          !wrapperData.fuseObj.CANNOT_SET_RESOLVER &&
+          !wrapperData.fuseObj.PARENT_CANNOT_CONTROL,
         canDeleteContract: 'nameWrapper',
       }
     }
@@ -60,6 +59,6 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
     baseSelfAbilities.canEdit,
     isWrapped,
     isFuseDataLoading,
-    fuseData,
+    wrapperData,
   ])
 }

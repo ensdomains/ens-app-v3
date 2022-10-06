@@ -130,7 +130,6 @@ const NamesListItem = ({ name }: { name: string }) => {
   const { avatar } = useAvatar(name, chainId)
   const zorb = useZorb(name, 'name')
   const { expiry, loading: expiryLoading } = useExpiry(name)
-  console.log(expiry, typeof expiry?.expiry)
 
   if (expiryLoading) return null
   return (

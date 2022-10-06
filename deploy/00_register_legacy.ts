@@ -247,17 +247,17 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
         const subOwner = allNamedAccts[namedSubOwner]
         const _registry = registry.connect(await ethers.getSigner(registrant))
-          const subnameTx = await _registry.setSubnodeRecord(
-            namehash(`${label}.eth`),
-            labelhash(subnameLabel),
-            subOwner,
-            resolver,
-            0,
-            {
-              nonce: nonce + index + i,
-            },
-          )
-          console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
+        const subnameTx = await _registry.setSubnodeRecord(
+          namehash(`${label}.eth`),
+          labelhash(subnameLabel),
+          subOwner,
+          resolver,
+          0,
+          {
+            nonce: nonce + index + i,
+          },
+        )
+        console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
       }
       return subnames.length
     }
@@ -329,32 +329,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('evm_setAutomine', [true])
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
-
-<<<<<<< Updated upstream
-  const resolver = publicResolver.address
-  const registrant = allNamedAccts.owner
-  const _registry = registry.connect(await ethers.getSigner(registrant))
-  const subnameTx = await _registry.setSubnodeRecord(
-    namehash(`test123.eth`),
-    labelhash('sub'),
-    registrant,
-    resolver,
-    0,
-  )
-  await subnameTx.wait()
-=======
-  // const resolver = publicResolver.address
-  // const registrant = allNamedAccts.owner
-  // const _registry = registry.connect(await ethers.getSigner(registrant))
-  // const tx = await _registry.setSubnodeRecord(
-  //   namehash('test123.eth'),
-  //   labelhash('sub'),
-  //   registrant,
-  //   resolver,
-  //   0,
-  // )
-  // await tx.wait()
->>>>>>> Stashed changes
 
   return true
 }
