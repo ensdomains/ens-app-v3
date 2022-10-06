@@ -11,7 +11,7 @@ export const useGetWrapperData = (name: string, skip?: any) => {
     status,
     isFetched,
     internal: { isFetchedAfterMount },
-  } = useQuery(['getFuseData', name], () => getWrapperData(name), {
+  } = useQuery(['getWrapperData', name], () => getWrapperData(name), {
     enabled: ready && !skip && name !== '',
   })
 

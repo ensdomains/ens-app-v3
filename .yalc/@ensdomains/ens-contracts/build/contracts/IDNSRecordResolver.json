@@ -1,0 +1,5 @@
+[
+  "event DNSRecordChanged(bytes32 indexed,bytes,uint16,bytes)",
+  "event DNSRecordDeleted(bytes32 indexed,bytes,uint16)",
+  "function dnsRecord(bytes32,bytes32,uint16) view returns (bytes)"
+]

@@ -1,6 +1,6 @@
 import { RainbowKitProvider, Theme, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
-import { QueryClient } from '@tanstack/react-query'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -144,26 +144,28 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
 
   return (
-    <I18nextProvider i18n={i18n}>
-      <WagmiConfig client={wagmiClient}>
-        <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
-          <TransactionStoreProvider>
-            <EnsProvider>
-              <ThemeProvider theme={thorinLightTheme}>
-                <BreakpointProvider queries={breakpoints}>
-                  <GlobalStyle />
-                  <ThorinGlobalStyles />
-                  <TransactionFlowProvider>
-                    <Notifications />
-                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                  </TransactionFlowProvider>
-                </BreakpointProvider>
-              </ThemeProvider>
-            </EnsProvider>
-          </TransactionStoreProvider>
-        </RainbowKitProvider>
-      </WagmiConfig>
-    </I18nextProvider>
+    <QueryClientProvider client={queryClient}>
+      <I18nextProvider i18n={i18n}>
+        <WagmiConfig client={wagmiClient}>
+          <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
+            <TransactionStoreProvider>
+              <EnsProvider>
+                <ThemeProvider theme={thorinLightTheme}>
+                  <BreakpointProvider queries={breakpoints}>
+                    <GlobalStyle />
+                    <ThorinGlobalStyles />
+                    <TransactionFlowProvider>
+                      <Notifications />
+                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                    </TransactionFlowProvider>
+                  </BreakpointProvider>
+                </ThemeProvider>
+              </EnsProvider>
+            </TransactionStoreProvider>
+          </RainbowKitProvider>
+        </WagmiConfig>
+      </I18nextProvider>
+    </QueryClientProvider>
   )
 }
 

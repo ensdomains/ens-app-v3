@@ -74,6 +74,8 @@ export type FuseObj = {
   PARENT_CANNOT_CONTROL: boolean
 }
 
+export type EthAddress = string
+
 export type CurrencyUnit = 'eth' | 'fiat'
 export type FiatUnit = 'usd'
 export type CurrencyDisplay = 'eth' | FiatUnit

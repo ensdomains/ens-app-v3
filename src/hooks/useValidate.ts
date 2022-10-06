@@ -1,6 +1,7 @@
-import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 import { isAddress } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
+
+import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 
 export const useValidate = (input: string, skip?: any) => {
   const [name, setNormalisedName] = useState('')
