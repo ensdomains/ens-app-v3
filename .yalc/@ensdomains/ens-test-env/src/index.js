@@ -1,4 +1,7 @@
 #!/usr/bin/env node
+
+/* eslint-disable */
+
 import { Command, Option } from 'commander'
 import path from 'path'
 import { emitKeypressEvents } from 'readline'
@@ -70,6 +73,12 @@ program
     new Option('-s, --save', 'Save data when exiting').implies({
       killGracefully: true,
     }),
+  )
+  .addOption(
+    new Option(
+      '--extra-time <time>',
+      'Sets the relative extra time for deploys',
+    ).conflicts('save'),
   )
   .addOption(new Option('-ng, --no-graph', "Don't start the graph"))
   .addOption(new Option('-k, --kill-gracefully', 'Kill gracefully'))

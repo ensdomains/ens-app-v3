@@ -1,0 +1,3 @@
+[
+  "function price(string,uint256,uint256) view returns (tuple(uint256,uint256))"
+]

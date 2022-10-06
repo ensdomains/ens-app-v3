@@ -1,0 +1,5 @@
+[
+  "constructor(int256)",
+  "function latestAnswer() view returns (int256)",
+  "function set(int256)"
+]

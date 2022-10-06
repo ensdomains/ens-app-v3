@@ -4,11 +4,11 @@ services:
     image: ghcr.io/ensdomains/anvil:latest
     ports:
       - '8545:8545'
-    entrypoint: /bin/sh -c 'anvil --chain-id 1337 --gas-limit 50000000 --timestamp $BLOCK_TIMESTAMP'
+    entrypoint: /bin/sh -c 'anvil --chain-id 1337 --gas-limit 50000000 --timestamp 1640995200 $ANVIL_EXTRA_ARGS'
     environment:
       ANVIL_IP_ADDR: '0.0.0.0'
   graph-node:
-    image: graphprotocol/graph-node
+    image: graphprotocol/graph-node:v0.27.0
     ports:
       - '8000:8000'
       - '8001:8001'
@@ -26,9 +26,9 @@ services:
       postgres_db: graph-node
       ipfs: 'ipfs:5001'
       ethereum: 'mainnet:http://anvil:8545'
-      GRAPH_LOG: debug
-      GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
+      GRAPH_LOG: $GRAPH_LOG_LEVEL
       GRAPH_ALLOW_NON_DETERMINISTIC_IPFS: 'true'
+      GRAPH_ETHEREUM_CLEANUP_BLOCKS: 'true'
     extra_hosts:
       - 'host.docker.internal:host-gateway'
   ipfs:

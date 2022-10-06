@@ -1,6 +1,8 @@
+const path = require('path')
+
 /**
  * @type {import('./config').ENSTestEnvConfig}
- **/
+ * */
 module.exports = {
   deployCommand: 'yarn hardhat deploy',
   buildCommand: 'yarn build',

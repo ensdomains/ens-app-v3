@@ -1,7 +1,7 @@
 {
   "name": "@ensdomains/ens-test-env",
   "type": "module",
-  "version": "0.2.2",
+  "version": "0.3.2",
   "files": [
     "src"
   ],
@@ -28,5 +28,5 @@
   },
   "preferUnplugged": true,
   "bin": "./src/index.js",
-  "yalcSig": "1f571e3eb0e4851de772a817f254bd08"
+  "yalcSig": "8ee1e574555529ab7a3645a86aa84faf"
 }

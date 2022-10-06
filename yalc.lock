@@ -1,0 +1,15 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/ens-contracts": {
+      "signature": "d56480ffe3874a462aff878e9eea6617",
+      "file": true,
+      "replaced": "0.0.14"
+    },
+    "@ensdomains/ens-test-env": {
+      "signature": "8ee1e574555529ab7a3645a86aa84faf",
+      "file": true,
+      "replaced": "^0.3.2"
+    }
+  }
+}

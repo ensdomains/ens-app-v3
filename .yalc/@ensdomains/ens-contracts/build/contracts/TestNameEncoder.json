@@ -1,0 +1,3 @@
+[
+  "function encodeName(string) pure returns (bytes, bytes32)"
+]

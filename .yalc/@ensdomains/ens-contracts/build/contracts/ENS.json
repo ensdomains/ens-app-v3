@@ -1,0 +1,19 @@
+[
+  "event ApprovalForAll(address indexed,address indexed,bool)",
+  "event NewOwner(bytes32 indexed,bytes32 indexed,address)",
+  "event NewResolver(bytes32 indexed,address)",
+  "event NewTTL(bytes32 indexed,uint64)",
+  "event Transfer(bytes32 indexed,address)",
+  "function isApprovedForAll(address,address) view returns (bool)",
+  "function owner(bytes32) view returns (address)",
+  "function recordExists(bytes32) view returns (bool)",
+  "function resolver(bytes32) view returns (address)",
+  "function setApprovalForAll(address,bool)",
+  "function setOwner(bytes32,address)",
+  "function setRecord(bytes32,address,address,uint64)",
+  "function setResolver(bytes32,address)",
+  "function setSubnodeOwner(bytes32,bytes32,address) returns (bytes32)",
+  "function setSubnodeRecord(bytes32,bytes32,address,address,uint64)",
+  "function setTTL(bytes32,uint64)",
+  "function ttl(bytes32) view returns (uint64)"
+]

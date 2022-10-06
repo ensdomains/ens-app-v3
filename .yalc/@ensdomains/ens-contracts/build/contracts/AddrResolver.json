@@ -1,0 +1,12 @@
+[
+  "event AddrChanged(bytes32 indexed,address)",
+  "event AddressChanged(bytes32 indexed,uint256,bytes)",
+  "event VersionChanged(bytes32 indexed,uint64)",
+  "function addr(bytes32) view returns (address)",
+  "function addr(bytes32,uint256) view returns (bytes)",
+  "function clearRecords(bytes32)",
+  "function recordVersions(bytes32) view returns (uint64)",
+  "function setAddr(bytes32,uint256,bytes)",
+  "function setAddr(bytes32,address)",
+  "function supportsInterface(bytes4) view returns (bool)"
+]

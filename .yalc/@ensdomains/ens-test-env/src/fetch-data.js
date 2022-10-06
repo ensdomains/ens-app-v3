@@ -1,4 +1,6 @@
 #!/usr/bin/env node
+
+/* eslint-disable */
 import colors from 'ansi-colors'
 import cliProgress from 'cli-progress'
 import 'dotenv/config'
