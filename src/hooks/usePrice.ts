@@ -1,6 +1,7 @@
+import { useQuery } from 'wagmi'
+
 import { useEns } from '@app/utils/EnsProvider'
 import { yearsToSeconds } from '@app/utils/utils'
-import { useQuery } from 'wagmi'
 
 export const usePrice = (name: string) => {
   const { ready, getPrice } = useEns()

@@ -35,14 +35,6 @@ export const DevSection = () => {
   const addTransaction = useAddRecentTransaction()
   const { createTransactionFlow } = useTransactionFlow()
 
-  // ToDo: Add in usePrepareSendTransaction
-  // const { config: successConfig } = usePrepareSendTransaction({
-  //   request: {
-  //     to: '0x0000000000000000000000000000000000000000',
-  //     value: '0',
-  //   },
-  // })
-
   const transactionOptions = {
     request: {
       to: '0x9fE46736679d2D9a65F0992F2272dE9f3c7fa6e0',
