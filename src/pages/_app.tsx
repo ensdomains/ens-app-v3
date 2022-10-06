@@ -17,8 +17,8 @@ import { TransactionStoreProvider } from '@app/hooks/transactions/TransactionSto
 import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
-import { EnsProvider } from '@app/utils/EnsProvider'
 
+// import { EnsProvider } from '@app/utils/EnsProvider'
 import i18n from '../i18n'
 import '../styles.css'
 
@@ -134,18 +134,18 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
       <Web3Modal config={config} />
       <QueryClientProvider client={queryClient}>
         <TransactionStoreProvider>
-          <EnsProvider>
-            <ThemeProvider theme={thorinLightTheme}>
-              <BreakpointProvider queries={breakpoints}>
-                <GlobalStyle />
-                <ThorinGlobalStyles />
-                <TransactionFlowProvider>
-                  <Notifications />
-                  <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                </TransactionFlowProvider>
-              </BreakpointProvider>
-            </ThemeProvider>
-          </EnsProvider>
+          {/* <EnsProvider> */}
+          <ThemeProvider theme={thorinLightTheme}>
+            <BreakpointProvider queries={breakpoints}>
+              <GlobalStyle />
+              <ThorinGlobalStyles />
+              <TransactionFlowProvider>
+                <Notifications />
+                <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+              </TransactionFlowProvider>
+            </BreakpointProvider>
+          </ThemeProvider>
+          {/* </EnsProvider> */}
         </TransactionStoreProvider>
       </QueryClientProvider>
     </I18nextProvider>

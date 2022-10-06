@@ -46,7 +46,7 @@ export function useTransactionStore() {
   const store = useContext(TransactionStoreContext)
 
   if (!store) {
-    throw new Error('Transaction hooks must be used within RainbowKitProvider')
+    throw new Error('Transaction hooks must be used within Web3ModalProvider')
   }
 
   return store
