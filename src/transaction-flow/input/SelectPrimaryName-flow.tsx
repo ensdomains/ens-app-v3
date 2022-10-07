@@ -1,7 +1,7 @@
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useInfiniteQuery } from 'wagmi'
 
 import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 

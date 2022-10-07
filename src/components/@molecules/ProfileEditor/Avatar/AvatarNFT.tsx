@@ -1,9 +1,10 @@
 /* eslint-disable @typescript-eslint/naming-convention */
+import { useInfiniteQuery } from '@tanstack/react-query'
+import { useAccount } from '@web3modal/react'
 import { BigNumber } from 'ethers'
 import { ReactNode, useCallback, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useInfiniteQuery } from 'wagmi'
 
 import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
 

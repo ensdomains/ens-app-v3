@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -31,12 +31,10 @@ export const useNameDetails = (name: string) => {
     data: dnsOwner,
     status: dnsOwnerStatus,
     isFetched: dnsOwnerIsFetched,
-    internal: { isFetchedAfterMount: dnsOwnerIsFetchedAfterMount },
   } = useQuery(['getDNSOwner', normalisedName], () => getDNSOwner(normalisedName), {
     enabled: !!(normalisedName && valid) && !normalisedName?.endsWith('.eth'),
   })
-  const dnsOwnerIsCachedData =
-    dnsOwnerStatus === 'success' && dnsOwnerIsFetched && !dnsOwnerIsFetchedAfterMount
+  const dnsOwnerIsCachedData = dnsOwnerStatus === 'success' && dnsOwnerIsFetched
 
   const error: string | ReactNode | null = useMemo(() => {
     if (valid === false) {

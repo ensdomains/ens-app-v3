@@ -87,16 +87,15 @@ const queryClient = new QueryClient({
 })
 
 // ------- web3 Modal Config -----------------------/
+// To Get a projectId from WalletConnect Cloud, visit https://cloud.walletconnect.com/
 const config: ConfigOptions = {
-  projectId: process.env.NEXT_PUBLIC_PROJECT_ID!,
+  projectId: '26ee9facbe4cbc407218b99540bc8053',
   theme: 'light',
   accentColor: 'default',
   ethereum: {
     appName: 'ENS',
     chains: [chains.goerli, chains.mainnet, chains.localhost],
-    providers: [
-      providers.walletConnectProvider({ projectId: process.env.NEXT_PUBLIC_PROJECT_ID! }),
-    ],
+    providers: [providers.walletConnectProvider({ projectId: '26ee9facbe4cbc407218b99540bc8053' })],
   },
 }
 

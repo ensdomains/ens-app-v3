@@ -1,9 +1,10 @@
+import { useQuery } from '@tanstack/react-query'
+import { useAccount } from '@web3modal/react'
 import { ethers } from 'ethers'
 import { useEffect, useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQuery } from 'wagmi'
 
 import { Button, Checkbox, Dialog, Helper, Input, Typography, mq } from '@ensdomains/thorin'
 

@@ -1,7 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
+import { useNetwork, useProvider } from '@web3modal/react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useNetwork, useProvider, useQuery } from 'wagmi'
 
 import { Button, Typography, mq } from '@ensdomains/thorin'
 

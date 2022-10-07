@@ -1,7 +1,8 @@
+import { useQuery } from '@tanstack/react-query'
+import { useFeeData } from '@web3modal/react'
 import { BigNumber } from 'ethers'
 import { toUtf8Bytes } from 'ethers/lib/utils'
 import { useMemo } from 'react'
-import { useFeeData, useQuery } from 'wagmi'
 
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 

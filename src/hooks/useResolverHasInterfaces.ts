@@ -1,6 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
 import { useNetwork, useProvider } from '@web3modal/react'
 import { useState } from 'react'
-import { useQuery } from 'wagmi'
 
 import { ContractInterface } from '@app/validators/validateContract'
 

@@ -20,6 +20,6 @@
   },
   "jest.jestCommandLine": "pnpm run test",
   "[typescriptreact]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+    "editor.defaultFormatter": "vscode.typescript-language-features"
   }
 }

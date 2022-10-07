@@ -1,4 +1,4 @@
-import { useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -9,7 +9,6 @@ export const useProfile = (name: string, skip?: any) => {
     data: profile,
     isLoading: loading,
     status,
-    internal: { isFetchedAfterMount },
     isFetched,
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -22,6 +21,6 @@ export const useProfile = (name: string, skip?: any) => {
     profile,
     loading: !ready || loading,
     status,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: status === 'success' && isFetched,
   }
 }

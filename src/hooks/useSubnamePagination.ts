@@ -1,6 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query'
+import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query'
 import { useEffect } from 'react'
-import { useInfiniteQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
 

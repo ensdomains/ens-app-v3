@@ -1,10 +1,10 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
+import { useQuery } from '@tanstack/react-query'
 import { useProvider, useSendTransaction, useSigner } from '@web3modal/react'
 import { utils } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQuery } from 'wagmi'
 
 import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 

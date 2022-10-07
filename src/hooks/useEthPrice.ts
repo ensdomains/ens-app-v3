@@ -1,5 +1,6 @@
+import { useQuery } from '@tanstack/react-query'
+import { useProvider } from '@web3modal/react'
 import { BigNumber, ethers } from 'ethers'
-import { useProvider, useQuery } from 'wagmi'
 
 import AggregatorInterface from '@ensdomains/ens-contracts/build/contracts/AggregatorInterface.json'
 
