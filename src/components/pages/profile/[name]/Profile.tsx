@@ -130,6 +130,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
   }
 
+  console.log(subNameAbilities)
   const profileActions = useMemo(() => {
     const actions: { onClick: () => void; color?: Colors; label: string; disabled?: boolean }[] = []
     if (!isSelf && (selfAbilities.canEdit || profile?.address === address) && ensName !== _name) {
@@ -180,14 +181,22 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
       })
     }
 
+    if (subNameAbilities.canDeleteError) {
+      actions.push({
+        label: t('tabs.profile.actions.deleteSubname.label'),
+        onClick: () => {},
+        disabled: true,
+        color: 'red',
+      })
+    }
+
     if (actions.length === 0) return undefined
     return actions
   }, [
     isSelf,
     selfAbilities.canEdit,
     profile?.address,
-    subNameAbilities.canDelete,
-    subNameAbilities.canDeleteContract,
+    subNameAbilities,
     address,
     ensName,
     _name,
@@ -195,6 +204,8 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     t,
     createTransactionFlow,
   ])
+
+  console.log(profileActions)
 
   return (
     <>

@@ -28,12 +28,13 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
-  ens.deleteSubname.populateTransaction(data.name, {
+const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
+  console.log('Data', data)
+  return ens.deleteSubname.populateTransaction(data.name, {
     signer,
     contract: data.contract,
   })
-
+}
 export default {
   displayItems,
   transaction,

@@ -1,11 +1,14 @@
 import { BigNumber } from 'ethers'
 
+const SingleNameGasLimit = BigNumber.from('105000')
+const BulkRenewalBaseGasLimit = BigNumber.from('105000')
+const BulkRenewalGasLimitPerName = BigNumber.from('42000')
 const gasLimitDictionary = {
-  RENEW: (count: number) => {
-    if (!count) return BigNumber.from('0')
-    return count === 1
-      ? BigNumber.from('105000')
-      : BigNumber.from('42000').mul(count).add(BigNumber.from('105000'))
+  RENEW: (numberOfNames: number) => {
+    if (!numberOfNames) return BigNumber.from('0')
+    return numberOfNames === 1
+      ? SingleNameGasLimit
+      : BulkRenewalGasLimitPerName.mul(numberOfNames).add(BulkRenewalBaseGasLimit)
   },
 }
 

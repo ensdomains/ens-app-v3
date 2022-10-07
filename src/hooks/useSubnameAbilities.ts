@@ -1,32 +1,48 @@
 import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
+import { useAccount, useQuery } from 'wagmi'
+
+import { useEns } from '@app/utils/EnsProvider'
 
 import { useGetWrapperData } from './useGetWrapperData'
 import { useNameDetails } from './useNameDetails'
-import { useSelfAbilities } from './useSelfAbilities'
 
 type OwnerData = ReturnType<typeof useNameDetails>['ownerData']
 
 type ReturnData = {
   canDelete: boolean
   canDeleteContract?: 'registry' | 'nameWrapper'
+  canDeleteError?: string
 }
 
 export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnData => {
   const nameHasOwner = !!ownerData
   const nameParts = name?.split('.') || []
-  const isValid2LD = nameParts.length === 3 && nameParts[2] === 'eth'
 
-  const baseName = nameParts.slice(-2).join('.')
+  const isSubname = nameParts.length > 2
+
+  const { getSubnames, ready } = useEns()
+  const { data: hasChildren, isLoading: loadingSubnames } = useQuery(
+    ['get-subnames', name],
+    async () => {
+      const result = await getSubnames({ name, pageSize: 1 })
+      return result.subnames.length > 0
+    },
+    {
+      enabled: ready && !!name && isSubname,
+      refetchOnMount: true,
+    },
+  )
+
+  const parentName = nameParts.slice(1).join('.')
 
   const {
-    ownerData: baseOwnerData,
+    ownerData: parentOwnerData,
     isWrapped,
     isLoading: isNameDetailsLoading,
-  } = useNameDetails(baseName)
+  } = useNameDetails(parentName)
 
   const { address } = useAccount()
-  const baseSelfAbilities = useSelfAbilities(address, baseOwnerData)
+  const canDeleteSubnames = parentOwnerData?.owner === address
 
   const skipFuseData = isNameDetailsLoading || !isWrapped
   const { wrapperData, isLoading: isFuseDataLoading } = useGetWrapperData(name, skipFuseData)
@@ -35,30 +51,31 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
     const abilities = {
       canDelete: false,
     }
-    if (!nameHasOwner || isNameDetailsLoading || !isValid2LD) return abilities
-    if (baseSelfAbilities.canEdit && !isWrapped)
+    if (!isSubname || !nameHasOwner || isNameDetailsLoading || loadingSubnames) return abilities
+    if (canDeleteSubnames && !isWrapped)
       return {
-        canDelete: true,
+        canDelete: !hasChildren,
         canDeleteContract: 'registry',
+        canDeleteError: hasChildren ? 'This name has subnames' : undefined,
       }
     if (isFuseDataLoading) return abilities
-    if (isWrapped && baseSelfAbilities.canEdit && wrapperData) {
+    if (canDeleteSubnames && isWrapped && wrapperData) {
       return {
-        canDelete:
-          !wrapperData.fuseObj.CANNOT_TRANSFER &&
-          !wrapperData.fuseObj.CANNOT_SET_RESOLVER &&
-          !wrapperData.fuseObj.PARENT_CANNOT_CONTROL,
+        canDelete: !hasChildren,
         canDeleteContract: 'nameWrapper',
+        canDeleteError: hasChildren ? 'This name has subnames' : undefined,
       }
     }
     return abilities
   }, [
+    isSubname,
     nameHasOwner,
     isNameDetailsLoading,
-    isValid2LD,
-    baseSelfAbilities.canEdit,
+    canDeleteSubnames,
     isWrapped,
     isFuseDataLoading,
     wrapperData,
+    hasChildren,
+    loadingSubnames,
   ])
 }

@@ -3,6 +3,7 @@ import { useInfiniteQuery } from 'wagmi'
 
 import { SortDirection, SortType } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { useEns } from '@app/utils/EnsProvider'
+import { emptyAddress } from '@app/utils/constants'
 
 const PAGE_SIZE = 10
 
@@ -40,9 +41,7 @@ export const useSubnameInfiniteQuery = (
         search,
       })
 
-      const ownedSubnames = result.subnames.filter(
-        (subname) => subname.owner.id !== '0x0000000000000000000000000000000000000000',
-      )
+      const ownedSubnames = result.subnames.filter((subname) => subname.owner.id !== emptyAddress)
       const isPageSize = result.subnames.length >= PAGE_SIZE
       const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
       return {
