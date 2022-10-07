@@ -21,7 +21,7 @@ jobs:
           node-version: 16
           cache: 'pnpm'
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
 
       - run: pnpm test:coverage
 
@@ -40,7 +40,7 @@ jobs:
           node-version: 16
           cache: 'pnpm'
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
 
       - name: Get contract addresses
         run: 'parallel --lb --halt now,success=1,fail=1 ::: \
@@ -74,7 +74,7 @@ jobs:
           node-version: 16
           cache: 'pnpm'
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
 
       - name: Build stateful
         run: pnpm build
@@ -107,7 +107,7 @@ jobs:
           node-version: 16
           cache: 'pnpm'
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
 
       - run: pnpm rebuild -r
 
@@ -165,7 +165,7 @@ jobs:
           node-version: 16
           cache: 'pnpm'
 
-      - run: pnpm install --frozen-lockfile
+      - run: pnpm install
 
       - run: pnpm rebuild -r
 
