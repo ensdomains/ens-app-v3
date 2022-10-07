@@ -1,9 +1,11 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import { ReactNode } from 'react'
+import { useAccount } from 'wagmi'
 
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -13,6 +15,8 @@ jest.mock('@app/hooks/useAvatar')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/hooks/useChainId')
+jest.mock('wagmi')
+jest.mock('@app/hooks/useNameDetails')
 jest.mock('@app/assets/NightSky', () => ({
   NightSky: ({ children }: { children: ReactNode }) => <>{children}</>,
 }))
@@ -21,6 +25,8 @@ const mockUseNFTImage = mockFunction(useNFTImage)
 const mockUseTransaction = mockFunction(useTransactionFlow)
 const mockUseEns = mockFunction(useEns)
 const mockUseChainId = mockFunction(useChainId)
+const mockUseAccount = mockFunction(useAccount)
+const mockUseNameDetails = mockFunction(useNameDetails)
 
 const mockWrapName = {
   populateTransaction: jest.fn(),
@@ -52,6 +58,13 @@ describe('WrapperCallToAction', () => {
     contracts: mockContracts,
   })
   mockUseChainId.mockReturnValue(1)
+  mockUseAccount.mockReturnValue({ address: '0x123' })
+  mockUseNameDetails.mockReturnValue({
+    ownerData: { owner: '0x123' },
+    profile: { resolverAddress: '0x456' },
+    isLoading: false,
+  })
+
   it('should render', () => {
     mockResumeTransactionFlow.mockReturnValue(0)
     render(<WrapperCallToAction name="test123.eth" />)

@@ -7,11 +7,10 @@ import { Button, Typography, mq } from '@ensdomains/thorin'
 import { NightSky } from '@app/assets/NightSky'
 import SparklesSVG from '@app/assets/Sparkles.svg'
 import { Card } from '@app/components/Card'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-
-import { useNameDetails } from '../../../../../hooks/useNameDetails'
 
 const Container = styled(Card)(
   ({ theme }) => css`
