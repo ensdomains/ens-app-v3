@@ -88,7 +88,6 @@ export const EnableDNSSEC = ({ setCurrentStep }: { setCurrentStep: (arg: number)
       <Typography>{t('enableDNSSEC.registrarHelp')}</Typography>
       <Spacer $height="5" />
       <Dropdown
-        align="left"
         items={HelperLinks.map((link) => ({
           label: link.label,
           onClick: () => null,
