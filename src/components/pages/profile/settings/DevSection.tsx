@@ -44,14 +44,14 @@ export const DevSection = () => {
     chainId,
   }
 
-  const { data: failureData, sendTransaction: sendFailure } = useSendTransaction(transactionOptions)
+  const { sendTransaction: sendFailure } = useSendTransaction(transactionOptions)
 
-  const { data: successData, sendTransaction: sendSuccess } = useSendTransaction(transactionOptions)
+  const { sendTransaction: sendSuccess } = useSendTransaction(transactionOptions)
 
   const addSuccess = async () => {
-    await sendSuccess!()
+    const tx = await sendSuccess!()
     addTransaction({
-      hash: successData!.hash,
+      hash: tx.hash,
       action: 'test',
     })
   }
@@ -63,9 +63,9 @@ export const DevSection = () => {
   }
 
   const addFailure = async () => {
-    await sendFailure!()
+    const tx = await sendFailure!()
     addTransaction({
-      hash: failureData!.hash,
+      hash: tx.hash,
       action: 'test',
     })
   }

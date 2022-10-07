@@ -63,11 +63,6 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
   const { open } = useConnectModal()
-  /* 
-    ToDo: 
-    - Swap this out with Web3Modal useConnectModal() and its open() function
-    - Import with `import { useConnectModal } from '@web3modal/react'`
-  */
 
   return (
     <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
