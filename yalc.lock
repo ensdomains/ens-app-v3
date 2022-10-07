@@ -1,11 +1,6 @@
 {
   "version": "v1",
   "packages": {
-    "@ensdomains/ensjs": {
-      "signature": "5035db6593d1a6900c6e4b5a9e690522",
-      "pure": true,
-      "replaced": "v3.0.0-alpha.17"
-    },
     "@ensdomains/thorin": {
       "signature": "68820abb25c75bd3f1fd4654113317b9",
       "file": true,
@@ -14,6 +9,10 @@
     "@ensdomains/ens-contracts": {
       "signature": "d56480ffe3874a462aff878e9eea6617",
       "file": true
+    },
+    "@ensdomains/ensjs": {
+      "signature": "2cb80e7d0ef7c67f6a917abc310e8a83",
+      "pure": true
     }
   }
 }

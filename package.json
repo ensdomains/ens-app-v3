@@ -49,9 +49,9 @@
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.18",
+    "@ensdomains/ens-contracts": "0.0.14",
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "3.0.0-alpha.24",
-    "@ensdomains/ens-contracts": "0.0.14",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "^0.6.17",
     "@rainbow-me/rainbowkit": "0.4.8",
