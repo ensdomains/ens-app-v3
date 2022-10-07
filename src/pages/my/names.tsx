@@ -1,6 +1,6 @@
 import { useAccount } from '@web3modal/react'
 import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -77,7 +77,7 @@ type FilterType = Name['type'] | 'none'
 export default function Page() {
   const { t } = useTranslation('names')
   const router = useRouter()
-  const { address: _address, isConnecting, isReconnecting } = useAccount()
+  const { address: _address, isConnecting, isReconnecting, isConnected } = useAccount()
   const address = (router.query.address as string) || (_address as string)
   const isSelf = true
   const chainId = useChainId()
@@ -89,6 +89,7 @@ export default function Page() {
   })
   const [filter] = useState<FilterType>('none')
   const [page, setPage] = useState(1)
+  const [isFetched, setIsFetching] = useState(false)
 
   const {
     currentPage,
@@ -109,8 +110,14 @@ export default function Page() {
   const loading =
     isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
 
-  // ToDo: Had to comment out due to our wagmi rendering
-  // useProtectedRoute('/', loading ? true : address && address !== '')
+  useEffect(() => {
+    if (!isFetched) {
+      setIsFetching(true)
+    }
+    if (!isConnected && isFetched) {
+      router.push('/')
+    }
+  }, [isConnected, isFetched, router])
 
   return (
     <Content

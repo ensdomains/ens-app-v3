@@ -1,8 +1,8 @@
+import { useAccount } from '@web3modal/react'
 import { BigNumber, utils } from 'ethers'
 import { useRouter } from 'next/router'
 import { TFunction, useTranslation } from 'react-i18next'
 import styled from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { RecordItem } from '@app/components/RecordItem'
 import { useBasicName } from '@app/hooks/useBasicName'
