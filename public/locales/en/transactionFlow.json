@@ -77,7 +77,10 @@
           "addContentHash": "Add decentralized website",
           "placeholder": {
             "default": "Add url here",
-            "ipfs": "ipfs://"
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "arweave://...",
+            "swarm": "bzz://..."
           }
         },
         "other": {

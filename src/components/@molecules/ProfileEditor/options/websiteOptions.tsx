@@ -1,6 +1,9 @@
 import styled, { css } from 'styled-components'
 
-import { DynamicContentHashIcon } from '@app/assets/contentHash/DynamicContentHashIcon'
+import {
+  ContentHashIconType,
+  DynamicContentHashIcon,
+} from '@app/assets/contentHash/DynamicContentHashIcon'
 import { formSafeKey } from '@app/utils/editor'
 
 const IconWrapper = styled.div(
@@ -17,17 +20,34 @@ const LabelWrapper = styled.div(
   `,
 )
 
-const websiteOptions = [
-  {
-    value: formSafeKey('ipfs'),
-    label: 'IPFS',
-    node: <LabelWrapper>IPFS</LabelWrapper>,
-    prefix: (
-      <IconWrapper>
-        <DynamicContentHashIcon name="ipfs" />
-      </IconWrapper>
-    ),
-  },
+const SUPPORTED_CONTENT_HASHES: ContentHashIconType[] = [
+  'ipfs',
+  'swarm',
+  'onion',
+  'skynet',
+  'arweave',
 ]
+// const websiteOptions = [
+//   {
+//     value: formSafeKey('ipfs'),
+//     label: 'IPFS',
+//     node: <LabelWrapper>IPFS</LabelWrapper>,
+//     prefix: (
+//       <IconWrapper>
+//         <DynamicContentHashIcon name="ipfs" />
+//       </IconWrapper>
+//     ),
+//   },
+//   {},
+// ]
 
-export default websiteOptions
+export default SUPPORTED_CONTENT_HASHES.map((value) => ({
+  value: formSafeKey(value),
+  label: value.toUpperCase(),
+  node: <LabelWrapper>{value.toUpperCase()}</LabelWrapper>,
+  prefix: (
+    <IconWrapper>
+      <DynamicContentHashIcon name={value} />
+    </IconWrapper>
+  ),
+}))
