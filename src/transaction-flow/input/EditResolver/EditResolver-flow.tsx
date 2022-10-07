@@ -1,12 +1,15 @@
+import { useCallback, useRef } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Button, Dialog, mq } from '@ensdomains/thorin'
+
 import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
 import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'
 import { useProfile } from '@app/hooks/useProfile'
 import useResolverEditor from '@app/hooks/useResolverEditor'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { Button, Dialog, mq } from '@ensdomains/thorin'
-import { useCallback, useRef } from 'react'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+
 import { makeTransactionItem } from '../../transaction'
 
 const EditResolverFormContainer = styled.div(() => [

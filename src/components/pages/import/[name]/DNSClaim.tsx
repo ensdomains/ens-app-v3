@@ -1,4 +1,3 @@
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
@@ -10,6 +9,7 @@ import { Button, Card, Typography, mq } from '@ensdomains/thorin'
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 

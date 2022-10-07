@@ -147,7 +147,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       stopCurrentFlow: () => dispatch({ name: 'stopFlow' }),
       cleanupFlow: (key: string) => dispatch({ name: 'forceCleanupTransaction', payload: key }),
     }
-  }, [dispatch, getResumable, getTransactionIndex, getLatestTransaction])
+  }, [getTransactionIndex, getTransaction, getResumable, getLatestTransaction, dispatch])
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
 

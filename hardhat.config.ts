@@ -11,9 +11,6 @@ BigInt.prototype.toJSON = function () {
 }
 
 const config = {
-  tenderly: {
-    project: 'core',
-  },
   solidity: {
     compilers: [
       {

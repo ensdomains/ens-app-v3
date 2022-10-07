@@ -233,7 +233,6 @@ export const TransactionStageModal = ({
         transaction.data,
       )
       const gasLimit = await signer!.estimateGas(populatedTransaction)
-      console.log('**gasLimit**', gasLimit)
 
       return {
         ...populatedTransaction,

@@ -1,7 +1,8 @@
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 type FormData = {
   resolverChoice: 'latest' | 'custom'

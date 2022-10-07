@@ -10,6 +10,11 @@
       "signature": "8ee1e574555529ab7a3645a86aa84faf",
       "file": true,
       "replaced": "^0.3.2"
+    },
+    "@ensdomains/ensjs": {
+      "signature": "125b850ad9d8e2b7af892336dfcbd4b6",
+      "pure": true,
+      "replaced": "3.0.0-alpha.24"
     }
   }
 }

@@ -1,7 +1,8 @@
-import type { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
 import styled, { css } from 'styled-components'
 
 import { Button, mq } from '@ensdomains/thorin'
+
+import type { Transaction } from '@app/hooks/transactions/transactionStore'
 
 export const ButtonContainer = styled.div(
   ({ theme }) => css`
@@ -34,8 +35,7 @@ export const CheckButton = styled(Button)(
 const latestTransaction = (transactions: Transaction[]) => {
   const transactionKey = localStorage.getItem('latestImportTransactionKey')
   const transaction = transactions.find((transactionInner) => {
-    const description = JSON.parse(transactionInner.description)
-    return description.key === transactionKey
+    return transactionInner.key === transactionKey
   })
   return transaction
 }

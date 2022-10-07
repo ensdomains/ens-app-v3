@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { useEffect, useMemo, useRef } from 'react'
+import { useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -111,7 +111,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const parentName = name.split('.').slice(1).join('.')
   const parentNameOwnerData = useBasicName(parentName)
   const { address } = useAccount()
-  const { register, watch, getFieldState, reset } = useForm<FormData>({
+  const { register, watch, getFieldState } = useForm<FormData>({
     mode: 'onChange',
   })
 
@@ -162,8 +162,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const handleSubmitForm = () => {
     const isController = ownerData?.owner === address
     const isRegistrant = ownerData?.registrant === address
-
-    console.log('**handleSubmit: ', ownerData, managerChoiceWatch, ownerChoiceWatch, ownershipLevel)
 
     if (ownershipLevel === 'nameWrapper') {
       dispatch({

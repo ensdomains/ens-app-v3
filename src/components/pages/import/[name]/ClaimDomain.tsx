@@ -1,4 +1,3 @@
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
@@ -11,6 +10,7 @@ import { Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useEstimateGasLimitForTransactions } from '@app/hooks/useEstimateGasLimitForTransactions'
 import {
   CreateTransactionFlow,
@@ -158,13 +158,11 @@ export const ClaimDomain = ({
       setPendingTransaction(true)
       return
     }
-
     if (shouldShowSuccessPage(transactions)) {
       setPendingTransaction(false)
       setCurrentStep((x: number) => x + 1)
       return
     }
-
     setPendingTransaction(false)
   }, [setCurrentStep, transactions])
 

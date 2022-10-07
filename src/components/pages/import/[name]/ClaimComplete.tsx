@@ -78,7 +78,7 @@ export const ClaimComplete = () => {
     <Container>
       <Confetti />
       <NFTTemplateContainer>
-        {name && <NFTTemplate name={name} isNormalised />}
+        {name && <NFTTemplate backgroundImage={undefined} name={name} isNormalised />}
       </NFTTemplateContainer>
       <Spacer $height="5" />
       <Typography {...{ weight: 'bold', variant: 'extraLarge' }}>
