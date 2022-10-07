@@ -1,0 +1,67 @@
+{
+  "name": "multibase",
+  "version": "2.0.0",
+  "description": "JavaScript implementation of the multibase specification",
+  "keywords": [
+    "IPFS",
+    "multiformats",
+    "multibase",
+    "encode",
+    "decode",
+    "formats"
+  ],
+  "homepage": "https://github.com/multiformats/js-multibase#readme",
+  "bugs": "https://github.com/multiformats/js-multibase/issues",
+  "license": "MIT",
+  "leadMaintainer": "Hugo Dias <hugomrdias@gmail.com>",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "main": "src/index.js",
+  "repository": "github:multiformats/js-multibase",
+  "scripts": {
+    "lint": "aegir lint",
+    "test": "aegir test",
+    "test:node": "aegir test -t node",
+    "test:browser": "aegir test -t browser",
+    "build": "aegir build",
+    "docs": "aegir docs",
+    "release": "aegir release --docs",
+    "release-minor": "aegir release --type minor --docs",
+    "release-major": "aegir release --type major --docs",
+    "coverage": "aegir coverage",
+    "coverage-publish": "aegir coverage publish"
+  },
+  "dependencies": {
+    "base-x": "^3.0.8",
+    "buffer": "^5.5.0",
+    "web-encoding": "^1.0.2"
+  },
+  "devDependencies": {
+    "aegir": "^25.0.0",
+    "benchmark": "^2.1.4"
+  },
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  },
+  "eslintConfig": {
+    "extends": "./node_modules/aegir/src/config/eslintrc.js"
+  },
+  "contributors": [
+    "David Dias <daviddias.p@gmail.com>",
+    "Hugo Dias <hugomrdias@gmail.com>",
+    "Oli Evans <oli@tableflip.io>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Alan Shaw <alan.shaw@protocol.ai>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
+    "Bora M. Alper <boramalper@gmail.com>",
+    "Irakli Gozalishvili <contact@gozala.io>",
+    "Richard Littauer <richard.littauer@gmail.com>",
+    "achingbrain <alex@achingbrain.net>",
+    "theobat <theophile.batoz@gmail.com>",
+    "Henrique Dias <hacdias@gmail.com>",
+    "Carson Farmer <carson.farmer@gmail.com>"
+  ]
+}

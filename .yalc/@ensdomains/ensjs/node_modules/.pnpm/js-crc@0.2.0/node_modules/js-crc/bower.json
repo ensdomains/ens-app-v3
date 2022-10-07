@@ -1,0 +1,9 @@
+{
+  "name": "js-crc",
+  "version": "0.2.0",
+  "main": ["src/crc.js"],
+  "ignore": [
+    "samples",
+    "tests"
+  ]
+}

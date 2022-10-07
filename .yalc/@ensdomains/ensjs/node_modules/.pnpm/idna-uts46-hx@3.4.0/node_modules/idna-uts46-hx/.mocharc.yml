@@ -1,0 +1,6 @@
+recursive: true
+bail: true
+inline-diffs: true
+reporter: spec
+check-leaks: true
+ui: tdd

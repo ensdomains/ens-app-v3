@@ -1,0 +1,72 @@
+{
+  "name": "multihashes",
+  "version": "2.0.0",
+  "description": "multihash implementation",
+  "keywords": [
+    "multihash",
+    "multiformats",
+    "ipfs",
+    "hash"
+  ],
+  "homepage": "https://github.com/multiformats/js-multihash",
+  "bugs": "https://github.com/multiformats/js-multihash/issues",
+  "license": "MIT",
+  "leadMaintainer": "Hugo Dias <hugomrdias@gmail.com>",
+  "files": [
+    "src",
+    "dist"
+  ],
+  "scripts": {
+    "lint": "aegir lint",
+    "test:browser": "aegir test --target browser",
+    "test:node": "aegir test --target node",
+    "build": "aegir build",
+    "test": "aegir test",
+    "docs": "aegir docs",
+    "release": "aegir release --docs",
+    "release-minor": "aegir release --type minor --docs",
+    "release-major": "aegir release --type major --docs",
+    "update-constants": "node update-constants.js"
+  },
+  "main": "src/index.js",
+  "repository": "github:multiformats/js-multihash",
+  "dependencies": {
+    "buffer": "^5.6.0",
+    "multibase": "^2.0.0",
+    "varint": "^5.0.0",
+    "web-encoding": "^1.0.2"
+  },
+  "devDependencies": {
+    "aegir": "^24.0.0",
+    "chai": "^4.1.2",
+    "dirty-chai": "^2.0.1",
+    "ipfs-utils": "^2.3.1"
+  },
+  "contributors": [
+    "David Dias <daviddias.p@gmail.com>",
+    "Hugo Dias <hugomrdias@gmail.com>",
+    "Juan Benet <juan@benet.ai>",
+    "Jacob Heun <jacobheun@gmail.com>",
+    "Friedel Ziegelmayer <dignifiedquire@gmail.com>",
+    "Richard Littauer <richard.littauer@gmail.com>",
+    "ᴠɪᴄᴛᴏʀ ʙᴊᴇʟᴋʜᴏʟᴍ <victorbjelkholm@gmail.com>",
+    "Rod Vagg <rod@vagg.org>",
+    "Pedro Teixeira <i@pgte.me>",
+    "Linus Unnebäck <linus@folkdatorn.se>",
+    "kumavis <aaron@kumavis.me>",
+    "Irakli Gozalishvili <contact@gozala.io>",
+    "Fil <fil@rezo.net>",
+    "Donald Tsang <brandonknlee@gmail.com>",
+    "Trond Arne Bråthen <tabrath@gmail.com>",
+    "Vasco Santos <vasco.santos@moxy.studio>",
+    "Volker Mische <volker.mische@gmail.com>",
+    "William Cotton <williamcotton@gmail.com>",
+    "nginnever <ginneversource@gmail.com>",
+    "Nate Foss <npfoss@gmail.com>",
+    "Alan Shaw <alan@tableflip.io>"
+  ],
+  "engines": {
+    "node": ">=10.0.0",
+    "npm": ">=6.0.0"
+  }
+}
