@@ -38,6 +38,7 @@ export const validateContentHash =
   (protocol?: string) =>
   (url?: string): string | boolean => {
     const _url = url || ''
+    if (_url === '') return true
     if (protocol === 'ipfs') return isIpfs(_url) || 'Invalid url'
     if (protocol === 'onion') return isOnion(_url) || 'Invalid url'
     if (protocol === 'skynet') return isSkynet(_url) || 'Invalid url'
