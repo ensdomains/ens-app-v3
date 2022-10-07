@@ -101,7 +101,7 @@ specifiers:
   jest-environment-jsdom: ^27.5.1
   jest-localstorage-mock: ^2.4.22
   lodash: ^4.17.21
-  next: ^12.0.8
+  next: ^12.3.1
   next-compose-plugins: ^2.2.1
   node-fetch: 2.6.1
   node-fetch-commonjs: ^3.1.1
