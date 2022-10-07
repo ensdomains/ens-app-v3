@@ -94,6 +94,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
 
   const { address } = useAccount()
   const { ownerData, profile, isLoading: isNameDetailsLoading } = useNameDetails(name)
+  const hasOwnerData = !!ownerData && !isNameDetailsLoading
   const isOwner = ownerData?.owner === address
   const resolverAddress = profile?.resolverAddress
 
@@ -101,36 +102,44 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleUpgradeClick = () => {
-    if (isNameDetailsLoading || !ownerData?.owner || !resolverAddress) return
-    const transactions = isOwner
-      ? [
+    if (resumable) return resumeTransactionFlow(`wrapName-${name}`)
+    if (hasOwnerData && isOwner)
+      return createTransactionFlow(`wrapName-${name}`, {
+        transactions: [
           makeTransactionItem('migrateProfile', {
             name,
           }),
           makeTransactionItem('wrapName', {
             name,
           }),
-        ]
-      : [
+        ],
+        resumable: true,
+        intro: {
+          title: t('details.wrap.startTitle'),
+          content: makeIntroItem('WrapName', { name }),
+        },
+      })
+    if (hasOwnerData)
+      return createTransactionFlow(`wrapName-${name}`, {
+        transactions: [
           makeTransactionItem('wrapName', {
             name,
-            owner: ownerData?.owner,
           }),
-          makeTransactionItem('migrateProfile', {
-            name,
-            resolverAddress,
-          }),
-        ]
-    return resumable
-      ? resumeTransactionFlow(`wrapName-${name}`)
-      : createTransactionFlow(`wrapName-${name}`, {
-          transactions,
-          resumable: true,
-          intro: {
-            title: t('details.wrap.startTitle'),
-            content: makeIntroItem('WrapName', { name }),
-          },
-        })
+          ...(resolverAddress
+            ? [
+                makeTransactionItem('migrateProfile', {
+                  name,
+                  resolverAddress,
+                }),
+              ]
+            : []),
+        ],
+        resumable: true,
+        intro: {
+          title: t('details.wrap.startTitle'),
+          content: makeIntroItem('WrapName', { name }),
+        },
+      })
   }
 
   return (

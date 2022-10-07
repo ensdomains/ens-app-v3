@@ -5,7 +5,6 @@ import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
-  owner?: string
 }
 
 const displayItems = (
@@ -27,11 +26,10 @@ const displayItems = (
   },
 ]
 
-const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const wrappedOwner = data.owner || (await signer.getAddress())
-  return ens.wrapName.populateTransaction(data.name, {
-    wrappedOwner,
+const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
+  ens.wrapName.populateTransaction(data.name, {
+    wrappedOwner: await signer.getAddress(),
     signer,
   })
-}
+
 export default { displayItems, transaction } as Transaction<Data>
