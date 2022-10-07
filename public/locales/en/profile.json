@@ -34,7 +34,9 @@
       "makeOwnerDescription": "The owner can send to a new owner and change the manager",
       "makeManager": "Make Manager",
       "makeManagerDescription": "The manager can change and set records.",
-      "inputPlaceholder": "Enter an Ethereum address or ENS name"
+      "inputPlaceholder": "Enter an Ethereum address or ENS name",
+      "transferSubname": "Transfer Name",
+      "transferController": "Transfer Controller"
     },
     "wrap": {
       "startTitle": "Upgrade your name",

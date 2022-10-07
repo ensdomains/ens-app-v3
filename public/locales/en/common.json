@@ -28,6 +28,8 @@
     "tryAgain": "Try Again",
     "done": "Done",
     "burnSelected": "Burn Selected",
+    "check": "Check",
+    "claim": "Claim",
     "remindMe": "Remind Me",
     "begin": "Begin",
     "finish": "Finish",
@@ -115,6 +117,7 @@
       "testSendName": "Send Name",
       "burnFuses": "Burn permissions",
       "createSubname": "Create Subname",
+      "importDNSSECName": "import DNSSEC Name",
       "commitName": "Start countdown",
       "registerName": "Register Name"
     },

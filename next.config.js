@@ -46,6 +46,10 @@ let nextConfig = {
         destination: '/register?name=:name',
       },
       {
+        source: '/import/:name',
+        destination: '/import?name=:name',
+      },
+      {
         source: '/address/:address',
         destination: '/address?address=:address',
       },
