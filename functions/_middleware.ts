@@ -24,6 +24,10 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     url.pathname = '/import'
     url.searchParams.set('name', paths[2])
     rewrite = true
+  } else if (paths[1] === 'register' && !!paths[2]) {
+    url.pathname = '/register'
+    url.searchParams.set('name', paths[2])
+    rewrite = true
   } else if (paths[1] === 'address' && !!paths[2]) {
     url.pathname = '/address'
     url.searchParams.set('address', paths[2])
