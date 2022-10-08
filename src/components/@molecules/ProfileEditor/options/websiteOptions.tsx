@@ -27,19 +27,6 @@ const SUPPORTED_CONTENT_HASHES: ContentHashIconType[] = [
   'skynet',
   'arweave',
 ]
-// const websiteOptions = [
-//   {
-//     value: formSafeKey('ipfs'),
-//     label: 'IPFS',
-//     node: <LabelWrapper>IPFS</LabelWrapper>,
-//     prefix: (
-//       <IconWrapper>
-//         <DynamicContentHashIcon name="ipfs" />
-//       </IconWrapper>
-//     ),
-//   },
-//   {},
-// ]
 
 export default SUPPORTED_CONTENT_HASHES.map((value) => ({
   value: formSafeKey(value),
