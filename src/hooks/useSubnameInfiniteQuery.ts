@@ -5,7 +5,7 @@ import { SortDirection, SortType } from '@app/components/@molecules/NameTableHea
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 
-const PAGE_SIZE = 10
+const PAGE_SIZE = 25
 
 export type Subname = {
   id: string
@@ -36,7 +36,7 @@ export const useSubnameInfiniteQuery = (
         name,
         lastSubnames: pageParam,
         orderBy: orderBy === 'creationDate' ? 'createdAt' : 'labelName',
-        orderDirection,
+        orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',
         pageSize: PAGE_SIZE,
         search,
       })

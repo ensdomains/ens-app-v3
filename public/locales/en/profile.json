@@ -68,6 +68,7 @@
         "label": "Subnames",
         "loading": "Loading subnames",
         "empty": "No subnames have been added",
+        "noResults": "No results",
         "noMoreResults": "No more results",
         "addSubname": {
           "title": "Subnames let you create additional names from your existing name.",

@@ -152,9 +152,13 @@ export const SubnamesTab = ({
         <Spinner size="small" color="accent" />
       </SpinnerContainer>
     )
-  } else if (subnames.length === 0) {
+  } else if (subnames.length === 0 && searchQuery === '') {
     InnerContent = (
       <NoMoreResultsContainer>{t('details.tabs.subnames.empty')}</NoMoreResultsContainer>
+    )
+  } else if (subnames.length === 0) {
+    InnerContent = (
+      <NoMoreResultsContainer>{t('details.tabs.subnames.noResults')}</NoMoreResultsContainer>
     )
   } else if (subnames.length > 0) {
     InnerContent = (

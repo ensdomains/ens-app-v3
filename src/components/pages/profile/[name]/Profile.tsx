@@ -133,7 +133,6 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
   }
 
-  console.log(subNameAbilities)
   const profileActions = useMemo(() => {
     const actions: { onClick: () => void; color?: Colors; label: string; disabled?: boolean }[] = []
     if (!isSelf && (selfAbilities.canEdit || profile?.address === address) && ensName !== _name) {

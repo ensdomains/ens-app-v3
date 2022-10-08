@@ -209,13 +209,12 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
     error: estimateGasLimitError,
     isLoading: isEstimateGasLoading,
   } = useEstimateGasLimitForTransactions(transactions)
-  console.log(estimateGasLimitError)
 
   const hardcodedGasLimit = gasLimitDictionary.RENEW(names.length)
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
 
   const { data: feeData, isLoading: isFeeDataLoading } = useFeeData()
-  const gasPrice = feeData?.maxFeePerGas || undefined
+  const gasPrice = feeData?.maxFeePerGas
   const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
 
   const items = [

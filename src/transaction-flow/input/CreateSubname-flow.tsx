@@ -48,8 +48,12 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
 
   const validation = useValidate(_label, !_label)
 
-  const { data: ownership, isLoading } = useQuery([label, 'createSubname', 'getOwner'], () =>
-    getOwner(`${validation.name}.${parent}`),
+  const { data: ownership, isLoading } = useQuery(
+    [label, 'createSubname', 'getOwner'],
+    () => getOwner(`${validation.name}.${parent}`),
+    {
+      refetchOnMount: true,
+    },
   )
 
   const debouncedSetLabel = useDebouncedCallback(setLabel, 500)

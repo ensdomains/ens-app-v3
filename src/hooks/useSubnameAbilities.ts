@@ -1,9 +1,8 @@
 import { useMemo } from 'react'
-import { useAccount, useQuery } from 'wagmi'
-
-import { useEns } from '@app/utils/EnsProvider'
+import { useAccount } from 'wagmi'
 
 import { useGetWrapperData } from './useGetWrapperData'
+import { useHasSubnames } from './useHasSubnames'
 import { useNameDetails } from './useNameDetails'
 
 type OwnerData = ReturnType<typeof useNameDetails>['ownerData']
@@ -20,18 +19,7 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
 
   const isSubname = nameParts.length > 2
 
-  const { getSubnames, ready } = useEns()
-  const { data: hasChildren, isLoading: loadingSubnames } = useQuery(
-    ['get-subnames', name],
-    async () => {
-      const result = await getSubnames({ name, pageSize: 1 })
-      return result.subnames.length > 0
-    },
-    {
-      enabled: ready && !!name && isSubname,
-      refetchOnMount: true,
-    },
-  )
+  const { hasSubnames, isLoading: loadingSubnames } = useHasSubnames(name)
 
   const parentName = nameParts.slice(1).join('.')
 
@@ -54,16 +42,16 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
     if (!isSubname || !nameHasOwner || isNameDetailsLoading || loadingSubnames) return abilities
     if (canDeleteSubnames && !isWrapped)
       return {
-        canDelete: !hasChildren,
+        canDelete: !hasSubnames,
         canDeleteContract: 'registry',
-        canDeleteError: hasChildren ? 'This name has subnames' : undefined,
+        canDeleteError: hasSubnames ? 'This name has subnames' : undefined,
       }
     if (isFuseDataLoading) return abilities
     if (canDeleteSubnames && isWrapped && wrapperData) {
       return {
-        canDelete: !hasChildren,
+        canDelete: !hasSubnames,
         canDeleteContract: 'nameWrapper',
-        canDeleteError: hasChildren ? 'This name has subnames' : undefined,
+        canDeleteError: hasSubnames ? 'This name has subnames' : undefined,
       }
     }
     return abilities
@@ -75,7 +63,7 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
     isWrapped,
     isFuseDataLoading,
     wrapperData,
-    hasChildren,
+    hasSubnames,
     loadingSubnames,
   ])
 }
