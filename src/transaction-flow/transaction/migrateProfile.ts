@@ -5,6 +5,7 @@ import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
+  resolverAddress?: string
 }
 
 const displayItems = (
@@ -27,7 +28,8 @@ const displayItems = (
 ]
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const profile = await ens.getProfile(data.name)
+  const options = data.resolverAddress ? { resolverAddress: data.resolverAddress } : undefined
+  const profile = await ens.getProfile(data.name, options)
   if (!profile) throw new Error('No profile found')
   if (!profile.records) throw new Error('No records found')
   const { contentHash } = profile.records
