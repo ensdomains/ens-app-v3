@@ -31,6 +31,8 @@
     "extend": "Extend",
     "delete": "Delete",
     "sort": "Sort",
+    "check": "Check",
+    "claim": "Claim",
     "remindMe": "Remind Me",
     "begin": "Begin",
     "finish": "Finish",
@@ -123,6 +125,7 @@
       "createSubname": "Create Subname",
       "deleteSubname": "Delete Subname",
       "extendNames": "Extend Names",
+      "importDNSSECName": "import DNSSEC Name",
       "commitName": "Start countdown",
       "registerName": "Register Name"
     },

@@ -7,7 +7,7 @@ import { ScrollBox, Textarea } from '@ensdomains/thorin'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
-import { validateCryptoAddress } from '@app/utils/validate'
+import { validateContentHash, validateCryptoAddress } from '@app/utils/validate'
 
 const TabContentsContainer = styled.div(
   () => css`
@@ -269,7 +269,9 @@ const ProfileTabContents = ({
 
                     setWebsiteOption(undefined)
                   }}
-                  {...register('website', {})}
+                  {...register('website', {
+                    validate: validateContentHash(websiteOption.value),
+                  })}
                 />
               ),
               other: (

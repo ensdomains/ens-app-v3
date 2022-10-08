@@ -1,4 +1,5 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
+import { utils } from 'ethers'
 import { useQuery, useSigner } from 'wagmi'
 
 import {
@@ -28,7 +29,11 @@ export const fetchEstimateWithConfig =
     }
   }
 
-export const useEstimateGasLimitForTransactions = (transactions: TransactionItem[]) => {
+export const useEstimateGasLimitForTransactions = (
+  transactions: TransactionItem[],
+  isEnabled: boolean = true,
+  extraKeys: string[] = [],
+) => {
   const keys = transactions.map((t) => t.name)
 
   const ens = useEns()
@@ -36,7 +41,7 @@ export const useEstimateGasLimitForTransactions = (transactions: TransactionItem
   const { data: signer, isLoading: isSignerLoading } = useSigner()
 
   const { data, ...results } = useQuery(
-    ['use-estimate-gas-limit-for-transactions', ...keys],
+    ['use-estimate-gas-limit-for-transactions', ...keys, ...extraKeys],
     async () => {
       if (!signer) throw new Error('No signer available')
       if (!ens) throw new Error('ensjs did not load')
@@ -47,18 +52,23 @@ export const useEstimateGasLimitForTransactions = (transactions: TransactionItem
       )
       const estimates = await Promise.all(transactions.map(fetchEstimate))
       const total = estimates.map((r) => r.gasLimit).reduce((a, b) => a.add(b))
+      const gasPrice = await signer.getGasPrice()
+      const gasCost = gasPrice.mul(total)
+
       return {
         estimates,
+        gasCost,
         gasLimit: total,
       }
     },
     {
-      enabled: ensReady && !isSignerLoading,
+      enabled: ensReady && !isSignerLoading && isEnabled,
     },
   )
 
   return {
     gasLimit: data?.gasLimit,
+    gasCostEth: utils.formatEther(data?.gasCost || 0),
     estimates: data?.estimates,
     ...results,
   }

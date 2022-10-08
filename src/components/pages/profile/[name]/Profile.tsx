@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -11,6 +11,7 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -24,6 +25,7 @@ import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { useSubnameAbilities } from '../../../../hooks/useSubnameAbilities'
+import { shouldShowSuccessPage } from '../../import/[name]/shared'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -67,6 +69,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
   const breakpoints = useBreakpoint()
   const chainId = useChainId()
   const { address } = useAccount()
+  const transactions = useRecentTransactions()
 
   const { name: ensName } = primary
 
@@ -205,7 +208,11 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     createTransactionFlow,
   ])
 
-  console.log(profileActions)
+  useEffect(() => {
+    if (shouldShowSuccessPage(transactions)) {
+      router.push(`/import/${name}`)
+    }
+  }, [name, router, transactions])
 
   return (
     <>
