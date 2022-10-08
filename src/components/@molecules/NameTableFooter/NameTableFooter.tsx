@@ -54,7 +54,7 @@ export const NameTableFooter = ({
         max={max}
         alwaysShowFirst={alwaysShowFirst}
         alwaysShowLast={alwaysShowLast}
-        showElipsis={breakpoints.sm}
+        showEllipsis={breakpoints.sm}
       />
       <div>
         <Select

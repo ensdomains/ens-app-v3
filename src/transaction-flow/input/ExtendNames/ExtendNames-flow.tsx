@@ -214,7 +214,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const gasLimit = estimatedGasLimit || hardcodedGasLimit
 
   const { data: feeData, isLoading: isFeeDataLoading } = useFeeData()
-  const gasPrice = feeData?.maxFeePerGas
+  const gasPrice = feeData?.maxFeePerGas || undefined
   const transactionFee = gasPrice ? gasLimit.mul(gasPrice) : BigNumber.from('0')
 
   const items = [

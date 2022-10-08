@@ -6,7 +6,7 @@ import { emptyAddress } from '../utils/constants'
 
 const FETCH_PAGE_SIZE = 50
 
-type Subnames = ReturnType<typeof useEns>['getSubnames']['subnames']
+type Subnames = Awaited<ReturnType<ReturnType<typeof useEns>['getSubnames']>>['subnames']
 
 export const useHasSubnames = (name: string) => {
   const { getSubnames, ready } = useEns()
