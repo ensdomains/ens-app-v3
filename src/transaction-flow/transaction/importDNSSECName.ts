@@ -5,8 +5,8 @@ import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
-  contract: 'registry' | 'nameWrapper'
-  newOwner: string
+  address: string
+  proverResult: any
 }
 
 const displayItems = (
@@ -20,14 +20,14 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: t('details.sendName.transferSubname', { ns: 'profile' }),
+    value: t('general.importDNSSECName', { ns: 'dnssec' }),
   },
 ]
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const tx = ens.transferSubname.populateTransaction(data.name, {
-    contract: data.contract,
-    owner: data.newOwner,
+  const tx = ens.importDNSSECName.populateTransaction(data.name, {
+    address: data.address,
+    proverResult: data.proverResult,
     signer,
   })
   return tx
@@ -36,5 +36,4 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
 export default {
   displayItems,
   transaction,
-  backToInput: true,
 } as Transaction<Data>

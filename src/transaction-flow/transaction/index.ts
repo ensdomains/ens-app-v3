@@ -1,6 +1,7 @@
 import burnFuses from './burnFuses'
 import commitName from './commitName'
 import createSubname from './createSubname'
+import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
 import registerName from './registerName'
@@ -30,6 +31,7 @@ export const transactions = {
   transferName,
   transferSubname,
   transferController,
+  importDNSSECName,
 }
 
 export type Transaction = typeof transactions
