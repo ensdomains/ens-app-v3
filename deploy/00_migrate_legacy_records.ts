@@ -1,10 +1,10 @@
 /* eslint-disable import/no-extraneous-dependencies */
-/* eslint-disable no-await-in-loop */
 
+/* eslint-disable no-await-in-loop */
+import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
-import { namehash } from 'ethers/lib/utils'
 
 const names = [
   {

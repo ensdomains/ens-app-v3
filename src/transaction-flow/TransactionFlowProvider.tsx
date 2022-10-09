@@ -32,6 +32,9 @@ type ProviderValue = {
   resumeTransactionFlow: (key: string) => void
   getTransactionIndex: (key: string) => number
   getResumable: (key: string) => boolean
+  getTransactionFlowStage: (
+    key: string,
+  ) => 'undefined' | 'input' | 'intro' | 'transaction' | 'completed'
   getLatestTransaction: (key: string) => GenericTransaction | undefined
   stopCurrentFlow: () => void
   cleanupFlow: (key: string) => void
@@ -43,6 +46,7 @@ const TransactionContext = React.createContext<ProviderValue>({
   resumeTransactionFlow: () => {},
   getTransactionIndex: () => 0,
   getResumable: () => false,
+  getTransactionFlowStage: () => 'undefined',
   getLatestTransaction: () => undefined,
   stopCurrentFlow: () => {},
   cleanupFlow: () => {},
@@ -72,6 +76,20 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const getTransactionIndex = useCallback(
     (key: string) => state.items[key]?.currentTransaction || 0,
+    [state.items],
+  )
+
+  const getTransactionFlowStage = useCallback(
+    (key: string) => {
+      const item = state.items[key]
+      if (!item) return 'undefined'
+      if (item.currentFlowStage !== 'transaction') return item.currentFlowStage
+      const { transactions } = item
+      if (transactions.length === 0) return 'completed'
+      const lastTransaction = transactions[transactions.length - 1]
+      if (lastTransaction.stage === 'complete') return 'completed'
+      return 'transaction'
+    },
     [state.items],
   )
 
@@ -141,11 +159,19 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
       getTransactionIndex,
       getTransaction,
       getResumable,
+      getTransactionFlowStage,
       getLatestTransaction,
       stopCurrentFlow: () => dispatch({ name: 'stopFlow' }),
       cleanupFlow: (key: string) => dispatch({ name: 'forceCleanupTransaction', payload: key }),
     }
-  }, [getTransactionIndex, getTransaction, getResumable, getLatestTransaction, dispatch])
+  }, [
+    dispatch,
+    getResumable,
+    getTransactionIndex,
+    getLatestTransaction,
+    getTransactionFlowStage,
+    getTransaction,
+  ])
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
 

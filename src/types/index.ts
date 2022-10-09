@@ -1,8 +1,10 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { PopulatedTransaction } from 'ethers'
+import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
 import type { ENS } from '@ensdomains/ensjs'
+import { Helper } from '@ensdomains/thorin'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
 
@@ -20,7 +22,7 @@ interface TransactionDisplayItemBase {
 }
 
 export interface TransactionDisplayItemSingle extends TransactionDisplayItemBase {
-  type?: 'name' | 'address'
+  type?: 'name' | 'subname' | 'address'
   value: string
 }
 
@@ -55,11 +57,13 @@ export type ProfileEditorType = {
 }
 export type PublicENS = PublicInterface<ENS>
 
+export type HelperProps = ComponentProps<typeof Helper>
 export type ReturnedENS = { [key in keyof PublicENS]: Awaited<ReturnType<PublicENS[key]>> }
 
 export interface Transaction<Data> {
   displayItems: (data: any, t: TFunction<'translation', undefined>) => TransactionDisplayItem[]
   transaction: (signer: JsonRpcSigner, ens: PublicENS, data: Data) => Promise<PopulatedTransaction>
+  helper?: (data: any, t: TFunction<'translation', undefined>) => undefined | HelperProps
   backToInput?: boolean
 }
 

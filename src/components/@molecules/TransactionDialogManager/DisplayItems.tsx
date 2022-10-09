@@ -142,6 +142,23 @@ const NameValue = ({ value }: { value: string }) => {
   )
 }
 
+const SubnameValue = ({ value }: { value: string }) => {
+  const network = useChainId()
+  const [label, ...parentParts] = value.split('.')
+  const parent = parentParts.join('.')
+  return (
+    <ValueWithAvatarContainer>
+      <div>
+        <ValueTypography weight="bold">{label}.</ValueTypography>
+        <ValueTypography weight="bold">{parent}</ValueTypography>
+      </div>
+      <AvatarWrapper>
+        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
+      </AvatarWrapper>
+    </ValueWithAvatarContainer>
+  )
+}
+
 const ListContainer = styled.div(
   () => css`
     display: flex;
@@ -157,10 +174,15 @@ const ListValue = ({ value }: { value: string[] }) => {
     <ListContainer>
       {value.map((val, idx) => {
         const isLast = idx === value.length - 1
+        const key = idx
         if (idx === 0) {
-          return <Typography weight="bold">{val}</Typography>
+          return (
+            <Typography key={key} weight="bold">
+              {val}
+            </Typography>
+          )
         }
-        return <ListItemTypography>{`${val}${!isLast ? ',' : ''}`}</ListItemTypography>
+        return <ListItemTypography key={key}>{`${val}${!isLast ? ',' : ''}`}</ListItemTypography>
       })}
     </ListContainer>
   )
@@ -173,6 +195,9 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   }
   if (type === 'name') {
     return <NameValue value={value} />
+  }
+  if (type === 'subname') {
+    return <SubnameValue value={value} />
   }
   if (type === 'list') {
     return <ListValue value={value} />

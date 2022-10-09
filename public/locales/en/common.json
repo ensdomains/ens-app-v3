@@ -28,6 +28,9 @@
     "tryAgain": "Try Again",
     "done": "Done",
     "burnSelected": "Burn Selected",
+    "extend": "Extend",
+    "delete": "Delete",
+    "sort": "Sort",
     "check": "Check",
     "claim": "Claim",
     "remindMe": "Remind Me",
@@ -40,7 +43,9 @@
     "years_other": "{{count}} years",
     "yrs_one": "{{count}} yr",
     "yrs_other": "{{count}} yrs",
-    "gas": "{{value}} gas"
+    "gas": "{{value}} gas",
+    "selected": "{{count}} selected",
+    "perPage": "{{count}} per page"
   },
   "navigation": {
     "home": "Home",
@@ -72,6 +77,7 @@
     "controller": "Controller",
     "dnsOwner": "DNS Owner",
     "owner": "Owner",
+    "manager": "Manager",
     "all": "All Names",
     "expiresInYears_one": "Expires in {{count}} year",
     "expiresInYears_other": "Expires in {{count}} years",
@@ -117,6 +123,8 @@
       "testSendName": "Send Name",
       "burnFuses": "Burn permissions",
       "createSubname": "Create Subname",
+      "deleteSubname": "Delete Subname",
+      "extendNames": "Extend Names",
       "importDNSSECName": "import DNSSEC Name",
       "commitName": "Start countdown",
       "registerName": "Register Name"
@@ -144,7 +152,8 @@
       "currentResolver": "Current Resolver",
       "newResolver": "New Resolver",
       "subname": "Subname",
-      "duration": "Duration"
+      "duration": "Duration",
+      "cost": "Cost"
     },
     "itemValue": {},
     "status": {

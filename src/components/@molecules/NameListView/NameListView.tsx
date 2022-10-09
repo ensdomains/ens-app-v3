@@ -18,22 +18,45 @@ const NoResultsContianer = styled.div(
 export const NameListView = ({
   currentPage,
   network,
+  mode,
+  rowsOnly = false,
+  selectedNames = [],
+  onSelectedNamesChange,
 }: {
   currentPage: ReturnedName[]
   network: number
+  mode?: 'select' | 'view'
+  rowsOnly?: boolean
+  selectedNames?: string[]
+  onSelectedNamesChange?: (data: string[]) => void
 }) => {
   const { t } = useTranslation('common')
-  if (!currentPage || currentPage.length === 0)
-    return (
+
+  const handleClickForName = (name: string) => () => {
+    if (selectedNames?.includes(name)) {
+      onSelectedNamesChange?.(selectedNames.filter((n) => n !== name))
+    } else {
+      onSelectedNamesChange?.([...selectedNames, name])
+    }
+  }
+
+  const InnerContent =
+    !currentPage || currentPage.length === 0 ? (
       <NoResultsContianer>
         <Heading as="h3">{t('errors.noResults')}</Heading>
       </NoResultsContianer>
+    ) : (
+      currentPage.map((name) => (
+        <TaggedNameItem
+          key={name.id}
+          {...{ ...name, network }}
+          mode={mode}
+          selected={selectedNames?.includes(name.name)}
+          onClick={handleClickForName(name.name)}
+        />
+      ))
     )
-  return (
-    <TabWrapper>
-      {currentPage.map((name) => (
-        <TaggedNameItem key={name.id} {...{ ...name, network }} />
-      ))}
-    </TabWrapper>
-  )
+
+  if (rowsOnly) return <>{InnerContent}</>
+  return <TabWrapper>{InnerContent}</TabWrapper>
 }

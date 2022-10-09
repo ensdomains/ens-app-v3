@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -86,18 +85,26 @@ const handleSend =
   }
 
 export const DetailSnippet = ({
+  name,
   expiryDate,
   canSend,
+  canEdit,
+  canExtend,
   isCached,
 }: {
+  name: string
   expiryDate?: Date | null
   canSend: boolean
+  canEdit?: boolean
+  canExtend?: boolean
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
+
   const { showDataInput } = useTransactionFlow()
-  const router = useRouter()
-  const name = router.query.name as string
+  const handleExtend = () => {
+    showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
+  }
 
   if (!expiryDate && !canSend) return null
   return (
@@ -106,7 +113,13 @@ export const DetailSnippet = ({
         {expiryDate && (
           <ExpiryContainer data-testid="expiry-data">
             <Typography weight="bold">{t('name.expires')}</Typography>
-            <Typography weight="bold">{formatExpiry(expiryDate)}</Typography>
+            <Typography
+              weight="bold"
+              data-testid="expiry-label"
+              data-timestamp={expiryDate.getTime()}
+            >
+              {formatExpiry(expiryDate)}
+            </Typography>
           </ExpiryContainer>
         )}
         <FavouriteButton disabled />
@@ -116,9 +129,10 @@ export const DetailSnippet = ({
           <FullWidthOutlinedButton
             size="small"
             shadowless
+            disabled={!canExtend}
             variant="transparent"
-            disabled
             data-testid="extend-button"
+            onClick={handleExtend}
           >
             <InnerButton>
               <ButtonIcon as={FastForwardSVG} />

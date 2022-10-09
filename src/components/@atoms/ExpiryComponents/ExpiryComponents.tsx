@@ -6,6 +6,8 @@ import { Typography } from '@ensdomains/thorin'
 import ClockSVG from '@app/assets/Clock.svg'
 import { secondsToDays } from '@app/utils/utils'
 
+import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
+
 const ExpiryWrapper = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -51,9 +53,10 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   return <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
 }
 
-export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
+export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOnly?: boolean }) => {
   const { t } = useTranslation()
-  const currentDate = new Date()
+  const blockTimestamp = useBlockTimestamp()
+  const currentDate = new Date(blockTimestamp.data!)
   const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)
@@ -75,8 +78,14 @@ export const ShortExpiry = ({ expiry }: { expiry: Date }) => {
     color = 'foreground'
   }
 
+  if (textOnly) return <>{text}</>
   return (
-    <ExpiryText data-testid={`short-expiry-${color}`} weight="bold" $color={color}>
+    <ExpiryText
+      data-testid={`short-expiry-${color}`}
+      data-timestamp={expiry.getTime()}
+      weight="bold"
+      $color={color}
+    >
       {text}
     </ExpiryText>
   )

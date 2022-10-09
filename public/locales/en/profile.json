@@ -19,6 +19,9 @@
           "label": "Set as primary name",
           "title": "Set your primary name",
           "description": "To set your primary name to this name, the ETH address must match this address."
+        },
+        "deleteSubname": {
+          "label": "Delete subname"
         }
       }
     }
@@ -65,6 +68,8 @@
         "label": "Subnames",
         "loading": "Loading subnames",
         "empty": "No subnames have been added",
+        "noResults": "No results",
+        "noMoreResults": "No more results",
         "addSubname": {
           "title": "Subnames let you create additional names from your existing name.",
           "learn": "Learn about subnames",

@@ -160,7 +160,7 @@ export const ProfileSnippet = ({
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
-  const hasActions = actions && actions.length > 0 && actions.some(({ disabled }) => !disabled)
+  const hasActions = actions && actions.length > 0
 
   const banner = getTextRecord?.('banner')?.value
   const description = getTextRecord?.('description')?.value

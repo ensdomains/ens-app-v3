@@ -52,7 +52,6 @@ export const useEstimateGasLimitForTransactions = (
       )
       const estimates = await Promise.all(transactions.map(fetchEstimate))
       const total = estimates.map((r) => r.gasLimit).reduce((a, b) => a.add(b))
-
       const gasPrice = await signer.getGasPrice()
       const gasCost = gasPrice.mul(total)
 

@@ -1,25 +1,27 @@
 import { useRouter } from 'next/router'
-import { ReactElement, useState } from 'react'
+import { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { PageButtons, Spinner, mq } from '@ensdomains/thorin'
+import { Button, Spinner } from '@ensdomains/thorin'
 
-import { NameListView } from '@app/components/@molecules/NameListView/NameListView'
-import SortControl, {
-  SortDirection,
-  SortType,
-  SortValue,
-} from '@app/components/@molecules/SortControl/SortControl'
-import { NameGridView } from '@app/components/names/NameGridView'
+import FastForwardSVG from '@app/assets/FastForward.svg'
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
+import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
+import { SortDirection, SortType } from '@app/components/@molecules/SortControl/SortControl'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
-import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
+import { ReturnedName, useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { Name } from '@app/types'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+
+import {
+  NameTableHeader,
+  NameTableMode,
+} from '../../components/@molecules/NameTableHeader/NameTableHeader'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -30,50 +32,36 @@ const EmptyDetailContainer = styled.div(
   `,
 )
 
-const PageButtonsContainer = styled.div(
-  ({ theme }) => css`
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    padding: ${theme.space['2']} ${theme.space['4']};
-  `,
-)
-
-const TabWrapperWithButtons = styled.div(
+const TabWrapperWithButtons = styled(TabWrapper)(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: normal;
     justify-content: flex-start;
     width: 100%;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
+    max-width: 100%;
+    background: ${theme.colors.white};
   `,
 )
 
-const FilterContainer = styled.div(
+const ButtonInner = styled.div(
   ({ theme }) => css`
-    width: 100%;
     display: flex;
-    flex-direction: row;
-    align-items: flex-end;
-    justify-content: space-between;
+    align-items: center;
     gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-    ${mq.md.min(css`
-      justify-content: flex-end;
-      gap: ${theme.space['8']};
-      flex-gap: ${theme.space['8']};
-    `)}
+    font-size: ${theme.space['3.5']};
+    height: ${theme.space['5']};
+    padding: 0 ${theme.space['2']};
+
+    svg {
+      display: block;
+      width: ${theme.space['3']};
+      height: ${theme.space['3']};
+    }
   `,
 )
 
 const spacing = '1fr 1fr'
-
-type ViewType = 'grid' | 'list'
-type FilterType = Name['type'] | 'none'
 
 export default function Page() {
   const { t } = useTranslation('names')
@@ -83,13 +71,21 @@ export default function Page() {
   const isSelf = true
   const chainId = useChainId()
 
-  const [viewType] = useState<ViewType>('list')
-  const [sortValue, setSortValue] = useState<SortValue>({
-    type: SortType.expiryDate,
-    direction: SortDirection.desc,
-  })
-  const [filter] = useState<FilterType>('none')
+  const [mode, setMode] = useState<NameTableMode>('view')
+  const [selectedNames, setSelectedNames] = useState<string[]>([])
+  const handleClickName = (name: string) => () => {
+    if (selectedNames.includes(name)) {
+      setSelectedNames(selectedNames.filter((n) => n !== name))
+    } else {
+      setSelectedNames([...selectedNames, name])
+    }
+  }
+  const [sortType, setSortType] = useState<SortType | undefined>()
+  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
+  const [searchQuery, setSearchQuery] = useState('')
+
   const [page, setPage] = useState(1)
+  const [pageSize, setPageSize] = useState(10)
 
   const {
     currentPage,
@@ -99,13 +95,40 @@ export default function Page() {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortValue.type,
-      orderDirection: sortValue.direction,
+      type: sortType || SortType.expiryDate,
+      orderDirection: sortDirection,
     },
     page,
-    resultsPerPage: 25,
-    filter: filter === 'none' ? undefined : filter,
+    resultsPerPage: pageSize,
+    search: searchQuery,
   })
+
+  const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const handleExtend = () => {
+    if (selectedNames.length === 0) return
+    showDataInput(`extend-names-${selectedNames.join('-')}`, 'ExtendNames', {
+      names: selectedNames,
+      isSelf,
+    })
+  }
+
+  const stage = getTransactionFlowStage(`extend-names-${selectedNames.join('-')}`)
+  useEffect(() => {
+    if (stage === 'completed') {
+      setSelectedNames([])
+      setMode('view')
+      setPage(1)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stage])
+
+  const isNameDisabled = useCallback(
+    (name: ReturnedName) => {
+      if (mode !== 'select') return false
+      return !name.expiryDate
+    },
+    [mode],
+  )
 
   const loading =
     isConnecting || isReconnecting || namesLoading || namesStatus === 'loading' || !router.isReady
@@ -123,45 +146,70 @@ export default function Page() {
       spacing={spacing}
     >
       {{
-        header: (
-          <FilterContainer>
-            <SortControl value={sortValue} onChange={(_value) => setSortValue(_value)} />
-          </FilterContainer>
-        ),
         trailing: (
           <TabWrapperWithButtons>
-            {loading && (
-              <TabWrapper>
+            <NameTableHeader
+              mode={mode}
+              sortType={sortType}
+              sortTypeOptionValues={[
+                SortType.expiryDate,
+                SortType.labelName,
+                SortType.creationDate,
+              ]}
+              sortDirection={sortDirection}
+              searchQuery={searchQuery}
+              selectedCount={selectedNames.length}
+              onModeChange={(m) => {
+                setMode(m)
+                setSelectedNames([])
+              }}
+              onSortDirectionChange={setSortDirection}
+              onSortTypeChange={setSortType}
+              onSearchChange={setSearchQuery}
+            >
+              {mode === 'select' && (
+                <Button
+                  size="extraSmall"
+                  shadowless
+                  onClick={handleExtend}
+                  data-testid="extend-names-button"
+                >
+                  <ButtonInner>
+                    <FastForwardSVG />
+                    {t('action.extend', { ns: 'common' })}
+                  </ButtonInner>
+                </Button>
+              )}
+            </NameTableHeader>
+            <div data-testid="names-list">
+              {/* eslint-disable no-nested-ternary */}
+              {loading ? (
                 <EmptyDetailContainer>
                   <Spinner color="accent" />
                 </EmptyDetailContainer>
-              </TabWrapper>
-            )}
-            {!loading &&
-              currentPage &&
-              pageLength > 0 &&
-              (viewType === 'list' ? (
-                <NameListView currentPage={currentPage} network={chainId} />
-              ) : (
-                <NameGridView currentPage={currentPage} network={chainId} />
-              ))}
-            {!loading && pageLength < 1 && (!currentPage || currentPage.length === 0) && (
-              <TabWrapper>
+              ) : pageLength === 0 ? (
                 <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
-              </TabWrapper>
-            )}
-            {pageLength > 0 && (
-              <PageButtonsContainer>
-                <PageButtons
-                  current={page}
-                  onChange={(value) => setPage(value)}
-                  total={pageLength}
-                  max={5}
-                  alwaysShowFirst
-                  alwaysShowLast
-                />
-              </PageButtonsContainer>
-            )}
+              ) : currentPage ? (
+                currentPage.map((name) => (
+                  <TaggedNameItem
+                    key={name.id}
+                    {...name}
+                    network={chainId}
+                    mode={mode}
+                    selected={selectedNames?.includes(name.name)}
+                    disabled={isNameDisabled(name)}
+                    onClick={handleClickName(name.name)}
+                  />
+                ))
+              ) : null}
+            </div>
+            <NameTableFooter
+              current={page}
+              onChange={(value) => setPage(value)}
+              total={pageLength}
+              pageSize={pageSize}
+              onPageSizeChange={setPageSize}
+            />
           </TabWrapperWithButtons>
         ),
       }}
