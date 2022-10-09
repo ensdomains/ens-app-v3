@@ -12,8 +12,8 @@ import BurnFusesContent, {
   baseFuseObj,
 } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
+import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
-import AvatarButton from '@app/components/@molecules/ProfileEditor/AvatarButton'
 import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
 import websiteOptions from '@app/components/@molecules/ProfileEditor/options/websiteOptions'

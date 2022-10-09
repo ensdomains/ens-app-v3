@@ -213,6 +213,12 @@ export const CropComponent = ({
       moving: false,
     }
     window.requestAnimationFrame(draw)
+
+    const canvas = canvasRef.current
+    if (canvas && canvas.width !== canvas.clientHeight) {
+      canvas.width = canvas.clientWidth
+      canvas.height = canvas.clientHeight
+    }
   }, [draw])
 
   const handleMoveStart = (e: MouseEvent | TouchEvent) => {
@@ -301,14 +307,6 @@ export const CropComponent = ({
     },
     [draw, setZoom],
   )
-
-  useEffect(() => {
-    const canvas = canvasRef.current
-    if (canvas && canvas.width !== canvas.clientHeight * resolutionMultiplier) {
-      canvas.width = canvas.clientWidth * resolutionMultiplier
-      canvas.height = canvas.clientHeight * resolutionMultiplier
-    }
-  }, [canvasRef])
 
   useEffect(() => {
     const image = imageRef.current
