@@ -113,17 +113,25 @@ export const NameSnippetMobile = ({
   network,
   expiryDate,
   canSend,
+  canEdit,
+  canExtend,
   isCached,
 }: {
   name: string
   network: number
   expiryDate?: Date | null
   canSend?: boolean
+  canEdit?: boolean
+  canExtend?: boolean
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
+
   const { showDataInput } = useTransactionFlow()
+  const handleExtend = () => {
+    showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
+  }
 
   return (
     <Container $isCached={isCached}>
@@ -135,7 +143,12 @@ export const NameSnippetMobile = ({
           {expiryDate ? (
             <div>
               <ExpiresHeading variant="label">{t('name.expires')}</ExpiresHeading>
-              <Typography variant="small" weight="bold">
+              <Typography
+                variant="small"
+                weight="bold"
+                data-testid="expiry-label"
+                data-timestamp={expiryDate.getTime()}
+              >
                 {formatExpiry(expiryDate)}
               </Typography>
             </div>
@@ -146,11 +159,12 @@ export const NameSnippetMobile = ({
         </ExpiryAndFavouriteRow>
         {expiryDate && (
           <OutlinedButton
-            disabled
             size="small"
             shadowless
             variant="transparent"
             data-testid="extend-button"
+            disabled={!canExtend}
+            onClick={handleExtend}
           >
             <InnerButton>
               {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}

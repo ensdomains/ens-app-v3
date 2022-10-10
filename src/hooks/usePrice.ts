@@ -1,17 +1,26 @@
-import { useEns } from '@app/utils/EnsProvider'
-import { yearsToSeconds } from '@app/utils/utils'
 import { useQuery } from 'wagmi'
 
-export const usePrice = (name: string) => {
+import { useEns } from '@app/utils/EnsProvider'
+import { yearsToSeconds } from '@app/utils/utils'
+
+export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
   const { ready, getPrice } = useEns()
+  const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames]
+  const type = legacy ? 'legacy' : 'new'
   const {
     data,
     status,
     isFetched,
+    isLoading: loading,
+    error,
     internal: { isFetchedAfterMount },
-  } = useQuery(['getPrice', name], async () => getPrice(name, yearsToSeconds(1), false), {
-    enabled: !!(ready && name),
-  })
+  } = useQuery(
+    ['usePrice', type, ...names],
+    async () => getPrice(nameOrNames, yearsToSeconds(1), legacy),
+    {
+      enabled: !!(ready && nameOrNames && nameOrNames.length > 0),
+    },
+  )
 
   const base = data?.base
   const premium = data?.premium
@@ -22,5 +31,7 @@ export const usePrice = (name: string) => {
     premium,
     hasPremium,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    loading,
+    error,
   }
 }

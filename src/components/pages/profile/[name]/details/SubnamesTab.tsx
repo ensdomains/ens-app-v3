@@ -1,44 +1,25 @@
 import { useRouter } from 'next/router'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
-import { ArrowRightSVG, Button, PageButtons, PlusSVG, Typography, mq } from '@ensdomains/thorin'
+import { Button, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
 
-import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
-import { SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import {
+  NameTableHeader,
+  SortDirection,
+  SortType,
+} from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { Card } from '@app/components/Card'
 import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
-import { useSubnamePagination } from '@app/hooks/useSubnamePagination'
+import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameInfiniteQuery'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-const RightArrow = styled.svg(
-  ({ theme }) => css`
-    stroke-width: ${theme.borderWidths['0.75']};
-    color: ${theme.colors.textTertiary};
-    display: block;
-    height: ${theme.space['6']};
-    width: ${theme.space['6']};
-  `,
-)
-
-const PageButtonsContainer = styled.div<{ $isFetching?: boolean }>(
-  ({ theme, $isFetching }) => css`
-    width: 100%;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
-    padding: ${theme.space['2']} ${theme.space['4']};
-
-    ${$isFetching &&
-    css`
-      pointer-events: none;
-      opacity: 0.5;
-    `}
-  `,
-)
+import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
+import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
+import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
 const TabWrapperWithButtons = styled.div(
   ({ theme }) => css`
@@ -51,25 +32,25 @@ const TabWrapperWithButtons = styled.div(
   `,
 )
 
-const StyledTabWrapper = styled(TabWrapper)<{ $isFetching?: boolean }>(
-  ({ $isFetching }) => css`
-    overflow: hidden;
-    transition: opacity 0.15s ease-in-out;
-    opacity: 1;
-    ${$isFetching &&
-    css`
-      pointer-events: none;
-      opacity: 0.5;
-    `}
-  `,
-)
+const StyledTabWrapper = styled(TabWrapper)(() => css``)
 
-const NoneFoundContainer = styled(TabWrapper)(
+const Footer = styled.div(
   ({ theme }) => css`
     display: flex;
     align-items: center;
     justify-content: center;
+    height: ${theme.space['8']};
+    border-top: 1px solid ${theme.colors.borderTertiary};
+  `,
+)
+
+const NoMoreResultsContainer = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['2']};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: ${theme.space['15']};
   `,
 )
 
@@ -103,6 +84,16 @@ const PlusPrefix = styled.svg(
   `,
 )
 
+const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
+  ({ theme, $showBorder }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: ${theme.space['15']};
+    ${$showBorder && `border-top: 1px solid ${theme.colors.borderTertiary};`}
+  `,
+)
+
 export const SubnamesTab = ({
   name,
   network,
@@ -116,19 +107,37 @@ export const SubnamesTab = ({
 }) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
-
+  const { address } = useAccount()
   const { showDataInput } = useTransactionFlow()
 
-  const page = router.query.page ? parseInt(router.query.page as string) : 1
-  const { subnames, max, isLoading, totalPages, isFetching } = useSubnamePagination(name, page)
+  const [sortType, setSortType] = useState<SubnameSortType | undefined>()
+  const [sortDirection, setSortDirection] = useState(SortDirection.desc)
+  const [searchInput, setSearchInput] = useState((router.query.search as string) || '')
 
-  const setPage = (newPage: number) => {
+  const searchQuery = (router.query.search as string) || ''
+  const [_searchQuery, setSearchQuery] = useState(searchQuery)
+  const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
+
+  useEffect(() => {
     const url = new URL(router.asPath, window.location.origin)
-    url.searchParams.set('page', newPage.toString())
-    router.push(url.toString(), undefined, {
-      shallow: true,
-    })
-  }
+    url.searchParams.set('search', _searchQuery)
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [_searchQuery])
+
+  const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
+    name,
+    sortType,
+    sortDirection,
+    searchQuery,
+  )
+
+  const [isIntersecting, setIsIntersecting] = useState(false)
+  useEffect(() => {
+    if (isIntersecting && hasNextPage && !isFetching) {
+      fetchNextPage()
+    }
+  }, [isIntersecting, fetchNextPage, hasNextPage, isFetching])
 
   const createSubname = () =>
     showDataInput(`make-subname-${name}`, 'CreateSubname', {
@@ -137,37 +146,43 @@ export const SubnamesTab = ({
     })
 
   let InnerContent: ReactNode
-
   if (isLoading) {
-    InnerContent = <SpinnerRow />
+    InnerContent = (
+      <SpinnerContainer>
+        <Spinner size="small" color="accent" />
+      </SpinnerContainer>
+    )
+  } else if (subnames.length === 0 && searchQuery === '') {
+    InnerContent = (
+      <NoMoreResultsContainer>{t('details.tabs.subnames.empty')}</NoMoreResultsContainer>
+    )
+  } else if (subnames.length === 0) {
+    InnerContent = (
+      <NoMoreResultsContainer>{t('details.tabs.subnames.noResults')}</NoMoreResultsContainer>
+    )
   } else if (subnames.length > 0) {
     InnerContent = (
-      <>
-        <StyledTabWrapper $isFetching={isFetching}>
+      <InfiniteScrollContainer onIntersectingChange={setIsIntersecting}>
+        <div>
           {subnames.map((subname) => (
-            <NameDetailItem key={subname.name} network={network} {...subname}>
-              <RightArrow as={ArrowRightSVG} />
-            </NameDetailItem>
+            <TaggedNameItem
+              key={subname.name}
+              name={subname.truncatedName || subname.name}
+              network={network}
+              mode="view"
+              isController={subname.owner?.id === address?.toLowerCase()}
+            />
           ))}
-        </StyledTabWrapper>
-        <PageButtonsContainer $isFetching={isFetching}>
-          <PageButtons
-            current={page}
-            onChange={(value) => setPage(value)}
-            total={totalPages || 1}
-            max={max}
-          />
-        </PageButtonsContainer>
-      </>
-    )
-  } else if (!canEdit) {
-    InnerContent = (
-      <NoneFoundContainer>
-        <Typography>{t('details.tabs.subnames.empty')}</Typography>
-      </NoneFoundContainer>
+        </div>
+        {isFetching && (
+          <SpinnerContainer $showBorder>
+            <Spinner size="small" color="accent" />
+          </SpinnerContainer>
+        )}
+      </InfiniteScrollContainer>
     )
   } else {
-    InnerContent = null
+    InnerContent = `${subnames.length}`
   }
 
   return (
@@ -188,7 +203,26 @@ export const SubnamesTab = ({
           </Button>
         </AddSubnamesCard>
       )}
-      {InnerContent}
+      <StyledTabWrapper>
+        <NameTableHeader
+          selectable={false}
+          sortType={sortType}
+          sortTypeOptionValues={[SortType.creationDate, SortType.labelName]}
+          sortDirection={sortDirection}
+          searchQuery={searchInput}
+          mode="view"
+          onSortTypeChange={(value: SortType) => {
+            if (['creationDate', 'labelName'].includes(value)) setSortType(value as SubnameSortType)
+          }}
+          onSortDirectionChange={setSortDirection}
+          onSearchChange={(s) => {
+            setSearchInput(s)
+            debouncedSetSearch(s)
+          }}
+        />
+        <div>{InnerContent}</div>
+        <Footer />
+      </StyledTabWrapper>
     </TabWrapperWithButtons>
   )
 }

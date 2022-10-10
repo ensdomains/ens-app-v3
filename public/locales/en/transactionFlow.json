@@ -77,7 +77,10 @@
           "addContentHash": "Add decentralized website",
           "placeholder": {
             "default": "Add url here",
-            "ipfs": "ipfs://"
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "arweave://...",
+            "swarm": "bzz://..."
           }
         },
         "other": {
@@ -124,10 +127,31 @@
       "customLabel": "Custom resolver",
       "customPlaceholder": "Enter custom resolver address"
     },
+    "extendNames": {
+      "title_one": "Extend Name",
+      "title_other": "Extend {{count}} Names",
+      "invoice": {
+        "extension": "{{count}} year extension",
+        "transaction": "Transaction fee",
+        "total": "Estimated total"
+      },
+      "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
+      "gasLimitError": "Insufficient funds"
+    }
+  },
+  "transaction": {
+    "extendNames": {
+      "actionValue": "Extend registration",
+      "costValue": "{{value}} + fees",
+      "warning": "Extending this name will not give you ownership of it"
+    },
     "transferProfile": {
       "title": "Transfer Profile",
       "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
       "message2": "Would you like to transfer your current profile?"
+    },
+    "deleteSubname": {
+      "warning": "Hello out there"
     }
   },
   "intro": {
@@ -137,4 +161,5 @@
       "warning": "Note that if you cancel this at any point your changes will not be saved."
     }
   }
+
 }

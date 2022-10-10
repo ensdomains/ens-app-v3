@@ -1,11 +1,13 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { NightSky } from '@app/assets/NightSky'
 import SparklesSVG from '@app/assets/Sparkles.svg'
 import { Card } from '@app/components/Card'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -89,27 +91,55 @@ const UpgradeButton = styled(Button)(
 export const WrapperCallToAction = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
 
+  const { address } = useAccount()
+  const { ownerData, profile, isLoading: isNameDetailsLoading } = useNameDetails(name)
+  const hasOwnerData = !!ownerData && !isNameDetailsLoading
+  const isOwner = ownerData?.owner === address
+  const resolverAddress = profile?.resolverAddress
+
   const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
   const resumable = getResumable(`wrapName-${name}`)
 
-  const handleUpgradeClick = () =>
-    resumable
-      ? resumeTransactionFlow(`wrapName-${name}`)
-      : createTransactionFlow(`wrapName-${name}`, {
-          transactions: [
-            makeTransactionItem('migrateProfile', {
-              name,
-            }),
-            makeTransactionItem('wrapName', {
-              name,
-            }),
-          ],
-          resumable: true,
-          intro: {
-            title: t('details.wrap.startTitle'),
-            content: makeIntroItem('WrapName', { name }),
-          },
-        })
+  const handleUpgradeClick = () => {
+    if (resumable) return resumeTransactionFlow(`wrapName-${name}`)
+    if (hasOwnerData && isOwner)
+      return createTransactionFlow(`wrapName-${name}`, {
+        transactions: [
+          makeTransactionItem('migrateProfile', {
+            name,
+          }),
+          makeTransactionItem('wrapName', {
+            name,
+          }),
+        ],
+        resumable: true,
+        intro: {
+          title: t('details.wrap.startTitle'),
+          content: makeIntroItem('WrapName', { name }),
+        },
+      })
+    if (hasOwnerData)
+      return createTransactionFlow(`wrapName-${name}`, {
+        transactions: [
+          makeTransactionItem('wrapName', {
+            name,
+          }),
+          ...(resolverAddress
+            ? [
+                makeTransactionItem('migrateProfile', {
+                  name,
+                  resolverAddress,
+                }),
+              ]
+            : []),
+        ],
+        resumable: true,
+        intro: {
+          title: t('details.wrap.startTitle'),
+          content: makeIntroItem('WrapName', { name }),
+        },
+      })
+  }
 
   return (
     <NightSky>

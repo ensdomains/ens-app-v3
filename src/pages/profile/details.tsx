@@ -130,6 +130,8 @@ export const Details = ({
           name={normalisedName}
           network={chainId}
           canSend={selfAbilities.canSend}
+          canEdit={selfAbilities.canEdit}
+          canExtend={selfAbilities.canExtend}
         />
       )}
       <OwnerButtons $isCached={isCached}>
@@ -176,8 +178,11 @@ export const Details = ({
       </OwnerButtons>
       {breakpoints.md && (
         <DetailSnippet
+          name={normalisedName}
           isCached={isCached}
           canSend={selfAbilities.canSend}
+          canEdit={selfAbilities.canEdit}
+          canExtend={selfAbilities.canExtend}
           expiryDate={expiryDate}
         />
       )}
