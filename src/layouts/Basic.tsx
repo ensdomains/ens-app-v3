@@ -54,12 +54,12 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter()
 
   useEffect(() => {
-    if (currentChain && currentChain.id !== 5) {
-      router.push('/unsupportedNetwork')
+    if (!(currentChain?.id === 5 || currentChain?.id === 1337)) {
       switchNetwork?.(5)
+      router.push('/unsupportedNetwork')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChain, router.pathname])
+  }, [currentChain?.id, router.pathname])
 
   return (
     <Container className="min-safe">
