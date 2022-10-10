@@ -78,6 +78,7 @@
             "title": "Create Subname",
             "error": {
               "invalidCharacters": "Contains invalid characters",
+              "mustUseLowercase": "Must use lowercase letters",
               "alreadyExists": "Name already exists"
             }
           }
