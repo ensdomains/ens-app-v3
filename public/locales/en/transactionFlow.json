@@ -137,6 +137,11 @@
       },
       "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
       "gasLimitError": "Insufficient funds"
+    },
+    "transferProfile": {
+      "title": "Transfer Profile",
+      "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
+      "message2": "Would you like to transfer your current profile?"
     }
   },
   "transaction": {
