@@ -1,7 +1,0 @@
-coverage
-node_modules
-.nyc_output
-docs
-dist
-idna-map.js
-index.d.ts

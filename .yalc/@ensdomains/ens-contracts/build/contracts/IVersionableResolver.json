@@ -1,4 +1,0 @@
-[
-  "event VersionChanged(bytes32 indexed,uint64)",
-  "function recordVersions(bytes32) view returns (uint64)"
-]
