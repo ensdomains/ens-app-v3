@@ -73,7 +73,6 @@ const Title = styled(Typography)(
 )
 
 const Container = styled.div`
-  overflow: initial !important;
   box-sizing: border-box;
   margin: 0 auto;
   grid-column: 1/-1;

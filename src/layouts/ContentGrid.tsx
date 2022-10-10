@@ -12,9 +12,6 @@ export const ContentGrid = styled.div<{ $spacing?: string }>(
     gap: ${theme.space['5']};
     align-self: center;
 
-    & > div {
-      overflow: hidden;
-    }
     ${mq.md.min(css`
       grid-template-columns: ${$spacing};
     `)}
