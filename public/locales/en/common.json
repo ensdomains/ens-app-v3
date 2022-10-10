@@ -2,6 +2,7 @@
   "title": "Your web3 username",
   "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
   "loading": "Loading",
+  "unsupportedNetwork": "Unsupported network",
   "action": {
     "cancel": "Cancel",
     "change": "Change",
@@ -36,7 +37,8 @@
     "remindMe": "Remind Me",
     "begin": "Begin",
     "finish": "Finish",
-    "skip": "Skip"
+    "skip": "Skip",
+    "changeNetwork": "Change Network"
   },
   "unit": {
     "years_one": "{{count}} year",

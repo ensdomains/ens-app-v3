@@ -1,4 +1,7 @@
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import styled, { css } from 'styled-components'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { mq } from '@ensdomains/thorin'
 
@@ -46,6 +49,18 @@ const BottomPlaceholder = styled.div(
 )
 
 export const Basic = ({ children }: { children: React.ReactNode }) => {
+  const { chain: currentChain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (currentChain && currentChain.id !== 5) {
+      router.push('/unsupportedNetwork')
+      switchNetwork?.(5)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentChain, router.pathname])
+
   return (
     <Container className="min-safe">
       <Navigation />
