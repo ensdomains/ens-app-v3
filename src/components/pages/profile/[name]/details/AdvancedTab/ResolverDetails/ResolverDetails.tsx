@@ -7,6 +7,7 @@ import { Typography, mq } from '@ensdomains/thorin'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { RecordItem } from '@app/components/RecordItem'
 import { TrafficLight } from '@app/components/TrafficLight'
+import { useChainId } from '@app/hooks/useChainId'
 import { useProfile } from '@app/hooks/useProfile'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
@@ -68,8 +69,9 @@ const ResolverDetails = () => {
 
   const { profile = { resolverAddress: '' }, isCachedData } = useProfile(name as string)
   const { resolverAddress } = profile
+  const chainId = useChainId()
 
-  const resolverAddressIndex = RESOLVER_ADDRESSES.indexOf(resolverAddress ?? '')
+  const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress ?? '')
 
   let versionIndicatorText = ''
   if (resolverAddressIndex === -1) {

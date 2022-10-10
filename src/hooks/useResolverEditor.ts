@@ -1,7 +1,9 @@
-import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
+
+import { useChainId } from '@app/hooks/useChainId'
+import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 type FormData = {
   resolverChoice: 'latest' | 'custom'
@@ -14,7 +16,8 @@ export type Props = {
 }
 
 const useResolverEditor = ({ callback, resolverAddress }: Props) => {
-  const lastestResolverAddress = RESOLVER_ADDRESSES[0]
+  const chainId = useChainId()
+  const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
   const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
   const {
