@@ -47,10 +47,8 @@ export default function Page() {
     <ProfileContent
       {...{
         nameDetails,
-        primary,
         isSelf,
         isLoading,
-        _name,
         name,
       }}
     />
