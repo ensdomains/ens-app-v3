@@ -1,15 +1,17 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
-import TripleDotSVG from '@app/assets/TripleDot.svg'
+import TripleDot from '@app/assets/TripleDot.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButton } from '@app/components/@atoms/DisabledButton'
 import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
+import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { formatExpiry } from '@app/utils/utils'
 
@@ -27,6 +29,20 @@ const Container = styled(Card)(
   cacheableComponentStyles,
 )
 
+const DropdownWrapper = styled.div(
+  ({ theme }) => css`
+    /* stylelint-disable */
+    & > div > div {
+      min-width: ${theme.space['48']};
+
+      button {
+        height: ${theme.space['10']};
+      }
+    }
+    /* stylelint-enable */
+  `,
+)
+
 const ExpiryContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -37,6 +53,15 @@ const ExpiryContainer = styled.div(
     & > div:first-of-type {
       color: ${theme.colors.textTertiary};
     }
+  `,
+)
+
+const TripleDotIcon = styled.div(
+  ({ theme }) => css`
+    display: block;
+    box-sizing: border-box;
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
   `,
 )
 
@@ -106,6 +131,9 @@ export const DetailSnippet = ({
     showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
   }
 
+  const { profileActions: actions } = useProfileActions()
+  const hasActions = actions && actions.length > 0
+
   if (!expiryDate && !canSend) return null
   return (
     <Container $isCached={isCached}>
@@ -154,11 +182,32 @@ export const DetailSnippet = ({
             </InnerButton>
           </FullWidthOutlinedButton>
         )}
-        <OutlinedButton disabled size="extraSmall" shadowless variant="transparent">
-          <InnerButton>
-            <ButtonIcon as={TripleDotSVG} />
-          </InnerButton>
-        </OutlinedButton>
+        {hasActions ? (
+          <DropdownWrapper>
+            <Dropdown
+              items={actions.map((action) => ({
+                ...action,
+                color: action.color || 'text',
+              }))}
+              menuLabelAlign="flex-end"
+              align="right"
+              shortThrow
+            >
+              <Button
+                data-testid="profile-actions"
+                shadowless
+                variant="transparent"
+                size="extraSmall"
+              >
+                <TripleDotIcon as={TripleDot} />
+              </Button>
+            </Dropdown>
+          </DropdownWrapper>
+        ) : (
+          <DisabledButton shadowless variant="transparent" size="extraSmall">
+            <TripleDotIcon as={TripleDot} />
+          </DisabledButton>
+        )}
       </Row>
     </Container>
   )

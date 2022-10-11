@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Colors } from '@ensdomains/thorin'
+import { Button } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
@@ -14,17 +14,13 @@ import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-import { useSubnameAbilities } from '../../../../hooks/useSubnameAbilities'
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
 
 const DetailsWrapper = styled.div(
@@ -56,22 +52,18 @@ const SelfButtons = styled(CacheableComponent)(
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
-  primary: ReturnType<typeof usePrimary>
   isSelf: boolean
   isLoading: boolean
-  _name: string
   name: string
 }
 
-const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }: Props) => {
+const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const chainId = useChainId()
   const { address } = useAccount()
   const transactions = useRecentTransactions()
-
-  const { name: ensName } = primary
 
   const {
     error,
@@ -86,9 +78,6 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, ownerData)
-  const subNameAbilities = useSubnameAbilities(name, ownerData)
-
-  const { createTransactionFlow } = useTransactionFlow()
 
   useProtectedRoute(
     '/',
@@ -133,79 +122,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
   }
 
-  const profileActions = useMemo(() => {
-    const actions: { onClick: () => void; color?: Colors; label: string; disabled?: boolean }[] = []
-    if (!isSelf && (selfAbilities.canEdit || profile?.address === address) && ensName !== _name) {
-      const setAsPrimaryTransactions: GenericTransaction[] = [
-        makeTransactionItem('setPrimaryName', {
-          name,
-          address: address!,
-        }),
-      ]
-      if (profile?.address !== address) {
-        setAsPrimaryTransactions.unshift(
-          makeTransactionItem('updateEthAddress', {
-            address: address!,
-            name,
-          }),
-        )
-      }
-      actions.push({
-        label: t('tabs.profile.actions.setAsPrimaryName.label'),
-        onClick: () =>
-          createTransactionFlow(`setPrimaryName-${name}-${address}`, {
-            transactions: setAsPrimaryTransactions,
-            resumable: true,
-            intro:
-              setAsPrimaryTransactions.length > 1
-                ? {
-                    title: t('tabs.profile.actions.setAsPrimaryName.title'),
-                    content: makeIntroItem('ChangePrimaryName', undefined),
-                  }
-                : undefined,
-          }),
-      })
-    }
-
-    if (subNameAbilities.canDelete && subNameAbilities.canDeleteContract) {
-      actions.push({
-        label: t('tabs.profile.actions.deleteSubname.label'),
-        onClick: () =>
-          createTransactionFlow(`deleteSubname-${name}`, {
-            transactions: [
-              makeTransactionItem('deleteSubname', {
-                name,
-                contract: subNameAbilities.canDeleteContract!,
-              }),
-            ],
-          }),
-        color: 'red',
-      })
-    }
-
-    if (subNameAbilities.canDeleteError) {
-      actions.push({
-        label: t('tabs.profile.actions.deleteSubname.label'),
-        onClick: () => {},
-        disabled: true,
-        color: 'red',
-      })
-    }
-
-    if (actions.length === 0) return undefined
-    return actions
-  }, [
-    isSelf,
-    selfAbilities.canEdit,
-    profile?.address,
-    subNameAbilities,
-    address,
-    ensName,
-    _name,
-    name,
-    t,
-    createTransactionFlow,
-  ])
+  const { profileActions } = useProfileActions()
 
   useEffect(() => {
     if (shouldShowSuccessPage(transactions)) {

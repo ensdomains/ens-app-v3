@@ -10,6 +10,7 @@ import { Card } from '@app/components//Card'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
+import { useAvatar } from '@app/hooks/useAvatar'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry, isDNSName } from '@app/utils/utils'
@@ -127,6 +128,7 @@ export const NameSnippetMobile = ({
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
+  const { avatar } = useAvatar(name, network)
 
   const { showDataInput } = useTransactionFlow()
   const handleExtend = () => {
@@ -137,9 +139,11 @@ export const NameSnippetMobile = ({
 
   return (
     <Container $isCached={isCached}>
-      <ImageWrapper>
-        <NFTWithPlaceholder name={name} network={network} />
-      </ImageWrapper>
+      {avatar && (
+        <ImageWrapper>
+          <NFTWithPlaceholder name={name} network={network} />
+        </ImageWrapper>
+      )}
       <RightColumn>
         <ExpiryAndFavouriteRow>
           {expiryDate ? (
