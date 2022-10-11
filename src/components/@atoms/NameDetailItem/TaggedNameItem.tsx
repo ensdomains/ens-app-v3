@@ -27,6 +27,8 @@ export const TaggedNameItem = ({
   name,
   isController,
   isRegistrant,
+  isWrappedOwner,
+  fuses,
   expiryDate,
   network,
   truncatedName,
@@ -45,6 +47,17 @@ export const TaggedNameItem = ({
 
   const isNativeEthName = /\.eth$/.test(name) && name.split('.').length === 2
 
+  const tags: [disabled: boolean, translation: string][] = []
+
+  if (!fuses) {
+    tags.push([!!isController, 'name.manager'])
+    if (isNativeEthName) {
+      tags.push([!!isRegistrant, 'name.owner'])
+    }
+  } else {
+    tags.push([!!isWrappedOwner, fuses.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager'])
+  }
+
   return (
     <NameDetailItem
       key={name}
@@ -58,10 +71,11 @@ export const TaggedNameItem = ({
       onClick={onClick}
     >
       <OtherItemsContainer>
-        <Tag tone={isController && !disabled ? 'accent' : 'secondary'}>{t('name.manager')}</Tag>
-        {isNativeEthName && (
-          <Tag tone={isRegistrant && !disabled ? 'accent' : 'secondary'}>{t('name.owner')}</Tag>
-        )}
+        {tags.map(([tagDisabled, translation]) => (
+          <Tag key={translation} tone={!(tagDisabled && disabled) ? 'accent' : 'secondary'}>
+            {t(translation)}
+          </Tag>
+        ))}
       </OtherItemsContainer>
     </NameDetailItem>
   )

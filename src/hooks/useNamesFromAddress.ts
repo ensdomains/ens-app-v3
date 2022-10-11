@@ -10,6 +10,7 @@ import { useBlockTimestamp } from './useBlockTimestamp'
 export type ReturnedName = Name & {
   isController?: boolean
   isRegistrant?: boolean
+  isWrappedOwner?: boolean
 }
 
 const chunkArr = (arr: any[], chunkSize: number) => {
@@ -63,12 +64,14 @@ export const useNamesFromAddress = ({
       const existingEntry = map[curr.name] || {}
       const isController = curr.type === 'domain'
       const isRegistrant = curr.type === 'registration'
+      const isWrappedOwner = curr.type === 'wrappedDomain'
       const newMap = map
       newMap[curr.name] = {
         ...existingEntry,
         ...curr,
         isController: existingEntry.isController || isController,
         isRegistrant: existingEntry.isRegistrant || isRegistrant,
+        isWrappedOwner: existingEntry.isWrappedOwner || isWrappedOwner,
       }
       const newItem = newMap[curr.name]
       if (newItem.expiryDate) newItem.expiryDate = new Date(newItem.expiryDate)
@@ -90,6 +93,7 @@ export const useNamesFromAddress = ({
     let searchFilter: (n: ReturnedName) => boolean = () => true
     if (filter === 'registration') secondaryFilter = (n: ReturnedName) => !!n.isRegistrant
     if (filter === 'domain') secondaryFilter = (n: ReturnedName) => !!n.isController
+    if (filter === 'wrappedDomain') secondaryFilter = (n: ReturnedName) => !!n.isWrappedOwner
     if (search)
       searchFilter = (n: ReturnedName) => n.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
     return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n) && searchFilter(n)
