@@ -223,8 +223,11 @@ export default function Page() {
   const tab = (router.query.tab as Tab) || 'records'
   const setTab = (newTab: Tab) => {
     const url = new URL(router.asPath, window.location.origin)
+    for (const [key, value] of Object.entries(router.query)) {
+      url.searchParams.set(key, value as string)
+    }
     url.searchParams.set('tab', newTab)
-    router.push(url.toString(), undefined, {
+    router.replace(url.toString(), undefined, {
       shallow: true,
     })
   }
