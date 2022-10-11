@@ -23,8 +23,10 @@ const customJestConfig = {
     '^__tests__/(.*)$': '<rootDir>/__tests__/$1',
     '^@app/(.*)$': '<rootDir>/src/$1',
     '^@rainbow-me/rainbowkit$': '<rootDir>/__mocks__/rainbowkitMock.js',
+    '@ensdomains/ensjs/(.*)$': '@ensdomains/ensjs/dist/cjs/$1',
   },
-  setupFilesAfterEnv: ['<rootDir>/jest.setup.ts'],
+  setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'],
+  setupFiles: ['<rootDir>/jest/setEnvVars.js'],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.yarn/',

@@ -1,9 +1,12 @@
+import Link from 'next/link'
+import styled, { css } from 'styled-components'
+
+import { Colors, mq } from '@ensdomains/thorin'
+
 import ClockSVG from '@app/assets/Clock.svg'
 import { ReturnedName } from '@app/hooks/useNamesFromAddress'
 import { secondsToDays } from '@app/utils/utils'
-import { Colors, mq } from '@ensdomains/thorin'
-import Link from 'next/link'
-import styled, { css } from 'styled-components'
+
 import { NFTWithPlaceholder } from '../NFTWithPlaceholder'
 
 const NameGrid = styled.div(
@@ -11,10 +14,7 @@ const NameGrid = styled.div(
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(${theme.space['32']}, 1fr));
     ${mq.md.min(css`
-      grid-template-columns: repeat(
-        auto-fit,
-        minmax(${theme.space['64']}, 1fr)
-      );
+      grid-template-columns: repeat(auto-fit, minmax(${theme.space['64']}, 1fr));
     `)}
     gap: ${theme.space['8']};
   `,
@@ -72,9 +72,7 @@ const ExpiryText = styled.div<{ $primary: boolean }>(
 
 export const Expiry = ({ expiry }: { expiry: Date }) => {
   const currentDate = new Date()
-  const difference = secondsToDays(
-    (expiry.getTime() - currentDate.getTime()) / 1000,
-  )
+  const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
   const months = Math.round(difference / 30)
   const years = Math.round(difference / 365)
   let text = `${years}y`
@@ -104,25 +102,13 @@ export const Expiry = ({ expiry }: { expiry: Date }) => {
   )
 }
 
-const GridItem = ({
-  name,
-  network,
-  expiry,
-}: {
-  name: string
-  network: number
-  expiry?: Date
-}) => {
+const GridItem = ({ name, network, expiry }: { name: string; network: number; expiry?: Date }) => {
   return (
     <Link href={`/profile/${name}`} passHref>
       <a>
         <NameGridItem>
           {expiry && <Expiry expiry={expiry} />}
-          <NFTWithPlaceholder
-            name={name}
-            network={network}
-            style={{ width: 270, height: 270 }}
-          />
+          <NFTWithPlaceholder name={name} network={network} style={{ width: 270, height: 270 }} />
         </NameGridItem>
       </a>
     </Link>
@@ -139,12 +125,7 @@ export const NameGridView = ({
   return (
     <NameGrid>
       {currentPage.map((item) => (
-        <GridItem
-          key={item.name}
-          name={item.name}
-          expiry={item.expiryDate}
-          network={network}
-        />
+        <GridItem key={item.name} name={item.name} expiry={item.expiryDate} network={network} />
       ))}
     </NameGrid>
   )

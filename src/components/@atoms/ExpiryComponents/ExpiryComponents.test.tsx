@@ -1,5 +1,10 @@
 import { render, screen } from '@app/test-utils'
+
 import { ExpiryClock, ShortExpiry } from './ExpiryComponents'
+
+jest.mock('@app/hooks/useBlockTimestamp', () => ({
+  useBlockTimestamp: () => ({ data: new Date().getTime() }),
+}))
 
 const twoYearExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24 * 366 * 2)
 const yearExpiry = new Date(Date.now() + 1000 * 60 * 60 * 24 * 365)

@@ -1,12 +1,25 @@
-import { render, screen } from '@app/test-utils'
+import { mockFunction, render, screen } from '@app/test-utils'
+
+import { useRouter } from 'next/router'
+
 import { DetailSnippet } from './DetailSnippet'
 
+jest.mock('next/router')
+const mockUseRouter = mockFunction(useRouter)
+
 describe('DetailSnippet', () => {
+  const mockRouterObject = {
+    query: {
+      name: 'nick.eth',
+    },
+  }
+
   it('should show the expiry date if given', () => {
     const mockData = {
       expiryDate: new Date(1654782805000),
       canSend: false,
     }
+    mockUseRouter.mockReturnValue(mockRouterObject)
     render(<DetailSnippet {...mockData} />)
     expect(screen.getByText('June 9, 2022')).toBeVisible()
   })
@@ -14,6 +27,7 @@ describe('DetailSnippet', () => {
     const mockData = {
       canSend: false,
     }
+    mockUseRouter.mockReturnValue(mockRouterObject)
     render(<DetailSnippet {...mockData} />)
     expect(screen.queryByText('June 9, 2022')).not.toBeInTheDocument()
   })

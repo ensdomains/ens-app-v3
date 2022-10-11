@@ -1,3 +1,9 @@
+import { ReactNode, useMemo, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Button, Dialog, DownIndicatorSVG, Dropdown, Typography } from '@ensdomains/thorin'
+
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { OutlinedButton } from '@app/components/OutlinedButton'
@@ -7,23 +13,13 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfile } from '@app/hooks/useProfile'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { shortenAddress } from '@app/utils/utils'
-import {
-  Button,
-  Dialog,
-  DownIndicatorSVG,
-  Dropdown,
-  Typography,
-} from '@ensdomains/thorin'
-import { ReactNode, useMemo, useState } from 'react'
-import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
 
 const ButtonWrapper = styled.div(
   ({ theme }) => css`
     width: 100%;
     & > button {
       border: 1px solid rgba(0, 0, 0, 0.06);
-      box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii.extraLarge};
       & > div {
@@ -173,8 +169,7 @@ const OwnerButtonWithPopup = ({
   const [open, setOpen] = useState(false)
   const { profile, loading } = useProfile(name!, !name)
 
-  const getTextRecord = (key: string) =>
-    profile?.records?.texts?.find((x) => x.key === key)
+  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
   return (
     <>
@@ -190,7 +185,9 @@ const OwnerButtonWithPopup = ({
           </AvatarWrapper>
           <TextContainer>
             <Label ellipsis>{label}</Label>
-            <Name ellipsis>{name || shortenAddress(address)}</Name>
+            <Name ellipsis data-testid={`owner-button-name-${label}`}>
+              {name || shortenAddress(address)}
+            </Name>
           </TextContainer>
         </Content>
       </OwnerButtonWrapper>
@@ -208,9 +205,7 @@ const OwnerButtonWithPopup = ({
                 name={name}
                 network={network}
                 button="viewProfile"
-                description={getTextRecord('description')?.value}
-                recordName={getTextRecord('name')?.value}
-                url={getTextRecord('url')?.value}
+                getTextRecord={getTextRecord}
               />
             </ProfileSnippetWrapper>
           )}
@@ -224,11 +219,7 @@ const OwnerButtonWithPopup = ({
               <Typography variant="large" weight="bold">
                 {shortenAddress(address, 14, 8, 6)}
               </Typography>
-              <IconCopyAnimated
-                color="textTertiary"
-                copied={copied}
-                size="3.5"
-              />
+              <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
             </AddressCopyContainer>
           </AddressCopyButton>
           {canTransfer && (
@@ -349,7 +340,9 @@ const OwnerButtonWithDropdown = ({
           <Label ellipsis>{label}</Label>
           <div style={{ flexGrow: 1 }} />
           <OwnerRow data-testid={`${label.toLowerCase()}-data`}>
-            <Name ellipsis>{name || shortenAddress(address)}</Name>
+            <Name ellipsis data-testid={`owner-button-name-${label}`}>
+              {name || shortenAddress(address)}
+            </Name>
             <AvatarWrapper>
               <AvatarWithZorb
                 label={name || address}
@@ -382,13 +375,8 @@ export const OwnerButton = ({
   description: string
 }) => {
   const { name } = usePrimary(address)
-
   if (type === 'dialog') {
-    return (
-      <OwnerButtonWithPopup
-        {...{ address, network, label, name, description, canTransfer }}
-      />
-    )
+    return <OwnerButtonWithPopup {...{ address, network, label, name, description, canTransfer }} />
   }
 
   return (

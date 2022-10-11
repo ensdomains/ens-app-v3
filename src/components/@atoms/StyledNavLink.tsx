@@ -2,6 +2,7 @@ import Link, { LinkProps } from 'next/link'
 import { useRouter } from 'next/router'
 import { PropsWithChildren } from 'react'
 import styled, { css } from 'styled-components'
+
 import { ConditionalWrapper } from '../ConditionalWrapper'
 
 const StyledAnchor = styled.a<{ $isActive: boolean; disabled?: boolean }>(
@@ -47,10 +48,7 @@ export const StyledNavLink = ({
         </Link>
       )}
     >
-      <StyledAnchor
-        disabled={disabled}
-        $isActive={router.asPath === props.href}
-      >
+      <StyledAnchor disabled={disabled} $isActive={router.asPath === props.href}>
         {children}
       </StyledAnchor>
     </ConditionalWrapper>

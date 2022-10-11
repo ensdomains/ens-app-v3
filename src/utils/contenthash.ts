@@ -1,4 +1,4 @@
-import { DecodedContentHash } from '@ensdomains/ensjs/dist/cjs/utils/contentHash'
+import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
 
 export const getContentHashLink = (
   name: string,
@@ -9,9 +9,7 @@ export const getContentHashLink = (
   const hash = decodedContentHash.decoded
 
   const useEthLink =
-    name.endsWith('.eth') &&
-    network === 1 &&
-    (protocol === 'ipfs' || protocol === 'ipns')
+    name.endsWith('.eth') && network === 1 && (protocol === 'ipfs' || protocol === 'ipns')
   if (useEthLink) {
     return `https://${name}.link`
   }
@@ -35,4 +33,13 @@ export const getContentHashLink = (
     return `https://arweave.net/${hash}`
   }
   return null
+}
+
+export const contentHashToString = (
+  contentHash: string | DecodedContentHash | undefined | null,
+): string => {
+  if (typeof contentHash === 'string') return contentHash
+  if (typeof contentHash === 'object' && contentHash?.decoded && contentHash?.protocolType)
+    return `${contentHash.protocolType}://${contentHash.decoded}`
+  return ''
 }

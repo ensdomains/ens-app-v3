@@ -2,12 +2,52 @@
   "title": "Your web3 username",
   "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
   "loading": "Loading",
+  "unsupportedNetwork": "Unsupported network",
   "action": {
     "cancel": "Cancel",
+    "change": "Change",
+    "upload": "Upload",
+    "close": "Close",
     "save": "Save",
     "edit": "Edit",
     "view": "View",
-    "clear": "Clear"
+    "clear": "Clear",
+    "update": "Update",
+    "learnMore": "Learn more",
+    "send": "Send",
+    "next": "Next",
+    "add": "Add",
+    "set": "Set",
+    "search": "Search",
+    "back": "Back",
+    "continue": "Continue",
+    "confirm": "Confirm",
+    "remove": "Remove",
+    "sign": "Sign",
+    "reset": "Reset",
+    "transfer": "Transfer",
+    "tryAgain": "Try Again",
+    "done": "Done",
+    "burnSelected": "Burn Selected",
+    "extend": "Extend",
+    "delete": "Delete",
+    "sort": "Sort",
+    "check": "Check",
+    "claim": "Claim",
+    "remindMe": "Remind Me",
+    "begin": "Begin",
+    "finish": "Finish",
+    "skip": "Skip",
+    "changeNetwork": "Change Network"
+  },
+  "unit": {
+    "years_one": "{{count}} year",
+    "years_other": "{{count}} years",
+    "yrs_one": "{{count}} yr",
+    "yrs_other": "{{count}} yrs",
+    "gas": "{{value}} gas",
+    "selected": "{{count}} selected",
+    "perPage": "{{count}} per page"
   },
   "navigation": {
     "home": "Home",
@@ -37,7 +77,9 @@
     "noExpiry": "No expiry",
     "registrant": "Registrant",
     "controller": "Controller",
+    "dnsOwner": "DNS Owner",
     "owner": "Owner",
+    "manager": "Manager",
     "all": "All Names",
     "expiresInYears_one": "Expires in {{count}} year",
     "expiresInYears_other": "Expires in {{count}} years",
@@ -47,7 +89,8 @@
     "expiresInDays_other": "Expires in {{count}} days",
     "extend": "Extend",
     "send": "Send",
-    "transfer": "Transfer"
+    "transfer": "Transfer",
+    "transferName": "Transfer Name"
   },
   "address": {
     "label": "Address",
@@ -56,7 +99,7 @@
   },
   "records": {
     "label": "Records"
-  },  
+  },
   "sortTypes": {
     "expiryDate": "Expiry Date",
     "labelName": "Name",
@@ -69,8 +112,52 @@
     "description": {
       "setName": "Set Name",
       "setRecords": "Set Records",
-      "test": "Test Transaction"
+      "test": "Test Transaction",
+      "addSuccess": "Add Success",
+      "sendName": "Send Name",
+      "migrateProfile": "Migrate Profile",
+      "migrateProfileWithSync": "Migrate Profile",
+      "wrapName": "Wrap Name",
+      "updateResolver": "Update Resolver",
+      "updateProfile": "Update Profile",
+      "setPrimaryName": "Set primary name",
+      "updateEthAddress": "Update ETH address",
+      "testSendName": "Send Name",
+      "burnFuses": "Burn permissions",
+      "createSubname": "Create Subname",
+      "deleteSubname": "Delete Subname",
+      "extendNames": "Extend Names",
+      "importDNSSECName": "import DNSSEC Name",
+      "commitName": "Start countdown",
+      "registerName": "Register Name"
     },
+    "info": {
+      "sendName": "Set the controller and registrant of the name",
+      "migrateProfile": "Set existing records on new resolver",
+      "migrateProfileWithSync": "Set existing records on new resolver",
+      "wrapName": "Wrap name and set new resolver",
+      "updateResolver": "Change contract used to store records",
+      "updateProfile": "Update records on existing resolver",
+      "setPrimaryName": "Set the primary name for your address",
+      "updateEthAddress": "Update ETH address to this address",
+      "testSendName": "Set the controller and registrant of the name",
+      "createSubname": "Create a new subname on the name",
+      "burnFuses": "Burn the chosen permissions until name expiry",
+      "commitName": "Start countdown to register name"
+    },
+    "itemLabel": {
+      "name": "Name",
+      "address": "Address",
+      "action": "Action",
+      "info": "Info",
+      "to": "To",
+      "currentResolver": "Current Resolver",
+      "newResolver": "New Resolver",
+      "subname": "Subname",
+      "duration": "Duration",
+      "cost": "Cost"
+    },
+    "itemValue": {},
     "status": {
       "pending": {
         "regular": "Pending"
@@ -78,12 +165,49 @@
       "confirmed": {
         "regular": "Confirmed",
         "notifyTitle": "Transaction Successful",
-        "notifyMessage": "Your \"%s\" transaction was successful"
+        "notifyMessage": "Your \"{{action}}\" transaction was successful"
       },
       "failed": {
         "regular": "Failed",
         "notifyTitle": "Transaction Failure",
-        "notifyMessage": "Your \"%s\" transaction failed and was reverted"
+        "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
+      }
+    },
+    "dialog": {
+      "intro": {
+        "trailingButton": "Start",
+        "trailingButtonResume": "Resume",
+        "step": "Step {{step}}"
+      },
+      "confirm": {
+        "title": "Confirm Details",
+        "message": "Double check these details before confirming in your wallet.",
+        "waitingForWallet": "Waiting for Wallet",
+        "openWallet": "Open Wallet"
+      },
+      "sent": {
+        "title": "Transaction Sent",
+        "message": "Your transaction is now in progress, you can close this and come back later.",
+        "progress": {
+          "title": "Sent",
+          "message": "Taking longer than expected"
+        }
+      },
+      "complete": {
+        "title": "Transaction Complete",
+        "message": "Your transaction is now complete!",
+        "progress": {
+          "title": "Done"
+        }
+      },
+      "failed": {
+        "title": "Transaction Failed",
+        "progress": {
+          "title": "Failed"
+        }
+      },
+      "error": {
+        "gasLimit": "The gas limit on your transaction wasn't high enough, please try again."
       }
     },
     "viewEtherscan": "View on Etherscan",
@@ -108,5 +232,10 @@
       "short": "Too Short",
       "default": "Invalid"
     }
+  },
+  "selectableInput": {
+    "add": "Add",
+    "placeholder": "Select an option",
+    "empty": "No options found"
   }
 }

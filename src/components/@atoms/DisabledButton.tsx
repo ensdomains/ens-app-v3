@@ -1,5 +1,6 @@
-import { Button } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+
+import { Button } from '@ensdomains/thorin'
 
 export const DisabledButton = styled(Button)(
   () => css`

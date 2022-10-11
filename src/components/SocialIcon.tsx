@@ -1,7 +1,9 @@
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Space } from '@ensdomains/thorin'
 import { ElementType } from 'react'
 import styled, { css } from 'styled-components'
+
+import { Space } from '@ensdomains/thorin'
+
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const SocialIconWrapper = styled.a<{ $boxSize: Space }>(
   ({ theme, $boxSize }) => css`
@@ -21,6 +23,7 @@ const StyledIcon = styled.div<{ $iconColor?: string }>(
     position: absolute;
     transition: 0.15s all ease-in-out;
     fill: ${theme.colors.backgroundHide};
+
     ${SocialIconWrapper}:hover && {
       fill: ${$iconColor};
     }
@@ -33,6 +36,7 @@ const StyledColoredIcon = styled.div(
     position: absolute;
     transition: 0.15s all ease-in-out;
     opacity: 0;
+
     ${SocialIconWrapper}:hover && {
       opacity: 1;
     }

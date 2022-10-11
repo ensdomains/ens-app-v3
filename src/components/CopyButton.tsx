@@ -1,6 +1,9 @@
-import { useCopied } from '@app/hooks/useCopied'
-import { Button } from '@ensdomains/thorin'
 import styled, { css } from 'styled-components'
+
+import { Button } from '@ensdomains/thorin'
+
+import { useCopied } from '@app/hooks/useCopied'
+
 import { IconCopyAnimated } from './IconCopyAnimated'
 
 const Container = styled.div(
@@ -16,12 +19,7 @@ export const CopyButton = ({ value }: { value: string }) => {
 
   return (
     <Container>
-      <Button
-        onClick={() => copy(value)}
-        size="extraSmall"
-        variant="transparent"
-        shadowless
-      >
+      <Button onClick={() => copy(value)} size="extraSmall" variant="transparent" shadowless>
         <IconCopyAnimated copied={copied} size="3.5" />
       </Button>
     </Container>

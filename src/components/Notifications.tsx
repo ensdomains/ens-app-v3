@@ -1,10 +1,17 @@
+import { useQueryClient } from '@tanstack/react-query'
+import { useCallback, useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Button, Toast } from '@ensdomains/thorin'
+
+import useCallbackOnTransaction, {
+  UpdateCallback,
+} from '@app/hooks/transactions/useCallbackOnTransaction'
 import { useChainName } from '@app/hooks/useChainName'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
-import { Button, Toast } from '@ensdomains/thorin'
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
-import { useEffect, useRef, useState } from 'react'
-import { useTranslation } from 'react-i18next'
 
 type Notification = {
   title: string
@@ -12,51 +19,70 @@ type Notification = {
   children?: React.ReactNode
 }
 
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: stretch;
+    gap: ${theme.space['2']};
+  `,
+)
+
 export const Notifications = () => {
   const { t } = useTranslation()
   const breakpoints = useBreakpoint()
 
   const chainName = useChainName()
-  const transactions = useRecentTransactions()
-  const previousTransactions =
-    useRef<ReturnType<typeof useRecentTransactions>>()
 
   const [open, setOpen] = useState(false)
+
+  const queryClient = useQueryClient()
+  const { resumeTransactionFlow, getResumable } = useTransactionFlow()
 
   const [notificationQueue, setNotificationQueue] = useState<Notification[]>([])
   const currentNotification = notificationQueue[0]
 
-  useEffect(() => {
-    const updatedTransactions = transactions.filter((transaction) => {
-      if (previousTransactions.current) {
-        const prevTransaction = previousTransactions.current.find(
-          (tr) => tr.hash === transaction.hash,
-        )
-        if (prevTransaction) {
-          return prevTransaction.status !== transaction.status
-        }
+  const updateCallback = useCallback<UpdateCallback>(
+    ({ action, key, status, hash }) => {
+      if (status === 'pending') return
+      const resumable = key && getResumable(key)
+      const item = {
+        title: t(`transaction.status.${status}.notifyTitle`),
+        description: t(`transaction.status.${status}.notifyMessage`, {
+          action: t(`transaction.description.${action}`),
+        }),
+        children: resumable ? (
+          <ButtonContainer>
+            <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
+              <Button shadowless size="small" variant="secondary">
+                {t('transaction.viewEtherscan')}
+              </Button>
+            </a>
+            <Button
+              shadowless
+              size="small"
+              variant="primary"
+              onClick={() => resumeTransactionFlow(key)}
+            >
+              Continue
+            </Button>
+          </ButtonContainer>
+        ) : (
+          <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
+            <Button shadowless size="small" variant="secondary">
+              {t('transaction.viewEtherscan')}
+            </Button>
+          </a>
+        ),
       }
-      return false
-    })
-    previousTransactions.current = JSON.parse(JSON.stringify(transactions))
-    const transactionsToPush = updatedTransactions.map((transaction) => ({
-      title: t(`transaction.status.${transaction.status}.notifyTitle`),
-      description: t(
-        `transaction.status.${transaction.status}.notifyMessage`,
-      ).replace('%s', t(`transaction.description.${transaction.description}`)),
-      children: (
-        <a
-          target="_blank"
-          href={makeEtherscanLink(transaction.hash, chainName)}
-          rel="noreferrer"
-        >
-          <Button size="small">{t('transaction.viewEtherscan')}</Button>
-        </a>
-      ),
-    }))
-    setNotificationQueue((prev) => [...prev, ...transactionsToPush])
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transactions])
+
+      setNotificationQueue((queue) => [...queue, item])
+    },
+    [chainName, getResumable, resumeTransactionFlow, t],
+  )
+
+  useCallbackOnTransaction(updateCallback)
 
   useEffect(() => {
     if (currentNotification) {
@@ -64,15 +90,19 @@ export const Notifications = () => {
     }
   }, [currentNotification])
 
+  useEffect(() => {
+    if (currentNotification) {
+      queryClient.invalidateQueries()
+      queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
+    }
+  }, [currentNotification, queryClient])
+
   return (
     <Toast
       onClose={() => {
         setOpen(false)
         setTimeout(
-          () =>
-            setNotificationQueue((prev) => [
-              ...prev.filter((x) => x !== currentNotification),
-            ]),
+          () => setNotificationQueue((prev) => [...prev.filter((x) => x !== currentNotification)]),
           300,
         )
       }}

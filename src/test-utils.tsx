@@ -1,11 +1,46 @@
-import { lightTheme, ThorinGlobalStyles } from '@ensdomains/thorin'
-import { render, RenderOptions } from '@testing-library/react'
-import { renderHook, RenderHookOptions } from '@testing-library/react-hooks'
+/* eslint-disable import/no-extraneous-dependencies */
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { RenderOptions, render } from '@testing-library/react'
+import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
+import userEvent from '@testing-library/user-event'
 import React, { FC, ReactElement } from 'react'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { ThemeProvider } from 'styled-components'
 
-const queryClient = new QueryClient()
+import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
+
+jest.mock('wagmi', () => {
+  const { useQuery, useInfiniteQuery } = jest.requireActual('wagmi')
+
+  return {
+    useQuery,
+    useInfiniteQuery,
+    useAccount: jest.fn(),
+    useNetwork: jest.fn(),
+    useProvider: jest.fn(),
+    useSigner: jest.fn(),
+    useSignTypedData: jest.fn(),
+    useBlockNumber: jest.fn(),
+    useSendTransaction: jest.fn(),
+  }
+})
+
+jest.mock('@app/components/@molecules/NFTTemplate', () => () => <div data-testid="nft-template" />)
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      cacheTime: Infinity,
+      retry: false,
+    },
+  },
+  logger: {
+    log: console.log,
+    warn: console.warn,
+    error: () => {},
+  },
+})
+
+beforeEach(() => queryClient.clear())
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
@@ -18,10 +53,8 @@ const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   )
 }
 
-const customRender = (
-  ui: ReactElement,
-  options?: Omit<RenderOptions, 'wrapper'>,
-) => render(ui, { wrapper: AllTheProviders, ...options })
+const customRender = (ui: ReactElement, options?: Omit<RenderOptions, 'wrapper'>) =>
+  render(ui, { wrapper: AllTheProviders, ...options })
 
 const customRenderHook = <TProps, TResult>(
   callback: (props: TProps) => TResult,
@@ -44,3 +77,4 @@ export const mockFunction = <T extends (...args: any) => any>(func: T) =>
 export * from '@testing-library/react'
 export { customRender as render }
 export { customRenderHook as renderHook }
+export { userEvent }

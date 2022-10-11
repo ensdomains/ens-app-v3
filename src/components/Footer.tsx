@@ -1,6 +1,8 @@
-import { mq } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { mq } from '@ensdomains/thorin'
+
 import SocialDiscord from '../assets/social/SocialDiscord.svg'
 import SocialDiscourse from '../assets/social/SocialDiscourse.svg'
 import SocialDiscourseColour from '../assets/social/SocialDiscourseColour.svg'
@@ -14,12 +16,13 @@ import { SocialIcon } from './SocialIcon'
 
 const Container = styled.footer(
   ({ theme }) => css`
-    display: flex;
+    display: none;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
     margin-top: ${theme.space['2.5']};
     ${mq.md.min(css`
+      display: flex;
       flex-direction: row;
     `)}
   `,
@@ -71,21 +74,9 @@ export const Footer = () => {
           </StyledNavLink>
         </LinkContainer>
         <SocialIconContainer>
-          <SocialIcon
-            Icon={SocialTwitter}
-            color="#5298FF"
-            href="https://twitter.com/ensdomains"
-          />
-          <SocialIcon
-            Icon={SocialGithub}
-            color="#0F0F0F"
-            href="https://github.com/ensdomains"
-          />
-          <SocialIcon
-            Icon={SocialDiscord}
-            color="#7F83FF"
-            href="https://chat.ens.domains"
-          />
+          <SocialIcon Icon={SocialTwitter} color="#5298FF" href="https://twitter.com/ensdomains" />
+          <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
+          <SocialIcon Icon={SocialDiscord} color="#7F83FF" href="https://chat.ens.domains" />
           <SocialIcon
             Icon={SocialMedium}
             color="#0F0F0F"

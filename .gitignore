@@ -45,11 +45,8 @@ yarn-error.log*
 /coverage
 
 # cypress
-/e2e/*
-!/e2e/specs
-!/e2e/.eslintrc.js
-!/e2e/tsconfig.json
-!/e2e/setup.js
+/e2e/videos
+/e2e/screenshots
 
 # IDEs
 .idea
@@ -67,3 +64,5 @@ yarn-error.log*
 
 # Sentry
 .sentryclirc
+
+.dev.vars

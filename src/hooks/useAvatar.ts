@@ -1,11 +1,13 @@
+import { useQuery } from 'wagmi'
+
 import { useEns } from '@app/utils/EnsProvider'
 import { ensNftImageUrl, imageUrlUnknownRecord } from '@app/utils/utils'
-import { useQuery } from 'react-query'
 
 const fetchImg = async (url: string) =>
   new Promise<string | undefined>((resolve) => {
     const img = new Image()
     img.src = url
+
     const handleLoad = () => {
       img.removeEventListener('load', handleLoad)
       if (!img.complete) {
@@ -24,10 +26,12 @@ const fetchImg = async (url: string) =>
 
 export const useAvatar = (name: string | undefined, network: number) => {
   const { data, isLoading, status } = useQuery(
-    ['getAvatar', name],
+    ['getAvatar', name, network],
     () => fetchImg(imageUrlUnknownRecord(name!, network)),
     {
       enabled: !!name,
+      cacheTime: 600,
+      staleTime: 60000,
     },
   )
 
@@ -35,14 +39,10 @@ export const useAvatar = (name: string | undefined, network: number) => {
 }
 
 export const useNFTImage = (name: string | undefined, network: number) => {
-  const isCompatible = !!(
-    name &&
-    name.split('.').length === 2 &&
-    name.endsWith('.eth')
-  )
+  const isCompatible = !!(name && name.split('.').length === 2)
   const { ready, contracts } = useEns()
   const { data: baseRegistrarAddress } = useQuery(
-    'base-registrar-address',
+    ['base-registrar-address'],
     () => contracts?.getBaseRegistrar()!.then((c) => c.address),
     {
       enabled: ready && !!name,

@@ -1,13 +1,17 @@
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
 import TripleDotSVG from '@app/assets/TripleDot.svg'
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Card } from '@app/components/Card'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { FavouriteButton } from '@app/components/pages/profile/FavouriteButton'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { formatExpiry } from '@app/utils/utils'
-import { Typography } from '@ensdomains/thorin'
-import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
 
 const Container = styled(Card)(
   ({ theme }) => css`
@@ -20,6 +24,7 @@ const Container = styled(Card)(
       margin-bottom: ${theme.space['3']};
     }
   `,
+  cacheableComponentStyles,
 )
 
 const ExpiryContainer = styled.div(
@@ -72,23 +77,49 @@ const ButtonIcon = styled.svg(
   `,
 )
 
+const handleSend =
+  (showDataInput: ReturnType<typeof useTransactionFlow>['showDataInput'], name: string) => () => {
+    showDataInput(`send-name-${name}`, 'SendName', {
+      name,
+    })
+  }
+
 export const DetailSnippet = ({
+  name,
   expiryDate,
   canSend,
+  canEdit,
+  canExtend,
+  isCached,
 }: {
+  name: string
   expiryDate?: Date | null
   canSend: boolean
+  canEdit?: boolean
+  canExtend?: boolean
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
 
+  const { showDataInput } = useTransactionFlow()
+  const handleExtend = () => {
+    showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
+  }
+
   if (!expiryDate && !canSend) return null
   return (
-    <Container>
+    <Container $isCached={isCached}>
       <Row>
         {expiryDate && (
           <ExpiryContainer data-testid="expiry-data">
             <Typography weight="bold">{t('name.expires')}</Typography>
-            <Typography weight="bold">{formatExpiry(expiryDate)}</Typography>
+            <Typography
+              weight="bold"
+              data-testid="expiry-label"
+              data-timestamp={expiryDate.getTime()}
+            >
+              {formatExpiry(expiryDate)}
+            </Typography>
           </ExpiryContainer>
         )}
         <FavouriteButton disabled />
@@ -98,9 +129,10 @@ export const DetailSnippet = ({
           <FullWidthOutlinedButton
             size="small"
             shadowless
+            disabled={!canExtend}
             variant="transparent"
-            disabled
             data-testid="extend-button"
+            onClick={handleExtend}
           >
             <InnerButton>
               <ButtonIcon as={FastForwardSVG} />
@@ -113,8 +145,8 @@ export const DetailSnippet = ({
             size="small"
             shadowless
             variant="transparent"
-            disabled
             data-testid="send-button"
+            onClick={handleSend(showDataInput, name)}
           >
             <InnerButton>
               <ButtonIcon as={PaperPlaneSVG} />
@@ -122,12 +154,7 @@ export const DetailSnippet = ({
             </InnerButton>
           </FullWidthOutlinedButton>
         )}
-        <OutlinedButton
-          disabled
-          size="extraSmall"
-          shadowless
-          variant="transparent"
-        >
+        <OutlinedButton disabled size="extraSmall" shadowless variant="transparent">
           <InnerButton>
             <ButtonIcon as={TripleDotSVG} />
           </InnerButton>

@@ -1,7 +1,6 @@
 // @ts-check
 const { i18n } = require('./next-i18next.config')
 const { withPlugins } = require('next-compose-plugins')
-const withTM = require('next-transpile-modules')(['@ensdomains/ensjs'])
 const path = require('path')
 const StylelintPlugin = require('stylelint-webpack-plugin')
 const { withSentryConfig } = require('@sentry/nextjs')
@@ -43,6 +42,14 @@ let nextConfig = {
         destination: '/profile?name=:name',
       },
       {
+        source: '/register/:name',
+        destination: '/register?name=:name',
+      },
+      {
+        source: '/import/:name',
+        destination: '/import?name=:name',
+      },
+      {
         source: '/address/:address',
         destination: '/address?address=:address',
       },
@@ -65,6 +72,12 @@ let nextConfig = {
         {
           loader: '@svgr/webpack',
           options: {
+            svgoConfig: {
+              plugins: [{
+                name: 'removeViewBox',
+                active: false,
+              }]              
+            },
             babel: false,
           },
         },
@@ -83,7 +96,7 @@ let nextConfig = {
   },
 }
 
-let plugins = [[withTM]]
+let plugins = []
 
 if (process.env.ANALYZE) {
   const withBundleAnalyzer = require('@next/bundle-analyzer')({
@@ -92,19 +105,20 @@ if (process.env.ANALYZE) {
   plugins.push([withBundleAnalyzer])
 }
 
-const sentryWebpackPluginOptions = {
-  // Additional config options for the Sentry Webpack plugin. Keep in mind that
-  // the following options are set automatically, and overriding them is not
-  // recommended:
-  //   release, url, org, project, authToken, configFile, stripPrefix,
-  //   urlPrefix, include, ignore
-
-  silent: true, // Suppresses all logs
-  // For all available options, see:
-  // https://github.com/getsentry/sentry-webpack-plugin#options.
+const withSentry = (config) => {
+  const sentryWebpackPluginOptions = {
+    // Additional config options for the Sentry Webpack plugin. Keep in mind that
+    // the following options are set automatically, and overriding them is not
+    // recommended:
+    //   release, url, org, project, authToken, configFile, stripPrefix,
+    //   urlPrefix, include, ignore
+    silent: true, // Suppresses all logs
+    // For all available options, see:
+    // https://github.com/getsentry/sentry-webpack-plugin#options.
+  }
+  if (process.env.NODE_ENV === 'production')
+    return withSentryConfig(config, sentryWebpackPluginOptions)
+  return config
 }
 
-module.exports = withSentryConfig(
-  withPlugins(plugins, nextConfig),
-  sentryWebpackPluginOptions,
-)
+module.exports = withSentry(withPlugins(plugins, nextConfig))

@@ -1,9 +1,11 @@
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { Dropdown, mq } from '@ensdomains/thorin'
 import ISO6391 from 'iso-639-1'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Dropdown, mq } from '@ensdomains/thorin'
+
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
   ({ theme, $large }) => css`
@@ -41,10 +43,7 @@ export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
       chevron={isLarge}
       size={isLarge ? 'medium' : 'small'}
       items={(i18n.options.supportedLngs || [])
-        .filter(
-          (lang: string) =>
-            lang && lang !== i18n.resolvedLanguage && lang !== 'cimode',
-        )
+        .filter((lang: string) => lang && lang !== i18n.resolvedLanguage && lang !== 'cimode')
         .map((lang: string) => ({
           label: formatName(lang),
           onClick: () => i18n.changeLanguage(lang),

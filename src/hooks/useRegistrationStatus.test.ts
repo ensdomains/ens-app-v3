@@ -1,6 +1,9 @@
 import { mockFunction, renderHook } from '@app/test-utils'
-import { useEns } from '@app/utils/EnsProvider'
+
 import { BigNumber } from 'ethers'
+
+import { useEns } from '@app/utils/EnsProvider'
+
 import { useRegistrationStatus } from './useRegistrationStatus'
 
 jest.mock('@app/utils/EnsProvider')
@@ -15,7 +18,10 @@ const mockGetPrice = {
   ...jest.fn(),
   batch: jest.fn(),
 }
-const mockGetOwner = jest.fn()
+const mockGetOwner = {
+  ...jest.fn(),
+  batch: jest.fn(),
+}
 const mockBatch = jest.fn()
 
 describe('useRegistrationStatus', () => {
@@ -28,9 +34,7 @@ describe('useRegistrationStatus', () => {
   })
   describe('2LD .eth', () => {
     it('should return short if a name is less than 3 characters', async () => {
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useRegistrationStatus('12.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('12.eth'))
       await waitForNextUpdate()
 
       expect(result.current.data).toBe('short')
@@ -38,9 +42,7 @@ describe('useRegistrationStatus', () => {
     it("should return invalid if batch call doesn't return", async () => {
       mockBatch.mockResolvedValue(null)
 
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useRegistrationStatus('test.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('test.eth'))
       await waitForNextUpdate()
 
       expect(result.current.data).toBe('invalid')
@@ -53,9 +55,7 @@ describe('useRegistrationStatus', () => {
       })
       mockGetPrice.batch.mockReturnValue({})
 
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useRegistrationStatus('test.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('test.eth'))
       await waitForNextUpdate()
 
       expect(result.current.data).toBe('registered')
@@ -68,9 +68,7 @@ describe('useRegistrationStatus', () => {
       })
       mockGetPrice.batch.mockReturnValue({})
 
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useRegistrationStatus('test.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('test.eth'))
       await waitForNextUpdate()
 
       expect(result.current.data).toBe('gracePeriod')
@@ -85,9 +83,7 @@ describe('useRegistrationStatus', () => {
         premium: BigNumber.from(1),
       })
 
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useRegistrationStatus('test.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('test.eth'))
       await waitForNextUpdate()
 
       expect(result.current.data).toBe('premium')
@@ -102,28 +98,26 @@ describe('useRegistrationStatus', () => {
         premium: BigNumber.from(0),
       })
 
-      const { result, waitForNextUpdate } = renderHook(() =>
-        useRegistrationStatus('test.eth'),
-      )
+      const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('test.eth'))
       await waitForNextUpdate()
 
       expect(result.current.data).toBe('available')
     })
   })
   it('should return registered if name has an owner', async () => {
-    mockGetOwner.mockResolvedValue({
+    mockBatch.mockImplementation((...args) => args)
+    mockGetOwner.batch.mockReturnValue({
       owner: '0x123',
     })
 
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useRegistrationStatus('example.com'),
-    )
+    const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('example.com'))
     await waitForNextUpdate()
 
     expect(result.current.data).toBe('registered')
   })
   it('should return not owned if name has no owner, and has more than 2 labels', async () => {
-    mockGetOwner.mockResolvedValue(undefined)
+    mockBatch.mockImplementation((...args) => args)
+    mockGetOwner.batch.mockReturnValue(undefined)
 
     const { result, waitForNextUpdate } = renderHook(() =>
       useRegistrationStatus('test.example.com'),
@@ -133,11 +127,10 @@ describe('useRegistrationStatus', () => {
     expect(result.current.data).toBe('notOwned')
   })
   it('should return not imported otherwise', async () => {
-    mockGetOwner.mockResolvedValue(undefined)
+    mockBatch.mockImplementation((...args) => args)
+    mockGetOwner.batch.mockReturnValue(undefined)
 
-    const { result, waitForNextUpdate } = renderHook(() =>
-      useRegistrationStatus('example.com'),
-    )
+    const { result, waitForNextUpdate } = renderHook(() => useRegistrationStatus('example.com'))
     await waitForNextUpdate()
 
     expect(result.current.data).toBe('notImported')

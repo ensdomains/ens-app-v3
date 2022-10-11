@@ -1,14 +1,17 @@
+import { useRouter } from 'next/router'
+import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
+import { useQuery } from 'wagmi'
+
+import { Button, Typography } from '@ensdomains/thorin'
+
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
-import { Button, Typography } from '@ensdomains/thorin'
-import { useRouter } from 'next/router'
-import { useQuery } from 'react-query'
-import styled, { css } from 'styled-components'
-import { useTranslation } from 'react-i18next'
 
-const Container = styled.div(
+const Container = styled(CacheableComponent)(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -52,18 +55,11 @@ const OwnerWithEns = styled.div(
   `,
 )
 
-const NameOwnerItem = ({
-  address = '',
-  network,
-}: {
-  address?: string
-  network: number
-}) => {
+const NameOwnerItem = ({ address = '', network }: { address?: string; network: number }) => {
   const { getName } = useEns()
   const { data } = useQuery(['getName', address], () => getName(address), {
     enabled: !!address,
   })
-
   const hasEns = data?.match && data?.name
 
   if (hasEns) {
@@ -76,12 +72,7 @@ const NameOwnerItem = ({
           <Typography weight="bold">{shortenAddress(address)}</Typography>
         </OwnerWithEns>
         <AvatarWrapper>
-          <AvatarWithZorb
-            label={data.name}
-            address={address}
-            name={data.name}
-            network={network}
-          />
+          <AvatarWithZorb label={data.name} address={address} name={data.name} network={network} />
         </AvatarWrapper>
       </OwnerContainer>
     )
@@ -106,7 +97,7 @@ const ItemContainer = styled.div(
   `,
 )
 
-const NameDetailContainer = styled.div(
+const NameDetailContainer = styled(CacheableComponent)(
   ({ theme }) => css`
     width: 100%;
     display: flex;
@@ -117,7 +108,7 @@ const NameDetailContainer = styled.div(
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
     border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-    box-shadow: 0px 3px 8px rgba(0, 0, 0, 0.02);
+    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
   `,
 )
 
@@ -143,6 +134,8 @@ export const NameDetailSnippet = ({
   ownerData,
   network,
   showButton,
+  dnsOwner,
+  isCached,
 }: {
   name: string
   expiryDate?: Date | null
@@ -152,31 +145,38 @@ export const NameDetailSnippet = ({
   }
   network: number
   showButton?: boolean
+  dnsOwner?: string
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
   const router = useRouter()
 
   return (
-    <NameDetailContainer>
+    <NameDetailContainer $isCached={isCached}>
       {expiryDate && (
         <ItemContainer>
           <LeftText weight="bold">{t('name.expires')}</LeftText>
-          <Typography weight="bold">{`${expiryDate.toLocaleDateString(
-            undefined,
-            {
-              month: 'long',
-            },
-          )} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
+          <Typography weight="bold">{`${expiryDate.toLocaleDateString(undefined, {
+            month: 'long',
+          })} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
         </ItemContainer>
       )}
-      <ItemContainer>
-        <LeftText weight="bold">{t('name.controller')}</LeftText>
-        <NameOwnerItem address={ownerData.owner} network={network} />
-      </ItemContainer>
+      {ownerData.owner && (
+        <ItemContainer>
+          <LeftText weight="bold">{t('name.controller')}</LeftText>
+          <NameOwnerItem address={ownerData.owner} network={network} />
+        </ItemContainer>
+      )}
       {ownerData.registrant && (
         <ItemContainer>
           <LeftText weight="bold">{t('name.registrant')}</LeftText>
           <NameOwnerItem address={ownerData.registrant} network={network} />
+        </ItemContainer>
+      )}
+      {dnsOwner && (
+        <ItemContainer>
+          <LeftText weight="bold">{t('name.dnsOwner')}</LeftText>
+          <NameOwnerItem address={dnsOwner} network={network} />
         </ItemContainer>
       )}
       {showButton && (
@@ -208,6 +208,8 @@ export const NameSnippet = ({
   expiryDate,
   ownerData,
   showButton,
+  dnsOwner,
+  isCached,
 }: {
   name: string
   network: number
@@ -217,6 +219,8 @@ export const NameSnippet = ({
     registrant?: string
   }
   showButton?: boolean
+  dnsOwner?: string
+  isCached: boolean
 }) => {
   return (
     <Container>
@@ -226,11 +230,13 @@ export const NameSnippet = ({
         style={{ width: '270px', height: '270px' }}
       />
       <NameDetailSnippet
+        isCached={isCached}
         name={name}
         expiryDate={expiryDate}
         ownerData={ownerData}
         network={network}
         showButton={showButton}
+        dnsOwner={dnsOwner}
       />
     </Container>
   )

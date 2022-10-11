@@ -1,6 +1,7 @@
-import { useEns } from '@app/utils/EnsProvider'
 import { useEffect, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
+
+import { useEns } from '@app/utils/EnsProvider'
 
 export const useExists = (name: string, skip?: any) => {
   const { ready, getOwner } = useEns()

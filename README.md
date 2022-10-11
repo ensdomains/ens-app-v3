@@ -4,92 +4,117 @@ The all new, all cool version of the ENS manager.
 
 ## EXTERNAL CONTRIBUTOR NOTICE
 
-**Please note that everything within this repo is currently in alpha, and should only be run on local nodes or testnets.**
+**Please note that everything within this repo is currently in alpha. Some contracts are not yet deployed on mainnet which means some functionality may break on the network.**
 
 ## Usage
 
 ### Quick start
 
 ```bash
-yarn
-yarn dev:gonline
+pnpm install
+pnpm denv
+pnpm dev:glocal
 ```
 
 ### Install
 
 ```bash
-yarn && yarn postinstall
+pnpm install
 ```
 
 ### Running Dev Server
 
 ```bash
-yarn dev
+# For mainnet
+pnpm dev
 
-# Or with local provider set
-yarn dev:glocal
+# Or with the test environment running
+pnpm dev:glocal
 ```
 
 ### Lint
 
 ```bash
-yarn lint
+pnpm lint
 ```
 
 ### Unit Test
 
 ```bash
-yarn test
-yarn test:watch
-yarn test:coverage
+pnpm test
+pnpm test:watch
+pnpm test:coverage
 ```
 
 We recommend installing [this](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest) vscode plugin for a better unit testing experience.
 
 ### Test Environment
 
-1. Create a local env file from the example:
+You must have [Docker](https://docs.docker.com/get-docker/) installed to run the test environment.
+For more information on the environment, see [ens-test-env](https://github.com/ensdomains/ensjs-v3/tree/main/packages/ens-test-env/).
+
+Once installed, you can run:
 
 ```bash
-cp .env.local.example .env.local
+pnpm denv
 ```
 
-2. Add archive node URL to env file
+#### **If you need to deploy a new subgraph**
+
+You shouldn't deploy the subgraph ontop of the existing dataset, instead you should create a clean dataset (explained below).
+
+1. Start the test environment
 
 ```bash
-FORK_RPC_URL=http://example.com
+pnpm denv --save
 ```
 
-3. Starting the environment:
+2. Deploy the subgraph
+
+After the deploy scripts have run, you can deploy the subgraph. Assuming you are in the [ens-subgraph](https://github.com/ensdomains/ens-subgraph) repo, you can use:
 
 ```bash
-yarn env start
+yarn setup
 ```
 
-For more information on the testing environment used, see [ens-test-env](https://github.com/ensdomains/ensjs-v3/tree/main/packages/ens-test-env/).
+3. Wait for the subgraph to sync
+
+Similar to the update process, a good indicator of sync status is if you see this message:
+
+```
+no chain head update for 30 seconds, polling for update, component: BlockStream
+```
+
+Dissimilar to the update process however is that you will never need to mine blocks manually.
+
+4. Exit the test environment
+
+You can exit out of the test environment using `Ctrl+C`.
+
+Once exited, you can commit the data to your branch. You do not need to run a separate save command.
 
 ### E2E Testing
 
 **Note: You don't need to run the test environment command. It is all handled in the e2e script.**
 
 ```bash
-yarn e2e
+pnpm e2e
 ```
 
 ### Building and Starting
 
 ```bash
-yarn build
-yarn start
+pnpm build
+pnpm start
 
-# Or with local provider set
-yarn build:glocal
-yarn buildandstart:glocal
+# Or with the test environment running
+pnpm build:glocal
+pnpm buildandstart:glocal
 ```
 
 ## PR builds
 
-Vercel will automatically build and deploy a test site when pushed to a new PR branch.
+Cloudflare will automatically build and deploy a test site when pushed to a new PR branch.
 
 ## External Package Local Development
 
@@ -103,14 +128,16 @@ npm i -g yalc
 
 ```bash
 # Example publish script for ENSjs, be aware this may have changed.
-yarn publish:local:ensjs
+pnpm publish:local:ensjs
 ```
 
-3. Run yarn within this repo:
+3. Run pnpm install within this repo:
 
 ```bash
-yarn
+pnpm install
 ```
+
+If updating an existing yalc installation, you can add the `--force` flag.
 
 ## Architecture
 

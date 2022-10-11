@@ -1,16 +1,22 @@
-import { useChainName } from '@app/hooks/useChainName'
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { useRecentTransactions } from '@rainbow-me/rainbowkit'
-import { Transaction } from '@rainbow-me/rainbowkit/dist/transactions/transactionStore'
+
 import { act } from '@testing-library/react'
+
+import { Transaction } from '@app/hooks/transactions/transactionStore'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useChainId } from '@app/hooks/useChainId'
+import { useChainName } from '@app/hooks/useChainName'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
 import { Notifications } from './Notifications'
 
 jest.mock('@app/hooks/useChainName')
-jest.mock('@rainbow-me/rainbowkit')
+jest.mock('@app/hooks/useChainId')
+jest.mock('@app/hooks/transactions/useRecentTransactions')
 jest.mock('@app/utils/BreakpointProvider')
 
 const mockUseChainName = mockFunction(useChainName)
+const mockUseChainId = mockFunction(useChainId)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 
@@ -21,10 +27,12 @@ const makeRecentTransaction =
   (_: any, i: number) =>
     ({
       status,
-      confirmations: 1,
-      description: `test description ${i}`,
+      action: `test-action-${i}`,
+      key: 'any',
       hash: `0x${i.toString(16).padStart(32, '0')}`,
     } as Transaction)
+
+window.scroll = jest.fn()
 
 describe('Notifications', () => {
   mockUseBreakpoint.mockReturnValue({
@@ -35,6 +43,7 @@ describe('Notifications', () => {
     xl: false,
   })
   mockUseChainName.mockReturnValue('mainnet')
+  mockUseChainId.mockReturnValue(1)
   it('should not render a toast if there is no transactions', () => {
     mockUseRecentTransactions.mockReturnValue([])
     render(<Notifications />)
@@ -68,23 +77,17 @@ describe('Notifications', () => {
     ])
     rerender(<Notifications />)
 
-    await waitFor(
-      () => screen.queryByText('transaction.status.confirmed1.notifyTitle'),
-      {
-        timeout: 500,
-      },
-    ).then((el) => expect(el).toBeInTheDocument())
+    await waitFor(() => screen.queryByText('transaction.status.confirmed1.notifyTitle'), {
+      timeout: 500,
+    }).then((el) => expect(el).toBeInTheDocument())
 
     act(() => {
       jest.advanceTimersByTime(8350)
     })
 
-    await waitFor(
-      () => screen.queryByText('transaction.status.confirmed2.notifyTitle'),
-      {
-        timeout: 500,
-      },
-    ).then((el) => expect(el).toBeInTheDocument())
+    await waitFor(() => screen.queryByText('transaction.status.confirmed2.notifyTitle'), {
+      timeout: 500,
+    }).then((el) => expect(el).toBeInTheDocument())
   })
   it('should show the correct title and description for a notification', async () => {
     const mockData = makeRecentTransaction('pending')(null, 0)
@@ -100,11 +103,7 @@ describe('Notifications', () => {
       timeout: 500,
     }).then((el) => expect(el).toBeInTheDocument())
 
-    expect(
-      screen.getByText('transaction.status.confirmed.notifyTitle'),
-    ).toBeInTheDocument()
-    expect(
-      screen.getByText('transaction.status.confirmed.notifyMessage'),
-    ).toBeInTheDocument()
+    expect(screen.getByText('transaction.status.confirmed.notifyTitle')).toBeInTheDocument()
+    expect(screen.getByText('transaction.status.confirmed.notifyMessage')).toBeInTheDocument()
   })
 })

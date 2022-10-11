@@ -1,11 +1,16 @@
-import { useEns } from '@app/utils/EnsProvider'
-import type { Name } from '@ensdomains/ensjs/dist/cjs/functions/getNames'
 import { useEffect, useMemo, useState } from 'react'
-import { useQuery } from 'react-query'
+import { useQuery } from 'wagmi'
+
+import type { Name } from '@ensdomains/ensjs/functions/getNames'
+
+import { useEns } from '@app/utils/EnsProvider'
+
+import { useBlockTimestamp } from './useBlockTimestamp'
 
 export type ReturnedName = Name & {
   isController?: boolean
   isRegistrant?: boolean
+  isWrappedOwner?: boolean
 }
 
 const chunkArr = (arr: any[], chunkSize: number) => {
@@ -23,6 +28,7 @@ export const useNamesFromAddress = ({
   resultsPerPage,
   page,
   filter,
+  search,
 }: {
   address?: string
   sort: {
@@ -30,13 +36,16 @@ export const useNamesFromAddress = ({
     orderDirection: 'asc' | 'desc'
   }
   page: number
-  resultsPerPage: number
+  resultsPerPage: number | 'all'
   filter?: Name['type']
+  search?: string
 }) => {
   const { ready, getNames } = useEns()
 
-  const { data, isLoading, status } = useQuery(
-    ['names', address],
+  const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
+
+  const { data, isLoading, status, refetch } = useQuery(
+    ['graph', 'names', address],
     () =>
       getNames({
         address: address!,
@@ -45,7 +54,7 @@ export const useNamesFromAddress = ({
         orderDirection: 'desc',
       }),
     {
-      enabled: ready && !!address,
+      enabled: ready && !!address && !isBlockTimestampLoading,
     },
   )
 
@@ -55,13 +64,19 @@ export const useNamesFromAddress = ({
       const existingEntry = map[curr.name] || {}
       const isController = curr.type === 'domain'
       const isRegistrant = curr.type === 'registration'
+      const isWrappedOwner = curr.type === 'wrappedDomain'
       const newMap = map
       newMap[curr.name] = {
         ...existingEntry,
         ...curr,
         isController: existingEntry.isController || isController,
         isRegistrant: existingEntry.isRegistrant || isRegistrant,
+        isWrappedOwner: existingEntry.isWrappedOwner || isWrappedOwner,
       }
+      const newItem = newMap[curr.name]
+      if (newItem.expiryDate) newItem.expiryDate = new Date(newItem.expiryDate)
+      if (newItem.createdAt) newItem.createdAt = new Date(newItem.createdAt)
+      if (newItem.registrationDate) newItem.registrationDate = new Date(newItem.registrationDate)
       return newMap
     }, {} as { [key: string]: ReturnedName })
     return Object.values(nameMap)
@@ -70,19 +85,26 @@ export const useNamesFromAddress = ({
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 
   const filterFunc = useMemo(() => {
-    if (filter === 'registration') return (n: ReturnedName) => n.isRegistrant
-    if (filter === 'domain') return (n: ReturnedName) => n.isController
-    return () => true
-  }, [filter])
+    const baseFilter = (n: ReturnedName) => {
+      if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp) return false
+      return n.parent.name !== 'addr.reverse'
+    }
+    let secondaryFilter: (n: ReturnedName) => boolean = () => true
+    let searchFilter: (n: ReturnedName) => boolean = () => true
+    if (filter === 'registration') secondaryFilter = (n: ReturnedName) => !!n.isRegistrant
+    if (filter === 'domain') secondaryFilter = (n: ReturnedName) => !!n.isController
+    if (filter === 'wrappedDomain') secondaryFilter = (n: ReturnedName) => !!n.isWrappedOwner
+    if (search)
+      searchFilter = (n: ReturnedName) => n.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n) && searchFilter(n)
+  }, [filter, search, blockTimestamp])
 
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {
       if (sort.orderDirection === 'asc') {
-        return (a: Name, b: Name) =>
-          (a.truncatedName || '').localeCompare(b.truncatedName || '')
+        return (a: Name, b: Name) => (a.truncatedName || '').localeCompare(b.truncatedName || '')
       }
-      return (a: Name, b: Name) =>
-        (b.truncatedName || '').localeCompare(a.truncatedName || '')
+      return (a: Name, b: Name) => (b.truncatedName || '').localeCompare(a.truncatedName || '')
     }
     if (sort.type === 'creationDate') {
       if (sort.orderDirection === 'asc') {
@@ -102,8 +124,7 @@ export const useNamesFromAddress = ({
         return (a.expiryDate?.getTime() || 0) - (b.expiryDate?.getTime() || 0)
       }
     }
-    return (a: Name, b: Name) =>
-      (b.expiryDate?.getTime() || 0) - (a.expiryDate?.getTime() || 0)
+    return (a: Name, b: Name) => (b.expiryDate?.getTime() || 0) - (a.expiryDate?.getTime() || 0)
   }, [sort.orderDirection, sort.type])
 
   useEffect(() => {
@@ -113,19 +134,19 @@ export const useNamesFromAddress = ({
   }, [status, mergedData, sortFunc, filterFunc])
 
   const pages = useMemo(
-    () => sortedData && chunkArr(sortedData, resultsPerPage),
+    () =>
+      sortedData &&
+      (resultsPerPage === 'all' ? [sortedData] : chunkArr(sortedData, resultsPerPage)),
     [sortedData, resultsPerPage],
   )
 
-  const currentPage: ReturnedName[] | null = useMemo(
-    () => pages && pages[page - 1],
-    [pages, page],
-  )
+  const currentPage: ReturnedName[] | null = useMemo(() => pages && pages[page - 1], [pages, page])
 
   return {
     currentPage,
     isLoading,
     status,
+    refetch,
     pageLength: pages?.length || 0,
     nameCount: sortedData?.length || 0,
   }

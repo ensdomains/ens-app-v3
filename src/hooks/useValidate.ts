@@ -1,9 +1,7 @@
-import {
-  parseInputType,
-  validateName,
-} from '@ensdomains/ensjs/dist/cjs/utils/validation'
 import { isAddress } from 'ethers/lib/utils'
 import { useEffect, useState } from 'react'
+
+import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 
 export const useValidate = (input: string, skip?: any) => {
   const [name, setNormalisedName] = useState('')
@@ -13,14 +11,12 @@ export const useValidate = (input: string, skip?: any) => {
   useEffect(() => {
     if (!skip) {
       try {
-        const normalisedName = validateName(input)
+        const normalisedName = validateName(decodeURIComponent(input))
         setNormalisedName(normalisedName)
 
         const inputType = parseInputType(normalisedName)
         setType(inputType.type)
-        setValid(
-          inputType.type !== 'unknown' && inputType.info !== 'unsupported',
-        )
+        setValid(inputType.type !== 'unknown' && inputType.info !== 'unsupported')
       } catch {
         setValid(false)
       }

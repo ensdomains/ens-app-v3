@@ -1,8 +1,11 @@
+import { mockFunction, render, screen } from '@app/test-utils'
+
+import { act, waitFor } from '@testing-library/react'
+
 import { useChainId } from '@app/hooks/useChainId'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
-import { mockFunction, render, screen } from '@app/test-utils'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { act, waitFor } from '@testing-library/react'
+
 import { SearchInput } from './SearchInput'
 
 jest.mock('@app/utils/BreakpointProvider')
@@ -12,6 +15,8 @@ jest.mock('@app/hooks/useChainId')
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseLocalStorage = mockFunction(useLocalStorage)
 const mockUseChainId = mockFunction(useChainId)
+
+window.scroll = jest.fn()
 
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
@@ -72,9 +77,7 @@ describe('SearchInput', () => {
     await waitFor(() => screen.getByTestId('search-input-results'), {
       timeout: 500,
     }).then((el) => expect(el).toHaveTextContent('search.emptyText'))
-    expect(screen.getByTestId('search-input-box')).not.toHaveTextContent(
-      'Search for a name',
-    )
+    expect(screen.getByTestId('search-input-box')).not.toHaveTextContent('Search for a name')
   })
   it('should show history items if available', async () => {
     mockUseLocalStorage.mockReturnValue([

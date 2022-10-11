@@ -4,14 +4,16 @@ export const getSocialData = (iconKey: string, value: string) => {
       return {
         icon: 'twitter',
         color: '#65C5FC',
-        value: `@${value.replace(/^\@/, '')}`,
+        label: 'Twitter',
+        value: `@${value.replace(/^@/, '')}`,
         type: 'link',
-        urlFormatter: `https://twitter.com/${value.replace(/^\@/, '')}`,
+        urlFormatter: `https://twitter.com/${value.replace(/^@/, '')}`,
       }
     case 'com.github':
       return {
         icon: 'github',
         color: '#000000',
+        label: 'GitHub',
         value,
         type: 'link',
         urlFormatter: `https://github.com/${value}`,
@@ -20,6 +22,7 @@ export const getSocialData = (iconKey: string, value: string) => {
       return {
         icon: 'discord',
         color: '#5A57DD',
+        label: 'Discord',
         value,
         type: 'copy',
       }

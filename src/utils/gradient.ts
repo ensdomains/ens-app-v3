@@ -1,5 +1,8 @@
-import { namehash } from '@ensdomains/ensjs/dist/cjs/utils/normalise'
 import { arrayify } from 'ethers/lib/utils'
+
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
+
+import { emptyAddress } from './constants'
 
 // original: https://github.com/ourzora/zorb/blob/main/packages/zorb-web-component/src
 
@@ -112,16 +115,13 @@ const lerpSaturationFn = (optionNum: number) => {
 }
 
 export const gradientForBytes = (address: string) => {
-  const bytes = arrayify(address).reverse()
+  const bytes = arrayify(address === '' ? emptyAddress : address).reverse()
   const hueShiftFn = lerpHueFn(bytes[3], bytes[6] % 2)
   const startHue = bscale(bytes[12], 360)
   const startLightness = bScaleRange(bytes[2], 32, 69.5)
   const endLightness = (97 + bScaleRange(bytes[8], 72, 97)) / 2
   const startSaturation = bScaleRange(bytes[7], 81, 97)
-  const endSaturation = Math.min(
-    startSaturation - 10,
-    bScaleRange(bytes[10], 70, 92),
-  )
+  const endSaturation = Math.min(startSaturation - 10, bScaleRange(bytes[10], 70, 92))
 
   const lightnessShiftFn = lerpLightnessFn(bytes[5] % 2)
   const saturationShiftFn = lerpSaturationFn(bytes[3] % 2)
@@ -154,17 +154,11 @@ export const gradientForBytes = (address: string) => {
   ]
 
   return inputs.map(
-    (input: HSL) =>
-      `hsl(${Math.round(input.h)}, ${Math.round(input.s)}%, ${Math.round(
-        input.l,
-      )}%)`,
+    (input: HSL) => `hsl(${Math.round(input.h)}, ${Math.round(input.s)}%, ${Math.round(input.l)}%)`,
   )
 }
 
-export const zorbImageSVG = (
-  input: string,
-  type: 'name' | 'address' | 'hash',
-) => {
+export const zorbImageSVG = (input: string, type: 'name' | 'address' | 'hash') => {
   const bytes = type === 'name' ? namehash(input) : input
   const gradientInfo = gradientForBytes(bytes)
   return `
@@ -186,12 +180,8 @@ export const zorbImageSVG = (
     `
 }
 
-export const zorbImageDataURI = (
-  input: string,
-  type: 'name' | 'address' | 'hash',
-) => {
-  return `data:image/svg+xml;base64,${Buffer.from(
-    zorbImageSVG(input, type),
-    'utf-8',
-  ).toString('base64')}`
+export const zorbImageDataURI = (input: string, type: 'name' | 'address' | 'hash') => {
+  return `data:image/svg+xml;base64,${Buffer.from(zorbImageSVG(input, type), 'utf-8').toString(
+    'base64',
+  )}`
 }

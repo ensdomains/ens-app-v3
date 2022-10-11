@@ -1,11 +1,16 @@
-import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
-import { Outlink } from '@app/components/Outlink'
-import { useCopied } from '@app/hooks/useCopied'
-import { getContentHashLink } from '@app/utils/contenthash'
-import { mq, Typography } from '@ensdomains/thorin'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Typography, mq } from '@ensdomains/thorin'
+
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
+import { Outlink } from '@app/components/Outlink'
+import { useCopied } from '@app/hooks/useCopied'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { getContentHashLink } from '@app/utils/contenthash'
+
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
 type TextRecord = {
@@ -43,6 +48,7 @@ const TabWrapper = styled(OriginalTabWrapper)(
       flex-gap: ${theme.space['6']};
     `)}
   `,
+  cacheableComponentStyles,
 )
 
 const RecordSection = styled.div(
@@ -220,9 +226,7 @@ const RecordItem = ({
   return (
     <RecordContainer
       data-testid={
-        itemKey
-          ? `name-details-${type}-${itemKey.toLowerCase()}`
-          : `name-details-${type}`
+        itemKey ? `name-details-${type}-${itemKey.toLowerCase()}` : `name-details-${type}`
       }
       onClick={() => copy(value)}
     >
@@ -251,6 +255,7 @@ export const RecordsTab = ({
   addresses,
   contentHash,
   canEdit,
+  isCached,
 }: {
   name: string
   network: number
@@ -258,17 +263,12 @@ export const RecordsTab = ({
   addresses?: AddressRecord[]
   contentHash?: ContentHash
   canEdit?: boolean
+  isCached?: boolean
 }) => {
   const { t } = useTranslation('profile')
 
-  const filteredTexts = useMemo(
-    () => texts?.filter(({ value }) => value),
-    [texts],
-  )
-  const filteredAddresses = useMemo(
-    () => addresses?.filter(({ addr }) => addr),
-    [addresses],
-  )
+  const filteredTexts = useMemo(() => texts?.filter(({ value }) => value), [texts])
+  const filteredAddresses = useMemo(() => addresses?.filter(({ addr }) => addr), [addresses])
 
   const formattedContentHash = useMemo(() => {
     if (contentHash) {
@@ -288,8 +288,11 @@ export const RecordsTab = ({
     }
   }, [name, network, contentHash])
 
+  const { showDataInput } = useTransactionFlow()
+  const handleShowEditor = () =>
+    showDataInput(`advanced-editor-${name}`, `AdvancedEditor`, { name })
   return (
-    <TabWrapper data-testid="records-tab">
+    <TabWrapper $isCached={isCached} data-testid="records-tab">
       <RecordSection>
         <SectionHeader>
           <SectionTitleContainer>
@@ -297,13 +300,13 @@ export const RecordsTab = ({
               {t('details.tabs.records.text')}
             </SectionTitle>
             <SectionSubtitle data-testid="text-amount" weight="bold">
-              {filteredTexts ? filteredTexts.length : 0}{' '}
-              {t('records.label', { ns: 'common' })}
+              {filteredTexts ? filteredTexts.length : 0} {t('records.label', { ns: 'common' })}
             </SectionSubtitle>
           </SectionTitleContainer>
+
           {canEdit && (
-            <EditButton disabled>
-              <Typography weight="bold">
+            <EditButton>
+              <Typography weight="bold" onClick={handleShowEditor}>
                 {t('action.edit', { ns: 'common' })}
               </Typography>
             </EditButton>
@@ -311,12 +314,7 @@ export const RecordsTab = ({
         </SectionHeader>
         {filteredTexts &&
           filteredTexts.map((text) => (
-            <RecordItem
-              key={text.key}
-              type="text"
-              itemKey={text.key}
-              value={text.value}
-            />
+            <RecordItem key={text.key} type="text" itemKey={text.key} value={text.value} />
           ))}
       </RecordSection>
       <RecordSection>
@@ -363,9 +361,7 @@ export const RecordsTab = ({
             )}
           </SectionTitleContainer>
         </SectionHeader>
-        {formattedContentHash && (
-          <RecordItem type="contentHash" value={formattedContentHash} />
-        )}
+        {formattedContentHash && <RecordItem type="contentHash" value={formattedContentHash} />}
       </RecordSection>
     </TabWrapper>
   )

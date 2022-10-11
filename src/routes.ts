@@ -36,7 +36,7 @@ export const routes: RouteItemObj[] = [
     name: 'about',
     href: '/about',
     label: 'navigation.about',
-    disabled: false,
+    disabled: true,
     connected: false,
   },
   {

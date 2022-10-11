@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@app/test-utils'
+
 import SortControl, { SortDirection, SortType, SortValue } from './SortControl'
 
 const sortValue: SortValue = {
@@ -24,9 +25,7 @@ describe('SortControl', () => {
 
   it('should display correct values', () => {
     render(<SortControl value={sortValue} onChange={onChange} />)
-    expect(screen.getByTestId('selected').textContent).toBe(
-      'sortTypes.expiryDate',
-    )
+    expect(screen.getByTestId('selected').textContent).toBe('sortTypes.expiryDate')
     const style = getComputedStyle(screen.getByTestId('button-desc'))
     expect(style.filter).toBe('brightness(0.95)')
     const style2 = getComputedStyle(screen.getByTestId('button-asc'))

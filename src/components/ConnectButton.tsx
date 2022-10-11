@@ -1,19 +1,24 @@
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { zorbImageDataURI } from '@app/utils/gradient'
-import { Button, mq, Profile } from '@ensdomains/thorin'
-import { ConnectButton } from '@rainbow-me/rainbowkit'
-import { useRouter } from 'next/router'
-import type { TFunction } from 'react-i18next'
+import { useConnectModal } from '@rainbow-me/rainbowkit'
+import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useDisconnect } from 'wagmi'
+import { useAccount, useDisconnect } from 'wagmi'
 
-const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(
-  ({ theme, $isTabBar }) =>
+import { Button, Profile, mq } from '@ensdomains/thorin'
+
+import { useAvatar } from '@app/hooks/useAvatar'
+import { useChainId } from '@app/hooks/useChainId'
+import { usePrimary } from '@app/hooks/usePrimary'
+import { useZorb } from '@app/hooks/useZorb'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
+const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }>(
+  ({ theme, $isTabBar, $large }) =>
     $isTabBar
       ? css`
           align-self: flex-end;
           justify-self: flex-end;
+
           & button {
             padding: 0 ${theme.space['4']};
             width: ${theme.space.full};
@@ -29,106 +34,99 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean }>(
           & button {
             border-radius: ${theme.radii['2xLarge']};
           }
+          ${$large &&
+          css`
+            width: 100%;
+            & button {
+              border-radius: ${theme.radii.large};
+            }
+          `}
         `,
 )
 
-export type AccountRenderProps = {
-  address: string
-  balanceDecimals?: number
-  balanceFormatted?: string
-  balanceSymbol?: string
-  displayBalance?: string
-  displayName: string
-  ensAvatar?: string
-  ensName?: string
-  hasPendingTransactions: boolean
-  disconnect: () => void
-  router: ReturnType<typeof useRouter>
-  t: TFunction
-  zorb: string
+type Props = {
+  isTabBar?: boolean
+  large?: boolean
+  inHeader?: boolean
 }
 
-export const ConnectButtonWrapper = ({
-  isTabBar,
-  children,
-}: {
-  isTabBar?: boolean
-  children: {
-    hasAccount: (renderProps: AccountRenderProps) => React.ReactNode
-    noAccountBefore?: React.ReactNode
-    noAccountAfter?: React.ReactNode
+const calculateTestId = (isTabBar: boolean | undefined, inHeader: boolean | undefined) => {
+  if (isTabBar) {
+    return 'tabbar-connect-button'
   }
-}) => {
-  const router = useRouter()
+  if (!inHeader) {
+    return 'body-connect-button'
+  }
+  return 'connect-button'
+}
+
+export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const { openConnectModal } = useConnectModal()
+
+  return (
+    <StyledButtonWrapper $large={large} $isTabBar={isTabBar}>
+      <Button
+        data-testid={calculateTestId(isTabBar, inHeader)}
+        onClick={() => openConnectModal?.()}
+        variant="primary"
+        size={breakpoints.md || large ? 'medium' : 'extraSmall'}
+        shadowless={large}
+      >
+        {t('wallet.connect')}
+      </Button>
+    </StyledButtonWrapper>
+  )
+}
+
+const HeaderProfile = ({ address }: { address: string }) => {
+  const { t } = useTranslation('common')
+
+  const { name } = usePrimary(address!, !address)
+  const chainId = useChainId()
+  const { avatar } = useAvatar(name || undefined, chainId)
+  const zorb = useZorb(address, 'address')
   const { disconnect } = useDisconnect()
 
   return (
-    <ConnectButton.Custom>
-      {({ account, openConnectModal }) =>
-        !account ? (
-          <>
-            {children.noAccountBefore}
-            <StyledButtonWrapper $isTabBar={isTabBar}>
-              <Button
-                onClick={() => openConnectModal()}
-                variant="primary"
-                size={breakpoints.md ? 'medium' : 'extraSmall'}
-              >
-                {t('wallet.connect')}
-              </Button>
-            </StyledButtonWrapper>
-          </>
-        ) : (
-          children.hasAccount({
-            ...account,
-            disconnect,
-            router,
-            t,
-            zorb: zorbImageDataURI(account.address, 'address'),
-          })
-        )
-      }
-    </ConnectButton.Custom>
+    <Profile
+      address={address}
+      ensName={name || undefined}
+      dropdownItems={[
+        {
+          label: t('wallet.myProfile'),
+          wrapper: (children, key) => (
+            <Link href="/my/profile" key={key}>
+              {children}
+            </Link>
+          ),
+          as: 'a',
+          color: 'text',
+        },
+        {
+          label: t('wallet.disconnect'),
+          color: 'red',
+          onClick: () => disconnect(),
+        },
+      ]}
+      avatar={{
+        src: avatar || zorb,
+        decoding: 'sync',
+        loading: 'eager',
+      }}
+      size="medium"
+      alignDropdown="right"
+    />
   )
 }
 
 export const HeaderConnect = () => {
-  return (
-    <ConnectButtonWrapper>
-      {{
-        hasAccount: ({
-          address,
-          ensName,
-          ensAvatar,
-          router,
-          t,
-          disconnect,
-          zorb,
-        }) => (
-          <Profile
-            address={address}
-            ensName={ensName}
-            dropdownItems={[
-              {
-                label: t('wallet.myProfile'),
-                color: 'text',
-                onClick: () => router.push('/my/profile'),
-              },
-              {
-                label: t('wallet.disconnect'),
-                color: 'red',
-                onClick: () => disconnect(),
-              },
-            ]}
-            avatar={ensAvatar || zorb}
-            size="medium"
-            alignDropdown="right"
-          />
-        ),
-      }}
-    </ConnectButtonWrapper>
-  )
+  const { address } = useAccount()
+
+  if (!address) {
+    return <ConnectButton inHeader />
+  }
+
+  return <HeaderProfile address={address} />
 }

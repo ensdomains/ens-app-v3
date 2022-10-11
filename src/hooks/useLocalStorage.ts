@@ -1,6 +1,7 @@
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
+import { Reducer, useImmerReducer } from 'use-immer'
 
-const isSSR = !!(
+const isBrowser = !!(
   typeof window !== 'undefined' &&
   window.document &&
   window.document.createElement
@@ -8,8 +9,13 @@ const isSSR = !!(
 
 const getStorageValue = <D>(key: string, defaultValue: D) => {
   // getting stored value
-  const saved = isSSR && localStorage.getItem(key)
-  return saved ? JSON.parse(saved) : defaultValue
+  const saved = isBrowser && localStorage.getItem(key)
+  try {
+    return saved && saved !== 'undefined' ? JSON.parse(saved) : defaultValue
+  } catch (e) {
+    console.error('parse error ', e)
+    return defaultValue
+  }
 }
 
 export const useLocalStorage = <D>(
@@ -28,4 +34,26 @@ export const useLocalStorage = <D>(
   }, [key, value])
 
   return [value, setValue]
+}
+
+export const useLocalStorageReducer = <S = any, A = any>(
+  key: string,
+  reducer: Reducer<S, A>,
+  initialState: S,
+  initialAction?: ((initial: any) => any) | undefined,
+): [S, Dispatch<A>] => {
+  const [state, dispatch] = useImmerReducer(
+    reducer,
+    getStorageValue(key, initialState),
+    initialAction,
+  )
+
+  useEffect(() => {
+    if (state !== initialState) {
+      localStorage.setItem(key, JSON.stringify(state))
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [key, state])
+
+  return [state, dispatch]
 }

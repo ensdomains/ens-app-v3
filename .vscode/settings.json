@@ -12,14 +12,11 @@
     "source.fixAll.stylelint": false
   },
   "stylelint.configFile": ".stylelintrc.json",
-  "stylelint.validate": [
-    "css",
-    "typescriptreact"
-  ],
+  "stylelint.validate": ["css", "typescriptreact"],
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "prettier.prettierPath": ".yarn/sdks/prettier/index.js",
   "[svg]": {
     "editor.defaultFormatter": "jock.svg"
   },
-  "jest.jestCommandLine": "yarn test"
+  "jest.jestCommandLine": "pnpm run test"
 }

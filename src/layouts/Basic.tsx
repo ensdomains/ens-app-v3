@@ -1,8 +1,12 @@
-import { Footer } from '@app/components/Footer'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { mq } from '@ensdomains/thorin'
 import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import styled, { css } from 'styled-components'
+import { useNetwork, useSwitchNetwork } from 'wagmi'
+
+import { mq } from '@ensdomains/thorin'
+
+import { Footer } from '@app/components/Footer'
+
 import { Navigation } from './Navigation'
 
 const Container = styled.div(
@@ -36,18 +40,33 @@ const ContentWrapper = styled.div(
 const BottomPlaceholder = styled.div(
   ({ theme }) => css`
     height: ${theme.space['16']};
+    ${mq.md.min(
+      css`
+        display: none;
+      `,
+    )}
   `,
 )
 
 export const Basic = ({ children }: { children: React.ReactNode }) => {
-  const { isReady } = useRouter()
-  const breakpoints = useBreakpoint()
+  const { chain: currentChain } = useNetwork()
+  const { switchNetwork } = useSwitchNetwork()
+  const router = useRouter()
+
+  useEffect(() => {
+    if (currentChain && !(currentChain?.id === 5 || currentChain?.id === 1337)) {
+      switchNetwork?.(5)
+      router.push('/unsupportedNetwork')
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentChain?.id, router.pathname])
 
   return (
     <Container className="min-safe">
       <Navigation />
       <ContentWrapper>{children}</ContentWrapper>
-      {isReady && !breakpoints.md ? <BottomPlaceholder /> : <Footer />}
+      <BottomPlaceholder />
+      <Footer />
     </Container>
   )
 }

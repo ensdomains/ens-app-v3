@@ -1,25 +1,11 @@
-import type { ReturnedName } from '@app/hooks/useNamesFromAddress'
-import { Heading, Tag, mq } from '@ensdomains/thorin'
-import styled, { css } from 'styled-components'
-import { NameDetailItem } from '@app/components/@atoms/NameDetailItem/NameDetailItem'
-import { ShortExpiry } from '@app/components/@atoms/ExpiryComponents/ExpiryComponents'
 import { useTranslation } from 'react-i18next'
-import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
+import styled, { css } from 'styled-components'
 
-const OtherItemsContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-    ${mq.md.min(css`
-      gap: ${theme.space['4']};
-      flex-gap: ${theme.space['4']};
-    `)}
-  `,
-)
+import { Heading } from '@ensdomains/thorin'
+
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
+import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
+import type { ReturnedName } from '@app/hooks/useNamesFromAddress'
 
 const NoResultsContianer = styled.div(
   ({ theme }) => css`
@@ -32,38 +18,45 @@ const NoResultsContianer = styled.div(
 export const NameListView = ({
   currentPage,
   network,
+  mode,
+  rowsOnly = false,
+  selectedNames = [],
+  onSelectedNamesChange,
 }: {
   currentPage: ReturnedName[]
   network: number
+  mode?: 'select' | 'view'
+  rowsOnly?: boolean
+  selectedNames?: string[]
+  onSelectedNamesChange?: (data: string[]) => void
 }) => {
   const { t } = useTranslation('common')
-  if (!currentPage || currentPage.length === 0)
-    return (
+
+  const handleClickForName = (name: string) => () => {
+    if (selectedNames?.includes(name)) {
+      onSelectedNamesChange?.(selectedNames.filter((n) => n !== name))
+    } else {
+      onSelectedNamesChange?.([...selectedNames, name])
+    }
+  }
+
+  const InnerContent =
+    !currentPage || currentPage.length === 0 ? (
       <NoResultsContianer>
         <Heading as="h3">{t('errors.noResults')}</Heading>
       </NoResultsContianer>
+    ) : (
+      currentPage.map((name) => (
+        <TaggedNameItem
+          key={name.id}
+          {...{ ...name, network }}
+          mode={mode}
+          selected={selectedNames?.includes(name.name)}
+          onClick={handleClickForName(name.name)}
+        />
+      ))
     )
-  return (
-    <TabWrapper>
-      {currentPage.map((name) => {
-        const isNativeEthName =
-          /\.eth$/.test(name.name) && name.name.split('.').length === 2
-        return (
-          <NameDetailItem key={name.name} network={network} {...name}>
-            <OtherItemsContainer>
-              {name.expiryDate && <ShortExpiry expiry={name.expiryDate} />}
-              <Tag tone={name.isController ? 'accent' : 'secondary'}>
-                {t('name.controller')}
-              </Tag>
-              {isNativeEthName && (
-                <Tag tone={name.isRegistrant ? 'accent' : 'secondary'}>
-                  {t('name.registrant')}
-                </Tag>
-              )}
-            </OtherItemsContainer>
-          </NameDetailItem>
-        )
-      })}
-    </TabWrapper>
-  )
+
+  if (rowsOnly) return <>{InnerContent}</>
+  return <TabWrapper>{InnerContent}</TabWrapper>
 }

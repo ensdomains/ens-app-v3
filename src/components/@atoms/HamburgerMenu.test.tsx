@@ -1,20 +1,36 @@
+/* eslint-disable jsx-a11y/no-static-element-interactions */
+
+/* eslint-disable jsx-a11y/click-events-have-key-events */
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
+
 import { useRouter } from 'next/router'
+
 import { HamburgerMenu } from './HamburgerMenu'
 
 jest.mock('next/router')
+jest.mock('next/link', () => {
+  const React = jest.requireActual('react')
+  const { UrlObject } = jest.requireActual('url')
+
+  type Url = string | typeof UrlObject
+  type LinkProps = {
+    href: Url
+    as?: Url
+  }
+
+  return ({ children, href }: React.PropsWithChildren<LinkProps>) =>
+    React.cloneElement(React.Children.only(children), { href })
+})
 const mockUseRouter = mockFunction(useRouter)
 
 describe('HamburgerMenu', () => {
-  const mockRouterObject = {
+  mockUseRouter.mockReturnValue({
     query: {
       name: 'nick.eth',
     },
-  }
+  })
 
   it('should render the correct label', () => {
-    mockUseRouter.mockReturnValue(mockRouterObject)
-
     const dropdownItems = [
       {
         label: 'testLabel',
@@ -26,7 +42,6 @@ describe('HamburgerMenu', () => {
   })
   it('should use provided onClick if there is one', async () => {
     const mockOnClick = jest.fn()
-    mockUseRouter.mockReturnValue(mockRouterObject)
 
     const dropdownItems = [
       {
@@ -42,15 +57,7 @@ describe('HamburgerMenu', () => {
       expect(mockOnClick).toHaveBeenCalled()
     })
   })
-  it('should redirect on click if https link', async () => {
-    mockUseRouter.mockReturnValue(mockRouterObject)
-
-    const mockReplace = jest.fn()
-
-    const { location } = window
-    delete (window as any).location
-    window.location = { replace: mockReplace } as any
-
+  it('should use next/link if https link', async () => {
     const dropdownItems = [
       {
         label: 'testLabel',
@@ -60,20 +67,9 @@ describe('HamburgerMenu', () => {
 
     render(<HamburgerMenu {...{ dropdownItems }} />)
     screen.getByTestId('dropdown').click()
-    screen.getByText('testLabel').click()
-    await waitFor(() => {
-      expect(mockReplace).toHaveBeenCalledWith('https://test.com')
-    })
-
-    window.location = location
+    expect(screen.getByText('testLabel')).toHaveAttribute('href', 'https://test.com')
   })
-  it('should redirect on click if http link', async () => {
-    const mockPush = jest.fn()
-    const mockRouterObjectLocal = {
-      push: mockPush,
-    }
-    mockUseRouter.mockReturnValue(mockRouterObjectLocal)
-
+  it('should use next/link if http link', async () => {
     const dropdownItems = [
       {
         label: 'testLabel',
@@ -82,9 +78,6 @@ describe('HamburgerMenu', () => {
     ]
     render(<HamburgerMenu {...{ dropdownItems }} />)
     screen.getByTestId('dropdown').click()
-    screen.getByText('testLabel').click()
-    await waitFor(() => {
-      expect(mockPush).toHaveBeenCalledWith('http://test.com')
-    })
+    expect(screen.getByText('testLabel')).toHaveAttribute('href', 'http://test.com')
   })
 })
