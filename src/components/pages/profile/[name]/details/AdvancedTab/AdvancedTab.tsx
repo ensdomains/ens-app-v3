@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 import { RecordItem } from '@app/components/RecordItem'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
+import { emptyAddress } from '@app/utils/constants'
 
 import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'
@@ -53,7 +54,7 @@ export const generateAccordionData = (
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
-    disabled: !wrapperData,
+    disabled: !wrapperData || wrapperData?.owner === emptyAddress,
     name: 'fuses',
     canEdit: ownerData?.owner === address && isWrapped,
   },
