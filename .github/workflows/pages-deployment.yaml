@@ -2,7 +2,6 @@ name: Cloudflare Pages
 
 env:
   SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-  NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/temp-goerli-ens
 
 on: [push]
 jobs:
@@ -49,7 +48,7 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Build and Export
-        run: pnpm build:alt && pnpm export
+        run: pnpm build && pnpm export
 
       - name: Generate sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
