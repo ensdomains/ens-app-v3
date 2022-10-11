@@ -18,6 +18,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
+    text-align: center;
     flex-direction: column;
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
