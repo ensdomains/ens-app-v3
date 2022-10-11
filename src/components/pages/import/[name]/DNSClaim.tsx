@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Card, Typography, mq } from '@ensdomains/thorin'
+import { Button, Card, Spinner, Typography, mq } from '@ensdomains/thorin'
 
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
@@ -82,6 +82,19 @@ const Container = styled.div`
 const MainContentContainer = styled(Card)(
   ({ theme }) => css`
     width: 100%;
+    ${mq.sm.min(css`
+      padding: ${theme.space['6']} ${theme.space['18']};
+      width: 620px;
+    `)}
+  `,
+)
+
+const LoadingContentContainer = styled(Card)(
+  ({ theme }) => css`
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
       width: 620px;
@@ -182,20 +195,28 @@ export default () => {
         {!router.query.from && !breakpoints.md && <HamburgerRoutes />}
       </HeadingContainer>
       <Spacer $height="4" />
-      <MainContentContainer>
-        {isConnected ? (
-          <>
-            {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep }} />}
-            {currentStep === 1 && (
-              <AddTextRecord {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning }} />
-            )}
-            {currentStep === 2 && <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning }} />}
-            {currentStep === 3 && <ClaimComplete />}
-          </>
-        ) : (
-          <Typography style={{ textAlign: 'center' }}>{t('general.connectWallet')}</Typography>
-        )}
-      </MainContentContainer>
+      {router.isReady ? (
+        <MainContentContainer>
+          {isConnected ? (
+            <>
+              {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep }} />}
+              {currentStep === 1 && (
+                <AddTextRecord {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning }} />
+              )}
+              {currentStep === 2 && (
+                <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning }} />
+              )}
+              {currentStep === 3 && <ClaimComplete />}
+            </>
+          ) : (
+            <Typography style={{ textAlign: 'center' }}>{t('general.connectWallet')}</Typography>
+          )}
+        </MainContentContainer>
+      ) : (
+        <LoadingContentContainer>
+          <Spinner color="accent" size="large" />
+        </LoadingContentContainer>
+      )}
     </Container>
   )
 }
