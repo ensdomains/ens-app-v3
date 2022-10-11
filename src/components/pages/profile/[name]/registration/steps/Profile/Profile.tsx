@@ -348,7 +348,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
   ])
 
   const trailingButton = useMemo(() => {
-    if (hasChanges) {
+    if (hasChanges || !isDefaultFuses) {
       return (
         <Button data-testid="next-button" shadowless disabled={hasErrors} type="submit">
           {t('action.next', { ns: 'common' })}
@@ -360,7 +360,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         {t('action.skip', { ns: 'common' })}
       </Button>
     )
-  }, [t, hasChanges, hasErrors])
+  }, [t, hasChanges, hasErrors, isDefaultFuses])
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOption, _setModalOption] = useState<ModalOption | null>(null)
@@ -401,8 +401,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             onSubmit={(newFuses) => {
               const _newFuses = newFuses as unknown as keyof FuseObj
               const newFuseObj = Object.keys(fuses).reduce((acc, key) => {
-                acc[key as keyof FuseObj] = _newFuses.includes(key)
-                return acc
+                return { ...acc, [key]: _newFuses.includes(key) }
               }, fuses)
               setFuses(newFuseObj)
               setModalOpen(false)
