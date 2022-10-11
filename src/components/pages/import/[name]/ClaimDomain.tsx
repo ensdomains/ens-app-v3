@@ -216,7 +216,12 @@ export const ClaimDomain = ({
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>
-        <CheckButton variant="primary" size="small" onClick={() => setCurrentStep((x) => x - 1)}>
+        <CheckButton
+          shadowless
+          variant="secondary"
+          size="small"
+          onClick={() => setCurrentStep((x) => x - 1)}
+        >
           {t('action.back', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>

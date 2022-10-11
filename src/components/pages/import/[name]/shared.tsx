@@ -7,7 +7,7 @@ import type { Transaction } from '@app/hooks/transactions/transactionStore'
 export const ButtonContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: column;
+    flex-direction: row-reverse;
     justify-content: center;
     gap: ${theme.space['2.5']};
     width: 100%;
