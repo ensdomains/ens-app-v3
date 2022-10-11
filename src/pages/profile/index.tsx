@@ -8,12 +8,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-
-const isDNSName = (name: string): boolean => {
-  const labels = name?.split('.')
-
-  return !!labels && labels[labels.length - 1] !== 'eth'
-}
+import { isDNSName } from '@app/utils/utils'
 
 export default function Page() {
   const router = useRouter()

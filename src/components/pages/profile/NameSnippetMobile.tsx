@@ -12,7 +12,7 @@ import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { formatExpiry } from '@app/utils/utils'
+import { formatExpiry, isDNSName } from '@app/utils/utils'
 
 import { FavouriteButton } from './FavouriteButton'
 
@@ -132,6 +132,8 @@ export const NameSnippetMobile = ({
   const handleExtend = () => {
     showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
   }
+
+  if (isDNSName(name)) return null
 
   return (
     <Container $isCached={isCached}>
