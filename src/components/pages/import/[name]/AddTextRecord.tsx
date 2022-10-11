@@ -270,8 +270,9 @@ export const AddTextRecord = ({
           onClick={() => {
             setCurrentStep(currentStep - 1)
           }}
-          variant="primary"
+          variant="secondary"
           size="small"
+          shadowless
         >
           {t('navigation.back', { ns: 'common' })}
         </CheckButton>
