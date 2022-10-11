@@ -9,6 +9,7 @@ const TabButtonsContainer = styled.div(
     display: flex;
     gap: ${theme.space['1.25']} ${theme.space['3']};
     overflow-x: auto;
+    overflow-y: hidden;
     padding: 0 ${theme.space['6']};
   `,
 )

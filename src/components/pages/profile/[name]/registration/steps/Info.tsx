@@ -13,6 +13,8 @@ import { RegistrationReducerDataItem } from '../types'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
+    max-width: 780px;
+    margin: 0 auto;
     flex-direction: column;
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};

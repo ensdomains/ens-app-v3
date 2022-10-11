@@ -28,6 +28,8 @@ import Resolver from './Resolver'
 
 const StyledCard = styled.form(
   ({ theme }) => css`
+    max-width: 780px;
+    margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
     border-radius: ${theme.radii['2xLarge']};
