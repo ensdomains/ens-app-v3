@@ -2,7 +2,7 @@ import type { JsonRpcSigner } from '@ethersproject/providers'
 import { BigNumber, utils } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
 import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
@@ -95,20 +95,27 @@ const MessageTypography = styled(Typography)(
 
 type Status = Omit<TransactionStage, 'confirm'>
 
+const progressAnimation = keyframes`
+ 0% { width: 6rem; }
+ 100% { width: 100%; }
+`
+
 const InnerBar = styled.div<{ $progress: number; $status: Status }>(
   ({ theme, $progress, $status }) => css`
-    transition: 1s width linear;
-    width: calc(
-      calc(${$progress / 100} * calc(100% - ${theme.space['24']})) + ${theme.space['24']}
-    );
     height: ${theme.space['9']};
     border-radius: ${theme.radii.full};
     padding: ${theme.space['2']} ${theme.space['4']};
 
+    animation-name: ${progressAnimation};
+    animation-duration: 45s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+
     ${$progress === 100 &&
     css`
       padding-right: ${theme.space['2']};
-      transition: 0.5s width ease-in-out;
+      animation-timing-function: ease-in-out;
+      animation-duration: 0.5s;
     `}
 
     display: flex;
@@ -128,7 +135,7 @@ const InnerBar = styled.div<{ $progress: number; $status: Status }>(
   `,
 )
 
-const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
+export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
 
   const time = useMemo(() => ({ start: sendTime || Date.now(), ms: 45000 }), [sendTime])
