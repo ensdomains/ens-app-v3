@@ -419,6 +419,7 @@ export const TransactionStageModal = ({
   )
 
   const lowerError = useMemo(() => {
+    if (stepStatus === 'completed') return null
     if (transactionError) {
       return transactionError.message
     }
@@ -426,7 +427,7 @@ export const TransactionStageModal = ({
       return requestError.message
     }
     return null
-  }, [transactionError, requestError])
+  }, [transactionError, requestError, stepStatus])
 
   return (
     <>

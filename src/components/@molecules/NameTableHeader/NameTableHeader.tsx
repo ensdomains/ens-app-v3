@@ -95,6 +95,7 @@ const SearchIconWrapper = styled.div(
 
 const DirectionButton = styled.button<{ $active: boolean }>(
   ({ theme, $active }) => css`
+    transition: all 0.15s ease-in-out;
     width: ${theme.space['9']};
     flex: 0 0 ${theme.space['9']};
     height: ${theme.space['9']};
@@ -103,6 +104,7 @@ const DirectionButton = styled.button<{ $active: boolean }>(
     display: flex;
     justify-content: center;
     align-items: center;
+    cursor: pointer;
     svg {
       display: block;
       width: ${theme.space['3']};
@@ -110,6 +112,9 @@ const DirectionButton = styled.button<{ $active: boolean }>(
       path {
         fill: ${$active ? theme.colors.accent : theme.colors.textTertiary};
       }
+    }
+    &:hover {
+      background-color: ${theme.colors.borderSecondary};
     }
   `,
 )

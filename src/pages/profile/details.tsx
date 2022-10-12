@@ -122,6 +122,7 @@ export const Details = ({
     label: string
     description: string
     canTransfer: boolean
+    transferType?: 'manager' | 'owner'
     testId: string
   }[] = []
 
@@ -129,6 +130,7 @@ export const Details = ({
     owners.push({
       address: ownerData.owner!,
       canTransfer: selfAbilities.canChangeOwner,
+      transferType: 'owner',
       label: wrapperData?.fuseObj.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
       description: 'details.descriptions.owner',
       testId: 'owner-button-owner',
@@ -138,6 +140,7 @@ export const Details = ({
       owners.push({
         address: ownerData?.owner,
         canTransfer: selfAbilities.canChangeOwner,
+        transferType: 'manager',
         label: 'name.manager',
         description: 'details.descriptions.controller',
         testId: 'owner-button-owner',
@@ -147,6 +150,7 @@ export const Details = ({
       owners.push({
         address: ownerData.registrant,
         canTransfer: selfAbilities.canChangeRegistrant,
+        transferType: 'owner',
         label: 'name.owner',
         description: 'details.descriptions.registrant',
         testId: 'owner-button-registrant',
@@ -185,9 +189,15 @@ export const Details = ({
       <OwnerButtons $isCached={isCached}>
         {owners.map((owner) => (
           <OwnerButton
+            name={normalisedName}
             key={owner.label}
             address={owner.address}
-            canTransfer={owner.canTransfer}
+            transfer={
+              owner.transferType && {
+                type: owner.transferType,
+                canTransfer: owner.canTransfer,
+              }
+            }
             label={t(owner.label, { ns: 'common' })}
             description={t(owner.description)}
             data-testid={owner.testId}

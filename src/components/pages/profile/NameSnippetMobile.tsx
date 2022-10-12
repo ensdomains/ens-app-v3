@@ -179,38 +179,36 @@ export const NameSnippetMobile = ({
         </ImageWrapper>
       )}
       <RightColumn>
-        <ExpiryAndFavouriteRow>
-          {expiryDate ? (
-            <div>
-              <ExpiresHeading variant="label">{t('name.expires')}</ExpiresHeading>
-              <Typography
-                variant="small"
-                weight="bold"
-                data-testid="expiry-label"
-                data-timestamp={expiryDate.getTime()}
-              >
-                {formatExpiry(expiryDate)}
-              </Typography>
-            </div>
-          ) : (
-            <Typography>{t('name.noExpiry')}</Typography>
-          )}
-          <FavouriteButton disabled />
-        </ExpiryAndFavouriteRow>
         {expiryDate && (
-          <OutlinedButton
-            size="small"
-            shadowless
-            variant="transparent"
-            data-testid="extend-button"
-            disabled={!canExtend}
-            onClick={handleExtend}
-          >
-            <InnerButton>
-              {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
-              <Typography weight="bold">{t('name.extend')}</Typography>
-            </InnerButton>
-          </OutlinedButton>
+          <>
+            <ExpiryAndFavouriteRow>
+              <div>
+                <ExpiresHeading variant="label">{t('name.expires')}</ExpiresHeading>
+                <Typography
+                  variant="small"
+                  weight="bold"
+                  data-testid="expiry-label"
+                  data-timestamp={expiryDate.getTime()}
+                >
+                  {formatExpiry(expiryDate)}
+                </Typography>
+              </div>
+              <FavouriteButton disabled />
+            </ExpiryAndFavouriteRow>
+            <OutlinedButton
+              size="small"
+              shadowless
+              variant="transparent"
+              data-testid="extend-button"
+              disabled={!canExtend}
+              onClick={handleExtend}
+            >
+              <InnerButton>
+                {breakpoints.xs && <ButtonIcon as={FastForwardSVG} />}
+                <Typography weight="bold">{t('name.extend')}</Typography>
+              </InnerButton>
+            </OutlinedButton>
+          </>
         )}
         {canSend && (
           <RowWithGap>

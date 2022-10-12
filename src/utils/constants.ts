@@ -29,7 +29,14 @@ export const RESOLVER_ADDRESSES: ResolverAddresses = {
     '0x1da022710df5002339274aadee8d58218e9d6ab5',
   ],
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  '5': ['0xE264d5bb84bA3b8061ADC38D3D76e6674aB91852'],
+  '5': [
+    '0xE264d5bb84bA3b8061ADC38D3D76e6674aB91852',
+    '0x121304143ea8101e69335f309e2062d299a234b5',
+    '0xff77b96d6bafcec0d684bb528b22e0ab09c70663',
+    '0x6e1b40ed2d626b97a43d2c12e48a6de49a03c7a4',
+    '0xc1ea41786094d1fbe5aded033b5370d51f7a3f96',
+    '0xbbe3fd189d18c8b73ba54e9dd01f89e6b3ee71f0',
+  ],
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '1337': [
     '0x4976fb03C32e5B8cfe2b6cCB31c09Ba78EBaBa41',

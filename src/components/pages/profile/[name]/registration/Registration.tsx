@@ -90,6 +90,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     dispatch({ name: back ? 'decreaseStep' : 'increaseStep', selected })
   }
 
+  const transactionsCallback = ({ back, resetSecret }: BackObj & { resetSecret?: boolean }) => {
+    if (resetSecret) {
+      dispatch({ name: 'resetSecret', selected })
+    }
+    genericCallback({ back })
+  }
+
   const infoProfileCallback = () => {
     dispatch({
       name: 'setQueue',
@@ -166,7 +173,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                 nameDetails={nameDetails}
                 registrationData={item}
                 onStart={onStart}
-                callback={genericCallback}
+                callback={transactionsCallback}
               />
             ),
             complete: <Complete nameDetails={nameDetails} callback={onComplete} />,

@@ -90,6 +90,7 @@ const NameValue = ({ value }: { value: string }) => {
 
 type Data = {
   name: string
+  type?: 'manager' | 'owner'
 }
 
 type FormData = {
@@ -114,6 +115,9 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { register, watch, getFieldState } = useForm<FormData>({
     mode: 'onChange',
   })
+
+  const managerDefaultChecked = data.type !== 'owner'
+  const ownerDefaultChecked = data.type !== 'manager'
 
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
@@ -341,7 +345,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             size="large"
             variant="switch"
             value="owner"
-            defaultChecked
+            defaultChecked={ownerDefaultChecked}
             data-testid="owner-checkbox"
             {...register('ownerChoice', { shouldUnregister: true })}
           />
@@ -360,7 +364,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             label=""
             variant="switch"
             value="manager"
-            defaultChecked
+            defaultChecked={managerDefaultChecked}
             data-testid="manager-checkbox"
             {...register('managerChoice', { shouldUnregister: true })}
           />

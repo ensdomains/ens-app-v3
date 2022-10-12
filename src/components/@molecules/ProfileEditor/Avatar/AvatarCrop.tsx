@@ -11,6 +11,8 @@ import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
 import { calcMomentum, getVars, resolutionMultiplier } from '@app/utils/avatarUpload'
 
+import AvatarScrollBox from './AvatarScrollBox'
+
 const EditImageContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
@@ -213,12 +215,6 @@ export const CropComponent = ({
       moving: false,
     }
     window.requestAnimationFrame(draw)
-
-    const canvas = canvasRef.current
-    if (canvas && canvas.width !== canvas.clientHeight) {
-      canvas.width = canvas.clientWidth
-      canvas.height = canvas.clientHeight
-    }
   }, [draw])
 
   const handleMoveStart = (e: MouseEvent | TouchEvent) => {
@@ -308,6 +304,33 @@ export const CropComponent = ({
     [draw, setZoom],
   )
 
+  const handleResize: ResizeObserverCallback = useCallback(
+    (entries) => {
+      const { width, height } = entries[0].contentRect
+      const canvas = canvasRef.current
+      if (canvas && canvas.width !== width * resolutionMultiplier) {
+        canvas.width = width * resolutionMultiplier
+        canvas.height = height * resolutionMultiplier
+        draw()
+      }
+    },
+    [draw],
+  )
+
+  useEffect(() => {
+    const canvas = canvasRef.current
+    let observer: ResizeObserver
+    if (canvas) {
+      observer = new ResizeObserver(handleResize)
+      observer.observe(canvas)
+    }
+    return () => {
+      if (observer) {
+        observer.disconnect()
+      }
+    }
+  }, [canvasRef, handleResize])
+
   useEffect(() => {
     const image = imageRef.current
     if (canvasRef && !image.src) {
@@ -355,25 +378,27 @@ export const CropComponent = ({
   return (
     <>
       <Dialog.Heading title={t('input.profileEditor.tabs.avatar.image.title')} />
-      <EditImageContainer data-testid="edit-image-container">
-        <ImageContainer>
-          <ImageCropBorder as={CropBorderSVG} />
-          <ImageCropFrame as={CropFrameSVG} />
-          <StyledCanvas ref={canvasRef} />
-        </ImageContainer>
-        <SliderContainer>
-          <PlusCircleSVG />
-          <Slider
-            label="zoom"
-            hideLabel
-            value={zoom}
-            onChange={(e) => setZoom(parseInt(e.target.value))}
-            min={100}
-            max={200}
-          />
-          <MinusCircleSVG />
-        </SliderContainer>
-      </EditImageContainer>
+      <AvatarScrollBox>
+        <EditImageContainer data-testid="edit-image-container">
+          <ImageContainer>
+            <ImageCropBorder as={CropBorderSVG} />
+            <ImageCropFrame as={CropFrameSVG} />
+            <StyledCanvas ref={canvasRef} />
+          </ImageContainer>
+          <SliderContainer>
+            <PlusCircleSVG />
+            <Slider
+              label="zoom"
+              hideLabel
+              value={zoom}
+              onChange={(e) => setZoom(parseInt(e.target.value))}
+              min={100}
+              max={200}
+            />
+            <MinusCircleSVG />
+          </SliderContainer>
+        </EditImageContainer>
+      </AvatarScrollBox>
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={

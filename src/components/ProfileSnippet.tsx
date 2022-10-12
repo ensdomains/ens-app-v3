@@ -41,12 +41,16 @@ const DetailStack = styled.div(
     flex-direction: column;
     align-items: flex-start;
     margin-bottom: ${theme.space['1']};
+    width: 100%;
+    overflow: hidden;
   `,
 )
 
 const Name = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
+    width: 100%;
+    overflow-wrap: anywhere;
   `,
 )
 
@@ -66,6 +70,8 @@ const TextStack = styled.div(
     justify-content: center;
     gap: ${theme.space['1']};
     flex-gap: ${theme.space['1']};
+    width: 100%;
+    overflow: hidden;
   `,
 )
 

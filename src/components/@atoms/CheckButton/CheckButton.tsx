@@ -11,8 +11,19 @@ const Container = styled.button<{ $active: boolean }>(
     svg {
       path,
       rect {
+        transition: all 0.15s ease-in-out;
         stroke: ${$active ? theme.colors.accent : theme.colors.textTertiary};
         stroke-width: 1px;
+      }
+    }
+
+    &:hover {
+      svg {
+        path,
+        rect {
+          stroke: ${theme.colors.accent};
+          stroke-width: 1.5px;
+        }
       }
     }
   `,
