@@ -55,9 +55,10 @@ type Props = {
   isSelf: boolean
   isLoading: boolean
   name: string
+  view?: 'profile' | 'details'
 }
 
-const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
+const ProfileContent = ({ nameDetails, isSelf, isLoading, name, view = 'details' }: Props) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
@@ -78,7 +79,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     wrapperData,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, ownerData)
+  const selfAbilities = useSelfAbilities(address, ownerData, name)
 
   useProtectedRoute(
     '/',
@@ -123,7 +124,24 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
   }
 
-  const { profileActions } = useProfileActions()
+  const { profileActions: baseProfileActions } = useProfileActions()
+
+  const profileOnlyActions =
+    selfAbilities.canExtend && view === 'profile'
+      ? [
+          {
+            label: t('tabs.profile.actions.extend.label'),
+            onClick: () => {
+              showDataInput(`extend-names-${name}`, 'ExtendNames', {
+                names: [name],
+                isSelf: selfAbilities.canEdit,
+              })
+            },
+          },
+        ]
+      : []
+
+  const profileActions = [...(baseProfileActions || []), ...profileOnlyActions]
 
   useEffect(() => {
     if (shouldShowSuccessPage(transactions)) {

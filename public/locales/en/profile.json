@@ -22,6 +22,9 @@
         },
         "deleteSubname": {
           "label": "Delete subname"
+        },
+        "extend": {
+          "label": "Extend name"
         }
       }
     }

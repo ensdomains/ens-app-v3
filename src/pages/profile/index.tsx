@@ -50,6 +50,7 @@ export default function Page() {
         isSelf,
         isLoading,
         name,
+        view: 'profile',
       }}
     />
   )
