@@ -12,6 +12,7 @@ import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorType } from '@app/types'
+import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
@@ -257,11 +258,16 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
       value,
     })) as { key: string; value: string }[]
 
+    const coinTypesWithZeroAddressses = coinTypes.map((coinType) => {
+      if (coinType.value) return coinType
+      return { key: coinType.key, value: emptyAddress }
+    })
+
     const contentHash = dirtyFields.website
 
     return {
       texts,
-      coinTypes,
+      coinTypes: coinTypesWithZeroAddressses,
       contentHash,
     }
   }
