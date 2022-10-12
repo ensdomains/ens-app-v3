@@ -53,7 +53,7 @@ const SearchResultsContainer = styled.div<{
     overflow: hidden;
 
     opacity: 0;
-    z-index: 1;
+    z-index: 1000;
     transform: translateY(-${theme.space['2']});
     transition: 0.35s all cubic-bezier(1, 0, 0.22, 1.6), 0s border-color linear 0s,
       0s width linear 0s;
