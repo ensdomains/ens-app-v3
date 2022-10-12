@@ -83,6 +83,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     valid,
     basicIsCachedData,
     profileIsCachedData,
+    wrapperData,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, ownerData)
@@ -234,6 +235,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
             : undefined,
           leading: breakpoints.md && ownerData && (
             <NameSnippet
+              wrapperData={wrapperData!}
               name={normalisedName}
               network={chainId}
               ownerData={ownerData}

@@ -8,8 +8,9 @@ import { Button, Typography } from '@ensdomains/thorin'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
+import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
-import { shortenAddress } from '@app/utils/utils'
+import { getOwnershipArray, shortenAddress } from '@app/utils/utils'
 
 const Container = styled(CacheableComponent)(
   ({ theme }) => css`
@@ -136,13 +137,12 @@ export const NameDetailSnippet = ({
   showButton,
   dnsOwner,
   isCached,
+  wrapperData,
 }: {
   name: string
   expiryDate?: Date | null
-  ownerData: {
-    owner?: string
-    registrant?: string
-  }
+  ownerData: Exclude<ReturnedENS['getOwner'], undefined>
+  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined>
   network: number
   showButton?: boolean
   dnsOwner?: string
@@ -150,6 +150,8 @@ export const NameDetailSnippet = ({
 }) => {
   const { t } = useTranslation('common')
   const router = useRouter()
+
+  const owners = getOwnershipArray(ownerData, wrapperData, dnsOwner!)
 
   return (
     <NameDetailContainer $isCached={isCached}>
@@ -161,24 +163,12 @@ export const NameDetailSnippet = ({
           })} ${expiryDate.getDate()}, ${expiryDate.getFullYear()}`}</Typography>
         </ItemContainer>
       )}
-      {ownerData.owner && (
-        <ItemContainer>
-          <LeftText weight="bold">{t('name.controller')}</LeftText>
-          <NameOwnerItem address={ownerData.owner} network={network} />
+      {owners.map(([translation, address]) => (
+        <ItemContainer key={translation}>
+          <LeftText weight="bold">{t(translation)}</LeftText>
+          <NameOwnerItem address={address} network={network} />
         </ItemContainer>
-      )}
-      {ownerData.registrant && (
-        <ItemContainer>
-          <LeftText weight="bold">{t('name.registrant')}</LeftText>
-          <NameOwnerItem address={ownerData.registrant} network={network} />
-        </ItemContainer>
-      )}
-      {dnsOwner && (
-        <ItemContainer>
-          <LeftText weight="bold">{t('name.dnsOwner')}</LeftText>
-          <NameOwnerItem address={dnsOwner} network={network} />
-        </ItemContainer>
-      )}
+      ))}
       {showButton && (
         <ButtonWrapper>
           <Button
@@ -210,14 +200,13 @@ export const NameSnippet = ({
   showButton,
   dnsOwner,
   isCached,
+  wrapperData,
 }: {
   name: string
   network: number
   expiryDate?: Date | null
-  ownerData: {
-    owner?: string
-    registrant?: string
-  }
+  ownerData: Exclude<ReturnedENS['getOwner'], undefined>
+  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined>
   showButton?: boolean
   dnsOwner?: string
   isCached: boolean
@@ -232,6 +221,7 @@ export const NameSnippet = ({
       <NameDetailSnippet
         isCached={isCached}
         name={name}
+        wrapperData={wrapperData}
         expiryDate={expiryDate}
         ownerData={ownerData}
         network={network}
