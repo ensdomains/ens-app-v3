@@ -7,6 +7,7 @@ import useProfileEditor from '@app/hooks/useProfileEditor'
 const TabButtonsContainer = styled.div(
   ({ theme }) => css`
     display: flex;
+    flex: 0 0 auto;
     gap: ${theme.space['1.25']} ${theme.space['3']};
     overflow-x: auto;
     overflow-y: hidden;

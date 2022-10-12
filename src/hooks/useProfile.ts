@@ -18,7 +18,7 @@ export const useProfile = (name: string, skip?: any) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
   } = useQuery(
-    ['getProfile', name, 'graph'],
+    ['graph', 'getProfile', name],
     () =>
       getProfile(name, {
         fallback: {
