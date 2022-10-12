@@ -384,10 +384,10 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             handleCancel={() => setModalOpen(false)}
             handleSubmit={(display: string, uri?: string) => {
               if (uri) {
-                setValue('avatar', uri)
+                setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
                 setAvatarDisplay(display)
               } else {
-                setValue('avatar', display)
+                setValue('avatar', display, { shouldDirty: true, shouldTouch: true })
               }
               setModalOpen(false)
             }}
