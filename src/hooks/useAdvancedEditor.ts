@@ -9,6 +9,7 @@ import addressOptions from '@app/components/@molecules/ProfileEditor/options/add
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
+import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
@@ -206,11 +207,16 @@ const useAdvancedEditor = ({ profile, loading, callback }: Props) => {
       value,
     })) as { key: string; value: string }[]
 
+    const coinTypesWithZeroAddressses = coinTypes.map((coinType) => {
+      if (coinType.value) return coinType
+      return { key: coinType.key, value: emptyAddress }
+    })
+
     const contentHash = dirtyFields.other?.contentHash
 
     const records = {
       texts,
-      coinTypes,
+      coinTypes: coinTypesWithZeroAddressses,
       contentHash,
     }
 
