@@ -43,6 +43,7 @@ export const generateAccordionData = (
   t: TFunction,
   ownerData: ReturnType<typeof useBasicName>['ownerData'],
   isWrapped: boolean,
+  name: string,
   address?: string,
 ): AccordionData[] => [
   {
@@ -63,11 +64,15 @@ export const generateAccordionData = (
     body: TokenId,
     name: 'tokenId',
   },
-  {
-    title: t('details.tabs.advanced.registrationDate.label'),
-    body: RegistrationDate,
-    name: 'registrationDate',
-  },
+  ...(name.split('.').length === 2 && name.startsWith('.eth')
+    ? [
+        {
+          title: t('details.tabs.advanced.registrationDate.label'),
+          body: RegistrationDate,
+          name: 'registrationDate',
+        },
+      ]
+    : []),
 ]
 
 const MoreTab = () => {
@@ -77,7 +82,14 @@ const MoreTab = () => {
   const { wrapperData } = useGetWrapperData((name as string) || '')
   const { address } = useAccount()
   const { ownerData, isWrapped } = useBasicName(name as string)
-  const accordionData = generateAccordionData(wrapperData, t, ownerData, isWrapped, address)
+  const accordionData = generateAccordionData(
+    wrapperData,
+    t,
+    ownerData,
+    isWrapped,
+    name as string,
+    address,
+  )
 
   return (
     <MoreContainer>

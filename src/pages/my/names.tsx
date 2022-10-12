@@ -144,6 +144,7 @@ export default function Page() {
       alwaysShowSubtitle
       singleColumnContent
       spacing={spacing}
+      loading={loading}
     >
       {{
         trailing: (
