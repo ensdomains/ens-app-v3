@@ -4,6 +4,7 @@ const { withPlugins } = require('next-compose-plugins')
 const path = require('path')
 const StylelintPlugin = require('stylelint-webpack-plugin')
 const { withSentryConfig } = require('@sentry/nextjs')
+const { execSync } = require('child_process')
 
 /**
  * @type {import('next').NextConfig}
@@ -55,6 +56,10 @@ let nextConfig = {
       },
     ]
   },
+  generateBuildId: () => {
+    const hash = execSync('git rev-parse HEAD').toString().trim()
+    return hash
+  },
   webpack: (config, options) => {
     config.module.rules.push({
       test: /ens.+\.json$/,
@@ -73,10 +78,12 @@ let nextConfig = {
           loader: '@svgr/webpack',
           options: {
             svgoConfig: {
-              plugins: [{
-                name: 'removeViewBox',
-                active: false,
-              }]              
+              plugins: [
+                {
+                  name: 'removeViewBox',
+                  active: false,
+                },
+              ],
             },
             babel: false,
           },
@@ -89,6 +96,11 @@ let nextConfig = {
         extensions: ['tsx'],
         failOnError: process.env.NODE_ENV !== 'development',
         cache: false,
+      }),
+    )
+    config.plugins.push(
+      new options.webpack.DefinePlugin({
+        'process.env.CONFIG_BUILD_ID': JSON.stringify(options.buildId),
       }),
     )
 
