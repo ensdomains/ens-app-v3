@@ -78,6 +78,7 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
     setFocus,
     handleSubmit,
     clearErrors,
+    watch,
   } = useForm<ProfileEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -281,10 +282,7 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
     callback(records, event)
   }
 
-  const avatar = useWatch({
-    control,
-    name: 'avatar',
-  })
+  const avatar = watch('avatar')
 
   const _avatar = useWatch({
     control,
