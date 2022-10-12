@@ -150,6 +150,7 @@ const OptionsContainer = styled.div(
     display: flex;
     gap: ${theme.space['1']};
     padding-bottom: ${theme.space['0.75']};
+    width: 10px;
   `,
 )
 
