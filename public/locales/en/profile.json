@@ -34,7 +34,7 @@
     "notWrapped": "Not wrapped",
     "sendName": {
       "title": "Send Name",
-      "description": "Sending this name will the new address the owner and/or the manager.",
+      "description": "Sending a name will give the new address control over it",
       "learnMore": "Learn more about name ownership.",
       "makeOwner": "Make owner",
       "makeOwnerDescription": "The owner can send to a new owner and change the manager",

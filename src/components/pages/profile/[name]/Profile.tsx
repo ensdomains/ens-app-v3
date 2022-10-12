@@ -11,12 +11,14 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import { WrapperCallToAction } from '@app/components/pages/profile/[name]/details/WrapperCallToAction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
+import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -76,9 +78,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     basicIsCachedData,
     profileIsCachedData,
     wrapperData,
+    isWrapped,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const nameWrapperExists = useWrapperExists()
+  const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
   useProtectedRoute(
     '/',
@@ -144,6 +149,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         loading={isLoading}
       >
         {{
+          info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
           warning: error
             ? {
                 type: 'warning',
