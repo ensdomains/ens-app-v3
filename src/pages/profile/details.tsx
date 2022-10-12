@@ -150,7 +150,6 @@ export const Details = ({
                 ? t('details.descriptions.owner')
                 : t('details.descriptions.controller')
             }
-            canTransfer={selfAbilities.canChangeOwner}
             data-testid="owner-button-owner"
           />
         )}
@@ -161,7 +160,6 @@ export const Details = ({
             label={t('name.dnsOwner', { ns: 'common' })}
             type={breakpoints.lg ? 'dropdown' : 'dialog'}
             description={t('details.descriptions.dnsOwner')}
-            canTransfer={false}
           />
         )}
         {ownerData?.registrant && (
@@ -171,7 +169,6 @@ export const Details = ({
             label={t('name.registrant', { ns: 'common' })}
             type={breakpoints.lg ? 'dropdown' : 'dialog'}
             description={t('details.descriptions.registrant')}
-            canTransfer={selfAbilities.canChangeRegistrant}
             data-testid="owner-button-registrant"
           />
         )}

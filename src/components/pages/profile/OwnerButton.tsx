@@ -126,23 +126,6 @@ const InnerDialog = styled.div(
   `,
 )
 
-const TransferButton = styled.button(
-  ({ theme, disabled }) => css`
-    outline: none;
-    padding: none;
-    margin: none;
-    border: none;
-    background-color: transparent;
-    color: ${theme.colors.accent};
-    margin-top: ${theme.space['4']};
-    ${disabled &&
-    css`
-      color: ${theme.colors.textTertiary};
-      pointer-events: none;
-    `}
-  `,
-)
-
 const ProfileSnippetWrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
@@ -155,16 +138,13 @@ const OwnerButtonWithPopup = ({
   network,
   label,
   description,
-  canTransfer,
 }: {
   address: string
   name?: string | null
   network: number
   label: string
   description: string
-  canTransfer: boolean
 }) => {
-  const { t } = useTranslation('common')
   const { copy, copied } = useCopied()
   const [open, setOpen] = useState(false)
   const { profile, loading } = useProfile(name!, !name)
@@ -222,13 +202,6 @@ const OwnerButtonWithPopup = ({
               <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
             </AddressCopyContainer>
           </AddressCopyButton>
-          {canTransfer && (
-            <TransferButton data-testid="transfer-button" disabled>
-              <Typography variant="large" weight="bold">
-                {t('name.transfer')}
-              </Typography>
-            </TransferButton>
-          )}
         </InnerDialog>
       </Dialog>
     </>
@@ -282,13 +255,11 @@ const OwnerButtonWithDropdown = ({
   name,
   network,
   label,
-  canTransfer,
 }: {
   address: string
   name?: string | null
   network: number
   label: string
-  canTransfer: boolean
 }) => {
   const { t } = useTranslation('common')
   const router = useRouterWithHistory()
@@ -314,17 +285,9 @@ const OwnerButtonWithDropdown = ({
         onClick: () => router.push(`/profile/${name}`),
       }
     }
-    if (canTransfer) {
-      items.push({
-        label: t('name.transfer'),
-        color: 'accent',
-        // eslint-disable-next-line no-alert
-        onClick: () => alert('Not implemented'),
-      })
-    }
     return items
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, name, canTransfer])
+  }, [address, name])
 
   return (
     <Dropdown
@@ -363,29 +326,19 @@ export const OwnerButton = ({
   address,
   network,
   label,
-  canTransfer,
   type = 'dialog',
   description,
 }: {
   address: string
   network: number
   label: string
-  canTransfer: boolean
   type?: 'dropdown' | 'dialog'
   description: string
 }) => {
   const { name } = usePrimary(address)
   if (type === 'dialog') {
-    return <OwnerButtonWithPopup {...{ address, network, label, name, description, canTransfer }} />
+    return <OwnerButtonWithPopup {...{ address, network, label, name, description }} />
   }
 
-  return (
-    <OwnerButtonWithDropdown
-      address={address}
-      canTransfer={canTransfer}
-      label={label}
-      network={network}
-      name={name}
-    />
-  )
+  return <OwnerButtonWithDropdown address={address} label={label} network={network} name={name} />
 }
