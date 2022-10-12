@@ -55,10 +55,9 @@ type Props = {
   isSelf: boolean
   isLoading: boolean
   name: string
-  view?: 'profile' | 'details'
 }
 
-const ProfileContent = ({ nameDetails, isSelf, isLoading, name, view = 'details' }: Props) => {
+const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
@@ -124,24 +123,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name, view = 'details'
     showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
   }
 
-  const { profileActions: baseProfileActions } = useProfileActions()
-
-  const profileOnlyActions =
-    selfAbilities.canExtend && view === 'profile'
-      ? [
-          {
-            label: t('tabs.profile.actions.extend.label'),
-            onClick: () => {
-              showDataInput(`extend-names-${name}`, 'ExtendNames', {
-                names: [name],
-                isSelf: selfAbilities.canEdit,
-              })
-            },
-          },
-        ]
-      : []
-
-  const profileActions = [...(baseProfileActions || []), ...profileOnlyActions]
+  const { profileActions } = useProfileActions()
 
   useEffect(() => {
     if (shouldShowSuccessPage(transactions)) {
@@ -186,11 +168,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name, view = 'details'
                 name={normalisedName}
                 network={chainId}
                 getTextRecord={getTextRecord}
-                button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
+                button={selfAbilities.canExtend ? 'extend' : undefined}
+                canEdit={selfAbilities.canEdit}
                 size={breakpoints.md ? 'medium' : 'small'}
                 actions={profileActions}
               />
-              {selfAbilities.canEdit && (
+              {/* eslint-disable no-nested-ternary */}
+              {selfAbilities.canEdit ? (
                 <SelfButtons $isCached={profileIsCachedData}>
                   <Button shadowless variant="transparent" size="small" onClick={handleEditProfile}>
                     {t('editProfile')}
@@ -211,7 +195,26 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name, view = 'details'
                     {t('viewDetails')}
                   </Button>
                 </SelfButtons>
-              )}
+              ) : !breakpoints.md ? (
+                <SelfButtons>
+                  <Button
+                    onClick={() =>
+                      router.push({
+                        pathname: `/profile/${normalisedName}/details`,
+                        query: {
+                          from: router.asPath,
+                        },
+                      })
+                    }
+                    shadowless
+                    variant="transparent"
+                    size="small"
+                  >
+                    {t('viewDetails')}
+                  </Button>
+                </SelfButtons>
+              ) : null}
+              {/* eslint-enable no-nested-ternary */}
               <ProfileDetails
                 isCached={profileIsCachedData}
                 addresses={(profile?.records?.coinTypes || []).map((item: any) => ({

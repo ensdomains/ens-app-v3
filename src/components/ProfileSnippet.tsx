@@ -1,11 +1,14 @@
 import { useRouter } from 'next/router'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
 
+import FastForwardSVG from '@app/assets/FastForward.svg'
 import TripleDot from '@app/assets/TripleDot.svg'
 
+import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { DisabledButton } from './@atoms/DisabledButton'
 import { NameAvatar } from './AvatarWithZorb'
 
@@ -97,6 +100,25 @@ const ButtonStack = styled.div(
   `,
 )
 
+const InnerButton = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['2']};
+    flex-gap: ${theme.space['2']};
+  `,
+)
+
+const ButtonIcon = styled.svg(
+  ({ theme }) => css`
+    display: block;
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
+  `,
+)
+
 const TripleDotIcon = styled.div(
   ({ theme }) => css`
     display: block;
@@ -144,12 +166,14 @@ export const ProfileSnippet = ({
   buttonPlacement = 'inline',
   network,
   actions,
+  canEdit,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
-  button?: 'viewDetails' | 'viewProfile'
+  button?: 'viewDetails' | 'viewProfile' | 'extend'
   size?: 'small' | 'medium'
   buttonPlacement?: 'inline' | 'bottom'
+  canEdit?: boolean
   network: number
   actions?: {
     onClick: () => void
@@ -162,36 +186,61 @@ export const ProfileSnippet = ({
   const { t } = useTranslation('common')
   const hasActions = actions && actions.length > 0
 
+  const { showDataInput } = useTransactionFlow()
+
   const banner = getTextRecord?.('banner')?.value
   const description = getTextRecord?.('description')?.value
   const url = getTextRecord?.('url')?.value
   const location = getTextRecord?.('location')?.value
   const recordName = getTextRecord?.('name')?.value
 
+  const ActionButton = useMemo(() => {
+    if (button === 'extend' && buttonPlacement === 'inline')
+      return (
+        <Button
+          size="extraSmall"
+          shadowless
+          disabled={false}
+          variant="transparent"
+          data-testid="extend-button"
+          onClick={() => {
+            showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
+          }}
+        >
+          <InnerButton>
+            <ButtonIcon as={FastForwardSVG} />
+            <Typography weight="bold">{t('action.extend', { ns: 'common' })}</Typography>
+          </InnerButton>
+        </Button>
+      )
+    if (button === 'viewDetails' || button === 'viewProfile')
+      return (
+        <Button
+          onClick={() =>
+            router.push({
+              pathname: button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
+              query: {
+                from: router.asPath,
+              },
+            })
+          }
+          shadowless
+          variant="transparent"
+          size="extraSmall"
+        >
+          {t(`wallet.${button}`)}
+        </Button>
+      )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [button, name, buttonPlacement, canEdit])
+
   return (
     <Container $banner={banner} $size={size} data-testid="profile-snippet">
       <FirstItems>
         <NameAvatar size="24" label={name} name={name} network={network} />
         <ButtonStack>
-          {button && buttonPlacement === 'inline' && (
-            <DetailButtonWrapper $placement={buttonPlacement}>
-              <Button
-                onClick={() =>
-                  router.push({
-                    pathname:
-                      button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
-                    query: {
-                      from: router.asPath,
-                    },
-                  })
-                }
-                shadowless
-                variant="transparent"
-                size="extraSmall"
-              >
-                {t(`wallet.${button}`)}
-              </Button>
-            </DetailButtonWrapper>
+          {ActionButton && buttonPlacement === 'inline' && (
+            <DetailButtonWrapper $placement={buttonPlacement}>{ActionButton}</DetailButtonWrapper>
           )}
           {hasActions ? (
             <DropdownWrapper>
@@ -246,25 +295,8 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
-      {button && buttonPlacement === 'bottom' && (
-        <DetailButtonWrapper $placement={buttonPlacement}>
-          <Button
-            onClick={() =>
-              router.push({
-                pathname:
-                  button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
-                query: {
-                  from: router.asPath,
-                },
-              })
-            }
-            shadowless
-            variant="transparent"
-            size="extraSmall"
-          >
-            {t(`wallet.${button}`)}
-          </Button>
-        </DetailButtonWrapper>
+      {ActionButton && buttonPlacement === 'bottom' && (
+        <DetailButtonWrapper $placement={buttonPlacement}>{ActionButton}</DetailButtonWrapper>
       )}
     </Container>
   )
