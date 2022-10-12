@@ -81,7 +81,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     isWrapped,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, ownerData)
+  const selfAbilities = useSelfAbilities(address, ownerData, name)
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
 
@@ -174,11 +174,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 name={normalisedName}
                 network={chainId}
                 getTextRecord={getTextRecord}
-                button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
+                button={selfAbilities.canExtend ? 'extend' : undefined}
+                canEdit={selfAbilities.canEdit}
                 size={breakpoints.md ? 'medium' : 'small'}
                 actions={profileActions}
               />
-              {selfAbilities.canEdit && (
+              {/* eslint-disable no-nested-ternary */}
+              {selfAbilities.canEdit ? (
                 <SelfButtons $isCached={profileIsCachedData}>
                   <Button shadowless variant="transparent" size="small" onClick={handleEditProfile}>
                     {t('editProfile')}
@@ -199,7 +201,26 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                     {t('viewDetails')}
                   </Button>
                 </SelfButtons>
-              )}
+              ) : !breakpoints.md ? (
+                <SelfButtons>
+                  <Button
+                    onClick={() =>
+                      router.push({
+                        pathname: `/profile/${normalisedName}/details`,
+                        query: {
+                          from: router.asPath,
+                        },
+                      })
+                    }
+                    shadowless
+                    variant="transparent"
+                    size="small"
+                  >
+                    {t('viewDetails')}
+                  </Button>
+                </SelfButtons>
+              ) : null}
+              {/* eslint-enable no-nested-ternary */}
               <ProfileDetails
                 isCached={profileIsCachedData}
                 addresses={(profile?.records?.coinTypes || []).map((item: any) => ({

@@ -1,16 +1,18 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Button, Dropdown, Typography } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import PaperPlaneSVG from '@app/assets/PaperPlane.svg'
-import TripleDotSVG from '@app/assets/TripleDot.svg'
+import TripleDot from '@app/assets/TripleDot.svg'
 import { Card } from '@app/components//Card'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButton } from '@app/components/@atoms/DisabledButton'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { OutlinedButton } from '@app/components/OutlinedButton'
 import { useAvatar } from '@app/hooks/useAvatar'
+import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { formatExpiry, isDNSName } from '@app/utils/utils'
@@ -109,6 +111,35 @@ const handleSend =
     })
   }
 
+const DropdownWrapper = styled.div(
+  ({ theme }) => css`
+    /* stylelint-disable */
+    & > div > div {
+      min-width: ${theme.space['48']};
+
+      button {
+        height: ${theme.space['10']};
+      }
+    }
+    /* stylelint-enable */
+  `,
+)
+
+const TripleDotIcon = styled.div(
+  ({ theme }) => css`
+    display: block;
+    box-sizing: border-box;
+    width: ${theme.space['4']};
+    height: ${theme.space['4']};
+  `,
+)
+
+const DisabledButtonWrapper = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['10']};
+  `,
+)
+
 export const NameSnippetMobile = ({
   name,
   network,
@@ -134,6 +165,9 @@ export const NameSnippetMobile = ({
   const handleExtend = () => {
     showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
   }
+
+  const { profileActions: actions } = useProfileActions()
+  const hasActions = actions && actions.length > 0
 
   if (isDNSName(name)) return null
 
@@ -192,11 +226,34 @@ export const NameSnippetMobile = ({
                 </InnerButton>
               </OutlinedButton>
             </SendButtonContainer>
-            <OutlinedButton disabled size="small" shadowless variant="transparent">
-              <InnerButton>
-                <ButtonIcon as={TripleDotSVG} />
-              </InnerButton>
-            </OutlinedButton>
+            {hasActions ? (
+              <DropdownWrapper>
+                <Dropdown
+                  items={actions.map((action) => ({
+                    ...action,
+                    color: action.color || 'text',
+                  }))}
+                  menuLabelAlign="flex-end"
+                  align="right"
+                  shortThrow
+                >
+                  <Button
+                    data-testid="profile-actions"
+                    shadowless
+                    variant="transparent"
+                    size="extraSmall"
+                  >
+                    <TripleDotIcon as={TripleDot} />
+                  </Button>
+                </Dropdown>
+              </DropdownWrapper>
+            ) : (
+              <DisabledButtonWrapper>
+                <DisabledButton shadowless variant="transparent" size="extraSmall">
+                  <TripleDotIcon as={TripleDot} />
+                </DisabledButton>
+              </DisabledButtonWrapper>
+            )}
           </RowWithGap>
         )}
       </RightColumn>
