@@ -10,7 +10,7 @@ import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
-import { getOwnershipArray, shortenAddress } from '@app/utils/utils'
+import { shortenAddress } from '@app/utils/utils'
 
 const Container = styled(CacheableComponent)(
   ({ theme }) => css`
@@ -151,7 +151,24 @@ export const NameDetailSnippet = ({
   const { t } = useTranslation('common')
   const router = useRouter()
 
-  const owners = getOwnershipArray(ownerData, wrapperData, dnsOwner!)
+  const owners: [translation: string, address: string][] = []
+
+  if (ownerData?.ownershipLevel === 'nameWrapper') {
+    owners.push([
+      wrapperData?.fuseObj.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+      ownerData.owner!,
+    ])
+  } else {
+    if (ownerData.owner) {
+      owners.push(['name.manager', ownerData.owner])
+    }
+    if (ownerData?.registrant) {
+      owners.push(['name.owner', ownerData.registrant])
+    }
+  }
+  if (dnsOwner) {
+    owners.push(['name.dnsOwner', dnsOwner])
+  }
 
   return (
     <NameDetailContainer $isCached={isCached}>

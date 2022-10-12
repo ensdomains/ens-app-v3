@@ -1,5 +1,3 @@
-import { ReturnedENS } from '@app/types'
-
 import { networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -49,30 +47,3 @@ export const isBrowser = !!(
   window.document &&
   window.document.createElement
 )
-
-export const getOwnershipArray = (
-  ownerData: Exclude<ReturnedENS['getOwner'], undefined>,
-  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined>,
-  dnsOwner: string,
-) => {
-  const owners: [translation: string, address: string][] = []
-
-  if (ownerData?.ownershipLevel === 'nameWrapper') {
-    owners.push([
-      wrapperData?.fuseObj.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
-      ownerData.owner!,
-    ])
-  } else {
-    if (ownerData.owner) {
-      owners.push(['name.manager', ownerData.owner])
-    }
-    if (ownerData?.registrant) {
-      owners.push(['name.owner', ownerData.registrant])
-    }
-  }
-  if (dnsOwner) {
-    owners.push(['name.dnsOwner', dnsOwner])
-  }
-
-  return owners
-}
