@@ -82,3 +82,7 @@ export type RegistrationReducerAction =
       name: 'resetItem'
       selected: SelectedItemProperties
     }
+  | {
+      name: 'resetSecret'
+      selected: SelectedItemProperties
+    }

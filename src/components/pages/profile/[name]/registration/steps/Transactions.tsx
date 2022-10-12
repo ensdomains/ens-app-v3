@@ -4,8 +4,18 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
-import { Button, CountdownCircle, Heading, Spinner, Typography, mq } from '@ensdomains/thorin'
+import {
+  AlertSVG,
+  Button,
+  CountdownCircle,
+  Dialog,
+  Heading,
+  Spinner,
+  Typography,
+  mq,
+} from '@ensdomains/thorin'
 
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Card } from '@app/components/Card'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -64,12 +74,40 @@ const StyledCountdown = styled(CountdownCircle)(
   `,
 )
 
-type Props = {
-  registrationData: RegistrationReducerDataItem
-  nameDetails: ReturnType<typeof useNameDetails>
-  callback: (data: { back: boolean }) => void
-  onStart: () => void
-}
+const DialogTitle = styled(Typography)(
+  ({ theme }) => css`
+    font-size: ${theme.fontSizes.headingThree};
+    font-weight: bold;
+  `,
+)
+
+const DialogHeading = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['1']};
+
+    div:first-of-type {
+      padding: ${theme.space['2']};
+      background-color: ${theme.colors.yellow};
+      color: ${theme.colors.background};
+      border-radius: ${theme.radii.full};
+
+      svg {
+        display: block;
+        overflow: visible;
+      }
+    }
+  `,
+)
+
+const DialogContent = styled(Typography)(
+  () => css`
+    text-align: center;
+  `,
+)
 
 const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
@@ -87,6 +125,13 @@ const ProgressButton = ({ onClick, label }: { onClick: () => void; label: string
   </MobileFullWidth>
 )
 
+type Props = {
+  registrationData: RegistrationReducerDataItem
+  nameDetails: ReturnType<typeof useNameDetails>
+  callback: (data: { back: boolean; resetSecret?: boolean }) => void
+  onStart: () => void
+}
+
 const Transactions = ({ registrationData, nameDetails, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
 
@@ -94,10 +139,11 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   const keySuffix = `${nameDetails.normalisedName}-${address}`
   const commitKey = `commit-${keySuffix}`
   const registerKey = `register-${keySuffix}`
-  const { getLatestTransaction, createTransactionFlow, resumeTransactionFlow } =
+  const { getLatestTransaction, createTransactionFlow, resumeTransactionFlow, cleanupFlow } =
     useTransactionFlow()
   const commitTx = getLatestTransaction(commitKey)
   const registerTx = getLatestTransaction(registerKey)
+  const [resetOpen, setResetOpen] = useState(false)
 
   const commitTimestamp = commitTx?.stage === 'complete' ? commitTx?.finaliseTime : undefined
   const [commitComplete, setCommitComplete] = useState(
@@ -143,6 +189,13 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     resumeTransactionFlow(registerKey)
   }
 
+  const resetTransactions = () => {
+    cleanupFlow(commitKey)
+    cleanupFlow(registerKey)
+    callback({ back: true, resetSecret: true })
+    setResetOpen(false)
+  }
+
   useEffect(() => {
     if (!commitTx) {
       makeCommitNameFlow()
@@ -155,38 +208,64 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     }
   }, [callback, registerTx?.stage])
 
-  let Buttons: ReactNode = (
-    <>
+  const NormalBackButton = useMemo(
+    () => (
       <MobileFullWidth>
         <Button shadowless onClick={() => callback({ back: true })} variant="secondary">
           {t('action.back', { ns: 'common' })}
         </Button>
       </MobileFullWidth>
-      <MobileFullWidth>
-        <Button data-testid="start-timer-button" shadowless onClick={makeCommitNameFlow}>
-          {t('steps.transactions.startTimer')}
+    ),
+    [t, callback],
+  )
+
+  const ResetBackButton = useMemo(
+    () => (
+      <div>
+        <Button shadowless variant="secondary" tone="red" onClick={() => setResetOpen(true)}>
+          {t('action.back', { ns: 'common' })}
         </Button>
-      </MobileFullWidth>
-    </>
+      </div>
+    ),
+    [t],
+  )
+
+  let BackButton: ReactNode = (
+    <MobileFullWidth>
+      <Button shadowless onClick={() => callback({ back: true })} variant="secondary">
+        {t('action.back', { ns: 'common' })}
+      </Button>
+    </MobileFullWidth>
+  )
+
+  let ActionButton: ReactNode = (
+    <MobileFullWidth>
+      <Button data-testid="start-timer-button" shadowless onClick={makeCommitNameFlow}>
+        {t('steps.transactions.startTimer')}
+      </Button>
+    </MobileFullWidth>
   )
 
   if (commitComplete) {
     if (registerTx?.stage === 'failed') {
-      Buttons = (
+      BackButton = ResetBackButton
+      ActionButton = (
         <FailedButton
           label={t('steps.transactions.transactionFailed')}
           onClick={showRegisterTransaction}
         />
       )
     } else if (registerTx?.stage === 'sent') {
-      Buttons = (
+      BackButton = null
+      ActionButton = (
         <ProgressButton
           label={t('steps.transactions.transactionProgress')}
           onClick={showRegisterTransaction}
         />
       )
     } else {
-      Buttons = (
+      BackButton = ResetBackButton
+      ActionButton = (
         <MobileFullWidth>
           <Button
             data-testid="finish-button"
@@ -200,21 +279,24 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
     }
   } else if (commitTx?.stage) {
     if (commitTx?.stage === 'failed') {
-      Buttons = (
+      BackButton = NormalBackButton
+      ActionButton = (
         <FailedButton
           label={t('steps.transactions.transactionFailed')}
           onClick={showCommitTransaction}
         />
       )
     } else if (commitTx?.stage === 'sent') {
-      Buttons = (
+      BackButton = null
+      ActionButton = (
         <ProgressButton
           label={t('steps.transactions.transactionProgress')}
           onClick={showCommitTransaction}
         />
       )
     } else if (commitTx?.stage === 'complete') {
-      Buttons = (
+      BackButton = ResetBackButton
+      ActionButton = (
         <MobileFullWidth>
           <Button
             data-testid="wait-button"
@@ -231,6 +313,29 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
 
   return (
     <StyledCard>
+      <Dialog variant="blank" open={resetOpen} onDismiss={() => setResetOpen(false)}>
+        <Dialog.CloseButton onClick={() => setResetOpen(false)} />
+        <InnerDialog>
+          <DialogHeading>
+            <div>
+              <AlertSVG />
+            </div>
+            <DialogTitle>You will lose your transaction</DialogTitle>
+          </DialogHeading>
+          <DialogContent>
+            Going back will reset your first transaction. If you go back you will need to complete
+            the transaction again and pay the associated fees.
+          </DialogContent>
+          <DialogContent>Are you sure you want to continue?</DialogContent>
+          <Dialog.Footer
+            trailing={
+              <Button shadowless onClick={resetTransactions} tone="red" variant="secondary">
+                Reset transaction and go back
+              </Button>
+            }
+          />
+        </InnerDialog>
+      </Dialog>
       <Heading>{t('steps.transactions.heading')}</Heading>
       <StyledCountdown
         countdownSeconds={60}
@@ -240,7 +345,10 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
         callback={() => setCommitComplete(true)}
       />
       <Typography>{t('steps.transactions.subheading')}</Typography>
-      <ButtonContainer>{Buttons}</ButtonContainer>
+      <ButtonContainer>
+        {BackButton}
+        {ActionButton}
+      </ButtonContainer>
     </StyledCard>
   )
 }
