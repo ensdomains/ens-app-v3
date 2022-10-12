@@ -70,6 +70,10 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       state.items[selectedItemInx] = makeDefaultData(action.selected)
       break
     }
+    case 'resetSecret': {
+      item.secret = randomSecret()
+      break
+    }
     case 'setQueue': {
       item.queue = action.payload
       break
