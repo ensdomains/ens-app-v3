@@ -58,7 +58,11 @@
     "@rainbow-me/rainbowkit": "0.4.8",
     "@sentry/nextjs": "^7.11.1",
     "@svgr/webpack": "^6.3.1",
-    "@tanstack/react-query": "^4.2.3",
+    "@tanstack/query-persist-client-core": "4.10.3",
+    "@tanstack/query-sync-storage-persister": "4.10.3",
+    "@tanstack/react-query": "4.10.3",
+    "@tanstack/react-query-persist-client": "4.10.3",
+    "@wagmi/core": "^0.5.8",
     "calendar-link": "^2.2.0",
     "dns-packet": "^5.4.0",
     "ethers": "^5.7.0",
@@ -80,7 +84,7 @@
     "react-use": "^17.4.0",
     "styled-components": "^5.3.5",
     "use-immer": "^0.7.0",
-    "wagmi": "^0.6.4"
+    "wagmi": "0.6.8"
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",
@@ -175,7 +179,12 @@
       "bn.js": "npm:bn.js@^5.2.0",
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@next/swc-linux-x64-gnu": "12.1.4",
-      "cypress": "10.8.0"
+      "cypress": "10.8.0",
+      "@tanstack/query-persist-client-core": "4.10.3",
+      "@tanstack/query-sync-storage-persister": "4.10.3",
+      "@tanstack/react-query": "4.10.3",
+      "@tanstack/react-query-persist-client": "4.10.3",
+      "@tanstack/query-core": "4.10.3"
     },
     "patchedDependencies": {
       "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",

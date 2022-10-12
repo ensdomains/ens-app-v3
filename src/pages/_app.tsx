@@ -18,6 +18,7 @@ import { Basic } from '@app/layouts/Basic'
 import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowProvider'
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
+import { makePersistent } from '@app/utils/persist'
 
 import i18n from '../i18n'
 import '../styles.css'
@@ -130,7 +131,10 @@ const wagmiClient = createClient({
   connectors,
   provider,
   queryClient,
+  persister: null,
 })
+
+makePersistent(queryClient)
 
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
