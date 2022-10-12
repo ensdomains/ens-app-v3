@@ -28,6 +28,8 @@ import Resolver from './Resolver'
 
 const StyledCard = styled.form(
   ({ theme }) => css`
+    max-width: 780px;
+    margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.06);
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
     border-radius: ${theme.radii['2xLarge']};
@@ -348,7 +350,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
   ])
 
   const trailingButton = useMemo(() => {
-    if (hasChanges) {
+    if (hasChanges || !isDefaultFuses) {
       return (
         <Button data-testid="next-button" shadowless disabled={hasErrors} type="submit">
           {t('action.next', { ns: 'common' })}
@@ -360,7 +362,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         {t('action.skip', { ns: 'common' })}
       </Button>
     )
-  }, [t, hasChanges, hasErrors])
+  }, [t, hasChanges, hasErrors, isDefaultFuses])
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOption, _setModalOption] = useState<ModalOption | null>(null)
@@ -382,10 +384,10 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             handleCancel={() => setModalOpen(false)}
             handleSubmit={(display: string, uri?: string) => {
               if (uri) {
-                setValue('avatar', uri)
+                setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
                 setAvatarDisplay(display)
               } else {
-                setValue('avatar', display)
+                setValue('avatar', display, { shouldDirty: true, shouldTouch: true })
               }
               setModalOpen(false)
             }}
@@ -401,8 +403,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             onSubmit={(newFuses) => {
               const _newFuses = newFuses as unknown as keyof FuseObj
               const newFuseObj = Object.keys(fuses).reduce((acc, key) => {
-                acc[key as keyof FuseObj] = _newFuses.includes(key)
-                return acc
+                return { ...acc, [key]: _newFuses.includes(key) }
               }, fuses)
               setFuses(newFuseObj)
               setModalOpen(false)

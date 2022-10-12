@@ -170,7 +170,8 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
   )
 
   const profileEditorForm = useProfileEditor({ callback: handleCreateTransaction, profile })
-  const { setValue, handleSubmit, hasErrors, avatar, _avatar, hasChanges } = profileEditorForm
+  const { setValue, handleSubmit, hasErrors, avatar, _avatar, hasChanges, formState } =
+    profileEditorForm
 
   const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
@@ -194,10 +195,13 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
           handleCancel={() => setCurrentContent('profile')}
           handleSubmit={(display: string, uri?: string) => {
             if (uri) {
-              setValue('avatar', uri)
+              setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
               setAvatarDisplay(display)
             } else {
-              setValue('avatar', display)
+              setValue('avatar', `${display}?timestamp=${Date.now()}`, {
+                shouldDirty: true,
+                shouldTouch: true,
+              })
             }
             setCurrentContent('profile')
           }}
@@ -207,7 +211,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
           <Banner zIndex={10}>
             <AvatarWrapper>
               <AvatarButton
-                validated={avatar !== undefined}
+                validated={formState.dirtyFields.avatar}
                 src={avatarDisplay || avatar}
                 onSelectOption={() => setCurrentContent('avatar')}
                 setValue={setValue}

@@ -29,8 +29,11 @@ export const getVars = (canvas: HTMLCanvasElement) => {
   }
 }
 
-export const distanceFromEdge = (a: number, max: number, imgSize: number, cropSize: number) =>
-  a > max ? max - a : Math.max(max - (a + imgSize) + cropSize, 0)
+export const distanceFromEdge = (a: number, max: number, imgSize: number, cropSize: number) => {
+  if (a > max) return max - a
+  if (imgSize < cropSize) return Math.max(0, max - a)
+  return Math.max(max - (a + imgSize) + cropSize, 0)
+}
 
 export const calcMomentum = (a: number, max: number, imgSize: number, crpSz: number) => {
   let momentum = 0

@@ -16,7 +16,7 @@ const Card = styled.div(
     justify-content: flex-start;
     width: ${theme.space.full};
     gap: ${theme.space['4']};
-    max-height: 75vh;
+    max-height: 85vh;
     overflow-y: auto;
 
     ${mq.sm.min(css`

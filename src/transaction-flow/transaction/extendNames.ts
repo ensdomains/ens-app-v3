@@ -5,6 +5,8 @@ import { TFunction } from 'react-i18next'
 import { HelperProps, PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 import { makeDisplay } from '@app/utils/currency'
 
+import { secondsToYears } from '../../utils/utils'
+
 type Data = {
   names: string[]
   duration: number
@@ -12,8 +14,10 @@ type Data = {
   isSelf?: boolean
 }
 
+const toSingleDecimal = (duration: number) => parseFloat(secondsToYears(duration).toFixed(1))
+
 const displayItems = (
-  { names, rentPrice }: Data,
+  { names, rentPrice, duration }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -27,7 +31,7 @@ const displayItems = (
   },
   {
     label: 'duration',
-    value: t('unit.years', { count: names.length }),
+    value: t('unit.years', { count: toSingleDecimal(duration) }),
   },
   {
     label: 'cost',
