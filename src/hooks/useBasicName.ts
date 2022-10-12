@@ -26,9 +26,13 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     async () => {
       const batchQueries = addRegistrationStatusToBatch(ens, normalisedName)
       if (batchQueries.length > 1) {
-        return ens.batch(ens.getOwner.batch(normalisedName), ...batchQueries)
+        return ens.batch(
+          ens.getOwner.batch(normalisedName),
+          ens.getWrapperData.batch(normalisedName),
+          ...batchQueries,
+        )
       }
-      return Promise.all([ens.getOwner(normalisedName)])
+      return ens.batch(...batchQueries, ens.getWrapperData.batch(normalisedName))
     },
     {
       enabled: !!(ens.ready && name && valid),
@@ -41,9 +45,11 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     ? getRegistrationStatus(batchData, normalisedName)
     : undefined
 
-  const expiryData = batchData?.[1] as ReturnedENS['getExpiry']
+  const wrapperData = batchData?.[1] as ReturnedENS['getWrapperData']
 
-  const priceData = batchData?.[2] as ReturnedENS['getPrice']
+  const expiryData = batchData?.[2] as ReturnedENS['getExpiry']
+
+  const priceData = batchData?.[3] as ReturnedENS['getPrice']
 
   const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
 
@@ -61,6 +67,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     valid,
     labelCount,
     ownerData,
+    wrapperData,
     priceData,
     expiryDate,
     gracePeriodEndDate,

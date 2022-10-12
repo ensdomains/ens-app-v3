@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { ENS } from '@ensdomains/ensjs'
 import { Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
@@ -22,6 +21,7 @@ import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
+import { ReturnedENS } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const DetailsContainer = styled.div(
@@ -97,6 +97,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
 export const Details = ({
   expiryDate,
   ownerData,
+  wrapperData,
   breakpoints,
   normalisedName,
   chainId,
@@ -105,7 +106,8 @@ export const Details = ({
   isCached,
 }: {
   expiryDate: Date | null | undefined
-  ownerData: Awaited<ReturnType<ENS['getOwner']>>
+  ownerData: ReturnedENS['getOwner']
+  wrapperData: ReturnedENS['getWrapperData']
   breakpoints: ReturnType<typeof useBreakpoint>
   normalisedName: string
   chainId: number
@@ -114,6 +116,52 @@ export const Details = ({
   isCached?: boolean
 }) => {
   const { t } = useTranslation('profile')
+
+  const owners: {
+    address: string
+    label: string
+    description: string
+    canTransfer: boolean
+    testId: string
+  }[] = []
+
+  if (ownerData?.ownershipLevel === 'nameWrapper') {
+    owners.push({
+      address: ownerData.owner!,
+      canTransfer: selfAbilities.canChangeOwner,
+      label: wrapperData?.fuseObj.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+      description: 'details.descriptions.owner',
+      testId: 'owner-button-owner',
+    })
+  } else {
+    if (ownerData?.owner) {
+      owners.push({
+        address: ownerData?.owner,
+        canTransfer: selfAbilities.canChangeOwner,
+        label: 'name.manager',
+        description: 'details.descriptions.controller',
+        testId: 'owner-button-owner',
+      })
+    }
+    if (ownerData?.registrant) {
+      owners.push({
+        address: ownerData.registrant,
+        canTransfer: selfAbilities.canChangeRegistrant,
+        label: 'name.owner',
+        description: 'details.descriptions.registrant',
+        testId: 'owner-button-registrant',
+      })
+    }
+  }
+  if (dnsOwner) {
+    owners.push({
+      address: dnsOwner,
+      canTransfer: false,
+      label: 'name.dnsOwner',
+      description: 'details.descriptions.dnsOwner',
+      testId: 'owner-button-dnsOwner',
+    })
+  }
 
   return (
     <DetailsContainer>
@@ -135,46 +183,18 @@ export const Details = ({
         />
       )}
       <OwnerButtons $isCached={isCached}>
-        {ownerData?.owner && (
+        {owners.map((owner) => (
           <OwnerButton
-            address={ownerData.owner}
-            network={chainId}
-            label={
-              ownerData.ownershipLevel === 'nameWrapper'
-                ? t('name.owner', { ns: 'common' })
-                : t('name.controller', { ns: 'common' })
-            }
+            key={owner.label}
+            address={owner.address}
+            canTransfer={owner.canTransfer}
+            label={t(owner.label, { ns: 'common' })}
+            description={t(owner.description)}
+            data-testid={owner.testId}
             type={breakpoints.lg ? 'dropdown' : 'dialog'}
-            description={
-              ownerData.ownershipLevel === 'nameWrapper'
-                ? t('details.descriptions.owner')
-                : t('details.descriptions.controller')
-            }
-            canTransfer={selfAbilities.canChangeOwner}
-            data-testid="owner-button-owner"
-          />
-        )}
-        {dnsOwner && (
-          <OwnerButton
-            address={dnsOwner}
             network={chainId}
-            label={t('name.dnsOwner', { ns: 'common' })}
-            type={breakpoints.lg ? 'dropdown' : 'dialog'}
-            description={t('details.descriptions.dnsOwner')}
-            canTransfer={false}
           />
-        )}
-        {ownerData?.registrant && (
-          <OwnerButton
-            address={ownerData.registrant}
-            network={chainId}
-            label={t('name.registrant', { ns: 'common' })}
-            type={breakpoints.lg ? 'dropdown' : 'dialog'}
-            description={t('details.descriptions.registrant')}
-            canTransfer={selfAbilities.canChangeRegistrant}
-            data-testid="owner-button-registrant"
-          />
-        )}
+        ))}
       </OwnerButtons>
       {breakpoints.md && (
         <DetailSnippet
@@ -212,6 +232,7 @@ export default function Page() {
     isWrapped,
     basicIsCachedData,
     profileIsCachedData,
+    wrapperData,
   } = useNameDetails(name)
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
@@ -239,6 +260,7 @@ export default function Page() {
         leading: (
           <Details
             {...{
+              wrapperData: wrapperData!,
               expiryDate,
               ownerData,
               breakpoints,
