@@ -2,15 +2,18 @@ import { mockFunction, render, screen } from '@app/test-utils'
 
 import { useRouter } from 'next/router'
 
+import { useChainId } from '@app/hooks/useChainId'
 import { useProfile } from '@app/hooks/useProfile'
 
 import ResolverDetails from './ResolverDetails'
 
 jest.mock('next/router')
 jest.mock('@app/hooks/useProfile')
+jest.mock('@app/hooks/useChainId')
 
 const mockUseRouter = mockFunction(useRouter)
 const mockUseProfile = mockFunction(useProfile)
+const mockUseChainId = mockFunction(useChainId)
 
 describe('ResolverDetails', () => {
   mockUseRouter.mockReturnValue({
@@ -18,6 +21,7 @@ describe('ResolverDetails', () => {
       name: 'nick.eth',
     },
   })
+  mockUseChainId.mockReturnValue(1)
 
   it('should display the address', () => {
     const mockProfileResponse = {

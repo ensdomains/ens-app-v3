@@ -72,6 +72,11 @@ describe('Details', () => {
       canChangeOwner: true,
       canChangeRegistrant: true,
     },
+    wrapperData: {
+      fuseObj: {
+        PARENT_CANNOT_CONTROL: true,
+      },
+    },
   }
 
   // default mock component implementations
@@ -81,6 +86,12 @@ describe('Details', () => {
   mockMore.mockImplementation(() => <div>MoreTab</div>)
   mockSubnamesTab.mockImplementation(() => <div>SubnamesTab</div>)
   mockRecordsTab.mockImplementation(() => <div>RecordsTab</div>)
+  mockUseAccount.mockReturnValue({ address: '0x123' })
+  mockUseNameDetails.mockReturnValue({
+    ownerData: { owner: '0x123' },
+    profile: { resolverAddress: '0x456' },
+    isLoading: false,
+  })
 
   it('should display NFT on its own on larger screens', () => {
     // render Details component with breakpoint.md === true (larger than md)
@@ -107,25 +118,24 @@ describe('Details', () => {
   })
   it('should display owner button if user is nameWrapper owner', () => {
     const props = { ...defaultProps }
-
     render(<Details {...props} />)
     expect(screen.getByText('name.owner')).toBeInTheDocument()
   })
 
-  it('should display controller button if user is controller', () => {
+  it('should display manager button if user is manager', () => {
     const props = { ...defaultProps }
-    props.ownerData.ownershipLevel = 'controller'
+    props.ownerData.ownershipLevel = 'registrar'
 
     render(<Details {...props} />)
-    expect(screen.getByText('name.controller')).toBeInTheDocument()
+    expect(screen.getByText('name.manager')).toBeInTheDocument()
   })
 
-  it('should display registrant button if user is registrant', () => {
+  it('should display owner button if user is registrant', () => {
     const props = { ...defaultProps }
-    props.ownerData.ownershipLevel = 'registrant'
+    props.ownerData.ownershipLevel = 'registrar'
 
     render(<Details {...props} />)
-    expect(screen.getByText('name.registrant')).toBeInTheDocument()
+    expect(screen.getByText('name.manager')).toBeInTheDocument()
   })
 })
 
@@ -141,6 +151,7 @@ describe('Page', () => {
     }))
 
     const mockPush = jest.fn()
+    const mockReplace = jest.fn()
 
     // mock implementation of useRouter that returns default data
     mockUseRouter.mockImplementation(() => ({
@@ -148,6 +159,7 @@ describe('Page', () => {
         name: '',
       },
       push: mockPush,
+      replace: mockReplace,
     }))
 
     // mock useChainId, useNameDetails and useAccount
@@ -170,7 +182,7 @@ describe('Page', () => {
     // click more tab on Page
     fireEvent.click(screen.getByText('details.tabs.advanced.label'))
 
-    expect(mockPush).toHaveBeenCalled()
+    expect(mockReplace).toHaveBeenCalled()
 
     mockUseRouter.mockImplementation(() => ({
       query: {
