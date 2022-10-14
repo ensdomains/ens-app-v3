@@ -60,6 +60,43 @@ describe('<AvatarNFT />', () => {
   mockUseAccount.mockReturnValue({
     address: '0x0000000000000000000000000000000000000001',
   })
+  it('should show detail on click', async () => {
+    global.fetch = jest.fn().mockResolvedValue({
+      json: () => ({
+        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
+        totalCount: 5,
+      }),
+    })
+    render(<AvatarNFT {...props} />)
+
+    await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
+    fireEvent.click(screen.getByTestId('nft-0-0x0'))
+    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible(), {
+      timeout: 1000,
+    })
+  })
+  it('should correctly call submit callback', async () => {
+    const ownedNfts = Array.from({ length: 5 }, generateNFT(true))
+
+    global.fetch = jest.fn().mockResolvedValue({
+      json: () => ({
+        ownedNfts,
+        totalCount: 5,
+      }),
+    })
+    render(<AvatarNFT {...props} />)
+
+    await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
+    fireEvent.click(screen.getByTestId('nft-0-0x0'))
+    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible())
+    fireEvent.click(screen.getByText('action.confirm'))
+    await waitFor(() =>
+      expect(mockHandleSubmit).toHaveBeenCalledWith(
+        'https://localhost/test-media-gateway.png',
+        'eip155:1/erc1155:0x0/0',
+      ),
+    )
+  })
   it('should display all NFTs', async () => {
     global.fetch = jest.fn().mockResolvedValue({
       json: () => ({
@@ -162,42 +199,5 @@ describe('<AvatarNFT />', () => {
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(mockedFetch).toHaveBeenCalledTimes(1))
-  })
-  it('should show detail on click', async () => {
-    global.fetch = jest.fn().mockResolvedValue({
-      json: () => ({
-        ownedNfts: Array.from({ length: 5 }, generateNFT(true)),
-        totalCount: 5,
-      }),
-    })
-    render(<AvatarNFT {...props} />)
-
-    await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
-    fireEvent.click(screen.getByTestId('nft-0-0x0'))
-    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible(), {
-      timeout: 1000,
-    })
-  })
-  it('should correctly call submit callback', async () => {
-    const ownedNfts = Array.from({ length: 5 }, generateNFT(true))
-
-    global.fetch = jest.fn().mockResolvedValue({
-      json: () => ({
-        ownedNfts,
-        totalCount: 5,
-      }),
-    })
-    render(<AvatarNFT {...props} />)
-
-    await waitFor(() => expect(screen.getByTestId('nft-0-0x0')).toBeVisible())
-    fireEvent.click(screen.getByTestId('nft-0-0x0'))
-    await waitFor(() => expect(screen.getByText('NFT 0 description')).toBeVisible())
-    fireEvent.click(screen.getByText('action.confirm'))
-    await waitFor(() =>
-      expect(mockHandleSubmit).toHaveBeenCalledWith(
-        'https://localhost/test-media-gateway.png',
-        'eip155:1/erc1155:0x0/0',
-      ),
-    )
   })
 })
