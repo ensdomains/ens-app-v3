@@ -50,7 +50,7 @@ describe('OwnerButton', () => {
       mockForNoPrimary()
       const mockData: ComponentProps<typeof OwnerButton> = {
         ...dialogMockData,
-        canTransfer: true,
+        transfer: { canTransfer: true },
       }
       render(<OwnerButton {...mockData} />)
 
@@ -87,7 +87,7 @@ describe('OwnerButton', () => {
       mockForNoPrimary()
       const mockData: ComponentProps<typeof OwnerButton> = {
         ...dropdownMockData,
-        canTransfer: true,
+        transfer: { canTransfer: true },
       }
       render(<OwnerButton {...mockData} />)
 

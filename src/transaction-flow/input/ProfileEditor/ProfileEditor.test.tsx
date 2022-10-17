@@ -229,7 +229,7 @@ describe('ProfileEditor', () => {
     await waitFor(() => {
       expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
         key: 'ETH',
-        value: '',
+        value: '0x0000000000000000000000000000000000000000',
       })
     })
   })

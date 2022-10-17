@@ -1,4 +1,4 @@
-import { mockFunction, renderHook } from '@app/test-utils'
+import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -23,6 +23,10 @@ const mockGetPrice = {
   ...jest.fn(),
   batch: jest.fn(),
 }
+const mockGetWrapperData = {
+  ...jest.fn(),
+  batch: jest.fn(),
+}
 
 const mockBatch = jest.fn()
 
@@ -32,12 +36,13 @@ describe('useBasicName', () => {
     getOwner: mockGetOwner,
     getExpiry: mockGetExpiry,
     getPrice: mockGetPrice,
+    getWrapperData: mockGetWrapperData,
     batch: mockBatch,
   })
   afterEach(() => {
     jest.clearAllMocks()
   })
-  it('should query for the expiry if the name is a 2LD .eth', () => {
+  it('should query for the expiry if the name is a 2LD .eth', async () => {
     mockUseValidate.mockReturnValue({
       valid: true,
       name: 'test.eth',
@@ -45,7 +50,7 @@ describe('useBasicName', () => {
     })
 
     renderHook(() => useBasicName('test.eth'))
-    expect(mockBatch).toHaveBeenCalled()
+    await waitFor(() => expect(mockBatch).toHaveBeenCalled())
     expect(mockGetExpiry.batch).toHaveBeenCalled()
   })
   it('should not query for the expiry if not a 2LD .eth', () => {
