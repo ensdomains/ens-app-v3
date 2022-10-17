@@ -15,7 +15,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Controller').should('have.text', '0xf39...92266')
+    cy.findByTestId('owner-button-name-Manager').should('have.text', '0xf39...92266')
   })
   it('Should allow manager to change manager when they are not the owner', () => {
     acceptMetamaskAccess(1)
@@ -30,7 +30,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click({ force: true })
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Controller').should('have.text', '0x709...c79C8')
+    cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
   it('Should allow owner to change owner', () => {
     acceptMetamaskAccess(2)
@@ -44,7 +44,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Registrant').should('have.text', '0xf39...92266')
+    cy.findByTestId('owner-button-name-Owner').should('have.text', '0xf39...92266')
   })
 
   it('Should allow owner to change manager if they are not the manager', () => {
@@ -59,7 +59,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Controller').should('have.text', '0xf39...92266')
+    cy.findByTestId('owner-button-name-Manager').should('have.text', '0xf39...92266')
   })
 
   it('Should allow owner to change owner and manager', () => {
@@ -77,8 +77,8 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Registrant').should('have.text', '0x709...c79C8')
-    cy.findByTestId('owner-button-name-Controller').should('have.text', '0x709...c79C8')
+    cy.findByTestId('owner-button-name-Owner').should('have.text', '0x709...c79C8')
+    cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
   it('Should allow namewrapper owner to send name', () => {
     acceptMetamaskAccess(2)
@@ -117,7 +117,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Controller').should('have.text', '0xf39...92266')
+    cy.findByTestId('owner-button-name-Manager').should('have.text', '0xf39...92266')
   })
   it('Should allow unwrapped subname to be sent by parent owner (setSubnodeOwner)', () => {
     acceptMetamaskAccess(2)
@@ -130,6 +130,6 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Controller').should('have.text', '0x709...c79C8')
+    cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
 })
