@@ -81,6 +81,7 @@ describe('Send Flow', () => {
     cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
   it('Should allow namewrapper owner to send name', () => {
+    cy.visit('/profile/wrapped.eth')
     acceptMetamaskAccess(2)
     cy.visit('/profile/wrapped.eth')
     cy.findByText('View Details').click({ force: true })
@@ -104,7 +105,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByTestId('owner-button-name-Owner').should('have.text', '0x709...c79C8')
+    cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
   it('Should allow unwrapped subname to be sent by owner (setOwner)', () => {
     acceptMetamaskAccess(2)
