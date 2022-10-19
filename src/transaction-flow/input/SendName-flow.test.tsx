@@ -23,6 +23,12 @@ const defaultMockInputData = {
 describe('handleSubmitForm', () => {
   describe('Parent sending subname', () => {
     it('should call transferSubname on the nameWrapper if the parent is wrapped', () => {
+      const result = handleSubmitForm({
+        ...defaultMockInputData,
+        name: 'sub.wrapped.eth',
+        ownerChoiceWatch: 'owner',
+      })
+
       const mockBatch = jest.fn()
       mockUseEns.mockReturnValue({
         getOwner: {
