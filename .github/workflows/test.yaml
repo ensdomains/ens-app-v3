@@ -92,6 +92,7 @@ jobs:
     needs: build-stateless
     timeout-minutes: 20
     runs-on: ubuntu-latest
+    continue-on-error: true
     strategy:
       matrix:
         node-version: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
@@ -150,7 +151,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [11, 12]
+        node-version: [101, 102, 103]
 
     steps:
       - uses: actions/checkout@v3

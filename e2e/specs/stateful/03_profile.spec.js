@@ -126,6 +126,7 @@ const profiles = [
 
 describe('Profile', () => {
   it('should allow user to connect', () => {
+    cy.changeMetamaskNetwork('goerli')
     acceptMetamaskAccess()
     cy.contains('0x', {
       timeout: 15000,
