@@ -191,6 +191,7 @@ jobs:
           "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
         env:
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
+          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
