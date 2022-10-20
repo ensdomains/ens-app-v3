@@ -38,7 +38,7 @@ services:
     volumes:
       - $DATA_FOLDER/ipfs:/data/ipfs
   postgres:
-    image: postgres
+    image: postgres:14
     ports:
       - '5432:5432'
     command: ['postgres', '-cshared_preload_libraries=pg_stat_statements']
