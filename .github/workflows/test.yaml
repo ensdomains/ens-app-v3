@@ -150,7 +150,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [12, 13]
+        node-version: [11, 12]
 
     steps:
       - uses: actions/checkout@v3

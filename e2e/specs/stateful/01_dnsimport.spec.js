@@ -52,6 +52,7 @@ describe('Import DNSSEC name', () => {
     cy.findByText('Congratulations!').should('be.visible')
   })
   it('should not show the success message again once acknowledged', () => {
+    cy.wait(2000)
     cy.visit('/profile/leontalbert.com')
     cy.findByText('View Name').click()
     cy.reload()
