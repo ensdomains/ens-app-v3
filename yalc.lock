@@ -2,8 +2,8 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ens-test-env": {
-      "signature": "8ee1e574555529ab7a3645a86aa84faf",
-      "file": true,
+      "signature": "be27f652d8755d10871cd87cfabfb94b",
+      "pure": true,
       "replaced": "^0.3.2"
     }
   }

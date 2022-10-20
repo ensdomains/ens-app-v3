@@ -222,7 +222,7 @@ export const main = async (_config, _options, justKill) => {
   if (!options.save) {
     if (!options.extraTime) {
       // set next block timestamp to ensure consistent hashes
-      await rpcFetch('anvil_setNextBlockTimestamp', [1640995200])
+      await rpcFetch('anvil_setNextBlockTimestamp', [opts.env.BLOXK_TIMESTAMP])
     } else {
       const timestamp =
         Math.floor(Date.now() / 1000) - parseInt(options.extraTime)

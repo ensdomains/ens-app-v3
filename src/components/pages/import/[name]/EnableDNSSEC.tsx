@@ -118,7 +118,13 @@ export const EnableDNSSEC = ({ setCurrentStep }: { setCurrentStep: (arg: number)
       />
       <Spacer $height="5" />
       <ButtonContainer>
-        <CheckButton onClick={handleCheck} variant="primary" size="small" loading={isLoading}>
+        <CheckButton
+          onClick={handleCheck}
+          variant="primary"
+          size="small"
+          loading={isLoading}
+          data-testid="dnssec-check-button"
+        >
           {t('action.check', { ns: 'common' })}
         </CheckButton>
       </ButtonContainer>
