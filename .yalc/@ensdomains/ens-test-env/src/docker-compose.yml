@@ -4,7 +4,7 @@ services:
     image: ghcr.io/ensdomains/anvil:latest
     ports:
       - '8545:8545'
-    entrypoint: /bin/sh -c 'anvil --chain-id 1337 --gas-limit 50000000 --timestamp $BLOCK_TIMESTAMP $ANVIL_EXTRA_ARGS'
+    entrypoint: /bin/sh -c 'anvil --chain-id 1337 --gas-limit 50000000 --timestamp 1640995200 $ANVIL_EXTRA_ARGS'
     environment:
       ANVIL_IP_ADDR: '0.0.0.0'
   graph-node:
