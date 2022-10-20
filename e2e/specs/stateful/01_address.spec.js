@@ -2,7 +2,6 @@ import { acceptMetamaskAccess } from '../../setup'
 
 describe('Address', () => {
   it('should allow user to connect', () => {
-    cy.changeMetamaskNetwork('goerli')
     acceptMetamaskAccess()
     cy.visit('/')
     // replace with data-testid when design system supports it

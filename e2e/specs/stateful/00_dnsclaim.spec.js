@@ -50,11 +50,11 @@ describe('Import DNSSEC name', () => {
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button', { timeout: 60000 }).click()
     cy.findByText('Congratulations!').should('be.visible')
+    cy.findByText('View Name').click()
+    cy.wait(5000)
   })
   it('should not show the success message again once acknowledged', () => {
-    cy.wait(2000)
     cy.visit('/profile/leontalbert.com')
-    cy.findByText('View Name').click()
     cy.reload()
     cy.findByText('Manager').should('be.visible')
   })
