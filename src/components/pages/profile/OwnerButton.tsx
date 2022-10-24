@@ -198,8 +198,6 @@ const OwnerButtonWithPopup = ({
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
-  console.log('label: ', label)
-
   return (
     <>
       <OwnerButtonWrapper onClick={() => setOpen(true)}>
