@@ -64,7 +64,7 @@ describe('SelectPrimaryName', () => {
   it('should show loading', async () => {
     mockRequest.mockImplementation(
       () =>
-        new Promise((resolve) => {
+        new Promise<void>((resolve) => {
           resolve()
         }),
     )
@@ -118,6 +118,20 @@ describe('SelectPrimaryName', () => {
       expect(screen.queryByText('test.eth')).not.toBeInTheDocument()
       expect(screen.getByText('test2.eth')).toBeInTheDocument()
       expect(screen.getByText('test3.eth')).toBeInTheDocument()
+    })
+  })
+  it('should truncate encoded names', async () => {
+    mockRequest.mockResolvedValue({
+      domains: [
+        {
+          name: '[2fcba40a1a605acf57a88f10820dd7f474036e9c73660ce1bafdbb9004b92ded].eth',
+          id: '0x0',
+        },
+      ],
+    })
+    renderHelper({})
+    await waitFor(() => {
+      expect(screen.getByText('[2fc...ded].eth')).toBeInTheDocument()
     })
   })
 })

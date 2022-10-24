@@ -233,4 +233,34 @@ describe('useNamesFromAddress', () => {
     expect(result.current.currentPage![0].isRegistrant).toBe(true)
     expect(result.current.currentPage![0].isController).toBe(true)
   })
+  it('should use registration expiry for wrapped domains', async () => {
+    const names = [
+      {
+        ...makeNameItem(true)(null, 0),
+        type: 'wrappedDomain',
+        expiryDate: new Date(0),
+        registration: {
+          registrationDate: new Date(Date.now() - 60 * 60 * 24 * 1000 * 6),
+          expiryDate: new Date(Date.now() + 60 * 60 * 24 * 1000 * 6),
+        },
+      },
+    ]
+
+    mockGetNames.mockResolvedValue(names)
+    const { result, waitForNextUpdate } = renderHook(() =>
+      useNamesFromAddress({
+        page: 1,
+        resultsPerPage: 5,
+        sort: {
+          orderDirection: 'desc',
+          type: 'expiryDate',
+        },
+        address: '0x123',
+      }),
+    )
+    await waitForNextUpdate()
+    expect(result.current.currentPage![0].expiryDate!.getTime()).toBe(
+      names[0].registration.expiryDate.getTime(),
+    )
+  })
 })
