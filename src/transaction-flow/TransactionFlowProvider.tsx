@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, {
   ComponentProps,
   ReactNode,
@@ -53,6 +54,8 @@ const TransactionContext = React.createContext<ProviderValue>({
 })
 
 export const TransactionFlowProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter()
+
   const [state, dispatch] = useLocalStorageReducer(
     'tx-flow',
     reducer,
@@ -141,6 +144,22 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     [state.items],
   )
 
+  const resumeTransactionFlow = useCallback(
+    (key: string) => {
+      const { getAllTransactionsComplete, getSelectedItem } = helpers({
+        selectedKey: key,
+        items: state.items,
+      })
+      const item = getSelectedItem()
+      if (!item.resumeLink || !getAllTransactionsComplete(item)) {
+        dispatch({ name: 'resumeFlow', key })
+        return
+      }
+      router.push(item.resumeLink)
+    },
+    [dispatch, router, state.items],
+  )
+
   const providerValue: ProviderValue = useMemo(() => {
     return {
       showDataInput: ((key, name, data) =>
@@ -155,7 +174,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
           key,
           payload: flow,
         })) as CreateTransactionFlow,
-      resumeTransactionFlow: (key: string) => dispatch({ name: 'resumeFlow', key }),
+      resumeTransactionFlow,
       getTransactionIndex,
       getTransaction,
       getResumable,
@@ -166,6 +185,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     }
   }, [
     dispatch,
+    resumeTransactionFlow,
     getResumable,
     getTransactionIndex,
     getLatestTransaction,
