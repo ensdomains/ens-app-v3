@@ -94,7 +94,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [1, 2, 3, 4, 5, 6, 7, 8]
+        node-version: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
     steps:
       - uses: actions/checkout@v3
       - uses: pnpm/action-setup@v2.2.2
@@ -150,7 +150,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [1, 2]
+        node-version: [101, 102, 103]
 
     steps:
       - uses: actions/checkout@v3
@@ -181,16 +181,17 @@ jobs:
       - name: Install window server
         run: sudo apt-get install -y fluxbox
 
-      # - name: Run tests
-      #   run: |
-      #     Xvfb :20 -screen 0 1366x768x16 &
-      #     sleep 1 &&
-      #     DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
-      #     parallel --lb --halt now,success=1,fail=1 ::: \
-      #     "pnpm start" \
-      #     "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
-      #   env:
-      #     NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
+      - name: Run tests
+        run: |
+          Xvfb :20 -screen 0 1366x768x16 &
+          sleep 1 &&
+          DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
+          parallel --lb --halt now,success=1,fail=1 ::: \
+          "pnpm start" \
+          "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
+        env:
+          NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
+          SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
       - uses: actions/upload-artifact@v2
         if: failure()

@@ -2,81 +2,37 @@ import { acceptMetamaskAccess } from '../../setup'
 
 const profiles = [
   {
-    name: 'taytems.eth',
+    name: 'wrapmebaby.eth',
     records: [
       {
         type: 'snippet',
         key: 'name',
-        value: 'tate',
+        value: 'wrap',
       },
       {
         type: 'snippet',
         key: 'description',
-        value: 'professional gamer',
+        value: 'Professional namer',
       },
-      {
-        type: 'snippet',
-        key: 'url',
-        value: 'taytems.xyz',
-      },
-      {
-        type: 'snippet',
-        key: 'location',
-        value: 'australia',
-      },
-      {
-        type: 'account',
-        key: 'com.discord',
-        value: 'taytems#0700',
-      },
-      {
-        type: 'account',
-        key: 'com.github',
-        value: 'tateb',
-      },
-      {
-        type: 'account',
-        key: 'com.twitter',
-        value: '@taytemss',
-        fullValue: 'taytemss',
-      },
-      {
-        type: 'address',
-        key: 'eth',
-        value: '0x8e8...E3216',
-        fullValue: '0x8e8Db5CcEF88cca9d624701Db544989C996E3216',
-      },
-      {
-        type: 'other',
-        key: 'avatar',
-        value: 'ipfs://QmR6SxBf...',
-        fullValue: 'ipfs://QmR6SxBfMEas7SB5KaRHd4ZrBzCeVjMrpn6fAMZZpbdojQ',
-      },
-      {
-        type: 'other',
-        key: 'email',
-        value: 'yo@taytems.xyz',
-      },
-    ],
-    owners: [
-      {
-        type: 'controller',
-        value: 'cold.taytems.eth',
-      },
-      {
-        type: 'registrant',
-        value: 'cold.taytems.eth',
-      },
-    ],
-    expiry: 'November 13, 2025',
-  },
-  {
-    name: 'ens.eth',
-    records: [
       {
         type: 'snippet',
         key: 'url',
         value: 'ens.domains',
+      },
+      {
+        type: 'snippet',
+        key: 'location',
+        value: 'Metaverse',
+      },
+      {
+        type: 'account',
+        key: 'com.discord',
+        value: 'ens#0700',
+      },
+      {
+        type: 'account',
+        key: 'com.github',
+        value: 'ensdomains',
       },
       {
         type: 'account',
@@ -85,47 +41,42 @@ const profiles = [
         fullValue: 'ensdomains',
       },
       {
-        type: 'account',
-        key: 'com.github',
-        value: 'ensdomains',
-      },
-      {
         type: 'address',
         key: 'eth',
-        value: '0xFe8...D44b7',
-        fullValue: '0xFe89cc7aBB2C4183683ab71653C4cdc9B02D44b7',
-      },
-      {
-        type: 'other',
-        key: 'snapshot',
-        value: 'ipns://storage....',
-        fullValue:
-          'ipns://storage.snapshot.page/registry/0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9/ens.eth',
+        value: '0x325...1be8f',
+        fullValue: '0x32518828A071a0e6E549F989D4aaB4Cd7401be8f',
       },
       {
         type: 'other',
         key: 'avatar',
-        value: 'https://i.imgur...',
-        fullValue: 'https://i.imgur.com/ga6y0c0.jpg',
+        value: 'https://avatar-...',
+        fullValue:
+          'https://avatar-upload.ens-cf.workers.dev/goerli/wrapmebaby.eth?timestamp=1666267425956',
+      },
+      {
+        type: 'other',
+        key: 'email',
+        value: 'email@ens.domai...',
+        fullValue: 'email@ens.domains',
       },
     ],
     owners: [
       {
-        type: 'controller',
-        value: '0xb6E...28cd9',
+        type: 'manager',
+        value: 'wrapmebaby.eth',
       },
       {
-        type: 'registrant',
-        value: '0xb6E...28cd9',
+        type: 'owner',
+        value: 'wrapmebaby.eth',
       },
     ],
-    expiry: 'August 26, 2030',
-    contentHash: 'ipns://k51qzi5uqu5dgox2z23r6e99oqency055a6xt92xzmyvpz8mwz5ycjavm0u150',
+    expiry: 'May 30, 2037',
   },
 ]
 
 describe('Profile', () => {
   it('should allow user to connect', () => {
+    cy.changeMetamaskNetwork('goerli')
     acceptMetamaskAccess()
     cy.contains('0x', {
       timeout: 15000,
@@ -187,11 +138,11 @@ describe('Profile', () => {
 
           it('should show other records', () => {
             if (otherRecords.length > 0) {
-              cy.contains('Other').should('be.visible')
+              cy.contains('Other Records').should('be.visible')
               otherRecords.forEach((other) => {
                 cy.findByTestId(`other-profile-button-${other.key}`)
                   .should('be.visible')
-                  .should('contain.text', other.value)
+                  .should('contain.text', `${other.key}${other.value}`)
               })
             }
           })
