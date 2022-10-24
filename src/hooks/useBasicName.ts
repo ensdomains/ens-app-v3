@@ -22,7 +22,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     internal: { isFetchedAfterMount },
     status,
   } = useQuery(
-    ['batch', 'getOwner', 'getExpiry', normalisedName, 2],
+    ['batch', 'getOwner', 'getExpiry', normalisedName],
     () => {
       const batchQueries = addRegistrationStatusToBatch(ens, normalisedName)
 
