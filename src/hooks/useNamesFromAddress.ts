@@ -74,7 +74,11 @@ export const useNamesFromAddress = ({
         isWrappedOwner: existingEntry.isWrappedOwner || isWrappedOwner,
       }
       const newItem = newMap[curr.name]
-      if (newItem.expiryDate) newItem.expiryDate = new Date(newItem.expiryDate)
+      if (newItem.registration?.expiryDate) {
+        newItem.expiryDate = new Date(newItem.registration.expiryDate)
+      } else if (newItem.expiryDate) {
+        newItem.expiryDate = new Date(newItem.expiryDate)
+      }
       if (newItem.createdAt) newItem.createdAt = new Date(newItem.createdAt)
       if (newItem.registrationDate) newItem.registrationDate = new Date(newItem.registrationDate)
       return newMap
