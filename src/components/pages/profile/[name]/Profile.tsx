@@ -94,6 +94,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
   )
 
+  useEffect(() => {
+    if (isSelf && name) {
+      router.replace(`/profile/${name}`)
+    }
+  }, [isSelf, name, router])
+
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
   const [titleContent, descriptionContent] = useMemo(() => {
