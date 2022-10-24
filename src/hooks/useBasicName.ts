@@ -23,10 +23,8 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName, 2],
-    async () => {
+    () => {
       const batchQueries = addRegistrationStatusToBatch(ens, normalisedName)
-
-      console.log('getting owner', await ens.getOwner(normalisedName))
 
       if (batchQueries.length > 1) {
         return ens.batch(
