@@ -170,7 +170,7 @@ describe('Extend Names', () => {
     cy.visit('/my/names')
 
     cy.findByTestId('select-page-size').click()
-    cy.findByText('100 per page').click()
+    cy.findByText('100 per page', { timeout: 5000 }).click({ force: true })
 
     cy.log('get the base data to compare')
     NAMES.forEach((name) => {
