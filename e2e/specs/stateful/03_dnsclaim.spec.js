@@ -33,7 +33,9 @@ describe('Import DNSSEC name', () => {
     cy.findByText('Claim').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.findByTestId('transaction-modal-complete-button', { timeout: 60000 }).click()
+    cy.findByTestId('transaction-modal-complete-button', {
+      timeout: Cypress.env('transactionWaitTime'),
+    }).click()
     cy.findByText('Congratulations!').should('be.visible')
   })
   it('should allow user to import a name that they are the owner of', () => {
@@ -48,7 +50,9 @@ describe('Import DNSSEC name', () => {
     cy.findByText('Claim').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.findByTestId('transaction-modal-complete-button', { timeout: 60000 }).click()
+    cy.findByTestId('transaction-modal-complete-button', {
+      timeout: Cypress.env('transactionWaitTime'),
+    }).click()
     cy.findByText('Congratulations!').should('be.visible')
     cy.findByText('View Name').click()
     cy.wait(5000)
