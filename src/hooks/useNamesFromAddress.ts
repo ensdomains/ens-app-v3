@@ -4,6 +4,7 @@ import { useQuery } from 'wagmi'
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { GRACE_PERIOD } from '@app/utils/constants'
 
 import { useBlockTimestamp } from './useBlockTimestamp'
 
@@ -90,7 +91,8 @@ export const useNamesFromAddress = ({
 
   const filterFunc = useMemo(() => {
     const baseFilter = (n: ReturnedName) => {
-      if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp) return false
+      if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp - GRACE_PERIOD)
+        return false
       return n.parent.name !== 'addr.reverse'
     }
     let secondaryFilter: (n: ReturnedName) => boolean = () => true

@@ -81,7 +81,8 @@ export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOn
   if (textOnly) return <>{text}</>
   return (
     <ExpiryText
-      data-testid={`short-expiry-${color}`}
+      data-testid="short-expiry"
+      data-color={color}
       data-timestamp={expiry.getTime()}
       weight="bold"
       $color={color}

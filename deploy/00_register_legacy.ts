@@ -105,6 +105,18 @@ const names: Name[] = [
     namedAddr: 'owner',
     customDuration: 2419200,
   },
+  {
+    label: 'grace-period',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
+  {
+    label: 'grace-period-in-list',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -331,9 +343,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
 
-  //register subname
+  // register subname
   const resolver = publicResolver.address
-  const registrant = allNamedAccts['owner']
+  const registrant = allNamedAccts.owner
   const _registry = registry.connect(await ethers.getSigner(registrant))
   const subnameTx = await _registry.setSubnodeRecord(
     namehash('test123.eth'),
