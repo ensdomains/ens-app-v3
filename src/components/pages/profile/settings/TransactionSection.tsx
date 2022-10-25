@@ -57,13 +57,22 @@ const TransactionContainer = styled(Card)(
   `,
 )
 
+const TransactionContainerLeft = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    padding-left: ${theme.space['1']};
+    gap: ${theme.space['3']};
+  `,
+)
+
 const TransactionInfoContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: center;
-    padding-left: ${theme.space['1']};
     gap: ${theme.space['0.5']};
   `,
 )
@@ -99,7 +108,10 @@ export const TransactionSection = () => {
   const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
-  const visibleTransactions = transactions.slice(0, viewAmt - 1)
+
+  const visibleTransactions = useMemo(() => {
+    return transactions.slice(0, viewAmt - 1)
+  }, [transactions, viewAmt])
 
   const canClear = useMemo(() => {
     return transactions.length > 0
@@ -136,17 +148,23 @@ export const TransactionSection = () => {
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${hash}-${i}`}
                 >
-                  {status === 'pending' && <Spinner data-testid="pending-spinner" color="accent" />}
-                  <TransactionInfoContainer>
-                    <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
-                    <StyledOutlink
-                      $error={status === 'failed'}
-                      href={makeEtherscanLink(hash, chainName)}
-                      target="_blank"
-                    >
-                      {tc(`transaction.status.${status}.regular`)}
-                    </StyledOutlink>
-                  </TransactionInfoContainer>
+                  <TransactionContainerLeft>
+                    {status === 'pending' && (
+                      <Spinner data-testid="pending-spinner" color="accent" />
+                    )}
+                    <TransactionInfoContainer>
+                      <Typography weight="bold">
+                        {tc(`transaction.description.${action}`)}
+                      </Typography>
+                      <StyledOutlink
+                        $error={status === 'failed'}
+                        href={makeEtherscanLink(hash, chainName)}
+                        target="_blank"
+                      >
+                        {tc(`transaction.status.${status}.regular`)}
+                      </StyledOutlink>
+                    </TransactionInfoContainer>
+                  </TransactionContainerLeft>
                   <ContinueContainer>
                     {resumable && (
                       <Button
@@ -155,7 +173,7 @@ export const TransactionSection = () => {
                         variant="primary"
                         onClick={() => resumeTransactionFlow(key)}
                       >
-                        Continue
+                        {tc('action.continue')}
                       </Button>
                     )}
                   </ContinueContainer>

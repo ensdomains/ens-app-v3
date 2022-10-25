@@ -101,13 +101,15 @@ const TabBarProfile = ({ address, isActive }: { address: string; isActive: boole
 }
 
 export const TabBar = () => {
-  const { address } = useAccount()
+  const { address, status } = useAccount()
+  const isAccountLoading = ['reconnecting', 'connecting'].includes(status)
 
   const activeRoute = useActiveRoute()
 
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
 
+  if (isAccountLoading) return null
   return (
     <>
       <TabWrapper id="tabbar">
