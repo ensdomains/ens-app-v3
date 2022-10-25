@@ -36,6 +36,7 @@ const InfoItems = styled.div(
 
     ${mq.md.min(css`
       flex-direction: row;
+      align-items: stretch;
     `)}
   `,
 )
