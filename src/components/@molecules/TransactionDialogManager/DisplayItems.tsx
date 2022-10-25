@@ -85,8 +85,10 @@ const InnerValueWrapper = styled.div(
 )
 
 const ValueTypography = styled(Typography)(
-  () => css`
+  ({ theme }) => css`
+    overflow-wrap: anywhere;
     text-align: right;
+    margin-left: ${theme.space['2']};
   `,
 )
 

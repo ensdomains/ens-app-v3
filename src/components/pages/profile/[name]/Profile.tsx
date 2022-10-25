@@ -83,7 +83,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const selfAbilities = useSelfAbilities(address, ownerData, name)
   const nameWrapperExists = useWrapperExists()
-  const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
+  const canBeWrapped =
+    nameWrapperExists &&
+    !isWrapped &&
+    normalisedName.endsWith('.eth') &&
+    (ownerData?.ownershipLevel === 'registrar'
+      ? ownerData?.registrant === address
+      : ownerData?.owner === address)
 
   useProtectedRoute(
     '/',

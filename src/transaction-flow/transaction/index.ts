@@ -1,3 +1,4 @@
+import approveNameWrapper from './approveNameWrapper'
 import burnFuses from './burnFuses'
 import commitName from './commitName'
 import createSubname from './createSubname'
@@ -36,6 +37,7 @@ export const transactions = {
   transferSubname,
   transferController,
   importDNSSECName,
+  approveNameWrapper,
 }
 
 export type Transaction = typeof transactions

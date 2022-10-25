@@ -6,7 +6,7 @@ module.exports = defineConfig({
   projectId: '4zmgdz',
   userAgent: 'synpress',
   retries: {
-    runMode: process.env.CI ? 5 : 0,
+    runMode: process.env.CI ? 5 : 1,
     openMode: 0,
   },
   fixturesFolder,

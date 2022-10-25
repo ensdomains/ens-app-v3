@@ -263,6 +263,7 @@ export const AddTextRecord = ({
           size="small"
           disabled={currentStep === 2}
           loading={isCheckLoading}
+          data-testid="dnssec-check-button"
         >
           {t('action.check', { ns: 'common' })}
         </CheckButton>

@@ -62,11 +62,17 @@ describe('SelectPrimaryName', () => {
     },
   })
   it('should show loading', async () => {
-    mockRequest.mockImplementation(async () => new Promise(() => {}))
+    mockRequest.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolve()
+        }),
+    )
     renderHelper({})
     await waitFor(() =>
       expect(screen.getByText('section.primary.input.loading')).toBeInTheDocument(),
     )
+    mockRequest.mockClear()
   })
   it('should show no name message', async () => {
     mockRequest.mockResolvedValue({ domains: [] })

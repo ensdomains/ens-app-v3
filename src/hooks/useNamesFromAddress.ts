@@ -144,7 +144,7 @@ export const useNamesFromAddress = ({
 
   return {
     currentPage,
-    isLoading,
+    isLoading: isLoading || isBlockTimestampLoading,
     status,
     refetch,
     pageLength: pages?.length || 0,

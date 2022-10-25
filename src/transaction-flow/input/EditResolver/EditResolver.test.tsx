@@ -47,7 +47,7 @@ describe('EditResolver', () => {
   describe('When profile is not updated to latest resolver', () => {
     beforeEach(() => {
       mockUseProfile.mockReturnValue({
-        profile: { resolverAddress: RESOLVER_ADDRESSES[2] },
+        profile: { resolverAddress: RESOLVER_ADDRESSES['1'][2] },
         loading: false,
       })
       mockUseProvider.mockReturnValue({})
@@ -75,8 +75,8 @@ describe('EditResolver', () => {
         data: {
           contract: 'registry',
           name: 'user1.eth',
-          oldResolver: RESOLVER_ADDRESSES[2],
-          resolver: RESOLVER_ADDRESSES[0],
+          oldResolver: RESOLVER_ADDRESSES['1'][2],
+          resolver: RESOLVER_ADDRESSES['1'][0],
         },
       })
     })
@@ -141,7 +141,7 @@ describe('EditResolver', () => {
       await waitFor(() => {
         expect(customInput).not.toBeDisabled()
       })
-      await userEvent.type(customInput, RESOLVER_ADDRESSES[1])
+      await userEvent.type(customInput, RESOLVER_ADDRESSES['1'][1])
 
       fireEvent.click(updateBtn)
 
@@ -153,8 +153,8 @@ describe('EditResolver', () => {
         data: {
           contract: 'registry',
           name: 'user1.eth',
-          oldResolver: RESOLVER_ADDRESSES[2],
-          resolver: RESOLVER_ADDRESSES[1],
+          oldResolver: RESOLVER_ADDRESSES['1'][2],
+          resolver: RESOLVER_ADDRESSES['1'][1],
         },
       })
     })
@@ -163,7 +163,7 @@ describe('EditResolver', () => {
   describe('when profile is update to latest resolver', () => {
     beforeEach(() => {
       mockUseProfile.mockReturnValue({
-        profile: { resolverAddress: RESOLVER_ADDRESSES[0] },
+        profile: { resolverAddress: RESOLVER_ADDRESSES['1'][0] },
         loading: false,
       })
       mockUseProvider.mockReturnValue({})

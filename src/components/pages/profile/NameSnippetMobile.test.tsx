@@ -1,12 +1,15 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { NameSnippetMobile } from './NameSnippetMobile'
 
 jest.mock('@app/utils/BreakpointProvider')
+jest.mock('@app/hooks/useProfileActions')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
+const mockUseProfileActions = mockFunction(useProfileActions)
 
 describe('NameSnippetMobile', () => {
   mockUseBreakpoint.mockReturnValue({
@@ -21,6 +24,10 @@ describe('NameSnippetMobile', () => {
     name: 'nick.eth',
     network: 1,
   }
+
+  mockUseProfileActions.mockReturnValue({
+    profileActions: undefined,
+  })
 
   it('should show the expiry date if given', () => {
     const mockData = {

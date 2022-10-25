@@ -53,3 +53,5 @@ export const isDNSName = (name: string): boolean => {
 
   return !!labels && labels[labels.length - 1] !== 'eth'
 }
+
+export const isASubname = (name: string) => name.split('.').length > 2

@@ -1,11 +1,18 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
 import { useRouter } from 'next/router'
+import { useAccount } from 'wagmi'
+
+import { useProfileActions } from '@app/hooks/useProfileActions'
 
 import { DetailSnippet } from './DetailSnippet'
 
 jest.mock('next/router')
+jest.mock('@app/hooks/useProfileActions')
+
 const mockUseRouter = mockFunction(useRouter)
+const mockUseAccount = mockFunction(useAccount)
+const mockUseProfileActions = mockFunction(useProfileActions)
 
 describe('DetailSnippet', () => {
   const mockRouterObject = {
@@ -13,11 +20,16 @@ describe('DetailSnippet', () => {
       name: 'nick.eth',
     },
   }
+  mockUseAccount.mockReturnValue({ address: '0x123' })
+  mockUseProfileActions.mockReturnValue({
+    profileActions: undefined,
+  })
 
   it('should show the expiry date if given', () => {
     const mockData = {
       expiryDate: new Date(1654782805000),
       canSend: false,
+      name: 'nick.eth',
     }
     mockUseRouter.mockReturnValue(mockRouterObject)
     render(<DetailSnippet {...mockData} />)
