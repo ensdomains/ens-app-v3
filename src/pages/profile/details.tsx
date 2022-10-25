@@ -245,7 +245,13 @@ export default function Page() {
     wrapperData,
   } = useNameDetails(name)
   const nameWrapperExists = useWrapperExists()
-  const canBeWrapped = nameWrapperExists && ownerData?.registrant === address && !isWrapped
+  const canBeWrapped =
+    nameWrapperExists &&
+    !isWrapped &&
+    normalisedName.endsWith('.eth') &&
+    (ownerData?.ownershipLevel === 'registrar'
+      ? ownerData?.registrant === address
+      : ownerData?.owner === address)
 
   const selfAbilities = useSelfAbilities(address, ownerData, name)
 
