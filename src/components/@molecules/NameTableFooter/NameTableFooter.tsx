@@ -56,7 +56,7 @@ export const NameTableFooter = ({
         alwaysShowLast={alwaysShowLast}
         showEllipsis={breakpoints.sm}
       />
-      <div>
+      <div data-testid="select-page-size">
         <Select
           hideLabel
           label="Results per page"

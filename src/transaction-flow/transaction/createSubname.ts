@@ -14,17 +14,13 @@ const displayItems = (
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
-    label: 'action',
-    value: t(`transaction.description.createSubname`),
-  },
-  {
-    label: 'info',
-    value: t(`transaction.info.createSubname`),
-  },
-  {
     label: 'name',
     value: parent,
     type: 'name',
+  },
+  {
+    label: 'action',
+    value: t(`transaction.description.createSubname`),
   },
   {
     label: 'subname',

@@ -66,4 +66,32 @@ describe('Wrap Name', () => {
     cy.findByTestId('transaction-modal-inner').should('not.exist')
     cy.findByTestId('wrapper-cta-container').should('not.exist')
   })
+
+  describe('subdomain', () => {
+    it('should allow wrapping a subdomain', () => {
+      cy.visit('/profile/sub.unwrapped-with-wrapped-subnames.eth/details')
+      connectFromExisting()
+      cy.findByTestId('wrapper-cta-container').should('be.visible')
+      cy.findByTestId('wrapper-cta-button').should('contain.text', 'Upgrade')
+    })
+    it('should approve name wrapper for address', () => {
+      cy.findByTestId('wrapper-cta-button').click()
+      cy.findByTestId('transaction-modal-inner').should('be.visible')
+      cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+    })
+    it('should wrap the name', () => {
+      // arbitrary wait so metamask updates the account nonce
+      cy.wait(1000)
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+    })
+    it('should remove the notification once the name is wrapped', () => {
+      cy.findByTestId('transaction-modal-inner').should('not.exist')
+      cy.findByTestId('wrapper-cta-container').should('not.exist')
+    })
+  })
 })

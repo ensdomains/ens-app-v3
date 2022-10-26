@@ -10,7 +10,7 @@ describe('Extend Names', () => {
     cy.log('get the base data to compare')
     NAMES.forEach((name) => {
       cy.findByTestId(`name-item-${name}`)
-        .findByTestId('short-expiry-foreground')
+        .findByTestId('short-expiry')
         .invoke('attr', 'data-timestamp')
         .then((timestamp) => {
           cy.log(`name: ${name} timestamp: ${timestamp}`)
@@ -51,7 +51,7 @@ describe('Extend Names', () => {
       cy.get(`@${name}`).then((timestamp) => {
         const newTimestamp = parseInt(timestamp) + 31536000000 * 2
         cy.findByTestId(`name-item-${name}`)
-          .findByTestId('short-expiry-foreground')
+          .findByTestId('short-expiry')
           .invoke('attr', 'data-timestamp')
           .should('eq', newTimestamp.toString())
       })
@@ -62,7 +62,6 @@ describe('Extend Names', () => {
     cy.clearLocalStorage()
     cy.visit('/profile/other-registrant.eth/details')
     connectFromExisting()
-    cy.wait(1000)
     cy.findByTestId('extend-button').should('be.visible')
     cy.findByTestId('expiry-label').should('be.visible')
     cy.findByTestId('expiry-label')
@@ -123,17 +122,56 @@ describe('Extend Names', () => {
     })
   })
 
-  it('should be able to register multiple names on the names page', () => {
-    const NAMES = ['test123.eth', 'with-subnames.eth', 'to-be-wrapped.eth']
-
-    cy.visit('/')
+  it('should extend a single name in grace period', () => {
+    cy.clearLocalStorage()
+    cy.visit('/profile/grace-period.eth/details')
     connectFromExisting()
+
+    cy.findByTestId('extend-button').should('be.visible')
+    cy.findByTestId('expiry-label').should('be.visible')
+    cy.findByTestId('expiry-label')
+      .invoke('attr', 'data-timestamp')
+      .then((timestamp) => {
+        cy.log(`timestamp: ${timestamp}`)
+        cy.wrap(timestamp).as('timestamp')
+      })
+
+    cy.findByTestId('extend-button').click()
+    cy.findByTestId('extend-names-modal', { timeout: 10000 }).should('be.visible')
+
+    cy.get('button').contains('Save').click()
+
+    cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.confirmMetamaskTransaction()
+    cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(5000)
+    cy.get('@timestamp').then((timestamp) => {
+      const newTimestamp = parseInt(timestamp) + 31536000000
+      cy.findByTestId('expiry-label')
+        .invoke('attr', 'data-timestamp')
+        .should('eq', newTimestamp.toString())
+    })
+  })
+
+  it('should be able to register multiple names on the names page', () => {
+    const NAMES = [
+      'test123.eth',
+      'with-subnames.eth',
+      'to-be-wrapped.eth',
+      'grace-period-in-list.eth',
+    ]
+
+    acceptMetamaskAccess(2)
     cy.visit('/my/names')
+
+    cy.findByTestId('select-page-size').click()
+    cy.wait(1000)
+    cy.findByTestId('select-option-100').click()
 
     cy.log('get the base data to compare')
     NAMES.forEach((name) => {
       cy.findByTestId(`name-item-${name}`)
-        .findByTestId('short-expiry-foreground')
+        .findByTestId('short-expiry')
         .invoke('attr', 'data-timestamp')
         .then((timestamp) => {
           cy.log(`name: ${name} timestamp: ${timestamp}`)
@@ -153,9 +191,9 @@ describe('Extend Names', () => {
     cy.get('button').contains('Next').click()
 
     cy.log('check the invoice details')
-    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0096')
-    cy.findByTestId('invoice-item-1-amount').should('contain.text', '0.0003')
-    cy.findByTestId('invoice-total').should('contain.text', '0.0099')
+    cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0128')
+    cy.findByTestId('invoice-item-1-amount').should('contain.text', '0.0004')
+    cy.findByTestId('invoice-total').should('contain.text', '0.0132')
     cy.findByText('1 year extension').should('be.visible')
 
     cy.log('check the price comparison table')
@@ -176,7 +214,7 @@ describe('Extend Names', () => {
       cy.get(`@${name}`).then((timestamp) => {
         const newTimestamp = parseInt(timestamp) + 31536000000 * 2
         cy.findByTestId(`name-item-${name}`)
-          .findByTestId('short-expiry-foreground')
+          .findByTestId('short-expiry')
           .invoke('attr', 'data-timestamp')
           .should('eq', newTimestamp.toString())
       })

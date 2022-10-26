@@ -33,7 +33,7 @@ specifiers:
   '@ensdomains/ens-contracts': 0.0.15
   '@ensdomains/ens-test-env': file:.yalc/@ensdomains/ens-test-env
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.30
+  '@ensdomains/ensjs': 3.0.0-alpha.32
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': 0.6.20
   '@ethersproject/providers': ^5.7.0
@@ -148,7 +148,7 @@ dependencies:
   '@ensdomains/dnssecoraclejs': 0.2.7_pvk3ufufkdqmdylw6bmtfuxgpy
   '@ensdomains/ens-contracts': 0.0.15_uhtqcqloeksov7aucejb2ltlwi
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.30_7x5j7mhlayj6sfsfjeiz4rsas4
+  '@ensdomains/ensjs': 3.0.0-alpha.32_7x5j7mhlayj6sfsfjeiz4rsas4
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.20_6haozuff5ofofiwuoke6ixqiri
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_wiydppdk2wtsgvuygzl3yf3yma
@@ -2124,8 +2124,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.30_7x5j7mhlayj6sfsfjeiz4rsas4:
-    resolution: {integrity: sha512-43ME6BTXzhz8qxL9NcF97Hip8U9ggErQzHGlJPed+zWvvyV4T+8AaW1o9MWKXZRq/svNeLOZUntPvhhJa8hrcA==}
+  /@ensdomains/ensjs/3.0.0-alpha.32_7x5j7mhlayj6sfsfjeiz4rsas4:
+    resolution: {integrity: sha512-FZ5IXAXxWBOJEBo4XAIGGgLmDdVCwoH/F0Tc0UNi2Dsfz3YBmIIzrb8AuHQC8/GoPX1ly8KhbTPaRmAMIPc76w==}
     peerDependencies:
       ethers: '*'
     dependencies:
@@ -23594,7 +23594,7 @@ packages:
   file:.yalc/@ensdomains/ens-test-env:
     resolution: {directory: .yalc/@ensdomains/ens-test-env, type: directory}
     name: '@ensdomains/ens-test-env'
-    version: 0.3.2
+    version: 0.3.3
     hasBin: true
     dependencies:
       '@ethersproject/wallet': 5.7.0
