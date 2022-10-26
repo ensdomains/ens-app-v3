@@ -33,7 +33,7 @@
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID",
     "synpress:ci:stateful": "pnpm synpress:stateful --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2",
-    "e2e": "E2E=true pnpm tenv start --extra-time 11368000",
+    "e2e": "E2E=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
     "e2e:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:stateful",
     "e2e:ci:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:ci:stateful",
