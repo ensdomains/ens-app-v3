@@ -103,6 +103,10 @@ export default function Page() {
     search: searchQuery,
   })
 
+  useEffect(() => {
+    setPage(1)
+  }, [address])
+
   const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
   const handleExtend = () => {
     if (selectedNames.length === 0) return
