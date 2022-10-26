@@ -11,7 +11,7 @@ const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
 export function imageUrlUnknownRecord(name: string, network: number) {
   const supported = getSupportedNetworkName(network)
 
-  return `${baseMetadataURL}/${supported}/avatar/${name}`
+  return `${baseMetadataURL}/${supported}/avatar/${name}?timestamp=${Date.now()}`
 }
 
 export function ensNftImageUrl(name: string, network: number, regAddr: string) {
