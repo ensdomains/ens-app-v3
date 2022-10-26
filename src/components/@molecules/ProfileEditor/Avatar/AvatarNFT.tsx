@@ -127,7 +127,7 @@ const SelectedNFTImage = styled.img(
 const LoadingContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
-    height: 100vh;
+    height: ${theme.space['32']};
 
     display: flex;
     align-items: center;
