@@ -130,6 +130,7 @@ jobs:
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           DISPLAY=:20 pnpm e2e:ci -nb
         env:
+          CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: stateless-${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
 
       - uses: actions/upload-artifact@v2
@@ -190,6 +191,7 @@ jobs:
           "pnpm start" \
           "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
         env:
+          CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
 
