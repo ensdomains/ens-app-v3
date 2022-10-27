@@ -39,7 +39,7 @@ const TabWrapper = styled.div(
     bottom: 0;
     left: 0;
     right: 0;
-    z-index: 1;
+    z-index: 100;
     background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, ${theme.colors.background} 60%);
     padding: ${theme.space['6']} ${theme.space['4']};
     ${mq.md.min(

@@ -10,16 +10,22 @@ export const useSelfAbilities = (
   name?: string,
 ) => {
   const parent = name?.split('.')?.slice(1)?.join('.')
+  const is2LDEth = name?.split('.')?.length === 2 && name?.split('.')?.[1] === 'eth'
+
   const { ownerData: parentOwnerData } = useBasicName(parent)
 
   return useMemo(() => {
     const abilities = {
       canEdit: false,
       canSend: false,
+      canExtend: false,
       canChangeOwner: false,
       canChangeRegistrant: false,
     }
+
     if (!address || !ownerData) return abilities
+
+    if (is2LDEth) abilities.canExtend = true
     if (address === ownerData.owner) {
       abilities.canSend = true
     }
@@ -39,5 +45,5 @@ export const useSelfAbilities = (
       abilities.canChangeOwner = true
     }
     return abilities
-  }, [address, ownerData, parentOwnerData])
+  }, [address, ownerData, parentOwnerData, is2LDEth])
 }

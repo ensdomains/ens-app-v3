@@ -1,10 +1,10 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { useQuery } from '@tanstack/react-query'
 import { useProvider, useSendTransaction, useSigner } from '@web3modal/react'
-import { utils } from 'ethers'
+import { BigNumber, utils } from 'ethers'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled, { css, keyframes } from 'styled-components'
 
 import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
@@ -24,6 +24,8 @@ import { useEns } from '@app/utils/EnsProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
+
+const COMMIT_GAS_COST = 45000
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -94,20 +96,27 @@ const MessageTypography = styled(Typography)(
 
 type Status = Omit<TransactionStage, 'confirm'>
 
+const progressAnimation = keyframes`
+ 0% { width: 6rem; }
+ 100% { width: 100%; }
+`
+
 const InnerBar = styled.div<{ $progress: number; $status: Status }>(
   ({ theme, $progress, $status }) => css`
-    transition: 1s width linear;
-    width: calc(
-      calc(${$progress / 100} * calc(100% - ${theme.space['24']})) + ${theme.space['24']}
-    );
     height: ${theme.space['9']};
     border-radius: ${theme.radii.full};
     padding: ${theme.space['2']} ${theme.space['4']};
 
+    animation-name: ${progressAnimation};
+    animation-duration: 45s;
+    animation-timing-function: linear;
+    animation-fill-mode: forwards;
+
     ${$progress === 100 &&
     css`
       padding-right: ${theme.space['2']};
-      transition: 0.5s width ease-in-out;
+      animation-timing-function: ease-in-out;
+      animation-duration: 0.5s;
     `}
 
     display: flex;
@@ -127,7 +136,15 @@ const InnerBar = styled.div<{ $progress: number; $status: Status }>(
   `,
 )
 
-const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
+type TxError = {
+  reason: string
+  code: string
+  method: string
+  transaction: object
+  error: Error
+}
+
+export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
 
   const time = useMemo(() => ({ start: sendTime || Date.now(), ms: 45000 }), [sendTime])
@@ -200,6 +217,7 @@ export const TransactionStageModal = ({
   actionName,
   currentStep,
   displayItems,
+  helper,
   dispatch,
   stepCount,
   transaction,
@@ -233,7 +251,11 @@ export const TransactionStageModal = ({
         ens,
         transaction.data,
       )
-      const gasLimit = await signer!.estimateGas(populatedTransaction)
+      let gasLimit = await signer!.estimateGas(populatedTransaction)
+
+      if (transaction.name === 'registerName') {
+        gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
+      }
 
       return {
         ...populatedTransaction,
@@ -242,10 +264,10 @@ export const TransactionStageModal = ({
       }
     },
     {
-      enabled: !!transaction && !!signer && !!ens,
+      enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
     },
   )
-  const requestError = _requestError as Error | null
+  const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: !!transaction && !!signer && !!ens,
     queryKey: ['prepareTx', txKey, currentStep],
@@ -284,6 +306,11 @@ export const TransactionStageModal = ({
       </>
     )
   }, [stage, t, transaction.sendTime])
+
+  const HelperContent = useMemo(() => {
+    if (!helper) return null
+    return <Helper {...helper} />
+  }, [helper])
 
   const ActionButton = useMemo(() => {
     if (stage === 'complete') {
@@ -401,14 +428,18 @@ export const TransactionStageModal = ({
   )
 
   const lowerError = useMemo(() => {
+    if (stage === 'complete' || stage === 'sent') return null
     if (transactionError) {
       return transactionError.message
     }
     if (requestError) {
-      return requestError.message
+      if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
+        return 'An unknown error occurred.'
+      }
+      return requestError.reason
     }
     return null
-  }, [transactionError, requestError])
+  }, [stage, transactionError, requestError])
 
   return (
     <>
@@ -422,6 +453,7 @@ export const TransactionStageModal = ({
         {MiddleContent}
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
         {FilledDisplayItems}
+        {HelperContent}
         {transaction.hash && (
           <Outlink href={makeEtherscanLink(transaction.hash!, chainName)}>
             {t('transaction.viewEtherscan')}

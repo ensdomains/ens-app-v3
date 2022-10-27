@@ -12,6 +12,7 @@ import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorType } from '@app/types'
+import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
@@ -77,6 +78,7 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
     setFocus,
     handleSubmit,
     clearErrors,
+    watch,
   } = useForm<ProfileEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -257,11 +259,16 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
       value,
     })) as { key: string; value: string }[]
 
+    const coinTypesWithZeroAddressses = coinTypes.map((coinType) => {
+      if (coinType.value) return coinType
+      return { key: coinType.key, value: emptyAddress }
+    })
+
     const contentHash = dirtyFields.website
 
     return {
       texts,
-      coinTypes,
+      coinTypes: coinTypesWithZeroAddressses,
       contentHash,
     }
   }
@@ -275,10 +282,7 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
     callback(records, event)
   }
 
-  const avatar = useWatch({
-    control,
-    name: 'avatar',
-  })
+  const avatar = watch('avatar')
 
   const _avatar = useWatch({
     control,

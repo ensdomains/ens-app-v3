@@ -47,3 +47,11 @@ export const isBrowser = !!(
   window.document &&
   window.document.createElement
 )
+
+export const isDNSName = (name: string): boolean => {
+  const labels = name?.split('.')
+
+  return !!labels && labels[labels.length - 1] !== 'eth'
+}
+
+export const isASubname = (name: string) => name.split('.').length > 2

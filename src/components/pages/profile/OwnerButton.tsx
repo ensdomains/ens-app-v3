@@ -12,6 +12,7 @@ import { useCopied } from '@app/hooks/useCopied'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useProfile } from '@app/hooks/useProfile'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { shortenAddress } from '@app/utils/utils'
 
 const ButtonWrapper = styled.div(
@@ -149,25 +150,51 @@ const ProfileSnippetWrapper = styled.div(
   `,
 )
 
+type TransferObj = {
+  canTransfer: boolean
+  type: 'manager' | 'owner'
+}
+
+const useHandleTransfer = (name: string, transfer: TransferObj | undefined) => {
+  const { showDataInput } = useTransactionFlow()
+
+  if (!transfer) {
+    return () => {}
+  }
+
+  return () => {
+    showDataInput(`send-name-${transfer?.type}-${name}`, 'SendName', {
+      name,
+      type: transfer?.type,
+    })
+  }
+}
+
 const OwnerButtonWithPopup = ({
-  address,
   name,
+  address,
+  primary,
   network,
   label,
   description,
-  canTransfer,
+  transfer,
 }: {
+  name: string
   address: string
-  name?: string | null
+  primary?: string | null
   network: number
   label: string
   description: string
-  canTransfer: boolean
+  transfer?: {
+    canTransfer: boolean
+    type: 'manager' | 'owner'
+  }
 }) => {
   const { t } = useTranslation('common')
   const { copy, copied } = useCopied()
   const [open, setOpen] = useState(false)
-  const { profile, loading } = useProfile(name!, !name)
+  const { profile, loading } = useProfile(primary!, !primary)
+  const handleTransfer = useHandleTransfer(name, transfer)
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
@@ -177,16 +204,16 @@ const OwnerButtonWithPopup = ({
         <Content>
           <AvatarWrapper>
             <AvatarWithZorb
-              label={name || address}
+              label={primary || address}
               address={address}
-              name={name || undefined}
+              name={primary || undefined}
               network={network}
             />
           </AvatarWrapper>
           <TextContainer>
             <Label ellipsis>{label}</Label>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
-              {name || shortenAddress(address)}
+              {primary || shortenAddress(address)}
             </Name>
           </TextContainer>
         </Content>
@@ -199,10 +226,10 @@ const OwnerButtonWithPopup = ({
         onDismiss={() => setOpen(false)}
       >
         <InnerDialog data-testid="owner-button-inner-dialog">
-          {name && !loading && (
+          {primary && !loading && (
             <ProfileSnippetWrapper>
               <ProfileSnippet
-                name={name}
+                name={primary}
                 network={network}
                 button="viewProfile"
                 getTextRecord={getTextRecord}
@@ -222,8 +249,8 @@ const OwnerButtonWithPopup = ({
               <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
             </AddressCopyContainer>
           </AddressCopyButton>
-          {canTransfer && (
-            <TransferButton data-testid="transfer-button" disabled>
+          {transfer?.canTransfer && (
+            <TransferButton data-testid="transfer-button" onClick={handleTransfer}>
               <Typography variant="large" weight="bold">
                 {t('name.transfer')}
               </Typography>
@@ -278,21 +305,24 @@ const OwnerButtonWrapperWithDropdown = styled(OwnerButtonWrapper)(
 )
 
 const OwnerButtonWithDropdown = ({
-  address,
   name,
+  address,
+  primary,
   network,
   label,
-  canTransfer,
+  transfer,
 }: {
+  name: string
   address: string
-  name?: string | null
+  primary?: string | null
   network: number
   label: string
-  canTransfer: boolean
+  transfer?: TransferObj
 }) => {
   const { t } = useTranslation('common')
   const router = useRouterWithHistory()
   const [isOpen, setIsOpen] = useState(false)
+  const handleTransfer = useHandleTransfer(name, transfer)
 
   const menuItems = useMemo(() => {
     const items: any[] = [
@@ -307,24 +337,24 @@ const OwnerButtonWithDropdown = ({
         onClick: () => navigator.clipboard.writeText(address),
       },
     ]
-    if (name) {
+    if (primary) {
       items[0] = {
         label: t('wallet.viewProfile'),
         color: 'text',
-        onClick: () => router.push(`/profile/${name}`),
+        onClick: () => router.push(`/profile/${primary}`),
       }
     }
-    if (canTransfer) {
+    if (transfer?.canTransfer) {
       items.push({
         label: t('name.transfer'),
         color: 'accent',
         // eslint-disable-next-line no-alert
-        onClick: () => alert('Not implemented'),
+        onClick: handleTransfer,
       })
     }
     return items
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [address, name, canTransfer])
+  }, [address, primary, transfer?.canTransfer])
 
   return (
     <Dropdown
@@ -341,13 +371,13 @@ const OwnerButtonWithDropdown = ({
           <div style={{ flexGrow: 1 }} />
           <OwnerRow data-testid={`${label.toLowerCase()}-data`}>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
-              {name || shortenAddress(address)}
+              {primary || shortenAddress(address)}
             </Name>
             <AvatarWrapper>
               <AvatarWithZorb
-                label={name || address}
+                label={primary || address}
                 address={address}
-                name={name || undefined}
+                name={primary || undefined}
                 network={network}
               />
             </AvatarWrapper>
@@ -360,31 +390,38 @@ const OwnerButtonWithDropdown = ({
 }
 
 export const OwnerButton = ({
+  name,
   address,
   network,
   label,
-  canTransfer,
+  transfer,
   type = 'dialog',
   description,
 }: {
+  name: string
   address: string
   network: number
   label: string
-  canTransfer: boolean
+  transfer?: TransferObj
   type?: 'dropdown' | 'dialog'
   description: string
 }) => {
-  const { name } = usePrimary(address)
+  const { name: primary } = usePrimary(address)
   if (type === 'dialog') {
-    return <OwnerButtonWithPopup {...{ address, network, label, name, description, canTransfer }} />
+    return (
+      <OwnerButtonWithPopup
+        {...{ address, network, label, primary, description, transfer, name }}
+      />
+    )
   }
 
   return (
     <OwnerButtonWithDropdown
       address={address}
-      canTransfer={canTransfer}
+      transfer={transfer}
       label={label}
       network={network}
+      primary={primary}
       name={name}
     />
   )

@@ -7,6 +7,7 @@ import styled from 'styled-components'
 import { RecordItem } from '@app/components/RecordItem'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
+import { emptyAddress } from '@app/utils/constants'
 
 import Accordion, { AccordionData } from './Accordion'
 import Fuses from './Fuses'
@@ -42,6 +43,7 @@ export const generateAccordionData = (
   t: TFunction,
   ownerData: ReturnType<typeof useBasicName>['ownerData'],
   isWrapped: boolean,
+  name: string,
   address?: string,
 ): AccordionData[] => [
   {
@@ -53,7 +55,7 @@ export const generateAccordionData = (
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
-    disabled: !wrapperData,
+    disabled: !wrapperData || wrapperData?.owner === emptyAddress,
     name: 'fuses',
     canEdit: ownerData?.owner === address && isWrapped,
   },
@@ -62,11 +64,15 @@ export const generateAccordionData = (
     body: TokenId,
     name: 'tokenId',
   },
-  {
-    title: t('details.tabs.advanced.registrationDate.label'),
-    body: RegistrationDate,
-    name: 'registrationDate',
-  },
+  ...(name.split('.').length === 2 && name.startsWith('.eth')
+    ? [
+        {
+          title: t('details.tabs.advanced.registrationDate.label'),
+          body: RegistrationDate,
+          name: 'registrationDate',
+        },
+      ]
+    : []),
 ]
 
 const MoreTab = () => {
@@ -76,7 +82,14 @@ const MoreTab = () => {
   const { wrapperData } = useGetWrapperData((name as string) || '')
   const { address } = useAccount()
   const { ownerData, isWrapped } = useBasicName(name as string)
-  const accordionData = generateAccordionData(wrapperData, t, ownerData, isWrapped, address)
+  const accordionData = generateAccordionData(
+    wrapperData,
+    t,
+    ownerData,
+    isWrapped,
+    name as string,
+    address,
+  )
 
   return (
     <MoreContainer>

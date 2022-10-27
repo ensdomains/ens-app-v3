@@ -1,6 +1,6 @@
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 
-import { Button, Dialog } from '@ensdomains/thorin'
+import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { TransactionDisplayItem } from '@app/types'
 
@@ -45,6 +45,7 @@ export type TransactionFlowItem = {
   resumable?: boolean
   requiresManualCleanup?: boolean
   autoClose?: boolean
+  resumeLink?: string
 }
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
@@ -153,5 +154,6 @@ export type ManagedDialogPropsTwo = {
   currentStep: number
   stepCount: number
   displayItems: TransactionDisplayItem[]
+  helper?: ComponentProps<typeof Helper>
   backToInput: boolean
 }

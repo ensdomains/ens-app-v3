@@ -15,6 +15,8 @@ const HeadingItems = styled.div<{ $spacing: string }>(
   ({ theme, $spacing }) => css`
     grid-column: span 1;
     width: 100%;
+    max-width: 100%;
+    overflow: hidden;
     display: grid;
     grid-template-columns: 1fr;
     gap: ${theme.space['5']};
@@ -32,12 +34,14 @@ const HeadingItems = styled.div<{ $spacing: string }>(
 const CustomLeadingHeading = styled(LeadingHeading)<{
   $customSpacing: boolean
 }>(
-  ({ theme, $customSpacing }) =>
-    $customSpacing &&
+  ({ theme, $customSpacing }) => css`
+    gap: ${theme.space['2']};
+    ${$customSpacing &&
     mq.sm.min(css`
       width: ${theme.space.full};
       margin-left: 0;
-    `),
+    `)}
+  `,
 )
 
 const ContentContainer = styled.div<{ $multiColumn?: boolean }>(
@@ -46,6 +50,7 @@ const ContentContainer = styled.div<{ $multiColumn?: boolean }>(
     padding: 0;
     min-height: 0;
     height: min-content;
+    overflow: hidden;
     ${$multiColumn &&
     mq.sm.min(css`
       grid-column: span 2;
@@ -86,6 +91,7 @@ const WarningWrapper = styled.div(
 const FullWidthSkeleton = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
+    overflow: hidden;
   `,
 )
 
@@ -94,6 +100,7 @@ const TitleContainer = styled.div(
     display: flex;
     flex-direction: column;
     justify-content: center;
+    overflow: hidden;
   `,
 )
 
@@ -123,6 +130,10 @@ const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
     line-height: ${theme.lineHeights.normal};
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   `,
 )
 

@@ -15,14 +15,24 @@ type Name = {
   subname?: string
   namedController?: string
   records?: {
-    text?: { key: string; value: string }[]
-    addr?: { key: number; value: string }[]
+    text?: {
+      key: string
+      value: string
+    }[]
+    addr?: {
+      key: number
+      value: string
+    }[]
     contenthash?: string
   }
+  subnames?: {
+    label: string
+    namedOwner: string
+  }[]
   customDuration?: number
 }
 
-const names = [
+const names: Name[] = [
   {
     label: 'test123',
     namedOwner: 'owner',
@@ -79,10 +89,39 @@ const names = [
     },
   },
   {
+    label: 'with-subnames',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    subnames: [
+      { label: 'test', namedOwner: 'owner' },
+      { label: 'legacy', namedOwner: 'deployer' },
+      { label: 'xyz', namedOwner: 'owner' },
+      { label: 'addr', namedOwner: 'owner' },
+    ],
+  },
+  {
     label: 'name-with-premium',
     namedOwner: 'owner',
     namedAddr: 'owner',
     customDuration: 2419200,
+  },
+  {
+    label: 'grace-period',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
+  {
+    label: 'grace-period-in-list',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
+  {
+    label: 'unwrapped-with-wrapped-subnames',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    subnames: [{ label: 'sub', namedOwner: 'owner' }],
   },
 ]
 
@@ -94,7 +133,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const controller = await ethers.getContract('LegacyETHRegistrarController')
   const publicResolver = await ethers.getContract('LegacyPublicResolver')
 
-  const makeData = ({ namedOwner, namedController, namedAddr, customDuration, ...rest }: Name) => {
+  const makeData = ({
+    namedOwner,
+    namedController,
+    namedAddr,
+    customDuration,
+    subnames,
+    ...rest
+  }: Name) => {
     const secret = '0x0000000000000000000000000000000000000000000000000000000000000000'
     const registrant = allNamedAccts[namedOwner]
     const owner = namedController ? allNamedAccts[namedController] : undefined
@@ -110,6 +156,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       addr,
       resolver,
       duration,
+      subnames,
     }
   }
 
@@ -137,7 +184,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const makeRegistration =
     (nonce: number) =>
     async (
-      { label, registrant, secret, resolver, addr, duration, subname }: ReturnType<typeof makeData>,
+      { label, registrant, secret, resolver, addr, duration }: ReturnType<typeof makeData>,
       index: number,
     ) => {
       const price = await controller.rentPrice(label, duration)
@@ -208,6 +255,32 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       return nonceRef - nonce
     }
 
+  const makeSubnames =
+    (nonce: number) =>
+    async (
+      { label, subnames, registrant, resolver }: ReturnType<typeof makeData>,
+      index: number,
+    ) => {
+      if (!subnames) return 0
+      for (let i = 0; i < subnames.length; i += 1) {
+        const { label: subnameLabel, namedOwner: namedSubOwner } = subnames[i]
+        const subOwner = allNamedAccts[namedSubOwner]
+        const _registry = registry.connect(await ethers.getSigner(registrant))
+        const subnameTx = await _registry.setSubnodeRecord(
+          namehash(`${label}.eth`),
+          labelhash(subnameLabel),
+          subOwner,
+          resolver,
+          0,
+          {
+            nonce: nonce + index + i,
+          },
+        )
+        console.log(`Creating subname ${subnameLabel}.${label}.eth (tx: ${subnameTx.hash})...`)
+      }
+      return subnames.length
+    }
+
   const makeController =
     (nonce: number) =>
     async ({ label, owner, registrant }: ReturnType<typeof makeData>, index: number) => {
@@ -243,7 +316,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
       for (let i = 0; i < namesWithAccount.length; i += 1) {
         const data = namesWithAccount[i]
-        usedNonces += await _func(newNonceMap[account])(data, i)
+        usedNonces += await _func(newNonceMap[account])(data, usedNonces)
       }
       newNonceMap[account] += usedNonces
     }
@@ -259,7 +332,13 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await getNonceAndApply('registrant', makeRegistration)
   await network.provider.send('evm_mine')
   const tempNonces = await getNonceAndApply('registrant', makeRecords, (data) => !!data.records)
-  await getNonceAndApply('registrant', makeController, (data) => !!data.owner, tempNonces)
+  const tempNonces2 = await getNonceAndApply(
+    'registrant',
+    makeController,
+    (data) => !!data.owner,
+    tempNonces,
+  )
+  await getNonceAndApply('registrant', makeSubnames, (data) => !!data.subnames, tempNonces2)
   await network.provider.send('evm_mine')
 
   // Skip forward 28 + 90 days so that minimum exp names go into premium
@@ -270,9 +349,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
 
-  //register subname
+  // register subname
   const resolver = publicResolver.address
-  const registrant = allNamedAccts['owner']
+  const registrant = allNamedAccts.owner
   const _registry = registry.connect(await ethers.getSigner(registrant))
   const subnameTx = await _registry.setSubnodeRecord(
     namehash('test123.eth'),

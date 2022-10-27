@@ -1,6 +1,10 @@
+import approveNameWrapper from './approveNameWrapper'
 import burnFuses from './burnFuses'
 import commitName from './commitName'
 import createSubname from './createSubname'
+import deleteSubname from './deleteSubname'
+import extendNames from './extendNames'
+import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
 import registerName from './registerName'
@@ -25,11 +29,15 @@ export const transactions = {
   migrateProfileWithSync,
   burnFuses,
   createSubname,
+  extendNames,
+  deleteSubname,
   commitName,
   registerName,
   transferName,
   transferSubname,
   transferController,
+  importDNSSECName,
+  approveNameWrapper,
 }
 
 export type Transaction = typeof transactions

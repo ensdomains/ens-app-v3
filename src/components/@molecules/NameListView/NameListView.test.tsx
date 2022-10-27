@@ -20,6 +20,7 @@ describe('NameListView', () => {
           [
             {
               name: 'name.eth',
+              id: '0x123',
               expiryDate: '2020-01-01',
               isController: true,
               isRegistrant: true,

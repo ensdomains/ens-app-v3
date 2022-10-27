@@ -4,10 +4,14 @@ import { useEffect, useMemo, useState } from 'react'
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { GRACE_PERIOD } from '@app/utils/constants'
+
+import { useBlockTimestamp } from './useBlockTimestamp'
 
 export type ReturnedName = Name & {
   isController?: boolean
   isRegistrant?: boolean
+  isWrappedOwner?: boolean
 }
 
 const chunkArr = (arr: any[], chunkSize: number) => {
@@ -25,6 +29,7 @@ export const useNamesFromAddress = ({
   resultsPerPage,
   page,
   filter,
+  search,
 }: {
   address?: string
   sort: {
@@ -34,11 +39,14 @@ export const useNamesFromAddress = ({
   page: number
   resultsPerPage: number | 'all'
   filter?: Name['type']
+  search?: string
 }) => {
   const { ready, getNames } = useEns()
 
-  const { data, isLoading, status } = useQuery(
-    ['names', address, 'graph'],
+  const { data: blockTimestamp, isLoading: isBlockTimestampLoading } = useBlockTimestamp()
+
+  const { data, isLoading, status, refetch } = useQuery(
+    ['graph', 'names', address],
     () =>
       getNames({
         address: address!,
@@ -47,7 +55,7 @@ export const useNamesFromAddress = ({
         orderDirection: 'desc',
       }),
     {
-      enabled: ready && !!address,
+      enabled: ready && !!address && !isBlockTimestampLoading,
     },
   )
 
@@ -57,15 +65,21 @@ export const useNamesFromAddress = ({
       const existingEntry = map[curr.name] || {}
       const isController = curr.type === 'domain'
       const isRegistrant = curr.type === 'registration'
+      const isWrappedOwner = curr.type === 'wrappedDomain'
       const newMap = map
       newMap[curr.name] = {
         ...existingEntry,
         ...curr,
         isController: existingEntry.isController || isController,
         isRegistrant: existingEntry.isRegistrant || isRegistrant,
+        isWrappedOwner: existingEntry.isWrappedOwner || isWrappedOwner,
       }
       const newItem = newMap[curr.name]
-      if (newItem.expiryDate) newItem.expiryDate = new Date(newItem.expiryDate)
+      if (newItem.registration?.expiryDate) {
+        newItem.expiryDate = new Date(newItem.registration.expiryDate)
+      } else if (newItem.expiryDate) {
+        newItem.expiryDate = new Date(newItem.expiryDate)
+      }
       if (newItem.createdAt) newItem.createdAt = new Date(newItem.createdAt)
       if (newItem.registrationDate) newItem.registrationDate = new Date(newItem.registrationDate)
       return newMap
@@ -76,12 +90,20 @@ export const useNamesFromAddress = ({
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 
   const filterFunc = useMemo(() => {
-    const baseFilter = (n: ReturnedName) => n.parent.name !== 'addr.reverse'
+    const baseFilter = (n: ReturnedName) => {
+      if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp - GRACE_PERIOD)
+        return false
+      return n.parent.name !== 'addr.reverse'
+    }
     let secondaryFilter: (n: ReturnedName) => boolean = () => true
+    let searchFilter: (n: ReturnedName) => boolean = () => true
     if (filter === 'registration') secondaryFilter = (n: ReturnedName) => !!n.isRegistrant
     if (filter === 'domain') secondaryFilter = (n: ReturnedName) => !!n.isController
-    return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n)
-  }, [filter])
+    if (filter === 'wrappedDomain') secondaryFilter = (n: ReturnedName) => !!n.isWrappedOwner
+    if (search)
+      searchFilter = (n: ReturnedName) => n.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    return (n: ReturnedName) => baseFilter(n) && secondaryFilter(n) && searchFilter(n)
+  }, [filter, search, blockTimestamp])
 
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {
@@ -128,8 +150,9 @@ export const useNamesFromAddress = ({
 
   return {
     currentPage,
-    isLoading,
+    isLoading: isLoading || isBlockTimestampLoading,
     status,
+    refetch,
     pageLength: pages?.length || 0,
     nameCount: sortedData?.length || 0,
   }

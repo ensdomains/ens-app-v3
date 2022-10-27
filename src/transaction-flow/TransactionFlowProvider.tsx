@@ -1,3 +1,4 @@
+import { useRouter } from 'next/router'
 import React, {
   ComponentProps,
   ReactNode,
@@ -24,7 +25,7 @@ type ShowDataInput = <C extends keyof DataInputComponent>(
   data: ComponentProps<DataInputComponent[C]>['data'],
 ) => void
 
-type CreateTransactionFlow = (key: string, flow: TransactionFlowItem) => void
+export type CreateTransactionFlow = (key: string, flow: TransactionFlowItem) => void
 
 type ProviderValue = {
   showDataInput: ShowDataInput
@@ -32,6 +33,9 @@ type ProviderValue = {
   resumeTransactionFlow: (key: string) => void
   getTransactionIndex: (key: string) => number
   getResumable: (key: string) => boolean
+  getTransactionFlowStage: (
+    key: string,
+  ) => 'undefined' | 'input' | 'intro' | 'transaction' | 'completed'
   getLatestTransaction: (key: string) => GenericTransaction | undefined
   stopCurrentFlow: () => void
   cleanupFlow: (key: string) => void
@@ -43,12 +47,15 @@ const TransactionContext = React.createContext<ProviderValue>({
   resumeTransactionFlow: () => {},
   getTransactionIndex: () => 0,
   getResumable: () => false,
+  getTransactionFlowStage: () => 'undefined',
   getLatestTransaction: () => undefined,
   stopCurrentFlow: () => {},
   cleanupFlow: () => {},
 })
 
 export const TransactionFlowProvider = ({ children }: { children: ReactNode }) => {
+  const router = useRouter()
+
   const [state, dispatch] = useLocalStorageReducer(
     'tx-flow',
     reducer,
@@ -72,6 +79,27 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const getTransactionIndex = useCallback(
     (key: string) => state.items[key]?.currentTransaction || 0,
+    [state.items],
+  )
+
+  const getTransactionFlowStage = useCallback(
+    (key: string) => {
+      const item = state.items[key]
+      if (!item) return 'undefined'
+      if (item.currentFlowStage !== 'transaction') return item.currentFlowStage
+      const { transactions } = item
+      if (transactions.length === 0) return 'completed'
+      const lastTransaction = transactions[transactions.length - 1]
+      if (lastTransaction.stage === 'complete') return 'completed'
+      return 'transaction'
+    },
+    [state.items],
+  )
+
+  const getTransaction = useCallback(
+    (key: string) => {
+      return state.items[key]
+    },
     [state.items],
   )
 
@@ -116,6 +144,22 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
     [state.items],
   )
 
+  const resumeTransactionFlow = useCallback(
+    (key: string) => {
+      const { getAllTransactionsComplete, getSelectedItem } = helpers({
+        selectedKey: key,
+        items: state.items,
+      })
+      const item = getSelectedItem()
+      if (!item.resumeLink || !getAllTransactionsComplete(item)) {
+        dispatch({ name: 'resumeFlow', key })
+        return
+      }
+      router.push(item.resumeLink)
+    },
+    [dispatch, router, state.items],
+  )
+
   const providerValue: ProviderValue = useMemo(() => {
     return {
       showDataInput: ((key, name, data) =>
@@ -130,14 +174,24 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
           key,
           payload: flow,
         })) as CreateTransactionFlow,
-      resumeTransactionFlow: (key: string) => dispatch({ name: 'resumeFlow', key }),
+      resumeTransactionFlow,
       getTransactionIndex,
+      getTransaction,
       getResumable,
+      getTransactionFlowStage,
       getLatestTransaction,
       stopCurrentFlow: () => dispatch({ name: 'stopFlow' }),
       cleanupFlow: (key: string) => dispatch({ name: 'forceCleanupTransaction', payload: key }),
     }
-  }, [dispatch, getResumable, getTransactionIndex, getLatestTransaction])
+  }, [
+    dispatch,
+    resumeTransactionFlow,
+    getResumable,
+    getTransactionIndex,
+    getLatestTransaction,
+    getTransactionFlowStage,
+    getTransaction,
+  ])
 
   const [selectedKey, setSelectedKey] = useState<string | null>(null)
 

@@ -20,7 +20,7 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: 'Transfer name' as string,
+    value: t('details.sendName.transferSubname', { ns: 'profile' }),
   },
 ]
 

@@ -40,7 +40,7 @@ export const useNameDetails = (name: string) => {
     if (valid === false) {
       return t('errors.invalidName')
     }
-    if (profile && !profile.isMigrated) {
+    if (profile && !profile.isMigrated && typeof profile.isMigrated === 'boolean') {
       return (
         <>
           {t('errors.migrationNotAvailable')}
@@ -53,12 +53,7 @@ export const useNameDetails = (name: string) => {
     if (profile && profile.message) {
       return profile.message
     }
-    if (
-      registrationStatus === 'available' ||
-      registrationStatus === 'premium' ||
-      registrationStatus === 'notImported' ||
-      registrationStatus === 'notOwned'
-    ) {
+    if (registrationStatus === 'available' || registrationStatus === 'premium') {
       return (
         <>
           {t('errors.featureNotAvailable')}

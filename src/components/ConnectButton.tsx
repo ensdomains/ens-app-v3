@@ -12,7 +12,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }>(
-  ({ theme, $isTabBar, $large }) =>
+  ({ theme, $isTabBar, $large }) => [
     $isTabBar
       ? css`
           align-self: flex-end;
@@ -41,6 +41,10 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
             }
           `}
         `,
+    css`
+      position: relative;
+    `,
+  ],
 )
 
 type Props = {
@@ -115,7 +119,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
         loading: 'eager',
       }}
       size="medium"
-      alignDropdown="right"
+      alignDropdown="left"
     />
   )
 }

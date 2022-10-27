@@ -1,7 +1,7 @@
 import { useAccount } from '@web3modal/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useMemo } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -11,17 +11,19 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
+import { WrapperCallToAction } from '@app/components/pages/profile/[name]/details/WrapperCallToAction'
+import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
+import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction } from '@app/transaction-flow/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
+import { shouldShowSuccessPage } from '../../import/[name]/shared'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -52,21 +54,18 @@ const SelfButtons = styled(CacheableComponent)(
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
-  primary: ReturnType<typeof usePrimary>
   isSelf: boolean
   isLoading: boolean
-  _name: string
   name: string
 }
 
-const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }: Props) => {
+const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const chainId = useChainId()
   const { address } = useAccount()
-
-  const { name: ensName } = primary
+  const transactions = useRecentTransactions()
 
   const {
     error,
@@ -78,11 +77,19 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     valid,
     basicIsCachedData,
     profileIsCachedData,
+    wrapperData,
+    isWrapped,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, ownerData)
-
-  const { createTransactionFlow } = useTransactionFlow()
+  const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const nameWrapperExists = useWrapperExists()
+  const canBeWrapped =
+    nameWrapperExists &&
+    !isWrapped &&
+    normalisedName.endsWith('.eth') &&
+    (ownerData?.ownershipLevel === 'registrar'
+      ? ownerData?.registrant === address
+      : ownerData?.owner === address)
 
   useProtectedRoute(
     '/',
@@ -92,6 +99,12 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
       : // if is self, user must be connected
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
   )
+
+  useEffect(() => {
+    if (isSelf && name) {
+      router.replace(`/profile/${name}`)
+    }
+  }, [isSelf, name, router])
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
@@ -127,51 +140,13 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
     showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
   }
 
-  const profileActions = useMemo(() => {
-    if (isSelf || (!selfAbilities.canEdit && profile?.address !== address) || ensName === _name)
-      return undefined
-    const setAsPrimaryTransactions: GenericTransaction[] = [
-      makeTransactionItem('setPrimaryName', {
-        name,
-        address: address!,
-      }),
-    ]
-    if (profile?.address !== address) {
-      setAsPrimaryTransactions.unshift(
-        makeTransactionItem('updateEthAddress', {
-          address: address!,
-          name,
-        }),
-      )
+  const { profileActions } = useProfileActions()
+
+  useEffect(() => {
+    if (shouldShowSuccessPage(transactions)) {
+      router.push(`/import/${name}`)
     }
-    return [
-      {
-        label: t('tabs.profile.actions.setAsPrimaryName.label'),
-        onClick: () =>
-          createTransactionFlow(`setPrimaryName-${name}-${address}`, {
-            transactions: setAsPrimaryTransactions,
-            resumable: true,
-            intro:
-              setAsPrimaryTransactions.length > 1
-                ? {
-                    title: t('tabs.profile.actions.setAsPrimaryName.title'),
-                    content: makeIntroItem('ChangePrimaryName', undefined),
-                  }
-                : undefined,
-          }),
-      },
-    ]
-  }, [
-    isSelf,
-    selfAbilities.canEdit,
-    profile?.address,
-    address,
-    ensName,
-    _name,
-    name,
-    t,
-    createTransactionFlow,
-  ])
+  }, [name, router, transactions])
 
   return (
     <>
@@ -186,6 +161,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
         loading={isLoading}
       >
         {{
+          info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
           warning: error
             ? {
                 type: 'warning',
@@ -194,6 +170,7 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
             : undefined,
           leading: breakpoints.md && ownerData && (
             <NameSnippet
+              wrapperData={wrapperData!}
               name={normalisedName}
               network={chainId}
               ownerData={ownerData}
@@ -209,11 +186,13 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
                 name={normalisedName}
                 network={chainId}
                 getTextRecord={getTextRecord}
-                button={isSelf || breakpoints.md ? undefined : 'viewDetails'}
+                button={selfAbilities.canExtend ? 'extend' : undefined}
+                canEdit={selfAbilities.canEdit}
                 size={breakpoints.md ? 'medium' : 'small'}
                 actions={profileActions}
               />
-              {selfAbilities.canEdit && (
+              {/* eslint-disable no-nested-ternary */}
+              {selfAbilities.canEdit ? (
                 <SelfButtons $isCached={profileIsCachedData}>
                   <Button shadowless variant="transparent" size="small" onClick={handleEditProfile}>
                     {t('editProfile')}
@@ -234,7 +213,26 @@ const ProfileContent = ({ nameDetails, primary, isSelf, isLoading, name, _name }
                     {t('viewDetails')}
                   </Button>
                 </SelfButtons>
-              )}
+              ) : !breakpoints.md ? (
+                <SelfButtons>
+                  <Button
+                    onClick={() =>
+                      router.push({
+                        pathname: `/profile/${normalisedName}/details`,
+                        query: {
+                          from: router.asPath,
+                        },
+                      })
+                    }
+                    shadowless
+                    variant="transparent"
+                    size="small"
+                  >
+                    {t('viewDetails')}
+                  </Button>
+                </SelfButtons>
+              ) : null}
+              {/* eslint-enable no-nested-ternary */}
               <ProfileDetails
                 isCached={profileIsCachedData}
                 addresses={(profile?.records?.coinTypes || []).map((item: any) => ({

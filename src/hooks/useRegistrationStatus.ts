@@ -28,6 +28,7 @@ export const useRegistrationStatus = (name?: string) => {
     },
     {
       enabled: ens.ready && !!name,
+      cacheTime: 0,
     },
   )
 

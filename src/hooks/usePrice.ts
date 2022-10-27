@@ -3,13 +3,21 @@ import { useQuery } from '@tanstack/react-query'
 import { useEns } from '@app/utils/EnsProvider'
 import { yearsToSeconds } from '@app/utils/utils'
 
-export const usePrice = (name: string) => {
+export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
   const { ready, getPrice } = useEns()
-  const { data, status, isFetched } = useQuery(
-    ['getPrice', name],
-    async () => getPrice(name, yearsToSeconds(1), false),
+  const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames]
+  const type = legacy ? 'legacy' : 'new'
+  const {
+    data,
+    status,
+    isFetched,
+    isLoading: loading,
+    error,
+  } = useQuery(
+    ['usePrice', type, ...names],
+    async () => getPrice(nameOrNames, yearsToSeconds(1), legacy),
     {
-      enabled: !!(ready && name),
+      enabled: !!(ready && nameOrNames && nameOrNames.length > 0),
     },
   )
 
@@ -22,5 +30,7 @@ export const usePrice = (name: string) => {
     premium,
     hasPremium,
     isCachedData: status === 'success' && isFetched,
+    loading,
+    error,
   }
 }
