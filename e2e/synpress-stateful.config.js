@@ -17,6 +17,7 @@ module.exports = defineConfig({
   viewportHeight: 768,
   env: {
     coverage: false,
+    transactionWaitTime: 120000,
   },
   defaultCommandTimeout: process.env.SYNDEBUG ? 9999999 : 30000,
   pageLoadTimeout: process.env.SYNDEBUG ? 0 : 9999999,

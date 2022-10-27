@@ -1,15 +1,10 @@
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Extend Names', () => {
-  before(() => {
-    acceptMetamaskAccess(2, true)
-  })
-
   it('should be able to register multiple names on the address page', () => {
     cy.clearLocalStorage()
     const NAMES = ['other-registrant.eth']
-    cy.visit('/')
-    connectFromExisting()
+    acceptMetamaskAccess(2)
     cy.visit('/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
 
     cy.log('get the base data to compare')
@@ -77,6 +72,7 @@ describe('Extend Names', () => {
       })
 
     cy.log('should show the extend modal')
+    cy.wait(1000)
     cy.findByTestId('extend-button').click()
     cy.findByTestId('extend-names-modal', { timeout: 10000 }).should('be.visible')
     cy.findByTestId('extend-names-names-list').should('not.exist')
@@ -165,12 +161,12 @@ describe('Extend Names', () => {
       'grace-period-in-list.eth',
     ]
 
-    cy.visit('/')
-    connectFromExisting()
+    acceptMetamaskAccess(2)
     cy.visit('/my/names')
 
     cy.findByTestId('select-page-size').click()
-    cy.findByText('100 per page', { timeout: 5000 }).click({ force: true })
+    cy.wait(1000)
+    cy.findByTestId('select-option-100').click()
 
     cy.log('get the base data to compare')
     NAMES.forEach((name) => {
