@@ -26,7 +26,7 @@ patchedDependencies:
 specifiers:
   '@cloudflare/workers-types': ^3.14.1
   '@cloudflare/wrangler': ^1.19.12
-  '@deploysentinel/cypress-debugger': ^0.5.4
+  '@deploysentinel/cypress-debugger': ^0.5.5
   '@ensdomains/address-encoder': ^0.2.18
   '@ensdomains/buffer': ^0.1.0
   '@ensdomains/dnsprovejs': 0.4.1
@@ -186,7 +186,7 @@ dependencies:
 devDependencies:
   '@cloudflare/workers-types': 3.16.0
   '@cloudflare/wrangler': 1.20.0
-  '@deploysentinel/cypress-debugger': 0.5.4
+  '@deploysentinel/cypress-debugger': 0.5.5
   '@ensdomains/buffer': 0.1.0_hardhat@2.11.2
   '@ensdomains/ens-test-env': 0.3.3
   '@ethersproject/providers': 5.7.1
@@ -1970,8 +1970,8 @@ packages:
       - supports-color
     dev: true
 
-  /@deploysentinel/cypress-debugger/0.5.4:
-    resolution: {integrity: sha512-lngYIiI0geS5buCgZM3VJQiHahPzBVpo5OdotnHJIHjgDY1f4G/BbM821GVjIldob/y2pfN/DCSmWl5hm8blWg==}
+  /@deploysentinel/cypress-debugger/0.5.5:
+    resolution: {integrity: sha512-oZW/mNO7oFGIPtcPtYf2WDJMUv++gUbucTJkSe/9nbAJntxFOBjF+L4IlXNpUYv1st51QIMrs7yy9qQn2lV7HQ==}
     hasBin: true
     dependencies:
       '@cypress/commit-info': 2.2.0

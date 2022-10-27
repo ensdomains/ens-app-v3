@@ -95,7 +95,7 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
     "@cloudflare/wrangler": "^1.19.12",
-    "@deploysentinel/cypress-debugger": "^0.5.4",
+    "@deploysentinel/cypress-debugger": "^0.5.5",
     "@ensdomains/buffer": "^0.1.0",
     "@ensdomains/ens-test-env": "^0.3.3",
     "@ethersproject/providers": "^5.7.0",
