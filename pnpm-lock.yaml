@@ -19,9 +19,6 @@ patchedDependencies:
   react-confetti@6.1.0:
     hash: bbuxkxhxbyez4jmqgptuoucij4
     path: patches/react-confetti@6.1.0.patch
-  '@synthetixio/synpress@2.3.3':
-    hash: z27nlp4xg6g3debjpthdaa2vxe
-    path: patches/@synthetixio__synpress@2.3.3.patch
 
 specifiers:
   '@cloudflare/workers-types': ^3.14.1
@@ -46,7 +43,7 @@ specifiers:
   '@rainbow-me/rainbowkit': 0.4.8
   '@sentry/nextjs': ^7.11.1
   '@svgr/webpack': ^6.3.1
-  '@synthetixio/synpress': 2.3.3
+  '@synthetixio/synpress': 2.4.1
   '@tanstack/query-persist-client-core': 4.10.3
   '@tanstack/query-sync-storage-persister': 4.10.3
   '@tanstack/react-query': 4.10.3
@@ -195,7 +192,7 @@ devDependencies:
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_liuail6phkx7un26teqxcf6yx4
   '@openzeppelin/contracts': 4.7.3
   '@openzeppelin/test-helpers': 0.5.16
-  '@synthetixio/synpress': 2.3.3_z27nlp4xg6g3debjpthdaa2vxe_nvofninzi4tfuua3i2aiid5ria
+  '@synthetixio/synpress': 2.4.1_cridlslxka7eqpph56piqjq4sm
   '@testing-library/cypress': 8.0.3_cypress@10.8.0
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
@@ -1896,23 +1893,6 @@ packages:
       - supports-color
     dev: true
 
-  /@cypress/react/6.2.0_jdhvrb4ifkei45dhr3opu2kpmu:
-    resolution: {integrity: sha512-arBO5/ed5MM56ypgmMugCOZoAIHH9e+7NH98oF2LCEffr8qkAV4WG5o4S+fqDjFPFP5WNZoKtPC7DEkxOm6kFA==}
-    peerDependencies:
-      '@types/react': ^16.9.16 || ^17.0.0
-      cypress: '*'
-      react: ^=16.x || ^=17.x
-      react-dom: ^=16.x || ^=17.x
-    peerDependenciesMeta:
-      '@types/react':
-        optional: true
-    dependencies:
-      '@types/react': 17.0.30
-      cypress: 10.8.0
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-    dev: true
-
   /@cypress/request/2.88.10:
     resolution: {integrity: sha512-Zp7F+R93N0yZyG34GutyTNr+okam7s/Fzc1+i3kcqOP8vk6OuajuE9qZJ6Rs+10/1JFtXFYMdyarnU1rZuJesg==}
     engines: {node: '>= 6'}
@@ -1937,7 +1917,7 @@ packages:
       uuid: 8.3.2
     dev: true
 
-  /@cypress/webpack-dev-server/2.3.0:
+  /@cypress/webpack-dev-server/2.3.0_debug@4.3.4:
     resolution: {integrity: sha512-afuElaHPesudTW7yLGcGRmAMbvSchhKDZG/H4cBKbRKIRKlrObPsuLhsQ7qRIS/TfhPqlBzVgpKptoXGQSoTqQ==}
     dependencies:
       find-up: 6.3.0
@@ -1947,7 +1927,7 @@ packages:
       local-pkg: 0.4.1
       speed-measure-webpack-plugin: 1.4.2
       tslib: 2.4.0
-      webpack-dev-server: 4.11.1
+      webpack-dev-server: 4.11.1_debug@4.3.4
       webpack-merge: 5.8.0
     transitivePeerDependencies:
       - bufferutil
@@ -3885,13 +3865,13 @@ packages:
     resolution: {integrity: sha512-HaW78NszGzRZd9SeoI3JD11JqY+lubnaOx7Pewj5pfjqWXOEATpeKIFb9Z4t2WBUK2iryiXX3lzWwmYWgUL0Ug==}
     dev: false
 
-  /@playwright/test/1.26.1:
-    resolution: {integrity: sha512-bNxyZASVt2adSZ9gbD7NCydzcb5JaI0OR9hc7s+nmPeH604gwp0zp17NNpwXY4c8nvuBGQQ9oGDx72LE+cUWvw==}
+  /@playwright/test/1.27.1:
+    resolution: {integrity: sha512-mrL2q0an/7tVqniQQF6RBL2saskjljXzqNcCOVMUjRIgE6Y38nCNaP+Dc2FBW06bcpD3tqIws/HT9qiMHbNU0A==}
     engines: {node: '>=14'}
     hasBin: true
     dependencies:
-      '@types/node': 18.8.2
-      playwright-core: 1.26.1
+      '@types/node': 18.11.4
+      playwright-core: 1.27.1
     dev: true
 
   /@polka/url/1.0.0-next.21:
@@ -4513,21 +4493,20 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@synthetixio/synpress/2.3.3_z27nlp4xg6g3debjpthdaa2vxe_nvofninzi4tfuua3i2aiid5ria:
-    resolution: {integrity: sha512-C09XRLUc2dfckTjkPAbR0X2hXTkqyYca+kLF/TWK9DXDRrDy0tzj1CpmmQZ6YnVcpeLgMMqpPIFK1Qa84w9bNw==}
+  /@synthetixio/synpress/2.4.1_cridlslxka7eqpph56piqjq4sm:
+    resolution: {integrity: sha512-0ziEV6F4GsUvDUd4hpE+QaPXzpwIEC7fQunOcL5cH93IAOemtZ8/ReACkbypkp0sioC9O7mVfXlGCoFA8KotDw==}
     engines: {node: '>=10'}
     hasBin: true
     dependencies:
       '@cypress/code-coverage': 3.10.0_rfzwbafsewngadleg5nrnid3xi
-      '@cypress/react': 6.2.0_jdhvrb4ifkei45dhr3opu2kpmu
-      '@cypress/webpack-dev-server': 2.3.0
+      '@cypress/webpack-dev-server': 2.3.0_debug@4.3.4
       '@drptbl/gremlins.js': 2.2.1
-      '@playwright/test': 1.26.1
+      '@playwright/test': 1.27.1
       '@synthetixio/js': 2.41.0
       '@testing-library/cypress': 8.0.3_cypress@10.8.0
       '@testing-library/react': 13.4.0_sfoxds7t5ydpegc3knd667wn6m
       '@types/testing-library__cypress': 5.0.9
-      axios: 0.27.2
+      axios: 1.1.3_debug@4.3.4
       babel-plugin-istanbul: 6.1.1
       babel-plugin-react-generate-property: 1.1.2
       babel-plugin-react-remove-properties: 0.3.0
@@ -4537,6 +4516,7 @@ packages:
       commander: 9.4.1
       cypress: 10.8.0
       cypress-wait-until: 1.7.2
+      debug: 4.3.4
       dotenv: 16.0.3
       dotenv-parse-variables: 2.0.0
       download: 8.0.0
@@ -4552,8 +4532,8 @@ packages:
       eslint-plugin-standard: 4.1.0_eslint@7.32.0
       eslint-plugin-testing-library: 5.7.2_3rubbgt5ekhqrcgx4uwls3neim
       eslint-plugin-ui-testing: 2.0.1_3rubbgt5ekhqrcgx4uwls3neim
-      eslint-plugin-unicorn: 43.0.2_eslint@7.32.0
-      etherscan-api: 10.2.0
+      eslint-plugin-unicorn: 44.0.2_eslint@7.32.0
+      etherscan-api: 10.2.0_debug@4.3.4
       find-config: 1.0.0
       node-fetch: 2.6.7
       prettier: 2.7.1
@@ -4563,11 +4543,9 @@ packages:
     transitivePeerDependencies:
       - '@babel/core'
       - '@babel/preset-env'
-      - '@types/react'
       - '@typescript-eslint/parser'
       - babel-loader
       - bufferutil
-      - debug
       - encoding
       - eslint-import-resolver-typescript
       - eslint-import-resolver-webpack
@@ -4580,7 +4558,6 @@ packages:
       - webpack
       - webpack-cli
     dev: true
-    patched: true
 
   /@szmarczak/http-timer/1.1.2:
     resolution: {integrity: sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==}
@@ -5998,7 +5975,7 @@ packages:
     resolution: {integrity: sha512-RZXG5mo1JhJjTBg/4NXlS8hyTr2fxiuFaz3UveRpoX9IIc3LPHmWz89dFqTHNQVbWi3VZqxSJqfUwWpb/mCHxA==}
     dependencies:
       web3-eth-abi: 1.8.0
-      web3-utils: 1.2.11
+      web3-utils: 1.8.0
     dev: true
 
   /abi-decoder/2.4.0:
@@ -6626,6 +6603,25 @@ packages:
     dependencies:
       follow-redirects: 1.15.2_debug@4.3.4
       form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
+  /axios/0.27.2_debug@4.3.4:
+    resolution: {integrity: sha512-t+yRIyySRTp/wua5xEr+z1q60QmLq8ABsS5O9Me1AsE5dfKqgnCFzwiCZZ/cGNd1lq4/7akDWMxdhVlucjmnOQ==}
+    dependencies:
+      follow-redirects: 1.15.2_debug@4.3.4
+      form-data: 4.0.0
+    transitivePeerDependencies:
+      - debug
+    dev: true
+
+  /axios/1.1.3_debug@4.3.4:
+    resolution: {integrity: sha512-00tXVRwKx/FZr/IDVFt4C+f9FYairX517WoGCL6dpOntqLkZofjhu43F/Xl44UOpqa+9sLFDrG/XAnFsUYgkDA==}
+    dependencies:
+      follow-redirects: 1.15.2_debug@4.3.4
+      form-data: 4.0.0
+      proxy-from-env: 1.1.0
     transitivePeerDependencies:
       - debug
     dev: true
@@ -10613,11 +10609,11 @@ packages:
       - typescript
     dev: true
 
-  /eslint-plugin-unicorn/43.0.2_eslint@7.32.0:
-    resolution: {integrity: sha512-DtqZ5mf/GMlfWoz1abIjq5jZfaFuHzGBZYIeuJfEoKKGWRHr2JiJR+ea+BF7Wx2N1PPRoT/2fwgiK1NnmNE3Hg==}
+  /eslint-plugin-unicorn/44.0.2_eslint@7.32.0:
+    resolution: {integrity: sha512-GLIDX1wmeEqpGaKcnMcqRvMVsoabeF0Ton0EX4Th5u6Kmf7RM9WBl705AXFEsns56ESkEs0uyelLuUTvz9Tr0w==}
     engines: {node: '>=14.18'}
     peerDependencies:
-      eslint: '>=8.18.0'
+      eslint: '>=8.23.1'
     dependencies:
       '@babel/helper-validator-identifier': 7.19.1
       ci-info: 3.4.0
@@ -11406,10 +11402,10 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /etherscan-api/10.2.0:
+  /etherscan-api/10.2.0_debug@4.3.4:
     resolution: {integrity: sha512-QCd3Eu/p1fI0lVOj9PrRJp5fi3vbiujZqgMmO4UA277DyKBFUz/1kW9nENDn1T4SnA3zNZjl2wwwDEnuJ3erYQ==}
     dependencies:
-      axios: 0.27.2
+      axios: 0.27.2_debug@4.3.4
       gh-pages: 4.0.0
       querystring: 0.2.1
     transitivePeerDependencies:
@@ -13312,7 +13308,7 @@ packages:
       - supports-color
     dev: true
 
-  /http-proxy-middleware/2.0.6_@types+express@4.17.14:
+  /http-proxy-middleware/2.0.6_bwlemkrjb22k3yqlwsvvolpocy:
     resolution: {integrity: sha512-ya/UeJ6HVBYxrgYotAZo1KvPWlgB48kUJLDePFeneHsVujFaW5WNj2NgWCAE//B1Dl02BIfYlpNgBy8Kf8Rjmw==}
     engines: {node: '>=12.0.0'}
     peerDependencies:
@@ -13323,7 +13319,7 @@ packages:
     dependencies:
       '@types/express': 4.17.14
       '@types/http-proxy': 1.17.9
-      http-proxy: 1.18.1
+      http-proxy: 1.18.1_debug@4.3.4
       is-glob: 4.0.3
       is-plain-obj: 3.0.0
       micromatch: 4.0.5
@@ -13331,7 +13327,7 @@ packages:
       - debug
     dev: true
 
-  /http-proxy/1.18.1:
+  /http-proxy/1.18.1_debug@4.3.4:
     resolution: {integrity: sha512-7mz/721AbnJwIVbnaSv1Cz3Am0ZLT/UBwkC92VlxhXv/k/BBQfM2fXElQNC27BVGr0uwUpplYPQM9LnaBMR5NQ==}
     engines: {node: '>=8.0.0'}
     dependencies:
@@ -14106,7 +14102,7 @@ packages:
     dependencies:
       '@babel/core': 7.19.3
       '@istanbuljs/schema': 0.1.3
-      istanbul-lib-coverage: 3.0.0
+      istanbul-lib-coverage: 3.2.0
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -16663,7 +16659,7 @@ packages:
       foreground-child: 2.0.0
       get-package-type: 0.1.0
       glob: 7.2.3
-      istanbul-lib-coverage: 3.0.0
+      istanbul-lib-coverage: 3.2.0
       istanbul-lib-hook: 3.0.0
       istanbul-lib-instrument: 4.0.3
       istanbul-lib-processinfo: 2.0.3
@@ -17369,8 +17365,8 @@ packages:
       find-up: 4.1.0
     dev: true
 
-  /playwright-core/1.26.1:
-    resolution: {integrity: sha512-hzFchhhxnEiPc4qVPs9q2ZR+5eKNifY2hQDHtg1HnTTUuphYCBP8ZRb2si+B1TR7BHirgXaPi48LIye5SgrLAA==}
+  /playwright-core/1.27.1:
+    resolution: {integrity: sha512-9EmeXDncC2Pmp/z+teoVYlvmPWUC6ejSSYZUln7YaP89Z6lpAaiaAnqroUt/BoLo8tn7WYShcfaCh+xofZa44Q==}
     engines: {node: '>=14'}
     hasBin: true
     dev: true
@@ -17628,7 +17624,6 @@ packages:
 
   /proxy-from-env/1.1.0:
     resolution: {integrity: sha512-D+zkORCbA9f1tdWRK0RaCR3GPv50cMxcrz4X8k5LTSUD1Dkw47mKJEZQNunItRTkWwgtaUSo1RVFRIG9ZXiFYg==}
-    dev: false
 
   /prr/1.0.1:
     resolution: {integrity: sha512-yPw4Sng1gWghHQWj0B3ZggWUm4qVbPwPFcRG8KyxiU7J2OHFSoEHKS+EZ3fv5l1t9CyCiop6l/ZYeWbrgoQejw==}
@@ -21114,7 +21109,7 @@ packages:
       axios: 0.21.4_debug@4.3.2
       joi: 17.6.2
       lodash: 4.17.21
-      minimist: 1.2.6
+      minimist: 1.2.7
       rxjs: 7.5.7
     transitivePeerDependencies:
       - debug
@@ -22069,7 +22064,7 @@ packages:
       schema-utils: 4.0.0
     dev: true
 
-  /webpack-dev-server/4.11.1:
+  /webpack-dev-server/4.11.1_debug@4.3.4:
     resolution: {integrity: sha512-lILVz9tAUy1zGFwieuaQtYiadImb5M3d+H+L1zDYalYoDl0cksAB1UNyuE5MMWJrG6zR1tXkCP2fitl7yoUJiw==}
     engines: {node: '>= 12.13.0'}
     hasBin: true
@@ -22097,7 +22092,7 @@ packages:
       express: 4.18.1
       graceful-fs: 4.2.10
       html-entities: 2.3.3
-      http-proxy-middleware: 2.0.6_@types+express@4.17.14
+      http-proxy-middleware: 2.0.6_bwlemkrjb22k3yqlwsvvolpocy
       ipaddr.js: 2.0.1
       open: 8.4.0
       p-retry: 4.6.2

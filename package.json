@@ -104,7 +104,7 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/test-helpers": "^0.5.16",
-    "@synthetixio/synpress": "2.3.3",
+    "@synthetixio/synpress": "2.4.1",
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
@@ -189,8 +189,7 @@
     },
     "patchedDependencies": {
       "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",
-      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "@synthetixio/synpress@2.3.3": "patches/@synthetixio__synpress@2.3.3.patch"
+      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch"
     }
   }
 }
