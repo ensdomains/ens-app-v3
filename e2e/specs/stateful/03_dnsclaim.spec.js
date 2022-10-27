@@ -22,7 +22,9 @@ describe('Import DNSSEC name', () => {
   })
   it('should allow user to import a domain that they are not the owner of', () => {
     cy.visit('/import/leontalbert.xyz')
-    cy.findByText('0x32518828A071a0e6E549F989D4aaB4Cd7401be8f').should('be.visible')
+    cy.findByText('0x32518828A071a0e6E549F989D4aaB4Cd7401be8f', { timeout: 10000 }).should(
+      'be.visible',
+    )
     cy.wait(2000)
     cy.findByTestId('dnssec-check-button').click({ force: true })
     cy.findByText(

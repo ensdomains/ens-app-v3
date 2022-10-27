@@ -43,7 +43,6 @@ describe('Profile Editor', () => {
     cy.get('[data-testid=warning-overlay-dismiss]').should('be.visible')
     cy.get('button').contains('Update').click()
     cy.findByTestId('transfer-profile-trailing-btn').should('not.be.disabled').click()
-    // cy.get('button').contains('Transfer').should('not.be.disabled').click()
     cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
