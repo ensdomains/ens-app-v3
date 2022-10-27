@@ -31,7 +31,7 @@
     "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" RPC_URL=http://127.0.0.1:8545 PASSWORD=TestMetaMask NETWORK_NAME=localhost CHAIN_ID=1337 synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js --spec e2e/specs/stateful/**/*.{js,jsx,ts,tsx}",
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress.config.js --spec e2e/specs/stateful/**/*.{js,jsx,ts,tsx}",
-    "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID",
+    "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ciBuildId $CI_BUILD_ID",
     "synpress:ci:stateful": "pnpm synpress:stateful --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2",
     "e2e": "E2E=true pnpm tenv start --extra-time 11368000",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true pnpm tenv start --extra-time 11368000",
@@ -189,7 +189,8 @@
     },
     "patchedDependencies": {
       "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",
-      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch"
+      "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
+      "@synthetixio/synpress@2.4.1": "patches/@synthetixio__synpress@2.4.1.patch"
     }
   }
 }

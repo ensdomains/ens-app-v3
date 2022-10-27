@@ -19,6 +19,9 @@ patchedDependencies:
   react-confetti@6.1.0:
     hash: bbuxkxhxbyez4jmqgptuoucij4
     path: patches/react-confetti@6.1.0.patch
+  '@synthetixio/synpress@2.4.1':
+    hash: rtpf36vgv3jpf67mquizjuqzbm
+    path: patches/@synthetixio__synpress@2.4.1.patch
 
 specifiers:
   '@cloudflare/workers-types': ^3.14.1
@@ -192,7 +195,7 @@ devDependencies:
   '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_liuail6phkx7un26teqxcf6yx4
   '@openzeppelin/contracts': 4.7.3
   '@openzeppelin/test-helpers': 0.5.16
-  '@synthetixio/synpress': 2.4.1_cridlslxka7eqpph56piqjq4sm
+  '@synthetixio/synpress': 2.4.1_rtpf36vgv3jpf67mquizjuqzbm_cridlslxka7eqpph56piqjq4sm
   '@testing-library/cypress': 8.0.3_cypress@10.8.0
   '@testing-library/jest-dom': 5.16.5
   '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
@@ -4493,7 +4496,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@synthetixio/synpress/2.4.1_cridlslxka7eqpph56piqjq4sm:
+  /@synthetixio/synpress/2.4.1_rtpf36vgv3jpf67mquizjuqzbm_cridlslxka7eqpph56piqjq4sm:
     resolution: {integrity: sha512-0ziEV6F4GsUvDUd4hpE+QaPXzpwIEC7fQunOcL5cH93IAOemtZ8/ReACkbypkp0sioC9O7mVfXlGCoFA8KotDw==}
     engines: {node: '>=10'}
     hasBin: true
@@ -4558,6 +4561,7 @@ packages:
       - webpack
       - webpack-cli
     dev: true
+    patched: true
 
   /@szmarczak/http-timer/1.1.2:
     resolution: {integrity: sha512-XIB2XbzHTN6ieIjfIMV9hlVcfPU26s2vafYWQcZHWXHOxiaRZYEDKEwdl129Zyg50+foYV2jCgtrqSA6qNuNSA==}
