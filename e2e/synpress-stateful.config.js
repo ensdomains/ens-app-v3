@@ -6,7 +6,7 @@ module.exports = defineConfig({
   projectId: '4zmgdz',
   userAgent: 'synpress',
   retries: {
-    runMode: process.env.CI ? 5 : 1,
+    runMode: process.env.CI ? 3 : 0,
     openMode: 0,
   },
   fixturesFolder,
@@ -18,7 +18,6 @@ module.exports = defineConfig({
   env: {
     coverage: false,
   },
-  video: false,
   defaultCommandTimeout: process.env.SYNDEBUG ? 9999999 : 30000,
   pageLoadTimeout: process.env.SYNDEBUG ? 0 : 9999999,
   requestTimeout: process.env.SYNDEBUG ? 0 : 9999999,
@@ -27,13 +26,12 @@ module.exports = defineConfig({
       // ❗ Leave this at the top to prevent conflicts with other plugins
       ;[on, config] = require('@deploysentinel/cypress-debugger/plugin')(on, config)
       require('cypress-localstorage-commands/plugin')(on, config)
-      require('./plugin')(on, config)
       importedSetupNodeEvents(on, config)
       return config
     },
     projectId: '4zmgdz',
     baseUrl: 'http://localhost:3000',
-    specPattern: 'e2e/specs/stateless/*.spec.{js,jsx,ts,tsx}',
+    specPattern: 'e2e/specs/stateful/*.spec.{js,jsx,ts,tsx}',
     supportFile: 'e2e/support.js',
   },
 })
