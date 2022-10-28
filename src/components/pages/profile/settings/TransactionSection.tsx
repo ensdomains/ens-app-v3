@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -101,6 +101,10 @@ export const TransactionSection = () => {
   const [viewAmt, setViewAmt] = useState(5)
   const visibleTransactions = transactions.slice(0, viewAmt - 1)
 
+  const canClear = useMemo(() => {
+    return transactions.length > 0
+  }, [transactions.length])
+
   const { getResumable, resumeTransactionFlow } = useTransactionFlow()
 
   return (
@@ -113,7 +117,7 @@ export const TransactionSection = () => {
           shadowless
           variant="secondary"
           onClick={() => clearTransactions()}
-          disabled={transactions.length > 0}
+          disabled={!canClear}
           data-testid="transaction-clear-button"
         >
           {tc('action.clear')}
