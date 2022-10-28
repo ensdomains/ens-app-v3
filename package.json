@@ -97,7 +97,7 @@
     "@cloudflare/wrangler": "^1.19.12",
     "@deploysentinel/cypress-debugger": "^0.5.5",
     "@ensdomains/buffer": "^0.1.0",
-    "@ensdomains/ens-test-env": "^0.3.4",
+    "@ensdomains/ens-test-env": "file:.yalc/@ensdomains/ens-test-env",
     "@ethersproject/providers": "^5.7.0",
     "@next/bundle-analyzer": "^12.2.5",
     "@next/swc-linux-x64-gnu": "12.1.4",
