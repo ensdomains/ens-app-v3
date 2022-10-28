@@ -323,6 +323,132 @@ export const handleSubmitForm =
     }
   }
 
+// Must take into account PCC when you are a parent
+
+// As a user, who is the...
+const contractFunction = {
+  unwrapped: {
+    name: {
+      owner: {
+        sendManager: {
+          contract: 'baseRegistrar',
+          method: 'reclaim',
+        },
+        sendOwner: {
+          contract: 'baseRegistrar',
+          method: 'safeTransferFrom',
+        },
+      },
+      manager: {
+        sendManager: {
+          contract: 'regsitry',
+          method: 'setOwner',
+        },
+      },
+    },
+    subname: {
+      manager: {
+        sendManager: {
+          contract: 'registry',
+          method: 'setOwner',
+        },
+      },
+      parentManager: {
+        sendManager: {
+          contract: 'registry',
+          method: 'setSubnodeOwner',
+        },
+      },
+      parentOwner: {
+        // We shouldn't actually do this!
+        // In parent change controller, then do what you would do as controller
+        sendManager: [],
+      },
+    },
+    wrappedSubname: {
+      manager: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+      parentManager: {
+        // We shouldn't actually do this! Will forcibly unwrap the name
+        sendManager: {
+          contract: 'registry',
+          method: 'setSubnodeOwner',
+        },
+      },
+      parentOwner: {
+        // Will require setting yourself as manager first
+        sendManager: {},
+      },
+    },
+  },
+  wrapped: {
+    name: {
+      owner: {
+        sendOwner: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+      manager: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+    },
+    wrappedSubname: {
+      owner: {
+        sendOwner: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+      manager: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'safeTransferFrom',
+        },
+      },
+      parentManager: {
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'setSubnodeOwner',
+        },
+      },
+      parentOwner: {
+        sendOwner: {
+          contract: 'nameWrapper',
+          method: 'setSubnodeOwner',
+        },
+        sendManager: {
+          contract: 'nameWrapper',
+          method: 'setSubnodeOnwer',
+        },
+      },
+    },
+    subname: {
+      manager: {
+        sendManager: {
+          contract: 'registry',
+          method: 'setOwner',
+        },
+      },
+      parentManager: {
+        // Must forcibly wrap subname or unwrap parent
+        sendManager: {},
+      },
+      parentOwner: {
+        // Must forcibly wrap subname or unwrap parent
+        sendManager: {},
+      },
+    },
+  },
+}
+
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const { t } = useTranslation('profile')

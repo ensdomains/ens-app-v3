@@ -6,7 +6,6 @@ describe('Send Flow', () => {
   })
   it('Should allow owner to change manager', () => {
     cy.visit('/profile/test123.eth')
-    // connectFromExisting()
     cy.findByText('View Details').click()
     cy.findByText('Send').click()
     cy.findByTestId('send-name-input').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -107,6 +106,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
+
   it('Should allow unwrapped subname to be sent by owner (setOwner)', () => {
     acceptMetamaskAccess(2)
     cy.visit('/profile/sub.test123.eth')
@@ -133,4 +133,21 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
+
+  it.todo(
+    'if user goes backwards and forwards again in between sending manager and owner, the flow should still succeed',
+  )
+
+  it.todo(
+    'should allow sending when parent is wrapped, child is unwrapped, and use is the owner of the parent',
+  )
+  it.todo(
+    'should allow sending when parent is wrapped, child is unwrapped, and use is the owner of the child',
+  )
+  it.todo(
+    'should allow sending when parent is unwrapped, child is wrapped, and user is the owner of the parent',
+  )
+  it.todo(
+    'should allow sending when parent is unwrapped, child is wrapped, and user is the owner of the child',
+  )
 })
