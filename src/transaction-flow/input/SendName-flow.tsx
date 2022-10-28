@@ -327,9 +327,9 @@ export const handleSubmitForm =
 
 // As a user, who is the...
 const contractFunction = {
-  unwrapped: {
+  isUnwrapped: {
     name: {
-      owner: {
+      isOwner: {
         sendManager: {
           contract: 'baseRegistrar',
           method: 'reclaim',
@@ -339,7 +339,7 @@ const contractFunction = {
           method: 'safeTransferFrom',
         },
       },
-      manager: {
+      isManager: {
         sendManager: {
           contract: 'regsitry',
           method: 'setOwner',
@@ -381,11 +381,11 @@ const contractFunction = {
       },
       parentOwner: {
         // Will require setting yourself as manager first
-        sendManager: {},
+        sendManager: [],
       },
     },
   },
-  wrapped: {
+  isWrapped: {
     name: {
       owner: {
         sendOwner: {
@@ -439,14 +439,60 @@ const contractFunction = {
       },
       parentManager: {
         // Must forcibly wrap subname or unwrap parent
-        sendManager: {},
+        sendManager: [],
       },
       parentOwner: {
         // Must forcibly wrap subname or unwrap parent
-        sendManager: {},
+        sendManager: [],
       },
     },
   },
+}
+
+export const getFunctionCallDetails = ({
+  ownerData,
+  parentOwnerData,
+  name,
+  wrapperData,
+  parentWrapperData,
+  address,
+}) => {
+  const isSubname = name.split('.').length > 2
+  const { fuseObj } = wrapperData
+  const parentFuseObj = parentWrapperData.fuseObj
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+  const isOwnerOrManager = ownerData?.owner === address
+
+  let functionCallDetails
+
+  if (isOwnerOrManager) {
+    functionCallDetails =
+      contractFunction[isWrapped ? 'isWrapped' : 'isUnwrapped'][
+        isWrapped ? 'wrappedSubname' : 'subname'
+      ][isOwnerOrManager && 'manager']
+  }
+
+  if (isSubname) {
+    const isParentWrapped = parentOwnerData?.ownershipLevel === 'nameWrapper'
+    const isParentOwnerOrManager = parentOwnerData?.owner === address
+
+    if (!isOwnerOrManager && !isParentOwnerOrManager) {
+      return
+    }
+
+    const isParentOwner = isParentWrapped
+      ? parentFuseObj.PARENT_CANNOT_CONTROL
+      : parentOwnerData.registrant === address
+
+    if (isParentOwnerOrManager) {
+      functionCallDetails =
+        contractFunction[isParentWrapped ? 'isWrapped' : 'isUnwrapped'][
+          isWrapped ? 'subname' : 'wrappedSubname'
+        ][`parent${isParentOwner ? 'Owner' : 'Manager'}`]
+    }
+  }
+
+  return functionCallDetails
 }
 
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
@@ -454,13 +500,17 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const formRef = useRef<HTMLFormElement>(null)
   const { getRecords } = useEns()
-  const { ownerData } = useBasicName(name as string)
+  const { ownerData, wrapperData } = useBasicName(name as string)
   const parentName = name.split('.').slice(1).join('.')
   const parentNameOwnerData = useBasicName(parentName)
   const { address } = useAccount()
   const { register, watch, getFieldState } = useForm<FormData>({
     mode: 'onChange',
   })
+
+  console.log('ownerData: ', ownerData)
+  console.log('wrapperData: ', wrapperData)
+  console.log('parentNameOwnerData: ', parentNameOwnerData)
 
   const managerDefaultChecked = data.type !== 'owner'
   const ownerDefaultChecked = data.type !== 'manager'
