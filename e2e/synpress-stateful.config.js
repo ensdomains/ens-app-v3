@@ -31,7 +31,7 @@ module.exports = defineConfig({
     },
     projectId: '4zmgdz',
     baseUrl: 'http://localhost:3000',
-    specPattern: 'e2e/specs/stateful/*.spec.{js,jsx,ts,tsx}',
+    specPattern: 'e2e/specs/stateful/**/*.{js,jsx,ts,tsx}',
     supportFile: 'e2e/support.js',
   },
 })
