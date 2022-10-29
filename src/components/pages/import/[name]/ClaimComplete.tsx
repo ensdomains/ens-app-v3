@@ -8,7 +8,7 @@ import styled, { css } from 'styled-components'
 import { Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import NFTTemplate from '@app/components/@molecules/NFTTemplate'
+import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 
 import { ButtonContainer, CheckButton } from './shared'
 

@@ -30,7 +30,7 @@ jest.mock('wagmi', () => {
   }
 })
 
-jest.mock('@app/components/@molecules/NFTTemplate', () => () => <div data-testid="nft-template" />)
+jest.mock('@app/components/@molecules/NFTTemplate/NFTTemplate', () => () => <div data-testid="nft-template" />)
 
 const queryClient = new QueryClient({
   defaultOptions: {

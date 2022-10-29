@@ -105,6 +105,7 @@ specifiers:
   i18next-browser-languagedetector: ^6.1.5
   i18next-http-backend: ^1.4.1
   immer: ^9.0.15
+  intl-segmenter-polyfill: ^0.4.4
   iso-639-1: ^2.1.15
   jest: ^27.5.1
   jest-environment-jsdom: ^27.5.1
@@ -166,6 +167,7 @@ dependencies:
   i18next-browser-languagedetector: 6.1.5
   i18next-http-backend: 1.4.4
   immer: 9.0.15
+  intl-segmenter-polyfill: 0.4.4
   iso-639-1: 2.1.15
   lodash: 4.17.21
   next: 12.1.6_sfoxds7t5ydpegc3knd667wn6m
@@ -236,7 +238,7 @@ devDependencies:
   eslint-plugin-react-hooks: 4.6.0_eslint@7.32.0
   eslint-plugin-testing-library: 4.12.4_3rubbgt5ekhqrcgx4uwls3neim
   ganache: 7.4.3
-  graphql-request: 5.0.1-next.2
+  graphql-request: 5.1.0-next.3
   hardhat: 2.11.2_mwhvu7sfp6vq5ryuwb6hlbjfka
   hardhat-dependency-compiler: 1.1.3_hardhat@2.11.2
   hardhat-deploy: 0.11.16
@@ -2257,7 +2259,7 @@ packages:
       dns-packet: 5.4.0
       ethers: 5.7.1
       graphql: 16.6.0
-      graphql-request: 5.0.1-next.2_graphql@16.6.0
+      graphql-request: 5.1.0-next.3_graphql@16.6.0
       idna-uts46-hx: 3.4.0
       traverse: 0.6.6
     transitivePeerDependencies:
@@ -11572,6 +11574,10 @@ packages:
     resolution: {integrity: sha512-wpYMUmFu5f00Sm0cj2pfivpmawLZ0NKdviQ4w9zJeR8JVtOpOxHmLaJuj0vxvGqMJQWyP/COUkF75/57OKyRag==}
     dev: false
 
+  /fast-text-encoding/1.0.6:
+    resolution: {integrity: sha512-VhXlQgj9ioXCqGstD37E/HBeqEGV/qOD/kmbVG8h5xKBYvM1L3lR1Zn4555cQ8GkYbJa8aJSipLPndE1k6zK2w==}
+    dev: false
+
   /fast-url-parser/1.1.3:
     resolution: {integrity: sha512-5jOCVXADYNuRkKFzNJ0dCCewsZiYo0dz8QNYljkOpFC6r2U4OBmKtvm/Tsuh4w1YYdDqDb31a8TVhBJ2OJKdqQ==}
     dependencies:
@@ -12560,8 +12566,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /graphql-request/5.0.1-next.2:
-    resolution: {integrity: sha512-wenr1clu45bJ97J37dvnrN1/Wq4JfUvnay745ZuNqsDf3Znb0V+mRGNWuXJygEsfTFHyIo3VALaUug5Sq7lYYg==}
+  /graphql-request/5.1.0-next.3:
+    resolution: {integrity: sha512-DzFHEz4/fUIWvo/CiWF3FnTejsaFDel/Fcu4YY34OYiFERG8LSsmGhKvwBWWygJYyzdQ5h4P42xv11+kdBheHg==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -12573,8 +12579,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/5.0.1-next.2_graphql@16.6.0:
-    resolution: {integrity: sha512-wenr1clu45bJ97J37dvnrN1/Wq4JfUvnay745ZuNqsDf3Znb0V+mRGNWuXJygEsfTFHyIo3VALaUug5Sq7lYYg==}
+  /graphql-request/5.1.0-next.3_graphql@16.6.0:
+    resolution: {integrity: sha512-DzFHEz4/fUIWvo/CiWF3FnTejsaFDel/Fcu4YY34OYiFERG8LSsmGhKvwBWWygJYyzdQ5h4P42xv11+kdBheHg==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -13358,6 +13364,12 @@ packages:
       get-intrinsic: 1.1.3
       has: 1.0.3
       side-channel: 1.0.4
+
+  /intl-segmenter-polyfill/0.4.4:
+    resolution: {integrity: sha512-dIOcmvH+Q1WYGkjMqxPfaCgHEwOegH5UPcd/LLeaeY8aguHadC46MzGb40q8C1LrsuyJxJGKeKqoVtIh9ADRXQ==}
+    dependencies:
+      fast-text-encoding: 1.0.6
+    dev: false
 
   /into-stream/3.1.0:
     resolution: {integrity: sha512-TcdjPibTksa1NQximqep2r17ISRiNE9fwlfbg3F8ANdvP5/yrFTew86VcO//jk4QTaMlbjypPBq76HN2zaKfZQ==}

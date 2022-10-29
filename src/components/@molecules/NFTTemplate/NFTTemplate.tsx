@@ -1,6 +1,16 @@
 import { ReactNode, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 
+if (!Intl.Segmenter) {
+  // Firefox Intl.Segmenter polyfill. Safely remove, when couple of minor release after the feature lands,
+  // track the status here: https://bugzilla.mozilla.org/show_bug.cgi?id=1423593
+  console.warn('Intl.Segmenter is not supported, loading polyfill')
+  ;(async () => {
+    const { createIntlSegmenterPolyfill } = await import('intl-segmenter-polyfill/dist/bundled')
+    ;(Intl.Segmenter as typeof Intl['Segmenter']) = (await createIntlSegmenterPolyfill()) as any
+  })()
+}
+
 type Props = {
   name: string
   backgroundImage: string | undefined
@@ -23,7 +33,7 @@ const getFontSize = (str: string) => {
   canvas.height = 270
   const ctx = canvas.getContext('2d')!
   ctx.font =
-    'normal normal bold 20px normal Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
+    'normal normal bold 20px normal Satoshi, Noto Color Emoji, Apple Color Emoji, sans-serif'
   const fontMetrics = ctx.measureText(str)
   const fontSize = Math.floor(20 * (200 / fontMetrics.width))
   return fontSize < 34 ? fontSize : 32
@@ -42,7 +52,7 @@ const addSpan = (str: string, inx: number) => (
 
 const Text = styled.text(
   () => css`
-    font-family: Satoshi, 'DejaVu Sans', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
+    font-family: Satoshi, 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
     font-style: normal;
     font-variant-numeric: tabular-nums;
     font-weight: bold;
@@ -54,11 +64,9 @@ const Text = styled.text(
 
 const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
   const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
-  const DejaVuSans = new FontFace('DejaVuSans', 'url(/fonts/sans-serif/DejaVuSans-Bold.ttf)')
 
   const elementData = useMemo(() => {
     if (!Satoshi.loaded) return {}
-    if (!DejaVuSans.loaded) return {}
     const labels = name.split('.')
     const isSubdomain = labels.length > 2
 
@@ -95,7 +103,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
       domainFontSize *= 2
     }
     return { domainFontSize, subdomainText, isSubdomain, domain }
-  }, [name, Satoshi.loaded, DejaVuSans.loaded])
+  }, [name, Satoshi.loaded])
   const { domainFontSize, subdomainText, isSubdomain, domain } = elementData
 
   let background: ReactNode
