@@ -34,6 +34,13 @@ export const TransactionDialogManager = ({
     })
   }, [dispatch])
 
+  const onBackgroundDismiss = useCallback(() => {
+    if (selectedItem?.disableBackgroundClick) return
+    dispatch({
+      name: 'stopFlow',
+    })
+  }, [dispatch, selectedItem?.disableBackgroundClick])
+
   const InnerComponent = useMemo(() => {
     if (selectedKey && selectedItem) {
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
@@ -86,7 +93,7 @@ export const TransactionDialogManager = ({
   }, [selectedKey, selectedItem, onDismiss, dispatch, t])
 
   return (
-    <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onDismiss}>
+    <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onBackgroundDismiss}>
       {InnerComponent}
       <Dialog.CloseButton onClick={onDismiss} />
     </Dialog>

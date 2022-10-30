@@ -124,6 +124,7 @@ const ResolverWarningOverlay = ({
           name: 'TransferProfile',
           data: { name },
         },
+        disableBackgroundClick: true,
       },
       key: `edit-profile-${name}`,
     })

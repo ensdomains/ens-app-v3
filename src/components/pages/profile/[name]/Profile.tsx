@@ -131,7 +131,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const { showDataInput } = useTransactionFlow()
   const handleEditProfile = () => {
-    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
+    showDataInput(
+      `edit-profile-${name}`,
+      'ProfileEditor',
+      { name },
+      { disableBackgroundClick: true },
+    )
   }
 
   const { profileActions } = useProfileActions()

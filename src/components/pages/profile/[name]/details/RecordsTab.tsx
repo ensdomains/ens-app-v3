@@ -290,7 +290,12 @@ export const RecordsTab = ({
 
   const { showDataInput } = useTransactionFlow()
   const handleShowEditor = () =>
-    showDataInput(`advanced-editor-${name}`, `AdvancedEditor`, { name })
+    showDataInput(
+      `advanced-editor-${name}`,
+      `AdvancedEditor`,
+      { name },
+      { disableBackgroundClick: true },
+    )
   return (
     <TabWrapper $isCached={isCached} data-testid="records-tab">
       <RecordSection>
