@@ -15,6 +15,7 @@ import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 
@@ -196,6 +197,7 @@ export const SearchInput = ({
 
   const searchInputRef = useRef<HTMLInputElement>(null)
   const searchInputContainerRef = useRef<HTMLDivElement>(null)
+  const { width } = useElementSize(searchInputContainerRef.current)
 
   const [selected, setSelected] = useState(0)
   const [usingPlaceholder, setUsingPlaceholder] = useState(false)
@@ -443,7 +445,7 @@ export const SearchInput = ({
   const SearchResultsElement = (
     <SearchResultsContainer
       style={{
-        width: searchInputContainerRef.current?.offsetWidth,
+        width,
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
