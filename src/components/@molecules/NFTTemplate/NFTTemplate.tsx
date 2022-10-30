@@ -112,7 +112,14 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
     background = (
       <>
         <defs>
-          <pattern id="backImg" patternUnits="userSpaceOnUse" x="0" y="0" {...bgProps}>
+          <pattern
+            id="backImg"
+            data-testid="nft-back-img"
+            patternUnits="userSpaceOnUse"
+            x="0"
+            y="0"
+            {...bgProps}
+          >
             <image href={backgroundImage} {...bgProps} />
           </pattern>
         </defs>

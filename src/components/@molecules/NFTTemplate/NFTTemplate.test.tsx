@@ -2,8 +2,15 @@ import { cleanup, render } from '@app/test-utils'
 
 import NFTTemplate from './NFTTemplate'
 
+// function requireUncached(module: string) {
+//   delete require.cache[require.resolve(module)];
+//   return require(module);
+// }
+
 describe('NFTTemplate', () => {
-  beforeEach(() => {})
+  beforeEach(() => {
+    global.FontFace = jest.fn().mockReturnValue({ loaded: true })
+  })
 
   afterEach(() => {
     cleanup()
@@ -11,7 +18,47 @@ describe('NFTTemplate', () => {
   })
 
   it('should render', async () => {
-    render(<NFTTemplate name="nick.eth" backgroundImage={undefined} isNormalised />)
-    // expect(screen.getByText('nick.eth')).toBeInTheDocument();
+    const { getByText } = render(
+      <NFTTemplate name="nick.eth" backgroundImage={undefined} isNormalised />,
+    )
+    expect(getByText('nick.eth')).toBeInTheDocument()
   })
+
+  it('should render with background', async () => {
+    const whiteBG =
+      'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAAAAAA6fptVAAAACklEQVQYV2P4DwABAQEAWk1v8QAAAABJRU5ErkJggg=='
+    const { getByText, getByTestId } = render(
+      <NFTTemplate name="validator.eth" backgroundImage={whiteBG} isNormalised />,
+    )
+    expect(getByText('validator.eth')).toBeInTheDocument()
+    expect(getByTestId('nft-back-img')).toBeInTheDocument()
+  })
+
+  it('should render with subdomain', async () => {
+    const { getByText } = render(
+      <NFTTemplate name="itsasubdomain.khori.eth" backgroundImage={undefined} isNormalised />,
+    )
+    expect(getByText('itsasubdomain.')).toBeInTheDocument()
+  })
+
+  it('should render domain with more than 25 chars', async () => {
+    const { getByText } = render(
+      <NFTTemplate
+        name="thisnameislongerthan25char.eth"
+        backgroundImage={undefined}
+        isNormalised
+      />,
+    )
+    expect(getByText('thisnameislonge')).toBeInTheDocument()
+    expect(getByText('rthan25char.eth')).toBeInTheDocument()
+  })
+
+  // it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
+  //   (Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any; // override native api
+  //   jest.isolateModules(async () => {
+  //     const NFTTemplate2 = requireUncached('./NFTTemplate' as any).default;
+  //     const { getByText } = render(<NFTTemplate2 name="alisha.eth" backgroundImage={undefined} isNormalised />)
+  //     expect(getByText("alisha.eth")).toBeInTheDocument();
+  //   });
+  // })
 })
