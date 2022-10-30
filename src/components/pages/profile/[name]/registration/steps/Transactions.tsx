@@ -172,14 +172,16 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       transactions: [makeTransactionItem('commitName', registrationParams)],
       requiresManualCleanup: true,
       autoClose: true,
+      resumeLink: `/register/${nameDetails.normalisedName}`,
     })
-  }, [commitKey, createTransactionFlow, onStart, registrationParams])
+  }, [commitKey, createTransactionFlow, nameDetails.normalisedName, onStart, registrationParams])
 
   const makeRegisterNameFlow = () => {
     createTransactionFlow(registerKey, {
       transactions: [makeTransactionItem('registerName', registrationParams)],
       requiresManualCleanup: true,
       autoClose: true,
+      resumeLink: `/register/${nameDetails.normalisedName}`,
     })
   }
 

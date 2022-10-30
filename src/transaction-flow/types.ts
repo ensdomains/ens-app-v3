@@ -45,6 +45,7 @@ export type TransactionFlowItem = {
   resumable?: boolean
   requiresManualCleanup?: boolean
   autoClose?: boolean
+  resumeLink?: string
 }
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {

@@ -105,6 +105,24 @@ const names: Name[] = [
     namedAddr: 'owner',
     customDuration: 2419200,
   },
+  {
+    label: 'grace-period',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
+  {
+    label: 'grace-period-in-list',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
+  {
+    label: 'unwrapped-with-wrapped-subnames',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    subnames: [{ label: 'sub', namedOwner: 'owner' }],
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -166,7 +184,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const makeRegistration =
     (nonce: number) =>
     async (
-      { label, registrant, secret, resolver, addr, duration, subname }: ReturnType<typeof makeData>,
+      { label, registrant, secret, resolver, addr, duration }: ReturnType<typeof makeData>,
       index: number,
     ) => {
       const price = await controller.rentPrice(label, duration)
@@ -298,7 +316,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 
       for (let i = 0; i < namesWithAccount.length; i += 1) {
         const data = namesWithAccount[i]
-        usedNonces += await _func(newNonceMap[account])(data, i)
+        usedNonces += await _func(newNonceMap[account])(data, usedNonces)
       }
       newNonceMap[account] += usedNonces
     }
@@ -331,9 +349,9 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   await network.provider.send('anvil_setBlockTimestampInterval', [1])
   await network.provider.send('evm_mine')
 
-  //register subname
+  // register subname
   const resolver = publicResolver.address
-  const registrant = allNamedAccts['owner']
+  const registrant = allNamedAccts.owner
   const _registry = registry.connect(await ethers.getSigner(registrant))
   const subnameTx = await _registry.setSubnodeRecord(
     namehash('test123.eth'),

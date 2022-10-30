@@ -4,6 +4,7 @@ import { useQuery } from 'wagmi'
 import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { GRACE_PERIOD } from '@app/utils/constants'
 
 import { useBlockTimestamp } from './useBlockTimestamp'
 
@@ -74,7 +75,11 @@ export const useNamesFromAddress = ({
         isWrappedOwner: existingEntry.isWrappedOwner || isWrappedOwner,
       }
       const newItem = newMap[curr.name]
-      if (newItem.expiryDate) newItem.expiryDate = new Date(newItem.expiryDate)
+      if (newItem.registration?.expiryDate) {
+        newItem.expiryDate = new Date(newItem.registration.expiryDate)
+      } else if (newItem.expiryDate) {
+        newItem.expiryDate = new Date(newItem.expiryDate)
+      }
       if (newItem.createdAt) newItem.createdAt = new Date(newItem.createdAt)
       if (newItem.registrationDate) newItem.registrationDate = new Date(newItem.registrationDate)
       return newMap
@@ -86,7 +91,8 @@ export const useNamesFromAddress = ({
 
   const filterFunc = useMemo(() => {
     const baseFilter = (n: ReturnedName) => {
-      if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp) return false
+      if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp - GRACE_PERIOD)
+        return false
       return n.parent.name !== 'addr.reverse'
     }
     let secondaryFilter: (n: ReturnedName) => boolean = () => true
@@ -144,7 +150,7 @@ export const useNamesFromAddress = ({
 
   return {
     currentPage,
-    isLoading,
+    isLoading: isLoading || isBlockTimestampLoading,
     status,
     refetch,
     pageLength: pages?.length || 0,

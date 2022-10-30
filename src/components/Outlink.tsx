@@ -37,13 +37,13 @@ export const Outlink = ({
   href,
   children,
   ...props
-}: Omit<ComponentProps<'a'>, 'href'> &
+}: Omit<ComponentProps<'a'>, 'href' | 'target' | 'rel'> &
   ComponentProps<typeof StyledAnchor> & {
     href: string | UrlObject
   }) => {
   return (
     <Link href={href} passHref>
-      <StyledAnchor {...props}>
+      <StyledAnchor {...props} rel="noreferrer noopener" target="_blank">
         <OutlinkTypography variant="small" weight="bold">
           {children}
         </OutlinkTypography>

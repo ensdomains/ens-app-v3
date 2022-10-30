@@ -135,6 +135,14 @@ const InnerBar = styled.div<{ $progress: number; $status: Status }>(
   `,
 )
 
+type TxError = {
+  reason: string
+  code: string
+  method: string
+  transaction: object
+  error: Error
+}
+
 export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
 
@@ -255,10 +263,10 @@ export const TransactionStageModal = ({
       }
     },
     {
-      enabled: !!transaction && !!signer && !!ens,
+      enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
     },
   )
-  const requestError = _requestError as Error | null
+  const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: !!transaction && !!signer && !!ens,
     queryKey: ['prepareTx', txKey, currentStep],
@@ -419,15 +427,18 @@ export const TransactionStageModal = ({
   )
 
   const lowerError = useMemo(() => {
-    if (stepStatus === 'completed') return null
+    if (stage === 'complete' || stage === 'sent') return null
     if (transactionError) {
       return transactionError.message
     }
     if (requestError) {
-      return requestError.message
+      if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
+        return 'An unknown error occurred.'
+      }
+      return requestError.reason
     }
     return null
-  }, [transactionError, requestError, stepStatus])
+  }, [stage, transactionError, requestError])
 
   return (
     <>
