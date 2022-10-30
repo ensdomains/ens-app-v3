@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useInfiniteQuery } from 'wagmi'
 
+import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -26,6 +27,7 @@ type Data = {
 type Domain = {
   id: string
   name: string
+  truncatedName: string
 }
 
 export type Props = {
@@ -66,7 +68,10 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       )
 
       if (!domains) return []
-      return domains as Domain[]
+      return domains.map((domain: any) => ({
+        ...domain,
+        truncatedName: truncateFormat(domain.name),
+      })) as Domain[]
     },
     {
       keepPreviousData: true,
@@ -114,7 +119,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
             .map((name) => (
               <RadioButton
                 labelRight
-                label={<NamePill name={name.name} network={chainId} key={name.id} />}
+                label={<NamePill name={name.truncatedName} network={chainId} key={name.id} />}
                 key={name.id}
                 name={name.name}
                 value={name.name}

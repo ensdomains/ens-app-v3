@@ -167,7 +167,8 @@ export const SubnamesTab = ({
           {subnames.map((subname) => (
             <TaggedNameItem
               key={subname.name}
-              name={subname.truncatedName || subname.name}
+              name={subname.name}
+              truncatedName={subname.truncatedName}
               network={network}
               mode="view"
               isController={subname.owner?.id === address?.toLowerCase()}
