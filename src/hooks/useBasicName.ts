@@ -25,6 +25,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     ['batch', 'getOwner', 'getExpiry', normalisedName],
     () => {
       const batchQueries = addRegistrationStatusToBatch(ens, normalisedName)
+
       if (batchQueries.length > 1) {
         return ens.batch(
           ens.getOwner.batch(normalisedName),
@@ -32,6 +33,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
           ...batchQueries,
         )
       }
+
       return ens.batch(...batchQueries, ens.getWrapperData.batch(normalisedName))
     },
     {

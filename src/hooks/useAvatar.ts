@@ -4,24 +4,30 @@ import { useEns } from '@app/utils/EnsProvider'
 import { ensNftImageUrl, imageUrlUnknownRecord } from '@app/utils/utils'
 
 const fetchImg = async (url: string) =>
-  new Promise<string | undefined>((resolve) => {
+  new Promise<string | null>((resolve) => {
     const img = new Image()
     img.src = url
 
     const handleLoad = () => {
       img.removeEventListener('load', handleLoad)
       if (!img.complete) {
-        resolve(undefined)
+        resolve(null)
         return
       }
       if (!img.naturalWidth) {
-        resolve(undefined)
+        resolve(null)
         return
       }
       resolve(img.src)
     }
 
+    const handleError = () => {
+      img.removeEventListener('error', handleError)
+      resolve(null)
+    }
+
     img.addEventListener('load', handleLoad)
+    img.addEventListener('error', handleError)
   })
 
 export const useAvatar = (name: string | undefined, network: number) => {

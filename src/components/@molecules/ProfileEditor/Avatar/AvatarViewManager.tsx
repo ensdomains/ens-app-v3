@@ -27,26 +27,19 @@ const Card = styled.div(
 )
 
 export const AvatarViewManager = ({
-  handleCancel,
-  handleSubmit,
+  type,
   avatar,
-  name,
+  ...props
 }: {
   handleCancel: () => void
   handleSubmit: (uri: string) => void
   name: string
   avatar?: File
+  type: 'upload' | 'nft'
 }) => {
-  const Component = avatar ? AvatarUpload : AvatarNFT
-
   return (
     <Card>
-      <Component
-        name={name}
-        avatar={avatar!}
-        handleCancel={handleCancel}
-        handleSubmit={handleSubmit}
-      />
+      {type === 'upload' ? <AvatarUpload avatar={avatar!} {...props} /> : <AvatarNFT {...props} />}
     </Card>
   )
 }
