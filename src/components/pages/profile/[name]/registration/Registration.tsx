@@ -4,6 +4,8 @@ import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAccount } from 'wagmi'
 
+import { Helper } from '@ensdomains/thorin'
+
 import { baseFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -12,6 +14,7 @@ import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import useResolverExists from '@app/hooks/useResolverExists'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { isLabelTooLong } from '@app/utils/utils'
 
 import Complete from './steps/Complete'
 import Info from './steps/Info'
@@ -39,6 +42,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     defaultResolverAddress,
   )
 
+  const { long: labelTooLong } = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
 
@@ -138,46 +142,50 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         title={normalisedName}
         hideHeading={step === 'complete'}
         subtitle={t('subtitle')}
-        loading={isLoading || primaryLoading || resolverExistsLoading}
+        loading={labelTooLong ? false : isLoading || primaryLoading || resolverExistsLoading}
         singleColumnContent
       >
         {{
-          trailing: {
-            pricing: (
-              <Pricing
-                resolverExists={resolverExists}
-                nameDetails={nameDetails}
-                callback={pricingCallback}
-                hasPrimaryName={!!primaryName}
-                registrationData={item}
-              />
-            ),
-            profile: (
-              <Profile
-                resolverExists={resolverExists}
-                nameDetails={nameDetails}
-                registrationData={item}
-                callback={profileCallback}
-              />
-            ),
-            info: (
-              <Info
-                nameDetails={nameDetails}
-                registrationData={item}
-                callback={genericCallback}
-                onProfileClick={infoProfileCallback}
-              />
-            ),
-            transactions: (
-              <Transactions
-                nameDetails={nameDetails}
-                registrationData={item}
-                onStart={onStart}
-                callback={transactionsCallback}
-              />
-            ),
-            complete: <Complete nameDetails={nameDetails} callback={onComplete} />,
-          }[step],
+          trailing: labelTooLong ? (
+            <Helper type="error">{t('error.nameTooLong')}</Helper>
+          ) : (
+            {
+              pricing: (
+                <Pricing
+                  resolverExists={resolverExists}
+                  nameDetails={nameDetails}
+                  callback={pricingCallback}
+                  hasPrimaryName={!!primaryName}
+                  registrationData={item}
+                />
+              ),
+              profile: (
+                <Profile
+                  resolverExists={resolverExists}
+                  nameDetails={nameDetails}
+                  registrationData={item}
+                  callback={profileCallback}
+                />
+              ),
+              info: (
+                <Info
+                  nameDetails={nameDetails}
+                  registrationData={item}
+                  callback={genericCallback}
+                  onProfileClick={infoProfileCallback}
+                />
+              ),
+              transactions: (
+                <Transactions
+                  nameDetails={nameDetails}
+                  registrationData={item}
+                  onStart={onStart}
+                  callback={transactionsCallback}
+                />
+              ),
+              complete: <Complete nameDetails={nameDetails} callback={onComplete} />,
+            }[step]
+          ),
         }}
       </Content>
     </>
