@@ -65,7 +65,6 @@ const Text = styled.text(
 )
 
 const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
-  console.log('>>>', window.Intl.Segmenter)
   // const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
 
   const { getSegmentLength, loading } = useGetSegmentLength()

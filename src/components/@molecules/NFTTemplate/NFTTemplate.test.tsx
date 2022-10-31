@@ -55,13 +55,11 @@ describe('NFTTemplate', () => {
 
   it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
     ;(window.Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any // override native api
-    jest.isolateModules(async () => {
-      // const NFTTemplate2 = requireUncached('./NFTTemplate' as any).default
-      const { getByText } = render(
-        <NFTTemplate name="alisha.eth" backgroundImage={undefined} isNormalised />,
-      )
-      await waitFor(() => expect(getByText('alisha.eth')).toBeInTheDocument())
-      expect(getByText('alisha.eth')).toBeInTheDocument()
-    })
+    // const NFTTemplate2 = requireUncached('./NFTTemplate' as any).default
+    const { getByText } = render(
+      <NFTTemplate name="alisha.eth" backgroundImage={undefined} isNormalised />,
+    )
+    await waitFor(() => expect(getByText('alisha.eth')).toBeInTheDocument())
+    expect(getByText('alisha.eth')).toBeInTheDocument()
   })
 })
