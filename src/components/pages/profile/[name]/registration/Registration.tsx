@@ -42,7 +42,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     defaultResolverAddress,
   )
 
-  const { long: labelTooLong } = isLabelTooLong(normalisedName)
+  const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
 

@@ -63,7 +63,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
   const { valid, error } = useMemo(() => {
     if (_label === '') return { valid: false, error: undefined }
     if (_label !== _label.toLowerCase()) return { valid: false, error: 'mustUseLowercase' }
-    if (isWrapped && isLabelTooLong(_label).long) return { valid: false, error: 'nameTooLong' }
+    if (isWrapped && isLabelTooLong(_label)) return { valid: false, error: 'nameTooLong' }
     if (!validation.valid) return { valid: false, error: 'invalidCharacters' }
     if (label !== _label || isLoading) return { valid: false, error: undefined }
     if (!ownership?.owner || (ownership.owner && ownership.owner === emptyAddress))

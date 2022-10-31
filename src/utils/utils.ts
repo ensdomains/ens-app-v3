@@ -58,11 +58,7 @@ export const isDNSName = (name: string): boolean => {
 
 export const isASubname = (name: string) => name.split('.').length > 2
 
-export const isLabelTooLong = (label: string): { long: boolean; byteLength: number } => {
+export const isLabelTooLong = (label: string) => {
   const bytes = toUtf8Bytes(label)
-  const long = bytes.byteLength > 255
-  return {
-    long,
-    byteLength: bytes.byteLength,
-  }
+  return bytes.byteLength > 255
 }

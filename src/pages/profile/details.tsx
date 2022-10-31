@@ -18,7 +18,6 @@ import { WrapperCallToAction } from '@app/components/pages/profile/[name]/detail
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { ReturnedENS } from '@app/types'
@@ -243,12 +242,10 @@ export default function Page() {
     basicIsCachedData,
     profileIsCachedData,
     wrapperData,
+    canBeWrapped: _canBeWrapped,
   } = useNameDetails(name)
-  const nameWrapperExists = useWrapperExists()
   const canBeWrapped =
-    nameWrapperExists &&
-    !isWrapped &&
-    normalisedName.endsWith('.eth') &&
+    _canBeWrapped &&
     (ownerData?.ownershipLevel === 'registrar'
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
