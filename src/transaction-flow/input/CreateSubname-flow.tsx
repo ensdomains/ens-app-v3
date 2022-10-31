@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
 
+import { validateName } from '@ensdomains/ensjs/utils/validation'
 import { Button, Dialog, Input } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -10,6 +11,7 @@ import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { useValidate } from '@app/hooks/useValidate'
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
+import { isLabelTooLong } from '@app/utils/utils'
 
 import { makeTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
@@ -61,12 +63,13 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
   const { valid, error } = useMemo(() => {
     if (_label === '') return { valid: false, error: undefined }
     if (_label !== _label.toLowerCase()) return { valid: false, error: 'mustUseLowercase' }
+    if (isWrapped && isLabelTooLong(_label).long) return { valid: false, error: 'nameTooLong' }
     if (!validation.valid) return { valid: false, error: 'invalidCharacters' }
     if (label !== _label || isLoading) return { valid: false, error: undefined }
     if (!ownership?.owner || (ownership.owner && ownership.owner === emptyAddress))
       return { valid: true, error: undefined }
     return { valid: false, error: 'alreadyExists' }
-  }, [ownership?.owner, label, _label, isLoading, validation.valid])
+  }, [ownership?.owner, label, _label, isLoading, validation.valid, isWrapped])
 
   const handleSubmit = () => {
     dispatch({
@@ -95,8 +98,14 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
           suffix={<ParentLabel>.{parent}</ParentLabel>}
           value={_label}
           onChange={(e) => {
-            _setLabel(e.target.value)
-            debouncedSetLabel(e.target.value)
+            try {
+              const normalised = validateName(e.target.value)
+              _setLabel(normalised)
+              debouncedSetLabel(normalised)
+            } catch {
+              _setLabel(e.target.value)
+              debouncedSetLabel(e.target.value)
+            }
           }}
           error={error ? t(`details.tabs.subnames.addSubname.dialog.error.${error}`) : undefined}
         />
