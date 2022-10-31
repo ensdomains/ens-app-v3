@@ -362,7 +362,7 @@ const contractFunction = {
       parentOwner: {
         // We shouldn't actually do this!
         // In parent change controller, then do what you would do as controller
-        sendManager: [],
+        // sendManager: [],
       },
     },
     wrappedSubname: {
@@ -381,7 +381,7 @@ const contractFunction = {
       },
       parentOwner: {
         // Will require setting yourself as manager first
-        sendManager: [],
+        // sendManager: [],
       },
     },
   },
@@ -439,11 +439,11 @@ const contractFunction = {
       },
       parentManager: {
         // Must forcibly wrap subname or unwrap parent
-        sendManager: [],
+        // sendManager: [],
       },
       parentOwner: {
         // Must forcibly wrap subname or unwrap parent
-        sendManager: [],
+        // sendManager: [],
       },
     },
   },
@@ -499,6 +499,20 @@ export const getFunctionCallDetails = ({
     const functionCallDetails =
       contractFunction[isWrapped ? 'wrapped' : 'unwrapped'].name[isOwner ? 'owner' : 'manager']
     return functionCallDetails
+  }
+}
+
+interface SendPermissions {
+  canSendOwner: boolean
+  canSendManager: boolean
+}
+
+export const getPermittedActions = (props): SendPermissions => {
+  const result = getFunctionCallDetails(props)
+  const keys = Object.keys(result)
+  return {
+    canSendOwner: keys.includes('sendOwner'),
+    canSendManager: keys.includes('sendManager'),
   }
 }
 
