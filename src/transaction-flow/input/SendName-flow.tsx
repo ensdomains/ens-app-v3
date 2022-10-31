@@ -327,9 +327,9 @@ export const handleSubmitForm =
 
 // As a user, who is the...
 const contractFunction = {
-  isUnwrapped: {
+  unwrapped: {
     name: {
-      isOwner: {
+      owner: {
         sendManager: {
           contract: 'baseRegistrar',
           method: 'reclaim',
@@ -339,9 +339,9 @@ const contractFunction = {
           method: 'safeTransferFrom',
         },
       },
-      isManager: {
+      manager: {
         sendManager: {
-          contract: 'regsitry',
+          contract: 'registry',
           method: 'setOwner',
         },
       },
@@ -385,7 +385,7 @@ const contractFunction = {
       },
     },
   },
-  isWrapped: {
+  wrapped: {
     name: {
       owner: {
         sendOwner: {
@@ -426,7 +426,7 @@ const contractFunction = {
         },
         sendManager: {
           contract: 'nameWrapper',
-          method: 'setSubnodeOnwer',
+          method: 'setSubnodeOwner',
         },
       },
     },
@@ -449,6 +449,7 @@ const contractFunction = {
   },
 }
 
+// Will pick out the correct function call from the object above
 export const getFunctionCallDetails = ({
   ownerData,
   parentOwnerData,
@@ -462,15 +463,7 @@ export const getFunctionCallDetails = ({
   const parentFuseObj = parentWrapperData.fuseObj
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
   const isOwnerOrManager = ownerData?.owner === address
-
-  let functionCallDetails
-
-  if (isOwnerOrManager) {
-    functionCallDetails =
-      contractFunction[isWrapped ? 'isWrapped' : 'isUnwrapped'][
-        isWrapped ? 'wrappedSubname' : 'subname'
-      ][isOwnerOrManager && 'manager']
-  }
+  const isOwner = isWrapped ? fuseObj.PARENT_CANNOT_CONTROL : ownerData.registrant === address
 
   if (isSubname) {
     const isParentWrapped = parentOwnerData?.ownershipLevel === 'nameWrapper'
@@ -480,19 +473,33 @@ export const getFunctionCallDetails = ({
       return
     }
 
+    if (isOwnerOrManager) {
+      const functionCallDetails =
+        contractFunction[isParentWrapped ? 'wrapped' : 'unwrapped'][
+          isWrapped ? 'wrappedSubname' : 'subname'
+        ][isOwner ? 'owner' : 'manager']
+      return functionCallDetails
+    }
+
     const isParentOwner = isParentWrapped
       ? parentFuseObj.PARENT_CANNOT_CONTROL
       : parentOwnerData.registrant === address
 
     if (isParentOwnerOrManager) {
-      functionCallDetails =
-        contractFunction[isParentWrapped ? 'isWrapped' : 'isUnwrapped'][
-          isWrapped ? 'subname' : 'wrappedSubname'
+      const functionCallDetails =
+        contractFunction[isParentWrapped ? 'wrapped' : 'unwrapped'][
+          isWrapped ? 'wrappedSubname' : 'subname'
         ][`parent${isParentOwner ? 'Owner' : 'Manager'}`]
+      return functionCallDetails
     }
   }
 
-  return functionCallDetails
+  // 2LD names
+  if (isOwnerOrManager) {
+    const functionCallDetails =
+      contractFunction[isWrapped ? 'wrapped' : 'unwrapped'].name[isOwner ? 'owner' : 'manager']
+    return functionCallDetails
+  }
 }
 
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
