@@ -1,10 +1,10 @@
-import { cleanup, render } from '@app/test-utils'
+import { cleanup, render, waitFor } from '@app/test-utils'
 
 import NFTTemplate from './NFTTemplate'
 
 // function requireUncached(module: string) {
-//   delete require.cache[require.resolve(module)];
-//   return require(module);
+//   delete require.cache[require.resolve(module)]
+//   return require(module)
 // }
 
 describe('NFTTemplate', () => {
@@ -53,12 +53,15 @@ describe('NFTTemplate', () => {
     expect(getByText('rthan25char.eth')).toBeInTheDocument()
   })
 
-  // it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
-  //   (Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any; // override native api
-  //   jest.isolateModules(async () => {
-  //     const NFTTemplate2 = requireUncached('./NFTTemplate' as any).default;
-  //     const { getByText } = render(<NFTTemplate2 name="alisha.eth" backgroundImage={undefined} isNormalised />)
-  //     expect(getByText("alisha.eth")).toBeInTheDocument();
-  //   });
-  // })
+  it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
+    ;(window.Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any // override native api
+    jest.isolateModules(async () => {
+      // const NFTTemplate2 = requireUncached('./NFTTemplate' as any).default
+      const { getByText } = render(
+        <NFTTemplate name="alisha.eth" backgroundImage={undefined} isNormalised />,
+      )
+      await waitFor(() => expect(getByText('alisha.eth')).toBeInTheDocument())
+      expect(getByText('alisha.eth')).toBeInTheDocument()
+    })
+  })
 })

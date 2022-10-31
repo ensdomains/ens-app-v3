@@ -1,15 +1,17 @@
 import { ReactNode, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 
-if (!Intl.Segmenter) {
-  // Firefox Intl.Segmenter polyfill. Safely remove, when couple of minor release after the feature lands,
-  // track the status here: https://bugzilla.mozilla.org/show_bug.cgi?id=1423593
-  console.warn('Intl.Segmenter is not supported, loading polyfill')
-  ;(async () => {
-    const { createIntlSegmenterPolyfill } = await import('intl-segmenter-polyfill/dist/bundled')
-    ;(Intl.Segmenter as typeof Intl['Segmenter']) = (await createIntlSegmenterPolyfill()) as any
-  })()
-}
+import { useGetSegmentLength } from '../../../hooks/useGetSegmentLength'
+
+// if (!Intl.Segmenter) {
+//   // Firefox Intl.Segmenter polyfill. Safely remove, when couple of minor release after the feature lands,
+//   // track the status here: https://bugzilla.mozilla.org/show_bug.cgi?id=1423593
+//   console.warn('Intl.Segmenter is not supported, loading polyfill')
+//   ;(async () => {
+//     const { createIntlSegmenterPolyfill } = await import('intl-segmenter-polyfill/dist/bundled')
+//     ;(Intl.Segmenter as typeof Intl['Segmenter']) = (await createIntlSegmenterPolyfill()) as any
+//   })()
+// }
 
 type Props = {
   name: string
@@ -20,7 +22,7 @@ type Props = {
 const MAX_CHAR = 60
 const bgProps = { width: '270', height: '270' }
 
-const getSegmentLength = (str: string) => [...new Intl.Segmenter().segment(str)].length
+// const getSegmentLength = (str: string) => [...new Intl.Segmenter().segment(str)].length
 
 const getEllipsis = (str: string) => {
   const len = str.length
@@ -63,10 +65,14 @@ const Text = styled.text(
 )
 
 const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
-  const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
+  console.log('>>>', window.Intl.Segmenter)
+  // const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
+
+  const { getSegmentLength, loading } = useGetSegmentLength()
 
   const elementData = useMemo(() => {
-    if (!Satoshi.loaded) return {}
+    // if (!Satoshi.loaded) return {}
+    if (loading) return {}
     const labels = name.split('.')
     const isSubdomain = labels.length > 2
 
@@ -78,7 +84,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
     if (isSubdomain && !name.includes('...')) {
       subdomain = `${labels.slice(0, labels.length - 2).join('.')}.`
       domain = labels.slice(-2).join('.')
-      if (getSegmentLength(subdomain) > MAX_CHAR) {
+      if (getSegmentLength?.(subdomain) > MAX_CHAR) {
         subdomain = getEllipsis(subdomain)
       }
       subdomainFontSize = getFontSize(subdomain)
@@ -103,7 +109,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
       domainFontSize *= 2
     }
     return { domainFontSize, subdomainText, isSubdomain, domain }
-  }, [name, Satoshi.loaded])
+  }, [name, getSegmentLength, loading])
   const { domainFontSize, subdomainText, isSubdomain, domain } = elementData
 
   let background: ReactNode
@@ -133,6 +139,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
     background = <rect fill="url(#paint1_linear)" {...bgProps} />
   }
 
+  if (loading) return null
   return (
     <svg viewBox="0 0 270 270" display="block" fill="none" xmlns="http://www.w3.org/2000/svg">
       {background}
