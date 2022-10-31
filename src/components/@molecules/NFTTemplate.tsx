@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 
 type Props = {
   name: string
-  backgroundImage: string | undefined
+  backgroundImage: string | undefined | null
   isNormalised: boolean
 }
 
