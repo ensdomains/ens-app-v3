@@ -22,7 +22,6 @@ export const useGetSegmentLength = () => {
 
   const getSegmentLength = useCallback(
     (name: string) => {
-      console.log('useCallback', Segmenter)
       if (Segmenter) return [...new Segmenter().segment(name)].length
       return 0
     },

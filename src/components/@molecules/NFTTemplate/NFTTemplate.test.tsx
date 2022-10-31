@@ -2,11 +2,6 @@ import { cleanup, render, waitFor } from '@app/test-utils'
 
 import NFTTemplate from './NFTTemplate'
 
-// function requireUncached(module: string) {
-//   delete require.cache[require.resolve(module)]
-//   return require(module)
-// }
-
 describe('NFTTemplate', () => {
   beforeEach(() => {
     global.FontFace = jest.fn().mockReturnValue({ loaded: true })
@@ -55,7 +50,6 @@ describe('NFTTemplate', () => {
 
   it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
     ;(window.Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any // override native api
-    // const NFTTemplate2 = requireUncached('./NFTTemplate' as any).default
     const { getByText } = render(
       <NFTTemplate name="alisha.eth" backgroundImage={undefined} isNormalised />,
     )
