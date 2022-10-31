@@ -53,7 +53,7 @@ export const useElementSize = (
   return state
 }
 
-const useWindowSize = (initialWidth: number, initialHeight: number) => {
+const useWindowSize = (initialWidth?: number, initialHeight?: number) => {
   return useElementSize('window', initialWidth, initialHeight)
 }
 
