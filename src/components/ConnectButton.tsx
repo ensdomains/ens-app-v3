@@ -126,10 +126,9 @@ const HeaderProfile = ({ address }: { address: string }) => {
 }
 
 export const HeaderConnect = () => {
-  const { address, status } = useAccount()
-  const isAddressLoading = ['reconnecting', 'connecting'].includes(status)
+  const { address, isConnecting, isReconnecting } = useAccount()
 
-  if (isAddressLoading) return null
+  if (isConnecting || isReconnecting) return null
   if (!address) return <ConnectButton inHeader />
   return <HeaderProfile address={address} />
 }
