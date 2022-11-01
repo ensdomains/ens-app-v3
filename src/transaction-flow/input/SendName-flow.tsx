@@ -372,12 +372,15 @@ const contractFunction = {
           method: 'safeTransferFrom',
         },
       },
+      owner: {
+        // This state should never happen as the parent is unwrapped and cannot burn PCC
+      },
       parentManager: {
         // We shouldn't actually do this! Will forcibly unwrap the name
-        sendManager: {
-          contract: 'registry',
-          method: 'setSubnodeOwner',
-        },
+        // sendManager: {
+        //   contract: 'registry',
+        //   method: 'setSubnodeOwner',
+        // },
       },
       parentOwner: {
         // Will require setting yourself as manager first
