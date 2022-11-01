@@ -23,6 +23,9 @@ type ShowDataInput = <C extends keyof DataInputComponent>(
   key: string,
   name: C,
   data: ComponentProps<DataInputComponent[C]>['data'],
+  options?: {
+    disableBackgroundClick?: boolean
+  },
 ) => void
 
 export type CreateTransactionFlow = (key: string, flow: TransactionFlowItem) => void
@@ -162,10 +165,13 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const providerValue: ProviderValue = useMemo(() => {
     return {
-      showDataInput: ((key, name, data) =>
+      showDataInput: ((key, name, data, options = {}) =>
         dispatch({
           name: 'showDataInput',
-          payload: { input: { name, data } },
+          payload: {
+            input: { name, data },
+            disableBackgroundClick: options.disableBackgroundClick,
+          },
           key,
         })) as ShowDataInput,
       createTransactionFlow: ((key, flow) =>

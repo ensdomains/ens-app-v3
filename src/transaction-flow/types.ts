@@ -46,6 +46,7 @@ export type TransactionFlowItem = {
   requiresManualCleanup?: boolean
   autoClose?: boolean
   resumeLink?: string
+  disableBackgroundClick?: boolean
 }
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
@@ -70,6 +71,7 @@ export type TransactionFlowAction =
       name: 'showDataInput'
       payload: {
         input: GenericDataInput
+        disableBackgroundClick?: boolean
       }
       key: string
     }
