@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -8,9 +9,11 @@ import { NightSky } from '@app/assets/NightSky'
 import SparklesSVG from '@app/assets/Sparkles.svg'
 import { Card } from '@app/components/Card'
 import { useNameDetails } from '@app/hooks/useNameDetails'
+import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { GenericTransaction } from '@app/transaction-flow/types'
 
 const Container = styled(Card)(
   ({ theme }) => css`
@@ -97,48 +100,65 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
   const isOwner = ownerData?.owner === address
   const resolverAddress = profile?.resolverAddress
 
+  const hasExistingRecords = useMemo(() => {
+    if (profile?.records) {
+      if (profile.records.contentHash) return true
+      if (Object.keys(profile.records.coinTypes || {}).length > 0) return true
+      if (Object.keys(profile.records.texts || {}).length > 0) return true
+    }
+    return false
+  }, [profile])
+
+  const isSubdomain = name.split('.').length > 2
+  const { approvedForAll, isLoading: approvalLoading } = useWrapperApprovedForAll(
+    address!,
+    isSubdomain,
+  )
+
   const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleUpgradeClick = () => {
     if (resumable) return resumeTransactionFlow(`wrapName-${name}`)
-    if (hasOwnerData && isOwner)
-      return createTransactionFlow(`wrapName-${name}`, {
-        transactions: [
+    if (hasOwnerData) {
+      const transactions: GenericTransaction[] = [
+        makeTransactionItem('wrapName', {
+          name,
+        }),
+      ]
+      if (isOwner) {
+        if (hasExistingRecords) {
+          transactions.unshift(
+            makeTransactionItem('migrateProfile', {
+              name,
+            }),
+          )
+        }
+
+        if (isSubdomain && !approvedForAll) {
+          transactions.unshift(
+            makeTransactionItem('approveNameWrapper', {
+              address: address!,
+            }),
+          )
+        }
+      } else if (!isSubdomain && hasExistingRecords) {
+        transactions.push(
           makeTransactionItem('migrateProfile', {
             name,
+            resolverAddress,
           }),
-          makeTransactionItem('wrapName', {
-            name,
-          }),
-        ],
-        resumable: true,
-        intro: {
-          title: t('details.wrap.startTitle'),
-          content: makeIntroItem('WrapName', { name }),
-        },
-      })
-    if (hasOwnerData)
+        )
+      }
       return createTransactionFlow(`wrapName-${name}`, {
-        transactions: [
-          makeTransactionItem('wrapName', {
-            name,
-          }),
-          ...(resolverAddress
-            ? [
-                makeTransactionItem('migrateProfile', {
-                  name,
-                  resolverAddress,
-                }),
-              ]
-            : []),
-        ],
+        transactions,
         resumable: true,
         intro: {
           title: t('details.wrap.startTitle'),
           content: makeIntroItem('WrapName', { name }),
         },
       })
+    }
   }
 
   return (
@@ -153,7 +173,12 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           </TextContainer>
           <Sparkles as={SparklesSVG} />
         </InnerContainer>
-        <UpgradeButton data-testid="wrapper-cta-button" shadowless onClick={handleUpgradeClick}>
+        <UpgradeButton
+          data-testid="wrapper-cta-button"
+          disabled={approvalLoading}
+          shadowless
+          onClick={handleUpgradeClick}
+        >
           {resumable ? t('details.wrap.resumeLabel') : t('details.wrap.startLabel')}
         </UpgradeButton>
       </Container>

@@ -36,7 +36,7 @@ export const addRegistrationStatusToBatch = (ens: PublicENS, name: string) => {
     }
     return [getExpiry.batch(name), getPrice.batch(labels[0], yearsToSeconds(1), false)]
   }
-  return [getOwner.batch(name, 'registry')]
+  return [getOwner.batch(name)]
 }
 
 type BatchResult =
