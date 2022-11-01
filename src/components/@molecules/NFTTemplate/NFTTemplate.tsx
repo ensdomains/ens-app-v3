@@ -11,7 +11,6 @@ type Props = {
 
 const MAX_CHAR = 60
 const bgProps = { width: '270', height: '270' }
-const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
 
 const getEllipsis = (str: string) => {
   const len = str.length
@@ -57,7 +56,6 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
   const { getSegmentLength, loading } = useGetSegmentLength()
 
   const elementData = useMemo(() => {
-    if (!Satoshi.loaded) return {}
     if (loading) return {}
     const labels = name.split('.')
     const isSubdomain = labels.length > 2

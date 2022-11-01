@@ -3,10 +3,6 @@ import { cleanup, render, waitFor } from '@app/test-utils'
 import NFTTemplate from './NFTTemplate'
 
 describe('NFTTemplate', () => {
-  beforeEach(() => {
-    global.FontFace = jest.fn().mockReturnValue({ loaded: true })
-  })
-
   afterEach(() => {
     cleanup()
     jest.clearAllMocks()
