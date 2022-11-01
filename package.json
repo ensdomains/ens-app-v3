@@ -52,7 +52,7 @@
     "@ensdomains/dnssecoraclejs": "^0.2.7",
     "@ensdomains/ens-contracts": "0.0.15",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "3.0.0-alpha.32",
+    "@ensdomains/ensjs": "3.0.0-alpha.33",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "0.6.20",
     "@rainbow-me/rainbowkit": "0.4.8",
