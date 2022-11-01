@@ -126,6 +126,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
       }}
       size="medium"
       alignDropdown="left"
+      data-testid="header-profile"
     />
   )
 }
