@@ -11,6 +11,7 @@ type Props = {
 
 const MAX_CHAR = 60
 const bgProps = { width: '270', height: '270' }
+const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
 
 const getEllipsis = (str: string) => {
   const len = str.length
@@ -53,8 +54,6 @@ const Text = styled.text(
 )
 
 const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
-  const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
-
   const { getSegmentLength, loading } = useGetSegmentLength()
 
   const elementData = useMemo(() => {
@@ -71,7 +70,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
     if (isSubdomain && !name.includes('...')) {
       subdomain = `${labels.slice(0, labels.length - 2).join('.')}.`
       domain = labels.slice(-2).join('.')
-      if (getSegmentLength?.(subdomain) > MAX_CHAR) {
+      if (getSegmentLength(subdomain) > MAX_CHAR) {
         subdomain = getEllipsis(subdomain)
       }
       subdomainFontSize = getFontSize(subdomain)
@@ -96,7 +95,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
       domainFontSize *= 2
     }
     return { domainFontSize, subdomainText, isSubdomain, domain }
-  }, [name, Satoshi.loaded, getSegmentLength, loading])
+  }, [name, getSegmentLength, loading])
   const { domainFontSize, subdomainText, isSubdomain, domain } = elementData
 
   let background: ReactNode
