@@ -1,6 +1,6 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import { useNetwork, useProvider } from 'wagmi'
+import { useNetwork, useProvider } from '@web3modal/react'
 
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { KnownResolveAddresses } from '@app/validators/validateResolver'

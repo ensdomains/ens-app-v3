@@ -1,7 +1,9 @@
 import { persistQueryClient } from '@tanstack/query-persist-client-core'
 import { createSyncStoragePersister } from '@tanstack/query-sync-storage-persister'
 import { QueryClient } from '@tanstack/react-query'
-import { deserialize, serialize } from 'wagmi'
+
+import { deserialize } from '@app/utils/deserialize'
+import { serialize } from '@app/utils/serialize'
 
 export const makePersistent = (queryClient: QueryClient) => {
   if (typeof window !== 'undefined') {

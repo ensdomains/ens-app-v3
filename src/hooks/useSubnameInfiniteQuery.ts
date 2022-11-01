@@ -1,5 +1,5 @@
+import { useInfiniteQuery } from '@tanstack/react-query'
 import { useMemo } from 'react'
-import { useInfiniteQuery } from 'wagmi'
 
 import { SortDirection, SortType } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { useEns } from '@app/utils/EnsProvider'

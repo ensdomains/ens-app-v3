@@ -1,9 +1,9 @@
+import { useAccount } from '@web3modal/react'
 import { utils } from 'ethers'
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Button, Dropdown, Helper, Typography } from '@ensdomains/thorin'

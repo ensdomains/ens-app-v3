@@ -1,6 +1,6 @@
 import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
-import { useNetwork, useProvider } from 'wagmi'
+import { useNetwork, useProvider } from '@web3modal/react'
 
 import { useProfile } from '@app/hooks/useProfile'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'

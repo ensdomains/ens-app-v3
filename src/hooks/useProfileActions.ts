@@ -1,6 +1,7 @@
+import { useQuery } from '@tanstack/react-query'
+import { useAccount } from '@web3modal/react'
 import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
-import { useAccount, useQuery } from 'wagmi'
 
 import type { Colors } from '@ensdomains/thorin'
 

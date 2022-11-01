@@ -25,17 +25,18 @@ const EnsContext = createContext({ ...defaultValue, ready: false })
 
 const EnsProvider = ({ children }: { children: React.ReactNode }) => {
   const provider = useProvider()
+  const isReady = useProvider()
 
   const ensWithCurrentProvider = useMemo(() => defaultValue, [])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     setReady(false)
-    if (provider) {
+    if (isReady && provider) {
       ensWithCurrentProvider.setProvider(provider! as any).then(() => setReady(true))
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [provider])
+  }, [provider, isReady])
 
   return (
     <EnsContext.Provider

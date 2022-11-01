@@ -1,8 +1,8 @@
+import { useAccount } from '@web3modal/react'
 import { useRouter } from 'next/router'
 import { ReactElement, useCallback, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, Spinner } from '@ensdomains/thorin'
 

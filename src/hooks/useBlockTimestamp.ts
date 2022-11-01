@@ -1,4 +1,5 @@
-import { useProvider, useQuery } from 'wagmi'
+import { useQuery } from '@tanstack/react-query'
+import { useProvider } from '@web3modal/react'
 
 export const useBlockTimestamp = () => {
   const provider = useProvider()

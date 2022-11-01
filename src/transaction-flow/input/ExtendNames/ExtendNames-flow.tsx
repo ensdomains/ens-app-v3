@@ -1,8 +1,8 @@
+import { useFeeData } from '@web3modal/react'
 import { BigNumber } from 'ethers'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useFeeData } from 'wagmi'
 
 import { Avatar, Button, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 

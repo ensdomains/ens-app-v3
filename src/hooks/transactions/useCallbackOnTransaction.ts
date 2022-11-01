@@ -48,7 +48,7 @@ const useCallbackOnTransaction = (callback: UpdateCallback) => {
         }
         return false
       },
-      enabled: !!gqlInstance && !!transactions.find((x) => x.minedData?.blockNumber),
+      // enabled: !!gqlInstance && !!transactions.find((x) => x.minedData?.blockNumber),
       onSuccess: (data) => {
         if (!data) return
         const waitingForBlock = findTransactionHigherThanBlock(data)

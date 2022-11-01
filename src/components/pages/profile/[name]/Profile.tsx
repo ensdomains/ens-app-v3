@@ -1,4 +1,4 @@
-import { useAccount } from '@web3modal/react'
+import { useAccount, useProvider } from '@web3modal/react'
 import Head from 'next/head'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo } from 'react'
@@ -66,6 +66,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
   const transactions = useRecentTransactions()
+  const isReady = useProvider()
 
   const {
     error,
@@ -94,7 +95,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   useProtectedRoute(
     '/',
     // When anything is loading, return true
-    isLoading
+    isLoading || isReady
       ? true
       : // if is self, user must be connected
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0,

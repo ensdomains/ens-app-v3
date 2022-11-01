@@ -1,6 +1,7 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
+import { useQuery } from '@tanstack/react-query'
+import { useSigner } from '@web3modal/react'
 import { utils } from 'ethers'
-import { useQuery, useSigner } from 'wagmi'
 
 import {
   Transaction,

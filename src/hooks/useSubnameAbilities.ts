@@ -1,5 +1,5 @@
+import { useAccount } from '@web3modal/react'
 import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
 import { useGetWrapperData } from './useGetWrapperData'
 import { useHasSubnames } from './useHasSubnames'

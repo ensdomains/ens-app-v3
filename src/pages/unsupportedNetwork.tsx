@@ -1,8 +1,8 @@
+import { useNetwork, useSwitchNetwork } from '@web3modal/react'
 import { useRouter } from 'next/router'
 import { ReactElement, useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { Button, Helper, mq } from '@ensdomains/thorin'
 

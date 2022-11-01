@@ -1,9 +1,10 @@
+import { useQuery } from '@tanstack/react-query'
+import { useAccount } from '@web3modal/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQuery } from 'wagmi'
 
 import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Helper, Typography } from '@ensdomains/thorin'
