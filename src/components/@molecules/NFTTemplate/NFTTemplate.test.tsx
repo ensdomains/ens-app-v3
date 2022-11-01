@@ -49,7 +49,7 @@ describe('NFTTemplate', () => {
   })
 
   it('should use polyfill of Intl.Segmenter if browser does not support', async () => {
-    ;(window.Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any // override native api
+    ;(window.Intl.Segmenter as typeof Intl['Segmenter']) = undefined as any
     const { getByText } = render(
       <NFTTemplate name="alisha.eth" backgroundImage={undefined} isNormalised />,
     )
