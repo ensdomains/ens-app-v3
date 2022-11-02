@@ -33,7 +33,7 @@ specifiers:
   '@ensdomains/ens-contracts': 0.0.15
   '@ensdomains/ens-test-env': ^0.3.3
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.30
+  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': 0.6.20
   '@ethersproject/providers': ^5.7.0
@@ -148,7 +148,7 @@ dependencies:
   '@ensdomains/dnssecoraclejs': 0.2.7_pvk3ufufkdqmdylw6bmtfuxgpy
   '@ensdomains/ens-contracts': 0.0.15_uhtqcqloeksov7aucejb2ltlwi
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.30_7x5j7mhlayj6sfsfjeiz4rsas4
+  '@ensdomains/ensjs': file:.yalc/@ensdomains/ensjs_7x5j7mhlayj6sfsfjeiz4rsas4
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.20_6haozuff5ofofiwuoke6ixqiri
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_wiydppdk2wtsgvuygzl3yf3yma
@@ -2146,37 +2146,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-
-  /@ensdomains/ensjs/3.0.0-alpha.30_7x5j7mhlayj6sfsfjeiz4rsas4:
-    resolution: {integrity: sha512-43ME6BTXzhz8qxL9NcF97Hip8U9ggErQzHGlJPed+zWvvyV4T+8AaW1o9MWKXZRq/svNeLOZUntPvhhJa8hrcA==}
-    peerDependencies:
-      ethers: '*'
-    dependencies:
-      '@ensdomains/address-encoder': 0.2.16
-      '@ensdomains/content-hash': 2.5.7
-      '@ensdomains/dnsprovejs': 0.4.1
-      '@ensdomains/dnssecoraclejs': 0.2.7_pvk3ufufkdqmdylw6bmtfuxgpy
-      dns-packet: 5.4.0
-      ethers: 5.7.1
-      graphql: 16.6.0
-      graphql-request: 5.1.0-next.3_graphql@16.6.0
-      idna-uts46-hx: 3.4.0
-      traverse: 0.6.6
-    transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
-      - bufferutil
-      - encoding
-      - hardhat
-      - supports-color
-      - ts-node
-      - typescript
-      - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
-    dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
@@ -23612,6 +23581,40 @@ packages:
       immer: 9.0.15
       react: 17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
+    dev: false
+
+  file:.yalc/@ensdomains/ensjs_7x5j7mhlayj6sfsfjeiz4rsas4:
+    resolution: {directory: .yalc/@ensdomains/ensjs, type: directory}
+    id: file:.yalc/@ensdomains/ensjs
+    name: '@ensdomains/ensjs'
+    version: 3.0.0-alpha.32
+    peerDependencies:
+      ethers: '*'
+    dependencies:
+      '@ensdomains/address-encoder': 0.2.16
+      '@ensdomains/content-hash': 2.5.7
+      '@ensdomains/dnsprovejs': 0.4.1
+      '@ensdomains/dnssecoraclejs': 0.2.7_pvk3ufufkdqmdylw6bmtfuxgpy
+      dns-packet: 5.4.0
+      ethers: 5.7.1
+      graphql: 16.6.0
+      graphql-request: 5.1.0-next.3_graphql@16.6.0
+      idna-uts46-hx: 3.4.0
+      traverse: 0.6.6
+    transitivePeerDependencies:
+      - '@nomiclabs/hardhat-web3'
+      - bufferutil
+      - encoding
+      - hardhat
+      - supports-color
+      - ts-node
+      - typescript
+      - utf-8-validate
+      - web3
+      - web3-core-helpers
+      - web3-core-promievent
+      - web3-eth-abi
+      - web3-utils
     dev: false
 
   github.com/ethereumjs/ethereumjs-abi/ee3994657fa7a427238e6ba92a84d0b529bbcde0:

@@ -20,7 +20,7 @@ const userStates = {
   unwrappedNameOwner: {
     ownerData: {
       ownershipLevel: 'registry',
-      owner: ownerAddress,
+      owner: '0xnotOwner',
       registrant: ownerAddress,
     },
     parentOwnerData: {

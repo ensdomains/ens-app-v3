@@ -7,6 +7,7 @@ type Data = {
   name: string
   newOwner: EthAddress
   contract: 'registry' | 'baseRegistrar' | 'nameWrapper'
+  reclaim?: boolean
 }
 
 const displayItems = (
@@ -28,6 +29,7 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const tx = ens.transferName.populateTransaction(data.name, {
     newOwner: data.newOwner,
     contract: data.contract,
+    reclaim: data.reclaim,
     signer,
   })
   return tx

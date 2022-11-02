@@ -1,0 +1,184 @@
+import type { BaseContract, BigNumber, BigNumberish, BytesLike, CallOverrides, ContractTransaction, Overrides, PopulatedTransaction, Signer, utils } from "ethers";
+import type { FunctionFragment, Result } from "@ethersproject/abi";
+import type { Listener, Provider } from "@ethersproject/providers";
+import type { TypedEventFilter, TypedEvent, TypedListener, OnEvent, PromiseOrValue } from "./common";
+export interface UniversalResolverInterface extends utils.Interface {
+    functions: {
+        "_resolveSingle(bytes,bytes,string[],bytes4,bytes)": FunctionFragment;
+        "batchGatewayURLs(uint256)": FunctionFragment;
+        "findResolver(bytes)": FunctionFragment;
+        "registry()": FunctionFragment;
+        "resolve(bytes,bytes,string[])": FunctionFragment;
+        "resolve(bytes,bytes[])": FunctionFragment;
+        "resolve(bytes,bytes[],string[])": FunctionFragment;
+        "resolve(bytes,bytes)": FunctionFragment;
+        "resolveCallback(bytes,bytes)": FunctionFragment;
+        "resolveSingleCallback(bytes,bytes)": FunctionFragment;
+        "reverse(bytes,string[])": FunctionFragment;
+        "reverse(bytes)": FunctionFragment;
+        "reverseCallback(bytes,bytes)": FunctionFragment;
+        "supportsInterface(bytes4)": FunctionFragment;
+    };
+    getFunction(nameOrSignatureOrTopic: "_resolveSingle" | "batchGatewayURLs" | "findResolver" | "registry" | "resolve(bytes,bytes,string[])" | "resolve(bytes,bytes[])" | "resolve(bytes,bytes[],string[])" | "resolve(bytes,bytes)" | "resolveCallback" | "resolveSingleCallback" | "reverse(bytes,string[])" | "reverse(bytes)" | "reverseCallback" | "supportsInterface"): FunctionFragment;
+    encodeFunctionData(functionFragment: "_resolveSingle", values: [
+        PromiseOrValue<BytesLike>,
+        PromiseOrValue<BytesLike>,
+        PromiseOrValue<string>[],
+        PromiseOrValue<BytesLike>,
+        PromiseOrValue<BytesLike>
+    ]): string;
+    encodeFunctionData(functionFragment: "batchGatewayURLs", values: [PromiseOrValue<BigNumberish>]): string;
+    encodeFunctionData(functionFragment: "findResolver", values: [PromiseOrValue<BytesLike>]): string;
+    encodeFunctionData(functionFragment: "registry", values?: undefined): string;
+    encodeFunctionData(functionFragment: "resolve(bytes,bytes,string[])", values: [
+        PromiseOrValue<BytesLike>,
+        PromiseOrValue<BytesLike>,
+        PromiseOrValue<string>[]
+    ]): string;
+    encodeFunctionData(functionFragment: "resolve(bytes,bytes[])", values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>[]]): string;
+    encodeFunctionData(functionFragment: "resolve(bytes,bytes[],string[])", values: [
+        PromiseOrValue<BytesLike>,
+        PromiseOrValue<BytesLike>[],
+        PromiseOrValue<string>[]
+    ]): string;
+    encodeFunctionData(functionFragment: "resolve(bytes,bytes)", values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]): string;
+    encodeFunctionData(functionFragment: "resolveCallback", values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]): string;
+    encodeFunctionData(functionFragment: "resolveSingleCallback", values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]): string;
+    encodeFunctionData(functionFragment: "reverse(bytes,string[])", values: [PromiseOrValue<BytesLike>, PromiseOrValue<string>[]]): string;
+    encodeFunctionData(functionFragment: "reverse(bytes)", values: [PromiseOrValue<BytesLike>]): string;
+    encodeFunctionData(functionFragment: "reverseCallback", values: [PromiseOrValue<BytesLike>, PromiseOrValue<BytesLike>]): string;
+    encodeFunctionData(functionFragment: "supportsInterface", values: [PromiseOrValue<BytesLike>]): string;
+    decodeFunctionResult(functionFragment: "_resolveSingle", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "batchGatewayURLs", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "findResolver", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "registry", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "resolve(bytes,bytes,string[])", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "resolve(bytes,bytes[])", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "resolve(bytes,bytes[],string[])", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "resolve(bytes,bytes)", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "resolveCallback", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "resolveSingleCallback", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "reverse(bytes,string[])", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "reverse(bytes)", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "reverseCallback", data: BytesLike): Result;
+    decodeFunctionResult(functionFragment: "supportsInterface", data: BytesLike): Result;
+    events: {};
+}
+export interface UniversalResolver extends BaseContract {
+    connect(signerOrProvider: Signer | Provider | string): this;
+    attach(addressOrName: string): this;
+    deployed(): Promise<this>;
+    interface: UniversalResolverInterface;
+    queryFilter<TEvent extends TypedEvent>(event: TypedEventFilter<TEvent>, fromBlockOrBlockhash?: string | number | undefined, toBlock?: string | number | undefined): Promise<Array<TEvent>>;
+    listeners<TEvent extends TypedEvent>(eventFilter?: TypedEventFilter<TEvent>): Array<TypedListener<TEvent>>;
+    listeners(eventName?: string): Array<Listener>;
+    removeAllListeners<TEvent extends TypedEvent>(eventFilter: TypedEventFilter<TEvent>): this;
+    removeAllListeners(eventName?: string): this;
+    off: OnEvent<this>;
+    on: OnEvent<this>;
+    once: OnEvent<this>;
+    removeListener: OnEvent<this>;
+    functions: {
+        _resolveSingle(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], callbackFunction: PromiseOrValue<BytesLike>, metaData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+        batchGatewayURLs(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<[string]>;
+        findResolver(name: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+        registry(overrides?: CallOverrides): Promise<[string]>;
+        "resolve(bytes,bytes,string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string, string]>;
+        "resolve(bytes,bytes[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<[string[], string]>;
+        "resolve(bytes,bytes[],string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string[], string]>;
+        "resolve(bytes,bytes)"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+        resolveCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        resolveSingleCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        "reverse(bytes,string[])"(reverseName: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string, string, string, string]>;
+        "reverse(bytes)"(reverseName: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string, string, string]>;
+        reverseCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<ContractTransaction>;
+        supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[boolean]>;
+    };
+    _resolveSingle(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], callbackFunction: PromiseOrValue<BytesLike>, metaData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+    batchGatewayURLs(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
+    findResolver(name: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+    registry(overrides?: CallOverrides): Promise<string>;
+    "resolve(bytes,bytes,string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string, string]>;
+    "resolve(bytes,bytes[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<[string[], string]>;
+    "resolve(bytes,bytes[],string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string[], string]>;
+    "resolve(bytes,bytes)"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+    resolveCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    resolveSingleCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    "reverse(bytes,string[])"(reverseName: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string, string, string, string]>;
+    "reverse(bytes)"(reverseName: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string, string, string]>;
+    reverseCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+        from?: PromiseOrValue<string>;
+    }): Promise<ContractTransaction>;
+    supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
+    callStatic: {
+        _resolveSingle(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], callbackFunction: PromiseOrValue<BytesLike>, metaData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+        batchGatewayURLs(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<string>;
+        findResolver(name: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+        registry(overrides?: CallOverrides): Promise<string>;
+        "resolve(bytes,bytes,string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string, string]>;
+        "resolve(bytes,bytes[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<[string[], string]>;
+        "resolve(bytes,bytes[],string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string[], string]>;
+        "resolve(bytes,bytes)"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+        resolveCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string[], string]>;
+        resolveSingleCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string]>;
+        "reverse(bytes,string[])"(reverseName: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<[string, string, string, string]>;
+        "reverse(bytes)"(reverseName: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string, string, string]>;
+        reverseCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<[string, string, string, string]>;
+        supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<boolean>;
+    };
+    filters: {};
+    estimateGas: {
+        _resolveSingle(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], callbackFunction: PromiseOrValue<BytesLike>, metaData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
+        batchGatewayURLs(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<BigNumber>;
+        findResolver(name: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
+        registry(overrides?: CallOverrides): Promise<BigNumber>;
+        "resolve(bytes,bytes,string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<BigNumber>;
+        "resolve(bytes,bytes[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<BigNumber>;
+        "resolve(bytes,bytes[],string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<BigNumber>;
+        "resolve(bytes,bytes)"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
+        resolveCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        resolveSingleCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        "reverse(bytes,string[])"(reverseName: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<BigNumber>;
+        "reverse(bytes)"(reverseName: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
+        reverseCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<BigNumber>;
+        supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<BigNumber>;
+    };
+    populateTransaction: {
+        _resolveSingle(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], callbackFunction: PromiseOrValue<BytesLike>, metaData: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        batchGatewayURLs(arg0: PromiseOrValue<BigNumberish>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        findResolver(name: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        registry(overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        "resolve(bytes,bytes,string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        "resolve(bytes,bytes[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        "resolve(bytes,bytes[],string[])"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>[], gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        "resolve(bytes,bytes)"(name: PromiseOrValue<BytesLike>, data: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        resolveCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        resolveSingleCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        "reverse(bytes,string[])"(reverseName: PromiseOrValue<BytesLike>, gateways: PromiseOrValue<string>[], overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        "reverse(bytes)"(reverseName: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+        reverseCallback(response: PromiseOrValue<BytesLike>, extraData: PromiseOrValue<BytesLike>, overrides?: Overrides & {
+            from?: PromiseOrValue<string>;
+        }): Promise<PopulatedTransaction>;
+        supportsInterface(interfaceId: PromiseOrValue<BytesLike>, overrides?: CallOverrides): Promise<PopulatedTransaction>;
+    };
+}

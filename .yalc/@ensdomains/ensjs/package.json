@@ -1,0 +1,86 @@
+{
+  "name": "@ensdomains/ensjs",
+  "version": "3.0.0-alpha.32",
+  "description": "ENS javascript library for contract interaction",
+  "main": "./dist/cjs/index.js",
+  "module": "./dist/esm/index.mjs",
+  "types": "./dist/types/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/esm/index.mjs",
+      "require": "./dist/cjs/index.js",
+      "default": "./dist/esm/index.mjs"
+    },
+    "./*.js": {
+      "import": "./dist/esm/*.mjs",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.mjs"
+    },
+    "./*.mjs": {
+      "import": "./dist/esm/*.mjs",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.mjs"
+    },
+    "./*": {
+      "import": "./dist/esm/*.mjs",
+      "require": "./dist/cjs/*.js",
+      "default": "./dist/esm/*.mjs"
+    }
+  },
+  "typesVersions": {
+    "*": {
+      "contracts/*": [
+        "./dist/types/contracts/*"
+      ],
+      "functions/*": [
+        "./dist/types/functions/*"
+      ],
+      "utils/*": [
+        "./dist/types/utils/*"
+      ],
+      "generated/*": [
+        "./dist/types/generated/*"
+      ]
+    }
+  },
+  "files": [
+    "dist/",
+    "src/",
+    "!src/tests"
+  ],
+  "repository": "git@github.com:ensdomains/ensjs-v3.git",
+  "author": "TateB <yo@taytems.xyz>",
+  "license": "MIT",
+  "scripts": {
+    "tenv": "ens-test-env -a",
+    "denv": "pnpm tenv start -ns -nb --extra-time 11368000",
+    "generate-types": "ts-node scripts/runTypechain.ts",
+    "generate-abis": "hardhat export-abi",
+    "start": "ts-node --files src/index.test.ts",
+    "test": "jest --run-in-band",
+    "test:watch": "jest --watch --run-in-band",
+    "test:specific": "ts-node --files ",
+    "clean": "rm -rf ./dist ./README.md ./LICENSE",
+    "lint": "eslint ./src/* --no-error-on-unmatched-pattern",
+    "build:types": "tsc --emitDeclarationOnly --project tsconfig.build.json",
+    "build": "pnpm clean && pnpm lint && pnpm build:types && pnpm node esbuild.js",
+    "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1663311099000",
+    "ver": "pnpm version --no-workspaces-update"
+  },
+  "dependencies": {
+    "@ensdomains/address-encoder": "0.2.16",
+    "@ensdomains/content-hash": "^2.5.7",
+    "@ensdomains/dnsprovejs": "^0.4.1",
+    "@ensdomains/dnssecoraclejs": "^0.2.7",
+    "dns-packet": "^5.3.1",
+    "ethers": "^5.6.1",
+    "graphql": "^16.3.0",
+    "graphql-request": "next",
+    "idna-uts46-hx": "3.4.0",
+    "traverse": "^0.6.6"
+  },
+  "peerDependencies": {
+    "ethers": "*"
+  },
+  "yalcSig": "e9e13673338d1936f91bcf0bdb4decdc"
+}
