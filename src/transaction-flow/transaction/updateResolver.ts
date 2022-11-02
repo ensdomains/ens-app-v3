@@ -3,6 +3,8 @@ import type { TFunction } from 'react-i18next'
 
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
+import { shortenAddress } from '../../utils/utils'
+
 type Data = {
   name: string
   contract: 'registry' | 'nameWrapper'
@@ -11,30 +13,22 @@ type Data = {
 }
 
 const displayItems = (
-  { resolver, oldResolver }: Data,
+  { name, resolver }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
+  {
+    label: 'name',
+    value: name,
+    type: 'name',
+  },
   {
     label: 'action',
     value: t(`transaction.description.updateResolver`),
   },
   {
     label: 'info',
-    value: t(`transaction.info.updateResolver`),
-  },
-  ...(oldResolver
-    ? [
-        {
-          label: 'currentResolver',
-          value: oldResolver,
-          type: 'address',
-        } as TransactionDisplayItem,
-      ]
-    : []),
-  {
-    label: 'newResolver',
-    value: resolver,
-    type: 'address',
+    value: [t(`transaction.info.updateResolver`), shortenAddress(resolver)],
+    type: 'list',
   },
 ]
 

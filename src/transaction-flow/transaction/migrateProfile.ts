@@ -13,17 +13,17 @@ const displayItems = (
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
+    label: 'name',
+    value: name,
+    type: 'name',
+  },
+  {
     label: 'action',
     value: t(`transaction.description.migrateProfile`),
   },
   {
     label: 'info',
     value: t(`transaction.info.migrateProfile`),
-  },
-  {
-    label: 'name',
-    value: name,
-    type: 'name',
   },
 ]
 
