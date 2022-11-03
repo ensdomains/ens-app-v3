@@ -53,12 +53,10 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
   const { switchNetwork } = useSwitchNetwork()
   const router = useRouter()
 
-  // ToDo: Revisit. This is a temporary fix to switch to the correct network when the user is on the wrong network
   useEffect(() => {
     if (currentChain && !(currentChain?.chain?.id === 5 || currentChain?.chain?.id === 1337)) {
-      console.log('Basic Check', currentChain)
       switchNetwork?.({ chainId: 5 })
-      // router.push('/unsupportedNetwork')
+      router.push('/unsupportedNetwork')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentChain, router.pathname])

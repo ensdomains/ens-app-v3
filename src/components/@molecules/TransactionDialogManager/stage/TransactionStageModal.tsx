@@ -269,11 +269,6 @@ export const TransactionStageModal = ({
   //   },
   // )
 
-  // console.log('request', request)
-  // console.log('requestLoading', requestLoading)
-  // console.log('_requestError', _requestError)
-
-  // const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: !!transaction && !!signer && !!ens,
     queryKey: ['prepareTx', txKey, currentStep],
@@ -284,10 +279,8 @@ export const TransactionStageModal = ({
     error: transactionError,
     sendTransaction,
   } = useSendTransaction({
-    // mode: 'prepared',
-    // request,
     request: {
-      to: 'vitalik.eth',
+      to: '0x0000000000000000000000000000000000000000',
       value: BigNumber.from('10000000000000000'),
     },
     chainId: 5,
@@ -449,7 +442,6 @@ export const TransactionStageModal = ({
     //   if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
     //     return 'An unknown error occurred.'
     //   }
-    //   // console.log('txErrr', requestError)
     //   return requestError.reason
     // }
     return null
