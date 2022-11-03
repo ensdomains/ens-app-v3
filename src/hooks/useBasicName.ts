@@ -85,7 +85,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     canBeWrapped:
       nameWrapperExists &&
       !isWrapped &&
-      normalisedName.endsWith('.eth') &&
+      normalisedName?.endsWith('.eth') &&
       !isLabelTooLong(normalisedName),
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
