@@ -1,5 +1,4 @@
 import { utils } from 'ethers'
-import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -125,14 +124,14 @@ export const AddTextRecord = ({
   setCurrentStep,
   syncWarning,
   setSyncWarning,
+  name,
 }: {
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
   syncWarning: boolean
   setSyncWarning: Dispatch<SetStateAction<boolean>>
+  name: string
 }) => {
-  const router = useRouter()
-  const { name } = router.query
   const { address } = useAccount()
   const [errorState, setErrorState] = useState<Errors>(Errors.NOT_CHECKED)
   const breakpoints = useBreakpoint()

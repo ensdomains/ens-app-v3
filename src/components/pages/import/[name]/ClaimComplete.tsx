@@ -58,11 +58,9 @@ const NFTTemplateContainer = styled.div(
   `,
 )
 
-export const ClaimComplete = () => {
+export const ClaimComplete = ({ name }: { name: string }) => {
   const router = useRouter()
   const { t } = useTranslation('dnssec')
-
-  const name = router.query.name as string
 
   // Removing from local storage so that sucess page is not shown twice.
   useEffect(() => {

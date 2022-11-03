@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
@@ -59,12 +58,16 @@ const Container = styled.div`
   align-items: center;
 `
 
-export const EnableDNSSEC = ({ setCurrentStep }: { setCurrentStep: (arg: number) => void }) => {
+export const EnableDNSSEC = ({
+  setCurrentStep,
+  name,
+}: {
+  setCurrentStep: (arg: number) => void
+  name: string
+}) => {
   const [errorState, setErrorState] = useState(Errors.NOT_CHECKED)
   const [isLoading, setIsLoading] = useState(false)
   const { t } = useTranslation('dnssec')
-  const router = useRouter()
-  const { name } = router.query
 
   const handleCheck = async () => {
     setIsLoading(true)
