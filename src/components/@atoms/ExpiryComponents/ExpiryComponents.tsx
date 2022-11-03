@@ -56,7 +56,7 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
 export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOnly?: boolean }) => {
   const { t } = useTranslation()
   const blockTimestamp = useBlockTimestamp()
-  const currentDate = new Date(blockTimestamp.data!)
+  const currentDate = new Date(blockTimestamp?.data!)
   const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)

@@ -6,7 +6,7 @@ import { useChainId } from '../useChainId'
 import { TransactionStore, createTransactionStore } from './transactionStore'
 
 // Only allow a single instance of the store to exist at once
-// so that multiple RainbowKitProvider instances can share the same store.
+// so that multiple W3M instances can share the same store.
 // We delay the creation of the store until the first time it is used
 // so that it always has access to a provider.
 let storeSingleton: ReturnType<typeof createTransactionStore> | undefined
@@ -27,7 +27,7 @@ export function TransactionStoreProvider({ children }: { children: React.ReactNo
       (storeSingleton = createTransactionStore({ provider: providers.BaseProvider })),
   )
 
-  // Keep store provider up to date with any wagmi changes
+  // Keep store provider up to date with any W3M changes
   useEffect(() => {
     if (provider && isReady) {
       store.setProvider(provider)
