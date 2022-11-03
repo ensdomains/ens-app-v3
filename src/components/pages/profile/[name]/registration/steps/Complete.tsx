@@ -9,7 +9,7 @@ import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import NFTTemplate from '@app/components/@molecules/NFTTemplate'
+import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useTransactionResponseReceipt from '@app/hooks/useTransactionResponseReceipt'

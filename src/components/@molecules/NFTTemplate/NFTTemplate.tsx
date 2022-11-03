@@ -1,6 +1,8 @@
 import { ReactNode, useMemo } from 'react'
 import styled, { css } from 'styled-components'
 
+import { useGetSegmentLength } from '../../../hooks/useGetSegmentLength'
+
 type Props = {
   name: string
   backgroundImage: string | undefined | null
@@ -9,8 +11,6 @@ type Props = {
 
 const MAX_CHAR = 60
 const bgProps = { width: '270', height: '270' }
-
-const getSegmentLength = (str: string) => [...new Intl.Segmenter().segment(str)].length
 
 const getEllipsis = (str: string) => {
   const len = str.length
@@ -23,7 +23,7 @@ const getFontSize = (str: string) => {
   canvas.height = 270
   const ctx = canvas.getContext('2d')!
   ctx.font =
-    'normal normal bold 20px normal Satoshi, DejaVu Sans, Noto Color Emoji, Apple Color Emoji, sans-serif'
+    'normal normal bold 20px normal Satoshi, Noto Color Emoji, Apple Color Emoji, sans-serif'
   const fontMetrics = ctx.measureText(str)
   const fontSize = Math.floor(20 * (200 / fontMetrics.width))
   return fontSize < 34 ? fontSize : 32
@@ -42,7 +42,7 @@ const addSpan = (str: string, inx: number) => (
 
 const Text = styled.text(
   () => css`
-    font-family: Satoshi, 'DejaVu Sans', 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
+    font-family: Satoshi, 'Noto Color Emoji', 'Apple Color Emoji', sans-serif;
     font-style: normal;
     font-variant-numeric: tabular-nums;
     font-weight: bold;
@@ -53,12 +53,10 @@ const Text = styled.text(
 )
 
 const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
-  const Satoshi = new FontFace('Satoshi', 'url(/fonts/sans-serif/Satoshi-Bold.otf)')
-  const DejaVuSans = new FontFace('DejaVuSans', 'url(/fonts/sans-serif/DejaVuSans-Bold.ttf)')
+  const { getSegmentLength, loading } = useGetSegmentLength()
 
   const elementData = useMemo(() => {
-    if (!Satoshi.loaded) return {}
-    if (!DejaVuSans.loaded) return {}
+    if (loading) return {}
     const labels = name.split('.')
     const isSubdomain = labels.length > 2
 
@@ -95,7 +93,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
       domainFontSize *= 2
     }
     return { domainFontSize, subdomainText, isSubdomain, domain }
-  }, [name, Satoshi.loaded, DejaVuSans.loaded])
+  }, [name, getSegmentLength, loading])
   const { domainFontSize, subdomainText, isSubdomain, domain } = elementData
 
   let background: ReactNode
@@ -104,7 +102,14 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
     background = (
       <>
         <defs>
-          <pattern id="backImg" patternUnits="userSpaceOnUse" x="0" y="0" {...bgProps}>
+          <pattern
+            id="backImg"
+            data-testid="nft-back-img"
+            patternUnits="userSpaceOnUse"
+            x="0"
+            y="0"
+            {...bgProps}
+          >
             <image href={backgroundImage} {...bgProps} />
           </pattern>
         </defs>
@@ -118,6 +123,7 @@ const NFTTemplate = ({ name, backgroundImage, isNormalised }: Props) => {
     background = <rect fill="url(#paint1_linear)" {...bgProps} />
   }
 
+  if (loading) return null
   return (
     <svg viewBox="0 0 270 270" display="block" fill="none" xmlns="http://www.w3.org/2000/svg">
       {background}
