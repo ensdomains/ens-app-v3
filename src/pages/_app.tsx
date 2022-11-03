@@ -1,6 +1,5 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { chains, providers } from '@web3modal/ethereum'
-import type { ConfigOptions } from '@web3modal/react'
 import { Web3Modal } from '@web3modal/react'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
@@ -89,10 +88,10 @@ const queryClient = new QueryClient({
 
 // ------- web3 Modal Config -----------------------/
 // To Get a projectId from WalletConnect Cloud, visit https://cloud.walletconnect.com/
-const config: ConfigOptions = {
+const config = {
   projectId: process.env.NEXT_PUBLIC_PROJECT_ID!,
-  theme: 'light',
-  accentColor: 'default',
+  theme: 'light' as const,
+  accentColor: 'default' as const,
   ethereum: {
     appName: 'ENS',
     chains: [chains.goerli],

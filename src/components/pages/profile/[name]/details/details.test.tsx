@@ -1,8 +1,8 @@
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
+import { useAccount } from '@web3modal/react'
 import { useRouter } from 'next/router'
 import { ComponentProps } from 'react'
-import { useAccount } from 'wagmi'
 
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
 import { NameSnippetMobile } from '@app/components/pages/profile/NameSnippetMobile'
@@ -26,7 +26,7 @@ jest.mock('@app/utils/BreakpointProvider')
 jest.mock('next/router')
 jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/useNameDetails')
-jest.mock('wagmi')
+jest.mock('@web3modal/react')
 
 const mockNFTWithPlaceholder = mockFunction(NFTWithPlaceholder)
 const mockNameSnippetMobile = mockFunction(NameSnippetMobile)
@@ -86,7 +86,7 @@ describe('Details', () => {
   mockMore.mockImplementation(() => <div>MoreTab</div>)
   mockSubnamesTab.mockImplementation(() => <div>SubnamesTab</div>)
   mockRecordsTab.mockImplementation(() => <div>RecordsTab</div>)
-  mockUseAccount.mockReturnValue({ address: '0x123' })
+  mockUseAccount.mockReturnValue({ account: { address: '0x123' } })
   mockUseNameDetails.mockReturnValue({
     ownerData: { owner: '0x123' },
     profile: { resolverAddress: '0x456' },
@@ -172,9 +172,11 @@ describe('Page', () => {
       error: null,
     }))
     mockUseAccount.mockImplementation(() => ({
-      address: '0x123',
-      isLoggedIn: true,
-      isLoading: false,
+      account: {
+        address: '0x123',
+        isLoggedIn: true,
+        isLoading: false,
+      },
     }))
 
     const { rerender } = render(<Page />)

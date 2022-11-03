@@ -1,6 +1,6 @@
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
-import { useSignTypedData } from 'wagmi'
+import { useSignTypedData } from '@web3modal/react'
 
 import { AvatarUpload } from './AvatarUpload'
 
@@ -26,7 +26,7 @@ const props = {
 
 describe('<AvatarUpload />', () => {
   mockUseSignTypedData.mockImplementation(() => ({
-    signTypedDataAsync: mockSignTypedDataAsync,
+    signTypedData: mockSignTypedDataAsync,
   }))
   window.IntersectionObserver = jest.fn()
   ;(window.IntersectionObserver as jest.Mock).mockImplementation(() => ({

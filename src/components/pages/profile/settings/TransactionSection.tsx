@@ -141,7 +141,7 @@ export const TransactionSection = () => {
                     <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
                     <StyledOutlink
                       $error={status === 'failed'}
-                      href={makeEtherscanLink(hash, chainName)}
+                      href={makeEtherscanLink(hash, chainName!)}
                       target="_blank"
                     >
                       {tc(`transaction.status.${status}.regular`)}

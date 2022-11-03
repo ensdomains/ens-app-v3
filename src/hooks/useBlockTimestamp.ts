@@ -6,8 +6,8 @@ export const useBlockTimestamp = () => {
   return useQuery(
     ['use-block-timestamp'],
     async () => {
-      const block = await provider.getBlock('latest')
-      return block.timestamp * 1000
+      const block = await provider?.getBlock('latest')
+      return block!.timestamp * 1000
     },
     {
       enabled: !!provider,

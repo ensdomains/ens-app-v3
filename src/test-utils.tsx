@@ -3,23 +3,15 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RenderOptions, render } from '@testing-library/react'
 import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
 import userEvent from '@testing-library/user-event'
-import { MockConnector } from '@wagmi/core/connectors/mock'
-import { providers } from 'ethers'
-import { Wallet } from 'ethers/lib/ethers'
+import { Web3Modal } from '@web3modal/react'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
-import { WagmiConfig, createClient } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
-jest.mock('wagmi', () => {
-  const { useQuery, useInfiniteQuery, createClient, WagmiConfig } = jest.requireActual('wagmi')
-
+jest.mock('@web3modal/react', () => {
   return {
-    useQuery,
-    useInfiniteQuery,
-    createClient,
-    WagmiConfig,
+    ...jest.requireActual('@tanstack/react-query'),
     useAccount: jest.fn(),
     useNetwork: jest.fn(),
     useProvider: jest.fn(),
@@ -48,34 +40,24 @@ const queryClient = new QueryClient({
 
 beforeEach(() => queryClient.clear())
 
-const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
-
-class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
-  toJSON() {
-    return `<Provider network={${this.network.chainId}} />`
-  }
+const config = {
+  projectId: 'cfb005f7419ba8ced7ab20955a7c252a',
+  theme: 'dark' as const,
+  accentColor: 'default' as const,
+  ethereum: {
+    appName: 'ens',
+    autoConnect: true,
+  },
 }
-
-const wagmiClient = createClient({
-  connectors: [
-    new MockConnector({
-      options: {
-        signer: new Wallet(privateKey, new EthersProviderWrapper()),
-      },
-    }),
-  ],
-  provider: () => new EthersProviderWrapper(),
-})
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
     <QueryClientProvider client={queryClient}>
-      <WagmiConfig client={wagmiClient}>
-        <ThemeProvider theme={lightTheme}>
-          <ThorinGlobalStyles />
-          {children}
-        </ThemeProvider>
-      </WagmiConfig>
+      <ThemeProvider theme={lightTheme}>
+        <ThorinGlobalStyles />
+        {children}
+      </ThemeProvider>
+      <Web3Modal config={config} />
     </QueryClientProvider>
   )
 }

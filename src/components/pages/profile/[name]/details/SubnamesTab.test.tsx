@@ -1,7 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { useAccount } from '@web3modal/react'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
@@ -16,7 +16,7 @@ jest.mock('@app/hooks/useSubnameInfiniteQuery')
 jest.mock('@app/hooks/useZorb')
 jest.mock('@app/hooks/useAvatar')
 jest.mock('next/router')
-jest.mock('wagmi')
+jest.mock('@web3modal/react')
 jest.mock('next/router')
 
 const mockUseRouter = mockFunction(useRouter)
@@ -60,7 +60,9 @@ describe('SubnamesTab', () => {
       isLoading: false,
     })
     mockUseAccount.mockReturnValue({
-      address: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      account: {
+        address: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+      },
     })
 
     mockIntersectionObserver.mockReturnValue({

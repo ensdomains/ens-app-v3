@@ -14,7 +14,7 @@ let storeSingleton: ReturnType<typeof createTransactionStore> | undefined
 const TransactionStoreContext = createContext<TransactionStore | null>(null)
 
 export function TransactionStoreProvider({ children }: { children: React.ReactNode }) {
-  const { provider, isReady } = useProvider<providers.BaseProvider>()
+  const { provider, isReady } = useProvider()
   const { account } = useAccount()
 
   const chainId = useChainId()
@@ -23,6 +23,7 @@ export function TransactionStoreProvider({ children }: { children: React.ReactNo
   const [store] = useState(
     () =>
       storeSingleton ??
+      // @ts-ignore
       (storeSingleton = createTransactionStore({ provider: providers.BaseProvider })),
   )
 

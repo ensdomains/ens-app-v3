@@ -69,7 +69,7 @@ export const useNameDetails = (name: string) => {
     if (registrationStatus === 'gracePeriod') {
       return t('errors.expiringSoon')
     }
-    if (!profile && !profileLoading && ready && status !== 'idle' && status !== 'loading') {
+    if (!profile && !profileLoading && ready && status !== 'loading') {
       return t('errors.unknown')
     }
     return null

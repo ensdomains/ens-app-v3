@@ -98,7 +98,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     isLoading || isReady
       ? true
       : // if is self, user must be connected
-        (isSelf ? account.address : true) && typeof name === 'string' && name.length > 0,
+        (isSelf ? account?.address : true) && typeof name === 'string' && name.length > 0,
   )
 
   useEffect(() => {

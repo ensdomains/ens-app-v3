@@ -51,7 +51,8 @@ export const DevSection = () => {
   const addSuccess = async () => {
     const tx = await sendSuccess!()
     addTransaction({
-      hash: tx.hash,
+      // @ts-ignore
+      hash: tx?.hash,
       action: 'test',
     })
   }
@@ -65,21 +66,27 @@ export const DevSection = () => {
   const addFailure = async () => {
     const tx = await sendFailure!()
     addTransaction({
+      // @ts-ignore
       hash: tx?.hash,
       action: 'test',
     })
   }
 
   const startAutoMine = async () =>
+    // @ts-ignore // W3M does not have hardhat evn_setAutomine
     provider.send('evm_setAutomine', [true]).then(() => provider.send('evm_mine', []))
 
+  // @ts-ignore
   const stopAutoMine = async () => provider.send('evm_setAutomine', [false])
 
   const revert = async () => {
     const currBlock = await provider?.getBlockNumber()
+    // @ts-ignore
     await provider.send('evm_revert', [1])
+    // @ts-ignore
     await provider.send('evm_snapshot', [])
     const revertBlock = await provider?.getBlockNumber()
+    // @ts-ignore
     const blocksToMine = currBlock - revertBlock
     await rpcSendBatch(
       Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),

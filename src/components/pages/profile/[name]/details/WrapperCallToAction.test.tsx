@@ -1,7 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { useAccount } from '@web3modal/react'
 import { ReactNode } from 'react'
-import { useAccount } from 'wagmi'
 
 import { useNFTImage } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
@@ -16,7 +16,7 @@ jest.mock('@app/hooks/useAvatar')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/hooks/useChainId')
-jest.mock('wagmi')
+jest.mock('@web3modal/react')
 jest.mock('@app/hooks/useNameDetails')
 jest.mock('@app/hooks/useWrapperApprovedForAll')
 jest.mock('@app/assets/NightSky', () => ({
@@ -61,7 +61,7 @@ describe('WrapperCallToAction', () => {
     contracts: mockContracts,
   })
   mockUseChainId.mockReturnValue(1)
-  mockUseAccount.mockReturnValue({ address: '0x123' })
+  mockUseAccount.mockReturnValue({ account: { address: '0x123' } })
   mockUseNameDetails.mockReturnValue({
     ownerData: { owner: '0x123' },
     profile: { resolverAddress: '0x456' },

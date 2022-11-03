@@ -5,7 +5,7 @@ import { useNetwork, useProvider } from '@web3modal/react'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { KnownResolveAddresses } from '@app/validators/validateResolver'
 
-jest.mock('wagmi', () => ({
+jest.mock('@web3modal/react', () => ({
   ...jest.requireActual('@tanstack/react-query'),
   useNetwork: jest.fn(),
   useProvider: jest.fn(),

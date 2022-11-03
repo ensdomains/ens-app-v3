@@ -1,7 +1,7 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
+import { useAccount } from '@web3modal/react'
 import { useRouter } from 'next/router'
-import { useAccount } from 'wagmi'
 
 import { useProfileActions } from '@app/hooks/useProfileActions'
 
@@ -20,7 +20,7 @@ describe('DetailSnippet', () => {
       name: 'nick.eth',
     },
   }
-  mockUseAccount.mockReturnValue({ address: '0x123' })
+  mockUseAccount.mockReturnValue({ account: { address: '0x123' } })
   mockUseProfileActions.mockReturnValue({
     profileActions: undefined,
   })

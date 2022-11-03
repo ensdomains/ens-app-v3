@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
-import { useAccount } from 'wagmi'
+import { useAccount } from '@web3modal/react'
 
 import * as ThorinComponents from '@ensdomains/thorin'
 
@@ -58,7 +58,9 @@ describe('<AvatarNFT />', () => {
     disconnect: jest.fn(),
   }))
   mockUseAccount.mockReturnValue({
-    address: '0x0000000000000000000000000000000000000001',
+    account: {
+      address: '0x0000000000000000000000000000000000000001',
+    },
   })
   it('should show detail on click', async () => {
     global.fetch = jest.fn().mockResolvedValue({

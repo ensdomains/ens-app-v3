@@ -1,8 +1,8 @@
 /* eslint-disable no-promise-executor-return */
 import { act, fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
 
+import { useSendTransaction, useSigner } from '@web3modal/react'
 import { ComponentProps } from 'react'
-import { useSendTransaction, useSigner } from 'wagmi'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
@@ -218,7 +218,7 @@ describe('TransactionStageModal', () => {
         const mockAddTransaction = jest.fn()
         mockUseAddRecentTransaction.mockReturnValue(mockAddTransaction)
         await renderHelper({ transaction: mockTransaction })
-        await waitFor(() => expect(mockUseSendTransaction.mock.lastCall[0].onSuccess).toBeDefined())
+        await waitFor(() => expect(mockUseSendTransaction.mock.lastCall[0]).toBeDefined())
         ;(mockUseSendTransaction.mock.lastCall[0] as any).onSuccess({ hash: '0x123' })
         expect(mockAddTransaction).toBeCalledWith({
           hash: '0x123',

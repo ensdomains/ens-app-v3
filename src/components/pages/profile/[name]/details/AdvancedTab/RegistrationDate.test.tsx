@@ -1,7 +1,7 @@
 import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
+import { useNetwork, useProvider } from '@web3modal/react'
 import { useRouter } from 'next/router'
-import { useNetwork, useProvider } from 'wagmi'
 
 import { useGetHistory } from '@app/hooks/useGetHistory'
 
@@ -23,13 +23,15 @@ describe('RegistrationDate', () => {
   }
 
   const providerObject = {
-    getBlock: () =>
-      new Promise((resolve) => {
-        resolve({ timestamp: 1654782805 })
-      }),
+    provider: {
+      getBlock: () =>
+        new Promise((resolve) => {
+          resolve({ timestamp: 1654782805 })
+        }),
+    },
   }
 
-  const networkObject = { chain: { id: 3 } }
+  const networkObject = { network: { chain: { id: 3 } } }
 
   const historyObject = {
     history: {
@@ -54,7 +56,7 @@ describe('RegistrationDate', () => {
       },
     })
     mockUseProvider.mockReturnValue({})
-    mockUseNetwork.mockReturnValue({ chain: { id: 3 } })
+    mockUseNetwork.mockReturnValue({ network: { chain: { id: 3 } } })
     mockUseGetHistory.mockReturnValue({
       history: {
         registration: [

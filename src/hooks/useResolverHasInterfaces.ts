@@ -35,7 +35,7 @@ export const useResolverHasInterfaces = (
     ['validateResolver', resolverAddress, interfaceNames.join(','), network?.chain?.id],
     async () => {
       const results = await validateResolver(interfaceNames, resolverAddress!, provider, {
-        networkId: network?.chains?.id,
+        networkId: network?.chain?.id,
       })
       if (results.length === 0) {
         setErrors([])

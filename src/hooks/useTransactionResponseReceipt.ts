@@ -4,6 +4,7 @@ const useTransactionResponseReceipt = (hash: string) => {
   const { data: responseData, isLoading: responseLoading } = useTransaction({
     hash: hash as `0x${string}`,
   })
+  // @ts-ignore
   const { receipt: receiptData, isWaiting: receiptLoading } = useWaitForTransaction({ hash })
 
   const isLoading = responseLoading || receiptLoading
