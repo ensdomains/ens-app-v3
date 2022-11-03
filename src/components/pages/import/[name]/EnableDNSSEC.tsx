@@ -126,6 +126,7 @@ export const EnableDNSSEC = ({
           variant="primary"
           size="small"
           loading={isLoading}
+          disabled={!name}
           data-testid="dnssec-check-button"
         >
           {t('action.check', { ns: 'common' })}
