@@ -18,409 +18,505 @@ const subname = 'sub.nick.eth'
 
 const userStates = {
   unwrappedNameOwner: {
-    ownerData: {
-      ownershipLevel: 'registry',
-      owner: '0xnotOwner',
-      registrant: ownerAddress,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: '0xnotOwner',
+        registrant: ownerAddress,
+      },
+      wrapperData: {
+        ownershipLevel: 'registry',
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {},
     },
-    wrapperData: {
-      ownershipLevel: 'registry',
-    },
-    parentWrapperData: {},
   },
   unwrappedNameManager: {
-    ownerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
-      registrant: '0xnotOwner',
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+        registrant: '0xnotOwner',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {},
     },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {},
   },
-  unwrappedSubnameManager: {
-    ownerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
+  unwrappedSubnameManagerHolderUnwrappedParentManager: {
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {},
     },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {},
   },
   unwrappedSubnameUnwrappedParentManager: {
-    ownerData: {
-      ownershipLevel: 'registry',
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
   },
   unwrappedSubnameManagerUnwrappedParentOwnerHolder: {
-    ownerData: {
-      ownershipLevel: 'registry',
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
-      registrant: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {
-      fuseObj: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+        registrant: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
   },
   unwrappedSubnameManagerUnwrappedParentManagerHolder: {
-    ownerData: {
-      ownershipLevel: 'registry',
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {
-      fuseObj: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
   },
   wrappedSubnameManagerHolderUnwrappedParentManager: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-    },
-    parentWrapperData: {
-      fuseObj: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
   },
   wrappedSubnameManagerUnwrappedParentManager: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
-    },
-    parentWrapperData: {
-      fuseObj: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
   },
   wrappedSubnameUnwrappedParentOwner: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
-      registrant: ownerAddress,
-    },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+        registrant: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
   },
   wrappedNameOwner: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
-    parentWrapperData: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {},
+    },
   },
   wrappedNameManager: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    parentOwnerData: {
-      ownershipLevel: 'registry',
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {},
+    },
   },
   wrappedSubnameManagerHolderWrappedParentOwner: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
   },
   wrappedSubnameManagerWrappedParentOwnerHolder: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
   },
   wrappedSubnameManagerWrappedParentManagerHolder: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
   },
   wrappedSubnameOwnerWrappedParentManager: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
-    parentWrapperData: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {},
+    },
   },
   wrappedSubnameOwnerHolderWrappedParentOwnerHolder: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
   },
   wrappedSubnameOwnerHolderUnwrappedParentOwnerHolder: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    parentOwnerData: {
-      ownershipLevel: 'baseRegistrar',
-      owner: ownerAddress,
-      registrant: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'baseRegistrar',
+        owner: ownerAddress,
+        registrant: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
   },
   wrappedSubnameWrappedParentManager: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
   },
   wrappedSubnameWrappedParentOwner: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
   },
   unwrappedSubnameManagerWrappedParentOwner: {
-    ownerData: {
-      ownershipLevel: 'registry',
-      owner: ownerAddress,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
   },
   unwrappedSubnameManagerWrappedParentOwnerHolder: {
-    ownerData: {
-      ownershipLevel: 'registry',
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: true,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+        },
       },
     },
   },
   unwrappedSubnameManagerWrappedParentManagerHolder: {
-    ownerData: {
-      ownershipLevel: 'registry',
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
-    parentOwnerData: {
-      ownershipLevel: 'nameWrapper',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {},
-    },
-    parentWrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
   },
   wrappedSubnameManagerUnwrappedParentOwnerHolder: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    parentOwnerData: {
-      ownershipLevel: 'baseRegsitrar',
-      owner: ownerAddress,
-      registrant: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'baseRegsitrar',
+        owner: ownerAddress,
+        registrant: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
   },
   wrappedSubnameManagerUnwrappedParentManagerHolder: {
-    ownerData: {
-      ownershipLevel: 'nameWrapper',
-    },
-    parentOwnerData: {
-      ownershipLevel: 'baseRegsitrar',
-      owner: ownerAddress,
-    },
-    wrapperData: {
-      fuseObj: {
-        PARENT_CANNOT_CONTROL: false,
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: false,
+        },
       },
     },
-    parentWrapperData: {
-      fuseObj: {},
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'baseRegsitrar',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {},
+      },
     },
   },
 }
@@ -429,16 +525,13 @@ describe('getFunctionCallDetails', () => {
   describe('Correct function call details', () => {
     describe('Unwrapped name', () => {
       it('for name owner who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.unwrappedNameOwner
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'baseRegistrar',
@@ -447,16 +540,13 @@ describe('getFunctionCallDetails', () => {
       })
 
       it('for name owner who wants to send owner', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.unwrappedNameOwner
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendOwner).toEqual({
           contract: 'baseRegistrar',
@@ -465,16 +555,13 @@ describe('getFunctionCallDetails', () => {
       })
 
       it('for name manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.unwrappedNameManager
+        const { basicNameData, parentBasicNameData } = userStates.unwrappedNameManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'registry',
@@ -483,16 +570,14 @@ describe('getFunctionCallDetails', () => {
       })
 
       it('for subname manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.unwrappedSubnameManager
+        const { basicNameData, parentBasicNameData } =
+          userStates.unwrappedSubnameManagerHolderUnwrappedParentManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'registry',
@@ -501,16 +586,14 @@ describe('getFunctionCallDetails', () => {
       })
 
       it('for subname parent manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+        const { basicNameData, parentBasicNameData } =
           userStates.unwrappedSubnameUnwrappedParentManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'registry',
@@ -519,31 +602,27 @@ describe('getFunctionCallDetails', () => {
       })
 
       it('for subname parent owner who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+        const { basicNameData, parentBasicNameData } =
           userStates.unwrappedSubnameManagerUnwrappedParentOwnerHolder
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual(undefined)
       })
 
       it('for wrapped subname manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+        const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameManagerHolderUnwrappedParentManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'nameWrapper',
@@ -551,30 +630,25 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for wrapped subname parent manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+        const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameManagerUnwrappedParentManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual(undefined)
       })
       it('for wrapped subname parent owner who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.wrappedSubnameUnwrappedParentOwner
+        const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameUnwrappedParentOwner
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual(undefined)
       })
@@ -582,16 +656,13 @@ describe('getFunctionCallDetails', () => {
 
     describe('Wrapped name', () => {
       it('for name owner who wants to send owner', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.wrappedNameOwner
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameOwner
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendOwner).toEqual({
           contract: 'nameWrapper',
@@ -599,16 +670,13 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for name manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.wrappedNameManager
+        const { basicNameData, parentBasicNameData } = userStates.wrappedNameManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'nameWrapper',
@@ -616,16 +684,14 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for wrapped subname manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+        const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameManagerHolderUnwrappedParentManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'nameWrapper',
@@ -633,16 +699,14 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for wrapped subname owner who wants to send owner', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+        const { basicNameData, parentBasicNameData } =
           userStates.wrappedSubnameOwnerWrappedParentManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendOwner).toEqual({
           contract: 'nameWrapper',
@@ -650,16 +714,13 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for wrapped subname parent manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.wrappedSubnameWrappedParentManager
+        const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameWrappedParentManager
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'nameWrapper',
@@ -667,16 +728,13 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for wrapped subname parent owner who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.wrappedSubnameWrappedParentOwner
+        const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameWrappedParentOwner
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'nameWrapper',
@@ -684,16 +742,13 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for wrapped subname parent owner who wants to send owner', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-          userStates.wrappedSubnameWrappedParentOwner
+        const { basicNameData, parentBasicNameData } = userStates.wrappedSubnameWrappedParentOwner
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendOwner).toEqual({
           contract: 'nameWrapper',
@@ -701,16 +756,14 @@ describe('getFunctionCallDetails', () => {
         })
       })
       it('for subname manager who wants to send manager', () => {
-        const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+        const { basicNameData, parentBasicNameData } =
           userStates.unwrappedSubnameManagerWrappedParentOwner
 
         const result = getFunctionCallDetails({
+          basicNameData,
+          parentBasicNameData,
           address: account,
           name: subname,
-          ownerData,
-          parentOwnerData,
-          wrapperData,
-          parentWrapperData,
         })
         expect(result.sendManager).toEqual({
           contract: 'registry',
@@ -724,16 +777,13 @@ describe('getFunctionCallDetails', () => {
 describe('getPermittedActions', () => {
   describe('correct permissions', () => {
     it('should return for wrapped name owner', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-        userStates.wrappedNameOwner
+      const { basicNameData, parentBasicNameData } = userStates.wrappedNameOwner
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: true,
@@ -741,16 +791,13 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for unwrapped name owner', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-        userStates.unwrappedNameOwner
+      const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: true,
@@ -758,16 +805,13 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for wrapped name manager', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-        userStates.wrappedNameManager
+      const { basicNameData, parentBasicNameData } = userStates.wrappedNameManager
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -775,16 +819,13 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for unwrapped name manager', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
-        userStates.unwrappedNameManager
+      const { basicNameData, parentBasicNameData } = userStates.unwrappedNameManager
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -793,16 +834,14 @@ describe('getPermittedActions', () => {
     })
 
     it('should return for wrapped subname owner', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameOwnerWrappedParentManager
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: true,
@@ -811,16 +850,14 @@ describe('getPermittedActions', () => {
     })
 
     it('should return for unwrapped subname owner', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentOwner
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -828,16 +865,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for wrapped subname manager', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerHolderWrappedParentOwner
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -845,16 +880,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for unwrapped subname manager holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentOwner
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -863,16 +896,14 @@ describe('getPermittedActions', () => {
     })
 
     it('should return for wrapped subname manager, wrapped parent owner holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerWrappedParentOwnerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: true,
@@ -880,16 +911,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for wrapped subname, unwrapped parent owner holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerUnwrappedParentOwnerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -897,16 +926,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for wrapped subname, wrapped parent manager holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerWrappedParentManagerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -914,16 +941,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for wrapped subname, unwrapped parent manager holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameManagerUnwrappedParentManagerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -932,16 +957,14 @@ describe('getPermittedActions', () => {
     })
 
     it('should return for unwrapped subname, wrapped parent owner holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentOwnerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -949,16 +972,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for unwrapped subname, unwrapped parent owner holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerUnwrappedParentOwnerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -966,16 +987,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for unwrapped subname, wrapped parent manager holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerWrappedParentManagerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -983,16 +1002,14 @@ describe('getPermittedActions', () => {
       })
     })
     it('should return for unwrapped subname, unwrapped parent manager holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.unwrappedSubnameManagerUnwrappedParentManagerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
@@ -1001,16 +1018,14 @@ describe('getPermittedActions', () => {
     })
 
     it('should return for wrapped subname owner holder, wrapped parent owner holder', () => {
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameOwnerHolderWrappedParentOwnerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: true,
@@ -1020,16 +1035,14 @@ describe('getPermittedActions', () => {
 
     it('should return for wrapped subname owner holder, unwrapped parent owner holder', () => {
       // This state should not be possible as parent cannot burn PCC
-      const { ownerData, parentOwnerData, wrapperData, parentWrapperData } =
+      const { basicNameData, parentBasicNameData } =
         userStates.wrappedSubnameOwnerHolderUnwrappedParentOwnerHolder
 
       const result = getPermittedActions({
+        basicNameData,
+        parentBasicNameData,
         address: account,
         name: subname,
-        ownerData,
-        parentOwnerData,
-        wrapperData,
-        parentWrapperData,
       })
       expect(result).toEqual({
         canSendOwner: false,
