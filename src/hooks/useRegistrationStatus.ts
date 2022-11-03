@@ -15,7 +15,7 @@ export const useRegistrationStatus = (name?: string) => {
     isLoading,
     status,
     isFetched,
-    internal: { isFetchedAfterMount },
+    // internal: { isFetchedAfterMount },
   } = useQuery(
     ['registrationStatus', name],
     async (): Promise<RegistrationStatus> => {
@@ -36,6 +36,6 @@ export const useRegistrationStatus = (name?: string) => {
     data,
     isLoading,
     status,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: status === 'success' && isFetched,
   }
 }

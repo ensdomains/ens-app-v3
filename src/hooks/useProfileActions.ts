@@ -19,11 +19,11 @@ export const useProfileActions = () => {
   const router = useRouter()
   const _name = router.query.name as string
   const isSelf = router.query.connected === 'true'
-  const { address } = useAccount()
-  const { name: ensName } = usePrimary(address || '')
+  const { account } = useAccount()
+  const { name: ensName } = usePrimary(account?.address || '')
   const name = isSelf && ensName ? ensName : _name
   const { profile, ownerData } = useNameDetails(name)
-  const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const selfAbilities = useSelfAbilities(account?.address, ownerData, name)
   const subNameAbilities = useSubnameAbilities(name, ownerData)
   const { createTransactionFlow } = useTransactionFlow()
   const { t } = useTranslation('profile')
@@ -32,7 +32,6 @@ export const useProfileActions = () => {
     data: profileActions,
     isLoading,
     status,
-    internal: { isFetchedAfterMount },
     isFetched,
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -44,7 +43,7 @@ export const useProfileActions = () => {
       selfAbilities.canEdit,
       profile?.address,
       subNameAbilities,
-      address,
+      account?.address,
       ensName,
       _name,
       name,
@@ -54,17 +53,21 @@ export const useProfileActions = () => {
     () => {
       const actions: { onClick: () => void; color?: Colors; label: string; disabled?: boolean }[] =
         []
-      if (!isSelf && (selfAbilities.canEdit || profile?.address === address) && ensName !== _name) {
+      if (
+        !isSelf &&
+        (selfAbilities.canEdit || profile?.address === account?.address) &&
+        ensName !== _name
+      ) {
         const setAsPrimaryTransactions: GenericTransaction[] = [
           makeTransactionItem('setPrimaryName', {
             name,
-            address: address!,
+            address: account?.address!,
           }),
         ]
-        if (profile?.address !== address) {
+        if (profile?.address !== account?.address) {
           setAsPrimaryTransactions.unshift(
             makeTransactionItem('updateEthAddress', {
-              address: address!,
+              address: account?.address!,
               name,
             }),
           )
@@ -72,7 +75,7 @@ export const useProfileActions = () => {
         actions.push({
           label: t('tabs.profile.actions.setAsPrimaryName.label'),
           onClick: () =>
-            createTransactionFlow(`setPrimaryName-${name}-${address}`, {
+            createTransactionFlow(`setPrimaryName-${name}-${account?.address}`, {
               transactions: setAsPrimaryTransactions,
               resumable: true,
               intro:
@@ -124,6 +127,6 @@ export const useProfileActions = () => {
     profileActions,
     loading: isLoading,
     status,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: status === 'success' && isFetched,
   }
 }

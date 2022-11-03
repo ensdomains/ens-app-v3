@@ -44,7 +44,7 @@ const UploadComponent = ({
   const expiry = useMemo(() => `${Date.now() + 1000 * 60 * 60 * 24 * 7}`, [])
   const network = useChainName()
 
-  const { signTypedDataAsync } = useSignTypedData({
+  const { data: signTypedDataRes, signTypedData } = useSignTypedData({
     domain: {
       name: 'Ethereum Name Service',
       version: '1',
@@ -70,7 +70,7 @@ const UploadComponent = ({
       process.env.NEXT_PUBLIC_AVUP_ENDPOINT || `https://avatar-upload.ens-cf.workers.dev/${network}`
     const endpoint = `${baseURL}/${name}`
 
-    const sig = await signTypedDataAsync()
+    signTypedData()
     const fetched = (await fetch(endpoint, {
       method: 'PUT',
       headers: {
@@ -80,7 +80,7 @@ const UploadComponent = ({
       body: JSON.stringify({
         expiry,
         dataURL,
-        sig,
+        signTypedDataRes,
       }),
     }).then((res) => res.json())) as any
 

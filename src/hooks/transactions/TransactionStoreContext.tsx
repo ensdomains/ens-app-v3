@@ -14,8 +14,8 @@ let storeSingleton: ReturnType<typeof createTransactionStore> | undefined
 const TransactionStoreContext = createContext<TransactionStore | null>(null)
 
 export function TransactionStoreProvider({ children }: { children: React.ReactNode }) {
-  const provider = useProvider<providers.BaseProvider>()
-  const { address } = useAccount()
+  const { provider, isReady } = useProvider<providers.BaseProvider>()
+  const { account } = useAccount()
 
   const chainId = useChainId()
 
@@ -28,17 +28,17 @@ export function TransactionStoreProvider({ children }: { children: React.ReactNo
 
   // Keep store provider up to date with any wagmi changes
   useEffect(() => {
-    if (provider) {
+    if (provider && isReady) {
       store.setProvider(provider)
     }
-  }, [store, provider])
+  }, [store, provider, isReady])
 
   // Wait for pending transactions whenever address or chainId changes
   useEffect(() => {
-    if (address && chainId) {
-      store.waitForPendingTransactions(address, chainId)
+    if (account.address && chainId) {
+      store.waitForPendingTransactions(account.address, chainId)
     }
-  }, [store, address, chainId])
+  }, [store, account, chainId])
 
   return (
     <TransactionStoreContext.Provider value={store}>{children}</TransactionStoreContext.Provider>

@@ -29,9 +29,12 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
 
   const router = useRouter()
-  const { address } = useAccount()
-  const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
-  const selected = { name: nameDetails.normalisedName, address: address! }
+  const { account } = useAccount()
+  const { name: primaryName, loading: primaryLoading } = usePrimary(
+    account?.address!,
+    !account?.address,
+  )
+  const selected = { name: nameDetails.normalisedName, address: account?.address! }
   const { normalisedName } = nameDetails
   const defaultResolverAddress = useContractAddress('PublicResolver')
   const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists(
@@ -42,7 +45,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
 
-  const keySuffix = `${nameDetails.normalisedName}-${address}`
+  const keySuffix = `${nameDetails.normalisedName}-${account?.address}`
   const commitKey = `commit-${keySuffix}`
   const registerKey = `register-${keySuffix}`
 
@@ -56,7 +59,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         name: 'setProfileData',
         payload: {
           records: {
-            coinTypes: [{ key: 'ETH', value: address! } as any],
+            coinTypes: [{ key: 'ETH', value: account?.address! } as any],
             clearRecords: resolverExists,
           },
           permissions: baseFuseObj,

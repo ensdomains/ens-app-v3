@@ -1,4 +1,5 @@
 import { useProvider } from '@web3modal/react'
+import { ethers } from 'ethers'
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react'
 
 import { ENS } from '@ensdomains/ensjs'
@@ -24,16 +25,18 @@ const defaultValue: ENS = new ENS(opts)
 const EnsContext = createContext({ ...defaultValue, ready: false })
 
 const EnsProvider = ({ children }: { children: React.ReactNode }) => {
-  const provider = useProvider()
-  const isReady = useProvider()
+  const { provider, isReady } = useProvider()
 
   const ensWithCurrentProvider = useMemo(() => defaultValue, [])
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
     setReady(false)
-    if (isReady && provider) {
-      ensWithCurrentProvider.setProvider(provider! as any).then(() => setReady(true))
+    if (provider && isReady) {
+      ensWithCurrentProvider
+        .setProvider(provider! as ethers.providers.JsonRpcProvider)
+        .then(() => setReady(true))
+      console.log('ensWithCurrentProvider', ensWithCurrentProvider)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [provider, isReady])

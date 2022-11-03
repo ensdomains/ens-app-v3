@@ -137,8 +137,8 @@ type Props = {
 const Transactions = ({ registrationData, nameDetails, callback, onStart }: Props) => {
   const { t } = useTranslation('register')
 
-  const { address } = useAccount()
-  const keySuffix = `${nameDetails.normalisedName}-${address}`
+  const { account } = useAccount()
+  const keySuffix = `${nameDetails.normalisedName}-${account?.address}`
   const commitKey = `commit-${keySuffix}`
   const registerKey = `register-${keySuffix}`
   const { getLatestTransaction, createTransactionFlow, resumeTransactionFlow, cleanupFlow } =
@@ -155,7 +155,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   const registrationParams: BaseRegistrationParams & { name: string } = useMemo(
     () => ({
       name: nameDetails.normalisedName,
-      owner: address!,
+      owner: account?.address!,
       duration: yearsToSeconds(registrationData.years),
       resolverAddress: registrationData.resolver,
       secret: registrationData.secret,
@@ -163,7 +163,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       records: registrationData.records,
       reverseRecord: registrationData.reverseRecord,
     }),
-    [address, nameDetails, registrationData],
+    [account?.address, nameDetails, registrationData],
   )
 
   const makeCommitNameFlow = useCallback(() => {

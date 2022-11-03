@@ -107,7 +107,7 @@ export const Header = () => {
   const { space } = useTheme()
   const router = useRouter()
   const isInitial = useInitial()
-  const { isConnected } = useAccount()
+  const { account } = useAccount()
   const breakpoints = useBreakpoint()
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
@@ -124,7 +124,7 @@ export const Header = () => {
   })
 
   // eslint-disable-next-line no-nested-ternary
-  const statefulRoutes = isConnected
+  const statefulRoutes = account?.isConnected
     ? dropdownRoutes
     : breakpoints.lg
     ? dropdownRoutes.slice(3)
@@ -132,7 +132,7 @@ export const Header = () => {
 
   let RouteItems: ReactNode
 
-  if (!isInitial && isConnected) {
+  if (!isInitial && account?.isConnected) {
     RouteItems = routesNoSearch.map((route) => (
       <RouteItem
         key={route.name}
@@ -190,7 +190,9 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {!isInitial && isConnected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
+        {!isInitial && account?.isConnected && (
+          <HamburgerMenu align="left" dropdownItems={statefulRoutes} />
+        )}
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
@@ -200,12 +202,12 @@ export const Header = () => {
           </>
         )}
         {(isInitial ||
-          (isConnected && (breakpoints.lg || router.asPath === '/')) ||
-          !isConnected) && <div style={{ flexGrow: 1 }} />}
+          (account?.isConnected && (breakpoints.lg || router.asPath === '/')) ||
+          !account?.isConnected) && <div style={{ flexGrow: 1 }} />}
         <RouteContainer ref={routeContainerRef} $state={breakpoints.lg ? 'entered' : state}>
           {RouteItems}
         </RouteContainer>
-        {!isInitial && !isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
+        {!isInitial && !account?.isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
         <HeaderConnect />
       </NavContainer>
     </HeaderWrapper>

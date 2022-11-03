@@ -95,7 +95,7 @@ const config: ConfigOptions = {
   accentColor: 'default',
   ethereum: {
     appName: 'ENS',
-    chains: [chains.goerli, chains.mainnet, chains.localhost],
+    chains: [chains.goerli],
     providers: [
       providers.walletConnectProvider({ projectId: process.env.NEXT_PUBLIC_PROJECT_ID! }),
     ],

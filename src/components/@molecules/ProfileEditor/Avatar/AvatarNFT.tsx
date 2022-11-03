@@ -147,8 +147,8 @@ export const AvatarNFT = ({
 }) => {
   const { t } = useTranslation('transactionFlow')
 
-  const { address: _address } = useAccount()
-  const address = _address!
+  const { account } = useAccount()
+  const address = account?.address!
 
   const {
     data: NFTPages,

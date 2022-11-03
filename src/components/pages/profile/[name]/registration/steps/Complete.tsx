@@ -109,8 +109,8 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
 
-  const { address } = useAccount()
-  const keySuffix = `${name}-${address}`
+  const { account } = useAccount()
+  const keySuffix = `${name}-${account?.address}`
   const commitKey = `commit-${keySuffix}`
   const registerKey = `register-${keySuffix}`
   const { getLatestTransaction } = useTransactionFlow()
@@ -119,6 +119,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const registerTxFlow = getLatestTransaction(registerKey)
 
   const { receipt: commitReceipt, isWaiting: commitLoading } = useWaitForTransaction({
+    // @ts-ignore
     hash: commitTxFlow!.hash,
   })
   const {

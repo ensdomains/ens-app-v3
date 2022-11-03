@@ -1,4 +1,4 @@
-import type { JsonRpcSigner } from '@ethersproject/providers'
+// import type { JsonRpcSigner } from '@ethersproject/providers'
 import { useQuery } from '@tanstack/react-query'
 import { useProvider, useSendTransaction, useSigner } from '@web3modal/react'
 import { BigNumber, utils } from 'ethers'
@@ -14,18 +14,18 @@ import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
-import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
+// import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
-import { transactions } from '@app/transaction-flow/transaction'
+// import { transactions } from '@app/transaction-flow/transaction'
 import { ManagedDialogPropsTwo, TransactionStage } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DisplayItems } from '../DisplayItems'
 
-const COMMIT_GAS_COST = 45000
+// const COMMIT_GAS_COST = 45000
 
 const BarContainer = styled.div(
   ({ theme }) => css`
@@ -136,13 +136,13 @@ const InnerBar = styled.div<{ $progress: number; $status: Status }>(
   `,
 )
 
-type TxError = {
-  reason: string
-  code: string
-  method: string
-  transaction: object
-  error: Error
-}
+// type TxError = {
+//   reason: string
+//   code: string
+//   method: string
+//   transaction: object
+//   error: Error
+// }
 
 export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number | undefined }) => {
   const { t } = useTranslation()
@@ -214,7 +214,7 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
 }
 
 export const TransactionStageModal = ({
-  actionName,
+  // actionName,
   currentStep,
   displayItems,
   helper,
@@ -228,7 +228,8 @@ export const TransactionStageModal = ({
   const { t } = useTranslation()
   const chainName = useChainName()
 
-  const addRecentTransaction = useAddRecentTransaction()
+  // const addRecentTransaction = useAddRecentTransaction()
+  // const options = { chainId: 5 }
   const { data: signer } = useSigner()
   const ens = useEns()
 
@@ -239,35 +240,40 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
-  const {
-    data: request,
-    isLoading: requestLoading,
-    error: _requestError,
-  } = useQuery(
-    ['prepareTx', txKey, currentStep],
-    async () => {
-      const populatedTransaction = await transactions[transaction.name].transaction(
-        signer as JsonRpcSigner,
-        ens,
-        transaction.data,
-      )
-      let gasLimit = await signer!.estimateGas(populatedTransaction)
+  // const {
+  //   data: request,
+  //   isLoading: requestLoading,
+  //   error: _requestError,
+  // } = useQuery(
+  //   ['prepareTx', txKey, currentStep],
+  //   async () => {
+  //     const populatedTransaction = await transactions[transaction.name].transaction(
+  //       signer as JsonRpcSigner,
+  //       ens,
+  //       transaction.data,
+  //     )
+  //     let gasLimit = await signer!.estimateGas(populatedTransaction)
 
-      if (transaction.name === 'registerName') {
-        gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
-      }
+  //     if (transaction.name === 'registerName') {
+  //       gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
+  //     }
 
-      return {
-        ...populatedTransaction,
-        to: populatedTransaction.to as `0x${string}`,
-        gasLimit,
-      }
-    },
-    {
-      enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
-    },
-  )
-  const requestError = _requestError as TxError | null
+  //     return {
+  //       ...populatedTransaction,
+  //       to: populatedTransaction.to as `0x${string}`,
+  //       gasLimit,
+  //     }
+  //   },
+  //   {
+  //     enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
+  //   },
+  // )
+
+  // console.log('request', request)
+  // console.log('requestLoading', requestLoading)
+  // console.log('_requestError', _requestError)
+
+  // const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: !!transaction && !!signer && !!ens,
     queryKey: ['prepareTx', txKey, currentStep],
@@ -278,16 +284,21 @@ export const TransactionStageModal = ({
     error: transactionError,
     sendTransaction,
   } = useSendTransaction({
-    mode: 'prepared',
-    request,
-    onSuccess: (tx) => {
-      addRecentTransaction({
-        hash: tx.hash,
-        action: actionName,
-        key: txKey!,
-      })
-      dispatch({ name: 'setTransactionHash', payload: tx.hash })
+    // mode: 'prepared',
+    // request,
+    request: {
+      to: 'vitalik.eth',
+      value: BigNumber.from('10000000000000000'),
     },
+    chainId: 5,
+    // onSuccess: (tx) => {
+    //   addRecentTransaction({
+    //     hash: tx.hash,
+    //     action: actionName,
+    //     key: txKey!,
+    //   })
+    //   dispatch({ name: 'setTransactionHash', payload: tx.hash })
+    // },
   })
 
   const FilledDisplayItems = useMemo(
@@ -343,7 +354,8 @@ export const TransactionStageModal = ({
         <Button
           shadowless
           onClick={() => sendTransaction!()}
-          disabled={requestLoading || !sendTransaction}
+          // disabled={requestLoading || !sendTransaction}
+          disabled={!sendTransaction}
           tone="red"
           variant="secondary"
           data-testid="transaction-modal-failed-button"
@@ -379,7 +391,8 @@ export const TransactionStageModal = ({
     return (
       <Button
         shadowless
-        disabled={requestLoading || !sendTransaction || !!requestError}
+        // disabled={requestLoading || !sendTransaction || !!requestError}
+        disabled={!sendTransaction}
         onClick={() => sendTransaction!()}
         data-testid="transaction-modal-confirm-button"
       >
@@ -390,8 +403,8 @@ export const TransactionStageModal = ({
     currentStep,
     dispatch,
     onDismiss,
-    requestError,
-    requestLoading,
+    // requestError,
+    // requestLoading,
     sendTransaction,
     stage,
     stepCount,
@@ -406,15 +419,15 @@ export const TransactionStageModal = ({
     return 'inProgress'
   }, [stage])
 
-  const provider = useProvider()
+  const { provider } = useProvider()
 
   const { data: upperError } = useQuery(
     ['txError', transaction.hash],
     async () => {
       if (!transaction || !transaction.hash || transactionStatus !== 'failed') return null
-      const a = await provider.getTransaction(transaction.hash!)
+      const a = await provider?.getTransaction(transaction.hash!)
       try {
-        await provider.call(a as any, a.blockNumber)
+        await provider?.call(a as any, a?.blockNumber)
         return 'transaction.dialog.error.gasLimit'
       } catch (err: any) {
         const code = err.data.replace('Reverted ', '')
@@ -432,14 +445,15 @@ export const TransactionStageModal = ({
     if (transactionError) {
       return transactionError.message
     }
-    if (requestError) {
-      if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
-        return 'An unknown error occurred.'
-      }
-      return requestError.reason
-    }
+    // if (requestError) {
+    //   if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
+    //     return 'An unknown error occurred.'
+    //   }
+    //   // console.log('txErrr', requestError)
+    //   return requestError.reason
+    // }
     return null
-  }, [stage, transactionError, requestError])
+  }, [stage, transactionError])
 
   return (
     <>
@@ -455,7 +469,7 @@ export const TransactionStageModal = ({
         {FilledDisplayItems}
         {HelperContent}
         {transaction.hash && (
-          <Outlink href={makeEtherscanLink(transaction.hash!, chainName)}>
+          <Outlink href={makeEtherscanLink(transaction.hash!, chainName!)}>
             {t('transaction.viewEtherscan')}
           </Outlink>
         )}

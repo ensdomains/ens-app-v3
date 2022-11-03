@@ -1,9 +1,9 @@
 import { useNetwork } from '@web3modal/react'
 
 export const useChainName = () => {
-  const { chain } = useNetwork()
-  if (chain) {
-    return chain.network.toLowerCase() ?? null
+  const { network } = useNetwork()
+  if (network) {
+    return network?.chain?.name.toLowerCase() ?? null
   }
   return 'mainnet'
 }

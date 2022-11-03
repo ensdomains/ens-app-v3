@@ -139,7 +139,7 @@ export default () => {
   const [syncWarning, setSyncWarning] = useState(false)
   const { dnsOwner } = useNameDetails(router.query.name as string)
   const transactions = useRecentTransactions()
-  const { isConnected } = useAccount()
+  const { account } = useAccount()
   const { t } = useTranslation('dnssec')
 
   const { name } = router.query
@@ -197,7 +197,7 @@ export default () => {
       <Spacer $height="4" />
       {router.isReady ? (
         <MainContentContainer>
-          {isConnected ? (
+          {account?.isConnected ? (
             <>
               {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep }} />}
               {currentStep === 1 && (

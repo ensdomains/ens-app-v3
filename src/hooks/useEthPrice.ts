@@ -11,7 +11,7 @@ const ORACLE_ENS = 'eth-usd.data.eth'
 const ORACLE_GOERLI = '0xD4a33860578De61DBAbDc8BFdb98FD742fA7028e'
 
 export const useEthPrice = () => {
-  const provider = useProvider()
+  const { provider } = useProvider()
   const { getAddr, ready } = useEns()
   const chainId = useChainId()
 

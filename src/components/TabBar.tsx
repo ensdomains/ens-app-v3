@@ -101,7 +101,7 @@ const TabBarProfile = ({ address, isActive }: { address: string; isActive: boole
 }
 
 export const TabBar = () => {
-  const { address } = useAccount()
+  const { account } = useAccount()
 
   const activeRoute = useActiveRoute()
 
@@ -114,10 +114,10 @@ export const TabBar = () => {
         <TabContainer>
           <TabItems>
             <RouteItem route={getRoute('search')} />
-            {address && (
+            {account?.address && (
               <>
                 <RouteItem route={getRoute('names')} />
-                <TabBarProfile address={address} isActive={activeRoute === 'profile'} />
+                <TabBarProfile address={account?.address} isActive={activeRoute === 'profile'} />
                 <RouteItem route={getRoute('favourites')} />
                 <RouteItem
                   route={getRoute('settings')}
@@ -126,7 +126,7 @@ export const TabBar = () => {
               </>
             )}
           </TabItems>
-          {!address && <ConnectButton isTabBar />}
+          {!account?.address && <ConnectButton isTabBar />}
         </TabContainer>
       </TabWrapper>
     </>

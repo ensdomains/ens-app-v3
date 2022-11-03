@@ -65,7 +65,11 @@ const spacing = '1fr 1fr'
 export default function Page() {
   const { t } = useTranslation('names')
   const router = useRouter()
-  const { address: _address, isConnecting, isReconnecting, isConnected } = useAccount()
+  const { account } = useAccount()
+  const _address = account?.address
+  const isConnected = account?.isConnected
+  const isConnecting = account?.isConnecting
+  const isReconnecting = account?.isReconnecting
   const address = (router.query.address as string) || (_address as string)
   const isSelf = true
   const chainId = useChainId()

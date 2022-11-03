@@ -7,22 +7,22 @@ import type { Transaction } from './transactionStore'
 
 export function useRecentTransactions(): Transaction[] {
   const store = useTransactionStore()
-  const { address } = useAccount()
+  const { account } = useAccount()
   const chainId = useChainId()
 
   const [transactions, setTransactions] = useState(() =>
-    store && address && chainId ? store.getTransactions(address, chainId) : [],
+    store && account?.address && chainId ? store.getTransactions(account?.address, chainId) : [],
   )
 
   useEffect(() => {
-    if (store && address && chainId) {
-      setTransactions(store.getTransactions(address, chainId))
+    if (store && account?.address && chainId) {
+      setTransactions(store.getTransactions(account?.address, chainId))
 
       return store.onChange(() => {
-        setTransactions(store.getTransactions(address, chainId))
+        setTransactions(store.getTransactions(account?.address, chainId))
       })
     }
-  }, [store, address, chainId])
+  }, [store, account?.address, chainId])
 
   return transactions
 }

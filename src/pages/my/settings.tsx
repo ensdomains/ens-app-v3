@@ -26,7 +26,10 @@ const spacing = '1fr'
 
 export default function Page() {
   const { t } = useTranslation('settings')
-  const { address, isConnecting, isReconnecting } = useAccount()
+  const { account } = useAccount()
+  const address = account?.address
+  const isConnecting = account?.isConnecting
+  const isReconnecting = account?.isReconnecting
   const [isFetched, setIsFetching] = useState(false)
   const router = useRouter()
 

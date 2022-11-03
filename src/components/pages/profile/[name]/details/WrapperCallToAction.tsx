@@ -94,7 +94,8 @@ const UpgradeButton = styled(Button)(
 export const WrapperCallToAction = ({ name }: { name: string }) => {
   const { t } = useTranslation('profile')
 
-  const { address } = useAccount()
+  const { account } = useAccount()
+  const address = account?.address
   const { ownerData, profile, isLoading: isNameDetailsLoading } = useNameDetails(name)
   const hasOwnerData = !!ownerData && !isNameDetailsLoading
   const isOwner = ownerData?.owner === address

@@ -107,7 +107,7 @@ export const SubnamesTab = ({
 }) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
-  const { address } = useAccount()
+  const { account } = useAccount()
   const { showDataInput } = useTransactionFlow()
 
   const [sortType, setSortType] = useState<SubnameSortType | undefined>()
@@ -171,7 +171,7 @@ export const SubnamesTab = ({
               truncatedName={subname.truncatedName}
               network={network}
               mode="view"
-              isController={subname.owner?.id === address?.toLowerCase()}
+              isController={subname.owner?.id === account?.address?.toLowerCase()}
             />
           ))}
         </div>

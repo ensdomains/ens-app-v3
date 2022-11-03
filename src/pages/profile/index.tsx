@@ -19,7 +19,10 @@ export default function Page() {
 
   const initial = useInitial()
 
-  const { address, isConnecting, isReconnecting } = useAccount()
+  const { account } = useAccount()
+  const address = account?.address
+  const isConnecting = account?.isConnecting
+  const isReconnecting = account?.isReconnecting
   const accountLoading = isConnecting || isReconnecting
 
   const primary = usePrimary(address as string, !address)

@@ -1,9 +1,9 @@
 import { useNetwork } from '@web3modal/react'
 
 export const useChainId = (): number => {
-  const { chain } = useNetwork()
-  if (chain) {
-    return chain.id ?? null
+  const { network } = useNetwork()
+  if (network) {
+    return network?.chain?.id ?? null
   }
   return 1
 }

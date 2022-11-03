@@ -80,7 +80,7 @@ const MoreTab = () => {
   const router = useRouter()
   const { name } = router.query
   const { wrapperData } = useGetWrapperData((name as string) || '')
-  const { address } = useAccount()
+  const { account } = useAccount()
   const { ownerData, isWrapped } = useBasicName(name as string)
   const accordionData = generateAccordionData(
     wrapperData,
@@ -88,7 +88,7 @@ const MoreTab = () => {
     ownerData,
     isWrapped,
     name as string,
-    address,
+    account?.address,
   )
 
   return (

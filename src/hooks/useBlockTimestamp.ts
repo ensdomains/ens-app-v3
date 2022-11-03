@@ -2,7 +2,7 @@ import { useQuery } from '@tanstack/react-query'
 import { useProvider } from '@web3modal/react'
 
 export const useBlockTimestamp = () => {
-  const provider = useProvider()
+  const { provider } = useProvider()
   return useQuery(
     ['use-block-timestamp'],
     async () => {

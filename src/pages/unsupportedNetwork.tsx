@@ -36,20 +36,39 @@ const Container = styled.div`
 
 export default function Page() {
   const { switchNetwork } = useSwitchNetwork()
-  const { chain: currentChain } = useNetwork()
+  const { network: currentChain } = useNetwork()
   const { t } = useTranslation()
   const router = useRouter()
 
+  // ToDo: Revisit. This is a temporary solution to handle the network change
+
   useEffect(() => {
-    if (currentChain?.id === 5 || currentChain?.id === 1337) {
+    if (currentChain?.chains?.[0].id === 5 || currentChain?.chains?.[0]?.id === 1337) {
+      console.log('Basic Check', currentChain)
       router.push('/')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentChain?.id])
+  }, [])
 
   const handleChangeNetwork = () => {
-    switchNetwork?.(5)
+    switchNetwork?.({ chainId: 5 })
   }
+
+  // const { switchNetwork } = useSwitchNetwork()
+  // const { chain: currentChain } = useNetwork()
+  // const { t } = useTranslation()
+  // const router = useRouter()
+
+  // useEffect(() => {
+  //   if (currentChain?.id === 5 || currentChain?.id === 1337) {
+  //     router.push('/')
+  //   }
+  //   // eslint-disable-next-line react-hooks/exhaustive-deps
+  // }, [currentChain?.id])
+
+  // const handleChangeNetwork = () => {
+  //   switchNetwork?.(5)
+  // }
 
   return (
     <Container>

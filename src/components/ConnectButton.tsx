@@ -125,11 +125,11 @@ const HeaderProfile = ({ address }: { address: string }) => {
 }
 
 export const HeaderConnect = () => {
-  const { address } = useAccount()
+  const { account } = useAccount()
 
-  if (!address) {
+  if (!account?.address) {
     return <ConnectButton inHeader />
   }
 
-  return <HeaderProfile address={address} />
+  return <HeaderProfile address={account?.address} />
 }

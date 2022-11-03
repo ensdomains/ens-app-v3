@@ -20,11 +20,11 @@ export const useResolverHasInterfaces = (
   const fallbackMsg =
     options?.fallbackMsg || 'Cannot determine if address supports resolver methods'
 
-  const provider = useProvider()
-  const { chain } = useNetwork()
+  const { provider } = useProvider()
+  const { network } = useNetwork()
   const [errors, setErrors] = useState<string[]>([])
 
-  const isEnabled = !!chain && !skip && !!resolverAddress
+  const isEnabled = !!network && !skip && !!resolverAddress
 
   const {
     data: hasInterface,
@@ -32,10 +32,10 @@ export const useResolverHasInterfaces = (
     status,
     error,
   } = useQuery(
-    ['validateResolver', resolverAddress, interfaceNames.join(','), chain?.id],
+    ['validateResolver', resolverAddress, interfaceNames.join(','), network?.chain?.id],
     async () => {
       const results = await validateResolver(interfaceNames, resolverAddress!, provider, {
-        networkId: chain!.id,
+        networkId: network?.chains?.id,
       })
       if (results.length === 0) {
         setErrors([])

@@ -213,7 +213,8 @@ type ValueItem = {
 const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Props) => {
   const { t } = useTranslation('register')
 
-  const { address } = useAccount()
+  const { account } = useAccount()
+  const address = account?.address
   const defaultResolverAddress = useContractAddress('PublicResolver')
   const backRef = useRef<HTMLButtonElement>(null)
 
@@ -340,7 +341,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         })
       })
   }, [
-    address,
+    account?.address,
     checkForDirtyTab,
     profile,
     setExistingRecords,

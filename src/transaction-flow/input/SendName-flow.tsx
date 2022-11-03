@@ -332,7 +332,9 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { ownerData } = useBasicName(name as string)
   const parentName = name.split('.').slice(1).join('.')
   const parentNameOwnerData = useBasicName(parentName)
-  const { address } = useAccount()
+  const { account } = useAccount()
+  const address = account?.address
+
   const { register, watch, getFieldState } = useForm<FormData>({
     mode: 'onChange',
   })

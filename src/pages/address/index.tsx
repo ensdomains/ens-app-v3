@@ -78,11 +78,11 @@ const EmptyDetailContainer = styled.div(
 const Page = () => {
   const { t } = useTranslation('address')
   const { query, isReady } = useRouter()
-  const { address: _address } = useAccount()
+  const { account } = useAccount()
   const address = query.address as string
   const chainId = useChainId()
   const breakpoints = useBreakpoint()
-  const isSelf = _address === address
+  const isSelf = account?.address === address
 
   const [mode, setMode] = useState<NameTableMode>('view')
   const [selectedNames, setSelectedNames] = useState<string[]>([])
@@ -189,7 +189,7 @@ const Page = () => {
         trailing: (
           <TabWrapperWithButtons>
             <NameTableHeader
-              selectable={!!_address}
+              selectable={!!account?.address}
               mode={mode}
               sortType={sortType}
               sortTypeOptionValues={[

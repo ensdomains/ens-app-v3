@@ -4,7 +4,7 @@ import { useProvider } from '@web3modal/react'
 import { useInvalidateOnBlock } from './useInvalidateOnBlock'
 
 const useCurrentBlockTimestamp = () => {
-  const provider = useProvider()
+  const { provider } = useProvider()
   const { data } = useQuery(['currentBlockTimestamp'], async () => {
     const { timestamp } = await provider.getBlock('latest')
     return timestamp

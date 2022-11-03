@@ -93,8 +93,8 @@ const Pricing = ({
   const breakpoints = useBreakpoint()
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
-  const { address } = useAccount()
-  const { data: balance } = useBalance({ addressOrName: address })
+  const { account } = useAccount()
+  const { data: balance } = useBalance({ addressOrName: account?.address })
   const resolverAddress = useContractAddress('PublicResolver')
 
   const [years, setYears] = useState(registrationData.years)
@@ -123,7 +123,7 @@ const Pricing = ({
 
   let actionButton: ReactNode
 
-  if (!address) {
+  if (!account?.address) {
     actionButton = <ConnectButton large />
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
@@ -184,7 +184,7 @@ const Pricing = ({
             variant="switch"
             hideLabel
             label={t('steps.pricing.primaryName')}
-            disabled={!address}
+            disabled={!account?.address}
             size={breakpoints.md ? 'large' : 'medium'}
             checked={reverseRecord}
             onChange={(e) => setReverseRecord(e.target.checked)}

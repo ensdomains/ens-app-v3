@@ -29,8 +29,8 @@ export const useSubnameAbilities = (name: string, ownerData: OwnerData): ReturnD
     isLoading: isNameDetailsLoading,
   } = useNameDetails(parentName)
 
-  const { address } = useAccount()
-  const canDeleteSubnames = parentOwnerData?.owner === address
+  const { account } = useAccount()
+  const canDeleteSubnames = parentOwnerData?.owner === account?.address
 
   const skipFuseData = isNameDetailsLoading || !isWrapped
   const { wrapperData, isLoading: isFuseDataLoading } = useGetWrapperData(name, skipFuseData)

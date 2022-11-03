@@ -127,7 +127,7 @@ export const ClaimDomain = ({
   setCurrentStep: Dispatch<SetStateAction<number>>
 }) => {
   const router = useRouter()
-  const { address } = useAccount()
+  const { account } = useAccount()
   const { createTransactionFlow } = useTransactionFlow()
   const transactions = useRecentTransactions()
   const [pendingTransaction, setPendingTransaction] = useState(false)
@@ -147,7 +147,7 @@ export const ClaimDomain = ({
       makeTransactionItem(`importDNSSECName`, {
         name,
         proverResult,
-        address: syncWarning ? emptyAddress : address!,
+        address: syncWarning ? emptyAddress : account?.address!,
       }),
     ],
     !!proverResult,
@@ -175,7 +175,7 @@ export const ClaimDomain = ({
       <Spacer $height="4" />
       <GreyBox>
         <Typography>{t('claimDomain.dnsOwner')}</Typography>
-        <NamePillWithAddress name={name} network={1} address={address || ''} />
+        <NamePillWithAddress name={name} network={1} address={account?.address || ''} />
       </GreyBox>
       <Spacer $height="4" />
       <GreyBox>
@@ -213,7 +213,11 @@ export const ClaimDomain = ({
         <CheckButton
           variant="primary"
           size="small"
-          onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address!)}
+          onClick={handleClaim(
+            name,
+            createTransactionFlow,
+            syncWarning ? emptyAddress : account?.address!,
+          )}
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>

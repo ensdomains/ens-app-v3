@@ -133,7 +133,7 @@ export const AddTextRecord = ({
 }) => {
   const router = useRouter()
   const { name } = router.query
-  const { address } = useAccount()
+  const { account } = useAccount()
   const [errorState, setErrorState] = useState<Errors>(Errors.NOT_CHECKED)
   const breakpoints = useBreakpoint()
   const { t } = useTranslation('dnssec')
@@ -157,7 +157,7 @@ export const AddTextRecord = ({
         // Invalid DNS record
         setSyncWarning(false)
         setErrorState(Errors.DNS_RECORD_INVALID)
-      } else if (dnsOwner.toLowerCase() === address?.toLowerCase()) {
+      } else if (dnsOwner.toLowerCase() === account?.address?.toLowerCase()) {
         // DNS record is set and matches the address
         setSyncWarning(false)
         setCurrentStep(currentStep + 1)
@@ -212,11 +212,13 @@ export const AddTextRecord = ({
         <Copyable {...{ label: 'Name', value: '_ens' }} />
       </ButtonRow>
       <Spacer $height="2" />
-      {address && (
+      {account?.address && (
         <Copyable
           {...{
             label: 'Value',
-            value: breakpoints.sm ? address : shortenAddress(address, undefined, 7, 7),
+            value: breakpoints.sm
+              ? account?.address
+              : shortenAddress(account?.address, undefined, 7, 7),
           }}
         />
       )}

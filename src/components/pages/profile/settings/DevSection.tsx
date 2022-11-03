@@ -29,7 +29,7 @@ const rpcSendBatch = (items: { method: string; params: any[] }[]) =>
   })
 
 export const DevSection = () => {
-  const provider = useProvider()
+  const { provider } = useProvider()
   const { id: chainId } = chains.goerli
 
   const addTransaction = useAddRecentTransaction()
@@ -65,7 +65,7 @@ export const DevSection = () => {
   const addFailure = async () => {
     const tx = await sendFailure!()
     addTransaction({
-      hash: tx.hash,
+      hash: tx?.hash,
       action: 'test',
     })
   }
@@ -76,10 +76,10 @@ export const DevSection = () => {
   const stopAutoMine = async () => provider.send('evm_setAutomine', [false])
 
   const revert = async () => {
-    const currBlock = await provider.getBlockNumber()
+    const currBlock = await provider?.getBlockNumber()
     await provider.send('evm_revert', [1])
     await provider.send('evm_snapshot', [])
-    const revertBlock = await provider.getBlockNumber()
+    const revertBlock = await provider?.getBlockNumber()
     const blocksToMine = currBlock - revertBlock
     await rpcSendBatch(
       Array.from({ length: blocksToMine + 1 }, () => ({ method: 'evm_mine', params: [] })),

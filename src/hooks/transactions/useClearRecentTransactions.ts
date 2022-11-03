@@ -6,14 +6,14 @@ import { useTransactionStore } from './TransactionStoreContext'
 
 export function useClearRecentTransactions(): () => void {
   const store = useTransactionStore()
-  const { address } = useAccount()
+  const { account } = useAccount()
   const chainId = useChainId()
 
   return useCallback(() => {
-    if (!address || !chainId) {
+    if (!account?.address || !chainId) {
       throw new Error('No address or chain ID found')
     }
 
-    store.clearTransactions(address, chainId)
-  }, [store, address, chainId])
+    store.clearTransactions(account?.address, chainId)
+  }, [store, account?.address, chainId])
 }

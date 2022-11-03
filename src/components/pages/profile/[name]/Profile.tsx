@@ -64,9 +64,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const { t } = useTranslation('profile')
   const breakpoints = useBreakpoint()
   const chainId = useChainId()
-  const { address } = useAccount()
+  const { account } = useAccount()
   const transactions = useRecentTransactions()
-  const isReady = useProvider()
+  const { isReady } = useProvider()
 
   const {
     error,
@@ -82,15 +82,15 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     isWrapped,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const selfAbilities = useSelfAbilities(account?.address, ownerData, name)
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped =
     nameWrapperExists &&
     !isWrapped &&
     normalisedName.endsWith('.eth') &&
     (ownerData?.ownershipLevel === 'registrar'
-      ? ownerData?.registrant === address
-      : ownerData?.owner === address)
+      ? ownerData?.registrant === account?.address
+      : ownerData?.owner === account?.address)
 
   useProtectedRoute(
     '/',
@@ -98,7 +98,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     isLoading || isReady
       ? true
       : // if is self, user must be connected
-        (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
+        (isSelf ? account.address : true) && typeof name === 'string' && name.length > 0,
   )
 
   useEffect(() => {

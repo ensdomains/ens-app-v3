@@ -57,8 +57,8 @@ export const RegistrationDate = () => {
   const router = useRouter()
   const { name } = router.query
   const { history = { registration: [] }, isCachedData } = useGetHistory(name as string)
-  const provider = useProvider()
-  const { chain } = useNetwork()
+  const { provider } = useProvider()
+  const { network } = useNetwork()
 
   const registration = history?.registration?.[0]
   const registrationBlock = registration?.blockNumber
@@ -66,9 +66,9 @@ export const RegistrationDate = () => {
   const { data: { registrationDate, transactionHash } = {} } = useQuery(
     ['getRegistrationData'],
     async () => {
-      const block = await provider.getBlock(registrationBlock)
-      const unixTimestamp = block.timestamp
-      const date = new Date(unixTimestamp * 1000)
+      const block = await provider?.getBlock(registrationBlock)
+      const unixTimestamp = block?.timestamp
+      const date = new Date(unixTimestamp! * 1000)
 
       return {
         registrationDate: date.toString(),
@@ -90,7 +90,7 @@ export const RegistrationDate = () => {
       <ButtonContainer>
         <Button
           as="a"
-          href={`${getEtherScanLink(chain?.id)}tx/${transactionHash}`}
+          href={`${getEtherScanLink(network?.chain?.id)}tx/${transactionHash}`}
           target="_blank"
           size="small"
         >

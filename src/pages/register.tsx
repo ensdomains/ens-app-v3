@@ -14,8 +14,9 @@ export default function Page() {
 
   const initial = useInitial()
 
-  const { address, isConnecting, isReconnecting } = useAccount()
-  const accountLoading = isConnecting || isReconnecting
+  // const { address, isConnecting, isReconnecting } = useAccount()
+  const { account } = useAccount()
+  const accountLoading = account?.isConnecting || account?.isReconnecting
 
   const nameDetails = useNameDetails(name)
   const { isLoading: detailsLoading, registrationStatus } = nameDetails
@@ -25,12 +26,12 @@ export default function Page() {
   if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
     let redirect = true
 
-    if (nameDetails.ownerData?.owner === address) {
+    if (nameDetails.ownerData?.owner === account?.address) {
       const registrationData = JSON.parse(
         localStorage.getItem('registration-status') || '{items:[]}',
       )
       const index = getSelectedIndex(registrationData, {
-        address: address!,
+        address: account?.address!,
         name: nameDetails.normalisedName,
       })
       if (index !== -1) {

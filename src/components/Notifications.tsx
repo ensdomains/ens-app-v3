@@ -54,7 +54,7 @@ export const Notifications = () => {
         }),
         children: resumable ? (
           <ButtonContainer>
-            <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
+            <a target="_blank" href={makeEtherscanLink(hash, chainName!)} rel="noreferrer">
               <Button shadowless size="small" variant="secondary">
                 {t('transaction.viewEtherscan')}
               </Button>
@@ -69,7 +69,7 @@ export const Notifications = () => {
             </Button>
           </ButtonContainer>
         ) : (
-          <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
+          <a target="_blank" href={makeEtherscanLink(hash, chainName!)} rel="noreferrer">
             <Button shadowless size="small" variant="secondary">
               {t('transaction.viewEtherscan')}
             </Button>

@@ -229,7 +229,10 @@ export default function Page() {
   const name = router.query.name as string
 
   const chainId = useChainId()
-  const { address, isConnecting, isReconnecting } = useAccount()
+  const { account } = useAccount()
+  const address = account?.address
+  const isConnecting = account?.isConnecting
+  const isReconnecting = account?.isReconnecting
   const accountLoading = isConnecting || isReconnecting
 
   const {
