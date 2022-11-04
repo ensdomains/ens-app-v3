@@ -445,7 +445,7 @@ export const SearchInput = ({
   const SearchResultsElement = (
     <SearchResultsContainer
       style={{
-        width,
+        width: width === Infinity ? undefined : width,
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}

@@ -221,7 +221,11 @@ export const Header = () => {
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
-            <SearchWrapper ref={searchWrapperRef} $state={breakpoints.lg ? 'entered' : state}>
+            <SearchWrapper
+              data-testid="search-wrapper"
+              ref={searchWrapperRef}
+              $state={breakpoints.lg ? 'entered' : state}
+            >
               <SearchInput size="large" />
             </SearchWrapper>
           </>
@@ -230,7 +234,11 @@ export const Header = () => {
           (isConnected && (breakpoints.lg || router.asPath === '/')) ||
           !isConnected) && <div style={{ flexGrow: 1 }} />}
         <RouteWrapper>
-          <RouteContainer ref={routeContainerRef} $state={breakpoints.lg ? 'entered' : state}>
+          <RouteContainer
+            data-testid="route-container"
+            ref={routeContainerRef}
+            $state={breakpoints.lg ? 'entered' : state}
+          >
             {RouteItems}
           </RouteContainer>
         </RouteWrapper>
