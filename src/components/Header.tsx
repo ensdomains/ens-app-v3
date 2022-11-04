@@ -61,6 +61,12 @@ const NavContainer = styled.div(
     justify-content: center;
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
+    height: ${theme.space['12']};
+
+    ${mq.md.min(css`
+      height: ${theme.space['18']};
+    `)}
+
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
