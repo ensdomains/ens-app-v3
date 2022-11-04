@@ -116,7 +116,7 @@
       "addSuccess": "Add Success",
       "sendName": "Send Name",
       "migrateProfile": "Migrate Profile",
-      "migrateProfileWithSync": "Migrate Profile",
+      "migrateProfileWithSync": "Migrate and update profile",
       "wrapName": "Wrap Name",
       "updateResolver": "Update Resolver",
       "updateProfile": "Update Profile",
@@ -128,23 +128,25 @@
       "deleteSubname": "Delete Subname",
       "extendNames": "Extend Names",
       "importDNSSECName": "import DNSSEC Name",
-      "commitName": "Start countdown",
+      "commitName": "Start timer",
       "registerName": "Register Name",
-      "approveNameWrapper": "Approve NameWrapper"
+      "approveNameWrapper": "Approve NameWrapper",
+      "clearRecords": "Clear records",
+      "updateRecords": "Update records"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
       "migrateProfile": "Set existing records on new resolver",
       "migrateProfileWithSync": "Set existing records on new resolver",
       "wrapName": "Wrap name and set new resolver",
-      "updateResolver": "Change contract used to store records",
+      "updateResolver": "Change resolver to",
       "updateProfile": "Update records on existing resolver",
       "setPrimaryName": "Set the primary name for your address",
       "updateEthAddress": "Update ETH address to this address",
       "testSendName": "Set the controller and registrant of the name",
       "createSubname": "Create a new subname on the name",
       "burnFuses": "Burn the chosen permissions until name expiry",
-      "commitName": "Start countdown to register name",
+      "commitName": "Start timer to register name",
       "approveNameWrapper": "Approve the NameWrapper to manage your names"
     },
     "itemLabel": {
@@ -157,9 +159,13 @@
       "newResolver": "New Resolver",
       "subname": "Subname",
       "duration": "Duration",
-      "cost": "Cost"
+      "cost": "Cost",
+      "update": "Update"
     },
-    "itemValue": {},
+    "itemValue": {
+      "records_one": "{{count}} record",
+      "records_other": "{{count}} records"
+    },
     "status": {
       "pending": {
         "regular": "Pending"

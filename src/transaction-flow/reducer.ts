@@ -46,6 +46,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         currentFlowStage: 'input',
         currentTransaction: 0,
         input: action.payload.input,
+        disableBackgroundClick: action.payload.disableBackgroundClick || undefined,
         transactions: [],
       }
       draft.selectedKey = action.key

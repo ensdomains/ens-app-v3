@@ -70,6 +70,7 @@
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
     "immer": "^9.0.15",
+    "intl-segmenter-polyfill": "^0.4.4",
     "iso-639-1": "^2.1.15",
     "lodash": "^4.17.21",
     "next": "12.1.6",

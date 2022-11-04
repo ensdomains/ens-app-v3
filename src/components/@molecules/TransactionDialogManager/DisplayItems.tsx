@@ -190,6 +190,39 @@ const ListValue = ({ value }: { value: string[] }) => {
   )
 }
 
+const RecordsContainer = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: column;
+    text-align: right;
+    gap: 0.5rem;
+    margin-left: 0.5rem;
+    overflow: hidden;
+  `,
+)
+
+const RecordContainer = styled.div(
+  () => css`
+    display: flex;
+    flex-direction: column;
+  `,
+)
+
+const RecordsValue = ({ value }: { value: [string, string][] }) => {
+  return (
+    <RecordsContainer>
+      {value.map(([key, val]) => (
+        <RecordContainer>
+          <Typography weight="bold" ellipsis>
+            {key}
+          </Typography>
+          <Typography ellipsis>{val}</Typography>
+        </RecordContainer>
+      ))}
+    </RecordsContainer>
+  )
+}
+
 const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   const { value, type } = props as TransactionDisplayItem
   if (type === 'address') {
@@ -203,6 +236,9 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   }
   if (type === 'list') {
     return <ListValue value={value} />
+  }
+  if (type === 'records') {
+    return <RecordsValue value={value} />
   }
   return <ValueTypography weight="bold">{value}</ValueTypography>
 }
