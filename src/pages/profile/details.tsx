@@ -242,10 +242,10 @@ export default function Page() {
     basicIsCachedData,
     profileIsCachedData,
     wrapperData,
-    canBeWrapped: _canBeWrapped,
+    canBeWrapped,
   } = useNameDetails(name)
-  const canBeWrapped =
-    _canBeWrapped &&
+  const _canBeWrapped =
+    canBeWrapped &&
     (ownerData?.ownershipLevel === 'registrar'
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
@@ -269,7 +269,7 @@ export default function Page() {
   return (
     <Content title={normalisedName} subtitle={t('details.title')} loading={isLoading}>
       {{
-        info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
+        info: _canBeWrapped && <WrapperCallToAction name={normalisedName} />,
         leading: (
           <Details
             {...{

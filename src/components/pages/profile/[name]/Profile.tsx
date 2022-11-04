@@ -77,12 +77,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     basicIsCachedData,
     profileIsCachedData,
     wrapperData,
-    canBeWrapped: _canBeWrapped,
+    canBeWrapped,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, ownerData, name)
-  const canBeWrapped =
-    _canBeWrapped &&
+  const _canBeWrapped =
+    canBeWrapped &&
     (ownerData?.ownershipLevel === 'registrar'
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
@@ -157,7 +157,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         loading={isLoading}
       >
         {{
-          info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
+          info: _canBeWrapped && <WrapperCallToAction name={normalisedName} />,
           warning: error
             ? {
                 type: 'warning',
