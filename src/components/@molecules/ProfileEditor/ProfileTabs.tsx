@@ -111,6 +111,7 @@ const ProfileEditorTabs = ({ formState, getFieldState, tab, handleTabClick }: Pr
         $hasError={!!getFieldState('website', formState).error}
         $isDirty={getFieldState('website').isDirty}
         onClick={handleTabClick('website')}
+        data-testid="website-tab"
       >
         {t('input.profileEditor.tabs.contentHash.label')}
       </TabButton>

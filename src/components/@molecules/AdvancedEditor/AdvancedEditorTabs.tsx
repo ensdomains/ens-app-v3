@@ -106,6 +106,7 @@ const AdvancedEditorTabs = ({ tab, formState, getFieldState, handleTabClick }: P
         $isDirty={getFieldState('other').isDirty}
         onClick={handleTabClick('other')}
         type="button"
+        data-testid="other-tab"
       >
         {t('advancedEditor.tabs.other.label')}
       </TabButton>
