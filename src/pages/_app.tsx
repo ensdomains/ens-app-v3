@@ -19,6 +19,7 @@ import { TransactionFlowProvider } from '@app/transaction-flow/TransactionFlowPr
 import { BreakpointProvider } from '@app/utils/BreakpointProvider'
 import { EnsProvider } from '@app/utils/EnsProvider'
 import { makePersistent } from '@app/utils/persist'
+import { getNetworkName } from '@app/utils/utils'
 
 import i18n from '../i18n'
 import '../styles.css'
@@ -91,27 +92,28 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const { provider, chains } = configureChains(
-  [chain.goerli, chain.localhost],
-  [
-    ...(process.env.NEXT_PUBLIC_PROVIDER
-      ? [
-          jsonRpcProvider({
-            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+const devProvider = process.env.NEXT_PUBLIC_PROVIDER
+
+const { provider, chains } = devProvider
+  ? configureChains(
+      [chain.localhost],
+      [
+        jsonRpcProvider({
+          rpc: () => ({ http: devProvider }),
+        }),
+      ],
+    )
+  : configureChains(
+      [chain.goerli],
+      [
+        infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
+        jsonRpcProvider({
+          rpc: (c) => ({
+            http: `https://web3.ens.domains/v1/${getNetworkName(c.network)}`,
           }),
-        ]
-      : [
-          jsonRpcProvider({
-            rpc: (c) => ({
-              http: `https://web3.ens.domains/v1/${
-                c.network === 'homestead' ? 'mainnet' : c.network
-              }`,
-            }),
-          }),
-          infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-        ]),
-  ],
-)
+        }),
+      ],
+    )
 
 const { connectors } = getDefaultWallets({
   appName: 'ENS',

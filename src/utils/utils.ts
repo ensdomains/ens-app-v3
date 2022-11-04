@@ -55,3 +55,5 @@ export const isDNSName = (name: string): boolean => {
 }
 
 export const isASubname = (name: string) => name.split('.').length > 2
+
+export const getNetworkName = (name: string) => (name === 'homestead' ? 'mainnet' : name)
