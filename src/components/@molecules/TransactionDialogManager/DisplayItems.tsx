@@ -213,10 +213,9 @@ const RecordsValue = ({ value }: { value: [string, string][] }) => {
     <RecordsContainer>
       {value.map(([key, val]) => (
         <RecordContainer>
-          <Typography weight="bold" ellipsis>
-            {key}
+          <Typography ellipsis>
+            <strong>{key}:</strong> {val}
           </Typography>
-          <Typography ellipsis>{val}</Typography>
         </RecordContainer>
       ))}
     </RecordsContainer>

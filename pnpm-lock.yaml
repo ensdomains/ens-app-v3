@@ -29,6 +29,7 @@ specifiers:
   '@deploysentinel/cypress-debugger': ^0.5.5
   '@ensdomains/address-encoder': ^0.2.18
   '@ensdomains/buffer': ^0.1.0
+  '@ensdomains/content-hash': ^2.5.7
   '@ensdomains/dnsprovejs': 0.4.1
   '@ensdomains/dnssecoraclejs': ^0.2.7
   '@ensdomains/ens-contracts': 0.0.15
@@ -145,11 +146,12 @@ specifiers:
 
 dependencies:
   '@ensdomains/address-encoder': 0.2.18
+  '@ensdomains/content-hash': 2.5.7
   '@ensdomains/dnsprovejs': 0.4.1
   '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
   '@ensdomains/ens-contracts': 0.0.15_hardhat@2.11.2
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.32_7mf75m2uyv7dow77vgezq7etiu
+  '@ensdomains/ensjs': 3.0.0-alpha.32_kdpqpin542yrq2nndtznhtz4cm
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.20_6haozuff5ofofiwuoke6ixqiri
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_wiydppdk2wtsgvuygzl3yf3yma
@@ -276,7 +278,7 @@ packages:
     engines: {node: '>=6.0.0'}
     dependencies:
       '@jridgewell/gen-mapping': 0.1.1
-      '@jridgewell/trace-mapping': 0.3.15
+      '@jridgewell/trace-mapping': 0.3.17
 
   /@babel/code-frame/7.12.11:
     resolution: {integrity: sha512-Zt1yodBx1UcyiePMSkWnU4hPqhwq7hGi2nFL1LeA3EUl+q2LQx16MISgJ0+z7dnmgvP9QtIleuETGOiOH1RcIw==}
@@ -2297,10 +2299,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.32_7mf75m2uyv7dow77vgezq7etiu:
+  /@ensdomains/ensjs/3.0.0-alpha.32_kdpqpin542yrq2nndtznhtz4cm:
     resolution: {integrity: sha512-FZ5IXAXxWBOJEBo4XAIGGgLmDdVCwoH/F0Tc0UNi2Dsfz3YBmIIzrb8AuHQC8/GoPX1ly8KhbTPaRmAMIPc76w==}
-    peerDependencies:
-      ethers: '*'
     dependencies:
       '@ensdomains/address-encoder': 0.2.16
       '@ensdomains/content-hash': 2.5.7
@@ -2431,7 +2431,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_hvhmgvgv65f7ns5nchpmx3azgq
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.7.1
@@ -3118,12 +3118,6 @@ packages:
 
   /@jridgewell/sourcemap-codec/1.4.14:
     resolution: {integrity: sha512-XPSJHWmi394fuUuzDnGz1wiKqWfo1yXecHQMRf2l6hztTO+nPru658AyDngaBe7isIxEkRsPR3FZh+s7iVa4Uw==}
-
-  /@jridgewell/trace-mapping/0.3.15:
-    resolution: {integrity: sha512-oWZNOULl+UbhsgB51uuZzglikfIKSUBO/M9W2OfEjn7cmqoAiCgmv9lyACTUacZwBz0ITnJ2NqjU8Tx0DHL88g==}
-    dependencies:
-      '@jridgewell/resolve-uri': 3.1.0
-      '@jridgewell/sourcemap-codec': 1.4.14
 
   /@jridgewell/trace-mapping/0.3.17:
     resolution: {integrity: sha512-MCNzAp77qzKca9+W/+I0+sEpaUnZoeasnghNeVc41VZCEKaCH73Vq3BZZ/SzWIgrqE4H4ceI+p+b6C0mHf9T4g==}
@@ -4986,14 +4980,16 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@typechain/ethers-v5/2.0.0_hvhmgvgv65f7ns5nchpmx3azgq:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.7.1
       typechain: 3.0.0_typescript@4.8.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@types/aria-query/4.2.2:
@@ -14177,13 +14173,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9
@@ -14383,7 +14379,7 @@ packages:
     dependencies:
       '@jest/types': 27.5.1
       '@types/graceful-fs': 4.1.5
-      '@types/node': 18.8.2
+      '@types/node': 18.11.4
       anymatch: 3.1.2
       fb-watchman: 2.0.2
       graceful-fs: 4.2.10
@@ -14642,7 +14638,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 18.8.2
+      '@types/node': 18.11.4
       chalk: 4.1.2
       ci-info: 3.4.0
       graceful-fs: 4.2.10

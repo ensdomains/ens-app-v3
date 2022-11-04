@@ -6,7 +6,8 @@ import { ScrollBox } from '@ensdomains/thorin'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
-import { validateContentHash, validateCryptoAddress } from '@app/utils/validate'
+import { validateCryptoAddress } from '@app/utils/validate'
+import { validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(
   ({ theme }) => css`
@@ -171,7 +172,7 @@ const AdvancedEditorContent = ({
                     error={getFieldState('other.contentHash', formState).error?.message}
                     autoComplete="off"
                     {...register('other.contentHash', {
-                      validate: validateContentHash(),
+                      validate: validateContentHash('all'),
                     })}
                   />
                   <RecordInput

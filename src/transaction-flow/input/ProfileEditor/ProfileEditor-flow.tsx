@@ -19,7 +19,7 @@ import useProfileEditor from '@app/hooks/useProfileEditor'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -108,8 +108,10 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
+const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
+
+  const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
 
   const { name = '', resumable = false } = data
 
@@ -171,7 +173,11 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
     [profile, status, resolverAddress],
   )
 
-  const profileEditorForm = useProfileEditor({ callback: handleCreateTransaction, profile })
+  const profileEditorForm = useProfileEditor({
+    callback: handleCreateTransaction,
+    profile,
+    overwrites: transaction?.data.records,
+  })
   const { setValue, handleSubmit, hasErrors, avatar, _avatar, hasChanges, formState } =
     profileEditorForm
 
