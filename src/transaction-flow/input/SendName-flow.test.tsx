@@ -103,7 +103,7 @@ const userStates = {
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
-        owner: ownerAddress,
+        owner: '0xother',
         registrant: ownerAddress,
       },
       wrapperData: {
@@ -524,6 +524,7 @@ const userStates = {
 describe('getFunctionCallDetails', () => {
   describe('Correct function call details', () => {
     describe('Unwrapped name', () => {
+      // it('')
       it('for name owner who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 

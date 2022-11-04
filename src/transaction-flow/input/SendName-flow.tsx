@@ -289,7 +289,7 @@ export const getFunctionCallDetails = ({
 
   if (!wrapperData || !parentWrapperData) return {}
 
-  const isSubname = name.split('.').length > 2
+  const isSubname = isASubname(name)
   const { fuseObj } = wrapperData
   const { fuseObj: parentFuseObj } = parentWrapperData
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
@@ -312,15 +312,15 @@ export const getFunctionCallDetails = ({
       return functionCallDetails
     }
 
-    const isParentOwner = isParentWrapped
-      ? parentFuseObj.PARENT_CANNOT_CONTROL
-      : parentOwnerData?.registrant === address
+    const isParentManager = isParentWrapped
+      ? !parentFuseObj.PARENT_CANNOT_CONTROL
+      : parentOwnerData?.owner === address
 
     if (isParentOwnerOrManager) {
       const functionCallDetails =
         contractFunction[isParentWrapped ? 'wrapped' : 'unwrapped'][
           isWrapped ? 'wrappedSubname' : 'subname'
-        ][`parent${isParentOwner ? 'Owner' : 'Manager'}`]
+        ][`parent${isParentManager ? 'Manager' : 'Owner'}`]
       return functionCallDetails ?? {}
     }
   }

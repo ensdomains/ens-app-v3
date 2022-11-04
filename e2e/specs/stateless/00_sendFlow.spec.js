@@ -120,7 +120,7 @@ describe('Send Flow', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('owner-button-name-Manager').should('have.text', '0xf39...92266')
   })
-  it('Should allow unwrapped subname to be sent by parent owner (setSubnodeOwner)', () => {
+  it('Should allow unwrapped subname to be sent by unwraped parent owner (setSubnodeOwner)', () => {
     acceptMetamaskAccess(2)
     cy.visit('/profile/sub.test123.eth')
     cy.findByText('View Details').click({ force: true })
@@ -134,9 +134,9 @@ describe('Send Flow', () => {
     cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
   })
 
+  /*
   it.todo(
     'if user goes backwards and forwards again in between sending manager and owner, the flow should still succeed',
-    () => {},
   )
 
   it.todo(
@@ -151,4 +151,10 @@ describe('Send Flow', () => {
   it.todo(
     'should allow sending when parent is unwrapped, child is wrapped, and user is the owner of the child',
   )
+  */
+
+  describe('unhappy', () => {
+    it.todo('should not show send button when parent is owner and not manager')
+    it.todo('should not show send button when subname is wrapped and parent is unwrapped')
+  })
 })
