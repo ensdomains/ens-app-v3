@@ -1,6 +1,4 @@
-import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
-
-import { getFunctionCallDetails, getPermittedActions } from './SendName-flow'
+import { getFunctionCallDetails, getPermittedActions } from './useSelfAbilities'
 
 const ownerAddress = '0x123'
 const account = ownerAddress

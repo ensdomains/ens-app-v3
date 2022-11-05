@@ -13,16 +13,11 @@ import { Outlink } from '@app/components/Outlink'
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
+import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
-import { isASubname } from '@app/utils/utils'
 
 import { makeTransactionItem } from '../transaction'
-
-interface SendPermissions {
-  canSendOwner: boolean
-  canSendManager: boolean
-}
 
 type Data = {
   name: string
@@ -40,41 +35,6 @@ export type Props = {
 } & TransactionDialogPassthrough
 
 type BasicNameData = ReturnType<typeof useBasicName>
-
-interface CallDetails {
-  contract: 'nameWrapper' | 'baseRegistrar' | 'registry'
-  method: 'setOwner' | 'setSubnodeOwner' | 'safeTransferFrom' | 'reclaim'
-}
-
-interface FunctionCallDetails {
-  sendManager?: CallDetails
-  sendOwner?: CallDetails
-}
-
-interface GetFunctionCallDetailsArgs {
-  basicNameData: BasicNameData
-  parentBasicNameData: BasicNameData
-  name: string
-  address: string
-}
-
-interface UserStates {
-  owner: FunctionCallDetails
-  manager: FunctionCallDetails
-  parentManager?: FunctionCallDetails
-  parentOwner?: FunctionCallDetails
-}
-
-interface NameStates {
-  name: UserStates
-  subname: UserStates
-  wrappedSubname: UserStates
-}
-
-interface ContractFunctionInfo {
-  unwrapped: NameStates
-  wrapped: NameStates
-}
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
@@ -146,235 +106,29 @@ const NameValue = ({ value }: { value: string }) => {
   )
 }
 
-// As a user, who is the...
-const contractFunction: ContractFunctionInfo = {
-  unwrapped: {
-    name: {
-      owner: {
-        sendManager: {
-          contract: 'baseRegistrar',
-          method: 'reclaim',
-        },
-        sendOwner: {
-          contract: 'baseRegistrar',
-          method: 'safeTransferFrom',
-        },
-      },
-      manager: {
-        sendManager: {
-          contract: 'registry',
-          method: 'setOwner',
-        },
-      },
-    },
-    subname: {
-      manager: {
-        sendManager: {
-          contract: 'registry',
-          method: 'setOwner',
-        },
-      },
-      owner: {},
-      parentManager: {
-        sendManager: {
-          contract: 'registry',
-          method: 'setSubnodeOwner',
-        },
-      },
-      parentOwner: {
-        // We shouldn't actually do this!
-        // In parent change controller, then do what you would do as controller
-        // sendManager: [],
-      },
-    },
-    wrappedSubname: {
-      manager: {
-        sendManager: {
-          contract: 'nameWrapper',
-          method: 'safeTransferFrom',
-        },
-      },
-      owner: {
-        // This state should never happen as the parent is unwrapped and cannot burn PCC
-      },
-      parentManager: {
-        // We shouldn't actually do this! Will forcibly unwrap the name
-        // sendManager: {
-        //   contract: 'registry',
-        //   method: 'setSubnodeOwner',
-        // },
-      },
-      parentOwner: {
-        // Will require setting yourself as manager first
-        // sendManager: [],
-      },
-    },
-  },
-  wrapped: {
-    name: {
-      owner: {
-        sendOwner: {
-          contract: 'nameWrapper',
-          method: 'safeTransferFrom',
-        },
-      },
-      manager: {
-        sendManager: {
-          contract: 'nameWrapper',
-          method: 'safeTransferFrom',
-        },
-      },
-    },
-    wrappedSubname: {
-      owner: {
-        sendOwner: {
-          contract: 'nameWrapper',
-          method: 'safeTransferFrom',
-        },
-      },
-      manager: {
-        sendManager: {
-          contract: 'nameWrapper',
-          method: 'safeTransferFrom',
-        },
-      },
-      parentManager: {
-        sendManager: {
-          contract: 'nameWrapper',
-          method: 'setSubnodeOwner',
-        },
-      },
-      parentOwner: {
-        sendOwner: {
-          contract: 'nameWrapper',
-          method: 'setSubnodeOwner',
-        },
-        sendManager: {
-          contract: 'nameWrapper',
-          method: 'setSubnodeOwner',
-        },
-      },
-    },
-    subname: {
-      manager: {
-        sendManager: {
-          contract: 'registry',
-          method: 'setOwner',
-        },
-      },
-      owner: {
-        // Unwrapped subname cannot have an owner
-      },
-      parentManager: {
-        // Must forcibly wrap subname or unwrap parent
-        // sendManager: [],
-      },
-      parentOwner: {
-        // Must forcibly wrap subname or unwrap parent
-        // sendManager: [],
-      },
-    },
-  },
-}
-
-// Will pick out the correct function call from the object above
-export const getFunctionCallDetails = ({
-  basicNameData,
-  parentBasicNameData,
-  name,
-  address,
-}: GetFunctionCallDetailsArgs): FunctionCallDetails => {
-  const { ownerData, wrapperData } = basicNameData
-  const { ownerData: parentOwnerData, wrapperData: parentWrapperData } = parentBasicNameData
-
-  if (!wrapperData || !parentWrapperData) return {}
-
-  const isSubname = isASubname(name)
-  const { fuseObj } = wrapperData
-  const { fuseObj: parentFuseObj } = parentWrapperData
-  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
-  const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
-  const isOwner = isWrapped ? fuseObj.PARENT_CANNOT_CONTROL : ownerData?.registrant === address
-
-  if (isSubname) {
-    const isParentWrapped = parentOwnerData?.ownershipLevel === 'nameWrapper'
-    const isParentOwnerOrManager = parentOwnerData?.owner === address
-
-    if (!isOwnerOrManager && !isParentOwnerOrManager) {
-      return {}
-    }
-
-    if (isOwnerOrManager) {
-      const functionCallDetails =
-        contractFunction[isParentWrapped ? 'wrapped' : 'unwrapped'][
-          isWrapped ? 'wrappedSubname' : 'subname'
-        ][isOwner ? 'owner' : 'manager']
-      return functionCallDetails
-    }
-
-    const isParentManager = isParentWrapped
-      ? !parentFuseObj.PARENT_CANNOT_CONTROL
-      : parentOwnerData?.owner === address
-
-    if (isParentOwnerOrManager) {
-      const functionCallDetails =
-        contractFunction[isParentWrapped ? 'wrapped' : 'unwrapped'][
-          isWrapped ? 'wrappedSubname' : 'subname'
-        ][`parent${isParentManager ? 'Manager' : 'Owner'}`]
-      return functionCallDetails ?? {}
-    }
-  }
-
-  // 2LD names
-  if (isOwnerOrManager) {
-    const functionCallDetails =
-      contractFunction[isWrapped ? 'wrapped' : 'unwrapped'].name[isOwner ? 'owner' : 'manager']
-    return functionCallDetails
-  }
-
-  return {}
-}
-
-export const getPermittedActions = (props: GetFunctionCallDetailsArgs): SendPermissions => {
-  if (!props.basicNameData.ownerData) return { canSendOwner: false, canSendManager: false }
-  const result = getFunctionCallDetails(props)
-  if (!result) return { canSendOwner: false, canSendManager: false }
-  const keys = Object.keys(result)
-  return {
-    canSendOwner: keys.includes('sendOwner'),
-    canSendManager: keys.includes('sendManager'),
-  }
-}
-
 export const handleSubmitForm =
   ({
     basicNameData,
-    parentBasicNameData,
     dispatch,
     sendNameWatch,
     managerChoiceWatch,
     ownerChoiceWatch,
     name,
     address,
+    sendNameFunctionCallDetails,
   }: {
     basicNameData: BasicNameData
-    parentBasicNameData: BasicNameData
     dispatch: TransactionDialogPassthrough['dispatch']
     sendNameWatch: string
     managerChoiceWatch: string
     ownerChoiceWatch: string
     name: string
     address: string
+    sendNameFunctionCallDetails: ReturnType<typeof useSelfAbilities>['sendNameFunctionCallDetails']
   }) =>
   () => {
     const { ownerData } = basicNameData
-    const functionCallDetails = getFunctionCallDetails({
-      basicNameData,
-      parentBasicNameData,
-      name,
-      address,
-    })
-    const callCount = Object.keys(functionCallDetails).length
+    const callCount = Object.keys(sendNameFunctionCallDetails).length
     const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
 
     if (callCount > 2) {
@@ -382,8 +136,12 @@ export const handleSubmitForm =
       return
     }
 
-    if (Object.keys(functionCallDetails).length === 2 && managerChoiceWatch && ownerChoiceWatch) {
-      if (!functionCallDetails.sendManager || !functionCallDetails.sendOwner) return
+    if (
+      Object.keys(sendNameFunctionCallDetails).length === 2 &&
+      managerChoiceWatch &&
+      ownerChoiceWatch
+    ) {
+      if (!sendNameFunctionCallDetails.sendManager || !sendNameFunctionCallDetails.sendOwner) return
       // This can only happen as the registrant of a 2LD .eth name
       dispatch({
         name: 'setTransactions',
@@ -391,13 +149,13 @@ export const handleSubmitForm =
           makeTransactionItem('transferName', {
             name,
             newOwner: sendNameWatch,
-            contract: functionCallDetails.sendManager.contract,
-            reclaim: functionCallDetails.sendManager.method === 'reclaim',
+            contract: sendNameFunctionCallDetails.sendManager.contract,
+            reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
           }),
           makeTransactionItem('transferName', {
             name,
             newOwner: sendNameWatch,
-            contract: functionCallDetails.sendOwner.contract,
+            contract: sendNameFunctionCallDetails.sendOwner.contract,
           }),
         ],
       })
@@ -406,7 +164,7 @@ export const handleSubmitForm =
     }
 
     const sendType = managerChoiceWatch ? 'sendManager' : 'sendOwner'
-    if (!functionCallDetails[sendType]) return
+    if (!sendNameFunctionCallDetails[sendType]) return
 
     dispatch({
       name: 'setTransactions',
@@ -414,8 +172,8 @@ export const handleSubmitForm =
         makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
           name,
           newOwner: sendNameWatch,
-          contract: functionCallDetails[sendType]!.contract,
-          reclaim: functionCallDetails[sendType]!.method === 'reclaim',
+          contract: sendNameFunctionCallDetails[sendType]!.contract,
+          reclaim: sendNameFunctionCallDetails[sendType]!.method === 'reclaim',
         }),
       ],
     })
@@ -428,8 +186,6 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const formRef = useRef<HTMLFormElement>(null)
   const { getRecords } = useEns()
   const basicNameData = useBasicName(name as string)
-  const parentName = name.split('.').slice(1).join('.')
-  const parentBasicNameData = useBasicName(parentName)
   const { address = '' } = useAccount()
   const { register, watch, getFieldState } = useForm<FormData>({
     mode: 'onChange',
@@ -452,12 +208,10 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
   const { name: primaryName } = usePrimary(ethNameValidation || sendNameWatch)
 
-  const { canSendOwner, canSendManager } = getPermittedActions({
-    basicNameData,
-    parentBasicNameData,
-    name,
+  const { canSendOwner, canSendManager, sendNameFunctionCallDetails } = useSelfAbilities(
     address,
-  })
+    name,
+  )
 
   const hasErrors = useMemo(() => {
     const errorData = {
@@ -576,13 +330,13 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             shadowless
             onClick={handleSubmitForm({
               basicNameData,
-              parentBasicNameData,
               dispatch,
               sendNameWatch,
               managerChoiceWatch,
               ownerChoiceWatch,
               name,
               address,
+              sendNameFunctionCallDetails,
             })}
             disabled={hasErrors.hasError}
           >

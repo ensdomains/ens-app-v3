@@ -81,7 +81,8 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     isWrapped,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const selfAbilities = useSelfAbilities(address, name)
+  console.log('selfAbilites: ', selfAbilities)
   const nameWrapperExists = useWrapperExists()
   const canBeWrapped =
     nameWrapperExists &&
