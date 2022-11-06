@@ -52,3 +52,5 @@ export const RESOLVER_INTERFACE_IDS = {
   txtInterfaceId: '0x59d1d43c',
   contentHashInterfaceId: '0xbc1c58d1',
 }
+
+export const GRACE_PERIOD = 90 * 24 * 60 * 60 * 1000

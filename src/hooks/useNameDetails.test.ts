@@ -6,16 +6,19 @@ import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
 import { useRegistrationStatus } from './useRegistrationStatus'
 import { useValidate } from './useValidate'
+import { useWrapperExists } from './useWrapperExists'
 
 jest.mock('@app/utils/EnsProvider')
 jest.mock('./useProfile')
 jest.mock('./useRegistrationStatus')
 jest.mock('./useValidate')
+jest.mock('./useWrapperExists')
 
 const mockUseEns = mockFunction(useEns)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseRegistrationStatus = mockFunction(useRegistrationStatus)
 const mockUseValidate = mockFunction(useValidate)
+const mockUseWrapperExists = mockFunction(useWrapperExists)
 
 const mockGetOwner = {
   ...jest.fn(),
@@ -51,6 +54,7 @@ describe('useNameDetails', () => {
     isLoading: false,
     status: 'success',
   })
+  mockUseWrapperExists.mockReturnValue(true)
   afterEach(() => {
     jest.clearAllMocks()
   })

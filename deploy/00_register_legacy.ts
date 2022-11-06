@@ -106,6 +106,18 @@ const names: Name[] = [
     customDuration: 2419200,
   },
   {
+    label: 'grace-period',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
+  {
+    label: 'grace-period-in-list',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    customDuration: 5011200,
+  },
+  {
     label: 'unwrapped-with-wrapped-subnames',
     namedOwner: 'owner',
     namedAddr: 'owner',

@@ -21,6 +21,11 @@ window.scroll = jest.fn()
 describe('SearchInput', () => {
   mockUseLocalStorage.mockReturnValue([[]])
   mockUseChainId.mockReturnValue(1)
+  window.ResizeObserver = jest.fn()
+  ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
+    observe: jest.fn(),
+    disconnect: jest.fn(),
+  }))
 
   it('should render on desktop layouts', () => {
     mockUseBreakpoint.mockReturnValue({

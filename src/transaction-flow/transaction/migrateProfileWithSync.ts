@@ -1,9 +1,11 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
+import { TFunction } from 'react-i18next'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
 import { Profile, PublicENS, RecordItem, Transaction, TransactionDisplayItem } from '@app/types'
 import { recordItemToKeyValue } from '@app/utils/editor'
+import { recordOptionsToToupleList } from '@app/utils/records'
 
 import { contentHashToString } from '../../utils/contenthash'
 
@@ -12,13 +14,49 @@ type Data = {
   records?: RecordOptions
 }
 
-const displayItems = ({ name }: Data): TransactionDisplayItem[] => [
-  {
-    label: 'name',
-    value: name,
-    type: 'name',
-  },
-]
+const displayItems = ({ name, records }: Data, t: TFunction): TransactionDisplayItem[] => {
+  const recordsList = recordOptionsToToupleList(records)
+
+  const actionItem =
+    recordsList.length > 0
+      ? {
+          label: 'action',
+          value: t('transaction.description.migrateProfileWithSync'),
+        }
+      : {
+          label: 'action',
+          value: t('transaction.description.migrateProfile'),
+        }
+
+  /* eslint-disable no-nested-ternary */
+  const recordsItem =
+    recordsList.length > 3
+      ? ({
+          label: 'update',
+          value: t('transaction.itemValue.records', { count: recordsList.length }),
+        } as TransactionDisplayItem)
+      : recordsList.length > 0
+      ? ({
+          label: 'update',
+          value: recordsList,
+          type: 'records',
+        } as TransactionDisplayItem)
+      : {
+          label: 'info',
+          value: t(`transaction.info.migrateProfile`),
+        }
+  /* eslint-enable no-nested-ternary */
+
+  return [
+    {
+      label: 'name',
+      value: name,
+      type: 'name',
+    },
+    actionItem,
+    recordsItem,
+  ]
+}
 
 // Returns the an array of record items where deleted records have value set to empty string.
 export const syncRecords = (

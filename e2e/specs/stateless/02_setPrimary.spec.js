@@ -8,6 +8,14 @@ describe('Set Primary Name', () => {
     cy.visit('/my/settings')
     cy.findByTestId('primary-section-text').should('contain.text', 'No primary name set.')
   })
+
+  it('should only show disconnect option in profile dropdown', () => {
+    cy.findByTestId('header-profile').as('header-profile')
+    cy.get('@header-profile').click()
+    cy.get('@header-profile').next().children().should('have.length', 1)
+  })
+
+
   describe('profile', () => {
     describe('differening ETH record', () => {
       it('should show primary name action in profile dropdown', () => {

@@ -10,7 +10,8 @@ import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
-import { useNameDetails } from '@app/hooks/useNameDetails'
+import useDNSOwner from '@app/hooks/useDNSOwner'
+import { useValidate } from '@app/hooks/useValidate'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { AddTextRecord } from './AddTextRecord'
@@ -137,12 +138,13 @@ export default () => {
   const breakpoints = useBreakpoint()
   const [currentStep, setCurrentStep] = useState(0)
   const [syncWarning, setSyncWarning] = useState(false)
-  const { dnsOwner } = useNameDetails(router.query.name as string)
+
+  const { name, valid } = useValidate(router.query.name as string)
+  const { dnsOwner } = useDNSOwner(name, valid)
+
   const transactions = useRecentTransactions()
   const { isConnected } = useAccount()
   const { t } = useTranslation('dnssec')
-
-  const { name } = router.query
 
   useEffect(() => {
     const init = async () => {
@@ -186,7 +188,7 @@ export default () => {
             <TitleWrapper $invert={!!router.query.from}>
               <TitleContainer>
                 <StyledTitle weight="bold">
-                  {t('action.claim', { ns: 'common' })} {router.query.name}
+                  {t('action.claim', { ns: 'common' })} {name}
                 </StyledTitle>
               </TitleContainer>
             </TitleWrapper>
@@ -199,14 +201,16 @@ export default () => {
         <MainContentContainer>
           {isConnected ? (
             <>
-              {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep }} />}
+              {currentStep === 0 && <EnableDNSSEC {...{ currentStep, setCurrentStep, name }} />}
               {currentStep === 1 && (
-                <AddTextRecord {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning }} />
+                <AddTextRecord
+                  {...{ currentStep, setCurrentStep, syncWarning, setSyncWarning, name }}
+                />
               )}
               {currentStep === 2 && (
-                <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning }} />
+                <ClaimDomain {...{ currentStep, setCurrentStep, syncWarning, name }} />
               )}
-              {currentStep === 3 && <ClaimComplete />}
+              {currentStep === 3 && <ClaimComplete name={name} />}
             </>
           ) : (
             <Typography style={{ textAlign: 'center' }}>{t('general.connectWallet')}</Typography>
