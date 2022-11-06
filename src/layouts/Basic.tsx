@@ -55,7 +55,7 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
 
   useEffect(() => {
     if (currentChain && !(currentChain?.id === 5 || currentChain?.id === 1337)) {
-      switchNetwork?.(5)
+      switchNetwork?.(1337)
       router.push('/unsupportedNetwork')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
