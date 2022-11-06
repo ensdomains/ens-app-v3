@@ -121,6 +121,9 @@ export type TransactionFlowAction =
         timestamp: number
       }
     }
+  | {
+      name: 'resetTransactionStep'
+    }
 
 export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
   variant: 'actionable'

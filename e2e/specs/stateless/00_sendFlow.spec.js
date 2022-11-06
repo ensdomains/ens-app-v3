@@ -7,7 +7,6 @@ describe('Send Flow', () => {
   before(() => {
     acceptMetamaskAccess(2, true)
   })
-  /*
   describe('Happy', () => {
     it('Should allow owner to change manager', () => {
       cy.visit('/profile/test123.eth')
@@ -76,6 +75,16 @@ describe('Send Flow', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByText('Next').click()
+      cy.findByText('Back').click()
+
+      //Should work after going back after first transaction
+      cy.findByTestId('send-name-input').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
+      cy.findByText('Next').click()
+      cy.wait(1000)
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByText('Next').click()
+
       cy.wait(1000)
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
@@ -138,7 +147,6 @@ describe('Send Flow', () => {
       cy.findByTestId('owner-button-name-Manager').should('have.text', '0x709...c79C8')
     })
   })
-  */
 
   describe('Unhappy', () => {
     it('should not show send button when parent is owner and not manager', () => {

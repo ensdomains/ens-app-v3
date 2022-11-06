@@ -93,6 +93,10 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       getSelectedItem().currentTransaction += 1
       break
     }
+    case 'resetTransactionStep': {
+      getSelectedItem().currentTransaction = 0
+      break
+    }
     case 'setTransactionStage': {
       const selectedItem = getSelectedItem()
       const currentTransaction = getCurrentTransaction(selectedItem)
