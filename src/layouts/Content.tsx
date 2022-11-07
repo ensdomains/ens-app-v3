@@ -1,6 +1,6 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { ReactNode } from 'react'
+import { ReactNode, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
@@ -16,7 +16,7 @@ const HeadingItems = styled.div<{ $spacing: string }>(
     grid-column: span 1;
     width: 100%;
     max-width: 100%;
-    overflow: hidden;
+
     display: grid;
     grid-template-columns: 1fr;
     gap: ${theme.space['5']};
@@ -50,7 +50,7 @@ const ContentContainer = styled.div<{ $multiColumn?: boolean }>(
     padding: 0;
     min-height: 0;
     height: min-content;
-    overflow: hidden;
+
     ${$multiColumn &&
     mq.sm.min(css`
       grid-column: span 2;
@@ -91,16 +91,15 @@ const WarningWrapper = styled.div(
 const FullWidthSkeleton = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
-    overflow: hidden;
   `,
 )
 
 const TitleContainer = styled.div(
   () => css`
+    position: relative;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow: hidden;
   `,
 )
 
@@ -126,13 +125,20 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
   `,
 )
 
+const DummyTitle = styled(Typography)(
+  ({ theme }) => css`
+    font-size: ${theme.fontSizes.extraLarge};
+    white-space: pre-wrap;
+  `,
+)
+
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
     line-height: ${theme.lineHeights.normal};
-    width: 100%;
+    position: absolute;
+    top: 0;
     white-space: nowrap;
-    overflow: hidden;
     text-overflow: ellipsis;
   `,
 )
@@ -143,6 +149,65 @@ const Subtitle = styled(Typography)(
     color: ${theme.colors.textTertiary};
   `,
 )
+
+const CompactTitle = ({
+  invert,
+  showSubtitle,
+  title,
+  subtitle,
+  titleButton,
+}: {
+  invert: boolean
+  showSubtitle: boolean
+  title: string
+  subtitle?: string
+  titleButton: ReactNode
+}) => {
+  const ref = useRef<HTMLDivElement>(null)
+  const [titleWidth, setTitleWidth] = useState(0)
+
+  const callback = () => {
+    const { current } = ref
+    if (current) {
+      const parent = current.parentElement!
+      const parentGap = parseInt(window.getComputedStyle(parent).getPropertyValue('gap'))
+      let newWidth = parent.offsetWidth
+      for (const child of parent.children) {
+        if (child !== current) {
+          newWidth -= child.clientWidth + parentGap
+        }
+      }
+      setTitleWidth(newWidth)
+    }
+  }
+
+  useEffect(() => {
+    const observer = new ResizeObserver(callback)
+    observer.observe(document.body)
+    return () => {
+      observer.disconnect()
+    }
+  }, [])
+
+  return (
+    <ContentContainer ref={ref}>
+      <TitleWrapper $invert={invert}>
+        {titleButton}
+        <TitleContainer>
+          <DummyTitle weight="bold"> </DummyTitle>
+          <Title
+            className="shrinkable-title"
+            weight="bold"
+            style={{ maxWidth: titleWidth, overflow: 'hidden' }}
+          >
+            {title}
+          </Title>
+          {showSubtitle && <Subtitle weight="bold">{subtitle}</Subtitle>}
+        </TitleContainer>
+      </TitleWrapper>
+    </ContentContainer>
+  )
+}
 
 export const Content = ({
   children,
@@ -231,17 +296,13 @@ export const Content = ({
                   </Button>
                 </div>
               )}
-              <ContentContainer>
-                <TitleWrapper $invert={!!hasBack}>
-                  {titleButton}
-                  <TitleContainer>
-                    <Title weight="bold">{title}</Title>
-                    {subtitle && (!breakpoints.md || alwaysShowSubtitle) && (
-                      <Subtitle weight="bold">{subtitle}</Subtitle>
-                    )}
-                  </TitleContainer>
-                </TitleWrapper>
-              </ContentContainer>
+              <CompactTitle
+                invert={!!hasBack}
+                showSubtitle={!!(subtitle && (!breakpoints.md || alwaysShowSubtitle))}
+                subtitle={subtitle}
+                title={title}
+                titleButton={titleButton}
+              />
               {!hasBack && !breakpoints.md && <HamburgerRoutes />}
             </CustomLeadingHeading>
           </Skeleton>
