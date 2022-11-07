@@ -115,7 +115,6 @@ export const Details = ({
   isCached?: boolean
 }) => {
   const { t } = useTranslation('profile')
-  console.log('selfAbilities: ', selfAbilities)
 
   const owners: {
     address: string

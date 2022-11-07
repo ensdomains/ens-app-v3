@@ -1,7 +1,6 @@
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 const accountOneShort = '0xf39...92266'
-const accountTwoShort = '0x709...c79C8'
 
 describe('Send Flow', () => {
   before(() => {
@@ -193,11 +192,4 @@ describe('Send Flow', () => {
       cy.findByText('Send').should('not.exist')
     })
   })
-
-  /*
-  it.todo(
-    'if user goes backwards and forwards again in between sending manager and owner, the flow should still succeed',
-  )
-
-  */
 })
