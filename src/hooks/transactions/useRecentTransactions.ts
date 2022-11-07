@@ -15,6 +15,11 @@ export function useRecentTransactions(): Transaction[] {
   useEffect(() => {
     if (store && address && chainId) {
       setTransactions(store.getTransactions(address, chainId))
+
+      return store.onChange(() => {
+        const newTransactions = store.getTransactions(address, chainId)
+        setTransactions(newTransactions)
+      })
     }
   }, [store, address, chainId])
 
