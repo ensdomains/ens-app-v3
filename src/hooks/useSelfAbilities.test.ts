@@ -1,4 +1,11 @@
-import { getFunctionCallDetails, getPermittedActions } from './useSelfAbilities'
+import { mockFunction, renderHook } from '@app/test-utils'
+
+import { useBasicName } from '@app/hooks/useBasicName'
+
+import { getFunctionCallDetails, getPermittedActions, useSelfAbilities } from './useSelfAbilities'
+
+jest.mock('@app/hooks/useBasicName')
+const mockUseBasicName = mockFunction(useBasicName)
 
 const ownerAddress = '0x123'
 const account = ownerAddress
@@ -201,6 +208,26 @@ const userStates = {
       wrapperData: {
         fuseObj: {
           PARENT_CANNOT_CONTROL: true,
+        },
+      },
+    },
+    parentBasicNameData: {
+      ownerData: {
+        ownershipLevel: 'registry',
+      },
+      wrapperData: {},
+    },
+  },
+  wrappedNameCTBurnedOwner: {
+    basicNameData: {
+      ownerData: {
+        ownershipLevel: 'nameWrapper',
+        owner: ownerAddress,
+      },
+      wrapperData: {
+        fuseObj: {
+          PARENT_CANNOT_CONTROL: true,
+          CANNOT_TRANSFER: true,
         },
       },
     },
@@ -522,7 +549,6 @@ const userStates = {
 describe('getFunctionCallDetails', () => {
   describe('Correct function call details', () => {
     describe('Unwrapped name', () => {
-      // it('')
       it('for name owner who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } = userStates.unwrappedNameOwner
 
@@ -1052,5 +1078,20 @@ describe('getPermittedActions', () => {
     it.todo('should return for unwrapped subname owner holder, wrapped parent owner holder')
     // Should not be possible
     it.todo('should return for unwrapped subname owner holder, unwrapped parent owner holder')
+  })
+})
+
+describe('useSelfAbilities', () => {
+  it('should return false for all send abilities if CANNOT_TRANSFER has been burned', () => {
+    mockUseBasicName.mockReturnValue({
+      wrapperData: {
+        fuseObj: {
+          CANNOT_TRANSFER: true,
+        },
+      },
+    })
+    const { result } = renderHook(() => useSelfAbilities(name, account))
+    expect(result.current.canSend).toBe(false)
+    console.log('result: ', result.current)
   })
 })

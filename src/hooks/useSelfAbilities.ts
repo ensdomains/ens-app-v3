@@ -268,7 +268,14 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       sendNameFunctionCallDetails: {},
     }
 
-    if (!name || !address || !basicNameData || !parentBasicNameData) return abilities
+    if (
+      !name ||
+      !address ||
+      !basicNameData ||
+      !parentBasicNameData ||
+      basicNameData.wrapperData?.fuseObj.CANNOT_TRANSFER
+    )
+      return abilities
 
     const functionCallDetails = getFunctionCallDetails({
       basicNameData,
