@@ -272,7 +272,7 @@ export const TransactionStageModal = ({
       }
     },
     {
-      enabled: !!transaction && !!signer && !!ens,
+      enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
     },
   )
   const requestError = _requestError as TxError | null
@@ -436,7 +436,7 @@ export const TransactionStageModal = ({
   )
 
   const lowerError = useMemo(() => {
-    if (stepStatus === 'completed') return null
+    if (stage === 'complete' || stage === 'sent') return null
     if (transactionError) {
       return transactionError.message
     }
@@ -447,7 +447,7 @@ export const TransactionStageModal = ({
       return requestError.reason
     }
     return null
-  }, [transactionError, requestError, stepStatus])
+  }, [stage, transactionError, requestError])
 
   return (
     <>

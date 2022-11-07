@@ -18,7 +18,6 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -78,16 +77,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     basicIsCachedData,
     profileIsCachedData,
     wrapperData,
-    isWrapped,
+    canBeWrapped,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, name)
-  console.log('selfAbilites: ', selfAbilities)
-  const nameWrapperExists = useWrapperExists()
-  const canBeWrapped =
-    nameWrapperExists &&
-    !isWrapped &&
-    normalisedName.endsWith('.eth') &&
+  const _canBeWrapped =
+    canBeWrapped &&
     (ownerData?.ownershipLevel === 'registrar'
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
@@ -100,6 +95,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       : // if is self, user must be connected
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
   )
+
+  useEffect(() => {
+    if (isSelf && name) {
+      router.replace(`/profile/${name}`)
+    }
+  }, [isSelf, name, router])
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
@@ -132,7 +133,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const { showDataInput } = useTransactionFlow()
   const handleEditProfile = () => {
-    showDataInput(`edit-profile-${name}`, 'ProfileEditor', { name })
+    showDataInput(
+      `edit-profile-${name}`,
+      'ProfileEditor',
+      { name },
+      { disableBackgroundClick: true },
+    )
   }
 
   const { profileActions } = useProfileActions()
@@ -156,7 +162,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         loading={isLoading}
       >
         {{
-          info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
+          info: _canBeWrapped && <WrapperCallToAction name={normalisedName} />,
           warning: error
             ? {
                 type: 'warning',

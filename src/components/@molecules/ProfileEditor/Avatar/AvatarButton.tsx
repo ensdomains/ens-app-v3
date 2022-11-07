@@ -56,14 +56,15 @@ const IconMask = styled.div(
     position: absolute;
     top: 0;
     left: 0;
-    width: 100%;
-    height: 100%;
+    width: 90px;
+    height: 90px;
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     background: linear-gradient(0deg, rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6));
     border: 4px solid ${theme.colors.grey};
+    overflow: hidden;
 
     svg {
       width: 40px;
@@ -72,11 +73,13 @@ const IconMask = styled.div(
   `,
 )
 
+export type AvatarClickType = 'upload' | 'nft'
+
 type Props = {
   validated?: boolean
   error?: boolean
   src?: string
-  onSelectOption?: (value: string) => void
+  onSelectOption?: (value: AvatarClickType) => void
   setValue: UseFormSetValue<ProfileEditorType>
   setDisplay: (display: string | null) => void
 }
@@ -86,7 +89,7 @@ const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisp
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
-  const handleSelectOption = (value: string) => () => {
+  const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
     if (value === 'remove') {
       setValue('avatar', undefined)
       setDisplay(null)

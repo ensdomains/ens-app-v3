@@ -22,7 +22,9 @@ describe('Import DNSSEC name', () => {
   })
   it('should allow user to import a domain that they are not the owner of', () => {
     cy.visit('/import/leontalbert.xyz')
-    cy.findByText('0x32518828A071a0e6E549F989D4aaB4Cd7401be8f').should('be.visible')
+    cy.findByText('0x32518828A071a0e6E549F989D4aaB4Cd7401be8f', { timeout: 10000 }).should(
+      'be.visible',
+    )
     cy.wait(2000)
     cy.findByTestId('dnssec-check-button').click({ force: true })
     cy.findByText(
@@ -33,7 +35,9 @@ describe('Import DNSSEC name', () => {
     cy.findByText('Claim').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.findByTestId('transaction-modal-complete-button', { timeout: 60000 }).click()
+    cy.findByTestId('transaction-modal-complete-button', {
+      timeout: Cypress.env('transactionWaitTime'),
+    }).click()
     cy.findByText('Congratulations!').should('be.visible')
   })
   it('should allow user to import a name that they are the owner of', () => {
@@ -48,7 +52,9 @@ describe('Import DNSSEC name', () => {
     cy.findByText('Claim').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.findByTestId('transaction-modal-complete-button', { timeout: 60000 }).click()
+    cy.findByTestId('transaction-modal-complete-button', {
+      timeout: Cypress.env('transactionWaitTime'),
+    }).click()
     cy.findByText('Congratulations!').should('be.visible')
     cy.findByText('View Name').click()
     cy.wait(5000)

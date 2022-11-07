@@ -1,3 +1,5 @@
+import { toUtf8Bytes } from 'ethers/lib/utils'
+
 import { networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -11,7 +13,7 @@ const baseMetadataURL = process.env.NEXT_PUBLIC_PROVIDER
 export function imageUrlUnknownRecord(name: string, network: number) {
   const supported = getSupportedNetworkName(network)
 
-  return `${baseMetadataURL}/${supported}/avatar/${name}`
+  return `${baseMetadataURL}/${supported}/avatar/${name}?timestamp=${Date.now()}`
 }
 
 export function ensNftImageUrl(name: string, network: number, regAddr: string) {
@@ -55,3 +57,8 @@ export const isDNSName = (name: string): boolean => {
 }
 
 export const isASubname = (name: string) => name.split('.').length > 2
+
+export const isLabelTooLong = (label: string) => {
+  const bytes = toUtf8Bytes(label)
+  return bytes.byteLength > 255
+}

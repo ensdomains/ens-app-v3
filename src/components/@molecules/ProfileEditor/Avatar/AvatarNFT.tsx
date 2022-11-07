@@ -9,6 +9,7 @@ import { Button, Dialog, Heading, Input, Typography } from '@ensdomains/thorin'
 
 import MagnifyingGlassSVG from '@app/assets/MagnifyingGlass.svg'
 import { ScrollBoxWithSpinner, SpinnerRow } from '@app/components/@molecules/ScrollBoxWithSpinner'
+import { useChainName } from '@app/hooks/useChainName'
 
 type OwnedNFT = {
   contract: {
@@ -50,7 +51,8 @@ type NFTResponse = {
 }
 
 const alchemyKey = process.env.NEXT_PUBLIC_ALCHEMY_KEY || 'no-key'
-const baseURL = `https://eth-mainnet.alchemyapi.io/nft/v2/${alchemyKey}/getNFTs/`
+const makeBaseURL = (network: string) =>
+  `https://eth-${network}.alchemyapi.io/nft/v2/${alchemyKey}/getNFTs/`
 
 const InnerScrollBox = styled.div(
   ({ theme }) => css`
@@ -127,7 +129,7 @@ const SelectedNFTImage = styled.img(
 const LoadingContainer = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
-    height: 100vh;
+    height: ${theme.space['32']};
 
     display: flex;
     align-items: center;
@@ -144,6 +146,7 @@ export const AvatarNFT = ({
   handleCancel: () => void
   handleSubmit: (display: string, uri: string) => void
 }) => {
+  const chain = useChainName()
   const { t } = useTranslation('transactionFlow')
 
   const { address: _address } = useAccount()
@@ -154,7 +157,7 @@ export const AvatarNFT = ({
     fetchNextPage,
     isLoading,
   } = useInfiniteQuery(
-    [address, 'NFTs'],
+    [chain, address, 'NFTs'],
     async ({ pageParam }: { pageParam?: string }) => {
       const urlParams = new URLSearchParams()
       urlParams.append('owner', address)
@@ -162,7 +165,7 @@ export const AvatarNFT = ({
       if (pageParam) {
         urlParams.append('pageKey', pageParam)
       }
-      const response = (await fetch(`${baseURL}?${urlParams.toString()}`, {
+      const response = (await fetch(`${makeBaseURL(chain)}?${urlParams.toString()}`, {
         method: 'GET',
         redirect: 'follow',
       }).then((res) => res.json())) as NFTResponse

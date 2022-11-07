@@ -4,12 +4,15 @@ import { useEns } from '@app/utils/EnsProvider'
 
 import { useBasicName } from './useBasicName'
 import { useValidate } from './useValidate'
+import { useWrapperExists } from './useWrapperExists'
 
 jest.mock('@app/utils/EnsProvider')
 jest.mock('./useValidate')
+jest.mock('./useWrapperExists')
 
 const mockUseEns = mockFunction(useEns)
 const mockUseValidate = mockFunction(useValidate)
+const mockUseWrapperExists = mockFunction(useWrapperExists)
 
 const mockGetOwner = {
   ...jest.fn(),
@@ -39,6 +42,7 @@ describe('useBasicName', () => {
     getWrapperData: mockGetWrapperData,
     batch: mockBatch,
   })
+  mockUseWrapperExists.mockReturnValue(true)
   afterEach(() => {
     jest.clearAllMocks()
   })

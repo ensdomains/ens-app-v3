@@ -59,6 +59,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
           }),
         ],
         resumable: true,
+        disableBackgroundClick: true,
       },
     })
   }

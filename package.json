@@ -1,6 +1,6 @@
 {
   "name": "ens-app-v2",
-  "version": "0.1.122",
+  "version": "0.1.123",
   "workspaces": [
     "./functions"
   ],
@@ -33,8 +33,8 @@
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID",
     "synpress:ci:stateful": "pnpm synpress:stateful --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2",
-    "e2e": "E2E=true pnpm tenv start --extra-time 11368000",
-    "e2e:ci": "E2E=true CI=true STABLE_MODE=true pnpm tenv start --extra-time 11368000",
+    "e2e": "E2E=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
+    "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
     "e2e:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:stateful",
     "e2e:ci:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:ci:stateful",
     "postinstall": "husky install",
@@ -70,6 +70,7 @@
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
     "immer": "^9.0.15",
+    "intl-segmenter-polyfill": "^0.4.4",
     "iso-639-1": "^2.1.15",
     "lodash": "^4.17.21",
     "next": "12.1.6",
@@ -95,8 +96,9 @@
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
     "@cloudflare/wrangler": "^1.19.12",
+    "@deploysentinel/cypress-debugger": "^0.5.5",
     "@ensdomains/buffer": "^0.1.0",
-    "@ensdomains/ens-test-env": "^0.3.3",
+    "@ensdomains/ens-test-env": "^0.3.5",
     "@ethersproject/providers": "^5.7.0",
     "@next/bundle-analyzer": "^12.2.5",
     "@next/swc-linux-x64-gnu": "12.1.4",

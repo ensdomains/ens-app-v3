@@ -7,6 +7,10 @@ import * as ThorinComponents from '@ensdomains/thorin'
 
 import { AvatarNFT } from './AvatarNFT'
 
+jest.mock('@app/hooks/useChainName', () => ({
+  useChainName: () => 'mainnet',
+}))
+
 const mockUseAccount = mockFunction(useAccount)
 const mockHandleSubmit = jest.fn()
 const mockHandleCancel = jest.fn()

@@ -31,9 +31,17 @@ export interface TransactionDisplayItemList extends TransactionDisplayItemBase {
   value: string[]
 }
 
-export type TransactionDisplayItem = TransactionDisplayItemSingle | TransactionDisplayItemList
+export interface TransactionDisplayItemRecords extends TransactionDisplayItemBase {
+  type: 'records'
+  value: [string, string][]
+}
 
-export type TransactionDisplayItemTypes = 'name' | 'address' | 'list'
+export type TransactionDisplayItem =
+  | TransactionDisplayItemSingle
+  | TransactionDisplayItemList
+  | TransactionDisplayItemRecords
+
+export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records'
 
 type PublicInterface<Type> = { [Key in keyof Type]: Type[Key] }
 
