@@ -78,7 +78,7 @@ describe('Settings', () => {
       cy.findByTestId('close-icon').click()
     })
     it('should clear transactions when clear is pressed', () => {
-      cy.contains('Clear').click()
+      cy.findByTestId('transaction-clear-button').should('not.be.disabled').click()
       cy.findByTestId('transaction-confirmed').should('not.exist')
     })
   })
