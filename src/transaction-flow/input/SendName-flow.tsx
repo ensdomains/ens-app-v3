@@ -1,5 +1,5 @@
 import { ethers } from 'ethers'
-import { useMemo, useRef } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -106,22 +106,67 @@ const NameValue = ({ value }: { value: string }) => {
   )
 }
 
+const DogFood = ({ register, getFieldState, watch, setValue }) => {
+  const { t } = useTranslation('profile')
+  const { getRecords } = useEns()
+
+  const inputWatch = watch('dogfoodRaw')
+  const { data: ethNameAddress } = useQuery(
+    ['ethNameValidation', inputWatch],
+    async () => {
+      const result = await getRecords(inputWatch)
+      return result?.address
+    },
+    { enabled: inputWatch?.includes('.eth') },
+  )
+  const { name: primaryName } = usePrimary(ethNameAddress || inputWatch)
+
+  useEffect(() => {
+    setValue('address: ', ethNameAddress || inputWatch)
+  }, [ethNameAddress, inputWatch, setValue])
+
+  return (
+    <InnerContainer>
+      <Input
+        data-testid="send-name-input"
+        label="Send to"
+        placeholder={t('details.sendName.inputPlaceholder')}
+        {...register('dogfoodRaw', {
+          validate: {
+            length: (value) =>
+              !value.includes('.eth') && value.length !== 42
+                ? t('errors.addressLength')
+                : undefined,
+            isAddress: (value) =>
+              !value.includes('.eth') && !ethers.utils.isAddress(value)
+                ? t('errors.invalidAddress')
+                : undefined,
+          },
+        })}
+        error={getFieldState('dogfoodRaw').error?.message}
+      />
+      <Spacer $height="4" />
+      {primaryName && <NameValue value={primaryName} />}
+    </InnerContainer>
+  )
+}
+
 export const handleSubmitForm =
   ({
     basicNameData,
     dispatch,
-    sendNameWatch,
-    managerChoiceWatch,
-    ownerChoiceWatch,
+    newOwner,
+    managerChoice,
+    ownerChoice,
     name,
     address,
     sendNameFunctionCallDetails,
   }: {
     basicNameData: BasicNameData
     dispatch: TransactionDialogPassthrough['dispatch']
-    sendNameWatch: string
-    managerChoiceWatch: string
-    ownerChoiceWatch: string
+    newOwner: string
+    managerChoice: string
+    ownerChoice: string
     name: string
     address: string
     sendNameFunctionCallDetails: ReturnType<typeof useSelfAbilities>['sendNameFunctionCallDetails']
@@ -136,11 +181,7 @@ export const handleSubmitForm =
       return
     }
 
-    if (
-      Object.keys(sendNameFunctionCallDetails).length === 2 &&
-      managerChoiceWatch &&
-      ownerChoiceWatch
-    ) {
+    if (Object.keys(sendNameFunctionCallDetails).length === 2 && managerChoice && ownerChoice) {
       if (!sendNameFunctionCallDetails.sendManager || !sendNameFunctionCallDetails.sendOwner) return
       // This can only happen as the registrant of a 2LD .eth name
       dispatch({
@@ -148,13 +189,13 @@ export const handleSubmitForm =
         payload: [
           makeTransactionItem('transferName', {
             name,
-            newOwner: sendNameWatch,
+            newOwner,
             contract: sendNameFunctionCallDetails.sendManager.contract,
             reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
           }),
           makeTransactionItem('transferName', {
             name,
-            newOwner: sendNameWatch,
+            newOwner,
             contract: sendNameFunctionCallDetails.sendOwner.contract,
           }),
         ],
@@ -163,7 +204,7 @@ export const handleSubmitForm =
       return
     }
 
-    const sendType = managerChoiceWatch ? 'sendManager' : 'sendOwner'
+    const sendType = managerChoice ? 'sendManager' : 'sendOwner'
     if (!sendNameFunctionCallDetails[sendType]) return
 
     dispatch({
@@ -171,7 +212,7 @@ export const handleSubmitForm =
       payload: [
         makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
           name,
-          newOwner: sendNameWatch,
+          newOwner,
           contract: sendNameFunctionCallDetails[sendType]!.contract,
           reclaim: sendNameFunctionCallDetails[sendType]!.method === 'reclaim',
         }),
@@ -183,67 +224,41 @@ export const handleSubmitForm =
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const { t } = useTranslation('profile')
-  const formRef = useRef<HTMLFormElement>(null)
-  const { getRecords } = useEns()
   const basicNameData = useBasicName(name as string)
   const { address = '' } = useAccount()
-  const { register, watch, getFieldState } = useForm<FormData>({
+  const {
+    register,
+    watch,
+    getFieldState,
+    handleSubmit,
+    setValue,
+    formState: { isValid, isDirty },
+  } = useForm<FormData>({
     mode: 'onChange',
   })
 
-  const managerDefaultChecked = data.type !== 'owner'
-  const ownerDefaultChecked = data.type !== 'manager'
-
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
-  const sendNameWatch = watch('sendName')
-  const { data: ethNameValidation, isLoading } = useQuery(
-    ['ethNameValidation', sendNameWatch],
-    async () => {
-      const result = await getRecords(sendNameWatch)
-      return result?.address
-    },
-    { enabled: sendNameWatch?.includes('.eth') },
-  )
-
-  const { name: primaryName } = usePrimary(ethNameValidation || sendNameWatch)
+  const hasChoice = managerChoiceWatch || ownerChoiceWatch
 
   const { canSendOwner, canSendManager, sendNameFunctionCallDetails } = useSelfAbilities(
     address,
     name,
   )
 
-  const hasErrors = useMemo(() => {
-    const errorData = {
-      formMessage: '',
-      fieldMessage: '',
-      hasError: false,
-    }
-
-    if (typeof managerChoiceWatch === 'undefined' && typeof ownerChoiceWatch === 'undefined')
-      return errorData
-
-    if (!managerChoiceWatch && !ownerChoiceWatch) {
-      return {
-        ...errorData,
-        formMessage: 'Must choose either Manager or Owner to send',
-        hasError: true,
-      }
-    }
-    if (getFieldState('sendName').error) return errorData
-    if (isLoading) return errorData
-    if (sendNameWatch?.includes('.') && !ethNameValidation)
-      return { ...errorData, message: 'No address set on name', hasError: true }
-
-    return errorData
-  }, [
-    ethNameValidation,
-    getFieldState,
-    isLoading,
-    managerChoiceWatch,
-    ownerChoiceWatch,
-    sendNameWatch,
-  ])
+  const onSubmit = (formData) => {
+    console.log(formData)
+    handleSubmitForm({
+      basicNameData,
+      dispatch,
+      newOwner: formData.address,
+      managerChoice: formData.managerChoice,
+      ownerChoice: formData.ownerChoice,
+      name,
+      address,
+      sendNameFunctionCallDetails,
+    })
+  }
 
   return (
     <>
@@ -263,7 +278,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             size="large"
             variant="switch"
             value="owner"
-            defaultChecked={ownerDefaultChecked}
+            defaultChecked
             data-testid="owner-checkbox"
             {...register('ownerChoice', { shouldUnregister: true })}
           />
@@ -282,68 +297,28 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             label=""
             variant="switch"
             value="manager"
-            defaultChecked={managerDefaultChecked}
+            defaultChecked
             data-testid="manager-checkbox"
             {...register('managerChoice', { shouldUnregister: true })}
           />
         </SwitchBox>
       )}
-      <InnerContainer>
-        <form data-testid="edit-resolver-form" ref={formRef}>
-          <Input
-            data-testid="send-name-input"
-            label="Send to"
-            placeholder={t('details.sendName.inputPlaceholder')}
-            {...register('sendName', {
-              validate: {
-                length: (value) =>
-                  !value.includes('.eth') && value.length !== 42
-                    ? t('errors.addressLength')
-                    : undefined,
-                isAddress: (value) =>
-                  !value.includes('.eth') && !ethers.utils.isAddress(value)
-                    ? t('errors.invalidAddress')
-                    : undefined,
-              },
-            })}
-            error={getFieldState('sendName').error?.message || hasErrors.fieldMessage}
-          />
-          <Spacer $height="4" />
-        </form>
-        {primaryName && <NameValue value={primaryName} />}
-      </InnerContainer>
-      {hasErrors.formMessage && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
-      <Dialog.Footer
-        leading={
-          <Button
-            variant="secondary"
-            tone="grey"
-            shadowless
-            onClick={onDismiss}
-            loading={isLoading}
-          >
-            {t('action.cancel', { ns: 'common' })}
-          </Button>
-        }
-        trailing={
-          <Button
-            shadowless
-            onClick={handleSubmitForm({
-              basicNameData,
-              dispatch,
-              sendNameWatch,
-              managerChoiceWatch,
-              ownerChoiceWatch,
-              name,
-              address,
-              sendNameFunctionCallDetails,
-            })}
-            disabled={hasErrors.hasError}
-          >
-            {t('action.next', { ns: 'common' })}
-          </Button>
-        }
-      />
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <DogFood {...{ register, getFieldState, watch, setValue }} />
+        {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
+        <Dialog.Footer
+          leading={
+            <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+              {t('action.cancel', { ns: 'common' })}
+            </Button>
+          }
+          trailing={
+            <Button shadowless type="submit" disabled={!hasChoice || !isValid || !isDirty}>
+              {t('action.next', { ns: 'common' })}
+            </Button>
+          }
+        />
+      </form>
     </>
   )
 }
