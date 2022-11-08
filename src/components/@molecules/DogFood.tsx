@@ -88,7 +88,7 @@ export const DogFood = (
   const { name: primaryName } = usePrimary(ethNameAddress || inputWatch)
 
   useEffect(() => {
-    setValue('address: ', ethNameAddress || inputWatch)
+    setValue('address', ethNameAddress || inputWatch)
   }, [ethNameAddress, inputWatch, setValue])
 
   return (
@@ -111,8 +111,12 @@ export const DogFood = (
         })}
         error={getFieldState('dogfoodRaw').error?.message}
       />
-      <Spacer $height="4" />
-      {primaryName && <NameValue value={primaryName} />}
+      {primaryName && (
+        <>
+         <Spacer $height="2" />
+         <NameValue value={primaryName} />
+        </>
+      )}
     </InnerContainer>
   )
 }

@@ -50,75 +50,73 @@ const TextContainer = styled.div`
   flex-direction: column;
 `
 
-export const handleSubmitForm =
-  ({
-    basicNameData,
-    dispatch,
-    newOwner,
-    managerChoice,
-    ownerChoice,
-    name,
-    address,
-    sendNameFunctionCallDetails,
-  }: {
-    basicNameData: BasicNameData
-    dispatch: TransactionDialogPassthrough['dispatch']
-    newOwner: string
-    managerChoice: string
-    ownerChoice: string
-    name: string
-    address: string
-    sendNameFunctionCallDetails: ReturnType<typeof useSelfAbilities>['sendNameFunctionCallDetails']
-  }) =>
-  () => {
-    const { ownerData } = basicNameData
-    const callCount = Object.keys(sendNameFunctionCallDetails).length
-    const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
+export const handleSubmitForm = ({
+  basicNameData,
+  dispatch,
+  newOwner,
+  managerChoice,
+  ownerChoice,
+  name,
+  address,
+  sendNameFunctionCallDetails,
+}: {
+  basicNameData: BasicNameData
+  dispatch: TransactionDialogPassthrough['dispatch']
+  newOwner: string
+  managerChoice: string
+  ownerChoice: string
+  name: string
+  address: string
+  sendNameFunctionCallDetails: ReturnType<typeof useSelfAbilities>['sendNameFunctionCallDetails']
+}) => {
+  const { ownerData } = basicNameData
+  const callCount = Object.keys(sendNameFunctionCallDetails).length
+  const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
 
-    if (callCount > 2) {
-      console.error('Too many send transactions')
-      return
-    }
+  if (callCount > 2) {
+    console.error('Too many send transactions')
+    return
+  }
 
-    if (Object.keys(sendNameFunctionCallDetails).length === 2 && managerChoice && ownerChoice) {
-      if (!sendNameFunctionCallDetails.sendManager || !sendNameFunctionCallDetails.sendOwner) return
-      // This can only happen as the registrant of a 2LD .eth name
-      dispatch({
-        name: 'setTransactions',
-        payload: [
-          makeTransactionItem('transferName', {
-            name,
-            newOwner,
-            contract: sendNameFunctionCallDetails.sendManager.contract,
-            reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
-          }),
-          makeTransactionItem('transferName', {
-            name,
-            newOwner,
-            contract: sendNameFunctionCallDetails.sendOwner.contract,
-          }),
-        ],
-      })
-      dispatch({ name: 'setFlowStage', payload: 'transaction' })
-      return
-    }
-
-    const sendType = managerChoice ? 'sendManager' : 'sendOwner'
-    if (!sendNameFunctionCallDetails[sendType]) return
-
+  if (Object.keys(sendNameFunctionCallDetails).length === 2 && managerChoice && ownerChoice) {
+    if (!sendNameFunctionCallDetails.sendManager || !sendNameFunctionCallDetails.sendOwner) return
+    // This can only happen as the registrant of a 2LD .eth name
     dispatch({
       name: 'setTransactions',
       payload: [
-        makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+        makeTransactionItem('transferName', {
           name,
           newOwner,
-          contract: sendNameFunctionCallDetails[sendType]!.contract,
-          reclaim: sendNameFunctionCallDetails[sendType]!.method === 'reclaim',
+          contract: sendNameFunctionCallDetails.sendManager.contract,
+          reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
+        }),
+        makeTransactionItem('transferName', {
+          name,
+          newOwner,
+          contract: sendNameFunctionCallDetails.sendOwner.contract,
         }),
       ],
     })
     dispatch({ name: 'setFlowStage', payload: 'transaction' })
+    return
   }
+
+  const sendType = managerChoice ? 'sendManager' : 'sendOwner'
+  if (!sendNameFunctionCallDetails[sendType]) return
+
+  dispatch({
+    name: 'setTransactions',
+    payload: [
+      makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+        name,
+        newOwner,
+        contract: sendNameFunctionCallDetails[sendType]!.contract,
+        reclaim: sendNameFunctionCallDetails[sendType]!.method === 'reclaim',
+      }),
+    ],
+  })
+  dispatch({ name: 'setFlowStage', payload: 'transaction' })
+}
 
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
@@ -203,20 +201,20 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <DogFood {...{ register, getFieldState, watch, setValue }} />
-        {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
-        <Dialog.Footer
-          leading={
-            <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
-              {t('action.cancel', { ns: 'common' })}
-            </Button>
-          }
-          trailing={
-            <Button shadowless type="submit" disabled={!hasChoice || !isValid || !isDirty}>
-              {t('action.next', { ns: 'common' })}
-            </Button>
-          }
-        />
       </form>
+      {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
+      <Dialog.Footer
+        leading={
+          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+            {t('action.cancel', { ns: 'common' })}
+          </Button>
+        }
+        trailing={
+          <Button shadowless type="submit" disabled={!hasChoice || !isValid || !isDirty}>
+            {t('action.next', { ns: 'common' })}
+          </Button>
+        }
+      />
     </>
   )
 }
