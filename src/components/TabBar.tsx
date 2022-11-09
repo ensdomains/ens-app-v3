@@ -9,6 +9,7 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
+import { useInitial } from '@app/hooks/useInitial'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { getRoute } from '@app/routes'
@@ -101,14 +102,15 @@ const TabBarProfile = ({ address, isActive }: { address: string; isActive: boole
 }
 
 export const TabBar = () => {
-  const { address, isConnecting, isReconnecting } = useAccount()
+  const isInitial = useInitial()
+  const { address } = useAccount()
 
   const activeRoute = useActiveRoute()
 
   const transactions = useRecentTransactions()
   const pendingTransactions = transactions.filter((x) => x.status === 'pending')
 
-  if (isConnecting || isReconnecting) return null
+  if (isInitial) return null
   return (
     <>
       <TabWrapper id="tabbar">

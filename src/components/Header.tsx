@@ -249,7 +249,7 @@ export const Header = () => {
           </RouteContainer>
         </RouteWrapper>
         {!isInitial && !isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
-        <HeaderConnect />
+        {!isInitial && <HeaderConnect />}
       </NavContainer>
     </HeaderWrapper>
   )
