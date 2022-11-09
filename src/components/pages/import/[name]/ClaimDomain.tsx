@@ -1,5 +1,4 @@
 import Link from 'next/link'
-import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -121,17 +120,17 @@ const handleClaim =
 export const ClaimDomain = ({
   syncWarning,
   setCurrentStep,
+  name,
 }: {
   syncWarning: boolean
   setCurrentStep: Dispatch<SetStateAction<number>>
+  name: string
 }) => {
-  const router = useRouter()
   const { address } = useAccount()
   const { createTransactionFlow } = useTransactionFlow()
   const transactions = useRecentTransactions()
   const [pendingTransaction, setPendingTransaction] = useState(false)
   const { t } = useTranslation('dnssec')
-  const name = router.query.name as string
 
   const { data: proverResult } = useQuery([`proverResult`, name, syncWarning], async () => {
     if (name) {

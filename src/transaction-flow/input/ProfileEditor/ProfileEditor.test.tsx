@@ -18,6 +18,9 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import ProfileEditor from './ProfileEditor-flow'
 
+const appPackage = require('@app/../package.json')
+const ensjsPackage = require('@app/../node_modules/@ensdomains/ensjs/package.json')
+
 const mockProfileData = {
   profile: {
     address: '0x70643CB203137b9b9eE19deA56080CD2BA01dBFd',
@@ -190,6 +193,12 @@ describe('ProfileEditor', () => {
   afterEach(() => {
     cleanup()
     jest.resetAllMocks()
+  })
+
+  it('should have use the same version of address-encoder as ensjs', () => {
+    expect(appPackage.dependencies['address-encoder']).toEqual(
+      ensjsPackage.dependencies['address-encoder'],
+    )
   })
 
   it('should render', async () => {

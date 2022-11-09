@@ -5,8 +5,10 @@ import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 import { ReturnedENS } from '@app/types/index'
 import { useEns } from '@app/utils/EnsProvider'
 import { addRegistrationStatusToBatch, getRegistrationStatus } from '@app/utils/registrationStatus'
+import { isLabelTooLong } from '@app/utils/utils'
 
 import { useValidate } from './useValidate'
+import { useWrapperExists } from './useWrapperExists'
 
 export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const ens = useEns()
@@ -62,6 +64,9 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
+  const nameWrapperExists = useWrapperExists()
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+
   const isLoading = !ens.ready || batchLoading
 
   return {
@@ -77,6 +82,11 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     truncatedName,
     registrationStatus,
     isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
+    canBeWrapped:
+      nameWrapperExists &&
+      !isWrapped &&
+      normalisedName?.endsWith('.eth') &&
+      !isLabelTooLong(normalisedName),
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

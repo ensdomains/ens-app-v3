@@ -61,6 +61,12 @@ const NavContainer = styled.div(
     justify-content: center;
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
+    height: ${theme.space['12']};
+
+    ${mq.md.min(css`
+      height: ${theme.space['18']};
+    `)}
+
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
@@ -70,30 +76,57 @@ const NavContainer = styled.div(
 
 const RouteContainer = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
-    width: min-content;
+    display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
     flex-gap: ${theme.space['1']};
     gap: ${theme.space['1']};
-    transition: transform 0.15s ease-in-out, display 0s linear 0.16s;
-    display: none;
+    transition: transform 0.15s ease-in-out;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    transform: translateX(125%);
 
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
+      position: relative;
     `)}
 
     ${$state === 'entered' &&
     css`
-      display: flex;
+      transform: translateX(0%);
     `}
   `,
 )
 
-const SearchWrapper = styled.div(
-  ({ theme }) => css`
+const RouteWrapper = styled.div(
+  () => css`
+    position: relative;
+  `,
+)
+
+const SearchWrapper = styled.div<{ $state: TransitionState }>(
+  ({ theme, $state }) => css`
     width: ${theme.space.full};
+    & > div > div {
+      max-width: ${theme.space.full};
+      ${mq.lg.min(css`
+        max-width: ${theme.space['96']};
+      `)}
+    }
+
+    transition: margin 0.15s ease-in-out;
+    margin-right: ${theme.space['32']};
+    ${$state !== 'entered' &&
+    css`
+      margin-right: 0;
+    `}
+    ${mq.lg.min(css`
+      margin-right: 0;
+    `)}
   `,
 )
 
@@ -115,8 +148,8 @@ export const Header = () => {
   const routeContainerRef = useRef<HTMLDivElement>(null)
   const [state, toggle] = useTransition({
     timeout: {
-      enter: 50,
-      exit: 300,
+      enter: 0,
+      exit: 0,
     },
     mountOnEnter: true,
     unmountOnExit: true,
@@ -194,7 +227,11 @@ export const Header = () => {
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
-            <SearchWrapper ref={searchWrapperRef}>
+            <SearchWrapper
+              data-testid="search-wrapper"
+              ref={searchWrapperRef}
+              $state={breakpoints.lg ? 'entered' : state}
+            >
               <SearchInput size="large" />
             </SearchWrapper>
           </>
@@ -202,9 +239,15 @@ export const Header = () => {
         {(isInitial ||
           (isConnected && (breakpoints.lg || router.asPath === '/')) ||
           !isConnected) && <div style={{ flexGrow: 1 }} />}
-        <RouteContainer ref={routeContainerRef} $state={breakpoints.lg ? 'entered' : state}>
-          {RouteItems}
-        </RouteContainer>
+        <RouteWrapper>
+          <RouteContainer
+            data-testid="route-container"
+            ref={routeContainerRef}
+            $state={breakpoints.lg ? 'entered' : state}
+          >
+            {RouteItems}
+          </RouteContainer>
+        </RouteWrapper>
         {!isInitial && !isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
         <HeaderConnect />
       </NavContainer>

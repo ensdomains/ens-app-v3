@@ -1,3 +1,5 @@
+import { toUtf8Bytes } from 'ethers/lib/utils'
+
 import { networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -55,3 +57,8 @@ export const isDNSName = (name: string): boolean => {
 }
 
 export const isASubname = (name: string) => name.split('.').length > 2
+
+export const isLabelTooLong = (label: string) => {
+  const bytes = toUtf8Bytes(label)
+  return bytes.byteLength > 255
+}

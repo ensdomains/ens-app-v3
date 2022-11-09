@@ -1,15 +1,15 @@
 import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
 
 import { useBasicName } from './useBasicName'
+import useDNSOwner from './useDNSOwner'
 import { useProfile } from './useProfile'
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
-  const { ready, getDNSOwner } = useEns()
+  const { ready } = useEns()
 
   const {
     valid,
@@ -28,15 +28,10 @@ export const useNameDetails = (name: string) => {
   } = useProfile(normalisedName, !normalisedName)
 
   const {
-    data: dnsOwner,
-    status: dnsOwnerStatus,
-    isFetched: dnsOwnerIsFetched,
-    internal: { isFetchedAfterMount: dnsOwnerIsFetchedAfterMount },
-  } = useQuery(['getDNSOwner', normalisedName], () => getDNSOwner(normalisedName), {
-    enabled: !!(normalisedName && valid) && !normalisedName?.endsWith('.eth'),
-  })
-  const dnsOwnerIsCachedData =
-    dnsOwnerStatus === 'success' && dnsOwnerIsFetched && !dnsOwnerIsFetchedAfterMount
+    dnsOwner,
+    isLoading: dnsOwnerLoading,
+    isCachedData: dnsOwnerIsCachedData,
+  } = useDNSOwner(normalisedName, valid)
 
   const error: string | ReactNode | null = useMemo(() => {
     if (valid === false) {
@@ -77,7 +72,7 @@ export const useNameDetails = (name: string) => {
     return null
   }, [normalisedName, profile, profileLoading, ready, registrationStatus, status, t, valid])
 
-  const isLoading = !ready || profileLoading || basicLoading
+  const isLoading = !ready || profileLoading || basicLoading || dnsOwnerLoading
 
   return {
     error,
