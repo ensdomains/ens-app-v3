@@ -82,7 +82,8 @@
             "error": {
               "invalidCharacters": "Contains invalid characters",
               "mustUseLowercase": "Must use lowercase letters",
-              "alreadyExists": "Name already exists"
+              "alreadyExists": "Name already exists",
+              "nameTooLong": "Name is too long"
             }
           }
         }

@@ -71,7 +71,7 @@ const useEstimateRegistration = (data: RegistrationProps | undefined) => {
       limit += addr.find(([dataInx]) => bytesAsDataInx >= dataInx)![1]
     }
 
-    return BigNumber.from(limit).mul(feeData.maxFeePerGas!)
+    return BigNumber.from(limit).mul((feeData.maxFeePerGas || BigNumber.from(100))!)
   }, [gasCosts, data, feeData])
 
   return { estimate, isLoading: feeDataLoading || gasCostsLoading }

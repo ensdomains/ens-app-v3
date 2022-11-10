@@ -342,7 +342,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       </Dialog>
       <Heading>{t('steps.transactions.heading')}</Heading>
       <StyledCountdown
-        countdownSeconds={60}
+        countdownSeconds={10}
         disabled={!commitTimestamp}
         startTimestamp={commitTimestamp}
         size="large"

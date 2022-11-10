@@ -95,7 +95,11 @@ export const RouteItem = ({
     >
       <LinkWrapper $asText={asText} $hasNotification={hasNotification}>
         {asText ? (
-          <StyledAnchor disabled={route.disabled} $isActive={isActive}>
+          <StyledAnchor
+            data-testid="route-item-text"
+            disabled={route.disabled}
+            $isActive={isActive}
+          >
             {t(route.label)}
           </StyledAnchor>
         ) : (

@@ -6,7 +6,7 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
+import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
@@ -91,8 +91,42 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
+// const localChain: Chain = {
+//   id: 1337,
+//   name: 'Local 8545',
+//   network: 'localhost',
+//   nativeCurrency: {
+//     decimals: 18,
+//     name: 'LocalETH',
+//     symbol: 'ETH',
+//   },
+//   rpcUrls: {
+//     default: 'http://0.0.0.0:8545',
+//   },
+//   testnet: false,
+// }
+
+const harmony: Chain = {
+  id: 1666600000,
+  name: 'Harmony Shard 0',
+  network: 'harmony',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'ONE',
+    symbol: 'ONE',
+  },
+  rpcUrls: {
+    default: 'https://api.harmony.one',
+  },
+  testnet: false,
+}
+
 const { provider, chains } = configureChains(
-  [chain.localhost, chain.goerli],
+  // [chain.goerli],
+  // [chain.goerli, chain.localhost],
+  // [localChain, chain.goerli],
+  [harmony],
+  // [chain.localhost, chain.goerli],
   [
     ...(process.env.NEXT_PUBLIC_PROVIDER
       ? [

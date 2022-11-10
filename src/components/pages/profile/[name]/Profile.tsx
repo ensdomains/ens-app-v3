@@ -18,7 +18,6 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { useWrapperExists } from '@app/hooks/useWrapperExists'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -78,15 +77,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     basicIsCachedData,
     profileIsCachedData,
     wrapperData,
-    isWrapped,
+    canBeWrapped,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, ownerData, name)
-  const nameWrapperExists = useWrapperExists()
-  const canBeWrapped =
-    nameWrapperExists &&
-    !isWrapped &&
-    normalisedName.endsWith('.eth') &&
+  const _canBeWrapped =
+    canBeWrapped &&
     (ownerData?.ownershipLevel === 'registrar'
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
@@ -166,7 +162,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         loading={isLoading}
       >
         {{
-          info: canBeWrapped && <WrapperCallToAction name={normalisedName} />,
+          info: _canBeWrapped && <WrapperCallToAction name={normalisedName} />,
           warning: error
             ? {
                 type: 'warning',
