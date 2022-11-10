@@ -7,7 +7,7 @@ import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 type FormData = {
   resolverChoice: 'latest' | 'custom'
-  customResolver: string
+  address: string
 }
 
 export type Props = {
@@ -22,23 +22,24 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
 
   const {
     register,
-    formState: { errors },
+    formState: { errors, isValid },
     handleSubmit,
     reset,
     trigger,
     watch,
     getFieldState,
+    setValue,
   } = useForm<FormData>({
     mode: 'onChange',
-    defaultValues: { resolverChoice: 'latest', customResolver: '' },
+    defaultValues: { resolverChoice: 'latest', address: '' },
   })
 
   useEffect(() => {
-    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', customResolver: '' })
+    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', address: '' })
   }, [isResolverAddressLatest, reset])
 
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
-  const customResolver = watch('customResolver')
+  const customResolver = watch('address')
 
   const { errors: resolverWarnings } = useResolverHasInterfaces(
     ['IAddrResolver', 'ITextResolver', 'IContentHashResolver'],
@@ -50,7 +51,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   )
 
   const handleResolverSubmit = async (values: FormData) => {
-    const { resolverChoice: choice, customResolver: address } = values
+    const { resolverChoice: choice, address } = values
     let newResolver
     if (choice === 'latest') {
       newResolver = lastestResolverAddress
@@ -85,6 +86,8 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     resolverWarnings,
     hasWarnings,
     hasErrors,
+    setValue,
+    isValid,
   }
 }
 

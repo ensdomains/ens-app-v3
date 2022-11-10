@@ -5,73 +5,30 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
 
-import { Input, Typography, mq } from '@ensdomains/thorin'
+import { Input } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { NameAvatar } from '@app/components/AvatarWithZorb'
-import { useChainId } from '@app/hooks/useChainId'
-import { usePrimary } from '@app/hooks/usePrimary'
 import { useEns } from '@app/utils/EnsProvider'
+import { DisplayItems } from './TransactionDialogManager/DisplayItems'
 
-const AvatarWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['7']};
-    min-width: ${theme.space['7']};
-    height: ${theme.space['7']};
-  `,
-)
-
-const ValueTypography = styled(Typography)(
-  () => css`
-    text-align: right;
-  `,
-)
-
-const ValueWithAvatarContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    justify-content: flex-end;
-    gap: ${theme.space['4']};
-    padding: 20px;
-    width: 100%;
-    border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      rgba(${theme.shadesRaw.foreground}, 0.06);
-  `,
-)
 
 const InnerContainer = styled.div(() => [
   css`
     width: 100%;
   `,
-  mq.sm.min(css`
-    width: 510px;
-  `),
 ])
-
-const NameValue = ({ value }: { value: string }) => {
-  const network = useChainId()
-
-  return (
-    <ValueWithAvatarContainer>
-      <ValueTypography weight="bold">{value}</ValueTypography>
-      <AvatarWrapper>
-        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
-      </AvatarWrapper>
-    </ValueWithAvatarContainer>
-  )
-}
 
 export const DogFood = (
     { 
       register, 
       getFieldState, 
       watch, 
-      setValue 
+      setValue,
+      label, 
+      validations = {},
     // eslint-disable-next-line prettier/prettier
-    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'getFieldState' | 'watch' | 'setValue'>
+    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'getFieldState' | 'watch' | 'setValue'> 
+    & { label?: string, validations?: any }
 ) => {
   const { t } = useTranslation('profile')
   const { getRecords } = useEns()
@@ -85,17 +42,18 @@ export const DogFood = (
     },
     { enabled: inputWatch?.includes('.eth') },
   )
-  const { name: primaryName } = usePrimary(ethNameAddress || inputWatch)
 
   useEffect(() => {
     setValue('address', ethNameAddress || inputWatch)
   }, [ethNameAddress, inputWatch, setValue])
 
+  const error = getFieldState('dogfoodRaw').error?.message
+
   return (
     <InnerContainer>
       <Input
         data-testid="send-name-input"
-        label="Send to"
+        label={label}
         placeholder={t('details.sendName.inputPlaceholder')}
         {...register('dogfoodRaw', {
           validate: {
@@ -107,14 +65,17 @@ export const DogFood = (
               !value.includes('.eth') && !ethers.utils.isAddress(value)
                 ? t('errors.invalidAddress')
                 : undefined,
+            ...validations
           },
         })}
         error={getFieldState('dogfoodRaw').error?.message}
       />
-      {primaryName && (
+      {!error && inputWatch && (
         <>
-         <Spacer $height="2" />
-         <NameValue value={primaryName} />
+        <Spacer $height='2' />
+      <DisplayItems displayItems={[
+        { label: 'address', value: inputWatch, type: 'address' },
+      ]} />
         </>
       )}
     </InnerContainer>

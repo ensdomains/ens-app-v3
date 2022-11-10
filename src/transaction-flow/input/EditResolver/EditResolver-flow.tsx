@@ -1,12 +1,16 @@
-import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
-import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'
-import { useProfile } from '@app/hooks/useProfile'
-import useResolverEditor from '@app/hooks/useResolverEditor'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { Button, Dialog, mq } from '@ensdomains/thorin'
 import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, Dialog, mq } from '@ensdomains/thorin'
+
+import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
+import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'
+import { useBasicName } from '@app/hooks/useBasicName'
+import { useProfile } from '@app/hooks/useProfile'
+import useResolverEditor from '@app/hooks/useResolverEditor'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+
 import { makeTransactionItem } from '../../transaction'
 
 const EditResolverFormContainer = styled.div(() => [
@@ -30,6 +34,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { name } = data
+  const { isWrapped } = useBasicName(name)
   const formRef = useRef<HTMLFormElement>(null)
 
   const { profile = { resolverAddress: '' } } = useProfile(name as string)
@@ -42,19 +47,18 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
         payload: [
           makeTransactionItem('updateResolver', {
             name,
-            contract: 'registry',
+            contract: isWrapped ? 'nameWrapper' : 'registry',
             resolver: newResolver,
-            oldResolver: resolverAddress!,
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [dispatch, name, resolverAddress],
+    [dispatch, name, isWrapped],
   )
 
   const editResolverForm = useResolverEditor({ resolverAddress, callback: handleCreateTransaction })
-  const { hasErrors } = editResolverForm
+  const { isValid } = editResolverForm
 
   const handleSubmitForm = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
@@ -73,7 +77,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
           </Button>
         }
         trailing={
-          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors}>
+          <Button shadowless onClick={handleSubmitForm} disabled={!isValid}>
             {t('action.update', { ns: 'common' })}
           </Button>
         }

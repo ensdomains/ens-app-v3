@@ -1,13 +1,14 @@
-import { ethers } from 'ethers'
 import { RefObject } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Input, RadioButton, Typography } from '@ensdomains/thorin'
+import { RadioButton, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 import useResolverEditor from '@app/hooks/useResolverEditor'
+
+import { DogFood } from '../DogFood'
 
 const InputContainer = styled.div(
   ({ theme }) => css`
@@ -65,6 +66,8 @@ const EditResolverForm = ({
   getFieldState,
   formRef,
   resolverAddress,
+  setValue,
+  watch,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -108,28 +111,19 @@ const EditResolverForm = ({
         {...register('resolverChoice')}
       />
       <InputContainer>
-        <Input
-          label="Custom resolver input"
-          hideLabel
-          placeholder={t('input.editResolver.customPlaceholder')}
-          disabled={resolverChoice !== 'custom'}
-          {...register('customResolver', {
-            validate: {
-              length: (value) =>
-                resolverChoice === 'custom' && value.length !== 42
-                  ? 'Address should be 42 characters long'
-                  : undefined,
+        <DogFood
+          {...{
+            register,
+            getFieldState,
+            watch,
+            setValue,
+            validations: {
               isCurrentResolver: (value) =>
                 resolverChoice === 'custom' && value === resolverAddress
                   ? 'This is the current resolver'
                   : undefined,
-              isAddress: (value) =>
-                resolverChoice === 'custom' && !ethers.utils.isAddress(value)
-                  ? 'Not a valid address'
-                  : undefined,
             },
-          })}
-          error={getFieldState('customResolver').error?.message}
+          }}
         />
       </InputContainer>
       <Spacer $height="4" />

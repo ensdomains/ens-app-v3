@@ -3,8 +3,9 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Checkbox, Dialog, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Checkbox, Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
+import { Spacer } from '@app/components/@atoms/Spacer'
 import { DogFood } from '@app/components/@molecules/DogFood'
 import { Outlink } from '@app/components/Outlink'
 import { useBasicName } from '@app/hooks/useBasicName'
@@ -118,6 +119,21 @@ export const handleSubmitForm = ({
   dispatch({ name: 'setFlowStage', payload: 'transaction' })
 }
 
+const InnerContainer = styled.div(() => [
+  css`
+    width: 100%;
+  `,
+  mq.sm.min(css`
+    width: 510px;
+  `),
+])
+
+const FooterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
+
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const { t } = useTranslation('profile')
@@ -200,21 +216,26 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         </SwitchBox>
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
-        <DogFood {...{ register, getFieldState, watch, setValue }} />
+        <InnerContainer>
+          <DogFood {...{ register, getFieldState, watch, setValue, label: 'Send to' }} />
+        </InnerContainer>
+        {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
+        <Spacer $height="3" />
+        <FooterContainer>
+          <Dialog.Footer
+            leading={
+              <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+                {t('action.cancel', { ns: 'common' })}
+              </Button>
+            }
+            trailing={
+              <Button shadowless type="submit" disabled={!hasChoice || !isValid || !isDirty}>
+                {t('action.next', { ns: 'common' })}
+              </Button>
+            }
+          />
+        </FooterContainer>
       </form>
-      {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
-      <Dialog.Footer
-        leading={
-          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
-            {t('action.cancel', { ns: 'common' })}
-          </Button>
-        }
-        trailing={
-          <Button shadowless type="submit" disabled={!hasChoice || !isValid || !isDirty}>
-            {t('action.next', { ns: 'common' })}
-          </Button>
-        }
-      />
     </>
   )
 }
