@@ -77,8 +77,8 @@ It is asumed that all the repositories are located in a parent folder ( e.g `~/e
 
 ```
 # Start Hardhat Locally (terminal window 1)
-cd ./ens-contracts
-ganachem='ganache -m "test test test test test test test test test test test junk"
+cd ./ens-deployer/env
+./ganache-new.sh
 
 # Deploy Contracts from ens-app-v3
 cd ./ens-app-v3
@@ -87,7 +87,9 @@ yarn deploy:local
 # Optional if you prefer to deploy via ens-deployer
 cd ./ens-deployer/contract
 yarn deploy --network local
-# Updating .env.local with NEXT_PUBLIC_DEPLOYMENT_ADDRESSES generated above
+# Update .env.local with NEXT_PUBLIC_DEPLOYMENT_ADDRESSES generated above
+# Update ens-subgraph/subraph.yaml ENSRegistry, Resolver, BaseRegistrarImplementation, EthRegistrarController, NameWrapper with NEXT_PUBLIC_DEPLOYMENT_ADDRESSES
+# Update ens-metadata-service/.env  ADDRESS_ETH_REGISTRAR, ADDRESS_NAME_WRAPPER with NEXT_PUBLIC_DEPLOYMENT_ADDRESSES
 
 # Start IPFS (terminal window 2)
 cd ./ipfs
@@ -118,7 +120,7 @@ yarn setup
 
 # Start metadata-service
 cd ./ens-metadata-service
-yarn test
+yarn dev
 # If you are not making code changes you can use
 yarn build
 yarn start

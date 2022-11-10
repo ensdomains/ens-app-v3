@@ -1,13 +1,14 @@
 import { RainbowKitProvider, Theme, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit'
 import '@rainbow-me/rainbowkit/styles.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+// import { localhost } from '@wagmi/core/dist/declarations/src/constants/chains'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
 import { Chain, WagmiConfig, configureChains, createClient } from 'wagmi'
-import { infuraProvider } from 'wagmi/providers/infura'
+// import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
 import { ThorinGlobalStyles, lightTheme as thorinLightTheme } from '@ensdomains/thorin'
@@ -91,20 +92,20 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-// const localChain: Chain = {
-//   id: 1337,
-//   name: 'Local 8545',
-//   network: 'localhost',
-//   nativeCurrency: {
-//     decimals: 18,
-//     name: 'LocalETH',
-//     symbol: 'ETH',
-//   },
-//   rpcUrls: {
-//     default: 'http://0.0.0.0:8545',
-//   },
-//   testnet: false,
-// }
+const localChain: Chain = {
+  id: 1337,
+  name: 'Local 8545',
+  network: 'localhost',
+  nativeCurrency: {
+    decimals: 18,
+    name: 'LocalETH',
+    symbol: 'ETH',
+  },
+  rpcUrls: {
+    default: 'http://0.0.0.0:8545',
+  },
+  testnet: false,
+}
 
 const harmony: Chain = {
   id: 1666600000,
@@ -122,28 +123,10 @@ const harmony: Chain = {
 }
 
 const { provider, chains } = configureChains(
-  // [chain.goerli],
-  // [chain.goerli, chain.localhost],
-  // [localChain, chain.goerli],
-  [harmony],
-  // [chain.localhost, chain.goerli],
+  [localChain, harmony],
   [
-    ...(process.env.NEXT_PUBLIC_PROVIDER
-      ? [
-          jsonRpcProvider({
-            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
-          }),
-        ]
-      : [
-          jsonRpcProvider({
-            rpc: (c) => ({
-              http: `https://web3.ens.domains/v1/${
-                c.network === 'homestead' ? 'mainnet' : c.network
-              }`,
-            }),
-          }),
-          infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-        ]),
+    jsonRpcProvider({ rpc: () => ({ http: localChain.rpcUrls.default }) }),
+    jsonRpcProvider({ rpc: () => ({ http: harmony.rpcUrls.default }) }),
   ],
 )
 
