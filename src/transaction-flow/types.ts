@@ -6,7 +6,7 @@ import { TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
-import type { TransactionName, makeTransactionItem } from './transaction'
+import type { TransactionItem, TransactionName, makeTransactionItem } from './transaction'
 
 export type TransactionFlowStage = 'input' | 'intro' | 'transaction'
 
@@ -46,6 +46,7 @@ export type TransactionFlowItem = {
   requiresManualCleanup?: boolean
   autoClose?: boolean
   resumeLink?: string
+  disableBackgroundClick?: boolean
 }
 
 export type BaseInternalTransactionFlowItem = TransactionFlowItem & {
@@ -70,6 +71,7 @@ export type TransactionFlowAction =
       name: 'showDataInput'
       payload: {
         input: GenericDataInput
+        disableBackgroundClick?: boolean
       }
       key: string
     }
@@ -132,6 +134,7 @@ export type TransactionDialogProps = ComponentProps<typeof Dialog> & {
 export type TransactionDialogPassthrough = {
   dispatch: Dispatch<TransactionFlowAction>
   onDismiss: () => void
+  transactions?: TransactionItem[]
 }
 
 export type ManagedDialogProps = {

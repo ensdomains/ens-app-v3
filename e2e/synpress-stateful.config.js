@@ -24,6 +24,8 @@ module.exports = defineConfig({
   requestTimeout: process.env.SYNDEBUG ? 0 : 9999999,
   e2e: {
     setupNodeEvents(on, config) {
+      // ❗ Leave this at the top to prevent conflicts with other plugins
+      ;[on, config] = require('@deploysentinel/cypress-debugger/plugin')(on, config)
       require('cypress-localstorage-commands/plugin')(on, config)
       importedSetupNodeEvents(on, config)
       return config

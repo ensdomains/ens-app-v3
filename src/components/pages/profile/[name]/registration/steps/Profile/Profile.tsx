@@ -12,7 +12,9 @@ import BurnFusesContent, {
   baseFuseObj,
 } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
-import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
+import AvatarButton, {
+  AvatarClickType,
+} from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
@@ -163,7 +165,7 @@ const ButtonContainer = styled.div(
   `,
 )
 
-type ModalOption = 'avatar' | 'permissions' | 'resolver'
+type ModalOption = AvatarClickType | 'permissions' | 'resolver'
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -377,12 +379,14 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
 
   const modalContent = useMemo(() => {
     switch (modalOption) {
-      case 'avatar': {
+      case 'upload':
+      case 'nft':
         return (
           <AvatarViewManager
             name={name}
             avatar={_avatar}
             handleCancel={() => setModalOpen(false)}
+            type={modalOption}
             handleSubmit={(display: string, uri?: string) => {
               if (uri) {
                 setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
@@ -394,7 +398,6 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             }}
           />
         )
-      }
       case 'permissions': {
         return (
           <BurnFusesContent
@@ -439,7 +442,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             <AvatarButton
               validated={avatar !== undefined}
               src={avatarDisplay || avatar}
-              onSelectOption={() => setModalOption('avatar')}
+              onSelectOption={setModalOption}
               setValue={setValue}
               setDisplay={setAvatarDisplay}
             />

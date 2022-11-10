@@ -3,7 +3,7 @@ import styled, { css } from 'styled-components'
 
 import { useAvatar } from '@app/hooks/useAvatar'
 
-import NFTTemplate from './@molecules/NFTTemplate'
+import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
 
 const StyledNftBox = styled.div(
   ({ theme }) => css`

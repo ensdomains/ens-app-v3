@@ -11,6 +11,9 @@
     "total": "Estimated total",
     "totalPaid": "Total paid"
   },
+  "error": {
+    "nameTooLong": "The name you want to register is too long. Please choose a shorter name."
+  },
   "steps": {
     "pricing": {
       "insufficientBalance": "Insufficient Balance",

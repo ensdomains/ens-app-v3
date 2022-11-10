@@ -140,6 +140,11 @@ describe('Details', () => {
 })
 
 describe('Page', () => {
+  window.ResizeObserver = jest.fn()
+  ;(window.ResizeObserver as jest.Mock).mockImplementation(() => ({
+    observe: jest.fn(),
+    disconnect: jest.fn(),
+  }))
   it('should set the correct tab when clicked', async () => {
     // mock useBreakpoint implementation that returns default breakpoint values
     mockUseBreakpoint.mockImplementation(() => ({

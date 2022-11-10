@@ -22,8 +22,6 @@ jest.mock('@web3modal/react', () => {
   }
 })
 
-jest.mock('@app/components/@molecules/NFTTemplate', () => () => <div data-testid="nft-template" />)
-
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

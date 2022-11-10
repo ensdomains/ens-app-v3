@@ -1,6 +1,5 @@
 import { useAccount } from '@web3modal/react'
 import { utils } from 'ethers'
-import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -125,15 +124,16 @@ export const AddTextRecord = ({
   setCurrentStep,
   syncWarning,
   setSyncWarning,
+  name,
 }: {
   currentStep: number
   setCurrentStep: Dispatch<SetStateAction<number>>
   syncWarning: boolean
   setSyncWarning: Dispatch<SetStateAction<boolean>>
+  name: string
 }) => {
-  const router = useRouter()
-  const { name } = router.query
   const { account } = useAccount()
+  const address = account?.address
   const [errorState, setErrorState] = useState<Errors>(Errors.NOT_CHECKED)
   const breakpoints = useBreakpoint()
   const { t } = useTranslation('dnssec')
@@ -157,7 +157,7 @@ export const AddTextRecord = ({
         // Invalid DNS record
         setSyncWarning(false)
         setErrorState(Errors.DNS_RECORD_INVALID)
-      } else if (dnsOwner.toLowerCase() === account?.address?.toLowerCase()) {
+      } else if (dnsOwner.toLowerCase() === address?.toLowerCase()) {
         // DNS record is set and matches the address
         setSyncWarning(false)
         setCurrentStep(currentStep + 1)

@@ -1,5 +1,6 @@
 import { useAccount, useConnectModal, useDisconnect } from '@web3modal/react'
 import Link from 'next/link'
+import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -97,16 +98,20 @@ const HeaderProfile = ({ address }: { address: string }) => {
       address={address}
       ensName={name || undefined}
       dropdownItems={[
-        {
-          label: t('wallet.myProfile'),
-          wrapper: (children, key) => (
-            <Link href="/my/profile" key={key}>
-              {children}
-            </Link>
-          ),
-          as: 'a',
-          color: 'text',
-        },
+        ...(name
+          ? [
+              {
+                label: t('wallet.myProfile'),
+                wrapper: (children: ReactNode, key: Key) => (
+                  <Link href="/my/profile" key={key}>
+                    {children}
+                  </Link>
+                ),
+                as: 'a' as 'a',
+                color: 'text',
+              },
+            ]
+          : []),
         {
           label: t('wallet.disconnect'),
           color: 'red',
@@ -120,6 +125,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
       }}
       size="medium"
       alignDropdown="left"
+      data-testid="header-profile"
     />
   )
 }

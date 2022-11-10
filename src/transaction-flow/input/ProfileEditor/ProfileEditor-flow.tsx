@@ -7,7 +7,9 @@ import { Button, mq } from '@ensdomains/thorin'
 
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
-import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
+import AvatarButton, {
+  AvatarClickType,
+} from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
@@ -17,7 +19,7 @@ import useProfileEditor from '@app/hooks/useProfileEditor'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
-import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
@@ -106,8 +108,10 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
+const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
+
+  const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
 
   const { name = '', resumable = false } = data
 
@@ -169,11 +173,15 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
     [profile, status, resolverAddress],
   )
 
-  const profileEditorForm = useProfileEditor({ callback: handleCreateTransaction, profile })
+  const profileEditorForm = useProfileEditor({
+    callback: handleCreateTransaction,
+    profile,
+    overwrites: transaction?.data.records,
+  })
   const { setValue, handleSubmit, hasErrors, avatar, _avatar, hasChanges, formState } =
     profileEditorForm
 
-  const [currentContent, setCurrentContent] = useState<'profile' | 'avatar'>('profile')
+  const [avatarView, setAvatarView] = useState<AvatarClickType | null>(null)
   const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
   const [showOverlay, setShowOverlay] = useState(false)
@@ -188,11 +196,12 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
   return (
     <>
       {' '}
-      {currentContent === 'avatar' ? (
+      {avatarView ? (
         <AvatarViewManager
           name={name}
           avatar={_avatar}
-          handleCancel={() => setCurrentContent('profile')}
+          type={avatarView}
+          handleCancel={() => setAvatarView(null)}
           handleSubmit={(display: string, uri?: string) => {
             if (uri) {
               setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
@@ -203,7 +212,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
                 shouldTouch: true,
               })
             }
-            setCurrentContent('profile')
+            setAvatarView(null)
           }}
         />
       ) : (
@@ -213,7 +222,7 @@ const ProfileEditor = ({ data = {}, dispatch, onDismiss }: Props) => {
               <AvatarButton
                 validated={formState.dirtyFields.avatar}
                 src={avatarDisplay || avatar}
-                onSelectOption={() => setCurrentContent('avatar')}
+                onSelectOption={setAvatarView}
                 setValue={setValue}
                 setDisplay={setAvatarDisplay}
               />

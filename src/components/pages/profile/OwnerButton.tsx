@@ -46,6 +46,7 @@ const Label = styled(Typography)(
   ({ theme }) => css`
     color: ${theme.colors.textTertiary};
     font-size: ${theme.fontSizes.small};
+    overflow: visible;
   `,
 )
 
@@ -60,6 +61,8 @@ const AvatarWrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space['6']};
     height: ${theme.space['6']};
+    min-width: ${theme.space['6']};
+    min-height: ${theme.space['6']};
   `,
 )
 
@@ -284,6 +287,7 @@ const OwnerRow = styled.div(
     flex-direction: row;
     align-items: center;
     justify-content: flex-end;
+    overflow: hidden;
     gap: ${theme.space['1.5']};
     flex-gap: ${theme.space['1.5']};
   `,
