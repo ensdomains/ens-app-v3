@@ -13,6 +13,8 @@ export const networkName = {
   '3': 'ropsten',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '1337': 'local',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1666600000': 'harmony',
 }
 
 interface ResolverAddresses {
