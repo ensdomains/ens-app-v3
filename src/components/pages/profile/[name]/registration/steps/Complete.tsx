@@ -1,3 +1,4 @@
+import { BigNumber } from 'ethers'
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 import type ConfettiT from 'react-confetti'
@@ -131,8 +132,12 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
     const { value } = registerResponse!
-    const commitNetFee = commitReceipt!.gasUsed.mul(commitReceipt!.effectiveGasPrice)
-    const registerNetFee = registerReceipt!.gasUsed.mul(registerReceipt!.effectiveGasPrice)
+    const commitNetFee = (commitReceipt!.gasUsed || BigNumber.from(10000)).mul(
+      commitReceipt!.effectiveGasPrice || BigNumber.from(100),
+    )
+    const registerNetFee = (registerReceipt!.gasUsed || BigNumber.from(10000)).mul(
+      registerReceipt!.effectiveGasPrice || BigNumber.from(100),
+    )
     const totalNetFee = commitNetFee.add(registerNetFee)
 
     return (
