@@ -41,6 +41,16 @@ nvm use v14.17.0
 yarn codegen
 ```
 
+### Metadata Service
+
+```
+git clone https://github.com/harmony-domains/ens-metadata-service.git
+cd ens-metadata-service
+cp .env.example .env // Fill in Vars
+yarn
+yarn dev
+```
+
 
 
 
@@ -62,27 +72,29 @@ NEXT_PUBLIC_DEPLOYMENT_ADDRESSES='{"LegacyENSRegistry":"0x5FbDB2315678afecb367f0
 ## Local Development Environment
 
 Following is a sample script to run each of the components
+
+It is asumed that all the repositories are located in a parent folder ( e.g `~/ens`)
+
 ```
 # Start Hardhat Locally (terminal window 1)
-cd /Users/john/one-wallet/ens/ens-contracts
+cd ./ens-contracts
 ganachem='ganache -m "test test test test test test test test test test test junk"
 
 # Deploy Contracts from ens-app-v3
-cd /Users/john/one-wallet/ens/ens-app-v3
-rm -rf ./deployments/localhost
-npx hardhat deploy --network localhost
+cd ./ens-app-v3
+yarn deploy:local
 
 # Optional if you prefer to deploy via ens-deployer
-cd /Users/john/one-wallet/ens/ens-deployer/contract
+cd ./ens-deployer/contract
 yarn deploy --network local
 # Updating .env.local with NEXT_PUBLIC_DEPLOYMENT_ADDRESSES generated above
 
 # Start IPFS (terminal window 2)
-cd /Users/john/one-wallet/ens/ipfs
+cd ./ipfs
 ipfs daemon
 
 # Start the postgres db (terminal window 3)
-cd /Users/john/one-wallet/ens/postgres
+cd ./postgres
 pg_ctl -D .postgres -l logfile stop
 cd ..
 rm -rf postgres
@@ -93,19 +105,26 @@ pg_ctl -D .postgres -l logfile start
 createdb graph-node
 
 # Start Graph Node (terminal window 4)
-cd /Users/john/one-wallet/ens/graph-node
+cd ./graph-node
 cargo run -p graph-node --release -- /
   --postgres-url postgresql://<<username>>:<<password>>@localhost:5432/graph-node /
   --ethereum-rpc mainnet:http://127.0.0.1:8545  /
  --ipfs 127.0.0.1:5001
 
 # Load ens-subgraph (terminal window 5)
-cd /Users/john/one-wallet/ens/ens-subgraph
+cd ./ens-subgraph
 nvm use v14.17.0
 yarn setup
 
+# Start metadata-service
+cd ./ens-metadata-service
+yarn test
+# If you are not making code changes you can use
+yarn build
+yarn start
+
 # Start the Frontend (separate terminal window 6)
-cd /Users/john/one-wallet/ens/ens-app-v3
+cd ./ens-app-v3
 pnpm dev
 ```
 

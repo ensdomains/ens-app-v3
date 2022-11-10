@@ -20,7 +20,6 @@ if (process.env.NEXT_PUBLIC_GRAPH_URI) {
 }
 
 const defaultValue: ENS = new ENS(opts)
-// const defaultValue: ENS = new ENS({ graphURI: null })
 
 const EnsContext = createContext({ ...defaultValue, ready: false })
 

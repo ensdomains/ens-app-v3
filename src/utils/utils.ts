@@ -7,7 +7,7 @@ export const getSupportedNetworkName = (networkId: number) =>
 //   ? 'http://localhost:8080'
 //   : 'https://metadata.ens.domains'
 
-const baseMetadataURL = 'https://metadata.ens.domains'
+const baseMetadataURL = process.env.NEXT_PUBLIC_METADATA_SERVICE || 'https://metadata.ens.domains'
 
 // eslint-disable-next-line consistent-return
 export function imageUrlUnknownRecord(name: string, network: number) {
