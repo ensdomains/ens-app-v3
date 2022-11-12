@@ -139,18 +139,10 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const basicNameData = useBasicName(name as string)
   const { address = '' } = useAccount()
-  const {
-    register,
-    watch,
-    getFieldState,
-    handleSubmit,
-    setValue,
-    getValues,
-    setError,
-    formState: { isValid, isDirty },
-  } = useForm<FormData>({
-    mode: 'onChange',
-  })
+  const { register, watch, getFieldState, handleSubmit, setValue, getValues, setError, formState } =
+    useForm<FormData>({
+      mode: 'onChange',
+    })
 
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
@@ -220,7 +212,16 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <InnerContainer>
           <DogFood
-            {...{ register, getFieldState, watch, setValue, getValues, setError, label: 'Send to' }}
+            {...{
+              register,
+              getFieldState,
+              watch,
+              setValue,
+              getValues,
+              setError,
+              label: 'Send to',
+              formState,
+            }}
           />
         </InnerContainer>
         {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
@@ -233,7 +234,11 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
               </Button>
             }
             trailing={
-              <Button shadowless type="submit" disabled={!hasChoice || !isValid || !isDirty}>
+              <Button
+                shadowless
+                type="submit"
+                disabled={!hasChoice || !formState.isValid || !formState.isDirty}
+              >
                 {t('action.next', { ns: 'common' })}
               </Button>
             }

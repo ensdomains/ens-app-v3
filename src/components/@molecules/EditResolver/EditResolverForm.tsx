@@ -68,6 +68,7 @@ const EditResolverForm = ({
   resolverAddress,
   setValue,
   watch,
+  formState,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -115,6 +116,7 @@ const EditResolverForm = ({
       <InputContainer>
         <DogFood
           {...{
+            formState,
             disabled: resolverChoice !== 'custom',
             register,
             getFieldState,

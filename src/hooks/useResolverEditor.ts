@@ -20,19 +20,11 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
   const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
-  const {
-    register,
-    formState: { errors, isValid },
-    handleSubmit,
-    reset,
-    trigger,
-    watch,
-    getFieldState,
-    setValue,
-  } = useForm<FormData>({
-    mode: 'onChange',
-    defaultValues: { resolverChoice: 'latest', address: '' },
-  })
+  const { register, formState, handleSubmit, reset, trigger, watch, getFieldState, setValue } =
+    useForm<FormData>({
+      mode: 'onChange',
+      defaultValues: { resolverChoice: 'latest', address: '' },
+    })
 
   useEffect(() => {
     if (isResolverAddressLatest) reset({ resolverChoice: 'custom', address: '' })
@@ -69,13 +61,12 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     resolverWarnings &&
     resolverWarnings.length > 0
 
-  const hasErrors = Object.keys(errors || {}).length > 0 && resolverChoice === 'custom'
+  const hasErrors = Object.keys(formState.errors || {}).length > 0 && resolverChoice === 'custom'
 
   return {
     lastestResolverAddress,
     isResolverAddressLatest,
     register,
-    errors,
     handleSubmit: handleSubmit(handleResolverSubmit),
     reset,
     trigger,
@@ -87,7 +78,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     hasWarnings,
     hasErrors,
     setValue,
-    isValid,
+    formState,
   }
 }
 

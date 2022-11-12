@@ -1,9 +1,10 @@
 import { ethers } from 'ethers'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
+import pMemoize from 'p-memoize';
 
 import { Input } from '@ensdomains/thorin'
 
@@ -20,27 +21,28 @@ const InnerContainer = styled.div(() => [
 
 export const DogFood = (
     { 
-      disabled,
       register, 
-      getFieldState, 
       watch, 
+      formState,
       setValue,
-      setError,
-      label, 
+      disabled,
       validations,
+      label, 
     // eslint-disable-next-line prettier/prettier
-    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'getFieldState' | 'watch' | 'setValue' | 'setError' | 'getValues'> 
+    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'watch' | 'formState' | 'setValue'> 
     & { label?: string, validations?: any, disabled?: boolean },
 ) => {
   const { t } = useTranslation('profile')
   const { getRecords } = useEns()
+  const getRecordsMem = useRef(pMemoize(getRecords))
+
   const inputWatch = watch('dogfoodRaw')
 
   const { data: ethNameAddress } = useQuery(
     ['ethNameAddress', inputWatch],
     async () => {
       try {
-      const result = await getRecords(inputWatch)
+      const result = await getRecordsMem.current(inputWatch)
       return result?.address ?? '' 
       } catch (e) {
         return ''
@@ -49,15 +51,8 @@ export const DogFood = (
     { enabled: inputWatch?.includes('.') },
   )
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
-
-  useEffect(() => {
-    setValue('address', finalValue)
-    if(inputWatch?.includes('.') && !finalValue) {
-      setError('dogfoodRaw', { type: 'custom', message: 'ENS Name has no ethereum address record' }, { shouldFocus: true })
-    }
-  }, [finalValue, inputWatch, setError, setValue])
-
-  const error = getFieldState('dogfoodRaw').error?.message
+  useEffect(() => { setValue('address', finalValue)}, [finalValue, setValue])
+  const errorMessage = formState.errors.dogfoodRaw?.message
 
   return (
     <InnerContainer>
@@ -76,12 +71,22 @@ export const DogFood = (
               !disabled && !value?.includes('.') && !ethers.utils.isAddress(value)
                 ? t('errors.invalidAddress')
                 : undefined,
+            hasAddressRecord: async (value) => {
+              if(value?.includes('.')) {
+                try {
+                  const result = await getRecordsMem.current(value)
+                  return result?.address ? undefined : 'ENS Name has no address record'
+                } catch (e) {
+                  return 'ENS Name has no address record'
+                }
+                }
+              },
             ...validations
           },
         })}
-        error={error}
+        error={errorMessage}
       />
-      {!error && finalValue && !disabled && (
+      {!errorMessage && finalValue && !disabled && (
         <>
          <Spacer $height='2' />
           <DisplayItems displayItems={[
