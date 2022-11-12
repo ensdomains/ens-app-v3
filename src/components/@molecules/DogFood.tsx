@@ -20,6 +20,7 @@ const InnerContainer = styled.div(() => [
 
 export const DogFood = (
     { 
+      disabled,
       register, 
       getFieldState, 
       watch, 
@@ -28,7 +29,7 @@ export const DogFood = (
       validations = {},
     // eslint-disable-next-line prettier/prettier
     }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'getFieldState' | 'watch' | 'setValue'> 
-    & { label?: string, validations?: any }
+    & { label?: string, validations?: any, disabled?: boolean },
 ) => {
   const { t } = useTranslation('profile')
   const { getRecords } = useEns()
@@ -52,17 +53,18 @@ export const DogFood = (
   return (
     <InnerContainer>
       <Input
-        data-testid="send-name-input"
+        data-testid="dogfood"
+        disabled={disabled}
         label={label}
         placeholder={t('details.sendName.inputPlaceholder')}
         {...register('dogfoodRaw', {
           validate: {
             length: (value) =>
-              !value.includes('.eth') && value.length !== 42
+              !disabled && !value?.includes('.eth') && value?.length !== 42
                 ? t('errors.addressLength')
                 : undefined,
             isAddress: (value) =>
-              !value.includes('.eth') && !ethers.utils.isAddress(value)
+              !disabled && !value?.includes('.eth') && !ethers.utils.isAddress(value)
                 ? t('errors.invalidAddress')
                 : undefined,
             ...validations
@@ -70,7 +72,7 @@ export const DogFood = (
         })}
         error={getFieldState('dogfoodRaw').error?.message}
       />
-      {!error && inputWatch && (
+      {!error && inputWatch && !disabled && (
         <>
         <Spacer $height='2' />
       <DisplayItems displayItems={[

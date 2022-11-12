@@ -65,11 +65,11 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
 
   const hasWarnings =
     resolverChoice === 'custom' &&
-    customResolver.length === 42 &&
+    customResolver?.length === 42 &&
     resolverWarnings &&
     resolverWarnings.length > 0
 
-  const hasErrors = Object.keys(errors || {}).length > 0
+  const hasErrors = Object.keys(errors || {}).length > 0 && resolverChoice === 'custom'
 
   return {
     lastestResolverAddress,

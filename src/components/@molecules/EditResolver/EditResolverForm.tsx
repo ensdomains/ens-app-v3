@@ -94,6 +94,7 @@ const EditResolverForm = ({
         label={latestResolverLabel}
         value="latest"
         labelRight
+        data-testid="latest-resolver-radio"
         disabled={isResolverAddressLatest}
         {...register('resolverChoice', {
           required: true,
@@ -107,12 +108,14 @@ const EditResolverForm = ({
       <RadioButton
         label={t('input.editResolver.customLabel')}
         value="custom"
+        data-testid="custom-resolver-radio"
         labelRight
         {...register('resolverChoice')}
       />
       <InputContainer>
         <DogFood
           {...{
+            disabled: resolverChoice !== 'custom',
             register,
             getFieldState,
             watch,

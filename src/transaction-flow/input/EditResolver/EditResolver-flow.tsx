@@ -58,7 +58,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   )
 
   const editResolverForm = useResolverEditor({ resolverAddress, callback: handleCreateTransaction })
-  const { isValid } = editResolverForm
+  const { hasErrors } = editResolverForm
 
   const handleSubmitForm = () => {
     formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }))
@@ -77,7 +77,12 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
           </Button>
         }
         trailing={
-          <Button shadowless onClick={handleSubmitForm} disabled={!isValid}>
+          <Button
+            shadowless
+            onClick={handleSubmitForm}
+            disabled={hasErrors}
+            data-testid="update-button"
+          >
             {t('action.update', { ns: 'common' })}
           </Button>
         }

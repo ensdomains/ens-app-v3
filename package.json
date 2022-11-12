@@ -48,6 +48,7 @@
   },
   "dependencies": {
     "@ensdomains/address-encoder": "^0.2.18",
+    "@ensdomains/content-hash": "^2.5.7",
     "@ensdomains/dnsprovejs": "0.4.1",
     "@ensdomains/dnssecoraclejs": "^0.2.7",
     "@ensdomains/ens-contracts": "0.0.15",
