@@ -145,6 +145,8 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     getFieldState,
     handleSubmit,
     setValue,
+    getValues,
+    setError,
     formState: { isValid, isDirty },
   } = useForm<FormData>({
     mode: 'onChange',
@@ -217,7 +219,9 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       )}
       <form onSubmit={handleSubmit(onSubmit)}>
         <InnerContainer>
-          <DogFood {...{ register, getFieldState, watch, setValue, label: 'Send to' }} />
+          <DogFood
+            {...{ register, getFieldState, watch, setValue, getValues, setError, label: 'Send to' }}
+          />
         </InnerContainer>
         {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
         <Spacer $height="3" />

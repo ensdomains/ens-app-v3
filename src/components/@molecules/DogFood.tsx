@@ -25,28 +25,37 @@ export const DogFood = (
       getFieldState, 
       watch, 
       setValue,
+      setError,
       label, 
-      validations = {},
+      validations,
     // eslint-disable-next-line prettier/prettier
-    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'getFieldState' | 'watch' | 'setValue'> 
+    }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'getFieldState' | 'watch' | 'setValue' | 'setError' | 'getValues'> 
     & { label?: string, validations?: any, disabled?: boolean },
 ) => {
   const { t } = useTranslation('profile')
   const { getRecords } = useEns()
-
   const inputWatch = watch('dogfoodRaw')
+
   const { data: ethNameAddress } = useQuery(
-    ['ethNameValidation', inputWatch],
+    ['ethNameAddress', inputWatch],
     async () => {
+      try {
       const result = await getRecords(inputWatch)
-      return result?.address
+      return result?.address ?? '' 
+      } catch (e) {
+        return ''
+      }
     },
-    { enabled: inputWatch?.includes('.eth') },
+    { enabled: inputWatch?.includes('.') },
   )
+  const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
 
   useEffect(() => {
-    setValue('address', ethNameAddress || inputWatch)
-  }, [ethNameAddress, inputWatch, setValue])
+    setValue('address', finalValue)
+    if(inputWatch?.includes('.') && !finalValue) {
+      setError('dogfoodRaw', { type: 'custom', message: 'ENS Name has no ethereum address record' }, { shouldFocus: true })
+    }
+  }, [finalValue, inputWatch, setError, setValue])
 
   const error = getFieldState('dogfoodRaw').error?.message
 
@@ -60,24 +69,24 @@ export const DogFood = (
         {...register('dogfoodRaw', {
           validate: {
             length: (value) =>
-              !disabled && !value?.includes('.eth') && value?.length !== 42
+              !disabled && !value?.includes('.') && value?.length !== 42
                 ? t('errors.addressLength')
                 : undefined,
             isAddress: (value) =>
-              !disabled && !value?.includes('.eth') && !ethers.utils.isAddress(value)
+              !disabled && !value?.includes('.') && !ethers.utils.isAddress(value)
                 ? t('errors.invalidAddress')
                 : undefined,
             ...validations
           },
         })}
-        error={getFieldState('dogfoodRaw').error?.message}
+        error={error}
       />
-      {!error && inputWatch && !disabled && (
+      {!error && finalValue && !disabled && (
         <>
-        <Spacer $height='2' />
-      <DisplayItems displayItems={[
-        { label: 'address', value: inputWatch, type: 'address' },
-      ]} />
+         <Spacer $height='2' />
+          <DisplayItems displayItems={[
+            { label: 'address', value: finalValue, type: 'address' },
+          ]} />
         </>
       )}
     </InnerContainer>
