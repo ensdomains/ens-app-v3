@@ -1,6 +1,6 @@
-import { RainbowKitProvider, Theme, getDefaultWallets, lightTheme } from '@rainbow-me/rainbowkit'
-import '@rainbow-me/rainbowkit/styles.css'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
+import { EthereumClient, modalConnectors } from '@web3modal/ethereum'
+import { Web3Modal } from '@web3modal/react'
 import { NextPage } from 'next'
 import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
@@ -22,16 +22,6 @@ import { makePersistent } from '@app/utils/persist'
 
 import i18n from '../i18n'
 import '../styles.css'
-
-const rainbowKitTheme: Theme = {
-  ...lightTheme({
-    accentColor: thorinLightTheme.colors.accent,
-    borderRadius: 'medium',
-  }),
-  fonts: {
-    body: 'Satoshi, -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen, Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif',
-  },
-}
 
 const GlobalStyle = createGlobalStyle`
   html,
@@ -91,29 +81,34 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const { provider, chains } = configureChains(
-  [chain.goerli, chain.localhost],
-  [
-    ...(process.env.NEXT_PUBLIC_PROVIDER
-      ? [
-          jsonRpcProvider({
-            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
-          }),
-        ]
-      : [
-          jsonRpcProvider({
-            rpc: (c) => ({
-              http: `https://web3.ens.domains/v1/${
-                c.network === 'homestead' ? 'mainnet' : c.network
-              }`,
-            }),
-          }),
-          infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
-        ]),
-  ],
-)
+// 1. Get projectID at https://cloud.walletconnect.com
+// ToDo: Replace with own projectID
+if (!process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID)
+  throw new Error('You need to provide NEXT_PUBLIC_PROJECT_ID env variable')
+const projectId = process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID
 
-const { connectors } = getDefaultWallets({
+const chains = [chain.goerli, chain.localhost]
+
+const { provider } = configureChains(chains, [
+  ...(process.env.NEXT_PUBLIC_PROVIDER
+    ? [
+        jsonRpcProvider({
+          rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+        }),
+      ]
+    : [
+        jsonRpcProvider({
+          rpc: (c) => ({
+            http: `https://web3.ens.domains/v1/${
+              c.network === 'homestead' ? 'mainnet' : c.network
+            }`,
+          }),
+        }),
+        infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
+      ]),
+])
+
+const connectors = modalConnectors({
   appName: 'ENS',
   chains,
 })
@@ -136,6 +131,9 @@ const wagmiClient = createClient({
 
 makePersistent(queryClient)
 
+// 3. Configure modal ethereum client
+const ethereumClient = new EthereumClient(wagmiClient, chains)
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
 }
@@ -151,22 +149,26 @@ function MyApp({ Component, pageProps }: AppPropsWithLayout) {
     <QueryClientProvider client={queryClient}>
       <I18nextProvider i18n={i18n}>
         <WagmiConfig client={wagmiClient}>
-          <RainbowKitProvider theme={rainbowKitTheme} chains={chains}>
-            <TransactionStoreProvider>
-              <EnsProvider>
-                <ThemeProvider theme={thorinLightTheme}>
-                  <BreakpointProvider queries={breakpoints}>
-                    <GlobalStyle />
-                    <ThorinGlobalStyles />
-                    <TransactionFlowProvider>
-                      <Notifications />
-                      <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
-                    </TransactionFlowProvider>
-                  </BreakpointProvider>
-                </ThemeProvider>
-              </EnsProvider>
-            </TransactionStoreProvider>
-          </RainbowKitProvider>
+          <Web3Modal
+            projectId={projectId}
+            theme="light"
+            accentColor="default"
+            ethereumClient={ethereumClient}
+          />
+          <TransactionStoreProvider>
+            <EnsProvider>
+              <ThemeProvider theme={thorinLightTheme}>
+                <BreakpointProvider queries={breakpoints}>
+                  <GlobalStyle />
+                  <ThorinGlobalStyles />
+                  <TransactionFlowProvider>
+                    <Notifications />
+                    <Basic>{getLayout(<Component {...pageProps} />)}</Basic>
+                  </TransactionFlowProvider>
+                </BreakpointProvider>
+              </ThemeProvider>
+            </EnsProvider>
+          </TransactionStoreProvider>
         </WagmiConfig>
       </I18nextProvider>
     </QueryClientProvider>

@@ -56,14 +56,15 @@
     "@ensdomains/ensjs": "3.0.0-alpha.33",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "0.6.20",
-    "@rainbow-me/rainbowkit": "0.4.8",
     "@sentry/nextjs": "^7.11.1",
     "@svgr/webpack": "^6.3.1",
-    "@tanstack/query-persist-client-core": "4.10.3",
-    "@tanstack/query-sync-storage-persister": "4.10.3",
-    "@tanstack/react-query": "4.10.3",
-    "@tanstack/react-query-persist-client": "4.10.3",
-    "@wagmi/core": "^0.5.8",
+    "@tanstack/query-persist-client-core": "4.15.1",
+    "@tanstack/query-sync-storage-persister": "4.15.1",
+    "@tanstack/react-query": "4.16.1",
+    "@tanstack/react-query-persist-client": "4.16.1",
+    "@wagmi/core": "0.7.3",
+    "@web3modal/ethereum": "2.0.0-c2564bd",
+    "@web3modal/react": "2.0.0-c2564bd",
     "calendar-link": "^2.2.0",
     "dns-packet": "^5.4.0",
     "ethers": "^5.7.0",
@@ -75,9 +76,9 @@
     "iso-639-1": "^2.1.15",
     "lodash": "^4.17.21",
     "next": "12.1.6",
-    "react": "^17.0.2",
+    "react": "18.2.0",
     "react-confetti": "^6.1.0",
-    "react-dom": "^17.0.2",
+    "react-dom": "18.2.0",
     "react-ga": "^3.3.1",
     "react-hook-form": "^7.34.2",
     "react-i18next": "^11.18.5",
@@ -86,7 +87,7 @@
     "react-use": "^17.4.0",
     "styled-components": "^5.3.5",
     "use-immer": "^0.7.0",
-    "wagmi": "0.6.8"
+    "wagmi": "0.8.3"
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",
@@ -183,14 +184,13 @@
       "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@0.3.0-beta.13",
       "@next/swc-linux-x64-gnu": "12.1.4",
       "cypress": "10.8.0",
-      "@tanstack/query-persist-client-core": "4.10.3",
-      "@tanstack/query-sync-storage-persister": "4.10.3",
-      "@tanstack/react-query": "4.10.3",
-      "@tanstack/react-query-persist-client": "4.10.3",
-      "@tanstack/query-core": "4.10.3"
+      "@tanstack/query-persist-client-core": "4.15.1",
+      "@tanstack/query-sync-storage-persister": "4.15.1",
+      "@tanstack/react-query": "4.16.1",
+      "@tanstack/react-query-persist-client": "4.16.1",
+      "@tanstack/query-core": "4.15.1"
     },
     "patchedDependencies": {
-      "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "@synthetixio/synpress@2.3.3": "patches/@synthetixio__synpress@2.3.3.patch"
     }
