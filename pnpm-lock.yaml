@@ -29,6 +29,7 @@ specifiers:
   '@deploysentinel/cypress-debugger': ^0.5.5
   '@ensdomains/address-encoder': ^0.2.18
   '@ensdomains/buffer': ^0.1.0
+  '@ensdomains/content-hash': ^2.5.7
   '@ensdomains/dnsprovejs': 0.4.1
   '@ensdomains/dnssecoraclejs': ^0.2.7
   '@ensdomains/ens-contracts': 0.0.15
@@ -146,6 +147,7 @@ specifiers:
 
 dependencies:
   '@ensdomains/address-encoder': 0.2.18
+  '@ensdomains/content-hash': 2.5.7
   '@ensdomains/dnsprovejs': 0.4.1
   '@ensdomains/dnssecoraclejs': 0.2.7_fu4lq56b6fk2qe2t5pezrufxti
   '@ensdomains/ens-contracts': 0.0.15_p54n6d4jheu2kgugg6357oa4xi

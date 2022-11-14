@@ -44,8 +44,17 @@ export const TransactionDialogManager = ({
   const InnerComponent = useMemo(() => {
     if (selectedKey && selectedItem) {
       if (selectedItem.input && selectedItem.currentFlowStage === 'input') {
-        const DataInputComponent = DataInputComponents[selectedItem.input.name]
-        return <DataInputComponent {...{ data: selectedItem.input.data, dispatch, onDismiss }} />
+        const Component = DataInputComponents[selectedItem.input.name]
+        return (
+          <Component
+            {...{
+              data: selectedItem.input.data,
+              transactions: selectedItem.transactions,
+              dispatch,
+              onDismiss,
+            }}
+          />
+        )
       }
       if (selectedItem.intro && selectedItem.currentFlowStage === 'intro') {
         const currentTx = selectedItem.transactions[selectedItem.currentTransaction]

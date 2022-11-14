@@ -212,11 +212,10 @@ const RecordsValue = ({ value }: { value: [string, string][] }) => {
   return (
     <RecordsContainer>
       {value.map(([key, val]) => (
-        <RecordContainer>
-          <Typography weight="bold" ellipsis>
-            {key}
+        <RecordContainer key={key}>
+          <Typography ellipsis>
+            <strong>{key}:</strong> {val}
           </Typography>
-          <Typography ellipsis>{val}</Typography>
         </RecordContainer>
       ))}
     </RecordsContainer>
