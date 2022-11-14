@@ -10,12 +10,11 @@ const useDNSOwner = (name: string, valid: boolean | undefined) => {
     status,
     isFetched,
     isLoading,
-    internal: { isFetchedAfterMount },
   } = useQuery(['getDNSOwner', name], () => getDNSOwner(name), {
     enabled: ready && valid && !name?.endsWith('.eth'),
   })
 
-  const isCachedData = status === 'success' && isFetched && !isFetchedAfterMount
+  const isCachedData = status === 'success' && isFetched
 
   return {
     dnsOwner,

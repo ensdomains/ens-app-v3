@@ -10,7 +10,6 @@ export const useGetWrapperData = (name: string, skip?: any) => {
     isLoading,
     status,
     isFetched,
-    internal: { isFetchedAfterMount },
   } = useQuery(['getWrapperData', name], () => getWrapperData(name), {
     enabled: ready && !skip && name !== '',
   })
@@ -19,6 +18,6 @@ export const useGetWrapperData = (name: string, skip?: any) => {
     wrapperData,
     isLoading,
     status,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: status === 'success' && isFetched,
   }
 }

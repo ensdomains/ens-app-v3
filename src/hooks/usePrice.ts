@@ -13,7 +13,6 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
     isFetched,
     isLoading: loading,
     error,
-    internal: { isFetchedAfterMount },
   } = useQuery(
     ['usePrice', type, ...names],
     async () => getPrice(nameOrNames, yearsToSeconds(1), legacy),
@@ -30,7 +29,7 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
     base,
     premium,
     hasPremium,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: status === 'success' && isFetched,
     loading,
     error,
   }

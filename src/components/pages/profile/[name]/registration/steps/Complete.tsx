@@ -1,3 +1,4 @@
+import { Hash } from '@wagmi/core'
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 import type ConfettiT from 'react-confetti'
@@ -119,8 +120,9 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const registerTxFlow = getLatestTransaction(registerKey)
 
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
-    hash: commitTxFlow!.hash,
+    hash: commitTxFlow!.hash as Hash,
   })
+
   const {
     response: registerResponse,
     receipt: registerReceipt,

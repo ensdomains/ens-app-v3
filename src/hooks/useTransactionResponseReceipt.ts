@@ -1,10 +1,13 @@
+import { Hash } from '@wagmi/core'
 import { useTransaction, useWaitForTransaction } from 'wagmi'
 
 const useTransactionResponseReceipt = (hash: string) => {
   const { data: responseData, isLoading: responseLoading } = useTransaction({
-    hash: hash as `0x${string}`,
+    hash: hash as Hash,
   })
-  const { data: receiptData, isLoading: receiptLoading } = useWaitForTransaction({ hash })
+  const { data: receiptData, isLoading: receiptLoading } = useWaitForTransaction({
+    hash: hash as Hash,
+  })
 
   const isLoading = responseLoading || receiptLoading
 
