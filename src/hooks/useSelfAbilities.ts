@@ -235,7 +235,7 @@ export const getFunctionCallDetails = ({
 
 export const getPermittedActions = (props: GetFunctionCallDetailsArgs): SendPermissions => {
   if (!props.basicNameData.ownerData) return { canSendOwner: false, canSendManager: false }
-  if (props.basicNameData.wrapperData?.fuseObj.CANNOT_TRANSFER)
+  if (props.basicNameData.wrapperData?.fuseObj?.CANNOT_TRANSFER)
     return { canSendOwner: false, canSendManager: false }
   const result = getFunctionCallDetails(props)
   if (!result) return { canSendOwner: false, canSendManager: false }
