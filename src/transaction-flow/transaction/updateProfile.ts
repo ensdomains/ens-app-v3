@@ -67,4 +67,5 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
 export default {
   displayItems,
   transaction,
+  backToInput: true,
 } as Transaction<Data>

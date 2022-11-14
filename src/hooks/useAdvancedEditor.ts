@@ -13,6 +13,7 @@ import { emptyAddress } from '@app/utils/constants'
 import {
   convertFormSafeKey,
   convertProfileToProfileFormObject,
+  formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
 
@@ -56,10 +57,11 @@ type ExpandableRecordsState = {
 type Props = {
   profile: ReturnType<typeof useProfile>['profile']
   loading: ReturnType<typeof useProfile>['loading']
+  overwrites?: RecordOptions
   callback: (data: RecordOptions) => void
 }
 
-const useAdvancedEditor = ({ profile, loading, callback }: Props) => {
+const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) => {
   const { t } = useTranslation('profile')
 
   const {
@@ -183,6 +185,29 @@ const useAdvancedEditor = ({ profile, loading, callback }: Props) => {
         address: Object.keys(newDefaultValues.address) || [],
         text: Object.keys(newDefaultValues.text) || [],
       }
+
+      overwrites?.texts?.forEach((text) => {
+        const { key, value } = text
+        const formKey = formSafeKey(key)
+        setValue(`text.${formKey}`, value, { shouldDirty: true })
+        if (!newExistingRecords.text.includes(formKey)) {
+          newExistingRecords.text.push(formKey)
+        }
+      })
+
+      overwrites?.coinTypes?.forEach((coinType) => {
+        const { key, value } = coinType
+        const formKey = formSafeKey(key)
+        setValue(`address.${formKey}`, value, { shouldDirty: true })
+        if (!newExistingRecords.address.includes(formKey)) {
+          newExistingRecords.address.push(formKey)
+        }
+      })
+
+      if (overwrites?.contentHash) {
+        setValue('other.contentHash', overwrites.contentHash, { shouldDirty: true })
+      }
+
       setExistingRecords(newExistingRecords)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

@@ -127,7 +127,9 @@ describe('Extend Names', () => {
     cy.visit('/profile/grace-period.eth/details')
     connectFromExisting()
 
-    cy.findByTestId('extend-button').should('be.visible')
+    cy.findByTestId('extend-button').as('extend-button')
+
+    cy.get('@extend-button').should('be.visible')
     cy.findByTestId('expiry-label').should('be.visible')
     cy.findByTestId('expiry-label')
       .invoke('attr', 'data-timestamp')
@@ -136,7 +138,7 @@ describe('Extend Names', () => {
         cy.wrap(timestamp).as('timestamp')
       })
 
-    cy.findByTestId('extend-button').click()
+    cy.get('@extend-button').click()
     cy.findByTestId('extend-names-modal', { timeout: 10000 }).should('be.visible')
 
     cy.get('button').contains('Save').click()

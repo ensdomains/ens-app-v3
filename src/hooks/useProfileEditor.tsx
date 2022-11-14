@@ -9,15 +9,21 @@ import addressOptions from '@app/components/@molecules/ProfileEditor/options/add
 import otherOptions from '@app/components/@molecules/ProfileEditor/options/otherOptions'
 import websiteOptions from '@app/components/@molecules/ProfileEditor/options/websiteOptions'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
+import supportedProfileItems from '@app/constants/supportedProfileItems.json'
+import supportedAccounts from '@app/constants/supportedTexts.json'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorType } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import {
+  ProfileFormObject,
   convertFormSafeKey,
   convertProfileToProfileFormObject,
+  formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
+
+import { getProtocolTypeAndContentId } from '../utils/contenthash'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -59,10 +65,11 @@ type ExpandableRecordsState = {
 export type Props = {
   callback: (data: RecordOptions, event?: React.BaseSyntheticEvent) => void
   profile: ReturnType<typeof useProfile>['profile']
+  overwrites?: RecordOptions
   returnAllFields?: boolean
 }
 
-const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
+const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const {
@@ -232,16 +239,54 @@ const useProfileEditor = ({ callback, profile, returnAllFields }: Props) => {
         accounts: Object.keys(newDefaultValues.accounts) || [],
       }
       reset(newDefaultValues)
-      setExistingRecords(newExistingRecords)
 
       setHasExistingWebsite(!!newDefaultValues.website)
-      const protocol = newDefaultValues.website?.match(/^[^:]+/)?.[0]?.toLowerCase()
-      if (protocol) {
-        const option = websiteOptions.find(({ value }) => value === protocol)
+      const { protocolType } = getProtocolTypeAndContentId(newDefaultValues.website)
+      if (protocolType) {
+        const option = websiteOptions.find(({ value }) => value === protocolType)
         setWebsiteOption(option || undefined)
       }
+
+      overwrites?.texts?.forEach((text) => {
+        const { key, value } = text
+        const formKey = formSafeKey(key.toString())
+        if (['avatar', 'banner'].includes(key)) {
+          setValue(formKey as keyof ProfileFormObject, value, { shouldDirty: true })
+        } else if (supportedProfileItems.includes(key)) {
+          setValue(`general.${formKey}`, value, { shouldDirty: true })
+        } else if (supportedAccounts.includes(key)) {
+          setValue(`accounts.${formKey}`, value, { shouldDirty: true })
+          if (!newExistingRecords.accounts.includes(formKey))
+            newExistingRecords.accounts.push(formKey)
+        } else {
+          setValue(`other.${formKey}`, value, { shouldDirty: true })
+          if (!newExistingRecords.other.includes(formKey)) newExistingRecords.other.push(formKey)
+        }
+      })
+
+      overwrites?.coinTypes?.forEach((record) => {
+        const { key, value } = record
+        const formKey = formSafeKey(key.toString())
+        setValue(`address.${formKey}`, value, { shouldDirty: true })
+        if (!newExistingRecords.address.includes(formKey)) newExistingRecords.address.push(formKey)
+      })
+
+      setExistingRecords(newExistingRecords)
+
+      if (overwrites?.contentHash) {
+        setValue('website', overwrites.contentHash, { shouldDirty: true })
+        setHasExistingWebsite(true)
+        const { protocolType: newProtocolType } = getProtocolTypeAndContentId(
+          overwrites.contentHash,
+        )
+        if (newProtocolType) {
+          const option = websiteOptions.find(({ value }) => value === newProtocolType)
+          setWebsiteOption(option || undefined)
+        }
+      }
     }
-  }, [profile, reset])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profile, reset, overwrites])
 
   const getValuesAsProfile = (profileData: ProfileEditorType) => {
     const dirtyFields = getDirtyFields(

@@ -1,3 +1,4 @@
+/* eslint-disable no-await-in-loop */
 import {
   cleanup,
   fireEvent,
@@ -12,6 +13,7 @@ import {
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { Profile } from '@app/types'
+import { formSafeKey } from '@app/utils/editor'
 
 import AdvancedEditor from './AdvancedEditor-flow'
 
@@ -40,11 +42,6 @@ const mockProfileData = {
           key: 'com.discord',
           type: 'text',
           value: 'test#1234',
-        },
-        {
-          key: 'com.github',
-          type: 'text',
-          value: 'https://github.com/test',
         },
         {
           key: 'com.reddit',
@@ -267,5 +264,110 @@ describe('AdvancedEditor', () => {
       value: '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
     })
     expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes.length).toBe(1)
+  })
+
+  it('should overwrite existing records and add new records for records passed in transactions', async () => {
+    render(
+      <AdvancedEditor
+        data={{ name: 'test.eth' }}
+        transactions={[
+          {
+            name: 'updateProfile',
+            data: {
+              records: {
+                texts: [
+                  {
+                    key: 'com.twitter',
+                    value: 'test2',
+                  },
+                  {
+                    key: 'com.github',
+                    value: 'test2',
+                  },
+                  {
+                    key: 'other',
+                    value: 'test2',
+                  },
+                  {
+                    key: 'email',
+                    value: 'test@ens.domains',
+                  },
+                ],
+                coinTypes: [
+                  {
+                    key: 'BNB',
+                    value: 'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
+                  },
+                  {
+                    key: 'ETH',
+                    value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+                  },
+                ],
+                contentHash: 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
+              },
+            },
+          },
+        ]}
+        dispatch={() => {}}
+        onDismiss={() => {}}
+      />,
+    )
+
+    const tabs = [
+      {
+        tab: 'text-tab',
+        records: [
+          {
+            label: formSafeKey('com.twitter'),
+            value: 'test2',
+          },
+          {
+            label: formSafeKey('com.github'),
+            value: 'test2',
+          },
+          {
+            label: 'other',
+            value: 'test2',
+          },
+          {
+            label: 'email',
+            value: 'test@ens.domains',
+          },
+        ],
+      },
+      {
+        tab: 'address-tab',
+        records: [
+          {
+            label: 'BNB',
+            value: 'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
+          },
+          {
+            label: 'ETH',
+            value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
+          },
+        ],
+      },
+      {
+        tab: 'other-tab',
+        records: [
+          {
+            label: 'advancedEditor.tabs.other.contentHash.label',
+            value: 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
+          },
+        ],
+      },
+    ]
+
+    for (const { tab, records } of tabs) {
+      const tabEl = await screen.findByTestId(tab)
+      await userEvent.click(tabEl)
+
+      for (const { label, value } of records) {
+        const record = await screen.findByTestId(`record-input-${label}`)
+        const recordInput = await within(record).getByTestId('record-input-input')
+        expect(recordInput).toHaveValue(value)
+      }
+    }
   })
 })

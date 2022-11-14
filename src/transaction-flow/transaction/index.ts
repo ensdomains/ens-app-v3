@@ -50,3 +50,5 @@ export const makeTransactionItem = <T extends TransactionName>(
   name,
   data,
 })
+
+export type TransactionItem = ReturnType<typeof makeTransactionItem>
