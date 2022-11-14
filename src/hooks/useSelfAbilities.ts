@@ -235,6 +235,8 @@ export const getFunctionCallDetails = ({
 
 export const getPermittedActions = (props: GetFunctionCallDetailsArgs): SendPermissions => {
   if (!props.basicNameData.ownerData) return { canSendOwner: false, canSendManager: false }
+  if (props.basicNameData.wrapperData?.fuseObj.CANNOT_TRANSFER)
+    return { canSendOwner: false, canSendManager: false }
   const result = getFunctionCallDetails(props)
   if (!result) return { canSendOwner: false, canSendManager: false }
   const keys = Object.keys(result)
@@ -268,14 +270,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       sendNameFunctionCallDetails: {},
     }
 
-    if (
-      !name ||
-      !address ||
-      !basicNameData ||
-      !parentBasicNameData ||
-      basicNameData.wrapperData?.fuseObj.CANNOT_TRANSFER
-    )
-      return abilities
+    if (!name || !address || !basicNameData || !parentBasicNameData) return abilities
 
     const functionCallDetails = getFunctionCallDetails({
       basicNameData,
