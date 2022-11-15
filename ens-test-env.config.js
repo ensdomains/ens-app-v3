@@ -8,8 +8,8 @@ require('dotenv').config({
   override: true,
 })
 
-process.env.ADDRESS_ETH_REGISTRAR = '0xc5a5C42992dECbae36851359345FE25997F5C42d'
-process.env.ADDRESS_NAME_WRAPPER = '0x9E545E3C0baAB3E08CdfD552C960A1050f373042'
+process.env.ADDRESS_ETH_REGISTRAR = '0xc8CB5439c767A63aca1c01862252B2F3495fDcFE'
+process.env.ADDRESS_NAME_WRAPPER = '0xB7aa4c318000BB9bD16108F81C40D02E48af1C42'
 process.env.BATCH_GATEWAY_URLS = JSON.stringify([
   'https://universal-offchain-unwrapper.ens-cf.workers.dev/',
 ])

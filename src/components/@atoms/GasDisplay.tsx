@@ -21,7 +21,7 @@ const Container = styled.div(
 )
 
 type Props = {
-  gasPrice: BigNumber | undefined
+  gasPrice: BigNumber | null | undefined
 }
 
 const GasDisplay = ({ gasPrice }: Props) => {
