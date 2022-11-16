@@ -16,6 +16,8 @@ services:
     - '2'
     - --hostname
     - '0.0.0.0'
+    - --gasLimit
+    - '30000000'
     - --debug
     environment:
       GANACHE_IP_ADDR: '0.0.0.0'
