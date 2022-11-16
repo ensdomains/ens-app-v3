@@ -15,7 +15,7 @@ process.env.BATCH_GATEWAY_URLS = JSON.stringify([
 ])
 
 /**
- * @type {import('@ensdomains/ens-test-env').ENSTestEnvConfig}
+ * @type {import('./ens-test-env').ENSTestEnvConfig}
  **/
 module.exports = {
   deployCommand: 'pnpm hardhat deploy',
