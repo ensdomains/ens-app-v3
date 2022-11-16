@@ -1,7 +1,6 @@
 #!/bin/bash
 
 devDeps=(
-    "@harmony-domains/ens-test-env"
     "@ensdomains/buffer"
     "@next/bundle-analyzer"
     "@nomiclabs/hardhat-ethers"
