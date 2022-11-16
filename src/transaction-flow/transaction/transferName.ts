@@ -7,11 +7,12 @@ type Data = {
   name: string
   newOwner: EthAddress
   contract: 'registry' | 'baseRegistrar' | 'nameWrapper'
+  sendType: 'sendManager' | 'sendOwner'
   reclaim?: boolean
 }
 
 const displayItems = (
-  { name }: Data,
+  { name, sendType, newOwner }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -21,7 +22,12 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: t('name.transferName'),
+    value: t(`name.${sendType}`),
+  },
+  {
+    label: 'to',
+    type: 'address',
+    value: newOwner,
   },
 ]
 

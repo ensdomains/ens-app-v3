@@ -45,6 +45,17 @@ interface ContractFunctionInfo {
   wrapped: NameStates
 }
 
+/*
+To use this object, put yourself in the shoes of the user.
+For example, if you are the owner of an unwrapped subname,
+and the parent is unwrapped, and you want to trasfer your 
+role as manager to someone else, you would go: 
+unwrapped.subname.manager.sendManager
+
+If for the same naem you were the parent manager, you would go:
+unwrapped.subname.parentManager.sendManager
+*/
+
 const contractFunction: ContractFunctionInfo = {
   unwrapped: {
     name: {
@@ -246,6 +257,25 @@ export const getPermittedActions = (props: GetFunctionCallDetailsArgs): SendPerm
   }
 }
 
+const isParentWithChildPCCBurnedCalc = (
+  basicNameData: BasicNameData,
+  parentBasicNameData: BasicNameData,
+  address: string,
+): boolean | undefined => {
+  const { ownerData, wrapperData } = basicNameData
+  const { ownerData: parentOwnerData } = parentBasicNameData
+  const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
+  const isParentOwnerOrManager = parentOwnerData?.owner === address
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+
+  return (
+    !isOwnerOrManager &&
+    isParentOwnerOrManager &&
+    isWrapped &&
+    wrapperData?.fuseObj.PARENT_CANNOT_CONTROL
+  )
+}
+
 export const useSelfAbilities = (address: string | undefined, name?: string) => {
   const parent = name?.split('.')?.slice(1)?.join('.')
   const is2LDEth = name?.split('.')?.length === 2 && name?.split('.')?.[1] === 'eth'
@@ -272,6 +302,13 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
 
     if (!name || !address || !basicNameData || !parentBasicNameData) return abilities
 
+    if (is2LDEth) abilities.canExtend = true
+
+    if (isParentWithChildPCCBurnedCalc(basicNameData, parentBasicNameData, address)) {
+      // PCC burned so GTFO parent
+      return abilities
+    }
+
     const functionCallDetails = getFunctionCallDetails({
       basicNameData,
       parentBasicNameData,
@@ -292,7 +329,6 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
     abilities.canSendManager = canSendManager
     abilities.canSend = canSendManager || canSendOwner
 
-    if (is2LDEth) abilities.canExtend = true
     if (basicNameData?.ownerData?.owner === address) {
       abilities.canEdit = true
     }

@@ -89,12 +89,14 @@ export const handleSubmitForm = ({
           name,
           newOwner,
           contract: sendNameFunctionCallDetails.sendManager.contract,
+          sendType: 'sendManager',
           reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
         }),
         makeTransactionItem('transferName', {
           name,
           newOwner,
           contract: sendNameFunctionCallDetails.sendOwner.contract,
+          sendType: 'sendOwner',
         }),
       ],
     })
@@ -112,6 +114,7 @@ export const handleSubmitForm = ({
         name,
         newOwner,
         contract: sendNameFunctionCallDetails[sendType]!.contract,
+        sendType,
         reclaim: sendNameFunctionCallDetails[sendType]!.method === 'reclaim',
       }),
     ],

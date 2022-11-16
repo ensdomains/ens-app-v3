@@ -90,7 +90,8 @@
     "extend": "Extend",
     "send": "Send",
     "transfer": "Transfer",
-    "transferName": "Transfer Name"
+    "sendManager": "Send Manager",
+    "sendOwner": "Send Owner"
   },
   "address": {
     "label": "Address",
