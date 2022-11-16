@@ -1,10 +1,30 @@
 # Developer.md
 
-## Prerequisites for Local Development
+## Prerequesites for FrontEnd Development
 
-Local Development requires the following components. Below are links to relevant documentation. 
+* [Docker](https://docs.docker.com/desktop/install/mac-install/)
 
-*Note: This will become simpler once a dockerized development environment is finalized*
+## Quickstart
+
+Open two terminal windows.
+
+Start Docker (ganache, ens-subgraph, ens-contracts, ens-metadata-service)
+```
+pnpm docker
+```
+
+Start the Frontend
+
+```
+pnpm buildandstart:glocal
+```
+
+## Prerequisites for ENS End to Ennd Local Development
+
+If developing all ENS Components locally you will require the following.
+
+*Below are links to relevant documentation.* 
+
 
 ### Ganache
 
