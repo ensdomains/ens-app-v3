@@ -17,6 +17,7 @@
         "start": "next start",
         "buildandstart": "pnpm build && pnpm start",
         "buildandstart:glocal": "pnpm build:glocal && pnpm start",
+        "docker": "node ./ens-test-env/src/index.js -a start -ns -nb --extra-time 11368000",
         "tenv": "ens-test-env -a",
         "denv": "pnpm tenv start -ns -nb --extra-time 11368000",
         "lint": "next lint && pnpm stylelint stylelint \"./src/**/*.tsx\"",
