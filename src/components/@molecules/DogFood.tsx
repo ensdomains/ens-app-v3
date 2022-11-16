@@ -51,7 +51,9 @@ export const DogFood = (
     { enabled: inputWatch?.includes('.') },
   )
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
-  useEffect(() => { setValue('address', finalValue)}, [finalValue, setValue])
+  useEffect(() => { 
+    setValue('address', finalValue)
+  }, [finalValue, setValue])
   const errorMessage = formState.errors.dogfoodRaw?.message
 
   return (

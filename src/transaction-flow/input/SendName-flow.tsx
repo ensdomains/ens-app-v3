@@ -156,6 +156,8 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     name,
   )
 
+  const hasErrors = Object.keys(formState.errors || {}).length > 0
+
   const onSubmit = (formData: any) => {
     handleSubmitForm({
       basicNameData,
@@ -240,7 +242,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
               <Button
                 shadowless
                 type="submit"
-                disabled={!hasChoice || !formState.isValid || !formState.isDirty}
+                disabled={!hasChoice || !formState.isDirty || hasErrors}
               >
                 {t('action.next', { ns: 'common' })}
               </Button>
