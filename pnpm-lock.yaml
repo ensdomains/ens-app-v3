@@ -117,6 +117,7 @@ specifiers:
   next-compose-plugins: ^2.2.1
   node-fetch: 2.6.1
   node-fetch-commonjs: ^3.1.1
+  p-memoize: ^7.1.1
   postcss-scss: ^4.0.4
   prettier: 2.6.2
   react: ^17.0.2
@@ -174,6 +175,7 @@ dependencies:
   iso-639-1: 2.1.15
   lodash: 4.17.21
   next: 12.1.6_7zkbjz6d46tpcbbta4lk5n6n6i
+  p-memoize: 7.1.1
   react: 17.0.2
   react-confetti: 6.1.0_bbuxkxhxbyez4jmqgptuoucij4_react@17.0.2
   react-dom: 17.0.2_react@17.0.2
@@ -16523,7 +16525,6 @@ packages:
   /mimic-fn/4.0.0:
     resolution: {integrity: sha512-vqiC06CuhBTUdZH+RYl8sFrL096vA45Ok5ISO6sE/Mr1jRbGH4Csnhi8f3wKVl7x8mO4Au7Ir9D3Oyv1VYMFJw==}
     engines: {node: '>=12'}
-    dev: true
 
   /mimic-response/1.0.1:
     resolution: {integrity: sha512-j5EctnkH7amfV/q5Hgmoal1g2QHFJRraOtmx0JpIqkxhBhI/lJSl1nMpQ45hVarwNETOoWEimndZ4QK0RHxuxQ==}
@@ -17724,6 +17725,14 @@ packages:
     engines: {node: '>=10'}
     dependencies:
       aggregate-error: 3.1.0
+
+  /p-memoize/7.1.1:
+    resolution: {integrity: sha512-DZ/bONJILHkQ721hSr/E9wMz5Am/OTJ9P6LhLFo2Tu+jL8044tgc9LwHO8g4PiaYePnlVVRAJcKmgy8J9MVFrA==}
+    engines: {node: '>=14.16'}
+    dependencies:
+      mimic-fn: 4.0.0
+      type-fest: 3.2.0
+    dev: false
 
   /p-retry/4.6.2:
     resolution: {integrity: sha512-312Id396EbJdvRONlngUx0NydfrIQ5lsYu0znKVUzVvArzEIt08V1qhtyESbGVd1FGX7UKtiFp5uwKZdM8wIuQ==}
@@ -21472,6 +21481,11 @@ packages:
     resolution: {integrity: sha512-RAH822pAdBgcNMAfWnCBU3CFZcfZ/i1eZjwFU/dsLKumyuuP3niueg2UAukXYF0E2AAoc82ZSSf9J0WQBinzHA==}
     engines: {node: '>=12.20'}
     dev: true
+
+  /type-fest/3.2.0:
+    resolution: {integrity: sha512-Il3wdLRzWvbAEtocgxGQA9YOoRVeVUGOMBtel5LdEpNeEAol6GJTLw8GbX6Z8EIMfvfhoOXs2bwOijtAZdK5og==}
+    engines: {node: '>=14.16'}
+    dev: false
 
   /type-is/1.6.18:
     resolution: {integrity: sha512-TkRKr9sUTxEH8MdfuCSP7VizJyzRNMjj2J2do2Jr3Kym598JVdEksuzPQCnlFPW4ky9Q+iA+ma9BGm06XQBy8g==}
