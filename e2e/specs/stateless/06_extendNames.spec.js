@@ -138,7 +138,7 @@ describe('Extend Names', () => {
         cy.wrap(timestamp).as('timestamp')
       })
 
-    cy.get('@extend-button').click()
+    cy.findByTestId('extend-button').click()
     cy.findByTestId('extend-names-modal', { timeout: 10000 }).should('be.visible')
 
     cy.get('button').contains('Save').click()
