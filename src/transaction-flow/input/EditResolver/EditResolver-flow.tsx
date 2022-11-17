@@ -1,12 +1,16 @@
-import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
-import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'
-import { useProfile } from '@app/hooks/useProfile'
-import useResolverEditor from '@app/hooks/useResolverEditor'
-import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { Button, Dialog, mq } from '@ensdomains/thorin'
 import { useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Button, Dialog, mq } from '@ensdomains/thorin'
+
+import EditResolverForm from '@app/components/@molecules/EditResolver/EditResolverForm'
+import EditResolverWarnings from '@app/components/@molecules/EditResolver/EditResolverWarnings'
+import { useBasicName } from '@app/hooks/useBasicName'
+import { useProfile } from '@app/hooks/useProfile'
+import useResolverEditor from '@app/hooks/useResolverEditor'
+import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+
 import { makeTransactionItem } from '../../transaction'
 
 const EditResolverFormContainer = styled.div(() => [
@@ -35,6 +39,8 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { profile = { resolverAddress: '' } } = useProfile(name as string)
   const { resolverAddress } = profile
 
+  const { isWrapped } = useBasicName(name)
+
   const handleCreateTransaction = useCallback(
     (newResolver: string) => {
       dispatch({
@@ -42,7 +48,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
         payload: [
           makeTransactionItem('updateResolver', {
             name,
-            contract: 'registry',
+            contract: isWrapped ? 'nameWrapper' : 'registry',
             resolver: newResolver,
             oldResolver: resolverAddress!,
           }),
@@ -50,7 +56,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [dispatch, name, resolverAddress],
+    [dispatch, name, resolverAddress, isWrapped],
   )
 
   const editResolverForm = useResolverEditor({ resolverAddress, callback: handleCreateTransaction })
