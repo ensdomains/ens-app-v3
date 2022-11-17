@@ -89,17 +89,3 @@ export default function Page() {
     </Content>
   )
 }
-
-// const Wrapper = styled.div(
-//   ({ theme }) => css`
-//     flex-grow: 1;
-//     display: flex;
-//     flex-direction: column;
-//     align-items: stretch;
-//     justify-content: center;
-//   `,
-// )
-
-// Page.getLayout = function getLayout(page: ReactElement) {
-//   return <Wrapper>{page}</Wrapper>
-// }

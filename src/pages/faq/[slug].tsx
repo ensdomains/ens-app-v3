@@ -13,23 +13,6 @@ import { faqOptions } from '@app/constants/faq'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 
-// const OptionContainer = styled.div(
-//   ({ theme }) => css`
-//     flex-grow: 1;
-//     display: grid;
-//     grid-template-columns: 1fr;
-//     grid-template-rows: repeat(1fr, 4);
-//     gap: ${theme.space['3']};
-//     flex-gap: ${theme.space['3']};
-
-//     ${mq.md.min(css`
-//       grid-template-columns: repeat(2, 1fr);
-//       grid-template-rows: repeat(1fr 1fr, 2);
-//       height: 100%;
-//     `)}
-//   `,
-// )
-
 const OptionLinks = styled(Card)(
   ({ theme }) => css`
     box-shadow: none;
