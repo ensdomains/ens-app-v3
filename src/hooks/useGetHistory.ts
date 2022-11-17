@@ -10,6 +10,7 @@ export const useGetHistory = (name: string, skip?: any) => {
     isLoading,
     status,
     isFetched,
+    internal: { isFetchedAfterMount },
   } = useQuery(['graph', 'getHistory', name], () => getHistory(name), {
     enabled: ready && !skip && name !== '',
   })
@@ -18,6 +19,6 @@ export const useGetHistory = (name: string, skip?: any) => {
     history,
     isLoading,
     status,
-    isCachedData: status === 'success' && isFetched,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

@@ -21,7 +21,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     data: batchData,
     isLoading: batchLoading,
     isFetched,
-    // internal: { isFetchedAfterMount },
+    internal: { isFetchedAfterMount },
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
@@ -87,6 +87,6 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
       !isWrapped &&
       normalisedName?.endsWith('.eth') &&
       !isLabelTooLong(normalisedName),
-    isCachedData: status === 'success' && isFetched,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

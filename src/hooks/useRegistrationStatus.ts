@@ -10,7 +10,13 @@ import {
 export const useRegistrationStatus = (name?: string) => {
   const ens = useEns()
 
-  const { data, isLoading, status, isFetched } = useQuery(
+  const {
+    data,
+    isLoading,
+    status,
+    isFetched,
+    internal: { isFetchedAfterMount },
+  } = useQuery(
     ['registrationStatus', name],
     async (): Promise<RegistrationStatus> => {
       const _name = name as string
@@ -30,6 +36,6 @@ export const useRegistrationStatus = (name?: string) => {
     data,
     isLoading,
     status,
-    isCachedData: status === 'success' && isFetched,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }
