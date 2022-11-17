@@ -22,7 +22,7 @@ export const useProfileActions = () => {
   const { name: ensName } = usePrimary(address || '')
   const name = isSelf && ensName ? ensName : _name
   const { profile, ownerData } = useNameDetails(name)
-  const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const selfAbilities = useSelfAbilities(address, name)
   const subNameAbilities = useSubnameAbilities(name, ownerData)
   const { createTransactionFlow } = useTransactionFlow()
   const { t } = useTranslation('profile')

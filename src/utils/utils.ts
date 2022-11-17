@@ -62,3 +62,7 @@ export const isLabelTooLong = (label: string) => {
   const bytes = toUtf8Bytes(label)
   return bytes.byteLength > 255
 }
+
+export const getTestId = (props: any, fallback: string): string => {
+  return props['data-testid'] ? String(props['data-testid']) : fallback
+}

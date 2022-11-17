@@ -1,6 +1,6 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { BigNumber, utils } from 'ethers'
-import { useCallback, useEffect, useMemo, useState } from 'react'
+import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, keyframes } from 'styled-components'
 import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
@@ -18,7 +18,11 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { transactions } from '@app/transaction-flow/transaction'
-import { ManagedDialogPropsTwo, TransactionStage } from '@app/transaction-flow/types'
+import {
+  ManagedDialogPropsTwo,
+  TransactionFlowAction,
+  TransactionStage,
+} from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
@@ -210,6 +214,11 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
       {message && <MessageTypography>{message}</MessageTypography>}
     </>
   )
+}
+
+export const handleBackToInput = (dispatch: Dispatch<TransactionFlowAction>) => () => {
+  dispatch({ name: 'setFlowStage', payload: 'input' })
+  dispatch({ name: 'resetTransactionStep' })
 }
 
 export const TransactionStageModal = ({
@@ -466,9 +475,7 @@ export const TransactionStageModal = ({
         trailing={
           backToInput &&
           !(stage === 'sent' || stage === 'complete') && (
-            <Button onClick={() => dispatch({ name: 'setFlowStage', payload: 'input' })}>
-              {t('action.back')}
-            </Button>
+            <Button onClick={handleBackToInput(dispatch)}>{t('action.back')}</Button>
           )
         }
       />

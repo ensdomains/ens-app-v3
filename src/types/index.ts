@@ -43,7 +43,7 @@ export type TransactionDisplayItem =
 
 export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records'
 
-type PublicInterface<T> = { [K in keyof T]: T[K] }
+type PublicInterface<Type> = { [Key in keyof Type]: Type[Key] }
 
 export type ProfileEditorType = {
   _avatar?: File
