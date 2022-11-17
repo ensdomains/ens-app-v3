@@ -131,12 +131,6 @@ const Pricing = ({
         {t('action.loading', { ns: 'common' })}
       </Button>
     )
-  } else if (balance?.value.lt(totalRequiredBalance)) {
-    actionButton = (
-      <Button data-testid="next-button" shadowless disabled>
-        {t('steps.pricing.insufficientBalance')}
-      </Button>
-    )
   } else {
     actionButton = (
       <Button
@@ -148,6 +142,14 @@ const Pricing = ({
       </Button>
     )
   }
+
+  // else if (balance?.value.lt(totalRequiredBalance)) {
+  //   actionButton = (
+  //     <Button data-testid="next-button" shadowless disabled>
+  //       {t('steps.pricing.insufficientBalance')}
+  //     </Button>
+  //   )
+  // }
 
   return (
     <StyledCard>

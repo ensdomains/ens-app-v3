@@ -1,4 +1,4 @@
-import { toUtf8Bytes } from 'ethers/lib/utils'
+import { keccak256, toUtf8Bytes } from 'ethers/lib/utils'
 
 import { networkName } from './constants'
 
@@ -63,6 +63,6 @@ export const isLabelTooLong = (label: string) => {
   return bytes.byteLength > 255
 }
 
-export const getTestId = (props: any, fallback: string): string => {
-  return props['data-testid'] ? String(props['data-testid']) : fallback
-}
+export const labelHashCalc = (label: string) => keccak256(toUtf8Bytes(label))
+
+export const getLabelFromName = (name: string = '') => name.split('.')[0]

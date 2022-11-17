@@ -1,12 +1,14 @@
 import Head from 'next/head'
 import { useRouter } from 'next/router'
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import { useAccount } from 'wagmi'
+import styled, { css } from 'styled-components'
+import { useAccount, useQuery } from 'wagmi'
 
-import { Helper } from '@ensdomains/thorin'
+import { Dialog, Helper } from '@ensdomains/thorin'
 
 import { baseFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -14,10 +16,11 @@ import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import useResolverExists from '@app/hooks/useResolverExists'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { isLabelTooLong } from '@app/utils/utils'
+import { MOONPAY_LINK_GENERATOR_URL } from '@app/utils/constants'
+import { getLabelFromName, isLabelTooLong, labelHashCalc } from '@app/utils/utils'
 
 import Complete from './steps/Complete'
-import Info from './steps/Info'
+import Info, { PaymentMethod } from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
@@ -28,9 +31,27 @@ type Props = {
   isLoading: boolean
 }
 
+const StyledDialog = styled(Dialog)(
+  ({ theme }) => css`
+    max-width: 100vw;
+    width: 90vw;
+    height: 90vh;
+
+    & > div {
+      max-width: 90vw;
+      width: 90vw;
+      height: 90vh;
+    }
+    & > div > div {
+      max-width: 90vw;
+      height: 90vh;
+    }
+  `,
+)
+
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
-
+  const chainId = useChainId()
   const router = useRouter()
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
@@ -41,6 +62,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     normalisedName,
     defaultResolverAddress,
   )
+  const [hasMoonpayModal, setHasMoonpayModal] = useState(false)
 
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
@@ -51,6 +73,24 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const registerKey = `register-${keySuffix}`
 
   const { cleanupFlow } = useTransactionFlow()
+
+  console.log('normalisedName', normalisedName)
+
+  const { data: moonpayUrl } = useQuery(
+    ['moonpayUrl', normalisedName, chainId],
+    async () => {
+      const label = getLabelFromName(normalisedName)
+      const tokenId = labelHashCalc(label)
+      const response = await fetch(`${MOONPAY_LINK_GENERATOR_URL[chainId]}?tokenId=${tokenId}`)
+      const textResponse = await response.text()
+      return textResponse
+    },
+    {
+      enabled: !!normalisedName && !!chainId,
+    },
+  )
+
+  console.log('moonpayUrl', moonpayUrl)
 
   const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
@@ -117,6 +157,18 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     router.push(toProfile ? `/profile/${normalisedName}` : '/')
   }
 
+  const infoCallback = (arg: { back?: boolean; paymentMethodChoice: PaymentMethod }) => {
+    if (arg.back) {
+      dispatch({ name: 'decreaseStep', selected })
+      return
+    }
+    if (arg.paymentMethodChoice === PaymentMethod.ethereum) {
+      dispatch({ name: 'increaseStep', selected })
+      return
+    }
+    setHasMoonpayModal(true)
+  }
+
   useEffect(() => {
     const handleRouteChange = (e: string) => {
       if (e !== router.asPath && step === 'complete') {
@@ -169,10 +221,12 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
               ),
               info: (
                 <Info
+                  resolverExists={resolverExists}
                   nameDetails={nameDetails}
                   registrationData={item}
-                  callback={genericCallback}
+                  callback={infoCallback}
                   onProfileClick={infoProfileCallback}
+                  hasPrimaryName={!!primaryName}
                 />
               ),
               transactions: (
@@ -188,6 +242,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
+      {moonpayUrl}
+      <StyledDialog open={hasMoonpayModal} onDismiss={() => setHasMoonpayModal(false)}>
+        <iframe title="Moonpay Checkout" width="100%" height="90%" src={moonpayUrl} />
+      </StyledDialog>
     </>
   )
 }

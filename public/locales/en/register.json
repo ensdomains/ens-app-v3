@@ -45,10 +45,14 @@
     "info": {
       "heading": "Before we start",
       "subheading": "Registering your name takes three steps",
-      "items": [
+      "ethItems": [
         "Complete a transaction to begin the timer",
         "Wait 60 seconds for the timer to complete",
         "Complete a second transaction to secure your name"
+      ],
+      "moonpayItems": [
+        "Create or login to an existing moonpay account",
+        "Use your credit or debit card to complete a single transaction"
       ],
       "setupProfile": "I'd like to set up my profile first"
     },

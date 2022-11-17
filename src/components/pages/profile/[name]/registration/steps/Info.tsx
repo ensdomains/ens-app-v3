@@ -1,10 +1,22 @@
+import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount, useBalance } from 'wagmi'
 
-import { Button, Heading, Typography, mq } from '@ensdomains/thorin'
+import {
+  Button,
+  Heading,
+  Helper,
+  RadioButton,
+  RadioButtonGroup,
+  Typography,
+  mq,
+} from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
+import { Spacer } from '@app/components/@atoms/Spacer'
 import { Card } from '@app/components/Card'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
@@ -97,13 +109,140 @@ const ProfileButton = styled.button(
   `,
 )
 
-const infoItemArr = Array.from({ length: 3 }, (_, i) => `steps.info.items.${i}`)
+const ethInfoItems = Array.from({ length: 3 }, (_, i) => `steps.info.ethItems.${i}`)
+const moonpayInfoItems = Array.from({ length: 2 }, (_, i) => `steps.info.moonpayItems.${i}`)
+
+const PaymentChoiceContainer = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+  `,
+)
+
+const StyledRadioButtonGroup = styled(RadioButtonGroup)(
+  ({ theme }) => css`
+    border: 1px solid ${theme.colors.grey};
+    border-radius: ${theme.radii.large};
+    gap: 0;
+  `,
+)
+
+const StyledRadioButton = styled(RadioButton)(({ theme }) => css``)
+
+const RadioButtonContainer = styled.div(
+  ({ theme }) => css`
+    padding: 8px 15px;
+    &:last-child {
+      border-top: 1px solid ${theme.colors.grey};
+    }
+  `,
+)
+
+const StyledTitle = styled(Typography)(
+  ({ theme }) => css`
+    margin-left: 15px;
+  `,
+)
+
+const RadioLabel = styled(Typography)(
+  ({ theme }) => css`
+    margin-right: 10px;
+    color: ${theme.colors.text};
+  `,
+)
+
+export enum PaymentMethod {
+  ethereum = 'ethereum',
+  moonpay = 'moonpay',
+}
+
+const PaymentChoice = ({
+  paymentMethodChoice,
+  setPaymentMethodChoice,
+  hasEnoughEth,
+}: {
+  paymentMethodChoice: PaymentMethod
+  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod>>
+}) => {
+  const { t } = useTranslation('register')
+  return (
+    <PaymentChoiceContainer>
+      <StyledTitle color="textTertiary" weight="bold">
+        Payment method
+      </StyledTitle>
+      <Spacer $height="2" />
+      <StyledRadioButtonGroup
+        value={paymentMethodChoice}
+        onChange={(e) => setPaymentMethodChoice(e.target.value as PaymentMethod)}
+      >
+        <RadioButtonContainer>
+          <StyledRadioButton
+            label={<RadioLabel>Ethereum</RadioLabel>}
+            name="RadioButtonGroup"
+            value={PaymentMethod.ethereum}
+            labelRight
+          />
+          {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
+            <>
+              <Spacer $height="2" />
+              <Helper type="warning" alignment="horizontal">
+                Not enough ETH in wallet
+              </Helper>
+              <Spacer $height="2" />
+            </>
+          )}
+          {paymentMethodChoice === PaymentMethod.ethereum && hasEnoughEth && (
+            <>
+              <Spacer $height="2" />
+              <InfoItems>
+                {ethInfoItems.map((item, idx) => (
+                  <InfoItem key={item}>
+                    <Typography>{idx + 1}</Typography>
+                    <Typography>{t(item)}</Typography>
+                  </InfoItem>
+                ))}
+              </InfoItems>
+              <Spacer $height="2" />
+            </>
+          )}
+        </RadioButtonContainer>
+        <RadioButtonContainer>
+          <StyledRadioButton
+            label={
+              <>
+                <RadioLabel>Credit or debit card</RadioLabel>
+                <Typography>(X% fee)</Typography>
+              </>
+            }
+            name="RadioButtonGroup"
+            value={PaymentMethod.moonpay}
+            labelRight
+          />
+          {paymentMethodChoice === PaymentMethod.moonpay && (
+            <>
+              <Spacer $height="2" />
+              <InfoItems>
+                {moonpayInfoItems.map((item, idx) => (
+                  <InfoItem key={item}>
+                    <Typography>{idx + 1}</Typography>
+                    <Typography>{t(item)}</Typography>
+                  </InfoItem>
+                ))}
+              </InfoItems>
+              <Spacer $height="2" />
+            </>
+          )}
+        </RadioButtonContainer>
+      </StyledRadioButtonGroup>
+    </PaymentChoiceContainer>
+  )
+}
 
 type Props = {
   registrationData: RegistrationReducerDataItem
   nameDetails: ReturnType<typeof useNameDetails>
-  callback: (data: { back: boolean }) => void
+  callback: (data: { back?: boolean; paymentMethodChoice?: PaymentMethod }) => void
   onProfileClick: () => void
+  resolverExists: boolean | undefined
 }
 
 const Info = ({
@@ -111,29 +250,53 @@ const Info = ({
   nameDetails: { priceData },
   callback,
   onProfileClick,
+  resolverExists,
+  hasPrimaryName,
+  nameDetails,
 }: Props) => {
   const { t } = useTranslation('register')
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState(PaymentMethod.ethereum)
+  const { address } = useAccount()
+  const { data: balance } = useBalance({ addressOrName: address })
+  const resolverAddress = useContractAddress('PublicResolver')
+  const [reverseRecord] = useState(registrationData.reverseRecord || !hasPrimaryName)
+  const [years] = useState(registrationData.years)
 
   const estimate = useEstimateFullRegistration({ registration: registrationData, price: priceData })
+
+  const fullEstimate = useEstimateFullRegistration({
+    registration: {
+      permissions: {},
+      records: {
+        coinTypes: [{ key: 'ETH', value: resolverAddress }],
+        clearRecords: resolverExists,
+      },
+      resolver: resolverAddress,
+      reverseRecord,
+      years,
+    },
+    price: nameDetails.priceData,
+  })
+  const { premiumFee, totalYearlyFee, estimatedGasFee } = fullEstimate
+
+  const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
+  const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
+  const hasEnoughEth = !balance?.value.lt(totalRequiredBalance)
+
+  console.log('totalRequiredBalance: ', totalRequiredBalance)
+  console.log('hasEnoughtEth: ', hasEnoughEth)
 
   return (
     <StyledCard>
       <Heading>{t('steps.info.heading')}</Heading>
       <Typography>{t('steps.info.subheading')}</Typography>
-      <InfoItems>
-        {infoItemArr.map((item, inx) => (
-          <InfoItem key={item}>
-            <Typography>{inx + 1}</Typography>
-            <Typography>{t(item)}</Typography>
-          </InfoItem>
-        ))}
-      </InfoItems>
       <FullInvoice {...estimate} />
       {!registrationData.queue.includes('profile') && (
         <ProfileButton data-testid="setup-profile-button" onClick={onProfileClick}>
           <Typography>{t('steps.info.setupProfile')}</Typography>
         </ProfileButton>
       )}
+      <PaymentChoice {...{ paymentMethodChoice, setPaymentMethodChoice, hasEnoughEth }} />
       <ButtonContainer>
         <MobileFullWidth>
           <Button shadowless variant="secondary" onClick={() => callback({ back: true })}>
@@ -141,7 +304,12 @@ const Info = ({
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
-          <Button data-testid="next-button" shadowless onClick={() => callback({ back: false })}>
+          <Button
+            disabled={paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth}
+            data-testid="next-button"
+            shadowless
+            onClick={() => callback({ paymentMethodChoice })}
+          >
             {t('action.begin', { ns: 'common' })}
           </Button>
         </MobileFullWidth>

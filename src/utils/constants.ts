@@ -52,3 +52,12 @@ export const RESOLVER_INTERFACE_IDS = {
 }
 
 export const GRACE_PERIOD = 90 * 24 * 60 * 60 * 1000
+
+export const MOONPAY_LINK_GENERATOR_URL = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1': 'https://moonpay.ens-cf.workers.dev/signedurl',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '5': 'https://moonpay-goerli.ens-cf.workers.dev/signedurl',
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1337': 'https://moonpay-goerli.ens-cf.workers.dev/signedurl',
+}
