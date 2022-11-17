@@ -32,9 +32,9 @@ export const PrimarySection = () => {
 
   const { name, loading: primaryLoading } = usePrimary(address, !address)
 
-  const { expiryDate, ownerData, truncatedName, isLoading: basicLoading } = useBasicName(name, true)
+  const { expiryDate, truncatedName, isLoading: basicLoading } = useBasicName(name, true)
 
-  const { canChangeOwner, canChangeRegistrant } = useSelfAbilities(address, ownerData)
+  const { canSendOwner, canSendManager } = useSelfAbilities(address, name)
 
   const isLoading = basicLoading || primaryLoading
 
@@ -65,8 +65,8 @@ export const PrimarySection = () => {
             name={name}
             network={chainId}
             expiryDate={expiryDate || undefined}
-            isController={canChangeOwner}
-            isRegistrant={canChangeRegistrant}
+            isController={canSendManager}
+            isRegistrant={canSendOwner}
             truncatedName={truncatedName}
           />
         </ItemWrapper>

@@ -80,7 +80,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     canBeWrapped,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const selfAbilities = useSelfAbilities(address, name)
   const _canBeWrapped =
     canBeWrapped &&
     (ownerData?.ownershipLevel === 'registrar'

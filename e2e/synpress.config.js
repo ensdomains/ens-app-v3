@@ -14,11 +14,11 @@ module.exports = defineConfig({
   videosFolder: 'e2e/videos',
   chromeWebSecurity: true,
   viewportWidth: 1366,
-  viewportHeight: 768,
+  viewportHeight: 2000,
   env: {
     coverage: false,
   },
-  video: false,
+  video: true,
   defaultCommandTimeout: process.env.SYNDEBUG ? 9999999 : 30000,
   pageLoadTimeout: process.env.SYNDEBUG ? 0 : 9999999,
   requestTimeout: process.env.SYNDEBUG ? 0 : 9999999,
