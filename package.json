@@ -74,6 +74,7 @@
     "intl-segmenter-polyfill": "^0.4.4",
     "iso-639-1": "^2.1.15",
     "lodash": "^4.17.21",
+    "markdown-to-jsx": "^7.1.7",
     "next": "12.1.6",
     "react": "^17.0.2",
     "react-confetti": "^6.1.0",
