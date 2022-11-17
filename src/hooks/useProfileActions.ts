@@ -31,11 +31,11 @@ export const useProfileActions = () => {
     data: profileActions,
     isLoading,
     status,
+    internal: { isFetchedAfterMount },
     isFetched,
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
-    internal: { isFetchedAfterMount },
   } = useQuery(
     [
       'getProfileActions',
