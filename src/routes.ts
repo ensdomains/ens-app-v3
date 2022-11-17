@@ -7,6 +7,7 @@ export type PublicRoute =
   | 'search'
   | 'about'
   | 'developers'
+  | 'faq'
   | 'community'
   | 'help'
   | 'governance'
@@ -51,6 +52,13 @@ export const routes: RouteItemObj[] = [
     href: '/community',
     label: 'navigation.community',
     disabled: true,
+    connected: false,
+  },
+  {
+    name: 'faq',
+    href: '/faq',
+    label: 'navigation.faq',
+    disabled: false,
     connected: false,
   },
   {
