@@ -1,7 +1,9 @@
-import { Outlink } from '@app/components/Outlink'
-import { Typography } from '@ensdomains/thorin'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Typography } from '@ensdomains/thorin'
+
+import { Outlink } from '@app/components/Outlink'
 
 const DescriptionWrapper = styled(Typography)(
   ({ theme }) => css`
@@ -25,7 +27,9 @@ export const MigrateAndUpdateResolver = () => {
           {t('intro.migrateAndUpdateResolver.title')}
           &nbsp;
           <span>
-            <Outlink href="#">{t('intro.migrateAndUpdateResolver.link')}</Outlink>
+            <Outlink href="/faq/managing-a-name#what-is-a-resolver">
+              {t('intro.migrateAndUpdateResolver.link')}
+            </Outlink>
           </span>
         </Typography>
         <Typography color="textSecondary" weight="bold">
