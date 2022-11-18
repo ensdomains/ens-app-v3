@@ -96,6 +96,15 @@ const ViewMoreInner = styled(Typography)(
   `,
 )
 
+const InfoContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['2']};
+  `,
+)
+
 const getTransactionExtraInfo = (action: string, key?: string) => {
   if (!key) return ''
   if (action === 'registerName' || action === 'commitName') {
@@ -155,19 +164,23 @@ export const TransactionSection = () => {
                   // eslint-disable-next-line react/no-array-index-key
                   key={`${hash}-${i}`}
                 >
-                  {status === 'pending' && <Spinner data-testid="pending-spinner" color="accent" />}
-                  <TransactionInfoContainer>
-                    <Typography weight="bold">{`${tc(
-                      `transaction.description.${action}`,
-                    )}${getTransactionExtraInfo(action, key)}`}</Typography>
-                    <StyledOutlink
-                      $error={status === 'failed'}
-                      href={makeEtherscanLink(hash, chainName)}
-                      target="_blank"
-                    >
-                      {tc(`transaction.status.${status}.regular`)}
-                    </StyledOutlink>
-                  </TransactionInfoContainer>
+                  <InfoContainer>
+                    {status === 'pending' && (
+                      <Spinner data-testid="pending-spinner" color="accent" />
+                    )}
+                    <TransactionInfoContainer>
+                      <Typography weight="bold">{`${tc(
+                        `transaction.description.${action}`,
+                      )}${getTransactionExtraInfo(action, key)}`}</Typography>
+                      <StyledOutlink
+                        $error={status === 'failed'}
+                        href={makeEtherscanLink(hash, chainName)}
+                        target="_blank"
+                      >
+                        {tc(`transaction.status.${status}.regular`)}
+                      </StyledOutlink>
+                    </TransactionInfoContainer>
+                  </InfoContainer>
                   <ContinueContainer>
                     {resumable && (
                       <Button
