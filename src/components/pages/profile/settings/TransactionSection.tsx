@@ -142,6 +142,7 @@ export const TransactionSection = () => {
       <TransactionSectionContainer
         $transactionLength={visibleTransactions.length}
         $hasViewMore={hasViewMore}
+        data-testid="transaction-section-container"
       >
         {transactions.length > 0 ? (
           <>
