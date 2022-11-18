@@ -1,0 +1,2 @@
+/profile/:name /profile?name=:name 301
+/profile/:name/details /profile/details?name=:name 301

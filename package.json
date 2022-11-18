@@ -21,7 +21,7 @@
     "denv": "pnpm tenv start -ns -nb --extra-time 11368000",
     "lint": "next lint && pnpm stylelint stylelint \"./src/**/*.tsx\"",
     "lint:fix": "next lint --fix",
-    "export": "next export && cp _redirects out/_redirects",
+    "export": "next export",
     "analyze": "ANALYZE=true pnpm build",
     "analyse": "pnpm analyze",
     "test": "jest --env=./custom-test-env.js",
