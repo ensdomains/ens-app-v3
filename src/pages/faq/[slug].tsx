@@ -6,7 +6,7 @@ import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography, mq } from '@ensdomains/thorin'
+import { LinkSVG, Typography, mq } from '@ensdomains/thorin'
 
 import { Card } from '@app/components/Card'
 import { faqOptions } from '@app/constants/faq'
@@ -62,7 +62,7 @@ const OptionFAQ = styled(Card)(
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: ${theme.space['4']};
+    gap: ${theme.space['6']};
 
     padding: ${theme.space['4']};
 
@@ -83,13 +83,9 @@ const OptionFAQ = styled(Card)(
         list-style: circle;
       }
 
-      a {
+      & > div:last-of-type a {
         color: ${theme.colors.accent};
         text-decoration: underline;
-      }
-
-      & > div:first-of-type {
-        font-weight: ${theme.fontWeights.bold};
       }
     }
 
@@ -115,11 +111,41 @@ const OptionFAQ = styled(Card)(
   `,
 )
 
+const Question = styled(Typography)(
+  ({ theme }) => css`
+    text-decoration: none;
+    color: ${theme.colors.text};
+    font-weight: ${theme.fontWeights.bold};
+    font-size: ${theme.fontSizes.large};
+    & > svg {
+      display: inline-block;
+      vertical-align: text-bottom;
+      width: ${theme.space['5']};
+      height: ${theme.space['5']};
+      stroke-width: ${theme.space['0.75']};
+      margin-left: ${theme.space['2']};
+      color: ${theme.colors.grey};
+
+      opacity: 0;
+      transition: opacity 0.15s ease-in-out;
+    }
+
+    &:hover > svg,
+    &:active > svg {
+      opacity: 1;
+    }
+  `,
+)
+
 function Page({ slug }: { slug: string }) {
   const currentOption = faqOptions.find((option) => option.slug === slug)!
   const { t } = useTranslation('faq')
   const questions = t(currentOption.title, { returnObjects: true }) as Record<string, string>
-  const questionArray = Object.entries(questions)
+  const questionArray = Object.entries(questions).map(([question, answer]) => [
+    question,
+    answer,
+    question.replace(/\s/g, '-').replace(/\?/g, '').toLowerCase(),
+  ])
 
   return (
     <Content title={t('title')}>
@@ -143,9 +169,12 @@ function Page({ slug }: { slug: string }) {
               <Typography>{t(`option.${currentOption.title}`)}</Typography>
             </div>
             <>
-              {questionArray.map(([question, answer]) => (
-                <div key={question}>
-                  <Typography>{question}</Typography>
+              {questionArray.map(([question, answer, id]) => (
+                <div key={question} id={id}>
+                  <Question href={`#${id}`} as="a">
+                    {question}
+                    <LinkSVG />
+                  </Question>
                   <Typography>
                     <Markdown>{answer}</Markdown>
                   </Typography>
