@@ -4,7 +4,7 @@ import { GetStaticPropsContext } from 'next'
 import Link from 'next/link'
 import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css } from 'styled-components'
+import styled, { DefaultTheme, css, keyframes } from 'styled-components'
 
 import { LinkSVG, Typography, mq } from '@ensdomains/thorin'
 
@@ -56,21 +56,37 @@ const OptionLinks = styled(Card)(
   `,
 )
 
+const targetKeyframes = ({ theme }: { theme: DefaultTheme }) => keyframes`
+  0% {
+    background-color: rgba(${theme.shadesRaw.foreground}, 0.05);
+  }
+
+  100% {
+    background-color: rgba(${theme.shadesRaw.foreground}, 0);
+  }
+`
+
 const OptionFAQ = styled(Card)(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     justify-content: flex-start;
-    gap: ${theme.space['6']};
+    gap: ${theme.space['4']};
 
-    padding: ${theme.space['4']};
+    padding: ${theme.space['2']};
 
     & > div {
       display: flex;
       flex-direction: column;
       align-items: stretch;
       justify-content: flex-start;
+      padding: ${theme.space['2']};
+
+      &:target {
+        border-radius: ${theme.radii.extraLarge};
+        animation: 0.5s ease-in-out 1s 1 normal both running ${targetKeyframes};
+      }
 
       li {
         list-style: disc;
@@ -106,7 +122,7 @@ const OptionFAQ = styled(Card)(
     }
 
     ${mq.md.min(css`
-      padding: ${theme.space['6']};
+      padding: ${theme.space['6']} ${theme.space['4']};
     `)}
   `,
 )
