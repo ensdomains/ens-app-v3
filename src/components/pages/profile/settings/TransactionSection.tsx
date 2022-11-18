@@ -14,8 +14,11 @@ import { Card } from '../../../Card'
 import { Outlink } from '../../../Outlink'
 import { SectionContainer } from './Section'
 
-const TransactionSectionContainer = styled.div<{ $transactionLength: number }>(
-  ({ theme, $transactionLength }) => css`
+const TransactionSectionContainer = styled.div<{
+  $transactionLength: number
+  $hasViewMore: boolean
+}>(
+  ({ theme, $transactionLength, $hasViewMore }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -27,7 +30,9 @@ const TransactionSectionContainer = styled.div<{ $transactionLength: number }>(
     ${$transactionLength &&
     css`
       justify-content: flex-end;
-      height: calc(${$transactionLength} * ${theme.space['18']});
+      height: calc(
+        ${$hasViewMore ? $transactionLength + 1 : $transactionLength} * ${theme.space['18']}
+      );
       background-color: transparent;
     `}
   `,
@@ -91,6 +96,13 @@ const ViewMoreInner = styled(Typography)(
   `,
 )
 
+const getTransactionExtraInfo = (action: string, key: string) => {
+  if (action === 'registerName' || action === 'commitName') {
+    return `: ${key.split('-')[1]}`
+  }
+  return ''
+}
+
 export const TransactionSection = () => {
   const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
@@ -106,6 +118,8 @@ export const TransactionSection = () => {
   }, [transactions.length])
 
   const { getResumable, resumeTransactionFlow } = useTransactionFlow()
+
+  const hasViewMore = transactions.length > viewAmt
 
   return (
     <SectionContainer
@@ -125,7 +139,10 @@ export const TransactionSection = () => {
       }
       fill
     >
-      <TransactionSectionContainer $transactionLength={visibleTransactions.length}>
+      <TransactionSectionContainer
+        $transactionLength={visibleTransactions.length}
+        $hasViewMore={hasViewMore}
+      >
         {transactions.length > 0 ? (
           <>
             {visibleTransactions.map(({ hash, status, action, key }, i) => {
@@ -138,7 +155,9 @@ export const TransactionSection = () => {
                 >
                   {status === 'pending' && <Spinner data-testid="pending-spinner" color="accent" />}
                   <TransactionInfoContainer>
-                    <Typography weight="bold">{tc(`transaction.description.${action}`)}</Typography>
+                    <Typography weight="bold">{`${tc(
+                      `transaction.description.${action}`,
+                    )}${getTransactionExtraInfo(action, key)}`}</Typography>
                     <StyledOutlink
                       $error={status === 'failed'}
                       href={makeEtherscanLink(hash, chainName)}
@@ -162,7 +181,7 @@ export const TransactionSection = () => {
                 </TransactionContainer>
               )
             })}
-            {transactions.length > viewAmt && (
+            {hasViewMore && (
               <TransactionContainer
                 onClick={() => setViewAmt((curr) => curr + 5)}
                 data-testid="transaction-view-more-button"
