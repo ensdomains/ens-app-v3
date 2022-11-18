@@ -96,7 +96,8 @@ const ViewMoreInner = styled(Typography)(
   `,
 )
 
-const getTransactionExtraInfo = (action: string, key: string) => {
+const getTransactionExtraInfo = (action: string, key?: string) => {
+  if (!key) return ''
   if (action === 'registerName' || action === 'commitName') {
     return `: ${key.split('-')[1]}`
   }
