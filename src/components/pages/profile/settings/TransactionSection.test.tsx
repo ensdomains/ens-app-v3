@@ -44,6 +44,18 @@ describe('TransactionSection', () => {
     render(<TransactionSection />)
     expect(screen.getAllByTestId('transaction-confirmed')).toHaveLength(4)
   })
+  it('should have correct height when "View More" button is visiable', () => {
+    mockUseRecentTransactions.mockReturnValue(Array.from({ length: 9 }, makeRecentTransaction()))
+    render(<TransactionSection />)
+    const element = screen.getByTestId('transaction-section-container')
+    expect(element).toHaveStyle(`height: calc( 5 * 4.5rem );`)
+  })
+  it('should have correct height when "View More" button is NOT visiable', () => {
+    mockUseRecentTransactions.mockReturnValue(Array.from({ length: 4 }, makeRecentTransaction()))
+    render(<TransactionSection />)
+    const element = screen.getByTestId('transaction-section-container')
+    expect(element).toHaveStyle(`height: calc( 4 * 4.5rem );`)
+  })
   it('should not show View More button if there is less than 5 transactions', () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 4 }, makeRecentTransaction()))
     render(<TransactionSection />)

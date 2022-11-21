@@ -7,7 +7,7 @@ import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
 type FormData = {
   resolverChoice: 'latest' | 'custom'
-  customResolver: string
+  address: string
 }
 
 export type Props = {
@@ -20,25 +20,18 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
   const isResolverAddressLatest = resolverAddress === lastestResolverAddress
 
-  const {
-    register,
-    formState: { errors },
-    handleSubmit,
-    reset,
-    trigger,
-    watch,
-    getFieldState,
-  } = useForm<FormData>({
-    mode: 'onChange',
-    defaultValues: { resolverChoice: 'latest', customResolver: '' },
-  })
+  const { register, formState, handleSubmit, reset, trigger, watch, getFieldState, setValue } =
+    useForm<FormData>({
+      mode: 'onChange',
+      defaultValues: { resolverChoice: 'latest', address: '' },
+    })
 
   useEffect(() => {
-    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', customResolver: '' })
+    if (isResolverAddressLatest) reset({ resolverChoice: 'custom', address: '' })
   }, [isResolverAddressLatest, reset])
 
   const resolverChoice: 'latest' | 'custom' = watch('resolverChoice')
-  const customResolver = watch('customResolver')
+  const customResolver = watch('address')
 
   const { errors: resolverWarnings } = useResolverHasInterfaces(
     ['IAddrResolver', 'ITextResolver', 'IContentHashResolver'],
@@ -50,7 +43,7 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
   )
 
   const handleResolverSubmit = async (values: FormData) => {
-    const { resolverChoice: choice, customResolver: address } = values
+    const { resolverChoice: choice, address } = values
     let newResolver
     if (choice === 'latest') {
       newResolver = lastestResolverAddress
@@ -64,17 +57,16 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
 
   const hasWarnings =
     resolverChoice === 'custom' &&
-    customResolver.length === 42 &&
+    customResolver?.length === 42 &&
     resolverWarnings &&
     resolverWarnings.length > 0
 
-  const hasErrors = Object.keys(errors || {}).length > 0
+  const hasErrors = Object.keys(formState.errors || {}).length > 0 && resolverChoice === 'custom'
 
   return {
     lastestResolverAddress,
     isResolverAddressLatest,
     register,
-    errors,
     handleSubmit: handleSubmit(handleResolverSubmit),
     reset,
     trigger,
@@ -85,6 +77,8 @@ const useResolverEditor = ({ callback, resolverAddress }: Props) => {
     resolverWarnings,
     hasWarnings,
     hasErrors,
+    setValue,
+    formState,
   }
 }
 

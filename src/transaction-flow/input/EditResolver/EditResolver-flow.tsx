@@ -34,12 +34,11 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const { name } = data
+  const { isWrapped } = useBasicName(name)
   const formRef = useRef<HTMLFormElement>(null)
 
   const { profile = { resolverAddress: '' } } = useProfile(name as string)
   const { resolverAddress } = profile
-
-  const { isWrapped } = useBasicName(name)
 
   const handleCreateTransaction = useCallback(
     (newResolver: string) => {
@@ -50,13 +49,12 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
             resolver: newResolver,
-            oldResolver: resolverAddress!,
           }),
         ],
       })
       dispatch({ name: 'setFlowStage', payload: 'transaction' })
     },
-    [dispatch, name, resolverAddress, isWrapped],
+    [dispatch, name, isWrapped],
   )
 
   const editResolverForm = useResolverEditor({ resolverAddress, callback: handleCreateTransaction })
@@ -79,7 +77,12 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
           </Button>
         }
         trailing={
-          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors}>
+          <Button
+            shadowless
+            onClick={handleSubmitForm}
+            disabled={hasErrors}
+            data-testid="update-button"
+          >
             {t('action.update', { ns: 'common' })}
           </Button>
         }

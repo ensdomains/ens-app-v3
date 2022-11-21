@@ -7,10 +7,12 @@ type Data = {
   name: string
   newOwner: EthAddress
   contract: 'registry' | 'baseRegistrar' | 'nameWrapper'
+  sendType: 'sendManager' | 'sendOwner'
+  reclaim?: boolean
 }
 
 const displayItems = (
-  { name }: Data,
+  { name, sendType, newOwner }: Data,
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => [
   {
@@ -20,7 +22,12 @@ const displayItems = (
   },
   {
     label: 'action',
-    value: t('name.transferName'),
+    value: t(`name.${sendType}`),
+  },
+  {
+    label: 'to',
+    type: 'address',
+    value: newOwner,
   },
 ]
 
@@ -28,6 +35,7 @@ const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   const tx = ens.transferName.populateTransaction(data.name, {
     newOwner: data.newOwner,
     contract: data.contract,
+    reclaim: data.reclaim,
     signer,
   })
   return tx

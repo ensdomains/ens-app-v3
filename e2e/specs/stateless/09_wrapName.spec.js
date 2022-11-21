@@ -29,7 +29,7 @@ describe('Wrap Name', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
   })
   it('should wrap the name', () => {
-    // arbitrary wait so metamask updates the account nonce
+    // wait so metamask updates the account nonce
     cy.wait(1000)
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()

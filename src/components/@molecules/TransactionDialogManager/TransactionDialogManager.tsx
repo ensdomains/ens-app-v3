@@ -92,9 +92,8 @@ export const TransactionDialogManager = ({
           stepCount={selectedItem.transactions.length}
           transaction={transactionItem}
           txKey={selectedKey}
-          dispatch={dispatch}
-          onDismiss={onDismiss}
           backToInput={transaction.backToInput ?? false}
+          {...{ dispatch, onDismiss }}
         />
       )
     }

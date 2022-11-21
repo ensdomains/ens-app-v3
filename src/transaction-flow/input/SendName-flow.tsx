@@ -1,52 +1,36 @@
-import { ethers } from 'ethers'
-import { useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQuery } from 'wagmi'
+import { useAccount } from 'wagmi'
 
-import { Button, Checkbox, Dialog, Helper, Input, Typography, mq } from '@ensdomains/thorin'
+import { Button, Checkbox, Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { NameAvatar } from '@app/components/AvatarWithZorb'
+import { DogFood } from '@app/components/@molecules/DogFood'
 import { Outlink } from '@app/components/Outlink'
 import { useBasicName } from '@app/hooks/useBasicName'
-import { useChainId } from '@app/hooks/useChainId'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { useEns } from '@app/utils/EnsProvider'
-import { isASubname } from '@app/utils/utils'
 
 import { makeTransactionItem } from '../transaction'
 
-const AvatarWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['7']};
-    min-width: ${theme.space['7']};
-    height: ${theme.space['7']};
-  `,
-)
+type Data = {
+  name: string
+  type?: 'manager' | 'owner'
+}
 
-const ValueTypography = styled(Typography)(
-  () => css`
-    text-align: right;
-  `,
-)
+type FormData = {
+  managerChoice: string
+  ownerChoice: string
+  dogfoodRaw: string
+  address: string
+}
 
-const ValueWithAvatarContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row-reverse;
-    align-items: center;
-    justify-content: flex-end;
-    gap: ${theme.space['4']};
-    padding: 20px;
-    width: 100%;
-    border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      rgba(${theme.shadesRaw.foreground}, 0.06);
-  `,
-)
+export type Props = {
+  data: Data
+} & TransactionDialogPassthrough
+
+type BasicNameData = ReturnType<typeof useBasicName>
 
 const SwitchBox = styled.div(
   ({ theme }) => css`
@@ -67,6 +51,77 @@ const TextContainer = styled.div`
   flex-direction: column;
 `
 
+export const handleSubmitForm = ({
+  basicNameData,
+  dispatch,
+  newOwner,
+  managerChoice,
+  ownerChoice,
+  name,
+  address,
+  sendNameFunctionCallDetails,
+}: {
+  basicNameData: BasicNameData
+  dispatch: TransactionDialogPassthrough['dispatch']
+  newOwner: string
+  managerChoice: string
+  ownerChoice: string
+  name: string
+  address: string
+  sendNameFunctionCallDetails: ReturnType<typeof useSelfAbilities>['sendNameFunctionCallDetails']
+}) => {
+  const { ownerData } = basicNameData
+  const callCount = Object.keys(sendNameFunctionCallDetails).length
+  const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
+
+  if (callCount > 2) {
+    console.error('Too many send transactions')
+    return
+  }
+
+  if (Object.keys(sendNameFunctionCallDetails).length === 2 && managerChoice && ownerChoice) {
+    if (!sendNameFunctionCallDetails.sendManager || !sendNameFunctionCallDetails.sendOwner) return
+    // This can only happen as the registrant of a 2LD .eth name
+    dispatch({
+      name: 'setTransactions',
+      payload: [
+        makeTransactionItem('transferName', {
+          name,
+          newOwner,
+          contract: sendNameFunctionCallDetails.sendManager.contract,
+          sendType: 'sendManager',
+          reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
+        }),
+        makeTransactionItem('transferName', {
+          name,
+          newOwner,
+          contract: sendNameFunctionCallDetails.sendOwner.contract,
+          sendType: 'sendOwner',
+        }),
+      ],
+    })
+    dispatch({ name: 'setFlowStage', payload: 'transaction' })
+    return
+  }
+
+  const sendType = managerChoice ? 'sendManager' : 'sendOwner'
+  if (!sendNameFunctionCallDetails[sendType]) return
+
+  dispatch({
+    name: 'setTransactions',
+    payload: [
+      makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+        name,
+        newOwner,
+        contract: sendNameFunctionCallDetails[sendType]!.contract,
+        sendType,
+        reclaim: sendNameFunctionCallDetails[sendType]!.method === 'reclaim',
+      }),
+    ],
+  })
+  dispatch({ name: 'setFlowStage', payload: 'transaction' })
+}
+
 const InnerContainer = styled.div(() => [
   css`
     width: 100%;
@@ -76,354 +131,54 @@ const InnerContainer = styled.div(() => [
   `),
 ])
 
-const NameValue = ({ value }: { value: string }) => {
-  const network = useChainId()
-
-  return (
-    <ValueWithAvatarContainer>
-      <ValueTypography weight="bold">{value}</ValueTypography>
-      <AvatarWrapper>
-        <NameAvatar name={value} label={`${value}-avatar`} network={network} />
-      </AvatarWrapper>
-    </ValueWithAvatarContainer>
-  )
-}
-
-type Data = {
-  name: string
-  type?: 'manager' | 'owner'
-}
-
-type FormData = {
-  managerChoice: string
-  ownerChoice: string
-  sendName: string
-}
-
-export type Props = {
-  data: Data
-} & TransactionDialogPassthrough
-
-const sendOwner = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferName', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'baseRegistrar',
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-const sendOwnerManager = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferName', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'baseRegistrar',
-      }),
-      makeTransactionItem('transferName', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'registry',
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-const sendWrappedOwner = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferName', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'nameWrapper',
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-const sendSubname = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferSubname', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'registry',
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-const sendWrappedSubnameAsOwner = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferSubname', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'nameWrapper',
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-const sendWrappedSubnameAsManager = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferName', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'nameWrapper',
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-const sendManagerAsOwner = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferController', {
-        name,
-        newOwner: sendNameWatch,
-        isOwner: false,
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-const sendManagerAsManager = (
-  dispatch: TransactionDialogPassthrough['dispatch'],
-  name: string,
-  sendNameWatch: string,
-) => {
-  dispatch({
-    name: 'setTransactions',
-    payload: [
-      makeTransactionItem('transferName', {
-        name,
-        newOwner: sendNameWatch,
-        contract: 'registry',
-      }),
-    ],
-  })
-  dispatch({ name: 'setFlowStage', payload: 'transaction' })
-}
-
-export const handleSubmitForm =
-  ({
-    ownerData,
-    parentNameOwnerData,
-    dispatch,
-    sendNameWatch,
-    managerChoiceWatch,
-    ownerChoiceWatch,
-    name,
-    address,
-  }: {
-    ownerData: ReturnType<typeof useBasicName>['ownerData']
-    parentNameOwnerData: ReturnType<typeof useBasicName>
-    dispatch: TransactionDialogPassthrough['dispatch']
-    sendNameWatch: string
-    managerChoiceWatch: string
-    ownerChoiceWatch: string
-    name: string
-    address?: string
-  }) =>
-  () => {
-    const isController = ownerData?.owner === address
-    const isRegistrant = ownerData?.registrant === address
-
-    const isSubname = name.split('.').length > 2
-
-    if (managerChoiceWatch && ownerChoiceWatch) {
-      sendOwnerManager(dispatch, name, sendNameWatch)
-      return
-    }
-
-    if (!managerChoiceWatch && ownerChoiceWatch) {
-      if (ownerData?.ownershipLevel === 'nameWrapper') {
-        sendWrappedOwner(dispatch, name, sendNameWatch)
-        return
-      }
-      if (isSubname) {
-        sendSubname(dispatch, name, sendNameWatch)
-        return
-      }
-      sendOwner(dispatch, name, sendNameWatch)
-      return
-    }
-
-    if (managerChoiceWatch && !ownerChoiceWatch) {
-      if (isSubname && ownerData?.ownershipLevel === 'nameWrapper' && address === ownerData.owner) {
-        sendWrappedSubnameAsOwner(dispatch, name, sendNameWatch)
-        return
-      }
-
-      if (
-        isSubname &&
-        ownerData?.ownershipLevel === 'nameWrapper' &&
-        address === parentNameOwnerData?.ownerData?.owner
-      ) {
-        sendWrappedSubnameAsManager(dispatch, name, sendNameWatch)
-        return
-      }
-
-      if (isRegistrant) {
-        sendManagerAsOwner(dispatch, name, sendNameWatch)
-        return
-      }
-
-      if (isController) {
-        sendManagerAsManager(dispatch, name, sendNameWatch)
-      }
-    }
-  }
+const FooterContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`
 
 export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { name } = data
   const { t } = useTranslation('profile')
-  const formRef = useRef<HTMLFormElement>(null)
-  const { getRecords } = useEns()
-  const { ownerData } = useBasicName(name as string)
-  const parentName = name.split('.').slice(1).join('.')
-  const parentNameOwnerData = useBasicName(parentName)
-  const { address } = useAccount()
-  const { register, watch, getFieldState } = useForm<FormData>({
-    mode: 'onChange',
-  })
-
-  const managerDefaultChecked = data.type !== 'owner'
-  const ownerDefaultChecked = data.type !== 'manager'
+  const basicNameData = useBasicName(name as string)
+  const { address = '' } = useAccount()
+  const { register, watch, getFieldState, handleSubmit, setValue, getValues, setError, formState } =
+    useForm<FormData>({
+      mode: 'onChange',
+    })
 
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
-  const sendNameWatch = watch('sendName')
-  const { data: ethNameValidation, isLoading } = useQuery(
-    ['ethNameValidation', sendNameWatch],
-    async () => {
-      const result = await getRecords(sendNameWatch)
-      return result?.address
-    },
-    { enabled: sendNameWatch?.includes('.eth') },
+  const hasChoice = managerChoiceWatch || ownerChoiceWatch
+
+  const { canSendOwner, canSendManager, sendNameFunctionCallDetails } = useSelfAbilities(
+    address,
+    name,
   )
 
-  const { name: primaryName } = usePrimary(ethNameValidation || sendNameWatch)
+  const hasErrors = Object.keys(formState.errors || {}).length > 0
 
-  const { data: canModify } = useQuery(['resolver', ownerData?.toString()], () => {
-    let _canModifyOwner = false
-    let _canModifyManager = false
-
-    if (ownerData?.ownershipLevel === 'registrar') {
-      if (address === ownerData?.registrant) {
-        _canModifyOwner = address === ownerData?.registrant
-        _canModifyManager = true
-      } else {
-        _canModifyManager = address === ownerData?.owner
-      }
-    }
-
-    if (ownerData?.ownershipLevel === 'nameWrapper') {
-      if (isASubname(name)) {
-        _canModifyManager =
-          address === ownerData?.owner || address === parentNameOwnerData?.ownerData?.owner
-      } else {
-        _canModifyOwner = address === ownerData?.owner
-      }
-    }
-
-    if (ownerData?.ownershipLevel === 'registry') {
-      _canModifyOwner =
-        address === ownerData?.owner || address === parentNameOwnerData?.ownerData?.owner
-    }
-
-    return {
-      canModifyOwner: _canModifyOwner,
-      canModifyManager: _canModifyManager,
-    }
-  })
-
-  const hasErrors = useMemo(() => {
-    const errorData = {
-      formMessage: '',
-      fieldMessage: '',
-      hasError: false,
-    }
-
-    if (typeof managerChoiceWatch === 'undefined' && typeof ownerChoiceWatch === 'undefined')
-      return errorData
-
-    if (!managerChoiceWatch && !ownerChoiceWatch) {
-      return {
-        ...errorData,
-        formMessage: 'Must choose either Manager or Owner to send',
-        hasError: true,
-      }
-    }
-    if (getFieldState('sendName').error) return errorData
-    if (isLoading) return errorData
-    if (sendNameWatch?.includes('.') && !ethNameValidation)
-      return { ...errorData, message: 'No address set on name', hasError: true }
-
-    return errorData
-  }, [
-    ethNameValidation,
-    getFieldState,
-    isLoading,
-    managerChoiceWatch,
-    ownerChoiceWatch,
-    sendNameWatch,
-  ])
+  const onSubmit = (formData: any) => {
+    handleSubmitForm({
+      basicNameData,
+      dispatch,
+      newOwner: formData.address,
+      managerChoice: formData.managerChoice,
+      ownerChoice: formData.ownerChoice,
+      name,
+      address,
+      sendNameFunctionCallDetails,
+    })
+  }
 
   return (
     <>
       <Typography variant="extraLarge">{t('details.sendName.title')}</Typography>
       <Typography style={{ textAlign: 'center' }}>{t('details.sendName.description')}</Typography>
-      <Outlink href="">{t('details.sendName.learnMore')}</Outlink>
-      {canModify?.canModifyOwner && (
+      <Outlink href="/faq/managing-a-name#what-are-managers-and-owners">
+        {t('details.sendName.learnMore')}
+      </Outlink>
+      {canSendOwner && (
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">{t('details.sendName.makeOwner')}</Typography>
@@ -436,13 +191,13 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             size="large"
             variant="switch"
             value="owner"
-            defaultChecked={ownerDefaultChecked}
+            defaultChecked
             data-testid="owner-checkbox"
             {...register('ownerChoice', { shouldUnregister: true })}
           />
         </SwitchBox>
       )}
-      {canModify?.canModifyManager && (
+      {canSendManager && (
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">{t('details.sendName.makeManager')}</Typography>
@@ -455,68 +210,48 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             label=""
             variant="switch"
             value="manager"
-            defaultChecked={managerDefaultChecked}
+            defaultChecked
             data-testid="manager-checkbox"
             {...register('managerChoice', { shouldUnregister: true })}
           />
         </SwitchBox>
       )}
-      <InnerContainer>
-        <form data-testid="edit-resolver-form" ref={formRef}>
-          <Input
-            data-testid="send-name-input"
-            label="Send to"
-            placeholder={t('details.sendName.inputPlaceholder')}
-            {...register('sendName', {
-              validate: {
-                length: (value) =>
-                  !value.includes('.eth') && value.length !== 42
-                    ? t('errors.addressLength')
-                    : undefined,
-                isAddress: (value) =>
-                  !value.includes('.eth') && !ethers.utils.isAddress(value)
-                    ? t('errors.invalidAddress')
-                    : undefined,
-              },
-            })}
-            error={getFieldState('sendName').error?.message || hasErrors.fieldMessage}
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <InnerContainer>
+          <DogFood
+            {...{
+              register,
+              getFieldState,
+              watch,
+              setValue,
+              getValues,
+              setError,
+              label: 'Send to',
+              formState,
+            }}
           />
-          <Spacer $height="4" />
-        </form>
-        {primaryName && <NameValue value={primaryName} />}
-      </InnerContainer>
-      {hasErrors.formMessage && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
-      <Dialog.Footer
-        leading={
-          <Button
-            variant="secondary"
-            tone="grey"
-            shadowless
-            onClick={onDismiss}
-            loading={isLoading}
-          >
-            {t('action.cancel', { ns: 'common' })}
-          </Button>
-        }
-        trailing={
-          <Button
-            shadowless
-            onClick={handleSubmitForm({
-              ownerData,
-              parentNameOwnerData,
-              dispatch,
-              sendNameWatch,
-              managerChoiceWatch,
-              ownerChoiceWatch,
-              name,
-              address,
-            })}
-            disabled={hasErrors.hasError}
-          >
-            {t('action.next', { ns: 'common' })}
-          </Button>
-        }
-      />
+        </InnerContainer>
+        {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
+        <Spacer $height="3" />
+        <FooterContainer>
+          <Dialog.Footer
+            leading={
+              <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+                {t('action.cancel', { ns: 'common' })}
+              </Button>
+            }
+            trailing={
+              <Button
+                shadowless
+                type="submit"
+                disabled={!hasChoice || !formState.isDirty || hasErrors}
+              >
+                {t('action.next', { ns: 'common' })}
+              </Button>
+            }
+          />
+        </FooterContainer>
+      </form>
     </>
   )
 }

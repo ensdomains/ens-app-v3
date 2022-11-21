@@ -101,7 +101,7 @@ const ResolverDetails = () => {
       </VersionContainer>
       <AddressContainer>
         <Typography weight="bold">{t('address.label', { ns: 'common' })}</Typography>
-        <RecordItem value={resolverAddress || ''} />
+        <RecordItem data-testid="resolver-address" value={resolverAddress || ''} />
       </AddressContainer>
     </ResolverDetailsContainer>
   )
