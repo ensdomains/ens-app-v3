@@ -27,6 +27,18 @@
           "label": "Extend name"
         }
       }
+    },
+    "records": {
+      "name": "Records"
+    },
+    "subnames": {
+      "name": "Subnames"
+    },
+    "fuses": {
+      "name": "Fuses"
+    },
+    "more": {
+      "name": "More"
     }
   },
   "details": {

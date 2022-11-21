@@ -11,11 +11,11 @@ import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
-const HeadingItems = styled.div<{ $spacing: string }>(
-  ({ theme, $spacing }) => css`
+const HeadingItems = styled.div(
+  ({ theme }) => css`
     grid-column: span 1;
     width: 100%;
-    max-width: 100%;
+    max-width: ${theme.space['192']};
 
     display: grid;
     grid-template-columns: 1fr;
@@ -26,35 +26,25 @@ const HeadingItems = styled.div<{ $spacing: string }>(
     ${mq.md.min(css`
       min-height: ${theme.space['10']};
       grid-column: span 2;
-      grid-template-columns: ${$spacing};
     `)}
   `,
 )
 
-const CustomLeadingHeading = styled(LeadingHeading)<{
-  $customSpacing: boolean
-}>(
-  ({ theme, $customSpacing }) => css`
+const CustomLeadingHeading = styled(LeadingHeading)(
+  ({ theme }) => css`
     gap: ${theme.space['2']};
-    ${$customSpacing &&
-    mq.sm.min(css`
-      width: ${theme.space.full};
-      margin-left: 0;
-    `)}
+    width: 100%;
+    margin-left: 0;
   `,
 )
 
-const ContentContainer = styled.div<{ $multiColumn?: boolean }>(
-  ({ $multiColumn }) => css`
+const ContentContainer = styled.div(
+  () => css`
     margin: 0;
     padding: 0;
     min-height: 0;
+    width: 100%;
     height: min-content;
-
-    ${$multiColumn &&
-    mq.sm.min(css`
-      grid-column: span 2;
-    `)}
   `,
 )
 
@@ -105,9 +95,10 @@ const TitleContainer = styled.div(
 
 const TitleWrapper = styled.div<{ $invert: boolean }>(
   ({ $invert }) => css`
+    width: 100%;
     display: flex;
     align-items: center;
-    justify-content: center;
+    justify-content: stretch;
     flex-direction: row;
 
     ${TitleContainer} {
@@ -122,24 +113,42 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
         align-items: flex-end;
       }
     `}
+
+    ${mq.md.min(css`
+      justify-content: flex-start;
+      width: max-content;
+
+      ${TitleContainer} {
+        text-align: left;
+        align-items: flex-start;
+      }
+    `)}
   `,
 )
 
 const DummyTitle = styled(Typography)(
   ({ theme }) => css`
-    font-size: ${theme.fontSizes.extraLarge};
+    font-size: ${theme.fontSizes.headingThree};
     white-space: pre-wrap;
+
+    ${mq.md.min(css`
+      font-size: ${theme.fontSizes.headingTwo};
+    `)}
   `,
 )
 
 const Title = styled(Typography)(
   ({ theme }) => css`
-    font-size: ${theme.fontSizes.extraLarge};
+    font-size: ${theme.fontSizes.headingThree};
     line-height: ${theme.lineHeights.normal};
     position: absolute;
     top: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
+
+    ${mq.md.min(css`
+      font-size: ${theme.fontSizes.headingTwo};
+    `)}
   `,
 )
 
@@ -220,7 +229,6 @@ export const Content = ({
   titleButton,
   hideBack,
   hideHeading,
-  spacing = '270px 2fr',
 }: {
   noTitle?: boolean
   title: string
@@ -229,7 +237,6 @@ export const Content = ({
   alwaysShowSubtitle?: boolean
   singleColumnContent?: boolean
   loading?: boolean
-  spacing?: string
   hideBack?: boolean
   hideHeading?: boolean
   children: {
@@ -281,9 +288,9 @@ export const Content = ({
       {breakpoints.md && InfoComponent}
 
       {!hideHeading && (
-        <HeadingItems $spacing={spacing}>
+        <HeadingItems>
           <Skeleton loading={loading} as={FullWidthSkeleton as any}>
-            <CustomLeadingHeading $customSpacing={spacing !== '270px 2fr'}>
+            <CustomLeadingHeading>
               {hasBack && (
                 <div data-testid="back-button">
                   <Button
@@ -306,11 +313,6 @@ export const Content = ({
               {!hasBack && !breakpoints.md && <HamburgerRoutes />}
             </CustomLeadingHeading>
           </Skeleton>
-          {children.header && breakpoints.md && (
-            <ContentContainer>
-              <Skeleton loading={loading}>{children.header}</Skeleton>
-            </ContentContainer>
-          )}
         </HeadingItems>
       )}
 
@@ -319,12 +321,12 @@ export const Content = ({
 
       {LeadingComponent}
 
-      {children.header && !breakpoints.md && (
+      {children.header && (
         <ContentContainer>
           <Skeleton loading={loading}>{children.header}</Skeleton>
         </ContentContainer>
       )}
-      <ContentContainer $multiColumn={singleColumnContent}>
+      <ContentContainer>
         <Skeleton loading={loading} as={FullWidthSkeleton as any}>
           {children.trailing}
         </Skeleton>

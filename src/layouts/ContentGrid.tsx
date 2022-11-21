@@ -1,20 +1,16 @@
 import styled, { css } from 'styled-components'
 
-import { mq } from '@ensdomains/thorin'
-
-export const ContentGrid = styled.div<{ $spacing?: string }>(
-  ({ theme, $spacing = '270px 2fr' }) => css`
+export const ContentGrid = styled.div(
+  ({ theme }) => css`
     flex-grow: 1;
     width: 100%;
+    max-width: ${theme.space['192']};
     overflow: hidden;
-    display: grid;
-    grid-template-columns: 1fr;
-    grid-template-rows: repeat(6, min-content);
-    gap: ${theme.space['5']};
-    align-self: center;
 
-    ${mq.md.min(css`
-      grid-template-columns: ${$spacing};
-    `)}
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['5']};
   `,
 )

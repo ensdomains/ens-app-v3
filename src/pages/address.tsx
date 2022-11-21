@@ -17,7 +17,6 @@ import { usePrimaryProfile } from '@app/hooks/usePrimaryProfile'
 import { Content } from '@app/layouts/Content'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { shortenAddress } from '@app/utils/utils'
 
 import {
@@ -25,8 +24,8 @@ import {
   NameTableMode,
   SortDirection,
   SortType,
-} from '../../components/@molecules/NameTableHeader/NameTableHeader'
-import { useChainId } from '../../hooks/useChainId'
+} from '../components/@molecules/NameTableHeader/NameTableHeader'
+import { useChainId } from '../hooks/useChainId'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -81,7 +80,6 @@ const Page = () => {
   const { address: _address } = useAccount()
   const address = query.address as string
   const chainId = useChainId()
-  const breakpoints = useBreakpoint()
   const isSelf = _address === address
 
   const [mode, setMode] = useState<NameTableMode>('view')
@@ -99,8 +97,6 @@ const Page = () => {
   const [searchQuery, setSearchQuery] = useState('')
 
   const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
-
-  const profileButtonPlacement = breakpoints.md ? 'bottom' : 'inline'
 
   const getTextRecord = (key: string) => primaryProfile?.records?.texts?.find((x) => x.key === key)
 
@@ -178,7 +174,7 @@ const Page = () => {
                 name={primaryProfile.name}
                 network={chainId}
                 button="viewProfile"
-                buttonPlacement={profileButtonPlacement}
+                buttonPlacement="inline"
                 getTextRecord={getTextRecord}
               />
             ) : (

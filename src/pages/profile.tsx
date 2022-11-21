@@ -1,5 +1,4 @@
 import { useRouter } from 'next/router'
-import { ReactElement } from 'react'
 import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
@@ -7,7 +6,6 @@ import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
-import { ContentGrid } from '@app/layouts/ContentGrid'
 import { isDNSName } from '@app/utils/utils'
 
 export default function Page() {
@@ -53,8 +51,4 @@ export default function Page() {
       }}
     />
   )
-}
-
-Page.getLayout = function getLayout(page: ReactElement) {
-  return <ContentGrid>{page}</ContentGrid>
 }

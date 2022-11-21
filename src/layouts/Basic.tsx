@@ -26,14 +26,14 @@ const Container = styled.div(
 
 const ContentWrapper = styled.div(
   ({ theme }) => css`
-    max-width: ${theme.space['288']};
+    max-width: ${theme.space['192']};
     width: 100%;
     align-self: center;
     flex-grow: 1;
     display: flex;
     flex-direction: column;
-    gap: ${theme.space['8']};
-    flex-gap: ${theme.space['8']};
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
   `,
 )
 

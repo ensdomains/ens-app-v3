@@ -5,51 +5,62 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 
-import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
-import { ProfileSnippet } from '@app/components/ProfileSnippet'
-import { NameSnippet } from '@app/components/pages/profile/NameSnippet'
-import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
-import { WrapperCallToAction } from '@app/components/pages/profile/[name]/details/WrapperCallToAction'
+import { WrapperCallToAction } from '@app/components/pages/profile/[name]/tabs/WrapperCallToAction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
-import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
+import MoreTab from './tabs/AdvancedTab/AdvancedTab'
+import ProfileTab from './tabs/ProfileTab'
+import { RecordsTab } from './tabs/RecordsTab'
+import { SubnamesTab } from './tabs/SubnamesTab'
 
-const DetailsWrapper = styled.div(
+const TabButtonContainer = styled.div(
   ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-start;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-    width: 100%;
-  `,
-)
-
-const SelfButtons = styled(CacheableComponent)(
-  ({ theme }) => css`
+    margin-left: -${theme.radii.extraLarge};
+    margin-right: -${theme.radii.extraLarge};
+    padding: 0 calc(${theme.radii.extraLarge} * 2);
     display: flex;
     flex-direction: row;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['6']};
+    flex-gap: ${theme.space['6']};
+    overflow: auto;
 
-    & > button {
-      border-radius: ${theme.radii.extraLarge};
-      border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
-      background-color: ${theme.colors.background};
+    &::-webkit-scrollbar {
+      display: none;
     }
   `,
 )
+
+const TabButton = styled.button<{ $selected: boolean }>(
+  ({ theme, $selected }) => css`
+    display: block;
+    outline: none;
+    border: none;
+    padding: 0;
+    margin: 0;
+    background: none;
+    color: ${$selected ? theme.colors.accent : theme.colors.textTertiary};
+    font-size: ${theme.fontSizes.extraLarge};
+    transition: all 0.15s ease-in-out;
+    cursor: pointer;
+
+    &:hover {
+      color: ${$selected ? theme.colors.accent : theme.colors.textSecondary};
+    }
+  `,
+)
+
+const tabs = ['profile', 'records', 'subnames', 'more'] as const
+type Tab = typeof tabs[number]
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -61,7 +72,6 @@ type Props = {
 const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const router = useRouter()
   const { t } = useTranslation('profile')
-  const breakpoints = useBreakpoint()
   const chainId = useChainId()
   const { address } = useAccount()
   const transactions = useRecentTransactions()
@@ -70,17 +80,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     error,
     profile,
     ownerData,
-    expiryDate,
     normalisedName,
-    dnsOwner,
     valid,
-    basicIsCachedData,
     profileIsCachedData,
-    wrapperData,
+    isWrapped,
     canBeWrapped,
   } = nameDetails
 
-  const selfAbilities = useSelfAbilities(address, name)
   const _canBeWrapped =
     canBeWrapped &&
     (ownerData?.ownershipLevel === 'registrar'
@@ -101,8 +107,6 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       router.replace(`/profile/${name}`)
     }
   }, [isSelf, name, router])
-
-  const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
   const [titleContent, descriptionContent] = useMemo(() => {
     if (isSelf) {
@@ -131,17 +135,19 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     ]
   }, [isSelf, normalisedName, valid, name, t])
 
-  const { showDataInput } = useTransactionFlow()
-  const handleEditProfile = () => {
-    showDataInput(
-      `edit-profile-${name}`,
-      'ProfileEditor',
-      { name },
-      { disableBackgroundClick: true },
-    )
+  const tab = (router.query.tab as Tab) || 'profile'
+  const setTab = (newTab: Tab) => {
+    const url = new URL(router.asPath, window.location.origin)
+    for (const [key, value] of Object.entries(router.query)) {
+      url.searchParams.set(key, value as string)
+    }
+    url.searchParams.set('tab', newTab)
+    router.replace(url.toString(), undefined, {
+      shallow: true,
+    })
   }
 
-  const { profileActions } = useProfileActions()
+  const selfAbilities = useSelfAbilities(address, name)
 
   useEffect(() => {
     if (shouldShowSuccessPage(transactions)) {
@@ -169,83 +175,49 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 message: error,
               }
             : undefined,
-          leading: breakpoints.md && ownerData && (
-            <NameSnippet
-              wrapperData={wrapperData!}
-              name={normalisedName}
-              network={chainId}
-              ownerData={ownerData}
-              expiryDate={expiryDate}
-              showButton={!selfAbilities.canEdit}
-              dnsOwner={dnsOwner}
-              isCached={basicIsCachedData}
-            />
+          header: (
+            <TabButtonContainer>
+              {tabs.map((tabItem) => (
+                <TabButton
+                  data-testid={`${tabItem}-tab`}
+                  $selected={tabItem === tab}
+                  onClick={() => setTab(tabItem)}
+                >
+                  <Typography weight="bold">{t(`tabs.${tabItem}.name`)}</Typography>
+                </TabButton>
+              ))}
+            </TabButtonContainer>
           ),
-          trailing: (
-            <DetailsWrapper>
-              <ProfileSnippet
+          trailing: {
+            profile: (
+              <ProfileTab
+                isLoading={isLoading}
+                isSelf={isSelf}
                 name={normalisedName}
+                nameDetails={nameDetails}
+              />
+            ),
+            records: (
+              <RecordsTab
                 network={chainId}
-                getTextRecord={getTextRecord}
-                button={selfAbilities.canExtend ? 'extend' : undefined}
+                name={normalisedName}
+                texts={(profile?.records?.texts as any) || []}
+                addresses={(profile?.records?.coinTypes as any) || []}
+                contentHash={profile?.records?.contentHash}
                 canEdit={selfAbilities.canEdit}
-                size={breakpoints.md ? 'medium' : 'small'}
-                actions={profileActions}
-              />
-              {/* eslint-disable no-nested-ternary */}
-              {selfAbilities.canEdit ? (
-                <SelfButtons $isCached={profileIsCachedData}>
-                  <Button shadowless variant="transparent" size="small" onClick={handleEditProfile}>
-                    {t('editProfile')}
-                  </Button>
-                  <Button
-                    onClick={() =>
-                      router.push({
-                        pathname: `/profile/${normalisedName}/details`,
-                        query: {
-                          from: router.asPath,
-                        },
-                      })
-                    }
-                    shadowless
-                    variant="transparent"
-                    size="small"
-                  >
-                    {t('viewDetails')}
-                  </Button>
-                </SelfButtons>
-              ) : !breakpoints.md ? (
-                <SelfButtons>
-                  <Button
-                    onClick={() =>
-                      router.push({
-                        pathname: `/profile/${normalisedName}/details`,
-                        query: {
-                          from: router.asPath,
-                        },
-                      })
-                    }
-                    shadowless
-                    variant="transparent"
-                    size="small"
-                  >
-                    {t('viewDetails')}
-                  </Button>
-                </SelfButtons>
-              ) : null}
-              {/* eslint-enable no-nested-ternary */}
-              <ProfileDetails
                 isCached={profileIsCachedData}
-                addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
-                  key: item.coin,
-                  value: item.addr,
-                }))}
-                textRecords={(profile?.records?.texts || [])
-                  .map((item: any) => ({ key: item.key, value: item.value }))
-                  .filter((item: any) => item.value !== null)}
               />
-            </DetailsWrapper>
-          ),
+            ),
+            subnames: (
+              <SubnamesTab
+                name={normalisedName}
+                isWrapped={isWrapped}
+                canEdit={selfAbilities.canEdit}
+                network={chainId}
+              />
+            ),
+            more: <MoreTab />,
+          }[tab],
         }}
       </Content>
     </>

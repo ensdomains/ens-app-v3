@@ -9,12 +9,12 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import TripleDot from '@app/assets/TripleDot.svg'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
-import { DisabledButton } from './@atoms/DisabledButton'
 import { NameAvatar } from './AvatarWithZorb'
 
 const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
-  ({ theme, $banner, $size }) => [
+  ({ theme, $banner, $size }) =>
     css`
+      width: 100%;
       padding: ${$size === 'medium' ? theme.space['8'] : theme.space['6']};
       padding-top: ${theme.space['16']};
       background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
@@ -32,7 +32,6 @@ const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
       gap: ${theme.space['3']};
       flex-gap: ${theme.space['3']};
     `,
-  ],
 )
 
 const DetailStack = styled.div(
@@ -248,7 +247,7 @@ export const ProfileSnippet = ({
           {ActionButton && buttonPlacement === 'inline' && (
             <DetailButtonWrapper $placement={buttonPlacement}>{ActionButton}</DetailButtonWrapper>
           )}
-          {hasActions ? (
+          {hasActions && (
             <DropdownWrapper>
               <Dropdown
                 items={actions.map((action) => ({
@@ -269,10 +268,6 @@ export const ProfileSnippet = ({
                 </Button>
               </Dropdown>
             </DropdownWrapper>
-          ) : (
-            <DisabledButton shadowless variant="transparent" size="extraSmall">
-              <TripleDotIcon as={TripleDot} />
-            </DisabledButton>
           )}
         </ButtonStack>
       </FirstItems>
