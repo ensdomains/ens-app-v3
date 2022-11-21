@@ -76,11 +76,10 @@ export const handleSubmitForm = ({
 }) => {
   const { ownerData } = basicNameData
   const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
-
   const transactions = []
   if (canSendManager && managerChoice === 'manager' && sendNameFunctionCallDetails.sendManager) {
     transactions.push(
-      makeTransactionItem('transferName', {
+      makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
         name,
         newOwner,
         contract: sendNameFunctionCallDetails.sendManager.contract,
