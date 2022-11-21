@@ -35,7 +35,7 @@ specifiers:
   '@ensdomains/ens-contracts': 0.0.15
   '@ensdomains/ens-test-env': ^0.3.5
   '@ensdomains/ens-validation': ^0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.34
+  '@ensdomains/ensjs': 3.0.0-alpha.36
   '@ensdomains/eth-ens-namehash': ^2.0.15
   '@ensdomains/thorin': 0.6.20
   '@ethersproject/providers': ^5.7.0
@@ -154,7 +154,7 @@ dependencies:
   '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
   '@ensdomains/ens-contracts': 0.0.15_hardhat@2.11.2
   '@ensdomains/ens-validation': 0.1.0
-  '@ensdomains/ensjs': 3.0.0-alpha.34_kdpqpin542yrq2nndtznhtz4cm
+  '@ensdomains/ensjs': 3.0.0-alpha.36_kdpqpin542yrq2nndtznhtz4cm
   '@ensdomains/eth-ens-namehash': 2.0.15
   '@ensdomains/thorin': 0.6.20_6haozuff5ofofiwuoke6ixqiri
   '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_wiydppdk2wtsgvuygzl3yf3yma
@@ -2289,8 +2289,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.34_kdpqpin542yrq2nndtznhtz4cm:
-    resolution: {integrity: sha512-vBPIo3Q8zPKe5B21RL6yvovyqkVYoIT7I4XYXNjqNYzvhvrCXL85Tn5VfoT9T9qvjK+Oy2unKfn+Fw5RTasoGA==}
+  /@ensdomains/ensjs/3.0.0-alpha.36_kdpqpin542yrq2nndtznhtz4cm:
+    resolution: {integrity: sha512-NTMrty8wOxYrkBANLiZVn6iqXDHacyBDZ8cMBXkZ7sLIDLHieV+932Ic77XEqj8OPa/J/S/fQcb8IHz+K37h6A==}
     dependencies:
       '@ensdomains/address-encoder': 0.2.18
       '@ensdomains/content-hash': 2.5.7
@@ -11367,7 +11367,7 @@ packages:
       '@ethersproject/networks': 5.7.1
       '@ethersproject/pbkdf2': 5.7.0
       '@ethersproject/properties': 5.7.0
-      '@ethersproject/providers': 5.7.1
+      '@ethersproject/providers': 5.7.2
       '@ethersproject/random': 5.7.0
       '@ethersproject/rlp': 5.7.0
       '@ethersproject/sha2': 5.7.0
