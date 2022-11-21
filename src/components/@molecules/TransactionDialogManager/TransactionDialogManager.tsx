@@ -101,7 +101,7 @@ export const TransactionDialogManager = ({
   }, [selectedKey, selectedItem, onDismiss, dispatch, t])
 
   return (
-    <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onBackgroundDismiss}>
+    <Dialog variant="blank" open={!!selectedKey} onDismiss={onBackgroundDismiss}>
       {InnerComponent}
       <Dialog.CloseButton onClick={onDismiss} />
     </Dialog>
