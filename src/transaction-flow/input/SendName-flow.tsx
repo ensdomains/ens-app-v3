@@ -175,7 +175,9 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     <>
       <Typography variant="extraLarge">{t('details.sendName.title')}</Typography>
       <Typography style={{ textAlign: 'center' }}>{t('details.sendName.description')}</Typography>
-      <Outlink href="">{t('details.sendName.learnMore')}</Outlink>
+      <Outlink href="/faq/managing-a-name#what-are-managers-and-owners">
+        {t('details.sendName.learnMore')}
+      </Outlink>
       {canSendOwner && (
         <SwitchBox>
           <TextContainer>
