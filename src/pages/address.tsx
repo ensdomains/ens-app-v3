@@ -174,7 +174,6 @@ const Page = () => {
                 name={primaryProfile.name}
                 network={chainId}
                 button="viewProfile"
-                buttonPlacement="inline"
                 getTextRecord={getTextRecord}
               />
             ) : (

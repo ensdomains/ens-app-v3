@@ -1,4 +1,5 @@
 import React, { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
 import { ArrowUpSVG, Button, Space, Typography, mq } from '@ensdomains/thorin'
@@ -8,6 +9,7 @@ import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSo
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
+import { usePrimary } from '@app/hooks/usePrimary'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
@@ -18,7 +20,7 @@ const Container = styled.div(
     padding-right: ${theme.space['0.25']};
     width: 100%;
     ${mq.md.min(css`
-      padding: 0 ${theme.space['1']};
+      padding: 0 ${theme.space['0.5']};
     `)}
   `,
 )
@@ -58,9 +60,14 @@ const RotatedIconArrowUp = styled.svg(
   `,
 )
 
-const MinWidthWrapper = styled.div(
-  () => css`
+const ButtonWrapper = styled.div(
+  ({ theme }) => css`
     width: min-content;
+
+    & > button,
+    & > a {
+      background-color: ${theme.colors.foregroundSecondary};
+    }
   `,
 )
 
@@ -87,11 +94,10 @@ const ProfileButton = ({
       condition={link}
       wrapper={(wrapperChildren) => <a href={link}>{wrapperChildren}</a>}
     >
-      <MinWidthWrapper>
+      <ButtonWrapper>
         <Button
           onClick={link ? undefined : () => copy(value)}
           size="extraSmall"
-          shape="circle"
           variant="primary"
           tone="grey"
           shadowless
@@ -116,7 +122,7 @@ const ProfileButton = ({
             </Wrapper>
           </Container>
         </Button>
-      </MinWidthWrapper>
+      </ButtonWrapper>
     </ConditionalWrapper>
   )
 }
@@ -229,6 +235,41 @@ export const OtherProfileButton = ({
       testid={`other-profile-button-${iconKey}`}
     >
       {formattedValue}
+    </ProfileButton>
+  )
+}
+
+export const OwnerProfileButton = ({
+  iconKey: label,
+  value: address,
+}: {
+  iconKey: string
+  value: string
+}) => {
+  const { t } = useTranslation('common')
+  const breakpoints = useBreakpoint()
+  const { name: primary } = usePrimary(address)
+
+  const formattedAddress = useMemo(() => {
+    if (breakpoints.sm) {
+      return shortenAddress(address)
+    }
+    return `${address.slice(0, 5)}...`
+  }, [address, breakpoints])
+
+  return (
+    <ProfileButton
+      link={`/address/${address}`}
+      value={address}
+      prefixSize="max"
+      prefix={
+        <OtherContainerTextPrefix color="textSecondary">
+          {t(label).toLocaleLowerCase()}
+        </OtherContainerTextPrefix>
+      }
+      testid={`owner-profile-button-${label}`}
+    >
+      {primary || formattedAddress}
     </ProfileButton>
   )
 }

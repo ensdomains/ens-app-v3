@@ -3,43 +3,46 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Colors, Dropdown, Typography } from '@ensdomains/thorin'
+import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
-import TripleDot from '@app/assets/TripleDot.svg'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
 
-const Container = styled.div<{ $banner?: string; $size?: 'small' | 'medium' }>(
-  ({ theme, $banner, $size }) =>
+const Container = styled.div<{ $banner?: string }>(
+  ({ theme, $banner }) =>
     css`
       width: 100%;
-      padding: ${$size === 'medium' ? theme.space['8'] : theme.space['6']};
-      padding-top: ${theme.space['16']};
+      padding: ${theme.space['4']};
+      padding-top: ${theme.space['18']};
       background-image: ${$banner ? `url(${$banner})` : theme.colors.gradients.blue};
       background-repeat: no-repeat;
       background-attachment: scroll;
       background-size: 100% ${theme.space['28']};
+      background-position-y: -1px; // for overlap with border i think
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii['2xLarge']};
-      border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
+      border: ${theme.space.px} solid ${theme.colors.borderSecondary};
       display: flex;
       flex-direction: column;
       align-items: flex-start;
       justify-content: center;
-      gap: ${theme.space['3']};
-      flex-gap: ${theme.space['3']};
+      gap: ${theme.space['4']};
+      flex-gap: ${theme.space['4']};
+
+      ${mq.md.min(css`
+        padding: ${theme.space['6']};
+        padding-top: ${theme.space['12']};
+      `)}
     `,
 )
 
 const DetailStack = styled.div(
-  ({ theme }) => css`
+  () => css`
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    margin-bottom: ${theme.space['1']};
     width: 100%;
     overflow: hidden;
   `,
@@ -47,7 +50,7 @@ const DetailStack = styled.div(
 
 const Name = styled(Typography)(
   ({ theme }) => css`
-    font-size: ${theme.fontSizes.extraLarge};
+    font-size: ${theme.fontSizes.headingThree};
     width: 100%;
     overflow-wrap: anywhere;
   `,
@@ -84,14 +87,10 @@ const FirstItems = styled.div(
   `,
 )
 
-const DetailButtonWrapper = styled.div<{ $placement?: 'inline' | 'bottom' }>(
-  ({ theme, $placement }) => css`
-    ${$placement === 'bottom' && 'width: 100%;'}
-
+const DetailButtonWrapper = styled.div(
+  ({ theme }) => css`
     & > button {
-      border: ${theme.space.px} solid ${theme.colors.borderSecondary};
-      border-radius: ${theme.radii.extraLarge};
-      padding: ${theme.space['2']};
+      border-radius: ${theme.radii.large};
     }
   `,
 )
@@ -124,27 +123,6 @@ const ButtonIcon = styled.svg(
   `,
 )
 
-const TripleDotIcon = styled.div(
-  ({ theme }) => css`
-    display: block;
-    box-sizing: border-box;
-    width: ${theme.space['4']};
-    height: ${theme.space['4']};
-  `,
-)
-
-const DropdownWrapper = styled.div(
-  ({ theme }) => css`
-    & > div > div {
-      min-width: ${theme.space['48']};
-
-      button {
-        height: ${theme.space['10']};
-      }
-    }
-  `,
-)
-
 const LocationAndUrl = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -167,29 +145,17 @@ export const ProfileSnippet = ({
   name,
   getTextRecord,
   button,
-  size = 'small',
-  buttonPlacement = 'inline',
   network,
-  actions,
   canEdit,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
-  button?: 'viewDetails' | 'viewProfile' | 'extend'
-  size?: 'small' | 'medium'
-  buttonPlacement?: 'inline' | 'bottom'
+  button?: 'viewProfile' | 'extend'
   canEdit?: boolean
   network: number
-  actions?: {
-    onClick: () => void
-    color?: Colors
-    label: string
-    disabled?: boolean
-  }[]
 }) => {
   const router = useRouter()
   const { t } = useTranslation('common')
-  const hasActions = actions && actions.length > 0
 
   const { showDataInput } = useTransactionFlow()
 
@@ -200,13 +166,12 @@ export const ProfileSnippet = ({
   const recordName = getTextRecord?.('name')?.value
 
   const ActionButton = useMemo(() => {
-    if (button === 'extend' && buttonPlacement === 'inline')
+    if (button === 'extend')
       return (
         <Button
-          size="extraSmall"
+          size="small"
           shadowless
-          disabled={false}
-          variant="transparent"
+          variant="secondary"
           data-testid="extend-button"
           onClick={() => {
             showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
@@ -218,63 +183,39 @@ export const ProfileSnippet = ({
           </InnerButton>
         </Button>
       )
-    if (button === 'viewDetails' || button === 'viewProfile')
+    if (button === 'viewProfile')
       return (
         <Button
           onClick={() =>
             router.push({
-              pathname: button === 'viewDetails' ? `/profile/${name}/details` : `/profile/${name}`,
+              pathname: `/profile/${name}`,
               query: {
                 from: router.asPath,
               },
             })
           }
+          size="small"
           shadowless
-          variant="transparent"
-          size="extraSmall"
+          variant="secondary"
         >
           {t(`wallet.${button}`)}
         </Button>
       )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [button, name, buttonPlacement, canEdit])
+  }, [button, name, canEdit])
 
   return (
-    <Container $banner={banner} $size={size} data-testid="profile-snippet">
+    <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
-        <NameAvatar size="24" label={name} name={name} network={network} />
+        <NameAvatar size={{ min: '24', md: '32' }} label={name} name={name} network={network} />
         <ButtonStack>
-          {ActionButton && buttonPlacement === 'inline' && (
-            <DetailButtonWrapper $placement={buttonPlacement}>{ActionButton}</DetailButtonWrapper>
-          )}
-          {hasActions && (
-            <DropdownWrapper>
-              <Dropdown
-                items={actions.map((action) => ({
-                  ...action,
-                  color: action.color || 'text',
-                }))}
-                menuLabelAlign="flex-end"
-                align="right"
-                shortThrow
-              >
-                <Button
-                  data-testid="profile-actions"
-                  shadowless
-                  variant="transparent"
-                  size="extraSmall"
-                >
-                  <TripleDotIcon as={TripleDot} />
-                </Button>
-              </Dropdown>
-            </DropdownWrapper>
-          )}
+          {ActionButton && <DetailButtonWrapper>{ActionButton}</DetailButtonWrapper>}
         </ButtonStack>
       </FirstItems>
       <TextStack>
         <DetailStack>
-          <Name weight="bold">{name}</Name>
-          {recordName && <NameRecord data-testid="profile-snippet-name">{recordName}</NameRecord>}
+          <Name weight="bold">{recordName || name}</Name>
+          {recordName && <NameRecord data-testid="profile-snippet-name">{name}</NameRecord>}
         </DetailStack>
         {description && (
           <Typography data-testid="profile-snippet-description">{description}</Typography>
@@ -296,9 +237,6 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
-      {ActionButton && buttonPlacement === 'bottom' && (
-        <DetailButtonWrapper $placement={buttonPlacement}>{ActionButton}</DetailButtonWrapper>
-      )}
     </Container>
   )
 }

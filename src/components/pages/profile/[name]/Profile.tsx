@@ -84,6 +84,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     valid,
     profileIsCachedData,
     isWrapped,
+    isLoading: detailsLoading,
     canBeWrapped,
   } = nameDetails
 
@@ -165,7 +166,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         noTitle
         title={isSelf ? t('yourProfile') : normalisedName}
         subtitle={isSelf ? normalisedName : 'Profile'}
-        loading={isLoading}
+        loading={isLoading || detailsLoading}
       >
         {{
           info: _canBeWrapped && <WrapperCallToAction name={normalisedName} />,
@@ -189,14 +190,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
             </TabButtonContainer>
           ),
           trailing: {
-            profile: (
-              <ProfileTab
-                isLoading={isLoading}
-                isSelf={isSelf}
-                name={normalisedName}
-                nameDetails={nameDetails}
-              />
-            ),
+            profile: <ProfileTab name={normalisedName} nameDetails={nameDetails} />,
             records: (
               <RecordsTab
                 network={chainId}

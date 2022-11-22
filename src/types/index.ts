@@ -4,7 +4,7 @@ import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
 import type { ENS } from '@ensdomains/ensjs'
-import { Helper } from '@ensdomains/thorin'
+import { Helper, Space } from '@ensdomains/thorin'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
 
@@ -91,3 +91,13 @@ export type EthAddress = string
 export type CurrencyUnit = 'eth' | 'fiat'
 export type FiatUnit = 'usd'
 export type CurrencyDisplay = 'eth' | FiatUnit
+
+export type QuerySpace =
+  | Space
+  | {
+      min: Space
+      xs?: Space
+      sm?: Space
+      md?: Space
+      lg?: Space
+    }

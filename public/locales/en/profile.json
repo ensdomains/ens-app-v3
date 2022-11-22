@@ -10,6 +10,7 @@
   "addresses": "Addresses",
   "otherRecords": "Other Records",
   "editProfile": "Edit Profile",
+  "ownership": "Ownership",
   "viewDetails": "View Details",
   "tabs": {
     "profile": {
@@ -25,6 +26,9 @@
         },
         "extend": {
           "label": "Extend name"
+        },
+        "editProfile": {
+          "label": "Edit profile"
         }
       }
     },
