@@ -81,7 +81,8 @@
         "label": "Records",
         "text": "Text",
         "contentHash": "Content Hash",
-        "noContentHash": "No Content Hash"
+        "noContentHash": "No Content Hash",
+        "editRecords": "Edit Records"
       },
       "subnames": {
         "label": "Subnames",

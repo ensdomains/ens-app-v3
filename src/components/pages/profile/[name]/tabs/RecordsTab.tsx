@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography, mq } from '@ensdomains/thorin'
+import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -34,21 +34,29 @@ type ContentHash =
   | string
 
 const TabWrapper = styled(OriginalTabWrapper)(
+  () => css`
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+  `,
+  cacheableComponentStyles,
+)
+
+const AllRecords = styled.div(
   ({ theme }) => css`
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
     gap: ${theme.space['3']};
-    flex-gap: ${theme.space['3']};
     padding: ${theme.space['4.5']};
     ${mq.md.min(css`
       padding: ${theme.space['6']};
       gap: ${theme.space['6']};
-      flex-gap: ${theme.space['6']};
     `)}
   `,
-  cacheableComponentStyles,
 )
 
 const RecordSection = styled.div(
@@ -79,8 +87,8 @@ const SectionTitleContainer = styled.div(
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
+    gap: ${theme.space['4']};
+    flex-gap: ${theme.space['4']};
   `,
 )
 
@@ -96,24 +104,6 @@ const SectionSubtitle = styled(Typography)(
   `,
 )
 
-const EditButton = styled.button(
-  ({ theme, disabled }) => css`
-    display: block;
-    outline: none;
-    border: none;
-    padding: 0;
-    margin: 0;
-    background: none;
-    color: ${theme.colors.accent};
-    font-size: ${theme.fontSizes.base};
-    ${disabled &&
-    css`
-      color: ${theme.colors.textTertiary};
-      pointer-events: none;
-    `}
-  `,
-)
-
 const RecordContainer = styled.button(
   ({ theme }) => css`
     width: 100%;
@@ -123,9 +113,11 @@ const RecordContainer = styled.button(
     justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    background: rgba(0, 0, 0, 0.04);
-    padding: ${theme.space['1.5']} ${theme.space['3']};
+    background: ${theme.colors.foregroundSecondary};
+    padding: ${theme.space['2.5']} ${theme.space['3']};
     border-radius: ${theme.radii.large};
+    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+
     font-size: calc(${theme.fontSizes.small} - ${theme.space.px});
     transition: all 0.15s ease-in-out;
     cursor: pointer;
@@ -141,13 +133,14 @@ const RecordContainer = styled.button(
     }
 
     ${mq.md.min(css`
-      font-size: ${theme.fontSizes.small};
+      font-size: ${theme.fontSizes.root};
     `)}
   `,
 )
 
 const RecordKey = styled(Typography)(
   ({ theme }) => css`
+    color: ${theme.colors.textTertiary};
     width: ${theme.space['20']};
     min-width: ${theme.space['20']};
     height: ${theme.space.full};
@@ -248,6 +241,23 @@ const RecordItem = ({
   )
 }
 
+const Actions = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-flow: row wrap;
+    gap: ${theme.space['2']};
+
+    border-top: 1px solid ${theme.colors.borderSecondary};
+    padding: ${theme.space['4']};
+
+    ${mq.md.min(css`
+      padding: ${theme.space['4']} ${theme.space['6']};
+    `)}
+  `,
+)
+
 export const RecordsTab = ({
   name,
   network,
@@ -298,76 +308,79 @@ export const RecordsTab = ({
     )
   return (
     <TabWrapper $isCached={isCached} data-testid="records-tab">
-      <RecordSection>
-        <SectionHeader>
-          <SectionTitleContainer>
-            <SectionTitle data-testid="text-heading" weight="bold">
-              {t('details.tabs.records.text')}
-            </SectionTitle>
-            <SectionSubtitle data-testid="text-amount" weight="bold">
-              {filteredTexts ? filteredTexts.length : 0} {t('records.label', { ns: 'common' })}
-            </SectionSubtitle>
-          </SectionTitleContainer>
-
-          {canEdit && (
-            <EditButton>
-              <Typography weight="bold" onClick={handleShowEditor}>
-                {t('action.edit', { ns: 'common' })}
-              </Typography>
-            </EditButton>
-          )}
-        </SectionHeader>
-        {filteredTexts &&
-          filteredTexts.map((text) => (
-            <RecordItem key={text.key} type="text" itemKey={text.key} value={text.value} />
-          ))}
-      </RecordSection>
-      <RecordSection>
-        <SectionHeader>
-          <SectionTitleContainer>
-            <SectionTitle data-testid="address-heading" weight="bold">
-              {t('address.label', { ns: 'common' })}
-            </SectionTitle>
-            <SectionSubtitle data-testid="address-amount" weight="bold">
-              {filteredAddresses ? filteredAddresses.length : 0}{' '}
-              {t('records.label', { ns: 'common' })}
-            </SectionSubtitle>
-          </SectionTitleContainer>
-        </SectionHeader>
-        {filteredAddresses &&
-          filteredAddresses.map((address) => (
-            <RecordItem
-              type="address"
-              key={address.key}
-              itemKey={address.coin}
-              value={address.addr}
-              showLegacy={address.coin.endsWith('_LEGACY')}
-            />
-          ))}
-      </RecordSection>
-      <RecordSection>
-        <SectionHeader>
-          <SectionTitleContainer>
-            {formattedContentHash ? (
-              <>
-                <SectionTitle data-testid="content-hash-heading" weight="bold">
-                  {t('details.tabs.records.contentHash')}
-                </SectionTitle>
-                {formattedContentHashLink && (
-                  <Outlink href={formattedContentHashLink}>
-                    {t('action.view', { ns: 'common' })}
-                  </Outlink>
-                )}
-              </>
-            ) : (
-              <SectionSubtitle data-testid="content-hash-heading" weight="bold">
-                {t('details.tabs.records.noContentHash')}
+      <AllRecords>
+        <RecordSection>
+          <SectionHeader>
+            <SectionTitleContainer>
+              <SectionTitle data-testid="text-heading" weight="bold">
+                {t('details.tabs.records.text')}
+              </SectionTitle>
+              <SectionSubtitle data-testid="text-amount">
+                {filteredTexts ? filteredTexts.length : 0} {t('records.label', { ns: 'common' })}
               </SectionSubtitle>
-            )}
-          </SectionTitleContainer>
-        </SectionHeader>
-        {formattedContentHash && <RecordItem type="contentHash" value={formattedContentHash} />}
-      </RecordSection>
+            </SectionTitleContainer>
+          </SectionHeader>
+          {filteredTexts &&
+            filteredTexts.map((text) => (
+              <RecordItem key={text.key} type="text" itemKey={text.key} value={text.value} />
+            ))}
+        </RecordSection>
+        <RecordSection>
+          <SectionHeader>
+            <SectionTitleContainer>
+              <SectionTitle data-testid="address-heading" weight="bold">
+                {t('address.label', { ns: 'common' })}
+              </SectionTitle>
+              <SectionSubtitle data-testid="address-amount">
+                {filteredAddresses ? filteredAddresses.length : 0}{' '}
+                {t('records.label', { ns: 'common' })}
+              </SectionSubtitle>
+            </SectionTitleContainer>
+          </SectionHeader>
+          {filteredAddresses &&
+            filteredAddresses.map((address) => (
+              <RecordItem
+                type="address"
+                key={address.key}
+                itemKey={address.coin}
+                value={address.addr}
+                showLegacy={address.coin.endsWith('_LEGACY')}
+              />
+            ))}
+        </RecordSection>
+        <RecordSection>
+          <SectionHeader>
+            <SectionTitleContainer>
+              {formattedContentHash ? (
+                <>
+                  <SectionTitle data-testid="content-hash-heading" weight="bold">
+                    {t('details.tabs.records.contentHash')}
+                  </SectionTitle>
+                  {formattedContentHashLink && (
+                    <Outlink href={formattedContentHashLink}>
+                      {t('action.view', { ns: 'common' })}
+                    </Outlink>
+                  )}
+                </>
+              ) : (
+                <SectionSubtitle data-testid="content-hash-heading">
+                  {t('details.tabs.records.noContentHash')}
+                </SectionSubtitle>
+              )}
+            </SectionTitleContainer>
+          </SectionHeader>
+          {formattedContentHash && <RecordItem type="contentHash" value={formattedContentHash} />}
+        </RecordSection>
+      </AllRecords>
+      {canEdit && (
+        <Actions>
+          <div>
+            <Button shadowless onClick={handleShowEditor} size="small">
+              {t('details.tabs.records.editRecords')}
+            </Button>
+          </div>
+        </Actions>
+      )}
     </TabWrapper>
   )
 }
