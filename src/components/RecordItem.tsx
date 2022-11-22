@@ -5,6 +5,7 @@ import { Typography } from '@ensdomains/thorin'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
 import mq from '@app/mediaQuery'
+import { getTestId } from '@app/utils/utils'
 
 const RecordContainer = styled.button<{ $hasBackground?: boolean }>(({ theme, $hasBackground }) => [
   css`
@@ -117,6 +118,7 @@ export const RecordItem = ({
   value,
   showLegacy,
   hasBackground = true,
+  ...props
 }: {
   itemKey?: string
   value: string
@@ -135,7 +137,9 @@ export const RecordItem = ({
           </LegacyType>
         </RecordKey>
       )}
-      <RecordValue $fullWidth={!itemKey}>{value}</RecordValue>
+      <RecordValue $fullWidth={!itemKey} data-testid={getTestId(props, 'record-value')}>
+        {value}
+      </RecordValue>
       <CopyButtonWrapper $hasBackground={hasBackground}>
         <InnerCopyButton>
           {value && <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />}

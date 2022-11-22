@@ -5,6 +5,7 @@ import { initReactI18next } from 'react-i18next'
 
 import address from '../public/locales/en/address.json'
 import common from '../public/locales/en/common.json'
+import faq from '../public/locales/en/faq.json'
 import names from '../public/locales/en/names.json'
 import profile from '../public/locales/en/profile.json'
 import settings from '../public/locales/en/settings.json'
@@ -22,7 +23,7 @@ i18n
       escapeValue: false,
     },
     defaultNS: 'common',
-    ns: ['address', 'common', 'names', 'profile', 'settings', 'transactionFlow'],
+    ns: ['address', 'common', 'names', 'profile', 'settings', 'transactionFlow', 'faq'],
     react: {
       useSuspense: false,
     },
@@ -35,5 +36,6 @@ i18n.addResourceBundle('en', 'names', names)
 i18n.addResourceBundle('en', 'profile', profile)
 i18n.addResourceBundle('en', 'settings', settings)
 i18n.addResourceBundle('en', 'transactionFlow', transactionFlow)
+i18n.addResourceBundle('en', 'faq', faq)
 
 export default i18n

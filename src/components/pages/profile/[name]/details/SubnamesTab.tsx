@@ -192,7 +192,9 @@ export const SubnamesTab = ({
         <AddSubnamesCard>
           <Typography>
             {t('details.tabs.subnames.addSubname.title')}{' '}
-            <Outlink href="#">{t('details.tabs.subnames.addSubname.learn')}</Outlink>
+            <Outlink href="/faq/managing-a-name#what-is-the-difference-between-a-name-and-a-subname">
+              {t('details.tabs.subnames.addSubname.learn')}
+            </Outlink>
           </Typography>
           <Button
             data-testid="add-subname-action"

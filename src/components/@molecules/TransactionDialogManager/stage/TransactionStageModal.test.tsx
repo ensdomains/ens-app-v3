@@ -10,7 +10,7 @@ import { useChainName } from '@app/hooks/useChainName'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 
-import { TransactionStageModal } from './TransactionStageModal'
+import { TransactionStageModal, handleBackToInput } from './TransactionStageModal'
 
 jest.mock('@app/hooks/useChainName')
 jest.mock('@app/hooks/transactions/useAddRecentTransaction')
@@ -294,6 +294,15 @@ describe('TransactionStageModal', () => {
         })
         expect(mockSendTransaction).toHaveBeenCalled()
       })
+    })
+  })
+})
+
+describe('handleBackToInput', () => {
+  it('should reset the transaction step', () => {
+    handleBackToInput(mockDispatch)()
+    expect(mockDispatch).toBeCalledWith({
+      name: 'resetTransactionStep',
     })
   })
 })

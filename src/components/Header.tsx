@@ -160,7 +160,7 @@ export const Header = () => {
   const statefulRoutes = isConnected
     ? dropdownRoutes
     : breakpoints.lg
-    ? dropdownRoutes.slice(3)
+    ? dropdownRoutes.slice(4)
     : dropdownRoutes
 
   let RouteItems: ReactNode
@@ -176,7 +176,7 @@ export const Header = () => {
     ))
   } else if (breakpoints.lg) {
     RouteItems = dropdownRoutes
-      .slice(0, 3)
+      .slice(0, 4)
       .map((route) => <RouteItem key={route.name} route={route} asText />)
   } else {
     RouteItems = null

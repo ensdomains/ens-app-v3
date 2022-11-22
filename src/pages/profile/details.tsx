@@ -128,7 +128,7 @@ export const Details = ({
   if (ownerData?.ownershipLevel === 'nameWrapper') {
     owners.push({
       address: ownerData.owner!,
-      canTransfer: selfAbilities.canChangeOwner,
+      canTransfer: selfAbilities.canSend,
       transferType: 'owner',
       label: wrapperData?.fuseObj.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
       description: 'details.descriptions.owner',
@@ -138,7 +138,7 @@ export const Details = ({
     if (ownerData?.owner) {
       owners.push({
         address: ownerData?.owner,
-        canTransfer: selfAbilities.canChangeOwner,
+        canTransfer: selfAbilities.canSend,
         transferType: 'manager',
         label: 'name.manager',
         description: 'details.descriptions.controller',
@@ -148,7 +148,7 @@ export const Details = ({
     if (ownerData?.registrant) {
       owners.push({
         address: ownerData.registrant,
-        canTransfer: selfAbilities.canChangeRegistrant,
+        canTransfer: selfAbilities.canSendOwner,
         transferType: 'owner',
         label: 'name.owner',
         description: 'details.descriptions.registrant',
@@ -250,7 +250,7 @@ export default function Page() {
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
 
-  const selfAbilities = useSelfAbilities(address, ownerData, name)
+  const selfAbilities = useSelfAbilities(address, name)
 
   const isLoading = detailsLoading || accountLoading
 
