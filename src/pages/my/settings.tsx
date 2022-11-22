@@ -21,8 +21,6 @@ const OtherWrapper = styled.div(
   `,
 )
 
-const spacing = '1fr'
-
 export default function Page() {
   const { t } = useTranslation('settings')
   const { address, isConnecting, isReconnecting } = useAccount()
@@ -30,7 +28,7 @@ export default function Page() {
   useProtectedRoute('/', isConnecting || isReconnecting ? true : address)
 
   return (
-    <Content singleColumnContent title={t('title')} spacing={spacing}>
+    <Content singleColumnContent title={t('title')}>
       {{
         leading: null,
         trailing: (

@@ -59,8 +59,6 @@ const ButtonInner = styled.div(
   `,
 )
 
-export const spacing = '1fr 1fr'
-
 const MyNames = () => {
   const { t } = useTranslation('names')
   const router = useRouter()
@@ -145,7 +143,6 @@ const MyNames = () => {
       )}`}
       alwaysShowSubtitle
       singleColumnContent
-      spacing={spacing}
       loading={loading}
     >
       {{

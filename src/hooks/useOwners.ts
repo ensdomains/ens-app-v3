@@ -1,14 +1,17 @@
 import { useMemo } from 'react'
-import { useAccount } from 'wagmi'
 
-import { useNameDetails } from './useNameDetails'
+import { ReturnedENS } from '@app/types'
+
 import { useSelfAbilities } from './useSelfAbilities'
 
-const useOwners = (name: string) => {
-  const { address, isConnecting } = useAccount()
-  const { ownerData, wrapperData, dnsOwner, isLoading } = useNameDetails(name)
-  const selfAbilities = useSelfAbilities(address, name)
+type Props = {
+  ownerData: Exclude<ReturnedENS['ownerData'], undefined>
+  wrapperData: Exclude<ReturnedENS['wrapperData'], undefined>
+  dnsOwner: Exclude<ReturnedENS['dnsOwner'], undefined>
+  selfAbilities: ReturnType<typeof useSelfAbilities>
+}
 
+const useOwners = ({ ownerData, wrapperData, dnsOwner, selfAbilities }: Props) => {
   const owners = useMemo(() => {
     const _owners: {
       address: string
@@ -62,7 +65,7 @@ const useOwners = (name: string) => {
     return _owners
   }, [ownerData, wrapperData, selfAbilities, dnsOwner])
 
-  return { owners, isLoading: isConnecting || isLoading }
+  return owners
 }
 
 export default useOwners

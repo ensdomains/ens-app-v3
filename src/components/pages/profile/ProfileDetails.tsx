@@ -102,23 +102,23 @@ const RecordsStack = styled.div(
 const Actions = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: row;
     align-items: center;
     justify-content: flex-end;
+    flex-flow: row wrap;
     gap: ${theme.space['2']};
 
     border-top: 1px solid ${theme.colors.borderSecondary};
     padding: ${theme.space['4']};
 
-    & > .leading {
-      flex-grow: 1;
-      order: -1;
-      & > button {
-        width: min-content;
-      }
-    }
-
     ${mq.md.min(css`
+      & > .leading {
+        flex-grow: 1;
+        order: -1;
+        & > button {
+          width: min-content;
+        }
+      }
+
       padding: ${theme.space['4']} ${theme.space['6']};
     `)}
   `,
@@ -127,12 +127,14 @@ const Actions = styled.div(
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
-  name,
+  owners,
+  actions,
   isCached,
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
-  name: string
+  owners: ReturnType<typeof useOwners>
+  actions: ReturnType<typeof useProfileActions>['profileActions']
   isCached?: boolean
 }) => {
   const otherRecords = [
@@ -144,9 +146,7 @@ export const ProfileDetails = ({
       )
       .map((x) => ({ ...x, type: 'text' })),
   ]
-  const { owners } = useOwners(name)
-  const mappedOwners = owners.map((x) => ({ key: x.label, value: x.address }))
-  const { profileActions } = useProfileActions()
+  const mappedOwners = owners?.map((x) => ({ key: x.label, value: x.address }))
 
   return (
     <ProfileInfoBox $isCached={isCached}>
@@ -176,15 +176,15 @@ export const ProfileDetails = ({
         />
         <ProfileSection
           label="ownership"
-          condition
-          array={mappedOwners}
+          condition={!!mappedOwners}
+          array={mappedOwners!}
           button={OwnerProfileButton}
         />
       </RecordsStack>
-      {profileActions && (
+      {actions && (
         <Actions>
-          {profileActions.map((action) => (
-            <div className={action.red ? 'leading' : ''}>
+          {actions.map((action) => (
+            <div className={action.red ? 'leading' : ''} key={action.label}>
               <Button
                 shadowless
                 onClick={action.onClick}

@@ -180,6 +180,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
             <TabButtonContainer>
               {tabs.map((tabItem) => (
                 <TabButton
+                  key={tabItem}
                   data-testid={`${tabItem}-tab`}
                   $selected={tabItem === tab}
                   onClick={() => setTab(tabItem)}
