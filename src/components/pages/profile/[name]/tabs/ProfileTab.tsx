@@ -44,7 +44,12 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   const { abilities: subnameAbilities, isCachedData: subnameAbilitiesCachedData } =
     useSubnameAbilities({ address, name, ownerData, wrapperData })
 
-  const owners = useOwners({ ownerData, wrapperData, dnsOwner, selfAbilities })
+  const owners = useOwners({
+    ownerData: ownerData!,
+    wrapperData: wrapperData!,
+    dnsOwner,
+    selfAbilities,
+  })
   const profileActions = useProfileActions({
     address,
     name,

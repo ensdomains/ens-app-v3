@@ -5,9 +5,9 @@ import { ReturnedENS } from '@app/types'
 import { useSelfAbilities } from './useSelfAbilities'
 
 type Props = {
-  ownerData: Exclude<ReturnedENS['ownerData'], undefined>
-  wrapperData: Exclude<ReturnedENS['wrapperData'], undefined>
-  dnsOwner: Exclude<ReturnedENS['dnsOwner'], undefined>
+  ownerData: Exclude<ReturnedENS['getOwner'], undefined>
+  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined>
+  dnsOwner: Exclude<ReturnedENS['getDNSOwner'], undefined>
   selfAbilities: ReturnType<typeof useSelfAbilities>
 }
 

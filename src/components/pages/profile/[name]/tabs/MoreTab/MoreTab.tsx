@@ -1,6 +1,11 @@
 import styled, { css } from 'styled-components'
 
+import { useNameDetails } from '@app/hooks/useNameDetails'
+import useOwners from '@app/hooks/useOwners'
+import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
+
 import Miscellaneous from './Miscellaneous'
+import Ownership from './Ownership'
 
 // export const TokenId = () => {
 //   const { t } = useTranslation('profile')
@@ -69,17 +74,31 @@ const MoreContainer = styled.div(
 //     : []),
 // ]
 
-const MoreTab = ({ name }: { name: string }) => {
+type Props = {
+  name: string
+  nameDetails: ReturnType<typeof useNameDetails>
+  selfAbilities: ReturnType<typeof useSelfAbilities>
+}
+
+const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
   // const { t } = useTranslation('profile')
   // const router = useRouter()
   // const { name } = router.query
   // const { wrapperData } = useGetWrapperData((name as string) || '')
   // const { address } = useAccount()
   // const { ownerData, isWrapped } = useBasicName(name as string)
+  const { ownerData, wrapperData, dnsOwner } = nameDetails
+  const owners = useOwners({
+    ownerData: ownerData!,
+    wrapperData: wrapperData!,
+    dnsOwner,
+    selfAbilities,
+  })
 
   return (
     <MoreContainer>
       <Miscellaneous name={name} />
+      <Ownership name={name} owners={owners} canSend={selfAbilities.canSend} />
     </MoreContainer>
   )
 }

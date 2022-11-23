@@ -211,7 +211,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 network={chainId}
               />
             ),
-            more: <MoreTab name={normalisedName} />,
+            more: (
+              <MoreTab
+                name={normalisedName}
+                nameDetails={nameDetails}
+                selfAbilities={selfAbilities}
+              />
+            ),
           }[tab],
         }}
       </Content>

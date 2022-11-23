@@ -70,6 +70,9 @@
           "PARENT_CANNOT_CONTROL": "Parent can control"
         }
       },
+      "ownership": {
+        "label": "Ownership"
+      },
       "token": {
         "label": "Token",
         "hex": "hex",
