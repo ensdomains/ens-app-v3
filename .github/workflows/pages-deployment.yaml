@@ -48,7 +48,12 @@ jobs:
       - run: pnpm install --frozen-lockfile
 
       - name: Build and Export
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/head/dev' }}
         run: pnpm build && pnpm export
+
+      - name: Build and Export with Profiler
+        if: ${{ github.ref != 'refs/heads/main' && github.ref != 'refs/head/dev' }}
+        run: pnpm build --profile && export
 
       - name: Generate sitemap
         if: ${{ github.ref == 'refs/heads/main' }}
