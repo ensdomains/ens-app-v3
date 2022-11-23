@@ -6,6 +6,7 @@ import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 
 import Miscellaneous from './Miscellaneous'
 import Ownership from './Ownership'
+import Token from './Token'
 
 // export const TokenId = () => {
 //   const { t } = useTranslation('profile')
@@ -87,7 +88,7 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
   // const { wrapperData } = useGetWrapperData((name as string) || '')
   // const { address } = useAccount()
   // const { ownerData, isWrapped } = useBasicName(name as string)
-  const { ownerData, wrapperData, dnsOwner } = nameDetails
+  const { ownerData, wrapperData, dnsOwner, isWrapped } = nameDetails
   const owners = useOwners({
     ownerData: ownerData!,
     wrapperData: wrapperData!,
@@ -99,6 +100,7 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
     <MoreContainer>
       <Miscellaneous name={name} />
       <Ownership name={name} owners={owners} canSend={selfAbilities.canSend} />
+      {(name.endsWith('.eth') || isWrapped) && <Token isWrapped={isWrapped} name={name} />}
     </MoreContainer>
   )
 }
