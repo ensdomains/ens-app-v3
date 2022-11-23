@@ -6,16 +6,13 @@ import ProfileContent from '@app/components/pages/profile/[name]/Profile'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
-import { useRegistrationStatus } from '@app/hooks/useRegistrationStatus'
 import { ContentGrid } from '@app/layouts/ContentGrid'
-import { isDNSName } from '@app/utils/utils'
+import { checkDNSName } from '@app/utils/utils'
 
 export default function Page() {
   const router = useRouter()
   const _name = router.query.name as string
   const isSelf = router.query.connected === 'true'
-
-  const { data: status } = useRegistrationStatus(_name)
 
   const initial = useInitial()
 
@@ -37,8 +34,8 @@ export default function Page() {
     return null
   }
 
-  const isDNS = isDNSName(name)
-  if (isDNS && status === 'notImported') {
+  const isDNS = checkDNSName(name)
+  if (isDNS && registrationStatus === 'notImported') {
     router.push(`/import/${name}`)
     return null
   }

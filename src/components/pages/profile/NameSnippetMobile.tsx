@@ -15,7 +15,7 @@ import { useAvatar } from '@app/hooks/useAvatar'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
-import { formatExpiry, isDNSName } from '@app/utils/utils'
+import { checkDNSName, formatExpiry } from '@app/utils/utils'
 
 import { FavouriteButton } from './FavouriteButton'
 
@@ -169,7 +169,7 @@ export const NameSnippetMobile = ({
   const { profileActions: actions } = useProfileActions()
   const hasActions = actions && actions.length > 0
 
-  if (isDNSName(name)) return null
+  if (checkDNSName(name)) return null
 
   return (
     <Container $isCached={isCached}>

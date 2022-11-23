@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers'
 
-import type { PublicENS, ReturnedENS } from '@app/types/index'
+import type { ReturnedENS } from '@app/types/index'
 
 import { emptyAddress } from './constants'
-import { yearsToSeconds } from './utils'
+import { checkETH2LDName, checkETHName } from './utils'
 
 export type RegistrationStatus =
   | 'invalid'
@@ -15,30 +15,6 @@ export type RegistrationStatus =
   | 'notImported'
   | 'notOwned'
 
-const start = (name: string) => {
-  const labels = name.split('.')
-  const isDotETH = labels[labels.length - 1] === 'eth'
-  return {
-    labels,
-    isDotETH,
-  }
-}
-
-const is2ldEth = (isDotEth: boolean, labels: string[], requireValid?: boolean) =>
-  isDotEth && labels.length === 2 && (requireValid ? labels[0].length >= 3 : true)
-
-export const addRegistrationStatusToBatch = (ens: PublicENS, name: string) => {
-  const { getExpiry, getPrice, getOwner } = ens
-  const { labels, isDotETH } = start(name)
-  if (is2ldEth(isDotETH, labels, false)) {
-    if (labels[0].length < 3) {
-      return []
-    }
-    return [getExpiry.batch(name), getPrice.batch(labels[0], yearsToSeconds(1), false)]
-  }
-  return [getOwner.batch(name)]
-}
-
 type BatchResult =
   | [...any[], ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
   | [...any[], ReturnedENS['getOwner']]
@@ -46,11 +22,12 @@ type BatchResult =
 
 export const getRegistrationStatus = (
   batchResults: any[] | undefined,
-  name: string,
+  name: string | null,
 ): RegistrationStatus => {
   const _batchResults = batchResults as BatchResult
-  const { labels, isDotETH } = start(name)
-  const isDotEth2ld = is2ldEth(isDotETH, labels, false)
+  const labels = name?.split('.') || []
+  const isDotETH = checkETHName(labels)
+  const isDotEth2ld = checkETH2LDName(isDotETH, labels, true)
   if (isDotEth2ld && labels[0].length < 3) {
     return 'short'
   }
