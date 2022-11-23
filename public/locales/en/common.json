@@ -74,6 +74,7 @@
     "viewDetails": "View Details"
   },
   "name": {
+    "registered": "Registered",
     "expires": "Expires",
     "noExpiry": "No expiry",
     "registrant": "Registrant",

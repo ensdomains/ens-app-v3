@@ -42,7 +42,43 @@
       "name": "Fuses"
     },
     "more": {
-      "name": "More"
+      "name": "More",
+      "resolver": {
+        "label": "Resolver",
+        "custom": "Custom",
+        "latest": "Latest",
+        "outdated": "Outdated",
+        "version": "Version",
+        "etherscan": "Etherscan"
+      },
+      "fuses": {
+        "label": "Fuses",
+        "info": "You must burn 'Can unwrap' in order to burn other fuses",
+        "callToAction": "Please wrap your name to unlock this feature",
+        "burnFormTitle": "Burn Permissions",
+        "burned": "Burned",
+        "permissions": {
+          "label": "Permissions",
+          "warning": "Fuses can be changed by the parent",
+          "CAN_DO_EVERYTHING": "Can do everything",
+          "CANNOT_BURN_FUSES": "Can burn fuses",
+          "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
+          "CANNOT_SET_RESOLVER": "Can set resolver",
+          "CANNOT_SET_TTL": "Can set TTL",
+          "CANNOT_TRANSFER": "Can transfer",
+          "CANNOT_UNWRAP": "Can unwrap",
+          "PARENT_CANNOT_CONTROL": "Parent can control"
+        }
+      },
+      "token": {
+        "label": "Token",
+        "hex": "hex",
+        "decimal": "decimal"
+      },
+      "misc": {
+        "registered": "Registered",
+        "expires": "Expires"
+      }
     }
   },
   "details": {
@@ -103,50 +139,6 @@
               "nameTooLong": "Name is too long"
             }
           }
-        }
-      },
-      "advanced": {
-        "label": "Advanced",
-        "resolver": {
-          "label": "Resolver",
-          "custom": "Custom",
-          "latest": "Latest",
-          "outdated": "Outdated",
-          "version": "Version",
-          "etherscan": "Etherscan"
-        },
-        "fuses": {
-          "label": "Fuses",
-          "info": "You must burn 'Can unwrap' in order to burn other fuses",
-          "callToAction": "Please wrap your name to unlock this feature",
-          "burnFormTitle": "Burn Permissions",
-          "burned": "Burned",
-          "permissions": {
-            "label": "Permissions",
-            "warning": "Fuses can be changed by the parent",
-            "CAN_DO_EVERYTHING": "Can do everything",
-            "CANNOT_BURN_FUSES": "Can burn fuses",
-            "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
-            "CANNOT_SET_RESOLVER": "Can set resolver",
-            "CANNOT_SET_TTL": "Can set TTL",
-            "CANNOT_TRANSFER": "Can transfer",
-            "CANNOT_UNWRAP": "Can unwrap",
-            "PARENT_CANNOT_CONTROL": "Parent can control"
-          },
-          "vulnerabilities": {
-            "label": "Vulnerabilities",
-            "vulnerability": "Vulnerability",
-            "vulnerableNode": "Vulnerable node",
-            "none": "None"
-          }
-        },
-        "tokenId": {
-          "label": "Token ID",
-          "hex": "hex",
-          "decimal": "decimal"
-        },
-        "registrationDate": {
-          "label": "Registration Date"
         }
       }
     }

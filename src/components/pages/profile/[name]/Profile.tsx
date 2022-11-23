@@ -16,7 +16,7 @@ import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
-import MoreTab from './tabs/AdvancedTab/AdvancedTab'
+import MoreTab from './tabs/MoreTab/MoreTab'
 import ProfileTab from './tabs/ProfileTab'
 import { RecordsTab } from './tabs/RecordsTab'
 import { SubnamesTab } from './tabs/SubnamesTab'
@@ -211,7 +211,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 network={chainId}
               />
             ),
-            more: <MoreTab />,
+            more: <MoreTab name={normalisedName} />,
           }[tab],
         }}
       </Content>

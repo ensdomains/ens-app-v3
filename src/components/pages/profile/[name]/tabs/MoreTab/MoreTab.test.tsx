@@ -3,7 +3,7 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import { BigNumber, utils } from 'ethers'
 import { useRouter } from 'next/router'
 
-import { TokenId, generateAccordionData } from './AdvancedTab'
+import { TokenId, generateAccordionData } from './MoreTab'
 
 jest.mock('next/router')
 

@@ -41,6 +41,21 @@ ${expiry.toLocaleDateString(undefined, {
   month: 'long',
 })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
+export const formatDateTime = (date: Date) => {
+  const baseFormatted = date.toLocaleTimeString('en', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false,
+    timeZoneName: 'short',
+  })
+  const timezoneString = date
+    .toTimeString()
+    .split('(')[1]
+    .replace(/\b(\w)\w*[\s)]?/g, '$1')
+  return `${baseFormatted} (${timezoneString})`
+}
+
 export const makeEtherscanLink = (hash: string, network?: string) =>
   `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
 
