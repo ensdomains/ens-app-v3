@@ -10,6 +10,7 @@ import { Button, Dropdown, Typography, mq } from '@ensdomains/thorin'
 import CalendarSVG from '@app/assets/Calendar.svg'
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -47,6 +48,7 @@ const calendarOptions = [
 ]
 
 const MiscellaneousContainer = styled(TabWrapper)(
+  cacheableComponentStyles,
   () => css`
     width: 100%;
     display: flex;
@@ -142,7 +144,16 @@ const query = `
 
 const useNameDates = (name: string) => {
   const { ready, gqlInstance } = useEns()
-  const { data, isLoading } = useQuery(
+  const {
+    data,
+    isLoading,
+    status,
+    internal: { isFetchedAfterMount },
+    isFetched,
+    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isFetching: _isFetching,
+  } = useQuery(
     ['getNameDates', name],
     async () => {
       const { registration } = await gqlInstance.request(query, {
@@ -159,14 +170,18 @@ const useNameDates = (name: string) => {
     },
   )
 
-  return { data, isLoading }
+  return {
+    data,
+    isLoading,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+  }
 }
 
 const Miscellaneous = ({ name }: { name: string }) => {
   const { t } = useTranslation('common')
 
   const { address } = useAccount()
-  const { data: nameDates } = useNameDates(name)
+  const { data: nameDates, isCachedData } = useNameDates(name)
   const { canExtend, canEdit } = useSelfAbilities(address, name)
 
   const { showDataInput } = useTransactionFlow()
@@ -184,7 +199,7 @@ const Miscellaneous = ({ name }: { name: string }) => {
   if (!nameDates) return null
 
   return (
-    <MiscellaneousContainer>
+    <MiscellaneousContainer $isCached={isCachedData}>
       <DatesContainer>
         <DateLayout>
           <Typography>{t('name.registered')}</Typography>

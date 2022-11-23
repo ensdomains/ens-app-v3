@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
 import useOwners from '@app/hooks/useOwners'
@@ -15,6 +16,7 @@ import { shortenAddress } from '@app/utils/utils'
 import { TabWrapper } from '../../../TabWrapper'
 
 const Container = styled(TabWrapper)(
+  cacheableComponentStyles,
   ({ theme }) => css`
     width: 100%;
     display: flex;
@@ -148,10 +150,12 @@ const Ownership = ({
   name,
   owners,
   canSend,
+  isCachedData,
 }: {
   name: string
   owners: ReturnType<typeof useOwners>
   canSend: boolean
+  isCachedData: boolean
 }) => {
   const { t } = useTranslation('profile')
 
@@ -164,7 +168,7 @@ const Ownership = ({
   }
 
   return (
-    <Container>
+    <Container $isCached={isCachedData}>
       <HeadingContainer>
         <Typography>{t('tabs.more.ownership.label')}</Typography>
         <div>

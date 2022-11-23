@@ -1,11 +1,13 @@
 import styled, { css } from 'styled-components'
 
+import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 
 import Miscellaneous from './Miscellaneous'
 import Ownership from './Ownership'
+import Resolver from './Resolver'
 import Token from './Token'
 
 // export const TokenId = () => {
@@ -26,7 +28,7 @@ import Token from './Token'
 //   )
 // }
 
-const MoreContainer = styled.div(
+const MoreContainer = styled(CacheableComponent)(
   ({ theme }) => css`
     display: flex;
     flex-direction: column;
@@ -88,7 +90,15 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
   // const { wrapperData } = useGetWrapperData((name as string) || '')
   // const { address } = useAccount()
   // const { ownerData, isWrapped } = useBasicName(name as string)
-  const { ownerData, wrapperData, dnsOwner, isWrapped } = nameDetails
+  const {
+    ownerData,
+    wrapperData,
+    dnsOwner,
+    isWrapped,
+    basicIsCachedData,
+    profileIsCachedData,
+    profile,
+  } = nameDetails
   const owners = useOwners({
     ownerData: ownerData!,
     wrapperData: wrapperData!,
@@ -99,8 +109,19 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
   return (
     <MoreContainer>
       <Miscellaneous name={name} />
-      <Ownership name={name} owners={owners} canSend={selfAbilities.canSend} />
+      <Ownership
+        name={name}
+        owners={owners}
+        canSend={selfAbilities.canSend}
+        isCachedData={basicIsCachedData}
+      />
       {(name.endsWith('.eth') || isWrapped) && <Token isWrapped={isWrapped} name={name} />}
+      <Resolver
+        name={name}
+        canEdit={selfAbilities.canEdit}
+        isCachedData={profileIsCachedData}
+        resolverAddress={profile?.resolverAddress}
+      />
     </MoreContainer>
   )
 }
