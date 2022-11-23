@@ -97,7 +97,9 @@ const Resolver = ({
     <Container $isCached={isCachedData}>
       <HeadingContainer>
         <InnerHeading>
-          <Typography weight="bold">{t('address.label', { ns: 'common' })}</Typography>
+          <Typography color="text" weight="bold">
+            {t('tabs.more.resolver.label')}
+          </Typography>
           <Tag tone={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
         {canEdit && (

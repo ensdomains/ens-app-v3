@@ -5,6 +5,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 
+import Fuses from './Fuses'
 import Miscellaneous from './Miscellaneous'
 import Ownership from './Ownership'
 import Resolver from './Resolver'
@@ -122,6 +123,14 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
         isCachedData={profileIsCachedData}
         resolverAddress={profile?.resolverAddress}
       />
+      {wrapperData && (
+        <Fuses
+          canEdit={selfAbilities.canEdit}
+          name={name}
+          fuseObj={wrapperData.fuseObj}
+          isCachedData={basicIsCachedData}
+        />
+      )}
     </MoreContainer>
   )
 }

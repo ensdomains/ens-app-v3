@@ -1,20 +1,55 @@
-import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Helper, Typography } from '@ensdomains/thorin'
+import { CurrentFuses, fuseEnum } from '@ensdomains/ensjs/utils/fuses'
+import { Helper, Typography, mq } from '@ensdomains/thorin'
 
-import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { TrafficLight } from '@app/components/TrafficLight'
-import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-const FusesContainer = styled(CacheableComponent)(
+import { TabWrapper } from '../../../TabWrapper'
+
+const FusesContainer = styled(TabWrapper)(
+  cacheableComponentStyles,
   () => css`
     display: flex;
     flex-direction: column;
-    margin: 0 auto;
-    padding: 20px 25px;
+    align-items: stretch;
+    justify-content: flex-start;
+  `,
+)
+
+const HeadingContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+
+    padding: ${theme.space['4']};
+
+    border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
+      ${theme.colors.borderTertiary};
+
+    & > button {
+      color: ${theme.colors.accent};
+      font-weight: ${theme.fontWeights.bold};
+      padding: 0 ${theme.space['2']};
+    }
+
+    ${mq.md.min(css`
+      padding: ${theme.space['6']};
+    `)}
+  `,
+)
+
+const Heading = styled(Typography)(
+  ({ theme }) => css`
+    color: ${theme.colors.text};
+    font-weight: ${theme.fontWeights.bold};
+    font-size: ${theme.fontSizes.headingThree};
   `,
 )
 
@@ -23,89 +58,75 @@ const FusesRow = styled.div(
     display: flex;
     align-items: center;
     justify-content: space-between;
+    padding: ${theme.space['4']};
 
     &:not(:last-child) {
-      margin-bottom: 10px;
-      padding-bottom: 10px;
       border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
         ${theme.colors.borderTertiary};
     }
+
+    ${mq.md.min(css`
+      padding: ${theme.space['6']};
+    `)}
   `,
 )
 
-const Fuses = () => {
-  const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
-  const router = useRouter()
-  const { name } = router.query
-  const { wrapperData, isCachedData } = useGetWrapperData((name as string) || '')
+const Fuses = ({
+  name,
+  fuseObj,
+  canEdit,
+  isCachedData,
+}: {
+  name: string
+  fuseObj: CurrentFuses
+  canEdit: boolean
+  isCachedData: boolean
+}) => {
+  const { t } = useTranslation('profile')
 
-  return !wrapperData ? (
-    <Typography>{t('fuses.callToAction')}</Typography>
-  ) : (
+  const { showDataInput } = useTransactionFlow()
+
+  const handleEditClick = () => {
+    showDataInput(`burn-fuses-${name}`, 'BurnFuses', {
+      name,
+    })
+  }
+
+  return (
     <FusesContainer $isCached={isCachedData}>
-      {!wrapperData.fuseObj.PARENT_CANNOT_CONTROL && (
+      {!fuseObj.PARENT_CANNOT_CONTROL && (
         <>
-          <Helper type="warning">{t('fuses.permissions.warning')}</Helper>
+          <Helper type="warning">{t('tabs.more.fuses.permissions.warning')}</Helper>
           <Spacer $height="8" />
         </>
       )}
       <div>
-        <Typography weight="bold" color="textTertiary">
-          {t('fuses.permissions.label')}
-        </Typography>
-        <Spacer $height="5" />
+        <HeadingContainer>
+          <Heading>{t('tabs.more.fuses.permissions.label')}</Heading>
+          {canEdit && (
+            <button type="button" onClick={handleEditClick}>
+              {t('action.edit', { ns: 'common' })}
+            </button>
+          )}
+        </HeadingContainer>
         <div>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.CAN_DO_EVERYTHING')}
-            </Typography>
-            <TrafficLight
-              $go={wrapperData.fuseObj.CAN_DO_EVERYTHING}
-              data-testid="first-traffic-light"
-            />
-          </FusesRow>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.CANNOT_BURN_FUSES')}
-            </Typography>
-            <TrafficLight $go={!wrapperData.fuseObj.CANNOT_BURN_FUSES} />
-          </FusesRow>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.CANNOT_CREATE_SUBDOMAIN')}
-            </Typography>
-            <TrafficLight $go={!wrapperData.fuseObj.CANNOT_CREATE_SUBDOMAIN} />
-          </FusesRow>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.CANNOT_SET_RESOLVER')}
-            </Typography>
-            <TrafficLight $go={!wrapperData.fuseObj.CANNOT_SET_RESOLVER} />
-          </FusesRow>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.CANNOT_SET_TTL')}
-            </Typography>
-            <TrafficLight $go={!wrapperData.fuseObj.CANNOT_SET_TTL} />
-          </FusesRow>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.CANNOT_TRANSFER')}
-            </Typography>
-            <TrafficLight $go={!wrapperData.fuseObj.CANNOT_TRANSFER} />
-          </FusesRow>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.CANNOT_UNWRAP')}
-            </Typography>
-            <TrafficLight $go={!wrapperData.fuseObj.CANNOT_UNWRAP} />
-          </FusesRow>
-          <FusesRow>
-            <Typography color="textSecondary" weight="bold">
-              {t('fuses.permissions.PARENT_CANNOT_CONTROL')}
-            </Typography>
-            <TrafficLight $go={!wrapperData.fuseObj.PARENT_CANNOT_CONTROL} />
-          </FusesRow>
+          {Object.entries(fuseObj)
+            .filter(([key]) => key !== 'CAN_DO_EVERYTHING')
+            .sort(
+              (a, b) =>
+                fuseEnum[a[0] as keyof typeof fuseEnum] - fuseEnum[b[0] as keyof typeof fuseEnum],
+            )
+            .map(([key, value], inx) => (
+              <FusesRow key={key}>
+                <Typography color="textSecondary" weight="bold">
+                  {t(`tabs.more.fuses.permissions.${key}`)}
+                </Typography>
+                <TrafficLight
+                  $go={!value}
+                  data-testid={inx === 0 ? 'first-traffic-light' : undefined}
+                />
+              </FusesRow>
+            ))}
         </div>
       </div>
     </FusesContainer>
