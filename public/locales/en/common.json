@@ -240,7 +240,8 @@
       "notOwned": "Not Owned",
       "notImported": "Not Imported",
       "short": "Too Short",
-      "default": "Invalid"
+      "default": "Invalid",
+      "unsupportedTLD": "Not Supported"
     }
   },
   "selectableInput": {

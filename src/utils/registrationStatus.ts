@@ -14,32 +14,39 @@ export type RegistrationStatus =
   | 'short'
   | 'notImported'
   | 'notOwned'
+  | 'unsupportedTLD'
 
-type BatchResult =
-  | [...any[], ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
-  | [...any[], ReturnedENS['getOwner']]
-  | undefined
-
-export const getRegistrationStatus = (
-  batchResults: any[] | undefined,
-  name: string | null,
-): RegistrationStatus => {
-  const _batchResults = batchResults as BatchResult
+export const getRegistrationStatus = ({
+  name,
+  ownerData,
+  wrapperData,
+  expiryData,
+  priceData,
+  supportedTLD,
+}: {
+  name: string | null
+  ownerData?: ReturnedENS['getOwner']
+  wrapperData?: ReturnedENS['getWrapperData']
+  expiryData?: ReturnedENS['getExpiry']
+  priceData?: ReturnedENS['getPrice']
+  supportedTLD?: boolean
+}): RegistrationStatus => {
   const labels = name?.split('.') || []
   const isDotETH = checkETHName(labels)
   const isDotEth2ld = checkETH2LDName(isDotETH, labels, true)
+
   if (isDotEth2ld && labels[0].length < 3) {
     return 'short'
   }
-  if (!_batchResults) {
-    return 'invalid'
+
+  if (!ownerData && !wrapperData) return 'invalid'
+
+  if (!supportedTLD) {
+    return 'unsupportedTLD'
   }
-  const resLength = _batchResults?.length
+
   if (isDotEth2ld) {
-    if (!resLength) return 'invalid'
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const expiryData = _batchResults[resLength - 2]
-    const priceData = _batchResults[resLength - 1]
     if (expiryData && expiryData.expiry) {
       const { expiry: _expiry, gracePeriod } = expiryData as {
         expiry: Date | string
@@ -62,8 +69,7 @@ export const getRegistrationStatus = (
     }
     return 'available'
   }
-  const owner = _batchResults ? _batchResults[(resLength as number) - 1] : undefined
-  if (owner && owner.owner !== emptyAddress) {
+  if (ownerData && ownerData.owner !== emptyAddress) {
     return 'registered'
   }
   if (labels.length > 2) {

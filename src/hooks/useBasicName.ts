@@ -7,6 +7,7 @@ import { useEns } from '@app/utils/EnsProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { checkETH2LDName, checkETHName, isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
+import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 import { useWrapperExists } from './useWrapperExists'
 
@@ -19,6 +20,8 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const { name: _normalisedName, valid, labelCount } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
+
+  const { data: supportedTLD } = useSupportsTLD(normalisedName)
 
   const {
     data: batchData,
@@ -53,7 +56,14 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const [ownerData, wrapperData, expiryData, priceData] = batchData || []
 
   const registrationStatus = batchData
-    ? getRegistrationStatus(batchData, normalisedName)
+    ? getRegistrationStatus({
+        name: normalisedName,
+        ownerData,
+        wrapperData,
+        expiryData,
+        priceData,
+        supportedTLD,
+      })
     : undefined
 
   const expiryDate = expiryData?.expiry ? new Date(expiryData.expiry) : undefined
