@@ -1,0 +1,251 @@
+{
+  "title": "Jouw web3 gebruikersnaam",
+  "description": "Jouw web3 identitiet, een naam voor al je crypto Adresen, en je gedecentralizeerde website.",
+  "loading": "Laden",
+  "unsupportedNetwork": "Netwerk niet ondersteund",
+  "action": {
+    "cancel": "Annuleer",
+    "change": "Verander",
+    "upload": "Upload",
+    "close": "Afsluiten",
+    "save": "Opslaan",
+    "edit": "Bewerken",
+    "view": "Bekijken",
+    "clear": "Maak leeg",
+    "update": "Pas aan",
+    "learnMore": "Leer meer",
+    "send": "Stuur",
+    "next": "Volgende",
+    "add": "Voeg toe",
+    "set": "Zet",
+    "search": "Zoek",
+    "back": "Terug",
+    "continue": "Volgende",
+    "confirm": "Confirmeer",
+    "remove": "Verwijder",
+    "sign": "Onderteken",
+    "reset": "Reset",
+    "transfer": "Transfer",
+    "tryAgain": "Probeer Opnieuw",
+    "done": "Klaar",
+    "burnSelected": "Burn geselecteerd",
+    "extend": "Brijd uit",
+    "delete": "Verwijder",
+    "sort": "Sorteer",
+    "check": "Check",
+    "claim": "Claim",
+    "remindMe": "Herinner mij",
+    "begin": "Begin",
+    "finish": "Eindig",
+    "skip": "Sla over",
+    "changeNetwork": "Verander Netwerk"
+  },
+  "unit": {
+    "years_one": "{{count}} jaar",
+    "years_other": "{{count}} jaren",
+    "yrs_one": "{{count}} jr",
+    "yrs_other": "{{count}} jr",
+    "gas": "{{value}} gas",
+    "selected": "{{count}} geselecteerd",
+    "perPage": "{{count}} per pagina"
+  },
+  "navigation": {
+    "home": "Home",
+    "about": "Over",
+    "developers": "Developers",
+    "community": "Community",
+    "faq": "FAQ",
+    "help": "Help",
+    "governance": "Governance",
+    "docs": "Docs",
+    "bugBounty": "Bug Bounty",
+    "mediaKit": "Media Kit",
+    "back": "Terug",
+    "names": "Namen",
+    "favourites": "Favorieten",
+    "settings": "Instellingen"
+  },
+  "wallet": {
+    "myProfile": "Profiel",
+    "disconnect": "Disconnect",
+    "connect": "Verbind Wallet",
+    "noPrimaryName": "Geen Primary Naam",
+    "viewProfile": "Bekijk Profiel",
+    "viewDetails": "Bekijk Details"
+  },
+  "name": {
+    "expires": "Verloopt",
+    "noExpiry": "Verloopt niet",
+    "registrant": "Registrant",
+    "controller": "Controller",
+    "dnsOwner": "DNS Eigenaar",
+    "owner": "Eigenaar",
+    "manager": "Manager",
+    "all": "Alle namen",
+    "expiresInYears_one": "Verloopt in {{count}} jaar",
+    "expiresInYears_other": "Verloopt in {{count}} jaren",
+    "expiresInMonths_one": "Verloopt in {{count}} maand",
+    "expiresInMonths_other": "Verloopt in {{count}} maanden",
+    "expiresInDays_one": "Verloopt in {{count}} dag",
+    "expiresInDays_other": "Verloopt in {{count}} dagen",
+    "extend": "Verleng",
+    "send": "Verstuur",
+    "transfer": "Transfer",
+    "sendManager": "Stuur Manager",
+    "sendOwner": "Stuur Owner"
+  },
+  "address": {
+    "label": "Adres",
+    "viewAddress": "Bekijk Adress",
+    "copyAddress": "Kopieer Adress"
+  },
+  "records": {
+    "label": "Records"
+  },
+  "sortTypes": {
+    "expiryDate": "Verloop Datum",
+    "labelName": "Naam",
+    "creationDate": "Creation Datum"
+  },
+  "errors": {
+    "noResults": "Geen resultaten gevonden."
+  },
+  "transaction": {
+    "description": {
+      "setName": "Zet Naam",
+      "setRecords": "Zet Records",
+      "test": "Test Transactie",
+      "addSuccess": "Voeg Success toe",
+      "sendName": "Stuur Naam",
+      "migrateProfile": "Migreer Profiel",
+      "migrateProfileWithSync": "Migreer en update profiel",
+      "wrapName": "Wrap Naam",
+      "updateResolver": "Update Resolver",
+      "updateProfile": "Update Profiel",
+      "setPrimaryName": "Zet primaire naam",
+      "updateEthAddress": "Update ETH adres",
+      "testSendName": "Stuur Naam",
+      "burnFuses": "Burn permissies",
+      "createSubname": "Creeer Subnaam",
+      "deleteSubname": "Verwijder Subnaam",
+      "extendNames": "Brijd Namen uit",
+      "importDNSSECName": "importeer DNSSEC Naam",
+      "commitName": "Start timer",
+      "registerName": "Registeer Naam",
+      "approveNameWrapper": "Sta NameWrapper toe",
+      "clearRecords": "Clear records",
+      "updateRecords": "Update records"
+    },
+    "info": {
+      "sendName": "Zet the controller and registrant of the name",
+      "migrateProfile": "Set existing records on new resolver",
+      "migrateProfileWithSync": "Set existing records on new resolver",
+      "wrapName": "Wrap name and set new resolver",
+      "updateResolver": "Change resolver to",
+      "updateProfile": "Update records on existing resolver",
+      "setPrimaryName": "Set the primary name for your address",
+      "updateEthAddress": "Update ETH address to this address",
+      "testSendName": "Set the controller and registrant of the name",
+      "createSubname": "Create a new subname on the name",
+      "burnFuses": "Burn the chosen permissions until name expiry",
+      "commitName": "Start timer to register name",
+      "approveNameWrapper": "Approve the NameWrapper to manage your names"
+    },
+    "itemLabel": {
+      "name": "Name",
+      "address": "Address",
+      "action": "Action",
+      "info": "Info",
+      "to": "To",
+      "currentResolver": "Current Resolver",
+      "newResolver": "New Resolver",
+      "subname": "Subname",
+      "duration": "Duration",
+      "cost": "Cost",
+      "update": "Update"
+    },
+    "itemValue": {
+      "records_one": "{{count}} record",
+      "records_other": "{{count}} records"
+    },
+    "status": {
+      "pending": {
+        "regular": "Pending"
+      },
+      "confirmed": {
+        "regular": "Confirmed",
+        "notifyTitle": "Transaction Successful",
+        "notifyMessage": "Your \"{{action}}\" transaction was successful"
+      },
+      "failed": {
+        "regular": "Failed",
+        "notifyTitle": "Transaction Failure",
+        "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
+      }
+    },
+    "dialog": {
+      "intro": {
+        "trailingButton": "Start",
+        "trailingButtonResume": "Resume",
+        "step": "Step {{step}}"
+      },
+      "confirm": {
+        "title": "Confirm Details",
+        "message": "Double check these details before confirming in your wallet.",
+        "waitingForWallet": "Waiting for Wallet",
+        "openWallet": "Open Wallet"
+      },
+      "sent": {
+        "title": "Transaction Sent",
+        "message": "Your transaction is now in progress, you can close this and come back later.",
+        "progress": {
+          "title": "Sent",
+          "message": "Taking longer than expected"
+        }
+      },
+      "complete": {
+        "title": "Transaction Complete",
+        "message": "Your transaction is now complete!",
+        "progress": {
+          "title": "Done"
+        }
+      },
+      "failed": {
+        "title": "Transaction Failed",
+        "progress": {
+          "title": "Failed"
+        }
+      },
+      "error": {
+        "gasLimit": "The gas limit on your transaction wasn't high enough, please try again."
+      }
+    },
+    "viewEtherscan": "View on Etherscan",
+    "viewMore": "View More"
+  },
+  "search": {
+    "label": "Name search",
+    "placeholder": "Search for a name",
+    "emptyText": "Type a name or address to search...",
+    "address": "Address",
+    "errors": {
+      "tooShort": "Name too short",
+      "invalid": "Invalid format for name"
+    },
+    "status": {
+      "registered": "Registered",
+      "gracePeriod": "Grace Period",
+      "premium": "Temporary Premium",
+      "available": "Available",
+      "notOwned": "Not Owned",
+      "notImported": "Not Imported",
+      "short": "Too Short",
+      "default": "Invalid"
+    }
+  },
+  "selectableInput": {
+    "add": "Add",
+    "placeholder": "Select an option",
+    "empty": "No options found"
+  }
+}

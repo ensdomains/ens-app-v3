@@ -1,0 +1,188 @@
+{
+  "meta": {
+    "title": "{{name}} on ENS",
+    "description": "{{name}}'s profile on the Ethereum Name Service"
+  },
+  "title": "Profile",
+  "yourWallet": "Your wallet",
+  "yourProfile": "Your profile",
+  "accounts": "Accounts",
+  "addresses": "Addresses",
+  "otherRecords": "Other Records",
+  "editProfile": "Edit Profile",
+  "viewDetails": "View Details",
+  "tabs": {
+    "profile": {
+      "name": "Profile",
+      "actions": {
+        "setAsPrimaryName": {
+          "label": "Set as primary name",
+          "title": "Set your primary name",
+          "description": "To set your primary name to this name, the ETH address must match this address."
+        },
+        "deleteSubname": {
+          "label": "Delete subname"
+        },
+        "extend": {
+          "label": "Extend name"
+        }
+      }
+    }
+  },
+  "details": {
+    "title": "Name Details",
+    "notWrapped": "Not wrapped",
+    "sendName": {
+      "title": "Send Name",
+      "description": "Sending a name will give the new address control over it",
+      "learnMore": "Learn more about name ownership.",
+      "makeOwner": "Make owner",
+      "makeOwnerDescription": "The owner can send to a new owner and change the manager",
+      "makeManager": "Make Manager",
+      "makeManagerDescription": "The manager can change and set records.",
+      "inputPlaceholder": "Enter an Ethereum address or ENS name",
+      "transferSubname": "Transfer Name",
+      "transferController": "Transfer Controller"
+    },
+    "wrap": {
+      "startTitle": "Upgrade your name",
+      "resumeTitle": "Resume your upgrade",
+      "completeTitle": "Upgrade complete",
+      "description": "Upgrading or \"wrapping\" your name gives it new features.",
+      "startLabel": "Upgrade",
+      "resumeLabel": "Resume Upgrade",
+      "boxTitle": "Unlock new features",
+      "boxDescription": "Upgrading your name unlocks the latest functionality of ENS"
+    },
+    "descriptions": {
+      "owner": "Owns and controls the name",
+      "controller": "Controls all the records of the name",
+      "registrant": "The owner of the NFT",
+      "dnsOwner": "Owner of the DNS name"
+    },
+    "tabs": {
+      "records": {
+        "label": "Records",
+        "text": "Text",
+        "contentHash": "Content Hash",
+        "noContentHash": "No Content Hash"
+      },
+      "subnames": {
+        "label": "Subnames",
+        "loading": "Loading subnames",
+        "empty": "No subnames have been added",
+        "noResults": "No results",
+        "noMoreResults": "No more results",
+        "addSubname": {
+          "title": "Subnames let you create additional names from your existing name.",
+          "learn": "Learn about subnames",
+          "action": "New subname",
+          "dialog": {
+            "title": "Create Subname",
+            "error": {
+              "invalidCharacters": "Contains invalid characters",
+              "mustUseLowercase": "Must use lowercase letters",
+              "alreadyExists": "Name already exists",
+              "nameTooLong": "Name is too long"
+            }
+          }
+        }
+      },
+      "advanced": {
+        "label": "Advanced",
+        "resolver": {
+          "label": "Resolver",
+          "custom": "Custom",
+          "latest": "Latest",
+          "outdated": "Outdated",
+          "version": "Version",
+          "etherscan": "Etherscan"
+        },
+        "fuses": {
+          "label": "Fuses",
+          "info": "You must burn 'Can unwrap' in order to burn other fuses",
+          "callToAction": "Please wrap your name to unlock this feature",
+          "burnFormTitle": "Burn Permissions",
+          "burned": "Burned",
+          "permissions": {
+            "label": "Permissions",
+            "warning": "Fuses can be changed by the parent",
+            "CAN_DO_EVERYTHING": "Can do everything",
+            "CANNOT_BURN_FUSES": "Can burn fuses",
+            "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
+            "CANNOT_SET_RESOLVER": "Can set resolver",
+            "CANNOT_SET_TTL": "Can set TTL",
+            "CANNOT_TRANSFER": "Can transfer",
+            "CANNOT_UNWRAP": "Can unwrap",
+            "PARENT_CANNOT_CONTROL": "Parent can control"
+          },
+          "vulnerabilities": {
+            "label": "Vulnerabilities",
+            "vulnerability": "Vulnerability",
+            "vulnerableNode": "Vulnerable node",
+            "none": "None"
+          }
+        },
+        "tokenId": {
+          "label": "Token ID",
+          "hex": "hex",
+          "decimal": "decimal"
+        },
+        "registrationDate": {
+          "label": "Registration Date"
+        }
+      }
+    }
+  },
+
+  "advancedEditor": {
+    "title": "{{name}}'s records",
+    "tabs": {
+      "text": {
+        "label": "Text",
+        "addRecord": "Add record",
+        "createRecord": "Type a record name...",
+        "placeholder": {
+          "default": "Add a value here..."
+        }
+      },
+      "address": {
+        "label": "Address",
+        "addRecord": "Add address",
+        "noOptions": "No address options available",
+        "placeholder": {
+          "default": "Add address here..."
+        }
+      },
+      "other": {
+        "label": "Other",
+        "labelDisabled": "Not supported by current resolver",
+        "contentHash": {
+          "label": "Content Hash",
+          "placeholder": "e.g. ipfs://"
+        },
+        "publicKey": {
+          "label": "Public Key",
+          "placeholder": "e.g. pub_1231231231231"
+        },
+        "abi": {
+          "label": "ABI",
+          "placeholder": "Enter an ABI here..."
+        }
+      }
+    }
+  },
+  "errors": {
+    "invalidName": "This name is invalid.",
+    "invalidAddress": "Not a valid address",
+    "expiringSoon": "This name is expiring soon.",
+    "ownerManagerChoice": "Must send owner or manager",
+    "unknown": "Unknown error",
+    "notMigrated": "This name is not migrated to the new registry.",
+    "featureNotAvailable": "Some features are not yet available, but you can still ",
+    "featureNotAvailableLink": "view this name in the old app.",
+    "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
+    "migrationNotAvailableLink": "migrate this name in the old app.",
+    "addressLength": "If address it should be 42 characters long"
+  }
+}
