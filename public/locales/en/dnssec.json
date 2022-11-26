@@ -42,7 +42,7 @@
     "ownerOf": "You are now the owner of:",
     "successMessage": "Your domain name was successfully imported into ENS. You can now view and manage your name.",
     "viewName": "View Name",
-    "claimAnother": "Claim anoter"
+    "claimAnother": "Claim another"
   },
   "claimDomain": {
     "title": "Claim your domain",
