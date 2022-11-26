@@ -149,19 +149,19 @@
       "createSubname": "Creeer een nieuwe subnaam onder deze name",
       "burnFuses": "Burn de gekozen permissies tot naam verlopen is",
       "commitName": "Start timer om naam te registreren",
-      "approveNameWrapper": "Approve the NameWrapper to manage your names"
+      "approveNameWrapper": "Sta de NameWrapper toe om je namen te managen"
     },
     "itemLabel": {
-      "name": "Name",
-      "address": "Address",
-      "action": "Action",
+      "name": "Naam",
+      "address": "Adres",
+      "action": "Actie",
       "info": "Info",
-      "to": "To",
-      "currentResolver": "Current Resolver",
-      "newResolver": "New Resolver",
-      "subname": "Subname",
-      "duration": "Duration",
-      "cost": "Cost",
+      "to": "Naar",
+      "currentResolver": "Momentele Resolver",
+      "newResolver": "Nieuwe Resolver",
+      "subname": "Subnaam",
+      "duration": "Duur",
+      "cost": "Kosten",
       "update": "Update"
     },
     "itemValue": {
@@ -173,79 +173,79 @@
         "regular": "Pending"
       },
       "confirmed": {
-        "regular": "Confirmed",
-        "notifyTitle": "Transaction Successful",
-        "notifyMessage": "Your \"{{action}}\" transaction was successful"
+        "regular": "Geconfirmeerd",
+        "notifyTitle": "Transactie Successvol",
+        "notifyMessage": "Jouw \"{{action}}\" transactie was successvol"
       },
       "failed": {
-        "regular": "Failed",
-        "notifyTitle": "Transaction Failure",
-        "notifyMessage": "Your \"{{action}}\" transaction failed and was reverted"
+        "regular": "Gefaald",
+        "notifyTitle": "Transactie Gefaald",
+        "notifyMessage": "Youw \"{{action}}\" transactie faalde en is teruggedraaid"
       }
     },
     "dialog": {
       "intro": {
         "trailingButton": "Start",
-        "trailingButtonResume": "Resume",
-        "step": "Step {{step}}"
+        "trailingButtonResume": "Ga door",
+        "step": "Stap {{step}}"
       },
       "confirm": {
-        "title": "Confirm Details",
-        "message": "Double check these details before confirming in your wallet.",
-        "waitingForWallet": "Waiting for Wallet",
+        "title": "Confirmeer Details",
+        "message": "Double check deze details voor dat je confirmeert in je wallet.",
+        "waitingForWallet": "Wachtende op Wallet",
         "openWallet": "Open Wallet"
       },
       "sent": {
-        "title": "Transaction Sent",
-        "message": "Your transaction is now in progress, you can close this and come back later.",
+        "title": "Transactie Verstuurd",
+        "message": "Jouw transactie is nu in progress, je kan dit afsluiten en later terugkomen.",
         "progress": {
-          "title": "Sent",
-          "message": "Taking longer than expected"
+          "title": "Verstuurd",
+          "message": "Duurt langer dan verwacht"
         }
       },
       "complete": {
-        "title": "Transaction Complete",
-        "message": "Your transaction is now complete!",
+        "title": "Transactie Compleet",
+        "message": "Jouw transactie is nu compleet!",
         "progress": {
-          "title": "Done"
+          "title": "Klaar"
         }
       },
       "failed": {
-        "title": "Transaction Failed",
+        "title": "Transactie Gefaald",
         "progress": {
-          "title": "Failed"
+          "title": "Gefaald"
         }
       },
       "error": {
-        "gasLimit": "The gas limit on your transaction wasn't high enough, please try again."
+        "gasLimit": "Het gas limiet op je transactie was niet hoog genoeg, probeer aub opnieuw."
       }
     },
-    "viewEtherscan": "View on Etherscan",
-    "viewMore": "View More"
+    "viewEtherscan": "Bekijk op Etherscan",
+    "viewMore": "Bekijk meer"
   },
   "search": {
-    "label": "Name search",
-    "placeholder": "Search for a name",
-    "emptyText": "Type a name or address to search...",
-    "address": "Address",
+    "label": "Zoek naam",
+    "placeholder": "Zoek voor een naam",
+    "emptyText": "Type een naam of adres om te zoeken...",
+    "address": "Adres",
     "errors": {
-      "tooShort": "Name too short",
-      "invalid": "Invalid format for name"
+      "tooShort": "Naam te kort",
+      "invalid": "Invalide formaat voor naam"
     },
     "status": {
-      "registered": "Registered",
-      "gracePeriod": "Grace Period",
-      "premium": "Temporary Premium",
-      "available": "Available",
-      "notOwned": "Not Owned",
-      "notImported": "Not Imported",
-      "short": "Too Short",
-      "default": "Invalid"
+      "registered": "Geregistreerd",
+      "gracePeriod": "Grace Periode",
+      "premium": "Tijdelijke Premium",
+      "available": "Beschikbaar",
+      "notOwned": "Zonder Eigenaar",
+      "notImported": "Niet Geimporteerd",
+      "short": "Te kort",
+      "default": "Invalide"
     }
   },
   "selectableInput": {
-    "add": "Add",
-    "placeholder": "Select an option",
-    "empty": "No options found"
+    "add": "Voeg toe",
+    "placeholder": "Kies een optie",
+    "empty": "Geen opties gevonden"
   }
 }
