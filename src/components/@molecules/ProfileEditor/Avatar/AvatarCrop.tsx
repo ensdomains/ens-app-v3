@@ -1,5 +1,4 @@
 /* eslint-disable no-multi-assign */
-import { debounce } from 'lodash'
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -10,6 +9,7 @@ import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
 import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
+import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { calcMomentum, getVars, resolutionMultiplier } from '@app/utils/avatarUpload'
 
 import AvatarScrollBox from './AvatarScrollBox'
@@ -177,8 +177,8 @@ export const CropComponent = ({
     }
   }, [])
 
-  const handleImageLoad = useCallback(
-    debounce(() => {
+  const handleImageLoad = useDebouncedCallback(
+    () => {
       const image = imageRef.current
       const { size, cropSize, max, ctx } = getVars(canvasRef.current!)
       const { width: iw, height: ih } = image
@@ -217,7 +217,8 @@ export const CropComponent = ({
         moving: false,
       }
       window.requestAnimationFrame(draw)
-    }, 100),
+    },
+    100,
     [draw],
   )
 
