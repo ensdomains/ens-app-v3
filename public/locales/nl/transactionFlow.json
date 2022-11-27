@@ -4,34 +4,34 @@
       "tabs": {
         "avatar": {
           "dropdown": {
-            "selectNFT": "Select NFT",
-            "uploadImage": "Upload Image"
+            "selectNFT": "Kies NFT",
+            "uploadImage": "Upload Foto"
           },
           "nft": {
-            "title": "Select an NFT",
-            "searchPlaceholder": "Search for an NFT",
-            "loading": "Loading your NFTs",
-            "unknown": "Unknown NFT",
-            "noNFTs": "No NFTs found for this address.",
+            "title": "Kies een NFT",
+            "searchPlaceholder": "Zoek voor een NFT",
+            "loading": "Jouw NFTs laden",
+            "unknown": "Onbekende NFT",
+            "noNFTs": "Geen NFTs gevonden voor dit adres.",
             "selected": {
-              "title": "Selected NFT",
-              "subtitle": "Are you sure you want to use this NFT?"
+              "title": "Geselecteerde NFT",
+              "subtitle": "Weet je zeker dat je deze NFT wilt gebruiken?"
             }
           },
           "image": {
-            "title": "Edit Image",
+            "title": "Pas foto aan",
             "upload": {
               "title": "Upload Avatar",
-              "subtitle": "You need to sign a message to upload an avatar. This won't cost anything.",
-              "action": "Sign and Upload"
+              "subtitle": "Je moet een bericht ondertekenen om een avatar te kunnen uploaden. Hier zitten geen kosten aan verbonden.",
+              "action": "Onderteken en upload"
             }
           }
         },
         "general": {
-          "label": "General",
+          "label": "Algemeen",
           "name": {
-            "label": "Nickname",
-            "placeholder": "John Smith"
+            "label": "Bijnaam",
+            "placeholder": "Jan Smit"
           },
           "url": {
             "label": "Website",
@@ -43,26 +43,26 @@
           },
           "description": {
             "label": "Short Bio",
-            "placeholder": "I'm a yield farmer from rural Tennessee."
+            "placeholder": "Ik ben een kaaskop uit nederland."
           }
         },
         "accounts": {
           "label": "Accounts",
-          "addAccount": "Add account",
-          "noOptions": "No account options available",
+          "addAccount": "Voeg account toe",
+          "noOptions": "Geen account opties beschikbaar",
           "placeholder": {
-            "default": "Add username here",
+            "default": "Voeg username hier toe",
             "com.twitter": "e.g. yogicodes",
             "com.github": "e.g. yogicodes",
             "com.discord": "e.g. yogicodes#4323"
           }
         },
         "address": {
-          "label": "Address",
-          "addAddress": "Add address",
-          "noOptions": "No address options available",
+          "label": "Adres",
+          "addAddress": "Voeg adres toe",
+          "noOptions": "Geen adres opties beschikbaar",
           "placeholder": {
-            "default": "Add address here",
+            "default": "Voeg adres hier toe",
             "ETH": "0xD9hbQK...",
             "BNB": "0xD9hbQK...",
             "BTC": "3FZbgi29...",
@@ -74,9 +74,9 @@
         },
         "contentHash": {
           "label": "Website",
-          "addContentHash": "Add decentralized website",
+          "addContentHash": "Voeg gedecentralizeerde website hier toe",
           "placeholder": {
-            "default": "Add url here",
+            "default": "Voeg url hier toe",
             "ipfs": "ipfs://...",
             "skynet": "sia://...",
             "arweave": "arweave://...",
@@ -84,71 +84,71 @@
           }
         },
         "other": {
-          "label": "Other",
-          "addRecord": "Add record",
-          "createRecord": "Type a record name...",
+          "label": "Anders",
+          "addRecord": "Voeg record toe",
+          "createRecord": "Type record naam...",
           "placeholder": {
-            "default": "Add a value here..."
+            "default": "Voeg waarde hier toe..."
           }
         }
       },
       "warningOverlay": {
         "resumable": {
-          "title": "Resumable transaction",
-          "subtitle": "You have previously started a transaction. Click resume to continue.",
-          "action": "Resume"
+          "title": "Hervatbare transactie",
+          "subtitle": "Je hebt hiervoor een transactie gestart. Click Hervat om die voort te zetten.",
+          "action": "Hervat"
         },
         "migrate": {
-          "title": "Migrate resolver",
-          "subtitle": "You have migrated your profile but haven't updated your resolver. Click upgrade to update to the latest resolver.",
+          "title": "Migreer resolver",
+          "subtitle": "Je hebt je profiel gemigreerd maar je resolver nog niet geupdate. Click update om naar de laatste resolver te updaten.",
           "action": "Update"
         },
         "noResolver": {
-          "title": "No resolver assigned",
-          "subtitle": "You need to set a resolver to edit your profile.",
+          "title": "Geen resolver gekoppeld",
+          "subtitle": "Je moet een resolver zetten om je profiel aan te kunnen passen.",
           "action": "Update"
         },
         "oldRegistry": {
-          "title": "Your registry is out of date",
-          "subtitle": "Migration to the new registry is not available, but you can still migrate this name in the old app.",
-          "action": "Migrate"
+          "title": "Je registry is out of date",
+          "subtitle": "Migreren naar de nieuwe registry is niet beschikbaar, maar je kan hem nogsteeds migreren via de oude app.",
+          "action": "Migreer"
         },
         "default": {
-          "title": "Your resolver is out of date",
-          "subtitle": "Profile editing is disabled until you update your resolver.",
+          "title": "Je resolver is out of date",
+          "subtitle": "Profiel editing kan pas na dat de resolver is geupdate.",
           "action": "Update"
         }
       }
     },
     "editResolver": {
-      "latestLabel": "Use latest resolver",
+      "latestLabel": "Gebruik laatste resolver",
       "etherscan": "Etherscan",
-      "latestMessage": "You are on the latest resolver",
-      "customLabel": "Custom resolver",
-      "customPlaceholder": "Enter custom resolver address"
+      "latestMessage": "Je gebruikt de laatste resolver",
+      "customLabel": "Handmatige resolver",
+      "customPlaceholder": "Vul handmatige resolver adres hier"
     },
     "extendNames": {
-      "title_one": "Extend Name",
-      "title_other": "Extend {{count}} Names",
+      "title_one": "Verleng Naam",
+      "title_other": "Verleng {{count}} Namen",
       "invoice": {
-        "extension": "{{count}} year extension",
-        "transaction": "Transaction fee",
-        "total": "Estimated total"
+        "extension": "{{count}} jaar verlenging",
+        "transaction": "Transactie Kosten",
+        "total": "Geschatte kosten"
       },
-      "bannerMsg": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
-      "gasLimitError": "Insufficient funds"
+      "bannerMsg": "Verlengen voor meerdere jaren scheelt netwerk kosten door jaarlijke transacties te voorkomen.",
+      "gasLimitError": "Onvoldoende balans"
     },
     "transferProfile": {
-      "title": "Transfer Profile",
-      "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
-      "message2": "Would you like to transfer your current profile?"
+      "title": "Transfer Profiel",
+      "message1": "Voor het upgraden kan je je momentele profiel overkopieren, anders raak je deze kwijt na de upgrade.",
+      "message2": "Wil je je momentele profiel overkopieren?"
     }
   },
   "transaction": {
     "extendNames": {
-      "actionValue": "Extend registration",
-      "costValue": "{{value}} + fees",
-      "warning": "Extending this name will not give you ownership of it"
+      "actionValue": "Verleng registratie",
+      "costValue": "{{value}} + kosten",
+      "warning": "Deze naam verlengen zal je niet eigenaar maken"
     },
     "deleteSubname": {
       "warning": "Hello out there"
@@ -156,9 +156,9 @@
   },
   "intro": {
     "migrateAndUpdateResolver": {
-      "title": "The edits you want to save to your profile require that you upgrade your resolver.",
-      "link": "Learn more about resolver upgrades",
-      "warning": "Note that if you cancel this at any point your changes will not be saved."
+      "title": "De aanpassingen die je wil maken aan je profiel vereisen dat je je profiel upgrade.",
+      "link": "Leer meer over resolver upgrades",
+      "warning": "Weet dat als je dit op welk moment dan ook cancelled dat de aanpassingen ongedaan gemaakt worden."
     }
   }
 

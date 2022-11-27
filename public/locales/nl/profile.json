@@ -1,120 +1,120 @@
 {
   "meta": {
-    "title": "{{name}} on ENS",
-    "description": "{{name}}'s profile on the Ethereum Name Service"
+    "title": "{{name}} op ENS",
+    "description": "{{name}}'s profiel op de Ethereum Name Service"
   },
-  "title": "Profile",
-  "yourWallet": "Your wallet",
-  "yourProfile": "Your profile",
+  "title": "Profiel",
+  "yourWallet": "Jouw wallet",
+  "yourProfile": "Jouw profiel",
   "accounts": "Accounts",
-  "addresses": "Addresses",
-  "otherRecords": "Other Records",
-  "editProfile": "Edit Profile",
-  "viewDetails": "View Details",
+  "addresses": "Adressen",
+  "otherRecords": "Andere Records",
+  "editProfile": "Edit Profiel",
+  "viewDetails": "Bekijk Details",
   "tabs": {
     "profile": {
-      "name": "Profile",
+      "name": "Profiel",
       "actions": {
         "setAsPrimaryName": {
-          "label": "Set as primary name",
-          "title": "Set your primary name",
-          "description": "To set your primary name to this name, the ETH address must match this address."
+          "label": "Zet als primaire naam",
+          "title": "Zet je primaire naam",
+          "description": "Om dit als primaire naam te kunnen zetten, moet het ETH adres hetzelfde zijn als dit adres."
         },
         "deleteSubname": {
-          "label": "Delete subname"
+          "label": "Verwijder subnaam"
         },
         "extend": {
-          "label": "Extend name"
+          "label": "Verleng naam"
         }
       }
     }
   },
   "details": {
-    "title": "Name Details",
-    "notWrapped": "Not wrapped",
+    "title": "Naam Details",
+    "notWrapped": "Niet wrapped",
     "sendName": {
-      "title": "Send Name",
-      "description": "Sending a name will give the new address control over it",
-      "learnMore": "Learn more about name ownership.",
-      "makeOwner": "Make owner",
-      "makeOwnerDescription": "The owner can send to a new owner and change the manager",
-      "makeManager": "Make Manager",
-      "makeManagerDescription": "The manager can change and set records.",
-      "inputPlaceholder": "Enter an Ethereum address or ENS name",
-      "transferSubname": "Transfer Name",
+      "title": "Stuur Naam",
+      "description": "Een naam versturen geeft een nieuw adres controle erover",
+      "learnMore": "Leer meer over eigendom.",
+      "makeOwner": "Maak eigenaar",
+      "makeOwnerDescription": "De eigenaar can versturen naar een nieuwe eigenaar en de manager veranderen",
+      "makeManager": "Maak Manager",
+      "makeManagerDescription": "De manager can records zetten en aanpassen.",
+      "inputPlaceholder": "Vul in Ethereum adres of een ENS naam",
+      "transferSubname": "Transfer Naam",
       "transferController": "Transfer Controller"
     },
     "wrap": {
-      "startTitle": "Upgrade your name",
-      "resumeTitle": "Resume your upgrade",
-      "completeTitle": "Upgrade complete",
-      "description": "Upgrading or \"wrapping\" your name gives it new features.",
+      "startTitle": "Upgrade je naam",
+      "resumeTitle": "Hetvat je upgrade",
+      "completeTitle": "Upgrade compleet",
+      "description": "Upgrading or \"wrapping\" je naam geeft je nieuwe features.",
       "startLabel": "Upgrade",
-      "resumeLabel": "Resume Upgrade",
-      "boxTitle": "Unlock new features",
-      "boxDescription": "Upgrading your name unlocks the latest functionality of ENS"
+      "resumeLabel": "Hervat Upgrade",
+      "boxTitle": "Unlock nieuwe features",
+      "boxDescription": "Je naam upgraden unlockt de laatste functionaliteit van ENS"
     },
     "descriptions": {
-      "owner": "Owns and controls the name",
-      "controller": "Controls all the records of the name",
-      "registrant": "The owner of the NFT",
-      "dnsOwner": "Owner of the DNS name"
+      "owner": "Is eigenaar van en bestuurd de naam",
+      "controller": "Bestuurd alle records van de naam",
+      "registrant": "Eigenaar van de NFT",
+      "dnsOwner": "Eigenaar van de DNS naam"
     },
     "tabs": {
       "records": {
         "label": "Records",
-        "text": "Text",
+        "text": "Tekst",
         "contentHash": "Content Hash",
-        "noContentHash": "No Content Hash"
+        "noContentHash": "Geen Content Hash"
       },
       "subnames": {
-        "label": "Subnames",
-        "loading": "Loading subnames",
-        "empty": "No subnames have been added",
-        "noResults": "No results",
-        "noMoreResults": "No more results",
+        "label": "Subnamen",
+        "loading": "Subnamen laden",
+        "empty": "Geen subnamen zijn toegevoegd",
+        "noResults": "Geen resultaten",
+        "noMoreResults": "Niet meer resultaten",
         "addSubname": {
-          "title": "Subnames let you create additional names from your existing name.",
-          "learn": "Learn about subnames",
-          "action": "New subname",
+          "title": "Subnamen laten je meer namen maken van je bestaande naam.",
+          "learn": "Leer meer over subnamen",
+          "action": "Nieuwe subnaam",
           "dialog": {
-            "title": "Create Subname",
+            "title": "Creeer subnaam",
             "error": {
-              "invalidCharacters": "Contains invalid characters",
-              "mustUseLowercase": "Must use lowercase letters",
-              "alreadyExists": "Name already exists",
-              "nameTooLong": "Name is too long"
+              "invalidCharacters": "Bevat invalide tokens",
+              "mustUseLowercase": "Moet gebruikmaken van lowercase letters",
+              "alreadyExists": "Naam bestaat al",
+              "nameTooLong": "Naam is te lang"
             }
           }
         }
       },
       "advanced": {
-        "label": "Advanced",
+        "label": "Geavanceerd",
         "resolver": {
           "label": "Resolver",
-          "custom": "Custom",
-          "latest": "Latest",
-          "outdated": "Outdated",
-          "version": "Version",
+          "custom": "Handmatig",
+          "latest": "Laatste",
+          "outdated": "Vervallen",
+          "version": "Versie",
           "etherscan": "Etherscan"
         },
         "fuses": {
           "label": "Fuses",
-          "info": "You must burn 'Can unwrap' in order to burn other fuses",
-          "callToAction": "Please wrap your name to unlock this feature",
-          "burnFormTitle": "Burn Permissions",
-          "burned": "Burned",
+          "info": "Je moet 'Can unwrap' branden om andere fuzen te kunnen branden",
+          "callToAction": "Wrap uw naam om deze functie te kunnen gebruiken",
+          "burnFormTitle": "Brand Permissions",
+          "burned": "Verbrand",
           "permissions": {
-            "label": "Permissions",
-            "warning": "Fuses can be changed by the parent",
-            "CAN_DO_EVERYTHING": "Can do everything",
-            "CANNOT_BURN_FUSES": "Can burn fuses",
-            "CANNOT_CREATE_SUBDOMAIN": "Can create subdomains",
-            "CANNOT_SET_RESOLVER": "Can set resolver",
-            "CANNOT_SET_TTL": "Can set TTL",
-            "CANNOT_TRANSFER": "Can transfer",
-            "CANNOT_UNWRAP": "Can unwrap",
-            "PARENT_CANNOT_CONTROL": "Parent can control"
+            "label": "Permissies",
+            "warning": "Fuses kunnen veranderd worden door de parent",
+            "CAN_DO_EVERYTHING": "Kan alles doen",
+            "CANNOT_BURN_FUSES": "Kan fuzes verbranden",
+            "CANNOT_CREATE_SUBDOMAIN": "Kan subdomains creeeren",
+            "CANNOT_SET_RESOLVER": "Kan resolver zetten",
+            "CANNOT_SET_TTL": "Kan TTL zetten",
+            "CANNOT_TRANSFER": "Kan transfer",
+            "CANNOT_UNWRAP": "Kan unwrap",
+            "PARENT_CANNOT_CONTROL": "Parent kan besturen"
           },
           "vulnerabilities": {
             "label": "Vulnerabilities",
@@ -129,7 +129,7 @@
           "decimal": "decimal"
         },
         "registrationDate": {
-          "label": "Registration Date"
+          "label": "Registratie Datum"
         }
       }
     }
@@ -139,24 +139,24 @@
     "title": "{{name}}'s records",
     "tabs": {
       "text": {
-        "label": "Text",
-        "addRecord": "Add record",
-        "createRecord": "Type a record name...",
+        "label": "Tekst",
+        "addRecord": "Voeg record toe",
+        "createRecord": "Type een record naam...",
         "placeholder": {
-          "default": "Add a value here..."
+          "default": "Voeg waarde hier toe..."
         }
       },
       "address": {
-        "label": "Address",
-        "addRecord": "Add address",
-        "noOptions": "No address options available",
+        "label": "Adres",
+        "addRecord": "Voeg adres toe",
+        "noOptions": "Geen adres opties beschikbaar",
         "placeholder": {
-          "default": "Add address here..."
+          "default": "Voeg adres hier toe..."
         }
       },
       "other": {
-        "label": "Other",
-        "labelDisabled": "Not supported by current resolver",
+        "label": "Anders",
+        "labelDisabled": "Niet beschikbaar in de momentele resolver",
         "contentHash": {
           "label": "Content Hash",
           "placeholder": "e.g. ipfs://"
@@ -173,16 +173,16 @@
     }
   },
   "errors": {
-    "invalidName": "This name is invalid.",
-    "invalidAddress": "Not a valid address",
-    "expiringSoon": "This name is expiring soon.",
-    "ownerManagerChoice": "Must send owner or manager",
+    "invalidName": "Deze naam is niet valide.",
+    "invalidAddress": "Niet een valide adres",
+    "expiringSoon": "Deze naam verloopt binnekort.",
+    "ownerManagerChoice": "Moet eigenaar of manager versturen",
     "unknown": "Unknown error",
-    "notMigrated": "This name is not migrated to the new registry.",
-    "featureNotAvailable": "Some features are not yet available, but you can still ",
-    "featureNotAvailableLink": "view this name in the old app.",
-    "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
-    "migrationNotAvailableLink": "migrate this name in the old app.",
-    "addressLength": "If address it should be 42 characters long"
+    "notMigrated": "Deze naam is nog niet gemigreerd naar de nieuwe registry.",
+    "featureNotAvailable": "Somige functies zijn nog niet beschikbaar, maar je kan nogsteeds ",
+    "featureNotAvailableLink": "deze naam bekijken in de oude app.",
+    "migrationNotAvailable": "Migreren naar de nieuwe registry is nog niet beschikbaar, maar je kan nogsteeds ",
+    "migrationNotAvailableLink": "deze naam migreren in de oude app.",
+    "addressLength": "Indien adres moet die 42 karakters lang zijn"
   }
 }

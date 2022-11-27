@@ -1,21 +1,21 @@
 {
-  "title": "Settings",
+  "title": "Instelligen",
   "section": {
     "wallet": {
       "title": "Wallet"
     },
     "transaction": {
-      "title": "Transactions",
-      "noRecentTransactions": "No recent transactions"
+      "title": "Transacties",
+      "noRecentTransactions": "Geen recente transacties"
     },
     "primary": {
-      "title": "Primary Name",
-      "loading": "Loading primary name...",
-      "noName": "No primary name set.",
+      "title": "Primaire Naam",
+      "loading": "Primaire naam laden...",
+      "noName": "Geen primaire naam gezet.",
       "input": {
-        "title": "Select a primary name",
-        "noNames": "No eligible names found for this address",
-        "loading": "Loading names"
+        "title": "Kies een primaire naam",
+        "noNames": "Geen geschikte namen gevonden voor dit adres",
+        "loading": "Namen laden"
       }
     }
   }
