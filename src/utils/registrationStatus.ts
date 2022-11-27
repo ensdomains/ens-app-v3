@@ -41,7 +41,7 @@ export const getRegistrationStatus = ({
 
   if (!ownerData && !wrapperData) return 'invalid'
 
-  if (!supportedTLD) {
+  if (!isDotETH && !supportedTLD) {
     return 'unsupportedTLD'
   }
 
