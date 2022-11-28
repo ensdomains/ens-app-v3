@@ -53,6 +53,7 @@ export const useProfileActions = () => {
     () => {
       const actions: { onClick: () => void; color?: Colors; label: string; disabled?: boolean }[] =
         []
+      if (!address) return actions
       if (!isSelf && (selfAbilities.canEdit || profile?.address === address) && ensName !== _name) {
         const setAsPrimaryTransactions: GenericTransaction[] = [
           makeTransactionItem('setPrimaryName', {

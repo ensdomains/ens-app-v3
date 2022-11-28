@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { useBasicName } from '@app/hooks/useBasicName'
-import { isASubname } from '@app/utils/utils'
+import { checkSubname } from '@app/utils/utils'
 
 interface SendPermissions {
   canSendOwner: boolean
@@ -198,7 +198,7 @@ export const getFunctionCallDetails = ({
 
   if (!wrapperData || !parentWrapperData) return {}
 
-  const isSubname = isASubname(name)
+  const isSubname = checkSubname(name)
   const { fuseObj } = wrapperData
   const { fuseObj: parentFuseObj } = parentWrapperData
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'

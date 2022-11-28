@@ -50,14 +50,14 @@ export const generateAccordionData = (
     title: t('details.tabs.advanced.resolver.label'),
     body: ResolverDetails,
     name: 'resolverDetails',
-    canEdit: ownerData?.owner === address,
+    canEdit: !!address && ownerData?.owner === address,
   },
   {
     title: t('details.tabs.advanced.fuses.label'),
     body: Fuses,
     disabled: !wrapperData || wrapperData?.owner === emptyAddress,
     name: 'fuses',
-    canEdit: ownerData?.owner === address && isWrapped,
+    canEdit: !!address && ownerData?.owner === address && isWrapped,
   },
   {
     title: t('details.tabs.advanced.tokenId.label'),
