@@ -4,19 +4,9 @@ import { ReturnedENS } from '@app/types'
 
 import { getRegistrationStatus } from './registrationStatus'
 
-const ownerData: { [key: string]: ReturnedENS['getOwner'] } = {
-  default: {
-    owner: '0x123',
-    ownershipLevel: 'registrar',
-  },
-  wrapped: {
-    owner: '0x123',
-    ownershipLevel: 'nameWrapper',
-  },
-  subdomain: {
-    owner: '0x123',
-    ownershipLevel: 'registry',
-  },
+const ownerData: ReturnedENS['getOwner'] = {
+  owner: '0x123',
+  ownershipLevel: 'registrar',
 }
 
 const wrapperData: ReturnedENS['getWrapperData'] = {
@@ -38,12 +28,12 @@ const wrapperData: ReturnedENS['getWrapperData'] = {
 describe('getRegistrationStatus', () => {
   describe('2LD .eth', () => {
     it('should return short if a name is less than 3 characters', async () => {
-      const result = await getRegistrationStatus({ name: 'a.eth' })
+      const result = getRegistrationStatus({ name: 'a.eth' })
       expect(result).toBe('short')
     })
 
     it('should return invalid if no values are provided', async () => {
-      const result = await getRegistrationStatus({ name: 'test.eth' })
+      const result = getRegistrationStatus({ name: 'test.eth' })
       expect(result).toBe('invalid')
     })
 
@@ -52,9 +42,9 @@ describe('getRegistrationStatus', () => {
         expiry: new Date(Date.now() + 1000 * 60 * 60 * 24 * 30),
         gracePeriod: 60 * 60 * 24 * 1000,
       }
-      const result = await getRegistrationStatus({
+      const result = getRegistrationStatus({
         name: 'test.eth',
-        ownerData: ownerData.default,
+        ownerData,
         wrapperData,
         expiryData,
       })
@@ -66,9 +56,9 @@ describe('getRegistrationStatus', () => {
         expiry: new Date(Date.now() - 1000),
         gracePeriod: 60 * 60 * 24 * 1000,
       }
-      const result = await getRegistrationStatus({
+      const result = getRegistrationStatus({
         name: 'test.eth',
-        ownerData: ownerData.default,
+        ownerData,
         wrapperData,
         expiryData,
       })
@@ -86,9 +76,9 @@ describe('getRegistrationStatus', () => {
         premium: BigNumber.from(1),
       }
 
-      const result = await getRegistrationStatus({
+      const result = getRegistrationStatus({
         name: 'test.eth',
-        ownerData: ownerData.default,
+        ownerData,
         wrapperData,
         expiryData,
         priceData,
@@ -106,9 +96,9 @@ describe('getRegistrationStatus', () => {
         premium: BigNumber.from(0),
       }
 
-      const result = await getRegistrationStatus({
+      const result = getRegistrationStatus({
         name: 'test.eth',
-        ownerData: ownerData.default,
+        ownerData,
         wrapperData,
         expiryData,
         priceData,
@@ -118,26 +108,51 @@ describe('getRegistrationStatus', () => {
     })
   })
 
-  it('should return registered if name has an owner', async () => {
-    const result = await getRegistrationStatus({
-      name: 'example.com',
-      ownerData: ownerData.default,
-      wrapperData,
-      supportedTLD: true,
-    })
-    expect(result).toBe('registered')
-  })
-
   it('should return not owned if name has no owner, and has more than 2 labels', async () => {
-    const result = await getRegistrationStatus({
+    const result = getRegistrationStatus({
       name: 'test.test.eth',
       wrapperData,
     })
     expect(result).toBe('notOwned')
   })
 
+  it('should not return short if subdomain is short', () => {
+    const result = getRegistrationStatus({
+      name: 'a.test.eth',
+      wrapperData,
+    })
+    expect(result).toBe('notOwned')
+  })
+
+  it('should return registered if name has an owner', async () => {
+    const result = getRegistrationStatus({
+      name: 'example.com',
+      ownerData,
+      wrapperData,
+      supportedTLD: true,
+    })
+    expect(result).toBe('registered')
+  })
+
+  it('should return not supported tld if supportedTLD is falsy', () => {
+    const result = getRegistrationStatus({
+      name: 'test.com',
+      wrapperData,
+    })
+    expect(result).toBe('unsupportedTLD')
+  })
+
+  it('should not return short if name is short but is not .eth', () => {
+    const result = getRegistrationStatus({
+      name: 'a.com',
+      wrapperData,
+      supportedTLD: true,
+    })
+    expect(result).not.toBe('short')
+  })
+
   it('should return not imported otherwise', async () => {
-    const result = await getRegistrationStatus({
+    const result = getRegistrationStatus({
       name: 'test.com',
       wrapperData,
       supportedTLD: true,
