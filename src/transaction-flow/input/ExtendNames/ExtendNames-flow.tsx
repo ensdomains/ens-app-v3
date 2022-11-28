@@ -243,7 +243,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
             })
             dispatch({ name: 'setFlowStage', payload: 'transaction' })
           },
-          children: t('action.save', { ns: 'common' }),
+          children: t('action.next', { ns: 'common' }),
         }
 
   if (isFeeDataLoading || isEstimateGasLoading || priceLoading) {

@@ -16,7 +16,8 @@
             "selected": {
               "title": "Selected NFT",
               "subtitle": "Are you sure you want to use this NFT?"
-            }
+            },
+            "noResults": "No results found."
           },
           "image": {
             "title": "Edit Image",
