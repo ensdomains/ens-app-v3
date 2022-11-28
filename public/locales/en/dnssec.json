@@ -42,7 +42,7 @@
     "ownerOf": "You are now the owner of:",
     "successMessage": "Your domain name was successfully imported into ENS. You can now view and manage your name.",
     "viewName": "View Name",
-    "claimAnother": "Claim anoter"
+    "claimAnother": "Claim another"
   },
   "claimDomain": {
     "title": "Claim your domain",
@@ -56,7 +56,7 @@
   },
   "enableDNSSEC": {
     "title": "Enable DNSSEC",
-    "instruction": "You’ll need to visit your domain registrar to enable DNSSEC. Once enabled, click 'Check' to move to the next step.",
+    "instruction": "You'll need to visit your domain registrar to enable DNSSEC. Once enabled, click 'Check' to move to the next step.",
     "registrarHelp": "Choose your registrar from the dropdown below for instructions on how to do this.",
     "findRegistrar": "Find your registrar",
     "DNSSECNotEnabled": "DNSSEC has not been enabled on this domain."

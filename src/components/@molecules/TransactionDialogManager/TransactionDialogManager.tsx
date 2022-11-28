@@ -1,8 +1,10 @@
 /* eslint-disable default-case */
 
 /* eslint-disable no-param-reassign */
-import { Dispatch, useCallback, useMemo } from 'react'
+import { Dispatch, useCallback, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
+import usePrevious from 'react-use/lib/usePrevious'
+import { useAccount } from 'wagmi'
 
 import { Dialog } from '@ensdomains/thorin'
 
@@ -12,6 +14,19 @@ import { DataInputComponents } from '../../../transaction-flow/input'
 import { InternalTransactionFlow, TransactionFlowAction } from '../../../transaction-flow/types'
 import { IntroStageModal } from './stage/Intro'
 import { TransactionStageModal } from './stage/TransactionStageModal'
+
+export const useResetSelectedKey = (dispatch: any) => {
+  const { address } = useAccount()
+  const prevAddress = usePrevious(address)
+
+  useEffect(() => {
+    if (prevAddress && prevAddress !== address) {
+      dispatch({
+        name: 'stopFlow',
+      })
+    }
+  }, [prevAddress, address, dispatch])
+}
 
 export const TransactionDialogManager = ({
   state,
@@ -27,6 +42,8 @@ export const TransactionDialogManager = ({
     () => (selectedKey ? state.items[selectedKey] : null),
     [selectedKey, state.items],
   )
+
+  useResetSelectedKey(dispatch)
 
   const onDismiss = useCallback(() => {
     dispatch({
@@ -101,7 +118,7 @@ export const TransactionDialogManager = ({
   }, [selectedKey, selectedItem, onDismiss, dispatch, t])
 
   return (
-    <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onBackgroundDismiss}>
+    <Dialog variant="blank" open={!!selectedKey} onDismiss={onBackgroundDismiss}>
       {InnerComponent}
       <Dialog.CloseButton onClick={onDismiss} />
     </Dialog>

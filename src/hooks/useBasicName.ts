@@ -25,8 +25,8 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
-    () => {
-      const batchQueries = addRegistrationStatusToBatch(ens, normalisedName)
+    async () => {
+      const batchQueries = await addRegistrationStatusToBatch(ens, normalisedName)
 
       if (batchQueries.length > 1) {
         return ens.batch(
