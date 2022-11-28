@@ -60,6 +60,10 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
 
   const debouncedSetLabel = useDebouncedCallback(setLabel, 500)
 
+  console.log('ownership: ', ownership)
+  console.log('validation: ', validation)
+  console.log('parent: ', parent)
+
   const { valid, error } = useMemo(() => {
     if (_label === '') return { valid: false, error: undefined }
     if (_label !== _label.toLowerCase()) return { valid: false, error: 'mustUseLowercase' }

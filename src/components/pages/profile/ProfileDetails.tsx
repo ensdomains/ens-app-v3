@@ -148,6 +148,8 @@ export const ProfileDetails = ({
   ]
   const mappedOwners = owners?.map((x) => ({ key: x.label, value: x.address }))
 
+  console.log('actions: ', actions)
+
   return (
     <ProfileInfoBox $isCached={isCached}>
       <RecordsStack>
@@ -182,10 +184,11 @@ export const ProfileDetails = ({
         />
       </RecordsStack>
       {actions && (
-        <Actions>
+        <Actions data-testid="profile-actions">
           {actions.map((action) => (
             <div className={action.red ? 'leading' : ''} key={action.label}>
               <Button
+                data-testid={`profile-action-${action.label}`}
                 shadowless
                 onClick={action.onClick}
                 size="small"

@@ -145,6 +145,8 @@ export const SubnamesTab = ({
       isWrapped,
     })
 
+  console.log('subnames: ', subnames)
+
   let InnerContent: ReactNode
   if (isLoading) {
     InnerContent = (
