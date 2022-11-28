@@ -1,9 +1,9 @@
 import { BigNumber } from 'ethers'
 
-import type { PublicENS, ReturnedENS } from '@app/types/index'
+import type { ReturnedENS } from '@app/types/index'
 
 import { emptyAddress } from './constants'
-import { yearsToSeconds } from './utils'
+import { checkETH2LDName, checkETHName } from './utils'
 
 export type RegistrationStatus =
   | 'invalid'
@@ -14,55 +14,39 @@ export type RegistrationStatus =
   | 'short'
   | 'notImported'
   | 'notOwned'
+  | 'unsupportedTLD'
 
-const start = (name: string) => {
-  const labels = name.split('.')
-  const isDotETH = labels[labels.length - 1] === 'eth'
-  return {
-    labels,
-    isDotETH,
-  }
-}
+export const getRegistrationStatus = ({
+  name,
+  ownerData,
+  wrapperData,
+  expiryData,
+  priceData,
+  supportedTLD,
+}: {
+  name: string | null
+  ownerData?: ReturnedENS['getOwner']
+  wrapperData?: ReturnedENS['getWrapperData']
+  expiryData?: ReturnedENS['getExpiry']
+  priceData?: ReturnedENS['getPrice']
+  supportedTLD?: boolean
+}): RegistrationStatus => {
+  const labels = name?.split('.') || []
+  const isDotETH = checkETHName(labels)
+  const isDotEth2ld = checkETH2LDName(isDotETH, labels, true)
 
-const is2ldEth = (isDotEth: boolean, labels: string[], requireValid?: boolean) =>
-  isDotEth && labels.length === 2 && (requireValid ? labels[0].length >= 3 : true)
-
-export const addRegistrationStatusToBatch = (ens: PublicENS, name: string) => {
-  const { getExpiry, getPrice, getOwner } = ens
-  const { labels, isDotETH } = start(name)
-  if (is2ldEth(isDotETH, labels, false)) {
-    if (labels[0].length < 3) {
-      return []
-    }
-    return [getExpiry.batch(name), getPrice.batch(labels[0], yearsToSeconds(1), false)]
-  }
-  return [getOwner.batch(name)]
-}
-
-type BatchResult =
-  | [...any[], ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
-  | [...any[], ReturnedENS['getOwner']]
-  | undefined
-
-export const getRegistrationStatus = (
-  batchResults: any[] | undefined,
-  name: string,
-): RegistrationStatus => {
-  const _batchResults = batchResults as BatchResult
-  const { labels, isDotETH } = start(name)
-  const isDotEth2ld = is2ldEth(isDotETH, labels, false)
   if (isDotEth2ld && labels[0].length < 3) {
     return 'short'
   }
-  if (!_batchResults) {
-    return 'invalid'
+
+  if (!ownerData && !wrapperData) return 'invalid'
+
+  if (!isDotETH && !supportedTLD) {
+    return 'unsupportedTLD'
   }
-  const resLength = _batchResults?.length
+
   if (isDotEth2ld) {
-    if (!resLength) return 'invalid'
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const expiryData = _batchResults[resLength - 2]
-    const priceData = _batchResults[resLength - 1]
     if (expiryData && expiryData.expiry) {
       const { expiry: _expiry, gracePeriod } = expiryData as {
         expiry: Date | string
@@ -85,8 +69,7 @@ export const getRegistrationStatus = (
     }
     return 'available'
   }
-  const owner = _batchResults ? _batchResults[(resLength as number) - 1] : undefined
-  if (owner && owner.owner !== emptyAddress) {
+  if (ownerData && ownerData.owner !== emptyAddress) {
     return 'registered'
   }
   if (labels.length > 2) {

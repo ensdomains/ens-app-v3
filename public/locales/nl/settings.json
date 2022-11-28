@@ -1,0 +1,22 @@
+{
+  "title": "Instelligen",
+  "section": {
+    "wallet": {
+      "title": "Wallet"
+    },
+    "transaction": {
+      "title": "Transacties",
+      "noRecentTransactions": "Geen recente transacties"
+    },
+    "primary": {
+      "title": "Primaire Naam",
+      "loading": "Primaire naam laden...",
+      "noName": "Geen primaire naam gezet.",
+      "input": {
+        "title": "Kies een primaire naam",
+        "noNames": "Geen geschikte namen gevonden voor dit adres",
+        "loading": "Namen laden"
+      }
+    }
+  }
+}

@@ -4,19 +4,16 @@ import { useEns } from '@app/utils/EnsProvider'
 
 import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
-import { useRegistrationStatus } from './useRegistrationStatus'
 import { useValidate } from './useValidate'
 import { useWrapperExists } from './useWrapperExists'
 
 jest.mock('@app/utils/EnsProvider')
 jest.mock('./useProfile')
-jest.mock('./useRegistrationStatus')
 jest.mock('./useValidate')
 jest.mock('./useWrapperExists')
 
 const mockUseEns = mockFunction(useEns)
 const mockUseProfile = mockFunction(useProfile)
-const mockUseRegistrationStatus = mockFunction(useRegistrationStatus)
 const mockUseValidate = mockFunction(useValidate)
 const mockUseWrapperExists = mockFunction(useWrapperExists)
 
@@ -47,11 +44,6 @@ describe('useNameDetails', () => {
   mockUseProfile.mockReturnValue({
     loading: false,
     profile: undefined,
-    status: 'success',
-  })
-  mockUseRegistrationStatus.mockReturnValue({
-    data: undefined,
-    isLoading: false,
     status: 'success',
   })
   mockUseWrapperExists.mockReturnValue(true)
