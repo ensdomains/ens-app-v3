@@ -86,10 +86,17 @@ describe('Profile', () => {
     cy.contains('Profile').should('not.be.visible')
   })
 
+  it('should show a warning if name is not supported', () => {
+    cy.visit('/profile/name.nottld')
+    cy.wait(10000)
+    cy.contains('This TLD is not supported').should('be.visible')
+  })
+
   profiles.forEach((profile) => {
     describe(profile.name, () => {
       describe('profile', () => {
         it('should go to the profile page', () => {
+          cy.visit('/')
           cy.get('[placeholder="Search for a name"]').type(profile.name).wait(1000).type('{enter}')
         })
 
