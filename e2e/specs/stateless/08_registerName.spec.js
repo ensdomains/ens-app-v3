@@ -58,6 +58,7 @@ describe('Register Name', () => {
       cy.findByTestId('invoice-item-1-amount').should('not.contain.text', `${this.estimate} ETH`)
     })
     it('should go to transactions step and open commit transaction immediately', () => {
+      cy.wait(1000)
       cy.findByTestId('next-button').should('contain.text', 'Begin').click()
       cy.findByText('Confirm Details').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').click()
@@ -75,6 +76,7 @@ describe('Register Name', () => {
       cy.findByTestId('finish-button').should('exist').should('be.enabled')
     })
     it('should allow finalising registration and automatically go to the complete step', () => {
+      cy.wait(1000)
       cy.findByTestId('finish-button').click()
       cy.findByText('Confirm Details').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').click()

@@ -160,7 +160,7 @@ export const Header = () => {
   const statefulRoutes = isConnected
     ? dropdownRoutes
     : breakpoints.lg
-    ? dropdownRoutes.slice(3)
+    ? dropdownRoutes.slice(4)
     : dropdownRoutes
 
   let RouteItems: ReactNode

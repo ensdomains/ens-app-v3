@@ -27,5 +27,8 @@
   "orientation": "portrait-primary",
   "theme_color": "#5298FF",
   "background_color": "#F7F7F7",
-  "display": "standalone"
+  "display": "standalone",
+  "scope": "/",
+  "start_url": "/",
+  "description": "Decentralised naming for wallets, websites, & more"
 }
