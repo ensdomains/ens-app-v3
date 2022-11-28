@@ -1,0 +1,64 @@
+{
+  "title": "Registreer {{name}} op ENS",
+  "subtitle": "Registreer",
+  "heading": "Registreer {{name}}",
+  "invoice": {
+    "yearRegistration": "{{years}} jaar registratie",
+    "registration": "Registratie",
+    "estimatedNetworkFee": "Geschatte netwerk kosten",
+    "networkFee": "Netwerk kosten",
+    "temporaryPremium": "Tijdelijke premium",
+    "total": "Geschat totaal",
+    "totalPaid": "Totaal te betalen"
+  },
+  "error": {
+    "nameTooLong": "De naam die je wilt registreren is te lang. Kies een kortere naam."
+  },
+  "steps": {
+    "pricing": {
+      "insufficientBalance": "Niet genoeg balans",
+      "multipleYearsMessage": "Verlengen voor meerdere jaren scheelt netwerk kosten door jaarlijke transacties te voorkomen.",
+      "primaryName": "Gebruik als primaire naam",
+      "primaryNameMessage": "Dit linkt je adres naar deze naam. Dit staat toe dat apps deze naam laten zien op je profiel als je ingelogt bent.",
+      "premium": {
+        "heading": "Deze naam heeft een tijdelijke premium",
+        "subheading": "Om een eerlijke kans te geven aan recentelijk verlopen namen begint de premium begint bij $100,000,000 en loopt af tot $0 over een periode van 21 days. Je kan de premium per datum hieronder bereken.",
+        "targetPrice": "Doel prijs",
+        "targetDate": "Doel datum",
+        "timezone": "Datum en tijd worden weer gegeven in lokale tijdzone ({{timezone}})"
+      }
+    },
+    "profile": {
+      "default": "Standaard",
+      "advanced": "Geavanceerd",
+      "permissions": "Permissies",
+      "resolver": "Resolver",
+      "visibilityMessage": "Je profiel informatie word opgeslagen op de blockchain. Alles wat je toevoegd is publiekelijk zichtbaar."
+    },
+    "complete": {
+      "heading": "Gefeliciteerd!",
+      "subheading": "Je bent nu de eigenaar van ",
+      "description": "Je naam was successvol geregistreerd. Je kan nu de naam bekijken en aanpassen.",
+      "registerAnother": "Registreer nog een",
+      "viewName": "Bekijk naam"
+    },
+    "info": {
+      "heading": "Voor dat we starten",
+      "subheading": "Je naam registreren gaat in drie stappen",
+      "items": [
+        "Doe een transactie om de timer te beginnen",
+        "Wacht 60 seconden op de timer",
+        "Doe een tweede transactie om je naam vast te leggen"
+      ],
+      "setupProfile": "Ik zet graag eerst mijn profiel op"
+    },
+    "transactions": {
+      "heading": "Bijna klaar",
+      "subheading": "Deze timer stopt andere mensen om jou naam te registreren voordat jou dit lukt.",
+      "startTimer": "Start timer",
+      "wait": "Wacht",
+      "transactionFailed": "Transactie Gefaald",
+      "transactionProgress": "Transactie bezig"
+    }
+  }
+}
