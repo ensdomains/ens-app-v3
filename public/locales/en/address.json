@@ -7,6 +7,7 @@
     "title": "No primary name set",
     "message": "This wallet needs to set a primary name to create a profile"
   },
+  "noResults": "No names found",
   "errors": {
     "names": "Could not find address"
   }

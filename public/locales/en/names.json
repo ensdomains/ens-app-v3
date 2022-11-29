@@ -8,8 +8,8 @@
   },
   "empty": "No names found for this address",
   "sortTypes": {
-    "expiryDate": "Expiry Date",
+    "expiryDate": "Expiry date",
     "labelName": "Name",
-    "creationDate": "Creation Date"
+    "creationDate": "Creation date"
   }
 }

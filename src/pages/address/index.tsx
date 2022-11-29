@@ -229,7 +229,7 @@ const Page = () => {
                   <Spinner color="accent" />
                 </EmptyDetailContainer>
               ) : pageLength === 0 ? (
-                <EmptyDetailContainer>{t('empty')}</EmptyDetailContainer>
+                <EmptyDetailContainer>{t('noResults')}</EmptyDetailContainer>
               ) : currentPage ? (
                 currentPage.map((name) => (
                   <TaggedNameItem

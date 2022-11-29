@@ -38,7 +38,7 @@
       "learnMore": "Learn more about name ownership.",
       "makeOwner": "Make owner",
       "makeOwnerDescription": "The owner can send to a new owner and change the manager",
-      "makeManager": "Make Manager",
+      "makeManager": "Make manager",
       "makeManagerDescription": "The manager can change and set records.",
       "inputPlaceholder": "Enter an Ethereum address or ENS name",
       "transferSubname": "Transfer Name",
