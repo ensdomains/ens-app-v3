@@ -9,7 +9,7 @@ describe('Delete subnames', () => {
     cy.visit('/profile/with-subnames.eth')
     connectFromExisting()
     cy.findByTestId('subnames-tab').click()
-    cy.findByTestId('xyz.with-subnames.eth').click()
+    cy.findByTestId('name-item-xyz.with-subnames.eth').click()
     cy.wait(500)
 
     cy.get('button').contains('Delete subname').click()
@@ -21,6 +21,6 @@ describe('Delete subnames', () => {
     cy.findByTestId('profile-actions').should('not.exist')
     cy.go('back')
 
-    cy.findByTestId('xyz.with-subnames.eth').should('not.exist')
+    cy.findByTestId('name-item-xyz.with-subnames.eth').should('not.exist')
   })
 })

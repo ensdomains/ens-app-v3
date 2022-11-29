@@ -10,7 +10,7 @@ describe('Create Subname', () => {
     cy.findByTestId('add-subname-action', { timeout: 2000 }).should('not.exist')
   })
   it('should not show add subname button when the connected wallet does not own the name', () => {
-    cy.visit('/profile/other-registrant.eth/details')
+    cy.visit('/profile/other-registrant.eth')
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('add-subname-action', { timeout: 2000 }).should('not.exist')
   })

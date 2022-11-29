@@ -103,7 +103,12 @@ const Resolver = ({
           <Tag tone={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
         {canEdit && (
-          <button type="button" onClick={handleEditClick}>
+          <button
+            style={{ cursor: 'pointer' }}
+            type="button"
+            onClick={handleEditClick}
+            data-testid="edit-resolver-button"
+          >
             {t('action.edit', { ns: 'common' })}
           </button>
         )}

@@ -11,10 +11,9 @@ describe('Update Resolver', () => {
   describe('Happy', () => {
     describe('When profile is updated to latest resolver', () => {
       it('should disable the latest resolver button, have custom resolver checked, and allow user to change reslover address', () => {
-        cy.visit(
-          '/profile/wrapped.eth/details?from=%2Fprofile%2Fwrapped.eth%3Ffrom%3D%252Fmy%252Fnames&name=wrapped.eth&tab=advanced',
-        )
-        cy.findByTestId('accordion-resolverDetails-edit').click()
+        cy.visit('/profile/wrapped.eth')
+        cy.findByTestId('more-tab').click()
+        cy.findByTestId('edit-resolver-button').click()
         cy.findByTestId('latest-resolver-radio').should('be.disabled')
         cy.findByTestId('custom-resolver-radio').should('not.be.disabled')
         cy.findByTestId('dogfood').type(oldResolver)

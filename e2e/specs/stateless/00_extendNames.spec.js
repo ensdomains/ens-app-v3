@@ -60,16 +60,17 @@ describe('Extend Names', () => {
 
   it('should extend a single name', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/other-registrant.eth/details')
+    cy.visit('/profile/other-registrant.eth')
     connectFromExisting()
     cy.findByTestId('extend-button').should('be.visible')
-    cy.findByTestId('expiry-label').should('be.visible')
-    cy.findByTestId('expiry-label')
-      .invoke('attr', 'data-timestamp')
-      .then((timestamp) => {
-        cy.log(`timestamp: ${timestamp}`)
-        cy.wrap(timestamp).as('timestamp')
-      })
+    // Maybe add this back in
+    // cy.findByTestId('expiry-label').should('be.visible')
+    // cy.findByTestId('expiry-label')
+    //   .invoke('attr', 'data-timestamp')
+    //   .then((timestamp) => {
+    //     cy.log(`timestamp: ${timestamp}`)
+    //     cy.wrap(timestamp).as('timestamp')
+    //   })
 
     cy.log('should show the extend modal')
     cy.wait(1000)
@@ -124,7 +125,7 @@ describe('Extend Names', () => {
 
   it('should extend a single name in grace period', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/grace-period.eth/details')
+    cy.visit('/profile/grace-period.eth')
     connectFromExisting()
 
     cy.findByTestId('extend-button').as('extend-button')
@@ -224,7 +225,7 @@ describe('Extend Names', () => {
   })
 
   it('should not show extend button on subnames', () => {
-    cy.visit('/profile/test.with-subnames.eth/details')
+    cy.visit('/profile/test.with-subnames.eth')
     connectFromExisting()
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('extend-subname-action', { timeout: 2000 }).should('not.exist')

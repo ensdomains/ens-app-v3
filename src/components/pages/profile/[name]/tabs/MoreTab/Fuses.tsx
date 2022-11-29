@@ -104,7 +104,12 @@ const Fuses = ({
         <HeadingContainer>
           <Heading>{t('tabs.more.fuses.permissions.label')}</Heading>
           {canEdit && (
-            <button data-testid="edit-fuses-button" type="button" onClick={handleEditClick}>
+            <button
+              style={{ cursor: 'pointer' }}
+              data-testid="edit-fuses-button"
+              type="button"
+              onClick={handleEditClick}
+            >
               {t('action.edit', { ns: 'common' })}
             </button>
           )}

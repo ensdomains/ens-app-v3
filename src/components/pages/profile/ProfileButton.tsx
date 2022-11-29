@@ -257,9 +257,11 @@ export const OwnerProfileButton = ({
     return `${address.slice(0, 5)}...`
   }, [address, breakpoints])
 
+  const isExpiry = label === 'expiry'
+
   return (
     <ProfileButton
-      link={`/address/${address}`}
+      link={isExpiry ? undefined : `/address/${address}`}
       value={address}
       prefixSize="max"
       prefix={
@@ -269,7 +271,7 @@ export const OwnerProfileButton = ({
       }
       testid={`owner-profile-button-${label}`}
     >
-      {primary || formattedAddress}
+      {isExpiry ? address : primary || formattedAddress}
     </ProfileButton>
   )
 }

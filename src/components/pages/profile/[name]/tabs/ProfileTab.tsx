@@ -60,6 +60,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
+  console.log('nameDetails: ', nameDetails)
+
   return (
     <DetailsWrapper>
       <ProfileSnippet
@@ -80,6 +82,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           .filter((item: any) => item.value !== null)}
         owners={owners}
         actions={profileActions.profileActions}
+        name={name}
       />
     </DetailsWrapper>
   )

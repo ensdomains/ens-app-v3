@@ -2,9 +2,8 @@ import { CalendarEvent, google, ics, office365, outlook, yahoo } from 'calendar-
 import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQuery } from 'wagmi'
+import { useAccount } from 'wagmi'
 
-import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { Button, Dropdown, Typography, mq } from '@ensdomains/thorin'
 
 import CalendarSVG from '@app/assets/Calendar.svg'
@@ -12,9 +11,9 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
+import { useNameDates } from '@app/hooks/useNameDates'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { useEns } from '@app/utils/EnsProvider'
 import { formatDateTime, formatExpiry } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
@@ -132,50 +131,6 @@ const FastForwardIcon = styled.svg(
     height: ${theme.space['4']};
   `,
 )
-
-const query = `
-  query getNameDates($id: String!) {
-    registration(id: $id) {
-      registrationDate
-      expiryDate
-    }
-  }
-`
-
-const useNameDates = (name: string) => {
-  const { ready, gqlInstance } = useEns()
-  const {
-    data,
-    isLoading,
-    status,
-    internal: { isFetchedAfterMount },
-    isFetched,
-    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFetching: _isFetching,
-  } = useQuery(
-    ['getNameDates', name],
-    async () => {
-      const { registration } = await gqlInstance.request(query, {
-        id: labelhash(name.split('.')[0]),
-      })
-      return registration as { registrationDate: string; expiryDate: string }
-    },
-    {
-      enabled: ready,
-      select: (d) => ({
-        registrationDate: new Date(parseInt(d.registrationDate) * 1000),
-        expiryDate: new Date(parseInt(d.expiryDate) * 1000),
-      }),
-    },
-  )
-
-  return {
-    data,
-    isLoading,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
-  }
-}
 
 const Miscellaneous = ({ name }: { name: string }) => {
   const { t } = useTranslation('common')

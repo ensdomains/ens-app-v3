@@ -7,8 +7,10 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
+import { useNameDates } from '@app/hooks/useNameDates'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
+import { formatExpiry } from '@app/utils/utils'
 
 import {
   AddressProfileButton,
@@ -130,13 +132,16 @@ export const ProfileDetails = ({
   owners,
   actions,
   isCached,
+  name,
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
   owners: ReturnType<typeof useOwners>
   actions: ReturnType<typeof useProfileActions>['profileActions']
   isCached?: boolean
+  name: string
 }) => {
+  const { data: nameDates } = useNameDates(name)
   const otherRecords = [
     ...textRecords
       .filter(
@@ -146,9 +151,18 @@ export const ProfileDetails = ({
       )
       .map((x) => ({ ...x, type: 'text' })),
   ]
-  const mappedOwners = owners?.map((x) => ({ key: x.label, value: x.address }))
+  const mappedOwners = [
+    ...(owners?.map((x) => ({ key: x.label, value: x.address })) || []),
+    {
+      key: 'expiry',
+      type: 'text',
+      value: nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry',
+    },
+  ]
 
-  console.log('actions: ', actions)
+  console.log('owners: ', owners)
+  console.log('mappedOwners: ', mappedOwners)
+  console.log('expiry: ', nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry')
 
   return (
     <ProfileInfoBox $isCached={isCached}>

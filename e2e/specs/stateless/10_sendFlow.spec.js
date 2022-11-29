@@ -9,7 +9,7 @@ describe('Send Flow', () => {
   describe('Happy', () => {
     it('Should allow owner to change manager', () => {
       cy.visit('/profile/test123.eth')
-      cy.findByText('View Details').click()
+      cy.findByText('More').click()
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
       cy.findByTestId('owner-checkbox').click()
@@ -22,7 +22,7 @@ describe('Send Flow', () => {
     it('Should allow manager to change manager when they are not the owner', () => {
       acceptMetamaskAccess(1)
       cy.visit('/profile/test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       //Should not allow the manager to change the owner
       cy.findByTestId('Make Owner', { timeout: 2000 }).should('not.exist')
@@ -37,7 +37,7 @@ describe('Send Flow', () => {
     it('Should allow owner to change owner', () => {
       acceptMetamaskAccess(2)
       cy.visit('/profile/test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('manager-checkbox').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -51,7 +51,7 @@ describe('Send Flow', () => {
     it('Should allow owner to change manager if they are not the manager', () => {
       acceptMetamaskAccess(1)
       cy.visit('/profile/test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('owner-checkbox').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -66,7 +66,7 @@ describe('Send Flow', () => {
     it('Should allow owner to change owner and manager', () => {
       acceptMetamaskAccess(1)
       cy.visit('/profile/test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
       cy.findByText('Next').click()
@@ -95,7 +95,7 @@ describe('Send Flow', () => {
       cy.visit('/profile/wrapped.eth')
       acceptMetamaskAccess(2)
       cy.visit('/profile/wrapped.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
       cy.findByText('Next').click()
@@ -108,7 +108,7 @@ describe('Send Flow', () => {
     it('Should allow namewrapper subname owner to send name', () => {
       acceptMetamaskAccess(1)
       cy.visit('/profile/sub.wrapped.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
       cy.findByText('Next').click()
@@ -122,7 +122,7 @@ describe('Send Flow', () => {
     it('Should allow unwrapped subname to be sent by owner (setOwner)', () => {
       acceptMetamaskAccess(2)
       cy.visit('/profile/sub.test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
       cy.findByText('Next').click()
@@ -135,7 +135,7 @@ describe('Send Flow', () => {
     it('Should allow unwrapped subname to be sent by unwraped parent owner (setSubnodeOwner)', () => {
       acceptMetamaskAccess(2)
       cy.visit('/profile/sub.test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
       cy.findByText('Next').click()
@@ -151,7 +151,7 @@ describe('Send Flow', () => {
     it('should not show send button when parent is owner and not manager', () => {
       acceptMetamaskAccess(2)
       cy.visit('/profile/test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('owner-checkbox').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -168,7 +168,7 @@ describe('Send Flow', () => {
     it('should not show send button when subname is wrapped and parent is unwrapped', () => {
       acceptMetamaskAccess(2)
       cy.visit('/profile/sub.test123.eth')
-      cy.findByText('View Details').click({ force: true })
+      cy.findByText('More').click({ force: true })
       cy.findByTestId('wrapper-cta-button').click()
       cy.findByTestId('transaction-modal-inner').should('be.visible')
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
