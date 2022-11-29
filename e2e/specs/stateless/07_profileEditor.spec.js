@@ -10,8 +10,9 @@ describe('Profile Editor', () => {
     connectFromExisting()
     cy.contains('Edit Profile').click()
     cy.findByTestId('warning-overlay').should('be.visible')
-    cy.get('[data-testid=warning-overlay-dismiss]').should('not.exist')
     cy.contains('Your registry is out of date').should('be.visible')
+    cy.findByTestId('warning-overlay-dismiss').should('exist').click()
+    cy.findByTestId('profile-editor').should('not.exist')
   })
 
   it('should force a user without a resolver set to migrate resolver', () => {
@@ -19,8 +20,9 @@ describe('Profile Editor', () => {
     connectFromExisting()
     cy.contains('Edit Profile').click()
     cy.findByTestId('warning-overlay').should('be.visible')
-    cy.get('[data-testid=warning-overlay-dismiss]').should('not.exist')
     cy.contains('No resolver assigned').should('be.visible')
+    cy.findByTestId('warning-overlay-dismiss').should('exist').click()
+    cy.findByTestId('profile-editor').should('not.exist')
   })
 
   it('should be able to update resolver if profile has been migrated but resolver has not been updated', () => {
