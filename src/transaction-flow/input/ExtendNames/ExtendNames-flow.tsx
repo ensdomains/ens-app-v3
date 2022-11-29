@@ -301,7 +301,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
             {t('action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={<Button shadowless {...trailingButtonProps} data-testid="extend-names-button" />}
+        trailing={<Button shadowless {...trailingButtonProps} data-testid="extend-names-confirm" />}
       />
     </Container>
   )

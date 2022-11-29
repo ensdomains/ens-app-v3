@@ -40,7 +40,7 @@ describe('Extend Names', () => {
 
     cy.log('increment and save')
     cy.findByTestId('plus-minus-control-plus').click()
-    cy.findByTestId('extend-names-button').click()
+    cy.findByTestId('extend-names-confirm').click()
     cy.contains('Extending this name will not give you ownership of it').should('exist')
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -108,7 +108,7 @@ describe('Extend Names', () => {
     cy.findByTestId('invoice-total').should('contain.text', '$5.19')
 
     cy.log('should save')
-    cy.findByTestId('extend-names-button').click()
+    cy.findByTestId('extend-names-confirm').click()
     cy.contains('Extending this name will not give you ownership of it').should('be.exist')
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -141,7 +141,7 @@ describe('Extend Names', () => {
     cy.findByTestId('extend-button').click()
     cy.findByTestId('extend-names-modal', { timeout: 10000 }).should('be.visible')
 
-    cy.findByTestId('extend-names-button').click()
+    cy.findByTestId('extend-names-confirm').click()
 
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -205,7 +205,7 @@ describe('Extend Names', () => {
 
     cy.log('increment and save')
     cy.findByTestId('plus-minus-control-plus').click()
-    cy.findByTestId('extend-names-button').click()
+    cy.findByTestId('extend-names-confirm').click()
     cy.contains('Extending this name will not give you ownership of it').should('not.exist')
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
