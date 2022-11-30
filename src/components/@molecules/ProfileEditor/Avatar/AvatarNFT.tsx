@@ -243,7 +243,7 @@ export const AvatarNFT = ({
         <SpinnerRow />
       </LoadingContainer>
     )
-  } else if (NFTs && NFTs.length > 0) {
+  } else if (NFTs && (NFTs.length > 0 || searchedInput !== '')) {
     innerContent = (
       <>
         <Input
@@ -253,29 +253,36 @@ export const AvatarNFT = ({
           value={searchedInput}
           onChange={(e) => setSearchedInput(e.target.value)}
           placeholder={t('input.profileEditor.tabs.avatar.nft.searchPlaceholder')}
+          data-testid="avatar-search-input"
         />
-        <ScrollBoxWithSpinner
-          data-testid="nft-scroll-box"
-          style={{ width: '100%' }}
-          onReachedBottom={fetchPage}
-          showSpinner={hasNextPage}
-        >
-          <InnerScrollBox>
-            {NFTs?.map((NFT, i) => (
-              <NFTContainer
-                data-testid={`nft-${NFT.id.tokenId}-${NFT.contract.address}`}
-                as="button"
-                onClick={() => setSelectedNFT(i)}
-                key={`${NFT.id.tokenId}-${NFT.contract.address}`}
-              >
-                <NFTImage src={NFT.media[0].thumbnail || NFT.media[0].gateway} loading="lazy" />
-                <NFTName weight="bold">
-                  {NFT.title || t('input.profileEditor.tabs.avatar.nft.unknown')}
-                </NFTName>
-              </NFTContainer>
-            ))}
-          </InnerScrollBox>
-        </ScrollBoxWithSpinner>
+        {NFTs.length > 0 ? (
+          <ScrollBoxWithSpinner
+            data-testid="nft-scroll-box"
+            style={{ width: '100%' }}
+            onReachedBottom={fetchPage}
+            showSpinner={hasNextPage}
+          >
+            <InnerScrollBox>
+              {NFTs?.map((NFT, i) => (
+                <NFTContainer
+                  data-testid={`nft-${NFT.id.tokenId}-${NFT.contract.address}`}
+                  as="button"
+                  onClick={() => setSelectedNFT(i)}
+                  key={`${NFT.id.tokenId}-${NFT.contract.address}`}
+                >
+                  <NFTImage src={NFT.media[0].thumbnail || NFT.media[0].gateway} loading="lazy" />
+                  <NFTName weight="bold">
+                    {NFT.title || t('input.profileEditor.tabs.avatar.nft.unknown')}
+                  </NFTName>
+                </NFTContainer>
+              ))}
+            </InnerScrollBox>
+          </ScrollBoxWithSpinner>
+        ) : (
+          <LoadingContainer>
+            <Heading>{t('input.profileEditor.tabs.avatar.nft.noResults')}</Heading>
+          </LoadingContainer>
+        )}
       </>
     )
   } else {

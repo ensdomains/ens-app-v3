@@ -1,0 +1,64 @@
+{
+  "general": {
+    "connectWallet": "Verbind aub je wallet om door te gaan",
+    "importDNSSECName": "Importeer DNSSEC Naam",
+    "domainRegistrar": "Domein Registrar"
+  },
+  "registrars": {
+    "namecheap": "Namecheap",
+    "domaindotcom": "Domain.com",
+    "googledomains": "Google Domains",
+    "dreamhost": "Dreamhost",
+    "hover": "Hover",
+    "godaddy": "GoDaddy",
+    "bluehost": "Bluehost",
+    "hostgator": "HostGator",
+    "findYourRegistrar": "Vind je registrar"
+  },
+  "addTextRecord": {
+    "title": "Voeg Text Records toe",
+    "explanation": "Je moet een nieuw DNS record creeeren voor je domain met de volgende details. Dit zal jouw Ethereum Adres als owner van deze naam zetten.",
+    "syncWarningOne": "Het lijkt erop dat je niet de DNS Eigenaar van dit domain bent, maar je kan hem nogsteeds toevoegen aan de ENS Registry.",
+    "syncWarningTwo": "Als je eigenaar van dit domain bent verander de _ens TXT record om je Ethereum Adres te hebben en click 'Check' opnieuw, anders click op 'Claim' om door te gaan.",
+    "type": "Type",
+    "txt": "TXT",
+    "errors": {
+      "SUBDOMAIN_NOT_SET": {
+        "title": "Subdomein niet gezet",
+        "content": "Zet aub je _ens subdomein naar de waarde zoals hierboven."
+      },
+      "DNS_RECORD_DOES_NOT_EXIST": {
+        "title": "Record bestaat niet",
+        "content": "DNS Record is niet gezet"
+      },
+      "DNS_RECORD_INVALID": {
+        "title": "Record Invalide",
+        "content": "Zet aub je record naar de waarde hierboven."
+      }
+    }
+  },
+  "claimComplete": {
+    "title": "Gefeliciteerd!",
+    "ownerOf": "Je bent nu de eigenaar van:",
+    "successMessage": "Je domain naam is successvol geimporteerd naar ENS. Je kan nu de naam bekijken en aanpassen.",
+    "viewName": "Bekijk Naam",
+    "claimAnother": "Claim nog een"
+  },
+  "claimDomain": {
+    "title": "Claim je domein",
+    "syncWarning": "Je importeert een DNS naam waar je niet de eigenaar van bent.",
+    "verifiedOwnership": "Je hebt eigendom geverifieerd en kan dit domein claimen.",
+    "pendingTransactionPre": "Je hebt al een",
+    "pendingTransactionLink": "lopende transactie",
+    "pendingTransactionPost": "voor deze naam",
+    "dnsOwner": "DNS Eigenaar",
+    "networkEst": "Geschatte netwerk kosten"
+  },
+  "enableDNSSEC": {
+    "title": "Enable DNSSEC",
+    "instruction": "Je zal je domein registrar moeten bezoeken om DNSSEC aan te kunnen zetten. Zodra het aan staat, click 'Check' om door te gaan naar de volgende stap.",
+    "registrarHelp": "Kies je registrar van de dropdown voor instructies over hoe dit te doen.",
+    "findRegistrar": "Vind je registrar",
+    "DNSSECNotEnabled": "DNSSEC staat nog niet aan voor dit domein."
+  }
+}

@@ -38,7 +38,7 @@
       "learnMore": "Learn more about name ownership.",
       "makeOwner": "Make owner",
       "makeOwnerDescription": "The owner can send to a new owner and change the manager",
-      "makeManager": "Make Manager",
+      "makeManager": "Make manager",
       "makeManagerDescription": "The manager can change and set records.",
       "inputPlaceholder": "Enter an Ethereum address or ENS name",
       "transferSubname": "Transfer Name",
@@ -183,6 +183,7 @@
     "featureNotAvailableLink": "view this name in the old app.",
     "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
     "migrationNotAvailableLink": "migrate this name in the old app.",
-    "addressLength": "If address it should be 42 characters long"
+    "addressLength": "If address it should be 42 characters long",
+    "unsupportedTLD": "This TLD is not supported"
   }
 }

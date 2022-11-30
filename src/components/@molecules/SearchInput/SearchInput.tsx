@@ -343,7 +343,14 @@ export const SearchInput = ({
         selectedItem.value,
       ])
       if (currentQuery) {
-        const registrationStatus = getRegistrationStatus(currentQuery, selectedItem.value)
+        const [ownerData, wrapperData, expiryData, priceData] = currentQuery
+        const registrationStatus = getRegistrationStatus({
+          name: selectedItem.value,
+          ownerData,
+          wrapperData,
+          expiryData,
+          priceData,
+        })
         if (registrationStatus === 'available') {
           path = `/register/${selectedItem.value}`
         }

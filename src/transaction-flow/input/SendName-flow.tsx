@@ -57,6 +57,8 @@ export const handleSubmitForm = ({
   newOwner,
   managerChoice,
   ownerChoice,
+  canSendOwner,
+  canSendManager,
   name,
   address,
   sendNameFunctionCallDetails,
@@ -66,58 +68,43 @@ export const handleSubmitForm = ({
   newOwner: string
   managerChoice: string
   ownerChoice: string
+  canSendOwner: boolean
+  canSendManager: boolean
   name: string
   address: string
   sendNameFunctionCallDetails: ReturnType<typeof useSelfAbilities>['sendNameFunctionCallDetails']
 }) => {
   const { ownerData } = basicNameData
-  const callCount = Object.keys(sendNameFunctionCallDetails).length
   const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
-
-  if (callCount > 2) {
-    console.error('Too many send transactions')
-    return
-  }
-
-  if (Object.keys(sendNameFunctionCallDetails).length === 2 && managerChoice && ownerChoice) {
-    if (!sendNameFunctionCallDetails.sendManager || !sendNameFunctionCallDetails.sendOwner) return
-    // This can only happen as the registrant of a 2LD .eth name
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        makeTransactionItem('transferName', {
-          name,
-          newOwner,
-          contract: sendNameFunctionCallDetails.sendManager.contract,
-          sendType: 'sendManager',
-          reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
-        }),
-        makeTransactionItem('transferName', {
-          name,
-          newOwner,
-          contract: sendNameFunctionCallDetails.sendOwner.contract,
-          sendType: 'sendOwner',
-        }),
-      ],
-    })
-    dispatch({ name: 'setFlowStage', payload: 'transaction' })
-    return
-  }
-
-  const sendType = managerChoice ? 'sendManager' : 'sendOwner'
-  if (!sendNameFunctionCallDetails[sendType]) return
-
-  dispatch({
-    name: 'setTransactions',
-    payload: [
+  const transactions = []
+  if (canSendManager && managerChoice === 'manager' && sendNameFunctionCallDetails.sendManager) {
+    transactions.push(
       makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
         name,
         newOwner,
-        contract: sendNameFunctionCallDetails[sendType]!.contract,
-        sendType,
-        reclaim: sendNameFunctionCallDetails[sendType]!.method === 'reclaim',
+        contract: sendNameFunctionCallDetails.sendManager.contract,
+        sendType: 'sendManager',
+        reclaim: sendNameFunctionCallDetails.sendManager.method === 'reclaim',
       }),
-    ],
+    )
+  }
+
+  if (canSendOwner && ownerChoice === 'owner' && sendNameFunctionCallDetails.sendOwner) {
+    transactions.push(
+      makeTransactionItem(isOwnerOrManager ? 'transferName' : 'transferSubname', {
+        name,
+        newOwner,
+        contract: sendNameFunctionCallDetails.sendOwner!.contract,
+        sendType: 'sendOwner',
+      }),
+    )
+  }
+
+  if (transactions.length === 0) return true
+
+  dispatch({
+    name: 'setTransactions',
+    payload: transactions,
   })
   dispatch({ name: 'setFlowStage', payload: 'transaction' })
 }
@@ -142,19 +129,27 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const basicNameData = useBasicName(name as string)
   const { address = '' } = useAccount()
+
   const { register, watch, getFieldState, handleSubmit, setValue, getValues, setError, formState } =
     useForm<FormData>({
       mode: 'onChange',
+      defaultValues: {
+        managerChoice: 'manager',
+        ownerChoice: 'owner',
+        dogfoodRaw: '',
+        address: '',
+      },
     })
 
   const managerChoiceWatch = watch('managerChoice')
   const ownerChoiceWatch = watch('ownerChoice')
-  const hasChoice = managerChoiceWatch || ownerChoiceWatch
-
   const { canSendOwner, canSendManager, sendNameFunctionCallDetails } = useSelfAbilities(
     address,
     name,
   )
+  const loadingAbilities = !canSendOwner && !canSendManager
+  const hasChoice =
+    (canSendManager && managerChoiceWatch) || (canSendOwner && ownerChoiceWatch) || loadingAbilities
 
   const hasErrors = Object.keys(formState.errors || {}).length > 0
 
@@ -165,6 +160,8 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
       newOwner: formData.address,
       managerChoice: formData.managerChoice,
       ownerChoice: formData.ownerChoice,
+      canSendOwner,
+      canSendManager,
       name,
       address,
       sendNameFunctionCallDetails,
@@ -231,7 +228,12 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
             }}
           />
         </InnerContainer>
-        {!hasChoice && <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>}
+        {!hasChoice && (
+          <>
+            <Spacer $height="3" />
+            <Helper type="error">{t('errors.ownerManagerChoice')}</Helper>
+          </>
+        )}
         <Spacer $height="3" />
         <FooterContainer>
           <Dialog.Footer

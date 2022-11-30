@@ -179,7 +179,7 @@ export function createTransactionStore({
     chainId: number,
     updateFn: (transactions: Transaction[]) => Transaction[],
   ): void {
-    // Ensure we’re always operating on the latest data in case we have
+    // Ensure we're always operating on the latest data in case we have
     // multiple instances/tabs/etc. since we write all data back to
     // local storage after updating
     data = loadData()
