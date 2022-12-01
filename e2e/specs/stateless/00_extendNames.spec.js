@@ -122,7 +122,7 @@ describe('Extend Names', () => {
       const newTimestamp = parseInt(timestamp) + 31536000000
       cy.findByTestId('owner-profile-button-expiry')
         .invoke('attr', 'data-timestamp')
-        .should('gt', newTimestamp.toString())
+        .should('eq', newTimestamp.toString())
     })
   })
 
@@ -153,7 +153,7 @@ describe('Extend Names', () => {
     cy.wait(5000)
     cy.get('@timestamp').then((timestamp) => {
       const newTimestamp = parseInt(timestamp) + 31536000000
-      cy.findByTestId('expiry-label')
+      cy.findByTestId('owner-profile-button-expiry')
         .invoke('attr', 'data-timestamp')
         .should('eq', newTimestamp.toString())
     })
