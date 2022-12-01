@@ -33,7 +33,42 @@
       "advanced": "Advanced",
       "permissions": "Permissions",
       "resolver": "Resolver",
-      "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible."
+      "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible.",
+      "options": {
+        "groups": {
+          "general": {
+            "label": "General",
+            "items": {
+              "location": "Location",
+              "name": "Nickname",
+              "description": "Biography",
+              "url": "Website"
+            }
+          },
+          "social": {
+            "label": "Social",
+            "items": {
+              "com.twitter": "Twitter",
+              "com.github": "GitHub",
+              "com.discord": "Discord"
+            }
+          },
+          "address": {
+            "label": "Address"
+          },
+          "website": {
+            "label": "Website"
+          },
+          "other": {
+            "label": "Other",
+            "items": {
+              "contentHash": "Content Hash",
+              "publicKey": "Public Key",
+              "abi": "ABI"
+            }
+          }
+        }
+      }
     },
     "complete": {
       "heading": "Congratulations!",

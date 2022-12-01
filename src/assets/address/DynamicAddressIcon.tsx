@@ -16,8 +16,13 @@ export const DynamicAddressIcon = ({
   name,
   ...props
 }: JSX.IntrinsicAttributes & {
-  name: AddressIconType
+  name: AddressIconType | string
 }) => {
-  const Icon = addressIconTypes[name]
+  if (name in addressIconTypes) {
+    const key = name as AddressIconType
+    const Icon = addressIconTypes[key] as any
+    return <Icon {...props} />
+  }
+  const Icon = dynamic(() => import('../Question.svg')) as any
   return <Icon {...props} />
 }

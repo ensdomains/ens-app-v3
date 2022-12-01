@@ -26,6 +26,8 @@ import { FuseObj } from '@app/types'
 import { ProfileFormObject, convertProfileToProfileFormObject } from '@app/utils/editor'
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
+import { AddProfileFieldView } from './AddProfileFieldView'
+import { DynamicDialog } from './DynamicDialog'
 import Resolver from './Resolver'
 
 const StyledCard = styled.form(
@@ -505,6 +507,9 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
           </ButtonContainer>
         </ContentContainer>
       </StyledCard>
+      <DynamicDialog>
+        <AddProfileFieldView />
+      </DynamicDialog>
     </>
   )
 }

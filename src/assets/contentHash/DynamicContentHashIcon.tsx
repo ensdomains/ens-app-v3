@@ -14,8 +14,12 @@ export const DynamicContentHashIcon = ({
   name,
   ...props
 }: JSX.IntrinsicAttributes & {
-  name: ContentHashIconType
+  name: ContentHashIconType | string
 }) => {
-  const Icon = contentHashIconTypes[name]
+  if (name in contentHashIconTypes) {
+    const Icon = contentHashIconTypes[name as ContentHashIconType]
+    return <Icon {...props} />
+  }
+  const Icon = dynamic(() => import('../Question.svg'))
   return <Icon {...props} />
 }

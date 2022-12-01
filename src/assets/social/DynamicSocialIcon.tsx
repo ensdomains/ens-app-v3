@@ -1,21 +1,37 @@
+/* eslint-disable @typescript-eslint/naming-convention */
 import dynamic from 'next/dynamic'
 
 export const socialIconTypes = {
-  discord: dynamic(() => import('./SocialDiscord.svg')),
-  discourse: dynamic(() => import('./SocialDiscourseColour.svg')),
-  github: dynamic(() => import('./SocialGithub.svg')),
-  medium: dynamic(() => import('./SocialMedium.svg')),
-  twitter: dynamic(() => import('./SocialTwitter.svg')),
-  youtube: dynamic(() => import('./SocialYoutube.svg')),
+  'com.discord': dynamic(() => import('./SocialDiscord.svg')),
+  'com.discourse': dynamic(() => import('./SocialDiscourseColour.svg')),
+  'com.github': dynamic(() => import('./SocialGithub.svg')),
+  'com.medium': dynamic(() => import('./SocialMedium.svg')),
+  'com.twitter': dynamic(() => import('./SocialTwitter.svg')),
+  'com.youtube': dynamic(() => import('./SocialYoutube.svg')),
+}
+
+export const socialIconColors = {
+  'com.discord': '#5A57DD',
+  'com.discourse': undefined,
+  'com.github': '#000000',
+  'com.medium': '#000000',
+  'com.twitter': '#65C5FC',
+  'com.youtube': '#FF0000',
 }
 
 export const DynamicSocialIcon = ({
   name,
   ...props
 }: {
-  name: keyof typeof socialIconTypes
+  name: keyof typeof socialIconTypes | string
   fill?: string
 }) => {
-  const Icon = socialIconTypes[name] as any
+  if (name in socialIconTypes) {
+    const key = name as keyof typeof socialIconTypes
+    const Icon = socialIconTypes[key] as any
+    const fill = socialIconColors[key]
+    return <Icon {...props} fill={fill} />
+  }
+  const Icon = dynamic(() => import('../Question.svg')) as any
   return <Icon {...props} />
 }
