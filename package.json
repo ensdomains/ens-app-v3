@@ -8,7 +8,7 @@
     "dev": "NODE_NO_WARNINGS=1 next dev",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
-    "dev:glocal": "NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens pnpm dev:nlocal",
+    "dev:glocal": "rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens pnpm dev:nlocal",
     "dev:gonline": "NEXT_PUBLIC_GRAPH_URI=https://api.thegraph.com/subgraphs/name/tateb/temp-goerli-ens pnpm dev",
     "build": "next build",
     "build:local": "NODE_ENV=development next build",

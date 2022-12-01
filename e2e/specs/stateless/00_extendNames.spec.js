@@ -1,6 +1,10 @@
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Extend Names', () => {
+  before(() => {
+    acceptMetamaskAccess(2, true)
+  })
+
   it('should be able to register multiple names on the address page', () => {
     cy.clearLocalStorage()
     const NAMES = ['other-registrant.eth']
@@ -63,14 +67,13 @@ describe('Extend Names', () => {
     cy.visit('/profile/other-registrant.eth')
     connectFromExisting()
     cy.findByTestId('extend-button').should('be.visible')
-    // Maybe add this back in
-    // cy.findByTestId('expiry-label').should('be.visible')
-    // cy.findByTestId('expiry-label')
-    //   .invoke('attr', 'data-timestamp')
-    //   .then((timestamp) => {
-    //     cy.log(`timestamp: ${timestamp}`)
-    //     cy.wrap(timestamp).as('timestamp')
-    //   })
+    cy.findByTestId('owner-profile-button-expiry').should('be.visible')
+    cy.findByTestId('owner-profile-button-expiry')
+      .invoke('attr', 'data-timestamp')
+      .then((timestamp) => {
+        cy.log(`timestamp: ${timestamp}`)
+        cy.wrap(timestamp).as('timestamp')
+      })
 
     cy.log('should show the extend modal')
     cy.wait(1000)
@@ -117,9 +120,9 @@ describe('Extend Names', () => {
     cy.wait(5000)
     cy.get('@timestamp').then((timestamp) => {
       const newTimestamp = parseInt(timestamp) + 31536000000
-      cy.findByTestId('expiry-label')
+      cy.findByTestId('owner-profile-button-expiry')
         .invoke('attr', 'data-timestamp')
-        .should('eq', newTimestamp.toString())
+        .should('gt', newTimestamp.toString())
     })
   })
 
@@ -131,8 +134,8 @@ describe('Extend Names', () => {
     cy.findByTestId('extend-button').as('extend-button')
 
     cy.get('@extend-button').should('be.visible')
-    cy.findByTestId('expiry-label').should('be.visible')
-    cy.findByTestId('expiry-label')
+    cy.findByTestId('owner-profile-button-expiry').should('be.visible')
+    cy.findByTestId('owner-profile-button-expiry')
       .invoke('attr', 'data-timestamp')
       .then((timestamp) => {
         cy.log(`timestamp: ${timestamp}`)
@@ -156,7 +159,7 @@ describe('Extend Names', () => {
     })
   })
 
-  it('should be able to register multiple names on the names page', () => {
+  it('should be able to extend multiple names on the names page', () => {
     const NAMES = [
       'test123.eth',
       'with-subnames.eth',

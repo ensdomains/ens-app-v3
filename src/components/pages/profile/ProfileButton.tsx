@@ -78,6 +78,7 @@ const ProfileButton = ({
   link,
   value,
   testid,
+  timestamp,
 }: {
   prefixSize?: Space
   prefix?: React.ReactNode
@@ -85,6 +86,7 @@ const ProfileButton = ({
   link?: string
   value: string
   testid?: string
+  timestamp?: number
 }) => {
   const { space } = useTheme()
   const { copy, copied } = useCopied()
@@ -102,7 +104,7 @@ const ProfileButton = ({
           tone="grey"
           shadowless
         >
-          <Container data-testid={testid}>
+          <Container data-testid={testid} data-timestamp={timestamp}>
             <Wrapper>
               <div
                 data-testid="found"
@@ -242,9 +244,11 @@ export const OtherProfileButton = ({
 export const OwnerProfileButton = ({
   iconKey: label,
   value: address,
+  timestamp,
 }: {
   iconKey: string
   value: string
+  timestamp?: number
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
@@ -270,6 +274,7 @@ export const OwnerProfileButton = ({
         </OtherContainerTextPrefix>
       }
       testid={`owner-profile-button-${label}`}
+      timestamp={isExpiry ? timestamp : undefined}
     >
       {isExpiry ? address : primary || formattedAddress}
     </ProfileButton>

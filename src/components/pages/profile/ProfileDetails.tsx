@@ -157,12 +157,14 @@ export const ProfileDetails = ({
       key: 'expiry',
       type: 'text',
       value: nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry',
+      timestamp: nameDates?.expiryDate ? nameDates.expiryDate.getTime() : 0,
     },
   ]
 
-  console.log('owners: ', owners)
-  console.log('mappedOwners: ', mappedOwners)
-  console.log('expiry: ', nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry')
+  // console.log('nameDates: ', nameDates)
+  // console.log('owners: ', owners)
+  // console.log('mappedOwners: ', mappedOwners)
+  // console.log('expiry: ', nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry')
 
   return (
     <ProfileInfoBox $isCached={isCached}>
