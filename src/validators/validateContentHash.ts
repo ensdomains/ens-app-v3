@@ -5,7 +5,7 @@ import {
   getProtocolTypeAndContentId,
 } from '@app/utils/contenthash'
 
-type ContentHashOption = ContentHashIconType | 'all'
+export type ContentHashOption = ContentHashIconType | 'all'
 
 const contentHashToProtocols = {
   ipfs: ['ipfs', 'ipns'],
@@ -28,7 +28,7 @@ export const validateContentHash =
       !contentHashToProtocols[contentHashOption]?.includes(protocolType)
     )
       return 'Invalid protocol type'
-    console.log(protocolType, contentId)
+
     const encoded = encodeContentId(protocolType as ContentHashProtocol, contentId)
     if (encoded.error) return encoded.error
     return true
