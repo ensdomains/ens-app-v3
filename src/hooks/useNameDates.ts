@@ -36,10 +36,13 @@ export const useNameDates = (name: string) => {
     },
     {
       enabled: ready,
-      select: (d) => ({
-        registrationDate: new Date(parseInt(d.registrationDate) * 1000),
-        expiryDate: new Date(parseInt(d.expiryDate) * 1000),
-      }),
+      select: (queryResult) => {
+        if (!queryResult) return null
+        return {
+          registrationDate: new Date(parseInt(queryResult?.registrationDate) * 1000),
+          expiryDate: new Date(parseInt(queryResult?.expiryDate) * 1000),
+        }
+      },
     },
   )
 

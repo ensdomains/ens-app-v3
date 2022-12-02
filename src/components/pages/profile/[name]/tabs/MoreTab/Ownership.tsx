@@ -137,7 +137,11 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
               {primary || shortenAddress(address)}
             </Name>
-            {primary && <Typography>{shortenAddress(address)}</Typography>}
+            {primary && (
+              <Typography data-testid={`owner-button-address-${label}`}>
+                {shortenAddress(address)}
+              </Typography>
+            )}
           </TextContainer>
         </OwnerDetailContainer>
         <Tag tone="accent">{t(label)}</Tag>
