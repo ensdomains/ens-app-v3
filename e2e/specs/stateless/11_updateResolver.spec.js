@@ -21,33 +21,36 @@ describe('Update Resolver', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
-        cy.findByTestId('resolver-address').should('have.text', oldResolver)
+        cy.findByTestId('name-details-text').should('have.text', oldResolver)
       })
     })
 
     describe('When profile is not updated to latest resolver', () => {
       it('should allow user to update if they have chosen to use the latest resolver', () => {
-        cy.findByTestId('accordion-resolverDetails-edit').click()
+        cy.visit('/profile/wrapped.eth')
+        cy.findByTestId('more-tab').click()
+        cy.findByTestId('edit-resolver-button').click()
         cy.findByTestId('update-button').click()
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
 
-        //This is only needed on cypress, not sure why!
-        cy.findByTestId('accordion-resolverDetails-edit').click()
+        // This is only needed on cypress, not sure why!
+        cy.reload()
+        cy.findByTestId('edit-resolver-button').click()
         cy.findByTestId('update-button').click()
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
 
-        cy.findByTestId('resolver-address').should('have.text', newResolver)
+        cy.findByTestId('name-details-text').should('have.text', newResolver)
       })
     })
   })
 
   describe('Unhappy', () => {
     it('should not allow user to update if they enter an invalid address', () => {
-      cy.findByTestId('accordion-resolverDetails-edit').click()
+      cy.findByTestId('edit-resolver-button').click()
       cy.findByTestId('custom-resolver-radio').click()
       cy.findByTestId('dogfood').type('0xInvalid')
       cy.findByTestId('update-button').should('be.disabled')
