@@ -148,8 +148,10 @@ describe('Send Flow', () => {
   })
 
   describe('Unhappy', () => {
+    before(() => {
+      acceptMetamaskAccess(2, true)
+    })
     it('should not show send button when parent is owner and not manager', () => {
-      acceptMetamaskAccess(2)
       cy.visit('/profile/test123.eth')
       cy.findByText('More').click({ force: true })
       cy.wait(1000)
@@ -174,7 +176,6 @@ describe('Send Flow', () => {
       cy.findByText('Send').should('not.exist')
     })
     it('should not show send button when subname is wrapped and parent is unwrapped', () => {
-      acceptMetamaskAccess(2)
       cy.visit('/profile/sub.test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByTestId('wrapper-cta-button').click()
