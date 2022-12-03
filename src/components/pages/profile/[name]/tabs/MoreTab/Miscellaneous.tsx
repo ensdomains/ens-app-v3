@@ -167,7 +167,7 @@ const Miscellaneous = ({ name }: { name: string }) => {
         </DateLayout>
         <DateLayout>
           <Typography>{t('name.expires')}</Typography>
-          <Typography>{formatExpiry(nameDates.expiryDate)}</Typography>
+          <Typography data-testid="expiry-data">{formatExpiry(nameDates.expiryDate)}</Typography>
           <Typography>{formatDateTime(nameDates.expiryDate)}</Typography>
           <Dropdown
             shortThrow
