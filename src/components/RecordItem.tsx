@@ -1,14 +1,12 @@
 import styled, { css } from 'styled-components'
 
-import { Typography } from '@ensdomains/thorin'
+import { Typography, mq } from '@ensdomains/thorin'
 
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
-import mq from '@app/mediaQuery'
-import { getTestId } from '@app/utils/utils'
 
-const RecordContainer = styled.button<{ $hasBackground?: boolean }>(({ theme, $hasBackground }) => [
-  css`
+const RecordContainer = styled.button(
+  ({ theme }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
@@ -16,13 +14,14 @@ const RecordContainer = styled.button<{ $hasBackground?: boolean }>(({ theme, $h
     justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    padding: ${theme.space['1.5']} ${theme.space['3']};
+    background: ${theme.colors.foregroundSecondary};
+    padding: ${theme.space['2.5']} ${theme.space['3']};
     border-radius: ${theme.radii.large};
+    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+
     font-size: calc(${theme.fontSizes.small} - ${theme.space.px});
     transition: all 0.15s ease-in-out;
     cursor: pointer;
-
-    ${$hasBackground ? `background: rgba(0, 0, 0, 0.04);` : ``}
 
     &:hover {
       background: rgba(0, 0, 0, 0.08);
@@ -33,14 +32,16 @@ const RecordContainer = styled.button<{ $hasBackground?: boolean }>(({ theme, $h
       background: rgba(0, 0, 0, 0.04);
       transform: translateY(0);
     }
-  `,
-  mq.md.min(css`
-    font-size: ${theme.fontSizes.small};
-  `),
-])
 
-const RecordKey = styled(Typography)(({ theme }) => [
-  css`
+    ${mq.md.min(css`
+      font-size: ${theme.fontSizes.root};
+    `)}
+  `,
+)
+
+const RecordKey = styled(Typography)(
+  ({ theme }) => css`
+    color: ${theme.colors.textTertiary};
     width: ${theme.space['20']};
     min-width: ${theme.space['20']};
     height: ${theme.space.full};
@@ -52,83 +53,77 @@ const RecordKey = styled(Typography)(({ theme }) => [
     text-align: left;
     overflow-wrap: break-word;
     word-break: break-all;
-  `,
-  mq.md.min(css`
-    width: ${theme.space['28']};
-    min-width: ${theme.space['28']};
-  `),
-])
 
-const CopyButtonWrapper = styled.div<{ $hasBackground?: boolean }>(
-  ({ $hasBackground }) => css`
+    ${mq.md.min(css`
+      width: ${theme.space['28']};
+      min-width: ${theme.space['28']};
+    `)}
+  `,
+)
+
+const CopyButtonWrapper = styled.div(
+  () => css`
     flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: flex-end;
-
-    ${$hasBackground
-      ? ``
-      : `
-      align-self: flex-start;
-      padding-top: 3px;
-    `}
   `,
 )
 
-const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(({ theme, $fullWidth }) => [
-  css`
+const RecordValue = styled(Typography)<{ $fullWidth: boolean }>(
+  ({ theme, $fullWidth }) => css`
     max-width: calc(
       100% - ${$fullWidth ? '0px' : theme.space['20']} - ${theme.space['9']} -
         ${$fullWidth ? theme.space['2'] : theme.space['4']}
     );
+
+    ${mq.md.min(css`
+      max-width: calc(
+        100% - ${$fullWidth ? '0px' : theme.space['28']} - ${theme.space['9']} -
+          ${$fullWidth ? theme.space['2'] : theme.space['4']}
+      );
+    `)}
+    display: inline-block;
     overflow-wrap: anywhere;
     text-align: left;
   `,
-  mq.md.min(css`
-    max-width: calc(
-      100% - ${$fullWidth ? '0px' : theme.space['28']} - ${theme.space['9']} -
-        ${$fullWidth ? theme.space['2'] : theme.space['4']}
-    );
-  `),
-  mq.lg.min(css`
-    max-width: 400px;
-  `),
-  mq.xl.min(css`
-    max-width: 600px;
-  `),
-])
+)
 
 const InnerCopyButton = styled.div(
   ({ theme }) => css`
-    width: ${theme.space['9']};
     display: flex;
     align-items: center;
     justify-content: center;
+    width: ${theme.space['9']};
   `,
 )
 
-const LegacyType = styled(Typography)`
-  ${({ theme }) => `
+const LegacyType = styled(Typography)(
+  ({ theme }) => css`
     color: ${theme.colors.textTertiary};
-  `}
-`
+  `,
+)
 
-export const RecordItem = ({
+const RecordItem = ({
   itemKey,
   value,
   showLegacy,
-  hasBackground = true,
-  ...props
+  type,
 }: {
   itemKey?: string
   value: string
   showLegacy?: boolean
-  hasBackground?: boolean
+  type: 'text' | 'address' | 'contentHash'
 }) => {
   const { copy, copied } = useCopied()
 
   return (
-    <RecordContainer onClick={() => copy(value)} $hasBackground={hasBackground}>
+    <RecordContainer
+      data-testid={
+        itemKey ? `name-details-${type}-${itemKey.toLowerCase()}` : `name-details-${type}`
+      }
+      onClick={() => copy(value)}
+    >
       {itemKey && (
         <RecordKey weight="bold">
           {showLegacy ? itemKey.replace('_LEGACY', '') : itemKey}
@@ -137,14 +132,14 @@ export const RecordItem = ({
           </LegacyType>
         </RecordKey>
       )}
-      <RecordValue $fullWidth={!itemKey} data-testid={getTestId(props, 'record-value')}>
-        {value}
-      </RecordValue>
-      <CopyButtonWrapper $hasBackground={hasBackground}>
+      <RecordValue $fullWidth={!itemKey}>{value}</RecordValue>
+      <CopyButtonWrapper>
         <InnerCopyButton>
-          {value && <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />}
+          <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
         </InnerCopyButton>
       </CopyButtonWrapper>
     </RecordContainer>
   )
 }
+
+export default RecordItem

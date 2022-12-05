@@ -1,27 +1,32 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Typography, mq } from '@ensdomains/thorin'
+import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
+import { useNameDates } from '@app/hooks/useNameDates'
+import useOwners from '@app/hooks/useOwners'
+import { useProfileActions } from '@app/hooks/useProfileActions'
+import { formatExpiry } from '@app/utils/utils'
 
-import { AddressProfileButton, OtherProfileButton, SocialProfileButton } from './ProfileButton'
+import {
+  AddressProfileButton,
+  OtherProfileButton,
+  OwnerProfileButton,
+  SocialProfileButton,
+} from './ProfileButton'
 
-const ProfileInfoBox = styled(CacheableComponent)(({ theme }) => [
-  css`
-    padding: ${theme.space['4']} ${theme.space['4']};
-    background-color: ${theme.colors.background};
-    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
-    border-radius: ${theme.radii['2xLarge']};
-  `,
-  mq.md.min(css`
-    padding: ${theme.space['8']} ${theme.space['8']};
-  `),
-])
+const ProfileInfoBox = styled(CacheableComponent)(
+  ({ theme }) =>
+    css`
+      background-color: ${theme.colors.background};
+      border-radius: ${theme.radii['2xLarge']};
+      border: ${theme.space.px} solid ${theme.colors.borderSecondary};
+    `,
+)
 
 const Stack = styled.div(
   ({ theme }) => css`
@@ -35,11 +40,9 @@ const Stack = styled.div(
 
 const SectionTitle = styled(Typography)(({ theme }) => [
   css`
+    color: ${theme.colors.textTertiary};
     margin-left: ${theme.space['2']};
   `,
-  mq.md.min(css`
-    margin-left: ${theme.space['3']};
-  `),
 ])
 
 const ProfileSection = ({
@@ -58,7 +61,7 @@ const ProfileSection = ({
   type?: 'address' | 'text'
 }) => {
   const { t } = useTranslation('profile')
-  const Button = button
+  const ButtonComponent = button
   const supportedArray = supported
     ? array.filter((x) => supported.includes(x.key.toLowerCase()))
     : array
@@ -68,12 +71,10 @@ const ProfileSection = ({
 
   return condition ? (
     <div>
-      <SectionTitle color="textSecondary" weight="bold" size="base">
-        {t(label)}
-      </SectionTitle>
+      <SectionTitle weight="bold">{t(label)}</SectionTitle>
       <Stack>
         {supportedArray.map((item: { key: string; value: string; type?: 'text' | 'address' }) => (
-          <Button {...{ ...item, iconKey: item.key }} />
+          <ButtonComponent {...{ ...item, iconKey: item.key }} />
         ))}
         {unsupportedArray.length > 0 &&
           unsupportedArray.map(
@@ -92,18 +93,55 @@ const RecordsStack = styled.div(
     flex-direction: column;
     flex-gap: ${theme.space['4']};
     gap: ${theme.space['4']};
+    padding: ${theme.space['4']};
+
+    ${mq.md.min(css`
+      padding: ${theme.space['6']};
+    `)}
+  `,
+)
+
+const Actions = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    flex-flow: row wrap;
+    gap: ${theme.space['2']};
+
+    border-top: 1px solid ${theme.colors.borderSecondary};
+    padding: ${theme.space['4']};
+
+    ${mq.md.min(css`
+      & > .leading {
+        flex-grow: 1;
+        order: -1;
+        & > button {
+          width: min-content;
+        }
+      }
+
+      padding: ${theme.space['4']} ${theme.space['6']};
+    `)}
   `,
 )
 
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
+  owners,
+  actions,
   isCached,
+  name,
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
+  owners: ReturnType<typeof useOwners>
+  actions: ReturnType<typeof useProfileActions>['profileActions']
   isCached?: boolean
+  name: string
 }) => {
+  const { data: nameDates } = useNameDates(name)
   const otherRecords = [
     ...textRecords
       .filter(
@@ -113,8 +151,15 @@ export const ProfileDetails = ({
       )
       .map((x) => ({ ...x, type: 'text' })),
   ]
-
-  if (!textRecords.length && !addresses.length) return null
+  const mappedOwners = [
+    ...(owners?.map((x) => ({ key: x.label, value: x.address })) || []),
+    {
+      key: 'expiry',
+      type: 'text',
+      value: nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry',
+      timestamp: nameDates?.expiryDate ? nameDates.expiryDate.getTime() : 0,
+    },
+  ]
 
   return (
     <ProfileInfoBox $isCached={isCached}>
@@ -142,7 +187,31 @@ export const ProfileDetails = ({
           array={otherRecords}
           button={OtherProfileButton}
         />
+        <ProfileSection
+          label="ownership"
+          condition={!!mappedOwners}
+          array={mappedOwners!}
+          button={OwnerProfileButton}
+        />
       </RecordsStack>
+      {actions && (
+        <Actions data-testid="profile-actions">
+          {actions.map((action) => (
+            <div className={action.red ? 'leading' : ''} key={action.label}>
+              <Button
+                data-testid={`profile-action-${action.label}`}
+                shadowless
+                onClick={action.onClick}
+                size="small"
+                tone={action.red ? 'red' : 'accent'}
+                variant={action.red ? 'secondary' : 'primary'}
+              >
+                {action.label}
+              </Button>
+            </div>
+          ))}
+        </Actions>
+      )}
     </ProfileInfoBox>
   )
 }
