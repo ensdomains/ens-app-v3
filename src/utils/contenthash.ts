@@ -10,6 +10,8 @@ type EncodedContentHash = {
 
 export type ContentHashProtocol = 'ipfs' | 'ipns' | 'bzz' | 'onion' | 'onion3' | 'sia' | 'arweave'
 
+export type ContentHashProvider = 'ipfs' | 'swarm' | 'onion' | 'skynet' | 'arweave'
+
 export const getContentHashLink = (
   name: string,
   network: number,
@@ -201,4 +203,19 @@ export const encodeContenthash = (address: string) => {
   const [, protocol, contentId] = matched
 
   return encodeContentId(protocol as ContentHashProtocol, contentId)
+}
+
+const contentHashProtocolToProviderMap: { [key: string]: ContentHashProvider | undefined } = {
+  ipfs: 'ipfs',
+  ipns: 'ipfs',
+  bzz: 'swarm',
+  onion: 'onion',
+  onion3: 'onion',
+  sia: 'skynet',
+  arweave: 'arweave',
+}
+
+export const contentHashProtocolToContentHashProvider = (protocol?: string) => {
+  if (!protocol) return
+  return contentHashProtocolToProviderMap[protocol]
 }

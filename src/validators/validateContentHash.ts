@@ -1,11 +1,11 @@
-import { ContentHashIconType } from '@app/assets/contentHash/DynamicContentHashIcon'
 import {
   ContentHashProtocol,
+  ContentHashProvider,
   encodeContentId,
   getProtocolTypeAndContentId,
 } from '@app/utils/contenthash'
 
-export type ContentHashOption = ContentHashIconType | 'all'
+export type ContentHashProviderOrAll = ContentHashProvider | 'all'
 
 const contentHashToProtocols = {
   ipfs: ['ipfs', 'ipns'],
@@ -16,17 +16,14 @@ const contentHashToProtocols = {
 }
 
 export const validateContentHash =
-  (contentHashOption: ContentHashOption) =>
+  (provider: ContentHashProviderOrAll) =>
   (address?: string): string | boolean => {
     if (!address) return true
 
     const { protocolType, contentId, error } = getProtocolTypeAndContentId(address)
     if (!contentId) return 'Missing content id'
     if (error) return error
-    if (
-      contentHashOption !== 'all' &&
-      !contentHashToProtocols[contentHashOption]?.includes(protocolType)
-    )
+    if (provider !== 'all' && !contentHashToProtocols[provider]?.includes(protocolType))
       return 'Invalid protocol type'
 
     const encoded = encodeContentId(protocolType as ContentHashProtocol, contentId)

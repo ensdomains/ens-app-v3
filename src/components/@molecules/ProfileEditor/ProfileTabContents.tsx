@@ -8,7 +8,7 @@ import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
 import { validateCryptoAddress } from '@app/utils/validate'
-import { ContentHashOption, validateContentHash } from '@app/validators/validateContentHash'
+import { ContentHashProviderOrAll, validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(
   () => css`
@@ -271,7 +271,7 @@ const ProfileTabContents = ({
                     setWebsiteOption(undefined)
                   }}
                   {...register('website', {
-                    validate: validateContentHash(websiteOption.value as ContentHashOption),
+                    validate: validateContentHash(websiteOption.value as ContentHashProviderOrAll),
                   })}
                 />
               ),
