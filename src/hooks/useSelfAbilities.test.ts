@@ -1092,6 +1092,5 @@ describe('useSelfAbilities', () => {
     })
     const { result } = renderHook(() => useSelfAbilities(name, account))
     expect(result.current.canSend).toBe(false)
-    console.log('result: ', result.current)
   })
 })

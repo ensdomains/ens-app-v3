@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/naming-convention */
-import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+import { fireEvent, mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { useAccount } from 'wagmi'
 
@@ -203,5 +203,32 @@ describe('<AvatarNFT />', () => {
     render(<AvatarNFT {...props} />)
 
     await waitFor(() => expect(mockedFetch).toHaveBeenCalledTimes(1))
+  })
+
+  it('should show message if search returns no results', async () => {
+    global.fetch = jest.fn()
+    const mockedFetch = global.fetch as jest.Mock
+    const ownedNfts = Array.from({ length: 5 }, generateNFT(true))
+    mockedFetch.mockImplementation(() =>
+      Promise.resolve({
+        json: async () => ({
+          ownedNfts,
+          totalCount: 5,
+        }),
+      }),
+    )
+
+    render(<AvatarNFT {...props} />)
+    const searchInput = screen.getByTestId('avatar-search-input')
+    mockedFetch.mockImplementation(() =>
+      Promise.resolve({
+        json: async () => ({
+          ownedNfts: [],
+          totalCount: 0,
+        }),
+      }),
+    )
+    await userEvent.type(searchInput, 'blahblahblah')
+    expect(screen.getByText('input.profileEditor.tabs.avatar.nft.noResults')).toBeVisible()
   })
 })

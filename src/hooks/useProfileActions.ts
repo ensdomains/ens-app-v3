@@ -32,6 +32,7 @@ export const useProfileActions = ({
 
   const profileActions = useMemo(() => {
     const actions: { onClick: () => void; red?: boolean; label: string; disabled?: boolean }[] = []
+    if (!address) return actions
     if ((selfAbilities.canEdit || profile?.address === address) && primaryName !== name) {
       const setAsPrimaryTransactions: GenericTransaction[] = [
         makeTransactionItem('setPrimaryName', {

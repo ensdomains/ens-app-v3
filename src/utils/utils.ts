@@ -65,13 +65,18 @@ export const isBrowser = !!(
   window.document.createElement
 )
 
-export const isDNSName = (name: string): boolean => {
+export const checkDNSName = (name: string): boolean => {
   const labels = name?.split('.')
 
   return !!labels && labels[labels.length - 1] !== 'eth'
 }
 
-export const isASubname = (name: string) => name.split('.').length > 2
+export const checkETHName = (labels: string[]) => labels[labels.length - 1] === 'eth'
+
+export const checkETH2LDName = (isDotETH: boolean, labels: string[], canBeShort?: boolean) =>
+  isDotETH && labels.length === 2 && (canBeShort || labels[0].length >= 3)
+
+export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {
   const bytes = toUtf8Bytes(label)

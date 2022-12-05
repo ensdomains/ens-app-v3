@@ -1,0 +1,165 @@
+{
+  "input": {
+    "profileEditor": {
+      "tabs": {
+        "avatar": {
+          "dropdown": {
+            "selectNFT": "Kies NFT",
+            "uploadImage": "Upload Foto"
+          },
+          "nft": {
+            "title": "Kies een NFT",
+            "searchPlaceholder": "Zoek voor een NFT",
+            "loading": "Jouw NFTs laden",
+            "unknown": "Onbekende NFT",
+            "noNFTs": "Geen NFTs gevonden voor dit adres.",
+            "selected": {
+              "title": "Geselecteerde NFT",
+              "subtitle": "Weet je zeker dat je deze NFT wilt gebruiken?"
+            }
+          },
+          "image": {
+            "title": "Pas foto aan",
+            "upload": {
+              "title": "Upload Avatar",
+              "subtitle": "Je moet een bericht ondertekenen om een avatar te kunnen uploaden. Hier zitten geen kosten aan verbonden.",
+              "action": "Onderteken en upload"
+            }
+          }
+        },
+        "general": {
+          "label": "Algemeen",
+          "name": {
+            "label": "Bijnaam",
+            "placeholder": "Jan Smit"
+          },
+          "url": {
+            "label": "Website",
+            "placeholder": "https://ens.domains"
+          },
+          "location": {
+            "label": "Location",
+            "placeholder": "Metaverse"
+          },
+          "description": {
+            "label": "Short Bio",
+            "placeholder": "Ik ben een kaaskop uit nederland."
+          }
+        },
+        "accounts": {
+          "label": "Accounts",
+          "addAccount": "Voeg account toe",
+          "noOptions": "Geen account opties beschikbaar",
+          "placeholder": {
+            "default": "Voeg username hier toe",
+            "com.twitter": "e.g. yogicodes",
+            "com.github": "e.g. yogicodes",
+            "com.discord": "e.g. yogicodes#4323"
+          }
+        },
+        "address": {
+          "label": "Adres",
+          "addAddress": "Voeg adres toe",
+          "noOptions": "Geen adres opties beschikbaar",
+          "placeholder": {
+            "default": "Voeg adres hier toe",
+            "ETH": "0xD9hbQK...",
+            "BNB": "0xD9hbQK...",
+            "BTC": "3FZbgi29...",
+            "LTC": "3FZbgi29...",
+            "SOL": "D4kA7VzHnmV...",
+            "DOT": "1D4kA7VxH...",
+            "DOGE": "DFabcd12..."
+          }
+        },
+        "contentHash": {
+          "label": "Website",
+          "addContentHash": "Voeg gedecentralizeerde website hier toe",
+          "placeholder": {
+            "default": "Voeg url hier toe",
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "arweave://...",
+            "swarm": "bzz://..."
+          }
+        },
+        "other": {
+          "label": "Anders",
+          "addRecord": "Voeg record toe",
+          "createRecord": "Type record naam...",
+          "placeholder": {
+            "default": "Voeg waarde hier toe..."
+          }
+        }
+      },
+      "warningOverlay": {
+        "resumable": {
+          "title": "Hervatbare transactie",
+          "subtitle": "Je hebt hiervoor een transactie gestart. Click Hervat om die voort te zetten.",
+          "action": "Hervat"
+        },
+        "migrate": {
+          "title": "Migreer resolver",
+          "subtitle": "Je hebt je profiel gemigreerd maar je resolver nog niet geupdate. Click update om naar de laatste resolver te updaten.",
+          "action": "Update"
+        },
+        "noResolver": {
+          "title": "Geen resolver gekoppeld",
+          "subtitle": "Je moet een resolver zetten om je profiel aan te kunnen passen.",
+          "action": "Update"
+        },
+        "oldRegistry": {
+          "title": "Je registry is out of date",
+          "subtitle": "Migreren naar de nieuwe registry is niet beschikbaar, maar je kan hem nogsteeds migreren via de oude app.",
+          "action": "Migreer"
+        },
+        "default": {
+          "title": "Je resolver is out of date",
+          "subtitle": "Profiel editing kan pas na dat de resolver is geupdate.",
+          "action": "Update"
+        }
+      }
+    },
+    "editResolver": {
+      "latestLabel": "Gebruik laatste resolver",
+      "etherscan": "Etherscan",
+      "latestMessage": "Je gebruikt de laatste resolver",
+      "customLabel": "Handmatige resolver",
+      "customPlaceholder": "Vul handmatige resolver adres hier"
+    },
+    "extendNames": {
+      "title_one": "Verleng Naam",
+      "title_other": "Verleng {{count}} Namen",
+      "invoice": {
+        "extension": "{{count}} jaar verlenging",
+        "transaction": "Transactie Kosten",
+        "total": "Geschatte kosten"
+      },
+      "bannerMsg": "Verlengen voor meerdere jaren scheelt netwerk kosten door jaarlijke transacties te voorkomen.",
+      "gasLimitError": "Onvoldoende balans"
+    },
+    "transferProfile": {
+      "title": "Transfer Profiel",
+      "message1": "Voor het upgraden kan je je momentele profiel overkopieren, anders raak je deze kwijt na de upgrade.",
+      "message2": "Wil je je momentele profiel overkopieren?"
+    }
+  },
+  "transaction": {
+    "extendNames": {
+      "actionValue": "Verleng registratie",
+      "costValue": "{{value}} + kosten",
+      "warning": "Deze naam verlengen zal je niet eigenaar maken"
+    },
+    "deleteSubname": {
+      "warning": "Hello out there"
+    }
+  },
+  "intro": {
+    "migrateAndUpdateResolver": {
+      "title": "De aanpassingen die je wil maken aan je profiel vereisen dat je je profiel upgrade.",
+      "link": "Leer meer over resolver upgrades",
+      "warning": "Weet dat als je dit op welk moment dan ook cancelled dat de aanpassingen ongedaan gemaakt worden."
+    }
+  }
+
+}
