@@ -1,15 +1,32 @@
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Avatar, Space } from '@ensdomains/thorin'
+import { Avatar, Space, mq } from '@ensdomains/thorin'
 
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
+import { QuerySpace } from '@app/types'
 
-const Wrapper = styled.div<{ $size?: Space }>(
+const Wrapper = styled.div<{ $size?: QuerySpace }>(
   ({ theme, $size }) => css`
-    width: ${$size ? theme.space[$size] : theme.space.full};
-    height: ${$size ? theme.space[$size] : theme.space.full};
+    ${typeof $size === 'object' &&
+    css`
+      width: ${theme.space[$size.min]};
+      height: ${theme.space[$size.min]};
+    `}
+    ${typeof $size !== 'object'
+      ? css`
+          width: ${$size ? theme.space[$size] : theme.space.full};
+          height: ${$size ? theme.space[$size] : theme.space.full};
+        `
+      : Object.entries($size)
+          .filter(([key]) => key !== 'min')
+          .map(([key, value]) =>
+            mq[key as keyof typeof mq].min(css`
+              width: ${theme.space[value as Space]};
+              height: ${theme.space[value as Space]};
+            `),
+          )}
 
     img {
       display: block;
@@ -19,7 +36,7 @@ const Wrapper = styled.div<{ $size?: Space }>(
 
 type BaseProps = {
   network: number
-  size?: Space
+  size?: QuerySpace
 }
 
 type Name = {

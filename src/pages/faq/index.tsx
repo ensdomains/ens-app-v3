@@ -64,13 +64,11 @@ const OptionItem = styled.a(
   `,
 )
 
-const spacing = '1fr'
-
 export default function Page() {
   const { t } = useTranslation('faq')
 
   return (
-    <Content singleColumnContent title={t('title')} spacing={spacing}>
+    <Content singleColumnContent title={t('title')}>
       {{
         leading: null,
         trailing: (

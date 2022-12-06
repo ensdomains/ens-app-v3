@@ -23,7 +23,10 @@ import {
   getDirtyFields,
 } from '@app/utils/editor'
 
-import { getProtocolTypeAndContentId } from '../utils/contenthash'
+import {
+  contentHashProtocolToContentHashProvider,
+  getProtocolTypeAndContentId,
+} from '../utils/contenthash'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -243,8 +246,9 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
       setHasExistingWebsite(!!newDefaultValues.website)
       const { protocolType } = getProtocolTypeAndContentId(newDefaultValues.website)
       if (protocolType) {
-        const option = websiteOptions.find(({ value }) => value === protocolType)
-        setWebsiteOption(option || undefined)
+        const contentHashProvider = contentHashProtocolToContentHashProvider(protocolType)
+        const option = websiteOptions.find(({ value }) => value === contentHashProvider)
+        setWebsiteOption(option)
       }
 
       overwrites?.texts?.forEach((text) => {

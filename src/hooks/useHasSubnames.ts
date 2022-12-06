@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useQuery } from 'wagmi'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -6,40 +6,64 @@ import { emptyAddress } from '../utils/constants'
 
 const FETCH_PAGE_SIZE = 50
 
-type Subnames = Awaited<ReturnType<ReturnType<typeof useEns>['getSubnames']>>['subnames']
+type Subnames = {
+  id: string
+  labelName: string | null
+  truncatedName?: string | undefined
+  labelhash: string
+  isMigrated: boolean
+  name: string
+  owner: {
+    id: string
+  }
+}[]
 
 export const useHasSubnames = (name: string) => {
   const { getSubnames, ready } = useEns()
 
   const isSubname = name && name.split('.').length > 2
 
-  const [hasSubnames, setHasSubnames] = useState(false)
-  const [done, setDone] = useState(false)
-  const [cursor, setCursor] = useState<Subnames | undefined>()
+  const {
+    data: hasSubnames,
+    isLoading,
+    isFetched,
+    internal: { isFetchedAfterMount },
+    status,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isFetching: _isFetching,
+  } = useQuery(
+    ['getSubnames', name],
+    async () => {
+      let cursor: Subnames = []
+      let done = false
 
-  const getSubnamesCallback = useCallback(async () => {
-    const result = await getSubnames({
-      name,
-      lastSubnames: cursor,
-      orderBy: 'labelName',
-      orderDirection: 'desc',
-      pageSize: FETCH_PAGE_SIZE,
-    })
-    const { subnames } = result
-    const subnamesHasOwner = result.subnames.some((subname) => subname.owner.id !== emptyAddress)
-    const fetchedFullPage = result.subnames.length === FETCH_PAGE_SIZE
+      while (!done) {
+        // eslint-disable-next-line no-await-in-loop
+        const { subnames } = await getSubnames({
+          name,
+          lastSubnames: cursor,
+          orderBy: 'labelName',
+          orderDirection: 'desc',
+          pageSize: FETCH_PAGE_SIZE,
+        })
+        const anyHasOwner = subnames.some((subname) => subname.owner.id !== emptyAddress)
+        if (anyHasOwner) {
+          return true
+        }
+        done = subnames.length !== FETCH_PAGE_SIZE
+        cursor = subnames
+      }
 
-    setHasSubnames(subnamesHasOwner)
-    setDone(subnamesHasOwner || !fetchedFullPage)
-    setCursor(subnames)
-  }, [cursor, name, getSubnames])
-
-  useEffect(() => {
-    if (ready && !!name && isSubname && !done) getSubnamesCallback()
-  }, [getSubnamesCallback, ready, name, isSubname, done])
+      return false
+    },
+    {
+      enabled: !!(ready && name && isSubname),
+    },
+  )
 
   return {
     hasSubnames,
-    isLoading: isSubname && !done,
+    isLoading,
+    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

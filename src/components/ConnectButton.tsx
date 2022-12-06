@@ -77,7 +77,7 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
         onClick={() => openConnectModal?.()}
         variant="primary"
         size={breakpoints.md || large ? 'medium' : 'extraSmall'}
-        shadowless={large}
+        shadowless={large || isTabBar}
       >
         {t('wallet.connect')}
       </Button>
