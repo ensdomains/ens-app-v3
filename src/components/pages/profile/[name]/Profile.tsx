@@ -149,6 +149,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   }
 
   const selfAbilities = useSelfAbilities(address, name)
+  console.log('selfAbilities: ', selfAbilities)
 
   useEffect(() => {
     if (shouldShowSuccessPage(transactions)) {

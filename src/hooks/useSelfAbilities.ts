@@ -283,6 +283,8 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
   const basicNameData = useBasicName(name)
   const parentBasicNameData = useBasicName(parent)
 
+  console.log('basicNameData: ', basicNameData)
+
   return useMemo(() => {
     const abilities: {
       canEdit: boolean
@@ -290,6 +292,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSendManager: boolean
       canSendOwner: boolean
       canSend: boolean
+      canEditResolver: boolean
       sendNameFunctionCallDetails: FunctionCallDetails
     } = {
       canEdit: false,
@@ -297,6 +300,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSendManager: false,
       canSendOwner: false,
       canSend: false,
+      canEditResolver: false,
       sendNameFunctionCallDetails: {},
     }
 
@@ -332,6 +336,11 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
     if (basicNameData?.ownerData?.owner === address) {
       abilities.canEdit = true
     }
+
+    if (basicNameData.wrapperData) {
+      abilities.canEditResolver = !basicNameData.wrapperData.fuseObj.CANNOT_SET_RESOLVER
+    }
+
     return abilities
   }, [address, name, is2LDEth, basicNameData, parentBasicNameData])
 }

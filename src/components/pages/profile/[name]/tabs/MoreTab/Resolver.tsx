@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Tag, Typography, mq } from '@ensdomains/thorin'
+import { Button, Tag, Tooltip, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import RecordItem from '@app/components/RecordItem'
@@ -30,20 +30,12 @@ const Container = styled(TabWrapper)(
   `,
 )
 
-const HeadingContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    & > button {
-      color: ${theme.colors.accent};
-      font-weight: ${theme.fontWeights.bold};
-      padding: 0 ${theme.space['2']};
-    }
-  `,
-)
+const HeadingContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+`
 
 const InnerHeading = styled.div(
   ({ theme }) => css`
@@ -62,12 +54,12 @@ const InnerHeading = styled.div(
 
 const Resolver = ({
   name,
-  canEdit,
+  canEditResolver,
   resolverAddress,
   isCachedData,
 }: {
   name: string
-  canEdit: boolean
+  canEditResolver: boolean
   resolverAddress: string | undefined
   isCachedData: boolean
 }) => {
@@ -102,7 +94,7 @@ const Resolver = ({
           </Typography>
           <Tag tone={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
-        {canEdit && (
+        {canEditResolver ? (
           <button
             style={{ cursor: 'pointer' }}
             type="button"
@@ -111,6 +103,21 @@ const Resolver = ({
           >
             {t('action.edit', { ns: 'common' })}
           </button>
+        ) : (
+          <>
+            <Tooltip
+              {...{
+                content: (
+                  <div>This name has revoked the permissions needed to perform this action</div>
+                ),
+                targetId: 'targetId',
+                placement: 'left',
+              }}
+            />
+            <Button id="targetId" psuedoDisabled style={{ width: 100, height: 40 }} shadowless>
+              Edit
+            </Button>
+          </>
         )}
       </HeadingContainer>
       <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />
