@@ -1,3 +1,4 @@
+/* eslint max-classes-per-file: "off" */
 import { normalise } from '@ensdomains/ensjs/utils/normalise'
 
 class ContentModifier {
@@ -9,6 +10,21 @@ class ContentModifier {
 
   element(element: Element) {
     element.setInnerContent(this.newContent)
+  }
+}
+
+class AttributeModifier {
+  private attributeName: string
+
+  private newContent: string
+
+  constructor(attributeName: string, newContent: string) {
+    this.attributeName = attributeName
+    this.newContent = newContent
+  }
+
+  element(element: Element) {
+    element.setAttribute(this.attributeName, this.newContent)
   }
 }
 
@@ -34,25 +50,18 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     rewrite = true
 
     const decodedName = decodeURIComponent(paths[2])
-    let normalisedName: string | null = null
+    let newTitle = 'Invalid Name - ENS'
+    let newDescription = 'An error occurred'
     try {
-      normalisedName = normalise(decodedName)
+      const normalisedName = normalise(decodedName)
+      newTitle = `${normalisedName} on ENS`
+      newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
       // eslint-disable-next-line no-empty
     } catch {}
     callback = (res) =>
       new HTMLRewriter()
-        .on(
-          'title',
-          new ContentModifier(normalisedName ? `${normalisedName} on ENS` : 'Invalid Name - ENS'),
-        )
-        .on(
-          'meta[name="description"]',
-          new ContentModifier(
-            normalisedName
-              ? `${normalisedName}'s profile on the Ethereum Name Service`
-              : `An error occurred`,
-          ),
-        )
+        .on('title', new ContentModifier(newTitle))
+        .on('meta[name="description"]', new AttributeModifier('content', newDescription))
         .transform(res)
   } else if (paths[1] === 'import' && !!paths[2]) {
     url.pathname = '/import'
