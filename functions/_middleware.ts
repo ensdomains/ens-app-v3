@@ -57,7 +57,9 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
       newTitle = `${normalisedName} on ENS`
       newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
       // eslint-disable-next-line no-empty
-    } catch {}
+    } catch {
+      console.error('Name could not be normalised')
+    }
     callback = (res) =>
       new HTMLRewriter()
         .on('title', new ContentModifier(newTitle))
