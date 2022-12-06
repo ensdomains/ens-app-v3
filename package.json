@@ -104,7 +104,6 @@
     "@ensdomains/ens-test-env": "^0.3.5",
     "@ethersproject/providers": "^5.7.0",
     "@next/bundle-analyzer": "^12.2.5",
-    "@next/swc-linux-x64-gnu": "12.1.4",
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/test-helpers": "^0.5.16",

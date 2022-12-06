@@ -163,9 +163,6 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
           '#FF9500',
           '#FFCC00',
         ]}
-        pieceWidth={{ min: 10, max: 20 }}
-        pieceHeight={{ min: 20, max: 50 }}
-        pieceShape="Square"
         gravity={0.25}
         initialVelocityY={20}
       />

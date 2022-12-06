@@ -1,3 +1,4 @@
+/* eslint-disable prettier/prettier */
 import { ethers } from 'ethers'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
