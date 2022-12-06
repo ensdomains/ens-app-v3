@@ -47,7 +47,7 @@
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
   },
   "dependencies": {
-    "@ensdomains/address-encoder": "^0.2.18",
+    "@ensdomains/address-encoder": "^0.2.20",
     "@ensdomains/content-hash": "^2.5.7",
     "@ensdomains/dnsprovejs": "0.4.1",
     "@ensdomains/dnssecoraclejs": "^0.2.7",
