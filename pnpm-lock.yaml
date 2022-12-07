@@ -30,7 +30,7 @@ importers:
       '@cloudflare/workers-types': ^3.14.1
       '@cloudflare/wrangler': ^1.19.12
       '@deploysentinel/cypress-debugger': ^0.5.5
-      '@ensdomains/address-encoder': ^0.2.18
+      '@ensdomains/address-encoder': ^0.2.20
       '@ensdomains/buffer': ^0.1.0
       '@ensdomains/content-hash': ^2.5.7
       '@ensdomains/dnsprovejs': 0.4.1
@@ -150,7 +150,7 @@ importers:
       wrangler: ^2.0.27
       yalc: ^1.0.0-pre.53
     dependencies:
-      '@ensdomains/address-encoder': 0.2.18
+      '@ensdomains/address-encoder': 0.2.20
       '@ensdomains/content-hash': 2.5.7
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
@@ -2087,8 +2087,8 @@ packages:
       nano-base32: 1.0.1
       ripemd160: 2.0.2
 
-  /@ensdomains/address-encoder/0.2.18:
-    resolution: {integrity: sha512-Elgi6smEraiEN5cUSGLfp/FVzMMFZDyMygOBL9sNCmpYBfQffJV0gwkQGGaniBwIhKRxttFN7jTpXM7+zKQRWQ==}
+  /@ensdomains/address-encoder/0.2.20:
+    resolution: {integrity: sha512-itaFxXavhdEnDcB2MuESzF9DDFb4xTNm5GyJu+MqzyplOKr6KtQBnj2LtH95qXpFxFhXQHoArOlGb/dfhkwfAg==}
     dependencies:
       bech32: 2.0.0
       blakejs: 1.2.1
@@ -2295,7 +2295,7 @@ packages:
     peerDependencies:
       ethers: '*'
     dependencies:
-      '@ensdomains/address-encoder': 0.2.18
+      '@ensdomains/address-encoder': 0.2.20
       '@ensdomains/content-hash': 2.5.7
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
@@ -18105,7 +18105,7 @@ packages:
       '@types/react': 17.0.30
       react: 17.0.2
       react-style-singleton: 2.2.1_bwnomau7tnufn56w7nc32j7my4
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: false
 
   /react-remove-scroll/2.5.4_bwnomau7tnufn56w7nc32j7my4:
@@ -18141,7 +18141,7 @@ packages:
       get-nonce: 1.0.1
       invariant: 2.2.4
       react: 17.0.2
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: false
 
   /react-transition-state/1.1.5_sfoxds7t5ydpegc3knd667wn6m:
@@ -20981,7 +20981,7 @@ packages:
     dependencies:
       '@types/react': 17.0.30
       react: 17.0.2
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: false
 
   /use-immer/0.7.0_immer@9.0.15+react@17.0.2:
@@ -21007,7 +21007,7 @@ packages:
       '@types/react': 17.0.30
       detect-node-es: 1.1.0
       react: 17.0.2
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: false
 
   /use-sync-external-store/1.2.0_react@17.0.2:
