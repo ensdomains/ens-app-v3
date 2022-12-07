@@ -1,9 +1,6 @@
 {
   "name": "ens-app-v2",
   "version": "0.1.123",
-  "workspaces": [
-    "./functions"
-  ],
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
@@ -38,8 +35,10 @@
     "e2e:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:stateful",
     "e2e:ci:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:ci:stateful",
     "postinstall": "husky install",
-    "update:local:ensjs": "yalc add @ensdomains/ensjs && pnpm",
-    "update:local:thorin": "yalc add @ensdomains/thorin && pnpm",
+    "local:add:ensjs": "yalc add @ensdomains/ensjs --workspace && pnpm install",
+    "local:remove:ensjs": "node ./scripts/removeWorkspace.mjs @ensdomains/ensjs && yalc remove @ensdomains/ensjs && pnpm install",
+    "local:add:thorin": "yalc add @ensdomains/thorin --workspace && pnpm install",
+    "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
     "wrangle": "next build && next export && npx wrangler pages dev ./out",
     "wrangle:dev": "wrangler pages dev ./next",
     "generate:sitemaps": "node ./generate-site-map.mjs",
