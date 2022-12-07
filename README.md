@@ -2,6 +2,10 @@
 
 The all new, all cool version of the ENS manager.
 
+## Front end developers.
+
+For front end developement please see [Developer.md](./docs/Developer.md)
+
 ## EXTERNAL CONTRIBUTOR NOTICE
 
 **Please note that everything within this repo is currently in alpha. Some contracts are not yet deployed on mainnet which means some functionality may break on the network.**
