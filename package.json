@@ -35,7 +35,7 @@
     "e2e:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:stateful",
     "e2e:ci:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:ci:stateful",
     "postinstall": "husky install",
-    "local:add:ensjs": "yalc add @ensdomains/ensjs --workspace && pnpm update @ensdomains/ensjs",
+    "local:add:ensjs": "yalc add @ensdomains/ensjs --workspace && pnpm install",
     "local:remove:ensjs": "node ./scripts/removeWorkspace.mjs @ensdomains/ensjs && yalc remove @ensdomains/ensjs && pnpm install",
     "local:add:thorin": "yalc add @ensdomains/thorin --workspace && pnpm install",
     "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
