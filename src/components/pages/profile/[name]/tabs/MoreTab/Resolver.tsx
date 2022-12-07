@@ -7,6 +7,7 @@ import { Button, Tag, Tooltip, Typography, mq } from '@ensdomains/thorin'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import RecordItem from '@app/components/RecordItem'
 import { useChainId } from '@app/hooks/useChainId'
+import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
@@ -64,6 +65,7 @@ const Resolver = ({
   isCachedData: boolean
 }) => {
   const { t } = useTranslation('profile')
+  const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager('targetId')
 
   const chainId = useChainId()
 
@@ -112,9 +114,16 @@ const Resolver = ({
                 ),
                 targetId: 'targetId',
                 placement: 'left',
+                onShowCallback: onSeen,
               }}
             />
-            <Button id="targetId" psuedoDisabled style={{ width: 100, height: 40 }} shadowless>
+            <Button
+              id="targetId"
+              psuedoDisabled
+              style={{ width: 100, height: 40 }}
+              shadowless
+              shouldShowTooltipIndicator={shouldShowTooltipIndicator}
+            >
               Edit
             </Button>
           </>

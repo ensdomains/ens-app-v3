@@ -873,6 +873,7 @@ const ButtonElement = styled.button(({
   $shape,
   $psuedoDisabled
 }) => css`
+    position: relative;
     align-items: center;
     cursor: pointer;
     display: flex;
@@ -1053,6 +1054,21 @@ const LabelContainer$1 = styled(Typography)(({
     font-weight: ${theme.fontWeights["semiBold"]};
     ${$fullWidthContent && `width: 100%;`}
   `);
+const TooltipIndicator = styled.div(({
+  theme
+}) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #e9b911;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    position: absolute;
+    right: -10px;
+    top: -10px;
+    color: white;
+  `);
 const Button = React.forwardRef(({
   center,
   children,
@@ -1077,6 +1093,7 @@ const Button = React.forwardRef(({
   fullWidthContent = false,
   as: asProp,
   psuedoDisabled,
+  shouldShowTooltipIndicator,
   ...props
 }, ref) => {
   const labelContent = /* @__PURE__ */ React.createElement(LabelContainer$1, {
@@ -1135,7 +1152,7 @@ const Button = React.forwardRef(({
       }
       onClick == null ? void 0 : onClick(e);
     }
-  }, childContent);
+  }, psuedoDisabled && shouldShowTooltipIndicator && /* @__PURE__ */ React.createElement(TooltipIndicator, null, "?"), childContent);
 });
 Button.displayName = "Button";
 const Container$f = styled.div(({
@@ -1214,7 +1231,8 @@ const DynamicPopover = ({
   placement = "top",
   animationFn: _animationFn,
   tooltipRef,
-  targetId
+  targetId,
+  onShowCallback
 }) => {
   const [positionState, setPositionState] = React.useState({
     top: 100,
@@ -1248,6 +1266,7 @@ const DynamicPopover = ({
       });
       timeoutRef.current = setTimeout(() => {
         setIsOpen(true);
+        onShowCallback == null ? void 0 : onShowCallback();
       }, 1e3);
     }
   }, [targetId]);

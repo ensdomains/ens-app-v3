@@ -37,6 +37,6 @@ export declare const computeCoordsFromPlacement: (reference: DOMRect, floating: 
     side: DynamicPopoverSide;
 };
 export declare const DynamicPopover: {
-    ({ popover, placement, animationFn: _animationFn, tooltipRef, targetId, }: DynamicPopoverProps): React.ReactPortal;
+    ({ popover, placement, animationFn: _animationFn, tooltipRef, targetId, onShowCallback, }: DynamicPopoverProps): React.ReactPortal;
     displayName: string;
 };
