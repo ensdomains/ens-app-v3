@@ -1189,11 +1189,11 @@ Card.displayName = "Card";
 const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, open = false) => {
   let translate = "";
   if (side === "top")
-    translate = `translate(0, -${verticalClearance}px)`;
+    translate = `translate(0, -${verticalClearance - window.scrollY}px)`;
   else if (side === "right")
     translate = `translate(${horizontalClearance * -1 + 10}px, 0)`;
   else if (side === "bottom")
-    translate = `translate(0, ${verticalClearance}px)`;
+    translate = `translate(0, ${verticalClearance + window.scrollY}px)`;
   else
     translate = `translate(${horizontalClearance - 10}px, 0);`;
   if (open) {
@@ -1211,17 +1211,15 @@ const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, open
 };
 const PopoverContainer = styled.div(({
   $injectedCSS,
-  $x,
-  $y
+  $isOpen,
+  $hasFirstLoad
 }) => css`
     position: absolute;
     box-sizing: border-box;
     z-index: 20;
     opacity: 0;
-    transition: all 0.35s cubic-bezier(1, 0, 0.22, 1.6);
     pointer-events: none;
-    left: ${$x}px;
-    top: ${$y}px;
+    ${$hasFirstLoad && `transition: all 0.35s cubic-bezier(1, 0, 0.22, 1.6);`}
     ${$injectedCSS && css`
       ${$injectedCSS}
     `}
@@ -1240,41 +1238,42 @@ const DynamicPopover = ({
     horizontalClearance: 100,
     verticalClearance: 100
   });
-  const timeoutRef = React.useRef(0);
+  const popoverContainerRef = React.useRef(null);
+  const [hasFirstLoad, setHasFirstLoad] = React.useState(false);
   const animationFn = React.useMemo(() => {
     if (_animationFn) {
       return (horizontalClearance, verticalClearance, side, open) => _animationFn(horizontalClearance, verticalClearance, side, open);
     }
     return (horizontalClearance, verticalClearance, side, open) => defaultAnimationFunc(horizontalClearance, verticalClearance, side, open);
   }, [_animationFn]);
-  const [isOpen, setIsOpen] = React.useState(false);
+  const [isOpen, setIsOpen] = React.useState(true);
   const handleMouseenter = React.useCallback(() => {
     const targetElement = document.getElementById(targetId);
     const targetRect = targetElement == null ? void 0 : targetElement.getBoundingClientRect();
     const tooltipElement = tooltipRef.current;
     const tooltipRect = tooltipElement == null ? void 0 : tooltipElement.getBoundingClientRect();
+    const popoverElement = popoverContainerRef.current;
     if (targetRect && tooltipRect) {
       const top = window.scrollY + targetRect.y + targetRect.height / 2 - tooltipRect.height / 2;
       const left = targetRect.x + targetRect.width / 2 - tooltipRect.width / 2;
       const horizontalClearance = -tooltipRect.width + (targetRect.left - left);
-      const verticalClearance = targetRect.height + 10;
+      const verticalClearance = tooltipRect.height;
+      popoverElement.style.top = `${top}px`;
+      popoverElement.style.left = `${left}px`;
+      setHasFirstLoad(true);
       setPositionState({
         top,
         left,
         horizontalClearance,
         verticalClearance
       });
-      timeoutRef.current = setTimeout(() => {
-        setIsOpen(true);
-        onShowCallback == null ? void 0 : onShowCallback();
-      }, 1e3);
+      setIsOpen(true);
+      onShowCallback == null ? void 0 : onShowCallback();
     }
   }, [targetId]);
   React.useEffect(() => {
     const targetElement = document.getElementById(targetId);
-    const handleMouseleave = (event) => {
-      clearTimeout(timeoutRef.current);
-      timeoutRef.current = 0;
+    const handleMouseleave = () => {
       setIsOpen(false);
     };
     targetElement == null ? void 0 : targetElement.addEventListener("mouseenter", handleMouseenter);
@@ -1286,10 +1285,11 @@ const DynamicPopover = ({
   }, []);
   const injectedCss2 = animationFn(positionState.horizontalClearance, positionState.verticalClearance, placement, isOpen);
   return ReactDOM__default.createPortal(/* @__PURE__ */ React.createElement(PopoverContainer, {
+    ref: popoverContainerRef,
     id: "popoverContainer",
-    $x: positionState.left,
-    $y: positionState.top,
-    $injectedCSS: injectedCss2
+    $injectedCSS: injectedCss2,
+    $isOpen: isOpen,
+    $hasFirstLoad: hasFirstLoad
   }, popover), document == null ? void 0 : document.body);
 };
 DynamicPopover.displayName = "DynamicPopover";
@@ -6485,7 +6485,6 @@ const TooltipPopover = styled.div(({
     max-width: 280px;
     position: relative;
     pointer-events: none;
-    text-align: center;
 
     filter: drop-shadow(0px 0px 1px #e8e8e8)
       drop-shadow(0px 2px 4px rgba(0, 0, 0, 0.2));

@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@ensdomains/thorin": {
-      "signature": "7fa237d3050e77edce3beff56719b17d",
+      "signature": "385229986df431bb607ffcb8e3b0e2d9",
       "pure": true,
       "replaced": "0.6.20"
     },

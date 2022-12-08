@@ -115,6 +115,7 @@ const Resolver = ({
                 targetId: 'targetId',
                 placement: 'left',
                 onShowCallback: onSeen,
+                width: 250,
               }}
             />
             <Button
