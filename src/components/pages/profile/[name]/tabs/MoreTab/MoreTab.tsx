@@ -64,7 +64,7 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
       />
       {wrapperData && (
         <Fuses
-          canEdit={selfAbilities.canEdit}
+          canEditPermissions={selfAbilities.canEditPermissions}
           name={name}
           fuseObj={wrapperData.fuseObj}
           isCachedData={basicIsCachedData}

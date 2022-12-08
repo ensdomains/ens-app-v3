@@ -1219,6 +1219,7 @@ const PopoverContainer = styled.div(({
     z-index: 20;
     opacity: 0;
     pointer-events: none;
+    width: 250px;
     ${$hasFirstLoad && `transition: all 0.35s cubic-bezier(1, 0, 0.22, 1.6);`}
     ${$injectedCSS && css`
       ${$injectedCSS}
@@ -1246,7 +1247,7 @@ const DynamicPopover = ({
     }
     return (horizontalClearance, verticalClearance, side, open) => defaultAnimationFunc(horizontalClearance, verticalClearance, side, open);
   }, [_animationFn]);
-  const [isOpen, setIsOpen] = React.useState(true);
+  const [isOpen, setIsOpen] = React.useState(false);
   const handleMouseenter = React.useCallback(() => {
     const targetElement = document.getElementById(targetId);
     const targetRect = targetElement == null ? void 0 : targetElement.getBoundingClientRect();

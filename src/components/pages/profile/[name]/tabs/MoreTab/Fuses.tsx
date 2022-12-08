@@ -2,11 +2,12 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { CurrentFuses, fuseEnum } from '@ensdomains/ensjs/utils/fuses'
-import { Helper, Typography, mq } from '@ensdomains/thorin'
+import { Button, Helper, Tooltip, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { TrafficLight } from '@app/components/TrafficLight'
+import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { TabWrapper } from '../../../TabWrapper'
@@ -71,15 +72,17 @@ const FusesRow = styled.div(
   `,
 )
 
+const disabledButtonId = 'edit-fuses-disabled-button'
+
 const Fuses = ({
   name,
   fuseObj,
-  canEdit,
   isCachedData,
+  canEditPermissions,
 }: {
   name: string
   fuseObj: CurrentFuses
-  canEdit: boolean
+  canEditPermissions: boolean
   isCachedData: boolean
 }) => {
   const { t } = useTranslation('profile')
@@ -91,6 +94,9 @@ const Fuses = ({
       name,
     })
   }
+  const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager('targetId')
+
+  console.log('canEditPermissions: ', canEditPermissions)
 
   return (
     <FusesContainer $isCached={isCachedData}>
@@ -103,7 +109,7 @@ const Fuses = ({
       <div>
         <HeadingContainer>
           <Heading>{t('tabs.more.fuses.permissions.label')}</Heading>
-          {canEdit && (
+          {canEditPermissions ? (
             <button
               style={{ cursor: 'pointer' }}
               data-testid="edit-fuses-button"
@@ -112,6 +118,29 @@ const Fuses = ({
             >
               {t('action.edit', { ns: 'common' })}
             </button>
+          ) : (
+            <>
+              <Tooltip
+                {...{
+                  content: (
+                    <div>This name has revoked the permissions needed to perform this action</div>
+                  ),
+                  targetId: disabledButtonId,
+                  placement: 'left',
+                  onShowCallback: onSeen,
+                  width: 250,
+                }}
+              />
+              <Button
+                id={disabledButtonId}
+                psuedoDisabled
+                style={{ width: 100, height: 40 }}
+                shadowless
+                shouldShowTooltipIndicator={shouldShowTooltipIndicator}
+              >
+                Edit
+              </Button>
+            </>
           )}
         </HeadingContainer>
         <div>

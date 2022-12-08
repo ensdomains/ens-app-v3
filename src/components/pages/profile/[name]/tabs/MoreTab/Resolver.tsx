@@ -53,6 +53,8 @@ const InnerHeading = styled.div(
   `,
 )
 
+const disabledButtonId = 'edit-resolver-disabled-button'
+
 const Resolver = ({
   name,
   canEditResolver,
@@ -65,7 +67,7 @@ const Resolver = ({
   isCachedData: boolean
 }) => {
   const { t } = useTranslation('profile')
-  const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager('targetId')
+  const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(disabledButtonId)
 
   const chainId = useChainId()
 
@@ -86,6 +88,8 @@ const Resolver = ({
     }
     return ['outdated', 'red'] as const
   }, [resolverAddressIndex])
+
+  console.log('canEditResolver', canEditResolver)
 
   return (
     <Container $isCached={isCachedData}>
@@ -112,14 +116,14 @@ const Resolver = ({
                 content: (
                   <div>This name has revoked the permissions needed to perform this action</div>
                 ),
-                targetId: 'targetId',
+                targetId: disabledButtonId,
                 placement: 'left',
                 onShowCallback: onSeen,
                 width: 250,
               }}
             />
             <Button
-              id="targetId"
+              id={disabledButtonId}
               psuedoDisabled
               style={{ width: 100, height: 40 }}
               shadowless

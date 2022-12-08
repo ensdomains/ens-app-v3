@@ -293,6 +293,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSendOwner: boolean
       canSend: boolean
       canEditResolver: boolean
+      canEditPermissions: boolean
       sendNameFunctionCallDetails: FunctionCallDetails
     } = {
       canEdit: false,
@@ -301,6 +302,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSendOwner: false,
       canSend: false,
       canEditResolver: false,
+      canEditPermissions: false,
       sendNameFunctionCallDetails: {},
     }
 
@@ -337,8 +339,11 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       abilities.canEdit = true
     }
 
+    console.log('fuseObj: ', basicNameData.wrapperData?.fuseObj)
+
     if (basicNameData.wrapperData) {
       abilities.canEditResolver = !basicNameData.wrapperData.fuseObj.CANNOT_SET_RESOLVER
+      abilities.canEditPermissions = !basicNameData.wrapperData.fuseObj.CANNOT_BURN_FUSES
     }
 
     return abilities
