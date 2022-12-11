@@ -16,7 +16,8 @@ const defaultData: RegistrationReducerDataItem = {
   queue: ['pricing', 'info', 'transactions', 'complete'],
   years: 1,
   reverseRecord: false,
-  records: {},
+  records: [],
+  clearRecords: false,
   resolver: '',
   permissions: {},
   secret: '',
@@ -36,7 +37,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   queue: ['pricing', 'info', 'transactions', 'complete'],
   years: 1,
   reverseRecord: false,
-  records: {},
+  records: [],
   resolver: '',
   permissions: {},
   secret: randomSecret(),
@@ -101,9 +102,9 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'setProfileData': {
-      item.records = action.payload.records
-      item.permissions = action.payload.permissions
-      item.resolver = action.payload.resolver
+      if (action.payload.records) item.records = action.payload.records
+      if (action.payload.permissions) item.permissions = action.payload.permissions
+      if (action.payload.resolver) item.resolver = action.payload.resolver
       break
     }
     // no default

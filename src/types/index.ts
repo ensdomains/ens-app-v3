@@ -45,6 +45,10 @@ export type TransactionDisplayItemTypes = 'name' | 'address' | 'list' | 'records
 
 type PublicInterface<Type> = { [Key in keyof Type]: Type[Key] }
 
+export type AvatarEditorType = {
+  avatar?: string
+}
+
 export type ProfileEditorType = {
   _avatar?: File
   avatar?: string
@@ -62,7 +66,8 @@ export type ProfileEditorType = {
   other: {
     [key: string]: string
   }
-}
+} & AvatarEditorType
+
 export type PublicENS = PublicInterface<ENS>
 
 export type HelperProps = ComponentProps<typeof Helper>

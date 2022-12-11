@@ -13,8 +13,9 @@ export const hasNonAscii = () => {
 
 export const validateCryptoAddress =
   (coin: string) =>
-  async (address: string): Promise<string | boolean> => {
+  async (address?: string): Promise<string | boolean> => {
     try {
+      if (!address) return 'Address is required'
       const coinTypeInstance = formatsByName[coin.toUpperCase()]
       coinTypeInstance.decoder(address)
       return true

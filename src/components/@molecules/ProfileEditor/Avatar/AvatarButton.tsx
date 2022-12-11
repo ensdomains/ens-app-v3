@@ -1,12 +1,12 @@
 import { useRef } from 'react'
-import { UseFormSetValue } from 'react-hook-form'
+import { Control, UseFormSetValue, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Avatar, Dropdown } from '@ensdomains/thorin'
 
 import CameraIcon from '@app/assets/Camera.svg'
-import { ProfileEditorType } from '@app/types'
+import { AvatarEditorType, ProfileEditorType } from '@app/types'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`
@@ -76,23 +76,46 @@ const IconMask = styled.div(
 export type AvatarClickType = 'upload' | 'nft'
 
 type Props = {
-  validated?: boolean
+  control: Control<AvatarEditorType>
   error?: boolean
   src?: string
+  validated?: boolean
   onSelectOption?: (value: AvatarClickType) => void
-  setValue: UseFormSetValue<ProfileEditorType>
-  setDisplay: (display: string | null) => void
+  onAvatarChange?: (avatar?: string) => void
+  onAvatarSrcChange?: (src?: string) => void
+  onAvatarFileChange?: (file?: File) => void
+  setValue?: UseFormSetValue<ProfileEditorType>
+  setDisplay?: (display: string | null) => void
 }
 
-const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisplay }: Props) => {
+const AvatarButton = ({
+  control,
+  error,
+  src,
+  validated: _validated,
+  onSelectOption,
+  setValue,
+  setDisplay,
+  onAvatarChange,
+  onAvatarSrcChange,
+  onAvatarFileChange,
+}: Props) => {
   const { t } = useTranslation('transactionFlow')
+
+  const avatar = useWatch({ control, name: 'avatar' })
+  const validated = typeof _validated !== 'undefined' ? _validated : !!avatar
+
+  console.log(typeof _validated, typeof _validated !== 'undefined')
+  console.log('avatar', avatar, src, validated, _validated)
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
     if (value === 'remove') {
-      setValue('avatar', undefined)
-      setDisplay(null)
+      setValue?.('avatar', undefined)
+      setDisplay?.(null)
+      onAvatarChange?.(undefined)
+      onAvatarSrcChange?.(undefined)
     } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {
@@ -127,7 +150,7 @@ const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisp
       shortThrow
     >
       <Container $validated={validated} $error={error} type="button">
-        <Avatar label="profile-button-avatar" src={src} noBorder />
+        <Avatar label="profile-button-avatar" src={src || avatar} noBorder />
         {!validated && !error && (
           <IconMask>
             <CameraIcon />
@@ -140,8 +163,9 @@ const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisp
           ref={fileInputRef}
           onChange={(e) => {
             if (e.target.files?.[0]) {
-              setValue('_avatar', e.target.files[0])
+              setValue?.('_avatar', e.target.files[0])
               onSelectOption?.('upload')
+              onAvatarFileChange?.(e.target.files[0])
             }
           }}
         />

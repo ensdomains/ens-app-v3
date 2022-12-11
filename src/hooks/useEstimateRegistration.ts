@@ -8,6 +8,7 @@ import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 import { RegistrationData } from '@app/components/pages/profile/[name]/registration/types'
 import { emptyAddress } from '@app/utils/constants'
 
+import { profileRecordsToRecordOptions } from '../components/pages/profile/[name]/registration/steps/Profile/profileRecord'
 import useEstimateTransactionCost from './useEstimateTransactionCost'
 import { useNameDetails } from './useNameDetails'
 
@@ -83,19 +84,20 @@ type FullProps = {
 }
 
 export const useEstimateFullRegistration = ({
-  registration: { reverseRecord, records, resolver, years },
+  registration: { reverseRecord, records: _records, resolver, years, clearRecords },
   price,
 }: FullProps) => {
   const { data: estimatedCommitData, isLoading: commitGasLoading } =
     useEstimateTransactionCost('COMMIT')
   const { transactionFee: commitGasFee, gasPrice } = estimatedCommitData || {}
+  const records = profileRecordsToRecordOptions(_records)
   const { estimate: registrationGasFee, isLoading: registrationGasLoading } =
     useEstimateRegistration({
       reverseRecord,
       addressRecords: records.coinTypes || [],
       textRecords: records.texts || [],
       hasResolverSet: resolver !== emptyAddress,
-      clearRecords: !!records.clearRecords,
+      clearRecords: !!clearRecords,
     })
   const estimatedGasLoading = commitGasLoading || registrationGasLoading
   const estimatedGasFee = useMemo(() => {

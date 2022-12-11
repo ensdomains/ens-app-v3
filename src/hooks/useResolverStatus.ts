@@ -1,9 +1,11 @@
-import { useEns } from '@app/utils/EnsProvider'
-import { Profile } from '@app/types'
-import { contentHashToString } from '@app/utils/contenthash'
 import { useQuery } from '@tanstack/react-query'
-import { useProfile } from './useProfile'
+
+import { Profile } from '@app/types'
+import { useEns } from '@app/utils/EnsProvider'
+import { contentHashToString } from '@app/utils/contenthash'
+
 import { useContractAddress } from './useContractAddress'
+import { useProfile } from './useProfile'
 
 const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
   const areTextsEqual = Object.values(

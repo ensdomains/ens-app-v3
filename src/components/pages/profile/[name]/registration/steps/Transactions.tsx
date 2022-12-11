@@ -24,6 +24,7 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { RegistrationReducerDataItem } from '../types'
+import { profileRecordsToRecordOptions } from './Profile/profileRecord'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -160,7 +161,10 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       resolverAddress: registrationData.resolver,
       secret: registrationData.secret,
       fuses: registrationData.permissions,
-      records: registrationData.records,
+      records: profileRecordsToRecordOptions(
+        registrationData.records,
+        registrationData.clearRecords,
+      ),
       reverseRecord: registrationData.reverseRecord,
     }),
     [address, nameDetails, registrationData],

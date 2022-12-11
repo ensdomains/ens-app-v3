@@ -14,15 +14,20 @@ export const addressIconTypes = {
 
 export const DynamicAddressIcon = ({
   name,
+  showDefault = true,
   ...props
 }: JSX.IntrinsicAttributes & {
   name: AddressIconType | string
+  showDefault?: boolean
 }) => {
-  if (name in addressIconTypes) {
-    const key = name as AddressIconType
+  if (name.toLowerCase() in addressIconTypes) {
+    const key = name.toLowerCase() as AddressIconType
     const Icon = addressIconTypes[key] as any
     return <Icon {...props} />
   }
-  const Icon = dynamic(() => import('../Question.svg')) as any
-  return <Icon {...props} />
+  if (showDefault) {
+    const Icon = dynamic(() => import('../Question.svg')) as any
+    return <Icon {...props} />
+  }
+  return null
 }

@@ -1,37 +1,33 @@
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+/* eslint-disable no-nested-ternary */
+import React, { BaseSyntheticEvent, useMemo, useRef, useState } from 'react'
+import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { Button, Dialog, DownIndicatorSVG, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG, mq } from '@ensdomains/thorin'
 
-import { Banner } from '@app/components/@atoms/Banner/Banner'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import BurnFusesContent, {
-  baseFuseObj,
-} from '@app/components/@molecules/BurnFuses/BurnFusesContent'
-import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
+import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import AvatarButton, {
   AvatarClickType,
 } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
-import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
-import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
-import websiteOptions from '@app/components/@molecules/ProfileEditor/options/websiteOptions'
+import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import useProfileEditor from '@app/hooks/useProfileEditor'
-import { FuseObj } from '@app/types'
-import { ProfileFormObject, convertProfileToProfileFormObject } from '@app/utils/editor'
+import { RegistrationForm, useRegistrationForm } from '@app/hooks/useRegistrationForm'
+import { AvatarEditorType } from '@app/types'
 
+import { useLocalStorage } from '../../../../../../../hooks/useLocalStorage'
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
-import { AddProfileFieldView } from './AddProfileFieldView'
-import { DynamicDialog } from './DynamicDialog'
-import Resolver from './Resolver'
+import { AddProfileRecordView } from './AddProfileRecordView'
+import { CustomProfileRecordInput } from './CustomProfileRecordInput'
+import { ProfileRecordInput } from './ProfileRecordInput'
+import { ProfileRecordTextarea } from './ProfileRecordTextarea'
 
-const StyledCard = styled.form(
-  ({ theme }) => css`
+const StyledCard = styled.form(({ theme }) => [
+  css`
     max-width: 780px;
     margin: 0 auto;
     border: 1px solid rgba(0, 0, 0, 0.06);
@@ -39,119 +35,67 @@ const StyledCard = styled.form(
     border-radius: ${theme.radii['2xLarge']};
     background-color: ${theme.colors.background};
     overflow: hidden;
+    padding: ${theme.space['4']};
 
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
+    gap: ${theme.space['4']};
   `,
-)
-
-const AvatarWrapper = styled.div(
-  ({ theme }) => css`
-    position: absolute;
-    bottom: 0;
-    height: ${theme.space['24']};
-    width: ${theme.space.full};
-    transform: translate(calc(50% - ${theme.space['12']}), 50%);
-    & > div {
-      height: ${theme.space['24']};
-      width: ${theme.space['24']};
-    }
-  `,
-)
-
-const ContentContainer = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space.full};
-    display: flex;
-    flex-direction: column;
+  mq.md.min(css`
+    padding: ${theme.space['6']};
     gap: ${theme.space['6']};
-    margin-top: ${theme.space['18']};
-    padding: ${theme.space['4']};
-    padding-top: 0;
-    overflow-y: visible;
-    position: static;
+  `),
+])
 
-    & > div:first-of-type {
-      align-items: center;
-      justify-content: flex-start;
-      padding: 0;
-      padding-bottom: ${theme.space['2']};
-      border-bottom: 1px solid ${theme.colors.grey};
-    }
-
-    ${mq.md.min(css`
-      padding: ${theme.space['6']} ${theme.space['18']};
-      & > div:first-of-type {
-        justify-content: center;
-        margin: 0 6px;
-      }
-    `)}
+const Heading = styled.h1(
+  ({ theme }) => css`
+    font-size: ${theme.fontSizes.headingTwo};
+    line-height: ${theme.space['10']};
+    font-weight: ${theme.fontWeights.bold};
+    color: ${theme.colors.black};
+    text-align: center;
   `,
 )
 
-const AdvancedOptions = styled.div(
+const Divider = styled.div(
   ({ theme }) => css`
-    --border-style: 1px solid ${theme.colors.grey};
-    display: flex;
-    flex-direction: column;
-    border: var(--border-style);
-    border-radius: ${theme.radii.large};
-    overflow: hidden;
+    width: ${theme.space.full};
+    height: ${theme.space.px};
+    background-color: ${theme.colors.borderTertiary};
   `,
 )
 
-const AdvancedOptionsContent = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    padding: 0 ${theme.space['4']};
+const ButtonWrapper = styled.div(({ theme }) => [
+  css`
+    width: ${theme.space.full};
   `,
-)
+  mq.md.min(css`
+    width: initial;
+  `),
+])
 
-const AdvancedOptionItem = styled.div(
+const ButtonInner = styled.div(
   ({ theme }) => css`
+    font-size: ${theme.fontSizes.root};
+    font-weight: ${theme.fontWeights.bold};
+    line-height: ${theme.space['5']};
+
     display: flex;
-    flex-direction: row;
     align-items: center;
-    justify-content: space-between;
-    padding: ${theme.space['4']} 0;
-    &:not(:last-of-type) {
-      border-bottom: var(--border-style);
-    }
-  `,
-)
-
-const AdvancedOptionTrailing = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: flex-end;
+    justify-content: center;
     gap: ${theme.space['2']};
   `,
 )
 
-const AdvancedOptionsButton = styled.button<{ $pressed: boolean }>(
-  ({ theme, $pressed }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-
-    border-bottom: var(--border-style);
-    padding: ${theme.space['4']};
-    margin-bottom: -${theme.space.px};
-
-    cursor: pointer;
-
+const ButtonIcon = styled.div(
+  ({ theme }) => css`
     svg {
-      width: ${theme.space['3']};
-      ${$pressed &&
-      css`
-        transform: rotate(180deg);
-      `}
+      display: block;
+      width: ${theme.space['4']};
+      height: ${theme.space['4']};
+      stroke-width: 2px;
     }
   `,
 )
@@ -167,7 +111,43 @@ const ButtonContainer = styled.div(
   `,
 )
 
-type ModalOption = AvatarClickType | 'permissions' | 'resolver'
+const SubmitButton = ({
+  control,
+  disabled,
+}: {
+  control: Control<RegistrationForm>
+  disabled: boolean
+}) => {
+  const { address } = useAccount()
+  const { t } = useTranslation('register')
+
+  const records = useWatch({
+    control,
+    name: 'records',
+  })
+
+  const avatar = useWatch({
+    control,
+    name: 'avatar',
+  })
+
+  const hasEthRecord = records.some((record) => record.key === 'ETH' && record.value === address)
+  const hasAvatar = !!avatar
+  const hasOneRecord = records.length === 1
+  const isClean = hasEthRecord && !hasAvatar && hasOneRecord
+
+  const message = isClean
+    ? t('steps.profile.actions.skipProfile')
+    : t('action.next', { ns: 'common' })
+
+  return (
+    <Button variant="primary" type="submit" disabled={disabled} shadowless>
+      <ButtonInner>{message}</ButtonInner>
+    </Button>
+  )
+}
+
+type ModalOption = AvatarClickType | 'add-record' | 'clear-eth' | 'public-notice'
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -176,197 +156,35 @@ type Props = {
   callback: (data: RegistrationStepData['profile'] & BackObj) => void
 }
 
-const AdvancedOption = ({
-  name,
-  isDefault,
-  onResetClick,
-  onClick,
-}: {
-  name: string
-  isDefault: boolean
-  onResetClick: () => void
-  onClick: () => void
-}) => {
-  const { t } = useTranslation('register')
-
-  return (
-    <AdvancedOptionItem>
-      <Typography>{name}</Typography>
-      <AdvancedOptionTrailing>
-        {isDefault ? (
-          <Tag tone="green">{t('steps.profile.default')}</Tag>
-        ) : (
-          <Button onClick={onResetClick} size="small" shadowless variant="secondary">
-            {t('action.reset', { ns: 'common' })}
-          </Button>
-        )}
-        <Button onClick={onClick} size="small" shadowless>
-          {t('action.edit', { ns: 'common' })}
-        </Button>
-      </AdvancedOptionTrailing>
-    </AdvancedOptionItem>
-  )
-}
-
-type ValueItem = {
-  key: string
-  value: any
-  dirty: boolean
-}
-
 const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Props) => {
   const { t } = useTranslation('register')
 
-  const { address } = useAccount()
   const defaultResolverAddress = useContractAddress('PublicResolver')
+  const clearRecords = registrationData.resolver === defaultResolverAddress ? resolverExists : false
   const backRef = useRef<HTMLButtonElement>(null)
 
   const { normalisedName: name } = nameDetails
 
-  const profile = useMemo(
-    () => ({
-      isMigrated: true,
-      createdAt: `${Date.now()}`,
-      records: {
-        ...registrationData.records,
-        coinTypes: (registrationData.records.coinTypes || []).map((c) => ({
-          coin: c.key,
-          addr: c.value,
-        })),
-      },
-    }),
-    [registrationData.records],
-  )
-
-  const [fuses, setFuses] = useState(registrationData.permissions)
-  const [resolver, setResolver] = useState(registrationData.resolver || defaultResolverAddress)
-
-  const isDefaultFuses = Object.values(fuses).every((fuse) => !fuse)
-  const isDefaultResolver = useMemo(
-    () => resolver === defaultResolverAddress,
-    [resolver, defaultResolverAddress],
-  )
-
-  const _callback = useCallback(
-    (_profile: RecordOptions, event?: React.BaseSyntheticEvent) => {
-      const nativeEvent = event?.nativeEvent as SubmitEvent | undefined
-      callback({
-        records: {
-          ..._profile,
-          clearRecords: resolver === defaultResolverAddress ? resolverExists : false,
-        },
-        resolver,
-        permissions: fuses,
-        back: nativeEvent?.submitter === backRef.current,
-      })
-    },
-    [fuses, callback, resolver, defaultResolverAddress, resolverExists],
-  )
-
-  const profileEditorForm = useProfileEditor({
-    callback: _callback,
-    profile: undefined,
-    returnAllFields: true,
-  })
   const {
-    avatar,
-    setValue,
-    _avatar,
+    records,
+    register,
+    trigger,
+    control,
+    handleSubmit: handleSubmit2,
+    addRecords,
+    removeRecordAtIndex,
+    removeRecordByKey,
+    setAvatar,
+    labelForRecord,
+    secondaryLabelForRecord,
+    validatorForRecord,
+    errorForRecordAtIndex,
+    isDirtyForRecordAtIndex,
     hasErrors,
-    hasChanges,
-    handleSubmit,
-    setExistingRecords,
-    newAccountKeys,
-    newAddressKeys,
-    newOtherKeys,
-    existingAccountKeys,
-    existingAddressKeys,
-    existingOtherKeys,
-    setHasExistingWebsite,
-    setWebsiteOption,
-  } = profileEditorForm
+  } = useRegistrationForm(registrationData.records)
 
-  const accountKeys = [...existingAccountKeys, ...newAccountKeys]
-  const addressKeys = [...existingAddressKeys, ...newAddressKeys]
-  const otherKeys = [...existingOtherKeys, ...newOtherKeys]
-
-  const checkForDirtyTab = useCallback(
-    (recordsAsTabs: ProfileFormObject) =>
-      (curr: ValueItem[], [tabKey, tabValue]: [string, any]) => {
-        // if the tab has no records, skip
-        if (Object.keys(tabValue).length > 0 && tabKey !== 'website') {
-          const subKeys = Object.entries(tabValue).map(([k, v]) => ({
-            key: `${tabKey}.${k}`,
-            value: v,
-            dirty: !(tabKey === 'address' && k === 'ETH' && v === address),
-          }))
-          return [
-            ...curr,
-            {
-              key: tabKey,
-              value: tabValue,
-              dirty: subKeys.some(({ dirty }) => dirty), // if any of the individual keys are dirty, then the whole tab is dirty
-            },
-            ...subKeys,
-          ]
-        }
-        // if key is website, set the website option
-        if (tabKey === 'website' && tabValue) {
-          const protocol = recordsAsTabs.website?.match(/^[^:]+/)?.[0]?.toLowerCase()
-          if (protocol) {
-            const option = websiteOptions.find(({ value: _val }) => _val === protocol)
-            setWebsiteOption(option || undefined)
-          }
-          setValue(tabKey, tabValue as string, { shouldDirty: true, shouldTouch: true })
-        }
-        // dont touch the tab if no sub-keys are dirty
-        return curr
-      },
-    [address, setValue, setWebsiteOption],
-  )
-
-  useEffect(() => {
-    const recordsAsTabs = convertProfileToProfileFormObject(profile as any)
-    const newExistingRecords = {
-      address: Object.keys(recordsAsTabs.address) || [],
-      other: Object.keys(recordsAsTabs.other) || [],
-      accounts: Object.keys(recordsAsTabs.accounts) || [],
-    }
-    setExistingRecords(newExistingRecords)
-
-    // iterate over record tabs
-    Object.entries(recordsAsTabs)
-      .reduce(checkForDirtyTab(recordsAsTabs), [] as { key: string; value: any; dirty: boolean }[])
-      .forEach(({ key, value, dirty }) => {
-        setValue(key as any, value, {
-          shouldDirty: dirty,
-          shouldTouch: key.includes('.') ? true : undefined,
-        })
-      })
-  }, [
-    address,
-    checkForDirtyTab,
-    profile,
-    setExistingRecords,
-    setHasExistingWebsite,
-    setValue,
-    setWebsiteOption,
-  ])
-
-  const trailingButton = useMemo(() => {
-    if (hasChanges || !isDefaultFuses) {
-      return (
-        <Button data-testid="next-button" shadowless disabled={hasErrors} type="submit">
-          {t('action.next', { ns: 'common' })}
-        </Button>
-      )
-    }
-    return (
-      <Button data-testid="next-button" shadowless variant="secondary" type="submit">
-        {t('action.skip', { ns: 'common' })}
-      </Button>
-    )
-  }, [t, hasChanges, hasErrors, isDefaultFuses])
+  const [avatarFile, setAvatarFile] = useState<File | undefined>()
+  const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOption, _setModalOption] = useState<ModalOption | null>(null)
@@ -375,8 +193,37 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     setModalOpen(true)
   }
 
-  const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
-  const [advancedOpen, setAdvancedOpen] = useState(false)
+  const [hasConfirmedPublicNotice, setHasConfirmedPublicNotice] = useLocalStorage(
+    'confirm-profile-is-public',
+    false,
+  )
+  const handleAddRecord = () => {
+    if (hasConfirmedPublicNotice) return setModalOption('add-record')
+    setModalOption('public-notice')
+  }
+
+  const handleDeleteRecord = (record: ProfileRecord, index: number) => {
+    if (record.key === 'ETH') return setModalOption('clear-eth')
+    removeRecordAtIndex(index)
+  }
+
+  const onSubmit = (data: RegistrationForm, e?: BaseSyntheticEvent<object, any, any>) => {
+    e?.preventDefault()
+    const nativeEvent = e?.nativeEvent as SubmitEvent | undefined
+    const newRecords = [
+      ...(data.avatar
+        ? [{ key: 'avatar', value: data.avatar, type: 'text', group: 'general' } as ProfileRecord]
+        : []),
+      ...data.records,
+    ]
+    callback({
+      records: newRecords,
+      clearRecords,
+      permissions: registrationData.permissions,
+      resolver: registrationData.resolver,
+      back: nativeEvent?.submitter === backRef.current,
+    })
+  }
 
   const modalContent = useMemo(() => {
     switch (modalOption) {
@@ -385,131 +232,145 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         return (
           <AvatarViewManager
             name={name}
-            avatar={_avatar}
+            avatarFile={avatarFile}
             handleCancel={() => setModalOpen(false)}
             type={modalOption}
             handleSubmit={(display: string, uri?: string) => {
               if (uri) {
-                setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
-                setAvatarDisplay(display)
+                setAvatar(uri)
+                setAvatarSrc(display)
               } else {
-                setValue('avatar', display, { shouldDirty: true, shouldTouch: true })
+                setAvatar(display)
+                setAvatarSrc(`${display}?timestamp=${Date.now()}`)
               }
               setModalOpen(false)
             }}
           />
         )
-      case 'permissions': {
+      case 'add-record': {
         return (
-          <BurnFusesContent
-            fuseData={{ fuseObj: fuses }}
-            onDismiss={() => setModalOpen(false)}
-            canUnsetFuse
-            onSubmit={(newFuses) => {
-              const _newFuses = newFuses as unknown as keyof FuseObj
-              const newFuseObj = Object.keys(fuses).reduce((acc, key) => {
-                return { ...acc, [key]: _newFuses.includes(key) }
-              }, fuses)
-              setFuses(newFuseObj)
+          <AddProfileRecordView
+            control={control}
+            onAdd={(newRecords) => {
+              addRecords(newRecords)
               setModalOpen(false)
             }}
+            onClose={() => setModalOpen(false)}
           />
         )
       }
-      case 'resolver': {
+      case 'public-notice': {
         return (
-          <Resolver
-            resolverAddress={resolver}
-            onDismiss={() => setModalOpen(false)}
-            onSubmit={(newResolver) => {
-              setResolver(newResolver)
-              setModalOpen(false)
+          <ConfirmationDialogView
+            title={t('steps.profile.confirmations.publicNotice.title')}
+            description={t('steps.profile.confirmations.publicNotice.description')}
+            confirmLabel={t('steps.profile.confirmations.publicNotice.confirm')}
+            declineLabel={t('steps.profile.confirmations.publicNotice.decline')}
+            onConfirm={() => {
+              setHasConfirmedPublicNotice(true)
+              setModalOption('add-record')
             }}
+            onDecline={() => setModalOpen(false)}
           />
         )
       }
+      case 'clear-eth': {
+        return (
+          <ConfirmationDialogView
+            title={t('steps.profile.confirmations.clearEth.title')}
+            description={t('steps.profile.confirmations.clearEth.description')}
+            confirmLabel={t('steps.profile.confirmations.clearEth.confirm')}
+            declineLabel={t('steps.profile.confirmations.clearEth.decline')}
+            onConfirm={() => {
+              removeRecordByKey('ETH')
+              setModalOpen(false)
+            }}
+            onDecline={() => setModalOpen(false)}
+          />
+        )
+      }
+
       // no default
     }
-  }, [_avatar, fuses, modalOption, name, resolver, setValue])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [name, avatarFile, modalOption])
 
   return (
     <>
       <Dialog onDismiss={() => setModalOpen(false)} variant="blank" open={modalOpen}>
         {modalContent}
       </Dialog>
-      <StyledCard onSubmit={handleSubmit}>
-        <Banner zIndex={2}>
-          <AvatarWrapper>
-            <AvatarButton
-              validated={avatar !== undefined}
-              src={avatarDisplay || avatar}
-              onSelectOption={setModalOption}
-              setValue={setValue}
-              setDisplay={setAvatarDisplay}
+      <StyledCard onSubmit={handleSubmit2(onSubmit)}>
+        <Heading>Create your profile</Heading>
+        <AvatarButton
+          control={control as unknown as Control<AvatarEditorType>}
+          src={avatarSrc}
+          onSelectOption={setModalOption}
+          onAvatarChange={(avatar) => setAvatar(avatar)}
+          onAvatarFileChange={(file) => setAvatarFile(file)}
+          onAvatarSrcChange={(src) => setAvatarSrc(src)}
+        />
+        {records.map((field, index) =>
+          field.group === 'custom' ? (
+            <CustomProfileRecordInput
+              register={register}
+              trigger={trigger}
+              index={index}
+              validator={validatorForRecord(field)}
+              error={errorForRecordAtIndex(index, 'key')}
+              onDelete={() => handleDeleteRecord(field, index)}
             />
-          </AvatarWrapper>
-        </Banner>
-        <ContentContainer>
-          <ProfileEditorTabs {...profileEditorForm} />
-          <ProfileTabContents
-            removePadding
-            {...{
-              ...profileEditorForm,
-              existingAccountKeys: [],
-              existingAddressKeys: [],
-              existingOtherKeys: [],
-              newAccountKeys: accountKeys,
-              newAddressKeys: addressKeys,
-              newOtherKeys: otherKeys,
-            }}
-          />
-          <AddRecord {...profileEditorForm} />
-          <Helper type="info">{t('steps.profile.visibilityMessage')}</Helper>
-          <AdvancedOptions>
-            <AdvancedOptionsButton
-              $pressed={advancedOpen}
-              onClick={(e) => {
-                e.preventDefault()
-                setAdvancedOpen((prev) => !prev)
-              }}
-            >
-              <Typography>{t('steps.profile.advanced')}</Typography>
-              <DownIndicatorSVG />
-            </AdvancedOptionsButton>
-            {advancedOpen && (
-              <AdvancedOptionsContent>
-                <AdvancedOption
-                  name={t('steps.profile.permissions')}
-                  isDefault={isDefaultFuses}
-                  onClick={() => setModalOption('permissions')}
-                  onResetClick={() => {
-                    setFuses({ ...baseFuseObj })
-                  }}
-                />
-                <AdvancedOption
-                  name={t('steps.profile.resolver')}
-                  isDefault={isDefaultResolver}
-                  onClick={() => setModalOption('resolver')}
-                  onResetClick={() => {
-                    setResolver(defaultResolverAddress)
-                  }}
-                />
-              </AdvancedOptionsContent>
-            )}
-          </AdvancedOptions>
-          <ButtonContainer>
-            <MobileFullWidth>
-              <Button ref={backRef} type="submit" shadowless variant="secondary">
-                {t('action.back', { ns: 'common' })}
-              </Button>
-            </MobileFullWidth>
-            <MobileFullWidth>{trailingButton}</MobileFullWidth>
-          </ButtonContainer>
-        </ContentContainer>
+          ) : field.key === 'description' ? (
+            <ProfileRecordTextarea
+              key={field.id}
+              recordKey={field.key}
+              label={labelForRecord(field)}
+              secondaryLabel={secondaryLabelForRecord(field)}
+              error={errorForRecordAtIndex(index)}
+              validated={isDirtyForRecordAtIndex(index)}
+              onDelete={() => handleDeleteRecord(field, index)}
+              {...register(`records.${index}.value`, {
+                validate: validatorForRecord(field),
+              })}
+            />
+          ) : (
+            <ProfileRecordInput
+              key={field.id}
+              recordKey={field.key}
+              group={field.group}
+              label={labelForRecord(field)}
+              secondaryLabel={secondaryLabelForRecord(field)}
+              error={errorForRecordAtIndex(index)}
+              validated={isDirtyForRecordAtIndex(index)}
+              onDelete={() => handleDeleteRecord(field, index)}
+              {...register(`records.${index}.value`, {
+                validate: validatorForRecord(field),
+              })}
+            />
+          ),
+        )}
+        <ButtonWrapper>
+          <Button shadowless size="medium" onClick={handleAddRecord}>
+            <ButtonInner>
+              <ButtonIcon>
+                <PlusSVG />
+              </ButtonIcon>
+              {t('Add more to profile')}
+            </ButtonInner>
+          </Button>
+        </ButtonWrapper>
+        <Divider />
+        <ButtonContainer>
+          <MobileFullWidth>
+            <Button ref={backRef} type="submit" shadowless variant="secondary" disabled={hasErrors}>
+              <ButtonInner>{t('action.back', { ns: 'common' })}</ButtonInner>
+            </Button>
+          </MobileFullWidth>
+          <MobileFullWidth>
+            <SubmitButton control={control} disabled={hasErrors} />
+          </MobileFullWidth>
+        </ButtonContainer>
       </StyledCard>
-      <DynamicDialog>
-        <AddProfileFieldView />
-      </DynamicDialog>
     </>
   )
 }

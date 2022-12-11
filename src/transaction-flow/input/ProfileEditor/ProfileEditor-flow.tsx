@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useState } from 'react'
+import { Control } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -21,6 +22,7 @@ import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { AvatarEditorType } from '@app/types'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 
@@ -178,11 +180,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     profile,
     overwrites: transaction?.data.records,
   })
-  const { setValue, handleSubmit, hasErrors, avatar, _avatar, hasChanges, formState } =
-    profileEditorForm
+  const { handleSubmit, hasErrors, setAvatar, hasChanges, formState, control } = profileEditorForm
 
   const [avatarView, setAvatarView] = useState<AvatarClickType | null>(null)
-  const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
+  const [avatarFile, setAvatarFile] = useState<File | undefined>()
+  const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
   const [showOverlay, setShowOverlay] = useState(false)
 
@@ -199,18 +201,16 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       {avatarView ? (
         <AvatarViewManager
           name={name}
-          avatar={_avatar}
+          avatarFile={avatarFile}
           type={avatarView}
           handleCancel={() => setAvatarView(null)}
           handleSubmit={(display: string, uri?: string) => {
             if (uri) {
-              setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
-              setAvatarDisplay(display)
+              setAvatar(uri)
+              setAvatarSrc(display)
             } else {
-              setValue('avatar', `${display}?timestamp=${Date.now()}`, {
-                shouldDirty: true,
-                shouldTouch: true,
-              })
+              setAvatar(`${display}?timestamp=${Date.now()}`)
+              setAvatarSrc(`${display}?timestamp=${Date.now()}`)
             }
             setAvatarView(null)
           }}
@@ -220,11 +220,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           <Banner zIndex={10}>
             <AvatarWrapper>
               <AvatarButton
-                validated={formState.dirtyFields.avatar}
-                src={avatarDisplay || avatar}
+                control={control as unknown as Control<AvatarEditorType>}
+                validated={!!formState.dirtyFields.avatar}
+                src={avatarSrc}
                 onSelectOption={setAvatarView}
-                setValue={setValue}
-                setDisplay={setAvatarDisplay}
+                onAvatarChange={(avatar) => setAvatar(avatar)}
+                onAvatarFileChange={(file) => setAvatarFile(file)}
+                onAvatarSrcChange={(src) => setAvatarSrc(src)}
               />
             </AvatarWrapper>
           </Banner>

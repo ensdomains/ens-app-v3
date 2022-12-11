@@ -1,10 +1,8 @@
 /* eslint-disable no-nested-ternary */
+import { useMemo } from 'react'
 import styled, { css } from 'styled-components'
 
-import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
-import { DynamicContentHashIcon } from '@app/assets/contentHash/DynamicContentHashIcon'
-import { DynamicSocialIcon } from '@app/assets/social/DynamicSocialIcon'
-import { DynamicTextIcon } from '@app/assets/text/DynamicTextIcon'
+import { DynamicIcon } from './DynamicIcon'
 
 type Props = {
   group: string
@@ -12,16 +10,6 @@ type Props = {
   label?: string
   selected?: boolean
 } & React.ButtonHTMLAttributes<HTMLButtonElement>
-
-const DynamicIcon = ({ group, name }: { group: string; name: string }) => {
-  console.log(group, name)
-  if (group === 'address') return <DynamicAddressIcon name={name} />
-  if (group === 'website') return <DynamicContentHashIcon name={name} />
-  if (group === 'social') {
-    return <DynamicSocialIcon name={name} />
-  }
-  return <DynamicTextIcon name={name} />
-}
 
 const Container = styled.button<{ $selected?: boolean }>(
   ({ theme, disabled, $selected }) => css`
@@ -32,14 +20,24 @@ const Container = styled.button<{ $selected?: boolean }>(
     gap: ${theme.space[1]};
     border-width: 1px;
     border-style: solid;
-    border-color: ${$selected ? theme.colors.accent : theme.colors.grey};
     border-radius: ${theme.radii.medium};
-    background: ${disabled
-      ? theme.colors.backgroundSecondary
-      : $selected
-      ? theme.colors.accentSecondary
-      : theme.colors.white};
+    border-color: ${theme.colors.grey};
+    background-color: ${theme.colors.white};
     padding: ${theme.space[4]} ${theme.space[2]};
+
+    ${$selected &&
+    css`
+      border-color: ${theme.colors.accent};
+      background-color: ${theme.colors.accentSecondary};
+    `}
+
+    ${disabled &&
+    css`
+      border-color: ${theme.colors.grey};
+      background-color: ${theme.colors.backgroundSecondary};
+    `}
+    transition: all 0.3s ease-out;
+    transition-property: border-color, background-color;
   `,
 )
 
@@ -74,11 +72,12 @@ export const OptionButton = ({
   ...props
 }: Props) => {
   const label = _label || item
+  const Icon = useMemo(() => {
+    return <DynamicIcon group={group} name={item} />
+  }, [group, item])
   return (
     <Container type="button" disabled={disabled} $selected={selected} {...props}>
-      <OptionIcon>
-        <DynamicIcon group={group} name={item} />
-      </OptionIcon>
+      <OptionIcon>{Icon}</OptionIcon>
       <OptionLabel $uppercase={!_label}>{label}</OptionLabel>
     </Container>
   )

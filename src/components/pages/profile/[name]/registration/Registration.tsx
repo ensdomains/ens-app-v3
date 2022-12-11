@@ -59,10 +59,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       dispatch({
         name: 'setProfileData',
         payload: {
-          records: {
-            coinTypes: [{ key: 'ETH', value: address! } as any],
-            clearRecords: resolverExists,
-          },
+          records: [{ key: 'ETH', group: 'address', type: 'addr', value: address! }],
           permissions: baseFuseObj,
           resolver: defaultResolverAddress,
         },

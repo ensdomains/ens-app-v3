@@ -1,5 +1,5 @@
 import React, { ComponentProps, useEffect, useState } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
@@ -85,7 +85,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     setFocus,
     handleSubmit,
     clearErrors,
-    watch,
   } = useForm<ProfileEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -238,6 +237,7 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         other: Object.keys(newDefaultValues.other) || [],
         accounts: Object.keys(newDefaultValues.accounts) || [],
       }
+      console.log(newDefaultValues)
       reset(newDefaultValues)
 
       setHasExistingWebsite(!!newDefaultValues.website)
@@ -327,12 +327,9 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     callback(records, event)
   }
 
-  const avatar = watch('avatar')
-
-  const _avatar = useWatch({
-    control,
-    name: '_avatar',
-  })
+  const setAvatar = (avatar?: string) => {
+    setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
+  }
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
@@ -379,8 +376,7 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     addOtherKey,
     removeOtherKey,
     AddButtonProps,
-    avatar,
-    _avatar,
+    setAvatar,
     hasChanges,
   }
 }

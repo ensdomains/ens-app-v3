@@ -21,9 +21,11 @@ export const socialIconColors = {
 
 export const DynamicSocialIcon = ({
   name,
+  showDefault = true,
   ...props
 }: {
   name: keyof typeof socialIconTypes | string
+  showDefault?: boolean
   fill?: string
 }) => {
   if (name in socialIconTypes) {
@@ -32,6 +34,9 @@ export const DynamicSocialIcon = ({
     const fill = socialIconColors[key]
     return <Icon {...props} fill={fill} />
   }
-  const Icon = dynamic(() => import('../Question.svg')) as any
-  return <Icon {...props} />
+  if (showDefault) {
+    const Icon = dynamic(() => import('../Question.svg')) as any
+    return <Icon {...props} />
+  }
+  return null
 }

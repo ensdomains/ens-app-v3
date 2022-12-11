@@ -34,6 +34,7 @@
       "permissions": "Permissions",
       "resolver": "Resolver",
       "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible.",
+      "addProfile": "Add profile fields",
       "options": {
         "groups": {
           "general": {
@@ -54,20 +55,51 @@
             }
           },
           "address": {
-            "label": "Address"
+            "label": "Address",
+            "itemLabel": "{{coin}} address"
           },
           "website": {
-            "label": "Website"
+            "label": "Website",
+            "items": {
+              "ipfs": "IPFS",
+              "swarm": "Swarm",
+              "onion": "Onion",
+              "skynet": "Skynet",
+              "arweave": "Arweave"
+            }
           },
           "other": {
             "label": "Other",
             "items": {
               "contentHash": "Content Hash",
               "publicKey": "Public Key",
-              "abi": "ABI"
+              "abi": "ABI",
+              "custom": "Custom"
             }
           }
         }
+      },
+      "errors": {
+        "noOptionResults": "You can create a custom record with the custom field option.",
+        "labelRequired": "A label is required",
+        "duplicateRecord": "Duplicate record"
+      },
+      "confirmations": {
+        "publicNotice": {
+          "title": "Your details are public",
+          "description": "Anything you add to your profile will be publicly viewable on the blockchain.",
+          "confirm": "I understand",
+          "decline": "Back"
+        },
+        "clearEth": {
+          "title": "Clear ETH address?",
+          "description": "Without an ETH address set people will not be able to send money to this name. This can be updated later.",
+          "confirm": "Clear",
+          "decline": "Cancel"
+        }
+      },
+      "actions": {
+        "skipProfile": "Skip profile"
       }
     },
     "complete": {
