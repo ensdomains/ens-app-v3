@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { Button, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
 
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import {
   NameTableHeader,
   SortDirection,
@@ -97,12 +98,12 @@ const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
 export const SubnamesTab = ({
   name,
   network,
-  canEdit,
+  canEditSubdomains,
   isWrapped,
 }: {
   name: string
   network: number
-  canEdit: boolean
+  canEditSubdomains: boolean
   isWrapped: boolean
 }) => {
   const router = useRouter()
@@ -188,14 +189,14 @@ export const SubnamesTab = ({
 
   return (
     <TabWrapperWithButtons>
-      {canEdit && (
-        <AddSubnamesCard>
-          <Typography>
-            {t('details.tabs.subnames.addSubname.title')}{' '}
-            <Outlink href="/faq/managing-a-name#what-is-the-difference-between-a-name-and-a-subname">
-              {t('details.tabs.subnames.addSubname.learn')}
-            </Outlink>
-          </Typography>
+      <AddSubnamesCard>
+        <Typography>
+          {t('details.tabs.subnames.addSubname.title')}{' '}
+          <Outlink href="/faq/managing-a-name#what-is-the-difference-between-a-name-and-a-subname">
+            {t('details.tabs.subnames.addSubname.learn')}
+          </Outlink>
+        </Typography>
+        {canEditSubdomains ? (
           <Button
             data-testid="add-subname-action"
             shadowless
@@ -204,8 +205,17 @@ export const SubnamesTab = ({
           >
             {t('details.tabs.subnames.addSubname.action')}
           </Button>
-        </AddSubnamesCard>
-      )}
+        ) : (
+          <DisabledButtonWithTooltip
+            {...{
+              buttonId: 'edit-subnames-button',
+              buttonText: '+ New Subname',
+              mobilePlacement: 'top',
+              mobileWidth: 250,
+            }}
+          />
+        )}
+      </AddSubnamesCard>
       <StyledTabWrapper>
         <NameTableHeader
           selectable={false}

@@ -5,6 +5,6 @@ export interface TooltipProps extends Omit<DynamicPopoverProps, 'popover' | 'ani
     content?: React.ReactNode;
 }
 export declare const Tooltip: {
-    ({ content, placement, ...props }: TooltipProps): any;
+    ({ content, placement, mobilePlacement, ...props }: TooltipProps): any;
     displayName: string;
 };

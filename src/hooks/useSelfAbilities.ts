@@ -294,6 +294,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSend: boolean
       canEditResolver: boolean
       canEditPermissions: boolean
+      canCreateSubdomains: boolean
       sendNameFunctionCallDetails: FunctionCallDetails
     } = {
       canEdit: false,
@@ -303,6 +304,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSend: false,
       canEditResolver: false,
       canEditPermissions: false,
+      canCreateSubdomains: false,
       sendNameFunctionCallDetails: {},
     }
 
@@ -344,6 +346,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
     if (basicNameData.wrapperData) {
       abilities.canEditResolver = !basicNameData.wrapperData.fuseObj.CANNOT_SET_RESOLVER
       abilities.canEditPermissions = !basicNameData.wrapperData.fuseObj.CANNOT_BURN_FUSES
+      abilities.canEditSubdomains = !basicNameData.wrapperData.fuseObj.CANNOT_CREATE_SUBDOMAIN
     }
 
     return abilities

@@ -2,12 +2,12 @@ import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Tag, Tooltip, Typography, mq } from '@ensdomains/thorin'
+import { Tag, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useChainId } from '@app/hooks/useChainId'
-import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
@@ -67,7 +67,6 @@ const Resolver = ({
   isCachedData: boolean
 }) => {
   const { t } = useTranslation('profile')
-  const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(disabledButtonId)
 
   const chainId = useChainId()
 
@@ -110,28 +109,9 @@ const Resolver = ({
             {t('action.edit', { ns: 'common' })}
           </button>
         ) : (
-          <>
-            <Tooltip
-              {...{
-                content: (
-                  <div>This name has revoked the permissions needed to perform this action</div>
-                ),
-                targetId: disabledButtonId,
-                placement: 'left',
-                onShowCallback: onSeen,
-                width: 250,
-              }}
-            />
-            <Button
-              id={disabledButtonId}
-              psuedoDisabled
-              style={{ width: 100, height: 40 }}
-              shadowless
-              shouldShowTooltipIndicator={shouldShowTooltipIndicator}
-            >
-              Edit
-            </Button>
-          </>
+          <DisabledButtonWithTooltip
+            {...{ buttonId: disabledButtonId, buttonText: 'Edit', mobileWidth: 250 }}
+          />
         )}
       </HeadingContainer>
       <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />

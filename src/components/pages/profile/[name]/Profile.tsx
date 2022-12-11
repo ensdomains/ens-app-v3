@@ -208,7 +208,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
               <SubnamesTab
                 name={normalisedName}
                 isWrapped={isWrapped}
-                canEdit={selfAbilities.canEdit}
+                canEditSubdomains={selfAbilities.canEditSubdomains}
                 network={chainId}
               />
             ),

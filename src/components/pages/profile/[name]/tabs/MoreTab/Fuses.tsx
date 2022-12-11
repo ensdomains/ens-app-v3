@@ -2,12 +2,12 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { CurrentFuses, fuseEnum } from '@ensdomains/ensjs/utils/fuses'
-import { Button, Helper, Tooltip, Typography, mq } from '@ensdomains/thorin'
+import { Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { Spacer } from '@app/components/@atoms/Spacer'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { TrafficLight } from '@app/components/TrafficLight'
-import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { TabWrapper } from '../../../TabWrapper'
@@ -94,8 +94,6 @@ const Fuses = ({
       name,
     })
   }
-  const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager('targetId')
-
   console.log('canEditPermissions: ', canEditPermissions)
 
   return (
@@ -119,28 +117,7 @@ const Fuses = ({
               {t('action.edit', { ns: 'common' })}
             </button>
           ) : (
-            <>
-              <Tooltip
-                {...{
-                  content: (
-                    <div>This name has revoked the permissions needed to perform this action</div>
-                  ),
-                  targetId: disabledButtonId,
-                  placement: 'left',
-                  onShowCallback: onSeen,
-                  width: 250,
-                }}
-              />
-              <Button
-                id={disabledButtonId}
-                psuedoDisabled
-                style={{ width: 100, height: 40 }}
-                shadowless
-                shouldShowTooltipIndicator={shouldShowTooltipIndicator}
-              >
-                Edit
-              </Button>
-            </>
+            <DisabledButtonWithTooltip {...{ buttonId: disabledButtonId }} />
           )}
         </HeadingContainer>
         <div>

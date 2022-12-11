@@ -1186,7 +1186,7 @@ const Card = ({
   }, children);
 };
 Card.displayName = "Card";
-const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, open = false) => {
+const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, open, mobileSide) => {
   let translate = "";
   if (side === "top")
     translate = `translate(0, -${verticalClearance - window.scrollY}px)`;
@@ -1196,42 +1196,54 @@ const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, open
     translate = `translate(0, ${verticalClearance + window.scrollY}px)`;
   else
     translate = `translate(${horizontalClearance - 10}px, 0);`;
-  if (open) {
-    return `
-      transform: ${translate};
-      opacity: 1;
-      visibility: visible;
-   `;
-  }
-  return `
-    transform: translate(0, 0);
-    opacity: 0;
-    visibility: hidden;
-  `;
+  let mobileTranslate = "";
+  if (mobileSide === "top")
+    mobileTranslate = `translate(0, -${verticalClearance - window.scrollY}px)`;
+  else if (mobileSide === "right")
+    mobileTranslate = `translate(${horizontalClearance * -1 + 10}px, 0)`;
+  else if (mobileSide === "bottom")
+    mobileTranslate = `translate(0, ${verticalClearance + window.scrollY}px)`;
+  else
+    mobileTranslate = `translate(${horizontalClearance - 10}px, 0);`;
+  return {
+    translate,
+    mobileTranslate
+  };
 };
 const PopoverContainer = styled.div(({
-  $injectedCSS,
   $isOpen,
-  $hasFirstLoad
+  $hasFirstLoad,
+  $translate,
+  $mobileTranslate,
+  $width,
+  $mobileWidth
 }) => css`
     position: absolute;
     box-sizing: border-box;
     z-index: 20;
-    opacity: 0;
     pointer-events: none;
-    width: 250px;
+    width: ${$mobileWidth}px;
+    transform: ${$isOpen ? $mobileTranslate : "translate(0, 0)"};
+    opacity: ${$isOpen ? 1 : 0};
+    visibility: ${$isOpen ? "visible" : "hidden"};
+
+    ${mq.md.min(css`
+      width: ${$width}px;
+      transform: ${$isOpen ? $translate : "translate (0, 0)"};
+    `)}
+
     ${$hasFirstLoad && `transition: all 0.35s cubic-bezier(1, 0, 0.22, 1.6);`}
-    ${$injectedCSS && css`
-      ${$injectedCSS}
-    `}
   `);
 const DynamicPopover = ({
   popover,
   placement = "top",
+  mobilePlacement = "top",
   animationFn: _animationFn,
   tooltipRef,
   targetId,
-  onShowCallback
+  onShowCallback,
+  width = 250,
+  mobileWidth = 150
 }) => {
   const [positionState, setPositionState] = React.useState({
     top: 100,
@@ -1243,9 +1255,9 @@ const DynamicPopover = ({
   const [hasFirstLoad, setHasFirstLoad] = React.useState(false);
   const animationFn = React.useMemo(() => {
     if (_animationFn) {
-      return (horizontalClearance, verticalClearance, side, open) => _animationFn(horizontalClearance, verticalClearance, side, open);
+      return (horizontalClearance, verticalClearance, side, open, mobileSide) => _animationFn(horizontalClearance, verticalClearance, side, open, mobileSide);
     }
-    return (horizontalClearance, verticalClearance, side, open) => defaultAnimationFunc(horizontalClearance, verticalClearance, side, open);
+    return (horizontalClearance, verticalClearance, side, open, mobileSide) => defaultAnimationFunc(horizontalClearance, verticalClearance, side, open, mobileSide);
   }, [_animationFn]);
   const [isOpen, setIsOpen] = React.useState(false);
   const handleMouseenter = React.useCallback(() => {
@@ -1284,13 +1296,21 @@ const DynamicPopover = ({
       targetElement == null ? void 0 : targetElement.removeEventListener("mouseleave", handleMouseleave);
     };
   }, []);
-  const injectedCss2 = animationFn(positionState.horizontalClearance, positionState.verticalClearance, placement, isOpen);
+  console.log("placement: ", placement);
+  console.log("mobilePlacement: ", mobilePlacement);
+  const {
+    translate,
+    mobileTranslate
+  } = animationFn(positionState.horizontalClearance, positionState.verticalClearance, placement, isOpen, mobilePlacement);
   return ReactDOM__default.createPortal(/* @__PURE__ */ React.createElement(PopoverContainer, {
     ref: popoverContainerRef,
     id: "popoverContainer",
-    $injectedCSS: injectedCss2,
     $isOpen: isOpen,
-    $hasFirstLoad: hasFirstLoad
+    $hasFirstLoad: hasFirstLoad,
+    $translate: translate,
+    $mobileTranslate: mobileTranslate,
+    $width: width,
+    $mobileWidth: mobileWidth
   }, popover), document == null ? void 0 : document.body);
 };
 DynamicPopover.displayName = "DynamicPopover";
@@ -6425,6 +6445,7 @@ Textarea.displayName = "Textarea";
 const injectedCss = {
   top: `
     &:after {
+      display: initial;
       content: '';
       position: absolute;
       bottom: -18px;
@@ -6439,6 +6460,7 @@ const injectedCss = {
   `,
   bottom: `
     &:after {
+      display: initial;
       content: '';
       position: absolute;
       top: -18px;
@@ -6455,6 +6477,7 @@ const injectedCss = {
     display: flex;
     align-items: center;
     &:before {
+      display: initial;
       content: '';
       position: absolute;
       right: -18px;
@@ -6468,6 +6491,7 @@ const injectedCss = {
     display: flex;
     align-items: center;
     &:before {
+      display: initial;
       content: '';
       position: absolute;
       left: -18px;
@@ -6480,10 +6504,10 @@ const injectedCss = {
 };
 const TooltipPopover = styled.div(({
   theme,
-  $placement
+  $placement,
+  $mobilePlacement
 }) => css`
     box-sizing: border-box;
-    max-width: 280px;
     position: relative;
     pointer-events: none;
 
@@ -6495,17 +6519,28 @@ const TooltipPopover = styled.div(({
       ${theme.space["2.5"]};
     background: ${theme.colors.background};
 
-    ${injectedCss[$placement]}
+    ${injectedCss[$mobilePlacement]}
+    ${mq.md.min(css`
+      &:before {
+        display: none;
+      }
+      &:after {
+        display: none;
+      }
+      ${injectedCss[$placement]}
+    `)}
   `);
 const Tooltip = ({
   content,
   placement,
+  mobilePlacement,
   ...props
 }) => {
   const tooltipRef = React.useRef(null);
   const popover = /* @__PURE__ */ React.createElement(TooltipPopover, {
     ref: tooltipRef,
-    $placement: placement
+    $placement: placement,
+    $mobilePlacement: mobilePlacement
   }, content);
   return DynamicPopover({
     popover,
