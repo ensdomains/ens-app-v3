@@ -1800,7 +1800,7 @@
       }
       ${It[r]}
     `)}
-  `),mt=({content:e,placement:r,mobilePlacement:o,...a})=>{const l=t.useRef(null);return He({popover:t.createElement(gs,{ref:l,$placement:r,$mobilePlacement:o},e),tooltipRef:l,placement:r,...a})};mt.displayName="Tooltip";const ps=d.default.div(({theme:e})=>n.css`
+  `),mt=({content:e,placement:r,mobilePlacement:o,...a})=>{const l=t.useRef(null);return He({popover:t.createElement(gs,{ref:l,$placement:r,$mobilePlacement:o},e),tooltipRef:l,placement:r,mobilePlacement:o,...a})};mt.displayName="Tooltip";const ps=d.default.div(({theme:e})=>n.css`
     position: absolute;
     top: ${e.space[4]};
     right: ${e.space[4]};

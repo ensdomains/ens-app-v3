@@ -94,7 +94,6 @@ const Fuses = ({
       name,
     })
   }
-  console.log('canEditPermissions: ', canEditPermissions)
 
   return (
     <FusesContainer $isCached={isCachedData}>

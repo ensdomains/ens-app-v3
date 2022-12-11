@@ -6,6 +6,7 @@ import { Button, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
 import useOwners from '@app/hooks/useOwners'
@@ -150,6 +151,8 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   )
 }
 
+const disabledButtonId = 'send-name-disabled-button'
+
 const Ownership = ({
   name,
   owners,
@@ -176,7 +179,7 @@ const Ownership = ({
       <HeadingContainer>
         <Typography>{t('tabs.more.ownership.label')}</Typography>
         <div>
-          {canSend && (
+          {canSend ? (
             <Button
               size="small"
               prefix={<AeroplaneIcon as={AeroplaneSVG} />}
@@ -185,6 +188,14 @@ const Ownership = ({
             >
               {t('action.send', { ns: 'common' })}
             </Button>
+          ) : (
+            <DisabledButtonWithTooltip
+              {...{
+                buttonId: disabledButtonId,
+                buttonText: 'Send',
+                mobilePlacement: 'left',
+              }}
+            />
           )}
         </div>
       </HeadingContainer>

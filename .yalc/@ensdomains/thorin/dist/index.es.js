@@ -6546,6 +6546,7 @@ const Tooltip = ({
     popover,
     tooltipRef,
     placement,
+    mobilePlacement,
     ...props
   });
 };
