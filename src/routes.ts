@@ -12,6 +12,8 @@ export type PublicRoute =
   | 'help'
   | 'governance'
   | 'docs'
+  | 'terms'
+  | 'privacy'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -112,6 +114,20 @@ export const routes: RouteItemObj[] = [
     disabled: false,
     connected: true,
     icon: CogSVG,
+  },
+  {
+    name: 'terms',
+    href: '/legal/terms-of-use',
+    label: 'navigation.terms',
+    disabled: false,
+    connected: false,
+  },
+  {
+    name: 'privacy',
+    href: '/legal/privacy-policy',
+    label: 'navigation.privacy',
+    disabled: false,
+    connected: false,
   },
 ]
 
