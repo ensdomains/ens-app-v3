@@ -7,10 +7,10 @@ import { Button, Dialog, Input, ScrollBox, SearchSVG } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { ProfileRecord, grouped as options } from '@app/constants/profileRecordOptions'
+import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { RegistrationForm } from '@app/hooks/useRegistrationForm'
 import mq from '@app/mediaQuery'
 
-import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
 import { DeleteButton } from './DeleteButton'
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
@@ -248,6 +248,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
         parentStyles={css`
           height: 48px;
         `}
+        data-testid="profile-record-search-input"
       />
       <Content>
         <SideBar>
@@ -278,6 +279,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
                     <OptionsGrid>
                       {option.items.map((item) => (
                         <OptionButton
+                          data-testid={`profile-record-option-${item.key}`}
                           group={option.group}
                           key={item.key}
                           item={item.key}
@@ -303,6 +305,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
                           onClick={() =>
                             handleToggleOption({ group: 'custom', key: '', type: 'text' })
                           }
+                          data-testid="profile-record-option-custom"
                         />
                       )}
                     </OptionsGrid>
@@ -321,6 +324,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
                   label={t(`steps.profile.options.groups.other.items.custom`)}
                   selected={!!selectedRecords.find((r) => r.group === 'custom')}
                   onClick={() => handleToggleOption({ group: 'custom', key: '', type: 'text' })}
+                  data-testid="profile-record-option-custom"
                 />
               </OptionsGrid>
             </NoResultsContainer>
@@ -335,11 +339,12 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
           shadowless
           fullWidthContent
           disabled={selectedRecords.length === 0}
+          data-testid="add-profile-records-button"
         >
           <ButtonInner>
             {t('action.add', { ns: 'common' })}
             {selectedRecords.length > 0 && (
-              <CounterWrapper>
+              <CounterWrapper data-testid="add-profile-records-counter">
                 <Counter>{selectedRecords.length}</Counter>
               </CounterWrapper>
             )}

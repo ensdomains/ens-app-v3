@@ -1,3 +1,4 @@
+import { HTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
 import { AlertSVG, Button } from '@ensdomains/thorin'
@@ -97,7 +98,7 @@ type Props = {
   declineLabel?: string
   onConfirm?: () => void
   onDecline?: () => void
-}
+} & HTMLAttributes<HTMLDivElement>
 
 export const ConfirmationDialogView = ({
   title,
@@ -106,9 +107,10 @@ export const ConfirmationDialogView = ({
   declineLabel,
   onConfirm,
   onDecline,
+  ...props
 }: Props) => {
   return (
-    <Container>
+    <Container {...props}>
       <DeleteButtonWrapper>
         <DeleteButton size="large" onClick={onDecline} />
       </DeleteButtonWrapper>
@@ -120,10 +122,22 @@ export const ConfirmationDialogView = ({
       </Header>
       <Description>{description}</Description>
       <ButtonContainer>
-        <Button size="medium" variant="secondary" shadowless onClick={onDecline}>
+        <Button
+          size="medium"
+          variant="secondary"
+          shadowless
+          onClick={onDecline}
+          data-testid="confirmation-dialog-decline-button"
+        >
           <ButtonInner>{declineLabel}</ButtonInner>
         </Button>
-        <Button size="medium" variant="primary" shadowless onClick={onConfirm}>
+        <Button
+          size="medium"
+          variant="primary"
+          shadowless
+          onClick={onConfirm}
+          data-testid="confirmation-dialog-confirm-button"
+        >
           <ButtonInner>{confirmLabel}</ButtonInner>
         </Button>
       </ButtonContainer>

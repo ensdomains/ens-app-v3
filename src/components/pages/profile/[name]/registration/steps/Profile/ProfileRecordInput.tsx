@@ -127,7 +127,7 @@ export const ProfileRecordInput = forwardRef(
             padding="3.5"
             error={!!error}
             placeholder={placeholder}
-            data-testid="record-input-input"
+            data-testid={`profile-record-input-input-${recordKey}`}
             validated={validated}
             parentStyles={css`
               height: ${theme.space['12']};
@@ -142,7 +142,7 @@ export const ProfileRecordInput = forwardRef(
                     type="button"
                     onClick={handleDelete}
                     onMouseDown={(e) => e.preventDefault()}
-                    data-testid="record-input-delete"
+                    data-testid={`profile-record-input-delete-button-${recordKey}`}
                   />
                 </DeleteButtonWrapper>
               )

@@ -42,13 +42,14 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     if (record.group === 'other') return t(`steps.profile.options.groups.other.items.${record.key}`)
     if (record.group === 'website')
       return t(`steps.profile.options.groups.website.items.${record.key}`)
+    return ''
   }
 
   const secondaryLabelForRecord = (record: ProfileRecord) => {
     if (record.group === 'website') return 'contenthash'
     if (record.key === 'contentHash') return 'contenthash'
     if (record.group !== 'custom') return record.key
-    return 'uh oh'
+    return ''
   }
 
   const validatorForRecord = (record: ProfileRecord) => {
@@ -97,8 +98,12 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     })
   }
 
+  const getRecords = () => getValues('records')
+
   const setAvatar = (avatar?: string) =>
     setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
+
+  const getAvatar = () => getValues('avatar')
 
   return {
     records,
@@ -107,9 +112,11 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     control,
     handleSubmit,
     addRecords,
+    getRecords,
     removeRecordAtIndex,
     removeRecordByKey,
     setAvatar,
+    getAvatar,
     labelForRecord,
     secondaryLabelForRecord,
     validatorForRecord,

@@ -44,17 +44,33 @@ describe('Register Name', () => {
     })
     it('should go to profile editor step', () => {
       cy.findByTestId('next-button').click()
-      cy.findByText('General').should('be.visible')
+      cy.findByText('Create your profile').should('be.visible')
     })
     it('should allow setting a general text record', () => {
-      cy.findByText('Nickname').click().type('Test Name')
+      cy.findByTestId('show-add-profile-records-modal-button').click()
+      cy.findByText('Your details are public').should('be.visible')
+      cy.findByTestId('confirmation-dialog-confirm-button').click()
+      cy.findByText('Add profile fields').should('be.visible')
+      cy.findByTestId('add-profile-records-button').should('be.disabled')
+      cy.findByTestId('add-profile-records-counter').should('not.exist')
+      cy.findByTestId('profile-record-option-name').click()
+      cy.findByTestId('add-profile-records-counter').should('contain.text', '1')
+      cy.findByTestId('add-profile-records-button').should('be.enabled').click()
+      cy.findByTestId('profile-record-input-input-name').type('Test Name')  
     })
+
     it('should show ETH record by default', () => {
-      cy.findByText('Address').click()
       cy.findByDisplayValue('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC').should('be.visible')
     })
+
+    it('should warn use before ETH record can be deleted', () => {
+      cy.findByTestId('profile-record-input-delete-button-ETH').click()
+      cy.findByText('Clear ETH address?').should('be.visible')
+      cy.findByTestId('confirmation-dialog-decline-button').click()
+    })
+
     it('should show go to info step and show updated estimate', function () {
-      cy.findByTestId('next-button').should('contain.text', 'Next').click()
+      cy.findByTestId('profile-submit-button').should('contain.text', 'Next').click()
       cy.findByTestId('invoice-item-1-amount').should('not.contain.text', `${this.estimate} ETH`)
     })
     it('should go to transactions step and open commit transaction immediately', () => {
@@ -92,7 +108,7 @@ describe('Register Name', () => {
       cy.url().should('eq', 'http://localhost:3000/profile/registration-normal.eth')
     })
     it('should show all records from registration', () => {
-      cy.findByTestId('profile-snippet-name').should('contain.text', 'Test Name')
+      // cy.findByTestId('profile-snippet-name').should('contain.text', 'Test Name')
       cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
     })
   })

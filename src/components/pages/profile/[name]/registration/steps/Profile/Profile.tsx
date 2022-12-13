@@ -141,7 +141,13 @@ const SubmitButton = ({
     : t('action.next', { ns: 'common' })
 
   return (
-    <Button variant="primary" type="submit" disabled={disabled} shadowless>
+    <Button
+      variant="primary"
+      type="submit"
+      disabled={disabled}
+      shadowless
+      data-testid="profile-submit-button"
+    >
       <ButtonInner>{message}</ButtonInner>
     </Button>
   )
@@ -301,7 +307,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         {modalContent}
       </Dialog>
       <StyledCard onSubmit={handleSubmit2(onSubmit)}>
-        <Heading>Create your profile</Heading>
+        <Heading>{t('steps.profile.title')}</Heading>
         <AvatarButton
           control={control as unknown as Control<AvatarEditorType>}
           src={avatarSrc}
@@ -350,7 +356,12 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
           ),
         )}
         <ButtonWrapper>
-          <Button shadowless size="medium" onClick={handleAddRecord}>
+          <Button
+            shadowless
+            size="medium"
+            onClick={handleAddRecord}
+            data-testid="show-add-profile-records-modal-button"
+          >
             <ButtonInner>
               <ButtonIcon>
                 <PlusSVG />

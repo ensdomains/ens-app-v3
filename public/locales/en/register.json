@@ -29,6 +29,7 @@
       }
     },
     "profile": {
+      "title": "Create your profile",
       "default": "Default",
       "advanced": "Advanced",
       "permissions": "Permissions",

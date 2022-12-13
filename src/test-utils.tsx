@@ -30,6 +30,15 @@ jest.mock('wagmi', () => {
   }
 })
 
+jest.mock('react-i18next', () => ({
+  useTranslation: () => ({
+    t: (value: string, opts: any) => `${opts?.value || opts?.count || ''} ${value}`,
+    i18n: {
+      isInitialized: true,
+    },
+  }),
+}))
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {

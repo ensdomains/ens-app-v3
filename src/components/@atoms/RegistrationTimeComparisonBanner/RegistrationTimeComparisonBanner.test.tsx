@@ -4,12 +4,6 @@ import { BigNumber } from 'ethers'
 
 import { RegistrationTimeComparisonBanner } from './RegistrationTimeComparisonBanner'
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (value: string, opts: any) => `${opts.value} ${value}`,
-  }),
-}))
-
 describe('RegistrationUpsellBanner', () => {
   it('should render correctly', async () => {
     render(

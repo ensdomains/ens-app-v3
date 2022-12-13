@@ -4,12 +4,6 @@ import { PlusMinusControl } from './PlusMinusControl'
 
 const mockChangeHandler = jest.fn()
 
-jest.mock('react-i18next', () => ({
-  useTranslation: () => ({
-    t: (value: string, opts: any) => `${opts.value || opts.count} ${value}`,
-  }),
-}))
-
 describe('PlusMinusControl', () => {
   afterEach(() => {
     jest.resetAllMocks()
