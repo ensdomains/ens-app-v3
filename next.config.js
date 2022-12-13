@@ -35,10 +35,6 @@ let nextConfig = {
         destination: '/my/names?address=:address',
       },
       {
-        source: '/profile/:name/details',
-        destination: '/profile/details?name=:name',
-      },
-      {
         source: '/profile/:name',
         destination: '/profile?name=:name',
       },

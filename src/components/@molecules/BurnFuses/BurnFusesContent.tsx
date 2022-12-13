@@ -109,7 +109,7 @@ const BurnButton = ({
   handleBurnClick: (permission: keyof FuseObj) => void
   isSelected: boolean
 }) => {
-  const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
+  const { t } = useTranslation('profile', { keyPrefix: 'tabs.more.fuses' })
 
   return (
     <StyledButton
@@ -122,10 +122,10 @@ const BurnButton = ({
       shadowless
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
-        <Typography>{t(`fuses.permissions.${permission}`)}</Typography>
+        <Typography>{t(`permissions.${permission}`)}</Typography>
         {isBurned && (
           <BurnedFlameContainer $isBurned={isBurned}>
-            <Typography>{t('fuses.burned')}</Typography>
+            <Typography>{t('burned')}</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
         )}
@@ -177,7 +177,7 @@ type Props = {
 }
 
 const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false }: Props) => {
-  const { t } = useTranslation('profile', { keyPrefix: 'details.tabs.advanced' })
+  const { t } = useTranslation('profile', { keyPrefix: 'tabs.more' })
   const { t: tc } = useTranslation()
   const [_fuseData, setFuseData] = useState<SelectableFuses>(defaultSelectableFuses)
   const [fuseSelected, setFuseSelected] = useState<Partial<SelectableFuses>>(defaultSelectableFuses)

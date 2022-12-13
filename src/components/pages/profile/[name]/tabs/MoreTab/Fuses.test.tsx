@@ -27,6 +27,13 @@ const mockFusesResponse = {
   rawFuses: BigNumber.from('0x40'),
 }
 
+const defaultProps = {
+  name: 'nick.eth',
+  fuseObj: mockFusesResponse.fuseObj,
+  canEdit: false,
+  isCachedData: false,
+}
+
 describe('Fuses', () => {
   afterEach(() => {
     jest.clearAllMocks()
@@ -39,21 +46,7 @@ describe('Fuses', () => {
       },
     })
     mockUseGetWrapperData.mockReturnValue({})
-    render(<Fuses />)
-    expect(screen.getByText('fuses.callToAction')).toBeVisible()
-  })
-
-  it('should show fuses if wrapped name', () => {
-    mockUseRouter.mockReturnValue({
-      query: {
-        name: 'nick.eth',
-      },
-    })
-    mockUseGetWrapperData.mockReturnValue({ wrapperData: mockFusesResponse })
-    render(<Fuses />)
-    expect(screen.getByTestId('first-traffic-light')).toHaveStyle(
-      'background-color: rgb(213,85,85)',
-    )
+    render(<Fuses {...defaultProps} />)
   })
 
   it('should show warning if PCC has NOT been burned', () => {
@@ -68,7 +61,11 @@ describe('Fuses', () => {
         fuseObj: { ...mockFusesResponse.fuseObj, PARENT_CANNOT_CONTROL: false },
       },
     })
-    render(<Fuses />)
-    expect(screen.getByText('fuses.permissions.warning')).toBeVisible()
+    const props = {
+      ...defaultProps,
+      fuseObj: { ...mockFusesResponse.fuseObj, PARENT_CANNOT_CONTROL: false },
+    }
+    render(<Fuses {...props} />)
+    expect(screen.getByText('tabs.more.fuses.permissions.warning')).toBeVisible()
   })
 })

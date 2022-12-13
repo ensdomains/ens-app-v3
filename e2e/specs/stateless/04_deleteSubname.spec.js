@@ -6,11 +6,11 @@ describe('Delete subnames', () => {
   })
 
   it('should be able to delete subname', () => {
-    cy.visit('/profile/with-subnames.eth/details?tab=subnames')
+    cy.visit('/profile/with-subnames.eth')
     connectFromExisting()
+    cy.findByTestId('subnames-tab').click()
     cy.findByTestId('name-item-xyz.with-subnames.eth').click()
     cy.wait(500)
-    cy.findByTestId('profile-actions').click({ force: true })
 
     cy.get('button').contains('Delete subname').click()
 

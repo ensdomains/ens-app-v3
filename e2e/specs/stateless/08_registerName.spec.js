@@ -76,7 +76,7 @@ describe('Register Name', () => {
     it('should go to transactions step and open commit transaction immediately', () => {
       cy.wait(1000)
       cy.findByTestId('next-button').should('contain.text', 'Begin').click()
-      cy.findByText('Confirm Details').should('be.visible')
+      cy.findByText('Open Wallet').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
     })
@@ -94,7 +94,7 @@ describe('Register Name', () => {
     it('should allow finalising registration and automatically go to the complete step', () => {
       cy.wait(1000)
       cy.findByTestId('finish-button').click()
-      cy.findByText('Confirm Details').should('be.visible')
+      cy.findByText('Open Wallet').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
     })
@@ -108,7 +108,7 @@ describe('Register Name', () => {
       cy.url().should('eq', 'http://localhost:3000/profile/registration-normal.eth')
     })
     it('should show all records from registration', () => {
-      // cy.findByTestId('profile-snippet-name').should('contain.text', 'Test Name')
+      cy.findByTestId('profile-snippet-nickname').should('contain.text', 'Test Name')
       cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
     })
   })

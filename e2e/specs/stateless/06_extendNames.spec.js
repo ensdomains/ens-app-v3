@@ -1,6 +1,10 @@
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Extend Names', () => {
+  before(() => {
+    acceptMetamaskAccess(2, true)
+  })
+
   it('should be able to register multiple names on the address page', () => {
     cy.clearLocalStorage()
     const NAMES = ['other-registrant.eth']
@@ -40,7 +44,7 @@ describe('Extend Names', () => {
 
     cy.log('increment and save')
     cy.findByTestId('plus-minus-control-plus').click()
-    cy.get('button').contains('Save').click()
+    cy.findByTestId('extend-names-confirm').click()
     cy.contains('Extending this name will not give you ownership of it').should('exist')
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -60,11 +64,11 @@ describe('Extend Names', () => {
 
   it('should extend a single name', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/other-registrant.eth/details')
+    cy.visit('/profile/other-registrant.eth')
     connectFromExisting()
     cy.findByTestId('extend-button').should('be.visible')
-    cy.findByTestId('expiry-label').should('be.visible')
-    cy.findByTestId('expiry-label')
+    cy.findByTestId('owner-profile-button-expiry').should('be.visible')
+    cy.findByTestId('owner-profile-button-expiry')
       .invoke('attr', 'data-timestamp')
       .then((timestamp) => {
         cy.log(`timestamp: ${timestamp}`)
@@ -108,7 +112,7 @@ describe('Extend Names', () => {
     cy.findByTestId('invoice-total').should('contain.text', '$5.19')
 
     cy.log('should save')
-    cy.get('button').contains('Save').click()
+    cy.findByTestId('extend-names-confirm').click()
     cy.contains('Extending this name will not give you ownership of it').should('be.exist')
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -116,7 +120,7 @@ describe('Extend Names', () => {
     cy.wait(5000)
     cy.get('@timestamp').then((timestamp) => {
       const newTimestamp = parseInt(timestamp) + 31536000000
-      cy.findByTestId('expiry-label')
+      cy.findByTestId('owner-profile-button-expiry')
         .invoke('attr', 'data-timestamp')
         .should('eq', newTimestamp.toString())
     })
@@ -124,14 +128,14 @@ describe('Extend Names', () => {
 
   it('should extend a single name in grace period', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/grace-period.eth/details')
+    cy.visit('/profile/grace-period.eth')
     connectFromExisting()
 
     cy.findByTestId('extend-button').as('extend-button')
 
     cy.get('@extend-button').should('be.visible')
-    cy.findByTestId('expiry-label').should('be.visible')
-    cy.findByTestId('expiry-label')
+    cy.findByTestId('owner-profile-button-expiry').should('be.visible')
+    cy.findByTestId('owner-profile-button-expiry')
       .invoke('attr', 'data-timestamp')
       .then((timestamp) => {
         cy.log(`timestamp: ${timestamp}`)
@@ -141,7 +145,7 @@ describe('Extend Names', () => {
     cy.findByTestId('extend-button').click()
     cy.findByTestId('extend-names-modal', { timeout: 10000 }).should('be.visible')
 
-    cy.get('button').contains('Save').click()
+    cy.findByTestId('extend-names-confirm').click()
 
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -149,13 +153,13 @@ describe('Extend Names', () => {
     cy.wait(5000)
     cy.get('@timestamp').then((timestamp) => {
       const newTimestamp = parseInt(timestamp) + 31536000000
-      cy.findByTestId('expiry-label')
+      cy.findByTestId('owner-profile-button-expiry')
         .invoke('attr', 'data-timestamp')
         .should('eq', newTimestamp.toString())
     })
   })
 
-  it('should be able to register multiple names on the names page', () => {
+  it('should be able to extend multiple names on the names page', () => {
     const NAMES = [
       'test123.eth',
       'with-subnames.eth',
@@ -205,7 +209,7 @@ describe('Extend Names', () => {
 
     cy.log('increment and save')
     cy.findByTestId('plus-minus-control-plus').click()
-    cy.get('button').contains('Save').click()
+    cy.findByTestId('extend-names-confirm').click()
     cy.contains('Extending this name will not give you ownership of it').should('not.exist')
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -224,7 +228,7 @@ describe('Extend Names', () => {
   })
 
   it('should not show extend button on subnames', () => {
-    cy.visit('/profile/test.with-subnames.eth/details')
+    cy.visit('/profile/test.with-subnames.eth')
     connectFromExisting()
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('extend-subname-action', { timeout: 2000 }).should('not.exist')

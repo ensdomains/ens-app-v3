@@ -4,6 +4,7 @@ import {
   ContentHashIconType,
   DynamicContentHashIcon,
 } from '@app/assets/contentHash/DynamicContentHashIcon'
+import supportedContentHashKeys from '@app/constants/supportedContentHashKeys.json'
 import { formSafeKey } from '@app/utils/editor'
 
 const IconWrapper = styled.div(
@@ -20,15 +21,7 @@ const LabelWrapper = styled.div(
   `,
 )
 
-const SUPPORTED_CONTENT_HASHES: ContentHashIconType[] = [
-  'ipfs',
-  'swarm',
-  'onion',
-  'skynet',
-  'arweave',
-]
-
-export default SUPPORTED_CONTENT_HASHES.map((value) => ({
+export default (supportedContentHashKeys as ContentHashIconType[]).map((value) => ({
   value: formSafeKey(value),
   label: value.toUpperCase(),
   node: <LabelWrapper>{value.toUpperCase()}</LabelWrapper>,

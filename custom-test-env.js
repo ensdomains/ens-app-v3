@@ -8,6 +8,7 @@ module.exports = class CustomTestEnvironment extends Environment {
       const { TextEncoder, TextDecoder } = require('util')
       this.global.TextEncoder = TextEncoder
       this.global.TextDecoder = TextDecoder
+      this.global.Uint8Array = Uint8Array
     }
   }
 }

@@ -3,6 +3,7 @@ import { revert } from './clean'
 export const acceptMetamaskAccess = (account = 1, runRevert = false) => {
   cy.clearLocalStorageSnapshot()
   cy.visit('/')
+  cy.wait(1000)
   cy.window().then((win) => win.ethereum.selectedAddress && cy.disconnectMetamaskWalletFromDapp())
   cy.switchMetamaskAccount(account).then(() => {
     runRevert &&

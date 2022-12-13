@@ -1,30 +1,27 @@
 import { isAddress } from 'ethers/lib/utils'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 
 export const useValidate = (input: string, skip?: any) => {
-  const [name, setNormalisedName] = useState('')
-  const [valid, setValid] = useState<boolean | undefined>(undefined)
-  const [type, setType] = useState<any>(undefined)
-
-  useEffect(() => {
+  const { normalisedName, valid, type } = useMemo(() => {
+    let _normalisedName = ''
+    let _inputType: ReturnType<typeof parseInputType> | undefined
+    let _valid: boolean | undefined
     if (!skip) {
       try {
-        const normalisedName = validateName(decodeURIComponent(input))
-        setNormalisedName(normalisedName)
-
-        const inputType = parseInputType(normalisedName)
-        setType(inputType.type)
-        setValid(inputType.type !== 'unknown' && inputType.info !== 'unsupported')
+        _normalisedName = validateName(decodeURIComponent(input))
+        _inputType = parseInputType(_normalisedName)
+        _valid = _inputType.type !== 'unknown' && _inputType.info !== 'unsupported'
+        // eslint-disable-next-line no-empty
       } catch {
-        setValid(false)
+        _valid = false
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    return { normalisedName: _normalisedName, valid: _valid, type: _inputType }
   }, [input, skip])
 
-  return { valid, type, name, labelCount: name.split('.').length }
+  return { valid, type, name: normalisedName, labelCount: normalisedName.split('.').length }
 }
 
 export const useValidateOrAddress = (input: string, skip?: any) => {

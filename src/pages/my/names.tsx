@@ -1,6 +1,6 @@
 import { ReactElement } from 'react'
 
-import MyNames, { spacing } from '@app/components/pages/my/names/MyNames'
+import MyNames from '@app/components/pages/my/names/MyNames'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 
 export default function Page() {
@@ -8,5 +8,5 @@ export default function Page() {
 }
 
 Page.getLayout = function getLayout(page: ReactElement) {
-  return <ContentGrid $spacing={spacing}>{page}</ContentGrid>
+  return <ContentGrid>{page}</ContentGrid>
 }

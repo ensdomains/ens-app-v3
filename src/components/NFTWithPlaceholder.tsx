@@ -8,17 +8,8 @@ import NFTTemplate from './@molecules/NFTTemplate/NFTTemplate'
 const StyledNftBox = styled.div(
   ({ theme }) => css`
     width: 100%;
-    border-radius: ${theme.radii['2xLarge']};
-    box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
+    border-radius: ${theme.radii.large};
     overflow: hidden;
-  `,
-)
-
-const Container = styled.div(
-  () => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
   `,
 )
 
@@ -37,10 +28,8 @@ export const NFTWithPlaceholder = ({
   if (!isCompatible) return null
 
   return (
-    <Container>
-      <StyledNftBox {...props}>
-        <NFTTemplate name={name} backgroundImage={avatar} isNormalised />
-      </StyledNftBox>
-    </Container>
+    <StyledNftBox {...props}>
+      <NFTTemplate name={name} backgroundImage={avatar} isNormalised />
+    </StyledNftBox>
   )
 }

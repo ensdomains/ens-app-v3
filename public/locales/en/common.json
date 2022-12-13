@@ -74,6 +74,7 @@
     "viewDetails": "View Details"
   },
   "name": {
+    "registered": "Registered",
     "expires": "Expires",
     "noExpiry": "No expiry",
     "registrant": "Registrant",
@@ -96,42 +97,42 @@
   },
   "address": {
     "label": "Address",
-    "viewAddress": "View Address",
-    "copyAddress": "Copy Address"
+    "viewAddress": "View address",
+    "copyAddress": "Copy address"
   },
   "records": {
     "label": "Records"
   },
   "sortTypes": {
-    "expiryDate": "Expiry Date",
+    "expiryDate": "Expiry date",
     "labelName": "Name",
-    "creationDate": "Creation Date"
+    "creationDate": "Creation date"
   },
   "errors": {
     "noResults": "No results found"
   },
   "transaction": {
     "description": {
-      "setName": "Set Name",
-      "setRecords": "Set Records",
-      "test": "Test Transaction",
-      "addSuccess": "Add Success",
-      "sendName": "Send Name",
-      "migrateProfile": "Migrate Profile",
+      "setName": "Set name",
+      "setRecords": "Set records",
+      "test": "Test transaction",
+      "addSuccess": "Add success",
+      "sendName": "Send name",
+      "migrateProfile": "Migrate profile",
       "migrateProfileWithSync": "Migrate and update profile",
-      "wrapName": "Wrap Name",
-      "updateResolver": "Update Resolver",
-      "updateProfile": "Update Profile",
+      "wrapName": "Wrap name",
+      "updateResolver": "Update resolver",
+      "updateProfile": "Update profile",
       "setPrimaryName": "Set primary name",
       "updateEthAddress": "Update ETH address",
-      "testSendName": "Send Name",
+      "testSendName": "Send name",
       "burnFuses": "Burn permissions",
-      "createSubname": "Create Subname",
-      "deleteSubname": "Delete Subname",
-      "extendNames": "Extend Names",
-      "importDNSSECName": "import DNSSEC Name",
+      "createSubname": "Create subname",
+      "deleteSubname": "Delete subname",
+      "extendNames": "Extend names",
+      "importDNSSECName": "import DNSSEC name",
       "commitName": "Start timer",
-      "registerName": "Register Name",
+      "registerName": "Register name",
       "approveNameWrapper": "Approve NameWrapper",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
@@ -158,8 +159,6 @@
       "action": "Action",
       "info": "Info",
       "to": "To",
-      "currentResolver": "Current Resolver",
-      "newResolver": "New Resolver",
       "subname": "Subname",
       "duration": "Duration",
       "cost": "Cost",
