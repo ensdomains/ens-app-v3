@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
@@ -8,6 +7,7 @@ import { Button, Typography } from '@ensdomains/thorin'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { AddressAvatar, AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { NFTWithPlaceholder } from '@app/components/NFTWithPlaceholder'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { shortenAddress } from '@app/utils/utils'
@@ -149,7 +149,7 @@ export const NameDetailSnippet = ({
   isCached?: boolean
 }) => {
   const { t } = useTranslation('common')
-  const router = useRouter()
+  const router = useRouterWithHistory()
 
   const owners: [translation: string, address: string][] = []
 
@@ -189,14 +189,7 @@ export const NameDetailSnippet = ({
       {showButton && (
         <ButtonWrapper>
           <Button
-            onClick={() =>
-              router.push({
-                pathname: `/profile/${name}/details`,
-                query: {
-                  from: router.asPath,
-                },
-              })
-            }
+            onClick={() => router.pushWithHistory(`/profile/${name}/details`)}
             variant="transparent"
             shadowless
             size="small"

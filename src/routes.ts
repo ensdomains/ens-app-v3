@@ -133,3 +133,49 @@ export const routes: RouteItemObj[] = [
 
 export const getRoute = (name: PublicRoute | ConnectedRoute): RouteItemObj =>
   routes.find((route) => route.name === name) as RouteItemObj
+
+export const rewrites = [
+  {
+    source: '/my/profile',
+    destination: '/profile?connected=true',
+  },
+  {
+    source: '/names/:address',
+    destination: '/my/names?address=$2',
+  },
+  {
+    source: '/profile/:name',
+    destination: '/profile?name=$2',
+  },
+  {
+    source: '/register/:name',
+    destination: '/register?name=$2',
+  },
+  {
+    source: '/import/:name',
+    destination: '/import?name=$2',
+  },
+  {
+    source: '/address/:address',
+    destination: '/address?address=$2',
+  },
+]
+
+// this function assumes that all query params are in order
+export const getDestination = (pathname: string) => {
+  if (!process.env.NEXT_PUBLIC_IPFS) return { pathname }
+  for (const rewrite of rewrites) {
+    const regex = new RegExp(rewrite.source.replace(/:[^/]+/g, '([^/]+)'))
+    const match = regex.exec(pathname)
+    if (match) {
+      const values = pathname.split('/')
+      const replacedDestination = rewrite.destination.replace(
+        /\$(\d)/g,
+        (_, n) => values[parseInt(n)],
+      )
+      const [newPathname, query] = replacedDestination.split('?')
+      return { pathname: newPathname, query: Object.fromEntries(new URLSearchParams(query)) }
+    }
+  }
+  return { pathname }
+}

@@ -24,6 +24,7 @@ let nextConfig = {
   images: {
     domains: ['metadata.ens.domains'],
   },
+  trailingSlash: process.env.NEXT_PUBLIC_IPFS ? true : false,
   async rewrites() {
     return [
       {
@@ -124,7 +125,7 @@ const withSentry = (config) => {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options.
   }
-  if (process.env.NODE_ENV === 'production')
+  if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS)
     return withSentryConfig(config, sentryWebpackPluginOptions)
   return config
 }

@@ -1,14 +1,14 @@
-import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 
 import ProfileContent from '@app/components/pages/profile/[name]/Profile'
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { checkDNSName } from '@app/utils/utils'
 
 export default function Page() {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const _name = router.query.name as string
   const isSelf = router.query.connected === 'true'
 

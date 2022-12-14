@@ -5,7 +5,6 @@
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
-import { useRouter } from 'next/router'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
@@ -15,6 +14,7 @@ import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useElementSize } from '@app/hooks/useWindowSize'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
@@ -176,7 +176,7 @@ export const SearchInput = ({
   setSearchState?: (value: TransitionState) => void
 }) => {
   const { t } = useTranslation('common')
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const queryClient = useQueryClient()
 
@@ -368,15 +368,7 @@ export const SearchInput = ({
     )
     setInputVal('')
     searchInputRef.current?.blur()
-    router.push(
-      {
-        pathname: path,
-        query: {
-          from: router.asPath,
-        },
-      },
-      path,
-    )
+    router.pushWithHistory(path)
   }, [normalisedName, queryClient, router, searchItems, selected, setHistory])
 
   const handleKeyDown = useCallback(
