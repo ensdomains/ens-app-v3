@@ -1,4 +1,3 @@
-import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { mq } from '@ensdomains/thorin'
@@ -10,7 +9,6 @@ import SocialGithub from '../assets/social/SocialGithub.svg'
 import SocialMedium from '../assets/social/SocialMedium.svg'
 import SocialTwitter from '../assets/social/SocialTwitter.svg'
 import SocialYoutube from '../assets/social/SocialYoutube.svg'
-import { StyledNavLink } from './@atoms/StyledNavLink'
 import { LanugageDropdown } from './LanguageDropdown'
 import { SocialIcon } from './SocialIcon'
 
@@ -39,16 +37,6 @@ const TrailingStack = styled.div(
   `,
 )
 
-const LinkContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    direction: row;
-    align-items: center;
-    flex-gap: ${theme.space['4']};
-    gap: ${theme.space['4']};
-  `,
-)
-
 const SocialIconContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -59,20 +47,10 @@ const SocialIconContainer = styled.div(
 )
 
 export const Footer = () => {
-  const { t } = useTranslation('common')
-
   return (
     <Container>
       <LanugageDropdown invert />
       <TrailingStack>
-        <LinkContainer>
-          <StyledNavLink disabled href="/bug-bounty">
-            {t('navigation.bugBounty')}
-          </StyledNavLink>
-          <StyledNavLink disabled href="/media-kit">
-            {t('navigation.mediaKit')}
-          </StyledNavLink>
-        </LinkContainer>
         <SocialIconContainer>
           <SocialIcon Icon={SocialTwitter} color="#5298FF" href="https://twitter.com/ensdomains" />
           <SocialIcon Icon={SocialGithub} color="#0F0F0F" href="https://github.com/ensdomains" />
