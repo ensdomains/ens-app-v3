@@ -2,6 +2,17 @@ import { AppPropsType, AppType } from 'next/dist/shared/lib/utils'
 import Document, { DocumentContext, Head, Html, Main, NextScript } from 'next/document'
 import { ServerStyleSheet } from 'styled-components'
 
+const ipfsPathScript = `
+  (function () {
+    const { pathname } = window.location
+    const ipfsMatch = /.*\\/Qm\\w{44}\\//.exec(pathname)
+    const base = document.createElement('base')
+
+    base.href = ipfsMatch ? ipfsMatch[0] : '/'
+    document.head.append(base)
+  })();
+`
+
 export default class MyDocument extends Document {
   static async getInitialProps(ctx: DocumentContext) {
     const sheet = new ServerStyleSheet()
@@ -33,6 +44,10 @@ export default class MyDocument extends Document {
     return (
       <Html>
         <Head>
+          {process.env.NEXT_PUBLIC_IPFS && (
+            // eslint-disable-next-line react/no-danger
+            <script dangerouslySetInnerHTML={{ __html: ipfsPathScript }} />
+          )}
           <link rel="apple-touch-icon" sizes="256x256" href="/icon/AppIcon.png" />
           <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
           <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />

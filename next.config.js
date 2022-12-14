@@ -24,7 +24,6 @@ let nextConfig = {
   images: {
     domains: ['metadata.ens.domains'],
   },
-  trailingSlash: process.env.NEXT_PUBLIC_IPFS ? true : false,
   async rewrites() {
     return [
       {
@@ -103,6 +102,12 @@ let nextConfig = {
 
     return config
   },
+  ...(process.env.NEXT_PUBLIC_IPFS
+    ? {
+        trailingSlash: true,
+        assetPrefix: './',
+      }
+    : {}),
 }
 
 let plugins = []
