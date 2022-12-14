@@ -1,5 +1,4 @@
 /* eslint-disable @next/next/no-img-element */
-import Link from 'next/link'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -13,6 +12,7 @@ import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { getRoute } from '@app/routes'
 
+import BaseLink from './@atoms/BaseLink'
 import { RouteItem } from './@atoms/RouteItem/RouteItem'
 import { ConnectButton } from './ConnectButton'
 
@@ -86,7 +86,7 @@ const TabBarProfile = ({ address, isActive }: { address: string; isActive: boole
   const zorb = useZorb(address, 'address')
 
   return (
-    <Link href={profileRoute.href} passHref>
+    <BaseLink href={profileRoute.href} passHref>
       <a>
         <AvatarWrapper $active={isActive}>
           {avatar ? (
@@ -96,7 +96,7 @@ const TabBarProfile = ({ address, isActive }: { address: string; isActive: boole
           )}
         </AvatarWrapper>
       </a>
-    </Link>
+    </BaseLink>
   )
 }
 

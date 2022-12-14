@@ -106,7 +106,6 @@ let nextConfig = {
     ? {
         trailingSlash: true,
         assetPrefix: './',
-        basePath: './',
       }
     : {}),
 }
