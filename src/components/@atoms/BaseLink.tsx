@@ -32,7 +32,7 @@ const BaseLink = ({ href, as, ...rest }: PropsWithChildren<LinkProps>) => {
       // on the client
       //   document is unavailable when compiling on the server
       if (typeof document !== 'undefined') {
-        baseURI.href = new URL(document.baseURI, baseURI.href).href
+        baseURI.href = new URL(baseURI.href, document.baseURI).href
         // => <a href="https://gateway.ipfs.io/ipfs/Qm<hash>/about">About</a>
       }
     }

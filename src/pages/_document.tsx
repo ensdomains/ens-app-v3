@@ -45,8 +45,12 @@ export default class MyDocument extends Document {
       <Html>
         <Head>
           {process.env.NEXT_PUBLIC_IPFS && (
-            // eslint-disable-next-line react/no-danger
-            <script dangerouslySetInnerHTML={{ __html: ipfsPathScript }} />
+            <>
+              {/* eslint-disable-next-line react/no-danger */}
+              <script dangerouslySetInnerHTML={{ __html: ipfsPathScript }} />
+              {/* eslint-disable-next-line @next/next/no-css-tags */}
+              <link rel="stylesheet" href="./fonts/fonts.css" />
+            </>
           )}
           <link rel="apple-touch-icon" sizes="256x256" href="./icon/AppIcon.png" />
           <link rel="icon" type="image/png" sizes="32x32" href="./favicon-32x32.png" />
