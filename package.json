@@ -66,6 +66,7 @@
     "calendar-link": "^2.2.0",
     "dns-packet": "^5.4.0",
     "ethers": "^5.7.0",
+    "glob": "^8.0.3",
     "i18next": "^21.9.1",
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
