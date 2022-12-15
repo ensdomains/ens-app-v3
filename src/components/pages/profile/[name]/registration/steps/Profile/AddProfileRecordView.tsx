@@ -264,7 +264,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
         </SideBar>
         <OptionsContainer>
           {visibleOptions.length > 0 ? (
-            <ScrollBox hideDividers>
+            <ScrollBox>
               {visibleOptions.map((option) => {
                 const showLabel = !['address', 'website'].includes(option.group)
 
