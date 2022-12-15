@@ -21,6 +21,7 @@ import { EnsProvider } from '@app/utils/EnsProvider'
 import { makePersistent } from '@app/utils/persist'
 
 import i18n from '../i18n'
+import '../styles.css'
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({

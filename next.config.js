@@ -99,6 +99,9 @@ let nextConfig = {
         'process.env.CONFIG_BUILD_ID': JSON.stringify(options.buildId),
       }),
     )
+    if (process.env.NEXT_PUBLIC_IPFS) {
+      config.resolve.alias['../styles.css'] = path.resolve(__dirname, 'src/stub.css')
+    }
 
     return config
   },
