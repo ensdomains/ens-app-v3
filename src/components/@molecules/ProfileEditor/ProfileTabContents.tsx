@@ -7,8 +7,6 @@ import { ScrollBox, Textarea } from '@ensdomains/thorin'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { convertFormSafeKey, formSafeKey } from '@app/utils/editor'
-import { validateCryptoAddress } from '@app/utils/validate'
-import { ContentHashProviderOrAll, validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(
   () => css`
@@ -75,6 +73,7 @@ const ProfileTabContents = ({
   newOtherKeys,
   removeOtherKey,
   removePadding = false,
+  validateForGroupAndKey,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
   const hasKeys = useMemo(() => {
@@ -211,7 +210,7 @@ const ProfileTabContents = ({
                         clearErrors([`address.${key}`])
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: validateForGroupAndKey('address', key),
                       })}
                     />
                   ))}
@@ -239,7 +238,7 @@ const ProfileTabContents = ({
                         unregister(`address.${key}`)
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: validateForGroupAndKey('address', key),
                       })}
                     />
                   ))}
@@ -271,7 +270,7 @@ const ProfileTabContents = ({
                     setWebsiteOption(undefined)
                   }}
                   {...register('website', {
-                    validate: validateContentHash(websiteOption.value as ContentHashProviderOrAll),
+                    validate: validateForGroupAndKey('website', websiteOption.value),
                   })}
                 />
               ),
@@ -289,7 +288,9 @@ const ProfileTabContents = ({
                       error={getFieldState(`other.${key}`, formState).error?.message}
                       validated={getFieldState(`other.${key}`, formState).isDirty}
                       onDelete={() => removeOtherKey(key, false)}
-                      {...register(`other.${key}`, {})}
+                      {...register(`other.${key}`, {
+                        validate: validateForGroupAndKey('other', key),
+                      })}
                     />
                   ))}
                   {newOtherKeys.map((key) => (
@@ -313,7 +314,9 @@ const ProfileTabContents = ({
                           keepTouched: false,
                         })
                       }}
-                      {...register(`other.${key}`, {})}
+                      {...register(`other.${key}`, {
+                        validate: validateForGroupAndKey('other', key),
+                      })}
                     />
                   ))}
                 </>

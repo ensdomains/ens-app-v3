@@ -12,7 +12,7 @@ const AccordionTitle = styled.div<{
 }>(
   ({ theme, $isActive, $isDisabled }) => css`
     padding: ${theme.space['4']} ${theme.space['6']};
-    background: ${theme.colors.white};
+    background: white;
     display: flex;
     justify-content: space-between;
     align-items: center;

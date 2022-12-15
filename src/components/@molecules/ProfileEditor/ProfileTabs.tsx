@@ -33,7 +33,7 @@ const getIndicatorStyle = (
       background-color: ${color};
       width: 12px;
       height: 12px;
-      border: 1px solid ${theme.colors.white};
+      border: 1px solid white;
       box-sizing: border-box;
       border-radius: 50%;
       top: 0;

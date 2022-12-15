@@ -51,6 +51,7 @@ type Props = {
   trigger: UseFormTrigger<RegistrationForm>
   index: number
   validator?: (value: string) => boolean | string | Promise<boolean | string>
+  validated?: boolean
   showDelete?: boolean
   onDelete?: () => void
 }
@@ -60,6 +61,7 @@ export const CustomProfileRecordInput = ({
   trigger,
   index,
   validator,
+  validated,
   error,
   showDelete = true,
   onDelete,
@@ -77,6 +79,7 @@ export const CustomProfileRecordInput = ({
             parentStyles={css`
               height: ${theme.space[12]};
             `}
+            placeholder={t('steps.profile.options.groups.custom.key')}
             {...register(`records.${index}.key`, {
               required: t('steps.profile.errors.labelRequired'),
               validate: validator,
@@ -84,13 +87,16 @@ export const CustomProfileRecordInput = ({
                 trigger()
               },
             })}
+            data-testid="custom-profile-record-input-key"
           />
         </LabelWrapper>
         <ValueWrapper>
           <Input
             label=""
             hideLabel
+            placeholder={t('steps.profile.options.groups.custom.value')}
             showDot
+            validated={validated}
             error={!!error}
             suffix={
               showDelete && (
@@ -103,6 +109,7 @@ export const CustomProfileRecordInput = ({
               height: ${theme.space[12]};
             `}
             {...register(`records.${index}.value`)}
+            data-testid="custom-profile-record-input-value"
           />
         </ValueWrapper>
       </ResponsiveContainer>

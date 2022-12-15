@@ -125,7 +125,6 @@ export const ConfirmationDialogView = ({
         <Button
           size="medium"
           variant="secondary"
-          shadowless
           onClick={onDecline}
           data-testid="confirmation-dialog-decline-button"
         >
@@ -134,7 +133,6 @@ export const ConfirmationDialogView = ({
         <Button
           size="medium"
           variant="primary"
-          shadowless
           onClick={onConfirm}
           data-testid="confirmation-dialog-confirm-button"
         >

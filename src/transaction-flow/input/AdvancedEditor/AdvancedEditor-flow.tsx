@@ -5,9 +5,9 @@ import styled, { css } from 'styled-components'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { Button, mq } from '@ensdomains/thorin'
 
+import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
-import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -19,7 +19,7 @@ const Container = styled.form(({ theme }) => [
     height: calc(100% + 2 * ${theme.space['3.5']});
     max-height: 90vh;
     margin: -${theme.space[3.5]};
-    background: ${theme.colors.white};
+    background: white;
     border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
@@ -122,6 +122,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     handleSubmit,
     isLoadingABIInterface,
     isLoadingPublicKeyInterface,
+    control,
   } = advancedEditorForm
 
   const handleCancel = () => {
@@ -135,12 +136,12 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
       <ContentContainer>
         <AdvancedEditorTabs {...advancedEditorForm} />
         <AdvancedEditorContent {...advancedEditorForm} />
-        <AddRecord AddButtonProps={AddButtonProps} />
+        <AddRecord AddButtonProps={AddButtonProps} control={control} />
         <FooterContainer>
-          <Button tone="grey" variant="secondary" shadowless onClick={handleCancel}>
+          <Button tone="grey" variant="secondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
-          <Button disabled={hasErrors || !hasChanges} type="submit" shadowless>
+          <Button disabled={hasErrors || !hasChanges} type="submit">
             {t('action.save', { ns: 'common' })}
           </Button>
         </FooterContainer>

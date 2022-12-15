@@ -36,14 +36,14 @@ const DetailsContainer = styled.div(
 )
 
 const TabWrapperWithButtons = styled(TabWrapper)(
-  ({ theme }) => css`
+  () => css`
     display: flex;
     flex-direction: column;
     align-items: normal;
     justify-content: flex-start;
     width: 100%;
     max-width: 100%;
-    background: ${theme.colors.white};
+    background: white;
   `,
 )
 
@@ -204,12 +204,7 @@ const Page = () => {
               onSearchChange={setSearchQuery}
             >
               {mode === 'select' && (
-                <Button
-                  size="extraSmall"
-                  shadowless
-                  onClick={handleExtend}
-                  data-testid="extend-names-button"
-                >
+                <Button size="extraSmall" onClick={handleExtend} data-testid="extend-names-button">
                   <ButtonInner>
                     <FastForwardSVG />
                     {t('action.extend', { ns: 'common' })}

@@ -272,6 +272,26 @@ describe('ProfileEditor', () => {
     })
   })
 
+  it('should prevent a custom record key if it already exists', async () => {
+    render(
+      <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
+    )
+
+    const tab = await screen.findByTestId('other-tab')
+    fireEvent.click(tab)
+
+    const addButton = await screen.findByTestId('add-record-button')
+    fireEvent.click(addButton)
+
+    const input = await screen.findByTestId('add-record-button-input')
+    await userEvent.type(input, 'description')
+
+    const actionBtn = await screen.findByTestId('add-record-button-action-button')
+    expect(actionBtn).toHaveAttribute('disabled')
+    expect(actionBtn).toHaveTextContent('action.add')
+    expect(screen.getByText('errors.keyInUse.description')).toBeInTheDocument()
+  })
+
   it('should set submit button to disabled if new record is created an then deleted', async () => {
     render(
       <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,

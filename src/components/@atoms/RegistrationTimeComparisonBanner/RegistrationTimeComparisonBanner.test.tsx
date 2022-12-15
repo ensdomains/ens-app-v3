@@ -14,9 +14,9 @@ describe('RegistrationUpsellBanner', () => {
     )
 
     await waitFor(() => {
-      expect(screen.getByText('50% unit.gas')).toBeVisible()
+      expect(screen.getByText('unit.gas.50%')).toBeVisible()
     })
-    expect(screen.getByText(`33% unit.gas`))
-    expect(screen.getByText(`17% unit.gas`))
+    expect(screen.getByText(`unit.gas.33%`))
+    expect(screen.getByText(`unit.gas.17%`))
   })
 })

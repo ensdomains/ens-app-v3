@@ -1,5 +1,6 @@
 export const getSocialData = (iconKey: string, value: string) => {
   switch (iconKey) {
+    case 'twitter':
     case 'com.twitter':
       return {
         icon: 'com.twitter',
@@ -9,6 +10,7 @@ export const getSocialData = (iconKey: string, value: string) => {
         type: 'link',
         urlFormatter: `https://twitter.com/${value.replace(/^@/, '')}`,
       }
+    case 'github':
     case 'com.github':
       return {
         icon: 'com.github',
@@ -18,6 +20,7 @@ export const getSocialData = (iconKey: string, value: string) => {
         type: 'link',
         urlFormatter: `https://github.com/${value}`,
       }
+    case 'discord':
     case 'com.discord':
       return {
         icon: 'com.discord',

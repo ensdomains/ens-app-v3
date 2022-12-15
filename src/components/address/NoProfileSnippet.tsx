@@ -12,7 +12,7 @@ const Container = styled.div(
     border-radius: ${theme.space['4']};
     border: 1px solid ${theme.colors.borderTertiary};
     box-shadow: ${theme.boxShadows['0.02']};
-    background: ${theme.colors.white};
+    background: white;
     padding: ${theme.space['5']};
   `,
 )

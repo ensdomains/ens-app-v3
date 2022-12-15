@@ -32,7 +32,10 @@ jest.mock('wagmi', () => {
 
 jest.mock('react-i18next', () => ({
   useTranslation: () => ({
-    t: (value: string, opts: any) => `${opts?.value || opts?.count || ''} ${value}`,
+    t: (value: string, opts: any) => {
+      const optsTxt = opts?.value || opts?.count || ''
+      return [value, ...(optsTxt ? [optsTxt] : [])].join('.')
+    },
     i18n: {
       isInitialized: true,
     },

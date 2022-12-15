@@ -1,5 +1,4 @@
 import { useCallback, useEffect, useState } from 'react'
-import { Control } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -22,7 +21,6 @@ import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { AvatarEditorType } from '@app/types'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 
@@ -32,7 +30,7 @@ const Container = styled.form(({ theme }) => [
     height: calc(100% + 2 * ${theme.space['3.5']});
     max-height: 90vh;
     margin: -${theme.space[3.5]};
-    background: ${theme.colors.white};
+    background: white;
     border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
@@ -180,11 +178,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     profile,
     overwrites: transaction?.data.records,
   })
-  const { handleSubmit, hasErrors, setAvatar, hasChanges, formState, control } = profileEditorForm
+  const { handleSubmit, hasErrors, setAvatar, hasChanges, formState } = profileEditorForm
 
   const [avatarView, setAvatarView] = useState<AvatarClickType | null>(null)
-  const [avatarFile, setAvatarFile] = useState<File | undefined>()
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
+  const [avatarFile, setAvatarFile] = useState<File | undefined>()
 
   const [showOverlay, setShowOverlay] = useState(false)
 
@@ -204,13 +202,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           avatarFile={avatarFile}
           type={avatarView}
           handleCancel={() => setAvatarView(null)}
-          handleSubmit={(display: string, uri?: string) => {
-            if (uri) {
+          handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
+            if (type === 'nft') {
               setAvatar(uri)
               setAvatarSrc(display)
             } else {
-              setAvatar(`${display}?timestamp=${Date.now()}`)
-              setAvatarSrc(`${display}?timestamp=${Date.now()}`)
+              setAvatar(`${uri}?timestamp=${Date.now()}`)
+              setAvatarSrc(display)
             }
             setAvatarView(null)
           }}
@@ -220,9 +218,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           <Banner zIndex={10}>
             <AvatarWrapper>
               <AvatarButton
-                control={control as unknown as Control<AvatarEditorType>}
-                validated={!!formState.dirtyFields.avatar}
                 src={avatarSrc}
+                validated={!!formState.dirtyFields.avatar}
                 onSelectOption={setAvatarView}
                 onAvatarChange={(avatar) => setAvatar(avatar)}
                 onAvatarFileChange={(file) => setAvatarFile(file)}
@@ -236,13 +233,12 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             <ProfileTabContents {...profileEditorForm} />
             <AddRecord {...profileEditorForm} />
             <FooterContainer>
-              <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
+              <Button variant="secondary" tone="grey" onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button
                 disabled={hasErrors || !hasChanges}
                 type="submit"
-                shadowless
                 data-testid="profile-editor-submit"
               >
                 {t('action.save', { ns: 'common' })}

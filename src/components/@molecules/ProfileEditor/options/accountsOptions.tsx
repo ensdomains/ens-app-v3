@@ -27,8 +27,8 @@ const accountsOptions = supportedTexts.reduce((list, account) => {
       prefix: (
         <IconWrapper>
           <DynamicSocialIcon
-            name={socialData?.value as keyof typeof socialIconTypes}
-            fill={socialData?.icon}
+            name={socialData?.icon as keyof typeof socialIconTypes}
+            fill={socialData?.color}
           />
         </IconWrapper>
       ),

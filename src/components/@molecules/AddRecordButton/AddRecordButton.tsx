@@ -1,4 +1,12 @@
-import { ButtonHTMLAttributes, ReactNode, useMemo, useRef, useState } from 'react'
+import {
+  ButtonHTMLAttributes,
+  ChangeEvent,
+  ReactNode,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
@@ -104,6 +112,11 @@ const ControlsHeaderTrailing = styled.button<{ $accented: boolean }>(
     padding: 0 ${theme.space['4']};
     color: ${$accented ? theme.colors.accent : theme.colors.textTertiary};
     cursor: pointer;
+
+    :disabled {
+      color: ${theme.colors.textTertiary};
+      cursor: not-allowed;
+    }
   `,
 )
 
@@ -171,7 +184,7 @@ const OptionContainer = styled.button<{ $inline: boolean }>(
     width: ${$inline ? 'auto' : theme.space['16']};
     height: ${$inline ? theme.space['12'] : theme.space['16']};
     border: 1px solid ${theme.colors.borderTertiary};
-    background: ${theme.colors.white};
+    background: white;
     border-radius: ${theme.radii.extraLarge};
     padding: ${theme.space['2']} ${$inline ? theme.space['4'] : theme.space['2']};
     cursor: pointer;
@@ -265,6 +278,7 @@ const ButtonContainer = styled.div<{ $state: TransitionState }>(
 type Props = {
   autocomplete?: boolean
   createable?: boolean
+  reservedKeys?: string[]
   inline?: boolean
   options?: Option[]
   messages?: {
@@ -279,6 +293,7 @@ type Props = {
 export const AddRecordButton = ({
   autocomplete,
   createable,
+  reservedKeys = [],
   inline = false,
   options: optionsProp,
   messages = {},
@@ -293,6 +308,8 @@ export const AddRecordButton = ({
     selectOption = 'Select an option',
     createRecord = 'Create a record',
   } = messages
+
+  const [error, setError] = useState<string | undefined>()
 
   const inputRef = useRef<HTMLInputElement>(null)
   const theme = useTheme()
@@ -313,7 +330,18 @@ export const AddRecordButton = ({
     if (createable) return 'create'
     return 'placeholder'
   })()
+
   const [inputValue, setInputValue] = useState('')
+
+  useEffect(() => {
+    const trimmedInputValue = inputValue.trim()
+    if (reservedKeys.includes(trimmedInputValue)) {
+      setError(t('errors.keyInUse', { value: trimmedInputValue }))
+    } else {
+      setError(undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue])
 
   const hasInput = inputValue.length > 0
 
@@ -345,6 +373,15 @@ export const AddRecordButton = ({
       (option) => option.label!.toLowerCase().indexOf(inputValue.toLowerCase()) > -1,
     )
   }, [inputValue, optionsProp])
+
+  useEffect(() => {
+    setInputValue('')
+    setError(undefined)
+  }, [optionsProp])
+
+  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+    setInputValue(event.target.value)
+  }
 
   const handleInputAction = () => {
     if (inputActionType === 'create' && onAddRecord) {
@@ -385,7 +422,8 @@ export const AddRecordButton = ({
                   border-radius: ${theme.radii.extraLarge};
                 `}
                 padding="3.5"
-                onChange={(e) => setInputValue(e.target.value)}
+                onChange={handleInputChange}
+                error={error}
                 data-testid="add-record-button-input"
               />
             )}
@@ -394,6 +432,8 @@ export const AddRecordButton = ({
             type="button"
             $accented={inputActionType === 'create'}
             onClick={handleInputAction}
+            disabled={!!error}
+            data-testid="add-record-button-action-button"
           >
             {inputActionType === 'create'
               ? t('action.add', { ns: 'common' })

@@ -37,11 +37,15 @@ const DeleteButtonWrapper = styled.div(
 type Props = {
   recordKey: string
   secondaryLabel?: string
+  validated: boolean
   onDelete?: () => void
 } & ComponentProps<typeof Textarea>
 
 export const ProfileRecordTextarea = forwardRef<HTMLTextAreaElement, Props>(
-  ({ recordKey, label, secondaryLabel, error, onDelete, onFocus, onBlur, ...props }, ref) => {
+  (
+    { recordKey, label, secondaryLabel, validated, error, onDelete, onFocus, onBlur, ...props },
+    ref,
+  ) => {
     const textareaRef = useDefaultRef<HTMLTextAreaElement>(ref)
 
     const [showDelete, setShowDelete] = useState(true)
@@ -61,6 +65,7 @@ export const ProfileRecordTextarea = forwardRef<HTMLTextAreaElement, Props>(
               ref={textareaRef}
               label=""
               hideLabel
+              showDot={validated}
               width="full"
               onFocus={handleFocus}
               onBlur={handleBlur}

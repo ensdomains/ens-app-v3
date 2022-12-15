@@ -88,7 +88,13 @@ describe('<AvatarUpload />', () => {
       ),
     )
 
-    await waitFor(() => expect(mockHandleSubmit).toHaveBeenCalled())
+    await waitFor(() =>
+      expect(mockHandleSubmit).toHaveBeenCalledWith(
+        'upload',
+        'https://avatar-upload.ens-cf.workers.dev/mainnet/test.eth',
+        mockFileDataURL,
+      ),
+    )
   })
   it('does not call handleSubmit if upload is unsuccessful', async () => {
     mockHandleSubmit.mockClear()

@@ -39,7 +39,7 @@ const StyledInputParent = () =>
       background-color: ${theme.colors.backgroundSecondary};
       transition: background-color 0.35s ease-in-out;
       &:focus-within {
-        background-color: ${theme.colors.white};
+        background-color: white;
         & input::placeholder {
           color: transparent;
         }

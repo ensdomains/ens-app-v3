@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { BaseSyntheticEvent, useMemo, useRef, useState } from 'react'
+import React, { BaseSyntheticEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -9,22 +9,21 @@ import { Button, Dialog, PlusSVG, mq } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
-import AvatarButton, {
-  AvatarClickType,
-} from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
+import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { RegistrationForm, useRegistrationForm } from '@app/hooks/useRegistrationForm'
-import { AvatarEditorType } from '@app/types'
 
-import { useLocalStorage } from '../../../../../../../hooks/useLocalStorage'
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import { AddProfileRecordView } from './AddProfileRecordView'
 import { CustomProfileRecordInput } from './CustomProfileRecordInput'
 import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
+import { WrappedAvatarButton } from './WrappedAvatarButton'
+import { registrationFormToProfileRecords } from './profileRecordUtils'
 
 const StyledCard = styled.form(({ theme }) => [
   css`
@@ -176,13 +175,14 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     register,
     trigger,
     control,
-    handleSubmit: handleSubmit2,
+    handleSubmit,
     addRecords,
     removeRecordAtIndex,
-    removeRecordByKey,
+    removeRecordByTypeAndKey,
     setAvatar,
     labelForRecord,
     secondaryLabelForRecord,
+    placeholderForRecord,
     validatorForRecord,
     errorForRecordAtIndex,
     isDirtyForRecordAtIndex,
@@ -191,6 +191,15 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
 
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
+  useEffect(() => {
+    const storage = localStorage.getItem(`avatar-src-${name}`)
+    if (storage) setAvatarSrc(storage)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+  const setAvatarSrcStorage = () => {
+    if (avatarSrc) localStorage.setItem(`avatar-src-${name}`, avatarSrc)
+    else localStorage.removeItem(`avatar-src-${name}`)
+  }
 
   const [modalOpen, setModalOpen] = useState(false)
   const [modalOption, _setModalOption] = useState<ModalOption | null>(null)
@@ -203,7 +212,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     'confirm-profile-is-public',
     false,
   )
-  const handleAddRecord = () => {
+  const handleShowAddRecordModal = () => {
     if (hasConfirmedPublicNotice) return setModalOption('add-record')
     setModalOption('public-notice')
   }
@@ -215,13 +224,10 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
 
   const onSubmit = (data: RegistrationForm, e?: BaseSyntheticEvent<object, any, any>) => {
     e?.preventDefault()
+    setAvatarSrcStorage()
     const nativeEvent = e?.nativeEvent as SubmitEvent | undefined
-    const newRecords = [
-      ...(data.avatar
-        ? [{ key: 'avatar', value: data.avatar, type: 'text', group: 'general' } as ProfileRecord]
-        : []),
-      ...data.records,
-    ]
+    const newRecords = registrationFormToProfileRecords(data)
+
     callback({
       records: newRecords,
       clearRecords,
@@ -241,15 +247,16 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             avatarFile={avatarFile}
             handleCancel={() => setModalOpen(false)}
             type={modalOption}
-            handleSubmit={(display: string, uri?: string) => {
-              if (uri) {
+            handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
+              if (type === 'nft') {
                 setAvatar(uri)
                 setAvatarSrc(display)
               } else {
-                setAvatar(display)
-                setAvatarSrc(`${display}?timestamp=${Date.now()}`)
+                setAvatar(`${uri}?timestamp=${Date.now()}`)
+                setAvatarSrc(display)
               }
               setModalOpen(false)
+              trigger()
             }}
           />
         )
@@ -288,7 +295,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             confirmLabel={t('steps.profile.confirmations.clearEth.confirm')}
             declineLabel={t('steps.profile.confirmations.clearEth.decline')}
             onConfirm={() => {
-              removeRecordByKey('ETH')
+              removeRecordByTypeAndKey('addr', 'ETH')
               setModalOpen(false)
             }}
             onDecline={() => setModalOpen(false)}
@@ -306,10 +313,10 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
       <Dialog onDismiss={() => setModalOpen(false)} variant="blank" open={modalOpen}>
         {modalContent}
       </Dialog>
-      <StyledCard onSubmit={handleSubmit2(onSubmit)}>
+      <StyledCard onSubmit={handleSubmit(onSubmit)}>
         <Heading>{t('steps.profile.title')}</Heading>
-        <AvatarButton
-          control={control as unknown as Control<AvatarEditorType>}
+        <WrappedAvatarButton
+          control={control}
           src={avatarSrc}
           onSelectOption={setModalOption}
           onAvatarChange={(avatar) => setAvatar(avatar)}
@@ -323,6 +330,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
               trigger={trigger}
               index={index}
               validator={validatorForRecord(field)}
+              validated={isDirtyForRecordAtIndex(index)}
               error={errorForRecordAtIndex(index, 'key')}
               onDelete={() => handleDeleteRecord(field, index)}
             />
@@ -332,6 +340,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
               recordKey={field.key}
               label={labelForRecord(field)}
               secondaryLabel={secondaryLabelForRecord(field)}
+              placeholder={placeholderForRecord(field)}
               error={errorForRecordAtIndex(index)}
               validated={isDirtyForRecordAtIndex(index)}
               onDelete={() => handleDeleteRecord(field, index)}
@@ -346,6 +355,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
               group={field.group}
               label={labelForRecord(field)}
               secondaryLabel={secondaryLabelForRecord(field)}
+              placeholder={placeholderForRecord(field)}
               error={errorForRecordAtIndex(index)}
               validated={isDirtyForRecordAtIndex(index)}
               onDelete={() => handleDeleteRecord(field, index)}
@@ -359,21 +369,29 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
           <Button
             shadowless
             size="medium"
-            onClick={handleAddRecord}
+            onClick={handleShowAddRecordModal}
             data-testid="show-add-profile-records-modal-button"
           >
             <ButtonInner>
               <ButtonIcon>
                 <PlusSVG />
               </ButtonIcon>
-              {t('Add more to profile')}
+              {t('steps.profile.addMore')}
             </ButtonInner>
           </Button>
         </ButtonWrapper>
         <Divider />
         <ButtonContainer>
           <MobileFullWidth>
-            <Button ref={backRef} type="submit" shadowless variant="secondary" disabled={hasErrors}>
+            <Button
+              id="profile-back-button"
+              ref={backRef}
+              type="submit"
+              shadowless
+              variant="secondary"
+              disabled={hasErrors}
+              data-testid="profile-back-button"
+            >
               <ButtonInner>{t('action.back', { ns: 'common' })}</ButtonInner>
             </Button>
           </MobileFullWidth>

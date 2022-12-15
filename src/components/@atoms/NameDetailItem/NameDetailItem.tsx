@@ -101,7 +101,7 @@ const AvatarOverlay = styled.div(
     border-radius: ${theme.radii.full};
     svg {
       path {
-        stroke: ${theme.colors.white};
+        stroke: white;
         stroke-width: 1px;
       }
       rect {

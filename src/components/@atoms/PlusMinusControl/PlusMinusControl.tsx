@@ -36,7 +36,7 @@ const Button = styled.button(
       display: block;
       transform: scale(0.67);
       path {
-        fill: ${theme.colors.white};
+        fill: white;
       }
     }
   `,

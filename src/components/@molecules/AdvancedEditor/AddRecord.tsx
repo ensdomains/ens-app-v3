@@ -2,8 +2,7 @@ import { useWatch } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 
 import { AddRecordButton } from '@app/components/@molecules/AddRecordButton/AddRecordButton'
-import useProfileEditor from '@app/hooks/useProfileEditor'
-import { ProfileEditorType } from '@app/types'
+import useAdvancedEditor, { AdvancedEditorType } from '@app/hooks/useAdvancedEditor'
 
 import { convertFormSafeKey } from '../../../utils/editor'
 
@@ -14,23 +13,18 @@ const AddRecordContainer = styled.div(
 )
 
 type Props = {
-  control: ReturnType<typeof useProfileEditor>['control']
-  AddButtonProps: ReturnType<typeof useProfileEditor>['AddButtonProps']
+  control: ReturnType<typeof useAdvancedEditor>['control']
+  AddButtonProps: ReturnType<typeof useAdvancedEditor>['AddButtonProps']
 }
 
 const AddRecord = ({ control, AddButtonProps }: Props) => {
-  const editor = useWatch<ProfileEditorType>({
+  const editor = useWatch<AdvancedEditorType>({
     control,
-    name: ['avatar', 'general', 'accounts', 'other'],
+    name: ['text'],
   })
 
-  const [avatar, general, accounts, other] = editor
-  const reservedKeys = [
-    ...(avatar ? ['avatar'] : []),
-    ...Object.keys(general || {}),
-    ...Object.keys(accounts || {}),
-    ...Object.keys(other || {}),
-  ].map((key) => convertFormSafeKey(key))
+  const [text] = editor
+  const reservedKeys = [...Object.keys(text || {})].map((key) => convertFormSafeKey(key))
 
   if (!AddButtonProps) return null
   return (

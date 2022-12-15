@@ -46,6 +46,7 @@ describe('Register Name', () => {
       cy.findByTestId('next-button').click()
       cy.findByText('Create your profile').should('be.visible')
     })
+
     it('should allow setting a general text record', () => {
       cy.findByTestId('show-add-profile-records-modal-button').click()
       cy.findByText('Your details are public').should('be.visible')
@@ -57,6 +58,31 @@ describe('Register Name', () => {
       cy.findByTestId('add-profile-records-counter').should('contain.text', '1')
       cy.findByTestId('add-profile-records-button').should('be.enabled').click()
       cy.findByTestId('profile-record-input-input-name').type('Test Name')  
+    })
+
+    it('should allow setting a social record', () => {
+      cy.findByTestId('show-add-profile-records-modal-button').click()
+      cy.findByText('Add profile fields').should('be.visible')
+      cy.findByTestId('profile-record-option-com.twitter').click()
+      cy.findByTestId('add-profile-records-button').should('be.enabled').click()
+      cy.findByTestId('profile-record-input-input-com.twitter').type('testname')  
+    })
+
+    it('should allow setting a website record', () => {
+      cy.findByTestId('show-add-profile-records-modal-button').click()
+      cy.findByText('Add profile fields').should('be.visible')
+      cy.findByTestId('profile-record-option-ipfs').click()
+      cy.findByTestId('add-profile-records-button').should('be.enabled').click()
+      cy.findByTestId('profile-record-input-input-ipfs').type('ipfs://Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu')  
+    })
+
+    it('should allow setting a custom record', () => {
+      cy.findByTestId('show-add-profile-records-modal-button').click()
+      cy.findByText('Add profile fields').should('be.visible')
+      cy.findByTestId('profile-record-option-custom').click()
+      cy.findByTestId('add-profile-records-button').should('be.enabled').click()
+      cy.findByTestId('custom-profile-record-input-key').type('hello')
+      cy.findByTestId('custom-profile-record-input-value').type('world')
     })
 
     it('should show ETH record by default', () => {
@@ -110,6 +136,8 @@ describe('Register Name', () => {
     it('should show all records from registration', () => {
       cy.findByTestId('profile-snippet-nickname').should('contain.text', 'Test Name')
       cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
+      cy.findByTestId('social-profile-button-com.twitter').should('contain.text', '@testname')
+      cy.findByTestId('other-profile-button-hello').should('contain.text', 'world')
     })
   })
   describe('not primary', () => {

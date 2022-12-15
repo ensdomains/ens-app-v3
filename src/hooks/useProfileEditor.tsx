@@ -22,11 +22,14 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
+import { validateCryptoAddress } from '@app/utils/validate'
 
 import {
+  ContentHashProvider,
   contentHashProtocolToContentHashProvider,
   getProtocolTypeAndContentId,
 } from '../utils/contenthash'
+import { validateContentHash } from '../validators/validateContentHash'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -240,7 +243,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         other: Object.keys(newDefaultValues.other) || [],
         accounts: Object.keys(newDefaultValues.accounts) || [],
       }
-      console.log(newDefaultValues)
       reset(newDefaultValues)
 
       setHasExistingWebsite(!!newDefaultValues.website)
@@ -337,6 +339,27 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
 
+  const validateCustomInputKey = (key?: string) => () => {
+    if (!key) return true
+    const editor = getValues()
+    const allTextKeys = [
+      ...(editor.avatar ? ['avatar'] : []),
+      ...Object.keys(editor.general || {}),
+      ...Object.keys(editor.accounts || {}),
+      ...Object.keys(editor.other || {}),
+    ]
+    return allTextKeys.filter((existingKey) => existingKey === key.trim()).length > 1
+      ? t('errors.duplicateKey', { value: key })
+      : true
+  }
+
+  const validateForGroupAndKey = (group: string, key: string) => {
+    if (group === 'address') return validateCryptoAddress(key)
+    if (group === 'website') return validateContentHash(key as ContentHashProvider)
+    if (group === 'other') return validateCustomInputKey(key)
+    return () => true
+  }
+
   return {
     register,
     unregister,
@@ -382,6 +405,7 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     AddButtonProps,
     setAvatar,
     hasChanges,
+    validateForGroupAndKey,
   }
 }
 

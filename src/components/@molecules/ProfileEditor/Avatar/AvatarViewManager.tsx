@@ -32,7 +32,7 @@ export const AvatarViewManager = ({
   ...props
 }: {
   handleCancel: () => void
-  handleSubmit: (uri: string) => void
+  handleSubmit: (type: 'upload' | 'nft', uri: string, display?: string) => void
   name: string
   avatarFile?: File
   type: 'upload' | 'nft'

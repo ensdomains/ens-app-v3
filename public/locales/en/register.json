@@ -36,15 +36,22 @@
       "resolver": "Resolver",
       "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible.",
       "addProfile": "Add profile fields",
+      "addMore": "Add more to profile",
       "options": {
         "groups": {
           "general": {
             "label": "General",
             "items": {
-              "location": "Location",
               "name": "Nickname",
-              "description": "Biography",
-              "url": "Website"
+              "url": "Website",
+              "location": "Location",
+              "description": "Short Bio"
+            },
+            "placeholder": {
+              "name": "John Smith",
+              "url": "https://ens.domains",
+              "location": "Metaverse",
+              "description": "I'm a yield farmer from rural Tennessee."
             }
           },
           "social": {
@@ -53,11 +60,26 @@
               "com.twitter": "Twitter",
               "com.github": "GitHub",
               "com.discord": "Discord"
+            },
+            "placeholder": {
+              "com.twitter": "e.g. yogicodes",
+              "com.github": "e.g. yogicodes",
+              "com.discord": "e.g. yogicodes#1234"
             }
           },
           "address": {
             "label": "Address",
-            "itemLabel": "{{coin}} address"
+            "itemLabel": "{{coin}} address",
+            "placeholder": {
+              "default": "Add address here",
+              "ETH": "0xD9hbQK...",
+              "BNB": "0xD9hbQK...",
+              "BTC": "3FZbgi29...",
+              "LTC": "3FZbgi29...",
+              "SOL": "D4kA7VzHnmV...",
+              "DOT": "1D4kA7VxH...",
+              "DOGE": "DFabcd12..."
+            }
           },
           "website": {
             "label": "Website",
@@ -67,6 +89,14 @@
               "onion": "Onion",
               "skynet": "Skynet",
               "arweave": "Arweave"
+            },
+            "placeholder": {
+              "default": "Add url here",
+              "ipfs": "ipfs://...",
+              "skynet": "sia://...",
+              "arweave": "arweave://...",
+              "swarm": "bzz://...",
+              "onion": "onion3://..."
             }
           },
           "other": {
@@ -77,13 +107,21 @@
               "abi": "ABI",
               "custom": "Custom"
             }
+          },
+          "custom": {
+            "key": "Key",
+            "value": "Value"
+          },
+          "default": {
+            "placeholder": "Add value here"
           }
         }
       },
       "errors": {
-        "noOptionResults": "You can create a custom record with the custom field option.",
+        "noOptionResults": "You can create a custom text record with the custom field option.",
         "labelRequired": "A label is required",
-        "duplicateRecord": "Duplicate record"
+        "duplicateRecord": "Duplicate record",
+        "avatarReserved": "Key is being used by avatar manager"
       },
       "confirmations": {
         "publicNotice": {

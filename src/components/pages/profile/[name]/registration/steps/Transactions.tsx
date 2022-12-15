@@ -24,7 +24,7 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { RegistrationReducerDataItem } from '../types'
-import { profileRecordsToRecordOptions } from './Profile/profileRecord'
+import { profileRecordsToRecordOptions } from './Profile/profileRecordUtils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`

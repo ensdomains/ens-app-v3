@@ -187,7 +187,7 @@ const OtherContainer = styled.div(
 
 const OtherContainerAddressPrefix = styled(Typography)(
   ({ theme }) => css`
-    color: ${theme.colors.white};
+    color: white;
     font-size: ${theme.fontSizes.label};
   `,
 )

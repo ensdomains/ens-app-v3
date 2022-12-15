@@ -196,6 +196,7 @@
     "migrationNotAvailable": "Migration to the new registry is not available yet, but you can still ",
     "migrationNotAvailableLink": "migrate this name in the old app.",
     "addressLength": "If address it should be 42 characters long",
-    "unsupportedTLD": "This TLD is not supported"
+    "unsupportedTLD": "This TLD is not supported",
+    "keyInUse": "{{value}} is already in use"
   }
 }

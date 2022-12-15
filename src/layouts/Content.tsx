@@ -294,12 +294,7 @@ export const Content = ({
             <CustomLeadingHeading>
               {hasBack && (
                 <div data-testid="back-button">
-                  <Button
-                    onClick={() => router.back()}
-                    variant="transparent"
-                    shadowless
-                    size="extraSmall"
-                  >
+                  <Button onClick={() => router.back()} variant="transparent" size="extraSmall">
                     <BackArrow as={ArrowLeftSVG} />
                   </Button>
                 </div>

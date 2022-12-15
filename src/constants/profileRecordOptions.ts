@@ -6,9 +6,16 @@ import supportedSocialRecordKeys from '@app/constants/supportedSocialRecordKeys.
 
 import coinList from './coinList'
 
-type ProfileRecordGroup = 'general' | 'address' | 'social' | 'website' | 'other' | 'custom'
+export type ProfileRecordGroup =
+  | 'general'
+  | 'media'
+  | 'address'
+  | 'social'
+  | 'website'
+  | 'other'
+  | 'custom'
 
-type ProfileRecordType = 'text' | 'addr' | 'contenthash'
+export type ProfileRecordType = 'text' | 'addr' | 'contenthash'
 
 export type ProfileRecord = {
   key: string

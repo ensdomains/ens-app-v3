@@ -8,7 +8,7 @@ import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 import { RegistrationData } from '@app/components/pages/profile/[name]/registration/types'
 import { emptyAddress } from '@app/utils/constants'
 
-import { profileRecordsToRecordOptions } from '../components/pages/profile/[name]/registration/steps/Profile/profileRecord'
+import { profileRecordsToRecordOptions } from '../components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import useEstimateTransactionCost from './useEstimateTransactionCost'
 import { useNameDetails } from './useNameDetails'
 

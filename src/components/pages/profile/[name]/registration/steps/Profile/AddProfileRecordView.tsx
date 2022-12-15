@@ -145,7 +145,7 @@ const Counter = styled.div(
     display: flex;
     justify-content: center;
     align-items: center;
-    border: 2px solid ${theme.colors.white};
+    border: 2px solid white;
     border-radius: ${theme.radii.full};
     font-size: ${theme.space[3]};
     width: ${theme.space[6]};
@@ -264,7 +264,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
         </SideBar>
         <OptionsContainer>
           {visibleOptions.length > 0 ? (
-            <ScrollBox>
+            <ScrollBox hideDividers>
               {visibleOptions.map((option) => {
                 const showLabel = !['address', 'website'].includes(option.group)
 
