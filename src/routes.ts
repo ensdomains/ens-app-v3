@@ -7,13 +7,12 @@ import MagnifyingGlassSVG from './assets/MagnifyingGlass.svg'
 
 export type PublicRoute =
   | 'search'
-  | 'about'
-  | 'developers'
   | 'faq'
-  | 'community'
-  | 'help'
   | 'governance'
-  | 'docs'
+  | 'community'
+  | 'developers'
+  | 'support'
+  | 'bounty'
   | 'terms'
   | 'privacy'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
@@ -38,68 +37,12 @@ export const routes: RouteItemObj[] = [
     icon: MagnifyingGlassSVG,
   },
   {
-    name: 'about',
-    href: '/about',
-    label: 'navigation.about',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'developers',
-    href: '/developers',
-    label: 'navigation.developers',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'community',
-    href: '/community',
-    label: 'navigation.community',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'faq',
-    href: '/faq',
-    label: 'navigation.faq',
-    disabled: false,
-    connected: false,
-  },
-  {
-    name: 'help',
-    href: '/help',
-    label: 'navigation.help',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'governance',
-    href: '/governance',
-    label: 'navigation.governance',
-    disabled: true,
-    connected: false,
-  },
-  {
-    name: 'docs',
-    href: '/docs',
-    label: 'navigation.docs',
-    disabled: true,
-    connected: false,
-  },
-  {
     name: 'names',
     href: '/my/names',
     label: 'navigation.names',
     disabled: false,
     connected: true,
     icon: GridSVG,
-  },
-  {
-    name: 'profile',
-    href: '/my/profile',
-    label: 'navigation.profile',
-    disabled: false,
-    connected: true,
   },
   {
     name: 'favourites',
@@ -116,6 +59,55 @@ export const routes: RouteItemObj[] = [
     disabled: false,
     connected: true,
     icon: CogSVG,
+  },
+  {
+    name: 'profile',
+    href: '/my/profile',
+    label: 'navigation.profile',
+    disabled: false,
+    connected: true,
+  },
+  {
+    name: 'faq',
+    href: '/faq',
+    label: 'navigation.faq',
+    disabled: false,
+    connected: false,
+  },
+  {
+    name: 'governance',
+    href: 'https://ens.domains/governance',
+    label: 'navigation.governance',
+    disabled: false,
+    connected: false,
+  },
+  {
+    name: 'community',
+    href: 'https://chat.ens.domains/',
+    label: 'navigation.community',
+    disabled: false,
+    connected: false,
+  },
+  {
+    name: 'developers',
+    href: 'https://docs.ens.domains/',
+    label: 'navigation.developers',
+    disabled: false,
+    connected: false,
+  },
+  {
+    name: 'support',
+    href: 'https://ens.domains/#get-support',
+    label: 'navigation.support',
+    disabled: false,
+    connected: false,
+  },
+  {
+    name: 'bounty',
+    href: 'https://docs.ens.domains/bug-bounty-program',
+    label: 'navigation.bounty',
+    disabled: false,
+    connected: false,
   },
   {
     name: 'terms',
