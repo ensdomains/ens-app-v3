@@ -1,3 +1,5 @@
+import { UrlObject } from 'url'
+
 import CogSVG from './assets/Cog.svg'
 import GridSVG from './assets/Grid.svg'
 import HeartSVG from './assets/Heart.svg'
@@ -160,22 +162,44 @@ export const rewrites = [
     destination: '/address?address=$2',
   },
 ]
-
-// this function assumes that all query params are in order
-export const getDestination = (pathname: string) => {
-  if (!process.env.NEXT_PUBLIC_IPFS) return { pathname }
+export const getDestination = (url: UrlObject | string) => {
+  if (!process.env.NEXT_PUBLIC_IPFS) return url
+  const isObj = typeof url !== 'string'
+  let href = isObj ? url.pathname! : url
+  const query = new URLSearchParams(isObj ? ((url.query || '') as any) : '')
   for (const rewrite of rewrites) {
     const regex = new RegExp(rewrite.source.replace(/:[^/]+/g, '([^/]+)'))
-    const match = regex.exec(pathname)
+    const match = regex.exec(href)
     if (match) {
-      const values = pathname.split('/')
+      const values = href.split('/')
       const replacedDestination = rewrite.destination.replace(
         /\$(\d)/g,
         (_, n) => values[parseInt(n)],
       )
-      const [newPathname, query] = replacedDestination.split('?')
-      return { pathname: newPathname, query: Object.fromEntries(new URLSearchParams(query)) }
+      const [newPathname, newQuery] = replacedDestination.split('?')
+      if (newQuery) {
+        const newQueryParams = new URLSearchParams(newQuery)
+        newQueryParams.forEach((value, key) => {
+          query.set(key, value)
+        })
+      }
+      href = newPathname
     }
   }
-  return { pathname }
+  // make absolute url relative
+  // when displayed in url bar
+  if (href?.startsWith('/')) {
+    //  for static html compilation
+    href = `.${href}`
+    // <IPFSLink href="/about"> => <a class="jsx-2055897931" href="./about">About</a>
+
+    // on the client
+    //   document is unavailable when compiling on the server
+    if (typeof document !== 'undefined') {
+      href = new URL(href, document.baseURI).href
+      // => <a href="https://gateway.ipfs.io/ipfs/Qm<hash>/about">About</a>
+    }
+  }
+  const parsedQuery = query.toString()
+  return `${href}${parsedQuery ? `?${parsedQuery}` : ''}`
 }

@@ -5,17 +5,17 @@ import { getDestination } from '@app/routes'
 export const useRouterWithHistory = () => {
   const router = useRouter()
 
-  const push = (path: string, query?: Record<string, any>) => {
-    const { pathname, query: destinationQuery } = getDestination(path)
-    return router.push({
-      pathname,
-      query: {
-        ...destinationQuery,
-        ...query,
-        from: router.asPath,
-      },
-    })
+  const push = (pathname: string, query?: Record<string, any>) => {
+    const destination = getDestination({ pathname, query })
+    router.push(destination)
   }
 
-  return { ...router, pushWithHistory: push }
+  const pushWithHistory = (pathname: string, query?: Record<string, any>) => {
+    const initialQuery = query || {}
+    initialQuery.from = router.asPath
+    const destination = getDestination({ pathname, query: initialQuery })
+    router.push(destination)
+  }
+
+  return { ...router, push, pushWithHistory }
 }
