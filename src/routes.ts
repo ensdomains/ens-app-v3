@@ -136,6 +136,10 @@ export const routes: RouteItemObj[] = [
 export const getRoute = (name: PublicRoute | ConnectedRoute): RouteItemObj =>
   routes.find((route) => route.name === name) as RouteItemObj
 
+// these rewrites are similar to the next.config.js rewrites
+// however the destination property uses the path index instead of a named parameter
+// e.g. /profile/:name => /profile?name=$2
+// evaluates to /profile/ens.eth => /profile?name=ens.eth
 export const rewrites = [
   {
     source: '/my/profile',
