@@ -46,7 +46,7 @@ export const HamburgerMenu = ({
           ? {
               ...item,
               wrapper: (children, key) => (
-                <Link href={item.disabled ? '' : item.href!} key={key}>
+                <Link href={item.disabled ? '' : item.href!} passHref key={key}>
                   {children}
                 </Link>
               ),
