@@ -63,7 +63,9 @@
     "back": "Back",
     "names": "Names",
     "favourites": "Favourites",
-    "settings": "Settings"
+    "settings": "Settings",
+    "terms": "Terms of Use",
+    "privacy": "Privacy Policy"
   },
   "wallet": {
     "myProfile": "Profile",
