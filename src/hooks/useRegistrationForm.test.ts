@@ -220,7 +220,7 @@ describe('useRegistrationForm', () => {
   describe('removeRecordByTypeAndKey', () => {
     it('should be able to remove a address record by type and key', async () => {
       const { result } = renderHook(() => useRegistrationForm(records))
-      result.current.removeRecordByTypeAndKey('addr', 'ETH')
+      result.current.removeRecordByGroupAndKey('addr', 'ETH')
       expect(result.current.getRecords().length).toBe(1)
     })
   })

@@ -178,7 +178,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     handleSubmit,
     addRecords,
     removeRecordAtIndex,
-    removeRecordByTypeAndKey,
+    removeRecordByGroupAndKey: removeRecordByTypeAndKey,
     setAvatar,
     labelForRecord,
     secondaryLabelForRecord,
@@ -295,7 +295,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
             confirmLabel={t('steps.profile.confirmations.clearEth.confirm')}
             declineLabel={t('steps.profile.confirmations.clearEth.decline')}
             onConfirm={() => {
-              removeRecordByTypeAndKey('addr', 'ETH')
+              removeRecordByTypeAndKey('address', 'ETH')
               setModalOpen(false)
             }}
             onDecline={() => setModalOpen(false)}

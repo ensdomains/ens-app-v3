@@ -5,7 +5,7 @@ import {
   profileRecordsToRegistrationForm,
   registrationFormToProfileRecords,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
-import { ProfileRecord, ProfileRecordType } from '@app/constants/profileRecordOptions'
+import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import { AvatarEditorType } from '@app/types'
 import { validateCryptoAddress } from '@app/utils/validate'
@@ -112,8 +112,8 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     name: 'records',
   })
 
-  const removeRecordByTypeAndKey = (type: ProfileRecordType, key: string) => {
-    const index = getValues('records').findIndex((r) => r.type === type && r.key === key)
+  const removeRecordByGroupAndKey = (group: ProfileRecordGroup, key: string) => {
+    const index = getValues('records').findIndex((r) => r.group === group && r.key === key)
     if (index >= 0) removeRecordAtIndex(index)
   }
 
@@ -154,7 +154,7 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     addRecords,
     getRecords,
     removeRecordAtIndex,
-    removeRecordByTypeAndKey,
+    removeRecordByGroupAndKey,
     setAvatar,
     getAvatar,
     labelForRecord,
