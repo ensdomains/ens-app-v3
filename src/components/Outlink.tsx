@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 import type { UrlObject } from 'url'
@@ -6,6 +5,8 @@ import type { UrlObject } from 'url'
 import { Typography } from '@ensdomains/thorin'
 
 import OutlinkSVG from '@app/assets/Outlink.svg'
+
+import BaseLink from './@atoms/BaseLink'
 
 export const StyledAnchor = styled.a(
   ({ theme }) => css`
@@ -42,13 +43,13 @@ export const Outlink = ({
     href: string | UrlObject
   }) => {
   return (
-    <Link href={href} passHref>
+    <BaseLink href={href} passHref>
       <StyledAnchor {...props} rel="noreferrer noopener" target="_blank">
         <OutlinkTypography variant="small" weight="bold">
           {children}
         </OutlinkTypography>
         <OutlinkIcon as={OutlinkSVG} />
       </StyledAnchor>
-    </Link>
+    </BaseLink>
   )
 }

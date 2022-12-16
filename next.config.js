@@ -99,9 +99,18 @@ let nextConfig = {
         'process.env.CONFIG_BUILD_ID': JSON.stringify(options.buildId),
       }),
     )
+    if (process.env.NEXT_PUBLIC_IPFS) {
+      config.resolve.alias['../styles.css'] = path.resolve(__dirname, 'src/stub.css')
+    }
 
     return config
   },
+  ...(process.env.NEXT_PUBLIC_IPFS
+    ? {
+        trailingSlash: true,
+        assetPrefix: './',
+      }
+    : {}),
 }
 
 let plugins = []
@@ -124,7 +133,7 @@ const withSentry = (config) => {
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options.
   }
-  if (process.env.NODE_ENV === 'production')
+  if (process.env.NODE_ENV === 'production' && !process.env.NEXT_PUBLIC_IPFS)
     return withSentryConfig(config, sentryWebpackPluginOptions)
   return config
 }

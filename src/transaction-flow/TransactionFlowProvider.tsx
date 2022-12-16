@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import React, {
   ComponentProps,
   ReactNode,
@@ -13,6 +12,7 @@ import useCallbackOnTransaction, {
   UpdateCallback,
 } from '@app/hooks/transactions/useCallbackOnTransaction'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import type { DataInputComponent } from './input'
@@ -57,7 +57,7 @@ const TransactionContext = React.createContext<ProviderValue>({
 })
 
 export const TransactionFlowProvider = ({ children }: { children: ReactNode }) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
 
   const [state, dispatch] = useLocalStorageReducer(
     'tx-flow',
@@ -158,7 +158,7 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
         dispatch({ name: 'resumeFlow', key })
         return
       }
-      router.push(item.resumeLink)
+      router.pushWithHistory(item.resumeLink)
     },
     [dispatch, router, state.items],
   )

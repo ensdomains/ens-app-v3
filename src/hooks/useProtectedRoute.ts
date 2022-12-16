@@ -1,8 +1,9 @@
-import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 
+import { useRouterWithHistory } from './useRouterWithHistory'
+
 export const useProtectedRoute = (baseRoute: string, condition: any) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
 
   useEffect(() => {
     if (!condition) {

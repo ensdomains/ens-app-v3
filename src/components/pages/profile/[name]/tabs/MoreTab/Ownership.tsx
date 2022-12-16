@@ -1,10 +1,10 @@
-import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Button, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
@@ -123,7 +123,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   const network = useChainId()
 
   return (
-    <Link passHref href={`/address/${address}`}>
+    <BaseLink passHref href={`/address/${address}`}>
       <OwnerContainer as="a">
         <OwnerDetailContainer>
           <AvatarWithZorb
@@ -146,7 +146,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
         </OwnerDetailContainer>
         <Tag tone="accent">{t(label)}</Tag>
       </OwnerContainer>
-    </Link>
+    </BaseLink>
   )
 }
 

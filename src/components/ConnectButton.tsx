@@ -1,5 +1,4 @@
 import { useConnectModal } from '@rainbow-me/rainbowkit'
-import Link from 'next/link'
 import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -12,6 +11,8 @@ import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
+import BaseLink from './@atoms/BaseLink'
 
 const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }>(
   ({ theme, $isTabBar, $large }) => [
@@ -104,9 +105,9 @@ const HeaderProfile = ({ address }: { address: string }) => {
               {
                 label: t('wallet.myProfile'),
                 wrapper: (children: ReactNode, key: Key) => (
-                  <Link href="/my/profile" key={key}>
+                  <BaseLink href="/my/profile" key={key}>
                     {children}
-                  </Link>
+                  </BaseLink>
                 ),
                 as: 'a' as 'a',
                 color: 'text',

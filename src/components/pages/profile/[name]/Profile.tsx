@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -12,6 +11,7 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
 
@@ -70,7 +70,7 @@ type Props = {
 }
 
 const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const chainId = useChainId()
   const { address } = useAccount()
