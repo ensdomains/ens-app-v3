@@ -110,7 +110,13 @@ const Resolver = ({
           </button>
         ) : (
           <DisabledButtonWithTooltip
-            {...{ buttonId: disabledButtonId, buttonText: 'Edit', mobileWidth: 250 }}
+            {...{
+              buttonId: disabledButtonId,
+              buttonText: 'Edit',
+              mobileWidth: 200,
+              buttonWidth: 'initial',
+              mobileButtonWidth: 'initial',
+            }}
           />
         )}
       </HeadingContainer>

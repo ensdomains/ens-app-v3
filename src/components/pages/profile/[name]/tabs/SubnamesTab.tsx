@@ -210,8 +210,10 @@ export const SubnamesTab = ({
             {...{
               buttonId: 'edit-subnames-button',
               buttonText: '+ New Subname',
+              placement: 'left',
               mobilePlacement: 'top',
               mobileWidth: 250,
+              buttonWidth: 'initial',
             }}
           />
         )}

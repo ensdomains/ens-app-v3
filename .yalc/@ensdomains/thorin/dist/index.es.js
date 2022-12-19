@@ -2,7 +2,7 @@ import * as React from "react";
 import { useEffect } from "react";
 import styled, { css, keyframes, useTheme, createGlobalStyle } from "styled-components";
 import * as ReactDOM from "react-dom";
-import ReactDOM__default from "react-dom";
+import { createPortal } from "react-dom";
 import { useTransition } from "react-transition-state";
 const Container$i = styled.div(({
   theme,
@@ -1054,21 +1054,19 @@ const LabelContainer$1 = styled(Typography)(({
     font-weight: ${theme.fontWeights["semiBold"]};
     ${$fullWidthContent && `width: 100%;`}
   `);
-const TooltipIndicator = styled.div(({
-  theme
-}) => css`
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: #e9b911;
-    border-radius: 50%;
-    width: 24px;
-    height: 24px;
-    position: absolute;
-    right: -10px;
-    top: -10px;
-    color: white;
-  `);
+const TooltipIndicator = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #e9b911;
+  border-radius: 50%;
+  width: 24px;
+  height: 24px;
+  position: absolute;
+  right: -10px;
+  top: -10px;
+  color: white;
+`;
 const Button = React.forwardRef(({
   center,
   children,
@@ -1128,12 +1126,12 @@ const Button = React.forwardRef(({
     $fullWidthContent: fullWidthContent,
     $outlined: outlined,
     $pressed: pressed,
+    $psuedoDisabled: psuedoDisabled,
     $shadowless: shadowless,
     $shape: shape,
     $size: size,
     $tone: tone,
     $variant: variant,
-    $psuedoDisabled: psuedoDisabled,
     as: asProp,
     disabled,
     href,
@@ -1186,23 +1184,166 @@ const Card = ({
   }, children);
 };
 Card.displayName = "Card";
-const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, open, mobileSide) => {
+var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
+var FUNC_ERROR_TEXT = "Expected a function";
+var NAN = 0 / 0;
+var symbolTag$1 = "[object Symbol]";
+var reTrim = /^\s+|\s+$/g;
+var reIsBadHex = /^[-+]0x[0-9a-f]+$/i;
+var reIsBinary = /^0b[01]+$/i;
+var reIsOctal = /^0o[0-7]+$/i;
+var freeParseInt = parseInt;
+var freeGlobal$2 = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
+var freeSelf$1 = typeof self == "object" && self && self.Object === Object && self;
+var root$2 = freeGlobal$2 || freeSelf$1 || Function("return this")();
+var objectProto$2 = Object.prototype;
+var objectToString$2 = objectProto$2.toString;
+var nativeMax = Math.max, nativeMin = Math.min;
+var now = function() {
+  return root$2.Date.now();
+};
+function debounce(func, wait, options) {
+  var lastArgs, lastThis, maxWait, result, timerId, lastCallTime, lastInvokeTime = 0, leading = false, maxing = false, trailing = true;
+  if (typeof func != "function") {
+    throw new TypeError(FUNC_ERROR_TEXT);
+  }
+  wait = toNumber(wait) || 0;
+  if (isObject(options)) {
+    leading = !!options.leading;
+    maxing = "maxWait" in options;
+    maxWait = maxing ? nativeMax(toNumber(options.maxWait) || 0, wait) : maxWait;
+    trailing = "trailing" in options ? !!options.trailing : trailing;
+  }
+  function invokeFunc(time) {
+    var args = lastArgs, thisArg = lastThis;
+    lastArgs = lastThis = void 0;
+    lastInvokeTime = time;
+    result = func.apply(thisArg, args);
+    return result;
+  }
+  function leadingEdge(time) {
+    lastInvokeTime = time;
+    timerId = setTimeout(timerExpired, wait);
+    return leading ? invokeFunc(time) : result;
+  }
+  function remainingWait(time) {
+    var timeSinceLastCall = time - lastCallTime, timeSinceLastInvoke = time - lastInvokeTime, result2 = wait - timeSinceLastCall;
+    return maxing ? nativeMin(result2, maxWait - timeSinceLastInvoke) : result2;
+  }
+  function shouldInvoke(time) {
+    var timeSinceLastCall = time - lastCallTime, timeSinceLastInvoke = time - lastInvokeTime;
+    return lastCallTime === void 0 || timeSinceLastCall >= wait || timeSinceLastCall < 0 || maxing && timeSinceLastInvoke >= maxWait;
+  }
+  function timerExpired() {
+    var time = now();
+    if (shouldInvoke(time)) {
+      return trailingEdge(time);
+    }
+    timerId = setTimeout(timerExpired, remainingWait(time));
+  }
+  function trailingEdge(time) {
+    timerId = void 0;
+    if (trailing && lastArgs) {
+      return invokeFunc(time);
+    }
+    lastArgs = lastThis = void 0;
+    return result;
+  }
+  function cancel() {
+    if (timerId !== void 0) {
+      clearTimeout(timerId);
+    }
+    lastInvokeTime = 0;
+    lastArgs = lastCallTime = lastThis = timerId = void 0;
+  }
+  function flush() {
+    return timerId === void 0 ? result : trailingEdge(now());
+  }
+  function debounced() {
+    var time = now(), isInvoking = shouldInvoke(time);
+    lastArgs = arguments;
+    lastThis = this;
+    lastCallTime = time;
+    if (isInvoking) {
+      if (timerId === void 0) {
+        return leadingEdge(lastCallTime);
+      }
+      if (maxing) {
+        timerId = setTimeout(timerExpired, wait);
+        return invokeFunc(lastCallTime);
+      }
+    }
+    if (timerId === void 0) {
+      timerId = setTimeout(timerExpired, wait);
+    }
+    return result;
+  }
+  debounced.cancel = cancel;
+  debounced.flush = flush;
+  return debounced;
+}
+function isObject(value) {
+  var type = typeof value;
+  return !!value && (type == "object" || type == "function");
+}
+function isObjectLike$2(value) {
+  return !!value && typeof value == "object";
+}
+function isSymbol$2(value) {
+  return typeof value == "symbol" || isObjectLike$2(value) && objectToString$2.call(value) == symbolTag$1;
+}
+function toNumber(value) {
+  if (typeof value == "number") {
+    return value;
+  }
+  if (isSymbol$2(value)) {
+    return NAN;
+  }
+  if (isObject(value)) {
+    var other = typeof value.valueOf == "function" ? value.valueOf() : value;
+    value = isObject(other) ? other + "" : other;
+  }
+  if (typeof value != "string") {
+    return value === 0 ? value : +value;
+  }
+  value = value.replace(reTrim, "");
+  var isBinary = reIsBinary.test(value);
+  return isBinary || reIsOctal.test(value) ? freeParseInt(value.slice(2), isBinary ? 2 : 8) : reIsBadHex.test(value) ? NAN : +value;
+}
+var lodash_debounce = debounce;
+const ANIMATION_DURATION = 350;
+const computeIdealSide = (side, referenceRect, floatingRect, padding, offset) => {
+  const top = referenceRect.top - floatingRect.height - padding - offset;
+  const left = referenceRect.left - floatingRect.width - padding - offset;
+  const right = window.innerWidth - referenceRect.left - referenceRect.width - floatingRect.width - padding - offset;
+  const bottom = window.innerHeight - referenceRect.top - referenceRect.height - floatingRect.height - padding - offset;
+  if (side === "top" && top < 0 && bottom > top)
+    return "bottom";
+  if (side === "right" && right < 0 && left > right)
+    return "left";
+  if (side === "bottom" && bottom < 0 && top > bottom)
+    return "top";
+  if (side === "left" && left < 0 && right > left)
+    return "right";
+  return side;
+};
+const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, mobileSide) => {
   let translate = "";
   if (side === "top")
-    translate = `translate(0, -${verticalClearance - window.scrollY}px)`;
+    translate = `translate(0, -${verticalClearance}px)`;
   else if (side === "right")
     translate = `translate(${horizontalClearance * -1 + 10}px, 0)`;
   else if (side === "bottom")
-    translate = `translate(0, ${verticalClearance + window.scrollY}px)`;
+    translate = `translate(0, ${verticalClearance}px)`;
   else
     translate = `translate(${horizontalClearance - 10}px, 0);`;
   let mobileTranslate = "";
   if (mobileSide === "top")
-    mobileTranslate = `translate(0, -${verticalClearance - window.scrollY}px)`;
+    mobileTranslate = `translate(0, -${verticalClearance}px)`;
   else if (mobileSide === "right")
     mobileTranslate = `translate(${horizontalClearance * -1 + 10}px, 0)`;
   else if (mobileSide === "bottom")
-    mobileTranslate = `translate(0, ${verticalClearance + window.scrollY}px)`;
+    mobileTranslate = `translate(0, ${verticalClearance}px)`;
   else
     mobileTranslate = `translate(${horizontalClearance - 10}px, 0);`;
   return {
@@ -1211,8 +1352,6 @@ const defaultAnimationFunc = (horizontalClearance, verticalClearance, side, open
   };
 };
 const PopoverContainer = styled.div(({
-  $isOpen,
-  $hasFirstLoad,
   $translate,
   $mobileTranslate,
   $width,
@@ -1223,17 +1362,38 @@ const PopoverContainer = styled.div(({
     z-index: 20;
     pointer-events: none;
     width: ${$mobileWidth}px;
-    transform: ${$isOpen ? $mobileTranslate : "translate(0, 0)"};
-    opacity: ${$isOpen ? 1 : 0};
-    visibility: ${$isOpen ? "visible" : "hidden"};
+    transform: ${$mobileTranslate};
 
     ${mq.md.min(css`
       width: ${$width}px;
-      transform: ${$isOpen ? $translate : "translate (0, 0)"};
+      transform: ${$translate};
     `)}
-
-    ${$hasFirstLoad && `transition: all 0.35s cubic-bezier(1, 0, 0.22, 1.6);`}
   `);
+const setPosition = (targetId, tooltipRef, popoverElement, placement, mobilePlacement, additionalGap, setPositionState) => {
+  const targetElement = document.getElementById(targetId);
+  const targetRect = targetElement == null ? void 0 : targetElement.getBoundingClientRect();
+  const tooltipElement = tooltipRef == null ? void 0 : tooltipRef.current;
+  const tooltipRect = tooltipElement == null ? void 0 : tooltipElement.getBoundingClientRect();
+  popoverElement.style.opacity = "0";
+  popoverElement.style.top = `10px`;
+  popoverElement.style.left = `10px`;
+  if (targetRect) {
+    const top = window.scrollY + targetRect.y + targetRect.height / 2 - tooltipRect.height / 2;
+    const left = targetRect.x + targetRect.width / 2 - tooltipRect.width / 2;
+    const horizontalClearance = -tooltipRect.width + (targetRect.left - left) - additionalGap;
+    const verticalClearance = tooltipRect.height + additionalGap;
+    const idealPlacement = computeIdealSide(placement, targetRect, tooltipRect, 0, 0);
+    const idealMobilePlacement = computeIdealSide(mobilePlacement, targetRect, tooltipRect, 0, 0);
+    setPositionState({
+      top,
+      left,
+      horizontalClearance,
+      verticalClearance,
+      idealPlacement,
+      idealMobilePlacement
+    });
+  }
+};
 const DynamicPopover = ({
   popover,
   placement = "top",
@@ -1243,74 +1403,140 @@ const DynamicPopover = ({
   targetId,
   onShowCallback,
   width = 250,
-  mobileWidth = 150
+  mobileWidth = 150,
+  useIdealSide = false,
+  additionalGap = 0
 }) => {
   const [positionState, setPositionState] = React.useState({
     top: 100,
     left: 100,
     horizontalClearance: 100,
-    verticalClearance: 100
+    verticalClearance: 100,
+    idealPlacement: placement,
+    idealMobilePlacement: mobilePlacement
   });
   const popoverContainerRef = React.useRef(null);
-  const [hasFirstLoad, setHasFirstLoad] = React.useState(false);
+  const mouseEnterTimeoutRef = React.useRef(false);
+  const mouseLeaveTimeoutRef = React.useRef(false);
   const animationFn = React.useMemo(() => {
     if (_animationFn) {
-      return (horizontalClearance, verticalClearance, side, open, mobileSide) => _animationFn(horizontalClearance, verticalClearance, side, open, mobileSide);
+      return (horizontalClearance, verticalClearance, side, mobileSide) => _animationFn(horizontalClearance, verticalClearance, side, mobileSide);
     }
-    return (horizontalClearance, verticalClearance, side, open, mobileSide) => defaultAnimationFunc(horizontalClearance, verticalClearance, side, open, mobileSide);
+    return (horizontalClearance, verticalClearance, side, mobileSide) => defaultAnimationFunc(horizontalClearance, verticalClearance, side, mobileSide);
   }, [_animationFn]);
-  const [isOpen, setIsOpen] = React.useState(false);
-  const handleMouseenter = React.useCallback(() => {
-    const targetElement = document.getElementById(targetId);
-    const targetRect = targetElement == null ? void 0 : targetElement.getBoundingClientRect();
-    const tooltipElement = tooltipRef.current;
-    const tooltipRect = tooltipElement == null ? void 0 : tooltipElement.getBoundingClientRect();
-    const popoverElement = popoverContainerRef.current;
-    if (targetRect && tooltipRect) {
-      const top = window.scrollY + targetRect.y + targetRect.height / 2 - tooltipRect.height / 2;
-      const left = targetRect.x + targetRect.width / 2 - tooltipRect.width / 2;
-      const horizontalClearance = -tooltipRect.width + (targetRect.left - left);
-      const verticalClearance = tooltipRect.height;
-      popoverElement.style.top = `${top}px`;
-      popoverElement.style.left = `${left}px`;
-      setHasFirstLoad(true);
-      setPositionState({
-        top,
-        left,
-        horizontalClearance,
-        verticalClearance
-      });
-      setIsOpen(true);
-      onShowCallback == null ? void 0 : onShowCallback();
-    }
-  }, [targetId]);
   React.useEffect(() => {
     const targetElement = document.getElementById(targetId);
-    const handleMouseleave = () => {
-      setIsOpen(false);
+    const popoverElement = popoverContainerRef.current;
+    if (popoverElement) {
+      setPosition(targetId, tooltipRef, popoverElement, placement, mobilePlacement, additionalGap, setPositionState);
+    }
+    const handleMouseenter = lodash_debounce(() => {
+      console.log("handleMousenter");
+      if (mouseLeaveTimeoutRef.current) {
+        return;
+      }
+      mouseEnterTimeoutRef.current = true;
+      const targetElement2 = document.getElementById(targetId);
+      const targetRect = targetElement2 == null ? void 0 : targetElement2.getBoundingClientRect();
+      const tooltipElement = tooltipRef == null ? void 0 : tooltipRef.current;
+      const tooltipRect = tooltipElement == null ? void 0 : tooltipElement.getBoundingClientRect();
+      const popoverElement2 = popoverContainerRef.current;
+      if (targetRect && tooltipRect) {
+        const top = window.scrollY + targetRect.y + targetRect.height / 2 - tooltipRect.height / 2;
+        const left = targetRect.x + targetRect.width / 2 - tooltipRect.width / 2;
+        const horizontalClearance = -tooltipRect.width + (targetRect.left - left) - additionalGap;
+        const verticalClearance = tooltipRect.height + additionalGap;
+        if (popoverElement2) {
+          popoverElement2.style.transition = `initial`;
+          popoverElement2.style.top = `${top}px`;
+          popoverElement2.style.left = `${left}px`;
+        } else {
+          console.error("no popover element");
+        }
+        const idealPlacement = computeIdealSide(placement, targetRect, tooltipRect, 0, 0);
+        const idealMobilePlacement = computeIdealSide(mobilePlacement, targetRect, tooltipRect, 0, 0);
+        setPositionState({
+          top,
+          left,
+          horizontalClearance,
+          verticalClearance,
+          idealPlacement,
+          idealMobilePlacement
+        });
+        setTimeout(() => {
+          if (!mouseLeaveTimeoutRef.current && popoverElement2) {
+            popoverElement2.style.transition = `all ${ANIMATION_DURATION}ms cubic-bezier(1, 0, 0.22, 1.6)`;
+            popoverElement2.style.opacity = "1";
+          }
+          onShowCallback == null ? void 0 : onShowCallback();
+          mouseEnterTimeoutRef.current = false;
+        }, 200);
+      }
+    }, ANIMATION_DURATION, {
+      leading: true,
+      trailing: false
+    });
+    const handleMouseleave = lodash_debounce(() => {
+      mouseLeaveTimeoutRef.current = true;
+      if (popoverElement) {
+        popoverElement.style.opacity = "0";
+      }
+      setTimeout(() => {
+        if (!popoverElement) {
+          console.error("no popover element");
+          return;
+        }
+        if (mouseEnterTimeoutRef.current) {
+          setTimeout(() => {
+            popoverElement.style.transition = "initial";
+            popoverElement.style.top = `10px`;
+            popoverElement.style.left = `10px`;
+            mouseLeaveTimeoutRef.current = false;
+          }, ANIMATION_DURATION);
+        } else {
+          popoverElement.style.transition = "initial";
+          popoverElement.style.top = `10px`;
+          popoverElement.style.left = `10px`;
+          mouseLeaveTimeoutRef.current = false;
+        }
+      }, ANIMATION_DURATION);
+    }, ANIMATION_DURATION, {
+      leading: true,
+      trailing: false
+    });
+    const handleResize = () => {
+      const targetElement2 = document.getElementById(targetId);
+      const targetRect = targetElement2 == null ? void 0 : targetElement2.getBoundingClientRect();
+      const tooltipElement = tooltipRef == null ? void 0 : tooltipRef.current;
+      const tooltipRect = tooltipElement == null ? void 0 : tooltipElement.getBoundingClientRect();
+      const popoverElement2 = popoverContainerRef.current;
+      const top = window.scrollY + targetRect.y + targetRect.height / 2 - tooltipRect.height / 2;
+      const left = targetRect.x + targetRect.width / 2 - tooltipRect.width / 2;
+      popoverElement2.style.transition = `initial`;
+      popoverElement2.style.top = `${top}px`;
+      popoverElement2.style.left = `${left}px`;
     };
     targetElement == null ? void 0 : targetElement.addEventListener("mouseenter", handleMouseenter);
     targetElement == null ? void 0 : targetElement.addEventListener("mouseleave", handleMouseleave);
+    addEventListener("resize", handleResize);
     return () => {
       targetElement == null ? void 0 : targetElement.removeEventListener("mouseover", handleMouseenter);
       targetElement == null ? void 0 : targetElement.removeEventListener("mouseleave", handleMouseleave);
+      removeEventListener("resize", handleResize);
     };
-  }, []);
-  console.log("placement: ", placement);
-  console.log("mobilePlacement: ", mobilePlacement);
+  }, [targetId]);
   const {
     translate,
     mobileTranslate
-  } = animationFn(positionState.horizontalClearance, positionState.verticalClearance, placement, isOpen, mobilePlacement);
-  return ReactDOM__default.createPortal(/* @__PURE__ */ React.createElement(PopoverContainer, {
-    ref: popoverContainerRef,
-    id: "popoverContainer",
-    $isOpen: isOpen,
-    $hasFirstLoad: hasFirstLoad,
+  } = animationFn(positionState.horizontalClearance, positionState.verticalClearance, useIdealSide ? positionState.idealPlacement : placement, useIdealSide ? positionState.idealMobilePlacement : mobilePlacement);
+  return createPortal(/* @__PURE__ */ React.createElement(PopoverContainer, {
     $translate: translate,
     $mobileTranslate: mobileTranslate,
     $width: width,
-    $mobileWidth: mobileWidth
+    $mobileWidth: mobileWidth,
+    id: "popoverContainer",
+    "data-testid": "popoverContainer",
+    ref: popoverContainerRef
   }, popover), document == null ? void 0 : document.body);
 };
 DynamicPopover.displayName = "DynamicPopover";
@@ -5382,7 +5608,6 @@ const RadioButtonGroup = React.forwardRef(({
   }));
 });
 RadioButtonGroup.displayName = "RadioButtonGroup";
-var commonjsGlobal = typeof globalThis !== "undefined" ? globalThis : typeof window !== "undefined" ? window : typeof global !== "undefined" ? global : typeof self !== "undefined" ? self : {};
 var freeGlobal$1 = typeof commonjsGlobal == "object" && commonjsGlobal && commonjsGlobal.Object === Object && commonjsGlobal;
 var _freeGlobal = freeGlobal$1;
 var freeGlobal = _freeGlobal;
@@ -6532,15 +6757,16 @@ const TooltipPopover = styled.div(({
   `);
 const Tooltip = ({
   content,
-  placement,
-  mobilePlacement,
+  placement = "top",
+  mobilePlacement = "top",
   ...props
 }) => {
   const tooltipRef = React.useRef(null);
   const popover = /* @__PURE__ */ React.createElement(TooltipPopover, {
-    ref: tooltipRef,
+    "data-testid": "tooltip-popover",
+    $mobilePlacement: mobilePlacement,
     $placement: placement,
-    $mobilePlacement: mobilePlacement
+    ref: tooltipRef
   }, content);
   return DynamicPopover({
     popover,

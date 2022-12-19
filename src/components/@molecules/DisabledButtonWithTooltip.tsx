@@ -1,8 +1,19 @@
-import { Button, Tooltip } from '@ensdomains/thorin'
+import styled, { css } from 'styled-components'
+
+import { Button, Tooltip, mq } from '@ensdomains/thorin'
 
 import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 
 type Placement = 'top' | 'bottom' | 'left' | 'right'
+
+const ButtonContainer = styled.div<{ $buttonWidth?: string; $mobileButtonWidth?: string }>(
+  ({ $buttonWidth, $mobileButtonWidth }) => css`
+    width: ${$mobileButtonWidth ? `${$mobileButtonWidth}` : '100%'};
+    ${mq.md.min(css`
+      width: ${$buttonWidth ? `${$buttonWidth}` : '100%'};
+    `)}
+  `,
+)
 
 export const DisabledButtonWithTooltip = ({
   buttonId,
@@ -11,13 +22,17 @@ export const DisabledButtonWithTooltip = ({
   mobilePlacement = 'left',
   width = 250,
   mobileWidth = 150,
+  buttonWidth,
+  mobileButtonWidth,
 }: {
   buttonId: string
-  buttonText: string
+  buttonText?: string
   placement?: Placement
   mobilePlacement?: Placement
   width?: number
   mobileWidth?: number
+  buttonWidth?: string
+  mobileButtonWidth?: string
 }) => {
   const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(buttonId)
   return (
@@ -34,14 +49,17 @@ export const DisabledButtonWithTooltip = ({
           open: true,
         }}
       />
-      <Button
-        id={buttonId}
-        psuedoDisabled
-        shadowless
-        shouldShowTooltipIndicator={shouldShowTooltipIndicator}
-      >
-        {buttonText}
-      </Button>
+      <ButtonContainer {...{ $buttonWidth: buttonWidth, $mobileButtonWidth: mobileButtonWidth }}>
+        <Button
+          id={buttonId}
+          size="small"
+          psuedoDisabled
+          shadowless
+          shouldShowTooltipIndicator={shouldShowTooltipIndicator}
+        >
+          {buttonText}
+        </Button>
+      </ButtonContainer>
     </>
   )
 }

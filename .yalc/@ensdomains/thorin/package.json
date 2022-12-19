@@ -37,6 +37,7 @@
     "clsx": "^1.1.1",
     "focus-visible": "^5.2.0",
     "lodash": "^4.17.21",
+    "lodash.debounce": "^4.0.8",
     "react-use": "^17.4.0"
   },
   "peerDependencies": {
@@ -45,5 +46,5 @@
     "react-transition-state": "^1.1.4",
     "styled-components": "^5.3.3"
   },
-  "yalcSig": "d4df6758484272d329eebcc146b2a641"
+  "yalcSig": "97dbd212e52a57fa10c1518d8e972a0e"
 }

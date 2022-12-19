@@ -1,42 +1,39 @@
 import * as React from 'react';
 export declare type DynamicPopoverSide = 'top' | 'right' | 'bottom' | 'left';
 export declare type DynamicPopoverAlignment = 'start' | 'center' | 'end';
-export declare type DynamicPopoverPlacement = 'top-start' | 'top-center' | 'top-end' | 'left-start' | 'left-center' | 'left-end' | 'right-start' | 'right-center' | 'right-end' | 'bottom-start' | 'bottom-center' | 'bottom-end';
-export declare type DynamicPopoverAnimationFunc = (side: DynamicPopoverSide, open?: boolean) => string;
+export declare type DynamicPopoverAnimationFunc = (horizonalClearance: number, verticalClearance: number, side: DynamicPopoverSide, mobileSide: DynamicPopoverSide) => {
+    translate: string;
+    mobileTranslate: string;
+};
 export declare type DynamicPopoverButtonProps = {
     pressed?: boolean;
     onClick?: React.MouseEventHandler<HTMLElement>;
 };
 export interface DynamicPopoverProps {
-    /** A Button component. The component will override the onClick and pressed properties of the button. */
-    children: React.ReactElement<DynamicPopoverButtonProps>;
-    /** A react node that has includes the styling and content of the popover. */
+    /** A react node that has includes the styling and content of the popover */
     popover: React.ReactNode;
-    /** The side and alignment of the popover in relation to the button. */
-    placement?: DynamicPopoverPlacement;
-    /** The number of pixels between the button and the popover */
-    offset?: number;
-    /** If shift is true, sets the minimum number of pixels between the popover and the viewport */
-    padding?: number;
-    /** If true, will flip the popover to the opposite side if there is not enough space. */
-    flip?: boolean;
-    /** If true, will shift the popover alignment to be remain visible. */
-    shift?: boolean;
-    /** If true, will prevent the popover from appearing */
-    disabled?: boolean;
-    /** If true, will display the popover */
-    open?: boolean;
-    /** The setter for the isOpen variable */
-    onDismiss?: () => void;
-    /** A function that returns string of the css state for open and closed popover. */
+    /** The side and alignment of the popover in relation to the target */
+    placement?: DynamicPopoverSide;
+    /** The side and alignment of the popover in relation to the target on mobile screen sizes */
+    mobilePlacement?: DynamicPopoverSide;
+    /** A function that returns string of the css state for open and closed popover */
     animationFn?: DynamicPopoverAnimationFunc;
+    /** A React reference to the tooltip element */
+    tooltipRef?: React.RefObject<HTMLDivElement>;
+    /** The id of the target element the tooltip will emerge from */
+    targetId: string;
+    /** Function that will be called when the DynamicPopover is shown */
+    onShowCallback?: () => void;
+    /** Width of the DynamicPopover*/
+    width?: number;
+    /** Width of the DynamicPopover on mobile*/
+    mobileWidth?: number;
+    /** Dynamic popover will switch sides if there is not enough room*/
+    useIdealSide?: boolean;
+    /** Add to the default gap between the popover and its target */
+    additionalGap?: number;
 }
-export declare const computeCoordsFromPlacement: (reference: DOMRect, floating: DOMRect, placement: DynamicPopoverPlacement, padding: number, offset: number, flip?: boolean, shift?: boolean) => {
-    x: number;
-    y: number;
-    side: DynamicPopoverSide;
-};
 export declare const DynamicPopover: {
-    ({ popover, placement, mobilePlacement, animationFn: _animationFn, tooltipRef, targetId, onShowCallback, width, mobileWidth, }: DynamicPopoverProps): React.ReactPortal;
+    ({ popover, placement, mobilePlacement, animationFn: _animationFn, tooltipRef, targetId, onShowCallback, width, mobileWidth, useIdealSide, additionalGap, }: DynamicPopoverProps): React.ReactPortal;
     displayName: string;
 };

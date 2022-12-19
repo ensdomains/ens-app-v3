@@ -116,7 +116,14 @@ const Fuses = ({
               {t('action.edit', { ns: 'common' })}
             </button>
           ) : (
-            <DisabledButtonWithTooltip {...{ buttonId: disabledButtonId }} />
+            <DisabledButtonWithTooltip
+              {...{
+                buttonId: disabledButtonId,
+                mobileWidth: 200,
+                buttonWidth: 'initial',
+                mobileButtonWidth: 'initial',
+              }}
+            />
           )}
         </HeadingContainer>
         <div>

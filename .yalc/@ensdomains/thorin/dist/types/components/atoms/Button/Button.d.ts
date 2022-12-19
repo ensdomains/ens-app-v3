@@ -43,6 +43,8 @@ declare type BaseProps = {
     onClick?: NativeButtonProps['onClick'];
     /** The handler for click events. */
     psuedoDisabled?: boolean;
+    /** Show indicator that button has extra info via tooltip. */
+    shouldShowTooltipIndicator?: boolean;
 } & Omit<NativeButtonProps, 'prefix' | 'size'>;
 declare type WithTone = {
     /** Sets the color scheme when variant is 'primary', 'action', or 'secondary' */

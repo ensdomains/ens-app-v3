@@ -1,2 +1,2 @@
 export { DynamicPopover } from './DynamicPopover';
-export type { DynamicPopoverPlacement, DynamicPopoverSide, DynamicPopoverAlignment, DynamicPopoverProps, } from './DynamicPopover';
+export type { DynamicPopoverSide, DynamicPopoverAlignment, DynamicPopoverProps, } from './DynamicPopover';

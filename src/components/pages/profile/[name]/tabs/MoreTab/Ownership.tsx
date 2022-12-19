@@ -194,6 +194,7 @@ const Ownership = ({
                 buttonId: disabledButtonId,
                 buttonText: 'Send',
                 mobilePlacement: 'left',
+                mobileWidth: 180,
               }}
             />
           )}
