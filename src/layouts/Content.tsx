@@ -230,6 +230,7 @@ export const Content = ({
   titleButton,
   hideBack,
   hideHeading,
+  inlineHeading,
 }: {
   noTitle?: boolean
   title: string
@@ -240,6 +241,7 @@ export const Content = ({
   loading?: boolean
   hideBack?: boolean
   hideHeading?: boolean
+  inlineHeading?: boolean
   children: {
     warning?: {
       type: 'warning' | 'error' | 'info'
@@ -311,6 +313,11 @@ export const Content = ({
                 title={title}
                 titleButton={titleButton}
               />
+              {inlineHeading && children.header && breakpoints.md && (
+                <ContentContainer>
+                  <Skeleton loading={loading}>{children.header}</Skeleton>
+                </ContentContainer>
+              )}
               {!hasBack && !breakpoints.md && <HamburgerRoutes />}
             </CustomLeadingHeading>
           </Skeleton>
@@ -322,7 +329,12 @@ export const Content = ({
 
       {LeadingComponent}
 
-      {children.header && (
+      {!inlineHeading && children.header && (
+        <ContentContainer>
+          <Skeleton loading={loading}>{children.header}</Skeleton>
+        </ContentContainer>
+      )}
+      {inlineHeading && children.header && !breakpoints.md && (
         <ContentContainer>
           <Skeleton loading={loading}>{children.header}</Skeleton>
         </ContentContainer>

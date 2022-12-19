@@ -11,6 +11,7 @@ export default function Page() {
   const router = useRouterWithHistory()
   const _name = router.query.name as string
   const isSelf = router.query.connected === 'true'
+  const isViewingExpired = router.query.expired === 'true'
 
   const initial = useInitial()
 
@@ -27,7 +28,10 @@ export default function Page() {
 
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
-  if (registrationStatus === 'available' || registrationStatus === 'premium') {
+  if (
+    (registrationStatus === 'available' || registrationStatus === 'premium') &&
+    !isViewingExpired
+  ) {
     router.push(`/register/${name}`)
     return null
   }

@@ -70,7 +70,8 @@
     "connect": "Connect Wallet",
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "register": "Register"
   },
   "name": {
     "registered": "Registered",
