@@ -36,7 +36,11 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
   let rewrite = false
   let callback: ((res: Response) => Response) | null = null
 
-  if (paths[1] === 'my' && paths[2] === 'profile') {
+  if (paths[1].match(/^0x[a-fA-F0-9]{40}$/)) {
+    url.pathname = '/address'
+    url.searchParams.set('address', paths[1])
+    rewrite = true
+  } else if (paths[1] === 'my' && paths[2] === 'profile') {
     url.pathname = '/profile'
     url.searchParams.set('connected', 'true')
     rewrite = true
@@ -44,39 +48,30 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     url.pathname = '/my/names'
     url.searchParams.set('address', paths[2])
     rewrite = true
-  } else if (paths[1] === 'profile' && !!paths[2]) {
-    url.pathname = '/profile'
-    url.searchParams.set('name', paths[2])
+  } else if (paths[1].match(/\./g) || paths[1] === 'tld') {
+    const isTLD = paths[1] === 'tld'
+    url.pathname = `/${(isTLD ? paths[3] : paths[2]) || 'profile'}`
+    url.searchParams.set('name', isTLD ? paths[2] : paths[1])
     rewrite = true
 
-    const decodedName = decodeURIComponent(paths[2])
-    let newTitle = 'Invalid Name - ENS'
-    let newDescription = 'An error occurred'
-    try {
-      const normalisedName = normalise(decodedName)
-      newTitle = `${normalisedName} on ENS`
-      newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
-      // eslint-disable-next-line no-empty
-    } catch {
-      console.error('Name could not be normalised')
+    if (url.pathname === '/profile') {
+      const decodedName = decodeURIComponent(isTLD ? paths[2] : paths[1])
+      let newTitle = 'Invalid Name - ENS'
+      let newDescription = 'An error occurred'
+      try {
+        const normalisedName = normalise(decodedName)
+        newTitle = `${normalisedName} on ENS`
+        newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
+        // eslint-disable-next-line no-empty
+      } catch {
+        console.error('Name could not be normalised')
+      }
+      callback = (res) =>
+        new HTMLRewriter()
+          .on('title', new ContentModifier(newTitle))
+          .on('meta[name="description"]', new AttributeModifier('content', newDescription))
+          .transform(res)
     }
-    callback = (res) =>
-      new HTMLRewriter()
-        .on('title', new ContentModifier(newTitle))
-        .on('meta[name="description"]', new AttributeModifier('content', newDescription))
-        .transform(res)
-  } else if (paths[1] === 'import' && !!paths[2]) {
-    url.pathname = '/import'
-    url.searchParams.set('name', paths[2])
-    rewrite = true
-  } else if (paths[1] === 'register' && !!paths[2]) {
-    url.pathname = '/register'
-    url.searchParams.set('name', paths[2])
-    rewrite = true
-  } else if (paths[1] === 'address' && !!paths[2]) {
-    url.pathname = '/address'
-    url.searchParams.set('address', paths[2])
-    rewrite = true
   }
 
   if (rewrite) {

@@ -35,20 +35,32 @@ let nextConfig = {
         destination: '/my/names?address=:address',
       },
       {
-        source: '/profile/:name',
+        source: '/:address(0x[a-fA-F0-9]{40}$)',
+        destination: '/address?address=:address',
+      },
+      {
+        source: '/:name',
         destination: '/profile?name=:name',
       },
       {
-        source: '/register/:name',
+        source: '/:name/register',
         destination: '/register?name=:name',
       },
       {
-        source: '/import/:name',
+        source: '/:name/import',
         destination: '/import?name=:name',
       },
       {
-        source: '/address/:address',
-        destination: '/address?address=:address',
+        source: '/tld/:tld',
+        destination: '/profile?name=:tld',
+      },
+      {
+        source: '/tld/:tld/register',
+        destination: '/register?name=:tld',
+      },
+      {
+        source: '/tld/:tld/import',
+        destination: '/import?name=:tld',
       },
     ]
   },
