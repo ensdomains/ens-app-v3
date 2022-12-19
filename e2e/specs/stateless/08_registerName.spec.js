@@ -89,7 +89,7 @@ describe('Register Name', () => {
       cy.findByTestId('home-button').click()
       cy.wait(1000)
       cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
-      cy.url().should('eq', 'http://localhost:3000/profile/registration-normal.eth')
+      cy.url().should('eq', 'http://localhost:3000/registration-normal.eth')
     })
     it('should show all records from registration', () => {
       cy.findByTestId('profile-snippet-nickname').should('contain.text', 'Test Name')
