@@ -98,7 +98,7 @@ describe('Register Name', () => {
   })
   describe('not primary', () => {
     it('should show primary name setting as unchecked if primary already set', () => {
-      cy.visit('/register/registration-not-primary.eth')
+      cy.visit('/registration-not-primary.eth/register')
       cy.findByTestId('checkbox').should('not.be.checked')
     })
     it('should show set profile button on info step', () => {
@@ -121,7 +121,7 @@ describe('Register Name', () => {
   })
   describe('premium', () => {
     it('should allow registration', () => {
-      cy.visit('/register/name-with-premium.eth')
+      cy.visit('/name-with-premium.eth/register')
       connectFromExisting()
       cy.findByTestId('invoice-item-2-amount').should('be.visible')
       cy.findByTestId('next-button').click()
