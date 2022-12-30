@@ -32,7 +32,7 @@ describe('OwnerButton', () => {
     address: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
     network: 1,
     label: 'Controller',
-    canTransfer: false,
+    // canTransfer: false,
     description: 'The controller of the name',
   }
 

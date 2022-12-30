@@ -1,7 +1,7 @@
 import { ComponentProps, ReactNode, Ref, forwardRef } from 'react'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { Button, CloseSVG, Input } from '@ensdomains/thorin'
+import { Input } from '@ensdomains/thorin'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
 
@@ -21,23 +21,6 @@ const InputWrapper = styled.div<{ $error: boolean }>(
     flex: 1;
     position: relative;
     ${$error && `margin-bottom: -${theme.space['2']};`}
-  `,
-)
-
-const ButtonContainer = styled.div<{ $readOnly?: boolean }>(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    width: ${theme.space['8']};
-    height: ${theme.space['8']};
-    margin-bottom: ${theme.space['3']};
-    svg {
-      display: block;
-      path {
-        fill: ${theme.colors.textSecondary};
-      }
-    }
   `,
 )
 
@@ -71,16 +54,6 @@ const ErrorWrapper = styled.div(
   `,
 )
 
-const IconWrapper = styled.div(
-  () => css`
-    svg {
-      display: block;
-      width: 22px;
-      height: 22px;
-    }
-  `,
-)
-
 type ThorinInputProps = ComponentProps<typeof Input>
 type Props = {
   validated?: boolean
@@ -94,6 +67,7 @@ type Props = {
   }
   deletable?: boolean
   onDelete?: () => void
+  onClear?: () => void
 } & Omit<ThorinInputProps, 'label' | 'labelSecondary'>
 
 export const RecordInput = forwardRef(
@@ -113,23 +87,18 @@ export const RecordInput = forwardRef(
       option,
       placeholder = 'Enter value here',
       onDelete,
+      onClear,
       disabled,
       ...props
     }: Props,
     ref: Ref<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
-    const theme = useTheme()
 
     const prefix = (() => {
       if (prefixProp) return prefixProp
-      if (option?.prefix) return <IconWrapper>{option.prefix}</IconWrapper>
-      if (showDefaultPrefix)
-        return (
-          <IconWrapper>
-            <UnsupportedSVG />
-          </IconWrapper>
-        )
+      if (option?.prefix) return option.prefix
+      if (showDefaultPrefix) return <UnsupportedSVG />
     })()
 
     const error = errorProp ? <ErrorWrapper>{errorProp}</ErrorWrapper> : undefined
@@ -139,8 +108,9 @@ export const RecordInput = forwardRef(
 
     const labelSecondary = disabled ? <LabelSecondary>{labelDisabled}</LabelSecondary> : undefined
 
-    const handleDelete = () => {
-      if (onDelete) onDelete()
+    const handleClickAction = () => {
+      if (deletable) return onDelete?.()
+      return onClear?.()
     }
 
     return (
@@ -150,37 +120,20 @@ export const RecordInput = forwardRef(
             size="medium"
             value={value}
             ref={inputRef}
-            prefix={prefix}
+            icon={prefix}
             showDot={showDot}
             label={label}
-            padding="3.5"
             error={error}
             placeholder={placeholder}
-            labelPlacement={{ error: 'bottom' }}
             data-testid="record-input-input"
             validated={validated}
             labelSecondary={labelSecondary}
-            parentStyles={css`
-              height: ${theme.space['12']};
-            `}
             disabled={disabled}
+            clearable={!deletable}
+            onClickAction={handleClickAction}
             {...props}
           />
         </InputWrapper>
-        {deletable && (
-          <ButtonContainer>
-            <Button
-              size="extraSmall"
-              variant="transparent"
-              shadowless
-              onClick={handleDelete}
-              onMouseDown={(e) => e.preventDefault()}
-              data-testid="record-input-delete"
-            >
-              <CloseSVG />
-            </Button>
-          </ButtonContainer>
-        )}
       </Container>
     )
   },

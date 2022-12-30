@@ -12,13 +12,7 @@ import { DogFood } from '../DogFood'
 
 const InputContainer = styled.div(
   ({ theme }) => css`
-    margin-left: ${theme.space[8]};
-  `,
-)
-
-const NegativeSpacer = styled.div(
-  ({ theme }) => css`
-    margin-top: -${theme.space['5.5']};
+    margin-top: -${theme.space['5']};
   `,
 )
 
@@ -26,7 +20,7 @@ const LatestResolverLabel = styled.div<{ $offset: boolean }>(
   ({ theme, $offset }) => css`
     display: flex;
     flex-direction: column;
-    ${$offset && `padding-top: ${theme.space['5.5']};`}
+    /* ${$offset && `padding-top: ${theme.space['5.5']};`} */
   `,
 )
 
@@ -81,7 +75,7 @@ const EditResolverForm = ({
         </Outlink>
       </LatestResolverTitleContainer>
       {isResolverAddressLatest && (
-        <LatestResolverSubtitle weight="medium" variant="small">
+        <LatestResolverSubtitle typography="Small/Normal">
           {t('input.editResolver.latestMessage')}
         </LatestResolverSubtitle>
       )}
@@ -90,7 +84,6 @@ const EditResolverForm = ({
 
   return (
     <form data-testid="edit-resolver-form" onSubmit={handleSubmit} ref={formRef}>
-      {isResolverAddressLatest && <NegativeSpacer />}
       <RadioButton
         label={latestResolverLabel}
         value="latest"
@@ -106,14 +99,35 @@ const EditResolverForm = ({
           },
         })}
       />
+      <Spacer $height="4" />
       <RadioButton
         label={t('input.editResolver.customLabel')}
+        description={
+          <InputContainer>
+            <DogFood
+              {...{
+                formState,
+                disabled: resolverChoice !== 'custom',
+                register,
+                getFieldState,
+                watch,
+                setValue,
+                validations: {
+                  isCurrentResolver: (value: string) =>
+                    resolverChoice === 'custom' && value === resolverAddress
+                      ? 'This is the current resolver'
+                      : undefined,
+                },
+              }}
+            />
+          </InputContainer>
+        }
         value="custom"
         data-testid="custom-resolver-radio"
         labelRight
         {...register('resolverChoice')}
       />
-      <InputContainer>
+      {/* <InputContainer>
         <DogFood
           {...{
             formState,
@@ -130,8 +144,8 @@ const EditResolverForm = ({
             },
           }}
         />
-      </InputContainer>
-      <Spacer $height="4" />
+      </InputContainer> */}
+      {/* <Spacer $height="4" /> */}
     </form>
   )
 }

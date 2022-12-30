@@ -92,9 +92,8 @@ export const AvCancelButton = ({ handleCancel }: { handleCancel: () => void }) =
   return (
     <Button
       data-testid="avatar-cancel-button"
-      variant="secondary"
-      tone="grey"
-      shadowless
+      colorScheme="secondary"
+      color="grey"
       onClick={handleCancel}
     >
       {t('action.back')}

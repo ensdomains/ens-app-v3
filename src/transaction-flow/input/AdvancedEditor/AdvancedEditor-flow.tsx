@@ -19,7 +19,7 @@ const Container = styled.form(({ theme }) => [
     height: calc(100% + 2 * ${theme.space['3.5']});
     max-height: 90vh;
     margin: -${theme.space[3.5]};
-    background: ${theme.colors.white};
+    background: ${theme.colors.backgroundPrimary};
     border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
@@ -137,10 +137,10 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         <AdvancedEditorContent {...advancedEditorForm} />
         <AddRecord AddButtonProps={AddButtonProps} />
         <FooterContainer>
-          <Button tone="grey" variant="secondary" shadowless onClick={handleCancel}>
+          <Button color="grey" colorScheme="secondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
-          <Button disabled={hasErrors || !hasChanges} type="submit" shadowless>
+          <Button disabled={hasErrors || !hasChanges} type="submit">
             {t('action.save', { ns: 'common' })}
           </Button>
         </FooterContainer>

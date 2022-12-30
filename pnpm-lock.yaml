@@ -40,7 +40,7 @@ importers:
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.37
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': 0.6.20
+      '@ensdomains/thorin': workspace:*
       '@ethersproject/providers': ^5.7.0
       '@next/bundle-analyzer': ^12.2.5
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -157,9 +157,9 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.15_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.37_7mf75m2uyv7dow77vgezq7etiu
+      '@ensdomains/ensjs': 3.0.0-alpha.37_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.20_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': link:.yalc/@ensdomains/thorin
       '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_wiydppdk2wtsgvuygzl3yf3yma
       '@sentry/nextjs': 7.14.1_next@12.1.6+react@17.0.2
       '@svgr/webpack': 6.4.0
@@ -249,7 +249,7 @@ importers:
       eslint-plugin-react-hooks: 4.6.0_eslint@7.32.0
       eslint-plugin-testing-library: 4.12.4_3rubbgt5ekhqrcgx4uwls3neim
       ganache: 7.4.3
-      graphql-request: 5.1.0-next.6
+      graphql-request: 5.1.0
       hardhat: 2.11.2_mwhvu7sfp6vq5ryuwb6hlbjfka
       hardhat-dependency-compiler: 1.1.3_hardhat@2.11.2
       hardhat-deploy: 0.11.16
@@ -275,6 +275,16 @@ importers:
       wait-on: 6.0.1
       wrangler: 2.1.10
       yalc: 1.0.0-pre.53
+
+  .yalc/@ensdomains/thorin:
+    specifiers:
+      clsx: ^1.1.1
+      focus-visible: ^5.2.0
+      lodash: ^4.17.21
+    dependencies:
+      clsx: 1.2.1
+      focus-visible: 5.2.0
+      lodash: 4.17.21
 
 packages:
 
@@ -2292,19 +2302,17 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.37_7mf75m2uyv7dow77vgezq7etiu:
+  /@ensdomains/ensjs/3.0.0-alpha.37_kdpqpin542yrq2nndtznhtz4cm:
     resolution: {integrity: sha512-qO/1lSDCT3QB4p2+phagpovYoGR8oRDRjKVDmaik0IdqFtC6HabXGVRIUIKUbiyk+/2tmG8VXIxFdLIvi18LAA==}
-    peerDependencies:
-      ethers: '*'
     dependencies:
       '@ensdomains/address-encoder': 0.2.20
       '@ensdomains/content-hash': 2.5.7
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       dns-packet: 5.4.0
-      ethers: 5.7.1
+      ethers: 5.7.2
       graphql: 16.6.0
-      graphql-request: 5.1.0-next.6_graphql@16.6.0
+      graphql-request: 5.1.0_graphql@16.6.0
       idna-uts46-hx: 3.4.0
       traverse: 0.6.7
     transitivePeerDependencies:
@@ -2335,23 +2343,6 @@ packages:
     resolution: {integrity: sha512-uhuG5LzRt/UJC0Ux83cE2rCKwSleRePoYdQVcqPN1wyf3/ekMzT/KZUF9+v7/AG5w9jlMLCQkUM50vfjr0Yu9Q==}
     dependencies:
       hash-test-vectors: 1.3.2
-    dev: false
-
-  /@ensdomains/thorin/0.6.20_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-n0eqjh7elzXt/KyauuAYK8SDK4rtoD2V95X+QQ8KbCaJUyWADWOtnAC1G1vBppnS48Ojiybh60LP8XdUQXrbbg==}
-    peerDependencies:
-      react: ^17
-      react-dom: ^17
-      react-transition-state: ^1.1.4
-      styled-components: ^5.3.3
-    dependencies:
-      clsx: 1.2.1
-      focus-visible: 5.2.0
-      lodash: 4.17.21
-      react: 17.0.2
-      react-dom: 17.0.2_react@17.0.2
-      react-transition-state: 1.1.5_sfoxds7t5ydpegc3knd667wn6m
-      styled-components: 5.3.6_fane7jikarojcev26y27hpbhu4
     dev: false
 
   /@esbuild-plugins/node-globals-polyfill/0.1.1_esbuild@0.14.51:
@@ -2426,7 +2417,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
@@ -5026,14 +5017,16 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@typechain/ethers-v5/2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.7.2
       typechain: 3.0.0_typescript@4.8.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@types/aria-query/4.2.2:
@@ -12899,8 +12892,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /graphql-request/5.1.0-next.6:
-    resolution: {integrity: sha512-s+B7wfdbPf/0zWIdfL1dUzAke37JNMuJ5cZIr0AgG97vIzxht9l/igx6cQc3f6uvnkCtAgd6FQPSEb0P8iWqAA==}
+  /graphql-request/5.1.0:
+    resolution: {integrity: sha512-0OeRVYigVwIiXhNmqnPDt+JhMzsjinxHE7TVy3Lm6jUzav0guVcL0lfSbi6jVTRAxcbwgyr6yrZioSHxf9gHzw==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -12912,8 +12905,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/5.1.0-next.6_graphql@16.6.0:
-    resolution: {integrity: sha512-s+B7wfdbPf/0zWIdfL1dUzAke37JNMuJ5cZIr0AgG97vIzxht9l/igx6cQc3f6uvnkCtAgd6FQPSEb0P8iWqAA==}
+  /graphql-request/5.1.0_graphql@16.6.0:
+    resolution: {integrity: sha512-0OeRVYigVwIiXhNmqnPDt+JhMzsjinxHE7TVy3Lm6jUzav0guVcL0lfSbi6jVTRAxcbwgyr6yrZioSHxf9gHzw==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -14308,13 +14301,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9

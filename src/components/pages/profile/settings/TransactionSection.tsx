@@ -54,7 +54,7 @@ const TransactionContainer = styled(Card)(
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
     border: none;
-    border-bottom: 1px solid ${theme.colors.borderTertiary};
+    border-bottom: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.none};
     &:last-of-type {
       border: none;
@@ -138,8 +138,7 @@ export const TransactionSection = () => {
       action={
         <Button
           size="small"
-          shadowless
-          variant="secondary"
+          colorScheme="secondary"
           onClick={() => clearTransactions()}
           disabled={!canClear}
           data-testid="transaction-clear-button"
@@ -184,9 +183,8 @@ export const TransactionSection = () => {
                   <ContinueContainer>
                     {resumable && (
                       <Button
-                        shadowless
                         size="small"
-                        variant="primary"
+                        colorScheme="primary"
                         onClick={() => resumeTransactionFlow(key)}
                       >
                         Continue

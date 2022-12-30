@@ -14,14 +14,14 @@ const Wrapper = styled.div<{ $align: 'left' | 'right' }>(
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${theme.lineHeights.headingThree};
   `,
 )
 
 const Subtitle = styled(Typography)(
   ({ theme }) => css`
-    line-height: ${theme.lineHeights.normal};
-    color: ${theme.colors.textTertiary};
+    line-height: ${theme.lineHeights.body};
+    color: ${theme.colors.greenPrimary};
   `,
 )
 
@@ -38,7 +38,7 @@ export const HeaderText = ({
     <Wrapper $align={align}>
       <Title weight="bold">{title}</Title>
       {subtitle && (
-        <Subtitle variant="small" weight="bold">
+        <Subtitle typography="small" weight="bold">
           {subtitle}
         </Subtitle>
       )}

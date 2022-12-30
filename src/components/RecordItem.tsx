@@ -1,6 +1,6 @@
 import styled, { css } from 'styled-components'
 
-import { Typography, mq } from '@ensdomains/thorin'
+import { RecordItem as ThorinRecordItem, Typography, mq } from '@ensdomains/thorin'
 
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
@@ -14,10 +14,10 @@ const RecordContainer = styled.button(
     justify-content: flex-start;
     gap: ${theme.space['2']};
     flex-gap: ${theme.space['2']};
-    background: ${theme.colors.foregroundSecondary};
+    background: ${theme.colors.red};
     padding: ${theme.space['2.5']} ${theme.space['3']};
     border-radius: ${theme.radii.large};
-    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+    border: ${theme.space.px} solid ${theme.colors.border};
 
     font-size: calc(${theme.fontSizes.small} - ${theme.space.px});
     transition: all 0.15s ease-in-out;
@@ -34,7 +34,7 @@ const RecordContainer = styled.button(
     }
 
     ${mq.md.min(css`
-      font-size: ${theme.fontSizes.root};
+      font-size: ${theme.fontSizes.body};
     `)}
   `,
 )
@@ -117,6 +117,22 @@ const RecordItem = ({
 }) => {
   const { copy, copied } = useCopied()
 
+  const keyLabel = showLegacy && itemKey ? itemKey?.replace('_LEGACY', '') : itemKey
+  const keySubLabel = showLegacy ? 'LEGACY' : undefined
+
+  return (
+    <ThorinRecordItem
+      size="large"
+      value={value}
+      keyLabel={keyLabel}
+      keySublabel={keySubLabel}
+      data-testid={
+        itemKey ? `name-details-${type}-${itemKey.toLowerCase()}` : `name-details-${type}`
+      }
+    >
+      {value}
+    </ThorinRecordItem>
+  )
   return (
     <RecordContainer
       data-testid={
@@ -127,7 +143,7 @@ const RecordItem = ({
       {itemKey && (
         <RecordKey weight="bold">
           {showLegacy ? itemKey.replace('_LEGACY', '') : itemKey}
-          <LegacyType weight="bold" variant="label">
+          <LegacyType weight="bold" typography="label">
             {showLegacy && 'LEGACY'}
           </LegacyType>
         </RecordKey>
@@ -135,7 +151,7 @@ const RecordItem = ({
       <RecordValue $fullWidth={!itemKey}>{value}</RecordValue>
       <CopyButtonWrapper>
         <InnerCopyButton>
-          <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
+          <IconCopyAnimated color="greyPrimary" copied={copied} size="3.5" />
         </InnerCopyButton>
       </CopyButtonWrapper>
     </RecordContainer>

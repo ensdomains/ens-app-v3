@@ -78,19 +78,14 @@ describe('AddRecordButton', () => {
     render(<AddRecordButton autocomplete options={options} onAddRecord={mockHandleAddRecord} />)
     fireEvent.click(screen.getByTestId('add-record-button-button'))
     const input = await screen.findByTestId('add-record-button-input')
-
-    expect(screen.queryByTestId('add-record-button-clear-button')).toBeNull()
+    const clearButton = screen.getByTestId('input-action-button')
 
     await userEvent.type(input, 'another')
+    expect(input).toHaveDisplayValue('another')
 
-    await waitFor(() => {
-      expect(screen.getByTestId('add-record-button-clear-button')).toBeVisible()
-    })
-
-    fireEvent.click(screen.getByTestId('add-record-button-clear-button'))
+    fireEvent.click(clearButton)
 
     expect(screen.getByDisplayValue('')).toHaveAttribute('data-testid', 'add-record-button-input')
-    expect(screen.queryByTestId('add-record-button-clear-button')).toBeNull()
   })
 
   it('should call onAddRecord with input value when createable is set to true', async () => {

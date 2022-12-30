@@ -14,7 +14,7 @@ const Container = styled.div(
     flex-direction: row;
     align-items: center;
     padding: ${theme.space['3']} ${theme.space['3']};
-    border-top: 1px solid ${theme.colors.borderTertiary};
+    border-top: 1px solid ${theme.colors.border};
   `,
 )
 

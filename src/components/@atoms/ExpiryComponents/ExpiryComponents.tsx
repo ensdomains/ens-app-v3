@@ -8,6 +8,8 @@ import { secondsToDays } from '@app/utils/utils'
 
 import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
 
+type Color = 'red' | 'orange' | 'grey'
+
 const ExpiryWrapper = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -18,7 +20,7 @@ const ExpiryWrapper = styled.div(
   `,
 )
 
-const ClockIcon = styled.div<{ $color: 'red' | 'orange' | 'grey' }>(
+const ClockIcon = styled.div<{ $color: Color }>(
   ({ theme, $color }) => css`
     width: ${theme.space['5']};
     height: ${theme.space['5']};
@@ -27,15 +29,10 @@ const ClockIcon = styled.div<{ $color: 'red' | 'orange' | 'grey' }>(
 )
 
 const ExpiryText = styled(Typography)<{
-  $color: 'red' | 'orange' | 'foreground'
+  $color: Color
 }>(
   ({ theme, $color }) => css`
     color: ${theme.colors[$color]};
-    ${$color === 'foreground'
-      ? css`
-          opacity: 0.4;
-        `
-      : ``}
   `,
 )
 
@@ -62,7 +59,7 @@ export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOn
   const years = Math.floor(difference / 365)
 
   let text = t('name.expiresInYears', { count: years })
-  let color: 'foreground' | 'red' | 'orange' = 'foreground'
+  let color: 'grey' | 'red' | 'orange' = 'grey'
 
   if (difference < 0) {
     text = t('name.expiresInDays', { count: difference + 90 })
@@ -75,7 +72,7 @@ export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOn
     color = 'orange'
   } else if (difference < 365) {
     text = t('name.expiresInMonths', { count: months })
-    color = 'foreground'
+    color = 'grey'
   }
 
   if (textOnly) return <>{text}</>
@@ -84,8 +81,8 @@ export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOn
       data-testid="short-expiry"
       data-color={color}
       data-timestamp={expiry.getTime()}
-      weight="bold"
       $color={color}
+      typography="Small/Normal"
     >
       {text}
     </ExpiryText>

@@ -108,7 +108,7 @@ const NameDetailContainer = styled(CacheableComponent)(
     padding: ${theme.space['4']};
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
-    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+    border: ${theme.space.px} solid ${theme.colors.border};
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
   `,
 )
@@ -190,8 +190,7 @@ export const NameDetailSnippet = ({
         <ButtonWrapper>
           <Button
             onClick={() => router.pushWithHistory(`/profile/${name}/details`)}
-            variant="transparent"
-            shadowless
+            colorScheme="transparent"
             size="small"
           >
             {t('wallet.viewDetails')}

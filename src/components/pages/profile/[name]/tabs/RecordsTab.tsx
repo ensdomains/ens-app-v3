@@ -93,7 +93,7 @@ const SectionTitleContainer = styled.div(
 
 const SectionTitle = styled(Typography)(
   ({ theme }) => css`
-    color: ${theme.colors.foreground};
+    color: ${theme.colors.greyPrimary};
   `,
 )
 
@@ -111,7 +111,7 @@ const Actions = styled.div(
     flex-flow: row wrap;
     gap: ${theme.space['2']};
 
-    border-top: 1px solid ${theme.colors.borderSecondary};
+    border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space['4']};
 
     ${mq.md.min(css`
@@ -174,7 +174,7 @@ export const RecordsTab = ({
         <RecordSection>
           <SectionHeader>
             <SectionTitleContainer>
-              <SectionTitle data-testid="text-heading" weight="bold">
+              <SectionTitle data-testid="text-heading" typography="Body/Bold">
                 {t('details.tabs.records.text')}
               </SectionTitle>
               <SectionSubtitle data-testid="text-amount">
@@ -190,7 +190,7 @@ export const RecordsTab = ({
         <RecordSection>
           <SectionHeader>
             <SectionTitleContainer>
-              <SectionTitle data-testid="address-heading" weight="bold">
+              <SectionTitle data-testid="address-heading" typography="Body/Bold">
                 {t('address.label', { ns: 'common' })}
               </SectionTitle>
               <SectionSubtitle data-testid="address-amount">
@@ -215,7 +215,7 @@ export const RecordsTab = ({
             <SectionTitleContainer>
               {formattedContentHash ? (
                 <>
-                  <SectionTitle data-testid="content-hash-heading" weight="bold">
+                  <SectionTitle data-testid="content-hash-heading" typography="Body/Bold">
                     {t('details.tabs.records.contentHash')}
                   </SectionTitle>
                   {formattedContentHashLink && (
@@ -237,7 +237,7 @@ export const RecordsTab = ({
       {canEdit && (
         <Actions>
           <div>
-            <Button shadowless onClick={handleShowEditor} size="small">
+            <Button onClick={handleShowEditor} size="small">
               {t('details.tabs.records.editRecords')}
             </Button>
           </div>

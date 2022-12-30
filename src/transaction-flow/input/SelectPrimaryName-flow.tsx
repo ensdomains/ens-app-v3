@@ -142,17 +142,12 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       <InnerDialog>{Content}</InnerDialog>
       <Dialog.Footer
         leading={
-          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+          <Button colorScheme="secondary" color="grey" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button
-            data-testid="primary-next"
-            shadowless
-            onClick={handleSubmit}
-            disabled={!selectedName}
-          >
+          <Button data-testid="primary-next" onClick={handleSubmit} disabled={!selectedName}>
             {t('action.next', { ns: 'common' })}
           </Button>
         }

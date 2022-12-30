@@ -16,7 +16,7 @@ const GradientTitle = styled.h1(
     font-size: ${theme.fontSizes.headingTwo};
     text-align: center;
     font-weight: 800;
-    background-image: ${theme.colors.accentGradient};
+    background-image: ${theme.colors.gradients.accent};
     background-repeat: no-repeat;
     background-size: 110%;
     /* stylelint-disable-next-line property-no-vendor-prefix */
@@ -58,12 +58,6 @@ const Stack = styled.div(
     justify-content: center;
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
-  `,
-)
-
-const Description = styled(Typography)(
-  ({ theme }) => css`
-    line-height: ${theme.lineHeights['1.5']};
   `,
 )
 
@@ -113,9 +107,9 @@ export default function Page() {
         <Stack>
           <GradientTitle>{t('title')}</GradientTitle>
           <SubtitleWrapper>
-            <Description variant="large" color="textSecondary">
+            <Typography typography="Large/Normal" color="grey">
               {t('description')}
-            </Description>
+            </Typography>
           </SubtitleWrapper>
           <SearchInput />
         </Stack>

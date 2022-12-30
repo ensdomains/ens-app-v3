@@ -10,9 +10,9 @@ const Container = styled.div(
     align-items: center;
     gap: 20px;
     border-radius: ${theme.space['4']};
-    border: 1px solid ${theme.colors.borderTertiary};
+    border: 1px solid ${theme.colors.border};
     box-shadow: ${theme.boxShadows['0.02']};
-    background: ${theme.colors.white};
+    background: ${theme.colors.backgroundPrimary};
     padding: ${theme.space['5']};
   `,
 )
@@ -37,7 +37,7 @@ const ProfileTitle = styled.div(
     font-size: ${theme.fontSizes.extraLarge};
     font-weight: ${theme.fontWeights.bold};
     letter-spacing: ${theme.letterSpacings['-0.01']};
-    line-height: ${theme.lineHeights['1.25']};
+    line-height: ${theme.lineHeights.extraLarge};
     margin-bottom: ${theme.space['1.5']};
   `,
 )
@@ -51,7 +51,7 @@ const NoProfileSnippet = () => {
       </AvatarContainer>
       <ProfileContent>
         <ProfileTitle>{t('noProfile.title')}</ProfileTitle>
-        <Typography variant="small" color="text">
+        <Typography typography="Small/Normal" color="text">
           {t('noProfile.message')}
         </Typography>
       </ProfileContent>

@@ -7,7 +7,7 @@ import { Dispatch, ForwardedRef, MouseEvent, SetStateAction, forwardRef } from '
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CancelCircleSVG, Input } from '@ensdomains/thorin'
+import { Input } from '@ensdomains/thorin'
 
 const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
   ({ theme, $size }) => css`
@@ -15,7 +15,7 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2.5xLarge']};
     border-width: 1px;
-    border-color: ${theme.colors.borderTertiary};
+    border-color: ${theme.colors.border};
     width: 100%;
     & input::placeholder {
       color: ${theme.colors.textTertiary};
@@ -39,7 +39,7 @@ const StyledInputParent = () =>
       background-color: ${theme.colors.backgroundSecondary};
       transition: background-color 0.35s ease-in-out;
       &:focus-within {
-        background-color: ${theme.colors.white};
+        background-color: ${theme.colors.backgroundPrimary};
         & input::placeholder {
           color: transparent;
         }
@@ -47,21 +47,21 @@ const StyledInputParent = () =>
     `,
   )
 
-const ResetButton = styled.div(
-  ({ theme }) => css`
-    display: block;
-    transition: all 0.15s ease-in-out;
-    cursor: pointer;
-    color: rgba(${theme.shadesRaw.foreground}, 0.25);
-    width: ${theme.space['7']};
-    height: ${theme.space['7']};
-    margin-right: ${theme.space['2']};
-    &:hover {
-      color: rgba(${theme.shadesRaw.foreground}, 0.3);
-      transform: translateY(-1px);
-    }
-  `,
-)
+// const ResetButton = styled.div(
+//   ({ theme }) => css`
+//     display: block;
+//     transition: all 0.15s ease-in-out;
+//     cursor: pointer;
+//     color: rgba(${theme.shadesRaw.foreground}, 0.25);
+//     width: ${theme.space['7']};
+//     height: ${theme.space['7']};
+//     margin-right: ${theme.space['2']};
+//     &:hover {
+//       color: rgba(${theme.shadesRaw.foreground}, 0.3);
+//       transform: translateY(-1px);
+//     }
+//   `,
+// )
 
 export const SearchInputBox = forwardRef(
   (
@@ -89,13 +89,13 @@ export const SearchInputBox = forwardRef(
           value={input}
           onChange={(e) => setInput(e.target.value)}
           ref={ref as any}
-          suffix={
-            input !== '' && (
-              <div onClick={() => setInput('')}>
-                <ResetButton data-testid="search-invalid" as={CancelCircleSVG} />
-              </div>
-            )
-          }
+          // suffix={
+          //   input !== '' && (
+          //     <div onClick={() => setInput('')}>
+          //       <ResetButton data-testid="search-invalid" as={CancelCircleSVG} />
+          //     </div>
+          //   )
+          // }
           autoComplete="off"
           autoCorrect="off"
           parentStyles={StyledInputParent()}

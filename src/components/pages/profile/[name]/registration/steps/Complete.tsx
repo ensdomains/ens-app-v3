@@ -74,7 +74,7 @@ const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingOne};
     font-weight: 800;
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${theme.lineHeights.headingOne};
   `,
 )
 
@@ -183,12 +183,12 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
       {InvoiceFilled}
       <ButtonContainer>
         <MobileFullWidth>
-          <Button shadowless variant="secondary" onClick={() => callback(false)}>
+          <Button colorScheme="secondary" onClick={() => callback(false)}>
             {t('steps.complete.registerAnother')}
           </Button>
         </MobileFullWidth>
         <MobileFullWidth>
-          <Button data-testid="view-name" shadowless onClick={() => callback(true)}>
+          <Button data-testid="view-name" onClick={() => callback(true)}>
             {t('steps.complete.viewName')}
           </Button>
         </MobileFullWidth>

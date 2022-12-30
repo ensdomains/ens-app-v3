@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { Button, Dialog, DownIndicatorSVG, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, DownChevronSVG, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
@@ -194,11 +194,11 @@ const AdvancedOption = ({
         {isDefault ? (
           <Tag tone="green">{t('steps.profile.default')}</Tag>
         ) : (
-          <Button onClick={onResetClick} size="small" shadowless variant="secondary">
+          <Button onClick={onResetClick} size="small" colorScheme="secondary">
             {t('action.reset', { ns: 'common' })}
           </Button>
         )}
-        <Button onClick={onClick} size="small" shadowless>
+        <Button onClick={onClick} size="small">
           {t('action.edit', { ns: 'common' })}
         </Button>
       </AdvancedOptionTrailing>
@@ -354,13 +354,13 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
   const trailingButton = useMemo(() => {
     if (hasChanges || !isDefaultFuses) {
       return (
-        <Button data-testid="next-button" shadowless disabled={hasErrors} type="submit">
+        <Button data-testid="next-button" disabled={hasErrors} type="submit">
           {t('action.next', { ns: 'common' })}
         </Button>
       )
     }
     return (
-      <Button data-testid="next-button" shadowless variant="secondary" type="submit">
+      <Button data-testid="next-button" colorScheme="secondary" type="submit">
         {t('action.skip', { ns: 'common' })}
       </Button>
     )
@@ -472,7 +472,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
               }}
             >
               <Typography>{t('steps.profile.advanced')}</Typography>
-              <DownIndicatorSVG />
+              <DownChevronSVG />
             </AdvancedOptionsButton>
             {advancedOpen && (
               <AdvancedOptionsContent>
@@ -497,7 +497,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
           </AdvancedOptions>
           <ButtonContainer>
             <MobileFullWidth>
-              <Button ref={backRef} type="submit" shadowless variant="secondary">
+              <Button ref={backRef} type="submit" colorScheme="secondary">
                 {t('action.back', { ns: 'common' })}
               </Button>
             </MobileFullWidth>

@@ -6,8 +6,8 @@ import { CurrencyUnit, FiatUnit } from '@app/types'
 const Container = styled.div(
   ({ theme }) => css`
     position: relative;
-    background: ${theme.colors.backgroundTertiary};
-    border: ${theme.space['0.5']} solid ${theme.colors.backgroundTertiary};
+    background: ${theme.colors.border};
+    border: ${theme.space['0.5']} solid ${theme.colors.border};
     border-radius: ${theme.radii.full};
     height: ${theme.space[8]};
     display: flex;
@@ -32,9 +32,9 @@ const Label = styled.div<{ $active: boolean }>(
     padding: ${theme.space[1]} ${theme.space[4]};
     line-height: ${theme.space[5]};
     font-weight: ${theme.fontWeights.bold};
-    font-size: ${theme.fontSizes.label};
+    font-size: ${theme.fontSizes.small};
     z-index: 1;
-    color: ${$active ? theme.colors.white : theme.colors.textTertiary};
+    color: ${$active ? theme.colors.backgroundPrimary : theme.colors.greyPrimary};
     transition: color 0.3s ease-in-out;
     display: flex;
     align-items: center;

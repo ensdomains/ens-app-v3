@@ -63,6 +63,10 @@ const Container = styled.div`
 const StyledButton = styled(Button)(
   ({ theme }) => css`
     padding: ${theme.space['0']} -${theme.space['1.5']};
+    label {
+      width: 100%;
+      padding: 0 ${theme.space['4']};
+    }
   `,
 )
 
@@ -71,6 +75,7 @@ const ButtonInner = styled.div`
   justify-content: space-between;
   width: 100%;
   align-items: center;
+  height: 48px;
 `
 
 const ButtonRow = styled.div(
@@ -94,18 +99,12 @@ const CopyableRightContainer = styled.div(
 const Copyable = ({ label, value }: { label: string; value: string }) => {
   const { copy, copied } = useCopied()
   return (
-    <StyledButton
-      outlined
-      fullWidthContent
-      shadowless
-      variant="transparent"
-      onClick={() => copy(value)}
-    >
+    <StyledButton color="background" onClick={() => copy(value)} size="flexible">
       <ButtonInner>
         <Typography>{label}</Typography>
         <CopyableRightContainer>
-          <Typography {...{ variant: 'small', color: 'foreground' }}>{value}</Typography>
-          <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
+          <Typography {...{ typography: 'small', color: 'text' }}>{value}</Typography>
+          <IconCopyAnimated color="grey" copied={copied} size="3.5" />
         </CopyableRightContainer>
       </ButtonInner>
     </StyledButton>
@@ -177,7 +176,7 @@ export const AddTextRecord = ({
 
   return (
     <Container>
-      <Typography {...{ variant: 'extraLarge' }}>{t('addTextRecord.title')}</Typography>
+      <Typography {...{ typography: 'Heading/H4' }}>{t('addTextRecord.title')}</Typography>
       <Spacer $height="3" />
       <Typography>{t('addTextRecord.explanation')}</Typography>
       <Spacer $height="3" />
@@ -200,10 +199,10 @@ export const AddTextRecord = ({
       </Outlink>
       <Spacer $height="5" />
       <ButtonRow>
-        <StyledButton outlined fullWidthContent shadowless variant="transparent">
+        <StyledButton color="background" size="flexible">
           <ButtonInner>
             <Typography>{t('addTextRecord.type')}</Typography>
-            <Typography {...{ variant: 'small', color: 'foreground' }}>
+            <Typography {...{ typography: 'small', color: 'text' }}>
               {t('addTextRecord.txt')}
             </Typography>
           </ButtonInner>
@@ -224,7 +223,7 @@ export const AddTextRecord = ({
         <>
           <Helper type="warning" style={{ textAlign: 'center' }}>
             <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
-            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+            <Typography {...{ typography: 'small', color: 'grey' }}>
               {t('addTextRecord.syncWarningTwo')}
             </Typography>
           </Helper>
@@ -235,7 +234,7 @@ export const AddTextRecord = ({
         <>
           <Helper type="error" style={{ textAlign: 'center' }}>
             <Typography>{t(`addTextRecord.errors.${errorState}.title`)}</Typography>
-            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+            <Typography {...{ typography: 'small', color: 'grey' }}>
               {t(`addTextRecord.errors.${errorState}.content`)}
             </Typography>
           </Helper>
@@ -250,7 +249,7 @@ export const AddTextRecord = ({
             onClick={() => {
               setCurrentStep(currentStep + 1)
             }}
-            variant="primary"
+            colorScheme="primary"
             size="small"
           >
             {t('action.continue', { ns: 'common' })}
@@ -258,7 +257,7 @@ export const AddTextRecord = ({
         )}
         <CheckButton
           onClick={handleCheck}
-          variant="primary"
+          colorScheme="primary"
           size="small"
           disabled={currentStep === 2}
           loading={isCheckLoading}
@@ -270,9 +269,8 @@ export const AddTextRecord = ({
           onClick={() => {
             setCurrentStep(currentStep - 1)
           }}
-          variant="secondary"
+          colorScheme="secondary"
           size="small"
-          shadowless
         >
           {t('navigation.back', { ns: 'common' })}
         </CheckButton>

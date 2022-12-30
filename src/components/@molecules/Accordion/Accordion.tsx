@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, DownIndicatorSVG, Typography } from '@ensdomains/thorin'
+import { Button, DownChevronSVG, Typography } from '@ensdomains/thorin'
 
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -12,7 +12,7 @@ const AccordionTitle = styled.div<{
 }>(
   ({ theme, $isActive, $isDisabled }) => css`
     padding: ${theme.space['4']} ${theme.space['6']};
-    background: ${theme.colors.white};
+    background: ${theme.colors.backgroundPrimary};
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -24,7 +24,7 @@ const AccordionTitle = styled.div<{
         border-bottom: 
         ${theme.borderWidths.px} 
         ${theme.borderStyles.solid}
-        ${theme.colors.borderTertiary}
+        ${theme.colors.border}
         ;
         `
       : ``}
@@ -83,8 +83,7 @@ const AccordionContainer = styled.div<{
     overflow: hidden;
 
     & > div {
-      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-        ${theme.colors.borderTertiary};
+      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
       &:last-of-type {
         border-bottom: none;
       }
@@ -92,7 +91,7 @@ const AccordionContainer = styled.div<{
   `,
 )
 
-const Chevron = styled(DownIndicatorSVG)<{
+const Chevron = styled(DownChevronSVG)<{
   $open?: boolean
 }>(
   ({ theme, $open }) => css`
@@ -184,7 +183,7 @@ const Accordion = ({ data, name }: AccordionProps) => {
             return (
               <AccordionItem data-testid={`accordion-${item.title}-disabled`} key={item.title}>
                 <AccordionTitle $isDisabled>
-                  <Typography variant="extraLarge" weight="bold" color="textTertiary">
+                  <Typography typography="Heading/H4" color="grey">
                     {item.title}
                   </Typography>
                   <UnwrappedIndicator color="textSecondary">
@@ -204,14 +203,11 @@ const Accordion = ({ data, name }: AccordionProps) => {
               >
                 <AccordionTitle {...{ isActive }}>
                   <TitleAndButtonContainer>
-                    <Typography variant="extraLarge" weight="bold">
-                      {item.title}
-                    </Typography>
+                    <Typography typography="Heading/H4">{item.title}</Typography>
                     {item.canEdit && (
                       <EditButton
                         data-testid={`accordion-${item.name}-edit`}
-                        shadowless
-                        variant="transparent"
+                        colorScheme="transparent"
                         size="small"
                         onClick={() => handleEditClick(idx)}
                       >

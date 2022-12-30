@@ -1,7 +1,7 @@
 import { ComponentProps, ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Heading } from '@ensdomains/thorin'
+import { Typography } from '@ensdomains/thorin'
 
 import { Card } from '@app/components/Card'
 import { useInitial } from '@app/hooks/useInitial'
@@ -13,7 +13,7 @@ const StyledCard = styled(Card)(
     align-items: stretch;
     justify-content: flex-start;
 
-    border: 1px solid ${theme.colors.borderTertiary};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii['2xLarge']};
     overflow: hidden;
 
@@ -23,8 +23,8 @@ const StyledCard = styled(Card)(
   `,
 )
 
-const SectionHeader = styled.div(
-  ({ theme }) => css`
+const SectionHeader = styled.div<{ $hideBorder?: boolean }>(
+  ({ theme, $hideBorder }) => css`
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -34,7 +34,10 @@ const SectionHeader = styled.div(
     width: ${theme.space.full};
 
     background-color: ${theme.colors.background};
-    border-bottom: 1px solid ${theme.colors.borderTertiary};
+    ${!$hideBorder &&
+    css`
+      border-bottom: 1px solid ${theme.colors.border};
+    `}
   `,
 )
 
@@ -77,10 +80,12 @@ export const SectionContainer = ({
     InnerContent = children
   }
 
+  const hideBorder = !children
+
   return (
     <StyledCard {...props}>
-      <SectionHeader>
-        <Heading>{title}</Heading>
+      <SectionHeader $hideBorder={hideBorder}>
+        <Typography typography="Large/Bold">{title}</Typography>
         <div>{action}</div>
       </SectionHeader>
       {InnerContent}

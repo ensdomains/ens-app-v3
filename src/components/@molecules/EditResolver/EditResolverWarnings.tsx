@@ -1,5 +1,6 @@
+import { Banner } from '@ensdomains/thorin'
+
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import useResolverEditor from '@app/hooks/useResolverEditor'
 
 type Props = Pick<ReturnType<typeof useResolverEditor>, 'hasWarnings' | 'resolverWarnings'>
@@ -9,7 +10,8 @@ const EditResolverWarnings = ({ hasWarnings, resolverWarnings }: Props) => {
 
   return (
     <>
-      <ErrorContainer
+      <Banner
+        alert="warning"
         message={
           <ul>
             {resolverWarnings?.map((message) => (
@@ -17,7 +19,6 @@ const EditResolverWarnings = ({ hasWarnings, resolverWarnings }: Props) => {
             ))}
           </ul>
         }
-        type="warning"
       />
       <Spacer $height="4" />
     </>

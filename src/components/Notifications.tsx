@@ -55,22 +55,17 @@ export const Notifications = () => {
         children: resumable ? (
           <ButtonContainer>
             <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
-              <Button shadowless size="small" variant="secondary">
+              <Button size="small" colorScheme="secondary">
                 {t('transaction.viewEtherscan')}
               </Button>
             </a>
-            <Button
-              shadowless
-              size="small"
-              variant="primary"
-              onClick={() => resumeTransactionFlow(key)}
-            >
+            <Button size="small" colorScheme="primary" onClick={() => resumeTransactionFlow(key)}>
               Continue
             </Button>
           </ButtonContainer>
         ) : (
           <a target="_blank" href={makeEtherscanLink(hash, chainName)} rel="noreferrer">
-            <Button shadowless size="small" variant="secondary">
+            <Button size="small" colorScheme="secondary">
               {t('transaction.viewEtherscan')}
             </Button>
           </a>

@@ -169,10 +169,11 @@ const TooltipWrapper = styled.div(
       left: calc(clamp(60px, var(--x), calc(100% - 60px)) - 85px);
     }
 
+    // TODO: Double check color
     &::before {
       ${dotStyle({
         name: 'hover',
-        color: `rgba(${theme.shadesRaw.foreground}, 0.5)`,
+        color: theme.colors.backgroundSecondary,
         extraY: `calc(200px + ${theme.space['0.5']})`,
       })}
     }
@@ -527,6 +528,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             type="text"
             prefix="$"
             size="medium"
+            clearable={false}
             parentStyles={inputStyle as any}
           />
           <Input
@@ -537,6 +539,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             step={60}
             max={dateToInput(maxDate)}
             onChange={handleDateInput}
+            clearable={false}
             type="datetime-local"
             parentStyles={inputStyle as any}
           />
@@ -571,7 +574,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
               color: 'text',
             }))}
           >
-            <Button prefix={<CalendarIcon as={CalendarSVG} />} shadowless>
+            <Button prefix={<CalendarIcon as={CalendarSVG} />}>
               {t('action.remindMe', { ns: 'common' })}
             </Button>
           </Dropdown>

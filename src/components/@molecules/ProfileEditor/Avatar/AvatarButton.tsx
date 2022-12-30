@@ -13,7 +13,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     width: 90px;
     height: 90px;
     border-radius: 50%;
-    background-color: ${theme.colors.white};
+    background-color: ${theme.colors.backgroundPrimary};
     cursor: pointer;
 
     ::after {
@@ -35,7 +35,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     css`
       :after {
         background-color: ${theme.colors.blue};
-        border-color: ${theme.colors.white};
+        border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
       }
     `}
@@ -44,7 +44,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     css`
       :after {
         background-color: ${theme.colors.red};
-        border-color: ${theme.colors.white};
+        border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
       }
     `}

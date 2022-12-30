@@ -87,8 +87,8 @@ export const NamePillWithAddress = ({
   return (
     <NamePillContainer>
       <TextContainer>
-        <Typography {...{ weight: 'bold' }}>{name}</Typography>
-        <Typography {...{ variant: 'small', weight: 'light', color: 'textTertiary' }}>
+        <Typography typography="Body/Bold">{name}</Typography>
+        <Typography typography="Small/Normal" color="grey">
           {shortenAddress(address)}
         </Typography>
       </TextContainer>
@@ -167,9 +167,7 @@ export const ClaimDomain = ({
 
   return (
     <Container>
-      <Typography {...{ variant: 'extraLarge', weight: 'bold' }}>
-        {t('claimDomain.title')}
-      </Typography>
+      <Typography typography="Large/XL Bold">{t('claimDomain.title')}</Typography>
       <Spacer $height="4" />
       <GreyBox>
         <Typography>{t('claimDomain.dnsOwner')}</Typography>
@@ -209,15 +207,14 @@ export const ClaimDomain = ({
       <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton
-          variant="primary"
+          colorScheme="primary"
           size="small"
           onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address!)}
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>
         <CheckButton
-          shadowless
-          variant="secondary"
+          colorScheme="secondary"
           size="small"
           onClick={() => setCurrentStep((x) => x - 1)}
         >

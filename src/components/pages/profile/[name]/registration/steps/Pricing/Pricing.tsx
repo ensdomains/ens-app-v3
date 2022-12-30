@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useBalance } from 'wagmi'
 
-import { Button, Checkbox, Heading, Typography, mq } from '@ensdomains/thorin'
+import { Button, Field, Heading, Toggle, Typography, mq } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
@@ -44,7 +44,7 @@ const OutlinedContainer = styled.div(
 
     padding: ${theme.space['4']};
     border-radius: ${theme.radii.large};
-    border: ${theme.colors.grey} solid 1px;
+    border: ${theme.colors.border} solid 1px;
 
     ${mq.md.min(css`
       grid-template-areas: 'title checkbox' 'description checkbox';
@@ -94,6 +94,7 @@ const Pricing = ({
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
   const { address } = useAccount()
+  console.log('address', address, !address)
   const { data: balance } = useBalance({ addressOrName: address })
   const resolverAddress = useContractAddress('PublicResolver')
 
@@ -127,23 +128,19 @@ const Pricing = ({
     actionButton = <ConnectButton large />
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
-      <Button data-testid="next-button" shadowless disabled>
+      <Button data-testid="next-button" disabled>
         {t('action.loading', { ns: 'common' })}
       </Button>
     )
   } else if (balance?.value.lt(totalRequiredBalance)) {
     actionButton = (
-      <Button data-testid="next-button" shadowless disabled>
+      <Button data-testid="next-button" disabled>
         {t('steps.pricing.insufficientBalance')}
       </Button>
     )
   } else {
     actionButton = (
-      <Button
-        data-testid="next-button"
-        shadowless
-        onClick={() => callback({ reverseRecord, years })}
-      >
+      <Button data-testid="next-button" onClick={() => callback({ reverseRecord, years })}>
         {t('action.next', { ns: 'common' })}
       </Button>
     )
@@ -180,15 +177,17 @@ const Pricing = ({
           {t('steps.pricing.primaryName')}
         </OutlinedContainerTitle>
         <CheckboxWrapper $name="checkbox">
-          <Checkbox
-            variant="switch"
-            hideLabel
-            label={t('steps.pricing.primaryName')}
-            disabled={!address}
-            size={breakpoints.md ? 'large' : 'medium'}
-            checked={reverseRecord}
-            onChange={(e) => setReverseRecord(e.target.checked)}
-          />
+          <Field hideLabel label={t('steps.pricing.primaryName')} inline reverse>
+            {(ids) => (
+              <Toggle
+                {...ids?.content}
+                disabled={!!address}
+                size={breakpoints.md ? 'large' : 'medium'}
+                checked={reverseRecord}
+                onChange={(e) => setReverseRecord(e.target.checked)}
+              />
+            )}
+          </Field>
         </CheckboxWrapper>
         <OutlinedContainerDescription $name="description">
           {t('steps.pricing.primaryNameMessage')}

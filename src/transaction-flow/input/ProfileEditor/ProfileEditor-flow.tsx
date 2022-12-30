@@ -30,7 +30,7 @@ const Container = styled.form(({ theme }) => [
     height: calc(100% + 2 * ${theme.space['3.5']});
     max-height: 90vh;
     margin: -${theme.space[3.5]};
-    background: ${theme.colors.white};
+    background: ${theme.colors.backgroundPrimary};
     border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
@@ -234,13 +234,12 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             <ProfileTabContents {...profileEditorForm} />
             <AddRecord {...profileEditorForm} />
             <FooterContainer>
-              <Button variant="secondary" tone="grey" shadowless onClick={handleCancel}>
+              <Button colorScheme="secondary" color="grey" onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button
                 disabled={hasErrors || !hasChanges}
                 type="submit"
-                shadowless
                 data-testid="profile-editor-submit"
               >
                 {t('action.save', { ns: 'common' })}

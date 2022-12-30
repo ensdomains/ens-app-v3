@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import type { NamedFusesToBurn } from '@ensdomains/ensjs'
-import { Button, FlameBurnedSVG, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
+import { Button, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import mq from '@app/mediaQuery'
@@ -67,7 +67,7 @@ const StyledFlameSVG = styled(FlameSVG)(
 
 const BurnedFlameContainer = styled.div<{ $isBurned: boolean }>(
   ({ theme, $isBurned }) => css`
-    background: ${theme.colors.backgroundTertiary};
+    background: ${theme.colors.greyPrimary};
     color: ${theme.colors.textSecondary};
     border-radius: ${theme.space['2.5']};
     display: flex;
@@ -115,11 +115,16 @@ const BurnButton = ({
     <StyledButton
       onClick={() => handleBurnClick(permission)}
       disabled={isBurned}
-      variant="secondary"
-      tone={isSelected ? 'red' : 'grey'}
+      colorScheme="secondary"
+      color={isSelected ? 'red' : 'grey'}
       size="small"
-      fullWidthContent
-      shadowless
+      suffix={
+        isSelected ? (
+          <FlameSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
+        ) : (
+          <StyledFlameSVG width="24" height="24" />
+        )
+      }
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
         <Typography>{t(`permissions.${permission}`)}</Typography>
@@ -128,11 +133,6 @@ const BurnButton = ({
             <Typography>{t('burned')}</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
-        )}
-        {isSelected ? (
-          <FlameBurnedSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
-        ) : (
-          <StyledFlameSVG width="24" height="24" />
         )}
       </ButtonInner>
     </StyledButton>
@@ -226,9 +226,7 @@ const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false 
 
   return (
     <FusesContainer>
-      <Typography weight="bold" variant="extraLarge">
-        {t('fuses.burnFormTitle')}
-      </Typography>
+      <Typography typography="Heading/H4">{t('fuses.burnFormTitle')}</Typography>
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
           <Spacer $height="1" />
@@ -254,15 +252,14 @@ const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false 
       </BurnButtonsContainer>
       <Spacer $height="6" />
       <ButtonsContainer>
-        <Button shadowless tone="grey" variant="secondary" onClick={onDismiss}>
+        <Button color="grey" colorScheme="secondary" onClick={onDismiss}>
           {tc('action.cancel')}
         </Button>
         <Button
           disabled={canContinue(_fuseData, fuseSelected, canUnsetFuse)}
           onClick={_onSubmit}
-          tone="red"
+          color="red"
           data-testid="burn-form-continue"
-          shadowless
         >
           {canUnsetFuse ? tc('action.confirm') : tc('action.burnSelected')}
         </Button>

@@ -21,14 +21,14 @@ const Container = styled.div(
   `,
 )
 
+// TODO: Check border color and background
 const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
   ({ theme, $shrink, $fade }) => css`
     display: grid;
     grid-template-columns: 0.5fr 2fr;
     align-items: center;
     border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      rgba(${theme.shadesRaw.foreground}, 0.06);
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
     min-height: ${theme.space['14']};
     padding: ${theme.space['2']} ${theme.space['5']};
     width: ${theme.space.full};
@@ -44,7 +44,7 @@ const DisplayItemContainer = styled.div<{ $shrink?: boolean; $fade?: boolean }>(
     ${$fade &&
     css`
       opacity: 0.5;
-      background-color: ${theme.colors.backgroundTertiary};
+      background-color: ${theme.colors.backgroundSecondary};
     `}
   `,
 )
@@ -95,7 +95,7 @@ const ValueTypography = styled(Typography)(
 const AddressSubtitle = styled(Typography)(
   ({ theme }) => css`
     color: ${theme.colors.textSecondary};
-    font-weight: ${theme.fontWeights.medium};
+    font-weight: ${theme.fontWeights.bold};
   `,
 )
 
@@ -106,9 +106,11 @@ const AddressValue = ({ value }: { value: string }) => {
   const AddressTypography = useMemo(
     () =>
       primary.name ? (
-        <AddressSubtitle variant="label">{shortenAddress(value)}</AddressSubtitle>
+        <AddressSubtitle typography="Body/Normal" color="grey">
+          {shortenAddress(value)}
+        </AddressSubtitle>
       ) : (
-        <ValueTypography weight="bold">{shortenAddress(value)}</ValueTypography>
+        <ValueTypography typography="Body/Bold">{shortenAddress(value)}</ValueTypography>
       ),
     [primary.name, value],
   )
@@ -116,7 +118,11 @@ const AddressValue = ({ value }: { value: string }) => {
   return (
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
-        {primary.name && <ValueTypography weight="bold">{primary.name}</ValueTypography>}
+        {primary.name && (
+          <ValueTypography typography="Body/Bold" color="text">
+            {primary.name}
+          </ValueTypography>
+        )}
         {AddressTypography}
       </InnerValueWrapper>
       <AvatarWrapper>
@@ -136,7 +142,7 @@ const NameValue = ({ value }: { value: string }) => {
 
   return (
     <ValueWithAvatarContainer>
-      <ValueTypography weight="bold">{value}</ValueTypography>
+      <ValueTypography typography="Body/Bold">{value}</ValueTypography>
       <AvatarWrapper>
         <NameAvatar name={value} label={`${value}-avatar`} network={network} />
       </AvatarWrapper>
@@ -151,8 +157,8 @@ const SubnameValue = ({ value }: { value: string }) => {
   return (
     <ValueWithAvatarContainer>
       <div>
-        <ValueTypography weight="bold">{label}.</ValueTypography>
-        <ValueTypography weight="bold">{parent}</ValueTypography>
+        <ValueTypography typography="Body/Bold">{label}.</ValueTypography>
+        <ValueTypography typography="Body/Bold">{parent}</ValueTypography>
       </div>
       <AvatarWrapper>
         <NameAvatar name={value} label={`${value}-avatar`} network={network} />
@@ -179,7 +185,7 @@ const ListValue = ({ value }: { value: string[] }) => {
         const key = idx
         if (idx === 0) {
           return (
-            <Typography key={key} weight="bold">
+            <Typography key={key} typography="Body/Bold">
               {val}
             </Typography>
           )
@@ -239,7 +245,7 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   if (type === 'records') {
     return <RecordsValue value={value} />
   }
-  return <ValueTypography weight="bold">{value}</ValueTypography>
+  return <ValueTypography typography="Body/Bold">{value}</ValueTypography>
 }
 
 export const DisplayItem = ({

@@ -58,11 +58,11 @@ const OptionLinks = styled(Card)(
 
 const targetKeyframes = ({ theme }: { theme: DefaultTheme }) => keyframes`
   0% {
-    background-color: rgba(${theme.shadesRaw.foreground}, 0.05);
+    background-color: rgba(${theme.colors.greyPrimary}, 0.05);
   }
 
   100% {
-    background-color: rgba(${theme.shadesRaw.foreground}, 0);
+    background-color: rgba(${theme.colors.greyPrimary}, 0);
   }
 `
 

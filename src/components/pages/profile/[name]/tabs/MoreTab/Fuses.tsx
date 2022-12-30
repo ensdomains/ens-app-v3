@@ -30,8 +30,7 @@ const HeadingContainer = styled.div(
 
     padding: ${theme.space['4']};
 
-    border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${theme.colors.borderTertiary};
+    border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
 
     & > button {
       color: ${theme.colors.accent};
@@ -61,8 +60,7 @@ const FusesRow = styled.div(
     padding: ${theme.space['4']};
 
     &:not(:last-child) {
-      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-        ${theme.colors.borderTertiary};
+      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
     }
 
     ${mq.md.min(css`

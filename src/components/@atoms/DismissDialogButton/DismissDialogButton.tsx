@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import { CloseSVG } from '@ensdomains/thorin'
+import { CrossCircleSVG } from '@ensdomains/thorin'
 
 const Container = styled.button(
   ({ theme }) => css`
@@ -14,17 +14,15 @@ const IconWrapper = styled.div(
     width: ${theme.space['8']};
     height: ${theme.space['8']};
     border-radius: 50%;
-    background: ${theme.colors.foregroundSecondary};
+
     display: flex;
     align-items: center;
     justify-content: center;
 
     svg {
-      width: ${theme.space['3.5']};
-      height: ${theme.space['3.5']};
-      path {
-        fill: ${theme.colors.textSecondary};
-      }
+      width: ${theme.space['6']};
+      height: ${theme.space['6']};
+      color: ${theme.colors.greyPrimary};
     }
   `,
 )
@@ -34,7 +32,7 @@ const DismissDialogButton = (props: Props) => {
   return (
     <Container type="button" {...props}>
       <IconWrapper>
-        <CloseSVG />
+        <CrossCircleSVG />
       </IconWrapper>
     </Container>
   )

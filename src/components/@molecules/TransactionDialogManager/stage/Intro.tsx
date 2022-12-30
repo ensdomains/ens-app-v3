@@ -35,8 +35,7 @@ export const IntroStageModal = ({
 
   const TrailingButton = (
     <Button
-      shadowless
-      variant="primary"
+      colorScheme="primary"
       onClick={() => onSuccess()}
       data-testid="transaction-dialog-intro-trailing-btn"
     >
