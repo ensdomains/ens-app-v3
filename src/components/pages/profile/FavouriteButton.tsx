@@ -25,7 +25,7 @@ const HeartIcon = styled.svg(
   ({ theme }) => css`
     display: block;
     color: transparent;
-    stroke: ${theme.colors.borderSecondary};
+    stroke: ${theme.colors.border};
     width: ${theme.space['6']};
     height: ${theme.space['6']};
   `,

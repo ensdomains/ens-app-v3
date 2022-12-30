@@ -100,12 +100,7 @@ const UploadComponent = ({
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button
-            disabled={isLoading}
-            onClick={() => signAndUpload()}
-            shadowless
-            data-testid="upload-button"
-          >
+          <Button disabled={isLoading} onClick={() => signAndUpload()} data-testid="upload-button">
             {t('input.profileEditor.tabs.avatar.image.upload.action')}
           </Button>
         }

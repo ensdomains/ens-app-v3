@@ -72,6 +72,9 @@ declare type WithTypeText = {
     type?: 'text';
     maxLength?: NativeInputProps['maxLength'];
 };
-declare type Props = BaseProps & (WithTypeEmail | WithTypeText);
+declare type WithTypeDateTimeLocal = {
+    type?: 'datetime-local';
+};
+declare type Props = BaseProps & (WithTypeEmail | WithTypeText | WithTypeDateTimeLocal);
 export declare const Input: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLInputElement>>;
 export {};

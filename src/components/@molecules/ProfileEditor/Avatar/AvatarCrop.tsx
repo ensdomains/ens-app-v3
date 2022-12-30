@@ -406,7 +406,7 @@ export const CropComponent = ({
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button shadowless onClick={handleSubmit} data-testid="continue-button">
+          <Button onClick={handleSubmit} data-testid="continue-button">
             {t('action.continue', { ns: 'common' })}
           </Button>
         }

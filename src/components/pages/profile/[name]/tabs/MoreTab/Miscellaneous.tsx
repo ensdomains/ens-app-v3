@@ -193,7 +193,6 @@ const Miscellaneous = ({ name }: { name: string }) => {
                   isSelf: canEdit,
                 })
               }}
-              shadowless
               prefix={<FastForwardIcon as={FastForwardSVG} />}
             >
               {t('action.extend')}

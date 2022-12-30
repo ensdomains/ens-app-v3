@@ -51,7 +51,7 @@ const OwnerWithEns = styled.div(
 
     & div:last-of-type {
       color: ${theme.colors.textTertiary};
-      font-size: ${theme.fontSizes.label};
+      font-size: ${theme.fontSizes.small};
     }
   `,
 )
@@ -117,7 +117,7 @@ const ButtonWrapper = styled.div(
   ({ theme }) => css`
     margin-top: ${theme.space['2']};
     & > button {
-      border: ${theme.space.px} solid ${theme.colors.borderSecondary};
+      border: ${theme.space.px} solid ${theme.colors.border};
       border-radius: ${theme.radii.extraLarge};
     }
   `,

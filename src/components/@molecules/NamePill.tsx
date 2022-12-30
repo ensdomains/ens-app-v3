@@ -7,7 +7,7 @@ import { NameAvatar } from '../AvatarWithZorb'
 const Container = styled.div(
   ({ theme }) => css`
     border-radius: ${theme.radii.full};
-    border: 1px solid ${theme.colors.borderSecondary};
+    border: 1px solid ${theme.colors.border};
     padding: ${theme.space['1']};
     padding-right: ${theme.space['4']};
 

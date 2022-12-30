@@ -72,7 +72,7 @@ const dotStyle =
       content: '';
       width: ${theme.space['3']};
       height: ${theme.space['3']};
-      background-color: ${color};
+      background: ${color};
       border-radius: ${theme.radii.full};
 
       position: absolute;
@@ -112,7 +112,7 @@ const ChartContainer = styled.div(
     }
 
     &::after {
-      ${dotStyle({ name: 'selected', color: theme.colors.foreground })};
+      ${dotStyle({ name: 'selected', color: theme.colors.textPrimary })};
       z-index: 2;
       display: var(--premium-chart-selected-display);
     }
@@ -169,11 +169,10 @@ const TooltipWrapper = styled.div(
       left: calc(clamp(60px, var(--x), calc(100% - 60px)) - 85px);
     }
 
-    // TODO: Double check color
     &::before {
       ${dotStyle({
         name: 'hover',
-        color: theme.colors.backgroundSecondary,
+        color: `hsla(0, 0%, 15%, 0.5)`,
         extraY: `calc(200px + ${theme.space['0.5']})`,
       })}
     }
