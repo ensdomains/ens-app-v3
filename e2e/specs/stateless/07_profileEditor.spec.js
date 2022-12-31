@@ -59,7 +59,7 @@ describe('Profile Editor', () => {
     connectFromExisting()
     cy.contains('Edit profile').click()
     cy.findByPlaceholderText('John Smith').type('Test Name')
-    cy.findByText('Save').should('not.be.disabled').click()
+    cy.findByTestId('profile-editor-submit').should('contain.text', 'Save').should('not.be.disabled').click({force: true})
     cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()

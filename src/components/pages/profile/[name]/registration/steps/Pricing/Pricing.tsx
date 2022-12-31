@@ -1,7 +1,7 @@
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useBalance } from 'wagmi'
+import { useBalance } from 'wagmi'
 
 import { Button, Field, Heading, Toggle, Typography, mq } from '@ensdomains/thorin'
 
@@ -10,6 +10,7 @@ import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMi
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -93,8 +94,7 @@ const Pricing = ({
   const breakpoints = useBreakpoint()
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
-  const { address } = useAccount()
-  console.log('address', address, !address)
+  const { address } = useAccountSafely()
   const { data: balance } = useBalance({ addressOrName: address })
   const resolverAddress = useContractAddress('PublicResolver')
 
@@ -177,14 +177,21 @@ const Pricing = ({
           {t('steps.pricing.primaryName')}
         </OutlinedContainerTitle>
         <CheckboxWrapper $name="checkbox">
-          <Field hideLabel label={t('steps.pricing.primaryName')} inline reverse>
+          <Field
+            hideLabel
+            label={t('steps.pricing.primaryName')}
+            inline
+            reverse
+            disabled={!address}
+          >
             {(ids) => (
               <Toggle
                 {...ids?.content}
-                disabled={!!address}
+                disabled={!address}
                 size={breakpoints.md ? 'large' : 'medium'}
                 checked={reverseRecord}
                 onChange={(e) => setReverseRecord(e.target.checked)}
+                data-testid="primary-name-toggle"
               />
             )}
           </Field>

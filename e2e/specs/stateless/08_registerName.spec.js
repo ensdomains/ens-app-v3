@@ -12,7 +12,7 @@ describe('Register Name', () => {
       cy.findByText('Register registration-normal.eth').should('be.visible')
     })
     it('should show primary name setting as checked', () => {
-      cy.findByTestId('checkbox').should('be.checked')
+      cy.findByTestId('primary-name-toggle').should('be.checked')
     })
     it('should show adjusted gas estimate when primary name setting checked', () => {
       cy.findByTestId('invoice-item-1-amount')
@@ -21,13 +21,13 @@ describe('Register Name', () => {
           const estimate = parseFloat($item.text())
           cy.wrap(estimate).as('estimate')
           expect(estimate).to.be.greaterThan(0)
-          cy.findByTestId('checkbox')
+          cy.findByTestId('primary-name-toggle')
             .click()
             .then(function () {
               expect(parseFloat($item.text())).to.be.lessThan(this.estimate)
             })
             .then(() => {
-              cy.findByTestId('checkbox').click()
+              cy.findByTestId('primary-name-toggle').click()
             })
         })
     })
@@ -54,7 +54,7 @@ describe('Register Name', () => {
       cy.findByDisplayValue('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC').should('be.visible')
     })
     it('should show go to info step and show updated estimate', function () {
-      cy.findByTestId('next-button').should('contain.text', 'Next').click()
+      cy.findByTestId('next-button').should('contain.text', 'Next').click({force: true})
       cy.findByTestId('invoice-item-1-amount').should('not.contain.text', `${this.estimate} ETH`)
     })
     it('should go to transactions step and open commit transaction immediately', () => {
@@ -99,7 +99,7 @@ describe('Register Name', () => {
   describe('not primary', () => {
     it('should show primary name setting as unchecked if primary already set', () => {
       cy.visit('/register/registration-not-primary.eth')
-      cy.findByTestId('checkbox').should('not.be.checked')
+      cy.findByTestId('primary-name-toggle').should('not.be.checked')
     })
     it('should show set profile button on info step', () => {
       cy.findByTestId('next-button').click()
