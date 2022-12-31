@@ -53,7 +53,7 @@ jobs:
 
       - name: Build and Export with Profiler
         if: ${{ github.ref != 'refs/heads/main' }}
-        run: pnpm build --profile && pnpm export
+        run: pnpm build && pnpm export
 
       - name: Generate sitemap
         if: ${{ github.ref == 'refs/heads/main' }}

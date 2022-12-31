@@ -4,7 +4,7 @@
     "@ensdomains/thorin": {
       "signature": "25af8d2fcfb69377ded28258d8c1cc63",
       "workspace": true,
-      "replaced": "0.6.20"
+      "replaced": "0.6.22-"
     }
   }
 }
