@@ -132,6 +132,8 @@ jobs:
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           CI_BUILD_ID: stateless-${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_PAT: ${{ secrets.GH_PAT }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
@@ -194,6 +196,8 @@ jobs:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_PAT: ${{ secrets.GH_PAT }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
