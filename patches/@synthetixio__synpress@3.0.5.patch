@@ -1,14 +1,20 @@
 diff --git a/commands/metamask.js b/commands/metamask.js
-index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..2e3fe6d8757f182d65ddd39b714753a8e26f5933 100644
+index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..9ba960f67f2cde7c9bd9624ceb285a03496a1e50 100644
 --- a/commands/metamask.js
 +++ b/commands/metamask.js
-@@ -362,6 +362,19 @@ module.exports = {
+@@ -1,5 +1,6 @@
+ const log = require('debug')('synpress:metamask');
+ const playwright = require('./playwright');
++const sleep = require('util').promisify(setTimeout);
+ 
+ const {
+   welcomePageElements,
+@@ -362,6 +363,18 @@ module.exports = {
      await module.exports.closePopupAndTooltips();
      await playwright.waitAndClick(mainPageElements.accountMenu.button);
      if (typeof accountNameOrAccountNumber === 'number') {
 +      const page = await playwright.metamaskWindow();
 +      await playwright.waitFor(mainPageElements.accountMenu.accountButton(1), page);
-+
 +      for (let i = 2; i <= accountNameOrAccountNumber; i++) {
 +        if (!(await page.locator(mainPageElements.accountMenu.accountButton(i)).count())) {
 +          await playwright.waitAndClick(
@@ -18,7 +24,15 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..2e3fe6d8757f182d65ddd39b714753a8
 +          await playwright.waitAndClick(mainPageElements.accountMenu.button);
 +        }
 +      }
-+
++      
        await playwright.waitAndClick(
          mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
        );
+@@ -811,6 +824,7 @@ module.exports = {
+     return true;
+   },
+   confirmTransaction: async gasConfig => {
++    if (process.env.TRANSACTION_WAIT_TIME) await sleep(parseInt(process.env.TRANSACTION_WAIT_TIME));
+     let txData = {};
+     const notificationPage = await playwright.switchToMetamaskNotification();
+     if (gasConfig) {

@@ -13,12 +13,12 @@ overrides:
   '@tanstack/query-core': 4.10.3
 
 patchedDependencies:
+  '@synthetixio/synpress@3.0.5':
+    hash: tuoldnv7rexudizxnqvws43ake
+    path: patches/@synthetixio__synpress@3.0.5.patch
   '@rainbow-me/rainbowkit@0.4.8':
     hash: zczigdeajjlj6h32kv7vfprn2y
     path: patches/@rainbow-me__rainbowkit@0.4.8.patch
-  '@synthetixio/synpress@3.0.5':
-    hash: ogxmmu3hqn7uivbedtyewimnhy
-    path: patches/@synthetixio__synpress@3.0.5.patch
   react-confetti@6.1.0:
     hash: bbuxkxhxbyez4jmqgptuoucij4
     path: patches/react-confetti@6.1.0.patch
@@ -206,7 +206,7 @@ importers:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_liuail6phkx7un26teqxcf6yx4
       '@openzeppelin/contracts': 4.7.3
       '@openzeppelin/test-helpers': 0.5.16
-      '@synthetixio/synpress': 3.0.5_ogxmmu3hqn7uivbedtyewimnhy_cridlslxka7eqpph56piqjq4sm
+      '@synthetixio/synpress': 3.0.5_tuoldnv7rexudizxnqvws43ake_cridlslxka7eqpph56piqjq4sm
       '@testing-library/cypress': 8.0.3_cypress@10.8.0
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
@@ -4513,7 +4513,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@synthetixio/synpress/3.0.5_ogxmmu3hqn7uivbedtyewimnhy_cridlslxka7eqpph56piqjq4sm:
+  /@synthetixio/synpress/3.0.5_tuoldnv7rexudizxnqvws43ake_cridlslxka7eqpph56piqjq4sm:
     resolution: {integrity: sha512-tkrQra/z+CW/t+rB7SBXQ9Xgmowq4lOlVE6QelDnpHVhIhms8w+0iuv5IeB564ucSoBE6UA9xkIgp28jzZNvbw==}
     engines: {node: '>=10'}
     hasBin: true
