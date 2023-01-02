@@ -27,7 +27,7 @@ const config: HardhatUserConfig = {
   networks: {
     hardhat: {
       saveDeployments: false,
-      chainId: parseInt(process.env.CHAIN_ID!),
+      chainId: 1337,
       accounts: {
         mnemonic: process.env.SECRET_WORDS!,
       },
@@ -36,8 +36,8 @@ const config: HardhatUserConfig = {
     },
     localhost: {
       saveDeployments: false,
-      url: process.env.RPC_URL,
-      chainId: parseInt(process.env.CHAIN_ID!),
+      url: 'http://localhost:8545',
+      chainId: 1337,
       accounts: {
         mnemonic: process.env.SECRET_WORDS!,
       },

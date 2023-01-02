@@ -1,0 +1,24 @@
+diff --git a/commands/metamask.js b/commands/metamask.js
+index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..2e3fe6d8757f182d65ddd39b714753a8e26f5933 100644
+--- a/commands/metamask.js
++++ b/commands/metamask.js
+@@ -362,6 +362,19 @@ module.exports = {
+     await module.exports.closePopupAndTooltips();
+     await playwright.waitAndClick(mainPageElements.accountMenu.button);
+     if (typeof accountNameOrAccountNumber === 'number') {
++      const page = await playwright.metamaskWindow();
++      await playwright.waitFor(mainPageElements.accountMenu.accountButton(1), page);
++
++      for (let i = 2; i <= accountNameOrAccountNumber; i++) {
++        if (!(await page.locator(mainPageElements.accountMenu.accountButton(i)).count())) {
++          await playwright.waitAndClick(
++            mainPageElements.accountMenu.createAccountButton,
++          );
++          await playwright.waitAndClick(mainPageElements.createAccount.createButton);
++          await playwright.waitAndClick(mainPageElements.accountMenu.button);
++        }
++      }
++
+       await playwright.waitAndClick(
+         mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
+       );
