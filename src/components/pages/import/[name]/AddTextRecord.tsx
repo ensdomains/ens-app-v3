@@ -60,23 +60,16 @@ const Container = styled.div`
   align-items: center;
 `
 
-const StyledButton = styled(Button)(
+const ButtonInner = styled.div(
   ({ theme }) => css`
-    padding: ${theme.space['0']} -${theme.space['1.5']};
-    label {
-      width: 100%;
-      padding: 0 ${theme.space['4']};
-    }
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    height: 48px;
+    padding: 0 ${theme.space['2.5']};
   `,
 )
-
-const ButtonInner = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-  height: 48px;
-`
 
 const ButtonRow = styled.div(
   ({ theme }) => css`
@@ -99,7 +92,7 @@ const CopyableRightContainer = styled.div(
 const Copyable = ({ label, value }: { label: string; value: string }) => {
   const { copy, copied } = useCopied()
   return (
-    <StyledButton color="background" onClick={() => copy(value)} size="flexible">
+    <Button color="background" onClick={() => copy(value)} size="flexible" fullWidthContent>
       <ButtonInner>
         <Typography>{label}</Typography>
         <CopyableRightContainer>
@@ -107,7 +100,7 @@ const Copyable = ({ label, value }: { label: string; value: string }) => {
           <IconCopyAnimated color="grey" copied={copied} size="3.5" />
         </CopyableRightContainer>
       </ButtonInner>
-    </StyledButton>
+    </Button>
   )
 }
 
@@ -199,14 +192,14 @@ export const AddTextRecord = ({
       </Outlink>
       <Spacer $height="5" />
       <ButtonRow>
-        <StyledButton color="background" size="flexible">
+        <Button color="background" size="flexible" fullWidthContent>
           <ButtonInner>
             <Typography>{t('addTextRecord.type')}</Typography>
             <Typography {...{ typography: 'small', color: 'text' }}>
               {t('addTextRecord.txt')}
             </Typography>
           </ButtonInner>
-        </StyledButton>
+        </Button>
         <Copyable {...{ label: 'Name', value: '_ens' }} />
       </ButtonRow>
       <Spacer $height="2" />
