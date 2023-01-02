@@ -97,6 +97,8 @@ jobs:
         node-version: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
     steps:
       - uses: actions/checkout@v3
+      - run: ./scripts/check-chrome.sh
+
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7.8.0
@@ -157,6 +159,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - run: ./scripts/check-chrome.sh
 
       - uses: pnpm/action-setup@v2.2.2
         with:
