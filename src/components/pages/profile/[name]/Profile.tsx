@@ -17,6 +17,7 @@ import { Content } from '@app/layouts/Content'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
+import { PermissionsTab } from './tabs/PermissionsTab/PermissionsTab'
 import ProfileTab from './tabs/ProfileTab'
 import { RecordsTab } from './tabs/RecordsTab'
 import { SubnamesTab } from './tabs/SubnamesTab'
@@ -59,7 +60,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
   `,
 )
 
-const tabs = ['profile', 'records', 'subnames', 'more'] as const
+const tabs = ['profile', 'records', 'subnames', 'permissions', 'more'] as const
 type Tab = typeof tabs[number]
 
 type Props = {
@@ -147,6 +148,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       shallow: true,
     })
   }
+  const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
   const selfAbilities = useSelfAbilities(address, name)
 
@@ -178,7 +180,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
             : undefined,
           header: (
             <TabButtonContainer>
-              {tabs.map((tabItem) => (
+              {visibileTabs.map((tabItem) => (
                 <TabButton
                   key={tabItem}
                   data-testid={`${tabItem}-tab`}
@@ -216,6 +218,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 network={chainId}
               />
             ),
+            permissions: <PermissionsTab />,
             more: (
               <MoreTab
                 name={normalisedName}
