@@ -62,4 +62,4 @@
   CHROME_DEB_URL="https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb"
   CHROME_DEB_NAME="google-chrome-stable_current_amd64.deb"
   download_with_retries $CHROME_DEB_URL "/tmp" "${CHROME_DEB_NAME}"
-  sudo apt install "/tmp/${CHROME_DEB_NAME}" -f
+  sudo apt-get install -y "/tmp/${CHROME_DEB_NAME}" -f
