@@ -133,7 +133,7 @@ jobs:
           DISPLAY=:20 pnpm e2e:ci -nb
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
-          CI_BUILD_ID: stateless-${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+          CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
           GH_USERNAME: ${{ secrets.GH_USERNAME }}
           GH_PAT: ${{ secrets.GH_PAT }}
 
@@ -197,7 +197,7 @@ jobs:
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm start" \
-          "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ciBuildId stateful-${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
+          "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ciBuildId ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }} --group stateful"
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
