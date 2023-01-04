@@ -1,5 +1,5 @@
 diff --git a/commands/metamask.js b/commands/metamask.js
-index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..9ba960f67f2cde7c9bd9624ceb285a03496a1e50 100644
+index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..f5986cae1673781f84df4cd6a3f72880f40ea18e 100644
 --- a/commands/metamask.js
 +++ b/commands/metamask.js
 @@ -1,5 +1,6 @@
@@ -9,7 +9,7 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..9ba960f67f2cde7c9bd9624ceb285a03
  
  const {
    welcomePageElements,
-@@ -362,6 +363,18 @@ module.exports = {
+@@ -362,6 +363,17 @@ module.exports = {
      await module.exports.closePopupAndTooltips();
      await playwright.waitAndClick(mainPageElements.accountMenu.button);
      if (typeof accountNameOrAccountNumber === 'number') {
@@ -24,11 +24,10 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..9ba960f67f2cde7c9bd9624ceb285a03
 +          await playwright.waitAndClick(mainPageElements.accountMenu.button);
 +        }
 +      }
-+      
        await playwright.waitAndClick(
          mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
        );
-@@ -811,6 +824,7 @@ module.exports = {
+@@ -811,6 +823,7 @@ module.exports = {
      return true;
    },
    confirmTransaction: async gasConfig => {
@@ -36,3 +35,20 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..9ba960f67f2cde7c9bd9624ceb285a03
      let txData = {};
      const notificationPage = await playwright.switchToMetamaskNotification();
      if (gasConfig) {
+diff --git a/synpress.js b/synpress.js
+index 4b98f42727602b955c8a6dc61f862b2990c8c2f6..0d9b6f55853e01694413ea98567ef6ea9acc1473 100755
+--- a/synpress.js
++++ b/synpress.js
+@@ -97,8 +97,10 @@ program
+     '-ro, --reporterOptions <options>',
+     'specify mocha reporter options, separate multiple values with comma',
+   )
+-  // dashboard
+-  .option('-cid, --ciBuildId', '[dashboard] add custom ci build id to the run')
++  .option(
++    '--ci-build-id <id>',
++    '[dashboard] the unique identifier for a run on your CI provider. typically a "BUILD_ID" env var. this value is automatically detected for most CI providers'
++  )
+   .option(
+     '-r, --record',
+     '[dashboard] record video of tests running after setting up your project to record',
