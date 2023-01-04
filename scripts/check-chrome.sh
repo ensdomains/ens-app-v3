@@ -45,20 +45,15 @@
   }
 
   INSTALLED_CHROME_VERSION=$(google-chrome --product-version)
-  INSTALLED_CHROME_VERSION=${INSTALLED_CHROME_VERSION%.*}
-  INSTALLED_CHROME_MAJOR_VERSION=$(echo $INSTALLED_CHROME_VERSION | cut -d. -f1)
 
-  # Determine latest release of chromedriver
-  # Compatibility of Google Chrome and Chromedriver: https://sites.google.com/a/chromium.org/chromedriver/downloads/version-selection
-  LATEST_VERSION_URL="https://chromedriver.storage.googleapis.com/LATEST_RELEASE"
-  echo "Fetching latest chromedriver version from: $LATEST_VERSION_URL"
-  LATEST_CHROMEDRIVER_VERSION=$(curl "$LATEST_VERSION_URL")
-  LATEST_CHROMEDRIVER_MAJOR_VERSION=$(echo $LATEST_CHROMEDRIVER_VERSION | cut -d. -f1)
+  LATEST_VERSION_URL="https://omahaproxy.appspot.com/linux"
+  echo "Fetching latest chrome version from: $LATEST_VERSION_URL"
+  LATEST_CHROME_VERSION=$(curl "$LATEST_VERSION_URL")
 
   echo "Installed Chrome Version: $INSTALLED_CHROME_VERSION"
-  echo "Latest ChromeDriver Version: $LATEST_CHROMEDRIVER_VERSION"
+  echo "Latest Chrome Version: $LATEST_CHROME_VERSION"
 
-  if [ "$INSTALLED_CHROME_MAJOR_VERSION" == "$LATEST_CHROMEDRIVER_MAJOR_VERSION" ]; then
+  if [ "$INSTALLED_CHROME_VERSION" == "$LATEST_CHROME_VERSION" ]; then
     echo "The latest major version of Chrome is already installed."
     exit 0
   fi
@@ -68,20 +63,3 @@
   CHROME_DEB_NAME="google-chrome-stable_current_amd64.deb"
   download_with_retries $CHROME_DEB_URL "/tmp" "${CHROME_DEB_NAME}"
   sudo apt install "/tmp/${CHROME_DEB_NAME}" -f
-
-  # Download and unpack latest release of chromedriver
-  echo "Downloading chromedriver v$LATEST_CHROMEDRIVER_VERSION..."
-  wget "https://chromedriver.storage.googleapis.com/$LATEST_CHROMEDRIVER_VERSION/chromedriver_linux64.zip"
-  unzip chromedriver_linux64.zip
-  rm chromedriver_linux64.zip
-
-  CHROMEDRIVER_DIR="/usr/local/share/chrome_driver"
-  CHROMEDRIVER_BIN="$CHROMEDRIVER_DIR/chromedriver"
-
-  sudo rm -rf $CHROMEDRIVER_DIR/*
-  sudo rm -rf $CHROMEDRIVER_BIN/*
-
-  sudo mkdir -p $CHROMEDRIVER_DIR
-  sudo mv "chromedriver" $CHROMEDRIVER_BIN
-  sudo chmod +x $CHROMEDRIVER_BIN
-  chromedriver --version
