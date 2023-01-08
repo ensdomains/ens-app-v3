@@ -25,7 +25,7 @@
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
-    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost synpress run -ne -cf ./e2e/synpress.config.js",
+    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost synpress run -ne -cf ./e2e/synpress.config.js --spec e2e/specs/stateless/09_wrapName.spec.js",
     "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID --group stateless",
