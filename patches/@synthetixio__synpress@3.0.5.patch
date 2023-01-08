@@ -1,5 +1,5 @@
 diff --git a/commands/metamask.js b/commands/metamask.js
-index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..f5986cae1673781f84df4cd6a3f72880f40ea18e 100644
+index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..ae526064550fa3742c78c1a273393409f9d8ab62 100644
 --- a/commands/metamask.js
 +++ b/commands/metamask.js
 @@ -1,5 +1,6 @@
@@ -9,7 +9,7 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..f5986cae1673781f84df4cd6a3f72880
  
  const {
    welcomePageElements,
-@@ -362,6 +363,17 @@ module.exports = {
+@@ -362,6 +363,18 @@ module.exports = {
      await module.exports.closePopupAndTooltips();
      await playwright.waitAndClick(mainPageElements.accountMenu.button);
      if (typeof accountNameOrAccountNumber === 'number') {
@@ -24,10 +24,11 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..f5986cae1673781f84df4cd6a3f72880
 +          await playwright.waitAndClick(mainPageElements.accountMenu.button);
 +        }
 +      }
++
        await playwright.waitAndClick(
          mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
        );
-@@ -811,6 +823,7 @@ module.exports = {
+@@ -811,6 +824,7 @@ module.exports = {
      return true;
    },
    confirmTransaction: async gasConfig => {
@@ -35,6 +36,38 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..f5986cae1673781f84df4cd6a3f72880
      let txData = {};
      const notificationPage = await playwright.switchToMetamaskNotification();
      if (gasConfig) {
+diff --git a/commands/playwright.js b/commands/playwright.js
+index d9223389b1abd3b491f85949dfa0e9f7dc73645d..a4f5eeb0788d5946c92a201f294c7e4624295efa 100644
+--- a/commands/playwright.js
++++ b/commands/playwright.js
+@@ -161,21 +161,15 @@ module.exports = {
+         force: args.force,
+       });
+     } else if (args.numberOfClicks && args.waitForEvent) {
+-      await Promise.all([
+-        page.waitForEvent(args.waitForEvent),
+-        element.click({ clickCount: args.numberOfClicks, force: args.force }),
+-      ]);
++      element.click({ clickCount: args.numberOfClicks, force: args.force });
++      await page.waitForEvent(args.waitForEvent);
+     } else if (args.waitForEvent) {
+       if (args.waitForEvent.includes('navi')) {
+-        await Promise.all([
+-          page.waitForNavigation(),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force })
++        await page.waitForNavigation();
+       } else {
+-        await Promise.all([
+-          page.waitForEvent(args.waitForEvent),
+-          element.click({ force: args.force }),
+-        ]);
++        element.click({ force: args.force });
++        await page.waitForEvent(args.waitForEvent);
+       }
+     } else {
+       await element.click({ force: args.force });
 diff --git a/synpress.js b/synpress.js
 index 4b98f42727602b955c8a6dc61f862b2990c8c2f6..0d9b6f55853e01694413ea98567ef6ea9acc1473 100755
 --- a/synpress.js
