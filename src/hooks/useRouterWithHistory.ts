@@ -14,7 +14,6 @@ export const useRouterWithHistory = () => {
     const initialQuery = query || {}
     initialQuery.from = router.asPath
     const destination = getDestination({ pathname, query: initialQuery })
-    console.log()
     router.push(destination, typeof destination === 'string' ? undefined : destination.pathname)
   }
 
