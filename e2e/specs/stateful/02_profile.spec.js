@@ -87,7 +87,7 @@ describe('Profile', () => {
   })
 
   it('should show a warning if name is not supported', () => {
-    cy.visit('/profile/name.nottld')
+    cy.visit('/name.nottld')
     cy.wait(10000)
     cy.contains('This TLD is not supported').should('be.visible')
   })
