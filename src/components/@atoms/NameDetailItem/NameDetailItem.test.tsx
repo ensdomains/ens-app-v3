@@ -19,6 +19,7 @@ mockShortExpiry.mockImplementation(({ expiry }) => <div>{expiry}</div>)
 
 describe('NameDetailitem', () => {
   const mockRouterObject = {
+    asPath: 'currentpath',
     query: {
       name: 'nick.eth',
     },
@@ -42,7 +43,7 @@ describe('NameDetailitem', () => {
     )
     expect(screen.getByText('truncatedName').closest('a')).toHaveAttribute(
       'href',
-      '/profile/name?from=',
+      '/tld/name?from=currentpath',
     )
   })
   it('should show zorb when there is no avatar', () => {

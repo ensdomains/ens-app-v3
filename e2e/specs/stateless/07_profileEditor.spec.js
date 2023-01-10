@@ -6,27 +6,29 @@ describe('Profile Editor', () => {
   })
 
   it('should force a name on the old registry to go to update registry', () => {
-    cy.visit('/profile/legacy.test')
+    cy.visit('/legacy.test')
     connectFromExisting()
-    cy.contains('Edit Profile').click()
+    cy.contains('Edit profile').click()
     cy.findByTestId('warning-overlay').should('be.visible')
-    cy.get('[data-testid=warning-overlay-dismiss]').should('not.exist')
     cy.contains('Your registry is out of date').should('be.visible')
+    cy.findByTestId('warning-overlay-dismiss').should('exist').click()
+    cy.findByTestId('profile-editor').should('not.exist')
   })
 
   it('should force a user without a resolver set to migrate resolver', () => {
-    cy.visit('/profile/reverse')
+    cy.visit('/tld/reverse')
     connectFromExisting()
-    cy.contains('Edit Profile').click()
+    cy.contains('Edit profile').click()
     cy.findByTestId('warning-overlay').should('be.visible')
-    cy.get('[data-testid=warning-overlay-dismiss]').should('not.exist')
     cy.contains('No resolver assigned').should('be.visible')
+    cy.findByTestId('warning-overlay-dismiss').should('exist').click()
+    cy.findByTestId('profile-editor').should('not.exist')
   })
 
   it('should be able to update resolver if profile has been migrated but resolver has not been updated', () => {
-    cy.visit('/profile/migrated-resolver-to-be-updated.eth')
+    cy.visit('/migrated-resolver-to-be-updated.eth')
     connectFromExisting()
-    cy.contains('Edit Profile').click()
+    cy.contains('Edit profile').click()
     cy.findByTestId('warning-overlay').should('be.visible')
     cy.get('button').contains('Update').click()
     cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
@@ -36,9 +38,9 @@ describe('Profile Editor', () => {
   })
 
   it('should be able to migrate account to new resolver', () => {
-    cy.visit('/profile/test123.eth')
+    cy.visit('/test123.eth')
     connectFromExisting()
-    cy.contains('Edit Profile').click()
+    cy.contains('Edit profile').click()
     cy.findByTestId('warning-overlay').should('be.visible')
     cy.get('[data-testid=warning-overlay-dismiss]').should('be.visible')
     cy.get('button').contains('Update').click()
@@ -53,9 +55,9 @@ describe('Profile Editor', () => {
   })
 
   it('should be able to update account', () => {
-    cy.visit('/profile/wrapped.eth')
+    cy.visit('/wrapped.eth')
     connectFromExisting()
-    cy.contains('Edit Profile').click()
+    cy.contains('Edit profile').click()
     cy.findByPlaceholderText('John Smith').type('Test Name')
     cy.findByText('Save').should('not.be.disabled').click()
     cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()

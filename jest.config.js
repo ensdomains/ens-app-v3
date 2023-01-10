@@ -75,6 +75,9 @@ const customJestConfig = {
     },
   },
   collectCoverage: true,
+  globals: {
+    Uint8Array: Uint8Array,
+  }
 }
 
 module.exports = createJestConfig(customJestConfig)

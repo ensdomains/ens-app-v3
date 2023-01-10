@@ -58,8 +58,9 @@ describe('Register Name', () => {
       cy.findByTestId('invoice-item-1-amount').should('not.contain.text', `${this.estimate} ETH`)
     })
     it('should go to transactions step and open commit transaction immediately', () => {
+      cy.wait(1000)
       cy.findByTestId('next-button').should('contain.text', 'Begin').click()
-      cy.findByText('Confirm Details').should('be.visible')
+      cy.findByText('Open Wallet').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
     })
@@ -75,8 +76,9 @@ describe('Register Name', () => {
       cy.findByTestId('finish-button').should('exist').should('be.enabled')
     })
     it('should allow finalising registration and automatically go to the complete step', () => {
+      cy.wait(1000)
       cy.findByTestId('finish-button').click()
-      cy.findByText('Confirm Details').should('be.visible')
+      cy.findByText('Open Wallet').should('be.visible')
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
     })
@@ -87,16 +89,16 @@ describe('Register Name', () => {
       cy.findByTestId('home-button').click()
       cy.wait(1000)
       cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
-      cy.url().should('eq', 'http://localhost:3000/profile/registration-normal.eth')
+      cy.url().should('eq', 'http://localhost:3000/registration-normal.eth')
     })
     it('should show all records from registration', () => {
-      cy.findByTestId('profile-snippet-name').should('contain.text', 'Test Name')
+      cy.findByTestId('profile-snippet-nickname').should('contain.text', 'Test Name')
       cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
     })
   })
   describe('not primary', () => {
     it('should show primary name setting as unchecked if primary already set', () => {
-      cy.visit('/register/registration-not-primary.eth')
+      cy.visit('/registration-not-primary.eth/register')
       cy.findByTestId('checkbox').should('not.be.checked')
     })
     it('should show set profile button on info step', () => {
@@ -119,7 +121,7 @@ describe('Register Name', () => {
   })
   describe('premium', () => {
     it('should allow registration', () => {
-      cy.visit('/register/name-with-premium.eth')
+      cy.visit('/name-with-premium.eth/register')
       connectFromExisting()
       cy.findByTestId('invoice-item-2-amount').should('be.visible')
       cy.findByTestId('next-button').click()

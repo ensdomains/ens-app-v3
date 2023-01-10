@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import ReactConfetti from 'react-confetti'
 import { useTranslation } from 'react-i18next'
@@ -9,6 +8,7 @@ import { Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { ButtonContainer, CheckButton } from './shared'
 
@@ -59,7 +59,7 @@ const NFTTemplateContainer = styled.div(
 )
 
 export const ClaimComplete = ({ name }: { name: string }) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const { t } = useTranslation('dnssec')
 
   // Removing from local storage so that sucess page is not shown twice.

@@ -1,8 +1,9 @@
-import { useCallback, useRef } from 'react'
+import { DependencyList, useCallback, useRef } from 'react'
 
 export default function useDebouncedCallback<T extends (...args: any[]) => ReturnType<T>>(
   func: T,
   wait?: number,
+  deps: DependencyList = [],
 ): T {
   const timerId = useRef<NodeJS.Timer>()
 
@@ -11,6 +12,6 @@ export default function useDebouncedCallback<T extends (...args: any[]) => Retur
       clearTimeout(timerId.current)
       timerId.current = setTimeout(() => func(...args), wait)
     },
-    [func, wait],
+    [func, wait, ...deps],
   ) as T
 }

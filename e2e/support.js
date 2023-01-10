@@ -5,6 +5,7 @@ import 'cypress-localstorage-commands'
 beforeEach(() => {
   cy.restoreLocalStorage()
 })
+
 afterEach(() => {
   cy.saveLocalStorage()
 })

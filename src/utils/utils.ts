@@ -41,6 +41,21 @@ ${expiry.toLocaleDateString(undefined, {
   month: 'long',
 })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
+export const formatDateTime = (date: Date) => {
+  const baseFormatted = date.toLocaleTimeString('en', {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false,
+    timeZoneName: 'short',
+  })
+  const timezoneString = date
+    .toTimeString()
+    .split('(')[1]
+    .replace(/\b(\w)\w*[\s)]?/g, '$1')
+  return `${baseFormatted} (${timezoneString})`
+}
+
 export const makeEtherscanLink = (hash: string, network?: string) =>
   `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
 
@@ -50,13 +65,18 @@ export const isBrowser = !!(
   window.document.createElement
 )
 
-export const isDNSName = (name: string): boolean => {
+export const checkDNSName = (name: string): boolean => {
   const labels = name?.split('.')
 
   return !!labels && labels[labels.length - 1] !== 'eth'
 }
 
-export const isASubname = (name: string) => name.split('.').length > 2
+export const checkETHName = (labels: string[]) => labels[labels.length - 1] === 'eth'
+
+export const checkETH2LDName = (isDotETH: boolean, labels: string[], canBeShort?: boolean) =>
+  isDotETH && labels.length === 2 && (canBeShort || labels[0].length >= 3)
+
+export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {
   const bytes = toUtf8Bytes(label)

@@ -257,7 +257,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               latestResolver={resolverAddress!}
               oldResolver={profile?.resolverAddress!}
               dispatch={dispatch}
-              onDismiss={() => setShowOverlay(false)}
+              onDismiss={onDismiss}
+              onDismissOverlay={() => setShowOverlay(false)}
             />
           )}{' '}
         </Container>

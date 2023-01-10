@@ -16,7 +16,7 @@ describe('Settings', () => {
     })
     it('should show the correct transaction details for a transaction modal', () => {
       cy.contains('Test Send Name').click()
-      cy.findByTestId('display-item-action-normal').should('contain.text', 'Send Name')
+      cy.findByTestId('display-item-action-normal').should('contain.text', 'Send name')
       cy.findByTestId('display-item-info-normal').should(
         'contain.text',
         'Set the controller and registrant of the name',
@@ -31,7 +31,7 @@ describe('Settings', () => {
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
-        .should('contain.text', 'Your "Send Name" transaction was successful')
+        .should('contain.text', 'Your "Send name" transaction was successful')
       cy.findByTestId('close-icon').click()
     })
     it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
@@ -41,12 +41,12 @@ describe('Settings', () => {
       cy.contains('Add Successful Transaction').click({ force: true })
       cy.wait(5000)
       cy.confirmMetamaskTransaction()
-      cy.contains('Test Transaction').should('be.visible')
+      cy.contains('Test transaction').should('be.visible')
 
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
-        .should('contain.text', 'Your "Test Transaction" transaction was successful')
+        .should('contain.text', 'Your "Test transaction" transaction was successful')
       cy.findByTestId('close-icon').click()
     })
     it('should add a failed transaction to the transaction list, and show the corresponding notification', () => {
@@ -55,11 +55,11 @@ describe('Settings', () => {
       cy.wait(500)
       cy.findByTestId('transaction-failed')
         .should('be.visible')
-        .should('contain.text', 'Test Transaction')
+        .should('contain.text', 'Test transaction')
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Failure')
-        .should('contain.text', 'Your "Test Transaction" transaction failed and was reverted')
+        .should('contain.text', 'Your "Test transaction" transaction failed and was reverted')
       cy.findByTestId('close-icon').click()
     })
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
@@ -69,12 +69,12 @@ describe('Settings', () => {
       cy.wait(500)
       cy.findByTestId('transaction-pending')
         .should('be.visible')
-        .should('contain.text', 'Test Transaction')
+        .should('contain.text', 'Test transaction')
       cy.contains('Start Automine').click()
       cy.findByTestId('toast-desktop')
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
-        .should('contain.text', 'Your "Test Transaction" transaction was successful')
+        .should('contain.text', 'Your "Test transaction" transaction was successful')
       cy.findByTestId('close-icon').click()
     })
     it('should clear transactions when clear is pressed', () => {

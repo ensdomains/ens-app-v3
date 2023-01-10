@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -11,6 +10,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import useDNSOwner from '@app/hooks/useDNSOwner'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate } from '@app/hooks/useValidate'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
@@ -134,7 +134,7 @@ const StyledTitle = styled(Title)(
 )
 
 export default () => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const [currentStep, setCurrentStep] = useState(0)
   const [syncWarning, setSyncWarning] = useState(false)

@@ -37,6 +37,9 @@ export const useNameDetails = (name: string) => {
     if (valid === false) {
       return t('errors.invalidName')
     }
+    if (registrationStatus === 'unsupportedTLD') {
+      return t('errors.unsupportedTLD')
+    }
     if (profile && !profile.isMigrated && typeof profile.isMigrated === 'boolean') {
       return (
         <>

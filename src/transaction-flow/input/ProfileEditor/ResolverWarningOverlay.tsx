@@ -1,3 +1,4 @@
+import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -82,6 +83,7 @@ type Props = {
   hasNoResolver?: boolean
   latestResolver: string
   oldResolver: string
+  onDismissOverlay?: () => void
 } & TransactionDialogPassthrough
 
 const ResolverWarningOverlay = ({
@@ -94,6 +96,7 @@ const ResolverWarningOverlay = ({
   oldResolver,
   dispatch,
   onDismiss,
+  onDismissOverlay,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
@@ -173,13 +176,16 @@ const ResolverWarningOverlay = ({
     handler?.()
   }
 
+  const handleDismiss = useCallback(() => {
+    if (dismissable) return onDismissOverlay?.()
+    onDismiss?.()
+  }, [dismissable, onDismiss, onDismissOverlay])
+
   return (
     <Container data-testid="warning-overlay">
-      {dismissable && (
-        <DismissButtonWrapper data-testid="warning-overlay-dismiss">
-          <DismissDialogButton onClick={onDismiss} />
-        </DismissButtonWrapper>
-      )}
+      <DismissButtonWrapper data-testid="warning-overlay-dismiss">
+        <DismissDialogButton onClick={handleDismiss} />
+      </DismissButtonWrapper>
       <Content>
         <Message>
           <Title variant="extraLarge">{title}</Title>

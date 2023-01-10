@@ -112,11 +112,9 @@ const ProfileButton = styled.button(
 const ethInfoItems = Array.from({ length: 3 }, (_, i) => `steps.info.ethItems.${i}`)
 const moonpayInfoItems = Array.from({ length: 2 }, (_, i) => `steps.info.moonpayItems.${i}`)
 
-const PaymentChoiceContainer = styled.div(
-  ({ theme }) => css`
-    width: 100%;
-  `,
-)
+const PaymentChoiceContainer = styled.div`
+  width: 100%;
+`
 
 const StyledRadioButtonGroup = styled(RadioButtonGroup)(
   ({ theme }) => css`
@@ -126,7 +124,7 @@ const StyledRadioButtonGroup = styled(RadioButtonGroup)(
   `,
 )
 
-const StyledRadioButton = styled(RadioButton)(({ theme }) => css``)
+const StyledRadioButton = styled(RadioButton)``
 
 const RadioButtonContainer = styled.div(
   ({ theme }) => css`
@@ -137,11 +135,9 @@ const RadioButtonContainer = styled.div(
   `,
 )
 
-const StyledTitle = styled(Typography)(
-  ({ theme }) => css`
-    margin-left: 15px;
-  `,
-)
+const StyledTitle = styled(Typography)`
+  margin-left: 15px;
+`
 
 const RadioLabel = styled(Typography)(
   ({ theme }) => css`
@@ -162,6 +158,7 @@ const PaymentChoice = ({
 }: {
   paymentMethodChoice: PaymentMethod
   setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod>>
+  hasEnoughEth: boolean
 }) => {
   const { t } = useTranslation('register')
   return (
@@ -243,6 +240,7 @@ type Props = {
   callback: (data: { back?: boolean; paymentMethodChoice?: PaymentMethod }) => void
   onProfileClick: () => void
   resolverExists: boolean | undefined
+  hasPrimaryName: boolean
 }
 
 const Info = ({
@@ -281,7 +279,7 @@ const Info = ({
 
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
   const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
-  const hasEnoughEth = !balance?.value.lt(totalRequiredBalance)
+  const hasEnoughEth = !balance?.value.lt(totalRequiredBalance || 0)
 
   console.log('totalRequiredBalance: ', totalRequiredBalance)
   console.log('hasEnoughtEth: ', hasEnoughEth)

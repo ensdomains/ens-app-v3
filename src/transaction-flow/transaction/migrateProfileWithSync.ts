@@ -1,13 +1,11 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { TFunction } from 'react-i18next'
+import type { TFunction } from 'react-i18next'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+import type { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 
 import { Profile, PublicENS, RecordItem, Transaction, TransactionDisplayItem } from '@app/types'
 import { recordItemToKeyValue } from '@app/utils/editor'
 import { recordOptionsToToupleList } from '@app/utils/records'
-
-import { contentHashToString } from '../../utils/contenthash'
 
 type Data = {
   name: string
@@ -94,6 +92,11 @@ export const syncRecords = (
 }
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
+  // dynamic import for large dependency
+  const contentHashToString = await import('../../utils/contenthash').then(
+    (m) => m.contentHashToString,
+  )
+
   const profile = await ens.getProfile(data.name)
   if (!profile) throw new Error('No profile found')
   if (!profile.records) throw new Error('No records found')

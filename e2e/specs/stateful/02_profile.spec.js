@@ -86,10 +86,17 @@ describe('Profile', () => {
     cy.contains('Profile').should('not.be.visible')
   })
 
+  it('should show a warning if name is not supported', () => {
+    cy.visit('/name.nottld')
+    cy.wait(10000)
+    cy.contains('This TLD is not supported').should('be.visible')
+  })
+
   profiles.forEach((profile) => {
     describe(profile.name, () => {
       describe('profile', () => {
         it('should go to the profile page', () => {
+          cy.visit('/')
           cy.get('[placeholder="Search for a name"]').type(profile.name).wait(1000).type('{enter}')
         })
 
@@ -149,18 +156,12 @@ describe('Profile', () => {
         })
       })
       describe('name details', () => {
-        it('should go to the name details page when clicking view details', () => {
-          cy.contains('View Details').click()
-          cy.url().should('contain', `http://localhost:3000/profile/${profile.name}/details`)
-        })
-
         const textRecords = profile.records.filter((x) => x.type !== 'address')
         const addressRecords = profile.records.filter((x) => x.type === 'address')
 
         it('should show all text records, and show correct number of records', () => {
-          cy.findByTestId('text-heading')
-            .parent()
-            .should('contain.text', `${textRecords.length} Records`)
+          cy.findByTestId('records-tab').click()
+          cy.findByTestId('text-amount').should('contain.text', `${textRecords.length} Records`)
           if (textRecords.length > 0) {
             textRecords.forEach((record) => {
               cy.findByTestId(`name-details-text-${record.key}`)
@@ -170,9 +171,10 @@ describe('Profile', () => {
           }
         })
         it('should show all address records, and show correct number of records', () => {
-          cy.findByTestId('address-heading')
-            .parent()
-            .should('contain.text', `${addressRecords.length} Records`)
+          cy.findByTestId('address-amount').should(
+            'contain.text',
+            `${addressRecords.length} Records`,
+          )
           if (addressRecords.length > 0) {
             addressRecords.forEach((record) => {
               cy.findByTestId(`name-details-address-${record.key}`)
@@ -192,8 +194,13 @@ describe('Profile', () => {
         })
 
         it('should have correct ownership data', () => {
+          cy.findByTestId('more-tab').click()
+          //owner-button-name-name.manager
           profile.owners.forEach((owner) => {
-            cy.findByTestId(`${owner.type}-data`).should('contain.text', owner.value)
+            cy.findByTestId(`owner-button-name-name.${owner.type}`).should(
+              'contain.text',
+              owner.value,
+            )
           })
         })
 

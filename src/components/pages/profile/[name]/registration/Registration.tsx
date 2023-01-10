@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -14,6 +13,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import useResolverExists from '@app/hooks/useResolverExists'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { MOONPAY_LINK_GENERATOR_URL } from '@app/utils/constants'
@@ -32,7 +32,7 @@ type Props = {
 }
 
 const StyledDialog = styled(Dialog)(
-  ({ theme }) => css`
+  () => css`
     max-width: 100vw;
     width: 90vw;
     height: 90vh;
@@ -52,7 +52,8 @@ const StyledDialog = styled(Dialog)(
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
   const chainId = useChainId()
-  const router = useRouter()
+
+  const router = useRouterWithHistory()
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }
@@ -74,6 +75,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
+  console.log('nameDetails: ', nameDetails)
   console.log('normalisedName', normalisedName)
 
   const { data: moonpayUrl } = useQuery(
@@ -81,7 +83,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     async () => {
       const label = getLabelFromName(normalisedName)
       const tokenId = labelHashCalc(label)
-      const response = await fetch(`${MOONPAY_LINK_GENERATOR_URL[chainId]}?tokenId=${tokenId}`)
+      const requestUrl = `${MOONPAY_LINK_GENERATOR_URL[chainId]}?tokenId=${tokenId}&name=${normalisedName}&duration=1`
+      const response = await fetch(requestUrl)
       const textResponse = await response.text()
       return textResponse
     },
@@ -242,7 +245,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
-      {moonpayUrl}
       <StyledDialog open={hasMoonpayModal} onDismiss={() => setHasMoonpayModal(false)}>
         <iframe title="Moonpay Checkout" width="100%" height="90%" src={moonpayUrl} />
       </StyledDialog>

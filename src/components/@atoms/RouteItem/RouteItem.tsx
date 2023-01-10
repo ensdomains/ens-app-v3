@@ -1,10 +1,11 @@
-import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
 import { RouteItemObj } from '@app/routes'
+
+import BaseLink from '../BaseLink'
 
 const LinkWrapper = styled.a<{ $hasNotification?: boolean; $asText?: boolean }>(
   ({ theme, $hasNotification, $asText }) => css`
@@ -88,9 +89,9 @@ export const RouteItem = ({
     <ConditionalWrapper
       condition={!route.disabled}
       wrapper={(wrapperChildren) => (
-        <Link href={route.href} passHref>
+        <BaseLink href={route.href} passHref>
           {wrapperChildren}
-        </Link>
+        </BaseLink>
       )}
     >
       <LinkWrapper $asText={asText} $hasNotification={hasNotification}>

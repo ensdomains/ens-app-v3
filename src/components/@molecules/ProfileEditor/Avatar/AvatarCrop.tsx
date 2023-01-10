@@ -9,6 +9,7 @@ import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
 import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
+import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
 import { calcMomentum, getVars, resolutionMultiplier } from '@app/utils/avatarUpload'
 
 import AvatarScrollBox from './AvatarScrollBox'
@@ -176,46 +177,50 @@ export const CropComponent = ({
     }
   }, [])
 
-  const handleImageLoad = useCallback(() => {
-    const image = imageRef.current
-    const { size, cropSize, max, ctx } = getVars(canvasRef.current!)
-    const { width: iw, height: ih } = image
-    const ir = iw / ih
+  const handleImageLoad = useDebouncedCallback(
+    () => {
+      const image = imageRef.current
+      const { size, cropSize, max, ctx } = getVars(canvasRef.current!)
+      const { width: iw, height: ih } = image
+      const ir = iw / ih
 
-    let x: number
-    let y: number
-    let w: number
-    let h: number
-    if (ir > 1) {
-      h = cropSize
-      w = h * ir
-      x = (size - w) / 2
-      y = max
-    } else if (ir < 1) {
-      w = cropSize
-      h = w / ir
-      x = max
-      y = (size - h) / 2
-    } else {
-      // eslint-disable-next-line no-multi-assign
-      w = h = cropSize
-      // eslint-disable-next-line no-multi-assign
-      x = y = max
-    }
-    ctx!.drawImage(image, x, y, w, h)
-    coordinatesRef.current = {
-      x,
-      y,
-      w,
-      h,
-      oW: w,
-      oH: h,
-      mx: 0,
-      my: 0,
-      moving: false,
-    }
-    window.requestAnimationFrame(draw)
-  }, [draw])
+      let x: number
+      let y: number
+      let w: number
+      let h: number
+      if (ir > 1) {
+        h = cropSize
+        w = h * ir
+        x = (size - w) / 2
+        y = max
+      } else if (ir < 1) {
+        w = cropSize
+        h = w / ir
+        x = max
+        y = (size - h) / 2
+      } else {
+        // eslint-disable-next-line no-multi-assign
+        w = h = cropSize
+        // eslint-disable-next-line no-multi-assign
+        x = y = max
+      }
+      ctx!.drawImage(image, x, y, w, h)
+      coordinatesRef.current = {
+        x,
+        y,
+        w,
+        h,
+        oW: w,
+        oH: h,
+        mx: 0,
+        my: 0,
+        moving: false,
+      }
+      window.requestAnimationFrame(draw)
+    },
+    100,
+    [draw],
+  )
 
   const handleMoveStart = (e: MouseEvent | TouchEvent) => {
     e.preventDefault()
