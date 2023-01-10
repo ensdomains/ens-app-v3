@@ -18,7 +18,7 @@ module.exports = defineConfig({
   env: {
     coverage: false,
   },
-  video: false,
+  video: true,
   defaultCommandTimeout: process.env.SYNDEBUG ? 9999999 : 30000,
   pageLoadTimeout: process.env.SYNDEBUG ? 0 : 9999999,
   requestTimeout: process.env.SYNDEBUG ? 0 : 9999999,
