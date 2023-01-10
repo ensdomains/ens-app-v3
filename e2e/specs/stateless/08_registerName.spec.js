@@ -89,14 +89,14 @@ describe('Register Name', () => {
     cy.findByTestId('home-button').click()
     cy.wait(1000)
     cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
-    cy.url().should('eq', 'http://localhost:3000/registration-normal.eth')
+    cy.url().should('eq', 'http://localhost:3000/profile/registration-normal.eth')
 
     cy.findByTestId('profile-snippet-nickname').should('contain.text', 'Test Name')
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
   it('should allow registering a non-primary name', () => {
     // should show primary name setting as unchecked if primary already set
-    cy.visit('/registration-not-primary.eth/register')
+    cy.visit('/register/registration-not-primary.eth')
     cy.findByTestId('checkbox').should('not.be.checked')
 
     // should show set profile button on info step
@@ -117,7 +117,7 @@ describe('Register Name', () => {
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
   it('should allow registering a premium name', () => {
-    cy.visit('/name-with-premium.eth/register')
+    cy.visit('/register/name-with-premium.eth/')
     connectFromExisting()
     cy.findByTestId('invoice-item-2-amount').should('be.visible')
     cy.findByTestId('next-button').click()
