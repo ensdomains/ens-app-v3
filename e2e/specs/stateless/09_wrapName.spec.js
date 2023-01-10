@@ -81,6 +81,7 @@ describe('Wrap Name', () => {
     cy.findByTestId('transaction-modal-inner').should('be.visible')
     cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.log('Confirm metamask transaction for name wrapper approval')
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
 
@@ -88,6 +89,7 @@ describe('Wrap Name', () => {
     // arbitrary wait so metamask updates the account nonce
     cy.wait(1000)
     cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.log('Confirm metamask transaction for wrapping name')
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
 
