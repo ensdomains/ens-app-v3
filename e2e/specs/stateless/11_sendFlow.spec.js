@@ -95,7 +95,7 @@ describe('Send Flow', () => {
       cy.findByTestId('transaction-modal-inner').should('be.visible')
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
-      cy.confirmMetamaskTransaction()
+      cy.confirmMetamaskPermissionToSpend()
       cy.findByTestId('transaction-modal-complete-button').click()
 
       // wait so metamask updates the account nonce
