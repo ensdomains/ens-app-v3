@@ -136,30 +136,40 @@ export const rewrites = [
   {
     source: '/my/profile',
     destination: '/profile?connected=true',
+    flattenedDestination: '/my/profile',
   },
   {
     source: '/names/:address',
     destination: '/my/names?address=$2',
+    flattenedDestination: '/names/$2',
+    tldPrefix: true,
   },
   {
     source: '/profile/:name',
     destination: '/profile?name=$2',
+    flattenedDestination: '/$2',
+    tldPrefix: true,
   },
   {
     source: '/register/:name',
     destination: '/register?name=$2',
+    flattenedDestination: '/$2/register',
+    tldPrefix: true,
   },
   {
     source: '/import/:name',
     destination: '/import?name=$2',
+    flattenedDestination: '/$2/import',
+    tldPrefix: true,
   },
   {
     source: '/address/:address',
     destination: '/address?address=$2',
+    flattenedDestination: '/$2',
   },
 ]
 export const getDestination = (url: UrlObject | string) => {
-  if (!process.env.NEXT_PUBLIC_IPFS) return url
+  const isIPFS = !!process.env.NEXT_PUBLIC_IPFS
   const isObj = typeof url !== 'string'
   let href = isObj ? url.pathname! : url
   const query = new URLSearchParams(isObj ? ((url.query || '') as any) : '')
@@ -168,10 +178,12 @@ export const getDestination = (url: UrlObject | string) => {
     const match = regex.exec(href)
     if (match) {
       const values = href.split('/')
-      const replacedDestination = rewrite.destination.replace(
-        /\$(\d)/g,
-        (_, n) => values[parseInt(n)],
-      )
+      let replacedDestination = (
+        isIPFS ? rewrite.destination : rewrite.flattenedDestination
+      ).replace(/\$(\d)/g, (_, n) => values[parseInt(n)])
+      if (!isIPFS && rewrite.tldPrefix && !replacedDestination.includes('.')) {
+        replacedDestination = `/tld${replacedDestination}`
+      }
       const [newPathname, newQuery] = replacedDestination.split('?')
       if (newQuery) {
         const newQueryParams = new URLSearchParams(newQuery)
@@ -181,6 +193,20 @@ export const getDestination = (url: UrlObject | string) => {
       }
       href = newPathname
     }
+  }
+  const makeURLString = () => {
+    const parsedQuery = query.toString()
+    return `${href}${parsedQuery ? `?${parsedQuery}` : ''}`
+  }
+
+  if (!isIPFS) {
+    if (isObj) {
+      return {
+        pathname: href,
+        query: query.toString(),
+      }
+    }
+    return makeURLString()
   }
   // make absolute url relative
   // when displayed in url bar
@@ -196,6 +222,5 @@ export const getDestination = (url: UrlObject | string) => {
       // => <a href="https://gateway.ipfs.io/ipfs/Qm<hash>/about">About</a>
     }
   }
-  const parsedQuery = query.toString()
-  return `${href}${parsedQuery ? `?${parsedQuery}` : ''}`
+  return makeURLString()
 }

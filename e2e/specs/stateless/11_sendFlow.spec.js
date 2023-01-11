@@ -5,9 +5,9 @@ const accountOneShort = '0xf39...92266'
 describe('Send Flow', () => {
   describe('Happy', () => {
     it('Should allow namewrapper owner to send name', () => {
-      cy.visit('/profile/wrapped.eth')
+      cy.visit('/wrapped.eth')
       acceptMetamaskAccess(2)
-      cy.visit('/profile/wrapped.eth')
+      cy.visit('/wrapped.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -20,7 +20,7 @@ describe('Send Flow', () => {
     })
     it('Should allow namewrapper subname owner to send name', () => {
       acceptMetamaskAccess(1)
-      cy.visit('/profile/sub.wrapped.eth')
+      cy.visit('/sub.wrapped.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
@@ -34,7 +34,7 @@ describe('Send Flow', () => {
 
     it('Should allow unwrapped subname to be sent by owner (setOwner)', () => {
       acceptMetamaskAccess(2)
-      cy.visit('/profile/sub.test123.eth')
+      cy.visit('/sub.test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -47,7 +47,7 @@ describe('Send Flow', () => {
     })
     it('Should allow unwrapped subname to be sent by unwraped parent owner (setSubnodeOwner)', () => {
       acceptMetamaskAccess(2)
-      cy.visit('/profile/sub.test123.eth')
+      cy.visit('/sub.test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
@@ -65,7 +65,7 @@ describe('Send Flow', () => {
       acceptMetamaskAccess(2, true)
     })
     it('should not show send button when parent is owner and not manager', () => {
-      cy.visit('/profile/test123.eth')
+      cy.visit('/test123.eth')
       cy.findByText('More').click({ force: true })
       cy.wait(1000)
       cy.findByText('Send').click()
@@ -84,12 +84,12 @@ describe('Send Flow', () => {
       )
 
       cy.wait(1000)
-      cy.visit('/profile/sub.test123.eth')
+      cy.visit('/sub.test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').should('not.exist')
     })
     it('should not show send button when subname is wrapped and parent is unwrapped', () => {
-      cy.visit('/profile/sub.test123.eth')
+      cy.visit('/sub.test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByTestId('wrapper-cta-button').click()
       cy.findByTestId('transaction-modal-inner').should('be.visible')

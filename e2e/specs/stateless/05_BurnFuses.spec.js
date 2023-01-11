@@ -5,7 +5,7 @@ describe('Burn Fuses', () => {
     acceptMetamaskAccess(2, true)
   })
   it('should not allow owner to burn PCC', () => {
-    cy.visit('/profile/wrapped.eth')
+    cy.visit('/wrapped.eth')
     cy.findByTestId('more-tab').click()
     cy.findByTestId('edit-fuses-button').click()
     cy.findByTestId('burn-button-PARENT_CANNOT_CONTROL', { timeout: 2000 }).should('not.exist')

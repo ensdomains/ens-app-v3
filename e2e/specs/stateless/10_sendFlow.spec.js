@@ -8,7 +8,7 @@ describe('Send Flow', () => {
   })
   describe('Happy', () => {
     it('Should allow owner to change manager', () => {
-      cy.visit('/profile/test123.eth')
+      cy.visit('/test123.eth')
       cy.findByText('More').click()
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
@@ -21,7 +21,7 @@ describe('Send Flow', () => {
     })
     it('Should allow manager to change manager when they are not the owner', () => {
       acceptMetamaskAccess(1)
-      cy.visit('/profile/test123.eth')
+      cy.visit('/test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       //Should not allow the manager to change the owner
@@ -36,7 +36,7 @@ describe('Send Flow', () => {
     })
     it('Should allow owner to change owner', () => {
       acceptMetamaskAccess(2)
-      cy.visit('/profile/test123.eth')
+      cy.visit('/test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('manager-checkbox').click()
@@ -50,7 +50,7 @@ describe('Send Flow', () => {
     })
     it('Should allow owner to change manager if they are not the manager', () => {
       acceptMetamaskAccess(1)
-      cy.visit('/profile/test123.eth')
+      cy.visit('/test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('owner-checkbox').click()
@@ -65,7 +65,7 @@ describe('Send Flow', () => {
 
     it('Should allow owner to change owner and manager', () => {
       acceptMetamaskAccess(1)
-      cy.visit('/profile/test123.eth')
+      cy.visit('/test123.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')

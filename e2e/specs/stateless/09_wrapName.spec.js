@@ -5,23 +5,23 @@ describe('Wrap Name', () => {
     acceptMetamaskAccess(2, true)
   })
   it('should not show wrap notification if the connected wallet is not the registrant', () => {
-    cy.visit('/profile/other-registrant.eth')
+    cy.visit('/other-registrant.eth')
     connectFromExisting()
     cy.findByTestId('wrapper-cta-container').should('not.exist')
   })
   it('should not show wrap notification if the name is already wrapped', () => {
-    cy.visit('/profile/wrapped.eth')
+    cy.visit('/wrapped.eth')
     connectFromExisting()
     cy.findByTestId('wrapper-cta-container').should('not.exist')
   })
   it('should show wrap notification on unwrapped name', () => {
-    cy.visit('/profile/to-be-wrapped.eth')
+    cy.visit('/to-be-wrapped.eth')
     connectFromExisting()
     cy.findByTestId('wrapper-cta-container').should('be.visible')
     cy.findByTestId('wrapper-cta-button').should('contain.text', 'Upgrade')
   })
   it('should wrap name', () => {
-    cy.visit('/profile/to-be-wrapped.eth')
+    cy.visit('/to-be-wrapped.eth')
     connectFromExisting()
 
     // should migrate the profile
@@ -43,7 +43,7 @@ describe('Wrap Name', () => {
     cy.findByTestId('wrapper-cta-container').should('not.exist')
   })
   it('should show resume state if wrap steps are incomplete', () => {
-    cy.visit('/profile/resume-and-wrap.eth')
+    cy.visit('/resume-and-wrap.eth')
     connectFromExisting()
     cy.findByTestId('wrapper-cta-button').click()
     cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
@@ -70,7 +70,7 @@ describe('Wrap Name', () => {
     cy.findByTestId('wrapper-cta-container').should('not.exist')
   })
   it('should allow wrapping a subdomain', () => {
-    cy.visit('/profile/sub.unwrapped-with-wrapped-subnames.eth')
+    cy.visit('/sub.unwrapped-with-wrapped-subnames.eth')
     connectFromExisting()
     cy.findByTestId('wrapper-cta-container').should('be.visible')
     cy.findByTestId('wrapper-cta-button').should('contain.text', 'Upgrade')
