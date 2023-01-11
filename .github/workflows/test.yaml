@@ -127,7 +127,7 @@ jobs:
 
       - name: Run tests
         run: |
-          Xvfb :20 -screen 0 800x600x16 &
+          Xvfb :20 -screen 0 1920x1080x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           DISPLAY=:20 pnpm e2e:ci -nb
@@ -192,7 +192,7 @@ jobs:
 
       - name: Run tests
         run: |
-          Xvfb :20 -screen 0 800x600x16 &
+          Xvfb :20 -screen 0 1920x1080x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           parallel --lb --halt now,success=1,fail=1 ::: \
