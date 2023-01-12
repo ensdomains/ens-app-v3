@@ -87,3 +87,7 @@ export type RegistrationReducerAction =
       name: 'resetSecret'
       selected: SelectedItemProperties
     }
+  | {
+      name: 'gotoMoonpayStep'
+      selected: SelectedItemProperties
+    }
