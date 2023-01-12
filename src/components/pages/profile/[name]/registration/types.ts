@@ -35,6 +35,7 @@ export type SelectedItemProperties = { address: string; name: string }
 export type RegistrationReducerDataItem = RegistrationData & {
   stepIndex: number
   queue: RegistrationStep[]
+  isMoonpayFlow: boolean
 } & SelectedItemProperties
 
 export type RegistrationReducerData = {

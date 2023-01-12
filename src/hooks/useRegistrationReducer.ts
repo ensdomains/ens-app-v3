@@ -23,6 +23,7 @@ const defaultData: RegistrationReducerDataItem = {
   started: false,
   address: '',
   name: '',
+  isMoonpayFlow: false,
 }
 
 const isBrowser = !!(
@@ -41,6 +42,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   permissions: {},
   secret: randomSecret(),
   started: false,
+  isMoonpayFlow: false,
   ...selected,
 })
 
@@ -83,6 +85,11 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'increaseStep': {
+      item.stepIndex += 1
+      break
+    }
+    case 'gotoMoonpayStep': {
+      item.isMoonpayFlow = true
       item.stepIndex += 1
       break
     }

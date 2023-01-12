@@ -21,6 +21,7 @@ import { getLabelFromName, isLabelTooLong, labelHashCalc } from '@app/utils/util
 
 import Complete from './steps/Complete'
 import Info, { PaymentMethod } from './steps/Info'
+import { MoonpayWait } from './steps/MoonpayWait'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
@@ -75,8 +76,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
-  console.log('nameDetails: ', nameDetails)
-  console.log('normalisedName', normalisedName)
+  console.log('item: ', item)
 
   const { data: moonpayUrl } = useQuery(
     ['moonpayUrl', normalisedName, chainId],
@@ -170,6 +170,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       return
     }
     setHasMoonpayModal(true)
+    dispatch({ name: 'gotoMoonpayStep', selected })
   }
 
   useEffect(() => {
@@ -232,7 +233,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   hasPrimaryName={!!primaryName}
                 />
               ),
-              transactions: (
+              transactions: item.isMoonpayFlow ? (
+                <MoonpayWait />
+              ) : (
                 <Transactions
                   nameDetails={nameDetails}
                   registrationData={item}
