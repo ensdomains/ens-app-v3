@@ -1,9 +1,6 @@
 {
   "name": "ens-app-v2",
   "version": "0.1.123",
-  "workspaces": [
-    "./functions"
-  ],
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
@@ -28,18 +25,20 @@
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
-    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" RPC_URL=http://127.0.0.1:8545 PASSWORD=TestMetaMask NETWORK_NAME=localhost CHAIN_ID=1337 synpress run -ne -cf ./e2e/synpress.config.js",
+    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
-    "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID",
+    "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID --group stateless",
     "synpress:ci:stateful": "pnpm synpress:stateful --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2",
     "e2e": "E2E=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
     "e2e:ci": "E2E=true CI=true STABLE_MODE=true SLOW_MODE=true pnpm tenv start --extra-time 11368000",
     "e2e:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:stateful",
     "e2e:ci:stateful": "E2E=true pnpm buildandstart & wait-on http://localhost:3000 && pnpm synpress:ci:stateful",
     "postinstall": "husky install",
-    "update:local:ensjs": "yalc add @ensdomains/ensjs && pnpm",
-    "update:local:thorin": "yalc add @ensdomains/thorin && pnpm",
+    "local:add:ensjs": "yalc add @ensdomains/ensjs --workspace && pnpm install",
+    "local:remove:ensjs": "node ./scripts/removeWorkspace.mjs @ensdomains/ensjs && yalc remove @ensdomains/ensjs && pnpm install",
+    "local:add:thorin": "yalc add @ensdomains/thorin --workspace && pnpm install",
+    "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
     "wrangle": "next build && next export && npx wrangler pages dev ./out",
     "wrangle:dev": "wrangler pages dev ./next",
     "generate:sitemaps": "node ./generate-site-map.mjs",
@@ -47,7 +46,7 @@
     "compose": "cp ./node_modules/@ensdomains/ens-test-env/src/docker-compose.yml ./docker-compose.yml"
   },
   "dependencies": {
-    "@ensdomains/address-encoder": "^0.2.18",
+    "@ensdomains/address-encoder": "^0.2.20",
     "@ensdomains/content-hash": "^2.5.7",
     "@ensdomains/dnsprovejs": "0.4.1",
     "@ensdomains/dnssecoraclejs": "^0.2.7",
@@ -67,6 +66,7 @@
     "calendar-link": "^2.2.0",
     "dns-packet": "^5.4.0",
     "ethers": "^5.7.0",
+    "glob": "^8.0.3",
     "i18next": "^21.9.1",
     "i18next-browser-languagedetector": "^6.1.5",
     "i18next-http-backend": "^1.4.1",
@@ -108,7 +108,7 @@
     "@nomiclabs/hardhat-ethers": "npm:hardhat-deploy-ethers@^0.3.0-beta.13",
     "@openzeppelin/contracts": "^4.7.3",
     "@openzeppelin/test-helpers": "^0.5.16",
-    "@synthetixio/synpress": "2.3.3",
+    "@synthetixio/synpress": "3.0.5",
     "@testing-library/cypress": "^8.0.3",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.1.5",
@@ -194,7 +194,7 @@
     "patchedDependencies": {
       "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "@synthetixio/synpress@2.3.3": "patches/@synthetixio__synpress@2.3.3.patch"
+      "@synthetixio/synpress@3.0.5": "patches/@synthetixio__synpress@3.0.5.patch"
     }
   }
 }

@@ -333,7 +333,7 @@ const OwnerButtonWithDropdown = ({
       {
         label: t('address.viewAddress'),
         color: 'text',
-        onClick: () => router.push(`/address/${address}`),
+        onClick: () => router.pushWithHistory(`/address/${address}`),
       },
       {
         label: t('address.copyAddress'),
@@ -345,7 +345,7 @@ const OwnerButtonWithDropdown = ({
       items[0] = {
         label: t('wallet.viewProfile'),
         color: 'text',
-        onClick: () => router.push(`/profile/${primary}`),
+        onClick: () => router.pushWithHistory(`/profile/${primary}`),
       }
     }
     if (transfer?.canTransfer) {

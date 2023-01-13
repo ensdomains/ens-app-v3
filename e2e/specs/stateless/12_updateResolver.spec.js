@@ -11,7 +11,7 @@ describe('Update Resolver', () => {
   describe('Happy', () => {
     describe('When profile is updated to latest resolver', () => {
       it('should disable the latest resolver button, have custom resolver checked, and allow user to change reslover address', () => {
-        cy.visit('/profile/wrapped.eth')
+        cy.visit('/wrapped.eth')
         cy.findByTestId('more-tab').click()
         cy.findByTestId('edit-resolver-button').click()
         cy.findByTestId('latest-resolver-radio').should('be.disabled')
@@ -27,7 +27,7 @@ describe('Update Resolver', () => {
 
     describe('When profile is not updated to latest resolver', () => {
       it('should allow user to update if they have chosen to use the latest resolver', () => {
-        cy.visit('/profile/wrapped.eth')
+        cy.visit('/wrapped.eth')
         cy.findByTestId('more-tab').click()
         cy.findByTestId('edit-resolver-button').click()
         cy.findByTestId('update-button').click()

@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -7,6 +6,7 @@ import { useAccount, useQuery } from 'wagmi'
 import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Helper, Typography } from '@ensdomains/thorin'
 
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
@@ -194,7 +194,7 @@ export const ClaimDomain = ({
           <Helper type="info" style={{ textAlign: 'center' }}>
             <StyledTypography>
               {t('claimDomain.pendingTransactionPre')}{' '}
-              <Link href="/my/settings">{t('claimDomain.pendingTransactionLink')}</Link>{' '}
+              <BaseLink href="/my/settings">{t('claimDomain.pendingTransactionLink')}</BaseLink>{' '}
               {t('claimDomain.pendingTransactionPost')}
             </StyledTypography>
           </Helper>

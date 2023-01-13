@@ -1,9 +1,9 @@
-import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Typography, mq } from '@ensdomains/thorin'
 
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { faqOptions } from '@app/constants/faq'
 import { Content } from '@app/layouts/Content'
 
@@ -74,12 +74,12 @@ export default function Page() {
         trailing: (
           <OptionContainer>
             {faqOptions.map(({ title, slug, icon: Icon }) => (
-              <Link href={`/faq/${slug}`} passHref key={title}>
+              <BaseLink href={`/faq/${slug}`} passHref key={title}>
                 <OptionItem>
                   <Icon />
                   <Typography>{t(`option.${title}`)}</Typography>
                 </OptionItem>
-              </Link>
+              </BaseLink>
             ))}
           </OptionContainer>
         ),

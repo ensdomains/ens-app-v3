@@ -10,6 +10,7 @@ import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { useCopied } from '@app/hooks/useCopied'
 import { usePrimary } from '@app/hooks/usePrimary'
+import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
@@ -265,7 +266,7 @@ export const OwnerProfileButton = ({
 
   return (
     <ProfileButton
-      link={isExpiry ? undefined : `/address/${address}`}
+      link={isExpiry ? undefined : (getDestination(`/address/${address}`) as string)}
       value={address}
       prefixSize="max"
       prefix={

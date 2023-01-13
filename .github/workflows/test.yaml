@@ -94,9 +94,11 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]
+        node-version: [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12]
     steps:
       - uses: actions/checkout@v3
+      - run: ./scripts/check-chrome.sh
+
       - uses: pnpm/action-setup@v2.2.2
         with:
           version: 7.8.0
@@ -125,13 +127,15 @@ jobs:
 
       - name: Run tests
         run: |
-          Xvfb :20 -screen 0 1366x768x16 &
+          Xvfb :20 -screen 0 800x600x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           DISPLAY=:20 pnpm e2e:ci -nb
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
-          CI_BUILD_ID: stateless-${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+          CI_BUILD_ID: ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_PAT: ${{ secrets.GH_PAT }}
 
       - uses: actions/upload-artifact@v2
         if: failure()
@@ -155,6 +159,7 @@ jobs:
 
     steps:
       - uses: actions/checkout@v3
+      - run: ./scripts/check-chrome.sh
 
       - uses: pnpm/action-setup@v2.2.2
         with:
@@ -182,18 +187,23 @@ jobs:
       - name: Install window server
         run: sudo apt-get install -y fluxbox
 
+      - name: Check chrome version
+        run: google-chrome --product-version
+
       - name: Run tests
         run: |
-          Xvfb :20 -screen 0 1366x768x16 &
+          Xvfb :20 -screen 0 800x600x16 &
           sleep 1 &&
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm start" \
-          "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }}"
+          "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }} --group stateful"
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
           SECRET_WORDS: ${{ secrets.SECRET_WORDS }}
+          GH_USERNAME: ${{ secrets.GH_USERNAME }}
+          GH_PAT: ${{ secrets.GH_PAT }}
 
       - uses: actions/upload-artifact@v2
         if: failure()

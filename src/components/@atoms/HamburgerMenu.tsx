@@ -1,9 +1,10 @@
-import Link from 'next/link'
 import { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
+
+import BaseLink from './BaseLink'
 
 export interface HamburgerItem {
   label: string
@@ -46,9 +47,9 @@ export const HamburgerMenu = ({
           ? {
               ...item,
               wrapper: (children, key) => (
-                <Link href={item.disabled ? '' : item.href!} key={key}>
+                <BaseLink href={item.disabled ? '' : item.href!} passHref key={key}>
                   {children}
-                </Link>
+                </BaseLink>
               ),
               label: t(item.label),
               as: 'a',

@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -6,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
@@ -154,7 +154,7 @@ export const ProfileSnippet = ({
   canEdit?: boolean
   network: number
 }) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
   const { showDataInput } = useTransactionFlow()
@@ -186,14 +186,7 @@ export const ProfileSnippet = ({
     if (button === 'viewProfile')
       return (
         <Button
-          onClick={() =>
-            router.push({
-              pathname: `/profile/${name}`,
-              query: {
-                from: router.asPath,
-              },
-            })
-          }
+          onClick={() => router.pushWithHistory(`/profile/${name}`)}
           size="small"
           shadowless
           variant="secondary"

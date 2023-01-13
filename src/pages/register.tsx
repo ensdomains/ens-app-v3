@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { ReactElement } from 'react'
 import { useAccount } from 'wagmi'
 
@@ -6,10 +5,11 @@ import Registration from '@app/components/pages/profile/[name]/registration/Regi
 import { useInitial } from '@app/hooks/useInitial'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { getSelectedIndex } from '@app/hooks/useRegistrationReducer'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { ContentGrid } from '@app/layouts/ContentGrid'
 
 export default function Page() {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const name = router.query.name as string
 
   const initial = useInitial()

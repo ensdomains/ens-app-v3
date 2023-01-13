@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { ReactNode, useCallback, useEffect, useRef } from 'react'
 import useTransition, { TransitionState } from 'react-transition-state'
@@ -14,6 +13,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
+import BaseLink from './@atoms/BaseLink'
 import { HamburgerMenu } from './@atoms/HamburgerMenu'
 import { RouteItem } from './@atoms/RouteItem/RouteItem'
 import { SearchInput } from './@molecules/SearchInput/SearchInput'
@@ -212,9 +212,9 @@ export const Header = () => {
         <ConditionalWrapper
           condition={router.asPath !== '/'}
           wrapper={(children) => (
-            <Link passHref href="/">
+            <BaseLink passHref href="/">
               <LogoAnchor data-testid="home-button">{children}</LogoAnchor>
-            </Link>
+            </BaseLink>
           )}
         >
           {router.asPath === '/' ? (
