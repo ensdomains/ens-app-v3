@@ -155,6 +155,7 @@ const PaymentChoice = ({
   paymentMethodChoice,
   setPaymentMethodChoice,
   hasEnoughEth,
+  hasPendingMoonpayTransaction,
 }: {
   paymentMethodChoice: PaymentMethod
   setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod>>
@@ -168,7 +169,7 @@ const PaymentChoice = ({
       </StyledTitle>
       <Spacer $height="2" />
       <StyledRadioButtonGroup
-        value={paymentMethodChoice}
+        value={hasPendingMoonpayTransaction ? PaymentMethod.moonpay : paymentMethodChoice}
         onChange={(e) => setPaymentMethodChoice(e.target.value as PaymentMethod)}
       >
         <RadioButtonContainer>
@@ -177,6 +178,7 @@ const PaymentChoice = ({
             name="RadioButtonGroup"
             value={PaymentMethod.ethereum}
             labelRight
+            disabled={hasPendingMoonpayTransaction}
           />
           {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
             <>
@@ -251,6 +253,7 @@ const Info = ({
   resolverExists,
   hasPrimaryName,
   nameDetails,
+  transactionStatus,
 }: Props) => {
   const { t } = useTranslation('register')
   const [paymentMethodChoice, setPaymentMethodChoice] = useState(PaymentMethod.ethereum)
@@ -280,6 +283,8 @@ const Info = ({
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
   const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
   const hasEnoughEth = !balance?.value.lt(totalRequiredBalance || 0)
+  const hasPendingMoonpayTransaction = transactionStatus === 'pending'
+  const hasFailedMoonpayTransaction = transactionStatus === 'failed'
 
   console.log('totalRequiredBalance: ', totalRequiredBalance)
   console.log('hasEnoughtEth: ', hasEnoughEth)
@@ -294,23 +299,51 @@ const Info = ({
           <Typography>{t('steps.info.setupProfile')}</Typography>
         </ProfileButton>
       )}
-      <PaymentChoice {...{ paymentMethodChoice, setPaymentMethodChoice, hasEnoughEth }} />
+      <PaymentChoice
+        {...{
+          paymentMethodChoice,
+          setPaymentMethodChoice,
+          hasEnoughEth,
+          hasPendingMoonpayTransaction,
+        }}
+      />
+      {hasPendingMoonpayTransaction && (
+        <Helper type="info">
+          Your moonpay transaction is processing. This may take up to two minutes. You can check
+          your progress from the confirmation email you recieved.
+        </Helper>
+      )}
+      {hasFailedMoonpayTransaction && (
+        <Helper type="error">Your moonpay transaction has failed. Please try again.</Helper>
+      )}
       <ButtonContainer>
-        <MobileFullWidth>
-          <Button shadowless variant="secondary" onClick={() => callback({ back: true })}>
-            {t('action.back', { ns: 'common' })}
-          </Button>
-        </MobileFullWidth>
-        <MobileFullWidth>
-          <Button
-            disabled={paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth}
-            data-testid="next-button"
-            shadowless
-            onClick={() => callback({ paymentMethodChoice })}
-          >
-            {t('action.begin', { ns: 'common' })}
-          </Button>
-        </MobileFullWidth>
+        {!hasPendingMoonpayTransaction && (
+          <MobileFullWidth>
+            <Button shadowless variant="secondary" onClick={() => callback({ back: true })}>
+              {t('action.back', { ns: 'common' })}
+            </Button>
+          </MobileFullWidth>
+        )}
+        {hasPendingMoonpayTransaction ? (
+          <MobileFullWidth>
+            <Button data-testid="next-button" shadowless disabled loading>
+              Processing
+            </Button>
+          </MobileFullWidth>
+        ) : (
+          <MobileFullWidth>
+            <Button
+              disabled={paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth}
+              data-testid="next-button"
+              shadowless
+              onClick={() => callback({ paymentMethodChoice })}
+            >
+              {hasFailedMoonpayTransaction
+                ? t('action.tryAgain', { ns: 'common' })
+                : t('action.begin', { ns: 'common' })}
+            </Button>
+          </MobileFullWidth>
+        )}
       </ButtonContainer>
     </StyledCard>
   )

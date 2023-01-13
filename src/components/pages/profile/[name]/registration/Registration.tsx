@@ -1,6 +1,7 @@
 import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import { useAccount, useQuery } from 'wagmi'
 
@@ -21,7 +22,6 @@ import { getLabelFromName, isLabelTooLong, labelHashCalc } from '@app/utils/util
 
 import Complete from './steps/Complete'
 import Info, { PaymentMethod } from './steps/Info'
-import { MoonpayWait } from './steps/MoonpayWait'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
@@ -50,9 +50,94 @@ const StyledDialog = styled(Dialog)(
   `,
 )
 
+// We dont' need to save the externalTransactionId until the state switches to pending
+// If the status of the current transaction is anything other than pending then it
+// can be overwritten, we will just start a new flow
+const useMoonpayRegistration = (dispatch, normalisedName, selected, item) => {
+  // const previousExternalTransactionId = usePrevious(externalTransactionId)
+  const chainId = useChainId()
+  const [hasMoonpayModal, setHasMoonpayModal] = useState(false)
+  const [moonpayUrl, setMoonpayUrl] = useState('')
+  const [currentExternalTransactionId, setCurrentExternalTransactionId] = useState('')
+
+  useEffect(() => {
+    if (item.externalTransactionId) {
+      console.log('setCurrentExternalTransactionId: ', item.externalTransactionId)
+      setCurrentExternalTransactionId(item.externalTransactionId)
+    }
+  }, [item.externalTransactionId])
+
+  const initiateMoonpayRegistration = async () => {
+    const label = getLabelFromName(normalisedName)
+    const tokenId = labelHashCalc(label)
+    const requestUrl = `${MOONPAY_LINK_GENERATOR_URL[chainId]}?tokenId=${tokenId}&name=${normalisedName}&duration=1`
+    const response = await fetch(requestUrl)
+    const textResponse = await response.text()
+    console.log('textResponse: ', textResponse)
+    setMoonpayUrl(textResponse)
+
+    const params = new Proxy(new URLSearchParams(textResponse), {
+      get: (searchParams, prop) => searchParams.get(prop),
+    })
+    // const { externalTransactionId } = params
+    console.log('externalId: ', params.externalTransactionId)
+
+    setCurrentExternalTransactionId(params.externalTransactionId)
+    setHasMoonpayModal(true)
+  }
+
+  // Monitor current transaction
+  const { data: transactionData } = useQuery(
+    ['currentExternalTransactionId', currentExternalTransactionId],
+    async () => {
+      const response = await fetch(
+        `https://moonpay-goerli.ens-cf.workers.dev/transactionInfo?externalTransactionId=${currentExternalTransactionId}`,
+      )
+      const jsonResult = (await response.json()) as Array
+      const result = jsonResult?.[0]
+      console.log('result: ', result)
+      console.log('result.status: ', result?.status)
+
+      if (result?.status === 'pending') {
+        dispatch({
+          name: 'setExternalTransactionId',
+          externalTransactionId: currentExternalTransactionId,
+          selected,
+        })
+      }
+
+      if (result?.status === 'completed') {
+        dispatch({
+          name: 'moonpayTransactionCompleted',
+          selected,
+        })
+      }
+
+      return result || {}
+    },
+    {
+      refetchOnWindowFocus: true,
+      refetchOnMount: true,
+      refetchInterval: 1000,
+      refetchIntervalInBackground: true,
+      enabled: !!currentExternalTransactionId,
+    },
+  )
+
+  console.log('transactionData: ', transactionData)
+
+  return {
+    moonpayUrl,
+    initiateMoonpayRegistration,
+    hasMoonpayModal,
+    setHasMoonpayModal,
+    currentExternalTransactionId,
+    transactionStatus: transactionData?.status,
+  }
+}
+
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
-  const chainId = useChainId()
 
   const router = useRouterWithHistory()
   const { address } = useAccount()
@@ -64,8 +149,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     normalisedName,
     defaultResolverAddress,
   )
-  const [hasMoonpayModal, setHasMoonpayModal] = useState(false)
-
   const labelTooLong = isLabelTooLong(normalisedName)
   const { dispatch, item } = useRegistrationReducer(selected)
   const step = item.queue[item.stepIndex]
@@ -76,24 +159,15 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
+  const {
+    moonpayUrl,
+    initiateMoonpayRegistration,
+    hasMoonpayModal,
+    setHasMoonpayModal,
+    transactionStatus,
+  } = useMoonpayRegistration(dispatch, normalisedName, selected, item)
+
   console.log('item: ', item)
-
-  const { data: moonpayUrl } = useQuery(
-    ['moonpayUrl', normalisedName, chainId],
-    async () => {
-      const label = getLabelFromName(normalisedName)
-      const tokenId = labelHashCalc(label)
-      const requestUrl = `${MOONPAY_LINK_GENERATOR_URL[chainId]}?tokenId=${tokenId}&name=${normalisedName}&duration=1`
-      const response = await fetch(requestUrl)
-      const textResponse = await response.text()
-      return textResponse
-    },
-    {
-      enabled: !!normalisedName && !!chainId,
-    },
-  )
-
-  console.log('moonpayUrl', moonpayUrl)
 
   const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
@@ -169,8 +243,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       dispatch({ name: 'increaseStep', selected })
       return
     }
-    setHasMoonpayModal(true)
-    dispatch({ name: 'gotoMoonpayStep', selected })
+    // setHasMoonpayModal(true)
+    // dispatch({ name: 'increaseStep', selected })
+    initiateMoonpayRegistration()
   }
 
   useEffect(() => {
@@ -231,11 +306,10 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   callback={infoCallback}
                   onProfileClick={infoProfileCallback}
                   hasPrimaryName={!!primaryName}
+                  transactionStatus={transactionStatus}
                 />
               ),
-              transactions: item.isMoonpayFlow ? (
-                <MoonpayWait />
-              ) : (
+              transactions: (
                 <Transactions
                   nameDetails={nameDetails}
                   registrationData={item}
@@ -248,15 +322,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
-      <StyledDialog
-        open={hasMoonpayModal}
-        onDismiss={() => setHasMoonpayModal(false)}
-        variant="closable"
-      >
+      <StyledDialog open={hasMoonpayModal} variant="actionable">
         <iframe title="Moonpay Checkout" width="100%" height="90%" src={moonpayUrl} />
       </StyledDialog>
     </>
   )
 }
+
+// hasPendingMoonpayTransaction={transactionStatus === 'pending'}
 
 export default Registration

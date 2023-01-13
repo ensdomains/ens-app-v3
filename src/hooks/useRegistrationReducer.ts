@@ -24,6 +24,7 @@ const defaultData: RegistrationReducerDataItem = {
   address: '',
   name: '',
   isMoonpayFlow: false,
+  externalTransactionId: '',
 }
 
 const isBrowser = !!(
@@ -43,19 +44,23 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   secret: randomSecret(),
   started: false,
   isMoonpayFlow: false,
+  externalTransactionId: '',
   ...selected,
 })
 
 export const getSelectedIndex = (
   state: RegistrationReducerData,
   selected: SelectedItemProperties,
-) => state.items.findIndex((x) => x.address === selected.address && x.name === selected.name)
+) => state.items.findIndex((x) => x.address === selected?.address && x.name === selected?.name)
 
 /* eslint-disable no-param-reassign */
 const reducer = (state: RegistrationReducerData, action: RegistrationReducerAction) => {
   let selectedItemInx = getSelectedIndex(state, action.selected)
 
   if (!isBrowser) return
+
+  console.log('state: ', state.items)
+  console.log('action: ', action)
 
   if (selectedItemInx === -1) {
     selectedItemInx = state.items.push(makeDefaultData(action.selected)) - 1
@@ -85,12 +90,19 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'increaseStep': {
+      console.log('*increaseStep*')
       item.stepIndex += 1
       break
     }
-    case 'gotoMoonpayStep': {
+    case 'setExternalTransactionId': {
+      console.log('*setExternalTransactionId*')
       item.isMoonpayFlow = true
-      item.stepIndex += 1
+      item.externalTransactionId = action.externalTransactionId
+      break
+    }
+    case 'moonpayTransactionCompleted': {
+      item.externalTransactionId = ''
+      item.stepIndex += 2
       break
     }
     case 'setPricingData': {
@@ -105,6 +117,11 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     }
     case 'setStarted': {
       item.started = true
+      break
+    }
+    case 'setMoonpayFlow': {
+      item.isMoonpayFlow = action.isMoonpayFlow
+      item.externalTransactionId = action.externalTransactionId
       break
     }
     case 'setProfileData': {

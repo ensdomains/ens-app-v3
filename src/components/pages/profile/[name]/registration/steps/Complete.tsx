@@ -119,21 +119,21 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const registerTxFlow = getLatestTransaction(registerKey)
 
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
-    hash: commitTxFlow!.hash,
+    hash: commitTxFlow?.hash,
   })
   const {
     response: registerResponse,
     receipt: registerReceipt,
     isLoading: registerLoading,
-  } = useTransactionResponseReceipt(registerTxFlow!.hash!)
+  } = useTransactionResponseReceipt(registerTxFlow?.hash!)
   const isLoading = commitLoading || registerLoading
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
     const { value } = registerResponse!
-    const commitNetFee = commitReceipt!.gasUsed.mul(commitReceipt!.effectiveGasPrice)
+    const commitNetFee = commitReceipt?.gasUsed.mul(commitReceipt!.effectiveGasPrice)
     const registerNetFee = registerReceipt!.gasUsed.mul(registerReceipt!.effectiveGasPrice)
-    const totalNetFee = commitNetFee.add(registerNetFee)
+    const totalNetFee = commitNetFee?.add(registerNetFee)
 
     return (
       <Invoice
