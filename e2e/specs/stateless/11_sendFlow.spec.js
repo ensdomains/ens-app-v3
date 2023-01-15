@@ -45,7 +45,7 @@ describe('Send Flow', () => {
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.findByTestId('owner-button-name-name.manager').should('have.text', '0xf39...92266')
     })
-    it('Should allow unwrapped subname to be sent by unwraped parent owner (setSubnodeOwner)', () => {
+    it('Should allow unwrapped subname to be sent by unwrapped parent owner (setSubnodeOwner)', () => {
       acceptMetamaskAccess(2)
       cy.visit('/sub.test123.eth')
       cy.findByText('More').click({ force: true })
