@@ -6,6 +6,7 @@ import styled, { css, useTheme } from 'styled-components'
 import { Button, CloseSVG, Input, PlusSVG, SearchSVG } from '@ensdomains/thorin'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
+import { formSafeKey } from '@app/utils/editor'
 
 const Container = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
@@ -348,7 +349,7 @@ export const AddRecordButton = ({
 
   const handleInputAction = () => {
     if (inputActionType === 'create' && onAddRecord) {
-      onAddRecord(inputValue)
+      onAddRecord(formSafeKey(inputValue))
     }
     toggle(false)
     setInputValue('')
@@ -394,6 +395,7 @@ export const AddRecordButton = ({
             type="button"
             $accented={inputActionType === 'create'}
             onClick={handleInputAction}
+            data-testid="add-record-button-input-action"
           >
             {inputActionType === 'create'
               ? t('action.add', { ns: 'common' })
