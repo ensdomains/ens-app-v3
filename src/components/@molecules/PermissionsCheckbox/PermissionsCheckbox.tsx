@@ -5,7 +5,6 @@ import { CheckSVG, Typography } from '@ensdomains/thorin'
 
 type Props = {
   title: string
-  description: string
 } & InputHTMLAttributes<HTMLInputElement>
 
 const Container = styled.div(
@@ -58,6 +57,7 @@ const Circle = styled.div(
     align-items: center;
     justify-content: center;
 
+    flex: 0 0 ${theme.space['7']};
     width: ${theme.space['7']};
     height: ${theme.space['7']};
     border-radius: ${theme.radii.full};
@@ -82,7 +82,7 @@ const Content = styled.div(
 )
 
 export const PermissionsCheckbox = forwardRef<HTMLInputElement, Props>(
-  ({ title, description, name, ...props }, ref) => {
+  ({ title, name, ...props }, ref) => {
     const defaultRef = useRef<HTMLInputElement>(null)
     const inputRef = ref || defaultRef
     return (
@@ -95,9 +95,6 @@ export const PermissionsCheckbox = forwardRef<HTMLInputElement, Props>(
           <Content>
             <Typography typography="Body/Bold" color="text">
               {title}
-            </Typography>
-            <Typography typography="Small/Normal" color="text">
-              {description}
             </Typography>
           </Content>
         </Label>

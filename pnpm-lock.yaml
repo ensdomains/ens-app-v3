@@ -40,7 +40,7 @@ importers:
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.37
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': 0.6.22-alpha-3
+      '@ensdomains/thorin': 0.6.22-alpha-5
       '@ethersproject/providers': ^5.7.0
       '@next/bundle-analyzer': ^12.2.5
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -159,7 +159,7 @@ importers:
       '@ensdomains/ens-validation': 0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.37_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.22-alpha-3_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.22-alpha-5_6haozuff5ofofiwuoke6ixqiri
       '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_wiydppdk2wtsgvuygzl3yf3yma
       '@sentry/nextjs': 7.14.1_next@12.1.6+react@17.0.2
       '@svgr/webpack': 6.4.0
@@ -2335,8 +2335,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.22-alpha-3_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-8FxdEm0kSzgza0HyjEs3Csa5yzvhcogalE7zqQBTUZeGMQ1WvmQKx0u4SbtDlwl7HK6ZjobDsynx1o6YV4lLjg==}
+  /@ensdomains/thorin/0.6.22-alpha-5_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-0unDFBKCHbjbfwncpgZAKKpDS2Ki3Zrj7AxvcaJdNt8Ss4csyaKxqNeiErLdf4asJQz8O+xNJ2Dfdm1bvx61bA==}
     peerDependencies:
       react: ^17
       react-dom: ^17

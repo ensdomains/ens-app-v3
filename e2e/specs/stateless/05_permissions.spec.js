@@ -1,0 +1,1 @@
+// Make sure the permissions tab is hidden for non-wrapped names and tlds

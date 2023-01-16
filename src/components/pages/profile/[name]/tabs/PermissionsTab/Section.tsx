@@ -126,6 +126,7 @@ export const SectionFooter = styled.div<{ $screen?: Screen }>(
     flex-direction: column;
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
+    border-top: ${theme.space.px} solid ${theme.colors.border};
 
     ${$screen === 'desktop' &&
     css`

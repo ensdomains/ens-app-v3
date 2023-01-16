@@ -143,6 +143,59 @@
       "title": "Transfer Profile",
       "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
       "message2": "Would you like to transfer your current profile?"
+    },
+    "revokePermissions": {
+      "views": {
+        "revokeWarning": {
+          "title": "This will make permanent changes",
+          "subtitle": "Permissions are an advanced feature that makes permanent changed to your name that will only be reset if the name expires. You will not be able to undo this.",
+          "subtitle2": "Make sure you are confident using this feature before proceeding. <infoLink>Learn more about permissions</infoLink>"
+        },
+        "revokePCC": {
+          "title": "Give up ownership",
+          "subtitle": "This will give ownership of this name to the manager (<manager>{{account}}</manager>). Unless you are also the manager, you will no longer be able to make changes to this name."
+        },
+        "setExpiry": {
+          "title": "Set name expiry",
+          "subtitle": "This name requires its own expiry date. This cannot be longer than the expiry of its parent (<parent>{{account}}</parent>)."
+        },
+        "revokeAdditional": {
+          "title": "Revoke permissions",
+          "subtitle": "Would you like to revoke permissions on this name before giving up ownership? This can only be done now.",
+          "action": {
+            "title": "Revoke additional permissions",
+            "description": "Unless you are also the manager, you will not be able to revoke additional permissions after this."
+          }
+        },
+        "revokeUnwrap": {
+          "title": "Revoke permissions",
+          "subtitle": "Permissions are a feature of wrapped names. You are required to revoke this permission before others can be revoked."
+        },
+        "revokePermissions": {
+          "title": "Revoke permissions",
+          "fuses": {
+            "CANNOT_BURN_FUSES": "Revoke permission to: Burn fuses",
+            "CANNOT_TRANSFER": "Revoke permission to: Transfer",
+            "CANNOT_SET_RESOLVER": "Revoke permission to: Set resolver",
+            "CANNOT_SET_TTL": "Revoke permission to: Set ttl",
+            "CANNOT_CREATE_SUBDOMAIN": "Revoke permission to: Create subdomains"
+          }
+        },
+        "revokeChangeFuses": {
+          "title": "Revoke permissions",
+          "subtitle": "By revoking this permission you are permanently losing the ability to change any remaining fuses. This will only be reset if the name expires.",
+          "fuses": {
+            "CANNOT_BURN_FUSES": "Revoke permission to: Change fuses"
+          }
+        },
+        "revokeChangeFusesWarning": {
+          "title": "Remaining permissions will not be revokable",
+          "subtitle": "By revoking this permission you are <strong>permanently</strong> losing the ability to change any remaining fuses. This will only be reset if the name expires."    
+        }
+      },
+      "action": {
+        "revoke": "Revoke"
+      }
     }
   },
   "transaction": {

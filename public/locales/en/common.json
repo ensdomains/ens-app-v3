@@ -38,7 +38,8 @@
     "begin": "Begin",
     "finish": "Finish",
     "skip": "Skip",
-    "changeNetwork": "Change Network"
+    "changeNetwork": "Change Network",
+    "understand": "I understand"
   },
   "unit": {
     "years_one": "{{count}} year",

@@ -1,13 +1,13 @@
-import { ComponentProps, Dispatch, PropsWithChildren, ReactNode, useState } from 'react'
+import { ComponentProps, Dispatch, ReactNode, useState } from 'react'
 import { Control, useForm, useWatch } from 'react-hook-form'
 import styled, { css } from 'styled-components'
 
 import type { NamedFusesToBurn } from '@ensdomains/ensjs'
-import { Button, Checkbox, Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
 
-import BurnFusesContent from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { PermissionsCheckbox } from '@app/components/@molecules/PermissionsCheckbox/PermissionsCheckbox'
 import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
+import { dateToDateTimeLocal } from '@app/utils/datetime-local'
 
 import { makeTransactionItem } from '../../transaction'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '../../types'
@@ -26,6 +26,8 @@ type View = 'burn' | 'expiry'
 
 type FormData = {
   burnPCC: boolean
+  expiryType: 'max' | 'custom'
+  expiryInput: string
 }
 
 const Form = styled.form(
@@ -45,6 +47,14 @@ const ControlledButton = ({ control, ...props }: ControlledButtonProps) => {
   return <Button {...props} disabled={!burnPCC} />
 }
 
+const ExpiryOptionsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    gap: ${theme.space['4']};
+  `,
+)
+
 const DateContainer = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['2']} ${theme.space['4']};
@@ -53,20 +63,25 @@ const DateContainer = styled.div(
   `,
 )
 
-export const BurnPCC = ({ data, onDismiss, dispatch }: Props) => {
+const BurnPCC = ({ data, onDismiss, dispatch }: Props) => {
   const { name } = data
   const { wrapperData } = useGetWrapperData((name as string) || '')
 
   const [view, setView] = useState<View>('burn')
 
-  const { register, watch, control } = useForm<FormData>({
+  const now = new Date(Date.now())
+  const date = new Date(Date.now() + 12096e5)
+
+  const min = dateToDateTimeLocal(now)
+  const max = dateToDateTimeLocal(date)
+
+  const { register, control, handleSubmit } = useForm<FormData>({
     defaultValues: {
       burnPCC: false,
+      expiryType: 'max',
+      expiryInput: max,
     },
   })
-
-  const test = watch('burnPCC')
-  console.log('watch', test)
 
   const onSubmit = (selectedFuses: NamedFusesToBurn, permissions: string[]) => {
     dispatch({
@@ -82,13 +97,6 @@ export const BurnPCC = ({ data, onDismiss, dispatch }: Props) => {
     dispatch({ name: 'setFlowStage', payload: 'transaction' })
   }
 
-  const date = (() => {
-    const now = new Date()
-    return new Date(now.getDate() + 7)
-  })()
-
-  console.log('date', typeof date, date)
-
   const views: { [key in View]: ReactNode } = {
     burn: (
       <div>
@@ -100,8 +108,9 @@ export const BurnPCC = ({ data, onDismiss, dispatch }: Props) => {
       </div>
     ),
     expiry: (
-      <div>
+      <ExpiryOptionsContainer>
         <RadioButton
+          value="max"
           label={
             <Typography typography="Body/Bold" color="text">
               Keep current (max)
@@ -110,25 +119,46 @@ export const BurnPCC = ({ data, onDismiss, dispatch }: Props) => {
           description={
             <DateContainer>
               <Typography typography="Small/Bold" color="text">
-                {`${date.getMonth()} ${date.getDate()}, ${date.getFullYear()}`}
+                {`${date.toLocaleDateString(undefined, {
+                  month: 'short',
+                  day: 'numeric',
+                  year: 'numeric',
+                })}`}
               </Typography>
               <Typography typography="Small/Normal" color="grey">
-                date
+                {`${date.toLocaleTimeString(undefined, {
+                  hour: 'numeric',
+                  minute: 'numeric',
+                  second: 'numeric',
+                  hour12: false,
+                  timeZoneName: 'longOffset',
+                })} `}
               </Typography>
             </DateContainer>
           }
+          {...register('expiryType')}
         />
         <RadioButton
+          value="custom"
           label={
             <Typography typography="Body/Bold" color="text">
               Choose an earlier date
             </Typography>
           }
           description={
-            <Input label="custom-expiry" hideLabel type="datetime-local" clearable={false} />
+            <Input
+              label="custom-expiry"
+              hideLabel
+              type="datetime-local"
+              clearable={false}
+              min={min}
+              max={max}
+              {...register('expiryInput')}
+            />
           }
+          {...register('expiryType')}
         />
-      </div>
+      </ExpiryOptionsContainer>
     ),
   }
 

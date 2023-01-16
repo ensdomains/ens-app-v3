@@ -8,6 +8,7 @@ import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
 import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
+import type { Props as RevokePermissionsProps } from './RevokePermissions/RevokePermissions-flow'
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
 import type { Props as SendNameProps } from './SendName-flow'
 import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile-flow'
@@ -34,6 +35,9 @@ const ExtendNames = dynamicHelper<ExtendNamesProps>('ExtendNames/ExtendNames')
 const BurnFuses = dynamicHelper<BurnFusesProps>('BurnFuses/BurnFuses')
 const SendName = dynamicHelper<SendNameProps>('SendName')
 const BurnPCC = dynamicHelper<BurnPCCProps>('BurnPCC/BurnPCC')
+const RevokePermissions = dynamicHelper<RevokePermissionsProps>(
+  'RevokePermissions/RevokePermissions',
+)
 
 export const DataInputComponents = {
   EditResolver,
@@ -46,6 +50,7 @@ export const DataInputComponents = {
   BurnFuses,
   SendName,
   BurnPCC,
+  RevokePermissions,
 }
 
 export type DataInputName = keyof typeof DataInputComponents
