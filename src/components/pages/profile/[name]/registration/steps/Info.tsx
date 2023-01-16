@@ -261,7 +261,7 @@ const Info = ({
 
   const { t } = useTranslation('register')
   const [paymentMethodChoice, setPaymentMethodChoice] = useState(
-    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : PaymentMethod.ethereum,
+    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
   )
   const { address } = useAccount()
   const { data: balance } = useBalance({ addressOrName: address })
