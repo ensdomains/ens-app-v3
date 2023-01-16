@@ -47,11 +47,11 @@ jobs:
           "pnpm tenv start -ng -ns -nb" \
           "pnpm wait-on ./.env.local"'
 
-      - name: Build stateless
-        run: pnpm build:glocal
+      - name: Build stateless and export
+        run: pnpm build:glocal && pnpm export
 
       - name: Tar stateless files
-        run: tar -cvf stateless-build.tar .next
+        run: tar -cvf stateless-build.tar out
 
       - name: Upload stateless
         uses: actions/upload-artifact@v3
@@ -76,11 +76,11 @@ jobs:
 
       - run: pnpm install --frozen-lockfile
 
-      - name: Build stateful
-        run: pnpm build
+      - name: Build stateful and export
+        run: pnpm build && pnpm export
 
       - name: Tar stateful files
-        run: tar -cvf stateful-build.tar .next
+        run: tar -cvf stateful-build.tar out
 
       - name: Upload stateful
         uses: actions/upload-artifact@v3
@@ -197,7 +197,7 @@ jobs:
           DISPLAY=:20 fluxbox -log /tmp/fluxbox.log &
           parallel --lb --halt now,success=1,fail=1 ::: \
           "pnpm start" \
-          "pnpm wait-on http://localhost:3000 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }} --group stateful"
+          "pnpm wait-on http://localhost:8788 && DISPLAY=:20 pnpm synpress:ci:stateful --parallel --ci-build-id ${{ github.sha }}-${{ github.workflow }}-${{ github.event_name }} --group stateful"
         env:
           CYPRESS_DEPLOYSENTINEL_KEY: ${{ secrets.CYPRESS_DEPLOYSENTINEL_KEY }}
           NEXT_PUBLIC_GRAPH_URI: https://api.thegraph.com/subgraphs/name/tateb/enssubdomaincount
