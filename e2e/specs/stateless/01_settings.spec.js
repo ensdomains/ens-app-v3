@@ -5,7 +5,7 @@ describe('Settings', () => {
     acceptMetamaskAccess(undefined, true)
     cy.visit('/my/settings')
     cy.findByTestId('wallet-section-disconnect').click()
-    cy.url().should('eq', 'http://localhost:3000/')
+    cy.url().should('eq', 'http://localhost:8788/')
   })
 
   describe('Transactions', () => {
