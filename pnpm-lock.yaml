@@ -36,7 +36,7 @@ importers:
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': ^0.2.7
       '@ensdomains/ens-contracts': 0.0.15
-      '@ensdomains/ens-test-env': ^0.3.5
+      '@ensdomains/ens-test-env': ^0.3.6
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.37
       '@ensdomains/eth-ens-namehash': ^2.0.15
@@ -199,7 +199,7 @@ importers:
       '@cloudflare/wrangler': 1.20.0
       '@deploysentinel/cypress-debugger': 0.5.5
       '@ensdomains/buffer': 0.1.0_hardhat@2.11.2
-      '@ensdomains/ens-test-env': 0.3.5
+      '@ensdomains/ens-test-env': 0.3.6
       '@ethersproject/providers': 5.7.1
       '@next/bundle-analyzer': 12.3.1
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -249,7 +249,7 @@ importers:
       eslint-plugin-react-hooks: 4.6.0_eslint@7.32.0
       eslint-plugin-testing-library: 4.12.4_3rubbgt5ekhqrcgx4uwls3neim
       ganache: 7.4.3
-      graphql-request: 5.1.0
+      graphql-request: 5.1.1-next.1
       hardhat: 2.11.2_mwhvu7sfp6vq5ryuwb6hlbjfka
       hardhat-dependency-compiler: 1.1.3_hardhat@2.11.2
       hardhat-deploy: 0.11.16
@@ -2222,8 +2222,8 @@ packages:
       - web3-utils
     dev: false
 
-  /@ensdomains/ens-test-env/0.3.5:
-    resolution: {integrity: sha512-FkhvCfW0KvL3aLQjrANnhZqilEcQF34At13SP6eV94Ux5olvl/Qgv2+e/BIjZ2uc3CtIBdjDst0rHlVM1C1UHA==}
+  /@ensdomains/ens-test-env/0.3.6:
+    resolution: {integrity: sha512-VeRYFBMLThaiiYY2to1LWsn1CyaOyvkyOeOZ3q8dpy79iH2iTSgw8NCqYTaOq1bJLNfG3tROxA6DoMtWlSnJuQ==}
     hasBin: true
     dependencies:
       '@ethersproject/wallet': 5.7.0
@@ -2287,7 +2287,7 @@ packages:
       dns-packet: 5.4.0
       ethers: 5.7.1
       graphql: 16.6.0
-      graphql-request: 5.1.0_graphql@16.6.0
+      graphql-request: 5.1.1-next.1_graphql@16.6.0
       idna-uts46-hx: 3.4.0
       traverse: 0.6.7
     transitivePeerDependencies:
@@ -12887,8 +12887,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /graphql-request/5.1.0:
-    resolution: {integrity: sha512-0OeRVYigVwIiXhNmqnPDt+JhMzsjinxHE7TVy3Lm6jUzav0guVcL0lfSbi6jVTRAxcbwgyr6yrZioSHxf9gHzw==}
+  /graphql-request/5.1.1-next.1:
+    resolution: {integrity: sha512-GPUWyaD1MAQkOc2RD2cLUwQCEbvVuI01Uh6tYEdzQHHXghC/pcQrwmgieW/r0g0hfz/XQE/8KVl9DQH7T8W8KQ==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -12900,8 +12900,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/5.1.0_graphql@16.6.0:
-    resolution: {integrity: sha512-0OeRVYigVwIiXhNmqnPDt+JhMzsjinxHE7TVy3Lm6jUzav0guVcL0lfSbi6jVTRAxcbwgyr6yrZioSHxf9gHzw==}
+  /graphql-request/5.1.1-next.1_graphql@16.6.0:
+    resolution: {integrity: sha512-GPUWyaD1MAQkOc2RD2cLUwQCEbvVuI01Uh6tYEdzQHHXghC/pcQrwmgieW/r0g0hfz/XQE/8KVl9DQH7T8W8KQ==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
