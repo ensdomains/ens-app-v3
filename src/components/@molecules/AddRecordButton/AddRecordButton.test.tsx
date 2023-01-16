@@ -106,4 +106,18 @@ describe('AddRecordButton', () => {
 
     expect(mockHandleAddRecord).toHaveBeenCalledWith('another')
   })
+
+  it('should call onAddRecord with form safe input value', async () => {
+    render(<AddRecordButton createable onAddRecord={mockHandleAddRecord} />)
+
+    fireEvent.click(screen.getByTestId('add-record-button-button'))
+
+    const input = await screen.findByTestId('add-record-button-input')
+    await userEvent.type(input, 'com.example')
+
+    const submit = await screen.findByText('action.add')
+    fireEvent.click(submit)
+
+    expect(mockHandleAddRecord).toHaveBeenCalledWith('com\u2024example')
+  })
 })
