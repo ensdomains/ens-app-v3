@@ -37,11 +37,7 @@ export const HeaderText = ({
   return (
     <Wrapper $align={align}>
       <Title weight="bold">{title}</Title>
-      {subtitle && (
-        <Subtitle typography="small" weight="bold">
-          {subtitle}
-        </Subtitle>
-      )}
+      {subtitle && <Subtitle fontVariant="smallBold">{subtitle}</Subtitle>}
     </Wrapper>
   )
 }

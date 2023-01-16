@@ -144,7 +144,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
             )}
           </TextContainer>
         </OwnerDetailContainer>
-        <Tag tone="accent">{t(label)}</Tag>
+        <Tag colorStyle="accentSecondary">{t(label)}</Tag>
       </OwnerContainer>
     </BaseLink>
   )
@@ -174,7 +174,7 @@ const Ownership = ({
   return (
     <Container $isCached={isCachedData}>
       <HeadingContainer>
-        <Typography typography="Heading/H3">{t('tabs.more.ownership.label')}</Typography>
+        <Typography fontVariant="headingThree">{t('tabs.more.ownership.label')}</Typography>
         <div>
           {canSend && (
             <Button size="small" prefix={<AeroplaneIcon as={AeroplaneSVG} />} onClick={handleSend}>

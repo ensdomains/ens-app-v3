@@ -296,7 +296,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       </ScrollBoxWrapper>
       <Dialog.Footer
         leading={
-          <Button color="grey" colorScheme="secondary" onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.back', { ns: 'common' })}
           </Button>
         }

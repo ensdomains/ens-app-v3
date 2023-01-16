@@ -186,7 +186,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                   onClick={() => setTab(tabItem)}
                 >
                   <Typography
-                    typography="Large/XL Bold"
+                    fontVariant="extraLargeBold"
                     color={tabItem === tab ? 'accent' : 'greyPrimary'}
                   >
                     {t(`tabs.${tabItem}.name`)}

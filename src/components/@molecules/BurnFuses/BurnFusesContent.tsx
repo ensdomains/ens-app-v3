@@ -115,8 +115,7 @@ const BurnButton = ({
     <StyledButton
       onClick={() => handleBurnClick(permission)}
       disabled={isBurned}
-      colorScheme="secondary"
-      color={isSelected ? 'red' : 'grey'}
+      colorStyle={isSelected ? 'redSecondary' : 'greySecondary'}
       size="small"
       suffix={
         isSelected ? (
@@ -226,7 +225,7 @@ const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false 
 
   return (
     <FusesContainer>
-      <Typography typography="Heading/H4">{t('fuses.burnFormTitle')}</Typography>
+      <Typography fontVariant="headingFour">{t('fuses.burnFormTitle')}</Typography>
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
           <Spacer $height="1" />
@@ -252,7 +251,7 @@ const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false 
       </BurnButtonsContainer>
       <Spacer $height="6" />
       <ButtonsContainer>
-        <Button color="grey" colorScheme="secondary" onClick={onDismiss}>
+        <Button colorStyle="greySecondary" onClick={onDismiss}>
           {tc('action.cancel')}
         </Button>
         <Button

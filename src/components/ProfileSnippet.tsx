@@ -149,7 +149,7 @@ export const ProfileSnippet = ({
       return (
         <Button
           size="small"
-          colorScheme="secondary"
+          colorStyle="accentSecondary"
           prefix={<FastForwardSVG />}
           data-testid="extend-button"
           onClick={() => {
@@ -164,7 +164,7 @@ export const ProfileSnippet = ({
         <Button
           onClick={() => router.pushWithHistory(`/profile/${name}`)}
           size="small"
-          colorScheme="secondary"
+          colorStyle="accentSecondary"
         >
           {t(`wallet.${button}`)}
         </Button>
@@ -182,7 +182,7 @@ export const ProfileSnippet = ({
       </FirstItems>
       <TextStack>
         <DetailStack>
-          <Name typography="Heading/H2" data-testid="profile-snippet-nickname">
+          <Name fontVariant="headingTwo" data-testid="profile-snippet-nickname">
             {recordName || name}
           </Name>
           {recordName && <NameRecord data-testid="profile-snippet-name">{name}</NameRecord>}

@@ -190,7 +190,7 @@ export const NameDetailSnippet = ({
         <ButtonWrapper>
           <Button
             onClick={() => router.pushWithHistory(`/profile/${name}/details`)}
-            colorScheme="transparent"
+            colorStyle="transparent"
             size="small"
           >
             {t('wallet.viewDetails')}

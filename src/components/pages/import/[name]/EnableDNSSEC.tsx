@@ -82,7 +82,7 @@ export const EnableDNSSEC = ({
 
   return (
     <Container>
-      <Typography typography="Large/XL Bold">{t('enableDNSSEC.title')}</Typography>
+      <Typography fontVariant="extraLargeBold">{t('enableDNSSEC.title')}</Typography>
       <Spacer $height="4" />
       <Typography>{t('enableDNSSEC.instruction')}</Typography>
       <Spacer $height="3" />
@@ -121,7 +121,6 @@ export const EnableDNSSEC = ({
       <ButtonContainer>
         <CheckButton
           onClick={handleCheck}
-          colorScheme="primary"
           size="small"
           loading={isLoading}
           disabled={!name}

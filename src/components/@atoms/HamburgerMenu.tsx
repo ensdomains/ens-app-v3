@@ -44,11 +44,6 @@ export const HamburgerMenu = ({
       chevron={false}
       shortThrow
       keepMenuOnTop
-      buttonProps={{
-        shadowless: true,
-        colorScheme: 'transparent',
-        size: 'flexible',
-      }}
       align="right"
       items={dropdownItems.map((item) =>
         item.href
@@ -70,7 +65,7 @@ export const HamburgerMenu = ({
       )}
       {...props}
     >
-      <Button colorScheme="transparent" size="flexible">
+      <Button colorStyle="transparent" size="flexible">
         <IconWrapper>
           <MenuSVG />
         </IconWrapper>

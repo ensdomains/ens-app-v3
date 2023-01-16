@@ -234,7 +234,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             <ProfileTabContents {...profileEditorForm} />
             <AddRecord {...profileEditorForm} />
             <FooterContainer>
-              <Button colorScheme="secondary" color="grey" onClick={handleCancel}>
+              <Button colorStyle="greySecondary" onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button

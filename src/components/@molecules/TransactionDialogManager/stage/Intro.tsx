@@ -34,11 +34,7 @@ export const IntroStageModal = ({
       : t('transaction.dialog.intro.trailingButton')
 
   const TrailingButton = (
-    <Button
-      colorScheme="primary"
-      onClick={() => onSuccess()}
-      data-testid="transaction-dialog-intro-trailing-btn"
-    >
+    <Button onClick={() => onSuccess()} data-testid="transaction-dialog-intro-trailing-btn">
       {trailingLabel || tLabel}
     </Button>
   )

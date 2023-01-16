@@ -40,6 +40,17 @@ const StyledScrollBox = styled(ScrollBoxWithSpinner)(
   `,
 )
 
+const NamePillWrapper = styled.div`
+  width: 100%;
+  transform: translateY(-0.5rem);
+`
+
+const NameList = styled.div(
+  () => css`
+    padding-top: 0.5rem;
+  `,
+)
+
 const querySize = 50
 
 const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDismiss }: Props) => {
@@ -113,19 +124,24 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   } else if (names && names.length > 0) {
     Content = (
       <StyledScrollBox showSpinner={hasNextPage} onReachedBottom={() => fetchNextPage()}>
-        <RadioButtonGroup value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
-          {names
-            ?.filter((x) => x.name !== existingPrimary)
-            .map((name) => (
-              <RadioButton
-                labelRight
-                label={<NamePill name={name.truncatedName} network={chainId} key={name.id} />}
-                key={name.id}
-                name={name.name}
-                value={name.name}
-              />
-            ))}
-        </RadioButtonGroup>
+        <NameList>
+          <RadioButtonGroup value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
+            {names
+              ?.filter((x) => x.name !== existingPrimary)
+              .map((name) => (
+                <RadioButton
+                  label={
+                    <NamePillWrapper>
+                      <NamePill name={name.truncatedName} network={chainId} key={name.id} />
+                    </NamePillWrapper>
+                  }
+                  key={name.id}
+                  name={name.name}
+                  value={name.name}
+                />
+              ))}
+          </RadioButtonGroup>
+        </NameList>
       </StyledScrollBox>
     )
   } else {
@@ -142,7 +158,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       <InnerDialog>{Content}</InnerDialog>
       <Dialog.Footer
         leading={
-          <Button colorScheme="secondary" color="grey" onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

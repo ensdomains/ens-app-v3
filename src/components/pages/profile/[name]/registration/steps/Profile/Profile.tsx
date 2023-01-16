@@ -192,9 +192,9 @@ const AdvancedOption = ({
       <Typography>{name}</Typography>
       <AdvancedOptionTrailing>
         {isDefault ? (
-          <Tag tone="green">{t('steps.profile.default')}</Tag>
+          <Tag colorStyle="greenSecondary">{t('steps.profile.default')}</Tag>
         ) : (
-          <Button onClick={onResetClick} size="small" colorScheme="secondary">
+          <Button onClick={onResetClick} size="small" colorStyle="accentSecondary">
             {t('action.reset', { ns: 'common' })}
           </Button>
         )}
@@ -360,7 +360,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
       )
     }
     return (
-      <Button data-testid="next-button" colorScheme="secondary" type="submit">
+      <Button data-testid="next-button" colorStyle="accentSecondary" type="submit">
         {t('action.skip', { ns: 'common' })}
       </Button>
     )
@@ -497,7 +497,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
           </AdvancedOptions>
           <ButtonContainer>
             <MobileFullWidth>
-              <Button ref={backRef} type="submit" colorScheme="secondary">
+              <Button ref={backRef} type="submit" colorStyle="accentSecondary">
                 {t('action.back', { ns: 'common' })}
               </Button>
             </MobileFullWidth>

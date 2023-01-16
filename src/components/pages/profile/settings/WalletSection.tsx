@@ -18,8 +18,7 @@ export const WalletSection = () => {
         <Button
           data-testid="wallet-section-disconnect"
           size="small"
-          color="red"
-          colorScheme="secondary"
+          colorStyle="redSecondary"
           onClick={() => disconnect()}
         >
           {tc('wallet.disconnect')}

@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Avatar, Dropdown } from '@ensdomains/thorin'
+import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
 import { ProfileEditorType } from '@app/types'
@@ -102,27 +103,29 @@ const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisp
 
   return (
     <Dropdown
-      items={[
-        {
-          label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-          color: 'black',
-          onClick: handleSelectOption('nft'),
-        },
-        {
-          label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-          color: 'black',
-          onClick: handleSelectOption('upload'),
-        },
-        ...(validated
-          ? [
-              {
-                label: t('action.remove', { ns: 'common' }),
-                color: 'red',
-                onClick: handleSelectOption('remove'),
-              },
-            ]
-          : []),
-      ]}
+      items={
+        [
+          {
+            label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
+            color: 'black',
+            onClick: handleSelectOption('nft'),
+          },
+          {
+            label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
+            color: 'black',
+            onClick: handleSelectOption('upload'),
+          },
+          ...(validated
+            ? [
+                {
+                  label: t('action.remove', { ns: 'common' }),
+                  color: 'red',
+                  onClick: handleSelectOption('remove'),
+                },
+              ]
+            : []),
+        ] as DropdownItem[]
+      }
       keepMenuOnTop
       shortThrow
     >

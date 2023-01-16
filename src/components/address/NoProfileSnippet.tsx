@@ -51,7 +51,7 @@ const NoProfileSnippet = () => {
       </AvatarContainer>
       <ProfileContent>
         <ProfileTitle>{t('noProfile.title')}</ProfileTitle>
-        <Typography typography="Small/Normal" color="text">
+        <Typography fontVariant="small" color="text">
           {t('noProfile.message')}
         </Typography>
       </ProfileContent>

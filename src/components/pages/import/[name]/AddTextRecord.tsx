@@ -242,7 +242,6 @@ export const AddTextRecord = ({
             onClick={() => {
               setCurrentStep(currentStep + 1)
             }}
-            colorScheme="primary"
             size="small"
           >
             {t('action.continue', { ns: 'common' })}
@@ -250,7 +249,6 @@ export const AddTextRecord = ({
         )}
         <CheckButton
           onClick={handleCheck}
-          colorScheme="primary"
           size="small"
           disabled={currentStep === 2}
           loading={isCheckLoading}
@@ -262,7 +260,7 @@ export const AddTextRecord = ({
           onClick={() => {
             setCurrentStep(currentStep - 1)
           }}
-          colorScheme="secondary"
+          colorStyle="accentSecondary"
           size="small"
         >
           {t('navigation.back', { ns: 'common' })}

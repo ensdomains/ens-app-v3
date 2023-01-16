@@ -106,11 +106,9 @@ const AddressValue = ({ value }: { value: string }) => {
   const AddressTypography = useMemo(
     () =>
       primary.name ? (
-        <AddressSubtitle typography="Body/Normal" color="grey">
-          {shortenAddress(value)}
-        </AddressSubtitle>
+        <AddressSubtitle color="grey">{shortenAddress(value)}</AddressSubtitle>
       ) : (
-        <ValueTypography typography="Body/Bold">{shortenAddress(value)}</ValueTypography>
+        <ValueTypography fontVariant="bodyBold">{shortenAddress(value)}</ValueTypography>
       ),
     [primary.name, value],
   )
@@ -119,7 +117,7 @@ const AddressValue = ({ value }: { value: string }) => {
     <ValueWithAvatarContainer>
       <InnerValueWrapper>
         {primary.name && (
-          <ValueTypography typography="Body/Bold" color="text">
+          <ValueTypography fontVariant="bodyBold" color="text">
             {primary.name}
           </ValueTypography>
         )}
@@ -142,7 +140,7 @@ const NameValue = ({ value }: { value: string }) => {
 
   return (
     <ValueWithAvatarContainer>
-      <ValueTypography typography="Body/Bold">{value}</ValueTypography>
+      <ValueTypography fontVariant="bodyBold">{value}</ValueTypography>
       <AvatarWrapper>
         <NameAvatar name={value} label={`${value}-avatar`} network={network} />
       </AvatarWrapper>
@@ -157,8 +155,8 @@ const SubnameValue = ({ value }: { value: string }) => {
   return (
     <ValueWithAvatarContainer>
       <div>
-        <ValueTypography typography="Body/Bold">{label}.</ValueTypography>
-        <ValueTypography typography="Body/Bold">{parent}</ValueTypography>
+        <ValueTypography fontVariant="bodyBold">{label}.</ValueTypography>
+        <ValueTypography fontVariant="bodyBold">{parent}</ValueTypography>
       </div>
       <AvatarWrapper>
         <NameAvatar name={value} label={`${value}-avatar`} network={network} />
@@ -185,7 +183,7 @@ const ListValue = ({ value }: { value: string[] }) => {
         const key = idx
         if (idx === 0) {
           return (
-            <Typography key={key} typography="Body/Bold">
+            <Typography key={key} fontVariant="bodyBold">
               {val}
             </Typography>
           )
@@ -245,7 +243,7 @@ const DisplayItemValue = (props: Omit<TransactionDisplayItem, 'label'>) => {
   if (type === 'records') {
     return <RecordsValue value={value} />
   }
-  return <ValueTypography typography="Body/Bold">{value}</ValueTypography>
+  return <ValueTypography fontVariant="bodyBold">{value}</ValueTypography>
 }
 
 export const DisplayItem = ({

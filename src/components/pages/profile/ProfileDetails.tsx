@@ -202,8 +202,7 @@ export const ProfileDetails = ({
                 data-testid={`profile-action-${action.label}`}
                 onClick={action.onClick}
                 size="small"
-                color={action.red ? 'red' : 'accent'}
-                colorScheme={action.red ? 'secondary' : 'primary'}
+                colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
               >
                 {action.label}
               </Button>

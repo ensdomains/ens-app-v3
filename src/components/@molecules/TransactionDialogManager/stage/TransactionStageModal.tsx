@@ -329,7 +329,7 @@ export const TransactionStageModal = ({
           <Button
             data-testid="transaction-modal-complete-button"
             onClick={() => onDismiss()}
-            colorScheme="secondary"
+            colorStyle="accentSecondary"
           >
             {t('action.done')}
           </Button>
@@ -349,8 +349,7 @@ export const TransactionStageModal = ({
         <Button
           onClick={() => sendTransaction!()}
           disabled={requestLoading || !sendTransaction}
-          color="red"
-          colorScheme="secondary"
+          colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
         >
           {t('action.tryAgain')}
@@ -362,7 +361,7 @@ export const TransactionStageModal = ({
         <Button
           onClick={() => onDismiss()}
           data-testid="transaction-modal-sent-button"
-          colorScheme="secondary"
+          colorStyle="accentSecondary"
         >
           {t('action.close')}
         </Button>

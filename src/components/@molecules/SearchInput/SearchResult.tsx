@@ -172,14 +172,14 @@ const AddressResultItem = ({ address }: { address: string }) => {
 const GracePeriodTag = styled(StyledTag)(
   ({ theme }) => css`
     color: ${theme.colors.yellow};
-    background-color: rgba(${theme.accentsRaw.yellow}, 0.1);
+    background-color: ${theme.colors.yellowSurface};
   `,
 )
 
 const PremiumTag = styled(StyledTag)(
   ({ theme }) => css`
     color: ${theme.colors.purple};
-    background-color: rgba(${theme.accentsRaw.purple}, 0.1);
+    background-color: ${theme.colors.purpleSurface};
   `,
 )
 
@@ -196,19 +196,19 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
       return <PremiumTag>{t(`search.status.${status}`)}</PremiumTag>
     }
     case 'available': {
-      return <StyledTag tone="green">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="greenSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'notOwned': {
-      return <StyledTag tone="blue">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'notImported': {
-      return <StyledTag tone="blue">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'short': {
-      return <StyledTag tone="red">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     default: {
-      return <StyledTag tone="red">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
   }
 }

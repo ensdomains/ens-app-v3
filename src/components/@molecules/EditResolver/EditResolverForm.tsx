@@ -75,7 +75,7 @@ const EditResolverForm = ({
         </Outlink>
       </LatestResolverTitleContainer>
       {isResolverAddressLatest && (
-        <LatestResolverSubtitle typography="Small/Normal">
+        <LatestResolverSubtitle fontVariant="small">
           {t('input.editResolver.latestMessage')}
         </LatestResolverSubtitle>
       )}
@@ -87,7 +87,6 @@ const EditResolverForm = ({
       <RadioButton
         label={latestResolverLabel}
         value="latest"
-        labelRight
         data-testid="latest-resolver-radio"
         disabled={isResolverAddressLatest}
         {...register('resolverChoice', {
@@ -124,28 +123,8 @@ const EditResolverForm = ({
         }
         value="custom"
         data-testid="custom-resolver-radio"
-        labelRight
         {...register('resolverChoice')}
       />
-      {/* <InputContainer>
-        <DogFood
-          {...{
-            formState,
-            disabled: resolverChoice !== 'custom',
-            register,
-            getFieldState,
-            watch,
-            setValue,
-            validations: {
-              isCurrentResolver: (value: string) =>
-                resolverChoice === 'custom' && value === resolverAddress
-                  ? 'This is the current resolver'
-                  : undefined,
-            },
-          }}
-        />
-      </InputContainer> */}
-      {/* <Spacer $height="4" /> */}
     </form>
   )
 }

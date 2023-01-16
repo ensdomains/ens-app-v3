@@ -19,7 +19,7 @@ export const CopyButton = ({ value }: { value: string }) => {
 
   return (
     <Container>
-      <Button onClick={() => copy(value)} size="flexible" colorScheme="transparent">
+      <Button onClick={() => copy(value)} size="flexible" colorStyle="transparent">
         <IconCopyAnimated copied={copied} size="3.5" />
       </Button>
     </Container>

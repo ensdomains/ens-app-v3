@@ -178,7 +178,7 @@ export default () => {
         <BackContainer>
           <Button
             onClick={() => router.push('/')}
-            colorScheme="transparent"
+            colorStyle="transparent"
             size="flexible"
             style={{ width: 50 }}
           >

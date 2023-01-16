@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { useAccount, useDisconnect } from 'wagmi'
 
 import { Button, ExitSVG, PersonSVG, Profile, mq } from '@ensdomains/thorin'
+import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
@@ -76,7 +77,6 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
       <Button
         data-testid={calculateTestId(isTabBar, inHeader)}
         onClick={() => openConnectModal?.()}
-        colorScheme="primary"
         size={breakpoints.md || large ? 'medium' : 'small'}
         width={inHeader ? '45' : undefined}
         shape="rounded"
@@ -100,29 +100,31 @@ const HeaderProfile = ({ address }: { address: string }) => {
     <Profile
       address={address}
       ensName={name || undefined}
-      dropdownItems={[
-        ...(name
-          ? [
-              {
-                label: t('wallet.myProfile'),
-                wrapper: (children: ReactNode, key: Key) => (
-                  <BaseLink href="/my/profile" key={key}>
-                    {children}
-                  </BaseLink>
-                ),
-                as: 'a' as 'a',
-                color: 'text',
-                icon: <PersonSVG />,
-              },
-            ]
-          : []),
-        {
-          label: t('wallet.disconnect'),
-          color: 'red',
-          onClick: () => disconnect(),
-          icon: <ExitSVG />,
-        },
-      ]}
+      dropdownItems={
+        [
+          ...(name
+            ? [
+                {
+                  label: t('wallet.myProfile'),
+                  wrapper: (children: ReactNode, key: Key) => (
+                    <BaseLink href="/my/profile" key={key}>
+                      {children}
+                    </BaseLink>
+                  ),
+                  as: 'a' as 'a',
+                  color: 'text',
+                  icon: <PersonSVG />,
+                },
+              ]
+            : []),
+          {
+            label: t('wallet.disconnect'),
+            color: 'red',
+            onClick: () => disconnect(),
+            icon: <ExitSVG />,
+          },
+        ] as DropdownItem[]
+      }
       avatar={{
         src: avatar || zorb,
         decoding: 'sync',

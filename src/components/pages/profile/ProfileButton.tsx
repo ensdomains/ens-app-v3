@@ -118,7 +118,7 @@ export const OtherProfileButton = ({
       keyLabel={
         type === 'address' ? (
           <OtherContainer>
-            <OtherContainerAddressPrefix typography="Small/XS Normal">
+            <OtherContainerAddressPrefix fontVariant="extraSmall">
               {iconKey}
             </OtherContainerAddressPrefix>
           </OtherContainer>
