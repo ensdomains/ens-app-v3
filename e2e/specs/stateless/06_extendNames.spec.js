@@ -9,7 +9,7 @@ describe('Extend Names', () => {
     cy.clearLocalStorage()
     const NAMES = ['other-registrant.eth']
     acceptMetamaskAccess(2)
-    cy.visit('/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
+    cy.visit('/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
 
     cy.log('get the base data to compare')
     NAMES.forEach((name) => {
@@ -64,7 +64,7 @@ describe('Extend Names', () => {
 
   it('should extend a single name', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/other-registrant.eth')
+    cy.visit('/other-registrant.eth')
     connectFromExisting()
     cy.findByTestId('extend-button').should('be.visible')
     cy.findByTestId('owner-profile-button-expiry').should('be.visible')
@@ -128,7 +128,7 @@ describe('Extend Names', () => {
 
   it('should extend a single name in grace period', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/grace-period.eth')
+    cy.visit('/grace-period.eth')
     connectFromExisting()
 
     cy.findByTestId('extend-button').as('extend-button')
@@ -228,7 +228,7 @@ describe('Extend Names', () => {
   })
 
   it('should not show extend button on subnames', () => {
-    cy.visit('/profile/test.with-subnames.eth')
+    cy.visit('/test.with-subnames.eth')
     connectFromExisting()
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('extend-subname-action', { timeout: 2000 }).should('not.exist')
