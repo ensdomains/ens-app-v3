@@ -329,6 +329,4 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   )
 }
 
-// hasPendingMoonpayTransaction={transactionStatus === 'pending'}
-
 export default Registration

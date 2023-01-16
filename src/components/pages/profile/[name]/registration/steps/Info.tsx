@@ -169,7 +169,7 @@ const PaymentChoice = ({
       </StyledTitle>
       <Spacer $height="2" />
       <StyledRadioButtonGroup
-        value={hasPendingMoonpayTransaction ? PaymentMethod.moonpay : paymentMethodChoice}
+        value={paymentMethodChoice}
         onChange={(e) => setPaymentMethodChoice(e.target.value as PaymentMethod)}
       >
         <RadioButtonContainer>
@@ -255,8 +255,14 @@ const Info = ({
   nameDetails,
   transactionStatus,
 }: Props) => {
+  console.log('transactionStatus: ', transactionStatus)
+  const hasPendingMoonpayTransaction = transactionStatus === 'pending'
+  const hasFailedMoonpayTransaction = transactionStatus === 'failed'
+
   const { t } = useTranslation('register')
-  const [paymentMethodChoice, setPaymentMethodChoice] = useState(PaymentMethod.ethereum)
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState(
+    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : PaymentMethod.ethereum,
+  )
   const { address } = useAccount()
   const { data: balance } = useBalance({ addressOrName: address })
   const resolverAddress = useContractAddress('PublicResolver')
@@ -283,11 +289,6 @@ const Info = ({
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
   const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
   const hasEnoughEth = !balance?.value.lt(totalRequiredBalance || 0)
-  const hasPendingMoonpayTransaction = transactionStatus === 'pending'
-  const hasFailedMoonpayTransaction = transactionStatus === 'failed'
-
-  console.log('totalRequiredBalance: ', totalRequiredBalance)
-  console.log('hasEnoughtEth: ', hasEnoughEth)
 
   return (
     <StyledCard>

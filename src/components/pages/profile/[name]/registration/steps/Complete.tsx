@@ -129,7 +129,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const isLoading = commitLoading || registerLoading
 
   const InvoiceFilled = useMemo(() => {
-    if (isLoading) return null
+    if (isLoading || !registerResponse) return null
     const { value } = registerResponse!
     const commitNetFee = commitReceipt?.gasUsed.mul(commitReceipt!.effectiveGasPrice)
     const registerNetFee = registerReceipt!.gasUsed.mul(registerReceipt!.effectiveGasPrice)
