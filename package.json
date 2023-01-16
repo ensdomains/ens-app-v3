@@ -39,7 +39,7 @@
     "local:remove:ensjs": "node ./scripts/removeWorkspace.mjs @ensdomains/ensjs && yalc remove @ensdomains/ensjs && pnpm install",
     "local:add:thorin": "yalc add @ensdomains/thorin --workspace && pnpm install",
     "local:remove:thorin": "node ./scripts/removeWorkspace.mjs @ensdomains/thorin && yalc remove @ensdomains/thorin && pnpm install",
-    "wrangle": "npx wrangler pages dev ./out",
+    "wrangle": "npx wrangler pages dev ./out --log-level none",
     "wrangle:dev": "wrangler pages dev ./next",
     "generate:sitemaps": "node ./generate-site-map.mjs",
     "enode": "ganache --wallet.mnemonic=\"test test test test test test test test test test test junk\" --chain.chainId 1337 --chain.networkId 1337 --chain.time 1659500634000",
