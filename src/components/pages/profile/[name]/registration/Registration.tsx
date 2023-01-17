@@ -308,13 +308,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
-      <StyledDialog open={hasMoonpayModal} variant="actionable">
+      <Dialog open={hasMoonpayModal} variant="actionable">
         <iframe title="Moonpay Checkout" width="100%" height="90%" src={moonpayUrl} />
-      </StyledDialog>
+      </Dialog>
     </>
   )
 }
-
-// complete: <Complete nameDetails={nameDetails} callback={onComplete} />,
 
 export default Registration
