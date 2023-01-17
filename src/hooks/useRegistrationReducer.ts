@@ -59,9 +59,6 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
 
   if (!isBrowser) return
 
-  console.log('state: ', state.items)
-  console.log('action: ', action)
-
   if (selectedItemInx === -1) {
     selectedItemInx = state.items.push(makeDefaultData(action.selected)) - 1
   }
@@ -95,7 +92,6 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'setExternalTransactionId': {
-      console.log('*setExternalTransactionId*')
       item.isMoonpayFlow = true
       item.externalTransactionId = action.externalTransactionId
       break
