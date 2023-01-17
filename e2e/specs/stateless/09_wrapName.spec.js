@@ -51,6 +51,7 @@ describe('Wrap Name', () => {
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('toast-close-icon').click()
+    cy.findByTestId('close-icon').click()
     cy.findByTestId('wrapper-cta-button').should('contain.text', 'Resume Upgrade')
 
     // should open to correctly resumed state
