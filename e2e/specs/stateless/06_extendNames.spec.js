@@ -102,7 +102,7 @@ describe('Extend Names', () => {
     cy.findByText('2 year extension').should('be.visible')
 
     cy.log('should show the correct fiat values')
-    cy.findByTestId('extend-names-currency-toggle').click()
+    cy.findByTestId('extend-names-currency-toggle').click({force: true})
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '$10.00')
     cy.findByTestId('invoice-item-1-amount').should('contain.text', '$0.19')
     cy.findByTestId('invoice-total').should('contain.text', '$10.19')
