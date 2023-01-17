@@ -10,12 +10,6 @@ import useResolverEditor from '@app/hooks/useResolverEditor'
 
 import { DogFood } from '../DogFood'
 
-const InputContainer = styled.div(
-  ({ theme }) => css`
-    margin-top: -${theme.space['5']};
-  `,
-)
-
 const LatestResolverLabel = styled.div<{ $offset: boolean }>(
   ({ theme, $offset }) => css`
     display: flex;
@@ -102,24 +96,23 @@ const EditResolverForm = ({
       <RadioButton
         label={t('input.editResolver.customLabel')}
         description={
-          <InputContainer>
-            <DogFood
-              {...{
-                formState,
-                disabled: resolverChoice !== 'custom',
-                register,
-                getFieldState,
-                watch,
-                setValue,
-                validations: {
-                  isCurrentResolver: (value: string) =>
-                    resolverChoice === 'custom' && value === resolverAddress
-                      ? 'This is the current resolver'
-                      : undefined,
-                },
-              }}
-            />
-          </InputContainer>
+          <DogFood
+            {...{
+              formState,
+              disabled: resolverChoice !== 'custom',
+              register,
+              getFieldState,
+              watch,
+              setValue,
+              hideLabel: true,
+              validations: {
+                isCurrentResolver: (value: string) =>
+                  resolverChoice === 'custom' && value === resolverAddress
+                    ? 'This is the current resolver'
+                    : undefined,
+              },
+            }}
+          />
         }
         value="custom"
         data-testid="custom-resolver-radio"

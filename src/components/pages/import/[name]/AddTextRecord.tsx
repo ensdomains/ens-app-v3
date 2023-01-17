@@ -92,11 +92,11 @@ const CopyableRightContainer = styled.div(
 const Copyable = ({ label, value }: { label: string; value: string }) => {
   const { copy, copied } = useCopied()
   return (
-    <Button color="background" onClick={() => copy(value)} size="flexible" fullWidthContent>
+    <Button colorStyle="background" onClick={() => copy(value)} size="flexible" fullWidthContent>
       <ButtonInner>
         <Typography>{label}</Typography>
         <CopyableRightContainer>
-          <Typography {...{ typography: 'small', color: 'text' }}>{value}</Typography>
+          <Typography fontVariant="small">{value}</Typography>
           <IconCopyAnimated color="grey" copied={copied} size="3.5" />
         </CopyableRightContainer>
       </ButtonInner>
@@ -169,7 +169,7 @@ export const AddTextRecord = ({
 
   return (
     <Container>
-      <Typography {...{ typography: 'Heading/H4' }}>{t('addTextRecord.title')}</Typography>
+      <Typography fontVariant="headingFour">{t('addTextRecord.title')}</Typography>
       <Spacer $height="3" />
       <Typography>{t('addTextRecord.explanation')}</Typography>
       <Spacer $height="3" />
@@ -192,12 +192,10 @@ export const AddTextRecord = ({
       </Outlink>
       <Spacer $height="5" />
       <ButtonRow>
-        <Button color="background" size="flexible" fullWidthContent>
+        <Button colorStyle="background" size="flexible" fullWidthContent>
           <ButtonInner>
             <Typography>{t('addTextRecord.type')}</Typography>
-            <Typography {...{ typography: 'small', color: 'text' }}>
-              {t('addTextRecord.txt')}
-            </Typography>
+            <Typography fontVariant="small">{t('addTextRecord.txt')}</Typography>
           </ButtonInner>
         </Button>
         <Copyable {...{ label: 'Name', value: '_ens' }} />
@@ -216,7 +214,7 @@ export const AddTextRecord = ({
         <>
           <Helper type="warning" style={{ textAlign: 'center' }}>
             <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
-            <Typography {...{ typography: 'small', color: 'grey' }}>
+            <Typography fontVariant="small" color="grey">
               {t('addTextRecord.syncWarningTwo')}
             </Typography>
           </Helper>
@@ -227,7 +225,7 @@ export const AddTextRecord = ({
         <>
           <Helper type="error" style={{ textAlign: 'center' }}>
             <Typography>{t(`addTextRecord.errors.${errorState}.title`)}</Typography>
-            <Typography {...{ typography: 'small', color: 'grey' }}>
+            <Typography fontVariant="small" color="grey">
               {t(`addTextRecord.errors.${errorState}.content`)}
             </Typography>
           </Helper>

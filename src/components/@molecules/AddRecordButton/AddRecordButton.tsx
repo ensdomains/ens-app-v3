@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 
-import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG } from '@ensdomains/thorin'
+import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
 import { formSafeKey } from '@app/utils/editor'
@@ -214,6 +214,12 @@ const NoOptionsContainer = styled.div<{ $inline: boolean }>(
   `,
 )
 
+const SVGWrapper = styled.svg(
+  ({ theme }) => css`
+    color: ${theme.colors.greyPrimary} !important;
+  `,
+)
+
 const ButtonContainer = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
@@ -323,6 +329,7 @@ export const AddRecordButton = ({
                 placeholder={
                   inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
                 }
+                clearable
                 onChange={(e) => setInputValue(e.target.value)}
                 data-testid="add-record-button-input"
               />
@@ -362,13 +369,13 @@ export const AddRecordButton = ({
       </ControlsContainer>
       <ButtonContainer $state={state}>
         <Button
-          prefix={<PlusSVG />}
-          color="background"
+          prefix={<SVGWrapper as={PlusSVG} />}
+          colorStyle="background"
           onClick={handleButtonClick}
           size="medium"
           data-testid="add-record-button-button"
         >
-          {addRecord}
+          <Typography color="greyPrimary">{addRecord}</Typography>
         </Button>
       </ButtonContainer>
     </Container>

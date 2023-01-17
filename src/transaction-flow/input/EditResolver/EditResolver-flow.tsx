@@ -66,6 +66,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
 
   return (
     <>
+      <Dialog.Heading title="Edit resolver" />
       <EditResolverFormContainer>
         <EditResolverWarnings {...editResolverForm} />
         <EditResolverForm {...{ ...editResolverForm, resolverAddress, formRef }} />

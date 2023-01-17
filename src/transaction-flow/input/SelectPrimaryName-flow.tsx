@@ -42,12 +42,15 @@ const StyledScrollBox = styled(ScrollBoxWithSpinner)(
 
 const NamePillWrapper = styled.div`
   width: 100%;
-  transform: translateY(-0.5rem);
+  display: inline-block;
 `
 
 const NameList = styled.div(
   () => css`
     padding-top: 0.5rem;
+    input {
+      margin-top: 8px;
+    }
   `,
 )
 

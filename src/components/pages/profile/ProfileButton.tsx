@@ -20,6 +20,7 @@ const StyledAddressIcon = styled(DynamicAddressIcon)(
 )
 
 export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
+  const breakpoints = useBreakpoint()
   const socialData = getSocialData(iconKey, value)
 
   return socialData ? (
@@ -30,6 +31,8 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
           name={socialData.icon as keyof typeof socialIconTypes}
         />
       }
+      size={breakpoints.md ? 'large' : 'small'}
+      inline
       data-testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
       link={socialData.type === 'link' ? socialData.urlFormatter : undefined}
@@ -54,6 +57,8 @@ export const AddressProfileButton = ({
       data-testid={`address-profile-button-${iconKey}`}
       icon={<StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />}
       value={value}
+      size={breakpoints.md ? 'large' : 'small'}
+      inline
     >
       {shortenAddress(
         value,
@@ -115,6 +120,8 @@ export const OtherProfileButton = ({
     <RecordItem
       link={isLink ? value : undefined}
       value={value}
+      inline
+      size={breakpoints.md ? 'large' : 'small'}
       keyLabel={
         type === 'address' ? (
           <OtherContainer>
@@ -166,6 +173,8 @@ export const OwnerProfileButton = ({
       }
       data-testid={`owner-profile-button-${label}`}
       data-timestamp={isExpiry ? timestamp : undefined}
+      inline
+      size={breakpoints.md ? 'large' : 'small'}
     >
       {isExpiry ? address : primary || formattedAddress}
     </RecordItem>
