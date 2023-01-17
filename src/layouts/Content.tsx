@@ -261,7 +261,7 @@ export const Content = ({
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
-      <Banner alert={children.warning.type}>children.warning.message</Banner>
+      <Banner alert={children.warning.type}>{children.warning.message}</Banner>
     </WarningWrapper>
   )
 
