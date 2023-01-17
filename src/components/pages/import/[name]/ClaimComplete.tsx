@@ -62,7 +62,7 @@ export const ClaimComplete = ({ name }: { name: string }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('dnssec')
 
-  // Removing from local storage so that sucess page is not shown twice.
+  // Removing from local storage so that success page is not shown twice.
   useEffect(() => {
     setTimeout(() => {
       localStorage.removeItem('latestImportTransactionKey')
