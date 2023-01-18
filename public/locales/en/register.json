@@ -54,7 +54,15 @@
         "Create or login to an existing moonpay account",
         "Use your credit or debit card to complete a single transaction"
       ],
-      "setupProfile": "I'd like to set up my profile first"
+      "setupProfile": "I'd like to set up my profile first",
+      "paymentMethod": "Payment method",
+      "notEnoughEth": "Not enough ETH in wallet",
+      "creditOrDebit": "Credit or debit card",
+      "fee": "fee",
+      "pendingMoonpayTransaction": "Your moonpay transaction is processing. This may take up to two minutes. You can check your progress from the confirmation email you recieved.",
+      "failedMoonpayTransaction": "Your moonpay transaction has failed. Please try again or choose the 'Ethereum' payment method.",
+      "ethereum": "Ethereum",
+      "processing": "Processing"
     },
     "transactions": {
       "heading": "Almost there",

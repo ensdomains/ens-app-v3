@@ -1,5 +1,6 @@
-import { Dispatch, SetStateAction, useState } from 'react'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import { usePrevious } from 'react-use'
 import styled, { css } from 'styled-components'
 import { useAccount, useBalance } from 'wagmi'
 
@@ -162,10 +163,11 @@ const PaymentChoice = ({
   hasEnoughEth: boolean
 }) => {
   const { t } = useTranslation('register')
+  console.log('paymentMethodChoice: ', paymentMethodChoice)
   return (
     <PaymentChoiceContainer>
       <StyledTitle color="textTertiary" weight="bold">
-        Payment method
+        {t('steps.info.paymentMethod')}
       </StyledTitle>
       <Spacer $height="2" />
       <StyledRadioButtonGroup
@@ -174,17 +176,18 @@ const PaymentChoice = ({
       >
         <RadioButtonContainer>
           <StyledRadioButton
-            label={<RadioLabel>Ethereum</RadioLabel>}
+            label={<RadioLabel>{t('steps.info.ethereum')}</RadioLabel>}
             name="RadioButtonGroup"
             value={PaymentMethod.ethereum}
             labelRight
             disabled={hasPendingMoonpayTransaction}
+            checked={paymentMethodChoice === PaymentMethod.ethereum || undefined}
           />
           {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
             <>
               <Spacer $height="2" />
               <Helper type="warning" alignment="horizontal">
-                Not enough ETH in wallet
+                {t('steps.info.notEnoughEth')}
               </Helper>
               <Spacer $height="2" />
             </>
@@ -208,13 +211,14 @@ const PaymentChoice = ({
           <StyledRadioButton
             label={
               <>
-                <RadioLabel>Credit or debit card</RadioLabel>
-                <Typography>(X% fee)</Typography>
+                <RadioLabel>{t('steps.info.creditOrDebit')}</RadioLabel>
+                <Typography>(X% {t('steps.info.fee')})</Typography>
               </>
             }
             name="RadioButtonGroup"
             value={PaymentMethod.moonpay}
             labelRight
+            checked={paymentMethodChoice === PaymentMethod.moonpay || undefined}
           />
           {paymentMethodChoice === PaymentMethod.moonpay && (
             <>
@@ -253,16 +257,33 @@ const Info = ({
   resolverExists,
   hasPrimaryName,
   nameDetails,
-  transactionStatus,
+  moonpayTransactionStatus,
 }: Props) => {
-  console.log('transactionStatus: ', transactionStatus)
-  const hasPendingMoonpayTransaction = transactionStatus === 'pending'
-  const hasFailedMoonpayTransaction = transactionStatus === 'failed'
+  const hasPendingMoonpayTransaction = moonpayTransactionStatus === 'pending'
+  const hasFailedMoonpayTransaction = moonpayTransactionStatus === 'failed'
+
+  const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
 
   const { t } = useTranslation('register')
   const [paymentMethodChoice, setPaymentMethodChoice] = useState(
     hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
   )
+
+  useEffect(() => {
+    if (previousMoonpayTransactionStatus === undefined && moonpayTransactionStatus) {
+      console.log('setPaymentmethodchoice')
+      setPaymentMethodChoice(
+        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction ? PaymentMethod.moonpay : '',
+      )
+    }
+  }, [
+    hasFailedMoonpayTransaction,
+    hasPendingMoonpayTransaction,
+    moonpayTransactionStatus,
+    previousMoonpayTransactionStatus,
+    setPaymentMethodChoice,
+  ])
+
   const { address } = useAccount()
   const { data: balance } = useBalance({ addressOrName: address })
   const resolverAddress = useContractAddress('PublicResolver')
@@ -309,13 +330,10 @@ const Info = ({
         }}
       />
       {hasPendingMoonpayTransaction && (
-        <Helper type="info">
-          Your moonpay transaction is processing. This may take up to two minutes. You can check
-          your progress from the confirmation email you recieved.
-        </Helper>
+        <Helper type="info">{t('steps.info.pendingMoonpayTransaction')}</Helper>
       )}
       {hasFailedMoonpayTransaction && (
-        <Helper type="error">Your moonpay transaction has failed. Please try again.</Helper>
+        <Helper type="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
       )}
       <ButtonContainer>
         {!hasPendingMoonpayTransaction && (
@@ -328,7 +346,7 @@ const Info = ({
         {hasPendingMoonpayTransaction ? (
           <MobileFullWidth>
             <Button data-testid="next-button" shadowless disabled loading>
-              Processing
+              {t('steps.info.processing')}
             </Button>
           </MobileFullWidth>
         ) : (
@@ -339,7 +357,7 @@ const Info = ({
               shadowless
               onClick={() => callback({ paymentMethodChoice })}
             >
-              {hasFailedMoonpayTransaction
+              {hasFailedMoonpayTransaction && paymentMethodChoice === PaymentMethod.moonpay
                 ? t('action.tryAgain', { ns: 'common' })
                 : t('action.begin', { ns: 'common' })}
             </Button>

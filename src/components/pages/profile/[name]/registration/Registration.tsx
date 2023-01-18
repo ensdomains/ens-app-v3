@@ -56,15 +56,8 @@ const useMoonpayRegistration = (dispatch, normalisedName, selected, item) => {
   const chainId = useChainId()
   const [hasMoonpayModal, setHasMoonpayModal] = useState(false)
   const [moonpayUrl, setMoonpayUrl] = useState('')
-  const [currentExternalTransactionId, setCurrentExternalTransactionId] = useState('')
   const [isCompleted, setIsCompleted] = useState(false)
-
-  useEffect(() => {
-    if (item.externalTransactionId) {
-      console.log('setCurrentExternalTransactionId: ', item.externalTransactionId)
-      setCurrentExternalTransactionId(item.externalTransactionId)
-    }
-  }, [item.externalTransactionId])
+  const currentExternalTransactionId = item.externalTransactionId
 
   const initiateMoonpayRegistration = async () => {
     const label = getLabelFromName(normalisedName)
@@ -77,7 +70,11 @@ const useMoonpayRegistration = (dispatch, normalisedName, selected, item) => {
     const params = new Proxy(new URLSearchParams(textResponse), {
       get: (searchParams, prop) => searchParams.get(prop),
     })
-    setCurrentExternalTransactionId(params.externalTransactionId)
+    dispatch({
+      name: 'setExternalTransactionId',
+      externalTransactionId: params.externalTransactionId,
+      selected,
+    })
     setHasMoonpayModal(true)
   }
 
@@ -90,16 +87,6 @@ const useMoonpayRegistration = (dispatch, normalisedName, selected, item) => {
       )
       const jsonResult = (await response.json()) as Array
       const result = jsonResult?.[0]
-      console.log('result: ', result)
-      console.log('result.status: ', result?.status)
-
-      if (result?.status === 'pending') {
-        dispatch({
-          name: 'setExternalTransactionId',
-          externalTransactionId: currentExternalTransactionId,
-          selected,
-        })
-      }
 
       if (result?.status === 'completed' && !isCompleted) {
         setIsCompleted(true)
@@ -127,7 +114,7 @@ const useMoonpayRegistration = (dispatch, normalisedName, selected, item) => {
     hasMoonpayModal,
     setHasMoonpayModal,
     currentExternalTransactionId,
-    transactionStatus: transactionData?.status,
+    moonpayTransactionStatus: transactionData?.status,
   }
 }
 
@@ -154,7 +141,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
-  const { moonpayUrl, initiateMoonpayRegistration, hasMoonpayModal, transactionStatus } =
+  const { moonpayUrl, initiateMoonpayRegistration, hasMoonpayModal, moonpayTransactionStatus } =
     useMoonpayRegistration(dispatch, normalisedName, selected, item)
 
   const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
@@ -292,7 +279,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   callback={infoCallback}
                   onProfileClick={infoProfileCallback}
                   hasPrimaryName={!!primaryName}
-                  transactionStatus={transactionStatus}
+                  moonpayTransactionStatus={moonpayTransactionStatus}
                 />
               ),
               transactions: (
@@ -308,9 +295,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
-      <Dialog open={hasMoonpayModal} variant="actionable">
+      <StyledDialog open={hasMoonpayModal} variant="actionable">
         <iframe title="Moonpay Checkout" width="100%" height="90%" src={moonpayUrl} />
-      </Dialog>
+      </StyledDialog>
     </>
   )
 }
