@@ -139,7 +139,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     router.push(toProfile ? `/profile/${normalisedName}` : '/')
   }
 
-  const infoCallback = (arg: { back?: boolean; paymentMethodChoice?: PaymentMethod }) => {
+  const infoCallback = (arg: { back?: boolean; paymentMethodChoice?: PaymentMethod | '' }) => {
     if (arg.back) {
       dispatch({ name: 'decreaseStep', selected })
       return

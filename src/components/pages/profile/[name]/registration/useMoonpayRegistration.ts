@@ -2,10 +2,18 @@ import { useState } from 'react'
 import { useQuery } from 'wagmi'
 
 import { useChainId } from '@app/hooks/useChainId'
+import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import { MOONPAY_WORKER_URL } from '@app/utils/constants'
 import { getLabelFromName, labelHashCalc } from '@app/utils/utils'
 
-export const useMoonpayRegistration = (dispatch, normalisedName, selected, item) => {
+import { MoonpayTransactionStatus } from './types'
+
+export const useMoonpayRegistration = (
+  dispatch: ReturnType<typeof useRegistrationReducer>['dispatch'],
+  normalisedName: string,
+  selected: { name: string; address: string },
+  item: ReturnType<typeof useRegistrationReducer>['item'],
+) => {
   const chainId = useChainId()
   const [hasMoonpayModal, setHasMoonpayModal] = useState(false)
   const [moonpayUrl, setMoonpayUrl] = useState('')
@@ -21,11 +29,12 @@ export const useMoonpayRegistration = (dispatch, normalisedName, selected, item)
     setMoonpayUrl(textResponse)
 
     const params = new Proxy(new URLSearchParams(textResponse), {
-      get: (searchParams, prop) => searchParams.get(prop),
+      get: (searchParams, prop) => searchParams.get(prop as string),
     })
     dispatch({
       name: 'setExternalTransactionId',
-      externalTransactionId: params.externalTransactionId,
+      externalTransactionId: (params as unknown as { externalTransactionId: string })
+        .externalTransactionId,
       selected,
     })
     setHasMoonpayModal(true)
@@ -38,7 +47,7 @@ export const useMoonpayRegistration = (dispatch, normalisedName, selected, item)
       const response = await fetch(
         `${MOONPAY_WORKER_URL[chainId]}/transactionInfo?externalTransactionId=${currentExternalTransactionId}`,
       )
-      const jsonResult = (await response.json()) as Array
+      const jsonResult = (await response.json()) as Array<{ status: MoonpayTransactionStatus }>
       const result = jsonResult?.[0]
 
       if (result?.status === 'completed' && !isCompleted) {

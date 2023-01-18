@@ -36,6 +36,7 @@ export type RegistrationReducerDataItem = RegistrationData & {
   stepIndex: number
   queue: RegistrationStep[]
   isMoonpayFlow: boolean
+  externalTransactionId: string
 } & SelectedItemProperties
 
 export type RegistrationReducerData = {
@@ -88,6 +89,13 @@ export type RegistrationReducerAction =
       selected: SelectedItemProperties
     }
   | {
-      name: 'gotoMoonpayStep'
+      name: 'setExternalTransactionId'
+      selected: SelectedItemProperties
+      externalTransactionId: string
+    }
+  | {
+      name: 'moonpayTransactionCompleted'
       selected: SelectedItemProperties
     }
+
+export type MoonpayTransactionStatus = 'pending' | 'completed' | 'failed'

@@ -22,7 +22,7 @@ import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 
 import FullInvoice from '../FullInvoice'
-import { RegistrationReducerDataItem } from '../types'
+import { MoonpayTransactionStatus, RegistrationReducerDataItem } from '../types'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -158,12 +158,13 @@ const PaymentChoice = ({
   hasEnoughEth,
   hasPendingMoonpayTransaction,
 }: {
-  paymentMethodChoice: PaymentMethod
-  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod>>
+  paymentMethodChoice: PaymentMethod | ''
+  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod | ''>>
   hasEnoughEth: boolean
+  hasPendingMoonpayTransaction: boolean
 }) => {
   const { t } = useTranslation('register')
-  console.log('paymentMethodChoice: ', paymentMethodChoice)
+
   return (
     <PaymentChoiceContainer>
       <StyledTitle color="textTertiary" weight="bold">
@@ -243,10 +244,11 @@ const PaymentChoice = ({
 type Props = {
   registrationData: RegistrationReducerDataItem
   nameDetails: ReturnType<typeof useNameDetails>
-  callback: (data: { back?: boolean; paymentMethodChoice?: PaymentMethod }) => void
+  callback: (data: { back?: boolean; paymentMethodChoice?: PaymentMethod | '' }) => void
   onProfileClick: () => void
   resolverExists: boolean | undefined
   hasPrimaryName: boolean
+  moonpayTransactionStatus?: MoonpayTransactionStatus
 }
 
 const Info = ({
@@ -265,13 +267,12 @@ const Info = ({
   const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
 
   const { t } = useTranslation('register')
-  const [paymentMethodChoice, setPaymentMethodChoice] = useState(
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod | ''>(
     hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
   )
 
   useEffect(() => {
     if (previousMoonpayTransactionStatus === undefined && moonpayTransactionStatus) {
-      console.log('setPaymentmethodchoice')
       setPaymentMethodChoice(
         hasPendingMoonpayTransaction || hasFailedMoonpayTransaction ? PaymentMethod.moonpay : '',
       )

@@ -115,11 +115,6 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       item.started = true
       break
     }
-    case 'setMoonpayFlow': {
-      item.isMoonpayFlow = action.isMoonpayFlow
-      item.externalTransactionId = action.externalTransactionId
-      break
-    }
     case 'setProfileData': {
       item.records = action.payload.records
       item.permissions = action.payload.permissions
