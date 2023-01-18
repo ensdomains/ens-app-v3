@@ -1,13 +1,12 @@
 import Head from 'next/head'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useQuery } from 'wagmi'
+import { useAccount } from 'wagmi'
 
 import { Dialog, Helper } from '@ensdomains/thorin'
 
 import { baseFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
-import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -16,8 +15,7 @@ import useResolverExists from '@app/hooks/useResolverExists'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { MOONPAY_LINK_GENERATOR_URL } from '@app/utils/constants'
-import { getLabelFromName, isLabelTooLong, labelHashCalc } from '@app/utils/utils'
+import { isLabelTooLong } from '@app/utils/utils'
 
 import Complete from './steps/Complete'
 import Info, { PaymentMethod } from './steps/Info'
@@ -25,6 +23,7 @@ import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
 import { BackObj, RegistrationStepData } from './types'
+import { useMoonpayRegistration } from './useMoonpayRegistration'
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -48,75 +47,6 @@ const StyledDialog = styled(Dialog)(
     }
   `,
 )
-
-// We dont' need to save the externalTransactionId until the state switches to pending
-// If the status of the current transaction is anything other than pending then it
-// can be overwritten, we will just start a new flow
-const useMoonpayRegistration = (dispatch, normalisedName, selected, item) => {
-  const chainId = useChainId()
-  const [hasMoonpayModal, setHasMoonpayModal] = useState(false)
-  const [moonpayUrl, setMoonpayUrl] = useState('')
-  const [isCompleted, setIsCompleted] = useState(false)
-  const currentExternalTransactionId = item.externalTransactionId
-
-  const initiateMoonpayRegistration = async () => {
-    const label = getLabelFromName(normalisedName)
-    const tokenId = labelHashCalc(label)
-    const requestUrl = `${MOONPAY_LINK_GENERATOR_URL[chainId]}?tokenId=${tokenId}&name=${normalisedName}&duration=1`
-    const response = await fetch(requestUrl)
-    const textResponse = await response.text()
-    setMoonpayUrl(textResponse)
-
-    const params = new Proxy(new URLSearchParams(textResponse), {
-      get: (searchParams, prop) => searchParams.get(prop),
-    })
-    dispatch({
-      name: 'setExternalTransactionId',
-      externalTransactionId: params.externalTransactionId,
-      selected,
-    })
-    setHasMoonpayModal(true)
-  }
-
-  // Monitor current transaction
-  const { data: transactionData } = useQuery(
-    ['currentExternalTransactionId', currentExternalTransactionId],
-    async () => {
-      const response = await fetch(
-        `https://moonpay-goerli.ens-cf.workers.dev/transactionInfo?externalTransactionId=${currentExternalTransactionId}`,
-      )
-      const jsonResult = (await response.json()) as Array
-      const result = jsonResult?.[0]
-
-      if (result?.status === 'completed' && !isCompleted) {
-        setIsCompleted(true)
-        setHasMoonpayModal(false)
-        dispatch({
-          name: 'moonpayTransactionCompleted',
-          selected,
-        })
-      }
-
-      return result || {}
-    },
-    {
-      refetchOnWindowFocus: true,
-      refetchOnMount: true,
-      refetchInterval: 1000,
-      refetchIntervalInBackground: true,
-      enabled: !!currentExternalTransactionId && !isCompleted,
-    },
-  )
-
-  return {
-    moonpayUrl,
-    initiateMoonpayRegistration,
-    hasMoonpayModal,
-    setHasMoonpayModal,
-    currentExternalTransactionId,
-    moonpayTransactionStatus: transactionData?.status,
-  }
-}
 
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
