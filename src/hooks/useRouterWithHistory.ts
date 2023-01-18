@@ -5,7 +5,7 @@ import { getDestination } from '@app/routes'
 export const useRouterWithHistory = () => {
   const router = useRouter()
 
-  const _replace = router.replace
+  const _replace = router?.replace
 
   const replace = (pathname: string) => {
     const destination = getDestination(pathname)
