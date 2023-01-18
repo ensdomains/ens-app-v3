@@ -243,6 +243,7 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         other: Object.keys(newDefaultValues.other) || [],
         accounts: Object.keys(newDefaultValues.accounts) || [],
       }
+      console.log(newDefaultValues)
       reset(newDefaultValues)
 
       setHasExistingWebsite(!!newDefaultValues.website)
@@ -329,7 +330,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     event?: React.BaseSyntheticEvent,
   ) => {
     const records = getValuesAsProfile(profileData)
-
     callback(records, event)
   }
 

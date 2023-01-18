@@ -1,9 +1,9 @@
-import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Typography, mq } from '@ensdomains/thorin'
 
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { faqOptions } from '@app/constants/faq'
 import { Content } from '@app/layouts/Content'
 
@@ -34,7 +34,7 @@ const OptionItem = styled.a(
     gap: ${theme.space['4']};
     padding: ${theme.space['6']};
 
-    border: 1px solid ${theme.colors.grey};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii['2xLarge']};
     background-color: ${theme.colors.background};
     transition: all 0.15s ease-in-out;
@@ -55,7 +55,6 @@ const OptionItem = styled.a(
 
     &:hover {
       background-color: ${theme.colors.backgroundSecondary};
-      border-color: ${theme.colors.borderSecondary};
     }
 
     ${mq.md.min(css`
@@ -74,12 +73,12 @@ export default function Page() {
         trailing: (
           <OptionContainer>
             {faqOptions.map(({ title, slug, icon: Icon }) => (
-              <Link href={`/faq/${slug}`} passHref key={title}>
+              <BaseLink href={`/faq/${slug}`} passHref key={title}>
                 <OptionItem>
                   <Icon />
                   <Typography>{t(`option.${title}`)}</Typography>
                 </OptionItem>
-              </Link>
+              </BaseLink>
             ))}
           </OptionContainer>
         ),

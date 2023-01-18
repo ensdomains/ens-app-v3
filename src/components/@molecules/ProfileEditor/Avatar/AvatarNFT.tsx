@@ -108,7 +108,7 @@ const NFTName = styled(Typography)(
 const SelectedNFTContainer = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']} ${theme.space['16']};
-    max-width: 540px;
+
     & div {
       padding: 0 ${theme.radii['2.5xLarge']};
       &:first-of-type {
@@ -144,7 +144,7 @@ export const AvatarNFT = ({
   handleSubmit,
 }: {
   handleCancel: () => void
-  handleSubmit: (type: 'nft', uri: string, display?: string) => void
+  handleSubmit: (display: string, uri: string) => void
 }) => {
   const chain = useChainName()
   const { t } = useTranslation('transactionFlow')
@@ -202,7 +202,7 @@ export const AvatarNFT = ({
       const string = `eip155:1/${nftReference.id.tokenMetadata.tokenType.toLowerCase()}:${
         nftReference.contract.address
       }/${BigNumber.from(nftReference.id.tokenId).toString()}`
-      handleSubmit('nft', string, nftReference.media[0].gateway)
+      handleSubmit(nftReference.media[0].gateway, string)
     }
 
     return (
@@ -220,7 +220,7 @@ export const AvatarNFT = ({
         </SelectedNFTContainer>
         <Dialog.Footer
           leading={
-            <Button variant="secondary" tone="grey" onClick={() => setSelectedNFT(null)}>
+            <Button colorStyle="greySecondary" onClick={() => setSelectedNFT(null)}>
               {t('action.back', { ns: 'common' })}
             </Button>
           }
@@ -297,7 +297,7 @@ export const AvatarNFT = ({
       {innerContent}
       <Dialog.Footer
         leading={
-          <Button variant="secondary" tone="grey" onClick={handleCancel}>
+          <Button colorStyle="greySecondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

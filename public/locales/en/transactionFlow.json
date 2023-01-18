@@ -123,6 +123,7 @@
       }
     },
     "editResolver": {
+      "title": "Edit Resolver",
       "latestLabel": "Use latest resolver",
       "etherscan": "Etherscan",
       "latestMessage": "You are on the latest resolver",

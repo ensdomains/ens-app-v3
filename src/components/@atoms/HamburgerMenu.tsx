@@ -1,9 +1,10 @@
-import Link from 'next/link'
 import { ComponentProps } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
+import { Button, Colors, Dropdown, MenuSVG } from '@ensdomains/thorin'
+
+import BaseLink from './BaseLink'
 
 export interface HamburgerItem {
   label: string
@@ -13,12 +14,20 @@ export interface HamburgerItem {
   href?: string
 }
 
-const MenuIcon = styled(MenuSVG)(
+const IconWrapper = styled.div<{}>(
   ({ theme }) => css`
-    display: block;
-    width: ${theme.space['4.5']};
-    height: ${theme.space['4.5']};
-    stroke-width: ${theme.borderWidths['0.75']};
+    width: ${theme.space['8.5']};
+    height: ${theme.space['8.5']};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    svg {
+      width: ${theme.space['5']};
+      height: ${theme.space['5']};
+      color: ${theme.colors.greyPrimary};
+      stroke-width: '0.1875rem';
+    }
   `,
 )
 
@@ -35,32 +44,32 @@ export const HamburgerMenu = ({
       chevron={false}
       shortThrow
       keepMenuOnTop
-      buttonProps={{
-        shadowless: true,
-        variant: 'transparent',
-        size: 'extraSmall',
-      }}
       align="right"
       items={dropdownItems.map((item) =>
         item.href
           ? {
               ...item,
               wrapper: (children, key) => (
-                <Link href={item.disabled ? '' : item.href!} key={key}>
+                <BaseLink href={item.disabled ? '' : item.href!} passHref key={key}>
                   {children}
-                </Link>
+                </BaseLink>
               ),
               label: t(item.label),
               as: 'a',
-              color: 'textSecondary',
+              color: 'greyPrimary',
             }
           : {
               ...item,
               label: t(item.label),
             },
       )}
-      label={<MenuIcon />}
       {...props}
-    />
+    >
+      <Button colorStyle="transparent" size="flexible">
+        <IconWrapper>
+          <MenuSVG />
+        </IconWrapper>
+      </Button>
+    </Dropdown>
   )
 }

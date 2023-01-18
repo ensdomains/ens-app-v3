@@ -31,7 +31,7 @@ describe('ExpiryClock', () => {
 describe('ShortExpiry', () => {
   it('should be grey if expiry is more than 90 days away', () => {
     render(<ShortExpiry expiry={yearExpiry} />)
-    expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'foreground')
+    expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'grey')
   })
 
   it('should be orange if expiry is less than 90 days away', () => {

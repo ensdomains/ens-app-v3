@@ -15,11 +15,10 @@ describe('Set Primary Name', () => {
     cy.get('@header-profile').next().children().should('have.length', 1)
   })
 
-
   describe('profile', () => {
     describe('differening ETH record', () => {
       it('should show primary name action in profile dropdown', () => {
-        cy.visit('/profile/other-eth-record.eth')
+        cy.visit('/other-eth-record.eth')
         connectFromExisting()
         cy.findByTestId('profile-actions').click()
         cy.findByText('Set as primary name').click()
@@ -59,7 +58,7 @@ describe('Set Primary Name', () => {
     })
     describe('same ETH record', () => {
       it('should show primary name action in profile dropdown', () => {
-        cy.visit('/profile/test123.eth')
+        cy.visit('/test123.eth')
         connectFromExisting()
         cy.findByTestId('profile-actions').click()
         cy.findByText('Set as primary name').click()

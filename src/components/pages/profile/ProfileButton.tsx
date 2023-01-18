@@ -1,40 +1,16 @@
 import React, { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { ArrowUpSVG, Button, Space, Typography, mq } from '@ensdomains/thorin'
+import { RecordItem, Typography } from '@ensdomains/thorin'
 
 import { DynamicAddressIcon, addressIconTypes } from '@app/assets/address/DynamicAddressIcon'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
-import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
-import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
-import { useCopied } from '@app/hooks/useCopied'
 import { usePrimary } from '@app/hooks/usePrimary'
+import { getDestination } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { getSocialData } from '@app/utils/getSocialData'
 import { shortenAddress } from '@app/utils/utils'
-
-const Container = styled.div(
-  ({ theme }) => css`
-    padding: 0;
-    padding-right: ${theme.space['0.25']};
-    width: 100%;
-    ${mq.md.min(css`
-      padding: 0 ${theme.space['0.5']};
-    `)}
-  `,
-)
-
-const Wrapper = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    flex-gap: ${theme.space['2']};
-    gap: ${theme.space['2']};
-    align-items: center;
-    justify-content: center;
-  `,
-)
 
 const StyledAddressIcon = styled(DynamicAddressIcon)(
   ({ theme }) => css`
@@ -43,110 +19,26 @@ const StyledAddressIcon = styled(DynamicAddressIcon)(
   `,
 )
 
-const PrimaryText = styled(Typography)(
-  ({ theme }) => css`
-    color: ${theme.colors.text};
-  `,
-)
-
-const RotatedIconArrowUp = styled.svg(
-  ({ theme }) => css`
-    display: block;
-    transform: rotate(45deg);
-    height: ${theme.space['3.5']};
-    width: ${theme.space['3.5']};
-    stroke-width: ${theme.borderWidths['1']};
-    color: ${theme.colors.textTertiary};
-  `,
-)
-
-const ButtonWrapper = styled.div(
-  ({ theme }) => css`
-    width: min-content;
-
-    & > button,
-    & > a {
-      background-color: ${theme.colors.foregroundSecondary};
-    }
-  `,
-)
-
-const ProfileButton = ({
-  prefixSize = '4',
-  prefix,
-  children,
-  link,
-  value,
-  testid,
-  timestamp,
-}: {
-  prefixSize?: Space
-  prefix?: React.ReactNode
-  children: React.ReactNode
-  link?: string
-  value: string
-  testid?: string
-  timestamp?: number
-}) => {
-  const { space } = useTheme()
-  const { copy, copied } = useCopied()
-
-  return (
-    <ConditionalWrapper
-      condition={link}
-      wrapper={(wrapperChildren) => <a href={link}>{wrapperChildren}</a>}
-    >
-      <ButtonWrapper>
-        <Button
-          onClick={link ? undefined : () => copy(value)}
-          size="extraSmall"
-          variant="primary"
-          tone="grey"
-          shadowless
-        >
-          <Container data-testid={testid} data-timestamp={timestamp}>
-            <Wrapper>
-              <div
-                data-testid="found"
-                style={{
-                  width: space[prefixSize],
-                  height: space[prefixSize],
-                }}
-              >
-                {prefix}
-              </div>
-              <PrimaryText>{children}</PrimaryText>
-              {link ? (
-                <RotatedIconArrowUp as={ArrowUpSVG} key={link} />
-              ) : (
-                <IconCopyAnimated key={value} copied={copied} size="3" color="textTertiary" />
-              )}
-            </Wrapper>
-          </Container>
-        </Button>
-      </ButtonWrapper>
-    </ConditionalWrapper>
-  )
-}
-
 export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
+  const breakpoints = useBreakpoint()
   const socialData = getSocialData(iconKey, value)
 
   return socialData ? (
-    <ProfileButton
-      prefixSize="4"
-      prefix={
+    <RecordItem
+      icon={
         <DynamicSocialIcon
           fill={socialData.color}
           name={socialData.icon as keyof typeof socialIconTypes}
         />
       }
-      testid={`social-profile-button-${iconKey}`}
+      size={breakpoints.md ? 'large' : 'small'}
+      inline
+      data-testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
       link={socialData.type === 'link' ? socialData.urlFormatter : undefined}
     >
       {socialData.value}
-    </ProfileButton>
+    </RecordItem>
   ) : null
 }
 
@@ -161,11 +53,12 @@ export const AddressProfileButton = ({
   const iconKey = _iconKey.toLowerCase()
 
   return addressIconTypes[iconKey as keyof typeof addressIconTypes] ? (
-    <ProfileButton
-      testid={`address-profile-button-${iconKey}`}
-      prefixSize="5"
-      prefix={<StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />}
+    <RecordItem
+      data-testid={`address-profile-button-${iconKey}`}
+      icon={<StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />}
       value={value}
+      size={breakpoints.md ? 'large' : 'small'}
+      inline
     >
       {shortenAddress(
         value,
@@ -173,22 +66,25 @@ export const AddressProfileButton = ({
         breakpoints.sm ? undefined : 4,
         breakpoints.sm ? undefined : 3,
       )}
-    </ProfileButton>
+    </RecordItem>
   ) : null
 }
 
 const OtherContainer = styled.div(
   ({ theme }) => css`
-    background-color: ${theme.colors.textTertiary};
-    padding: ${theme.space['0.5']} ${theme.space['1.25']};
-    border-radius: ${theme.radii.large};
+    background-color: ${theme.colors.greyPrimary};
+    padding: 0 ${theme.space['1.25']};
+    border-radius: ${theme.radii.checkbox};
+    height: ${theme.space['5']};
+    display: flex;
+    align-items: center;
   `,
 )
 
 const OtherContainerAddressPrefix = styled(Typography)(
   ({ theme }) => css`
-    color: white;
-    font-size: ${theme.fontSizes.label};
+    color: ${theme.colors.backgroundPrimary};
+    font-size: ${theme.fontSizes.extraSmall};
   `,
 )
 
@@ -221,23 +117,26 @@ export const OtherProfileButton = ({
   }, [type, value, breakpoints])
 
   return (
-    <ProfileButton
+    <RecordItem
       link={isLink ? value : undefined}
       value={value}
-      prefixSize="max"
-      prefix={
+      inline
+      size={breakpoints.md ? 'large' : 'small'}
+      keyLabel={
         type === 'address' ? (
           <OtherContainer>
-            <OtherContainerAddressPrefix variant="label">{iconKey}</OtherContainerAddressPrefix>
+            <OtherContainerAddressPrefix fontVariant="extraSmall">
+              {iconKey}
+            </OtherContainerAddressPrefix>
           </OtherContainer>
         ) : (
-          <OtherContainerTextPrefix color="textSecondary">{iconKey}</OtherContainerTextPrefix>
+          <OtherContainerTextPrefix color="grey">{iconKey}</OtherContainerTextPrefix>
         )
       }
-      testid={`other-profile-button-${iconKey}`}
+      data-testid={`other-profile-button-${iconKey}`}
     >
       {formattedValue}
-    </ProfileButton>
+    </RecordItem>
   )
 }
 
@@ -264,19 +163,20 @@ export const OwnerProfileButton = ({
   const isExpiry = label === 'expiry'
 
   return (
-    <ProfileButton
-      link={isExpiry ? undefined : `/address/${address}`}
+    <RecordItem
+      link={isExpiry ? undefined : (getDestination(`/address/${address}`) as string)}
       value={address}
-      prefixSize="max"
-      prefix={
+      keyLabel={
         <OtherContainerTextPrefix color="textSecondary">
           {t(label).toLocaleLowerCase()}
         </OtherContainerTextPrefix>
       }
-      testid={`owner-profile-button-${label}`}
-      timestamp={isExpiry ? timestamp : undefined}
+      data-testid={`owner-profile-button-${label}`}
+      data-timestamp={isExpiry ? timestamp : undefined}
+      inline
+      size={breakpoints.md ? 'large' : 'small'}
     >
       {isExpiry ? address : primary || formattedAddress}
-    </ProfileButton>
+    </RecordItem>
   )
 }

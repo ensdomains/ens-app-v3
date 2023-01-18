@@ -1,15 +1,16 @@
 import { ReactNode, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useBalance } from 'wagmi'
+import { useBalance } from 'wagmi'
 
-import { Button, Checkbox, Heading, Typography, mq } from '@ensdomains/thorin'
+import { Button, Field, Heading, Toggle, Typography, mq } from '@ensdomains/thorin'
 
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
 import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -44,7 +45,7 @@ const OutlinedContainer = styled.div(
 
     padding: ${theme.space['4']};
     border-radius: ${theme.radii.large};
-    border: ${theme.colors.grey} solid 1px;
+    border: ${theme.colors.border} solid 1px;
 
     ${mq.md.min(css`
       grid-template-areas: 'title checkbox' 'description checkbox';
@@ -93,7 +94,7 @@ const Pricing = ({
   const breakpoints = useBreakpoint()
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
-  const { address } = useAccount()
+  const { address } = useAccountSafely()
   const { data: balance } = useBalance({ addressOrName: address })
   const resolverAddress = useContractAddress('PublicResolver')
 
@@ -125,23 +126,19 @@ const Pricing = ({
     actionButton = <ConnectButton large />
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
-      <Button data-testid="next-button" shadowless disabled>
+      <Button data-testid="next-button" disabled>
         {t('action.loading', { ns: 'common' })}
       </Button>
     )
   } else if (balance?.value.lt(totalRequiredBalance)) {
     actionButton = (
-      <Button data-testid="next-button" shadowless disabled>
+      <Button data-testid="next-button" disabled>
         {t('steps.pricing.insufficientBalance')}
       </Button>
     )
   } else {
     actionButton = (
-      <Button
-        data-testid="next-button"
-        shadowless
-        onClick={() => callback({ reverseRecord, years })}
-      >
+      <Button data-testid="next-button" onClick={() => callback({ reverseRecord, years })}>
         {t('action.next', { ns: 'common' })}
       </Button>
     )
@@ -178,15 +175,24 @@ const Pricing = ({
           {t('steps.pricing.primaryName')}
         </OutlinedContainerTitle>
         <CheckboxWrapper $name="checkbox">
-          <Checkbox
-            variant="switch"
+          <Field
             hideLabel
             label={t('steps.pricing.primaryName')}
+            inline
+            reverse
             disabled={!address}
-            size={breakpoints.md ? 'large' : 'medium'}
-            checked={reverseRecord}
-            onChange={(e) => setReverseRecord(e.target.checked)}
-          />
+          >
+            {(ids) => (
+              <Toggle
+                {...ids?.content}
+                disabled={!address}
+                size={breakpoints.md ? 'large' : 'medium'}
+                checked={reverseRecord}
+                onChange={(e) => setReverseRecord(e.target.checked)}
+                data-testid="primary-name-toggle"
+              />
+            )}
+          </Field>
         </CheckboxWrapper>
         <OutlinedContainerDescription $name="description">
           {t('steps.pricing.primaryNameMessage')}

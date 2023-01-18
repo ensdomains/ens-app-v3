@@ -1,13 +1,13 @@
 /* stylelint-disable no-descending-specificity */
 import Markdown from 'markdown-to-jsx'
 import { GetStaticPropsContext } from 'next'
-import Link from 'next/link'
 import { ReactElement } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { DefaultTheme, css, keyframes } from 'styled-components'
 
 import { LinkSVG, Typography, mq } from '@ensdomains/thorin'
 
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { Card } from '@app/components/Card'
 import { faqOptions } from '@app/constants/faq'
 import { Content } from '@app/layouts/Content'
@@ -58,11 +58,11 @@ const OptionLinks = styled(Card)(
 
 const targetKeyframes = ({ theme }: { theme: DefaultTheme }) => keyframes`
   0% {
-    background-color: rgba(${theme.shadesRaw.foreground}, 0.05);
+    background-color: rgba(${theme.colors.greyPrimary}, 0.05);
   }
 
   100% {
-    background-color: rgba(${theme.shadesRaw.foreground}, 0);
+    background-color: rgba(${theme.colors.greyPrimary}, 0);
   }
 `
 
@@ -169,12 +169,12 @@ function Page({ slug }: { slug: string }) {
         leading: (
           <OptionLinks>
             {faqOptions.map(({ title, slug: itemSlug, icon: Icon }) => (
-              <Link href={`/faq/${itemSlug}`} passHref key={title}>
+              <BaseLink href={`/faq/${itemSlug}`} passHref key={title}>
                 <a className={slug === itemSlug ? 'selected' : undefined}>
                   <Icon />
                   <Typography>{t(`option.${title}`)}</Typography>
                 </a>
-              </Link>
+              </BaseLink>
             ))}
           </OptionLinks>
         ),

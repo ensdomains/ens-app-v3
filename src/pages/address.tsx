@@ -36,32 +36,14 @@ const DetailsContainer = styled.div(
 )
 
 const TabWrapperWithButtons = styled(TabWrapper)(
-  () => css`
+  ({ theme }) => css`
     display: flex;
     flex-direction: column;
     align-items: normal;
     justify-content: flex-start;
     width: 100%;
     max-width: 100%;
-    background: white;
-  `,
-)
-
-const ButtonInner = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    align-items: center;
-    gap: ${theme.space['2']};
-
-    font-size: ${theme.space['3.5']};
-    height: ${theme.space['5']};
-    padding: 0 ${theme.space['2']};
-
-    svg {
-      display: block;
-      width: ${theme.space['3']};
-      height: ${theme.space['3']};
-    }
+    background: ${theme.colors.backgroundPrimary};
   `,
 )
 
@@ -204,11 +186,13 @@ const Page = () => {
               onSearchChange={setSearchQuery}
             >
               {mode === 'select' && (
-                <Button size="extraSmall" onClick={handleExtend} data-testid="extend-names-button">
-                  <ButtonInner>
-                    <FastForwardSVG />
-                    {t('action.extend', { ns: 'common' })}
-                  </ButtonInner>
+                <Button
+                  size="small"
+                  onClick={handleExtend}
+                  data-testid="extend-names-button"
+                  prefix={<FastForwardSVG />}
+                >
+                  {t('action.extend', { ns: 'common' })}
                 </Button>
               )}
             </NameTableHeader>

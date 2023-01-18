@@ -1,10 +1,11 @@
-import Link from 'next/link'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
 import { RouteItemObj } from '@app/routes'
+
+import BaseLink from '../BaseLink'
 
 const LinkWrapper = styled.a<{ $hasNotification?: boolean; $asText?: boolean }>(
   ({ theme, $hasNotification, $asText }) => css`
@@ -44,12 +45,12 @@ const StyledAnchor = styled.div<{ $isActive: boolean; disabled?: boolean }>(
     transition: color 0.125s ease-in-out;
     ${disabled
       ? css`
-          color: ${theme.colors.textPlaceholder};
+          color: ${theme.colors.greyPrimary};
           cursor: not-allowed;
         `
       : css`
           &:hover {
-            color: ${theme.colors.textSecondary};
+            color: ${theme.colors.textPrimary};
           }
         `}
     ${$isActive &&
@@ -66,7 +67,7 @@ const IconContainer = styled.div<{ $active: boolean; disabled: boolean }>(
     height: ${theme.space['6']};
     ${disabled &&
     css`
-      color: ${theme.colors.foregroundSecondary};
+      color: ${theme.colors.greyPrimary};
     `}
   `,
 )
@@ -88,9 +89,9 @@ export const RouteItem = ({
     <ConditionalWrapper
       condition={!route.disabled}
       wrapper={(wrapperChildren) => (
-        <Link href={route.href} passHref>
+        <BaseLink href={route.href} passHref>
           {wrapperChildren}
-        </Link>
+        </BaseLink>
       )}
     >
       <LinkWrapper $asText={asText} $hasNotification={hasNotification}>

@@ -9,33 +9,39 @@ import {
 } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { Button, CloseSVG, Input, PlusSVG, SearchSVG } from '@ensdomains/thorin'
+import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
+import { formSafeKey } from '@app/utils/editor'
 
 const Container = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     position: relative;
-    border: 1px solid ${theme.colors.borderTertiary};
+    /* border: 1px solid ${theme.colors.border}; */
     background: ${$state === 'exited' || $state === 'exiting'
-      ? theme.colors.white
-      : theme.colors.foregroundTertiary};
+      ? theme.colors.backgroundPrimary
+      : theme.colors.greySurface};
     max-height: ${$state === 'exited' || $state === 'exiting'
       ? theme.space['12']
       : theme.space['40']};
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
-    overflow: hidden;
     box-sizing: content-box;
     border-radius: ${theme.radii.extraLarge};
+    margin: 0 ${theme.space['3']};
     cursor: pointer;
 
     ${$state === 'exited' &&
-    `
-    &:hover {
-      transform: translateY(-1px);
-    }
+    css`
+      &:hover {
+        transform: translateY(-1px);
+      }
+    `}
+
+    ${$state === 'entered' &&
+    css`
+      border: 1px solid ${theme.colors.border};
     `}
   `,
 )
@@ -62,55 +68,12 @@ const ControlsHeaderLeading = styled.div(
   `,
 )
 
-const SearchIconWrapper = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['5']};
-    height: ${theme.space['5']};
-
-    svg {
-      display: block;
-      width: 100%;
-      height: 100%;
-      path {
-        stroke-width: 3;
-        stroke: ${theme.colors.textTertiary};
-      }
-    }
-  `,
-)
-const ClearButton = styled.button(
-  ({ theme }) => css`
-    height: 100%;
-    cursor: pointer;
-
-    div {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: ${theme.space['6']};
-      height: ${theme.space['6']};
-      background: ${theme.colors.backgroundTertiary};
-      border-radius: 50%;
-    }
-
-    svg {
-      display: block;
-      width: ${theme.space['2.5']};
-      height: ${theme.space['2.5']};
-      path {
-        stroke: ${theme.colors.textTertiary};
-        fill: ${theme.colors.textTertiary};
-      }
-    }
-  `,
-)
-
 const ControlsHeaderTrailing = styled.button<{ $accented: boolean }>(
   ({ theme, $accented }) => css`
     display: flex;
     align-items: center;
     padding: 0 ${theme.space['4']};
-    color: ${$accented ? theme.colors.accent : theme.colors.textTertiary};
+    color: ${$accented ? theme.colors.accent : theme.colors.greyPrimary};
     cursor: pointer;
 
     :disabled {
@@ -152,7 +115,7 @@ const ControlsBody = styled.div(
     }
 
     &:hover {
-      border-color: rgba(${theme.shadesRaw.foreground}, 0.2);
+      border-color: ${theme.colors.greyPrimary};
     }
   `,
 )
@@ -181,10 +144,11 @@ const OptionContainer = styled.button<{ $inline: boolean }>(
     flex-direction: ${$inline ? 'row' : 'column'};
     align-items: center;
     gap: ${theme.space['1']};
+    flex: 0 0 ${$inline ? theme.space['12'] : theme.space['16']};
     width: ${$inline ? 'auto' : theme.space['16']};
     height: ${$inline ? theme.space['12'] : theme.space['16']};
-    border: 1px solid ${theme.colors.borderTertiary};
-    background: white;
+    border: 1px solid ${theme.colors.border};
+    background: ${theme.colors.backgroundPrimary};
     border-radius: ${theme.radii.extraLarge};
     padding: ${theme.space['2']} ${$inline ? theme.space['4'] : theme.space['2']};
     cursor: pointer;
@@ -263,11 +227,17 @@ const NoOptionsContainer = styled.div<{ $inline: boolean }>(
   `,
 )
 
+const SVGWrapper = styled.svg(
+  ({ theme }) => css`
+    color: ${theme.colors.greyPrimary} !important;
+  `,
+)
+
 const ButtonContainer = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
     position: absolute;
-    bottom: -1px;
+    bottom: 0;
     left: 0;
     width: 100%;
     opacity: ${$state === 'entered' || $state === 'entering' ? 0 : 1};
@@ -312,7 +282,6 @@ export const AddRecordButton = ({
   const [error, setError] = useState<string | undefined>()
 
   const inputRef = useRef<HTMLInputElement>(null)
-  const theme = useTheme()
 
   const [state, toggle] = useTransition({
     timeout: 300,
@@ -347,26 +316,7 @@ export const AddRecordButton = ({
 
   const inputActionType = createable && hasInput ? 'create' : 'cancel'
 
-  const prefix = autocomplete ? (
-    <SearchIconWrapper>
-      <SearchSVG />
-    </SearchIconWrapper>
-  ) : undefined
-
-  const suffix = hasInput ? (
-    <ClearButton
-      type="button"
-      onClick={() => {
-        setInputValue('')
-        inputRef.current?.focus()
-      }}
-      data-testid="add-record-button-clear-button"
-    >
-      <div>
-        <CloseSVG />
-      </div>
-    </ClearButton>
-  ) : undefined
+  const prefix = autocomplete ? <MagnifyingGlassSimpleSVG /> : undefined
 
   const options = useMemo(() => {
     return optionsProp?.filter(
@@ -385,7 +335,7 @@ export const AddRecordButton = ({
 
   const handleInputAction = () => {
     if (inputActionType === 'create' && onAddRecord) {
-      onAddRecord(inputValue)
+      onAddRecord(formSafeKey(inputValue))
     }
     toggle(false)
     setInputValue('')
@@ -407,23 +357,18 @@ export const AddRecordButton = ({
             ) : (
               <Input
                 ref={inputRef}
-                prefix={prefix}
-                suffix={suffix}
+                icon={prefix}
                 suffixAs="div"
                 value={inputValue}
                 label=""
+                size="small"
                 hideLabel
                 placeholder={
                   inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
                 }
-                parentStyles={css`
-                  background: white;
-                  height: ${theme.space['10']};
-                  border-radius: ${theme.radii.extraLarge};
-                `}
-                padding="3.5"
-                onChange={handleInputChange}
                 error={error}
+                clearable
+                onChange={(e) => setInputValue(e.target.value)}
                 data-testid="add-record-button-input"
               />
             )}
@@ -463,14 +408,13 @@ export const AddRecordButton = ({
       </ControlsContainer>
       <ButtonContainer $state={state}>
         <Button
-          prefix={<PlusSVG />}
-          variant="transparent"
-          shadowless
+          prefix={<SVGWrapper as={PlusSVG} />}
+          colorStyle="background"
           onClick={handleButtonClick}
-          style={{ height: `${theme.space['12']}` }}
+          size="medium"
           data-testid="add-record-button-button"
         >
-          {addRecord}
+          <Typography color="greyPrimary">{addRecord}</Typography>
         </Button>
       </ButtonContainer>
     </Container>

@@ -1,11 +1,12 @@
-import Link from 'next/link'
 import { ComponentProps } from 'react'
 
-type Props = ComponentProps<typeof Link> & { active?: boolean }
+import BaseLink from '../BaseLink'
+
+type Props = ComponentProps<typeof BaseLink> & { active?: boolean }
 
 export const OptionalLink = ({ children, active, ...props }: Props) => {
   if (!active) {
     return <>{children}</>
   }
-  return <Link {...props}>{children}</Link>
+  return <BaseLink {...props}>{children}</BaseLink>
 }

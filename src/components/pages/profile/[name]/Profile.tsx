@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -12,6 +11,7 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
 
@@ -48,7 +48,7 @@ const TabButton = styled.button<{ $selected: boolean }>(
     padding: 0;
     margin: 0;
     background: none;
-    color: ${$selected ? theme.colors.accent : theme.colors.textTertiary};
+    color: ${$selected ? theme.colors.accent : theme.colors.greyPrimary};
     font-size: ${theme.fontSizes.extraLarge};
     transition: all 0.15s ease-in-out;
     cursor: pointer;
@@ -70,7 +70,7 @@ type Props = {
 }
 
 const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const chainId = useChainId()
   const { address } = useAccount()
@@ -185,7 +185,12 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                   $selected={tabItem === tab}
                   onClick={() => setTab(tabItem)}
                 >
-                  <Typography weight="bold">{t(`tabs.${tabItem}.name`)}</Typography>
+                  <Typography
+                    fontVariant="extraLargeBold"
+                    color={tabItem === tab ? 'accent' : 'greyPrimary'}
+                  >
+                    {t(`tabs.${tabItem}.name`)}
+                  </Typography>
                 </TabButton>
               ))}
             </TabButtonContainer>

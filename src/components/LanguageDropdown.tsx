@@ -12,7 +12,7 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
     width: fit;
     padding: ${theme.space['0.5']} ${theme.space['1.5']};
     display: block;
-    font-size: ${theme.fontSizes.label};
+    font-size: ${theme.fontSizes.small};
     align-items: center;
     transition: none;
     ${$large &&

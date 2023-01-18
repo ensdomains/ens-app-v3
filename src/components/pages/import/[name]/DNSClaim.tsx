@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -11,6 +10,7 @@ import { Spacer } from '@app/components/@atoms/Spacer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import useDNSOwner from '@app/hooks/useDNSOwner'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useValidate } from '@app/hooks/useValidate'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
@@ -26,6 +26,7 @@ const BackArrow = styled.div(
     width: ${theme.space['6']};
     height: ${theme.space['6']};
     display: block;
+    color: ${theme.colors.greyPrimary};
   `,
 )
 
@@ -69,7 +70,7 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${theme.lineHeights.extraLarge};
   `,
 )
 
@@ -134,7 +135,7 @@ const StyledTitle = styled(Title)(
 )
 
 export default () => {
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const breakpoints = useBreakpoint()
   const [currentStep, setCurrentStep] = useState(0)
   const [syncWarning, setSyncWarning] = useState(false)
@@ -177,9 +178,8 @@ export default () => {
         <BackContainer>
           <Button
             onClick={() => router.push('/')}
-            variant="transparent"
-            shadowless
-            size="extraSmall"
+            colorStyle="transparent"
+            size="flexible"
             style={{ width: 50 }}
           >
             <BackArrow as={ArrowLeftSVG} />

@@ -4,9 +4,8 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useFeeData } from 'wagmi'
 
-import { Avatar, Button, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
+import { Avatar, Button, CurrencyToggle, Dialog, Helper, ScrollBox, mq } from '@ensdomains/thorin'
 
-import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
@@ -86,7 +85,7 @@ const NamesListItemContainer = styled.div(
     align-items: center;
     gap: ${theme.space['2']};
     height: ${theme.space['16']};
-    border: 1px solid ${theme.colors.borderSecondary};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.full};
     padding: ${theme.space['2']};
     padding-right: ${theme.space['5']};
@@ -274,10 +273,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
               </PlusMinusWrapper>
               <OptionBar>
                 <GasDisplay gasPrice={gasPrice} />
-                <CurrencySwitch
-                  fiat="usd"
-                  value={currencyUnit}
-                  onChange={(unit) => setCurrencyUnit(unit)}
+                <CurrencyToggle
+                  size="small"
+                  checked={currencyUnit === 'fiat'}
+                  onChange={() => setCurrencyUnit(currencyUnit === 'eth' ? 'fiat' : 'eth')}
+                  data-testid="extend-names-currency-toggle"
                 />
               </OptionBar>
               {rentFee && transactionFee && (
@@ -297,11 +297,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
       </ScrollBoxWrapper>
       <Dialog.Footer
         leading={
-          <Button shadowless tone="grey" variant="secondary" onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.back', { ns: 'common' })}
           </Button>
         }
-        trailing={<Button shadowless {...trailingButtonProps} data-testid="extend-names-confirm" />}
+        trailing={<Button {...trailingButtonProps} data-testid="extend-names-confirm" />}
       />
     </Container>
   )

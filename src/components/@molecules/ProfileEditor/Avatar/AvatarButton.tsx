@@ -1,17 +1,20 @@
 import { useRef } from 'react'
+import { UseFormSetValue } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Avatar, Dropdown } from '@ensdomains/thorin'
+import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
+import { ProfileEditorType } from '@app/types'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`
     width: 90px;
     height: 90px;
     border-radius: 50%;
-    background-color: white;
+    background-color: ${theme.colors.backgroundPrimary};
     cursor: pointer;
 
     ::after {
@@ -33,7 +36,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     css`
       :after {
         background-color: ${theme.colors.blue};
-        border-color: white;
+        border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
       }
     `}
@@ -42,7 +45,7 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     css`
       :after {
         background-color: ${theme.colors.red};
-        border-color: white;
+        border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
       }
     `}
@@ -78,28 +81,19 @@ type Props = {
   error?: boolean
   src?: string
   onSelectOption?: (value: AvatarClickType) => void
-  onAvatarChange?: (avatar?: string) => void
-  onAvatarSrcChange?: (src?: string) => void
-  onAvatarFileChange?: (file?: File) => void
+  setValue: UseFormSetValue<ProfileEditorType>
+  setDisplay: (display: string | null) => void
 }
 
-const AvatarButton = ({
-  validated,
-  src,
-  error,
-  onSelectOption,
-  onAvatarChange,
-  onAvatarSrcChange,
-  onAvatarFileChange,
-}: Props) => {
+const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisplay }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
     if (value === 'remove') {
-      onAvatarChange?.(undefined)
-      onAvatarSrcChange?.(undefined)
+      setValue('avatar', undefined)
+      setDisplay(null)
     } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {
@@ -109,27 +103,29 @@ const AvatarButton = ({
 
   return (
     <Dropdown
-      items={[
-        {
-          label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
-          color: 'black',
-          onClick: handleSelectOption('nft'),
-        },
-        {
-          label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
-          color: 'black',
-          onClick: handleSelectOption('upload'),
-        },
-        ...(validated
-          ? [
-              {
-                label: t('action.remove', { ns: 'common' }),
-                color: 'red',
-                onClick: handleSelectOption('remove'),
-              },
-            ]
-          : []),
-      ]}
+      items={
+        [
+          {
+            label: t('input.profileEditor.tabs.avatar.dropdown.selectNFT'),
+            color: 'black',
+            onClick: handleSelectOption('nft'),
+          },
+          {
+            label: t('input.profileEditor.tabs.avatar.dropdown.uploadImage'),
+            color: 'black',
+            onClick: handleSelectOption('upload'),
+          },
+          ...(validated
+            ? [
+                {
+                  label: t('action.remove', { ns: 'common' }),
+                  color: 'red',
+                  onClick: handleSelectOption('remove'),
+                },
+              ]
+            : []),
+        ] as DropdownItem[]
+      }
       keepMenuOnTop
       shortThrow
     >
@@ -147,8 +143,8 @@ const AvatarButton = ({
           ref={fileInputRef}
           onChange={(e) => {
             if (e.target.files?.[0]) {
+              setValue('_avatar', e.target.files[0])
               onSelectOption?.('upload')
-              onAvatarFileChange?.(e.target.files[0])
             }
           }}
         />

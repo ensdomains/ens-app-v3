@@ -72,7 +72,7 @@ const dotStyle =
       content: '';
       width: ${theme.space['3']};
       height: ${theme.space['3']};
-      background-color: ${color};
+      background: ${color};
       border-radius: ${theme.radii.full};
 
       position: absolute;
@@ -112,7 +112,7 @@ const ChartContainer = styled.div(
     }
 
     &::after {
-      ${dotStyle({ name: 'selected', color: theme.colors.foreground })};
+      ${dotStyle({ name: 'selected', color: theme.colors.textPrimary })};
       z-index: 2;
       display: var(--premium-chart-selected-display);
     }
@@ -172,7 +172,7 @@ const TooltipWrapper = styled.div(
     &::before {
       ${dotStyle({
         name: 'hover',
-        color: `rgba(${theme.shadesRaw.foreground}, 0.5)`,
+        color: `hsla(0, 0%, 15%, 0.5)`,
         extraY: `calc(200px + ${theme.space['0.5']})`,
       })}
     }
@@ -527,6 +527,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             type="text"
             prefix="$"
             size="medium"
+            clearable={false}
             parentStyles={inputStyle as any}
           />
           <Input
@@ -537,6 +538,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
             step={60}
             max={dateToInput(maxDate)}
             onChange={handleDateInput}
+            clearable={false}
             type="datetime-local"
             parentStyles={inputStyle as any}
           />
@@ -571,7 +573,7 @@ const TemporaryPremium = ({ startDate, name }: Props) => {
               color: 'text',
             }))}
           >
-            <Button prefix={<CalendarIcon as={CalendarSVG} />} shadowless>
+            <Button prefix={<CalendarIcon as={CalendarSVG} />}>
               {t('action.remindMe', { ns: 'common' })}
             </Button>
           </Dropdown>

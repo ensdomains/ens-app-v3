@@ -13,7 +13,7 @@ const Container = styled.div<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
     width: 100%;
     padding: ${$highlighted ? theme.space['4'] : theme.space['1']};
-    border: 1px solid ${theme.colors.borderSecondary};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.full};
     display: flex;
     align-items: center;
@@ -36,7 +36,7 @@ const Button = styled.button(
       display: block;
       transform: scale(0.67);
       path {
-        fill: white;
+        fill: ${theme.colors.backgroundPrimary};
       }
     }
   `,
@@ -51,7 +51,7 @@ const Label = styled.div<{ $highlighted?: boolean }>(
     font-style: normal;
     font-weight: ${theme.fontWeights.bold};
     font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${$highlighted ? theme.lineHeights.headingTwo : theme.lineHeights.large};
     text-align: center;
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
   `,

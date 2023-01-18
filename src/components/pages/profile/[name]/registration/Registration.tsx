@@ -1,5 +1,4 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useAccount } from 'wagmi'
@@ -12,6 +11,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import useRegistrationReducer from '@app/hooks/useRegistrationReducer'
 import useResolverExists from '@app/hooks/useResolverExists'
+import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { isLabelTooLong } from '@app/utils/utils'
@@ -31,7 +31,7 @@ type Props = {
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
 
-  const router = useRouter()
+  const router = useRouterWithHistory()
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }

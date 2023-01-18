@@ -22,12 +22,14 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     overflow: hidden;
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
-    border-bottom: 1px solid ${theme.colors.borderTertiary};
+    border-bottom: 1px solid ${theme.colors.border};
     transition: all 0.15s ease-in-out, border 0s;
-    background: ${$highlight ? theme.colors.accentSecondary : theme.colors.white};
+    background: ${$highlight ? theme.colors.blueSurface : theme.colors.backgroundPrimary};
     cursor: ${$disabled ? 'not-allowed' : 'pointer'};
     &:hover {
-      background: ${$highlight ? theme.colors.accentTertiary : theme.colors.backgroundSecondary};
+      background: ${$highlight
+        ? theme.colors.backgroundSecondary
+        : theme.colors.backgroundSecondary};
     }
     &:last-of-type {
       border: none;
@@ -83,7 +85,7 @@ const SubtitleWrapper = styled.div(
   ({ theme }) => css`
     font-size: ${theme.space['3.5']};
     line-height: 1.43;
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.greyPrimary};
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
@@ -97,11 +99,11 @@ const AvatarOverlay = styled.div(
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(82, 152, 255, 0.75);
+    background: rgba(82, 152, 255, 0.5);
     border-radius: ${theme.radii.full};
     svg {
       path {
-        stroke: white;
+        stroke: ${theme.colors.backgroundPrimary};
         stroke-width: 1px;
       }
       rect {

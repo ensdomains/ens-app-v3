@@ -30,7 +30,7 @@ const Container = styled.form(({ theme }) => [
     height: calc(100% + 2 * ${theme.space['3.5']});
     max-height: 90vh;
     margin: -${theme.space[3.5]};
-    background: white;
+    background: ${theme.colors.backgroundPrimary};
     border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
@@ -178,11 +178,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     profile,
     overwrites: transaction?.data.records,
   })
-  const { handleSubmit, hasErrors, setAvatar, hasChanges, formState } = profileEditorForm
+  const { setValue, handleSubmit, hasErrors, avatar, _avatar, hasChanges, formState } =
+    profileEditorForm
 
   const [avatarView, setAvatarView] = useState<AvatarClickType | null>(null)
-  const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
-  const [avatarFile, setAvatarFile] = useState<File | undefined>()
+  const [avatarDisplay, setAvatarDisplay] = useState<string | null>(null)
 
   const [showOverlay, setShowOverlay] = useState(false)
 
@@ -199,16 +199,18 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
       {avatarView ? (
         <AvatarViewManager
           name={name}
-          avatarFile={avatarFile}
+          avatar={_avatar}
           type={avatarView}
           handleCancel={() => setAvatarView(null)}
-          handleSubmit={(type: 'nft' | 'upload', uri: string, display?: string) => {
-            if (type === 'nft') {
-              setAvatar(uri)
-              setAvatarSrc(display)
+          handleSubmit={(display: string, uri?: string) => {
+            if (uri) {
+              setValue('avatar', uri, { shouldDirty: true, shouldTouch: true })
+              setAvatarDisplay(display)
             } else {
-              setAvatar(`${uri}?timestamp=${Date.now()}`)
-              setAvatarSrc(display)
+              setValue('avatar', `${display}?timestamp=${Date.now()}`, {
+                shouldDirty: true,
+                shouldTouch: true,
+              })
             }
             setAvatarView(null)
           }}
@@ -218,12 +220,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           <Banner zIndex={10}>
             <AvatarWrapper>
               <AvatarButton
-                src={avatarSrc}
-                validated={!!formState.dirtyFields.avatar}
+                validated={formState.dirtyFields.avatar}
+                src={avatarDisplay || avatar}
                 onSelectOption={setAvatarView}
-                onAvatarChange={(avatar) => setAvatar(avatar)}
-                onAvatarFileChange={(file) => setAvatarFile(file)}
-                onAvatarSrcChange={(src) => setAvatarSrc(src)}
+                setValue={setValue}
+                setDisplay={setAvatarDisplay}
               />
             </AvatarWrapper>
           </Banner>
@@ -233,7 +234,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             <ProfileTabContents {...profileEditorForm} />
             <AddRecord {...profileEditorForm} />
             <FooterContainer>
-              <Button variant="secondary" tone="grey" onClick={handleCancel}>
+              <Button colorStyle="greySecondary" onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
               <Button

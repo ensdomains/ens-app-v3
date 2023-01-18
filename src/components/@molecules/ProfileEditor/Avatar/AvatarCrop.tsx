@@ -90,13 +90,7 @@ export const AvCancelButton = ({ handleCancel }: { handleCancel: () => void }) =
   const { t } = useTranslation('common')
 
   return (
-    <Button
-      data-testid="avatar-cancel-button"
-      variant="secondary"
-      tone="grey"
-      shadowless
-      onClick={handleCancel}
-    >
+    <Button data-testid="avatar-cancel-button" colorStyle="greySecondary" onClick={handleCancel}>
       {t('action.back')}
     </Button>
   )
@@ -407,7 +401,7 @@ export const CropComponent = ({
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button shadowless onClick={handleSubmit} data-testid="continue-button">
+          <Button onClick={handleSubmit} data-testid="continue-button">
             {t('action.continue', { ns: 'common' })}
           </Button>
         }

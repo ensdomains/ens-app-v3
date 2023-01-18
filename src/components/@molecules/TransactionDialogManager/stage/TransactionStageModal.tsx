@@ -51,7 +51,7 @@ const Bar = styled.div(
     width: ${theme.space.full};
     height: ${theme.space['9']};
     border-radius: ${theme.radii.full};
-    background-color: ${theme.colors.lightBlue};
+    background-color: ${theme.colors.blueSurface};
     overflow: hidden;
     display: flex;
     flex-direction: row;
@@ -329,8 +329,7 @@ export const TransactionStageModal = ({
           <Button
             data-testid="transaction-modal-complete-button"
             onClick={() => onDismiss()}
-            shadowless
-            variant="secondary"
+            colorStyle="accentSecondary"
           >
             {t('action.done')}
           </Button>
@@ -340,7 +339,6 @@ export const TransactionStageModal = ({
         <Button
           data-testid="transaction-modal-complete-button"
           onClick={() => dispatch({ name: 'incrementTransaction' })}
-          shadowless
         >
           {t('action.next')}
         </Button>
@@ -349,11 +347,9 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          shadowless
           onClick={() => sendTransaction!()}
           disabled={requestLoading || !sendTransaction}
-          tone="red"
-          variant="secondary"
+          colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
         >
           {t('action.tryAgain')}
@@ -363,10 +359,9 @@ export const TransactionStageModal = ({
     if (stage === 'sent') {
       return (
         <Button
-          shadowless
           onClick={() => onDismiss()}
           data-testid="transaction-modal-sent-button"
-          variant="secondary"
+          colorStyle="accentSecondary"
         >
           {t('action.close')}
         </Button>
@@ -375,7 +370,6 @@ export const TransactionStageModal = ({
     if (transactionLoading) {
       return (
         <Button
-          shadowless
           disabled
           suffix={<Spinner color="background" />}
           data-testid="transaction-modal-confirm-button"
@@ -386,7 +380,6 @@ export const TransactionStageModal = ({
     }
     return (
       <Button
-        shadowless
         disabled={requestLoading || !sendTransaction || !!requestError}
         onClick={() => sendTransaction!()}
         data-testid="transaction-modal-confirm-button"
@@ -451,12 +444,7 @@ export const TransactionStageModal = ({
 
   return (
     <>
-      <Dialog.Heading
-        title={t(`transaction.dialog.${stage}.title`)}
-        currentStep={currentStep}
-        stepCount={stepCount > 1 ? stepCount : undefined}
-        stepStatus={stepStatus}
-      />
+      <Dialog.Heading title={t(`transaction.dialog.${stage}.title`)} />
       <InnerDialog data-testid="transaction-modal-inner">
         {MiddleContent}
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
@@ -471,6 +459,9 @@ export const TransactionStageModal = ({
       </InnerDialog>
       <Dialog.Footer
         center
+        currentStep={currentStep}
+        stepCount={stepCount > 1 ? stepCount : undefined}
+        stepStatus={stepStatus}
         leading={ActionButton}
         trailing={
           backToInput &&

@@ -1,4 +1,3 @@
-import Link from 'next/link'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -7,6 +6,7 @@ import { useAccount, useQuery } from 'wagmi'
 import { DNSProver } from '@ensdomains/dnsprovejs'
 import { Helper, Typography } from '@ensdomains/thorin'
 
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { NameAvatar } from '@app/components/AvatarWithZorb'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
@@ -87,8 +87,8 @@ export const NamePillWithAddress = ({
   return (
     <NamePillContainer>
       <TextContainer>
-        <Typography {...{ weight: 'bold' }}>{name}</Typography>
-        <Typography {...{ variant: 'small', weight: 'light', color: 'textTertiary' }}>
+        <Typography fontVariant="bodyBold">{name}</Typography>
+        <Typography fontVariant="small" color="grey">
           {shortenAddress(address)}
         </Typography>
       </TextContainer>
@@ -167,9 +167,7 @@ export const ClaimDomain = ({
 
   return (
     <Container>
-      <Typography {...{ variant: 'extraLarge', weight: 'bold' }}>
-        {t('claimDomain.title')}
-      </Typography>
+      <Typography fontVariant="extraLargeBold">{t('claimDomain.title')}</Typography>
       <Spacer $height="4" />
       <GreyBox>
         <Typography>{t('claimDomain.dnsOwner')}</Typography>
@@ -194,7 +192,7 @@ export const ClaimDomain = ({
           <Helper type="info" style={{ textAlign: 'center' }}>
             <StyledTypography>
               {t('claimDomain.pendingTransactionPre')}{' '}
-              <Link href="/my/settings">{t('claimDomain.pendingTransactionLink')}</Link>{' '}
+              <BaseLink href="/my/settings">{t('claimDomain.pendingTransactionLink')}</BaseLink>{' '}
               {t('claimDomain.pendingTransactionPost')}
             </StyledTypography>
           </Helper>
@@ -209,15 +207,13 @@ export const ClaimDomain = ({
       <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton
-          variant="primary"
           size="small"
           onClick={handleClaim(name, createTransactionFlow, syncWarning ? emptyAddress : address!)}
         >
           {t('action.claim', { ns: 'common' })}
         </CheckButton>
         <CheckButton
-          shadowless
-          variant="secondary"
+          colorStyle="accentSecondary"
           size="small"
           onClick={() => setCurrentStep((x) => x - 1)}
         >
