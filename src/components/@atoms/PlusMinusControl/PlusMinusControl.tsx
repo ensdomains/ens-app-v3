@@ -31,6 +31,7 @@ const Button = styled.button(
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 150ms ease-in-out;
 
     svg {
       display: block;
@@ -38,6 +39,10 @@ const Button = styled.button(
       path {
         fill: ${theme.colors.backgroundPrimary};
       }
+    }
+
+    &:disabled {
+      background: ${theme.colors.greyBright};
     }
   `,
 )
@@ -89,6 +94,9 @@ export const PlusMinusControl = forwardRef(
 
     const [value, setValue] = useState(_value || defaultValue || 1)
 
+    const minusDisabled = typeof minValue !== 'undefined' && value <= minValue
+    const plusDisabled = typeof maxValue !== 'undefined' && value >= maxValue
+
     const adjustValue = (v: number) => {
       if (minValue && v < minValue) {
         return minValue
@@ -116,11 +124,21 @@ export const PlusMinusControl = forwardRef(
 
     return (
       <Container $highlighted={highlighted}>
-        <Button type="button" onClick={incrementHandler(-1)} data-testid="plus-minus-control-minus">
+        <Button
+          type="button"
+          onClick={incrementHandler(-1)}
+          data-testid="plus-minus-control-minus"
+          disabled={minusDisabled}
+        >
           <MinusIcon />
         </Button>
         <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
-        <Button type="button" onClick={incrementHandler(1)} data-testid="plus-minus-control-plus">
+        <Button
+          type="button"
+          onClick={incrementHandler(1)}
+          data-testid="plus-minus-control-plus"
+          disabled={plusDisabled}
+        >
           <PlusIcon />
         </Button>
         <VisuallyHidden>

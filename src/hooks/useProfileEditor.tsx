@@ -243,7 +243,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         other: Object.keys(newDefaultValues.other) || [],
         accounts: Object.keys(newDefaultValues.accounts) || [],
       }
-      console.log(newDefaultValues)
       reset(newDefaultValues)
 
       setHasExistingWebsite(!!newDefaultValues.website)

@@ -93,7 +93,7 @@ describe('Extend Names', () => {
     cy.findByTestId('year-marker-2').should('include.text', '1% gas')
 
     cy.log('should not be able to set duration below 1')
-    cy.findByTestId('plus-minus-control-minus').click()
+    cy.findByTestId('plus-minus-control-minus').should('be.disabled')
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032')
 
     cy.log('should show the correct price for yearly registration')
