@@ -45,15 +45,16 @@ describe('Register Name', () => {
     // should go to profile editor step
     cy.findByTestId('next-button').click()
 
+    // should show a confirmation dialog that records are public
     cy.findByTestId('show-add-profile-records-modal-button').click()
+    cy.findByTestId('confirmation-dialog-confirm-button').click()
+
+    // should all setting a gener text record
     cy.findByTestId('profile-record-option-name').click()
     cy.findByTestId('add-profile-records-button').click()
-
-    // should allow setting a general text record
     cy.findByTestId('profile-record-input-input-name').type('Test Name')
 
     // should show ETH record by default
-    cy.findByText('Address').click()
     cy.findByDisplayValue('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC').should('be.visible')
 
     // should show go to info step and show updated estimate
