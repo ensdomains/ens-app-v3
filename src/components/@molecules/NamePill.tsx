@@ -7,7 +7,7 @@ import { NameAvatar } from '../AvatarWithZorb'
 const Container = styled.div(
   ({ theme }) => css`
     border-radius: ${theme.radii.full};
-    border: 1px solid ${theme.colors.borderSecondary};
+    border: 1px solid ${theme.colors.border};
     padding: ${theme.space['1']};
     padding-right: ${theme.space['4']};
 
@@ -23,8 +23,16 @@ const Container = styled.div(
 
 const AvatarWrapper = styled.div(
   ({ theme }) => css`
+    flex: 0 0 ${theme.space['7']};
     width: ${theme.space['7']};
     height: ${theme.space['7']};
+  `,
+)
+
+const TypographyWrapper = styled.div(
+  () => css`
+    flex: 1;
+    overflow: hidden;
   `,
 )
 
@@ -34,7 +42,9 @@ export const NamePill = ({ name, network }: { name: string; network: number }) =
       <AvatarWrapper>
         <NameAvatar label={name} name={name} network={network} />
       </AvatarWrapper>
-      <Typography>{name}</Typography>
+      <TypographyWrapper>
+        <Typography ellipsis>{name}</Typography>
+      </TypographyWrapper>
     </Container>
   )
 }

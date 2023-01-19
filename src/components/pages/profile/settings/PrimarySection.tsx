@@ -48,12 +48,7 @@ export const PrimarySection = () => {
     <SectionContainer
       title={t('section.primary.title')}
       action={
-        <Button
-          data-testid="primary-section-button"
-          size="small"
-          shadowless
-          onClick={() => changePrimary()}
-        >
+        <Button data-testid="primary-section-button" size="small" onClick={() => changePrimary()}>
           {t(`action.${name ? 'change' : 'set'}`, { ns: 'common' })}
         </Button>
       }

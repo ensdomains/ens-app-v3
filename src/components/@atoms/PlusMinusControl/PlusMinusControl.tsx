@@ -13,7 +13,7 @@ const Container = styled.div<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
     width: 100%;
     padding: ${$highlighted ? theme.space['4'] : theme.space['1']};
-    border: 1px solid ${theme.colors.borderSecondary};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.full};
     display: flex;
     align-items: center;
@@ -31,13 +31,18 @@ const Button = styled.button(
     display: flex;
     justify-content: center;
     align-items: center;
+    transition: background-color 150ms ease-in-out;
 
     svg {
       display: block;
       transform: scale(0.67);
       path {
-        fill: ${theme.colors.white};
+        fill: ${theme.colors.backgroundPrimary};
       }
+    }
+
+    &:disabled {
+      background: ${theme.colors.greyBright};
     }
   `,
 )
@@ -51,7 +56,7 @@ const Label = styled.div<{ $highlighted?: boolean }>(
     font-style: normal;
     font-weight: ${theme.fontWeights.bold};
     font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${$highlighted ? theme.lineHeights.headingTwo : theme.lineHeights.large};
     text-align: center;
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
   `,
@@ -89,6 +94,9 @@ export const PlusMinusControl = forwardRef(
 
     const [value, setValue] = useState(_value || defaultValue || 1)
 
+    const minusDisabled = typeof minValue !== 'undefined' && value <= minValue
+    const plusDisabled = typeof maxValue !== 'undefined' && value >= maxValue
+
     const adjustValue = (v: number) => {
       if (minValue && v < minValue) {
         return minValue
@@ -116,11 +124,21 @@ export const PlusMinusControl = forwardRef(
 
     return (
       <Container $highlighted={highlighted}>
-        <Button type="button" onClick={incrementHandler(-1)} data-testid="plus-minus-control-minus">
+        <Button
+          type="button"
+          onClick={incrementHandler(-1)}
+          data-testid="plus-minus-control-minus"
+          disabled={minusDisabled}
+        >
           <MinusIcon />
         </Button>
         <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
-        <Button type="button" onClick={incrementHandler(1)} data-testid="plus-minus-control-plus">
+        <Button
+          type="button"
+          onClick={incrementHandler(1)}
+          data-testid="plus-minus-control-plus"
+          disabled={plusDisabled}
+        >
           <PlusIcon />
         </Button>
         <VisuallyHidden>

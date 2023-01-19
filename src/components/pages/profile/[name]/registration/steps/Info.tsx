@@ -65,7 +65,7 @@ const InfoItem = styled.div(
     gap: ${theme.space['4']};
 
     padding: ${theme.space['4']};
-    border: 1px solid ${theme.colors.grey};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.large};
     text-align: center;
 
@@ -77,8 +77,8 @@ const InfoItem = styled.div(
       justify-content: center;
       font-size: ${theme.fontSizes.extraLarge};
       font-weight: ${theme.fontWeights.bold};
-      color: ${theme.colors.background};
-      background: ${theme.colors.accent};
+      color: ${theme.colors.backgroundPrimary};
+      background: ${theme.colors.accentPrimary};
       border-radius: ${theme.radii.full};
     }
 

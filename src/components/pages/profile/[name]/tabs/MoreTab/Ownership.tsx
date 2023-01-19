@@ -26,7 +26,7 @@ const Container = styled(TabWrapper)(
     overflow: hidden;
 
     & > * {
-      border-bottom: 1px solid ${theme.colors.borderSecondary};
+      border-bottom: 1px solid ${theme.colors.border};
 
       &:last-child {
         border-bottom: none;
@@ -88,7 +88,7 @@ const Name = styled(Typography)(
   ({ theme }) => css`
     color: ${theme.colors.text};
     font-weight: ${theme.fontWeights.bold};
-    font-size: ${theme.fontSizes.base};
+    font-size: ${theme.fontSizes.body};
   `,
 )
 
@@ -144,7 +144,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
             )}
           </TextContainer>
         </OwnerDetailContainer>
-        <Tag tone="accent">{t(label)}</Tag>
+        <Tag colorStyle="accentSecondary">{t(label)}</Tag>
       </OwnerContainer>
     </BaseLink>
   )
@@ -174,15 +174,10 @@ const Ownership = ({
   return (
     <Container $isCached={isCachedData}>
       <HeadingContainer>
-        <Typography>{t('tabs.more.ownership.label')}</Typography>
+        <Typography fontVariant="headingThree">{t('tabs.more.ownership.label')}</Typography>
         <div>
           {canSend && (
-            <Button
-              size="small"
-              prefix={<AeroplaneIcon as={AeroplaneSVG} />}
-              onClick={handleSend}
-              shadowless
-            >
+            <Button size="small" prefix={<AeroplaneIcon as={AeroplaneSVG} />} onClick={handleSend}>
               {t('action.send', { ns: 'common' })}
             </Button>
           )}

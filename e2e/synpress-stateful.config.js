@@ -19,6 +19,7 @@ module.exports = defineConfig({
     coverage: false,
     transactionWaitTime: 120000,
   },
+  video: true,
   defaultCommandTimeout: process.env.SYNDEBUG ? 9999999 : 30000,
   pageLoadTimeout: process.env.SYNDEBUG ? 0 : 9999999,
   requestTimeout: process.env.SYNDEBUG ? 0 : 9999999,
@@ -31,7 +32,7 @@ module.exports = defineConfig({
       return config
     },
     projectId: '4zmgdz',
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:8788',
     specPattern: 'e2e/specs/stateful/**/*.{js,jsx,ts,tsx}',
     supportFile: 'e2e/support.js',
   },
