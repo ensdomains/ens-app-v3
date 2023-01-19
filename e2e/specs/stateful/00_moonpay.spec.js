@@ -10,13 +10,46 @@ function makeid(length) {
   return result
 }
 
-describe('Address', () => {
-  it('should allow user to connect', () => {
+const getIframeDocument = () => {
+  return (
+    cy
+      .get('iframe[data-cy="the-frame"]')
+      // Cypress yields jQuery element, which has the real
+      // DOM element under property "0".
+      // From the real DOM iframe element we can get
+      // the "document" element, it is stored in "contentDocument" property
+      // Cypress "its" command can access deep properties using dot notation
+      // https://on.cypress.io/its
+      .its('0.contentDocument')
+      .should('exist')
+  )
+}
+
+const getIframeBody = () => {
+  // get the document
+  return (
+    getIframeDocument()
+      // automatically retries until body is loaded
+      .its('body')
+      .should('not.be.undefined')
+      // wraps "body" DOM element to allow
+      // chaining more Cypress commands, like ".find(...)"
+      .then(cy.wrap)
+  )
+}
+
+describe('Moonpay regsitration', () => {
+  it('should allow user register via moonpay', () => {
+    cy.changeMetamaskNetwork('goerli')
     acceptMetamaskAccess()
     cy.visit(`/${makeid(250)}.eth/register`)
     cy.contains('Next').click()
+    cy.contains('Skip').click()
     cy.contains('Credit or debit card').click()
     cy.contains('Begin').click()
+
+    getIframeBody().findByTestId('#submitButton').should('have.text', 'Continue').click()
+
     // replace with data-testid when design system supports it
     // cy.contains('Profile').should('be.visible')
     // cy.contains('0x').click()
