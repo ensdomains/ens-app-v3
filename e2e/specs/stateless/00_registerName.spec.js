@@ -58,7 +58,7 @@ describe('Register Name', () => {
     cy.findByDisplayValue('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC').should('be.visible')
 
     // should show go to info step and show updated estimate
-    cy.findByTestId('next-button').should('contain.text', 'Next').click()
+    cy.findByTestId('profile-submit-button').should('contain.text', 'Next').click()
     cy.findByTestId('invoice-item-1-amount').should('not.contain.text', `${this.estimate} ETH`)
 
     // should go to transactions step and open commit transaction immediately
