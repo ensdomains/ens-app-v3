@@ -45,12 +45,12 @@ const StyledAnchor = styled.div<{ $isActive: boolean; disabled?: boolean }>(
     transition: color 0.125s ease-in-out;
     ${disabled
       ? css`
-          color: ${theme.colors.greyPrimary};
+          color: ${theme.colors.greyBright};
           cursor: not-allowed;
         `
       : css`
           &:hover {
-            color: ${theme.colors.textPrimary};
+            color: ${$isActive ? theme.colors.accentBright : theme.colors.textPrimary};
           }
         `}
     ${$isActive &&
@@ -62,12 +62,22 @@ const StyledAnchor = styled.div<{ $isActive: boolean; disabled?: boolean }>(
 
 const IconContainer = styled.div<{ $active: boolean; disabled: boolean }>(
   ({ theme, $active, disabled }) => css`
-    color: ${$active ? theme.colors.accent : 'rgba(196, 196, 196, 1)'};
+    color: ${$active ? theme.colors.accent : theme.colors.greyPrimary};
     width: ${theme.space['6']};
     height: ${theme.space['6']};
+    cursor: ${disabled ? 'not-allowed' : 'pointer'};
+    transition: all 150ms ease-in-out;
+
+    &:hover {
+      color: ${$active ? theme.colors.accentBright : theme.colors.text};
+    }
+
     ${disabled &&
     css`
-      color: ${theme.colors.greyPrimary};
+      color: ${theme.colors.greyBright};
+      &:hover {
+        color: ${theme.colors.greyBright};
+      }
     `}
   `,
 )

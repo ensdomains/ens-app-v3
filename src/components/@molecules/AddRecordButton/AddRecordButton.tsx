@@ -11,7 +11,7 @@ import { formSafeKey } from '@app/utils/editor'
 const Container = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     position: relative;
-    /* border: 1px solid ${theme.colors.border}; */
+    border: 1px solid ${theme.colors.border};
     background: ${$state === 'exited' || $state === 'exiting'
       ? theme.colors.backgroundPrimary
       : theme.colors.greySurface};
@@ -23,6 +23,12 @@ const Container = styled.div<{ $state: TransitionState }>(
     border-radius: ${theme.radii.extraLarge};
     margin: 0 ${theme.space['3']};
     cursor: pointer;
+
+    &:hover {
+      background: ${$state === 'exited' || $state === 'exiting'
+        ? theme.colors.border
+        : theme.colors.greySurface};
+    }
 
     ${$state === 'exited' &&
     css`
@@ -67,6 +73,12 @@ const ControlsHeaderTrailing = styled.button<{ $accented: boolean }>(
     padding: 0 ${theme.space['4']};
     color: ${$accented ? theme.colors.accent : theme.colors.greyPrimary};
     cursor: pointer;
+    transition: all 150ms ease-in-out;
+
+    &:hover {
+      color: ${$accented ? theme.colors.accentBright : theme.colors.greyBright};
+      transform: translateY(-1px);
+    }
   `,
 )
 
@@ -214,9 +226,11 @@ const NoOptionsContainer = styled.div<{ $inline: boolean }>(
   `,
 )
 
-const SVGWrapper = styled.svg(
+const SVGWrapper = styled.div(
   ({ theme }) => css`
-    color: ${theme.colors.greyPrimary} !important;
+    svg {
+      color: ${theme.colors.greyPrimary};
+    }
   `,
 )
 
@@ -369,8 +383,12 @@ export const AddRecordButton = ({
       </ControlsContainer>
       <ButtonContainer $state={state}>
         <Button
-          prefix={<SVGWrapper as={PlusSVG} />}
-          colorStyle="background"
+          prefix={
+            <SVGWrapper>
+              <PlusSVG />
+            </SVGWrapper>
+          }
+          colorStyle="transparent"
           onClick={handleButtonClick}
           size="medium"
           data-testid="add-record-button-button"

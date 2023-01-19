@@ -56,7 +56,7 @@ export const HamburgerMenu = ({
               ),
               label: t(item.label),
               as: 'a',
-              color: 'greyPrimary',
+              color: 'textPrimary',
             }
           : {
               ...item,
