@@ -23,7 +23,7 @@ const Container = styled.div<{ $banner?: string }>(
       background-position-y: -1px; // for overlap with border i think
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii['2xLarge']};
-      border: ${theme.space.px} solid ${theme.colors.borderSecondary};
+      border: ${theme.space.px} solid ${theme.colors.border};
       display: flex;
       flex-direction: column;
       align-items: flex-start;
@@ -49,8 +49,7 @@ const DetailStack = styled.div(
 )
 
 const Name = styled(Typography)(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.headingThree};
+  () => css`
     width: 100%;
     overflow-wrap: anywhere;
   `,
@@ -58,8 +57,7 @@ const Name = styled(Typography)(
 
 const NameRecord = styled(Typography)(
   ({ theme }) => css`
-    font-size: ${theme.fontSizes.large};
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.greyPrimary};
     margin-top: -${theme.space['0.5']};
   `,
 )
@@ -104,25 +102,6 @@ const ButtonStack = styled.div(
   `,
 )
 
-const InnerButton = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-    flex-gap: ${theme.space['2']};
-  `,
-)
-
-const ButtonIcon = styled.svg(
-  ({ theme }) => css`
-    display: block;
-    width: ${theme.space['4']};
-    height: ${theme.space['4']};
-  `,
-)
-
 const LocationAndUrl = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -132,7 +111,7 @@ const LocationAndUrl = styled.div(
     gap: ${theme.space['2']};
 
     #profile-loc {
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.greyPrimary};
     }
 
     #profile-url {
@@ -170,17 +149,14 @@ export const ProfileSnippet = ({
       return (
         <Button
           size="small"
-          shadowless
-          variant="secondary"
+          colorStyle="accentSecondary"
+          prefix={<FastForwardSVG />}
           data-testid="extend-button"
           onClick={() => {
             showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
           }}
         >
-          <InnerButton>
-            <ButtonIcon as={FastForwardSVG} />
-            <Typography weight="bold">{t('action.extend', { ns: 'common' })}</Typography>
-          </InnerButton>
+          {t('action.extend', { ns: 'common' })}
         </Button>
       )
     if (button === 'register')
@@ -199,8 +175,7 @@ export const ProfileSnippet = ({
         <Button
           onClick={() => router.pushWithHistory(`/profile/${name}`)}
           size="small"
-          shadowless
-          variant="secondary"
+          colorStyle="accentSecondary"
         >
           {t(`wallet.${button}`)}
         </Button>
@@ -218,7 +193,7 @@ export const ProfileSnippet = ({
       </FirstItems>
       <TextStack>
         <DetailStack>
-          <Name weight="bold" data-testid="profile-snippet-nickname">
+          <Name fontVariant="headingTwo" data-testid="profile-snippet-nickname">
             {recordName || name}
           </Name>
           {recordName && <NameRecord data-testid="profile-snippet-name">{name}</NameRecord>}

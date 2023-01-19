@@ -112,17 +112,12 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
       </StyledInnerDialog>
       <Dialog.Footer
         leading={
-          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button
-            data-testid="create-subname-next"
-            shadowless
-            onClick={handleSubmit}
-            disabled={!valid}
-          >
+          <Button data-testid="create-subname-next" onClick={handleSubmit} disabled={!valid}>
             {t('action.next', { ns: 'common' })}
           </Button>
         }

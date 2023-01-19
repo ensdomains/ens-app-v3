@@ -48,11 +48,11 @@ interface ContractFunctionInfo {
 /*
 To use this object, put yourself in the shoes of the user.
 For example, if you are the owner of an unwrapped subname,
-and the parent is unwrapped, and you want to trasfer your 
+and the parent is unwrapped, and you want to transfer your 
 role as manager to someone else, you would go: 
 unwrapped.subname.manager.sendManager
 
-If for the same naem you were the parent manager, you would go:
+If for the same name you were the parent manager, you would go:
 unwrapped.subname.parentManager.sendManager
 */
 

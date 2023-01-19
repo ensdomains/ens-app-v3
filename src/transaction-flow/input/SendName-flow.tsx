@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Checkbox, Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
+import { Button, Dialog, Helper, Toggle, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { DogFood } from '@app/components/@molecules/DogFood'
@@ -41,15 +41,21 @@ const SwitchBox = styled.div(
     padding: 20px;
     width: 100%;
     border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      rgba(${theme.shadesRaw.foreground}, 0.06);
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
   `,
 )
 
 const TextContainer = styled.div`
   display: flex;
   flex-direction: column;
+  flex: 1;
 `
+
+const Form = styled.form(
+  () => css`
+    width: 100%;
+  `,
+)
 
 export const handleSubmitForm = ({
   basicNameData,
@@ -170,7 +176,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
   return (
     <>
-      <Typography variant="extraLarge">{t('details.sendName.title')}</Typography>
+      <Typography fontVariant="headingFour">{t('details.sendName.title')}</Typography>
       <Typography style={{ textAlign: 'center' }}>{t('details.sendName.description')}</Typography>
       <Outlink href="/faq/managing-a-name#what-are-managers-and-owners">
         {t('details.sendName.learnMore')}
@@ -179,14 +185,12 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">{t('details.sendName.makeOwner')}</Typography>
-            <Typography weight="light" variant="small">
+            <Typography fontVariant="small">
               {t('details.sendName.makeOwnerDescription')}
             </Typography>
           </TextContainer>
-          <Checkbox
-            label=""
+          <Toggle
             size="large"
-            variant="switch"
             value="owner"
             defaultChecked
             data-testid="owner-checkbox"
@@ -198,14 +202,12 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">{t('details.sendName.makeManager')}</Typography>
-            <Typography weight="light" variant="small">
+            <Typography fontVariant="small">
               {t('details.sendName.makeManagerDescription')}
             </Typography>
           </TextContainer>
-          <Checkbox
+          <Toggle
             size="large"
-            label=""
-            variant="switch"
             value="manager"
             defaultChecked
             data-testid="manager-checkbox"
@@ -213,7 +215,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
           />
         </SwitchBox>
       )}
-      <form onSubmit={handleSubmit(onSubmit)}>
+      <Form onSubmit={handleSubmit(onSubmit)}>
         <InnerContainer>
           <DogFood
             {...{
@@ -238,22 +240,18 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <FooterContainer>
           <Dialog.Footer
             leading={
-              <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+              <Button colorStyle="greySecondary" onClick={onDismiss}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
             }
             trailing={
-              <Button
-                shadowless
-                type="submit"
-                disabled={!hasChoice || !formState.isDirty || hasErrors}
-              >
+              <Button type="submit" disabled={!hasChoice || !formState.isDirty || hasErrors}>
                 {t('action.next', { ns: 'common' })}
               </Button>
             }
           />
         </FooterContainer>
-      </form>
+      </Form>
     </>
   )
 }

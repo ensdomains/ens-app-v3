@@ -2,7 +2,7 @@ import { ReactNode, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, DownIndicatorSVG, Dropdown, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, DownChevronSVG, Dropdown, Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
@@ -88,7 +88,7 @@ const OwnerButtonWrapper = ({
 }) => {
   return (
     <ButtonWrapper className={className}>
-      <Button onClick={onClick} data-testid="owner-button" size="extraSmall">
+      <Button onClick={onClick} data-testid="owner-button" size="flexible">
         {children}
       </Button>
     </ButtonWrapper>
@@ -239,24 +239,15 @@ const OwnerButtonWithPopup = ({
               />
             </ProfileSnippetWrapper>
           )}
-          <AddressCopyButton
-            variant="transparent"
-            size="extraSmall"
-            shadowless
-            onClick={() => copy(address)}
-          >
+          <AddressCopyButton colorStyle="transparent" size="flexible" onClick={() => copy(address)}>
             <AddressCopyContainer>
-              <Typography variant="large" weight="bold">
-                {shortenAddress(address, 14, 8, 6)}
-              </Typography>
+              <Typography fontVariant="largeBold">{shortenAddress(address, 14, 8, 6)}</Typography>
               <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
             </AddressCopyContainer>
           </AddressCopyButton>
           {transfer?.canTransfer && (
             <TransferButton data-testid="transfer-button" onClick={handleTransfer}>
-              <Typography variant="large" weight="bold">
-                {t('name.transfer')}
-              </Typography>
+              <Typography fontVariant="largeBold">{t('name.transfer')}</Typography>
             </TransferButton>
           )}
         </InnerDialog>
@@ -268,14 +259,14 @@ const OwnerButtonWithPopup = ({
 const ChevronIcon = styled.div<{ $pressed: boolean }>(
   ({ theme, $pressed }) => css`
     width: ${theme.space['3']};
-    color: ${theme.colors.foreground};
-    opacity: ${theme.opacity['30']};
+    color: ${theme.colors.greyPrimary};
+    opacity: 0.3;
     margin: ${theme.space['2']};
     transform: rotate(0deg);
     transition: all 0.2s ease-in-out;
     ${$pressed &&
     css`
-      opacity: ${theme.opacity['70']};
+      opacity: 0.7;
       transform: rotate(180deg);
     `}
   `,
@@ -386,7 +377,7 @@ const OwnerButtonWithDropdown = ({
               />
             </AvatarWrapper>
           </OwnerRow>
-          <ChevronIcon $pressed={isOpen} as={DownIndicatorSVG} />
+          <ChevronIcon $pressed={isOpen} as={DownChevronSVG} />
         </ContentWithDropdown>
       </OwnerButtonWrapperWithDropdown>
     </Dropdown>

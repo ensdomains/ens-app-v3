@@ -4,7 +4,8 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount, useDisconnect } from 'wagmi'
 
-import { Button, Profile, mq } from '@ensdomains/thorin'
+import { Button, ExitSVG, PersonSVG, Profile, mq } from '@ensdomains/thorin'
+import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
@@ -26,7 +27,7 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
             width: ${theme.space.full};
             height: ${theme.space['12']};
             border-radius: ${theme.radii.full};
-            font-size: ${theme.fontSizes.base};
+            font-size: ${theme.fontSizes.body};
             ${mq.xs.min(css`
               padding: 0 ${theme.space['8']};
             `)}
@@ -34,7 +35,7 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
         `
       : css`
           & button {
-            border-radius: ${theme.radii['2xLarge']};
+            /* border-radius: ${theme.radii['2xLarge']}; */
           }
           ${$large &&
           css`
@@ -76,9 +77,9 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
       <Button
         data-testid={calculateTestId(isTabBar, inHeader)}
         onClick={() => openConnectModal?.()}
-        variant="primary"
-        size={breakpoints.md || large ? 'medium' : 'extraSmall'}
-        shadowless={large || isTabBar}
+        size={breakpoints.md || large ? 'medium' : 'small'}
+        width={inHeader ? '45' : undefined}
+        shape="rounded"
       >
         {t('wallet.connect')}
       </Button>
@@ -99,27 +100,31 @@ const HeaderProfile = ({ address }: { address: string }) => {
     <Profile
       address={address}
       ensName={name || undefined}
-      dropdownItems={[
-        ...(name
-          ? [
-              {
-                label: t('wallet.myProfile'),
-                wrapper: (children: ReactNode, key: Key) => (
-                  <BaseLink href="/my/profile" key={key}>
-                    {children}
-                  </BaseLink>
-                ),
-                as: 'a' as 'a',
-                color: 'text',
-              },
-            ]
-          : []),
-        {
-          label: t('wallet.disconnect'),
-          color: 'red',
-          onClick: () => disconnect(),
-        },
-      ]}
+      dropdownItems={
+        [
+          ...(name
+            ? [
+                {
+                  label: t('wallet.myProfile'),
+                  wrapper: (children: ReactNode, key: Key) => (
+                    <BaseLink href="/my/profile" key={key}>
+                      {children}
+                    </BaseLink>
+                  ),
+                  as: 'a' as 'a',
+                  color: 'text',
+                  icon: <PersonSVG />,
+                },
+              ]
+            : []),
+          {
+            label: t('wallet.disconnect'),
+            color: 'red',
+            onClick: () => disconnect(),
+            icon: <ExitSVG />,
+          },
+        ] as DropdownItem[]
+      }
       avatar={{
         src: avatar || zorb,
         decoding: 'sync',

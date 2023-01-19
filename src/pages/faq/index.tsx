@@ -34,7 +34,7 @@ const OptionItem = styled.a(
     gap: ${theme.space['4']};
     padding: ${theme.space['6']};
 
-    border: 1px solid ${theme.colors.grey};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii['2xLarge']};
     background-color: ${theme.colors.background};
     transition: all 0.15s ease-in-out;
@@ -55,7 +55,6 @@ const OptionItem = styled.a(
 
     &:hover {
       background-color: ${theme.colors.backgroundSecondary};
-      border-color: ${theme.colors.borderSecondary};
     }
 
     ${mq.md.min(css`

@@ -13,13 +13,23 @@ import {
   NameTableHeader,
   NameTableMode,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
-import { SortDirection, SortType } from '@app/components/@molecules/SortControl/SortControl'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
 import { ReturnedName, useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+
+export enum SortType {
+  expiryDate = 'expiryDate',
+  labelName = 'labelName',
+  creationDate = 'creationDate',
+}
+
+export enum SortDirection {
+  asc = 'asc',
+  desc = 'desc',
+}
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -38,24 +48,7 @@ const TabWrapperWithButtons = styled(TabWrapper)(
     justify-content: flex-start;
     width: 100%;
     max-width: 100%;
-    background: ${theme.colors.white};
-  `,
-)
-
-const ButtonInner = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    align-items: center;
-    gap: ${theme.space['2']};
-    font-size: ${theme.space['3.5']};
-    height: ${theme.space['5']};
-    padding: 0 ${theme.space['2']};
-
-    svg {
-      display: block;
-      width: ${theme.space['3']};
-      height: ${theme.space['3']};
-    }
+    background: ${theme.colors.backgroundPrimary};
   `,
 )
 
@@ -169,15 +162,12 @@ const MyNames = () => {
             >
               {mode === 'select' && (
                 <Button
-                  size="extraSmall"
-                  shadowless
+                  size="small"
                   onClick={handleExtend}
                   data-testid="extend-names-button"
+                  prefix={<FastForwardSVG />}
                 >
-                  <ButtonInner>
-                    <FastForwardSVG />
-                    {t('action.extend', { ns: 'common' })}
-                  </ButtonInner>
+                  {t('action.extend', { ns: 'common' })}
                 </Button>
               )}
             </NameTableHeader>

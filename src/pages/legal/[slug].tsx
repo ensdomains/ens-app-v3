@@ -12,7 +12,7 @@ import { ContentGrid } from '@app/layouts/ContentGrid'
 
 const Container = styled.div(
   ({ theme }) => css`
-    line-height: ${theme.lineHeights['1.25']};
+    line-height: ${theme.lineHeights.body};
 
     &,
     ol {

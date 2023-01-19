@@ -3,10 +3,9 @@ import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
+import { Banner, Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
 
 import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
-import { ErrorContainer } from '@app/components/@molecules/ErrorContainer'
 import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
 import { LeadingHeading } from '@app/components/LeadingHeading'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -65,6 +64,7 @@ const BackArrow = styled.div(
     width: ${theme.space['6']};
     height: ${theme.space['6']};
     display: block;
+    color: ${theme.colors.greyPrimary};
   `,
 )
 
@@ -82,6 +82,19 @@ const WarningWrapper = styled.div(
 const FullWidthSkeleton = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
+  `,
+)
+
+const BackButtonWrapper = styled.div(
+  ({ theme }) => css`
+    margin-left: -${theme.space[2]};
+    margin-right: -${theme.space[1]};
+  `,
+)
+
+const BackArrowWrapper = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space[2]};
   `,
 )
 
@@ -130,10 +143,12 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
 const DummyTitle = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
+    line-height: ${theme.lineHeights.headingThree};
     white-space: pre-wrap;
 
     ${mq.md.min(css`
       font-size: ${theme.fontSizes.headingTwo};
+      line-height: ${theme.lineHeights.headingTwo};
     `)}
   `,
 )
@@ -141,7 +156,7 @@ const DummyTitle = styled(Typography)(
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${theme.lineHeights.headingThree};
     position: absolute;
     top: 0;
     white-space: nowrap;
@@ -149,14 +164,15 @@ const Title = styled(Typography)(
 
     ${mq.md.min(css`
       font-size: ${theme.fontSizes.headingTwo};
+      line-height: ${theme.lineHeights.headingTwo};
     `)}
   `,
 )
 
 const Subtitle = styled(Typography)(
   ({ theme }) => css`
-    line-height: ${theme.lineHeights.normal};
-    color: ${theme.colors.textTertiary};
+    line-height: ${theme.lineHeights.body};
+    color: ${theme.colors.greyPrimary};
   `,
 )
 
@@ -260,7 +276,7 @@ export const Content = ({
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
-      <ErrorContainer message={children.warning.message} type={children.warning.type} />
+      <Banner alert={children.warning.type}>{children.warning.message}</Banner>
     </WarningWrapper>
   )
 
@@ -295,16 +311,13 @@ export const Content = ({
           <Skeleton loading={loading} as={FullWidthSkeleton as any}>
             <CustomLeadingHeading>
               {hasBack && (
-                <div data-testid="back-button">
-                  <Button
-                    onClick={() => router.back()}
-                    variant="transparent"
-                    shadowless
-                    size="extraSmall"
-                  >
-                    <BackArrow as={ArrowLeftSVG} />
+                <BackButtonWrapper data-testid="back-button">
+                  <Button onClick={() => router.back()} colorStyle="transparent" size="flexible">
+                    <BackArrowWrapper>
+                      <BackArrow as={ArrowLeftSVG} />
+                    </BackArrowWrapper>
                   </Button>
-                </div>
+                </BackButtonWrapper>
               )}
               <CompactTitle
                 invert={!!hasBack}

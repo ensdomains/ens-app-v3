@@ -46,10 +46,10 @@ const SearchResultsContainer = styled.div<{
     top: calc(100% + ${theme.space['3']});
 
     background-color: #f7f7f7;
-    box-shadow: 0 2px 12px rgba(${theme.shadesRaw.foreground}, 0.04);
+    box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii.extraLarge};
     border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${$error ? theme.colors.red : theme.colors.borderTertiary};
+      ${$error ? theme.colors.red : theme.colors.border};
 
     overflow: hidden;
 
@@ -314,6 +314,7 @@ export const SearchInput = ({
 
   const handleSearch = useCallback(() => {
     let selectedItem = searchItems[selected] as SearchItem
+    if (!selectedItem) return
     if (selectedItem.type === 'error' || selectedItem.type === 'text') return
     if (selectedItem.type === 'nameWithDotEth') {
       selectedItem = {

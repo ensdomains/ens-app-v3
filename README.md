@@ -61,7 +61,7 @@ pnpm denv
 
 #### **If you need to deploy a new subgraph**
 
-You shouldn't deploy the subgraph ontop of the existing dataset, instead you should create a clean dataset (explained below).
+You shouldn't deploy the subgraph on top of the existing dataset, instead you should create a clean dataset (explained below).
 
 1. Start the test environment
 
@@ -141,13 +141,13 @@ If updating an existing yalc installation, you can add the `--force` flag.
 
 ## Architecture
 
-The strcutre of the `pages` folder is mimicked inside `components`. Components specific to a page can be found in the the `components` folder, in the folder corresponding to that page.
+The structure of the `pages` folder is mimicked inside `components`. Components specific to a page can be found in the the `components` folder, in the folder corresponding to that page.
 
 Components that are used in multiple places will be found in the top level of the `components` folder.
 
 ## Testing philosophy
 
-Our testing philiosphy is user-centric, meaning we want to write out tests so that they resemble the way a user would use our app as much as possible. We've borrowed this from the excellent [testing-library](https://testing-library.com/docs/guiding-principles/).
+Our testing philosophy is user-centric, meaning we want to write out tests so that they resemble the way a user would use our app as much as possible. We've borrowed this from the excellent [testing-library](https://testing-library.com/docs/guiding-principles/).
 
 A user generally clicks, types and swipes, and so most tests should include one of these actions. A user may also load a page in a specific state (by clicking, typing or swiping outside of the app) so sometimes we just want to check a page renders correctly. The vast majority of our tests will be of these kinds.
 

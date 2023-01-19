@@ -327,7 +327,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     event?: React.BaseSyntheticEvent,
   ) => {
     const records = getValuesAsProfile(profileData)
-
     callback(records, event)
   }
 

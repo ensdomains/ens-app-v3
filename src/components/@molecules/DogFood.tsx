@@ -28,9 +28,10 @@ export const DogFood = (
       disabled,
       validations,
       label, 
+      hideLabel
     // eslint-disable-next-line prettier/prettier
     }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'watch' | 'formState' | 'setValue'> 
-    & { label?: string, validations?: any, disabled?: boolean },
+    & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
 ) => {
   const { t } = useTranslation('profile')
   const { getRecords } = useEns()
@@ -62,6 +63,7 @@ export const DogFood = (
         data-testid="dogfood"
         disabled={disabled}
         label={label}
+        hideLabel={hideLabel}
         placeholder={t('details.sendName.inputPlaceholder')}
         {...register('dogfoodRaw', {
           validate: {
@@ -87,6 +89,7 @@ export const DogFood = (
           },
         })}
         error={errorMessage}
+        onClickAction={() => setValue('dogfoodRaw', '')}
       />
       {!errorMessage && finalValue && !disabled && (
         <>

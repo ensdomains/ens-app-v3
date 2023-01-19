@@ -26,6 +26,7 @@ const BackArrow = styled.div(
     width: ${theme.space['6']};
     height: ${theme.space['6']};
     display: block;
+    color: ${theme.colors.greyPrimary};
   `,
 )
 
@@ -69,7 +70,7 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.extraLarge};
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${theme.lineHeights.extraLarge};
   `,
 )
 
@@ -177,9 +178,8 @@ export default () => {
         <BackContainer>
           <Button
             onClick={() => router.push('/')}
-            variant="transparent"
-            shadowless
-            size="extraSmall"
+            colorStyle="transparent"
+            size="flexible"
             style={{ width: 50 }}
           >
             <BackArrow as={ArrowLeftSVG} />

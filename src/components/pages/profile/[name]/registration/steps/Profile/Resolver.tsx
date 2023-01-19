@@ -44,12 +44,12 @@ const Resolver = ({ resolverAddress, onDismiss, onSubmit }: Props) => {
       </EditResolverFormContainer>
       <Dialog.Footer
         leading={
-          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button shadowless onClick={handleSubmitForm} disabled={hasErrors}>
+          <Button onClick={handleSubmitForm} disabled={hasErrors}>
             {t('action.update', { ns: 'common' })}
           </Button>
         }

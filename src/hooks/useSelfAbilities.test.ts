@@ -4,6 +4,28 @@ import { useBasicName } from '@app/hooks/useBasicName'
 
 import { getFunctionCallDetails, getPermittedActions, useSelfAbilities } from './useSelfAbilities'
 
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>
+}
+
+type BasicNameData = ReturnType<typeof useBasicName>
+
+type PartialBasicNameData = DeepPartial<BasicNameData>
+
+type PartialMockData = {
+  [key: string]: {
+    basicNameData: PartialBasicNameData
+    parentBasicNameData: PartialBasicNameData
+  }
+}
+
+type MockData = {
+  [key: string]: {
+    basicNameData: BasicNameData
+    parentBasicNameData: BasicNameData
+  }
+}
+
 jest.mock('@app/hooks/useBasicName')
 const mockUseBasicName = mockFunction(useBasicName)
 
@@ -21,7 +43,7 @@ const subname = 'sub.nick.eth'
   both then "Hoder" will be appended to both sections of the name.
 */
 
-const userStates = {
+const partialUserStates = {
   unwrappedNameOwner: {
     basicNameData: {
       ownerData: {
@@ -383,7 +405,7 @@ const userStates = {
     },
     parentBasicNameData: {
       ownerData: {
-        ownershipLevel: 'baseRegistrar',
+        ownershipLevel: 'registrar',
         owner: ownerAddress,
         registrant: ownerAddress,
       },
@@ -514,7 +536,7 @@ const userStates = {
     },
     parentBasicNameData: {
       ownerData: {
-        ownershipLevel: 'baseRegsitrar',
+        ownershipLevel: 'registrar',
         owner: ownerAddress,
         registrant: ownerAddress,
       },
@@ -536,7 +558,7 @@ const userStates = {
     },
     parentBasicNameData: {
       ownerData: {
-        ownershipLevel: 'baseRegsitrar',
+        ownershipLevel: 'registrar',
         owner: ownerAddress,
       },
       wrapperData: {
@@ -544,7 +566,9 @@ const userStates = {
       },
     },
   },
-}
+} as PartialMockData
+
+const userStates = { ...partialUserStates } as MockData
 
 describe('getFunctionCallDetails', () => {
   describe('Correct function call details', () => {
