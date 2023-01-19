@@ -7,7 +7,6 @@ import { Input } from '@ensdomains/thorin'
 import { RegistrationForm } from '@app/hooks/useRegistrationForm'
 import mq from '@app/mediaQuery'
 
-import { DeleteButton } from './DeleteButton'
 import { Field } from './Field'
 
 const ResponsiveContainer = styled.div(({ theme }) => [
@@ -39,12 +38,6 @@ const ValueWrapper = styled.div(() => [
   `),
 ])
 
-const DeleteButtonWrapper = styled.div(
-  ({ theme }) => css`
-    margin-right: -${theme.space[2]};
-  `,
-)
-
 type Props = {
   error?: string
   register: UseFormRegister<RegistrationForm>
@@ -52,7 +45,6 @@ type Props = {
   index: number
   validator?: (value: string) => boolean | string | Promise<boolean | string>
   validated?: boolean
-  showDelete?: boolean
   onDelete?: () => void
 }
 
@@ -63,7 +55,6 @@ export const CustomProfileRecordInput = ({
   validator,
   validated,
   error,
-  showDelete = true,
   onDelete,
 }: Props) => {
   const theme = useTheme()
@@ -98,16 +89,7 @@ export const CustomProfileRecordInput = ({
             showDot
             validated={validated}
             error={!!error}
-            suffix={
-              showDelete && (
-                <DeleteButtonWrapper>
-                  <DeleteButton size="medium" onClick={() => onDelete?.()} />
-                </DeleteButtonWrapper>
-              )
-            }
-            parentStyles={css`
-              height: ${theme.space[12]};
-            `}
+            onClickAction={onDelete}
             {...register(`records.${index}.value`)}
             data-testid="custom-profile-record-input-value"
           />

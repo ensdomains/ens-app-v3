@@ -5,9 +5,8 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Dialog, PlusSVG, mq } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG, Typography, mq } from '@ensdomains/thorin'
 
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { ConfirmationDialogView } from '@app/components/@molecules/ConfirmationDialogView/ConfirmationDialogView'
 import { AvatarClickType } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
@@ -48,12 +47,8 @@ const StyledCard = styled.form(({ theme }) => [
   `),
 ])
 
-const Heading = styled.h1(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.headingTwo};
-    line-height: ${theme.space['10']};
-    font-weight: ${theme.fontWeights.bold};
-    color: ${theme.colors.black};
+const CenterAlignedTypography = styled(Typography)(
+  () => css`
     text-align: center;
   `,
 )
@@ -62,7 +57,7 @@ const Divider = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     height: ${theme.space.px};
-    background-color: ${theme.colors.borderTertiary};
+    background: ${theme.colors.border};
   `,
 )
 
@@ -70,45 +65,10 @@ const ButtonWrapper = styled.div(({ theme }) => [
   css`
     width: ${theme.space.full};
   `,
-  mq.md.min(css`
+  mq.xs.min(css`
     width: initial;
   `),
 ])
-
-const ButtonInner = styled.div(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.root};
-    font-weight: ${theme.fontWeights.bold};
-    line-height: ${theme.space['5']};
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-  `,
-)
-
-const ButtonIcon = styled.div(
-  ({ theme }) => css`
-    svg {
-      display: block;
-      width: ${theme.space['4']};
-      height: ${theme.space['4']};
-      stroke-width: 2px;
-    }
-  `,
-)
-
-const ButtonContainer = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space.full};
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: center;
-    gap: ${theme.space['2']};
-  `,
-)
 
 const SubmitButton = ({
   control,
@@ -140,14 +100,8 @@ const SubmitButton = ({
     : t('action.next', { ns: 'common' })
 
   return (
-    <Button
-      variant="primary"
-      type="submit"
-      disabled={disabled}
-      shadowless
-      data-testid="profile-submit-button"
-    >
-      <ButtonInner>{message}</ButtonInner>
+    <Button type="submit" disabled={disabled} data-testid="profile-submit-button">
+      {message}
     </Button>
   )
 }
@@ -308,13 +262,16 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, avatarFile, modalOption])
 
+  console.log('avatarSrc', avatarSrc)
   return (
     <>
       <Dialog onDismiss={() => setModalOpen(false)} variant="blank" open={modalOpen}>
         {modalContent}
       </Dialog>
       <StyledCard onSubmit={handleSubmit(onSubmit)}>
-        <Heading>{t('steps.profile.title')}</Heading>
+        <CenterAlignedTypography fontVariant="headingTwo">
+          {t('steps.profile.title')}
+        </CenterAlignedTypography>
         <WrappedAvatarButton
           control={control}
           src={avatarSrc}
@@ -326,6 +283,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         {records.map((field, index) =>
           field.group === 'custom' ? (
             <CustomProfileRecordInput
+              key={field.id}
               register={register}
               trigger={trigger}
               index={index}
@@ -367,38 +325,30 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         )}
         <ButtonWrapper>
           <Button
-            shadowless
             size="medium"
             onClick={handleShowAddRecordModal}
             data-testid="show-add-profile-records-modal-button"
+            prefix={<PlusSVG />}
           >
-            <ButtonInner>
-              <ButtonIcon>
-                <PlusSVG />
-              </ButtonIcon>
-              {t('steps.profile.addMore')}
-            </ButtonInner>
+            {t('steps.profile.addMore')}
           </Button>
         </ButtonWrapper>
         <Divider />
-        <ButtonContainer>
-          <MobileFullWidth>
+        <Dialog.Footer
+          leading={
             <Button
               id="profile-back-button"
               ref={backRef}
               type="submit"
-              shadowless
-              variant="secondary"
+              colorStyle="accentSecondary"
               disabled={hasErrors}
               data-testid="profile-back-button"
             >
-              <ButtonInner>{t('action.back', { ns: 'common' })}</ButtonInner>
+              {t('action.back', { ns: 'common' })}
             </Button>
-          </MobileFullWidth>
-          <MobileFullWidth>
-            <SubmitButton control={control} disabled={hasErrors} />
-          </MobileFullWidth>
-        </ButtonContainer>
+          }
+          trailing={<SubmitButton control={control} disabled={hasErrors} />}
+        />
       </StyledCard>
     </>
   )

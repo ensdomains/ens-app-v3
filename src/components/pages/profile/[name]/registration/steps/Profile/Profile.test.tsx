@@ -1,5 +1,6 @@
 import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
+import { PointerEventsCheckLevel } from '@testing-library/user-event'
 import { useAccount, useNetwork } from 'wagmi'
 
 import { useContractAddress } from '@app/hooks/useContractAddress'
@@ -147,7 +148,9 @@ describe('Profile', () => {
         resolverExists
       />,
     )
-    await userEvent.click(screen.getByTestId('profile-record-input-delete-button-ETH'))
+    await userEvent.click(screen.getByTestId('input-action-button'), {
+      pointerEventsCheck: PointerEventsCheckLevel.Never,
+    })
     await waitFor(() =>
       expect(screen.getByText('steps.profile.confirmations.clearEth.title')).toBeInTheDocument(),
     )

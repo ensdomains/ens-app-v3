@@ -21,19 +21,19 @@ const Container = styled.button<{ $selected?: boolean }>(
     border-width: 1px;
     border-style: solid;
     border-radius: ${theme.radii.medium};
-    border-color: ${theme.colors.grey};
+    border-color: ${theme.colors.border};
     background-color: white;
     padding: ${theme.space[4]} ${theme.space[2]};
 
     ${$selected &&
     css`
       border-color: ${theme.colors.accent};
-      background-color: ${theme.colors.accentSecondary};
+      background-color: ${theme.colors.accentSurface};
     `}
 
     ${disabled &&
     css`
-      border-color: ${theme.colors.grey};
+      border-color: ${theme.colors.border};
       background-color: ${theme.colors.backgroundSecondary};
     `}
     transition: all 0.3s ease-out;

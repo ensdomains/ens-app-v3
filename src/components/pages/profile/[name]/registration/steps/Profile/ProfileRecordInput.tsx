@@ -1,20 +1,8 @@
-import {
-  ComponentProps,
-  FocusEvent,
-  ReactNode,
-  Ref,
-  RefObject,
-  forwardRef,
-  useMemo,
-  useState,
-} from 'react'
+import { ComponentProps, FocusEvent, ReactNode, Ref, RefObject, forwardRef, useMemo } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 
 import { Input } from '@ensdomains/thorin'
 
-import { useDefaultRef } from '@app/hooks/useDefaultRef'
-
-import { DeleteButton } from './DeleteButton'
 import { DynamicIcon } from './DynamicIcon'
 import { Field } from './Field'
 
@@ -35,12 +23,6 @@ const IconWrapper = styled.div(
       width: 22px;
       height: 22px;
     }
-  `,
-)
-
-const DeleteButtonWrapper = styled.div(
-  ({ theme }) => css`
-    margin-right: -${theme.space['3.5']};
   `,
 )
 
@@ -86,7 +68,6 @@ export const ProfileRecordInput = forwardRef(
     }: Props,
     ref: Ref<HTMLElement>,
   ) => {
-    const inputRef = useDefaultRef<HTMLElement>(ref)
     const theme = useTheme()
 
     const prefix = useMemo(() => {
@@ -104,16 +85,6 @@ export const ProfileRecordInput = forwardRef(
       if (onDelete) onDelete()
     }
 
-    const [showDelete, setShowDelete] = useState(true)
-    const handleFocus = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      onFocus?.(e)
-      setShowDelete(false)
-    }
-    const handleBlur = (e: FocusEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-      onBlur?.(e)
-      setShowDelete(true)
-    }
-
     return (
       <Container data-testid={`profile-record-input-${recordKey}`}>
         <Field label={label} secondaryLabel={secondaryLabel} errorLabel={error}>
@@ -121,10 +92,9 @@ export const ProfileRecordInput = forwardRef(
             size="medium"
             label=""
             hideLabel
-            ref={inputRef as RefObject<HTMLInputElement>}
-            prefix={prefix}
+            ref={ref as RefObject<HTMLInputElement>}
+            icon={prefix}
             showDot
-            padding="3.5"
             error={!!error}
             placeholder={placeholder}
             data-testid={`profile-record-input-input-${recordKey}`}
@@ -132,21 +102,26 @@ export const ProfileRecordInput = forwardRef(
             parentStyles={css`
               height: ${theme.space['12']};
             `}
-            onFocus={handleFocus}
-            onBlur={handleBlur}
+            iconWidth="5.5"
+            onFocus={onFocus}
+            onBlur={onBlur}
+            clearable
+            onClickAction={() => {
+              handleDelete()
+            }}
             {...props}
-            suffix={
-              showDelete && (
-                <DeleteButtonWrapper>
-                  <DeleteButton
-                    type="button"
-                    onClick={handleDelete}
-                    onMouseDown={(e) => e.preventDefault()}
-                    data-testid={`profile-record-input-delete-button-${recordKey}`}
-                  />
-                </DeleteButtonWrapper>
-              )
-            }
+            // suffix={
+            //   showDelete && (
+            //     <DeleteButtonWrapper>
+            //       <DeleteButton
+            //         type="button"
+            //         onClick={handleDelete}
+            //         onMouseDown={(e) => e.preventDefault()}
+            //         data-testid={`profile-record-input-delete-button-${recordKey}`}
+            //       />
+            //     </DeleteButtonWrapper>
+            //   )
+            // }
           />
         </Field>
       </Container>

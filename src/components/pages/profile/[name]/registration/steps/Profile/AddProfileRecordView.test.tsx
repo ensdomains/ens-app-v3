@@ -70,7 +70,7 @@ describe('AddProfileRecordView', () => {
     render(<AddProfileRecordView control={result.current.control} />)
     await userEvent.click(screen.getByTestId('profile-record-option-ipfs'))
     expect(screen.getByTestId('profile-record-option-ipfs')).toHaveStyle(
-      'background-color: rgba(82, 152, 255, 0.15)',
+      'background-color: ButtonFace',
     )
     expect(screen.getByTestId('profile-record-option-contentHash')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-skynet')).toBeDisabled()
@@ -93,7 +93,7 @@ describe('AddProfileRecordView', () => {
     render(<AddProfileRecordView control={result.current.control} />)
     await userEvent.click(screen.getByTestId('profile-record-option-contentHash'))
     expect(screen.getByTestId('profile-record-option-contentHash')).toHaveStyle(
-      'background-color: rgba(82, 152, 255, 0.15)',
+      'background-color: ButtonFace',
     )
     expect(screen.getByTestId('profile-record-option-ipfs')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-skynet')).toBeDisabled()
@@ -102,7 +102,7 @@ describe('AddProfileRecordView', () => {
     expect(screen.getByTestId('profile-record-option-arweave')).toBeDisabled()
     await userEvent.click(screen.getByTestId('profile-record-option-contentHash'))
     expect(screen.getByTestId('profile-record-option-contentHash')).not.toHaveStyle(
-      'background-color: rgba(82, 152, 255, 0.15)',
+      'background-color: ButtonFace',
     )
     expect(screen.getByTestId('profile-record-option-ipfs')).not.toBeDisabled()
     expect(screen.getByTestId('profile-record-option-skynet')).not.toBeDisabled()

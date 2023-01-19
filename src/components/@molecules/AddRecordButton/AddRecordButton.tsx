@@ -1,12 +1,4 @@
-import {
-  ButtonHTMLAttributes,
-  ChangeEvent,
-  ReactNode,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react'
+import { ButtonHTMLAttributes, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
@@ -65,6 +57,16 @@ const ControlsHeaderLeading = styled.div(
   ({ theme }) => css`
     flex: 1;
     padding: ${theme.space['3']} 0 ${theme.space['3']} ${theme.space['3']};
+  `,
+)
+
+const InputWrapper = styled.div(
+  () => css`
+    & > div:first-child {
+      & > div:first-child {
+        display: none;
+      }
+    }
   `,
 )
 
@@ -329,9 +331,9 @@ export const AddRecordButton = ({
     setError(undefined)
   }, [optionsProp])
 
-  const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setInputValue(event.target.value)
-  }
+  // const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setInputValue(event.target.value)
+  // }
 
   const handleInputAction = () => {
     if (inputActionType === 'create' && onAddRecord) {
@@ -355,22 +357,23 @@ export const AddRecordButton = ({
             {inputType === 'placeholder' ? (
               <div>{selectOption}</div>
             ) : (
-              <Input
-                ref={inputRef}
-                icon={prefix}
-                suffixAs="div"
-                value={inputValue}
-                label=""
-                size="small"
-                hideLabel
-                placeholder={
-                  inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
-                }
-                error={error}
-                clearable
-                onChange={(e) => setInputValue(e.target.value)}
-                data-testid="add-record-button-input"
-              />
+              <InputWrapper>
+                <Input
+                  ref={inputRef}
+                  icon={prefix}
+                  suffixAs="div"
+                  value={inputValue}
+                  label=""
+                  size="small"
+                  placeholder={
+                    inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
+                  }
+                  error={error}
+                  clearable
+                  onChange={(e) => setInputValue(e.target.value)}
+                  data-testid="add-record-button-input"
+                />
+              </InputWrapper>
             )}
           </ControlsHeaderLeading>
           <ControlsHeaderTrailing

@@ -44,10 +44,13 @@ describe('Register Name', () => {
 
     // should go to profile editor step
     cy.findByTestId('next-button').click()
-    cy.findByText('General').should('be.visible')
+
+    cy.findByTestId('show-add-profile-records-modal-button').click()
+    cy.findByTestId('profile-record-option-name').click()
+    cy.findByTestId('add-profile-records-button').click()
 
     // should allow setting a general text record
-    cy.findByText('Nickname').click().type('Test Name')
+    cy.findByTestId('profile-record-input-input-name').type('Test Name')
 
     // should show ETH record by default
     cy.findByText('Address').click()

@@ -1,11 +1,8 @@
-import { ComponentProps, FocusEvent, forwardRef, useState } from 'react'
+import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Textarea } from '@ensdomains/thorin'
 
-import { useDefaultRef } from '@app/hooks/useDefaultRef'
-
-import { DeleteButton } from './DeleteButton'
 import { Field } from './Field'
 
 const Container = styled.div(
@@ -21,19 +18,6 @@ const TextareaContainer = styled.div(
   `,
 )
 
-const DeleteButtonWrapper = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: absolute;
-    top: 0;
-    right: 0;
-    width: ${theme.space[12]};
-    height: ${theme.space[12]};
-  `,
-)
-
 type Props = {
   recordKey: string
   secondaryLabel?: string
@@ -46,40 +30,21 @@ export const ProfileRecordTextarea = forwardRef<HTMLTextAreaElement, Props>(
     { recordKey, label, secondaryLabel, validated, error, onDelete, onFocus, onBlur, ...props },
     ref,
   ) => {
-    const textareaRef = useDefaultRef<HTMLTextAreaElement>(ref)
-
-    const [showDelete, setShowDelete] = useState(true)
-    const handleFocus = (e: FocusEvent<HTMLTextAreaElement>) => {
-      onFocus?.(e)
-      setShowDelete(false)
-    }
-    const handleBlur = (e: FocusEvent<HTMLTextAreaElement>) => {
-      onBlur?.(e)
-      setShowDelete(true)
-    }
     return (
       <Container data-testid={`profile-record-input-${recordKey}`}>
         <Field label={label} secondaryLabel={secondaryLabel} errorLabel={error}>
           <TextareaContainer>
             <Textarea
-              ref={textareaRef}
+              ref={ref}
               label=""
               hideLabel
               showDot={validated}
               width="full"
-              onFocus={handleFocus}
-              onBlur={handleBlur}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              onClickAction={onDelete}
               {...props}
             />
-            {showDelete && (
-              <DeleteButtonWrapper>
-                <DeleteButton
-                  onClick={() => {
-                    onDelete?.()
-                  }}
-                />
-              </DeleteButtonWrapper>
-            )}
           </TextareaContainer>
         </Field>
       </Container>

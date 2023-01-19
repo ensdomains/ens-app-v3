@@ -3,7 +3,7 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Input, ScrollBox, SearchSVG } from '@ensdomains/thorin'
+import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { ProfileRecord, grouped as options } from '@app/constants/profileRecordOptions'
@@ -113,44 +113,10 @@ const NoResultsMessage = styled.div(
 
 const FooterWrapper = styled.div(
   ({ theme }) => css`
-    border-top: 1px solid ${theme.colors.borderTertiary};
+    border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space[4]};
     padding-bottom: 0;
     margin: 0 -${theme.space['3.5']};
-  `,
-)
-
-const ButtonInner = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    justify-content: center;
-    position: relative;
-    width: 100%;
-    font-size: ${theme.fontSizes.root};
-    line-height: ${theme.space[8]};
-  `,
-)
-
-const CounterWrapper = styled.div(
-  ({ theme }) => css`
-    height: ${theme.space[8]};
-    position: absolute;
-    right: 0;
-    display: flex;
-    align-items: center;
-  `,
-)
-const Counter = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border: 2px solid white;
-    border-radius: ${theme.radii.full};
-    font-size: ${theme.space[3]};
-    width: ${theme.space[6]};
-    height: ${theme.space[6]};
-    box-sizing: border-box;
   `,
 )
 
@@ -237,7 +203,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
       <Input
         label=""
         hideLabel
-        prefix={<SearchSVG />}
+        icon={<MagnifyingGlassSimpleSVG />}
         size="medium"
         placeholder={t('action.search', { ns: 'common' })}
         value={search}
@@ -245,9 +211,6 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
           setSearch(e.currentTarget.value)
           setDebouncedSearch(e.currentTarget.value)
         }}
-        parentStyles={css`
-          height: 48px;
-        `}
         data-testid="profile-record-search-input"
       />
       <Content>
@@ -264,7 +227,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
         </SideBar>
         <OptionsContainer>
           {visibleOptions.length > 0 ? (
-            <ScrollBox>
+            <ScrollBox hideDividers>
               {visibleOptions.map((option) => {
                 const showLabel = !['address', 'website'].includes(option.group)
 
@@ -333,22 +296,14 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
       </Content>
       <FooterWrapper>
         <Button
-          variant="primary"
-          size="extraSmall"
+          size="medium"
           onClick={() => onAdd?.(selectedRecords)}
-          shadowless
+          count={selectedRecords.length}
           fullWidthContent
           disabled={selectedRecords.length === 0}
           data-testid="add-profile-records-button"
         >
-          <ButtonInner>
-            {t('action.add', { ns: 'common' })}
-            {selectedRecords.length > 0 && (
-              <CounterWrapper data-testid="add-profile-records-counter">
-                <Counter>{selectedRecords.length}</Counter>
-              </CounterWrapper>
-            )}
-          </ButtonInner>
+          {t('action.add', { ns: 'common' })}
         </Button>
       </FooterWrapper>
     </Container>
