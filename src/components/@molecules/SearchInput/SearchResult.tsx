@@ -30,8 +30,7 @@ const SearchItem = styled.div<{
     gap: ${theme.space['2']};
     height: ${theme.space['14']};
     padding: 0 ${theme.space['4']};
-    border-bottom: ${theme.borderWidths['0.375']} ${theme.borderStyles.solid}
-      ${theme.colors.borderTertiary};
+    border-bottom: ${theme.borderWidths['0.375']} ${theme.borderStyles.solid} ${theme.colors.border};
     &:last-of-type {
       border-bottom: 0;
     }
@@ -48,7 +47,7 @@ const SearchItem = styled.div<{
     `}
     ${$error &&
     css`
-      background-color: rgba(${theme.accentsRaw.red}, 0.1);
+      background-color: ${theme.colors.redSurface};
       color: ${theme.colors.red};
     `}
     ${$clickable &&
@@ -62,7 +61,7 @@ const SearchItem = styled.div<{
         position: absolute;
         height: ${theme.space['3']};
         width: ${theme.space['3']};
-        background-color: ${theme.colors.foreground};
+        background-color: ${theme.colors.greyPrimary};
         opacity: 0.4;
         right: ${theme.space['3']};
       }
@@ -128,15 +127,15 @@ const StyledTag = styled(Tag)(
 
 const AddressTag = styled(StyledTag)(
   ({ theme }) => css`
-    border: ${theme.borderWidths['0.375']} solid ${theme.colors.borderSecondary};
+    border: ${theme.borderWidths['0.375']} solid ${theme.colors.border};
     background-color: transparent;
   `,
 )
 
 const AddressPrimary = styled.div(
   ({ theme }) => css`
-    font-size: ${theme.fontSizes.label};
-    color: ${theme.colors.textSecondary};
+    font-size: ${theme.fontSizes.small};
+    color: ${theme.colors.greyPrimary};
   `,
 )
 
@@ -173,14 +172,14 @@ const AddressResultItem = ({ address }: { address: string }) => {
 const GracePeriodTag = styled(StyledTag)(
   ({ theme }) => css`
     color: ${theme.colors.yellow};
-    background-color: rgba(${theme.accentsRaw.yellow}, 0.1);
+    background-color: ${theme.colors.yellowSurface};
   `,
 )
 
 const PremiumTag = styled(StyledTag)(
   ({ theme }) => css`
     color: ${theme.colors.purple};
-    background-color: rgba(${theme.accentsRaw.purple}, 0.1);
+    background-color: ${theme.colors.purpleSurface};
   `,
 )
 
@@ -197,19 +196,19 @@ const StatusTag = ({ status }: { status: RegistrationStatus }) => {
       return <PremiumTag>{t(`search.status.${status}`)}</PremiumTag>
     }
     case 'available': {
-      return <StyledTag tone="green">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="greenSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'notOwned': {
-      return <StyledTag tone="blue">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'notImported': {
-      return <StyledTag tone="blue">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     case 'short': {
-      return <StyledTag tone="red">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
     default: {
-      return <StyledTag tone="red">{t(`search.status.${status}`)}</StyledTag>
+      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
     }
   }
 }

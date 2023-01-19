@@ -43,25 +43,7 @@ const TabWrapperWithButtons = styled(TabWrapper)(
     justify-content: flex-start;
     width: 100%;
     max-width: 100%;
-    background: ${theme.colors.white};
-  `,
-)
-
-const ButtonInner = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    align-items: center;
-    gap: ${theme.space['2']};
-
-    font-size: ${theme.space['3.5']};
-    height: ${theme.space['5']};
-    padding: 0 ${theme.space['2']};
-
-    svg {
-      display: block;
-      width: ${theme.space['3']};
-      height: ${theme.space['3']};
-    }
+    background: ${theme.colors.backgroundPrimary};
   `,
 )
 
@@ -205,15 +187,12 @@ const Page = () => {
             >
               {mode === 'select' && (
                 <Button
-                  size="extraSmall"
-                  shadowless
+                  size="small"
                   onClick={handleExtend}
                   data-testid="extend-names-button"
+                  prefix={<FastForwardSVG />}
                 >
-                  <ButtonInner>
-                    <FastForwardSVG />
-                    {t('action.extend', { ns: 'common' })}
-                  </ButtonInner>
+                  {t('action.extend', { ns: 'common' })}
                 </Button>
               )}
             </NameTableHeader>

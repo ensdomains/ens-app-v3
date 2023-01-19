@@ -37,7 +37,7 @@ const NameGridItem = styled.div(
 )
 
 const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>(
-  ({ theme, $color, $primary }) => css`
+  ({ theme, $color }) => css`
     display: flex;
     gap: ${theme.space['1']};
     flex-gap: ${theme.space['1']};
@@ -53,12 +53,7 @@ const ExpiryWrapper = styled.div<{ $color: Colors; $primary: boolean }>(
     top: calc(-1 * ${theme.space['1.5']});
     border-style: solid;
     border-width: 2px;
-    border-color: rgba(
-      ${$color === 'foreground'
-        ? '0,0,0'
-        : theme.accentsRaw[$color as keyof typeof theme.accentsRaw]},
-      ${$primary ? '0.2' : '0.42'}
-    );
+    border-color: ${theme.colors.border};
     color: rgb(${theme.colors[$color]});
   `,
 )
@@ -76,7 +71,7 @@ export const Expiry = ({ expiry }: { expiry: Date }) => {
   const months = Math.round(difference / 30)
   const years = Math.round(difference / 365)
   let text = `${years}y`
-  let color: Colors = 'foreground'
+  let color: Colors = 'grey'
 
   if (difference < 0) {
     text = `${difference + 90}d`
@@ -86,18 +81,13 @@ export const Expiry = ({ expiry }: { expiry: Date }) => {
     color = 'orange'
   } else if (difference < 365) {
     text = `${months}m`
-    color = 'foreground'
+    color = 'grey'
   }
 
   return (
-    <ExpiryWrapper $primary={color === 'foreground'} $color={color}>
-      <ClockSVG
-        opacity={color === 'foreground' ? '0.2' : '0.8'}
-        color={color}
-        width="16"
-        height="16"
-      />
-      <ExpiryText $primary={color === 'foreground'}>{text}</ExpiryText>
+    <ExpiryWrapper $primary={color === 'grey'} $color={color}>
+      <ClockSVG opacity={color === 'grey' ? '0.2' : '0.8'} color={color} width="16" height="16" />
+      <ExpiryText $primary={color === 'grey'}>{text}</ExpiryText>
     </ExpiryWrapper>
   )
 }

@@ -2,9 +2,8 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Colors } from '@ensdomains/thorin'
+import { Colors, CurrencyToggle } from '@ensdomains/thorin'
 
-import { CurrencySwitch } from '@app/components/@atoms/CurrencySwitch/CurrencySwitch'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
@@ -76,10 +75,10 @@ const FullInvoice = ({
     <InvoiceContainer>
       <OptionBar>
         <GasDisplay gasPrice={gasPrice} />
-        <CurrencySwitch
-          value={currencyUnit}
-          onChange={(unit) => setCurrencyUnit(unit)}
-          fiat={fiatUnit}
+        <CurrencyToggle
+          size="small"
+          checked={currencyUnit === 'fiat'}
+          onChange={(e) => setCurrencyUnit(e.target.checked ? 'fiat' : 'eth')}
         />
       </OptionBar>
       <Invoice items={invoiceItems} unit={currencyDisplay} totalLabel={t('invoice.total')} />

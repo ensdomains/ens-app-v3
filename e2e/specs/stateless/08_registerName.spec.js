@@ -12,7 +12,7 @@ describe('Register Name', () => {
     cy.findByText('Register registration-normal.eth').should('be.visible')
 
     // should show primary name setting as checked
-    cy.findByTestId('checkbox').should('be.checked')
+    cy.findByTestId('primary-name-toggle').should('be.checked')
 
     // should show adjusted gas estimate when primary name setting checked
     cy.findByTestId('invoice-item-1-amount')
@@ -21,13 +21,13 @@ describe('Register Name', () => {
         const estimate = parseFloat($item.text())
         cy.wrap(estimate).as('estimate')
         expect(estimate).to.be.greaterThan(0)
-        cy.findByTestId('checkbox')
+        cy.findByTestId('primary-name-toggle')
           .click()
           .then(function () {
             expect(parseFloat($item.text())).to.be.lessThan(this.estimate)
           })
           .then(() => {
-            cy.findByTestId('checkbox').click()
+            cy.findByTestId('primary-name-toggle').click()
           })
       })
 
@@ -97,7 +97,7 @@ describe('Register Name', () => {
   it('should allow registering a non-primary name', () => {
     // should show primary name setting as unchecked if primary already set
     cy.visit('/registration-not-primary.eth/register')
-    cy.findByTestId('checkbox').should('not.be.checked')
+    cy.findByTestId('primary-name-toggle').should('not.be.checked')
 
     // should show set profile button on info step
     cy.findByTestId('next-button').click()

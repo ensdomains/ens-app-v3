@@ -72,7 +72,10 @@ export const TaggedNameItem = ({
     >
       <OtherItemsContainer>
         {tags.map(([tagDisabled, translation]) => (
-          <Tag key={translation} tone={!(tagDisabled && disabled) ? 'accent' : 'secondary'}>
+          <Tag
+            key={translation}
+            colorStyle={!(tagDisabled && disabled) ? 'accentSecondary' : 'greySecondary'}
+          >
             {t(translation)}
           </Tag>
         ))}

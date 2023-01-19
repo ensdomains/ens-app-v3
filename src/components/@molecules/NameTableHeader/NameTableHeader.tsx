@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Input, SearchSVG, Select, mq } from '@ensdomains/thorin'
+import { Input, MagnifyingGlassSimpleSVG, Select, mq } from '@ensdomains/thorin'
 
 import DownDirectionSVG from '@app/assets/SortAscending.svg'
 import UpDirectionSVG from '@app/assets/SortDescending.svg'
@@ -14,7 +14,7 @@ const TableHeader = styled.div(
     display: flex;
     flex-direction: column-reverse;
     align-items: flex-end;
-    border-bottom: 1px solid ${theme.colors.borderTertiary};
+    border-bottom: 1px solid ${theme.colors.border};
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
     ${mq.md.min(css`
@@ -81,25 +81,13 @@ const TableHeaderTrailing = styled.div(
   `,
 )
 
-const SearchIconWrapper = styled.div(
-  ({ theme }) => css`
-    svg {
-      display: block;
-      path {
-        stroke-width: 3px;
-        stroke: ${theme.colors.textTertiary};
-      }
-    }
-  `,
-)
-
 const DirectionButton = styled.button<{ $active: boolean }>(
   ({ theme, $active }) => css`
     transition: all 0.15s ease-in-out;
-    width: ${theme.space['9']};
-    flex: 0 0 ${theme.space['9']};
-    height: ${theme.space['9']};
-    border: 1px solid ${theme.colors.borderSecondary};
+    width: ${theme.space['10']};
+    flex: 0 0 ${theme.space['10']};
+    height: ${theme.space['10']};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.space['2']};
     display: flex;
     justify-content: center;
@@ -114,7 +102,7 @@ const DirectionButton = styled.button<{ $active: boolean }>(
       }
     }
     &:hover {
-      background-color: ${theme.colors.borderSecondary};
+      background-color: ${theme.colors.border};
     }
   `,
 )
@@ -218,22 +206,13 @@ export const NameTableHeader = ({
       </TableHeaderLeading>
       <TableHeaderTrailing>
         <Input
-          size="medium"
+          size="small"
           label="search"
           value={searchQuery}
           onChange={(e) => onSearchChange?.(e.target.value)}
           hideLabel
-          prefix={
-            <SearchIconWrapper>
-              <SearchSVG />
-            </SearchIconWrapper>
-          }
+          icon={<MagnifyingGlassSimpleSVG />}
           placeholder={t('action.search')}
-          parentStyles={css`
-            height: 36px;
-            border-radius: 8px;
-          `}
-          padding="2"
         />
       </TableHeaderTrailing>
     </TableHeader>

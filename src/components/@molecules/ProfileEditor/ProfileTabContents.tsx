@@ -11,12 +11,13 @@ import { validateCryptoAddress } from '@app/utils/validate'
 import { ContentHashProviderOrAll, validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(
-  () => css`
+  ({ theme }) => css`
     position: relative;
     flex: 1;
     overflow: hidden;
     display: flex;
     flex-direction: column;
+    padding: ${theme.space['1']};
   `,
 )
 
@@ -111,6 +112,9 @@ const ProfileTabContents = ({
                     showDot
                     validated={getFieldState('general.name', formState).isDirty}
                     autoComplete="off"
+                    onClear={() => {
+                      setValue('general.name', '')
+                    }}
                     {...register('general.name')}
                   />
                   <RecordInput
@@ -120,6 +124,9 @@ const ProfileTabContents = ({
                     placeholder={t('input.profileEditor.tabs.general.url.placeholder')}
                     showDot
                     validated={getFieldState('general.url', formState).isDirty}
+                    onClear={() => {
+                      setValue('general.url', '')
+                    }}
                     {...register('general.url')}
                   />
                   <RecordInput
@@ -129,6 +136,9 @@ const ProfileTabContents = ({
                     placeholder={t('input.profileEditor.tabs.general.location.placeholder')}
                     showDot
                     validated={getFieldState('general.location', formState).isDirty}
+                    onClear={() => {
+                      setValue('general.location', '')
+                    }}
                     {...register('general.location')}
                   />
                   <Textarea
@@ -141,6 +151,7 @@ const ProfileTabContents = ({
                     placeholder={t('input.profileEditor.tabs.general.description.placeholder')}
                     showDot
                     validated={getFieldState('general.description', formState).isDirty}
+                    clearable
                     {...register('general.description')}
                   />
                 </>

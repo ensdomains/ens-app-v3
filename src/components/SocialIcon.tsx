@@ -22,7 +22,7 @@ const StyledIcon = styled.div<{ $iconColor?: string }>(
     height: 80%;
     position: absolute;
     transition: 0.15s all ease-in-out;
-    fill: ${theme.colors.backgroundHide};
+    fill: ${theme.colors.greyPrimary};
 
     ${SocialIconWrapper}:hover && {
       fill: ${$iconColor};

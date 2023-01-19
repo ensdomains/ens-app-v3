@@ -48,13 +48,13 @@ const TabButton = styled.button<{ $selected: boolean }>(
     padding: 0;
     margin: 0;
     background: none;
-    color: ${$selected ? theme.colors.accent : theme.colors.textTertiary};
+    color: ${$selected ? theme.colors.accent : theme.colors.greyPrimary};
     font-size: ${theme.fontSizes.extraLarge};
     transition: all 0.15s ease-in-out;
     cursor: pointer;
 
     &:hover {
-      color: ${$selected ? theme.colors.accent : theme.colors.textSecondary};
+      color: ${$selected ? theme.colors.accentBright : theme.colors.text};
     }
   `,
 )
@@ -185,7 +185,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                   $selected={tabItem === tab}
                   onClick={() => setTab(tabItem)}
                 >
-                  <Typography weight="bold">{t(`tabs.${tabItem}.name`)}</Typography>
+                  <Typography fontVariant="extraLargeBold" color="inherit">
+                    {t(`tabs.${tabItem}.name`)}
+                  </Typography>
                 </TabButton>
               ))}
             </TabButtonContainer>

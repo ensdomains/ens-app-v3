@@ -87,24 +87,12 @@ export const DevSection = () => {
 
   return (
     <SectionContainer title="Developer">
-      <Button shadowless onClick={() => addSuccess()}>
-        Add Successful Transaction
-      </Button>
-      <Button shadowless onClick={() => sendName()}>
-        Test Send Name
-      </Button>
-      <Button shadowless onClick={() => addFailure()}>
-        Add Failing Transaction
-      </Button>
-      <Button shadowless onClick={() => startAutoMine()}>
-        Start Automine
-      </Button>
-      <Button shadowless onClick={() => stopAutoMine()}>
-        Stop Automine
-      </Button>
-      <Button shadowless onClick={() => revert()}>
-        Revert
-      </Button>
+      <Button onClick={() => addSuccess()}>Add Successful Transaction</Button>
+      <Button onClick={() => sendName()}>Test Send Name</Button>
+      <Button onClick={() => addFailure()}>Add Failing Transaction</Button>
+      <Button onClick={() => startAutoMine()}>Start Automine</Button>
+      <Button onClick={() => stopAutoMine()}>Stop Automine</Button>
+      <Button onClick={() => revert()}>Revert</Button>
     </SectionContainer>
   )
 }

@@ -79,21 +79,16 @@ export const ClaimComplete = ({ name }: { name: string }) => {
         {name && <NFTTemplate backgroundImage={undefined} name={name} isNormalised />}
       </NFTTemplateContainer>
       <Spacer $height="5" />
-      <Typography {...{ weight: 'bold', variant: 'extraLarge' }}>
-        {t('claimComplete.title')}
-      </Typography>{' '}
+      <Typography fontVariant="headingFour">{t('claimComplete.title')}</Typography>{' '}
       <DomainTextContainer>
-        <Typography {...{ weight: 'bold', variant: 'large' }}>
-          {t('claimComplete.ownerOf')}
-        </Typography>
-        <FunkyTypography {...{ weight: 'bold', variant: 'large' }}>{name}</FunkyTypography>
+        <Typography fontVariant="extraLargeBold">{t('claimComplete.ownerOf')}</Typography>
+        <FunkyTypography fontVariant="largeBold">{name}</FunkyTypography>
       </DomainTextContainer>
       <Spacer $height="4" />
       <Typography>{t('claimComplete.successMessage')}</Typography>
       <Spacer $height="5" />
       <ButtonContainer>
         <CheckButton
-          variant="primary"
           size="small"
           onClick={() => {
             router.push(`/profile/${name}`)
@@ -102,7 +97,6 @@ export const ClaimComplete = ({ name }: { name: string }) => {
           {t('claimComplete.viewName')}
         </CheckButton>
         <CheckButton
-          variant="primary"
           size="small"
           onClick={() => {
             router.push(`/`)

@@ -1,6 +1,10 @@
 import { render, screen } from '@app/test-utils'
 
+import { ComponentProps } from 'react'
+
 import { NameDetailSnippet } from './NameSnippet'
+
+type NameDetailSnippetProps = ComponentProps<typeof NameDetailSnippet>
 
 jest.mock('@app/utils/BreakpointProvider')
 
@@ -22,8 +26,11 @@ describe('NameSnippetMobile', () => {
     const mockData = {
       ...baseMockData,
       expiryDate: new Date(1654782805000),
-      ownerData: {},
-    }
+      ownerData: {
+        owner: '0x983110309620D911731Ac0932219af06091b6744',
+        ownershipLevel: 'registrar',
+      },
+    } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getByText('June 9, 2022')).toBeVisible()
   })
@@ -32,8 +39,9 @@ describe('NameSnippetMobile', () => {
       ...baseMockData,
       ownerData: {
         owner: '0x983110309620D911731Ac0932219af06091b6744',
+        ownershipLevel: 'registrar',
       },
-    }
+    } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getByText('0x983...b6744')).toBeVisible()
   })
@@ -43,7 +51,7 @@ describe('NameSnippetMobile', () => {
       ownerData: {
         registrant: '0x983110309620D911731Ac0932219af06091b6744',
       },
-    }
+    } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getByText('0x983...b6744')).toBeVisible()
   })
@@ -52,7 +60,7 @@ describe('NameSnippetMobile', () => {
       ...baseMockData,
       ownerData: {},
       dnsOwner: '0x983110309620D911731Ac0932219af06091b6744',
-    }
+    } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getByText('0x983...b6744')).toBeVisible()
   })
@@ -61,7 +69,7 @@ describe('NameSnippetMobile', () => {
       ...baseMockData,
       ownerData: {},
       showButton: true,
-    }
+    } as NameDetailSnippetProps
     render(<NameDetailSnippet {...mockData} />)
     expect(screen.getByText('wallet.viewDetails')).toBeVisible()
   })

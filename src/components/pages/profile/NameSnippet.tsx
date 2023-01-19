@@ -51,7 +51,7 @@ const OwnerWithEns = styled.div(
 
     & div:last-of-type {
       color: ${theme.colors.textTertiary};
-      font-size: ${theme.fontSizes.label};
+      font-size: ${theme.fontSizes.small};
     }
   `,
 )
@@ -108,7 +108,7 @@ const NameDetailContainer = styled(CacheableComponent)(
     padding: ${theme.space['4']};
     background-color: ${theme.colors.background};
     border-radius: ${theme.radii['2xLarge']};
-    border: ${theme.space.px} solid ${theme.colors.borderTertiary};
+    border: ${theme.space.px} solid ${theme.colors.border};
     box-shadow: 0 3px 8px rgba(0, 0, 0, 0.02);
   `,
 )
@@ -117,7 +117,7 @@ const ButtonWrapper = styled.div(
   ({ theme }) => css`
     margin-top: ${theme.space['2']};
     & > button {
-      border: ${theme.space.px} solid ${theme.colors.borderSecondary};
+      border: ${theme.space.px} solid ${theme.colors.border};
       border-radius: ${theme.radii.extraLarge};
     }
   `,
@@ -190,8 +190,7 @@ export const NameDetailSnippet = ({
         <ButtonWrapper>
           <Button
             onClick={() => router.pushWithHistory(`/profile/${name}/details`)}
-            variant="transparent"
-            shadowless
+            colorStyle="transparent"
             size="small"
           >
             {t('wallet.viewDetails')}
