@@ -1,14 +1,14 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import type { TFunction } from 'react-i18next'
 
-import type { NamedFusesToBurn } from '@ensdomains/ensjs'
+import type { ChildFuses } from '@ensdomains/ensjs'
 
 import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 
 type Data = {
   name: string
   permissions: string[]
-  selectedFuses: NamedFusesToBurn
+  selectedFuses: ChildFuses['fuse'][]
 }
 
 const displayItems = (

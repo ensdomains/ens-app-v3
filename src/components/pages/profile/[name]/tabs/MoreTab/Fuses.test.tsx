@@ -3,15 +3,11 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import { BigNumber } from 'ethers'
 import { useRouter } from 'next/router'
 
-import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
-
 import Fuses from './Fuses'
 
 jest.mock('next/router')
-jest.mock('@app/hooks/useGetWrapperData')
 
 const mockUseRouter = mockFunction(useRouter)
-const mockUseGetWrapperData = mockFunction(useGetWrapperData)
 
 const mockFusesResponse = {
   fuseObj: {
@@ -23,6 +19,7 @@ const mockFusesResponse = {
     CANNOT_CREATE_SUBDOMAIN: false,
     PARENT_CANNOT_CONTROL: true,
     CAN_DO_EVERYTHING: false,
+    CAN_EXTEND_EXPIRY: true,
   },
   rawFuses: BigNumber.from('0x40'),
 }
@@ -45,7 +42,6 @@ describe('Fuses', () => {
         name: 'nick.eth',
       },
     })
-    mockUseGetWrapperData.mockReturnValue({})
     render(<Fuses {...defaultProps} />)
   })
 
@@ -53,12 +49,6 @@ describe('Fuses', () => {
     mockUseRouter.mockReturnValue({
       query: {
         name: 'nick.eth',
-      },
-    })
-    mockUseGetWrapperData.mockReturnValue({
-      wrapperData: {
-        ...mockFusesResponse,
-        fuseObj: { ...mockFusesResponse.fuseObj, PARENT_CANNOT_CONTROL: false },
       },
     })
     const props = {

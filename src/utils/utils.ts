@@ -86,3 +86,19 @@ export const isLabelTooLong = (label: string) => {
 export const getTestId = (props: any, fallback: string): string => {
   return props['data-testid'] ? String(props['data-testid']) : fallback
 }
+
+export const deleteProperty = <T extends Record<string, any>, K extends keyof T>(
+  key: K,
+  { [key]: _, ...newObj }: T,
+): Omit<T, K> => newObj
+
+export const deleteProperties = <T extends Record<string, any>, K extends keyof T>(
+  obj: T,
+  ...keys: K[]
+): Omit<T, K> => {
+  const newObj = { ...obj }
+  for (const key of keys) {
+    delete newObj[key]
+  }
+  return newObj
+}

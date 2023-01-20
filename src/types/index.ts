@@ -3,7 +3,7 @@ import { PopulatedTransaction } from 'ethers'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
-import type { ENS } from '@ensdomains/ensjs'
+import type { ChildFuses, ENS } from '@ensdomains/ensjs'
 import { Helper, Space } from '@ensdomains/thorin'
 
 export type Profile = NonNullable<Awaited<ReturnType<ENS['getProfile']>>>
@@ -75,16 +75,7 @@ export interface Transaction<Data> {
   backToInput?: boolean
 }
 
-export type FuseObj = {
-  CAN_DO_EVERYTHING: boolean
-  CANNOT_UNWRAP: boolean
-  CANNOT_BURN_FUSES: boolean
-  CANNOT_TRANSFER: boolean
-  CANNOT_SET_RESOLVER: boolean
-  CANNOT_SET_TTL: boolean
-  CANNOT_CREATE_SUBDOMAIN: boolean
-  PARENT_CANNOT_CONTROL: boolean
-}
+export type AllChildFuses = Required<ChildFuses['options']>
 
 export type EthAddress = string
 
@@ -101,3 +92,9 @@ export type QuerySpace =
       md?: Space
       lg?: Space
     }
+
+export type DeepPartial<T> = T extends object
+  ? {
+      [P in keyof T]?: DeepPartial<T[P]>
+    }
+  : T

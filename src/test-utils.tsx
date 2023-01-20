@@ -12,6 +12,8 @@ import { WagmiConfig, createClient } from 'wagmi'
 
 import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
+import { DeepPartial } from './types'
+
 jest.mock('wagmi', () => {
   const { useQuery, useInfiniteQuery, createClient, WagmiConfig } = jest.requireActual('wagmi')
 
@@ -85,12 +87,6 @@ const customRenderHook = <TProps, TResult>(
   callback: (props: TProps) => TResult,
   options?: Omit<RenderHookOptions<TProps>, 'wrapper'>,
 ) => renderHook(callback, { wrapper: AllTheProviders as any, ...options })
-
-type DeepPartial<T> = T extends object
-  ? {
-      [P in keyof T]?: DeepPartial<T[P]>
-    }
-  : T
 
 export type PartialMockedFunction<T extends (...args: any) => any> = (
   ...args: Parameters<T>
