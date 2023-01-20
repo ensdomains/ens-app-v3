@@ -1,4 +1,4 @@
-import { toUtf8Bytes } from 'ethers/lib/utils'
+import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { networkName } from './constants'
 

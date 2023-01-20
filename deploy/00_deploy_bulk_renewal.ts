@@ -1,8 +1,9 @@
 /* eslint-disable import/no-extraneous-dependencies */
-import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 const labelHash = (label: string) => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(label))
 

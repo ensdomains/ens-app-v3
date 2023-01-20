@@ -30,7 +30,7 @@ __export(normalise_exports, {
 module.exports = __toCommonJS(normalise_exports);
 var import_bytes = require("@ethersproject/bytes");
 var import_keccak256 = require("@ethersproject/keccak256");
-var import_utf8 = require("@ethersproject/strings/lib/utf8");
+var import_strings = require("@ethersproject/strings");
 var import_uts46bundle = __toESM(require("idna-uts46-hx/uts46bundle.js"));
 var import_labels = require("./labels");
 const zeros = new Uint8Array(32);
@@ -46,7 +46,7 @@ const namehash = (name) => {
         labelSha = (0, import_labels.decodeLabelhash)(labels[i]);
       } else {
         const normalised = normalise(labels[i]);
-        labelSha = (0, import_keccak256.keccak256)((0, import_utf8.toUtf8Bytes)(normalised));
+        labelSha = (0, import_keccak256.keccak256)((0, import_strings.toUtf8Bytes)(normalised));
       }
       result = (0, import_keccak256.keccak256)((0, import_bytes.concat)([result, labelSha]));
     }

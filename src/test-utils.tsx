@@ -1,11 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { StaticJsonRpcProvider } from '@ethersproject/providers/lib/url-json-rpc-provider'
+import { Wallet } from '@ethersproject/wallet'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RenderOptions, render } from '@testing-library/react'
 import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
 import userEvent from '@testing-library/user-event'
 import { MockConnector } from '@wagmi/core/connectors/mock'
-import { providers } from 'ethers'
-import { Wallet } from 'ethers/lib/ethers'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { WagmiConfig, createClient } from 'wagmi'
@@ -15,13 +15,18 @@ import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 import { DeepPartial } from './types'
 
 jest.mock('wagmi', () => {
-  const { useQuery, useInfiniteQuery, createClient, WagmiConfig } = jest.requireActual('wagmi')
+  const {
+    useQuery,
+    useInfiniteQuery,
+    createClient: _createClient,
+    WagmiConfig: _WagmiConfig,
+  } = jest.requireActual('wagmi')
 
   return {
     useQuery,
     useInfiniteQuery,
-    createClient,
-    WagmiConfig,
+    createClient: _createClient,
+    WagmiConfig: _WagmiConfig,
     useAccount: jest.fn(),
     useNetwork: jest.fn(),
     useProvider: jest.fn(),
@@ -50,7 +55,7 @@ beforeEach(() => queryClient.clear())
 
 const privateKey = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80'
 
-class EthersProviderWrapper extends providers.StaticJsonRpcProvider {
+class EthersProviderWrapper extends StaticJsonRpcProvider {
   toJSON() {
     return `<Provider network={${this.network.chainId}} />`
   }

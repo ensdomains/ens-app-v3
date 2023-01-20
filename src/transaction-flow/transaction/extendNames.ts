@@ -1,5 +1,5 @@
+import type { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import type { BigNumber } from 'ethers'
 import type { TFunction } from 'react-i18next'
 
 import { HelperProps, PublicENS, Transaction, TransactionDisplayItem } from '@app/types'

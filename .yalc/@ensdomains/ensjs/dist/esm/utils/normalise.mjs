@@ -1,7 +1,7 @@
 // src/utils/normalise.ts
 import { concat, hexlify } from "@ethersproject/bytes";
 import { keccak256 } from "@ethersproject/keccak256";
-import { toUtf8Bytes } from "@ethersproject/strings/lib.esm/utf8.js";
+import { toUtf8Bytes } from "@ethersproject/strings";
 import uts46 from "idna-uts46-hx/uts46bundle.js";
 import { decodeLabelhash, isEncodedLabelhash } from "./labels.mjs";
 var zeros = new Uint8Array(32);

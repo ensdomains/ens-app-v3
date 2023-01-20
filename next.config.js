@@ -70,6 +70,14 @@ let nextConfig = {
   },
   webpack: (config, options) => {
     config.module.rules.push({
+      // test for .js or .mjs
+      test: /(?<!@ethersproject\/.*)\.m?js$/,
+      use: {
+        loader: path.resolve(__dirname, './loaders/ethers-loader.js'),
+        options: {},
+      },
+    })
+    config.module.rules.push({
       test: /ens.+\.json$/,
       use: {
         loader: path.resolve(__dirname, './loaders/abi-loader.js'),

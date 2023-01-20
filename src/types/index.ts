@@ -1,5 +1,5 @@
+import type { PopulatedTransaction } from '@ethersproject/contracts'
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { PopulatedTransaction } from 'ethers'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
