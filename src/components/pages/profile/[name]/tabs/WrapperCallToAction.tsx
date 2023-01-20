@@ -165,7 +165,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
       <Container data-testid="wrapper-cta-container">
         <InnerContainer>
           <TextContainer>
-            <Heading typography="Large/XL Bold">{t('details.wrap.boxTitle')}</Heading>
+            <Heading fontVariant="extraLargeBold">{t('details.wrap.boxTitle')}</Heading>
             <Subheading>{t('details.wrap.boxDescription')}</Subheading>
           </TextContainer>
           <Sparkles as={SparklesSVG} />

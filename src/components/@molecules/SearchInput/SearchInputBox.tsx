@@ -14,11 +14,10 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
     z-index: 1;
     box-shadow: ${theme.boxShadows['0.25']};
     border-radius: ${theme.radii['2.5xLarge']};
-    border-width: 1px;
     border-color: ${theme.colors.border};
     width: 100%;
     & input::placeholder {
-      color: ${theme.colors.textTertiary};
+      color: ${theme.colors.greyPrimary};
       font-weight: ${theme.fontWeights.bold};
     }
     ${$size === 'large' &&
@@ -26,7 +25,7 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
       max-width: ${theme.space['96']};
       box-shadow: ${theme.boxShadows['0.25']};
       & input::placeholder {
-        color: ${theme.colors.textTertiary};
+        color: ${theme.colors.greyPrimary};
       }
     `}
   `,
@@ -89,13 +88,7 @@ export const SearchInputBox = forwardRef(
           value={input}
           onChange={(e) => setInput(e.target.value)}
           ref={ref as any}
-          // suffix={
-          //   input !== '' && (
-          //     <div onClick={() => setInput('')}>
-          //       <ResetButton data-testid="search-invalid" as={CancelCircleSVG} />
-          //     </div>
-          //   )
-          // }
+          clearable
           autoComplete="off"
           autoCorrect="off"
           parentStyles={StyledInputParent()}

@@ -220,7 +220,6 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
     useResolverHasInterfaces(['IPubkeyResolver'], profile?.resolverAddress, loading)
 
   const handleRecordSubmit = async (editorData: AdvancedEditorType) => {
-    console.log('editorData', editorData)
     const dirtyFields = getDirtyFields(formState.dirtyFields, editorData) as AdvancedEditorType
 
     const texts = Object.entries(getFieldsByType('text', dirtyFields)).map(([key, value]) => ({

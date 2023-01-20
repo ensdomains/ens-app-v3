@@ -137,7 +137,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
         <AdvancedEditorContent {...advancedEditorForm} />
         <AddRecord AddButtonProps={AddButtonProps} />
         <FooterContainer>
-          <Button color="grey" colorScheme="secondary" onClick={handleCancel}>
+          <Button colorStyle="greySecondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
           <Button disabled={hasErrors || !hasChanges} type="submit">

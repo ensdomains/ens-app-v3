@@ -121,7 +121,7 @@ const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }
 
 const ProgressButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
-    <Button colorScheme="secondary" onClick={onClick}>
+    <Button colorStyle="accentSecondary" onClick={onClick}>
       {label}
     </Button>
   </MobileFullWidth>
@@ -215,7 +215,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   const NormalBackButton = useMemo(
     () => (
       <MobileFullWidth>
-        <Button onClick={() => callback({ back: true })} colorScheme="secondary">
+        <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
           {t('action.back', { ns: 'common' })}
         </Button>
       </MobileFullWidth>
@@ -226,7 +226,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   const ResetBackButton = useMemo(
     () => (
       <div>
-        <Button colorScheme="secondary" color="red" onClick={() => setResetOpen(true)}>
+        <Button colorStyle="redSecondary" onClick={() => setResetOpen(true)}>
           {t('action.back', { ns: 'common' })}
         </Button>
       </div>
@@ -236,7 +236,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
 
   let BackButton: ReactNode = (
     <MobileFullWidth>
-      <Button onClick={() => callback({ back: true })} colorScheme="secondary">
+      <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
         {t('action.back', { ns: 'common' })}
       </Button>
     </MobileFullWidth>
@@ -327,7 +327,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
           <DialogContent>Are you sure you want to continue?</DialogContent>
           <Dialog.Footer
             trailing={
-              <Button onClick={resetTransactions} color="red" colorScheme="secondary">
+              <Button onClick={resetTransactions} colorStyle="redSecondary">
                 Reset transaction and go back
               </Button>
             }

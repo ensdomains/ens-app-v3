@@ -85,6 +85,19 @@ const FullWidthSkeleton = styled.div(
   `,
 )
 
+const BackButtonWrapper = styled.div(
+  ({ theme }) => css`
+    margin-left: -${theme.space[2]};
+    margin-right: -${theme.space[1]};
+  `,
+)
+
+const BackArrowWrapper = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space[2]};
+  `,
+)
+
 const TitleContainer = styled.div(
   () => css`
     position: relative;
@@ -261,7 +274,7 @@ export const Content = ({
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
-      <Banner alert={children.warning.type} message={children.warning.message} />
+      <Banner alert={children.warning.type}>{children.warning.message}</Banner>
     </WarningWrapper>
   )
 
@@ -296,11 +309,13 @@ export const Content = ({
           <Skeleton loading={loading} as={FullWidthSkeleton as any}>
             <CustomLeadingHeading>
               {hasBack && (
-                <div data-testid="back-button">
-                  <Button onClick={() => router.back()} colorScheme="transparent" size="flexible">
-                    <BackArrow as={ArrowLeftSVG} />
+                <BackButtonWrapper data-testid="back-button">
+                  <Button onClick={() => router.back()} colorStyle="transparent" size="flexible">
+                    <BackArrowWrapper>
+                      <BackArrow as={ArrowLeftSVG} />
+                    </BackArrowWrapper>
                   </Button>
-                </div>
+                </BackButtonWrapper>
               )}
               <CompactTitle
                 invert={!!hasBack}

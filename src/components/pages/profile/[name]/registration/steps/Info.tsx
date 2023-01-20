@@ -136,7 +136,7 @@ const Info = ({
       )}
       <ButtonContainer>
         <MobileFullWidth>
-          <Button colorScheme="secondary" onClick={() => callback({ back: true })}>
+          <Button colorStyle="accentSecondary" onClick={() => callback({ back: true })}>
             {t('action.back', { ns: 'common' })}
           </Button>
         </MobileFullWidth>

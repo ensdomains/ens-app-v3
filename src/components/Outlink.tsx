@@ -45,7 +45,7 @@ export const Outlink = ({
   return (
     <BaseLink href={href} passHref>
       <StyledAnchor {...props} rel="noreferrer noopener" target="_blank">
-        <OutlinkTypography typography="small" weight="bold">
+        <OutlinkTypography fontVariant="smallBold" color="blue">
           {children}
         </OutlinkTypography>
         <OutlinkIcon as={OutlinkSVG} />

@@ -188,7 +188,7 @@ const ResolverWarningOverlay = ({
       </DismissButtonWrapper>
       <Content>
         <Message>
-          <Title typography="Heading/H4">{title}</Title>
+          <Title fontVariant="headingFour">{title}</Title>
           <Subtitle color="grey">{subtitle}</Subtitle>
         </Message>
         <Button as={as} href={href} target="_blank" onClick={handleUpgrade}>

@@ -183,7 +183,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
       {InvoiceFilled}
       <ButtonContainer>
         <MobileFullWidth>
-          <Button colorScheme="secondary" onClick={() => callback(false)}>
+          <Button colorStyle="accentSecondary" onClick={() => callback(false)}>
             {t('steps.complete.registerAnother')}
           </Button>
         </MobileFullWidth>

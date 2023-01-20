@@ -183,7 +183,7 @@ const Accordion = ({ data, name }: AccordionProps) => {
             return (
               <AccordionItem data-testid={`accordion-${item.title}-disabled`} key={item.title}>
                 <AccordionTitle $isDisabled>
-                  <Typography typography="Heading/H4" color="grey">
+                  <Typography fontVariant="headingFour" color="grey">
                     {item.title}
                   </Typography>
                   <UnwrappedIndicator color="textSecondary">
@@ -203,11 +203,11 @@ const Accordion = ({ data, name }: AccordionProps) => {
               >
                 <AccordionTitle {...{ isActive }}>
                   <TitleAndButtonContainer>
-                    <Typography typography="Heading/H4">{item.title}</Typography>
+                    <Typography fontVariant="headingFour">{item.title}</Typography>
                     {item.canEdit && (
                       <EditButton
                         data-testid={`accordion-${item.name}-edit`}
-                        colorScheme="transparent"
+                        colorStyle="transparent"
                         size="small"
                         onClick={() => handleEditClick(idx)}
                       >

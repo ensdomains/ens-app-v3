@@ -65,8 +65,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
   }
   const footerLeading = (
     <Button
-      colorScheme="secondary"
-      color="grey"
+      colorStyle="greySecondary"
       onClick={handleReset}
       data-testid="transfer-profile-leading-btn"
     >

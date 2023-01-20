@@ -107,7 +107,7 @@ export default function Page() {
         <Stack>
           <GradientTitle>{t('title')}</GradientTitle>
           <SubtitleWrapper>
-            <Typography typography="Large/Normal" color="grey">
+            <Typography fontVariant="large" color="grey">
               {t('description')}
             </Typography>
           </SubtitleWrapper>

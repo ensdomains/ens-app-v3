@@ -138,7 +138,7 @@ export const TransactionSection = () => {
       action={
         <Button
           size="small"
-          colorScheme="secondary"
+          colorStyle="accentSecondary"
           onClick={() => clearTransactions()}
           disabled={!canClear}
           data-testid="transaction-clear-button"
@@ -182,11 +182,7 @@ export const TransactionSection = () => {
                   </InfoContainer>
                   <ContinueContainer>
                     {resumable && (
-                      <Button
-                        size="small"
-                        colorScheme="primary"
-                        onClick={() => resumeTransactionFlow(key)}
-                      >
+                      <Button size="small" onClick={() => resumeTransactionFlow(key)}>
                         Continue
                       </Button>
                     )}

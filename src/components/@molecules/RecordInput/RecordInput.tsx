@@ -131,6 +131,7 @@ export const RecordInput = forwardRef(
             disabled={disabled}
             clearable={!deletable}
             onClickAction={handleClickAction}
+            alwaysShowAction={deletable}
             {...props}
           />
         </InputWrapper>

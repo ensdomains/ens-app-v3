@@ -44,7 +44,7 @@ const Resolver = ({ resolverAddress, onDismiss, onSubmit }: Props) => {
       </EditResolverFormContainer>
       <Dialog.Footer
         leading={
-          <Button colorScheme="secondary" color="grey" onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

@@ -22,7 +22,7 @@ const mockFusesResponse = {
     CANNOT_SET_TTL: false,
     CANNOT_CREATE_SUBDOMAIN: false,
     PARENT_CANNOT_CONTROL: true,
-    canDoEverything: false,
+    CAN_DO_EVERYTHING: false,
   },
   rawFuses: BigNumber.from('0x40'),
 }

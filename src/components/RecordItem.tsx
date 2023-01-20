@@ -1,5 +1,7 @@
 import { RecordItem as ThorinRecordItem } from '@ensdomains/thorin'
 
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
+
 const RecordItem = ({
   itemKey,
   value,
@@ -11,12 +13,13 @@ const RecordItem = ({
   showLegacy?: boolean
   type: 'text' | 'address' | 'contentHash'
 }) => {
+  const breakpoint = useBreakpoint()
   const keyLabel = showLegacy && itemKey ? itemKey?.replace('_LEGACY', '') : itemKey
   const keySubLabel = showLegacy ? 'LEGACY' : undefined
 
   return (
     <ThorinRecordItem
-      size="large"
+      size={breakpoint.md ? 'large' : 'small'}
       value={value}
       keyLabel={keyLabel}
       keySublabel={keySubLabel}

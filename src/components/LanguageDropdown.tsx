@@ -17,7 +17,7 @@ const MobileInnerDropdownButton = styled.div<{ $large: boolean }>(
     transition: none;
     ${$large &&
     mq.sm.min(css`
-      width: ${theme.space['12']};
+      width: ${theme.space['18']};
       padding: 0;
       display: flex;
       align-items: flex-start;
@@ -48,7 +48,7 @@ export const LanugageDropdown = ({ invert }: { invert?: boolean }) => {
           label: formatName(lang),
           onClick: () => i18n.changeLanguage(lang),
         }))}
-      menuLabelAlign={isLarge ? 'flex-start' : 'center'}
+      menuLabelAlign="center"
       label={
         <MobileInnerDropdownButton $large={isLarge}>
           {formatName(i18n.language || 'en')}

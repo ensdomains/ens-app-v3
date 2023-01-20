@@ -82,7 +82,7 @@ export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOn
       data-color={color}
       data-timestamp={expiry.getTime()}
       $color={color}
-      typography="Small/Normal"
+      fontVariant="small"
     >
       {text}
     </ExpiryText>

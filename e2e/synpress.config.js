@@ -33,7 +33,7 @@ module.exports = defineConfig({
       return config
     },
     projectId: '4zmgdz',
-    baseUrl: 'http://localhost:3000',
+    baseUrl: 'http://localhost:8788',
     specPattern: 'e2e/specs/stateless/**/*.{js,jsx,ts,tsx}',
     supportFile: 'e2e/support.js',
   },

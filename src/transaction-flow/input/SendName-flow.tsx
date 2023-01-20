@@ -176,7 +176,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
 
   return (
     <>
-      <Typography typography="Heading/H4">{t('details.sendName.title')}</Typography>
+      <Typography fontVariant="headingFour">{t('details.sendName.title')}</Typography>
       <Typography style={{ textAlign: 'center' }}>{t('details.sendName.description')}</Typography>
       <Outlink href="/faq/managing-a-name#what-are-managers-and-owners">
         {t('details.sendName.learnMore')}
@@ -185,7 +185,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">{t('details.sendName.makeOwner')}</Typography>
-            <Typography typography="Small/Normal">
+            <Typography fontVariant="small">
               {t('details.sendName.makeOwnerDescription')}
             </Typography>
           </TextContainer>
@@ -202,7 +202,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <SwitchBox>
           <TextContainer>
             <Typography weight="bold">{t('details.sendName.makeManager')}</Typography>
-            <Typography typography="Small/Normal">
+            <Typography fontVariant="small">
               {t('details.sendName.makeManagerDescription')}
             </Typography>
           </TextContainer>
@@ -240,7 +240,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <FooterContainer>
           <Dialog.Footer
             leading={
-              <Button colorScheme="secondary" color="grey" onClick={onDismiss}>
+              <Button colorStyle="greySecondary" onClick={onDismiss}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
             }

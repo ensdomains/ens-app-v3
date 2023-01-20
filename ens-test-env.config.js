@@ -19,15 +19,15 @@ process.env.BATCH_GATEWAY_URLS = JSON.stringify([
  **/
 module.exports = {
   deployCommand: 'pnpm hardhat deploy',
-  buildCommand: 'pnpm build:glocal',
+  buildCommand: 'pnpm build:glocal && pnpm export',
   scripts: [
     {
-      command: 'pnpm start',
-      name: 'nextjs',
+      command: 'pnpm wrangle',
+      name: 'wrangler',
       prefixColor: 'magenta.bold',
     },
     {
-      command: `pnpm wait-on http://localhost:3000 && ${
+      command: `pnpm wait-on http://localhost:8788 && ${
         process.env.CI ? 'pnpm synpress:ci' : 'pnpm synpress:start'
       }`,
       name: 'synpress',

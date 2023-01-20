@@ -3,14 +3,15 @@ import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
 
-import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG } from '@ensdomains/thorin'
+import { Button, Input, MagnifyingGlassSimpleSVG, PlusSVG, Typography } from '@ensdomains/thorin'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
+import { formSafeKey } from '@app/utils/editor'
 
 const Container = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     position: relative;
-    /* border: 1px solid ${theme.colors.border}; */
+    border: 1px solid ${theme.colors.border};
     background: ${$state === 'exited' || $state === 'exiting'
       ? theme.colors.backgroundPrimary
       : theme.colors.greySurface};
@@ -22,6 +23,12 @@ const Container = styled.div<{ $state: TransitionState }>(
     border-radius: ${theme.radii.extraLarge};
     margin: 0 ${theme.space['3']};
     cursor: pointer;
+
+    &:hover {
+      background: ${$state === 'exited' || $state === 'exiting'
+        ? theme.colors.border
+        : theme.colors.greySurface};
+    }
 
     ${$state === 'exited' &&
     css`
@@ -66,6 +73,12 @@ const ControlsHeaderTrailing = styled.button<{ $accented: boolean }>(
     padding: 0 ${theme.space['4']};
     color: ${$accented ? theme.colors.accent : theme.colors.greyPrimary};
     cursor: pointer;
+    transition: all 150ms ease-in-out;
+
+    &:hover {
+      color: ${$accented ? theme.colors.accentBright : theme.colors.greyBright};
+      transform: translateY(-1px);
+    }
   `,
 )
 
@@ -213,6 +226,14 @@ const NoOptionsContainer = styled.div<{ $inline: boolean }>(
   `,
 )
 
+const SVGWrapper = styled.div(
+  ({ theme }) => css`
+    svg {
+      color: ${theme.colors.greyPrimary};
+    }
+  `,
+)
+
 const ButtonContainer = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
@@ -291,7 +312,7 @@ export const AddRecordButton = ({
 
   const handleInputAction = () => {
     if (inputActionType === 'create' && onAddRecord) {
-      onAddRecord(inputValue)
+      onAddRecord(formSafeKey(inputValue))
     }
     toggle(false)
     setInputValue('')
@@ -322,6 +343,7 @@ export const AddRecordButton = ({
                 placeholder={
                   inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
                 }
+                clearable
                 onChange={(e) => setInputValue(e.target.value)}
                 data-testid="add-record-button-input"
               />
@@ -331,6 +353,7 @@ export const AddRecordButton = ({
             type="button"
             $accented={inputActionType === 'create'}
             onClick={handleInputAction}
+            data-testid="add-record-button-input-action"
           >
             {inputActionType === 'create'
               ? t('action.add', { ns: 'common' })
@@ -360,13 +383,17 @@ export const AddRecordButton = ({
       </ControlsContainer>
       <ButtonContainer $state={state}>
         <Button
-          prefix={<PlusSVG />}
-          color="background"
+          prefix={
+            <SVGWrapper>
+              <PlusSVG />
+            </SVGWrapper>
+          }
+          colorStyle="transparent"
           onClick={handleButtonClick}
           size="medium"
           data-testid="add-record-button-button"
         >
-          {addRecord}
+          <Typography color="greyPrimary">{addRecord}</Typography>
         </Button>
       </ButtonContainer>
     </Container>

@@ -112,7 +112,7 @@ const CreateSubname = ({ data: { parent, isWrapped }, dispatch, onDismiss }: Pro
       </StyledInnerDialog>
       <Dialog.Footer
         leading={
-          <Button colorScheme="secondary" color="grey" onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

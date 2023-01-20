@@ -9,7 +9,7 @@ describe('Extend Names', () => {
     cy.clearLocalStorage()
     const NAMES = ['other-registrant.eth']
     acceptMetamaskAccess(2)
-    cy.visit('/address/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
+    cy.visit('/0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
 
     cy.log('get the base data to compare')
     NAMES.forEach((name) => {
@@ -64,7 +64,7 @@ describe('Extend Names', () => {
 
   it('should extend a single name', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/other-registrant.eth')
+    cy.visit('/other-registrant.eth')
     connectFromExisting()
     cy.findByTestId('extend-button').should('be.visible')
     cy.findByTestId('owner-profile-button-expiry').should('be.visible')
@@ -93,7 +93,7 @@ describe('Extend Names', () => {
     cy.findByTestId('year-marker-2').should('include.text', '1% gas')
 
     cy.log('should not be able to set duration below 1')
-    cy.findByTestId('plus-minus-control-minus').click()
+    cy.findByTestId('plus-minus-control-minus').should('be.disabled')
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032')
 
     cy.log('should show the correct price for yearly registration')
@@ -102,7 +102,7 @@ describe('Extend Names', () => {
     cy.findByText('2 year extension').should('be.visible')
 
     cy.log('should show the correct fiat values')
-    cy.findByTestId('currency-fiat').click()
+    cy.findByTestId('extend-names-currency-toggle').click({force: true})
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '$10.00')
     cy.findByTestId('invoice-item-1-amount').should('contain.text', '$0.19')
     cy.findByTestId('invoice-total').should('contain.text', '$10.19')
@@ -128,7 +128,7 @@ describe('Extend Names', () => {
 
   it('should extend a single name in grace period', () => {
     cy.clearLocalStorage()
-    cy.visit('/profile/grace-period.eth')
+    cy.visit('/grace-period.eth')
     connectFromExisting()
 
     cy.findByTestId('extend-button').as('extend-button')
@@ -228,7 +228,7 @@ describe('Extend Names', () => {
   })
 
   it('should not show extend button on subnames', () => {
-    cy.visit('/profile/test.with-subnames.eth')
+    cy.visit('/test.with-subnames.eth')
     connectFromExisting()
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('extend-subname-action', { timeout: 2000 }).should('not.exist')

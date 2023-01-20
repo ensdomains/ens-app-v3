@@ -3,13 +3,18 @@ import { mockFunction, render, screen } from '@app/test-utils'
 import { BigNumber, utils } from 'ethers'
 
 import { useChainId } from '@app/hooks/useChainId'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import Token from './Token'
 
 jest.mock('next/router')
 jest.mock('@app/hooks/useChainId')
+jest.mock('@app/utils/BreakpointProvider')
 
 const mockUseChainId = mockFunction(useChainId)
+const mockUseBreakpoint = mockFunction(useBreakpoint)
+
+mockUseBreakpoint.mockReturnValue({ sm: true, md: true, lg: true })
 
 describe('Token', () => {
   describe('TokenId', () => {

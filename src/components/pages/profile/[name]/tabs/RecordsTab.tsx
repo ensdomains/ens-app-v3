@@ -174,7 +174,7 @@ export const RecordsTab = ({
         <RecordSection>
           <SectionHeader>
             <SectionTitleContainer>
-              <SectionTitle data-testid="text-heading" typography="Body/Bold">
+              <SectionTitle data-testid="text-heading" fontVariant="bodyBold">
                 {t('details.tabs.records.text')}
               </SectionTitle>
               <SectionSubtitle data-testid="text-amount">
@@ -190,7 +190,7 @@ export const RecordsTab = ({
         <RecordSection>
           <SectionHeader>
             <SectionTitleContainer>
-              <SectionTitle data-testid="address-heading" typography="Body/Bold">
+              <SectionTitle data-testid="address-heading" fontVariant="bodyBold">
                 {t('address.label', { ns: 'common' })}
               </SectionTitle>
               <SectionSubtitle data-testid="address-amount">
@@ -215,7 +215,7 @@ export const RecordsTab = ({
             <SectionTitleContainer>
               {formattedContentHash ? (
                 <>
-                  <SectionTitle data-testid="content-hash-heading" typography="Body/Bold">
+                  <SectionTitle data-testid="content-hash-heading" fontVariant="bodyBold">
                     {t('details.tabs.records.contentHash')}
                   </SectionTitle>
                   {formattedContentHashLink && (

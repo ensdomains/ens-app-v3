@@ -239,19 +239,15 @@ const OwnerButtonWithPopup = ({
               />
             </ProfileSnippetWrapper>
           )}
-          <AddressCopyButton
-            colorScheme="transparent"
-            size="flexible"
-            onClick={() => copy(address)}
-          >
+          <AddressCopyButton colorStyle="transparent" size="flexible" onClick={() => copy(address)}>
             <AddressCopyContainer>
-              <Typography typography="Large/Bold">{shortenAddress(address, 14, 8, 6)}</Typography>
+              <Typography fontVariant="largeBold">{shortenAddress(address, 14, 8, 6)}</Typography>
               <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
             </AddressCopyContainer>
           </AddressCopyButton>
           {transfer?.canTransfer && (
             <TransferButton data-testid="transfer-button" onClick={handleTransfer}>
-              <Typography typography="Large/Bold">{t('name.transfer')}</Typography>
+              <Typography fontVariant="largeBold">{t('name.transfer')}</Typography>
             </TransferButton>
           )}
         </InnerDialog>
