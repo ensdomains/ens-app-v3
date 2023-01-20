@@ -1,6 +1,6 @@
 // src/utils/wrapper.ts
 import { BigNumber } from "@ethersproject/bignumber/lib.esm/bignumber.js";
-import { toUtf8Bytes } from "@ethersproject/strings/lib.esm/utf8.js";
+import { toUtf8Bytes } from "@ethersproject/strings";
 var MAX_EXPIRY = BigNumber.from(2).pow(64).sub(1);
 var makeExpiry = async ({ getExpiry }, name, expiry) => {
   if (expiry) {

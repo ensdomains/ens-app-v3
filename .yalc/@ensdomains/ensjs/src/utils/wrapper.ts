@@ -1,5 +1,5 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
+import { toUtf8Bytes } from '@ethersproject/strings'
 import { ENSArgs } from '../index'
 
 export type Expiry = string | number | Date | BigNumber

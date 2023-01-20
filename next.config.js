@@ -123,6 +123,11 @@ let nextConfig = {
       config.resolve.alias['../styles.css'] = path.resolve(__dirname, 'src/stub.css')
     }
 
+    config.resolve.alias['@ethersproject/strings/lib/idna.js'] = path.resolve(
+      __dirname,
+      'src/stub.js',
+    )
+
     return config
   },
   ...(process.env.NEXT_PUBLIC_IPFS

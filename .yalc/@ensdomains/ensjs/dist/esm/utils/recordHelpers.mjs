@@ -1,6 +1,7 @@
 // src/utils/recordHelpers.ts
 import { formatsByCoinType, formatsByName } from "@ensdomains/address-encoder";
-import { isBytesLike, toUtf8Bytes } from "ethers/lib/utils";
+import { isBytesLike } from "@ethersproject/bytes";
+import { toUtf8Bytes } from "@ethersproject/strings";
 import { encodeContenthash } from "./contentHash.mjs";
 var generateSetAddr = (namehash, coinType, address, resolver) => {
   let coinTypeInstance;

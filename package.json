@@ -15,7 +15,7 @@
     "buildandstart": "pnpm build && pnpm start",
     "buildandstart:glocal": "pnpm build:glocal && pnpm start",
     "tenv": "ens-test-env -a",
-    "denv": "pnpm tenv start -ns -nb --extra-time 11368000",
+    "denv": "pnpm tenv start -ns -nb --extra-time 11368000 --verbosity 1",
     "lint": "next lint && pnpm stylelint stylelint \"./src/**/*.tsx\"",
     "lint:types": "tsc --noEmit",
     "lint:fix": "next lint --fix",

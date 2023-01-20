@@ -1,6 +1,7 @@
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
+import { isBytesLike } from '@ethersproject/bytes'
+import { toUtf8Bytes } from '@ethersproject/strings'
 import type { BigNumberish } from 'ethers'
-import { isBytesLike, toUtf8Bytes } from 'ethers/lib/utils'
 import type { PublicResolver } from '../generated'
 import { encodeContenthash } from './contentHash'
 

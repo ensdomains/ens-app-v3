@@ -24,7 +24,7 @@ __export(wrapper_exports, {
 });
 module.exports = __toCommonJS(wrapper_exports);
 var import_bignumber = require("@ethersproject/bignumber/lib/bignumber");
-var import_utf8 = require("@ethersproject/strings/lib/utf8");
+var import_strings = require("@ethersproject/strings");
 const MAX_EXPIRY = import_bignumber.BigNumber.from(2).pow(64).sub(1);
 const makeExpiry = async ({ getExpiry }, name, expiry) => {
   if (expiry) {
@@ -45,7 +45,7 @@ const makeExpiry = async ({ getExpiry }, name, expiry) => {
   return MAX_EXPIRY;
 };
 const wrappedLabelLengthCheck = (label) => {
-  const bytes = (0, import_utf8.toUtf8Bytes)(label);
+  const bytes = (0, import_strings.toUtf8Bytes)(label);
   if (bytes.byteLength > 255)
     throw new Error("Label can't be longer than 255 bytes");
 };

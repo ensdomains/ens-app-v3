@@ -49,7 +49,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       data,
       reverseRecord,
       fuses,
-      wrapperExpiry,
     )
 
     const _controller = controller.connect(await ethers.getSigner(owner))
@@ -70,7 +69,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       data,
       reverseRecord,
       fuses,
-      wrapperExpiry,
       {
         value: price,
       },

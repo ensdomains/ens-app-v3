@@ -31,7 +31,8 @@ __export(recordHelpers_exports, {
 });
 module.exports = __toCommonJS(recordHelpers_exports);
 var import_address_encoder = require("@ensdomains/address-encoder");
-var import_utils = require("ethers/lib/utils");
+var import_bytes = require("@ethersproject/bytes");
+var import_strings = require("@ethersproject/strings");
 var import_contentHash = require("./contentHash");
 const generateSetAddr = (namehash, coinType, address, resolver) => {
   let coinTypeInstance;
@@ -97,11 +98,11 @@ function generateSingleRecordCall(namehash, resolver, type) {
       const record = _r;
       const { contentType = 1, data } = record;
       let encodedData = data;
-      if (!(0, import_utils.isBytesLike)(encodedData)) {
+      if (!(0, import_bytes.isBytesLike)(encodedData)) {
         if (typeof encodedData === "object") {
           encodedData = JSON.stringify(encodedData);
         }
-        encodedData = (0, import_utils.toUtf8Bytes)(encodedData);
+        encodedData = (0, import_strings.toUtf8Bytes)(encodedData);
       }
       return resolver.interface.encodeFunctionData("setABI", [
         namehash,

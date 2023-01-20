@@ -85,7 +85,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       resolver,
       secret,
       duration,
-      wrapperExpiry,
       owner,
       name,
       label: name.split('.')[0],
