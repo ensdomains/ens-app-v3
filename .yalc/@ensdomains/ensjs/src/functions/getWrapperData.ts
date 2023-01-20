@@ -1,4 +1,4 @@
-import type { BigNumber } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { ENSArgs } from '../index'
 import { decodeFuses } from '../utils/fuses'
 import { namehash } from '../utils/normalise'
@@ -21,9 +21,10 @@ const decode = async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
 
     const fuseObj = decodeFuses(fuses)
 
-    const expiryDate = expiry.gt(0)
-      ? new Date(expiry.toNumber() * 1000)
-      : undefined
+    const expiryDate =
+      expiry.gt(0) && expiry.lt(BigNumber.from(2).pow(32))
+        ? new Date(expiry.toNumber() * 1000)
+        : undefined
 
     return {
       ...fuseObj,
