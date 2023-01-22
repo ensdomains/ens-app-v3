@@ -1,9 +1,18 @@
 /* eslint-disable import/no-extraneous-dependencies */
+import { Interface } from '@ethersproject/abi'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
+
+const { makeInterfaceId } = require('@openzeppelin/test-helpers')
+
+function computeInterfaceId(iface: Interface) {
+  return makeInterfaceId.ERC165(
+    Object.values(iface.functions).map((frag) => frag.format('sighash')),
+  )
+}
 
 const labelHash = (label: string) => ethers.utils.keccak256(ethers.utils.toUtf8Bytes(label))
 
@@ -21,6 +30,8 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const resolver = await ethers.getContract('PublicResolver', await ethers.getSigner(owner))
   const registrar = await ethers.getContract('BaseRegistrarImplementation')
   const controller = await ethers.getContract('ETHRegistrarController')
+  const wrapper = await ethers.getContract('NameWrapper')
+  const controllerArtifact = await deployments.getArtifact('IETHRegistrarController')
 
   const bulkRenewal = await deploy('BulkRenewal', {
     from: deployer,
@@ -39,7 +50,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('Set interface implementor of eth tld for bulk renewal')
   const tx2 = await resolver.setInterface(
     ethers.utils.namehash('eth'),
-    '0x3150bfba',
+    computeInterfaceId(new Interface(bulkRenewal.abi)),
     bulkRenewal.address,
   )
   await tx2.wait()
@@ -47,10 +58,18 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   console.log('Set interface implementor of eth tld for registrar controller')
   const tx3 = await resolver.setInterface(
     ethers.utils.namehash('eth'),
-    '0xdf7ed181',
+    computeInterfaceId(new Interface(controllerArtifact.abi)),
     controller.address,
   )
   await tx3.wait()
+
+  console.log('Set interface implementor of eth tld for name wrapper')
+  const tx4 = await resolver.setInterface(
+    ethers.utils.namehash('eth'),
+    computeInterfaceId(wrapper.interface),
+    wrapper.address,
+  )
+  await tx4.wait()
 
   console.log('Set owner of eth tld back to registrar')
   const tx11 = await root.setSubnodeOwner(labelHash('eth'), registrar.address)
@@ -60,7 +79,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
 }
 
 func.id = 'bulk-renewal'
-func.tags = ['ethregistrar', 'BulkRenewal', 'Root']
+func.tags = ['ethregistrar', 'BulkRenewal']
 func.dependencies = [
   'root',
   'registry',
