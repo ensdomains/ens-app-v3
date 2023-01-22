@@ -164,7 +164,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
         named: Object.keys(registrationData.permissions).filter(
           (key) => registrationData.permissions[key as ChildFuses['fuse']],
         ) as ChildFuses['fuse'][],
-        unnamed: {},
+        unnamed: [],
       },
       records: registrationData.records,
       reverseRecord: registrationData.reverseRecord,

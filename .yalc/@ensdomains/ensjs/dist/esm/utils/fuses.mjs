@@ -92,6 +92,35 @@ var checkNumber = (fuses) => {
     );
   }
 };
+var testFuses = (fuses) => {
+  if ("named" in fuses && fuses.named.length > 0) {
+    return true;
+  }
+  if ("unnamed" in fuses && fuses.unnamed.length > 0) {
+    return true;
+  }
+  if ("number" in fuses && fuses.number !== 0) {
+    return true;
+  }
+  return false;
+};
+var hasFuses = (fuses) => {
+  if (typeof fuses === "number") {
+    return fuses !== 0;
+  }
+  if (typeof fuses === "object") {
+    if ("child" in fuses && testFuses(fuses.child)) {
+      return true;
+    }
+    if ("parent" in fuses && testFuses(fuses.parent)) {
+      return true;
+    }
+    if (testFuses(fuses)) {
+      return true;
+    }
+  }
+  return false;
+};
 function encodeFuses(fuses, restrictTo) {
   let encodedFuses = 0;
   if (typeof fuses === "number") {
@@ -240,6 +269,7 @@ export {
   fullFuseEnum,
   fullParentFuseEnum,
   fullParentFuseKeys,
+  hasFuses,
   parentFuseEnum,
   parentFuseKeys,
   unnamedChildFuses,

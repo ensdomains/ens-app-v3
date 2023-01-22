@@ -49,7 +49,7 @@ const makeCommitmentData = ({
   const labelHash = (0, import_labels.labelhash)(name.split(".")[0]);
   const hash = (0, import_normalise.namehash)(name);
   const resolverAddress = resolver.address;
-  const fuseData = fuses ? (0, import_fuses.encodeFuses)(fuses, "child") : 0;
+  const fuseData = (0, import_fuses.hasFuses)(fuses) ? (0, import_fuses.encodeFuses)(fuses, "child") : 0;
   if (reverseRecord) {
     if (!records) {
       records = { coinTypes: [{ key: "ETH", value: owner }] };

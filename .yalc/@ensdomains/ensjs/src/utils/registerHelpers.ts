@@ -1,7 +1,7 @@
 import { defaultAbiCoder } from '@ethersproject/abi/lib/abi-coder'
 import { keccak256 } from '@ethersproject/keccak256'
 import type { PublicResolver } from '../generated'
-import { CombinedFuseInput, encodeFuses } from './fuses'
+import { CombinedFuseInput, encodeFuses, hasFuses } from './fuses'
 import { labelhash } from './labels'
 import { namehash } from './normalise'
 import { generateRecordCallArray, RecordOptions } from './recordHelpers'
@@ -59,7 +59,7 @@ export const makeCommitmentData = ({
   const labelHash = labelhash(name.split('.')[0])
   const hash = namehash(name)
   const resolverAddress = resolver.address
-  const fuseData = fuses ? encodeFuses(fuses, 'child') : 0
+  const fuseData = hasFuses(fuses) ? encodeFuses(fuses!, 'child') : 0
 
   if (reverseRecord) {
     if (!records) {

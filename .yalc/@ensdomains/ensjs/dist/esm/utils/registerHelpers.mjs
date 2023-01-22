@@ -1,7 +1,7 @@
 // src/utils/registerHelpers.ts
 import { defaultAbiCoder } from "@ethersproject/abi/lib.esm/abi-coder.js";
 import { keccak256 } from "@ethersproject/keccak256";
-import { encodeFuses } from "./fuses.mjs";
+import { encodeFuses, hasFuses } from "./fuses.mjs";
 import { labelhash } from "./labels.mjs";
 import { namehash } from "./normalise.mjs";
 import { generateRecordCallArray } from "./recordHelpers.mjs";
@@ -22,7 +22,7 @@ var makeCommitmentData = ({
   const labelHash = labelhash(name.split(".")[0]);
   const hash = namehash(name);
   const resolverAddress = resolver.address;
-  const fuseData = fuses ? encodeFuses(fuses, "child") : 0;
+  const fuseData = hasFuses(fuses) ? encodeFuses(fuses, "child") : 0;
   if (reverseRecord) {
     if (!records) {
       records = { coinTypes: [{ key: "ETH", value: owner }] };

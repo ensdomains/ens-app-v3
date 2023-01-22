@@ -32,8 +32,8 @@ const displayItems = (
 ]
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  const tx = ens.burnFuses.populateTransaction(data.name, {
-    namedFusesToBurn: data.selectedFuses,
+  const tx = ens.setFuses.populateTransaction(data.name, {
+    named: data.selectedFuses,
     signer,
   })
   return tx

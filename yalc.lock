@@ -2,8 +2,8 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "a2ac6a99153cec7696f6b52dd033d3c5",
-      "pure": true,
+      "signature": "0ad1f4f304ec163ba2ce80e93745edc2",
+      "file": true,
       "replaced": "3.0.0-alpha.37"
     }
   }

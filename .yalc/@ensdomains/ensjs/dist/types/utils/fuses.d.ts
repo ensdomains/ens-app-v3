@@ -80,6 +80,7 @@ export declare type CombinedFuseInput = {
     child: InputFuses<ChildFuses['fuse'], ChildFuses['unnamedValues']>;
     parent: InputFuses<ParentFuses['fuse'], ParentFuses['unnamedValues']>;
 };
+export declare const hasFuses: (fuses: any) => boolean;
 export declare function encodeFuses(fuses: Partial<CombinedFuseInput> | number): number;
 export declare function encodeFuses(fuses: CombinedFuseInput['child'], restrictTo: 'child'): number;
 export declare function encodeFuses(fuses: CombinedFuseInput['parent'], restrictTo: 'parent'): number;

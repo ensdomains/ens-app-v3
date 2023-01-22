@@ -146,6 +146,38 @@ const checkNumber = (fuses: number) => {
   }
 }
 
+const testFuses = (fuses: any) => {
+  if ('named' in fuses && fuses.named.length > 0) {
+    return true
+  }
+  if ('unnamed' in fuses && fuses.unnamed.length > 0) {
+    return true
+  }
+  if ('number' in fuses && fuses.number !== 0) {
+    return true
+  }
+  return false
+}
+
+export const hasFuses = (fuses: any) => {
+  if (typeof fuses === 'number') {
+    return fuses !== 0
+  }
+
+  if (typeof fuses === 'object') {
+    if ('child' in fuses && testFuses(fuses.child)) {
+      return true
+    }
+    if ('parent' in fuses && testFuses(fuses.parent)) {
+      return true
+    }
+    if (testFuses(fuses)) {
+      return true
+    }
+  }
+  return false
+}
+
 export function encodeFuses(fuses: Partial<CombinedFuseInput> | number): number
 export function encodeFuses(
   fuses: CombinedFuseInput['child'],

@@ -39,7 +39,7 @@ const decode = async ({ contracts }, data) => {
       data
     );
     const fuseObj = (0, import_fuses.decodeFuses)(fuses);
-    const expiryDate = expiry.gt(0) && expiry.lt(import_bignumber.BigNumber.from(2).pow(32)) ? new Date(expiry.toNumber() * 1e3) : void 0;
+    const expiryDate = expiry.gt(0) && expiry.lt(import_bignumber.BigNumber.from(2).pow(32)) ? new Date(expiry.mul(1e3).toString()) : void 0;
     return {
       ...fuseObj,
       expiryDate,

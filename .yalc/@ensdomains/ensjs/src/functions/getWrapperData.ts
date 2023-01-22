@@ -23,7 +23,7 @@ const decode = async ({ contracts }: ENSArgs<'contracts'>, data: string) => {
 
     const expiryDate =
       expiry.gt(0) && expiry.lt(BigNumber.from(2).pow(32))
-        ? new Date(expiry.toNumber() * 1000)
+        ? new Date(expiry.mul(1000).toString())
         : undefined
 
     return {
