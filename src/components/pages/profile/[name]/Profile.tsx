@@ -1,11 +1,12 @@
 import Head from 'next/head'
 import { useEffect, useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Typography } from '@ensdomains/thorin'
+import { Banner, CheckCircleSVG, Typography } from '@ensdomains/thorin'
 
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { WrapperCallToAction } from '@app/components/pages/profile/[name]/tabs/WrapperCallToAction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainId } from '@app/hooks/useChainId'
@@ -80,6 +81,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     error,
     profile,
     ownerData,
+    gracePeriodEndDate,
     normalisedName,
     valid,
     profileIsCachedData,
@@ -156,6 +158,32 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     }
   }, [name, router, transactions])
 
+  const infoBanner = useMemo(() => {
+    if (gracePeriodEndDate && gracePeriodEndDate < new Date()) {
+      return (
+        <BaseLink href={`/register/${normalisedName}`} passHref legacyBehavior>
+          <Banner
+            alert="info"
+            as="a"
+            icon={<CheckCircleSVG />}
+            title={t('banner.available.title', { name: normalisedName })}
+          >
+            <Trans
+              ns="profile"
+              i18nKey="banner.available.description"
+              values={{ date: gracePeriodEndDate.toString() }}
+              components={{ strong: <strong /> }}
+            />
+          </Banner>
+        </BaseLink>
+      )
+    }
+    if (_canBeWrapped) {
+      return <WrapperCallToAction name={normalisedName} />
+    }
+    return undefined
+  }, [gracePeriodEndDate, normalisedName, t, _canBeWrapped])
+
   return (
     <>
       <Head>
@@ -169,7 +197,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         loading={isLoading || detailsLoading}
       >
         {{
-          info: _canBeWrapped && <WrapperCallToAction name={normalisedName} />,
+          info: infoBanner,
           warning: error
             ? {
                 type: 'warning',

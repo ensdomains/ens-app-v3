@@ -12,6 +12,12 @@
   "editProfile": "Edit Profile",
   "ownership": "Ownership",
   "viewDetails": "View Details",
+  "banner": {
+    "available": {
+      "title": "{{name}} is available",
+      "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
+    }
+  },
   "tabs": {
     "profile": {
       "name": "Profile",

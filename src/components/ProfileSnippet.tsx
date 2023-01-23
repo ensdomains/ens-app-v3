@@ -164,8 +164,7 @@ export const ProfileSnippet = ({
         <Button
           onClick={() => router.pushWithHistory(`/register/${name}`)}
           size="small"
-          shadowless
-          variant="secondary"
+          colorStyle="accentSecondary"
         >
           {t(`wallet.${button}`)}
         </Button>
