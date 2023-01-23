@@ -9,7 +9,6 @@ import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
 type Props = {
   revokeAdditional: boolean
   onChangeRevokeAdditional: (e: ChangeEvent<HTMLInputElement>) => void
-  onDismiss: () => void
 }
 
 const ToggleContainer = styled.div(
@@ -34,24 +33,20 @@ const ToggleInfo = styled.div(
 export const RevokeAdditionalView = ({
   revokeAdditional = false,
   onChangeRevokeAdditional,
-  onDismiss,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
     <>
-      <Dialog.Heading
-        title={t('input.revokePermissions.views.revokeAdditional.title')}
-        onDismiss={() => onDismiss()}
-      />
-      <CenterAlignedTypography typography="Body/Normal" color="text">
+      <Dialog.Heading title={t('input.revokePermissions.views.revokeAdditional.title')} />
+      <CenterAlignedTypography fontVariant="body" color="text">
         {t('input.revokePermissions.views.revokeAdditional.subtitle')}
       </CenterAlignedTypography>
       <ToggleContainer>
         <ToggleInfo>
-          <Typography typography="Body/Bold" color="text">
+          <Typography fontVariant="bodyBold" color="text">
             {t('input.revokePermissions.views.revokeAdditional.action.title')}
           </Typography>
-          <Typography typography="Body/Normal" color="text">
+          <Typography fontVariant="body" color="text">
             {t('input.revokePermissions.views.revokeAdditional.action.description')}
           </Typography>
         </ToggleInfo>

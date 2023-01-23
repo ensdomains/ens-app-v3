@@ -1,4 +1,7 @@
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+
+import { Banner } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useGetHistory } from '@app/hooks/useGetHistory'
@@ -6,6 +9,7 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useEns } from '@app/utils/EnsProvider'
 
+import { ExpiryPermissions } from './ExpiryPermissions'
 import { NameChangePermissions } from './NameChangePermissions'
 import { OwnershipPermissions } from './OwnershipPermissions'
 
@@ -29,6 +33,8 @@ const Container = styled(CacheableComponent)(
 )
 
 export const PermissionsTab = ({ name, wrapperData }: Props) => {
+  const { t } = useTranslation('profile')
+
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
   const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
@@ -45,12 +51,21 @@ export const PermissionsTab = ({ name, wrapperData }: Props) => {
 
   return (
     <Container>
+      <Banner alert="warning">
+        <Trans t={t} i18nKey="permissionsTab.warning" />
+      </Banner>
       <OwnershipPermissions
         name={name}
         is2LDEth={is2LDEth}
         wrapperData={wrapperData}
         parentWrapperData={parentWrapperData}
         isCachedData={false}
+      />
+      <ExpiryPermissions
+        name={name}
+        isCachedData={false}
+        wrapperData={wrapperData}
+        parentWrapperData={parentWrapperData}
       />
       <NameChangePermissions
         name={name}

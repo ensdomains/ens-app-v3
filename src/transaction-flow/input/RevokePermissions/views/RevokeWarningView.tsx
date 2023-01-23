@@ -5,10 +5,6 @@ import { Dialog } from '@ensdomains/thorin'
 
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
 
-type Props = {
-  onDismiss: () => void
-}
-
 const StyledAnchor = styled.a(
   ({ theme }) => css`
     color: ${theme.colors.accent};
@@ -16,7 +12,7 @@ const StyledAnchor = styled.a(
   `,
 )
 
-export const RevokeWarningView = ({ onDismiss }: Props) => {
+export const RevokeWarningView = () => {
   const { t } = useTranslation('transactionFlow')
 
   return (
@@ -24,12 +20,11 @@ export const RevokeWarningView = ({ onDismiss }: Props) => {
       <Dialog.Heading
         alert="error"
         title={t('input.revokePermissions.views.revokeWarning.title')}
-        onDismiss={() => onDismiss()}
       />
-      <CenterAlignedTypography typography="Body/Bold">
+      <CenterAlignedTypography fontVariant="bodyBold">
         {t('input.revokePermissions.views.revokeWarning.subtitle')}
       </CenterAlignedTypography>
-      <CenterAlignedTypography typography="Body/Normal">
+      <CenterAlignedTypography fontVariant="body">
         <Trans
           i18nKey="input.revokePermissions.views.revokeWarning.subtitle2"
           t={t}

@@ -4,9 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { CurrentFuses } from '@ensdomains/ensjs/utils/fuses'
-import { Dialog } from '@ensdomains/thorin'
-
-import { PermissionsCheckbox } from '@app/components/@molecules/PermissionsCheckbox/PermissionsCheckbox'
+import { CheckboxRow, Dialog } from '@ensdomains/thorin'
 
 import type { FormData } from '../RevokePermissions-flow'
 
@@ -35,12 +33,7 @@ const PermissionsList = styled.div(
   `,
 )
 
-export const RevokePermissionsView = ({
-  fuses,
-  showCannotBurnFuses,
-  register,
-  onDismiss,
-}: Props) => {
+export const RevokePermissionsView = ({ fuses, showCannotBurnFuses, register }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const availableFuses: Fuse[] = useMemo(
@@ -55,15 +48,12 @@ export const RevokePermissionsView = ({
 
   return (
     <>
-      <Dialog.Heading
-        title={t('input.revokePermissions.views.revokePermissions.title')}
-        onDismiss={() => onDismiss()}
-      />
+      <Dialog.Heading title={t('input.revokePermissions.views.revokePermissions.title')} />
       <PermissionsList>
         {availableFuses.map((fuse) => (
-          <PermissionsCheckbox
+          <CheckboxRow
             key={fuse}
-            title={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
+            label={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
             {...register(`fuseObj.${fuse}`)}
           />
         ))}

@@ -149,7 +149,7 @@
       "views": {
         "revokeWarning": {
           "title": "This will make permanent changes",
-          "subtitle": "Permissions are an advanced feature that makes permanent changed to your name that will only be reset if the name expires. You will not be able to undo this.",
+          "subtitle": "Permissions are an advanced feature that make permanent changed to your name.  You will not be able to undo these chagnes, and they will only be reset if the name expires.",
           "subtitle2": "Make sure you are confident using this feature before proceeding. <infoLink>Learn more about permissions</infoLink>"
         },
         "revokePCC": {
@@ -170,7 +170,7 @@
         },
         "revokeUnwrap": {
           "title": "Revoke permissions",
-          "subtitle": "Permissions are a feature of wrapped names. You are required to revoke this permission before others can be revoked."
+          "subtitle": "You are required to revoke this permission before others can be revoked. This prevents permissions from being removed."
         },
         "revokePermissions": {
           "title": "Revoke permissions",

@@ -10,18 +10,14 @@ import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
 
 type Props = {
   register: UseFormRegister<FormData>
-  onDismiss: () => void
 }
 
-export const RevokeChangeFusesView = ({ register, onDismiss }: Props) => {
+export const RevokeChangeFusesView = ({ register }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   return (
     <>
-      <Dialog.Heading
-        title={t('input.revokePermissions.views.revokeChangeFuses.title')}
-        onDismiss={() => onDismiss()}
-      />
+      <Dialog.Heading title={t('input.revokePermissions.views.revokeChangeFuses.title')} />
       <CenterAlignedTypography>
         {t('input.revokePermissions.views.revokeChangeFuses.subtitle')}
       </CenterAlignedTypography>

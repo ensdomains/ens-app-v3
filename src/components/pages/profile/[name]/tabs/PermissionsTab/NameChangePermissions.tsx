@@ -127,17 +127,17 @@ export const NameChangePermissions = ({
   return (
     <Section $isCached={isCachedData}>
       <SectionHeader>
-        <Typography typography="Heading/H3">Name Change Permissions</Typography>
-        <Typography typography="Body/Normal">
+        <Typography fontVariant="headingThree">Name Change Permissions</Typography>
+        <Typography fontVariant="body">
           The owner of this name may be able to change settings on this name.
         </Typography>
       </SectionHeader>
       {permissions.unburned.map(({ translationKey }) => (
         <SectionItem icon="info">
-          <Typography typography="Body/Bold">
+          <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
           </Typography>
-          <Typography typography="Small/Normal">
+          <Typography fontVariant="small">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
               owner: ownerLabel,
             })}{' '}
@@ -146,11 +146,11 @@ export const NameChangePermissions = ({
       ))}
       {permissions.burned.map(({ translationKey }) => (
         <SectionItem icon="disabled">
-          <Typography typography="Body/Bold">
+          <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
           </Typography>
-          <TypographyGreyDim typography="Small/XS Normal">Revoked Oct 27, 2022</TypographyGreyDim>
-          <Typography typography="Small/Normal">
+          <TypographyGreyDim fontVariant="extraSmall">Revoked Oct 27, 2022</TypographyGreyDim>
+          <Typography fontVariant="small">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
               owner: ownerLabel,
             })}

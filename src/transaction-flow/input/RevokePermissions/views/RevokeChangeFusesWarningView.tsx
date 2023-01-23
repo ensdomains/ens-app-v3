@@ -4,11 +4,7 @@ import { Dialog } from '@ensdomains/thorin'
 
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
 
-type Props = {
-  onDismiss: () => void
-}
-
-export const RevokeChangeFusesWarningView = ({ onDismiss }: Props) => {
+export const RevokeChangeFusesWarningView = () => {
   const { t } = useTranslation('transactionFlow')
 
   return (
@@ -16,7 +12,6 @@ export const RevokeChangeFusesWarningView = ({ onDismiss }: Props) => {
       <Dialog.Heading
         alert="warning"
         title={t('input.revokePermissions.views.revokeChangeFusesWarning.title')}
-        onDismiss={() => onDismiss()}
       />
       <CenterAlignedTypography>
         <Trans t={t} i18nKey="input.revokePermissions.views.revokeChangeFusesWarning.subtitle" />

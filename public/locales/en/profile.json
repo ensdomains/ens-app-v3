@@ -93,6 +93,19 @@
           "revokePermission": "Revoke permission"
         }
       },
+      "expiry": {
+        "permissions": {
+            "canExtendExpiry": {
+              "label": "Can extend expiry",
+              "description": "This names permission expiry ({{date}}) can be extended by the owner."
+            },
+            "cannotExtendExpiry": {
+              "label": "Cannot extend expiry",
+              "description": "This names permission expiry ({{date}}) cannot be extended by the manager."
+            
+            }
+        }
+      },
       "nameChangePermissions": {
         "title": "Name Change Permissions",
         "subtitle": {

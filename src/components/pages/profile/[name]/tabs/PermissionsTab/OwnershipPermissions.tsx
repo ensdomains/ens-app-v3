@@ -121,11 +121,11 @@ export const OwnershipPermissions = ({
   return (
     <Section $isCached={isCachedData}>
       <SectionHeader>
-        <Typography typography="Heading/H3">{t('tabs.permissions.ownership.title')}</Typography>
+        <Typography fontVariant="headingThree">{t('tabs.permissions.ownership.title')}</Typography>
       </SectionHeader>
       {ownershipStatus === 'parent-cannot-control' && (
         <SectionItem icon="disabled" date-testid="parent-cannot-control">
-          <Typography typography="Body/Bold">
+          <Typography fontVariant="bodyBold">
             <Trans
               t={t}
               i18nKey="tabs.permissions.ownership.parentCannotControl.label"
@@ -133,8 +133,8 @@ export const OwnershipPermissions = ({
               components={{ parentLink: <AccountLink nameOrAddress={parentName} /> }}
             />
           </Typography>
-          <TypographyGreyDim typography="Small/XS Normal">Revoked Oct 27, 2022</TypographyGreyDim>
-          <Typography typography="Small/Normal">
+          <TypographyGreyDim fontVariant="extraSmall">Revoked Oct 27, 2022</TypographyGreyDim>
+          <Typography fontVariant="small">
             {t('tabs.permissions.ownership.parentCannotControl.sublabel')}
           </Typography>
           <SectionList title={t('tabs.permissions.ownership.parentCannotControl.list.title')}>
@@ -154,7 +154,7 @@ export const OwnershipPermissions = ({
       )}
       {ownershipStatus === 'parent-can-control' && (
         <SectionItem icon="info" data-testid="parent-can-control">
-          <Typography typography="Body/Bold">
+          <Typography fontVariant="bodyBold">
             <Trans
               t={t}
               i18nKey="tabs.permissions.ownership.parentCanControl.label"
@@ -171,7 +171,7 @@ export const OwnershipPermissions = ({
       )}
       {editorStatus === 'owner-can-change' && (
         <SectionItem icon="info" date-testid="owner-can-change">
-          <Typography typography="Body/Bold">
+          <Typography fontVariant="bodyBold">
             {t('tabs.permissions.ownership.ownerCanChange.label')}
           </Typography>
           <SectionList title={t('tabs.permissions.ownership.ownerCanChange.list.title')}>
@@ -182,10 +182,10 @@ export const OwnershipPermissions = ({
       )}
       {editorStatus === 'owner-cannot-change' && (
         <SectionItem icon="disabled" date-testid="owner-cannot-change">
-          <Typography typography="Body/Bold">
+          <Typography fontVariant="bodyBold">
             {t('tabs.permissions.ownership.ownerCannotChange.label')}
           </Typography>
-          <TypographyGreyDim typography="Small/XS Normal">Revoked Oct 27, 2022</TypographyGreyDim>
+          <TypographyGreyDim fontVariant="extraSmall">Revoked Oct 27, 2022</TypographyGreyDim>
           <SectionList title={t('tabs.permissions.ownership.ownerCannotChange.list.title')}>
             <li>{t('tabs.permissions.ownership.ownerCanChange.list.item1')}</li>
             <li>{t('tabs.permissions.ownership.ownerCanChange.list.item2')}</li>
@@ -194,7 +194,7 @@ export const OwnershipPermissions = ({
       )}
       {editorStatus === 'parent-can-change' && (
         <SectionItem icon="info" date-testid="parent-can-change">
-          <Typography typography="Body/Bold">
+          <Typography fontVariant="bodyBold">
             <Trans
               t={t}
               i18nKey="tabs.permissions.ownership.parentCanChange.label"
@@ -212,7 +212,7 @@ export const OwnershipPermissions = ({
         <SectionFooter>
           {showUnwrapWarning && (
             <Helper type="info">
-              <Typography typography="Body/Normal">
+              <Typography fontVariant="body">
                 <Trans
                   t={t}
                   i18nKey="tabs.permissions.ownership.unwrapWarning.message"

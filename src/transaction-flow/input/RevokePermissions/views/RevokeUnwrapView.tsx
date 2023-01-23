@@ -2,15 +2,12 @@ import { UseFormRegister } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Dialog, Typography } from '@ensdomains/thorin'
-
-import { PermissionsCheckbox } from '@app/components/@molecules/PermissionsCheckbox/PermissionsCheckbox'
+import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin'
 
 import type { FormData } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>
-  onDismiss: () => void
 }
 
 const CenterAlignedTypography = styled(Typography)(
@@ -19,19 +16,16 @@ const CenterAlignedTypography = styled(Typography)(
   `,
 )
 
-export const RevokeUnwrapView = ({ register, onDismiss }: Props) => {
+export const RevokeUnwrapView = ({ register }: Props) => {
   const { t } = useTranslation('transactionFlow')
   return (
     <>
-      <Dialog.Heading
-        title={t('input.revokePermissions.views.revokeUnwrap.title')}
-        onDismiss={() => onDismiss()}
-      />
-      <CenterAlignedTypography typography="Body/Normal" color="text">
+      <Dialog.Heading title={t('input.revokePermissions.views.revokeUnwrap.title')} />
+      <CenterAlignedTypography fontVariant="body" color="text">
         {t('input.revokePermissions.views.revokeUnwrap.subtitle')}
       </CenterAlignedTypography>
-      <PermissionsCheckbox
-        title="Revoke permission to: Unwrap this name"
+      <CheckboxRow
+        label="Revoke permission to: Unwrap this name"
         {...register('fuseObj.CANNOT_UNWRAP', {})}
       />
     </>

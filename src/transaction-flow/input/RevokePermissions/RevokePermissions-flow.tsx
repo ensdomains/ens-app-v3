@@ -19,7 +19,7 @@ import { SetExpiryView } from './views/SetExpiryView'
 
 type Data = {
   name: string
-  flowType: 'revoke-pcc' | 'revoke-permissions' | 'revoke-change-fuses'
+  flowType: 'revoke-pcc' | 'revoke-permissions' | 'revoke-change-fuses' | 'grant-extend-expiry'
   owner: string
   fuseObj: CurrentFuses
   minExpiry?: number
@@ -201,13 +201,12 @@ const RevokePermissions = ({ data, onDismiss, dispatch }: Props) => {
     <Form ref={formRef} onSubmit={handleSubmit(onSubmit)}>
       {
         {
-          revokeWarning: <RevokeWarningView onDismiss={onDismiss} />,
+          revokeWarning: <RevokeWarningView />,
           revokePCC: <RevokePCCView manager={name} register={register} onDismiss={onDismiss} />,
           setExpiry: (
             <SetExpiryView
               name={name}
               register={register}
-              onDismiss={onDismiss}
               minExpiry={minExpiry!}
               maxExpiry={maxExpiry!}
             />
@@ -215,11 +214,10 @@ const RevokePermissions = ({ data, onDismiss, dispatch }: Props) => {
           revokeAdditional: (
             <RevokeAdditionalView
               revokeAdditional={revokeAdditional}
-              onDismiss={onDismiss}
               onChangeRevokeAdditional={(e) => setRevokeAdditional(e.target.checked)}
             />
           ),
-          revokeUnwrap: <RevokeUnwrapView register={register} onDismiss={onDismiss} />,
+          revokeUnwrap: <RevokeUnwrapView register={register} />,
           revokePermissions: (
             <RevokePermissionsView
               fuses={availableFuses}
@@ -228,13 +226,16 @@ const RevokePermissions = ({ data, onDismiss, dispatch }: Props) => {
               onDismiss={onDismiss}
             />
           ),
-          revokeChangeFuses: <RevokeChangeFusesView register={register} onDismiss={onDismiss} />,
-          revokeChangeFusesWarning: <RevokeChangeFusesWarningView onDismiss={onDismiss} />,
+          revokeChangeFuses: <RevokeChangeFusesView register={register} />,
+          revokeChangeFusesWarning: <RevokeChangeFusesWarningView />,
         }[view]
       }
       <Dialog.Footer
         leading={
-          <Button colorScheme="secondary" onClick={() => setCurrentIndex((index) => index - 1)}>
+          <Button
+            colorStyle="accentSecondary"
+            onClick={() => setCurrentIndex((index) => index - 1)}
+          >
             {currentIndex === 0
               ? t('action.cancel', { ns: 'common' })
               : t('action.back', { ns: 'common' })}

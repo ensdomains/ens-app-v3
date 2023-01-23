@@ -15,7 +15,6 @@ type Props = {
   minExpiry: number
   maxExpiry: number
   register: UseFormRegister<FormData>
-  onDismiss: () => void
 }
 
 const ExpiryOptionsContainer = styled.div(
@@ -34,7 +33,7 @@ const DateContainer = styled.div(
   `,
 )
 
-export const SetExpiryView = ({ name, minExpiry, maxExpiry, register, onDismiss }: Props) => {
+export const SetExpiryView = ({ name, minExpiry, maxExpiry, register }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const now = new Date(minExpiry)
@@ -45,10 +44,7 @@ export const SetExpiryView = ({ name, minExpiry, maxExpiry, register, onDismiss 
 
   return (
     <>
-      <Dialog.Heading
-        title={t('input.revokePermissions.views.setExpiry.title')}
-        onDismiss={() => onDismiss()}
-      />
+      <Dialog.Heading title={t('input.revokePermissions.views.setExpiry.title')} />
       <CenterAlignedTypography>
         <Trans
           t={t}
@@ -65,20 +61,20 @@ export const SetExpiryView = ({ name, minExpiry, maxExpiry, register, onDismiss 
         <RadioButton
           value="max"
           label={
-            <Typography typography="Body/Bold" color="text">
+            <Typography fontVariant="bodyBold" color="text">
               Keep current (max)
             </Typography>
           }
           description={
             <DateContainer>
-              <Typography typography="Small/Bold" color="text">
+              <Typography fontVariant="smallBold" color="text">
                 {`${date.toLocaleDateString(undefined, {
                   month: 'short',
                   day: 'numeric',
                   year: 'numeric',
                 })}`}
               </Typography>
-              <Typography typography="Small/Normal" color="grey">
+              <Typography fontVariant="small" color="grey">
                 {`${date.toLocaleTimeString(undefined, {
                   hour: 'numeric',
                   minute: 'numeric',
@@ -94,7 +90,7 @@ export const SetExpiryView = ({ name, minExpiry, maxExpiry, register, onDismiss 
         <RadioButton
           value="custom"
           label={
-            <Typography typography="Body/Bold" color="text">
+            <Typography fontVariant="bodyBold" color="text">
               Choose an earlier date
             </Typography>
           }
