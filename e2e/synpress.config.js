@@ -12,7 +12,7 @@ module.exports = defineConfig({
   fixturesFolder,
   screenshotsFolder: 'e2e/screenshots',
   videosFolder: 'e2e/videos',
-  chromeWebSecurity: false,
+  chromeWebSecurity: true,
   viewportWidth: 1366,
   viewportHeight: 2000,
   env: {

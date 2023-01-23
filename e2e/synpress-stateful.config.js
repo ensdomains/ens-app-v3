@@ -12,9 +12,9 @@ module.exports = defineConfig({
   fixturesFolder,
   screenshotsFolder: 'e2e/screenshots',
   videosFolder: 'e2e/videos',
-  chromeWebSecurity: false,
+  chromeWebSecurity: true,
   viewportWidth: 1366,
-  viewportHeight: 768,
+  viewportHeight: 900,
   env: {
     coverage: false,
     transactionWaitTime: 120000,
@@ -35,6 +35,7 @@ module.exports = defineConfig({
     baseUrl: 'http://localhost:8788',
     specPattern: 'e2e/specs/stateful/**/*.{js,jsx,ts,tsx}',
     supportFile: 'e2e/support.js',
+    experimentalSessionAndOrigin: true,
   },
 })
 

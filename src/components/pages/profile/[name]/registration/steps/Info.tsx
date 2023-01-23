@@ -180,7 +180,6 @@ const PaymentChoice = ({
             label={<RadioLabel>{t('steps.info.ethereum')}</RadioLabel>}
             name="RadioButtonGroup"
             value={PaymentMethod.ethereum}
-            labelRight
             disabled={hasPendingMoonpayTransaction}
             checked={paymentMethodChoice === PaymentMethod.ethereum || undefined}
           />
@@ -218,7 +217,6 @@ const PaymentChoice = ({
             }
             name="RadioButtonGroup"
             value={PaymentMethod.moonpay}
-            labelRight
             checked={paymentMethodChoice === PaymentMethod.moonpay || undefined}
           />
           {paymentMethodChoice === PaymentMethod.moonpay && (
@@ -339,14 +337,14 @@ const Info = ({
       <ButtonContainer>
         {!hasPendingMoonpayTransaction && (
           <MobileFullWidth>
-            <Button shadowless variant="secondary" onClick={() => callback({ back: true })}>
+            <Button onClick={() => callback({ back: true })}>
               {t('action.back', { ns: 'common' })}
             </Button>
           </MobileFullWidth>
         )}
         {hasPendingMoonpayTransaction ? (
           <MobileFullWidth>
-            <Button data-testid="next-button" shadowless disabled loading>
+            <Button data-testid="next-button" disabled loading>
               {t('steps.info.processing')}
             </Button>
           </MobileFullWidth>
@@ -355,7 +353,6 @@ const Info = ({
             <Button
               disabled={paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth}
               data-testid="next-button"
-              shadowless
               onClick={() => callback({ paymentMethodChoice })}
             >
               {hasFailedMoonpayTransaction && paymentMethodChoice === PaymentMethod.moonpay

@@ -226,7 +226,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         }}
       </Content>
       <StyledDialog open={hasMoonpayModal} variant="actionable">
-        <iframe title="Moonpay Checkout" width="100%" height="90%" src={moonpayUrl} />
+        <iframe
+          title="Moonpay Checkout"
+          width="100%"
+          height="90%"
+          src={moonpayUrl}
+          id="moonpayIframe"
+        />
       </StyledDialog>
     </>
   )
