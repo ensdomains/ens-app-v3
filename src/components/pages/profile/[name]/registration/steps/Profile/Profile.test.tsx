@@ -38,7 +38,6 @@ const makeExpectedCallbackData = (overwrites: any = {}): any => {
   }
 }
 
-jest.mock('wagmi')
 jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/useLocalStorage')
 

@@ -65,7 +65,6 @@ export const registrationFormToProfileRecords = (data: RegistrationForm): Profil
 }
 
 export const profileRecordsToRegistrationForm = (records: ProfileRecord[]): RegistrationForm => {
-  console.log(records)
   const avatar = records?.find((r) => r.key === 'avatar' && r.group === 'media')?.value
   const recordsWithNoMedia = records
     ?.filter((r) => r.group !== 'media')

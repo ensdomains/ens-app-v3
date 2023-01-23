@@ -110,18 +110,6 @@ export const ProfileRecordInput = forwardRef(
               handleDelete()
             }}
             {...props}
-            // suffix={
-            //   showDelete && (
-            //     <DeleteButtonWrapper>
-            //       <DeleteButton
-            //         type="button"
-            //         onClick={handleDelete}
-            //         onMouseDown={(e) => e.preventDefault()}
-            //         data-testid={`profile-record-input-delete-button-${recordKey}`}
-            //       />
-            //     </DeleteButtonWrapper>
-            //   )
-            // }
           />
         </Field>
       </Container>

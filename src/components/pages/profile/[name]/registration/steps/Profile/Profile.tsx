@@ -262,7 +262,6 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [name, avatarFile, modalOption])
 
-  console.log('avatarSrc', avatarSrc)
   return (
     <>
       <Dialog onDismiss={() => setModalOpen(false)} variant="blank" open={modalOpen}>

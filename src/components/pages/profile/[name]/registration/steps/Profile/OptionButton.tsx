@@ -24,20 +24,37 @@ const Container = styled.button<{ $selected?: boolean }>(
     border-color: ${theme.colors.border};
     background-color: white;
     padding: ${theme.space[4]} ${theme.space[2]};
+    cursor: pointer;
+
+    &:hover {
+      background-color: ${theme.colors.backgroundSecondary};
+      transform: translateY(-1px);
+    }
 
     ${$selected &&
     css`
       border-color: ${theme.colors.accent};
       background-color: ${theme.colors.accentSurface};
+
+      &:hover {
+        background-color: ${theme.colors.accentLight};
+      }
     `}
 
     ${disabled &&
     css`
       border-color: ${theme.colors.border};
-      background-color: ${theme.colors.backgroundSecondary};
+      background-color: ${theme.colors.greyLight};
+      color: ${theme.colors.greyPrimary};
+      cursor: not-allowed;
+
+      &:hover {
+        background-color: ${theme.colors.greyLight};
+        transform: initial;
+      }
     `}
     transition: all 0.3s ease-out;
-    transition-property: border-color, background-color;
+    transition-property: border-color, background-color, transform;
   `,
 )
 

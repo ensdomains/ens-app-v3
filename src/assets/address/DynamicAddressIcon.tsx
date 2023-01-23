@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic'
 
+import { QuestionCircleSVG } from '@ensdomains/thorin'
+
 export type AddressIconType = keyof typeof addressIconTypes
 
 export const addressIconTypes = {
@@ -26,8 +28,7 @@ export const DynamicAddressIcon = ({
     return <Icon {...props} />
   }
   if (showDefault) {
-    const Icon = dynamic(() => import('../Question.svg')) as any
-    return <Icon {...props} />
+    return <QuestionCircleSVG {...props} />
   }
   return null
 }

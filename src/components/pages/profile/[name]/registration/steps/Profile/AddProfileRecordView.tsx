@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -6,8 +6,11 @@ import styled, { css } from 'styled-components'
 import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { ProfileRecord, grouped as options } from '@app/constants/profileRecordOptions'
-import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
+import {
+  ProfileRecord,
+  ProfileRecordGroup,
+  grouped as options,
+} from '@app/constants/profileRecordOptions'
 import { RegistrationForm } from '@app/hooks/useRegistrationForm'
 import mq from '@app/mediaQuery'
 
@@ -20,6 +23,7 @@ const Container = styled.div(() => [
     display: flex;
     flex-direction: column;
     width: 100%;
+    max-height: 600px;
   `,
   mq.sm.min(css`
     width: 520px;
@@ -54,11 +58,24 @@ const SideBar = styled.div(
   `,
 )
 
-const SideBarItem = styled.button(
-  ({ theme }) => css`
+const SideBarItem = styled.button<{
+  $active?: boolean
+}>(
+  ({ theme, $active }) => css`
     font-size: ${theme.space['3.5']};
     line-height: ${theme.space[4]};
     padding: ${theme.space[2]} ${theme.space[2]};
+    cursor: pointer;
+    color: ${theme.colors.greyPrimary};
+
+    ${$active &&
+    css`
+      color: ${theme.colors.accentPrimary};
+    `}
+
+    &:hover {
+      color: ${$active ? theme.colors.accentPrimary : theme.colors.text};
+    }
   `,
 )
 
@@ -83,7 +100,7 @@ const GroupLabel = styled.div(
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.space['3.5']};
     line-height: ${theme.space[5]};
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.greyPrimary};
   `,
 )
 const OptionsGrid = styled.div(
@@ -133,30 +150,94 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
   const [selectedRecords, setSelectedRecords] = useState<ProfileRecord[]>([])
 
   const [search, setSearch] = useState('')
-  const [debouncedSearch, _setDebouncedSearch] = useState('')
-  const setDebouncedSearch = useDebouncedCallback(
-    (value: string) => _setDebouncedSearch(value),
-    300,
-  )
 
   const visibleOptions = useMemo(() => {
-    if (!i18n.isInitialized || !debouncedSearch) return options
+    if (!i18n.isInitialized || !search) return options
     return options
       .map((option) => {
         const items = option.items.filter((item) => {
           const { key: record } = item
-          if (record.toLowerCase().indexOf(debouncedSearch.toLocaleLowerCase()) !== -1) return true
+          if (record.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return true
           if (['address', 'website'].includes(option.group)) return false
           const label = t(`steps.profile.options.groups.${option.group}.items.${item}`)
-          return label.toLowerCase().indexOf(debouncedSearch.toLocaleLowerCase()) !== -1
+          return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
         })
         return items.length > 0 ? { ...option, items } : null
       })
       .filter((option) => !!option) as typeof options
-  }, [debouncedSearch, t, i18n])
+  }, [search, t, i18n])
 
-  const scrollToRef = useRef<HTMLDivElement>(null)
+  const observerRef = useRef<string>()
+  const targetRef = useRef<HTMLDivElement>(null)
+  const generalRef = useRef<HTMLDivElement>(null)
+  const socialRef = useRef<HTMLDivElement>(null)
+  const addressRef = useRef<HTMLDivElement>(null)
+  const websiteRef = useRef<HTMLDivElement>(null)
+  const otherRef = useRef<HTMLDivElement>(null)
+  const topRef = useRef<HTMLDivElement>(null)
+  const bottomRef = useRef<HTMLDivElement>(null)
+
+  const sectionRefMap: {
+    [key in ProfileRecordGroup]?: React.RefObject<HTMLDivElement>
+  } = {
+    general: generalRef,
+    social: socialRef,
+    address: addressRef,
+    website: websiteRef,
+    other: otherRef,
+  }
+
   const [selectedGroup, setSelectedGroup] = useState<string | null>(null)
+
+  useEffect(() => {
+    const intersectingEdges = new Set<string>()
+    const intersectingSections = new Set<string>()
+
+    const handleObserver = (entries: IntersectionObserverEntry[]) => {
+      entries.forEach((entry) => {
+        const group = entry.target.getAttribute('data-group')
+        const isEdge = ['top', 'bottom'].includes(group as string)
+        if (!group) return
+        if (isEdge) {
+          if (entry.isIntersecting) intersectingEdges.add(group)
+          else intersectingEdges.delete(group)
+        }
+        if (!isEdge) {
+          if (entry.isIntersecting) intersectingSections.add(group as string)
+          else intersectingSections.delete(group as string)
+        }
+      })
+
+      const first = [...intersectingSections][0]
+      if (intersectingEdges.has('top')) setSelectedGroup(visibleOptions[0].group)
+      else if (intersectingEdges.has('bottom'))
+        setSelectedGroup(visibleOptions[visibleOptions.length - 1].group)
+      else setSelectedGroup(first as ProfileRecordGroup)
+    }
+
+    const observer = new IntersectionObserver(handleObserver, {
+      root: targetRef.current,
+      rootMargin: '-20% 0px -70% 0px',
+    })
+
+    const sectionRefMapKeys = Object.keys(sectionRefMap) as ProfileRecordGroup[]
+    sectionRefMapKeys.forEach((key: ProfileRecordGroup) => {
+      const ref = sectionRefMap[key]
+      if (ref?.current) {
+        observer?.observe(ref.current)
+      }
+    })
+
+    const edgesObserver = new IntersectionObserver(handleObserver, {
+      root: targetRef.current,
+    })
+    if (bottomRef.current) edgesObserver.observe(bottomRef.current)
+    if (topRef.current) edgesObserver.observe(topRef.current)
+
+    return () => {
+      observer?.disconnect()
+    }
+  }, [visibleOptions])
 
   const isOptionSelected = (option: ProfileRecord) => {
     return !!selectedRecords.find((record) => record.key === option.key)
@@ -180,9 +261,9 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
   const handleSelectGroup = (group: string) => {
     setSelectedGroup(group)
-    process.nextTick(() => {
-      scrollToRef.current?.scrollIntoView({ behavior: 'smooth' })
-    })
+    const ref = sectionRefMap[group as ProfileRecordGroup]
+    ref?.current?.scrollIntoView({ behavior: 'smooth' })
+    observerRef.current = group
   }
 
   const handleToggleOption = (option: ProfileRecord) => {
@@ -209,7 +290,6 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
         value={search}
         onChange={(e) => {
           setSearch(e.currentTarget.value)
-          setDebouncedSearch(e.currentTarget.value)
         }}
         data-testid="profile-record-search-input"
       />
@@ -219,24 +299,26 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
             <SideBarItem
               type="button"
               key={option.group}
+              $active={selectedGroup === option.group}
               onClick={() => handleSelectGroup(option.group)}
             >
               {t(`steps.profile.options.groups.${option.group}.label`)}
             </SideBarItem>
           ))}
         </SideBar>
-        <OptionsContainer>
+        <OptionsContainer ref={targetRef}>
           {visibleOptions.length > 0 ? (
             <ScrollBox hideDividers>
+              <div ref={topRef} style={{ height: '1px' }} data-group="top" />
               {visibleOptions.map((option) => {
                 const showLabel = !['address', 'website'].includes(option.group)
-
                 return (
                   <OptionGroup
                     key={option.group}
-                    ref={selectedGroup === option.group ? scrollToRef : null}
+                    ref={sectionRefMap[option.group]}
+                    data-group={option.group}
                   >
-                    <GroupLabel>
+                    <GroupLabel id={`option-group-${option.group}`}>
                       {t(`steps.profile.options.groups.${option.group}.label`)}
                     </GroupLabel>
                     <OptionsGrid>
@@ -275,6 +357,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
                   </OptionGroup>
                 )
               })}
+              <div ref={bottomRef} style={{ height: '1px' }} data-group="bottom" />
             </ScrollBox>
           ) : (
             <NoResultsContainer>

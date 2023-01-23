@@ -13,6 +13,5 @@ export const WrappedAvatarButton = ({ control, ...props }: Props) => {
     control,
     name: 'avatar',
   })
-  console.log(props.src)
   return <AvatarButton {...props} validated={!!avatar} />
 }

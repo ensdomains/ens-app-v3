@@ -1,7 +1,7 @@
 import { ButtonHTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import CircleCrossSVG from '@app/assets/CircleCross.svg'
+import { CrossCircleSVG } from '@ensdomains/thorin'
 
 type Props = {
   size?: 'medium' | 'large'
@@ -45,7 +45,7 @@ const Button = styled.button<{ $size: 'small' | 'medium' | 'large' }>(
 export const DeleteButton = ({ size = 'medium', type = 'button', ...props }: Props) => {
   return (
     <Button $size={size} type={type} {...props}>
-      <CircleCrossSVG />
+      <CrossCircleSVG />
     </Button>
   )
 }

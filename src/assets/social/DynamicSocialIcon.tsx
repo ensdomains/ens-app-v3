@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/naming-convention */
 import dynamic from 'next/dynamic'
 
+import { QuestionCircleSVG } from '@ensdomains/thorin'
+
 export const socialIconTypes = {
   'com.discord': dynamic(() => import('./SocialDiscord.svg')),
   'com.discourse': dynamic(() => import('./SocialDiscourseColour.svg')),
@@ -35,8 +37,7 @@ export const DynamicSocialIcon = ({
     return <Icon {...props} fill={fill} />
   }
   if (showDefault) {
-    const Icon = dynamic(() => import('../Question.svg')) as any
-    return <Icon {...props} />
+    return <QuestionCircleSVG {...props} />
   }
   return null
 }

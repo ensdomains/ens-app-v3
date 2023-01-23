@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic'
 
+import { QuestionCircleSVG } from '@ensdomains/thorin'
+
 export const textIcons = {
   description: dynamic(() => import('./TextBio.svg')),
   url: dynamic(() => import('./TextURL.svg')),
@@ -23,8 +25,7 @@ export const DynamicTextIcon = ({
     return <Icon {...props} />
   }
   if (showDefault) {
-    const Icon = dynamic(() => import('../Question.svg')) as any
-    return <Icon {...props} />
+    return <QuestionCircleSVG {...props} />
   }
   return null
 }
