@@ -63,7 +63,7 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
         isCachedData={profileIsCachedData}
         resolverAddress={profile?.resolverAddress}
       />
-      {wrapperData && (
+      {isWrapped && wrapperData && (
         <Fuses
           canEdit={selfAbilities.canEdit}
           name={name}
