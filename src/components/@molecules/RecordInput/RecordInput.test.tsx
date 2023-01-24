@@ -39,7 +39,7 @@ describe('RecordInput', () => {
 
   it('should call onDelete when action button clicked', () => {
     render(<RecordInput onDelete={mockCallback} />)
-    fireEvent.click(screen.getByTestId('input-action-button'))
+    fireEvent.click(screen.getByTestId('record-input-delete-button'))
     expect(mockCallback).toHaveBeenCalled()
   })
 })

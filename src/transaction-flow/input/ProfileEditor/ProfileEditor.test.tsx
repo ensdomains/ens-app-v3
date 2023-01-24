@@ -219,7 +219,7 @@ describe('ProfileEditor', () => {
     fireEvent.click(tab)
 
     const recordInput = await screen.findByTestId('record-input-ETH')
-    const deleteButton = within(recordInput).getByTestId('input-action-button')
+    const deleteButton = within(recordInput).getByTestId('record-input-delete-button')
     fireEvent.click(deleteButton)
     await waitFor(() => {
       expect(recordInput).not.toBeVisible()
@@ -291,7 +291,7 @@ describe('ProfileEditor', () => {
 
     await userEvent.type(recordInputInput, '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
 
-    const deleteRecord = within(recordInput).getByTestId('input-action-button')
+    const deleteRecord = within(recordInput).getByTestId('record-input-delete-button')
     fireEvent.click(deleteRecord)
 
     const submitButton = screen.getByTestId('profile-editor-submit')

@@ -163,7 +163,6 @@ const AdvancedEditorContent = ({
                       {...register(`address.${key}`, {
                         validate: async (value: string) => {
                           const result = await validateCryptoAddress(key)(value)
-                          console.log('result', result)
                           if (typeof result === 'string')
                             return t('errors.invalidAddress', { ns: 'common' })
                           return result
