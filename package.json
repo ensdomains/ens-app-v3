@@ -55,7 +55,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "3.0.0-alpha.37",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "^0.6.23-alpha-4",
+    "@ensdomains/thorin": "^0.6.23",
     "@rainbow-me/rainbowkit": "0.4.8",
     "@sentry/nextjs": "^7.11.1",
     "@svgr/webpack": "^6.3.1",
