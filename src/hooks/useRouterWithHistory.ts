@@ -11,6 +11,8 @@ type TransitionOptions = {
 export const useRouterWithHistory = () => {
   const router = useRouter()
 
+  const _replace = router?.replace
+
   const push = (pathname: string, query?: Record<string, any>) => {
     const destination = getDestination({ pathname, query })
     router.push(destination)
@@ -28,5 +30,5 @@ export const useRouterWithHistory = () => {
     router.push(destination, typeof destination === 'string' ? undefined : destination.pathname)
   }
 
-  return { ...router, replace, push, pushWithHistory }
+  return { ...router, push, pushWithHistory, replace, _replace }
 }
