@@ -122,7 +122,7 @@ const LocationAndUrl = styled.div(
 )
 
 // eslint-disable-next-line no-control-regex
-const nonAsciiRegex = /^[^\u0000-\u007f]+/g
+const nonAsciiRegex = /[^\u0000-\u007f]+/g
 
 export const ProfileSnippet = ({
   name,
