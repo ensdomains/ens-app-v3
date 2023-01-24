@@ -30,6 +30,9 @@
         "editProfile": {
           "label": "Edit profile"
         }
+      },
+      "warnings": {
+        "wrappedDNS": "DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names."
       }
     },
     "records": {

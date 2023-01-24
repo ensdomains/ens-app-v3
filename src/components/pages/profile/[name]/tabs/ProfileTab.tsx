@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
@@ -31,6 +32,7 @@ type Props = {
 const ProfileTab = ({ nameDetails, name }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
+  const { t } = useTranslation('profile')
 
   const {
     profile,
@@ -73,9 +75,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         canEdit={selfAbilities.canEdit}
       >
         {isWrapped && !normalisedName.endsWith('.eth') && (
-          <Banner alert="warning">
-            DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.
-          </Banner>
+          <Banner alert="warning">{t('tabs.profile.warnings.wrappedDNS')}</Banner>
         )}
       </ProfileSnippet>
       <ProfileDetails
