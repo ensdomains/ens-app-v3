@@ -32,7 +32,8 @@
         }
       },
       "warnings": {
-        "wrappedDNS": "DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names."
+        "wrappedDNS": "DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.",
+        "homoglyph": "This name contains non-ASCII characters. There may be characters that look identical or very similar to other characters, which could be used to deceive readers. <a>Learn more about homoglyphs</a>"
       }
     },
     "records": {
