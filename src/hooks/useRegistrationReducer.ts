@@ -87,7 +87,6 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       break
     }
     case 'increaseStep': {
-      console.log('*increaseStep*')
       item.stepIndex += 1
       break
     }
