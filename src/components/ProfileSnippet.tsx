@@ -126,12 +126,14 @@ export const ProfileSnippet = ({
   button,
   network,
   canEdit,
+  children,
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
   button?: 'viewProfile' | 'extend'
   canEdit?: boolean
   network: number
+  children?: React.ReactNode
 }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
@@ -207,6 +209,7 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
+      {children}
     </Container>
   )
 }

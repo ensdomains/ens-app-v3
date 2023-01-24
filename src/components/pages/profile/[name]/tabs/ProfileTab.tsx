@@ -1,6 +1,8 @@
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { Banner } from '@ensdomains/thorin'
+
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
@@ -38,6 +40,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     ownerData,
     wrapperData,
     dnsOwner,
+    isWrapped,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, name)
@@ -68,7 +71,13 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         getTextRecord={getTextRecord}
         button={selfAbilities.canExtend ? 'extend' : undefined}
         canEdit={selfAbilities.canEdit}
-      />
+      >
+        {isWrapped && !normalisedName.endsWith('.eth') && (
+          <Banner alert="warning">
+            DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.
+          </Banner>
+        )}
+      </ProfileSnippet>
       <ProfileDetails
         isCached={profileIsCachedData || basicIsCachedData || subnameAbilitiesCachedData}
         addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
