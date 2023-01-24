@@ -1,4 +1,5 @@
-import { BigNumber, ethers } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import { Contract } from '@ethersproject/contracts'
 import { useProvider, useQuery } from 'wagmi'
 
 import AggregatorInterface from '@ensdomains/ens-contracts/build/contracts/AggregatorInterface.json'
@@ -26,7 +27,7 @@ export const useEthPrice = () => {
       }
       if (!address) throw new Error('Contract address not found')
       if (typeof address !== 'string') throw new Error('Contract address is wrong type')
-      const oracle = new ethers.Contract(address, AggregatorInterface, provider)
+      const oracle = new Contract(address, AggregatorInterface, provider)
       const latest = (await oracle.latestAnswer()) as BigNumber
       return latest
     },

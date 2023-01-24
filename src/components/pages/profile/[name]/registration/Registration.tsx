@@ -5,7 +5,7 @@ import { useAccount } from 'wagmi'
 
 import { Helper } from '@ensdomains/thorin'
 
-import { baseFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
+import { childFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -63,7 +63,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
             coinTypes: [{ key: 'ETH', value: address! } as any],
             clearRecords: resolverExists,
           },
-          permissions: baseFuseObj,
+          permissions: childFuseObj,
           resolver: defaultResolverAddress,
         },
         selected,

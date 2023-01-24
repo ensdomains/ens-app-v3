@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 import { ReturnedENS } from '@app/types'
 
@@ -10,20 +10,22 @@ const ownerData: ReturnedENS['getOwner'] = {
 }
 
 const wrapperData: ReturnedENS['getWrapperData'] = {
-  fuseObj: {
+  child: {
     CAN_DO_EVERYTHING: true,
     CANNOT_BURN_FUSES: false,
     CANNOT_TRANSFER: false,
     CANNOT_UNWRAP: false,
     CANNOT_SET_RESOLVER: false,
     CANNOT_SET_TTL: false,
-    PARENT_CANNOT_CONTROL: false,
     CANNOT_CREATE_SUBDOMAIN: false,
   },
+  parent: {
+    PARENT_CANNOT_CONTROL: false,
+  },
   expiryDate: new Date(),
-  rawFuses: BigNumber.from(0),
+  rawFuses: 0,
   owner: '0x123',
-}
+} as ReturnedENS['getWrapperData']
 
 describe('getRegistrationStatus', () => {
   describe('2LD .eth', () => {

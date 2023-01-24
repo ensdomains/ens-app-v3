@@ -1,4 +1,5 @@
-import { ethers } from 'ethers'
+import { isAddress } from '@ethersproject/address'
+import { Contract } from '@ethersproject/contracts'
 
 const supportsInterfaceAbi = [
   {
@@ -72,11 +73,11 @@ const validateContract = async (
   address: string,
   provider: any,
 ) => {
-  if (!ethers.utils.isAddress(address)) {
+  if (!isAddress(address)) {
     return ['Address is not a valid address']
   }
 
-  const maybeContract = new ethers.Contract(address, supportsInterfaceAbi, provider)
+  const maybeContract = new Contract(address, supportsInterfaceAbi, provider)
   let results
   try {
     results = await Promise.all(
