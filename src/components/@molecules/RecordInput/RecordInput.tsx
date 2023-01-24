@@ -1,7 +1,7 @@
 import { ComponentProps, ReactNode, Ref, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Input } from '@ensdomains/thorin'
+import { CrossSVG, Input } from '@ensdomains/thorin'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
 
@@ -11,7 +11,6 @@ const Container = styled.div(
   () => css`
     display: flex;
     align-items: flex-end;
-    gap: 5px;
     position: relative;
   `,
 )
@@ -21,6 +20,50 @@ const InputWrapper = styled.div<{ $error: boolean }>(
     flex: 1;
     position: relative;
     ${$error && `margin-bottom: -${theme.space['2']};`}
+  `,
+)
+
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    margin-right: -${theme.space['1']};
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+    padding-bottom: ${theme.space.px};
+  `,
+)
+
+const DeleteButton = styled.button(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    height: ${theme.space['11']};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
+
+const InnerButtonWrapper = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['8']};
+    height: ${theme.space['8']};
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease-in-out;
+
+    svg {
+      color: ${theme.colors.greyPrimary};
+    }
+
+    &:hover {
+      background: ${theme.colors.greySurface};
+      transform: translateY(-1px);
+    }
   `,
 )
 
@@ -108,11 +151,6 @@ export const RecordInput = forwardRef(
 
     const labelSecondary = disabled ? <LabelSecondary>{labelDisabled}</LabelSecondary> : undefined
 
-    const handleClickAction = () => {
-      if (deletable) return onDelete?.()
-      return onClear?.()
-    }
-
     return (
       <Container data-testid={`record-input-${labelText}`}>
         <InputWrapper $error={!!error}>
@@ -129,12 +167,22 @@ export const RecordInput = forwardRef(
             validated={validated}
             labelSecondary={labelSecondary}
             disabled={disabled}
-            clearable={!deletable}
-            onClickAction={handleClickAction}
-            alwaysShowAction={deletable}
             {...props}
           />
         </InputWrapper>
+        {deletable && (
+          <ButtonContainer>
+            <DeleteButton
+              data-testid="record-input-delete-button"
+              onClick={onDelete}
+              onMouseDown={(e) => e.preventDefault()}
+            >
+              <InnerButtonWrapper>
+                <CrossSVG />
+              </InnerButtonWrapper>
+            </DeleteButton>
+          </ButtonContainer>
+        )}
       </Container>
     )
   },
