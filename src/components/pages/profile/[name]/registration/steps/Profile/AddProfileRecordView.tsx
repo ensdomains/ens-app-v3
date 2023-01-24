@@ -14,6 +14,7 @@ import {
 import { RegistrationForm } from '@app/hooks/useRegistrationForm'
 import mq from '@app/mediaQuery'
 
+import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
 import { DeleteButton } from './DeleteButton'
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
@@ -63,6 +64,7 @@ const SideBarItem = styled.button<{
 }>(
   ({ theme, $active }) => css`
     font-size: ${theme.space['3.5']};
+    font-weight: ${theme.fontWeights.bold};
     line-height: ${theme.space[4]};
     padding: ${theme.space[2]} ${theme.space[2]};
     cursor: pointer;
@@ -167,8 +169,15 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
       .filter((option) => !!option) as typeof options
   }, [search, t, i18n])
 
-  const observerRef = useRef<string>()
-  const targetRef = useRef<HTMLDivElement>(null)
+  // Tracks when to skip updating the sidebar while options grid is scrolling
+  const shouldSkipObserverUpdateRef = useRef<boolean>()
+  const debouncedSetShouldSkipObserverUpdateRef = useDebouncedCallback(
+    () => (shouldSkipObserverUpdateRef.current = false),
+    1000,
+    [],
+  )
+
+  const observerRootRef = useRef<HTMLDivElement>(null)
   const generalRef = useRef<HTMLDivElement>(null)
   const socialRef = useRef<HTMLDivElement>(null)
   const addressRef = useRef<HTMLDivElement>(null)
@@ -197,27 +206,31 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
       entries.forEach((entry) => {
         const group = entry.target.getAttribute('data-group')
         const isEdge = ['top', 'bottom'].includes(group as string)
+
         if (!group) return
+
         if (isEdge) {
           if (entry.isIntersecting) intersectingEdges.add(group)
           else intersectingEdges.delete(group)
-        }
-        if (!isEdge) {
-          if (entry.isIntersecting) intersectingSections.add(group as string)
-          else intersectingSections.delete(group as string)
-        }
+        } else if (entry.isIntersecting) intersectingSections.add(group as string)
+        else intersectingSections.delete(group as string)
       })
 
+      if (shouldSkipObserverUpdateRef.current) return
+
       const first = [...intersectingSections][0]
-      if (intersectingEdges.has('top')) setSelectedGroup(visibleOptions[0].group)
-      else if (intersectingEdges.has('bottom'))
+      if (intersectingEdges.has('top') && visibleOptions[0]) {
+        setSelectedGroup(visibleOptions[0].group)
+      } else if (intersectingEdges.has('bottom') && visibleOptions[visibleOptions.length - 1]) {
         setSelectedGroup(visibleOptions[visibleOptions.length - 1].group)
-      else setSelectedGroup(first as ProfileRecordGroup)
+      } else if (first) {
+        setSelectedGroup(first as ProfileRecordGroup)
+      }
     }
 
     const observer = new IntersectionObserver(handleObserver, {
-      root: targetRef.current,
-      rootMargin: '-20% 0px -70% 0px',
+      root: observerRootRef.current,
+      rootMargin: '-20% 0px -80% 0px',
     })
 
     const sectionRefMapKeys = Object.keys(sectionRefMap) as ProfileRecordGroup[]
@@ -229,14 +242,16 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
     })
 
     const edgesObserver = new IntersectionObserver(handleObserver, {
-      root: targetRef.current,
+      root: observerRootRef.current,
     })
     if (bottomRef.current) edgesObserver.observe(bottomRef.current)
     if (topRef.current) edgesObserver.observe(topRef.current)
 
     return () => {
       observer?.disconnect()
+      edgesObserver?.disconnect()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [visibleOptions])
 
   const isOptionSelected = (option: ProfileRecord) => {
@@ -262,8 +277,9 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
   const handleSelectGroup = (group: string) => {
     setSelectedGroup(group)
     const ref = sectionRefMap[group as ProfileRecordGroup]
+    shouldSkipObserverUpdateRef.current = true
     ref?.current?.scrollIntoView({ behavior: 'smooth' })
-    observerRef.current = group
+    debouncedSetShouldSkipObserverUpdateRef()
   }
 
   const handleToggleOption = (option: ProfileRecord) => {
@@ -306,7 +322,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
             </SideBarItem>
           ))}
         </SideBar>
-        <OptionsContainer ref={targetRef}>
+        <OptionsContainer ref={observerRootRef}>
           {visibleOptions.length > 0 ? (
             <ScrollBox hideDividers>
               <div ref={topRef} style={{ height: '1px' }} data-group="top" />
