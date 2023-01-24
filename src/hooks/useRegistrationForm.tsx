@@ -72,7 +72,12 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
 
   const validatorForRecord = (record: ProfileRecord) => {
     if (record.key === 'contentHash') return validateContentHash('all')
-    if (record.group === 'address') return validateCryptoAddress(record.key)
+    if (record.group === 'address')
+      return async (value: string) => {
+        const result = await validateCryptoAddress(record.key)(value)
+        if (typeof result === 'string') return t('errors.invalidAddress', { ns: 'common' })
+        return result
+      }
     if (record.group === 'website') return validateContentHash(record.key as ContentHashProvider)
     if (record.group === 'custom')
       return (key?: string) => {
