@@ -89,14 +89,22 @@ const CopyableRightContainer = styled.div(
   `,
 )
 
-const Copyable = ({ label, value }: { label: string; value: string }) => {
+const Copyable = ({
+  label,
+  value,
+  displayValue,
+}: {
+  label: string
+  value: string
+  displayValue: string
+}) => {
   const { copy, copied } = useCopied()
   return (
     <Button colorStyle="background" onClick={() => copy(value)} size="flexible" fullWidthContent>
       <ButtonInner>
         <Typography>{label}</Typography>
         <CopyableRightContainer>
-          <Typography fontVariant="small">{value}</Typography>
+          <Typography fontVariant="small">{displayValue}</Typography>
           <IconCopyAnimated color="grey" copied={copied} size="3.5" />
         </CopyableRightContainer>
       </ButtonInner>
@@ -198,14 +206,17 @@ export const AddTextRecord = ({
             <Typography fontVariant="small">{t('addTextRecord.txt')}</Typography>
           </ButtonInner>
         </Button>
-        <Copyable {...{ label: 'Name', value: '_ens' }} />
+        <Copyable {...{ label: 'Name', value: '_ens', displayValue: '_ens' }} />
       </ButtonRow>
       <Spacer $height="2" />
       {address && (
         <Copyable
           {...{
             label: 'Value',
-            value: breakpoints.sm ? address : shortenAddress(address, undefined, 7, 7),
+            value: `a=${address}`,
+            displayValue: `a=${
+              breakpoints.sm ? address : shortenAddress(address, undefined, 6, 6)
+            }`,
           }}
         />
       )}

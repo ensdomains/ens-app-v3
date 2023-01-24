@@ -98,4 +98,4 @@ export type RegistrationReducerAction =
       selected: SelectedItemProperties
     }
 
-export type MoonpayTransactionStatus = 'pending' | 'completed' | 'failed'
+export type MoonpayTransactionStatus = 'pending' | 'completed' | 'failed' | 'waitingAuthorization'

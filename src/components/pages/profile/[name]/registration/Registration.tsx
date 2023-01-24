@@ -71,8 +71,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
-  const { moonpayUrl, initiateMoonpayRegistration, hasMoonpayModal, moonpayTransactionStatus } =
-    useMoonpayRegistration(dispatch, normalisedName, selected, item)
+  const {
+    moonpayUrl,
+    initiateMoonpayRegistration,
+    hasMoonpayModal,
+    setHasMoonpayModal,
+    moonpayTransactionStatus,
+  } = useMoonpayRegistration(dispatch, normalisedName, selected, item)
 
   const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
@@ -225,7 +230,16 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
-      <StyledDialog open={hasMoonpayModal} variant="actionable">
+      <StyledDialog
+        open={hasMoonpayModal}
+        variant="actionable"
+        onDismiss={() => {
+          if (moonpayTransactionStatus === 'waitingAuthorization') {
+            return
+          }
+          setHasMoonpayModal(false)
+        }}
+      >
         <iframe
           title="Moonpay Checkout"
           width="100%"

@@ -14,6 +14,7 @@ import {
   mq,
 } from '@ensdomains/thorin'
 
+import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Card } from '@app/components/Card'
@@ -63,9 +64,9 @@ const InfoItem = styled.div(
     align-items: center;
     justify-content: center;
     gap: ${theme.space['4']};
+    background: ${theme.colors.backgroundSecondary};
 
     padding: ${theme.space['4']};
-    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.large};
     text-align: center;
 
@@ -119,7 +120,7 @@ const PaymentChoiceContainer = styled.div`
 
 const StyledRadioButtonGroup = styled(RadioButtonGroup)(
   ({ theme }) => css`
-    border: 1px solid ${theme.colors.grey};
+    border: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.large};
     gap: 0;
   `,
@@ -129,9 +130,9 @@ const StyledRadioButton = styled(RadioButton)``
 
 const RadioButtonContainer = styled.div(
   ({ theme }) => css`
-    padding: 8px 15px;
+    padding: ${theme.space['4']};
     &:last-child {
-      border-top: 1px solid ${theme.colors.grey};
+      border-top: 1px solid ${theme.colors.border};
     }
   `,
 )
@@ -146,6 +147,13 @@ const RadioLabel = styled(Typography)(
     color: ${theme.colors.text};
   `,
 )
+
+const MoonpayContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+`
 
 export enum PaymentMethod {
   ethereum = 'ethereum',
@@ -185,7 +193,7 @@ const PaymentChoice = ({
           />
           {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
             <>
-              <Spacer $height="2" />
+              <Spacer $height="4" />
               <Helper type="warning" alignment="horizontal">
                 {t('steps.info.notEnoughEth')}
               </Helper>
@@ -194,7 +202,7 @@ const PaymentChoice = ({
           )}
           {paymentMethodChoice === PaymentMethod.ethereum && hasEnoughEth && (
             <>
-              <Spacer $height="2" />
+              <Spacer $height="4" />
               <InfoItems>
                 {ethInfoItems.map((item, idx) => (
                   <InfoItem key={item}>
@@ -212,7 +220,10 @@ const PaymentChoice = ({
             label={
               <>
                 <RadioLabel>{t('steps.info.creditOrDebit')}</RadioLabel>
-                <Typography>(X% {t('steps.info.fee')})</Typography>
+                <br />
+                <Typography color="textTertiary" weight="light">
+                  ({t('steps.info.additionalFee')})
+                </Typography>
               </>
             }
             name="RadioButtonGroup"
@@ -221,7 +232,7 @@ const PaymentChoice = ({
           />
           {paymentMethodChoice === PaymentMethod.moonpay && (
             <>
-              <Spacer $height="2" />
+              <Spacer $height="4" />
               <InfoItems>
                 {moonpayInfoItems.map((item, idx) => (
                   <InfoItem key={item}>
@@ -230,7 +241,11 @@ const PaymentChoice = ({
                   </InfoItem>
                 ))}
               </InfoItems>
-              <Spacer $height="2" />
+              <Spacer $height="4" />
+              <MoonpayContainer>
+                {t('steps.info.poweredBy')}
+                <MoonpayLogo />
+              </MoonpayContainer>
             </>
           )}
         </RadioButtonContainer>
@@ -269,8 +284,9 @@ const Info = ({
     hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
   )
 
+  // Keep radio button choice up to date
   useEffect(() => {
-    if (previousMoonpayTransactionStatus === undefined && moonpayTransactionStatus) {
+    if (moonpayTransactionStatus) {
       setPaymentMethodChoice(
         hasPendingMoonpayTransaction || hasFailedMoonpayTransaction ? PaymentMethod.moonpay : '',
       )

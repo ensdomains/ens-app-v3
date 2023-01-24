@@ -140,14 +140,6 @@ const Pricing = ({
     )
   }
 
-  // else if (balance?.value.lt(totalRequiredBalance)) {
-  //   actionButton = (
-  //     <Button data-testid="next-button" shadowless disabled>
-  //       {t('steps.pricing.insufficientBalance')}
-  //     </Button>
-  //   )
-  // }
-
   return (
     <StyledCard>
       <Heading>{t('heading', { name: normalisedName })}</Heading>
