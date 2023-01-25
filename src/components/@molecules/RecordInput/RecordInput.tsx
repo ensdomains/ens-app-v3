@@ -55,6 +55,7 @@ const InnerButtonWrapper = styled.div(
     align-items: center;
     justify-content: center;
     transition: all 150ms ease-in-out;
+    cursor: pointer;
 
     svg {
       color: ${theme.colors.greyPrimary};
