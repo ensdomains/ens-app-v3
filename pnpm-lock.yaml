@@ -41,6 +41,7 @@ importers:
       '@ensdomains/ensjs': 3.0.0-alpha.37
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': ^0.6.23
+      '@ethersproject/address': ^5.7.0
       '@ethersproject/providers': ^5.7.0
       '@next/bundle-analyzer': ^12.2.5
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -160,6 +161,8 @@ importers:
       '@ensdomains/ensjs': 3.0.0-alpha.37_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.23_6haozuff5ofofiwuoke6ixqiri
+      '@ethersproject/address': 5.7.0
+      '@ethersproject/providers': 5.7.1
       '@rainbow-me/rainbowkit': 0.4.8_zczigdeajjlj6h32kv7vfprn2y_wiydppdk2wtsgvuygzl3yf3yma
       '@sentry/nextjs': 7.14.1_next@12.1.6+react@17.0.2
       '@svgr/webpack': 6.4.0
@@ -200,7 +203,6 @@ importers:
       '@deploysentinel/cypress-debugger': 0.5.5
       '@ensdomains/buffer': 0.1.0_hardhat@2.11.2
       '@ensdomains/ens-test-env': 0.3.6
-      '@ethersproject/providers': 5.7.1
       '@next/bundle-analyzer': 12.3.1
       '@next/swc-linux-x64-gnu': 12.1.4
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_liuail6phkx7un26teqxcf6yx4

@@ -1,4 +1,4 @@
-import { getAddress } from 'ethers/lib/utils'
+import { getAddress } from '@ethersproject/address'
 
 import { formatsByName } from '@ensdomains/address-encoder'
 import { validate } from '@ensdomains/ens-validation'
@@ -15,7 +15,7 @@ export const hasNonAscii = () => {
 
 export const validateCryptoAddress =
   (coin: string) =>
-  async (address: string): Promise<string | boolean> => {
+  (address: string): string | boolean => {
     try {
       const _coin = coin.toUpperCase()
 

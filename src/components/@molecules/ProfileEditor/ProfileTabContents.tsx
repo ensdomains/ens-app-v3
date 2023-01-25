@@ -222,10 +222,10 @@ const ProfileTabContents = ({
                         clearErrors([`address.${key}`])
                       }}
                       {...register(`address.${key}`, {
-                        validate: async (value: string) => {
-                          const result = await validateCryptoAddress(key)(value)
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
                           if (typeof result === 'string')
-                            return t('errors.invalidAddres', { ns: 'common' })
+                            return t('errors.invalidAddress', { ns: 'common' })
                           return result
                         },
                       })}
@@ -255,8 +255,8 @@ const ProfileTabContents = ({
                         unregister(`address.${key}`)
                       }}
                       {...register(`address.${key}`, {
-                        validate: async (value: string) => {
-                          const result = await validateCryptoAddress(key)(value)
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
                           if (typeof result === 'string')
                             return t('errors.invalidAddress', { ns: 'common' })
                           return result
