@@ -101,6 +101,7 @@ const { provider, chains } = configureChains(
           }),
         ]
       : [
+          infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }),
           jsonRpcProvider({
             rpc: (c) => ({
               http: `https://web3.ens.domains/v1/${
@@ -108,7 +109,6 @@ const { provider, chains } = configureChains(
               }`,
             }),
           }),
-          infuraProvider({ apiKey: '58a380d3ecd545b2b5b3dad5d2b18bf0' }),
         ]),
   ],
 )
