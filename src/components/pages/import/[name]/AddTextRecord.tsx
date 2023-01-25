@@ -1,4 +1,4 @@
-import { utils } from 'ethers'
+import { isAddress } from '@ethersproject/address'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -144,7 +144,7 @@ export const AddTextRecord = ({
         // DNS record is not set
         setSyncWarning(false)
         setErrorState(Errors.DNS_RECORD_DOES_NOT_EXIST)
-      } else if (!utils.isAddress(dnsOwner)) {
+      } else if (!isAddress(dnsOwner)) {
         // Invalid DNS record
         setSyncWarning(false)
         setErrorState(Errors.DNS_RECORD_INVALID)

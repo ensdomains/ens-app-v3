@@ -1,4 +1,4 @@
-import { isAddress } from 'ethers/lib/utils'
+import { isAddress } from '@ethersproject/address'
 import { useEffect, useMemo, useState } from 'react'
 
 import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'

@@ -1,6 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 import { useEthPrice } from '@app/hooks/useEthPrice'
 

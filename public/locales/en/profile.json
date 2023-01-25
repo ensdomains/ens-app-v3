@@ -67,7 +67,9 @@
           "CANNOT_SET_TTL": "Can set TTL",
           "CANNOT_TRANSFER": "Can transfer",
           "CANNOT_UNWRAP": "Can unwrap",
-          "PARENT_CANNOT_CONTROL": "Parent can control"
+          "PARENT_CANNOT_CONTROL": "Parent can control",
+          "CAN_EXTEND_EXPIRY": "Cannot extend expiry",
+          "IS_DOT_ETH": "Is not .eth"
         }
       },
       "ownership": {

@@ -1,11 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { namehash } from 'ethers/lib/utils'
 import fs from 'fs/promises'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   if (!hre.network.tags.generate) {

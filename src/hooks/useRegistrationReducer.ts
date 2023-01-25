@@ -1,3 +1,4 @@
+import { childFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import {
   RegistrationReducerAction,
   RegistrationReducerData,
@@ -18,7 +19,7 @@ const defaultData: RegistrationReducerDataItem = {
   reverseRecord: false,
   records: {},
   resolver: '',
-  permissions: {},
+  permissions: childFuseObj,
   secret: '',
   started: false,
   address: '',
@@ -38,7 +39,7 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   reverseRecord: false,
   records: {},
   resolver: '',
-  permissions: {},
+  permissions: childFuseObj,
   secret: randomSecret(),
   started: false,
   ...selected,

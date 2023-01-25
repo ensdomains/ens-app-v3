@@ -1,8 +1,9 @@
 import { mockFunction, renderHook } from '@app/test-utils'
-import { useProfile } from './useProfile'
-import { useResolverStatus } from './useResolverStatus'
+
 import { useEns } from '../utils/EnsProvider'
 import { useContractAddress } from './useContractAddress'
+import { useProfile } from './useProfile'
+import { useResolverStatus } from './useResolverStatus'
 
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/hooks/useContractAddress')

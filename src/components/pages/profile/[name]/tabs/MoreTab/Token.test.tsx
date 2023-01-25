@@ -1,6 +1,9 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { BigNumber, utils } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+
+import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 import { useChainId } from '@app/hooks/useChainId'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -22,22 +25,22 @@ describe('Token', () => {
       mockUseChainId.mockReturnValue(1)
       const name = 'nick.eth'
       const label = 'nick'
-      const labelhash = utils.keccak256(utils.toUtf8Bytes(label))
-      const tokenId = BigNumber.from(labelhash).toString()
+      const labelHash = labelhash(label)
+      const tokenId = BigNumber.from(labelHash).toString()
 
       render(<Token {...{ name, isWrapped: false }} />)
-      expect(screen.getByText(labelhash)).toBeVisible()
+      expect(screen.getByText(labelHash)).toBeVisible()
       expect(screen.getByText(tokenId)).toBeVisible()
     })
 
     it('should display the correct tokenID (decimal and hex) for an wrapped names', () => {
       mockUseChainId.mockReturnValue(1)
       const name = 'nick.eth'
-      const namehash = utils.namehash(name)
-      const tokenId = BigNumber.from(namehash).toString()
+      const nameHash = namehash(name)
+      const tokenId = BigNumber.from(nameHash).toString()
 
       render(<Token {...{ name, isWrapped: true }} />)
-      expect(screen.getByText(namehash)).toBeVisible()
+      expect(screen.getByText(nameHash)).toBeVisible()
       expect(screen.getByText(tokenId)).toBeVisible()
     })
   })
