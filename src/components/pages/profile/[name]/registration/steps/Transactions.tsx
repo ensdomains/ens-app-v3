@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { ChildFuses } from '@ensdomains/ensjs'
 import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
 import {
   AlertSVG,
@@ -160,11 +161,19 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       duration: yearsToSeconds(registrationData.years),
       resolverAddress: registrationData.resolver,
       secret: registrationData.secret,
+      // Start here
       fuses: registrationData.permissions,
       records: profileRecordsToRecordOptions(
         registrationData.records,
         registrationData.clearRecords,
       ),
+      // fuses: {
+      //   named: Object.keys(registrationData.permissions).filter(
+      //     (key) => registrationData.permissions[key as ChildFuses['fuse']],
+      //   ) as ChildFuses['fuse'][],
+      //   unnamed: [],
+      // },
+      // records: registrationData.records,
       reverseRecord: registrationData.reverseRecord,
     }),
     [address, nameDetails, registrationData],

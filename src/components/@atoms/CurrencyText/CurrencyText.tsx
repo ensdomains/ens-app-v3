@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 import { useEthPrice } from '@app/hooks/useEthPrice'
 import { CurrencyDisplay } from '@app/types'

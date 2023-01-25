@@ -1,10 +1,11 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
+
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 const names = [
   {
@@ -48,7 +49,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       data,
       reverseRecord,
       fuses,
-      wrapperExpiry,
     )
 
     const _controller = controller.connect(await ethers.getSigner(owner))
@@ -69,7 +69,6 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       data,
       reverseRecord,
       fuses,
-      wrapperExpiry,
       {
         value: price,
       },

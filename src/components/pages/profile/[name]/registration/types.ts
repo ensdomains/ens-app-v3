@@ -1,3 +1,6 @@
+import type { ChildFuses } from '@ensdomains/ensjs'
+import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
+
 import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { FuseObj } from '@app/types'
 
@@ -17,6 +20,9 @@ export type RegistrationStepData = {
     clearRecords?: boolean
     resolver?: string
     permissions?: Partial<FuseObj>
+    // records: RecordOptions
+    // resolver: string
+    // permissions: ChildFuses['current']
   }
   info: {}
   transactions: {

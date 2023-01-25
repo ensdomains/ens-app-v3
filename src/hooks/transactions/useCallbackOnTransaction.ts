@@ -38,7 +38,10 @@ const useCallbackOnTransaction = (callback: UpdateCallback) => {
 
   useQuery<number>(
     ['graphBlock', chainId, transactions],
-    () => gqlInstance.request(query).then((res: GraphResponse) => res._meta.block.number),
+    () =>
+      gqlInstance.client
+        .request(query)
+        .then((res: GraphResponse | null) => res!._meta.block.number),
     {
       initialData: 0,
       refetchInterval: (data) => {

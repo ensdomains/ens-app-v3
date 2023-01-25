@@ -1,5 +1,5 @@
-import { BigNumber } from 'ethers'
-import { toUtf8Bytes } from 'ethers/lib/utils'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 import { useMemo } from 'react'
 import { useFeeData, useQuery } from 'wagmi'
 

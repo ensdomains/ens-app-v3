@@ -1,5 +1,6 @@
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { BigNumber, utils } from 'ethers'
+import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, keyframes } from 'styled-components'
@@ -418,7 +419,7 @@ export const TransactionStageModal = ({
         return 'transaction.dialog.error.gasLimit'
       } catch (err: any) {
         const code = err.data.replace('Reverted ', '')
-        const reason = utils.toUtf8String(`0x${code.substr(138)}`)
+        const reason = toUtf8String(`0x${code.substr(138)}`)
         return reason
       }
     },
