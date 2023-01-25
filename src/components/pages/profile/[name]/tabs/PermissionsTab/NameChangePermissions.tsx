@@ -7,7 +7,7 @@ import { Button, Typography } from '@ensdomains/thorin'
 import type { useEns } from '@app/utils/EnsProvider'
 
 import { useTransactionFlow } from '../../../../../../transaction-flow/TransactionFlowProvider'
-import { Section, SectionFooter, SectionHeader, SectionItem } from './Section'
+import { Section, SectionFooter, SectionItem } from './Section'
 
 type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
 type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
@@ -126,12 +126,6 @@ export const NameChangePermissions = ({
 
   return (
     <Section $isCached={isCachedData}>
-      <SectionHeader>
-        <Typography fontVariant="headingThree">Name Change Permissions</Typography>
-        <Typography fontVariant="body">
-          The owner of this name may be able to change settings on this name.
-        </Typography>
-      </SectionHeader>
       {permissions.unburned.map(({ translationKey }) => (
         <SectionItem icon="info">
           <Typography fontVariant="bodyBold">

@@ -230,6 +230,7 @@ const RevokePermissions = ({ data, onDismiss, dispatch }: Props) => {
           revokeChangeFusesWarning: <RevokeChangeFusesWarningView />,
         }[view]
       }
+      {flowType}
       <Dialog.Footer
         leading={
           <Button

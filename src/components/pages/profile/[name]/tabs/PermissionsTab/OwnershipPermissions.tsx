@@ -3,12 +3,12 @@ import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Helper, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
 import type { useEns } from '@app/utils/EnsProvider'
 
 import { useTransactionFlow } from '../../../../../../transaction-flow/TransactionFlowProvider'
-import { Section, SectionFooter, SectionHeader, SectionItem, SectionList } from './Section'
+import { Section, SectionFooter, SectionItem, SectionList } from './Section'
 import { AccountLink } from './components/AccountLink'
 
 type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
@@ -120,9 +120,6 @@ export const OwnershipPermissions = ({
 
   return (
     <Section $isCached={isCachedData}>
-      <SectionHeader>
-        <Typography fontVariant="headingThree">{t('tabs.permissions.ownership.title')}</Typography>
-      </SectionHeader>
       {ownershipStatus === 'parent-cannot-control' && (
         <SectionItem icon="disabled" date-testid="parent-cannot-control">
           <Typography fontVariant="bodyBold">
@@ -210,20 +207,6 @@ export const OwnershipPermissions = ({
       )}
       {buttonProps && (
         <SectionFooter>
-          {showUnwrapWarning && (
-            <Helper type="info">
-              <Typography fontVariant="body">
-                <Trans
-                  t={t}
-                  i18nKey="tabs.permissions.ownership.unwrapWarning.message"
-                  values={{ parent: parentName }}
-                  components={{
-                    parentLink: <AccountLink nameOrAddress={parentName} tab="permissions" />,
-                  }}
-                />
-              </Typography>
-            </Helper>
-          )}
           <ButtonRow>
             <div>
               <Button onClick={buttonProps.onClick} disabled={!!buttonProps.disabled}>

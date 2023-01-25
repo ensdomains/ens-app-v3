@@ -40,6 +40,7 @@
     },
     "permissions": {
       "name": "Permissions",
+      "revokeUnwrapWarning": "<strong>You cannot change permissions on this name.</strong> You must first revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
       "ownership": {
         "title": "Ownership Permissions",
         "parentCanControl": {
@@ -155,7 +156,6 @@
           }
         }
       }
-    
     },
     "fuses": {
       "name": "Fuses"

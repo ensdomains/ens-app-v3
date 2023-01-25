@@ -1,9 +1,7 @@
 import { UseFormRegister } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
-import { Dialog } from '@ensdomains/thorin'
-
-import { PermissionsCheckbox } from '@app/components/@molecules/PermissionsCheckbox/PermissionsCheckbox'
+import { CheckboxRow, Dialog } from '@ensdomains/thorin'
 
 import type { FormData } from '../RevokePermissions-flow'
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
@@ -21,8 +19,8 @@ export const RevokeChangeFusesView = ({ register }: Props) => {
       <CenterAlignedTypography>
         {t('input.revokePermissions.views.revokeChangeFuses.subtitle')}
       </CenterAlignedTypography>
-      <PermissionsCheckbox
-        title={t('input.revokePermissions.views.revokeChangeFuses.fuses.CANNOT_BURN_FUSES')}
+      <CheckboxRow
+        label={t('input.revokePermissions.views.revokeChangeFuses.fuses.CANNOT_BURN_FUSES')}
         {...register('fuseObj.CANNOT_BURN_FUSES')}
       />
     </>

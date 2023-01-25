@@ -17,6 +17,14 @@ export const Section = styled.div(
     border-radius: ${theme.space[4]};
     border: ${theme.space.px} solid ${theme.colors.border};
     background: ${theme.colors.backgroundPrimary};
+
+    > * {
+      border-top: 1px solid ${theme.colors.border};
+    }
+
+    > *:first-child {
+      border-top: none;
+    }
   `,
 )
 
@@ -41,7 +49,7 @@ const SectionItemContainer = styled.div<{ $screen?: 'desktop' | 'mobile' }>(
     gap: ${theme.space['4']};
 
     padding: ${theme.space['4']};
-    border-top: ${theme.space.px} solid ${theme.colors.border};
+    /* border-top: ${theme.space.px} solid ${theme.colors.border}; */
 
     ${$screen === 'desktop' &&
     css`
@@ -112,7 +120,7 @@ const SectionListContainer = styled.div(
 export const SectionList = ({ title, children }: PropsWithChildren<SectionListProps>) => {
   return (
     <SectionListContainer>
-      <Typography typography="Small/Bold" color="text">
+      <Typography fontVariant="smallBold" color="text">
         {title}
       </Typography>
       <ul>{children}</ul>
@@ -126,7 +134,7 @@ export const SectionFooter = styled.div<{ $screen?: Screen }>(
     flex-direction: column;
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
-    border-top: ${theme.space.px} solid ${theme.colors.border};
+    /* border-top: ${theme.space.px} solid ${theme.colors.border}; */
 
     ${$screen === 'desktop' &&
     css`

@@ -1,8 +1,10 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount } from 'wagmi'
 
 import { Banner } from '@ensdomains/thorin'
 
+import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useGetHistory } from '@app/hooks/useGetHistory'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -35,9 +37,11 @@ const Container = styled(CacheableComponent)(
 export const PermissionsTab = ({ name, wrapperData }: Props) => {
   const { t } = useTranslation('profile')
 
+  const { address } = useAccount()
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
   const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
+  const isSubnameEth = nameParts.length >= 3 && nameParts[nameParts.length - 1] === 'eth'
 
   const { wrapperData: parentWrapperData } = useNameDetails(parentName)
 
@@ -48,12 +52,25 @@ export const PermissionsTab = ({ name, wrapperData }: Props) => {
   console.log('wrapperData', wrapperData)
   console.log('parentWrapperData', parentWrapperData)
   console.log('primaryName', primaryName)
+  console.log('parentExpiry', parentWrapperData?.expiryDate)
+
+  const userIsParentOwner = parentWrapperData?.owner === address
+  const showUnwrapWarning =
+    isSubnameEth && !parentWrapperData?.fuseObj.CANNOT_UNWRAP && userIsParentOwner
 
   return (
     <Container>
-      <Banner alert="warning">
-        <Trans t={t} i18nKey="permissionsTab.warning" />
-      </Banner>
+      {showUnwrapWarning && (
+        <BaseLink href={`/${parentName}?tab=permissions`} passHref>
+          <Banner alert="warning" as="a">
+            <Trans
+              t={t}
+              i18nKey="tabs.permissions.revokeUnwrapWarning"
+              values={{ parent: parentName }}
+            />
+          </Banner>
+        </BaseLink>
+      )}
       <OwnershipPermissions
         name={name}
         is2LDEth={is2LDEth}

@@ -92,7 +92,7 @@ export const ExpiryPermissions = ({
       <SectionFooter>
         <FooterContainer>
           <div>
-            <Button onClick={handleRevokePermissions}>Revoke permissions</Button>
+            <Button onClick={handleRevokePermissions}>Change permissions</Button>
           </div>
         </FooterContainer>
       </SectionFooter>
