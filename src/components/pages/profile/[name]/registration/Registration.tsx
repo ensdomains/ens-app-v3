@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Dialog, Helper } from '@ensdomains/thorin'
+import { Dialog, Helper, mq } from '@ensdomains/thorin'
 
 import { baseFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { useContractAddress } from '@app/hooks/useContractAddress'
@@ -32,19 +32,29 @@ type Props = {
 
 const StyledDialog = styled(Dialog)(
   () => css`
-    max-width: 100vw;
-    width: 90vw;
-    height: 90vh;
+    height: 80vh;
 
-    & > div {
-      max-width: 90vw;
+    & > div > div {
+      height: 100%;
+    }
+
+    ${mq.sm.min(css`
+      max-width: 100vw;
       width: 90vw;
       height: 90vh;
-    }
-    & > div > div {
-      max-width: 90vw;
-      height: 90vh;
-    }
+
+      & > div {
+        max-width: 90vw;
+        width: 90vw;
+        height: 90vh;
+        padding: 0;
+      }
+      & > div > div {
+        max-width: 90vw;
+        height: 90vh;
+        gap: 0;
+      }
+    `)}
   `,
 )
 
@@ -243,7 +253,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         <iframe
           title="Moonpay Checkout"
           width="100%"
-          height="90%"
+          height="100%"
+          style={{ borderRadius: 25 }}
           src={moonpayUrl}
           id="moonpayIframe"
         />

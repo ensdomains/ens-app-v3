@@ -329,13 +329,7 @@ const Info = ({
   return (
     <StyledCard>
       <Heading>{t('steps.info.heading')}</Heading>
-      <Typography>{t('steps.info.subheading')}</Typography>
       <FullInvoice {...estimate} />
-      {!registrationData.queue.includes('profile') && (
-        <ProfileButton data-testid="setup-profile-button" onClick={onProfileClick}>
-          <Typography>{t('steps.info.setupProfile')}</Typography>
-        </ProfileButton>
-      )}
       <PaymentChoice
         {...{
           paymentMethodChoice,
@@ -349,6 +343,11 @@ const Info = ({
       )}
       {hasFailedMoonpayTransaction && (
         <Helper type="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
+      )}
+      {!registrationData.queue.includes('profile') && (
+        <ProfileButton data-testid="setup-profile-button" onClick={onProfileClick}>
+          <Typography color="accent">{t('steps.info.setupProfile')}</Typography>
+        </ProfileButton>
       )}
       <ButtonContainer>
         {!hasPendingMoonpayTransaction && (
