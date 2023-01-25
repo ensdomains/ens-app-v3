@@ -344,7 +344,7 @@ const Info = ({
       {hasFailedMoonpayTransaction && (
         <Helper type="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
       )}
-      {!registrationData.queue.includes('profile') && (
+      {!registrationData.queue.includes('profile') && !hasPendingMoonpayTransaction && (
         <ProfileButton data-testid="setup-profile-button" onClick={onProfileClick}>
           <Typography color="accent">{t('steps.info.setupProfile')}</Typography>
         </ProfileButton>
