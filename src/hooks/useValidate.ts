@@ -1,6 +1,12 @@
 import { isAddress } from '@ethersproject/address'
 import { useEffect, useMemo, useState } from 'react'
 
+import {
+  checkIsDecrypted,
+  checkLabel,
+  isEncodedLabelhash,
+  saveName,
+} from '@ensdomains/ensjs/utils/labels'
 import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 
 export const useValidate = (input: string, skip?: any) => {
@@ -10,9 +16,18 @@ export const useValidate = (input: string, skip?: any) => {
     let _valid: boolean | undefined
     if (!skip) {
       try {
-        _normalisedName = validateName(decodeURIComponent(input))
+        let _input = decodeURIComponent(input)
+        if (!checkIsDecrypted(input))
+          _input = _input
+            .split('.')
+            .map((label) => (isEncodedLabelhash(label) ? checkLabel(label) || label : label))
+            .join('.')
+        _normalisedName = validateName(_input)
         _inputType = parseInputType(_normalisedName)
         _valid = _inputType.type !== 'unknown' && _inputType.info !== 'unsupported'
+        if (_valid) {
+          saveName(_normalisedName)
+        }
         // eslint-disable-next-line no-empty
       } catch {
         _valid = false

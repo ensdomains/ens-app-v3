@@ -123,6 +123,20 @@ const names: Name[] = [
     namedAddr: 'owner',
     subnames: [{ label: 'sub', namedOwner: 'owner' }],
   },
+  {
+    label: 'unknown-labels',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    subnames: [
+      { label: 'aaa123xyz000', namedOwner: 'owner' },
+      { label: 'aaa123', namedOwner: 'owner' },
+    ],
+  },
+  {
+    label: 'aaa123',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {

@@ -144,6 +144,10 @@
       "title": "Transfer Profile",
       "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
       "message2": "Would you like to transfer your current profile?"
+    },
+    "unknownLabels": {
+      "title": "Confirm your name",
+      "subtitle": "Some of the labels in your name aren't known. Please enter them to continue."
     }
   },
   "transaction": {
@@ -163,5 +167,4 @@
       "warning": "Note that if you cancel this at any point your changes will not be saved."
     }
   }
-
 }

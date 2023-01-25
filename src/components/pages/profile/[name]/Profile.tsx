@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { getEncryptedLabelAmount } from '@ensdomains/ensjs/utils/labels'
 import { Typography } from '@ensdomains/thorin'
 
 import { WrapperCallToAction } from '@app/components/pages/profile/[name]/tabs/WrapperCallToAction'
@@ -103,12 +104,6 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
   )
 
-  useEffect(() => {
-    if (isSelf && name) {
-      router.replace(`/profile/${name}`)
-    }
-  }, [isSelf, name, router])
-
   const [titleContent, descriptionContent] = useMemo(() => {
     if (isSelf) {
       return [t('yourProfile'), '']
@@ -149,6 +144,31 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   }
 
   const selfAbilities = useSelfAbilities(address, name)
+
+  useEffect(() => {
+    if (
+      name !== profile?.decryptedName &&
+      profile?.decryptedName &&
+      !isSelf &&
+      getEncryptedLabelAmount(normalisedName) > getEncryptedLabelAmount(profile.decryptedName)
+    ) {
+      router.replace(`/profile/${profile.decryptedName}`, { shallow: true, maintainHistory: true })
+    } else if (
+      name !== normalisedName &&
+      normalisedName &&
+      !isSelf &&
+      (!profile?.decryptedName ||
+        getEncryptedLabelAmount(profile.decryptedName) > getEncryptedLabelAmount(normalisedName))
+    ) {
+      router.replace(`/profile/${normalisedName}`, { shallow: true, maintainHistory: true })
+    }
+  }, [profile?.decryptedName, normalisedName, name, isSelf, router])
+
+  useEffect(() => {
+    if (isSelf && name) {
+      router.replace(`/profile/${name}`)
+    }
+  }, [isSelf, name, router])
 
   useEffect(() => {
     if (shouldShowSuccessPage(transactions)) {

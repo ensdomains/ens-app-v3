@@ -5,6 +5,8 @@ import supportedProfileItems from '@app/constants/supportedProfileItems.json'
 import supportedTexts from '@app/constants/supportedTexts.json'
 import { useEns } from '@app/utils/EnsProvider'
 
+import useDecryptName from './useDecryptName'
+
 export const useProfile = (name: string, skip?: any) => {
   const { ready, getProfile } = useEns()
 
@@ -31,8 +33,10 @@ export const useProfile = (name: string, skip?: any) => {
     },
   )
 
+  const { decryptedName } = useDecryptName(name, !profile)
+
   return {
-    profile,
+    profile: profile ? { ...profile, ...(decryptedName ? { decryptedName } : {}) } : undefined,
     loading: !ready || loading,
     status,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
