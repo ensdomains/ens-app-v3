@@ -16,13 +16,13 @@ export const useValidate = (input: string, skip?: any) => {
     let _valid: boolean | undefined
     if (!skip) {
       try {
-        let _input = decodeURIComponent(input)
-        if (!checkIsDecrypted(input))
-          _input = _input
+        let decodedInput = decodeURIComponent(input)
+        if (!checkIsDecrypted(decodedInput))
+          decodedInput = decodedInput
             .split('.')
             .map((label) => (isEncodedLabelhash(label) ? checkLabel(label) || label : label))
             .join('.')
-        _normalisedName = validateName(_input)
+        _normalisedName = validateName(decodedInput)
         _inputType = parseInputType(_normalisedName)
         _valid = _inputType.type !== 'unknown' && _inputType.info !== 'unsupported'
         if (_valid) {
