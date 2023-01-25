@@ -145,6 +145,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const selfAbilities = useSelfAbilities(address, name)
 
+  // hook for redirecting to the correct profile url
+  // profile.decryptedName fetches labels from NW/subgraph
+  // normalisedName fetches labels from localStorage
   useEffect(() => {
     if (
       name !== profile?.decryptedName &&
@@ -152,6 +155,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       !isSelf &&
       getEncryptedLabelAmount(normalisedName) > getEncryptedLabelAmount(profile.decryptedName)
     ) {
+      // if the fetched decrypted name is different to the current name
+      // and the decrypted name has less encrypted labels than the normalised name
+      // direct to the fetched decrypted name
       router.replace(`/profile/${profile.decryptedName}`, { shallow: true, maintainHistory: true })
     } else if (
       name !== normalisedName &&
@@ -160,6 +166,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       (!profile?.decryptedName ||
         getEncryptedLabelAmount(profile.decryptedName) > getEncryptedLabelAmount(normalisedName))
     ) {
+      // if the normalised name is different to the current name
+      // and the normalised name has less encrypted labels than the decrypted name
+      // direct to normalised name
       router.replace(`/profile/${normalisedName}`, { shallow: true, maintainHistory: true })
     }
   }, [profile?.decryptedName, normalisedName, name, isSelf, router])
