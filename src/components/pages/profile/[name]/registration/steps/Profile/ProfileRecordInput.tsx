@@ -1,18 +1,61 @@
 import { ComponentProps, FocusEvent, ReactNode, Ref, RefObject, forwardRef, useMemo } from 'react'
 import styled, { css, useTheme } from 'styled-components'
 
-import { Input } from '@ensdomains/thorin'
+import { CrossSVG, Input } from '@ensdomains/thorin'
 
 import { DynamicIcon } from './DynamicIcon'
-import { Field } from './Field'
 
 const Container = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     display: flex;
-    align-items: flex-end;
-    gap: 5px;
+    align-items: stretch;
     position: relative;
+  `,
+)
+
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    margin-right: -${theme.space['1']};
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: ${theme.space['8']};
+    margin-top: -1px;
+  `,
+)
+
+const DeleteButton = styled.button(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    height: ${theme.space['11']};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
+
+const InnerButtonWrapper = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['8']};
+    height: ${theme.space['8']};
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease-in-out;
+
+    svg {
+      color: ${theme.colors.greyPrimary};
+    }
+
+    &:hover {
+      background: ${theme.colors.greySurface};
+      transform: translateY(-1px);
+    }
   `,
 )
 
@@ -87,31 +130,36 @@ export const ProfileRecordInput = forwardRef(
 
     return (
       <Container data-testid={`profile-record-input-${recordKey}`}>
-        <Field label={label} secondaryLabel={secondaryLabel} errorLabel={error}>
-          <Input
-            size="medium"
-            label=""
-            hideLabel
-            ref={ref as RefObject<HTMLInputElement>}
-            icon={prefix}
-            showDot
-            error={!!error}
-            placeholder={placeholder}
-            data-testid={`profile-record-input-input-${recordKey}`}
-            validated={validated}
-            parentStyles={css`
-              height: ${theme.space['12']};
-            `}
-            iconWidth="5.5"
-            onFocus={onFocus}
-            onBlur={onBlur}
-            clearable
-            onClickAction={() => {
-              handleDelete()
-            }}
-            {...props}
-          />
-        </Field>
+        <Input
+          size="medium"
+          label={label}
+          labelSecondary={secondaryLabel}
+          ref={ref as RefObject<HTMLInputElement>}
+          icon={prefix}
+          showDot
+          error={error}
+          placeholder={placeholder}
+          data-testid={`profile-record-input-input-${recordKey}`}
+          validated={validated}
+          parentStyles={css`
+            height: ${theme.space['12']};
+          `}
+          iconWidth="5.5"
+          onFocus={onFocus}
+          onBlur={onBlur}
+          {...props}
+        />
+        <ButtonContainer>
+          <DeleteButton
+            onClick={handleDelete}
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+          >
+            <InnerButtonWrapper>
+              <CrossSVG />
+            </InnerButtonWrapper>
+          </DeleteButton>
+        </ButtonContainer>
       </Container>
     )
   },
