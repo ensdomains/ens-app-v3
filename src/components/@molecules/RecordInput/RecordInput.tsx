@@ -176,6 +176,7 @@ export const RecordInput = forwardRef(
               data-testid="record-input-delete-button"
               onClick={onDelete}
               onMouseDown={(e) => e.preventDefault()}
+              type="button"
             >
               <InnerButtonWrapper>
                 <CrossSVG />
