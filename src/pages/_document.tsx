@@ -76,6 +76,7 @@ export default class MyDocument extends Document {
           <link rel="mask-icon" href={makeIPFSURL('/safari-pinned-tab.svg')} color="#5bbad5" />
           <meta name="msapplication-TileColor" content="#da532c" />
           <meta name="theme-color" content="#F7F7F7" />
+          <script defer data-domain="alpha.ens.domains" src="https://plausible.io/js/script.js" />
         </Head>
         <body>
           <Main />

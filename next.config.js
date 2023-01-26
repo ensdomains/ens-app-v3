@@ -70,6 +70,14 @@ let nextConfig = {
   },
   webpack: (config, options) => {
     config.module.rules.push({
+      // test for .js or .mjs
+      test: /(?<!@ethersproject\/.*)\.m?js$/,
+      use: {
+        loader: path.resolve(__dirname, './loaders/ethers-loader.js'),
+        options: {},
+      },
+    })
+    config.module.rules.push({
       test: /ens.+\.json$/,
       use: {
         loader: path.resolve(__dirname, './loaders/abi-loader.js'),
@@ -114,6 +122,11 @@ let nextConfig = {
     if (process.env.NEXT_PUBLIC_IPFS) {
       config.resolve.alias['../styles.css'] = path.resolve(__dirname, 'src/stub.css')
     }
+
+    config.resolve.alias['@ethersproject/strings/lib/idna.js'] = path.resolve(
+      __dirname,
+      'src/stub.js',
+    )
 
     return config
   },

@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 const SingleNameGasLimit = BigNumber.from('105000')
 const BulkRenewalBaseGasLimit = BigNumber.from('105000')

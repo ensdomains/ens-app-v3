@@ -109,7 +109,8 @@
     "creationDate": "Creation date"
   },
   "errors": {
-    "noResults": "No results found"
+    "noResults": "No results found",
+    "invalidAddress": "Invalid address"
   },
   "transaction": {
     "description": {

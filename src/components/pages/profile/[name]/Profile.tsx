@@ -146,7 +146,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       url.searchParams.set(key, value as string)
     }
     url.searchParams.set('tab', newTab)
-    router.replace(url.toString(), undefined, {
+    router._replace(url.toString(), undefined, {
       shallow: true,
     })
   }

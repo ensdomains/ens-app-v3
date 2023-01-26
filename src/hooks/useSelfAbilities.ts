@@ -199,11 +199,13 @@ export const getFunctionCallDetails = ({
   if (!wrapperData || !parentWrapperData) return {}
 
   const isSubname = checkSubname(name)
-  const { fuseObj } = wrapperData
-  const { fuseObj: parentFuseObj } = parentWrapperData
+  const { parent: childParentFuseObj } = wrapperData
+  const { parent: parentParentFuseObj } = parentWrapperData
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
   const isOwnerOrManager = ownerData?.owner === address || ownerData?.registrant === address
-  const isOwner = isWrapped ? fuseObj.PARENT_CANNOT_CONTROL : ownerData?.registrant === address
+  const isOwner = isWrapped
+    ? childParentFuseObj.PARENT_CANNOT_CONTROL
+    : ownerData?.registrant === address
 
   if (isSubname) {
     const isParentWrapped = parentOwnerData?.ownershipLevel === 'nameWrapper'
@@ -222,7 +224,7 @@ export const getFunctionCallDetails = ({
     }
 
     const isParentManager = isParentWrapped
-      ? !parentFuseObj.PARENT_CANNOT_CONTROL
+      ? !parentParentFuseObj.PARENT_CANNOT_CONTROL
       : parentOwnerData?.owner === address
 
     if (isParentOwnerOrManager) {
@@ -246,7 +248,7 @@ export const getFunctionCallDetails = ({
 
 export const getPermittedActions = (props: GetFunctionCallDetailsArgs): SendPermissions => {
   if (!props.basicNameData.ownerData) return { canSendOwner: false, canSendManager: false }
-  if (props.basicNameData.wrapperData?.fuseObj?.CANNOT_TRANSFER)
+  if (props.basicNameData.wrapperData?.child.CANNOT_TRANSFER)
     return { canSendOwner: false, canSendManager: false }
   const result = getFunctionCallDetails(props)
   if (!result) return { canSendOwner: false, canSendManager: false }
@@ -272,7 +274,7 @@ const isParentWithChildPCCBurnedCalc = (
     !isOwnerOrManager &&
     isParentOwnerOrManager &&
     isWrapped &&
-    wrapperData?.fuseObj.PARENT_CANNOT_CONTROL
+    wrapperData?.parent.PARENT_CANNOT_CONTROL
   )
 }
 

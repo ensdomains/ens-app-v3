@@ -9,7 +9,7 @@ import { Button, Dialog, DownChevronSVG, Helper, Tag, Typography, mq } from '@en
 import { Banner } from '@app/components/@atoms/Banner/Banner'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import BurnFusesContent, {
-  baseFuseObj,
+  childFuseObj,
 } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
 import AvatarButton, {
@@ -22,7 +22,6 @@ import websiteOptions from '@app/components/@molecules/ProfileEditor/options/web
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useProfileEditor from '@app/hooks/useProfileEditor'
-import { FuseObj } from '@app/types'
 import { ProfileFormObject, convertProfileToProfileFormObject } from '@app/utils/editor'
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
@@ -400,15 +399,12 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
       case 'permissions': {
         return (
           <BurnFusesContent
-            fuseData={{ fuseObj: fuses }}
+            fuseData={fuses}
             onDismiss={() => setModalOpen(false)}
             canUnsetFuse
+            returnObject
             onSubmit={(newFuses) => {
-              const _newFuses = newFuses as unknown as keyof FuseObj
-              const newFuseObj = Object.keys(fuses).reduce((acc, key) => {
-                return { ...acc, [key]: _newFuses.includes(key) }
-              }, fuses)
-              setFuses(newFuseObj)
+              setFuses(newFuses)
               setModalOpen(false)
             }}
           />
@@ -481,7 +477,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
                   isDefault={isDefaultFuses}
                   onClick={() => setModalOption('permissions')}
                   onResetClick={() => {
-                    setFuses({ ...baseFuseObj })
+                    setFuses(childFuseObj)
                   }}
                 />
                 <AdvancedOption

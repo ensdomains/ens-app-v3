@@ -1,6 +1,6 @@
 /* eslint-disable no-multi-assign */
+import { sha256 } from '@ethersproject/sha2'
 import { useMutation } from '@tanstack/react-query'
-import { sha256 } from 'ethers/lib/utils'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'

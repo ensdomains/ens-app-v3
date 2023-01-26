@@ -1,13 +1,13 @@
 import { mockFunction, renderHook } from '@app/test-utils'
 
-import { isAddress } from 'ethers/lib/utils'
+import { isAddress } from '@ethersproject/address'
 
 import { parseInputType, validateName } from '@ensdomains/ensjs/utils/validation'
 
 import { useValidate, useValidateOrAddress } from './useValidate'
 
 jest.mock('@ensdomains/ensjs/utils/validation')
-jest.mock('ethers/lib/utils')
+jest.mock('@ethersproject/address')
 
 const mockParseInputType = mockFunction(parseInputType)
 const mockValidateName = mockFunction(validateName)
