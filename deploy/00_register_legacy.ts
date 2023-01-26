@@ -128,7 +128,7 @@ const names: Name[] = [
     namedOwner: 'owner',
     namedAddr: 'owner',
     subnames: [
-      { label: 'aaa123xyz000', namedOwner: 'owner' },
+      { label: 'aaa123xyz000', namedOwner: 'owner2' },
       { label: 'aaa123', namedOwner: 'owner' },
     ],
   },

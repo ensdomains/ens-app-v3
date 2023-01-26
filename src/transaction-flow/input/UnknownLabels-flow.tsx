@@ -140,7 +140,7 @@ const CreateSubname = ({ data: { name, transactions }, dispatch, onDismiss }: Pr
     handleSubmit: _handleSubmit,
     getFieldState,
   } = useForm<FormData>({
-    mode: 'onBlur',
+    mode: 'onChange',
     defaultValues: unknownLabels.reduce(
       (acc, [inx, hash]) => ({ ...acc, [`${inx}-${hash}`]: '' }),
       {},
@@ -203,6 +203,7 @@ const CreateSubname = ({ data: { name, transactions }, dispatch, onDismiss }: Pr
               spellCheck={false}
               autoCorrect="off"
               autoComplete="off"
+              data-testid={`unknown-label-input-${label}`}
               {...(disabled
                 ? {}
                 : register(`${inx}-${label}`, {
@@ -220,7 +221,7 @@ const CreateSubname = ({ data: { name, transactions }, dispatch, onDismiss }: Pr
         }
         trailing={
           <Button
-            data-testid="create-subname-next"
+            data-testid="unknown-labels-confirm"
             onClick={handleSubmitForm}
             disabled={!canConfirm}
           >

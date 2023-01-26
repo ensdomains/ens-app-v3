@@ -97,4 +97,44 @@ describe('Wrap Name', () => {
     cy.findByTestId('transaction-modal-inner').should('not.exist')
     cy.findByTestId('wrapper-cta-container').should('not.exist')
   })
+  it('should allow wrapping a name with an unknown label', () => {
+    acceptMetamaskAccess(3, false)
+    cy.visit(
+      '/[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
+    )
+    cy.findByTestId('wrapper-cta-container').should('be.visible')
+    cy.findByTestId('wrapper-cta-button').should('contain.text', 'Upgrade').click()
+
+    const input = cy.findByTestId(
+      'unknown-label-input-0x5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04',
+    )
+
+    // fail to confirm with invalid label
+    input.click().type('failure')
+    cy.findByText('Label is incorrect').should('be.visible')
+    cy.findByTestId('unknown-labels-confirm').should('be.disabled')
+
+    input.click().clear().type('aaa123xyz000')
+    cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
+
+    cy.findByTestId('wrapper-cta-button').click()
+    cy.findByTestId('transaction-modal-inner').should('be.visible')
+    cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+    cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.log('Confirm metamask transaction for name wrapper approval')
+    cy.confirmMetamaskPermissionToSpend()
+    cy.findByTestId('transaction-modal-complete-button').click()
+
+    cy.wait(1000)
+    cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.log('Confirm metamask transaction for wrapping name')
+    cy.confirmMetamaskTransaction()
+    cy.findByTestId('transaction-modal-complete-button').click()
+
+    cy.findByTestId('transaction-modal-inner').should('not.exist')
+    cy.findByTestId('wrapper-cta-container').should('not.exist')
+
+    // should direct to the known label page
+    cy.url().should('contain', 'aaa123xyz000.unknown-labels.eth')
+  })
 })
