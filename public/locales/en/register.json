@@ -118,9 +118,8 @@
         }
       },
       "errors": {
-        "noOptionResults": "You can create a custom text record with the custom field option.",
-        "labelRequired": "A label is required",
-        "duplicateRecord": "Duplicate record",
+        "labelRequired": "A record key is required",
+        "duplicateRecord": "Duplicate record key",
         "avatarReserved": "Key is being used by avatar manager"
       },
       "confirmations": {

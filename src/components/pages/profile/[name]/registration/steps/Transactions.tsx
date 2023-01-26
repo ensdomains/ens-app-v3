@@ -161,19 +161,18 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       duration: yearsToSeconds(registrationData.years),
       resolverAddress: registrationData.resolver,
       secret: registrationData.secret,
-      // Start here
-      fuses: registrationData.permissions,
       records: profileRecordsToRecordOptions(
         registrationData.records,
         registrationData.clearRecords,
       ),
-      // fuses: {
-      //   named: Object.keys(registrationData.permissions).filter(
-      //     (key) => registrationData.permissions[key as ChildFuses['fuse']],
-      //   ) as ChildFuses['fuse'][],
-      //   unnamed: [],
-      // },
-      // records: registrationData.records,
+      fuses: {
+        named: registrationData.permissions
+          ? (Object.keys(registrationData.permissions).filter(
+              (key) => !!registrationData.permissions?.[key as ChildFuses['fuse']],
+            ) as ChildFuses['fuse'][])
+          : [],
+        unnamed: [],
+      },
       reverseRecord: registrationData.reverseRecord,
     }),
     [address, nameDetails, registrationData],

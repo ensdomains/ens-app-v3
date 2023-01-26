@@ -22,7 +22,6 @@ const defaultRegistrationData = {
     },
   ],
   resolver: '0x123',
-  permissions: {},
   clearRecords: true,
 }
 
@@ -138,6 +137,21 @@ describe('Profile', () => {
     )
   })
 
+  it('should disable eth record if registrationData.reverseRecord is true', async () => {
+    render(
+      <Profile
+        nameDetails={nameDetails}
+        registrationData={makeRegistrationData({ reverseRecord: true })}
+        callback={mockCallback}
+        resolverExists
+      />,
+    )
+
+    const ethRecord = screen.getByTestId('profile-record-input-ETH')
+    expect(ethRecord.querySelector('input')).toBeDisabled()
+    expect(screen.getByTestId('profile-record-input-ETH-delete-button')).toBeDisabled()
+  })
+
   it('should prompt user before deleting eth record', async () => {
     render(
       <Profile
@@ -147,7 +161,8 @@ describe('Profile', () => {
         resolverExists
       />,
     )
-    await userEvent.click(screen.getByTestId('input-action-button'), {
+
+    await userEvent.click(screen.getByTestId('profile-record-input-ETH-delete-button'), {
       pointerEventsCheck: PointerEventsCheckLevel.Never,
     })
     await waitFor(() =>

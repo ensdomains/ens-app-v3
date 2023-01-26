@@ -185,7 +185,6 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     callback({
       records: newRecords,
       clearRecords,
-      permissions: registrationData.permissions,
       resolver: registrationData.resolver,
       back: nativeEvent?.submitter === backRef.current,
     })
@@ -310,6 +309,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
               key={field.id}
               recordKey={field.key}
               group={field.group}
+              disabled={field.key === 'ETH' && registrationData.reverseRecord}
               label={labelForRecord(field)}
               secondaryLabel={secondaryLabelForRecord(field)}
               placeholder={placeholderForRecord(field)}

@@ -1,20 +1,59 @@
 import { ComponentProps, forwardRef } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Textarea } from '@ensdomains/thorin'
-
-import { Field } from './Field'
+import { CrossSVG, Textarea } from '@ensdomains/thorin'
 
 const Container = styled.div(
   () => css`
     position: relative;
     width: 100%;
+    display: flex;
   `,
 )
 
-const TextareaContainer = styled.div(
-  () => css`
-    position: relative;
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    margin-right: -${theme.space['1']};
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    padding-top: ${theme.space['8']};
+    margin-top: -1px;
+  `,
+)
+
+const DeleteButton = styled.button(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    height: ${theme.space['11']};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
+
+const InnerButtonWrapper = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space['8']};
+    height: ${theme.space['8']};
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease-in-out;
+    cursor: pointer;
+
+    svg {
+      color: ${theme.colors.greyPrimary};
+    }
+
+    &:hover {
+      background: ${theme.colors.greySurface};
+      transform: translateY(-1px);
+    }
   `,
 )
 
@@ -32,21 +71,24 @@ export const ProfileRecordTextarea = forwardRef<HTMLTextAreaElement, Props>(
   ) => {
     return (
       <Container data-testid={`profile-record-input-${recordKey}`}>
-        <Field label={label} secondaryLabel={secondaryLabel} errorLabel={error}>
-          <TextareaContainer>
-            <Textarea
-              ref={ref}
-              label=""
-              hideLabel
-              showDot={validated}
-              width="full"
-              onFocus={onFocus}
-              onBlur={onBlur}
-              onClickAction={onDelete}
-              {...props}
-            />
-          </TextareaContainer>
-        </Field>
+        <Textarea
+          ref={ref}
+          label={label}
+          labelSecondary={secondaryLabel}
+          error={error}
+          showDot={validated}
+          width="full"
+          onFocus={onFocus}
+          onBlur={onBlur}
+          {...props}
+        />
+        <ButtonContainer>
+          <DeleteButton onClick={onDelete}>
+            <InnerButtonWrapper>
+              <CrossSVG />
+            </InnerButtonWrapper>
+          </DeleteButton>
+        </ButtonContainer>
       </Container>
     )
   },

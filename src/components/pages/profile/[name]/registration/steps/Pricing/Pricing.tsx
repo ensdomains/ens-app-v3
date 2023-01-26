@@ -8,7 +8,6 @@ import { Button, Field, Heading, Toggle, Typography, mq } from '@ensdomains/thor
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
-import { childFuseObj } from '@app/components/@molecules/BurnFuses/BurnFusesContent'
 import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
@@ -106,15 +105,8 @@ const Pricing = ({
 
   const fullEstimate = useEstimateFullRegistration({
     registration: {
-      // permissions: {},
-      permissions: childFuseObj,
       records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
       clearRecords: resolverExists,
-      // permissions: childFuseObj,
-      // records: {
-      //   coinTypes: [{ key: 'ETH', value: resolverAddress }],
-      //   clearRecords: resolverExists,
-      // },
       resolver: resolverAddress,
       reverseRecord,
       years,

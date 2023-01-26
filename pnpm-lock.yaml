@@ -40,7 +40,7 @@ importers:
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.42
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': ^0.6.23-alpha-4
+      '@ensdomains/thorin': ^0.6.24
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
       '@ethersproject/abstract-signer': ^5.7.0
@@ -175,7 +175,7 @@ importers:
       '@ensdomains/ens-validation': 0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.42_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.23-alpha-4_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.24_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -2378,8 +2378,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.23-alpha-4_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-h2OxekrDX6uyxgDO7h3R552byACuD4Ll869ljEWw+qVU/QWna9eoRSlbQo6T27V3B2QRjGcPHTaaY+52uuhaHQ==}
+  /@ensdomains/thorin/0.6.24_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-vFhjNUI45BbziWpq1YO9xedeSJGFrHpojg0+gLth24alQvtabRSzm62zkpFzdHQdZe+XOt2OkQkcUlGlfOC2kw==}
     peerDependencies:
       react: ^17
       react-dom: ^17
@@ -2467,7 +2467,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
@@ -5030,14 +5030,16 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@typechain/ethers-v5/2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.7.2
       typechain: 3.0.0_typescript@4.8.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@types/aria-query/4.2.2:
@@ -14282,13 +14284,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9

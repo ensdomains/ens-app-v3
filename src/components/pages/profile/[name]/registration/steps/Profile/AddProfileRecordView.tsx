@@ -78,6 +78,11 @@ const SideBarItem = styled.button<{
     &:hover {
       color: ${$active ? theme.colors.accentPrimary : theme.colors.text};
     }
+
+    &:disabled {
+      color: ${theme.colors.border};
+      cursor: not-allowed;
+    }
   `,
 )
 
@@ -114,22 +119,6 @@ const OptionsGrid = styled.div(
   `,
 )
 
-const NoResultsContainer = styled.div(
-  () => css`
-    display: flex;
-    flex-direction: column;
-  `,
-)
-const NoResultsMessage = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    width: 100%;
-    align-items: center;
-    justify-content: center;
-    padding: ${theme.space[4]};
-  `,
-)
-
 const FooterWrapper = styled.div(
   ({ theme }) => css`
     border-top: 1px solid ${theme.colors.border};
@@ -153,20 +142,21 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
   const [search, setSearch] = useState('')
 
-  const visibleOptions = useMemo(() => {
+  const filteredOptions = useMemo(() => {
     if (!i18n.isInitialized || !search) return options
-    return options
-      .map((option) => {
-        const items = option.items.filter((item) => {
-          const { key: record } = item
-          if (record.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return true
-          if (['address', 'website'].includes(option.group)) return false
-          const label = t(`steps.profile.options.groups.${option.group}.items.${item}`)
-          return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
-        })
-        return items.length > 0 ? { ...option, items } : null
+    return options.map((option) => {
+      const items = option.items.filter((item) => {
+        const { key: record } = item
+        if (record.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return true
+        if (['address', 'website'].includes(option.group)) return false
+        const label = t(`steps.profile.options.groups.${option.group}.items.${item}`)
+        return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
       })
-      .filter((option) => !!option) as typeof options
+      return {
+        ...option,
+        items,
+      }
+    })
   }, [search, t, i18n])
 
   // Tracks when to skip updating the sidebar while options grid is scrolling
@@ -218,13 +208,14 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
       if (shouldSkipObserverUpdateRef.current) return
 
-      const first = [...intersectingSections][0]
-      if (intersectingEdges.has('top') && visibleOptions[0]) {
-        setSelectedGroup(visibleOptions[0].group)
-      } else if (intersectingEdges.has('bottom') && visibleOptions[visibleOptions.length - 1]) {
-        setSelectedGroup(visibleOptions[visibleOptions.length - 1].group)
-      } else if (first) {
-        setSelectedGroup(first as ProfileRecordGroup)
+      const firstIntersectingGroup = [...intersectingSections][0]
+      const firstOptionWithItems = filteredOptions.find((option) => option.items.length > 0)
+      if (intersectingEdges.has('top') && firstOptionWithItems) {
+        setSelectedGroup(firstOptionWithItems.group)
+      } else if (intersectingEdges.has('bottom') && filteredOptions[filteredOptions.length - 1]) {
+        setSelectedGroup('other')
+      } else if (firstIntersectingGroup) {
+        setSelectedGroup(firstIntersectingGroup as ProfileRecordGroup)
       }
     }
 
@@ -252,7 +243,7 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
       edgesObserver?.disconnect()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visibleOptions])
+  }, [filteredOptions])
 
   const isOptionSelected = (option: ProfileRecord) => {
     return !!selectedRecords.find((record) => record.key === option.key)
@@ -311,11 +302,12 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
       />
       <Content>
         <SideBar>
-          {visibleOptions.map((option) => (
+          {filteredOptions.map((option) => (
             <SideBarItem
               type="button"
               key={option.group}
               $active={selectedGroup === option.group}
+              disabled={option.items.length === 0 && option.group !== 'other'}
               onClick={() => handleSelectGroup(option.group)}
             >
               {t(`steps.profile.options.groups.${option.group}.label`)}
@@ -323,74 +315,58 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
           ))}
         </SideBar>
         <OptionsContainer ref={observerRootRef}>
-          {visibleOptions.length > 0 ? (
-            <ScrollBox hideDividers>
-              <div ref={topRef} style={{ height: '1px' }} data-group="top" />
-              {visibleOptions.map((option) => {
-                const showLabel = !['address', 'website'].includes(option.group)
-                return (
-                  <OptionGroup
-                    key={option.group}
-                    ref={sectionRefMap[option.group]}
-                    data-group={option.group}
-                  >
-                    <GroupLabel id={`option-group-${option.group}`}>
-                      {t(`steps.profile.options.groups.${option.group}.label`)}
-                    </GroupLabel>
-                    <OptionsGrid>
-                      {option.items.map((item) => (
-                        <OptionButton
-                          data-testid={`profile-record-option-${item.key}`}
-                          group={option.group}
-                          key={item.key}
-                          item={item.key}
-                          {...(showLabel
-                            ? {
-                                label: t(
-                                  `steps.profile.options.groups.${option.group}.items.${item.key}`,
-                                ),
-                              }
-                            : {})}
-                          selected={isOptionSelected(item)}
-                          disabled={isOptionDisabled(item)}
-                          onClick={() => handleToggleOption(item)}
-                        />
-                      ))}
-                      {option.group === 'other' && (
-                        <OptionButton
-                          group="custom"
-                          key="custom"
-                          item="custom"
-                          label={t(`steps.profile.options.groups.other.items.custom`)}
-                          selected={!!selectedRecords.find((r) => r.group === 'custom')}
-                          onClick={() =>
-                            handleToggleOption({ group: 'custom', key: '', type: 'text' })
-                          }
-                          data-testid="profile-record-option-custom"
-                        />
-                      )}
-                    </OptionsGrid>
-                  </OptionGroup>
-                )
-              })}
-              <div ref={bottomRef} style={{ height: '1px' }} data-group="bottom" />
-            </ScrollBox>
-          ) : (
-            <NoResultsContainer>
-              <NoResultsMessage>{t('steps.profile.errors.noOptionResults')}</NoResultsMessage>
-              <OptionsGrid>
-                <OptionButton
-                  group="custom"
-                  key="custom"
-                  item="custom"
-                  label={t(`steps.profile.options.groups.other.items.custom`)}
-                  selected={!!selectedRecords.find((r) => r.group === 'custom')}
-                  onClick={() => handleToggleOption({ group: 'custom', key: '', type: 'text' })}
-                  data-testid="profile-record-option-custom"
-                />
-              </OptionsGrid>
-            </NoResultsContainer>
-          )}
+          <ScrollBox hideDividers>
+            <div ref={topRef} style={{ height: '1px' }} data-group="top" />
+            {filteredOptions.map((option) => {
+              const showLabel = !['address', 'website'].includes(option.group)
+              if (option.items.length === 0 && option.group !== 'other') return null
+              return (
+                <OptionGroup
+                  key={option.group}
+                  ref={sectionRefMap[option.group]}
+                  data-group={option.group}
+                >
+                  <GroupLabel id={`option-group-${option.group}`}>
+                    {t(`steps.profile.options.groups.${option.group}.label`)}
+                  </GroupLabel>
+                  <OptionsGrid>
+                    {option.items.map((item) => (
+                      <OptionButton
+                        data-testid={`profile-record-option-${item.key}`}
+                        group={option.group}
+                        key={item.key}
+                        item={item.key}
+                        {...(showLabel
+                          ? {
+                              label: t(
+                                `steps.profile.options.groups.${option.group}.items.${item.key}`,
+                              ),
+                            }
+                          : {})}
+                        selected={isOptionSelected(item)}
+                        disabled={isOptionDisabled(item)}
+                        onClick={() => handleToggleOption(item)}
+                      />
+                    ))}
+                    {option.group === 'other' && (
+                      <OptionButton
+                        group="custom"
+                        key="custom"
+                        item="custom"
+                        label={t(`steps.profile.options.groups.other.items.custom`)}
+                        selected={!!selectedRecords.find((r) => r.group === 'custom')}
+                        onClick={() =>
+                          handleToggleOption({ group: 'custom', key: '', type: 'text' })
+                        }
+                        data-testid="profile-record-option-custom"
+                      />
+                    )}
+                  </OptionsGrid>
+                </OptionGroup>
+              )
+            })}
+            <div ref={bottomRef} style={{ height: '1px' }} data-group="bottom" />
+          </ScrollBox>
         </OptionsContainer>
       </Content>
       <FooterWrapper>

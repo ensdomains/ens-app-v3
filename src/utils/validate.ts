@@ -1,4 +1,4 @@
-import { getAddress } from 'ethers/lib/utils'
+import { getAddress } from '@ethersproject/address'
 
 import { formatsByName } from '@ensdomains/address-encoder'
 import { validate } from '@ensdomains/ens-validation'

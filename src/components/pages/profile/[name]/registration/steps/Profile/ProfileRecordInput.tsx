@@ -26,17 +26,6 @@ const ButtonContainer = styled.div(
   `,
 )
 
-const DeleteButton = styled.button(
-  ({ theme }) => css`
-    width: ${theme.space['11']};
-    height: ${theme.space['11']};
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  `,
-)
-
 const InnerButtonWrapper = styled.div(
   ({ theme }) => css`
     width: ${theme.space['8']};
@@ -47,6 +36,7 @@ const InnerButtonWrapper = styled.div(
     align-items: center;
     justify-content: center;
     transition: all 150ms ease-in-out;
+    cursor: pointer;
 
     svg {
       color: ${theme.colors.greyPrimary};
@@ -56,6 +46,27 @@ const InnerButtonWrapper = styled.div(
       background: ${theme.colors.greySurface};
       transform: translateY(-1px);
     }
+  `,
+)
+
+const DeleteButton = styled.button(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    height: ${theme.space['11']};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    /* &:disabled svg {
+      color: ${theme.colors.border};
+    }
+
+    &:disabled .icon-wrapper:hover {
+      background: none;
+      transform: initial;
+      cursor: not-allowed;
+    } */
   `,
 )
 
@@ -103,6 +114,7 @@ export const ProfileRecordInput = forwardRef(
       prefix: prefixProp,
       label: labelProp,
       option,
+      disabled,
       placeholder = 'Enter value here',
       onFocus,
       onBlur,
@@ -145,17 +157,20 @@ export const ProfileRecordInput = forwardRef(
             height: ${theme.space['12']};
           `}
           iconWidth="5.5"
+          disabled={disabled}
           onFocus={onFocus}
           onBlur={onBlur}
           {...props}
         />
         <ButtonContainer>
           <DeleteButton
-            onClick={handleDelete}
             type="button"
+            disabled={disabled}
+            data-testid={`profile-record-input-${recordKey}-delete-button`}
             onMouseDown={(e) => e.preventDefault()}
+            onClick={handleDelete}
           >
-            <InnerButtonWrapper>
+            <InnerButtonWrapper className="icon-wrapper">
               <CrossSVG />
             </InnerButtonWrapper>
           </DeleteButton>
