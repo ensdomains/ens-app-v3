@@ -222,7 +222,12 @@ const ProfileTabContents = ({
                         clearErrors([`address.${key}`])
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}
@@ -250,7 +255,12 @@ const ProfileTabContents = ({
                         unregister(`address.${key}`)
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}
