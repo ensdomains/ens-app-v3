@@ -221,7 +221,12 @@ const ProfileTabContents = ({
                         clearErrors([`address.${key}`])
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateForGroupAndKey('address', key),
+                        validate: (value: string) => {
+                          const result = validateForGroupAndKey('address', key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}
@@ -249,7 +254,12 @@ const ProfileTabContents = ({
                         unregister(`address.${key}`)
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateForGroupAndKey('address', key),
+                        validate: (value: string) => {
+                          const result = validateForGroupAndKey('address', key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}

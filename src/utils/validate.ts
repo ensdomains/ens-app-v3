@@ -15,15 +15,16 @@ export const hasNonAscii = () => {
 
 export const validateCryptoAddress =
   (coin: string) =>
-  async (address?: string): Promise<string | boolean> => {
-    if (!address) return true
+  (address: string): string | boolean => {
     try {
-      let formattedAddress = address
-      if (coin.toUpperCase() === 'ETH') {
-        formattedAddress = getAddress(address)
-      }
-      const coinTypeInstance = formatsByName[coin.toUpperCase()]
-      coinTypeInstance.decoder(formattedAddress)
+      const _coin = coin.toUpperCase()
+
+      let _address
+      if (_coin === 'ETH') _address = getAddress(address)
+      else _address = address
+
+      const coinTypeInstance = formatsByName[_coin]
+      coinTypeInstance.decoder(_address)
       return true
     } catch (e: any) {
       if (typeof e === 'string') return e

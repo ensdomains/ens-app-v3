@@ -129,7 +129,12 @@ const AdvancedEditorContent = ({
                         clearErrors([`address.${key}`])
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}
@@ -156,7 +161,12 @@ const AdvancedEditorContent = ({
                         })
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}
