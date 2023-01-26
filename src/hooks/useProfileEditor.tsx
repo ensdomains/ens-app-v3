@@ -1,5 +1,5 @@
 import React, { ComponentProps, useEffect, useState } from 'react'
-import { useForm, useWatch } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
@@ -9,8 +9,8 @@ import addressOptions from '@app/components/@molecules/ProfileEditor/options/add
 import otherOptions from '@app/components/@molecules/ProfileEditor/options/otherOptions'
 import websiteOptions from '@app/components/@molecules/ProfileEditor/options/websiteOptions'
 import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
-import supportedProfileItems from '@app/constants/supportedProfileItems.json'
-import supportedAccounts from '@app/constants/supportedTexts.json'
+import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
+import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
 import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorType } from '@app/types'
@@ -22,11 +22,14 @@ import {
   formSafeKey,
   getDirtyFields,
 } from '@app/utils/editor'
+import { validateCryptoAddress } from '@app/utils/validate'
 
 import {
+  ContentHashProvider,
   contentHashProtocolToContentHashProvider,
   getProtocolTypeAndContentId,
 } from '../utils/contenthash'
+import { validateContentHash } from '../validators/validateContentHash'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -88,7 +91,6 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     setFocus,
     handleSubmit,
     clearErrors,
-    watch,
   } = useForm<ProfileEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -330,14 +332,32 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     callback(records, event)
   }
 
-  const avatar = watch('avatar')
-
-  const _avatar = useWatch({
-    control,
-    name: '_avatar',
-  })
+  const setAvatar = (avatar?: string) => {
+    setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
+  }
 
   const hasChanges = Object.keys(formState.dirtyFields || {}).length > 0
+
+  const validateCustomInputKey = (key?: string) => () => {
+    if (!key) return true
+    const editor = getValues()
+    const allTextKeys = [
+      ...(editor.avatar ? ['avatar'] : []),
+      ...Object.keys(editor.general || {}),
+      ...Object.keys(editor.accounts || {}),
+      ...Object.keys(editor.other || {}),
+    ]
+    return allTextKeys.filter((existingKey) => existingKey === key.trim()).length > 1
+      ? t('errors.duplicateKey', { value: key })
+      : true
+  }
+
+  const validateForGroupAndKey = (group: string, key: string) => {
+    if (group === 'address') return validateCryptoAddress(key)
+    if (group === 'website') return validateContentHash(key as ContentHashProvider)
+    if (group === 'other') return validateCustomInputKey(key)
+    return () => true
+  }
 
   return {
     register,
@@ -382,9 +402,9 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
     addOtherKey,
     removeOtherKey,
     AddButtonProps,
-    avatar,
-    _avatar,
+    setAvatar,
     hasChanges,
+    validateForGroupAndKey,
   }
 }
 

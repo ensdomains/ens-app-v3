@@ -29,11 +29,116 @@
       }
     },
     "profile": {
+      "title": "Create your profile",
       "default": "Default",
       "advanced": "Advanced",
       "permissions": "Permissions",
       "resolver": "Resolver",
-      "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible."
+      "visibilityMessage": "Your profile information will be stored on the blockchain. Anything you add will be publicly visible.",
+      "addProfile": "Add profile fields",
+      "addMore": "Add more to profile",
+      "options": {
+        "groups": {
+          "general": {
+            "label": "General",
+            "items": {
+              "name": "Nickname",
+              "url": "Website",
+              "location": "Location",
+              "description": "Short Bio"
+            },
+            "placeholder": {
+              "name": "John Smith",
+              "url": "https://ens.domains",
+              "location": "Metaverse",
+              "description": "I'm a yield farmer from rural Tennessee."
+            }
+          },
+          "social": {
+            "label": "Social",
+            "items": {
+              "com.twitter": "Twitter",
+              "com.github": "GitHub",
+              "com.discord": "Discord"
+            },
+            "placeholder": {
+              "com.twitter": "e.g. yogicodes",
+              "com.github": "e.g. yogicodes",
+              "com.discord": "e.g. yogicodes#1234"
+            }
+          },
+          "address": {
+            "label": "Address",
+            "itemLabel": "{{coin}} address",
+            "placeholder": {
+              "default": "Add address here",
+              "ETH": "0xD9hbQK...",
+              "BNB": "0xD9hbQK...",
+              "BTC": "3FZbgi29...",
+              "LTC": "3FZbgi29...",
+              "SOL": "D4kA7VzHnmV...",
+              "DOT": "1D4kA7VxH...",
+              "DOGE": "DFabcd12..."
+            }
+          },
+          "website": {
+            "label": "Website",
+            "items": {
+              "ipfs": "IPFS",
+              "swarm": "Swarm",
+              "onion": "Onion",
+              "skynet": "Skynet",
+              "arweave": "Arweave"
+            },
+            "placeholder": {
+              "default": "Add url here",
+              "ipfs": "ipfs://...",
+              "skynet": "sia://...",
+              "arweave": "arweave://...",
+              "swarm": "bzz://...",
+              "onion": "onion3://..."
+            }
+          },
+          "other": {
+            "label": "Other",
+            "items": {
+              "contentHash": "Content Hash",
+              "publicKey": "Public Key",
+              "abi": "ABI",
+              "custom": "Custom"
+            }
+          },
+          "custom": {
+            "key": "Key",
+            "value": "Value"
+          },
+          "default": {
+            "placeholder": "Add value here"
+          }
+        }
+      },
+      "errors": {
+        "labelRequired": "A record key is required",
+        "duplicateRecord": "Duplicate record key",
+        "avatarReserved": "Key is being used by avatar manager"
+      },
+      "confirmations": {
+        "publicNotice": {
+          "title": "Your details are public",
+          "description": "Anything you add to your profile will be publicly viewable on the blockchain.",
+          "confirm": "I understand",
+          "decline": "Back"
+        },
+        "clearEth": {
+          "title": "Clear ETH address?",
+          "description": "Without an ETH address set people will not be able to send money to this name. This can be updated later.",
+          "confirm": "Clear",
+          "decline": "Cancel"
+        }
+      },
+      "actions": {
+        "skipProfile": "Skip profile"
+      }
     },
     "complete": {
       "heading": "Congratulations!",
