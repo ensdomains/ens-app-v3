@@ -117,7 +117,6 @@ describe('Wrap Name', () => {
     input.click().clear().type('aaa123xyz000')
     cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
 
-    cy.findByTestId('wrapper-cta-button').click()
     cy.findByTestId('transaction-modal-inner').should('be.visible')
     cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
