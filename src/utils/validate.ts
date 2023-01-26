@@ -15,8 +15,9 @@ export const hasNonAscii = () => {
 
 export const validateCryptoAddress =
   (coin: string) =>
-  (address: string): string | boolean => {
+  (address?: string): string | boolean => {
     try {
+      if (!address) return 'addressRequired'
       const _coin = coin.toUpperCase()
 
       let _address

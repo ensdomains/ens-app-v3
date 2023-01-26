@@ -223,8 +223,11 @@ const ProfileTabContents = ({
                       {...register(`address.${key}`, {
                         validate: (value: string) => {
                           const result = validateForGroupAndKey('address', key)(value)
-                          if (typeof result === 'string')
+                          if (typeof result === 'string') {
+                            if (result === 'addressRequired')
+                              return t('errors.addressRequired', { ns: 'common' })
                             return t('errors.invalidAddress', { ns: 'common' })
+                          }
                           return result
                         },
                       })}
@@ -256,8 +259,11 @@ const ProfileTabContents = ({
                       {...register(`address.${key}`, {
                         validate: (value: string) => {
                           const result = validateForGroupAndKey('address', key)(value)
-                          if (typeof result === 'string')
+                          if (typeof result === 'string') {
+                            if (result === 'addressRequired')
+                              return t('errors.addressRequired', { ns: 'common' })
                             return t('errors.invalidAddress', { ns: 'common' })
+                          }
                           return result
                         },
                       })}
