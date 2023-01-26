@@ -26,8 +26,19 @@ const ButtonContainer = styled.div(
   `,
 )
 
-const InnerButtonWrapper = styled.div(
+const DeleteButton = styled.button(
   ({ theme }) => css`
+    width: ${theme.space['11']};
+    height: ${theme.space['11']};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
+
+const InnerButtonWrapper = styled.div<{ $disabled?: boolean }>(
+  ({ theme, $disabled }) => css`
     width: ${theme.space['8']};
     height: ${theme.space['8']};
     border-radius: 50%;
@@ -46,27 +57,19 @@ const InnerButtonWrapper = styled.div(
       background: ${theme.colors.greySurface};
       transform: translateY(-1px);
     }
-  `,
-)
 
-const DeleteButton = styled.button(
-  ({ theme }) => css`
-    width: ${theme.space['11']};
-    height: ${theme.space['11']};
+    ${$disabled &&
+    css`
+      svg {
+        color: ${theme.colors.border};
+      }
 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    /* &:disabled svg {
-      color: ${theme.colors.border};
-    }
-
-    &:disabled .icon-wrapper:hover {
-      background: none;
-      transform: initial;
-      cursor: not-allowed;
-    } */
+      &:hover {
+        background: none;
+        transform: initial;
+        cursor: not-allowed;
+      }
+    `}
   `,
 )
 
@@ -170,7 +173,7 @@ export const ProfileRecordInput = forwardRef(
             onMouseDown={(e) => e.preventDefault()}
             onClick={handleDelete}
           >
-            <InnerButtonWrapper className="icon-wrapper">
+            <InnerButtonWrapper $disabled={disabled}>
               <CrossSVG />
             </InnerButtonWrapper>
           </DeleteButton>
