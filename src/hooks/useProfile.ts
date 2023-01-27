@@ -2,8 +2,8 @@ import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
 import supportedAddresses from '@app/constants/supportedAddresses.json'
-import supportedProfileItems from '@app/constants/supportedProfileItems.json'
-import supportedTexts from '@app/constants/supportedTexts.json'
+import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
+import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useEns } from '@app/utils/EnsProvider'
 
 import useDecryptName from './useDecryptName'

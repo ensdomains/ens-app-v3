@@ -35,7 +35,7 @@ const UploadComponent = ({
 }: {
   dataURL: string
   handleCancel: () => void
-  handleSubmit: (uri: string) => void
+  handleSubmit: (type: 'upload', uri: string, display?: string) => void
   name: string
 }) => {
   const { t } = useTranslation('transactionFlow')
@@ -85,7 +85,7 @@ const UploadComponent = ({
     }).then((res) => res.json())) as any
 
     if (fetched.message === 'uploaded') {
-      return handleSubmit(endpoint)
+      return handleSubmit('upload', endpoint, dataURL)
     }
     throw new Error(fetched.message)
   })
@@ -117,7 +117,7 @@ export const AvatarUpload = ({
 }: {
   avatar: File
   handleCancel: () => void
-  handleSubmit: (uri: string) => void
+  handleSubmit: (type: 'upload', uri: string, display?: string) => void
   name: string
 }) => {
   const [dataURL, setDataURL] = useState<string | null>(null)

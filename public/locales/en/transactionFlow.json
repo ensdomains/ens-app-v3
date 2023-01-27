@@ -81,7 +81,8 @@
             "ipfs": "ipfs://...",
             "skynet": "sia://...",
             "arweave": "arweave://...",
-            "swarm": "bzz://..."
+            "swarm": "bzz://...",
+            "onion": "onion3://..."
           }
         },
         "other": {
@@ -166,5 +167,8 @@
       "link": "Learn more about resolver upgrades",
       "warning": "Note that if you cancel this at any point your changes will not be saved."
     }
+  },
+  "errors": {
+    "duplicateKey": "{{value}} is a duplicate key"
   }
 }

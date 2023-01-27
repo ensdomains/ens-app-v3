@@ -6,6 +6,13 @@ const StylelintPlugin = require('stylelint-webpack-plugin')
 const { withSentryConfig } = require('@sentry/nextjs')
 const { execSync } = require('child_process')
 
+const babelIncludeRegexes = [
+  /next[\\/]dist[\\/]shared[\\/]lib/,
+  /next[\\/]dist[\\/]client/,
+  /next[\\/]dist[\\/]pages/,
+  /[\\/](strip-ansi|ansi-regex)[\\/]/,
+]
+
 /**
  * @type {import('next').NextConfig}
  **/
@@ -69,6 +76,23 @@ let nextConfig = {
     return hash
   },
   webpack: (config, options) => {
+    for (const rule of config.module.rules) {
+      if (rule.oneOf && rule.oneOf.length > 5) {
+        for (const item of rule.oneOf) {
+          if (typeof item.exclude === 'function' && item.test.toString().includes('js')) {
+            item.exclude = (excludePath) => {
+              if (babelIncludeRegexes.some((r) => r.test(excludePath))) {
+                return false
+              }
+              if (/\.yalc\/@ensdomains\/thorin/.test(excludePath)) {
+                return true
+              }
+              return /node_modules/.test(excludePath)
+            }
+          }
+        }
+      }
+    }
     config.module.rules.push({
       // test for .js or .mjs
       test: /(?<!@ethersproject\/.*)\.m?js$/,

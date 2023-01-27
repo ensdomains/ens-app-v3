@@ -5,9 +5,9 @@ import styled, { css } from 'styled-components'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { Button, mq } from '@ensdomains/thorin'
 
+import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
-import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
 import { useProfile } from '@app/hooks/useProfile'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
@@ -119,6 +119,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
     AddButtonProps,
     hasErrors,
     hasChanges,
+    control,
     handleSubmit,
     isLoadingABIInterface,
     isLoadingPublicKeyInterface,
@@ -135,7 +136,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
       <ContentContainer>
         <AdvancedEditorTabs {...advancedEditorForm} />
         <AdvancedEditorContent {...advancedEditorForm} />
-        <AddRecord AddButtonProps={AddButtonProps} />
+        <AddRecord control={control} AddButtonProps={AddButtonProps} />
         <FooterContainer>
           <Button colorStyle="greySecondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
