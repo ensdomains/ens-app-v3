@@ -33,7 +33,7 @@ const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: AdvancedEd
   return Object.fromEntries(entries)
 }
 
-type AdvancedEditorType = {
+export type AdvancedEditorType = {
   text: {
     [key: string]: string
   }
@@ -75,6 +75,7 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
     clearErrors,
     setFocus,
     resetField,
+    control,
   } = useForm<AdvancedEditorType>({
     mode: 'onBlur',
     reValidateMode: 'onBlur',
@@ -284,6 +285,7 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
     hasPublicKeyInterface,
     isLoadingPublicKeyInterface,
     hasChanges,
+    control,
   }
 }
 

@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic'
 
+import { QuestionCircleSVG } from '@ensdomains/thorin'
+
 export type ContentHashIconType = keyof typeof contentHashIconTypes
 
 export const contentHashIconTypes = {
@@ -12,10 +14,18 @@ export const contentHashIconTypes = {
 
 export const DynamicContentHashIcon = ({
   name,
+  showDefault = true,
   ...props
 }: JSX.IntrinsicAttributes & {
-  name: ContentHashIconType
+  name: ContentHashIconType | string
+  showDefault?: boolean
 }) => {
-  const Icon = contentHashIconTypes[name]
-  return <Icon {...props} />
+  if (name in contentHashIconTypes) {
+    const Icon = contentHashIconTypes[name as ContentHashIconType]
+    return <Icon {...props} />
+  }
+  if (showDefault) {
+    return <QuestionCircleSVG {...props} />
+  }
+  return null
 }

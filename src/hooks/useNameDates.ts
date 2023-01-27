@@ -29,7 +29,7 @@ export const useNameDates = (name: string) => {
   } = useQuery(
     ['graph', 'getNameDates', name],
     async () => {
-      const { registration } = await gqlInstance.request(query, {
+      const { registration } = await gqlInstance.client.request(query, {
         id: labelhash(name.split('.')[0]),
       })
       return registration as { registrationDate: string; expiryDate: string }

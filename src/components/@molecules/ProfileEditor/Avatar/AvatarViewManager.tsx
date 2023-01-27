@@ -28,18 +28,22 @@ const Card = styled.div(
 
 export const AvatarViewManager = ({
   type,
-  avatar,
+  avatarFile,
   ...props
 }: {
   handleCancel: () => void
-  handleSubmit: (uri: string) => void
+  handleSubmit: (type: 'upload' | 'nft', uri: string, display?: string) => void
   name: string
-  avatar?: File
+  avatarFile?: File
   type: 'upload' | 'nft'
 }) => {
   return (
     <Card>
-      {type === 'upload' ? <AvatarUpload avatar={avatar!} {...props} /> : <AvatarNFT {...props} />}
+      {type === 'upload' ? (
+        <AvatarUpload avatar={avatarFile!} {...props} />
+      ) : (
+        <AvatarNFT {...props} />
+      )}
     </Card>
   )
 }

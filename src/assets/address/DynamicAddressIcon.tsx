@@ -1,5 +1,7 @@
 import dynamic from 'next/dynamic'
 
+import { QuestionCircleSVG } from '@ensdomains/thorin'
+
 export type AddressIconType = keyof typeof addressIconTypes
 
 export const addressIconTypes = {
@@ -14,10 +16,19 @@ export const addressIconTypes = {
 
 export const DynamicAddressIcon = ({
   name,
+  showDefault = true,
   ...props
 }: JSX.IntrinsicAttributes & {
-  name: AddressIconType
+  name: AddressIconType | string
+  showDefault?: boolean
 }) => {
-  const Icon = addressIconTypes[name]
-  return <Icon {...props} />
+  if (name.toLowerCase() in addressIconTypes) {
+    const key = name.toLowerCase() as AddressIconType
+    const Icon = addressIconTypes[key] as any
+    return <Icon {...props} />
+  }
+  if (showDefault) {
+    return <QuestionCircleSVG {...props} />
+  }
+  return null
 }

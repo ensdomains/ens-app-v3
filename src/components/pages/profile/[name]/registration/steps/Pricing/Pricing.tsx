@@ -105,11 +105,8 @@ const Pricing = ({
 
   const fullEstimate = useEstimateFullRegistration({
     registration: {
-      permissions: {},
-      records: {
-        coinTypes: [{ key: 'ETH', value: resolverAddress }],
-        clearRecords: resolverExists,
-      },
+      records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
+      clearRecords: resolverExists,
       resolver: resolverAddress,
       reverseRecord,
       years,

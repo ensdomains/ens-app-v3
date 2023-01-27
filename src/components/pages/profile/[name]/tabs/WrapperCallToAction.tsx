@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { NightSky } from '@app/assets/NightSky'
@@ -114,7 +115,8 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
     isSubdomain,
   )
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, showDataInput } =
+    useTransactionFlow()
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleUpgradeClick = () => {
@@ -149,6 +151,8 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           }),
         )
       }
+      if (!checkIsDecrypted(name))
+        return showDataInput(`wrapName-${name}`, 'UnknownLabels', { name, transactions })
       return createTransactionFlow(`wrapName-${name}`, {
         transactions,
         resumable: true,

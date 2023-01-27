@@ -1,4 +1,4 @@
-import { providers } from 'ethers'
+import type { BaseProvider } from '@ethersproject/providers'
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { useAccount, useProvider } from 'wagmi'
 
@@ -14,7 +14,7 @@ let storeSingleton: ReturnType<typeof createTransactionStore> | undefined
 const TransactionStoreContext = createContext<TransactionStore | null>(null)
 
 export function TransactionStoreProvider({ children }: { children: React.ReactNode }) {
-  const provider = useProvider<providers.BaseProvider>()
+  const provider = useProvider<BaseProvider>()
   const { address } = useAccount()
   const chainId = useChainId()
 

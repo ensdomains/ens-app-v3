@@ -26,7 +26,7 @@ const useOwners = ({ ownerData, wrapperData, dnsOwner, selfAbilities }: Props) =
         address: ownerData.owner!,
         canTransfer: selfAbilities.canSend,
         transferType: 'owner',
-        label: wrapperData?.fuseObj.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+        label: wrapperData?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
         description: 'details.descriptions.owner',
         testId: 'owner-button-owner',
       })

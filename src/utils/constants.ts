@@ -30,7 +30,7 @@ export const RESOLVER_ADDRESSES: ResolverAddresses = {
   ],
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '5': [
-    '0xE264d5bb84bA3b8061ADC38D3D76e6674aB91852',
+    '0x2800Ec5BAB9CE9226d19E0ad5BC607e3cfC4347E',
     '0x121304143ea8101e69335f309e2062d299a234b5',
     '0xff77b96d6bafcec0d684bb528b22e0ab09c70663',
     '0x6e1b40ed2d626b97a43d2c12e48a6de49a03c7a4',

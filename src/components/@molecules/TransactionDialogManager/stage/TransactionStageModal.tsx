@@ -1,14 +1,14 @@
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { BigNumber, utils } from 'ethers'
+import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, keyframes } from 'styled-components'
 import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
-import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
+import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
-import CircleCrossSVG from '@app/assets/CircleCross.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -192,7 +192,7 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
       return <CircleIcon as={CircleTickSVG} />
     }
     if (status === 'failed') {
-      return <CircleIcon as={CircleCrossSVG} />
+      return <CircleIcon as={CrossCircleSVG} />
     }
     if (progress !== 100) {
       return <AeroplaneIcon as={AeroplaneSVG} />
@@ -419,7 +419,7 @@ export const TransactionStageModal = ({
         return 'transaction.dialog.error.gasLimit'
       } catch (err: any) {
         const code = err.data.replace('Reverted ', '')
-        const reason = utils.toUtf8String(`0x${code.substr(138)}`)
+        const reason = toUtf8String(`0x${code.substr(138)}`)
         return reason
       }
     },

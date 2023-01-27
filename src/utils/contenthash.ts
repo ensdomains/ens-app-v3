@@ -1,4 +1,4 @@
-import { utils } from 'ethers'
+import { isHexString } from '@ethersproject/bytes/lib/index'
 
 import contentHash from '@ensdomains/content-hash'
 import { DecodedContentHash } from '@ensdomains/ensjs/utils/contentHash'
@@ -134,7 +134,7 @@ export const validateContent = (encoded: string) => {
 export const isValidContenthash = (encoded: string) => {
   try {
     const codec = contentHash.getCodec(encoded)
-    return utils.isHexString(encoded) && supportedCodecs.includes(codec)
+    return isHexString(encoded) && supportedCodecs.includes(codec)
   } catch {
     return false
   }
