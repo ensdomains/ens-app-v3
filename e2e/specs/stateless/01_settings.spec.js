@@ -50,6 +50,7 @@ describe('Settings', () => {
       cy.findByTestId('toast-close-icon').click()
     })
     it('should add a failed transaction to the transaction list, and show the corresponding notification', () => {
+      cy.wait(5000)
       cy.contains('Add Failing Transaction').click()
       cy.confirmMetamaskTransaction()
       cy.wait(500)
@@ -63,6 +64,7 @@ describe('Settings', () => {
       cy.findByTestId('toast-close-icon').click()
     })
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
+      cy.wait(5000)
       cy.contains('Stop Automine').click()
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()

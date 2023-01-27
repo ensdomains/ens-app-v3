@@ -1,5 +1,4 @@
 import { useRef } from 'react'
-import { UseFormSetValue } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -7,7 +6,6 @@ import { Avatar, Dropdown } from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
 import CameraIcon from '@app/assets/Camera.svg'
-import { ProfileEditorType } from '@app/types'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
   ({ theme, $validated, $error }) => css`
@@ -81,19 +79,28 @@ type Props = {
   error?: boolean
   src?: string
   onSelectOption?: (value: AvatarClickType) => void
-  setValue: UseFormSetValue<ProfileEditorType>
-  setDisplay: (display: string | null) => void
+  onAvatarChange?: (avatar?: string) => void
+  onAvatarSrcChange?: (src?: string) => void
+  onAvatarFileChange?: (file?: File) => void
 }
 
-const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisplay }: Props) => {
+const AvatarButton = ({
+  validated,
+  error,
+  src,
+  onSelectOption,
+  onAvatarChange,
+  onAvatarSrcChange,
+  onAvatarFileChange,
+}: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
     if (value === 'remove') {
-      setValue('avatar', undefined)
-      setDisplay(null)
+      onAvatarChange?.(undefined)
+      onAvatarSrcChange?.(undefined)
     } else if (value === 'upload') {
       fileInputRef.current?.click()
     } else {
@@ -143,8 +150,8 @@ const AvatarButton = ({ validated, error, src, onSelectOption, setValue, setDisp
           ref={fileInputRef}
           onChange={(e) => {
             if (e.target.files?.[0]) {
-              setValue('_avatar', e.target.files[0])
               onSelectOption?.('upload')
+              onAvatarFileChange?.(e.target.files[0])
             }
           }}
         />

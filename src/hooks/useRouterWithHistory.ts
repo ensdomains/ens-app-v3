@@ -2,25 +2,35 @@ import { useRouter } from 'next/router'
 
 import { getDestination } from '@app/routes'
 
-type TransitionOptions = {
-  shallow?: boolean
-  locale?: string | false
-  scroll?: boolean
-}
-
 export const useRouterWithHistory = () => {
   const router = useRouter()
 
   const _replace = router?.replace
 
-  const push = (pathname: string, query?: Record<string, any>) => {
-    const destination = getDestination({ pathname, query })
-    router.push(destination)
+  const replace = (
+    pathname: string,
+    options?: {
+      shallow?: boolean
+      scroll?: boolean
+      maintainHistory?: boolean
+    },
+  ) => {
+    if (typeof window === 'undefined') return
+    const { maintainHistory, ...opts } = options || {}
+    const destination =
+      maintainHistory && router.query.from
+        ? getDestination({ pathname, query: { from: router.query.from } })
+        : getDestination(pathname)
+    router.replace(
+      destination,
+      typeof destination === 'string' ? undefined : destination.pathname,
+      opts,
+    )
   }
 
-  const replace = (pathname: string, as?: any, options?: TransitionOptions) => {
-    const destination = getDestination(pathname)
-    router.replace(destination, as, options)
+  const push = (pathname: string, query?: Record<string, any>, shallow?: boolean) => {
+    const destination = getDestination({ pathname, query })
+    router.push(destination, undefined, { shallow })
   }
 
   const pushWithHistory = (pathname: string, query?: Record<string, any>) => {

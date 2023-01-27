@@ -1,12 +1,12 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
-import { namehash } from 'ethers/lib/utils'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
+import { namehash } from '@ensdomains/ensjs/utils/normalise'
 
 type Name = {
   label: string
@@ -128,6 +128,20 @@ const names: Name[] = [
     namedOwner: 'owner',
     namedAddr: 'owner',
     subnames: [{ label: 'sub', namedOwner: 'owner' }],
+  },
+  {
+    label: 'unknown-labels',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    subnames: [
+      { label: 'aaa123xyz000', namedOwner: 'owner2' },
+      { label: 'aaa123', namedOwner: 'owner' },
+    ],
+  },
+  {
+    label: 'aaa123',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
   },
 ]
 

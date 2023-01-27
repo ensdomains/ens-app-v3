@@ -96,8 +96,9 @@ describe('<AvatarNFT />', () => {
     fireEvent.click(screen.getByText('action.confirm'))
     await waitFor(() =>
       expect(mockHandleSubmit).toHaveBeenCalledWith(
-        'https://localhost/test-media-gateway.png',
+        'nft',
         'eip155:1/erc1155:0x0/0',
+        'https://localhost/test-media-gateway.png',
       ),
     )
   })

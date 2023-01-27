@@ -156,7 +156,7 @@ describe('AdvancedEditor', () => {
     )
 
     const avatarInput = await screen.findByTestId('record-input-avatar')
-    const deleteBtn = within(avatarInput).getByTestId('input-action-button')
+    const deleteBtn = within(avatarInput).getByTestId('record-input-delete-button')
     fireEvent.click(deleteBtn)
 
     const submitBtn = screen.getByText('action.save')
@@ -214,7 +214,7 @@ describe('AdvancedEditor', () => {
     fireEvent.click(tab)
 
     const adressInput = await screen.findByTestId('record-input-ETH')
-    const deleteBtn = within(adressInput).getByTestId('input-action-button')
+    const deleteBtn = within(adressInput).getByTestId('record-input-delete-button')
     fireEvent.click(deleteBtn)
 
     const submitBtn = screen.getByText('action.save')

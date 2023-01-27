@@ -2,7 +2,8 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
-import { BigNumber, providers } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
+import type { BaseProvider, Block } from '@ethersproject/providers'
 
 const storageKey = 'transaction-data'
 
@@ -72,19 +73,15 @@ function validateTransaction(transaction: NewTransaction): string[] {
   return errors
 }
 
-export function createTransactionStore({
-  provider: initialProvider,
-}: {
-  provider: providers.BaseProvider
-}) {
+export function createTransactionStore({ provider: initialProvider }: { provider: BaseProvider }) {
   let data: Data = loadData()
 
   let provider = initialProvider
   const listeners: Set<() => void> = new Set()
   const transactionRequestCache: Map<string, Promise<void>> = new Map()
-  const blockRequestCache: Map<string, Promise<providers.Block>> = new Map()
+  const blockRequestCache: Map<string, Promise<Block>> = new Map()
 
-  function setProvider(newProvider: providers.BaseProvider): void {
+  function setProvider(newProvider: BaseProvider): void {
     provider = newProvider
   }
 
