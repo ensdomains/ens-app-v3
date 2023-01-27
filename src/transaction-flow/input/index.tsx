@@ -10,7 +10,7 @@ import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
 import type { Props as SendNameProps } from './SendName-flow'
 import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile-flow'
-import type { Props as UnknownLabelsProps } from './UnknownLabels-flow'
+import type { Props as UnknownLabelsProps } from './UnknownLabels/UnknownLabels-flow'
 
 const dynamicHelper = <P,>(name: string) =>
   dynamic<P>(

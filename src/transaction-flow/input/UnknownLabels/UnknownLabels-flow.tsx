@@ -14,8 +14,8 @@ import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
 
 import { isLabelTooLong } from '@app/utils/utils'
 
-import { makeIntroItem } from '../intro'
-import { GenericTransaction, TransactionDialogPassthrough } from '../types'
+import { makeIntroItem } from '../../intro'
+import { GenericTransaction, TransactionDialogPassthrough } from '../../types'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -94,7 +94,7 @@ const validateLabel = (hash: string) => (label: string) => {
   return true
 }
 
-const CreateSubname = ({ data: { name, transactions }, dispatch, onDismiss }: Props) => {
+const UnknownLabels = ({ data: { name, transactions }, dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const formRef = useRef<HTMLFormElement>(null)
@@ -233,4 +233,4 @@ const CreateSubname = ({ data: { name, transactions }, dispatch, onDismiss }: Pr
   )
 }
 
-export default CreateSubname
+export default UnknownLabels
