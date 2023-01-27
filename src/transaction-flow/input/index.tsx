@@ -33,7 +33,7 @@ const TransferProfile = dynamicHelper<TransferProfileProps>('TransferProfile/Tra
 const ExtendNames = dynamicHelper<ExtendNamesProps>('ExtendNames/ExtendNames')
 const BurnFuses = dynamicHelper<BurnFusesProps>('BurnFuses/BurnFuses')
 const SendName = dynamicHelper<SendNameProps>('SendName')
-const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels')
+const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLabels')
 
 export const DataInputComponents = {
   EditResolver,
