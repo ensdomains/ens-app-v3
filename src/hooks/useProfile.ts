@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
 import supportedAddresses from '@app/constants/supportedAddresses.json'
@@ -35,8 +36,14 @@ export const useProfile = (name: string, skip?: any) => {
 
   const { decryptedName } = useDecryptName(name, !profile)
 
+  const returnProfile = useMemo(() => {
+    if (!profile) return undefined
+    if (!decryptedName) return profile
+    return { ...profile, decryptedName }
+  }, [profile, decryptedName])
+
   return {
-    profile: profile ? { ...profile, ...(decryptedName ? { decryptedName } : {}) } : undefined,
+    profile: returnProfile,
     loading: !ready || loading,
     status,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
