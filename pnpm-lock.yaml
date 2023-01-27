@@ -36,9 +36,9 @@ importers:
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': ^0.2.7
       '@ensdomains/ens-contracts': 0.0.16
-      '@ensdomains/ens-test-env': ^0.3.6
+      '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.42
+      '@ensdomains/ensjs': 3.0.0-alpha.43
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': ^0.6.24
       '@ethersproject/abi': ^5.6.4
@@ -173,7 +173,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.42_f2qxwv66g46rb33uzxnl5nluty
+      '@ensdomains/ensjs': 3.0.0-alpha.43_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.24_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -230,7 +230,7 @@ importers:
       '@cloudflare/wrangler': 1.20.0
       '@deploysentinel/cypress-debugger': 0.5.5
       '@ensdomains/buffer': 0.1.0_hardhat@2.11.2
-      '@ensdomains/ens-test-env': 0.3.6
+      '@ensdomains/ens-test-env': 0.3.7
       '@ethersproject/wallet': 5.7.0
       '@next/bundle-analyzer': 12.3.1
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -2254,8 +2254,8 @@ packages:
       - web3-utils
     dev: false
 
-  /@ensdomains/ens-test-env/0.3.6:
-    resolution: {integrity: sha512-VeRYFBMLThaiiYY2to1LWsn1CyaOyvkyOeOZ3q8dpy79iH2iTSgw8NCqYTaOq1bJLNfG3tROxA6DoMtWlSnJuQ==}
+  /@ensdomains/ens-test-env/0.3.7:
+    resolution: {integrity: sha512-3X8cWDAMEN/s48afxsDVuOlzVIAlM5aorGx+6c4rhc8zCsp6nTMed8lGgKl/OMdCodEb7YF2WmMEVJNnGr3gHw==}
     hasBin: true
     dependencies:
       '@ethersproject/wallet': 5.7.0
@@ -2307,8 +2307,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.42_f2qxwv66g46rb33uzxnl5nluty:
-    resolution: {integrity: sha512-l23iTSEsSSlaSuwAISRmZeL0s3DsoURH1HUCMJbOLm5uwBipWU7z/95LtvTXtHAYuTXCpXq/4WhE5B2waLmcCQ==}
+  /@ensdomains/ensjs/3.0.0-alpha.43_f2qxwv66g46rb33uzxnl5nluty:
+    resolution: {integrity: sha512-NcTvhQVEB2tv3fyPWBs+QfQ3bU0wqoDw/LqPsfiK7Ewvvel1/CMkDmN6STbXvWpYIrdzC39o0lve6DLn399EUA==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
@@ -2920,7 +2920,7 @@ packages:
       '@jest/test-result': 27.5.1
       '@jest/transform': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 18.8.2
+      '@types/node': 18.11.11
       ansi-escapes: 4.3.2
       chalk: 4.1.2
       emittery: 0.8.1
@@ -2957,7 +2957,7 @@ packages:
     dependencies:
       '@jest/fake-timers': 27.5.1
       '@jest/types': 27.5.1
-      '@types/node': 18.8.2
+      '@types/node': 18.11.11
       jest-mock: 27.5.1
     dev: true
 
@@ -2974,7 +2974,7 @@ packages:
     dependencies:
       '@jest/types': 27.5.1
       '@sinonjs/fake-timers': 8.1.0
-      '@types/node': 18.8.2
+      '@types/node': 18.11.11
       jest-message-util: 27.5.1
       jest-mock: 27.5.1
       jest-util: 27.5.1
@@ -5092,7 +5092,7 @@ packages:
   /@types/bn.js/5.1.1:
     resolution: {integrity: sha512-qNrYbZqMx0uJAfKnKclPh+dTwK33KfLHYqtyODwd5HnXOjnkhc4qgn3BrK6RWyGZm5+sIFE7Q7Vz6QQtJB7w7g==}
     dependencies:
-      '@types/node': 18.8.2
+      '@types/node': 18.11.11
 
   /@types/body-parser/1.19.2:
     resolution: {integrity: sha512-ALYone6pm6QmwZoAgeyNksccT9Q4AWZQ6PvfwR37GT6r6FWUPguq6sUmNGSMV2Wr761oQoBxwGGa6DR5o1DC9g==}
@@ -5354,7 +5354,7 @@ packages:
   /@types/sax/1.2.4:
     resolution: {integrity: sha512-pSAff4IAxJjfAXUG6tFkO7dsSbTmf8CtUpfhhZ5VhkRpC4628tJhh3+V6H1E+/Gs9piSzYKT5yzHO5M4GG9jkw==}
     dependencies:
-      '@types/node': 18.8.2
+      '@types/node': 18.11.11
     dev: true
 
   /@types/scheduler/0.16.2:
@@ -14597,7 +14597,7 @@ packages:
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
     dependencies:
       '@jest/types': 27.5.1
-      '@types/node': 18.8.2
+      '@types/node': 18.11.11
     dev: true
 
   /jest-pnp-resolver/1.2.2_jest-resolve@27.5.1:
@@ -14806,7 +14806,7 @@ packages:
     resolution: {integrity: sha512-CqRA220YV/6jCo8VWvAt1KKx6eek1VIHMPeLEbpcfSfkEeWyBNppynM/o6q+Wmw+sOhos2ml34wZbSX3G13//g==}
     engines: {node: ^12.13.0 || ^14.15.0 || ^16.10.0 || >=17.0.0}
     dependencies:
-      '@types/node': 18.8.2
+      '@types/node': 18.11.11
       merge-stream: 2.0.0
       supports-color: 8.1.1
     dev: true

@@ -1,9 +1,12 @@
+import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useEns } from '@app/utils/EnsProvider'
+
+import useDecryptName from './useDecryptName'
 
 export const useProfile = (name: string, skip?: any) => {
   const { ready, getProfile } = useEns()
@@ -31,8 +34,16 @@ export const useProfile = (name: string, skip?: any) => {
     },
   )
 
+  const { decryptedName } = useDecryptName(name, !profile)
+
+  const returnProfile = useMemo(() => {
+    if (!profile) return undefined
+    if (!decryptedName) return profile
+    return { ...profile, decryptedName }
+  }, [profile, decryptedName])
+
   return {
-    profile,
+    profile: returnProfile,
     loading: !ready || loading,
     status,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
