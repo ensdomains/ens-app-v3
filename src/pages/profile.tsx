@@ -24,9 +24,14 @@ export default function Page() {
   const name = isSelf && ensName ? ensName : _name
 
   const nameDetails = useNameDetails(name)
-  const { isLoading: detailsLoading, registrationStatus } = nameDetails
+  const { isLoading: detailsLoading, registrationStatus, gracePeriodEndDate } = nameDetails
 
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
+
+  if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
+    router.push(`/profile/${name}`)
+    return null
+  }
 
   if (
     (registrationStatus === 'available' || registrationStatus === 'premium') &&
