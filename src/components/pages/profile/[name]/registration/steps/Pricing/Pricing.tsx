@@ -53,6 +53,18 @@ const OutlinedContainer = styled.div(
   `,
 )
 
+const StyledHeading = styled(Heading)(
+  () => css`
+    width: 100%;
+    word-break: break-all;
+
+    @supports (overflow-wrap: anywhere) {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+  `,
+)
+
 const gridAreaStyle = ({ $name }: { $name: string }) => css`
   grid-area: ${$name};
 `
@@ -145,7 +157,7 @@ const Pricing = ({
 
   return (
     <StyledCard>
-      <Heading>{t('heading', { name: normalisedName })}</Heading>
+      <StyledHeading>{t('heading', { name: normalisedName })}</StyledHeading>
       <PlusMinusControl
         minValue={1}
         value={years}
