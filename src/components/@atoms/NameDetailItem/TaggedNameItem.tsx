@@ -55,7 +55,10 @@ export const TaggedNameItem = ({
       tags.push([!!isRegistrant, 'name.owner'])
     }
   } else {
-    tags.push([!!isWrappedOwner, fuses.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager'])
+    tags.push([
+      !!isWrappedOwner,
+      fuses.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+    ])
   }
 
   return (
@@ -72,7 +75,10 @@ export const TaggedNameItem = ({
     >
       <OtherItemsContainer>
         {tags.map(([tagDisabled, translation]) => (
-          <Tag key={translation} tone={!(tagDisabled && disabled) ? 'accent' : 'secondary'}>
+          <Tag
+            key={translation}
+            colorStyle={!(tagDisabled && disabled) ? 'accentSecondary' : 'greySecondary'}
+          >
             {t(translation)}
           </Tag>
         ))}

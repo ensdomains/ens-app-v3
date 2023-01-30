@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { ChildFuses } from '@ensdomains/ensjs'
 import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
 import {
   AlertSVG,
@@ -24,6 +25,7 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { RegistrationReducerDataItem } from '../types'
+import { profileRecordsToRecordOptions } from './Profile/profileRecordUtils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -113,7 +115,7 @@ const DialogContent = styled(Typography)(
 
 const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
-    <Button shadowless tone="red" onClick={onClick}>
+    <Button color="red" onClick={onClick}>
       {label}
     </Button>
   </MobileFullWidth>
@@ -121,7 +123,7 @@ const FailedButton = ({ onClick, label }: { onClick: () => void; label: string }
 
 const ProgressButton = ({ onClick, label }: { onClick: () => void; label: string }) => (
   <MobileFullWidth>
-    <Button shadowless variant="secondary" onClick={onClick}>
+    <Button colorStyle="accentSecondary" onClick={onClick}>
       {label}
     </Button>
   </MobileFullWidth>
@@ -159,8 +161,18 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       duration: yearsToSeconds(registrationData.years),
       resolverAddress: registrationData.resolver,
       secret: registrationData.secret,
-      fuses: registrationData.permissions,
-      records: registrationData.records,
+      records: profileRecordsToRecordOptions(
+        registrationData.records,
+        registrationData.clearRecords,
+      ),
+      fuses: {
+        named: registrationData.permissions
+          ? (Object.keys(registrationData.permissions).filter(
+              (key) => !!registrationData.permissions?.[key as ChildFuses['fuse']],
+            ) as ChildFuses['fuse'][])
+          : [],
+        unnamed: [],
+      },
       reverseRecord: registrationData.reverseRecord,
     }),
     [address, nameDetails, registrationData],
@@ -215,7 +227,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   const NormalBackButton = useMemo(
     () => (
       <MobileFullWidth>
-        <Button shadowless onClick={() => callback({ back: true })} variant="secondary">
+        <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
           {t('action.back', { ns: 'common' })}
         </Button>
       </MobileFullWidth>
@@ -226,7 +238,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
   const ResetBackButton = useMemo(
     () => (
       <div>
-        <Button shadowless variant="secondary" tone="red" onClick={() => setResetOpen(true)}>
+        <Button colorStyle="redSecondary" onClick={() => setResetOpen(true)}>
           {t('action.back', { ns: 'common' })}
         </Button>
       </div>
@@ -236,7 +248,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
 
   let BackButton: ReactNode = (
     <MobileFullWidth>
-      <Button shadowless onClick={() => callback({ back: true })} variant="secondary">
+      <Button onClick={() => callback({ back: true })} colorStyle="accentSecondary">
         {t('action.back', { ns: 'common' })}
       </Button>
     </MobileFullWidth>
@@ -244,7 +256,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
 
   let ActionButton: ReactNode = (
     <MobileFullWidth>
-      <Button data-testid="start-timer-button" shadowless onClick={makeCommitNameFlow}>
+      <Button data-testid="start-timer-button" onClick={makeCommitNameFlow}>
         {t('steps.transactions.startTimer')}
       </Button>
     </MobileFullWidth>
@@ -273,7 +285,6 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
         <MobileFullWidth>
           <Button
             data-testid="finish-button"
-            shadowless
             onClick={!registerTx ? makeRegisterNameFlow : showRegisterTransaction}
           >
             {t('action.finish', { ns: 'common' })}
@@ -302,12 +313,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       BackButton = ResetBackButton
       ActionButton = (
         <MobileFullWidth>
-          <Button
-            data-testid="wait-button"
-            shadowless
-            disabled
-            suffix={<Spinner color="background" />}
-          >
+          <Button data-testid="wait-button" disabled suffix={<Spinner color="greyPrimary" />}>
             {t('steps.transactions.wait')}
           </Button>
         </MobileFullWidth>
@@ -333,7 +339,7 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
           <DialogContent>Are you sure you want to continue?</DialogContent>
           <Dialog.Footer
             trailing={
-              <Button shadowless onClick={resetTransactions} tone="red" variant="secondary">
+              <Button onClick={resetTransactions} colorStyle="redSecondary">
                 Reset transaction and go back
               </Button>
             }

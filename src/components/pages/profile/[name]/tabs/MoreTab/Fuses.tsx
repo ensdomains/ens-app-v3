@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CurrentFuses, fuseEnum } from '@ensdomains/ensjs/utils/fuses'
+import { ChildFuses, ParentFuses, userSettableFuseEnum } from '@ensdomains/ensjs/utils/fuses'
 import { Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
@@ -30,8 +30,7 @@ const HeadingContainer = styled.div(
 
     padding: ${theme.space['4']};
 
-    border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${theme.colors.borderTertiary};
+    border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
 
     & > button {
       color: ${theme.colors.accent};
@@ -61,8 +60,7 @@ const FusesRow = styled.div(
     padding: ${theme.space['4']};
 
     &:not(:last-child) {
-      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-        ${theme.colors.borderTertiary};
+      border-bottom: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
     }
 
     ${mq.md.min(css`
@@ -78,7 +76,7 @@ const Fuses = ({
   isCachedData,
 }: {
   name: string
-  fuseObj: CurrentFuses
+  fuseObj: ChildFuses['current'] & ParentFuses['current']
   canEdit: boolean
   isCachedData: boolean
 }) => {
@@ -119,7 +117,8 @@ const Fuses = ({
             .filter(([key]) => key !== 'CAN_DO_EVERYTHING')
             .sort(
               (a, b) =>
-                fuseEnum[a[0] as keyof typeof fuseEnum] - fuseEnum[b[0] as keyof typeof fuseEnum],
+                userSettableFuseEnum[a[0] as keyof typeof userSettableFuseEnum] -
+                userSettableFuseEnum[b[0] as keyof typeof userSettableFuseEnum],
             )
             .map(([key, value], inx) => (
               <FusesRow key={key}>

@@ -16,12 +16,12 @@ const StyledAnchor = styled.a<{ $isActive: boolean; disabled?: boolean }>(
     transition: color 0.125s ease-in-out;
     ${disabled
       ? css`
-          color: ${theme.colors.textPlaceholder};
+          color: ${theme.colors.greyPrimary};
           cursor: not-allowed;
         `
       : css`
           &:hover {
-            color: ${theme.colors.textSecondary};
+            color: ${theme.colors.textPrimary};
           }
         `}
     ${$isActive &&

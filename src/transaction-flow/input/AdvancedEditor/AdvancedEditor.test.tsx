@@ -156,7 +156,7 @@ describe('AdvancedEditor', () => {
     )
 
     const avatarInput = await screen.findByTestId('record-input-avatar')
-    const deleteBtn = within(avatarInput).getByTestId('record-input-delete')
+    const deleteBtn = within(avatarInput).getByTestId('record-input-delete-button')
     fireEvent.click(deleteBtn)
 
     const submitBtn = screen.getByText('action.save')
@@ -164,6 +164,7 @@ describe('AdvancedEditor', () => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
     fireEvent.click(submitBtn)
+    fireEvent.submit(screen.getByTestId('advanced-editor'))
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
@@ -193,6 +194,7 @@ describe('AdvancedEditor', () => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
     fireEvent.click(submitBtn)
+    fireEvent.submit(screen.getByTestId('advanced-editor'))
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
@@ -212,7 +214,7 @@ describe('AdvancedEditor', () => {
     fireEvent.click(tab)
 
     const adressInput = await screen.findByTestId('record-input-ETH')
-    const deleteBtn = within(adressInput).getByTestId('record-input-delete')
+    const deleteBtn = within(adressInput).getByTestId('record-input-delete-button')
     fireEvent.click(deleteBtn)
 
     const submitBtn = screen.getByText('action.save')
@@ -220,6 +222,7 @@ describe('AdvancedEditor', () => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
     fireEvent.click(submitBtn)
+    fireEvent.submit(screen.getByTestId('advanced-editor'))
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()
@@ -254,7 +257,8 @@ describe('AdvancedEditor', () => {
     await waitFor(() => {
       expect(submitBtn).not.toHaveAttribute('disabled')
     })
-    fireEvent.click(submitBtn)
+    await userEvent.click(submitBtn)
+    fireEvent.submit(screen.getByTestId('advanced-editor'))
 
     await waitFor(() => {
       expect(mockDispatch).toHaveBeenCalled()

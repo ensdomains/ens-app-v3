@@ -1,6 +1,6 @@
 /* eslint-disable no-multi-assign */
+import { sha256 } from '@ethersproject/sha2'
 import { useMutation } from '@tanstack/react-query'
-import { sha256 } from 'ethers/lib/utils'
 import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -35,7 +35,7 @@ const UploadComponent = ({
 }: {
   dataURL: string
   handleCancel: () => void
-  handleSubmit: (uri: string) => void
+  handleSubmit: (type: 'upload', uri: string, display?: string) => void
   name: string
 }) => {
   const { t } = useTranslation('transactionFlow')
@@ -85,7 +85,7 @@ const UploadComponent = ({
     }).then((res) => res.json())) as any
 
     if (fetched.message === 'uploaded') {
-      return handleSubmit(endpoint)
+      return handleSubmit('upload', endpoint, dataURL)
     }
     throw new Error(fetched.message)
   })
@@ -100,12 +100,7 @@ const UploadComponent = ({
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={
-          <Button
-            disabled={isLoading}
-            onClick={() => signAndUpload()}
-            shadowless
-            data-testid="upload-button"
-          >
+          <Button disabled={isLoading} onClick={() => signAndUpload()} data-testid="upload-button">
             {t('input.profileEditor.tabs.avatar.image.upload.action')}
           </Button>
         }
@@ -122,7 +117,7 @@ export const AvatarUpload = ({
 }: {
   avatar: File
   handleCancel: () => void
-  handleSubmit: (uri: string) => void
+  handleSubmit: (type: 'upload', uri: string, display?: string) => void
   name: string
 }) => {
   const [dataURL, setDataURL] = useState<string | null>(null)

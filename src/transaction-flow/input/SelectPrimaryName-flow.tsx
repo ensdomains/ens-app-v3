@@ -40,6 +40,20 @@ const StyledScrollBox = styled(ScrollBoxWithSpinner)(
   `,
 )
 
+const NamePillWrapper = styled.div`
+  width: 100%;
+  display: inline-block;
+`
+
+const NameList = styled.div(
+  () => css`
+    padding-top: 0.5rem;
+    input {
+      margin-top: 8px;
+    }
+  `,
+)
+
 const querySize = 50
 
 const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDismiss }: Props) => {
@@ -51,7 +65,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   const { data, fetchNextPage, isLoading } = useInfiniteQuery(
     [address, 'primaryNameOptions'],
     async ({ pageParam }: { pageParam?: string }) => {
-      const { domains } = await gqlInstance.request(
+      const { domains } = await gqlInstance.client.request(
         gqlInstance.gql`
       query getEthRecordAvailableNames($address: String!, $lastID: String, $size: Int!) {
         domains(first: $size, where: { id_gt: $lastID, resolvedAddress: $address }) {
@@ -113,19 +127,24 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   } else if (names && names.length > 0) {
     Content = (
       <StyledScrollBox showSpinner={hasNextPage} onReachedBottom={() => fetchNextPage()}>
-        <RadioButtonGroup value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
-          {names
-            ?.filter((x) => x.name !== existingPrimary)
-            .map((name) => (
-              <RadioButton
-                labelRight
-                label={<NamePill name={name.truncatedName} network={chainId} key={name.id} />}
-                key={name.id}
-                name={name.name}
-                value={name.name}
-              />
-            ))}
-        </RadioButtonGroup>
+        <NameList>
+          <RadioButtonGroup value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
+            {names
+              ?.filter((x) => x.name !== existingPrimary)
+              .map((name) => (
+                <RadioButton
+                  label={
+                    <NamePillWrapper>
+                      <NamePill name={name.truncatedName} network={chainId} key={name.id} />
+                    </NamePillWrapper>
+                  }
+                  key={name.id}
+                  name={name.name}
+                  value={name.name}
+                />
+              ))}
+          </RadioButtonGroup>
+        </NameList>
       </StyledScrollBox>
     )
   } else {
@@ -142,17 +161,12 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       <InnerDialog>{Content}</InnerDialog>
       <Dialog.Footer
         leading={
-          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button
-            data-testid="primary-next"
-            shadowless
-            onClick={handleSubmit}
-            disabled={!selectedName}
-          >
+          <Button data-testid="primary-next" onClick={handleSubmit} disabled={!selectedName}>
             {t('action.next', { ns: 'common' })}
           </Button>
         }

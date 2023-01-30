@@ -55,6 +55,7 @@ const AdvancedEditorContent = ({
   tab,
   hasPublicKeyInterface,
   hasABIInterface,
+  setValue,
 }: Props) => {
   const { t } = useTranslation('profile')
 
@@ -128,7 +129,12 @@ const AdvancedEditorContent = ({
                         clearErrors([`address.${key}`])
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}
@@ -155,7 +161,12 @@ const AdvancedEditorContent = ({
                         })
                       }}
                       {...register(`address.${key}`, {
-                        validate: validateCryptoAddress(key),
+                        validate: (value: string) => {
+                          const result = validateCryptoAddress(key)(value)
+                          if (typeof result === 'string')
+                            return t('errors.invalidAddress', { ns: 'common' })
+                          return result
+                        },
                       })}
                     />
                   ))}
@@ -171,6 +182,10 @@ const AdvancedEditorContent = ({
                     validated={getFieldState('other.contentHash', formState).isDirty}
                     error={getFieldState('other.contentHash', formState).error?.message}
                     autoComplete="off"
+                    onClear={() => {
+                      setValue('other.contentHash', '')
+                      clearErrors(['other.contentHash'])
+                    }}
                     {...register('other.contentHash', {
                       validate: validateContentHash('all'),
                     })}
@@ -185,6 +200,10 @@ const AdvancedEditorContent = ({
                     validated={getFieldState('other.publicKey', formState).isDirty}
                     error={getFieldState('other.publicKey', formState).error?.message}
                     autoComplete="off"
+                    onClear={() => {
+                      setValue('other.publicKey', '')
+                      clearErrors(['other.publicKey'])
+                    }}
                     {...register('other.publicKey', {})}
                   />
                   <RecordInput
@@ -196,6 +215,10 @@ const AdvancedEditorContent = ({
                     showDot
                     validated={getFieldState('other.abi', formState).isDirty}
                     autoComplete="off"
+                    onClear={() => {
+                      setValue('other.abi', '')
+                      clearErrors(['other.abi'])
+                    }}
                     {...register('other.abi', {})}
                   />
                 </>

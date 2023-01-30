@@ -85,12 +85,12 @@ const Resolver = ({
   const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress ?? '')
   const [resolverAddressType, tone] = useMemo(() => {
     if (resolverAddressIndex === -1) {
-      return ['custom', 'secondary'] as const
+      return ['custom', 'greySecondary'] as const
     }
     if (resolverAddressIndex === 0) {
-      return ['latest', 'green'] as const
+      return ['latest', 'greenSecondary'] as const
     }
-    return ['outdated', 'red'] as const
+    return ['outdated', 'redSecondary'] as const
   }, [resolverAddressIndex])
 
   return (
@@ -100,7 +100,7 @@ const Resolver = ({
           <Typography color="text" weight="bold">
             {t('tabs.more.resolver.label')}
           </Typography>
-          <Tag tone={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
+          <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
         {canEdit && (
           <button

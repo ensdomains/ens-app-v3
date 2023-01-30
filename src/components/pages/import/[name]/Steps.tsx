@@ -19,8 +19,7 @@ const StepItem = styled.div<{ $type: StepType }>(
     height: ${theme.space['3.5']};
     ${$type === 'notStarted' &&
     css`
-      border: ${theme.borderWidths['0.5']} ${theme.borderStyles.solid}
-        ${theme.colors.borderSecondary};
+      border: ${theme.borderWidths['0.5']} ${theme.borderStyles.solid} ${theme.colors.border};
     `}
     ${$type === 'inProgress' &&
     css`

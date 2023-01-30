@@ -1,4 +1,4 @@
-import { utils } from 'ethers'
+import { isAddress } from '@ethersproject/address'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -60,18 +60,16 @@ const Container = styled.div`
   align-items: center;
 `
 
-const StyledButton = styled(Button)(
+const ButtonInner = styled.div(
   ({ theme }) => css`
-    padding: ${theme.space['0']} -${theme.space['1.5']};
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+    height: 48px;
+    padding: 0 ${theme.space['2.5']};
   `,
 )
-
-const ButtonInner = styled.div`
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  align-items: center;
-`
 
 const ButtonRow = styled.div(
   ({ theme }) => css`
@@ -94,21 +92,15 @@ const CopyableRightContainer = styled.div(
 const Copyable = ({ label, value }: { label: string; value: string }) => {
   const { copy, copied } = useCopied()
   return (
-    <StyledButton
-      outlined
-      fullWidthContent
-      shadowless
-      variant="transparent"
-      onClick={() => copy(value)}
-    >
+    <Button colorStyle="background" onClick={() => copy(value)} size="flexible" fullWidthContent>
       <ButtonInner>
         <Typography>{label}</Typography>
         <CopyableRightContainer>
-          <Typography {...{ variant: 'small', color: 'foreground' }}>{value}</Typography>
-          <IconCopyAnimated color="textTertiary" copied={copied} size="3.5" />
+          <Typography fontVariant="small">{value}</Typography>
+          <IconCopyAnimated color="grey" copied={copied} size="3.5" />
         </CopyableRightContainer>
       </ButtonInner>
-    </StyledButton>
+    </Button>
   )
 }
 
@@ -152,7 +144,7 @@ export const AddTextRecord = ({
         // DNS record is not set
         setSyncWarning(false)
         setErrorState(Errors.DNS_RECORD_DOES_NOT_EXIST)
-      } else if (!utils.isAddress(dnsOwner)) {
+      } else if (!isAddress(dnsOwner)) {
         // Invalid DNS record
         setSyncWarning(false)
         setErrorState(Errors.DNS_RECORD_INVALID)
@@ -177,7 +169,7 @@ export const AddTextRecord = ({
 
   return (
     <Container>
-      <Typography {...{ variant: 'extraLarge' }}>{t('addTextRecord.title')}</Typography>
+      <Typography fontVariant="headingFour">{t('addTextRecord.title')}</Typography>
       <Spacer $height="3" />
       <Typography>{t('addTextRecord.explanation')}</Typography>
       <Spacer $height="3" />
@@ -200,14 +192,12 @@ export const AddTextRecord = ({
       </Outlink>
       <Spacer $height="5" />
       <ButtonRow>
-        <StyledButton outlined fullWidthContent shadowless variant="transparent">
+        <Button colorStyle="background" size="flexible" fullWidthContent>
           <ButtonInner>
             <Typography>{t('addTextRecord.type')}</Typography>
-            <Typography {...{ variant: 'small', color: 'foreground' }}>
-              {t('addTextRecord.txt')}
-            </Typography>
+            <Typography fontVariant="small">{t('addTextRecord.txt')}</Typography>
           </ButtonInner>
-        </StyledButton>
+        </Button>
         <Copyable {...{ label: 'Name', value: '_ens' }} />
       </ButtonRow>
       <Spacer $height="2" />
@@ -224,7 +214,7 @@ export const AddTextRecord = ({
         <>
           <Helper type="warning" style={{ textAlign: 'center' }}>
             <Typography>{t('addTextRecord.syncWarningOne')}</Typography>
-            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+            <Typography fontVariant="small" color="grey">
               {t('addTextRecord.syncWarningTwo')}
             </Typography>
           </Helper>
@@ -235,7 +225,7 @@ export const AddTextRecord = ({
         <>
           <Helper type="error" style={{ textAlign: 'center' }}>
             <Typography>{t(`addTextRecord.errors.${errorState}.title`)}</Typography>
-            <Typography {...{ variant: 'small', color: 'textSecondary' }}>
+            <Typography fontVariant="small" color="grey">
               {t(`addTextRecord.errors.${errorState}.content`)}
             </Typography>
           </Helper>
@@ -250,7 +240,6 @@ export const AddTextRecord = ({
             onClick={() => {
               setCurrentStep(currentStep + 1)
             }}
-            variant="primary"
             size="small"
           >
             {t('action.continue', { ns: 'common' })}
@@ -258,7 +247,6 @@ export const AddTextRecord = ({
         )}
         <CheckButton
           onClick={handleCheck}
-          variant="primary"
           size="small"
           disabled={currentStep === 2}
           loading={isCheckLoading}
@@ -270,9 +258,8 @@ export const AddTextRecord = ({
           onClick={() => {
             setCurrentStep(currentStep - 1)
           }}
-          variant="secondary"
+          colorStyle="accentSecondary"
           size="small"
-          shadowless
         >
           {t('navigation.back', { ns: 'common' })}
         </CheckButton>

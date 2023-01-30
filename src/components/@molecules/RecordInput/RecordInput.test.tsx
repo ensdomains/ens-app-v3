@@ -15,9 +15,8 @@ describe('RecordInput', () => {
   })
 
   it('should render', () => {
-    render(<RecordInput />)
+    render(<RecordInput value="hello world" />)
     expect(screen.getByTestId('record-input-input')).toBeVisible()
-    expect(screen.getByTestId('record-input-delete')).toBeVisible()
   })
 
   it('should display option data', () => {
@@ -33,19 +32,14 @@ describe('RecordInput', () => {
     const input = screen.getByTestId('record-input-test-label')
     expect(screen.getByText('test-label')).toBeVisible()
 
-    const labelList = input.querySelectorAll('label')
+    const labelList = input.querySelectorAll('svg')
     const labels = Array.from(labelList)
-    expect(labels.some((label) => /<svg/.test(label.innerHTML))).toBe(true)
+    expect(labels.some((label) => /<svg/.test(label.outerHTML))).toBe(true)
   })
 
-  it('should call onDelete when delete button clicked', () => {
+  it('should call onDelete when action button clicked', () => {
     render(<RecordInput onDelete={mockCallback} />)
-    fireEvent.click(screen.getByTestId('record-input-delete'))
+    fireEvent.click(screen.getByTestId('record-input-delete-button'))
     expect(mockCallback).toHaveBeenCalled()
-  })
-
-  it('should hide delete button if deleteable is set to false', () => {
-    render(<RecordInput onDelete={mockCallback} deletable={false} />)
-    expect(screen.queryByTestId('record-input-delete')).toBe(null)
   })
 })

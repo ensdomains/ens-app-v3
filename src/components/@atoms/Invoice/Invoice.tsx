@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import styled, { css } from 'styled-components'
 
 import { Colors } from '@ensdomains/thorin'
@@ -10,7 +10,7 @@ import { CurrencyText } from '../CurrencyText/CurrencyText'
 const Container = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']};
-    background: ${theme.colors.foregroundTertiary};
+    background: ${theme.colors.backgroundSecondary};
     display: flex;
     flex-direction: column;
     gap: ${theme.space['2']};

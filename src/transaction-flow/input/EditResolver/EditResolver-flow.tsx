@@ -66,23 +66,19 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
 
   return (
     <>
+      <Dialog.Heading title={t('input.editResolver.title')} />
       <EditResolverFormContainer>
         <EditResolverWarnings {...editResolverForm} />
         <EditResolverForm {...{ ...editResolverForm, resolverAddress, formRef }} />
       </EditResolverFormContainer>
       <Dialog.Footer
         leading={
-          <Button variant="secondary" tone="grey" shadowless onClick={onDismiss}>
+          <Button colorStyle="greySecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }
         trailing={
-          <Button
-            shadowless
-            onClick={handleSubmitForm}
-            disabled={hasErrors}
-            data-testid="update-button"
-          >
+          <Button onClick={handleSubmitForm} disabled={hasErrors} data-testid="update-button">
             {t('action.update', { ns: 'common' })}
           </Button>
         }

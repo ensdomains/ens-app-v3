@@ -40,7 +40,7 @@ const Footer = styled.div(
     align-items: center;
     justify-content: center;
     height: ${theme.space['8']};
-    border-top: 1px solid ${theme.colors.borderTertiary};
+    border-top: 1px solid ${theme.colors.border};
   `,
 )
 
@@ -90,7 +90,7 @@ const SpinnerContainer = styled.div<{ $showBorder?: boolean }>(
     align-items: center;
     justify-content: center;
     height: ${theme.space['15']};
-    ${$showBorder && `border-top: 1px solid ${theme.colors.borderTertiary};`}
+    ${$showBorder && `border-top: 1px solid ${theme.colors.border};`}
   `,
 )
 
@@ -198,7 +198,6 @@ export const SubnamesTab = ({
           </Typography>
           <Button
             data-testid="add-subname-action"
-            shadowless
             onClick={createSubname}
             prefix={<PlusPrefix as={PlusSVG} />}
           >

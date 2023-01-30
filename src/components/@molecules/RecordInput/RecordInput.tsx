@@ -1,7 +1,7 @@
 import { ComponentProps, ReactNode, Ref, forwardRef } from 'react'
-import styled, { css, useTheme } from 'styled-components'
+import styled, { css } from 'styled-components'
 
-import { Button, CloseSVG, Input } from '@ensdomains/thorin'
+import { CrossSVG, Input } from '@ensdomains/thorin'
 
 import UnsupportedSVG from '@app/assets/Unsupported.svg'
 
@@ -11,7 +11,6 @@ const Container = styled.div(
   () => css`
     display: flex;
     align-items: flex-end;
-    gap: 5px;
     position: relative;
   `,
 )
@@ -24,19 +23,47 @@ const InputWrapper = styled.div<{ $error: boolean }>(
   `,
 )
 
-const ButtonContainer = styled.div<{ $readOnly?: boolean }>(
+const ButtonContainer = styled.div(
   ({ theme }) => css`
+    width: ${theme.space['11']};
+    margin-right: -${theme.space['1']};
     display: flex;
     flex-direction: column;
     justify-content: flex-end;
+    padding-bottom: ${theme.space.px};
+  `,
+)
+
+const DeleteButton = styled.button(
+  ({ theme }) => css`
+    width: ${theme.space['11']};
+    height: ${theme.space['11']};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  `,
+)
+
+const InnerButtonWrapper = styled.div(
+  ({ theme }) => css`
     width: ${theme.space['8']};
     height: ${theme.space['8']};
-    margin-bottom: ${theme.space['3']};
+    border-radius: 50%;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 150ms ease-in-out;
+    cursor: pointer;
+
     svg {
-      display: block;
-      path {
-        fill: ${theme.colors.textSecondary};
-      }
+      color: ${theme.colors.greyPrimary};
+    }
+
+    &:hover {
+      background: ${theme.colors.greySurface};
+      transform: translateY(-1px);
     }
   `,
 )
@@ -71,16 +98,6 @@ const ErrorWrapper = styled.div(
   `,
 )
 
-const IconWrapper = styled.div(
-  () => css`
-    svg {
-      display: block;
-      width: 22px;
-      height: 22px;
-    }
-  `,
-)
-
 type ThorinInputProps = ComponentProps<typeof Input>
 type Props = {
   validated?: boolean
@@ -94,6 +111,7 @@ type Props = {
   }
   deletable?: boolean
   onDelete?: () => void
+  onClear?: () => void
 } & Omit<ThorinInputProps, 'label' | 'labelSecondary'>
 
 export const RecordInput = forwardRef(
@@ -113,23 +131,18 @@ export const RecordInput = forwardRef(
       option,
       placeholder = 'Enter value here',
       onDelete,
+      onClear,
       disabled,
       ...props
     }: Props,
     ref: Ref<HTMLInputElement>,
   ) => {
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
-    const theme = useTheme()
 
     const prefix = (() => {
       if (prefixProp) return prefixProp
-      if (option?.prefix) return <IconWrapper>{option.prefix}</IconWrapper>
-      if (showDefaultPrefix)
-        return (
-          <IconWrapper>
-            <UnsupportedSVG />
-          </IconWrapper>
-        )
+      if (option?.prefix) return option.prefix
+      if (showDefaultPrefix) return <UnsupportedSVG />
     })()
 
     const error = errorProp ? <ErrorWrapper>{errorProp}</ErrorWrapper> : undefined
@@ -139,10 +152,6 @@ export const RecordInput = forwardRef(
 
     const labelSecondary = disabled ? <LabelSecondary>{labelDisabled}</LabelSecondary> : undefined
 
-    const handleDelete = () => {
-      if (onDelete) onDelete()
-    }
-
     return (
       <Container data-testid={`record-input-${labelText}`}>
         <InputWrapper $error={!!error}>
@@ -150,35 +159,30 @@ export const RecordInput = forwardRef(
             size="medium"
             value={value}
             ref={inputRef}
-            prefix={prefix}
+            icon={prefix}
             showDot={showDot}
             label={label}
-            padding="3.5"
             error={error}
             placeholder={placeholder}
-            labelPlacement={{ error: 'bottom' }}
             data-testid="record-input-input"
             validated={validated}
             labelSecondary={labelSecondary}
-            parentStyles={css`
-              height: ${theme.space['12']};
-            `}
             disabled={disabled}
             {...props}
           />
         </InputWrapper>
         {deletable && (
           <ButtonContainer>
-            <Button
-              size="extraSmall"
-              variant="transparent"
-              shadowless
-              onClick={handleDelete}
+            <DeleteButton
+              data-testid="record-input-delete-button"
+              onClick={onDelete}
               onMouseDown={(e) => e.preventDefault()}
-              data-testid="record-input-delete"
+              type="button"
             >
-              <CloseSVG />
-            </Button>
+              <InnerButtonWrapper>
+                <CrossSVG />
+              </InnerButtonWrapper>
+            </DeleteButton>
           </ButtonContainer>
         )}
       </Container>

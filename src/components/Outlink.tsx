@@ -24,7 +24,7 @@ const OutlinkIcon = styled.div(
     right: ${theme.space['0']};
     width: ${theme.space['3.5']};
     height: ${theme.space['3.5']};
-    opacity: ${theme.opacity[50]};
+    opacity: 0.5;
   `,
 )
 
@@ -45,7 +45,7 @@ export const Outlink = ({
   return (
     <BaseLink href={href} passHref>
       <StyledAnchor {...props} rel="noreferrer noopener" target="_blank">
-        <OutlinkTypography variant="small" weight="bold">
+        <OutlinkTypography fontVariant="smallBold" color="blue">
           {children}
         </OutlinkTypography>
         <OutlinkIcon as={OutlinkSVG} />

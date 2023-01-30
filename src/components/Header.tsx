@@ -49,7 +49,7 @@ const VerticalLine = styled.div(
   ({ theme }) => css`
     width: 1px;
     height: ${theme.space['14']};
-    background-color: ${theme.colors.borderSecondary};
+    background-color: ${theme.colors.border};
   `,
 )
 

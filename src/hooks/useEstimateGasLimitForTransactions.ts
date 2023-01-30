@@ -1,5 +1,5 @@
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { utils } from 'ethers'
+import { formatEther } from '@ethersproject/units'
 import { useQuery, useSigner } from 'wagmi'
 
 import {
@@ -68,7 +68,7 @@ export const useEstimateGasLimitForTransactions = (
 
   return {
     gasLimit: data?.gasLimit,
-    gasCostEth: utils.formatEther(data?.gasCost || 0),
+    gasCostEth: formatEther(data?.gasCost || 0),
     estimates: data?.estimates,
     ...results,
   }

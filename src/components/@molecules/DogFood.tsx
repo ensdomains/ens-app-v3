@@ -1,10 +1,10 @@
-import { ethers } from 'ethers'
+import { isAddress } from '@ethersproject/address'
+import pMemoize from 'p-memoize'
 import { useEffect, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useQuery } from 'wagmi'
-import pMemoize from 'p-memoize';
 
 import { Input } from '@ensdomains/thorin'
 
@@ -28,9 +28,10 @@ export const DogFood = (
       disabled,
       validations,
       label, 
+      hideLabel
     // eslint-disable-next-line prettier/prettier
     }: Pick<ReturnType<typeof useForm<any>>, 'register' | 'watch' | 'formState' | 'setValue'> 
-    & { label?: string, validations?: any, disabled?: boolean },
+    & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
 ) => {
   const { t } = useTranslation('profile')
   const { getRecords } = useEns()
@@ -62,6 +63,7 @@ export const DogFood = (
         data-testid="dogfood"
         disabled={disabled}
         label={label}
+        hideLabel={hideLabel}
         placeholder={t('details.sendName.inputPlaceholder')}
         {...register('dogfoodRaw', {
           validate: {
@@ -70,7 +72,7 @@ export const DogFood = (
                 ? t('errors.addressLength')
                 : undefined,
             isAddress: (value) =>
-              !disabled && !value?.includes('.') && !ethers.utils.isAddress(value)
+              !disabled && !value?.includes('.') && !isAddress(value)
                 ? t('errors.invalidAddress')
                 : undefined,
             hasAddressRecord: async (value) => {
@@ -87,6 +89,7 @@ export const DogFood = (
           },
         })}
         error={errorMessage}
+        onClickAction={() => setValue('dogfoodRaw', '')}
       />
       {!errorMessage && finalValue && !disabled && (
         <>

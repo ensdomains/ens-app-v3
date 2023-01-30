@@ -5,7 +5,7 @@ describe('Settings', () => {
     acceptMetamaskAccess(undefined, true)
     cy.visit('/my/settings')
     cy.findByTestId('wallet-section-disconnect').click()
-    cy.url().should('eq', 'http://localhost:3000/')
+    cy.url().should('eq', 'http://localhost:8788/')
   })
 
   describe('Transactions', () => {
@@ -32,7 +32,7 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
         .should('contain.text', 'Your "Send name" transaction was successful')
-      cy.findByTestId('close-icon').click()
+      cy.findByTestId('toast-close-icon').click()
     })
     it('should add a successful transaction to the transaction list, and show the corresponding notification', () => {
       acceptMetamaskAccess(2)
@@ -47,9 +47,10 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
         .should('contain.text', 'Your "Test transaction" transaction was successful')
-      cy.findByTestId('close-icon').click()
+      cy.findByTestId('toast-close-icon').click()
     })
     it('should add a failed transaction to the transaction list, and show the corresponding notification', () => {
+      cy.wait(5000)
       cy.contains('Add Failing Transaction').click()
       cy.confirmMetamaskTransaction()
       cy.wait(500)
@@ -60,9 +61,10 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Failure')
         .should('contain.text', 'Your "Test transaction" transaction failed and was reverted')
-      cy.findByTestId('close-icon').click()
+      cy.findByTestId('toast-close-icon').click()
     })
     it('should add a pending transaction to the transaction list, and show the corresponding notification once confirmed', () => {
+      cy.wait(5000)
       cy.contains('Stop Automine').click()
       cy.contains('Add Successful Transaction').click()
       cy.confirmMetamaskTransaction()
@@ -75,7 +77,7 @@ describe('Settings', () => {
         .should('be.visible')
         .should('contain.text', 'Transaction Successful')
         .should('contain.text', 'Your "Test transaction" transaction was successful')
-      cy.findByTestId('close-icon').click()
+      cy.findByTestId('toast-close-icon').click()
     })
     it('should clear transactions when clear is pressed', () => {
       cy.findByTestId('transaction-clear-button').should('not.be.disabled').click()

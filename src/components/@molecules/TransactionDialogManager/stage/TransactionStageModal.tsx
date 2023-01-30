@@ -1,14 +1,14 @@
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
-import { BigNumber, utils } from 'ethers'
+import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css, keyframes } from 'styled-components'
 import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
-import { Button, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
+import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
-import CircleCrossSVG from '@app/assets/CircleCross.svg'
 import CircleTickSVG from '@app/assets/CircleTick.svg'
 import WalletSVG from '@app/assets/Wallet.svg'
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -51,7 +51,7 @@ const Bar = styled.div(
     width: ${theme.space.full};
     height: ${theme.space['9']};
     border-radius: ${theme.radii.full};
-    background-color: ${theme.colors.lightBlue};
+    background-color: ${theme.colors.blueSurface};
     overflow: hidden;
     display: flex;
     flex-direction: row;
@@ -192,7 +192,7 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
       return <CircleIcon as={CircleTickSVG} />
     }
     if (status === 'failed') {
-      return <CircleIcon as={CircleCrossSVG} />
+      return <CircleIcon as={CrossCircleSVG} />
     }
     if (progress !== 100) {
       return <AeroplaneIcon as={AeroplaneSVG} />
@@ -329,8 +329,7 @@ export const TransactionStageModal = ({
           <Button
             data-testid="transaction-modal-complete-button"
             onClick={() => onDismiss()}
-            shadowless
-            variant="secondary"
+            colorStyle="accentSecondary"
           >
             {t('action.done')}
           </Button>
@@ -340,7 +339,6 @@ export const TransactionStageModal = ({
         <Button
           data-testid="transaction-modal-complete-button"
           onClick={() => dispatch({ name: 'incrementTransaction' })}
-          shadowless
         >
           {t('action.next')}
         </Button>
@@ -349,11 +347,9 @@ export const TransactionStageModal = ({
     if (stage === 'failed') {
       return (
         <Button
-          shadowless
           onClick={() => sendTransaction!()}
           disabled={requestLoading || !sendTransaction}
-          tone="red"
-          variant="secondary"
+          colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
         >
           {t('action.tryAgain')}
@@ -363,10 +359,9 @@ export const TransactionStageModal = ({
     if (stage === 'sent') {
       return (
         <Button
-          shadowless
           onClick={() => onDismiss()}
           data-testid="transaction-modal-sent-button"
-          variant="secondary"
+          colorStyle="accentSecondary"
         >
           {t('action.close')}
         </Button>
@@ -375,7 +370,6 @@ export const TransactionStageModal = ({
     if (transactionLoading) {
       return (
         <Button
-          shadowless
           disabled
           suffix={<Spinner color="background" />}
           data-testid="transaction-modal-confirm-button"
@@ -386,7 +380,6 @@ export const TransactionStageModal = ({
     }
     return (
       <Button
-        shadowless
         disabled={requestLoading || !sendTransaction || !!requestError}
         onClick={() => sendTransaction!()}
         data-testid="transaction-modal-confirm-button"
@@ -426,7 +419,7 @@ export const TransactionStageModal = ({
         return 'transaction.dialog.error.gasLimit'
       } catch (err: any) {
         const code = err.data.replace('Reverted ', '')
-        const reason = utils.toUtf8String(`0x${code.substr(138)}`)
+        const reason = toUtf8String(`0x${code.substr(138)}`)
         return reason
       }
     },
@@ -451,12 +444,7 @@ export const TransactionStageModal = ({
 
   return (
     <>
-      <Dialog.Heading
-        title={t(`transaction.dialog.${stage}.title`)}
-        currentStep={currentStep}
-        stepCount={stepCount > 1 ? stepCount : undefined}
-        stepStatus={stepStatus}
-      />
+      <Dialog.Heading title={t(`transaction.dialog.${stage}.title`)} />
       <InnerDialog data-testid="transaction-modal-inner">
         {MiddleContent}
         {upperError && <Helper type="error">{t(upperError)}</Helper>}
@@ -471,6 +459,9 @@ export const TransactionStageModal = ({
       </InnerDialog>
       <Dialog.Footer
         center
+        currentStep={currentStep}
+        stepCount={stepCount > 1 ? stepCount : undefined}
+        stepStatus={stepStatus}
         leading={ActionButton}
         trailing={
           backToInput &&

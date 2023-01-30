@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { NightSky } from '@app/assets/NightSky'
@@ -53,7 +54,7 @@ const InnerContainer = styled.div(
 const Heading = styled(Typography)(
   ({ theme }) => css`
     color: ${theme.colors.background};
-    line-height: ${theme.lineHeights.normal};
+    line-height: ${theme.lineHeights.body};
   `,
 )
 
@@ -79,14 +80,13 @@ const TextContainer = styled.div(
 
 const UpgradeButton = styled(Button)(
   ({ theme }) => css`
-    background: ${theme.colors.backgroundTertiary};
-    color: ${theme.colors.foreground};
+    background: rgba(255, 255, 255, 0.25);
+    color: ${theme.colors.backgroundPrimary};
     &:hover {
-      background: ${theme.colors.background};
+      background: rgba(255, 255, 255, 0.45);
     }
     ${mq.md.min(css`
       max-width: ${theme.space['64']};
-      height: ${theme.space.full};
     `)}
   `,
 )
@@ -115,7 +115,8 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
     isSubdomain,
   )
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable } = useTransactionFlow()
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, showDataInput } =
+    useTransactionFlow()
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleUpgradeClick = () => {
@@ -150,6 +151,8 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           }),
         )
       }
+      if (!checkIsDecrypted(name))
+        return showDataInput(`wrapName-${name}`, 'UnknownLabels', { name, transactions })
       return createTransactionFlow(`wrapName-${name}`, {
         transactions,
         resumable: true,
@@ -166,9 +169,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
       <Container data-testid="wrapper-cta-container">
         <InnerContainer>
           <TextContainer>
-            <Heading variant="extraLarge" weight="bold">
-              {t('details.wrap.boxTitle')}
-            </Heading>
+            <Heading fontVariant="extraLargeBold">{t('details.wrap.boxTitle')}</Heading>
             <Subheading>{t('details.wrap.boxDescription')}</Subheading>
           </TextContainer>
           <Sparkles as={SparklesSVG} />
@@ -176,7 +177,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
         <UpgradeButton
           data-testid="wrapper-cta-button"
           disabled={approvalLoading}
-          shadowless
+          size="medium"
           onClick={handleUpgradeClick}
         >
           {resumable ? t('details.wrap.resumeLabel') : t('details.wrap.startLabel')}

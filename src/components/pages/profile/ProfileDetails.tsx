@@ -5,8 +5,8 @@ import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
-import supportedProfileItems from '@app/constants/supportedProfileItems.json'
-import supportedTexts from '@app/constants/supportedTexts.json'
+import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
+import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useNameDates } from '@app/hooks/useNameDates'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
@@ -24,7 +24,7 @@ const ProfileInfoBox = styled(CacheableComponent)(
     css`
       background-color: ${theme.colors.background};
       border-radius: ${theme.radii['2xLarge']};
-      border: ${theme.space.px} solid ${theme.colors.borderSecondary};
+      border: ${theme.space.px} solid ${theme.colors.border};
     `,
 )
 
@@ -40,7 +40,7 @@ const Stack = styled.div(
 
 const SectionTitle = styled(Typography)(({ theme }) => [
   css`
-    color: ${theme.colors.textTertiary};
+    color: ${theme.colors.greyPrimary};
     margin-left: ${theme.space['2']};
   `,
 ])
@@ -109,7 +109,7 @@ const Actions = styled.div(
     flex-flow: row wrap;
     gap: ${theme.space['2']};
 
-    border-top: 1px solid ${theme.colors.borderSecondary};
+    border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space['4']};
 
     ${mq.md.min(css`
@@ -200,11 +200,9 @@ export const ProfileDetails = ({
             <div className={action.red ? 'leading' : ''} key={action.label}>
               <Button
                 data-testid={`profile-action-${action.label}`}
-                shadowless
                 onClick={action.onClick}
                 size="small"
-                tone={action.red ? 'red' : 'accent'}
-                variant={action.red ? 'secondary' : 'primary'}
+                colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
               >
                 {action.label}
               </Button>

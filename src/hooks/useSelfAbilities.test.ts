@@ -4,6 +4,28 @@ import { useBasicName } from '@app/hooks/useBasicName'
 
 import { getFunctionCallDetails, getPermittedActions, useSelfAbilities } from './useSelfAbilities'
 
+type DeepPartial<T> = {
+  [P in keyof T]?: DeepPartial<T[P]>
+}
+
+type BasicNameData = ReturnType<typeof useBasicName>
+
+type PartialBasicNameData = DeepPartial<BasicNameData>
+
+type PartialMockData = {
+  [key: string]: {
+    basicNameData: PartialBasicNameData
+    parentBasicNameData: PartialBasicNameData
+  }
+}
+
+type MockData = {
+  [key: string]: {
+    basicNameData: BasicNameData
+    parentBasicNameData: BasicNameData
+  }
+}
+
 jest.mock('@app/hooks/useBasicName')
 const mockUseBasicName = mockFunction(useBasicName)
 
@@ -21,7 +43,7 @@ const subname = 'sub.nick.eth'
   both then "Hoder" will be appended to both sections of the name.
 */
 
-const userStates = {
+const partialUserStates = {
   unwrappedNameOwner: {
     basicNameData: {
       ownerData: {
@@ -31,13 +53,18 @@ const userStates = {
       },
       wrapperData: {
         ownershipLevel: 'registry',
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
       },
-      wrapperData: {},
+      wrapperData: {
+        child: {},
+        parent: {},
+      },
     },
   },
   unwrappedNameManager: {
@@ -48,14 +75,18 @@ const userStates = {
         registrant: '0xnotOwner',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
       },
-      wrapperData: {},
+      wrapperData: {
+        child: {},
+        parent: {},
+      },
     },
   },
   unwrappedSubnameManagerHolderUnwrappedParentManager: {
@@ -65,14 +96,18 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
       },
-      wrapperData: {},
+      wrapperData: {
+        child: {},
+        parent: {},
+      },
     },
   },
   unwrappedSubnameUnwrappedParentManager: {
@@ -81,7 +116,8 @@ const userStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
@@ -90,9 +126,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
   },
@@ -102,7 +139,8 @@ const userStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
@@ -112,7 +150,8 @@ const userStates = {
         registrant: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
   },
@@ -122,7 +161,8 @@ const userStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
@@ -131,7 +171,8 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
   },
@@ -142,9 +183,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -152,7 +194,8 @@ const userStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
   },
@@ -162,9 +205,10 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -173,7 +217,8 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
   },
@@ -183,7 +228,8 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
@@ -193,9 +239,10 @@ const userStates = {
         registrant: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
   },
@@ -206,16 +253,20 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
       },
-      wrapperData: {},
+      wrapperData: {
+        child: {},
+        parent: {},
+      },
     },
   },
   wrappedNameCTBurnedOwner: {
@@ -225,9 +276,11 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
-          PARENT_CANNOT_CONTROL: true,
+        child: {
           CANNOT_TRANSFER: true,
+        },
+        parent: {
+          PARENT_CANNOT_CONTROL: true,
         },
       },
     },
@@ -235,7 +288,10 @@ const userStates = {
       ownerData: {
         ownershipLevel: 'registry',
       },
-      wrapperData: {},
+      wrapperData: {
+        child: {},
+        parent: {},
+      },
     },
   },
   wrappedNameManager: {
@@ -245,16 +301,20 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'registry',
       },
-      wrapperData: {},
+      wrapperData: {
+        child: {},
+        parent: {},
+      },
     },
   },
   wrappedSubnameManagerHolderWrappedParentOwner: {
@@ -264,9 +324,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -274,9 +335,10 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
   },
@@ -286,9 +348,10 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -297,9 +360,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
   },
@@ -309,9 +373,10 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -320,9 +385,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
   },
@@ -333,16 +399,20 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
         ownershipLevel: 'nameWrapper',
       },
-      wrapperData: {},
+      wrapperData: {
+        child: {},
+        parent: {},
+      },
     },
   },
   wrappedSubnameOwnerHolderWrappedParentOwnerHolder: {
@@ -352,9 +422,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -363,9 +434,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
   },
@@ -376,19 +448,21 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
-        ownershipLevel: 'baseRegistrar',
+        ownershipLevel: 'registrar',
         owner: ownerAddress,
         registrant: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
   },
@@ -398,9 +472,10 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -409,9 +484,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
   },
@@ -421,9 +497,10 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
@@ -432,9 +509,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
   },
@@ -445,7 +523,8 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
@@ -453,9 +532,10 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
   },
@@ -465,7 +545,8 @@ const userStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
@@ -474,9 +555,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: true,
         },
+        child: {},
       },
     },
   },
@@ -486,7 +568,8 @@ const userStates = {
         ownershipLevel: 'registry',
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
     parentBasicNameData: {
@@ -495,9 +578,10 @@ const userStates = {
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
   },
@@ -507,19 +591,21 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
-        ownershipLevel: 'baseRegsitrar',
+        ownershipLevel: 'registrar',
         owner: ownerAddress,
         registrant: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
   },
@@ -529,22 +615,26 @@ const userStates = {
         ownershipLevel: 'nameWrapper',
       },
       wrapperData: {
-        fuseObj: {
+        parent: {
           PARENT_CANNOT_CONTROL: false,
         },
+        child: {},
       },
     },
     parentBasicNameData: {
       ownerData: {
-        ownershipLevel: 'baseRegsitrar',
+        ownershipLevel: 'registrar',
         owner: ownerAddress,
       },
       wrapperData: {
-        fuseObj: {},
+        child: {},
+        parent: {},
       },
     },
   },
-}
+} as PartialMockData
+
+const userStates = { ...partialUserStates } as MockData
 
 describe('getFunctionCallDetails', () => {
   describe('Correct function call details', () => {
@@ -1085,7 +1175,7 @@ describe('useSelfAbilities', () => {
   it('should return false for all send abilities if CANNOT_TRANSFER has been burned', () => {
     mockUseBasicName.mockReturnValue({
       wrapperData: {
-        fuseObj: {
+        child: {
           CANNOT_TRANSFER: true,
         },
       },

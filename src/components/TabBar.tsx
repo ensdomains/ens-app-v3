@@ -60,7 +60,7 @@ const TabContainer = styled.div(
     border-radius: ${theme.radii.full};
     background-color: ${theme.colors.background};
     border: 1px solid rgba(0, 0, 0, 0.08);
-    box-shadow: 0 3px 24px ${theme.colors.borderTertiary};
+    box-shadow: 0 3px 24px ${theme.colors.border};
     padding: ${theme.space['1.5']} ${theme.space['1.5']};
   `,
 )

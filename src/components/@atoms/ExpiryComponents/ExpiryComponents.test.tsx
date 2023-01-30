@@ -31,7 +31,7 @@ describe('ExpiryClock', () => {
 describe('ShortExpiry', () => {
   it('should be grey if expiry is more than 90 days away', () => {
     render(<ShortExpiry expiry={yearExpiry} />)
-    expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'foreground')
+    expect(screen.getByTestId('short-expiry')).toHaveAttribute('data-color', 'grey')
   })
 
   it('should be orange if expiry is less than 90 days away', () => {
@@ -45,14 +45,14 @@ describe('ShortExpiry', () => {
   })
   it('should show year units if expiry is more than a year away', () => {
     render(<ShortExpiry expiry={twoYearExpiry} />)
-    expect(screen.getByText('name.expiresInYears')).toBeVisible()
+    expect(screen.getByText('name.expiresInYears.2')).toBeVisible()
   })
   it('should show month units if expiry is less than 365 days away', () => {
     render(<ShortExpiry expiry={yearExpiry} />)
-    expect(screen.getByText('name.expiresInMonths')).toBeVisible()
+    expect(screen.getByText('name.expiresInMonths.12')).toBeVisible()
   })
   it('should show day units if expiry is less than 90 days away', () => {
     render(<ShortExpiry expiry={monthExpiry} />)
-    expect(screen.getByText('name.expiresInDays')).toBeVisible()
+    expect(screen.getByText('name.expiresInDays.29')).toBeVisible()
   })
 })

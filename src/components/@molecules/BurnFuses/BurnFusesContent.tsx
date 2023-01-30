@@ -3,32 +3,17 @@ import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import type { NamedFusesToBurn } from '@ensdomains/ensjs'
-import { Button, FlameBurnedSVG, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
+import type { ChildFuses } from '@ensdomains/ensjs'
+import { childFuseKeys } from '@ensdomains/ensjs/utils/fuses'
+import { Button, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import mq from '@app/mediaQuery'
-import { FuseObj } from '@app/types'
+import { AllChildFuses } from '@app/types'
 
-export const baseFuseObj = {
-  CANNOT_UNWRAP: false,
-  CANNOT_BURN_FUSES: false,
-  CANNOT_TRANSFER: false,
-  CANNOT_SET_RESOLVER: false,
-  CANNOT_SET_TTL: false,
-  CANNOT_CREATE_SUBDOMAIN: false,
-}
-
-export const defaultFuseObj = {
-  ...baseFuseObj,
-  PARENT_CANNOT_CONTROL: false,
-}
-
-export const defaultSelectableFuses = {
-  ...defaultFuseObj,
-}
-
-type SelectableFuses = Omit<FuseObj, 'PARENT_CANNOT_CONTROL' | 'CAN_DO_EVERYTHING'>
+export const childFuseObj = Object.fromEntries(
+  childFuseKeys.map((key) => [key, false]),
+) as ChildFuses['current']
 
 const FusesContainer = styled.div(({ theme }) => [
   css`
@@ -67,7 +52,7 @@ const StyledFlameSVG = styled(FlameSVG)(
 
 const BurnedFlameContainer = styled.div<{ $isBurned: boolean }>(
   ({ theme, $isBurned }) => css`
-    background: ${theme.colors.backgroundTertiary};
+    background: ${theme.colors.greyPrimary};
     color: ${theme.colors.textSecondary};
     border-radius: ${theme.space['2.5']};
     display: flex;
@@ -104,9 +89,9 @@ const BurnButton = ({
   handleBurnClick,
   isSelected,
 }: {
-  permission: keyof FuseObj
+  permission: ChildFuses['fuse']
   isBurned: boolean
-  handleBurnClick: (permission: keyof FuseObj) => void
+  handleBurnClick: (permission: ChildFuses['fuse']) => void
   isSelected: boolean
 }) => {
   const { t } = useTranslation('profile', { keyPrefix: 'tabs.more.fuses' })
@@ -115,11 +100,15 @@ const BurnButton = ({
     <StyledButton
       onClick={() => handleBurnClick(permission)}
       disabled={isBurned}
-      variant="secondary"
-      tone={isSelected ? 'red' : 'grey'}
+      colorStyle={isSelected ? 'redSecondary' : 'greySecondary'}
       size="small"
-      fullWidthContent
-      shadowless
+      suffix={
+        isSelected ? (
+          <FlameSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
+        ) : (
+          <StyledFlameSVG width="24" height="24" />
+        )
+      }
     >
       <ButtonInner data-testid={`burn-button-${permission}`}>
         <Typography>{t(`permissions.${permission}`)}</Typography>
@@ -128,11 +117,6 @@ const BurnButton = ({
             <Typography>{t('burned')}</Typography>
             <BurnedStyledFlameSVG width="24" height="24" />
           </BurnedFlameContainer>
-        )}
-        {isSelected ? (
-          <FlameBurnedSVG width="24" height="24" data-testid={`flame-selected-${permission}`} />
-        ) : (
-          <StyledFlameSVG width="24" height="24" />
         )}
       </ButtonInner>
     </StyledButton>
@@ -147,14 +131,14 @@ const ButtonsContainer = styled.div(
 )
 
 const canContinue = (
-  fuseData: Partial<FuseObj>,
-  fuseSelected: Partial<SelectableFuses>,
+  fuseData: ChildFuses['options'],
+  fuseSelected: ChildFuses['options'],
   canUnsetFuse: boolean,
 ) => {
-  const filteredInitialFuseData: Partial<FuseObj> = { ...fuseData }
+  const filteredInitialFuseData: ChildFuses['options'] = { ...fuseData }
   Object.keys(filteredInitialFuseData).forEach((key: string) => {
-    if (filteredInitialFuseData[key as keyof FuseObj]) {
-      delete filteredInitialFuseData[key as keyof FuseObj]
+    if (filteredInitialFuseData[key as ChildFuses['fuse']]) {
+      delete filteredInitialFuseData[key as ChildFuses['fuse']]
     }
   })
   const cannotUnwrap = !fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP
@@ -165,60 +149,66 @@ const canContinue = (
   return isEqual(filteredInitialFuseData, fuseSelected) || cannotUnwrap
 }
 
-type Props = {
-  fuseData:
-    | {
-        fuseObj: Record<string, boolean>
-      }
-    | undefined
+type BaseProps = {
+  fuseData: AllChildFuses | undefined
   onDismiss: () => void
-  onSubmit: (fuses: NamedFusesToBurn, fuseNames: string[]) => void
   canUnsetFuse?: boolean
+  returnObject?: boolean
 }
 
-const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false }: Props) => {
+type PropsWithReturnObject = BaseProps & {
+  returnObject: true
+  onSubmit: (fuses: ChildFuses['current']) => void
+}
+
+type PropsWithReturnArray = BaseProps & {
+  returnObject?: never
+  onSubmit: (fuses: ChildFuses['fuse'][], fuseNames: string[]) => void
+}
+
+const BurnFusesContent = ({
+  fuseData,
+  onDismiss,
+  onSubmit,
+  canUnsetFuse = false,
+  returnObject,
+}: PropsWithReturnArray | PropsWithReturnObject) => {
   const { t } = useTranslation('profile', { keyPrefix: 'tabs.more' })
   const { t: tc } = useTranslation()
-  const [_fuseData, setFuseData] = useState<SelectableFuses>(defaultSelectableFuses)
-  const [fuseSelected, setFuseSelected] = useState<Partial<SelectableFuses>>(defaultSelectableFuses)
+  const [_fuseData, setFuseData] = useState<AllChildFuses>(childFuseObj)
+  const [fuseSelected, setFuseSelected] = useState<ChildFuses['options']>(childFuseObj)
 
-  const handleBurnClick = (permission: keyof FuseObj) => {
-    const nextFuseSelected = { ...fuseSelected } as FuseObj
+  const handleBurnClick = (permission: ChildFuses['fuse']) => {
+    const nextFuseSelected = { ...fuseSelected } as ChildFuses['options']
     nextFuseSelected[permission] = !nextFuseSelected[permission]
     setFuseSelected(nextFuseSelected)
   }
 
   const _onSubmit = () => {
-    const selectedFuses: Array<keyof SelectableFuses> = []
-    Object.keys(fuseSelected).forEach((key) => {
-      if (fuseSelected[key as keyof SelectableFuses]) {
-        selectedFuses.push(key as keyof SelectableFuses)
-      }
-    })
+    if (returnObject) {
+      return onSubmit({ ...fuseData, ...fuseSelected } as ChildFuses['current'])
+    }
+
+    const selectedFuses = Object.keys(fuseSelected).filter(
+      (key) => fuseSelected[key as ChildFuses['fuse']],
+    ) as ChildFuses['fuse'][]
 
     const permissions = selectedFuses.map((key) => t(`fuses.permissions.${key}`))
 
-    onSubmit(selectedFuses as NamedFusesToBurn, permissions)
+    onSubmit(selectedFuses, permissions)
   }
 
   useEffect(() => {
     if (fuseData) {
-      const initialFuseData = Object.fromEntries(
-        Object.entries({
-          ...(fuseData.fuseObj as FuseObj),
-        }).filter(([key]) => {
-          return !(key === 'PARENT_CANNOT_CONTROL' || key === 'CAN_DO_EVERYTHING')
-        }),
-      ) as SelectableFuses
-      setFuseData(initialFuseData)
+      setFuseData(fuseData)
 
       const initialFusesSelected = Object.fromEntries(
         Object.entries({
-          ...initialFuseData,
+          ...fuseData,
         }).filter(([, val]) => !val),
       )
       if (!canUnsetFuse) setFuseSelected(initialFusesSelected)
-      else setFuseSelected(initialFuseData)
+      else setFuseSelected(fuseData)
     }
   }, [fuseData, canUnsetFuse])
 
@@ -226,9 +216,7 @@ const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false 
 
   return (
     <FusesContainer>
-      <Typography weight="bold" variant="extraLarge">
-        {t('fuses.burnFormTitle')}
-      </Typography>
+      <Typography fontVariant="headingFour">{t('fuses.burnFormTitle')}</Typography>
       {!_fuseData.CANNOT_UNWRAP && !fuseSelected.CANNOT_UNWRAP ? (
         <>
           <Spacer $height="1" />
@@ -244,25 +232,24 @@ const BurnFusesContent = ({ fuseData, onDismiss, onSubmit, canUnsetFuse = false 
         {Object.entries(_fuseData).map(([key, value]) => (
           <BurnButton
             {...{
-              permission: key as keyof FuseObj,
+              permission: key as ChildFuses['fuse'],
               isBurned: !!value && !canUnsetFuse,
               handleBurnClick,
-              isSelected: !!fuseSelected[key as keyof SelectableFuses],
+              isSelected: !!fuseSelected[key as ChildFuses['fuse']],
             }}
           />
         ))}
       </BurnButtonsContainer>
       <Spacer $height="6" />
       <ButtonsContainer>
-        <Button shadowless tone="grey" variant="secondary" onClick={onDismiss}>
+        <Button colorStyle="greySecondary" onClick={onDismiss}>
           {tc('action.cancel')}
         </Button>
         <Button
           disabled={canContinue(_fuseData, fuseSelected, canUnsetFuse)}
           onClick={_onSubmit}
-          tone="red"
+          color="red"
           data-testid="burn-form-continue"
-          shadowless
         >
           {canUnsetFuse ? tc('action.confirm') : tc('action.burnSelected')}
         </Button>

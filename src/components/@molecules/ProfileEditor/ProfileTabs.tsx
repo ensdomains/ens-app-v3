@@ -12,6 +12,40 @@ const TabButtonsContainer = styled.div(
     overflow-x: auto;
     overflow-y: hidden;
     padding: 0 ${theme.space['6']};
+
+    /* stylelint-disable-next-line selector-pseudo-element-no-unknown */
+    &::-webkit-scrollbar-track {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar-button:end:increment,
+    &::-webkit-scrollbar-button:start:decrement {
+      width: ${theme.space['6']};
+      display: block;
+      background: transparent;
+    }
+
+    &::-webkit-scrollbar {
+      background-color: transparent;
+    }
+
+    &::-webkit-scrollbar:horizontal {
+      height: ${theme.space['1.5']};
+      background-color: transparent;
+      padding: 0 ${theme.space['1.5']};
+    }
+
+    &::-webkit-scrollbar-thumb:horizontal {
+      border: none;
+      border-radius: ${theme.radii.full};
+      border-bottom-style: inset;
+      border-bottom-width: calc(100vw + 100vh);
+      border-color: inherit;
+    }
+
+    &:hover {
+      border-color: ${theme.colors.greyBright};
+    }
   `,
 )
 
@@ -33,7 +67,7 @@ const getIndicatorStyle = (
       background-color: ${color};
       width: 12px;
       height: 12px;
-      border: 1px solid ${theme.colors.white};
+      border: 1px solid ${theme.colors.backgroundPrimary};
       box-sizing: border-box;
       border-radius: 50%;
       top: 0;

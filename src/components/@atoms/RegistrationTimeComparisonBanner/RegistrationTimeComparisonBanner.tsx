@@ -1,4 +1,4 @@
-import { BigNumber } from 'ethers'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -51,6 +51,7 @@ const Marker = styled.div<{ $percent: number }>(
     flex-direction: column;
     justify-content: center;
     align-items: center;
+    gap: ${theme.space['1']};
 
     width: ${theme.space['16']};
     height: ${theme.space['10']};
@@ -63,8 +64,8 @@ const Marker = styled.div<{ $percent: number }>(
       color: ${theme.colors.background};
     }
 
-    font-size: ${theme.space['3']};
-    line-height: ${theme.lineHeights['1.25']};
+    font-size: ${theme.fontSizes.extraSmall};
+    line-height: ${theme.lineHeights.extraSmall};
 
     b {
       display: block;
@@ -77,8 +78,9 @@ const Marker = styled.div<{ $percent: number }>(
 
     ${mq.xs.min(css`
       width: ${theme.space['18']};
-      font-size: ${theme.fontSizes.label};
+      font-size: ${theme.fontSizes.small};
     `)}
+
     &::before {
       content: '';
 
@@ -89,7 +91,7 @@ const Marker = styled.div<{ $percent: number }>(
       height: ${theme.space['7']};
       width: ${theme.space['1']};
 
-      outline: ${theme.space['0.5']} solid ${theme.colors.lightBlue};
+      outline: ${theme.space['0.5']} solid ${theme.colors.blueSurface};
 
       border-radius: ${theme.radii.medium};
       background-color: inherit;

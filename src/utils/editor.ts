@@ -1,6 +1,6 @@
 import supportedAddresses from '@app/constants/supportedAddresses.json'
-import supportedProfileItems from '@app/constants/supportedProfileItems.json'
-import supportedAccounts from '@app/constants/supportedTexts.json'
+import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
+import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import { Profile, RecordItem } from '@app/types/index'
 
 export const formSafeKey = (key: string) => key.replace(/\./g, '\u2024')
@@ -78,7 +78,13 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
         },
       }
     },
-    { general: {}, accounts: {}, other: {} },
+    {
+      general: {
+        name: '',
+      },
+      accounts: {},
+      other: {},
+    },
   ) || { general: {}, accounts: {}, other: {} }
 
   let website = ''

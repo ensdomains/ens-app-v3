@@ -5,9 +5,9 @@ import { Typography } from '@ensdomains/thorin'
 const generateBgImg = (percent: number, theme: DefaultTheme) => css`
   background-image: linear-gradient(
     90deg,
-    rgba(${theme.shadesRaw.foreground}, 1) 0%,
-    rgba(${theme.shadesRaw.foreground}, 1) ${percent}%,
-    rgba(${theme.shadesRaw.foreground}, 0) ${percent}%
+    rgba(${theme.colors.greyPrimary}, 1) 0%,
+    rgba(${theme.colors.greyPrimary}, 1) ${percent}%,
+    rgba(${theme.colors.greyPrimary}, 0) ${percent}%
   );
 `
 

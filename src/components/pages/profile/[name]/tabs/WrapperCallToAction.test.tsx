@@ -45,6 +45,7 @@ const mockContracts = {
 const mockCreateTransactionFlow = jest.fn()
 const mockResumeTransactionFlow = jest.fn()
 const mockGetResumeable = jest.fn()
+const mockShowDataInput = jest.fn()
 
 describe('WrapperCallToAction', () => {
   mockUseNFTImage.mockReturnValue({ isCompatible: true, image: '#' })
@@ -52,6 +53,7 @@ describe('WrapperCallToAction', () => {
     resumeTransactionFlow: mockResumeTransactionFlow,
     createTransactionFlow: mockCreateTransactionFlow,
     getResumable: mockGetResumeable,
+    showDataInput: mockShowDataInput,
   })
   mockUseEns.mockReturnValue({
     ready: true,
@@ -236,5 +238,45 @@ describe('WrapperCallToAction', () => {
     mockGetResumeable.mockReturnValue(1)
     render(<WrapperCallToAction name="test123.eth" />)
     expect(screen.getByTestId('wrapper-cta-button')).toHaveTextContent('details.wrap.resumeLabel')
+  })
+
+  it('should show an unknown labels input if a label is unknown', () => {
+    mockGetResumeable.mockReturnValue(false)
+    mockCreateTransactionFlow.mockClear()
+    mockUseNameDetails.mockReturnValue({
+      ownerData: { owner: '0x123' },
+      profile: {
+        resolverAddress: '0x456',
+        records: {},
+      },
+      isLoading: false,
+    })
+    mockUseWrapperApprovedForAll.mockReturnValue({
+      approvedForAll: false,
+      isLoading: false,
+    })
+    // name is sub2.test123.eth
+    render(
+      <WrapperCallToAction name="[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth" />,
+    )
+    screen.getByTestId('wrapper-cta-button').click()
+    expect(mockCreateTransactionFlow).not.toHaveBeenCalled()
+    expect(mockShowDataInput).toHaveBeenCalled()
+
+    const args = mockShowDataInput.mock.lastCall
+    expect(args[0]).toBe(
+      'wrapName-[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
+    )
+    expect(args[1]).toBe('UnknownLabels')
+    expect(args[2].name).toBe(
+      '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
+    )
+    const { transactions } = args[2]
+    expect(transactions[0].name).toEqual('approveNameWrapper')
+    expect(transactions[0].data).toEqual({ address: '0x123' })
+    expect(transactions[1].name).toEqual('wrapName')
+    expect(transactions[1].data).toEqual({
+      name: '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
+    })
   })
 })
