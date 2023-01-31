@@ -1,16 +1,21 @@
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useAccount, useQueryClient } from 'wagmi'
 
-import { Button, Tag, Typography, mq } from '@ensdomains/thorin'
+import { Button, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
 
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
+import useDNSProof from '@app/hooks/useDNSProof'
 import useOwners from '@app/hooks/useOwners'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { makeIntroItem } from '@app/transaction-flow/intro'
+import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { shortenAddress } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
@@ -150,16 +155,117 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   )
 }
 
+const DNSOwnerSectionContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: ${theme.space['4']};
+    padding: ${theme.space['4']};
+
+    ${mq.md.min(css`
+      padding: ${theme.space['6']};
+    `)}
+  `,
+)
+
+const ButtonsContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: ${theme.space['4']};
+  `,
+)
+
+const DNSOwnerSection = ({
+  name,
+  owners,
+  canSend,
+  isWrapped,
+}: {
+  name: string
+  owners: ReturnType<typeof useOwners>
+  canSend: boolean
+  isWrapped: boolean
+}) => {
+  const { address } = useAccount()
+  const { t } = useTranslation('profile')
+  const { createTransactionFlow } = useTransactionFlow()
+  const { resetQueries } = useQueryClient()
+
+  const canShow = useMemo(() => {
+    let hasMatchingAddress = false
+    let hasMismatchingAddress = false
+    let hasDNSOwner = false
+    for (const owner of owners) {
+      if (owner.address === address) {
+        hasMatchingAddress = true
+      } else {
+        hasMismatchingAddress = true
+      }
+      if (owner.label === 'name.dnsOwner') {
+        hasDNSOwner = true
+      }
+    }
+    return hasMatchingAddress && hasMismatchingAddress && hasDNSOwner
+  }, [owners, address])
+
+  const { data, isLoading } = useDNSProof(name, !canShow || canSend)
+
+  const handleSyncManager = () => {
+    const currentManager = owners.find((owner) => owner.label === 'name.manager')
+
+    createTransactionFlow(`sync-manager-${name}-${address}`, {
+      intro: {
+        title: t('tabs.more.ownership.dnsOwnerWarning.syncManager'),
+        content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
+      },
+      transactions: [
+        makeTransactionItem('syncManager', { address: address!, name, proverResult: data! }),
+      ],
+    })
+  }
+
+  const handleRefresh = () => {
+    resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
+  }
+
+  if (!canShow) return null
+
+  return (
+    <DNSOwnerSectionContainer>
+      <Helper type="warning" alignment="horizontal">
+        {t(`tabs.more.ownership.dnsOwnerWarning.${canSend ? 'isManager' : 'isDnsOwner'}`)}
+      </Helper>
+      <ButtonsContainer>
+        <Button width="auto" colorStyle="accentSecondary" onClick={handleRefresh}>
+          Refresh DNS
+        </Button>
+        {!canSend && (
+          <Button width="auto" onClick={handleSyncManager} loading={isLoading} disabled={!data}>
+            {t('tabs.more.ownership.dnsOwnerWarning.syncManager')}
+          </Button>
+        )}
+      </ButtonsContainer>
+    </DNSOwnerSectionContainer>
+  )
+}
+
 const Ownership = ({
   name,
   owners,
   canSend,
   isCachedData,
+  isWrapped,
 }: {
   name: string
   owners: ReturnType<typeof useOwners>
   canSend: boolean
   isCachedData: boolean
+  isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
 
@@ -186,6 +292,7 @@ const Ownership = ({
       {owners.map((owner) => (
         <Owner key={`${owner.address}-${owner.label}`} {...owner} />
       ))}
+      <DNSOwnerSection {...{ name, owners, canSend, isWrapped }} />
     </Container>
   )
 }

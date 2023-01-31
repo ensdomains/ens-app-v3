@@ -13,6 +13,7 @@ export const IntroStageModal = ({
   transactions,
   onSuccess,
   currentStep,
+  onDismiss,
   content,
   title,
   trailingLabel,
@@ -32,6 +33,16 @@ export const IntroStageModal = ({
     currentStep > 0
       ? t('transaction.dialog.intro.trailingButtonResume')
       : t('transaction.dialog.intro.trailingButton')
+
+  const LeadingButton = (
+    <Button
+      colorStyle="accentSecondary"
+      onClick={() => onDismiss()}
+      data-testid="transaction-dialog-intro-leading-btn"
+    >
+      {t('action.cancel')}
+    </Button>
+  )
 
   const TrailingButton = (
     <Button onClick={() => onSuccess()} data-testid="transaction-dialog-intro-trailing-btn">
@@ -69,8 +80,8 @@ export const IntroStageModal = ({
         currentStep={currentStep}
         stepCount={txCount > 1 ? txCount : undefined}
         stepStatus={stepStatus}
-        center
         trailing={TrailingButton}
+        leading={LeadingButton}
       />
     </>
   )

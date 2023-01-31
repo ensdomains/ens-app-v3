@@ -2,11 +2,13 @@ import { ComponentProps } from 'react'
 
 import { ChangePrimaryName } from './ChangePrimaryName'
 import { MigrateAndUpdateResolver } from './MigrateAndUpdateResolver'
+import { SyncManager } from './SyncManager'
 import { WrapName } from './WrapName'
 
 export const intros = {
   WrapName,
   MigrateAndUpdateResolver,
+  SyncManager,
   ChangePrimaryName,
 }
 
