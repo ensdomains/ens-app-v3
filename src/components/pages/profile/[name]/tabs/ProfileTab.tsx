@@ -2,7 +2,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Banner } from '@ensdomains/thorin'
+import { Helper } from '@ensdomains/thorin'
 
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
@@ -75,7 +75,9 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         canEdit={selfAbilities.canEdit}
       >
         {isWrapped && !normalisedName.endsWith('.eth') && (
-          <Banner alert="warning">{t('tabs.profile.warnings.wrappedDNS')}</Banner>
+          <Helper type="warning" alignment="horizontal">
+            {t('tabs.profile.warnings.wrappedDNS')}
+          </Helper>
         )}
       </ProfileSnippet>
       <ProfileDetails

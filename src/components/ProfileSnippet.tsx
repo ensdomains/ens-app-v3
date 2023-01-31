@@ -2,7 +2,7 @@ import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Banner, Button, Typography, mq } from '@ensdomains/thorin'
+import { Button, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -216,7 +216,7 @@ export const ProfileSnippet = ({
         )}
       </TextStack>
       {showHomoglyphWarning && (
-        <Banner alert="warning">
+        <Helper type="warning" alignment="horizontal">
           <Trans
             i18nKey="tabs.profile.warnings.homoglyph"
             ns="profile"
@@ -224,7 +224,7 @@ export const ProfileSnippet = ({
               a: <Outlink href="https://en.wikipedia.org/wiki/IDN_homograph_attack" />,
             }}
           />
-        </Banner>
+        </Helper>
       )}
       {children}
     </Container>
