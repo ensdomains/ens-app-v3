@@ -108,7 +108,7 @@ const NFTName = styled(Typography)(
 const SelectedNFTContainer = styled.div(
   ({ theme }) => css`
     padding: ${theme.space['4']} ${theme.space['16']};
-
+    max-width: 540px;
     & div {
       padding: 0 ${theme.radii['2.5xLarge']};
       &:first-of-type {
@@ -144,7 +144,7 @@ export const AvatarNFT = ({
   handleSubmit,
 }: {
   handleCancel: () => void
-  handleSubmit: (display: string, uri: string) => void
+  handleSubmit: (type: 'nft', uri: string, display: string) => void
 }) => {
   const chain = useChainName()
   const { t } = useTranslation('transactionFlow')
@@ -202,7 +202,7 @@ export const AvatarNFT = ({
       const string = `eip155:1/${nftReference.id.tokenMetadata.tokenType.toLowerCase()}:${
         nftReference.contract.address
       }/${BigNumber.from(nftReference.id.tokenId).toString()}`
-      handleSubmit(nftReference.media[0].gateway, string)
+      handleSubmit('nft', string, nftReference.media[0].gateway)
     }
 
     return (
@@ -245,13 +245,14 @@ export const AvatarNFT = ({
     innerContent = (
       <>
         <Input
-          prefix={<MagnifyingGlassSVG />}
+          icon={<MagnifyingGlassSVG />}
           hideLabel
           label="search"
           value={searchedInput}
           onChange={(e) => setSearchedInput(e.target.value)}
           placeholder={t('input.profileEditor.tabs.avatar.nft.searchPlaceholder')}
           data-testid="avatar-search-input"
+          clearable
         />
         {NFTs.length > 0 ? (
           <ScrollBoxWithSpinner

@@ -1,4 +1,4 @@
-import { ButtonHTMLAttributes, ReactNode, useMemo, useRef, useState } from 'react'
+import { ButtonHTMLAttributes, ReactNode, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
@@ -66,6 +66,16 @@ const ControlsHeaderLeading = styled.div(
   `,
 )
 
+const InputWrapper = styled.div(
+  () => css`
+    & > div:first-child {
+      & > div:first-child {
+        display: none;
+      }
+    }
+  `,
+)
+
 const ControlsHeaderTrailing = styled.button<{ $accented: boolean }>(
   ({ theme, $accented }) => css`
     display: flex;
@@ -75,9 +85,19 @@ const ControlsHeaderTrailing = styled.button<{ $accented: boolean }>(
     cursor: pointer;
     transition: all 150ms ease-in-out;
 
+    &:disabled {
+      color: ${theme.colors.greyBright};
+      cursor: not-allowed;
+    }
+
     &:hover {
       color: ${$accented ? theme.colors.accentBright : theme.colors.greyBright};
       transform: translateY(-1px);
+    }
+
+    &:disabled:hover {
+      color: ${theme.colors.greyBright};
+      transform: initial;
     }
   `,
 )
@@ -249,6 +269,7 @@ const ButtonContainer = styled.div<{ $state: TransitionState }>(
 type Props = {
   autocomplete?: boolean
   createable?: boolean
+  reservedKeys?: string[]
   inline?: boolean
   options?: Option[]
   messages?: {
@@ -263,6 +284,7 @@ type Props = {
 export const AddRecordButton = ({
   autocomplete,
   createable,
+  reservedKeys = [],
   inline = false,
   options: optionsProp,
   messages = {},
@@ -277,6 +299,8 @@ export const AddRecordButton = ({
     selectOption = 'Select an option',
     createRecord = 'Create a record',
   } = messages
+
+  const [error, setError] = useState<string | undefined>()
 
   const inputRef = useRef<HTMLInputElement>(null)
 
@@ -296,7 +320,18 @@ export const AddRecordButton = ({
     if (createable) return 'create'
     return 'placeholder'
   })()
+
   const [inputValue, setInputValue] = useState('')
+
+  useEffect(() => {
+    const trimmedInputValue = inputValue.trim()
+    if (reservedKeys.includes(trimmedInputValue)) {
+      setError(t('errors.keyInUse', { value: trimmedInputValue }))
+    } else {
+      setError(undefined)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [inputValue])
 
   const hasInput = inputValue.length > 0
 
@@ -309,6 +344,15 @@ export const AddRecordButton = ({
       (option) => option.label!.toLowerCase().indexOf(inputValue.toLowerCase()) > -1,
     )
   }, [inputValue, optionsProp])
+
+  useEffect(() => {
+    setInputValue('')
+    setError(undefined)
+  }, [optionsProp])
+
+  // const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
+  //   setInputValue(event.target.value)
+  // }
 
   const handleInputAction = () => {
     if (inputActionType === 'create' && onAddRecord) {
@@ -332,28 +376,31 @@ export const AddRecordButton = ({
             {inputType === 'placeholder' ? (
               <div>{selectOption}</div>
             ) : (
-              <Input
-                ref={inputRef}
-                icon={prefix}
-                suffixAs="div"
-                value={inputValue}
-                label=""
-                size="small"
-                hideLabel
-                placeholder={
-                  inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
-                }
-                clearable
-                onChange={(e) => setInputValue(e.target.value)}
-                data-testid="add-record-button-input"
-              />
+              <InputWrapper>
+                <Input
+                  ref={inputRef}
+                  icon={prefix}
+                  suffixAs="div"
+                  value={inputValue}
+                  label=""
+                  size="small"
+                  placeholder={
+                    inputType === 'search' ? t('action.search', { ns: 'common' }) : createRecord
+                  }
+                  error={error}
+                  clearable
+                  onChange={(e) => setInputValue(e.target.value)}
+                  data-testid="add-record-button-input"
+                />
+              </InputWrapper>
             )}
           </ControlsHeaderLeading>
           <ControlsHeaderTrailing
             type="button"
             $accented={inputActionType === 'create'}
             onClick={handleInputAction}
-            data-testid="add-record-button-input-action"
+            disabled={!!error}
+            data-testid="add-record-button-action-button"
           >
             {inputActionType === 'create'
               ? t('action.add', { ns: 'common' })

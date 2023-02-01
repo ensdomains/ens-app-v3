@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { getEncryptedLabelAmount } from '@ensdomains/ensjs/utils/labels'
 import { Typography } from '@ensdomains/thorin'
 
 import { WrapperCallToAction } from '@app/components/pages/profile/[name]/tabs/WrapperCallToAction'
@@ -106,12 +107,6 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         (isSelf ? address : true) && typeof name === 'string' && name.length > 0,
   )
 
-  useEffect(() => {
-    if (isSelf && name) {
-      router.replace(`/profile/${name}`)
-    }
-  }, [isSelf, name, router])
-
   const [titleContent, descriptionContent] = useMemo(() => {
     if (isSelf) {
       return [t('yourProfile'), '']
@@ -153,6 +148,40 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
   const selfAbilities = useSelfAbilities(address, name)
+
+  // hook for redirecting to the correct profile url
+  // profile.decryptedName fetches labels from NW/subgraph
+  // normalisedName fetches labels from localStorage
+  useEffect(() => {
+    if (
+      name !== profile?.decryptedName &&
+      profile?.decryptedName &&
+      !isSelf &&
+      getEncryptedLabelAmount(normalisedName) > getEncryptedLabelAmount(profile.decryptedName)
+    ) {
+      // if the fetched decrypted name is different to the current name
+      // and the decrypted name has less encrypted labels than the normalised name
+      // direct to the fetched decrypted name
+      router.replace(`/profile/${profile.decryptedName}`, { shallow: true, maintainHistory: true })
+    } else if (
+      name !== normalisedName &&
+      normalisedName &&
+      !isSelf &&
+      (!profile?.decryptedName ||
+        getEncryptedLabelAmount(profile.decryptedName) > getEncryptedLabelAmount(normalisedName))
+    ) {
+      // if the normalised name is different to the current name
+      // and the normalised name has less encrypted labels than the decrypted name
+      // direct to normalised name
+      router.replace(`/profile/${normalisedName}`, { shallow: true, maintainHistory: true })
+    }
+  }, [profile?.decryptedName, normalisedName, name, isSelf, router])
+
+  useEffect(() => {
+    if (isSelf && name) {
+      router.replace(`/profile/${name}`)
+    }
+  }, [isSelf, name, router])
 
   useEffect(() => {
     if (shouldShowSuccessPage(transactions)) {

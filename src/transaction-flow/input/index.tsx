@@ -12,6 +12,7 @@ import type { Props as RevokePermissionsProps } from './RevokePermissions/Revoke
 import type { Props as SelectPrimaryNameProps } from './SelectPrimaryName-flow'
 import type { Props as SendNameProps } from './SendName-flow'
 import type { Props as TransferProfileProps } from './TransferProfile/TransferProfile-flow'
+import type { Props as UnknownLabelsProps } from './UnknownLabels/UnknownLabels-flow'
 
 const dynamicHelper = <P,>(name: string) =>
   dynamic<P>(
@@ -38,6 +39,7 @@ const BurnPCC = dynamicHelper<BurnPCCProps>('BurnPCC/BurnPCC')
 const RevokePermissions = dynamicHelper<RevokePermissionsProps>(
   'RevokePermissions/RevokePermissions',
 )
+const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLabels')
 
 export const DataInputComponents = {
   EditResolver,
@@ -51,6 +53,7 @@ export const DataInputComponents = {
   SendName,
   BurnPCC,
   RevokePermissions,
+  UnknownLabels,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

@@ -110,7 +110,8 @@
   },
   "errors": {
     "noResults": "No results found",
-    "invalidAddress": "Invalid address"
+    "invalidAddress": "Invalid address",
+    "addressRequired": "Address required"
   },
   "transaction": {
     "description": {
