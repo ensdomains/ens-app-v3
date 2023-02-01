@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 
 import { Button, Tooltip, Typography } from '@ensdomains/thorin'
 
-import QuestionSVG from '@app/assets/question.svg'
+import QuestionSVG from '@app/assets/Question.svg'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import type { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
