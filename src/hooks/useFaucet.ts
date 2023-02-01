@@ -1,4 +1,5 @@
-import { useMutation, useQuery, useQueryClient } from 'wagmi'
+import { useQueryClient } from '@tanstack/react-query'
+import { useMutation, useQuery } from 'wagmi'
 
 import { useAccountSafely } from './useAccountSafely'
 import { useChainId } from './useChainId'
@@ -33,7 +34,7 @@ const ENDPOINT =
     : 'https://ens-faucet.ens-cf.workers.dev/'
 
 const useFaucet = () => {
-  const { resetQueries } = useQueryClient()
+  const queryClient = useQueryClient()
   const { address } = useAccountSafely()
   const chainId = useChainId()
   const { data, error, isLoading } = useQuery(
@@ -85,7 +86,7 @@ const useFaucet = () => {
     },
     {
       onSuccess: () => {
-        resetQueries(['getFaucetEligibility', address])
+        queryClient.resetQueries(['getFaucetEligibility', address])
       },
     },
   )
