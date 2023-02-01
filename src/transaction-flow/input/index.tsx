@@ -3,7 +3,6 @@ import dynamic from 'next/dynamic'
 import TransactionLoader from '../TransactionLoader'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
 import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
-import type { Props as BurnPCCProps } from './BurnPCC/BurnPCC-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
 import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
@@ -35,7 +34,6 @@ const TransferProfile = dynamicHelper<TransferProfileProps>('TransferProfile/Tra
 const ExtendNames = dynamicHelper<ExtendNamesProps>('ExtendNames/ExtendNames')
 const BurnFuses = dynamicHelper<BurnFusesProps>('BurnFuses/BurnFuses')
 const SendName = dynamicHelper<SendNameProps>('SendName')
-const BurnPCC = dynamicHelper<BurnPCCProps>('BurnPCC/BurnPCC')
 const RevokePermissions = dynamicHelper<RevokePermissionsProps>(
   'RevokePermissions/RevokePermissions',
 )
@@ -51,7 +49,6 @@ export const DataInputComponents = {
   ExtendNames,
   BurnFuses,
   SendName,
-  BurnPCC,
   RevokePermissions,
   UnknownLabels,
 }

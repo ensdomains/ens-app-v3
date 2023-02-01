@@ -45,6 +45,11 @@ const DateContainer = styled.div(
 const CustomExpiryErrorLabel = styled.div(
   ({ theme }) => css`
     color: ${theme.colors.red};
+    margin-top: ${theme.space['2']};
+    padding: 0 ${theme.space['2']};
+    font-weight: ${theme.fontWeights.bold};
+    font-size: ${theme.fontSizes.body};
+    line-height: ${theme.lineHeights.body};
   `,
 )
 
@@ -72,6 +77,19 @@ export const SetExpiryView = ({
   const min = dateToDateTimeLocal(now)
   const max = dateToDateTimeLocal(date)
 
+  const maxDateLabel = date.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
+  const maxTimeLabel = date.toLocaleTimeString(undefined, {
+    hour: 'numeric',
+    minute: 'numeric',
+    second: 'numeric',
+    hour12: false,
+    timeZoneName: 'short',
+  })
+
   const expiryLabel = now.toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
@@ -98,6 +116,7 @@ export const SetExpiryView = ({
       </CenterAlignedTypography>
       <ExpiryOptionsContainer>
         <RadioButton
+          data-testid="radio-max"
           value="max"
           label={
             <Typography fontVariant="bodyBold" color="text">
@@ -107,31 +126,21 @@ export const SetExpiryView = ({
           description={
             <DateContainer>
               <Typography fontVariant="smallBold" color="text">
-                {`${date.toLocaleDateString(undefined, {
-                  month: 'short',
-                  day: 'numeric',
-                  year: 'numeric',
-                })}`}
+                {maxDateLabel}
               </Typography>
               <Typography fontVariant="small" color="grey">
-                {`${date.toLocaleTimeString(undefined, {
-                  hour: 'numeric',
-                  minute: 'numeric',
-                  second: 'numeric',
-                  hour12: false,
-                  timeZoneName: 'longOffset',
-                })} `}
+                {maxTimeLabel}
               </Typography>
             </DateContainer>
           }
           {...register('expiryType', {
             onChange: () => {
               trigger('expiryCustom')
-              console.log('change')
             },
           })}
         />
         <RadioButton
+          data-testid="radio-custom"
           value="custom"
           label={
             <Typography fontVariant="bodyBold" color="text">
@@ -141,6 +150,7 @@ export const SetExpiryView = ({
           description={
             <>
               <Input
+                data-testid="input-expiry-custom"
                 label="custom-expiry"
                 type="datetime-local"
                 hideLabel
@@ -177,9 +187,9 @@ export const SetExpiryView = ({
                   },
                 })}
               />
-              <CustomExpiryErrorLabel>
-                {formState.errors.expiryCustom?.message}
-              </CustomExpiryErrorLabel>
+              {customErrorLabel && (
+                <CustomExpiryErrorLabel>{customErrorLabel}</CustomExpiryErrorLabel>
+              )}
             </>
           }
           {...register('expiryType')}

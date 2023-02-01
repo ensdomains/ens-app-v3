@@ -66,9 +66,7 @@ export const useFusesStates = ({
       )
     }
 
-    console.log(address)
     if (address) {
-      console.log(address, wrapperData?.owner)
       defaultValues.isUserOwner = !!wrapperData?.owner && wrapperData.owner === address
       defaultValues.isUserParentOwner =
         !!parentWrapperData?.owner && parentWrapperData?.owner === address

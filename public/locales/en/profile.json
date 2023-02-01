@@ -40,8 +40,7 @@
     },
     "permissions": {
       "name": "Permissions",
-      "parentEmancipatedWarning": "<strong>You cannot change permissions on this name.</strong> You must first revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
-      "parentWrappedWarning": "<strong>You cannot change permissions on this name.</strong> You must first ‘give up control’ and revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
+      "parentUnlockedWarning": "<strong>You cannot change permissions on this name.</strong> You must first revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
       "revokedLabel": "Revoked {{date}}",
       "grantedLabel": "Granted {{date}}",
       "role": {

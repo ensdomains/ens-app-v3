@@ -76,6 +76,8 @@ export const OwnershipPermissions = ({
     if (!wrapperData) return
     if (isUserParentOwner && ownershipStatus === 'parent-can-control' && parentState === 'locked')
       return {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'data-testid': 'button-revoke-pcc',
         onClick: () => {
           showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
             name,
@@ -91,6 +93,8 @@ export const OwnershipPermissions = ({
       }
     if (isUserOwner && editorStatus === 'owner-can-change' && wrapperData.child.CANNOT_UNWRAP)
       return {
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        'data-testid': 'button-revoke-change-fuses',
         onClick: () => {
           showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
             name,

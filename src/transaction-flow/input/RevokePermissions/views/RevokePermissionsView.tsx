@@ -47,6 +47,7 @@ export const RevokePermissionsView = ({ register, unburnedFuses }: Props) => {
       <PermissionsList>
         {unburned.map((fuse) => (
           <CheckboxRow
+            data-testid={`checkbox-${fuse}`}
             key={fuse}
             label={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
             {...register(`childFuses.${fuse}`)}
@@ -54,6 +55,7 @@ export const RevokePermissionsView = ({ register, unburnedFuses }: Props) => {
         ))}
         {burned.map((fuse) => (
           <CheckboxRow
+            data-testid={`checkbox-${fuse}`}
             key={fuse}
             label={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
             disabled

@@ -36,6 +36,7 @@ export const RevokePCCView = ({ managerAddr, register }: Props) => {
         />
       </CenterAlignedTypography>
       <CheckboxRow
+        data-testid="checkbox-pcc"
         label={t('input.revokePermissions.views.revokePCC.title')}
         {...register('parentFuses.PARENT_CANNOT_CONTROL')}
       />

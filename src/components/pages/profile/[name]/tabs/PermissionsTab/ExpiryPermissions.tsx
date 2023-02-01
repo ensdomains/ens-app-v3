@@ -38,6 +38,7 @@ export const ExpiryPermissions = ({
   name,
   wrapperData,
   state,
+  parentState,
   fusesSetDates,
   expiryLabel,
   isUserParentOwner,
@@ -65,10 +66,10 @@ export const ExpiryPermissions = ({
 
   const canExtendExpiry = wrapperData?.parent?.CAN_EXTEND_EXPIRY || is2LDEth
 
-  const canCanExtendExpiryStillBeBurned =
-    !wrapperData?.parent.PARENT_CANNOT_CONTROL && !wrapperData?.parent?.CAN_EXTEND_EXPIRY
+  const canCanExtendExpiryBeBurned =
+    !canExtendExpiry && !wrapperData?.parent.PARENT_CANNOT_CONTROL && parentState === 'locked'
 
-  const showChangePermissionsButton = canCanExtendExpiryStillBeBurned && isUserParentOwner
+  const showChangePermissionsButton = canCanExtendExpiryBeBurned && isUserParentOwner
 
   return (
     <Section>
@@ -108,7 +109,7 @@ export const ExpiryPermissions = ({
             <SectionFooter>
               <FooterContainer>
                 <div>
-                  <Button onClick={handleRevokePermissions}>
+                  <Button data-testid="button-extend-expiry" onClick={handleRevokePermissions}>
                     {t('tabs.permissions.expiry.action.changePermissions')}
                   </Button>
                 </div>

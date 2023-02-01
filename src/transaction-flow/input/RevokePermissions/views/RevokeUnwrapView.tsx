@@ -25,6 +25,7 @@ export const RevokeUnwrapView = ({ register }: Props) => {
         {t('input.revokePermissions.views.revokeUnwrap.subtitle')}
       </CenterAlignedTypography>
       <CheckboxRow
+        data-testid="checkbox-CANNOT_UNWRAP"
         label={t('input.revokePermissions.views.revokeUnwrap.fuses.CANNOT_UNWRAP')}
         {...register('childFuses.CANNOT_UNWRAP', {})}
       />

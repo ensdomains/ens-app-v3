@@ -57,21 +57,17 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
   })
 
   const showUnwrapWarning =
-    isSubname &&
-    fusesStatus.isUserParentOwner &&
-    ['wrapped', 'emancipated'].includes(fusesStatus.parentState)
+    isSubname && fusesStatus.isUserParentOwner && fusesStatus.parentState !== 'locked'
 
   const isCached = isBasicCached || isParentBasicCachedData
   return (
     <Container $isCached={isCached}>
       {showUnwrapWarning && (
         <BaseLink href={`/${parentName}?tab=permissions`} passHref>
-          <Banner alert="warning" as="a">
+          <Banner alert="warning" as="a" data-testid="banner-parent-not-locked">
             <Trans
               t={t}
-              i18nKey={`tabs.permissions.parent${
-                fusesStatus.parentState === 'wrapped' ? 'Wrapped' : 'Emancipated'
-              }Warning`}
+              i18nKey="tabs.permissions.parentUnlockedWarning"
               values={{ parent: parentName }}
             />
           </Banner>

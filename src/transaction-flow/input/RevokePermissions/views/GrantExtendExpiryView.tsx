@@ -15,6 +15,7 @@ export const GrantExtendExpiryView = ({ register }: Props) => {
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.grantExtendExpiry.title')} />
       <CheckboxRow
+        data-testid="checkbox-CAN_EXTEND_EXPIRY"
         label={t('input.revokePermissions.views.grantExtendExpiry.fuses.CAN_EXTEND_EXPIRY')}
         {...register(`parentFuses.CAN_EXTEND_EXPIRY`, {})}
       />

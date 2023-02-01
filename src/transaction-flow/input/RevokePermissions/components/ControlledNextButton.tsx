@@ -27,7 +27,6 @@ export const ControlledNextButton = ({
   const [parentFuses, childFuses] = useWatch({ control, name: ['parentFuses', 'childFuses'] })
   const formState = useFormState({ control, name: 'expiryCustom' })
   const isCustomExpiryValid = formState.errors.expiryCustom === undefined
-  console.log('error', formState.errors.expiryCustom?.message)
 
   /**
    * Fuses that have burned during this flow. Must breakdown the fuses individually for useMemo to
@@ -130,6 +129,11 @@ export const ControlledNextButton = ({
           children: buttonTitle,
         }
       }
+      case 'revokeChangeFuses':
+        return {
+          ...defaultProps,
+          disabled: childFuses.CANNOT_BURN_FUSES === false,
+        }
       case 'revokeChangeFusesWarning':
         return {
           ...defaultProps,
@@ -141,5 +145,5 @@ export const ControlledNextButton = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [view, parentFuses, childFuses, unburnedFuses, fusesBurnedDuringFlow, isCustomExpiryValid])
 
-  return <Button {...props} />
+  return <Button data-testid="permissions-next-button" {...props} />
 }

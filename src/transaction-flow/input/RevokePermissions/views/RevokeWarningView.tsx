@@ -37,7 +37,9 @@ export const RevokeWarningView = () => {
               />
             ),
           }}
-        />
+        >
+          {t('input.revokePermissions.views.revokeWarning.subtitle2')}
+        </Trans>
       </CenterAlignedTypography>
     </>
   )

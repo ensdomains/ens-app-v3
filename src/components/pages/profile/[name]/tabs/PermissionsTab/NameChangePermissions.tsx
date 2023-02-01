@@ -30,7 +30,7 @@ type FuseItem = {
   revoked?: string
 }
 
-const CHILD_FUSE_WITHOUT_CBF = CHILD_FUSES.filter((fuse) => fuse !== 'CANNOT_BURN_FUSES')
+const CHILD_FUSES_WITHOUT_CBF = CHILD_FUSES.filter((fuse) => fuse !== 'CANNOT_BURN_FUSES')
 
 const PERMISSION_TRANSLATION_KEY: {
   [key in ChildFuse]?: {
@@ -104,6 +104,7 @@ export const NameChangePermissions = ({
   name,
   wrapperData,
   fusesSetDates,
+  state,
   parentState,
   isUserOwner,
 }: Props) => {
@@ -112,7 +113,7 @@ export const NameChangePermissions = ({
 
   const isParentLocked = parentState === 'locked'
 
-  const permissions = CHILD_FUSE_WITHOUT_CBF.reduce<{ burned: FuseItem[]; unburned: FuseItem[] }>(
+  const permissions = CHILD_FUSES_WITHOUT_CBF.reduce<{ burned: FuseItem[]; unburned: FuseItem[] }>(
     (acc, permission) => {
       const isBurned = !!wrapperData?.child[permission]
       const burnedTranslationKey = PERMISSION_TRANSLATION_KEY[permission]?.burned
@@ -147,7 +148,9 @@ export const NameChangePermissions = ({
 
   const [isTooltipOpen, setIsTooltipOpen] = useState(false)
   const ButtonComponent = useMemo(() => {
-    if (!isUserOwner || permissions.unburned.length === 0) return null
+    const showButton =
+      isUserOwner && ['emancipated', 'locked'].includes(state) && permissions.unburned.length > 0
+    if (!showButton) return null
     if (wrapperData?.child.CANNOT_BURN_FUSES)
       return (
         <Tooltip
@@ -157,7 +160,11 @@ export const NameChangePermissions = ({
           onDismiss={() => setIsTooltipOpen(false)}
         >
           <ButtonContainer>
-            <Button colorStyle="disabled" onClick={() => setIsTooltipOpen((value) => !value)}>
+            <Button
+              data-testid="button-revoke-permissions-disabled"
+              colorStyle="disabled"
+              onClick={() => setIsTooltipOpen((value) => !value)}
+            >
               {t('tabs.permissions.nameChangePermissions.action.changePermissions')}
             </Button>
             <IndicatorWrapper>
@@ -166,13 +173,14 @@ export const NameChangePermissions = ({
           </ButtonContainer>
         </Tooltip>
       )
+
     return (
-      <Button onClick={handleRevokePermissions}>
+      <Button data-testid="button-revoke-permissions" onClick={handleRevokePermissions}>
         {t('tabs.permissions.nameChangePermissions.action.changePermissions')}
       </Button>
     )
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [permissions, wrapperData])
+  }, [permissions, wrapperData, state, isUserOwner])
 
   return (
     <Section>
