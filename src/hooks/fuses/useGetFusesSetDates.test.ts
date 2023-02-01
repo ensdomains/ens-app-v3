@@ -131,18 +131,20 @@ jest.spyOn(Date.prototype, 'toLocaleDateString').mockImplementation(() => {
 })
 
 describe('useGetFusesSetDates', () => {
-  it('should ', async () => {
+  it('should return an object with fuses mapped to strings', async () => {
     mockUseGetHistory.mockReturnValue({ history: mockHistory })
 
     const { result, waitForNextUpdate } = renderHook(() => useGetFusesSetDates('test.eth'))
     await waitForNextUpdate()
     expect(result.current).toEqual({
-      PARENT_CANNOT_CONTROL: '93',
-      CANNOT_UNWRAP: '94',
-      CANNOT_CREATE_SUBDOMAIN: '95',
-      CANNOT_TRANSFER: '96',
-      CANNOT_SET_TTL: '97',
-      CANNOT_SET_RESOLVER: '98',
+      fusesSetDates: {
+        PARENT_CANNOT_CONTROL: '93',
+        CANNOT_UNWRAP: '94',
+        CANNOT_CREATE_SUBDOMAIN: '95',
+        CANNOT_TRANSFER: '96',
+        CANNOT_SET_TTL: '97',
+        CANNOT_SET_RESOLVER: '98',
+      },
     })
   })
 })
