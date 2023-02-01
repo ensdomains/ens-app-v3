@@ -1,13 +1,19 @@
-import { UseFormRegister } from 'react-hook-form'
+import {
+  Control,
+  UseFormGetValues,
+  UseFormRegister,
+  UseFormTrigger,
+  useFormState,
+  useWatch,
+} from 'react-hook-form'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { Dialog, Input, RadioButton, Typography } from '@ensdomains/thorin'
 
-import { dateToDateTimeLocal } from '@app/utils/datetime-local'
+import { dateTimeLocalToDate, dateToDateTimeLocal } from '@app/utils/datetime-local'
 
 import type { FormData } from '../RevokePermissions-flow'
-import { AccountLink } from '../components/AccountLink'
 import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
 
 type Props = {
@@ -15,6 +21,9 @@ type Props = {
   minExpiry: number
   maxExpiry: number
   register: UseFormRegister<FormData>
+  control: Control<FormData>
+  getValues: UseFormGetValues<FormData>
+  trigger: UseFormTrigger<FormData>
 }
 
 const ExpiryOptionsContainer = styled.div(
@@ -33,36 +42,66 @@ const DateContainer = styled.div(
   `,
 )
 
-export const SetExpiryView = ({ name, minExpiry, maxExpiry, register }: Props) => {
+const CustomExpiryErrorLabel = styled.div(
+  ({ theme }) => css`
+    color: ${theme.colors.red};
+  `,
+)
+
+export const SetExpiryView = ({
+  name,
+  minExpiry,
+  maxExpiry,
+  register,
+  control,
+  getValues,
+  trigger,
+}: Props) => {
   const { t } = useTranslation('transactionFlow')
 
-  const now = new Date(minExpiry)
-  const date = new Date(maxExpiry)
+  const canExtendExpiry = useWatch({ control, name: 'parentFuses.CAN_EXTEND_EXPIRY' })
+  const nameParts = name.split('.')
+  const parentName = nameParts.slice(1).join('.')
+
+  const formState = useFormState({ control, name: 'expiryCustom' })
+  const customErrorLabel = formState.errors.expiryCustom?.message
+
+  const now = new Date(minExpiry * 1000)
+  const date = new Date(maxExpiry * 1000)
 
   const min = dateToDateTimeLocal(now)
   const max = dateToDateTimeLocal(date)
+
+  const expiryLabel = now.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+  })
 
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.setExpiry.title')} />
       <CenterAlignedTypography>
-        <Trans
-          t={t}
-          i18nKey="input.revokePermissions.views.setExpiry.subtitle"
-          values={{ account: name }}
-          components={{
-            parent: <AccountLink nameOrAddress={name} />,
-          }}
-        >
-          {t('input.revokePermissions.views.setExpiry.subtitle')}
-        </Trans>
+        {canExtendExpiry ? (
+          <Trans
+            t={t}
+            i18nKey="input.revokePermissions.views.setExpiry.subtitleWithCEE"
+            values={{ parent: parentName, expiry: expiryLabel }}
+          />
+        ) : (
+          <Trans
+            t={t}
+            i18nKey="input.revokePermissions.views.setExpiry.subtitle"
+            values={{ parent: parentName, expiry: expiryLabel }}
+          />
+        )}
       </CenterAlignedTypography>
       <ExpiryOptionsContainer>
         <RadioButton
           value="max"
           label={
             <Typography fontVariant="bodyBold" color="text">
-              Keep current (max)
+              {t('input.revokePermissions.views.setExpiry.options.max')}
             </Typography>
           }
           description={
@@ -85,25 +124,63 @@ export const SetExpiryView = ({ name, minExpiry, maxExpiry, register }: Props) =
               </Typography>
             </DateContainer>
           }
-          {...register('expiryType')}
+          {...register('expiryType', {
+            onChange: () => {
+              trigger('expiryCustom')
+              console.log('change')
+            },
+          })}
         />
         <RadioButton
           value="custom"
           label={
             <Typography fontVariant="bodyBold" color="text">
-              Choose an earlier date
+              {t('input.revokePermissions.views.setExpiry.options.custom')}
             </Typography>
           }
           description={
-            <Input
-              label="custom-expiry"
-              hideLabel
-              type="datetime-local"
-              clearable={false}
-              min={min}
-              max={max}
-              {...register('expiryCustom')}
-            />
+            <>
+              <Input
+                label="custom-expiry"
+                type="datetime-local"
+                hideLabel
+                error={formState.errors.expiryCustom}
+                clearable={false}
+                min={min}
+                max={max}
+                {...register('expiryCustom', {
+                  validate: (value) => {
+                    const expiryType = getValues('expiryType')
+                    if (expiryType !== 'custom') return true
+                    if (!value) return t('input.revokePermissions.views.setExpiry.error.required')
+                    if (value < min) {
+                      const dateLabel = dateTimeLocalToDate(min).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })
+                      return t('input.revokePermissions.views.setExpiry.error.min', {
+                        date: dateLabel,
+                      })
+                    }
+                    if (value > max) {
+                      const dateLabel = dateTimeLocalToDate(max).toLocaleDateString(undefined, {
+                        month: 'short',
+                        day: 'numeric',
+                        year: 'numeric',
+                      })
+                      return t('input.revokePermissions.views.setExpiry.error.max', {
+                        date: dateLabel,
+                      })
+                    }
+                    return true
+                  },
+                })}
+              />
+              <CustomExpiryErrorLabel>
+                {formState.errors.expiryCustom?.message}
+              </CustomExpiryErrorLabel>
+            </>
           }
           {...register('expiryType')}
         />

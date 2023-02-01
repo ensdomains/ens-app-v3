@@ -137,7 +137,8 @@
       "approveNameWrapper": "Approve NameWrapper",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
-      "transferName": "Transfer name"
+      "transferName": "Transfer name",
+      "changePermissions": "Change permissions"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
@@ -152,7 +153,20 @@
       "createSubname": "Create a new subname on the name",
       "burnFuses": "Burn the chosen permissions until name expiry",
       "commitName": "Start timer to register name",
-      "approveNameWrapper": "Approve the NameWrapper to manage your names"
+      "approveNameWrapper": "Approve the NameWrapper to manage your names",
+      "fuses": {
+        "revoke": "Revoke",
+        "grant": "Grant",
+        "setExpiry": "Set expiry",
+        "PARENT_CANNOT_CONTROL": "Give up parent control",
+        "CAN_EXTEND_EXPIRY": "Extend expiry",
+        "CANNOT_UNWRAP": "Unwrap this name",
+        "CANNOT_CREATE_SUBDOMAIN": "Create subdomains",
+        "CANNOT_SET_RESOLVER": "Set resolver",
+        "CANNOT_SET_TTL": "Set TTL",
+        "CANNOT_TRANSFER": "Send this name",
+        "CANNOT_BURN_FUSES": "Change permissions"
+      }
     },
     "itemLabel": {
       "name": "Name",

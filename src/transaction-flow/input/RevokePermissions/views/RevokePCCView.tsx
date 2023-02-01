@@ -4,13 +4,12 @@ import styled, { css } from 'styled-components'
 
 import { CheckboxRow, Dialog, Typography } from '@ensdomains/thorin'
 
-import { PermissionsCheckbox } from '@app/components/@molecules/PermissionsCheckbox/PermissionsCheckbox'
+import { usePrimaryNameOrAddress } from '@app/hooks/reverseRecord/usePrimaryNameOrAddress'
 
 import type { FormData } from '../RevokePermissions-flow'
-import { AccountLink } from '../components/AccountLink'
 
 type Props = {
-  manager: string
+  managerAddr: string
   register: UseFormRegister<FormData>
   onDismiss: () => void
 }
@@ -21,8 +20,11 @@ const CenterAlignedTypography = styled(Typography)(
   `,
 )
 
-export const RevokePCCView = ({ manager = 'wrapped.eth', register }: Props) => {
+export const RevokePCCView = ({ managerAddr, register }: Props) => {
   const { t } = useTranslation('transactionFlow')
+
+  const { nameOrAddr } = usePrimaryNameOrAddress(managerAddr)
+
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.revokePCC.title')} />
@@ -30,19 +32,12 @@ export const RevokePCCView = ({ manager = 'wrapped.eth', register }: Props) => {
         <Trans
           i18nKey="input.revokePermissions.views.revokePCC.subtitle"
           t={t}
-          values={{ account: manager }}
-          components={{
-            manager: <AccountLink nameOrAddress={manager} />,
-          }}
+          values={{ account: nameOrAddr }}
         />
       </CenterAlignedTypography>
       <CheckboxRow
-        label={t('input.revokePermissions.views.revokePCC')}
-        {...register('fuseObj.PARENT_CANNOT_CONTROL')}
-      />
-      <PermissionsCheckbox
-        title="Give up permission"
-        {...register('fuseObj.PARENT_CANNOT_CONTROL')}
+        label={t('input.revokePermissions.views.revokePCC.title')}
+        {...register('parentFuses.PARENT_CANNOT_CONTROL')}
       />
     </>
   )

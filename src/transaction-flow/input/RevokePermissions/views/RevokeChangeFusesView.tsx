@@ -21,7 +21,7 @@ export const RevokeChangeFusesView = ({ register }: Props) => {
       </CenterAlignedTypography>
       <CheckboxRow
         label={t('input.revokePermissions.views.revokeChangeFuses.fuses.CANNOT_BURN_FUSES')}
-        {...register('fuseObj.CANNOT_BURN_FUSES')}
+        {...register('childFuses.CANNOT_BURN_FUSES')}
       />
     </>
   )

@@ -1,48 +1,43 @@
+import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CurrentFuses } from '@ensdomains/ensjs/utils/fuses'
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Tooltip, Typography } from '@ensdomains/thorin'
 
+import QuestionSVG from '@app/assets/question.svg'
+import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
+import type { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { CHILD_FUSES, ChildFuse } from '@app/transaction-flow/transaction/changePermissions'
 import type { useEns } from '@app/utils/EnsProvider'
 
-import { useTransactionFlow } from '../../../../../../transaction-flow/TransactionFlowProvider'
 import { Section, SectionFooter, SectionItem } from './Section'
 
 type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
 type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
+type FusesSetDates = ReturnType<typeof useGetFusesSetDates>['fusesSetDates']
+type FusesStates = ReturnType<typeof useFusesStates>
 
 type Props = {
-  isCachedData: boolean
   name: string
   wrapperData: WrapperData
-  parentWrapperData: WrapperData
-}
-
-type NameChangeFuse = keyof Pick<
-  CurrentFuses,
-  | 'CANNOT_UNWRAP'
-  | 'CANNOT_CREATE_SUBDOMAIN'
-  | 'CANNOT_TRANSFER'
-  | 'CANNOT_SET_RESOLVER'
-  | 'CANNOT_SET_TTL'
->
+  fusesSetDates: FusesSetDates
+} & FusesStates
 
 type FuseItem = {
-  fuse: NameChangeFuse
+  fuse: ChildFuse
   translationKey: string
   revoked?: string
 }
 
-const PERMISSIONS: NameChangeFuse[] = [
-  'CANNOT_UNWRAP',
-  'CANNOT_CREATE_SUBDOMAIN',
-  'CANNOT_TRANSFER',
-  'CANNOT_SET_RESOLVER',
-  'CANNOT_SET_TTL',
-]
+const CHILD_FUSE_WITHOUT_CBF = CHILD_FUSES.filter((fuse) => fuse !== 'CANNOT_BURN_FUSES')
 
-const PERMISSION_TRANSLATION_KEY: Record<NameChangeFuse, { burned: string; unburned: string }> = {
+const PERMISSION_TRANSLATION_KEY: {
+  [key in ChildFuse]?: {
+    burned: string
+    unburned: string
+  }
+} = {
   CANNOT_UNWRAP: {
     burned: 'cannotUnwrap',
     unburned: 'canUnwrap',
@@ -71,6 +66,33 @@ const TypographyGreyDim = styled(Typography)(
   `,
 )
 
+const IndicatorWrapper = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    right: -${theme.space[2]};
+    top: -${theme.space[2]};
+    background: ${theme.colors.yellowPrimary};
+    width: ${theme.space[6]};
+    height: ${theme.space[6]};
+    border-radius: ${theme.radii.full};
+
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    svg {
+      width: ${theme.space[4]};
+      height: ${theme.space[4]};
+    }
+  `,
+)
+
+const ButtonContainer = styled.div(
+  () => css`
+    position: relative;
+  `,
+)
+
 const FooterContainer = styled.div(
   () => css`
     display: flex;
@@ -79,36 +101,33 @@ const FooterContainer = styled.div(
 )
 
 export const NameChangePermissions = ({
-  isCachedData,
   name,
   wrapperData,
-  parentWrapperData,
+  fusesSetDates,
+  parentState,
+  isUserOwner,
 }: Props) => {
   const { t } = useTranslation('profile')
   const { showDataInput } = useTransactionFlow()
 
-  const nameParts = name.split('.')
-  // const parentName = nameParts.slice(1).join('.')
-  const isSubname = nameParts.length > 2
+  const isParentLocked = parentState === 'locked'
 
-  const isLocked = isSubname
-    ? parentWrapperData?.fuseObj.CANNOT_UNWRAP && parentWrapperData?.fuseObj.PARENT_CANNOT_CONTROL
-    : true
-
-  const ownerLabel = isLocked ? 'owner' : 'parent'
-
-  const permissions = PERMISSIONS.reduce<{ burned: FuseItem[]; unburned: FuseItem[] }>(
+  const permissions = CHILD_FUSE_WITHOUT_CBF.reduce<{ burned: FuseItem[]; unburned: FuseItem[] }>(
     (acc, permission) => {
-      const isBurned = wrapperData?.fuseObj[permission]
-      if (isBurned)
+      const isBurned = !!wrapperData?.child[permission]
+      const burnedTranslationKey = PERMISSION_TRANSLATION_KEY[permission]?.burned
+      const unburnedTranslationKey = PERMISSION_TRANSLATION_KEY[permission]?.unburned
+
+      if (isBurned && burnedTranslationKey)
         acc.burned.push({
           fuse: permission,
-          translationKey: PERMISSION_TRANSLATION_KEY[permission].burned,
+          translationKey: burnedTranslationKey,
         })
-      else
+
+      if (!isBurned && unburnedTranslationKey)
         acc.unburned.push({
           fuse: permission,
-          translationKey: PERMISSION_TRANSLATION_KEY[permission].unburned,
+          translationKey: unburnedTranslationKey,
         })
       return acc
     },
@@ -116,48 +135,87 @@ export const NameChangePermissions = ({
   )
 
   const handleRevokePermissions = () => {
+    if (!wrapperData) return
     showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
       name,
-      owner: 'test.eth',
-      fuseObj: wrapperData!.fuseObj,
+      owner: wrapperData.owner,
+      parentFuses: wrapperData.parent,
+      childFuses: wrapperData.child,
       flowType: 'revoke-permissions',
     })
   }
 
+  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
+  const ButtonComponent = useMemo(() => {
+    if (!isUserOwner || permissions.unburned.length === 0) return null
+    if (wrapperData?.child.CANNOT_BURN_FUSES)
+      return (
+        <Tooltip
+          content="This name has revoked the permissions needed for this action"
+          placement="top-center"
+          open={isTooltipOpen}
+          onDismiss={() => setIsTooltipOpen(false)}
+        >
+          <ButtonContainer>
+            <Button colorStyle="disabled" onClick={() => setIsTooltipOpen((value) => !value)}>
+              {t('tabs.permissions.nameChangePermissions.action.changePermissions')}
+            </Button>
+            <IndicatorWrapper>
+              <QuestionSVG />
+            </IndicatorWrapper>
+          </ButtonContainer>
+        </Tooltip>
+      )
+    return (
+      <Button onClick={handleRevokePermissions}>
+        {t('tabs.permissions.nameChangePermissions.action.changePermissions')}
+      </Button>
+    )
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [permissions, wrapperData])
+
   return (
-    <Section $isCached={isCachedData}>
-      {permissions.unburned.map(({ translationKey }) => (
-        <SectionItem icon="info">
+    <Section>
+      {permissions.unburned.map(({ translationKey, fuse }) => (
+        <SectionItem key={fuse} icon="info">
           <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
           </Typography>
           <Typography fontVariant="small">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
-              owner: ownerLabel,
-            })}{' '}
-          </Typography>
-        </SectionItem>
-      ))}
-      {permissions.burned.map(({ translationKey }) => (
-        <SectionItem icon="disabled">
-          <Typography fontVariant="bodyBold">
-            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
-          </Typography>
-          <TypographyGreyDim fontVariant="extraSmall">Revoked Oct 27, 2022</TypographyGreyDim>
-          <Typography fontVariant="small">
-            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
-              owner: ownerLabel,
+              owner: isParentLocked
+                ? t('tabs.permissions.role.owner')
+                : t('tabs.permissions.role.parent'),
             })}
           </Typography>
         </SectionItem>
       ))}
-      <SectionFooter>
-        <FooterContainer>
-          <div>
-            <Button onClick={handleRevokePermissions}>Revoke permissions</Button>
-          </div>
-        </FooterContainer>
-      </SectionFooter>
+      {permissions.burned.map(({ translationKey, fuse }) => (
+        <SectionItem key={fuse} icon="disabled">
+          <Typography fontVariant="bodyBold">
+            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
+          </Typography>
+          {fusesSetDates[fuse] && (
+            <TypographyGreyDim fontVariant="extraSmall">
+              {t('tabs.permissions.revokedLabel', { date: fusesSetDates[fuse] })}
+            </TypographyGreyDim>
+          )}
+          <Typography fontVariant="small">
+            {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.description`, {
+              owner: isParentLocked
+                ? t('tabs.permissions.role.owner')
+                : t('tabs.permissions.role.parent'),
+            })}
+          </Typography>
+        </SectionItem>
+      ))}
+      {ButtonComponent && (
+        <SectionFooter>
+          <FooterContainer>
+            <div>{ButtonComponent}</div>
+          </FooterContainer>
+        </SectionFooter>
+      )}
     </Section>
   )
 }

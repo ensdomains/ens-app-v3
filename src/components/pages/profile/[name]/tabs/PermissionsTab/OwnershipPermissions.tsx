@@ -1,26 +1,28 @@
 import { useMemo } from 'react'
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Button, Typography } from '@ensdomains/thorin'
 
+import { StyledLink } from '@app/components/@atoms/StyledLink'
+import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
+import type { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
+import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import type { useEns } from '@app/utils/EnsProvider'
 
-import { useTransactionFlow } from '../../../../../../transaction-flow/TransactionFlowProvider'
 import { Section, SectionFooter, SectionItem, SectionList } from './Section'
-import { AccountLink } from './components/AccountLink'
 
 type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
 type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
+type FusesSetDates = ReturnType<typeof useGetFusesSetDates>['fusesSetDates']
+type FusesStatus = ReturnType<typeof useFusesStates>
 
 type Props = {
   name: string
-  is2LDEth: boolean
-  isCachedData: boolean
   wrapperData: WrapperData
   parentWrapperData: WrapperData
-}
+  fusesSetDates: FusesSetDates
+} & FusesStatus
 
 const TypographyGreyDim = styled(Typography)(
   ({ theme }) => css`
@@ -37,12 +39,17 @@ const ButtonRow = styled.div(
 
 export const OwnershipPermissions = ({
   name,
-  is2LDEth,
   wrapperData,
-  parentWrapperData,
-  isCachedData,
+  fusesSetDates,
+  parentState,
+  state,
+  expiry,
+  expiryLabel,
+  parentExpiry,
+  parentExpiryLabel,
+  isUserOwner,
+  isUserParentOwner,
 }: Props) => {
-  const { address } = useAccount()
   const { showDataInput } = useTransactionFlow()
   const { t } = useTranslation('profile')
 
@@ -50,76 +57,67 @@ export const OwnershipPermissions = ({
   const parentName = nameParts.slice(1).join('.')
   const isSubname = nameParts.length > 2
 
-  const isParentLocked = is2LDEth
-    ? true
-    : parentWrapperData?.fuseObj.PARENT_CANNOT_CONTROL && parentWrapperData?.fuseObj.CANNOT_UNWRAP
-
-  const isUserParentOwner = address === parentWrapperData?.owner
-  const isUserOwner = address === wrapperData?.owner
-
-  // Ownership Label
+  // Ownership status
   const ownershipStatus = useMemo(() => {
-    if (!isSubname) return
-    return isParentLocked ? 'parent-cannot-control' : 'parent-can-control'
-  }, [isSubname, isParentLocked])
+    if (!isSubname || state === 'unwrapped') return
+    return ['emancipated', 'locked'].includes(state)
+      ? 'parent-cannot-control'
+      : 'parent-can-control'
+  }, [state, isSubname])
 
-  // Changes Label
+  // Editor status
   const editorStatus = useMemo(() => {
-    if (wrapperData?.fuseObj.CANNOT_BURN_FUSES) return 'owner-cannot-change'
-    if (isParentLocked) return 'owner-can-change'
+    if (wrapperData?.child.CANNOT_BURN_FUSES) return 'owner-cannot-change'
+    if (['emancipated', 'locked'].includes(state)) return 'owner-can-change'
     return 'parent-can-change'
-  }, [wrapperData, isParentLocked])
-
-  const showUnwrapWarning = isUserParentOwner && !parentWrapperData?.fuseObj.CANNOT_UNWRAP
+  }, [wrapperData, state])
 
   const buttonProps = useMemo(() => {
-    if (isUserParentOwner && ownershipStatus === 'parent-can-control')
+    if (!wrapperData) return
+    if (isUserParentOwner && ownershipStatus === 'parent-can-control' && parentState === 'locked')
       return {
         onClick: () => {
           showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
             name,
             flowType: 'revoke-pcc',
-            fuseObj: wrapperData!.fuseObj,
+            parentFuses: wrapperData.parent,
+            childFuses: wrapperData.child,
             owner: wrapperData!.owner,
-            // minExpiry: wrapperData!.expiryDate?.getTime(),
-            // maxExpiry: parentWrapperData?.expiryDate?.getTime(),
-            minExpiry: new Date(Date.now()).getTime(),
-            maxExpiry: new Date(Date.now() + 12096e5).getTime(),
+            minExpiry: expiry,
+            maxExpiry: parentExpiry,
           })
         },
-        disabled: showUnwrapWarning,
-        text: t('tabs.permissions.ownership.action.giveUpControl'),
+        children: t('tabs.permissions.ownership.action.giveUpControl'),
       }
-    if (isUserOwner && editorStatus === 'owner-can-change')
+    if (isUserOwner && editorStatus === 'owner-can-change' && wrapperData.child.CANNOT_UNWRAP)
       return {
         onClick: () => {
           showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
             name,
             flowType: 'revoke-change-fuses',
-            fuseObj: wrapperData!.fuseObj,
+            parentFuses: wrapperData.parent,
+            childFuses: wrapperData.child,
             owner: wrapperData!.owner,
-            // minExpiry: wrapperData!.expiryDate?.getTime(),
-            // maxExpiry: parentWrapperData?.expiryDate?.getTime(),
-            minExpiry: new Date(Date.now()).getTime(),
-            maxExpiry: new Date(Date.now() + 12096e5).getTime(),
           })
         },
-        text: t('tabs.permissions.ownership.action.revokePermission'),
+        children: t('tabs.permissions.ownership.action.revokePermission'),
       }
   }, [
     isUserParentOwner,
     ownershipStatus,
     isUserOwner,
     editorStatus,
-    showUnwrapWarning,
+    parentState,
     t,
     showDataInput,
     name,
     wrapperData,
+    expiry,
+    parentExpiry,
   ])
 
   return (
-    <Section $isCached={isCachedData}>
+    <Section>
       {ownershipStatus === 'parent-cannot-control' && (
         <SectionItem icon="disabled" date-testid="parent-cannot-control">
           <Typography fontVariant="bodyBold">
@@ -127,22 +125,28 @@ export const OwnershipPermissions = ({
               t={t}
               i18nKey="tabs.permissions.ownership.parentCannotControl.label"
               values={{ parent: parentName }}
-              components={{ parentLink: <AccountLink nameOrAddress={parentName} /> }}
+              components={{ parentLink: <StyledLink href={`/${parentName}`} /> }}
             />
           </Typography>
-          <TypographyGreyDim fontVariant="extraSmall">Revoked Oct 27, 2022</TypographyGreyDim>
+          {fusesSetDates.PARENT_CANNOT_CONTROL && (
+            <TypographyGreyDim fontVariant="extraSmall">
+              {t('tabs.permissions.revokedLabel', {
+                date: fusesSetDates.PARENT_CANNOT_CONTROL,
+              })}
+            </TypographyGreyDim>
+          )}
           <Typography fontVariant="small">
             {t('tabs.permissions.ownership.parentCannotControl.sublabel')}
           </Typography>
           <SectionList title={t('tabs.permissions.ownership.parentCannotControl.list.title')}>
             <li>
               {t('tabs.permissions.ownership.parentCannotControl.list.item1', {
-                date: 'Jan 1, 2036',
+                date: expiryLabel,
               })}
             </li>
             <li>
               {t('tabs.permissions.ownership.parentCannotControl.list.item2', {
-                date: 'Jan 3, 3222',
+                date: parentExpiryLabel,
               })}
             </li>
             <li>{t('tabs.permissions.ownership.parentCannotControl.list.item3')}</li>
@@ -156,7 +160,7 @@ export const OwnershipPermissions = ({
               t={t}
               i18nKey="tabs.permissions.ownership.parentCanControl.label"
               values={{ parent: parentName }}
-              components={{ parentLink: <AccountLink nameOrAddress={parentName} /> }}
+              components={{ parentLink: <StyledLink href={`/${parentName}`} /> }}
             />
           </Typography>
           <SectionList title={t('tabs.permissions.ownership.parentCanControl.list.title')}>
@@ -182,7 +186,11 @@ export const OwnershipPermissions = ({
           <Typography fontVariant="bodyBold">
             {t('tabs.permissions.ownership.ownerCannotChange.label')}
           </Typography>
-          <TypographyGreyDim fontVariant="extraSmall">Revoked Oct 27, 2022</TypographyGreyDim>
+          {fusesSetDates.CANNOT_BURN_FUSES && (
+            <TypographyGreyDim fontVariant="extraSmall">
+              {t('tabs.permissions.revokedLabel', { date: fusesSetDates.CANNOT_BURN_FUSES })}
+            </TypographyGreyDim>
+          )}
           <SectionList title={t('tabs.permissions.ownership.ownerCannotChange.list.title')}>
             <li>{t('tabs.permissions.ownership.ownerCanChange.list.item1')}</li>
             <li>{t('tabs.permissions.ownership.ownerCanChange.list.item2')}</li>
@@ -196,7 +204,7 @@ export const OwnershipPermissions = ({
               t={t}
               i18nKey="tabs.permissions.ownership.parentCanChange.label"
               values={{ parent: parentName }}
-              components={{ parentLink: <AccountLink nameOrAddress={parentName} /> }}
+              components={{ parentLink: <StyledLink href={`/${parentName}`} /> }}
             />
           </Typography>
           <SectionList title={t('tabs.permissions.ownership.parentCanChange.list.title')}>
@@ -209,9 +217,7 @@ export const OwnershipPermissions = ({
         <SectionFooter>
           <ButtonRow>
             <div>
-              <Button onClick={buttonProps.onClick} disabled={!!buttonProps.disabled}>
-                {buttonProps.text}
-              </Button>
+              <Button {...buttonProps} />
             </div>
           </ButtonRow>
         </SectionFooter>

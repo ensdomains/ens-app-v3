@@ -3,14 +3,11 @@ import styled, { css } from 'styled-components'
 
 import { DisabledSVG, InfoCircleSVG, Typography } from '@ensdomains/thorin'
 
-import { cacheableComponentStyles } from '../../../../../@atoms/CacheableComponent'
-
 type Screen = 'desktop' | 'mobile'
 
 type Color = 'yellow' | 'grey'
 
 export const Section = styled.div(
-  cacheableComponentStyles,
   ({ theme }) => css`
     display: flex;
     flex-direction: column;

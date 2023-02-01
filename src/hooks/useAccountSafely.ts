@@ -8,6 +8,7 @@ export const useAccountSafely = () => {
     isReconnecting: _isReconnecting,
   } = useAccount()
 
+  console.log(_address)
   const [address, setAddress] = useState<string | undefined>()
   useEffect(() => {
     setAddress(_address)

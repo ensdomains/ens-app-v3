@@ -71,7 +71,6 @@ type Props = {
 }
 
 const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
-  console.log(nameDetails)
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
   const chainId = useChainId()
@@ -85,6 +84,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     normalisedName,
     valid,
     profileIsCachedData,
+    basicIsCachedData,
     isWrapped,
     isLoading: detailsLoading,
     canBeWrapped,
@@ -217,7 +217,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 network={chainId}
               />
             ),
-            permissions: <PermissionsTab name={normalisedName} wrapperData={wrapperData} />,
+            permissions: (
+              <PermissionsTab
+                name={normalisedName}
+                wrapperData={wrapperData}
+                isCached={basicIsCachedData}
+              />
+            ),
             more: (
               <MoreTab
                 name={normalisedName}

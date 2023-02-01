@@ -1,4 +1,4 @@
-import { UseFormRegister } from 'react-hook-form'
+import { Control, UseFormRegister, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -10,12 +10,11 @@ import type { FormData } from '../RevokePermissions-flow'
 
 type Props = {
   register: UseFormRegister<FormData>
+  control: Control<FormData>
   unburnedFuses: Fuse[]
 }
 
-const CHILD_FUSES_WITHOUT_CU_AND_CBF = CHILD_FUSES.filter(
-  (fuse) => !['CANNOT_UNWRAP', 'CANNOT_BURN_FUSES'].includes(fuse),
-)
+const CHILD_FUSES_WITHOUT_CU: ChildFuse[] = CHILD_FUSES.filter((fuse) => fuse !== 'CANNOT_UNWRAP')
 
 const PermissionsList = styled.div(
   ({ theme }) => css`
@@ -25,38 +24,33 @@ const PermissionsList = styled.div(
   `,
 )
 
-export const RevokePermissionsView = ({ register, unburnedFuses }: Props) => {
+export const ParentRevokePermissionsView = ({ register, control, unburnedFuses }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
-  const { burned, unburned } = CHILD_FUSES_WITHOUT_CU_AND_CBF.reduce<{
-    burned: ChildFuse[]
-    unburned: ChildFuse[]
-  }>(
-    (filteredFuses, fuse) => {
-      const isUnburned = unburnedFuses.includes(fuse)
-      if (isUnburned) filteredFuses.unburned.push(fuse)
-      else filteredFuses.burned.push(fuse)
-      return filteredFuses
-    },
-    { burned: [], unburned: [] },
-  )
+  const unwrapped = useWatch({ control, name: 'childFuses.CANNOT_UNWRAP' })
+
+  const isCEEUnburned = unburnedFuses.includes('CAN_EXTEND_EXPIRY')
 
   return (
     <>
       <Dialog.Heading title={t('input.revokePermissions.views.revokePermissions.title')} />
       <PermissionsList>
-        {unburned.map((fuse) => (
+        {isCEEUnburned && (
           <CheckboxRow
-            key={fuse}
-            label={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
-            {...register(`childFuses.${fuse}`)}
+            label={t('input.revokePermissions.views.revokePermissions.fuses.CAN_EXTEND_EXPIRY')}
+            {...register(`parentFuses.CAN_EXTEND_EXPIRY`)}
           />
-        ))}
-        {burned.map((fuse) => (
+        )}
+        <CheckboxRow
+          label={t('input.revokePermissions.views.revokePermissions.fuses.CANNOT_UNWRAP')}
+          subLabel={t('input.revokePermissions.views.revokePermissions.unwrapSubtitle')}
+          {...register('childFuses.CANNOT_UNWRAP')}
+        />
+        {CHILD_FUSES_WITHOUT_CU.map((fuse) => (
           <CheckboxRow
             key={fuse}
             label={t(`input.revokePermissions.views.revokePermissions.fuses.${fuse}`)}
-            disabled
+            disabled={!unwrapped}
             {...register(`childFuses.${fuse}`)}
           />
         ))}

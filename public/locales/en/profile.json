@@ -40,14 +40,22 @@
     },
     "permissions": {
       "name": "Permissions",
-      "revokeUnwrapWarning": "<strong>You cannot change permissions on this name.</strong> You must first revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
+      "parentEmancipatedWarning": "<strong>You cannot change permissions on this name.</strong> You must first revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
+      "parentWrappedWarning": "<strong>You cannot change permissions on this name.</strong> You must first ‘give up control’ and revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
+      "revokedLabel": "Revoked {{date}}",
+      "grantedLabel": "Granted {{date}}",
+      "role": {
+        "manager": "manager",
+        "owner": "owner",
+        "parent": "parent"
+      },
       "ownership": {
         "title": "Ownership Permissions",
         "parentCanControl": {
           "label": "This name can be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
           "list" : {
             "title": "The owner of the parent name can:",
-            "item1": "Control and modify teh settings and records",
+            "item1": "Control and modify the settings and records",
             "item2": "Retake or reassign ownership of this name",
             "item3": "Remove this name"
           }
@@ -98,13 +106,17 @@
         "permissions": {
             "canExtendExpiry": {
               "label": "Can extend expiry",
-              "description": "This names permission expiry ({{date}}) can be extended by the owner."
+              "description": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
             },
             "cannotExtendExpiry": {
               "label": "Cannot extend expiry",
               "description": "This names permission expiry ({{date}}) cannot be extended by the manager."
-            
             }
+        },
+        "manager": "manager",
+        "owner": "owner",
+        "action": {
+          "changePermissions": "Change permissions"
         }
       },
       "nameChangePermissions": {
@@ -154,6 +166,9 @@
             "label": "Cannot set TTL",
             "description": "The {{owner}} of this name cannot set and change the TTL."
           }
+        },
+        "action": {
+          "changePermissions": "Change permissions"
         }
       }
     },

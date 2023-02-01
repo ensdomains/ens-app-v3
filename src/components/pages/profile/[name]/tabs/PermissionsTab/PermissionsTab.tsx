@@ -1,14 +1,13 @@
 import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount } from 'wagmi'
 
 import { Banner } from '@ensdomains/thorin'
 
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
-import { useGetHistory } from '@app/hooks/useGetHistory'
-import { useNameDetails } from '@app/hooks/useNameDetails'
-import { usePrimary } from '@app/hooks/usePrimary'
+import { useFusesStates } from '@app/hooks/fuses/useFusesStates'
+import { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { ExpiryPermissions } from './ExpiryPermissions'
@@ -21,6 +20,7 @@ type WrapperData = Awaited<ReturnType<GetWrapperDataFunc>>
 type Props = {
   name: string
   wrapperData: WrapperData
+  isCached: boolean
 }
 
 const Container = styled(CacheableComponent)(
@@ -34,38 +34,44 @@ const Container = styled(CacheableComponent)(
   `,
 )
 
-export const PermissionsTab = ({ name, wrapperData }: Props) => {
+export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: Props) => {
   const { t } = useTranslation('profile')
 
-  const { address } = useAccount()
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
-  const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
-  const isSubnameEth = nameParts.length >= 3 && nameParts[nameParts.length - 1] === 'eth'
 
-  const { wrapperData: parentWrapperData } = useNameDetails(parentName)
+  const isValidParent = parentName.split('.').length > 1
+  const isSubname = nameParts.length > 2
 
-  const primaryName = usePrimary(wrapperData?.owner)
+  const validParentName = isValidParent ? parentName : ''
+  const { wrapperData: parentWrapperData, isCachedData: _isParentBasicCachedData } = useBasicName(
+    validParentName,
+    false,
+  )
+  const isParentBasicCachedData = isValidParent && _isParentBasicCachedData
 
-  const { history } = useGetHistory(name)
-  console.log('history', history)
-  console.log('wrapperData', wrapperData)
-  console.log('parentWrapperData', parentWrapperData)
-  console.log('primaryName', primaryName)
-  console.log('parentExpiry', parentWrapperData?.expiryDate)
+  const { fusesSetDates } = useGetFusesSetDates(name)
+  const fusesStatus = useFusesStates({
+    wrapperData,
+    parentWrapperData,
+  })
 
-  const userIsParentOwner = parentWrapperData?.owner === address
   const showUnwrapWarning =
-    isSubnameEth && !parentWrapperData?.fuseObj.CANNOT_UNWRAP && userIsParentOwner
+    isSubname &&
+    fusesStatus.isUserParentOwner &&
+    ['wrapped', 'emancipated'].includes(fusesStatus.parentState)
 
+  const isCached = isBasicCached || isParentBasicCachedData
   return (
-    <Container>
+    <Container $isCached={isCached}>
       {showUnwrapWarning && (
         <BaseLink href={`/${parentName}?tab=permissions`} passHref>
           <Banner alert="warning" as="a">
             <Trans
               t={t}
-              i18nKey="tabs.permissions.revokeUnwrapWarning"
+              i18nKey={`tabs.permissions.parent${
+                fusesStatus.parentState === 'wrapped' ? 'Wrapped' : 'Emancipated'
+              }Warning`}
               values={{ parent: parentName }}
             />
           </Banner>
@@ -73,22 +79,22 @@ export const PermissionsTab = ({ name, wrapperData }: Props) => {
       )}
       <OwnershipPermissions
         name={name}
-        is2LDEth={is2LDEth}
         wrapperData={wrapperData}
         parentWrapperData={parentWrapperData}
-        isCachedData={false}
+        fusesSetDates={fusesSetDates}
+        {...fusesStatus}
       />
       <ExpiryPermissions
         name={name}
-        isCachedData={false}
         wrapperData={wrapperData}
-        parentWrapperData={parentWrapperData}
+        fusesSetDates={fusesSetDates}
+        {...fusesStatus}
       />
       <NameChangePermissions
         name={name}
-        isCachedData={false}
         wrapperData={wrapperData}
-        parentWrapperData={parentWrapperData}
+        fusesSetDates={fusesSetDates}
+        {...fusesStatus}
       />
     </Container>
   )

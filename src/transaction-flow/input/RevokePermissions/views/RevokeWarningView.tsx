@@ -29,7 +29,13 @@ export const RevokeWarningView = () => {
           i18nKey="input.revokePermissions.views.revokeWarning.subtitle2"
           t={t}
           components={{
-            infoLink: <StyledAnchor href="https://test.com" />,
+            infoLink: (
+              <StyledAnchor
+                href="https://support.ens.domains/docs/dev-basics/namewrapper/fuses"
+                target="_blank"
+                rel="noreferrer"
+              />
+            ),
           }}
         />
       </CenterAlignedTypography>

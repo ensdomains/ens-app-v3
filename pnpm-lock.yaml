@@ -38,9 +38,9 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.6
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.42
+      '@ensdomains/ensjs': 3.0.0-alpha.44
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': ^0.6.23
+      '@ensdomains/thorin': 0.6.25-alpha-2
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
       '@ethersproject/abstract-signer': ^5.7.0
@@ -173,9 +173,9 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.42_f2qxwv66g46rb33uzxnl5nluty
+      '@ensdomains/ensjs': 3.0.0-alpha.44_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.23_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.25-alpha-2_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -2307,8 +2307,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.42_f2qxwv66g46rb33uzxnl5nluty:
-    resolution: {integrity: sha512-l23iTSEsSSlaSuwAISRmZeL0s3DsoURH1HUCMJbOLm5uwBipWU7z/95LtvTXtHAYuTXCpXq/4WhE5B2waLmcCQ==}
+  /@ensdomains/ensjs/3.0.0-alpha.44_f2qxwv66g46rb33uzxnl5nluty:
+    resolution: {integrity: sha512-0CjbneVC2FemLHwKVVqoM/sDv68NnkSSLczE99EySG+H6DKODqs5A6lyLD4MCu89Kn6DVMVWYf8A4weuekSjOw==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
@@ -2378,8 +2378,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.23_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-af4gawGGkaCMS68QIRQSqoUqwPxqnFoBhAYNw121eAuxiz7CBY2nnYzO5ztojNJTxA2I8bWLCN17JagzIM8IvA==}
+  /@ensdomains/thorin/0.6.25-alpha-2_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-ydnY1X3o7eV9PtA2WdYB2WXCljnoqgZ3cgpQPxdEkNe8VFIkh0S8UTK0jv9LQdMlXRgaS0YdTJugUAbknGN9cg==}
     peerDependencies:
       react: ^17
       react-dom: ^17
@@ -18145,14 +18145,14 @@ packages:
       react-dom: 17.0.2_react@17.0.2
     dev: false
 
-  /react-universal-interface/0.6.2_react@17.0.2+tslib@2.4.0:
+  /react-universal-interface/0.6.2_react@17.0.2+tslib@2.4.1:
     resolution: {integrity: sha512-dg8yXdcQmvgR13RIlZbTRQOoUrDciFVoSBZILwjE2LFISxZZ8loVJKAkuzswl5js8BHda79bIb2b84ehU8IjXw==}
     peerDependencies:
       react: '*'
       tslib: '*'
     dependencies:
       react: 17.0.2
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: false
 
   /react-use/17.4.0_sfoxds7t5ydpegc3knd667wn6m:
@@ -18170,13 +18170,13 @@ packages:
       nano-css: 5.3.5_sfoxds7t5ydpegc3knd667wn6m
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-universal-interface: 0.6.2_react@17.0.2+tslib@2.4.0
+      react-universal-interface: 0.6.2_react@17.0.2+tslib@2.4.1
       resize-observer-polyfill: 1.5.1
       screenfull: 5.2.0
       set-harmonic-interval: 1.0.1
       throttle-debounce: 3.0.1
       ts-easing: 0.2.0
-      tslib: 2.4.0
+      tslib: 2.4.1
     dev: false
 
   /react/17.0.2:
@@ -19376,6 +19376,7 @@ packages:
 
   /sourcemap-codec/1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
+    deprecated: Please use @jridgewell/sourcemap-codec instead
 
   /spawn-command/0.0.2-1:
     resolution: {integrity: sha512-n98l9E2RMSJ9ON1AKisHzz7V42VDiBQGY6PB1BwRglz99wpVsSuGzQ+jOi6lFXBGVTCrRpltvjm+/XA+tpeJrg==}
@@ -20605,10 +20606,6 @@ packages:
 
   /tslib/1.14.1:
     resolution: {integrity: sha512-Xni35NKzjgMrwevysHTCArtLDpPvye8zV/0E4EyYn43P7/7qvQwPh9BGkHewbMulVntbigmcT7rdX3BNo9wRJg==}
-
-  /tslib/2.4.0:
-    resolution: {integrity: sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==}
-    dev: false
 
   /tslib/2.4.1:
     resolution: {integrity: sha512-tGyy4dAjRIEwI7BzsB0lynWgOpfqjUdq91XXAlIWD2OwKBH7oCl/GZG/HT4BOHrTlPMOASlMQ7veyTqpmRcrNA==}
