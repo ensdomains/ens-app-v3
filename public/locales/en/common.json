@@ -137,7 +137,8 @@
       "approveNameWrapper": "Approve NameWrapper",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
-      "transferName": "Transfer name"
+      "transferName": "Transfer name",
+      "syncManager": "Sync manager"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
