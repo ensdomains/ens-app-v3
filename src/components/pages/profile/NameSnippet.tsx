@@ -155,7 +155,7 @@ export const NameDetailSnippet = ({
 
   if (ownerData?.ownershipLevel === 'nameWrapper') {
     owners.push([
-      wrapperData?.fuseObj.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
+      wrapperData?.parent.PARENT_CANNOT_CONTROL ? 'name.owner' : 'name.manager',
       ownerData.owner!,
     ])
   } else {

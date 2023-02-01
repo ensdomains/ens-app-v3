@@ -57,6 +57,9 @@ const config: HardhatUserConfig = {
     owner: {
       default: 1,
     },
+    owner2: {
+      default: 2,
+    },
   },
   external: {
     contracts: [

@@ -17,7 +17,9 @@ const useResolverExists = (name: string, address: string) => {
   const { data, isLoading } = useQuery(
     ['graph', 'getResolverExists', name],
     async () => {
-      const { resolver } = await gqlInstance.request(query, { id: `${address}-${namehash(name)}` })
+      const { resolver } = await gqlInstance.client.request(query, {
+        id: `${address}-${namehash(name)}`,
+      })
       return !!resolver
     },
     {

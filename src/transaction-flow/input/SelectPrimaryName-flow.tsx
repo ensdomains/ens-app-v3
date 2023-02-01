@@ -65,7 +65,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   const { data, fetchNextPage, isLoading } = useInfiniteQuery(
     [address, 'primaryNameOptions'],
     async ({ pageParam }: { pageParam?: string }) => {
-      const { domains } = await gqlInstance.request(
+      const { domains } = await gqlInstance.client.request(
         gqlInstance.gql`
       query getEthRecordAvailableNames($address: String!, $lastID: String, $size: Int!) {
         domains(first: $size, where: { id_gt: $lastID, resolvedAddress: $address }) {

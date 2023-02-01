@@ -1,4 +1,5 @@
-import { BigNumber, FixedNumber } from 'ethers'
+import { formatFixed } from '@ethersproject/bignumber'
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 export const makeDisplay = (
   val: BigNumber | number,
@@ -6,12 +7,7 @@ export const makeDisplay = (
   symbol: string,
   fromDecimals: number = 18,
 ) => {
-  let number: number
-  if (val instanceof BigNumber) {
-    number = FixedNumber.fromValue(val, fromDecimals).toUnsafeFloat()
-  } else {
-    number = val
-  }
+  const number = typeof val === 'number' ? val : Number(formatFixed(val, fromDecimals))
   const options: Intl.NumberFormatOptions & { [x: string]: string } = {
     style: 'currency',
     currency: symbol.toLowerCase(),

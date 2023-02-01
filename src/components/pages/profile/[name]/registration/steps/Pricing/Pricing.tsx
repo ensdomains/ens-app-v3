@@ -53,6 +53,18 @@ const OutlinedContainer = styled.div(
   `,
 )
 
+const StyledHeading = styled(Heading)(
+  () => css`
+    width: 100%;
+    word-break: break-all;
+
+    @supports (overflow-wrap: anywhere) {
+      overflow-wrap: anywhere;
+      word-break: normal;
+    }
+  `,
+)
+
 const gridAreaStyle = ({ $name }: { $name: string }) => css`
   grid-area: ${$name};
 `
@@ -105,11 +117,8 @@ const Pricing = ({
 
   const fullEstimate = useEstimateFullRegistration({
     registration: {
-      permissions: {},
-      records: {
-        coinTypes: [{ key: 'ETH', value: resolverAddress }],
-        clearRecords: resolverExists,
-      },
+      records: [{ key: 'ETH', value: resolverAddress, type: 'addr', group: 'address' }],
+      clearRecords: resolverExists,
       resolver: resolverAddress,
       reverseRecord,
       years,
@@ -148,7 +157,7 @@ const Pricing = ({
 
   return (
     <StyledCard>
-      <Heading>{t('heading', { name: normalisedName })}</Heading>
+      <StyledHeading>{t('heading', { name: normalisedName })}</StyledHeading>
       <PlusMinusControl
         minValue={1}
         value={years}

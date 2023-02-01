@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { ChildFuses } from '@ensdomains/ensjs'
 import { BaseRegistrationParams } from '@ensdomains/ensjs/utils/registerHelpers'
 import {
   AlertSVG,
@@ -24,6 +25,7 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { RegistrationReducerDataItem } from '../types'
+import { profileRecordsToRecordOptions } from './Profile/profileRecordUtils'
 
 const StyledCard = styled(Card)(
   ({ theme }) => css`
@@ -159,8 +161,18 @@ const Transactions = ({ registrationData, nameDetails, callback, onStart }: Prop
       duration: yearsToSeconds(registrationData.years),
       resolverAddress: registrationData.resolver,
       secret: registrationData.secret,
-      fuses: registrationData.permissions,
-      records: registrationData.records,
+      records: profileRecordsToRecordOptions(
+        registrationData.records,
+        registrationData.clearRecords,
+      ),
+      fuses: {
+        named: registrationData.permissions
+          ? (Object.keys(registrationData.permissions).filter(
+              (key) => !!registrationData.permissions?.[key as ChildFuses['fuse']],
+            ) as ChildFuses['fuse'][])
+          : [],
+        unnamed: [],
+      },
       reverseRecord: registrationData.reverseRecord,
     }),
     [address, nameDetails, registrationData],

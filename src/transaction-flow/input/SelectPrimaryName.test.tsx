@@ -58,7 +58,9 @@ describe('SelectPrimaryName', () => {
   mockUseEns.mockReturnValue({
     gqlInstance: {
       gql: (str: string) => str,
-      request: mockRequest,
+      client: {
+        request: mockRequest,
+      },
     },
   })
   it('should show loading', async () => {

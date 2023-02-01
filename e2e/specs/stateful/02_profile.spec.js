@@ -212,4 +212,12 @@ describe('Profile', () => {
       })
     })
   })
+
+  it('should decode an unknown label', () => {
+    cy.visit('/[8df9cfc425ad5e1853259e1cef0a8d1d44591fbec8e3feb6f930d9dfacd5eff2].eth')
+    cy.wait(5000)
+    cy.findByTestId('profile-snippet', {
+      timeout: 25000,
+    }).should('contain.text', 'wrapmebaby.eth')
+  })
 })

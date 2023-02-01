@@ -1,4 +1,4 @@
-import { arrayify } from 'ethers/lib/utils'
+import { arrayify } from '@ethersproject/bytes/lib/index'
 
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 

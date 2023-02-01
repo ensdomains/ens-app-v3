@@ -44,17 +44,21 @@ describe('Register Name', () => {
 
     // should go to profile editor step
     cy.findByTestId('next-button').click()
-    cy.findByText('General').should('be.visible')
 
-    // should allow setting a general text record
-    cy.findByText('Nickname').click().type('Test Name')
+    // should show a confirmation dialog that records are public
+    cy.findByTestId('show-add-profile-records-modal-button').click()
+    cy.findByTestId('confirmation-dialog-confirm-button').click()
+
+    // should all setting a gener text record
+    cy.findByTestId('profile-record-option-name').click()
+    cy.findByTestId('add-profile-records-button').click()
+    cy.findByTestId('profile-record-input-input-name').type('Test Name')
 
     // should show ETH record by default
-    cy.findByText('Address').click()
     cy.findByDisplayValue('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC').should('be.visible')
 
     // should show go to info step and show updated estimate
-    cy.findByTestId('next-button').should('contain.text', 'Next').click()
+    cy.findByTestId('profile-submit-button').should('contain.text', 'Next').click()
     cy.findByTestId('invoice-item-1-amount').should('not.contain.text', `${this.estimate} ETH`)
 
     // should go to transactions step and open commit transaction immediately
