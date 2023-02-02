@@ -62,7 +62,7 @@ describe('Permissions', () => {
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
-    cy.wait(5000)
+    cy.wait(30000)
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
     const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER']
