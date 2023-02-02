@@ -1,7 +1,10 @@
 import { acceptMetamaskAccess } from "../../setup";
 
+const POST_TRANSACTION_WAIT_TIME = 10000;
+
 describe('Permissions', () => {
   before(() => {
+    cy.clearLocalStorage()
     acceptMetamaskAccess(2, true)
   })
   
@@ -12,11 +15,21 @@ describe('Permissions', () => {
   })
 
   it('should allow owner to revoke permissions', () => {
+    // Parent Status
+    cy.findByTestId('owner-can-change-permissions').should('be.visible')
+
+    // Permissions
+    cy.findByTestId('unburned-CANNOT_UNWRAP').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
+    // revoke-permissions flow
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('checkbox-CANNOT_UNWRAP').click()
     cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
-
     const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER', 'CANNOT_SET_RESOLVER', 'CANNOT_SET_TTL']
     for (const fuse of fuses) {
       cy.findByTestId(`checkbox-${fuse}`).click()
@@ -25,11 +38,33 @@ describe('Permissions', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(POST_TRANSACTION_WAIT_TIME)
+
+    // Permissions
+    cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
+    cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+    cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
+    cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
+    cy.findByTestId('burned-CANNOT_SET_TTL').should('be.visible')
+
   })
 
   it('should allow parent owner to extend expiry', () => {
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
+
+    // Parent status
+    cy.findByTestId('parent-can-control').should('be.visible')
+    cy.findByTestId('parent-can-change-permissions').should('be.visible')
+    cy.findByTestId('owner-cannot-extend-expiry').should('be.visible')
+
+     // Permissions
+     cy.findByTestId('unburned-CANNOT_UNWRAP').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
     cy.findByTestId('button-extend-expiry').click()
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('checkbox-CAN_EXTEND_EXPIRY').click()
@@ -39,11 +74,40 @@ describe('Permissions', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(POST_TRANSACTION_WAIT_TIME)
+
+     // Parent status
+     cy.findByTestId('parent-can-control').should('be.visible')
+     cy.findByTestId('parent-can-change-permissions').should('be.visible')
+     cy.findByTestId('owner-can-extend-expiry').should('be.visible')
+ 
+      // Permissions
+      cy.findByTestId('unburned-CANNOT_UNWRAP').should('be.visible')
+      cy.findByTestId('unburned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+      cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
+      cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+      cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
+      // Button should disappear
+      cy.findByTestId('button-extend-expiry').should('not.exist')
   })
 
   it('should allow parent owner to burn pcc', () => {
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
+
+    // Parent status
+    cy.findByTestId('parent-can-control').should('be.visible')
+    cy.findByTestId('parent-can-change-permissions').should('be.visible')
+    cy.findByTestId('owner-can-extend-expiry').should('be.visible')
+
+     // Permissions
+     cy.findByTestId('unburned-CANNOT_UNWRAP').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
     cy.findByTestId('button-revoke-pcc').click()
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('checkbox-pcc').click()
@@ -55,14 +119,41 @@ describe('Permissions', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(POST_TRANSACTION_WAIT_TIME)
+
+    // Parent status
+    cy.findByTestId('parent-cannot-control').should('be.visible')
+    cy.findByTestId('owner-can-change-permissions').should('be.visible')
+    cy.findByTestId('owner-can-extend-expiry').should('be.visible')
+
+     // Permissions
+     cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
+    // Button should disappear
+    cy.findByTestId('button-revoke-pcc').should('not.exist')
   })
 
   it('should allow name owner to revoke permissions', () => {
-    cy.clearLocalStorage()
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
-    cy.wait(30000)
+
+     // Parent status
+     cy.findByTestId('parent-cannot-control').should('be.visible')
+     cy.findByTestId('owner-can-change-permissions').should('be.visible')
+     cy.findByTestId('owner-can-extend-expiry').should('be.visible')
+ 
+    // Permissions
+    cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_TRANSFER').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+    cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
     const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER']
@@ -73,11 +164,38 @@ describe('Permissions', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(POST_TRANSACTION_WAIT_TIME)
+
+      // Parent status
+      cy.findByTestId('parent-cannot-control').should('be.visible')
+      cy.findByTestId('owner-can-change-permissions').should('be.visible')
+      cy.findByTestId('owner-can-extend-expiry').should('be.visible')
+  
+     // Permissions
+     cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
+     cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+     cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+     cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
   })
 
   it('should allow name owner to revoke change fuses', () => {
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
+
+   // Parent status
+   cy.findByTestId('parent-cannot-control').should('be.visible')
+   cy.findByTestId('owner-can-change-permissions').should('be.visible')
+   cy.findByTestId('owner-can-extend-expiry').should('be.visible')
+
+  // Permissions
+  cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
+  cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+  cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
+  cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+  cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
     cy.findByTestId('button-revoke-change-fuses').click()
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('checkbox-CANNOT_BURN_FUSES').click()
@@ -87,6 +205,25 @@ describe('Permissions', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(POST_TRANSACTION_WAIT_TIME)
+
+       // Parent status
+       cy.findByTestId('parent-cannot-control').should('be.visible')
+       cy.findByTestId('owner-cannnot-change-permissions').should('be.visible')
+       cy.findByTestId('owner-can-extend-expiry').should('be.visible')
+   
+      // Permissions
+      cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
+      cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
+      cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
+      cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+      cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
+
+      // Button should disappear
+      cy.findByTestId('button-revoke-change-fuses').should('not.exist')
+
+      // Should have disabled permissions button
+      cy.findByTestId('button-revoke-permissions-disabled').should('be.visible')
   })
 
 })
