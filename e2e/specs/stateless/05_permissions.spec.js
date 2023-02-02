@@ -1,6 +1,6 @@
 import { acceptMetamaskAccess } from "../../setup";
 
-const POST_TRANSACTION_WAIT_TIME = 10000;
+const POST_TRANSACTION_WAIT_TIME = 15000;
 
 describe('Permissions', () => {
   before(() => {
