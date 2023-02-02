@@ -1,14 +1,3 @@
-// Make sure the permissions tab is hidden for non-wrapped names and tlds
-
-// Check that give ownership shows name as well as address
-
-// There are two different ways set expiry messages
-// Check that on back the correct expiry is shown
-
-// On revoke PCC... test that child fuses are not passed if cu is not burned
-
-// Going back goes to the right view
-
 import { acceptMetamaskAccess } from "../../setup";
 
 describe('Permissions', () => {
@@ -27,9 +16,11 @@ describe('Permissions', () => {
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('checkbox-CANNOT_UNWRAP').click()
     cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
-    ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER', 'CANNOT_SET_RESOLVER', 'CANNOT_SET_TTL'].forEach((fuse) => {
+
+    const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER', 'CANNOT_SET_RESOLVER', 'CANNOT_SET_TTL']
+    for (const fuse of fuses) {
       cy.findByTestId(`checkbox-${fuse}`).click()
-    })
+    }
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
@@ -72,9 +63,10 @@ describe('Permissions', () => {
     cy.findByTestId('permissions-tab').click()
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
-    ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER'].forEach((fuse) => {
+    const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER']
+    for (const fuse of fuses) {
       cy.findByTestId(`checkbox-${fuse}`).click()
-    })
+    }
     cy.findByTestId('permissions-next-button').should('not.be.disabled').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
