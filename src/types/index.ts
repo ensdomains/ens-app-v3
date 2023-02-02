@@ -22,7 +22,7 @@ interface TransactionDisplayItemBase {
 }
 
 export interface TransactionDisplayItemSingle extends TransactionDisplayItemBase {
-  type?: 'name' | 'subname' | 'address'
+  type?: 'name' | 'subname' | 'address' | undefined
   value: string
 }
 

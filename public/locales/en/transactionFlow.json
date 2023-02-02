@@ -241,6 +241,10 @@
       "title": "The edits you want to save to your profile require that you upgrade your resolver.",
       "link": "Learn more about resolver upgrades",
       "warning": "Note that if you cancel this at any point your changes will not be saved."
+    },
+    "syncManager": {
+      "description": "Syncing the manager will make you the new manager of this name. The current manager <b>({{manager}})</b> will no longer be able to make changes.",
+      "wrappedWarning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
     }
   },
   "errors": {

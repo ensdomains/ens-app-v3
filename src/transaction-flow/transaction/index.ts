@@ -10,6 +10,7 @@ import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
 import registerName from './registerName'
 import setPrimaryName from './setPrimaryName'
+import syncManager from './syncManager'
 import testSendName from './testSendName'
 import transferController from './transferController'
 import transferName from './transferName'
@@ -40,6 +41,7 @@ export const transactions = {
   importDNSSECName,
   approveNameWrapper,
   changePermissions,
+  syncManager,
 }
 
 export type Transaction = typeof transactions

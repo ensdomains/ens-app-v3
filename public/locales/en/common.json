@@ -139,7 +139,8 @@
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
       "transferName": "Transfer name",
-      "changePermissions": "Change permissions"
+      "changePermissions": "Change permissions",
+      "syncManager": "Sync manager"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",
