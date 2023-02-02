@@ -71,7 +71,7 @@ export const ExpiryPermissions = ({
   return (
     <Section>
       {canExtendExpiry ? (
-        <SectionItem icon="info">
+        <SectionItem icon="info" data-testid="owner-can-extend-expiry">
           <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.expiry.permissions.canExtendExpiry.label`)}
           </Typography>
@@ -92,7 +92,7 @@ export const ExpiryPermissions = ({
         </SectionItem>
       ) : (
         <>
-          <SectionItem icon="disabled">
+          <SectionItem icon="disabled" data-testid="owner-cannot-extend-expiry">
             <Typography fontVariant="bodyBold">
               {t(`tabs.permissions.expiry.permissions.cannotExtendExpiry.label`)}
             </Typography>

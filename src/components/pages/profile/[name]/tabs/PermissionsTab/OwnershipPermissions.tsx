@@ -67,9 +67,9 @@ export const OwnershipPermissions = ({
 
   // Editor status
   const editorStatus = useMemo(() => {
-    if (wrapperData?.child.CANNOT_BURN_FUSES) return 'owner-cannot-change'
-    if (['emancipated', 'locked'].includes(state)) return 'owner-can-change'
-    return 'parent-can-change'
+    if (wrapperData?.child.CANNOT_BURN_FUSES) return 'owner-cannot-change-permissions'
+    if (['emancipated', 'locked'].includes(state)) return 'owner-can-change-permissions'
+    return 'parent-can-change-permissions'
   }, [wrapperData, state])
 
   const buttonProps = useMemo(() => {
@@ -91,7 +91,11 @@ export const OwnershipPermissions = ({
         },
         children: t('tabs.permissions.ownership.action.giveUpControl'),
       }
-    if (isUserOwner && editorStatus === 'owner-can-change' && wrapperData.child.CANNOT_UNWRAP)
+    if (
+      isUserOwner &&
+      editorStatus === 'owner-can-change-permissions' &&
+      wrapperData.child.CANNOT_UNWRAP
+    )
       return {
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'data-testid': 'button-revoke-change-fuses',
@@ -123,7 +127,7 @@ export const OwnershipPermissions = ({
   return (
     <Section>
       {ownershipStatus === 'parent-cannot-control' && (
-        <SectionItem icon="disabled" date-testid="parent-cannot-control">
+        <SectionItem icon="disabled" data-testid="parent-cannot-control">
           <Typography fontVariant="bodyBold">
             <Trans
               t={t}
@@ -174,8 +178,8 @@ export const OwnershipPermissions = ({
           </SectionList>
         </SectionItem>
       )}
-      {editorStatus === 'owner-can-change' && (
-        <SectionItem icon="info" date-testid="owner-can-change">
+      {editorStatus === 'owner-can-change-permissions' && (
+        <SectionItem icon="info" data-testid="owner-can-change-permissions">
           <Typography fontVariant="bodyBold">
             {t('tabs.permissions.ownership.ownerCanChange.label')}
           </Typography>
@@ -185,8 +189,8 @@ export const OwnershipPermissions = ({
           </SectionList>
         </SectionItem>
       )}
-      {editorStatus === 'owner-cannot-change' && (
-        <SectionItem icon="disabled" date-testid="owner-cannot-change">
+      {editorStatus === 'owner-cannot-change-permissions' && (
+        <SectionItem icon="disabled" data-testid="owner-cannot-change-permissions">
           <Typography fontVariant="bodyBold">
             {t('tabs.permissions.ownership.ownerCannotChange.label')}
           </Typography>
@@ -201,8 +205,8 @@ export const OwnershipPermissions = ({
           </SectionList>
         </SectionItem>
       )}
-      {editorStatus === 'parent-can-change' && (
-        <SectionItem icon="info" date-testid="parent-can-change">
+      {editorStatus === 'parent-can-change-permissions' && (
+        <SectionItem icon="info" data-testid="parent-can-change-permissions">
           <Typography fontVariant="bodyBold">
             <Trans
               t={t}

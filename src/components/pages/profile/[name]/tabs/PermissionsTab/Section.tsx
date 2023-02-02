@@ -77,9 +77,14 @@ type SectionItemProps = {
   icon?: 'info' | 'disabled'
   screen?: Screen
 }
-export const SectionItem = ({ icon, screen, children }: PropsWithChildren<SectionItemProps>) => {
+export const SectionItem = ({
+  icon,
+  screen,
+  children,
+  ...props
+}: PropsWithChildren<SectionItemProps>) => {
   return (
-    <SectionItemContainer $screen={screen}>
+    <SectionItemContainer $screen={screen} {...props}>
       {icon === 'info' ? (
         <SectionItemIcon as={InfoCircleSVG} $color="yellow" />
       ) : (

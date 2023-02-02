@@ -55,12 +55,6 @@ mockUseAccountSafely.mockReturnValue({
 
 const mockUseBasicName = mockFunction(useBasicName)
 
-// button-revoke-pcc
-// button-revoke-change-fuses
-// button-extend-expiry
-// button-revoke-permissions-disabled
-// button-revoke-permissions
-
 const components = [
   'banner-parent-not-locked',
   'button-revoke-pcc',
@@ -81,6 +75,251 @@ const expectFunc = (visible: Component[] = []) => {
 }
 
 describe('<PermissionsTab>', () => {
+  describe('2LDEths', () => {
+    it('should display the correct info', () => {
+      mockUseBasicName.mockReturnValue({})
+      render(
+        <PermissionsTab
+          name="test.eth"
+          wrapperData={makeWrapperData({
+            parent: {
+              PARENT_CANNOT_CONTROL: true,
+            },
+          })}
+          isCached={false}
+        />,
+      )
+      expect(screen.queryByTestId('parent-can-control')).toBeNull()
+      expect(screen.queryByTestId('parent-cannot-control')).toBeNull()
+      expect(screen.getByTestId('owner-can-change-permissions')).toBeInTheDocument()
+      expect(screen.queryByTestId('owner-cannot-change-permissions')).toBeNull()
+      expect(screen.queryByTestId('parent-can-change-permissions')).toBeNull()
+      expect(screen.queryByTestId('owner-can-extend-expiry')).toBeNull()
+      expect(screen.queryByTestId('owner-cannot-extend-expiry')).toBeNull()
+    })
+  })
+
+  describe('Subnames', () => {
+    it('Should show the correct info if the parent name is in wrapped state', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({
+          parent: {},
+        }),
+      })
+      render(
+        <PermissionsTab name="sub.test.eth" wrapperData={makeWrapperData({})} isCached={false} />,
+      )
+      expect(screen.getByTestId('parent-can-control')).toBeInTheDocument()
+      expect(screen.getByTestId('parent-can-change-permissions')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-cannot-extend-expiry')).toBeInTheDocument()
+    })
+
+    it('Should show the correct info if the parent name is in emancipated state', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+        }),
+      })
+      render(
+        <PermissionsTab name="sub.test.eth" wrapperData={makeWrapperData({})} isCached={false} />,
+      )
+      expect(screen.getByTestId('parent-can-control')).toBeInTheDocument()
+      expect(screen.getByTestId('parent-can-change-permissions')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-cannot-extend-expiry')).toBeInTheDocument()
+    })
+
+    it('Should show the correct info if the parent name is locked', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_UNWRAP: true,
+          },
+        }),
+      })
+      render(
+        <PermissionsTab name="sub.test.eth" wrapperData={makeWrapperData({})} isCached={false} />,
+      )
+      expect(screen.getByTestId('parent-can-control')).toBeInTheDocument()
+      expect(screen.getByTestId('parent-can-change-permissions')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-cannot-extend-expiry')).toBeInTheDocument()
+    })
+
+    it('Should show the correct info if the name is in emancipated state', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_UNWRAP: true,
+          },
+        }),
+      })
+      render(
+        <PermissionsTab
+          name="sub.test.eth"
+          wrapperData={makeWrapperData({
+            parent: {
+              PARENT_CANNOT_CONTROL: true,
+            },
+          })}
+          isCached={false}
+        />,
+      )
+      expect(screen.getByTestId('parent-cannot-control')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-can-change-permissions')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-cannot-extend-expiry')).toBeInTheDocument()
+    })
+
+    it('Should show the correct info if can extend expiry is burned', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_UNWRAP: true,
+          },
+        }),
+      })
+      render(
+        <PermissionsTab
+          name="sub.test.eth"
+          wrapperData={makeWrapperData({
+            parent: {
+              PARENT_CANNOT_CONTROL: true,
+              CAN_EXTEND_EXPIRY: true,
+            },
+          })}
+          isCached={false}
+        />,
+      )
+      expect(screen.getByTestId('parent-cannot-control')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-can-change-permissions')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-can-extend-expiry')).toBeInTheDocument()
+    })
+
+    it('Should show the correct info if the name is locked', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_UNWRAP: true,
+          },
+        }),
+      })
+      render(
+        <PermissionsTab
+          name="sub.test.eth"
+          wrapperData={makeWrapperData({
+            parent: {
+              PARENT_CANNOT_CONTROL: true,
+              CAN_EXTEND_EXPIRY: true,
+            },
+            child: {
+              CANNOT_UNWRAP: true,
+            },
+          })}
+          isCached={false}
+        />,
+      )
+      expect(screen.getByTestId('parent-cannot-control')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-can-change-permissions')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-can-extend-expiry')).toBeInTheDocument()
+    })
+
+    it('Should show the correct info if the name is locked', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({
+          parent: {
+            PARENT_CANNOT_CONTROL: true,
+          },
+          child: {
+            CANNOT_UNWRAP: true,
+          },
+        }),
+      })
+      render(
+        <PermissionsTab
+          name="sub.test.eth"
+          wrapperData={makeWrapperData({
+            parent: {
+              PARENT_CANNOT_CONTROL: true,
+              CAN_EXTEND_EXPIRY: true,
+            },
+            child: {
+              CANNOT_UNWRAP: true,
+              CANNOT_BURN_FUSES: true,
+            },
+          })}
+          isCached={false}
+        />,
+      )
+      expect(screen.getByTestId('parent-cannot-control')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-cannot-change-permissions')).toBeInTheDocument()
+      expect(screen.getByTestId('owner-can-extend-expiry')).toBeInTheDocument()
+    })
+  })
+
+  describe('Child fuses', () => {
+    it('should display unburned permissions correctly', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({}),
+      })
+      render(
+        <PermissionsTab name="sub.test.eth" wrapperData={makeWrapperData()} isCached={false} />,
+      )
+      const fuses = [
+        'CANNOT_UNWRAP',
+        'CANNOT_CREATE_SUBDOMAIN',
+        'CANNOT_TRANSFER',
+        'CANNOT_SET_RESOLVER',
+        'CANNOT_SET_TTL',
+      ]
+      for (const fuse of fuses) {
+        expect(screen.getByTestId(`unburned-${fuse}`)).toBeInTheDocument()
+      }
+    })
+
+    it('should display burned permissions correctly', () => {
+      mockUseBasicName.mockReturnValue({
+        wrapperData: makeWrapperData({}),
+      })
+      render(
+        <PermissionsTab
+          name="sub.test.eth"
+          wrapperData={makeWrapperData({
+            child: {
+              CANNOT_UNWRAP: true,
+              CANNOT_CREATE_SUBDOMAIN: true,
+              CANNOT_TRANSFER: true,
+              CANNOT_SET_RESOLVER: true,
+              CANNOT_SET_TTL: true,
+            },
+          })}
+          isCached={false}
+        />,
+      )
+      const fuses = [
+        'CANNOT_UNWRAP',
+        'CANNOT_CREATE_SUBDOMAIN',
+        'CANNOT_TRANSFER',
+        'CANNOT_SET_RESOLVER',
+        'CANNOT_SET_TTL',
+      ]
+      for (const fuse of fuses) {
+        expect(screen.getByTestId(`burned-${fuse}`)).toBeInTheDocument()
+      }
+    })
+  })
+
   describe('user is parent name owner', () => {
     it('should show banner if parent has not burned any fuses', async () => {
       mockUseBasicName.mockReturnValue({

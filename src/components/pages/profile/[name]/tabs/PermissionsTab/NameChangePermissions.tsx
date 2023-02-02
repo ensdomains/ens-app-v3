@@ -185,7 +185,7 @@ export const NameChangePermissions = ({
   return (
     <Section>
       {permissions.unburned.map(({ translationKey, fuse }) => (
-        <SectionItem key={fuse} icon="info">
+        <SectionItem key={fuse} icon="info" data-testid={`unburned-${fuse}`}>
           <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
           </Typography>
@@ -199,7 +199,7 @@ export const NameChangePermissions = ({
         </SectionItem>
       ))}
       {permissions.burned.map(({ translationKey, fuse }) => (
-        <SectionItem key={fuse} icon="disabled">
+        <SectionItem key={fuse} icon="disabled" data-testid={`burned-${fuse}`}>
           <Typography fontVariant="bodyBold">
             {t(`tabs.permissions.nameChangePermissions.permissions.${translationKey}.label`)}
           </Typography>
