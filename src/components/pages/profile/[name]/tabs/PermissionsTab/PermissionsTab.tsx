@@ -40,6 +40,7 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
 
+  const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
   const isValidParent = parentName.split('.').length > 1
   const isSubname = nameParts.length > 2
 
@@ -80,12 +81,14 @@ export const PermissionsTab = ({ name, wrapperData, isCached: isBasicCached }: P
         fusesSetDates={fusesSetDates}
         {...fusesStatus}
       />
-      <ExpiryPermissions
-        name={name}
-        wrapperData={wrapperData}
-        fusesSetDates={fusesSetDates}
-        {...fusesStatus}
-      />
+      {!is2LDEth && (
+        <ExpiryPermissions
+          name={name}
+          wrapperData={wrapperData}
+          fusesSetDates={fusesSetDates}
+          {...fusesStatus}
+        />
+      )}
       <NameChangePermissions
         name={name}
         wrapperData={wrapperData}

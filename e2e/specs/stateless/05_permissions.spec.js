@@ -11,7 +11,7 @@ describe('Permissions', () => {
     cy.findByTestId('banner-parent-not-locked').click()
   })
 
-  it('should allow revoke permissions', () => {
+  it('should allow owner to revoke permissions', () => {
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
     cy.findByTestId('checkbox-CANNOT_UNWRAP').click()
@@ -57,7 +57,8 @@ describe('Permissions', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
   })
 
-  it('should allow name owner to ', () => {
+  it('should a0x19c2d5D0f035563344dBB7bE5fD09c8dad62b001llow name owner to revoke permissions', () => {
+    cy.clearLocalStorage()
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()

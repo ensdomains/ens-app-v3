@@ -100,7 +100,6 @@ const displayItems = (
 }
 
 const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
-  console.log('data', data)
   const { contract } = data
   if (contract === 'setChildFuses') {
     return ens.setChildFuses.populateTransaction(data.name, {

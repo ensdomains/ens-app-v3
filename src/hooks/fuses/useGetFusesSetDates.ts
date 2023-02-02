@@ -1,8 +1,13 @@
 import { useEffect, useState } from 'react'
 import { useProvider } from 'wagmi'
 
-import { ChildFuses, ParentFuses } from '@ensdomains/ensjs'
 import { decodeFuses } from '@ensdomains/ensjs/utils/fuses'
+
+import {
+  CHILD_FUSES,
+  Fuse,
+  PARENT_FUSES,
+} from '@app/transaction-flow/transaction/changePermissions'
 
 import { useGetHistory } from '../useGetHistory'
 
@@ -11,22 +16,9 @@ type NameWrapperEventData = {
   expiry?: number
 }
 
-type ParentFuseKeys = ParentFuses['fuse']
-type ChildFuseKeys = ChildFuses['fuse']
-type AllFuses = ParentFuseKeys | ChildFuseKeys
 type Result = {
-  [key in AllFuses]?: string
+  [key in Fuse]?: string
 }
-
-const PARENT_FUSES: ParentFuseKeys[] = ['PARENT_CANNOT_CONTROL', 'CAN_EXTEND_EXPIRY']
-const CHILD_FUSES: ChildFuseKeys[] = [
-  'CANNOT_UNWRAP',
-  'CANNOT_CREATE_SUBDOMAIN',
-  'CANNOT_TRANSFER',
-  'CANNOT_SET_RESOLVER',
-  'CANNOT_SET_TTL',
-  'CANNOT_BURN_FUSES',
-]
 
 /** Need a polyfill because Firefox does not support findLastIndex */
 export function findLastIndex<T>(

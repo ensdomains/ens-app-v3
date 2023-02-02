@@ -48,9 +48,6 @@ export const ExpiryPermissions = ({
   const { t } = useTranslation('profile')
   const { showDataInput } = useTransactionFlow()
 
-  const nameParts = name.split('.')
-  const is2LDEth = nameParts.length === 2 && nameParts[1] === 'eth'
-
   const handleRevokePermissions = () => {
     if (!wrapperData) return
     showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
@@ -64,7 +61,7 @@ export const ExpiryPermissions = ({
     })
   }
 
-  const canExtendExpiry = wrapperData?.parent?.CAN_EXTEND_EXPIRY || is2LDEth
+  const canExtendExpiry = wrapperData?.parent?.CAN_EXTEND_EXPIRY
 
   const canCanExtendExpiryBeBurned =
     !canExtendExpiry && !wrapperData?.parent.PARENT_CANNOT_CONTROL && parentState === 'locked'
