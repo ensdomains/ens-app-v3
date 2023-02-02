@@ -57,11 +57,12 @@ describe('Permissions', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
   })
 
-  it('should a0x19c2d5D0f035563344dBB7bE5fD09c8dad62b001llow name owner to revoke permissions', () => {
+  it('should allow name owner to revoke permissions', () => {
     cy.clearLocalStorage()
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
+    cy.wait(5000)
     cy.findByTestId('button-revoke-permissions').click()
     cy.findByTestId('permissions-next-button').click()
     const fuses = ['CANNOT_CREATE_SUBDOMAIN', 'CANNOT_TRANSFER']
