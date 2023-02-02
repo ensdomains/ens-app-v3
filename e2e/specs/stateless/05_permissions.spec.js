@@ -1,6 +1,6 @@
 import { acceptMetamaskAccess } from "../../setup";
 
-const POST_TRANSACTION_WAIT_TIME = 15000;
+const POST_TRANSACTION_WAIT_TIME = 10000;
 
 describe('Permissions', () => {
   before(() => {
@@ -209,7 +209,7 @@ describe('Permissions', () => {
 
        // Parent status
        cy.findByTestId('parent-cannot-control').should('be.visible')
-       cy.findByTestId('owner-cannnot-change-permissions').should('be.visible')
+       cy.findByTestId('owner-cannot-change-permissions').should('be.visible')
        cy.findByTestId('owner-can-extend-expiry').should('be.visible')
    
       // Permissions
