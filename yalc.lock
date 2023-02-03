@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/thorin": {
+      "signature": "f020dde0600bbf76b1d68113e38c2f15",
+      "workspace": true,
+      "replaced": "file:.yalc/@ensdomains/thorin"
+    }
+  }
+}

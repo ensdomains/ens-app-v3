@@ -293,12 +293,18 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSendOwner: boolean
       canSend: boolean
       sendNameFunctionCallDetails: FunctionCallDetails
+      canEditResolver: boolean
+      canEditPermissions: boolean
+      canCreateSubdomains: boolean
     } = {
       canEdit: false,
       canExtend: false,
       canSendManager: false,
       canSendOwner: false,
       canSend: false,
+      canEditResolver: false,
+      canEditPermissions: false,
+      canCreateSubdomains: false,
       sendNameFunctionCallDetails: {},
     }
 
@@ -334,6 +340,14 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
     if (basicNameData?.ownerData?.owner === address) {
       abilities.canEdit = true
     }
+
+
+    if (basicNameData.wrapperData) {
+      abilities.canEditResolver = !basicNameData.wrapperData.child.CANNOT_SET_RESOLVER
+      abilities.canEditPermissions = !basicNameData.wrapperData.child.CANNOT_BURN_FUSES
+      abilities.canEditSubdomains = !basicNameData.wrapperData.child.CANNOT_CREATE_SUBDOMAIN
+    }
+
     return abilities
   }, [address, name, is2LDEth, basicNameData, parentBasicNameData])
 }
