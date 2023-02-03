@@ -129,7 +129,7 @@ export const ProfileSnippet = ({
 }: {
   name: string
   getTextRecord?: (key: string) => { value: string } | undefined
-  button?: 'viewProfile' | 'extend'
+  button?: 'viewProfile' | 'extend' | 'register'
   canEdit?: boolean
   network: number
 }) => {
@@ -157,6 +157,16 @@ export const ProfileSnippet = ({
           }}
         >
           {t('action.extend', { ns: 'common' })}
+        </Button>
+      )
+    if (button === 'register')
+      return (
+        <Button
+          onClick={() => router.pushWithHistory(`/register/${name}`)}
+          size="small"
+          colorStyle="accentSecondary"
+        >
+          {t(`wallet.${button}`)}
         </Button>
       )
     if (button === 'viewProfile')

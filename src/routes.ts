@@ -151,6 +151,12 @@ export const rewrites = [
     tldPrefix: true,
   },
   {
+    source: '/expired-profile/:name',
+    destination: '/profile?name=$2&expired=true',
+    flattenedDestination: '/$2/expired-profile',
+    tldPrefix: true,
+  },
+  {
     source: '/register/:name',
     destination: '/register?name=$2',
     flattenedDestination: '/$2/register',

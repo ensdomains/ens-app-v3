@@ -11,6 +11,7 @@ export default function Page() {
   const router = useRouterWithHistory()
   const _name = router.query.name as string
   const isSelf = router.query.connected === 'true'
+  const isViewingExpired = router.query.expired === 'true'
 
   const initial = useInitial()
 
@@ -23,11 +24,19 @@ export default function Page() {
   const name = isSelf && ensName ? ensName : _name
 
   const nameDetails = useNameDetails(name)
-  const { isLoading: detailsLoading, registrationStatus } = nameDetails
+  const { isLoading: detailsLoading, registrationStatus, gracePeriodEndDate } = nameDetails
 
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
-  if (registrationStatus === 'available' || registrationStatus === 'premium') {
+  if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
+    router.push(`/profile/${name}`)
+    return null
+  }
+
+  if (
+    (registrationStatus === 'available' || registrationStatus === 'premium') &&
+    !isViewingExpired
+  ) {
     router.push(`/register/${name}`)
     return null
   }

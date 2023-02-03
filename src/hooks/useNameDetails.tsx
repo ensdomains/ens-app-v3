@@ -53,16 +53,6 @@ export const useNameDetails = (name: string) => {
     if (profile && profile.message) {
       return profile.message
     }
-    if (registrationStatus === 'available' || registrationStatus === 'premium') {
-      return (
-        <>
-          {t('errors.featureNotAvailable')}
-          <a href={`https://app.ens.domains/name/${normalisedName}`}>
-            {t('errors.featureNotAvailableLink')}
-          </a>
-        </>
-      )
-    }
     if (registrationStatus === 'invalid') {
       return t('errors.invalidName')
     }
