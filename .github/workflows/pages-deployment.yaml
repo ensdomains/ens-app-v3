@@ -56,7 +56,8 @@ jobs:
         run: pnpm build --profile && pnpm export
 
       - name: Generate sitemap
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: false
+        # if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           mkdir -p ./out/sitemaps
           pnpm generate:sitemaps
