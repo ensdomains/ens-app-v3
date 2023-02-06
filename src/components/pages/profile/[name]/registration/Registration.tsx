@@ -1,10 +1,12 @@
 import Head from 'next/head'
 import { useEffect } from 'react'
 import { useTranslation } from 'react-i18next'
+import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Helper } from '@ensdomains/thorin'
+import { Helper, Typography, mq } from '@ensdomains/thorin'
 
+import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -22,6 +24,32 @@ import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
 import { BackObj, RegistrationStepData } from './types'
+
+const ViewProfileContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+
+    margin-bottom: -${theme.space['3']};
+    padding: 0 ${theme.space['4']};
+
+    & > a {
+      transition: all 0.15s ease-in-out;
+
+      &:hover {
+        filter: brightness(1.05);
+        transform: translateY(-1px);
+      }
+    }
+
+    ${mq.md.min(css`
+      margin-bottom: 0;
+      padding: 0;
+    `)}
+  `,
+)
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -151,8 +179,20 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         subtitle={t('subtitle')}
         loading={labelTooLong ? false : isLoading || primaryLoading || resolverExistsLoading}
         singleColumnContent
+        inlineHeading
       >
         {{
+          header: nameDetails.expiryDate && (
+            <ViewProfileContainer>
+              <BaseLinkWithHistory href={`/expired-profile/${normalisedName}`} passHref>
+                <a>
+                  <Typography color="accent" weight="bold">
+                    {t('wallet.viewProfile', { ns: 'common' })}
+                  </Typography>
+                </a>
+              </BaseLinkWithHistory>
+            </ViewProfileContainer>
+          ),
           trailing: labelTooLong ? (
             <Helper type="error">{t('error.nameTooLong')}</Helper>
           ) : (

@@ -54,6 +54,11 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     url.searchParams.set('name', isTLD ? paths[2] : paths[1])
     rewrite = true
 
+    if (url.pathname === '/expired-profile') {
+      url.pathname = '/profile'
+      url.searchParams.set('expired', 'true')
+    }
+
     if (url.pathname === '/profile') {
       const decodedName = decodeURIComponent(isTLD ? paths[2] : paths[1])
       let newTitle = 'Invalid Name - ENS'
