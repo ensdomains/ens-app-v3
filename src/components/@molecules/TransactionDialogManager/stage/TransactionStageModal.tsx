@@ -431,7 +431,7 @@ export const TransactionStageModal = ({
   const lowerError = useMemo(() => {
     if (stage === 'complete' || stage === 'sent') return null
     if (transactionError) {
-      return transactionError.message
+      return transactionError.message.split('(')[0].trim()
     }
     if (requestError) {
       if (requestError.code === 'UNPREDICTABLE_GAS_LIMIT') {
