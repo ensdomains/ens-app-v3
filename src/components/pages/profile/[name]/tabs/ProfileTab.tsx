@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
@@ -43,6 +44,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     wrapperData,
     dnsOwner,
     isWrapped,
+    gracePeriodEndDate,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, name)
@@ -63,6 +65,15 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     subnameAbilities,
   })
 
+  const isExpired = useMemo(
+    () => gracePeriodEndDate && gracePeriodEndDate < new Date(),
+    [gracePeriodEndDate],
+  )
+  const snippetButton = useMemo(() => {
+    if (isExpired) return 'register'
+    if (selfAbilities.canExtend) return 'extend'
+  }, [isExpired, selfAbilities.canExtend])
+
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
 
   return (
@@ -71,7 +82,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         name={normalisedName}
         network={chainId}
         getTextRecord={getTextRecord}
-        button={selfAbilities.canExtend ? 'extend' : undefined}
+        button={snippetButton}
         canEdit={selfAbilities.canEdit}
       >
         {isWrapped && !normalisedName.endsWith('.eth') && (

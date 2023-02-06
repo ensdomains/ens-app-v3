@@ -70,7 +70,8 @@
     "connect": "Connect Wallet",
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
-    "viewDetails": "View Details"
+    "viewDetails": "View Details",
+    "register": "Register"
   },
   "name": {
     "registered": "Registered",
@@ -137,7 +138,8 @@
       "approveNameWrapper": "Approve NameWrapper",
       "clearRecords": "Clear records",
       "updateRecords": "Update records",
-      "transferName": "Transfer name"
+      "transferName": "Transfer name",
+      "syncManager": "Sync manager"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",

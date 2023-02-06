@@ -13,6 +13,7 @@ export const IntroStageModal = ({
   transactions,
   onSuccess,
   currentStep,
+  onDismiss,
   content,
   title,
   trailingLabel,
@@ -33,6 +34,16 @@ export const IntroStageModal = ({
       ? t('transaction.dialog.intro.trailingButtonResume')
       : t('transaction.dialog.intro.trailingButton')
 
+  const LeadingButton = (
+    <Button
+      colorStyle="accentSecondary"
+      onClick={() => onDismiss()}
+      data-testid="transaction-dialog-intro-leading-btn"
+    >
+      {t('action.cancel')}
+    </Button>
+  )
+
   const TrailingButton = (
     <Button onClick={() => onSuccess()} data-testid="transaction-dialog-intro-trailing-btn">
       {trailingLabel || tLabel}
@@ -45,30 +56,33 @@ export const IntroStageModal = ({
 
   return (
     <>
-      <Dialog.Heading
-        currentStep={currentStep}
-        stepCount={txCount}
-        stepStatus={stepStatus}
-        title={title}
-      />
+      <Dialog.Heading title={title} />
       <InnerDialog data-testid="transaction-modal-inner">
         <Content {...content.data} />
-        <DisplayItems
-          displayItems={
-            transactions.map(
-              ({ name }, index) =>
-                ({
-                  fade: currentStep > index,
-                  shrink: true,
-                  label: t('transaction.dialog.intro.step', { step: index + 1 }),
-                  value: t(`transaction.description.${name}`),
-                  useRawLabel: true,
-                } as TransactionDisplayItemSingle),
-            ) || []
-          }
-        />
+        {txCount > 1 && (
+          <DisplayItems
+            displayItems={
+              transactions.map(
+                ({ name }, index) =>
+                  ({
+                    fade: currentStep > index,
+                    shrink: true,
+                    label: t('transaction.dialog.intro.step', { step: index + 1 }),
+                    value: t(`transaction.description.${name}`),
+                    useRawLabel: true,
+                  } as TransactionDisplayItemSingle),
+              ) || []
+            }
+          />
+        )}
       </InnerDialog>
-      <Dialog.Footer center trailing={TrailingButton} />
+      <Dialog.Footer
+        currentStep={currentStep}
+        stepCount={txCount > 1 ? txCount : undefined}
+        stepStatus={stepStatus}
+        trailing={TrailingButton}
+        leading={LeadingButton}
+      />
     </>
   )
 }

@@ -12,6 +12,12 @@
   "editProfile": "Edit Profile",
   "ownership": "Ownership",
   "viewDetails": "View Details",
+  "banner": {
+    "available": {
+      "title": "{{name}} is available",
+      "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
+    }
+  },
   "tabs": {
     "profile": {
       "name": "Profile",
@@ -77,7 +83,13 @@
         }
       },
       "ownership": {
-        "label": "Ownership"
+        "label": "Ownership",
+        "dnsOwnerWarning": {
+          "isDnsOwner": "You cannot make changes to this name because you are the DNS Owner, but not the Manager. You can sync the manager to fix this.",
+          "isManager": "You are the Manager but not DNS Owner of this name. DNS names can be reclaimed by the DNS Owner at any time. You can send this name to the Owner, or update the DNS record to match.",
+          "refreshDNS": "Refresh DNS",
+          "syncManager": "Sync manager"
+        }
       },
       "token": {
         "label": "Token",
