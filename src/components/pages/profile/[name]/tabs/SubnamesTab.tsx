@@ -6,6 +6,7 @@ import { useAccount } from 'wagmi'
 
 import { Button, PlusSVG, Spinner, Typography, mq } from '@ensdomains/thorin'
 
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import {
   NameTableHeader,
   SortDirection,
@@ -98,11 +99,13 @@ export const SubnamesTab = ({
   name,
   network,
   canEdit,
+  canEditSubdomains,
   isWrapped,
 }: {
   name: string
   network: number
   canEdit: boolean
+  canEditSubdomains: bool
   isWrapped: boolean
 }) => {
   const router = useRouter()
@@ -196,13 +199,27 @@ export const SubnamesTab = ({
               {t('details.tabs.subnames.addSubname.learn')}
             </Outlink>
           </Typography>
-          <Button
-            data-testid="add-subname-action"
-            onClick={createSubname}
-            prefix={<PlusPrefix as={PlusSVG} />}
-          >
-            {t('details.tabs.subnames.addSubname.action')}
-          </Button>
+          {canEditSubdomains ? (
+            <Button
+              data-testid="add-subname-action"
+              onClick={createSubname}
+              prefix={<PlusPrefix as={PlusSVG} />}
+            >
+              {t('details.tabs.subnames.addSubname.action')}
+            </Button>
+          ) : (
+            <DisabledButtonWithTooltip
+              {...{
+                buttonId: 'send-name-disabled-button',
+                buttonText: 'New subname',
+                mobileWidth: 200,
+                buttonWidth: 'initial',
+                mobileButtonWidth: 'initial',
+                mobilePlacement: 'top',
+                prefix: <PlusPrefix as={PlusSVG} />,
+              }}
+            />
+          )}
         </AddSubnamesCard>
       )}
       <StyledTabWrapper>

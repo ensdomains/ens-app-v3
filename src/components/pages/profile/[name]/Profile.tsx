@@ -243,6 +243,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 name={normalisedName}
                 isWrapped={isWrapped}
                 canEdit={selfAbilities.canEdit}
+                canEditSubdomains={selfAbilities.canEditSubdomains}
                 network={chainId}
               />
             ),
