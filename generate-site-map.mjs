@@ -2,11 +2,11 @@ import { createReadStream, createWriteStream, existsSync } from 'fs'
 import { gql, request } from 'graphql-request'
 import fetch from 'node-fetch'
 import {
-  parseSitemap,
-  parseSitemapIndex,
   SitemapAndIndexStream,
   SitemapStream,
   XMLToSitemapItemStream,
+  parseSitemap,
+  parseSitemapIndex,
 } from 'sitemap'
 
 const baseURL = 'https://alpha.ens.domains'
@@ -67,7 +67,7 @@ const main = async () => {
       return [
         new URL(path, baseURL).toString(),
         sitemapStream,
-        sitemapStream.pipe(createWriteStream(`./out/sitemaps/${path}`)),
+        sitemapStream.pipe(createWriteStream(`./out/sitemaps${path}`)),
       ]
     },
   })
@@ -77,8 +77,11 @@ const main = async () => {
   })
 
   const oldSitemapIndexRes = await fetch(new URL('/sitemap.xml', baseURL).toString())
+  const contentType = oldSitemapIndexRes.headers.get('content-type')
+  const canUsePrevious =
+    oldSitemapIndexRes.ok && (contentType === 'application/xml' || contentType === 'text/xml')
 
-  if (oldSitemapIndexRes.ok) {
+  if (canUsePrevious) {
     const oldSitemapIndex = await parseSitemapIndex(oldSitemapIndexRes.body)
 
     for (const sitemapIndex of oldSitemapIndex) {
@@ -92,7 +95,7 @@ const main = async () => {
     }
   }
 
-  let lastCreatedAt = oldSitemapIndexRes.ok ? await getPreviousLast() : '0'
+  let lastCreatedAt = canUsePrevious ? await getPreviousLast() : '0'
 
   do {
     // eslint-disable-next-line no-await-in-loop

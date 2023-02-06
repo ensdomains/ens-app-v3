@@ -36,6 +36,11 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
   let rewrite = false
   let callback: ((res: Response) => Response) | null = null
 
+  // exception for static files
+  if (paths.length === 2 && paths[1].match(/^.*\.(png|xml|ico|json|webmanifest|txt|svg)$/i)) {
+    return next()
+  }
+
   if (paths[1].match(/^0x[a-fA-F0-9]{40}$/)) {
     url.pathname = '/address'
     url.searchParams.set('address', paths[1])
