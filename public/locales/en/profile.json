@@ -338,6 +338,7 @@
     "migrationNotAvailableLink": "migrate this name in the old app.",
     "addressLength": "If address it should be 42 characters long",
     "unsupportedTLD": "This TLD is not supported",
-    "keyInUse": "{{value}} is already in use"
+    "keyInUse": "{{value}} is already in use",
+    "hasSubnames": "This name has subnames"
   }
 }
