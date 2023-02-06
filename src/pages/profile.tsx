@@ -35,7 +35,8 @@ export default function Page() {
 
   if (
     (registrationStatus === 'available' || registrationStatus === 'premium') &&
-    !isViewingExpired
+    !isViewingExpired &&
+    !detailsLoading
   ) {
     router.push(`/register/${name}`)
     return null
