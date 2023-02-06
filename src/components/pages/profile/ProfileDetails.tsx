@@ -4,13 +4,14 @@ import styled, { css } from 'styled-components'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import { useNameDates } from '@app/hooks/useNameDates'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
-import { formatExpiry } from '@app/utils/utils'
+import { formatExpiry, is2LDEthCalc } from '@app/utils/utils'
 
 import {
   AddressProfileButton,
@@ -126,6 +127,34 @@ const Actions = styled.div(
   `,
 )
 
+const getAction = (action, is2LDEth) => {
+  if (action.disabled) {
+    if (is2LDEth) return null
+    return (
+      <DisabledButtonWithTooltip
+        {...{
+          buttonId: 'send-name-disabled-button',
+          buttonText: 'Delete subname',
+          mobileWidth: 150,
+          buttonWidth: 150,
+          mobileButtonWidth: 'initial',
+          mobilePlacement: 'top',
+        }}
+      />
+    )
+  }
+  return (
+    <Button
+      data-testid={`profile-action-${action.label}`}
+      onClick={action.onClick}
+      size="small"
+      colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
+    >
+      {action.label}
+    </Button>
+  )
+}
+
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
@@ -160,6 +189,8 @@ export const ProfileDetails = ({
       timestamp: nameDates?.expiryDate ? nameDates.expiryDate.getTime() : 0,
     },
   ]
+
+  const is2LDEth = is2LDEthCalc(name)
 
   return (
     <ProfileInfoBox $isCached={isCached}>
@@ -198,14 +229,7 @@ export const ProfileDetails = ({
         <Actions data-testid="profile-actions">
           {actions.map((action) => (
             <div className={action.red ? 'leading' : ''} key={action.label}>
-              <Button
-                data-testid={`profile-action-${action.label}`}
-                onClick={action.onClick}
-                size="small"
-                colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
-              >
-                {action.label}
-              </Button>
+              {getAction(action, is2LDEth)}
             </div>
           ))}
         </Actions>

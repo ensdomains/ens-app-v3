@@ -102,3 +102,6 @@ export const deleteProperties = <T extends Record<string, any>, K extends keyof 
   }
   return newObj
 }
+
+export const is2LDEthCalc = (name: string) => name?.split('.')?.length === 2 && name?.split('.')?.[1] === 'eth'
+

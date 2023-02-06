@@ -8,9 +8,9 @@ type Placement = 'top' | 'bottom' | 'left' | 'right'
 
 const ButtonContainer = styled.div<{ $buttonWidth?: string; $mobileButtonWidth?: string }>(
   ({ $buttonWidth, $mobileButtonWidth }) => css`
-    width: ${$mobileButtonWidth ? `${$mobileButtonWidth}` : '100%'};
+    width: ${$mobileButtonWidth ? `${$mobileButtonWidth}px` : '100%'};
     ${mq.md.min(css`
-      width: ${$buttonWidth ? `${$buttonWidth}` : '100%'};
+      width: ${$buttonWidth ? `${$buttonWidth}px` : '100%'};
     `)}
   `,
 )

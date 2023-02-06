@@ -103,6 +103,15 @@ export const useProfileActions = ({
       })
     }
 
+    if (!subnameAbilities.canDelete) {
+      actions.push({
+        label: t('tabs.profile.actions.deleteSubname.label'),
+        onClick: () => null,
+        red: true,
+        disabled: true
+      })
+    }
+
     if (actions.length === 0) return undefined
     return actions
   }, [

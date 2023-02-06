@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
 
 import { useBasicName } from '@app/hooks/useBasicName'
-import { checkSubname } from '@app/utils/utils'
+import { checkSubname, is2LDEthCalc } from '@app/utils/utils'
 
 interface SendPermissions {
   canSendOwner: boolean
