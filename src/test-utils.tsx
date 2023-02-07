@@ -47,6 +47,7 @@ jest.mock('react-i18next', () => ({
       isInitialized: true,
     },
   }),
+  Trans: ({ i18nKey }: { i18nKey: string }) => i18nKey,
 }))
 
 const queryClient = new QueryClient({

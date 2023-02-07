@@ -1,5 +1,6 @@
 import approveNameWrapper from './approveNameWrapper'
 import burnFuses from './burnFuses'
+import changePermissions from './changePermissions'
 import commitName from './commitName'
 import createSubname from './createSubname'
 import deleteSubname from './deleteSubname'
@@ -39,6 +40,7 @@ export const transactions = {
   transferController,
   importDNSSECName,
   approveNameWrapper,
+  changePermissions,
   syncManager,
 }
 

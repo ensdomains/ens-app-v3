@@ -33,7 +33,7 @@ export interface TransactionDisplayItemList extends TransactionDisplayItemBase {
 
 export interface TransactionDisplayItemRecords extends TransactionDisplayItemBase {
   type: 'records'
-  value: [string, string][]
+  value: [string, string | undefined][]
 }
 
 export type TransactionDisplayItem =

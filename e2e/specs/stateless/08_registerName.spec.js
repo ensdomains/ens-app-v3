@@ -85,6 +85,7 @@ describe('Register Name', () => {
     cy.findByText('Open Wallet').should('be.visible')
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
+    cy.wait(10000)
 
     // should show the correct details on completion
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032 ETH')

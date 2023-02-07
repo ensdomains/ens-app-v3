@@ -1,4 +1,5 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 
 import { ReturnedENS } from '@app/types'
 
@@ -28,8 +29,11 @@ export const useSubnameAbilities = ({
   ownerData,
   wrapperData,
 }: Props): ReturnData => {
+  const { t } = useTranslation('profile')
+
   const nameHasOwner = !!ownerData
   const nameParts = name?.split('.') || []
+  const parentName = nameParts.slice(1).join('.')
 
   const isSubname = nameParts.length > 2
 
@@ -39,33 +43,40 @@ export const useSubnameAbilities = ({
     isCachedData: subnamesCachedData,
   } = useHasSubnames(name)
 
-  const parentName = nameParts.slice(1).join('.')
-
   const {
     ownerData: parentOwnerData,
-    isWrapped,
     isLoading: parentLoading,
     isCachedData: parentCachedData,
   } = useBasicName(parentName)
 
-  const canDeleteSubnames = parentOwnerData?.owner === address
+  const isParentOwner = parentOwnerData?.owner === address
+  const isOwner = ownerData?.owner === address
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+  const isPCCBurned = wrapperData?.parent.PARENT_CANNOT_CONTROL
 
   const subnameAbilities = useMemo(() => {
     const abilities = {
       canDelete: false,
     }
     if (!isSubname || !nameHasOwner || parentLoading || loadingSubnames) return abilities
-    if (canDeleteSubnames && !isWrapped)
+    if (!isWrapped && isParentOwner)
       return {
         canDelete: !hasSubnames,
         canDeleteContract: 'registry',
-        canDeleteError: hasSubnames ? 'This name has subnames' : undefined,
+        canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
       } as const
-    if (canDeleteSubnames && isWrapped && wrapperData) {
+    if (isWrapped && isPCCBurned && isOwner) {
       return {
         canDelete: !hasSubnames,
         canDeleteContract: 'nameWrapper',
-        canDeleteError: hasSubnames ? 'This name has subnames' : undefined,
+        canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
+      } as const
+    }
+    if (isWrapped && !isPCCBurned && isParentOwner) {
+      return {
+        canDelete: !hasSubnames,
+        canDeleteContract: 'nameWrapper',
+        canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
       } as const
     }
     return abilities
@@ -73,11 +84,13 @@ export const useSubnameAbilities = ({
     isSubname,
     nameHasOwner,
     parentLoading,
-    canDeleteSubnames,
     isWrapped,
-    wrapperData,
     hasSubnames,
     loadingSubnames,
+    isOwner,
+    isParentOwner,
+    isPCCBurned,
+    t,
   ])
 
   return {

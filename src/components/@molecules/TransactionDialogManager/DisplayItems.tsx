@@ -212,13 +212,17 @@ const RecordContainer = styled.div(
   `,
 )
 
-const RecordsValue = ({ value }: { value: [string, string][] }) => {
+const RecordsValue = ({ value }: { value: [string, string | undefined][] }) => {
   return (
     <RecordsContainer>
       {value.map(([key, val]) => (
-        <RecordContainer key={key}>
+        <RecordContainer key={`${key}-${val}`}>
           <Typography ellipsis>
-            <strong>{key}:</strong> {val}
+            <strong>
+              {key}
+              {!!val && ':'}
+            </strong>{' '}
+            {!!val && val}
           </Typography>
         </RecordContainer>
       ))}
