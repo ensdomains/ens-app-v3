@@ -56,6 +56,7 @@ describe('Send Flow', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
       cy.findByTestId('owner-button-name-name.manager').should('have.text', '0x709...c79C8')
     })
   })
@@ -77,7 +78,7 @@ describe('Send Flow', () => {
       cy.findByTestId('transaction-modal-confirm-button', { timeout: 5000 }).click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(1000)
+      cy.wait(10000)
       cy.findByTestId('owner-button-name-name.manager', { timeout: 5000 }).should(
         'have.text',
         accountOneShort,

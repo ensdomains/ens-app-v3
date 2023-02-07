@@ -146,6 +146,81 @@
       "message1": "Before upgrading, you can transfer your current profile if you'd like, otherwise it will be reset when you upgrade.",
       "message2": "Would you like to transfer your current profile?"
     },
+    "revokePermissions": {
+      "views": {
+        "revokeWarning": {
+          "title": "This will make permanent changes",
+          "subtitle": "Permissions are an advanced feature that make permanent changes to your name.  You will not be able to undo these changes, and they will only be reset if the name expires.",
+          "subtitle2": "Make sure you are confident using this feature before proceeding. <infoLink>Learn more about permissions</infoLink>"
+        },
+        "revokePCC": {
+          "title": "Give up ownership",
+          "subtitle": "This will give ownership of this name to the manager ({{account}}). Unless you are also the manager, you will no longer be able to make changes to this name."
+        },
+        "grantExtendExpiry": {
+          "title": "Change permissions",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "Grant permission to: Extend expiry"
+          } 
+        },
+        "setExpiry": {
+          "title": "Set name expiry",
+          "subtitle": "Set a date when permissions will expire. This date cannot be longer than the expiry of its parent ({{parent}}).",
+          "subtitleWithCEE": "Set a date when this name will expire. This will replace it’s existing permission expiry ({{expiry}}), and cannot be later than the expiry of its parent ({{parent}}).",
+          "options": {
+            "max": "Max",
+            "custom": "Choose an earlier date"
+          },
+          "error": {
+            "required": "A date is required if a custom date is selected",
+            "min": "Date must be greater than {{date}}",
+            "max": "Date must be less than {{date}}"
+          }
+        },
+        "revokeAdditional": {
+          "title": "Revoke permissions",
+          "subtitle": "Would you like to revoke permissions on this name before giving up ownership? This can only be done now.",
+          "action": {
+            "title": "Revoke additional permissions",
+            "description": "Unless you are also the manager, you will not be able to revoke additional permissions after this."
+          }
+        },
+        "revokeUnwrap": {
+          "title": "Revoke permissions",
+          "subtitle": "You are required to revoke this permission before others can be revoked. This prevents permissions from being removed.",
+          "fuses": {
+            "CANNOT_UNWRAP": "Revoke permission to: Unwrap this name"
+          }
+        },
+        "revokePermissions": {
+          "title": "Revoke permissions",
+          "unwrapSubtitle": "Select this to enable the others",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "Grant permission to: Extend expiry.",
+            "CANNOT_UNWRAP": "Revoke permission to: Unwrap this name",
+            "CANNOT_CREATE_SUBDOMAIN": "Revoke permission to: Create subdomains",
+            "CANNOT_TRANSFER": "Revoke permission to: Send this name",
+            "CANNOT_SET_RESOLVER": "Revoke permission to: Set resolver",
+            "CANNOT_SET_TTL": "Revoke permission to: Set TTL",
+            "CANNOT_BURN_FUSES": "Revoke permission to: Change permissions"
+          }
+        },
+        "revokeChangeFuses": {
+          "title": "Revoke permissions",
+          "subtitle": "By revoking this permission you are permanently losing the ability to change any remaining fuses. This will only be reset if the name expires.",
+          "fuses": {
+            "CANNOT_BURN_FUSES": "Revoke permission to: Change permissions"
+          }
+        },
+        "revokeChangeFusesWarning": {
+          "title": "Remaining permissions will be locked",
+          "subtitle": "Permissions and custom fuses will be permanently locked in their current state after ‘change permissions’ is revoked. This will only be reset if the name expires."    
+        }
+      },
+      "action": {
+        "revoke": "Revoke"
+      }
+    },
     "unknownLabels": {
       "title": "Confirm your name",
       "subtitle": "Some of the labels in your name aren't known. Please enter them to continue."

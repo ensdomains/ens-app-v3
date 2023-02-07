@@ -48,6 +48,139 @@
     "subnames": {
       "name": "Subnames"
     },
+    "permissions": {
+      "name": "Permissions",
+      "parentUnlockedWarning": "<strong>You cannot change permissions on this name.</strong> You must first revoke ‘unwrap this name’ on the parent ({{parent}}). Click here to view the parent’s permissions.",
+      "revokedLabel": "Revoked {{date}}",
+      "grantedLabel": "Granted {{date}}",
+      "role": {
+        "manager": "manager",
+        "owner": "owner",
+        "parent": "parent"
+      },
+      "ownership": {
+        "title": "Ownership Permissions",
+        "parentCanControl": {
+          "label": "This name can be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
+          "list" : {
+            "title": "The owner of the parent name can:",
+            "item1": "Control and modify the settings and records",
+            "item2": "Retake or reassign ownership of this name",
+            "item3": "Remove this name"
+          }
+        },
+        "parentCannotControl": {
+          "label": "This name cannot be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
+          "sublabel": "The owner of the parent name cannot control, modify, remove or retake ownership of this name.",
+          "list" : {
+            "title": "The name owner will retain ownership unless one of the following happens:",
+            "item1": "The name expires on {{date}} (can be extended)",
+            "item2": "The parent name expires on {{date}}",
+            "item3": "Ownership of the name is sent to another address"
+          }
+        },
+        "parentCanChange": {
+          "label": "The parent of this name (<parentLink>{{parent}}</parentLink>) can change permissions",
+          "list": {
+            "title": "The parent can:",
+            "item1": "Revoke permissions",
+            "item2": "Change or burn custom fuses"
+          }
+        },
+        "ownerCanChange": {
+          "label": "The owner of this name can change permissions",
+          "list": {
+            "title": "The owner can:",
+            "item1": "Revoke permissions",
+            "item2": "Change or burn custom fuses"
+          }
+        },
+        "ownerCannotChange": {
+          "label": "The owner of this name cannot change permissions",
+          "list": {
+            "title": "The owner cannot:",
+            "item1": "Revoke permissions",
+            "item2": "Change or burn custom fuses"
+          }
+        },
+        "unwrapWarning": {
+          "message": "Unwrap permissions must be revoked on the parent (<strong>{{parent}}</strong>) before giving up parent control.<br> <parentLink>Go to parent permissions</parentLink>"
+        },
+        "action": {
+          "giveUpControl": "Give up parent control",
+          "revokePermission": "Revoke permission"
+        }
+      },
+      "expiry": {
+        "permissions": {
+            "canExtendExpiry": {
+              "label": "Can extend expiry",
+              "description": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
+            },
+            "cannotExtendExpiry": {
+              "label": "Cannot extend expiry",
+              "description": "This names permission expiry ({{date}}) cannot be extended by the manager."
+            }
+        },
+        "manager": "manager",
+        "owner": "owner",
+        "action": {
+          "changePermissions": "Change permissions"
+        }
+      },
+      "nameChangePermissions": {
+        "title": "Name Change Permissions",
+        "subtitle": {
+          "parent-can-change": "The parent of this name (<parentLink>{{parent}}</parentLink>) can change settings on this name.",
+          "owner-can-change": "The owner of this name can change settings on this name."
+        },
+        "permissions": {
+          "canUnwrap": {
+            "label": "Can unwrap this name",
+            "description": "The {{owner}} of this name can unwrap this name."
+          },
+          "cannotUnwrap": {
+            "label": "Cannot unwrap this name",
+            "description": "The {{owner}} of this name cannot unwrap this name."
+          },
+          "canCreateSubnames": {
+            "label": "Can create subnames",
+            "description": "The {{owner}} of this name can create new subnames."
+          },
+          "cannotCreateSubnames": {
+            "label": "Cannot create subnames",
+            "description": "The {{owner}} of this name cannot create new subnames."
+          },
+          "canSend": {
+            "label": "Can send this name",
+            "description": "The {{owner}} of this name can send it to a new owner."
+          },
+          "cannotSend": {
+            "label": "Cannot send this name",
+            "description": "The {{owner}} of this name cannot send it to a new owner."
+          },
+          "canSetResolver": {
+            "label": "Can set the resolver",
+            "description": "The {{owner}} of this name can set and change the resolver."
+          },
+          "cannotSetResolver": {
+            "label": "Cannot set the resolver",
+            "description": "The {{owner}} of this name cannot set and change the resolver."
+          },
+          "canSetTTL": {
+            "label": "Can set TTL",
+            "description": "The {{owner}} of this name can set and change the TTL."
+          },
+          "cannotSetTTL": {
+            "label": "Cannot set TTL",
+            "description": "The {{owner}} of this name cannot set and change the TTL."
+          }
+        },
+        "action": {
+          "changePermissions": "Change permissions"
+        }
+      }
+    },
     "fuses": {
       "name": "Fuses"
     },
@@ -215,6 +348,7 @@
     "migrationNotAvailableLink": "migrate this name in the old app.",
     "addressLength": "If address it should be 42 characters long",
     "unsupportedTLD": "This TLD is not supported",
-    "keyInUse": "{{value}} is already in use"
+    "keyInUse": "{{value}} is already in use",
+    "hasSubnames": "This name has subnames"
   }
 }
