@@ -1,3 +1,4 @@
+import { keccak256 } from '@ethersproject/keccak256'
 import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { networkName } from './constants'
@@ -102,3 +103,7 @@ export const deleteProperties = <T extends Record<string, any>, K extends keyof 
   }
   return newObj
 }
+
+export const labelHashCalc = (label: string) => keccak256(toUtf8Bytes(label))
+
+export const getLabelFromName = (name: string = '') => name.split('.')[0]

@@ -19,11 +19,11 @@ import { isLabelTooLong } from '@app/utils/utils'
 
 import { ProfileRecord } from '../../../../../constants/profileRecordOptions'
 import Complete from './steps/Complete'
-import Info, { PaymentMethod } from './steps/Info'
+import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
-import { BackObj, RegistrationStepData } from './types'
+import { BackObj, PaymentMethod, RegistrationStepData } from './types'
 import { useMoonpayRegistration } from './useMoonpayRegistration'
 
 const ViewProfileContainer = styled.div(
@@ -114,7 +114,15 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     moonpayTransactionStatus,
   } = useMoonpayRegistration(dispatch, normalisedName, selected, item)
 
-  const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
+  const pricingCallback = ({
+    years,
+    reverseRecord,
+    paymentMethodChoice,
+  }: RegistrationStepData['pricing']) => {
+    if (paymentMethodChoice === PaymentMethod.moonpay) {
+      initiateMoonpayRegistration()
+      return
+    }
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
     if (!item.queue.includes('profile')) {
       // if profile is not in queue, set the default profile data
@@ -135,18 +143,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           selected,
         })
       }
-    }
-
-    const infoCallback = (arg: { back?: boolean; paymentMethodChoice?: PaymentMethod | '' }) => {
-      if (arg.back) {
-        dispatch({ name: 'decreaseStep', selected })
-        return
-      }
-      if (arg.paymentMethodChoice === PaymentMethod.ethereum) {
-        dispatch({ name: 'increaseStep', selected })
-        return
-      }
-      initiateMoonpayRegistration()
     }
 
     // If profile is in queue and reverse record is selected, make sure that eth record is included and is set to address

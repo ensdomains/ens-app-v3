@@ -8,10 +8,16 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   ? I
   : never
 
+export enum PaymentMethod {
+  ethereum = 'ethereum',
+  moonpay = 'moonpay',
+}
+
 export type RegistrationStepData = {
   pricing: {
     years: number
     reverseRecord: boolean
+    paymentMethod: PaymentMethod
   }
   profile: {
     records: ProfileRecord[]

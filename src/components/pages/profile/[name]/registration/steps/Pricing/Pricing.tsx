@@ -32,6 +32,7 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import FullInvoice from '../../FullInvoice'
 import {
   MoonpayTransactionStatus,
+  PaymentMethod,
   RegistrationReducerDataItem,
   RegistrationStepData,
 } from '../../types'
@@ -129,11 +130,6 @@ const MoonpayContainer = styled.div`
   justify-content: center;
   gap: 5px;
 `
-
-export enum PaymentMethod {
-  ethereum = 'ethereum',
-  moonpay = 'moonpay',
-}
 
 const InfoItems = styled.div(
   ({ theme }) => css`
@@ -318,6 +314,7 @@ const Pricing = ({
   hasPrimaryName,
   registrationData,
   resolverExists,
+  moonpayTransactionStatus,
 }: Props) => {
   const { t } = useTranslation('register')
 
@@ -331,6 +328,12 @@ const Pricing = ({
   const [years, setYears] = useState(registrationData.years)
   const [reverseRecord, setReverseRecord] = useState(
     registrationData.reverseRecord || !hasPrimaryName,
+  )
+
+  const hasPendingMoonpayTransaction = moonpayTransactionStatus === 'pending'
+  const hasFailedMoonpayTransaction = moonpayTransactionStatus === 'failed'
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod | ''>(
+    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
   )
 
   const fullEstimate = useEstimateFullRegistration({
@@ -367,7 +370,10 @@ const Pricing = ({
     )
   } else {
     actionButton = (
-      <Button data-testid="next-button" onClick={() => callback({ reverseRecord, years })}>
+      <Button
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+      >
         {t('action.next', { ns: 'common' })}
       </Button>
     )
@@ -429,8 +435,8 @@ const Pricing = ({
       </OutlinedContainer>
       <PaymentChoice
         {...{
-          paymentMethodChoice: '',
-          setPaymentMethodChoice: () => null,
+          paymentMethodChoice,
+          setPaymentMethodChoice,
           hasEnoughEth: true,
           hasPendingMoonpayTransaction: false,
         }}
