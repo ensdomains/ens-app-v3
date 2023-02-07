@@ -106,6 +106,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
+  console.log('item: ', item)
+
   const {
     moonpayUrl,
     initiateMoonpayRegistration,
@@ -246,6 +248,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   callback={pricingCallback}
                   hasPrimaryName={!!primaryName}
                   registrationData={item}
+                  moonpayTransactionStatus={moonpayTransactionStatus}
                 />
               ),
               profile: (
@@ -272,7 +275,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   callback={transactionsCallback}
                 />
               ),
-              complete: <Complete nameDetails={nameDetails} callback={onComplete} />,
+              complete: (
+                <Complete
+                  nameDetails={nameDetails}
+                  callback={onComplete}
+                  isMoonpayFlow={item.isMoonpayFlow}
+                />
+              ),
             }[step]
           ),
         }}

@@ -1,4 +1,4 @@
-import { Dispatch, ReactNode, SetStateAction, useState } from 'react'
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
@@ -332,9 +332,27 @@ const Pricing = ({
 
   const hasPendingMoonpayTransaction = moonpayTransactionStatus === 'pending'
   const hasFailedMoonpayTransaction = moonpayTransactionStatus === 'failed'
+
+  const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
+
   const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod | ''>(
     hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
   )
+
+  // Keep radio button choice up to date
+  useEffect(() => {
+    if (moonpayTransactionStatus) {
+      setPaymentMethodChoice(
+        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction ? PaymentMethod.moonpay : '',
+      )
+    }
+  }, [
+    hasFailedMoonpayTransaction,
+    hasPendingMoonpayTransaction,
+    moonpayTransactionStatus,
+    previousMoonpayTransactionStatus,
+    setPaymentMethodChoice,
+  ])
 
   const fullEstimate = useEstimateFullRegistration({
     registration: {
@@ -366,6 +384,12 @@ const Pricing = ({
     actionButton = (
       <Button data-testid="next-button" disabled>
         {t('steps.pricing.insufficientBalance')}
+      </Button>
+    )
+  } else if (hasPendingMoonpayTransaction) {
+    actionButton = (
+      <Button data-testid="next-button" disabled loading>
+        {t('steps.info.processing')}
       </Button>
     )
   } else {

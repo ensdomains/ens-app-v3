@@ -43,6 +43,8 @@ const makeDefaultData = (selected: SelectedItemProperties): RegistrationReducerD
   permissions: childFuseObj,
   secret: randomSecret(),
   started: false,
+  isMoonpayFlow: false,
+  externalTransactionId: '',
   ...selected,
 })
 
@@ -106,6 +108,16 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
       if (action.payload.records) item.records = action.payload.records
       if (action.payload.permissions) item.permissions = action.payload.permissions
       if (action.payload.resolver) item.resolver = action.payload.resolver
+      break
+    }
+    case 'setExternalTransactionId': {
+      item.isMoonpayFlow = true
+      item.externalTransactionId = action.externalTransactionId
+      break
+    }
+    case 'moonpayTransactionCompleted': {
+      item.externalTransactionId = ''
+      item.stepIndex += 3
       break
     }
     // no default

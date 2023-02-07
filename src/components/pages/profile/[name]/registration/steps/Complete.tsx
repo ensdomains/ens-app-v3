@@ -100,15 +100,8 @@ const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
 
-type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
-  callback: (toProfile: boolean) => void
-}
-
-const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) => {
+const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
   const { t } = useTranslation('register')
-  const { width, height } = useWindowSize()
-
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
   const commitKey = `commit-${keySuffix}`
@@ -119,21 +112,21 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const registerTxFlow = getLatestTransaction(registerKey)
 
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
-    hash: commitTxFlow!.hash,
+    hash: commitTxFlow?.hash,
   })
   const {
     response: registerResponse,
     receipt: registerReceipt,
     isLoading: registerLoading,
-  } = useTransactionResponseReceipt(registerTxFlow!.hash!)
+  } = useTransactionResponseReceipt(registerTxFlow?.hash || '')
   const isLoading = commitLoading || registerLoading
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    const { value } = registerResponse!
-    const commitNetFee = commitReceipt!.gasUsed.mul(commitReceipt!.effectiveGasPrice)
-    const registerNetFee = registerReceipt!.gasUsed.mul(registerReceipt!.effectiveGasPrice)
-    const totalNetFee = commitNetFee.add(registerNetFee)
+    const value = registerResponse?.value || 0
+    const commitNetFee = commitReceipt?.gasUsed.mul(commitReceipt!.effectiveGasPrice)
+    const registerNetFee = registerReceipt?.gasUsed.mul(registerReceipt!.effectiveGasPrice)
+    const totalNetFee = commitNetFee?.add(registerNetFee)
 
     return (
       <Invoice
@@ -145,6 +138,21 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
       />
     )
   }, [t, registerResponse, commitReceipt, registerReceipt, isLoading])
+
+  if (isMoonpayFlow) return null
+
+  return InvoiceFilled
+}
+
+type Props = {
+  nameDetails: ReturnType<typeof useNameDetails>
+  callback: (toProfile: boolean) => void
+}
+
+const Complete = ({ nameDetails: { normalisedName: name }, callback, isMoonpayFlow }: Props) => {
+  const { t } = useTranslation('register')
+  const { width, height } = useWindowSize()
+  const InvoiceFilled = useEthInvoice(name, isMoonpayFlow)
 
   return (
     <StyledCard>
