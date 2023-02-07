@@ -13,6 +13,7 @@
     "build:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm build",
     "start": "next start",
     "buildandstart": "pnpm build && pnpm start",
+    "buildandexport": "pnpm build && pnpm export",
     "buildandstart:glocal": "pnpm build:glocal && pnpm start",
     "tenv": "ens-test-env -a",
     "denv": "pnpm tenv start -ns -nb --extra-time 12232000 --verbosity 1",

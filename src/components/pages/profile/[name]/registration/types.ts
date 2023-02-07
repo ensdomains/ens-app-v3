@@ -36,6 +36,8 @@ export type SelectedItemProperties = { address: string; name: string }
 export type RegistrationReducerDataItem = RegistrationData & {
   stepIndex: number
   queue: RegistrationStep[]
+  isMoonpayFlow: boolean
+  externalTransactionId: string
 } & SelectedItemProperties
 
 export type RegistrationReducerData = {
@@ -87,3 +89,14 @@ export type RegistrationReducerAction =
       name: 'resetSecret'
       selected: SelectedItemProperties
     }
+  | {
+      name: 'setExternalTransactionId'
+      selected: SelectedItemProperties
+      externalTransactionId: string
+    }
+  | {
+      name: 'moonpayTransactionCompleted'
+      selected: SelectedItemProperties
+    }
+
+export type MoonpayTransactionStatus = 'pending' | 'completed' | 'failed' | 'waitingAuthorization'

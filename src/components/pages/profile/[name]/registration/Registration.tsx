@@ -4,7 +4,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Helper, Typography, mq } from '@ensdomains/thorin'
+import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
 import { useContractAddress } from '@app/hooks/useContractAddress'
@@ -19,11 +19,12 @@ import { isLabelTooLong } from '@app/utils/utils'
 
 import { ProfileRecord } from '../../../../../constants/profileRecordOptions'
 import Complete from './steps/Complete'
-import Info from './steps/Info'
+import Info, { PaymentMethod } from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
 import { BackObj, RegistrationStepData } from './types'
+import { useMoonpayRegistration } from './useMoonpayRegistration'
 
 const ViewProfileContainer = styled.div(
   ({ theme }) => css`
@@ -56,6 +57,31 @@ type Props = {
   isLoading: boolean
 }
 
+const StyledDialog = styled(Dialog)(
+  () => css`
+    height: 80vh;
+    & > div > div {
+      height: 100%;
+    }
+    ${mq.sm.min(css`
+      max-width: 100vw;
+      width: 90vw;
+      height: 90vh;
+      & > div {
+        max-width: 90vw;
+        width: 90vw;
+        height: 90vh;
+        padding: 0;
+      }
+      & > div > div {
+        max-width: 90vw;
+        height: 90vh;
+        gap: 0;
+      }
+    `)}
+  `,
+)
+
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
 
@@ -80,6 +106,14 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
+  const {
+    moonpayUrl,
+    initiateMoonpayRegistration,
+    hasMoonpayModal,
+    setHasMoonpayModal,
+    moonpayTransactionStatus,
+  } = useMoonpayRegistration(dispatch, normalisedName, selected, item)
+
   const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
     if (!item.queue.includes('profile')) {
@@ -101,6 +135,18 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           selected,
         })
       }
+    }
+
+    const infoCallback = (arg: { back?: boolean; paymentMethodChoice?: PaymentMethod | '' }) => {
+      if (arg.back) {
+        dispatch({ name: 'decreaseStep', selected })
+        return
+      }
+      if (arg.paymentMethodChoice === PaymentMethod.ethereum) {
+        dispatch({ name: 'increaseStep', selected })
+        return
+      }
+      initiateMoonpayRegistration()
     }
 
     // If profile is in queue and reverse record is selected, make sure that eth record is included and is set to address
@@ -235,6 +281,25 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
+      <StyledDialog
+        open={hasMoonpayModal}
+        variant="actionable"
+        onDismiss={() => {
+          if (moonpayTransactionStatus === 'waitingAuthorization') {
+            return
+          }
+          setHasMoonpayModal(false)
+        }}
+      >
+        <iframe
+          title="Moonpay Checkout"
+          width="100%"
+          height="100%"
+          style={{ borderRadius: 25 }}
+          src={moonpayUrl}
+          id="moonpayIframe"
+        />
+      </StyledDialog>
     </>
   )
 }
