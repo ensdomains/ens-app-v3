@@ -83,6 +83,7 @@ const StyledDialog = styled(Dialog)(
 
 const FeedbackButton = styled.div<{ $isShown: boolean }>(
   ({ $isShown }) => css`
+    z-index: 10000;
     background: #f6a93c;
     width: 140px;
     height: 50px;
