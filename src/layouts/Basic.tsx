@@ -82,7 +82,8 @@ const StyledDialog = styled(Dialog)(
 )
 
 const FeedbackButton = styled.div<{ $isShown: boolean }>(
-  ({ theme, $isShown }) => css`
+  ({ $isShown }) => css`
+    z-index: 10000;
     background: #f6a93c;
     width: 140px;
     height: 50px;
@@ -141,7 +142,7 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
           width="100%"
           height="100%"
           style={{ borderRadius: 25 }}
-          src={`https://docs.google.com/forms/d/e/1FAIpQLSfAVFlV7LC2oCEBtZEK0uKpAU32-eYyY307Ji07wyGSFaZU8Q/viewform?usp=pp_url&entry.435573398=${router.asPath}}`}
+          src={`https://docs.google.com/forms/d/e/1FAIpQLSfAVFlV7LC2oCEBtZEK0uKpAU32-eYyY307Ji07wyGSFaZU8Q/viewform?usp=pp_url&entry.435573398=${router.asPath}`}
           id="moonpayIframe"
         />
       </StyledDialog>

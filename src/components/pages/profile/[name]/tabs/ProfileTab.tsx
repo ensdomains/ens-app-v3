@@ -1,6 +1,9 @@
 import { useMemo } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
+
+import { Helper } from '@ensdomains/thorin'
 
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
@@ -30,6 +33,7 @@ type Props = {
 const ProfileTab = ({ nameDetails, name }: Props) => {
   const chainId = useChainId()
   const { address } = useAccount()
+  const { t } = useTranslation('profile')
 
   const {
     profile,
@@ -39,6 +43,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     ownerData,
     wrapperData,
     dnsOwner,
+    isWrapped,
     gracePeriodEndDate,
   } = nameDetails
 
@@ -79,7 +84,13 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         getTextRecord={getTextRecord}
         button={snippetButton}
         canEdit={selfAbilities.canEdit}
-      />
+      >
+        {isWrapped && !normalisedName.endsWith('.eth') && (
+          <Helper type="warning" alignment="horizontal">
+            {t('tabs.profile.warnings.wrappedDNS')}
+          </Helper>
+        )}
+      </ProfileSnippet>
       <ProfileDetails
         isCached={profileIsCachedData || basicIsCachedData || subnameAbilitiesCachedData}
         addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
