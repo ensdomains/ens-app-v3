@@ -172,6 +172,8 @@ export const SubnamesTab = ({
               network={network}
               mode="view"
               isController={subname.owner?.id === address?.toLowerCase()}
+              fuses={subname.fuses}
+              expiryDate={subname.expiryDate}
             />
           ))}
         </div>

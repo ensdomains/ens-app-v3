@@ -2,21 +2,13 @@ import { useMemo } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
 import { SortDirection, SortType } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
+import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 
 const PAGE_SIZE = 25
 
-export type Subname = {
-  id: string
-  name: string
-  truncatedName?: string
-  resultsPerPage?: number
-  searchQuery?: string
-  owner?: {
-    id?: string
-  }
-}
+export type Subname = ReturnedENS['getSubnames']['subnames'][number]
 
 export type SubnameSortType = Exclude<SortType, SortType.expiryDate>
 
