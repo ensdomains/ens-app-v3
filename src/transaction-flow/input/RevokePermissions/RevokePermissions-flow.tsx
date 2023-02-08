@@ -337,7 +337,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
             }}
             onSubmit={() => {
               formRef.current?.dispatchEvent(
-                new Event('submit', { cancelable: false, bubbles: true }),
+                new Event('submit', { cancelable: true, bubbles: true }),
               )
             }}
           />
