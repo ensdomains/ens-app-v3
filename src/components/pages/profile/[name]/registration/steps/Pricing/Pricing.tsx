@@ -238,6 +238,7 @@ const PaymentChoice = ({
       >
         <RadioButtonContainer>
           <StyledRadioButton
+            data-testid="payment-choice-ethereum"
             label={<RadioLabel>{t('steps.info.ethereum')}</RadioLabel>}
             name="RadioButtonGroup"
             value={PaymentMethod.ethereum}
@@ -271,7 +272,6 @@ const PaymentChoice = ({
                     {(ids) => (
                       <Toggle
                         {...ids?.content}
-                        name=""
                         disabled={!address}
                         size={breakpoints.md ? 'large' : 'medium'}
                         checked={reverseRecord}

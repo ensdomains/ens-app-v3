@@ -16,10 +16,8 @@ describe('Moonpay regsitration', () => {
 
     acceptMetamaskAccess()
     cy.visit(`/${makeid(230)}.eth/register`)
-    cy.contains('Next').click()
-    cy.contains('Skip').click()
     cy.contains('Credit or debit card').click()
-    cy.contains('Begin').click()
+    cy.contains('Next').click()
 
     cy.get('#moonpayIframe')
       .invoke('attr', 'src')
