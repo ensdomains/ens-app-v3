@@ -63,7 +63,7 @@ const OutlinedContainer = styled.div(
 
     padding: ${theme.space['4']};
     border-radius: ${theme.radii.large};
-    border: ${theme.colors.border} solid 1px;
+    background: ${theme.colors.backgroundSecondary};
 
     ${mq.md.min(css`
       grid-template-areas: 'title checkbox' 'description checkbox';
@@ -190,16 +190,42 @@ const LabelContainer = styled.div(
   `,
 )
 
+const CheckboxWrapper = styled.div(
+  () => css`
+    width: 100%;
+  `,
+  gridAreaStyle,
+)
+
+const OutlinedContainerDescription = styled(Typography)(gridAreaStyle)
+
+const OutlinedContainerTitle = styled(Typography)(
+  ({ theme }) => css`
+    font-size: ${theme.fontSizes.large};
+    font-weight: ${theme.fontWeights.bold};
+    white-space: nowrap;
+  `,
+  gridAreaStyle,
+)
+
 const PaymentChoice = ({
   paymentMethodChoice,
   setPaymentMethodChoice,
   hasEnoughEth,
   hasPendingMoonpayTransaction,
+  address,
+  breakpoints,
+  reverseRecord,
+  setReverseRecord,
 }: {
   paymentMethodChoice: PaymentMethod | ''
   setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod | ''>>
   hasEnoughEth: boolean
   hasPendingMoonpayTransaction: boolean
+  address?: string
+  breakpoints: any
+  reverseRecord: any
+  setReverseRecord: any
 }) => {
   const { t } = useTranslation('register')
 
@@ -233,14 +259,46 @@ const PaymentChoice = ({
           {paymentMethodChoice === PaymentMethod.ethereum && hasEnoughEth && (
             <>
               <Spacer $height="4" />
-              <InfoItems>
+              {/* <InfoItems>
                 {ethInfoItems.map((item, idx) => (
                   <InfoItem key={item}>
                     <Typography>{idx + 1}</Typography>
                     <Typography>{t(item)}</Typography>
                   </InfoItem>
                 ))}
-              </InfoItems>
+              </InfoItems> */}
+              <OutlinedContainer>
+                <OutlinedContainerTitle $name="title">
+                  {t('steps.pricing.primaryName')}
+                </OutlinedContainerTitle>
+                <CheckboxWrapper $name="checkbox">
+                  <Field
+                    hideLabel
+                    label={t('steps.pricing.primaryName')}
+                    inline
+                    reverse
+                    disabled={!address}
+                  >
+                    {(ids) => (
+                      <Toggle
+                        {...ids?.content}
+                        name=""
+                        disabled={!address}
+                        size={breakpoints.md ? 'large' : 'medium'}
+                        checked={reverseRecord}
+                        onChange={(e) => {
+                          e.stopPropagation()
+                          setReverseRecord(e.target.checked)
+                        }}
+                        data-testid="primary-name-toggle"
+                      />
+                    )}
+                  </Field>
+                </CheckboxWrapper>
+                <OutlinedContainerDescription $name="description">
+                  {t('steps.pricing.primaryNameMessage')}
+                </OutlinedContainerDescription>
+              </OutlinedContainer>
               <Spacer $height="2" />
             </>
           )}
@@ -282,23 +340,6 @@ const PaymentChoice = ({
     </PaymentChoiceContainer>
   )
 }
-
-const CheckboxWrapper = styled.div(
-  () => css`
-    width: 100%;
-  `,
-  gridAreaStyle,
-)
-const OutlinedContainerDescription = styled(Typography)(gridAreaStyle)
-
-const OutlinedContainerTitle = styled(Typography)(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.large};
-    font-weight: ${theme.fontWeights.bold};
-    white-space: nowrap;
-  `,
-  gridAreaStyle,
-)
 
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
@@ -374,6 +415,22 @@ const Pricing = ({
 
   if (!address) {
     actionButton = <ConnectButton large />
+  } else if (paymentMethodChoice === PaymentMethod.moonpay) {
+    actionButton = (
+      <Button
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        disabled={!paymentMethodChoice}
+      >
+        {t('action.next', { ns: 'common' })}
+      </Button>
+    )
+  } else if (hasPendingMoonpayTransaction) {
+    actionButton = (
+      <Button data-testid="next-button" disabled loading>
+        {t('steps.info.processing')}
+      </Button>
+    )
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
       <Button data-testid="next-button" disabled>
@@ -386,17 +443,12 @@ const Pricing = ({
         {t('steps.pricing.insufficientBalance')}
       </Button>
     )
-  } else if (hasPendingMoonpayTransaction) {
-    actionButton = (
-      <Button data-testid="next-button" disabled loading>
-        {t('steps.info.processing')}
-      </Button>
-    )
   } else {
     actionButton = (
       <Button
         data-testid="next-button"
         onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        disabled={!paymentMethodChoice}
       >
         {t('action.next', { ns: 'common' })}
       </Button>
@@ -429,38 +481,14 @@ const Pricing = ({
           />
         )
       )}
-      <OutlinedContainer>
-        <OutlinedContainerTitle $name="title">
-          {t('steps.pricing.primaryName')}
-        </OutlinedContainerTitle>
-        <CheckboxWrapper $name="checkbox">
-          <Field
-            hideLabel
-            label={t('steps.pricing.primaryName')}
-            inline
-            reverse
-            disabled={!address}
-          >
-            {(ids) => (
-              <Toggle
-                {...ids?.content}
-                disabled={!address}
-                size={breakpoints.md ? 'large' : 'medium'}
-                checked={reverseRecord}
-                onChange={(e) => setReverseRecord(e.target.checked)}
-                data-testid="primary-name-toggle"
-              />
-            )}
-          </Field>
-        </CheckboxWrapper>
-        <OutlinedContainerDescription $name="description">
-          {t('steps.pricing.primaryNameMessage')}
-        </OutlinedContainerDescription>
-      </OutlinedContainer>
       <PaymentChoice
         {...{
           paymentMethodChoice,
           setPaymentMethodChoice,
+          address,
+          breakpoints,
+          reverseRecord,
+          setReverseRecord,
           hasEnoughEth: true,
           hasPendingMoonpayTransaction: false,
         }}
