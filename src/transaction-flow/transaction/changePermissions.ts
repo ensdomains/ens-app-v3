@@ -46,7 +46,7 @@ const displayItems = (
   t: TFunction<'translation', undefined>,
 ): TransactionDisplayItem[] => {
   const parentFuses = contract === 'setChildFuses' ? fuses.parent : []
-  const expiry = contract === 'setChildFuses' ? (data as WithSetChildFuses).expiry : undefined
+  const expiry = contract === 'setChildFuses' ? (data as WithSetChildFuses).expiry : 0
   const childFuses = contract === 'setChildFuses' ? fuses.child : fuses
 
   const parentInfoItems = parentFuses.map((fuse) => {
