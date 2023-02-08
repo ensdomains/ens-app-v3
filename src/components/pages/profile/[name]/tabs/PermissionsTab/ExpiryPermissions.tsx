@@ -99,6 +99,7 @@ export const ExpiryPermissions = ({
             <Typography fontVariant="small">
               {t(`tabs.permissions.expiry.permissions.cannotExtendExpiry.description`, {
                 date: expiryLabel,
+                context: expiryLabel ? 'date' : undefined,
               })}
             </Typography>
           </SectionItem>
