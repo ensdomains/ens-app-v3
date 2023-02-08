@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import dynamic from 'next/dynamic'
 import { useMemo } from 'react'
 import type ConfettiT from 'react-confetti'
@@ -123,10 +124,10 @@ const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    const value = registerResponse?.value || 0
+    const value = registerResponse?.value || BigNumber.from(0)
     const commitNetFee = commitReceipt?.gasUsed.mul(commitReceipt!.effectiveGasPrice)
     const registerNetFee = registerReceipt?.gasUsed.mul(registerReceipt!.effectiveGasPrice)
-    const totalNetFee = commitNetFee?.add(registerNetFee)
+    const totalNetFee = registerNetFee ? commitNetFee?.add(registerNetFee) : BigNumber.from(0)
 
     return (
       <Invoice
@@ -147,6 +148,7 @@ const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   callback: (toProfile: boolean) => void
+  isMoonpayFlow: boolean
 }
 
 const Complete = ({ nameDetails: { normalisedName: name }, callback, isMoonpayFlow }: Props) => {

@@ -17,7 +17,7 @@ export type RegistrationStepData = {
   pricing: {
     years: number
     reverseRecord: boolean
-    paymentMethod: PaymentMethod
+    paymentMethodChoice: PaymentMethod | ''
   }
   profile: {
     records: ProfileRecord[]
@@ -39,7 +39,7 @@ export type RegistrationData = UnionToIntersection<RegistrationStepData[Registra
 
 export type SelectedItemProperties = { address: string; name: string }
 
-export type RegistrationReducerDataItem = RegistrationData & {
+export type RegistrationReducerDataItem = Omit<RegistrationData, 'paymentMethodChoice'> & {
   stepIndex: number
   queue: RegistrationStep[]
   isMoonpayFlow: boolean
@@ -67,7 +67,7 @@ export type RegistrationReducerAction =
   | {
       name: 'setPricingData'
       selected: SelectedItemProperties
-      payload: RegistrationStepData['pricing']
+      payload: Omit<RegistrationStepData['pricing'], 'paymentMethodChoice'>
     }
   | {
       name: 'setProfileData'

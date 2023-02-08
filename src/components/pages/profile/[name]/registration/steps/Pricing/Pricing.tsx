@@ -183,12 +183,10 @@ const InfoItem = styled.div(
   `,
 )
 
-const LabelContainer = styled.div(
-  ({ theme }) => css`
-    display: flex;
-    flex-wrap: wrap;
-  `,
-)
+const LabelContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
 
 const CheckboxWrapper = styled.div(
   () => css`
@@ -259,14 +257,6 @@ const PaymentChoice = ({
           {paymentMethodChoice === PaymentMethod.ethereum && hasEnoughEth && (
             <>
               <Spacer $height="4" />
-              {/* <InfoItems>
-                {ethInfoItems.map((item, idx) => (
-                  <InfoItem key={item}>
-                    <Typography>{idx + 1}</Typography>
-                    <Typography>{t(item)}</Typography>
-                  </InfoItem>
-                ))}
-              </InfoItems> */}
               <OutlinedContainer>
                 <OutlinedContainerTitle $name="title">
                   {t('steps.pricing.primaryName')}
@@ -347,6 +337,7 @@ type Props = {
   callback: (props: RegistrationStepData['pricing']) => void
   hasPrimaryName: boolean
   registrationData: RegistrationReducerDataItem
+  moonpayTransactionStatus?: MoonpayTransactionStatus
 }
 
 const Pricing = ({

@@ -25,6 +25,8 @@ const defaultData: RegistrationReducerDataItem = {
   started: false,
   address: '',
   name: '',
+  isMoonpayFlow: false,
+  externalTransactionId: '',
 }
 
 const isBrowser = !!(

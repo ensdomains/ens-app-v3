@@ -97,7 +97,7 @@ const ProfileButton = styled.button(
   `,
 )
 
-const infoItemArr = Array.from({ length: 3 }, (_, i) => `steps.info.items.${i}`)
+const infoItemArr = Array.from({ length: 3 }, (_, i) => `steps.info.ethItems.${i}`)
 
 type Props = {
   registrationData: RegistrationReducerDataItem
