@@ -415,6 +415,12 @@ const Pricing = ({
 
   if (!address) {
     actionButton = <ConnectButton large />
+  } else if (hasPendingMoonpayTransaction) {
+    actionButton = (
+      <Button data-testid="next-button" disabled loading>
+        {t('steps.info.processing')}
+      </Button>
+    )
   } else if (paymentMethodChoice === PaymentMethod.moonpay) {
     actionButton = (
       <Button
@@ -423,12 +429,6 @@ const Pricing = ({
         disabled={!paymentMethodChoice}
       >
         {t('action.next', { ns: 'common' })}
-      </Button>
-    )
-  } else if (hasPendingMoonpayTransaction) {
-    actionButton = (
-      <Button data-testid="next-button" disabled loading>
-        {t('steps.info.processing')}
       </Button>
     )
   } else if (!balance?.value || !totalRequiredBalance) {
