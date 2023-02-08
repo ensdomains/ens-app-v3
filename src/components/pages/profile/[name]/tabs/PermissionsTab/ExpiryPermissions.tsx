@@ -49,7 +49,7 @@ export const ExpiryPermissions = ({
   const { showDataInput } = useTransactionFlow()
 
   const handleRevokePermissions = () => {
-    if (!wrapperData) return
+    if (!wrapperData || !parentExpiry) return
     showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
       name,
       owner: wrapperData.owner,
@@ -99,6 +99,7 @@ export const ExpiryPermissions = ({
             <Typography fontVariant="small">
               {t(`tabs.permissions.expiry.permissions.cannotExtendExpiry.description`, {
                 date: expiryLabel,
+                context: expiryLabel ? 'date' : undefined,
               })}
             </Typography>
           </SectionItem>

@@ -79,6 +79,7 @@ export const OwnershipPermissions = ({
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'data-testid': 'button-revoke-pcc',
         onClick: () => {
+          if (!parentExpiry) return
           showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
             name,
             flowType: 'revoke-pcc',
