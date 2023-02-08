@@ -210,6 +210,7 @@ const PaymentChoice = ({
   setPaymentMethodChoice,
   hasEnoughEth,
   hasPendingMoonpayTransaction,
+  hasFailedMoonpayTransaction,
   address,
   breakpoints,
   reverseRecord,
@@ -219,10 +220,11 @@ const PaymentChoice = ({
   setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod | ''>>
   hasEnoughEth: boolean
   hasPendingMoonpayTransaction: boolean
+  hasFailedMoonpayTransaction: boolean
   address?: string
-  breakpoints: any
-  reverseRecord: any
-  setReverseRecord: any
+  breakpoints: ReturnType<typeof useBreakpoint>
+  reverseRecord: boolean
+  setReverseRecord: (reverseRecord: boolean) => void
 }) => {
   const { t } = useTranslation('register')
 
@@ -318,6 +320,10 @@ const PaymentChoice = ({
                 ))}
               </InfoItems>
               <Spacer $height="4" />
+              {hasFailedMoonpayTransaction && (
+                <Helper type="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
+              )}
+              <Spacer $height="4" />
               <MoonpayContainer>
                 {t('steps.info.poweredBy')}
                 <MoonpayLogo />
@@ -411,6 +417,15 @@ const Pricing = ({
         {t('steps.info.processing')}
       </Button>
     )
+  } else if (hasFailedMoonpayTransaction && paymentMethodChoice === PaymentMethod.moonpay) {
+    actionButton = (
+      <Button
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+      >
+        {t('action.tryAgain', { ns: 'common' })}
+      </Button>
+    )
   } else if (paymentMethodChoice === PaymentMethod.moonpay) {
     actionButton = (
       <Button
@@ -480,7 +495,8 @@ const Pricing = ({
           reverseRecord,
           setReverseRecord,
           hasEnoughEth: true,
-          hasPendingMoonpayTransaction: false,
+          hasPendingMoonpayTransaction,
+          hasFailedMoonpayTransaction,
         }}
       />
       <MobileFullWidth>{actionButton}</MobileFullWidth>

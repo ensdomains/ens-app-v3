@@ -106,8 +106,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
-  console.log('item: ', item)
-
   const {
     moonpayUrl,
     initiateMoonpayRegistration,

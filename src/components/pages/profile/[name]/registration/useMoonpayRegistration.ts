@@ -76,6 +76,6 @@ export const useMoonpayRegistration = (
     hasMoonpayModal,
     setHasMoonpayModal,
     currentExternalTransactionId,
-    moonpayTransactionStatus: transactionData?.status,
+    moonpayTransactionStatus: transactionData?.status as MoonpayTransactionStatus,
   }
 }
