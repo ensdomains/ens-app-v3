@@ -45,7 +45,6 @@ export const ParentRevokePermissionsView = ({ register, control, unburnedFuses }
         <CheckboxRow
           data-testid="checkbox-CANNOT_UNWRAP"
           label={t('input.revokePermissions.views.revokePermissions.fuses.CANNOT_UNWRAP')}
-          subLabel={t('input.revokePermissions.views.revokePermissions.unwrapSubtitle')}
           {...register('childFuses.CANNOT_UNWRAP')}
         />
         {CHILD_FUSES_WITHOUT_CU.map((fuse) => (
