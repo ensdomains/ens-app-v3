@@ -18,7 +18,7 @@ import { CenterAlignedTypography } from '../components/CenterAlignedTypography'
 
 type Props = {
   name: string
-  minExpiry: number
+  minExpiry?: number
   maxExpiry: number
   register: UseFormRegister<FormData>
   control: Control<FormData>

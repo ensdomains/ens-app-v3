@@ -297,8 +297,8 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
               name={name}
               register={register}
               control={control}
-              minExpiry={minExpiry!}
-              maxExpiry={maxExpiry!}
+              minExpiry={minExpiry as FlowWithExpiry['minExpiry']}
+              maxExpiry={maxExpiry as FlowWithExpiry['maxExpiry']}
               getValues={getValues}
               trigger={trigger}
             />
