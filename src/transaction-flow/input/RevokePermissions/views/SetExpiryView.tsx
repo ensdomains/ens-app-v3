@@ -71,18 +71,18 @@ export const SetExpiryView = ({
   const formState = useFormState({ control, name: 'expiryCustom' })
   const customErrorLabel = formState.errors.expiryCustom?.message
 
-  const now = new Date(minExpiry * 1000)
-  const date = new Date(maxExpiry * 1000)
+  const minDate = minExpiry ? new Date(minExpiry * 1000) : new Date()
+  const maxDate = new Date(maxExpiry * 1000)
 
-  const min = dateToDateTimeLocal(now)
-  const max = dateToDateTimeLocal(date)
+  const minDateTime = dateToDateTimeLocal(minDate)
+  const maxDateTime = dateToDateTimeLocal(maxDate)
 
-  const maxDateLabel = date.toLocaleDateString(undefined, {
+  const maxDateLabel = maxDate.toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
   })
-  const maxTimeLabel = date.toLocaleTimeString(undefined, {
+  const maxTimeLabel = maxDate.toLocaleTimeString(undefined, {
     hour: 'numeric',
     minute: 'numeric',
     second: 'numeric',
@@ -90,7 +90,7 @@ export const SetExpiryView = ({
     timeZoneName: 'short',
   })
 
-  const expiryLabel = now.toLocaleDateString(undefined, {
+  const expiryLabel = minDate.toLocaleDateString(undefined, {
     month: 'short',
     day: 'numeric',
     year: 'numeric',
@@ -156,29 +156,35 @@ export const SetExpiryView = ({
                 hideLabel
                 error={formState.errors.expiryCustom}
                 clearable={false}
-                min={min}
-                max={max}
+                min={minDateTime}
+                max={maxDateTime}
                 {...register('expiryCustom', {
                   validate: (value) => {
                     const expiryType = getValues('expiryType')
                     if (expiryType !== 'custom') return true
                     if (!value) return t('input.revokePermissions.views.setExpiry.error.required')
-                    if (value < min) {
-                      const dateLabel = dateTimeLocalToDate(min).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })
+                    if (value < minDateTime) {
+                      const dateLabel = dateTimeLocalToDate(minDateTime).toLocaleDateString(
+                        undefined,
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        },
+                      )
                       return t('input.revokePermissions.views.setExpiry.error.min', {
                         date: dateLabel,
                       })
                     }
-                    if (value > max) {
-                      const dateLabel = dateTimeLocalToDate(max).toLocaleDateString(undefined, {
-                        month: 'short',
-                        day: 'numeric',
-                        year: 'numeric',
-                      })
+                    if (value > maxDateTime) {
+                      const dateLabel = dateTimeLocalToDate(maxDateTime).toLocaleDateString(
+                        undefined,
+                        {
+                          month: 'short',
+                          day: 'numeric',
+                          year: 'numeric',
+                        },
+                      )
                       return t('input.revokePermissions.views.setExpiry.error.max', {
                         date: dateLabel,
                       })

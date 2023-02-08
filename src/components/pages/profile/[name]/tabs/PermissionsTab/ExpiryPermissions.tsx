@@ -49,7 +49,7 @@ export const ExpiryPermissions = ({
   const { showDataInput } = useTransactionFlow()
 
   const handleRevokePermissions = () => {
-    if (!wrapperData) return
+    if (!wrapperData || !parentExpiry) return
     showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
       name,
       owner: wrapperData.owner,

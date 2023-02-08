@@ -34,6 +34,7 @@ export type FlowType =
   | 'revoke-permissions'
   | 'revoke-change-fuses'
   | 'grant-extend-expiry'
+  | 'revoke-change-fuses'
 
 export type FormData = {
   parentFuses: {
@@ -47,15 +48,25 @@ export type FormData = {
   expiryCustom?: string
 }
 
+type FlowWithExpiry = {
+  flowType: 'revoke-pcc' | 'grant-extend-expiry'
+  minExpiry?: number
+  maxExpiry: number
+}
+
+type FlowWithoutExpiry = {
+  flowType: 'revoke-permissions' | 'revoke-change-fuses' | 'revoke-permissions'
+  minExpiry?: never
+  maxExpiry?: never
+}
+
 type Data = {
   name: string
   flowType: FlowType
   owner: string
   parentFuses: AllCurrentFuses['parent']
   childFuses: AllCurrentFuses['child']
-  minExpiry?: number
-  maxExpiry?: number
-}
+} & (FlowWithExpiry | FlowWithoutExpiry)
 
 export type Props = {
   data: Data
@@ -92,7 +103,7 @@ const getFormDataDefaultValues = (data: Data, transactionData?: TransactionData)
   let expiryType: FormData['expiryType'] = 'max'
   let expiryCustom = data.minExpiry
     ? dateToDateTimeLocal(new Date(data.minExpiry * 1000))
-    : undefined
+    : dateToDateTimeLocal(new Date(Date.now() + 60 * 60 * 24 * 1000))
 
   if (transactionData?.contract === 'setChildFuses') {
     parentFuseEntries = parentFuseEntries.map(([fuse, value]) => [
@@ -182,15 +193,15 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
   /** The user flow depending on  */
   const flow = useMemo(() => {
     const isSubname = name.split('.').length > 2
-    const isMinExpiryLessThanMaxExpiry =
-      isSubname && !!minExpiry && !!maxExpiry && minExpiry < maxExpiry
+    const isMinExpiryAtLeastEqualToMaxExpiry =
+      isSubname && !!minExpiry && !!maxExpiry && minExpiry >= maxExpiry
 
     switch (flowType) {
       case 'revoke-pcc': {
         return [
           'revokeWarning',
           'revokePCC',
-          ...(isMinExpiryLessThanMaxExpiry ? ['setExpiry'] : []),
+          ...(!isMinExpiryAtLeastEqualToMaxExpiry ? ['setExpiry'] : []),
           'parentRevokePermissions',
           'revokeChangeFusesWarning',
         ]
@@ -199,7 +210,7 @@ const RevokePermissions = ({ data, transactions, onDismiss, dispatch }: Props) =
         return [
           'revokeWarning',
           'grantExtendExpiry',
-          ...(isMinExpiryLessThanMaxExpiry ? ['setExpiry'] : []),
+          ...(!isMinExpiryAtLeastEqualToMaxExpiry ? ['setExpiry'] : []),
         ]
       }
       case 'revoke-permissions': {
