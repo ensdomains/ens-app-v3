@@ -35,6 +35,8 @@ type BaseProps = {
     count?: number;
     /** The handler for click events. */
     onClick?: NativeButtonProps['onClick'];
+    /** Show indicator that button has extra info via tooltip. */
+    shouldShowTooltipIndicator?: boolean;
 } & Omit<NativeButtonProps, 'prefix' | 'size'>;
 type WithAnchor = {
     /** The href attribute for the anchor element. */

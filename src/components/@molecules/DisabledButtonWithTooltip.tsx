@@ -37,6 +37,7 @@ export const DisabledButtonWithTooltip = ({
   prefix?: React.node
 }) => {
   const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(buttonId)
+  console.log('shouldShowTooltipIndicator: ', shouldShowTooltipIndicator)
   return (
     <>
       <Tooltip
@@ -57,6 +58,7 @@ export const DisabledButtonWithTooltip = ({
           size="small"
           shadowless
           shouldShowTooltipIndicator={shouldShowTooltipIndicator}
+          sanity
           colorStyle="disabled"
           prefix={prefix}
         >
