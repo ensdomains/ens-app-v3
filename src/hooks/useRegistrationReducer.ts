@@ -119,7 +119,7 @@ const reducer = (state: RegistrationReducerData, action: RegistrationReducerActi
     }
     case 'moonpayTransactionCompleted': {
       item.externalTransactionId = ''
-      item.stepIndex += 3
+      item.stepIndex = item.queue.findIndex((step) => step === 'complete')
       break
     }
     // no default

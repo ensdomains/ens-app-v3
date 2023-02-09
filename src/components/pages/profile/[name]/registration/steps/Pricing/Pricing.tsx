@@ -439,7 +439,7 @@ const Pricing = ({
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
       <Button data-testid="next-button" disabled>
-        {t('action.loading', { ns: 'common' })}
+        {t('loading', { ns: 'common' })}
       </Button>
     )
   } else if (balance?.value.lt(totalRequiredBalance)) {
