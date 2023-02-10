@@ -21,6 +21,7 @@ __export(fuses_exports, {
   CHILD_CONTROLLED_FUSES: () => CHILD_CONTROLLED_FUSES,
   PARENT_CONTROLLED_FUSES: () => PARENT_CONTROLLED_FUSES,
   USER_SETTABLE_FUSES: () => USER_SETTABLE_FUSES,
+  checkPCCBurned: () => checkPCCBurned,
   childFuseEnum: () => childFuseEnum,
   childFuseKeys: () => childFuseKeys,
   decodeFuses: () => decodeFuses,
@@ -297,4 +298,5 @@ const decodeFuses = (fuses) => {
     }
   };
 };
+const checkPCCBurned = (fuses) => (fuses & PARENT_CANNOT_CONTROL) === PARENT_CANNOT_CONTROL;
 var fuses_default = fullFuseEnum;

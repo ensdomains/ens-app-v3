@@ -1,5 +1,6 @@
 import { ENS } from '..'
 import setup from '../tests/setup'
+import { decodeFuses } from '../utils/fuses'
 
 let ensInstance: ENS
 
@@ -130,19 +131,55 @@ describe('getSubnames', () => {
       'truncatedName',
     )
   })
+  describe('wrapped subnames', () => {
+    it('should return fuses', async () => {
+      const result = await ensInstance.getSubnames({
+        name: 'wrapped-with-subnames.eth',
+        pageSize: 10,
+        orderBy: 'createdAt',
+        orderDirection: 'desc',
+      })
 
-  it('should return fuses for wrapped subnames', async () => {
-    const result = await ensInstance.getSubnames({
-      name: 'wrapped-with-subnames.eth',
-      pageSize: 10,
-      orderBy: 'createdAt',
-      orderDirection: 'desc',
+      expect(result).toBeTruthy()
+      expect(result.subnames.length).toBe(1)
+      expect(result.subnameCount).toBe(1)
+      expect(result.subnames[0].fuses).toBeDefined()
     })
+    it('should return expiry as undefined if 0', async () => {
+      const result = await ensInstance.getSubnames({
+        name: 'wrapped-with-expiring-subnames.eth',
+        pageSize: 10,
+        orderBy: 'createdAt',
+        orderDirection: 'desc',
+      })
 
-    expect(result).toBeTruthy()
-    expect(result.subnames.length).toBe(1)
-    expect(result.subnameCount).toBe(1)
-    expect(result.subnames[0].fuses).toBeDefined()
+      expect(result).toBeTruthy()
+      expect(result.subnames[1].expiryDate).toBeUndefined()
+    })
+    it('should return expiry', async () => {
+      const result = await ensInstance.getSubnames({
+        name: 'wrapped-with-expiring-subnames.eth',
+        pageSize: 10,
+        orderBy: 'createdAt',
+        orderDirection: 'desc',
+      })
+
+      expect(result).toBeTruthy()
+      expect(result.subnames[2].expiryDate).toBeInstanceOf(Date)
+    })
+    it('should return owner as undefined, fuses as 0, and pccExpired as true if pcc expired', async () => {
+      const result = await ensInstance.getSubnames({
+        name: 'wrapped-with-expiring-subnames.eth',
+        pageSize: 10,
+        orderBy: 'createdAt',
+        orderDirection: 'desc',
+      })
+
+      expect(result).toBeTruthy()
+      expect(result.subnames[0].owner).toBeUndefined()
+      expect(result.subnames[0].fuses).toStrictEqual(decodeFuses(0))
+      expect(result.subnames[0].pccExpired).toBe(true)
+    })
   })
 
   describe('with pagination', () => {

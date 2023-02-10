@@ -91,6 +91,7 @@ export const useNamesFromAddress = ({
 
   const filterFunc = useMemo(() => {
     const baseFilter = (n: ReturnedName) => {
+      // filter out names with expiry beyond grace period
       if (n.expiryDate && blockTimestamp && n?.expiryDate.getTime() < blockTimestamp - GRACE_PERIOD)
         return false
       return n.parent.name !== 'addr.reverse'

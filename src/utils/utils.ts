@@ -76,6 +76,11 @@ export const checkETHName = (labels: string[]) => labels[labels.length - 1] === 
 export const checkETH2LDName = (isDotETH: boolean, labels: string[], canBeShort?: boolean) =>
   isDotETH && labels.length === 2 && (canBeShort || labels[0].length >= 3)
 
+export const checkETH2LDFromName = (name: string) => {
+  const labels = name.split('.')
+  return checkETH2LDName(checkETHName(labels), labels)
+}
+
 export const checkSubname = (name: string) => name.split('.').length > 2
 
 export const isLabelTooLong = (label: string) => {

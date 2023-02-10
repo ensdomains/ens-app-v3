@@ -47,7 +47,7 @@ export const TaggedNameItem = ({
 
   const isNativeEthName = /\.eth$/.test(name) && name.split('.').length === 2
 
-  const tags: [disabled: boolean, translation: string][] = []
+  const tags: [enabled: boolean, translation: string][] = []
 
   if (!fuses) {
     tags.push([!!isController, 'name.manager'])
@@ -74,10 +74,11 @@ export const TaggedNameItem = ({
       onClick={onClick}
     >
       <OtherItemsContainer>
-        {tags.map(([tagDisabled, translation]) => (
+        {tags.map(([tagEnabled, translation]) => (
           <Tag
             key={translation}
-            colorStyle={!(tagDisabled && disabled) ? 'accentSecondary' : 'greySecondary'}
+            colorStyle={!disabled && tagEnabled ? 'accentSecondary' : 'greySecondary'}
+            data-testid={`tag-${translation}-${tagEnabled}`}
           >
             {t(translation)}
           </Tag>

@@ -1,11 +1,21 @@
 // src/functions/getNames.ts
 import { truncateFormat } from "../utils/format.mjs";
-import { decodeFuses } from "../utils/fuses.mjs";
+import { checkPCCBurned, decodeFuses } from "../utils/fuses.mjs";
 import { decryptName } from "../utils/labels.mjs";
 var mapDomain = ({ name, ...domain }) => {
   const decrypted = name ? decryptName(name) : void 0;
   return {
     ...domain,
+    ...domain.registration ? {
+      registration: {
+        expiryDate: new Date(
+          parseInt(domain.registration.expiryDate) * 1e3
+        ),
+        registrationDate: new Date(
+          parseInt(domain.registration.registrationDate) * 1e3
+        )
+      }
+    } : {},
     name: decrypted,
     truncatedName: decrypted ? truncateFormat(decrypted) : void 0,
     createdAt: new Date(parseInt(domain.createdAt) * 1e3),
@@ -13,19 +23,13 @@ var mapDomain = ({ name, ...domain }) => {
   };
 };
 var mapWrappedDomain = (wrappedDomain) => {
-  const domain = mapDomain(wrappedDomain.domain);
-  if (domain.registration) {
-    domain.registration = {
-      expiryDate: new Date(
-        parseInt(domain.registration.expiryDate) * 1e3
-      ),
-      registrationDate: new Date(
-        parseInt(domain.registration.registrationDate) * 1e3
-      )
-    };
+  const expiryDate = wrappedDomain.expiryDate && wrappedDomain.expiryDate !== "0" ? new Date(parseInt(wrappedDomain.expiryDate) * 1e3) : void 0;
+  if (expiryDate && expiryDate < new Date() && checkPCCBurned(wrappedDomain.fuses)) {
+    return null;
   }
+  const domain = mapDomain(wrappedDomain.domain);
   return {
-    expiryDate: new Date(parseInt(wrappedDomain.expiryDate) * 1e3),
+    expiryDate,
     fuses: decodeFuses(wrappedDomain.fuses),
     ...domain,
     type: "wrappedDomain"
@@ -84,6 +88,10 @@ var getNames = async ({ gqlInstance }, {
           domains(first: 1000) {
             ${domainQueryData}
             createdAt
+            registration {
+              registrationDate
+              expiryDate
+            }
           }
           wrappedDomains(first: 1000) {
             expiryDate
@@ -115,6 +123,10 @@ var getNames = async ({ gqlInstance }, {
             domains(orderBy: $orderBy, orderDirection: $orderDirection) {
               ${domainQueryData}
               createdAt
+              registration {
+                registrationDate
+                expiryDate
+              }
             }
           }
         }
@@ -288,7 +300,7 @@ var getNames = async ({ gqlInstance }, {
     return [
       ...account?.domains.map(mapDomain) || [],
       ...account?.registrations.map(mapRegistration) || [],
-      ...account?.wrappedDomains.map(mapWrappedDomain) || []
+      ...account?.wrappedDomains.map(mapWrappedDomain).filter((d) => d) || []
     ].sort((a, b) => {
       if (orderDirection === "desc") {
         if (orderBy === "labelName") {
@@ -306,7 +318,7 @@ var getNames = async ({ gqlInstance }, {
     return account?.domains.map(mapDomain) || [];
   }
   if (type === "wrappedOwner") {
-    return account?.wrappedDomains.map(mapWrappedDomain) || [];
+    return account?.wrappedDomains.map(mapWrappedDomain).filter((d) => d) || [];
   }
   return account?.registrations.map(mapRegistration) || [];
 };

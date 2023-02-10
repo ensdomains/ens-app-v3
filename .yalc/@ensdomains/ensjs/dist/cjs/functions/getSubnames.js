@@ -81,6 +81,9 @@ const largeQuery = async ({ gqlInstance }, {
           wrappedDomain {
             fuses
             expiryDate
+            owner {
+              id
+            }
           }
         }
       }
@@ -105,11 +108,18 @@ const largeQuery = async ({ gqlInstance }, {
         labelName: subname.labelName || null,
         labelhash: subname.labelhash || "",
         name: decrypted,
-        truncatedName: (0, import_format.truncateFormat)(decrypted)
+        truncatedName: (0, import_format.truncateFormat)(decrypted),
+        owner: subname.owner.id,
+        type: "domain"
       };
       if (wrappedDomain) {
-        obj.fuses = (0, import_fuses.decodeFuses)(wrappedDomain.fuses);
-        obj.expiryDate = new Date(parseInt(wrappedDomain.expiryDate) * 1e3);
+        obj.type = "wrappedDomain";
+        const expiryDateAsDate = wrappedDomain.expiryDate && wrappedDomain.expiryDate !== "0" ? new Date(parseInt(wrappedDomain.expiryDate) * 1e3) : void 0;
+        const hasExpired = expiryDateAsDate && expiryDateAsDate < new Date();
+        obj.expiryDate = expiryDateAsDate;
+        obj.fuses = (0, import_fuses.decodeFuses)(hasExpired ? 0 : wrappedDomain.fuses);
+        obj.pccExpired = hasExpired ? (0, import_fuses.checkPCCBurned)(wrappedDomain.fuses) : false;
+        obj.owner = obj.pccExpired ? void 0 : wrappedDomain.owner.id;
       }
       return obj;
     }

@@ -128,5 +128,6 @@ export declare const decodeFuses: (fuses: number) => {
         CANNOT_CREATE_SUBDOMAIN: boolean;
     };
 };
+export declare const checkPCCBurned: (fuses: number) => boolean;
 export declare type AllCurrentFuses = ReturnType<typeof decodeFuses>;
 export default fullFuseEnum;

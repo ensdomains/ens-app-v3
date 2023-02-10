@@ -28,6 +28,16 @@ const mapDomain = ({ name, ...domain }) => {
   const decrypted = name ? (0, import_labels.decryptName)(name) : void 0;
   return {
     ...domain,
+    ...domain.registration ? {
+      registration: {
+        expiryDate: new Date(
+          parseInt(domain.registration.expiryDate) * 1e3
+        ),
+        registrationDate: new Date(
+          parseInt(domain.registration.registrationDate) * 1e3
+        )
+      }
+    } : {},
     name: decrypted,
     truncatedName: decrypted ? (0, import_format.truncateFormat)(decrypted) : void 0,
     createdAt: new Date(parseInt(domain.createdAt) * 1e3),
@@ -35,19 +45,13 @@ const mapDomain = ({ name, ...domain }) => {
   };
 };
 const mapWrappedDomain = (wrappedDomain) => {
-  const domain = mapDomain(wrappedDomain.domain);
-  if (domain.registration) {
-    domain.registration = {
-      expiryDate: new Date(
-        parseInt(domain.registration.expiryDate) * 1e3
-      ),
-      registrationDate: new Date(
-        parseInt(domain.registration.registrationDate) * 1e3
-      )
-    };
+  const expiryDate = wrappedDomain.expiryDate && wrappedDomain.expiryDate !== "0" ? new Date(parseInt(wrappedDomain.expiryDate) * 1e3) : void 0;
+  if (expiryDate && expiryDate < new Date() && (0, import_fuses.checkPCCBurned)(wrappedDomain.fuses)) {
+    return null;
   }
+  const domain = mapDomain(wrappedDomain.domain);
   return {
-    expiryDate: new Date(parseInt(wrappedDomain.expiryDate) * 1e3),
+    expiryDate,
     fuses: (0, import_fuses.decodeFuses)(wrappedDomain.fuses),
     ...domain,
     type: "wrappedDomain"
@@ -106,6 +110,10 @@ const getNames = async ({ gqlInstance }, {
           domains(first: 1000) {
             ${domainQueryData}
             createdAt
+            registration {
+              registrationDate
+              expiryDate
+            }
           }
           wrappedDomains(first: 1000) {
             expiryDate
@@ -137,6 +145,10 @@ const getNames = async ({ gqlInstance }, {
             domains(orderBy: $orderBy, orderDirection: $orderDirection) {
               ${domainQueryData}
               createdAt
+              registration {
+                registrationDate
+                expiryDate
+              }
             }
           }
         }
@@ -310,7 +322,7 @@ const getNames = async ({ gqlInstance }, {
     return [
       ...(account == null ? void 0 : account.domains.map(mapDomain)) || [],
       ...(account == null ? void 0 : account.registrations.map(mapRegistration)) || [],
-      ...(account == null ? void 0 : account.wrappedDomains.map(mapWrappedDomain)) || []
+      ...(account == null ? void 0 : account.wrappedDomains.map(mapWrappedDomain).filter((d) => d)) || []
     ].sort((a, b) => {
       if (orderDirection === "desc") {
         if (orderBy === "labelName") {
@@ -328,7 +340,7 @@ const getNames = async ({ gqlInstance }, {
     return (account == null ? void 0 : account.domains.map(mapDomain)) || [];
   }
   if (type === "wrappedOwner") {
-    return (account == null ? void 0 : account.wrappedDomains.map(mapWrappedDomain)) || [];
+    return (account == null ? void 0 : account.wrappedDomains.map(mapWrappedDomain).filter((d) => d)) || [];
   }
   return (account == null ? void 0 : account.registrations.map(mapRegistration)) || [];
 };

@@ -6,6 +6,7 @@ import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 import { PublicResolver__factory } from '@ensdomains/ensjs/generated/factories/PublicResolver__factory'
+import { CombinedFuseInput, encodeFuses } from '@ensdomains/ensjs/utils/fuses'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
 import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import {
@@ -21,19 +22,13 @@ type Name = {
   namedOwner: string
   reverseRecord?: boolean
   records?: RecordOptions
-  fuses?: {
-    cannotUnwrap: true
-    cannotBurnFuses?: boolean
-    cannotTransfer?: boolean
-    cannotSetResolver?: boolean
-    cannotSetTtl?: boolean
-    cannotCreateSubdomain?: boolean
-    parentCannotControl?: boolean
-  }
+  fuses?: CombinedFuseInput['child']
   customDuration?: number
   subnames?: {
     label: string
     namedOwner: string
+    fuses?: number
+    expiry?: number
   }[]
 }
 
@@ -49,6 +44,22 @@ const names: Name[] = [
     name: 'wrapped.eth',
     namedOwner: 'owner',
     subnames: [{ label: 'sub', namedOwner: 'deployer' }],
+  },
+  {
+    name: 'wrapped-expired-subnames.eth',
+    namedOwner: 'owner',
+    fuses: {
+      named: ['CANNOT_UNWRAP'],
+    },
+    subnames: [
+      {
+        label: 'sub',
+        namedOwner: 'owner',
+        // set expiry to 24 hours ago
+        expiry: Math.floor(Date.now() / 1000) - 86400,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+    ],
   },
 ]
 
@@ -74,12 +85,14 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const owner = allNamedAccts[namedOwner]
 
     const processedSubnames: ProcessedSubname[] =
-      subnames?.map(({ label, namedOwner: subNamedOwner }) => ({
-        label,
-        owner: allNamedAccts[subNamedOwner],
-        expiry: wrapperExpiry,
-        fuses: 0,
-      })) || []
+      subnames?.map(
+        ({ label, namedOwner: subNamedOwner, fuses: subnameFuses, expiry: subnameExpiry }) => ({
+          label,
+          owner: allNamedAccts[subNamedOwner],
+          expiry: subnameExpiry || wrapperExpiry,
+          fuses: subnameFuses || 0,
+        }),
+      ) || []
 
     return {
       resolver,
@@ -89,6 +102,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
       name,
       label: name.split('.')[0],
       subnames: processedSubnames,
+      fuses: fuses || undefined,
       ...rest,
     }
   }

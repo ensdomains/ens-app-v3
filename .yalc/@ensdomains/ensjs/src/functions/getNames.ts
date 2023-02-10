@@ -1,6 +1,6 @@
 import { ENSArgs } from '..'
 import { truncateFormat } from '../utils/format'
-import { AllCurrentFuses, decodeFuses } from '../utils/fuses'
+import { AllCurrentFuses, checkPCCBurned, decodeFuses } from '../utils/fuses'
 import { decryptName } from '../utils/labels'
 import { Domain, Registration, WrappedDomain } from '../utils/subgraph-types'
 
@@ -60,8 +60,21 @@ type Params = BaseParams &
 
 const mapDomain = ({ name, ...domain }: Domain) => {
   const decrypted = name ? decryptName(name) : undefined
+
   return {
     ...domain,
+    ...(domain.registration
+      ? {
+          registration: {
+            expiryDate: new Date(
+              parseInt(domain.registration.expiryDate) * 1000,
+            ),
+            registrationDate: new Date(
+              parseInt(domain.registration.registrationDate) * 1000,
+            ),
+          },
+        }
+      : {}),
     name: decrypted,
     truncatedName: decrypted ? truncateFormat(decrypted) : undefined,
     createdAt: new Date(parseInt(domain.createdAt) * 1000),
@@ -70,27 +83,27 @@ const mapDomain = ({ name, ...domain }: Domain) => {
 }
 
 const mapWrappedDomain = (wrappedDomain: WrappedDomain) => {
-  const domain = mapDomain(wrappedDomain.domain) as Omit<
-    ReturnType<typeof mapDomain>,
-    'registration'
-  > & {
-    registration?: {
-      expiryDate: string | Date
-      registrationDate: string | Date
-    }
+  const expiryDate =
+    wrappedDomain.expiryDate && wrappedDomain.expiryDate !== '0'
+      ? new Date(parseInt(wrappedDomain.expiryDate) * 1000)
+      : undefined
+  if (
+    expiryDate &&
+    expiryDate < new Date() &&
+    checkPCCBurned(wrappedDomain.fuses)
+  ) {
+    // PCC was burned previously and now the fuses are expired meaning that the
+    // owner is now 0x0 so we need to filter this out
+    // if a user's local time is out of sync with the blockchain, this could potentially
+    // be incorrect. the likelihood of that happening though is very low, and devs
+    // shouldn't be relying on this value for anything critical anyway.
+    return null
   }
-  if (domain.registration) {
-    domain.registration = {
-      expiryDate: new Date(
-        parseInt(domain.registration.expiryDate as string) * 1000,
-      ),
-      registrationDate: new Date(
-        parseInt(domain.registration.registrationDate as string) * 1000,
-      ),
-    }
-  }
+
+  const domain = mapDomain(wrappedDomain.domain)
+
   return {
-    expiryDate: new Date(parseInt(wrappedDomain.expiryDate) * 1000),
+    expiryDate,
     fuses: decodeFuses(wrappedDomain.fuses),
     ...domain,
     type: 'wrappedDomain',
@@ -156,6 +169,10 @@ const getNames = async (
           domains(first: 1000) {
             ${domainQueryData}
             createdAt
+            registration {
+              registrationDate
+              expiryDate
+            }
           }
           wrappedDomains(first: 1000) {
             expiryDate
@@ -187,6 +204,10 @@ const getNames = async (
             domains(orderBy: $orderBy, orderDirection: $orderDirection) {
               ${domainQueryData}
               createdAt
+              registration {
+                registrationDate
+                expiryDate
+              }
             }
           }
         }
@@ -366,7 +387,8 @@ const getNames = async (
     return [
       ...(account?.domains.map(mapDomain) || []),
       ...(account?.registrations.map(mapRegistration) || []),
-      ...(account?.wrappedDomains.map(mapWrappedDomain) || []),
+      ...(account?.wrappedDomains.map(mapWrappedDomain).filter((d: any) => d) ||
+        []),
     ].sort((a, b) => {
       if (orderDirection === 'desc') {
         if (orderBy === 'labelName') {
@@ -384,7 +406,9 @@ const getNames = async (
     return (account?.domains.map(mapDomain) || []) as Name[]
   }
   if (type === 'wrappedOwner') {
-    return (account?.wrappedDomains.map(mapWrappedDomain) || []) as Name[]
+    return (account?.wrappedDomains
+      .map(mapWrappedDomain)
+      .filter((d: any) => d) || []) as Name[]
   }
   return (account?.registrations.map(mapRegistration) || []) as Name[]
 }

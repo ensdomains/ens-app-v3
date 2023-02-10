@@ -33,7 +33,7 @@ export const useSubnameInfiniteQuery = (
         search,
       })
 
-      const ownedSubnames = result.subnames.filter((subname) => subname.owner.id !== emptyAddress)
+      const ownedSubnames = result.subnames.filter((subname) => subname.owner !== emptyAddress)
       const isPageSize = result.subnames.length >= PAGE_SIZE
       const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
       return {
@@ -52,7 +52,16 @@ export const useSubnameInfiniteQuery = (
   const subnames: Subname[] = useMemo(() => {
     return (
       data?.pages.reduce<Subname[]>((acc, curr) => {
-        return [...acc, ...curr.subnames]
+        return [
+          ...acc,
+          ...curr.subnames.map(
+            (s) =>
+              ({
+                ...s,
+                expiryDate: s.expiryDate ? new Date(s.expiryDate) : undefined,
+              } as Subname),
+          ),
+        ]
       }, []) || ([] as Subname[])
     )
   }, [data])

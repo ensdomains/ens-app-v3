@@ -352,6 +352,9 @@ export const decodeFuses = (fuses: number) => {
   }
 }
 
+export const checkPCCBurned = (fuses: number) =>
+  (fuses & PARENT_CANNOT_CONTROL) === PARENT_CANNOT_CONTROL
+
 export type AllCurrentFuses = ReturnType<typeof decodeFuses>
 
 export default fullFuseEnum

@@ -461,17 +461,29 @@ export declare class ENS {
         lastSubnames?: any[] | undefined;
         search?: string | undefined;
     }) => Promise<{
-        subnames: {
+        subnames: (({
             id: string;
             labelName: string | null;
             truncatedName?: string | undefined;
             labelhash: string;
             isMigrated: boolean;
             name: string;
-            owner: {
-                id: string;
-            };
-            fuses?: {
+            owner: string | undefined;
+        } & {
+            fuses?: undefined;
+            expiryDate?: undefined;
+            pccExpired?: undefined;
+            type: "domain";
+        }) | ({
+            id: string;
+            labelName: string | null;
+            truncatedName?: string | undefined;
+            labelhash: string;
+            isMigrated: boolean;
+            name: string;
+            owner: string | undefined;
+        } & {
+            fuses: {
                 parent: {
                     unnamed: {
                         524288: boolean;
@@ -513,9 +525,11 @@ export declare class ENS {
                     CANNOT_SET_TTL: boolean;
                     CANNOT_CREATE_SUBDOMAIN: boolean;
                 };
-            } | undefined;
-            expiryDate?: Date | undefined;
-        }[];
+            };
+            expiryDate: Date;
+            pccExpired: boolean;
+            type: "wrappedDomain";
+        }))[];
         subnameCount: number;
     }>;
     getNames: (args_0: {

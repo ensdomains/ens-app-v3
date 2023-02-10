@@ -257,11 +257,13 @@ var decodeFuses = (fuses) => {
     }
   };
 };
+var checkPCCBurned = (fuses) => (fuses & PARENT_CANNOT_CONTROL) === PARENT_CANNOT_CONTROL;
 var fuses_default = fullFuseEnum;
 export {
   CHILD_CONTROLLED_FUSES,
   PARENT_CONTROLLED_FUSES,
   USER_SETTABLE_FUSES,
+  checkPCCBurned,
   childFuseEnum,
   childFuseKeys,
   decodeFuses,
