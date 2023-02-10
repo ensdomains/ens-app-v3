@@ -184,6 +184,7 @@ export const SubnamesTab = ({
               }
               notOwned={!subname.owner || subname.owner === emptyAddress}
               fuses={subname.fuses}
+              pccExpired={subname.pccExpired}
               expiryDate={subname.expiryDate}
             />
           ))}

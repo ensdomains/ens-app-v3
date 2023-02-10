@@ -5,6 +5,7 @@ import type { Name } from '@ensdomains/ensjs/functions/getNames'
 
 import { useEns } from '@app/utils/EnsProvider'
 import { GRACE_PERIOD } from '@app/utils/constants'
+import { validateExpiry } from '@app/utils/utils'
 
 import { useBlockTimestamp } from './useBlockTimestamp'
 
@@ -74,11 +75,12 @@ export const useNamesFromAddress = ({
         isRegistrant: existingEntry.isRegistrant || isRegistrant,
         isWrappedOwner: existingEntry.isWrappedOwner || isWrappedOwner,
       }
-      const newItem = newMap[curr.name]
+      const newItem: ReturnedName = newMap[curr.name]
       if (newItem.registration?.expiryDate) {
         newItem.expiryDate = new Date(newItem.registration.expiryDate)
       } else if (newItem.expiryDate) {
-        newItem.expiryDate = new Date(newItem.expiryDate)
+        // only add expiry date from wrapped name if PCC is burned
+        newItem.expiryDate = validateExpiry(curr.name, newItem.fuses, new Date(newItem.expiryDate))
       }
       if (newItem.createdAt) newItem.createdAt = new Date(newItem.createdAt)
       if (newItem.registrationDate) newItem.registrationDate = new Date(newItem.registrationDate)

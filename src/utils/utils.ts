@@ -1,5 +1,7 @@
 import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
+import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
+
 import { networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -106,4 +108,16 @@ export const deleteProperties = <T extends Record<string, any>, K extends keyof 
     delete newObj[key]
   }
   return newObj
+}
+
+export const validateExpiry = (
+  name: string,
+  fuses: AllCurrentFuses | undefined,
+  expiry: Date | undefined,
+  pccExpired?: boolean,
+) => {
+  const isDotETH = checkETH2LDFromName(name)
+  if (isDotETH) return expiry
+  if (!fuses) return undefined
+  return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }

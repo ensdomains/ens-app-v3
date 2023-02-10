@@ -8,11 +8,13 @@ import { Helper } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
+import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
+import { validateExpiry } from '@app/utils/utils'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -42,6 +44,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     basicIsCachedData,
     ownerData,
     wrapperData,
+    expiryDate,
     dnsOwner,
     isWrapped,
     gracePeriodEndDate,
@@ -65,6 +68,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     subnameAbilities,
   })
 
+  const nameWrapperAddress = useContractAddress('NameWrapper')
   const isExpired = useMemo(
     () => gracePeriodEndDate && gracePeriodEndDate < new Date(),
     [gracePeriodEndDate],
@@ -75,6 +79,12 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   }, [isExpired, selfAbilities.canExtend])
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
+
+  const pccExpired =
+    owners.length === 1 &&
+    owners[0].address === nameWrapperAddress &&
+    wrapperData?.expiryDate &&
+    wrapperData.expiryDate < new Date()
 
   return (
     <DetailsWrapper>
@@ -92,6 +102,13 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         )}
       </ProfileSnippet>
       <ProfileDetails
+        expiryDate={validateExpiry(
+          normalisedName,
+          wrapperData,
+          expiryDate || wrapperData?.expiryDate,
+          pccExpired,
+        )}
+        pccExpired={!!pccExpired}
         isCached={profileIsCachedData || basicIsCachedData || subnameAbilitiesCachedData}
         addresses={(profile?.records?.coinTypes || []).map((item: any) => ({
           key: item.coin,
@@ -102,7 +119,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           .filter((item: any) => item.value !== null)}
         owners={owners}
         actions={profileActions.profileActions}
-        name={name}
       />
     </DetailsWrapper>
   )

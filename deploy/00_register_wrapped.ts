@@ -59,6 +59,16 @@ const names: Name[] = [
         expiry: Math.floor(Date.now() / 1000) - 86400,
         fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
       },
+      {
+        label: 'no-pcc',
+        namedOwner: 'owner',
+        expiry: Math.floor(Date.now() / 1000) - 86400,
+      },
+      {
+        label: 'not-expired',
+        namedOwner: 'owner',
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
     ],
   },
 ]

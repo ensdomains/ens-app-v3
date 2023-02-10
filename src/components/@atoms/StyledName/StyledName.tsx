@@ -34,17 +34,15 @@ const Tld = styled.span(
 )
 
 export const StyledName = ({ name, disabled = false }: { name: string; disabled?: boolean }) => {
-  const labels = name.split('.')
-  const tld = labels.length > 1 ? `${labels[labels.length - 1]}` : ''
-  const nameWithoutTld = labels.length > 1 ? labels.slice(0, -1).join('.') : name
+  const [label, ...restName] = name.split('.')
 
   return (
     <Container>
       <Name $disabled={disabled}>
-        {nameWithoutTld}
-        {labels.length > 1 && <Dot>.</Dot>}
+        {label}
+        {restName.length > 0 && <Dot>.</Dot>}
       </Name>
-      <Tld>{tld}</Tld>
+      <Tld>{restName.join('.')}</Tld>
     </Container>
   )
 }

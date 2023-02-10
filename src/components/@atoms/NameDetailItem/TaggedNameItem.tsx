@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Tag, mq } from '@ensdomains/thorin'
 
 import { ReturnedName } from '@app/hooks/useNamesFromAddress'
+import { validateExpiry } from '@app/utils/utils'
 
 import { NameDetailItem } from './NameDetailItem'
 
@@ -37,6 +38,7 @@ export const TaggedNameItem = ({
   disabled = false,
   onClick,
   notOwned,
+  pccExpired,
 }: Omit<ReturnedName, 'labelName' | 'labelhash' | 'isMigrated' | 'parent' | 'type' | 'id'> & {
   notOwned?: boolean
   network: number
@@ -44,6 +46,7 @@ export const TaggedNameItem = ({
   mode?: 'select' | 'view'
   disabled?: boolean
   onClick?: () => void
+  pccExpired?: boolean
 }) => {
   const { t } = useTranslation('common')
 
@@ -70,7 +73,7 @@ export const TaggedNameItem = ({
       key={name}
       network={network}
       truncatedName={truncatedName}
-      expiryDate={expiryDate}
+      expiryDate={validateExpiry(name, fuses, expiryDate, pccExpired)}
       name={name}
       mode={mode}
       selected={selected}
