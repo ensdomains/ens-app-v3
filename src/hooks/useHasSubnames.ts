@@ -1,22 +1,13 @@
 import { useQuery } from 'wagmi'
 
+import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { emptyAddress } from '../utils/constants'
 
 const FETCH_PAGE_SIZE = 50
 
-type Subnames = {
-  id: string
-  labelName: string | null
-  truncatedName?: string | undefined
-  labelhash: string
-  isMigrated: boolean
-  name: string
-  owner: {
-    id: string
-  }
-}[]
+type Subnames = ReturnedENS['getSubnames']['subnames']
 
 export const useHasSubnames = (name: string) => {
   const { getSubnames, ready } = useEns()
@@ -46,7 +37,7 @@ export const useHasSubnames = (name: string) => {
           orderDirection: 'desc',
           pageSize: FETCH_PAGE_SIZE,
         })
-        const anyHasOwner = subnames.some((subname) => subname.owner.id !== emptyAddress)
+        const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
         if (anyHasOwner) {
           return true
         }
