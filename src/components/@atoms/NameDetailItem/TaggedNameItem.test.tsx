@@ -18,12 +18,14 @@ const renderHelper = ({
   controller,
   registrant,
   wrappedOwner,
+  notOwned,
   fuses,
 }: {
   eth?: boolean
   controller?: boolean
   registrant?: boolean
   wrappedOwner?: boolean
+  notOwned?: boolean
   fuses?: number
 }) =>
   render(
@@ -33,6 +35,7 @@ const renderHelper = ({
       isRegistrant={registrant}
       isWrappedOwner={wrappedOwner}
       fuses={typeof fuses !== 'undefined' ? decodeFuses(fuses) : undefined}
+      notOwned={notOwned}
       network={1}
       expiryDate={'2020-01-01' as any}
     />,
@@ -133,6 +136,17 @@ describe('TaggedNameItem', () => {
         })
         expect(getByTestId('tag-name.owner-true')).toBeInTheDocument()
         expect(queryByText('name.manager')).not.toBeInTheDocument()
+      })
+      it('should show not owned tag and override all other tags if enabled', () => {
+        const { getByTestId, queryByText } = renderHelper({
+          eth: false,
+          wrappedOwner: true,
+          fuses: 0,
+          notOwned: true,
+        })
+        expect(getByTestId('tag-name.notOwned-false')).toBeInTheDocument()
+        expect(queryByText('name.manager')).not.toBeInTheDocument()
+        expect(queryByText('name.owner')).not.toBeInTheDocument()
       })
     })
   })

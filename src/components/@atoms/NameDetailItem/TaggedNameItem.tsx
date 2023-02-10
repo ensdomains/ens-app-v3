@@ -36,7 +36,9 @@ export const TaggedNameItem = ({
   selected,
   disabled = false,
   onClick,
+  notOwned,
 }: Omit<ReturnedName, 'labelName' | 'labelhash' | 'isMigrated' | 'parent' | 'type' | 'id'> & {
+  notOwned?: boolean
   network: number
   selected?: boolean
   mode?: 'select' | 'view'
@@ -49,7 +51,9 @@ export const TaggedNameItem = ({
 
   const tags: [enabled: boolean, translation: string][] = []
 
-  if (!fuses) {
+  if (notOwned) {
+    tags.push([false, 'name.notOwned'])
+  } else if (!fuses) {
     tags.push([!!isController, 'name.manager'])
     if (isNativeEthName) {
       tags.push([!!isRegistrant, 'name.owner'])
