@@ -80,7 +80,7 @@ export const checkETH2LDName = (isDotETH: boolean, labels: string[], canBeShort?
 
 export const checkETH2LDFromName = (name: string) => {
   const labels = name.split('.')
-  return checkETH2LDName(checkETHName(labels), labels)
+  return checkETH2LDName(checkETHName(labels), labels, true)
 }
 
 export const checkSubname = (name: string) => name.split('.').length > 2
