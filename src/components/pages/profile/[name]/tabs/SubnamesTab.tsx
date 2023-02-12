@@ -171,7 +171,7 @@ export const SubnamesTab = ({
               truncatedName={subname.truncatedName}
               network={network}
               mode="view"
-              isController={subname.owner?.id === address?.toLowerCase()}
+              isController={subname.owner === address?.toLowerCase()}
             />
           ))}
         </div>

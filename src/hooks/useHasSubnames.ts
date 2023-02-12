@@ -6,17 +6,7 @@ import { emptyAddress } from '../utils/constants'
 
 const FETCH_PAGE_SIZE = 50
 
-type Subnames = {
-  id: string
-  labelName: string | null
-  truncatedName?: string | undefined
-  labelhash: string
-  isMigrated: boolean
-  name: string
-  owner: {
-    id: string
-  }
-}[]
+type Subnames = Awaited<ReturnType<ReturnType<typeof useEns>['getSubnames']>>['subnames']
 
 export const useHasSubnames = (name: string) => {
   const { getSubnames, ready } = useEns()
@@ -46,7 +36,7 @@ export const useHasSubnames = (name: string) => {
           orderDirection: 'desc',
           pageSize: FETCH_PAGE_SIZE,
         })
-        const anyHasOwner = subnames.some((subname) => subname.owner.id !== emptyAddress)
+        const anyHasOwner = subnames.some((subname) => subname.owner !== emptyAddress)
         if (anyHasOwner) {
           return true
         }

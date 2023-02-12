@@ -31,9 +31,7 @@ const makeSubname = (_: any, i: number) => {
   const name = `${label}.eth`
   const nameHash = namehash(name)
   const labelHash = labelhash(label)
-  const owner = {
-    id: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
-  }
+  const owner = '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9'
 
   return {
     id: nameHash,
