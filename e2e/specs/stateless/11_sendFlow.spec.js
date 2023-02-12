@@ -116,7 +116,7 @@ describe('Send Flow', () => {
 
   describe('Wrapped subnames', () => {
     it('should allow namewrapper subname owner to send name', () => {
-      acceptMetamaskAccess(1)
+      acceptMetamaskAccess(1, true)
       cy.visit('/sub.wrapped.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
@@ -132,7 +132,6 @@ describe('Send Flow', () => {
       cy.findByTestId('owner-button-name-name.manager').should('have.text', '0x709...c79C8')
     })
 
-    // Propbably won't work since wrapper.eth ownership was changed earlier
     it('should allow parent owner to send name', () => {
       acceptMetamaskAccess(2)
       cy.visit('/test.wrapped.eth')
