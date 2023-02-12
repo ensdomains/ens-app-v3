@@ -36,6 +36,7 @@ import {
   RegistrationReducerDataItem,
   RegistrationStepData,
 } from '../../types'
+import { useMoonpayRegistration } from '../../useMoonpayRegistration'
 import TemporaryPremium from './TemporaryPremium'
 
 const StyledCard = styled(Card)(
@@ -343,6 +344,9 @@ type Props = {
   hasPrimaryName: boolean
   registrationData: RegistrationReducerDataItem
   moonpayTransactionStatus?: MoonpayTransactionStatus
+  initiateMoonpayRegistrationMutation: ReturnType<
+    typeof useMoonpayRegistration
+  >['initiateMoonpayRegistrationMutation']
 }
 
 const Pricing = ({
@@ -352,6 +356,7 @@ const Pricing = ({
   registrationData,
   resolverExists,
   moonpayTransactionStatus,
+  initiateMoonpayRegistrationMutation,
 }: Props) => {
   const { t } = useTranslation('register')
 
@@ -429,9 +434,10 @@ const Pricing = ({
   } else if (paymentMethodChoice === PaymentMethod.moonpay) {
     actionButton = (
       <Button
+        loading={initiateMoonpayRegistrationMutation.isLoading}
         data-testid="next-button"
         onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
-        disabled={!paymentMethodChoice}
+        disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isLoading}
       >
         {t('action.next', { ns: 'common' })}
       </Button>

@@ -108,7 +108,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const {
     moonpayUrl,
-    initiateMoonpayRegistration,
+    initiateMoonpayRegistrationMutation,
     hasMoonpayModal,
     setHasMoonpayModal,
     moonpayTransactionStatus,
@@ -120,7 +120,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     paymentMethodChoice,
   }: RegistrationStepData['pricing']) => {
     if (paymentMethodChoice === PaymentMethod.moonpay) {
-      initiateMoonpayRegistration()
+      initiateMoonpayRegistrationMutation.mutate()
       return
     }
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
@@ -247,6 +247,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   hasPrimaryName={!!primaryName}
                   registrationData={item}
                   moonpayTransactionStatus={moonpayTransactionStatus}
+                  initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}
                 />
               ),
               profile: (

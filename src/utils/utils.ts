@@ -104,6 +104,4 @@ export const deleteProperties = <T extends Record<string, any>, K extends keyof 
   return newObj
 }
 
-export const labelHashCalc = (label: string) => keccak256(toUtf8Bytes(label))
-
 export const getLabelFromName = (name: string = '') => name.split('.')[0]
