@@ -79,19 +79,33 @@ export const useProfileActions = ({
     }
 
     if (subnameAbilities.canDelete && subnameAbilities.canDeleteContract) {
-      actions.push({
-        label: t('tabs.profile.actions.deleteSubname.label'),
-        onClick: () =>
-          createTransactionFlow(`deleteSubname-${name}`, {
-            transactions: [
-              makeTransactionItem('deleteSubname', {
-                name,
-                contract: subnameAbilities.canDeleteContract!,
+      const action = subnameAbilities.isPCCBurned
+        ? {
+            label: t('tabs.profile.actions.deleteSubname.label'),
+            onClick: () => {
+              showDataInput(
+                `delete-emancipated-subname-warning-${name}`,
+                'DeleteEmancipatedSubnameWarning',
+                { name },
+              )
+            },
+            red: true,
+          }
+        : {
+            label: t('tabs.profile.actions.deleteSubname.label'),
+            onClick: () =>
+              createTransactionFlow(`deleteSubname-${name}`, {
+                transactions: [
+                  makeTransactionItem('deleteSubname', {
+                    name,
+                    contract: subnameAbilities.canDeleteContract!,
+                    method: subnameAbilities.canDeleteMethod,
+                  }),
+                ],
               }),
-            ],
-          }),
-        red: true,
-      })
+            red: true,
+          }
+      actions.push(action)
     }
 
     if (subnameAbilities.canDeleteError) {
@@ -115,6 +129,7 @@ export const useProfileActions = ({
     showDataInput,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
+    subnameAbilities.canDeleteMethod,
     subnameAbilities.canDeleteError,
     t,
   ])

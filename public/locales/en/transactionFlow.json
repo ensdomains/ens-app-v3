@@ -224,6 +224,10 @@
     "unknownLabels": {
       "title": "Confirm your name",
       "subtitle": "Some of the labels in your name aren't known. Please enter them to continue."
+    },
+    "deleteEmancipatedSubnameWarning": {
+      "title": "Subname is not recreatable",
+      "message": "This will give ownership of this name to no one. The parent of this name will not be able to recreate this name until it's permissions expire{{date}}. "
     }
   },
   "transaction": {

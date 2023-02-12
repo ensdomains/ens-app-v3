@@ -6,6 +6,7 @@ import { PublicENS, Transaction, TransactionDisplayItem } from '@app/types'
 type Data = {
   name: string
   contract: 'nameWrapper' | 'registry'
+  method?: 'setSubnodeOwner' | 'setRecord'
 }
 
 const displayItems = (
@@ -30,8 +31,9 @@ const displayItems = (
 
 const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
   return ens.deleteSubname.populateTransaction(data.name, {
-    signer,
     contract: data.contract,
+    method: data.method,
+    signer,
   })
 }
 export default {

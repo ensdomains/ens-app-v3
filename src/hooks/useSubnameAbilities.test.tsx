@@ -239,7 +239,11 @@ const groups = [
         ...wrappedSubname,
         hasSubnames: false,
         address: '0xParent',
-        abilities: makeResults({ canDelete: true, canDeleteContract: 'nameWrapper' }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setSubnodeOwner',
+        }),
       },
       {
         description:
@@ -250,6 +254,7 @@ const groups = [
         abilities: makeResults({
           canDelete: false,
           canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setSubnodeOwner',
           canDeleteError: 'errors.hasSubnames',
         }),
       },
@@ -258,7 +263,23 @@ const groups = [
         ...wrappedSubname,
         hasSubnames: false,
         address: '0xName',
-        abilities: makeResults({ canDelete: false }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
+        }),
+      },
+      {
+        description: 'should return canDelete is false if user is name owner and name has subnames',
+        ...wrappedSubname,
+        hasSubnames: true,
+        address: '0xName',
+        abilities: makeResults({
+          canDelete: false,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
+          canDeleteError: 'errors.hasSubnames',
+        }),
       },
     ],
   },
@@ -270,7 +291,12 @@ const groups = [
         ...wrappedSubnameWithPCCBurned,
         hasSubnames: false,
         address: '0xName',
-        abilities: makeResults({ canDelete: true, canDeleteContract: 'nameWrapper' }),
+        abilities: makeResults({
+          canDelete: true,
+          canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
+          isPCCBurned: true,
+        }),
       },
       {
         description: 'should return canDelete is false if user is name owner and name has subnames',
@@ -280,7 +306,9 @@ const groups = [
         abilities: makeResults({
           canDelete: false,
           canDeleteContract: 'nameWrapper',
+          canDeleteMethod: 'setRecord',
           canDeleteError: 'errors.hasSubnames',
+          isPCCBurned: true,
         }),
       },
       {

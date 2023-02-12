@@ -102,6 +102,7 @@ describe('Send Flow', () => {
       cy.visit('/wrapped.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
+      cy.findByText('make owner').should('be.visible')
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
       cy.findByText('Next').click()
       cy.wait(1000)
@@ -131,6 +132,7 @@ describe('Send Flow', () => {
       cy.findByTestId('owner-button-name-name.manager').should('have.text', '0x709...c79C8')
     })
 
+    // Propbably won't work since wrapper.eth ownership was changed earlier
     it('should allow parent owner to send name', () => {
       acceptMetamaskAccess(2)
       cy.visit('/test.wrapped.eth')

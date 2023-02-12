@@ -290,7 +290,8 @@
               "invalidCharacters": "Contains invalid characters",
               "mustUseLowercase": "Must use lowercase letters",
               "alreadyExists": "Name already exists",
-              "nameTooLong": "Name is too long"
+              "nameTooLong": "Name is too long",
+              "pccBurned": "Name is locked until {{date}}"
             }
           }
         }
