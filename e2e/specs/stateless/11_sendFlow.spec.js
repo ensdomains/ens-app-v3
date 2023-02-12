@@ -6,33 +6,6 @@ describe('Send Flow', () => {
     before(() => {
       acceptMetamaskAccess(2, true)
     })
-  
-  describe('Unwrapped name', () => {
-    it('should NOT show send button when parent is owner and not manager', () => {
-      cy.visit('/test123.eth')
-      cy.findByText('More').click({ force: true })
-      cy.wait(1000)
-      cy.findByText('Send').click()
-
-      cy.findByTestId('owner-checkbox').click()
-      cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
-      cy.wait(1000)
-      cy.findByText('Next').click()
-      cy.findByTestId('transaction-modal-confirm-button', { timeout: 5000 }).click()
-      cy.confirmMetamaskTransaction()
-      cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(10000)
-      cy.findByTestId('owner-button-name-name.manager', { timeout: 5000 }).should(
-        'have.text',
-        accountOneShort,
-      )
-
-      cy.wait(1000)
-      cy.visit('/sub.test123.eth')
-      cy.findByText('More').click({ force: true })
-      cy.findByText('Send').should('not.exist')
-    })
-  })
 
   describe('Unwrapped subnames', () => {
     it('Should allow unwrapped subname to be sent by owner (setOwner)', () => {
@@ -95,28 +68,36 @@ describe('Send Flow', () => {
     })
   })
 
-  describe('Wrapped name', () => {
-    it('Should allow namewrapper owner to send name', () => {
-      cy.visit('/wrapped.eth')
-      acceptMetamaskAccess(2)
-      cy.visit('/wrapped.eth')
+  describe('Unwrapped name', () => {
+    it('should NOT show send button when parent is owner and not manager', () => {
+      cy.visit('/test123.eth')
       cy.findByText('More').click({ force: true })
-      cy.findByText('Send').click()
-      cy.findByText('make owner').should('be.visible')
-      cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
-      cy.findByText('Next').click()
       cy.wait(1000)
-      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.findByText('Send').click()
+
+      cy.findByTestId('owner-checkbox').click()
+      cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
+      cy.wait(1000)
+      cy.findByText('Next').click()
+      cy.findByTestId('transaction-modal-confirm-button', { timeout: 5000 }).click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(10000)
-      cy.findByTestId('owner-button-name-name.owner').should('have.text', '0xf39...92266')
+      cy.findByTestId('owner-button-name-name.manager', { timeout: 5000 }).should(
+        'have.text',
+        accountOneShort,
+      )
+
+      cy.wait(1000)
+      cy.visit('/sub.test123.eth')
+      cy.findByText('More').click({ force: true })
+      cy.findByText('Send').should('not.exist')
     })
   })
 
   describe('Wrapped subnames', () => {
     it('should allow namewrapper subname owner to send name', () => {
-      acceptMetamaskAccess(1, true)
+      acceptMetamaskAccess(1)
       cy.visit('/sub.wrapped.eth')
       cy.findByText('More').click({ force: true })
       cy.findByText('Send').click()
@@ -137,7 +118,7 @@ describe('Send Flow', () => {
       cy.visit('/test.wrapped.eth')
       cy.findByTestId('more-tab').click()
       cy.findByTestId('button-send-ownership').click()
-      cy.findByText('Make owner').should('be.visible')
+      cy.findByText('Make manager').should('be.visible')
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
       cy.findByText('Next').click()
       cy.wait(1000)
@@ -203,6 +184,27 @@ describe('Send Flow', () => {
 
       cy.findByTestId('profile-tab').click()
       cy.findByTestId('owner-profile-button-name.owner').should('have.text', 'owner0x709...c79C8')
+    })
+  })
+
+  describe('Wrapped name', () => {
+    it('Should allow namewrapper owner to send name', () => {
+      cy.visit('/wrapped.eth')
+      acceptMetamaskAccess(2)
+      cy.visit('/wrapped.eth')
+      cy.findByText('More').click({ force: true })
+      cy.findByText('Send').click()
+      cy.findByText('Make owner').should('be.visible')
+      cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
+      cy.findByText('Next').click()
+      cy.wait(1000)
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(10000)
+      cy.findByTestId('owner-button-name-name.owner').should('have.text', '0xf39...92266')
+
+      
     })
   })
 })
