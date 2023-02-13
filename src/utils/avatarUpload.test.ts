@@ -37,7 +37,7 @@ describe('avatarUpload', () => {
       const max = 40
       const size = 176
       const cropSize = 176
-      const momentum = calcMomentum(n, max, size, cropSize)
+      const momentum = calcMomentum(n, max, size, cropSize, 4)
       expect(momentum).toBe(0)
     })
     it('should return negative momentum if positively outside bound', () => {
@@ -45,7 +45,7 @@ describe('avatarUpload', () => {
       const max = 40
       const size = 176
       const cropSize = 176
-      const momentum = calcMomentum(n, max, size, cropSize)
+      const momentum = calcMomentum(n, max, size, cropSize, 4)
       expect(momentum).toBe(-96)
     })
     it('should return positive momentum if negatively outside bound', () => {
@@ -53,7 +53,7 @@ describe('avatarUpload', () => {
       const max = 40
       const size = 176
       const cropSize = 176
-      const momentum = calcMomentum(n, max, size, cropSize)
+      const momentum = calcMomentum(n, max, size, cropSize, 4)
       expect(momentum).toBe(96)
     })
     it('should provide exact distance if within resolution boundary', () => {
@@ -61,7 +61,7 @@ describe('avatarUpload', () => {
       const max = 40
       const size = 176
       const cropSize = 176
-      const momentum = calcMomentum(n, max, size, cropSize)
+      const momentum = calcMomentum(n, max, size, cropSize, 4)
       expect(momentum).toBe(-2.5)
     })
   })
