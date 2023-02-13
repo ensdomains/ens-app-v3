@@ -18,6 +18,7 @@ const Card = styled.div(
     gap: ${theme.space['4']};
     max-height: 85vh;
     overflow-y: auto;
+    overflow-x: hidden;
 
     ${mq.sm.min(css`
       width: initial;

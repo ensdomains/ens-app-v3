@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -112,6 +112,8 @@ const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
   const commitTxFlow = getLatestTransaction(commitKey)
   const registerTxFlow = getLatestTransaction(registerKey)
 
+  const [setAvatarSrc] = useState<string | undefined>()
+
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
     hash: commitTxFlow?.hash,
   })
@@ -121,6 +123,11 @@ const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
     isLoading: registerLoading,
   } = useTransactionResponseReceipt(registerTxFlow?.hash || '')
   const isLoading = commitLoading || registerLoading
+
+  useEffect(() => {
+    const storage = localStorage.getItem(`avatar-src-${name}`)
+    if (storage) setAvatarSrc(storage)
+  }, [name])
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
@@ -180,7 +187,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback, isMoonpayFl
         initialVelocityY={20}
       />
       <NFTContainer>
-        <NFTTemplate backgroundImage={undefined} isNormalised name={name} />
+        <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
       </NFTContainer>
       <TitleContainer>
         <Title>{t('steps.complete.heading')}</Title>
