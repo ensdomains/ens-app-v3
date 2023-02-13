@@ -10,8 +10,8 @@ function makeid(length) {
   return result
 }
 
-describe('Moonpay regsitration', () => {
-  it('should open up moonpay flow if selected', () => {
+describe.skip('Moonpay regsitration', () => {
+  it.skip('should open up moonpay flow if selected', () => {
     cy.changeMetamaskNetwork('goerli')
 
     acceptMetamaskAccess()
@@ -26,6 +26,7 @@ describe('Moonpay regsitration', () => {
           cy.visit(src)
           cy.get('[data-testid="submitButton"]').click()
           //Have to stop here because moonpay flow requires email confirmation
+          //Also need to add this to synpress stateful config:     experimentalSessionAndOrigin: true,
         })
       })
   })
