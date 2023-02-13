@@ -1,6 +1,6 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import dynamic from 'next/dynamic'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -101,7 +101,10 @@ const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
 
-const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
+const useEthInvoice = (
+  name: string,
+  isMoonpayFlow: boolean,
+): { InvoiceFilled?: React.ReactNode; avatarSrc?: string } => {
   const { t } = useTranslation('register')
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
@@ -112,7 +115,7 @@ const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
   const commitTxFlow = getLatestTransaction(commitKey)
   const registerTxFlow = getLatestTransaction(registerKey)
 
-  const [setAvatarSrc] = useState<string | undefined>()
+  const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
     hash: commitTxFlow?.hash,
@@ -147,9 +150,9 @@ const useEthInvoice = (name: string, isMoonpayFlow: boolean) => {
     )
   }, [t, registerResponse, commitReceipt, registerReceipt, isLoading])
 
-  if (isMoonpayFlow) return null
+  if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
 
-  return InvoiceFilled
+  return { InvoiceFilled, avatarSrc }
 }
 
 type Props = {
@@ -161,7 +164,7 @@ type Props = {
 const Complete = ({ nameDetails: { normalisedName: name }, callback, isMoonpayFlow }: Props) => {
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
-  const InvoiceFilled = useEthInvoice(name, isMoonpayFlow)
+  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, isMoonpayFlow)
 
   return (
     <StyledCard>
