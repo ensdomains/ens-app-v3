@@ -72,7 +72,7 @@ export const getRegistrationStatus = ({
     return 'available'
   }
   if (ownerData && ownerData.owner !== emptyAddress) {
-    if (!isDotETH) {
+    if (labels.length === 2) {
       return 'imported'
     }
     return 'owned'
