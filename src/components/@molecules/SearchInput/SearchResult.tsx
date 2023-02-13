@@ -186,6 +186,7 @@ const PremiumTag = styled(StyledTag)(
 const StatusTag = ({ status }: { status: RegistrationStatus }) => {
   const { t } = useTranslation('common')
   switch (status) {
+    case 'owned':
     case 'imported':
     case 'registered':
       return <StyledTag>{t(`search.status.${status}`)}</StyledTag>
