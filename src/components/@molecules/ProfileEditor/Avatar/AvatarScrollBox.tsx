@@ -1,10 +1,15 @@
 import styled, { css } from 'styled-components'
 
-import { ScrollBox } from '@ensdomains/thorin'
+import { mq } from '@ensdomains/thorin'
 
-const AvatarScrollBox = styled(ScrollBox)(
+const AvatarScrollBox = styled.div(
   ({ theme }) => css`
-    padding: 0 ${theme.space['4']};
+    height: 100%;
+    width: 100%;
+    overflow-y: auto;
+    ${mq.sm.min(css`
+      padding: 0 ${theme.space['4']};
+    `)}
   `,
 )
 

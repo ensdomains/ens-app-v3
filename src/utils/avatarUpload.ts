@@ -1,5 +1,4 @@
 export const imagePercent = 0.6875
-export const resolutionMultiplier = 4
 export const maxSpeed = 96
 
 export const getVars = (canvas: HTMLCanvasElement) => {
@@ -35,11 +34,18 @@ export const distanceFromEdge = (a: number, max: number, imgSize: number, cropSi
   return Math.max(max - (a + imgSize) + cropSize, 0)
 }
 
-export const calcMomentum = (a: number, max: number, imgSize: number, crpSz: number) => {
+export const calcMomentum = (
+  a: number,
+  max: number,
+  imgSize: number,
+  crpSz: number,
+  resolutionMultiplier: number,
+) => {
   let momentum = 0
   const distance = distanceFromEdge(a, max, imgSize, crpSz)
   if (distance > 0 || distance < 0) {
-    if (distance <= resolutionMultiplier * 2 && distance >= -resolutionMultiplier * 2) {
+    const snapDistance = resolutionMultiplier ** 2
+    if (distance <= snapDistance && distance >= -snapDistance) {
       momentum = distance
     } else {
       momentum = Math.round(Math.min(Math.max(distance / 16, -maxSpeed), maxSpeed))

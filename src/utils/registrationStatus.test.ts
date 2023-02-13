@@ -126,14 +126,32 @@ describe('getRegistrationStatus', () => {
     expect(result).toBe('notOwned')
   })
 
-  it('should return registered if name has an owner', async () => {
+  it('should return imported if DNS name has an owner', async () => {
     const result = getRegistrationStatus({
       name: 'example.com',
       ownerData,
       wrapperData,
       supportedTLD: true,
     })
-    expect(result).toBe('registered')
+    expect(result).toBe('imported')
+  })
+  it('should return owned if DNS name subname has an owner', async () => {
+    const result = getRegistrationStatus({
+      name: 'test.example.com',
+      ownerData,
+      wrapperData,
+      supportedTLD: true,
+    })
+    expect(result).toBe('owned')
+  })
+  it('should return owned if name has an owner', async () => {
+    const result = getRegistrationStatus({
+      name: 'test.example.eth',
+      ownerData,
+      wrapperData,
+      supportedTLD: true,
+    })
+    expect(result).toBe('owned')
   })
 
   it('should return not supported tld if supportedTLD is falsy', () => {
