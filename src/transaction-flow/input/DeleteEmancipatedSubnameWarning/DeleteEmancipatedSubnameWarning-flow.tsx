@@ -7,8 +7,9 @@ import { useGetWrapperData } from '@app/hooks/useGetWrapperData'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { makeTransactionItem } from '../../transaction/index'
+import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
 
-const MessageContainer = styled.div(() => [
+const MessageContainer = styled(CenterAlignedTypography)(() => [
   css``,
   mq.sm.min(css`
     width: 100vw;
@@ -53,7 +54,7 @@ const DeleteEmancipatedSubnameWarning = ({ data, dispatch, onDismiss }: Props) =
 
   return (
     <>
-      <Dialog.Heading title={t('input.deleteEmancipatedSubnameWarning.title')} alert="error" />
+      <Dialog.Heading title={t('input.deleteEmancipatedSubnameWarning.title')} alert="warning" />
       <MessageContainer>
         {t('input.deleteEmancipatedSubnameWarning.message', { date: expiryLabel })}
       </MessageContainer>

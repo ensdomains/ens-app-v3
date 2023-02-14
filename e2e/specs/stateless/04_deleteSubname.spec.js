@@ -98,7 +98,7 @@ describe('Delete subnames', () => {
       cy.get('button').contains('Delete subname', {timeout: 10000}).click()
 
       // Delete emancipated name warning
-      cy.findByText('Subname is not recreatable').should('be.visible')
+      cy.findByText('This subname cannot be recreated').should('be.visible')
       cy.findByTestId('delete-emancipated-subname-button').should('not.be.disabled').click()
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
