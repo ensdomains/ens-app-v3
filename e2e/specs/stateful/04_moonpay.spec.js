@@ -10,7 +10,7 @@ function makeid(length) {
   return result
 }
 
-describe.skip('Moonpay regsitration', () => {
+describe.skip('Moonpay registration', () => {
   it.skip('should open up moonpay flow if selected', () => {
     cy.changeMetamaskNetwork('goerli')
 
