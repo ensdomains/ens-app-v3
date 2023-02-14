@@ -4,6 +4,7 @@ import TransactionLoader from '../TransactionLoader'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
 import type { Props as BurnFusesProps } from './BurnFuses/BurnFuses-flow'
 import type { Props as CreateSubnameProps } from './CreateSubname-flow'
+import type { Props as DeleteEmancipatedSubnameWarningProps } from './DeleteEmancipatedSubnameWarning/DeleteEmancipatedSubnameWarning-flow'
 import type { Props as EditResolverProps } from './EditResolver/EditResolver-flow'
 import type { Props as ExtendNamesProps } from './ExtendNames/ExtendNames-flow'
 import type { Props as ProfileEditorProps } from './ProfileEditor/ProfileEditor-flow'
@@ -38,6 +39,9 @@ const RevokePermissions = dynamicHelper<RevokePermissionsProps>(
   'RevokePermissions/RevokePermissions',
 )
 const UnknownLabels = dynamicHelper<UnknownLabelsProps>('UnknownLabels/UnknownLabels')
+const DeleteEmancipatedSubnameWarning = dynamicHelper<DeleteEmancipatedSubnameWarningProps>(
+  'DeleteEmancipatedSubnameWarning/DeleteEmancipatedSubnameWarning',
+)
 
 export const DataInputComponents = {
   EditResolver,
@@ -51,6 +55,7 @@ export const DataInputComponents = {
   SendName,
   RevokePermissions,
   UnknownLabels,
+  DeleteEmancipatedSubnameWarning,
 }
 
 export type DataInputName = keyof typeof DataInputComponents

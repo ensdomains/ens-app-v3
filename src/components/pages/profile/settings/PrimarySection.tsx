@@ -32,7 +32,12 @@ export const PrimarySection = () => {
 
   const { name, loading: primaryLoading } = usePrimary(address, !address)
 
-  const { expiryDate, truncatedName, isLoading: basicLoading } = useBasicName(name, true)
+  const {
+    expiryDate,
+    truncatedName,
+    isLoading: basicLoading,
+    wrapperData,
+  } = useBasicName(name, true)
 
   const { canSendOwner, canSendManager } = useSelfAbilities(address, name)
 
@@ -63,6 +68,7 @@ export const PrimarySection = () => {
             isController={canSendManager}
             isRegistrant={canSendOwner}
             truncatedName={truncatedName}
+            fuses={wrapperData}
           />
         </ItemWrapper>
       ) : (
