@@ -11,6 +11,15 @@ import { ReturnedENS } from '@app/types'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
 
+type Action = {
+  onClick: () => void
+  label: string
+  red?: boolean
+  disabled?: boolean
+  tooltipContent?: string
+  skip2LDEth?: boolean
+}
+
 type Props = {
   name: string
   address: string | undefined
@@ -31,7 +40,7 @@ export const useProfileActions = ({
   const { t } = useTranslation('profile')
 
   const profileActions = useMemo(() => {
-    const actions: { onClick: () => void; red?: boolean; label: string; disabled?: boolean }[] = []
+    const actions: Action[] = []
     if (!address) return actions
     if ((selfAbilities.canEdit || profile?.address === address) && primaryName !== name) {
       const setAsPrimaryTransactions: GenericTransaction[] = [
@@ -91,24 +100,16 @@ export const useProfileActions = ({
             ],
           }),
         red: true,
+        skip2LDEth: true,
       })
-    }
-
-    if (subnameAbilities.canDeleteError) {
+    } else if (subnameAbilities.canDeleteError) {
       actions.push({
         label: t('tabs.profile.actions.deleteSubname.label'),
         onClick: () => {},
         disabled: true,
         red: true,
-      })
-    }
-
-    if (!subnameAbilities.canDelete) {
-      actions.push({
-        label: t('tabs.profile.actions.deleteSubname.label'),
-        onClick: () => null,
-        red: true,
-        disabled: true
+        skip2LDEth: true,
+        tooltipContent: t('errors.permissionRevoked'),
       })
     }
 

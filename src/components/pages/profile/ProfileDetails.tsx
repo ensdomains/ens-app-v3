@@ -117,8 +117,11 @@ const Actions = styled.div(
       & > .leading {
         flex-grow: 1;
         order: -1;
-        & > button {
+        & > div {
           width: min-content;
+          & > button {
+            width: min-content;
+          }
         }
       }
 
@@ -127,19 +130,20 @@ const Actions = styled.div(
   `,
 )
 
-const getAction = (action, is2LDEth) => {
-  if (action.disabled) {
-    if (is2LDEth) return null
+type Action = NonNullable<ReturnType<typeof useProfileActions>['profileActions']>[number]
+const getAction = (action: Action, is2LDEth: boolean) => {
+  if (action.skip2LDEth && is2LDEth) return null
+  if (action.tooltipContent) {
     return (
       <DisabledButtonWithTooltip
-        {...{
-          buttonId: 'send-name-disabled-button',
-          buttonText: 'Delete subname',
-          mobileWidth: 150,
-          buttonWidth: 150,
-          mobileButtonWidth: 'initial',
-          mobilePlacement: 'top',
-        }}
+        buttonId="delete-subname-disabled-button"
+        content={action.tooltipContent}
+        buttonText={action.label}
+        mobileWidth={150}
+        mobileButtonWidth="initial"
+        buttonWidth="initial"
+        mobilePlacement="top"
+        placement="right"
       />
     )
   }

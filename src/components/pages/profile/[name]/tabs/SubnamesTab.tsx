@@ -210,12 +210,12 @@ export const SubnamesTab = ({
           ) : (
             <DisabledButtonWithTooltip
               {...{
+                size: 'medium',
                 buttonId: 'add-subname-disabled-button',
                 content: t('errors.permissionRevoked'),
                 buttonText: t('details.tabs.subnames.addSubname.action'),
-                mobileWidth: 150,
+                mobileWidth: 200,
                 buttonWidth: 'initial',
-                mobileButtonWidth: 'initial',
                 mobilePlacement: 'top',
                 prefix: <PlusPrefix as={PlusSVG} />,
               }}

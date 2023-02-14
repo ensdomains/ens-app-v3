@@ -7,17 +7,18 @@ import { ReactNodeNoStrings } from '@ensdomains/thorin/dist/types/types/index'
 import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 
 type Placement = NonNullable<ComponentProps<typeof Tooltip>['placement']>
-
+type Size = ComponentProps<typeof Button>['size']
 const ButtonContainer = styled.div<{ $buttonWidth?: string; $mobileButtonWidth?: string }>(
   ({ $buttonWidth, $mobileButtonWidth }) => css`
-    width: ${$mobileButtonWidth ? `${$mobileButtonWidth}px` : '100%'};
+    width: ${$mobileButtonWidth ? `${$mobileButtonWidth}` : '100%'};
     ${mq.md.min(css`
-      width: ${$buttonWidth ? `${$buttonWidth}px` : '100%'};
+      width: ${$buttonWidth ? `${$buttonWidth}` : '100%'};
     `)}
   `,
 )
 
 export const DisabledButtonWithTooltip = ({
+  size = 'small',
   content,
   buttonId,
   buttonText = 'Edit',
@@ -29,6 +30,7 @@ export const DisabledButtonWithTooltip = ({
   mobileButtonWidth,
   prefix,
 }: {
+  size?: Size
   content: string
   buttonId: string
   buttonText?: string
@@ -53,13 +55,12 @@ export const DisabledButtonWithTooltip = ({
           onShowCallback: onSeen,
           width,
           mobileWidth,
-          open: true,
         }}
       >
         <ButtonContainer {...{ $buttonWidth: buttonWidth, $mobileButtonWidth: mobileButtonWidth }}>
           <Button
             id={buttonId}
-            size="small"
+            size={size}
             shouldShowTooltipIndicator={shouldShowTooltipIndicator}
             colorStyle="disabled"
             prefix={prefix}
