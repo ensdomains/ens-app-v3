@@ -59,7 +59,7 @@ type Props = {
 
 const StyledDialog = styled(Dialog)(
   ({ theme }) => css`
-    height: 80vh;
+    height: min(640px, 80vh);
     & > div {
       padding: 0;
 
@@ -85,12 +85,10 @@ const StyledDialog = styled(Dialog)(
     ${mq.sm.min(css`
       max-width: 30rem;
       width: 90vw;
-      height: min(640px, 80vh);
       & > div {
         max-width: 30rem;
         width: 90vw;
         padding: 0;
-        margin-bottom: ${theme.space['4']};
 
         & > div {
           max-width: 30rem;
