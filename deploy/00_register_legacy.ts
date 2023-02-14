@@ -103,6 +103,12 @@ const names: Name[] = [
     label: 'name-with-premium',
     namedOwner: 'owner',
     namedAddr: 'owner',
+    customDuration: 3283200,
+  },
+  {
+    label: 'expired',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
     customDuration: 2419200,
   },
   {

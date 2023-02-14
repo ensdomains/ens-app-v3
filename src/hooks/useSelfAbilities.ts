@@ -154,10 +154,6 @@ const contractFunction: ContractFunctionInfo = {
         },
       },
       parentOwner: {
-        sendOwner: {
-          contract: 'nameWrapper',
-          method: 'setSubnodeOwner',
-        },
         sendManager: {
           contract: 'nameWrapper',
           method: 'setSubnodeOwner',

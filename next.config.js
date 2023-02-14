@@ -54,6 +54,10 @@ let nextConfig = {
         destination: '/register?name=:name',
       },
       {
+        source: '/:name/expired-profile',
+        destination: '/profile?name=:name&expired=true',
+      },
+      {
         source: '/:name/import',
         destination: '/import?name=:name',
       },
@@ -64,6 +68,10 @@ let nextConfig = {
       {
         source: '/tld/:tld/register',
         destination: '/register?name=:tld',
+      },
+      {
+        source: '/tld/:tld/expired-profile',
+        destination: '/profile?name=:tld&expired=true',
       },
       {
         source: '/tld/:tld/import',

@@ -36,6 +36,11 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
   let rewrite = false
   let callback: ((res: Response) => Response) | null = null
 
+  // exception for static files
+  if (paths.length === 2 && paths[1].match(/^.*\.(png|xml|ico|json|webmanifest|txt|svg)$/i)) {
+    return next()
+  }
+
   if (paths[1].match(/^0x[a-fA-F0-9]{40}$/)) {
     url.pathname = '/address'
     url.searchParams.set('address', paths[1])
@@ -53,6 +58,11 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
     url.pathname = `/${(isTLD ? paths[3] : paths[2]) || 'profile'}`
     url.searchParams.set('name', isTLD ? paths[2] : paths[1])
     rewrite = true
+
+    if (url.pathname === '/expired-profile') {
+      url.pathname = '/profile'
+      url.searchParams.set('expired', 'true')
+    }
 
     if (url.pathname === '/profile') {
       const decodedName = decodeURIComponent(isTLD ? paths[2] : paths[1])

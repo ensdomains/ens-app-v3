@@ -186,30 +186,22 @@ const PremiumTag = styled(StyledTag)(
 const StatusTag = ({ status }: { status: RegistrationStatus }) => {
   const { t } = useTranslation('common')
   switch (status) {
-    case 'registered': {
+    case 'owned':
+    case 'imported':
+    case 'registered':
       return <StyledTag>{t(`search.status.${status}`)}</StyledTag>
-    }
-    case 'gracePeriod': {
+    case 'gracePeriod':
       return <GracePeriodTag>{t(`search.status.${status}`)}</GracePeriodTag>
-    }
-    case 'premium': {
+    case 'premium':
       return <PremiumTag>{t(`search.status.${status}`)}</PremiumTag>
-    }
-    case 'available': {
+    case 'available':
       return <StyledTag colorStyle="greenSecondary">{t(`search.status.${status}`)}</StyledTag>
-    }
-    case 'notOwned': {
+    case 'notOwned':
+    case 'notImported':
       return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
-    }
-    case 'notImported': {
-      return <StyledTag colorStyle="blueSecondary">{t(`search.status.${status}`)}</StyledTag>
-    }
-    case 'short': {
+    case 'short':
+    default:
       return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
-    }
-    default: {
-      return <StyledTag colorStyle="redSecondary">{t(`search.status.${status}`)}</StyledTag>
-    }
   }
 }
 
@@ -254,7 +246,7 @@ const NameResultItem = ({ name }: { name: string }) => {
   const network = useChainId()
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
-  const { registrationStatus } = useBasicName(name)
+  const { registrationStatus, isLoading } = useBasicName(name)
 
   return (
     <>
@@ -266,7 +258,7 @@ const NameResultItem = ({ name }: { name: string }) => {
           <Typography weight="bold">{name}</Typography>
         </TextWrapper>
       </LeadingSearchItem>
-      {registrationStatus ? (
+      {!isLoading && registrationStatus ? (
         <StatusTag status={registrationStatus} />
       ) : (
         <SpinnerWrapper>

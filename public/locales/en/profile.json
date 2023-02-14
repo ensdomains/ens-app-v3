@@ -12,6 +12,12 @@
   "editProfile": "Edit Profile",
   "ownership": "Ownership",
   "viewDetails": "View Details",
+  "banner": {
+    "available": {
+      "title": "{{name}} is available",
+      "description": "This name expired on <strong>{{date}}</strong>. Click here to view the registration page."
+    }
+  },
   "tabs": {
     "profile": {
       "name": "Profile",
@@ -30,6 +36,10 @@
         "editProfile": {
           "label": "Edit profile"
         }
+      },
+      "warnings": {
+        "wrappedDNS": "DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.",
+        "homoglyph": "This name contains non-ASCII characters. There may be characters that look identical or very similar to other characters, which could be used to deceive readers. <a>Learn more about homoglyphs</a>"
       }
     },
     "records": {
@@ -109,7 +119,8 @@
             },
             "cannotExtendExpiry": {
               "label": "Cannot extend expiry",
-              "description": "This names permission expiry ({{date}}) cannot be extended by the manager."
+              "description": "This names permission expiry cannot be extended by the manager.",
+              "description_date": "This names permission expiry ({{date}}) cannot be extended by the manager."
             }
         },
         "manager": "manager",
@@ -280,7 +291,8 @@
               "invalidCharacters": "Contains invalid characters",
               "mustUseLowercase": "Must use lowercase letters",
               "alreadyExists": "Name already exists",
-              "nameTooLong": "Name is too long"
+              "nameTooLong": "Name is too long",
+              "pccBurned": "Name is locked until {{date}}"
             }
           }
         }

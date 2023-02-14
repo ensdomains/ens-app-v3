@@ -865,10 +865,7 @@ describe('getFunctionCallDetails', () => {
           address: account,
           name: subname,
         })
-        expect(result.sendOwner).toEqual({
-          contract: 'nameWrapper',
-          method: 'setSubnodeOwner',
-        })
+        expect(result.sendOwner).toBeUndefined()
       })
       it('for subname manager who wants to send manager', () => {
         const { basicNameData, parentBasicNameData } =
@@ -1021,7 +1018,7 @@ describe('getPermittedActions', () => {
         name: subname,
       })
       expect(result).toEqual({
-        canSendOwner: true,
+        canSendOwner: false,
         canSendManager: true,
       })
     })

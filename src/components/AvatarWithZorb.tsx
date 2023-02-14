@@ -37,6 +37,7 @@ const Wrapper = styled.div<{ $size?: QuerySpace }>(
 type BaseProps = {
   network: number
   size?: QuerySpace
+  noCache?: boolean
 }
 
 type Name = {
@@ -52,9 +53,10 @@ export const NameAvatar = ({
   name,
   network,
   size,
+  noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Required<Name>) => {
-  const { avatar } = useAvatar(name, network)
+  const { avatar } = useAvatar(name, network, noCache)
   const zorb = useZorb(name, 'name')
   return (
     <Wrapper $size={size}>
@@ -69,9 +71,10 @@ export const AvatarWithZorb = ({
   address,
   network,
   size,
+  noCache = false,
   ...props
 }: ComponentProps<typeof Avatar> & BaseProps & Address & Name) => {
-  const { avatar } = useAvatar(name, network)
+  const { avatar } = useAvatar(name, network, noCache)
   const zorb = useZorb(address || name || '', address ? 'address' : 'name')
   return (
     <Wrapper $size={size}>

@@ -3,14 +3,14 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Slider } from '@ensdomains/thorin'
+import { Button, Dialog, Slider, mq } from '@ensdomains/thorin'
 
 import CropBorderSVG from '@app/assets/CropBorder.svg'
 import CropFrameSVG from '@app/assets/CropFrame.svg'
 import MinusCircleSVG from '@app/assets/MinusCircle.svg'
 import PlusCircleSVG from '@app/assets/PlusCircle.svg'
 import useDebouncedCallback from '@app/hooks/useDebouncedCallback'
-import { calcMomentum, getVars, resolutionMultiplier } from '@app/utils/avatarUpload'
+import { calcMomentum, getVars } from '@app/utils/avatarUpload'
 
 import AvatarScrollBox from './AvatarScrollBox'
 
@@ -26,13 +26,21 @@ const EditImageContainer = styled.div(
   `,
 )
 
+const ImageWrapper = styled.div(
+  () => css`
+    width: 100%;
+    height: max-content;
+  `,
+)
+
 const ImageContainer = styled.div(
   ({ theme }) => css`
-    position: relative;
+    margin: 0 auto;
     aspect-ratio: 1;
-    width: ${theme.space.full};
-    height: ${theme.space.full};
-    max-width: ${theme.space['112']};
+    position: relative;
+    width: 100%;
+    height: 100%;
+    max-width: ${theme.space['96']};
     border-radius: ${theme.radii.extraLarge};
     overflow: hidden;
   `,
@@ -42,6 +50,7 @@ const ImageCropBorder = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     height: ${theme.space.full};
+    max-width: ${theme.space['96']};
     color: ${theme.colors.background};
     position: absolute;
     pointer-events: none;
@@ -52,6 +61,7 @@ const ImageCropFrame = styled.div(
   ({ theme }) => css`
     width: ${theme.space.full};
     height: ${theme.space.full};
+    max-width: ${theme.space['96']};
     color: ${theme.colors.accent};
     position: absolute;
     pointer-events: none;
@@ -75,7 +85,7 @@ const SliderContainer = styled.div(
     justify-content: stretch;
     gap: ${theme.space['4']};
 
-    padding: ${theme.space['2']} ${theme.space['8']};
+    padding: ${theme.space['2']} 0;
     width: ${theme.space.full};
 
     & > svg {
@@ -83,6 +93,10 @@ const SliderContainer = styled.div(
       height: ${theme.space['6']};
       opacity: 0.15;
     }
+
+    ${mq.sm.min(css`
+      padding: ${theme.space['2']} ${theme.space['8']};
+    `)}
   `,
 )
 
@@ -108,6 +122,7 @@ export const CropComponent = ({
   const { t } = useTranslation('transactionFlow')
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const imageRef = useRef(new Image())
+  const resolutionMultiplierRef = useRef(1)
 
   const coordinatesRef = useRef({
     x: 0,
@@ -138,6 +153,7 @@ export const CropComponent = ({
   }
 
   const draw = useCallback(() => {
+    const resolutionMultiplier = resolutionMultiplierRef.current
     const image = imageRef.current
     const canvas = canvasRef.current
     if (!canvas) return
@@ -163,8 +179,8 @@ export const CropComponent = ({
       moving,
     }
     if (!moving) {
-      coordinatesRef.current.mx = calcMomentum(x, max, w, cropSize)
-      coordinatesRef.current.my = calcMomentum(y, max, h, cropSize)
+      coordinatesRef.current.mx = calcMomentum(x, max, w, cropSize, resolutionMultiplier)
+      coordinatesRef.current.my = calcMomentum(y, max, h, cropSize, resolutionMultiplier)
       if (coordinatesRef.current.mx !== 0 || coordinatesRef.current.my !== 0) {
         window.requestAnimationFrame(draw)
       }
@@ -243,6 +259,7 @@ export const CropComponent = ({
       if (!coordinatesRef.current.moving) return
       e.preventDefault()
 
+      const resolutionMultiplier = resolutionMultiplierRef.current
       const { movementX, movementY } = e
       coordinatesRef.current = {
         ...coordinatesRef.current,
@@ -287,6 +304,7 @@ export const CropComponent = ({
         const { clientX: ogX, clientY: ogY } = tpCache[pointInxs[0]]
         const { clientX: nx, clientY: ny } = touch1
         const { x, y } = coordinatesRef.current
+        const resolutionMultiplier = resolutionMultiplierRef.current
         const mx = (ogX - nx) * -1 * resolutionMultiplier
         const my = (ogY - ny) * -1 * resolutionMultiplier
         coordinatesRef.current = {
@@ -303,32 +321,29 @@ export const CropComponent = ({
     [draw, setZoom],
   )
 
-  const handleResize: ResizeObserverCallback = useCallback(
-    (entries) => {
-      const { width, height } = entries[0].contentRect
-      const canvas = canvasRef.current
-      if (canvas && canvas.width !== width * resolutionMultiplier) {
-        canvas.width = width * resolutionMultiplier
-        canvas.height = height * resolutionMultiplier
-        draw()
-      }
-    },
-    [draw],
-  )
+  const handleWindowResize = useCallback(() => {
+    const adjustedWidth = window.innerWidth / 3 - 25
+    const adjustedHeight = window.innerHeight / 2
+    const minBound = Math.max(Math.min(adjustedWidth, adjustedHeight, 384), 208)
+    const canvas = canvasRef.current
+    if (canvas) {
+      const parent = canvas.parentElement!
+      parent.style.height =
+        parent.style.width =
+        canvas.style.height =
+        canvas.style.width =
+          `${minBound}px`
+      parent.style.width = `${minBound}px`
+      resolutionMultiplierRef.current = canvas.width / minBound
+      draw()
+    }
+  }, [draw])
 
   useEffect(() => {
-    const canvas = canvasRef.current
-    let observer: ResizeObserver
-    if (canvas) {
-      observer = new ResizeObserver(handleResize)
-      observer.observe(canvas)
+    if (canvasRef.current) {
+      handleWindowResize()
     }
-    return () => {
-      if (observer) {
-        observer.disconnect()
-      }
-    }
-  }, [canvasRef, handleResize])
+  }, [canvasRef, handleWindowResize])
 
   useEffect(() => {
     const image = imageRef.current
@@ -347,6 +362,7 @@ export const CropComponent = ({
     window.addEventListener('touchmove', handleTouchMove, { passive: false })
     window.addEventListener('touchend', handleMoveEnd, { passive: false })
     window.addEventListener('touchcancel', handleMoveEnd, { passive: false })
+    window.addEventListener('resize', handleWindowResize)
     return () => {
       canvas?.removeEventListener('mousedown', handleMoveStart)
       window.removeEventListener('mousemove', handleMouseMove)
@@ -355,8 +371,9 @@ export const CropComponent = ({
       window.removeEventListener('touchmove', handleTouchMove)
       window.removeEventListener('touchend', handleMoveEnd)
       window.removeEventListener('touchcancel', handleMoveEnd)
+      window.removeEventListener('resize', handleWindowResize)
     }
-  }, [handleMouseMove, handleMoveEnd, handleTouchMove])
+  }, [handleMouseMove, handleMoveEnd, handleTouchMove, handleWindowResize])
 
   useEffect(() => {
     if (zoom) {
@@ -379,13 +396,15 @@ export const CropComponent = ({
       <Dialog.Heading title={t('input.profileEditor.tabs.avatar.image.title')} />
       <AvatarScrollBox>
         <EditImageContainer data-testid="edit-image-container">
-          <ImageContainer>
-            <ImageCropBorder as={CropBorderSVG} />
-            <ImageCropFrame as={CropFrameSVG} />
-            <StyledCanvas ref={canvasRef} />
-          </ImageContainer>
+          <ImageWrapper>
+            <ImageContainer>
+              <ImageCropBorder as={CropBorderSVG} />
+              <ImageCropFrame as={CropFrameSVG} />
+              <StyledCanvas width={1024} height={1024} ref={canvasRef} />
+            </ImageContainer>
+          </ImageWrapper>
           <SliderContainer>
-            <PlusCircleSVG />
+            <MinusCircleSVG />
             <Slider
               label="zoom"
               hideLabel
@@ -394,7 +413,7 @@ export const CropComponent = ({
               min={100}
               max={200}
             />
-            <MinusCircleSVG />
+            <PlusCircleSVG />
           </SliderContainer>
         </EditImageContainer>
       </AvatarScrollBox>

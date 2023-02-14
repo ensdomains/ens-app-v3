@@ -220,4 +220,15 @@ describe('Profile', () => {
       timeout: 25000,
     }).should('contain.text', 'wrapmebaby.eth')
   })
+
+  it('should show wrapped DNS name warning', () => {
+    cy.visit('/wrappeddnsname.com')
+    cy.wait(5000)
+    cy.findByTestId('profile-snippet', {
+      timeout: 25000,
+    }).should(
+      'include.text',
+      'DNS names can be reclaimed by the DNS owner at any time. Do not purchase DNS names.',
+    )
+  })
 })

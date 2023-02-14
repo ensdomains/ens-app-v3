@@ -12,6 +12,8 @@ export type RegistrationStatus =
   | 'premium'
   | 'available'
   | 'short'
+  | 'imported'
+  | 'owned'
   | 'notImported'
   | 'notOwned'
   | 'unsupportedTLD'
@@ -70,7 +72,10 @@ export const getRegistrationStatus = ({
     return 'available'
   }
   if (ownerData && ownerData.owner !== emptyAddress) {
-    return 'registered'
+    if (labels.length === 2) {
+      return 'imported'
+    }
+    return 'owned'
   }
   if (labels.length > 2) {
     return 'notOwned'
