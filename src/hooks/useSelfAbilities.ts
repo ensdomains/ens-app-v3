@@ -248,8 +248,6 @@ export const getFunctionCallDetails = ({
 
 export const getPermittedActions = (props: GetFunctionCallDetailsArgs): SendPermissions => {
   if (!props.basicNameData.ownerData) return { canSendOwner: false, canSendManager: false }
-  if (props.basicNameData.wrapperData?.child.CANNOT_TRANSFER)
-    return { canSendOwner: false, canSendManager: false }
   const result = getFunctionCallDetails(props)
   if (!result) return { canSendOwner: false, canSendManager: false }
   const keys = Object.keys(result)
@@ -292,8 +290,10 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSendManager: boolean
       canSendOwner: boolean
       canSend: boolean
+      canSendError?: string
       sendNameFunctionCallDetails: FunctionCallDetails
       canEditResolver: boolean
+      canEditTTL: boolean
       canEditPermissions: boolean
       canCreateSubdomains: boolean
     } = {
@@ -304,6 +304,7 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       canSend: false,
       canEditResolver: false,
       canEditPermissions: false,
+      canEditTTL: false,
       canCreateSubdomains: false,
       sendNameFunctionCallDetails: {},
     }
@@ -341,11 +342,16 @@ export const useSelfAbilities = (address: string | undefined, name?: string) => 
       abilities.canEdit = true
     }
 
-
-    if (basicNameData.wrapperData) {
+    if (abilities.canEdit && basicNameData.wrapperData) {
       abilities.canEditResolver = !basicNameData.wrapperData.child.CANNOT_SET_RESOLVER
       abilities.canEditPermissions = !basicNameData.wrapperData.child.CANNOT_BURN_FUSES
-      abilities.canEditSubdomains = !basicNameData.wrapperData.child.CANNOT_CREATE_SUBDOMAIN
+      abilities.canCreateSubdomains = !basicNameData.wrapperData.child.CANNOT_CREATE_SUBDOMAIN
+      abilities.canEditTTL = !basicNameData.wrapperData.child.CANNOT_SET_TTL
+    }
+
+    if (abilities.canSend && !!basicNameData.wrapperData?.child.CANNOT_TRANSFER) {
+      abilities.canSend = false
+      abilities.canSendError = 'permissionRevoked'
     }
 
     return abilities

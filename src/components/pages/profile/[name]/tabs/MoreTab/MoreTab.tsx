@@ -54,12 +54,14 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
         name={name}
         owners={owners}
         canSend={selfAbilities.canSend}
+        canSendError={selfAbilities.canSendError}
         isCachedData={basicIsCachedData}
         isWrapped={isWrapped}
       />
       {(name.endsWith('.eth') || isWrapped) && <Token isWrapped={isWrapped} name={name} />}
       <Resolver
         name={name}
+        canEdit={selfAbilities.canEdit}
         canEditResolver={selfAbilities.canEditResolver}
         isCachedData={profileIsCachedData}
         resolverAddress={profile?.resolverAddress}

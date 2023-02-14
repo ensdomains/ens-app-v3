@@ -259,12 +259,14 @@ const Ownership = ({
   name,
   owners,
   canSend,
+  canSendError,
   isCachedData,
   isWrapped,
 }: {
   name: string
   owners: ReturnType<typeof useOwners>
   canSend: boolean
+  canSendError?: string
   isCachedData: boolean
   isWrapped: boolean
 }) => {
@@ -283,16 +285,23 @@ const Ownership = ({
       <HeadingContainer>
         <Typography fontVariant="headingThree">{t('tabs.more.ownership.label')}</Typography>
         <div>
-          {canSend ? (
-            <Button size="small" prefix={<AeroplaneIcon as={AeroplaneSVG} />} onClick={handleSend}>
+          {canSend && (
+            <Button
+              size="small"
+              prefix={<AeroplaneIcon as={AeroplaneSVG} />}
+              onClick={handleSend}
+              data-testid="send-name-button"
+            >
               {t('action.send', { ns: 'common' })}
             </Button>
-          ) : (
+          )}
+          {!canSend && canSendError && (
             <DisabledButtonWithTooltip
               {...{
+                content: t(`errors.${canSendError}`),
                 buttonId: 'send-name-disabled-button',
-                buttonText: 'Send',
-                mobileWidth: 200,
+                buttonText: t('action.send', { ns: 'common' }),
+                mobileWidth: 150,
                 buttonWidth: 'initial',
                 mobileButtonWidth: 'initial',
                 prefix: <AeroplaneIcon as={AeroplaneSVG} />,

@@ -2,9 +2,9 @@
   "version": "v1",
   "packages": {
     "@ensdomains/thorin": {
-      "signature": "03494a1c7fb08e8712d517d135377cb5",
-      "pure": true,
-      "replaced": "workspace:*"
+      "signature": "cf89e81e720b45c32672ae73491e8760",
+      "workspace": true,
+      "replaced": "file:.yalc/@ensdomains/thorin"
     }
   }
 }

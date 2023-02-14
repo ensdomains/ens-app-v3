@@ -99,13 +99,13 @@ export const SubnamesTab = ({
   name,
   network,
   canEdit,
-  canEditSubdomains,
+  canCreateSubdomains,
   isWrapped,
 }: {
   name: string
   network: number
   canEdit: boolean
-  canEditSubdomains: bool
+  canCreateSubdomains: boolean
   isWrapped: boolean
 }) => {
   const router = useRouter()
@@ -199,7 +199,7 @@ export const SubnamesTab = ({
               {t('details.tabs.subnames.addSubname.learn')}
             </Outlink>
           </Typography>
-          {canEditSubdomains ? (
+          {canCreateSubdomains ? (
             <Button
               data-testid="add-subname-action"
               onClick={createSubname}
@@ -211,8 +211,9 @@ export const SubnamesTab = ({
             <DisabledButtonWithTooltip
               {...{
                 buttonId: 'send-name-disabled-button',
-                buttonText: 'New subname',
-                mobileWidth: 200,
+                content: t('errors.permissionRevoked'),
+                buttonText: t('details.tabs.subnames.addSubname.action'),
+                mobileWidth: 150,
                 buttonWidth: 'initial',
                 mobileButtonWidth: 'initial',
                 mobilePlacement: 'top',

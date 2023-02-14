@@ -64,11 +64,13 @@ const InnerHeading = styled.div(
 const Resolver = ({
   name,
   canEditResolver,
+  canEdit,
   resolverAddress,
   isCachedData,
 }: {
   name: string
   canEditResolver: boolean
+  canEdit: boolean
   resolverAddress: string | undefined
   isCachedData: boolean
 }) => {
@@ -103,25 +105,30 @@ const Resolver = ({
           </Typography>
           <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
-        {canEditResolver ? (
-          <button
-            style={{ cursor: 'pointer' }}
-            type="button"
-            onClick={handleEditClick}
-            data-testid="edit-resolver-button"
-          >
-            {t('action.edit', { ns: 'common' })}
-          </button>
-        ) : (
-          <DisabledButtonWithTooltip
-            {...{
-              buttonId: 'set-resolver-disabled-button',
-              buttonText: 'Edit',
-              mobileWidth: 200,
-              buttonWidth: 'initial',
-              mobileButtonWidth: 'initial',
-            }}
-          />
+        {canEdit && (
+          <>
+            {canEditResolver ? (
+              <button
+                style={{ cursor: 'pointer' }}
+                type="button"
+                onClick={handleEditClick}
+                data-testid="edit-resolver-button"
+              >
+                {t('action.edit', { ns: 'common' })}
+              </button>
+            ) : (
+              <DisabledButtonWithTooltip
+                {...{
+                  buttonId: 'set-resolver-disabled-button',
+                  content: t(`errors.permissionRevoked`),
+                  buttonText: 'Edit',
+                  mobileWidth: 150,
+                  buttonWidth: 'initial',
+                  mobileButtonWidth: 'initial',
+                }}
+              />
+            )}
+          </>
         )}
       </HeadingContainer>
       <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />

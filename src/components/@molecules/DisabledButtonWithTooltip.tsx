@@ -1,10 +1,12 @@
+import { ComponentProps } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Button, Tooltip, mq } from '@ensdomains/thorin'
+import { ReactNodeNoStrings } from '@ensdomains/thorin/dist/types/types/index'
 
 import { useTooltipSeenManager } from '@app/hooks/useTooltipSeenManager'
 
-type Placement = 'top' | 'bottom' | 'left' | 'right'
+type Placement = NonNullable<ComponentProps<typeof Tooltip>['placement']>
 
 const ButtonContainer = styled.div<{ $buttonWidth?: string; $mobileButtonWidth?: string }>(
   ({ $buttonWidth, $mobileButtonWidth }) => css`
@@ -16,6 +18,7 @@ const ButtonContainer = styled.div<{ $buttonWidth?: string; $mobileButtonWidth?:
 )
 
 export const DisabledButtonWithTooltip = ({
+  content,
   buttonId,
   buttonText = 'Edit',
   placement = 'left',
@@ -26,6 +29,7 @@ export const DisabledButtonWithTooltip = ({
   mobileButtonWidth,
   prefix,
 }: {
+  content: string
   buttonId: string
   buttonText?: string
   placement?: Placement
@@ -34,7 +38,7 @@ export const DisabledButtonWithTooltip = ({
   mobileWidth?: number
   buttonWidth?: string
   mobileButtonWidth?: string
-  prefix?: React.node
+  prefix?: ReactNodeNoStrings
 }) => {
   const { shouldShowTooltipIndicator, onSeen } = useTooltipSeenManager(buttonId)
   console.log('shouldShowTooltipIndicator: ', shouldShowTooltipIndicator)
@@ -42,7 +46,7 @@ export const DisabledButtonWithTooltip = ({
     <>
       <Tooltip
         {...{
-          content: <div>This name has revoked the permissions needed to perform this action</div>,
+          content: <div>{content}</div>,
           targetId: buttonId,
           placement,
           mobilePlacement,
@@ -51,20 +55,19 @@ export const DisabledButtonWithTooltip = ({
           mobileWidth,
           open: true,
         }}
-      />
-      <ButtonContainer {...{ $buttonWidth: buttonWidth, $mobileButtonWidth: mobileButtonWidth }}>
-        <Button
-          id={buttonId}
-          size="small"
-          shadowless
-          shouldShowTooltipIndicator={shouldShowTooltipIndicator}
-          sanity
-          colorStyle="disabled"
-          prefix={prefix}
-        >
-          {buttonText}
-        </Button>
-      </ButtonContainer>
+      >
+        <ButtonContainer {...{ $buttonWidth: buttonWidth, $mobileButtonWidth: mobileButtonWidth }}>
+          <Button
+            id={buttonId}
+            size="small"
+            shouldShowTooltipIndicator={shouldShowTooltipIndicator}
+            colorStyle="disabled"
+            prefix={prefix}
+          >
+            {buttonText}
+          </Button>
+        </ButtonContainer>
+      </Tooltip>
     </>
   )
 }

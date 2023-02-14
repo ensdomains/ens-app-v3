@@ -12,10 +12,23 @@ describe('Permissions', () => {
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
     cy.findByTestId('banner-parent-not-locked').click()
+    cy.url().should('contain', '/wrapped.eth').should('contain', 'tab=permissions')
   })
 
   it('should allow owner to revoke permissions', () => {
+    cy.visit('/wrapped.eth')
+
+     // Create subname button should be visible
+     cy.findByTestId('subnames-tab').click()
+     cy.findByTestId('add-subname-action').should('be.visible')
+ 
+     // Edit resolver and send button should be disabled
+     cy.findByTestId('more-tab').click()
+     cy.findByTestId('send-name-button').should('be.visible')
+     cy.findByTestId('edit-resolver-button').should('be.visible')
+
     // Parent Status
+    cy.findByTestId('permissions-tab').click()
     cy.findByTestId('owner-can-change-permissions').should('be.visible')
 
     // Permissions
@@ -47,6 +60,14 @@ describe('Permissions', () => {
     cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
     cy.findByTestId('burned-CANNOT_SET_TTL').should('be.visible')
 
+    // Create subname button should be disabled
+    cy.findByTestId('subnames-tab').click()
+    cy.findByTestId('send-name-disabled-button').should('be.visible')
+
+    // Edit resolver and send button should be disabled
+    cy.findByTestId('more-tab').click()
+    cy.findByTestId('send-name-disabled-button').should('be.visible')
+    cy.findByTestId('set-resolver-disabled-button').should('be.visible')
   })
 
   it('should allow parent owner to extend expiry', () => {
