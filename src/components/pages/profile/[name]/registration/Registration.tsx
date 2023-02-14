@@ -58,25 +58,45 @@ type Props = {
 }
 
 const StyledDialog = styled(Dialog)(
-  () => css`
+  ({ theme }) => css`
     height: 80vh;
-    & > div > div {
-      height: 100%;
+    & > div {
+      padding: 0;
+
+      & > div {
+        height: 100%;
+        gap: 0;
+
+        & > iframe {
+          height: 640px;
+          border-bottom-left-radius: ${theme.radii['2xLarge']};
+          border-bottom-right-radius: ${theme.radii['2xLarge']};
+        }
+
+        & > div:nth-child(2) {
+          width: 100%;
+          background-color: ${theme.colors.backgroundSecondary};
+          padding: ${theme.space['4']};
+          border-top-left-radius: ${theme.radii['2xLarge']};
+          border-top-right-radius: ${theme.radii['2xLarge']};
+        }
+      }
     }
     ${mq.sm.min(css`
-      max-width: 100vw;
+      max-width: 30rem;
       width: 90vw;
-      height: 90vh;
+      height: min(640px, 80vh);
       & > div {
-        max-width: 90vw;
+        max-width: 30rem;
         width: 90vw;
-        height: 90vh;
         padding: 0;
-      }
-      & > div > div {
-        max-width: 90vw;
-        height: 90vh;
-        gap: 0;
+        margin-bottom: ${theme.space['4']};
+
+        & > div {
+          max-width: 30rem;
+          gap: 0;
+          max-height: 90vh;
+        }
       }
     `)}
   `,
@@ -295,11 +315,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           setHasMoonpayModal(false)
         }}
       >
+        <div>
+          <Typography fontVariant="extraLargeBold">MoonPay Checkout</Typography>
+        </div>
         <iframe
           title="Moonpay Checkout"
           width="100%"
           height="100%"
-          style={{ borderRadius: 25 }}
           src={moonpayUrl}
           id="moonpayIframe"
         />
