@@ -38,7 +38,7 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.6
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.44
+      '@ensdomains/ensjs': 3.0.0-alpha.47
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': 0.6.25-alpha-2
       '@ethersproject/abi': ^5.6.4
@@ -174,7 +174,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.44_f2qxwv66g46rb33uzxnl5nluty
+      '@ensdomains/ensjs': 3.0.0-alpha.47_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.25-alpha-2_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -2309,8 +2309,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.44_f2qxwv66g46rb33uzxnl5nluty:
-    resolution: {integrity: sha512-0CjbneVC2FemLHwKVVqoM/sDv68NnkSSLczE99EySG+H6DKODqs5A6lyLD4MCu89Kn6DVMVWYf8A4weuekSjOw==}
+  /@ensdomains/ensjs/3.0.0-alpha.47_f2qxwv66g46rb33uzxnl5nluty:
+    resolution: {integrity: sha512-hA3BVKqhsliFpFcZYgR9+rJmw1/rpiq9BPPh4WtmWEUu+zK4eiwGGEpDwQqNg+VnzLsT0fhBDYc9BMFerXN6ow==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0

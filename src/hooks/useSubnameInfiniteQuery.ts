@@ -7,16 +7,9 @@ import { emptyAddress } from '@app/utils/constants'
 
 const PAGE_SIZE = 25
 
-export type Subname = {
-  id: string
-  name: string
-  truncatedName?: string
-  resultsPerPage?: number
-  searchQuery?: string
-  owner?: {
-    id?: string
-  }
-}
+type Subnames = Awaited<ReturnType<ReturnType<typeof useEns>['getSubnames']>>['subnames']
+
+type Subname = Subnames[number]
 
 export type SubnameSortType = Exclude<SortType, SortType.expiryDate>
 
@@ -41,7 +34,7 @@ export const useSubnameInfiniteQuery = (
         search,
       })
 
-      const ownedSubnames = result.subnames.filter((subname) => subname.owner.id !== emptyAddress)
+      const ownedSubnames = result.subnames.filter((subname) => subname.owner !== emptyAddress)
       const isPageSize = result.subnames.length >= PAGE_SIZE
       const lastSubname = isPageSize ? result.subnames[result.subnames.length - 1] : undefined
       return {

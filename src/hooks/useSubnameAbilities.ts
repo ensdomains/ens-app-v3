@@ -13,12 +13,16 @@ type Props = {
   wrapperData: ReturnedENS['getWrapperData']
 }
 
+type Abilities = {
+  canDelete: boolean
+  canDeleteContract?: 'registry' | 'nameWrapper'
+  canDeleteMethod?: 'setRecord' | 'setSubnodeOwner'
+  canDeleteError?: string
+  isPCCBurned?: boolean
+}
+
 type ReturnData = {
-  abilities: {
-    canDelete: boolean
-    canDeleteContract?: 'registry' | 'nameWrapper'
-    canDeleteError?: string
-  }
+  abilities: Abilities
   isLoading: boolean
   isCachedData: boolean
 }
@@ -55,7 +59,7 @@ export const useSubnameAbilities = ({
   const isPCCBurned = wrapperData?.parent.PARENT_CANNOT_CONTROL
 
   const subnameAbilities = useMemo(() => {
-    const abilities = {
+    const abilities: Abilities = {
       canDelete: false,
     }
     if (!isSubname || !nameHasOwner || parentLoading || loadingSubnames) return abilities
@@ -64,20 +68,31 @@ export const useSubnameAbilities = ({
         canDelete: !hasSubnames,
         canDeleteContract: 'registry',
         canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
-      } as const
+      } as Abilities
     if (isWrapped && isPCCBurned && isOwner) {
       return {
         canDelete: !hasSubnames,
         canDeleteContract: 'nameWrapper',
-        canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
-      } as const
+        canDeleteMethod: 'setRecord',
+        isPCCBurned,
+        ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
+      } as Abilities
     }
     if (isWrapped && !isPCCBurned && isParentOwner) {
       return {
         canDelete: !hasSubnames,
         canDeleteContract: 'nameWrapper',
-        canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
-      } as const
+        canDeleteMethod: 'setSubnodeOwner',
+        ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
+      } as Abilities
+    }
+    if (isWrapped && !isPCCBurned && isOwner) {
+      return {
+        canDelete: !hasSubnames,
+        canDeleteContract: 'nameWrapper',
+        canDeleteMethod: 'setRecord',
+        ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
+      } as Abilities
     }
     return abilities
   }, [
