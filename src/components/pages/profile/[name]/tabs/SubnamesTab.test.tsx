@@ -77,6 +77,7 @@ describe('SubnamesTab', () => {
     network: 1,
     canEdit: false,
     isWrapped: false,
+    canCreateSubdomains: true,
   }
 
   it('should show message if no subnames are found', () => {
@@ -120,5 +121,19 @@ describe('SubnamesTab', () => {
     mockUseSubnamePagination.mockReturnValue(subnamesMockData)
     render(<SubnamesTab {...baseMockData} canEdit />)
     expect(screen.getByTestId('add-subname-action')).toBeVisible()
+  })
+
+  it('should show disabled create subname button if canCreateSubdomains is false', () => {
+    const subnamesMockData = {
+      subnames: Array.from({ length: 10 }, makeSubname),
+      subnameCount: 10,
+      isLoading: false,
+      max: 2,
+      page: 0,
+      totalPages: 1,
+    }
+    mockUseSubnamePagination.mockReturnValue(subnamesMockData)
+    render(<SubnamesTab {...{ ...baseMockData, canCreateSubdomains: false }} canEdit />)
+    expect(screen.getByTestId('add-subname-disabled-button')).toBeVisible()
   })
 })

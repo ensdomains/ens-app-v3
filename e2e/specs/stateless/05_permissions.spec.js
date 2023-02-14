@@ -62,7 +62,7 @@ describe('Permissions', () => {
 
     // Create subname button should be disabled
     cy.findByTestId('subnames-tab').click()
-    cy.findByTestId('send-name-disabled-button').should('be.visible')
+    cy.findByTestId('add-subname-disabled-button').should('be.visible')
 
     // Edit resolver and send button should be disabled
     cy.findByTestId('more-tab').click()

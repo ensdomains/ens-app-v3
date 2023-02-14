@@ -63,6 +63,7 @@ export const DisabledButtonWithTooltip = ({
             shouldShowTooltipIndicator={shouldShowTooltipIndicator}
             colorStyle="disabled"
             prefix={prefix}
+            data-testid={buttonId}
           >
             {buttonText}
           </Button>
