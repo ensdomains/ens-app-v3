@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import ClockSVG from '@app/assets/Clock.svg'
-import { secondsToDays } from '@app/utils/utils'
+import { daysToSeconds, secondsToDays, secondsToHours } from '@app/utils/utils'
 
 import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
 
@@ -62,9 +62,11 @@ export const ShortExpiry = ({
   const { t } = useTranslation()
   const blockTimestamp = useBlockTimestamp()
   const currentDate = new Date(blockTimestamp.data!)
-  let difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
-  const inverse = (!hasGracePeriod && difference < 0) || (hasGracePeriod && difference < -90)
-  if (inverse) difference = -difference
+  let secondsDiff = (expiry.getTime() - currentDate.getTime()) / 1000
+  const inverse =
+    (!hasGracePeriod && secondsDiff < 0) || (hasGracePeriod && secondsDiff < -daysToSeconds(90))
+  if (inverse) secondsDiff = -secondsDiff
+  let difference = secondsToDays(secondsDiff)
 
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)
@@ -73,7 +75,11 @@ export const ShortExpiry = ({
   let text = t(`${transPrefix}InYears`, { count: years })
   let color: 'grey' | 'red' | 'orange' = 'grey'
 
-  if (difference < 0) {
+  if (difference === 0) {
+    difference = secondsToHours(secondsDiff)
+    text = t(`${transPrefix}InHours`, { count: difference })
+    color = 'red'
+  } else if (difference < 0) {
     text = t(`${transPrefix}InDays`, { count: hasGracePeriod ? difference + 90 : difference })
     color = 'red'
   } else if (difference < 30) {
