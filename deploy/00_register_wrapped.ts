@@ -58,10 +58,36 @@ const names: Name[] = [
     },
     subnames: [
       {
-        label: 'sub',
+        label: 'day-expired',
         namedOwner: 'owner',
         // set expiry to 24 hours ago
         expiry: Math.floor(Date.now() / 1000) - 86400,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+      {
+        label: 'hour-expired',
+        namedOwner: 'owner',
+        // set expiry to 24 hours ago
+        expiry: Math.floor(Date.now() / 1000) - 3600,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+      {
+        label: 'two-minute-expired',
+        namedOwner: 'owner',
+        expiry: Math.floor(Date.now() / 1000) - 120,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+      {
+        label: 'two-minute-expiring',
+        namedOwner: 'owner',
+        expiry: Math.floor(Date.now() / 1000) + 120,
+        fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
+      },
+      {
+        label: 'hour-expiring',
+        namedOwner: 'owner',
+        // set expiry to 24 hours ago
+        expiry: Math.floor(Date.now() / 1000) + 3600,
         fuses: encodeFuses({ parent: { named: ['PARENT_CANNOT_CONTROL'] } }),
       },
       {
