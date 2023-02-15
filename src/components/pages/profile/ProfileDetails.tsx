@@ -119,9 +119,9 @@ const Actions = styled.div(
         order: -1;
         & > div {
           width: min-content;
-          & > button {
-            width: min-content;
-          }
+        }
+        button {
+          width: min-content;
         }
       }
 
