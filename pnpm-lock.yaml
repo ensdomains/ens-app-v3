@@ -16,12 +16,12 @@ patchedDependencies:
   '@rainbow-me/rainbowkit@0.4.8':
     hash: zczigdeajjlj6h32kv7vfprn2y
     path: patches/@rainbow-me__rainbowkit@0.4.8.patch
-  react-confetti@6.1.0:
-    hash: bbuxkxhxbyez4jmqgptuoucij4
-    path: patches/react-confetti@6.1.0.patch
   '@synthetixio/synpress@3.0.5':
     hash: ju73ftymsm3appsjtul4xt2dhm
     path: patches/@synthetixio__synpress@3.0.5.patch
+  react-confetti@6.1.0:
+    hash: bbuxkxhxbyez4jmqgptuoucij4
+    path: patches/react-confetti@6.1.0.patch
 
 importers:
 
@@ -38,7 +38,7 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.46
+      '@ensdomains/ensjs': 3.0.0-alpha.47
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': 0.6.25-alpha-2
       '@ethersproject/abi': ^5.6.4
@@ -130,6 +130,7 @@ importers:
       intl-segmenter-polyfill: ^0.4.4
       iso-639-1: ^2.1.15
       jest: ^27.5.1
+      jest-canvas-mock: ^2.4.0
       jest-environment-jsdom: ^27.5.1
       jest-localstorage-mock: ^2.4.22
       lodash: ^4.17.21
@@ -173,7 +174,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.46_f2qxwv66g46rb33uzxnl5nluty
+      '@ensdomains/ensjs': 3.0.0-alpha.47_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.25-alpha-2_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -287,6 +288,7 @@ importers:
       hardhat-deploy: 0.11.16
       husky: 7.0.4
       jest: 27.5.1_mjwkemmcjegc73wou7xswbzdh4
+      jest-canvas-mock: 2.4.0
       jest-environment-jsdom: 27.5.1_canvas@2.10.1
       jest-localstorage-mock: 2.4.22
       next-compose-plugins: 2.2.1
@@ -2307,8 +2309,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.46_f2qxwv66g46rb33uzxnl5nluty:
-    resolution: {integrity: sha512-2ANElJJks4LztJhc4ZJnRFLfUmC3n3v1Oj3dPQPJqtVbqg4aQhYDLYDEDQkB3TW14U+oiSvXq4NR+J6UkWZvXw==}
+  /@ensdomains/ensjs/3.0.0-alpha.47_f2qxwv66g46rb33uzxnl5nluty:
+    resolution: {integrity: sha512-hA3BVKqhsliFpFcZYgR9+rJmw1/rpiq9BPPh4WtmWEUu+zK4eiwGGEpDwQqNg+VnzLsT0fhBDYc9BMFerXN6ow==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
@@ -8978,6 +8980,10 @@ packages:
     engines: {node: '>=4'}
     hasBin: true
 
+  /cssfontparser/1.2.1:
+    resolution: {integrity: sha512-6tun4LoZnj7VN6YeegOVb67KBX/7JJsqvj+pv3ZA7F878/eN33AbGa5b/S/wXxS/tcp8nc40xRUrsPlxIyNUPg==}
+    dev: true
+
   /csso/4.2.0:
     resolution: {integrity: sha512-wvlcdIbf6pwKEk7vHj8/Bkc0B4ylXZruLvOgs9doS5eOsOpuodOV2zJChSpkp+pRpYQLQMeF04nr3Z68Sta9jA==}
     engines: {node: '>=8.0.0'}
@@ -14297,6 +14303,13 @@ packages:
       - utf-8-validate
     dev: false
 
+  /jest-canvas-mock/2.4.0:
+    resolution: {integrity: sha512-mmMpZzpmLzn5vepIaHk5HoH3Ka4WykbSoLuG/EKoJd0x0ID/t+INo1l8ByfcUJuDM+RIsL4QDg/gDnBbrj2/IQ==}
+    dependencies:
+      cssfontparser: 1.2.1
+      moo-color: 1.0.3
+    dev: true
+
   /jest-changed-files/27.5.1:
     resolution: {integrity: sha512-buBLMiByfWGCoMsLLzGUUSpAmIAGnbR2KJoMN10ziLhOLvP4e0SlypHnAel8iqQXTrcbmfEY9sSqae5sgUsTvw==}
     engines: {node: ^10.13.0 || ^12.13.0 || ^14.15.0 || >=15.0.0}
@@ -16212,6 +16225,12 @@ packages:
   /module-error/1.0.2:
     resolution: {integrity: sha512-0yuvsqSCv8LbaOKhnsQ/T5JhyFlCYLPXK3U2sgV10zoKQwzs/MyfuQUOZQ1V/6OCOJsK/TRgNVrPuPDqtdMFtA==}
     engines: {node: '>=10'}
+
+  /moo-color/1.0.3:
+    resolution: {integrity: sha512-i/+ZKXMDf6aqYtBhuOcej71YSlbjT3wCO/4H1j8rPvxDJEifdwgg5MaFyu6iYAT8GBZJg2z0dkgK4YMzvURALQ==}
+    dependencies:
+      color-name: 1.1.4
+    dev: true
 
   /mrmime/1.0.1:
     resolution: {integrity: sha512-hzzEagAgDyoU1Q6yg5uI+AorQgdvMCur3FcKf7NhMKWsaYg+RnbTyHRa/9IlLF9rf455MOCtcqqrQQ83pPP7Uw==}

@@ -43,7 +43,12 @@ const names: Name[] = [
   {
     name: 'wrapped.eth',
     namedOwner: 'owner',
-    subnames: [{ label: 'sub', namedOwner: 'deployer' }],
+    subnames: [
+      { label: 'sub', namedOwner: 'deployer' },
+      { label: 'test', namedOwner: 'deployer' },
+      { label: 'legacy', namedOwner: 'deployer' },
+      { label: 'xyz', namedOwner: 'deployer' },
+    ],
   },
   {
     name: 'wrapped-expired-subnames.eth',

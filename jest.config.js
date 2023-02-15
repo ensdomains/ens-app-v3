@@ -26,7 +26,7 @@ const customJestConfig = {
     '@ensdomains/ensjs/(.*)$': '@ensdomains/ensjs/dist/cjs/$1',
   },
   setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'],
-  setupFiles: ['<rootDir>/jest/setEnvVars.js'],
+  setupFiles: ['<rootDir>/jest/setEnvVars.js', 'jest-canvas-mock'],
   testPathIgnorePatterns: [
     '<rootDir>/node_modules/',
     '<rootDir>/.yarn/',
@@ -77,7 +77,7 @@ const customJestConfig = {
   collectCoverage: true,
   globals: {
     Uint8Array: Uint8Array,
-  }
+  },
 }
 
 module.exports = createJestConfig(customJestConfig)

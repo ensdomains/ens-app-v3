@@ -139,10 +139,13 @@ const MobileSearchInput = ({
     <>
       <FakeSearchInputBox
         onClick={(e) => {
-          ;(e.target as any).blur()
-          e.preventDefault()
           toggle(true)
-          searchInputRef.current?.focus()
+          // MOBILE SAFARI FIX:
+          // focus on the fake input first, then wait for the transition to finish and focus on the real input
+          // this allows the keyboard to pop up
+          e.currentTarget.focus()
+          e.preventDefault()
+          setTimeout(() => searchInputRef.current?.focus(), 350)
         }}
       />
       {state !== 'unmounted' && (

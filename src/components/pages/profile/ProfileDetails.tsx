@@ -203,7 +203,7 @@ export const ProfileDetails = ({
           button={OwnerProfileButton}
         />
       </RecordsStack>
-      {actions && (
+      {actions && actions?.length > 0 && (
         <Actions data-testid="profile-actions">
           {actions.map((action) => (
             <div className={action.red ? 'leading' : ''} key={action.label}>

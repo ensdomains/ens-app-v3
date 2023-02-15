@@ -119,7 +119,8 @@
             },
             "cannotExtendExpiry": {
               "label": "Cannot extend expiry",
-              "description": "This names permission expiry ({{date}}) cannot be extended by the manager."
+              "description": "This names permission expiry cannot be extended by the manager.",
+              "description_date": "This names permission expiry ({{date}}) cannot be extended by the manager."
             }
         },
         "manager": "manager",
@@ -290,7 +291,8 @@
               "invalidCharacters": "Contains invalid characters",
               "mustUseLowercase": "Must use lowercase letters",
               "alreadyExists": "Name already exists",
-              "nameTooLong": "Name is too long"
+              "nameTooLong": "Name is too long",
+              "pccBurned": "Name is locked until {{date}}"
             }
           }
         }

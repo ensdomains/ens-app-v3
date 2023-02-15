@@ -283,7 +283,12 @@ const Ownership = ({
         <Typography fontVariant="headingThree">{t('tabs.more.ownership.label')}</Typography>
         <div>
           {canSend && (
-            <Button size="small" prefix={<AeroplaneIcon as={AeroplaneSVG} />} onClick={handleSend}>
+            <Button
+              size="small"
+              prefix={<AeroplaneIcon as={AeroplaneSVG} />}
+              onClick={handleSend}
+              data-testid="button-send-ownership"
+            >
               {t('action.send', { ns: 'common' })}
             </Button>
           )}

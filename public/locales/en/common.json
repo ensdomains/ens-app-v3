@@ -272,7 +272,9 @@
       "notImported": "Not Imported",
       "short": "Too Short",
       "default": "Invalid",
-      "unsupportedTLD": "Not Supported"
+      "unsupportedTLD": "Not Supported",
+      "imported": "Imported",
+      "owned": "Owned"
     }
   },
   "selectableInput": {

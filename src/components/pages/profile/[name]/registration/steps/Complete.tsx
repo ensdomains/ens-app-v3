@@ -1,5 +1,5 @@
 import dynamic from 'next/dynamic'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -118,6 +118,8 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const commitTxFlow = getLatestTransaction(commitKey)
   const registerTxFlow = getLatestTransaction(registerKey)
 
+  const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
+
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
     hash: commitTxFlow!.hash,
   })
@@ -127,6 +129,11 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
     isLoading: registerLoading,
   } = useTransactionResponseReceipt(registerTxFlow!.hash!)
   const isLoading = commitLoading || registerLoading
+
+  useEffect(() => {
+    const storage = localStorage.getItem(`avatar-src-${name}`)
+    if (storage) setAvatarSrc(storage)
+  }, [name])
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
@@ -170,7 +177,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
         initialVelocityY={20}
       />
       <NFTContainer>
-        <NFTTemplate backgroundImage={undefined} isNormalised name={name} />
+        <NFTTemplate backgroundImage={avatarSrc} isNormalised name={name} />
       </NFTContainer>
       <TitleContainer>
         <Title>{t('steps.complete.heading')}</Title>

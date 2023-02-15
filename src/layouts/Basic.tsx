@@ -18,7 +18,13 @@ const Container = styled.div(
     gap: ${theme.space['8']};
     flex-direction: column;
     align-items: stretch;
-    min-width: 100%;
+    @supports (-webkit-touch-callout: none) {
+      width: calc(100% - ${theme.space['8']});
+      box-sizing: content-box;
+      ${mq.md.min(css`
+        width: calc(100% - ${theme.space['32']});
+      `)}
+    }
     ${mq.md.min(css`
       padding: ${theme.space['12']} ${theme.space['16']};
     `)}

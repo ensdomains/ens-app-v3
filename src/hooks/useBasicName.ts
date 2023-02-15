@@ -21,7 +21,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const normalisedName = normalised ? name! : _normalisedName
 
-  const { data: supportedTLD } = useSupportsTLD(normalisedName)
+  const { data: supportedTLD, isLoading: supportedTLDLoading } = useSupportsTLD(normalisedName)
 
   const {
     data: batchData,
@@ -78,7 +78,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const nameWrapperExists = useWrapperExists()
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
 
-  const isLoading = !ens.ready || batchLoading
+  const isLoading = !ens.ready || batchLoading || supportedTLDLoading
 
   return {
     normalisedName,
