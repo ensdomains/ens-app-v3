@@ -55,7 +55,7 @@
     "@ensdomains/ens-validation": "^0.1.0",
     "@ensdomains/ensjs": "3.0.0-alpha.47",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
-    "@ensdomains/thorin": "0.6.25-alpha-2",
+    "@ensdomains/thorin": "0.6.28",
     "@ethersproject/abi": "^5.6.4",
     "@ethersproject/abstract-provider": "^5.7.0",
     "@ethersproject/abstract-signer": "^5.7.0",
@@ -114,7 +114,6 @@
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^3.14.1",
-    "@cloudflare/wrangler": "^1.19.12",
     "@deploysentinel/cypress-debugger": "^0.5.5",
     "@ensdomains/buffer": "^0.1.0",
     "@ensdomains/ens-test-env": "^0.3.6",
@@ -193,7 +192,7 @@
     "typescript": "^4.8.2",
     "typescript-styled-plugin": "^0.18.2",
     "wait-on": "^6.0.1",
-    "wrangler": "^2.0.27",
+    "wrangler": "0.0.0-ff35b9d1",
     "yalc": "^1.0.0-pre.53"
   },
   "pnpm": {
