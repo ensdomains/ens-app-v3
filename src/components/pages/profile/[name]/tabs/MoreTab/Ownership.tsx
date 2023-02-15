@@ -8,6 +8,7 @@ import { Button, Helper, Tag, Typography, mq } from '@ensdomains/thorin'
 import AeroplaneSVG from '@app/assets/Aeroplane.svg'
 import BaseLink from '@app/components/@atoms/BaseLink'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarWithZorb } from '@app/components/AvatarWithZorb'
 import { useChainId } from '@app/hooks/useChainId'
 import useDNSProof from '@app/hooks/useDNSProof'
@@ -258,12 +259,14 @@ const Ownership = ({
   name,
   owners,
   canSend,
+  canSendError,
   isCachedData,
   isWrapped,
 }: {
   name: string
   owners: ReturnType<typeof useOwners>
   canSend: boolean
+  canSendError?: string
   isCachedData: boolean
   isWrapped: boolean
 }) => {
@@ -287,10 +290,23 @@ const Ownership = ({
               size="small"
               prefix={<AeroplaneIcon as={AeroplaneSVG} />}
               onClick={handleSend}
-              data-testid="button-send-ownership"
+              data-testid="send-name-button"
             >
               {t('action.send', { ns: 'common' })}
             </Button>
+          )}
+          {!canSend && canSendError && (
+            <DisabledButtonWithTooltip
+              {...{
+                content: t(`errors.${canSendError}`),
+                buttonId: 'send-name-disabled-button',
+                buttonText: t('action.send', { ns: 'common' }),
+                mobileWidth: 150,
+                buttonWidth: 'initial',
+                mobileButtonWidth: 'initial',
+                prefix: <AeroplaneIcon as={AeroplaneSVG} />,
+              }}
+            />
           )}
         </div>
       </HeadingContainer>

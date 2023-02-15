@@ -1,16 +1,16 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Tooltip, Typography } from '@ensdomains/thorin'
+import { Button, Typography } from '@ensdomains/thorin'
 
-import QuestionSVG from '@app/assets/Question.svg'
 import type { useFusesStates } from '@app/hooks/fuses/useFusesStates'
 import type { useGetFusesSetDates } from '@app/hooks/fuses/useGetFusesSetDates'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { CHILD_FUSES, ChildFuse } from '@app/transaction-flow/transaction/changePermissions'
 import type { useEns } from '@app/utils/EnsProvider'
 
+import { DisabledButtonWithTooltip } from '../../../../../@molecules/DisabledButtonWithTooltip'
 import { Section, SectionFooter, SectionItem } from './Section'
 
 type GetWrapperDataFunc = ReturnType<typeof useEns>['getWrapperData']
@@ -63,33 +63,6 @@ const PERMISSION_TRANSLATION_KEY: {
 const TypographyGreyDim = styled(Typography)(
   ({ theme }) => css`
     color: ${theme.colors.greyDim};
-  `,
-)
-
-const IndicatorWrapper = styled.div(
-  ({ theme }) => css`
-    position: absolute;
-    right: -${theme.space[2]};
-    top: -${theme.space[2]};
-    background: ${theme.colors.yellowPrimary};
-    width: ${theme.space[6]};
-    height: ${theme.space[6]};
-    border-radius: ${theme.radii.full};
-
-    display: flex;
-    justify-content: center;
-    align-items: center;
-
-    svg {
-      width: ${theme.space[4]};
-      height: ${theme.space[4]};
-    }
-  `,
-)
-
-const ButtonContainer = styled.div(
-  () => css`
-    position: relative;
   `,
 )
 
@@ -146,32 +119,22 @@ export const NameChangePermissions = ({
     })
   }
 
-  const [isTooltipOpen, setIsTooltipOpen] = useState(false)
   const ButtonComponent = useMemo(() => {
     const showButton =
       isUserOwner && ['emancipated', 'locked'].includes(state) && permissions.unburned.length > 0
     if (!showButton) return null
     if (wrapperData?.child.CANNOT_BURN_FUSES)
       return (
-        <Tooltip
-          content="This name has revoked the permissions needed for this action"
-          placement="top-center"
-          open={isTooltipOpen}
-          onDismiss={() => setIsTooltipOpen(false)}
-        >
-          <ButtonContainer>
-            <Button
-              data-testid="button-revoke-permissions-disabled"
-              colorStyle="disabled"
-              onClick={() => setIsTooltipOpen((value) => !value)}
-            >
-              {t('tabs.permissions.nameChangePermissions.action.changePermissions')}
-            </Button>
-            <IndicatorWrapper>
-              <QuestionSVG />
-            </IndicatorWrapper>
-          </ButtonContainer>
-        </Tooltip>
+        <DisabledButtonWithTooltip
+          buttonId="button-revoke-permissions-disabled"
+          content={t('errors.permissionRevoked')}
+          buttonText={t('tabs.permissions.nameChangePermissions.action.changePermissions')}
+          placement="left"
+          mobilePlacement="top"
+          mobileWidth={150}
+          buttonWidth="100%"
+          mobileButtonWidth="100%"
+        />
       )
 
     return (
