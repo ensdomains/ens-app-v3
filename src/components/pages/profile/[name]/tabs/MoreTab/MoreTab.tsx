@@ -45,8 +45,6 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
     selfAbilities,
   })
 
-  console.log('selfAbilities: ', selfAbilities)
-
   return (
     <MoreContainer>
       <Miscellaneous name={name} />

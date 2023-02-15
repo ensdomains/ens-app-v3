@@ -141,6 +141,8 @@ export const useProfileActions = ({
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
     subnameAbilities.canDeleteError,
+    subnameAbilities.canDeleteMethod,
+    subnameAbilities.isPCCBurned,
     t,
   ])
 
