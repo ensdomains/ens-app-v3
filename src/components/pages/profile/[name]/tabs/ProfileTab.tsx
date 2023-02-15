@@ -118,6 +118,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
           .map((item: any) => ({ key: item.key, value: item.value }))
           .filter((item: any) => item.value !== null)}
         owners={owners}
+        name={normalisedName}
         actions={profileActions.profileActions}
       />
     </DetailsWrapper>

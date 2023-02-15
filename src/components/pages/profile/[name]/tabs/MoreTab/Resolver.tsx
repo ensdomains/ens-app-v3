@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Tag, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import RecordItem from '@app/components/RecordItem'
 import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
@@ -62,11 +63,13 @@ const InnerHeading = styled.div(
 
 const Resolver = ({
   name,
+  canEditResolver,
   canEdit,
   resolverAddress,
   isCachedData,
 }: {
   name: string
+  canEditResolver: boolean
   canEdit: boolean
   resolverAddress: string | undefined
   isCachedData: boolean
@@ -103,14 +106,29 @@ const Resolver = ({
           <Tag colorStyle={tone}>{t(`tabs.more.resolver.${resolverAddressType}`)}</Tag>
         </InnerHeading>
         {canEdit && (
-          <button
-            style={{ cursor: 'pointer' }}
-            type="button"
-            onClick={handleEditClick}
-            data-testid="edit-resolver-button"
-          >
-            {t('action.edit', { ns: 'common' })}
-          </button>
+          <>
+            {canEditResolver ? (
+              <button
+                style={{ cursor: 'pointer' }}
+                type="button"
+                onClick={handleEditClick}
+                data-testid="edit-resolver-button"
+              >
+                {t('action.edit', { ns: 'common' })}
+              </button>
+            ) : (
+              <DisabledButtonWithTooltip
+                {...{
+                  buttonId: 'set-resolver-disabled-button',
+                  content: t(`errors.permissionRevoked`),
+                  buttonText: 'Edit',
+                  mobileWidth: 150,
+                  buttonWidth: 'initial',
+                  mobileButtonWidth: 'initial',
+                }}
+              />
+            )}
+          </>
         )}
       </HeadingContainer>
       <RecordItem type="text" data-testid="resolver-address" value={resolverAddress || ''} />
