@@ -58,9 +58,16 @@ const EmptyDetailContainer = styled.div(
 
 const Page = () => {
   const { t } = useTranslation('address')
-  const { query, isReady } = useRouter()
+  const router = useRouter()
+  const { isReady, query } = router
   const { address: _address } = useAccount()
-  const address = query.address as string
+
+  const { address, search, sort, direction } = query as {
+    address: string
+    search?: string
+    sort?: string
+    direction?: string
+  }
   const chainId = useChainId()
   const isSelf = _address === address
 
@@ -74,9 +81,46 @@ const Page = () => {
     }
   }
 
-  const [sortType, setSortType] = useState<SortType | undefined>()
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
-  const [searchQuery, setSearchQuery] = useState('')
+  /* eslint-disable no-nested-ternary */
+  const [sortType, setSortType] = useState<SortType | undefined>(
+    sort === 'name'
+      ? SortType.labelName
+      : sort === 'creation'
+      ? SortType.creationDate
+      : sort === 'expiry'
+      ? SortType.expiryDate
+      : undefined,
+  )
+  /* eslint-enable no-nested-ternary */
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (sortType === SortType.labelName) url.searchParams.set('sort', 'name')
+    else if (sortType === SortType.creationDate) url.searchParams.set('sort', 'creation')
+    else if (sortType === SortType.expiryDate) url.searchParams.set('sort', 'expiry')
+    else url.searchParams.delete('sort')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortType])
+
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    direction === 'asc' ? SortDirection.asc : SortDirection.desc,
+  )
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (sortDirection === SortDirection.asc) url.searchParams.set('direction', 'asc')
+    else url.searchParams.delete('direction')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortDirection])
+
+  const [searchQuery, setSearchQuery] = useState(search || '')
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (searchQuery) url.searchParams.set('search', searchQuery)
+    else url.searchParams.delete('search')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery])
 
   const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
 

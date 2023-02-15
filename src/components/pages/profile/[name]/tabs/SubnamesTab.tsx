@@ -110,20 +110,48 @@ export const SubnamesTab = ({
   const { address } = useAccount()
   const { showDataInput } = useTransactionFlow()
 
-  const [sortType, setSortType] = useState<SubnameSortType | undefined>()
-  const [sortDirection, setSortDirection] = useState(SortDirection.desc)
-  const [searchInput, setSearchInput] = useState((router.query.search as string) || '')
+  const { sort, search, direction } = router.query as {
+    sort?: string
+    search?: string
+    direction?: string
+  }
 
-  const searchQuery = (router.query.search as string) || ''
-  const [_searchQuery, setSearchQuery] = useState(searchQuery)
-  const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
-
+  /* eslint-disable no-nested-ternary */
+  const [sortType, setSortType] = useState<SubnameSortType | undefined>(
+    sort === 'name' ? SortType.labelName : sort === 'creation' ? SortType.creationDate : undefined,
+  )
+  /* eslint-enable no-nested-ternary */
   useEffect(() => {
     const url = new URL(router.asPath, window.location.origin)
-    url.searchParams.set('search', _searchQuery)
+    if (sortType === SortType.labelName) url.searchParams.set('sort', 'name')
+    else if (sortType === SortType.creationDate) url.searchParams.set('sort', 'creation')
+    else url.searchParams.delete('sort')
     router.replace(url.toString(), undefined, { shallow: true })
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_searchQuery])
+  }, [sortType])
+
+  const [sortDirection, setSortDirection] = useState(
+    direction === 'asc' ? SortDirection.asc : SortDirection.desc,
+  )
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (sortDirection === SortDirection.asc) url.searchParams.set('direction', 'asc')
+    else url.searchParams.delete('direction')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortDirection])
+
+  const [searchQuery, setSearchQuery] = useState(search || '')
+  const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (searchQuery) url.searchParams.set('search', searchQuery)
+    else url.searchParams.delete('search')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery])
+
+  const [searchInput, setSearchInput] = useState(search || '')
 
   const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
     name,

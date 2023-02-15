@@ -69,9 +69,53 @@ const MyNames = () => {
       setSelectedNames([...selectedNames, name])
     }
   }
-  const [sortType, setSortType] = useState<SortType | undefined>()
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
-  const [searchQuery, setSearchQuery] = useState('')
+
+  const { sort, direction, search } = router.query as {
+    sort?: string
+    direction?: string
+    search?: string
+  }
+
+  /* eslint-disable no-nested-ternary */
+  const [sortType, setSortType] = useState<SortType | undefined>(
+    sort === 'expiry'
+      ? SortType.expiryDate
+      : sort === 'name'
+      ? SortType.labelName
+      : sort === 'creation'
+      ? SortType.creationDate
+      : undefined,
+  )
+  /* eslint-enable no-nested-ternary */
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (sortType === SortType.expiryDate) url.searchParams.set('sort', 'expiry')
+    else if (sortType === SortType.labelName) url.searchParams.set('sort', 'name')
+    else if (sortType === SortType.creationDate) url.searchParams.set('sort', 'creation')
+    else url.searchParams.delete('sort')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortType])
+
+  const [sortDirection, setSortDirection] = useState<SortDirection>(
+    direction === 'asc' ? SortDirection.asc : SortDirection.desc,
+  )
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (sortDirection === SortDirection.asc) url.searchParams.set('direction', 'asc')
+    else url.searchParams.delete('direction')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [sortDirection])
+
+  const [searchQuery, setSearchQuery] = useState(search || '')
+  useEffect(() => {
+    const url = new URL(router.asPath, window.location.origin)
+    if (searchQuery) url.searchParams.set('search', searchQuery)
+    else url.searchParams.delete('search')
+    router.replace(url.toString(), undefined, { shallow: true })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchQuery])
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
