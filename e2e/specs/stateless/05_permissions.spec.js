@@ -82,6 +82,7 @@ describe('Permissions', () => {
     cy.findByTestId('edit-resolver-button').should('not.exist')
     // Name owner settings
     acceptMetamaskAccess(1)
+    cy.visit('/sub.wrapped.eth')
     cy.findByTestId('profile-tab').click()
     cy.findByTestId('profile-action-Delete subname').should('be.visible')
     cy.findByTestId('subnames-tab').click()
@@ -136,6 +137,7 @@ describe('Permissions', () => {
   })
 
   it('should allow parent owner to burn pcc', () => {
+    acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
 
@@ -224,6 +226,7 @@ describe('Permissions', () => {
   })
 
   it('should allow name owner to revoke change fuses', () => {
+    acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
     cy.findByTestId('permissions-tab').click()
 
@@ -236,7 +239,7 @@ describe('Permissions', () => {
   cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
   cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
   cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
-  cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+  cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
   cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
 
     cy.findByTestId('button-revoke-change-fuses').click()
@@ -259,7 +262,7 @@ describe('Permissions', () => {
       cy.findByTestId('burned-CANNOT_UNWRAP').should('be.visible')
       cy.findByTestId('burned-CANNOT_CREATE_SUBDOMAIN').should('be.visible')
       cy.findByTestId('burned-CANNOT_TRANSFER').should('be.visible')
-      cy.findByTestId('unburned-CANNOT_SET_RESOLVER').should('be.visible')
+      cy.findByTestId('burned-CANNOT_SET_RESOLVER').should('be.visible')
       cy.findByTestId('unburned-CANNOT_SET_TTL').should('be.visible')
 
       // Button should disappear
@@ -281,13 +284,14 @@ describe('Permissions', () => {
     cy.findByTestId('edit-resolver-button').should('not.exist')
     // Name owner settings
     acceptMetamaskAccess(1)
+    cy.visit('/sub.wrapped.eth')
     cy.findByTestId('profile-tab').click()
-    cy.findByTestId('delete-button-disabled-button').should('be.visible')
+    cy.findByTestId('delete-subname-disabled-button').should('be.visible')
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('add-subname-disabled-button').should('be.visible')
     cy.findByTestId('more-tab').click()
     cy.findByTestId('send-name-disabled-button').should('be.visible')
-    cy.findByTestId('edit-resolver-disabled-button').should('be.visible')
+    cy.findByTestId('set-resolver-disabled-button').should('be.visible')
   })
 
 })
