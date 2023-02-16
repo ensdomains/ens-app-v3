@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -106,7 +105,6 @@ export const SubnamesTab = ({
   canEdit: boolean
   isWrapped: boolean
 }) => {
-  const router = useRouter()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
   const { showDataInput } = useTransactionFlow()
@@ -120,16 +118,7 @@ export const SubnamesTab = ({
     'desc' as SortDirection,
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
-
   const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
-  useEffect(() => {
-    const url = new URL(router.asPath, window.location.origin)
-    if (searchQuery) url.searchParams.set('search', searchQuery)
-    else url.searchParams.delete('search')
-    router.replace(url.toString(), undefined, { shallow: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [searchQuery])
-
   const [searchInput, setSearchInput] = useState(searchQuery)
 
   const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
