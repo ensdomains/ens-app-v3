@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, Typography } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
+import { useBasicName } from '@app/hooks/useBasicName'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
@@ -100,6 +101,7 @@ const ResolverWarningOverlay = ({
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
+  const { isWrapped } = useBasicName(name)
   const handleResumeTransaction = () => {
     dispatch({ name: 'resumeFlow', key: `edit-profile-flow-${name}` })
   }
@@ -110,7 +112,7 @@ const ResolverWarningOverlay = ({
       payload: [
         makeTransactionItem('updateResolver', {
           name,
-          contract: 'registry',
+          contract: isWrapped ? 'nameWrapper' : 'registry',
           resolver: latestResolver,
           oldResolver,
         }),
@@ -160,7 +162,7 @@ const ResolverWarningOverlay = ({
     oldRegistry: {
       dismissable: false,
       as: 'a',
-      href: `https://app.ens.domains/name/${name}`,
+      href: `${process.env.NEXT_PUBLIC_LEGACY_APP_URL}/name/${name}`,
     },
     default: {
       handler: handleTransferProfile,
@@ -191,7 +193,13 @@ const ResolverWarningOverlay = ({
           <Title fontVariant="headingFour">{title}</Title>
           <Subtitle color="grey">{subtitle}</Subtitle>
         </Message>
-        <Button as={as} href={href} target="_blank" onClick={handleUpgrade}>
+        <Button
+          as={as}
+          href={href}
+          target="_blank"
+          onClick={handleUpgrade}
+          data-testid="profile-editor-overlay-button"
+        >
           {action}
         </Button>
       </Content>

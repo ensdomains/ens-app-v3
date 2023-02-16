@@ -79,9 +79,7 @@ export const convertProfileToProfileFormObject = (profile: Profile): ProfileForm
       }
     },
     {
-      general: {
-        name: '',
-      },
+      general: {},
       accounts: {},
       other: {},
     },

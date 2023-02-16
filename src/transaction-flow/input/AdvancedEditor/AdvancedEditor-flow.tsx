@@ -92,6 +92,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
 
   const { profile, loading } = useProfile(name, name !== '')
 
+  console.log(profile)
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {
       dispatch({
@@ -141,7 +142,11 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
           <Button colorStyle="greySecondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
-          <Button disabled={hasErrors || !hasChanges} type="submit">
+          <Button
+            disabled={hasErrors || !hasChanges}
+            type="submit"
+            data-testid="advanced-editor-save-button"
+          >
             {t('action.save', { ns: 'common' })}
           </Button>
         </FooterContainer>
