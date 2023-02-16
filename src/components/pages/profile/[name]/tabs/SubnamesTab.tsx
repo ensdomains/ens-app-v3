@@ -17,6 +17,7 @@ import { Outlink } from '@app/components/Outlink'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameInfiniteQuery'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
+import { emptyAddress } from '@app/utils/constants'
 
 import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
 import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
@@ -174,7 +175,20 @@ export const SubnamesTab = ({
               truncatedName={subname.truncatedName}
               network={network}
               mode="view"
-              isController={subname.owner === address?.toLowerCase()}
+              isController={
+                subname.type === 'domain' && subname.owner
+                  ? subname.owner === address?.toLowerCase()
+                  : undefined
+              }
+              isWrappedOwner={
+                subname.type === 'wrappedDomain' && subname.owner
+                  ? subname.owner === address?.toLowerCase()
+                  : undefined
+              }
+              notOwned={!subname.owner || subname.owner === emptyAddress}
+              fuses={subname.fuses}
+              pccExpired={subname.pccExpired}
+              expiryDate={subname.expiryDate}
             />
           ))}
         </div>

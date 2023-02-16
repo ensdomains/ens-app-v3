@@ -8,10 +8,9 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
-import { useNameDates } from '@app/hooks/useNameDates'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
-import { formatExpiry, is2LDEthCalc } from '@app/utils/utils'
+import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
 import {
   AddressProfileButton,
@@ -162,6 +161,8 @@ const getAction = (action: Action, is2LDEth: boolean) => {
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
+  expiryDate,
+  pccExpired,
   owners,
   actions,
   isCached,
@@ -169,12 +170,13 @@ export const ProfileDetails = ({
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
+  expiryDate: Date | undefined
+  pccExpired: boolean
   owners: ReturnType<typeof useOwners>
   actions: ReturnType<typeof useProfileActions>['profileActions']
   isCached?: boolean
   name: string
 }) => {
-  const { data: nameDates } = useNameDates(name)
   const otherRecords = [
     ...textRecords
       .filter(
@@ -184,17 +186,26 @@ export const ProfileDetails = ({
       )
       .map((x) => ({ ...x, type: 'text' })),
   ]
+
   const mappedOwners = [
-    ...(owners?.map((x) => ({ key: x.label, value: x.address })) || []),
+    ...((pccExpired
+      ? [
+          {
+            key: 'owner',
+            type: 'text',
+            value: '',
+          },
+        ]
+      : owners?.map((x) => ({ key: x.label, value: x.address }))) || []),
     {
       key: 'expiry',
       type: 'text',
-      value: nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry',
-      timestamp: nameDates?.expiryDate ? nameDates.expiryDate.getTime() : 0,
+      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+      timestamp: expiryDate ? expiryDate.getTime() : 0,
     },
   ]
 
-  const is2LDEth = is2LDEthCalc(name)
+  const is2LDEth = checkETH2LDFromName(name)
 
   return (
     <ProfileInfoBox $isCached={isCached}>

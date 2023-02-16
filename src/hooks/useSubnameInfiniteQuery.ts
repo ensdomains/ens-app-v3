@@ -2,14 +2,13 @@ import { useMemo } from 'react'
 import { useInfiniteQuery } from 'wagmi'
 
 import { SortDirection, SortType } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
+import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 
 const PAGE_SIZE = 25
 
-type Subnames = Awaited<ReturnType<ReturnType<typeof useEns>['getSubnames']>>['subnames']
-
-type Subname = Subnames[number]
+export type Subname = ReturnedENS['getSubnames']['subnames'][number]
 
 export type SubnameSortType = Exclude<SortType, SortType.expiryDate>
 
@@ -53,7 +52,16 @@ export const useSubnameInfiniteQuery = (
   const subnames: Subname[] = useMemo(() => {
     return (
       data?.pages.reduce<Subname[]>((acc, curr) => {
-        return [...acc, ...curr.subnames]
+        return [
+          ...acc,
+          ...curr.subnames.map(
+            (s) =>
+              ({
+                ...s,
+                expiryDate: s.expiryDate ? new Date(s.expiryDate) : undefined,
+              } as Subname),
+          ),
+        ]
       }, []) || ([] as Subname[])
     )
   }, [data])

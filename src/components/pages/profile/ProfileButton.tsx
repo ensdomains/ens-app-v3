@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -151,7 +151,7 @@ export const OwnerProfileButton = ({
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
-  const { name: primary } = usePrimary(address)
+  const { name: primary } = usePrimary(address, address === '')
 
   const formattedAddress = useMemo(() => {
     if (breakpoints.sm) {
@@ -161,10 +161,21 @@ export const OwnerProfileButton = ({
   }, [address, breakpoints])
 
   const isExpiry = label === 'expiry'
+  const isNotOwned = !isExpiry && address === ''
+
+  const value = useMemo(() => {
+    if (isExpiry) {
+      return address
+    }
+    if (isNotOwned) {
+      return t('name.notOwned').toLocaleLowerCase()
+    }
+    return primary || formattedAddress
+  }, [address, formattedAddress, isExpiry, isNotOwned, primary, t])
 
   return (
     <RecordItem
-      link={isExpiry ? undefined : (getDestination(`/address/${address}`) as string)}
+      link={isExpiry || isNotOwned ? undefined : (getDestination(`/address/${address}`) as string)}
       value={address}
       keyLabel={
         <OtherContainerTextPrefix color="textSecondary">
@@ -176,7 +187,7 @@ export const OwnerProfileButton = ({
       inline
       size={breakpoints.md ? 'large' : 'small'}
     >
-      {isExpiry ? address : primary || formattedAddress}
+      {value}
     </RecordItem>
   )
 }

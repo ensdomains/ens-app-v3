@@ -16,12 +16,12 @@ patchedDependencies:
   '@rainbow-me/rainbowkit@0.4.8':
     hash: zczigdeajjlj6h32kv7vfprn2y
     path: patches/@rainbow-me__rainbowkit@0.4.8.patch
-  react-confetti@6.1.0:
-    hash: bbuxkxhxbyez4jmqgptuoucij4
-    path: patches/react-confetti@6.1.0.patch
   '@synthetixio/synpress@3.0.5':
     hash: ju73ftymsm3appsjtul4xt2dhm
     path: patches/@synthetixio__synpress@3.0.5.patch
+  react-confetti@6.1.0:
+    hash: bbuxkxhxbyez4jmqgptuoucij4
+    path: patches/react-confetti@6.1.0.patch
 
 importers:
 
@@ -35,7 +35,7 @@ importers:
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': ^0.2.7
       '@ensdomains/ens-contracts': 0.0.16
-      '@ensdomains/ens-test-env': ^0.3.6
+      '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.47
       '@ensdomains/eth-ens-namehash': ^2.0.15
@@ -229,7 +229,7 @@ importers:
       '@cloudflare/workers-types': 3.16.0
       '@deploysentinel/cypress-debugger': 0.5.5
       '@ensdomains/buffer': 0.1.0_hardhat@2.11.2
-      '@ensdomains/ens-test-env': 0.3.6
+      '@ensdomains/ens-test-env': 0.3.7
       '@ethersproject/wallet': 5.7.0
       '@next/bundle-analyzer': 12.3.1
       '@next/swc-linux-x64-gnu': 12.1.4
@@ -2242,8 +2242,8 @@ packages:
       - web3-utils
     dev: false
 
-  /@ensdomains/ens-test-env/0.3.6:
-    resolution: {integrity: sha512-VeRYFBMLThaiiYY2to1LWsn1CyaOyvkyOeOZ3q8dpy79iH2iTSgw8NCqYTaOq1bJLNfG3tROxA6DoMtWlSnJuQ==}
+  /@ensdomains/ens-test-env/0.3.7:
+    resolution: {integrity: sha512-3X8cWDAMEN/s48afxsDVuOlzVIAlM5aorGx+6c4rhc8zCsp6nTMed8lGgKl/OMdCodEb7YF2WmMEVJNnGr3gHw==}
     hasBin: true
     dependencies:
       '@ethersproject/wallet': 5.7.0

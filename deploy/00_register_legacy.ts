@@ -70,6 +70,12 @@ const names: Name[] = [
     namedController: 'deployer',
   },
   {
+    label: 'other-registrant-2',
+    namedOwner: 'deployer',
+    namedAddr: 'deployer',
+    namedController: 'owner',
+  },
+  {
     label: 'migrated-resolver-to-be-updated',
     namedOwner: 'owner',
     namedAddr: 'owner',
