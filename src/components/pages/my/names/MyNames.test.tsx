@@ -45,6 +45,7 @@ describe('MyNames', () => {
   mockUseRouter.mockReturnValue({
     query: {},
     isReady: true,
+    replace: () => {},
   })
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseNamesFromAddress.mockReturnValue({
