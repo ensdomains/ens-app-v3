@@ -18,6 +18,7 @@ import { SubnameSortType, useSubnameInfiniteQuery } from '@app/hooks/useSubnameI
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
+import { useQueryParameterState } from '../../../../../hooks/useQueryParameterState'
 import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
 import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
@@ -110,38 +111,16 @@ export const SubnamesTab = ({
   const { address } = useAccount()
   const { showDataInput } = useTransactionFlow()
 
-  const { sort, search, direction } = router.query as {
-    sort?: string
-    search?: string
-    direction?: string
-  }
-
-  /* eslint-disable no-nested-ternary */
-  const [sortType, setSortType] = useState<SubnameSortType | undefined>(
-    sort === 'name' ? SortType.labelName : sort === 'creation' ? SortType.creationDate : undefined,
+  const [sortType, setSortType] = useQueryParameterState<SubnameSortType>(
+    'sort',
+    'creationDate' as SubnameSortType,
   )
-  /* eslint-enable no-nested-ternary */
-  useEffect(() => {
-    const url = new URL(router.asPath, window.location.origin)
-    if (sortType === SortType.labelName) url.searchParams.set('sort', 'name')
-    else if (sortType === SortType.creationDate) url.searchParams.set('sort', 'creation')
-    else url.searchParams.delete('sort')
-    router.replace(url.toString(), undefined, { shallow: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortType])
-
-  const [sortDirection, setSortDirection] = useState(
-    direction === 'asc' ? SortDirection.asc : SortDirection.desc,
+  const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
+    'direction',
+    'desc' as SortDirection,
   )
-  useEffect(() => {
-    const url = new URL(router.asPath, window.location.origin)
-    if (sortDirection === SortDirection.asc) url.searchParams.set('direction', 'asc')
-    else url.searchParams.delete('direction')
-    router.replace(url.toString(), undefined, { shallow: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [sortDirection])
+  const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
-  const [searchQuery, setSearchQuery] = useState(search || '')
   const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
   useEffect(() => {
     const url = new URL(router.asPath, window.location.origin)
@@ -151,7 +130,7 @@ export const SubnamesTab = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery])
 
-  const [searchInput, setSearchInput] = useState(search || '')
+  const [searchInput, setSearchInput] = useState(searchQuery)
 
   const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
     name,
