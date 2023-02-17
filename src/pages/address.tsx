@@ -77,10 +77,10 @@ const Page = () => {
     }
   }
 
-  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate' as SortType)
+  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
     'direction',
-    'desc' as SortDirection,
+    'desc',
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
@@ -99,7 +99,7 @@ const Page = () => {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortType || SortType.expiryDate,
+      type: sortType || 'expiryDate',
       orderDirection: sortDirection,
     },
     page,
@@ -175,11 +175,7 @@ const Page = () => {
               selectable={!!_address}
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={[
-                SortType.expiryDate,
-                SortType.labelName,
-                SortType.creationDate,
-              ]}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}

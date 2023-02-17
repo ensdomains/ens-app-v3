@@ -11,7 +11,7 @@ type Subnames = Awaited<ReturnType<ReturnType<typeof useEns>['getSubnames']>>['s
 
 type Subname = Subnames[number]
 
-export type SubnameSortType = Exclude<SortType, SortType.expiryDate>
+export type SubnameSortType = Exclude<SortType, 'expiryDate'>
 
 export const useSubnameInfiniteQuery = (
   name: string,

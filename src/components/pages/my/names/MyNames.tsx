@@ -12,6 +12,8 @@ import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/Name
 import {
   NameTableHeader,
   NameTableMode,
+  SortDirection,
+  SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
@@ -21,17 +23,6 @@ import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
 import { useQueryParameterState } from '../../../../hooks/useQueryParameterState'
-
-export enum SortType {
-  expiryDate = 'expiryDate',
-  labelName = 'labelName',
-  creationDate = 'creationDate',
-}
-
-export enum SortDirection {
-  asc = 'asc',
-  desc = 'desc',
-}
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -72,10 +63,10 @@ const MyNames = () => {
     }
   }
 
-  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate' as SortType)
+  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
     'direction',
-    'desc' as SortDirection,
+    'desc',
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
@@ -90,7 +81,7 @@ const MyNames = () => {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortType || SortType.expiryDate,
+      type: sortType || 'expiryDate',
       orderDirection: sortDirection,
     },
     page,
@@ -150,11 +141,7 @@ const MyNames = () => {
             <NameTableHeader
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={[
-                SortType.expiryDate,
-                SortType.labelName,
-                SortType.creationDate,
-              ]}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}

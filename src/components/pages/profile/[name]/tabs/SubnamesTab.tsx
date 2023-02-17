@@ -109,13 +109,10 @@ export const SubnamesTab = ({
   const { address } = useAccount()
   const { showDataInput } = useTransactionFlow()
 
-  const [sortType, setSortType] = useQueryParameterState<SubnameSortType>(
-    'sort',
-    'creationDate' as SubnameSortType,
-  )
+  const [sortType, setSortType] = useQueryParameterState<SubnameSortType>('sort', 'creationDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
     'direction',
-    'desc' as SortDirection,
+    'desc',
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
   const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
@@ -205,7 +202,7 @@ export const SubnamesTab = ({
         <NameTableHeader
           selectable={false}
           sortType={sortType}
-          sortTypeOptionValues={[SortType.creationDate, SortType.labelName]}
+          sortTypeOptionValues={['creationDate', 'labelName']}
           sortDirection={sortDirection}
           searchQuery={searchInput}
           mode="view"
