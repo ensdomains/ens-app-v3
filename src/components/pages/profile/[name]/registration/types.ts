@@ -8,10 +8,16 @@ type UnionToIntersection<U> = (U extends any ? (k: U) => void : never) extends (
   ? I
   : never
 
+export enum PaymentMethod {
+  ethereum = 'ethereum',
+  moonpay = 'moonpay',
+}
+
 export type RegistrationStepData = {
   pricing: {
     years: number
     reverseRecord: boolean
+    paymentMethodChoice: PaymentMethod | ''
   }
   profile: {
     records: ProfileRecord[]
@@ -33,9 +39,11 @@ export type RegistrationData = UnionToIntersection<RegistrationStepData[Registra
 
 export type SelectedItemProperties = { address: string; name: string }
 
-export type RegistrationReducerDataItem = RegistrationData & {
+export type RegistrationReducerDataItem = Omit<RegistrationData, 'paymentMethodChoice'> & {
   stepIndex: number
   queue: RegistrationStep[]
+  isMoonpayFlow: boolean
+  externalTransactionId: string
 } & SelectedItemProperties
 
 export type RegistrationReducerData = {
@@ -59,7 +67,7 @@ export type RegistrationReducerAction =
   | {
       name: 'setPricingData'
       selected: SelectedItemProperties
-      payload: RegistrationStepData['pricing']
+      payload: Omit<RegistrationStepData['pricing'], 'paymentMethodChoice'>
     }
   | {
       name: 'setProfileData'
@@ -87,3 +95,14 @@ export type RegistrationReducerAction =
       name: 'resetSecret'
       selected: SelectedItemProperties
     }
+  | {
+      name: 'setExternalTransactionId'
+      selected: SelectedItemProperties
+      externalTransactionId: string
+    }
+  | {
+      name: 'moonpayTransactionCompleted'
+      selected: SelectedItemProperties
+    }
+
+export type MoonpayTransactionStatus = 'pending' | 'completed' | 'failed' | 'waitingAuthorization'
