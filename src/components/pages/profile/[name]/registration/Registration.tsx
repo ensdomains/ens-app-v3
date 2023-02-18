@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -104,6 +105,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
 
   const router = useRouterWithHistory()
+  const chainId = useChainId()
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }
@@ -315,6 +317,9 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
       >
         <div>
           <Typography fontVariant="extraLargeBold">MoonPay Checkout</Typography>
+          {chainId === 5 && (
+            <Typography>Test card details: 4000 0209 5159 5032, 12/2030, 123</Typography>
+          )}
         </div>
         <iframe
           title="Moonpay Checkout"
