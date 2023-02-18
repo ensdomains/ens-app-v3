@@ -29,7 +29,7 @@ export const nonceManager =
 
       for (let i = 0; i < namesWithAccount.length; i += 1) {
         const data = namesWithAccount[i]
-        usedNonces += await func(newNonceMap[account])(data, i)
+        usedNonces += await func(newNonceMap[account])(data, usedNonces)
       }
       newNonceMap[account] += usedNonces
     }

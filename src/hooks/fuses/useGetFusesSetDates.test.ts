@@ -51,7 +51,7 @@ const mockHistory: any = {
       transactionHash: '0x31ec20daa6b92e3aa0d2e4f86178b72240e0e42fe7a0ce7f8371818b71f807d1',
       id: '85-5',
       data: {
-        resolver: '0x70e0ba845a1a0f2da3359c97e0285013525ffc49',
+        resolver: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF',
       },
     },
     {

@@ -7,6 +7,7 @@ import { Avatar, mq } from '@ensdomains/thorin'
 import CircleTick from '@app/assets/CircleTick.svg'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
+import { checkETH2LDFromName } from '@app/utils/utils'
 
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
@@ -182,7 +183,7 @@ export const NameDetailItem = ({
             <TitleWrapper name={truncatedName || name} disabled={disabled} />
             {expiryDate && (
               <SubtitleWrapper>
-                <ShortExpiry expiry={expiryDate} />
+                <ShortExpiry expiry={expiryDate} hasGracePeriod={checkETH2LDFromName(name)} />
               </SubtitleWrapper>
             )}
           </NameItemContent>

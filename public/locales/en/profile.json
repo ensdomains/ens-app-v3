@@ -351,6 +351,7 @@
     "addressLength": "If address it should be 42 characters long",
     "unsupportedTLD": "This TLD is not supported",
     "keyInUse": "{{value}} is already in use",
-    "hasSubnames": "This name has subnames"
+    "hasSubnames": "This name has subnames",
+    "permissionRevoked": "This name has revoked the permissions needed to perform this action."
   }
 }

@@ -57,6 +57,7 @@ export const useSubnameAbilities = ({
   const isOwner = ownerData?.owner === address
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
   const isPCCBurned = wrapperData?.parent.PARENT_CANNOT_CONTROL
+  const isCannotTransferBurned = wrapperData?.child.CANNOT_TRANSFER
 
   const subnameAbilities = useMemo(() => {
     const abilities: Abilities = {
@@ -70,13 +71,20 @@ export const useSubnameAbilities = ({
         canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
       } as Abilities
     if (isWrapped && isPCCBurned && isOwner) {
+      /* eslint-disable no-nested-ternary */
       return {
-        canDelete: !hasSubnames,
+        canDelete: !hasSubnames && !isCannotTransferBurned,
         canDeleteContract: 'nameWrapper',
+        canDeleteError: isCannotTransferBurned
+          ? 'permissionRevoked'
+          : hasSubnames
+          ? t('errors.hasSubnames')
+          : undefined,
         canDeleteMethod: 'setRecord',
         isPCCBurned,
         ...(hasSubnames ? { canDeleteError: t('errors.hasSubnames') } : {}),
       } as Abilities
+      /* eslint-enable no-nested-ternary */
     }
     if (isWrapped && !isPCCBurned && isParentOwner) {
       return {
@@ -105,6 +113,7 @@ export const useSubnameAbilities = ({
     isOwner,
     isParentOwner,
     isPCCBurned,
+    isCannotTransferBurned,
     t,
   ])
 

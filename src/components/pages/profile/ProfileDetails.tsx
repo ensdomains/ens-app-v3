@@ -4,13 +4,13 @@ import styled, { css } from 'styled-components'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
-import { useNameDates } from '@app/hooks/useNameDates'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
-import { formatExpiry } from '@app/utils/utils'
+import { checkETH2LDFromName, formatExpiry } from '@app/utils/utils'
 
 import {
   AddressProfileButton,
@@ -116,7 +116,10 @@ const Actions = styled.div(
       & > .leading {
         flex-grow: 1;
         order: -1;
-        & > button {
+        & > div {
+          width: min-content;
+        }
+        button {
           width: min-content;
         }
       }
@@ -126,9 +129,40 @@ const Actions = styled.div(
   `,
 )
 
+type Action = NonNullable<ReturnType<typeof useProfileActions>['profileActions']>[number]
+const getAction = (action: Action, is2LDEth: boolean) => {
+  if (action.skip2LDEth && is2LDEth) return null
+  if (action.tooltipContent) {
+    return (
+      <DisabledButtonWithTooltip
+        buttonId="delete-subname-disabled-button"
+        content={action.tooltipContent}
+        buttonText={action.label}
+        mobileWidth={150}
+        mobileButtonWidth="initial"
+        buttonWidth="initial"
+        mobilePlacement="top"
+        placement="right"
+      />
+    )
+  }
+  return (
+    <Button
+      data-testid={`profile-action-${action.label}`}
+      onClick={action.onClick}
+      size="small"
+      colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
+    >
+      {action.label}
+    </Button>
+  )
+}
+
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
+  expiryDate,
+  pccExpired,
   owners,
   actions,
   isCached,
@@ -136,12 +170,13 @@ export const ProfileDetails = ({
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
+  expiryDate: Date | undefined
+  pccExpired: boolean
   owners: ReturnType<typeof useOwners>
   actions: ReturnType<typeof useProfileActions>['profileActions']
   isCached?: boolean
   name: string
 }) => {
-  const { data: nameDates } = useNameDates(name)
   const otherRecords = [
     ...textRecords
       .filter(
@@ -151,15 +186,26 @@ export const ProfileDetails = ({
       )
       .map((x) => ({ ...x, type: 'text' })),
   ]
+
   const mappedOwners = [
-    ...(owners?.map((x) => ({ key: x.label, value: x.address })) || []),
+    ...((pccExpired
+      ? [
+          {
+            key: 'owner',
+            type: 'text',
+            value: '',
+          },
+        ]
+      : owners?.map((x) => ({ key: x.label, value: x.address }))) || []),
     {
       key: 'expiry',
       type: 'text',
-      value: nameDates?.expiryDate ? formatExpiry(nameDates?.expiryDate) : 'no expiry',
-      timestamp: nameDates?.expiryDate ? nameDates.expiryDate.getTime() : 0,
+      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+      timestamp: expiryDate ? expiryDate.getTime() : 0,
     },
   ]
+
+  const is2LDEth = checkETH2LDFromName(name)
 
   return (
     <ProfileInfoBox $isCached={isCached}>
@@ -198,14 +244,7 @@ export const ProfileDetails = ({
         <Actions data-testid="profile-actions">
           {actions.map((action) => (
             <div className={action.red ? 'leading' : ''} key={action.label}>
-              <Button
-                data-testid={`profile-action-${action.label}`}
-                onClick={action.onClick}
-                size="small"
-                colorStyle={action.red ? 'redSecondary' : 'accentPrimary'}
-              >
-                {action.label}
-              </Button>
+              {getAction(action, is2LDEth)}
             </div>
           ))}
         </Actions>
