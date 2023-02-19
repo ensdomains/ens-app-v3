@@ -1,0 +1,64 @@
+{
+  "general": {
+    "connectWallet": "Please connect your wallet to continue",
+    "importDNSSECName": "Import DNSSEC Name",
+    "domainRegistrar": "Domain Registrar"
+  },
+  "registrars": {
+    "namecheap": "Namecheap",
+    "domaindotcom": "Domain.com",
+    "googledomains": "Google Domains",
+    "dreamhost": "Dreamhost",
+    "hover": "Hover",
+    "godaddy": "GoDaddy",
+    "bluehost": "Bluehost",
+    "hostgator": "HostGator",
+    "findYourRegistrar": "Find your registrar"
+  },
+  "addTextRecord": {
+    "title": "Add Text Records",
+    "explanation": "You need to create a new DNS record for your domain using these details. This will claim your Ethereum address as the owner of this domain.",
+    "syncWarningOne": "You don't appear to be the DNS Owner of this domain, but you can still add this name to ENS Registry.",
+    "syncWarningTwo": "If you own this domain change its _ens TXT record to contain your Ethereum Address and click 'Check' again, otherwise click 'Claim' to proceed.",
+    "type": "Type",
+    "txt": "TXT",
+    "errors": {
+      "SUBDOMAIN_NOT_SET": {
+        "title": "Subdomain not set",
+        "content": "Please set your _ens subdomain with the value shown above."
+      },
+      "DNS_RECORD_DOES_NOT_EXIST": {
+        "title": "Record does not exist",
+        "content": "DNS Record is not set"
+      },
+      "DNS_RECORD_INVALID": {
+        "title": "Record Invalid",
+        "content": "Please set the record with the value above."
+      }
+    }
+  },
+  "claimComplete": {
+    "title": "Congratulations!",
+    "ownerOf": "You are now the owner of:",
+    "successMessage": "Your domain name was successfully imported into ENS. You can now view and manage your name.",
+    "viewName": "View Name",
+    "claimAnother": "Claim another"
+  },
+  "claimDomain": {
+    "title": "Claim your domain",
+    "syncWarning": "You are importing a DNS name that you appear to not own.",
+    "verifiedOwnership": "You have verified your ownership and can claim this domain.",
+    "pendingTransactionPre": "You already have a",
+    "pendingTransactionLink": "pending transaction",
+    "pendingTransactionPost": "for this name",
+    "dnsOwner": "DNS Owner",
+    "networkEst": "Estimated network cost"
+  },
+  "enableDNSSEC": {
+    "title": "Enable DNSSEC",
+    "instruction": "You'll need to visit your domain registrar to enable DNSSEC. Once enabled, click 'Check' to move to the next step.",
+    "registrarHelp": "Choose your registrar from the dropdown below for instructions on how to do this.",
+    "findRegistrar": "Find your registrar",
+    "DNSSECNotEnabled": "DNSSEC has not been enabled on this domain."
+  }
+}

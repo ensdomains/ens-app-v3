@@ -1,0 +1,357 @@
+{
+  "meta": {
+    "title": "{{name}} - ENS",
+    "description": "{{name}} 在 ENS 中的资料"
+  },
+  "title": "个人资料",
+  "yourWallet": "您的钱包",
+  "yourProfile": "您的个人资料",
+  "accounts": "账户",
+  "addresses": "地址",
+  "otherRecords": "其他记录",
+  "editProfile": "编辑资料",
+  "ownership": "所有权",
+  "viewDetails": "查看详情",
+  "banner": {
+    "available": {
+      "title": "{{name}} 可以注册",
+      "description": "这个名字在 <strong>{{date}}</strong> 已经过期。点击此处查看注册页面。"
+    }
+  },
+  "tabs": {
+    "profile": {
+      "name": "个人资料",
+      "actions": {
+        "setAsPrimaryName": {
+          "label": "设置为主名",
+          "title": "设置您的主名",
+          "description": "如果将这个名字设置为主名，ETH 地址记录必须与此地址相匹配。"
+        },
+        "deleteSubname": {
+          "label": "删除子名"
+        },
+        "extend": {
+          "label": "名字续期"
+        },
+        "editProfile": {
+          "label": "编辑资料"
+        }
+      },
+      "warnings": {
+        "wrappedDNS": "一个 DNS 的所有者可以随时收回他的 DNS 名字。不要购买 DNS 名字。",
+        "homoglyph": "这个名字包含非 ASCII 字符。有些字符可能看起来与其他字符相同或非常相似，这可能会用于欺骗用户。<a>了解更多关于同形文字的知识</a>"
+      }
+    },
+    "records": {
+      "name": "记录"
+    },
+    "subnames": {
+      "name": "子名"
+    },
+    "permissions": {
+      "name": "权限",
+      "parentUnlockedWarning": "<strong>不能更改这个名字的权限。</strong>你必须首先撤销父级 ({{parent}}) 上的 “解除包装” 权限。点击这里查看父级权限。",
+      "revokedLabel": "撤销于 {{date}}",
+      "grantedLabel": "授权于 {{date}}",
+      "role": {
+        "manager": "管理者",
+        "owner": "所有者",
+        "parent": "父级"
+      },
+      "ownership": {
+        "title": "所有者权限",
+        "parentCanControl": {
+          "label": "这个名字可以受到父级的控制 (<parentLink>{{parent}}</parentLink>)",
+          "list" : {
+            "title": "父级的所有者可以:",
+            "item1": "控制和修改这个名字的设置和记录",
+            "item2": "重新获得或重新分配这个名字的所有权",
+            "item3": "移除这个名字"
+          }
+        },
+        "parentCannotControl": {
+          "label": "这个名字不受父级的控制 (<parentLink>{{parent}}</parentLink>)",
+          "sublabel": "父级的所有者不能控制、修改、删除或重新获得该名字的所有权。",
+          "list" : {
+            "title": "这个名字的所有权不会发生变化，除非发生下列情况之一:",
+            "item1": "这个名字在 {{date}} 到期 (可以续期)",
+            "item2": "父级名字在 {{date}} 到期",
+            "item3": "名字的所有权被发送到其他地址"
+          }
+        },
+        "parentCanChange": {
+          "label": "这个名字的父级 (<parentLink>{{parent}}</parentLink>) 可以更改权限",
+          "list": {
+            "title": "父级可以:",
+            "item1": "撤销权限",
+            "item2": "更改或烧毁自定义的保险丝"
+          }
+        },
+        "ownerCanChange": {
+          "label": "这个名字的所有者可以更改权限",
+          "list": {
+            "title": "所有者可以:",
+            "item1": "撤销权限",
+            "item2": "更改或烧毁自定义的保险丝"
+          }
+        },
+        "ownerCannotChange": {
+          "label": "这个名字的所有者不能更改权限",
+          "list": {
+            "title": "所有者不能:",
+            "item1": "撤销权限",
+            "item2": "更改或烧毁自定义的保险丝"
+          }
+        },
+        "unwrapWarning": {
+          "message": "在放弃父级控制之前，必须先撤销父级 (<strong>{{parent}}</strong>) 的解除包装权限。<br> <parentLink>进入父级权限</parentLink>"
+        },
+        "action": {
+          "giveUpControl": "放弃父级控制权",
+          "revokePermission": "撤销权限"
+        }
+      },
+      "expiry": {
+        "permissions": {
+            "canExtendExpiry": {
+              "label": "可以延长有效期",
+              "description": "这个名字的权限的有效期 ({{date}}) 可以由 {{managerOrOwner}} 延长。"
+            },
+            "cannotExtendExpiry": {
+              "label": "不能延长有效期",
+              "description": "这个名字的权限的有效期不能由其管理者延长。",
+              "description_date": "这个名字的权限的有效期 ({{date}}) 不能由其管理者延长。"
+            }
+        },
+        "manager": "管理者",
+        "owner": "所有者",
+        "action": {
+          "changePermissions": "更改权限"
+        }
+      },
+      "nameChangePermissions": {
+        "title": "权限更改命名",
+        "subtitle": {
+          "parent-can-change": "这个名字的父级 (<parentLink>{{parent}}</parentLink>) 可以更改这个名字的设置。",
+          "owner-can-change": "这个名字的所有者可以更改这个名字的设置。"
+        },
+        "permissions": {
+          "canUnwrap": {
+            "label": "可以解除这个名字的包装",
+            "description": "这个名字的所有者 {{owner}} 可以解除这个名字的包装。"
+          },
+          "cannotUnwrap": {
+            "label": "不能解除这个名字的包装",
+            "description": "这个名字的所有者 {{owner}} 不能解除这个名字的包装。"
+          },
+          "canCreateSubnames": {
+            "label": "可以创建子名",
+            "description": "这个名字的所有者 {{owner}} 可以创建子名。"
+          },
+          "cannotCreateSubnames": {
+            "label": "不能创建子名",
+            "description": "这个名字的所有者 {{owner}} 不能创建子名。"
+          },
+          "canSend": {
+            "label": "可以发送这个名字",
+            "description": "这个名字的所有者 {{owner}} 可以将这个名字发送给其他人。"
+          },
+          "cannotSend": {
+            "label": "不能发送这个名字",
+            "description": "这个名字的所有者 {{owner}} 不能将这个名字发送给其他人。"
+          },
+          "canSetResolver": {
+            "label": "可以设置解析器",
+            "description": "这个名字的所有者 {{owner}} 可以设置和更改它的解析器。"
+          },
+          "cannotSetResolver": {
+            "label": "不能设置解析器",
+            "description": "这个名字的所有者 {{owner}} 不能设置和更改它的解析器。"
+          },
+          "canSetTTL": {
+            "label": "可以设置 TTL",
+            "description": "这个名字的所有者 {{owner}} 可以设置和更改它的 TTL。"
+          },
+          "cannotSetTTL": {
+            "label": "不能设置 TTL",
+            "description": "这个名字的所有者 {{owner}} 不能设置和更改它的 TTL。"
+          }
+        },
+        "action": {
+          "changePermissions": "更改权限"
+        }
+      }
+    },
+    "fuses": {
+      "name": "保险丝"
+    },
+    "more": {
+      "name": "更多",
+      "resolver": {
+        "label": "解析器",
+        "custom": "自定义",
+        "latest": "最新版",
+        "outdated": "已过时",
+        "version": "版本",
+        "etherscan": "Etherscan"
+      },
+      "fuses": {
+        "label": "保险丝",
+        "info": "您必须先烧毁 “可以解除包装”，才能烧毁其他的保险丝",
+        "callToAction": "请包装您的名字以解锁这项功能",
+        "burnFormTitle": "烧毁权限",
+        "burned": "已烧毁",
+        "permissions": {
+          "label": "权限",
+          "warning": "保险丝可以由父级更改",
+          "CAN_DO_EVERYTHING": "具备全部权限",
+          "CANNOT_BURN_FUSES": "可以烧毁保险丝",
+          "CANNOT_CREATE_SUBDOMAIN": "可以创建子名",
+          "CANNOT_SET_RESOLVER": "可以设置解析器",
+          "CANNOT_SET_TTL": "可以设置 TTL",
+          "CANNOT_TRANSFER": "可以转移",
+          "CANNOT_UNWRAP": "可以解除包装",
+          "PARENT_CANNOT_CONTROL": "父级可以控制",
+          "CAN_EXTEND_EXPIRY": "不能延长有效期",
+          "IS_DOT_ETH": "不是 .eth"
+        }
+      },
+      "ownership": {
+        "label": "所有权",
+        "dnsOwnerWarning": {
+          "isDnsOwner": "您不能更改这个名字，因为您是 DNS 所有者，而不是管理员。您可以通过同步管理者来修复这个问题。",
+          "isManager": "您是这个名字的管理员，但不是 DNS 所有者。DNS 所有者可以随时收回他的 DNS 名字。您可以将这个名字发送给所有者，或是通过更新 DNS 记录来匹配所有者。",
+          "refreshDNS": "刷新 DNS",
+          "syncManager": "同步管理者"
+        }
+      },
+      "token": {
+        "label": "NFT",
+        "hex": "十六进制",
+        "decimal": "十进制"
+      },
+      "misc": {
+        "registered": "已注册",
+        "expires": "到期时间"
+      }
+    }
+  },
+  "details": {
+    "title": "名字详情",
+    "notWrapped": "未包装",
+    "sendName": {
+      "title": "Send Name",
+      "description": "发送名字将使其受新地址的控制",
+      "learnMore": "了解关于更多名字所有权的内容",
+      "makeOwner": "任命所有者",
+      "makeOwnerDescription": "所有者可以发送所有权以及更改管理者",
+      "makeManager": "任命管理者",
+      "makeManagerDescription": "管理者可以更改和设置记录",
+      "inputPlaceholder": "输入以太坊地址或 ENS 名字",
+      "transferSubname": "转移名字",
+      "transferController": "转移管理员"
+    },
+    "wrap": {
+      "startTitle": "升级您的名字",
+      "resumeTitle": "继续您的升级",
+      "completeTitle": "升级完成",
+      "description": "升级或 “包装” 您的名字会给它带来新的功能。",
+      "startLabel": "升级",
+      "resumeLabel": "继续升级",
+      "boxTitle": "解锁新功能",
+      "boxDescription": "升级您的名字可以解锁 ENS 的最新功能"
+    },
+    "descriptions": {
+      "owner": "持有并掌控名字",
+      "controller": "控制这个名字的所有记录",
+      "registrant": "这个 NFT 的所有者",
+      "dnsOwner": "这个 DNS 名字的所有者"
+    },
+    "tabs": {
+      "records": {
+        "label": "记录",
+        "text": "文本",
+        "contentHash": "内容哈希",
+        "noContentHash": "无内容哈希",
+        "editRecords": "编辑记录"
+      },
+      "subnames": {
+        "label": "子名",
+        "loading": "子名加载中",
+        "empty": "暂未创建子名",
+        "noResults": "无结果",
+        "noMoreResults": "无其他结果",
+        "addSubname": {
+          "title": "子名功能允许您在现有名字上创建其他名字。",
+          "learn": "了解子名",
+          "action": "创建子名",
+          "dialog": {
+            "title": "创建子名",
+            "error": {
+              "invalidCharacters": "含有无效字符",
+              "mustUseLowercase": "必须使用小写字母",
+              "alreadyExists": "名字已经存在",
+              "nameTooLong": "名字太长",
+              "pccBurned": "名字已被锁定至 {{date}}"
+            }
+          }
+        }
+      }
+    }
+  },
+
+  "advancedEditor": {
+    "title": "{{name}} 的记录",
+    "tabs": {
+      "text": {
+        "label": "文本",
+        "addRecord": "添加记录",
+        "createRecord": "输入一个记录名...",
+        "placeholder": {
+          "default": "在此添加记录值..."
+        }
+      },
+      "address": {
+        "label": "地址",
+        "addRecord": "添加地址",
+        "noOptions": "未找到可用地址项",
+        "placeholder": {
+          "default": "在此添加地址..."
+        }
+      },
+      "other": {
+        "label": "其他",
+        "labelDisabled": "当前解析器不支持",
+        "contentHash": {
+          "label": "内容哈希",
+          "placeholder": "例如 ipfs://"
+        },
+        "publicKey": {
+          "label": "公钥",
+          "placeholder": "例如 pub_1231231231231"
+        },
+        "abi": {
+          "label": "ABI",
+          "placeholder": "在此输入 ABI..."
+        }
+      }
+    }
+  },
+  "errors": {
+    "invalidName": "这个名字无效。",
+    "invalidAddress": "不是一个有效的地址",
+    "expiringSoon": "这个名字即将过期。",
+    "ownerManagerChoice": "必须发送所有者或管理者",
+    "unknown": "未知错误",
+    "notMigrated": "这个名字没有迁移到新的注册表。",
+    "featureNotAvailable": "有些功能目前还不可用，但您仍然可以使用",
+    "featureNotAvailableLink": "在旧版 app 中查看这个名字。",
+    "migrationNotAvailable": "目前还不能迁移至新注册表，但您仍然可以",
+    "migrationNotAvailableLink": "在旧版 app 中迁移这个名字。",
+    "addressLength": "如果是地址，那它的长度应该是 42 个字符",
+    "unsupportedTLD": "不支持这个 TLD",
+    "keyInUse": "{{value}} 已经在使用了",
+    "hasSubnames": "这个名字拥有子名",
+    "permissionRevoked": "这个名字撤销了执行此操作所需的权限。"
+  }
+}

@@ -1,0 +1,22 @@
+{
+  "title": "Settings",
+  "section": {
+    "wallet": {
+      "title": "Wallet"
+    },
+    "transaction": {
+      "title": "Transactions",
+      "noRecentTransactions": "No recent transactions"
+    },
+    "primary": {
+      "title": "Primary Name",
+      "loading": "Loading primary name...",
+      "noName": "No primary name set.",
+      "input": {
+        "title": "Select a primary name",
+        "noNames": "No eligible names found for this address",
+        "loading": "Loading names"
+      }
+    }
+  }
+}

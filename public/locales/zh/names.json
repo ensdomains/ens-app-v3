@@ -1,0 +1,15 @@
+{
+  "title": "Names",
+  "subtitle": {
+    "start": "All the names held by",
+    "this": "this",
+    "your": "your",
+    "wallet": "wallet"
+  },
+  "empty": "No names found for this address",
+  "sortTypes": {
+    "expiryDate": "Expiry date",
+    "labelName": "Name",
+    "creationDate": "Creation date"
+  }
+}
