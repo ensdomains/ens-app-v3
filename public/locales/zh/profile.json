@@ -1,7 +1,7 @@
 {
   "meta": {
     "title": "{{name}} - ENS",
-    "description": "{{name}} 在 ENS 中的资料"
+    "description": "{{name}} 在 ENS 中的个人资料"
   },
   "title": "个人资料",
   "yourWallet": "您的钱包",
@@ -9,7 +9,7 @@
   "accounts": "账户",
   "addresses": "地址",
   "otherRecords": "其他记录",
-  "editProfile": "编辑资料",
+  "editProfile": "编辑个人资料",
   "ownership": "所有权",
   "viewDetails": "查看详情",
   "banner": {
@@ -34,11 +34,11 @@
           "label": "名字续期"
         },
         "editProfile": {
-          "label": "编辑资料"
+          "label": "编辑个人资料"
         }
       },
       "warnings": {
-        "wrappedDNS": "一个 DNS 的所有者可以随时收回他的 DNS 名字。不要购买 DNS 名字。",
+        "wrappedDNS": "一个 DNS 的所有者可以随时收回他的 DNS 域名。不要购买 DNS 域名。",
         "homoglyph": "这个名字包含非 ASCII 字符。有些字符可能看起来与其他字符相同或非常相似，这可能会用于欺骗用户。<a>了解更多关于同形文字的知识</a>"
       }
     },
@@ -115,12 +115,12 @@
         "permissions": {
             "canExtendExpiry": {
               "label": "可以延长有效期",
-              "description": "这个名字的权限的有效期 ({{date}}) 可以由 {{managerOrOwner}} 延长。"
+              "description": "这个名字的权限有效期 ({{date}}) 可以由 {{managerOrOwner}} 延长。"
             },
             "cannotExtendExpiry": {
               "label": "不能延长有效期",
-              "description": "这个名字的权限的有效期不能由其管理者延长。",
-              "description_date": "这个名字的权限的有效期 ({{date}}) 不能由其管理者延长。"
+              "description": "这个名字的权限有效期不能由其管理者延长。",
+              "description_date": "这个名字的权限有效期 ({{date}}) 不能由其管理者延长。"
             }
         },
         "manager": "管理者",
@@ -137,11 +137,11 @@
         },
         "permissions": {
           "canUnwrap": {
-            "label": "可以解除这个名字的包装",
+            "label": "可以解除包装",
             "description": "这个名字的所有者 {{owner}} 可以解除这个名字的包装。"
           },
           "cannotUnwrap": {
-            "label": "不能解除这个名字的包装",
+            "label": "不能解除包装",
             "description": "这个名字的所有者 {{owner}} 不能解除这个名字的包装。"
           },
           "canCreateSubnames": {
@@ -153,11 +153,11 @@
             "description": "这个名字的所有者 {{owner}} 不能创建子名。"
           },
           "canSend": {
-            "label": "可以发送这个名字",
+            "label": "可以发送名字",
             "description": "这个名字的所有者 {{owner}} 可以将这个名字发送给其他人。"
           },
           "cannotSend": {
-            "label": "不能发送这个名字",
+            "label": "不能发送名字",
             "description": "这个名字的所有者 {{owner}} 不能将这个名字发送给其他人。"
           },
           "canSetResolver": {
@@ -220,7 +220,7 @@
         "label": "所有权",
         "dnsOwnerWarning": {
           "isDnsOwner": "您不能更改这个名字，因为您是 DNS 所有者，而不是管理员。您可以通过同步管理者来修复这个问题。",
-          "isManager": "您是这个名字的管理员，但不是 DNS 所有者。DNS 所有者可以随时收回他的 DNS 名字。您可以将这个名字发送给所有者，或是通过更新 DNS 记录来匹配所有者。",
+          "isManager": "您是这个名字的管理员，但不是 DNS 所有者。DNS 所有者可以随时收回他的 DNS 域名。您可以将这个名字发送给所有者，或是通过更新 DNS 记录来匹配所有者。",
           "refreshDNS": "刷新 DNS",
           "syncManager": "同步管理者"
         }
@@ -265,7 +265,7 @@
       "owner": "持有并掌控名字",
       "controller": "控制这个名字的所有记录",
       "registrant": "这个 NFT 的所有者",
-      "dnsOwner": "这个 DNS 名字的所有者"
+      "dnsOwner": "这个 DNS 域名的所有者"
     },
     "tabs": {
       "records": {

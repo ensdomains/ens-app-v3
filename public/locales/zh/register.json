@@ -35,8 +35,8 @@
       "permissions": "权限",
       "resolver": "解析器",
       "visibilityMessage": "您的个人资料将存储在区块链上，您添加的所有内容都将是公开可见的。",
-      "addProfile": "添加资料标识",
-      "addMore": "添加更多资料",
+      "addProfile": "添加个人资料标识",
+      "addMore": "添加更多个人资料",
       "options": {
         "groups": {
           "general": {
@@ -137,7 +137,7 @@
         }
       },
       "actions": {
-        "skipProfile": "跳过资料"
+        "skipProfile": "跳过个人资料"
       }
     },
     "complete": {

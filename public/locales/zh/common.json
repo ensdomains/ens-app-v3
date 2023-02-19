@@ -46,7 +46,7 @@
     "years_other": "{{count}} 年",
     "yrs_one": "{{count}} 年",
     "yrs_other": "{{count}} 年",
-    "gas": "{{value}} 燃料",
+    "gas": "{{value}} 网络费",
     "selected": "{{count}} 个选中项",
     "perPage": "{{count}} 个/页"
   },
@@ -70,7 +70,7 @@
     "disconnect": "断开连接",
     "connect": "连接钱包",
     "noPrimaryName": "未设置主名",
-    "viewProfile": "查看资料",
+    "viewProfile": "查看个人资料",
     "viewDetails": "查看详情",
     "register": "注册"
   },
@@ -134,11 +134,11 @@
       "test": "测试交易",
       "addSuccess": "添加成功",
       "sendName": "发送名字",
-      "migrateProfile": "迁移资料",
-      "migrateProfileWithSync": "迁移并更新资料",
+      "migrateProfile": "迁移个人资料",
+      "migrateProfileWithSync": "迁移并更新个人资料",
       "wrapName": "包装名字",
       "updateResolver": "更新解析器",
-      "updateProfile": "更新资料",
+      "updateProfile": "更新个人资料",
       "setPrimaryName": "设置主名",
       "updateEthAddress": "更新 ETH 地址",
       "testSendName": "发送名字",
@@ -248,7 +248,7 @@
         }
       },
       "error": {
-        "gasLimit": "这笔交易的燃料限额不够高，请再试一次。"
+        "gasLimit": "这笔交易的网络费限额不够高，请再试一次。"
       }
     },
     "viewEtherscan": "在 Etherscan 上查看",

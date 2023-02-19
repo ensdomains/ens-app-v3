@@ -1,15 +1,15 @@
 {
-  "title": "Names",
+  "title": "名字",
   "subtitle": {
     "start": "All the names held by",
-    "this": "this",
-    "your": "your",
-    "wallet": "wallet"
+    "this": "这个",
+    "your": "您的",
+    "wallet": "钱包"
   },
-  "empty": "No names found for this address",
+  "empty": "在这个地址上未找到任何名字",
   "sortTypes": {
-    "expiryDate": "Expiry date",
-    "labelName": "Name",
-    "creationDate": "Creation date"
+    "expiryDate": "到期时间",
+    "labelName": "名字",
+    "creationDate": "创建时间"
   }
 }

@@ -1,21 +1,21 @@
 {
-  "title": "Settings",
+  "title": "设置",
   "section": {
     "wallet": {
-      "title": "Wallet"
+      "title": "钱包"
     },
     "transaction": {
-      "title": "Transactions",
-      "noRecentTransactions": "No recent transactions"
+      "title": "交易",
+      "noRecentTransactions": "近期无交易"
     },
     "primary": {
-      "title": "Primary Name",
-      "loading": "Loading primary name...",
-      "noName": "No primary name set.",
+      "title": "主名",
+      "loading": "主名加载中...",
+      "noName": "主名未设置。",
       "input": {
-        "title": "Select a primary name",
-        "noNames": "No eligible names found for this address",
-        "loading": "Loading names"
+        "title": "选择主名",
+        "noNames": "此地址上未找到符合条件的名字",
+        "loading": "名字加载中"
       }
     }
   }

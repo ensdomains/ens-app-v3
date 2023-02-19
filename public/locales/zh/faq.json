@@ -1,20 +1,20 @@
 {
-  "title": "FAQs",
+  "title": "常见问题",
   "option": {
-    "general": "General",
-    "register": "Registering a name",
-    "manage": "Managing a name",
-    "troubleshoot": "Troubleshooting"
+    "general": "通用",
+    "register": "注册名字",
+    "manage": "管理名字",
+    "troubleshoot": "处理问题"
   },
   "general": {
-    "What is the maximum length of a name I can register?": "Names cannot be less than 3 characters. Wrapped names can only have labels as long as 256 bytes",
-    "Can names have emojis?": "Yes!",
-    "What happens if a name expires?": "After a name expires, there is a 90 day grace period in which the owner can't edit the records, but can still re-register the name. After this grace period, the name is released for registration by anyone with a temporary premium, which decreases over a 21 days period.<br/><br/>Expired names do not lose their records, so will continue resolving to their previous ETH address until a new owner overwrites it.",
-    "Where can I see the list of names to be released?": "You can find a list at the _ENS Names to be released_ section of [the Dune Analytics dashboard](https://dune.xyz/makoto/ens-released-to-be-released-names).",
-    "What is an ENS profile?": "ENS profiles are a collection of pre-defined records, which are used by other dApps. Creating your profile in ENS allows you to have a single source for your profile information across Web3.",
-    "What is an ENS avatar?": "You can upload an image, or use an NFT as your ENS avatar. This will be pulled into dApps as your web3 avatar, while also updating your ENS NFT background.<br/><br/>To add an avatar click Edit Profile from the Profile tab of any name you own. NFT avatars must be an ERC721/ERC1155 NFT and have a valid image URI.",
-    "Can I use an ENS name to point to my website?": "Though ENS can technically store anything, there aren't many third party tools and applications which resolve IP addresses attached to ENS.<br/><br/>Instead, we suggest hosting your static html/css/images on IPFS and put the hash in your ENS name's Content record. Then it can be resolved by ENS-aware browsers (e.g. Opera), browser extensions (Metamask), or any browser with \".link\" or \".limo\" appended to the end (e.g. vitalik.eth.link or vitalik.eth.limo).<br/><br/>If you want to redirect your ENS name to an existing website, you could write a html file containing JavaScript logic to redirect to your website, upload the file into ipfs using services like [IPFS Pinata](https://pinata.cloud/), then set the CID to your contenthash. See the source code of depositcontract.eth.limo as an example.",
-    "I bought my name on an NFT marketplace, how do I use it?": "When you purchase an existing name it may come with existing records from the previous owner. To use it as your primary name, make sure to update the ETH records to match your ETH address and then update your primary name from the settings page.<br/><br/>Optionally, you can also remove or override existing records or create your own profile."
+    "我最多可以注册多长的名字?": "名字不能少于 3 个字符。可被包装的名字，它的标签最多只能有 256 字节。",
+    "名字中可以包含 emoji 吗?": "可以!",
+    "如果名字过期了会怎么样?": "名字过期后，有 90 天的宽限期，在此期间，名字的所有者不能编辑记录，但仍然可以重新注册这个名字。在这段宽限期之后，名字会被释放，任何人都可以注册，但此时名字会有一个临时溢价，该溢价在 21 天内递减。<br/><br/>过期名字的记录不会丢失，所以仍然会解析到之前的 ETH 地址，直到新的所有者重新设置它。",
+    "我在哪里可以看到即将过期释放的名字列表?": "您可以在 [Dune Analytics 数据表盘](https://dune.xyz/makoto/ens-released-to-be-released-names) 上找到一个名为 _ENS Names to be released_ 汇总表。",
+    "ENS 个人资料是什么?": "ENS 个人资料是预定义记录的集合，供其他 dApp 使用。在 ENS 中创建您的个人资料，能让您在 Web3 拥有一套单一来源的个人资料信息。",
+    "ENS 头像是什么?": "您可以使用上传的图像，或使用 NFT 作为您的 ENS 头像。这能让 dApp 引入并作为你的 web3 头像，同时也会更新你的 ENS NFT 背景。<br/><br/>要添加头像，请从您任意名字的个人资料选项卡上单击 “编辑个人资料”。NFT头像必须是 ERC721/ERC1155 NFT，并具备有效的图像 URI。",
+    "我可以使用 ENS 名字来指向我的网站吗?": "虽然 ENS 在技术上可以存储任何东西，但是能将 ENS 解析到 IP 地址的第三方工具和应用程序并不多。<br/><br/>相反，我们建议将静态 html、css 以及图像托管在 IPFS 上，并将其哈希值放在 ENS 名字的内容记录中。然后可以通过支持 ENS 的浏览器 (例如 Opera)、浏览器扩展 (Metamask) 来解析，或在任意浏览器中通过附加 \".link\" 或 \".limo\" 后缀来解析 (例如 vitalik.eth.link 或 vitalik.eth.limo)。<br/><br/>如果您想将您的 ENS 名字重定向到一个现有的网站，您可以编写一个包含 JavaScript 重定向代码的 html 文件，并使用 [IPFS Pinata](https://pinata.cloud/) 等服务将该文件上传到 ipfs，然后将 CID 设置为 ENS 的内容哈希。可参考 depositcontract.eth.limo 的源代码。",
+    "我在 NFT 市场上买了名字，我该如何使用它?": "当您购买一个现有的名字时，它可能还保留着上一个所有者的记录。要使用它作为您的主名，请确保将您的 ETH 地址更新到它的 ETH 记录中，然后再从设置页面更新您的主名。<br/><br/>您还可以选择删除或覆盖当前记录，或者创建自己的个人资料。"
   },
   "register": {
     "Can I register names other than .eth?": "Yes! You can import any DNS name that has DNSSEC-enabled into ENS. Please refer to our [guide](https://docs.ens.domains/dns-registrar-guide) for more detail.",
