@@ -140,7 +140,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     paymentMethodChoice,
   }: RegistrationStepData['pricing']) => {
     if (paymentMethodChoice === PaymentMethod.moonpay) {
-      initiateMoonpayRegistrationMutation.mutate()
+      initiateMoonpayRegistrationMutation.mutate(years)
       return
     }
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
