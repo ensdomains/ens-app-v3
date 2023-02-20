@@ -148,6 +148,8 @@ export const CropComponent = ({
     cropCanvas.width = cropSize
     cropCanvas.height = cropSize
 
+    cropCtx.fillStyle = 'white'
+    cropCtx.fillRect(0, 0, cropSize, cropSize)
     cropCtx.drawImage(canvasRef.current!, max, max, cropSize, cropSize, 0, 0, cropSize, cropSize)
     setDataURL(cropCanvas.toDataURL('image/jpeg', 0.9))
   }
