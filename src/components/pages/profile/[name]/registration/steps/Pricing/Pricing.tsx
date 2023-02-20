@@ -1,13 +1,26 @@
-import { ReactNode, useState } from 'react'
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
+import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
 import { useBalance } from 'wagmi'
 
-import { Button, Field, Heading, Toggle, Typography, mq } from '@ensdomains/thorin'
+import {
+  Button,
+  Field,
+  Heading,
+  Helper,
+  RadioButton,
+  RadioButtonGroup,
+  Toggle,
+  Typography,
+  mq,
+} from '@ensdomains/thorin'
 
+import MoonpayLogo from '@app/assets/MoonpayLogo.svg'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { PlusMinusControl } from '@app/components/@atoms/PlusMinusControl/PlusMinusControl'
 import { RegistrationTimeComparisonBanner } from '@app/components/@atoms/RegistrationTimeComparisonBanner/RegistrationTimeComparisonBanner'
+import { Spacer } from '@app/components/@atoms/Spacer'
 import { Card } from '@app/components/Card'
 import { ConnectButton } from '@app/components/ConnectButton'
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
@@ -17,7 +30,13 @@ import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import FullInvoice from '../../FullInvoice'
-import { RegistrationReducerDataItem, RegistrationStepData } from '../../types'
+import {
+  MoonpayTransactionStatus,
+  PaymentMethod,
+  RegistrationReducerDataItem,
+  RegistrationStepData,
+} from '../../types'
+import { useMoonpayRegistration } from '../../useMoonpayRegistration'
 import TemporaryPremium from './TemporaryPremium'
 
 const StyledCard = styled(Card)(
@@ -45,7 +64,7 @@ const OutlinedContainer = styled.div(
 
     padding: ${theme.space['4']};
     border-radius: ${theme.radii.large};
-    border: ${theme.colors.border} solid 1px;
+    background: ${theme.colors.backgroundSecondary};
 
     ${mq.md.min(css`
       grid-template-areas: 'title checkbox' 'description checkbox';
@@ -69,12 +88,113 @@ const gridAreaStyle = ({ $name }: { $name: string }) => css`
   grid-area: ${$name};
 `
 
+const moonpayInfoItems = Array.from({ length: 2 }, (_, i) => `steps.info.moonpayItems.${i}`)
+
+const PaymentChoiceContainer = styled.div`
+  width: 100%;
+`
+
+const StyledRadioButtonGroup = styled(RadioButtonGroup)(
+  ({ theme }) => css`
+    border: 1px solid ${theme.colors.border};
+    border-radius: ${theme.radii.large};
+    gap: 0;
+  `,
+)
+
+const StyledRadioButton = styled(RadioButton)``
+
+const RadioButtonContainer = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['4']};
+    &:last-child {
+      border-top: 1px solid ${theme.colors.border};
+    }
+  `,
+)
+
+const StyledTitle = styled(Typography)`
+  margin-left: 15px;
+`
+
+const RadioLabel = styled(Typography)(
+  ({ theme }) => css`
+    margin-right: 10px;
+    color: ${theme.colors.text};
+  `,
+)
+
+const MoonpayContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+`
+
+const InfoItems = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['4']};
+
+    ${mq.md.min(css`
+      flex-direction: row;
+      align-items: stretch;
+    `)}
+  `,
+)
+
+const InfoItem = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['4']};
+
+    padding: ${theme.space['4']};
+    border: 1px solid ${theme.colors.border};
+    border-radius: ${theme.radii.large};
+    text-align: center;
+
+    & > div:first-of-type {
+      width: ${theme.space['10']};
+      height: ${theme.space['10']};
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: ${theme.fontSizes.extraLarge};
+      font-weight: ${theme.fontWeights.bold};
+      color: ${theme.colors.backgroundPrimary};
+      background: ${theme.colors.accentPrimary};
+      border-radius: ${theme.radii.full};
+    }
+
+    & > div:last-of-type {
+      flex-grow: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+  `,
+)
+
+const LabelContainer = styled.div`
+  display: flex;
+  flex-wrap: wrap;
+`
+
 const CheckboxWrapper = styled.div(
   () => css`
     width: 100%;
   `,
   gridAreaStyle,
 )
+
 const OutlinedContainerDescription = styled(Typography)(gridAreaStyle)
 
 const OutlinedContainerTitle = styled(Typography)(
@@ -86,12 +206,147 @@ const OutlinedContainerTitle = styled(Typography)(
   gridAreaStyle,
 )
 
+const PaymentChoice = ({
+  paymentMethodChoice,
+  setPaymentMethodChoice,
+  hasEnoughEth,
+  hasPendingMoonpayTransaction,
+  hasFailedMoonpayTransaction,
+  address,
+  breakpoints,
+  reverseRecord,
+  setReverseRecord,
+}: {
+  paymentMethodChoice: PaymentMethod | ''
+  setPaymentMethodChoice: Dispatch<SetStateAction<PaymentMethod | ''>>
+  hasEnoughEth: boolean
+  hasPendingMoonpayTransaction: boolean
+  hasFailedMoonpayTransaction: boolean
+  address?: string
+  breakpoints: ReturnType<typeof useBreakpoint>
+  reverseRecord: boolean
+  setReverseRecord: (reverseRecord: boolean) => void
+}) => {
+  const { t } = useTranslation('register')
+
+  return (
+    <PaymentChoiceContainer>
+      <StyledTitle color="textTertiary" weight="bold">
+        {t('steps.info.paymentMethod')}
+      </StyledTitle>
+      <Spacer $height="2" />
+      <StyledRadioButtonGroup
+        value={paymentMethodChoice}
+        onChange={(e) => setPaymentMethodChoice(e.target.value as PaymentMethod)}
+      >
+        <RadioButtonContainer>
+          <StyledRadioButton
+            data-testid="payment-choice-ethereum"
+            label={<RadioLabel>{t('steps.info.ethereum')}</RadioLabel>}
+            name="RadioButtonGroup"
+            value={PaymentMethod.ethereum}
+            disabled={hasPendingMoonpayTransaction}
+            checked={paymentMethodChoice === PaymentMethod.ethereum || undefined}
+          />
+          {paymentMethodChoice === PaymentMethod.ethereum && !hasEnoughEth && (
+            <>
+              <Spacer $height="4" />
+              <Helper type="warning" alignment="horizontal">
+                {t('steps.info.notEnoughEth')}
+              </Helper>
+              <Spacer $height="2" />
+            </>
+          )}
+          {paymentMethodChoice === PaymentMethod.ethereum && hasEnoughEth && (
+            <>
+              <Spacer $height="4" />
+              <OutlinedContainer>
+                <OutlinedContainerTitle $name="title">
+                  {t('steps.pricing.primaryName')}
+                </OutlinedContainerTitle>
+                <CheckboxWrapper $name="checkbox">
+                  <Field
+                    hideLabel
+                    label={t('steps.pricing.primaryName')}
+                    inline
+                    reverse
+                    disabled={!address}
+                  >
+                    {(ids) => (
+                      <Toggle
+                        {...ids?.content}
+                        disabled={!address}
+                        size={breakpoints.md ? 'large' : 'medium'}
+                        checked={reverseRecord}
+                        onChange={(e) => {
+                          e.stopPropagation()
+                          setReverseRecord(e.target.checked)
+                        }}
+                        data-testid="primary-name-toggle"
+                      />
+                    )}
+                  </Field>
+                </CheckboxWrapper>
+                <OutlinedContainerDescription $name="description">
+                  {t('steps.pricing.primaryNameMessage')}
+                </OutlinedContainerDescription>
+              </OutlinedContainer>
+              <Spacer $height="2" />
+            </>
+          )}
+        </RadioButtonContainer>
+        <RadioButtonContainer>
+          <StyledRadioButton
+            label={
+              <LabelContainer>
+                <RadioLabel>{t('steps.info.creditOrDebit')}</RadioLabel>
+                <Typography color="textTertiary" weight="light">
+                  ({t('steps.info.additionalFee')})
+                </Typography>
+              </LabelContainer>
+            }
+            name="RadioButtonGroup"
+            value={PaymentMethod.moonpay}
+            checked={paymentMethodChoice === PaymentMethod.moonpay || undefined}
+          />
+          {paymentMethodChoice === PaymentMethod.moonpay && (
+            <>
+              <Spacer $height="4" />
+              <InfoItems>
+                {moonpayInfoItems.map((item, idx) => (
+                  <InfoItem key={item}>
+                    <Typography>{idx + 1}</Typography>
+                    <Typography>{t(item)}</Typography>
+                  </InfoItem>
+                ))}
+              </InfoItems>
+              <Spacer $height="4" />
+              {hasFailedMoonpayTransaction && (
+                <Helper type="error">{t('steps.info.failedMoonpayTransaction')}</Helper>
+              )}
+              <Spacer $height="4" />
+              <MoonpayContainer>
+                {t('steps.info.poweredBy')}
+                <MoonpayLogo />
+              </MoonpayContainer>
+            </>
+          )}
+        </RadioButtonContainer>
+      </StyledRadioButtonGroup>
+    </PaymentChoiceContainer>
+  )
+}
+
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   resolverExists: boolean | undefined
   callback: (props: RegistrationStepData['pricing']) => void
   hasPrimaryName: boolean
   registrationData: RegistrationReducerDataItem
+  moonpayTransactionStatus?: MoonpayTransactionStatus
+  initiateMoonpayRegistrationMutation: ReturnType<
+    typeof useMoonpayRegistration
+  >['initiateMoonpayRegistrationMutation']
 }
 
 const Pricing = ({
@@ -100,6 +355,8 @@ const Pricing = ({
   hasPrimaryName,
   registrationData,
   resolverExists,
+  moonpayTransactionStatus,
+  initiateMoonpayRegistrationMutation,
 }: Props) => {
   const { t } = useTranslation('register')
 
@@ -114,6 +371,30 @@ const Pricing = ({
   const [reverseRecord, setReverseRecord] = useState(
     registrationData.reverseRecord || !hasPrimaryName,
   )
+
+  const hasPendingMoonpayTransaction = moonpayTransactionStatus === 'pending'
+  const hasFailedMoonpayTransaction = moonpayTransactionStatus === 'failed'
+
+  const previousMoonpayTransactionStatus = usePrevious(moonpayTransactionStatus)
+
+  const [paymentMethodChoice, setPaymentMethodChoice] = useState<PaymentMethod | ''>(
+    hasPendingMoonpayTransaction ? PaymentMethod.moonpay : '',
+  )
+
+  // Keep radio button choice up to date
+  useEffect(() => {
+    if (moonpayTransactionStatus) {
+      setPaymentMethodChoice(
+        hasPendingMoonpayTransaction || hasFailedMoonpayTransaction ? PaymentMethod.moonpay : '',
+      )
+    }
+  }, [
+    hasFailedMoonpayTransaction,
+    hasPendingMoonpayTransaction,
+    moonpayTransactionStatus,
+    previousMoonpayTransactionStatus,
+    setPaymentMethodChoice,
+  ])
 
   const fullEstimate = useEstimateFullRegistration({
     registration: {
@@ -135,10 +416,36 @@ const Pricing = ({
 
   if (!address) {
     actionButton = <ConnectButton large />
+  } else if (hasPendingMoonpayTransaction) {
+    actionButton = (
+      <Button data-testid="next-button" disabled loading>
+        {t('steps.info.processing')}
+      </Button>
+    )
+  } else if (hasFailedMoonpayTransaction && paymentMethodChoice === PaymentMethod.moonpay) {
+    actionButton = (
+      <Button
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+      >
+        {t('action.tryAgain', { ns: 'common' })}
+      </Button>
+    )
+  } else if (paymentMethodChoice === PaymentMethod.moonpay) {
+    actionButton = (
+      <Button
+        loading={initiateMoonpayRegistrationMutation.isLoading}
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isLoading}
+      >
+        {t('action.next', { ns: 'common' })}
+      </Button>
+    )
   } else if (!balance?.value || !totalRequiredBalance) {
     actionButton = (
       <Button data-testid="next-button" disabled>
-        {t('action.loading', { ns: 'common' })}
+        {t('loading', { ns: 'common' })}
       </Button>
     )
   } else if (balance?.value.lt(totalRequiredBalance)) {
@@ -149,7 +456,11 @@ const Pricing = ({
     )
   } else {
     actionButton = (
-      <Button data-testid="next-button" onClick={() => callback({ reverseRecord, years })}>
+      <Button
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        disabled={!paymentMethodChoice}
+      >
         {t('action.next', { ns: 'common' })}
       </Button>
     )
@@ -181,34 +492,19 @@ const Pricing = ({
           />
         )
       )}
-      <OutlinedContainer>
-        <OutlinedContainerTitle $name="title">
-          {t('steps.pricing.primaryName')}
-        </OutlinedContainerTitle>
-        <CheckboxWrapper $name="checkbox">
-          <Field
-            hideLabel
-            label={t('steps.pricing.primaryName')}
-            inline
-            reverse
-            disabled={!address}
-          >
-            {(ids) => (
-              <Toggle
-                {...ids?.content}
-                disabled={!address}
-                size={breakpoints.md ? 'large' : 'medium'}
-                checked={reverseRecord}
-                onChange={(e) => setReverseRecord(e.target.checked)}
-                data-testid="primary-name-toggle"
-              />
-            )}
-          </Field>
-        </CheckboxWrapper>
-        <OutlinedContainerDescription $name="description">
-          {t('steps.pricing.primaryNameMessage')}
-        </OutlinedContainerDescription>
-      </OutlinedContainer>
+      <PaymentChoice
+        {...{
+          paymentMethodChoice,
+          setPaymentMethodChoice,
+          address,
+          breakpoints,
+          reverseRecord,
+          setReverseRecord,
+          hasEnoughEth: true,
+          hasPendingMoonpayTransaction,
+          hasFailedMoonpayTransaction,
+        }}
+      />
       <MobileFullWidth>{actionButton}</MobileFullWidth>
     </StyledCard>
   )

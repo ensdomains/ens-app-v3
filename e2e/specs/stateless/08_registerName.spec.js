@@ -12,6 +12,7 @@ describe('Register Name', () => {
     cy.findByText('Register registration-normal.eth').should('be.visible')
 
     // should show primary name setting as checked
+    cy.findByTestId('payment-choice-ethereum').click()
     cy.findByTestId('primary-name-toggle').should('be.checked')
 
     // should show adjusted gas estimate when primary name setting checked
@@ -102,6 +103,7 @@ describe('Register Name', () => {
   it('should allow registering a non-primary name', () => {
     // should show primary name setting as unchecked if primary already set
     cy.visit('/registration-not-primary.eth/register')
+    cy.findByTestId('payment-choice-ethereum').click()
     cy.findByTestId('primary-name-toggle').should('not.be.checked')
 
     // should show set profile button on info step
@@ -124,6 +126,7 @@ describe('Register Name', () => {
   })
   it('should allow registering a premium name', () => {
     cy.visit('/name-with-premium.eth/register')
+    cy.findByTestId('payment-choice-ethereum').click()
     connectFromExisting()
     cy.findByTestId('invoice-item-2-amount').should('be.visible')
     cy.findByTestId('next-button').click()

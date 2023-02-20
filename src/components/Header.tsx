@@ -132,9 +132,12 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
 
 const routesNoSearch = routes.filter((route) => route.name !== 'search' && route.icon)
 
-const dropdownRoutes = routes.filter(
+const disconnectedRoutes = routes.filter(
   (route) => route.name !== 'search' && route.connected === false,
 )
+
+const alwaysVisibleRoutes = disconnectedRoutes.filter((r) => !r.onlyDropdown).slice(0, 4)
+const dropdownOnlyRoutes = disconnectedRoutes.filter((r) => !alwaysVisibleRoutes.includes(r))
 
 export const Header = () => {
   const { space } = useTheme()
@@ -157,11 +160,11 @@ export const Header = () => {
   })
 
   // eslint-disable-next-line no-nested-ternary
-  const statefulRoutes = isConnected
-    ? dropdownRoutes
+  const dropdownRoutes = isConnected
+    ? disconnectedRoutes
     : breakpoints.lg
-    ? dropdownRoutes.slice(4)
-    : dropdownRoutes
+    ? dropdownOnlyRoutes
+    : disconnectedRoutes
 
   let RouteItems: ReactNode
 
@@ -175,9 +178,9 @@ export const Header = () => {
       />
     ))
   } else if (breakpoints.lg) {
-    RouteItems = dropdownRoutes
-      .slice(0, 4)
-      .map((route) => <RouteItem key={route.name} route={route} asText />)
+    RouteItems = alwaysVisibleRoutes.map((route) => (
+      <RouteItem key={route.name} route={route} asText />
+    ))
   } else {
     RouteItems = null
   }
@@ -223,7 +226,7 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {!isInitial && isConnected && <HamburgerMenu align="left" dropdownItems={statefulRoutes} />}
+        {!isInitial && isConnected && <HamburgerMenu align="left" dropdownItems={dropdownRoutes} />}
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
@@ -248,7 +251,7 @@ export const Header = () => {
             {RouteItems}
           </RouteContainer>
         </RouteWrapper>
-        {!isInitial && !isConnected && <HamburgerMenu dropdownItems={statefulRoutes} />}
+        {!isInitial && !isConnected && <HamburgerMenu dropdownItems={dropdownRoutes} />}
         <HeaderConnect />
       </NavContainer>
     </HeaderWrapper>

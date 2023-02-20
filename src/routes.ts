@@ -15,6 +15,7 @@ export type PublicRoute =
   | 'bounty'
   | 'terms'
   | 'privacy'
+  | 'oldApp'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -25,6 +26,7 @@ export type RouteItemObj = {
   disabled: boolean
   connected: boolean
   icon?: any
+  onlyDropdown?: boolean
 }
 
 export const routes: RouteItemObj[] = [
@@ -73,6 +75,14 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.faq',
     disabled: false,
     connected: false,
+  },
+  {
+    name: 'oldApp',
+    href: 'https://app.ens.domains',
+    label: 'navigation.oldApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
   },
   {
     name: 'governance',

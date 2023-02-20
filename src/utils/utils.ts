@@ -114,6 +114,8 @@ export const deleteProperties = <T extends Record<string, any>, K extends keyof 
   return newObj
 }
 
+export const getLabelFromName = (name: string = '') => name.split('.')[0]
+
 export const validateExpiry = (
   name: string,
   fuses: AllCurrentFuses | undefined,
