@@ -90,9 +90,7 @@ const ButtonContainer = styled.div(
 )
 
 const ProfileButton = styled.button(
-  ({ theme }) => css`
-    color: ${theme.colors.accent};
-    font-weight: bold;
+  () => css`
     cursor: pointer;
   `,
 )
@@ -131,7 +129,9 @@ const Info = ({
       <FullInvoice {...estimate} />
       {!registrationData.queue.includes('profile') && (
         <ProfileButton data-testid="setup-profile-button" onClick={onProfileClick}>
-          <Typography>{t('steps.info.setupProfile')}</Typography>
+          <Typography weight="bold" color="accent">
+            {t('steps.info.setupProfile')}
+          </Typography>
         </ProfileButton>
       )}
       <ButtonContainer>
