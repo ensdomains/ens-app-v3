@@ -13,6 +13,8 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
+import { trackEvent } from '../utils/analytics'
+
 type Notification = {
   title: string
   description?: string
@@ -46,6 +48,21 @@ export const Notifications = () => {
   const updateCallback = useCallback<UpdateCallback>(
     ({ action, key, status, hash }) => {
       if (status === 'pending') return
+      if (status === 'confirmed') {
+        switch (action) {
+          case 'registerName':
+            trackEvent('register')
+            break
+          case 'commitName':
+            trackEvent('commit')
+            break
+          case 'extendNames':
+            trackEvent('renew')
+            break
+          default:
+            break
+        }
+      }
       const resumable = key && getResumable(key)
       const item = {
         title: t(`transaction.status.${status}.notifyTitle`),
