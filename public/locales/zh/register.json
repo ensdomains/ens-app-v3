@@ -35,7 +35,7 @@
       "permissions": "权限",
       "resolver": "解析器",
       "visibilityMessage": "您的个人资料将存储在区块链上，您添加的所有内容都将是公开可见的。",
-      "addProfile": "添加个人资料标识",
+      "addProfile": "添加个人资料",
       "addMore": "添加更多个人资料",
       "options": {
         "groups": {
@@ -150,12 +150,25 @@
     "info": {
       "heading": "开始之前",
       "subheading": "注册一个名称需要三个步骤",
-      "items": [
+      "ethItems": [
         "完成一笔交易并开始计时",
         "等待计时器完成 60 秒计时",
         "完成第二笔交易来获得这个名称"
       ],
-      "setupProfile": "我希望先创建我的个人资料"
+      "moonpayItems": [
+        "创建或登录现有的 Moonpay 账户",
+        "使用信用卡或借记卡完成单笔交易"
+      ],
+      "setupProfile": "我希望先创建我的个人资料",
+      "paymentMethod": "支付方式",
+      "notEnoughEth": "钱包中的 ETH 不足",
+      "creditOrDebit": "信用卡或借记卡",
+      "additionalFee": "附加手续费",
+      "pendingMoonpayTransaction": "您的 Moonpay 交易正在处理中，这可能需要两分钟。您可以从收到的确认邮件中查看当前进度。",
+      "failedMoonpayTransaction": "您的 Moonpay 交易失败。请重试或选择 “以太坊” 支付方式。",
+      "ethereum": "以太坊",
+      "processing": "处理中",
+      "poweredBy": "技术支持来自"
     },
     "transactions": {
       "heading": "接近完成",

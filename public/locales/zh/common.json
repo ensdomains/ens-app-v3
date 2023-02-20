@@ -63,7 +63,8 @@
     "bounty": "漏洞赏金",
     "terms": "使用条款",
     "privacy": "隐私策略",
-    "back": "返回"
+    "back": "返回",
+    "oldApp": "旧版 ENS App"
   },
   "wallet": {
     "myProfile": "个人资料",
@@ -82,7 +83,7 @@
     "controller": "管理员",
     "dnsOwner": "DNS 所有者",
     "owner": "所有者",
-    "notOwned": "未使用",
+    "notOwned": "未被持有",
     "manager": "管理者",
     "all": "所有名称",
     "expiresInYears_one": "{{count}} 年后到期",
