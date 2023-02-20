@@ -12,17 +12,17 @@
     "totalPaid": "支付总额"
   },
   "error": {
-    "nameTooLong": "您要注册的名字太长了，请选择一个较短的名字。"
+    "nameTooLong": "您要注册的名称太长了，请选择一个较短的名称。"
   },
   "steps": {
     "pricing": {
       "insufficientBalance": "余额不足",
       "multipleYearsMessage": "一次续期数年可以避免每年进行交易，从而节省网络成本。",
-      "primaryName": "作为主名使用",
-      "primaryNameMessage": "这将把你的地址关联到这个名字，这样在连接到应用程序时，应用程序就可以将这个名字作为你的个人资料显示出来。",
+      "primaryName": "作为主名称使用",
+      "primaryNameMessage": "这将把您的地址关联到这个名称，这样在连接到应用程序时，应用程序就可以将这个名称作为您的个人资料显示出来。",
       "premium": {
-        "heading": "这个名字存在一个临时溢价",
-        "subheading": "为了给刚过期的名字提供公平的注册机会，溢价从 100,000,000 美元开始，在 21 天内降至 0 美元。您可以利用下面的日期计算溢价。",
+        "heading": "这个名称存在一个临时溢价",
+        "subheading": "为了给刚过期的名称提供公平的注册机会，溢价从 100,000,000 美元开始，在 21 天内降至 0 美元。您可以利用下面的日期计算溢价。",
         "targetPrice": "目标价格",
         "targetDate": "目标日期",
         "timezone": "当前显示的是本地时区 ({{timezone}}) 的日期和时间"
@@ -131,7 +131,7 @@
         },
         "clearEth": {
           "title": "清除 ETH 地址?",
-          "description": "如果没有设置 ETH 地址，人们便无法向这个名字发送资金。此项可在以后更新。",
+          "description": "如果没有设置 ETH 地址，人们便无法向这个名称发送资金。此项可在以后更新。",
           "confirm": "清除",
           "decline": "取消"
         }
@@ -142,24 +142,24 @@
     },
     "complete": {
       "heading": "恭喜!",
-      "subheading": "您现是这个名字的所有者: ",
-      "description": "名字注册成功。您现在可以查看和管理您的名字。",
+      "subheading": "您现是这个名称的所有者: ",
+      "description": "名称注册成功。您现在可以查看和管理您的名称。",
       "registerAnother": "再注册一个",
-      "viewName": "查看名字"
+      "viewName": "查看名称"
     },
     "info": {
       "heading": "开始之前",
-      "subheading": "注册一个名字需要三个步骤",
+      "subheading": "注册一个名称需要三个步骤",
       "items": [
         "完成一笔交易并开始计时",
         "等待计时器完成 60 秒计时",
-        "完成第二笔交易来获得这个名字"
+        "完成第二笔交易来获得这个名称"
       ],
       "setupProfile": "我希望先创建我的个人资料"
     },
     "transactions": {
       "heading": "接近完成",
-      "subheading": "该计时器可防止其他人在您之前注册这个名字。",
+      "subheading": "该计时器可防止其他人在您之前注册这个名称。",
       "startTimer": "启动计时器",
       "wait": "等待",
       "transactionFailed": "交易失败",
