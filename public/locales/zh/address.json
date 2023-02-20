@@ -4,11 +4,11 @@
   "filter": "筛选",
   "view": "查看",
   "noProfile": {
-    "title": "未设置主名称",
-    "message": "这个钱包需要设置一个主名称来创建个人资料"
+    "title": "未设置主名",
+    "message": "创建个人资料前，请为该钱包设置一个主名"
   },
   "noResults": "未找到名称",
   "errors": {
-    "names": "找不到地址"
+    "names": "未找到地址"
   }
 }

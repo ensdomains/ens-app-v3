@@ -1,6 +1,6 @@
 {
   "title": "您的 web3 用户名",
-  "description": "您在 web3 上的身份，一个名称关联您所有的加密地址和您的去中心化网站。",
+  "description": "您在 web3 上的身份，一个名称就能解析到您所有的加密地址和您的去中心化网站。",
   "loading": "加载中",
   "unsupportedNetwork": "不支持的网络",
   "action": {
@@ -70,7 +70,7 @@
     "myProfile": "个人资料",
     "disconnect": "断开连接",
     "connect": "连接钱包",
-    "noPrimaryName": "未设置主名称",
+    "noPrimaryName": "未设置主名",
     "viewProfile": "查看个人资料",
     "viewDetails": "查看详情",
     "register": "注册"
@@ -84,7 +84,7 @@
     "dnsOwner": "DNS 所有者",
     "owner": "所有者",
     "notOwned": "未被持有",
-    "manager": "管理者",
+    "manager": "管理员",
     "all": "所有名称",
     "expiresInYears_one": "{{count}} 年后到期",
     "expiresInYears_other": "{{count}} 年后到期",
@@ -140,7 +140,7 @@
       "wrapName": "包装名称",
       "updateResolver": "更新解析器",
       "updateProfile": "更新个人资料",
-      "setPrimaryName": "设置主名称",
+      "setPrimaryName": "设置主名",
       "updateEthAddress": "更新 ETH 地址",
       "testSendName": "发送名称",
       "burnFuses": "销毁权限",
@@ -155,7 +155,7 @@
       "updateRecords": "更新记录",
       "transferName": "转移名称",
       "changePermissions": "更改权限",
-      "syncManager": "同步管理者"
+      "syncManager": "同步管理员"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
@@ -164,10 +164,10 @@
       "wrapName": "包装名称并设置新的解析器",
       "updateResolver": "将解析器更改为",
       "updateProfile": "更新现有解析器上的记录",
-      "setPrimaryName": "为您的地址设置主名称",
-      "updateEthAddress": "Update ETH address to this address",
-      "testSendName": "设置这个名称的管理员和注册人",
-      "createSubname": "在这个名称上创建子名称",
+      "setPrimaryName": "为您的地址设置主名",
+      "updateEthAddress": "将该地址更新到 ETH 地址记录",
+      "testSendName": "设置该名称的管理员和注册人",
+      "createSubname": "在该名称上创建子名称",
       "burnFuses": "销毁选中的权限，直到名称过期",
       "commitName": "启动注册名称的计时器",
       "approveNameWrapper": "批准名称包装器管理您的名称",
@@ -181,14 +181,14 @@
         "CANNOT_CREATE_SUBDOMAIN": "创建子名称",
         "CANNOT_SET_RESOLVER": "设置解析器",
         "CANNOT_SET_TTL": "设置 TTL",
-        "CANNOT_TRANSFER": "转移这个名称",
+        "CANNOT_TRANSFER": "转移该名称",
         "CANNOT_BURN_FUSES": "更改权限"
       }
     },
     "itemLabel": {
       "name": "名称",
       "address": "地址",
-      "action": "动作",
+      "action": "操作",
       "info": "信息",
       "to": "至",
       "subname": "子名称",

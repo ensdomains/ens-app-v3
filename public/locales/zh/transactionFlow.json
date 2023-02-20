@@ -15,7 +15,7 @@
             "noNFTs": "此地址上未找到 NFT。",
             "selected": {
               "title": "选择 NFT",
-              "subtitle": "您确定要使用这个 NFT 吗?"
+              "subtitle": "您确定要使用该 NFT 吗?"
             },
             "noResults": "未找到结果。"
           },
@@ -112,7 +112,7 @@
         },
         "oldRegistry": {
           "title": "您的注册已经过时了",
-          "subtitle": "现在不能迁移到新的注册表，但是您仍然可以在旧的 app 中迁移这个名称。",
+          "subtitle": "现在不能迁移到新的注册表，但是您仍然可以在旧的 app 中迁移该名称。",
           "action": "迁移"
         },
         "default": {
@@ -155,7 +155,7 @@
         },
         "revokePCC": {
           "title": "放弃所有权",
-          "subtitle": "该操作会把这个名称的所有权转让给管理器 ({{account}})。除非您同时也是管理员，否则您将无法再管理这个名称。"
+          "subtitle": "此操作会把名称的所有权转让给管理员 ({{account}})。除非您同时也是管理员，否则您将无法再管理该名称。"
         },
         "grantExtendExpiry": {
           "title": "更改权限",
@@ -166,7 +166,7 @@
         "setExpiry": {
           "title": "设置名称的有效期",
           "subtitle": "设置权限有效期。该日期不能超过其父名称 ({{parent}}) 的到期时间。",
-          "subtitleWithCEE": "设置这个名称的有效期。这将取代它现有的权限有效期 ({{expiry}})，并且不能晚于它的父名称 ({{parent}}) 的到期时间。",
+          "subtitleWithCEE": "设置该名称的有效期。这将取代它现有的权限有效期 ({{expiry}})，并且不能晚于它的父名称 ({{parent}}) 的到期时间。",
           "options": {
             "max": "最晚",
             "custom": "选择较早的日期"
@@ -179,7 +179,7 @@
         },
         "revokeAdditional": {
           "title": "销毁权限",
-          "subtitle": "在放弃所有权之前，您需要销毁这个名称的某些权限吗? 需要销毁权限的话，您只能现在操作。",
+          "subtitle": "在放弃所有权之前，您需要销毁该名称的某些权限吗? 需要销毁权限的话，您只能现在操作。",
           "action": {
             "title": "销毁其他权限",
             "description": "除非您同时也是管理员，否则在此之后您将无法销毁其他权限。"
@@ -226,15 +226,15 @@
       "subtitle": "您有些名称的标签是未知的，请先将它们输入后再继续。"
     },
     "deleteEmancipatedSubnameWarning": {
-      "title": "不能重新创建这个子名称",
-      "message": "删除这个子名称意味着不能再使用或重新创建它，一直到它过期时 {{date}}。由于父名称控制权限已被销毁，因此这个操作也无法撤消。"
+      "title": "不能重新创建该子名称",
+      "message": "删除该子名称意味着不能再使用或重新创建它，一直到它过期 {{date}}。由于父名称控制权限已被销毁，因此该操作也无法撤消。"
     }
   },
   "transaction": {
     "extendNames": {
       "actionValue": "续期",
       "costValue": "{{value}} + 网络费",
-      "warning": "为这个名称续期不会让您获得它的所有权"
+      "warning": "为该名称续期不会让您获得它的所有权"
     },
     "deleteSubname": {
       "warning": "大家好"
@@ -244,11 +244,11 @@
     "migrateAndUpdateResolver": {
       "title": "您需要先升级解析器，然后才能保存您编辑的个人资料。",
       "link": "了解有关解析器升级的更多信息",
-      "warning": "请注意，一旦您取消这个选项，那您的更改将无法保存。"
+      "warning": "请注意，一旦您取消该选项，那您的更改将无法保存。"
     },
     "syncManager": {
-      "description": "同步管理者会让您成为这个名称的新管理者。当前管理者 <b>({{manager}})</b> 将会失去管理权限。",
-      "wrappedWarning": "同步管理者也将解除这个名称的包装，这会销毁 NFT 并重置所有权限。"
+      "description": "同步管理员会让您成为该名称的新管理员。当前管理员 <b>({{manager}})</b> 将会失去管理权限。",
+      "wrappedWarning": "同步管理员也将解除该名称的包装，这会销毁 NFT 并重置所有权限。"
     }
   },
   "errors": {

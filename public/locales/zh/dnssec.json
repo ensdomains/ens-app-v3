@@ -17,9 +17,9 @@
   },
   "addTextRecord": {
     "title": "添加文本记录",
-    "explanation": "您需要利用这些信息为您的域名创建一个新的 DNS 记录，用于将您的以太坊地址认定为这个域名的所有者。",
-    "syncWarningOne": "您可能不是这个 DNS 域名的所有者，但您仍然可以将这个域名添加到 ENS 注册表。",
-    "syncWarningTwo": "如果您持有这个域名，请更改它的 _ens TXT 记录，使其包含您的以太坊地址，然后再次单击 “检查”。其他情况，请单击 “认领” 继续。",
+    "explanation": "您需要利用这些信息为您的域名创建一个新的 DNS 记录，用于将您的以太坊地址认定为该域名的所有者。",
+    "syncWarningOne": "您可能不是该 DNS 域名的所有者，但您仍然可以将该域名添加到 ENS 注册表。",
+    "syncWarningTwo": "如果您持有该域名，请更改它的 _ens TXT 记录，使其包含您的以太坊地址，然后再次单击 “检查”。其他情况，请单击 “认领” 继续。",
     "type": "类型",
     "txt": "TXT",
     "errors": {
@@ -39,18 +39,18 @@
   },
   "claimComplete": {
     "title": "恭喜!",
-    "ownerOf": "您现是这个名称的所有者: ",
-    "successMessage": "您的域名已成功导入 ENS，您现在可以查看和管理您的域名。",
+    "ownerOf": "您现是该名称的所有者: ",
+    "successMessage": "您的域名已成功导入 ENS，现在可以查看和管理域名。",
     "viewName": "查看域名",
     "claimAnother": "再认领一个"
   },
   "claimDomain": {
     "title": "认领您的域名",
     "syncWarning": "您正在导入的 DNS 域名似乎并不属于您。",
-    "verifiedOwnership": "您已经验证了所有权，现在可以认领这个域名。",
+    "verifiedOwnership": "您已经验证了所有权，现在可以认领该域名。",
     "pendingTransactionPre": "您已经有一个",
     "pendingTransactionLink": "正在处理的交易",
-    "pendingTransactionPost": "与这个名称有关",
+    "pendingTransactionPost": "与该名称有关",
     "dnsOwner": "DNS 所有者",
     "networkEst": "预估网络费"
   },
@@ -59,6 +59,6 @@
     "instruction": "您需要访问您的域名注册商来启用 DNSSEC。启用后，单击 “检查” 进入下一步。",
     "registrarHelp": "从下面的下拉框中选择您的注册商，查看相应的启用说明。",
     "findRegistrar": "找到您的注册商",
-    "DNSSECNotEnabled": "这个域名还未启用 DNSSEC。"
+    "DNSSECNotEnabled": "该域名尚未启用 DNSSEC。"
   }
 }
