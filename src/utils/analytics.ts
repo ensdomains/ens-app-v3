@@ -1,13 +1,6 @@
 import ReactGA4 from 'react-ga4'
 
 const V4TrackingID = 'G-5PN3YEBDZQ'
-declare global {
-  interface Window {
-    plausible: any
-    location: Location
-    sessionStorage: any
-  }
-}
 
 function isProduction() {
   if (typeof window !== 'undefined') {
