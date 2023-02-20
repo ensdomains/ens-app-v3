@@ -144,7 +144,6 @@ importers:
       react: ^17.0.2
       react-confetti: ^6.1.0
       react-dom: ^17.0.2
-      react-ga: ^3.3.1
       react-ga4: ^2.0.0
       react-hook-form: ^7.34.2
       react-i18next: ^11.18.5
@@ -217,7 +216,6 @@ importers:
       react: 17.0.2
       react-confetti: 6.1.0_bbuxkxhxbyez4jmqgptuoucij4_react@17.0.2
       react-dom: 17.0.2_react@17.0.2
-      react-ga: 3.3.1_react@17.0.2
       react-ga4: 2.0.0
       react-hook-form: 7.36.1_react@17.0.2
       react-i18next: 11.18.6_jlvubkh2ypz6tastophpvdjiqq
@@ -282,7 +280,7 @@ importers:
       eslint-plugin-testing-library: 4.12.4_3rubbgt5ekhqrcgx4uwls3neim
       ethers: 5.7.2
       ganache: 7.4.3
-      graphql-request: 5.1.1-next.1
+      graphql-request: 5.2.0-next.4
       hardhat: 2.11.2_mwhvu7sfp6vq5ryuwb6hlbjfka
       hardhat-dependency-compiler: 1.1.3_hardhat@2.11.2
       hardhat-deploy: 0.11.16
@@ -2364,7 +2362,7 @@ packages:
       cbor: 8.1.0
       dns-packet: 5.4.0
       graphql: 16.6.0
-      graphql-request: 5.1.1-next.1_graphql@16.6.0
+      graphql-request: 5.2.0-next.4_graphql@16.6.0
       idna-uts46-hx: 3.4.0
       pako: 2.1.0
       traverse: 0.6.7
@@ -12845,8 +12843,8 @@ packages:
   /graceful-fs/4.2.10:
     resolution: {integrity: sha512-9ByhssR2fPVsNZj478qUUbKfmL0+t5BDVyjShtyZZLiK7ZDAArFFfopyOTj0M05wE2tJPisA4iTnnXl2YoPvOA==}
 
-  /graphql-request/5.1.1-next.1:
-    resolution: {integrity: sha512-GPUWyaD1MAQkOc2RD2cLUwQCEbvVuI01Uh6tYEdzQHHXghC/pcQrwmgieW/r0g0hfz/XQE/8KVl9DQH7T8W8KQ==}
+  /graphql-request/5.2.0-next.4:
+    resolution: {integrity: sha512-Nylg6X3QO6ecOkhXV6O9ZO8djOjvV0aNTmRm2dSDg83KeEX8/s3c9j+ojVdmIora81sNeL3KtXXHOPzXhOTRAQ==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -12858,8 +12856,8 @@ packages:
       - encoding
     dev: true
 
-  /graphql-request/5.1.1-next.1_graphql@16.6.0:
-    resolution: {integrity: sha512-GPUWyaD1MAQkOc2RD2cLUwQCEbvVuI01Uh6tYEdzQHHXghC/pcQrwmgieW/r0g0hfz/XQE/8KVl9DQH7T8W8KQ==}
+  /graphql-request/5.2.0-next.4_graphql@16.6.0:
+    resolution: {integrity: sha512-Nylg6X3QO6ecOkhXV6O9ZO8djOjvV0aNTmRm2dSDg83KeEX8/s3c9j+ojVdmIora81sNeL3KtXXHOPzXhOTRAQ==}
     peerDependencies:
       graphql: 14 - 16
     dependencies:
@@ -17998,15 +17996,6 @@ packages:
       '@babel/runtime': 7.19.0
       react: 17.0.2
     dev: true
-
-  /react-ga/3.3.1_react@17.0.2:
-    resolution: {integrity: sha512-4Vc0W5EvXAXUN/wWyxvsAKDLLgtJ3oLmhYYssx+YzphJpejtOst6cbIHCIyF50Fdxuf5DDKqRYny24yJ2y7GFQ==}
-    peerDependencies:
-      prop-types: ^15.6.0
-      react: ^15.6.2 || ^16.0 || ^17 || ^18
-    dependencies:
-      react: 17.0.2
-    dev: false
 
   /react-ga4/2.0.0:
     resolution: {integrity: sha512-WHi98hMunzh4ngRdNil8NN6Qly3ZZUkprhbgSqA+NFzovp8zqpYV3jcbKL9FnMdeBQHGhv8AVNCT2oFEE+EFXA==}
