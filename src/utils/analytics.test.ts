@@ -1,6 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import { initialize, send } from 'react-ga4'
+import ReactGA4 from 'react-ga4'
 
 import { getUtm, setUtm, setupAnalytics, trackEvent } from './analytics'
 
@@ -8,9 +8,10 @@ type Window = {
   plausible: any
 }
 
-jest.mock('react-ga4')
-const mockInitialize = mockFunction(initialize)
-const mockSend = mockFunction(send)
+jest.mock('react-ga4', () => ({
+  initialize: jest.fn(),
+  send: jest.fn(),
+}))
 
 describe('analytics', () => {
   describe('utm', () => {
@@ -28,7 +29,7 @@ describe('analytics', () => {
     })
   })
   describe('trackEvent', () => {
-    it('send event to plausible', () => {
+    it('send event to plausible and GA', () => {
       global.window = Object.create(window)
       const mockPlausibleFunction = jest.fn()
       window.plausible = mockPlausibleFunction
@@ -39,14 +40,22 @@ describe('analytics', () => {
         },
         writable: true,
       })
+      const mockSend = ReactGA4.send
+      const mockInitialize = ReactGA4.initialize
 
       setupAnalytics([{ network: 'goerli' }])
-      expect(mockInitialize).toHaveBeenCalled()
+      expect(mockInitialize).toBeCalledWith('G-5PN3YEBDZQ')
       trackEvent('register')
+      expect(mockSend).toBeCalledWith({
+        category: 'referral',
+        action: 'register domain',
+        type: 'register',
+        referrer: 'twitter',
+      })
+
       expect(mockPlausibleFunction).toBeCalledWith('register', {
         props: { referrer: 'twitter' },
       })
-      expect(mockSend).toHaveBeenCalled()
     })
   })
 })
