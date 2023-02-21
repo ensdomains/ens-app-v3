@@ -14,6 +14,10 @@ jest.mock('react-ga4', () => ({
 }))
 
 describe('analytics', () => {
+  beforeEach(() => {
+    window.localStorage.clear()
+  })
+
   describe('utm', () => {
     it('can set and get utm', () => {
       global.window = Object.create(window)
