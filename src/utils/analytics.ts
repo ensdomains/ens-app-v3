@@ -1,11 +1,20 @@
 import ReactGA4 from 'react-ga4'
 
 const V4TrackingID = 'G-5PN3YEBDZQ'
+interface Chain {
+  network: string
+}
+let chains: Chain[]
 
 function isProduction() {
   if (typeof window !== 'undefined') {
     return !!window.location.host.match('ens.domains')
   }
+}
+
+function isMainnet(chains: Chain[]) {
+  // Change to 'mainnet' after the mainnet release
+  return chains.map((c) => c.network).includes('goerli')
 }
 
 export function setUtm() {
@@ -22,25 +31,23 @@ export function getUtm() {
   return window.sessionStorage.getItem('utmSource')
 }
 
-export const setupAnalytics = () => {
+export const setupAnalytics = (_chains: Chain[]) => {
   if (isProduction()) {
     ReactGA4.initialize(V4TrackingID)
   }
-
+  chains = _chains
   setUtm()
 }
 
 export const trackEvent = async (type: string) => {
   const referrer = getUtm()
-
   function track() {
-    const eventObject = {
+    ReactGA4.send({
       category: 'referral',
       action: `${type} domain`,
       type,
       referrer,
-    }
-    ReactGA4.send(eventObject)
+    })
     if (typeof window !== 'undefined' && window.plausible) {
       window.plausible(type, {
         props: {
@@ -49,7 +56,7 @@ export const trackEvent = async (type: string) => {
       })
     }
   }
-  if (isProduction()) {
+  if (isProduction() && isMainnet(chains)) {
     track()
   } else {
     console.log(

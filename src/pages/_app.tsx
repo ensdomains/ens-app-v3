@@ -114,7 +114,7 @@ const { provider, chains } = configureChains(
   ],
 )
 
-setupAnalytics()
+setupAnalytics(chains)
 
 const { connectors } = getDefaultWallets({
   appName: 'ENS',
