@@ -178,47 +178,47 @@
           }
         },
         "revokeAdditional": {
-          "title": "销毁权限",
-          "subtitle": "在放弃所有权之前，您需要销毁该名称的某些权限吗? 需要销毁权限的话，您只能现在操作。",
+          "title": "撤销权限",
+          "subtitle": "在放弃所有权之前，您需要撤销该名称的某些权限吗? 需要撤销权限的话，您只能现在操作。",
           "action": {
-            "title": "销毁其他权限",
-            "description": "除非您同时也是管理员，否则在此之后您将无法销毁其他权限。"
+            "title": "撤销其他权限",
+            "description": "除非您同时也是管理员，否则在此之后您将无法撤销其他权限。"
           }
         },
         "revokeUnwrap": {
-          "title": "销毁权限",
-          "subtitle": "您必须先销毁这项权限，才能销毁其他权限。这是为了防止权限被移除。",
+          "title": "撤销权限",
+          "subtitle": "您必须先撤销这项权限，才能撤销其他权限。这是为了防止权限被移除。",
           "fuses": {
-            "CANNOT_UNWRAP": "销毁此权限: 解除包装"
+            "CANNOT_UNWRAP": "撤销此权限: 解除包装"
           }
         },
         "revokePermissions": {
-          "title": "销毁权限",
+          "title": "撤销权限",
           "unwrapSubtitle": "选择此项可激活其他选项",
           "fuses": {
             "CAN_EXTEND_EXPIRY": "授予此权限: 延长有效期",
-            "CANNOT_UNWRAP": "销毁此权限: 解除包装",
-            "CANNOT_CREATE_SUBDOMAIN": "销毁此权限: 创建子名称",
-            "CANNOT_TRANSFER": "销毁此权限: 发送名称",
-            "CANNOT_SET_RESOLVER": "销毁此权限: 设置解析器",
-            "CANNOT_SET_TTL": "销毁此权限: 设置 TTL",
-            "CANNOT_BURN_FUSES": "销毁此权限: 更改权限"
+            "CANNOT_UNWRAP": "撤销此权限: 解除包装",
+            "CANNOT_CREATE_SUBDOMAIN": "撤销此权限: 创建子名称",
+            "CANNOT_TRANSFER": "撤销此权限: 发送名称",
+            "CANNOT_SET_RESOLVER": "撤销此权限: 设置解析器",
+            "CANNOT_SET_TTL": "撤销此权限: 设置 TTL",
+            "CANNOT_BURN_FUSES": "撤销此权限: 更改权限"
           }
         },
         "revokeChangeFuses": {
-          "title": "销毁权限",
-          "subtitle": "一旦销毁此权限，您将永远无法再更改其他权限。只能在名称过期时才会被重置。",
+          "title": "撤销权限",
+          "subtitle": "一旦撤销此权限，您将永远无法再更改其他权限。只能在名称过期时才会被重置。",
           "fuses": {
-            "CANNOT_BURN_FUSES": "销毁此权限: 更改权限"
+            "CANNOT_BURN_FUSES": "撤销此权限: 更改权限"
           }
         },
         "revokeChangeFusesWarning": {
           "title": "剩余的权限将被锁定",
-          "subtitle": "在销毁 “更改权限” 后，权限和自定义保险丝将永久锁定在其当前状态。只有在名称过期时才会重置。"    
+          "subtitle": "在撤销 “更改权限” 后，权限和自定义保险丝将永久锁定在其当前状态。只有在名称过期时才会重置。"    
         }
       },
       "action": {
-        "revoke": "销毁"
+        "revoke": "撤销"
       }
     },
     "unknownLabels": {
@@ -227,7 +227,7 @@
     },
     "deleteEmancipatedSubnameWarning": {
       "title": "不能重新创建该子名称",
-      "message": "删除该子名称意味着不能再使用或重新创建它，一直到它过期 {{date}}。由于父名称控制权限已被销毁，因此该操作也无法撤消。"
+      "message": "删除该子名称意味着不能再使用或重新创建它，一直到它过期 {{date}}。由于父名称控制权限已被撤销，因此该操作也无法撤消。"
     }
   },
   "transaction": {
@@ -248,7 +248,7 @@
     },
     "syncManager": {
       "description": "同步管理员会让您成为该名称的新管理员。当前管理员 <b>({{manager}})</b> 将会失去管理权限。",
-      "wrappedWarning": "同步管理员也将解除该名称的包装，这会销毁 NFT 并重置所有权限。"
+      "wrappedWarning": "同步管理员也将解除该名称的包装，这会烧毁 NFT 并重置所有权限。"
     }
   },
   "errors": {

@@ -50,8 +50,8 @@
     },
     "permissions": {
       "name": "权限",
-      "parentUnlockedWarning": "<strong>不能更改该名称的权限。</strong>您必须首先销毁父名称 ({{parent}}) 上的 “解除包装” 权限。点击这里查看父名称权限。",
-      "revokedLabel": "销毁于 {{date}}",
+      "parentUnlockedWarning": "<strong>不能更改该名称的权限。</strong>您必须首先撤销父名称 ({{parent}}) 上的 “解除包装” 权限。点击这里查看父名称权限。",
+      "revokedLabel": "撤销于 {{date}}",
       "grantedLabel": "授权于 {{date}}",
       "role": {
         "manager": "管理员",
@@ -83,32 +83,32 @@
           "label": "该名称的父名称 (<parentLink>{{parent}}</parentLink>) 可以更改权限",
           "list": {
             "title": "父名称可以:",
-            "item1": "销毁权限",
-            "item2": "更改或销毁自定义的保险丝"
+            "item1": "撤销权限",
+            "item2": "更改或烧毁自定义的保险丝"
           }
         },
         "ownerCanChange": {
           "label": "该名称的所有者可以更改权限",
           "list": {
             "title": "所有者可以:",
-            "item1": "销毁权限",
-            "item2": "更改或销毁自定义的保险丝"
+            "item1": "撤销权限",
+            "item2": "更改或烧毁自定义的保险丝"
           }
         },
         "ownerCannotChange": {
           "label": "该名称的所有者不能更改权限",
           "list": {
             "title": "所有者不能:",
-            "item1": "销毁权限",
-            "item2": "更改或销毁自定义的保险丝"
+            "item1": "撤销权限",
+            "item2": "更改或烧毁自定义的保险丝"
           }
         },
         "unwrapWarning": {
-          "message": "在放弃父名称控制之前，必须先销毁父名称 (<strong>{{parent}}</strong>) 的解除包装权限。<br> <parentLink>进入父名称权限</parentLink>"
+          "message": "在放弃父名称控制之前，必须先撤销父名称 (<strong>{{parent}}</strong>) 的解除包装权限。<br> <parentLink>进入父名称权限</parentLink>"
         },
         "action": {
           "giveUpControl": "放弃父名称控制权",
-          "revokePermission": "销毁权限"
+          "revokePermission": "撤销权限"
         }
       },
       "expiry": {
@@ -197,15 +197,15 @@
       },
       "fuses": {
         "label": "保险丝",
-        "info": "您必须先销毁 “可以解除包装”，才能销毁其他的保险丝",
+        "info": "您必须先烧毁 “可以解除包装”，才能烧毁其他的保险丝",
         "callToAction": "请包装您的名称以解锁这项功能",
-        "burnFormTitle": "销毁权限",
-        "burned": "已销毁",
+        "burnFormTitle": "烧毁权限",
+        "burned": "已烧毁",
         "permissions": {
           "label": "权限",
           "warning": "保险丝可以由父名称更改",
           "CAN_DO_EVERYTHING": "具备全部权限",
-          "CANNOT_BURN_FUSES": "可以销毁保险丝",
+          "CANNOT_BURN_FUSES": "可以烧毁保险丝",
           "CANNOT_CREATE_SUBDOMAIN": "可以创建子名称",
           "CANNOT_SET_RESOLVER": "可以设置解析器",
           "CANNOT_SET_TTL": "可以设置 TTL",
@@ -352,6 +352,6 @@
     "unsupportedTLD": "不支持该 TLD",
     "keyInUse": "{{value}} 已经在使用了",
     "hasSubnames": "该名称拥有子名称",
-    "permissionRevoked": "该名称销毁了执行此操作所需的权限。"
+    "permissionRevoked": "该名称撤销了执行此操作所需的权限。"
   }
 }
