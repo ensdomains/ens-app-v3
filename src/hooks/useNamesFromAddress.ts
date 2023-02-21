@@ -111,9 +111,9 @@ export const useNamesFromAddress = ({
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {
       if (sort.orderDirection === 'asc') {
-        return (a: Name, b: Name) => (b.truncatedName || '').localeCompare(a.truncatedName || '')
+        return (a: Name, b: Name) => (a.truncatedName || '').localeCompare(b.truncatedName || '')
       }
-      return (a: Name, b: Name) => (a.truncatedName || '').localeCompare(b.truncatedName || '')
+      return (a: Name, b: Name) => (b.truncatedName || '').localeCompare(a.truncatedName || '')
     }
     if (sort.type === 'creationDate') {
       if (sort.orderDirection === 'asc') {
