@@ -1,10 +1,16 @@
-import ReactGA4 from 'react-ga4'
+import { mockFunction, render, screen } from '@app/test-utils'
+
+import { initialize, send } from 'react-ga4'
 
 import { getUtm, setUtm, setupAnalytics, trackEvent } from './analytics'
 
 type Window = {
   plausible: any
 }
+
+jest.mock('react-ga4')
+const mockInitialize = mockFunction(initialize)
+const mockSend = mockFunction(send)
 
 describe('analytics', () => {
   describe('utm', () => {
@@ -35,10 +41,12 @@ describe('analytics', () => {
       })
 
       setupAnalytics([{ network: 'goerli' }])
+      expect(mockInitialize).toHaveBeenCalled()
       trackEvent('register')
       expect(mockPlausibleFunction).toBeCalledWith('register', {
         props: { referrer: 'twitter' },
       })
+      expect(mockSend).toHaveBeenCalled()
     })
   })
 })
