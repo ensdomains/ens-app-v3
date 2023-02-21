@@ -63,7 +63,8 @@
     "bounty": "Bug Bounty",
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
-    "back": "Back"
+    "back": "Back",
+    "oldApp": "Old ENS App"
   },
   "wallet": {
     "myProfile": "Profile",

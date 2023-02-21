@@ -4,9 +4,10 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Helper, Typography, mq } from '@ensdomains/thorin'
+import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { usePrimary } from '@app/hooks/usePrimary'
@@ -23,7 +24,8 @@ import Info from './steps/Info'
 import Pricing from './steps/Pricing/Pricing'
 import Profile from './steps/Profile/Profile'
 import Transactions from './steps/Transactions'
-import { BackObj, RegistrationStepData } from './types'
+import { BackObj, PaymentMethod, RegistrationStepData } from './types'
+import { useMoonpayRegistration } from './useMoonpayRegistration'
 
 const ViewProfileContainer = styled.div(
   ({ theme }) => css`
@@ -56,10 +58,54 @@ type Props = {
   isLoading: boolean
 }
 
+const StyledDialog = styled(Dialog)(
+  ({ theme }) => css`
+    height: min(640px, 80vh);
+    & > div {
+      padding: 0;
+
+      & > div {
+        height: 100%;
+        gap: 0;
+
+        & > iframe {
+          height: 640px;
+          border-bottom-left-radius: ${theme.radii['2xLarge']};
+          border-bottom-right-radius: ${theme.radii['2xLarge']};
+        }
+
+        & > div:nth-child(2) {
+          width: 100%;
+          background-color: ${theme.colors.backgroundSecondary};
+          padding: ${theme.space['4']};
+          border-top-left-radius: ${theme.radii['2xLarge']};
+          border-top-right-radius: ${theme.radii['2xLarge']};
+        }
+      }
+    }
+    ${mq.sm.min(css`
+      max-width: 30rem;
+      width: 90vw;
+      & > div {
+        max-width: 30rem;
+        width: 90vw;
+        padding: 0;
+
+        & > div {
+          max-width: 30rem;
+          gap: 0;
+          max-height: 90vh;
+        }
+      }
+    `)}
+  `,
+)
+
 const Registration = ({ nameDetails, isLoading }: Props) => {
   const { t } = useTranslation('register')
 
   const router = useRouterWithHistory()
+  const chainId = useChainId()
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }
@@ -80,7 +126,23 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   const { cleanupFlow } = useTransactionFlow()
 
-  const pricingCallback = ({ years, reverseRecord }: RegistrationStepData['pricing']) => {
+  const {
+    moonpayUrl,
+    initiateMoonpayRegistrationMutation,
+    hasMoonpayModal,
+    setHasMoonpayModal,
+    moonpayTransactionStatus,
+  } = useMoonpayRegistration(dispatch, normalisedName, selected, item)
+
+  const pricingCallback = ({
+    years,
+    reverseRecord,
+    paymentMethodChoice,
+  }: RegistrationStepData['pricing']) => {
+    if (paymentMethodChoice === PaymentMethod.moonpay) {
+      initiateMoonpayRegistrationMutation.mutate()
+      return
+    }
     dispatch({ name: 'setPricingData', payload: { years, reverseRecord }, selected })
     if (!item.queue.includes('profile')) {
       // if profile is not in queue, set the default profile data
@@ -204,6 +266,8 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   callback={pricingCallback}
                   hasPrimaryName={!!primaryName}
                   registrationData={item}
+                  moonpayTransactionStatus={moonpayTransactionStatus}
+                  initiateMoonpayRegistrationMutation={initiateMoonpayRegistrationMutation}
                 />
               ),
               profile: (
@@ -230,11 +294,41 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
                   callback={transactionsCallback}
                 />
               ),
-              complete: <Complete nameDetails={nameDetails} callback={onComplete} />,
+              complete: (
+                <Complete
+                  nameDetails={nameDetails}
+                  callback={onComplete}
+                  isMoonpayFlow={item.isMoonpayFlow}
+                />
+              ),
             }[step]
           ),
         }}
       </Content>
+      <StyledDialog
+        open={hasMoonpayModal}
+        variant="actionable"
+        onDismiss={() => {
+          if (moonpayTransactionStatus === 'waitingAuthorization') {
+            return
+          }
+          setHasMoonpayModal(false)
+        }}
+      >
+        <div>
+          <Typography fontVariant="extraLargeBold">MoonPay Checkout</Typography>
+          {chainId === 5 && (
+            <Typography>Test card details: 4000 0209 5159 5032, 12/2030, 123</Typography>
+          )}
+        </div>
+        <iframe
+          title="Moonpay Checkout"
+          width="100%"
+          height="100%"
+          src={moonpayUrl}
+          id="moonpayIframe"
+        />
+      </StyledDialog>
     </>
   )
 }
