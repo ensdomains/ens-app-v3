@@ -136,12 +136,17 @@ export const AddProfileRecordView = ({ control, onAdd }: Props) => {
   const filteredOptions = useMemo(() => {
     if (!i18n.isInitialized || !search) return options
     return options.map((option) => {
+      const groupLabel = t(`steps.profile.options.groups.${option.group}.label`)
       const items = option.items.filter((item) => {
         const { key: record } = item
-        if (record.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return true
-        if (['address', 'website'].includes(option.group)) return false
-        const label = t(`steps.profile.options.groups.${option.group}.items.${item}`)
-        return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+        const matchSearch = (s: string) =>
+          s.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+        if (matchSearch(record) || matchSearch(groupLabel)) return true
+        if (['address', 'website'].includes(option.group)) {
+          return false
+        }
+        const label = t(`steps.profile.options.groups.${option.group}.items.${record}`)
+        return matchSearch(label)
       })
       return {
         ...option,
