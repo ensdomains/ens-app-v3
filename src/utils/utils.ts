@@ -62,8 +62,8 @@ export const formatDateTime = (date: Date) => {
   return `${baseFormatted} (${timezoneString})`
 }
 
-export const makeEtherscanLink = (hash: string, network?: string) =>
-  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
+export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
+  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
 export const isBrowser = !!(
   typeof window !== 'undefined' &&

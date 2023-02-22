@@ -11,10 +11,11 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import useRegistrationDate from '@app/hooks/useRegistrationDate'
+import { useChainName } from '@app/hooks/useChainName'
+import useRegistrationDate from '@app/hooks/useRegistrationData'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
-import { formatDateTime, formatExpiry } from '@app/utils/utils'
+import { formatDateTime, formatExpiry, makeEtherscanLink } from '@app/utils/utils'
 
 import { TabWrapper } from '../../../TabWrapper'
 
@@ -144,7 +145,8 @@ const Miscellaneous = ({
   const { t } = useTranslation('common')
 
   const { address } = useAccount()
-  const { data: registrationDate, isCachedData: registrationCachedData } = useRegistrationDate(name)
+  const chainName = useChainName()
+  const { data: registrationData, isCachedData: registrationCachedData } = useRegistrationDate(name)
   const { canExtend, canEdit } = useSelfAbilities(address, name)
 
   const { showDataInput } = useTransactionFlow()
@@ -164,12 +166,16 @@ const Miscellaneous = ({
   return (
     <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
       <DatesContainer>
-        {registrationDate && (
+        {registrationData && (
           <DateLayout>
             <Typography>{t('name.registered')}</Typography>
-            <Typography>{formatExpiry(registrationDate)}</Typography>
-            <Typography>{formatDateTime(registrationDate)}</Typography>
-            <a href="#">
+            <Typography>{formatExpiry(registrationData.registrationDate)}</Typography>
+            <Typography>{formatDateTime(registrationData.registrationDate)}</Typography>
+            <a
+              target="_blank"
+              href={makeEtherscanLink(registrationData.transactionHash, chainName)}
+              rel="noreferrer"
+            >
               {t('action.view')}
               <OutlinkSVG />
             </a>

@@ -10,10 +10,13 @@ const query = `
     registration(id: $id) {
       registrationDate
     }
+    nameRegistereds(first: 1, orderBy: blockNumber, orderDirection: desc, where: { registration: $id }) {
+      transactionID
+    }
   }
 `
 
-const useRegistrationDate = (name: string) => {
+const useRegistrationData = (name: string) => {
   const { ready, gqlInstance } = useEns()
   const is2LDEth = checkETH2LDFromName(name)
   const {
@@ -32,6 +35,9 @@ const useRegistrationDate = (name: string) => {
         registration?: {
           registrationDate: string
         }
+        nameRegistereds: {
+          transactionID: string
+        }[]
       }>(query, {
         id: labelhash(name.split('.')[0]),
       }),
@@ -39,7 +45,10 @@ const useRegistrationDate = (name: string) => {
       enabled: ready && is2LDEth,
       select: (queryResult) => {
         if (!queryResult?.registration) return null
-        return new Date(parseInt(queryResult.registration.registrationDate) * 1000)
+        return {
+          registrationDate: new Date(parseInt(queryResult.registration.registrationDate) * 1000),
+          transactionHash: queryResult.nameRegistereds[0]?.transactionID,
+        }
       },
     },
   )
@@ -51,4 +60,4 @@ const useRegistrationDate = (name: string) => {
   }
 }
 
-export default useRegistrationDate
+export default useRegistrationData
