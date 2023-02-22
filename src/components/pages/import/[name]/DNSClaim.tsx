@@ -112,11 +112,23 @@ const HeadingContainer = styled.div`
   justify-content: space-between;
 `
 
-const BackContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-`
+const BackContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+
+    & > button {
+      padding: ${theme.space['2']};
+
+      & > svg {
+        width: ${theme.space['6']};
+        height: ${theme.space['6']};
+      }
+    }
+  `,
+)
 
 const StyledTitle = styled(Title)(
   () => css`
@@ -180,12 +192,7 @@ export default () => {
       </Head>
       <HeadingContainer>
         <BackContainer>
-          <Button
-            onClick={() => router.push('/')}
-            colorStyle="transparent"
-            size="flexible"
-            style={{ width: 50 }}
-          >
+          <Button onClick={() => router.push('/')} colorStyle="transparent" size="flexible">
             <BackArrow as={ArrowLeftSVG} />
           </Button>
           <ContentContainer>
