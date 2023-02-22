@@ -12,6 +12,7 @@ jest.mock('react-ga4', () => ({
   initialize: jest.fn(),
   send: jest.fn(),
 }))
+const network = 'goerli'
 
 describe('analytics', () => {
   beforeEach(() => {
@@ -47,9 +48,9 @@ describe('analytics', () => {
       const mockSend = ReactGA4.send
       const mockInitialize = ReactGA4.initialize
 
-      setupAnalytics([{ network: 'goerli' }])
+      setupAnalytics()
       expect(mockInitialize).toBeCalledWith('G-5PN3YEBDZQ')
-      trackEvent('register')
+      trackEvent('register', network)
       expect(mockSend).toBeCalledWith({
         category: 'referral',
         action: 'register domain',

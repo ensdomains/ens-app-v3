@@ -51,13 +51,13 @@ export const Notifications = () => {
       if (status === 'confirmed') {
         switch (action) {
           case 'registerName':
-            trackEvent('register')
+            trackEvent('register', chainName)
             break
           case 'commitName':
-            trackEvent('commit')
+            trackEvent('commit', chainName)
             break
           case 'extendNames':
-            trackEvent('renew')
+            trackEvent('renew', chainName)
             break
           default:
             break
