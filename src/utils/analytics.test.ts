@@ -8,7 +8,7 @@ type Window = {
   plausible: any
 }
 
-jest.mock('react-ga4', () => ({
+jest.mock('react-ga', () => ({
   initialize: jest.fn(),
   send: jest.fn(),
 }))
