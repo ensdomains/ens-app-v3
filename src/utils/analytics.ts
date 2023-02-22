@@ -1,6 +1,11 @@
 import ReactGA from 'react-ga'
 
 const V4TrackingID = 'G-5PN3YEBDZQ'
+declare global {
+  interface Window {
+    plausible: any
+  }
+}
 
 function isProduction() {
   if (typeof window !== 'undefined') {
