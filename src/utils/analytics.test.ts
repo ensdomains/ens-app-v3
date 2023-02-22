@@ -1,6 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import ReactGA4 from 'react-ga4'
+import ReactGA from 'react-ga'
 
 import { getUtm, setUtm, setupAnalytics, trackEvent } from './analytics'
 

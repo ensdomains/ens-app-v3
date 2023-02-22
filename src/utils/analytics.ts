@@ -1,4 +1,4 @@
-import ReactGA4 from 'react-ga4'
+import ReactGA from 'react-ga'
 
 const V4TrackingID = 'G-5PN3YEBDZQ'
 
