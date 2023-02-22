@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -174,6 +175,9 @@ export default () => {
 
   return (
     <Container>
+      <Head>
+        <title>{t('title', { name })}</title>
+      </Head>
       <HeadingContainer>
         <BackContainer>
           <Button

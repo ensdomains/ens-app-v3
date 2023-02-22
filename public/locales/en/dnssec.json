@@ -1,4 +1,5 @@
 {
+  "title": "Import {{name}} into ENS",
   "general": {
     "connectWallet": "Please connect your wallet to continue",
     "importDNSSECName": "Import DNSSEC Name",
