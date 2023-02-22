@@ -29,7 +29,7 @@ export function getUtm() {
 
 export const setupAnalytics = () => {
   if (isProduction()) {
-    ReactGA4.initialize(V4TrackingID)
+    ReactGA.initialize(V4TrackingID)
   }
   setUtm()
 }
@@ -37,7 +37,7 @@ export const setupAnalytics = () => {
 export const trackEvent = async (type: string, chain: string) => {
   const referrer = getUtm()
   function track() {
-    ReactGA4.send({
+    ReactGA.send({
       category: 'referral',
       action: `${type} domain`,
       type,

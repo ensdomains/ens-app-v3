@@ -45,8 +45,8 @@ describe('analytics', () => {
         },
         writable: true,
       })
-      const mockSend = ReactGA4.send
-      const mockInitialize = ReactGA4.initialize
+      const mockSend = ReactGA.send
+      const mockInitialize = ReactGA.initialize
 
       setupAnalytics()
       expect(mockInitialize).toBeCalledWith('G-5PN3YEBDZQ')
