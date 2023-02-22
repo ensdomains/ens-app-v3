@@ -14,7 +14,7 @@ const mockUseChainId = mockFunction(useChainId)
 const mockUseEns = mockFunction(useEns)
 const mockNamePill = mockFunction(NamePill)
 
-const mockComponent = ({ name }: { name: string }) => <div>{name}</div>
+const mockComponent = ({ truncatedName }: { truncatedName: string }) => <div>{truncatedName}</div>
 
 const mockRequest = jest.fn()
 
