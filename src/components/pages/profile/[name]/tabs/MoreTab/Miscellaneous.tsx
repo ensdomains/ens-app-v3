@@ -11,7 +11,7 @@ import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
 import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
-import { useNameDates } from '@app/hooks/useNameDates'
+import useRegistrationDate from '@app/hooks/useNameDates'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { formatDateTime, formatExpiry } from '@app/utils/utils'
@@ -132,11 +132,19 @@ const FastForwardIcon = styled.svg(
   `,
 )
 
-const Miscellaneous = ({ name }: { name: string }) => {
+const Miscellaneous = ({
+  name,
+  expiryDate,
+  isCachedData,
+}: {
+  name: string
+  expiryDate: Date | undefined
+  isCachedData: boolean
+}) => {
   const { t } = useTranslation('common')
 
   const { address } = useAccount()
-  const { data: nameDates, isCachedData } = useNameDates(name)
+  const { data: registrationDate, isCachedData: registrationCachedData } = useRegistrationDate(name)
   const { canExtend, canEdit } = useSelfAbilities(address, name)
 
   const { showDataInput } = useTransactionFlow()
@@ -144,31 +152,33 @@ const Miscellaneous = ({ name }: { name: string }) => {
   const makeEvent: () => CalendarEvent = useCallback(
     () => ({
       title: `Renew ${name}`,
-      start: nameDates?.expiryDate,
+      start: expiryDate,
       duration: [10, 'minute'],
       url: window.location.href,
     }),
-    [name, nameDates],
+    [name, expiryDate],
   )
 
-  if (!nameDates) return null
+  if (!expiryDate) return null
 
   return (
-    <MiscellaneousContainer $isCached={isCachedData}>
+    <MiscellaneousContainer $isCached={isCachedData || registrationCachedData}>
       <DatesContainer>
-        <DateLayout>
-          <Typography>{t('name.registered')}</Typography>
-          <Typography>{formatExpiry(nameDates.registrationDate)}</Typography>
-          <Typography>{formatDateTime(nameDates.registrationDate)}</Typography>
-          <a href="#">
-            {t('action.view')}
-            <OutlinkSVG />
-          </a>
-        </DateLayout>
+        {registrationDate && (
+          <DateLayout>
+            <Typography>{t('name.registered')}</Typography>
+            <Typography>{formatExpiry(registrationDate)}</Typography>
+            <Typography>{formatDateTime(registrationDate)}</Typography>
+            <a href="#">
+              {t('action.view')}
+              <OutlinkSVG />
+            </a>
+          </DateLayout>
+        )}
         <DateLayout>
           <Typography>{t('name.expires')}</Typography>
-          <Typography data-testid="expiry-data">{formatExpiry(nameDates.expiryDate)}</Typography>
-          <Typography>{formatDateTime(nameDates.expiryDate)}</Typography>
+          <Typography data-testid="expiry-data">{formatExpiry(expiryDate)}</Typography>
+          <Typography>{formatDateTime(expiryDate)}</Typography>
           <Dropdown
             shortThrow
             keepMenuOnTop
