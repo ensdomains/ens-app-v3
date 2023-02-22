@@ -89,11 +89,17 @@ export const EnableDNSSEC = ({
       <Typography>{t('enableDNSSEC.registrarHelp')}</Typography>
       <Spacer $height="5" />
       <Dropdown
+        inheritContentWidth
         items={HelperLinks.map((link) => ({
           label: link.label,
-          onClick: () => null,
           wrapper: (children, key) => (
-            <a href={link.href} target="_blank" key={key} rel="noreferrer">
+            <a
+              target="_blank"
+              rel="noreferrer"
+              href={link.href}
+              key={key}
+              style={{ width: '100%' }}
+            >
               {children}
             </a>
           ),
