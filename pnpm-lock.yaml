@@ -145,6 +145,7 @@ importers:
       react-confetti: ^6.1.0
       react-dom: ^17.0.2
       react-ga: ^3.3.1
+      react-ga4: ^2.0.0
       react-hook-form: ^7.34.2
       react-i18next: ^11.18.5
       react-is: ^17.0.2
@@ -217,6 +218,7 @@ importers:
       react-confetti: 6.1.0_bbuxkxhxbyez4jmqgptuoucij4_react@17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-ga: 3.3.1_react@17.0.2
+      react-ga4: 2.0.0
       react-hook-form: 7.36.1_react@17.0.2
       react-i18next: 11.18.6_jlvubkh2ypz6tastophpvdjiqq
       react-is: 17.0.2
@@ -18018,6 +18020,10 @@ packages:
       react: ^15.6.2 || ^16.0 || ^17 || ^18
     dependencies:
       react: 17.0.2
+    dev: false
+
+  /react-ga4/2.0.0:
+    resolution: {integrity: sha512-WHi98hMunzh4ngRdNil8NN6Qly3ZZUkprhbgSqA+NFzovp8zqpYV3jcbKL9FnMdeBQHGhv8AVNCT2oFEE+EFXA==}
     dev: false
 
   /react-hook-form/7.36.1_react@17.0.2:

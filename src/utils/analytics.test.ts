@@ -1,6 +1,6 @@
 import { mockFunction, render, screen } from '@app/test-utils'
 
-import ReactGA from 'react-ga'
+import ReactGA from 'react-ga4'
 
 import { getUtm, setUtm, setupAnalytics, trackEvent } from './analytics'
 
@@ -8,7 +8,7 @@ type Window = {
   plausible: any
 }
 
-jest.mock('react-ga', () => ({
+jest.mock('react-ga4', () => ({
   initialize: jest.fn(),
   send: jest.fn(),
 }))
