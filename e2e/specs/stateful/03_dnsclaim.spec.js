@@ -22,7 +22,7 @@ describe('Import DNSSEC name', () => {
   })
   it('should allow user to import a domain that they are not the owner of', () => {
     cy.visit('/leontalbert.xyz/import')
-    cy.findByText('0x32518828A071a0e6E549F989D4aaB4Cd7401be8f', { timeout: 10000 }).should(
+    cy.findByText('a=0x32518828A071a0e6E549F989D4aaB4Cd7401be8f', { timeout: 10000 }).should(
       'be.visible',
     )
     cy.wait(2000)
@@ -43,7 +43,7 @@ describe('Import DNSSEC name', () => {
   it('should allow user to import a name that they are the owner of', () => {
     cy.wait(2000)
     cy.visit('/leontalbert.com/import')
-    cy.findByText('0x32518828A071a0e6E549F989D4aaB4Cd7401be8f').should('be.visible')
+    cy.findByText('a=0x32518828A071a0e6E549F989D4aaB4Cd7401be8f').should('be.visible')
     cy.wait(2000)
     cy.findByTestId('dnssec-check-button').click()
     cy.findByText('You have verified your ownership and can claim this domain.').should(
