@@ -46,7 +46,7 @@ export const IntroStageModal = ({
 
   const TrailingButton = (
     <Button onClick={() => onSuccess()} data-testid="transaction-dialog-intro-trailing-btn">
-      {trailingLabel || tLabel}
+      {trailingLabel ? t(...trailingLabel) : tLabel}
     </Button>
   )
 
@@ -56,7 +56,7 @@ export const IntroStageModal = ({
 
   return (
     <>
-      <Dialog.Heading title={title} />
+      <Dialog.Heading title={t(...title)} />
       <InnerDialog data-testid="transaction-modal-inner">
         <Content {...content.data} />
         {txCount > 1 && (

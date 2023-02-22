@@ -17,6 +17,7 @@ import { DeepPartial } from './types'
 jest.mock('wagmi', () => {
   const {
     useQuery,
+    useQueryClient,
     useInfiniteQuery,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
@@ -24,6 +25,7 @@ jest.mock('wagmi', () => {
 
   return {
     useQuery,
+    useQueryClient,
     useInfiniteQuery,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
