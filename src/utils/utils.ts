@@ -63,7 +63,7 @@ export const formatDateTime = (date: Date) => {
 }
 
 export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
-  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/${route}/${data}`
+  `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
 export const isBrowser = !!(
   typeof window !== 'undefined' &&

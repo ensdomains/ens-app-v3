@@ -175,6 +175,7 @@ const Miscellaneous = ({
               target="_blank"
               href={makeEtherscanLink(registrationData.transactionHash, chainName)}
               rel="noreferrer"
+              data-testid="etherscan-registration-link"
             >
               {t('action.view')}
               <OutlinkSVG />

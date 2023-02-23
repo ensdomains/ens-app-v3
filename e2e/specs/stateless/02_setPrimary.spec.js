@@ -55,11 +55,42 @@ describe('Set Primary Name', () => {
         wrapper.should('exist')
         wrapper.should('include.text', 'other-eth-record.eth')
       })
+      it('should allow setting primary name from name with encrypted label', () => {
+        acceptMetamaskAccess(3)
+        cy.visit(
+          '/[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
+        )
+        cy.findByText('Set as primary name').click()
+        cy.findByTestId(
+          'unknown-label-input-0x5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04',
+        ).type('aaa123xyz000')
+        cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
+
+        cy.location('pathname').should('equal', '/aaa123xyz000.unknown-labels.eth')
+        cy.findByText('Set your primary name').should('be.visible')
+        cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+
+        // update eth address
+        cy.findByTestId('transaction-modal-confirm-button').click()
+        cy.confirmMetamaskTransaction()
+        cy.findByTestId('transaction-modal-complete-button').click()
+
+        // set primary name
+        cy.findByTestId('transaction-modal-confirm-button').click()
+        cy.confirmMetamaskTransaction()
+        cy.findByTestId('transaction-modal-complete-button').click()
+
+        cy.wait(1000)
+
+        cy.findByTestId('header-profile').within(() => {
+          cy.findByTestId('profile-title').should('contain.text', 'aaa123xyz000.unknown-labels.eth')
+        })
+      })
     })
     describe('same ETH record', () => {
       it('should show primary name action in profile dropdown', () => {
         cy.visit('/test123.eth')
-        connectFromExisting()
+        acceptMetamaskAccess(2)
         cy.findByTestId('profile-actions').click()
         cy.findByText('Set as primary name').click()
       })

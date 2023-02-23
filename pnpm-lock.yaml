@@ -310,18 +310,6 @@ importers:
       wrangler: 0.0.0-ff35b9d1
       yalc: 1.0.0-pre.53
 
-  .yalc/@ensdomains/ens-contracts:
-    specifiers:
-      '@ensdomains/buffer': ^0.0.13
-      '@ensdomains/solsha1': 0.0.3
-      '@openzeppelin/contracts': ^4.1.0
-      dns-packet: ^5.3.0
-    dependencies:
-      '@ensdomains/buffer': 0.0.13
-      '@ensdomains/solsha1': 0.0.3
-      '@openzeppelin/contracts': 4.7.3
-      dns-packet: 5.4.0
-
 packages:
 
   /@adobe/css-tools/4.0.1:
@@ -2124,24 +2112,6 @@ packages:
 
   /@ensdomains/buffer/0.0.10:
     resolution: {integrity: sha512-EOFqiWnN36EyyBAgHFTsabFcFICUALt41SiDm/4pAw4V36R4lD4wHcnZcqCYki9m1fMaeWGHrdqxmrMa8iiSTQ==}
-    dev: false
-
-  /@ensdomains/buffer/0.0.13:
-    resolution: {integrity: sha512-8aA+U/e4S54ebPwcge1HHvvpgXLKxPd6EOSegMlrTvBnKB8RwB3OpNyflaikD6KqzIwDaBaH8bvnTrMcfpV7oQ==}
-    dependencies:
-      '@nomiclabs/hardhat-truffle5': 2.0.7
-    transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
-      - bufferutil
-      - encoding
-      - hardhat
-      - supports-color
-      - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
     dev: false
 
   /@ensdomains/buffer/0.0.13_hardhat@2.11.2:
@@ -4034,29 +4004,6 @@ packages:
       '@nomicfoundation/solidity-analyzer-win32-arm64-msvc': 0.0.3
       '@nomicfoundation/solidity-analyzer-win32-ia32-msvc': 0.0.3
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.0.3
-
-  /@nomiclabs/hardhat-truffle5/2.0.7:
-    resolution: {integrity: sha512-Pw8451IUZp1bTp0QqCHCYfCHs66sCnyxPcaorapu9mfOV9xnZsVaFdtutnhNEiXdiZwbed7LFKpRsde4BjFwig==}
-    peerDependencies:
-      '@nomiclabs/hardhat-web3': ^2.0.0
-      hardhat: ^2.6.4
-      web3: ^1.0.0-beta.36
-    dependencies:
-      '@nomiclabs/truffle-contract': 4.5.10
-      '@types/chai': 4.3.3
-      chai: 4.3.6
-      ethereumjs-util: 7.1.5
-      fs-extra: 7.0.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
-    dev: false
 
   /@nomiclabs/hardhat-truffle5/2.0.7_hardhat@2.11.2:
     resolution: {integrity: sha512-Pw8451IUZp1bTp0QqCHCYfCHs66sCnyxPcaorapu9mfOV9xnZsVaFdtutnhNEiXdiZwbed7LFKpRsde4BjFwig==}
