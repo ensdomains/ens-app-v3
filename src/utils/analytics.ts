@@ -7,12 +7,6 @@ declare global {
   }
 }
 
-function isProduction() {
-  if (typeof window !== 'undefined') {
-    return !!window.location.host.match('ens.domains')
-  }
-}
-
 function isMainnet(chain: string) {
   // Change to 'mainnet' after the mainnet release
   return chain === 'goerli'
@@ -48,7 +42,9 @@ export const trackEvent = async (type: string, chain: string) => {
       type,
       referrer,
     })
+    console.log('Event triggered on mainnet2', type, chain)
     if (typeof window !== 'undefined' && window.plausible) {
+      console.log('Event triggered on mainnet3', type, chain)
       window.plausible(type, {
         props: {
           referrer,
@@ -56,11 +52,13 @@ export const trackEvent = async (type: string, chain: string) => {
       })
     }
   }
-  if (isProduction() && isMainnet(chain)) {
+  console.log('Event triggering', type, chain)
+  if (isMainnet(chain)) {
+    console.log('Event triggered on mainnet1', type, chain)
     track()
   } else {
     console.log(
-      'Referral triggered on local development',
+      'Event triggered on local development',
       JSON.stringify({
         type,
         referrer,
