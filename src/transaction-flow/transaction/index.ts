@@ -17,6 +17,7 @@ import transferName from './transferName'
 import transferSubname from './transferSubname'
 import updateEthAddress from './updateEthAddress'
 import updateProfile from './updateProfile'
+import updateProfileRecords from './updateProfileRecords'
 import updateResolver from './updateResolver'
 import wrapName from './wrapName'
 
@@ -42,6 +43,7 @@ export const transactions = {
   approveNameWrapper,
   changePermissions,
   syncManager,
+  updateProfileRecords,
 }
 
 export type Transaction = typeof transactions

@@ -12,6 +12,7 @@ import { TransactionDialogPassthrough } from '../../types'
 
 type Data = {
   name: string
+  isWrapped: boolean
 }
 
 export type Props = { data: Data } & TransactionDialogPassthrough
@@ -32,7 +33,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
           name: data.name,
           resolver: resolverAddress,
           oldResolver: oldResolverAddress,
-          contract: 'registry',
+          contract: data.isWrapped ? 'nameWrapper' : 'registry',
         }),
       ],
     })
@@ -55,7 +56,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
             name: data.name,
             resolver: resolverAddress,
             oldResolver: oldResolverAddress,
-            contract: 'registry',
+            contract: data.isWrapped ? 'nameWrapper' : 'registry',
           }),
         ],
         resumable: true,

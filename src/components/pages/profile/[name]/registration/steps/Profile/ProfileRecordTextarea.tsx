@@ -76,7 +76,8 @@ export const ProfileRecordTextarea = forwardRef<HTMLTextAreaElement, Props>(
           label={label}
           labelSecondary={secondaryLabel}
           error={error}
-          showDot={validated}
+          showDot
+          validated={validated}
           width="full"
           onFocus={onFocus}
           onBlur={onBlur}

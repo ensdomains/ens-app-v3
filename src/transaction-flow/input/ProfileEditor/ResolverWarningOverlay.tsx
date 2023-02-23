@@ -10,7 +10,6 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 const Container = styled.div(
   ({ theme }) => css`
-    position: absolute;
     top: 0;
     left: 0;
     width: 100%;
@@ -77,6 +76,7 @@ type SettingsDict = {
 
 type Props = {
   name: string
+  isWrapped: boolean
   resumable?: boolean
   hasOldRegistry?: boolean
   hasMigratedProfile?: boolean
@@ -88,6 +88,7 @@ type Props = {
 
 const ResolverWarningOverlay = ({
   name,
+  isWrapped,
   hasOldRegistry = false,
   resumable = false,
   hasMigratedProfile = false,
@@ -110,7 +111,7 @@ const ResolverWarningOverlay = ({
       payload: [
         makeTransactionItem('updateResolver', {
           name,
-          contract: 'registry',
+          contract: isWrapped ? 'nameWrapper' : 'registry',
           resolver: latestResolver,
           oldResolver,
         }),
@@ -125,7 +126,7 @@ const ResolverWarningOverlay = ({
       payload: {
         input: {
           name: 'TransferProfile',
-          data: { name },
+          data: { name, isWrapped },
         },
         disableBackgroundClick: true,
       },

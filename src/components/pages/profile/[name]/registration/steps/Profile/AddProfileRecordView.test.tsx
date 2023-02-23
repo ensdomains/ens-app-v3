@@ -4,12 +4,12 @@ import { renderHook } from '@testing-library/react-hooks'
 import { useForm } from 'react-hook-form'
 
 import { grouped as options } from '@app/constants/profileRecordOptions'
-import { RegistrationForm } from '@app/hooks/useRegistrationForm'
+import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 import { AddProfileRecordView } from './AddProfileRecordView'
 
 const { result } = renderHook(() =>
-  useForm<RegistrationForm>({
+  useForm<ProfileEditorForm>({
     defaultValues: {
       records: [],
     },

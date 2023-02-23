@@ -45,13 +45,15 @@ export const TransactionDialogManager = ({
 
   useResetSelectedKey(dispatch)
 
-  const onDismiss = useCallback(() => {
-    dispatch({
-      name: 'stopFlow',
-    })
-  }, [dispatch])
+  const onClose = useMemo(() => {
+    if (selectedItem?.disableBackgroundClick) return
+    return () =>
+      dispatch({
+        name: 'stopFlow',
+      })
+  }, [dispatch, selectedItem?.disableBackgroundClick])
 
-  const onBackgroundDismiss = useCallback(() => {
+  const onDismiss = useCallback(() => {
     if (selectedItem?.disableBackgroundClick) return
     dispatch({
       name: 'stopFlow',
@@ -118,12 +120,7 @@ export const TransactionDialogManager = ({
   }, [selectedKey, selectedItem, onDismiss, dispatch, t])
 
   return (
-    <Dialog
-      variant="blank"
-      open={!!state.selectedKey}
-      onDismiss={onBackgroundDismiss}
-      onClose={onDismiss}
-    >
+    <Dialog variant="blank" open={!!state.selectedKey} onDismiss={onDismiss} onClose={onClose}>
       {InnerComponent}
     </Dialog>
   )

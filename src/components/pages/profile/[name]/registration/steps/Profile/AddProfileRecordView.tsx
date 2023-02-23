@@ -11,7 +11,7 @@ import {
   ProfileRecordGroup,
   grouped as options,
 } from '@app/constants/profileRecordOptions'
-import { RegistrationForm } from '@app/hooks/useRegistrationForm'
+import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import mq from '@app/mediaQuery'
 
 import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
@@ -129,7 +129,7 @@ const FooterWrapper = styled.div(
 )
 
 type Props = {
-  control: Control<RegistrationForm, any>
+  control: Control<ProfileEditorForm, any>
   onAdd?: (records: ProfileRecord[]) => void
   onClose?: () => void
 }
@@ -145,11 +145,14 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
   const filteredOptions = useMemo(() => {
     if (!i18n.isInitialized || !search) return options
     return options.map((option) => {
+      const groupLabel = t(`steps.profile.options.groups.${option.group}.label`)
+      if (groupLabel.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return option
       const items = option.items.filter((item) => {
-        const { key: record } = item
-        if (record.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return true
-        if (['address', 'website'].includes(option.group)) return false
-        const label = t(`steps.profile.options.groups.${option.group}.items.${item}`)
+        const { key: record, group } = item
+        // Address and website do not use labels
+        if (['address', 'website'].includes(group))
+          return record.toLocaleLowerCase().indexOf(search.toLowerCase()) !== -1
+        const label = t(`steps.profile.options.groups.${option.group}.items.${record}`)
         return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
       })
       return {

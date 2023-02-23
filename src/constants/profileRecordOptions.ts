@@ -15,7 +15,7 @@ export type ProfileRecordGroup =
   | 'other'
   | 'custom'
 
-export type ProfileRecordType = 'text' | 'addr' | 'contenthash'
+export type ProfileRecordType = 'text' | 'addr' | 'contenthash' | 'abi'
 
 export type ProfileRecord = {
   key: string
@@ -54,10 +54,16 @@ const website: ProfileRecord[] = supportedContentHashKeys.map((key) => ({
   type: 'contenthash',
 }))
 
+const typeForOtherRecordKey = (key: string): ProfileRecordType => {
+  if (key === 'contentHash') return 'contenthash'
+  if (key === 'abi') return 'abi'
+  return 'text'
+}
+
 const other: ProfileRecord[] = supportedOtherRecordKeys.map((key) => ({
   key,
   group: 'other',
-  type: key === 'contentHash' ? 'contenthash' : 'text',
+  type: typeForOtherRecordKey(key),
 }))
 
 export default [...general, ...social, ...address, ...website, ...other]
@@ -86,3 +92,30 @@ export const grouped: {
     items: other,
   },
 ]
+
+export const sortValues: { [key: string]: { [key: string]: number } } = {
+  media: {
+    avatar: 1,
+  },
+  general: supportedGeneralRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
+    acc[key] = index + 100
+    return acc
+  }, {}),
+  social: supportedSocialRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
+    acc[key] = index + 200
+    return acc
+  }, {}),
+  address: supportedAddresses.reduce<{ [key: string]: number }>((acc, key, index) => {
+    if (key === 'eth') acc[key] = 1
+    else acc[key] = index + 300
+    return acc
+  }, {}),
+  website: supportedContentHashKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
+    acc[key] = index + 400
+    return acc
+  }, {}),
+  other: supportedOtherRecordKeys.reduce<{ [key: string]: number }>((acc, key, index) => {
+    acc[key] = index + 500
+    return acc
+  }, {}),
+}
