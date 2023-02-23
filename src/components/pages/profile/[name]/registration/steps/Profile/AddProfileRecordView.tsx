@@ -15,7 +15,6 @@ import { RegistrationForm } from '@app/hooks/useRegistrationForm'
 import mq from '@app/mediaQuery'
 
 import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
-import { DeleteButton } from './DeleteButton'
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
 
@@ -30,14 +29,6 @@ const Container = styled.div(() => [
     width: 520px;
   `),
 ])
-
-const ButtonWrapper = styled.div(
-  () => css`
-    position: absolute;
-    top: 0;
-    right: 0;
-  `,
-)
 
 const Content = styled.div(
   ({ theme }) => css`
@@ -134,7 +125,7 @@ type Props = {
   onClose?: () => void
 }
 
-export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
+export const AddProfileRecordView = ({ control, onAdd }: Props) => {
   const { t, i18n } = useTranslation('register')
 
   const currentRecords = useWatch({ control, name: 'records' })
@@ -145,12 +136,17 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
   const filteredOptions = useMemo(() => {
     if (!i18n.isInitialized || !search) return options
     return options.map((option) => {
+      const groupLabel = t(`steps.profile.options.groups.${option.group}.label`)
       const items = option.items.filter((item) => {
         const { key: record } = item
-        if (record.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return true
-        if (['address', 'website'].includes(option.group)) return false
-        const label = t(`steps.profile.options.groups.${option.group}.items.${item}`)
-        return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+        const matchSearch = (s: string) =>
+          s.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+        if (matchSearch(record) || matchSearch(groupLabel)) return true
+        if (['address', 'website'].includes(option.group)) {
+          return false
+        }
+        const label = t(`steps.profile.options.groups.${option.group}.items.${record}`)
+        return matchSearch(label)
       })
       return {
         ...option,
@@ -283,9 +279,6 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
   return (
     <Container>
-      <ButtonWrapper>
-        <DeleteButton size="large" onClick={() => onClose?.()} />
-      </ButtonWrapper>
       <Dialog.Heading title={t('steps.profile.addProfile')} />
       <Spacer $height="6" />
       <Input

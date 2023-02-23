@@ -3,7 +3,6 @@ import styled, { css } from 'styled-components'
 
 import { Button, Dialog, Typography } from '@ensdomains/thorin'
 
-import { DeleteButton } from '@app/components/pages/profile/[name]/registration/steps/Profile/DeleteButton'
 import mq from '@app/mediaQuery'
 
 const Container = styled.div(({ theme }) => [
@@ -19,14 +18,6 @@ const Container = styled.div(({ theme }) => [
     width: 520px;
   `),
 ])
-
-const DeleteButtonWrapper = styled.div(
-  () => css`
-    position: absolute;
-    top: 0;
-    right: 0;
-  `,
-)
 
 const Description = styled(Typography)(
   () => css`
@@ -55,9 +46,6 @@ export const ConfirmationDialogView = ({
   return (
     <Container {...props}>
       <Dialog.Heading title={title} alert="warning" />
-      <DeleteButtonWrapper>
-        <DeleteButton size="large" onClick={onDecline} />
-      </DeleteButtonWrapper>
       <Description>{description}</Description>
       <Dialog.Footer
         leading={

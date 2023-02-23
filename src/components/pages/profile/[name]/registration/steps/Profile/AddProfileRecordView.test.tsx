@@ -1,9 +1,10 @@
+/* eslint-disable no-await-in-loop */
 import { render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { renderHook } from '@testing-library/react-hooks'
 import { useForm } from 'react-hook-form'
 
-import { grouped as options } from '@app/constants/profileRecordOptions'
+import allOptionsArray, { grouped as options } from '@app/constants/profileRecordOptions'
 import { RegistrationForm } from '@app/hooks/useRegistrationForm'
 
 import { AddProfileRecordView } from './AddProfileRecordView'
@@ -24,6 +25,8 @@ mockIntersectionObserver.mockReturnValue({
 })
 window.IntersectionObserver = mockIntersectionObserver
 window.scroll = jest.fn()
+
+jest.setTimeout(30000)
 
 describe('AddProfileRecordView', () => {
   it('should render', () => {
@@ -141,5 +144,50 @@ describe('AddProfileRecordView', () => {
         })
       })
     })
+  })
+
+  it('should filter by group from search', async () => {
+    result.current.reset({ records: [] })
+    render(<AddProfileRecordView control={result.current.control} />)
+    for (const { group, items } of options) {
+      await userEvent.clear(screen.getByTestId('profile-record-search-input'))
+      await userEvent.type(screen.getByTestId('profile-record-search-input'), group)
+      for (const { key } of items) {
+        expect(screen.getByTestId(`profile-record-option-${key}`)).toBeInTheDocument()
+      }
+      for (const { key } of allOptionsArray.filter(
+        ({ key: k, group: g }) => g !== group && k !== group,
+      )) {
+        expect(screen.queryByTestId(`profile-record-option-${key}`)).not.toBeInTheDocument()
+      }
+    }
+  })
+  it('should filter by label from search', async () => {
+    result.current.reset({ records: [] })
+    render(<AddProfileRecordView control={result.current.control} />)
+    // array for only first 10 address items, to reduce test time
+    const itemsArray = options.reduce((prev, curr) => {
+      if (curr.group === 'address') {
+        return [...prev, ...curr.items.slice(0, 10)]
+      }
+      return [...prev, ...curr.items]
+    }, [] as typeof allOptionsArray)
+    for (const { key } of itemsArray) {
+      await userEvent.clear(screen.getByTestId('profile-record-search-input'))
+      await userEvent.type(screen.getByTestId('profile-record-search-input'), key)
+      // eslint-disable-next-line @typescript-eslint/no-loop-func
+      await waitFor(() =>
+        expect(screen.getByTestId(`profile-record-option-${key}`)).toBeInTheDocument(),
+      )
+      const lowerCaseKey = key.toLowerCase()
+      for (const { key: filteredKey } of allOptionsArray.filter(
+        ({ key: k, group: g }) =>
+          k.toLowerCase().indexOf(lowerCaseKey) === -1 &&
+          g.toLowerCase().indexOf(lowerCaseKey) === -1 &&
+          'steps.profile.options.groups.x.items'.indexOf(lowerCaseKey) === -1,
+      )) {
+        expect(screen.queryByTestId(`profile-record-option-${filteredKey}`)).not.toBeInTheDocument()
+      }
+    }
   })
 })

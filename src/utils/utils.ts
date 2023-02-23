@@ -2,6 +2,8 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
+import { OwnerArray, ReturnedENS } from '@app/types'
+
 import { networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -127,3 +129,15 @@ export const validateExpiry = (
   if (!fuses) return undefined
   return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }
+
+export const checkPCCExpired = (
+  owners: OwnerArray,
+  wrapperData: ReturnedENS['getWrapperData'] | undefined,
+  nameWrapperAddress: string,
+) =>
+  !!(
+    owners.length === 1 &&
+    owners[0].address === nameWrapperAddress &&
+    wrapperData?.expiryDate &&
+    wrapperData.expiryDate < new Date()
+  )

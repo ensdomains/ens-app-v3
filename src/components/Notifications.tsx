@@ -77,7 +77,11 @@ export const Notifications = () => {
                 {t('transaction.viewEtherscan')}
               </Button>
             </a>
-            <Button size="small" onClick={() => resumeTransactionFlow(key)}>
+            <Button
+              size="small"
+              data-testid="notification-continue-button"
+              onClick={() => resumeTransactionFlow(key)}
+            >
               Continue
             </Button>
           </ButtonContainer>

@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 
-import { ReturnedENS } from '@app/types'
+import { OwnerArray, ReturnedENS } from '@app/types'
 
 import { useSelfAbilities } from './useSelfAbilities'
 
@@ -13,14 +13,7 @@ type Props = {
 
 const useOwners = ({ ownerData, wrapperData, dnsOwner, selfAbilities }: Props) => {
   const owners = useMemo(() => {
-    const _owners: {
-      address: string
-      label: string
-      description: string
-      canTransfer: boolean
-      transferType?: 'manager' | 'owner'
-      testId: string
-    }[] = []
+    const _owners: OwnerArray = []
     if (ownerData?.ownershipLevel === 'nameWrapper') {
       _owners.push({
         address: ownerData.owner!,

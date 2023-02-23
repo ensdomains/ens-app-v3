@@ -1,4 +1,4 @@
-import { increaseTime, syncTime } from '../../clean'
+import { increaseTime, setAutomine, syncTime } from '../../clean'
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Register Name', () => {
@@ -108,7 +108,13 @@ describe('Register Name', () => {
 
     // should show set profile button on info step
     cy.findByTestId('next-button').click()
-    cy.findByTestId('setup-profile-button').should('be.visible')
+
+    // setup profile buttons should be blue
+    cy.findByTestId('setup-profile-button')
+      .should('be.visible')
+      .within(() => {
+        cy.get('div').should('have.css', 'color', 'rgb(56, 136, 255)')
+      })
 
     // should allow registering a name without setting primary name
     cy.findByTestId('next-button').click()
@@ -142,5 +148,25 @@ describe('Register Name', () => {
     cy.confirmMetamaskTransaction()
     cy.findByTestId('view-name').click()
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
+  })
+  it('should allow registering a name and resuming from the commit toast', () => {
+    cy.visit('/registration-resume.eth/register')
+    cy.findByTestId('payment-choice-ethereum').click()
+    connectFromExisting()
+    cy.findByTestId('next-button').click()
+    cy.findByTestId('next-button').click()
+    cy.wrap(null).then(() => setAutomine(false))
+    cy.wait(500)
+    cy.findByTestId('transaction-modal-confirm-button').click()
+    cy.confirmMetamaskTransaction()
+    cy.wait(500)
+    cy.findByTestId('transaction-modal-sent-button').click()
+    cy.visit('/')
+    cy.wrap(null).then(() => setAutomine(true))
+    cy.wait(500)
+    cy.findByTestId('notification-continue-button').should('be.visible').click()
+    cy.location('pathname').should('equal', '/registration-resume.eth/register')
+    cy.findByTestId('countdown-circle').should('be.visible')
+    // we don't need to test the rest of registration, just the resume part
   })
 })
