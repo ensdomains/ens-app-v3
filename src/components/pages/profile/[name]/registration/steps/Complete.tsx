@@ -1,5 +1,6 @@
+import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 import dynamic from 'next/dynamic'
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -100,15 +101,11 @@ const Confetti = dynamic(() =>
   import('react-confetti').then((mod) => mod.default as typeof ConfettiT),
 )
 
-type Props = {
-  nameDetails: ReturnType<typeof useNameDetails>
-  callback: (toProfile: boolean) => void
-}
-
-const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) => {
+const useEthInvoice = (
+  name: string,
+  isMoonpayFlow: boolean,
+): { InvoiceFilled?: React.ReactNode; avatarSrc?: string } => {
   const { t } = useTranslation('register')
-  const { width, height } = useWindowSize()
-
   const { address } = useAccount()
   const keySuffix = `${name}-${address}`
   const commitKey = `commit-${keySuffix}`
@@ -121,13 +118,13 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
-    hash: commitTxFlow!.hash,
+    hash: commitTxFlow?.hash,
   })
   const {
     response: registerResponse,
     receipt: registerReceipt,
     isLoading: registerLoading,
-  } = useTransactionResponseReceipt(registerTxFlow!.hash!)
+  } = useTransactionResponseReceipt(registerTxFlow?.hash || '')
   const isLoading = commitLoading || registerLoading
 
   useEffect(() => {
@@ -137,10 +134,10 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    const { value } = registerResponse!
-    const commitNetFee = commitReceipt!.gasUsed.mul(commitReceipt!.effectiveGasPrice)
-    const registerNetFee = registerReceipt!.gasUsed.mul(registerReceipt!.effectiveGasPrice)
-    const totalNetFee = commitNetFee.add(registerNetFee)
+    const value = registerResponse?.value || BigNumber.from(0)
+    const commitNetFee = commitReceipt?.gasUsed.mul(commitReceipt!.effectiveGasPrice)
+    const registerNetFee = registerReceipt?.gasUsed.mul(registerReceipt!.effectiveGasPrice)
+    const totalNetFee = registerNetFee ? commitNetFee?.add(registerNetFee) : BigNumber.from(0)
 
     return (
       <Invoice
@@ -152,6 +149,22 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback }: Props) =>
       />
     )
   }, [t, registerResponse, commitReceipt, registerReceipt, isLoading])
+
+  if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
+
+  return { InvoiceFilled, avatarSrc }
+}
+
+type Props = {
+  nameDetails: ReturnType<typeof useNameDetails>
+  callback: (toProfile: boolean) => void
+  isMoonpayFlow: boolean
+}
+
+const Complete = ({ nameDetails: { normalisedName: name }, callback, isMoonpayFlow }: Props) => {
+  const { t } = useTranslation('register')
+  const { width, height } = useWindowSize()
+  const { InvoiceFilled, avatarSrc } = useEthInvoice(name, isMoonpayFlow)
 
   return (
     <StyledCard>

@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import ClockSVG from '@app/assets/Clock.svg'
-import { secondsToDays } from '@app/utils/utils'
+import { daysToSeconds, secondsToDays, secondsToHours } from '@app/utils/utils'
 
 import { useBlockTimestamp } from '../../../hooks/useBlockTimestamp'
 
@@ -50,38 +50,58 @@ export const ExpiryClock = ({ expiry }: { expiry: Date }) => {
   return <ClockIcon data-testid="expiry-clock-grey" $color="grey" as={ClockSVG} />
 }
 
-export const ShortExpiry = ({ expiry, textOnly = false }: { expiry: Date; textOnly?: boolean }) => {
+export const ShortExpiry = ({
+  expiry,
+  textOnly = false,
+  hasGracePeriod,
+}: {
+  expiry: Date
+  textOnly?: boolean
+  hasGracePeriod?: boolean
+}) => {
   const { t } = useTranslation()
   const blockTimestamp = useBlockTimestamp()
   const currentDate = new Date(blockTimestamp.data!)
-  const difference = secondsToDays((expiry.getTime() - currentDate.getTime()) / 1000)
+  let secondsDiff = (expiry.getTime() - currentDate.getTime()) / 1000
+  const inverse =
+    (!hasGracePeriod && secondsDiff < 0) || (hasGracePeriod && secondsDiff < -daysToSeconds(90))
+  if (inverse) secondsDiff = -secondsDiff
+  let difference = secondsToDays(secondsDiff)
+
   const months = Math.floor(difference / 30)
   const years = Math.floor(difference / 365)
+  const transPrefix = inverse ? 'name.expired' : 'name.expires'
 
-  let text = t('name.expiresInYears', { count: years })
+  let text = t(`${transPrefix}InYears`, { count: years })
   let color: 'grey' | 'red' | 'orange' = 'grey'
 
-  if (difference < 0) {
-    text = t('name.expiresInDays', { count: difference + 90 })
+  if (difference === 0) {
+    difference = secondsToHours(secondsDiff)
+    text = t(`${transPrefix}InHours`, { count: difference })
+    color = 'red'
+  } else if (difference < 0) {
+    text = t(`${transPrefix}InDays`, { count: hasGracePeriod ? difference + 90 : difference })
     color = 'red'
   } else if (difference < 30) {
-    text = t('name.expiresInDays', { count: difference })
+    text = t(`${transPrefix}InDays`, { count: difference })
     color = 'orange'
   } else if (difference < 90) {
-    text = t('name.expiresInMonths', { count: months })
+    text = t(`${transPrefix}InMonths`, { count: months })
     color = 'orange'
   } else if (difference < 365) {
-    text = t('name.expiresInMonths', { count: months })
+    text = t(`${transPrefix}InMonths`, { count: months })
     color = 'grey'
   }
+
+  const processedColor = inverse ? 'red' : color
 
   if (textOnly) return <>{text}</>
   return (
     <ExpiryText
       data-testid="short-expiry"
-      data-color={color}
+      data-color={processedColor}
       data-timestamp={expiry.getTime()}
-      $color={color}
+      $color={processedColor}
       fontVariant="small"
     >
       {text}

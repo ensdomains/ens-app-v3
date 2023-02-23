@@ -1,12 +1,13 @@
 import { useQuery } from 'wagmi'
 
+import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { emptyAddress } from '../utils/constants'
 
 const FETCH_PAGE_SIZE = 50
 
-type Subnames = Awaited<ReturnType<ReturnType<typeof useEns>['getSubnames']>>['subnames']
+type Subnames = ReturnedENS['getSubnames']['subnames']
 
 export const useHasSubnames = (name: string) => {
   const { getSubnames, ready } = useEns()

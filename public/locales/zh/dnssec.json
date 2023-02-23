@@ -1,0 +1,64 @@
+{
+  "general": {
+    "connectWallet": "请先连接您的钱包",
+    "importDNSSECName": "导入 DNSSEC 域名",
+    "domainRegistrar": "域名注册商"
+  },
+  "registrars": {
+    "namecheap": "Namecheap",
+    "domaindotcom": "Domain.com",
+    "googledomains": "Google Domains",
+    "dreamhost": "Dreamhost",
+    "hover": "Hover",
+    "godaddy": "GoDaddy",
+    "bluehost": "Bluehost",
+    "hostgator": "HostGator",
+    "findYourRegistrar": "找到您的注册商"
+  },
+  "addTextRecord": {
+    "title": "添加文本记录",
+    "explanation": "您需要利用这些信息为您的域名创建一个新的 DNS 记录，用于将您的以太坊地址认定为该域名的所有者。",
+    "syncWarningOne": "您可能不是该 DNS 域名的所有者，但您仍然可以将该域名添加到 ENS 注册表。",
+    "syncWarningTwo": "如果您持有该域名，请更改它的 _ens TXT 记录，使其包含您的以太坊地址，然后再次单击 “检查”。其他情况，请单击 “认领” 继续。",
+    "type": "类型",
+    "txt": "TXT",
+    "errors": {
+      "SUBDOMAIN_NOT_SET": {
+        "title": "未设置子域名",
+        "content": "请将上面显示的值设置到您的 _ens 子域名记录中。"
+      },
+      "DNS_RECORD_DOES_NOT_EXIST": {
+        "title": "记录不存在",
+        "content": "未设置 DNS 记录"
+      },
+      "DNS_RECORD_INVALID": {
+        "title": "无效记录",
+        "content": "请将记录设置为上面的值。"
+      }
+    }
+  },
+  "claimComplete": {
+    "title": "恭喜!",
+    "ownerOf": "您现是该名称的所有者: ",
+    "successMessage": "您的域名已成功导入 ENS，现在可以查看和管理域名。",
+    "viewName": "查看域名",
+    "claimAnother": "再认领一个"
+  },
+  "claimDomain": {
+    "title": "认领您的域名",
+    "syncWarning": "您正在导入的 DNS 域名似乎并不属于您。",
+    "verifiedOwnership": "您已经验证了所有权，现在可以认领该域名。",
+    "pendingTransactionPre": "您已经有一个",
+    "pendingTransactionLink": "正在处理的交易",
+    "pendingTransactionPost": "与该名称有关",
+    "dnsOwner": "DNS 所有者",
+    "networkEst": "预估网络费"
+  },
+  "enableDNSSEC": {
+    "title": "启用 DNSSEC",
+    "instruction": "您需要访问您的域名注册商来启用 DNSSEC。启用后，单击 “检查” 进入下一步。",
+    "registrarHelp": "从下面的下拉框中选择您的注册商，查看相应的启用说明。",
+    "findRegistrar": "找到您的注册商",
+    "DNSSECNotEnabled": "该域名尚未启用 DNSSEC。"
+  }
+}

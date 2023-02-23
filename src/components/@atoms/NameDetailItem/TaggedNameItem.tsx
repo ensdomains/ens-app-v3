@@ -4,6 +4,7 @@ import styled, { css } from 'styled-components'
 import { Tag, mq } from '@ensdomains/thorin'
 
 import { ReturnedName } from '@app/hooks/useNamesFromAddress'
+import { validateExpiry } from '@app/utils/utils'
 
 import { NameDetailItem } from './NameDetailItem'
 
@@ -36,20 +37,26 @@ export const TaggedNameItem = ({
   selected,
   disabled = false,
   onClick,
+  notOwned,
+  pccExpired,
 }: Omit<ReturnedName, 'labelName' | 'labelhash' | 'isMigrated' | 'parent' | 'type' | 'id'> & {
+  notOwned?: boolean
   network: number
   selected?: boolean
   mode?: 'select' | 'view'
   disabled?: boolean
   onClick?: () => void
+  pccExpired?: boolean
 }) => {
   const { t } = useTranslation('common')
 
   const isNativeEthName = /\.eth$/.test(name) && name.split('.').length === 2
 
-  const tags: [disabled: boolean, translation: string][] = []
+  const tags: [enabled: boolean, translation: string][] = []
 
-  if (!fuses) {
+  if (notOwned) {
+    tags.push([false, 'name.notOwned'])
+  } else if (!fuses) {
     tags.push([!!isController, 'name.manager'])
     if (isNativeEthName) {
       tags.push([!!isRegistrant, 'name.owner'])
@@ -66,7 +73,7 @@ export const TaggedNameItem = ({
       key={name}
       network={network}
       truncatedName={truncatedName}
-      expiryDate={expiryDate}
+      expiryDate={validateExpiry(name, fuses, expiryDate, pccExpired)}
       name={name}
       mode={mode}
       selected={selected}
@@ -74,10 +81,11 @@ export const TaggedNameItem = ({
       onClick={onClick}
     >
       <OtherItemsContainer>
-        {tags.map(([tagDisabled, translation]) => (
+        {tags.map(([tagEnabled, translation]) => (
           <Tag
             key={translation}
-            colorStyle={!(tagDisabled && disabled) ? 'accentSecondary' : 'greySecondary'}
+            colorStyle={!disabled && tagEnabled ? 'accentSecondary' : 'greySecondary'}
+            data-testid={`tag-${translation}-${tagEnabled}`}
           >
             {t(translation)}
           </Tag>

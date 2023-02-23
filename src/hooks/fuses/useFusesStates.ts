@@ -19,6 +19,17 @@ type Results = {
   expiry?: number
 }
 
+const makeExpiryNumberAndLabel = (expiryDate: Date | undefined) => {
+  const expiry = expiryDate ? Math.floor(new Date(expiryDate).getTime() / 1000) : 0
+  const expiryLabel = new Date(expiryDate || 0).toLocaleDateString(undefined, {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+  })
+
+  return { expiry, expiryLabel }
+}
+
 export const useFusesStates = ({
   wrapperData,
   parentWrapperData,
@@ -43,27 +54,16 @@ export const useFusesStates = ({
     if (wrapperData?.parent.PARENT_CANNOT_CONTROL) defaultValues.state = 'emancipated'
     if (wrapperData?.child.CANNOT_UNWRAP) defaultValues.state = 'locked'
 
-    if (wrapperData?.expiryDate) {
-      defaultValues.expiry = Math.floor(new Date(wrapperData.expiryDate).getTime() / 1000)
-      defaultValues.expiryLabel = new Date(wrapperData.expiryDate).toLocaleDateString(undefined, {
-        year: 'numeric',
-        month: 'short',
-        day: 'numeric',
-      })
+    if (wrapperData) {
+      const { expiry, expiryLabel } = makeExpiryNumberAndLabel(wrapperData.expiryDate)
+      defaultValues.expiry = expiry
+      defaultValues.expiryLabel = expiryLabel
     }
 
-    if (parentWrapperData?.expiryDate) {
-      defaultValues.parentExpiry = Math.floor(
-        new Date(parentWrapperData.expiryDate).getTime() / 1000,
-      )
-      defaultValues.parentExpiryLabel = new Date(parentWrapperData.expiryDate).toLocaleDateString(
-        undefined,
-        {
-          year: 'numeric',
-          month: 'short',
-          day: 'numeric',
-        },
-      )
+    if (parentWrapperData) {
+      const { expiry, expiryLabel } = makeExpiryNumberAndLabel(parentWrapperData.expiryDate)
+      defaultValues.parentExpiry = expiry
+      defaultValues.parentExpiryLabel = expiryLabel
     }
 
     if (address) {

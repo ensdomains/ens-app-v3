@@ -1,3 +1,4 @@
+import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
 import { truncateFormat } from '@ensdomains/ensjs/utils/format'
@@ -53,7 +54,16 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     },
   )
 
-  const [ownerData, wrapperData, expiryData, priceData] = batchData || []
+  const [ownerData, _wrapperData, expiryData, priceData] = batchData || []
+
+  const wrapperData = useMemo(() => {
+    if (!_wrapperData) return undefined
+    const { expiryDate, ...rest } = _wrapperData
+    return {
+      ...rest,
+      expiryDate: expiryDate ? new Date(expiryDate) : undefined,
+    }
+  }, [_wrapperData])
 
   const registrationStatus = batchData
     ? getRegistrationStatus({
