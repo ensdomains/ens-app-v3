@@ -51,6 +51,10 @@ export const syncTime = (difference) => {
     .then(() => provider.send('evm_mine', []))
 }
 
+export const setAutomine = async (value) => {
+  await provider.send('anvil_setAutomine', [value])
+}
+
 export const globalIncreaseTime = async (seconds) => {
   await provider.send('evm_increaseTime', [seconds])
   await provider.send('evm_mine', [])

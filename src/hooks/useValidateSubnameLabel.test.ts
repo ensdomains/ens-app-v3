@@ -279,6 +279,20 @@ const groups = [
           error: 'invalidCharacters',
         },
       },
+      {
+        description: 'should return NOT valid if label has period between text',
+        name: 'wrapped.eth',
+        isWrapped: true,
+        label: 'hello.world',
+        ownerData: makeOwnerData('nameWrapper'),
+        wrapperData: makeWrapperData(),
+        skipWaitForNextUpdate: true,
+        result: {
+          valid: false,
+          isLoading: false,
+          error: 'invalidCharacters',
+        },
+      },
     ],
   },
 ]
