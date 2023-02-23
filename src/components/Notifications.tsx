@@ -47,6 +47,7 @@ export const Notifications = () => {
 
   const updateCallback = useCallback<UpdateCallback>(
     ({ action, key, status, hash }) => {
+      console.log('updateCallback', { chainName, action, key, status, hash })
       if (status === 'pending') return
       if (status === 'confirmed') {
         switch (action) {
