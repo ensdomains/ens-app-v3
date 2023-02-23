@@ -22,6 +22,7 @@ import { makePersistent } from '@app/utils/persist'
 
 import i18n from '../i18n'
 import '../styles.css'
+import { setupAnalytics } from '../utils/analytics'
 
 const rainbowKitTheme: Theme = {
   ...lightTheme({
@@ -112,6 +113,8 @@ const { provider, chains } = configureChains(
         ]),
   ],
 )
+
+setupAnalytics()
 
 const { connectors } = getDefaultWallets({
   appName: 'ENS',
