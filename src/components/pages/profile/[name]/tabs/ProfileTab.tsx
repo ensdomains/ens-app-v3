@@ -86,6 +86,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     wrapperData?.expiryDate &&
     wrapperData.expiryDate < new Date()
 
+  console.log('isExpired: ', isExpired)
+
   return (
     <DetailsWrapper>
       <ProfileSnippet

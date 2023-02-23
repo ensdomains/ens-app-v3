@@ -205,6 +205,8 @@ export const ProfileDetails = ({
     },
   ]
 
+  console.log('expiryDate: ', expiryDate)
+
   const is2LDEth = checkETH2LDFromName(name)
 
   return (
