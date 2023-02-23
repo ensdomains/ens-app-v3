@@ -166,7 +166,7 @@ describe('Register Name', () => {
     cy.wait(500)
     cy.findByTestId('notification-continue-button').should('be.visible').click()
     cy.location('pathname').should('equal', '/registration-resume.eth/register')
-    cy.findByTestId('countdown-complete-check').should('be.visible')
+    cy.findByTestId('countdown-circle').should('be.visible')
     // we don't need to test the rest of registration, just the resume part
   })
 })
