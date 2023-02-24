@@ -46,6 +46,13 @@ export const RESOLVER_ADDRESSES: ResolverAddresses = {
   ],
 }
 
+export const NAMEWRAPPER_AWARE_RESOLVERS: ResolverAddresses = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1': [],
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '5': ['0x19c2d5D0f035563344dBB7bE5fD09c8dad62b001'],
+}
+
 export const RESOLVER_INTERFACE_IDS = {
   addrInterfaceId: '0x3b3b57de',
   txtInterfaceId: '0x59d1d43c',

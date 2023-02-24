@@ -6,6 +6,7 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { Button, mq } from '@ensdomains/thorin'
 
 import { Banner } from '@app/components/@atoms/Banner/Banner'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
 import AvatarButton, {
   AvatarClickType,
@@ -13,7 +14,9 @@ import AvatarButton, {
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProfile } from '@app/hooks/useProfile'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
@@ -21,6 +24,7 @@ import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import ResolverWarningOverlay from './ResolverWarningOverlay'
 
@@ -123,6 +127,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     skipCompare: resumable,
   })
 
+  const chainId = useChainId()
+
   const handleCancel = () => {
     if (onDismiss) onDismiss()
   }
@@ -192,6 +198,14 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     }
   }, [status, statusLoading, resumable])
 
+  const { isWrapped } = useNameDetails(name)
+
+  const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
+    isWrapped,
+    profile.resolverAddress,
+    chainId,
+  )
+
   if (profileLoading || statusLoading) return <TransactionLoader />
   return (
     <>
@@ -236,13 +250,27 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               <Button colorStyle="greySecondary" onClick={handleCancel}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
-              <Button
-                disabled={hasErrors || !hasChanges}
-                type="submit"
-                data-testid="profile-editor-submit"
-              >
-                {t('action.save', { ns: 'common' })}
-              </Button>
+              {canEditRecordsWhenWrapped ? (
+                <Button
+                  disabled={hasErrors || !hasChanges}
+                  type="submit"
+                  data-testid="profile-editor-submit"
+                >
+                  {t('action.save', { ns: 'common' })}
+                </Button>
+              ) : (
+                <DisabledButtonWithTooltip
+                  buttonId="profile-editor-save-disabled"
+                  content={t('details.tabs.records.editRecordsDisabled', { ns: 'profile' })}
+                  buttonText="Save"
+                  mobileWidth={150}
+                  width={150}
+                  mobileButtonWidth="initial"
+                  mobilePlacement="top"
+                  placement="top"
+                  size="medium"
+                />
+              )}
             </FooterContainer>
           </ContentContainer>
           {showOverlay && (

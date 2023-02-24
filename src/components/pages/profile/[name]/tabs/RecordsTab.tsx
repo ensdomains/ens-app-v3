@@ -5,10 +5,14 @@ import styled, { css } from 'styled-components'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
+import { useChainId } from '@app/hooks/useChainId'
+import { useProfile } from '@app/hooks/useProfile'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
+import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
@@ -128,6 +132,7 @@ export const RecordsTab = ({
   contentHash,
   canEdit,
   isCached,
+  isWrapped,
 }: {
   name: string
   network: number
@@ -136,6 +141,7 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   canEdit?: boolean
   isCached?: boolean
+  isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
 
@@ -168,6 +174,17 @@ export const RecordsTab = ({
       { name },
       { disableBackgroundClick: true },
     )
+
+  const { profile } = useProfile(name, name !== '')
+
+  const chainId = useChainId()
+
+  const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
+    isWrapped,
+    profile?.resolverAddress,
+    chainId,
+  )
+
   return (
     <TabWrapper $isCached={isCached} data-testid="records-tab">
       <AllRecords>
@@ -237,9 +254,22 @@ export const RecordsTab = ({
       {canEdit && (
         <Actions>
           <div>
-            <Button onClick={handleShowEditor} size="small">
-              {t('details.tabs.records.editRecords')}
-            </Button>
+            {canEditRecordsWhenWrapped ? (
+              <Button onClick={handleShowEditor} size="small">
+                {t('details.tabs.records.editRecords')}
+              </Button>
+            ) : (
+              <DisabledButtonWithTooltip
+                buttonId="records-tab-edit-records-disabled"
+                content={t('details.tabs.records.editRecordsDisabled')}
+                buttonText={t('details.tabs.records.editRecords')}
+                mobileWidth={150}
+                mobileButtonWidth="initial"
+                mobilePlacement="top"
+                placement="top"
+                size="small"
+              />
+            )}
           </div>
         </Actions>
       )}

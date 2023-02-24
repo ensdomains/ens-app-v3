@@ -264,6 +264,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 contentHash={profile?.records?.contentHash}
                 canEdit={selfAbilities.canEdit}
                 isCached={profileIsCachedData}
+                isWrapped={isWrapped}
               />
             ),
             subnames: (
