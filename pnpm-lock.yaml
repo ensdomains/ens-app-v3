@@ -29,7 +29,7 @@ importers:
     specifiers:
       '@cloudflare/workers-types': ^3.14.1
       '@deploysentinel/cypress-debugger': ^0.5.5
-      '@ensdomains/address-encoder': ^0.2.20
+      '@ensdomains/address-encoder': ^0.2.21
       '@ensdomains/buffer': ^0.1.0
       '@ensdomains/content-hash': ^2.5.7
       '@ensdomains/dnsprovejs': 0.4.1
@@ -168,7 +168,7 @@ importers:
       wrangler: 0.0.0-ff35b9d1
       yalc: ^1.0.0-pre.53
     dependencies:
-      '@ensdomains/address-encoder': 0.2.20
+      '@ensdomains/address-encoder': 0.2.21
       '@ensdomains/content-hash': 2.5.7
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
@@ -2106,8 +2106,8 @@ packages:
       nano-base32: 1.0.1
       ripemd160: 2.0.2
 
-  /@ensdomains/address-encoder/0.2.20:
-    resolution: {integrity: sha512-itaFxXavhdEnDcB2MuESzF9DDFb4xTNm5GyJu+MqzyplOKr6KtQBnj2LtH95qXpFxFhXQHoArOlGb/dfhkwfAg==}
+  /@ensdomains/address-encoder/0.2.21:
+    resolution: {integrity: sha512-U+/bKRgN04kIRiLX4qLO6hega8Qw8rv16/6hAKd5EnQdEf1+1sFAndTesu2ePJlieiiiSNucW2xmNuj7l8HxwQ==}
     dependencies:
       bech32: 2.0.0
       blakejs: 1.2.1
@@ -2344,7 +2344,7 @@ packages:
       '@ethersproject/transactions': ^5.7.0
       '@ethersproject/web': ^5.7.1
     dependencies:
-      '@ensdomains/address-encoder': 0.2.20
+      '@ensdomains/address-encoder': 0.2.21
       '@ensdomains/content-hash': 2.5.7
       '@ensdomains/dnsprovejs': 0.4.1
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
