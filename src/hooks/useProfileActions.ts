@@ -62,14 +62,15 @@ export const useProfileActions = ({
         onClick: () =>
           createTransactionFlow(`setPrimaryName-${name}-${address}`, {
             transactions: setAsPrimaryTransactions,
-            resumable: true,
-            intro:
-              setAsPrimaryTransactions.length > 1
-                ? {
+            ...(setAsPrimaryTransactions.length > 1
+              ? {
+                  resumable: true,
+                  intro: {
                     title: t('tabs.profile.actions.setAsPrimaryName.title'),
                     content: makeIntroItem('ChangePrimaryName', undefined),
-                  }
-                : undefined,
+                  },
+                }
+              : {}),
           }),
       })
     }

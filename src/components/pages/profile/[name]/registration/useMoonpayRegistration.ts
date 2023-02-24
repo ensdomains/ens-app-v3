@@ -23,11 +23,11 @@ export const useMoonpayRegistration = (
   const [isCompleted, setIsCompleted] = useState(false)
   const currentExternalTransactionId = item.externalTransactionId
 
-  const initiateMoonpayRegistrationMutation = useMutation(async () => {
+  const initiateMoonpayRegistrationMutation = useMutation(async (duration: number = 1) => {
     const label = getLabelFromName(normalisedName)
     const tokenId = labelhash(label)
 
-    const requestUrl = `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=1`
+    const requestUrl = `${MOONPAY_WORKER_URL[chainId]}/signedurl?tokenId=${tokenId}&name=${normalisedName}&duration=${duration}`
     const response = await fetch(requestUrl)
     const textResponse = await response.text()
     setMoonpayUrl(textResponse)
