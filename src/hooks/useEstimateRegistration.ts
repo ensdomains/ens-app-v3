@@ -79,7 +79,7 @@ const useEstimateRegistration = (data: RegistrationProps | undefined) => {
 }
 
 type FullProps = {
-  registration: Omit<RegistrationData, 'secret' | 'started'>
+  registration: Omit<RegistrationData, 'secret' | 'started' | 'paymentMethodChoice'>
   price: ReturnType<typeof useNameDetails>['priceData']
 }
 

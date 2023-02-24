@@ -92,6 +92,15 @@ describe('Profile', () => {
     cy.contains('This TLD is not supported').should('be.visible')
   })
 
+  it('should load emoji domain pages', () => {
+    cy.visit('/%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F.eth')
+    cy.wait(10000)
+    cy.findByTestId('profile-snippet-nickname', { timeout: 25000 }).should(
+      'contain.text',
+      '❤❤❤.eth',
+    )
+  })
+
   profiles.forEach((profile) => {
     describe(profile.name, () => {
       describe('profile', () => {

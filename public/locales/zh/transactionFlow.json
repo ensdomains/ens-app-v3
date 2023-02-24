@@ -1,0 +1,257 @@
+{
+  "input": {
+    "profileEditor": {
+      "tabs": {
+        "avatar": {
+          "dropdown": {
+            "selectNFT": "选择 NFT",
+            "uploadImage": "上传图像"
+          },
+          "nft": {
+            "title": "选择一个 NFT",
+            "searchPlaceholder": "搜索 NFT",
+            "loading": "正在加载您的 NFT",
+            "unknown": "未知 NFT",
+            "noNFTs": "此地址上未找到 NFT。",
+            "selected": {
+              "title": "选择 NFT",
+              "subtitle": "您确定要使用该 NFT 吗?"
+            },
+            "noResults": "未找到结果。"
+          },
+          "image": {
+            "title": "编辑图像",
+            "upload": {
+              "title": "上传头像",
+              "subtitle": "您需要在一条消息上签名才能上传头像，这不涉及任何费用。",
+              "action": "签名并上传"
+            }
+          }
+        },
+        "general": {
+          "label": "通用",
+          "name": {
+            "label": "昵称",
+            "placeholder": "约翰·史密斯"
+          },
+          "url": {
+            "label": "网站",
+            "placeholder": "https://ens.domains"
+          },
+          "location": {
+            "label": "位置",
+            "placeholder": "元宇宙"
+          },
+          "description": {
+            "label": "简介",
+            "placeholder": "我是一个来自田纳西州的农民。"
+          }
+        },
+        "accounts": {
+          "label": "账户",
+          "addAccount": "添加账户",
+          "noOptions": "没有可用的账户",
+          "placeholder": {
+            "default": "在此添加用户名",
+            "com.twitter": "例如 yogicodes",
+            "com.github": "例如 yogicodes",
+            "com.discord": "例如 yogicodes#4323"
+          }
+        },
+        "address": {
+          "label": "地址",
+          "addAddress": "添加地址",
+          "noOptions": "没有可用的地址",
+          "placeholder": {
+            "default": "在此添加地址",
+            "ETH": "0xD9hbQK...",
+            "BNB": "0xD9hbQK...",
+            "BTC": "3FZbgi29...",
+            "LTC": "3FZbgi29...",
+            "SOL": "D4kA7VzHnmV...",
+            "DOT": "1D4kA7VxH...",
+            "DOGE": "DFabcd12..."
+          }
+        },
+        "contentHash": {
+          "label": "网站",
+          "addContentHash": "添加去中心化网站",
+          "placeholder": {
+            "default": "在此添加 url",
+            "ipfs": "ipfs://...",
+            "skynet": "sia://...",
+            "arweave": "arweave://...",
+            "swarm": "bzz://...",
+            "onion": "onion3://..."
+          }
+        },
+        "other": {
+          "label": "其他",
+          "addRecord": "添加记录",
+          "createRecord": "输入记录名...",
+          "placeholder": {
+            "default": "添加记录值..."
+          }
+        }
+      },
+      "warningOverlay": {
+        "resumable": {
+          "title": "可继续执行的交易",
+          "subtitle": "您以前已经启动了一个交易，请单击 “继续” 来恢复执行。",
+          "action": "继续"
+        },
+        "migrate": {
+          "title": "迁移解析器",
+          "subtitle": "您已经迁移了您的个人资料，但还没有更新您的解析器。单击 “升级” 可更新到最新的解析器。",
+          "action": "更新"
+        },
+        "noResolver": {
+          "title": "未指定解析器",
+          "subtitle": "您需要设置一个解析器来编辑您的个人资料。",
+          "action": "更新"
+        },
+        "oldRegistry": {
+          "title": "您的注册已经过时了",
+          "subtitle": "现在不能迁移到新的注册表，但是您仍然可以在旧的 app 中迁移该名称。",
+          "action": "迁移"
+        },
+        "default": {
+          "title": "您的解析器已经过时了",
+          "subtitle": "在更新解析器之前，个人资料编辑将被禁用。",
+          "action": "更新"
+        }
+      }
+    },
+    "editResolver": {
+      "title": "编辑解析器",
+      "latestLabel": "使用最新的解析器",
+      "etherscan": "Etherscan",
+      "latestMessage": "您已经在使用最新的解析器",
+      "customLabel": "自定义解析器",
+      "customPlaceholder": "输入自定义解析器地址"
+    },
+    "extendNames": {
+      "title_one": "名称续期",
+      "title_other": "续期 {{count}} 个名称",
+      "invoice": {
+        "extension": "续期 {{count}} 年",
+        "transaction": "交易费",
+        "total": "预估总额"
+      },
+      "bannerMsg": "一次续期数年可以避免每年进行交易，从而节省网络成本。",
+      "gasLimitError": "资金不足"
+    },
+    "transferProfile": {
+      "title": "转移个人资料",
+      "message1": "在升级之前，如果愿意，您可以转移当前的个人资料，否则在升级时这些个人资料会被重置。",
+      "message2": "您要转移当前的个人资料吗?"
+    },
+    "revokePermissions": {
+      "views": {
+        "revokeWarning": {
+          "title": "这些更改将是永久性的",
+          "subtitle": "权限调整是一项高级功能，它会给您的名称带来的永久性的更改。您将无法撤消这些更改，并且只有在名称过期时才会重置这些更改。",
+          "subtitle2": "请先确保您有信心使用此功能，再继续操作。<infoLink>了解更多关于权限的信息</infoLink>"
+        },
+        "revokePCC": {
+          "title": "放弃所有权",
+          "subtitle": "此操作会把名称的所有权转让给管理员 ({{account}})。除非您同时也是管理员，否则您将无法再管理该名称。"
+        },
+        "grantExtendExpiry": {
+          "title": "更改权限",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "授予此权限: 延长有效期"
+          } 
+        },
+        "setExpiry": {
+          "title": "设置名称的有效期",
+          "subtitle": "设置权限有效期。该日期不能超过其父名称 ({{parent}}) 的到期时间。",
+          "subtitleWithCEE": "设置该名称的有效期。这将取代它现有的权限有效期 ({{expiry}})，并且不能晚于它的父名称 ({{parent}}) 的到期时间。",
+          "options": {
+            "max": "最晚",
+            "custom": "选择较早的日期"
+          },
+          "error": {
+            "required": "使用自定义日期，必须要选择一个日期",
+            "min": "日期必须晚于 {{date}}",
+            "max": "日期必须早于 {{date}}"
+          }
+        },
+        "revokeAdditional": {
+          "title": "撤销权限",
+          "subtitle": "在放弃所有权之前，您需要撤销该名称的某些权限吗? 需要撤销权限的话，您只能现在操作。",
+          "action": {
+            "title": "撤销其他权限",
+            "description": "除非您同时也是管理员，否则在此之后您将无法撤销其他权限。"
+          }
+        },
+        "revokeUnwrap": {
+          "title": "撤销权限",
+          "subtitle": "您必须先撤销这项权限，才能撤销其他权限。这是为了防止权限被移除。",
+          "fuses": {
+            "CANNOT_UNWRAP": "撤销此权限: 解除包装"
+          }
+        },
+        "revokePermissions": {
+          "title": "撤销权限",
+          "unwrapSubtitle": "选择此项可激活其他选项",
+          "fuses": {
+            "CAN_EXTEND_EXPIRY": "授予此权限: 延长有效期",
+            "CANNOT_UNWRAP": "撤销此权限: 解除包装",
+            "CANNOT_CREATE_SUBDOMAIN": "撤销此权限: 创建子名称",
+            "CANNOT_TRANSFER": "撤销此权限: 发送名称",
+            "CANNOT_SET_RESOLVER": "撤销此权限: 设置解析器",
+            "CANNOT_SET_TTL": "撤销此权限: 设置 TTL",
+            "CANNOT_BURN_FUSES": "撤销此权限: 更改权限"
+          }
+        },
+        "revokeChangeFuses": {
+          "title": "撤销权限",
+          "subtitle": "一旦撤销此权限，您将永远无法再更改其他权限。只能在名称过期时才会被重置。",
+          "fuses": {
+            "CANNOT_BURN_FUSES": "撤销此权限: 更改权限"
+          }
+        },
+        "revokeChangeFusesWarning": {
+          "title": "剩余的权限将被锁定",
+          "subtitle": "在撤销 “更改权限” 后，权限和自定义保险丝将永久锁定在其当前状态。只有在名称过期时才会重置。"    
+        }
+      },
+      "action": {
+        "revoke": "撤销"
+      }
+    },
+    "unknownLabels": {
+      "title": "确认您的名称",
+      "subtitle": "您有些名称的标签是未知的，请先将它们输入后再继续。"
+    },
+    "deleteEmancipatedSubnameWarning": {
+      "title": "不能重新创建该子名称",
+      "message": "删除该子名称意味着不能再使用或重新创建它，一直到它过期 {{date}}。由于父名称控制权限已被撤销，因此该操作也无法撤消。"
+    }
+  },
+  "transaction": {
+    "extendNames": {
+      "actionValue": "续期",
+      "costValue": "{{value}} + 网络费",
+      "warning": "为该名称续期不会让您获得它的所有权"
+    },
+    "deleteSubname": {
+      "warning": "大家好"
+    }
+  },
+  "intro": {
+    "migrateAndUpdateResolver": {
+      "title": "您需要先升级解析器，然后才能保存您编辑的个人资料。",
+      "link": "了解有关解析器升级的更多信息",
+      "warning": "请注意，一旦您取消该选项，那您的更改将无法保存。"
+    },
+    "syncManager": {
+      "description": "同步管理员会让您成为该名称的新管理员。当前管理员 <b>({{manager}})</b> 将会失去管理权限。",
+      "wrappedWarning": "同步管理员也将解除该名称的包装，这会烧毁 NFT 并重置所有权限。"
+    }
+  },
+  "errors": {
+    "duplicateKey": "{{value}} 键已经存在"
+  }
+}

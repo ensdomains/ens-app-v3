@@ -90,14 +90,12 @@ const ButtonContainer = styled.div(
 )
 
 const ProfileButton = styled.button(
-  ({ theme }) => css`
-    color: ${theme.colors.accent};
-    font-weight: bold;
+  () => css`
     cursor: pointer;
   `,
 )
 
-const infoItemArr = Array.from({ length: 3 }, (_, i) => `steps.info.items.${i}`)
+const infoItemArr = Array.from({ length: 3 }, (_, i) => `steps.info.ethItems.${i}`)
 
 type Props = {
   registrationData: RegistrationReducerDataItem
@@ -131,7 +129,9 @@ const Info = ({
       <FullInvoice {...estimate} />
       {!registrationData.queue.includes('profile') && (
         <ProfileButton data-testid="setup-profile-button" onClick={onProfileClick}>
-          <Typography>{t('steps.info.setupProfile')}</Typography>
+          <Typography weight="bold" color="accent">
+            {t('steps.info.setupProfile')}
+          </Typography>
         </ProfileButton>
       )}
       <ButtonContainer>

@@ -15,7 +15,6 @@ import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import mq from '@app/mediaQuery'
 
 import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
-import { DeleteButton } from './DeleteButton'
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
 
@@ -30,14 +29,6 @@ const Container = styled.div(() => [
     width: 520px;
   `),
 ])
-
-const ButtonWrapper = styled.div(
-  () => css`
-    position: absolute;
-    top: 0;
-    right: 0;
-  `,
-)
 
 const Content = styled.div(
   ({ theme }) => css`
@@ -134,7 +125,7 @@ type Props = {
   onClose?: () => void
 }
 
-export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
+export const AddProfileRecordView = ({ control, onAdd }: Props) => {
   const { t, i18n } = useTranslation('register')
 
   const currentRecords = useWatch({ control, name: 'records' })
@@ -144,16 +135,15 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
   const filteredOptions = useMemo(() => {
     if (!i18n.isInitialized || !search) return options
+    const matchSearch = (s: string) => s.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     return options.map((option) => {
-      const groupLabel = t(`steps.profile.options.groups.${option.group}.label`)
-      if (groupLabel.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return option
+      // If search matches group label, return all items
+      if (matchSearch(t(`steps.profile.options.groups.${option.group}.label`))) return option
       const items = option.items.filter((item) => {
         const { key: record, group } = item
-        // Address and website do not use labels
-        if (['address', 'website'].includes(group))
-          return record.toLocaleLowerCase().indexOf(search.toLowerCase()) !== -1
-        const label = t(`steps.profile.options.groups.${option.group}.items.${record}`)
-        return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+        // if website or address match the record name, else match the translated record name
+        if (['address', 'website'].includes(group)) return matchSearch(record)
+        return matchSearch(t(`steps.profile.options.groups.${option.group}.items.${record}`))
       })
       return {
         ...option,
@@ -286,9 +276,6 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
   return (
     <Container>
-      <ButtonWrapper>
-        <DeleteButton size="large" onClick={() => onClose?.()} />
-      </ButtonWrapper>
       <Dialog.Heading title={t('steps.profile.addProfile')} />
       <Spacer $height="6" />
       <Input

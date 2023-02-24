@@ -1,0 +1,182 @@
+{
+  "title": "注册 {{name}} - ENS",
+  "subtitle": "注册",
+  "heading": "注册 {{name}}",
+  "invoice": {
+    "yearRegistration": "注册 {{years}} 年",
+    "registration": "注册",
+    "estimatedNetworkFee": "预估网络费",
+    "networkFee": "网络费",
+    "temporaryPremium": "临时溢价",
+    "total": "预估总额",
+    "totalPaid": "支付总额"
+  },
+  "error": {
+    "nameTooLong": "您要注册的名称太长了，请选择一个较短的名称。"
+  },
+  "steps": {
+    "pricing": {
+      "insufficientBalance": "余额不足",
+      "multipleYearsMessage": "一次续期数年可以避免每年进行交易，从而节省网络成本。",
+      "primaryName": "作为主名使用",
+      "primaryNameMessage": "把您的地址关联到该名称，这样在连接到 app 时，就可以将该名称作为您的个人资料显示出来。",
+      "premium": {
+        "heading": "该名称存在一个临时溢价",
+        "subheading": "为了给刚过期的名称提供公平的注册机会，溢价从 1 亿美元开始，在 21 天内逐步降至 0 美元。您可以在下面利用日期计算溢价。",
+        "targetPrice": "目标价格",
+        "targetDate": "目标日期",
+        "timezone": "当前显示的是本地时区 ({{timezone}}) 的日期和时间"
+      }
+    },
+    "profile": {
+      "title": "创建您的个人资料",
+      "default": "默认",
+      "advanced": "高级",
+      "permissions": "权限",
+      "resolver": "解析器",
+      "visibilityMessage": "您的个人资料将存储在区块链上，您添加的所有内容都将是公开可见的。",
+      "addProfile": "添加个人资料",
+      "addMore": "添加更多个人资料",
+      "options": {
+        "groups": {
+          "general": {
+            "label": "通用",
+            "items": {
+              "name": "昵称",
+              "url": "网站",
+              "location": "位置",
+              "description": "简介"
+            },
+            "placeholder": {
+              "name": "约翰·史密斯",
+              "url": "https://ens.domains",
+              "location": "元宇宙",
+              "description": "我是一个来自田纳西州的农民。"
+            }
+          },
+          "social": {
+            "label": "社交",
+            "items": {
+              "com.twitter": "Twitter",
+              "com.github": "GitHub",
+              "com.discord": "Discord"
+            },
+            "placeholder": {
+              "com.twitter": "例如 yogicodes",
+              "com.github": "例如 yogicodes",
+              "com.discord": "例如 yogicodes#1234"
+            }
+          },
+          "address": {
+            "label": "地址",
+            "itemLabel": "{{coin}} 地址",
+            "placeholder": {
+              "default": "在此添加地址",
+              "ETH": "0xD9hbQK...",
+              "BNB": "0xD9hbQK...",
+              "BTC": "3FZbgi29...",
+              "LTC": "3FZbgi29...",
+              "SOL": "D4kA7VzHnmV...",
+              "DOT": "1D4kA7VxH...",
+              "DOGE": "DFabcd12..."
+            }
+          },
+          "website": {
+            "label": "网站",
+            "items": {
+              "ipfs": "IPFS",
+              "swarm": "Swarm",
+              "onion": "Onion",
+              "skynet": "Skynet",
+              "arweave": "Arweave"
+            },
+            "placeholder": {
+              "default": "在此添加 url",
+              "ipfs": "ipfs://...",
+              "skynet": "sia://...",
+              "arweave": "arweave://...",
+              "swarm": "bzz://...",
+              "onion": "onion3://..."
+            }
+          },
+          "other": {
+            "label": "其他",
+            "items": {
+              "contentHash": "内容哈希",
+              "publicKey": "公钥",
+              "abi": "ABI",
+              "custom": "自定义"
+            }
+          },
+          "custom": {
+            "key": "键",
+            "value": "值"
+          },
+          "default": {
+            "placeholder": "在此添加值"
+          }
+        }
+      },
+      "errors": {
+        "labelRequired": "记录键是必填项",
+        "duplicateRecord": "重复的记录键",
+        "avatarReserved": "该键已被头像管理员使用"
+      },
+      "confirmations": {
+        "publicNotice": {
+          "title": "您的详细信息是公开的",
+          "description": "您在个人资料中添加的所有内容都将在区块链上公开显示。",
+          "confirm": "我了解",
+          "decline": "返回"
+        },
+        "clearEth": {
+          "title": "清除 ETH 地址?",
+          "description": "如果没有设置 ETH 地址，人们便无法向该名称发送资金。此项可在以后更新。",
+          "confirm": "清除",
+          "decline": "取消"
+        }
+      },
+      "actions": {
+        "skipProfile": "跳过个人资料"
+      }
+    },
+    "complete": {
+      "heading": "恭喜!",
+      "subheading": "您现是该名称的所有者: ",
+      "description": "名称注册成功。现在可以查看和管理您的名称。",
+      "registerAnother": "再注册一个",
+      "viewName": "查看名称"
+    },
+    "info": {
+      "heading": "开始之前",
+      "subheading": "注册一个名称需要三个步骤",
+      "ethItems": [
+        "完成一笔交易并开始计时",
+        "等待计时器完成 60 秒计时",
+        "完成第二笔交易来获得该名称"
+      ],
+      "moonpayItems": [
+        "创建或登录现有的 Moonpay 账户",
+        "使用信用卡或借记卡完成单笔交易"
+      ],
+      "setupProfile": "我希望先创建我的个人资料",
+      "paymentMethod": "支付方式",
+      "notEnoughEth": "钱包中的 ETH 不足",
+      "creditOrDebit": "信用卡或借记卡",
+      "additionalFee": "附加手续费",
+      "pendingMoonpayTransaction": "您的 Moonpay 交易正在处理中，这可能需要两分钟。您可以从收到的确认邮件中查看当前进度。",
+      "failedMoonpayTransaction": "您的 Moonpay 交易失败。请重试或选择 “以太坊” 支付方式。",
+      "ethereum": "以太坊",
+      "processing": "处理中",
+      "poweredBy": "技术支持来自"
+    },
+    "transactions": {
+      "heading": "接近完成",
+      "subheading": "该计时器可防止其他人在您之前注册该名称。",
+      "startTimer": "启动计时器",
+      "wait": "等待",
+      "transactionFailed": "交易失败",
+      "transactionProgress": "交易正在处理"
+    }
+  }
+}

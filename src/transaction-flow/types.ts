@@ -85,6 +85,13 @@ export type TransactionFlowAction =
       key: string
     }
   | {
+      name: 'resumeFlowWithCheck'
+      key: string
+      payload: {
+        push: (path: string) => void
+      }
+    }
+  | {
       name: 'setTransactions'
       payload: ReturnType<typeof makeTransactionItem>[]
     }

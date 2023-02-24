@@ -84,7 +84,7 @@ const validateLabel = (hash: string) => (label: string) => {
     return 'Label is too long'
   }
   try {
-    if (!validateName(label)) throw new Error()
+    if (!validateName(label) || label.indexOf('.') !== -1) throw new Error()
   } catch {
     return 'Invalid label'
   }
