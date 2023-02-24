@@ -71,6 +71,7 @@ describe('Set Primary Name', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
+        cy.get('[data-testid="notification-continue-button"]').should('not.exist')
       })
       it('should show changes in settings', () => {
         cy.visit('/')

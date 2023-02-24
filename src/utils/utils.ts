@@ -2,6 +2,8 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
+import { OwnerArray, ReturnedENS } from '@app/types'
+
 import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -136,3 +138,14 @@ export const canEditRecordsWhenWrappedCalc = (
   if (!isWrapped) return true
   return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
 }
+export const checkPCCExpired = (
+  owners: OwnerArray,
+  wrapperData: ReturnedENS['getWrapperData'] | undefined,
+  nameWrapperAddress: string,
+) =>
+  !!(
+    owners.length === 1 &&
+    owners[0].address === nameWrapperAddress &&
+    wrapperData?.expiryDate &&
+    wrapperData.expiryDate < new Date()
+  )

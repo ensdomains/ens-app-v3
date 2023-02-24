@@ -56,11 +56,12 @@ export const trackEvent = async (type: string, chain: string) => {
       })
     }
   }
+  console.log('Event triggering', type, chain)
   if (isProduction() && isMainnet(chain)) {
     track()
   } else {
     console.log(
-      'Referral triggered on local development',
+      'Event triggered on local development',
       JSON.stringify({
         type,
         referrer,

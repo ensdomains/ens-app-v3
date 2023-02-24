@@ -1,5 +1,5 @@
 /* eslint-disable no-nested-ternary */
-import React, { BaseSyntheticEvent, useEffect, useMemo, useRef, useState } from 'react'
+import { BaseSyntheticEvent, useEffect, useMemo, useRef, useState } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -221,7 +221,6 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
               addRecords(newRecords)
               setModalOpen(false)
             }}
-            onClose={() => setModalOpen(false)}
           />
         )
       }
