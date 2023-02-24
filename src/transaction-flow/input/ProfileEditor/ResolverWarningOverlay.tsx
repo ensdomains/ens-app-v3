@@ -128,7 +128,6 @@ const ResolverWarningOverlay = ({
           name: 'TransferProfile',
           data: { name, isWrapped },
         },
-        disableBackgroundClick: true,
       },
       key: `edit-profile-${name}`,
     })
@@ -185,7 +184,7 @@ const ResolverWarningOverlay = ({
   return (
     <Container data-testid="warning-overlay">
       <DismissButtonWrapper data-testid="warning-overlay-dismiss">
-        <DismissDialogButton onClick={handleDismiss} />
+        <DismissDialogButton onClick={handleDismiss} data-testid="dismiss-dialog-button" />
       </DismissButtonWrapper>
       <Content>
         <Message>

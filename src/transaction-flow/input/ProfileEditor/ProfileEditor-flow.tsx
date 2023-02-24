@@ -37,6 +37,7 @@ const Container = styled.form(({ theme }) => [
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
+    min-height: 33vh;
   `,
   mq.sm.min(css`
     width: 520px;
@@ -137,7 +138,7 @@ const SubmitButton = ({
 const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('register')
 
-  const [view, setView] = useState<'editor' | 'upload' | 'nft' | 'add-record' | 'warning'>('editor')
+  const [view, setView] = useState<'editor' | 'upload' | 'nft' | 'addRecord' | 'warning'>('editor')
 
   const { name = '', resumable = false } = data
 
@@ -204,9 +205,9 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
+      const records = profileEditorFormToProfileRecords(form)
       if (!profile?.resolverAddress || !resolverAddress) return
       if (status?.hasLatestResolver) {
-        const records = profileEditorFormToProfileRecords(form)
         dispatch({
           name: 'setTransactions',
           payload: [
@@ -234,7 +235,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
           transactions: [
             makeTransactionItem('updateProfileRecords', {
               name,
-              records: form.records,
+              records,
               resolver: resolverAddress,
               clearRecords: false,
             }),
@@ -267,157 +268,184 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   }
 
   const handleShowAddRecordModal = () => {
-    setView('add-record')
+    setView('addRecord')
   }
 
   if (profileLoading || statusLoading || !isRecordsUpdated) return <TransactionLoader />
   return (
     <Container
-      style={{ maxHeight: '600px', display: 'flex', flexDirection: 'column' }}
+      data-testid="profile-editor"
       onSubmit={handleSubmit((_data, event) => {
         event?.preventDefault()
         handleCreateTransaction(_data)
       })}
     >
-      {view === 'editor' ? (
-        <>
-          <Dialog.Heading title="Edit your profile" />
-          <StyledScrollBox hideDividers={{ bottom: true }}>
-            <ScrollContentContainer>
-              <AvatarWrapper>
-                <WrappedAvatarButton
-                  name={name}
-                  control={control}
-                  src={avatarSrc}
-                  onSelectOption={(option) => setView(option)}
-                  onAvatarChange={(avatar) => setAvatar(avatar)}
-                  onAvatarFileChange={(file) => setAvatarFile(file)}
-                  onAvatarSrcChange={(src) => setAvatarSrc(src)}
-                />
-              </AvatarWrapper>
-              {profileRecords.map((field, index) =>
-                field.group === 'custom' ? (
-                  <CustomProfileRecordInput
-                    key={field.id}
-                    register={register}
-                    trigger={trigger}
-                    index={index}
-                    validator={validatorForRecord(field)}
-                    validated={isDirtyForRecordAtIndex(index)}
-                    error={errorForRecordAtIndex(index, 'key')}
-                    onDelete={() => handleDeleteRecord(field, index)}
-                  />
-                ) : field.key === 'description' ? (
-                  <ProfileRecordTextarea
-                    key={field.id}
-                    recordKey={field.key}
-                    label={labelForRecord(field)}
-                    secondaryLabel={secondaryLabelForRecord(field)}
-                    placeholder={placeholderForRecord(field)}
-                    error={errorForRecordAtIndex(index)}
-                    validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => handleDeleteRecord(field, index)}
-                    {...register(`records.${index}.value`, {
-                      validate: validatorForRecord(field),
-                    })}
-                  />
-                ) : (
-                  <ProfileRecordInput
-                    key={field.id}
-                    recordKey={field.key}
-                    group={field.group}
-                    label={labelForRecord(field)}
-                    secondaryLabel={secondaryLabelForRecord(field)}
-                    placeholder={placeholderForRecord(field)}
-                    error={errorForRecordAtIndex(index)}
-                    validated={isDirtyForRecordAtIndex(index)}
-                    onDelete={() => handleDeleteRecord(field, index)}
-                    {...register(`records.${index}.value`, {
-                      validate: validatorForRecord(field),
-                    })}
-                  />
-                ),
-              )}
-              <ButtonContainer>
-                <ButtonWrapper>
+      {
+        {
+          editor: (
+            <>
+              <Dialog.Heading title="Edit your profile" />
+              <StyledScrollBox hideDividers={{ bottom: true }}>
+                <ScrollContentContainer>
+                  <AvatarWrapper>
+                    <WrappedAvatarButton
+                      name={name}
+                      control={control}
+                      src={avatarSrc}
+                      onSelectOption={(option) => setView(option)}
+                      onAvatarChange={(avatar) => setAvatar(avatar)}
+                      onAvatarFileChange={(file) => setAvatarFile(file)}
+                      onAvatarSrcChange={(src) => setAvatarSrc(src)}
+                    />
+                  </AvatarWrapper>
+                  {profileRecords.map((field, index) =>
+                    field.group === 'custom' ? (
+                      <CustomProfileRecordInput
+                        key={field.id}
+                        register={register}
+                        trigger={trigger}
+                        index={index}
+                        validator={validatorForRecord(field)}
+                        validated={isDirtyForRecordAtIndex(index)}
+                        error={errorForRecordAtIndex(index, 'key')}
+                        onDelete={() => handleDeleteRecord(field, index)}
+                      />
+                    ) : field.key === 'description' ? (
+                      <ProfileRecordTextarea
+                        key={field.id}
+                        recordKey={field.key}
+                        label={labelForRecord(field)}
+                        secondaryLabel={secondaryLabelForRecord(field)}
+                        placeholder={placeholderForRecord(field)}
+                        error={errorForRecordAtIndex(index)}
+                        validated={isDirtyForRecordAtIndex(index)}
+                        onDelete={() => handleDeleteRecord(field, index)}
+                        {...register(`records.${index}.value`, {
+                          validate: validatorForRecord(field),
+                        })}
+                      />
+                    ) : (
+                      <ProfileRecordInput
+                        key={field.id}
+                        recordKey={field.key}
+                        group={field.group}
+                        label={labelForRecord(field)}
+                        secondaryLabel={secondaryLabelForRecord(field)}
+                        placeholder={placeholderForRecord(field)}
+                        error={errorForRecordAtIndex(index)}
+                        validated={isDirtyForRecordAtIndex(index)}
+                        onDelete={() => handleDeleteRecord(field, index)}
+                        {...register(`records.${index}.value`, {
+                          validate: validatorForRecord(field),
+                        })}
+                      />
+                    ),
+                  )}
+                  <ButtonContainer>
+                    <ButtonWrapper>
+                      <Button
+                        size="medium"
+                        onClick={handleShowAddRecordModal}
+                        data-testid="show-add-profile-records-modal-button"
+                        prefix={<PlusSVG />}
+                      >
+                        {t('steps.profile.addMore')}
+                      </Button>
+                    </ButtonWrapper>
+                  </ButtonContainer>
+                </ScrollContentContainer>
+                <Divider />
+              </StyledScrollBox>
+              <Dialog.Footer
+                leading={
                   <Button
-                    size="medium"
-                    onClick={handleShowAddRecordModal}
-                    data-testid="show-add-profile-records-modal-button"
-                    prefix={<PlusSVG />}
+                    id="profile-back-button"
+                    type="button"
+                    colorStyle="accentSecondary"
+                    data-testid="profile-back-button"
+                    onClick={() => {
+                      onDismiss?.()
+                      // dispatch({ name: 'stopFlow' })
+                    }}
                   >
-                    {t('steps.profile.addMore')}
+                    {t('action.cancel', { ns: 'common' })}
                   </Button>
-                </ButtonWrapper>
-              </ButtonContainer>
-            </ScrollContentContainer>
-            <Divider />
-          </StyledScrollBox>
-          <Dialog.Footer
-            leading={
-              <Button
-                id="profile-back-button"
-                type="button"
-                colorStyle="accentSecondary"
-                data-testid="profile-back-button"
-                onClick={() => {
-                  dispatch({ name: 'stopFlow' })
-                }}
-              >
-                {t('action.cancel', { ns: 'common' })}
-              </Button>
-            }
-            trailing={
-              <SubmitButton
-                control={control}
-                disabled={hasErrors}
-                previousRecords={existingRecords}
+                }
+                trailing={
+                  <SubmitButton
+                    control={control}
+                    disabled={hasErrors}
+                    previousRecords={existingRecords}
+                  />
+                }
               />
-            }
-          />
-        </>
-      ) : view === 'add-record' ? (
-        <AddProfileRecordView
-          control={control}
-          onAdd={(newRecords) => {
-            addRecords(newRecords)
-            setView('editor')
-          }}
-          onClose={() => setView('editor')}
-        />
-      ) : view === 'warning' ? (
-        <ResolverWarningOverlay
-          name={name}
-          isWrapped={isWrapped}
-          hasOldRegistry={!profile?.isMigrated}
-          resumable={resumable}
-          hasNoResolver={!status?.hasResolver}
-          hasMigratedProfile={status?.hasMigratedProfile}
-          latestResolver={resolverAddress!}
-          oldResolver={profile?.resolverAddress!}
-          dispatch={dispatch}
-          onDismiss={onDismiss}
-          onDismissOverlay={() => setView('editor')}
-        />
-      ) : view === 'upload' || view === 'nft' ? (
-        <AvatarViewManager
-          name={name}
-          avatarFile={avatarFile}
-          handleCancel={() => setView('editor')}
-          type={view}
-          handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-            if (type === 'nft') {
-              setAvatar(uri)
-              setAvatarSrc(display)
-            } else {
-              setAvatar(`${uri}?timestamp=${Date.now()}`)
-              setAvatarSrc(display)
-            }
-            setView('editor')
-            trigger()
-          }}
-        />
-      ) : null}
+            </>
+          ),
+          addRecord: (
+            <AddProfileRecordView
+              control={control}
+              onAdd={(newRecords) => {
+                addRecords(newRecords)
+                setView('editor')
+              }}
+              onClose={() => setView('editor')}
+            />
+          ),
+          warning: (
+            <ResolverWarningOverlay
+              name={name}
+              isWrapped={isWrapped}
+              hasOldRegistry={!profile?.isMigrated}
+              resumable={resumable}
+              hasNoResolver={!status?.hasResolver}
+              hasMigratedProfile={status?.hasMigratedProfile}
+              latestResolver={resolverAddress!}
+              oldResolver={profile?.resolverAddress!}
+              dispatch={dispatch}
+              onDismiss={() => dispatch({ name: 'stopFlow' })}
+              onDismissOverlay={() => setView('editor')}
+            />
+          ),
+          upload: (
+            <AvatarViewManager
+              name={name}
+              avatarFile={avatarFile}
+              handleCancel={() => setView('editor')}
+              type="upload"
+              handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
+                if (type === 'nft') {
+                  setAvatar(uri)
+                  setAvatarSrc(display)
+                } else {
+                  setAvatar(`${uri}?timestamp=${Date.now()}`)
+                  setAvatarSrc(display)
+                }
+                setView('editor')
+                trigger()
+              }}
+            />
+          ),
+          nft: (
+            <AvatarViewManager
+              name={name}
+              avatarFile={avatarFile}
+              handleCancel={() => setView('editor')}
+              type="nft"
+              handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
+                if (type === 'nft') {
+                  setAvatar(uri)
+                  setAvatarSrc(display)
+                } else {
+                  setAvatar(`${uri}?timestamp=${Date.now()}`)
+                  setAvatarSrc(display)
+                }
+                setView('editor')
+                trigger()
+              }}
+            />
+          ),
+        }[view]
+      }
     </Container>
   )
 }

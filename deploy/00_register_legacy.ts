@@ -37,11 +37,39 @@ const names: Name[] = [
     label: 'test123',
     namedOwner: 'owner',
     namedAddr: 'owner',
+    records: {
+      text: [
+        { key: 'description', value: 'Hello2' },
+        { key: 'url', value: 'twitter.com' },
+        { key: 'blankrecord', value: '' },
+        { key: 'email', value: 'fakeemail@fake.com' },
+      ],
+      addr: [
+        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+      ],
+      contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
+    },
   },
   {
     label: 'to-be-wrapped',
     namedOwner: 'owner',
     namedAddr: 'owner',
+    records: {
+      text: [
+        { key: 'description', value: 'Hello2' },
+        { key: 'url', value: 'twitter.com' },
+        { key: 'blankrecord', value: '' },
+        { key: 'email', value: 'fakeemail@fake.com' },
+      ],
+      addr: [
+        { key: 61, value: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC' },
+        { key: 0, value: '0x00149010587f8364b964fcaa70687216b53bd2cbd798' },
+        { key: 2, value: '0x0000000000000000000000000000000000000000' },
+      ],
+      contenthash: '0xe301017012204edd2984eeaf3ddf50bac238ec95c5713fb40b5e428b508fdbe55d3b9f155ffe',
+    },
   },
   {
     label: 'resume-and-wrap',

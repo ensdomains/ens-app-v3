@@ -12,11 +12,17 @@ const IconWrapper = styled.div(
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: transparent;
+    transition: background-color 300ms ease-in-out;
 
     svg {
       width: ${theme.space['6']};
       height: ${theme.space['6']};
       color: ${theme.colors.greyPrimary};
+    }
+
+    :hover {
+      background-color: ${theme.colors.greySurface};
     }
   `,
 )

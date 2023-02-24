@@ -85,7 +85,7 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const AdvancedEditor = ({ data, transactions = [], dispatch }: Props) => {
+const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('profile')
   const name = data?.name || ''
   const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
@@ -126,7 +126,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch }: Props) => {
   } = advancedEditorForm
 
   const handleCancel = () => {
-    dispatch({ name: 'stopFlow' })
+    onDismiss?.()
   }
 
   if (loading || isLoadingABIInterface || isLoadingPublicKeyInterface) return null

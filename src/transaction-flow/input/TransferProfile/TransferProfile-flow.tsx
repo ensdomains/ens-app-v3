@@ -24,18 +24,18 @@ const TransferProfile = ({ data, dispatch }: Props) => {
   const { profile, loading } = useProfile(data.name)
   const oldResolverAddress = profile?.resolverAddress
 
+  const updateResolverTransaction = makeTransactionItem('updateResolver', {
+    name: data.name,
+    resolver: resolverAddress,
+    oldResolver: oldResolverAddress,
+    contract: data.isWrapped ? 'nameWrapper' : 'registry',
+  })
+
   const handleReset = () => {
     if (!resolverAddress) return
     dispatch({
       name: 'setTransactions',
-      payload: [
-        makeTransactionItem('updateResolver', {
-          name: data.name,
-          resolver: resolverAddress,
-          oldResolver: oldResolverAddress,
-          contract: data.isWrapped ? 'nameWrapper' : 'registry',
-        }),
-      ],
+      payload: [updateResolverTransaction],
     })
 
     dispatch({
@@ -52,12 +52,7 @@ const TransferProfile = ({ data, dispatch }: Props) => {
       payload: {
         transactions: [
           makeTransactionItem('migrateProfile', { name: data.name }),
-          makeTransactionItem('updateResolver', {
-            name: data.name,
-            resolver: resolverAddress,
-            oldResolver: oldResolverAddress,
-            contract: data.isWrapped ? 'nameWrapper' : 'registry',
-          }),
+          updateResolverTransaction,
         ],
         resumable: true,
         disableBackgroundClick: true,
