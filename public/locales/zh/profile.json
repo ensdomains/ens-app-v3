@@ -138,43 +138,43 @@
         "permissions": {
           "canUnwrap": {
             "label": "可以解除包装",
-            "description": "该名称的所有者 {{owner}} 可以解除它的包装。"
+            "description": "该名称的{{owner}}可以解除它的包装。"
           },
           "cannotUnwrap": {
             "label": "不能解除包装",
-            "description": "该名称的所有者 {{owner}} 不能解除它的包装。"
+            "description": "该名称的{{owner}}不能解除它的包装。"
           },
           "canCreateSubnames": {
             "label": "可以创建子名称",
-            "description": "该名称的所有者 {{owner}} 可以创建子名称。"
+            "description": "该名称的{{owner}}可以创建子名称。"
           },
           "cannotCreateSubnames": {
             "label": "不能创建子名称",
-            "description": "该名称的所有者 {{owner}} 不能创建子名称。"
+            "description": "该名称的{{owner}}不能创建子名称。"
           },
           "canSend": {
             "label": "可以发送名称",
-            "description": "该名称的所有者 {{owner}} 可以将它发送给其他人。"
+            "description": "该名称的{{owner}}可以将它发送给其他人。"
           },
           "cannotSend": {
             "label": "不能发送名称",
-            "description": "该名称的所有者 {{owner}} 不能将它发送给其他人。"
+            "description": "该名称的{{owner}}不能将它发送给其他人。"
           },
           "canSetResolver": {
             "label": "可以设置解析器",
-            "description": "该名称的所有者 {{owner}} 可以设置和更改它的解析器。"
+            "description": "该名称的{{owner}}可以设置和更改它的解析器。"
           },
           "cannotSetResolver": {
             "label": "不能设置解析器",
-            "description": "该名称的所有者 {{owner}} 不能设置和更改它的解析器。"
+            "description": "该名称的{{owner}}不能设置和更改它的解析器。"
           },
           "canSetTTL": {
             "label": "可以设置 TTL",
-            "description": "该名称的所有者 {{owner}} 可以设置和更改它的 TTL。"
+            "description": "该名称的{{owner}}可以设置和更改它的 TTL。"
           },
           "cannotSetTTL": {
             "label": "不能设置 TTL",
-            "description": "该名称的所有者 {{owner}} 不能设置和更改它的 TTL。"
+            "description": "该名称的{{owner}}不能设置和更改它的 TTL。"
           }
         },
         "action": {
