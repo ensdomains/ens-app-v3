@@ -89,6 +89,7 @@ export const EnableDNSSEC = ({
       <Typography>{t('enableDNSSEC.registrarHelp')}</Typography>
       <Spacer $height="5" />
       <Dropdown
+        // needed for no line breaks in buttons
         inheritContentWidth
         items={HelperLinks.map((link) => ({
           label: link.label,
@@ -98,6 +99,7 @@ export const EnableDNSSEC = ({
               rel="noreferrer"
               href={link.href}
               key={key}
+              // needed for buttons to maintain the width of the dropdown
               style={{ width: '100%' }}
             >
               {children}
