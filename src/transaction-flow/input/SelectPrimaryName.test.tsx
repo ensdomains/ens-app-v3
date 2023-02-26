@@ -136,4 +136,18 @@ describe('SelectPrimaryName', () => {
       expect(screen.getByText('[2fc...ded].eth')).toBeInTheDocument()
     })
   })
+  it('should show no names message when only eligible name is already set', async () => {
+    mockRequest.mockResolvedValue({
+      domains: [
+        {
+          name: 'test.eth',
+          id: '0x0',
+        },
+      ],
+    })
+    renderHelper({ existingPrimary: 'test.eth' })
+    await waitFor(() => {
+      expect(screen.getByText('section.primary.input.noOtherNames')).toBeInTheDocument()
+    })
+  })
 })
