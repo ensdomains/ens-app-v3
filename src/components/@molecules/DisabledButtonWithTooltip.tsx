@@ -18,7 +18,7 @@ export const DisabledButtonWithTooltip = ({
   mobilePlacement = 'left',
   width = 250,
   mobileWidth = 150,
-  buttonWidth = undefined,
+  buttonWidth,
   colorStyle = 'disabled',
   prefix,
 }: {

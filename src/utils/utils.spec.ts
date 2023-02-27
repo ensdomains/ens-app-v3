@@ -50,7 +50,7 @@ describe('formatExpiry', () => {
   })
 })
 
-describe('canEdirRecordsWhenWrappedCalc', () => {
+describe('canEditRecordsWhenWrappedCalc', () => {
   it('should return true if the domain is not wrapped', () => {
     const result = canEditRecordsWhenWrappedCalc(false)
     expect(result).toEqual(true)

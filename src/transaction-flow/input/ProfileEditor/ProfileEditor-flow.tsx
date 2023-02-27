@@ -14,9 +14,9 @@ import AvatarButton, {
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
 import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
+import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
-import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProfile } from '@app/hooks/useProfile'
 import useProfileEditor from '@app/hooks/useProfileEditor'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
@@ -198,7 +198,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     }
   }, [status, statusLoading, resumable])
 
-  const { isWrapped } = useNameDetails(name)
+  const { isWrapped } = useBasicName(name)
 
   const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
     isWrapped,

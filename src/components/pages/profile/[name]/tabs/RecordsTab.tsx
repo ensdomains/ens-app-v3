@@ -9,7 +9,6 @@ import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledBu
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
 import { useChainId } from '@app/hooks/useChainId'
-import { useProfile } from '@app/hooks/useProfile'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
@@ -133,6 +132,7 @@ export const RecordsTab = ({
   canEdit,
   isCached,
   isWrapped,
+  resolverAddress,
 }: {
   name: string
   network: number
@@ -141,6 +141,7 @@ export const RecordsTab = ({
   contentHash?: ContentHash
   canEdit?: boolean
   isCached?: boolean
+  resolverAddress?: string
   isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
@@ -175,13 +176,11 @@ export const RecordsTab = ({
       { disableBackgroundClick: true },
     )
 
-  const { profile } = useProfile(name, name !== '')
-
   const chainId = useChainId()
 
   const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
     isWrapped,
-    profile?.resolverAddress,
+    resolverAddress,
     chainId,
   )
 
