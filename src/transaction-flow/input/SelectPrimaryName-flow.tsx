@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useInfiniteQuery } from 'wagmi'
 
-import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 import { decryptName } from '@ensdomains/ensjs/utils/labels'
 import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 
@@ -28,7 +27,6 @@ type Data = {
 type Domain = {
   id: string
   name: string
-  truncatedName: string
 }
 
 export type Props = {
@@ -83,14 +81,16 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       )
 
       if (!domains) return []
-      return domains.map((domain: any) => {
-        const decryptedName = decryptName(domain.name)
-        return {
-          ...domain,
-          name: decryptedName,
-          truncatedName: truncateFormat(decryptedName),
-        }
-      }) as Domain[]
+      return domains
+        .map((domain: any) => {
+          const decryptedName = decryptName(domain.name)
+          if (decryptedName.includes('[')) return null
+          return {
+            ...domain,
+            name: decryptedName,
+          }
+        })
+        .filter((domain: any) => domain) as Domain[]
     },
     {
       keepPreviousData: true,
@@ -142,7 +142,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
                   <NamePillWrapper>
                     <NamePill
                       name={name.name}
-                      truncatedName={name.truncatedName}
+                      truncatedName={name.name}
                       network={chainId}
                       key={name.id}
                     />

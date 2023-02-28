@@ -122,7 +122,7 @@ describe('SelectPrimaryName', () => {
       expect(screen.getByText('test3.eth')).toBeInTheDocument()
     })
   })
-  it('should truncate encoded names', async () => {
+  it('should remove names with hashed labels', async () => {
     mockRequest.mockResolvedValue({
       domains: [
         {
@@ -133,7 +133,7 @@ describe('SelectPrimaryName', () => {
     })
     renderHelper({})
     await waitFor(() => {
-      expect(screen.getByText('[2fc...ded].eth')).toBeInTheDocument()
+      expect(screen.getByText('section.primary.input.noNames')).toBeInTheDocument()
     })
   })
   it('should show no names message when only eligible name is already set', async () => {
