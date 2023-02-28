@@ -17,6 +17,8 @@ export const useNameDetails = (name: string) => {
     isLoading: basicLoading,
     isCachedData: basicIsCachedData,
     registrationStatus,
+    expiryDate,
+    gracePeriodEndDate,
     ...basicName
   } = useBasicName(name)
 
@@ -57,18 +59,37 @@ export const useNameDetails = (name: string) => {
       return t('errors.invalidName')
     }
     if (registrationStatus === 'gracePeriod') {
-      return t('errors.expiringSoon')
+      return `${t('errors.expiringSoonOne')} ${gracePeriodEndDate?.toString()} ${t(
+        'errors.expiringSoonTwo',
+      )}`
     }
     if (!profile && !profileLoading && ready && status !== 'idle' && status !== 'loading') {
       return t('errors.unknown')
     }
     return null
-  }, [normalisedName, profile, profileLoading, ready, registrationStatus, status, t, valid])
+  }, [
+    gracePeriodEndDate,
+    normalisedName,
+    profile,
+    profileLoading,
+    ready,
+    registrationStatus,
+    status,
+    t,
+    valid,
+  ])
+
+  const errorTitle = useMemo(() => {
+    if (registrationStatus === 'gracePeriod') {
+      return `${name}  has expired`
+    }
+  }, [registrationStatus, name])
 
   const isLoading = !ready || profileLoading || basicLoading || dnsOwnerLoading
 
   return {
     error,
+    errorTitle,
     normalisedName,
     valid,
     profile,
@@ -77,6 +98,8 @@ export const useNameDetails = (name: string) => {
     basicIsCachedData: basicIsCachedData || dnsOwnerIsCachedData,
     profileIsCachedData,
     registrationStatus,
+    gracePeriodEndDate,
+    expiryDate,
     ...basicName,
   }
 }

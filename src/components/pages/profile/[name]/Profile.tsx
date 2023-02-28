@@ -81,9 +81,11 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const {
     error,
+    errorTitle,
     profile,
     ownerData,
     gracePeriodEndDate,
+    expiryDate,
     normalisedName,
     valid,
     profileIsCachedData,
@@ -205,7 +207,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
             <Trans
               ns="profile"
               i18nKey="banner.available.description"
-              values={{ date: gracePeriodEndDate.toString() }}
+              values={{ date: expiryDate?.toString() }}
               components={{ strong: <strong /> }}
             />
           </Banner>
@@ -216,7 +218,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       return <WrapperCallToAction name={normalisedName} />
     }
     return undefined
-  }, [gracePeriodEndDate, normalisedName, t, _canBeWrapped])
+  }, [gracePeriodEndDate, normalisedName, t, _canBeWrapped, expiryDate])
 
   return (
     <>
@@ -236,6 +238,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
             ? {
                 type: 'warning',
                 message: error,
+                title: errorTitle,
               }
             : undefined,
           header: (
