@@ -37,9 +37,9 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.48
+      '@ensdomains/ensjs': 3.0.0-alpha.49
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': 0.6.28
+      '@ensdomains/thorin': 0.6.30
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
       '@ethersproject/abstract-signer': ^5.7.0
@@ -174,9 +174,9 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.48_f2qxwv66g46rb33uzxnl5nluty
+      '@ensdomains/ensjs': 3.0.0-alpha.49_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.28_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.30_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -2297,8 +2297,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.48_f2qxwv66g46rb33uzxnl5nluty:
-    resolution: {integrity: sha512-qI1KvEGLmztU+WDC+EABrhN5YsXjoW+qfBTPrgPEd9wZ430T9odlIb2z6JM5qVv/qxwEkikQZk0YyPj0pUdKrA==}
+  /@ensdomains/ensjs/3.0.0-alpha.49_f2qxwv66g46rb33uzxnl5nluty:
+    resolution: {integrity: sha512-EmUm0emjoR9uCSzJqc9ZLnIkLBcGzGaRsVpZrqyP3K4zmUZhP6ey5o+PA23LRDbVufGxsHXsSYbGGF637fczyw==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
@@ -2368,8 +2368,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.28_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-HPVXEdF3m5ObTQFeLI+sa4uNkNpV+EgllctFFgfVSIfptwEHSdW918MaESMRHciDacvZGQOKlazkDVUUh7YybA==}
+  /@ensdomains/thorin/0.6.30_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-0K7nhfaCn1S4hRyunaSglbSyHF2oSaFTV5TC0G08gfJw9XFBUfFHo1f8B1YyhkTTymcifvq/kNSGbcRHrHh+bg==}
     peerDependencies:
       react: ^17
       react-dom: ^17

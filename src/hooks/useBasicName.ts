@@ -90,6 +90,16 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const isLoading = !ens.ready || batchLoading || supportedTLDLoading
 
+  console.log(
+    'useBasicName',
+    name,
+    'status',
+    status,
+    'isFetched',
+    isFetched,
+    'isFetchedAfterMount',
+    isFetchedAfterMount,
+  )
   return {
     normalisedName,
     valid,

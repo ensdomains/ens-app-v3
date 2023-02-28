@@ -3,11 +3,10 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { ProfileRecord, ProfileRecordGroup, sortValues } from '@app/constants/profileRecordOptions'
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
-import type { useProfile } from '@app/hooks/useProfile'
+import { DetailedProfile } from '@app/hooks/useNameDetails'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
+import { emptyAddress } from '@app/utils/constants'
 import { contentHashToString, getProtocolTypeAndContentId } from '@app/utils/contenthash'
-
-import { emptyAddress } from '../../../../../../../utils/constants'
 
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
@@ -128,8 +127,7 @@ const sortProfileRecords = (recordA: ProfileRecord, recordB: ProfileRecord): num
   return recordAValue - recordBValue
 }
 
-type Profile = ReturnType<typeof useProfile>['profile']
-export const profileToProfileRecords = (profile: Profile): ProfileRecord[] => {
+export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecord[] => {
   const records = profile?.records || {}
   const texts: ProfileRecord[] =
     records.texts?.map(({ key, value }) => {
@@ -172,7 +170,10 @@ export const profileToProfileRecords = (profile: Profile): ProfileRecord[] => {
       ? [{ key: protocolType, type: 'contenthash', group: 'website', value: contentHashStr }]
       : []
 
-  const profileRecords = [...texts, ...addresses, ...website]
+  const abi: ProfileRecord[] = records.abi?.data
+    ? [{ key: 'abi', type: 'abi', group: 'other', value: records.abi.data }]
+    : []
+  const profileRecords = [...texts, ...addresses, ...website, ...abi]
   const sortedProfileRecords = profileRecords.sort(sortProfileRecords)
   return sortedProfileRecords
 }

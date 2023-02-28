@@ -10,9 +10,8 @@ import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avat
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
-import { useBasicName } from '@app/hooks/useBasicName'
 import { useContractAddress } from '@app/hooks/useContractAddress'
-import { useProfile } from '@app/hooks/useProfile'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
@@ -142,8 +141,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const { name = '', resumable = false } = data
 
-  const { profile, loading: profileLoading } = useProfile(name, name !== '')
-  const { isWrapped } = useBasicName(name, true)
+  const { profile, isWrapped, isLoading: profileLoading } = useNameDetails(name)
   const existingRecords = profileToProfileRecords(profile)
   const {
     records: profileRecords,
@@ -265,6 +263,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)
+    process.nextTick(() => trigger())
   }
 
   const handleShowAddRecordModal = () => {

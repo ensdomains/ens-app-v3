@@ -63,6 +63,7 @@ const OptionIcon = styled.div(
     width: ${theme.space[5]};
     height: ${theme.space[5]};
     svg {
+      display: block;
       width: 100%;
       height: 100%;
     }

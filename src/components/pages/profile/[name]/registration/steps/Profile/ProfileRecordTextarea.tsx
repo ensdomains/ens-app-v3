@@ -84,7 +84,7 @@ export const ProfileRecordTextarea = forwardRef<HTMLTextAreaElement, Props>(
           {...props}
         />
         <ButtonContainer>
-          <DeleteButton onClick={onDelete}>
+          <DeleteButton type="button" onClick={onDelete}>
             <InnerButtonWrapper>
               <CrossSVG />
             </InnerButtonWrapper>

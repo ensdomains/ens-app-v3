@@ -42,6 +42,16 @@ export const useProfile = (name: string, skip?: any) => {
     return { ...profile, decryptedName }
   }, [profile, decryptedName])
 
+  console.log(
+    'useProfile',
+    name,
+    'status',
+    status,
+    'isFetched',
+    isFetched,
+    'isFetchedAfterMount',
+    isFetchedAfterMount,
+  )
   return {
     profile: returnProfile,
     loading: !ready || loading,

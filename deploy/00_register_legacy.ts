@@ -1,12 +1,132 @@
 /* eslint-disable import/no-extraneous-dependencies */
 
 /* eslint-disable no-await-in-loop */
+import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 import { ethers } from 'hardhat'
 import { DeployFunction } from 'hardhat-deploy/types'
 import { HardhatRuntimeEnvironment } from 'hardhat/types'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 import { namehash } from '@ensdomains/ensjs/utils/normalise'
+
+const dummyABI = [
+  {
+    type: 'event',
+    anonymous: false,
+    name: 'ABIChanged',
+    inputs: [
+      {
+        type: 'bytes32',
+        indexed: true,
+      },
+      {
+        type: 'uint256',
+        indexed: true,
+      },
+    ],
+  },
+  {
+    type: 'event',
+    anonymous: false,
+    name: 'VersionChanged',
+    inputs: [
+      {
+        type: 'bytes32',
+        indexed: true,
+      },
+      {
+        type: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'ABI',
+    constant: true,
+    stateMutability: 'view',
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+      {
+        type: 'uint256',
+      },
+    ],
+    outputs: [
+      {
+        type: 'uint256',
+      },
+      {
+        type: 'bytes',
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'clearRecords',
+    constant: false,
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'recordVersions',
+    constant: true,
+    stateMutability: 'view',
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+    ],
+    outputs: [
+      {
+        type: 'uint64',
+      },
+    ],
+  },
+  {
+    type: 'function',
+    name: 'setABI',
+    constant: false,
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes32',
+      },
+      {
+        type: 'uint256',
+      },
+      {
+        type: 'bytes',
+      },
+    ],
+    outputs: [],
+  },
+  {
+    type: 'function',
+    name: 'supportsInterface',
+    constant: true,
+    stateMutability: 'view',
+    payable: false,
+    inputs: [
+      {
+        type: 'bytes4',
+      },
+    ],
+    outputs: [
+      {
+        type: 'bool',
+      },
+    ],
+  },
+]
 
 type Name = {
   label: string
@@ -24,6 +144,10 @@ type Name = {
       value: string
     }[]
     contenthash?: string
+    abi?: {
+      contentType: number
+      data: any
+    }
   }
   subnames?: {
     label: string
@@ -177,6 +301,17 @@ const names: Name[] = [
     namedOwner: 'owner',
     namedAddr: 'owner',
   },
+  {
+    label: 'with-abi',
+    namedOwner: 'owner',
+    namedAddr: 'owner',
+    records: {
+      abi: {
+        contentType: 1,
+        data: dummyABI,
+      },
+    },
+  },
 ]
 
 const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
@@ -305,8 +440,22 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
         console.log(` - ${records.contenthash} (tx: ${setContenthashTx.hash})...`)
         nonceRef += 1
       }
-
-      return nonceRef - nonce
+      if (records.abi) {
+        console.log('ABI')
+        const { contentType, data } = records.abi
+        console.log(data)
+        const setAbiTx = await _publicResolver.setABI(
+          hash,
+          contentType,
+          toUtf8Bytes(JSON.stringify(data)),
+          {
+            nonce: nonceRef,
+          },
+        )
+        console.log(` - ${records.abi} (tx: ${setAbiTx.hash})...`)
+        nonceRef += 1
+      }
+      return nonceRef - nonce - index
     }
 
   const makeSubnames =

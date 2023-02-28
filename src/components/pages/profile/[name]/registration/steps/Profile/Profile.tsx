@@ -174,6 +174,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     if (record.key === 'ETH') return setModalOption('clear-eth')
     removeRecordAtIndex(index)
+    process.nextTick(() => trigger())
   }
 
   const onSubmit = (data: ProfileEditorForm, e?: BaseSyntheticEvent<object, any, any>) => {
@@ -262,7 +263,12 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
 
   return (
     <>
-      <Dialog onDismiss={() => setModalOpen(false)} variant="blank" open={modalOpen}>
+      <Dialog
+        onDismiss={() => setModalOpen(false)}
+        onClose={() => setModalOpen(false)}
+        variant="blank"
+        open={modalOpen}
+      >
         {modalContent}
       </Dialog>
       <StyledCard onSubmit={handleSubmit(onSubmit)}>

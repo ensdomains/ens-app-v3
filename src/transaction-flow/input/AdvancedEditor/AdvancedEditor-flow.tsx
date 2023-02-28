@@ -9,7 +9,7 @@ import AddRecord from '@app/components/@molecules/AdvancedEditor/AddRecord'
 import AdvancedEditorContent from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabContent'
 import AdvancedEditorTabs from '@app/components/@molecules/AdvancedEditor/AdvancedEditorTabs'
 import useAdvancedEditor from '@app/hooks/useAdvancedEditor'
-import { useProfile } from '@app/hooks/useProfile'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
@@ -90,7 +90,7 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
   const name = data?.name || ''
   const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
 
-  const { profile, loading } = useProfile(name, name !== '')
+  const { profile, isLoading: loading } = useNameDetails(name)
 
   const handleCreateTransaction = useCallback(
     (records: RecordOptions) => {

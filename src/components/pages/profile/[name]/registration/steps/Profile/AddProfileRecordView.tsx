@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 
 import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
 
+import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import {
   ProfileRecord,
@@ -119,13 +120,21 @@ const FooterWrapper = styled.div(
   `,
 )
 
+const DismissButtonWrapper = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    top: ${theme.space[3]};
+    right: ${theme.space[3]};
+  `,
+)
+
 type Props = {
   control: Control<ProfileEditorForm, any>
   onAdd?: (records: ProfileRecord[]) => void
   onClose?: () => void
 }
 
-export const AddProfileRecordView = ({ control, onAdd }: Props) => {
+export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
   const { t, i18n } = useTranslation('register')
 
   const currentRecords = useWatch({ control, name: 'records' })
@@ -371,6 +380,11 @@ export const AddProfileRecordView = ({ control, onAdd }: Props) => {
           {t('action.add', { ns: 'common' })}
         </Button>
       </FooterWrapper>
+      {onClose && (
+        <DismissButtonWrapper>
+          <DismissDialogButton onClick={onClose} />
+        </DismissButtonWrapper>
+      )}
     </Container>
   )
 }

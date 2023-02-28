@@ -12,6 +12,7 @@ import { validateCryptoAddress } from '@app/utils/validate'
 import { validateContentHash } from '@app/validators/validateContentHash'
 
 import { ContentHashProvider } from '../utils/contenthash'
+import { validateAbi } from '../validators/validateAbi'
 
 const SINGLE_VALUE_RECORD_TYPES = ['contenthash']
 
@@ -82,6 +83,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
         return result
       }
     if (record.group === 'website') return validateContentHash(record.key as ContentHashProvider)
+    if (record.type === 'abi') return validateAbi(t)
     if (record.group === 'custom')
       return (key?: string) => {
         if (!key) return t('steps.profile.errors.keyRequired') as string

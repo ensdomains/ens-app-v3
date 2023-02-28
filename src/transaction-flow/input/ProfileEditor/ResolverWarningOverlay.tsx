@@ -191,7 +191,13 @@ const ResolverWarningOverlay = ({
           <Title fontVariant="headingFour">{title}</Title>
           <Subtitle color="grey">{subtitle}</Subtitle>
         </Message>
-        <Button as={as} href={href} target="_blank" onClick={handleUpgrade}>
+        <Button
+          as={as}
+          href={href}
+          target="_blank"
+          onClick={handleUpgrade}
+          data-testid="profile-editor-overlay-button"
+        >
           {action}
         </Button>
       </Content>
