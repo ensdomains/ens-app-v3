@@ -101,9 +101,13 @@ export const profileRecordsToProfileEditorForm = (records: ProfileRecord[]): Pro
     (result, record) => {
       if (record.key === 'avatar' && record.group === 'media')
         return { ...result, avatar: record.value || '' }
+      const normalizedRecord = {
+        ...record,
+        value: record.value || '',
+      }
       return {
         ...result,
-        records: [...result.records, record],
+        records: [...result.records, normalizedRecord],
       }
     },
     { avatar: '', records: [] },

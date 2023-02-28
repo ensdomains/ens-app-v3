@@ -24,7 +24,7 @@ const invalidEth = '0x70997970C51812dc3A010C7d01b50e0d17dc79C4'
 const validOnion = 'onion3://p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uqd'
 const invalidOnion = 'onion3://p53lf57qovyuvwsc6xnrppyply3vtqm7l6pcobkmyqsiofyeznfu5uq'
 
-describe('useRegistrationForm', () => {
+describe('useProfileEditorForm', () => {
   describe('loading', () => {
     it('should load the default records', async () => {
       const { result } = renderHook(() => useProfileEditorForm(records))
@@ -58,7 +58,7 @@ describe('useRegistrationForm', () => {
         baseRecord,
       ]
       const { result } = renderHook(() => useProfileEditorForm(existingRecords))
-      expect(result.current.getAvatar()).toBe(undefined)
+      expect(result.current.getAvatar()).toBe('')
       expect(result.current.getValues('records')).toEqual(existingRecords)
       expect(result.current.getRecords()).toEqual(existingRecords)
     })

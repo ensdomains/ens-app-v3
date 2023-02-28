@@ -249,7 +249,7 @@ describe('profileRecordsToRecordOptions', () => {
         const result: ProfileRecord[] = []
         expect(getProfileRecordsDiff(currentRecords, previousRecords)).toEqual(result)
       })
-      it('should add records with empty string for records that are in previous records but not in current records', () => {
+      it('should add records with "empty value" for records that are in previous records but not in current records', () => {
         const currentRecords: ProfileRecord[] = []
         const previousRecords: ProfileRecord[] = [
           {
@@ -316,7 +316,7 @@ describe('profileRecordsToRecordOptions', () => {
           },
           {
             key: 'ETH',
-            value: '',
+            value: '0x0000000000000000000000000000000000000000',
             type: 'addr',
             group: 'address',
           },
