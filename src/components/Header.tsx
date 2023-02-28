@@ -14,8 +14,8 @@ import { useBreakpoint } from '@app/utils/BreakpointProvider'
 import ENSFull from '../assets/ENSFull.svg'
 import ENSWithGradient from '../assets/ENSWithGradient.svg'
 import BaseLink from './@atoms/BaseLink'
-import { HamburgerMenu } from './@atoms/HamburgerMenu'
 import { RouteItem } from './@atoms/RouteItem/RouteItem'
+import Hamburger from './@molecules/Hamburger/Hamburger'
 import { SearchInput } from './@molecules/SearchInput/SearchInput'
 import { ConditionalWrapper } from './ConditionalWrapper'
 import { HeaderConnect } from './ConnectButton'
@@ -132,13 +132,6 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
 
 const routesNoSearch = routes.filter((route) => route.name !== 'search' && route.icon)
 
-const disconnectedRoutes = routes.filter(
-  (route) => route.name !== 'search' && route.connected === false,
-)
-
-const alwaysVisibleRoutes = disconnectedRoutes.filter((r) => !r.onlyDropdown).slice(0, 4)
-const dropdownOnlyRoutes = disconnectedRoutes.filter((r) => !alwaysVisibleRoutes.includes(r))
-
 export const Header = () => {
   const { space } = useTheme()
   const router = useRouter()
@@ -159,13 +152,6 @@ export const Header = () => {
     initialEntered: true,
   })
 
-  // eslint-disable-next-line no-nested-ternary
-  const dropdownRoutes = isConnected
-    ? disconnectedRoutes
-    : breakpoints.lg
-    ? dropdownOnlyRoutes
-    : disconnectedRoutes
-
   let RouteItems: ReactNode
 
   if (!isInitial && isConnected) {
@@ -177,12 +163,6 @@ export const Header = () => {
         hasNotification={route.name === 'settings' && pendingTransactions.length > 0}
       />
     ))
-  } else if (breakpoints.lg) {
-    RouteItems = alwaysVisibleRoutes.map((route) => (
-      <RouteItem key={route.name} route={route} asText />
-    ))
-  } else {
-    RouteItems = null
   }
 
   const toggleRoutesShowing = useCallback(
@@ -210,7 +190,7 @@ export const Header = () => {
   }, [searchWrapperRef.current])
 
   return (
-    <HeaderWrapper>
+    <HeaderWrapper className="header">
       <NavContainer>
         <ConditionalWrapper
           condition={router.asPath !== '/'}
@@ -226,7 +206,6 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {!isInitial && isConnected && <HamburgerMenu align="left" dropdownItems={dropdownRoutes} />}
         {router.asPath !== '/' && breakpoints.md && (
           <>
             <VerticalLine />
@@ -251,7 +230,7 @@ export const Header = () => {
             {RouteItems}
           </RouteContainer>
         </RouteWrapper>
-        {!isInitial && !isConnected && <HamburgerMenu dropdownItems={dropdownRoutes} />}
+        <Hamburger />
         <HeaderConnect />
       </NavContainer>
     </HeaderWrapper>
