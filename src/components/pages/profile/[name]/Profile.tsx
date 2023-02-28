@@ -72,6 +72,33 @@ type Props = {
   name: string
 }
 
+export const GracePeriodBanner = ({
+  normalisedName,
+  expiryDate,
+}: {
+  normalisedName: string
+  expiryDate?: Date
+}) => {
+  const { t } = useTranslation('profile')
+  return (
+    <BaseLink href={`/register/${normalisedName}`} passHref legacyBehavior>
+      <Banner
+        alert="info"
+        as="a"
+        icon={<CheckCircleSVG />}
+        title={t('banner.available.title', { name: normalisedName })}
+      >
+        <Trans
+          ns="profile"
+          i18nKey="banner.available.description"
+          values={{ date: expiryDate?.toString() }}
+          components={{ strong: <strong /> }}
+        />
+      </Banner>
+    </BaseLink>
+  )
+}
+
 const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('profile')
@@ -196,29 +223,13 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const infoBanner = useMemo(() => {
     if (gracePeriodEndDate && gracePeriodEndDate < new Date()) {
-      return (
-        <BaseLink href={`/register/${normalisedName}`} passHref legacyBehavior>
-          <Banner
-            alert="info"
-            as="a"
-            icon={<CheckCircleSVG />}
-            title={t('banner.available.title', { name: normalisedName })}
-          >
-            <Trans
-              ns="profile"
-              i18nKey="banner.available.description"
-              values={{ date: expiryDate?.toString() }}
-              components={{ strong: <strong /> }}
-            />
-          </Banner>
-        </BaseLink>
-      )
+      return <GracePeriodBanner {...{ normalisedName, expiryDate }} />
     }
     if (_canBeWrapped) {
       return <WrapperCallToAction name={normalisedName} />
     }
     return undefined
-  }, [gracePeriodEndDate, normalisedName, t, _canBeWrapped, expiryDate])
+  }, [gracePeriodEndDate, normalisedName, _canBeWrapped, expiryDate])
 
   return (
     <>
