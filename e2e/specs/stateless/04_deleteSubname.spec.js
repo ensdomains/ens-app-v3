@@ -95,6 +95,7 @@ describe('Delete subnames', () => {
     it('should allow name owner to delete', () => {
       acceptMetamaskAccess(1)
       cy.visit('/test.wrapped.eth')
+      cy.wait(10000)
       cy.get('button').contains('Delete subname', { timeout: 10000 }).click()
 
       // Delete emancipated name warning
