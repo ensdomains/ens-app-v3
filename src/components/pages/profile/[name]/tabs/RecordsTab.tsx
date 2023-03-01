@@ -35,6 +35,11 @@ type ContentHash =
   | null
   | string
 
+type AbiRecord = {
+  data: string
+  contentType?: number
+}
+
 const TabWrapper = styled(OriginalTabWrapper)(
   () => css`
     display: flex;
@@ -129,6 +134,7 @@ export const RecordsTab = ({
   texts,
   addresses,
   contentHash,
+  abi,
   canEdit,
   isCached,
   isWrapped,
@@ -139,6 +145,7 @@ export const RecordsTab = ({
   texts?: TextRecord[]
   addresses?: AddressRecord[]
   contentHash?: ContentHash
+  abi?: AbiRecord
   canEdit?: boolean
   isCached?: boolean
   resolverAddress?: string
@@ -248,6 +255,24 @@ export const RecordsTab = ({
             </SectionTitleContainer>
           </SectionHeader>
           {formattedContentHash && <RecordItem type="contentHash" value={formattedContentHash} />}
+        </RecordSection>
+        <RecordSection>
+          <SectionHeader>
+            <SectionTitleContainer>
+              {abi ? (
+                <>
+                  <SectionTitle data-testid="abi-heading" fontVariant="bodyBold">
+                    ABI
+                  </SectionTitle>
+                </>
+              ) : (
+                <SectionSubtitle data-testid="abi-heading">
+                  {t('details.tabs.records.noAbi')}
+                </SectionSubtitle>
+              )}
+            </SectionTitleContainer>
+          </SectionHeader>
+          {abi && <RecordItem type="text" value={abi.data} />}
         </RecordSection>
       </AllRecords>
       {canEdit && (

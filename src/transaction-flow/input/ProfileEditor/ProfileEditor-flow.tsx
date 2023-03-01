@@ -1,24 +1,19 @@
+/* eslint-disable no-nested-ternary */
 import { useCallback, useEffect, useState } from 'react'
+import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
-import { Button, mq } from '@ensdomains/thorin'
+import { Button, Dialog, PlusSVG, ScrollBox, mq } from '@ensdomains/thorin'
 
-import { Banner } from '@app/components/@atoms/Banner/Banner'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
-import AddRecord from '@app/components/@molecules/ProfileEditor/AddRecord'
-import AvatarButton, {
-  AvatarClickType,
-} from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
-import ProfileTabContents from '@app/components/@molecules/ProfileEditor/ProfileTabContents'
-import ProfileEditorTabs from '@app/components/@molecules/ProfileEditor/ProfileTabs'
-import { useBasicName } from '@app/hooks/useBasicName'
+import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
+import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
+import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
-import { useProfile } from '@app/hooks/useProfile'
-import useProfileEditor from '@app/hooks/useProfileEditor'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
@@ -26,80 +21,86 @@ import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/tran
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
+import { AddProfileRecordView } from '../../../components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
+import {
+  getProfileRecordsDiff,
+  profileEditorFormToProfileRecords,
+  profileToProfileRecords,
+} from '../../../components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
+import { ProfileRecord } from '../../../constants/profileRecordOptions'
+import { ProfileEditorForm, useProfileEditorForm } from '../../../hooks/useProfileEditorForm'
 import ResolverWarningOverlay from './ResolverWarningOverlay'
+import { WrappedAvatarButton } from './WrappedAvatarButton'
 
 const Container = styled.form(({ theme }) => [
   css`
-    width: calc(100% + 2 * ${theme.space['3.5']});
-    height: calc(100% + 2 * ${theme.space['3.5']});
-    max-height: 90vh;
-    margin: -${theme.space[3.5]};
-    background: ${theme.colors.backgroundPrimary};
-    border-radius: ${theme.space['5']};
-    overflow: hidden;
+    width: 100%;
+    max-height: 600px;
     display: flex;
     flex-direction: column;
+    gap: ${theme.space['4']};
+    min-height: 33vh;
   `,
-  mq.sm.min`
-    width: 95vw;
-    max-width: 600px;
-  `,
+  mq.sm.min(css`
+    width: 520px;
+  `),
 ])
 
 const AvatarWrapper = styled.div(
   () => css`
-    position: absolute;
-    left: 24px;
-    bottom: 0;
-    height: 90px;
-    width: 90px;
-    transform: translateY(50%);
+    display: flex;
+    justify-content: center;
   `,
 )
 
-const NameContainer = styled.div(({ theme }) => [
-  css`
-    flex: 0 0 45px;
-    display: block;
-    height: 45px;
-    width: 100%;
-    padding-left: 134px;
-    padding-right: ${theme.space['8']};
-    letter-spacing: ${theme.letterSpacings['-0.01']};
-    line-height: 45px;
-    vertical-align: middle;
-    text-align: right;
-    font-feature-settings: 'ss01' on, 'ss03' on, 'ss04' on;
-    font-weight: ${theme.fontWeights.bold};
-    font-size: 1.25rem;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    overflow: hidden;
-  `,
-])
-
-const ContentContainer = styled.div(
+const StyledScrollBox = styled(ScrollBox)(
   ({ theme }) => css`
+    margin-right: -${theme.space['2']};
     flex: 1;
-    display: flex;
-    gap: ${theme.space['4']};
-    margin-top: ${theme.space['4.5']};
-    flex-direction: column;
-    overflow: hidden;
-    z-index: 1;
   `,
 )
 
-const FooterContainer = styled.div(
+const ScrollContentContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    gap: ${theme.space['3']};
-    padding: 0 ${theme.space['4']} ${theme.space['4']} ${theme.space['4']};
-    width: 100%;
-    max-width: ${theme.space['96']};
-    margin: 0 auto;
+    position: relative;
+    flex-direction: column;
+    justify-content: space-between;
+    min-height: 100%;
+    gap: ${theme.space['4']};
+    padding-right: ${theme.space['1']};
+    padding-bottom: ${theme.space['4']};
   `,
 )
+
+const Divider = styled.div(
+  ({ theme }) => css`
+    width: ${theme.space.full};
+    height: ${theme.space.px};
+    background: ${theme.colors.border};
+
+    /* stylelint-disable-next-line value-no-vendor-prefix */
+    position: -webkit-sticky;
+    position: sticky;
+    bottom: 0;
+  `,
+)
+
+const ButtonContainer = styled.div(
+  () => css`
+    display: flex;
+    justify-content: center;
+  `,
+)
+
+const ButtonWrapper = styled.div(({ theme }) => [
+  css`
+    width: ${theme.space.full};
+  `,
+  mq.xs.min(css`
+    width: max-content;
+  `),
+])
 
 type Data = {
   name?: string
@@ -112,14 +113,104 @@ export type Props = {
   onDismiss?: () => void
 } & TransactionDialogPassthrough
 
-const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
-  const { t } = useTranslation('transactionFlow')
+const SubmitButton = ({
+  control,
+  previousRecords,
+  disabled: _disabled,
+  canEdit = true,
+}: {
+  control: Control<ProfileEditorForm>
+  previousRecords: ProfileRecord[]
+  disabled: boolean
+  canEdit: boolean
+}) => {
+  const { t } = useTranslation('common')
 
-  const transaction = transactions.find((item: TransactionItem) => item.name === 'updateProfile')
+  // Precompute the records that will be submitted
+  const form = useWatch({ control }) as ProfileEditorForm
+  const currentRecords = profileEditorFormToProfileRecords(form)
+  const recordsDiff = getProfileRecordsDiff(currentRecords, previousRecords)
+
+  const disabled = _disabled || recordsDiff.length === 0
+
+  return canEdit ? (
+    <Button type="submit" disabled={disabled} data-testid="profile-submit-button">
+      {t('action.save', { ns: 'common' })}
+    </Button>
+  ) : (
+    <DisabledButtonWithTooltip
+      buttonId="profile-editor-save-disabled"
+      content={t('details.tabs.records.editRecordsDisabled', { ns: 'profile' })}
+      buttonText={t('action.save', { ns: 'common' })}
+      mobileWidth={150}
+      width={150}
+      mobileButtonWidth="initial"
+      mobilePlacement="top"
+      placement="top"
+      size="medium"
+    />
+  )
+}
+const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
+  const { t } = useTranslation('register')
+
+  const [view, setView] = useState<'editor' | 'upload' | 'nft' | 'addRecord' | 'warning'>('editor')
 
   const { name = '', resumable = false } = data
 
-  const { profile, loading: profileLoading } = useProfile(name, name !== '')
+  const { profile, isWrapped, isLoading: profileLoading } = useNameDetails(name)
+  const existingRecords = profileToProfileRecords(profile)
+  const {
+    records: profileRecords,
+    register,
+    trigger,
+    control,
+    handleSubmit,
+    addRecords,
+    updateRecord,
+    removeRecordAtIndex,
+    removeRecordByGroupAndKey,
+    setAvatar,
+    labelForRecord,
+    secondaryLabelForRecord,
+    placeholderForRecord,
+    validatorForRecord,
+    errorForRecordAtIndex,
+    isDirtyForRecordAtIndex,
+    hasErrors,
+  } = useProfileEditorForm(existingRecords)
+
+  // Update profile records if transaction data exists
+  const [isRecordsUpdated, setIsRecordsUpdated] = useState(false)
+  useEffect(() => {
+    const updateProfileRecordsWithTransactionData = () => {
+      const transaction = transactions.find(
+        (item: TransactionItem) => item.name === 'updateProfileRecords',
+      )
+      if (!transaction) return
+      const updatedRecords: ProfileRecord[] = transaction?.data?.records || []
+      updatedRecords.forEach((record) => {
+        if (record.key === 'avatar' && record.group === 'media') {
+          setAvatar(record.value)
+        } else {
+          updateRecord(record)
+        }
+      })
+      existingRecords.forEach((record) => {
+        const updatedRecord = updatedRecords.find(
+          (r) => r.group === record.group && r.key === record.key,
+        )
+        if (!updatedRecord) {
+          removeRecordByGroupAndKey(record.group, record.key)
+        }
+      })
+    }
+    if (!profileLoading) {
+      updateProfileRecordsWithTransactionData()
+      setIsRecordsUpdated(true)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [profileLoading, transactions, setIsRecordsUpdated, isRecordsUpdated])
 
   const resolverAddress = useContractAddress('PublicResolver')
 
@@ -129,21 +220,20 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const chainId = useChainId()
 
-  const handleCancel = () => {
-    if (onDismiss) onDismiss()
-  }
-
   const handleCreateTransaction = useCallback(
-    async (records: RecordOptions) => {
+    async (form: ProfileEditorForm) => {
+      const records = profileEditorFormToProfileRecords(form)
       if (!profile?.resolverAddress || !resolverAddress) return
       if (status?.hasLatestResolver) {
         dispatch({
           name: 'setTransactions',
           payload: [
-            makeTransactionItem('updateProfile', {
+            makeTransactionItem('updateProfileRecords', {
               name,
               resolver: profile.resolverAddress,
               records,
+              previousRecords: existingRecords,
+              clearRecords: false,
             }),
           ],
         })
@@ -160,15 +250,17 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
             content: makeIntroItem('MigrateAndUpdateResolver', { name }),
           },
           transactions: [
-            makeTransactionItem('migrateProfileWithSync', {
+            makeTransactionItem('updateProfileRecords', {
               name,
               records,
+              resolver: resolverAddress,
+              clearRecords: false,
             }),
             makeTransactionItem('updateResolver', {
               name,
               resolver: resolverAddress,
               oldResolver: profile!.resolverAddress!,
-              contract: 'registry',
+              contract: isWrapped ? 'nameWrapper' : 'registry',
             }),
           ],
           resumable: true,
@@ -179,26 +271,23 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     [profile, status, resolverAddress],
   )
 
-  const profileEditorForm = useProfileEditor({
-    callback: handleCreateTransaction,
-    profile,
-    overwrites: transaction?.data.records,
-  })
-  const { handleSubmit, hasErrors, setAvatar, hasChanges, formState } = profileEditorForm
-
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
-  const [avatarView, setAvatarView] = useState<AvatarClickType | null>(null)
-
-  const [showOverlay, setShowOverlay] = useState(false)
 
   useEffect(() => {
     if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
-      setShowOverlay(true)
+      setView('warning')
     }
   }, [status, statusLoading, resumable])
 
-  const { isWrapped } = useBasicName(name)
+  const handleDeleteRecord = (record: ProfileRecord, index: number) => {
+    removeRecordAtIndex(index)
+    process.nextTick(() => trigger())
+  }
+
+  const handleShowAddRecordModal = () => {
+    setView('addRecord')
+  }
 
   const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
     isWrapped,
@@ -206,76 +295,131 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     chainId,
   )
 
-  if (profileLoading || statusLoading) return <TransactionLoader />
+  if (profileLoading || statusLoading || !isRecordsUpdated) return <TransactionLoader />
   return (
-    <>
-      {' '}
-      {avatarView ? (
-        <AvatarViewManager
-          name={name}
-          avatarFile={avatarFile}
-          type={avatarView}
-          handleCancel={() => setAvatarView(null)}
-          handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
-            if (type === 'nft') {
-              setAvatar(uri)
-              setAvatarSrc(display)
-            } else {
-              setAvatar(`${uri}?timestamp=${Date.now()}`)
-              setAvatarSrc(display)
-            }
-            setAvatarView(null)
-          }}
-        />
-      ) : (
-        <Container data-testid="profile-editor" onSubmit={handleSubmit}>
-          <Banner zIndex={10}>
-            <AvatarWrapper>
-              <AvatarButton
-                src={avatarSrc}
-                validated={formState.dirtyFields.avatar}
-                onSelectOption={setAvatarView}
-                onAvatarChange={(avatar) => setAvatar(avatar)}
-                onAvatarFileChange={(file) => setAvatarFile(file)}
-                onAvatarSrcChange={(src) => setAvatarSrc(src)}
+    <Container
+      data-testid="profile-editor"
+      onSubmit={handleSubmit((_data, event) => {
+        event?.preventDefault()
+        handleCreateTransaction(_data)
+      })}
+    >
+      {
+        {
+          editor: (
+            <>
+              <Dialog.Heading title="Edit your profile" />
+              <StyledScrollBox hideDividers={{ bottom: true }}>
+                <ScrollContentContainer>
+                  <AvatarWrapper>
+                    <WrappedAvatarButton
+                      name={name}
+                      control={control}
+                      src={avatarSrc}
+                      onSelectOption={(option) => setView(option)}
+                      onAvatarChange={(avatar) => setAvatar(avatar)}
+                      onAvatarFileChange={(file) => setAvatarFile(file)}
+                      onAvatarSrcChange={(src) => setAvatarSrc(src)}
+                    />
+                  </AvatarWrapper>
+                  {profileRecords.map((field, index) =>
+                    field.group === 'custom' ? (
+                      <CustomProfileRecordInput
+                        key={field.id}
+                        register={register}
+                        trigger={trigger}
+                        index={index}
+                        validator={validatorForRecord(field)}
+                        validated={isDirtyForRecordAtIndex(index)}
+                        error={errorForRecordAtIndex(index, 'key')}
+                        onDelete={() => handleDeleteRecord(field, index)}
+                      />
+                    ) : field.key === 'description' ? (
+                      <ProfileRecordTextarea
+                        key={field.id}
+                        recordKey={field.key}
+                        label={labelForRecord(field)}
+                        secondaryLabel={secondaryLabelForRecord(field)}
+                        placeholder={placeholderForRecord(field)}
+                        error={errorForRecordAtIndex(index)}
+                        validated={isDirtyForRecordAtIndex(index)}
+                        onDelete={() => handleDeleteRecord(field, index)}
+                        {...register(`records.${index}.value`, {
+                          validate: validatorForRecord(field),
+                        })}
+                      />
+                    ) : (
+                      <ProfileRecordInput
+                        key={field.id}
+                        recordKey={field.key}
+                        group={field.group}
+                        label={labelForRecord(field)}
+                        secondaryLabel={secondaryLabelForRecord(field)}
+                        placeholder={placeholderForRecord(field)}
+                        error={errorForRecordAtIndex(index)}
+                        validated={isDirtyForRecordAtIndex(index)}
+                        onDelete={() => handleDeleteRecord(field, index)}
+                        {...register(`records.${index}.value`, {
+                          validate: validatorForRecord(field),
+                        })}
+                      />
+                    ),
+                  )}
+                  <ButtonContainer>
+                    <ButtonWrapper>
+                      <Button
+                        size="medium"
+                        onClick={handleShowAddRecordModal}
+                        data-testid="show-add-profile-records-modal-button"
+                        prefix={<PlusSVG />}
+                      >
+                        {t('steps.profile.addMore')}
+                      </Button>
+                    </ButtonWrapper>
+                  </ButtonContainer>
+                </ScrollContentContainer>
+                <Divider />
+              </StyledScrollBox>
+              <Dialog.Footer
+                leading={
+                  <Button
+                    id="profile-back-button"
+                    type="button"
+                    colorStyle="accentSecondary"
+                    data-testid="profile-back-button"
+                    onClick={() => {
+                      onDismiss?.()
+                      // dispatch({ name: 'stopFlow' })
+                    }}
+                  >
+                    {t('action.cancel', { ns: 'common' })}
+                  </Button>
+                }
+                trailing={
+                  <SubmitButton
+                    control={control}
+                    disabled={hasErrors}
+                    previousRecords={existingRecords}
+                    canEdit={canEditRecordsWhenWrapped}
+                  />
+                }
               />
-            </AvatarWrapper>
-          </Banner>
-          <NameContainer>{name}</NameContainer>
-          <ContentContainer>
-            <ProfileEditorTabs {...profileEditorForm} />
-            <ProfileTabContents {...profileEditorForm} />
-            <AddRecord {...profileEditorForm} />
-            <FooterContainer>
-              <Button colorStyle="greySecondary" onClick={handleCancel}>
-                {t('action.cancel', { ns: 'common' })}
-              </Button>
-              {canEditRecordsWhenWrapped ? (
-                <Button
-                  disabled={hasErrors || !hasChanges}
-                  type="submit"
-                  data-testid="profile-editor-submit"
-                >
-                  {t('action.save', { ns: 'common' })}
-                </Button>
-              ) : (
-                <DisabledButtonWithTooltip
-                  buttonId="profile-editor-save-disabled"
-                  content={t('details.tabs.records.editRecordsDisabled', { ns: 'profile' })}
-                  buttonText="Save"
-                  mobileWidth={150}
-                  width={150}
-                  mobileButtonWidth="initial"
-                  mobilePlacement="top"
-                  placement="top"
-                  size="medium"
-                />
-              )}
-            </FooterContainer>
-          </ContentContainer>
-          {showOverlay && (
+            </>
+          ),
+          addRecord: (
+            <AddProfileRecordView
+              control={control}
+              onAdd={(newRecords) => {
+                addRecords(newRecords)
+                setView('editor')
+              }}
+              onClose={() => setView('editor')}
+            />
+          ),
+          warning: (
             <ResolverWarningOverlay
               name={name}
+              isWrapped={isWrapped}
               hasOldRegistry={!profile?.isMigrated}
               resumable={resumable}
               hasNoResolver={!status?.hasResolver}
@@ -283,13 +427,51 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
               latestResolver={resolverAddress!}
               oldResolver={profile?.resolverAddress!}
               dispatch={dispatch}
-              onDismiss={onDismiss}
-              onDismissOverlay={() => setShowOverlay(false)}
+              onDismiss={() => dispatch({ name: 'stopFlow' })}
+              onDismissOverlay={() => setView('editor')}
             />
-          )}{' '}
-        </Container>
-      )}
-    </>
+          ),
+          upload: (
+            <AvatarViewManager
+              name={name}
+              avatarFile={avatarFile}
+              handleCancel={() => setView('editor')}
+              type="upload"
+              handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
+                if (type === 'nft') {
+                  setAvatar(uri)
+                  setAvatarSrc(display)
+                } else {
+                  setAvatar(`${uri}?timestamp=${Date.now()}`)
+                  setAvatarSrc(display)
+                }
+                setView('editor')
+                trigger()
+              }}
+            />
+          ),
+          nft: (
+            <AvatarViewManager
+              name={name}
+              avatarFile={avatarFile}
+              handleCancel={() => setView('editor')}
+              type="nft"
+              handleSubmit={(type: 'upload' | 'nft', uri: string, display?: string) => {
+                if (type === 'nft') {
+                  setAvatar(uri)
+                  setAvatarSrc(display)
+                } else {
+                  setAvatar(`${uri}?timestamp=${Date.now()}`)
+                  setAvatarSrc(display)
+                }
+                setView('editor')
+                trigger()
+              }}
+            />
+          ),
+        }[view]
+      }
+    </Container>
   )
 }
 

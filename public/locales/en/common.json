@@ -155,7 +155,8 @@
       "updateRecords": "Update records",
       "transferName": "Transfer name",
       "changePermissions": "Change permissions",
-      "syncManager": "Sync manager"
+      "syncManager": "Sync manager",
+      "updateProfileRecords": "Update profile"
     },
     "info": {
       "sendName": "Set the controller and registrant of the name",

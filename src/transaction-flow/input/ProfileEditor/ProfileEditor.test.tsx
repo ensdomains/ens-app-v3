@@ -7,13 +7,14 @@ import {
   screen,
   userEvent,
   waitFor,
-  within,
 } from '@app/test-utils'
+
+import { useNetwork } from 'wagmi'
 
 import { useBasicName } from '@app/hooks/useBasicName'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
-import { useProfile } from '@app/hooks/useProfile'
+import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
 import { Profile } from '@app/types'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -106,26 +107,28 @@ const mockProfileData = {
     isMigrated: true,
     createdAt: '1630553876',
   },
-  loading: false,
+  isLoading: false,
+  isWrapped: false,
 }
 
 jest.mock('@app/utils/BreakpointProvider')
-jest.mock('@app/hooks/useProfile')
+jest.mock('@app/hooks/useNameDetails')
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/useResolverStatus')
+jest.mock('wagmi')
 jest.mock('@app/hooks/useChainId')
 jest.mock('@app/hooks/useBasicName')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
-const mockUseProfile = mockFunction(useProfile)
+const mockUseNameDetails = mockFunction(useNameDetails)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
+const mockUseNetwork = mockFunction(useNetwork)
 const mockUseChainId = mockFunction(useChainId)
 const mockUseBasicName = mockFunction(useBasicName)
 
-const mockSetCurrentTransaction = jest.fn()
 const mockDispatch = jest.fn()
 
 export function setupIntersectionObserverMock({
@@ -168,9 +171,11 @@ export function setupIntersectionObserverMock({
 
 describe('ProfileEditor', () => {
   beforeEach(() => {
-    mockUseProfile.mockReturnValue(
+    mockUseNameDetails.mockReturnValue(
       mockProfileData as unknown as { profile: Profile; loading: boolean },
     )
+
+    mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
 
     mockUseBreakpoint.mockReturnValue({
       xs: true,
@@ -217,235 +222,11 @@ describe('ProfileEditor', () => {
       expect(screen.getByTestId('profile-editor')).toBeVisible()
     })
   })
-
-  it('should submit empty string when an existing record is deleted', async () => {
-    render(
-      <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
-    )
-
-    const tab = await screen.findByTestId('address-tab')
-    fireEvent.click(tab)
-
-    const recordInput = await screen.findByTestId('record-input-ETH')
-    const deleteButton = within(recordInput).getByTestId('record-input-delete-button')
-    fireEvent.click(deleteButton)
-    await waitFor(() => {
-      expect(recordInput).not.toBeVisible()
-    })
-
-    const submitButton = screen.getByTestId('profile-editor-submit')
-    await waitFor(() => {
-      expect(submitButton).not.toHaveAttribute('disabled')
-    })
-    fireEvent.click(submitButton)
-
-    await waitFor(() => {
-      expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
-        key: 'ETH',
-        value: '0x0000000000000000000000000000000000000000',
-      })
-    })
-  })
-
-  it('should submit a key and value when a new record is created', async () => {
-    render(
-      <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
-    )
-
-    const tab = await screen.findByTestId('address-tab')
-    fireEvent.click(tab)
-
-    const addButton = await screen.findByTestId('add-record-button')
-    fireEvent.click(addButton)
-
-    const select = await screen.findByTestId('add-record-button-option-DOT')
-    fireEvent.click(select)
-
-    const recordInput = await screen.findByTestId('record-input-DOT')
-    const recordInputInput = within(recordInput).getByTestId('record-input-input')
-
-    await userEvent.type(recordInputInput, '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
-
-    const submitButton = screen.getByTestId('profile-editor-submit')
-    await waitFor(() => {
-      expect(submitButton).not.toHaveAttribute('disabled')
-    })
-    fireEvent.click(submitButton)
-
-    await waitFor(() => {
-      expect(mockDispatch.mock.calls[0][0].payload[0].data.records.coinTypes[0]).toEqual({
-        key: 'DOT',
-        value: '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
-      })
-    })
-  })
-
-  it('should prevent a custom record key if it already exists', async () => {
-    render(
-      <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
-    )
-
-    const tab = await screen.findByTestId('other-tab')
-    fireEvent.click(tab)
-
-    const addButton = await screen.findByTestId('add-record-button')
-    fireEvent.click(addButton)
-
-    const input = await screen.findByTestId('add-record-button-input')
-    await userEvent.type(input, 'description')
-
-    const actionBtn = await screen.findByTestId('add-record-button-action-button')
-    expect(actionBtn).toHaveAttribute('disabled')
-    expect(actionBtn).toHaveTextContent('action.add')
-    expect(screen.getByText('errors.keyInUse.description')).toBeInTheDocument()
-  })
-
-  it('should set submit button to disabled if new record is created an then deleted', async () => {
-    render(
-      <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
-    )
-
-    const tab = await screen.findByTestId('address-tab')
-    fireEvent.click(tab)
-
-    const addButton = await screen.findByTestId('add-record-button')
-    fireEvent.click(addButton)
-
-    const select = await screen.findByTestId('add-record-button-option-DOT')
-    fireEvent.click(select)
-
-    const recordInput = await screen.findByTestId('record-input-DOT')
-    const recordInputInput = within(recordInput).getByTestId('record-input-input')
-
-    await userEvent.type(recordInputInput, '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
-
-    const deleteRecord = within(recordInput).getByTestId('record-input-delete-button')
-    fireEvent.click(deleteRecord)
-
-    const submitButton = screen.getByTestId('profile-editor-submit')
-    await waitFor(() => {
-      expect(submitButton).toHaveAttribute('disabled')
-    })
-    fireEvent.click(submitButton)
-    await waitFor(() => {
-      expect(mockSetCurrentTransaction).not.toHaveBeenCalled()
-    })
-  })
-
-  it('should overwrite existing records and add new records for records passed in transactions', async () => {
-    render(
-      <ProfileEditor
-        data={{ name: 'test.eth' }}
-        transactions={[
-          {
-            name: 'updateProfile',
-            data: {
-              records: {
-                texts: [
-                  {
-                    key: 'com.twitter',
-                    value: 'test2',
-                  },
-                  {
-                    key: 'com.github',
-                    value: 'test2',
-                  },
-                  {
-                    key: 'other',
-                    value: 'test2',
-                  },
-                  {
-                    key: 'email',
-                    value: 'test@ens.domains',
-                  },
-                ],
-                coinTypes: [
-                  {
-                    key: 'BNB',
-                    value: 'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
-                  },
-                  {
-                    key: 'ETH',
-                    value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
-                  },
-                ],
-                contentHash: 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
-              },
-            },
-          },
-        ]}
-        dispatch={mockDispatch}
-        onDismiss={() => {}}
-      />,
-    )
-
-    const tabs = [
-      {
-        tab: 'accounts-tab',
-        records: [
-          {
-            label: 'Twitter',
-            value: 'test2',
-          },
-          {
-            label: 'GitHub',
-            value: 'test2',
-          },
-        ],
-      },
-      {
-        tab: 'address-tab',
-        records: [
-          {
-            label: 'BNB',
-            value: 'bnb1g5p04snezgpky203fq6da9qyjsy2k9kzr5yuhl',
-          },
-          {
-            label: 'ETH',
-            value: '0x71C7656EC7ab88b098defB751B7401B5f6d8976F',
-          },
-        ],
-      },
-      {
-        tab: 'website-tab',
-        records: [
-          {
-            label: 'IPFS',
-            value: 'https://ipfs.io/ipfs/Qme7ss3ARVgxv6rXqVPiikMJ8u2NLgmgszg13pYrDKEoiu',
-          },
-        ],
-      },
-      {
-        tab: 'other-tab',
-        records: [
-          {
-            label: 'other',
-            value: 'test2',
-          },
-          {
-            label: 'email',
-            value: 'test@ens.domains',
-          },
-        ],
-      },
-    ]
-
-    for (const { tab, records } of tabs) {
-      const tabEl = await screen.findByTestId(tab)
-      await userEvent.click(tabEl)
-
-      for (const { label, value } of records) {
-        const record = await screen.findByTestId(`record-input-${label}`)
-        const recordInput = await within(record).getByTestId('record-input-input')
-        expect(recordInput).toHaveValue(value)
-      }
-    }
-  })
 })
 
 describe('ProfileEditor with old resolver', () => {
   beforeEach(() => {
-    mockUseProfile.mockReturnValue(
+    mockUseNameDetails.mockReturnValue(
       mockProfileData as unknown as { profile: Profile; loading: boolean },
     )
 
@@ -460,6 +241,8 @@ describe('ProfileEditor with old resolver', () => {
       },
       loading: false,
     })
+
+    mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
     mockUseChainId.mockReturnValue(1)
     mockUseBasicName.mockReturnValue({ isWrapped: false })
   })
@@ -469,21 +252,16 @@ describe('ProfileEditor with old resolver', () => {
       <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
     )
 
-    const tab = await screen.findByTestId('address-tab')
-    fireEvent.click(tab)
+    await userEvent.click(screen.getByTestId('dismiss-dialog-button'))
+    await userEvent.click(screen.getByTestId('show-add-profile-records-modal-button'))
+    await userEvent.click(screen.getByTestId('profile-record-option-DOT'))
+    await userEvent.click(screen.getByTestId('add-profile-records-button'))
+    await userEvent.type(
+      screen.getByTestId('profile-record-input-input-DOT'),
+      '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
+    )
 
-    const addButton = await screen.findByTestId('add-record-button')
-    fireEvent.click(addButton)
-
-    const select = await screen.findByTestId('add-record-button-option-DOT')
-    fireEvent.click(select)
-
-    const recordInput = await screen.findByTestId('record-input-DOT')
-    const recordInputInput = within(recordInput).getByTestId('record-input-input')
-
-    await userEvent.type(recordInputInput, '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX')
-
-    const submitButton = screen.getByTestId('profile-editor-submit')
+    const submitButton = screen.getByTestId('profile-submit-button')
     await waitFor(() => {
       expect(submitButton).not.toHaveAttribute('disabled')
     })
@@ -492,9 +270,13 @@ describe('ProfileEditor with old resolver', () => {
     await waitFor(() => {
       expect(mockDispatch.mock.calls[0][0].name).toBe('startFlow')
       expect(
-        mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.coinTypes[0],
+        mockDispatch.mock.calls[0][0].payload.transactions[0].data.records.find(
+          (r: any) => r.key === 'DOT',
+        ),
       ).toEqual({
+        group: 'address',
         key: 'DOT',
+        type: 'addr',
         value: '5F3sa2TJAWMqDhXG6jhV4N8ko9SxwGy8TpaNS1repo5EYjQX',
       })
     })

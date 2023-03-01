@@ -274,6 +274,8 @@
         "contentHash": "Content Hash",
         "noContentHash": "No Content Hash",
         "editRecords": "Edit Records",
+        "noAbi": "No ABI",
+        "abi": "ABI",
         "editRecordsDisabled": "Current resolver is not compatible with wrapped names"
       },
       "subnames": {
@@ -353,6 +355,7 @@
     "unsupportedTLD": "This TLD is not supported",
     "keyInUse": "{{value}} is already in use",
     "hasSubnames": "This name has subnames",
-    "permissionRevoked": "This name has revoked the permissions needed to perform this action."
+    "permissionRevoked": "This name has revoked the permissions needed to perform this action.",
+    "invalidJSON": "Invalid JSON"
   }
 }
