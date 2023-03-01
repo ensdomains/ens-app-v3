@@ -107,7 +107,7 @@ describe('Delete subnames', () => {
       cy.visit('/test.wrapped.eth')
       
       reloadUntilExists()
-      cy.findByTestId('profile-action-Delete subname').should('be.visible').click()
+      cy.findByTestId('profile-action-Delete subname').should('be.visible').click({force: true})
 
       // Delete emancipated name warning
       cy.findByText('This subname cannot be recreated').should('be.visible')
