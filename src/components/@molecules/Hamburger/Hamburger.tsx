@@ -1,9 +1,10 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
-import { DynamicPopover, MenuSVG } from '@ensdomains/thorin'
+import { CrossSVG, DynamicPopover, MenuSVG, Modal } from '@ensdomains/thorin'
 
 import { useInitial } from '@app/hooks/useInitial'
+import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 import LanguageMenu from './LanguageMenu'
 import MainMenu from './MainMenu'
@@ -33,6 +34,48 @@ const Button = styled.button<{ $active: boolean }>(
       background-color: ${theme.colors.greyLight};
       color: ${theme.colors.textPrimary};
     `}
+  `,
+)
+
+const MobileCard = styled.div(
+  ({ theme }) => css`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    position: relative;
+
+    border-radius: ${theme.radii['2xLarge']};
+    background-color: ${theme.colors.background};
+
+    transition: all 0.2s ease-out;
+
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+  `,
+)
+
+const CloseButton = styled.button(
+  ({ theme }) => css`
+    border-radius: ${theme.radii.full};
+    background-color: ${theme.colors.background};
+
+    position: absolute;
+    bottom: -${theme.space['4']};
+    left: 50%;
+    transform: translate(-50%, 100%);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: ${theme.space['2']};
+
+    svg {
+      display: block;
+      width: ${theme.space['4']};
+      height: ${theme.space['4']};
+    }
   `,
 )
 
@@ -72,12 +115,16 @@ const SlideContainer = styled.div<{ $direction: 'backwards' | 'forwards' }>(
 type View = 'main' | 'language'
 
 const Hamburger = () => {
+  const breakpoints = useBreakpoint()
+
   const containerRef = useRef<HTMLDivElement>(null)
   const btnRef = useRef<HTMLButtonElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
   const isInitial = useInitial()
 
-  const [height, setHeight] = useState(435)
+  const defaultHeight = useRef<number>(464)
+
+  const [height, setHeight] = useState(defaultHeight.current)
   const [animation, setAnimation] = useState<{
     component: ReactNode
     direction: 'backwards' | 'forwards'
@@ -134,9 +181,11 @@ const Hamburger = () => {
   useEffect(() => {
     if (!animation) return
     if (animation.direction === 'backwards') {
-      setHeight(435)
+      setHeight(defaultHeight.current)
     } else {
-      setHeight(slideRef.current?.children[0].getBoundingClientRect().height ?? 435)
+      setHeight(
+        slideRef.current?.children[0].getBoundingClientRect().height ?? defaultHeight.current,
+      )
     }
     const timeout = setTimeout(() => {
       setAnimation(null)
@@ -144,28 +193,49 @@ const Hamburger = () => {
     return () => clearTimeout(timeout)
   }, [animation])
 
+  useEffect(() => {
+    const initialHeight = defaultHeight.current
+    if (breakpoints.md) {
+      defaultHeight.current = 427
+    } else {
+      defaultHeight.current = 464
+    }
+    setHeight((prev) => {
+      if (prev === initialHeight && initialHeight !== defaultHeight.current) {
+        return defaultHeight.current
+      }
+      return prev
+    })
+  }, [breakpoints.md])
+
   const currentComponent = {
     main: <MainMenu setCurrentView={setCurrentView} />,
     language: <LanguageMenu setCurrentView={setCurrentView} />,
   }[currentView]
+
+  const componentWithAnimation = (
+    <>
+      {animation && (
+        <SlideContainer ref={slideRef} $direction={animation.direction}>
+          {animation.direction === 'forwards' ? currentComponent : animation.component}
+        </SlideContainer>
+      )}
+      {animation?.direction === 'forwards' ? animation.component : currentComponent}
+    </>
+  )
 
   return (
     <>
       <Button ref={btnRef} $active={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
         <MenuSVG />
       </Button>
-      {!isInitial && (
+      {!isInitial && breakpoints.md ? (
         <DynamicPopover
           isOpen={isOpen}
           anchorRef={btnRef}
           popover={
             <DesktopDropdownCard ref={containerRef} style={{ height }}>
-              {animation && (
-                <SlideContainer ref={slideRef} $direction={animation.direction}>
-                  {animation.direction === 'forwards' ? currentComponent : animation.component}
-                </SlideContainer>
-              )}
-              {animation?.direction === 'forwards' ? animation.component : currentComponent}
+              {componentWithAnimation}
             </DesktopDropdownCard>
           }
           placement="bottom"
@@ -173,6 +243,15 @@ const Hamburger = () => {
           transitionDuration={150}
           align="end"
         />
+      ) : (
+        <Modal open={isOpen} onDismiss={() => setIsOpen(false)} alignTop>
+          <MobileCard ref={containerRef} style={{ height }}>
+            {componentWithAnimation}
+          </MobileCard>
+          <CloseButton onClick={() => setIsOpen(false)}>
+            <CrossSVG />
+          </CloseButton>
+        </Modal>
       )}
     </>
   )

@@ -2,20 +2,32 @@ import ISO6391 from 'iso-639-1'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { CheckCircleSVG, LeftArrowSVG, Typography } from '@ensdomains/thorin'
+import { CheckCircleSVG, LanguageSVG, LeftArrowSVG, Typography, mq } from '@ensdomains/thorin'
 
 const Container = styled.div(
-  () => css`
+  ({ theme }) => css`
+    width: 100%;
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: stretch;
     justify-content: flex-start;
+
+    padding: ${theme.space['4']};
+    gap: ${theme.space['4']};
+
+    ${mq.md.min(css`
+      flex-direction: column;
+      padding: 0;
+      gap: 0;
+    `)}
   `,
 )
 
 const HeadingWrapper = styled.div(
   ({ theme }) => css`
-    border-bottom: 1px solid ${theme.colors.border};
+    ${mq.md.min(css`
+      border-bottom: 1px solid ${theme.colors.border};
+    `)}
   `,
 )
 
@@ -24,11 +36,10 @@ const Heading = styled.div(
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: flex-start;
+    justify-content: space-between;
 
     gap: ${theme.space['2']};
-    padding: ${theme.space['4']} ${theme.space['6']};
-    margin: ${theme.space['2']};
+    padding: ${theme.space['2']} ${theme.space['4']};
 
     border-radius: ${theme.radii.large};
 
@@ -38,16 +49,49 @@ const Heading = styled.div(
     &:hover {
       background-color: ${theme.colors.greySurface};
     }
+
+    & > svg {
+      color: ${theme.colors.grey};
+    }
+
+    ${mq.md.min(css`
+      justify-content: flex-start;
+      padding: ${theme.space['4']} ${theme.space['6']};
+      margin: ${theme.space['2']};
+
+      & > svg {
+        color: ${theme.colors.text};
+      }
+
+      & > div > svg {
+        display: none;
+      }
+    `)}
+  `,
+)
+
+const InnerHeading = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: flex-end;
+    gap: ${theme.space['2']};
   `,
 )
 
 const LanguagesContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: column;
+    flex-direction: column-reverse;
     align-items: stretch;
     justify-content: flex-start;
-    padding: ${theme.space['2']};
+    gap: ${theme.space['2']};
+    ${mq.md.min(css`
+      flex-direction: column;
+      padding: ${theme.space['2']};
+      gap: 0;
+    `)}
   `,
 )
 
@@ -60,6 +104,7 @@ const LanguageItem = styled.div(
 
     padding: ${theme.space['4']};
     border-radius: ${theme.radii.large};
+    border: 1px solid ${theme.colors.border};
 
     transition: all 0.1s ease-in-out;
     cursor: pointer;
@@ -79,6 +124,10 @@ const LanguageItem = styled.div(
         color: ${theme.colors.green};
       }
     }
+
+    ${mq.md.min(css`
+      border: none;
+    `)}
   `,
 )
 
@@ -97,7 +146,10 @@ const LanguageMenu = ({
       <HeadingWrapper>
         <Heading onClick={() => setCurrentView('main')}>
           <LeftArrowSVG />
-          <Typography weight="bold">Language</Typography>
+          <InnerHeading>
+            <LanguageSVG />
+            <Typography weight="bold">Language</Typography>
+          </InnerHeading>
         </Heading>
       </HeadingWrapper>
       <LanguagesContainer>

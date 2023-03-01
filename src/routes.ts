@@ -1,9 +1,15 @@
 import { UrlObject } from 'url'
 
-import CogSVG from './assets/Cog.svg'
-import GridSVG from './assets/Grid.svg'
-import HeartSVG from './assets/Heart.svg'
-import MagnifyingGlassSVG from './assets/MagnifyingGlass.svg'
+import {
+  CogActiveSVG,
+  CogSVG,
+  DotGridActiveSVG,
+  DotGridSVG,
+  HeartActiveSVG,
+  HeartSVG,
+  MagnifyingGlassActiveSVG,
+  MagnifyingGlassSVG,
+} from '@ensdomains/thorin'
 
 export type PublicRoute =
   | 'search'
@@ -25,7 +31,10 @@ export type RouteItemObj = {
   label: string
   disabled: boolean
   connected: boolean
-  icon?: any
+  icon?: {
+    inactive: any
+    active: any
+  }
   onlyDropdown?: boolean
 }
 
@@ -36,7 +45,10 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.home',
     disabled: false,
     connected: false,
-    icon: MagnifyingGlassSVG,
+    icon: {
+      inactive: MagnifyingGlassSVG,
+      active: MagnifyingGlassActiveSVG,
+    },
   },
   {
     name: 'names',
@@ -44,7 +56,10 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.names',
     disabled: false,
     connected: true,
-    icon: GridSVG,
+    icon: {
+      inactive: DotGridSVG,
+      active: DotGridActiveSVG,
+    },
   },
   {
     name: 'favourites',
@@ -52,7 +67,10 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.favourites',
     disabled: true,
     connected: true,
-    icon: HeartSVG,
+    icon: {
+      inactive: HeartSVG,
+      active: HeartActiveSVG,
+    },
   },
   {
     name: 'settings',
@@ -60,7 +78,11 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.settings',
     disabled: false,
     connected: true,
-    icon: CogSVG,
+    icon: {
+      inactive: CogSVG,
+      active: CogActiveSVG,
+    },
+    onlyDropdown: true,
   },
   {
     name: 'profile',
@@ -68,6 +90,7 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.profile',
     disabled: false,
     connected: true,
+    onlyDropdown: true,
   },
   {
     name: 'faq',

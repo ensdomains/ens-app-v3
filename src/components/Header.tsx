@@ -122,7 +122,9 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
   `,
 )
 
-const routesNoSearch = routes.filter((route) => route.name !== 'search' && route.icon)
+const routesNoSearch = routes.filter(
+  (route) => route.name !== 'search' && route.icon && !route.onlyDropdown,
+)
 
 export const Header = () => {
   const { space } = useTheme()
@@ -182,7 +184,7 @@ export const Header = () => {
   }, [searchWrapperRef.current])
 
   return (
-    <HeaderWrapper className="header">
+    <HeaderWrapper id="header">
       <NavContainer>
         <ConditionalWrapper
           condition={router.asPath !== '/'}

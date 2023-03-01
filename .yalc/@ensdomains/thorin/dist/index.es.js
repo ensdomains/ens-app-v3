@@ -3526,14 +3526,20 @@ const cl = (e, r) => {
 Er.displayName = "Input";
 const hl = d.div(({
   theme: e,
-  $state: r
+  $state: r,
+  $alignTop: o
 }) => n`
-    width: 95%;
+    width: 100%;
 
     position: fixed;
-    left: 2.5%;
+    left: 0;
     z-index: 9999;
-    bottom: ${e.space[4]};
+
+    ${o ? n`
+          top: 0;
+        ` : n`
+          bottom: 0;
+        `}
 
     display: flex;
     flex-direction: row;
@@ -3555,17 +3561,18 @@ const hl = d.div(({
           transform: translateY(0px);
         ` : n`
           opacity: 0;
-          transform: translateY(128px);
+          transform: translateY(${o ? "-" : ""}128px);
         `}
   `), Fe = ({
   children: e,
   backdropSurface: r,
   onDismiss: o,
   open: a,
-  ...i
+  alignTop: i,
+  ...l
 }) => /* @__PURE__ */ t.createElement(Te, { open: a, surface: r, onDismiss: o }, ({
-  state: l
-}) => /* @__PURE__ */ t.createElement(hl, { $state: l, ...i }, e));
+  state: c
+}) => /* @__PURE__ */ t.createElement(hl, { $alignTop: i, $state: c, ...l }, e));
 Fe.displayName = "Modal";
 const wl = d.div(({
   theme: e

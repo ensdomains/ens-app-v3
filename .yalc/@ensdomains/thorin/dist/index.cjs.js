@@ -1563,13 +1563,18 @@
         pointer-events: none;
       }
     `}
-  `),xt=t.forwardRef(({autoFocus:e,autoComplete:r="off",autoCorrect:o,defaultValue:a,description:i,disabled:n,error:c,validated:u,showDot:s,hideLabel:p,id:b,inputMode:g,icon:f,iconWidth:h,actionIcon:$,alwaysShowAction:w=!1,label:k,labelSecondary:L,name:E="clear-button",placeholder:y,prefix:m,prefixAs:v,readOnly:Z,required:H,spellCheck:B,suffix:R,suffixAs:C,clearable:G=!1,tabIndex:T,type:N="text",units:j,value:D,width:P,onBlur:V,onChange:O,onFocus:ie,onClickAction:J,size:W="medium",parentStyles:_,...ee},I)=>{const oe=t.useRef(null),X=I||oe,le=y?`${y!=null?y:""}${j?` ${j}`:""}`:void 0,ce=c?!0:void 0,me=N==="email"?"text":N,be=G||!!J,se=z=>{var Y;if(z.preventDefault(),z.stopPropagation(),J)return J(),(Y=X.current)==null?void 0:Y.focus();X.current&&(sn(X.current,""),X.current.dispatchEvent(new Event("input",{bubbles:!0})),X.current.focus())};return t.createElement(te,{description:i,disabled:n,error:c,hideLabel:p,id:b,label:k,labelSecondary:L,readOnly:Z,required:H,width:P},z=>t.createElement(fn,{$disabled:n,$hasError:ce,$validated:u,$showDot:s,$suffix:R!==void 0,$size:W,$userStyles:_,$ids:z},t.createElement(hn,{$alwaysShowAction:w,$disabled:!!n,$hasError:!!c,$readOnly:!!Z,$size:W},t.createElement($n,{ref:X,...ee,...z==null?void 0:z.content,"aria-invalid":ce,$hasAction:be,$hasError:!!c,$hasIcon:!!f,$iconWidth:h,$size:W,autoComplete:r,autoCorrect:o,autoFocus:e,defaultValue:a,disabled:n,inputMode:g,name:E,placeholder:le,readOnly:Z,spellCheck:B,tabIndex:T,type:me,value:D,onBlur:V,onChange:O,onFocus:ie}),m&&t.createElement(gn,{"aria-hidden":"true",as:v,...z==null?void 0:z.label,$size:W},m),f&&t.createElement(mn,{$iconWidth:h,$size:W},f),be&&t.createElement(bn,{$size:W,"data-testid":"input-action-button",onClick:se,onMouseDown:Y=>Y.preventDefault()},$||t.createElement(Me,null)),R&&t.createElement(zo,{$size:W,"aria-hidden":"true",...z==null?void 0:z.label,...C?{as:C}:{}},R))))});xt.displayName="Input";const wn=d.default.div(({theme:e,$state:r})=>l.css`
-    width: 95%;
+  `),xt=t.forwardRef(({autoFocus:e,autoComplete:r="off",autoCorrect:o,defaultValue:a,description:i,disabled:n,error:c,validated:u,showDot:s,hideLabel:p,id:b,inputMode:g,icon:f,iconWidth:h,actionIcon:$,alwaysShowAction:w=!1,label:k,labelSecondary:L,name:E="clear-button",placeholder:y,prefix:m,prefixAs:v,readOnly:Z,required:H,spellCheck:B,suffix:R,suffixAs:C,clearable:G=!1,tabIndex:T,type:N="text",units:j,value:D,width:P,onBlur:V,onChange:O,onFocus:ie,onClickAction:J,size:W="medium",parentStyles:_,...ee},I)=>{const oe=t.useRef(null),X=I||oe,le=y?`${y!=null?y:""}${j?` ${j}`:""}`:void 0,ce=c?!0:void 0,me=N==="email"?"text":N,be=G||!!J,se=z=>{var Y;if(z.preventDefault(),z.stopPropagation(),J)return J(),(Y=X.current)==null?void 0:Y.focus();X.current&&(sn(X.current,""),X.current.dispatchEvent(new Event("input",{bubbles:!0})),X.current.focus())};return t.createElement(te,{description:i,disabled:n,error:c,hideLabel:p,id:b,label:k,labelSecondary:L,readOnly:Z,required:H,width:P},z=>t.createElement(fn,{$disabled:n,$hasError:ce,$validated:u,$showDot:s,$suffix:R!==void 0,$size:W,$userStyles:_,$ids:z},t.createElement(hn,{$alwaysShowAction:w,$disabled:!!n,$hasError:!!c,$readOnly:!!Z,$size:W},t.createElement($n,{ref:X,...ee,...z==null?void 0:z.content,"aria-invalid":ce,$hasAction:be,$hasError:!!c,$hasIcon:!!f,$iconWidth:h,$size:W,autoComplete:r,autoCorrect:o,autoFocus:e,defaultValue:a,disabled:n,inputMode:g,name:E,placeholder:le,readOnly:Z,spellCheck:B,tabIndex:T,type:me,value:D,onBlur:V,onChange:O,onFocus:ie}),m&&t.createElement(gn,{"aria-hidden":"true",as:v,...z==null?void 0:z.label,$size:W},m),f&&t.createElement(mn,{$iconWidth:h,$size:W},f),be&&t.createElement(bn,{$size:W,"data-testid":"input-action-button",onClick:se,onMouseDown:Y=>Y.preventDefault()},$||t.createElement(Me,null)),R&&t.createElement(zo,{$size:W,"aria-hidden":"true",...z==null?void 0:z.label,...C?{as:C}:{}},R))))});xt.displayName="Input";const wn=d.default.div(({theme:e,$state:r,$alignTop:o})=>l.css`
+    width: 100%;
 
     position: fixed;
-    left: 2.5%;
+    left: 0;
     z-index: 9999;
-    bottom: ${e.space[4]};
+
+    ${o?l.css`
+          top: 0;
+        `:l.css`
+          bottom: 0;
+        `}
 
     display: flex;
     flex-direction: row;
@@ -1591,9 +1596,9 @@
           transform: translateY(0px);
         `:l.css`
           opacity: 0;
-          transform: translateY(128px);
+          transform: translateY(${o?"-":""}128px);
         `}
-  `),Ge=({children:e,backdropSurface:r,onDismiss:o,open:a,...i})=>t.createElement(Le,{open:a,surface:r,onDismiss:o},({state:n})=>t.createElement(wn,{$state:n,...i},e));Ge.displayName="Modal";const vn=d.default.div(({theme:e})=>l.css`
+  `),Ge=({children:e,backdropSurface:r,onDismiss:o,open:a,alignTop:i,...n})=>t.createElement(Le,{open:a,surface:r,onDismiss:o},({state:c})=>t.createElement(wn,{$alignTop:i,$state:c,...n},e));Ge.displayName="Modal";const vn=d.default.div(({theme:e})=>l.css`
     display: flex;
     flex-direction: row;
     align-items: center;

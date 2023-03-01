@@ -9,6 +9,7 @@ import {
   RightChevronSVG,
   Typography,
   WalletSVG,
+  mq,
 } from '@ensdomains/thorin'
 
 import SocialDiscord from '@app/assets/social/SocialDiscord.svg'
@@ -26,17 +27,27 @@ import { makeDisplay } from '@app/utils/currency'
 
 const Container = styled.div(
   ({ theme }) => css`
+    width: 100%;
     display: flex;
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    & > div {
-      border-bottom: 1px solid ${theme.colors.border};
-    }
+    background-color: ${theme.colors.background};
 
-    & > div:last-child {
-      border-bottom: none;
-    }
+    padding: ${theme.space['4']};
+    gap: ${theme.space['2']};
+
+    ${mq.md.min(css`
+      padding: 0;
+      gap: 0;
+      & > div {
+        border-bottom: 1px solid ${theme.colors.border};
+      }
+
+      & > div:last-child {
+        border-bottom: none;
+      }
+    `)}
   `,
 )
 
@@ -47,7 +58,15 @@ const SettingsSection = styled.div(
     flex-direction: column;
     align-items: stretch;
     justify-content: flex-start;
-    padding: ${theme.space['2']};
+    padding: 0;
+    margin-bottom: ${theme.space['2']};
+    gap: ${theme.space['2']};
+
+    ${mq.md.min(css`
+      padding: ${theme.space['2']};
+      margin: 0;
+      gap: 0;
+    `)}
   `,
 )
 
@@ -59,6 +78,10 @@ const SettingsItem = styled.div(
     justify-content: space-between;
 
     padding: ${theme.space['4']};
+    height: ${theme.space['13']};
+
+    border-radius: ${theme.radii.large};
+    border: 1px solid ${theme.colors.border};
 
     & > div:first-child {
       display: flex;
@@ -71,13 +94,16 @@ const SettingsItem = styled.div(
         display: block;
       }
     }
+
+    ${mq.md.min(css`
+      border: none;
+    `)}
   `,
 )
 
 const HoverableSettingsItem = styled(SettingsItem)(
   ({ theme }) => css`
     transition: all 0.1s ease-in-out;
-    border-radius: ${theme.radii.large};
     cursor: pointer;
 
     & > div:last-child {
@@ -100,6 +126,18 @@ const HoverableSettingsItem = styled(SettingsItem)(
   `,
 )
 
+const miscSectionStyle = css(
+  ({ theme }) => css`
+    background-color: ${theme.colors.greySurface};
+    border-radius: ${theme.radii.large};
+
+    ${mq.md.min(css`
+      background-color: transparent;
+      border-radius: none;
+    `)}
+  `,
+)
+
 const RoutesSection = styled.div(
   ({ theme }) => css`
     width: 100%;
@@ -108,18 +146,23 @@ const RoutesSection = styled.div(
     display: grid;
     grid-template-columns: repeat(2, 1fr);
   `,
+  miscSectionStyle,
 )
 
 const RouteItem = styled.a(
   ({ theme }) => css`
     transition: all 0.1s ease-in-out;
     text-align: left;
-    padding: ${theme.space['2']} ${theme.space['4']};
+    padding: ${theme.space['2']} ${theme.space['2']};
     border-radius: ${theme.radii.large};
 
     &:hover {
       background-color: ${theme.colors.greySurface};
     }
+
+    ${mq.md.min(css`
+      padding: ${theme.space['2']} ${theme.space['4']};
+    `)}
   `,
 )
 
@@ -132,6 +175,7 @@ const SocialSection = styled.div(
     justify-content: space-between;
     padding: ${theme.space['4']} ${theme.space['6']};
   `,
+  miscSectionStyle,
 )
 
 const NetworkSectionContainer = styled.div(
@@ -142,12 +186,17 @@ const NetworkSectionContainer = styled.div(
     align-items: center;
     justify-content: center;
     gap: ${theme.space['2']};
-    padding: ${theme.space['4']} ${theme.space['6']};
+    padding: ${theme.space['2']};
 
     & > div:first-child {
       text-transform: capitalize;
     }
+
+    ${mq.md.min(css`
+      padding: ${theme.space['4']} ${theme.space['6']};
+    `)}
   `,
+  miscSectionStyle,
 )
 
 const NetworkSection = () => {

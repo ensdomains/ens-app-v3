@@ -8,9 +8,11 @@ declare type Props = {
     onDismiss?: () => void;
     /** If true, the modal is visible. */
     open: boolean;
+    /** Aligns the modal to the top of the page. Only applies to mobile views. */
+    alignTop?: boolean;
 } & NativeDivProps;
 export declare const Modal: {
-    ({ children, backdropSurface, onDismiss, open, ...props }: Props): JSX.Element;
+    ({ children, backdropSurface, onDismiss, open, alignTop, ...props }: Props): JSX.Element;
     displayName: string;
 };
 export {};
