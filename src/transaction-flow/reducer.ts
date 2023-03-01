@@ -22,10 +22,10 @@ export const helpers = (draft: InternalTransactionFlow) => {
   const getNoTransactionsStarted = (item: InternalTransactionFlowItem) =>
     item.transactions.every(({ stage }) => !stage || stage === 'confirm')
   const getCanRemoveItem = (item: InternalTransactionFlowItem) =>
-    item.requiresManualCleanup
+    item?.requiresManualCleanup
       ? false
-      : !item.transactions ||
-        !item.resumable ||
+      : !item?.transactions ||
+        !item?.resumable ||
         getAllTransactionsComplete(item) ||
         getNoTransactionsStarted(item)
 
@@ -74,6 +74,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         payload: { push },
       } = action
       const item = draft.items[key]
+      if (!item) break // item no longer exists because transactions were completed
       if (item.resumeLink && getAllTransactionsComplete(item)) {
         push(item.resumeLink)
         break
@@ -83,6 +84,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
     case 'resumeFlow': {
       const { key } = action
       const item = draft.items[key]
+      if (!item) break // item no longer exists because transactions were completed
       if (item.intro) {
         item.currentFlowStage = 'intro'
       }
