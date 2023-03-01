@@ -45,14 +45,6 @@ const LogoAnchor = styled.a(
   `,
 )
 
-const VerticalLine = styled.div(
-  ({ theme }) => css`
-    width: 1px;
-    height: ${theme.space['14']};
-    background-color: ${theme.colors.border};
-  `,
-)
-
 const NavContainer = styled.div(
   ({ theme }) => css`
     display: flex;
@@ -208,7 +200,6 @@ export const Header = () => {
         </ConditionalWrapper>
         {router.asPath !== '/' && breakpoints.md && (
           <>
-            <VerticalLine />
             <SearchWrapper
               data-testid="search-wrapper"
               ref={searchWrapperRef}
