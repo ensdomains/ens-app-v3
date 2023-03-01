@@ -310,18 +310,6 @@ importers:
       wrangler: 0.0.0-ff35b9d1
       yalc: 1.0.0-pre.53
 
-  .yalc/@ensdomains/ens-contracts:
-    specifiers:
-      '@ensdomains/buffer': ^0.0.13
-      '@ensdomains/solsha1': 0.0.3
-      '@openzeppelin/contracts': ^4.1.0
-      dns-packet: ^5.3.0
-    dependencies:
-      '@ensdomains/buffer': 0.0.13
-      '@ensdomains/solsha1': 0.0.3
-      '@openzeppelin/contracts': 4.7.3
-      dns-packet: 5.4.0
-
 packages:
 
   /@adobe/css-tools/4.0.1:
@@ -2126,24 +2114,6 @@ packages:
     resolution: {integrity: sha512-EOFqiWnN36EyyBAgHFTsabFcFICUALt41SiDm/4pAw4V36R4lD4wHcnZcqCYki9m1fMaeWGHrdqxmrMa8iiSTQ==}
     dev: false
 
-  /@ensdomains/buffer/0.0.13:
-    resolution: {integrity: sha512-8aA+U/e4S54ebPwcge1HHvvpgXLKxPd6EOSegMlrTvBnKB8RwB3OpNyflaikD6KqzIwDaBaH8bvnTrMcfpV7oQ==}
-    dependencies:
-      '@nomiclabs/hardhat-truffle5': 2.0.7
-    transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
-      - bufferutil
-      - encoding
-      - hardhat
-      - supports-color
-      - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
-    dev: false
-
   /@ensdomains/buffer/0.0.13_hardhat@2.11.2:
     resolution: {integrity: sha512-8aA+U/e4S54ebPwcge1HHvvpgXLKxPd6EOSegMlrTvBnKB8RwB3OpNyflaikD6KqzIwDaBaH8bvnTrMcfpV7oQ==}
     dependencies:
@@ -2685,7 +2655,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
@@ -4035,29 +4005,6 @@ packages:
       '@nomicfoundation/solidity-analyzer-win32-ia32-msvc': 0.0.3
       '@nomicfoundation/solidity-analyzer-win32-x64-msvc': 0.0.3
 
-  /@nomiclabs/hardhat-truffle5/2.0.7:
-    resolution: {integrity: sha512-Pw8451IUZp1bTp0QqCHCYfCHs66sCnyxPcaorapu9mfOV9xnZsVaFdtutnhNEiXdiZwbed7LFKpRsde4BjFwig==}
-    peerDependencies:
-      '@nomiclabs/hardhat-web3': ^2.0.0
-      hardhat: ^2.6.4
-      web3: ^1.0.0-beta.36
-    dependencies:
-      '@nomiclabs/truffle-contract': 4.5.10
-      '@types/chai': 4.3.3
-      chai: 4.3.6
-      ethereumjs-util: 7.1.5
-      fs-extra: 7.0.1
-    transitivePeerDependencies:
-      - bufferutil
-      - encoding
-      - supports-color
-      - utf-8-validate
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
-    dev: false
-
   /@nomiclabs/hardhat-truffle5/2.0.7_hardhat@2.11.2:
     resolution: {integrity: sha512-Pw8451IUZp1bTp0QqCHCYfCHs66sCnyxPcaorapu9mfOV9xnZsVaFdtutnhNEiXdiZwbed7LFKpRsde4BjFwig==}
     peerDependencies:
@@ -5203,14 +5150,16 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@typechain/ethers-v5/2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.7.2
       typechain: 3.0.0_typescript@4.8.4
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@types/aria-query/4.2.2:
@@ -14257,13 +14206,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9

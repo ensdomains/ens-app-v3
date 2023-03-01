@@ -187,6 +187,7 @@ export const ProfileDetails = ({
       .map((x) => ({ ...x, type: 'text' })),
   ]
 
+  const parentName = name.split('.').slice(1).join('.')
   const mappedOwners = [
     ...((pccExpired
       ? [
@@ -203,6 +204,15 @@ export const ProfileDetails = ({
       value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
       timestamp: expiryDate ? expiryDate.getTime() : 0,
     },
+    ...(parentName
+      ? [
+          {
+            key: 'parent',
+            type: 'text',
+            value: parentName,
+          },
+        ]
+      : []),
   ]
 
   const is2LDEth = checkETH2LDFromName(name)
