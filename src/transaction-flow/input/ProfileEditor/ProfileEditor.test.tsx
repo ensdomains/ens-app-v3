@@ -10,6 +10,8 @@ import {
   within,
 } from '@app/test-utils'
 
+import { useBasicName } from '@app/hooks/useBasicName'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
@@ -113,11 +115,15 @@ jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/useResolverStatus')
+jest.mock('@app/hooks/useChainId')
+jest.mock('@app/hooks/useBasicName')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
+const mockUseChainId = mockFunction(useChainId)
+const mockUseBasicName = mockFunction(useBasicName)
 
 const mockSetCurrentTransaction = jest.fn()
 const mockDispatch = jest.fn()
@@ -188,6 +194,8 @@ describe('ProfileEditor', () => {
       },
       loading: false,
     })
+    mockUseChainId.mockReturnValue(1)
+    mockUseBasicName.mockReturnValue({ isWrapped: false })
   })
 
   afterEach(() => {
@@ -452,6 +460,8 @@ describe('ProfileEditor with old resolver', () => {
       },
       loading: false,
     })
+    mockUseChainId.mockReturnValue(1)
+    mockUseBasicName.mockReturnValue({ isWrapped: false })
   })
 
   it('should submit to key value to alternative dispatch if resolver address is not current', async () => {

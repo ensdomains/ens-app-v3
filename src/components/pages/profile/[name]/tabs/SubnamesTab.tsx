@@ -229,7 +229,6 @@ export const SubnamesTab = ({
                 content: t('errors.permissionRevoked'),
                 buttonText: t('details.tabs.subnames.addSubname.action'),
                 mobileWidth: 200,
-                buttonWidth: 'initial',
                 mobilePlacement: 'top',
                 prefix: <PlusPrefix as={PlusSVG} />,
               }}

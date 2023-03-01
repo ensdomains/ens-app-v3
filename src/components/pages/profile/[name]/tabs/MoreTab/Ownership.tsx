@@ -302,7 +302,6 @@ const Ownership = ({
                 buttonId: 'send-name-disabled-button',
                 buttonText: t('action.send', { ns: 'common' }),
                 mobileWidth: 150,
-                buttonWidth: 'initial',
                 mobileButtonWidth: 'initial',
                 prefix: <AeroplaneIcon as={AeroplaneSVG} />,
               }}
