@@ -93,8 +93,9 @@ describe('Delete subnames', () => {
     })
 
     const reloadUntilExists = (max = 3, attempt = 0) => {
-      cy.get('button[data-testid="profile-action-Delete subname"]').then(($button) => {
-        if (!$button && attempt < max) {
+      cy.get('button').then(($buttons) => {
+        const button = $buttons.find((el) => el.innerText === 'Delete subname')
+        if (!button && attempt < max) {
           cy.reload()
           reloadUntilExists(max, attempt + 1)
         }
