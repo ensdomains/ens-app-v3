@@ -135,13 +135,13 @@ const SubmitButton = ({
 
   return canEdit ? (
     <Button type="submit" disabled={disabled} data-testid="profile-submit-button">
-      {t('action.next')}
+      {t('action.save', { ns: 'common' })}
     </Button>
   ) : (
     <DisabledButtonWithTooltip
       buttonId="profile-editor-save-disabled"
       content={t('details.tabs.records.editRecordsDisabled', { ns: 'profile' })}
-      buttonText="Save"
+      buttonText={t('action.save', { ns: 'common' })}
       mobileWidth={150}
       width={150}
       mobileButtonWidth="initial"
