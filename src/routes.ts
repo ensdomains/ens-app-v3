@@ -9,6 +9,7 @@ import {
   HeartSVG,
   MagnifyingGlassActiveSVG,
   MagnifyingGlassSVG,
+  PersonSVG,
 } from '@ensdomains/thorin'
 
 export type PublicRoute =
@@ -90,6 +91,10 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.profile',
     disabled: false,
     connected: true,
+    icon: {
+      inactive: PersonSVG,
+      active: PersonSVG,
+    },
     onlyDropdown: true,
   },
   {

@@ -1,5 +1,8 @@
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useDisconnect } from 'wagmi'
+
+import { ExitSVG } from '@ensdomains/thorin'
 
 import { ConditionalWrapper } from '@app/components/ConditionalWrapper'
 import { useActiveRoute } from '@app/hooks/useActiveRoute'
@@ -82,17 +85,19 @@ const IconContainer = styled.div(
 )
 
 export const RouteItem = ({
+  active,
   route,
   hasNotification,
   asText,
 }: {
+  active?: boolean
   route: RouteItemObj
   hasNotification?: boolean
   asText?: boolean
 }) => {
   const { t } = useTranslation('common')
   const activeRoute = useActiveRoute()
-  const isActive = activeRoute === route.name
+  const isActive = active || activeRoute === route.name
   const icon = isActive ? route.icon!.active : route.icon!.inactive
 
   return (
@@ -120,5 +125,15 @@ export const RouteItem = ({
         )}
       </LinkWrapper>
     </ConditionalWrapper>
+  )
+}
+
+export const DisconnectButton = () => {
+  const { disconnect } = useDisconnect()
+
+  return (
+    <LinkWrapper $isActive={false} as="button" onClick={() => disconnect()} type="button">
+      <IconContainer as={ExitSVG} />
+    </LinkWrapper>
   )
 }

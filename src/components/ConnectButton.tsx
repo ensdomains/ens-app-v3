@@ -19,13 +19,16 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
   ({ theme, $isTabBar, $large }) => [
     $isTabBar
       ? css`
-          align-self: flex-end;
-          justify-self: flex-end;
+          position: absolute;
+          align-self: center;
+          justify-self: center;
+
+          right: ${theme.space['2']};
 
           & button {
             padding: 0 ${theme.space['4']};
             width: ${theme.space.full};
-            height: ${theme.space['12']};
+            height: ${theme.space['10']};
             border-radius: ${theme.radii.full};
             font-size: ${theme.fontSizes.body};
             ${mq.xs.min(css`
@@ -34,6 +37,7 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
           }
         `
       : css`
+          position: relative;
           & button {
             /* border-radius: ${theme.radii['2xLarge']}; */
           }
@@ -45,9 +49,6 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
             }
           `}
         `,
-    css`
-      position: relative;
-    `,
   ],
 )
 

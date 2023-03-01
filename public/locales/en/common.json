@@ -69,7 +69,7 @@
   "wallet": {
     "myProfile": "Profile",
     "disconnect": "Disconnect",
-    "connect": "Connect Wallet",
+    "connect": "Connect",
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
     "viewDetails": "View Details",
