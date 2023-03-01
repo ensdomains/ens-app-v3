@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/thorin": {
+      "signature": "59fbc0e7f414217ebce060bf2905f9aa",
+      "pure": true,
+      "replaced": "^0.6.20"
+    }
+  }
+}

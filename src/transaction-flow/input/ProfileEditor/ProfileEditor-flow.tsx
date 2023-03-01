@@ -6,10 +6,12 @@ import styled, { css } from 'styled-components'
 
 import { Button, Dialog, PlusSVG, ScrollBox, mq } from '@ensdomains/thorin'
 
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { AvatarViewManager } from '@app/components/@molecules/ProfileEditor/Avatar/AvatarViewManager'
 import { CustomProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/CustomProfileRecordInput'
 import { ProfileRecordInput } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordInput'
 import { ProfileRecordTextarea } from '@app/components/pages/profile/[name]/registration/steps/Profile/ProfileRecordTextarea'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
@@ -17,6 +19,7 @@ import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { TransactionItem, makeTransactionItem } from '@app/transaction-flow/transaction'
 import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import { AddProfileRecordView } from '../../../components/pages/profile/[name]/registration/steps/Profile/AddProfileRecordView'
 import {
@@ -114,10 +117,12 @@ const SubmitButton = ({
   control,
   previousRecords,
   disabled: _disabled,
+  canEdit = true,
 }: {
   control: Control<ProfileEditorForm>
   previousRecords: ProfileRecord[]
   disabled: boolean
+  canEdit: boolean
 }) => {
   const { t } = useTranslation('common')
 
@@ -128,10 +133,22 @@ const SubmitButton = ({
 
   const disabled = _disabled || recordsDiff.length === 0
 
-  return (
+  return canEdit ? (
     <Button type="submit" disabled={disabled} data-testid="profile-submit-button">
       {t('action.next')}
     </Button>
+  ) : (
+    <DisabledButtonWithTooltip
+      buttonId="profile-editor-save-disabled"
+      content={t('details.tabs.records.editRecordsDisabled', { ns: 'profile' })}
+      buttonText="Save"
+      mobileWidth={150}
+      width={150}
+      mobileButtonWidth="initial"
+      mobilePlacement="top"
+      placement="top"
+      size="medium"
+    />
   )
 }
 const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
@@ -201,6 +218,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     skipCompare: resumable,
   })
 
+  const chainId = useChainId()
+
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
@@ -269,6 +288,12 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const handleShowAddRecordModal = () => {
     setView('addRecord')
   }
+
+  const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
+    isWrapped,
+    profile?.resolverAddress,
+    chainId,
+  )
 
   if (profileLoading || statusLoading || !isRecordsUpdated) return <TransactionLoader />
   return (
@@ -375,6 +400,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                     control={control}
                     disabled={hasErrors}
                     previousRecords={existingRecords}
+                    canEdit={canEditRecordsWhenWrapped}
                   />
                 }
               />

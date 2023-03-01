@@ -11,6 +11,8 @@ import {
 
 import { useNetwork } from 'wagmi'
 
+import { useBasicName } from '@app/hooks/useBasicName'
+import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useResolverStatus } from '@app/hooks/useResolverStatus'
@@ -116,12 +118,16 @@ jest.mock('@app/transaction-flow/TransactionFlowProvider')
 jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/useResolverStatus')
 jest.mock('wagmi')
+jest.mock('@app/hooks/useChainId')
+jest.mock('@app/hooks/useBasicName')
 
 const mockUseBreakpoint = mockFunction(useBreakpoint)
 const mockUseNameDetails = mockFunction(useNameDetails)
 const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseResolverStatus = mockFunction(useResolverStatus)
 const mockUseNetwork = mockFunction(useNetwork)
+const mockUseChainId = mockFunction(useChainId)
+const mockUseBasicName = mockFunction(useBasicName)
 
 const mockDispatch = jest.fn()
 
@@ -193,6 +199,8 @@ describe('ProfileEditor', () => {
       },
       loading: false,
     })
+    mockUseChainId.mockReturnValue(1)
+    mockUseBasicName.mockReturnValue({ isWrapped: false })
   })
 
   afterEach(() => {
@@ -235,6 +243,8 @@ describe('ProfileEditor with old resolver', () => {
     })
 
     mockUseNetwork.mockReturnValue({ chain: { id: 1 } })
+    mockUseChainId.mockReturnValue(1)
+    mockUseBasicName.mockReturnValue({ isWrapped: false })
   })
 
   it('should submit to key value to alternative dispatch if resolver address is not current', async () => {

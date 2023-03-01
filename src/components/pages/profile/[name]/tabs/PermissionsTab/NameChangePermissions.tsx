@@ -132,7 +132,6 @@ export const NameChangePermissions = ({
           placement="left"
           mobilePlacement="top"
           mobileWidth={150}
-          buttonWidth="100%"
           mobileButtonWidth="100%"
         />
       )
