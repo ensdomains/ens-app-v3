@@ -213,6 +213,14 @@ describe('Profile', () => {
           })
         })
 
+        it('should have view link for registration transaction', () => {
+          cy.findByTestId('more-tab').click()
+          cy.findByTestId('etherscan-registration-link')
+            .should('be.visible')
+            .should('have.attr', 'href')
+            .and('match', /https:\/\/goerli\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/)
+        })
+
         it('should show the expiry of the name if available', () => {
           if (profile.expiry) {
             cy.findByTestId('expiry-data').should('contain.text', profile.expiry)

@@ -182,12 +182,21 @@ export const AddTextRecord = ({
       <Typography>{t('addTextRecord.explanation')}</Typography>
       <Spacer $height="3" />
       <Dropdown
+        // needed for no line breaks in buttons
+        inheritContentWidth
         align="left"
         items={HelperLinks.map((link) => ({
           label: t(link.label),
           onClick: () => null,
           wrapper: (children, key) => (
-            <a href={link.href} target="_blank" key={key} rel="noreferrer">
+            <a
+              href={link.href}
+              target="_blank"
+              key={key}
+              rel="noreferrer"
+              // needed for buttons to maintain the width of the dropdown
+              style={{ width: '100%' }}
+            >
               {children}
             </a>
           ),
