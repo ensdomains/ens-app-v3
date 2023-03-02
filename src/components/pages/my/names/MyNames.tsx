@@ -12,6 +12,8 @@ import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/Name
 import {
   NameTableHeader,
   NameTableMode,
+  SortDirection,
+  SortType,
 } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { TabWrapper } from '@app/components/pages/profile/TabWrapper'
 import { useChainId } from '@app/hooks/useChainId'
@@ -20,16 +22,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
-export enum SortType {
-  expiryDate = 'expiryDate',
-  labelName = 'labelName',
-  creationDate = 'creationDate',
-}
-
-export enum SortDirection {
-  asc = 'asc',
-  desc = 'desc',
-}
+import { useQueryParameterState } from '../../../../hooks/useQueryParameterState'
 
 const EmptyDetailContainer = styled.div(
   ({ theme }) => css`
@@ -69,9 +62,13 @@ const MyNames = () => {
       setSelectedNames([...selectedNames, name])
     }
   }
-  const [sortType, setSortType] = useState<SortType | undefined>()
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
-  const [searchQuery, setSearchQuery] = useState('')
+
+  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
+  const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
+    'direction',
+    'desc',
+  )
+  const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
   const [page, setPage] = useState(1)
   const [pageSize, setPageSize] = useState(10)
@@ -84,7 +81,7 @@ const MyNames = () => {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortType || SortType.expiryDate,
+      type: sortType || 'expiryDate',
       orderDirection: sortDirection,
     },
     page,
@@ -144,11 +141,7 @@ const MyNames = () => {
             <NameTableHeader
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={[
-                SortType.expiryDate,
-                SortType.labelName,
-                SortType.creationDate,
-              ]}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}
