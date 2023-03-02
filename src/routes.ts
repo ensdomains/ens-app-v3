@@ -9,6 +9,7 @@ import {
   HeartSVG,
   MagnifyingGlassActiveSVG,
   MagnifyingGlassSVG,
+  PersonActiveSVG,
   PersonSVG,
 } from '@ensdomains/thorin'
 
@@ -93,7 +94,7 @@ export const routes: RouteItemObj[] = [
     connected: true,
     icon: {
       inactive: PersonSVG,
-      active: PersonSVG,
+      active: PersonActiveSVG,
     },
     onlyDropdown: true,
   },

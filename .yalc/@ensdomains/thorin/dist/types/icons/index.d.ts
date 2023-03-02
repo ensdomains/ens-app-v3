@@ -55,6 +55,7 @@ export { ReactComponent as MoonSVG } from './Moon.svg';
 export { ReactComponent as NametagSVG } from './Nametag.svg';
 export { ReactComponent as OutlinkSVG } from './Outlink.svg';
 export { ReactComponent as PersonSVG } from './Person.svg';
+export { ReactComponent as PersonActiveSVG } from './PersonActive.svg';
 export { ReactComponent as PersonPlusSVG } from './PersonPlus.svg';
 export { ReactComponent as PlusSVG } from './Plus.svg';
 export { ReactComponent as PlusCircleSVG } from './PlusCircle.svg';

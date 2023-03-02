@@ -24,6 +24,7 @@ import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/useChainName'
 import { routes } from '@app/routes'
 import { makeDisplay } from '@app/utils/currency'
+import useUserConfig from '@app/utils/useUserConfig'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -224,6 +225,7 @@ const disconnectedRoutes = routes.filter(
 const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'language') => void }) => {
   const { t, i18n } = useTranslation('common')
   const language = i18n.resolvedLanguage || 'en'
+  const { userConfig, setCurrency } = useUserConfig()
 
   return (
     <Container>
@@ -246,8 +248,12 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
             <Typography weight="bold">Currency</Typography>
           </div>
           <div>
-            {/* TODO: Implement currency toggle functionality */}
-            <CurrencyToggle size="extraSmall" />
+            <CurrencyToggle
+              size="extraSmall"
+              fiat={userConfig.fiat}
+              checked={userConfig.currency === 'fiat'}
+              onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
+            />
           </div>
         </SettingsItem>
       </SettingsSection>
