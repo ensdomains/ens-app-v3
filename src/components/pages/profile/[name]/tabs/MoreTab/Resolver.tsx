@@ -123,8 +123,9 @@ const Resolver = ({
                   content: t(`errors.permissionRevoked`),
                   buttonText: 'Edit',
                   mobileWidth: 150,
-                  buttonWidth: 'initial',
+                  buttonWidth: '15',
                   mobileButtonWidth: 'initial',
+                  colorStyle: 'transparent',
                 }}
               />
             )}

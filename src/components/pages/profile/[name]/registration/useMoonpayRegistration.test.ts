@@ -16,10 +16,10 @@ describe('useMoonpayRegistration', () => {
     mockUseChaindId.mockReturnValue(1)
     const mockDispatch = jest.fn()
     const normalisedName = 'test.eth'
-    const selected = {}
+    const selected = {} as any
     const item = {
       externalTransactionId: '0x123',
-    }
+    } as any
     global.fetch = jest.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ message: 'uploaded' }],
@@ -33,10 +33,10 @@ describe('useMoonpayRegistration', () => {
     mockUseChaindId.mockReturnValue(1)
     const mockDispatch = jest.fn()
     const normalisedName = 'test.eth'
-    const selected = {}
+    const selected = {} as any
     let item = {
       externalTransactionId: '0x123',
-    }
+    } as any
     global.fetch = jest.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ status: 'pending' }],
@@ -72,10 +72,10 @@ describe('useMoonpayRegistration', () => {
     mockUseChaindId.mockReturnValue(1)
     const mockDispatch = jest.fn()
     let normalisedName = 'test.eth'
-    const selected = {}
+    const selected = {} as any
     let item = {
       externalTransactionId: '0x123',
-    }
+    } as any
     global.fetch = jest.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ status: 'pending' }],
@@ -101,10 +101,10 @@ describe('useMoonpayRegistration', () => {
     const mockDispatch = jest.fn()
     const normalisedName = 'test.eth'
     const tokenId = labelhash('test')
-    const selected = {}
+    const selected = {} as any
     const item = {
       externalTransactionId: null,
-    }
+    } as any
     global.fetch = jest.fn().mockImplementation(() => {
       return Promise.resolve({
         json: () => [{ status: 'pending' }],

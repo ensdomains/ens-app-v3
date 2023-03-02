@@ -14,7 +14,7 @@ import { ProfileRecord } from '@app/constants/profileRecordOptions'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useLocalStorage } from '@app/hooks/useLocalStorage'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import { RegistrationForm, useRegistrationForm } from '@app/hooks/useRegistrationForm'
+import { ProfileEditorForm, useProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 import { BackObj, RegistrationReducerDataItem, RegistrationStepData } from '../../types'
 import { AddProfileRecordView } from './AddProfileRecordView'
@@ -22,7 +22,7 @@ import { CustomProfileRecordInput } from './CustomProfileRecordInput'
 import { ProfileRecordInput } from './ProfileRecordInput'
 import { ProfileRecordTextarea } from './ProfileRecordTextarea'
 import { WrappedAvatarButton } from './WrappedAvatarButton'
-import { registrationFormToProfileRecords } from './profileRecordUtils'
+import { profileEditorFormToProfileRecords } from './profileRecordUtils'
 
 const StyledCard = styled.form(({ theme }) => [
   css`
@@ -74,7 +74,7 @@ const SubmitButton = ({
   control,
   disabled,
 }: {
-  control: Control<RegistrationForm>
+  control: Control<ProfileEditorForm>
   disabled: boolean
 }) => {
   const { address } = useAccount()
@@ -141,7 +141,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     errorForRecordAtIndex,
     isDirtyForRecordAtIndex,
     hasErrors,
-  } = useRegistrationForm(registrationData.records)
+  } = useProfileEditorForm(registrationData.records)
 
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
@@ -174,13 +174,14 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     if (record.key === 'ETH') return setModalOption('clear-eth')
     removeRecordAtIndex(index)
+    process.nextTick(() => trigger())
   }
 
-  const onSubmit = (data: RegistrationForm, e?: BaseSyntheticEvent<object, any, any>) => {
+  const onSubmit = (data: ProfileEditorForm, e?: BaseSyntheticEvent<object, any, any>) => {
     e?.preventDefault()
     setAvatarSrcStorage()
     const nativeEvent = e?.nativeEvent as SubmitEvent | undefined
-    const newRecords = registrationFormToProfileRecords(data)
+    const newRecords = profileEditorFormToProfileRecords(data)
 
     callback({
       records: newRecords,
@@ -262,7 +263,12 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
 
   return (
     <>
-      <Dialog onDismiss={() => setModalOpen(false)} variant="blank" open={modalOpen}>
+      <Dialog
+        onDismiss={() => setModalOpen(false)}
+        onClose={() => setModalOpen(false)}
+        variant="blank"
+        open={modalOpen}
+      >
         {modalContent}
       </Dialog>
       <StyledCard onSubmit={handleSubmit(onSubmit)}>

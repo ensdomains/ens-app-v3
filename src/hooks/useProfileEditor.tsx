@@ -12,11 +12,9 @@ import { RecordInput } from '@app/components/@molecules/RecordInput/RecordInput'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
-import { useProfile } from '@app/hooks/useProfile'
 import { ProfileEditorType } from '@app/types'
 import { emptyAddress } from '@app/utils/constants'
 import {
-  ProfileFormObject,
   convertFormSafeKey,
   convertProfileToProfileFormObject,
   formSafeKey,
@@ -30,6 +28,7 @@ import {
   getProtocolTypeAndContentId,
 } from '../utils/contenthash'
 import { validateContentHash } from '../validators/validateContentHash'
+import { DetailedProfile } from './useNameDetails'
 
 const getFieldsByType = (type: 'text' | 'addr' | 'contentHash', data: ProfileEditorType) => {
   const entries = []
@@ -70,7 +69,7 @@ type ExpandableRecordsState = {
 
 export type Props = {
   callback: (data: RecordOptions, event?: React.BaseSyntheticEvent) => void
-  profile: ReturnType<typeof useProfile>['profile']
+  profile: DetailedProfile
   overwrites?: RecordOptions
   returnAllFields?: boolean
 }
@@ -257,7 +256,7 @@ const useProfileEditor = ({ callback, profile, overwrites, returnAllFields }: Pr
         const { key, value } = text
         const formKey = formSafeKey(key.toString())
         if (['avatar', 'banner'].includes(key)) {
-          setValue(formKey as keyof ProfileFormObject, value, { shouldDirty: true })
+          setValue(formKey as any, value, { shouldDirty: true })
         } else if (supportedProfileItems.includes(key)) {
           setValue(`general.${formKey}`, value, { shouldDirty: true })
         } else if (supportedAccounts.includes(key)) {

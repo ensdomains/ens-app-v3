@@ -4,7 +4,7 @@ import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
 import { OwnerArray, ReturnedENS } from '@app/types'
 
-import { networkName } from './constants'
+import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -130,6 +130,14 @@ export const validateExpiry = (
   return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }
 
+export const canEditRecordsWhenWrappedCalc = (
+  isWrapped: boolean,
+  resolverAddress: string = '',
+  chainId: number = 1,
+) => {
+  if (!isWrapped) return true
+  return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
+}
 export const checkPCCExpired = (
   owners: OwnerArray,
   wrapperData: ReturnedENS['getWrapperData'] | undefined,

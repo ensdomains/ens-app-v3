@@ -92,10 +92,22 @@ describe('Delete subnames', () => {
       cy.get('button').contains('Delete subname', { timeout: 10000 }).should('not.exist')
     })
 
+    const reloadUntilExists = (max = 3, attempt = 0) => {
+      cy.get('button').then(($buttons) => {
+        const button = $buttons.find((el) => el.innerText === 'Delete subname')
+        if (!button && attempt < max) {
+          cy.reload()
+          reloadUntilExists(max, attempt + 1)
+        }
+      })
+    }
+
     it('should allow name owner to delete', () => {
       acceptMetamaskAccess(1)
       cy.visit('/test.wrapped.eth')
-      cy.get('button').contains('Delete subname', { timeout: 10000 }).click()
+      
+      reloadUntilExists()
+      cy.findByTestId('profile-action-Delete subname').should('be.visible').click({force: true})
 
       // Delete emancipated name warning
       cy.findByText('This subname cannot be recreated').should('be.visible')
