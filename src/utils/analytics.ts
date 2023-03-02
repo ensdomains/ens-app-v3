@@ -48,9 +48,7 @@ export const trackEvent = async (type: string, chain: string) => {
       type,
       referrer,
     })
-    console.log('Event triggered on mainnet2', type, chain)
     if (typeof window !== 'undefined' && window.plausible) {
-      console.log('Event triggered on mainnet3', type, chain)
       window.plausible(type, {
         props: {
           referrer,
@@ -60,7 +58,6 @@ export const trackEvent = async (type: string, chain: string) => {
   }
   console.log('Event triggering', type, chain)
   if (isProduction() && isMainnet(chain)) {
-    console.log('Event triggered on mainnet1', type, chain)
     track()
   } else {
     console.log(

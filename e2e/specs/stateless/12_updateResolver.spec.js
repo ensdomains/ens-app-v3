@@ -29,6 +29,7 @@ describe('Update Resolver', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
+        cy.wait(10000)
         cy.findByTestId('name-details-text').should('have.text', oldResolver)
       })
     })
@@ -42,6 +43,7 @@ describe('Update Resolver', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
+        cy.wait(10000)
 
         // This is only needed on cypress, not sure why!
         cy.reload()
@@ -50,7 +52,8 @@ describe('Update Resolver', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
-
+        cy.wait(10000)
+        
         cy.findByTestId('name-details-text').should('have.text', newResolver)
       })
     })

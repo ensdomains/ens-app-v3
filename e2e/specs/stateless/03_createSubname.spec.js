@@ -1,5 +1,7 @@
 import { acceptMetamaskAccess } from '../../setup'
 
+const CYPRESS_WAIT_TIME = 10000
+
 describe('Create Subname', () => {
   before(() => {
     acceptMetamaskAccess(2, true)
@@ -30,7 +32,8 @@ describe('Create Subname', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByText('test.test123.eth').should('be.visible')
+    cy.wait(CYPRESS_WAIT_TIME)
+    cy.findByTestId('name-item-test.test123.eth').should('be.visible')
   })
   it('should allow creating a subnames if the user is the wrapped owner', () => {
     acceptMetamaskAccess(2)
@@ -42,7 +45,8 @@ describe('Create Subname', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
-    cy.findByText('subname.wrapped.eth').should('be.visible')
+    cy.wait(CYPRESS_WAIT_TIME)
+    cy.findByTestId('name-item-subname.wrapped.eth').should('be.visible')
   })
   it('should not allow adding a subname that already exists', () => {
     cy.visit('/wrapped.eth')

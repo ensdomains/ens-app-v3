@@ -2,14 +2,14 @@ import { ComponentProps } from 'react'
 import { Control, useWatch } from 'react-hook-form'
 
 import AvatarButton from '@app/components/@molecules/ProfileEditor/Avatar/AvatarButton'
-import { RegistrationForm } from '@app/hooks/useRegistrationForm'
+import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 
 type Props = {
-  control: Control<RegistrationForm>
+  control: Control<ProfileEditorForm>
 } & Omit<ComponentProps<typeof AvatarButton>, 'validated'>
 
 export const WrappedAvatarButton = ({ control, ...props }: Props) => {
-  const avatar = useWatch<RegistrationForm>({
+  const avatar = useWatch<ProfileEditorForm>({
     control,
     name: 'avatar',
   })

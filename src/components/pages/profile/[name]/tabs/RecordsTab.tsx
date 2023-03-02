@@ -5,10 +5,13 @@ import styled, { css } from 'styled-components'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
+import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
 import { Outlink } from '@app/components/Outlink'
 import RecordItem from '@app/components/RecordItem'
+import { useChainId } from '@app/hooks/useChainId'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { getContentHashLink } from '@app/utils/contenthash'
+import { canEditRecordsWhenWrappedCalc } from '@app/utils/utils'
 
 import { TabWrapper as OriginalTabWrapper } from '../../TabWrapper'
 
@@ -31,6 +34,11 @@ type ContentHash =
     }
   | null
   | string
+
+type AbiRecord = {
+  data: string
+  contentType?: number
+}
 
 const TabWrapper = styled(OriginalTabWrapper)(
   () => css`
@@ -126,16 +134,22 @@ export const RecordsTab = ({
   texts,
   addresses,
   contentHash,
+  abi,
   canEdit,
   isCached,
+  isWrapped,
+  resolverAddress,
 }: {
   name: string
   network: number
   texts?: TextRecord[]
   addresses?: AddressRecord[]
   contentHash?: ContentHash
+  abi?: AbiRecord
   canEdit?: boolean
   isCached?: boolean
+  resolverAddress?: string
+  isWrapped: boolean
 }) => {
   const { t } = useTranslation('profile')
 
@@ -168,6 +182,15 @@ export const RecordsTab = ({
       { name },
       { disableBackgroundClick: true },
     )
+
+  const chainId = useChainId()
+
+  const canEditRecordsWhenWrapped = canEditRecordsWhenWrappedCalc(
+    isWrapped,
+    resolverAddress,
+    chainId,
+  )
+
   return (
     <TabWrapper $isCached={isCached} data-testid="records-tab">
       <AllRecords>
@@ -233,13 +256,44 @@ export const RecordsTab = ({
           </SectionHeader>
           {formattedContentHash && <RecordItem type="contentHash" value={formattedContentHash} />}
         </RecordSection>
+        <RecordSection>
+          <SectionHeader>
+            <SectionTitleContainer>
+              {abi ? (
+                <>
+                  <SectionTitle data-testid="abi-heading" fontVariant="bodyBold">
+                    ABI
+                  </SectionTitle>
+                </>
+              ) : (
+                <SectionSubtitle data-testid="abi-heading">
+                  {t('details.tabs.records.noAbi')}
+                </SectionSubtitle>
+              )}
+            </SectionTitleContainer>
+          </SectionHeader>
+          {abi && <RecordItem type="text" value={abi.data} />}
+        </RecordSection>
       </AllRecords>
       {canEdit && (
         <Actions>
           <div>
-            <Button onClick={handleShowEditor} size="small">
-              {t('details.tabs.records.editRecords')}
-            </Button>
+            {canEditRecordsWhenWrapped ? (
+              <Button onClick={handleShowEditor} size="small">
+                {t('details.tabs.records.editRecords')}
+              </Button>
+            ) : (
+              <DisabledButtonWithTooltip
+                buttonId="records-tab-edit-records-disabled"
+                content={t('details.tabs.records.editRecordsDisabled')}
+                buttonText={t('details.tabs.records.editRecords')}
+                mobileWidth={150}
+                mobileButtonWidth="initial"
+                mobilePlacement="top"
+                placement="top"
+                size="small"
+              />
+            )}
           </div>
         </Actions>
       )}

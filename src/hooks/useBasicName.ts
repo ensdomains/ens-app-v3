@@ -29,6 +29,9 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     data: batchData,
     isLoading: batchLoading,
     isFetched,
+    /** DO NOT REMOVE */
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isFetching,
     internal: { isFetchedAfterMount },
     status,
   } = useQuery(
