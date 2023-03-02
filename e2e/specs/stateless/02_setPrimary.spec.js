@@ -89,8 +89,9 @@ describe('Set Primary Name', () => {
     })
     describe('same ETH record', () => {
       it('should show primary name action in profile dropdown', () => {
-        cy.visit('/test123.eth')
         acceptMetamaskAccess(2)
+        cy.visit('/test123.eth')
+        cy.wait(4000)
         cy.findByTestId('profile-actions').click()
         cy.findByText('Set as primary name').click()
       })
@@ -127,11 +128,11 @@ describe('Set Primary Name', () => {
     })
     it('should allow setting primary name', () => {
       cy.findByTestId('radiogroup').then((el) => {
-        cy.wrap(el).findByText('other-eth-record.eth').click()
+        cy.wrap(el).findByText('other-controller.eth').click()
       })
       cy.findByTestId('primary-next').click()
       cy.findByTestId('display-item-action-normal').should('contain.text', 'Set primary name')
-      cy.findByTestId('display-item-name-normal').should('contain.text', 'other-eth-record.eth')
+      cy.findByTestId('display-item-name-normal').should('contain.text', 'other-controller.eth')
       cy.findByTestId('display-item-address-normal').should('contain.text', '0x709...c79C8')
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
@@ -140,7 +141,7 @@ describe('Set Primary Name', () => {
     it('should show changes', () => {
       const wrapper = cy.findByTestId('primary-wrapper')
       wrapper.should('exist')
-      wrapper.should('include.text', 'other-eth-record.eth')
+      wrapper.should('include.text', 'other-controller.eth')
     })
   })
 })
