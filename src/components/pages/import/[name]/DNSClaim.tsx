@@ -3,11 +3,10 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Card, Spinner, Typography, mq } from '@ensdomains/thorin'
+import { Card, Spinner, Typography, mq } from '@ensdomains/thorin'
 
-import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import useDNSOwner from '@app/hooks/useDNSOwner'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -20,15 +19,6 @@ import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
 import { hasPendingTransaction, shouldShowSuccessPage } from './shared'
 import { isDnsSecEnabled } from './utils'
-
-const BackArrow = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['6']};
-    height: ${theme.space['6']};
-    display: block;
-    color: ${theme.colors.greyPrimary};
-  `,
-)
 
 const ContentContainer = styled.div`
   margin: 0;
@@ -176,14 +166,6 @@ export default () => {
     <Container>
       <HeadingContainer>
         <BackContainer>
-          <Button
-            onClick={() => router.push('/')}
-            colorStyle="transparent"
-            size="flexible"
-            style={{ width: 50 }}
-          >
-            <BackArrow as={ArrowLeftSVG} />
-          </Button>
           <ContentContainer>
             <TitleWrapper $invert={!!router.query.from}>
               <TitleContainer>
@@ -194,7 +176,7 @@ export default () => {
             </TitleWrapper>
           </ContentContainer>
         </BackContainer>
-        {!router.query.from && !breakpoints.md && <HamburgerRoutes />}
+        {!breakpoints.md && <Hamburger />}
       </HeadingContainer>
       <Spacer $height="4" />
       {router.isReady ? (
