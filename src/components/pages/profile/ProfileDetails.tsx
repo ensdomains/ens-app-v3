@@ -192,27 +192,23 @@ export const ProfileDetails = ({
     ...((pccExpired
       ? [
           {
-            key: 'owner',
+            key: 'name.owner',
             type: 'text',
             value: '',
           },
         ]
       : owners?.map((x) => ({ key: x.label, value: x.address }))) || []),
     {
-      key: 'expiry',
+      key: 'name.expiry',
       type: 'text',
-      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+      value: expiryDate ? formatExpiry(expiryDate) : '',
       timestamp: expiryDate ? expiryDate.getTime() : 0,
     },
-    ...(parentName
-      ? [
-          {
-            key: 'parent',
-            type: 'text',
-            value: parentName,
-          },
-        ]
-      : []),
+    {
+      key: 'name.parent',
+      type: 'text',
+      value: parentName,
+    },
   ]
 
   const is2LDEth = checkETH2LDFromName(name)
