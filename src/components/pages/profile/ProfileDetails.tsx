@@ -140,7 +140,6 @@ const getAction = (action: Action, is2LDEth: boolean) => {
         buttonText={action.label}
         mobileWidth={150}
         mobileButtonWidth="initial"
-        buttonWidth="initial"
         mobilePlacement="top"
         placement="right"
       />
