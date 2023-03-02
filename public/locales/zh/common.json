@@ -155,7 +155,8 @@
       "updateRecords": "更新记录",
       "transferName": "转移名称",
       "changePermissions": "更改权限",
-      "syncManager": "同步管理员"
+      "syncManager": "同步管理员",
+      "updateProfileRecords": "更新个人资料"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
