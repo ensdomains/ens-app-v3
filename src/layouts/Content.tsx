@@ -123,6 +123,13 @@ const Title = styled(Typography)(
   `,
 )
 
+const Subtitle = styled(Typography)(
+  ({ theme }) => css`
+    line-height: ${theme.lineHeights.body};
+    color: ${theme.colors.greyPrimary};
+  `,
+)
+
 const CopyButton = styled(Button)(
   ({ theme }) => css`
     padding: 0;
@@ -142,10 +149,12 @@ const CopyButton = styled(Button)(
 const CompactTitle = ({
   title,
   titleButton,
+  subtitle,
   copyValue,
 }: {
   title: string
   titleButton: ReactNode
+  subtitle?: string
   copyValue?: string
 }) => {
   const ref = useRef<HTMLDivElement>(null)
@@ -190,6 +199,7 @@ const CompactTitle = ({
           >
             {titleWidth && title}
           </Title>
+          {subtitle && <Subtitle weight="bold">{subtitle}</Subtitle>}
         </TitleContainer>
         {hasCopyButton && (
           <CopyButton colorStyle="transparent" shape="square" onClick={() => copy(copyValue)}>
@@ -206,8 +216,10 @@ export const Content = ({
   loading,
   noTitle,
   title,
-  singleColumnContent,
   titleButton,
+  subtitle,
+  alwaysShowSubtitle,
+  singleColumnContent,
   hideHeading,
   inlineHeading,
   copyValue,
@@ -215,6 +227,8 @@ export const Content = ({
   noTitle?: boolean
   title: string
   titleButton?: React.ReactNode
+  subtitle?: string
+  alwaysShowSubtitle?: boolean
   singleColumnContent?: boolean
   loading?: boolean
   hideHeading?: boolean
@@ -269,7 +283,14 @@ export const Content = ({
         <HeadingItems>
           <Skeleton loading={loading} as={FullWidthSkeleton as any}>
             <CustomLeadingHeading>
-              <CompactTitle copyValue={copyValue} title={title} titleButton={titleButton} />
+              <CompactTitle
+                copyValue={copyValue}
+                title={title}
+                subtitle={
+                  subtitle && (!breakpoints.md || alwaysShowSubtitle) ? subtitle : undefined
+                }
+                titleButton={titleButton}
+              />
               {inlineHeading && children.header && breakpoints.md && (
                 <ContentContainer>
                   <Skeleton loading={loading}>{children.header}</Skeleton>
