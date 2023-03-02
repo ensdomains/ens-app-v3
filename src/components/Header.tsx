@@ -123,7 +123,7 @@ const SearchWrapper = styled.div<{ $state: TransitionState }>(
 )
 
 const routesNoSearch = routes.filter(
-  (route) => route.name !== 'search' && route.icon && !route.onlyDropdown,
+  (route) => route.name !== 'search' && route.icon && !route.onlyDropdown && !route.disabled,
 )
 
 export const Header = () => {

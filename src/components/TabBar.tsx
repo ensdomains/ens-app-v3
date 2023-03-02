@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { LeftArrowSVG, LeftChevronSVG, PersonSVG, mq } from '@ensdomains/thorin'
+import { CrossSVG, LeftChevronSVG, PersonSVG, mq } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useAvatar } from '@app/hooks/useAvatar'
@@ -101,7 +101,7 @@ const TabContainer = styled.div<{ $shrink: boolean }>(
 
     ${$shrink &&
     css`
-      --tab-container-width: ${theme.space['44']};
+      --tab-container-width: calc(${theme.space['40']} + ${theme.space['2']});
     `}
   `,
 )
@@ -191,7 +191,7 @@ const TabBarProfile = ({
   return (
     <ExtraNavWrapper $isOpen={isOpen}>
       <AvatarWrapper onClick={() => setIsOpen((prev) => !prev)}>
-        <ArrowOverlay as={LeftArrowSVG} $isOpen={isOpen} />
+        <ArrowOverlay as={CrossSVG} $isOpen={isOpen} />
         {avatar ? (
           <img loading="eager" decoding="sync" alt="avatar" src={avatar} />
         ) : (
@@ -234,6 +234,12 @@ export const TabBar = () => {
     }
   }, [router.events])
 
+  useEffect(() => {
+    if (!address) {
+      setIsOpen(false)
+    }
+  }, [address])
+
   return (
     <>
       <TabWrapper id="tabbar">
@@ -242,13 +248,13 @@ export const TabBar = () => {
             <LeftChevronSVG />
           </BackButton>
         )}
-        <TabContainer $shrink={!!(address && !hasPrimary && isOpen)}>
+        <TabContainer $shrink={!!(address && ((isOpen && !hasPrimary) || !isOpen))}>
           <TabItems $isConnected={!!address}>
             <RouteItem route={getRoute('search')} />
             {address && (
               <>
                 <RouteItem route={getRoute('names')} />
-                <RouteItem route={getRoute('favourites')} />
+                {/* <RouteItem route={getRoute('favourites')} /> */}
                 <TabBarProfile
                   address={address}
                   isOpen={isOpen}

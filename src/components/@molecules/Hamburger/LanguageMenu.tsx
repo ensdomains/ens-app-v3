@@ -1,4 +1,5 @@
 import ISO6391 from 'iso-639-1'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -131,15 +132,27 @@ const LanguageItem = styled.div(
   `,
 )
 
+const CheckIcon = styled.svg(() => css``)
+
 const LanguageMenu = ({
   setCurrentView,
 }: {
   setCurrentView: (view: 'main' | 'language') => void
 }) => {
   const { i18n } = useTranslation()
-  const languages = (i18n.options.supportedLngs || []).filter(
-    (lang: string) => lang && lang !== i18n.resolvedLanguage && lang !== 'cimode',
-  )
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const initialLanguage = useMemo(() => i18n.resolvedLanguage, [])
+  const languages = (i18n.options.supportedLngs || [])
+    .filter((lang: string) => lang && lang !== 'cimode')
+    .sort((a, b) => {
+      if (a === initialLanguage) {
+        return -1
+      }
+      if (b === initialLanguage) {
+        return 1
+      }
+      return a.localeCompare(b)
+    })
 
   return (
     <Container>
@@ -153,17 +166,13 @@ const LanguageMenu = ({
         </Heading>
       </HeadingWrapper>
       <LanguagesContainer>
-        <LanguageItem>
-          <div>
-            <CheckCircleSVG />
-            <Typography weight="bold">{ISO6391.getNativeName(i18n.resolvedLanguage)}</Typography>
-          </div>
-          <Typography>{i18n.resolvedLanguage.toLocaleUpperCase()}</Typography>
-        </LanguageItem>
         {languages.map((lang: string) => (
           <LanguageItem key={lang} onClick={() => i18n.changeLanguage(lang)}>
             <div>
-              <div style={{ width: '16px' }} />
+              <CheckIcon
+                as={CheckCircleSVG}
+                style={{ display: i18n.resolvedLanguage === lang ? 'block' : 'none' }}
+              />
               <Typography>{ISO6391.getNativeName(lang)}</Typography>
             </div>
             <Typography>{lang.toLocaleUpperCase()}</Typography>
