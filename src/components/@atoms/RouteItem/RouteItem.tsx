@@ -98,7 +98,7 @@ export const RouteItem = ({
   const { t } = useTranslation('common')
   const activeRoute = useActiveRoute()
   const isActive = active || activeRoute === route.name
-  const icon = isActive ? route.icon!.active : route.icon!.inactive
+  const icon = isActive ? route.icon?.active! : route.icon?.inactive!
 
   return (
     <ConditionalWrapper
