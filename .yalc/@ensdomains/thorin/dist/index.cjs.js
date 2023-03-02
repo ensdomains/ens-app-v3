@@ -298,13 +298,22 @@
     color: ${F(i,"text")};
     border-color: ${F(i,"border")};
 
-    &:hover {
-      transform: translateY(-1px);
-      background: ${F(i,"hover")};
-    }
-
     &:active {
       transform: translateY(0px);
+    }
+
+    /* solves sticky problem */
+    @media (hover: hover) {
+      &:hover {
+        transform: translateY(-1px);
+        background: ${F(i,"hover")};
+      }
+    }
+    @media (hover: none) {
+      &:active {
+        transform: translateY(-1px);
+        background: ${F(i,"hover")};
+      }
     }
 
     &:disabled {
@@ -781,6 +790,9 @@
     display: block;
     ${e?l.css`
           visibility: hidden;
+          * {
+            visibility: hidden !important;
+          }
         `:""}
   `),pt=({as:e,children:r,loading:o,...a})=>{const i=t.useContext(Zr),n=o!=null?o:i;return t.createElement(Ma,{...a,$active:n,as:e},t.createElement(Ga,{$active:n},r))};pt.displayName="Skeleton";const Ta=s.default.div(({theme:e,$hover:r,$size:o,$colorStyle:a})=>l.css`
     align-items: center;

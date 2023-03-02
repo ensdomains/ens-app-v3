@@ -226,9 +226,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       </Head>
       <Content
         noTitle
-        title={isSelf ? t('yourProfile') : normalisedName}
-        subtitle={isSelf ? normalisedName : 'Profile'}
+        title={normalisedName}
         loading={isLoading || detailsLoading}
+        copyValue={normalisedName}
       >
         {{
           info: infoBanner,

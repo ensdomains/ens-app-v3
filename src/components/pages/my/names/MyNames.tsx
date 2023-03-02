@@ -129,15 +129,7 @@ const MyNames = () => {
   useProtectedRoute('/', loading ? true : address && address !== '')
 
   return (
-    <Content
-      title={t('title')}
-      subtitle={`${t('subtitle.start')} ${isSelf ? t('subtitle.your') : t('subtitle.this')} ${t(
-        'subtitle.wallet',
-      )}`}
-      alwaysShowSubtitle
-      singleColumnContent
-      loading={loading}
-    >
+    <Content title={t('title')} singleColumnContent loading={loading}>
       {{
         trailing: (
           <TabWrapperWithButtons>

@@ -3,7 +3,7 @@ import { useRouter } from 'next/router'
 import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import styled, { css } from 'styled-components'
 
-import { LeftArrowSVG, PersonSVG, mq } from '@ensdomains/thorin'
+import { LeftArrowSVG, LeftChevronSVG, PersonSVG, mq } from '@ensdomains/thorin'
 
 import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useAvatar } from '@app/hooks/useAvatar'
@@ -56,6 +56,11 @@ const AvatarWrapper = styled.div(
 const TabWrapper = styled.div(
   ({ theme }) => css`
     position: fixed;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['2']};
     bottom: 0;
     left: 0;
     right: 0;
@@ -80,7 +85,6 @@ const TabContainer = styled.div<{ $shrink: boolean }>(
 
     width: var(--tab-container-width);
     height: ${theme.space['14']};
-    margin: 0 auto;
     display: flex;
     flex-direction: row;
     align-items: center;
@@ -119,6 +123,26 @@ const TabItems = styled.div<{ $isConnected: boolean }>(
     justify-content: center;
     gap: ${theme.space['4']};
     padding: 0 ${theme.space['1.5']};
+  `,
+)
+
+const BackButton = styled.button(
+  ({ theme }) => css`
+    width: ${theme.space['10']};
+    height: ${theme.space['10']};
+    border: 2px solid ${theme.colors.border};
+    border-radius: ${theme.radii.full};
+    background-color: ${theme.colors.background};
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    & > svg {
+      width: ${theme.space['6']};
+      height: ${theme.space['6']};
+      color: ${theme.colors.grey};
+    }
   `,
 )
 
@@ -196,6 +220,7 @@ export const TabBar = () => {
   const { name } = usePrimary(address!, !!address)
 
   const hasPrimary = !!name
+  const hasBack = !!router.query.from
 
   const [isOpen, setIsOpen] = useState(false)
 
@@ -212,6 +237,11 @@ export const TabBar = () => {
   return (
     <>
       <TabWrapper id="tabbar">
+        {hasBack && (
+          <BackButton onClick={() => router.back()}>
+            <LeftChevronSVG />
+          </BackButton>
+        )}
         <TabContainer $shrink={!!(address && !hasPrimary && isOpen)}>
           <TabItems $isConnected={!!address}>
             <RouteItem route={getRoute('search')} />
