@@ -343,8 +343,8 @@
   "errors": {
     "invalidName": "This name is invalid.",
     "invalidAddress": "Not a valid address",
-    "expiringSoonOne": "The grace period for this name ends on",
-    "expiringSoonTwo": ". If it isn’t extended before this date, it will become available for registration.",
+    "expiringSoon": "The grace period for this name ends on {{date}}. If it isn’t extended before this date, it will become available for registration.",
+    "hasExpired": "{{ name }} has expired",
     "ownerManagerChoice": "Must send owner or manager",
     "unknown": "Unknown error",
     "notMigrated": "This name is not migrated to the new registry.",

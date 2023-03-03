@@ -82,9 +82,7 @@ export const useNameDetails = (name: string) => {
       return t('errors.invalidName')
     }
     if (registrationStatus === 'gracePeriod') {
-      return `${t('errors.expiringSoonOne')} ${formatFullExpiry(gracePeriodEndDate)} ${t(
-        'errors.expiringSoonTwo',
-      )}`
+      return `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`
     }
     if (
       !profile &&
@@ -112,9 +110,9 @@ export const useNameDetails = (name: string) => {
 
   const errorTitle = useMemo(() => {
     if (registrationStatus === 'gracePeriod') {
-      return `${name}  has expired`
+      return t('errors.hasExpired', { name })
     }
-  }, [registrationStatus, name])
+  }, [registrationStatus, name, t])
 
   const isLoading = !ready || profileLoading || abiLoading || basicLoading || dnsOwnerLoading
 
