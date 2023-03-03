@@ -161,7 +161,7 @@
           "title": "Change permissions",
           "fuses": {
             "CAN_EXTEND_EXPIRY": "Grant permission to: Extend expiry"
-          } 
+          }
         },
         "setExpiry": {
           "title": "Set name expiry",
@@ -214,7 +214,7 @@
         },
         "revokeChangeFusesWarning": {
           "title": "Remaining permissions will be locked",
-          "subtitle": "Permissions and custom fuses will be permanently locked in their current state after ‘change permissions’ is revoked. This will only be reset if the name expires."    
+          "subtitle": "Permissions and custom fuses will be permanently locked in their current state after ‘change permissions’ is revoked. This will only be reset if the name expires."
         }
       },
       "action": {
@@ -242,7 +242,8 @@
   },
   "intro": {
     "migrateAndUpdateResolver": {
-      "title": "The edits you want to save to your profile require that you upgrade your resolver.",
+      "title": "Action Required",
+      "heading": "The edits you want to save to your profile require that you upgrade your resolver.",
       "link": "Learn more about resolver upgrades",
       "warning": "Note that if you cancel this at any point your changes will not be saved."
     },

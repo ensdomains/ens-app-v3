@@ -107,16 +107,9 @@ const DirectionButton = styled.button<{ $active: boolean }>(
   `,
 )
 
-export enum SortType {
-  expiryDate = 'expiryDate',
-  labelName = 'labelName',
-  creationDate = 'creationDate',
-}
+export type SortType = 'expiryDate' | 'labelName' | 'creationDate'
 
-export enum SortDirection {
-  asc = 'asc',
-  desc = 'desc',
-}
+export type SortDirection = 'asc' | 'desc'
 
 export type SortValue = {
   type: SortType
@@ -188,14 +181,14 @@ export const NameTableHeader = ({
                 options={sortTypeOptions}
               />
               <DirectionButton
-                $active={sortDirection === SortDirection.desc}
-                onClick={() => onSortDirectionChange?.(SortDirection.desc)}
+                $active={sortDirection === 'desc'}
+                onClick={() => onSortDirectionChange?.('desc')}
               >
                 <UpDirectionSVG />
               </DirectionButton>
               <DirectionButton
-                $active={sortDirection === SortDirection.asc}
-                onClick={() => onSortDirectionChange?.(SortDirection.asc)}
+                $active={sortDirection === 'asc'}
+                onClick={() => onSortDirectionChange?.('asc')}
               >
                 <DownDirectionSVG />
               </DirectionButton>

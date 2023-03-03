@@ -24,7 +24,7 @@ export const MigrateAndUpdateResolver = () => {
     <>
       <DescriptionWrapper>
         <Typography color="textTertiary">
-          {t('intro.migrateAndUpdateResolver.title')}
+          {t('intro.migrateAndUpdateResolver.heading')}
           &nbsp;
           <span>
             <Outlink href="/faq/managing-a-name#what-is-a-resolver">

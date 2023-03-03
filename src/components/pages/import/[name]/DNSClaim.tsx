@@ -1,3 +1,4 @@
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -101,11 +102,23 @@ const HeadingContainer = styled.div`
   justify-content: space-between;
 `
 
-const BackContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-`
+const BackContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+
+    & > button {
+      padding: ${theme.space['2']};
+
+      & > svg {
+        width: ${theme.space['6']};
+        height: ${theme.space['6']};
+      }
+    }
+  `,
+)
 
 const StyledTitle = styled(Title)(
   () => css`
@@ -164,6 +177,9 @@ export default () => {
 
   return (
     <Container>
+      <Head>
+        <title>{t('title', { name })}</title>
+      </Head>
       <HeadingContainer>
         <BackContainer>
           <ContentContainer>
