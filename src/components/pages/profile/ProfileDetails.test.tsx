@@ -37,7 +37,6 @@ describe('onwershipInfoCalc', () => {
     ]
 
     const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
-    console.log('result: ', result)
     expect(result).toEqual([
       { key: 'manager', value: '0x123' },
       { key: 'owner', value: '0x123' },
