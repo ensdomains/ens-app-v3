@@ -72,7 +72,7 @@ type Props = {
   name: string
 }
 
-export const GracePeriodBanner = ({
+export const NameAvailableBanner = ({
   normalisedName,
   expiryDate,
 }: {
@@ -223,7 +223,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const infoBanner = useMemo(() => {
     if (gracePeriodEndDate && gracePeriodEndDate < new Date()) {
-      return <GracePeriodBanner {...{ normalisedName, expiryDate }} />
+      return <NameAvailableBanner {...{ normalisedName, expiryDate }} />
     }
     if (_canBeWrapped) {
       return <WrapperCallToAction name={normalisedName} />

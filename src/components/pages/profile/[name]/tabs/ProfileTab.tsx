@@ -115,6 +115,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}
+        gracePeriodEndDate={gracePeriodEndDate}
       />
     </DetailsWrapper>
   )
