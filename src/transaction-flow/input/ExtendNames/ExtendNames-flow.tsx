@@ -276,6 +276,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                   size="small"
                   checked={userConfig.currency === 'fiat'}
                   onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
+                  data-testid="extend-names-currency-toggle"
                 />
               </OptionBar>
               {rentFee && transactionFee && (
