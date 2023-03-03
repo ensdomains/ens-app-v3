@@ -2,6 +2,7 @@ import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { formatFullExpiry } from '@app/utils/utils'
 
 import { useBasicName } from './useBasicName'
 import useDNSOwner from './useDNSOwner'
@@ -81,7 +82,7 @@ export const useNameDetails = (name: string) => {
       return t('errors.invalidName')
     }
     if (registrationStatus === 'gracePeriod') {
-      return `${t('errors.expiringSoonOne')} ${gracePeriodEndDate?.toString()} ${t(
+      return `${t('errors.expiringSoonOne')} ${formatFullExpiry(gracePeriodEndDate)} ${t(
         'errors.expiringSoonTwo',
       )}`
     }

@@ -16,6 +16,7 @@ import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
+import { formatFullExpiry } from '@app/utils/utils'
 
 import { shouldShowSuccessPage } from '../../import/[name]/shared'
 import MoreTab from './tabs/MoreTab/MoreTab'
@@ -91,7 +92,9 @@ export const NameAvailableBanner = ({
         <Trans
           ns="profile"
           i18nKey="banner.available.description"
-          values={{ date: expiryDate?.toString() }}
+          values={{
+            date: formatFullExpiry(expiryDate),
+          }}
           components={{ strong: <strong /> }}
         />
       </Banner>

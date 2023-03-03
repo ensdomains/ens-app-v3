@@ -1,11 +1,11 @@
 import { render, screen } from '@app/test-utils'
 
-import { GracePeriodBanner } from './Profile'
+import { NameAvailableBanner } from './Profile'
 
-describe('GracePeriodBanner', () => {
+describe('NameAvailableBanner', () => {
   it('should display the expiry date of the name', () => {
     const date = new Date()
-    render(<GracePeriodBanner {...{ normalisedName: 'nick.eth', expiryDate: date }} />)
+    render(<NameAvailableBanner {...{ normalisedName: 'nick.eth', expiryDate: date }} />)
     expect(screen.getByText(date.toString(), { exact: false })).toBeVisible()
   })
 })
