@@ -64,7 +64,8 @@
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
     "back": "Back",
-    "oldApp": "Old ENS App"
+    "oldApp": "Old ENS App",
+    "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet."
   },
   "wallet": {
     "myProfile": "Profile",

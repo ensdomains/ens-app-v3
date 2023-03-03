@@ -1,16 +1,18 @@
 import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css, keyframes } from 'styled-components'
 
-import { CrossSVG, DynamicPopover, MenuSVG, Modal } from '@ensdomains/thorin'
+import { CrossSVG, DynamicPopover, MenuSVG, Modal, Spinner } from '@ensdomains/thorin'
 
 import { useInitial } from '@app/hooks/useInitial'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { useGraphOutOfSync } from '@app/utils/SyncProvider'
 
 import LanguageMenu from './LanguageMenu'
 import MainMenu from './MainMenu'
 
 const Button = styled.button<{ $active: boolean }>(
   ({ theme, $active }) => css`
+    position: relative;
     padding: ${theme.space['2']};
     border-radius: ${theme.radii.full};
 
@@ -34,6 +36,17 @@ const Button = styled.button<{ $active: boolean }>(
       background-color: ${theme.colors.greyLight};
       color: ${theme.colors.textPrimary};
     `}
+  `,
+)
+
+const StyledSpinner = styled(Spinner)(
+  ({ theme }) => css`
+    position: absolute;
+    height: ${theme.space['9']};
+    width: ${theme.space['9']};
+    top: -${theme.space['0.5']};
+    left: -${theme.space['0.5']};
+    stroke-width: ${theme.space['0.5']};
   `,
 )
 
@@ -117,12 +130,14 @@ type View = 'main' | 'language'
 const Hamburger = () => {
   const breakpoints = useBreakpoint()
 
-  const containerRef = useRef<HTMLDivElement>(null)
+  const containerRef = useRef<HTMLDivElement>()
   const btnRef = useRef<HTMLButtonElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
   const isInitial = useInitial()
 
-  const defaultHeight = useRef<number>(464)
+  const graphOutOfSync = useGraphOutOfSync()
+
+  const defaultHeight = useRef<number>(null)
 
   const [height, setHeight] = useState(defaultHeight.current)
   const [animation, setAnimation] = useState<{
@@ -181,11 +196,9 @@ const Hamburger = () => {
   useEffect(() => {
     if (!animation) return
     if (animation.direction === 'backwards') {
-      setHeight(defaultHeight.current)
+      setHeight(containerRef.current?.children[1].getBoundingClientRect().height ?? null)
     } else {
-      setHeight(
-        slideRef.current?.children[0].getBoundingClientRect().height ?? defaultHeight.current,
-      )
+      setHeight(slideRef.current?.children[0].getBoundingClientRect().height ?? null)
     }
     const timeout = setTimeout(() => {
       setAnimation(null)
@@ -193,20 +206,26 @@ const Hamburger = () => {
     return () => clearTimeout(timeout)
   }, [animation])
 
-  useEffect(() => {
-    const initialHeight = defaultHeight.current
-    if (breakpoints.md) {
-      defaultHeight.current = 427
-    } else {
-      defaultHeight.current = 464
+  const measuredRef = useCallback((el: HTMLDivElement) => {
+    if (el) {
+      setTimeout(() => {
+        const getChildHeight = (n: number) => el.children[n]?.getBoundingClientRect().height
+        const child0Height = getChildHeight(0)
+        if (child0Height === 0) setHeight(getChildHeight(1))
+        else setHeight(child0Height)
+        containerRef.current = el
+      }, 1)
     }
-    setHeight((prev) => {
-      if (prev === initialHeight && initialHeight !== defaultHeight.current) {
-        return defaultHeight.current
-      }
-      return prev
-    })
-  }, [breakpoints.md])
+  }, [])
+
+  const button = (
+    <Button ref={btnRef} $active={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
+      {graphOutOfSync && <StyledSpinner color="accent" />}
+      <MenuSVG />
+    </Button>
+  )
+
+  if (isInitial) return button
 
   const currentComponent = {
     main: <MainMenu setCurrentView={setCurrentView} />,
@@ -226,15 +245,13 @@ const Hamburger = () => {
 
   return (
     <>
-      <Button ref={btnRef} $active={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
-        <MenuSVG />
-      </Button>
+      {button}
       {!isInitial && breakpoints.md ? (
         <DynamicPopover
           isOpen={isOpen}
           anchorRef={btnRef}
           popover={
-            <DesktopDropdownCard ref={containerRef} style={{ height }}>
+            <DesktopDropdownCard ref={measuredRef} style={{ height: height || undefined }}>
               {componentWithAnimation}
             </DesktopDropdownCard>
           }
@@ -245,7 +262,7 @@ const Hamburger = () => {
         />
       ) : (
         <Modal open={isOpen} onDismiss={() => setIsOpen(false)} alignTop>
-          <MobileCard ref={containerRef} style={{ height }}>
+          <MobileCard ref={measuredRef} style={{ height: height || undefined }}>
             {componentWithAnimation}
           </MobileCard>
           <CloseButton onClick={() => setIsOpen(false)}>

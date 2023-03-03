@@ -7,6 +7,7 @@ import {
   CurrencyToggle,
   LanguageSVG,
   RightChevronSVG,
+  Spinner,
   Typography,
   WalletSVG,
   mq,
@@ -23,6 +24,7 @@ import BaseLink from '@app/components/@atoms/BaseLink'
 import { SocialIcon } from '@app/components/SocialIcon'
 import { useChainName } from '@app/hooks/useChainName'
 import { routes } from '@app/routes'
+import { useGraphOutOfSync } from '@app/utils/SyncProvider'
 import { makeDisplay } from '@app/utils/currency'
 import useUserConfig from '@app/utils/useUserConfig'
 
@@ -183,13 +185,13 @@ const NetworkSectionContainer = styled.div(
   ({ theme }) => css`
     width: 100%;
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
     gap: ${theme.space['2']};
     padding: ${theme.space['2']};
 
-    & > div:first-child {
+    #chain-name {
       text-transform: capitalize;
     }
 
@@ -200,19 +202,40 @@ const NetworkSectionContainer = styled.div(
   miscSectionStyle,
 )
 
+const NetworkSectionRow = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    gap: ${theme.space['2']};
+    text-align: center;
+  `,
+)
+
 const NetworkSection = () => {
+  const { t } = useTranslation('common')
+  const graphOutOfSync = useGraphOutOfSync()
   const chainName = useChainName()
   const feeData = useFeeData()
 
   return (
     <NetworkSectionContainer>
-      <Typography weight="bold" color="text">
-        {chainName}
-      </Typography>
-      {feeData?.data?.maxFeePerGas && (
-        <Typography color="grey">
-          {makeDisplay(feeData?.data?.maxFeePerGas, undefined, 'Gwei', 9)}
+      <NetworkSectionRow>
+        {graphOutOfSync && <Spinner color="accent" />}
+        <Typography id="chain-name" weight="bold" color="text">
+          {chainName}
         </Typography>
+        {feeData?.data?.maxFeePerGas && (
+          <Typography color="grey">
+            {makeDisplay(feeData?.data?.maxFeePerGas, undefined, 'Gwei', 9)}
+          </Typography>
+        )}
+      </NetworkSectionRow>
+      {graphOutOfSync && (
+        <NetworkSectionRow>
+          <Typography fontVariant="small">{t('navigation.syncMessage')}</Typography>
+        </NetworkSectionRow>
       )}
     </NetworkSectionContainer>
   )
