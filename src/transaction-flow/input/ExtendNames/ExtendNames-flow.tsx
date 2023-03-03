@@ -17,7 +17,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
-import { CurrencyUnit } from '@app/types'
+import useUserConfig from '@app/utils/useUserConfig'
 import { yearsToSeconds } from '@app/utils/utils'
 
 import { ShortExpiry } from '../../../components/@atoms/ExpiryComponents/ExpiryComponents'
@@ -192,9 +192,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
   const [years, setYears] = useState(1)
   const duration = yearsToSeconds(years)
 
-  const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
-  const fiatUnit = 'usd'
-  const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
+  const { userConfig, setCurrency } = useUserConfig()
+  const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
   const { base: rentFee, loading: priceLoading } = usePrice(names, true)
 
@@ -275,9 +274,8 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
                 <GasDisplay gasPrice={gasPrice} />
                 <CurrencyToggle
                   size="small"
-                  checked={currencyUnit === 'fiat'}
-                  onChange={() => setCurrencyUnit(currencyUnit === 'eth' ? 'fiat' : 'eth')}
-                  data-testid="extend-names-currency-toggle"
+                  checked={userConfig.currency === 'fiat'}
+                  onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
                 />
               </OptionBar>
               {rentFee && transactionFee && (
