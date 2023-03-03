@@ -157,7 +157,7 @@ export const OwnerProfileButton = ({
     if (breakpoints.sm) {
       return shortenAddress(address)
     }
-    return `${address.slice(0, 5)}...`
+    return `${address?.slice(0, 5)}...`
   }, [address, breakpoints])
 
   const isExpiry = label === 'expiry'
