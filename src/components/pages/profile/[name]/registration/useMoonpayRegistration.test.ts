@@ -115,7 +115,6 @@ describe('useMoonpayRegistration', () => {
       useMoonpayRegistration(mockDispatch, normalisedName, selected, item),
     )
 
-    console.log('result: ', result.current)
     result.current.initiateMoonpayRegistrationMutation.mutate(registrationDuration)
     await waitFor(
       () =>
