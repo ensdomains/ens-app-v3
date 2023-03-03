@@ -148,6 +148,7 @@ type AppPropsWithLayout = AppProps & {
 }
 
 // Meaningless change
+// And another one
 function MyApp({ Component, pageProps }: AppPropsWithLayout) {
   const getLayout = Component.getLayout ?? ((page) => page)
 
