@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { WithColor } from '../../../types/withColorOrColorStyle';
-declare type NativeDivAttributes = React.HTMLAttributes<HTMLDivElement>;
+type NativeDivAttributes = React.HTMLAttributes<HTMLDivElement>;
 export declare const Heading: React.ForwardRefExoticComponent<{
     /** CSS property of textAlign */
     align?: React.CSSProperties['textAlign'];

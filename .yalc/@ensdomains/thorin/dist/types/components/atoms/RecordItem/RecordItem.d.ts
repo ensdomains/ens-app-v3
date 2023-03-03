@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
-declare type Size = 'small' | 'large';
-declare type BaseProps = {
+type Size = 'small' | 'large';
+type BaseProps = {
     value: string;
     link?: string;
     size?: Size;
@@ -11,7 +11,7 @@ declare type BaseProps = {
     children: string;
     onClick?: () => void;
 };
-export declare type Props = BaseProps;
+export type Props = BaseProps;
 export declare const RecordItem: {
     ({ link, size, inline, icon, keyLabel, keySublabel, value, children, ...props }: Props): JSX.Element;
     displayName: string;

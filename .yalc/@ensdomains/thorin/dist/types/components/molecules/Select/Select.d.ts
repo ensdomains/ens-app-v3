@@ -1,9 +1,9 @@
 import * as React from 'react';
 import { Colors, Space } from '../../../tokens';
 import { FieldBaseProps } from '../../atoms/Field';
-declare type Size = 'small' | 'medium';
-declare type NativeSelectProps = React.InputHTMLAttributes<HTMLInputElement>;
-export declare type SelectOptionProps = {
+type Size = 'small' | 'medium';
+type NativeSelectProps = React.InputHTMLAttributes<HTMLInputElement>;
+export type SelectOptionProps = {
     value: string;
     label?: string;
     node?: React.ReactNode;
@@ -11,9 +11,9 @@ export declare type SelectOptionProps = {
     disabled?: boolean;
     color?: Colors;
 };
-declare type Direction = 'up' | 'down';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-export declare type SelectProps = {
+type Direction = 'up' | 'down';
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+export type SelectProps = {
     /** The id attribute of div element. */
     id?: NativeSelectProps['id'];
     /** If true, prevents user interaction with component. */
@@ -124,5 +124,5 @@ export declare const Select: React.ForwardRefExoticComponent<{
     validated?: boolean | undefined;
     /** If true, sets the select component into read only mode */
     readOnly?: boolean | undefined;
-} & FieldBaseProps & Omit<NativeDivProps, "children" | "id" | "role" | "tabIndex" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-invalid" | "onFocus" | "onBlur" | "onChange" | "onKeyDown" | "onClick"> & React.RefAttributes<HTMLInputElement>>;
+} & FieldBaseProps & Omit<NativeDivProps, "id" | "role" | "tabIndex" | "aria-controls" | "aria-expanded" | "aria-haspopup" | "aria-invalid" | "children" | "onFocus" | "onBlur" | "onChange" | "onKeyDown" | "onClick"> & React.RefAttributes<HTMLInputElement>>;
 export {};

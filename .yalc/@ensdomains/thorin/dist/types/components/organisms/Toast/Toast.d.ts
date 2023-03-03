@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { TransitionState } from 'react-transition-state';
 import { Space } from '../../..';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-declare type Props = {
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type Props = {
     onClose: () => void;
     open: boolean;
     msToShow?: number;
@@ -15,7 +15,7 @@ declare type Props = {
     bottom?: Space;
     variant?: 'touch' | 'desktop';
 } & Omit<NativeDivProps, 'title'>;
-declare type InternalProps = {
+type InternalProps = {
     state: TransitionState;
 };
 export declare const TouchToast: ({ onClose, open, title, description, left, right, bottom, state, children, popped, setPopped, ...props }: {

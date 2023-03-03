@@ -1,6 +1,6 @@
 import * as React from 'react';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-declare type Props = {
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type Props = {
     children: NativeDivProps['children'];
     /** An element providing styling for the backdrop component. Defaults to the BackdropSurface component. */
     backdropSurface?: React.ElementType;
@@ -10,9 +10,11 @@ declare type Props = {
     open: boolean;
     /** Aligns the modal to the top of the page. Only applies to mobile views. */
     alignTop?: boolean;
+    /** A callback fired on the render of children */
+    renderCallback?: () => void;
 } & NativeDivProps;
 export declare const Modal: {
-    ({ children, backdropSurface, onDismiss, open, alignTop, ...props }: Props): JSX.Element;
+    ({ children, backdropSurface, onDismiss, open, alignTop, renderCallback, ...props }: Props): JSX.Element;
     displayName: string;
 };
 export {};

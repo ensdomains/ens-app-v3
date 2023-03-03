@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { WithAlert } from '../../../types';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-declare type IconTypes = 'filledCircle' | 'normal' | 'none';
-declare type BaseProps = {
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type IconTypes = 'filledCircle' | 'normal' | 'none';
+type BaseProps = {
     /** The title for the banner */
     title?: string;
     as?: 'a';
@@ -11,15 +11,15 @@ declare type BaseProps = {
     icon?: React.ReactNode;
     iconType?: IconTypes;
 } & NativeDivProps;
-declare type WithIcon = {
+type WithIcon = {
     icon?: React.ReactNode;
     iconType?: Omit<IconTypes, 'none'>;
 };
-declare type WithoutIcon = {
+type WithoutIcon = {
     icon?: never;
     iconType: 'none';
 };
-declare type WithAnchor = {
+type WithAnchor = {
     as: 'a';
     href?: string;
     target?: string;
@@ -27,16 +27,16 @@ declare type WithAnchor = {
     onDismiss?: never;
     actionIcon?: React.ReactNode;
 };
-declare type WithoutAnchor = {
+type WithoutAnchor = {
     as?: never;
     href?: never;
     target?: never;
     rel?: never;
     onDismiss?: () => void;
 };
-export declare type Props = BaseProps & (WithAnchor | WithoutAnchor) & (WithIcon | WithoutIcon) & WithAlert;
+export type Props = BaseProps & (WithAnchor | WithoutAnchor) & (WithIcon | WithoutIcon) & WithAlert;
 export declare const Banner: {
-    ({ title, alert, icon, iconType, as, children, onDismiss, ...props }: React.PropsWithChildren<Props>): JSX.Element;
+    ({ title, alert, icon, iconType, as: asProp, children, onDismiss, ...props }: React.PropsWithChildren<Props>): JSX.Element;
     displayName: string;
 };
 export {};

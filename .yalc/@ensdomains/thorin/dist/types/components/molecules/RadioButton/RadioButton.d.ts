@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { WithColorStyle } from '../../../types/withColorOrColorStyle';
 import { FieldBaseProps } from '../../atoms/Field';
-declare type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
 export declare const RadioButton: React.ForwardRefExoticComponent<{
     /** A string or component that represents the input item. */
     label: React.ReactNode;
@@ -25,5 +25,5 @@ export declare const RadioButton: React.ForwardRefExoticComponent<{
     onFocus?: NativeInputProps['onFocus'];
     /** The handler for blur events. */
     onBlur?: NativeInputProps['onBlur'];
-} & Omit<FieldBaseProps, "labelRight"> & Omit<NativeInputProps, "value" | "type" | "children" | "role" | "aria-invalid" | "defaultValue"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>;
+} & Omit<FieldBaseProps, "labelRight"> & Omit<NativeInputProps, "value" | "type" | "role" | "aria-invalid" | "children" | "defaultValue"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>;
 export {};

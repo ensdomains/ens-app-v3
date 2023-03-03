@@ -2,7 +2,7 @@ import * as React from 'react';
 import { Font, FontWeight } from '../../../tokens/typography';
 import { WithTypography } from '../../../types/withTypography';
 import { WithColor } from '../../../types/withColorOrColorStyle';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
 export declare const Typography: React.ForwardRefExoticComponent<{
     /** element type of container */
     asProp?: "code" | "div" | "h1" | "h2" | "h3" | "h4" | "h5" | "h6" | "i" | "label" | "p" | "span" | undefined;

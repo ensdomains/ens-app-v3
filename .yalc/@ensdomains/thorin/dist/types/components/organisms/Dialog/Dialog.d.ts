@@ -1,35 +1,35 @@
 import * as React from 'react';
 import { WithAlert } from '../../../types';
-declare type StepType = 'notStarted' | 'inProgress' | 'completed';
-declare type TitleProps = {
+type StepType = 'notStarted' | 'inProgress' | 'completed';
+type TitleProps = {
     title?: string | React.ReactNode;
     subtitle?: string | React.ReactNode;
 } & WithAlert;
-declare type StepProps = {
+type StepProps = {
     currentStep?: number;
     stepCount?: number;
     stepStatus?: StepType;
 };
-declare type BaseProps = {
+type BaseProps = {
     variant?: 'closable' | 'actionable' | 'blank';
     children: React.ReactNode;
     onDismiss?: () => void;
     onClose?: () => void;
     open: boolean;
 };
-declare type ClosableProps = {
+type ClosableProps = {
     variant: 'closable';
 } & TitleProps;
-declare type ActionableProps = {
+type ActionableProps = {
     variant: 'actionable';
     trailing?: React.ReactNode;
     leading?: React.ReactNode;
     center?: boolean;
 } & TitleProps & StepProps;
-declare type BlankProps = {
+type BlankProps = {
     variant: 'blank';
 };
-declare type Props = BaseProps & (ClosableProps | ActionableProps | BlankProps);
+type Props = BaseProps & (ClosableProps | ActionableProps | BlankProps);
 export declare const Dialog: {
     ({ children, onDismiss, onClose, open, variant, ...props }: Props): JSX.Element;
     displayName: string;

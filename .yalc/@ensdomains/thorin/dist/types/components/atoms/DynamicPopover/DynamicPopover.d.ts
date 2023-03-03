@@ -1,15 +1,15 @@
 import * as React from 'react';
-export declare type DynamicPopoverSide = 'top' | 'right' | 'bottom' | 'left';
-export declare type DynamicPopoverAlignment = 'start' | 'center' | 'end';
-export declare type PopoverProps = React.PropsWithChildren<{
+export type DynamicPopoverSide = 'top' | 'right' | 'bottom' | 'left';
+export type DynamicPopoverAlignment = 'start' | 'center' | 'end';
+export type PopoverProps = React.PropsWithChildren<{
     placement: DynamicPopoverSide;
     mobilePlacement: DynamicPopoverSide;
 }>;
-export declare type DynamicPopoverAnimationFunc = (horizonalClearance: number, verticalClearance: number, side: DynamicPopoverSide, mobileSide: DynamicPopoverSide) => {
+export type DynamicPopoverAnimationFunc = (horizonalClearance: number, verticalClearance: number, side: DynamicPopoverSide, mobileSide: DynamicPopoverSide) => {
     translate: string;
     mobileTranslate: string;
 };
-export declare type DynamicPopoverButtonProps = {
+export type DynamicPopoverButtonProps = {
     pressed?: boolean;
     onClick?: React.MouseEventHandler<HTMLElement>;
 };
@@ -42,6 +42,6 @@ export interface DynamicPopoverProps {
     isOpen?: boolean;
 }
 export declare const DynamicPopover: {
-    ({ popover, placement, mobilePlacement, animationFn, anchorRef, onShowCallback, width, mobileWidth, useIdealPlacement, additionalGap, transitionDuration, isOpen, align, }: DynamicPopoverProps): React.ReactPortal;
+    ({ popover, placement, mobilePlacement, animationFn: _animationFn, anchorRef, onShowCallback, width, mobileWidth, useIdealPlacement, additionalGap, transitionDuration, isOpen, align, }: DynamicPopoverProps): JSX.Element | null;
     displayName: string;
 };

@@ -1,7 +1,7 @@
 import * as React from 'react';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-declare type Size = 'small' | 'medium';
-declare type Props = {
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type Size = 'small' | 'medium';
+type Props = {
     /** Total number of pages */
     total: number;
     current: number;

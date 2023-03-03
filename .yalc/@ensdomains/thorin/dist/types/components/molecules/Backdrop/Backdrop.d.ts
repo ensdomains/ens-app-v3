@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { TransitionState } from 'react-transition-state';
-declare type Props = {
+type Props = {
     /** A function that renders the children nodes */
     children: (renderProps: {
         state: TransitionState;
@@ -14,9 +14,11 @@ declare type Props = {
     /** If true, removes background */
     noBackground?: boolean;
     className?: string;
+    /** A callback fired on the render of children */
+    renderCallback?: () => void;
 };
 export declare const Backdrop: {
-    ({ children, surface, onDismiss, noBackground, className, open, }: Props): JSX.Element | null;
+    ({ children, surface, onDismiss, noBackground, className, open, renderCallback, }: Props): JSX.Element | null;
     displayName: string;
 };
 export {};

@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { FieldBaseProps } from '../../atoms/Field';
-declare type NativeTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
+type NativeTextareaProps = React.TextareaHTMLAttributes<HTMLTextAreaElement>;
 export declare const Textarea: React.ForwardRefExoticComponent<Omit<FieldBaseProps, "inline"> & {
     /** If true, the input will automatically correct words it marks as spelling errors. */
     autoCorrect?: NativeTextareaProps['autoCorrect'];
@@ -48,5 +48,5 @@ export declare const Textarea: React.ForwardRefExoticComponent<Omit<FieldBasePro
     onBlur?: NativeTextareaProps['onBlur'];
     /** The handler for focus events. */
     onFocus?: NativeTextareaProps['onFocus'];
-} & Omit<NativeTextareaProps, "value" | "children" | "aria-invalid" | "defaultValue"> & React.RefAttributes<HTMLTextAreaElement>>;
+} & Omit<NativeTextareaProps, "value" | "aria-invalid" | "children" | "defaultValue"> & React.RefAttributes<HTMLTextAreaElement>>;
 export {};

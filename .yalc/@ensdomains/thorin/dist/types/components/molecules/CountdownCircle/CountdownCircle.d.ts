@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Colors } from '../../../tokens';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
 export declare const CountdownCircle: React.ForwardRefExoticComponent<{
     accessibilityLabel?: string | undefined;
     color?: Colors | undefined;
@@ -9,5 +9,5 @@ export declare const CountdownCircle: React.ForwardRefExoticComponent<{
     disabled?: boolean | undefined;
     callback?: (() => void) | undefined;
     size?: "small" | "large" | undefined;
-} & Omit<NativeDivProps, "children" | "color"> & React.RefAttributes<HTMLDivElement>>;
+} & Omit<NativeDivProps, "color" | "children"> & React.RefAttributes<HTMLDivElement>>;
 export {};

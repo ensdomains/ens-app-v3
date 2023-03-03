@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { WithColorStyle } from '../../../types/withColorOrColorStyle';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-export declare type Props = {
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+export type Props = {
     /** Element type of container */
     as?: 'div' | 'span';
     /** If true, changes colors on hover */

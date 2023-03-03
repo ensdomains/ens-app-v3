@@ -2,8 +2,8 @@ import * as React from 'react';
 import { FlattenInterpolation } from 'styled-components';
 import { FieldBaseProps } from '../../atoms/Field';
 import { Space } from '../../../tokens/index';
-declare type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
-declare type BaseProps = Omit<FieldBaseProps, 'inline'> & {
+type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type BaseProps = Omit<FieldBaseProps, 'inline'> & {
     /** If the element should attempt to gain focus after it is rendered. */
     autoFocus?: NativeInputProps['autoFocus'];
     /** If the input should display a list of suggested words. */
@@ -70,16 +70,16 @@ declare type BaseProps = Omit<FieldBaseProps, 'inline'> & {
     /** Set of styles  */
     parentStyles?: FlattenInterpolation<any>;
 } & Omit<NativeInputProps, 'size' | 'prefix' | 'children' | 'value' | 'defaultValue' | 'type' | 'aria-invalid' | 'onInput' | 'onKeyDown' | 'onWheel'>;
-declare type WithTypeEmail = {
+type WithTypeEmail = {
     type?: 'email';
 };
-declare type WithTypeText = {
+type WithTypeText = {
     type?: 'text';
     maxLength?: NativeInputProps['maxLength'];
 };
-declare type WithTypeDateTimeLocal = {
+type WithTypeDateTimeLocal = {
     type?: 'datetime-local';
 };
-declare type Props = BaseProps & (WithTypeEmail | WithTypeText | WithTypeDateTimeLocal);
+type Props = BaseProps & (WithTypeEmail | WithTypeText | WithTypeDateTimeLocal);
 export declare const Input: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLInputElement>>;
 export {};

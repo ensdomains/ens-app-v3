@@ -14,8 +14,8 @@ export declare const colorMap: {
     teal: string;
     grey: string;
     background: string;
-    border: string;
     accent: string;
+    border: string;
     blueSurface: string;
     indigoSurface: string;
     purpleSurface: string;
@@ -27,39 +27,6 @@ export declare const colorMap: {
     tealSurface: string;
     greySurface: string;
     accentSurface: string;
-    blueActive: string;
-    indigoActive: string;
-    purpleActive: string;
-    pinkActive: string;
-    redActive: string;
-    orangeActive: string;
-    yellowActive: string;
-    greenActive: string;
-    tealActive: string;
-    greyActive: string;
-    accentActive: string;
-    blueDim: string;
-    indigoDim: string;
-    purpleDim: string;
-    pinkDim: string;
-    redDim: string;
-    orangeDim: string;
-    yellowDim: string;
-    greenDim: string;
-    tealDim: string;
-    greyDim: string;
-    accentDim: string;
-    bluePrimary: string;
-    indigoPrimary: string;
-    purplePrimary: string;
-    pinkPrimary: string;
-    redPrimary: string;
-    orangePrimary: string;
-    yellowPrimary: string;
-    greenPrimary: string;
-    tealPrimary: string;
-    greyPrimary: string;
-    accentPrimary: string;
     blueLight: string;
     indigoLight: string;
     purpleLight: string;
@@ -82,10 +49,43 @@ export declare const colorMap: {
     tealBright: string;
     greyBright: string;
     accentBright: string;
+    bluePrimary: string;
+    indigoPrimary: string;
+    purplePrimary: string;
+    pinkPrimary: string;
+    redPrimary: string;
+    orangePrimary: string;
+    yellowPrimary: string;
+    greenPrimary: string;
+    tealPrimary: string;
+    greyPrimary: string;
+    accentPrimary: string;
+    blueDim: string;
+    indigoDim: string;
+    purpleDim: string;
+    pinkDim: string;
+    redDim: string;
+    orangeDim: string;
+    yellowDim: string;
+    greenDim: string;
+    tealDim: string;
+    greyDim: string;
+    accentDim: string;
+    blueActive: string;
+    indigoActive: string;
+    purpleActive: string;
+    pinkActive: string;
+    redActive: string;
+    orangeActive: string;
+    yellowActive: string;
+    greenActive: string;
+    tealActive: string;
+    greyActive: string;
+    accentActive: string;
     textPrimary: string;
-    textAccent: string;
     textSecondary: string;
     textTertiary: string;
+    textAccent: string;
     backgroundPrimary: string;
     backgroundSecondary: string;
     borderPrimary: string;
@@ -96,18 +96,18 @@ export declare const colorMap: {
     greyGradient: string;
     accentGradient: string;
 };
-export declare type Color = keyof typeof colorMap;
-export declare type WithColor = {
+export type Color = keyof typeof colorMap;
+export type WithColor = {
     /** The color to style the component */
     color?: Color;
 };
-declare type ColorStyleItem = {
+type ColorStyleItem = {
     text: string;
     background: string;
     border: string;
     hover: string;
 };
-declare type ColorAttribute = keyof ColorStyleItem;
+type ColorAttribute = keyof ColorStyleItem;
 declare const colorStyleMap: {
     transparent: ColorStyleItem;
     disabled: ColorStyleItem;
@@ -141,8 +141,8 @@ declare const colorStyleMap: {
     greyPrimary: ColorStyleItem;
     accentPrimary: ColorStyleItem;
 };
-export declare type ColorStyle = keyof typeof colorStyleMap;
-export declare type WithColorStyle = {
+export type ColorStyle = keyof typeof colorStyleMap;
+export type WithColorStyle = {
     /** The color style to style the component */
     colorStyle?: ColorStyle;
 };

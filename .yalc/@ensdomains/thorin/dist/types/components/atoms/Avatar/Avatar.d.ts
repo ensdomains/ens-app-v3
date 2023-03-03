@@ -1,7 +1,7 @@
 import * as React from 'react';
-declare type NativeImgAttributes = React.ImgHTMLAttributes<HTMLImageElement>;
-declare type Shape = 'circle' | 'square';
-export declare type Props = {
+type NativeImgAttributes = React.ImgHTMLAttributes<HTMLImageElement>;
+type Shape = 'circle' | 'square';
+export type Props = {
     /** Accessibility text. */
     label: string;
     /** If true, removes the border around the avatar. */

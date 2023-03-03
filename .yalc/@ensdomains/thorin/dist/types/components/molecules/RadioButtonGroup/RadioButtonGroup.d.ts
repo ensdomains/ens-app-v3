@@ -2,9 +2,9 @@ import type { WithColorStyle } from '../../../types';
 import type { FieldBaseProps } from '../../atoms/Field';
 import * as React from 'react';
 import { RadioButton } from '../../../components';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-declare type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
-export declare type Props = {
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
+export type Props = {
     /** Display the radio buttons in a row */
     inline?: boolean;
     /** The children of the component that conform to the basic input attributes  */
@@ -32,7 +32,7 @@ export declare const RadioButtonGroup: React.ForwardRefExoticComponent<{
         tabIndex?: number | undefined;
         onFocus?: React.FocusEventHandler<HTMLInputElement> | undefined;
         onBlur?: React.FocusEventHandler<HTMLInputElement> | undefined;
-    } & Omit<FieldBaseProps, "labelRight"> & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "type" | "children" | "role" | "aria-invalid" | "defaultValue"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>, string | React.JSXElementConstructor<any>> | React.ReactElement<React.ForwardRefExoticComponent<{
+    } & Omit<FieldBaseProps, "labelRight"> & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "type" | "role" | "aria-invalid" | "children" | "defaultValue"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>, string | React.JSXElementConstructor<any>> | React.ReactElement<React.ForwardRefExoticComponent<{
         label: React.ReactNode;
         name: string | undefined;
         value: string;
@@ -44,7 +44,7 @@ export declare const RadioButtonGroup: React.ForwardRefExoticComponent<{
         tabIndex?: number | undefined;
         onFocus?: React.FocusEventHandler<HTMLInputElement> | undefined;
         onBlur?: React.FocusEventHandler<HTMLInputElement> | undefined;
-    } & Omit<FieldBaseProps, "labelRight"> & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "type" | "children" | "role" | "aria-invalid" | "defaultValue"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>, string | React.JSXElementConstructor<any>>[] | undefined;
+    } & Omit<FieldBaseProps, "labelRight"> & Omit<React.InputHTMLAttributes<HTMLInputElement>, "value" | "type" | "role" | "aria-invalid" | "children" | "defaultValue"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>, string | React.JSXElementConstructor<any>>[] | undefined;
     /** The value for the radio group */
     value?: string | undefined;
     /** The handler for the change event. */

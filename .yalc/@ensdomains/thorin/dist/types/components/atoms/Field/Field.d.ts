@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Space } from '../../../tokens';
 import { ReactNodeNoStrings } from '../../../types';
 import { useFieldIds } from '../../../hooks';
-export declare type State = ReturnType<typeof useFieldIds> | undefined;
-declare type NativeFormProps = React.AllHTMLAttributes<HTMLFormElement>;
-declare type NativeLabelProps = React.LabelHTMLAttributes<HTMLLabelElement>;
-export declare type FieldBaseProps = {
+export type State = ReturnType<typeof useFieldIds> | undefined;
+type NativeFormProps = React.AllHTMLAttributes<HTMLFormElement>;
+type NativeLabelProps = React.LabelHTMLAttributes<HTMLLabelElement>;
+export type FieldBaseProps = {
     /** Description text or react component. */
     description?: React.ReactNode;
     /** Error text or a react component. */
@@ -27,7 +27,7 @@ export declare type FieldBaseProps = {
     /** If true, will set the Fields component to read only mode */
     readOnly?: boolean;
 };
-declare type Props = FieldBaseProps & {
+type Props = FieldBaseProps & {
     children: React.ReactElement | ((context: State) => ReactNodeNoStrings);
     /** The id attribute of the label element */
     id?: NativeFormProps['id'];

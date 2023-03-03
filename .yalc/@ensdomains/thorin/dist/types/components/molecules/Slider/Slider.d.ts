@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { FieldBaseProps } from '../../atoms/Field';
-declare type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
-export declare type Props = FieldBaseProps & {
+type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
+export type Props = FieldBaseProps & {
     /** The initial value. Useful for detecting changes in value. */
     defaultValue?: string | number;
     /** If true, prevents user interaction. */
@@ -52,5 +52,5 @@ export declare const Slider: React.ForwardRefExoticComponent<FieldBaseProps & {
     onBlur?: NativeInputProps['onBlur'];
     /** The handler for focus events. */
     onFocus?: NativeInputProps['onFocus'];
-} & Omit<NativeInputProps, "value" | "type" | "children" | "aria-invalid" | "defaultValue"> & React.RefAttributes<HTMLInputElement>>;
+} & Omit<NativeInputProps, "value" | "type" | "aria-invalid" | "children" | "defaultValue"> & React.RefAttributes<HTMLInputElement>>;
 export {};

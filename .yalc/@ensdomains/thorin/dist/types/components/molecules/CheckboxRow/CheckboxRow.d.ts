@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { Hue } from '../../../tokens';
-export declare type Props = {
+export type Props = {
     label: string;
     subLabel?: string;
     color?: Hue;

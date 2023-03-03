@@ -1,5 +1,5 @@
 import * as React from 'react';
-declare type Props = {
+type Props = {
     hideDividers?: boolean | {
         top?: boolean;
         bottom?: boolean;

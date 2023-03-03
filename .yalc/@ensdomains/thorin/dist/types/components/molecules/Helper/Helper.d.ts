@@ -1,8 +1,8 @@
 import * as React from 'react';
-declare type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
-declare type HelperType = 'info' | 'warning' | 'error';
-declare type Alignment = 'horizontal' | 'vertical';
-export declare type Props = NativeDivProps & {
+type NativeDivProps = React.HTMLAttributes<HTMLDivElement>;
+type HelperType = 'info' | 'warning' | 'error';
+type Alignment = 'horizontal' | 'vertical';
+export type Props = NativeDivProps & {
     type?: HelperType;
     alignment?: Alignment;
     children: React.ReactNode;

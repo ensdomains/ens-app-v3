@@ -1,9 +1,9 @@
-declare type Args = {
+type Args = {
     description?: boolean;
     error?: boolean;
     id?: string;
 };
-export declare const useFieldIds: ({ description, error, id, }?: Args) => {
+export declare const useFieldIds: ({ description: hasDescription, error: hasError, id: contentId, }?: Args) => {
     content: {
         'aria-describedby': string | undefined;
         'aria-labelledby': string;

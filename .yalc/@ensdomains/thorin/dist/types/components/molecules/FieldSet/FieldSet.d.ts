@@ -1,8 +1,8 @@
 import * as React from 'react';
 import { ReactNodeNoStrings } from '../../../types';
 import { TagProps } from '../../atoms/Tag';
-declare type NativeFieldSetProps = React.FieldsetHTMLAttributes<HTMLFieldSetElement>;
-export declare type Props = {
+type NativeFieldSetProps = React.FieldsetHTMLAttributes<HTMLFieldSetElement>;
+export type Props = {
     children: ReactNodeNoStrings;
     /** Description content */
     description?: string | React.ReactNode;

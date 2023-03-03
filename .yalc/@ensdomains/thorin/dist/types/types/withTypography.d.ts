@@ -1,4 +1,4 @@
-declare type FontDetail = {
+type FontDetail = {
     size: string;
     lineHeight: string;
     weight: string;
@@ -21,11 +21,11 @@ declare const fontDetails: {
     label: FontDetail;
     labelHeading: FontDetail;
 };
-export declare type FontVariant = keyof typeof fontDetails;
+export type FontVariant = keyof typeof fontDetails;
 export declare const getFontSize: (fontVariant: FontVariant) => string;
 export declare const getLineHeight: (fontVariant: FontVariant) => string;
 export declare const getFontWeight: (fontVariant: FontVariant) => string;
-export declare type WithTypography = {
+export type WithTypography = {
     fontVariant?: FontVariant;
 };
 export {};

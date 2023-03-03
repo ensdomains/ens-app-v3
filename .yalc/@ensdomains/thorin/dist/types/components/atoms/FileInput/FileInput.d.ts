@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNodeNoStrings } from '../../../types';
-declare type Context = {
+type Context = {
     droppable?: boolean;
     file?: File;
     focused?: boolean;
@@ -9,8 +9,8 @@ declare type Context = {
     type?: string;
     reset?: (event: React.MouseEvent<HTMLInputElement>) => void;
 };
-declare type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
-export declare type Props = {
+type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
+export type Props = {
     /** The accept attribute of input element */
     accept?: NativeInputProps['accept'];
     /** The autoFocus attribute of input element */

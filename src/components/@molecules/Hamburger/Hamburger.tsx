@@ -130,16 +130,14 @@ type View = 'main' | 'language'
 const Hamburger = () => {
   const breakpoints = useBreakpoint()
 
-  const containerRef = useRef<HTMLDivElement>()
+  const containerRef = useRef<HTMLDivElement>(null)
   const btnRef = useRef<HTMLButtonElement>(null)
   const slideRef = useRef<HTMLDivElement>(null)
   const isInitial = useInitial()
 
   const graphOutOfSync = useGraphOutOfSync()
 
-  const defaultHeight = useRef<number>(null)
-
-  const [height, setHeight] = useState(defaultHeight.current)
+  const [height, setHeight] = useState<number | null>(null)
   const [animation, setAnimation] = useState<{
     component: ReactNode
     direction: 'backwards' | 'forwards'
@@ -206,16 +204,12 @@ const Hamburger = () => {
     return () => clearTimeout(timeout)
   }, [animation])
 
-  const measuredRef = useCallback((el: HTMLDivElement) => {
-    if (el) {
-      setTimeout(() => {
-        const getChildHeight = (n: number) => el.children[n]?.getBoundingClientRect().height
-        const child0Height = getChildHeight(0)
-        if (child0Height === 0) setHeight(getChildHeight(1))
-        else setHeight(child0Height)
-        containerRef.current = el
-      }, 1)
-    }
+  const renderCallback = useCallback(() => {
+    const el = containerRef.current!
+    const getChildHeight = (n: number) => el.children[n]?.getBoundingClientRect().height
+    const child0Height = getChildHeight(0)
+    if (child0Height === 0) setHeight(getChildHeight(1))
+    else setHeight(child0Height)
   }, [])
 
   const button = (
@@ -251,18 +245,24 @@ const Hamburger = () => {
           isOpen={isOpen}
           anchorRef={btnRef}
           popover={
-            <DesktopDropdownCard ref={measuredRef} style={{ height: height || undefined }}>
+            <DesktopDropdownCard ref={containerRef} style={{ height: height || undefined }}>
               {componentWithAnimation}
             </DesktopDropdownCard>
           }
+          onShowCallback={renderCallback}
           placement="bottom"
           width={320}
           transitionDuration={150}
           align="end"
         />
       ) : (
-        <Modal open={isOpen} onDismiss={() => setIsOpen(false)} alignTop>
-          <MobileCard ref={measuredRef} style={{ height: height || undefined }}>
+        <Modal
+          renderCallback={renderCallback}
+          open={isOpen}
+          onDismiss={() => setIsOpen(false)}
+          alignTop
+        >
+          <MobileCard ref={containerRef} style={{ height: height || undefined }}>
             {componentWithAnimation}
           </MobileCard>
           <CloseButton onClick={() => setIsOpen(false)}>

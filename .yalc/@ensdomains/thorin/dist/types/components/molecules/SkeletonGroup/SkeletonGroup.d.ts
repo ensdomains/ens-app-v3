@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { ReactNodeNoStrings } from '../../../types';
-declare type Props = {
+type Props = {
     children: ReactNodeNoStrings;
     loading?: boolean;
 };

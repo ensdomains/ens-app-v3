@@ -1,6 +1,6 @@
 import * as React from 'react';
-declare type Size = 'extraSmall' | 'small' | 'medium';
-export declare type Props = {
+type Size = 'extraSmall' | 'small' | 'medium';
+export type Props = {
     size?: Size;
     fiat?: string;
 } & Omit<React.InputHTMLAttributes<HTMLInputElement>, 'size'>;

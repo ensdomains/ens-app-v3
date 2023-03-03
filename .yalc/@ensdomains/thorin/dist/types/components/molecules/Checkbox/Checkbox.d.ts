@@ -1,7 +1,7 @@
 import * as React from 'react';
 import { WithColorStyle } from '../../../types/withColorOrColorStyle';
 import { FieldBaseProps } from '../../atoms/Field';
-declare type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
+type NativeInputProps = React.InputHTMLAttributes<HTMLInputElement>;
 export declare const Checkbox: React.ForwardRefExoticComponent<{
     /** Label content */
     label: React.ReactNode;
@@ -31,5 +31,5 @@ export declare const Checkbox: React.ForwardRefExoticComponent<{
     background?: "grey" | "white" | undefined;
     /** Set the input to readonly mode */
     readOnly?: NativeInputProps['readOnly'];
-} & Omit<FieldBaseProps, "labelRight"> & Omit<NativeInputProps, "value" | "type" | "children" | "color" | "aria-invalid" | "defaultValue" | "size"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>;
+} & Omit<FieldBaseProps, "labelRight"> & Omit<NativeInputProps, "value" | "type" | "color" | "aria-invalid" | "children" | "defaultValue" | "size"> & WithColorStyle & React.RefAttributes<HTMLInputElement>>;
 export {};

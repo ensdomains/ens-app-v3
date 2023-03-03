@@ -2,10 +2,10 @@ import * as React from 'react';
 import { Space } from '../../../tokens';
 import { WithColorStyle } from '../../../types/withColorOrColorStyle';
 import { ReactNodeNoStrings } from '../../../types';
-export declare type Size = 'small' | 'medium' | 'flexible';
-declare type NativeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
-declare type NativeAnchorProps = React.AllHTMLAttributes<HTMLAnchorElement>;
-declare type BaseProps = {
+export type Size = 'small' | 'medium' | 'flexible';
+type NativeButtonProps = React.ButtonHTMLAttributes<HTMLButtonElement>;
+type NativeAnchorProps = React.AllHTMLAttributes<HTMLAnchorElement>;
+type BaseProps = {
     /** An alternative element type to render the component as.*/
     as?: 'a';
     children: NativeButtonProps['children'];
@@ -38,7 +38,7 @@ declare type BaseProps = {
     /** Show indicator that button has extra info via tooltip. */
     shouldShowTooltipIndicator?: boolean;
 } & Omit<NativeButtonProps, 'prefix' | 'size'>;
-declare type WithAnchor = {
+type WithAnchor = {
     /** The href attribute for the anchor element. */
     href?: NativeAnchorProps['href'];
     /** The rel attribute for the anchor element. */
@@ -46,11 +46,11 @@ declare type WithAnchor = {
     /** The target attribute for the anchor element. */
     target?: NativeAnchorProps['target'];
 };
-declare type WithoutAnchor = {
+type WithoutAnchor = {
     href?: never;
     rel?: never;
     target?: never;
 };
-export declare type Props = BaseProps & (WithoutAnchor | WithAnchor) & WithColorStyle;
+export type Props = BaseProps & (WithoutAnchor | WithAnchor) & WithColorStyle;
 export declare const Button: React.ForwardRefExoticComponent<Props & React.RefAttributes<HTMLButtonElement>>;
 export {};

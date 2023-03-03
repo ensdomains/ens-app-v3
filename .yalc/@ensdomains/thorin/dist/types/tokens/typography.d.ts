@@ -1,6 +1,6 @@
-export declare type Font = 'mono' | 'sans';
-export declare type FontSize = 'headingOne' | 'headingTwo' | 'headingThree' | 'headingFour' | 'extraLarge' | 'large' | 'body' | 'small' | 'extraSmall';
-export declare type FontWeight = 'light' | 'normal' | 'bold' | 'extraBold';
+export type Font = 'mono' | 'sans';
+export type FontSize = 'headingOne' | 'headingTwo' | 'headingThree' | 'headingFour' | 'extraLarge' | 'large' | 'body' | 'small' | 'extraSmall';
+export type FontWeight = 'light' | 'normal' | 'bold' | 'extraBold';
 export declare const fonts: {
     [key in Font]: string;
 };
