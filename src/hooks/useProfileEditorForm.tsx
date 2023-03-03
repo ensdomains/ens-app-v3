@@ -2,8 +2,8 @@ import { useFieldArray, useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 
 import {
-  profileRecordsToRegistrationForm,
-  registrationFormToProfileRecords,
+  profileEditorFormToProfileRecords,
+  profileRecordsToProfileEditorForm,
 } from '@app/components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
 import { ProfileRecord, ProfileRecordGroup } from '@app/constants/profileRecordOptions'
 import supportedAddresses from '@app/constants/supportedAddresses.json'
@@ -12,14 +12,15 @@ import { validateCryptoAddress } from '@app/utils/validate'
 import { validateContentHash } from '@app/validators/validateContentHash'
 
 import { ContentHashProvider } from '../utils/contenthash'
+import { validateAbi } from '../validators/validateAbi'
 
 const SINGLE_VALUE_RECORD_TYPES = ['contenthash']
 
-export type RegistrationForm = {
+export type ProfileEditorForm = {
   records: ProfileRecord[]
 } & AvatarEditorType
 
-export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
+export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   const { t } = useTranslation('register')
 
   const {
@@ -31,9 +32,9 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     getFieldState,
     formState,
     trigger,
-  } = useForm<RegistrationForm>({
+  } = useForm<ProfileEditorForm>({
     mode: 'onChange',
-    defaultValues: profileRecordsToRegistrationForm(existingRecords),
+    defaultValues: profileRecordsToProfileEditorForm(existingRecords),
   })
 
   const labelForRecord = (record: ProfileRecord) => {
@@ -82,6 +83,7 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
         return result
       }
     if (record.group === 'website') return validateContentHash(record.key as ContentHashProvider)
+    if (record.type === 'abi') return validateAbi(t)
     if (record.group === 'custom')
       return (key?: string) => {
         if (!key) return t('steps.profile.errors.keyRequired') as string
@@ -115,14 +117,29 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     fields: records,
     append: addRecord,
     remove: removeRecordAtIndex,
+    append: appendRecord,
   } = useFieldArray({
     control,
     name: 'records',
   })
 
+  const setAvatar = (avatar?: string) =>
+    setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
+
   const removeRecordByGroupAndKey = (group: ProfileRecordGroup, key: string) => {
+    if (group === 'media' && key === 'avatar') return setAvatar('')
     const index = getValues('records').findIndex((r) => r.group === group && r.key === key)
     if (index >= 0) removeRecordAtIndex(index)
+  }
+
+  const updateRecord = (record: ProfileRecord) => {
+    const currentRecords: ProfileRecord[] = getValues('records')
+    const index = currentRecords.findIndex((r) => r.group === record.group && r.key === record.key)
+    if (index >= 0) {
+      setValue(`records.${index}`, record, { shouldDirty: true, shouldTouch: true })
+    } else {
+      appendRecord(record)
+    }
   }
 
   const addRecords = (recordOrRecords: ProfileRecord | ProfileRecord[]) => {
@@ -144,11 +161,8 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
   const getRecords = () => {
     const avatar = getValues('avatar')
     const _records = getValues('records')
-    return registrationFormToProfileRecords({ avatar, records: _records })
+    return profileEditorFormToProfileRecords({ avatar, records: _records })
   }
-
-  const setAvatar = (avatar?: string) =>
-    setValue('avatar', avatar, { shouldDirty: true, shouldTouch: true })
 
   const getAvatar = () => getValues('avatar')
 
@@ -161,6 +175,7 @@ export const useRegistrationForm = (existingRecords: ProfileRecord[]) => {
     getValues,
     addRecords,
     getRecords,
+    updateRecord,
     removeRecordAtIndex,
     removeRecordByGroupAndKey,
     setAvatar,

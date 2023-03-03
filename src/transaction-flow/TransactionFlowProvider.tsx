@@ -149,18 +149,9 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
 
   const resumeTransactionFlow = useCallback(
     (key: string) => {
-      const { getAllTransactionsComplete, getSelectedItem } = helpers({
-        selectedKey: key,
-        items: state.items,
-      })
-      const item = getSelectedItem()
-      if (!item.resumeLink || !getAllTransactionsComplete(item)) {
-        dispatch({ name: 'resumeFlow', key })
-        return
-      }
-      router.pushWithHistory(item.resumeLink)
+      dispatch({ name: 'resumeFlowWithCheck', key, payload: { push: router.pushWithHistory } })
     },
-    [dispatch, router, state.items],
+    [dispatch, router.pushWithHistory],
   )
 
   const providerValue: ProviderValue = useMemo(() => {

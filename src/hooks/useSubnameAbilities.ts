@@ -11,6 +11,7 @@ type Props = {
   address: string | undefined
   ownerData: ReturnedENS['getOwner']
   wrapperData: ReturnedENS['getWrapperData']
+  pccExpired: boolean
 }
 
 type Abilities = {
@@ -32,6 +33,7 @@ export const useSubnameAbilities = ({
   address,
   ownerData,
   wrapperData,
+  pccExpired,
 }: Props): ReturnData => {
   const { t } = useTranslation('profile')
 
@@ -66,7 +68,7 @@ export const useSubnameAbilities = ({
     if (!isSubname || !nameHasOwner || parentLoading || loadingSubnames) return abilities
     if (!isWrapped && isParentOwner)
       return {
-        canDelete: !hasSubnames,
+        canDelete: !hasSubnames && !pccExpired,
         canDeleteContract: 'registry',
         canDeleteError: hasSubnames ? t('errors.hasSubnames') : undefined,
       } as Abilities
@@ -107,14 +109,15 @@ export const useSubnameAbilities = ({
     isSubname,
     nameHasOwner,
     parentLoading,
-    isWrapped,
-    hasSubnames,
     loadingSubnames,
-    isOwner,
+    isWrapped,
     isParentOwner,
-    isPCCBurned,
-    isCannotTransferBurned,
+    hasSubnames,
+    pccExpired,
     t,
+    isPCCBurned,
+    isOwner,
+    isCannotTransferBurned,
   ])
 
   return {

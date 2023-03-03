@@ -7,8 +7,8 @@ import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules
 
 import CameraIcon from '@app/assets/Camera.svg'
 
-const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
-  ({ theme, $validated, $error }) => css`
+const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
+  ({ theme, $validated, $dirty, $error }) => css`
     width: 90px;
     height: 90px;
     border-radius: 50%;
@@ -34,6 +34,15 @@ const Container = styled.button<{ $error?: boolean; $validated?: boolean }>(
     css`
       :after {
         background-color: ${theme.colors.blue};
+        border-color: ${theme.colors.backgroundPrimary};
+        transform: translate(-20%, 20%) scale(1);
+      }
+    `}
+
+    ${$dirty &&
+    css`
+      :after {
+        background-color: ${theme.colors.green};
         border-color: ${theme.colors.backgroundPrimary};
         transform: translate(-20%, 20%) scale(1);
       }
@@ -76,6 +85,7 @@ export type AvatarClickType = 'upload' | 'nft'
 
 type Props = {
   validated?: boolean
+  dirty?: boolean
   error?: boolean
   src?: string
   onSelectOption?: (value: AvatarClickType) => void
@@ -86,6 +96,7 @@ type Props = {
 
 const AvatarButton = ({
   validated,
+  dirty,
   error,
   src,
   onSelectOption,
@@ -107,7 +118,6 @@ const AvatarButton = ({
       onSelectOption?.(value)
     }
   }
-
   return (
     <Dropdown
       items={
@@ -136,7 +146,7 @@ const AvatarButton = ({
       keepMenuOnTop
       shortThrow
     >
-      <Container $validated={validated} $error={error} type="button">
+      <Container $validated={validated} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />
         {!validated && !error && (
           <IconMask>

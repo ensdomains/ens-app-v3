@@ -47,7 +47,6 @@ export const Notifications = () => {
 
   const updateCallback = useCallback<UpdateCallback>(
     ({ action, key, status, hash }) => {
-      console.log('updateCallback', { chainName, action, key, status, hash })
       if (status === 'pending') return
       if (status === 'confirmed') {
         switch (action) {
@@ -77,7 +76,11 @@ export const Notifications = () => {
                 {t('transaction.viewEtherscan')}
               </Button>
             </a>
-            <Button size="small" onClick={() => resumeTransactionFlow(key)}>
+            <Button
+              size="small"
+              data-testid="notification-continue-button"
+              onClick={() => resumeTransactionFlow(key)}
+            >
               Continue
             </Button>
           </ButtonContainer>

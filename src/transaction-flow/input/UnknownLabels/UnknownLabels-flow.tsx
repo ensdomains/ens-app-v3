@@ -2,6 +2,7 @@ import { useMemo, useRef } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
+import { useQueryClient } from 'wagmi'
 
 import {
   decodeLabelhash,
@@ -14,8 +15,7 @@ import { Button, Dialog, Input, Typography, mq } from '@ensdomains/thorin'
 
 import { isLabelTooLong } from '@app/utils/utils'
 
-import { makeIntroItem } from '../../intro'
-import { GenericTransaction, TransactionDialogPassthrough } from '../../types'
+import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
 
 const Container = styled.div(
   ({ theme }) => css`
@@ -62,7 +62,8 @@ type FormData = Record<string, string>
 
 type Data = {
   name: string
-  transactions: GenericTransaction[]
+  key: string
+  transactionFlowItem: TransactionFlowItem
 }
 
 type UnknownLabelItem = [index: number, hash: string]
@@ -84,7 +85,7 @@ const validateLabel = (hash: string) => (label: string) => {
     return 'Label is too long'
   }
   try {
-    if (!validateName(label)) throw new Error()
+    if (!validateName(label) || label.indexOf('.') !== -1) throw new Error()
   } catch {
     return 'Invalid label'
   }
@@ -94,7 +95,13 @@ const validateLabel = (hash: string) => (label: string) => {
   return true
 }
 
-const UnknownLabels = ({ data: { name, transactions }, dispatch, onDismiss }: Props) => {
+const UnknownLabels = ({
+  data: { name, key, transactionFlowItem },
+  dispatch,
+  onDismiss,
+}: Props) => {
+  const queryClient = useQueryClient()
+
   const { t } = useTranslation('transactionFlow')
 
   const formRef = useRef<HTMLFormElement>(null)
@@ -160,22 +167,33 @@ const UnknownLabels = ({ data: { name, transactions }, dispatch, onDismiss }: Pr
 
     saveName(newName)
 
+    const { transactions, intro } = transactionFlowItem
+
+    const newKey = key.replace(name, newName)
+
     const newTransactions = transactions.map((tx) =>
       typeof tx.data === 'object' && tx.data.name
         ? { ...tx, data: { ...tx.data, name: newName } }
         : tx,
     )
 
+    const newIntro =
+      intro && typeof intro.content.data === 'object' && intro.content.data.name
+        ? {
+            ...intro,
+            content: { ...intro.content, data: { ...intro.content.data, name: newName } },
+          }
+        : intro
+
+    queryClient.resetQueries({ exact: true, queryKey: ['validate', name] })
+
     dispatch({
       name: 'startFlow',
-      key: `wrapName-${newName}`,
+      key: newKey,
       payload: {
+        ...transactionFlowItem,
         transactions: newTransactions,
-        resumable: true,
-        intro: {
-          title: t('details.wrap.startTitle', { ns: 'profile' }),
-          content: makeIntroItem('WrapName', { name: newName }),
-        },
+        intro: newIntro as any,
       },
     })
   }

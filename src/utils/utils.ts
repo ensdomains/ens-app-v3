@@ -2,7 +2,9 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { networkName } from './constants'
+import { OwnerArray, ReturnedENS } from '@app/types'
+
+import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -62,8 +64,8 @@ export const formatDateTime = (date: Date) => {
   return `${baseFormatted} (${timezoneString})`
 }
 
-export const makeEtherscanLink = (hash: string, network?: string) =>
-  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
+export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
+  `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
 export const isBrowser = !!(
   typeof window !== 'undefined' &&
@@ -126,4 +128,13 @@ export const validateExpiry = (
   if (isDotETH) return expiry
   if (!fuses) return undefined
   return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
+}
+
+export const canEditRecordsWhenWrappedCalc = (
+  isWrapped: boolean,
+  resolverAddress: string = '',
+  chainId: number = 1,
+) => {
+  if (!isWrapped) return true
+  return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
 }

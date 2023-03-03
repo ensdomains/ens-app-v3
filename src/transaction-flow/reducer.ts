@@ -68,6 +68,18 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       draft.selectedKey = action.key
       break
     }
+    case 'resumeFlowWithCheck': {
+      const {
+        key,
+        payload: { push },
+      } = action
+      const item = draft.items[key]
+      if (item.resumeLink && getAllTransactionsComplete(item)) {
+        push(item.resumeLink)
+        break
+      }
+      // falls through
+    }
     case 'resumeFlow': {
       const { key } = action
       const item = draft.items[key]

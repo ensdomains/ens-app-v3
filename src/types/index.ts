@@ -103,3 +103,12 @@ export type DeepPartial<T> = T extends object
       [P in keyof T]?: DeepPartial<T[P]>
     }
   : T
+
+export type OwnerArray = {
+  address: string
+  label: string
+  description: string
+  canTransfer: boolean
+  transferType?: 'manager' | 'owner'
+  testId: string
+}[]

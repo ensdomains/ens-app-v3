@@ -5,17 +5,17 @@ import styled, { css } from 'styled-components'
 
 import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
 
+import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
 import {
   ProfileRecord,
   ProfileRecordGroup,
   grouped as options,
 } from '@app/constants/profileRecordOptions'
-import { RegistrationForm } from '@app/hooks/useRegistrationForm'
+import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import mq from '@app/mediaQuery'
 
 import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
-import { DeleteButton } from './DeleteButton'
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
 
@@ -30,14 +30,6 @@ const Container = styled.div(() => [
     width: 520px;
   `),
 ])
-
-const ButtonWrapper = styled.div(
-  () => css`
-    position: absolute;
-    top: 0;
-    right: 0;
-  `,
-)
 
 const Content = styled.div(
   ({ theme }) => css`
@@ -128,8 +120,16 @@ const FooterWrapper = styled.div(
   `,
 )
 
+const DismissButtonWrapper = styled.div(
+  ({ theme }) => css`
+    position: absolute;
+    top: ${theme.space[3]};
+    right: ${theme.space[3]};
+  `,
+)
+
 type Props = {
-  control: Control<RegistrationForm, any>
+  control: Control<ProfileEditorForm, any>
   onAdd?: (records: ProfileRecord[]) => void
   onClose?: () => void
 }
@@ -144,13 +144,15 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
   const filteredOptions = useMemo(() => {
     if (!i18n.isInitialized || !search) return options
+    const matchSearch = (s: string) => s.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
     return options.map((option) => {
+      // If search matches group label, return all items
+      if (matchSearch(t(`steps.profile.options.groups.${option.group}.label`))) return option
       const items = option.items.filter((item) => {
-        const { key: record } = item
-        if (record.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1) return true
-        if (['address', 'website'].includes(option.group)) return false
-        const label = t(`steps.profile.options.groups.${option.group}.items.${item}`)
-        return label.toLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
+        const { key: record, group } = item
+        // if website or address match the record name, else match the translated record name
+        if (['address', 'website'].includes(group)) return matchSearch(record)
+        return matchSearch(t(`steps.profile.options.groups.${option.group}.items.${record}`))
       })
       return {
         ...option,
@@ -283,9 +285,6 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
 
   return (
     <Container>
-      <ButtonWrapper>
-        <DeleteButton size="large" onClick={() => onClose?.()} />
-      </ButtonWrapper>
       <Dialog.Heading title={t('steps.profile.addProfile')} />
       <Spacer $height="6" />
       <Input
@@ -381,6 +380,11 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
           {t('action.add', { ns: 'common' })}
         </Button>
       </FooterWrapper>
+      {onClose && (
+        <DismissButtonWrapper>
+          <DismissDialogButton onClick={onClose} />
+        </DismissButtonWrapper>
+      )}
     </Container>
   )
 }

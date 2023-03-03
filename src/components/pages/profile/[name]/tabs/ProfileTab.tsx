@@ -8,7 +8,6 @@ import { Helper } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
@@ -47,12 +46,11 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     expiryDate,
     dnsOwner,
     isWrapped,
+    pccExpired,
     gracePeriodEndDate,
   } = nameDetails
 
   const selfAbilities = useSelfAbilities(address, name)
-  const { abilities: subnameAbilities, isCachedData: subnameAbilitiesCachedData } =
-    useSubnameAbilities({ address, name, ownerData, wrapperData })
 
   const owners = useOwners({
     ownerData: ownerData!,
@@ -60,6 +58,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     dnsOwner,
     selfAbilities,
   })
+  const { abilities: subnameAbilities, isCachedData: subnameAbilitiesCachedData } =
+    useSubnameAbilities({ address, name, ownerData, wrapperData, pccExpired })
   const profileActions = useProfileActions({
     address,
     name,
@@ -68,7 +68,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     subnameAbilities,
   })
 
-  const nameWrapperAddress = useContractAddress('NameWrapper')
   const isExpired = useMemo(
     () => gracePeriodEndDate && gracePeriodEndDate < new Date(),
     [gracePeriodEndDate],
@@ -79,12 +78,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
   }, [isExpired, selfAbilities.canExtend])
 
   const getTextRecord = (key: string) => profile?.records?.texts?.find((x) => x.key === key)
-
-  const pccExpired =
-    owners.length === 1 &&
-    owners[0].address === nameWrapperAddress &&
-    wrapperData?.expiryDate &&
-    wrapperData.expiryDate < new Date()
 
   return (
     <DetailsWrapper>

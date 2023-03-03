@@ -1,3 +1,4 @@
+import { TOptions } from 'i18next'
 import { ComponentProps, Dispatch, ReactNode } from 'react'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
@@ -31,10 +32,12 @@ type GenericIntro = {
   data: any
 }
 
+type StoredTranslationReference = [key: string, options?: TOptions]
+
 export type TransactionIntro = {
-  title: string
-  leadingLabel?: string
-  trailingLabel?: string
+  title: StoredTranslationReference
+  leadingLabel?: StoredTranslationReference
+  trailingLabel?: StoredTranslationReference
   content: GenericIntro
 }
 
@@ -83,6 +86,13 @@ export type TransactionFlowAction =
   | {
       name: 'resumeFlow'
       key: string
+    }
+  | {
+      name: 'resumeFlowWithCheck'
+      key: string
+      payload: {
+        push: (path: string) => void
+      }
     }
   | {
       name: 'setTransactions'
