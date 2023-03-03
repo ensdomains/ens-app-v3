@@ -3,7 +3,9 @@ import { useNetwork } from 'wagmi'
 export const useChainName = () => {
   const { chain } = useNetwork()
   if (chain) {
-    return chain.network.toLowerCase() ?? null
+    if (!chain.network) throw new Error('Chain network is not defined')
+    const name = chain.network.toLowerCase()
+    return name === 'homestead' ? 'mainnet' : name
   }
-  return 'mainnet'
+  return 'goerli'
 }

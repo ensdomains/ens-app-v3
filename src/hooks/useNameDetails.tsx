@@ -5,7 +5,16 @@ import { useEns } from '@app/utils/EnsProvider'
 
 import { useBasicName } from './useBasicName'
 import useDNSOwner from './useDNSOwner'
+import { useGetABI } from './useGetABI'
 import { useProfile } from './useProfile'
+
+export type Profile = NonNullable<ReturnType<typeof useProfile>['profile']>
+export type DetailedProfileRecords = Profile['records'] & {
+  abi?: { data: string; contentType?: number }
+}
+export type DetailedProfile = Omit<Profile, 'records'> & {
+  records: DetailedProfileRecords
+}
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
@@ -23,11 +32,24 @@ export const useNameDetails = (name: string) => {
   } = useBasicName(name)
 
   const {
-    profile,
+    profile: baseProfile,
     loading: profileLoading,
     status,
     isCachedData: profileIsCachedData,
   } = useProfile(normalisedName, !normalisedName)
+
+  const { abi, loading: abiLoading } = useGetABI(normalisedName, !normalisedName)
+
+  const profile: DetailedProfile | undefined = useMemo(() => {
+    if (!baseProfile) return undefined
+    return {
+      ...baseProfile,
+      records: {
+        ...baseProfile.records,
+        ...(abi ? { abi } : {}),
+      },
+    }
+  }, [abi, baseProfile])
 
   const {
     dnsOwner,
@@ -63,7 +85,14 @@ export const useNameDetails = (name: string) => {
         'errors.expiringSoonTwo',
       )}`
     }
-    if (!profile && !profileLoading && ready && status !== 'idle' && status !== 'loading') {
+    if (
+      !profile &&
+      !profileLoading &&
+      !abiLoading &&
+      ready &&
+      status !== 'idle' &&
+      status !== 'loading'
+    ) {
       return t('errors.unknown')
     }
     return null
@@ -72,6 +101,7 @@ export const useNameDetails = (name: string) => {
     normalisedName,
     profile,
     profileLoading,
+    abiLoading,
     ready,
     registrationStatus,
     status,
@@ -85,7 +115,7 @@ export const useNameDetails = (name: string) => {
     }
   }, [registrationStatus, name])
 
-  const isLoading = !ready || profileLoading || basicLoading || dnsOwnerLoading
+  const isLoading = !ready || profileLoading || abiLoading || basicLoading || dnsOwnerLoading
 
   return {
     error,

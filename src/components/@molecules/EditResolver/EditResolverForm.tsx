@@ -6,7 +6,9 @@ import { RadioButton, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
+import { useChainName } from '@app/hooks/useChainName'
 import useResolverEditor from '@app/hooks/useResolverEditor'
+import { makeEtherscanLink } from '@app/utils/utils'
 
 import { DogFood } from '../DogFood'
 
@@ -59,12 +61,16 @@ const EditResolverForm = ({
   formState,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
+  const chainName = useChainName()
 
   const latestResolverLabel = (
     <LatestResolverLabel $offset={isResolverAddressLatest}>
       <LatestResolverTitleContainer>
         <LatestResolverTitle>{t('input.editResolver.latestLabel')}</LatestResolverTitle>
-        <Outlink href={`https://etherscan.io/address/${lastestResolverAddress}`}>
+        <Outlink
+          data-testid="latest-resolver-etherscan"
+          href={makeEtherscanLink(lastestResolverAddress, chainName, 'address')}
+        >
           {t('input.editResolver.etherscan')}
         </Outlink>
       </LatestResolverTitleContainer>

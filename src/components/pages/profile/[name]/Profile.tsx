@@ -277,8 +277,11 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
                 texts={(profile?.records?.texts as any) || []}
                 addresses={(profile?.records?.coinTypes as any) || []}
                 contentHash={profile?.records?.contentHash}
+                abi={profile?.records?.abi}
+                resolverAddress={profile?.resolverAddress}
                 canEdit={selfAbilities.canEdit}
                 isCached={profileIsCachedData}
+                isWrapped={isWrapped}
               />
             ),
             subnames: (

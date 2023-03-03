@@ -2,20 +2,20 @@ import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 
 import { useEns } from '@app/utils/EnsProvider'
 
+import { useContractAddress } from './useContractAddress'
 import { useNameDetails } from './useNameDetails'
 import { useProfile } from './useProfile'
 import { useValidate } from './useValidate'
-import { useWrapperExists } from './useWrapperExists'
 
 jest.mock('@app/utils/EnsProvider')
 jest.mock('./useProfile')
 jest.mock('./useValidate')
-jest.mock('./useWrapperExists')
+jest.mock('./useContractAddress')
 
 const mockUseEns = mockFunction(useEns)
 const mockUseProfile = mockFunction(useProfile)
 const mockUseValidate = mockFunction(useValidate)
-const mockUseWrapperExists = mockFunction(useWrapperExists)
+const mockUseContractAddress = mockFunction(useContractAddress)
 
 const mockGetOwner = {
   ...jest.fn(),
@@ -46,7 +46,7 @@ describe('useNameDetails', () => {
     profile: undefined,
     status: 'success',
   })
-  mockUseWrapperExists.mockReturnValue(true)
+  mockUseContractAddress.mockReturnValue('0x123')
   afterEach(() => {
     jest.clearAllMocks()
   })

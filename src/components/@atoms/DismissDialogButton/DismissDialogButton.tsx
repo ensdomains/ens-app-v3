@@ -1,28 +1,28 @@
 import { ButtonHTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import { CrossCircleSVG } from '@ensdomains/thorin'
-
-const Container = styled.button(
-  ({ theme }) => css`
-    padding: ${theme.space['3']};
-  `,
-)
+import { CrossSVG } from '@ensdomains/thorin'
 
 const IconWrapper = styled.div(
   ({ theme }) => css`
-    width: ${theme.space['8']};
-    height: ${theme.space['8']};
+    width: ${theme.space['9']};
+    height: ${theme.space['9']};
     border-radius: 50%;
 
     display: flex;
     align-items: center;
     justify-content: center;
+    background-color: transparent;
+    transition: background-color 300ms ease-in-out;
 
     svg {
       width: ${theme.space['6']};
       height: ${theme.space['6']};
       color: ${theme.colors.greyPrimary};
+    }
+
+    :hover {
+      background-color: ${theme.colors.greySurface};
     }
   `,
 )
@@ -30,11 +30,11 @@ const IconWrapper = styled.div(
 type Props = Omit<ButtonHTMLAttributes<HTMLButtonElement>, 'type'>
 const DismissDialogButton = (props: Props) => {
   return (
-    <Container type="button" {...props}>
+    <button type="button" {...props}>
       <IconWrapper>
-        <CrossCircleSVG />
+        <CrossSVG />
       </IconWrapper>
-    </Container>
+    </button>
   )
 }
 

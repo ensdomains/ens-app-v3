@@ -4,7 +4,7 @@ import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
 import { OwnerArray, ReturnedENS } from '@app/types'
 
-import { networkName } from './constants'
+import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -64,8 +64,8 @@ export const formatDateTime = (date: Date) => {
   return `${baseFormatted} (${timezoneString})`
 }
 
-export const makeEtherscanLink = (hash: string, network?: string) =>
-  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
+export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
+  `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
 export const isBrowser = !!(
   typeof window !== 'undefined' &&
@@ -130,14 +130,11 @@ export const validateExpiry = (
   return pccExpired || fuses.parent.PARENT_CANNOT_CONTROL ? expiry : undefined
 }
 
-export const checkPCCExpired = (
-  owners: OwnerArray,
-  wrapperData: ReturnedENS['getWrapperData'] | undefined,
-  nameWrapperAddress: string,
-) =>
-  !!(
-    owners.length === 1 &&
-    owners[0].address === nameWrapperAddress &&
-    wrapperData?.expiryDate &&
-    wrapperData.expiryDate < new Date()
-  )
+export const canEditRecordsWhenWrappedCalc = (
+  isWrapped: boolean,
+  resolverAddress: string = '',
+  chainId: number = 1,
+) => {
+  if (!isWrapped) return true
+  return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
+}

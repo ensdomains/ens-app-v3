@@ -357,6 +357,7 @@ describe('useSubnameAbilities', () => {
                 address,
                 ownerData,
                 wrapperData,
+                pccExpired: false,
               }),
             )
             expect(result.current).toEqual({

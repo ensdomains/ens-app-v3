@@ -4,7 +4,6 @@ import { useRouter } from 'next/router'
 import { useAccount } from 'wagmi'
 
 import { NameTableFooter } from '@app/components/@molecules/NameTableFooter/NameTableFooter'
-import { SortDirection, SortType } from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import { useChainId } from '@app/hooks/useChainId'
 import { useNamesFromAddress } from '@app/hooks/useNamesFromAddress'
 import { Content } from '@app/layouts/Content'
@@ -30,8 +29,8 @@ const expectQuery = (address: string, page: number) => {
   expect(mockUseNamesFromAddress).toBeCalledWith({
     address,
     sort: {
-      type: SortType.expiryDate,
-      orderDirection: SortDirection.desc,
+      type: 'expiryDate',
+      orderDirection: 'desc',
     },
     page,
     resultsPerPage: 10,
@@ -45,6 +44,7 @@ describe('MyNames', () => {
   mockUseRouter.mockReturnValue({
     query: {},
     isReady: true,
+    replace: () => {},
   })
   mockUseAccount.mockReturnValue({ address: '0x123' })
   mockUseNamesFromAddress.mockReturnValue({
