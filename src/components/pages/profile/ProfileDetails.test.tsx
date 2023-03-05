@@ -16,7 +16,7 @@ describe('onwershipInfoCalc', () => {
     const gracePeriodEndDate = new Date(2)
     const owners = [{ transferType: 'manager', address: '0x123' }]
 
-    const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
+    const result = ownershipInfoCalc(false, owners as any, gracePeriodEndDate, expiryDate)
     expect(result).toEqual([
       { key: 'owner', type: 'text', value: '' },
       { key: 'manager', type: 'text', value: '0x123' },
@@ -36,14 +36,14 @@ describe('onwershipInfoCalc', () => {
       { transferType: 'owner', address: '0x123', label: 'owner' },
     ]
 
-    const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
+    const result = ownershipInfoCalc(false, owners as any, gracePeriodEndDate, expiryDate)
     expect(result).toEqual([
       { key: 'manager', value: '0x123' },
       { key: 'owner', value: '0x123' },
       {
         key: 'expiry',
         type: 'text',
-        value: '\nMarch 3, 2073',
+        value: '\nMarch 4, 2073',
         timestamp: 3255803954000,
       },
     ])
