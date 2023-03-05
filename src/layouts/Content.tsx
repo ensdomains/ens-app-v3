@@ -238,6 +238,7 @@ export const Content = ({
     warning?: {
       type: 'warning' | 'error' | 'info'
       message: string | React.ReactNode
+      title?: string
     }
     info?: React.ReactNode
     header?: React.ReactNode
@@ -249,7 +250,9 @@ export const Content = ({
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
-      <Banner alert={children.warning.type}>{children.warning.message}</Banner>
+      <Banner title={children.warning.title} alert={children.warning.type}>
+        {children.warning.message}
+      </Banner>
     </WarningWrapper>
   )
 
