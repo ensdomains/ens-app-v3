@@ -43,7 +43,7 @@ describe('onwershipInfoCalc', () => {
       {
         key: 'expiry',
         type: 'text',
-        value: '\nMarch 4, 2073',
+        value: '\nMarch 3, 2073',
         timestamp: 3255803954000,
       },
     ])
