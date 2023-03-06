@@ -24,7 +24,6 @@ const ADDRESS_TYPE = {
 }
 const mockUsePrimary = mockFunction(usePrimary)
 mockUsePrimary.mockImplementation((address, skip) => {
-  console.log(address, skip)
   const isNoPrimary = ADDRESS_TYPE.NoPrimary === address
   return {
     // eslint-disable-next-line no-nested-ternary

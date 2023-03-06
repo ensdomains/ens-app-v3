@@ -170,7 +170,7 @@ export const OwnerProfileButton = ({
   }, [addressOrNameOrDate, label])
 
   const { name: primary } = usePrimary(addressOrNameOrDate, dataType !== 'address')
-  console.log('primary', primary)
+
   const recordItemPartialProps: Pick<RecordItemProps, 'link' | 'value' | 'keyLabel' | 'children'> =
     useMemo(() => {
       const base = {
