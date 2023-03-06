@@ -53,7 +53,7 @@ export const AddressProfileButton = ({
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
-  return _iconKey in dynamicAddressIcons ? (
+  return iconKey in dynamicAddressIcons ? (
     <RecordItem
       data-testid={`address-profile-button-${iconKey}`}
       icon={<StyledAddressIcon name={iconKey} />}
