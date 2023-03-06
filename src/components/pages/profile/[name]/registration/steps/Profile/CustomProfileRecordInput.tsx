@@ -4,7 +4,7 @@ import styled, { css, useTheme } from 'styled-components'
 
 import { CrossSVG, Input } from '@ensdomains/thorin'
 
-import { RegistrationForm } from '@app/hooks/useRegistrationForm'
+import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
 import mq from '@app/mediaQuery'
 
 import { Field } from './Field'
@@ -96,8 +96,8 @@ const InnerButtonWrapper = styled.div(
 
 type Props = {
   error?: string
-  register: UseFormRegister<RegistrationForm>
-  trigger: UseFormTrigger<RegistrationForm>
+  register: UseFormRegister<ProfileEditorForm>
+  trigger: UseFormTrigger<ProfileEditorForm>
   index: number
   validator?: (value: string) => boolean | string | Promise<boolean | string>
   validated?: boolean

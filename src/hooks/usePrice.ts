@@ -14,6 +14,9 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
     isLoading: loading,
     error,
     internal: { isFetchedAfterMount },
+    // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    isFetching,
   } = useQuery(
     ['usePrice', type, ...names],
     async () => getPrice(nameOrNames, yearsToSeconds(1), legacy),

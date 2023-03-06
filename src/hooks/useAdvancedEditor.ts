@@ -7,6 +7,7 @@ import { RecordOptions } from '@ensdomains/ensjs/utils/recordHelpers'
 import { textOptions } from '@app/components/@molecules/AdvancedEditor/textOptions'
 import addressOptions from '@app/components/@molecules/ProfileEditor/options/addressOptions'
 import useExpandableRecordsGroup from '@app/hooks/useExpandableRecordsGroup'
+import { DetailedProfile } from '@app/hooks/useNameDetails'
 import { useProfile } from '@app/hooks/useProfile'
 import { useResolverHasInterfaces } from '@app/hooks/useResolverHasInterfaces'
 import { emptyAddress } from '@app/utils/constants'
@@ -42,8 +43,10 @@ export type AdvancedEditorType = {
   }
   other: {
     contentHash?: string
-    publicKey?: string
-    abi?: string
+    abi?: {
+      data: string
+      contentType: number | undefined
+    }
   }
 }
 
@@ -55,7 +58,7 @@ type ExpandableRecordsState = {
 }
 
 type Props = {
-  profile: ReturnType<typeof useProfile>['profile']
+  profile?: DetailedProfile
   loading: ReturnType<typeof useProfile>['loading']
   overwrites?: RecordOptions
   callback: (data: RecordOptions) => void
@@ -177,8 +180,7 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
         address: formObject.address,
         other: {
           contentHash: formObject.website,
-          publicKey: '',
-          abi: '',
+          abi: formObject.abi,
         },
       }
       reset(newDefaultValues)
@@ -240,10 +242,18 @@ const useAdvancedEditor = ({ profile, loading, overwrites, callback }: Props) =>
 
     const contentHash = dirtyFields.other?.contentHash
 
+    const abi = dirtyFields.other?.abi?.data
+      ? {
+          data: dirtyFields.other.abi.data,
+          contentType: 1,
+        }
+      : undefined
+
     const records = {
       texts,
       coinTypes: coinTypesWithZeroAddressses,
       contentHash,
+      abi,
     }
 
     callback(records)

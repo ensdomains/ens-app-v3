@@ -10,7 +10,7 @@ const PAGE_SIZE = 25
 
 export type Subname = ReturnedENS['getSubnames']['subnames'][number]
 
-export type SubnameSortType = Exclude<SortType, SortType.expiryDate>
+export type SubnameSortType = Exclude<SortType, 'expiryDate'>
 
 export const useSubnameInfiniteQuery = (
   name: string,

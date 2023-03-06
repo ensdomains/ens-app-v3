@@ -26,6 +26,7 @@ import {
   SortType,
 } from '../components/@molecules/NameTableHeader/NameTableHeader'
 import { useChainId } from '../hooks/useChainId'
+import { useQueryParameterState } from '../hooks/useQueryParameterState'
 
 const DetailsContainer = styled.div(
   ({ theme }) => css`
@@ -58,8 +59,10 @@ const EmptyDetailContainer = styled.div(
 
 const Page = () => {
   const { t } = useTranslation('address')
-  const { query, isReady } = useRouter()
+  const router = useRouter()
+  const { isReady, query } = router
   const { address: _address } = useAccount()
+
   const address = query.address as string
   const chainId = useChainId()
   const isSelf = _address === address
@@ -74,9 +77,12 @@ const Page = () => {
     }
   }
 
-  const [sortType, setSortType] = useState<SortType | undefined>()
-  const [sortDirection, setSortDirection] = useState<SortDirection>(SortDirection.desc)
-  const [searchQuery, setSearchQuery] = useState('')
+  const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
+  const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
+    'direction',
+    'desc',
+  )
+  const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
   const { profile: primaryProfile, loading: primaryProfileLoading } = usePrimaryProfile(address)
 
@@ -93,7 +99,7 @@ const Page = () => {
   } = useNamesFromAddress({
     address,
     sort: {
-      type: sortType || SortType.expiryDate,
+      type: sortType || 'expiryDate',
       orderDirection: sortDirection,
     },
     page,
@@ -169,11 +175,7 @@ const Page = () => {
               selectable={!!_address}
               mode={mode}
               sortType={sortType}
-              sortTypeOptionValues={[
-                SortType.expiryDate,
-                SortType.labelName,
-                SortType.creationDate,
-              ]}
+              sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
               sortDirection={sortDirection}
               searchQuery={searchQuery}
               selectedCount={selectedNames.length}

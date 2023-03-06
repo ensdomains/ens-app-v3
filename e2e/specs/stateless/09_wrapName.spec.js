@@ -31,12 +31,13 @@ describe('Wrap Name', () => {
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(10000)
 
     // should wrap the name
-    cy.wait(1000)
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
     cy.findByTestId('transaction-modal-complete-button').click()
+    cy.wait(10000)
 
     // should remove the notification once the name is wrapped
     cy.findByTestId('transaction-modal-inner').should('not.exist')

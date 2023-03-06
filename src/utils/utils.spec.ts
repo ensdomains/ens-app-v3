@@ -1,4 +1,11 @@
-import { formatExpiry, secondsToDays, shortenAddress, yearsToSeconds } from './utils'
+import { NAMEWRAPPER_AWARE_RESOLVERS } from './constants'
+import {
+  canEditRecordsWhenWrappedCalc,
+  formatExpiry,
+  secondsToDays,
+  shortenAddress,
+  yearsToSeconds,
+} from './utils'
 
 describe('shortenAddress', () => {
   it('should NOT shorten address if it is below maxLength', () => {
@@ -40,5 +47,20 @@ describe('formatExpiry', () => {
     const expiry = new Date('2020-01-01')
     const result = formatExpiry(expiry)
     expect(result).toEqual('January 1, 2020')
+  })
+})
+
+describe('canEditRecordsWhenWrappedCalc', () => {
+  it('should return true if the domain is not wrapped', () => {
+    const result = canEditRecordsWhenWrappedCalc(false)
+    expect(result).toEqual(true)
+  })
+  it('should return true if the domain is wrapped and has a wrapper aware resolver', () => {
+    const result = canEditRecordsWhenWrappedCalc(true, NAMEWRAPPER_AWARE_RESOLVERS[5][0], 5)
+    expect(result).toEqual(true)
+  })
+  it('should return false if the domain is wrapped and does NOT have a wrapper aware resolver', () => {
+    const result = canEditRecordsWhenWrappedCalc(true, '0xaddress', 5)
+    expect(result).toEqual(false)
   })
 })
