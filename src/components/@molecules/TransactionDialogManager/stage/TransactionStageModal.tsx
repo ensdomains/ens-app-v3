@@ -458,7 +458,6 @@ export const TransactionStageModal = ({
         {lowerError && <Helper type="error">{lowerError}</Helper>}
       </InnerDialog>
       <Dialog.Footer
-        center
         currentStep={currentStep}
         stepCount={stepCount > 1 ? stepCount : undefined}
         stepStatus={stepStatus}

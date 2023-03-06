@@ -70,7 +70,7 @@ describe('Permissions', () => {
     cy.findByTestId('set-resolver-disabled-button').should('be.visible')
   })
 
-  it('should show correct buttons for managing subname', () => {
+  it('should show correct buttons for managing subname (Parent owner settings)', () => {
     acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
     // Parent owner settings
@@ -80,6 +80,8 @@ describe('Permissions', () => {
     cy.findByTestId('more-tab').click()
     cy.findByTestId('send-name-button').should('be.visible')
     cy.findByTestId('edit-resolver-button').should('not.exist')
+  })
+  it('should show correct buttons for managing subname (Name owner settings)', () => {
     // Name owner settings
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')
@@ -272,7 +274,7 @@ describe('Permissions', () => {
       cy.findByTestId('button-revoke-permissions-disabled').should('be.visible')
   })
 
-  it('should show correct buttons for managing subname', () => {
+  it('should show correct buttons for managing subname (Parent owner settings)', () => {
     acceptMetamaskAccess(2)
     cy.visit('/sub.wrapped.eth')
     // Parent owner settings
@@ -282,6 +284,9 @@ describe('Permissions', () => {
     cy.findByTestId('more-tab').click()
     cy.findByTestId('send-name-button').should('not.exist')
     cy.findByTestId('edit-resolver-button').should('not.exist')
+  })
+
+  it('should show correct buttons for managing subname (Name owner settings)', () => {
     // Name owner settings
     acceptMetamaskAccess(1)
     cy.visit('/sub.wrapped.eth')

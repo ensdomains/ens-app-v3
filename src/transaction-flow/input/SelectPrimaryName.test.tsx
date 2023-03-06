@@ -14,7 +14,7 @@ const mockUseChainId = mockFunction(useChainId)
 const mockUseEns = mockFunction(useEns)
 const mockNamePill = mockFunction(NamePill)
 
-const mockComponent = ({ name }: { name: string }) => <div>{name}</div>
+const mockComponent = ({ truncatedName }: { truncatedName: string }) => <div>{truncatedName}</div>
 
 const mockRequest = jest.fn()
 
@@ -122,7 +122,7 @@ describe('SelectPrimaryName', () => {
       expect(screen.getByText('test3.eth')).toBeInTheDocument()
     })
   })
-  it('should truncate encoded names', async () => {
+  it('should remove names with hashed labels', async () => {
     mockRequest.mockResolvedValue({
       domains: [
         {
@@ -133,7 +133,21 @@ describe('SelectPrimaryName', () => {
     })
     renderHelper({})
     await waitFor(() => {
-      expect(screen.getByText('[2fc...ded].eth')).toBeInTheDocument()
+      expect(screen.getByText('section.primary.input.noNames')).toBeInTheDocument()
+    })
+  })
+  it('should show no names message when only eligible name is already set', async () => {
+    mockRequest.mockResolvedValue({
+      domains: [
+        {
+          name: 'test.eth',
+          id: '0x0',
+        },
+      ],
+    })
+    renderHelper({ existingPrimary: 'test.eth' })
+    await waitFor(() => {
+      expect(screen.getByText('section.primary.input.noOtherNames')).toBeInTheDocument()
     })
   })
 })

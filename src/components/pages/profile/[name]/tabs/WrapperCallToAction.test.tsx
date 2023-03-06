@@ -271,7 +271,9 @@ describe('WrapperCallToAction', () => {
     expect(args[2].name).toBe(
       '[b2fd3233fdc544d81e84c93822934ddd9b599f056b6a7f84f4de29378bf1cb15].test123.eth',
     )
-    const { transactions } = args[2]
+    const {
+      transactionFlowItem: { transactions },
+    } = args[2]
     expect(transactions[0].name).toEqual('approveNameWrapper')
     expect(transactions[0].data).toEqual({ address: '0x123' })
     expect(transactions[1].name).toEqual('wrapName')

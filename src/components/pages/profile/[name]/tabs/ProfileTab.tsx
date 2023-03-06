@@ -8,13 +8,12 @@ import { Helper } from '@ensdomains/thorin'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
-import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useProfileActions } from '@app/hooks/useProfileActions'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { useSubnameAbilities } from '@app/hooks/useSubnameAbilities'
-import { checkPCCExpired, validateExpiry } from '@app/utils/utils'
+import { validateExpiry } from '@app/utils/utils'
 
 const DetailsWrapper = styled.div(
   ({ theme }) => css`
@@ -47,6 +46,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     expiryDate,
     dnsOwner,
     isWrapped,
+    pccExpired,
     gracePeriodEndDate,
   } = nameDetails
 
@@ -58,8 +58,6 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     dnsOwner,
     selfAbilities,
   })
-  const nameWrapperAddress = useContractAddress('NameWrapper')
-  const pccExpired = checkPCCExpired(owners, wrapperData, nameWrapperAddress)
   const { abilities: subnameAbilities, isCachedData: subnameAbilitiesCachedData } =
     useSubnameAbilities({ address, name, ownerData, wrapperData, pccExpired })
   const profileActions = useProfileActions({
@@ -115,6 +113,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         owners={owners}
         name={normalisedName}
         actions={profileActions.profileActions}
+        gracePeriodEndDate={gracePeriodEndDate}
       />
     </DetailsWrapper>
   )

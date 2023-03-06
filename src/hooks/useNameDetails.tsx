@@ -2,10 +2,20 @@ import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { formatFullExpiry } from '@app/utils/utils'
 
 import { useBasicName } from './useBasicName'
 import useDNSOwner from './useDNSOwner'
+import { useGetABI } from './useGetABI'
 import { useProfile } from './useProfile'
+
+export type Profile = NonNullable<ReturnType<typeof useProfile>['profile']>
+export type DetailedProfileRecords = Profile['records'] & {
+  abi?: { data: string; contentType?: number }
+}
+export type DetailedProfile = Omit<Profile, 'records'> & {
+  records: DetailedProfileRecords
+}
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
@@ -17,15 +27,30 @@ export const useNameDetails = (name: string) => {
     isLoading: basicLoading,
     isCachedData: basicIsCachedData,
     registrationStatus,
+    expiryDate,
+    gracePeriodEndDate,
     ...basicName
   } = useBasicName(name)
 
   const {
-    profile,
+    profile: baseProfile,
     loading: profileLoading,
     status,
     isCachedData: profileIsCachedData,
   } = useProfile(normalisedName, !normalisedName)
+
+  const { abi, loading: abiLoading } = useGetABI(normalisedName, !normalisedName)
+
+  const profile: DetailedProfile | undefined = useMemo(() => {
+    if (!baseProfile) return undefined
+    return {
+      ...baseProfile,
+      records: {
+        ...baseProfile.records,
+        ...(abi ? { abi } : {}),
+      },
+    }
+  }, [abi, baseProfile])
 
   const {
     dnsOwner,
@@ -57,18 +82,43 @@ export const useNameDetails = (name: string) => {
       return t('errors.invalidName')
     }
     if (registrationStatus === 'gracePeriod') {
-      return t('errors.expiringSoon')
+      return `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`
     }
-    if (!profile && !profileLoading && ready && status !== 'idle' && status !== 'loading') {
+    if (
+      !profile &&
+      !profileLoading &&
+      !abiLoading &&
+      ready &&
+      status !== 'idle' &&
+      status !== 'loading'
+    ) {
       return t('errors.unknown')
     }
     return null
-  }, [normalisedName, profile, profileLoading, ready, registrationStatus, status, t, valid])
+  }, [
+    gracePeriodEndDate,
+    normalisedName,
+    profile,
+    profileLoading,
+    abiLoading,
+    ready,
+    registrationStatus,
+    status,
+    t,
+    valid,
+  ])
 
-  const isLoading = !ready || profileLoading || basicLoading || dnsOwnerLoading
+  const errorTitle = useMemo(() => {
+    if (registrationStatus === 'gracePeriod') {
+      return t('errors.hasExpired', { name })
+    }
+  }, [registrationStatus, name, t])
+
+  const isLoading = !ready || profileLoading || abiLoading || basicLoading || dnsOwnerLoading
 
   return {
     error,
+    errorTitle,
     normalisedName,
     valid,
     profile,
@@ -77,6 +127,8 @@ export const useNameDetails = (name: string) => {
     basicIsCachedData: basicIsCachedData || dnsOwnerIsCachedData,
     profileIsCachedData,
     registrationStatus,
+    gracePeriodEndDate,
+    expiryDate,
     ...basicName,
   }
 }

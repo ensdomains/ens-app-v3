@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useInfiniteQuery } from 'wagmi'
 
-import { truncateFormat } from '@ensdomains/ensjs/utils/format'
+import { decryptName } from '@ensdomains/ensjs/utils/labels'
 import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
@@ -27,7 +27,6 @@ type Data = {
 type Domain = {
   id: string
   name: string
-  truncatedName: string
 }
 
 export type Props = {
@@ -82,10 +81,16 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       )
 
       if (!domains) return []
-      return domains.map((domain: any) => ({
-        ...domain,
-        truncatedName: truncateFormat(domain.name),
-      })) as Domain[]
+      return domains
+        .map((domain: any) => {
+          const decryptedName = decryptName(domain.name)
+          if (decryptedName.includes('[')) return null
+          return {
+            ...domain,
+            name: decryptedName,
+          }
+        })
+        .filter((domain: any) => domain) as Domain[]
     },
     {
       keepPreviousData: true,
@@ -93,7 +98,9 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
     },
   )
 
-  const names = data?.pages?.reduce((prev, curr) => [...prev, ...curr], [] as Domain[])
+  const unfilteredNames = data?.pages?.reduce((prev, curr) => [...prev, ...curr], [] as Domain[])
+
+  const names = unfilteredNames?.filter((x) => x.name !== existingPrimary)
 
   const hasNextPage = data?.pages[data.pages.length - 1].length === querySize
 
@@ -129,20 +136,23 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       <StyledScrollBox showSpinner={hasNextPage} onReachedBottom={() => fetchNextPage()}>
         <NameList>
           <RadioButtonGroup value={selectedName} onChange={(e) => setSelectedName(e.target.value)}>
-            {names
-              ?.filter((x) => x.name !== existingPrimary)
-              .map((name) => (
-                <RadioButton
-                  label={
-                    <NamePillWrapper>
-                      <NamePill name={name.truncatedName} network={chainId} key={name.id} />
-                    </NamePillWrapper>
-                  }
-                  key={name.id}
-                  name={name.name}
-                  value={name.name}
-                />
-              ))}
+            {names.map((name) => (
+              <RadioButton
+                label={
+                  <NamePillWrapper>
+                    <NamePill
+                      name={name.name}
+                      truncatedName={name.name}
+                      network={chainId}
+                      key={name.id}
+                    />
+                  </NamePillWrapper>
+                }
+                key={name.id}
+                name={name.name}
+                value={name.name}
+              />
+            ))}
           </RadioButtonGroup>
         </NameList>
       </StyledScrollBox>
@@ -150,7 +160,11 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   } else {
     Content = (
       <LoadingContainer>
-        <Heading>{t('section.primary.input.noNames')}</Heading>
+        <Heading>
+          {unfilteredNames && unfilteredNames.length > 0
+            ? t('section.primary.input.noOtherNames')
+            : t('section.primary.input.noNames')}
+        </Heading>
       </LoadingContainer>
     )
   }

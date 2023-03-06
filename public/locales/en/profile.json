@@ -62,7 +62,7 @@
         "title": "Ownership Permissions",
         "parentCanControl": {
           "label": "This name can be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
-          "list" : {
+          "list": {
             "title": "The owner of the parent name can:",
             "item1": "Control and modify the settings and records",
             "item2": "Retake or reassign ownership of this name",
@@ -72,7 +72,7 @@
         "parentCannotControl": {
           "label": "This name cannot be controlled by its parent (<parentLink>{{parent}}</parentLink>)",
           "sublabel": "The owner of the parent name cannot control, modify, remove or retake ownership of this name.",
-          "list" : {
+          "list": {
             "title": "The name owner will retain ownership unless one of the following happens:",
             "item1": "The name expires on {{date}} (can be extended)",
             "item2": "The parent name expires on {{date}}",
@@ -113,15 +113,15 @@
       },
       "expiry": {
         "permissions": {
-            "canExtendExpiry": {
-              "label": "Can extend expiry",
-              "description": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
-            },
-            "cannotExtendExpiry": {
-              "label": "Cannot extend expiry",
-              "description": "This names permission expiry cannot be extended by the manager.",
-              "description_date": "This names permission expiry ({{date}}) cannot be extended by the manager."
-            }
+          "canExtendExpiry": {
+            "label": "Can extend expiry",
+            "description": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
+          },
+          "cannotExtendExpiry": {
+            "label": "Cannot extend expiry",
+            "description": "This names permission expiry cannot be extended by the manager.",
+            "description_date": "This names permission expiry ({{date}}) cannot be extended by the manager."
+          }
         },
         "manager": "manager",
         "owner": "owner",
@@ -273,7 +273,10 @@
         "text": "Text",
         "contentHash": "Content Hash",
         "noContentHash": "No Content Hash",
-        "editRecords": "Edit Records"
+        "editRecords": "Edit Records",
+        "noAbi": "No ABI",
+        "abi": "ABI",
+        "editRecordsDisabled": "Current resolver is not compatible with wrapped names"
       },
       "subnames": {
         "label": "Subnames",
@@ -340,7 +343,8 @@
   "errors": {
     "invalidName": "This name is invalid.",
     "invalidAddress": "Not a valid address",
-    "expiringSoon": "This name is expiring soon.",
+    "expiringSoon": "The grace period for this name ends on {{date}}. If it isn’t extended before this date, it will become available for registration.",
+    "hasExpired": "{{ name }} has expired",
     "ownerManagerChoice": "Must send owner or manager",
     "unknown": "Unknown error",
     "notMigrated": "This name is not migrated to the new registry.",
@@ -352,6 +356,7 @@
     "unsupportedTLD": "This TLD is not supported",
     "keyInUse": "{{value}} is already in use",
     "hasSubnames": "This name has subnames",
-    "permissionRevoked": "This name has revoked the permissions needed to perform this action."
+    "permissionRevoked": "This name has revoked the permissions needed to perform this action.",
+    "invalidJSON": "Invalid JSON"
   }
 }

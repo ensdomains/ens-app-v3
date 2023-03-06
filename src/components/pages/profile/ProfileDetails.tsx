@@ -140,7 +140,6 @@ const getAction = (action: Action, is2LDEth: boolean) => {
         buttonText={action.label}
         mobileWidth={150}
         mobileButtonWidth="initial"
-        buttonWidth="initial"
         mobilePlacement="top"
         placement="right"
       />
@@ -158,6 +157,71 @@ const getAction = (action: Action, is2LDEth: boolean) => {
   )
 }
 
+export const ownershipInfoCalc = (
+  pccExpired: boolean,
+  owners: ReturnType<typeof useOwners>,
+  gracePeriodEndDate?: Date,
+  expiryDate?: Date,
+) => {
+  if (pccExpired) {
+    return [
+      {
+        key: 'owner',
+        type: 'text',
+        value: '',
+      },
+    ]
+  }
+
+  if (gracePeriodEndDate && gracePeriodEndDate < new Date() && !pccExpired) {
+    const managerDetails = owners.find((x) => x.transferType === 'manager')
+
+    return [
+      {
+        key: 'owner',
+        type: 'text',
+        value: '',
+      },
+      {
+        key: 'manager',
+        type: 'text',
+        value: managerDetails?.address || '',
+      },
+      {
+        key: 'expiry',
+        type: 'text',
+        value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+        timestamp: expiryDate ? expiryDate.getTime() : 0,
+      },
+    ]
+  }
+
+  if (!owners)
+    return [
+      {
+        key: 'owner',
+        type: 'text',
+        value: '',
+      },
+      {
+        key: 'expiry',
+        type: 'text',
+        value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+        timestamp: expiryDate ? expiryDate.getTime() : 0,
+      },
+    ]
+
+  return [
+    ...owners.map((x) => ({ key: x.label, value: x.address })),
+    {
+      key: 'expiry',
+      type: 'text',
+      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+      timestamp: expiryDate ? expiryDate.getTime() : 0,
+    },
+  ]
+}
+
 export const ProfileDetails = ({
   textRecords = [],
   addresses = [],
@@ -167,6 +231,7 @@ export const ProfileDetails = ({
   actions,
   isCached,
   name,
+  gracePeriodEndDate,
 }: {
   textRecords: Array<Record<'key' | 'value', string>>
   addresses: Array<Record<'key' | 'value', string>>
@@ -176,6 +241,7 @@ export const ProfileDetails = ({
   actions: ReturnType<typeof useProfileActions>['profileActions']
   isCached?: boolean
   name: string
+  gracePeriodEndDate?: Date
 }) => {
   const otherRecords = [
     ...textRecords
@@ -187,23 +253,7 @@ export const ProfileDetails = ({
       .map((x) => ({ ...x, type: 'text' })),
   ]
 
-  const mappedOwners = [
-    ...((pccExpired
-      ? [
-          {
-            key: 'owner',
-            type: 'text',
-            value: '',
-          },
-        ]
-      : owners?.map((x) => ({ key: x.label, value: x.address }))) || []),
-    {
-      key: 'expiry',
-      type: 'text',
-      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
-      timestamp: expiryDate ? expiryDate.getTime() : 0,
-    },
-  ]
+  const mappedOwners = ownershipInfoCalc(pccExpired, owners, gracePeriodEndDate, expiryDate)
 
   const is2LDEth = checkETH2LDFromName(name)
 

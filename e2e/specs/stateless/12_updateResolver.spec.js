@@ -10,10 +10,18 @@ describe('Update Resolver', () => {
 
   describe('Happy', () => {
     describe('When profile is updated to latest resolver', () => {
-      it('should disable the latest resolver button, have custom resolver checked, and allow user to change reslover address', () => {
+      it('should disable the latest resolver button, have custom resolver checked, and allow user to change resolver address', () => {
         cy.visit('/wrapped.eth')
         cy.findByTestId('more-tab').click()
         cy.findByTestId('edit-resolver-button').click()
+
+        // check that etherscan link is correct
+        cy.findByTestId('latest-resolver-etherscan').should(
+          'have.attr',
+          'href',
+          `https://localhost.etherscan.io/address/${newResolver}`,
+        )
+
         cy.findByTestId('latest-resolver-radio').should('be.disabled')
         cy.findByTestId('custom-resolver-radio').should('not.be.disabled')
         cy.findByTestId('dogfood').type(oldResolver)
@@ -21,6 +29,7 @@ describe('Update Resolver', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
+        cy.wait(10000)
         cy.findByTestId('name-details-text').should('have.text', oldResolver)
       })
     })
@@ -34,6 +43,7 @@ describe('Update Resolver', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
+        cy.wait(10000)
 
         // This is only needed on cypress, not sure why!
         cy.reload()
@@ -42,7 +52,8 @@ describe('Update Resolver', () => {
         cy.findByTestId('transaction-modal-confirm-button').click()
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
-
+        cy.wait(10000)
+        
         cy.findByTestId('name-details-text').should('have.text', newResolver)
       })
     })

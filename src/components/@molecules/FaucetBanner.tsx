@@ -109,7 +109,7 @@ const FaucetBanner = () => {
             <LargeCheckIcon as={CheckCircleSVG} />
             <Typography>It may take a few minutes to show up in your wallet.</Typography>
           </InnerDialog>
-          <Dialog.Footer center trailing={<Button onClick={closeDialog}>Close</Button>} />
+          <Dialog.Footer trailing={<Button onClick={closeDialog}>Close</Button>} />
         </>
       )}
     </Dialog>
