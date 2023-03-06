@@ -3,13 +3,31 @@ import styled, { css } from 'styled-components'
 
 import { CheckSVG, CopySVG, tokens } from '@ensdomains/thorin'
 
-const IconWrapper = styled.div<{ $copied: boolean }>(
-  ({ $copied }) => css`
+const IconWrapper = styled.div<{
+  $copied: boolean
+  $checkStrokeWidth: SVGProps['checkStrokeWidth']
+  $size: SVGProps['size']
+  $color: SVGProps['color']
+}>(
+  ({ theme, $copied, $checkStrokeWidth, $color, $size }) => css`
     position: relative;
 
     & > svg {
       display: block;
       transition: all 0.15s ease-in-out;
+      ${$checkStrokeWidth &&
+      css`
+        stroke-width: ${theme.borderWidths[$checkStrokeWidth]};
+      `}
+      ${$size &&
+      css`
+        width: ${theme.space[$size]};
+        height: ${theme.space[$size]};
+      `}
+    ${$color &&
+      css`
+        color: ${theme.colors[$color]};
+      `}
     }
 
     & > svg:first-child {
@@ -45,28 +63,6 @@ type SVGProps = {
   color?: keyof typeof tokens.colors.light | keyof typeof tokens.colors.dark
 }
 
-const SVGWrapper = styled.svg<{
-  $checkStrokeWidth: SVGProps['checkStrokeWidth']
-  $size: SVGProps['size']
-  $color: SVGProps['color']
-}>(
-  ({ theme, $checkStrokeWidth, $size, $color }) => css`
-    ${$checkStrokeWidth &&
-    css`
-      stroke-width: ${theme.borderWidths[$checkStrokeWidth]};
-    `}
-    ${$size &&
-    css`
-      width: ${theme.space[$size]};
-      height: ${theme.space[$size]};
-    `}
-  ${$color &&
-    css`
-      color: ${theme.colors[$color]};
-    `}
-  `,
-)
-
 export const IconCopyAnimated = memo(
   ({
     copied = false,
@@ -77,22 +73,16 @@ export const IconCopyAnimated = memo(
     copied?: boolean
   } & SVGProps) => {
     return (
-      <IconWrapper $copied={copied}>
-        <SVGWrapper
-          {...{
-            $checkStrokeWidth: checkStrokeWidth,
-            $size: size,
-            $color: color,
-          }}
-          as={CheckSVG}
-        />
-        <SVGWrapper
-          {...{
-            $size: size,
-            $color: color,
-          }}
-          as={CopySVG}
-        />
+      <IconWrapper
+        {...{
+          $copied: copied,
+          $checkStrokeWidth: checkStrokeWidth,
+          $size: size,
+          $color: color,
+        }}
+      >
+        <CheckSVG />
+        <CopySVG />
       </IconWrapper>
     )
   },

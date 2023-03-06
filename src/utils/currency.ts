@@ -3,7 +3,7 @@ import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
 export const makeDisplay = (
   val: BigNumber | number,
-  decimals: number,
+  decimals: number | undefined,
   symbol: string,
   fromDecimals: number = 18,
 ) => {

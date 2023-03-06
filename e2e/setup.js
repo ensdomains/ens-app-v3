@@ -10,7 +10,7 @@ export const acceptMetamaskAccess = (account = 1, runRevert = false) => {
       cy.wrap(revert()).then(([currBlock, revertBlock]) => cy.task('log', [currBlock, revertBlock]))
   })
   cy.resetMetamaskAccount()
-  cy.contains('Connect Wallet').click()
+  cy.findByTestId('connect-button').click()
   cy.contains('MetaMask').click()
   cy.wait(1000)
   cy.window()
