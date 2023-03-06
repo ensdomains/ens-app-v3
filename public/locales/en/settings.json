@@ -15,6 +15,7 @@
       "input": {
         "title": "Select a primary name",
         "noNames": "No eligible names found for this address",
+        "noOtherNames": "No other eligible names found for this address",
         "loading": "Loading names"
       }
     }

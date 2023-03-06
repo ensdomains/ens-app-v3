@@ -14,13 +14,22 @@ const mockValidateName = mockFunction(validateName)
 const mockIsAddress = mockFunction(isAddress)
 
 describe('useValidate', () => {
-  it('should return invalid inputType is unknown and unsupported', () => {
+  it('should return valid when input is valid', async () => {
     mockValidateName.mockReturnValue('test')
+    mockParseInputType.mockReturnValue({
+      type: 'name',
+      info: 'supported',
+    })
+    const { result } = renderHook(() => useValidate('test'))
+    expect(result.current.valid).toEqual(true)
+  })
+  it('should return invalid inputType is unknown and unsupported', async () => {
+    mockValidateName.mockReturnValue('fail')
     mockParseInputType.mockReturnValue({
       type: 'unknown',
       info: 'unsupported',
     })
-    const { result } = renderHook(() => useValidate('test'))
+    const { result } = renderHook(() => useValidate('fail'))
     expect(result.current.valid).toEqual(false)
   })
 })

@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { ReactNode, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -20,6 +19,7 @@ import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvide
 import { emptyAddress } from '@app/utils/constants'
 
 import useDebouncedCallback from '../../../../../hooks/useDebouncedCallback'
+import { useQueryParameterState } from '../../../../../hooks/useQueryParameterState'
 import { InfiniteScrollContainer } from '../../../../@atoms/InfiniteScrollContainer/InfiniteScrollContainer'
 import { TaggedNameItem } from '../../../../@atoms/NameDetailItem/TaggedNameItem'
 
@@ -109,25 +109,18 @@ export const SubnamesTab = ({
   canCreateSubdomains: boolean
   isWrapped: boolean
 }) => {
-  const router = useRouter()
   const { t } = useTranslation('profile')
   const { address } = useAccount()
   const { showDataInput } = useTransactionFlow()
 
-  const [sortType, setSortType] = useState<SubnameSortType | undefined>()
-  const [sortDirection, setSortDirection] = useState(SortDirection.desc)
-  const [searchInput, setSearchInput] = useState((router.query.search as string) || '')
-
-  const searchQuery = (router.query.search as string) || ''
-  const [_searchQuery, setSearchQuery] = useState(searchQuery)
+  const [sortType, setSortType] = useQueryParameterState<SubnameSortType>('sort', 'creationDate')
+  const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
+    'direction',
+    'desc',
+  )
+  const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
   const debouncedSetSearch = useDebouncedCallback(setSearchQuery, 500)
-
-  useEffect(() => {
-    const url = new URL(router.asPath, window.location.origin)
-    url.searchParams.set('search', _searchQuery)
-    router.replace(url.toString(), undefined, { shallow: true })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [_searchQuery])
+  const [searchInput, setSearchInput] = useState(searchQuery)
 
   const { subnames, isLoading, isFetching, fetchNextPage, hasNextPage } = useSubnameInfiniteQuery(
     name,
@@ -240,7 +233,7 @@ export const SubnamesTab = ({
         <NameTableHeader
           selectable={false}
           sortType={sortType}
-          sortTypeOptionValues={[SortType.creationDate, SortType.labelName]}
+          sortTypeOptionValues={['creationDate', 'labelName']}
           sortDirection={sortDirection}
           searchQuery={searchInput}
           mode="view"

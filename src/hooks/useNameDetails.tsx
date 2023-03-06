@@ -2,6 +2,7 @@ import { ReactNode, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
 import { useEns } from '@app/utils/EnsProvider'
+import { formatFullExpiry } from '@app/utils/utils'
 
 import { useBasicName } from './useBasicName'
 import useDNSOwner from './useDNSOwner'
@@ -26,6 +27,8 @@ export const useNameDetails = (name: string) => {
     isLoading: basicLoading,
     isCachedData: basicIsCachedData,
     registrationStatus,
+    expiryDate,
+    gracePeriodEndDate,
     ...basicName
   } = useBasicName(name)
 
@@ -79,7 +82,7 @@ export const useNameDetails = (name: string) => {
       return t('errors.invalidName')
     }
     if (registrationStatus === 'gracePeriod') {
-      return t('errors.expiringSoon')
+      return `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`
     }
     if (
       !profile &&
@@ -93,6 +96,7 @@ export const useNameDetails = (name: string) => {
     }
     return null
   }, [
+    gracePeriodEndDate,
     normalisedName,
     profile,
     profileLoading,
@@ -104,10 +108,17 @@ export const useNameDetails = (name: string) => {
     valid,
   ])
 
+  const errorTitle = useMemo(() => {
+    if (registrationStatus === 'gracePeriod') {
+      return t('errors.hasExpired', { name })
+    }
+  }, [registrationStatus, name, t])
+
   const isLoading = !ready || profileLoading || abiLoading || basicLoading || dnsOwnerLoading
 
   return {
     error,
+    errorTitle,
     normalisedName,
     valid,
     profile,
@@ -116,6 +127,8 @@ export const useNameDetails = (name: string) => {
     basicIsCachedData: basicIsCachedData || dnsOwnerIsCachedData,
     profileIsCachedData,
     registrationStatus,
+    gracePeriodEndDate,
+    expiryDate,
     ...basicName,
   }
 }

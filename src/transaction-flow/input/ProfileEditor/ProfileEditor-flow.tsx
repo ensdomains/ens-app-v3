@@ -246,7 +246,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         key: `edit-profile-flow-${name}`,
         payload: {
           intro: {
-            title: 'Action Required',
+            title: ['Action Required', { ns: 'transactionFlow' }],
             content: makeIntroItem('MigrateAndUpdateResolver', { name }),
           },
           transactions: [

@@ -3,16 +3,19 @@ import { mockFunction, renderHook, waitFor } from '@app/test-utils'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { useBasicName } from './useBasicName'
+import { useContractAddress } from './useContractAddress'
+import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
-import { useWrapperExists } from './useWrapperExists'
 
 jest.mock('@app/utils/EnsProvider')
 jest.mock('./useValidate')
-jest.mock('./useWrapperExists')
+jest.mock('./useContractAddress')
+jest.mock('./useSupportsTLD')
 
 const mockUseEns = mockFunction(useEns)
 const mockUseValidate = mockFunction(useValidate)
-const mockUseWrapperExists = mockFunction(useWrapperExists)
+const mockUseContractAddress = mockFunction(useContractAddress)
+const mockUseSupportsTLD = mockFunction(useSupportsTLD)
 
 const mockGetOwner = {
   ...jest.fn(),
@@ -34,6 +37,7 @@ const mockGetWrapperData = {
 const mockBatch = jest.fn()
 
 describe('useBasicName', () => {
+  mockUseSupportsTLD.mockReturnValue({ data: true, isLoading: false })
   mockUseEns.mockReturnValue({
     ready: true,
     getOwner: mockGetOwner,
@@ -42,7 +46,7 @@ describe('useBasicName', () => {
     getWrapperData: mockGetWrapperData,
     batch: mockBatch,
   })
-  mockUseWrapperExists.mockReturnValue(true)
+  mockUseContractAddress.mockReturnValue('0x123')
   afterEach(() => {
     jest.clearAllMocks()
   })

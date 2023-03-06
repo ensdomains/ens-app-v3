@@ -37,7 +37,7 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.49
+      '@ensdomains/ensjs': 3.0.0-alpha.50
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': 0.6.31
       '@ethersproject/abi': ^5.6.4
@@ -175,7 +175,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.49_f2qxwv66g46rb33uzxnl5nluty
+      '@ensdomains/ensjs': 3.0.0-alpha.50_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.31_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -381,7 +381,7 @@ packages:
       convert-source-map: 1.8.0
       debug: 4.3.4
       gensync: 1.0.0-beta.2
-      json5: 2.2.1
+      json5: 2.2.3
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -2299,8 +2299,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.49_f2qxwv66g46rb33uzxnl5nluty:
-    resolution: {integrity: sha512-EmUm0emjoR9uCSzJqc9ZLnIkLBcGzGaRsVpZrqyP3K4zmUZhP6ey5o+PA23LRDbVufGxsHXsSYbGGF637fczyw==}
+  /@ensdomains/ensjs/3.0.0-alpha.50_f2qxwv66g46rb33uzxnl5nluty:
+    resolution: {integrity: sha512-7v/QL8iWg4dAHGzuR+RCR0pLE1C06BvsGzgxmvdw5DqIGfXoLOPbCGy109Na/vyXlHcG0ErKczcwXUYIHAQ/1A==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
@@ -14994,6 +14994,12 @@ packages:
 
   /json5/2.2.1:
     resolution: {integrity: sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==}
+    engines: {node: '>=6'}
+    hasBin: true
+    dev: true
+
+  /json5/2.2.3:
+    resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}
     engines: {node: '>=6'}
     hasBin: true
 

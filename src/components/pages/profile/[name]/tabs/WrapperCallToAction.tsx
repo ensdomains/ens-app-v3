@@ -14,7 +14,7 @@ import useWrapperApprovedForAll from '@app/hooks/useWrapperApprovedForAll'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction } from '@app/transaction-flow/types'
+import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 
 const Container = styled(Card)(
   ({ theme }) => css`
@@ -151,16 +151,22 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
           }),
         )
       }
-      if (!checkIsDecrypted(name))
-        return showDataInput(`wrapName-${name}`, 'UnknownLabels', { name, transactions })
-      return createTransactionFlow(`wrapName-${name}`, {
+      const transactionFlowItem: TransactionFlowItem = {
         transactions,
         resumable: true,
         intro: {
-          title: t('details.wrap.startTitle'),
+          title: ['details.wrap.startTitle', { ns: 'profile' }],
           content: makeIntroItem('WrapName', { name }),
         },
-      })
+      }
+      const key = `wrapName-${name}`
+      if (!checkIsDecrypted(name))
+        return showDataInput(key, 'UnknownLabels', {
+          name,
+          key,
+          transactionFlowItem,
+        })
+      return createTransactionFlow(key, transactionFlowItem)
     }
   }
 

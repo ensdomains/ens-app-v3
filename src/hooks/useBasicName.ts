@@ -5,12 +5,13 @@ import { truncateFormat } from '@ensdomains/ensjs/utils/format'
 
 import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
+import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { checkETH2LDName, checkETHName, isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
+import { useContractAddress } from './useContractAddress'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
-import { useWrapperExists } from './useWrapperExists'
 
 type BaseBatchReturn = [ReturnedENS['getOwner'], ReturnedENS['getWrapperData']]
 type ETH2LDBatchReturn = [...BaseBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
@@ -88,8 +89,30 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const truncatedName = normalisedName ? truncateFormat(normalisedName) : undefined
 
-  const nameWrapperExists = useWrapperExists()
+  const nameWrapperAddress = useContractAddress('NameWrapper')
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+  const canBeWrapped = useMemo(
+    () =>
+      !!(
+        ens.ready &&
+        nameWrapperAddress &&
+        nameWrapperAddress !== emptyAddress &&
+        !isWrapped &&
+        normalisedName?.endsWith('.eth') &&
+        !isLabelTooLong(normalisedName)
+      ),
+    [ens.ready, nameWrapperAddress, isWrapped, normalisedName],
+  )
+  const pccExpired = useMemo(
+    () =>
+      !!(
+        ownerData?.ownershipLevel === 'registry' &&
+        ownerData.owner === nameWrapperAddress &&
+        wrapperData?.expiryDate &&
+        wrapperData.expiryDate < new Date()
+      ),
+    [ownerData, wrapperData, nameWrapperAddress],
+  )
 
   const isLoading = !ens.ready || batchLoading || supportedTLDLoading
 
@@ -106,11 +129,8 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     truncatedName,
     registrationStatus,
     isWrapped: ownerData?.ownershipLevel === 'nameWrapper',
-    canBeWrapped:
-      nameWrapperExists &&
-      !isWrapped &&
-      normalisedName?.endsWith('.eth') &&
-      !isLabelTooLong(normalisedName),
+    pccExpired,
+    canBeWrapped,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

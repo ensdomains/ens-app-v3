@@ -4,7 +4,7 @@ import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import useOwners from '@app/hooks/useOwners'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
-import { checkETH2LDFromName } from '@app/utils/utils'
+import { checkETH2LDFromName, validateExpiry } from '@app/utils/utils'
 
 import Miscellaneous from './Miscellaneous'
 import Ownership from './Ownership'
@@ -38,6 +38,8 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
     basicIsCachedData,
     profileIsCachedData,
     profile,
+    expiryDate,
+    pccExpired,
   } = nameDetails
   const owners = useOwners({
     ownerData: ownerData!,
@@ -48,7 +50,16 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
 
   return (
     <MoreContainer>
-      <Miscellaneous name={name} />
+      <Miscellaneous
+        expiryDate={validateExpiry(
+          name,
+          wrapperData,
+          wrapperData?.expiryDate || expiryDate,
+          pccExpired,
+        )}
+        name={name}
+        isCachedData={basicIsCachedData}
+      />
       {owners && owners.length > 0 && (
         <Ownership
           name={name}

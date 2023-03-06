@@ -17,6 +17,7 @@ import { DeepPartial } from './types'
 jest.mock('wagmi', () => {
   const {
     useQuery,
+    useQueryClient,
     useInfiniteQuery,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
@@ -24,6 +25,7 @@ jest.mock('wagmi', () => {
 
   return {
     useQuery,
+    useQueryClient,
     useInfiniteQuery,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
@@ -47,7 +49,8 @@ jest.mock('react-i18next', () => ({
       isInitialized: true,
     },
   }),
-  Trans: ({ i18nKey }: { i18nKey: string }) => i18nKey,
+  Trans: ({ i18nKey, values }: { i18nKey: string; values: string[] }) =>
+    `${i18nKey} ${values ? Object.values(values).join(', ') : ''}`,
 }))
 
 const queryClient = new QueryClient({
