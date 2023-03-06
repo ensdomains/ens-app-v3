@@ -163,12 +163,14 @@ const Hamburger = () => {
     })
   }, [])
 
+  // set the view back to main when the menu is closed
   useEffect(() => {
     if (!isOpen) {
       setCurrentView('main')
     }
   }, [isOpen, setCurrentView])
 
+  // close the menu when the user clicks outside of the menu
   useEffect(() => {
     const handleClick = (e: MouseEvent) => {
       if (
@@ -191,6 +193,7 @@ const Hamburger = () => {
     }
   }, [isOpen])
 
+  // set the height of the menu based on the finished animation view
   useEffect(() => {
     if (!animation) return
     if (animation.direction === 'backwards') {

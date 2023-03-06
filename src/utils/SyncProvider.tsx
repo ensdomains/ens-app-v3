@@ -83,6 +83,7 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
     },
   )
 
+  // finds transactions that have been updated and calls the callbacks
   useEffect(() => {
     const updatedTransactions = transactions.filter((transaction) => {
       if (previousTransactions.current) {
