@@ -4,7 +4,8 @@ import styled, { css } from 'styled-components'
 
 import { RecordItem, Typography } from '@ensdomains/thorin'
 
-import { DynamicAddressIcon, addressIconTypes } from '@app/assets/address/DynamicAddressIcon'
+import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
+import { dynamicAddressIcons } from '@app/assets/address/dynamicAddressIcons'
 import { DynamicSocialIcon, socialIconTypes } from '@app/assets/social/DynamicSocialIcon'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { getDestination } from '@app/routes'
@@ -52,10 +53,10 @@ export const AddressProfileButton = ({
   const breakpoints = useBreakpoint()
   const iconKey = _iconKey.toLowerCase()
 
-  return addressIconTypes[iconKey as keyof typeof addressIconTypes] ? (
+  return _iconKey in dynamicAddressIcons ? (
     <RecordItem
       data-testid={`address-profile-button-${iconKey}`}
-      icon={<StyledAddressIcon name={iconKey as keyof typeof addressIconTypes} />}
+      icon={<StyledAddressIcon name={iconKey} />}
       value={value}
       size={breakpoints.md ? 'large' : 'small'}
       inline

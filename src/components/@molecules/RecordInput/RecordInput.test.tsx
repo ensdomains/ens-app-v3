@@ -2,7 +2,7 @@ import { fireEvent, render, screen } from '@app/test-utils'
 
 import { cleanup } from '@testing-library/react'
 
-import AddressEthereumSVG from '@app/assets/address/AddressEthereum.svg'
+import AddressEthereumSVG from '@app/assets/address/AddressEth.svg'
 
 import { RecordInput } from './RecordInput'
 

@@ -3,8 +3,7 @@ import supportedContentHashKeys from '@app/constants/supportedContentHashKeys.js
 import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedOtherRecordKeys from '@app/constants/supportedOtherRecordKeys.json'
 import supportedSocialRecordKeys from '@app/constants/supportedSocialRecordKeys.json'
-
-import coinList from './coinList'
+import unsupportedAddresses from '@app/constants/unsupportedAddresses.json'
 
 export type ProfileRecordGroup =
   | 'general'
@@ -36,17 +35,11 @@ const social: ProfileRecord[] = supportedSocialRecordKeys.map((key) => ({
   type: 'text',
 }))
 
-const _address = coinList.reduce<ProfileRecord[]>((acc, coin) => {
-  const record: ProfileRecord = {
-    key: coin,
-    group: 'address',
-    type: 'addr',
-  }
-  if (coin === 'ETH') return acc
-  if (supportedAddresses.includes(coin.toLowerCase())) return [record, ...acc]
-  return [...acc, record]
-}, [])
-const address: ProfileRecord[] = [{ key: 'ETH', group: 'address', type: 'addr' }, ..._address]
+const address = [...supportedAddresses, ...unsupportedAddresses].map((coin) => ({
+  key: coin.toUpperCase(),
+  group: 'address',
+  type: 'addr',
+})) as ProfileRecord[]
 
 const website: ProfileRecord[] = supportedContentHashKeys.map((key) => ({
   key,
