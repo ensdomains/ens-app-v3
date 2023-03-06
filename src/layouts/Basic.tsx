@@ -57,6 +57,7 @@ const BottomPlaceholder = styled.div(
 const StyledDialog = styled(Dialog)(
   () => css`
     height: 80vh;
+    z-index: 10001;
 
     & > div {
       padding: 0;
