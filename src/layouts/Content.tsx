@@ -1,13 +1,13 @@
 import Head from 'next/head'
-import { useRouter } from 'next/router'
-import { ReactNode, useEffect, useRef, useState } from 'react'
+import { ReactNode, useCallback, useEffect, useRef, useState } from 'react'
 import styled, { css } from 'styled-components'
 
 import { Banner, Button, Skeleton, Typography, mq } from '@ensdomains/thorin'
 
-import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
-import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
+import { IconCopyAnimated } from '@app/components/IconCopyAnimated'
 import { LeadingHeading } from '@app/components/LeadingHeading'
+import { useCopied } from '@app/hooks/useCopied'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
 const HeadingItems = styled.div(
@@ -59,15 +59,6 @@ const ContentPlaceholder = styled.div(
   `,
 )
 
-const BackArrow = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['6']};
-    height: ${theme.space['6']};
-    display: block;
-    color: ${theme.colors.greyPrimary};
-  `,
-)
-
 const WarningWrapper = styled.div(
   () => css`
     width: 100%;
@@ -85,19 +76,6 @@ const FullWidthSkeleton = styled.div(
   `,
 )
 
-const BackButtonWrapper = styled.div(
-  ({ theme }) => css`
-    margin-left: -${theme.space[2]};
-    margin-right: -${theme.space[1]};
-  `,
-)
-
-const BackArrowWrapper = styled.div(
-  ({ theme }) => css`
-    padding: ${theme.space[2]};
-  `,
-)
-
 const TitleContainer = styled.div(
   () => css`
     position: relative;
@@ -107,8 +85,8 @@ const TitleContainer = styled.div(
   `,
 )
 
-const TitleWrapper = styled.div<{ $invert: boolean }>(
-  ({ $invert }) => css`
+const TitleWrapper = styled.div(
+  () => css`
     width: 100%;
     display: flex;
     align-items: center;
@@ -118,15 +96,6 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
     ${TitleContainer} {
       align-items: flex-start;
     }
-
-    ${$invert &&
-    css`
-      flex-direction: row-reverse;
-
-      ${TitleContainer} {
-        align-items: flex-end;
-      }
-    `}
 
     ${mq.md.min(css`
       justify-content: flex-start;
@@ -140,25 +109,10 @@ const TitleWrapper = styled.div<{ $invert: boolean }>(
   `,
 )
 
-const DummyTitle = styled(Typography)(
-  ({ theme }) => css`
-    font-size: ${theme.fontSizes.headingThree};
-    line-height: ${theme.lineHeights.headingThree};
-    white-space: pre-wrap;
-
-    ${mq.md.min(css`
-      font-size: ${theme.fontSizes.headingTwo};
-      line-height: ${theme.lineHeights.headingTwo};
-    `)}
-  `,
-)
-
 const Title = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
     line-height: ${theme.lineHeights.headingThree};
-    position: absolute;
-    top: 0;
     white-space: nowrap;
     text-overflow: ellipsis;
 
@@ -176,28 +130,46 @@ const Subtitle = styled(Typography)(
   `,
 )
 
+const CopyButton = styled(Button)(
+  ({ theme }) => css`
+    padding: 0;
+    width: ${theme.space['8.5']};
+    height: ${theme.space['8.5']};
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    position: relative;
+
+    margin-left: ${theme.space['2']};
+  `,
+)
+
 const CompactTitle = ({
-  invert,
-  showSubtitle,
   title,
-  subtitle,
   titleButton,
+  subtitle,
+  copyValue,
 }: {
-  invert: boolean
-  showSubtitle: boolean
   title: string
-  subtitle?: string
   titleButton: ReactNode
+  subtitle?: string
+  copyValue?: string
 }) => {
   const ref = useRef<HTMLDivElement>(null)
   const [titleWidth, setTitleWidth] = useState(0)
+  const { copy, copied } = useCopied()
 
-  const callback = () => {
+  const hasCopyButton = !!copyValue
+
+  const callback = useCallback(() => {
     const { current } = ref
     if (current) {
       const parent = current.parentElement!
       const parentGap = parseInt(window.getComputedStyle(parent).getPropertyValue('gap'))
-      let newWidth = parent.offsetWidth
+      // 48 width for copy button (40 + 8 padding)
+      let newWidth = parent.offsetWidth - (hasCopyButton ? 48 : 0)
       for (const child of parent.children) {
         if (child !== current) {
           newWidth -= child.clientWidth + parentGap
@@ -205,7 +177,7 @@ const CompactTitle = ({
       }
       setTitleWidth(newWidth)
     }
-  }
+  }, [hasCopyButton])
 
   useEffect(() => {
     const observer = new ResizeObserver(callback)
@@ -213,14 +185,13 @@ const CompactTitle = ({
     return () => {
       observer.disconnect()
     }
-  }, [])
+  }, [callback])
 
   return (
     <ContentContainer ref={ref}>
-      <TitleWrapper $invert={invert}>
+      <TitleWrapper>
         {titleButton}
-        <TitleContainer>
-          <DummyTitle weight="bold"> </DummyTitle>
+        <TitleContainer style={{ maxWidth: 'fit-content' }}>
           <Title
             className="shrinkable-title"
             weight="bold"
@@ -228,8 +199,13 @@ const CompactTitle = ({
           >
             {title}
           </Title>
-          {showSubtitle && <Subtitle weight="bold">{subtitle}</Subtitle>}
+          {subtitle && <Subtitle weight="bold">{subtitle}</Subtitle>}
         </TitleContainer>
+        {hasCopyButton && (
+          <CopyButton colorStyle="transparent" shape="square" onClick={() => copy(copyValue)}>
+            <IconCopyAnimated copied={copied} color="grey" size="4.5" />
+          </CopyButton>
+        )}
       </TitleWrapper>
     </ContentContainer>
   )
@@ -240,24 +216,24 @@ export const Content = ({
   loading,
   noTitle,
   title,
+  titleButton,
   subtitle,
   alwaysShowSubtitle,
   singleColumnContent,
-  titleButton,
-  hideBack,
   hideHeading,
   inlineHeading,
+  copyValue,
 }: {
   noTitle?: boolean
   title: string
-  subtitle?: string
   titleButton?: React.ReactNode
+  subtitle?: string
   alwaysShowSubtitle?: boolean
   singleColumnContent?: boolean
   loading?: boolean
-  hideBack?: boolean
   hideHeading?: boolean
   inlineHeading?: boolean
+  copyValue?: string
   children: {
     warning?: {
       type: 'warning' | 'error' | 'info'
@@ -270,10 +246,7 @@ export const Content = ({
     trailing: React.ReactNode
   }
 }) => {
-  const router = useRouter()
   const breakpoints = useBreakpoint()
-
-  const hasBack = router.query.from && !hideBack
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
@@ -313,20 +286,12 @@ export const Content = ({
         <HeadingItems>
           <Skeleton loading={loading} as={FullWidthSkeleton as any}>
             <CustomLeadingHeading>
-              {hasBack && (
-                <BackButtonWrapper data-testid="back-button">
-                  <Button onClick={() => router.back()} colorStyle="transparent" size="flexible">
-                    <BackArrowWrapper>
-                      <BackArrow as={ArrowLeftSVG} />
-                    </BackArrowWrapper>
-                  </Button>
-                </BackButtonWrapper>
-              )}
               <CompactTitle
-                invert={!!hasBack}
-                showSubtitle={!!(subtitle && (!breakpoints.md || alwaysShowSubtitle))}
-                subtitle={subtitle}
+                copyValue={copyValue}
                 title={title}
+                subtitle={
+                  subtitle && (!breakpoints.md || alwaysShowSubtitle) ? subtitle : undefined
+                }
                 titleButton={titleButton}
               />
               {inlineHeading && children.header && breakpoints.md && (
@@ -334,7 +299,7 @@ export const Content = ({
                   <Skeleton loading={loading}>{children.header}</Skeleton>
                 </ContentContainer>
               )}
-              {!hasBack && !breakpoints.md && <HamburgerRoutes />}
+              {!breakpoints.md && <Hamburger />}
             </CustomLeadingHeading>
           </Skeleton>
         </HeadingItems>
@@ -347,7 +312,9 @@ export const Content = ({
 
       {!inlineHeading && children.header && (
         <ContentContainer>
-          <Skeleton loading={loading}>{children.header}</Skeleton>
+          <Skeleton loading={loading} as={FullWidthSkeleton as any}>
+            {children.header}
+          </Skeleton>
         </ContentContainer>
       )}
       {inlineHeading && children.header && !breakpoints.md && (

@@ -78,11 +78,9 @@ describe('Profile', () => {
   it('should allow user to connect', () => {
     cy.changeMetamaskNetwork('goerli')
     acceptMetamaskAccess()
-    cy.contains('0x', {
-      timeout: 15000,
-    }).click()
+    cy.findByTestId('header-profile').click()
     cy.contains('Profile').should('be.visible')
-    cy.contains('0x').click()
+    cy.findByTestId('header-profile').click()
     cy.contains('Profile').should('not.be.visible')
   })
 
@@ -95,10 +93,7 @@ describe('Profile', () => {
   it('should load emoji domain pages', () => {
     cy.visit('/%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F.eth')
     cy.wait(10000)
-    cy.findByTestId('profile-snippet-nickname', { timeout: 25000 }).should(
-      'contain.text',
-      '❤❤❤.eth',
-    )
+    cy.findByTestId('profile-snippet-name', { timeout: 25000 }).should('contain.text', '❤❤❤.eth')
   })
 
   profiles.forEach((profile) => {

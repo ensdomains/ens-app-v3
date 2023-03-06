@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 
-export const useCopied = () => {
+export const useCopied = (timeoutMs: number = 1500) => {
   const [copied, setCopied] = useState(false)
 
   const copy = (value: string) => {
@@ -11,10 +11,10 @@ export const useCopied = () => {
   useEffect(() => {
     let timeout: any
     if (copied) {
-      timeout = setTimeout(() => setCopied(false), 1500)
+      timeout = setTimeout(() => setCopied(false), timeoutMs)
     }
     return () => clearTimeout(timeout)
-  }, [copied])
+  }, [copied, timeoutMs])
 
   return { copy, copied }
 }

@@ -5,12 +5,9 @@ describe('Address', () => {
     cy.changeMetamaskNetwork('goerli')
     acceptMetamaskAccess()
     cy.visit('/')
-    // replace with data-testid when design system supports it
-    cy.contains('0x', {
-      timeout: 15000,
-    }).click()
+    cy.findByTestId('header-profile').click()
     cy.contains('Profile').should('be.visible')
-    cy.contains('0x').click()
+    cy.findByTestId('header-profile').click()
     cy.contains('Profile').should('not.be.visible')
   })
 
