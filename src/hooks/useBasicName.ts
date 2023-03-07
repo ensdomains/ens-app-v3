@@ -32,7 +32,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     /** DO NOT REMOVE */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
-    internal: { isFetchedAfterMount },
+    isFetchedAfterMount,
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],

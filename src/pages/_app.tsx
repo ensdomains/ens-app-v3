@@ -6,7 +6,8 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
+import { WagmiConfig, configureChains, createClient } from 'wagmi'
+import { goerli, localhost } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
@@ -94,7 +95,7 @@ const breakpoints = {
 }
 
 const { provider, chains } = configureChains(
-  [chain.goerli, chain.localhost],
+  [goerli, localhost],
   [
     ...(process.env.NEXT_PUBLIC_PROVIDER
       ? [
@@ -103,7 +104,7 @@ const { provider, chains } = configureChains(
           }),
         ]
       : [
-          infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }),
+          infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }) as any,
           jsonRpcProvider({
             rpc: (c) => ({
               http: `https://web3.ens.domains/v1/${

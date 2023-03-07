@@ -364,7 +364,7 @@ const Pricing = ({
   const { normalisedName, gracePeriodEndDate } = nameDetails
 
   const { address } = useAccountSafely()
-  const { data: balance } = useBalance({ addressOrName: address })
+  const { data: balance } = useBalance({ address: address as `0x${string}` | undefined })
   const resolverAddress = useContractAddress('PublicResolver')
 
   const [years, setYears] = useState(registrationData.years)

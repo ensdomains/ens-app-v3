@@ -118,13 +118,13 @@ const useEthInvoice = (
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
   const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
-    hash: commitTxFlow?.hash,
+    hash: commitTxFlow?.hash as `0x${string}` | undefined,
   })
   const {
     response: registerResponse,
     receipt: registerReceipt,
     isLoading: registerLoading,
-  } = useTransactionResponseReceipt(registerTxFlow?.hash || '')
+  } = useTransactionResponseReceipt(registerTxFlow?.hash as `0x${string}` | undefined)
   const isLoading = commitLoading || registerLoading
 
   useEffect(() => {
