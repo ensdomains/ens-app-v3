@@ -21,7 +21,9 @@ describe('onwershipInfoCalc', () => {
   it('if unwrapped and expired, should return manager and expiry', () => {
     const expiryDate = new Date(1)
     const gracePeriodEndDate = new Date(2)
-    const owners = [{ transferType: 'manager', address: '0x123' }] as OwnerArray
+    const owners = [
+      { transferType: 'manager', address: '0x123', label: 'name.manager' },
+    ] as OwnerArray
 
     const result = ownershipInfoCalc('eth', false, owners, gracePeriodEndDate, expiryDate)
     expect(result).toEqual([
