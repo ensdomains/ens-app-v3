@@ -233,7 +233,7 @@ export const ownershipInfoCalc = (
     {
       key: 'name.expiry',
       type: 'text',
-      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+      value: expiryDate ? formatExpiry(expiryDate) : '',
       timestamp: expiryDate ? expiryDate.getTime() : 0,
     },
     {

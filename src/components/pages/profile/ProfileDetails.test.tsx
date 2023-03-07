@@ -1,11 +1,18 @@
+import { OwnerArray } from '@app/types'
+
 import { ownershipInfoCalc } from './ProfileDetails'
 
 describe('onwershipInfoCalc', () => {
   it('should return no owner if PCC is expired', () => {
-    const result = ownershipInfoCalc(true, [], new Date(), new Date())
+    const result = ownershipInfoCalc('', true, [], new Date(), new Date())
     expect(result).toEqual([
       {
-        key: 'owner',
+        key: 'name.owner',
+        type: 'text',
+        value: '',
+      },
+      {
+        key: 'name.parent',
         type: 'text',
         value: '',
       },
@@ -14,17 +21,22 @@ describe('onwershipInfoCalc', () => {
   it('if unwrapped and expired, should return manager and expiry', () => {
     const expiryDate = new Date(1)
     const gracePeriodEndDate = new Date(2)
-    const owners = [{ transferType: 'manager', address: '0x123' }]
+    const owners = [{ transferType: 'manager', address: '0x123' }] as OwnerArray
 
-    const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
+    const result = ownershipInfoCalc('eth', false, owners, gracePeriodEndDate, expiryDate)
     expect(result).toEqual([
-      { key: 'owner', type: 'text', value: '' },
-      { key: 'manager', type: 'text', value: '0x123' },
+      { key: 'name.owner', type: 'text', value: '' },
+      { key: 'name.manager', type: 'text', value: '0x123' },
       {
-        key: 'expiry',
+        key: 'name.expiry',
         type: 'text',
-        value: '\nJanuary 1, 1970',
+        value: 'January 1, 1970',
         timestamp: 1,
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: '',
       },
     ])
   })
@@ -32,19 +44,24 @@ describe('onwershipInfoCalc', () => {
     const expiryDate = new Date(3255803954000)
     const gracePeriodEndDate = new Date(3255803954000 + 1000 * 60 * 60 * 24 * 30)
     const owners = [
-      { transferType: 'manager', address: '0x123', label: 'manager' },
-      { transferType: 'owner', address: '0x123', label: 'owner' },
-    ]
+      { transferType: 'manager', address: '0x123', label: 'name.manager' },
+      { transferType: 'owner', address: '0x123', label: 'name.owner' },
+    ] as OwnerArray
 
-    const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
+    const result = ownershipInfoCalc('test.eth', false, owners, gracePeriodEndDate, expiryDate)
     expect(result).toEqual([
-      { key: 'manager', value: '0x123' },
-      { key: 'owner', value: '0x123' },
+      { key: 'name.manager', value: '0x123' },
+      { key: 'name.owner', value: '0x123' },
       {
-        key: 'expiry',
+        key: 'name.expiry',
         type: 'text',
-        value: '\nMarch 3, 2073',
+        value: 'March 3, 2073',
         timestamp: 3255803954000,
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: 'eth',
       },
     ])
   })
