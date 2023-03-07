@@ -140,9 +140,18 @@ export function createTransactionStore({ provider: initialProvider }: { provider
             return existingRequest
           }
 
+          console.log('original hash', hash)
           const requestPromise = provider
             .waitForTransaction(hash, 1)
             .then(async ({ status, blockHash, blockNumber, effectiveGasPrice, gasUsed }) => {
+              console.log({
+                hash,
+                status,
+                blockHash,
+                blockNumber,
+                effectiveGasPrice,
+                gasUsed,
+              })
               let blockRequest = blockRequestCache.get(blockHash)
               if (!blockRequest) {
                 blockRequest = provider.getBlock(blockHash)
