@@ -6,7 +6,6 @@ import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { Dialog, Typography, mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
-import { Footer } from '@app/components/Footer'
 
 import { Navigation } from './Navigation'
 
@@ -49,7 +48,7 @@ const BottomPlaceholder = styled.div(
     height: ${theme.space['16']};
     ${mq.md.min(
       css`
-        display: none;
+        height: ${theme.space['18']};
       `,
     )}
   `,
@@ -137,7 +136,6 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
       <Navigation />
       <ContentWrapper>{children}</ContentWrapper>
       <BottomPlaceholder />
-      <Footer />
       <StyledDialog
         open={hasFeedbackForm}
         variant="actionable"

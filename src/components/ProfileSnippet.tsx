@@ -206,10 +206,12 @@ export const ProfileSnippet = ({
       </FirstItems>
       <TextStack>
         <DetailStack>
-          <Name fontVariant="headingTwo" data-testid="profile-snippet-nickname">
-            {recordName || name}
+          <Name fontVariant="headingTwo" data-testid="profile-snippet-name">
+            {name}
           </Name>
-          {recordName && <NameRecord data-testid="profile-snippet-name">{name}</NameRecord>}
+          {recordName && (
+            <NameRecord data-testid="profile-snippet-nickname">{recordName}</NameRecord>
+          )}
         </DetailStack>
         {description && (
           <Typography data-testid="profile-snippet-description">{description}</Typography>

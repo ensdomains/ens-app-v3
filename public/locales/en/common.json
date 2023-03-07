@@ -52,7 +52,7 @@
   },
   "navigation": {
     "home": "Home",
-    "names": "Names",
+    "names": "My Names",
     "favourites": "Favourites",
     "settings": "Settings",
     "faq": "FAQ",
@@ -64,12 +64,13 @@
     "terms": "Terms of Use",
     "privacy": "Privacy Policy",
     "back": "Back",
-    "oldApp": "Old ENS App"
+    "oldApp": "Old ENS App",
+    "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet."
   },
   "wallet": {
     "myProfile": "Profile",
     "disconnect": "Disconnect",
-    "connect": "Connect Wallet",
+    "connect": "Connect",
     "noPrimaryName": "No Primary Name",
     "viewProfile": "View Profile",
     "viewDetails": "View Details",

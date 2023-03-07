@@ -30,7 +30,21 @@ export const useLocalStorage = <D>(
     if (value !== defaultValue) {
       localStorage.setItem(key, JSON.stringify(value))
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    window.dispatchEvent(new StorageEvent('storage', { key, newValue: JSON.stringify(value) }))
+  }, [key, value, defaultValue])
+
+  useEffect(() => {
+    const handleStorageChange = (event: StorageEvent) => {
+      if (event.key === key && event.newValue && JSON.stringify(value) !== event.newValue) {
+        setValue(JSON.parse(event.newValue!))
+      }
+    }
+
+    window.addEventListener('storage', handleStorageChange)
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange)
+    }
   }, [key, value])
 
   return [value, setValue]

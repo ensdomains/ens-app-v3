@@ -18,7 +18,7 @@ describe('onwershipInfoCalc', () => {
     const gracePeriodEndDate = new Date(2)
     const owners = [{ transferType: 'manager', address: '0x123' }] as OwnerArray
 
-    const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
+    const result = ownershipInfoCalc(false, owners as any, gracePeriodEndDate, expiryDate)
     expect(result).toEqual([
       { key: 'owner', type: 'text', value: '' },
       { key: 'manager', type: 'text', value: '0x123' },
@@ -40,6 +40,7 @@ describe('onwershipInfoCalc', () => {
 
     // Date string is locale based. Ignore this test if it fails as March 4, 2073
     const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
+
     expect(result).toEqual([
       { key: 'manager', value: '0x123' },
       { key: 'owner', value: '0x123' },

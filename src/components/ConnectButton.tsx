@@ -2,16 +2,28 @@ import { useConnectModal } from '@rainbow-me/rainbowkit'
 import { Key, ReactNode } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useDisconnect } from 'wagmi'
+import { useDisconnect } from 'wagmi'
 
-import { Button, ExitSVG, PersonSVG, Profile, mq } from '@ensdomains/thorin'
+import {
+  Button,
+  CheckSVG,
+  CogSVG,
+  CopySVG,
+  ExitSVG,
+  PersonSVG,
+  Profile,
+  mq,
+} from '@ensdomains/thorin'
 import { DropdownItem } from '@ensdomains/thorin/dist/types/components/molecules/Dropdown/Dropdown'
 
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useChainId } from '@app/hooks/useChainId'
+import { useCopied } from '@app/hooks/useCopied'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { shortenAddress } from '@app/utils/utils'
 
 import BaseLink from './@atoms/BaseLink'
 
@@ -19,13 +31,16 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
   ({ theme, $isTabBar, $large }) => [
     $isTabBar
       ? css`
-          align-self: flex-end;
-          justify-self: flex-end;
+          position: absolute;
+          align-self: center;
+          justify-self: center;
+
+          right: ${theme.space['2']};
 
           & button {
             padding: 0 ${theme.space['4']};
             width: ${theme.space.full};
-            height: ${theme.space['12']};
+            height: ${theme.space['10']};
             border-radius: ${theme.radii.full};
             font-size: ${theme.fontSizes.body};
             ${mq.xs.min(css`
@@ -34,6 +49,7 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
           }
         `
       : css`
+          position: relative;
           & button {
             /* border-radius: ${theme.radii['2xLarge']}; */
           }
@@ -45,10 +61,31 @@ const StyledButtonWrapper = styled.div<{ $isTabBar?: boolean; $large?: boolean }
             }
           `}
         `,
-    css`
-      position: relative;
-    `,
   ],
+)
+
+const SectionDivider = styled.div(
+  ({ theme }) => css`
+    width: calc(100% + ${theme.space['4']});
+    height: 1px;
+    background-color: ${theme.colors.border};
+  `,
+)
+
+const PersonOverlay = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    z-index: 1;
+
+    background: rgba(0, 0, 0, 0.25);
+
+    svg {
+      color: ${theme.colors.background};
+    }
+  `,
 )
 
 type Props = {
@@ -95,6 +132,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
   const { avatar } = useAvatar(name || undefined, chainId)
   const zorb = useZorb(address, 'address')
   const { disconnect } = useDisconnect()
+  const { copy, copied } = useCopied(300)
 
   return (
     <Profile
@@ -118,6 +156,24 @@ const HeaderProfile = ({ address }: { address: string }) => {
               ]
             : []),
           {
+            label: t('navigation.settings'),
+            color: 'text',
+            wrapper: (children: ReactNode, key: Key) => (
+              <BaseLink href="/my/settings" key={key}>
+                {children}
+              </BaseLink>
+            ),
+            as: 'a',
+            icon: <CogSVG />,
+          },
+          <SectionDivider key="divider" />,
+          {
+            label: shortenAddress(address),
+            color: 'text',
+            onClick: () => copy(address),
+            icon: copied ? <CheckSVG /> : <CopySVG />,
+          },
+          {
             label: t('wallet.disconnect'),
             color: 'red',
             onClick: () => disconnect(),
@@ -129,6 +185,12 @@ const HeaderProfile = ({ address }: { address: string }) => {
         src: avatar || zorb,
         decoding: 'sync',
         loading: 'eager',
+        noBorder: true,
+        overlay: avatar ? undefined : (
+          <PersonOverlay>
+            <PersonSVG />
+          </PersonOverlay>
+        ),
       }}
       size="medium"
       alignDropdown="left"
@@ -138,7 +200,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
 }
 
 export const HeaderConnect = () => {
-  const { address } = useAccount()
+  const { address } = useAccountSafely()
 
   if (!address) {
     return <ConnectButton inHeader />
