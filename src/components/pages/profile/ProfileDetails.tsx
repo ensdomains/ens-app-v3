@@ -5,7 +5,7 @@ import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import { CacheableComponent } from '@app/components/@atoms/CacheableComponent'
 import { DisabledButtonWithTooltip } from '@app/components/@molecules/DisabledButtonWithTooltip'
-import supportedAddresses from '@app/constants/supportedAddresses.json'
+import coinsWithIcons from '@app/constants/coinsWithIcons.json'
 import supportedProfileItems from '@app/constants/supportedGeneralRecordKeys.json'
 import supportedTexts from '@app/constants/supportedSocialRecordKeys.json'
 import useOwners from '@app/hooks/useOwners'
@@ -273,7 +273,7 @@ export const ProfileDetails = ({
           label="addresses"
           type="address"
           condition={addresses && addresses.length > 0}
-          supported={supportedAddresses}
+          supported={coinsWithIcons}
           array={addresses}
           button={AddressProfileButton}
         />

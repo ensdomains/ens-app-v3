@@ -4,8 +4,8 @@ import styled, { css } from 'styled-components'
 import { Select } from '@ensdomains/thorin'
 
 import { DynamicAddressIcon } from '@app/assets/address/DynamicAddressIcon'
-import supportedAddresses from '@app/constants/supportedAddresses.json'
-import unsupportedAddresses from '@app/constants/unsupportedAddresses.json'
+import coinsWithIcons from '@app/constants/coinsWithIcons.json'
+import coinsWithoutIcons from '@app/constants/coinsWithoutIcons.json'
 import { formSafeKey } from '@app/utils/editor'
 
 const IconWrapper = styled.div(
@@ -34,7 +34,7 @@ const UnsupportedAddressWrapper = styled.div(
   `,
 )
 
-const supportedAddressOptions = supportedAddresses.map((coin) => ({
+const coinsWithIconsOptions = coinsWithIcons.map((coin) => ({
   value: formSafeKey(coin.toUpperCase()),
   label: coin.toUpperCase(),
   node: <AddressWrapper>{coin}</AddressWrapper>,
@@ -45,13 +45,13 @@ const supportedAddressOptions = supportedAddresses.map((coin) => ({
   ),
 }))
 
-const unSupporedAddresssOptions = unsupportedAddresses.map((coin) => ({
+const coinsWithoutIconsOptions = coinsWithoutIcons.map((coin) => ({
   value: formSafeKey(coin.toUpperCase()),
   label: coin.toUpperCase(),
   node: <UnsupportedAddressWrapper>{coin.toUpperCase}</UnsupportedAddressWrapper>,
 }))
 
-const addressOptions = [...supportedAddressOptions, ...unSupporedAddresssOptions] as ComponentProps<
+const addressOptions = [...coinsWithIconsOptions, ...coinsWithoutIconsOptions] as ComponentProps<
   typeof Select
 >['options']
 export default addressOptions

@@ -7,16 +7,16 @@ import coinList from '../src/constants/coinList'
 
 const iconFolderPath = resolve(process.argv[2])
 const destinationFolderPath = resolve(__dirname, '../src/assets/address')
-const supportedAddessesFile = resolve(__dirname, '../src/constants/supportedAddresses.json')
-const unsupportedAddessesFile = resolve(__dirname, '../src/constants/unsupportedAddresses.json')
+const supportedAddessesFile = resolve(__dirname, '../src/constants/coinsWithIcons.json')
+const unsupportedAddessesFile = resolve(__dirname, '../src/constants/coinsWithoutIcons.json')
 
 ;(async () => {
   if (!existsSync(iconFolderPath)) throw new Error('Icon folder path does not exist')
 
   let dynamicAddressIcons =
     "import dynamic from 'next/dynamic'\n\nexport type DynamicAddressIcon = keyof typeof dynamicAddressIcons\n\nexport const dynamicAddressIcons = {"
-  const supportedAddress = []
-  const unsupportedAddress = []
+  const coinsWithIcons = []
+  const coinsWithoutIcons = []
 
   for (const _coin of coinList) {
     const coin = _coin.toLowerCase()
@@ -24,12 +24,12 @@ const unsupportedAddessesFile = resolve(__dirname, '../src/constants/unsupported
 
     // Skip if icon does not exist
     if (!existsSync(iconPath)) {
-      unsupportedAddress.push(coin)
+      coinsWithoutIcons.push(coin)
       // eslint-disable-next-line no-continue
       continue
     }
 
-    supportedAddress.push(coin)
+    coinsWithIcons.push(coin)
 
     const svgStr = readFileSync(iconPath, 'utf8')
     const optimizedSvg = await optimize(svgStr, {
@@ -56,10 +56,10 @@ const unsupportedAddessesFile = resolve(__dirname, '../src/constants/unsupported
   const isNotPresortedCoin = (coin: string) => !presortedCoins.includes(coin)
   const sortedSupportedAddress = [
     ...presortedCoins,
-    ...supportedAddress.filter(isNotPresortedCoin).sort(),
+    ...coinsWithIcons.filter(isNotPresortedCoin).sort(),
   ]
 
-  const sortedUnSupportedAddress = unsupportedAddress.sort()
+  const sortedUnSupportedAddress = coinsWithoutIcons.sort()
 
   const allAddress = [...sortedSupportedAddress, ...sortedUnSupportedAddress]
   const isUnique = allAddress.every(
