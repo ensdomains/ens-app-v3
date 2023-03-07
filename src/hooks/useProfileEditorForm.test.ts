@@ -1,5 +1,8 @@
 import { renderHook } from '@testing-library/react-hooks'
 
+import registerI18n from '@app/../public/locales/en/register.json'
+import supportedAddresses from '@app/constants/supportedAddresses.json'
+
 import profileRecordOptions, { ProfileRecord, grouped } from '../constants/profileRecordOptions'
 import { useProfileEditorForm } from './useProfileEditorForm'
 
@@ -337,6 +340,17 @@ describe('useProfileEditorForm', () => {
       expect(contenthashOptions.length).toBe(6)
       result.current.addRecords(contenthashOptions)
       expect(result.current.getRecords()).toEqual(currentRecords)
+    })
+  })
+
+  describe('supportedAddress', () => {
+    it('should have a custom placeholder for supported address record', () => {
+      const hasTranslation = supportedAddresses.every((coin) => {
+        const key =
+          coin.toUpperCase() as keyof typeof registerI18n.steps.profile.options.groups.address.placeholder
+        return !!registerI18n.steps.profile.options.groups.address.placeholder[key]
+      })
+      expect(hasTranslation).toBe(true)
     })
   })
 })
