@@ -1,25 +1,21 @@
 import { ElementType } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Space } from '@ensdomains/thorin'
-
-import { useBreakpoint } from '@app/utils/BreakpointProvider'
-
-const SocialIconWrapper = styled.a<{ $boxSize: Space }>(
-  ({ theme, $boxSize }) => css`
+const SocialIconWrapper = styled.a(
+  ({ theme }) => css`
     position: relative;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    width: ${theme.space[$boxSize]};
-    min-height: ${theme.space[$boxSize]};
+    width: ${theme.space['6']};
+    min-height: ${theme.space['6']};
   `,
 )
 
 const StyledIcon = styled.div<{ $iconColor?: string }>(
   ({ theme, $iconColor }) => css`
-    height: 80%;
+    height: 100%;
     position: absolute;
     transition: 0.15s all ease-in-out;
     fill: ${theme.colors.greyPrimary};
@@ -54,10 +50,8 @@ export const SocialIcon = ({
   color?: string
   href: string
 }) => {
-  const breakpoints = useBreakpoint()
-
   return (
-    <SocialIconWrapper href={href} $boxSize={breakpoints.sm ? '10' : '8'}>
+    <SocialIconWrapper href={href}>
       <StyledIcon key={href} $iconColor={color} as={Icon} />
       {ColoredIcon && <StyledColoredIcon as={ColoredIcon} />}
     </SocialIconWrapper>

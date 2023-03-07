@@ -238,7 +238,6 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         noTitle
         title={normalisedName}
         hideHeading={step === 'complete'}
-        subtitle={t('subtitle')}
         loading={labelTooLong ? false : isLoading || primaryLoading || resolverExistsLoading}
         singleColumnContent
         inlineHeading

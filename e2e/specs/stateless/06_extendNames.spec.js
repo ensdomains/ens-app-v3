@@ -170,7 +170,7 @@ describe('Extend Names', () => {
     acceptMetamaskAccess(2)
     cy.visit('/my/names')
 
-    cy.findByTestId('select-page-size').click()
+    cy.findByTestId('select-page-size').should('be.visible').click()
     cy.wait(1000)
     cy.findByTestId('select-option-100').click()
 

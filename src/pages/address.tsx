@@ -142,12 +142,7 @@ const Page = () => {
   const error = hasErrors ? t('errors.names') : ''
 
   return (
-    <Content
-      alwaysShowSubtitle
-      subtitle={t('addressDetails')}
-      title={shortenAddress(address)}
-      loading={loading}
-    >
+    <Content title={shortenAddress(address)} copyValue={address} loading={loading}>
       {{
         warning: error
           ? {

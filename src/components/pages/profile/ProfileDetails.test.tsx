@@ -26,6 +26,7 @@ describe('onwershipInfoCalc', () => {
     ] as OwnerArray
 
     const result = ownershipInfoCalc('eth', false, owners, gracePeriodEndDate, expiryDate)
+
     expect(result).toEqual([
       { key: 'name.owner', type: 'text', value: '' },
       { key: 'name.manager', type: 'text', value: '0x123' },
@@ -51,6 +52,7 @@ describe('onwershipInfoCalc', () => {
     ] as OwnerArray
 
     const result = ownershipInfoCalc('test.eth', false, owners, gracePeriodEndDate, expiryDate)
+
     expect(result).toEqual([
       { key: 'name.manager', value: '0x123' },
       { key: 'name.owner', value: '0x123' },

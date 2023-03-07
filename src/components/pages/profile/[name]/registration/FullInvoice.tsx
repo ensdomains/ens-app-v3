@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -7,7 +7,7 @@ import { Colors, CurrencyToggle } from '@ensdomains/thorin'
 import GasDisplay from '@app/components/@atoms/GasDisplay'
 import { Invoice } from '@app/components/@atoms/Invoice/Invoice'
 import { useEstimateFullRegistration } from '@app/hooks/useEstimateRegistration'
-import { CurrencyUnit } from '@app/types'
+import useUserConfig from '@app/utils/useUserConfig'
 
 const OptionBar = styled.div(
   () => css`
@@ -41,10 +41,9 @@ const FullInvoice = ({
   gasPrice,
 }: Props) => {
   const { t } = useTranslation('register')
-  const fiatUnit = 'usd'
 
-  const [currencyUnit, setCurrencyUnit] = useState<CurrencyUnit>('eth')
-  const currencyDisplay = currencyUnit === 'fiat' ? fiatUnit : 'eth'
+  const { userConfig, setCurrency } = useUserConfig()
+  const currencyDisplay = userConfig.currency === 'fiat' ? userConfig.fiat : 'eth'
 
   const invoiceItems = useMemo(
     () => [
@@ -77,8 +76,8 @@ const FullInvoice = ({
         <GasDisplay gasPrice={gasPrice} />
         <CurrencyToggle
           size="small"
-          checked={currencyUnit === 'fiat'}
-          onChange={(e) => setCurrencyUnit(e.target.checked ? 'fiat' : 'eth')}
+          checked={userConfig.currency === 'fiat'}
+          onChange={(e) => setCurrency(e.target.checked ? 'fiat' : 'eth')}
         />
       </OptionBar>
       <Invoice items={invoiceItems} unit={currencyDisplay} totalLabel={t('invoice.total')} />

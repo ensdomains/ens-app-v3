@@ -5,12 +5,10 @@ import styled, { css } from 'styled-components'
 
 import { Button, Toast } from '@ensdomains/thorin'
 
-import useCallbackOnTransaction, {
-  UpdateCallback,
-} from '@app/hooks/transactions/useCallbackOnTransaction'
 import { useChainName } from '@app/hooks/useChainName'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
 import { trackEvent } from '../utils/analytics'

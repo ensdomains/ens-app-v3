@@ -9,10 +9,11 @@ describe('Set Primary Name', () => {
     cy.findByTestId('primary-section-text').should('contain.text', 'No primary name set.')
   })
 
-  it('should only show disconnect option in profile dropdown', () => {
+  it('should not show profile button in header dropdown', () => {
     cy.findByTestId('header-profile').as('header-profile')
     cy.get('@header-profile').click()
-    cy.get('@header-profile').next().children().should('have.length', 1)
+    // length 4 = 3 buttons + 1 divider
+    cy.get('@header-profile').next().children().should('have.length', 4)
   })
 
   describe('profile', () => {

@@ -179,6 +179,7 @@ export const NameTableHeader = ({
                   onSortTypeChange?.(e.target.value as SortType)
                 }}
                 options={sortTypeOptions}
+                id="sort-by"
               />
               <DirectionButton
                 $active={sortDirection === 'desc'}

@@ -8,11 +8,9 @@ import React, {
   useState,
 } from 'react'
 
-import useCallbackOnTransaction, {
-  UpdateCallback,
-} from '@app/hooks/transactions/useCallbackOnTransaction'
 import { useLocalStorageReducer } from '@app/hooks/useLocalStorage'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
+import { UpdateCallback, useCallbackOnTransaction } from '@app/utils/SyncProvider'
 
 import { TransactionDialogManager } from '../components/@molecules/TransactionDialogManager/TransactionDialogManager'
 import type { DataInputComponent } from './input'
