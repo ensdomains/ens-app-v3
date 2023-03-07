@@ -448,7 +448,10 @@ const Pricing = ({
         {t('loading', { ns: 'common' })}
       </Button>
     )
-  } else if (balance?.value.lt(totalRequiredBalance)) {
+  } else if (
+    balance?.value.lt(totalRequiredBalance) &&
+    paymentMethodChoice === PaymentMethod.ethereum
+  ) {
     actionButton = (
       <Button data-testid="next-button" disabled>
         {t('steps.pricing.insufficientBalance')}
