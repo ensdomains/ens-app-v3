@@ -163,6 +163,9 @@ export function createTransactionStore({ provider: initialProvider }: { provider
                 timestamp,
               })
             })
+            .catch((err: unknown) => {
+              console.error('Error waiting for transaction', err)
+            })
 
           transactionRequestCache.set(hash, requestPromise)
 

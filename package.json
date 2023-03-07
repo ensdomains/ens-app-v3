@@ -73,14 +73,14 @@
     "@ethersproject/transactions": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
     "@ethersproject/web": "^5.7.1",
-    "@rainbow-me/rainbowkit": "0.4.8",
+    "@rainbow-me/rainbowkit": "latest",
     "@sentry/nextjs": "^7.11.1",
     "@svgr/webpack": "^6.3.1",
     "@tanstack/query-persist-client-core": "4.10.3",
     "@tanstack/query-sync-storage-persister": "4.10.3",
     "@tanstack/react-query": "4.10.3",
     "@tanstack/react-query-persist-client": "4.10.3",
-    "@wagmi/core": "^0.5.8",
+    "@wagmi/core": "latest",
     "calendar-link": "^2.2.0",
     "dns-packet": "^5.4.0",
     "glob": "^8.0.3",
@@ -106,7 +106,7 @@
     "react-use": "^17.4.0",
     "styled-components": "^5.3.5",
     "use-immer": "^0.7.0",
-    "wagmi": "0.6.8"
+    "wagmi": "latest"
   },
   "peerDependencies": {
     "@typescript-eslint/eslint-plugin": "*",
@@ -211,7 +211,6 @@
       "@tanstack/query-core": "4.10.3"
     },
     "patchedDependencies": {
-      "@rainbow-me/rainbowkit@0.4.8": "patches/@rainbow-me__rainbowkit@0.4.8.patch",
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
       "@synthetixio/synpress@3.0.5": "patches/@synthetixio__synpress@3.0.5.patch"
     }
