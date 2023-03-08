@@ -6,7 +6,6 @@ import { useNetwork, useSwitchNetwork } from 'wagmi'
 import { Dialog, Typography, mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
-import { Footer } from '@app/components/Footer'
 
 import { Navigation } from './Navigation'
 
@@ -49,7 +48,7 @@ const BottomPlaceholder = styled.div(
     height: ${theme.space['16']};
     ${mq.md.min(
       css`
-        display: none;
+        height: ${theme.space['18']};
       `,
     )}
   `,
@@ -58,6 +57,7 @@ const BottomPlaceholder = styled.div(
 const StyledDialog = styled(Dialog)(
   () => css`
     height: 80vh;
+    z-index: 10001;
 
     & > div {
       padding: 0;
@@ -87,22 +87,55 @@ const StyledDialog = styled(Dialog)(
   `,
 )
 
-const FeedbackButton = styled.div<{ $isShown: boolean }>(
-  ({ $isShown }) => css`
+const FeedbackButton = styled.div(
+  ({ theme }) => css`
     z-index: 10000;
-    background: #f6a93c;
-    width: 140px;
-    height: 50px;
-    border-radius: 25px 0 0 25px;
+    background: ${theme.colors.orange};
+    width: ${theme.space['11']};
+    height: ${theme.space['52']};
+    border-radius: ${theme.radii['2xLarge']} 0 0 ${theme.radii['2xLarge']};
     position: fixed;
-    right: ${$isShown ? '0' : '-90'}px;
-    top: 45vh;
+    right: -${theme.space['2']};
+    top: 50vh;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 10px;
     cursor: pointer;
-    transition: right 0.3s ease-in-out;
+    transition: all 0.15s ease-in-out;
+
+    svg {
+      width: ${theme.space['4']};
+      height: ${theme.space['4']};
+    }
+
+    /* stylelint-disable-next-line no-descending-specificity */
+    & > div {
+      margin-right: ${theme.space['2']};
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      justify-content: center;
+      gap: ${theme.space['2']};
+      min-width: ${theme.space['52']};
+      transform: rotate(90deg);
+    }
+
+    @media (hover: hover) {
+      &:hover {
+        right: 0;
+        background: ${theme.colors.orangeBright};
+      }
+      &:active {
+        right: -${theme.space['2']};
+      }
+    }
+    @media (hover: none) {
+      &:active {
+        right: 0;
+        background: ${theme.colors.orangeBright};
+      }
+    }
   `,
 )
 
@@ -112,7 +145,6 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
   const { chain: currentChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const router = useRouter()
-  const [isShown, setIsShown] = useState(false)
   const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
 
   useEffect(() => {
@@ -125,19 +157,15 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
 
   return (
     <Container className="min-safe">
-      <FeedbackButton
-        onMouseEnter={() => setIsShown(true)}
-        onMouseLeave={() => setIsShown(false)}
-        $isShown={isShown}
-        onClick={() => setHasFeedbackForm(true)}
-      >
-        <StyledFeedbackSVG />
-        <Typography style={{ color: 'white' }}>Feedback</Typography>
+      <FeedbackButton onClick={() => setHasFeedbackForm(true)}>
+        <div>
+          <FeedbackSVG />
+          <Typography style={{ color: 'white' }}>Bug bash feedback</Typography>
+        </div>
       </FeedbackButton>
       <Navigation />
       <ContentWrapper>{children}</ContentWrapper>
       <BottomPlaceholder />
-      <Footer />
       <StyledDialog
         open={hasFeedbackForm}
         variant="actionable"

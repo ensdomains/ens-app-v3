@@ -2,8 +2,6 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { OwnerArray, ReturnedENS } from '@app/types'
-
 import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -57,15 +55,14 @@ export const formatDateTime = (date: Date) => {
     hour12: false,
     timeZoneName: 'short',
   })
-  const timezoneString = date
-    .toTimeString()
-    .split('(')[1]
-    .replace(/\b(\w)\w*[\s)]?/g, '$1')
-  return `${baseFormatted} (${timezoneString})`
+  return `${baseFormatted}`
 }
 
-export const makeEtherscanLink = (hash: string, network?: string) =>
-  `https://${!network || network === 'ethereum' ? '' : `${network}.`}etherscan.io/tx/${hash}`
+export const formatFullExpiry = (expiryDate?: Date) =>
+  expiryDate ? `${formatExpiry(expiryDate)}, ${formatDateTime(expiryDate)}` : ''
+
+export const makeEtherscanLink = (data: string, network?: string, route: string = 'tx') =>
+  `https://${!network || network === 'mainnet' ? '' : `${network}.`}etherscan.io/${route}/${data}`
 
 export const isBrowser = !!(
   typeof window !== 'undefined' &&
@@ -138,14 +135,3 @@ export const canEditRecordsWhenWrappedCalc = (
   if (!isWrapped) return true
   return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
 }
-export const checkPCCExpired = (
-  owners: OwnerArray,
-  wrapperData: ReturnedENS['getWrapperData'] | undefined,
-  nameWrapperAddress: string,
-) =>
-  !!(
-    owners.length === 1 &&
-    owners[0].address === nameWrapperAddress &&
-    wrapperData?.expiryDate &&
-    wrapperData.expiryDate < new Date()
-  )

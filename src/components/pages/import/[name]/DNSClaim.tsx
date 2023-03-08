@@ -1,13 +1,13 @@
+import Head from 'next/head'
 import { useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { Button, Card, Spinner, Typography, mq } from '@ensdomains/thorin'
+import { Card, Spinner, Typography, mq } from '@ensdomains/thorin'
 
-import ArrowLeftSVG from '@app/assets/ArrowLeft.svg'
 import { Spacer } from '@app/components/@atoms/Spacer'
-import { HamburgerRoutes } from '@app/components/@molecules/HamburgerRoutes'
+import Hamburger from '@app/components/@molecules/Hamburger/Hamburger'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import useDNSOwner from '@app/hooks/useDNSOwner'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
@@ -20,15 +20,6 @@ import { ClaimDomain } from './ClaimDomain'
 import { EnableDNSSEC } from './EnableDNSSEC'
 import { hasPendingTransaction, shouldShowSuccessPage } from './shared'
 import { isDnsSecEnabled } from './utils'
-
-const BackArrow = styled.div(
-  ({ theme }) => css`
-    width: ${theme.space['6']};
-    height: ${theme.space['6']};
-    display: block;
-    color: ${theme.colors.greyPrimary};
-  `,
-)
 
 const ContentContainer = styled.div`
   margin: 0;
@@ -111,11 +102,23 @@ const HeadingContainer = styled.div`
   justify-content: space-between;
 `
 
-const BackContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: flex-start;
-`
+const BackContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: ${theme.space['2']};
+
+    & > button {
+      padding: ${theme.space['2']};
+
+      & > svg {
+        width: ${theme.space['6']};
+        height: ${theme.space['6']};
+      }
+    }
+  `,
+)
 
 const StyledTitle = styled(Title)(
   () => css`
@@ -174,16 +177,11 @@ export default () => {
 
   return (
     <Container>
+      <Head>
+        <title>{t('title', { name })}</title>
+      </Head>
       <HeadingContainer>
         <BackContainer>
-          <Button
-            onClick={() => router.push('/')}
-            colorStyle="transparent"
-            size="flexible"
-            style={{ width: 50 }}
-          >
-            <BackArrow as={ArrowLeftSVG} />
-          </Button>
           <ContentContainer>
             <TitleWrapper $invert={!!router.query.from}>
               <TitleContainer>
@@ -194,7 +192,7 @@ export default () => {
             </TitleWrapper>
           </ContentContainer>
         </BackContainer>
-        {!router.query.from && !breakpoints.md && <HamburgerRoutes />}
+        {!breakpoints.md && <Hamburger />}
       </HeadingContainer>
       <Spacer $height="4" />
       {router.isReady ? (

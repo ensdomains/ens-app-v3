@@ -1,11 +1,13 @@
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
+import { checkIsDecrypted } from '@ensdomains/ensjs/utils/labels'
+
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
-import { GenericTransaction } from '@app/transaction-flow/types'
+import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 
 import { useSelfAbilities } from './useSelfAbilities'
@@ -57,21 +59,24 @@ export const useProfileActions = ({
           }),
         )
       }
+      const transactionFlowItem: TransactionFlowItem = {
+        transactions: setAsPrimaryTransactions,
+        ...(setAsPrimaryTransactions.length > 1
+          ? {
+              resumable: true,
+              intro: {
+                title: ['tabs.profile.actions.setAsPrimaryName.title', { ns: 'profile' }],
+                content: makeIntroItem('ChangePrimaryName', undefined),
+              },
+            }
+          : {}),
+      }
+      const key = `setPrimaryName-${name}-${address}`
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
-        onClick: () =>
-          createTransactionFlow(`setPrimaryName-${name}-${address}`, {
-            transactions: setAsPrimaryTransactions,
-            ...(setAsPrimaryTransactions.length > 1
-              ? {
-                  resumable: true,
-                  intro: {
-                    title: t('tabs.profile.actions.setAsPrimaryName.title'),
-                    content: makeIntroItem('ChangePrimaryName', undefined),
-                  },
-                }
-              : {}),
-          }),
+        onClick: !checkIsDecrypted(name)
+          ? () => showDataInput(key, 'UnknownLabels', { name, key, transactionFlowItem })
+          : () => createTransactionFlow(key, transactionFlowItem),
       })
     }
 

@@ -16,12 +16,12 @@ patchedDependencies:
   '@rainbow-me/rainbowkit@0.4.8':
     hash: zczigdeajjlj6h32kv7vfprn2y
     path: patches/@rainbow-me__rainbowkit@0.4.8.patch
-  react-confetti@6.1.0:
-    hash: bbuxkxhxbyez4jmqgptuoucij4
-    path: patches/react-confetti@6.1.0.patch
   '@synthetixio/synpress@3.0.5':
     hash: ju73ftymsm3appsjtul4xt2dhm
     path: patches/@synthetixio__synpress@3.0.5.patch
+  react-confetti@6.1.0:
+    hash: bbuxkxhxbyez4jmqgptuoucij4
+    path: patches/react-confetti@6.1.0.patch
 
 importers:
 
@@ -37,9 +37,9 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.49
+      '@ensdomains/ensjs': 3.0.0-alpha.50
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': 0.6.31
+      '@ensdomains/thorin': 0.6.32
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
       '@ethersproject/abstract-signer': ^5.7.0
@@ -159,6 +159,7 @@ importers:
       stylelint-config-styled-components: ^0.1.1
       stylelint-processor-styled-components: ^1.10.0
       stylelint-webpack-plugin: ^3.3.0
+      svgo: latest
       ts-node: ^10.9.1
       typescript: ^4.8.2
       typescript-styled-plugin: ^0.18.2
@@ -174,9 +175,9 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_kdpqpin542yrq2nndtznhtz4cm
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.49_f2qxwv66g46rb33uzxnl5nluty
+      '@ensdomains/ensjs': 3.0.0-alpha.50_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.31_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.32_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -303,6 +304,7 @@ importers:
       stylelint-config-styled-components: 0.1.1
       stylelint-processor-styled-components: 1.10.0
       stylelint-webpack-plugin: 3.3.0_stylelint@14.11.0
+      svgo: 3.0.2
       ts-node: 10.9.1_p2zphemn5bk5inasc666rmprwi
       typescript: 4.8.4
       typescript-styled-plugin: 0.18.2
@@ -2297,8 +2299,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.49_f2qxwv66g46rb33uzxnl5nluty:
-    resolution: {integrity: sha512-EmUm0emjoR9uCSzJqc9ZLnIkLBcGzGaRsVpZrqyP3K4zmUZhP6ey5o+PA23LRDbVufGxsHXsSYbGGF637fczyw==}
+  /@ensdomains/ensjs/3.0.0-alpha.50_f2qxwv66g46rb33uzxnl5nluty:
+    resolution: {integrity: sha512-7v/QL8iWg4dAHGzuR+RCR0pLE1C06BvsGzgxmvdw5DqIGfXoLOPbCGy109Na/vyXlHcG0ErKczcwXUYIHAQ/1A==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
@@ -2368,8 +2370,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.31_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-F6xxtBk7JRV62ikm3RX62ijUZUzOfm80FNPIw1lO3UIlACCzkJw8VX+Y3DlNrgfrP4F53QuvrlHCo8T3zfSGsg==}
+  /@ensdomains/thorin/0.6.32_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-3dP8ygNTbPJh1QJdHSRGRB0nJELjYXdCHvDZvRFuycNC2WSK7ZYOypKWFzrnL/7WKqI29k/Lg3d43uoMF/bwbA==}
     peerDependencies:
       react: ^17
       react-dom: ^17
@@ -5136,7 +5138,6 @@ packages:
   /@trysound/sax/0.2.0:
     resolution: {integrity: sha512-L7z9BgrNEcYyUYtF+HaEfiS5ebkh9jXqbszz7pC0hRBPaatV0XjSD3+eHrpqFemQfgwiFF0QPIarnIihIDn7OA==}
     engines: {node: '>=10.13.0'}
-    dev: false
 
   /@tsconfig/node10/1.0.9:
     resolution: {integrity: sha512-jNsYVVxU8v5g43Erja32laIDHXeoNvFEpX33OK4d6hljo3jDhCBDhx5dhCCTMWUojscpAagGiRkBKxpdl9fxqA==}
@@ -8733,7 +8734,6 @@ packages:
   /commander/7.2.0:
     resolution: {integrity: sha512-QrWXB+ZQSVPmIWIhtEO9H+gwHaMGYiF5ChvoJ+K9ZGHG/sVsa6yiesAD1GC/x46sET00Xlwo1u49RVVVzvcSkw==}
     engines: {node: '>= 10'}
-    dev: false
 
   /commander/8.3.0:
     resolution: {integrity: sha512-OkTL9umf+He2DZkUq8f8J9of7yL6RJKI24dVITBmNfZBmri9zYZQrKkuXiKhyfPSu8tUhnVBB1iKXevvnlR4Ww==}
@@ -9083,6 +9083,22 @@ packages:
       source-map: 0.6.1
     dev: false
 
+  /css-tree/2.2.1:
+    resolution: {integrity: sha512-OA0mILzGc1kCOCSJerOeqDxDQ4HOh+G8NbOJFOTgOCzpw7fCBubk0fEyxp8AgOL/jvLgYA/uV0cMbe43ElF1JA==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
+    dependencies:
+      mdn-data: 2.0.28
+      source-map-js: 1.0.2
+    dev: true
+
+  /css-tree/2.3.1:
+    resolution: {integrity: sha512-6Fv1DV/TYw//QF5IzQdqsNDjx/wc8TrMBZsqjL9eW01tWb7R7k/mq+/VXfJCl7SoD5emsJop9cOByJZfs8hYIw==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0}
+    dependencies:
+      mdn-data: 2.0.30
+      source-map-js: 1.0.2
+    dev: true
+
   /css-what/5.1.0:
     resolution: {integrity: sha512-arSMRWIIFY0hV8pIxZMEfmMI47Wj3R/aWpZDDxWYCPEiOMv6tfOrnpDtgxBYPEQD4V0Y/958+1TdC3iWTFcUPw==}
     engines: {node: '>= 6'}
@@ -9111,6 +9127,13 @@ packages:
     dependencies:
       css-tree: 1.1.3
     dev: false
+
+  /csso/5.0.5:
+    resolution: {integrity: sha512-0LrrStPOdJj+SPCCrGhzryycLjwcgUSHBtxNA8aIDxf0GLsRh1cKYhB00Gd1lDOS4yGH69+SNn13+TWbVHETFQ==}
+    engines: {node: ^10 || ^12.20.0 || ^14.13.0 || >=15.0.0, npm: '>=7.0.0'}
+    dependencies:
+      css-tree: 2.2.1
+    dev: true
 
   /cssom/0.3.8:
     resolution: {integrity: sha512-b0tGHbfegbhPJpxpiBPU2sCkigAqtM9O121le6bbOlgyV+NyGyCmVfJ6QW9eRjz8CpNfWEOYBIMIGRYkLwsIYg==}
@@ -15706,6 +15729,14 @@ packages:
     resolution: {integrity: sha512-dn6wd0uw5GsdswPFfsgMp5NSB0/aDe6fK94YJV/AJDYXL6HVLWBsxeq7js7Ad+mU2K9LAlwpk6kN2D5mwCPVow==}
     dev: false
 
+  /mdn-data/2.0.28:
+    resolution: {integrity: sha512-aylIc7Z9y4yzHYAJNuESG3hfhC+0Ibp/MAMiaOZgNv4pmEdFyfZhhhny4MNiAfWdBQ1RQ2mfDWmM1x8SvGyp8g==}
+    dev: true
+
+  /mdn-data/2.0.30:
+    resolution: {integrity: sha512-GaqWWShW4kv/G9IEucWScBx9G1/vsFZZJUO+tD26M8J8z3Kw5RDQjaoZe03YAClgeS/SWPOcb4nkFBTEi5DUEA==}
+    dev: true
+
   /media-typer/0.3.0:
     resolution: {integrity: sha512-dq+qelQ9akHpcOl/gUVRTxVIOkAJ1wR3QAvb4RsVjS8oVoFjDGTc679wJYmUmknUF5HwMLOgb5O+a3KxfWapPQ==}
     engines: {node: '>= 0.6'}
@@ -20032,6 +20063,19 @@ packages:
       picocolors: 1.0.0
       stable: 0.1.8
     dev: false
+
+  /svgo/3.0.2:
+    resolution: {integrity: sha512-Z706C1U2pb1+JGP48fbazf3KxHrWOsLme6Rv7imFBn5EnuanDW1GPaA/P1/dvObE670JDePC3mnj0k0B7P0jjQ==}
+    engines: {node: '>=14.0.0'}
+    hasBin: true
+    dependencies:
+      '@trysound/sax': 0.2.0
+      commander: 7.2.0
+      css-select: 5.1.0
+      css-tree: 2.3.1
+      csso: 5.0.5
+      picocolors: 1.0.0
+    dev: true
 
   /swap-case/1.1.2:
     resolution: {integrity: sha512-BAmWG6/bx8syfc6qXPprof3Mn5vQgf5dwdUNJhsNqU9WdPt5P+ES/wQ5bxfijy8zwZgZZHslC3iAsxsuQMCzJQ==}
