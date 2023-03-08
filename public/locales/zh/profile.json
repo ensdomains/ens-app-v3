@@ -343,7 +343,8 @@
   "errors": {
     "invalidName": "该名称无效。",
     "invalidAddress": "不是一个有效的地址",
-    "expiringSoon": "该名称即将过期。",
+    "expiringSoon": "该名称的宽限期将在 {{date}} 结束。如果在此之前没有进行续期，它将变成可以注册的状态。",
+    "hasExpired": "{{ name }} 已过期",
     "ownerManagerChoice": "必须发送所有者或管理员",
     "unknown": "未知错误",
     "notMigrated": "该名称没有迁移到新的注册表。",

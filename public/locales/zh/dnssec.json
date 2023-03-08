@@ -1,4 +1,5 @@
 {
+  "title": "将 {{name}} 引入 ENS",
   "general": {
     "connectWallet": "请先连接您的钱包",
     "importDNSSECName": "导入 DNSSEC 域名",
@@ -13,7 +14,7 @@
     "godaddy": "GoDaddy",
     "bluehost": "Bluehost",
     "hostgator": "HostGator",
-    "findYourRegistrar": "找到您的注册商"
+    "findYourRegistrar": "查看您的注册商"
   },
   "addTextRecord": {
     "title": "添加文本记录",
@@ -58,7 +59,7 @@
     "title": "启用 DNSSEC",
     "instruction": "您需要访问您的域名注册商来启用 DNSSEC。启用后，单击 “检查” 进入下一步。",
     "registrarHelp": "从下面的下拉框中选择您的注册商，查看相应的启用说明。",
-    "findRegistrar": "找到您的注册商",
+    "findRegistrar": "查看您的注册商",
     "DNSSECNotEnabled": "该域名尚未启用 DNSSEC。"
   }
 }
