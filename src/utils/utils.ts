@@ -42,10 +42,10 @@ export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
 
 export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
 
-export const formatExpiry = (expiry: Date) => `
-${expiry.toLocaleDateString(undefined, {
-  month: 'long',
-})} ${expiry.getDate()}, ${expiry.getFullYear()}`
+export const formatExpiry = (expiry: Date) =>
+  `${expiry.toLocaleDateString(undefined, {
+    month: 'long',
+  })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
 export const formatDateTime = (date: Date) => {
   const baseFormatted = date.toLocaleTimeString('en', {

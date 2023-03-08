@@ -1,3 +1,4 @@
+import { isAddress } from '@ethersproject/address'
 import { useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -19,6 +20,8 @@ const StyledAddressIcon = styled(DynamicAddressIcon)(
     height: ${theme.space['5']};
   `,
 )
+
+type RecordItemProps = React.ComponentProps<typeof RecordItem>
 
 export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
   const breakpoints = useBreakpoint()
@@ -143,7 +146,7 @@ export const OtherProfileButton = ({
 
 export const OwnerProfileButton = ({
   iconKey: label,
-  value: address,
+  value: addressOrNameOrDate,
   timestamp,
 }: {
   iconKey: string
@@ -152,43 +155,75 @@ export const OwnerProfileButton = ({
 }) => {
   const { t } = useTranslation('common')
   const breakpoints = useBreakpoint()
-  const { name: primary } = usePrimary(address, address === '')
 
-  const formattedAddress = useMemo(() => {
-    if (breakpoints.sm) {
-      return shortenAddress(address)
-    }
-    return `${address?.slice(0, 5)}...`
-  }, [address, breakpoints])
+  const dataType = useMemo(() => {
+    if (!addressOrNameOrDate)
+      // eslint-disable-next-line no-nested-ternary
+      return label === 'name.expiry'
+        ? 'noExpiry'
+        : label === 'name.parent'
+        ? 'noParent'
+        : 'notOwned'
+    if (label === 'name.expiry') return 'expiry'
+    if (isAddress(addressOrNameOrDate)) return 'address'
+    const isTLD = addressOrNameOrDate.split('.').length === 1
+    return isTLD ? 'tld' : 'name'
+  }, [addressOrNameOrDate, label])
 
-  const isExpiry = label === 'expiry'
-  const isNotOwned = !isExpiry && address === ''
+  const { name: primary } = usePrimary(addressOrNameOrDate, dataType !== 'address')
 
-  const value = useMemo(() => {
-    if (isExpiry) {
-      return address
-    }
-    if (isNotOwned) {
-      return t('name.notOwned').toLocaleLowerCase()
-    }
-    return primary || formattedAddress
-  }, [address, formattedAddress, isExpiry, isNotOwned, primary, t])
+  const recordItemPartialProps: Pick<RecordItemProps, 'link' | 'value' | 'keyLabel' | 'children'> =
+    useMemo(() => {
+      const base = {
+        keyLabel: t(label).toLocaleLowerCase(),
+        value: addressOrNameOrDate,
+      }
+      if (dataType === 'expiry')
+        return {
+          ...base,
+          link: undefined,
+          children: addressOrNameOrDate,
+        }
+      if (dataType === 'noExpiry')
+        return {
+          ...base,
+          link: undefined,
+          children: t('name.noExpiry').toLocaleLowerCase(),
+        }
+      if (dataType === 'notOwned')
+        return {
+          ...base,
+          link: undefined,
+          children: t('name.notOwned').toLocaleLowerCase(),
+        }
+      if (dataType === 'noParent')
+        return { ...base, link: undefined, children: t('name.noParent').toLocaleLowerCase() }
+      if (dataType === 'address')
+        return {
+          ...base,
+          link: primary
+            ? (getDestination(`/profile/${primary}`) as string)
+            : (getDestination(`/address/${addressOrNameOrDate}`) as string),
+          children:
+            primary ||
+            (breakpoints.sm
+              ? shortenAddress(addressOrNameOrDate)
+              : addressOrNameOrDate.slice(0, 5)),
+        }
+      return {
+        ...base,
+        link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
+        children: addressOrNameOrDate,
+      }
+    }, [dataType, addressOrNameOrDate, label, breakpoints, primary, t])
 
   return (
     <RecordItem
-      link={isExpiry || isNotOwned ? undefined : (getDestination(`/address/${address}`) as string)}
-      value={address}
-      keyLabel={
-        <OtherContainerTextPrefix color="textSecondary">
-          {t(label).toLocaleLowerCase()}
-        </OtherContainerTextPrefix>
-      }
+      {...recordItemPartialProps}
       data-testid={`owner-profile-button-${label}`}
-      data-timestamp={isExpiry ? timestamp : undefined}
+      data-timestamp={timestamp}
       inline
       size={breakpoints.md ? 'large' : 'small'}
-    >
-      {value}
-    </RecordItem>
+    />
   )
 }

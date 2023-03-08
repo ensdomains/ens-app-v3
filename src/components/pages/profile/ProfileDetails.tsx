@@ -158,17 +158,24 @@ const getAction = (action: Action, is2LDEth: boolean) => {
 }
 
 export const ownershipInfoCalc = (
+  name: string,
   pccExpired: boolean,
   owners: ReturnType<typeof useOwners>,
   gracePeriodEndDate?: Date,
   expiryDate?: Date,
 ) => {
+  const parentName = name.split('.').slice(1).join('.')
   if (pccExpired) {
     return [
       {
-        key: 'owner',
+        key: 'name.owner',
         type: 'text',
         value: '',
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: parentName,
       },
     ]
   }
@@ -178,20 +185,25 @@ export const ownershipInfoCalc = (
 
     return [
       {
-        key: 'owner',
+        key: 'name.owner',
         type: 'text',
         value: '',
       },
       {
-        key: 'manager',
+        key: 'name.manager',
         type: 'text',
         value: managerDetails?.address || '',
       },
       {
-        key: 'expiry',
+        key: 'name.expiry',
         type: 'text',
-        value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+        value: expiryDate ? formatExpiry(expiryDate) : '',
         timestamp: expiryDate ? expiryDate.getTime() : 0,
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: parentName,
       },
     ]
   }
@@ -199,25 +211,35 @@ export const ownershipInfoCalc = (
   if (!owners)
     return [
       {
-        key: 'owner',
+        key: 'name.owner',
         type: 'text',
         value: '',
       },
       {
-        key: 'expiry',
+        key: 'name.expiry',
         type: 'text',
-        value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+        value: expiryDate ? formatExpiry(expiryDate) : '',
         timestamp: expiryDate ? expiryDate.getTime() : 0,
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: parentName,
       },
     ]
 
   return [
     ...owners.map((x) => ({ key: x.label, value: x.address })),
     {
-      key: 'expiry',
+      key: 'name.expiry',
       type: 'text',
-      value: expiryDate ? formatExpiry(expiryDate) : 'no expiry',
+      value: expiryDate ? formatExpiry(expiryDate) : '',
       timestamp: expiryDate ? expiryDate.getTime() : 0,
+    },
+    {
+      key: 'name.parent',
+      type: 'text',
+      value: parentName,
     },
   ]
 }
@@ -253,7 +275,7 @@ export const ProfileDetails = ({
       .map((x) => ({ ...x, type: 'text' })),
   ]
 
-  const mappedOwners = ownershipInfoCalc(pccExpired, owners, gracePeriodEndDate, expiryDate)
+  const mappedOwners = ownershipInfoCalc(name, pccExpired, owners, gracePeriodEndDate, expiryDate)
 
   const is2LDEth = checkETH2LDFromName(name)
 
