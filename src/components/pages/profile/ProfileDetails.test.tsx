@@ -1,3 +1,5 @@
+import { OwnerArray } from '@app/types'
+
 import { ownershipInfoCalc } from './ProfileDetails'
 
 describe('onwershipInfoCalc', () => {
@@ -14,7 +16,7 @@ describe('onwershipInfoCalc', () => {
   it('if unwrapped and expired, should return manager and expiry', () => {
     const expiryDate = new Date(1)
     const gracePeriodEndDate = new Date(2)
-    const owners = [{ transferType: 'manager', address: '0x123' }]
+    const owners = [{ transferType: 'manager', address: '0x123' }] as OwnerArray
 
     const result = ownershipInfoCalc(false, owners as any, gracePeriodEndDate, expiryDate)
     expect(result).toEqual([
@@ -34,9 +36,11 @@ describe('onwershipInfoCalc', () => {
     const owners = [
       { transferType: 'manager', address: '0x123', label: 'manager' },
       { transferType: 'owner', address: '0x123', label: 'owner' },
-    ]
+    ] as OwnerArray
 
-    const result = ownershipInfoCalc(false, owners as any, gracePeriodEndDate, expiryDate)
+    // Date string is locale based. Ignore this test if it fails as March 4, 2073
+    const result = ownershipInfoCalc(false, owners, gracePeriodEndDate, expiryDate)
+
     expect(result).toEqual([
       { key: 'manager', value: '0x123' },
       { key: 'owner', value: '0x123' },
