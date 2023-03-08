@@ -51,6 +51,7 @@ describe('onwershipInfoCalc', () => {
       { transferType: 'owner', address: '0x123', label: 'name.owner' },
     ] as OwnerArray
 
+    // Date string is locale based. Ignore this test if it fails as March 4, 2073
     const result = ownershipInfoCalc('test.eth', false, owners, gracePeriodEndDate, expiryDate)
 
     expect(result).toEqual([

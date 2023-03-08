@@ -2,8 +2,6 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { OwnerArray, ReturnedENS } from '@app/types'
-
 import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
