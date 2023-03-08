@@ -2,8 +2,6 @@ import { ChangeEventHandler, ForwardedRef, InputHTMLAttributes, forwardRef, useS
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { VisuallyHidden } from '@ensdomains/thorin'
-
 import MinusIcon from '@app/assets/Minus.svg'
 import PlusIcon from '@app/assets/Plus.svg'
 import { useDefaultRef } from '@app/hooks/useDefaultRef'
@@ -42,14 +40,34 @@ const Button = styled.button(
     }
 
     &:disabled {
-      background: ${theme.colors.greyBright};
+      background-color: ${theme.colors.greyBright};
+      cursor: not-allowed;
     }
   `,
 )
 
-const Label = styled.div<{ $highlighted?: boolean }>(
-  ({ theme, $highlighted }) => css`
+const LabelContainer = styled.div(
+  ({ theme }) => css`
+    position: relative;
     flex: 1;
+    height: ${theme.space['11']};
+
+    :focus-within label {
+      opacity: 0;
+    }
+    :focus-within input {
+      opacity: 1;
+    }
+  `,
+)
+
+const Label = styled.label<{ $highlighted?: boolean }>(
+  ({ theme, $highlighted }) => css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -59,6 +77,33 @@ const Label = styled.div<{ $highlighted?: boolean }>(
     line-height: ${$highlighted ? theme.lineHeights.headingTwo : theme.lineHeights.large};
     text-align: center;
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity 150ms ease-in-out;
+  `,
+)
+
+const LabelInput = styled.input<{ $highlighted?: boolean }>(
+  ({ theme, $highlighted }) => css`
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    font-style: normal;
+    font-weight: ${theme.fontWeights.bold};
+    font-size: ${$highlighted ? theme.fontSizes.headingTwo : theme.fontSizes.large};
+    line-height: ${$highlighted ? theme.lineHeights.headingTwo : theme.lineHeights.large};
+    color: ${$highlighted ? theme.colors.accent : theme.colors.text};
+    opacity: 0;
+    transition: opacity 150ms ease-in-out;
+
+    /* stylelint-disable property-no-vendor-prefix */
+    ::-webkit-outer-spin-button,
+    ::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    -moz-appearance: textfield;
+    /* stylelint-enable property-no-vendor-prefix */
   `,
 )
 
@@ -79,7 +124,7 @@ export const PlusMinusControl = forwardRef(
     {
       value: _value,
       defaultValue,
-      minValue,
+      minValue = 1,
       maxValue,
       name = 'plus-minus-control',
       unit = 'years',
@@ -93,6 +138,7 @@ export const PlusMinusControl = forwardRef(
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
 
     const [value, setValue] = useState(_value || defaultValue || 1)
+    const [focused, setFocused] = useState(false)
 
     const minusDisabled = typeof minValue !== 'undefined' && value <= minValue
     const plusDisabled = typeof maxValue !== 'undefined' && value >= maxValue
@@ -122,27 +168,29 @@ export const PlusMinusControl = forwardRef(
       onChange?.(e)
     }
 
+    const handleBlur = () => {
+      if (Number.isNaN(value)) {
+        setValue(minValue)
+        const newEvent = createChangeEvent(minValue, name)
+        onChange?.(newEvent)
+      }
+      setFocused(false)
+    }
+
     return (
       <Container $highlighted={highlighted}>
         <Button
           type="button"
           onClick={incrementHandler(-1)}
           data-testid="plus-minus-control-minus"
-          disabled={minusDisabled}
+          disabled={focused || minusDisabled}
         >
           <MinusIcon />
         </Button>
-        <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
-        <Button
-          type="button"
-          onClick={incrementHandler(1)}
-          data-testid="plus-minus-control-plus"
-          disabled={plusDisabled}
-        >
-          <PlusIcon />
-        </Button>
-        <VisuallyHidden>
-          <input
+        <LabelContainer>
+          <LabelInput
+            data-testid="plus-minus-control-input"
+            $highlighted={highlighted}
             type="number"
             {...props}
             ref={inputRef}
@@ -150,8 +198,19 @@ export const PlusMinusControl = forwardRef(
             onChange={handleChange}
             min={minValue}
             max={maxValue}
+            onFocus={() => setFocused(true)}
+            onBlur={handleBlur}
           />
-        </VisuallyHidden>
+          <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
+        </LabelContainer>
+        <Button
+          type="button"
+          onClick={incrementHandler(1)}
+          data-testid="plus-minus-control-plus"
+          disabled={focused || plusDisabled}
+        >
+          <PlusIcon />
+        </Button>
       </Container>
     )
   },

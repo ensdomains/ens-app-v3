@@ -1,4 +1,4 @@
-import { render, screen, userEvent, waitFor } from '@app/test-utils'
+import { fireEvent, render, screen, userEvent, waitFor } from '@app/test-utils'
 
 import { PlusMinusControl } from './PlusMinusControl'
 
@@ -40,11 +40,37 @@ describe('PlusMinusControl', () => {
     })
   })
 
-  it('should render correctly', async () => {
+  it('should not call onChange if value is at maxValue', async () => {
     render(<PlusMinusControl value={2} maxValue={2} onChange={mockChangeHandler} />)
     await userEvent.click(screen.getByTestId('plus-minus-control-plus'))
     await waitFor(() => {
       expect(mockChangeHandler).not.toBeCalled()
     })
+  })
+
+  it('should call onChange if number is inputed', async () => {
+    render(<PlusMinusControl value={2} minValue={2} onChange={mockChangeHandler} />)
+    const input = screen.getByTestId('plus-minus-control-input')
+    await userEvent.click(input)
+    await userEvent.type(input, '20')
+    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('220')
+  })
+
+  it('should call onChange with minValue if input is deleted', async () => {
+    render(<PlusMinusControl value={4} minValue={2} onChange={mockChangeHandler} />)
+    const input = screen.getByTestId('plus-minus-control-input')
+    await userEvent.click(input)
+    await userEvent.type(input, '{selectall}{backspace}')
+    fireEvent.blur(input)
+    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('2')
+  })
+
+  it('should call onChange with 1 if input is deleted and minValue does not exist', async () => {
+    render(<PlusMinusControl value={4} onChange={mockChangeHandler} />)
+    const input = screen.getByTestId('plus-minus-control-input')
+    await userEvent.click(input)
+    await userEvent.type(input, '{selectall}{backspace}')
+    fireEvent.blur(input)
+    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('1')
   })
 })
