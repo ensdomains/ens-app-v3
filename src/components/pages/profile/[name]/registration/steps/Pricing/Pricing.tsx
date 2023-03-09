@@ -1,4 +1,5 @@
-import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
+import type { BigNumber } from 'ethers'
+import { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import usePrevious from 'react-use/lib/usePrevious'
 import styled, { css } from 'styled-components'
@@ -337,6 +338,92 @@ const PaymentChoice = ({
   )
 }
 
+interface ActionButtonProps {
+  address?: string
+  hasPendingMoonpayTransaction: boolean
+  hasFailedMoonpayTransaction: boolean
+  paymentMethodChoice: PaymentMethod | ''
+  reverseRecord: boolean
+  callback: (props: RegistrationStepData['pricing']) => void
+  initiateMoonpayRegistrationMutation: ReturnType<
+    typeof useMoonpayRegistration
+  >['initiateMoonpayRegistrationMutation']
+  years: number
+  balance: ReturnType<typeof useBalance>['data']
+  totalRequiredBalance?: BigNumber
+}
+
+export const ActionButton = ({
+  address,
+  hasPendingMoonpayTransaction,
+  hasFailedMoonpayTransaction,
+  paymentMethodChoice,
+  reverseRecord,
+  callback,
+  initiateMoonpayRegistrationMutation,
+  years,
+  balance,
+  totalRequiredBalance,
+}: ActionButtonProps) => {
+  const { t } = useTranslation('register')
+
+  if (!address) {
+    return <ConnectButton large />
+  }
+  if (hasPendingMoonpayTransaction) {
+    return (
+      <Button data-testid="next-button" disabled loading>
+        {t('steps.info.processing')}
+      </Button>
+    )
+  }
+  if (hasFailedMoonpayTransaction && paymentMethodChoice === PaymentMethod.moonpay) {
+    return (
+      <Button
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+      >
+        {t('action.tryAgain', { ns: 'common' })}
+      </Button>
+    )
+  }
+  if (paymentMethodChoice === PaymentMethod.moonpay) {
+    return (
+      <Button
+        loading={initiateMoonpayRegistrationMutation.isLoading}
+        data-testid="next-button"
+        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+        disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isLoading}
+      >
+        {t('action.next', { ns: 'common' })}
+      </Button>
+    )
+  }
+  if (!balance?.value || !totalRequiredBalance) {
+    return (
+      <Button data-testid="next-button" disabled>
+        {t('loading', { ns: 'common' })}
+      </Button>
+    )
+  }
+  if (balance?.value.lt(totalRequiredBalance) && paymentMethodChoice === PaymentMethod.ethereum) {
+    return (
+      <Button data-testid="next-button" disabled>
+        {t('steps.pricing.insufficientBalance')}
+      </Button>
+    )
+  }
+  return (
+    <Button
+      data-testid="next-button"
+      onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
+      disabled={!paymentMethodChoice}
+    >
+      {t('action.next', { ns: 'common' })}
+    </Button>
+  )
+}
+
 type Props = {
   nameDetails: ReturnType<typeof useNameDetails>
   resolverExists: boolean | undefined
@@ -412,60 +499,6 @@ const Pricing = ({
   const yearlyRequiredBalance = totalYearlyFee?.mul(110).div(100)
   const totalRequiredBalance = yearlyRequiredBalance?.add(premiumFee || 0).add(estimatedGasFee || 0)
 
-  let actionButton: ReactNode
-
-  if (!address) {
-    actionButton = <ConnectButton large />
-  } else if (hasPendingMoonpayTransaction) {
-    actionButton = (
-      <Button data-testid="next-button" disabled loading>
-        {t('steps.info.processing')}
-      </Button>
-    )
-  } else if (hasFailedMoonpayTransaction && paymentMethodChoice === PaymentMethod.moonpay) {
-    actionButton = (
-      <Button
-        data-testid="next-button"
-        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
-      >
-        {t('action.tryAgain', { ns: 'common' })}
-      </Button>
-    )
-  } else if (paymentMethodChoice === PaymentMethod.moonpay) {
-    actionButton = (
-      <Button
-        loading={initiateMoonpayRegistrationMutation.isLoading}
-        data-testid="next-button"
-        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
-        disabled={!paymentMethodChoice || initiateMoonpayRegistrationMutation.isLoading}
-      >
-        {t('action.next', { ns: 'common' })}
-      </Button>
-    )
-  } else if (!balance?.value || !totalRequiredBalance) {
-    actionButton = (
-      <Button data-testid="next-button" disabled>
-        {t('loading', { ns: 'common' })}
-      </Button>
-    )
-  } else if (balance?.value.lt(totalRequiredBalance)) {
-    actionButton = (
-      <Button data-testid="next-button" disabled>
-        {t('steps.pricing.insufficientBalance')}
-      </Button>
-    )
-  } else {
-    actionButton = (
-      <Button
-        data-testid="next-button"
-        onClick={() => callback({ reverseRecord, years, paymentMethodChoice })}
-        disabled={!paymentMethodChoice}
-      >
-        {t('action.next', { ns: 'common' })}
-      </Button>
-    )
-  }
-
   return (
     <StyledCard>
       <StyledHeading>{t('heading', { name: normalisedName })}</StyledHeading>
@@ -505,7 +538,22 @@ const Pricing = ({
           hasFailedMoonpayTransaction,
         }}
       />
-      <MobileFullWidth>{actionButton}</MobileFullWidth>
+      <MobileFullWidth>
+        <ActionButton
+          {...{
+            address,
+            hasPendingMoonpayTransaction,
+            hasFailedMoonpayTransaction,
+            paymentMethodChoice,
+            reverseRecord,
+            callback,
+            initiateMoonpayRegistrationMutation,
+            years,
+            balance,
+            totalRequiredBalance,
+          }}
+        />
+      </MobileFullWidth>
     </StyledCard>
   )
 }
