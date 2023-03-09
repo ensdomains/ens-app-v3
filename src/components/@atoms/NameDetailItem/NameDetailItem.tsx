@@ -1,4 +1,3 @@
-import { useRouter } from 'next/router'
 import { ReactNode } from 'react'
 import styled, { css } from 'styled-components'
 
@@ -138,7 +137,6 @@ export const NameDetailItem = ({
   onClick?: () => void
   children: ReactNode
 }) => {
-  const router = useRouter()
   const { avatar } = useAvatar(name, network)
   const zorb = useZorb(name, 'name')
 
@@ -148,16 +146,7 @@ export const NameDetailItem = ({
   }
 
   return (
-    <OptionalLink
-      active={mode !== 'select'}
-      href={{
-        pathname: `/profile/${name}`,
-        query: {
-          from: router.asPath,
-        },
-      }}
-      passHref
-    >
+    <OptionalLink active={mode !== 'select'} href={`/profile/${name}`} passHref>
       <NameItemWrapper
         $disabled={disabled}
         $highlight={mode === 'select' && selected}

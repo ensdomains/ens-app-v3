@@ -15,10 +15,25 @@ export const useQueryParameterState = <T extends string | number>(
     getInitialValue(router.query[parameter] as string, defaultValue),
   )
   const setState = (value: T) => {
+    const visibleSearchParams = new URLSearchParams(window.location.search)
     const url = new URL(router.asPath, window.location.href)
-    if (value && value !== defaultValue) url.searchParams.set(parameter, value.toString())
-    else url.searchParams.delete(parameter)
-    router.replace(url.toString(), undefined, { shallow: true })
+    const visibleUrl = new URL(router.asPath, window.location.href)
+
+    for (const [key, queryVal] of Object.entries(router.query)) {
+      // eslint-disable-next-line no-continue
+      if (key === parameter) continue
+      url.searchParams.set(key, queryVal as string)
+      if (visibleSearchParams.has(key)) {
+        visibleUrl.searchParams.set(key, queryVal as string)
+      }
+    }
+
+    if (value && value !== defaultValue) {
+      url.searchParams.set(parameter, value.toString())
+      visibleUrl.searchParams.set(parameter, value.toString())
+    }
+
+    router.replace(url.toString(), visibleUrl.toString(), { shallow: true })
     _setState(value)
   }
   return [state, setState]
