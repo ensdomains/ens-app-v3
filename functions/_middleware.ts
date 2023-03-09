@@ -37,7 +37,7 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
   let callback: ((res: Response) => Response) | null = null
 
   // exception for static files
-  if (paths.length === 2 && paths[1].match(/^.*\.(png|xml|ico|json|webmanifest|txt|svg)$/i)) {
+  if (paths.length === 2 && paths[1].match(/^.*\.(png|xml|ico|json|webmanifest|txt|svg|map)$/i)) {
     return next()
   }
 
