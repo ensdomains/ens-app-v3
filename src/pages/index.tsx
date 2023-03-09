@@ -80,7 +80,7 @@ const LogoAndLanguage = styled.div(
 
 const StyledLeadingHeading = styled(LeadingHeading)(
   () => css`
-    ${mq.md.min(
+    ${mq.sm.min(
       css`
         display: none;
       `,

@@ -22,7 +22,7 @@ const HeadingItems = styled.div(
     gap: ${theme.space['5']};
     align-self: center;
     align-items: center;
-    min-height: ${theme.space['15']};
+    min-height: ${theme.space['12']};
     ${mq.md.min(css`
       min-height: ${theme.space['10']};
       grid-column: span 2;
@@ -247,6 +247,7 @@ export const Content = ({
   }
 }) => {
   const breakpoints = useBreakpoint()
+  const isDesktopMode = breakpoints.sm
 
   const WarningComponent = !loading && children.warning && (
     <WarningWrapper>
@@ -278,9 +279,9 @@ export const Content = ({
         </Head>
       )}
 
-      {breakpoints.md && WarningComponent}
+      {isDesktopMode && WarningComponent}
 
-      {breakpoints.md && InfoComponent}
+      {isDesktopMode && InfoComponent}
 
       {!hideHeading && (
         <HeadingItems>
@@ -289,24 +290,22 @@ export const Content = ({
               <CompactTitle
                 copyValue={copyValue}
                 title={title}
-                subtitle={
-                  subtitle && (!breakpoints.md || alwaysShowSubtitle) ? subtitle : undefined
-                }
+                subtitle={subtitle && (!isDesktopMode || alwaysShowSubtitle) ? subtitle : undefined}
                 titleButton={titleButton}
               />
-              {inlineHeading && children.header && breakpoints.md && (
+              {inlineHeading && children.header && isDesktopMode && (
                 <ContentContainer>
                   <Skeleton loading={loading}>{children.header}</Skeleton>
                 </ContentContainer>
               )}
-              {!breakpoints.md && <Hamburger />}
+              {!isDesktopMode && <Hamburger />}
             </CustomLeadingHeading>
           </Skeleton>
         </HeadingItems>
       )}
 
-      {!breakpoints.md && WarningComponent}
-      {!breakpoints.md && InfoComponent}
+      {!isDesktopMode && WarningComponent}
+      {!isDesktopMode && InfoComponent}
 
       {LeadingComponent}
 
@@ -317,7 +316,7 @@ export const Content = ({
           </Skeleton>
         </ContentContainer>
       )}
-      {inlineHeading && children.header && !breakpoints.md && (
+      {inlineHeading && children.header && !isDesktopMode && (
         <ContentContainer>
           <Skeleton loading={loading}>{children.header}</Skeleton>
         </ContentContainer>

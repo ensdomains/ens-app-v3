@@ -9,7 +9,7 @@ import styled, { css } from 'styled-components'
 
 import { Input, MagnifyingGlassSVG } from '@ensdomains/thorin'
 
-const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
+const SearchInputWrapper = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ theme, $size }) => css`
     z-index: 1;
     box-shadow: ${theme.boxShadows['0.25']};
@@ -20,7 +20,7 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
       color: ${theme.colors.greyPrimary};
       font-weight: ${theme.fontWeights.bold};
     }
-    ${$size === 'large' &&
+    ${$size === 'medium' &&
     css`
       max-width: ${theme.space['96']};
       box-shadow: none;
@@ -33,13 +33,13 @@ const SearchInputWrapper = styled.div<{ $size: 'large' | 'extraLarge' }>(
   `,
 )
 
-const StyledInputParent = (size: 'large' | 'extraLarge') =>
+const StyledInputParent = (size: 'medium' | 'extraLarge') =>
   css(
     ({ theme }) => css`
       border-radius: ${theme.radii.full};
       background-color: ${theme.colors.backgroundSecondary};
       transition: background-color 0.35s ease-in-out;
-      ${size === 'large' &&
+      ${size === 'medium' &&
       css`
         & > div {
           border-radius: ${theme.radii.full};
@@ -88,7 +88,7 @@ export const SearchInputBox = forwardRef(
       setInput,
       containerRef,
     }: {
-      size?: 'large' | 'extraLarge'
+      size?: 'medium' | 'extraLarge'
       input: string
       setInput: Dispatch<SetStateAction<string>>
       containerRef: ForwardedRef<HTMLDivElement>
@@ -110,7 +110,7 @@ export const SearchInputBox = forwardRef(
           autoComplete="off"
           autoCorrect="off"
           parentStyles={StyledInputParent(size)}
-          icon={size === 'large' ? <MagnifyingGlassIcon as={MagnifyingGlassSVG} /> : undefined}
+          icon={size === 'medium' ? <MagnifyingGlassIcon as={MagnifyingGlassSVG} /> : undefined}
           spellCheck="false"
           data-testid="search-input-box"
         />
@@ -125,7 +125,7 @@ export const FakeSearchInputBox = forwardRef(
       size = 'extraLarge',
       onClick,
     }: {
-      size?: 'large' | 'extraLarge'
+      size?: 'medium' | 'extraLarge'
       onClick: (e: MouseEvent<HTMLInputElement>) => void
     },
     ref,

@@ -40,7 +40,7 @@ const Container = styled.div(
     padding: ${theme.space['4']};
     gap: ${theme.space['2']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: 0;
       gap: 0;
       & > div {
@@ -65,7 +65,7 @@ const SettingsSection = styled.div(
     margin-bottom: ${theme.space['2']};
     gap: ${theme.space['2']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['2']};
       margin: 0;
       gap: 0;
@@ -98,7 +98,7 @@ const SettingsItem = styled.div(
       }
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       border: none;
     `)}
   `,
@@ -134,7 +134,7 @@ const miscSectionStyle = css(
     background-color: ${theme.colors.greySurface};
     border-radius: ${theme.radii.large};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       background-color: transparent;
       border-radius: none;
     `)}
