@@ -2,8 +2,6 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { OwnerArray, ReturnedENS } from '@app/types'
-
 import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
@@ -44,10 +42,10 @@ export const yearsToSeconds = (years: number) => years * 60 * 60 * 24 * 365
 
 export const secondsToYears = (seconds: number) => seconds / (60 * 60 * 24 * 365)
 
-export const formatExpiry = (expiry: Date) => `
-${expiry.toLocaleDateString(undefined, {
-  month: 'long',
-})} ${expiry.getDate()}, ${expiry.getFullYear()}`
+export const formatExpiry = (expiry: Date) =>
+  `${expiry.toLocaleDateString(undefined, {
+    month: 'long',
+  })} ${expiry.getDate()}, ${expiry.getFullYear()}`
 
 export const formatDateTime = (date: Date) => {
   const baseFormatted = date.toLocaleTimeString('en', {

@@ -52,7 +52,7 @@
   },
   "navigation": {
     "home": "首页",
-    "names": "名称",
+    "names": "我的名称",
     "favourites": "收藏",
     "settings": "设置",
     "faq": "常见问题",
@@ -64,12 +64,13 @@
     "terms": "使用条款",
     "privacy": "隐私策略",
     "back": "返回",
-    "oldApp": "旧版 ENS App"
+    "oldApp": "旧版 ENS App",
+    "syncMessage": "正在进行网络同步，您在交易中更改的内容可能还看不到。"
   },
   "wallet": {
     "myProfile": "个人资料",
     "disconnect": "断开连接",
-    "connect": "连接钱包",
+    "connect": "连接",
     "noPrimaryName": "未设置主名",
     "viewProfile": "查看个人资料",
     "viewDetails": "查看详情",
@@ -155,7 +156,8 @@
       "updateRecords": "更新记录",
       "transferName": "转移名称",
       "changePermissions": "更改权限",
-      "syncManager": "同步管理员"
+      "syncManager": "同步管理员",
+      "updateProfileRecords": "更新个人资料"
     },
     "info": {
       "sendName": "设置名称的管理员和注册人",
