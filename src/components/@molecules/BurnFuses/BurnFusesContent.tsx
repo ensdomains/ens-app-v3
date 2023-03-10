@@ -20,7 +20,7 @@ const FusesContainer = styled.div(({ theme }) => [
     width: 100%;
     padding: ${theme.space['1.25']} ${theme.space['4']};
   `,
-  mq.md.min(css`
+  mq.sm.min(css`
     min-width: ${theme.space['112']};
   `),
 ])

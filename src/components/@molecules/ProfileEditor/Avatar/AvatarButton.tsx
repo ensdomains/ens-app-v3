@@ -9,6 +9,7 @@ import CameraIcon from '@app/assets/Camera.svg'
 
 const Container = styled.button<{ $error?: boolean; $validated?: boolean; $dirty?: boolean }>(
   ({ theme, $validated, $dirty, $error }) => css`
+    position: relative;
     width: 90px;
     height: 90px;
     border-radius: 50%;

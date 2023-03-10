@@ -71,7 +71,7 @@ const TabWrapper = styled.div(
       ${theme.colors.backgroundSecondary} 60%
     );
     padding: ${theme.space['6']} ${theme.space['4']};
-    ${mq.md.min(
+    ${mq.sm.min(
       css`
         display: none;
       `,

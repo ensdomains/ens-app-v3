@@ -32,7 +32,7 @@ const Container = styled.div<{ $banner?: string }>(
       gap: ${theme.space['4']};
       flex-gap: ${theme.space['4']};
 
-      ${mq.md.min(css`
+      ${mq.sm.min(css`
         padding: ${theme.space['6']};
         padding-top: ${theme.space['12']};
       `)}

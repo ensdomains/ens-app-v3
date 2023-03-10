@@ -163,7 +163,7 @@ const RouteItem = styled.a(
       background-color: ${theme.colors.greySurface};
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['2']} ${theme.space['4']};
     `)}
   `,
@@ -195,7 +195,7 @@ const NetworkSectionContainer = styled.div(
       text-transform: capitalize;
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['4']} ${theme.space['6']};
     `)}
   `,

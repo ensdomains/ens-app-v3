@@ -67,7 +67,7 @@ const AddSubnamesCard = styled(Card)(
       width: 100%;
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex-direction: row;
       text-align: left;
       & > button {

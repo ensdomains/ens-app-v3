@@ -28,7 +28,7 @@ const Container = styled(TabWrapper)(
       font-weight: ${theme.fontWeights.bold};
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,

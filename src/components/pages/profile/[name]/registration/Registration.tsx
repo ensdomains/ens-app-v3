@@ -46,7 +46,7 @@ const ViewProfileContainer = styled.div(
       }
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       margin-bottom: 0;
       padding: 0;
     `)}

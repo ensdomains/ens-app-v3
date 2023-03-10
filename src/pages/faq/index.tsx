@@ -16,7 +16,7 @@ const OptionContainer = styled.div(
     gap: ${theme.space['3']};
     flex-gap: ${theme.space['3']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       grid-template-columns: repeat(2, 1fr);
       grid-template-rows: repeat(1fr 1fr, 2);
       height: 100%;
@@ -57,7 +57,7 @@ const OptionItem = styled.a(
       background-color: ${theme.colors.backgroundSecondary};
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['10']} ${theme.space['6']};
     `)}
   `,
@@ -69,7 +69,6 @@ export default function Page() {
   return (
     <Content singleColumnContent title={t('title')}>
       {{
-        leading: null,
         trailing: (
           <OptionContainer>
             {faqOptions.map(({ title, slug, icon: Icon }) => (
