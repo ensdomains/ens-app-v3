@@ -73,7 +73,7 @@ export const EditResolver = ({ data, dispatch, onDismiss }: Props) => {
       </EditResolverFormContainer>
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={onDismiss}>
+          <Button colorStyle="accentSecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

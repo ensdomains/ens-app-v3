@@ -240,7 +240,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <FooterContainer>
           <Dialog.Footer
             leading={
-              <Button colorStyle="greySecondary" onClick={onDismiss}>
+              <Button colorStyle="accentSecondary" onClick={onDismiss}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
             }
