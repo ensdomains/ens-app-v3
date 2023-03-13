@@ -107,7 +107,10 @@ const Token = ({ name, isWrapped }: { name: string; isWrapped: boolean }) => {
     <Container>
       <HeaderContainer>
         <Typography>{t('tabs.more.token.label')}</Typography>
-        <Outlink href={makeEtherscanLink(`${contractAddress}/${tokenId}`, networkName, 'nft')}>
+        <Outlink
+          data-testid="etherscan-nft-link"
+          href={makeEtherscanLink(`${contractAddress}/${tokenId}`, networkName, 'nft')}
+        >
           Etherscan
         </Outlink>
       </HeaderContainer>
