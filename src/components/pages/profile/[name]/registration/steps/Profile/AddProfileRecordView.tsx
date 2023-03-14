@@ -138,9 +138,10 @@ type Props = {
   control: Control<ProfileEditorForm, any>
   onAdd?: (records: ProfileRecord[]) => void
   onClose?: () => void
+  showDismiss?: boolean
 }
 
-export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
+export const AddProfileRecordView = ({ control, onAdd, onClose, showDismiss }: Props) => {
   const { t, i18n } = useTranslation('register')
 
   const currentRecords = useWatch({ control, name: 'records' })
@@ -375,20 +376,36 @@ export const AddProfileRecordView = ({ control, onAdd, onClose }: Props) => {
         </OptionsContainer>
       </Content>
       <FooterWrapper>
-        <Button
-          size="medium"
-          onClick={() => onAdd?.(selectedRecords)}
-          count={selectedRecords.length}
-          fullWidthContent
-          disabled={selectedRecords.length === 0}
-          data-testid="add-profile-records-button"
-        >
-          {t('action.add', { ns: 'common' })}
-        </Button>
+        <Dialog.Footer
+          leading={
+            !showDismiss &&
+            onClose && (
+              <Button
+                data-testid="add-profile-records-close"
+                onClick={() => onClose()}
+                colorStyle="accentSecondary"
+              >
+                {t('action.back', { ns: 'common' })}
+              </Button>
+            )
+          }
+          trailing={
+            <Button
+              size="medium"
+              onClick={() => onAdd?.(selectedRecords)}
+              count={selectedRecords.length}
+              fullWidthContent
+              disabled={selectedRecords.length === 0}
+              data-testid="add-profile-records-button"
+            >
+              {t('action.add', { ns: 'common' })}
+            </Button>
+          }
+        />
       </FooterWrapper>
-      {onClose && (
+      {onClose && showDismiss && (
         <DismissButtonWrapper>
-          <DismissDialogButton onClick={onClose} />
+          <DismissDialogButton data-testid="dismiss-dialog-btn" onClick={onClose} />
         </DismissButtonWrapper>
       )}
     </Container>
