@@ -24,10 +24,9 @@ const Container = styled(TabWrapper)(
     align-items: stretch;
     justify-content: center;
     gap: ${theme.space['4']};
-
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -44,10 +43,6 @@ const HeaderContainer = styled.div(
       font-size: ${theme.fontSizes.headingThree};
       font-weight: ${theme.fontWeights.bold};
     }
-
-    ${mq.sm.min(css`
-      padding: ${theme.space['6']};
-    `)}
   `,
 )
 
