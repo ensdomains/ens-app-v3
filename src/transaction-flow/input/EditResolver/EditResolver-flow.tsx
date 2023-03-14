@@ -13,12 +13,13 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 import { makeTransactionItem } from '../../transaction'
 
-const EditResolverFormContainer = styled.div(() => [
+const EditResolverFormContainer = styled.div(({ theme }) => [
   css`
     width: 100%;
   `,
   mq.sm.min(css`
-    width: 510px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: 510px;
   `),
 ])
 

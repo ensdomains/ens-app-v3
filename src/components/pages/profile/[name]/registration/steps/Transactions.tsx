@@ -82,6 +82,7 @@ const DialogTitle = styled(Typography)(
   ({ theme }) => css`
     font-size: ${theme.fontSizes.headingThree};
     font-weight: bold;
+    text-align: center;
   `,
 )
 

@@ -194,7 +194,7 @@ export const ProfileSnippet = ({
     <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
         <NameAvatar
-          size={{ min: '24', md: '32' }}
+          size={{ min: '24', sm: '32' }}
           label={name}
           name={name}
           network={network}

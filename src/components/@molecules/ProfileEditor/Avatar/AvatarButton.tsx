@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { ComponentProps, Dispatch, SetStateAction, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -84,6 +84,8 @@ const IconMask = styled.div(
 
 export type AvatarClickType = 'upload' | 'nft'
 
+type PickedDropdownProps = Pick<ComponentProps<typeof Dropdown>, 'isOpen' | 'setIsOpen'>
+
 type Props = {
   validated?: boolean
   dirty?: boolean
@@ -93,7 +95,7 @@ type Props = {
   onAvatarChange?: (avatar?: string) => void
   onAvatarSrcChange?: (src?: string) => void
   onAvatarFileChange?: (file?: File) => void
-}
+} & PickedDropdownProps
 
 const AvatarButton = ({
   validated,
@@ -104,11 +106,12 @@ const AvatarButton = ({
   onAvatarChange,
   onAvatarSrcChange,
   onAvatarFileChange,
+  isOpen,
+  setIsOpen,
 }: Props) => {
   const { t } = useTranslation('transactionFlow')
 
   const fileInputRef = useRef<HTMLInputElement>(null)
-
   const handleSelectOption = (value: AvatarClickType | 'remove') => () => {
     if (value === 'remove') {
       onAvatarChange?.(undefined)
@@ -119,6 +122,11 @@ const AvatarButton = ({
       onSelectOption?.(value)
     }
   }
+
+  const dropdownProps = setIsOpen
+    ? ({ isOpen, setIsOpen } as { isOpen: boolean; setIsOpen: Dispatch<SetStateAction<boolean>> })
+    : ({} as { isOpen: never; setIsOpen: never })
+
   return (
     <Dropdown
       items={
@@ -146,6 +154,7 @@ const AvatarButton = ({
       }
       keepMenuOnTop
       shortThrow
+      {...dropdownProps}
     >
       <Container $validated={validated} $error={error} $dirty={dirty} type="button">
         <Avatar label="profile-button-avatar" src={src} noBorder />

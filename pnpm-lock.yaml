@@ -39,7 +39,7 @@ importers:
       '@ensdomains/ens-validation': ^0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.50
       '@ensdomains/eth-ens-namehash': ^2.0.15
-      '@ensdomains/thorin': 0.6.33
+      '@ensdomains/thorin': 0.6.34
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
       '@ethersproject/abstract-signer': ^5.7.0
@@ -177,7 +177,7 @@ importers:
       '@ensdomains/ens-validation': 0.1.0
       '@ensdomains/ensjs': 3.0.0-alpha.50_f2qxwv66g46rb33uzxnl5nluty
       '@ensdomains/eth-ens-namehash': 2.0.15
-      '@ensdomains/thorin': 0.6.33_6haozuff5ofofiwuoke6ixqiri
+      '@ensdomains/thorin': 0.6.34_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -2370,8 +2370,8 @@ packages:
       hash-test-vectors: 1.3.2
     dev: false
 
-  /@ensdomains/thorin/0.6.33_6haozuff5ofofiwuoke6ixqiri:
-    resolution: {integrity: sha512-txqqIsRMoQEVxeBTipV6r4vZs0TwnZ3HG5bIl7qxJXIpIaVNA0U8YftYT4W4YisCWVQxCNbNSu5ulalljW8XdA==}
+  /@ensdomains/thorin/0.6.34_6haozuff5ofofiwuoke6ixqiri:
+    resolution: {integrity: sha512-TJLs6iBsMaFd4zmv89intjCDS8M/gDWekjgryXWCHRGxOXT3CC/FP7X45UPcfQ1hiBk634lLWn6q+kKaWpQ7Rw==}
     peerDependencies:
       react: ^17
       react-dom: ^17

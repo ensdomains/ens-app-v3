@@ -21,7 +21,6 @@ const Container = styled.div<{ $state: TransitionState }>(
     transition: all 0.3s ${theme.transitionTimingFunction.inOut};
     box-sizing: content-box;
     border-radius: ${theme.radii.extraLarge};
-    margin: 0 ${theme.space['3']};
     cursor: pointer;
 
     &:hover {

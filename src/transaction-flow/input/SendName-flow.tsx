@@ -115,12 +115,13 @@ export const handleSubmitForm = ({
   dispatch({ name: 'setFlowStage', payload: 'transaction' })
 }
 
-const InnerContainer = styled.div(() => [
+const InnerContainer = styled.div(({ theme }) => [
   css`
     width: 100%;
   `,
   mq.sm.min(css`
-    width: 510px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: 510px;
   `),
 ])
 
