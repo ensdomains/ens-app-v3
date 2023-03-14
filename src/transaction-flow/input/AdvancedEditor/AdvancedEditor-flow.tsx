@@ -127,24 +127,22 @@ const AdvancedEditor = ({ data, transactions = [], dispatch, onDismiss }: Props)
 
   if (loading || isLoadingABIInterface || isLoadingPublicKeyInterface) return null
   return (
-    <>
-      <Container onSubmit={handleSubmit} data-testid="advanced-editor">
-        <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>
-        <ContentContainer>
-          <AdvancedEditorTabs {...advancedEditorForm} />
-          <AdvancedEditorContent {...advancedEditorForm} />
-          <AddRecord control={control} AddButtonProps={AddButtonProps} />
-          <FooterContainer>
-            <Button colorStyle="greySecondary" onClick={handleCancel}>
-              {t('action.cancel', { ns: 'common' })}
-            </Button>
-            <Button disabled={hasErrors || !hasChanges} type="submit">
-              {t('action.save', { ns: 'common' })}
-            </Button>
-          </FooterContainer>
-        </ContentContainer>
-      </Container>
-    </>
+    <Container onSubmit={handleSubmit} data-testid="advanced-editor">
+      <NameContainer>{t('advancedEditor.title', { name })}</NameContainer>
+      <ContentContainer>
+        <AdvancedEditorTabs {...advancedEditorForm} />
+        <AdvancedEditorContent {...advancedEditorForm} />
+        <AddRecord control={control} AddButtonProps={AddButtonProps} />
+        <FooterContainer>
+          <Button colorStyle="accentSecondary" onClick={handleCancel}>
+            {t('action.cancel', { ns: 'common' })}
+          </Button>
+          <Button disabled={hasErrors || !hasChanges} type="submit">
+            {t('action.save', { ns: 'common' })}
+          </Button>
+        </FooterContainer>
+      </ContentContainer>
+    </Container>
   )
 }
 
