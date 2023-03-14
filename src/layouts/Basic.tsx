@@ -162,7 +162,7 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
       <FeedbackButton onClick={() => setHasFeedbackForm(true)}>
         <div>
           <FeedbackSVG />
-          <Typography style={{ color: 'white' }}>Bug bash feedback</Typography>
+          <Typography style={{ color: 'white' }}>Feedback</Typography>
         </div>
       </FeedbackButton>
       <Navigation />
@@ -174,12 +174,11 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
         onDismiss={() => setHasFeedbackForm(false)}
       >
         <iframe
-          title="Moonpay Checkout"
+          title="Feedback"
           width="100%"
           height="100%"
           style={{ borderRadius: 25 }}
           src={`https://docs.google.com/forms/d/e/1FAIpQLSfAVFlV7LC2oCEBtZEK0uKpAU32-eYyY307Ji07wyGSFaZU8Q/viewform?usp=pp_url&entry.435573398=${router.asPath}`}
-          id="moonpayIframe"
         />
       </StyledDialog>
     </Container>
