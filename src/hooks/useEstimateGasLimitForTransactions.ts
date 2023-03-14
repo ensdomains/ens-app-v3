@@ -1,3 +1,4 @@
+import { BigNumber } from '@ethersproject/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { formatEther } from '@ethersproject/units'
 import { useQuery, useSigner } from 'wagmi'
@@ -27,6 +28,7 @@ export const fetchEstimateWithConfig =
       gasLimit = await signer!.estimateGas(populatedTransaction)
     } catch (e) {
       console.error('Error estimating gas limit: ', e)
+      gasLimit = BigNumber.from(0)
     }
     return {
       name: transactionName,
