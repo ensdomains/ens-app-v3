@@ -6,11 +6,6 @@ overrides:
   '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
   '@next/swc-linux-x64-gnu': 12.1.4
   cypress: 10.8.0
-  '@tanstack/query-persist-client-core': 4.10.3
-  '@tanstack/query-sync-storage-persister': 4.10.3
-  '@tanstack/react-query': 4.10.3
-  '@tanstack/react-query-persist-client': 4.10.3
-  '@tanstack/query-core': 4.10.3
 
 patchedDependencies:
   react-confetti@6.1.0:
@@ -63,10 +58,6 @@ importers:
       '@sentry/nextjs': ^7.11.1
       '@svgr/webpack': ^6.3.1
       '@synthetixio/synpress': 3.0.5
-      '@tanstack/query-persist-client-core': 4.10.3
-      '@tanstack/query-sync-storage-persister': 4.10.3
-      '@tanstack/react-query': 4.10.3
-      '@tanstack/react-query-persist-client': 4.10.3
       '@testing-library/cypress': ^8.0.3
       '@testing-library/jest-dom': ^5.16.5
       '@testing-library/react': ^12.1.5
@@ -190,14 +181,10 @@ importers:
       '@ethersproject/transactions': 5.7.0
       '@ethersproject/units': 5.7.0
       '@ethersproject/web': 5.7.1
-      '@rainbow-me/rainbowkit': 0.11.1_vmrj7spg6flshoe6e2pxdbw5au
+      '@rainbow-me/rainbowkit': 0.12.1_vwgfuivoohbeopgq6vyae2p5py
       '@sentry/nextjs': 7.14.1_next@12.1.6+react@17.0.2
       '@svgr/webpack': 6.4.0
-      '@tanstack/query-persist-client-core': 4.10.3
-      '@tanstack/query-sync-storage-persister': 4.10.3
-      '@tanstack/react-query': 4.10.3_sfoxds7t5ydpegc3knd667wn6m
-      '@tanstack/react-query-persist-client': 4.10.3_44u2an622imnmu2zk5qotweaoa
-      '@wagmi/core': 0.10.0_2kcjp2zw2zkbst5h245vvrkyma
+      '@wagmi/core': 0.10.1_2kcjp2zw2zkbst5h245vvrkyma
       calendar-link: 2.2.0
       dns-packet: 5.4.0
       glob: 8.0.3
@@ -223,7 +210,7 @@ importers:
       react-use: 17.4.0_sfoxds7t5ydpegc3knd667wn6m
       styled-components: 5.3.6_fane7jikarojcev26y27hpbhu4
       use-immer: 0.7.0_immer@9.0.15+react@17.0.2
-      wagmi: 0.12.0_p4z7j3uewr23c7xjvay3y6hbzy
+      wagmi: 0.12.1_p4z7j3uewr23c7xjvay3y6hbzy
     devDependencies:
       '@cloudflare/workers-types': 3.16.0
       '@deploysentinel/cypress-debugger': 0.5.5
@@ -1850,7 +1837,7 @@ packages:
       eth-rpc-errors: 4.0.2
       json-rpc-engine: 6.1.0
       keccak: 3.0.2
-      preact: 10.11.1
+      preact: 10.13.0
       qs: 6.11.0
       rxjs: 6.6.7
       sha.js: 2.4.11
@@ -4243,14 +4230,14 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@rainbow-me/rainbowkit/0.11.1_vmrj7spg6flshoe6e2pxdbw5au:
-    resolution: {integrity: sha512-UAOsEhpEqe7xi3ol00sqliEkDH6/5LGWkpA4jso0SbsHaRgqVYpuqd3LnIim+Z4AZX+76Td41gsY7x90GyE0dw==}
+  /@rainbow-me/rainbowkit/0.12.1_vwgfuivoohbeopgq6vyae2p5py:
+    resolution: {integrity: sha512-zyKKYWBHRs+QUtxi85Lg6eOysy61nVSzDtSh5VRQ45X5j7AsoxGJE3Ddn7GwZvm0Jxt4XIIt79iDQdvkhTbb1Q==}
     engines: {node: '>=12.4'}
     peerDependencies:
       ethers: '>=5.5.1'
       react: '>=17'
       react-dom: '>=17'
-      wagmi: '>=0.11.7 <0.12.0'
+      wagmi: 0.12.x
     dependencies:
       '@vanilla-extract/css': 1.9.1
       '@vanilla-extract/dynamic': 2.0.2
@@ -4261,7 +4248,7 @@ packages:
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-remove-scroll: 2.5.4_bwnomau7tnufn56w7nc32j7my4
-      wagmi: 0.12.0_p4z7j3uewr23c7xjvay3y6hbzy
+      wagmi: 0.12.1_p4z7j3uewr23c7xjvay3y6hbzy
     transitivePeerDependencies:
       - '@types/react'
     dev: false
@@ -5050,37 +5037,33 @@ packages:
     dependencies:
       defer-to-connect: 2.0.1
 
-  /@tanstack/query-core/4.10.3:
-    resolution: {integrity: sha512-+ME02sUmBfx3Pjd+0XtEthK8/4rVMD2jcxvnW9DSgFONpKtpjzfRzjY4ykzpDw1QEo2eoPvl7NS8J5mNI199aA==}
+  /@tanstack/query-core/4.26.1:
+    resolution: {integrity: sha512-Zrx2pVQUP4ndnsu6+K/m8zerXSVY8QM+YSbxA1/jbBY21GeCd5oKfYl92oXPK0hPEUtoNuunIdiq0ZMqLos+Zg==}
     dev: false
 
-  /@tanstack/query-persist-client-core/4.10.3:
-    resolution: {integrity: sha512-KGNnQdUW+eAedIzVM6zugeNpmEcrtJXzX66OQWc9WugpzHvUZE/13ZvUVxStvomUw9zeR+iMAWvBEiXJam4apQ==}
-    peerDependencies:
-      '@tanstack/query-core': 4.10.3
-    dev: false
-
-  /@tanstack/query-sync-storage-persister/4.10.3:
-    resolution: {integrity: sha512-BCaOEBOZflGZqDEMjD7HXghN/9oJ5Puj6AViYsWUTi8o0hZ0IMF0j4vtyXCxIGsseofBOuWSjP7kDsD8xojEgw==}
+  /@tanstack/query-persist-client-core/4.26.1:
+    resolution: {integrity: sha512-gKO5VQuvNlMMTNSxRtB4tm3zGSx3/U9YluFkdumsHana9YMh3ngc76gUCbQZsnf5DDCwdI673F7A7oSphp/vgA==}
     dependencies:
-      '@tanstack/query-persist-client-core': 4.10.3
-    transitivePeerDependencies:
-      - '@tanstack/query-core'
+      '@tanstack/query-core': 4.26.1
     dev: false
 
-  /@tanstack/react-query-persist-client/4.10.3_44u2an622imnmu2zk5qotweaoa:
-    resolution: {integrity: sha512-TKfRv5FibgpQu0yt//UDKnBueplqKwEK4MyCgfE/4mKVKYHSQsa8yq5bT/VbQlzbYnxmi0btCE/N6adeJ6wyug==}
-    peerDependencies:
-      '@tanstack/react-query': 4.10.3
+  /@tanstack/query-sync-storage-persister/4.26.1:
+    resolution: {integrity: sha512-Mt7Z+PKbdEiYt6KGTciLivHvsEQf2Q/G3lpGvLzqEP0S8VULJeUB3pqt6jvZBMgj4nKWBbyH3HZDtDw7pFyg2g==}
     dependencies:
-      '@tanstack/query-persist-client-core': 4.10.3
-      '@tanstack/react-query': 4.10.3_sfoxds7t5ydpegc3knd667wn6m
-    transitivePeerDependencies:
-      - '@tanstack/query-core'
+      '@tanstack/query-persist-client-core': 4.26.1
     dev: false
 
-  /@tanstack/react-query/4.10.3_sfoxds7t5ydpegc3knd667wn6m:
-    resolution: {integrity: sha512-4OEJjkcsCTmG3ui7RjsVzsXerWQvInTe95CBKFyOV/GchMUlNztoFnnYmlMhX7hLUqJMhbG9l7M507V7+xU8Hw==}
+  /@tanstack/react-query-persist-client/4.26.1_vohxj3xpfxn57cw32hqo6tozmq:
+    resolution: {integrity: sha512-efS2hPz8z+ySCTIy1DJ4uuT7LSi8F0E4bMXwP/aj2dDuMRFn6AV3z7LItInpp0Em3JKhi90GP2vxDyvQTOhO2A==}
+    peerDependencies:
+      '@tanstack/react-query': 4.26.1
+    dependencies:
+      '@tanstack/query-persist-client-core': 4.26.1
+      '@tanstack/react-query': 4.26.1_sfoxds7t5ydpegc3knd667wn6m
+    dev: false
+
+  /@tanstack/react-query/4.26.1_sfoxds7t5ydpegc3knd667wn6m:
+    resolution: {integrity: sha512-i3dnz4TOARGIXrXQ5P7S25Zfi4noii/bxhcwPurh2nrf5EUCcAt/95TB2HSmMweUBx206yIMWUMEQ7ptd6zwDg==}
     peerDependencies:
       react: ^16.8.0 || ^17.0.0 || ^18.0.0
       react-dom: ^16.8.0 || ^17.0.0 || ^18.0.0
@@ -5091,7 +5074,7 @@ packages:
       react-native:
         optional: true
     dependencies:
-      '@tanstack/query-core': 4.10.3
+      '@tanstack/query-core': 4.26.1
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       use-sync-external-store: 1.2.0_react@17.0.2
@@ -6115,8 +6098,8 @@ packages:
       '@vanilla-extract/css': 1.9.1
     dev: false
 
-  /@wagmi/chains/0.2.10_typescript@4.8.4:
-    resolution: {integrity: sha512-MoMyQaR5cb1CmhuRu2C9Xyoddas8AZU7RwVQHIX7IHAL2LKbURjMnt0YQu2vr575yCO4llwVMmt2OyGFnq6P9w==}
+  /@wagmi/chains/0.2.11_typescript@4.8.4:
+    resolution: {integrity: sha512-aMrI1zKKXdeAaiTxBiv+3Zfgd3IajCDpxBtPPvpjXuWVRe4ikwzbyZ1HARKj3V1+wNMPng8EJiWpN966PcvROg==}
     peerDependencies:
       typescript: '>=4.9.4'
     peerDependenciesMeta:
@@ -6126,7 +6109,7 @@ packages:
       typescript: 4.8.4
     dev: false
 
-  /@wagmi/connectors/0.3.2_mdy23lexwbfo4ilamjdxfyojiu:
+  /@wagmi/connectors/0.3.2_s4xyd4uzqvsl3zdon6nex4eooq:
     resolution: {integrity: sha512-VZ/lmzR/+Zw4xbQvgXscXvifoNJZbMB4E4rQMUvrlCtHMdK3kxb9BC2KMiPTgfsZmEldz72CMmPbrM8C8X1JCA==}
     peerDependencies:
       '@wagmi/core': '>=0.9.x'
@@ -6142,7 +6125,7 @@ packages:
       '@ledgerhq/connect-kit-loader': 1.0.2
       '@safe-global/safe-apps-provider': 0.15.2
       '@safe-global/safe-apps-sdk': 7.10.0
-      '@wagmi/core': 0.10.0_2kcjp2zw2zkbst5h245vvrkyma
+      '@wagmi/core': 0.10.1_2kcjp2zw2zkbst5h245vvrkyma
       '@walletconnect/ethereum-provider': 2.4.7_j3wuvcjcapvokxah2upi7zqm3e
       '@walletconnect/legacy-provider': 2.0.0
       abitype: 0.3.0_typescript@4.8.4
@@ -6165,8 +6148,8 @@ packages:
       - zod
     dev: false
 
-  /@wagmi/core/0.10.0_2kcjp2zw2zkbst5h245vvrkyma:
-    resolution: {integrity: sha512-biDjKhN9H/hEsbdWfIXovV90nHdwnO3urUTlZVX8fsntg8d9TFQFxhjRCgspHfXcznfRGbUHVslPyQoup1wvrg==}
+  /@wagmi/core/0.10.1_2kcjp2zw2zkbst5h245vvrkyma:
+    resolution: {integrity: sha512-UmcX4JNBRl20rg8ybPLOA5SEzKdyqEDd0TXqTfowil1T+IMjsZJhoJ/SWdTPkBXbAQyo8GlQ+Yr0lZ3/CKC1Nw==}
     peerDependencies:
       ethers: '>=5.5.1 <6'
       typescript: '>=4.9.4'
@@ -6174,8 +6157,8 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@wagmi/chains': 0.2.10_typescript@4.8.4
-      '@wagmi/connectors': 0.3.2_mdy23lexwbfo4ilamjdxfyojiu
+      '@wagmi/chains': 0.2.11_typescript@4.8.4
+      '@wagmi/connectors': 0.3.2_s4xyd4uzqvsl3zdon6nex4eooq
       abitype: 0.3.0_typescript@4.8.4
       ethers: 5.7.2
       eventemitter3: 4.0.7
@@ -6261,16 +6244,6 @@ packages:
       - utf-8-validate
     dev: false
 
-  /@walletconnect/crypto/1.0.2:
-    resolution: {integrity: sha512-+OlNtwieUqVcOpFTvLBvH+9J9pntEqH5evpINHfVxff1XIgwV55PpbdvkHu6r9Ib4WQDOFiD8OeeXs1vHw7xKQ==}
-    dependencies:
-      '@walletconnect/encoding': 1.0.1
-      '@walletconnect/environment': 1.0.1
-      '@walletconnect/randombytes': 1.0.2
-      aes-js: 3.1.2
-      hash.js: 1.1.7
-    dev: true
-
   /@walletconnect/crypto/1.0.3:
     resolution: {integrity: sha512-+2jdORD7XQs76I2Odgr3wwrtyuLUXD/kprNVsjWRhhhdO9Mt6WqVzOPu0/t7OHSmgal8k7SoBQzUc5hu/8zL/g==}
     dependencies:
@@ -6280,14 +6253,6 @@ packages:
       aes-js: 3.1.2
       hash.js: 1.1.7
       tslib: 1.14.1
-    dev: false
-
-  /@walletconnect/encoding/1.0.1:
-    resolution: {integrity: sha512-8opL2rs6N6E3tJfsqwS82aZQDL3gmupWUgmvuZ3CGU7z/InZs3R9jkzH8wmYtpbq0sFK3WkJkQRZFFk4BkrmFA==}
-    dependencies:
-      is-typedarray: 1.0.0
-      typedarray-to-buffer: 3.1.5
-    dev: true
 
   /@walletconnect/encoding/1.0.2:
     resolution: {integrity: sha512-CrwSBrjqJ7rpGQcTL3kU+Ief+Bcuu9PH6JLOb+wM6NITX1GTxR/MfNwnQfhLKK6xpRAyj2/nM04OOH6wS8Imag==}
@@ -6363,7 +6328,7 @@ packages:
   /@walletconnect/iso-crypto/1.8.0:
     resolution: {integrity: sha512-pWy19KCyitpfXb70hA73r9FcvklS+FvO9QUIttp3c2mfW8frxgYeRXfxLRCIQTkaYueRKvdqPjbyhPLam508XQ==}
     dependencies:
-      '@walletconnect/crypto': 1.0.2
+      '@walletconnect/crypto': 1.0.3
       '@walletconnect/types': 1.8.0
       '@walletconnect/utils': 1.8.0
     dev: true
@@ -6393,20 +6358,12 @@ packages:
       keyvaluestorage-interface: 1.0.0
       tslib: 1.14.1
 
-  /@walletconnect/jsonrpc-utils/1.0.3:
-    resolution: {integrity: sha512-3yb49bPk16MNLk6uIIHPSHQCpD6UAo1OMOx1rM8cW/MPEAYAzrSW5hkhG7NEUwX9SokRIgnZK3QuQkiyNzBMhQ==}
-    dependencies:
-      '@walletconnect/environment': 1.0.1
-      '@walletconnect/jsonrpc-types': 1.0.2
-    dev: true
-
   /@walletconnect/jsonrpc-utils/1.0.6:
     resolution: {integrity: sha512-snp0tfkjPiDLQp/jrBewI+9SM33GPV4+Gjgldod6XQ7rFyQ5FZjnBxUkY4xWH0+arNxzQSi6v5iDXjCjSaorpg==}
     dependencies:
       '@walletconnect/environment': 1.0.1
       '@walletconnect/jsonrpc-types': 1.0.2
       tslib: 1.14.1
-    dev: false
 
   /@walletconnect/jsonrpc-ws-connection/1.0.9:
     resolution: {integrity: sha512-x1COaW6hhMLEo+ND5zF/siBGg5SEwC/gHjeRbJtK1CRiq9atkg/XR7JwtSNfMvYX/O3PRCVmuc5SP0RQio9JUw==}
@@ -6511,17 +6468,9 @@ packages:
       '@walletconnect/browser-utils': 1.8.0
       '@walletconnect/mobile-registry': 1.4.0
       '@walletconnect/types': 1.8.0
-      copy-to-clipboard: 3.3.2
+      copy-to-clipboard: 3.3.3
       preact: 10.4.1
       qrcode: 1.4.4
-    dev: true
-
-  /@walletconnect/randombytes/1.0.2:
-    resolution: {integrity: sha512-ivgOtAyqQnN0rLQmOFPemsgYGysd/ooLfaDA/ACQ3cyqlca56t3rZc7pXfqJOIETx/wSyoF5XbwL+BqYodw27A==}
-    dependencies:
-      '@walletconnect/encoding': 1.0.2
-      '@walletconnect/environment': 1.0.1
-      randombytes: 2.1.0
     dev: true
 
   /@walletconnect/randombytes/1.0.3:
@@ -6531,7 +6480,6 @@ packages:
       '@walletconnect/environment': 1.0.1
       randombytes: 2.1.0
       tslib: 1.14.1
-    dev: false
 
   /@walletconnect/relay-api/1.0.9:
     resolution: {integrity: sha512-Q3+rylJOqRkO1D9Su0DPE3mmznbAalYapJ9qmzDgK28mYF9alcP3UwG/og5V7l7CFOqzCLi7B8BvcBUrpDj0Rg==}
@@ -6605,6 +6553,7 @@ packages:
 
   /@walletconnect/types/1.8.0:
     resolution: {integrity: sha512-Cn+3I0V0vT9ghMuzh1KzZvCkiAxTq+1TR2eSqw5E5AVWfmCtECFkVZBP6uUJZ8YjwLqXheI+rnjqPy7sVM4Fyg==}
+    deprecated: 'WalletConnect''s v1 SDKs are now deprecated. Please upgrade to a v2 SDK. For details see: https://docs.walletconnect.com/'
     dev: true
 
   /@walletconnect/types/2.4.7_p2zphemn5bk5inasc666rmprwi:
@@ -6656,8 +6605,8 @@ packages:
     resolution: {integrity: sha512-zExzp8Mj1YiAIBfKNm5u622oNw44WOESzo6hj+Q3apSMIb0Jph9X3GDIdbZmvVZsNPxWDL7uodKgZcCInZv2vA==}
     dependencies:
       '@walletconnect/browser-utils': 1.8.0
-      '@walletconnect/encoding': 1.0.1
-      '@walletconnect/jsonrpc-utils': 1.0.3
+      '@walletconnect/encoding': 1.0.2
+      '@walletconnect/jsonrpc-utils': 1.0.6
       '@walletconnect/types': 1.8.0
       bn.js: 5.2.1
       js-sha3: 0.8.0
@@ -9569,12 +9518,12 @@ packages:
     resolution: {integrity: sha512-Vme1Z6RUDzrb6xAI7EZlVZ5uvOk2F//GaxKUxajDqm9LhOVM1inxNAD2vy+UZDYsd0uyA9s7b3/FVZPSxqrCfg==}
     dependencies:
       toggle-selection: 1.0.6
+    dev: false
 
   /copy-to-clipboard/3.3.3:
     resolution: {integrity: sha512-2KV8NhB5JqC3ky0r9PMCAZKbUHSwtEo4CwCs0KXgruG43gX5PMqDEBbVU4OUzw2MuAWUfsuFmWvEKG5QRfSnJA==}
     dependencies:
       toggle-selection: 1.0.6
-    dev: false
 
   /core-js-compat/3.25.5:
     resolution: {integrity: sha512-ovcyhs2DEBUIE0MGEKHP4olCUW/XYte3Vroyxuh38rD1wAO4dHohsovUC4eAOuzFxE6b+RXvBU3UZ9o0YhUTkA==}
@@ -18377,6 +18326,7 @@ packages:
 
   /preact/10.11.1:
     resolution: {integrity: sha512-1Wz5PCRm6Fg+6BTXWJHhX4wRK9MZbZBHuwBqfZlOdVm2NqPe8/rjYpufvYCwJSGb9layyzB2jTTXfpCTynLqFQ==}
+    dev: true
 
   /preact/10.13.0:
     resolution: {integrity: sha512-ERdIdUpR6doqdaSIh80hvzebHB7O6JxycOhyzAeLEchqOq/4yueslQbfnPwXaNhAYacFTyCclhwkEbOumT0tHw==}
@@ -22073,8 +22023,8 @@ packages:
       xml-name-validator: 3.0.0
     dev: true
 
-  /wagmi/0.12.0_p4z7j3uewr23c7xjvay3y6hbzy:
-    resolution: {integrity: sha512-NUm1Z/SH+GbCVbLhQe8xPEztz3Rq0F1oxMiDrLuOMZbbydtcm2OI7QsqMDQYqL/1rXTCbniTwzlRe7sV3CeNLQ==}
+  /wagmi/0.12.1_p4z7j3uewr23c7xjvay3y6hbzy:
+    resolution: {integrity: sha512-O3X2D5dm3LBesuVSG8qdwSEIulDUn9pouSW/bOn/xdbKR6Q/GouphbiqOyoTn+a1urKlmDI7nq9EU6UeY8Hd3w==}
     peerDependencies:
       ethers: '>=5.5.1 <6'
       react: '>=17.0.0'
@@ -22083,10 +22033,10 @@ packages:
       typescript:
         optional: true
     dependencies:
-      '@tanstack/query-sync-storage-persister': 4.10.3
-      '@tanstack/react-query': 4.10.3_sfoxds7t5ydpegc3knd667wn6m
-      '@tanstack/react-query-persist-client': 4.10.3_44u2an622imnmu2zk5qotweaoa
-      '@wagmi/core': 0.10.0_2kcjp2zw2zkbst5h245vvrkyma
+      '@tanstack/query-sync-storage-persister': 4.26.1
+      '@tanstack/react-query': 4.26.1_sfoxds7t5ydpegc3knd667wn6m
+      '@tanstack/react-query-persist-client': 4.26.1_vohxj3xpfxn57cw32hqo6tozmq
+      '@wagmi/core': 0.10.1_2kcjp2zw2zkbst5h245vvrkyma
       abitype: 0.3.0_typescript@4.8.4
       ethers: 5.7.2
       react: 17.0.2
@@ -22097,7 +22047,6 @@ packages:
       - '@react-native-async-storage/async-storage'
       - '@swc/core'
       - '@swc/wasm'
-      - '@tanstack/query-core'
       - '@types/node'
       - bufferutil
       - debug
