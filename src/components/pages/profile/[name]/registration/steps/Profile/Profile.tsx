@@ -218,6 +218,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         return (
           <AddProfileRecordView
             control={control}
+            showDismiss
             onAdd={(newRecords) => {
               addRecords(newRecords)
               setModalOpen(false)

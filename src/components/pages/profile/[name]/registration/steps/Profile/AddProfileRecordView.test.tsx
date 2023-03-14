@@ -190,4 +190,17 @@ describe('AddProfileRecordView', () => {
       }
     }
   })
+
+  it('should not show dismiss button by default', async () => {
+    result.current.reset({ records: [] })
+    render(<AddProfileRecordView control={result.current.control} onClose={() => {}} />)
+    expect(screen.queryByTestId('dismiss-dialog-btn')).not.toBeInTheDocument()
+    expect(screen.getByTestId('add-profile-records-close')).toBeInTheDocument()
+  })
+
+  it('should show dismiss button if specified', async () => {
+    result.current.reset({ records: [] })
+    render(<AddProfileRecordView control={result.current.control} showDismiss onClose={() => {}} />)
+    expect(screen.getByTestId('dismiss-dialog-btn')).toBeInTheDocument()
+  })
 })
