@@ -20,42 +20,41 @@ const props = {
   handleCancel: mockHandleCancel,
 }
 
-export const generateNFT =
-  (withMedia: boolean, contractAddress?: string) => (_: any, i: number) => ({
-    contract: {
-      address: contractAddress || `0x${i.toString(16)}`,
+const generateNFT = (withMedia: boolean, contractAddress?: string) => (_: any, i: number) => ({
+  contract: {
+    address: contractAddress || `0x${i.toString(16)}`,
+  },
+  id: {
+    tokenId: String(i),
+    tokenMetadata: {
+      tokenType: Math.random() > 0.5 && i > 1 ? 'ERC721' : 'ERC1155',
     },
-    id: {
-      tokenId: String(i),
-      tokenMetadata: {
-        tokenType: Math.random() > 0.5 && i > 1 ? 'ERC721' : 'ERC1155',
-      },
-    },
-    balance: '1',
-    title: `NFT ${i}`,
+  },
+  balance: '1',
+  title: `NFT ${i}`,
+  description: `NFT ${i} description`,
+  tokenUri: {
+    raw: 'https://localhost/test-uri-raw.png',
+    gateway: 'https://localhost/test-uri-gateway.png',
+  },
+  media: withMedia
+    ? [
+        {
+          raw: 'https://localhost/test-media-raw.png',
+          gateway: 'https://localhost/test-media-gateway.png',
+          thumbnail: 'https://localhost/test-media-thumbnail.png',
+        },
+      ]
+    : [],
+  metadata: {
+    image: 'https://localhost/test-meta-image.png',
+    external_url: 'https://localhost/',
+    background_color: '#000000',
+    name: `NFT ${i}`,
     description: `NFT ${i} description`,
-    tokenUri: {
-      raw: 'https://localhost/test-uri-raw.png',
-      gateway: 'https://localhost/test-uri-gateway.png',
-    },
-    media: withMedia
-      ? [
-          {
-            raw: 'https://localhost/test-media-raw.png',
-            gateway: 'https://localhost/test-media-gateway.png',
-            thumbnail: 'https://localhost/test-media-thumbnail.png',
-          },
-        ]
-      : [],
-    metadata: {
-      image: 'https://localhost/test-meta-image.png',
-      external_url: 'https://localhost/',
-      background_color: '#000000',
-      name: `NFT ${i}`,
-      description: `NFT ${i} description`,
-      attributes: '{"test": "test"}',
-    },
-  })
+    attributes: '{"test": "test"}',
+  },
+})
 describe('<AvatarNFT />', () => {
   window.IntersectionObserver = jest.fn()
   ;(window.IntersectionObserver as jest.Mock).mockImplementation(() => ({
