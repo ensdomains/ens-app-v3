@@ -22,7 +22,12 @@ export const fetchEstimateWithConfig =
       ens,
       transaction.data,
     )
-    const gasLimit = await signer!.estimateGas(populatedTransaction)
+    let gasLimit
+    try {
+      gasLimit = await signer!.estimateGas(populatedTransaction)
+    } catch (e) {
+      console.error('Error estimating gas limit: ', e)
+    }
     return {
       name: transactionName,
       gasLimit,
