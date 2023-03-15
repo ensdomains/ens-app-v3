@@ -127,14 +127,19 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       break
     }
     case 'setTransactionStageFromUpdate': {
-      const { hash, key, status, timestamp } = action.payload
-      const selectedItem = draft.items[key]
+      const { hash, key, status, minedData, newHash } = action.payload
+      const selectedItem = draft.items[key!]
       if (!selectedItem) break
       const transaction = selectedItem.transactions.find((x) => x.hash === hash)
       if (transaction) {
+        if (status === 'repriced') {
+          transaction.hash = newHash
+          transaction.stage = 'sent'
+          break
+        }
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
-        transaction.finaliseTime = timestamp
+        transaction.finaliseTime = minedData!.timestamp * 1000
         if (
           key === draft.selectedKey &&
           selectedItem.autoClose &&

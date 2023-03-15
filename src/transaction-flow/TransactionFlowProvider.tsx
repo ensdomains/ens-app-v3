@@ -119,11 +119,11 @@ export const TransactionFlowProvider = ({ children }: { children: ReactNode }) =
   )
 
   const updateCallback = useCallback<UpdateCallback>(
-    ({ key, status, hash, minedData }) => {
-      if (status !== 'pending' && key) {
+    (transaction) => {
+      if (transaction.status !== 'pending' && transaction.key) {
         dispatch({
           name: 'setTransactionStageFromUpdate',
-          payload: { key, status, hash, timestamp: minedData.timestamp * 1000 },
+          payload: transaction,
         })
       }
     },

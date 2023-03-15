@@ -3,6 +3,7 @@ import { ComponentProps, Dispatch, ReactNode } from 'react'
 
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
+import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
@@ -126,12 +127,7 @@ export type TransactionFlowAction =
     }
   | {
       name: 'setTransactionStageFromUpdate'
-      payload: {
-        key: string
-        hash: string
-        status: 'confirmed' | 'failed'
-        timestamp: number
-      }
+      payload: Transaction
     }
   | {
       name: 'resetTransactionStep'
