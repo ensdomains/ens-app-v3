@@ -18,7 +18,7 @@ describe('Profile Editor', () => {
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay').should('be.visible')
         cy.contains('Your registry is out of date').should('be.visible')
-        cy.findByTestId('dismiss-dialog-button').should('exist').click()
+        cy.findByTestId('warning-overlay-secondary-action').should('have.text', 'Cancel').click()
         cy.findByTestId('profile-editor').should('not.exist')
       })
 
@@ -34,7 +34,7 @@ describe('Profile Editor', () => {
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay').should('be.visible')
         cy.contains('No resolver assigned').should('be.visible')
-        cy.findByTestId('dismiss-dialog-button').should('exist').click()
+        cy.findByTestId('warning-overlay-secondary-action').should('have.text', 'Cancel').click()
         cy.findByTestId('profile-editor').should('not.exist')
 
         cy.contains('Edit profile').click()
@@ -112,7 +112,7 @@ describe('Profile Editor', () => {
 
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay').should('be.visible')
-        cy.findByTestId('dismiss-dialog-button').should('be.visible')
+        cy.findByTestId('warning-overlay-secondary-action').should('have.text', 'Edit profile')
         cy.findByTestId('profile-editor-overlay-button').click()
         cy.findByTestId('transfer-profile-trailing-btn').should('not.be.disabled').click()
         cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
@@ -163,7 +163,7 @@ describe('Profile Editor', () => {
         // Update and add records to test migration records merge
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay').should('be.visible')
-        cy.findByTestId('dismiss-dialog-button').should('be.visible').click()
+        cy.findByTestId('warning-overlay-secondary-action').should('have.text', 'Edit profile').click()
         cy.findByTestId('profile-record-input-description')
           .get('textarea')
           .type('{selectall}{backspace}new name')
@@ -275,7 +275,7 @@ describe('Profile Editor', () => {
         cy.findByTestId('profile-tab').click()
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay').should('be.visible')
-        cy.findByTestId('warning-overlay-dismiss').should('be.visible')
+        cy.findByTestId('warning-overlay-secondary-action').should('have.text', 'Edit profile')
         cy.findByTestId('profile-editor-overlay-button').click()
         cy.findByTestId('transaction-modal-confirm-button').should('not.be.disabled').click()
         cy.confirmMetamaskTransaction()

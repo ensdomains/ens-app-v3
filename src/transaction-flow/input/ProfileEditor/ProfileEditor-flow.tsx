@@ -39,7 +39,6 @@ const Container = styled.form(({ theme }) => [
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
-    min-height: 33vh;
   `,
   mq.sm.min(css`
     width: calc(80vw - 2 * ${theme.space['6']});

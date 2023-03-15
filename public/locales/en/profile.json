@@ -302,7 +302,6 @@
       }
     }
   },
-
   "advancedEditor": {
     "title": "{{name}}'s records",
     "tabs": {
