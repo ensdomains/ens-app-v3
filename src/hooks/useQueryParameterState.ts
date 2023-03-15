@@ -41,10 +41,8 @@ export const useQueryParameterState = <T extends string | number>(
   }
 
   useEffect(() => {
-    if (paramValue) {
-      _setState(getInitialValue(paramValue, defaultValue))
-    }
+    _setState(getInitialValue(paramValue, defaultValue))
   }, [defaultValue, paramValue, router.isReady])
 
-  return [state, setState]
+  return [paramValue ? state : defaultValue, setState]
 }
