@@ -96,24 +96,22 @@ const breakpoints = {
 
 const { provider, chains } = configureChains(
   [goerli, localhost],
-  [
-    ...(process.env.NEXT_PUBLIC_PROVIDER
-      ? [
-          jsonRpcProvider({
-            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+  process.env.NEXT_PUBLIC_PROVIDER
+    ? [
+        jsonRpcProvider({
+          rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+        }),
+      ]
+    : [
+        infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }),
+        jsonRpcProvider({
+          rpc: (c) => ({
+            http: `https://web3.ens.domains/v1/${
+              c.network === 'homestead' ? 'mainnet' : c.network
+            }`,
           }),
-        ]
-      : [
-          infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }) as any,
-          jsonRpcProvider({
-            rpc: (c) => ({
-              http: `https://web3.ens.domains/v1/${
-                c.network === 'homestead' ? 'mainnet' : c.network
-              }`,
-            }),
-          }),
-        ]),
-  ],
+        }),
+      ],
 )
 
 setupAnalytics()
