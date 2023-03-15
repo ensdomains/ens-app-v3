@@ -361,7 +361,7 @@ export const SearchInput = ({
       }
     }
     if ('isHistory' in selectedItem) {
-      delete selectedItem.isHistory
+      delete (selectedItem as SearchItem & { isHistory?: boolean }).isHistory
     }
     setHistory((prev) => [
       ...prev
