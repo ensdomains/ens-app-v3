@@ -47,10 +47,10 @@ const ContentWrapper = styled.div(
 
 const BottomPlaceholder = styled.div(
   ({ theme }) => css`
-    height: ${theme.space['16']};
+    height: ${theme.space['14']};
     ${mq.sm.min(
       css`
-        height: ${theme.space['18']};
+        display: none;
       `,
     )}
   `,

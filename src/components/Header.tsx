@@ -4,10 +4,9 @@ import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { mq } from '@ensdomains/thorin'
-
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
+import mq from '@app/mediaQuery'
 import { routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
@@ -54,10 +53,6 @@ const NavContainer = styled.div(
     flex-gap: ${theme.space['3']};
     gap: ${theme.space['3']};
     height: ${theme.space['12']};
-
-    ${mq.sm.min(css`
-      height: ${theme.space['18']};
-    `)}
 
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
