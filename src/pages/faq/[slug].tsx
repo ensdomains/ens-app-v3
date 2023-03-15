@@ -49,7 +49,7 @@ const OptionLinks = styled(Card)(
       }
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       gap: ${theme.space['4']};
       padding: ${theme.space['6']};
     `)}
@@ -121,7 +121,7 @@ const OptionFAQ = styled(Card)(
       }
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['4']};
     `)}
   `,

@@ -95,7 +95,7 @@ const RecordsStack = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -112,7 +112,7 @@ const Actions = styled.div(
     border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       & > .leading {
         flex-grow: 1;
         order: -1;

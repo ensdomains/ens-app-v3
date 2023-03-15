@@ -15,28 +15,25 @@ import type { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
 const Container = styled.form(({ theme }) => [
   css`
-    width: calc(100% + 2 * ${theme.space['3.5']});
-    height: calc(100% + 2 * ${theme.space['3.5']});
-    max-height: 90vh;
-    margin: -${theme.space[3.5]};
+    width: 100%;
+    max-height: 60vh;
     background: ${theme.colors.backgroundPrimary};
     border-radius: ${theme.space['5']};
     overflow: hidden;
     display: flex;
     flex-direction: column;
   `,
-  mq.sm.min`
-    width: 95vw;
+  mq.sm.min(css`
+    width: calc(80vw - 2 * ${theme.space['6']});
     max-width: 600px;
-  `,
+  `),
 ])
 
 const NameContainer = styled.div(({ theme }) => [
   css`
     display: block;
     width: 100%;
-    padding-top: ${theme.space['6']};
-    padding-left: ${theme.space['7']};
+    padding-left: ${theme.space['2']};
     padding-right: ${theme.space['4']};
     letter-spacing: ${theme.letterSpacings['-0.01']};
     line-height: 45px;
@@ -69,7 +66,6 @@ const FooterContainer = styled.div(
   ({ theme }) => css`
     display: flex;
     gap: ${theme.space['3']};
-    padding: 0 ${theme.space['4']} ${theme.space['4']} ${theme.space['4']};
     width: 100%;
     max-width: ${theme.space['96']};
     margin: 0 auto;

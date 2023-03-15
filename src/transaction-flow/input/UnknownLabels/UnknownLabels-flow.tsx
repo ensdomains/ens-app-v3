@@ -19,16 +19,12 @@ import { TransactionDialogPassthrough, TransactionFlowItem } from '../../types'
 
 const Container = styled.div(
   ({ theme }) => css`
-    width: calc(100% + 2 * ${theme.space['3.5']});
-    height: calc(100% + 2 * ${theme.space['3.5']});
-
+    width: 100%;
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items: stretch;
-    gap: ${theme.space['6']};
-
-    padding: 0 ${theme.space['2']};
+    gap: ${theme.space['4']};
 
     & > div {
       text-align: center;
@@ -37,7 +33,8 @@ const Container = styled.div(
     }
 
     ${mq.sm.min(css`
-      width: 95vw;
+      gap: ${theme.space['6']};
+      width: calc(80vw - 2 * ${theme.space['6']});
       max-width: ${theme.space['128']};
     `)}
   `,

@@ -4,10 +4,9 @@ import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
-import { mq } from '@ensdomains/thorin'
-
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
+import mq from '@app/mediaQuery'
 import { routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
@@ -23,7 +22,7 @@ import { HeaderConnect } from './ConnectButton'
 const HeaderWrapper = styled.header(
   () => css`
     height: min-content;
-    ${mq.md.max(css`
+    ${mq.sm.max(css`
       display: none;
     `)}
   `,
@@ -55,10 +54,6 @@ const NavContainer = styled.div(
     gap: ${theme.space['3']};
     height: ${theme.space['12']};
 
-    ${mq.md.min(css`
-      height: ${theme.space['18']};
-    `)}
-
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
       gap: ${theme.space['6']};
@@ -74,12 +69,13 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     justify-content: flex-end;
     flex-gap: ${theme.space['1']};
     gap: ${theme.space['1']};
-    transition: transform 0.15s ease-in-out;
+    transition: transform 0.15s ease-in-out, opacity 0.15s ease-in-out;
     position: absolute;
     right: 0;
     top: 0;
     bottom: 0;
     transform: translateX(125%);
+    opacity: 0;
 
     ${mq.lg.min(css`
       flex-gap: ${theme.space['6']};
@@ -90,6 +86,7 @@ const RouteContainer = styled.div<{ $state: TransitionState }>(
     ${$state === 'entered' &&
     css`
       transform: translateX(0%);
+      opacity: 1;
     `}
   `,
 )
@@ -103,15 +100,16 @@ const RouteWrapper = styled.div(
 const SearchWrapper = styled.div<{ $state: TransitionState }>(
   ({ theme, $state }) => css`
     width: ${theme.space.full};
+    max-width: ${theme.space['80']};
     & > div > div {
       max-width: ${theme.space.full};
       ${mq.lg.min(css`
-        max-width: ${theme.space['96']};
+        max-width: ${theme.space['80']};
       `)}
     }
 
     transition: margin 0.15s ease-in-out;
-    margin-right: ${theme.space['32']};
+    margin-right: ${theme.space['24']};
     ${$state !== 'entered' &&
     css`
       margin-right: 0;
@@ -200,19 +198,19 @@ export const Header = () => {
             <ENSWithGradient height={space['12']} />
           )}
         </ConditionalWrapper>
-        {router.asPath !== '/' && breakpoints.md && (
+        {router.asPath !== '/' && breakpoints.sm && (
           <>
             <SearchWrapper
               data-testid="search-wrapper"
               ref={searchWrapperRef}
               $state={breakpoints.lg ? 'entered' : state}
             >
-              <SearchInput size="large" />
+              <SearchInput size="medium" />
             </SearchWrapper>
           </>
         )}
         {(isInitial ||
-          (isConnected && (breakpoints.lg || router.asPath === '/')) ||
+          (isConnected && (breakpoints.md || router.asPath === '/')) ||
           !isConnected) && <div style={{ flexGrow: 1 }} />}
         <RouteWrapper>
           <RouteContainer

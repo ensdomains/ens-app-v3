@@ -11,9 +11,8 @@ import { validateAbi } from '@app/validators/validateAbi'
 import { validateContentHash } from '@app/validators/validateContentHash'
 
 const TabContentsContainer = styled.div(
-  ({ theme }) => css`
+  () => css`
     position: relative;
-    padding: 0 ${theme.space['1']};
     flex: 1;
     overflow: hidden;
     display: flex;
@@ -26,7 +25,6 @@ const TabContentContainer = styled.div(
     display: flex;
     flex-direction: column;
     gap: ${theme.space['3']};
-    padding: 0 ${theme.space['2']};
     overflow: hidden;
     flex: 1;
   `,

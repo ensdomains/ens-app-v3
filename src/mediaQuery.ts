@@ -8,12 +8,12 @@ const breakpointTypes: Record<BreakpointType, string> = {
   max: 'max-width',
 }
 
-const breakpoints: Record<Breakpoint, string> = {
-  xs: '360px',
-  sm: '640px',
-  md: '768px',
-  lg: '1024px',
-  xl: '1280px',
+const breakpoints: Record<Breakpoint, number> = {
+  xs: 360,
+  sm: 640,
+  md: 768,
+  lg: 1024,
+  xl: 1280,
 }
 
 type MediaQuery = (args: ReturnType<typeof css>) => ReturnType<typeof css>
@@ -24,8 +24,10 @@ const typeKeys = Object.keys(breakpointTypes) as Array<BreakpointType>
 const mq = keys.reduce((acc, sizeLabel) => {
   acc[sizeLabel] = typeKeys.reduce((accumulator, typeLabel) => {
     accumulator[typeLabel] = ((args: ReturnType<typeof css>) => {
+      const size =
+        typeLabel === 'max' ? `${breakpoints[sizeLabel] - 1}px` : `${breakpoints[sizeLabel]}px`
       return css`
-        @media (${breakpointTypes[typeLabel]}: ${breakpoints[sizeLabel]}) {
+        @media (${breakpointTypes[typeLabel]}: ${size}) {
           ${args};
         }
       `

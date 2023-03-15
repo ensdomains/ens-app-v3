@@ -23,12 +23,12 @@ import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'
 
-const Container = styled.div<{ $size: 'large' | 'extraLarge' }>(
+const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&
-    mq.md.min(css`
+    mq.sm.min(css`
       padding-left: 48px;
       padding-right: 48px;
     `)}
@@ -175,7 +175,7 @@ export const SearchInput = ({
   size = 'extraLarge',
   setSearchState,
 }: {
-  size?: 'large' | 'extraLarge'
+  size?: 'medium' | 'extraLarge'
   setSearchState?: (value: TransitionState) => void
 }) => {
   const { t } = useTranslation('common')
@@ -470,7 +470,7 @@ export const SearchInput = ({
     </SearchResultsContainer>
   )
 
-  if (breakpoints.md) {
+  if (breakpoints.sm) {
     return (
       <Container data-testid="search-input-desktop" $size={size}>
         {SearchInputElement}

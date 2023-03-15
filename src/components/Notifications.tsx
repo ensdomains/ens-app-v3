@@ -121,7 +121,7 @@ export const Notifications = () => {
         )
       }}
       open={open}
-      variant={breakpoints.md ? 'desktop' : 'touch'}
+      variant={breakpoints.sm ? 'desktop' : 'touch'}
       {...currentNotification}
     />
   )

@@ -29,7 +29,7 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     `)}
@@ -54,7 +54,7 @@ const NFTContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
     overflow: hidden;
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       width: ${theme.space['80']};
       height: ${theme.space['80']};
     `)}

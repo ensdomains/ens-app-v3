@@ -8,14 +8,14 @@ import mq from '@app/mediaQuery'
 const Container = styled.div(({ theme }) => [
   css`
     width: 100%;
-    padding: ${theme.space['2.5']};
-
     display: flex;
     flex-direction: column;
-    gap: ${theme.space[6]};
+    gap: ${theme.space[4]};
   `,
   mq.sm.min(css`
-    width: 520px;
+    gap: ${theme.space[6]};
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: 520px;
   `),
 ])
 

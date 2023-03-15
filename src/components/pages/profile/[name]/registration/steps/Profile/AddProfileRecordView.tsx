@@ -19,7 +19,7 @@ import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallbac
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
 
-const Container = styled.div(() => [
+const Container = styled.div(({ theme }) => [
   css`
     display: flex;
     flex-direction: column;
@@ -27,7 +27,8 @@ const Container = styled.div(() => [
     max-height: 600px;
   `,
   mq.sm.min(css`
-    width: 520px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: 520px;
   `),
 ])
 
@@ -111,14 +112,19 @@ const OptionsGrid = styled.div(
   `,
 )
 
-const FooterWrapper = styled.div(
-  ({ theme }) => css`
+const FooterWrapper = styled.div(({ theme }) => [
+  css`
     border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space[4]};
     padding-bottom: 0;
-    margin: 0 -${theme.space['3.5']};
+    margin: 0 -${theme.space['4']};
   `,
-)
+  mq.sm.min(css`
+    padding: ${theme.space[6]};
+    padding-bottom: 0;
+    margin: 0 -${theme.space['6']};
+  `),
+])
 
 const DismissButtonWrapper = styled.div(
   ({ theme }) => css`

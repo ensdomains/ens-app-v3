@@ -22,7 +22,7 @@ const InnerResponsiveContainer = styled.div(({ theme }) => [
     flex-direction: column;
     gap: ${theme.space[2]};
   `,
-  mq.md.min(css`
+  mq.sm.min(css`
     flex-direction: row;
   `),
 ])
@@ -31,7 +31,7 @@ const LabelWrapper = styled.div(() => [
   css`
     width: 100%;
   `,
-  mq.md.min(css`
+  mq.sm.min(css`
     flex: 0 0 25%;
   `),
 ])
@@ -40,7 +40,7 @@ const ValueWrapper = styled.div(() => [
   css`
     width: 100%;
   `,
-  mq.md.min(css`
+  mq.sm.min(css`
     flex: 1;
   `),
 ])
@@ -55,7 +55,7 @@ const ButtonContainer = styled.div(({ theme }) => [
     padding-top: calc(${theme.space['8']} + ${theme.space['12']} + ${theme.space['2']});
     margin-top: -1px;
   `,
-  mq.md.min(css`
+  mq.sm.min(css`
     padding-top: ${theme.space['8']};
   `),
 ])

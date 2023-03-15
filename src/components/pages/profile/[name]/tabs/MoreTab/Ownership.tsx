@@ -54,7 +54,7 @@ const HeadingContainer = styled.div(
     font-weight: ${theme.fontWeights.bold};
     font-size: ${theme.fontSizes.headingThree};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -84,7 +84,7 @@ const OwnerContainer = styled.div(
       background-color: ${theme.colors.backgroundSecondary};
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['4']} ${theme.space['6']};
     `)}
   `,
@@ -165,7 +165,7 @@ const DNSOwnerSectionContainer = styled.div(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
