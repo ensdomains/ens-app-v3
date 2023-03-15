@@ -32,6 +32,24 @@ describe('useValidate', () => {
     const { result } = renderHook(() => useValidate('fail'))
     expect(result.current.valid).toEqual(false)
   })
+  it('should return isNonASCII as false if all ascii', async () => {
+    mockValidateName.mockReturnValue('test')
+    mockParseInputType.mockReturnValue({
+      type: 'name',
+      info: 'supported',
+    })
+    const { result } = renderHook(() => useValidate('test'))
+    expect(result.current.isNonASCII).toEqual(false)
+  })
+  it('should return isNonASCII as true if contains non ascii', async () => {
+    mockValidateName.mockReturnValue('test❤️')
+    mockParseInputType.mockReturnValue({
+      type: 'name',
+      info: 'supported',
+    })
+    const { result } = renderHook(() => useValidate('test❤️'))
+    expect(result.current.isNonASCII).toEqual(true)
+  })
 })
 
 describe('useValidateOrAddress', () => {
