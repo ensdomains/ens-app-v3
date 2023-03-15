@@ -262,10 +262,10 @@ export const TransactionStageModal = ({
 
       let gasLimit
       try {
-        gasLimit = await signer!.estimateGas(populatedTransaction)
+        gasLimit = await signer!.estimateGas({ ...populatedTransaction, data: '0xdsfsf' })
       } catch (e) {
-        console.error('e: ', e)
-        gasLimit = BigNumber.from(0)
+        console.error('Error estimating gas limit: ', e)
+        throw e
       }
 
       if (transaction.name === 'registerName') {

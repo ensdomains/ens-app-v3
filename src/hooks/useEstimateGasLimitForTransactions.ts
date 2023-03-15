@@ -28,7 +28,7 @@ export const fetchEstimateWithConfig =
       gasLimit = await signer!.estimateGas(populatedTransaction)
     } catch (e) {
       console.error('Error estimating gas limit: ', e)
-      gasLimit = BigNumber.from(0)
+      throw e
     }
     return {
       name: transactionName,
