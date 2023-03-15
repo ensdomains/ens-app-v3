@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Spinner, Typography } from '@ensdomains/thorin'
+import { Button, Spinner, Typography, mq } from '@ensdomains/thorin'
 
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
@@ -18,21 +18,17 @@ const TransactionSectionContainer = styled.div<{
   $transactionLength: number
   $hasViewMore: boolean
 }>(
-  ({ theme, $transactionLength, $hasViewMore }) => css`
+  ({ $transactionLength }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
-    height: ${theme.space['13']};
     overflow: hidden;
     transition: 0.2s all ease-in-out, 0s justify-content 0s linear, 0s color 0s linear;
     ${$transactionLength &&
     css`
       justify-content: flex-end;
-      height: calc(
-        ${$hasViewMore ? $transactionLength + 1 : $transactionLength} * ${theme.space['18']}
-      );
       background-color: transparent;
     `}
   `,
@@ -45,10 +41,10 @@ const RecentTransactionsMessage = styled(Typography)(
 )
 
 const TransactionContainer = styled(Card)(
-  ({ theme }) => css`
+  ({ theme, onClick }) => css`
     width: 100%;
     min-height: ${theme.space['18']};
-    padding: 0 ${theme.space['3']};
+    padding: ${theme.space['3']};
     flex-direction: row;
     justify-content: space-between;
     gap: ${theme.space['3']};
@@ -56,6 +52,12 @@ const TransactionContainer = styled(Card)(
     border: none;
     border-bottom: 1px solid ${theme.colors.border};
     border-radius: ${theme.radii.none};
+
+    ${onClick &&
+    css`
+      cursor: pointer;
+    `}
+
     &:last-of-type {
       border: none;
     }
@@ -64,6 +66,7 @@ const TransactionContainer = styled(Card)(
 
 const TransactionInfoContainer = styled.div(
   ({ theme }) => css`
+    flex: 1;
     display: flex;
     flex-direction: column;
     align-items: flex-start;
@@ -84,12 +87,20 @@ const StyledOutlink = styled(Outlink)<{ $error: boolean }>(
     `,
 )
 
-const ContinueContainer = styled.div(
-  ({ theme }) => css`
+const ContinueContainer = styled.div(({ theme }) => [
+  css`
     max-width: ${theme.space['48']};
-    width: ${theme.space.full};
+    width: fit-content;
+    button {
+      padding: 0 ${theme.space['4']};
+    }
   `,
-)
+  mq.sm.min(css`
+    button {
+      padding: 0 ${theme.space['8']};
+    }
+  `),
+])
 
 const ViewMoreInner = styled(Typography)(
   ({ theme }) => css`
@@ -183,13 +194,13 @@ export const TransactionSection = () => {
                       </StyledOutlink>
                     </TransactionInfoContainer>
                   </InfoContainer>
-                  <ContinueContainer>
-                    {resumable && (
+                  {resumable && (
+                    <ContinueContainer>
                       <Button size="small" onClick={() => resumeTransactionFlow(key)}>
                         Continue
                       </Button>
-                    )}
-                  </ContinueContainer>
+                    </ContinueContainer>
+                  )}
                 </TransactionContainer>
               )
             })}
