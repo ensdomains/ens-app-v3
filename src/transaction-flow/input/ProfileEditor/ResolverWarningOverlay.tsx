@@ -2,9 +2,10 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Typography } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
@@ -182,26 +183,26 @@ const ResolverWarningOverlay = ({
   }, [dismissable, onDismiss, onDismissOverlay])
 
   return (
-    <Container data-testid="warning-overlay">
-      <DismissButtonWrapper data-testid="warning-overlay-dismiss">
-        <DismissDialogButton onClick={handleDismiss} data-testid="dismiss-dialog-button" />
-      </DismissButtonWrapper>
-      <Content>
-        <Message>
-          <Title fontVariant="headingFour">{title}</Title>
-          <Subtitle color="grey">{subtitle}</Subtitle>
-        </Message>
-        <Button
-          as={as}
-          href={href}
-          target="_blank"
-          onClick={handleUpgrade}
-          data-testid="profile-editor-overlay-button"
-        >
-          {action}
-        </Button>
-      </Content>
-    </Container>
+    <>
+      <Dialog.Heading title={title} alert="warning" />
+      <InnerDialog data-testid="warning-overlay">
+        <Subtitle color="grey">{subtitle}</Subtitle>
+      </InnerDialog>
+      <Dialog.Footer
+        leading={<Button colorStyle="accentSecondary">Hello</Button>}
+        trailing={
+          <Button
+            as={as}
+            href={href}
+            target="_blank"
+            onClick={handleUpgrade}
+            data-testid="profile-editor-overlay-button"
+          >
+            {action}
+          </Button>
+        }
+      />
+    </>
   )
 }
 
