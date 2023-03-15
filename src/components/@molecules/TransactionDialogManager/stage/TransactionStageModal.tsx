@@ -260,13 +260,7 @@ export const TransactionStageModal = ({
         transaction.data,
       )
 
-      let gasLimit
-      try {
-        gasLimit = await signer!.estimateGas({ ...populatedTransaction, data: '0xdsfsf' })
-      } catch (e) {
-        console.error('Error estimating gas limit: ', e)
-        throw e
-      }
+      let gasLimit = await signer!.estimateGas(populatedTransaction)
 
       if (transaction.name === 'registerName') {
         gasLimit = gasLimit.add(BigNumber.from(COMMIT_GAS_COST))
@@ -280,6 +274,7 @@ export const TransactionStageModal = ({
     },
     {
       enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
+      onError: console.error,
     },
   )
   const requestError = _requestError as TxError | null

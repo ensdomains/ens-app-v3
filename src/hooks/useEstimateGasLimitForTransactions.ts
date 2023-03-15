@@ -1,4 +1,3 @@
-import { BigNumber } from '@ethersproject/bignumber'
 import type { JsonRpcSigner } from '@ethersproject/providers'
 import { formatEther } from '@ethersproject/units'
 import { useQuery, useSigner } from 'wagmi'
@@ -23,13 +22,9 @@ export const fetchEstimateWithConfig =
       ens,
       transaction.data,
     )
-    let gasLimit
-    try {
-      gasLimit = await signer!.estimateGas(populatedTransaction)
-    } catch (e) {
-      console.error('Error estimating gas limit: ', e)
-      throw e
-    }
+
+    const gasLimit = await signer!.estimateGas(populatedTransaction)
+
     return {
       name: transactionName,
       gasLimit,
@@ -70,6 +65,7 @@ export const useEstimateGasLimitForTransactions = (
     },
     {
       enabled: ensReady && !isSignerLoading && isEnabled,
+      onError: console.error,
     },
   )
 
