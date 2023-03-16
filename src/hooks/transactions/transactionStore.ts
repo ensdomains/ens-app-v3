@@ -2,20 +2,14 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
+import type { BaseProvider, Block } from '@ethersproject/providers'
+import { waitForTransaction } from '@wagmi/core'
+
+import { MinedData } from '@app/types'
 
 const storageKey = 'transaction-data'
 
 type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced'
-
-type MinedData = {
-  blockHash: string
-  blockNumber: number
-  timestamp: number
-  gasUsed: BigNumber
-  effectiveGasPrice: BigNumber
-}
 
 interface BaseTransaction {
   hash: string
@@ -34,7 +28,7 @@ interface PendingTransaction extends BaseTransaction {
 
 interface MinedTransaction extends BaseTransaction {
   status: 'confirmed' | 'failed'
-  minedData: MinedData
+  minedData?: MinedData
 }
 
 interface RepricedTransaction extends BaseTransaction {
@@ -93,6 +87,14 @@ export function createTransactionStore({ provider: initialProvider }: { provider
 
   function getTransactions(account: string, chainId: number): Transaction[] {
     return data[account]?.[chainId] ?? []
+  }
+
+  function getCurrentTransactionHash(account: string, chainId: number, hash: string): string {
+    const allTransactions = getTransactions(account, chainId)
+    const currentTransaction = allTransactions.find((transaction) => transaction.hash === hash)
+    if (currentTransaction && currentTransaction.status === 'repriced')
+      return getCurrentTransactionHash(account, chainId, currentTransaction.newHash)
+    return hash
   }
 
   function addTransaction(account: string, chainId: number, transaction: NewTransaction): void {
@@ -166,57 +168,49 @@ export function createTransactionStore({ provider: initialProvider }: { provider
             return existingRequest
           }
 
-          const requestCallback = async (_hash: string): Promise<void> =>
-            provider
-              .waitForTransaction(_hash, 1)
-              .then(
-                async ({
-                  status,
-                  blockHash,
-                  blockNumber,
-                  effectiveGasPrice,
-                  gasUsed,
-                }: TransactionReceipt) => {
-                  let blockRequest = blockRequestCache.get(blockHash)
-                  if (!blockRequest) {
-                    blockRequest = provider.getBlock(blockHash)
-                    blockRequestCache.set(blockHash, blockRequest)
-                  }
-                  const { timestamp } = await blockRequest
-                  transactionRequestCache.delete(_hash)
-
-                  if (status === undefined) {
-                    return
-                  }
-
-                  setTransactionStatus(
-                    account,
-                    chainId,
-                    _hash,
-                    status === 0 ? 'failed' : 'confirmed',
-                    {
-                      blockHash,
-                      blockNumber,
-                      effectiveGasPrice,
-                      gasUsed,
-                      timestamp,
-                    },
-                  )
-                },
-              )
-              .catch((err: any) => {
-                if (err?.reason === 'repriced') {
-                  setTransactionStatus(account, chainId, hash, 'repriced', err?.replacement.hash)
-                  addTransaction(account, chainId, { ...transaction, hash: err?.replacement.hash })
-                  return requestCallback(err?.replacement.hash)
-                }
-                console.error('Error waiting for transaction', err)
+          const requestPromise = waitForTransaction({
+            confirmations: 1,
+            hash: hash as `0x${string}`,
+            onSpeedUp: (speedUpTransaction) => {
+              setTransactionStatus(account, chainId, hash, 'repriced', speedUpTransaction.hash)
+              addTransaction(account, chainId, {
+                ...transaction,
+                hash: speedUpTransaction.hash,
               })
 
-          const requestPromise = requestCallback(hash)
+              transactionRequestCache.set(speedUpTransaction.hash, requestPromise)
+              transactionRequestCache.delete(hash)
+            },
+          }).then(async (receipt) => {
+            const { status, blockHash } = receipt
+            let blockRequest = blockRequestCache.get(blockHash)
+            if (!blockRequest) {
+              blockRequest = provider.getBlock(blockHash)
+              blockRequestCache.set(blockHash, blockRequest)
+            }
+            const { timestamp } = await blockRequest
+
+            const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
+
+            transactionRequestCache.delete(hashOfRequest)
+
+            if (status === undefined) {
+              return
+            }
+
+            setTransactionStatus(
+              account,
+              chainId,
+              hashOfRequest,
+              status === 0 ? 'failed' : 'confirmed',
+              {
+                ...receipt,
+                timestamp: timestamp * 1000,
+              },
+            )
+          })
 
           transactionRequestCache.set(hash, requestPromise)
-
           return requestPromise
         }),
     )
@@ -239,11 +233,9 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     const transactions = updateFn(data[account][chainId] ?? [])
       // Keep the list of completed transactions from growing indefinitely
       .filter(({ status }) => {
-        return (
-          (status === 'pending'
-            ? true
-            : completedTransactionCount++ <= MAX_COMPLETED_TRANSACTIONS) && status !== 'repriced'
-        )
+        return status === 'pending'
+          ? true
+          : completedTransactionCount++ <= MAX_COMPLETED_TRANSACTIONS
       })
 
     data[account][chainId] = transactions.length > 0 ? transactions : undefined

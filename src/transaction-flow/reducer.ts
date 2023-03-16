@@ -139,6 +139,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         }
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
+        transaction.minedData = minedData
         transaction.finaliseTime = minedData!.timestamp * 1000
         if (
           key === draft.selectedKey &&

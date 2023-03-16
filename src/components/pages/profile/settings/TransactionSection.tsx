@@ -118,9 +118,12 @@ export const TransactionSection = () => {
   const { t } = useTranslation('settings')
 
   const chainName = useChainName()
-  const transactions = useRecentTransactions()
+  const _transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
+
+  const transactions = _transactions.filter((tx) => tx.status !== 'repriced')
+
   const visibleTransactions = transactions.slice(0, viewAmt - 1)
 
   const canClear = useMemo(() => {

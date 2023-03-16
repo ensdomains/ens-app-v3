@@ -4,7 +4,7 @@ import { ComponentProps, Dispatch, ReactNode } from 'react'
 import { Button, Dialog, Helper } from '@ensdomains/thorin'
 
 import { Transaction } from '@app/hooks/transactions/transactionStore'
-import { TransactionDisplayItem } from '@app/types'
+import { MinedData, TransactionDisplayItem } from '@app/types'
 
 import type { DataInputComponent } from './input'
 import type { IntroComponentName } from './intro'
@@ -26,6 +26,7 @@ export type GenericTransaction = {
   sendTime?: number
   finaliseTime?: number
   stage?: TransactionStage
+  minedData?: MinedData
 }
 
 type GenericIntro = {
