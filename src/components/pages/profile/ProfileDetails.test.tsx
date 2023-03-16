@@ -1,3 +1,5 @@
+import '@app/test-utils'
+
 import { ownershipInfoCalc } from './ProfileDetails'
 
 describe('onwershipInfoCalc', () => {
