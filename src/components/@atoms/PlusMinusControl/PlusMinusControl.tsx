@@ -1,4 +1,11 @@
-import { ChangeEventHandler, ForwardedRef, InputHTMLAttributes, forwardRef, useState } from 'react'
+import {
+  ChangeEventHandler,
+  ForwardedRef,
+  InputHTMLAttributes,
+  forwardRef,
+  useCallback,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -34,6 +41,7 @@ const Button = styled.button(
     svg {
       display: block;
       transform: scale(0.67);
+      pointer-events: none;
       path {
         fill: ${theme.colors.backgroundPrimary};
       }
@@ -51,18 +59,29 @@ const LabelContainer = styled.div(
     position: relative;
     flex: 1;
     height: ${theme.space['11']};
+    border-radius: ${theme.radii.full};
+    transition: background-color 150ms ease-in-out;
 
+    :focus-within {
+      background-color: ${theme.colors.accentSurface};
+    }
     :focus-within label {
       opacity: 0;
     }
     :focus-within input {
       opacity: 1;
     }
+    :hover {
+      background-color: ${theme.colors.accentSurface};
+    }
   `,
 )
 
 const Label = styled.label<{ $highlighted?: boolean }>(
   ({ theme, $highlighted }) => css`
+    display: flex;
+    justify-content: center;
+    align-items: center;
     position: absolute;
     top: 0;
     left: 0;
@@ -95,6 +114,7 @@ const LabelInput = styled.input<{ $highlighted?: boolean }>(
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
     opacity: 0;
     transition: opacity 150ms ease-in-out;
+    border-radius: ${theme.radii.full};
 
     /* stylelint-disable property-no-vendor-prefix */
     ::-webkit-outer-spin-button,
@@ -104,8 +124,33 @@ const LabelInput = styled.input<{ $highlighted?: boolean }>(
     }
     -moz-appearance: textfield;
     /* stylelint-enable property-no-vendor-prefix */
+
+    :hover,
+    :focus {
+      background-color: ${theme.colors.accentSurface};
+    }
   `,
 )
+
+const getDefaultValue = (
+  value: number | undefined,
+  defaultValue: number | undefined,
+  minValue: number | undefined,
+) => {
+  if (typeof value === 'number') return value
+  if (typeof defaultValue === 'number') return defaultValue
+  if (typeof minValue === 'number') return minValue
+  return 1
+}
+
+const getInitialInputValue = (
+  value: number | undefined,
+  defautValue: number | undefined,
+  minValue: number | undefined,
+) => {
+  const defaultValue = getDefaultValue(value, defautValue, minValue)
+  return defaultValue.toString()
+}
 
 type InputProps = InputHTMLAttributes<HTMLInputElement>
 type Props = {
@@ -122,13 +167,14 @@ type Props = {
 export const PlusMinusControl = forwardRef(
   (
     {
-      value: _value,
+      value,
       defaultValue,
       minValue = 1,
-      maxValue,
+      maxValue = 1000,
       name = 'plus-minus-control',
       unit = 'years',
       onChange,
+      onBlur,
       highlighted,
       ...props
     }: Props,
@@ -137,43 +183,68 @@ export const PlusMinusControl = forwardRef(
     const { t } = useTranslation('common')
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
 
-    const [value, setValue] = useState(_value || defaultValue || 1)
+    const [inputValue, setInputValue] = useState<string>(
+      getInitialInputValue(value, defaultValue, minValue),
+    )
     const [focused, setFocused] = useState(false)
 
-    const minusDisabled = typeof minValue !== 'undefined' && value <= minValue
-    const plusDisabled = typeof maxValue !== 'undefined' && value >= maxValue
+    const minusDisabled =
+      typeof minValue === 'number' && typeof value === 'number' && value <= minValue
+    const plusDisabled =
+      typeof maxValue === 'number' && typeof value === 'number' && value >= maxValue
 
-    const adjustValue = (v: number) => {
-      if (minValue && v < minValue) {
-        return minValue
-      }
-      if (maxValue && v > maxValue) {
-        return maxValue
-      }
-      return v
-    }
+    const normalizeValue = useCallback(
+      (num: number) => {
+        const normalizedValue = Number.parseFloat(num.toFixed(2))
+        if (typeof minValue === 'number' && normalizedValue < minValue) return minValue
+        if (typeof maxValue === 'number' && normalizedValue > maxValue) return maxValue
+        return normalizedValue
+      },
+      [minValue, maxValue],
+    )
+
+    const isValidValue = useCallback(
+      (num: number) => {
+        if (Number.isNaN(num)) return false
+        if (typeof minValue === 'number' && num < minValue) return false
+        if (typeof maxValue === 'number' && num > maxValue) return false
+        return true
+      },
+      [minValue, maxValue],
+    )
 
     const incrementHandler = (inc: number) => () => {
-      const newValue = (value || 0) + inc
-      const adjustedValue = adjustValue(newValue)
+      const newValue = (value || minValue) + inc
+      const adjustedValue = normalizeValue(newValue)
       if (adjustedValue === value) return
-      setValue(adjustedValue)
+      setInputValue(adjustedValue.toString())
+
       const newEvent = createChangeEvent(adjustedValue, name)
       onChange?.(newEvent)
     }
 
-    const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-      const newValue = parseInt(e.target.value, 10)
-      setValue(newValue)
-      onChange?.(e)
+    const handleInputChange: ChangeEventHandler<HTMLInputElement> = (e) => {
+      setInputValue(e.target.value)
+
+      const floatValue = Number.parseFloat(e.target.value)
+      if (!isValidValue(floatValue)) return
+      const newEvent = createChangeEvent(floatValue, name)
+      onChange?.(newEvent)
     }
 
-    const handleBlur = () => {
-      if (Number.isNaN(value)) {
-        setValue(minValue)
-        const newEvent = createChangeEvent(minValue, name)
-        onChange?.(newEvent)
-      }
+    const handleInputBlur = (e: any) => {
+      let targetValue = Number.parseFloat(e.target.value)
+      if (Number.isNaN(targetValue)) targetValue = getDefaultValue(value, defaultValue, minValue)
+
+      const normalizedValue = normalizeValue(targetValue)
+
+      const newInputValue = Number.parseFloat(normalizedValue.toFixed(2)).toString()
+      setInputValue(newInputValue)
+
+      const newEvent = createChangeEvent(normalizedValue, name)
+      onChange?.(newEvent)
+
+      onBlur?.(e)
       setFocused(false)
     }
 
@@ -192,14 +263,15 @@ export const PlusMinusControl = forwardRef(
             data-testid="plus-minus-control-input"
             $highlighted={highlighted}
             type="number"
-            {...props}
+            step={1}
             ref={inputRef}
-            value={value}
-            onChange={handleChange}
+            value={inputValue}
+            onChange={handleInputChange}
             min={minValue}
             max={maxValue}
             onFocus={() => setFocused(true)}
-            onBlur={handleBlur}
+            onBlur={handleInputBlur}
+            {...props}
           />
           <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
         </LabelContainer>

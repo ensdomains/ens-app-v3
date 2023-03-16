@@ -470,10 +470,12 @@ const Pricing = ({
     <StyledCard>
       <StyledHeading>{t('heading', { name: normalisedName })}</StyledHeading>
       <PlusMinusControl
-        minValue={1}
+        minValue={0.5}
+        maxValue={1000}
         value={years}
+        step={1}
         onChange={(e) => {
-          const newYears = parseInt(e.target.value)
+          const newYears = parseFloat(e.target.value)
           if (!Number.isNaN(newYears)) setYears(newYears)
         }}
         highlighted

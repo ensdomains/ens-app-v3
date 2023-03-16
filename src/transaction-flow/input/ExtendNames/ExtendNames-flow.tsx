@@ -17,6 +17,7 @@ import { useZorb } from '@app/hooks/useZorb'
 import TransactionLoader from '@app/transaction-flow/TransactionLoader'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
+import { safelyMultiplyBigNumber } from '@app/utils/bigNumber'
 import useUserConfig from '@app/utils/useUserConfig'
 import { yearsToSeconds } from '@app/utils/utils'
 
@@ -197,7 +198,7 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
 
   const { base: rentFee, loading: priceLoading } = usePrice(names, true)
 
-  const totalRentFee = rentFee ? rentFee.mul(years) : undefined
+  const totalRentFee = rentFee ? safelyMultiplyBigNumber(rentFee, years) : undefined
   const transactions = [
     makeTransactionItem('extendNames', { names, duration, rentPrice: totalRentFee!, isSelf }),
   ]
@@ -262,10 +263,11 @@ const ExtendNames = ({ data: { names, isSelf }, dispatch, onDismiss }: Props) =>
             <>
               <PlusMinusWrapper>
                 <PlusMinusControl
-                  minValue={1}
+                  minValue={0.5}
+                  maxValue={1000}
                   value={years}
                   onChange={(e) => {
-                    const newYears = parseInt(e.target.value)
+                    const newYears = parseFloat(e.target.value)
                     if (!Number.isNaN(newYears)) setYears(newYears)
                   }}
                 />

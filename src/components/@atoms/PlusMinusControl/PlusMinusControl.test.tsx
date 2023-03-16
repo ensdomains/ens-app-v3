@@ -53,7 +53,7 @@ describe('PlusMinusControl', () => {
     const input = screen.getByTestId('plus-minus-control-input')
     await userEvent.click(input)
     await userEvent.type(input, '20')
-    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('220')
+    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('22')
   })
 
   it('should call onChange with minValue if input is deleted', async () => {
@@ -62,7 +62,7 @@ describe('PlusMinusControl', () => {
     await userEvent.click(input)
     await userEvent.type(input, '{selectall}{backspace}')
     fireEvent.blur(input)
-    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('2')
+    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('4')
   })
 
   it('should call onChange with 1 if input is deleted and minValue does not exist', async () => {
@@ -71,6 +71,6 @@ describe('PlusMinusControl', () => {
     await userEvent.click(input)
     await userEvent.type(input, '{selectall}{backspace}')
     fireEvent.blur(input)
-    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('1')
+    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('4')
   })
 })

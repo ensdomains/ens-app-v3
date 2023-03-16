@@ -6,6 +6,7 @@ import { useFeeData, useQuery } from 'wagmi'
 import { formatsByCoinType, formatsByName } from '@ensdomains/address-encoder'
 
 import { RegistrationData } from '@app/components/pages/profile/[name]/registration/types'
+import { safelyMultiplyBigNumber } from '@app/utils/bigNumber'
 import { emptyAddress } from '@app/utils/constants'
 
 import { profileRecordsToRecordOptions } from '../components/pages/profile/[name]/registration/steps/Profile/profileRecordUtils'
@@ -107,7 +108,7 @@ export const useEstimateFullRegistration = ({
   const yearlyFee = price?.base
   const premiumFee = price?.premium
   const hasPremium = premiumFee?.gt(0)
-  const totalYearlyFee = yearlyFee?.mul(years)
+  const totalYearlyFee = yearlyFee ? safelyMultiplyBigNumber(yearlyFee, years) : undefined
 
   return {
     estimatedGasFee,
