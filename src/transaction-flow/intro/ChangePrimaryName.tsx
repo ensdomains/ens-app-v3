@@ -24,7 +24,7 @@ export const ChangePrimaryName = () => {
       <Typography>
         {t('tabs.profile.actions.setAsPrimaryName.description')}{' '}
         <span>
-          <Outlink href="/faq/managing-a-name#what-is-a-primary-ens-name">
+          <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-a-primary-ens-name">
             {t('action.learnMore', { ns: 'common' })}
           </Outlink>
         </span>

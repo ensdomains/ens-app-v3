@@ -27,7 +27,7 @@ export const MigrateAndUpdateResolver = () => {
           {t('intro.migrateAndUpdateResolver.heading')}
           &nbsp;
           <span>
-            <Outlink href="/faq/managing-a-name#what-is-a-resolver">
+            <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-a-resolver">
               {t('intro.migrateAndUpdateResolver.link')}
             </Outlink>
           </span>
