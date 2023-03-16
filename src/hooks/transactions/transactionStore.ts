@@ -2,7 +2,7 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
-import type { BaseProvider, Block } from '@ethersproject/providers'
+import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
 import { waitForTransaction } from '@wagmi/core'
 
 import { MinedData } from '@app/types'
@@ -181,34 +181,48 @@ export function createTransactionStore({ provider: initialProvider }: { provider
               transactionRequestCache.set(speedUpTransaction.hash, requestPromise)
               transactionRequestCache.delete(hash)
             },
-          }).then(async (receipt) => {
-            const { status, blockHash } = receipt
-            let blockRequest = blockRequestCache.get(blockHash)
-            if (!blockRequest) {
-              blockRequest = provider.getBlock(blockHash)
-              blockRequestCache.set(blockHash, blockRequest)
-            }
-            const { timestamp } = await blockRequest
-
-            const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
-
-            transactionRequestCache.delete(hashOfRequest)
-
-            if (status === undefined) {
-              return
-            }
-
-            setTransactionStatus(
-              account,
-              chainId,
-              hashOfRequest,
-              status === 0 ? 'failed' : 'confirmed',
-              {
-                ...receipt,
-                timestamp: timestamp * 1000,
-              },
-            )
           })
+            .catch((err) => {
+              console.error('transaction error:', err)
+              if (err.cancelled) {
+                const replacement = err.replacement as TransactionReceipt
+                return { ...replacement, status: 0 }
+              }
+              return err
+            })
+            .then(async (receipt) => {
+              const { status, blockHash } = receipt
+              let blockRequest = blockRequestCache.get(blockHash)
+              if (!blockRequest) {
+                blockRequest = provider.getBlock(blockHash)
+                blockRequestCache.set(blockHash, blockRequest)
+              }
+              const { timestamp } = await blockRequest
+
+              const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
+
+              transactionRequestCache.delete(hashOfRequest)
+
+              if (status === undefined) {
+                if (receipt instanceof Error) {
+                  setTransactionStatus(account, chainId, hashOfRequest, 'failed', {
+                    timestamp: Date.now(),
+                  } as MinedData)
+                }
+                return
+              }
+
+              setTransactionStatus(
+                account,
+                chainId,
+                hashOfRequest,
+                status === 0 ? 'failed' : 'confirmed',
+                {
+                  ...receipt,
+                  timestamp: timestamp * 1000,
+                },
+              )
+            })
 
           transactionRequestCache.set(hash, requestPromise)
           return requestPromise
