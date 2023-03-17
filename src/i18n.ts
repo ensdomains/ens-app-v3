@@ -6,7 +6,6 @@ import { initReactI18next } from 'react-i18next'
 import address from '../public/locales/en/address.json'
 import common from '../public/locales/en/common.json'
 import dnssec from '../public/locales/en/dnssec.json'
-import faq from '../public/locales/en/faq.json'
 import names from '../public/locales/en/names.json'
 import profile from '../public/locales/en/profile.json'
 import register from '../public/locales/en/register.json'
@@ -29,7 +28,6 @@ i18n
       'address',
       'common',
       'dnssec',
-      'faq',
       'names',
       'profile',
       'register',
@@ -45,7 +43,6 @@ i18n
 i18n.addResourceBundle('en', 'address', address)
 i18n.addResourceBundle('en', 'common', common)
 i18n.addResourceBundle('en', 'dnssec', dnssec)
-i18n.addResourceBundle('en', 'faq', faq)
 i18n.addResourceBundle('en', 'names', names)
 i18n.addResourceBundle('en', 'profile', profile)
 i18n.addResourceBundle('en', 'register', register)
