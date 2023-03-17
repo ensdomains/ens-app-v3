@@ -51,6 +51,14 @@ const LabelContainer = styled.div(
     position: relative;
     flex: 1;
     height: ${theme.space['11']};
+    border-radius: ${theme.radii.full};
+    background-color: transparent;
+    transition: background-color 150ms ease-in-out;
+    overflow: hidden;
+
+    :hover {
+      background-color: ${theme.colors.accentSurface};
+    }
 
     :focus-within label {
       opacity: 0;
@@ -95,6 +103,7 @@ const LabelInput = styled.input<{ $highlighted?: boolean }>(
     color: ${$highlighted ? theme.colors.accent : theme.colors.text};
     opacity: 0;
     transition: opacity 150ms ease-in-out;
+    background-color: ${theme.colors.accentSurface};
 
     /* stylelint-disable property-no-vendor-prefix */
     ::-webkit-outer-spin-button,
