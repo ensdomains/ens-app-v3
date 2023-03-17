@@ -140,29 +140,30 @@ export function createTransactionStore({ provider: initialProvider }: { provider
             return existingRequest
           }
 
-          const requestPromise = provider
-            .waitForTransaction(hash, 1)
-            .then(async ({ status, blockHash, blockNumber, effectiveGasPrice, gasUsed }) => {
-              let blockRequest = blockRequestCache.get(blockHash)
-              if (!blockRequest) {
-                blockRequest = provider.getBlock(blockHash)
-                blockRequestCache.set(blockHash, blockRequest)
-              }
-              const { timestamp } = await blockRequest
-              transactionRequestCache.delete(hash)
+          const requestPromise = provider.waitForTransaction(hash, 1).then(async (result) => {
+            const { status, blockHash, blockNumber, effectiveGasPrice, gasUsed } = result
+            let blockRequest = blockRequestCache.get(blockHash)
+            if (!blockRequest) {
+              blockRequest = provider.getBlock(blockHash)
+              blockRequestCache.set(blockHash, blockRequest)
+            }
+            console.log('blockRequest: ', blockRequest)
+            console.log('result: ', result)
+            const { timestamp } = await blockRequest
+            transactionRequestCache.delete(hash)
 
-              if (status === undefined) {
-                return
-              }
+            if (status === undefined) {
+              return
+            }
 
-              setTransactionStatus(account, chainId, hash, status === 0 ? 'failed' : 'confirmed', {
-                blockHash,
-                blockNumber,
-                effectiveGasPrice,
-                gasUsed,
-                timestamp,
-              })
+            setTransactionStatus(account, chainId, hash, status === 0 ? 'failed' : 'confirmed', {
+              blockHash,
+              blockNumber,
+              effectiveGasPrice,
+              gasUsed,
+              timestamp,
             })
+          })
 
           transactionRequestCache.set(hash, requestPromise)
 
