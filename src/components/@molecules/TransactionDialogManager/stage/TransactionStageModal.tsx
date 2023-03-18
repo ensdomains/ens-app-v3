@@ -461,11 +461,13 @@ export const TransactionStageModal = ({
         currentStep={currentStep}
         stepCount={stepCount > 1 ? stepCount : undefined}
         stepStatus={stepStatus}
-        leading={ActionButton}
-        trailing={
+        trailing={ActionButton}
+        leading={
           backToInput &&
           !(stage === 'sent' || stage === 'complete') && (
-            <Button onClick={handleBackToInput(dispatch)}>{t('action.back')}</Button>
+            <Button colorStyle="accentSecondary" onClick={handleBackToInput(dispatch)}>
+              {t('action.back')}
+            </Button>
           )
         }
       />

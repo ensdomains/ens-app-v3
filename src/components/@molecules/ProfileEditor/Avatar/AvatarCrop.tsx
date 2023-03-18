@@ -104,7 +104,7 @@ export const AvCancelButton = ({ handleCancel }: { handleCancel: () => void }) =
   const { t } = useTranslation('common')
 
   return (
-    <Button data-testid="avatar-cancel-button" colorStyle="greySecondary" onClick={handleCancel}>
+    <Button data-testid="avatar-cancel-button" colorStyle="accentSecondary" onClick={handleCancel}>
       {t('action.back')}
     </Button>
   )

@@ -1,12 +1,12 @@
 import { ComponentProps } from 'react'
 
-import BaseLink from '../BaseLink'
+import { BaseLinkWithHistory } from '../BaseLink'
 
-type Props = ComponentProps<typeof BaseLink> & { active?: boolean }
+type Props = ComponentProps<typeof BaseLinkWithHistory> & { active?: boolean }
 
 export const OptionalLink = ({ children, active, ...props }: Props) => {
   if (!active) {
     return <>{children}</>
   }
-  return <BaseLink {...props}>{children}</BaseLink>
+  return <BaseLinkWithHistory {...props}>{children}</BaseLinkWithHistory>
 }

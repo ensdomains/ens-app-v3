@@ -202,7 +202,7 @@ export const SubnamesTab = ({
         <AddSubnamesCard>
           <Typography>
             {t('details.tabs.subnames.addSubname.title')}{' '}
-            <Outlink href="/faq/managing-a-name#what-is-the-difference-between-a-name-and-a-subname">
+            <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-is-the-difference-between-a-name-and-a-subname">
               {t('details.tabs.subnames.addSubname.learn')}
             </Outlink>
           </Typography>

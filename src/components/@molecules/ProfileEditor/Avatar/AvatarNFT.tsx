@@ -239,7 +239,7 @@ export const AvatarNFT = ({
         </SelectedNFTContainer>
         <Dialog.Footer
           leading={
-            <Button colorStyle="greySecondary" onClick={() => setSelectedNFT(null)}>
+            <Button colorStyle="accentSecondary" onClick={() => setSelectedNFT(null)}>
               {t('action.back', { ns: 'common' })}
             </Button>
           }
@@ -317,7 +317,7 @@ export const AvatarNFT = ({
       {innerContent}
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={handleCancel}>
+          <Button colorStyle="accentSecondary" onClick={handleCancel}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

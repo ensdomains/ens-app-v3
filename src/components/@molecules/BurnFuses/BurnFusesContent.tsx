@@ -241,7 +241,7 @@ const BurnFusesContent = ({
       </BurnButtonsContainer>
       <Spacer $height="6" />
       <ButtonsContainer>
-        <Button colorStyle="greySecondary" onClick={onDismiss}>
+        <Button colorStyle="accentSecondary" onClick={onDismiss}>
           {tc('action.cancel')}
         </Button>
         <Button

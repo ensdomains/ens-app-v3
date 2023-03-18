@@ -1,15 +1,14 @@
 import { useMemo } from 'react'
-import { Trans, useTranslation } from 'react-i18next'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Helper, Typography, mq } from '@ensdomains/thorin'
+import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
 import { NameAvatar } from './AvatarWithZorb'
-import { Outlink } from './Outlink'
 
 const Container = styled.div<{ $banner?: string }>(
   ({ theme, $banner }) =>
@@ -121,9 +120,6 @@ const LocationAndUrl = styled.div(
   `,
 )
 
-// eslint-disable-next-line no-control-regex
-const nonAsciiRegex = /[^\u0000-\u007f]+/g
-
 export const ProfileSnippet = ({
   name,
   getTextRecord,
@@ -141,8 +137,6 @@ export const ProfileSnippet = ({
 }) => {
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
-
-  const showHomoglyphWarning = nonAsciiRegex.test(name)
 
   const { showDataInput } = useTransactionFlow()
 
@@ -233,17 +227,6 @@ export const ProfileSnippet = ({
           </LocationAndUrl>
         )}
       </TextStack>
-      {showHomoglyphWarning && (
-        <Helper type="warning" alignment="horizontal">
-          <Trans
-            i18nKey="tabs.profile.warnings.homoglyph"
-            ns="profile"
-            components={{
-              a: <Outlink href="https://en.wikipedia.org/wiki/IDN_homograph_attack" />,
-            }}
-          />
-        </Helper>
-      )}
       {children}
     </Container>
   )
