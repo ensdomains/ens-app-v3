@@ -1,4 +1,12 @@
-import { ChangeEventHandler, ForwardedRef, InputHTMLAttributes, forwardRef, useState } from 'react'
+import {
+  ChangeEventHandler,
+  FocusEvent,
+  ForwardedRef,
+  InputHTMLAttributes,
+  forwardRef,
+  useCallback,
+  useState,
+} from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -34,6 +42,7 @@ const Button = styled.button(
     svg {
       display: block;
       transform: scale(0.67);
+      pointer-events: none;
       path {
         fill: ${theme.colors.backgroundPrimary};
       }
@@ -76,6 +85,9 @@ const Label = styled.label<{ $highlighted?: boolean }>(
     left: 0;
     width: 100%;
     height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
     white-space: nowrap;
     text-overflow: ellipsis;
     overflow: hidden;
@@ -131,13 +143,15 @@ type Props = {
 export const PlusMinusControl = forwardRef(
   (
     {
-      value: _value,
+      value,
       defaultValue,
       minValue = 1,
-      maxValue,
+      // maxValue is needed to prevent exceeding NUMBER.MAX_SAFE_INTEGER
+      maxValue = 1000,
       name = 'plus-minus-control',
       unit = 'years',
       onChange,
+      onBlur,
       highlighted,
       ...props
     }: Props,
@@ -146,44 +160,64 @@ export const PlusMinusControl = forwardRef(
     const { t } = useTranslation('common')
     const inputRef = useDefaultRef<HTMLInputElement>(ref)
 
-    const [value, setValue] = useState(_value || defaultValue || 1)
+    const getDefaultValue = useCallback(() => {
+      return value || defaultValue || minValue
+    }, [value, defaultValue, minValue])
+
+    const normalizeValue = useCallback(
+      (val: number) => {
+        if (Number.isNaN(val)) return getDefaultValue()
+        if (val < minValue) return minValue
+        if (val > maxValue) return maxValue
+        return val
+      },
+      [minValue, maxValue, getDefaultValue],
+    )
+
+    const isValidValue = useCallback(
+      (val: number) => {
+        if (Number.isNaN(val)) return false
+        if (val < minValue) return false
+        if (val > maxValue) return false
+        return true
+      },
+      [minValue, maxValue],
+    )
+
+    const [inputValue, setInputValue] = useState<string>(getDefaultValue().toString())
     const [focused, setFocused] = useState(false)
 
-    const minusDisabled = typeof minValue !== 'undefined' && value <= minValue
-    const plusDisabled = typeof maxValue !== 'undefined' && value >= maxValue
-
-    const adjustValue = (v: number) => {
-      if (minValue && v < minValue) {
-        return minValue
-      }
-      if (maxValue && v > maxValue) {
-        return maxValue
-      }
-      return v
-    }
+    const minusDisabled = typeof value === 'number' && value <= minValue
+    const plusDisabled = typeof value === 'number' && value >= maxValue
 
     const incrementHandler = (inc: number) => () => {
       const newValue = (value || 0) + inc
-      const adjustedValue = adjustValue(newValue)
-      if (adjustedValue === value) return
-      setValue(adjustedValue)
-      const newEvent = createChangeEvent(adjustedValue, name)
+      const normalizedValue = normalizeValue(newValue)
+      if (normalizedValue === value) return
+      setInputValue(normalizedValue.toFixed(0))
+      const newEvent = createChangeEvent(normalizedValue, name)
       onChange?.(newEvent)
     }
 
     const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-      const newValue = parseInt(e.target.value, 10)
-      setValue(newValue)
+      setInputValue(e.target.value)
+
+      const newValue = parseInt(e.target.value)
+      if (!isValidValue(newValue)) return
       onChange?.(e)
     }
 
-    const handleBlur = () => {
-      if (Number.isNaN(value)) {
-        setValue(minValue)
-        const newEvent = createChangeEvent(minValue, name)
+    const handleBlur = (e: FocusEvent<HTMLInputElement>) => {
+      const normalizedValue = normalizeValue(parseInt(e.target.value))
+      setInputValue(normalizedValue.toFixed(0))
+
+      if (normalizedValue !== value) {
+        const newEvent = createChangeEvent(normalizedValue, name)
         onChange?.(newEvent)
       }
+
       setFocused(false)
+      onBlur?.(e)
     }
 
     return (
@@ -203,10 +237,13 @@ export const PlusMinusControl = forwardRef(
             type="number"
             {...props}
             ref={inputRef}
-            value={value}
+            value={inputValue}
             onChange={handleChange}
             min={minValue}
             max={maxValue}
+            onKeyDown={(e) => {
+              if (e.key === '.') e.preventDefault()
+            }}
             onFocus={() => setFocused(true)}
             onBlur={handleBlur}
           />
