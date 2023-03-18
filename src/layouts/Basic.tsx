@@ -50,7 +50,7 @@ const BottomPlaceholder = styled.div(
     height: ${theme.space['14']};
     ${mq.sm.min(
       css`
-        display: none;
+        height: ${theme.space['12']};
       `,
     )}
   `,

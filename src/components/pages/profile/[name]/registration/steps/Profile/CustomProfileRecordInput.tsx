@@ -2,10 +2,9 @@ import { UseFormRegister, UseFormTrigger } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css, useTheme } from 'styled-components'
 
-import { CrossSVG, Input } from '@ensdomains/thorin'
+import { CrossSVG, Input, mq } from '@ensdomains/thorin'
 
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import mq from '@app/mediaQuery'
 
 import { Field } from './Field'
 

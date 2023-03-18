@@ -1,9 +1,7 @@
 import { HTMLAttributes } from 'react'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Typography } from '@ensdomains/thorin'
-
-import mq from '@app/mediaQuery'
+import { Button, Dialog, Typography, mq } from '@ensdomains/thorin'
 
 const Container = styled.div(({ theme }) => [
   css`
