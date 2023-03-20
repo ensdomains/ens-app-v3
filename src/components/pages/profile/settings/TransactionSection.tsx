@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -7,6 +7,7 @@ import { Button, Spinner, Typography, mq } from '@ensdomains/thorin'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
+import useThrottledCallback from '@app/hooks/useThrottledCallback'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
@@ -17,14 +18,16 @@ import { SectionContainer } from './Section'
 const TransactionSectionContainer = styled.div<{
   $transactionLength: number
   $hasViewMore: boolean
+  $height: string
 }>(
-  ({ $transactionLength }) => css`
+  ({ $transactionLength, $height }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     width: 100%;
     overflow: hidden;
+    height: ${$height};
     transition: 0.2s all ease-in-out, 0s justify-content 0s linear, 0s color 0s linear;
     ${$transactionLength &&
     css`
@@ -34,9 +37,20 @@ const TransactionSectionContainer = styled.div<{
   `,
 )
 
+const TransactionSectionInner = styled.div(
+  () => css`
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  `,
+)
+
 const RecentTransactionsMessage = styled(Typography)(
   ({ theme }) => css`
+    display: flex;
+    justify-content: center;
     color: ${theme.colors.textTertiary};
+    padding: ${theme.space['4']};
   `,
 )
 
@@ -135,7 +149,7 @@ export const TransactionSection = () => {
   const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
-  const visibleTransactions = transactions.slice(0, viewAmt - 1)
+  const visibleTransactions = transactions.slice(0, viewAmt)
 
   const canClear = useMemo(() => {
     return transactions.length > 0
@@ -143,7 +157,28 @@ export const TransactionSection = () => {
 
   const { getResumable, resumeTransactionFlow } = useTransactionFlow()
 
+  const ref = useRef<HTMLDivElement>(null)
+  const [height, setHeight] = useState<string>('auto')
+
   const hasViewMore = transactions.length > viewAmt
+
+  const [width, _setWidth] = useState(0)
+  const setWidth = useThrottledCallback(_setWidth, 300)
+  useEffect(() => {
+    const onResize = () => {
+      const _width = ref.current?.getBoundingClientRect().width || 0
+      setWidth(_width)
+    }
+    window.addEventListener('resize', onResize)
+    return () => {
+      window.removeEventListener('resize', onResize)
+    }
+  })
+
+  useEffect(() => {
+    const _height = ref.current?.getBoundingClientRect().height || 0
+    setHeight(_height ? `${_height}px` : 'auto')
+  }, [transactions.length, hasViewMore, width])
 
   return (
     <SectionContainer
@@ -153,7 +188,10 @@ export const TransactionSection = () => {
         <Button
           size="small"
           colorStyle="accentSecondary"
-          onClick={() => clearTransactions()}
+          onClick={() => {
+            clearTransactions()
+            setViewAmt(5)
+          }}
           disabled={!canClear}
           data-testid="transaction-clear-button"
         >
@@ -165,59 +203,62 @@ export const TransactionSection = () => {
       <TransactionSectionContainer
         $transactionLength={visibleTransactions.length}
         $hasViewMore={hasViewMore}
+        $height={height}
         data-testid="transaction-section-container"
       >
-        {transactions.length > 0 ? (
-          <>
-            {visibleTransactions.map(({ hash, status, action, key }, i) => {
-              const resumable = key && getResumable(key)
-              return (
-                <TransactionContainer
-                  data-testid={`transaction-${status}`}
-                  // eslint-disable-next-line react/no-array-index-key
-                  key={`${hash}-${i}`}
-                >
-                  <InfoContainer>
-                    {status === 'pending' && (
-                      <Spinner data-testid="pending-spinner" color="accent" />
+        <TransactionSectionInner ref={ref}>
+          {transactions.length > 0 ? (
+            <>
+              {visibleTransactions.map(({ hash, status, action, key }, i) => {
+                const resumable = key && getResumable(key)
+                return (
+                  <TransactionContainer
+                    data-testid={`transaction-${status}`}
+                    // eslint-disable-next-line react/no-array-index-key
+                    key={`${hash}-${i}`}
+                  >
+                    <InfoContainer>
+                      {status === 'pending' && (
+                        <Spinner data-testid="pending-spinner" color="accent" />
+                      )}
+                      <TransactionInfoContainer>
+                        <Typography weight="bold">{`${tc(
+                          `transaction.description.${action}`,
+                        )}${getTransactionExtraInfo(action, key)}`}</Typography>
+                        <StyledOutlink
+                          $error={status === 'failed'}
+                          href={makeEtherscanLink(hash, chainName)}
+                          target="_blank"
+                        >
+                          {tc(`transaction.status.${status}.regular`)}
+                        </StyledOutlink>
+                      </TransactionInfoContainer>
+                    </InfoContainer>
+                    {resumable && (
+                      <ContinueContainer>
+                        <Button size="small" onClick={() => resumeTransactionFlow(key)}>
+                          Continue
+                        </Button>
+                      </ContinueContainer>
                     )}
-                    <TransactionInfoContainer>
-                      <Typography weight="bold">{`${tc(
-                        `transaction.description.${action}`,
-                      )}${getTransactionExtraInfo(action, key)}`}</Typography>
-                      <StyledOutlink
-                        $error={status === 'failed'}
-                        href={makeEtherscanLink(hash, chainName)}
-                        target="_blank"
-                      >
-                        {tc(`transaction.status.${status}.regular`)}
-                      </StyledOutlink>
-                    </TransactionInfoContainer>
-                  </InfoContainer>
-                  {resumable && (
-                    <ContinueContainer>
-                      <Button size="small" onClick={() => resumeTransactionFlow(key)}>
-                        Continue
-                      </Button>
-                    </ContinueContainer>
-                  )}
+                  </TransactionContainer>
+                )
+              })}
+              {hasViewMore && (
+                <TransactionContainer
+                  onClick={() => setViewAmt((curr) => curr + 5)}
+                  data-testid="transaction-view-more-button"
+                >
+                  <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
                 </TransactionContainer>
-              )
-            })}
-            {hasViewMore && (
-              <TransactionContainer
-                onClick={() => setViewAmt((curr) => curr + 5)}
-                data-testid="transaction-view-more-button"
-              >
-                <ViewMoreInner weight="bold">{tc('transaction.viewMore')}</ViewMoreInner>
-              </TransactionContainer>
-            )}
-          </>
-        ) : (
-          <RecentTransactionsMessage weight="bold">
-            {t('section.transaction.noRecentTransactions')}
-          </RecentTransactionsMessage>
-        )}
+              )}
+            </>
+          ) : (
+            <RecentTransactionsMessage weight="bold">
+              {t('section.transaction.noRecentTransactions')}
+            </RecentTransactionsMessage>
+          )}
+        </TransactionSectionInner>
       </TransactionSectionContainer>
     </SectionContainer>
   )
