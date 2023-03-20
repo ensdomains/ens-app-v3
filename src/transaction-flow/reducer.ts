@@ -140,7 +140,7 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
         const stage = status === 'confirmed' ? 'complete' : 'failed'
         transaction.stage = stage
         transaction.minedData = minedData
-        transaction.finaliseTime = minedData!.timestamp * 1000
+        transaction.finaliseTime = minedData!.timestamp
         if (
           key === draft.selectedKey &&
           selectedItem.autoClose &&

@@ -118,21 +118,21 @@ export const TransactionSection = () => {
   const { t } = useTranslation('settings')
 
   const chainName = useChainName()
-  const _transactions = useRecentTransactions()
+  const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
 
-  const transactions = _transactions.filter((tx) => tx.status !== 'repriced')
+  const nonRepricedTransactions = transactions.filter((tx) => tx.status !== 'repriced')
 
-  const visibleTransactions = transactions.slice(0, viewAmt - 1)
+  const visibleTransactions = nonRepricedTransactions.slice(0, viewAmt - 1)
 
   const canClear = useMemo(() => {
-    return transactions.length > 0
-  }, [transactions.length])
+    return nonRepricedTransactions.length > 0
+  }, [nonRepricedTransactions.length])
 
   const { getResumable, resumeTransactionFlow } = useTransactionFlow()
 
-  const hasViewMore = transactions.length > viewAmt
+  const hasViewMore = nonRepricedTransactions.length > viewAmt
 
   return (
     <SectionContainer
@@ -156,7 +156,7 @@ export const TransactionSection = () => {
         $hasViewMore={hasViewMore}
         data-testid="transaction-section-container"
       >
-        {transactions.length > 0 ? (
+        {nonRepricedTransactions.length > 0 ? (
           <>
             {visibleTransactions.map(({ hash, status, action, key }, i) => {
               const resumable = key && getResumable(key)
