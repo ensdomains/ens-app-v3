@@ -80,7 +80,7 @@ describe('PlusMinusControl', () => {
     render(<PlusMinusControl value={4} onChange={mockChangeHandler} />)
     const input = screen.getByTestId('plus-minus-control-input')
     await userEvent.click(input)
-    await userEvent.type(input, '{selectall}{backspace}9999999999999999')
+    await userEvent.type(input, '{selectall}9999999999999999')
     fireEvent.blur(input)
     expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('9007199254740990')
     expect(input).toHaveValue(9007199254740990)

@@ -246,7 +246,10 @@ export const PlusMinusControl = forwardRef(
               // additionally prevent . and -
               if (['.', '-'].includes(e.key)) e.preventDefault()
             }}
-            onFocus={() => setFocused(true)}
+            onFocus={(e) => {
+              e.target.select()
+              setFocused(true)
+            }}
             onBlur={handleBlur}
           />
           <Label $highlighted={highlighted}>{t(`unit.${unit}`, { count: value })}</Label>
