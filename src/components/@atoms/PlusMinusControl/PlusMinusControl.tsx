@@ -147,7 +147,7 @@ export const PlusMinusControl = forwardRef(
       defaultValue,
       minValue = 1,
       // maxValue is needed to prevent exceeding NUMBER.MAX_SAFE_INTEGER
-      maxValue = 1000,
+      maxValue = Number.MAX_SAFE_INTEGER - 1,
       name = 'plus-minus-control',
       unit = 'years',
       onChange,
@@ -184,7 +184,7 @@ export const PlusMinusControl = forwardRef(
       [minValue, maxValue],
     )
 
-    const [inputValue, setInputValue] = useState<string>(getDefaultValue().toString())
+    const [inputValue, setInputValue] = useState<string>(getDefaultValue().toFixed(0))
     const [focused, setFocused] = useState(false)
 
     const minusDisabled = typeof value === 'number' && value <= minValue
@@ -242,7 +242,9 @@ export const PlusMinusControl = forwardRef(
             min={minValue}
             max={maxValue}
             onKeyDown={(e) => {
-              if (e.key === '.') e.preventDefault()
+              // rely on type="number" to prevent non-numeric input
+              // additionally prevent . and -
+              if (['.', '-'].includes(e.key)) e.preventDefault()
             }}
             onFocus={() => setFocused(true)}
             onBlur={handleBlur}

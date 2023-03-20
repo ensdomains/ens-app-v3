@@ -56,21 +56,33 @@ describe('PlusMinusControl', () => {
     expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('220')
   })
 
-  it('should call onChange with minValue if input is deleted', async () => {
+  it('should not change value if input is empty', async () => {
     render(<PlusMinusControl value={4} minValue={2} onChange={mockChangeHandler} />)
     const input = screen.getByTestId('plus-minus-control-input')
     await userEvent.click(input)
     await userEvent.type(input, '{selectall}{backspace}')
     fireEvent.blur(input)
-    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('2')
+    expect(mockChangeHandler).not.toBeCalled()
+    expect(input).toHaveValue(4)
   })
 
-  it('should call onChange with 1 if input is deleted and minValue does not exist', async () => {
+  it('should set value to minValue if input value is less', async () => {
     render(<PlusMinusControl value={4} onChange={mockChangeHandler} />)
     const input = screen.getByTestId('plus-minus-control-input')
     await userEvent.click(input)
-    await userEvent.type(input, '{selectall}{backspace}')
+    await userEvent.type(input, '{selectall}{backspace}0')
     fireEvent.blur(input)
     expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('1')
+    expect(input).toHaveValue(1)
+  })
+
+  it('should set value to maxValue if input value is greater', async () => {
+    render(<PlusMinusControl value={4} onChange={mockChangeHandler} />)
+    const input = screen.getByTestId('plus-minus-control-input')
+    await userEvent.click(input)
+    await userEvent.type(input, '{selectall}{backspace}9999999999999999')
+    fireEvent.blur(input)
+    expect(mockChangeHandler.mock.calls[0][0].target.value).toEqual('9007199254740990')
+    expect(input).toHaveValue(9007199254740990)
   })
 })
