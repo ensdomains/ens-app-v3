@@ -16,24 +16,18 @@ import { Outlink } from '../../../Outlink'
 import { SectionContainer } from './Section'
 
 const TransactionSectionContainer = styled.div<{
-  $transactionLength: number
-  $hasViewMore: boolean
   $height: string
 }>(
-  ({ $transactionLength, $height }) => css`
+  ({ $height }) => css`
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: center;
     width: 100%;
     overflow: hidden;
     height: ${$height};
-    transition: 0.2s all ease-in-out, 0s justify-content 0s linear, 0s color 0s linear;
-    ${$transactionLength &&
-    css`
-      justify-content: flex-end;
-      background-color: transparent;
-    `}
+    transition: 0.2s all ease-in-out;
+    justify-content: flex-end;
+    background-color: transparent;
   `,
 )
 
@@ -173,7 +167,7 @@ export const TransactionSection = () => {
     return () => {
       window.removeEventListener('resize', onResize)
     }
-  })
+  }, [])
 
   useEffect(() => {
     const _height = ref.current?.getBoundingClientRect().height || 0
@@ -200,12 +194,7 @@ export const TransactionSection = () => {
       }
       fill
     >
-      <TransactionSectionContainer
-        $transactionLength={visibleTransactions.length}
-        $hasViewMore={hasViewMore}
-        $height={height}
-        data-testid="transaction-section-container"
-      >
+      <TransactionSectionContainer $height={height} data-testid="transaction-section-container">
         <TransactionSectionInner ref={ref}>
           {transactions.length > 0 ? (
             <>

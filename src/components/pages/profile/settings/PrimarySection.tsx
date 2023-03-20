@@ -72,7 +72,7 @@ export const PrimarySection = () => {
           />
         </ItemWrapper>
       ) : (
-        <Typography data-testid="primary-section-text">
+        <Typography data-testid="primary-section-text" fontVariant="bodyBold" color="grey">
           {isLoading ? t('section.primary.loading') : t('section.primary.noName')}
         </Typography>
       )}
