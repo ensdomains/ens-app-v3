@@ -175,7 +175,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
       <InnerDialog>{Content}</InnerDialog>
       <Dialog.Footer
         leading={
-          <Button colorStyle="greySecondary" onClick={onDismiss}>
+          <Button colorStyle="accentSecondary" onClick={onDismiss}>
             {t('action.cancel', { ns: 'common' })}
           </Button>
         }

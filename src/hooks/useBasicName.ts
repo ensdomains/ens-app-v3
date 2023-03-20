@@ -19,7 +19,7 @@ type ETH2LDBatchReturn = [...BaseBatchReturn, ReturnedENS['getExpiry'], Returned
 export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const ens = useEns()
 
-  const { name: _normalisedName, valid, labelCount } = useValidate(name!, !name)
+  const { name: _normalisedName, valid, labelCount, isNonASCII } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
 
@@ -119,6 +119,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
   return {
     normalisedName,
     valid,
+    isNonASCII,
     labelCount,
     ownerData,
     wrapperData,

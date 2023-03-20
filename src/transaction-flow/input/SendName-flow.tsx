@@ -178,7 +178,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
     <>
       <Typography fontVariant="headingFour">{t('details.sendName.title')}</Typography>
       <Typography style={{ textAlign: 'center' }}>{t('details.sendName.description')}</Typography>
-      <Outlink href="/faq/managing-a-name#what-are-managers-and-owners">
+      <Outlink href="https://support.ens.domains/docs/faq/manager/managing-names#what-are-managers-and-owners">
         {t('details.sendName.learnMore')}
       </Outlink>
       {canSendOwner && (
@@ -240,7 +240,7 @@ export const SendName = ({ data, dispatch, onDismiss }: Props) => {
         <FooterContainer>
           <Dialog.Footer
             leading={
-              <Button colorStyle="greySecondary" onClick={onDismiss}>
+              <Button colorStyle="accentSecondary" onClick={onDismiss}>
                 {t('action.cancel', { ns: 'common' })}
               </Button>
             }

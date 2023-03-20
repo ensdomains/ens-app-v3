@@ -186,7 +186,7 @@ const withSentry = (config) => {
     // recommended:
     //   release, url, org, project, authToken, configFile, stripPrefix,
     //   urlPrefix, include, ignore
-    silent: true, // Suppresses all logs
+    silent: false, // Suppresses all logs
     // For all available options, see:
     // https://github.com/getsentry/sentry-webpack-plugin#options.
   }
