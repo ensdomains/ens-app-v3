@@ -115,7 +115,8 @@
         "permissions": {
           "canExtendExpiry": {
             "label": "Can extend expiry",
-            "description": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
+            "description": "This names permission expiry can be extended by the {{managerOrOwner}}.",
+            "description_date": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
           },
           "cannotExtendExpiry": {
             "label": "Cannot extend expiry",
