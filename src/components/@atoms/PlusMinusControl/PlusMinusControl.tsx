@@ -241,6 +241,8 @@ export const PlusMinusControl = forwardRef(
             onChange={handleChange}
             min={minValue}
             max={maxValue}
+            inputMode="numeric"
+            pattern="[0-9]*"
             onKeyDown={(e) => {
               // rely on type="number" to prevent non-numeric input
               // additionally prevent . and -
