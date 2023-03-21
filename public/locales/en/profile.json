@@ -175,6 +175,14 @@
           "cannotSetTTL": {
             "label": "Cannot set TTL",
             "description": "The {{owner}} of this name cannot set and change the TTL."
+          },
+          "canApprove": {
+            "label": "Can change renewal manager",
+            "description": "The owner of this name can change the manager approved to renew subnames."
+          },
+          "cannotApprove": {
+            "label": "Cannot change renewal manager",
+            "description": "The owner of this name cannot change the manager approved to renew subnames."
           }
         },
         "action": {

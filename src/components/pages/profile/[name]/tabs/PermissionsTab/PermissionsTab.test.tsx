@@ -22,6 +22,7 @@ const makeWrapperData = (override: DeepPartial<WrapperData> = {}) => {
       CANNOT_TRANSFER: false,
       CANNOT_SET_RESOLVER: false,
       CANNOT_SET_TTL: false,
+      CANNOT_APPROVE: false,
       CANNOT_BURN_FUSES: false,
     },
     expiryDate: new Date('2021-01-01T00:00:00.000Z'),
@@ -282,6 +283,7 @@ describe('<PermissionsTab>', () => {
         'CANNOT_TRANSFER',
         'CANNOT_SET_RESOLVER',
         'CANNOT_SET_TTL',
+        'CANNOT_APPROVE',
       ]
       for (const fuse of fuses) {
         expect(screen.getByTestId(`unburned-${fuse}`)).toBeInTheDocument()
@@ -302,6 +304,7 @@ describe('<PermissionsTab>', () => {
               CANNOT_TRANSFER: true,
               CANNOT_SET_RESOLVER: true,
               CANNOT_SET_TTL: true,
+              CANNOT_APPROVE: true,
             },
           })}
           isCached={false}
@@ -313,6 +316,7 @@ describe('<PermissionsTab>', () => {
         'CANNOT_TRANSFER',
         'CANNOT_SET_RESOLVER',
         'CANNOT_SET_TTL',
+        'CANNOT_APPROVE',
       ]
       for (const fuse of fuses) {
         expect(screen.getByTestId(`burned-${fuse}`)).toBeInTheDocument()
@@ -608,6 +612,7 @@ describe('<PermissionsTab>', () => {
               CANNOT_SET_RESOLVER: true,
               CANNOT_SET_TTL: true,
               CANNOT_TRANSFER: true,
+              CANNOT_APPROVE: true,
             },
             owner: '0xOwner',
           })}
@@ -640,6 +645,7 @@ describe('<PermissionsTab>', () => {
               CANNOT_CREATE_SUBDOMAIN: true,
               CANNOT_SET_RESOLVER: true,
               CANNOT_SET_TTL: true,
+              CANNOT_APPROVE: true,
               CANNOT_TRANSFER: true,
               CANNOT_BURN_FUSES: true,
             },
