@@ -3,7 +3,7 @@ import type { JsonRpcSigner } from '@ethersproject/providers'
 import { toUtf8String } from '@ethersproject/strings'
 import { Dispatch, useCallback, useEffect, useMemo, useState } from 'react'
 import { useTranslation } from 'react-i18next'
-import styled, { css, keyframes } from 'styled-components'
+import styled, { css } from 'styled-components'
 import { useProvider, useQuery, useSendTransaction, useSigner } from 'wagmi'
 
 import { Button, CrossCircleSVG, Dialog, Helper, Spinner, Typography } from '@ensdomains/thorin'
@@ -46,8 +46,8 @@ const WalletIcon = styled.svg(
   `,
 )
 
-const Bar = styled.div(
-  ({ theme }) => css`
+const Bar = styled.div<{ $status: Status }>(
+  ({ theme, $status }) => css`
     width: ${theme.space.full};
     height: ${theme.space['9']};
     border-radius: ${theme.radii.full};
@@ -57,6 +57,17 @@ const Bar = styled.div(
     flex-direction: row;
     align-items: center;
     justify-content: flex-start;
+
+    --bar-color: ${theme.colors.blue};
+
+    ${$status === 'complete' &&
+    css`
+      --bar-color: ${theme.colors.green};
+    `}
+    ${$status === 'failed' &&
+    css`
+      --bar-color: ${theme.colors.red};
+    `}
   `,
 )
 
@@ -99,43 +110,51 @@ const MessageTypography = styled(Typography)(
 
 type Status = Omit<TransactionStage, 'confirm'>
 
-const progressAnimation = keyframes`
- 0% { width: 6rem; }
- 100% { width: 100%; }
-`
-
-const InnerBar = styled.div<{ $progress: number; $status: Status }>(
-  ({ theme, $progress, $status }) => css`
-    height: ${theme.space['9']};
-    border-radius: ${theme.radii.full};
+const BarPrefix = styled.div(
+  ({ theme }) => css`
     padding: ${theme.space['2']} ${theme.space['4']};
+    width: min-content;
+    height: ${theme.space['9']};
+    margin-right: -1px;
 
-    animation-name: ${progressAnimation};
-    animation-duration: 45s;
-    animation-timing-function: linear;
-    animation-fill-mode: forwards;
+    border-radius: ${theme.radii.full};
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+    background-color: var(--bar-color);
+  `,
+)
 
-    ${$progress === 100 &&
-    css`
+const InnerBar = styled.div(
+  ({ theme }) => css`
+    padding: ${theme.space['2']} ${theme.space['4']};
+    height: ${theme.space['9']};
+
+    border-radius: ${theme.radii.full};
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+
+    transition: width 1s linear;
+    &.progress-complete {
+      width: 100%;
       padding-right: ${theme.space['2']};
-      animation-timing-function: ease-in-out;
-      animation-duration: 0.5s;
-    `}
+      transition: width 0.5s ease-in-out;
+    }
+
+    background-color: var(--bar-color);
 
     display: flex;
     flex-direction: row;
     align-items: center;
-    justify-content: space-between;
+    justify-content: flex-end;
 
-    background-color: ${theme.colors.blue};
-    ${$status === 'complete' &&
-    css`
-      background-color: ${theme.colors.green};
-    `}
-    ${$status === 'failed' &&
-    css`
-      background-color: ${theme.colors.red};
-    `}
+    position: relative;
+
+    & > svg {
+      position: absolute;
+      right: ${theme.space['2']};
+      top: 50%;
+      transform: translateY(-50%);
+    }
   `,
 )
 
@@ -203,9 +222,14 @@ export const LoadBar = ({ status, sendTime }: { status: Status; sendTime: number
   return (
     <>
       <BarContainer data-testid="load-bar-container">
-        <Bar>
-          <InnerBar $progress={status !== 'sent' ? 100 : progress} $status={status}>
+        <Bar $status={status} key={sendTime}>
+          <BarPrefix>
             <BarTypography>{t(`transaction.dialog.${status}.progress.title`)}</BarTypography>
+          </BarPrefix>
+          <InnerBar
+            style={{ width: `${progress}%` }}
+            className={progress === 100 || status !== 'sent' ? 'progress-complete' : ''}
+          >
             {EndElement}
           </InnerBar>
         </Bar>
