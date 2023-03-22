@@ -8,7 +8,7 @@ export const Navigation = () => {
   const breakpoints = useBreakpoint()
 
   if (!isInitial) {
-    if (breakpoints.md) {
+    if (breakpoints.sm) {
       return <Header key="header-nav" />
     }
     return <TabBar key="tab-bar-nav" />

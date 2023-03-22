@@ -164,9 +164,8 @@ const Form = styled.form(({ theme }) => [
     gap: ${theme.space['6']};
   `,
   mq.sm.min(css`
-    width: 100vw;
-    max-width: 520px;
-    padding: ${theme.space['2.5']};
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
   `),
 ])
 
