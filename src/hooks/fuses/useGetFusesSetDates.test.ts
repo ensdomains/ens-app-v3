@@ -143,7 +143,6 @@ describe('useGetFusesSetDates', () => {
         CANNOT_CREATE_SUBDOMAIN: '95',
         CANNOT_TRANSFER: '96',
         CANNOT_SET_TTL: '97',
-        CANNOT_APPROVE: '98',
         CANNOT_SET_RESOLVER: '98',
       },
     })
