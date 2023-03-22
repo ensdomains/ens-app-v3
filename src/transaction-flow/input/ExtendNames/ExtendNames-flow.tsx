@@ -38,7 +38,7 @@ const Container = styled.form(
     ${mq.sm.min(
       css`
         width: calc(80vw - 2 * ${theme.space['6']});
-        max-width: 600px;
+        max-width: ${theme.space['128']};
       `,
     )}
   `,

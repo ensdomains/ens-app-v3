@@ -13,7 +13,7 @@ const AvatarScrollBox = styled.div(({ theme }) => [
   `,
   mq.sm.min(css`
     width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: 520px;
+    max-width: ${theme.space['128']};
   `),
 ])
 
