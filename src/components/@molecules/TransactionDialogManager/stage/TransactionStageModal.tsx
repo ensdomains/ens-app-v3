@@ -135,7 +135,7 @@ const InnerBar = styled.div(
 
     transition: width 1s linear;
     &.progress-complete {
-      width: 100%;
+      width: 100% !important;
       padding-right: ${theme.space['2']};
       transition: width 0.5s ease-in-out;
     }
