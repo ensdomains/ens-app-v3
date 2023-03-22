@@ -60,14 +60,15 @@ const InnerContainer = styled.div(
   `,
 )
 
-const PlusMinusWrapper = styled.div(
-  () => css`
+const PlusMinusWrapper = styled.div(({ theme }) => [
+  css`
     width: 100%;
-    max-width: 60%;
+    max-width: ${theme.space['80']};
     overflow: hidden;
     display: flex;
   `,
-)
+  mq.sm.min(css``),
+])
 
 const OptionBar = styled.div(
   () => css`
