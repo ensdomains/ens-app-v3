@@ -33,8 +33,8 @@ export default function Page() {
         leading: null,
         trailing: (
           <OtherWrapper>
-            <WalletSection />
             <PrimarySection />
+            <WalletSection />
             <TransactionSection />
             {process.env.NEXT_PUBLIC_PROVIDER && <DevSection />}
           </OtherWrapper>

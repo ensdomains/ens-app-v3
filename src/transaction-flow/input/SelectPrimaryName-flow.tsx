@@ -22,6 +22,7 @@ import { TransactionDialogPassthrough } from '../types'
 type Data = {
   address: string
   existingPrimary: string | null
+  action: 'reset' | 'select'
 }
 
 type Domain = {
