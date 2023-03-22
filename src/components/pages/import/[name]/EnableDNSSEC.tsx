@@ -41,6 +41,10 @@ const HelperLinks = [
     href: 'https://cp.cn.bluehost.com/kb/answer/1909',
   },
   {
+    label: 'registrars.cloudflare',
+    href: 'https://developers.cloudflare.com/dns/additional-options/dnssec/#enable-dnssec',
+  },
+  {
     label: 'HostGator',
     href: 'https://www.hostgator.com/help/article/resellerclub-dnssec-domain-name-system-security-extensions',
   },
