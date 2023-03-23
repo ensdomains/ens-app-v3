@@ -69,8 +69,8 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
       let newTitle = 'Invalid Name - ENS'
       let newDescription = 'An error occurred'
       try {
-        // const normalisedName = normalise(decodedName)
-        const normalisedName = decodedName
+        const { normalise } = await import('@ensdomains/ensjs/utils/normalise')
+        const normalisedName = normalise(decodedName)
         newTitle = `${normalisedName} on ENS`
         newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
         // eslint-disable-next-line no-empty
