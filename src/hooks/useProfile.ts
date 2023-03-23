@@ -15,7 +15,7 @@ export const useProfile = (name: string, skip?: any) => {
     data: profile,
     isLoading: loading,
     status,
-    internal: { isFetchedAfterMount },
+    isFetchedAfterMount,
     isFetched,
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

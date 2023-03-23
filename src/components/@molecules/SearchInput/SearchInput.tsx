@@ -23,12 +23,12 @@ import { FakeSearchInputBox, SearchInputBox } from './SearchInputBox'
 import { SearchResult } from './SearchResult'
 import { AnyItem, HistoryItem, SearchItem } from './types'
 
-const Container = styled.div<{ $size: 'large' | 'extraLarge' }>(
+const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
   ({ $size }) => css`
     width: 100%;
     position: relative;
     ${$size === 'extraLarge' &&
-    mq.md.min(css`
+    mq.sm.min(css`
       padding-left: 48px;
       padding-right: 48px;
     `)}
@@ -175,7 +175,7 @@ export const SearchInput = ({
   size = 'extraLarge',
   setSearchState,
 }: {
-  size?: 'large' | 'extraLarge'
+  size?: 'medium' | 'extraLarge'
   setSearchState?: (value: TransitionState) => void
 }) => {
   const { t } = useTranslation('common')
@@ -277,39 +277,39 @@ export const SearchInput = ({
 
   const extraItems = useMemo(() => {
     if (history.length > 0) {
-      if (normalisedName === '') {
-        return history
+      let historyRef = history
+      if (normalisedName !== '') {
+        historyRef = history.filter(
+          (item) =>
+            item.value !== normalisedName &&
+            item.value.includes(normalisedName) &&
+            (searchItem.type === 'nameWithDotEth' ? item.value !== `${normalisedName}.eth` : true),
+        )
       }
-      return history.filter(
-        (item) =>
-          item.value !== normalisedName &&
-          item.value.includes(normalisedName) &&
-          (searchItem.type === 'nameWithDotEth' ? item.value !== `${normalisedName}.eth` : true),
-      )
+      return historyRef
+        .sort((a, b) => b.lastAccessed - a.lastAccessed)
+        .map((item) => ({ ...item, isHistory: true }))
     }
     return []
   }, [normalisedName, searchItem.type, history])
 
   const searchItems: AnyItem[] = useMemo(() => {
     const _searchItem = { ...searchItem, isHistory: false }
-    const _extraItems = extraItems.map((item) => ({ ...item, isHistory: true }))
+    const _extraItems = extraItems
     if (searchItem.type === 'error') {
       return [_searchItem]
     }
     if (searchItem.type === 'text') {
       if (extraItems.length > 0) {
-        return [..._extraItems]
+        return [..._extraItems.slice(0, 5)]
       }
       return [_searchItem]
     }
-    const _searchItems: SearchItem[] =
+    const _searchItems: AnyItem[] =
       _searchItem.type === 'nameWithDotEth'
         ? [_searchItem, { type: 'name', isHistory: false }]
         : [_searchItem]
-    return [
-      ..._searchItems.map((item) => ({ ...item, isHistory: false })),
-      ...extraItems.map((item) => ({ ...item, isHistory: true })),
-    ]
+    return [..._searchItems, ...extraItems].slice(0, 5)
   }, [searchItem, extraItems])
 
   const handleFocusIn = useCallback(() => toggle(true), [toggle])
@@ -360,16 +360,15 @@ export const SearchInput = ({
         }
       }
     }
-    setHistory((prev) =>
-      [
-        ...prev.filter(
-          (item) => !(item.value === selectedItem.value && item.type === selectedItem.type),
-        ),
-        selectedItem as HistoryItem,
-      ]
-        .reverse()
-        .slice(0, 5),
-    )
+    if ('isHistory' in selectedItem) {
+      delete (selectedItem as SearchItem & { isHistory?: boolean }).isHistory
+    }
+    setHistory((prev) => [
+      ...prev
+        .filter((item) => !(item.value === selectedItem.value && item.type === selectedItem.type))
+        .slice(0, 25),
+      { ...selectedItem, lastAccessed: Date.now() } as HistoryItem,
+    ])
     setInputVal('')
     searchInputRef.current?.blur()
     router.pushWithHistory(path)
@@ -470,7 +469,7 @@ export const SearchInput = ({
     </SearchResultsContainer>
   )
 
-  if (breakpoints.md) {
+  if (breakpoints.sm) {
     return (
       <Container data-testid="search-input-desktop" $size={size}>
         {SearchInputElement}

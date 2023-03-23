@@ -183,7 +183,6 @@ export const AddTextRecord = ({
       <Spacer $height="3" />
       <Dropdown
         // needed for no line breaks in buttons
-        inheritContentWidth
         align="left"
         items={HelperLinks.map((link) => ({
           label: t(link.label),

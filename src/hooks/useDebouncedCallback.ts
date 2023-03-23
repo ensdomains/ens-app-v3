@@ -12,6 +12,7 @@ export default function useDebouncedCallback<T extends (...args: any[]) => Retur
       clearTimeout(timerId.current)
       timerId.current = setTimeout(() => func(...args), wait)
     },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
     [func, wait, ...deps],
   ) as T
 }

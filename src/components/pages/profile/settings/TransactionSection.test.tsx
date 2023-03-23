@@ -1,6 +1,7 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
+import React from 'react'
 
 import type { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRecentTransactions'
@@ -32,6 +33,14 @@ describe('TransactionSection', () => {
   mockUseChainName.mockReturnValue('mainnet')
   mockUseClearRecentTransactions.mockReturnValue(mockClearTransactions)
 
+  beforeAll(() => {
+    Element.prototype.getBoundingClientRect = () =>
+      ({
+        width: 300,
+        height: 300,
+      } as any)
+  })
+
   it('should render', () => {
     mockUseRecentTransactions.mockReturnValue([])
     render(<TransactionSection />)
@@ -39,22 +48,28 @@ describe('TransactionSection', () => {
     expect(screen.getByText('section.transaction.title')).toBeVisible()
     expect(screen.getByText('section.transaction.noRecentTransactions')).toBeVisible()
   })
-  it('should only show 4 transactions on initial render', () => {
+
+  it('should only show 5 transactions on initial render', () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 9 }, makeRecentTransaction()))
     render(<TransactionSection />)
-    expect(screen.getAllByTestId('transaction-confirmed')).toHaveLength(4)
+    expect(screen.getAllByTestId('transaction-confirmed')).toHaveLength(5)
   })
-  it('should have correct height when "View More" button is visiable', () => {
+
+  it('should have correct height when "View More" button is visiable', async () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 9 }, makeRecentTransaction()))
     render(<TransactionSection />)
     const element = screen.getByTestId('transaction-section-container')
-    expect(element).toHaveStyle(`height: calc( 5 * 4.5rem );`)
+    await waitFor(() => {
+      expect(element).toHaveStyle(`height: 300px;`)
+    })
   })
-  it('should have correct height when "View More" button is NOT visiable', () => {
+  it('should have correct height when "View More" button is NOT visiable', async () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 4 }, makeRecentTransaction()))
     render(<TransactionSection />)
     const element = screen.getByTestId('transaction-section-container')
-    expect(element).toHaveStyle(`height: calc( 4 * 4.5rem );`)
+    await waitFor(() => {
+      expect(element).toHaveStyle(`height: 300px;`)
+    })
   })
   it('should not show View More button if there is less than 5 transactions', () => {
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 4 }, makeRecentTransaction()))

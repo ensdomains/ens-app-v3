@@ -31,7 +31,7 @@ const Container = styled.div<{ $banner?: string }>(
       gap: ${theme.space['4']};
       flex-gap: ${theme.space['4']};
 
-      ${mq.md.min(css`
+      ${mq.sm.min(css`
         padding: ${theme.space['6']};
         padding-top: ${theme.space['12']};
       `)}
@@ -188,7 +188,7 @@ export const ProfileSnippet = ({
     <Container $banner={banner} data-testid="profile-snippet">
       <FirstItems>
         <NameAvatar
-          size={{ min: '24', md: '32' }}
+          size={{ min: '24', sm: '32' }}
           label={name}
           name={name}
           network={network}

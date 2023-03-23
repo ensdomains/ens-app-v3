@@ -192,7 +192,7 @@ export default () => {
             </TitleWrapper>
           </ContentContainer>
         </BackContainer>
-        {!breakpoints.md && <Hamburger />}
+        {!breakpoints.sm && <Hamburger />}
       </HeadingContainer>
       <Spacer $height="4" />
       {router.isReady ? (

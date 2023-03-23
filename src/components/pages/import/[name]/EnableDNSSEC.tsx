@@ -90,7 +90,6 @@ export const EnableDNSSEC = ({
       <Spacer $height="5" />
       <Dropdown
         // needed for no line breaks in buttons
-        inheritContentWidth
         items={HelperLinks.map((link) => ({
           label: link.label,
           wrapper: (children, key) => (

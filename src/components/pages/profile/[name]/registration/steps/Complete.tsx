@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import type ConfettiT from 'react-confetti'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useAccount, useWaitForTransaction } from 'wagmi'
+import { useAccount, useTransaction } from 'wagmi'
 
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
@@ -13,7 +13,6 @@ import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import NFTTemplate from '@app/components/@molecules/NFTTemplate/NFTTemplate'
 import { Card } from '@app/components/Card'
 import { useNameDetails } from '@app/hooks/useNameDetails'
-import useTransactionResponseReceipt from '@app/hooks/useTransactionResponseReceipt'
 import useWindowSize from '@app/hooks/useWindowSize'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -29,7 +28,7 @@ const StyledCard = styled(Card)(
       max-width: ${theme.space.full};
     }
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     `)}
@@ -54,7 +53,7 @@ const NFTContainer = styled.div(
     border-radius: ${theme.radii['2xLarge']};
     overflow: hidden;
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       width: ${theme.space['80']};
       height: ${theme.space['80']};
     `)}
@@ -117,15 +116,13 @@ const useEthInvoice = (
 
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
 
-  const { data: commitReceipt, isLoading: commitLoading } = useWaitForTransaction({
-    hash: commitTxFlow?.hash,
+  const commitReceipt = commitTxFlow?.minedData
+  const registerReceipt = registerTxFlow?.minedData
+
+  const { data: registerData, isLoading: registerLoading } = useTransaction({
+    hash: registerTxFlow?.hash as `0x${string}` | undefined,
   })
-  const {
-    response: registerResponse,
-    receipt: registerReceipt,
-    isLoading: registerLoading,
-  } = useTransactionResponseReceipt(registerTxFlow?.hash || '')
-  const isLoading = commitLoading || registerLoading
+  const isLoading = !commitReceipt || !registerReceipt || registerLoading
 
   useEffect(() => {
     const storage = localStorage.getItem(`avatar-src-${name}`)
@@ -134,9 +131,13 @@ const useEthInvoice = (
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    const value = registerResponse?.value || BigNumber.from(0)
-    const commitNetFee = commitReceipt?.gasUsed.mul(commitReceipt!.effectiveGasPrice)
-    const registerNetFee = registerReceipt?.gasUsed.mul(registerReceipt!.effectiveGasPrice)
+    const value = BigNumber.from(registerData?.value) || BigNumber.from(0)
+
+    const commitGasUsed = BigNumber.from(commitReceipt?.gasUsed || 0)
+    const registerGasUsed = BigNumber.from(registerReceipt?.gasUsed || 0)
+
+    const commitNetFee = commitGasUsed.mul(commitReceipt!.effectiveGasPrice)
+    const registerNetFee = registerGasUsed.mul(registerReceipt!.effectiveGasPrice)
     const totalNetFee = registerNetFee ? commitNetFee?.add(registerNetFee) : BigNumber.from(0)
 
     return (
@@ -148,7 +149,7 @@ const useEthInvoice = (
         totalLabel={t('invoice.totalPaid')}
       />
     )
-  }, [t, registerResponse, commitReceipt, registerReceipt, isLoading])
+  }, [isLoading, registerData?.value, commitReceipt, registerReceipt, t])
 
   if (isMoonpayFlow) return { InvoiceFilled: null, avatarSrc }
 

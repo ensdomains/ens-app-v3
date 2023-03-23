@@ -114,7 +114,7 @@ export const TransactionDialogManager = ({
   }, [onDismiss, selectedItem?.disableBackgroundClick, selectedItem?.currentFlowStage])
 
   const onDismissDialog = useCallback(() => {
-    if ((selectedItem?.disableBackgroundClick, selectedItem?.currentFlowStage === 'input')) return
+    if (selectedItem?.disableBackgroundClick && selectedItem?.currentFlowStage === 'input') return
     dispatch({
       name: 'stopFlow',
     })

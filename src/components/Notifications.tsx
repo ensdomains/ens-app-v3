@@ -45,7 +45,7 @@ export const Notifications = () => {
 
   const updateCallback = useCallback<UpdateCallback>(
     ({ action, key, status, hash }) => {
-      if (status === 'pending') return
+      if (status === 'pending' || status === 'repriced') return
       if (status === 'confirmed') {
         switch (action) {
           case 'registerName':
@@ -121,7 +121,7 @@ export const Notifications = () => {
         )
       }}
       open={open}
-      variant={breakpoints.md ? 'desktop' : 'touch'}
+      variant={breakpoints.sm ? 'desktop' : 'touch'}
       {...currentNotification}
     />
   )
