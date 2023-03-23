@@ -131,9 +131,13 @@ const useEthInvoice = (
 
   const InvoiceFilled = useMemo(() => {
     if (isLoading) return null
-    const value = registerData?.value || BigNumber.from(0)
-    const commitNetFee = commitReceipt?.gasUsed.mul(commitReceipt!.effectiveGasPrice)
-    const registerNetFee = registerReceipt?.gasUsed.mul(registerReceipt!.effectiveGasPrice)
+    const value = BigNumber.from(registerData?.value) || BigNumber.from(0)
+
+    const commitGasUsed = BigNumber.from(commitReceipt?.gasUsed || 0)
+    const registerGasUsed = BigNumber.from(registerReceipt?.gasUsed || 0)
+
+    const commitNetFee = commitGasUsed.mul(commitReceipt!.effectiveGasPrice)
+    const registerNetFee = registerGasUsed.mul(registerReceipt!.effectiveGasPrice)
     const totalNetFee = registerNetFee ? commitNetFee?.add(registerNetFee) : BigNumber.from(0)
 
     return (
