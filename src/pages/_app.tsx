@@ -6,7 +6,8 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import { WagmiConfig, chain, configureChains, createClient } from 'wagmi'
+import { ChainProviderFn, WagmiConfig, configureChains, createClient } from 'wagmi'
+import { goerli, localhost } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
 
@@ -93,7 +94,7 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const providerArray: Parameters<typeof configureChains>[1] = []
+const providerArray: ChainProviderFn<typeof goerli | typeof localhost>[] = []
 
 if (process.env.NEXT_PUBLIC_PROVIDER) {
   // for local testing
@@ -118,7 +119,7 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   )
 }
 
-const { provider, chains } = configureChains([chain.goerli, chain.localhost], providerArray)
+const { provider, chains } = configureChains([goerli, localhost], providerArray)
 
 setupAnalytics()
 

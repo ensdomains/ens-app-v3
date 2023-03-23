@@ -1,0 +1,54 @@
+diff --git a/dist/chunk-CDB4MGXW.js b/dist/chunk-CDB4MGXW.js
+index fb9c5435323d3d07d970f032a83ada8f5e1862d6..369d12771e9e3421de6db69de8bd5bd3a3b178b4 100644
+--- a/dist/chunk-CDB4MGXW.js
++++ b/dist/chunk-CDB4MGXW.js
+@@ -4440,19 +4440,20 @@ function ModalProvider({ children }) {
+   const connectionStatus = useConnectionStatus();
+   const { chain } = useNetwork6();
+   const chainSupported = !(chain == null ? void 0 : chain.unsupported);
+-  function closeModals({
+-    keepConnectModalOpen = false
+-  } = {}) {
+-    if (!keepConnectModalOpen) {
++
++  const isUnauthenticated = useAuthenticationStatus() === "unauthenticated";
++
++  const closeModals = useCallback(() => {
++    if (!isUnauthenticated) {
+       closeConnectModal();
+     }
+     closeAccountModal();
+     closeChainModal();
+-  }
+-  const isUnauthenticated = useAuthenticationStatus() === "unauthenticated";
++  }, [isUnauthenticated, closeConnectModal, closeAccountModal, closeChainModal]);
++
+   useAccount11({
+-    onConnect: () => closeModals({ keepConnectModalOpen: isUnauthenticated }),
+-    onDisconnect: () => closeModals()
++    onConnect: closeModals,
++    onDisconnect: closeModals
+   });
+   return /* @__PURE__ */ React53.createElement(ModalContext.Provider, {
+     value: useMemo6(() => ({
+diff --git a/dist/index.js b/dist/index.js
+index 9e9a3487ca57a76af44257d04af0c56719618317..310cfe99aa900488f67369ee215223281aa4c09f 100644
+--- a/dist/index.js
++++ b/dist/index.js
+@@ -476,12 +476,12 @@ var getDefaultWallets = ({
+     {
+       groupName: "Popular",
+       wallets: [
+-        injectedWallet({ chains }),
+-        rainbowWallet({ chains }),
++        injectedWallet({ chains, shimDisconnect: true }),
++        rainbowWallet({ chains, shimDisconnect: true }),
+         coinbaseWallet({ appName, chains }),
+-        metaMaskWallet({ chains }),
++        metaMaskWallet({ chains, shimDisconnect: true }),
+         walletConnectWallet({ chains }),
+-        braveWallet({ chains })
++        braveWallet({ chains, shimDisconnect: true })
+       ]
+     }
+   ];
