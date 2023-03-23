@@ -1,5 +1,5 @@
 /* eslint max-classes-per-file: "off" */
-import { normalise } from '@ensdomains/ensjs/utils/normalise'
+// import { normalise } from '@ensdomains/ensjs/utils/normalise'
 
 class ContentModifier {
   private newContent: string
@@ -69,7 +69,8 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
       let newTitle = 'Invalid Name - ENS'
       let newDescription = 'An error occurred'
       try {
-        const normalisedName = normalise(decodedName)
+        // const normalisedName = normalise(decodedName)
+        const normalisedName = decodedName
         newTitle = `${normalisedName} on ENS`
         newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
         // eslint-disable-next-line no-empty
