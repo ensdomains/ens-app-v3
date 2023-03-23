@@ -1,3 +1,5 @@
+import '@app/test-utils'
+
 import { OwnerArray } from '@app/types'
 
 import { ownershipInfoCalc } from './ProfileDetails'
