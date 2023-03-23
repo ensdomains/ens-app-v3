@@ -10,7 +10,7 @@ describe('reducer', () => {
       payload: {
         push: mockPush,
       },
-    }
+    } as TransactionFlowAction
     const draft = {
       items: {
         key: {
@@ -18,7 +18,7 @@ describe('reducer', () => {
           transactions: [{ hash: 'hash', stage: 'complete' }],
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(mockPush).toHaveBeenCalled()
   })
@@ -30,7 +30,7 @@ describe('reducer', () => {
       payload: {
         push: mockPush,
       },
-    }
+    } as TransactionFlowAction
     const draft = {
       items: {
         otherKey: {
@@ -38,7 +38,7 @@ describe('reducer', () => {
           transactions: [{ hash: 'hash', stage: 'complete' }],
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(mockPush).not.toHaveBeenCalled()
   })
@@ -50,7 +50,7 @@ describe('reducer', () => {
       payload: {
         push: mockPush,
       },
-    }
+    } as TransactionFlowAction
     const draft = {
       selectedKey: '',
       items: {
@@ -59,7 +59,7 @@ describe('reducer', () => {
           currentFlowStage: '',
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(draft.selectedKey).toEqual('key')
   })
@@ -71,7 +71,7 @@ describe('reducer', () => {
       payload: {
         push: mockPush,
       },
-    }
+    } as TransactionFlowAction
     const draft = {
       selectedKey: '',
       items: {
@@ -80,7 +80,7 @@ describe('reducer', () => {
           currentFlowStage: '',
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(draft.selectedKey).toEqual('')
   })
