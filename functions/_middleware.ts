@@ -1,5 +1,4 @@
 /* eslint max-classes-per-file: "off" */
-// import { normalise } from '@ensdomains/ensjs/utils/normalise'
 
 class ContentModifier {
   private newContent: string
