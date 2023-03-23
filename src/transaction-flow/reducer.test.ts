@@ -1,9 +1,10 @@
 import { reducer } from './reducer'
+import { TransactionFlowAction } from './types'
 
 describe('reducer', () => {
   it('should not break if resumeFlowWithCheck is called with item', () => {
     const mockPush = jest.fn()
-    const action = {
+    const action: TransactionFlowAction = {
       name: 'resumeFlowWithCheck',
       key: 'key',
       payload: {
@@ -17,13 +18,13 @@ describe('reducer', () => {
           transactions: [{ hash: 'hash', stage: 'complete' }],
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(mockPush).toHaveBeenCalled()
   })
   it('should break if resumeFlowWithCheck is called wihout item', () => {
     const mockPush = jest.fn()
-    const action = {
+    const action: TransactionFlowAction = {
       name: 'resumeFlowWithCheck',
       key: 'key',
       payload: {
@@ -37,19 +38,19 @@ describe('reducer', () => {
           transactions: [{ hash: 'hash', stage: 'complete' }],
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(mockPush).not.toHaveBeenCalled()
   })
   it('should not break if resumeFlow is called with item', () => {
     const mockPush = jest.fn()
-    const action = {
+    const action: TransactionFlowAction = {
       name: 'resumeFlow',
       key: 'key',
       payload: {
         push: mockPush,
       },
-    }
+    } as any
     const draft = {
       selectedKey: '',
       items: {
@@ -58,7 +59,7 @@ describe('reducer', () => {
           currentFlowStage: '',
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(draft.selectedKey).toEqual('key')
   })
@@ -70,7 +71,7 @@ describe('reducer', () => {
       payload: {
         push: mockPush,
       },
-    }
+    } as any
     const draft = {
       selectedKey: '',
       items: {
@@ -79,7 +80,7 @@ describe('reducer', () => {
           currentFlowStage: '',
         },
       },
-    }
+    } as any
     reducer(draft, action)
     expect(draft.selectedKey).toEqual('')
   })
