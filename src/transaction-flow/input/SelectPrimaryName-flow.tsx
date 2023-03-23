@@ -4,10 +4,16 @@ import styled, { css } from 'styled-components'
 import { useInfiniteQuery } from 'wagmi'
 
 import { decryptName } from '@ensdomains/ensjs/utils/labels'
-import { Button, Dialog, Heading, RadioButton, RadioButtonGroup } from '@ensdomains/thorin'
+import { Button, Dialog, Heading, RadioButton, RadioButtonGroup, mq } from '@ensdomains/thorin'
 
 import { InnerDialog } from '@app/components/@atoms/InnerDialog'
+import { TaggedNameItem } from '@app/components/@atoms/NameDetailItem/TaggedNameItem'
 import { NamePill } from '@app/components/@molecules/NamePill'
+import {
+  NameTableHeader,
+  SortDirection,
+  SortType,
+} from '@app/components/@molecules/NameTableHeader/NameTableHeader'
 import {
   LoadingContainer,
   ScrollBoxWithSpinner,
@@ -16,6 +22,8 @@ import {
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 
+import { useAvailablePrimaryNamesFromAddress } from '../../hooks/useAvailablePrimaryNamesFromAddress'
+import useDebouncedCallback from '../../hooks/useDebouncedCallback'
 import { makeTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
 
@@ -33,6 +41,20 @@ type Domain = {
 export type Props = {
   data: Data
 } & TransactionDialogPassthrough
+
+const ContentContainer = styled.div(({ theme }) => [
+  css`
+    width: 100%;
+    max-height: 60vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  `,
+  mq.sm.min(css`
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
+  `),
+])
 
 const StyledScrollBox = styled(ScrollBoxWithSpinner)(
   ({ theme }) => css`
@@ -61,6 +83,21 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
 
   const chainId = useChainId()
   const { gqlInstance } = useEns()
+
+  const [sortType, setSortType] = useState<SortType>('labelName')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [search, _setSearch] = useState('')
+  const setSearch = useDebouncedCallback(_setSearch, 300, [])
+  const { currentPage } = useAvailablePrimaryNamesFromAddress({
+    address,
+    sort: {
+      type: sortType,
+      orderDirection: sortDirection,
+    },
+    search,
+    resultsPerPage: 10,
+    page: 1,
+  })
 
   const { data, fetchNextPage, isLoading } = useInfiniteQuery(
     [address, 'primaryNameOptions'],
@@ -105,7 +142,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
 
   const hasNextPage = data?.pages[data.pages.length - 1].length === querySize
 
-  const [selectedName, setSelectedName] = useState<string | undefined>(undefined)
+  const [selectedName, setSelectedName] = useState<string | undefined | any>(undefined)
 
   const handleSubmit = () => {
     dispatch({
@@ -173,7 +210,40 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   return (
     <>
       <Dialog.Heading title="Select a primary name" />
-      <InnerDialog>{Content}</InnerDialog>
+      <ContentContainer>
+        <NameTableHeader
+          mode="view"
+          selectable={false}
+          sortType={sortType}
+          sortTypeOptionValues={['expiryDate', 'labelName', 'creationDate']}
+          sortDirection={sortDirection}
+          searchQuery={search}
+          selectedCount={0}
+          onModeChange={() => {}}
+          onSortTypeChange={setSortType}
+          onSortDirectionChange={setSortDirection}
+          onSearchChange={setSearch}
+        />
+        <StyledScrollBox>
+          {!!currentPage && currentPage.length > 0 ? (
+            <>
+              {currentPage?.map((name) => (
+                <TaggedNameItem
+                  key={name.id}
+                  {...name}
+                  network={1337}
+                  mode="select"
+                  selected={selectedName?.name === name.name}
+                  onClick={() => setSelectedName(name)}
+                />
+              ))}
+            </>
+          ) : (
+            <div style={{ height: '100px' }}> No names </div>
+          )}
+        </StyledScrollBox>
+      </ContentContainer>
+      {/* <InnerDialog>{Content}</InnerDialog> */}
       <Dialog.Footer
         leading={
           <Button colorStyle="accentSecondary" onClick={onDismiss}>

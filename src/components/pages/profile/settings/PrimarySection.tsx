@@ -105,6 +105,7 @@ export const PrimarySection = () => {
   const address = _address as string
 
   const { name, loading: primaryLoading } = usePrimary(address, !address)
+  console.log(address, name, primaryLoading)
 
   // const { truncatedName, isLoading: basicLoading } = useBasicName(name, true)
 

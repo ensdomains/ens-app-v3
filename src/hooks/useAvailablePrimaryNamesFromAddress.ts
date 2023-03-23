@@ -24,7 +24,7 @@ const chunkArr = (arr: any[], chunkSize: number) => {
   return res
 }
 
-export const useNamesFromAddress = ({
+export const useAvailablePrimaryNamesFromAddress = ({
   address,
   sort,
   resultsPerPage,
@@ -89,8 +89,7 @@ export const useNamesFromAddress = ({
     return Object.values(nameMap)
   }, [data])
 
-  console.log(mergedData)
-
+  console.log('mergedData', mergedData)
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 
   const filterFunc = useMemo(() => {

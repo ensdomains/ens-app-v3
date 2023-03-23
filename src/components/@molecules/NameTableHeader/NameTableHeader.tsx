@@ -8,8 +8,10 @@ import DownDirectionSVG from '@app/assets/SortAscending.svg'
 import UpDirectionSVG from '@app/assets/SortDescending.svg'
 import { CheckButton } from '@app/components/@atoms/CheckButton/CheckButton'
 
-const TableHeader = styled.div(
-  ({ theme }) => css`
+const TableHeader = styled.div<{
+  $minimizeRowGap?: boolean
+}>(
+  ({ theme, $minimizeRowGap: $increaseRowGap }) => css`
     width: 100%;
     display: flex;
     flex-direction: column-reverse;
@@ -17,10 +19,11 @@ const TableHeader = styled.div(
     border-bottom: 1px solid ${theme.colors.border};
     padding: ${theme.space['3']} ${theme.space['4']};
     gap: ${theme.space['2']};
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex-direction: row;
       align-items: center;
       padding: ${theme.space['3']} ${theme.space['4.5']};
+      gap: ${$increaseRowGap ? theme.space['2'] : theme.space['6']};
     `)}
   `,
 )
@@ -42,7 +45,7 @@ const TableHeaderLeadingLeft = styled.div<{ $isFullWidth: boolean }>(
     align-items: center;
     color: ${theme.colors.text};
     ${$isFullWidth && `flex: 1;`}
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       gap: ${theme.space['4']};
       flex-basis: auto;
       flex-grow: 0;
@@ -67,15 +70,17 @@ const TableHeaderLeftControlsContainer = styled.div<{
 
 const TableHeaderLeadingRight = styled.div(() => css``)
 
-const TableHeaderTrailing = styled.div(
-  ({ theme }) => css`
+const TableHeaderTrailing = styled.div<{
+  $fixedWidth?: boolean
+}>(
+  ({ theme, $fixedWidth }) => css`
     width: 100%;
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
-    ${mq.md.min(css`
-      flex: 0 0 ${theme.space['32']};
+    ${mq.sm.min(css`
+      flex: ${$fixedWidth ? `0 0 ${theme.space['32']}` : '2'};
       width: ${theme.space['32']};
     `)}
   `,
@@ -156,7 +161,7 @@ export const NameTableHeader = ({
   }))
 
   return (
-    <TableHeader>
+    <TableHeader $minimizeRowGap={selectable}>
       <TableHeaderLeading>
         <TableHeaderLeadingLeft $isFullWidth={!selectable}>
           {selectable && (
@@ -198,7 +203,7 @@ export const NameTableHeader = ({
         </TableHeaderLeadingLeft>
         <TableHeaderLeadingRight>{children}</TableHeaderLeadingRight>
       </TableHeaderLeading>
-      <TableHeaderTrailing>
+      <TableHeaderTrailing $fixedWidth={selectable}>
         <Input
           size="small"
           label="search"
