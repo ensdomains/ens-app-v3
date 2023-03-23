@@ -9,11 +9,13 @@ import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { makeTransactionItem } from '../../transaction/index'
 import { CenterAlignedTypography } from '../RevokePermissions/components/CenterAlignedTypography'
 
-const MessageContainer = styled(CenterAlignedTypography)(() => [
-  css``,
+const MessageContainer = styled(CenterAlignedTypography)(({ theme }) => [
+  css`
+    width: 100%;
+  `,
   mq.sm.min(css`
-    width: 100vw;
-    max-width: 510px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
   `),
 ])
 

@@ -42,7 +42,8 @@ const Container = styled.form(({ theme }) => [
     min-height: 33vh;
   `,
   mq.sm.min(css`
-    width: 520px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
   `),
 ])
 

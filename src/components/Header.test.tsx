@@ -60,9 +60,9 @@ describe('Header', () => {
   mockHeaderConnect.mockImplementation(() => <div>Connect</div>)
   mockHamburger.mockImplementation(() => <div>burger</div>)
   describe('search', () => {
-    it('should expand on focus and hide icons if md breakpoint', () => {
+    it('should expand on focus and hide icons if sm breakpoint', () => {
       render(<Header />)
-      expect(screen.getByTestId('search-wrapper')).toHaveStyle('margin-right: 8rem')
+      expect(screen.getByTestId('search-wrapper')).toHaveStyle('margin-right: 6rem')
       checkRoutesPlacement(true)
 
       fireEvent.focus(screen.getByTestId('search-input-box'))
