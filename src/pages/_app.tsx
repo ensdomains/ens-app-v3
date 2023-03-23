@@ -6,7 +6,7 @@ import type { AppProps } from 'next/app'
 import { ReactElement, ReactNode } from 'react'
 import { I18nextProvider } from 'react-i18next'
 import { ThemeProvider, createGlobalStyle } from 'styled-components'
-import { WagmiConfig, configureChains, createClient } from 'wagmi'
+import { ChainProviderFn, WagmiConfig, configureChains, createClient } from 'wagmi'
 import { goerli, localhost } from 'wagmi/chains'
 import { infuraProvider } from 'wagmi/providers/infura'
 import { jsonRpcProvider } from 'wagmi/providers/jsonRpc'
@@ -94,25 +94,32 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const { provider, chains } = configureChains(
-  [goerli, localhost],
-  process.env.NEXT_PUBLIC_PROVIDER
-    ? [
-        jsonRpcProvider({
-          rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
-        }),
-      ]
-    : [
-        infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }),
-        jsonRpcProvider({
-          rpc: (c) => ({
-            http: `https://web3.ens.domains/v1/${
-              c.network === 'homestead' ? 'mainnet' : c.network
-            }`,
-          }),
-        }),
-      ],
-)
+const providerArray: ChainProviderFn<typeof goerli | typeof localhost>[] = []
+
+if (process.env.NEXT_PUBLIC_PROVIDER) {
+  // for local testing
+  providerArray.push(
+    jsonRpcProvider({
+      rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+    }),
+  )
+} else {
+  if (!process.env.NEXT_PUBLIC_IPFS) {
+    // only use infura if we are not using IPFS
+    // since we don't want to allow all domains to access infura
+    providerArray.push(infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }))
+  }
+  // fallback cloudflare gateway if infura is down or for IPFS
+  providerArray.push(
+    jsonRpcProvider({
+      rpc: (c) => ({
+        http: `https://web3.ens.domains/v1/${c.network === 'homestead' ? 'mainnet' : c.network}`,
+      }),
+    }),
+  )
+}
+
+const { provider, chains } = configureChains([goerli, localhost], providerArray)
 
 setupAnalytics()
 
