@@ -93,27 +93,32 @@ const breakpoints = {
   xl: '(min-width: 1280px)',
 }
 
-const { provider, chains } = configureChains(
-  [chain.goerli, chain.localhost],
-  [
-    ...(process.env.NEXT_PUBLIC_PROVIDER
-      ? [
-          jsonRpcProvider({
-            rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
-          }),
-        ]
-      : [
-          infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }),
-          jsonRpcProvider({
-            rpc: (c) => ({
-              http: `https://web3.ens.domains/v1/${
-                c.network === 'homestead' ? 'mainnet' : c.network
-              }`,
-            }),
-          }),
-        ]),
-  ],
-)
+const providerArray: Parameters<typeof configureChains>[1] = []
+
+if (process.env.NEXT_PUBLIC_PROVIDER) {
+  // for local testing
+  providerArray.push(
+    jsonRpcProvider({
+      rpc: () => ({ http: process.env.NEXT_PUBLIC_PROVIDER! }),
+    }),
+  )
+} else {
+  if (!process.env.NEXT_PUBLIC_IPFS) {
+    // only use infura if we are not using IPFS
+    // since we don't want to allow all domains to access infura
+    providerArray.push(infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }))
+  }
+  // fallback cloudflare gateway if infura is down or for IPFS
+  providerArray.push(
+    jsonRpcProvider({
+      rpc: (c) => ({
+        http: `https://web3.ens.domains/v1/${c.network === 'homestead' ? 'mainnet' : c.network}`,
+      }),
+    }),
+  )
+}
+
+const { provider, chains } = configureChains([chain.goerli, chain.localhost], providerArray)
 
 setupAnalytics()
 
