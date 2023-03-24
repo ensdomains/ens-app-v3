@@ -45,6 +45,21 @@ const TabWrapperWithButtons = styled(TabWrapper)(
   `,
 )
 
+const ExtendButton = styled(Button)<{ $hasSelected: boolean }>(
+  ({ $hasSelected }) => css`
+    opacity: 0;
+    pointer-events: none;
+    touch-action: none;
+    transition: opacity 0.2s ease-in-out;
+    ${$hasSelected &&
+    css`
+      opacity: 1;
+      pointer-events: auto;
+      touch-action: auto;
+    `}
+  `,
+)
+
 const MyNames = () => {
   const { t } = useTranslation('names')
   const router = useRouter()
@@ -146,15 +161,15 @@ const MyNames = () => {
               onSearchChange={setSearchQuery}
             >
               {mode === 'select' && (
-                <Button
+                <ExtendButton
+                  $hasSelected={selectedNames.length > 0}
                   size="small"
                   onClick={handleExtend}
                   data-testid="extend-names-button"
                   prefix={<FastForwardSVG />}
-                  disabled={selectedNames.length === 0}
                 >
                   {t('action.extend', { ns: 'common' })}
-                </Button>
+                </ExtendButton>
               )}
             </NameTableHeader>
             <div data-testid="names-list">
