@@ -66,6 +66,7 @@ const makeWrapperData = (overrides: DeepPartial<WrapperData> = {}) => {
       CANNOT_TRANSFER: false,
       CANNOT_SET_RESOLVER: false,
       CANNOT_SET_TTL: false,
+      CANNOT_APPROVE: false,
       CANNOT_CREATE_SUBDOMAIN: false,
       ...child,
     },

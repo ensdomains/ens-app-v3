@@ -87,6 +87,7 @@ export const ExpiryPermissions = ({
                   ? t('tabs.permissions.expiry.owner')
                   : t('tabs.permissions.expiry.manager'),
               date: expiryLabel,
+              context: expiryLabel ? 'date' : undefined,
             })}
           </Typography>
         </SectionItem>

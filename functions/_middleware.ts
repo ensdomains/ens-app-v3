@@ -1,5 +1,4 @@
 /* eslint max-classes-per-file: "off" */
-import { normalise } from '@ensdomains/ensjs/utils/normalise'
 
 class ContentModifier {
   private newContent: string
@@ -69,6 +68,7 @@ export const onRequest: PagesFunction = async ({ request, next }) => {
       let newTitle = 'Invalid Name - ENS'
       let newDescription = 'An error occurred'
       try {
+        const { normalise } = await import('@ensdomains/ensjs/utils/normalise')
         const normalisedName = normalise(decodedName)
         newTitle = `${normalisedName} on ENS`
         newDescription = `${normalisedName}'s profile on the Ethereum Name Service`
