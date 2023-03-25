@@ -21,7 +21,7 @@ describe('ActionButton', () => {
       },
     },
     totalRequiredBalance: 1,
-  }
+  } as any
 
   it('should have disabled "Next" button if no choice has been made', () => {
     render(<ActionButton {...baseMockData} />)

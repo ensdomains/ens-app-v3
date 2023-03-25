@@ -143,18 +143,21 @@ export const TransactionSection = () => {
   const transactions = useRecentTransactions()
   const clearTransactions = useClearRecentTransactions()
   const [viewAmt, setViewAmt] = useState(5)
-  const visibleTransactions = transactions.slice(0, viewAmt)
+
+  const nonRepricedTransactions = transactions.filter((tx) => tx.status !== 'repriced')
+
+  const visibleTransactions = nonRepricedTransactions.slice(0, viewAmt)
 
   const canClear = useMemo(() => {
-    return transactions.length > 0
-  }, [transactions.length])
+    return nonRepricedTransactions.length > 0
+  }, [nonRepricedTransactions.length])
 
   const { getResumable, resumeTransactionFlow } = useTransactionFlow()
 
   const ref = useRef<HTMLDivElement>(null)
   const [height, setHeight] = useState<string>('auto')
 
-  const hasViewMore = transactions.length > viewAmt
+  const hasViewMore = nonRepricedTransactions.length > viewAmt
 
   const [width, _setWidth] = useState(0)
   const setWidth = useThrottledCallback(_setWidth, 300)
@@ -173,7 +176,7 @@ export const TransactionSection = () => {
   useEffect(() => {
     const _height = ref.current?.getBoundingClientRect().height || 0
     setHeight(_height ? `${_height}px` : 'auto')
-  }, [transactions.length, hasViewMore, width])
+  }, [nonRepricedTransactions.length, hasViewMore, width])
 
   return (
     <SectionContainer
@@ -197,7 +200,7 @@ export const TransactionSection = () => {
     >
       <TransactionSectionContainer $height={height} data-testid="transaction-section-container">
         <TransactionSectionInner ref={ref}>
-          {transactions.length > 0 ? (
+          {nonRepricedTransactions.length > 0 ? (
             <>
               {visibleTransactions.map(({ hash, status, action, key }, i) => {
                 const resumable = key && getResumable(key)

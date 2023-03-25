@@ -10,7 +10,6 @@ import CalendarSVG from '@app/assets/Calendar.svg'
 import FastForwardSVG from '@app/assets/FastForward.svg'
 import OutlinkSVG from '@app/assets/Outlink.svg'
 import { cacheableComponentStyles } from '@app/components/@atoms/CacheableComponent'
-import MobileFullWidth from '@app/components/@atoms/MobileFullWidth'
 import { useChainName } from '@app/hooks/useChainName'
 import useRegistrationDate from '@app/hooks/useRegistrationData'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
@@ -61,17 +60,14 @@ const MiscellaneousContainer = styled(TabWrapper)(
 const DatesContainer = styled.div(
   ({ theme }) => css`
     display: flex;
-    flex-direction: column;
+    position: relative;
+    flex-wrap: wrap;
     align-items: stretch;
-    justify-content: center;
+    justify-content: space-between;
     gap: ${theme.space['4']};
-
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
-      flex-direction: row;
-      align-items: flex-end;
-      justify-content: space-between;
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
@@ -130,6 +126,20 @@ const FastForwardIcon = styled.svg(
     color: ${theme.colors.background};
     width: ${theme.space['4']};
     height: ${theme.space['4']};
+  `,
+)
+
+const ButtonContainer = styled.div(
+  ({ theme }) => css`
+    display: flex;
+    align-items: center;
+    width: 100%;
+    min-width: 100%;
+    ${mq.sm.min(css`
+      width: fit-content;
+      min-width: ${theme.space['40']};
+      max-width: max-content;
+    `)}
   `,
 )
 
@@ -202,7 +212,7 @@ const Miscellaneous = ({
           </Dropdown>
         </DateLayout>
         {canExtend && (
-          <MobileFullWidth>
+          <ButtonContainer>
             <Button
               onClick={() => {
                 showDataInput(`extend-names-${name}`, 'ExtendNames', {
@@ -214,7 +224,7 @@ const Miscellaneous = ({
             >
               {t('action.extend')}
             </Button>
-          </MobileFullWidth>
+          </ButtonContainer>
         )}
       </DatesContainer>
     </MiscellaneousContainer>

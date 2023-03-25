@@ -114,7 +114,7 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
       <Button
         data-testid={calculateTestId(isTabBar, inHeader)}
         onClick={() => openConnectModal?.()}
-        size={breakpoints.md || large ? 'medium' : 'small'}
+        size={breakpoints.sm || large ? 'medium' : 'small'}
         width={inHeader ? '45' : undefined}
         shape="rounded"
       >

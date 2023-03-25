@@ -22,7 +22,9 @@ export const fetchEstimateWithConfig =
       ens,
       transaction.data,
     )
+
     const gasLimit = await signer!.estimateGas(populatedTransaction)
+
     return {
       name: transactionName,
       gasLimit,
@@ -63,6 +65,7 @@ export const useEstimateGasLimitForTransactions = (
     },
     {
       enabled: ensReady && !isSignerLoading && isEnabled,
+      onError: console.error,
     },
   )
 

@@ -5,10 +5,9 @@ import styled, { css } from 'styled-components'
 
 import type { ChildFuses } from '@ensdomains/ensjs'
 import { childFuseKeys } from '@ensdomains/ensjs/utils/fuses'
-import { Button, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
+import { Button, FlameSVG, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import mq from '@app/mediaQuery'
 import { AllChildFuses } from '@app/types'
 
 export const childFuseObj = Object.fromEntries(
@@ -20,7 +19,7 @@ const FusesContainer = styled.div(({ theme }) => [
     width: 100%;
     padding: ${theme.space['1.25']} ${theme.space['4']};
   `,
-  mq.md.min(css`
+  mq.sm.min(css`
     min-width: ${theme.space['112']};
   `),
 ])

@@ -13,7 +13,7 @@ describe('Set Primary Name', () => {
     cy.findByTestId('header-profile').as('header-profile')
     cy.get('@header-profile').click()
     // length 4 = 3 buttons + 1 divider
-    cy.get('@header-profile').next().children().should('have.length', 4)
+    cy.findByTestId('dropdown-menu').children().should('have.length', 4)
   })
 
   describe('profile', () => {

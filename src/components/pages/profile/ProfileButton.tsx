@@ -35,7 +35,7 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
           name={socialData.icon as keyof typeof socialIconTypes}
         />
       }
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
       inline
       data-testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
@@ -61,7 +61,7 @@ export const AddressProfileButton = ({
       data-testid={`address-profile-button-${iconKey}`}
       icon={<StyledAddressIcon name={iconKey} />}
       value={value}
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
       inline
     >
       {shortenAddress(
@@ -125,7 +125,7 @@ export const OtherProfileButton = ({
       link={isLink ? value : undefined}
       value={value}
       inline
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
       keyLabel={
         type === 'address' ? (
           <OtherContainer>
@@ -223,7 +223,7 @@ export const OwnerProfileButton = ({
       data-testid={`owner-profile-button-${label}`}
       data-timestamp={timestamp}
       inline
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
     />
   )
 }

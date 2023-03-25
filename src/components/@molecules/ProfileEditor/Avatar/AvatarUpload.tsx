@@ -6,11 +6,22 @@ import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useSignTypedData } from 'wagmi'
 
-import { Button, Dialog } from '@ensdomains/thorin'
+import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { useChainName } from '@app/hooks/useChainName'
 
 import { AvCancelButton, CropComponent } from './AvatarCrop'
+
+const Container = styled.div(({ theme }) => [
+  css`
+    display: flex;
+    justify-content: center;
+  `,
+  mq.sm.min(css`
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
+  `),
+])
 
 const CroppedImagePreview = styled.img(
   ({ theme }) => css`
@@ -96,7 +107,9 @@ const UploadComponent = ({
         title={t('input.profileEditor.tabs.avatar.image.upload.title')}
         subtitle={t('input.profileEditor.tabs.avatar.image.upload.subtitle')}
       />
-      <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
+      <Container>
+        <CroppedImagePreview data-testid="cropped-image-preview" src={dataURL} />
+      </Container>
       <Dialog.Footer
         leading={<AvCancelButton handleCancel={handleCancel} />}
         trailing={

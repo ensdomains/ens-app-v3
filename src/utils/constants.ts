@@ -71,9 +71,9 @@ export const GRACE_PERIOD = 90 * 24 * 60 * 60 * 1000
 
 export const MOONPAY_WORKER_URL: { [key: number]: string } = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  1: 'https://moonpay.ens-cf.workers.dev',
+  1: 'https://moonpay-worker.ens-cf.workers.dev',
   // eslint-disable-next-line @typescript-eslint/naming-convention
-  5: 'https://moonpay-goerli.ens-cf.workers.dev',
+  5: 'https://moopnay-worker-goerli.ens-cf.workers.dev',
   // eslint-disable-next-line @typescript-eslint/naming-convention
   1337: 'https://moonpay-goerli.ens-cf.workers.dev',
 }
