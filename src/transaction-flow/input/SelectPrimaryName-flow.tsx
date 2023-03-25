@@ -22,7 +22,7 @@ import {
 import { useChainId } from '@app/hooks/useChainId'
 import { useEns } from '@app/utils/EnsProvider'
 
-import { useAvailablePrimaryNamesFromAddress } from '../../hooks/useAvailablePrimaryNamesFromAddress'
+import { useAvailablePrimaryNamesForAddress } from '../../hooks/useAvailablePrimaryNamesForAddress'
 import useDebouncedCallback from '../../hooks/useDebouncedCallback'
 import { makeTransactionItem } from '../transaction'
 import { TransactionDialogPassthrough } from '../types'
@@ -88,7 +88,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
   const [search, _setSearch] = useState('')
   const setSearch = useDebouncedCallback(_setSearch, 300, [])
-  const { currentPage } = useAvailablePrimaryNamesFromAddress({
+  const { names: currentPage } = useAvailablePrimaryNamesForAddress({
     address,
     sort: {
       type: sortType,
@@ -138,7 +138,7 @@ const SelectPrimaryName = ({ data: { address, existingPrimary }, dispatch, onDis
 
   const unfilteredNames = data?.pages?.reduce((prev, curr) => [...prev, ...curr], [] as Domain[])
 
-  const names = unfilteredNames?.filter((x) => x.name !== existingPrimary)
+  const names = unfilteredNames?.filter((name) => name.name !== existingPrimary)
 
   const hasNextPage = data?.pages[data.pages.length - 1].length === querySize
 

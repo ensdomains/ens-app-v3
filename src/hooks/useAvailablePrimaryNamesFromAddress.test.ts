@@ -1,6 +1,6 @@
 import { renderHook } from '@app/test-utils'
 
-import { useAvailablePrimaryNamesFromAddress } from './useAvailablePrimaryNamesFromAddress'
+import { useAvailablePrimaryNamesForAddress } from './useAvailablePrimaryNamesForAddress'
 
 jest.mock('@app/utils/EnsProvider')
 
@@ -185,15 +185,13 @@ const MOCK_DATA: any[] = [
     isWrappedOwner: false,
   },
   /** * Subnames ** */
-  {
-    
-  }
+  {},
 ]
 
 describe('useAvailablePrimaryNamesFromAddress', () => {
   it('should only return ', async () => {
     const { result, waitForNextUpdate } = renderHook(() =>
-      useAvailablePrimaryNamesFromAddress({
+      useAvailablePrimaryNamesForAddress({
         address: '0x123',
         sort: { type: 'labelName', orderDirection: 'asc' },
         page: 1,
