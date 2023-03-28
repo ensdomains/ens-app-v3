@@ -54,7 +54,7 @@
     "@ensdomains/dnssecoraclejs": "^0.2.7",
     "@ensdomains/ens-contracts": "0.0.16",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "3.0.0-alpha.52",
+    "@ensdomains/ensjs": "workspace:*",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "0.6.35",
     "@ethersproject/abi": "^5.6.4",
@@ -145,6 +145,7 @@
     "@types/testing-library__jest-dom": "^5.14.5",
     "@typescript-eslint/eslint-plugin": "^5.35.1",
     "@typescript-eslint/parser": "^5.35.1",
+    "@wagmi/core-cjs": "npm:@wagmi/core@0.10.1-cjs",
     "babel-jest": "^27.5.1",
     "babel-loader": "^8.2.5",
     "canvas": "^2.9.3",
@@ -194,11 +195,10 @@
     "ts-node": "^10.9.1",
     "typescript": "^4.9.4",
     "typescript-styled-plugin": "^0.18.2",
+    "wagmi-cjs": "npm:wagmi@0.12.1-cjs",
     "wait-on": "^6.0.1",
     "wrangler": "0.0.0-ff35b9d1",
-    "yalc": "^1.0.0-pre.53",
-    "wagmi-cjs": "npm:wagmi@0.12.1-cjs",
-    "@wagmi/core-cjs": "npm:@wagmi/core@0.10.1-cjs"
+    "yalc": "^1.0.0-pre.53"
   },
   "pnpm": {
     "overrides": {
