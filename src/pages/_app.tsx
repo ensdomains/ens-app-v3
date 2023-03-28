@@ -122,7 +122,7 @@ const { provider, chains } = configureChains(
   [mainnet],
   [
     jsonRpcProvider({
-      rpc: () => ({ http: 'https://rpc.tenderly.co/fork/c5254582-619f-4e1a-9a06-d01c3656c086' }),
+      rpc: () => ({ http: 'https://rpc.tenderly.co/fork/f103150f-1041-4b65-84cf-61aaaaac21f1' }),
     }),
   ],
 )
