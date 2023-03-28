@@ -251,6 +251,16 @@
     "syncManager": {
       "description": "Syncing the manager will make you the new manager of this name. The current manager <b>({{manager}})</b> will no longer be able to make changes.",
       "wrappedWarning": "Syncing the manager will also unwrap this name. This will burn the NFT and reset any permissions."
+    },
+    "selectPrimaryName": {
+      "updateEthAddress": {
+        "title": "Update ETH address",
+        "description": "The ETH address for this name doesn't match this wallet. To use this as your primary name you will need to update the ETH address first."
+      },
+      "noResolver": {
+        "title": "No resolver set",
+        "description": "To use this as your primary name you will need to set a resolver and update the ETH address first."
+      }      
     }
   },
   "errors": {

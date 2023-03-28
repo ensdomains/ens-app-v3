@@ -25,6 +25,7 @@ var import_format = require("../utils/format");
 var import_fuses = require("../utils/fuses");
 var import_labels = require("../utils/labels");
 const mapDomain = ({ name, ...domain }) => {
+  var _a;
   const decrypted = name ? (0, import_labels.decryptName)(name) : void 0;
   return {
     ...domain,
@@ -38,6 +39,7 @@ const mapDomain = ({ name, ...domain }) => {
         )
       }
     } : {},
+    resolver: ((_a = domain.resolver) == null ? void 0 : _a.id) ? domain.resolver.id : void 0,
     name: decrypted,
     truncatedName: decrypted ? (0, import_format.truncateFormat)(decrypted) : void 0,
     createdAt: new Date(parseInt(domain.createdAt) * 1e3),
@@ -49,7 +51,7 @@ const mapWrappedDomain = (wrappedDomain) => {
   if (expiryDate && expiryDate < new Date() && (0, import_fuses.checkPCCBurned)(wrappedDomain.fuses)) {
     return null;
   }
-  const domain = mapDomain(wrappedDomain.domain);
+  const domain = wrappedDomain.domain ? mapDomain(wrappedDomain.domain) : {};
   return {
     expiryDate,
     fuses: (0, import_fuses.decodeFuses)(wrappedDomain.fuses),
@@ -59,13 +61,22 @@ const mapWrappedDomain = (wrappedDomain) => {
 };
 const mapRegistration = (registration) => {
   const decrypted = (0, import_labels.decryptName)(registration.domain.name);
+  const domain = mapDomain(registration.domain);
   return {
     expiryDate: new Date(parseInt(registration.expiryDate) * 1e3),
     registrationDate: new Date(parseInt(registration.registrationDate) * 1e3),
-    ...registration.domain,
+    ...domain,
     name: decrypted,
     truncatedName: (0, import_format.truncateFormat)(decrypted),
     type: "registration"
+  };
+};
+const mapResolvedAddress = ({ wrappedDomain, ...domain }) => {
+  const mappedDomain = mapDomain(domain);
+  const mappedWrappedDomain = wrappedDomain ? mapWrappedDomain(wrappedDomain) : {};
+  return {
+    ...mappedDomain,
+    ...mappedWrappedDomain
   };
 };
 const getNames = async ({ gqlInstance }, {
@@ -84,6 +95,9 @@ const getNames = async ({ gqlInstance }, {
     labelhash
     name
     isMigrated
+    resolver {
+      id
+    }
     parent {
         name
     }
@@ -149,6 +163,10 @@ const getNames = async ({ gqlInstance }, {
         registration {
           registrationDate
           expiryDate
+        }
+        wrappedDomain {
+          expiryDate
+          fuses
         }
       }
     }`;
@@ -356,7 +374,7 @@ const getNames = async ({ gqlInstance }, {
     });
   }
   if (type === "resolvedAddress") {
-    return (response == null ? void 0 : response.domains.map(mapDomain)) || [];
+    return (response == null ? void 0 : response.domains.map(mapResolvedAddress)) || [];
   }
   if (type === "owner") {
     return (account == null ? void 0 : account.domains.map(mapDomain)) || [];

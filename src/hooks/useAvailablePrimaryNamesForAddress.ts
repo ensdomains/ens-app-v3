@@ -40,13 +40,41 @@ export const useAvailablePrimaryNamesForAddress = ({
   const { names: resolvedAddressNames = [], isLoading: isResolvedAddressNamesLoading } =
     useNamesFromResolvedAddress(address!)
 
-  const filterFunc = useMemo(() => {
+  const baseFilterFunc = useMemo(() => {
+    const isMigratedName = (n: Name) => n.isMigrated
     const isResolvedOrManagedName = (n: Name) =>
       n.isResolvedAddress || n.isController || n.isWrappedOwner
-    const isSearchedName = (n: Name) => !search || n.name.toLocaleLowerCase().indexOf(search) !== -1
     const isNotPrimaryName = (n: Name) => !primaryName || n.name !== primaryName
-    return (n: Name) => isResolvedOrManagedName(n) && isSearchedName(n) && isNotPrimaryName(n)
-  }, [search, primaryName])
+    return (n: Name) => isMigratedName(n) && isResolvedOrManagedName(n) && isNotPrimaryName(n)
+  }, [primaryName])
+
+  const resolvedOrManagedNames = useMemo(() => {
+    if (isOwnedOrManagedNamesLoading || isResolvedAddressNamesLoading) return []
+    const mergedNamesMap = [
+      ...resolvedAddressNames.map((name) => ({
+        ...name,
+        isResolvedAddress: true,
+      })),
+      ...(ownedOrManagedNames || []),
+    ].reduce<{ [key: string]: Name }>((acc, curr) => {
+      const { name } = curr
+      if (acc[name]) acc[name] = { ...acc[name], ...curr }
+      else acc[name] = curr
+      return acc
+    }, {})
+    return Object.values(mergedNamesMap).filter(baseFilterFunc)
+  }, [
+    ownedOrManagedNames,
+    resolvedAddressNames,
+    baseFilterFunc,
+    isOwnedOrManagedNamesLoading,
+    isResolvedAddressNamesLoading,
+  ])
+
+  const filterFunc = useMemo(() => {
+    const isSearchedName = (n: Name) => !search || n.name.toLocaleLowerCase().indexOf(search) !== -1
+    return (n: Name) => isSearchedName(n)
+  }, [search])
 
   const sortFunc = useMemo(() => {
     if (sort.type === 'labelName') {
@@ -76,28 +104,20 @@ export const useAvailablePrimaryNamesForAddress = ({
     return (a: Name, b: Name) => (b.expiryDate?.getTime() || 0) - (a.expiryDate?.getTime() || 0)
   }, [sort.orderDirection, sort.type])
 
-  const resolvedOrManagedNames = useMemo(() => {
-    const mergedNamesMap = [
-      ...resolvedAddressNames.map((name) => ({ ...name, isResolvedAddress: true })),
-      ...(ownedOrManagedNames || []),
-    ].reduce<{ [key: string]: Name }>((acc, curr) => {
-      const { name } = curr
-      if (acc[name]) acc[name] = { ...acc[name], ...curr }
-      else acc[name] = curr
-      return acc
-    }, {})
-    return Object.values(mergedNamesMap).filter(filterFunc).sort(sortFunc)
-  }, [ownedOrManagedNames, resolvedAddressNames, filterFunc, sortFunc])
+  const sortedAndFilteredNames = useMemo(() => {
+    return resolvedOrManagedNames.filter(filterFunc).sort(sortFunc)
+  }, [resolvedOrManagedNames, filterFunc, sortFunc])
 
   const [visibleNamesCount, setVisibleNamesCount] = useState<number>(
     resultsPerPage === 'all' ? Infinity : resultsPerPage,
   )
   const visibleNames = useMemo(() => {
-    if (resultsPerPage === 'all') return resolvedOrManagedNames
-    return resolvedOrManagedNames.slice(0, visibleNamesCount)
-  }, [resolvedOrManagedNames, visibleNamesCount, resultsPerPage])
+    if (resultsPerPage === 'all') return sortedAndFilteredNames
+    return sortedAndFilteredNames.slice(0, visibleNamesCount)
+  }, [sortedAndFilteredNames, visibleNamesCount, resultsPerPage])
 
-  const hasMore = resultsPerPage === 'all' ? false : visibleNames.length < visibleNamesCount
+  const hasMore =
+    resultsPerPage === 'all' ? false : visibleNamesCount < resolvedOrManagedNames.length
 
   const loadMore = useCallback(() => {
     if (resultsPerPage !== 'all' && hasMore) setVisibleNamesCount((prev) => prev + resultsPerPage)
@@ -107,6 +127,7 @@ export const useAvailablePrimaryNamesForAddress = ({
     names: visibleNames,
     isLoading: isOwnedOrManagedNamesLoading || isResolvedAddressNamesLoading,
     hasMore,
+    count: resolvedOrManagedNames.length,
     loadMore,
   }
 }

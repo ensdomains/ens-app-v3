@@ -57,7 +57,7 @@ type AllParams = {
 
 type ResolvedAddressParams = {
   type: 'resolvedAddress'
-  orderBy?: 'labelName' | 'creationDate' | 'expiryDate'
+  orderBy?: 'labelName' | 'creationDate'
   page?: never
   pageSize?: never
 }
@@ -88,6 +88,7 @@ const mapDomain = ({ name, ...domain }: Domain) => {
           },
         }
       : {}),
+    resolver: domain.resolver?.id ? domain.resolver.id : undefined,
     name: decrypted,
     truncatedName: decrypted ? truncateFormat(decrypted) : undefined,
     createdAt: new Date(parseInt(domain.createdAt) * 1000),
@@ -113,7 +114,7 @@ const mapWrappedDomain = (wrappedDomain: WrappedDomain) => {
     return null
   }
 
-  const domain = mapDomain(wrappedDomain.domain)
+  const domain = wrappedDomain.domain ? mapDomain(wrappedDomain.domain) : {}
 
   return {
     expiryDate,
@@ -125,13 +126,25 @@ const mapWrappedDomain = (wrappedDomain: WrappedDomain) => {
 
 const mapRegistration = (registration: Registration) => {
   const decrypted = decryptName(registration.domain.name!)
+  const domain = mapDomain(registration.domain)
   return {
     expiryDate: new Date(parseInt(registration.expiryDate) * 1000),
     registrationDate: new Date(parseInt(registration.registrationDate) * 1000),
-    ...registration.domain,
+    ...domain,
     name: decrypted,
     truncatedName: truncateFormat(decrypted),
     type: 'registration',
+  }
+}
+
+const mapResolvedAddress = ({ wrappedDomain, ...domain }: Domain) => {
+  const mappedDomain = mapDomain(domain)
+  const mappedWrappedDomain = wrappedDomain
+    ? mapWrappedDomain(wrappedDomain)
+    : {}
+  return {
+    ...mappedDomain,
+    ...mappedWrappedDomain,
   }
 }
 
@@ -154,6 +167,9 @@ const getNames = async (
     labelhash
     name
     isMigrated
+    resolver {
+      id
+    }
     parent {
         name
     }
@@ -221,6 +237,10 @@ const getNames = async (
         registration {
           registrationDate
           expiryDate
+        }
+        wrappedDomain {
+          expiryDate
+          fuses
         }
       }
     }`
@@ -436,7 +456,7 @@ const getNames = async (
     }) as Name[]
   }
   if (type === 'resolvedAddress') {
-    return (response?.domains.map(mapDomain) || []) as Name[]
+    return (response?.domains.map(mapResolvedAddress) || []) as Name[]
   }
   if (type === 'owner') {
     return (account?.domains.map(mapDomain) || []) as Name[]

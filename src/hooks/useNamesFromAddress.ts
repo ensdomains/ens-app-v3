@@ -89,8 +89,6 @@ export const useNamesFromAddress = ({
     return Object.values(nameMap)
   }, [data])
 
-  console.log(mergedData)
-
   const [sortedData, setSortedData] = useState<Name[] | null>(null)
 
   const filterFunc = useMemo(() => {

@@ -1,12 +1,22 @@
+/* eslint-disable no-await-in-loop */
+import { ethers } from 'ethers'
 import { ENS } from '..'
 import setup from '../tests/setup'
 import { Name } from './getNames'
 import { names as wrappedNames } from '../../deploy/00_register_wrapped'
 
 let ensInstance: ENS
+let revert: Awaited<ReturnType<typeof setup>>['revert']
+let provider: ethers.providers.JsonRpcProvider
+let accounts: string[]
 
 beforeAll(async () => {
-  ;({ ensInstance } = await setup())
+  ;({ ensInstance, revert, provider } = await setup())
+  accounts = await provider.listAccounts()
+})
+
+afterEach(async () => {
+  await revert()
 })
 
 const testProperties = (obj: object, ...properties: string[]) =>
@@ -188,18 +198,41 @@ describe('getNames', () => {
     expect(pageOne).toHaveLength(nameCout - 1)
   })
   it('should get the names the resolve to an address', async () => {
-    const pageOne = await ensInstance.getNames({
-      address: '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC',
-      type: 'resolvedAddress',
-    })
-    pageOne.forEach(async (name: any) => {
-      const records = await ensInstance.getRecords(name.name)
-      expect(
-        (records?.records?.coinTypes?.find(({ coin }) => coin === 'ETH') as any)
-          ?.addr,
-      ).toBe('0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC')
-    })
-    console.log(pageOne.length)
+    const NAMES = ['wrapped.eth', 'test123.eth']
+    // for (const NAME of NAMES) {
+    //   const tx = await ensInstance.setRecord(NAME, {
+    //     type: 'addr',
+    //     record: { key: 'ETH', value: address },
+    //     addressOrIndex: 1,
+    //   })
+    //   expect(tx).toBeTruthy()
+    //   await tx.wait()
+    //   await waitFor(async () => {
+    //     const profile = await ensInstance.getRecords(NAME)
+    //     console.log(profile?.records?.coinTypes)
+    //     expect(profile?.records?.coinTypes?.find(({ coin }) => coin === 'ETH').addr).toBe(address)
+    //   })
+    // }
+
+    console.log(accounts)
+
+    const ADDRESSES = [accounts[0], accounts[1], accounts[2]]
+    for (const ADDRESS of ADDRESSES) {
+      const pageOne = await ensInstance.getNames({
+        address: ADDRESS,
+        type: 'resolvedAddress',
+      })
+      console.log(ADDRESS)
+      console.log(pageOne.map((name) => name.name))
+    }
+    for (const NAME of NAMES) {
+      const profile = await ensInstance.getRecords(NAME)
+      console.log(NAME, profile?.records?.coinTypes)
+      // expect(
+      //   (profile?.records?.coinTypes?.find(({ coin }) => coin === 'ETH') as any)
+      //     ?.addr,
+      // ).toBe(address)
+    }
   })
   describe('orderBy', () => {
     describe('registrations', () => {

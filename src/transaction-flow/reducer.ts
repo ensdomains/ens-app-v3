@@ -92,6 +92,10 @@ export const reducer = (draft: InternalTransactionFlow, action: TransactionFlowA
       draft.selectedKey = key
       break
     }
+    case 'setIntro': {
+      getSelectedItem().intro = action.payload
+      break
+    }
     case 'setTransactions': {
       getSelectedItem().transactions = action.payload
       break

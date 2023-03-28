@@ -206,6 +206,12 @@ const names: Name[] = [
     namedAddr: 'deployer',
   },
   {
+    label: 'without-resolver',
+    namedOwner: 'owner',
+    namedAddr: 'deployer',
+    subnames: [{ label: 'sub', namedOwner: 'owner' }],
+  },
+  {
     label: 'other-eth-record',
     namedOwner: 'owner',
     namedAddr: 'deployer',

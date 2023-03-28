@@ -16,6 +16,7 @@ var mapDomain = ({ name, ...domain }) => {
         )
       }
     } : {},
+    resolver: domain.resolver?.id ? domain.resolver.id : void 0,
     name: decrypted,
     truncatedName: decrypted ? truncateFormat(decrypted) : void 0,
     createdAt: new Date(parseInt(domain.createdAt) * 1e3),
@@ -27,7 +28,7 @@ var mapWrappedDomain = (wrappedDomain) => {
   if (expiryDate && expiryDate < new Date() && checkPCCBurned(wrappedDomain.fuses)) {
     return null;
   }
-  const domain = mapDomain(wrappedDomain.domain);
+  const domain = wrappedDomain.domain ? mapDomain(wrappedDomain.domain) : {};
   return {
     expiryDate,
     fuses: decodeFuses(wrappedDomain.fuses),
@@ -37,13 +38,22 @@ var mapWrappedDomain = (wrappedDomain) => {
 };
 var mapRegistration = (registration) => {
   const decrypted = decryptName(registration.domain.name);
+  const domain = mapDomain(registration.domain);
   return {
     expiryDate: new Date(parseInt(registration.expiryDate) * 1e3),
     registrationDate: new Date(parseInt(registration.registrationDate) * 1e3),
-    ...registration.domain,
+    ...domain,
     name: decrypted,
     truncatedName: truncateFormat(decrypted),
     type: "registration"
+  };
+};
+var mapResolvedAddress = ({ wrappedDomain, ...domain }) => {
+  const mappedDomain = mapDomain(domain);
+  const mappedWrappedDomain = wrappedDomain ? mapWrappedDomain(wrappedDomain) : {};
+  return {
+    ...mappedDomain,
+    ...mappedWrappedDomain
   };
 };
 var getNames = async ({ gqlInstance }, {
@@ -62,6 +72,9 @@ var getNames = async ({ gqlInstance }, {
     labelhash
     name
     isMigrated
+    resolver {
+      id
+    }
     parent {
         name
     }
@@ -127,6 +140,10 @@ var getNames = async ({ gqlInstance }, {
         registration {
           registrationDate
           expiryDate
+        }
+        wrappedDomain {
+          expiryDate
+          fuses
         }
       }
     }`;
@@ -334,7 +351,7 @@ var getNames = async ({ gqlInstance }, {
     });
   }
   if (type === "resolvedAddress") {
-    return response?.domains.map(mapDomain) || [];
+    return response?.domains.map(mapResolvedAddress) || [];
   }
   if (type === "owner") {
     return account?.domains.map(mapDomain) || [];

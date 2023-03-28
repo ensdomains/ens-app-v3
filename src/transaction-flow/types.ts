@@ -97,6 +97,10 @@ export type TransactionFlowAction =
       }
     }
   | {
+      name: 'setInput'
+      payload: DataInputComponent
+    }
+  | {
       name: 'setTransactions'
       payload: ReturnType<typeof makeTransactionItem>[]
     }
