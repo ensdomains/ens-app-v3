@@ -150,8 +150,11 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
   const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
 
   useEffect(() => {
-    if (currentChain && !(currentChain?.id === 5 || currentChain?.id === 1337)) {
-      switchNetwork?.(5)
+    if (
+      currentChain &&
+      !(currentChain?.id === 1 || currentChain?.id === 5 || currentChain?.id === 1337)
+    ) {
+      switchNetwork?.(1)
       router.push('/unsupportedNetwork')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
