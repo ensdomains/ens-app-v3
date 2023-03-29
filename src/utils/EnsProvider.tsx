@@ -6,6 +6,12 @@ import type { ContractName } from '@ensdomains/ensjs/contracts/types'
 
 const opts: ConstructorParameters<typeof ENS>[0] = {}
 
+console.log(
+  'process.env.NEXT_PUBLIC_PROVIDER',
+  process.env.NEXT_PUBLIC_PROVIDER,
+  process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES,
+)
+
 if (process.env.NEXT_PUBLIC_PROVIDER && process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES) {
   const deploymentAddresses = JSON.parse(process.env.NEXT_PUBLIC_DEPLOYMENT_ADDRESSES!) as Record<
     ContractName | 'ENSRegistry',

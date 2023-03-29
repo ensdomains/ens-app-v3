@@ -36,6 +36,7 @@ export const useAvailablePrimaryNamesForAddress = ({
 
   const { names: resolvedAddressNames = [], isLoading: isResolvedAddressNamesLoading } =
     useNamesFromResolvedAddress(address!)
+  console.log('resolvedAddressNames', resolvedAddressNames)
 
   const baseFilterFunc = useMemo(() => {
     const isMigratedName = (n: Name) => n.isMigrated

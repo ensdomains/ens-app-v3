@@ -144,7 +144,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     if (!selectedName || !isEnsReady || !contracts) return
     const isWrapped = !!selectedName.fuses
     console.log(selectedName)
-    const resolver = await getResolver(selectedName.name)
+    // const resolver = await getResolver(selectedName.name)
+    const resolver = '0x0000000'
     const hasResolver = !!resolver && resolver !== emptyAddress
     if (!hasResolver) {
       return dispatch({

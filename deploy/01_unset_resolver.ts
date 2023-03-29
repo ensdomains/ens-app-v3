@@ -44,29 +44,10 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
   const registry = await ethers.getContract('ENSRegistry')
 
   for (const { name, namedOwner, contract: _contract } of names) {
-    // if (_contract === 'nameWrapper') {
-    //   console.log('>>>>>')
-    //   const data = await wrapper.getData(namehash(name))
-    //   console.log('name', name)
-    //   console.log('data', data)
-    //   const _wrapper = wrapper.connect(await ethers.getSigner(namedAccounts[namedOwner]))
-    //   console.log('-------')
-    //   const tx = await _wrapper.setResolver(namehash(name), emptyAddress)
-    //   await tx.wait()
-    //   console.log('<<<<<')
-    // }
     const contract = _contract === 'nameWrapper' ? wrapper : registry
-    console.log('contract', contract.address)
-    console.log('name', name)
-    console.log('owner', namedAccounts[namedOwner])
-    const test = await registry.resolver(namehash(name))
-    console.log('test', test)
     const signedContract = contract.connect(await ethers.getSigner(namedAccounts[namedOwner]))
     const tx = await signedContract.setResolver(namehash(name), emptyAddress)
     await tx.wait()
-
-    const test2 = await registry.resolver(namehash(name))
-    console.log('test', test2)
   }
   return true
 }

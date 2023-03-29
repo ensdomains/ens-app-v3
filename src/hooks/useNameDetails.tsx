@@ -26,9 +26,9 @@ export const useNameDetails = (name: string) => {
   useEffect(() => {
     if (ready) {
       ;(async () => {
-        const registry = await contracts?.getRegistry()
-        const resolver = await registry!.resolver(namehash(name))
-        console.log('resolver', name, resolver)
+        // const registry = await contracts?.getRegistry()
+        // const resolver = await registry!.resolver(namehash(name))
+        // console.log('resolver', name, resolver)
       })()
     }
   }, [ready])
