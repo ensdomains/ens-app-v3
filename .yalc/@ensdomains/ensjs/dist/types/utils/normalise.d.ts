@@ -1,0 +1,11 @@
+import { DisallowedToken, EmojiToken, ens_beautify, ens_emoji, ens_normalize_fragment, ens_split, ens_tokenize, IgnoredToken, is_combining_mark, Label, MappedToken, NFCToken, should_escape, StopToken, TextToken, Token, ValidToken } from '@adraffy/ens-normalize';
+export declare const normalise: (name: string) => string;
+export declare const namehash: (name: string) => string;
+export declare const beautify: typeof ens_beautify;
+export declare const emoji: typeof ens_emoji;
+export declare const normalizeFragment: typeof ens_normalize_fragment;
+export declare const split: typeof ens_split;
+export declare const tokenise: typeof ens_tokenize;
+export declare const isCombiningMark: typeof is_combining_mark;
+export declare const shouldEscape: typeof should_escape;
+export type { DisallowedToken, EmojiToken, IgnoredToken, Label, MappedToken, NFCToken, StopToken, TextToken, Token, ValidToken, };

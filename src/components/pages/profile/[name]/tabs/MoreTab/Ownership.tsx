@@ -125,7 +125,7 @@ const OwnerDetailContainer = styled.div(
 
 const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   const { t } = useTranslation('common')
-  const { name: primary } = usePrimary(address)
+  const { name: primary, beautifiedName } = usePrimary(address)
   const network = useChainId()
 
   return (
@@ -141,7 +141,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
           />
           <TextContainer>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
-              {primary || shortenAddress(address)}
+              {beautifiedName || shortenAddress(address)}
             </Name>
             {primary && (
               <Typography data-testid={`owner-button-address-${label}`}>

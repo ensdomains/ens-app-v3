@@ -127,7 +127,7 @@ export const ConnectButton = ({ isTabBar, large, inHeader }: Props) => {
 const HeaderProfile = ({ address }: { address: string }) => {
   const { t } = useTranslation('common')
 
-  const { name } = usePrimary(address!, !address)
+  const { name, beautifiedName } = usePrimary(address!, !address)
   const chainId = useChainId()
   const { avatar } = useAvatar(name || undefined, chainId)
   const zorb = useZorb(address, 'address')
@@ -137,7 +137,7 @@ const HeaderProfile = ({ address }: { address: string }) => {
   return (
     <Profile
       address={address}
-      ensName={name || undefined}
+      ensName={beautifiedName || undefined}
       dropdownItems={
         [
           ...(name

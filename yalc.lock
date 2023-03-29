@@ -1,0 +1,10 @@
+{
+  "version": "v1",
+  "packages": {
+    "@ensdomains/ensjs": {
+      "signature": "2c466a6cb129a3e9705402a2b584e7c0",
+      "workspace": true,
+      "replaced": "3.0.0-alpha.52"
+    }
+  }
+}

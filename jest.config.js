@@ -25,6 +25,8 @@ const customJestConfig = {
     '^@rainbow-me/rainbowkit$': '<rootDir>/__mocks__/rainbowkitMock.js',
     '@ensdomains/ensjs/(.*)$': '@ensdomains/ensjs/dist/cjs/$1',
     '@adraffy/ens-normalize': '@adraffy/ens-normalize/dist/index.cjs',
+    '^wagmi(.*)$': 'wagmi-cjs$1',
+    '@wagmi/core(.*)$': '@wagmi/core-cjs$1',
   },
   setupFilesAfterEnv: ['<rootDir>/jest/jest.setup.ts'],
   setupFiles: ['<rootDir>/jest/setEnvVars.js', 'jest-canvas-mock'],

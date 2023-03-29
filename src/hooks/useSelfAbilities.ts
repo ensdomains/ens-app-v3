@@ -272,7 +272,7 @@ const isParentWithChildPCCBurnedCalc = (
   )
 }
 
-export const useSelfAbilities = (address: string | undefined, name?: string) => {
+export const useSelfAbilities = (address: string | undefined, name?: string | null) => {
   const parent = name?.split('.')?.slice(1)?.join('.')
   const is2LDEth = name?.split('.')?.length === 2 && name?.split('.')?.[1] === 'eth'
 

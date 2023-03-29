@@ -30,7 +30,7 @@ const fetchImg = async (url: string) =>
     img.addEventListener('error', handleError)
   })
 
-export const useAvatar = (name: string | undefined, network: number, noCache?: boolean) => {
+export const useAvatar = (name: string | null | undefined, network: number, noCache?: boolean) => {
   const { data, isLoading, status } = useQuery(
     ['getAvatar', name, network],
     () => fetchImg(imageUrlUnknownRecord(name!, network)),

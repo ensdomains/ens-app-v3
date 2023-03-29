@@ -143,8 +143,8 @@ export default () => {
   const [currentStep, setCurrentStep] = useState(0)
   const [syncWarning, setSyncWarning] = useState(false)
 
-  const { name, valid } = useValidate(router.query.name as string)
-  const { dnsOwner } = useDNSOwner(name, valid)
+  const { name, isValid } = useValidate(router.query.name as string)
+  const { dnsOwner } = useDNSOwner(name, isValid)
 
   const transactions = useRecentTransactions()
   const { isConnected } = useAccount()

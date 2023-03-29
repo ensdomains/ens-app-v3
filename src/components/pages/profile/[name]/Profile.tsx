@@ -118,7 +118,8 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     gracePeriodEndDate,
     expiryDate,
     normalisedName,
-    valid,
+    beautifiedName,
+    isValid,
     profileIsCachedData,
     basicIsCachedData,
     isWrapped,
@@ -146,17 +147,17 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     if (isSelf) {
       return [t('yourProfile'), '']
     }
-    if (normalisedName) {
+    if (beautifiedName) {
       return [
         t('meta.title', {
-          name: normalisedName,
+          name: beautifiedName,
         }),
         t('meta.description', {
-          name: normalisedName,
+          name: beautifiedName,
         }),
       ]
     }
-    if (typeof valid === 'boolean' && valid === false) {
+    if (typeof isValid === 'boolean' && isValid === false) {
       return [t('errors.invalidName'), t('errors.invalidName')]
     }
     return [
@@ -167,7 +168,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
         name,
       }),
     ]
-  }, [isSelf, normalisedName, valid, name, t])
+  }, [isSelf, beautifiedName, isValid, name, t])
 
   const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
@@ -233,9 +234,9 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
       </Head>
       <Content
         noTitle
-        title={normalisedName}
+        title={beautifiedName}
         loading={isLoading || detailsLoading}
-        copyValue={normalisedName}
+        copyValue={beautifiedName}
       >
         {{
           info: infoBanner,

@@ -38,7 +38,7 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.52
+      '@ensdomains/ensjs': workspace:*
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': 0.6.35
       '@ethersproject/abi': ^5.6.4
@@ -178,7 +178,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_v6aogrdjojfeat5uhab6hyaxg4
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.52_6zpvpzigupcdblombyllfjwbve
+      '@ensdomains/ensjs': link:.yalc/@ensdomains/ensjs
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.35_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -316,6 +316,30 @@ importers:
       wait-on: 6.0.1
       wrangler: 0.0.0-ff35b9d1
       yalc: 1.0.0-pre.53
+
+  .yalc/@ensdomains/ensjs:
+    specifiers:
+      '@adraffy/ens-normalize': 1.9.0
+      '@ensdomains/address-encoder': ^0.2.18
+      '@ensdomains/content-hash': ^2.5.7
+      '@ensdomains/dnssecoraclejs': ^0.2.8
+      cbor: ^8.1.0
+      dns-packet: ^5.3.1
+      graphql: ^16.3.0
+      graphql-request: 5.1.0
+      pako: ^2.1.0
+      traverse: ^0.6.6
+    dependencies:
+      '@adraffy/ens-normalize': 1.9.0
+      '@ensdomains/address-encoder': 0.2.21
+      '@ensdomains/content-hash': 2.5.7
+      '@ensdomains/dnssecoraclejs': 0.2.8
+      cbor: 8.1.0
+      dns-packet: 5.4.0
+      graphql: 16.6.0
+      graphql-request: 5.1.0_graphql@16.6.0
+      pako: 2.1.0
+      traverse: 0.6.7
 
 packages:
 
@@ -2907,6 +2931,17 @@ packages:
       - web3-utils
     dev: false
 
+  /@ensdomains/dnssecoraclejs/0.2.8:
+    resolution: {integrity: sha512-XW7AIFoBqzPO47qr4iGWWvNTm55GJ07Ahbbn+cvHBUpBsjnLE2MFs0gOAUWZB6kIv+2+PSDX/NK3h20nQDBWdA==}
+    dependencies:
+      '@ensdomains/dnsprovejs': 0.4.1
+      dns-packet: 5.4.0
+      ethers: 5.7.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
   /@ensdomains/ens-contracts/0.0.16_hardhat@2.11.2:
     resolution: {integrity: sha512-pssd2nrzHoFJOvzANoBVNMdb9H9tpyMPSyb9JaTFmS6HDo7RRcsyWL8FYCGkUmsnAqzz8dz3OwxiH03s8cLG2A==}
     dependencies:
@@ -3011,63 +3046,6 @@ packages:
     transitivePeerDependencies:
       - bufferutil
       - utf-8-validate
-
-  /@ensdomains/ensjs/3.0.0-alpha.52_6zpvpzigupcdblombyllfjwbve:
-    resolution: {integrity: sha512-WEEaXcR6coxuuc004hJpzxgskbSlqSHu9kreAvOEaKNf7aDMVMnX9AlGYVpOmcTN1z/M6Yr8Bp3fMZ0Y7WASvg==}
-    peerDependencies:
-      '@ethersproject/abi': ^5.6.4
-      '@ethersproject/abstract-provider': ^5.7.0
-      '@ethersproject/abstract-signer': ^5.7.0
-      '@ethersproject/address': ^5.7.0
-      '@ethersproject/bignumber': ^5.7.0
-      '@ethersproject/bytes': ^5.7.0
-      '@ethersproject/contracts': ^5.7.0
-      '@ethersproject/keccak256': ^5.7.0
-      '@ethersproject/providers': ^5.6.8
-      '@ethersproject/solidity': ^5.7.0
-      '@ethersproject/strings': ^5.7.0
-      '@ethersproject/transactions': ^5.7.0
-      '@ethersproject/web': ^5.7.1
-    dependencies:
-      '@adraffy/ens-normalize': 1.9.0
-      '@ensdomains/address-encoder': 0.2.21
-      '@ensdomains/content-hash': 2.5.7
-      '@ensdomains/dnsprovejs': 0.4.1
-      '@ensdomains/dnssecoraclejs': 0.2.7_v6aogrdjojfeat5uhab6hyaxg4
-      '@ethersproject/abi': 5.7.0
-      '@ethersproject/abstract-provider': 5.7.0
-      '@ethersproject/abstract-signer': 5.7.0
-      '@ethersproject/address': 5.7.0
-      '@ethersproject/bignumber': 5.7.0
-      '@ethersproject/bytes': 5.7.0
-      '@ethersproject/contracts': 5.7.0
-      '@ethersproject/keccak256': 5.7.0
-      '@ethersproject/providers': 5.7.2
-      '@ethersproject/solidity': 5.7.0
-      '@ethersproject/strings': 5.7.0
-      '@ethersproject/transactions': 5.7.0
-      '@ethersproject/web': 5.7.1
-      cbor: 8.1.0
-      dns-packet: 5.4.0
-      graphql: 16.6.0
-      graphql-request: 5.1.0_graphql@16.6.0
-      pako: 2.1.0
-      traverse: 0.6.7
-    transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
-      - bufferutil
-      - encoding
-      - hardhat
-      - supports-color
-      - ts-node
-      - typescript
-      - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
-    dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
     resolution: {integrity: sha512-JRDFP6+Hczb1E0/HhIg0PONgBYasfGfDheujmfxaZaAv/NAH4jE6Kf48WbqfRZdxt4IZI3jl3Ri7sZ1nP09lgw==}
@@ -3370,7 +3348,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
+      '@typechain/ethers-v5': 2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
@@ -6283,16 +6261,14 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
+  /@typechain/ethers-v5/2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
+      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.7.2
       typechain: 3.0.0_typescript@4.9.5
-    transitivePeerDependencies:
-      - bufferutil
-      - utf-8-validate
     dev: false
 
   /@types/aria-query/4.2.2:
@@ -7027,9 +7003,8 @@ packages:
         optional: true
     dependencies:
       typescript: 4.9.5
-    dev: false
 
-  /@wagmi/connectors/0.3.2-cjs_53eezjek5ph5merypceuco45nm:
+  /@wagmi/connectors/0.3.2-cjs_n7y4hinxl4md3cobuwn55m6afm:
     resolution: {integrity: sha512-bGMnaT6sFwDzuLZZ4JZgfv3mOCnFbPGjCbhr+zTc79B8O3RTCH65WzZ7SAVHcn3d1t59lpcvCrSiuWFDQwCwMQ==}
     peerDependencies:
       '@wagmi/core': '>=0.9.x'
@@ -7045,7 +7020,7 @@ packages:
       '@ledgerhq/connect-kit-loader': 1.0.2
       '@safe-global/safe-apps-provider': 0.15.2
       '@safe-global/safe-apps-sdk': 7.10.0
-      '@wagmi/core': 0.10.1-cjs_doqggw3bbf427gsxc7b534c7hy
+      '@wagmi/core': 0.10.1_doqggw3bbf427gsxc7b534c7hy
       '@walletconnect/ethereum-provider': 2.4.7_pnos3do3mvc4xuniaz22azwvzm
       '@walletconnect/legacy-provider': 2.0.0
       abitype: 0.3.0_typescript@4.9.5
@@ -7105,7 +7080,6 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: false
 
   /@wagmi/core/0.10.1-cjs_doqggw3bbf427gsxc7b534c7hy:
     resolution: {integrity: sha512-1RcgCC2Z88QB1g8fW3u1Lh8cby2gl8oDhl00kJdhi5s46InqoJe5lhv6329NZI4uH+eFevdFTW/Pug4AYArTJg==}
@@ -7117,7 +7091,7 @@ packages:
         optional: true
     dependencies:
       '@wagmi/chains': 0.2.11-cjs_typescript@4.9.5
-      '@wagmi/connectors': 0.3.2-cjs_53eezjek5ph5merypceuco45nm
+      '@wagmi/connectors': 0.3.2-cjs_n7y4hinxl4md3cobuwn55m6afm
       abitype: 0.3.0_typescript@4.9.5
       ethers: 5.7.2
       eventemitter3: 4.0.7
@@ -7171,7 +7145,6 @@ packages:
       - supports-color
       - utf-8-validate
       - zod
-    dev: false
 
   /@walletconnect/browser-utils/1.8.0:
     resolution: {integrity: sha512-Wcqqx+wjxIo9fv6eBUFHPsW1y/bGWWRboni5dfD8PtOmrihrEpOCmvRJe4rfl7xgJW8Ea9UqKEaq0bIRLHlK4A==}
@@ -12622,6 +12595,8 @@ packages:
       eth-query: 2.1.2
       json-rpc-engine: 6.1.0
       pify: 5.0.0
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-json-rpc-filters/5.1.0:
@@ -12651,7 +12626,9 @@ packages:
       eth-json-rpc-middleware: 6.0.0
       eth-rpc-errors: 3.0.0
       json-rpc-engine: 5.4.0
-      node-fetch: 2.6.1
+      node-fetch: 2.6.7
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-json-rpc-middleware/1.6.0:
@@ -12687,9 +12664,11 @@ packages:
       ethereumjs-vm: 2.6.0
       json-rpc-engine: 5.4.0
       json-stable-stringify: 1.0.1
-      node-fetch: 2.6.1
+      node-fetch: 2.6.7
       pify: 3.0.0
       safe-event-emitter: 1.0.1
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-json-rpc-middleware/6.0.0:
@@ -12703,9 +12682,11 @@ packages:
       ethereumjs-util: 5.2.1
       json-rpc-engine: 5.4.0
       json-stable-stringify: 1.0.1
-      node-fetch: 2.6.1
+      node-fetch: 2.6.7
       pify: 3.0.0
       safe-event-emitter: 1.0.1
+    transitivePeerDependencies:
+      - encoding
     dev: true
 
   /eth-lib/0.1.29:
@@ -16047,13 +16028,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
+      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
-      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9

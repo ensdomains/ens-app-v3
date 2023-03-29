@@ -52,7 +52,10 @@ describe('useBasicName', () => {
   })
   it('should query for the expiry if the name is a 2LD .eth', async () => {
     mockUseValidate.mockReturnValue({
-      valid: true,
+      isValid: true,
+      is2LD: true,
+      isETH: true,
+      isShort: false,
       name: 'test.eth',
       labelCount: 2,
     })
@@ -63,7 +66,10 @@ describe('useBasicName', () => {
   })
   it('should not query for the expiry if not a 2LD .eth', () => {
     mockUseValidate.mockReturnValue({
-      valid: true,
+      isValid: true,
+      is2LD: true,
+      isETH: false,
+      isShort: false,
       name: 'test.com',
       labelCount: 2,
     })
