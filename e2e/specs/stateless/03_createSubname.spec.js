@@ -21,12 +21,19 @@ describe('Create Subname', () => {
     cy.findByTestId('subnames-tab').click()
     cy.findByTestId('add-subname-action').click()
   })
+  //----
   it('should not allow creating a subname with invalid characters', () => {
+    cy.visit('/test123.eth')
+    cy.findByTestId('subnames-tab').click()
+    cy.findByTestId('add-subname-action').click()
     cy.findByTestId('add-subname-input').type('test ')
     cy.findByTestId('create-subname-next').should('be.disabled')
     cy.findByText('Contains invalid characters').should('be.visible')
   })
   it('should allow creating a subname', () => {
+    cy.visit('/test123.eth')
+    cy.findByTestId('subnames-tab').click()
+    cy.findByTestId('add-subname-action').click()
     cy.findByTestId('add-subname-input').clear().type('test')
     cy.findByTestId('create-subname-next').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
