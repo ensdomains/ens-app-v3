@@ -1,8 +1,6 @@
 import { ReactNode, useEffect, useMemo } from 'react'
 import { useTranslation } from 'react-i18next'
 
-import { namehash } from '@ensdomains/ensjs/utils/normalise'
-
 import { useEns } from '@app/utils/EnsProvider'
 import { formatFullExpiry } from '@app/utils/utils'
 
@@ -21,17 +19,7 @@ export type DetailedProfile = Omit<Profile, 'records'> & {
 
 export const useNameDetails = (name: string) => {
   const { t } = useTranslation('profile')
-  const { ready, contracts } = useEns()
-
-  useEffect(() => {
-    if (ready) {
-      ;(async () => {
-        // const registry = await contracts?.getRegistry()
-        // const resolver = await registry!.resolver(namehash(name))
-        // console.log('resolver', name, resolver)
-      })()
-    }
-  }, [ready])
+  const { ready } = useEns()
 
   const {
     valid,
