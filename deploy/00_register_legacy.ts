@@ -208,7 +208,8 @@ const names: Name[] = [
   {
     label: 'without-resolver',
     namedOwner: 'owner',
-    namedAddr: 'deployer',
+    namedAddr: 'owner',
+    namedController: 'deployer',
     subnames: [{ label: 'sub', namedOwner: 'owner' }],
   },
   {

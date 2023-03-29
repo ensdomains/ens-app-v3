@@ -477,6 +477,7 @@ const getProfileFromName = async (
   name: string,
   options?: InputProfileOptions,
 ): Promise<ResolvedProfile | undefined> => {
+  console.log('getProfileFromName', name, options)
   const { resolverAddress, fallback, ..._options } = options || {}
   const optsLength = Object.keys(_options).length
   let usingOptions: InputProfileOptions | undefined
@@ -491,6 +492,8 @@ const getProfileFromName = async (
     usingOptions,
     resolverAddress,
   )
+
+  console.log('graphResult', graphResult)
   let isMigrated: boolean | null = null
   let createdAt: string | null = null
   let decryptedName: string | null = null

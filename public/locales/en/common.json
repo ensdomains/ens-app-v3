@@ -144,6 +144,7 @@
       "updateResolver": "Update resolver",
       "updateProfile": "Update profile",
       "setPrimaryName": "Set primary name",
+      "resetPrimaryName": "Remove primary name",
       "updateEthAddress": "Update ETH address",
       "testSendName": "Send name",
       "burnFuses": "Burn permissions",

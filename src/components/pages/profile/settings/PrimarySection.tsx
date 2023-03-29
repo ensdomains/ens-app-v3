@@ -12,6 +12,7 @@ import {
   mq,
 } from '@ensdomains/thorin'
 
+import { useBasicName } from '@app/hooks/useBasicName'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 
@@ -133,20 +134,26 @@ export const PrimarySection = () => {
   const address = _address as string
 
   const { name, loading: primaryLoading } = usePrimary(address, !address)
-  console.log(address, name, primaryLoading)
 
-  // const { truncatedName, isLoading: basicLoading } = useBasicName(name, true)
+  const { truncatedName, isLoading: basicLoading } = useBasicName(name, true)
 
   // const { canSendOwner, canSendManager } = useSelfAbilities(address, name)
 
-  const isLoading = primaryLoading
+  const isLoading = primaryLoading || basicLoading
 
-  const changePrimary = (action: 'reset' | 'select') => () =>
+  const changePrimary = () => {
     showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', {
       address,
       existingPrimary: name,
-      action,
     })
+  }
+
+  const resetPrimary = () => {
+    showDataInput(`resetPrimary-${address}`, 'ResetPrimaryName', {
+      name,
+      address,
+    })
+  }
 
   return (
     <Skeleton loading={isLoading} as={SkeletonFiller as any}>
@@ -158,21 +165,17 @@ export const PrimarySection = () => {
                 Primary Name
               </Typography>
               <Typography fontVariant="headingTwo" ellipsis>
-                {name}
+                {truncatedName}
               </Typography>
             </PrimaryNameInfo>
             <AvatarContainer>
               <Avatar label="primary name avatar" src={name} />
             </AvatarContainer>
             <ActionsContainer>
-              <Button
-                prefix={<CrossSVG />}
-                colorStyle="redSecondary"
-                onClick={changePrimary('reset')}
-              >
+              <Button prefix={<CrossSVG />} colorStyle="redSecondary" onClick={resetPrimary}>
                 {t('action.reset', { ns: 'common' })}
               </Button>
-              <Button prefix={<PersonPlusSVG />} onClick={changePrimary('select')}>
+              <Button prefix={<PersonPlusSVG />} onClick={changePrimary}>
                 {t('action.change', { ns: 'common' })}
               </Button>
             </ActionsContainer>
@@ -180,7 +183,7 @@ export const PrimarySection = () => {
         ) : (
           <NoNameContainer>
             <NoNameTitle fontVariant="headingFour">Primary Name</NoNameTitle>
-            <NoNameButton size="small" prefix={<PersonPlusSVG />} onClick={changePrimary('select')}>
+            <NoNameButton size="small" prefix={<PersonPlusSVG />} onClick={changePrimary}>
               Choose primary name
             </NoNameButton>
             <NoNameDescription>

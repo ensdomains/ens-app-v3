@@ -229,6 +229,17 @@
     "deleteEmancipatedSubnameWarning": {
       "title": "This subname cannot be recreated",
       "message": "Deleting this subname will prevent it from being used or recreated until it has expired{{date}}. This cannot be undone because the parent control permissions have been revoked."
+    },
+    "selectPrimaryName": {
+      "title": "Select a primary name",
+      "errors": {
+        "noNamesFound": "No names found",
+        "noEligibleNames": "No eligible names"
+      }
+    },
+    "resetPrimaryName": {
+      "title": "Remove Primary Name",
+      "description": "This name will no longer appear as the name for this address. However, transactions to this name will still resolve to this address unless you remove the ETH record."
     }
   },
   "transaction": {

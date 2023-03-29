@@ -8,6 +8,7 @@ import { useClearRecentTransactions } from '@app/hooks/transactions/useClearRece
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useChainName } from '@app/hooks/useChainName'
 import useThrottledCallback from '@app/hooks/useThrottledCallback'
+import type { SettingsDialogProps } from '@app/pages/my/settings'
 import { useTransactionFlow } from '@app/transaction-flow/TransactionFlowProvider'
 import { makeEtherscanLink } from '@app/utils/utils'
 
@@ -135,7 +136,11 @@ const getTransactionExtraInfo = (action: string, key?: string) => {
   return ''
 }
 
-export const TransactionSection = () => {
+export const TransactionSection = ({
+  onShowDialog,
+}: {
+  onShowDialog?: (props: SettingsDialogProps) => void
+}) => {
   const { t: tc } = useTranslation()
   const { t } = useTranslation('settings')
 
@@ -178,6 +183,17 @@ export const TransactionSection = () => {
     setHeight(_height ? `${_height}px` : 'auto')
   }, [nonRepricedTransactions.length, hasViewMore, width])
 
+  const handleClearTransactions = () => {
+    onShowDialog?.({
+      title: t('section.transaction.clearTransactions.title'),
+      description: t('section.transaction.clearTransactions.description'),
+      actionLabel: t('section.transaction.clearTransactions.actionLabel'),
+      callBack: () => {
+        clearTransactions()
+        setViewAmt(5)
+      },
+    })
+  }
   return (
     <SectionContainer
       data-testid="transaction-section"
@@ -186,10 +202,7 @@ export const TransactionSection = () => {
         <Button
           size="small"
           colorStyle="accentSecondary"
-          onClick={() => {
-            clearTransactions()
-            setViewAmt(5)
-          }}
+          onClick={handleClearTransactions}
           disabled={!canClear}
           data-testid="transaction-clear-button"
         >

@@ -22,6 +22,8 @@ export type Name = {
     expiryDate: Date
     registrationDate: Date
   }
+  owner?: string
+  manager?: string
   type: 'domain' | 'registration' | 'wrappedDomain'
 }
 
@@ -88,7 +90,6 @@ const mapDomain = ({ name, ...domain }: Domain) => {
           },
         }
       : {}),
-    resolver: domain.resolver?.id ? domain.resolver.id : undefined,
     name: decrypted,
     truncatedName: decrypted ? truncateFormat(decrypted) : undefined,
     createdAt: new Date(parseInt(domain.createdAt) * 1000),
@@ -137,14 +138,34 @@ const mapRegistration = (registration: Registration) => {
   }
 }
 
-const mapResolvedAddress = ({ wrappedDomain, ...domain }: Domain) => {
+const mapResolvedAddress = ({
+  wrappedDomain,
+  registration,
+  ...domain
+}: Domain) => {
   const mappedDomain = mapDomain(domain)
-  const mappedWrappedDomain = wrappedDomain
-    ? mapWrappedDomain(wrappedDomain)
-    : {}
+  if (wrappedDomain) {
+    const mappedWrappedDomain = mapWrappedDomain(wrappedDomain)
+    // If wrapped domain is expired then filter it out.
+    if (!mappedWrappedDomain) return null
+    return {
+      ...mappedDomain,
+      ...mappedWrappedDomain,
+      owner: wrappedDomain.owner.id,
+    }
+  }
   return {
     ...mappedDomain,
-    ...mappedWrappedDomain,
+    ...(registration
+      ? {
+          expiryDate: new Date(parseInt(registration.expiryDate) * 1000),
+          registrationDate: new Date(
+            parseInt(registration.registrationDate) * 1000,
+          ),
+          owner: registration.registrant.id,
+        }
+      : {}),
+    manager: domain.owner.id,
   }
 }
 
@@ -167,9 +188,6 @@ const getNames = async (
     labelhash
     name
     isMigrated
-    resolver {
-      id
-    }
     parent {
         name
     }
@@ -225,29 +243,36 @@ const getNames = async (
     finalQuery = gqlInstance.gql`
     query getNames(
       $id: String!
-      $lastID: ID
     ) {
       domains(
         first: 1000
         where: { 
-          id_gt: $lastID, resolvedAddress: $id 
+           resolvedAddress: $id 
         }
       ) {
         ${domainQueryData}
+        owner {
+          id
+        }
         registration {
           registrationDate
           expiryDate
+          registrant {
+            id
+          }
         }
         wrappedDomain {
           expiryDate
           fuses
+          owner {
+            id
+          }
         }
       }
     }`
 
     queryVars = {
       id: address,
-      lastID: '',
     }
   } else if (type === 'owner') {
     if (typeof page !== 'number') {
@@ -456,7 +481,8 @@ const getNames = async (
     }) as Name[]
   }
   if (type === 'resolvedAddress') {
-    return (response?.domains.map(mapResolvedAddress) || []) as Name[]
+    return (response?.domains.map(mapResolvedAddress).filter((d: any) => d) ||
+      []) as Name[]
   }
   if (type === 'owner') {
     return (account?.domains.map(mapDomain) || []) as Name[]

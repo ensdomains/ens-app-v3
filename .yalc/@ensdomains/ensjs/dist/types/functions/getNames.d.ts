@@ -18,6 +18,8 @@ export declare type Name = {
         expiryDate: Date;
         registrationDate: Date;
     };
+    owner?: string;
+    manager?: string;
     type: 'domain' | 'registration' | 'wrappedDomain';
 };
 declare type BaseParams = {

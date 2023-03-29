@@ -32,11 +32,12 @@ const displayItems = (
   },
 ]
 
-const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
-  ens.setResolver.populateTransaction(data.name, {
+const transaction = (signer: JsonRpcSigner, ens: PublicENS, data: Data) => {
+  return ens.setResolver.populateTransaction(data.name, {
     contract: data.contract,
     resolver: data.resolver,
     signer,
   })
+}
 
 export default { displayItems, transaction } as Transaction<Data>

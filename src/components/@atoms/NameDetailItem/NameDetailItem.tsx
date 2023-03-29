@@ -8,6 +8,7 @@ import { useAvatar } from '@app/hooks/useAvatar'
 import { useZorb } from '@app/hooks/useZorb'
 import { checkETH2LDFromName } from '@app/utils/utils'
 
+import { safeDateObj } from '../../../utils/date'
 import { ShortExpiry } from '../ExpiryComponents/ExpiryComponents'
 import { OptionalLink } from '../OptionalLink/OptionalLink'
 import { StyledName } from '../StyledName/StyledName'
@@ -120,7 +121,7 @@ type Name = {
 export const NameDetailItem = ({
   name,
   truncatedName,
-  expiryDate,
+  expiryDate: _expiryDate,
   network,
   mode,
   selected = false,
@@ -143,6 +144,8 @@ export const NameDetailItem = ({
     if (disabled) return
     onClick?.()
   }
+
+  const expiryDate = safeDateObj(_expiryDate)
 
   return (
     <OptionalLink active={mode !== 'select'} href={`/profile/${name}`} passHref>

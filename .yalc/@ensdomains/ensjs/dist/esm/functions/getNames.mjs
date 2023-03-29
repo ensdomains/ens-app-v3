@@ -16,7 +16,6 @@ var mapDomain = ({ name, ...domain }) => {
         )
       }
     } : {},
-    resolver: domain.resolver?.id ? domain.resolver.id : void 0,
     name: decrypted,
     truncatedName: decrypted ? truncateFormat(decrypted) : void 0,
     createdAt: new Date(parseInt(domain.createdAt) * 1e3),
@@ -48,12 +47,32 @@ var mapRegistration = (registration) => {
     type: "registration"
   };
 };
-var mapResolvedAddress = ({ wrappedDomain, ...domain }) => {
+var mapResolvedAddress = ({
+  wrappedDomain,
+  registration,
+  ...domain
+}) => {
   const mappedDomain = mapDomain(domain);
-  const mappedWrappedDomain = wrappedDomain ? mapWrappedDomain(wrappedDomain) : {};
+  if (wrappedDomain) {
+    const mappedWrappedDomain = mapWrappedDomain(wrappedDomain);
+    if (!mappedWrappedDomain)
+      return null;
+    return {
+      ...mappedDomain,
+      ...mappedWrappedDomain,
+      owner: wrappedDomain.owner.id
+    };
+  }
   return {
     ...mappedDomain,
-    ...mappedWrappedDomain
+    ...registration ? {
+      expiryDate: new Date(parseInt(registration.expiryDate) * 1e3),
+      registrationDate: new Date(
+        parseInt(registration.registrationDate) * 1e3
+      ),
+      owner: registration.registrant.id
+    } : {},
+    manager: domain.owner.id
   };
 };
 var getNames = async ({ gqlInstance }, {
@@ -72,9 +91,6 @@ var getNames = async ({ gqlInstance }, {
     labelhash
     name
     isMigrated
-    resolver {
-      id
-    }
     parent {
         name
     }
@@ -128,28 +144,35 @@ var getNames = async ({ gqlInstance }, {
     finalQuery = gqlInstance.gql`
     query getNames(
       $id: String!
-      $lastID: ID
     ) {
       domains(
         first: 1000
         where: { 
-          id_gt: $lastID, resolvedAddress: $id 
+           resolvedAddress: $id 
         }
       ) {
         ${domainQueryData}
+        owner {
+          id
+        }
         registration {
           registrationDate
           expiryDate
+          registrant {
+            id
+          }
         }
         wrappedDomain {
           expiryDate
           fuses
+          owner {
+            id
+          }
         }
       }
     }`;
     queryVars = {
-      id: address,
-      lastID: ""
+      id: address
     };
   } else if (type === "owner") {
     if (typeof page !== "number") {
@@ -351,7 +374,7 @@ var getNames = async ({ gqlInstance }, {
     });
   }
   if (type === "resolvedAddress") {
-    return response?.domains.map(mapResolvedAddress) || [];
+    return response?.domains.map(mapResolvedAddress).filter((d) => d) || [];
   }
   if (type === "owner") {
     return account?.domains.map(mapDomain) || [];

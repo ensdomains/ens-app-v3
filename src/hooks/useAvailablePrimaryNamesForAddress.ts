@@ -17,8 +17,6 @@ export const useAvailablePrimaryNamesForAddress = ({
   sort: {
     type: 'labelName' | 'creationDate' | 'expiryDate'
     orderDirection: 'asc' | 'desc'
-    resultsPerPage: number | 'all'
-    page: number
   }
   resultsPerPage: number | 'all'
   search?: string
@@ -34,7 +32,6 @@ export const useAvailablePrimaryNamesForAddress = ({
       },
       page: 1,
       resultsPerPage: 'all',
-      search,
     })
 
   const { names: resolvedAddressNames = [], isLoading: isResolvedAddressNamesLoading } =
@@ -42,10 +39,12 @@ export const useAvailablePrimaryNamesForAddress = ({
 
   const baseFilterFunc = useMemo(() => {
     const isMigratedName = (n: Name) => n.isMigrated
+    const isNotTLD = (n: Name) => n.name.split('.').length > 1
     const isResolvedOrManagedName = (n: Name) =>
       n.isResolvedAddress || n.isController || n.isWrappedOwner
     const isNotPrimaryName = (n: Name) => !primaryName || n.name !== primaryName
-    return (n: Name) => isMigratedName(n) && isResolvedOrManagedName(n) && isNotPrimaryName(n)
+    return (n: Name) =>
+      isMigratedName(n) && isNotTLD(n) && isResolvedOrManagedName(n) && isNotPrimaryName(n)
   }, [primaryName])
 
   const resolvedOrManagedNames = useMemo(() => {

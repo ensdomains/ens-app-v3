@@ -309,6 +309,7 @@ var getProfileFromName = async ({
   resolverMulticallWrapper,
   multicallWrapper
 }, name, options) => {
+  console.log("getProfileFromName", name, options);
   const { resolverAddress, fallback, ..._options } = options || {};
   const optsLength = Object.keys(_options).length;
   let usingOptions;
@@ -324,6 +325,7 @@ var getProfileFromName = async ({
     usingOptions,
     resolverAddress
   );
+  console.log("graphResult", graphResult);
   let isMigrated = null;
   let createdAt = null;
   let decryptedName = null;

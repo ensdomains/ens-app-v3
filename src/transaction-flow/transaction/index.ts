@@ -9,6 +9,7 @@ import importDNSSECName from './importDNSSECName'
 import migrateProfile from './migrateProfile'
 import migrateProfileWithSync from './migrateProfileWithSync'
 import registerName from './registerName'
+import resetPrimaryName from './resetPrimaryName'
 import setPrimaryName from './setPrimaryName'
 import syncManager from './syncManager'
 import testSendName from './testSendName'
@@ -28,6 +29,7 @@ export const transactions = {
   testSendName,
   updateProfile,
   setPrimaryName,
+  resetPrimaryName,
   updateEthAddress,
   migrateProfileWithSync,
   burnFuses,
