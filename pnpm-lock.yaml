@@ -14,15 +14,15 @@ overrides:
   wagmi: 0.12.1
 
 patchedDependencies:
-  '@synthetixio/synpress@3.5.1':
-    hash: wflgbidmjcansy4wjbgapgnz3a
-    path: patches/@synthetixio__synpress@3.5.1.patch
   react-confetti@6.1.0:
     hash: bbuxkxhxbyez4jmqgptuoucij4
     path: patches/react-confetti@6.1.0.patch
   '@rainbow-me/rainbowkit@0.12.1':
     hash: z2ubwtguxrajavdusmmghl5kju
     path: patches/@rainbow-me__rainbowkit@0.12.1.patch
+  '@synthetixio/synpress@3.5.1':
+    hash: v5rh3432htoy7hglpuhogbyzsm
+    path: patches/@synthetixio__synpress@3.5.1.patch
 
 importers:
 
@@ -242,7 +242,7 @@ importers:
       '@nomiclabs/hardhat-ethers': /hardhat-deploy-ethers/0.3.0-beta.13_vf54o5zygcw7cr76twqof3t24a
       '@openzeppelin/contracts': 4.7.3
       '@openzeppelin/test-helpers': 0.5.16
-      '@synthetixio/synpress': 3.5.1_wflgbidmjcansy4wjbgapgnz3a_6k7jd2a6fdjetkuaal3wnzynvi
+      '@synthetixio/synpress': 3.5.1_v5rh3432htoy7hglpuhogbyzsm_6k7jd2a6fdjetkuaal3wnzynvi
       '@testing-library/cypress': 8.0.3_cypress@12.7.0
       '@testing-library/jest-dom': 5.16.5
       '@testing-library/react': 12.1.5_sfoxds7t5ydpegc3knd667wn6m
@@ -393,7 +393,7 @@ packages:
       convert-source-map: 1.8.0
       debug: 4.3.4
       gensync: 1.0.0-beta.2
-      json5: 2.2.1
+      json5: 2.2.3
       semver: 6.3.0
     transitivePeerDependencies:
       - supports-color
@@ -3393,7 +3393,7 @@ packages:
     dependencies:
       '@resolver-engine/imports': 0.3.3
       '@resolver-engine/imports-fs': 0.3.3
-      '@typechain/ethers-v5': 2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a
+      '@typechain/ethers-v5': 2.0.0_typechain@3.0.0
       '@types/mkdirp': 0.5.2
       '@types/node-fetch': 2.6.2
       ethers: 5.7.2
@@ -5902,7 +5902,7 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@synthetixio/synpress/3.5.1_wflgbidmjcansy4wjbgapgnz3a_6k7jd2a6fdjetkuaal3wnzynvi:
+  /@synthetixio/synpress/3.5.1_v5rh3432htoy7hglpuhogbyzsm_6k7jd2a6fdjetkuaal3wnzynvi:
     resolution: {integrity: sha512-nRTdTXVELCkA+7KxZzm5iKudAWzV6mqM1PliW7azFt0QYq/UVfn2CvpXLukDj8bNoitKZyg1Mxgu4R5GDB3ihQ==}
     engines: {node: '>=14'}
     hasBin: true
@@ -6340,14 +6340,16 @@ packages:
   /@tsconfig/node16/1.0.3:
     resolution: {integrity: sha512-yOlFc+7UtL/89t2ZhjPvvB/DeAr3r+Dq58IgzsFkOAvVC6NMJXmCGjbptdXdR9qsX7pKcTL+s87FtYREi2dEEQ==}
 
-  /@typechain/ethers-v5/2.0.0_qm5qgbtbzj2awa7q5l4ce4se5a:
+  /@typechain/ethers-v5/2.0.0_typechain@3.0.0:
     resolution: {integrity: sha512-0xdCkyGOzdqh4h5JSf+zoWx85IusEjDcPIwNEHP8mrWSnCae4rvrqB+/gtpdNfX7zjlFlZiMeePn2r63EI3Lrw==}
     peerDependencies:
-      ethers: ^5.0.0
       typechain: ^3.0.0
     dependencies:
       ethers: 5.7.2
       typechain: 3.0.0_typescript@4.9.5
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
     dev: false
 
   /@types/aria-query/4.2.2:
@@ -16300,13 +16302,13 @@ packages:
       '@types/connect': 3.4.35
       '@types/node': 12.20.55
       '@types/ws': 7.4.7
-      JSONStream: 1.3.5
       commander: 2.20.3
       delay: 5.0.0
       es6-promisify: 5.0.0
       eyes: 0.1.8
       isomorphic-ws: 4.0.1_ws@7.5.9
       json-stringify-safe: 5.0.1
+      JSONStream: 1.3.5
       lodash: 4.17.21
       uuid: 8.3.2
       ws: 7.5.9
@@ -17171,6 +17173,7 @@ packages:
     resolution: {integrity: sha512-1hqLFMSrGHRHxav9q9gNjJ5EXznIxGVO09xQRrwplcS8qs28pZ8s8hupZAmqDwZUmVZ2Qb2jnyPOWcDH8m8dlA==}
     engines: {node: '>=6'}
     hasBin: true
+    dev: true
 
   /json5/2.2.3:
     resolution: {integrity: sha512-XmOWe7eyHYH14cLdVPoyg+GOH3rYX++KpzrylJwSW98t3Nk+U8XOl8FWKOgwtzdb8lXGf6zYwDUzeHMWfxasyg==}

@@ -32,42 +32,10 @@ index b32c62856e518052c2b9e837ceb5c247084152f3..b0d774026d0a89dcbb425b25e8eb4dc0
      return true;
    },
    async confirmTransaction(gasConfig) {
-+    if (process.env.TRANSACTION_WAIT_TIME) await sleep(parseInt(process.env.TRANSACTION_WAIT_TIME));
++    if (process.env.TRANSACTION_WAIT_TIME) console.log('')
      let txData = {};
      const notificationPage = await playwright.switchToMetamaskNotification();
      if (gasConfig) {
-diff --git a/commands/playwright.js b/commands/playwright.js
-index 26df7862263b8c9ec37da4e7d12d7c324d102c48..0f2a509cf7b8ef5e0bc39a7ce788f407df01dd88 100644
---- a/commands/playwright.js
-+++ b/commands/playwright.js
-@@ -157,21 +157,15 @@ module.exports = {
-         force: args.force,
-       });
-     } else if (args.numberOfClicks && args.waitForEvent) {
--      await Promise.all([
--        page.waitForEvent(args.waitForEvent),
--        element.click({ clickCount: args.numberOfClicks, force: args.force }),
--      ]);
-+      element.click({ clickCount: args.numberOfClicks, force: args.force });
-+      await page.waitForEvent(args.waitForEvent);
-     } else if (args.waitForEvent) {
-       if (args.waitForEvent.includes('navi')) {
--        await Promise.all([
--          page.waitForNavigation(),
--          element.click({ force: args.force }),
--        ]);
-+        element.click({ force: args.force })
-+        await page.waitForNavigation();
-       } else {
--        await Promise.all([
--          page.waitForEvent(args.waitForEvent),
--          element.click({ force: args.force }),
--        ]);
-+        element.click({ force: args.force });
-+        await page.waitForEvent(args.waitForEvent);
-       }
-     } else {
-       await element.click({ force: args.force });
 diff --git a/synpress.js b/synpress.js
 index cf7b4ecc9eee4232fe4e94902b161ddb4f015656..a375c1074f0e19e1daea84004254c7ed0cca9df5 100755
 --- a/synpress.js
