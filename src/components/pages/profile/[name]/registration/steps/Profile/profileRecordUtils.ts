@@ -5,7 +5,6 @@ import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKey
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import { DetailedProfile } from '@app/hooks/useNameDetails'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { emptyAddress } from '@app/utils/constants'
 import { contentHashToString, getProtocolTypeAndContentId } from '@app/utils/contenthash'
 
 export const profileRecordsToRecordOptions = (
@@ -211,7 +210,7 @@ export const getProfileRecordsDiff = (
     })
     .map((r) => ({
       ...r,
-      value: r.type === 'addr' ? emptyAddress : '',
+      value: '',
     }))
   return [...updatedAndNewRecords, ...deletedRecords]
 }
