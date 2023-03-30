@@ -1,6 +1,7 @@
 import { acceptMetamaskAccess } from '../../setup'
 
 const accountOneShort = '0xf39...92266'
+const CYPRESS_WAIT = 10000
 
 describe('Send Flow', () => {
   before(() => {
@@ -28,7 +29,7 @@ describe('Send Flow', () => {
       cy.findByTestId('Make Owner', { timeout: 2000 }).should('not.exist')
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
       cy.findByText('Next').click()
-      cy.wait(1000)
+      cy.wait(CYPRESS_WAIT)
       cy.findByTestId('transaction-modal-confirm-button').click({ force: true })
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
@@ -42,7 +43,7 @@ describe('Send Flow', () => {
       cy.findByTestId('manager-checkbox').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
       cy.findByText('Next').click()
-      cy.wait(1000)
+      cy.wait(CYPRESS_WAIT)
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
@@ -56,7 +57,7 @@ describe('Send Flow', () => {
       cy.findByTestId('owner-checkbox').click()
       cy.findByTestId('dogfood').type('0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266')
       cy.findByText('Next').click()
-      cy.wait(1000)
+      cy.wait(CYPRESS_WAIT)
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
@@ -70,7 +71,7 @@ describe('Send Flow', () => {
       cy.findByText('Send').click()
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
       cy.findByText('Next').click()
-      cy.wait(1000)
+      cy.wait(CYPRESS_WAIT)
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByText('Next').click()
@@ -79,12 +80,12 @@ describe('Send Flow', () => {
       //Should work after going back after first transaction
       cy.findByTestId('dogfood').type('0x70997970C51812dc3A010C7d01b50e0d17dc79C8')
       cy.findByText('Next').click()
-      cy.wait(1000)
+      cy.wait(CYPRESS_WAIT)
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByText('Next').click()
 
-      cy.wait(1000)
+      cy.wait(CYPRESS_WAIT)
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
