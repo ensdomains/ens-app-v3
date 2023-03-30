@@ -6,7 +6,7 @@ describe('Set Primary Name', () => {
   })
   it('should show no primary message if no primary is set in settings', () => {
     cy.visit('/my/settings')
-    cy.findByTestId('primary-section-text').should('contain.text', 'No primary name set.')
+    cy.findByTestId('no-primary-name').should('be.visible')
   })
 
   it('should not show profile button in header dropdown', () => {
@@ -14,6 +14,46 @@ describe('Set Primary Name', () => {
     cy.get('@header-profile').click()
     // length 4 = 3 buttons + 1 divider
     cy.findByTestId('dropdown-menu').children().should('have.length', 4)
+  })
+
+  describe('settings', () => {
+    acceptMetamaskAccess(1)
+    it('should show no primary name set', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('no-primary-name').should('be.visible')
+    })
+
+    it('should allow setting unmanaged name that has eth record set to address', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('set-primary-button').click()
+      const searchInput = cy.
+    })
+    it('should show modal', () => {
+      cy.findByTestId('primary-section-button').click()
+      cy.findByText('Select a primary name').should('exist')
+    })
+    it('should not show current primary name in list', () => {
+      cy.findByTestId('radiogroup').then((el) => {
+        cy.wrap(el).findByText('test123.eth').should('not.exist')
+      })
+    })
+    it('should allow setting primary name', () => {
+      cy.findByTestId('radiogroup').then((el) => {
+        cy.wrap(el).findByText('other-controller.eth').click()
+      })
+      cy.findByTestId('primary-next').click()
+      cy.findByTestId('display-item-action-normal').should('contain.text', 'Set primary name')
+      cy.findByTestId('display-item-name-normal').should('contain.text', 'other-controller.eth')
+      cy.findByTestId('display-item-address-normal').should('contain.text', '0x709...c79C8')
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+    })
+    it('should show changes', () => {
+      const wrapper = cy.findByTestId('primary-wrapper')
+      wrapper.should('exist')
+      wrapper.should('include.text', 'other-controller.eth')
+    })
   })
 
   describe('profile', () => {
@@ -115,34 +155,6 @@ describe('Set Primary Name', () => {
         wrapper.should('exist')
         wrapper.should('include.text', 'test123.eth')
       })
-    })
-  })
-  describe('settings', () => {
-    it('should show modal', () => {
-      cy.findByTestId('primary-section-button').click()
-      cy.findByText('Select a primary name').should('exist')
-    })
-    it('should not show current primary name in list', () => {
-      cy.findByTestId('radiogroup').then((el) => {
-        cy.wrap(el).findByText('test123.eth').should('not.exist')
-      })
-    })
-    it('should allow setting primary name', () => {
-      cy.findByTestId('radiogroup').then((el) => {
-        cy.wrap(el).findByText('other-controller.eth').click()
-      })
-      cy.findByTestId('primary-next').click()
-      cy.findByTestId('display-item-action-normal').should('contain.text', 'Set primary name')
-      cy.findByTestId('display-item-name-normal').should('contain.text', 'other-controller.eth')
-      cy.findByTestId('display-item-address-normal').should('contain.text', '0x709...c79C8')
-      cy.findByTestId('transaction-modal-confirm-button').click()
-      cy.confirmMetamaskTransaction()
-      cy.findByTestId('transaction-modal-complete-button').click()
-    })
-    it('should show changes', () => {
-      const wrapper = cy.findByTestId('primary-wrapper')
-      wrapper.should('exist')
-      wrapper.should('include.text', 'other-controller.eth')
     })
   })
 })

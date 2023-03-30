@@ -32,6 +32,12 @@ const OtherWrapper = styled.div(
   `,
 )
 
+const StyledInnerDialog = styled(InnerDialog)(
+  () => css`
+    text-align: center;
+  `,
+)
+
 export default function Page() {
   const { t } = useTranslation('settings')
   const { address, isConnecting, isReconnecting } = useAccount()
@@ -58,7 +64,7 @@ export default function Page() {
               onClose={() => setDialogProps(null)}
             >
               <Dialog.Heading alert="warning" title={dialogProps?.title} />
-              <InnerDialog>{dialogProps?.description}</InnerDialog>
+              <StyledInnerDialog>{dialogProps?.description}</StyledInnerDialog>
               <Dialog.Footer
                 leading={
                   <Button

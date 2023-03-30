@@ -143,9 +143,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const handleSubmit = async () => {
     if (!selectedName || !isEnsReady || !contracts) return
     const isWrapped = !!selectedName.fuses
-    console.log(selectedName)
-    // const resolver = await getResolver(selectedName.name)
-    const resolver = '0x0000000'
+    const resolver = await getResolver(selectedName.name)
     const hasResolver = !!resolver && resolver !== emptyAddress
     if (!hasResolver) {
       return dispatch({
@@ -233,6 +231,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
           <>
             <NameTableHeaderWrapper>
               <NameTableHeader
+                data-testid="primary-names-modal-header"
                 mode="view"
                 selectable={false}
                 sortType={sortType}

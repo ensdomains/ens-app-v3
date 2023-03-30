@@ -1,0 +1,36 @@
+// src/functions/renewNames.ts
+import { MAX_INT_64 } from "../utils/consts.mjs";
+import { labelhash } from "../utils/labels.mjs";
+import { namehash } from "../utils/normalise.mjs";
+async function extendWrappedName({ contracts }, name, options) {
+  const expiry = options?.duration || MAX_INT_64;
+  const labels = name.split(".");
+  const labelHash = labelhash(labels.shift());
+  const parentNode = namehash(labels.join("."));
+  const nameWrapper = await contracts.getNameWrapper();
+  return nameWrapper.populateTransaction.extendExpiry(
+    parentNode,
+    labelHash,
+    expiry
+  );
+}
+async function renewNames_default({ contracts }, nameOrNames, { duration, value }) {
+  const names = Array.isArray(nameOrNames) ? nameOrNames : [nameOrNames];
+  const labels = names.map((name) => {
+    const label = name.split(".");
+    if (label.length !== 2 || label[1] !== "eth") {
+      throw new Error("Currently only .eth TLD renewals are supported");
+    }
+    return label[0];
+  });
+  if (labels.length === 1) {
+    const controller = await contracts.getEthRegistrarController();
+    return controller.populateTransaction.renew(labels[0], duration, { value });
+  }
+  const bulkRenewal = await contracts.getBulkRenewal();
+  return bulkRenewal.populateTransaction.renewAll(labels, duration, { value });
+}
+export {
+  renewNames_default as default,
+  extendWrappedName
+};

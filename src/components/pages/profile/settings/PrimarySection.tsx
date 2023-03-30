@@ -137,8 +137,6 @@ export const PrimarySection = () => {
 
   const { truncatedName, isLoading: basicLoading } = useBasicName(name, true)
 
-  // const { canSendOwner, canSendManager } = useSelfAbilities(address, name)
-
   const isLoading = primaryLoading || basicLoading
 
   const changePrimary = () => {
@@ -162,7 +160,7 @@ export const PrimarySection = () => {
           <PrimaryNameContainer>
             <PrimaryNameInfo>
               <Typography fontVariant="bodyBold" color="grey">
-                Primary Name
+                {t('section.primary.title')}
               </Typography>
               <Typography fontVariant="headingTwo" ellipsis>
                 {truncatedName}
@@ -172,24 +170,35 @@ export const PrimarySection = () => {
               <Avatar label="primary name avatar" src={name} />
             </AvatarContainer>
             <ActionsContainer>
-              <Button prefix={<CrossSVG />} colorStyle="redSecondary" onClick={resetPrimary}>
+              <Button
+                data-testid="reset-primary-name-button"
+                prefix={<CrossSVG />}
+                colorStyle="redSecondary"
+                onClick={resetPrimary}
+              >
                 {t('action.reset', { ns: 'common' })}
               </Button>
-              <Button prefix={<PersonPlusSVG />} onClick={changePrimary}>
+              <Button
+                data-testid="change-primary-name-button"
+                prefix={<PersonPlusSVG />}
+                onClick={changePrimary}
+              >
                 {t('action.change', { ns: 'common' })}
               </Button>
             </ActionsContainer>
           </PrimaryNameContainer>
         ) : (
-          <NoNameContainer>
-            <NoNameTitle fontVariant="headingFour">Primary Name</NoNameTitle>
-            <NoNameButton size="small" prefix={<PersonPlusSVG />} onClick={changePrimary}>
-              Choose primary name
+          <NoNameContainer data-testid="no-primary-name">
+            <NoNameTitle fontVariant="headingFour">{t('section.primary.title')}</NoNameTitle>
+            <NoNameButton
+              data-testid="set-primary-name-button"
+              size="small"
+              prefix={<PersonPlusSVG />}
+              onClick={changePrimary}
+            >
+              {t('section.primary.choosePrimaryName')}
             </NoNameButton>
-            <NoNameDescription>
-              A primary name links your address to a name, allowing dApps to display a name as your
-              profile when connected to them. Learn about primary names
-            </NoNameDescription>
+            <NoNameDescription>{t('section.primary.noNameDescription')}</NoNameDescription>
           </NoNameContainer>
         )}
       </Card>

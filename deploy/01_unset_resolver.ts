@@ -21,7 +21,7 @@ const names: {
   },
   {
     name: 'sub.without-resolver.eth',
-    namedOwner: 'owner',
+    namedOwner: 'deployer',
     contract: 'registry',
   },
   {
@@ -48,6 +48,7 @@ const func: DeployFunction = async function (hre: HardhatRuntimeEnvironment) {
     const signedContract = contract.connect(await ethers.getSigner(namedAccounts[namedOwner]))
     const tx = await signedContract.setResolver(namehash(name), emptyAddress)
     await tx.wait()
+    console.log(` - ${name} (tx: ${tx.hash})...`)
   }
   return true
 }
