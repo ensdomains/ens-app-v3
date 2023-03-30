@@ -20,39 +20,76 @@ describe('Set Primary Name', () => {
     acceptMetamaskAccess(1)
     it('should show no primary name set', () => {
       cy.visit('/my/settings')
-      cy.findByTestId('no-primary-name').should('be.visible')
+      cy.findByTestId('no-primary-name-section').should('be.visible')
     })
 
     it('should allow setting unmanaged name that has eth record set to address', () => {
       cy.visit('/my/settings')
       cy.findByTestId('set-primary-button').click()
-      const searchInput = cy.
-    })
-    it('should show modal', () => {
-      cy.findByTestId('primary-section-button').click()
-      cy.findByText('Select a primary name').should('exist')
-    })
-    it('should not show current primary name in list', () => {
-      cy.findByTestId('radiogroup').then((el) => {
-        cy.wrap(el).findByText('test123.eth').should('not.exist')
-      })
-    })
-    it('should allow setting primary name', () => {
-      cy.findByTestId('radiogroup').then((el) => {
-        cy.wrap(el).findByText('other-controller.eth').click()
-      })
+      cy.findByTestId('name-table-header-search').type('other')
+      cy.findByTestId('name-item-other-eth-record.eth').within(() => {
+        cy.findByTestId('tag-name.manager-false').should('be.visible')
+        cy.findByTestId('tag-name.owner-false').should('be.visible')
+      }).click()
       cy.findByTestId('primary-next').click()
-      cy.findByTestId('display-item-action-normal').should('contain.text', 'Set primary name')
-      cy.findByTestId('display-item-name-normal').should('contain.text', 'other-controller.eth')
-      cy.findByTestId('display-item-address-normal').should('contain.text', '0x709...c79C8')
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.findByTestId('primary-name-section').should('be.visible')
+      cy.findByTestId('primary-name-label').should('contain.text', 'other-eth-record.eth')
     })
-    it('should show changes', () => {
-      const wrapper = cy.findByTestId('primary-wrapper')
-      wrapper.should('exist')
-      wrapper.should('include.text', 'other-controller.eth')
+
+    it('should allow setting unwrapped name that user is manager of but whose resolved address is not the same as the user', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('change-primary-name-button').click()
+      cy.findByTestId('name-item-other-controller.eth').within(() => {
+        cy.findByTestId('tag-name.manager-true').should('be.visible')
+        cy.findByTestId('tag-name.owner-false').should('be.visible')
+      }).click()
+      cy.findByTestId('primary-next').click()
+      cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.findByTestId('primary-name-label').should('contain.text', 'other-controller.eth')
+    })
+
+    it('should allow setting wrapped name that user is manager of but whose resolved address is not the same as the user', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('change-primary-name-button').click()
+      cy.findByTestId('name-item-sub.wrapped-without-resolver.eth').within(() => {
+        cy.findByTestId('tag-name.manager-true').should('be.visible')
+      }).click()
+      cy.findByTestId('primary-next').click()
+      cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.findByTestId('primary-name-label').should('contain.text', 'sub.wrapped-without-resolver.eth')
+    })
+
+    it.todo('should allow setting a name that does not have a resolver --- can not do this until get resolver is updated to reject resolver if it does not support ExtendResolver')
+
+    it('should not show current primary name in list', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('change-primary-name-button').click()
+      cy.queryByTestId('name-item-sub.wrapped-without-resolver.eth').should('not.exist')
+    })
+
+    it('should allow resetting primary name', () => {
+      cy.visit('/my/settings')
+      cy.findByTestId('reset-primary-name-button').click()
+      cy.findByTestId('primary-next').click()
+      cy.findByTestId('transaction-modal-confirm-button').click()
+      cy.confirmMetamaskTransaction()
+      cy.findByTestId('transaction-modal-complete-button').click()
+      cy.findByTestId('no-primary-name-section').should('be.visible')
     })
   })
 

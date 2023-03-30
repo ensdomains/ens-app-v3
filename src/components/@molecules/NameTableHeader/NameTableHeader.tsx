@@ -205,6 +205,7 @@ export const NameTableHeader = ({
       </TableHeaderLeading>
       <TableHeaderTrailing $fixedWidth={selectable}>
         <Input
+          data-testid="name-table-header-search"
           size="small"
           label="search"
           value={searchQuery}

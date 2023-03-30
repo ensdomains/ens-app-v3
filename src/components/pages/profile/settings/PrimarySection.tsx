@@ -157,12 +157,12 @@ export const PrimarySection = () => {
     <Skeleton loading={isLoading} as={SkeletonFiller as any}>
       <Card>
         {name ? (
-          <PrimaryNameContainer>
+          <PrimaryNameContainer data-testid="primary-name-section">
             <PrimaryNameInfo>
               <Typography fontVariant="bodyBold" color="grey">
                 {t('section.primary.title')}
               </Typography>
-              <Typography fontVariant="headingTwo" ellipsis>
+              <Typography data-testid="primary-name-label" fontVariant="headingTwo" ellipsis>
                 {truncatedName}
               </Typography>
             </PrimaryNameInfo>
@@ -188,7 +188,7 @@ export const PrimarySection = () => {
             </ActionsContainer>
           </PrimaryNameContainer>
         ) : (
-          <NoNameContainer data-testid="no-primary-name">
+          <NoNameContainer data-testid="no-primary-name-section">
             <NoNameTitle fontVariant="headingFour">{t('section.primary.title')}</NoNameTitle>
             <NoNameButton
               data-testid="set-primary-name-button"

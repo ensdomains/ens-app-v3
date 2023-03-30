@@ -142,6 +142,23 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   const handleSubmit = async () => {
     if (!selectedName || !isEnsReady || !contracts) return
+
+    if (selectedName.isResolvedAddress) {
+      dispatch({
+        name: 'setTransactions',
+        payload: [
+          makeTransactionItem('setPrimaryName', {
+            address,
+            name: selectedName.name!,
+          }),
+        ],
+      })
+      dispatch({
+        name: 'setFlowStage',
+        payload: 'transaction',
+      })
+    }
+
     const isWrapped = !!selectedName.fuses
     const resolver = await getResolver(selectedName.name)
     const hasResolver = !!resolver && resolver !== emptyAddress
@@ -174,42 +191,28 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
         },
       })
     }
-    if (!selectedName.isResolvedAddress) {
-      return dispatch({
-        name: 'startFlow',
-        key: 'ChangePrimaryName',
-        payload: {
-          intro: {
-            title: ['intro.selectPrimaryName.updateEthAddress.title', { ns: 'transactionFlow' }],
-            content: makeIntroItem('GenericWithDescription', {
-              description: t('intro.selectPrimaryName.updateEthAddress.description'),
-            }),
-          },
-          transactions: [
-            makeTransactionItem('updateEthAddress', {
-              address: address!,
-              name: selectedName.name,
-            }),
-            makeTransactionItem('setPrimaryName', {
-              address,
-              name: selectedName.name!,
-            }),
-          ],
+
+    dispatch({
+      name: 'startFlow',
+      key: 'ChangePrimaryName',
+      payload: {
+        intro: {
+          title: ['intro.selectPrimaryName.updateEthAddress.title', { ns: 'transactionFlow' }],
+          content: makeIntroItem('GenericWithDescription', {
+            description: t('intro.selectPrimaryName.updateEthAddress.description'),
+          }),
         },
-      })
-    }
-    dispatch({
-      name: 'setTransactions',
-      payload: [
-        makeTransactionItem('setPrimaryName', {
-          address,
-          name: selectedName.name!,
-        }),
-      ],
-    })
-    dispatch({
-      name: 'setFlowStage',
-      payload: 'transaction',
+        transactions: [
+          makeTransactionItem('updateEthAddress', {
+            address: address!,
+            name: selectedName.name,
+          }),
+          makeTransactionItem('setPrimaryName', {
+            address,
+            name: selectedName.name!,
+          }),
+        ],
+      },
     })
   }
 
