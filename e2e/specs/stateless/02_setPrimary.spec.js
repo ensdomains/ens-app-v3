@@ -10,6 +10,7 @@ describe('Set Primary Name', () => {
   })
 
   it('should not show profile button in header dropdown', () => {
+    cy.visit('/my/settings')
     cy.findByTestId('header-profile').as('header-profile')
     cy.get('@header-profile').click()
     // length 4 = 3 buttons + 1 divider
@@ -21,19 +22,19 @@ describe('Set Primary Name', () => {
       it('should show primary name action in profile dropdown', () => {
         cy.visit('/other-eth-record.eth')
         connectFromExisting()
-        cy.findByTestId('profile-actions').click()
-        cy.findByText('Set as primary name').click()
+        cy.findByTestId('profile-actions').within(() => {
+          cy.findByText('Set as primary name').should('be.visible')
+        })
       })
       it('should show steps', () => {
         cy.visit('/other-eth-record.eth')
         cy.wait(350)
-        cy.findByText('Set your primary name').should('be.visible')
+        cy.findByText('Set as primary name').should('be.visible').click()
         cy.findByTestId('display-item-Step 1-normal').should('contain.text', 'Update ETH address')
         cy.findByTestId('display-item-Step 2-normal').should('contain.text', 'Set primary name')
         cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
       })
       it('should allow setting ETH record', () => {
-        cy.visit('/other-eth-record.eth')
         cy.findByTestId('display-item-action-normal').should('contain.text', 'Update ETH address')
         cy.findByTestId('display-item-name-normal').should('contain.text', 'other-eth-record.eth')
         cy.findByTestId('display-item-address-normal').should('contain.text', '0x709...c79C8')
@@ -71,7 +72,7 @@ describe('Set Primary Name', () => {
         cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
 
         cy.location('pathname').should('equal', '/aaa123xyz000.unknown-labels.eth')
-        cy.findByText('Set your primary name').should('be.visible')
+        cy.findByText('Set as primary name').should('be.visible')
         cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
 
         // update eth address
@@ -100,7 +101,6 @@ describe('Set Primary Name', () => {
         cy.findByText('Set as primary name').click()
       })
       it('should allow setting primary name', () => {
-        cy.visit('/test123.eth')
         cy.wait(350)
         cy.findByTestId('display-item-action-normal').should('contain.text', 'Set primary name')
         cy.findByTestId('display-item-name-normal').should('contain.text', 'test123.eth')
