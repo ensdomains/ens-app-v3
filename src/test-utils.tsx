@@ -5,7 +5,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { RenderOptions, render } from '@testing-library/react'
 import { RenderHookOptions, renderHook } from '@testing-library/react-hooks'
 import userEvent from '@testing-library/user-event'
-import * as MockWagmi from '@wagmi/core-cjs/connectors/mock'
+import { MockConnector } from '@wagmi/core/connectors/mock'
 import React, { FC, ReactElement } from 'react'
 import { ThemeProvider } from 'styled-components'
 import { WagmiConfig, createClient } from 'wagmi'
@@ -14,9 +14,6 @@ import { ThorinGlobalStyles, lightTheme } from '@ensdomains/thorin'
 
 import { DeepPartial } from './types'
 
-// For some reason the actual object returned does not match up with type
-const MockConnector = (MockWagmi as any).Connector
-
 jest.mock('wagmi', () => {
   const {
     useQuery,
@@ -24,7 +21,7 @@ jest.mock('wagmi', () => {
     useInfiniteQuery,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
-  } = jest.requireActual('wagmi-cjs')
+  } = jest.requireActual('wagmi')
 
   return {
     useQuery,
