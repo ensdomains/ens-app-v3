@@ -121,8 +121,6 @@ export const useNameDetails = (name: string) => {
 
   const isLoading = !ready || profileLoading || abiLoading || basicLoading || dnsOwnerLoading
 
-  console.log({ ready, profileLoading, abiLoading, basicLoading, dnsOwnerLoading })
-
   return {
     error,
     errorTitle,
