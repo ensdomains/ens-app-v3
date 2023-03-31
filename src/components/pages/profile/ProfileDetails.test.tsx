@@ -41,7 +41,7 @@ describe('onwershipInfoCalc', () => {
       {
         key: 'name.parent',
         type: 'text',
-        value: '',
+        value: '[root]',
       },
     ])
   })

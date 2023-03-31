@@ -166,7 +166,7 @@ export const ownershipInfoCalc = (
 ) => {
   let parentName = name.split('.').slice(1).join('.')
   // exception for TLDs, show parent as "[root]"
-  if (parentName === '' && name !== '[root]') parentName = '[root]'
+  if (parentName === '' && name !== '[root]' && name !== '') parentName = '[root]'
   if (pccExpired) {
     return [
       {
