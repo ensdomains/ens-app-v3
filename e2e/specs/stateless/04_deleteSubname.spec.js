@@ -103,6 +103,7 @@ describe('Delete subnames', () => {
     }
 
     it('should allow name owner to delete', () => {
+      cy.clearLocalStorage()
       acceptMetamaskAccess(1)
       cy.visit('/test.wrapped.eth')
       
