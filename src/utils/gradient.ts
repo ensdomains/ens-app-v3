@@ -206,7 +206,5 @@ export const zorbImageDataURI = (
   if (type === 'name' && input === '[root]') {
     return makeBase64Svg(makeEnsOutlineIcon(colours))
   }
-  return `data:image/svg+xml;base64,${Buffer.from(zorbImageSVG(input, type), 'utf-8').toString(
-    'base64',
-  )}`
+  return makeBase64Svg(zorbImageSVG(input, type))
 }
