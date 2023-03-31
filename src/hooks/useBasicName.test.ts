@@ -71,4 +71,15 @@ describe('useBasicName', () => {
     renderHook(() => useBasicName('test.com'))
     expect(mockGetExpiry.batch).not.toHaveBeenCalled()
   })
+  it('should not query for the expiry if is [root]', () => {
+    mockUseValidate.mockReturnValue({
+      valid: true,
+      name: '[root]',
+      labelCount: 1,
+    })
+
+    renderHook(() => useBasicName('[root]'))
+    expect(mockGetExpiry.batch).not.toHaveBeenCalled()
+    expect(mockGetOwner).toHaveBeenCalled()
+  })
 })
