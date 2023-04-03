@@ -121,5 +121,17 @@ describe('MoreTab', () => {
       })
       expect(screen.queryByText(`Miscellaneous-expiry:${date.toString()}`)).not.toBeInTheDocument()
     })
+    it('should use registrar expiry if available', () => {
+      const registrarExpiry = new Date(Date.now() + 1000)
+      const wrapperExpiry = new Date(Date.now() + 2000)
+      renderHelper({
+        name: 'test.eth',
+        isWrapped: true,
+        pccExpired: false,
+        wrapperData: { expiryDate: wrapperExpiry } as any,
+        expiryDate: registrarExpiry,
+      })
+      expect(screen.getByText(`Miscellaneous-expiry:${registrarExpiry.toString()}`)).toBeVisible()
+    })
   })
 })

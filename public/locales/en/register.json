@@ -19,7 +19,7 @@
       "insufficientBalance": "Insufficient Balance",
       "multipleYearsMessage": "Extending for multiple years will save money on network costs by avoiding yearly transactions.",
       "primaryName": "Use as primary name",
-      "primaryNameMessage": "This links your address to this name, allowing apps to display this name as your profile when connected to them.",
+      "primaryNameMessage": "This links your address to this name, allowing dApps to display it as your profile when connected to them. You can only have one primary name per address.",
       "premium": {
         "heading": "This name has a temporary premium",
         "subheading": "To give fair opportunity to recently expired names, the premium starts at $100,000,000 and reduces to $0 over 21 days. You can calculate the premium on a date below.",
@@ -62,9 +62,9 @@
               "com.discord": "Discord"
             },
             "placeholder": {
-              "com.twitter": "e.g. yogicodes",
-              "com.github": "e.g. yogicodes",
-              "com.discord": "e.g. yogicodes#1234"
+              "com.twitter": "e.g. ensdomains",
+              "com.github": "e.g. ensdomains",
+              "com.discord": "e.g. alisha.eth#0001"
             }
           },
           "address": {
@@ -172,7 +172,7 @@
     },
     "transactions": {
       "heading": "Almost there",
-      "subheading": "This timer prevents others from registering this name before you do.",
+      "subheading": "This timer helps prevent others from registering the name before you do. Your name is not registered until you've completed the second transaction.",
       "startTimer": "Start timer",
       "wait": "Wait",
       "transactionFailed": "Transaction Failed",
