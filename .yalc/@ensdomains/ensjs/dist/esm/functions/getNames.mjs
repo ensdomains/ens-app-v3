@@ -2,8 +2,10 @@
 import { truncateFormat } from "../utils/format.mjs";
 import { checkPCCBurned, decodeFuses } from "../utils/fuses.mjs";
 import { decryptName } from "../utils/labels.mjs";
-var mapDomain = ({ name, ...domain }) => {
-  const decrypted = name ? decryptName(name) : void 0;
+var mapDomain = (domain) => {
+  if (!domain)
+    return {};
+  const decrypted = domain.name ? decryptName(domain.name) : void 0;
   return {
     ...domain,
     ...domain.registration ? {
@@ -27,7 +29,7 @@ var mapWrappedDomain = (wrappedDomain) => {
   if (expiryDate && expiryDate < new Date() && checkPCCBurned(wrappedDomain.fuses)) {
     return null;
   }
-  const domain = wrappedDomain.domain ? mapDomain(wrappedDomain.domain) : {};
+  const domain = mapDomain(wrappedDomain.domain);
   return {
     expiryDate,
     fuses: decodeFuses(wrappedDomain.fuses),
@@ -144,12 +146,16 @@ var getNames = async ({ gqlInstance }, {
     finalQuery = gqlInstance.gql`
     query getNames(
       $id: String!
+      $orderBy: Domain_orderBy
+      $orderDirection: OrderDirection
     ) {
       domains(
         first: 1000
         where: { 
            resolvedAddress: $id 
         }
+        orderBy: $orderBy
+        orderDirection: $orderDirection
       ) {
         ${domainQueryData}
         owner {
@@ -172,7 +178,9 @@ var getNames = async ({ gqlInstance }, {
       }
     }`;
     queryVars = {
-      id: address
+      id: address,
+      orderBy: orderBy === "labelName" ? "labelName" : "createdAt",
+      orderDirection: orderDirection === "asc" ? "asc" : "desc"
     };
   } else if (type === "owner") {
     if (typeof page !== "number") {

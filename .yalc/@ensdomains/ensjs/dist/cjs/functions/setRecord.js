@@ -41,9 +41,7 @@ async function setRecord_default({
   if (resolverAddress) {
     resolverToUse = resolverAddress;
   } else {
-    console.log("getting address");
     resolverToUse = await getResolver(name);
-    console.log("resolverToUse", resolverToUse);
   }
   if (!resolverToUse) {
     throw new Error("No resolver found for input address");

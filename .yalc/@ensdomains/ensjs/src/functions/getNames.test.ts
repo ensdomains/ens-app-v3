@@ -6,17 +6,12 @@ import { Name } from './getNames'
 import { names as wrappedNames } from '../../deploy/00_register_wrapped'
 
 let ensInstance: ENS
-let revert: Awaited<ReturnType<typeof setup>>['revert']
 let provider: ethers.providers.JsonRpcProvider
 let accounts: string[]
 
 beforeAll(async () => {
-  ;({ ensInstance, revert, provider } = await setup())
+  ;({ ensInstance, provider } = await setup())
   accounts = await provider.listAccounts()
-})
-
-afterEach(async () => {
-  await revert()
 })
 
 const testProperties = (obj: object, ...properties: string[]) =>
@@ -197,42 +192,70 @@ describe('getNames', () => {
     // the result here implies that the PCC expired name is not returned
     expect(pageOne).toHaveLength(nameCout - 1)
   })
-  it('should get the names the resolve to an address', async () => {
-    const NAMES = ['wrapped.eth', 'test123.eth']
-    // for (const NAME of NAMES) {
-    //   const tx = await ensInstance.setRecord(NAME, {
-    //     type: 'addr',
-    //     record: { key: 'ETH', value: address },
-    //     addressOrIndex: 1,
-    //   })
-    //   expect(tx).toBeTruthy()
-    //   await tx.wait()
-    //   await waitFor(async () => {
-    //     const profile = await ensInstance.getRecords(NAME)
-    //     console.log(profile?.records?.coinTypes)
-    //     expect(profile?.records?.coinTypes?.find(({ coin }) => coin === 'ETH').addr).toBe(address)
-    //   })
-    // }
 
-    console.log(accounts)
+  describe('resolved addresses', () => {
+    /* eslint-disable @typescript-eslint/naming-convention */
+    const RESOLVED_ADDRESS_COUNT: { [key: string]: number } = {
+      '0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266': 2,
+      '0x70997970C51812dc3A010C7d01b50e0d17dc79C8': 16,
+      '0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC': 35,
+    }
+    /* eslint-enable @typescript-eslint/naming-convention */
 
-    const ADDRESSES = [accounts[0], accounts[1], accounts[2]]
-    for (const ADDRESS of ADDRESSES) {
-      const pageOne = await ensInstance.getNames({
-        address: ADDRESS,
-        type: 'resolvedAddress',
-      })
-      console.log(ADDRESS)
-      console.log(pageOne.map((name) => name.name))
-    }
-    for (const NAME of NAMES) {
-      const profile = await ensInstance.getRecords(NAME)
-      console.log(NAME, profile?.records?.coinTypes)
-      // expect(
-      //   (profile?.records?.coinTypes?.find(({ coin }) => coin === 'ETH') as any)
-      //     ?.addr,
-      // ).toBe(address)
-    }
+    it('should get the names that resolve to an address by labelName', async () => {
+      const ADDRESSES = [accounts[0], accounts[1], accounts[2]]
+      for (const ADDRESS of ADDRESSES) {
+        const pageOne = await ensInstance.getNames({
+          address: ADDRESS,
+          type: 'resolvedAddress',
+          orderBy: 'labelName',
+          orderDirection: 'asc',
+        })
+        expect(pageOne.length).toBe(RESOLVED_ADDRESS_COUNT[ADDRESS])
+        let prevLabelName = pageOne[0].labelName
+        for (const name of pageOne) {
+          console.log(name)
+          expect(
+            !!name.labelName &&
+              prevLabelName &&
+              name.labelName >= prevLabelName,
+          ).toBe(true)
+          prevLabelName = name.labelName
+          const profile = await ensInstance.getProfile(name.name)
+          const eth = profile?.records?.coinTypes?.find(
+            (coin) => coin.coin === 'ETH',
+          )
+          expect((eth as any).addr).toBe(ADDRESS)
+        }
+      }
+    })
+
+    it('should get the names that resolve to an address by creationDate', async () => {
+      const ADDRESSES = [accounts[0], accounts[1], accounts[2]]
+      for (const ADDRESS of ADDRESSES) {
+        const pageOne = await ensInstance.getNames({
+          address: ADDRESS,
+          type: 'resolvedAddress',
+          orderBy: 'createdAt',
+          orderDirection: 'desc',
+        })
+        expect(pageOne.length).toBe(RESOLVED_ADDRESS_COUNT[ADDRESS])
+        let prevCreatedAt = pageOne[0].createdAt?.getTime()
+        for (const name of pageOne) {
+          expect(
+            !!name.createdAt &&
+              !!prevCreatedAt &&
+              name.createdAt.getTime() <= prevCreatedAt,
+          ).toBe(true)
+          prevCreatedAt = name.createdAt?.getTime()
+          const profile = await ensInstance.getProfile(name.name)
+          const eth = profile?.records?.coinTypes?.find(
+            (coin) => coin.coin === 'ETH',
+          )
+          expect((eth as any).addr).toBe(ADDRESS)
+        }
+      }
+    })
   })
   describe('orderBy', () => {
     describe('registrations', () => {
@@ -243,6 +266,7 @@ describe('getNames', () => {
           orderBy: 'registrationDate',
           orderDirection: 'desc',
         })) as Name[]
+        registrationDateOrderedDesc.forEach((name) => console.log(name))
         registrationDateOrderedDesc.reduce((prev, curr) => {
           expect(prev.registrationDate!.getTime()).toBeGreaterThanOrEqual(
             curr.registrationDate!.getTime(),

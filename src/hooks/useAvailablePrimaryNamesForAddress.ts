@@ -1,11 +1,13 @@
 import { useCallback, useMemo, useState } from 'react'
 
+import { safeDateObj } from '@app/utils/date'
+
 import { useNamesFromAddress } from './useNamesFromAddress'
 import { useNamesFromResolvedAddress } from './useNamesFromResolvedAddress'
 import { usePrimary } from './usePrimary'
 
 type BaseName = NonNullable<ReturnType<typeof useNamesFromAddress>['currentPage']>[number]
-type Name = BaseName & { isResolvedAddress?: boolean }
+export type Name = BaseName & { isResolvedAddress?: boolean }
 
 export const useAvailablePrimaryNamesForAddress = ({
   address,
@@ -36,7 +38,6 @@ export const useAvailablePrimaryNamesForAddress = ({
 
   const { names: resolvedAddressNames = [], isLoading: isResolvedAddressNamesLoading } =
     useNamesFromResolvedAddress(address!)
-  console.log('resolvedAddressNames', resolvedAddressNames)
 
   const baseFilterFunc = useMemo(() => {
     const isMigratedName = (n: Name) => n.isMigrated
@@ -44,8 +45,17 @@ export const useAvailablePrimaryNamesForAddress = ({
     const isResolvedOrManagedName = (n: Name) =>
       n.isResolvedAddress || n.isController || n.isWrappedOwner
     const isNotPrimaryName = (n: Name) => !primaryName || n.name !== primaryName
+    const now = Date.now()
+    const isNotExpired = (n: Name) => {
+      const date = safeDateObj(n.expiryDate)
+      return !date || date.getTime() > now
+    }
     return (n: Name) =>
-      isMigratedName(n) && isNotTLD(n) && isResolvedOrManagedName(n) && isNotPrimaryName(n)
+      isMigratedName(n) &&
+      isNotTLD(n) &&
+      isResolvedOrManagedName(n) &&
+      isNotExpired(n) &&
+      isNotPrimaryName(n)
   }, [primaryName])
 
   const resolvedOrManagedNames = useMemo(() => {

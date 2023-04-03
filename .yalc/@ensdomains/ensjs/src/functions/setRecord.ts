@@ -43,9 +43,7 @@ export default async function (
   if (resolverAddress) {
     resolverToUse = resolverAddress
   } else {
-    console.log('getting address')
     resolverToUse = await getResolver(name)
-    console.log('resolverToUse', resolverToUse)
   }
 
   if (!resolverToUse) {

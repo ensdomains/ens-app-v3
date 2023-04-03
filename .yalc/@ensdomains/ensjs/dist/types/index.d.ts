@@ -554,7 +554,7 @@ export declare class ENS {
         pageSize?: undefined;
     } | {
         type: "resolvedAddress";
-        orderBy?: "labelName" | "creationDate" | undefined;
+        orderBy?: "labelName" | "createdAt" | undefined;
         page?: undefined;
         pageSize?: undefined;
     })) => Promise<import("./functions/getNames").Name[]>;

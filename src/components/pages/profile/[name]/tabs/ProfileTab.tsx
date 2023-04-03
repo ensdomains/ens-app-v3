@@ -68,6 +68,8 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
     profile,
     selfAbilities,
     subnameAbilities,
+    ownerData,
+    chainId,
   })
 
   const isExpired = useMemo(

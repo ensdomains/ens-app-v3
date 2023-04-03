@@ -49,7 +49,7 @@ declare type AllParams = {
 };
 declare type ResolvedAddressParams = {
     type: 'resolvedAddress';
-    orderBy?: 'labelName' | 'creationDate';
+    orderBy?: 'labelName' | 'createdAt';
     page?: never;
     pageSize?: never;
 };

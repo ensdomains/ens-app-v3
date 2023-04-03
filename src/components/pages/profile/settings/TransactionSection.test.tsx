@@ -98,11 +98,14 @@ describe('TransactionSection', () => {
     expect(screen.getByTestId('transaction-clear-button')).toBeDisabled()
   })
   it('should call clearRecentTransactions if clear is pressed', () => {
+    const mockOnShowDialog = jest.fn()
     mockUseRecentTransactions.mockReturnValue(Array.from({ length: 1 }, makeRecentTransaction()))
-    render(<TransactionSection />)
+    render(<TransactionSection onShowDialog={mockOnShowDialog} />)
     act(() => {
       screen.getByTestId('transaction-clear-button').click()
     })
+    expect(mockOnShowDialog).toHaveBeenCalled()
+    mockOnShowDialog.mock.calls[0][0].callBack()
     expect(mockClearTransactions).toHaveBeenCalled()
   })
 })

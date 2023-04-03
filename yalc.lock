@@ -2,7 +2,7 @@
   "version": "v1",
   "packages": {
     "@ensdomains/ensjs": {
-      "signature": "636456d8052258da007096c1a3a5eae9",
+      "signature": "d7f24b465d8ea17a03a4de370885e914",
       "workspace": true,
       "replaced": "3.0.0-alpha.52"
     }

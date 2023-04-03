@@ -59,7 +59,7 @@ type AllParams = {
 
 type ResolvedAddressParams = {
   type: 'resolvedAddress'
-  orderBy?: 'labelName' | 'creationDate'
+  orderBy?: 'labelName' | 'createdAt'
   page?: never
   pageSize?: never
 }
@@ -73,9 +73,10 @@ type Params = BaseParams &
     | ResolvedAddressParams
   )
 
-const mapDomain = ({ name, ...domain }: Domain) => {
-  const decrypted = name ? decryptName(name) : undefined
+const mapDomain = (domain?: Domain) => {
+  if (!domain) return {}
 
+  const decrypted = domain.name ? decryptName(domain.name) : undefined
   return {
     ...domain,
     ...(domain.registration
@@ -115,7 +116,7 @@ const mapWrappedDomain = (wrappedDomain: WrappedDomain) => {
     return null
   }
 
-  const domain = wrappedDomain.domain ? mapDomain(wrappedDomain.domain) : {}
+  const domain = mapDomain(wrappedDomain.domain)
 
   return {
     expiryDate,
@@ -243,12 +244,16 @@ const getNames = async (
     finalQuery = gqlInstance.gql`
     query getNames(
       $id: String!
+      $orderBy: Domain_orderBy
+      $orderDirection: OrderDirection
     ) {
       domains(
         first: 1000
         where: { 
            resolvedAddress: $id 
         }
+        orderBy: $orderBy
+        orderDirection: $orderDirection
       ) {
         ${domainQueryData}
         owner {
@@ -273,6 +278,8 @@ const getNames = async (
 
     queryVars = {
       id: address,
+      orderBy: orderBy === 'labelName' ? 'labelName' : 'createdAt',
+      orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',
     }
   } else if (type === 'owner') {
     if (typeof page !== 'number') {

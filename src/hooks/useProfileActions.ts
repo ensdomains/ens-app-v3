@@ -9,7 +9,9 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 
+import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
 
@@ -28,6 +30,8 @@ type Props = {
   profile: ReturnedENS['getProfile']
   selfAbilities: ReturnType<typeof useSelfAbilities>
   subnameAbilities: ReturnType<typeof useSubnameAbilities>['abilities']
+  ownerData: ReturnType<typeof useNameDetails>['ownerData']
+  chainId: number
 }
 
 export const useProfileActions = ({
@@ -36,9 +40,14 @@ export const useProfileActions = ({
   profile,
   selfAbilities,
   subnameAbilities,
+  ownerData,
+  chainId,
 }: Props) => {
   const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
   const { createTransactionFlow, showDataInput } = useTransactionFlow()
+  const latestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
+  const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
+
   const { t } = useTranslation('profile')
 
   const profileActions = useMemo(() => {
@@ -56,6 +65,15 @@ export const useProfileActions = ({
           makeTransactionItem('updateEthAddress', {
             address: address!,
             name,
+          }),
+        )
+      }
+      if (!profile?.resolverAddress && profile?.address !== address) {
+        setAsPrimaryTransactions.unshift(
+          makeTransactionItem('updateResolver', {
+            name,
+            contract: isWrapped ? 'nameWrapper' : 'registry',
+            resolver: latestResolverAddress,
           }),
         )
       }
@@ -142,6 +160,7 @@ export const useProfileActions = ({
     name,
     primaryName,
     profile?.address,
+    profile?.resolverAddress,
     selfAbilities.canEdit,
     showDataInput,
     subnameAbilities.canDelete,
@@ -149,6 +168,8 @@ export const useProfileActions = ({
     subnameAbilities.canDeleteError,
     subnameAbilities.canDeleteMethod,
     subnameAbilities.isPCCBurned,
+    isWrapped,
+    latestResolverAddress,
     t,
   ])
 

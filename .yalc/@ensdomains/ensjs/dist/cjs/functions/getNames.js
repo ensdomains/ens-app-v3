@@ -24,8 +24,10 @@ module.exports = __toCommonJS(getNames_exports);
 var import_format = require("../utils/format");
 var import_fuses = require("../utils/fuses");
 var import_labels = require("../utils/labels");
-const mapDomain = ({ name, ...domain }) => {
-  const decrypted = name ? (0, import_labels.decryptName)(name) : void 0;
+const mapDomain = (domain) => {
+  if (!domain)
+    return {};
+  const decrypted = domain.name ? (0, import_labels.decryptName)(domain.name) : void 0;
   return {
     ...domain,
     ...domain.registration ? {
@@ -49,7 +51,7 @@ const mapWrappedDomain = (wrappedDomain) => {
   if (expiryDate && expiryDate < new Date() && (0, import_fuses.checkPCCBurned)(wrappedDomain.fuses)) {
     return null;
   }
-  const domain = wrappedDomain.domain ? mapDomain(wrappedDomain.domain) : {};
+  const domain = mapDomain(wrappedDomain.domain);
   return {
     expiryDate,
     fuses: (0, import_fuses.decodeFuses)(wrappedDomain.fuses),
@@ -166,12 +168,16 @@ const getNames = async ({ gqlInstance }, {
     finalQuery = gqlInstance.gql`
     query getNames(
       $id: String!
+      $orderBy: Domain_orderBy
+      $orderDirection: OrderDirection
     ) {
       domains(
         first: 1000
         where: { 
            resolvedAddress: $id 
         }
+        orderBy: $orderBy
+        orderDirection: $orderDirection
       ) {
         ${domainQueryData}
         owner {
@@ -194,7 +200,9 @@ const getNames = async ({ gqlInstance }, {
       }
     }`;
     queryVars = {
-      id: address
+      id: address,
+      orderBy: orderBy === "labelName" ? "labelName" : "createdAt",
+      orderDirection: orderDirection === "asc" ? "asc" : "desc"
     };
   } else if (type === "owner") {
     if (typeof page !== "number") {
