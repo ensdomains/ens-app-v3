@@ -38,7 +38,7 @@ importers:
       '@ensdomains/ens-contracts': 0.0.16
       '@ensdomains/ens-test-env': ^0.3.7
       '@ensdomains/ens-validation': ^0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.52
+      '@ensdomains/ensjs': 3.0.0-alpha.56
       '@ensdomains/eth-ens-namehash': ^2.0.15
       '@ensdomains/thorin': 0.6.35
       '@ethersproject/abi': ^5.6.4
@@ -178,7 +178,7 @@ importers:
       '@ensdomains/dnssecoraclejs': 0.2.7_v6aogrdjojfeat5uhab6hyaxg4
       '@ensdomains/ens-contracts': 0.0.16_hardhat@2.11.2
       '@ensdomains/ens-validation': 0.1.0
-      '@ensdomains/ensjs': 3.0.0-alpha.52_6zpvpzigupcdblombyllfjwbve
+      '@ensdomains/ensjs': 3.0.0-alpha.56_4wk6sblqc5kfzwjkcabkhle2du
       '@ensdomains/eth-ens-namehash': 2.0.15
       '@ensdomains/thorin': 0.6.35_6haozuff5ofofiwuoke6ixqiri
       '@ethersproject/abi': 5.7.0
@@ -2920,6 +2920,17 @@ packages:
       - web3-utils
     dev: false
 
+  /@ensdomains/dnssecoraclejs/0.2.8:
+    resolution: {integrity: sha512-XW7AIFoBqzPO47qr4iGWWvNTm55GJ07Ahbbn+cvHBUpBsjnLE2MFs0gOAUWZB6kIv+2+PSDX/NK3h20nQDBWdA==}
+    dependencies:
+      '@ensdomains/dnsprovejs': 0.4.1
+      dns-packet: 5.4.0
+      ethers: 5.7.2
+    transitivePeerDependencies:
+      - bufferutil
+      - utf-8-validate
+    dev: false
+
   /@ensdomains/ens-contracts/0.0.16_hardhat@2.11.2:
     resolution: {integrity: sha512-pssd2nrzHoFJOvzANoBVNMdb9H9tpyMPSyb9JaTFmS6HDo7RRcsyWL8FYCGkUmsnAqzz8dz3OwxiH03s8cLG2A==}
     dependencies:
@@ -3025,8 +3036,8 @@ packages:
       - bufferutil
       - utf-8-validate
 
-  /@ensdomains/ensjs/3.0.0-alpha.52_6zpvpzigupcdblombyllfjwbve:
-    resolution: {integrity: sha512-WEEaXcR6coxuuc004hJpzxgskbSlqSHu9kreAvOEaKNf7aDMVMnX9AlGYVpOmcTN1z/M6Yr8Bp3fMZ0Y7WASvg==}
+  /@ensdomains/ensjs/3.0.0-alpha.56_4wk6sblqc5kfzwjkcabkhle2du:
+    resolution: {integrity: sha512-tzrKrEwfr/TBEE9OwuoRFFCzXCVAeRZ+Th83CmBu2FuUFB9wJ5YzTClAvkklAGSp1jRVAMb1PM3M/ggAh2sOnw==}
     peerDependencies:
       '@ethersproject/abi': ^5.6.4
       '@ethersproject/abstract-provider': ^5.7.0
@@ -3045,8 +3056,7 @@ packages:
       '@adraffy/ens-normalize': 1.9.0
       '@ensdomains/address-encoder': 0.2.21
       '@ensdomains/content-hash': 2.5.7
-      '@ensdomains/dnsprovejs': 0.4.1
-      '@ensdomains/dnssecoraclejs': 0.2.7_v6aogrdjojfeat5uhab6hyaxg4
+      '@ensdomains/dnssecoraclejs': 0.2.8
       '@ethersproject/abi': 5.7.0
       '@ethersproject/abstract-provider': 5.7.0
       '@ethersproject/abstract-signer': 5.7.0
@@ -3067,19 +3077,9 @@ packages:
       pako: 2.1.0
       traverse: 0.6.7
     transitivePeerDependencies:
-      - '@nomiclabs/hardhat-web3'
       - bufferutil
       - encoding
-      - hardhat
-      - supports-color
-      - ts-node
-      - typescript
       - utf-8-validate
-      - web3
-      - web3-core-helpers
-      - web3-core-promievent
-      - web3-eth-abi
-      - web3-utils
     dev: false
 
   /@ensdomains/eth-ens-namehash/2.0.15:
