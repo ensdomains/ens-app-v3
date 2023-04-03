@@ -151,6 +151,7 @@ const SubmitButton = ({
     />
   )
 }
+
 const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('register')
 
@@ -308,7 +309,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         {
           editor: (
             <>
-              <Dialog.Heading title="Edit your profile" />
+              <Dialog.Heading title={t('steps.profile.title2')} />
               <StyledScrollBox hideDividers={{ bottom: true }}>
                 <ScrollContentContainer>
                   <AvatarWrapper>
