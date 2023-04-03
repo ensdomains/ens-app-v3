@@ -118,7 +118,7 @@ const SelectedNFTContainer = styled.div(({ theme }) => [
   `,
   mq.sm.min(css`
     width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: 540px;
+    max-width: ${theme.space['128']};
   `),
 ])
 
@@ -152,7 +152,7 @@ const LoadingContainer = styled.div(({ theme }) => [
   mq.sm.min(css`
     gap: ${theme.space['6']};
     width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: 540px;
+    max-width: ${theme.space['128']};
   `),
 ])
 

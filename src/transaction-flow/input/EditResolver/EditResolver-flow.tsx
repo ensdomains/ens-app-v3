@@ -19,7 +19,7 @@ const EditResolverFormContainer = styled.div(({ theme }) => [
   `,
   mq.sm.min(css`
     width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: 510px;
+    max-width: ${theme.space['128']};
   `),
 ])
 

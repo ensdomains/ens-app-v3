@@ -13,6 +13,7 @@ import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransact
 import { useChainId } from '@app/hooks/useChainId'
 import { useNameDetails } from '@app/hooks/useNameDetails'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
+import { useQueryParameterState } from '@app/hooks/useQueryParameterState'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 import { useSelfAbilities } from '@app/hooks/useSelfAbilities'
 import { Content } from '@app/layouts/Content'
@@ -168,17 +169,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
     ]
   }, [isSelf, normalisedName, valid, name, t])
 
-  const tab = (router.query.tab as Tab) || 'profile'
-  const setTab = (newTab: Tab) => {
-    const url = new URL(router.asPath, window.location.origin)
-    for (const [key, value] of Object.entries(router.query)) {
-      url.searchParams.set(key, value as string)
-    }
-    url.searchParams.set('tab', newTab)
-    router._replace(url.toString(), undefined, {
-      shallow: true,
-    })
-  }
+  const [tab, setTab] = useQueryParameterState<Tab>('tab', 'profile')
   const visibileTabs = isWrapped ? tabs : tabs.filter((_tab) => _tab !== 'permissions')
 
   const selfAbilities = useSelfAbilities(address, name)

@@ -83,7 +83,7 @@ const wagmiClient = createClient({
       options: {
         signer: new Wallet(privateKey, new EthersProviderWrapper()),
       },
-    }),
+    }) as any,
   ],
   provider: () => new EthersProviderWrapper(),
 })

@@ -3,7 +3,7 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox, mq } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
@@ -13,7 +13,6 @@ import {
   grouped as options,
 } from '@app/constants/profileRecordOptions'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import mq from '@app/mediaQuery'
 
 import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
 import { OptionButton } from './OptionButton'
@@ -28,7 +27,7 @@ const Container = styled.div(({ theme }) => [
   `,
   mq.sm.min(css`
     width: calc(80vw - 2 * ${theme.space['6']});
-    max-width: 520px;
+    max-width: ${theme.space['128']};
   `),
 ])
 

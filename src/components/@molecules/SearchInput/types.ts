@@ -8,6 +8,7 @@ export type SearchItem = {
 export type HistoryItem = {
   type: 'name' | 'address'
   value: string
+  lastAccessed: number
 }
 
 export type AnyItem = (SearchItem | HistoryItem) & {

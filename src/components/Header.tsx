@@ -4,9 +4,10 @@ import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css, useTheme } from 'styled-components'
 import { useAccount } from 'wagmi'
 
+import { mq } from '@ensdomains/thorin'
+
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
 import { useInitial } from '@app/hooks/useInitial'
-import mq from '@app/mediaQuery'
 import { routes } from '@app/routes'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
 
@@ -20,8 +21,9 @@ import { ConditionalWrapper } from './ConditionalWrapper'
 import { HeaderConnect } from './ConnectButton'
 
 const HeaderWrapper = styled.header(
-  () => css`
-    height: min-content;
+  ({ theme }) => css`
+    height: ${theme.space['12']};
+
     ${mq.sm.max(css`
       display: none;
     `)}
@@ -209,9 +211,7 @@ export const Header = () => {
             </SearchWrapper>
           </>
         )}
-        {(isInitial ||
-          (isConnected && (breakpoints.md || router.asPath === '/')) ||
-          !isConnected) && <div style={{ flexGrow: 1 }} />}
+        <div style={{ flexGrow: 1 }} />
         <RouteWrapper>
           <RouteContainer
             data-testid="route-container"

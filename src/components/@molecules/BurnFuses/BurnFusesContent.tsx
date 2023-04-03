@@ -5,10 +5,9 @@ import styled, { css } from 'styled-components'
 
 import type { ChildFuses } from '@ensdomains/ensjs'
 import { childFuseKeys } from '@ensdomains/ensjs/utils/fuses'
-import { Button, FlameSVG, Helper, Typography } from '@ensdomains/thorin'
+import { Button, FlameSVG, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
-import mq from '@app/mediaQuery'
 import { AllChildFuses } from '@app/types'
 
 export const childFuseObj = Object.fromEntries(

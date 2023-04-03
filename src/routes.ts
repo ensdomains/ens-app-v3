@@ -15,7 +15,6 @@ import {
 
 export type PublicRoute =
   | 'search'
-  | 'faq'
   | 'governance'
   | 'community'
   | 'developers'
@@ -99,9 +98,9 @@ export const routes: RouteItemObj[] = [
     onlyDropdown: true,
   },
   {
-    name: 'faq',
-    href: '/faq',
-    label: 'navigation.faq',
+    name: 'support',
+    href: 'https://support.ens.domains',
+    label: 'navigation.support',
     disabled: false,
     connected: false,
   },
@@ -131,13 +130,6 @@ export const routes: RouteItemObj[] = [
     name: 'developers',
     href: 'https://docs.ens.domains/',
     label: 'navigation.developers',
-    disabled: false,
-    connected: false,
-  },
-  {
-    name: 'support',
-    href: 'https://ens.domains/#get-support',
-    label: 'navigation.support',
     disabled: false,
     connected: false,
   },

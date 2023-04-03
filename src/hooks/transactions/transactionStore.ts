@@ -2,20 +2,14 @@
 
 /* eslint-disable @typescript-eslint/no-use-before-define */
 // this is taken from rainbowkit
-import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
-import type { BaseProvider, Block } from '@ethersproject/providers'
+import type { BaseProvider, Block, TransactionReceipt } from '@ethersproject/providers'
+import { waitForTransaction } from '@wagmi/core'
+
+import { MinedData } from '@app/types'
 
 const storageKey = 'transaction-data'
 
-type TransactionStatus = 'pending' | 'confirmed' | 'failed'
-
-type MinedData = {
-  blockHash: string
-  blockNumber: number
-  timestamp: number
-  gasUsed: BigNumber
-  effectiveGasPrice: BigNumber
-}
+type TransactionStatus = 'pending' | 'confirmed' | 'failed' | 'repriced'
 
 interface BaseTransaction {
   hash: string
@@ -24,6 +18,7 @@ interface BaseTransaction {
   description?: string
   status: TransactionStatus
   minedData?: MinedData
+  newHash?: string
 }
 
 interface PendingTransaction extends BaseTransaction {
@@ -33,10 +28,15 @@ interface PendingTransaction extends BaseTransaction {
 
 interface MinedTransaction extends BaseTransaction {
   status: 'confirmed' | 'failed'
-  minedData: MinedData
+  minedData?: MinedData
 }
 
-export type Transaction = PendingTransaction | MinedTransaction
+interface RepricedTransaction extends BaseTransaction {
+  status: 'repriced'
+  newHash: string
+}
+
+export type Transaction = PendingTransaction | MinedTransaction | RepricedTransaction
 
 export type NewTransaction = Omit<Transaction, 'status' | 'minedData'>
 
@@ -89,6 +89,14 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     return data[account]?.[chainId] ?? []
   }
 
+  function getCurrentTransactionHash(account: string, chainId: number, hash: string): string {
+    const allTransactions = getTransactions(account, chainId)
+    const currentTransaction = allTransactions.find((transaction) => transaction.hash === hash)
+    if (currentTransaction && currentTransaction.status === 'repriced')
+      return getCurrentTransactionHash(account, chainId, currentTransaction.newHash)
+    return hash
+  }
+
   function addTransaction(account: string, chainId: number, transaction: NewTransaction): void {
     const errors = validateTransaction(transaction)
 
@@ -119,10 +127,30 @@ export function createTransactionStore({ provider: initialProvider }: { provider
     hash: string,
     status: 'confirmed' | 'failed',
     minedData: MinedData,
+  ): void
+  function setTransactionStatus(
+    account: string,
+    chainId: number,
+    hash: string,
+    status: 'repriced',
+    newHash: string,
+  ): void
+  function setTransactionStatus(
+    account: string,
+    chainId: number,
+    hash: string,
+    status: 'confirmed' | 'failed' | 'repriced',
+    minedData: MinedData | string,
   ): void {
     updateTransactions(account, chainId, (transactions) => {
       return transactions.map((transaction) =>
-        transaction.hash === hash ? { ...transaction, status, minedData } : transaction,
+        transaction.hash === hash
+          ? ({
+              ...transaction,
+              status,
+              ...(status === 'repriced' ? { newHash: minedData } : { minedData }),
+            } as Transaction)
+          : transaction,
       )
     })
   }
@@ -140,32 +168,63 @@ export function createTransactionStore({ provider: initialProvider }: { provider
             return existingRequest
           }
 
-          const requestPromise = provider
-            .waitForTransaction(hash, 1)
-            .then(async ({ status, blockHash, blockNumber, effectiveGasPrice, gasUsed }) => {
+          const requestPromise = waitForTransaction({
+            confirmations: 1,
+            hash: hash as `0x${string}`,
+            onSpeedUp: (speedUpTransaction) => {
+              setTransactionStatus(account, chainId, hash, 'repriced', speedUpTransaction.hash)
+              addTransaction(account, chainId, {
+                ...transaction,
+                hash: speedUpTransaction.hash,
+              })
+
+              transactionRequestCache.set(speedUpTransaction.hash, requestPromise)
+              transactionRequestCache.delete(hash)
+            },
+          })
+            .catch((err) => {
+              console.error('transaction error:', err)
+              if (err.cancelled) {
+                const replacement = err.replacement as TransactionReceipt
+                return { ...replacement, status: 0 }
+              }
+              return err
+            })
+            .then(async (receipt) => {
+              const { status, blockHash } = receipt
               let blockRequest = blockRequestCache.get(blockHash)
               if (!blockRequest) {
                 blockRequest = provider.getBlock(blockHash)
                 blockRequestCache.set(blockHash, blockRequest)
               }
               const { timestamp } = await blockRequest
-              transactionRequestCache.delete(hash)
+
+              const hashOfRequest = getCurrentTransactionHash(account, chainId, hash)
+
+              transactionRequestCache.delete(hashOfRequest)
 
               if (status === undefined) {
+                if (receipt instanceof Error) {
+                  setTransactionStatus(account, chainId, hashOfRequest, 'failed', {
+                    timestamp: Date.now(),
+                  } as MinedData)
+                }
                 return
               }
 
-              setTransactionStatus(account, chainId, hash, status === 0 ? 'failed' : 'confirmed', {
-                blockHash,
-                blockNumber,
-                effectiveGasPrice,
-                gasUsed,
-                timestamp,
-              })
+              setTransactionStatus(
+                account,
+                chainId,
+                hashOfRequest,
+                status === 0 ? 'failed' : 'confirmed',
+                {
+                  ...receipt,
+                  timestamp: timestamp * 1000,
+                },
+              )
             })
 
           transactionRequestCache.set(hash, requestPromise)
-
           return requestPromise
         }),
     )

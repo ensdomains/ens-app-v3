@@ -205,7 +205,8 @@
             "CANNOT_TRANSFER": "Revoke permission to: Send this name",
             "CANNOT_SET_RESOLVER": "Revoke permission to: Set resolver",
             "CANNOT_SET_TTL": "Revoke permission to: Set TTL",
-            "CANNOT_BURN_FUSES": "Revoke permission to: Change permissions"
+            "CANNOT_BURN_FUSES": "Revoke permission to: Change permissions",
+            "CANNOT_APPROVE": "Revoke permission to: Change renewal manager"
           }
         },
         "revokeChangeFuses": {

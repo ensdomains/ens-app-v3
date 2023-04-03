@@ -1,10 +1,11 @@
 import { useMemo } from 'react'
-import { useTranslation } from 'react-i18next'
+import { Trans, useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 import { useAccount } from 'wagmi'
 
 import { Helper } from '@ensdomains/thorin'
 
+import { Outlink } from '@app/components/Outlink'
 import { ProfileSnippet } from '@app/components/ProfileSnippet'
 import { ProfileDetails } from '@app/components/pages/profile/ProfileDetails'
 import { useChainId } from '@app/hooks/useChainId'
@@ -32,9 +33,10 @@ type Props = {
 }
 
 const ProfileTab = ({ nameDetails, name }: Props) => {
+  const { t } = useTranslation('profile')
+
   const chainId = useChainId()
   const { address } = useAccount()
-  const { t } = useTranslation('profile')
 
   const {
     profile,
@@ -88,6 +90,17 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
         button={snippetButton}
         canEdit={selfAbilities.canEdit}
       >
+        {nameDetails.isNonASCII && (
+          <Helper type="warning" alignment="horizontal">
+            <Trans
+              i18nKey="tabs.profile.warnings.homoglyph"
+              ns="profile"
+              components={{
+                a: <Outlink href="https://en.wikipedia.org/wiki/IDN_homograph_attack" />,
+              }}
+            />
+          </Helper>
+        )}
         {isWrapped && !normalisedName.endsWith('.eth') && (
           <Helper type="warning" alignment="horizontal">
             {t('tabs.profile.warnings.wrappedDNS')}

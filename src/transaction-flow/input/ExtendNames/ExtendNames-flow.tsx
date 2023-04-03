@@ -38,7 +38,7 @@ const Container = styled.form(
     ${mq.sm.min(
       css`
         width: calc(80vw - 2 * ${theme.space['6']});
-        max-width: 600px;
+        max-width: ${theme.space['128']};
       `,
     )}
   `,
@@ -61,14 +61,15 @@ const InnerContainer = styled.div(
   `,
 )
 
-const PlusMinusWrapper = styled.div(
-  () => css`
+const PlusMinusWrapper = styled.div(({ theme }) => [
+  css`
     width: 100%;
-    max-width: 60%;
+    max-width: ${theme.space['80']};
     overflow: hidden;
     display: flex;
   `,
-)
+  mq.sm.min(css``),
+])
 
 const OptionBar = styled.div(
   () => css`
