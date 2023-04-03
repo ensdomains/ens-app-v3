@@ -21,11 +21,13 @@ type Results = {
 
 const makeExpiryNumberAndLabel = (expiryDate: Date | undefined) => {
   const expiry = expiryDate ? Math.floor(new Date(expiryDate).getTime() / 1000) : 0
-  const expiryLabel = new Date(expiryDate || 0).toLocaleDateString(undefined, {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  })
+  const expiryLabel = expiryDate
+    ? new Date(expiryDate).toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+      })
+    : undefined
 
   return { expiry, expiryLabel }
 }
