@@ -117,6 +117,30 @@ describe('useNamesFromAddress', () => {
         new Date(Date.now() + 60 * 60 * 24 * 1000 * 5).getDate(),
       )
     })
+    it('should show names without expiry at top when sorting by asc expiryDate', async () => {
+      const names = [...Array.from({ length: 5 }, makeNameItem(false)), makeNameItem(true)(null, 5)]
+
+      mockGetNames.mockResolvedValue(names)
+
+      const { result, waitForNextUpdate } = renderHook(() =>
+        useNamesFromAddress({
+          page: 1,
+          resultsPerPage: 5,
+          sort: {
+            orderDirection: 'asc',
+            type: 'expiryDate',
+          },
+          address: '0x123',
+        }),
+      )
+      await waitForNextUpdate()
+      const first = result.current.currentPage![0]
+      const last = result.current.currentPage![4]
+      expect(first.expiryDate).toBeUndefined()
+      expect(last.expiryDate?.getDate()).toBe(
+        new Date(Date.now() + 60 * 60 * 24 * 1000 * 3).getDate(),
+      )
+    })
     it('should sort by label name', async () => {
       const names = Array.from({ length: 10 }, makeNameItem(false))
 
