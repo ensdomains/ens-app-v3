@@ -145,7 +145,11 @@ export const UnknownLabelsForm = forwardRef<HTMLFormElement, Props>(
         <Dialog.Heading title={t('input.unknownLabels.title')} />
         <Container>
           <Typography>{t('input.unknownLabels.subtitle')}</Typography>
-          <LabelsContainer ref={ref} onSubmit={handleSubmit(onSubmit)}>
+          <LabelsContainer
+            ref={ref}
+            onSubmit={handleSubmit(onSubmit)}
+            data-testid="unknown-labels-form"
+          >
             {labels.map(({ label, value, disabled }, inx) => (
               <Input
                 // eslint-disable-next-line react/no-array-index-key

@@ -36,7 +36,6 @@ const DEFAULT_PAGE_SIZE = 10
 
 type Data = {
   address: string
-  existingPrimary: string | null
 }
 
 export type Props = {
@@ -140,7 +139,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
 
   const chainId = useChainId()
   const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
-  const { contracts, ready: isEnsReady, getResolver } = useEns()
+  const { ready: isEnsReady, getResolver } = useEns()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
@@ -173,8 +172,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
 
   const onSubmit = async (data: FormData) => {
-    console.log('onSubmit', data)
-    if (!data.name || !isEnsReady || !contracts) return
+    if (!data.name || isLoading) return
 
     let validName = data.name.name
 

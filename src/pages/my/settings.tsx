@@ -9,7 +9,6 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { DevSection } from '@app/components/pages/profile/settings/DevSection'
 import { PrimarySection } from '@app/components/pages/profile/settings/PrimarySection'
 import { TransactionSection } from '@app/components/pages/profile/settings/TransactionSection'
-import { WalletSection } from '@app/components/pages/profile/settings/WalletSection'
 import { useProtectedRoute } from '@app/hooks/useProtectedRoute'
 import { Content } from '@app/layouts/Content'
 
@@ -53,7 +52,6 @@ export default function Page() {
           <>
             <OtherWrapper>
               <PrimarySection />
-              <WalletSection />
               <TransactionSection onShowDialog={setDialogProps} />
               {process.env.NEXT_PUBLIC_PROVIDER && <DevSection />}
             </OtherWrapper>

@@ -1,153 +1,153 @@
-import { fireEvent, mockFunction, render, screen, waitFor } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent, waitFor } from '@app/test-utils'
 
-import { NamePill } from '@app/components/@molecules/NamePill'
-import { useChainId } from '@app/hooks/useChainId'
+import { useAvailablePrimaryNamesForAddress } from '@app/hooks/useAvailablePrimaryNamesForAddress'
 import { useEns } from '@app/utils/EnsProvider'
 
 import SelectPrimaryName from './SelectPrimaryName-flow'
 
-jest.mock('@app/hooks/useChainId')
+jest.mock('@app/hooks/useChainId', () => ({
+  useChainId: jest.fn().mockReturnValue(1),
+}))
+
+const mockInvalidateQueries = jest.fn()
+jest.mock('wagmi', () =>
+  jest.fn().mockReturnValue({
+    useQueryClient: jest.fn().mockReturnValue({
+      invalidateQueries: mockInvalidateQueries,
+    }),
+  }),
+)
+jest.mock('@app/components/@atoms/NameDetailItem/TaggedNameItem', () => ({
+  TaggedNameItem: ({ name, ...props }: any) => <div {...props}>{name}</div>,
+}))
+
+jest.mock('@app/hooks/useAvailablePrimaryNamesForAddress')
 jest.mock('@app/utils/EnsProvider')
-jest.mock('@app/components/@molecules/NamePill')
 
-const mockUseChainId = mockFunction(useChainId)
 const mockUseEns = mockFunction(useEns)
-const mockNamePill = mockFunction(NamePill)
+const mockUseAvailablePrimaryNamesForAddress = mockFunction(useAvailablePrimaryNamesForAddress)
 
-const mockComponent = ({ truncatedName }: { truncatedName: string }) => <div>{truncatedName}</div>
-
-const mockRequest = jest.fn()
-
-const mockRequestWithNames = () =>
-  mockRequest.mockResolvedValue({
-    domains: [
-      {
-        name: 'test.eth',
-        id: '0x0',
-      },
-      {
-        name: 'test2.eth',
-        id: '0x1',
-      },
-      {
-        name: 'test3.eth',
-        id: '0x2',
-      },
-    ],
-  })
-
-const renderHelper = ({ existingPrimary }: { existingPrimary?: string }) =>
-  render(
-    <SelectPrimaryName
-      data={{
-        address: '0x0',
-        existingPrimary: existingPrimary || null,
-      }}
-      dispatch={jest.fn()}
-      onDismiss={jest.fn()}
-    />,
-  )
+const makeName = (index: number) => ({
+  name: `test${index}.eth`,
+  id: `0x${index}`,
+})
 
 describe('SelectPrimaryName', () => {
   window.IntersectionObserver = jest.fn().mockReturnValue({
     observe: jest.fn(),
     disconnect: jest.fn(),
   })
-  mockNamePill.mockImplementation(mockComponent as any)
-  mockUseChainId.mockReturnValue(1)
-  mockUseEns.mockReturnValue({
-    gqlInstance: {
-      gql: (str: string) => str,
-      client: {
-        request: mockRequest,
-      },
-    },
-  })
-  it('should show loading', async () => {
-    mockRequest.mockImplementation(
-      () =>
-        new Promise<void>((resolve) => {
-          resolve()
-        }),
-    )
-    renderHelper({})
-    await waitFor(() =>
-      expect(screen.getByText('section.primary.input.loading')).toBeInTheDocument(),
-    )
-    mockRequest.mockClear()
-  })
-  it('should show no name message', async () => {
-    mockRequest.mockResolvedValue({ domains: [] })
+
+  it('should show loading if data hook is loading', async () => {
+    mockUseEns.mockReturnValue({
+      ready: true,
+      getResolver: jest.fn(),
+    })
+
+    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+      names: undefined,
+      isLoading: true,
+    })
     render(
-      <SelectPrimaryName
-        data={{
-          address: '0x0',
-          existingPrimary: null,
-        }}
-        dispatch={jest.fn()}
-        onDismiss={jest.fn()}
-      />,
+      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
+    )
+    await waitFor(() => expect(screen.getByText('loading')).toBeInTheDocument())
+  })
+
+  it('should show loading message if ens hook is loading', async () => {
+    mockUseEns.mockReturnValue({
+      ready: false,
+      getResolver: jest.fn(),
+    })
+    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+      names: [{ name: 'test1.eth' }],
+      isLoading: false,
+    })
+    render(
+      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
+    )
+    await waitFor(() => expect(screen.getByText('loading')).toBeInTheDocument())
+  })
+
+  it('should show no name message if data returns an empty array', async () => {
+    mockUseEns.mockReturnValue({
+      ready: true,
+      getResolver: jest.fn(),
+    })
+    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+      names: [],
+      isLoading: false,
+    })
+    render(
+      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
     )
     await waitFor(() =>
-      expect(screen.getByText('section.primary.input.noNames')).toBeInTheDocument(),
+      expect(
+        screen.getByText('input.selectPrimaryName.errors.noEligibleNames'),
+      ).toBeInTheDocument(),
     )
   })
+
   it('should show names', async () => {
-    mockRequestWithNames()
-    renderHelper({})
+    mockUseEns.mockReturnValue({
+      ready: true,
+      getResolver: jest.fn(),
+    })
+    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+      names: new Array(5).fill(0).map((_, i) => makeName(i)),
+      isLoading: false,
+    })
+    render(
+      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
+    )
     await waitFor(() => {
-      expect(screen.getByText('test.eth')).toBeInTheDocument()
+      expect(screen.getByText('test1.eth')).toBeInTheDocument()
       expect(screen.getByText('test2.eth')).toBeInTheDocument()
       expect(screen.getByText('test3.eth')).toBeInTheDocument()
     })
   })
+
   it('should only enable next button if name selected', async () => {
-    mockRequestWithNames()
-    renderHelper({})
-    await waitFor(() => {
-      expect(screen.getByText('test.eth')).toBeInTheDocument()
-      expect(screen.getByText('test2.eth')).toBeInTheDocument()
-      expect(screen.getByText('test3.eth')).toBeInTheDocument()
+    mockUseEns.mockReturnValue({
+      ready: true,
+      getResolver: jest.fn(),
     })
+    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+      names: new Array(5).fill(0).map((_, i) => makeName(i)),
+      isLoading: false,
+    })
+    render(
+      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
+    )
     expect(screen.getByTestId('primary-next')).toBeDisabled()
-    fireEvent.click(screen.getByText('test.eth'))
-    expect(screen.getByTestId('primary-next')).not.toBeDisabled()
+    await userEvent.click(screen.getByText('test1.eth'))
+    await waitFor(() => expect(screen.getByTestId('primary-next')).not.toBeDisabled())
   })
-  it('should filter out existing primary name for selection', async () => {
-    mockRequestWithNames()
-    renderHelper({ existingPrimary: 'test.eth' })
-    await waitFor(() => {
-      expect(screen.queryByText('test.eth')).not.toBeInTheDocument()
-      expect(screen.getByText('test2.eth')).toBeInTheDocument()
-      expect(screen.getByText('test3.eth')).toBeInTheDocument()
+
+  it('should show decrypt view if name has hash label', async () => {
+    mockUseEns.mockReturnValue({
+      ready: true,
+      getResolver: jest.fn(),
     })
-  })
-  it('should remove names with hashed labels', async () => {
-    mockRequest.mockResolvedValue({
-      domains: [
+    mockUseAvailablePrimaryNamesForAddress.mockReturnValue({
+      names: [
+        ...new Array(5).fill(0).map((_, i) => makeName(i)),
         {
           name: '[2fcba40a1a605acf57a88f10820dd7f474036e9c73660ce1bafdbb9004b92ded].eth',
-          id: '0x0',
+          id: '0xhash',
         },
       ],
+      isLoading: false,
     })
-    renderHelper({})
-    await waitFor(() => {
-      expect(screen.getByText('section.primary.input.noNames')).toBeInTheDocument()
-    })
-  })
-  it('should show no names message when only eligible name is already set', async () => {
-    mockRequest.mockResolvedValue({
-      domains: [
-        {
-          name: 'test.eth',
-          id: '0x0',
-        },
-      ],
-    })
-    renderHelper({ existingPrimary: 'test.eth' })
-    await waitFor(() => {
-      expect(screen.getByText('section.primary.input.noOtherNames')).toBeInTheDocument()
-    })
+    render(
+      <SelectPrimaryName data={{ address: '0x123' }} dispatch={() => {}} onDismiss={() => {}} />,
+    )
+    expect(screen.getByTestId('primary-next')).toBeDisabled()
+    await userEvent.click(
+      screen.getByText('[2fcba40a1a605acf57a88f10820dd7f474036e9c73660ce1bafdbb9004b92ded].eth'),
+    )
+    await waitFor(() => expect(screen.getByTestId('primary-next')).not.toBeDisabled())
+    await userEvent.click(screen.getByTestId('primary-next'))
+    await waitFor(() => expect(screen.getByTestId('unknown-labels-form')).toBeInTheDocument())
   })
 })

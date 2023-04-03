@@ -86,7 +86,6 @@ const Resolver = ({
       name,
     })
   }
-  console.log(resolverAddress)
 
   const resolverAddressIndex = RESOLVER_ADDRESSES[`${chainId}`]?.indexOf(resolverAddress ?? '')
   const [resolverAddressType, tone] = useMemo(() => {
