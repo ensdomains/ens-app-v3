@@ -92,7 +92,7 @@ describe('Register Name', () => {
     cy.findByTestId('invoice-item-0-amount').should('contain.text', '0.0032 ETH')
   })
   it('should not direct to the registration page on search, and show all records from registration', () => {
-    cy.findByTestId('home-button').click()
+    cy.visit('/')
     cy.wait(1000)
     cy.findByTestId('search-input-box').click().type('registration-normal.eth{enter}')
     cy.url().should('eq', 'http://localhost:8788/registration-normal.eth')
