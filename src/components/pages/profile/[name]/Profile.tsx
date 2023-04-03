@@ -130,6 +130,7 @@ const ProfileContent = ({ nameDetails, isSelf, isLoading, name }: Props) => {
 
   const _canBeWrapped =
     canBeWrapped &&
+    !!address &&
     (ownerData?.ownershipLevel === 'registrar'
       ? ownerData?.registrant === address
       : ownerData?.owner === address)
