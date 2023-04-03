@@ -53,7 +53,7 @@ describe('Update Resolver', () => {
         cy.confirmMetamaskTransaction()
         cy.findByTestId('transaction-modal-complete-button').click()
         cy.wait(10000)
-        
+
         cy.findByTestId('name-details-text').should('have.text', newResolver)
       })
     })
@@ -61,6 +61,8 @@ describe('Update Resolver', () => {
 
   describe('Unhappy', () => {
     it('should not allow user to update if they enter an invalid address', () => {
+      cy.visit('/wrapped.eth')
+      cy.findByTestId('more-tab').click()
       cy.findByTestId('edit-resolver-button').click()
       cy.findByTestId('custom-resolver-radio').click()
       cy.findByTestId('dogfood').type('0xInvalid')

@@ -14,6 +14,7 @@
     "godaddy": "GoDaddy",
     "bluehost": "Bluehost",
     "hostgator": "HostGator",
+    "cloudflare": "Cloudflare",
     "findYourRegistrar": "查看您的注册商"
   },
   "addTextRecord": {

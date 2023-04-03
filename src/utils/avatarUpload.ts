@@ -34,17 +34,11 @@ export const distanceFromEdge = (a: number, max: number, imgSize: number, cropSi
   return Math.max(max - (a + imgSize) + cropSize, 0)
 }
 
-export const calcMomentum = (
-  a: number,
-  max: number,
-  imgSize: number,
-  crpSz: number,
-  resolutionMultiplier: number,
-) => {
+export const calcMomentum = (a: number, max: number, imgSize: number, crpSz: number) => {
   let momentum = 0
   const distance = distanceFromEdge(a, max, imgSize, crpSz)
   if (distance > 0 || distance < 0) {
-    const snapDistance = resolutionMultiplier ** 2
+    const snapDistance = 8
     if (distance <= snapDistance && distance >= -snapDistance) {
       momentum = distance
     } else {
