@@ -283,6 +283,7 @@ export const TransactionStageModal = ({
         ens,
         transaction.data,
       )
+
       let gasLimit = await signer!.estimateGas(populatedTransaction)
 
       if (transaction.name === 'registerName') {
@@ -297,6 +298,7 @@ export const TransactionStageModal = ({
     },
     {
       enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
+      onError: console.error,
     },
   )
   const requestError = _requestError as TxError | null

@@ -58,6 +58,10 @@ const PERMISSION_TRANSLATION_KEY: {
     burned: 'cannotSetTTL',
     unburned: 'canSetTTL',
   },
+  CANNOT_APPROVE: {
+    burned: 'cannotApprove',
+    unburned: 'canApprove',
+  },
 }
 
 const TypographyGreyDim = styled(Typography)(

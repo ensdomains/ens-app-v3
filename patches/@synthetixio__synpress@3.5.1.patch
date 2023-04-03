@@ -1,5 +1,5 @@
 diff --git a/commands/metamask.js b/commands/metamask.js
-index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..ae526064550fa3742c78c1a273393409f9d8ab62 100644
+index b32c62856e518052c2b9e837ceb5c247084152f3..c92e4fcbf797b7d134b2ef3d720276a00dcf4f53 100644
 --- a/commands/metamask.js
 +++ b/commands/metamask.js
 @@ -1,5 +1,6 @@
@@ -8,8 +8,8 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..ae526064550fa3742c78c1a273393409
 +const sleep = require('util').promisify(setTimeout);
  
  const {
-   welcomePageElements,
-@@ -362,6 +363,18 @@ module.exports = {
+   onboardingWelcomePageElements,
+@@ -358,6 +359,18 @@ const metamask = {
      await module.exports.closePopupAndTooltips();
      await playwright.waitAndClick(mainPageElements.accountMenu.button);
      if (typeof accountNameOrAccountNumber === 'number') {
@@ -28,19 +28,47 @@ index 017d0037ca5d7eafbd2006af8ff993ada5fa4640..ae526064550fa3742c78c1a273393409
        await playwright.waitAndClick(
          mainPageElements.accountMenu.accountButton(accountNameOrAccountNumber),
        );
-@@ -811,6 +824,7 @@ module.exports = {
+@@ -817,6 +830,7 @@ const metamask = {
      return true;
    },
-   confirmTransaction: async gasConfig => {
+   async confirmTransaction(gasConfig) {
 +    if (process.env.TRANSACTION_WAIT_TIME) await sleep(parseInt(process.env.TRANSACTION_WAIT_TIME));
      let txData = {};
      const notificationPage = await playwright.switchToMetamaskNotification();
      if (gasConfig) {
+@@ -948,27 +962,6 @@ const metamask = {
+         }
+       }
+     }
+-    log('[confirmTransaction] Checking if recipient address is present..');
+-    if (
+-      await playwright
+-        .metamaskNotificationWindow()
+-        .locator(confirmPageElements.recipientButton)
+-        .isVisible()
+-    ) {
+-      log('[confirmTransaction] Getting recipient address..');
+-      await playwright.waitAndClick(
+-        confirmPageElements.recipientButton,
+-        notificationPage,
+-      );
+-      txData.recipientPublicAddress = await playwright.waitAndGetValue(
+-        recipientPopupElements.recipientPublicAddress,
+-        notificationPage,
+-      );
+-      await playwright.waitAndClick(
+-        recipientPopupElements.popupCloseButton,
+-        notificationPage,
+-      );
+-    }
+     log('[confirmTransaction] Checking if network name is present..');
+     if (
+       await playwright
 diff --git a/commands/playwright.js b/commands/playwright.js
-index d9223389b1abd3b491f85949dfa0e9f7dc73645d..a4f5eeb0788d5946c92a201f294c7e4624295efa 100644
+index 26df7862263b8c9ec37da4e7d12d7c324d102c48..0f2a509cf7b8ef5e0bc39a7ce788f407df01dd88 100644
 --- a/commands/playwright.js
 +++ b/commands/playwright.js
-@@ -161,21 +161,15 @@ module.exports = {
+@@ -157,21 +157,15 @@ module.exports = {
          force: args.force,
        });
      } else if (args.numberOfClicks && args.waitForEvent) {
@@ -69,14 +97,13 @@ index d9223389b1abd3b491f85949dfa0e9f7dc73645d..a4f5eeb0788d5946c92a201f294c7e46
      } else {
        await element.click({ force: args.force });
 diff --git a/synpress.js b/synpress.js
-index 4b98f42727602b955c8a6dc61f862b2990c8c2f6..0d9b6f55853e01694413ea98567ef6ea9acc1473 100755
+index cf7b4ecc9eee4232fe4e94902b161ddb4f015656..a375c1074f0e19e1daea84004254c7ed0cca9df5 100755
 --- a/synpress.js
 +++ b/synpress.js
-@@ -97,8 +97,10 @@ program
-     '-ro, --reporterOptions <options>',
+@@ -99,7 +99,10 @@ program
      'specify mocha reporter options, separate multiple values with comma',
    )
--  // dashboard
+   // dashboard
 -  .option('-cid, --ciBuildId', '[dashboard] add custom ci build id to the run')
 +  .option(
 +    '--ci-build-id <id>',
