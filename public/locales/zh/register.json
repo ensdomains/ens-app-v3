@@ -62,9 +62,9 @@
               "com.discord": "Discord"
             },
             "placeholder": {
-              "com.twitter": "例如 yogicodes",
-              "com.github": "例如 yogicodes",
-              "com.discord": "例如 yogicodes#1234"
+              "com.twitter": "例如 ensdomains",
+              "com.github": "例如 ensdomains",
+              "com.discord": "例如 alisha.eth#0001"
             }
           },
           "address": {
@@ -155,10 +155,7 @@
         "等待计时器完成 60 秒计时",
         "完成第二笔交易来获得该名称"
       ],
-      "moonpayItems": [
-        "创建或登录现有的 Moonpay 账户",
-        "使用信用卡或借记卡完成单笔交易"
-      ],
+      "moonpayItems": ["创建或登录现有的 Moonpay 账户", "使用信用卡或借记卡完成单笔交易"],
       "setupProfile": "我希望先创建我的个人资料",
       "paymentMethod": "支付方式",
       "notEnoughEth": "钱包中的 ETH 不足",
