@@ -30,7 +30,7 @@ const expectQuery = (address: string, page: number) => {
     address,
     sort: {
       type: 'expiryDate',
-      orderDirection: 'desc',
+      orderDirection: 'asc',
     },
     page,
     resultsPerPage: 10,
