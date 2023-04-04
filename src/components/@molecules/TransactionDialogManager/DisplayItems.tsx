@@ -173,8 +173,6 @@ const ListContainer = styled.div(
   `,
 )
 
-const ListItemTypography = styled(Typography)(() => css``)
-
 const ListValue = ({ value }: { value: string[] }) => {
   return (
     <ListContainer>
@@ -188,7 +186,7 @@ const ListValue = ({ value }: { value: string[] }) => {
             </Typography>
           )
         }
-        return <ListItemTypography key={key}>{`${val}${!isLast ? ',' : ''}`}</ListItemTypography>
+        return <ValueTypography key={key}>{`${val}${!isLast ? ',' : ''}`}</ValueTypography>
       })}
     </ListContainer>
   )
