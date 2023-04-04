@@ -96,6 +96,12 @@ describe('Profile', () => {
     cy.findByTestId('profile-snippet-name', { timeout: 25000 }).should('contain.text', '❤❤❤.eth')
   })
 
+  it('should allow searching for emoji domain', () => {
+    cy.visit('/')
+    cy.get('[placeholder="Search for a name"]').type('❤❤❤.eth').wait(1000).type('{enter}')
+    cy.url().should('include', '/❤❤❤.eth')
+  })
+
   profiles.forEach((profile) => {
     describe(profile.name, () => {
       describe('profile', () => {
