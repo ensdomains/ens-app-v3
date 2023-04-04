@@ -96,7 +96,7 @@ const ProfileTab = ({ nameDetails, name }: Props) => {
               i18nKey="tabs.profile.warnings.homoglyph"
               ns="profile"
               components={{
-                a: <Outlink href="https://en.wikipedia.org/wiki/IDN_homograph_attack" />,
+                a: <Outlink href="https://support.ens.domains/faq/normalization/homoglyphs/" />,
               }}
             />
           </Helper>

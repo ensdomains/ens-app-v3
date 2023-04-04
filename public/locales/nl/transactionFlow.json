@@ -52,9 +52,9 @@
           "noOptions": "Geen account opties beschikbaar",
           "placeholder": {
             "default": "Voeg username hier toe",
-            "com.twitter": "e.g. yogicodes",
-            "com.github": "e.g. yogicodes",
-            "com.discord": "e.g. yogicodes#4323"
+            "com.twitter": "e.g. ensdomains",
+            "com.github": "e.g. ensdomains",
+            "com.discord": "e.g. alisha.eth#0001"
           }
         },
         "address": {
@@ -161,5 +161,4 @@
       "warning": "Weet dat als je dit op welk moment dan ook cancelled dat de aanpassingen ongedaan gemaakt worden."
     }
   }
-
 }

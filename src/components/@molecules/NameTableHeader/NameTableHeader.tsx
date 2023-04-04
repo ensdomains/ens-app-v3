@@ -182,16 +182,16 @@ export const NameTableHeader = ({
                 id="sort-by"
               />
               <DirectionButton
-                $active={sortDirection === 'desc'}
-                onClick={() => onSortDirectionChange?.('desc')}
-              >
-                <UpDirectionSVG />
-              </DirectionButton>
-              <DirectionButton
                 $active={sortDirection === 'asc'}
                 onClick={() => onSortDirectionChange?.('asc')}
               >
                 <DownDirectionSVG />
+              </DirectionButton>
+              <DirectionButton
+                $active={sortDirection === 'desc'}
+                onClick={() => onSortDirectionChange?.('desc')}
+              >
+                <UpDirectionSVG />
               </DirectionButton>
             </TableHeaderLeftControlsContainer>
           )}

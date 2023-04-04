@@ -2,53 +2,21 @@ import { useCallback } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Typography } from '@ensdomains/thorin'
+import { Button, Dialog, Typography } from '@ensdomains/thorin'
 
-import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
+import { Outlink } from '@app/components/Outlink'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 
-const Container = styled.div(
+const StyledInnerDialog = styled(InnerDialog)(
   ({ theme }) => css`
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    background: radial-gradient(
-      41.95% 17.64% at 50.14% 50.08%,
-      #fff 0%,
-      rgba(255, 255, 255, 0.81) 100%
-    );
-    backdrop-filter: blur(8px);
-    border-radius: ${theme.radii.extraLarge};
+    flex: 1;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    z-index: 10;
-  `,
-)
-
-const Content = styled.div(
-  ({ theme }) => css`
-    width: 90%;
-    max-width: ${theme.space['72']};
-    display: flex;
-    flex-direction: column;
-    gap: ${theme.space['9']};
-  `,
-)
-
-const Message = styled.div(
-  () => css`
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  `,
-)
-
-const Title = styled(Typography)(
-  () => css`
-    text-align: center;
+    gap: ${theme.space['2']};
   `,
 )
 
@@ -58,20 +26,16 @@ const Subtitle = styled(Typography)(
   `,
 )
 
-const DismissButtonWrapper = styled.div(
-  ({ theme }) => css`
-    position: absolute;
-    top: ${theme.space['2']};
-    right: ${theme.space['2']};
-    z-index: 10000;
-  `,
-)
 type SettingsDict = {
   [key: string]: {
     handler?: () => void
     href?: string
     as?: 'a'
     dismissable: boolean
+    link?: {
+      href: string
+      label: string
+    }
   }
 }
 
@@ -153,10 +117,18 @@ const ResolverWarningOverlay = ({
     migrate: {
       handler: handleUpdateResolver,
       dismissable: true,
+      link: {
+        href: 'https://support.ens.domains/docs/core/records/resolver',
+        label: t('input.profileEditor.warningOverlay.links.learnMoreResolvers'),
+      },
     },
     noResolver: {
       handler: handleUpdateResolver,
       dismissable: false,
+      link: {
+        href: 'https://support.ens.domains/docs/core/records/resolver',
+        label: t('input.profileEditor.warningOverlay.links.learnMoreResolvers'),
+      },
     },
     oldRegistry: {
       dismissable: false,
@@ -166,9 +138,13 @@ const ResolverWarningOverlay = ({
     default: {
       handler: handleTransferProfile,
       dismissable: true,
+      link: {
+        href: 'https://support.ens.domains/docs/core/records/resolver',
+        label: t('input.profileEditor.warningOverlay.links.learnMoreResolvers'),
+      },
     },
   }
-  const { dismissable, handler, as, href } = settingsDict[settingsKey]
+  const { dismissable, handler, as, href, link } = settingsDict[settingsKey]
   const title = t(`input.profileEditor.warningOverlay.${settingsKey}.title`)
   const subtitle = t(`input.profileEditor.warningOverlay.${settingsKey}.subtitle`)
   const action = t(`input.profileEditor.warningOverlay.${settingsKey}.action`)
@@ -177,19 +153,33 @@ const ResolverWarningOverlay = ({
     handler?.()
   }
 
-  const handleDismiss = useCallback(() => {
+  const secondaryActionLabel = dismissable
+    ? t('tabs.profile.actions.editProfile.label', { ns: 'profile' })
+    : t('action.cancel', { ns: 'common' })
+
+  const handleSecondaryAction = useCallback(() => {
     if (dismissable) return onDismissOverlay?.()
     onDismiss?.()
   }, [dismissable, onDismiss, onDismissOverlay])
 
   return (
     <>
-      <Container data-testid="warning-overlay">
-        <Content>
-          <Message>
-            <Title fontVariant="headingFour">{title}</Title>
-            <Subtitle color="grey">{subtitle}</Subtitle>
-          </Message>
+      <Dialog.Heading title={title} alert="warning" />
+      <StyledInnerDialog data-testid="warning-overlay">
+        <Subtitle color="grey">{subtitle}</Subtitle>
+        {link && <Outlink href={link.href}>{link.label}</Outlink>}
+      </StyledInnerDialog>
+      <Dialog.Footer
+        leading={
+          <Button
+            colorStyle="accentSecondary"
+            onClick={handleSecondaryAction}
+            data-testid="warning-overlay-secondary-action"
+          >
+            {secondaryActionLabel}
+          </Button>
+        }
+        trailing={
           <Button
             as={as}
             href={href}
@@ -199,11 +189,8 @@ const ResolverWarningOverlay = ({
           >
             {action}
           </Button>
-        </Content>
-      </Container>
-      <DismissButtonWrapper data-testid="warning-overlay-dismiss">
-        <DismissDialogButton onClick={handleDismiss} data-testid="dismiss-dialog-button" />
-      </DismissButtonWrapper>
+        }
+      />
     </>
   )
 }

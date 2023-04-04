@@ -53,9 +53,9 @@
           "noOptions": "No account options available",
           "placeholder": {
             "default": "Add username here",
-            "com.twitter": "e.g. yogicodes",
-            "com.github": "e.g. yogicodes",
-            "com.discord": "e.g. yogicodes#4323"
+            "com.twitter": "e.g. ensdomains",
+            "com.github": "e.g. ensdomains",
+            "com.discord": "e.g. alisha.eth#0001"
           }
         },
         "address": {
@@ -119,6 +119,9 @@
           "title": "Your resolver is out of date",
           "subtitle": "Profile editing is disabled until you update your resolver.",
           "action": "Update"
+        },
+        "links": {
+          "learnMoreResolvers": "Learn more about resolvers"
         }
       }
     },
