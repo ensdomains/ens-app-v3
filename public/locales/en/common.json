@@ -107,6 +107,17 @@
     "expiredInMonths_other": "Expired {{count}} months ago",
     "expiredInYears_one": "Expired {{count}} year ago",
     "expiredInYears_other": "Expired {{count}} years ago",
+    "gracePeriod": {
+      "expiresInYears_one": "Grace period expires in {{count}} year",
+      "expiresInYears_other": "Grace period expires in {{count}} years",
+      "expiresInMonths_one": "Grace period expires in {{count}} month",
+      "expiresInMonths_other": "Grace period expires in {{count}} months",
+      "expiresInDays_one": "Grace period expires in {{count}} day",
+      "expiresInDays_other": "Grace period expires in {{count}} days",
+      "expiresInHours_one": "Grace period expires in {{count}} hour",
+      "expiresInHours_other": "Grace period expires in {{count}} hours",
+      "expiresInHours_zero": "Grace period expires in less than an hour"
+    },
     "extend": "Extend",
     "send": "Send",
     "transfer": "Transfer",
