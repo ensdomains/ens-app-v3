@@ -49,7 +49,6 @@ describe('AddProfileRecordView', () => {
   it('should disable all contenthash options if a website option is already selected', async () => {
     result.current.reset({ records: [{ key: 'ipfs', type: 'contenthash', group: 'website' }] })
     render(<AddProfileRecordView control={result.current.control} />)
-    expect(screen.getByTestId('profile-record-option-contentHash')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-ipfs')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-skynet')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-swarm')).toBeDisabled()
@@ -60,7 +59,6 @@ describe('AddProfileRecordView', () => {
   it('should disable all contenthash options if a contentHash option is already selected', async () => {
     result.current.reset({ records: [{ key: 'contentHash', type: 'contenthash', group: 'other' }] })
     render(<AddProfileRecordView control={result.current.control} />)
-    expect(screen.getByTestId('profile-record-option-contentHash')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-ipfs')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-skynet')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-swarm')).toBeDisabled()
@@ -75,7 +73,6 @@ describe('AddProfileRecordView', () => {
     expect(screen.getByTestId('profile-record-option-ipfs')).toHaveStyle(
       'background-color: ButtonFace',
     )
-    expect(screen.getByTestId('profile-record-option-contentHash')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-skynet')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-swarm')).toBeDisabled()
     expect(screen.getByTestId('profile-record-option-onion')).toBeDisabled()
@@ -84,30 +81,6 @@ describe('AddProfileRecordView', () => {
     expect(screen.getByTestId('profile-record-option-ipfs')).not.toHaveStyle(
       'background-color: rgba(82, 152, 255, 0.15)',
     )
-    expect(screen.getByTestId('profile-record-option-contentHash')).not.toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-skynet')).not.toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-swarm')).not.toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-onion')).not.toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-arweave')).not.toBeDisabled()
-  })
-
-  it('should disable other contenthash options if a website option is selected', async () => {
-    result.current.reset({ records: [] })
-    render(<AddProfileRecordView control={result.current.control} />)
-    await userEvent.click(screen.getByTestId('profile-record-option-contentHash'))
-    expect(screen.getByTestId('profile-record-option-contentHash')).toHaveStyle(
-      'background-color: ButtonFace',
-    )
-    expect(screen.getByTestId('profile-record-option-ipfs')).toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-skynet')).toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-swarm')).toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-onion')).toBeDisabled()
-    expect(screen.getByTestId('profile-record-option-arweave')).toBeDisabled()
-    await userEvent.click(screen.getByTestId('profile-record-option-contentHash'))
-    expect(screen.getByTestId('profile-record-option-contentHash')).not.toHaveStyle(
-      'background-color: ButtonFace',
-    )
-    expect(screen.getByTestId('profile-record-option-ipfs')).not.toBeDisabled()
     expect(screen.getByTestId('profile-record-option-skynet')).not.toBeDisabled()
     expect(screen.getByTestId('profile-record-option-swarm')).not.toBeDisabled()
     expect(screen.getByTestId('profile-record-option-onion')).not.toBeDisabled()
