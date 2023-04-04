@@ -7,6 +7,7 @@ import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 import { Button, Dialog, mq } from '@ensdomains/thorin'
 
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
+import type changePermissions from '@app/transaction-flow/transaction/changePermissions'
 import {
   CHILD_FUSES,
   ChildFuse,
@@ -14,7 +15,6 @@ import {
   PARENT_FUSES,
   ParentFuse,
 } from '@app/transaction-flow/transaction/changePermissions'
-import type changePermissions from '@app/transaction-flow/transaction/changePermissions'
 import { TransactionDialogPassthrough, TransactionFlowAction } from '@app/transaction-flow/types'
 import { dateTimeLocalToDate, dateToDateTimeLocal } from '@app/utils/datetime-local'
 
@@ -102,8 +102,8 @@ const getFormDataDefaultValues = (data: Data, transactionData?: TransactionData)
   const expiry = data.maxExpiry
   let expiryType: FormData['expiryType'] = 'max'
   let expiryCustom = data.minExpiry
-    ? dateToDateTimeLocal(new Date(data.minExpiry * 1000))
-    : dateToDateTimeLocal(new Date(Date.now() + 60 * 60 * 24 * 1000))
+    ? dateToDateTimeLocal(new Date(data.minExpiry * 1000), true)
+    : dateToDateTimeLocal(new Date(Date.now() + 60 * 60 * 24 * 1000), true)
 
   if (transactionData?.contract === 'setChildFuses') {
     parentFuseEntries = parentFuseEntries.map(([fuse, value]) => [
@@ -121,7 +121,7 @@ const getFormDataDefaultValues = (data: Data, transactionData?: TransactionData)
     transactionData.expiry !== expiry
   ) {
     expiryType = 'custom'
-    expiryCustom = dateToDateTimeLocal(new Date(transactionData.expiry * 1000))
+    expiryCustom = dateToDateTimeLocal(new Date(transactionData.expiry * 1000), true)
   }
   if (transactionData?.contract === 'setFuses') {
     childFuseEntries = childFuseEntries.map(([fuse, value]) => [
