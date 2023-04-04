@@ -93,13 +93,13 @@ describe('Profile', () => {
   it('should load emoji domain pages', () => {
     cy.visit('/%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F%E2%9D%A4%EF%B8%8F.eth')
     cy.wait(10000)
-    cy.findByTestId('profile-snippet-name', { timeout: 25000 }).should('contain.text', '❤❤❤.eth')
+    cy.findByTestId('profile-snippet-name', { timeout: 25000 }).should('contain.text', '❤️❤️❤️.eth')
   })
 
   it('should allow searching for emoji domain', () => {
     cy.visit('/')
-    cy.get('[placeholder="Search for a name"]').type('❤❤❤.eth').wait(1000).type('{enter}')
-    cy.url().should('include', '/❤❤❤.eth')
+    cy.get('[placeholder="Search for a name"]').type('❤️❤️❤️.eth').wait(1000).type('{enter}')
+    cy.url().should('include', '/%E2%9D%A4%E2%9D%A4%E2%9D%A4.eth')
   })
 
   profiles.forEach((profile) => {
