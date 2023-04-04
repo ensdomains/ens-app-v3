@@ -85,4 +85,5 @@ describe('Create Subname', () => {
     cy.findByTestId('transaction-modal-complete-button').click()
     cy.findByTestId('profile-action-Recreate name').should('not.exist')
   })
+  
 })
