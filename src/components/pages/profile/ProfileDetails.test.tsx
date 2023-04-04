@@ -41,7 +41,7 @@ describe('onwershipInfoCalc', () => {
       {
         key: 'name.parent',
         type: 'text',
-        value: '',
+        value: '[root]',
       },
     ])
   })
@@ -75,6 +75,22 @@ describe('onwershipInfoCalc', () => {
         key: 'name.parent',
         type: 'text',
         value: 'eth',
+      },
+    ])
+  })
+
+  it('should return parent as [root] if TLD', () => {
+    const result = ownershipInfoCalc('eth', true, [], new Date(), new Date())
+    expect(result).toEqual([
+      {
+        key: 'name.owner',
+        type: 'text',
+        value: '',
+      },
+      {
+        key: 'name.parent',
+        type: 'text',
+        value: '[root]',
       },
     ])
   })

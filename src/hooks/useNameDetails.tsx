@@ -37,9 +37,12 @@ export const useNameDetails = (name: string) => {
     loading: profileLoading,
     status,
     isCachedData: profileIsCachedData,
-  } = useProfile(normalisedName, !normalisedName)
+  } = useProfile(normalisedName, !normalisedName || normalisedName === '[root]')
 
-  const { abi, loading: abiLoading } = useGetABI(normalisedName, !normalisedName)
+  const { abi, loading: abiLoading } = useGetABI(
+    normalisedName,
+    !normalisedName || normalisedName === '[root]',
+  )
 
   const profile: DetailedProfile | undefined = useMemo(() => {
     if (!baseProfile) return undefined
@@ -85,6 +88,8 @@ export const useNameDetails = (name: string) => {
       return `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`
     }
     if (
+      // bypass unknown error for root name
+      normalisedName !== '[root]' &&
       !profile &&
       !profileLoading &&
       !abiLoading &&

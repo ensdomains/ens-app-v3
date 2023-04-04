@@ -13,8 +13,9 @@ import { useContractAddress } from './useContractAddress'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
-type BaseBatchReturn = [ReturnedENS['getOwner'], ReturnedENS['getWrapperData']]
-type ETH2LDBatchReturn = [...BaseBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
+type BaseBatchReturn = [ReturnedENS['getOwner']]
+type NormalBatchReturn = [...BaseBatchReturn, ReturnedENS['getWrapperData']]
+type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
 
 export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const ens = useEns()
@@ -36,7 +37,12 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
-    (): Promise<[] | BaseBatchReturn | ETH2LDBatchReturn | undefined> => {
+    (): Promise<[] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined> => {
+      // exception for "[root]", get owner of blank name
+      if (normalisedName === '[root]') {
+        return Promise.all([ens.getOwner('', 'registry')])
+      }
+
       const labels = normalisedName.split('.')
       const isDotETH = checkETHName(labels)
       if (checkETH2LDName(isDotETH, labels, true)) {

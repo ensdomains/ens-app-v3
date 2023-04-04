@@ -1,4 +1,4 @@
-import { mockFunction, renderHook, waitFor } from '@app/test-utils'
+import { mockFunction, renderHook } from '@app/test-utils'
 
 import { useEns } from '@app/utils/EnsProvider'
 
@@ -18,34 +18,32 @@ const mockUseContractAddress = mockFunction(useContractAddress)
 const mockUseSupportsTLD = mockFunction(useSupportsTLD)
 
 const mockGetOwner = {
-  ...jest.fn(),
   batch: jest.fn(),
 }
 const mockGetExpiry = {
-  ...jest.fn(),
   batch: jest.fn(),
 }
 const mockGetPrice = {
-  ...jest.fn(),
   batch: jest.fn(),
 }
 const mockGetWrapperData = {
-  ...jest.fn(),
   batch: jest.fn(),
 }
 
 const mockBatch = jest.fn()
 
+const mockUseEnsValue = {
+  ready: true,
+  getOwner: mockGetOwner,
+  getExpiry: mockGetExpiry,
+  getPrice: mockGetPrice,
+  getWrapperData: mockGetWrapperData,
+  batch: mockBatch,
+}
+
 describe('useBasicName', () => {
   mockUseSupportsTLD.mockReturnValue({ data: true, isLoading: false })
-  mockUseEns.mockReturnValue({
-    ready: true,
-    getOwner: mockGetOwner,
-    getExpiry: mockGetExpiry,
-    getPrice: mockGetPrice,
-    getWrapperData: mockGetWrapperData,
-    batch: mockBatch,
-  })
+  mockUseEns.mockReturnValue(mockUseEnsValue)
   mockUseContractAddress.mockReturnValue('0x123')
   afterEach(() => {
     jest.clearAllMocks()
@@ -57,18 +55,36 @@ describe('useBasicName', () => {
       labelCount: 2,
     })
 
-    renderHook(() => useBasicName('test.eth'))
-    await waitFor(() => expect(mockBatch).toHaveBeenCalled())
+    const { waitForNextUpdate } = renderHook(() => useBasicName('test.eth'))
+    await waitForNextUpdate()
     expect(mockGetExpiry.batch).toHaveBeenCalled()
   })
-  it('should not query for the expiry if not a 2LD .eth', () => {
+  it('should not query for the expiry if not a 2LD .eth', async () => {
     mockUseValidate.mockReturnValue({
       valid: true,
       name: 'test.com',
       labelCount: 2,
     })
 
-    renderHook(() => useBasicName('test.com'))
+    const { waitForNextUpdate } = renderHook(() => useBasicName('test.com'))
+    await waitForNextUpdate()
     expect(mockGetExpiry.batch).not.toHaveBeenCalled()
+  })
+  it('should not query for the expiry if is [root]', async () => {
+    const mockGetOwnerNoBatch = jest.fn()
+    mockUseEns.mockReturnValue({
+      ...mockUseEnsValue,
+      getOwner: mockGetOwnerNoBatch,
+    })
+    mockUseValidate.mockReturnValue({
+      valid: true,
+      name: '[root]',
+      labelCount: 1,
+    })
+
+    const { waitForNextUpdate } = renderHook(() => useBasicName('[root]'))
+    await waitForNextUpdate()
+    expect(mockGetExpiry.batch).not.toHaveBeenCalled()
+    expect(mockGetOwnerNoBatch).toHaveBeenCalled()
   })
 })
