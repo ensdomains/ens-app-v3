@@ -35,6 +35,10 @@
         },
         "editProfile": {
           "label": "Edit profile"
+        },
+        "reclaim": {
+          "label": "Recreate name",
+          "warning": "This subname has expired and is not owned. You can recreate this subname."
         }
       },
       "warnings": {

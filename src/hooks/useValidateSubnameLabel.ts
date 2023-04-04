@@ -5,6 +5,7 @@ import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 import { isLabelTooLong } from '@app/utils/utils'
 
+import { usePccExpired } from './fuses/usePccExpired'
 import { useGetWrapperData } from './useGetWrapperData'
 import { useValidate } from './useValidate'
 
@@ -33,6 +34,8 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
   )
   const isPCCBurned = !!wrapperData?.parent?.PARENT_CANNOT_CONTROL
 
+  const pccExpired = usePccExpired({ ownerData: ownership, wrapperData })
+
   const isLoading = isGetOwnerLoading || isGetWrapperDataLoading || !ready
 
   const { valid, error, expiryLabel } = useMemo(() => {
@@ -55,12 +58,24 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
     }
     if (validation.labelCount > 1 || !validation.valid)
       return { valid: false, error: 'invalidCharacters' }
-    if (!ownership?.owner || (ownership.owner && ownership.owner === emptyAddress))
+    if (
+      !ownership?.owner ||
+      (ownership.owner && ownership.owner === emptyAddress) ||
+      (isWrapped && pccExpired)
+    )
       return { valid: true, error: undefined }
     return { valid: false, error: 'alreadyExists' }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ownership?.owner, label, validation.valid, isWrapped, isPCCBurned, isParentTLD])
+  }, [
+    ownership?.owner,
+    label,
+    validation.valid,
+    isWrapped,
+    isPCCBurned,
+    isParentTLD,
+    pccExpired,
+    validation.labelCount,
+    wrapperData?.expiryDate,
+  ])
 
   return {
     valid,
