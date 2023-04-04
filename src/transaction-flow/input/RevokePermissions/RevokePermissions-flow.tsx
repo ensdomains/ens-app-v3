@@ -101,9 +101,18 @@ const getFormDataDefaultValues = (data: Data, transactionData?: TransactionData)
   ][]
   const expiry = data.maxExpiry
   let expiryType: FormData['expiryType'] = 'max'
-  let expiryCustom = data.minExpiry
-    ? dateToDateTimeLocal(new Date(data.minExpiry * 1000), true)
-    : dateToDateTimeLocal(new Date(Date.now() + 60 * 60 * 24 * 1000), true)
+  let expiryCustom = dateToDateTimeLocal(
+    new Date(
+      // set default to min + 1 day if min is larger than current time
+      // otherwise set to current time + 1 day
+      // max value is the maximum expiry
+      Math.min(
+        Math.max(data.minExpiry || 0, Date.now()) + 60 * 60 * 24 * 1000,
+        data.maxExpiry ? data.maxExpiry * 1000 : Infinity,
+      ),
+    ),
+    true,
+  )
 
   if (transactionData?.contract === 'setChildFuses') {
     parentFuseEntries = parentFuseEntries.map(([fuse, value]) => [
