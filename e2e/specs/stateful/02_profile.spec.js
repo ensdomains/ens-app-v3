@@ -103,131 +103,103 @@ describe('Profile', () => {
   })
 
   profiles.forEach((profile) => {
-    describe(profile.name, () => {
-      describe('profile', () => {
-        it('should go to the profile page', () => {
-          cy.visit('/')
-          cy.get('[placeholder="Search for a name"]').type(profile.name).wait(1000).type('{enter}')
+    it('should load profile for: ' + profile.name, () => {
+      cy.visit('/')
+      cy.log('should go to the profile page')
+      cy.get('[placeholder="Search for a name"]').type(profile.name).wait(1000).type('{enter}')
+      cy.url().should('include', `/${profile.name}`)
+      cy.log('should show the name in the profile snippet')
+      cy.findByTestId('profile-snippet', {
+        timeout: 25000,
+      }).should('contain.text', profile.name)
+
+      const snippetRecords = profile.records.filter((x) => x.type === 'snippet')
+      const accounts = profile.records.filter((x) => x.type === 'account')
+      const addresses = profile.records.filter((x) => x.type === 'address')
+      const otherRecords = profile.records.filter((x) => x.type === 'other')
+
+      const textRecords = profile.records.filter((x) => x.type !== 'address')
+      const addressRecords = profile.records.filter((x) => x.type === 'address')
+
+      cy.log('should show profile records')
+      cy.log('should show all snippet records in profile snippet')
+      if (snippetRecords.length > 0) {
+        snippetRecords.forEach((record) => {
+          cy.findByTestId(`profile-snippet-${record.key}`).should('contain.text', record.value)
         })
-
-        it('should show the name in the profile snippet', () => {
-          cy.findByTestId('profile-snippet', {
-            timeout: 25000,
-          }).should('contain.text', profile.name)
-        })
-
-        const snippetRecords = profile.records.filter((x) => x.type === 'snippet')
-        const accounts = profile.records.filter((x) => x.type === 'account')
-        const addresses = profile.records.filter((x) => x.type === 'address')
-        const otherRecords = profile.records.filter((x) => x.type === 'other')
-
-        describe('should show profile records', () => {
-          it('should show all snippet records in profile snippet', () => {
-            if (snippetRecords.length > 0) {
-              snippetRecords.forEach((record) => {
-                cy.findByTestId(`profile-snippet-${record.key}`).should(
-                  'contain.text',
-                  record.value,
-                )
-              })
-            }
-          })
-          it('should show accounts', () => {
-            if (accounts.length > 0) {
-              cy.contains('Accounts').should('be.visible')
-              accounts.forEach((account) => {
-                cy.findByTestId(`social-profile-button-${account.key}`)
-                  .should('be.visible')
-                  .should('contain.text', account.value)
-              })
-            }
-          })
-          it('should show addresses', () => {
-            if (addresses.length > 0) {
-              cy.contains('Addresses').should('be.visible')
-              addresses.forEach((address) => {
-                cy.findByTestId(`address-profile-button-${address.key}`)
-                  .should('be.visible')
-                  .should('contain.text', address.value)
-              })
-            }
-          })
-
-          it('should show other records', () => {
-            if (otherRecords.length > 0) {
-              cy.contains('Other Records').should('be.visible')
-              otherRecords.forEach((other) => {
-                cy.findByTestId(`other-profile-button-${other.key}`)
-                  .should('be.visible')
-                  .should('contain.text', `${other.key}${other.value}`)
-              })
-            }
-          })
-        })
-      })
-      describe('name details', () => {
-        const textRecords = profile.records.filter((x) => x.type !== 'address')
-        const addressRecords = profile.records.filter((x) => x.type === 'address')
-
-        it('should show all text records, and show correct number of records', () => {
-          cy.findByTestId('records-tab').click()
-          cy.findByTestId('text-amount').should('contain.text', `${textRecords.length} Records`)
-          if (textRecords.length > 0) {
-            textRecords.forEach((record) => {
-              cy.findByTestId(`name-details-text-${record.key}`)
-                .should('be.visible')
-                .should('include.text', record.fullValue || record.value)
-            })
-          }
-        })
-        it('should show all address records, and show correct number of records', () => {
-          cy.findByTestId('address-amount').should(
-            'contain.text',
-            `${addressRecords.length} Records`,
-          )
-          if (addressRecords.length > 0) {
-            addressRecords.forEach((record) => {
-              cy.findByTestId(`name-details-address-${record.key}`)
-                .should('be.visible')
-                .should('include.text', record.fullValue)
-            })
-          }
-        })
-
-        it('should show the contenthash if available', () => {
-          if (profile.contentHash) {
-            cy.findByTestId('content-hash-heading').should('have.text', 'Content Hash')
-            cy.findByTestId('name-details-contentHash').should('contain.text', profile.contentHash)
-          } else {
-            cy.findAllByTestId('content-hash-heading').should('have.text', 'No Content Hash')
-          }
-        })
-
-        it('should have correct ownership data', () => {
-          cy.findByTestId('more-tab').click()
-          //owner-button-name-name.manager
-          profile.owners.forEach((owner) => {
-            cy.findByTestId(`owner-button-name-name.${owner.type}`).should(
-              'contain.text',
-              owner.value,
-            )
-          })
-        })
-
-        it('should have view link for registration transaction', () => {
-          cy.findByTestId('more-tab').click()
-          cy.findByTestId('etherscan-registration-link')
+      }
+      cy.log('should show accounts')
+      if (accounts.length > 0) {
+        cy.contains('Accounts').should('be.visible')
+        accounts.forEach((account) => {
+          cy.findByTestId(`social-profile-button-${account.key}`)
             .should('be.visible')
-            .should('have.attr', 'href')
-            .and('match', /https:\/\/goerli\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/)
+            .should('contain.text', account.value)
         })
+      }
+      cy.log('should show addresses')
+      if (addresses.length > 0) {
+        cy.contains('Addresses').should('be.visible')
+        addresses.forEach((address) => {
+          cy.findByTestId(`address-profile-button-${address.key}`)
+            .should('be.visible')
+            .should('contain.text', address.value)
+        })
+      }
+      cy.log('should show other records')
+      if (otherRecords.length > 0) {
+        cy.contains('Other Records').should('be.visible')
+        otherRecords.forEach((other) => {
+          cy.findByTestId(`other-profile-button-${other.key}`)
+            .should('be.visible')
+            .should('contain.text', `${other.key}${other.value}`)
+        })
+      }
 
-        it('should show the expiry of the name if available', () => {
-          if (profile.expiry) {
-            cy.findByTestId('expiry-data').should('contain.text', profile.expiry)
-          }
+      cy.log('should show details in records tab')
+      cy.findByTestId('records-tab').click()
+      cy.log('should show all text records, and show correct number of records')
+      cy.findByTestId('text-amount').should('contain.text', `${textRecords.length} Records`)
+      if (textRecords.length > 0) {
+        textRecords.forEach((record) => {
+          cy.findByTestId(`name-details-text-${record.key}`)
+            .should('be.visible')
+            .should('include.text', record.fullValue || record.value)
         })
+      }
+      cy.log('should show all address records, and show correct number of records')
+      cy.findByTestId('address-amount').should('contain.text', `${addressRecords.length} Records`)
+      if (addressRecords.length > 0) {
+        addressRecords.forEach((record) => {
+          cy.findByTestId(`name-details-address-${record.key}`)
+            .should('be.visible')
+            .should('include.text', record.fullValue)
+        })
+      }
+      cy.log('should show content hash if available')
+      if (profile.contentHash) {
+        cy.findByTestId('content-hash-heading').should('have.text', 'Content Hash')
+        cy.findByTestId('name-details-contentHash').should('contain.text', profile.contentHash)
+      } else {
+        cy.findAllByTestId('content-hash-heading').should('have.text', 'No Content Hash')
+      }
+
+      cy.log('should show details in more tab')
+      cy.findByTestId('more-tab').click()
+      cy.log('should have correct ownership data')
+      profile.owners.forEach((owner) => {
+        cy.findByTestId(`owner-button-name-name.${owner.type}`).should('contain.text', owner.value)
       })
+      cy.log('should have view link for registration transaction')
+      cy.findByTestId('more-tab').click()
+      cy.findByTestId('etherscan-registration-link')
+        .should('be.visible')
+        .should('have.attr', 'href')
+        .and('match', /https:\/\/goerli\.etherscan\.io\/tx\/0x[a-fA-F0-9]{64}/)
+      cy.log('should show the expiry of the name if available')
+      if (profile.expiry) {
+        cy.findByTestId('expiry-data').should('contain.text', profile.expiry)
+      }
     })
   })
 

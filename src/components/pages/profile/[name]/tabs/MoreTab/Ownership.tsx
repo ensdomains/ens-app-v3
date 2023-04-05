@@ -195,7 +195,7 @@ const DNSOwnerSection = ({
   const { address } = useAccount()
   const { t } = useTranslation('profile')
   const { createTransactionFlow } = useTransactionFlow()
-  const { resetQueries } = useQueryClient()
+  const queryClient = useQueryClient()
 
   const canShow = useMemo(() => {
     let hasMatchingAddress = false
@@ -221,7 +221,7 @@ const DNSOwnerSection = ({
 
     createTransactionFlow(`sync-manager-${name}-${address}`, {
       intro: {
-        title: t('tabs.more.ownership.dnsOwnerWarning.syncManager'),
+        title: ['tabs.more.ownership.dnsOwnerWarning.syncManager', { ns: 'profile' }],
         content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
       },
       transactions: [
@@ -231,7 +231,7 @@ const DNSOwnerSection = ({
   }
 
   const handleRefresh = () => {
-    resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
+    queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
   }
 
   if (!canShow) return null
