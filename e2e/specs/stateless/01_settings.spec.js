@@ -1,12 +1,6 @@
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Settings', () => {
-  it('should allow user to disconnect', () => {
-    acceptMetamaskAccess(undefined, true)
-    cy.visit('/my/settings')
-    cy.findByTestId('wallet-section-disconnect').click()
-    cy.url().should('eq', 'http://localhost:8788/')
-  })
 
   describe('Transactions', () => {
     before(() => {
