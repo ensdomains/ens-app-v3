@@ -1,5 +1,5 @@
 diff --git a/commands/metamask.js b/commands/metamask.js
-index b32c62856e518052c2b9e837ceb5c247084152f3..b0d774026d0a89dcbb425b25e8eb4dc0ed9cc4fe 100644
+index b32c62856e518052c2b9e837ceb5c247084152f3..c92e4fcbf797b7d134b2ef3d720276a00dcf4f53 100644
 --- a/commands/metamask.js
 +++ b/commands/metamask.js
 @@ -1,5 +1,6 @@
@@ -36,6 +36,34 @@ index b32c62856e518052c2b9e837ceb5c247084152f3..b0d774026d0a89dcbb425b25e8eb4dc0
      let txData = {};
      const notificationPage = await playwright.switchToMetamaskNotification();
      if (gasConfig) {
+@@ -948,27 +962,6 @@ const metamask = {
+         }
+       }
+     }
+-    log('[confirmTransaction] Checking if recipient address is present..');
+-    if (
+-      await playwright
+-        .metamaskNotificationWindow()
+-        .locator(confirmPageElements.recipientButton)
+-        .isVisible()
+-    ) {
+-      log('[confirmTransaction] Getting recipient address..');
+-      await playwright.waitAndClick(
+-        confirmPageElements.recipientButton,
+-        notificationPage,
+-      );
+-      txData.recipientPublicAddress = await playwright.waitAndGetValue(
+-        recipientPopupElements.recipientPublicAddress,
+-        notificationPage,
+-      );
+-      await playwright.waitAndClick(
+-        recipientPopupElements.popupCloseButton,
+-        notificationPage,
+-      );
+-    }
+     log('[confirmTransaction] Checking if network name is present..');
+     if (
+       await playwright
 diff --git a/commands/playwright.js b/commands/playwright.js
 index 26df7862263b8c9ec37da4e7d12d7c324d102c48..0f2a509cf7b8ef5e0bc39a7ce788f407df01dd88 100644
 --- a/commands/playwright.js

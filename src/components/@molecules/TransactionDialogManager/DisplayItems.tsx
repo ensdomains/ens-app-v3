@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Typography } from '@ensdomains/thorin'
 
 import { AvatarWithZorb, NameAvatar } from '@app/components/AvatarWithZorb'
+import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { TransactionDisplayItem } from '@app/types'
@@ -118,7 +119,7 @@ const AddressValue = ({ value }: { value: string }) => {
       <InnerValueWrapper>
         {primary.name && (
           <ValueTypography fontVariant="bodyBold" color="text">
-            {primary.name}
+            {primary.beautifiedName}
           </ValueTypography>
         )}
         {AddressTypography}
@@ -137,10 +138,11 @@ const AddressValue = ({ value }: { value: string }) => {
 
 const NameValue = ({ value }: { value: string }) => {
   const network = useChainId()
+  const beautifiedName = useBeautifiedName(value)
 
   return (
     <ValueWithAvatarContainer>
-      <ValueTypography fontVariant="bodyBold">{value}</ValueTypography>
+      <ValueTypography fontVariant="bodyBold">{beautifiedName}</ValueTypography>
       <AvatarWrapper>
         <NameAvatar name={value} label={`${value}-avatar`} network={network} />
       </AvatarWrapper>
@@ -173,8 +175,6 @@ const ListContainer = styled.div(
   `,
 )
 
-const ListItemTypography = styled(Typography)(() => css``)
-
 const ListValue = ({ value }: { value: string[] }) => {
   return (
     <ListContainer>
@@ -188,7 +188,7 @@ const ListValue = ({ value }: { value: string[] }) => {
             </Typography>
           )
         }
-        return <ListItemTypography key={key}>{`${val}${!isLast ? ',' : ''}`}</ListItemTypography>
+        return <ValueTypography key={key}>{`${val}${!isLast ? ',' : ''}`}</ValueTypography>
       })}
     </ListContainer>
   )

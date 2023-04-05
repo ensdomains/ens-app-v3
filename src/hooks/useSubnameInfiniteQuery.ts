@@ -25,7 +25,7 @@ export const useSubnameInfiniteQuery = (
     queryKey,
     async ({ pageParam }) => {
       const result = await getSubnames({
-        name,
+        name: name === '[root]' ? '' : name,
         lastSubnames: pageParam,
         orderBy: orderBy === 'creationDate' ? 'createdAt' : 'labelName',
         orderDirection: orderDirection === 'asc' ? 'asc' : 'desc',

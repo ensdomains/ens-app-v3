@@ -180,8 +180,31 @@ export const zorbImageSVG = (input: string, type: 'name' | 'address' | 'hash') =
     `
 }
 
-export const zorbImageDataURI = (input: string, type: 'name' | 'address' | 'hash') => {
-  return `data:image/svg+xml;base64,${Buffer.from(zorbImageSVG(input, type), 'utf-8').toString(
-    'base64',
-  )}`
+type EnsOutlineColours = {
+  bg: string
+  fg: string
+  accent: string
+}
+
+const makeEnsOutlineIcon = ({ bg, fg, accent }: EnsOutlineColours) => `
+<svg viewBox="0 0 2048 2048" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="2048" height="2048" fill="${bg}" />
+  <path d="M579.269 668.355c12.569-23.334 30.709-43.227 52.82-57.924l371.071-258.175-380.208 626.405s-33.22-55.935-46.176-84.238c-16.145-35.586-24.287-74.257-23.857-113.308.43-39.051 9.424-77.535 26.35-112.76ZM426.123 1100.47c4.189 59.9 21.176 118.22 49.822 171.05 28.646 52.84 68.29 98.96 116.279 135.28l410.436 285.16s-256.793-368.73-473.388-735.638c-21.929-38.765-36.67-81.146-43.519-125.117-3.032-19.91-3.032-40.165 0-60.076-5.648 10.429-16.61 31.777-16.61 31.777-21.962 44.626-36.919 92.348-44.349 141.5-4.277 51.954-3.832 104.184 1.329 156.064Zm1046.437 49.65c-13.29-28.3-46.18-84.24-46.18-84.24l-379.54 626.08 371.07-258.02c22.11-14.69 40.25-34.58 52.82-57.92 16.93-35.22 25.92-73.71 26.35-112.76.43-39.05-7.71-77.72-23.86-113.31l-.66.17Zm150.65-206.213c-4.19-59.9-21.17-118.223-49.82-171.053-28.65-52.831-68.29-98.954-116.28-135.281l-409.77-285.317s256.63 368.727 473.39 735.634c21.87 38.78 36.55 81.16 43.35 125.12 3.03 19.91 3.03 40.16 0 60.07 5.65-10.43 16.61-31.78 16.61-31.78 21.96-44.62 36.92-92.34 44.35-141.5 4.33-51.95 3.94-104.177-1.16-156.057l-.67.164Z" fill="${accent}" stroke="${fg}" stroke-width="16" stroke-dasharray="48" />
+</svg>
+`
+
+const makeBase64Svg = (svg: string) => {
+  return `data:image/svg+xml;base64,${Buffer.from(svg, 'utf-8').toString('base64')}`
+}
+
+export const zorbImageDataURI = (
+  input: string,
+  type: 'name' | 'address' | 'hash',
+  colours: EnsOutlineColours,
+) => {
+  // root icon
+  if (type === 'name' && input === '[root]') {
+    return makeBase64Svg(makeEnsOutlineIcon(colours))
+  }
+  return makeBase64Svg(zorbImageSVG(input, type))
 }

@@ -125,7 +125,7 @@ const OwnerDetailContainer = styled.div(
 
 const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
   const { t } = useTranslation('common')
-  const { name: primary } = usePrimary(address)
+  const { name: primary, beautifiedName } = usePrimary(address)
   const network = useChainId()
 
   return (
@@ -141,7 +141,7 @@ const Owner = ({ address, label }: ReturnType<typeof useOwners>[0]) => {
           />
           <TextContainer>
             <Name ellipsis data-testid={`owner-button-name-${label}`}>
-              {primary || shortenAddress(address)}
+              {beautifiedName || shortenAddress(address)}
             </Name>
             {primary && (
               <Typography data-testid={`owner-button-address-${label}`}>
@@ -195,7 +195,7 @@ const DNSOwnerSection = ({
   const { address } = useAccount()
   const { t } = useTranslation('profile')
   const { createTransactionFlow } = useTransactionFlow()
-  const { resetQueries } = useQueryClient()
+  const queryClient = useQueryClient()
 
   const canShow = useMemo(() => {
     let hasMatchingAddress = false
@@ -221,7 +221,7 @@ const DNSOwnerSection = ({
 
     createTransactionFlow(`sync-manager-${name}-${address}`, {
       intro: {
-        title: t('tabs.more.ownership.dnsOwnerWarning.syncManager'),
+        title: ['tabs.more.ownership.dnsOwnerWarning.syncManager', { ns: 'profile' }],
         content: makeIntroItem('SyncManager', { isWrapped, manager: currentManager!.address }),
       },
       transactions: [
@@ -231,7 +231,7 @@ const DNSOwnerSection = ({
   }
 
   const handleRefresh = () => {
-    resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
+    queryClient.resetQueries({ exact: true, queryKey: ['getDNSOwner', name] })
   }
 
   if (!canShow) return null

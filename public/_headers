@@ -1,0 +1,2 @@
+/*
+  Content-Security-Policy: worker-src 'self' ; script-src 'self' https://*.googletagmanager.com plausible.io static.cloudflareinsights.com *.ens-app-v3.pages.dev; frame-ancestors 'self' https://app.safe.global;

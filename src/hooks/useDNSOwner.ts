@@ -15,7 +15,7 @@ const useDNSOwner = (name: string, valid: boolean | undefined) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
   } = useQuery(['getDNSOwner', name], () => getDNSOwner(name), {
-    enabled: ready && valid && !name?.endsWith('.eth'),
+    enabled: ready && valid && !name?.endsWith('.eth') && name !== 'eth' && name !== '[root]',
   })
 
   const isCachedData = status === 'success' && isFetched && !isFetchedAfterMount

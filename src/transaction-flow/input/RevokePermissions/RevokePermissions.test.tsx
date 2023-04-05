@@ -321,7 +321,7 @@ describe('RevokePermissions', () => {
                 parent: ['CAN_EXTEND_EXPIRY'],
                 child: [],
               },
-              expiry: 1672531200,
+              expiry: 1675238574,
             }),
           ],
         })

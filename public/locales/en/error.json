@@ -1,0 +1,10 @@
+{
+  "not-found": {
+    "title": "Not found",
+    "message": "The page you were looking for wasn't found. <br /> You can <HomeLink>search for a name</HomeLink> or <SupportLink>visit our support</SupportLink> for further help."
+  },
+  "application-error": {
+    "title": "Application error",
+    "message": "Something has gone wrong. <br /> If this is a recurring issue, please <SupportLink>visit our support</SupportLink> for further help."
+  }
+}

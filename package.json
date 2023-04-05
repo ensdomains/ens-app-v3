@@ -27,7 +27,7 @@
     "test:watch": "jest --env=./custom-test-env.js --watch",
     "test:coverage": "jest --env=./custom-test-env.js --coverage",
     "synpress:start": "synpress run -cf ./e2e/synpress.config.js",
-    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/01_settings.spec.js",
+    "synpress:standalone": "SECRET_WORDS=\"test test test test test test test test test test test junk\" PASSWORD=TestMetaMask NETWORK_NAME=localhost TRANSACTION_WAIT_TIME=5000 synpress run -ne -cf ./e2e/synpress.config.js --spec ./e2e/specs/stateless/01_settings.spec.js",
     "synpress:local": "synpress run -ne -cf ./e2e/synpress.config.js",
     "synpress:stateful": "NETWORK_NAME=mainnet synpress run -cf ./e2e/synpress-stateful.config.js",
     "synpress:ci": "pnpm synpress:start --parallel --record --key aab18385-26dc-4b7c-8631-e91bc79f2ab2 --ci-build-id $CI_BUILD_ID --group stateless",
@@ -104,6 +104,7 @@
     "react-is": "^17.0.2",
     "react-transition-state": "^1.1.5",
     "react-use": "^17.4.0",
+    "react-use-error-boundary": "^3.0.0",
     "styled-components": "^5.3.5",
     "use-immer": "^0.7.0",
     "wagmi": "0.12.1"
@@ -197,7 +198,7 @@
     "typescript-styled-plugin": "^0.18.2",
     "wagmi-cjs": "npm:wagmi@0.12.1-cjs",
     "wait-on": "^6.0.1",
-    "wrangler": "0.0.0-ff35b9d1",
+    "wrangler": "2.13.0",
     "yalc": "^1.0.0-pre.53"
   },
   "pnpm": {
