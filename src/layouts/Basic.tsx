@@ -1,11 +1,13 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { Dialog, Typography, mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
+import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 
 import { Navigation } from './Navigation'
 
@@ -143,11 +145,12 @@ const FeedbackButton = styled.div(
 
 export const StyledFeedbackSVG = styled(FeedbackSVG)(() => css``)
 
-export const Basic = ({ children }: { children: React.ReactNode }) => {
+export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
   const { chain: currentChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const router = useRouter()
   const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
+  const [error] = useErrorBoundary()
 
   useEffect(() => {
     if (currentChain && !(currentChain?.id === 5 || currentChain?.id === 1337)) {
@@ -166,7 +169,9 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
         </div>
       </FeedbackButton>
       <Navigation />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper>
+        {error ? <ErrorScreen errorType="application-error" /> : children}
+      </ContentWrapper>
       <BottomPlaceholder />
       <StyledDialog
         open={hasFeedbackForm}
@@ -183,4 +188,4 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
       </StyledDialog>
     </Container>
   )
-}
+})

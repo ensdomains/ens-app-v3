@@ -54,7 +54,7 @@
     "@ensdomains/dnssecoraclejs": "^0.2.7",
     "@ensdomains/ens-contracts": "0.0.16",
     "@ensdomains/ens-validation": "^0.1.0",
-    "@ensdomains/ensjs": "3.0.0-alpha.54",
+    "@ensdomains/ensjs": "3.0.0-alpha.55",
     "@ensdomains/eth-ens-namehash": "^2.0.15",
     "@ensdomains/thorin": "0.6.35",
     "@ethersproject/abi": "^5.6.4",
@@ -104,6 +104,7 @@
     "react-is": "^17.0.2",
     "react-transition-state": "^1.1.5",
     "react-use": "^17.4.0",
+    "react-use-error-boundary": "^3.0.0",
     "styled-components": "^5.3.5",
     "use-immer": "^0.7.0",
     "wagmi": "0.12.1"
