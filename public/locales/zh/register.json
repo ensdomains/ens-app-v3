@@ -19,7 +19,7 @@
       "insufficientBalance": "余额不足",
       "multipleYearsMessage": "一次续期数年可以避免每年进行交易，从而节省网络成本。",
       "primaryName": "作为主名使用",
-      "primaryNameMessage": "把您的地址关联到该名称，这样在连接到 app 时，就可以将该名称作为您的个人资料显示出来。",
+      "primaryNameMessage": "把您的地址关联到该名称，这样在连接到 dApp 时，就可以将它作为您的个人资料显示出来。每个地址只能有一个主名。",
       "premium": {
         "heading": "该名称存在一个临时溢价",
         "subheading": "为了给刚过期的名称提供公平的注册机会，溢价从 1 亿美元开始，在 21 天内逐步降至 0 美元。您可以在下面利用日期计算溢价。",
@@ -30,6 +30,7 @@
     },
     "profile": {
       "title": "创建您的个人资料",
+      "title2": "编辑您的个人资料",
       "default": "默认",
       "advanced": "高级",
       "permissions": "权限",
@@ -155,7 +156,10 @@
         "等待计时器完成 60 秒计时",
         "完成第二笔交易来获得该名称"
       ],
-      "moonpayItems": ["创建或登录现有的 Moonpay 账户", "使用信用卡或借记卡完成单笔交易"],
+      "moonpayItems": [
+        "创建或登录现有的 Moonpay 账户", 
+        "使用信用卡或借记卡完成单笔交易"
+      ],
       "setupProfile": "我希望先创建我的个人资料",
       "paymentMethod": "支付方式",
       "notEnoughEth": "钱包中的 ETH 不足",
@@ -169,7 +173,7 @@
     },
     "transactions": {
       "heading": "接近完成",
-      "subheading": "该计时器可防止其他人在您之前注册该名称。",
+      "subheading": "该计时器有助于防止其他人在您之前注册该名称。只有在完成第二笔交易之后，才能成功注册该名称。",
       "startTimer": "启动计时器",
       "wait": "等待",
       "transactionFailed": "交易失败",
