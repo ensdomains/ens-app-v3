@@ -3,7 +3,7 @@ import { Control, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
-import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox } from '@ensdomains/thorin'
+import { Button, Dialog, Input, MagnifyingGlassSimpleSVG, ScrollBox, mq } from '@ensdomains/thorin'
 
 import DismissDialogButton from '@app/components/@atoms/DismissDialogButton/DismissDialogButton'
 import { Spacer } from '@app/components/@atoms/Spacer'
@@ -13,13 +13,12 @@ import {
   grouped as options,
 } from '@app/constants/profileRecordOptions'
 import { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import mq from '@app/mediaQuery'
 
 import useDebouncedCallback from '../../../../../../../hooks/useDebouncedCallback'
 import { OptionButton } from './OptionButton'
 import { OptionGroup } from './OptionGroup'
 
-const Container = styled.div(() => [
+const Container = styled.div(({ theme }) => [
   css`
     display: flex;
     flex-direction: column;
@@ -27,7 +26,8 @@ const Container = styled.div(() => [
     max-height: 600px;
   `,
   mq.sm.min(css`
-    width: 520px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
   `),
 ])
 
@@ -111,14 +111,19 @@ const OptionsGrid = styled.div(
   `,
 )
 
-const FooterWrapper = styled.div(
-  ({ theme }) => css`
+const FooterWrapper = styled.div(({ theme }) => [
+  css`
     border-top: 1px solid ${theme.colors.border};
     padding: ${theme.space[4]};
     padding-bottom: 0;
-    margin: 0 -${theme.space['3.5']};
+    margin: 0 -${theme.space['4']};
   `,
-)
+  mq.sm.min(css`
+    padding: ${theme.space[6]};
+    padding-bottom: 0;
+    margin: 0 -${theme.space['6']};
+  `),
+])
 
 const DismissButtonWrapper = styled.div(
   ({ theme }) => css`

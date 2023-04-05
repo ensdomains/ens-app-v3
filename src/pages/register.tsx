@@ -25,9 +25,9 @@ export default function Page() {
   if (!isLoading && registrationStatus !== 'available' && registrationStatus !== 'premium') {
     let redirect = true
 
-    if (nameDetails.ownerData?.owner === address) {
+    if (nameDetails.ownerData?.owner === address && !!address) {
       const registrationData = JSON.parse(
-        localStorage.getItem('registration-status') || '{items:[]}',
+        localStorage.getItem('registration-status') || '{"items":[]}',
       )
       const index = getSelectedIndex(registrationData, {
         address: address!,

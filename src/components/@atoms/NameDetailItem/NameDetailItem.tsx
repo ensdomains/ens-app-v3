@@ -34,7 +34,7 @@ const NameItemWrapper = styled.div<{ $highlight: boolean; $disabled: boolean }>(
     &:last-of-type {
       border: none;
     }
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['3']} ${theme.space['4.5']};
       gap: ${theme.space['4']};
     `)}
@@ -77,7 +77,6 @@ const NameItemContent = styled.div(
 const TitleWrapper = styled(StyledName)(
   () => css`
     font-size: 1rem;
-    ${mq.md.min(css``)}
   `,
 )
 

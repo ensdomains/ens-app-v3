@@ -48,6 +48,10 @@ const HelperLinks = [
     href: 'https://www.bluehost.com/help/article/dns-management-add-edit-or-delete-dns-entries',
   },
   {
+    label: 'registrars.cloudflare',
+    href: 'https://developers.cloudflare.com/dns/additional-options/dnssec/#enable-dnssec',
+  },
+  {
     label: 'registrars.hostgator',
     href: 'https://www.hostgator.com/help/article/changing-dns-records',
   },
@@ -183,7 +187,6 @@ export const AddTextRecord = ({
       <Spacer $height="3" />
       <Dropdown
         // needed for no line breaks in buttons
-        inheritContentWidth
         align="left"
         items={HelperLinks.map((link) => ({
           label: t(link.label),

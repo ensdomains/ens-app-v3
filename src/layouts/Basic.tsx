@@ -1,31 +1,35 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
 import { Dialog, Typography, mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
+import ErrorScreen from '@app/components/@atoms/ErrorScreen'
 
 import { Navigation } from './Navigation'
 
 const Container = styled.div(
   ({ theme }) => css`
-    padding: ${theme.space['5']} ${theme.space['4']};
+    padding: ${theme.space['4']};
     display: flex;
-    flex-gap: ${theme.space['8']};
-    gap: ${theme.space['8']};
+    flex-gap: ${theme.space['4']};
+    gap: ${theme.space['4']};
     flex-direction: column;
     align-items: stretch;
     @supports (-webkit-touch-callout: none) {
       width: calc(100% - ${theme.space['8']});
       box-sizing: content-box;
-      ${mq.md.min(css`
+      ${mq.sm.min(css`
         width: calc(100% - ${theme.space['32']});
       `)}
     }
-    ${mq.md.min(css`
-      padding: ${theme.space['12']} ${theme.space['16']};
+    ${mq.sm.min(css`
+      padding: ${theme.space['8']};
+      gap: ${theme.space['6']};
+      flex-gap: ${theme.space['6']};
     `)}
   `,
 )
@@ -45,10 +49,10 @@ const ContentWrapper = styled.div(
 
 const BottomPlaceholder = styled.div(
   ({ theme }) => css`
-    height: ${theme.space['16']};
-    ${mq.md.min(
+    height: ${theme.space['14']};
+    ${mq.sm.min(
       css`
-        height: ${theme.space['18']};
+        height: ${theme.space['12']};
       `,
     )}
   `,
@@ -141,11 +145,12 @@ const FeedbackButton = styled.div(
 
 export const StyledFeedbackSVG = styled(FeedbackSVG)(() => css``)
 
-export const Basic = ({ children }: { children: React.ReactNode }) => {
+export const Basic = withErrorBoundary(({ children }: { children: React.ReactNode }) => {
   const { chain: currentChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const router = useRouter()
   const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
+  const [error] = useErrorBoundary()
 
   useEffect(() => {
     if (currentChain && !(currentChain?.id === 5 || currentChain?.id === 1337)) {
@@ -164,7 +169,9 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
         </div>
       </FeedbackButton>
       <Navigation />
-      <ContentWrapper>{children}</ContentWrapper>
+      <ContentWrapper>
+        {error ? <ErrorScreen errorType="application-error" /> : children}
+      </ContentWrapper>
       <BottomPlaceholder />
       <StyledDialog
         open={hasFeedbackForm}
@@ -181,4 +188,4 @@ export const Basic = ({ children }: { children: React.ReactNode }) => {
       </StyledDialog>
     </Container>
   )
-}
+})

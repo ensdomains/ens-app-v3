@@ -41,7 +41,7 @@ const StyledCard = styled.form(({ theme }) => [
     justify-content: center;
     gap: ${theme.space['4']};
   `,
-  mq.md.min(css`
+  mq.sm.min(css`
     padding: ${theme.space['6']};
     gap: ${theme.space['6']};
   `),
@@ -143,6 +143,8 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
     hasErrors,
   } = useProfileEditorForm(registrationData.records)
 
+  const [isAvatarDropdownOpen, setIsAvatarDropdownOpen] = useState(false)
+
   const [avatarFile, setAvatarFile] = useState<File | undefined>()
   const [avatarSrc, setAvatarSrc] = useState<string | undefined>()
   useEffect(() => {
@@ -159,6 +161,7 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
   const [modalOption, _setModalOption] = useState<ModalOption | null>(null)
   const setModalOption = (option: ModalOption) => {
     _setModalOption(option)
+    setIsAvatarDropdownOpen(false)
     setModalOpen(true)
   }
 
@@ -279,10 +282,12 @@ const Profile = ({ nameDetails, callback, registrationData, resolverExists }: Pr
         <WrappedAvatarButton
           control={control}
           src={avatarSrc}
+          isOpen={isAvatarDropdownOpen}
           onSelectOption={setModalOption}
           onAvatarChange={(avatar) => setAvatar(avatar)}
           onAvatarFileChange={(file) => setAvatarFile(file)}
           onAvatarSrcChange={(src) => setAvatarSrc(src)}
+          setIsOpen={setIsAvatarDropdownOpen}
         />
         {records.map((field, index) =>
           field.group === 'custom' ? (

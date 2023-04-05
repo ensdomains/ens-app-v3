@@ -243,7 +243,7 @@ const Hamburger = () => {
   return (
     <>
       {button}
-      {!isInitial && breakpoints.md ? (
+      {breakpoints.sm ? (
         <DynamicPopover
           isOpen={isOpen}
           anchorRef={btnRef}

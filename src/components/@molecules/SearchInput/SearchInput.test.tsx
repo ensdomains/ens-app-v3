@@ -120,4 +120,90 @@ describe('SearchInput', () => {
     expect(screen.getByText('0xb6E040...d28cd9')).toBeInTheDocument()
     expect(screen.getByText('test.eth')).toBeInTheDocument()
   })
+  it('should show history items in correct order', async () => {
+    mockUseLocalStorage.mockReturnValue([
+      [
+        {
+          type: 'name',
+          value: 'nick.eth',
+          lastAccessed: 1,
+        },
+        {
+          type: 'address',
+          value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+          lastAccessed: 3,
+        },
+        {
+          type: 'name',
+          value: 'test.eth',
+          lastAccessed: 2,
+        },
+      ],
+    ])
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+    render(<SearchInput />)
+    act(() => {
+      screen.getByTestId('search-input-box').focus()
+    })
+    const container = await waitFor(() => screen.getByTestId('search-input-results'), {
+      timeout: 500,
+    })
+
+    expect(container.children[0]).toHaveTextContent('0xb6E040...d28cd9')
+    expect(container.children[1]).toHaveTextContent('test.eth')
+    expect(container.children[2]).toHaveTextContent('nick.eth')
+  })
+  it('should show a maximum of 5 history items', async () => {
+    mockUseLocalStorage.mockReturnValue([
+      [
+        {
+          type: 'name',
+          value: 'nick.eth',
+        },
+        {
+          type: 'address',
+          value: '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+        },
+        {
+          type: 'name',
+          value: 'test.eth',
+        },
+        {
+          type: 'name',
+          value: 'test1.eth',
+        },
+        {
+          type: 'name',
+          value: 'test2.eth',
+        },
+        {
+          type: 'name',
+          value: 'test3.eth',
+        },
+      ],
+    ])
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+    render(<SearchInput />)
+    act(() => {
+      screen.getByTestId('search-input-box').focus()
+    })
+    await waitFor(() => screen.getByTestId('search-input-results'), {
+      timeout: 500,
+    })
+
+    expect(screen.getByText('test2.eth')).toBeInTheDocument()
+    expect(screen.queryByText('test3.eth')).not.toBeInTheDocument()
+  })
 })

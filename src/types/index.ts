@@ -1,5 +1,5 @@
 import type { PopulatedTransaction } from '@ethersproject/contracts'
-import type { JsonRpcSigner } from '@ethersproject/providers'
+import type { JsonRpcSigner, TransactionReceipt } from '@ethersproject/providers'
 import { ComponentProps } from 'react'
 import type { TFunction } from 'react-i18next'
 
@@ -120,3 +120,11 @@ export type OwnerArray = {
   transferType?: 'manager' | 'owner'
   testId: string
 }[]
+
+export type MinedData = TransactionReceipt & {
+  timestamp: number
+}
+
+export type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}

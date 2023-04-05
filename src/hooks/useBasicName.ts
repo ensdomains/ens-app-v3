@@ -7,19 +7,20 @@ import { ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
-import { checkETH2LDName, checkETHName, isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
+import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
 import { useContractAddress } from './useContractAddress'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
 
-type BaseBatchReturn = [ReturnedENS['getOwner'], ReturnedENS['getWrapperData']]
-type ETH2LDBatchReturn = [...BaseBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
+type BaseBatchReturn = [ReturnedENS['getOwner']]
+type NormalBatchReturn = [...BaseBatchReturn, ReturnedENS['getWrapperData']]
+type ETH2LDBatchReturn = [...NormalBatchReturn, ReturnedENS['getExpiry'], ReturnedENS['getPrice']]
 
 export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const ens = useEns()
 
-  const { name: _normalisedName, valid, labelCount, isNonASCII } = useValidate(name!, !name)
+  const { name: _normalisedName, isValid, ...validation } = useValidate(name!, !name)
 
   const normalisedName = normalised ? name! : _normalisedName
 
@@ -32,15 +33,19 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
     /** DO NOT REMOVE */
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,
-    internal: { isFetchedAfterMount },
+    isFetchedAfterMount,
     status,
   } = useQuery(
     ['batch', 'getOwner', 'getExpiry', normalisedName],
-    (): Promise<[] | BaseBatchReturn | ETH2LDBatchReturn | undefined> => {
+    (): Promise<[] | BaseBatchReturn | NormalBatchReturn | ETH2LDBatchReturn | undefined> => {
+      // exception for "[root]", get owner of blank name
+      if (normalisedName === '[root]') {
+        return Promise.all([ens.getOwner('', 'registry')])
+      }
+
       const labels = normalisedName.split('.')
-      const isDotETH = checkETHName(labels)
-      if (checkETH2LDName(isDotETH, labels, true)) {
-        if (labels[0].length < 3) {
+      if (validation.isETH && validation.is2LD) {
+        if (validation.isShort) {
           return Promise.resolve([])
         }
         return ens.batch(
@@ -54,7 +59,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
       return ens.batch(ens.getOwner.batch(normalisedName), ens.getWrapperData.batch(normalisedName))
     },
     {
-      enabled: !!(ens.ready && name && valid),
+      enabled: !!(ens.ready && name && isValid),
     },
   )
 
@@ -71,7 +76,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
 
   const registrationStatus = batchData
     ? getRegistrationStatus({
-        name: normalisedName,
+        validation,
         ownerData,
         wrapperData,
         expiryData,
@@ -117,10 +122,9 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
   const isLoading = !ens.ready || batchLoading || supportedTLDLoading
 
   return {
+    ...validation,
     normalisedName,
-    valid,
-    isNonASCII,
-    labelCount,
+    isValid,
     ownerData,
     wrapperData,
     priceData,

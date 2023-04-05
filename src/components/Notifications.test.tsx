@@ -2,7 +2,7 @@ import { mockFunction, render, screen, waitFor } from '@app/test-utils'
 
 import { act } from '@testing-library/react'
 
-import { Transaction } from '@app/hooks/transactions/transactionStore'
+import type { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useChainId } from '@app/hooks/useChainId'
 import { useChainName } from '@app/hooks/useChainName'
 import { useBreakpoint } from '@app/utils/BreakpointProvider'
@@ -99,5 +99,17 @@ describe('Notifications', () => {
 
     expect(screen.getByText('transaction.status.confirmed.notifyTitle')).toBeInTheDocument()
     expect(screen.getByText('transaction.status.confirmed.notifyMessage')).toBeInTheDocument()
+  })
+  it('should not show a notification for a repriced transaction', async () => {
+    const { rerender } = render(<Notifications />)
+
+    const mockData = makeRecentTransaction('repriced')(null, 0)
+    cb(mockData)
+
+    rerender(<Notifications />)
+
+    await waitFor(() => screen.queryByTestId('toast-desktop'), {
+      timeout: 500,
+    }).then((el) => expect(el).not.toBeInTheDocument())
   })
 })

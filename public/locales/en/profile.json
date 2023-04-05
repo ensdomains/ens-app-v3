@@ -115,7 +115,8 @@
         "permissions": {
           "canExtendExpiry": {
             "label": "Can extend expiry",
-            "description": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
+            "description": "This names permission expiry can be extended by the {{managerOrOwner}}.",
+            "description_date": "This names permission expiry ({{date}}) can be extended by the {{managerOrOwner}}."
           },
           "cannotExtendExpiry": {
             "label": "Cannot extend expiry",
@@ -175,6 +176,14 @@
           "cannotSetTTL": {
             "label": "Cannot set TTL",
             "description": "The {{owner}} of this name cannot set and change the TTL."
+          },
+          "canApprove": {
+            "label": "Can change renewal manager",
+            "description": "The owner of this name can change the manager approved to renew subnames."
+          },
+          "cannotApprove": {
+            "label": "Cannot change renewal manager",
+            "description": "The owner of this name cannot change the manager approved to renew subnames."
           }
         },
         "action": {
@@ -302,7 +311,6 @@
       }
     }
   },
-
   "advancedEditor": {
     "title": "{{name}}'s records",
     "tabs": {

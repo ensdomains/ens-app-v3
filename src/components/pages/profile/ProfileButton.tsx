@@ -35,7 +35,7 @@ export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value
           name={socialData.icon as keyof typeof socialIconTypes}
         />
       }
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
       inline
       data-testid={`social-profile-button-${iconKey}`}
       value={socialData.value}
@@ -61,7 +61,7 @@ export const AddressProfileButton = ({
       data-testid={`address-profile-button-${iconKey}`}
       icon={<StyledAddressIcon name={iconKey} />}
       value={value}
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
       inline
     >
       {shortenAddress(
@@ -125,7 +125,7 @@ export const OtherProfileButton = ({
       link={isLink ? value : undefined}
       value={value}
       inline
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
       keyLabel={
         type === 'address' ? (
           <OtherContainer>
@@ -170,7 +170,7 @@ export const OwnerProfileButton = ({
     return isTLD ? 'tld' : 'name'
   }, [addressOrNameOrDate, label])
 
-  const { name: primary } = usePrimary(addressOrNameOrDate, dataType !== 'address')
+  const { name: primary, beautifiedName } = usePrimary(addressOrNameOrDate, dataType !== 'address')
 
   const recordItemPartialProps: Pick<RecordItemProps, 'link' | 'value' | 'keyLabel' | 'children'> =
     useMemo(() => {
@@ -205,7 +205,7 @@ export const OwnerProfileButton = ({
             ? (getDestination(`/profile/${primary}`) as string)
             : (getDestination(`/address/${addressOrNameOrDate}`) as string),
           children:
-            primary ||
+            beautifiedName ||
             (breakpoints.sm
               ? shortenAddress(addressOrNameOrDate)
               : addressOrNameOrDate.slice(0, 5)),
@@ -215,7 +215,7 @@ export const OwnerProfileButton = ({
         link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
         children: addressOrNameOrDate,
       }
-    }, [dataType, addressOrNameOrDate, label, breakpoints, primary, t])
+    }, [dataType, addressOrNameOrDate, label, breakpoints, primary, beautifiedName, t])
 
   return (
     <RecordItem
@@ -223,7 +223,7 @@ export const OwnerProfileButton = ({
       data-testid={`owner-profile-button-${label}`}
       data-timestamp={timestamp}
       inline
-      size={breakpoints.md ? 'large' : 'small'}
+      size={breakpoints.sm ? 'large' : 'small'}
     />
   )
 }

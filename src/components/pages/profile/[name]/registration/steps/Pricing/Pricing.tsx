@@ -48,7 +48,7 @@ const StyledCard = styled(Card)(
     gap: ${theme.space['4']};
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']} ${theme.space['18']};
       gap: ${theme.space['6']};
     `)}
@@ -67,7 +67,7 @@ const OutlinedContainer = styled.div(
     border-radius: ${theme.radii.large};
     background: ${theme.colors.backgroundSecondary};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       grid-template-areas: 'title checkbox' 'description checkbox';
     `)}
   `,
@@ -140,7 +140,7 @@ const InfoItems = styled.div(
     justify-content: flex-start;
     gap: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex-direction: row;
       align-items: stretch;
     `)}
@@ -277,7 +277,7 @@ const PaymentChoice = ({
                       <Toggle
                         {...ids?.content}
                         disabled={!address}
-                        size={breakpoints.md ? 'large' : 'medium'}
+                        size={breakpoints.sm ? 'large' : 'medium'}
                         checked={reverseRecord}
                         onChange={(e) => {
                           e.stopPropagation()
@@ -448,10 +448,10 @@ const Pricing = ({
   const { t } = useTranslation('register')
 
   const breakpoints = useBreakpoint()
-  const { normalisedName, gracePeriodEndDate } = nameDetails
+  const { normalisedName, gracePeriodEndDate, beautifiedName } = nameDetails
 
   const { address } = useAccountSafely()
-  const { data: balance } = useBalance({ addressOrName: address })
+  const { data: balance } = useBalance({ address: address as `0x${string}` | undefined })
   const resolverAddress = useContractAddress('PublicResolver')
 
   const [years, setYears] = useState(registrationData.years)
@@ -501,7 +501,7 @@ const Pricing = ({
 
   return (
     <StyledCard>
-      <StyledHeading>{t('heading', { name: normalisedName })}</StyledHeading>
+      <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
       <PlusMinusControl
         minValue={1}
         value={years}

@@ -252,7 +252,7 @@ describe('ProfileEditor with old resolver', () => {
       <ProfileEditor data={{ name: 'test.eth' }} dispatch={mockDispatch} onDismiss={() => {}} />,
     )
 
-    await userEvent.click(screen.getByTestId('dismiss-dialog-button'))
+    await userEvent.click(screen.getByTestId('warning-overlay-secondary-action'))
     await userEvent.click(screen.getByTestId('show-add-profile-records-modal-button'))
     await userEvent.click(screen.getByTestId('profile-record-option-DOT'))
     await userEvent.click(screen.getByTestId('add-profile-records-button'))

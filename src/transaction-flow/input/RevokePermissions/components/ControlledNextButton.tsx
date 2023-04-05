@@ -41,6 +41,7 @@ export const ControlledNextButton = ({
       CANNOT_TRANSFER: childFuses.CANNOT_TRANSFER,
       CANNOT_SET_RESOLVER: childFuses.CANNOT_SET_RESOLVER,
       CANNOT_SET_TTL: childFuses.CANNOT_SET_TTL,
+      CANNOT_APPROVE: childFuses.CANNOT_APPROVE,
       CANNOT_BURN_FUSES: childFuses.CANNOT_BURN_FUSES,
     }
     const allFuseKeys = Object.keys(allFuses) as Fuse[]
@@ -54,6 +55,7 @@ export const ControlledNextButton = ({
     childFuses.CANNOT_TRANSFER,
     childFuses.CANNOT_SET_RESOLVER,
     childFuses.CANNOT_SET_TTL,
+    childFuses.CANNOT_APPROVE,
     childFuses.CANNOT_BURN_FUSES,
     unburnedFuses,
   ])

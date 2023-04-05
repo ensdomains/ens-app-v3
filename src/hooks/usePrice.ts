@@ -13,7 +13,7 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
     isFetched,
     isLoading: loading,
     error,
-    internal: { isFetchedAfterMount },
+    isFetchedAfterMount,
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching,

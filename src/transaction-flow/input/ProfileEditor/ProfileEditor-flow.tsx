@@ -39,10 +39,10 @@ const Container = styled.form(({ theme }) => [
     display: flex;
     flex-direction: column;
     gap: ${theme.space['4']};
-    min-height: 33vh;
   `,
   mq.sm.min(css`
-    width: 520px;
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
   `),
 ])
 
@@ -151,6 +151,7 @@ const SubmitButton = ({
     />
   )
 }
+
 const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Props) => {
   const { t } = useTranslation('register')
 
@@ -308,7 +309,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
         {
           editor: (
             <>
-              <Dialog.Heading title="Edit your profile" />
+              <Dialog.Heading title={t('steps.profile.title2')} />
               <StyledScrollBox hideDividers={{ bottom: true }}>
                 <ScrollContentContainer>
                   <AvatarWrapper>

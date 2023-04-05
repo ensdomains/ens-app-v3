@@ -35,6 +35,7 @@ const makeWrapperData = (overrides: DeepPartial<WrapperData> = {}) => {
       CANNOT_SET_RESOLVER: false,
       CANNOT_SET_TTL: false,
       CANNOT_CREATE_SUBDOMAIN: false,
+      CANNOT_APPROVE: false,
       ...child,
     },
     owner: '0x0000000000000000000000000000000000000000',

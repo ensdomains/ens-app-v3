@@ -30,14 +30,15 @@ const Container = styled.form(
   ({ theme }) => css`
     display: flex;
     width: 100%;
-    max-height: 90vh;
+    max-height: 60vh;
     flex-direction: column;
     align-items: center;
     gap: ${theme.space['4']};
 
     ${mq.sm.min(
       css`
-        min-width: 600px;
+        width: calc(80vw - 2 * ${theme.space['6']});
+        max-width: ${theme.space['128']};
       `,
     )}
   `,
@@ -60,14 +61,15 @@ const InnerContainer = styled.div(
   `,
 )
 
-const PlusMinusWrapper = styled.div(
-  () => css`
+const PlusMinusWrapper = styled.div(({ theme }) => [
+  css`
     width: 100%;
-    max-width: 60%;
+    max-width: ${theme.space['80']};
     overflow: hidden;
     display: flex;
   `,
-)
+  mq.sm.min(css``),
+])
 
 const OptionBar = styled.div(
   () => css`

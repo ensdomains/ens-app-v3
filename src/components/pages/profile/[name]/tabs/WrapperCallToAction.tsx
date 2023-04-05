@@ -23,7 +23,7 @@ const Container = styled(Card)(
     gap: ${theme.space['3']};
     padding: ${theme.space['3']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex-direction: row;
       padding-right: ${theme.space['5']};
     `)}
@@ -41,7 +41,7 @@ const InnerContainer = styled.div(
     padding: 0 ${theme.space['2']};
     padding-top: ${theme.space['1']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       flex-grow: 1;
       flex-direction: row-reverse;
       justify-content: flex-end;
@@ -85,8 +85,8 @@ const UpgradeButton = styled(Button)(
     &:hover {
       background: rgba(255, 255, 255, 0.45);
     }
-    ${mq.md.min(css`
-      max-width: ${theme.space['64']};
+    ${mq.sm.min(css`
+      max-width: 40%;
     `)}
   `,
 )

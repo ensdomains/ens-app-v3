@@ -18,7 +18,7 @@ const mockUsePrimary = mockFunction(usePrimary)
 
 describe('SearchResult', () => {
   mockUseChainId.mockReturnValue(1)
-  mockUseBasicName.mockReturnValue({ registrationStatus: 'available' })
+  mockUseBasicName.mockReturnValue({ registrationStatus: 'available', beautifiedName: 'nick.eth' })
 
   const baseMockData: ComponentProps<typeof SearchResult> = {
     type: 'name',
@@ -58,6 +58,7 @@ describe('SearchResult', () => {
     mockUsePrimary.mockReturnValue({
       loading: false,
       name: 'test.eth',
+      beautifiedName: 'test.eth',
       status: 'success',
     })
     const mockData: ComponentProps<typeof SearchResult> = {

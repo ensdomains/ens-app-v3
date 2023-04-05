@@ -54,7 +54,7 @@ const MoreTab = ({ name, nameDetails, selfAbilities }: Props) => {
         expiryDate={validateExpiry(
           name,
           wrapperData,
-          wrapperData?.expiryDate || expiryDate,
+          expiryDate || wrapperData?.expiryDate,
           pccExpired,
         )}
         name={name}

@@ -22,7 +22,7 @@ export const useNameDetails = (name: string) => {
   const { ready } = useEns()
 
   const {
-    valid,
+    isValid,
     normalisedName,
     isLoading: basicLoading,
     isCachedData: basicIsCachedData,
@@ -37,9 +37,12 @@ export const useNameDetails = (name: string) => {
     loading: profileLoading,
     status,
     isCachedData: profileIsCachedData,
-  } = useProfile(normalisedName, !normalisedName)
+  } = useProfile(normalisedName, !normalisedName || normalisedName === '[root]')
 
-  const { abi, loading: abiLoading } = useGetABI(normalisedName, !normalisedName)
+  const { abi, loading: abiLoading } = useGetABI(
+    normalisedName,
+    !normalisedName || normalisedName === '[root]',
+  )
 
   const profile: DetailedProfile | undefined = useMemo(() => {
     if (!baseProfile) return undefined
@@ -56,10 +59,10 @@ export const useNameDetails = (name: string) => {
     dnsOwner,
     isLoading: dnsOwnerLoading,
     isCachedData: dnsOwnerIsCachedData,
-  } = useDNSOwner(normalisedName, valid)
+  } = useDNSOwner(normalisedName, isValid)
 
   const error: string | ReactNode | null = useMemo(() => {
-    if (valid === false) {
+    if (isValid === false) {
       return t('errors.invalidName')
     }
     if (registrationStatus === 'unsupportedTLD') {
@@ -85,6 +88,8 @@ export const useNameDetails = (name: string) => {
       return `${t('errors.expiringSoon', { date: formatFullExpiry(gracePeriodEndDate) })}`
     }
     if (
+      // bypass unknown error for root name
+      normalisedName !== '[root]' &&
       !profile &&
       !profileLoading &&
       !abiLoading &&
@@ -105,7 +110,7 @@ export const useNameDetails = (name: string) => {
     registrationStatus,
     status,
     t,
-    valid,
+    isValid,
   ])
 
   const errorTitle = useMemo(() => {
@@ -120,7 +125,7 @@ export const useNameDetails = (name: string) => {
     error,
     errorTitle,
     normalisedName,
-    valid,
+    isValid,
     profile,
     isLoading,
     dnsOwner,

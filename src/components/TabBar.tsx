@@ -70,8 +70,8 @@ const TabWrapper = styled.div(
       rgba(255, 255, 255, 0) 0%,
       ${theme.colors.backgroundSecondary} 60%
     );
-    padding: ${theme.space['6']} ${theme.space['4']};
-    ${mq.md.min(
+    padding: ${theme.space['4']};
+    ${mq.sm.min(
       css`
         display: none;
       `,
@@ -181,7 +181,7 @@ const TabBarProfile = ({
   address: string
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  name: string | undefined
+  name: string | null
 }) => {
   const router = useRouter()
   const chainId = useChainId()

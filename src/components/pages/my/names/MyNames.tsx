@@ -66,7 +66,7 @@ const MyNames = () => {
   const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
     'direction',
-    'desc',
+    'asc',
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
@@ -151,6 +151,7 @@ const MyNames = () => {
                   onClick={handleExtend}
                   data-testid="extend-names-button"
                   prefix={<FastForwardSVG />}
+                  disabled={selectedNames.length === 0}
                 >
                   {t('action.extend', { ns: 'common' })}
                 </Button>

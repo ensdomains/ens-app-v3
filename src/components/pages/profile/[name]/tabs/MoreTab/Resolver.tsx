@@ -25,7 +25,7 @@ const Container = styled(TabWrapper)(
 
     padding: ${theme.space['4']};
 
-    ${mq.md.min(css`
+    ${mq.sm.min(css`
       padding: ${theme.space['6']};
     `)}
   `,
