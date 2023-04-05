@@ -153,6 +153,7 @@ importers:
       react-is: ^17.0.2
       react-transition-state: ^1.1.5
       react-use: ^17.4.0
+      react-use-error-boundary: ^3.0.0
       sitemap: ^7.1.1
       styled-components: ^5.3.5
       stylelint: 14.11.0
@@ -228,6 +229,7 @@ importers:
       react-is: 17.0.2
       react-transition-state: 1.1.5_sfoxds7t5ydpegc3knd667wn6m
       react-use: 17.4.0_sfoxds7t5ydpegc3knd667wn6m
+      react-use-error-boundary: 3.0.0_react@17.0.2
       styled-components: 5.3.6_fane7jikarojcev26y27hpbhu4
       use-immer: 0.7.0_immer@9.0.15+react@17.0.2
       wagmi: 0.12.1_5oahlguaku2ksepp75x2eqguge
@@ -8506,7 +8508,7 @@ packages:
   /axios/0.21.4:
     resolution: {integrity: sha512-ut5vewkiu8jjGBdqpM44XxjuCjq9LAKeHVmoVfHVzy8eHgxxq8SbAVQNovDA8mVi05kP0Ea/n/UzcSHcTJQfNg==}
     dependencies:
-      follow-redirects: 1.15.2_debug@4.3.4
+      follow-redirects: 1.15.2
     transitivePeerDependencies:
       - debug
 
@@ -14199,7 +14201,6 @@ packages:
     peerDependenciesMeta:
       debug:
         optional: true
-    dev: true
 
   /follow-redirects/1.15.2_debug@4.3.4:
     resolution: {integrity: sha512-VQLG33o04KaQ8uYi2tVNbdrWp1QWxNNea+nmIB4EVM28v0hmP17z7aG1+wAkNzVq4KeXTq3221ye5qTJP91JwA==}
@@ -20866,6 +20867,14 @@ packages:
     dependencies:
       react: 17.0.2
       tslib: 2.4.1
+    dev: false
+
+  /react-use-error-boundary/3.0.0_react@17.0.2:
+    resolution: {integrity: sha512-5urkfyU3ZzInEMSHe1gxtDzlQAHs0krTt0V6h8H2L5nXhDKq3OYXnCs9lGHDkEkYvLmsphw8ap5g8uYfvrkJng==}
+    peerDependencies:
+      react: '>= 16.8'
+    dependencies:
+      react: 17.0.2
     dev: false
 
   /react-use/17.4.0_sfoxds7t5ydpegc3knd667wn6m:
