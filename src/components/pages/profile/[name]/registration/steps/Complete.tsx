@@ -162,7 +162,11 @@ type Props = {
   isMoonpayFlow: boolean
 }
 
-const Complete = ({ nameDetails: { normalisedName: name }, callback, isMoonpayFlow }: Props) => {
+const Complete = ({
+  nameDetails: { normalisedName: name, beautifiedName },
+  callback,
+  isMoonpayFlow,
+}: Props) => {
   const { t } = useTranslation('register')
   const { width, height } = useWindowSize()
   const { InvoiceFilled, avatarSrc } = useEthInvoice(name, isMoonpayFlow)
@@ -197,7 +201,7 @@ const Complete = ({ nameDetails: { normalisedName: name }, callback, isMoonpayFl
         <Title>{t('steps.complete.heading')}</Title>
         <SubtitleWithGradient>
           {t('steps.complete.subheading')}
-          <b>{name}</b>
+          <b>{beautifiedName}</b>
         </SubtitleWithGradient>
       </TitleContainer>
       <Typography>{t('steps.complete.description')}</Typography>

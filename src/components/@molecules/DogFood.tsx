@@ -1,6 +1,6 @@
+import useThrottledCallback from '@app/hooks/useThrottledCallback'
 import { isAddress } from '@ethersproject/address'
-import pMemoize from 'p-memoize'
-import { useEffect, useRef } from 'react'
+import { useEffect } from 'react'
 import { useForm } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
@@ -34,17 +34,18 @@ export const DogFood = (
     & { label?: string, validations?: any, disabled?: boolean, hideLabel?: boolean },
 ) => {
   const { t } = useTranslation('profile')
-  const { getRecords } = useEns()
-  const getRecordsMem = useRef(pMemoize(getRecords))
+  const { getAddr } = useEns()
 
-  const inputWatch = watch('dogfoodRaw')
+  const inputWatch: string | undefined = watch('dogfoodRaw')
 
-  const { data: ethNameAddress } = useQuery(
-    ['ethNameAddress', inputWatch],
-    async () => {
+  const throttledGetAddr = useThrottledCallback(getAddr, 500)
+
+  const { data: ethNameAddress, refetch } = useQuery(
+    ['getAddr', inputWatch],
+    async ({ queryKey: [, name] }) => {
       try {
-      const result = await getRecordsMem.current(inputWatch)
-      return result?.address ?? '' 
+      const result = await throttledGetAddr(name!)
+      return result as string ?? '' 
       } catch (e) {
         return ''
       }
@@ -78,11 +79,11 @@ export const DogFood = (
             hasAddressRecord: async (value) => {
               if(value?.includes('.')) {
                 try {
-                  const result = await getRecordsMem.current(value)
-                  return result?.address ? undefined : 'ENS Name has no address record'
-                } catch (e) {
-                  return 'ENS Name has no address record'
-                }
+                  const result = await refetch({ queryKey: ['getAddr', value] })
+                  if (result) { return undefined }
+                // eslint-disable-next-line no-empty
+                } catch {}
+                return 'ENS Name has no address record'
                 }
               },
             ...validations

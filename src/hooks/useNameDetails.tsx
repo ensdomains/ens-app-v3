@@ -22,7 +22,7 @@ export const useNameDetails = (name: string) => {
   const { ready } = useEns()
 
   const {
-    valid,
+    isValid,
     normalisedName,
     isLoading: basicLoading,
     isCachedData: basicIsCachedData,
@@ -59,10 +59,10 @@ export const useNameDetails = (name: string) => {
     dnsOwner,
     isLoading: dnsOwnerLoading,
     isCachedData: dnsOwnerIsCachedData,
-  } = useDNSOwner(normalisedName, valid)
+  } = useDNSOwner(normalisedName, isValid)
 
   const error: string | ReactNode | null = useMemo(() => {
-    if (valid === false) {
+    if (isValid === false) {
       return t('errors.invalidName')
     }
     if (registrationStatus === 'unsupportedTLD') {
@@ -110,7 +110,7 @@ export const useNameDetails = (name: string) => {
     registrationStatus,
     status,
     t,
-    valid,
+    isValid,
   ])
 
   const errorTitle = useMemo(() => {
@@ -125,7 +125,7 @@ export const useNameDetails = (name: string) => {
     error,
     errorTitle,
     normalisedName,
-    valid,
+    isValid,
     profile,
     isLoading,
     dnsOwner,

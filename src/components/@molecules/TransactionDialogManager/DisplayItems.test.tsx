@@ -45,6 +45,7 @@ describe('DisplayItems', () => {
     mockUsePrimary.mockReturnValue({
       loading: false,
       name: 'test.eth',
+      beautifiedName: 'test.eth',
       status: 'success',
     })
     render(<DisplayItems displayItems={[addressItem]} />)

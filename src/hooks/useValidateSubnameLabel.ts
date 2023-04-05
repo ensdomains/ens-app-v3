@@ -16,7 +16,7 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
   const skipValidation = !label || !name || !ready || isParentTLD
   const validation = useValidate(label, skipValidation)
 
-  const skipGetOwner = skipValidation || !validation.valid || validation.labelCount > 1
+  const skipGetOwner = skipValidation || !validation.isValid || validation.labelCount > 1
   const { data: ownership, isLoading: isGetOwnerLoading } = useQuery(
     [validation.name, 'createSubname', 'getOwner'],
     () => getOwner(`${validation.name}.${name}`),
@@ -53,14 +53,14 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
           : undefined,
       }
     }
-    if (validation.labelCount > 1 || !validation.valid)
+    if (validation.labelCount > 1 || !validation.isValid)
       return { valid: false, error: 'invalidCharacters' }
     if (!ownership?.owner || (ownership.owner && ownership.owner === emptyAddress))
       return { valid: true, error: undefined }
     return { valid: false, error: 'alreadyExists' }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [ownership?.owner, label, validation.valid, isWrapped, isPCCBurned, isParentTLD])
+  }, [ownership?.owner, label, validation.isValid, isWrapped, isPCCBurned, isParentTLD])
 
   return {
     valid,

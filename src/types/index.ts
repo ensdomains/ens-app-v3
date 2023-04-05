@@ -124,3 +124,7 @@ export type OwnerArray = {
 export type MinedData = TransactionReceipt & {
   timestamp: number
 }
+
+export type Prettify<T> = {
+  [K in keyof T]: T[K]
+} & {}

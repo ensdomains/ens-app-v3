@@ -109,7 +109,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   const { address } = useAccount()
   const { name: primaryName, loading: primaryLoading } = usePrimary(address!, !address)
   const selected = { name: nameDetails.normalisedName, address: address! }
-  const { normalisedName } = nameDetails
+  const { normalisedName, beautifiedName } = nameDetails
   const defaultResolverAddress = useContractAddress('PublicResolver')
   const { data: resolverExists, isLoading: resolverExistsLoading } = useResolverExists(
     normalisedName,
@@ -232,11 +232,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
   return (
     <>
       <Head>
-        <title>{t('title', { name: normalisedName })}</title>
+        <title>{t('title', { name: beautifiedName })}</title>
       </Head>
       <Content
         noTitle
-        title={normalisedName}
+        title={beautifiedName}
         hideHeading={step === 'complete'}
         loading={labelTooLong ? false : isLoading || primaryLoading || resolverExistsLoading}
         singleColumnContent
