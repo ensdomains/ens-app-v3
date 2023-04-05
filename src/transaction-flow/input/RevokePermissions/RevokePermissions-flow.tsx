@@ -107,7 +107,7 @@ const getFormDataDefaultValues = (data: Data, transactionData?: TransactionData)
       // otherwise set to current time + 1 day
       // max value is the maximum expiry
       Math.min(
-        Math.max(data.minExpiry || 0, Date.now()) + 60 * 60 * 24 * 1000,
+        Math.max((data.minExpiry || 0) * 1000, Date.now()) + 60 * 60 * 24,
         data.maxExpiry ? data.maxExpiry * 1000 : Infinity,
       ),
     ),
