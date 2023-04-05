@@ -138,7 +138,7 @@ export const PrimarySection = () => {
   const { name, loading: primaryLoading } = usePrimary(address, !address)
   const { chain } = useNetwork()
   const { avatar } = useAvatar(name, chain?.id || 1)
-  const zorb = useZorb(name, 'name')
+  const zorb = useZorb(name || '', 'name')
 
   const { truncatedName, isLoading: basicLoading } = useBasicName(name, true)
 
@@ -147,13 +147,12 @@ export const PrimarySection = () => {
   const changePrimary = () => {
     showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', {
       address,
-      existingPrimary: name,
     })
   }
 
   const resetPrimary = () => {
     showDataInput(`resetPrimary-${address}`, 'ResetPrimaryName', {
-      name,
+      name: name!,
       address,
     })
   }
