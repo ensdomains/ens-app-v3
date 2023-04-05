@@ -170,7 +170,7 @@ export const OwnerProfileButton = ({
     return isTLD ? 'tld' : 'name'
   }, [addressOrNameOrDate, label])
 
-  const { name: primary } = usePrimary(addressOrNameOrDate, dataType !== 'address')
+  const { name: primary, beautifiedName } = usePrimary(addressOrNameOrDate, dataType !== 'address')
 
   const recordItemPartialProps: Pick<RecordItemProps, 'link' | 'value' | 'keyLabel' | 'children'> =
     useMemo(() => {
@@ -205,7 +205,7 @@ export const OwnerProfileButton = ({
             ? (getDestination(`/profile/${primary}`) as string)
             : (getDestination(`/address/${addressOrNameOrDate}`) as string),
           children:
-            primary ||
+            beautifiedName ||
             (breakpoints.sm
               ? shortenAddress(addressOrNameOrDate)
               : addressOrNameOrDate.slice(0, 5)),
@@ -215,7 +215,7 @@ export const OwnerProfileButton = ({
         link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
         children: addressOrNameOrDate,
       }
-    }, [dataType, addressOrNameOrDate, label, breakpoints, primary, t])
+    }, [dataType, addressOrNameOrDate, label, breakpoints, primary, beautifiedName, t])
 
   return (
     <RecordItem

@@ -1,9 +1,10 @@
 import { BigNumber } from '@ethersproject/bignumber/lib/bignumber'
 
+import { ParsedInputResult } from '@ensdomains/ensjs/utils/validation'
+
 import type { ReturnedENS } from '@app/types/index'
 
 import { emptyAddress } from './constants'
-import { checkETH2LDName, checkETHName } from './utils'
 
 export type RegistrationStatus =
   | 'invalid'
@@ -19,35 +20,31 @@ export type RegistrationStatus =
   | 'unsupportedTLD'
 
 export const getRegistrationStatus = ({
-  name,
+  validation: { isETH, is2LD, isShort, type },
   ownerData,
   wrapperData,
   expiryData,
   priceData,
   supportedTLD,
 }: {
-  name: string | null
+  validation: Partial<Omit<ParsedInputResult, 'normalised' | 'isValid'>>
   ownerData?: ReturnedENS['getOwner']
   wrapperData?: ReturnedENS['getWrapperData']
   expiryData?: ReturnedENS['getExpiry']
   priceData?: ReturnedENS['getPrice']
   supportedTLD?: boolean
 }): RegistrationStatus => {
-  const labels = name?.split('.') || []
-  const isDotETH = checkETHName(labels)
-  const isDotEth2ld = checkETH2LDName(isDotETH, labels, true)
-
-  if (isDotEth2ld && labels[0].length < 3) {
+  if (isETH && is2LD && isShort) {
     return 'short'
   }
 
   if (!ownerData && !wrapperData) return 'invalid'
 
-  if (!isDotETH && !supportedTLD) {
+  if (!isETH && !supportedTLD) {
     return 'unsupportedTLD'
   }
 
-  if (isDotEth2ld) {
+  if (isETH && is2LD) {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     if (expiryData && expiryData.expiry) {
       const { expiry: _expiry, gracePeriod } = expiryData as {
@@ -72,12 +69,13 @@ export const getRegistrationStatus = ({
     return 'available'
   }
   if (ownerData && ownerData.owner !== emptyAddress) {
-    if (labels.length === 2) {
+    if (is2LD) {
       return 'imported'
     }
     return 'owned'
   }
-  if (labels.length > 2) {
+  if (type === 'name' && !is2LD) {
+    // more than 2 labels
     return 'notOwned'
   }
   return 'notImported'

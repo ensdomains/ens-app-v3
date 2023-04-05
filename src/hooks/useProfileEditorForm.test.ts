@@ -325,7 +325,7 @@ describe('useProfileEditorForm', () => {
       ]
       const { result } = renderHook(() => useProfileEditorForm(currentRecords))
       const contenthashOptions = profileRecordOptions.filter((o) => o.type === 'contenthash')
-      expect(contenthashOptions.length).toBe(6)
+      expect(contenthashOptions.length).toBe(5)
       result.current.addRecords(contenthashOptions)
       expect(result.current.getRecords()).toEqual(currentRecords)
     })
@@ -337,7 +337,7 @@ describe('useProfileEditorForm', () => {
       ]
       const { result } = renderHook(() => useProfileEditorForm(currentRecords))
       const contenthashOptions = profileRecordOptions.filter((o) => o.type === 'contenthash')
-      expect(contenthashOptions.length).toBe(6)
+      expect(contenthashOptions.length).toBe(5)
       result.current.addRecords(contenthashOptions)
       expect(result.current.getRecords()).toEqual(currentRecords)
     })

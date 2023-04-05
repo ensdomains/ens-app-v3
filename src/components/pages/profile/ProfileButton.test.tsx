@@ -28,6 +28,7 @@ mockUsePrimary.mockImplementation((address, skip) => {
   return {
     // eslint-disable-next-line no-nested-ternary
     name: skip ? undefined : isNoPrimary ? null : 'primary.eth',
+    beautifiedName: isNoPrimary ? null : 'primary.eth',
     loading: false,
   }
 })

@@ -3,7 +3,7 @@
 /* eslint-disable jsx-a11y/no-static-element-interactions */
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
-import { useCallback, useEffect, useMemo, useRef } from 'react'
+import { forwardRef, useCallback, useEffect, useMemo, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
@@ -11,6 +11,7 @@ import { Avatar, Spinner, Tag, Typography } from '@ensdomains/thorin'
 
 import { useAvatar } from '@app/hooks/useAvatar'
 import { useBasicName } from '@app/hooks/useBasicName'
+import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { useChainId } from '@app/hooks/useChainId'
 import { usePrimary } from '@app/hooks/usePrimary'
 import { useZorb } from '@app/hooks/useZorb'
@@ -161,7 +162,7 @@ const AddressResultItem = ({ address }: { address: string }) => {
         </AvatarWrapper>
         <AddressAndName>
           <Typography weight="bold">{shortenAddress(address, undefined, 8, 6)}</Typography>
-          {primary.name && <AddressPrimary>{primary.name}</AddressPrimary>}
+          {primary.name && <AddressPrimary>{primary.beautifiedName}</AddressPrimary>}
         </AddressAndName>
       </LeadingSearchItem>
       <AddressTag>{t('address.label')}</AddressTag>
@@ -224,6 +225,7 @@ const TextWrapper = styled.div(
 
 const PlaceholderResultItem = ({ input }: { input: string }) => {
   const zorb = useZorb('placeholder', 'name')
+  const beautifiedName = useBeautifiedName(input)
 
   return (
     <>
@@ -232,7 +234,7 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
           <Avatar src={zorb} label="name" />
         </AvatarWrapper>
         <TextWrapper>
-          <Typography weight="bold">{input}</Typography>
+          <Typography weight="bold">{beautifiedName}</Typography>
         </TextWrapper>
       </LeadingSearchItem>
       <SpinnerWrapper>
@@ -242,32 +244,39 @@ const PlaceholderResultItem = ({ input }: { input: string }) => {
   )
 }
 
-const NameResultItem = ({ name }: { name: string }) => {
-  const network = useChainId()
-  const { avatar } = useAvatar(name, network)
-  const zorb = useZorb(name, 'name')
-  const { registrationStatus, isLoading } = useBasicName(name)
+const NameResultItem = forwardRef<HTMLDivElement, { name: string; $selected: boolean }>(
+  ({ name, ...props }, ref) => {
+    const network = useChainId()
+    const { avatar } = useAvatar(name, network)
+    const zorb = useZorb(name, 'name')
+    const { registrationStatus, isLoading, beautifiedName } = useBasicName(name)
 
-  return (
-    <>
-      <LeadingSearchItem>
-        <AvatarWrapper>
-          <Avatar src={avatar || zorb} label="name" />
-        </AvatarWrapper>
-        <TextWrapper>
-          <Typography weight="bold">{name}</Typography>
-        </TextWrapper>
-      </LeadingSearchItem>
-      {!isLoading && registrationStatus ? (
-        <StatusTag status={registrationStatus} />
-      ) : (
-        <SpinnerWrapper>
-          <Spinner color="accent" />
-        </SpinnerWrapper>
-      )}
-    </>
-  )
-}
+    return (
+      <SearchItem
+        data-testid="search-result-name"
+        {...props}
+        $clickable={registrationStatus !== 'short'}
+        ref={ref}
+      >
+        <LeadingSearchItem>
+          <AvatarWrapper>
+            <Avatar src={avatar || zorb} label="name" />
+          </AvatarWrapper>
+          <TextWrapper>
+            <Typography weight="bold">{beautifiedName}</Typography>
+          </TextWrapper>
+        </LeadingSearchItem>
+        {!isLoading && registrationStatus ? (
+          <StatusTag status={registrationStatus} />
+        ) : (
+          <SpinnerWrapper>
+            <Spinner color="accent" />
+          </SpinnerWrapper>
+        )}
+      </SearchItem>
+    )
+  },
+)
 
 type SearchItemType = 'text' | 'error' | 'address' | 'name' | 'nameWithDotEth'
 
@@ -313,25 +322,13 @@ export const SearchResult = ({
     return value
   }, [type, value])
 
-  const clickable = useMemo(() => {
-    if (type === 'name' || type === 'nameWithDotEth') {
-      const labels = input.split('.')
-      const isDotETH = labels.length === 2 && labels[1] === 'eth'
-      if (isDotETH && labels[0].length < 3) {
-        return false
-      }
-    }
-    return true
-  }, [input, type])
-
   const props = useMemo(
     () => ({
       ref: wrapperRef,
       onMouseEnter: () => hoverCallback(index),
       $selected: index === selected,
-      $clickable: clickable,
     }),
-    [index, hoverCallback, selected, clickable],
+    [index, hoverCallback, selected],
   )
 
   if (usingPlaceholder && type !== 'error' && type !== 'text') {
@@ -351,11 +348,7 @@ export const SearchResult = ({
   }
 
   if (type === 'name' || type === 'nameWithDotEth') {
-    return (
-      <SearchItem data-testid="search-result-name" {...props}>
-        <NameResultItem name={input} />
-      </SearchItem>
-    )
+    return <NameResultItem name={input} {...props} />
   }
 
   if (type === 'error') {

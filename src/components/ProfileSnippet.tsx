@@ -5,6 +5,7 @@ import styled, { css } from 'styled-components'
 import { Button, Typography, mq } from '@ensdomains/thorin'
 
 import FastForwardSVG from '@app/assets/FastForward.svg'
+import useBeautifiedName from '@app/hooks/useBeautifiedName'
 import { useRouterWithHistory } from '@app/hooks/useRouterWithHistory'
 
 import { useTransactionFlow } from '../transaction-flow/TransactionFlowProvider'
@@ -140,6 +141,8 @@ export const ProfileSnippet = ({
 
   const { showDataInput } = useTransactionFlow()
 
+  const beautifiedName = useBeautifiedName(name)
+
   const banner = getTextRecord?.('banner')?.value
   const description = getTextRecord?.('description')?.value
   const url = getTextRecord?.('url')?.value
@@ -201,7 +204,7 @@ export const ProfileSnippet = ({
       <TextStack>
         <DetailStack>
           <Name fontVariant="headingTwo" data-testid="profile-snippet-name">
-            {name}
+            {beautifiedName}
           </Name>
           {recordName && (
             <NameRecord data-testid="profile-snippet-nickname">{recordName}</NameRecord>

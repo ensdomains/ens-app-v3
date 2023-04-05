@@ -181,7 +181,7 @@ const TabBarProfile = ({
   address: string
   isOpen: boolean
   setIsOpen: Dispatch<SetStateAction<boolean>>
-  name: string | undefined
+  name: string | null
 }) => {
   const router = useRouter()
   const chainId = useChainId()

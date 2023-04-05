@@ -77,7 +77,7 @@ const customJestConfig = {
       statements: 2.29,
     },
   },
-  collectCoverage: true,
+  collectCoverage: false,
   globals: {
     Uint8Array: Uint8Array,
   },

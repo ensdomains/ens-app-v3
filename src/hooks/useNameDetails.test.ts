@@ -52,7 +52,7 @@ describe('useNameDetails', () => {
   })
   it('should return an error message for an invalid name', () => {
     mockUseValidate.mockReturnValue({
-      valid: false,
+      isValid: false,
       name: 'invalid',
     })
 
@@ -61,7 +61,7 @@ describe('useNameDetails', () => {
   })
   it('should call getDNSOwner if TLD is not .eth', () => {
     mockUseValidate.mockReturnValue({
-      valid: true,
+      isValid: true,
       name: 'test.com',
       labelCount: 2,
     })
@@ -71,7 +71,7 @@ describe('useNameDetails', () => {
   })
   it('should return dnsOwner if TLD is not .eth and there is an owner', async () => {
     mockUseValidate.mockReturnValue({
-      valid: true,
+      isValid: true,
       name: 'test.com',
       labelCount: 2,
     })

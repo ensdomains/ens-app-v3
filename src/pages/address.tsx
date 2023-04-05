@@ -80,7 +80,7 @@ const Page = () => {
   const [sortType, setSortType] = useQueryParameterState<SortType>('sort', 'expiryDate')
   const [sortDirection, setSortDirection] = useQueryParameterState<SortDirection>(
     'direction',
-    'desc',
+    'asc',
   )
   const [searchQuery, setSearchQuery] = useQueryParameterState<string>('search', '')
 
