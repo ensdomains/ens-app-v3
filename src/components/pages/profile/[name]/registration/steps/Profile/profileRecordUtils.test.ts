@@ -316,7 +316,7 @@ describe('profileRecordsToRecordOptions', () => {
           },
           {
             key: 'ETH',
-            value: '0x0000000000000000000000000000000000000000',
+            value: '',
             type: 'addr',
             group: 'address',
           },

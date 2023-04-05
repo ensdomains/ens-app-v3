@@ -83,7 +83,7 @@ describe('useBasicName', () => {
       getOwner: mockGetOwnerNoBatch,
     })
     mockUseValidate.mockReturnValue({
-      valid: true,
+      isValid: true,
       name: '[root]',
       labelCount: 1,
     })
