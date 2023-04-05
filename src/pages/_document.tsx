@@ -17,6 +17,7 @@ const makeIPFSURL = (url: string) => {
   if (process.env.NEXT_PUBLIC_IPFS) {
     return `.${url}`
   }
+  return url
 }
 
 export default class MyDocument extends Document {

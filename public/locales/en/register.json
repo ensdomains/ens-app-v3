@@ -30,6 +30,7 @@
     },
     "profile": {
       "title": "Create your profile",
+      "title2": "Edit your profile",
       "default": "Default",
       "advanced": "Advanced",
       "permissions": "Permissions",

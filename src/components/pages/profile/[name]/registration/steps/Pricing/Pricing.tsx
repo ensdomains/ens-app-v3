@@ -448,7 +448,7 @@ const Pricing = ({
   const { t } = useTranslation('register')
 
   const breakpoints = useBreakpoint()
-  const { normalisedName, gracePeriodEndDate } = nameDetails
+  const { normalisedName, gracePeriodEndDate, beautifiedName } = nameDetails
 
   const { address } = useAccountSafely()
   const { data: balance } = useBalance({ address: address as `0x${string}` | undefined })
@@ -501,7 +501,7 @@ const Pricing = ({
 
   return (
     <StyledCard>
-      <StyledHeading>{t('heading', { name: normalisedName })}</StyledHeading>
+      <StyledHeading>{t('heading', { name: beautifiedName })}</StyledHeading>
       <PlusMinusControl
         minValue={1}
         value={years}

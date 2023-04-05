@@ -119,6 +119,9 @@
           "title": "Your resolver is out of date",
           "subtitle": "Profile editing is disabled until you update your resolver.",
           "action": "Update"
+        },
+        "links": {
+          "learnMoreResolvers": "Learn more about resolvers"
         }
       }
     },
