@@ -215,7 +215,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const resolverAddress = useContractAddress('PublicResolver')
 
-  const { status, loading: statusLoading } = useResolverStatus(name, profileLoading, {
+  const {
+    status,
+    loading: statusLoading,
+    isFetching,
+  } = useResolverStatus(name, profileLoading, {
     skipCompare: resumable,
   })
 
@@ -399,7 +403,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
                 trailing={
                   <SubmitButton
                     control={control}
-                    disabled={hasErrors}
+                    disabled={hasErrors || isFetching}
                     previousRecords={existingRecords}
                     canEdit={canEditRecordsWhenWrapped}
                   />

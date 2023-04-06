@@ -13,6 +13,7 @@ export const useHasSubnames = (name: string) => {
   const { getSubnames, ready } = useEns()
 
   const isSubname = name && name.split('.').length > 2
+  const enabled = !!(ready && name && isSubname)
 
   const {
     data: hasSubnames,
@@ -49,13 +50,13 @@ export const useHasSubnames = (name: string) => {
       return false
     },
     {
-      enabled: !!(ready && name && isSubname),
+      enabled,
     },
   )
 
   return {
     hasSubnames,
     isLoading,
-    isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
+    isCachedData: enabled && status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }

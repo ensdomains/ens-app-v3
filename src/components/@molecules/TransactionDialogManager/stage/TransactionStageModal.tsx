@@ -276,7 +276,7 @@ export const TransactionStageModal = ({
     isLoading: requestLoading,
     error: _requestError,
   } = useQuery(
-    ['prepareTx', txKey, currentStep],
+    ['prepareTx', txKey, currentStep, transaction.name],
     async () => {
       const populatedTransaction = await transactions[transaction.name].transaction(
         signer as JsonRpcSigner,
@@ -304,7 +304,7 @@ export const TransactionStageModal = ({
   const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: !!transaction && !!signer && !!ens,
-    queryKey: ['prepareTx', txKey, currentStep],
+    queryKey: ['prepareTx', txKey, currentStep, transaction.name],
   })
 
   const {

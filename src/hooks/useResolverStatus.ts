@@ -54,6 +54,7 @@ type Result = {
     isMigratedProfileEqual: boolean
   }
   loading: boolean
+  isFetching: boolean
 }
 
 export const useResolverStatus = (name: string, skip?: boolean, options?: Options): Result => {
@@ -62,7 +63,7 @@ export const useResolverStatus = (name: string, skip?: boolean, options?: Option
   // Profile resolver address check
   const latestResolverAddress = useContractAddress('PublicResolver')
 
-  const { profile, loading: profileLoading } = useProfile(name, !name || skip)
+  const { profile, loading: profileLoading, isFetching } = useProfile(name, !name || skip)
   const profileResolverAddress = profile?.resolverAddress
 
   const { data: status, isLoading: loading } = useQuery(
@@ -119,5 +120,6 @@ export const useResolverStatus = (name: string, skip?: boolean, options?: Option
   return {
     status,
     loading: profileLoading || loading,
+    isFetching,
   }
 }
