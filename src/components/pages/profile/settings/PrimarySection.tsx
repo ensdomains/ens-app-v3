@@ -132,10 +132,9 @@ export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
   const { showDataInput } = useTransactionFlow()
-  const { address: _address } = useAccountSafely()
-  const address = _address as string
+  const { address } = useAccountSafely()
 
-  const { name, loading: primaryLoading } = usePrimary(address, !address)
+  const { name, loading: primaryLoading } = usePrimary(address!, !address)
   const { chain } = useNetwork()
   const { avatar } = useAvatar(name, chain?.id || 1)
   const zorb = useZorb(name || '', 'name')
@@ -145,12 +144,14 @@ export const PrimarySection = () => {
   const isLoading = primaryLoading || basicLoading
 
   const changePrimary = () => {
+    if (!address) return
     showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', {
       address,
     })
   }
 
   const resetPrimary = () => {
+    if (!address) return
     showDataInput(`resetPrimary-${address}`, 'ResetPrimaryName', {
       name: name!,
       address,
