@@ -2,13 +2,13 @@ import { useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import styled from 'styled-components'
 
-import { Dropdown, Helper, Typography } from '@ensdomains/thorin'
+import { Helper, Typography } from '@ensdomains/thorin'
 
 import { Spacer } from '@app/components/@atoms/Spacer'
 import { Outlink } from '@app/components/Outlink'
 
 import { Steps } from './Steps'
-import { ButtonContainer, CheckButton } from './shared'
+import { AlignedDropdown, ButtonContainer, CheckButton } from './shared'
 import { isDnsSecEnabled } from './utils'
 
 const HelperLinks = [
@@ -41,7 +41,7 @@ const HelperLinks = [
     href: 'https://cp.cn.bluehost.com/kb/answer/1909',
   },
   {
-    label: 'registrars.cloudflare',
+    label: 'Cloudflare',
     href: 'https://developers.cloudflare.com/dns/additional-options/dnssec/#enable-dnssec',
   },
   {
@@ -92,7 +92,10 @@ export const EnableDNSSEC = ({
       <Spacer $height="3" />
       <Typography>{t('enableDNSSEC.registrarHelp')}</Typography>
       <Spacer $height="5" />
-      <Dropdown
+      <AlignedDropdown
+        width={200}
+        height={200}
+        direction="down"
         // needed for no line breaks in buttons
         items={HelperLinks.map((link) => ({
           label: link.label,
@@ -103,7 +106,7 @@ export const EnableDNSSEC = ({
               href={link.href}
               key={key}
               // needed for buttons to maintain the width of the dropdown
-              style={{ width: '100%' }}
+              style={{ width: '100%', textAlign: 'left' }}
             >
               {children}
             </a>
