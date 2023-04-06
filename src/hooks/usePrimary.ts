@@ -21,7 +21,6 @@ export const usePrimary = (address: string, skip?: any): Result => {
     ['getName', address],
     async () => {
       const res = await getName(address)
-      console.log('getName', res)
       if (!res || !res.name || !res.match) return null
       return {
         ...res,
@@ -33,6 +32,6 @@ export const usePrimary = (address: string, skip?: any): Result => {
       cacheTime: 60,
     },
   )
-  console.log('usePrimary', data)
+
   return { name: data?.name || null, beautifiedName: data?.beautifiedName || null, loading, status }
 }
