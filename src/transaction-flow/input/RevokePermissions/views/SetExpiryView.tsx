@@ -71,7 +71,7 @@ export const SetExpiryView = ({
   const formState = useFormState({ control, name: 'expiryCustom' })
   const customErrorLabel = formState.errors.expiryCustom?.message
 
-  const minDate = minExpiry ? new Date(minExpiry * 1000) : new Date()
+  const minDate = new Date(Math.max((minExpiry || 0) * 1000, Date.now()))
   const maxDate = new Date(maxExpiry * 1000)
 
   const minDateTime = dateToDateTimeLocal(minDate)

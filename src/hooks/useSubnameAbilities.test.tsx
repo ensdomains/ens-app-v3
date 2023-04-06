@@ -3,16 +3,21 @@ import { mockFunction, renderHook } from '@app/test-utils'
 import { DeepPartial } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 
+import { emptyAddress } from '../utils/constants'
 import { useBasicName } from './useBasicName'
+import { useContractAddress } from './useContractAddress'
 import { useHasSubnames } from './useHasSubnames'
 import { useSubnameAbilities } from './useSubnameAbilities'
 
+jest.mock('@app/hooks/useContractAddress')
 jest.mock('@app/hooks/useHasSubnames')
 jest.mock('@app/hooks/useBasicName')
 
 const mockUseBasicName = mockFunction(useBasicName)
 const mockUseHasSubnames = mockFunction(useHasSubnames)
+const mockUseContractAddress = mockFunction(useContractAddress)
 
+mockUseContractAddress.mockReturnValue('0xNameWrapper')
 mockUseHasSubnames.mockReturnValue({
   hasSubnames: false,
   isLoading: false,
@@ -58,6 +63,7 @@ type Abilities = ReturnType<typeof useSubnameAbilities>['abilities']
 const makeResults = (overrides: DeepPartial<Abilities> = {}) => {
   return {
     canDelete: false,
+    canReclaim: false,
     ...overrides,
   } as Abilities
 }
@@ -133,6 +139,28 @@ const wrappedSubname = {
   }),
   wrapperData: makeWrapperData({
     owner: '0xName',
+  }),
+}
+
+const expiredWrappedSubname = {
+  parentOwnerData: makeOwnerData({
+    ownershipLevel: 'nameWrapper',
+    owner: '0xParent',
+  }),
+  parentWrapperData: makeWrapperData({
+    parent: {
+      PARENT_CANNOT_CONTROL: true,
+    },
+    owner: '0xParent',
+  }),
+  isParentWrapped: true,
+  name: 'sub.test.eth',
+  ownerData: makeOwnerData({
+    ownershipLevel: 'registry',
+    owner: '0xNameWrapper',
+  }),
+  wrapperData: makeWrapperData({
+    owner: emptyAddress,
   }),
 }
 
@@ -282,6 +310,20 @@ const groups = [
           canDeleteError: 'errors.hasSubnames',
         }),
       },
+      {
+        description:
+          'should return canReclaim is true if the use is the name owner and the subname has expired',
+        ...expiredWrappedSubname,
+        hasSubnames: false,
+        address: '0xParent',
+        pccExpired: true,
+        abilities: makeResults({
+          canDelete: false,
+          canDeleteContract: 'registry',
+          canDeleteError: undefined,
+          canReclaim: true,
+        }),
+      },
     ],
   },
   {
@@ -338,6 +380,7 @@ describe('useSubnameAbilities', () => {
           wrapperData,
           address,
           abilities,
+          ...rest
         }) => {
           it(description, () => {
             mockUseBasicName.mockReturnValue({
@@ -358,7 +401,7 @@ describe('useSubnameAbilities', () => {
                 address,
                 ownerData,
                 wrapperData,
-                pccExpired: false,
+                pccExpired: !!(rest as any).pccExpired,
               }),
             )
             expect(result.current).toEqual({
