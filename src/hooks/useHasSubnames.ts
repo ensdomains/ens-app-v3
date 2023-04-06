@@ -50,7 +50,6 @@ export const useHasSubnames = (name: string) => {
     },
     {
       enabled: !!(ready && name && isSubname),
-      refetchOnMount: 'always',
     },
   )
 
