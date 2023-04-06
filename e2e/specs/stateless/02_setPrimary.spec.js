@@ -1,5 +1,7 @@
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
+const CYPRESS_WAIT_TIME = 10000
+
 describe('Set Primary Name from settings', () => {
   before(() => {
     acceptMetamaskAccess(1, true)
@@ -35,6 +37,9 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(CYPRESS_WAIT_TIME)
+
+      // Assertions
       cy.findByTestId('primary-name-section').should('be.visible')
       cy.findByTestId('primary-name-label').should('contain.text', 'other-eth-record.eth')
     })
@@ -57,11 +62,13 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(CYPRESS_WAIT_TIME)
 
       // Set Primary Name modal
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(CYPRESS_WAIT_TIME)
 
       // Assertion
       cy.findByTestId('primary-name-label').should('contain.text', 'other-controller.eth')
@@ -84,11 +91,13 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(CYPRESS_WAIT_TIME)
 
       // Set Primary Name modal
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(CYPRESS_WAIT_TIME)
 
       // Assertion
       cy.findByTestId('primary-name-label').should(
@@ -112,6 +121,8 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(CYPRESS_WAIT_TIME)
+
       cy.findByTestId('no-primary-name-section').should('be.visible')
     })
 
@@ -144,12 +155,14 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
+      cy.wait(CYPRESS_WAIT_TIME)
 
       // set primary name
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
-
+      cy.wait(CYPRESS_WAIT_TIME)
+      
       // Assertion
       cy.findByTestId('primary-name-label').should('have.text', 'aaa123xyz000.unknown-labels.eth')
     })
