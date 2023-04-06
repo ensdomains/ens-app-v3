@@ -3,6 +3,7 @@
   "version": "0.1.123",
   "scripts": {
     "dev": "NODE_NO_WARNINGS=1 next dev",
+    "dev:https": "next-dev-https --https --qr --port 3000",
     "dev:nlocal": "NEXT_PUBLIC_PROVIDER=http://localhost:8545 NEXT_PUBLIC_AVUP_ENDPOINT=http://localhost:8787 pnpm dev",
     "dev:localname": "NEXT_PUBLIC_PROVIDER=\"http://$(\"hostname\"):8545\" && NEXT_PUBLIC_AVUP_ENDPOINT=\"http://$(\"hostname\"):8787\" && NEXT_PUBLIC_GRAPH_URI=\"http://$(\"hostname\"):8000/subgraphs/name/graphprotocol/ens\" && pnpm dev",
     "dev:glocal": "rm -rf .next && NEXT_PUBLIC_GRAPH_URI=http://localhost:8000/subgraphs/name/graphprotocol/ens pnpm dev:nlocal",
@@ -181,6 +182,7 @@
     "jest-environment-jsdom": "^27.5.1",
     "jest-localstorage-mock": "^2.4.22",
     "next-compose-plugins": "^2.2.1",
+    "next-dev-https": "^0.1.2",
     "node-fetch": "2.6.1",
     "node-fetch-commonjs": "^3.1.1",
     "postcss-scss": "^4.0.4",

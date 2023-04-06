@@ -107,7 +107,11 @@ if (process.env.NEXT_PUBLIC_PROVIDER) {
   if (!process.env.NEXT_PUBLIC_IPFS) {
     // only use infura if we are not using IPFS
     // since we don't want to allow all domains to access infura
-    providerArray.push(infuraProvider({ apiKey: 'cfa6ae2501cc4354a74e20432507317c' }))
+    providerArray.push(
+      infuraProvider({
+        apiKey: process.env.NEXT_PUBLIC_INFURA_KEY || 'cfa6ae2501cc4354a74e20432507317c',
+      }),
+    )
   }
   // fallback cloudflare gateway if infura is down or for IPFS
   providerArray.push(
