@@ -22,6 +22,7 @@ export const usePrimary = (address: string, skip?: any): Result => {
     async () => {
       const res = await getName(address)
       console.log('getName', res)
+      if (!res || !res.name || !res.match) console.log('RETURNING NULL')
       if (!res || !res.name || !res.match) return null
       return {
         ...res,
@@ -34,5 +35,6 @@ export const usePrimary = (address: string, skip?: any): Result => {
     },
   )
 
+  console.log('usePrimary', JSON.stringify(data))
   return { name: data?.name || null, beautifiedName: data?.beautifiedName || null, loading, status }
 }
