@@ -116,7 +116,9 @@ describe('Set Primary Name from settings', () => {
     })
 
     it('should allow setting primary name from name with encrypted label', () => {
+      cy.clearLocalStorage()
       acceptMetamaskAccess(3)
+
       cy.visit('/my/settings')
 
       cy.findByTestId('set-primary-name-button').click()
