@@ -24,7 +24,7 @@ export const useHasSubnames = (name: string) => {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isFetching: _isFetching,
   } = useQuery(
-    ['getSubnames', name],
+    ['graph', 'getSubnames', name],
     async () => {
       let cursor: Subnames = []
       let done = false
@@ -50,8 +50,11 @@ export const useHasSubnames = (name: string) => {
     },
     {
       enabled: !!(ready && name && isSubname),
+      refetchOnMount: 'always',
     },
   )
+
+  console.log(status, isFetched, isFetchedAfterMount)
 
   return {
     hasSubnames,

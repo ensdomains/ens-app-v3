@@ -20,7 +20,7 @@ export const useSubnameInfiniteQuery = (
 ) => {
   const { getSubnames } = useEns()
 
-  const queryKey = ['getSubnames', name, orderBy, orderDirection, search]
+  const queryKey = ['graph', 'getSubnames', 'infinite', name, orderBy, orderDirection, search]
   const { data, isLoading, isFetching, fetchNextPage, hasNextPage, refetch } = useInfiniteQuery(
     queryKey,
     async ({ pageParam }) => {
