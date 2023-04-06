@@ -21,6 +21,7 @@ export const usePrimary = (address: string, skip?: any): Result => {
     ['getName', address],
     async () => {
       const res = await getName(address)
+      console.log('getName', res)
       if (!res || !res.name || !res.match) return null
       return {
         ...res,
