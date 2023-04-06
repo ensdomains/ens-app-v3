@@ -54,8 +54,6 @@ export const useHasSubnames = (name: string) => {
     },
   )
 
-  console.log(status, isFetched, isFetchedAfterMount)
-
   return {
     hasSubnames,
     isLoading,
