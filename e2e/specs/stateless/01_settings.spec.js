@@ -1,6 +1,9 @@
 import { acceptMetamaskAccess, connectFromExisting } from '../../setup'
 
 describe('Settings', () => {
+  before(() => {
+    acceptMetamaskAccess(undefined, false)
+  })
 
   describe('Transactions', () => {
     before(() => {
@@ -9,6 +12,7 @@ describe('Settings', () => {
       cy.visit('/my/settings')
     })
     it('should show the correct transaction details for a transaction modal', () => {
+      cy.visit('/my/settings')
       cy.contains('Test Send Name').click()
       cy.findByTestId('display-item-action-normal').should('contain.text', 'Send name')
       cy.findByTestId('display-item-info-normal').should(
@@ -78,7 +82,8 @@ describe('Settings', () => {
     it('should clear transactions when clear is pressed', () => {
       cy.visit('/my/settings')
       cy.findByTestId('transaction-clear-button').should('not.be.disabled').click()
-      cy.findByTestId('transaction-confirmed').should('not.exist')
+      cy.get('button').contains('Clear History').click()
+      cy.findByTestId('transaction-section-container').children().first().children().should('have.length', 1)
     })
   })
 })
