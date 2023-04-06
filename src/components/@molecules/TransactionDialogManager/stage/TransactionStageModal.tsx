@@ -15,6 +15,7 @@ import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { Outlink } from '@app/components/Outlink'
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainName } from '@app/hooks/useChainName'
 import { useInvalidateOnBlock } from '@app/hooks/useInvalidateOnBlock'
 import { transactions } from '@app/transaction-flow/transaction'
@@ -262,6 +263,7 @@ export const TransactionStageModal = ({
 
   const addRecentTransaction = useAddRecentTransaction()
   const { data: signer } = useSigner()
+  const { address } = useAccountSafely()
   const ens = useEns()
 
   const stage = transaction.stage || 'confirm'
@@ -271,12 +273,24 @@ export const TransactionStageModal = ({
     [recentTransactions, transaction.hash],
   )
 
+  const uniqueTxIdentifiers = useMemo(
+    () => ({
+      key: txKey,
+      step: currentStep,
+      name: transaction?.name,
+      data: transaction?.data,
+      chainName,
+      address,
+    }),
+    [txKey, currentStep, transaction?.name, transaction?.data, chainName, address],
+  )
+
   const {
     data: request,
     isLoading: requestLoading,
     error: _requestError,
   } = useQuery(
-    ['prepareTx', txKey, currentStep, transaction.name],
+    ['prepareTx', uniqueTxIdentifiers],
     async () => {
       const populatedTransaction = await transactions[transaction.name].transaction(
         signer as JsonRpcSigner,
@@ -304,7 +318,7 @@ export const TransactionStageModal = ({
   const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
     enabled: !!transaction && !!signer && !!ens,
-    queryKey: ['prepareTx', txKey, currentStep, transaction.name],
+    queryKey: ['prepareTx', uniqueTxIdentifiers],
   })
 
   const {
