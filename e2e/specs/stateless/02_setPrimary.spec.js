@@ -130,7 +130,7 @@ describe('Set Primary Name from settings', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(2)
       cy.visit('/my/settings')
-      cy.findByTestId('change-primary-name-button').click()
+      cy.findByTestId('set-primary-name-button').click()
       cy.findByTestId('name-item-wrapped-without-resolver.eth').click()
       cy.findByTestId('primary-next').click()
 
