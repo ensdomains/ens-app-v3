@@ -5,6 +5,8 @@ import { DeepPartial } from '@app/types'
 
 import RevokePermissions, { Props } from './RevokePermissions-flow'
 
+jest.spyOn(Date, 'now').mockImplementation(() => new Date('2023-01-01').getTime())
+
 const mockDispatch = jest.fn()
 const mockOnDismiss = jest.fn()
 
@@ -259,8 +261,8 @@ describe('RevokePermissions', () => {
           data={makeData({
             name: 'sub.test.eth',
             flowType: 'grant-extend-expiry',
-            minExpiry: 1672531200,
-            maxExpiry: 1675238574,
+            minExpiry: Math.floor(new Date('2022-01-01').getTime() / 1000),
+            maxExpiry: Math.floor(new Date('2024-01-01').getTime() / 1000),
           })}
           transactions={[]}
           onDismiss={mockOnDismiss}
@@ -321,7 +323,7 @@ describe('RevokePermissions', () => {
                 parent: ['CAN_EXTEND_EXPIRY'],
                 child: [],
               },
-              expiry: 1675238574,
+              expiry: Math.floor(new Date('2023-01-02').getTime() / 1000),
             }),
           ],
         })

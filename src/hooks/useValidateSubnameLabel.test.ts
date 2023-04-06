@@ -6,6 +6,7 @@ import { DeepPartial } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { emptyAddress } from '@app/utils/constants'
 
+import { usePccExpired } from './fuses/usePccExpired'
 import { useGetWrapperData } from './useGetWrapperData'
 import { useValidateSubnameLabel } from './useValidateSubnameLabel'
 
@@ -14,6 +15,7 @@ const BYTE256 =
 
 jest.mock('@app/utils/EnsProvider')
 jest.mock('@app/hooks/useGetWrapperData')
+jest.mock('@app/hooks/fuses/usePccExpired')
 
 const mockUseEns = mockFunction(useEns)
 const mockGetOwner = jest.fn()
@@ -23,6 +25,7 @@ mockUseEns.mockReturnValue({
 })
 
 const mockUseGetWrapperData = mockFunction(useGetWrapperData)
+const mockUsePccExpired = mockFunction(usePccExpired)
 
 type OwnerData = Awaited<ReturnType<ReturnType<typeof useEns>['getOwner']>>
 const makeOwnerData = (
@@ -294,6 +297,21 @@ const groups = [
           error: 'invalidCharacters',
         },
       },
+      {
+        description: 'should return valid if label is expired subname',
+        name: 'wrapped.eth',
+        isWrapped: true,
+        label: 'hello.world',
+        ownerData: makeOwnerData('nameWrapper'),
+        wrapperData: makeWrapperData(),
+        skipWaitForNextUpdate: true,
+        pccBurned: true,
+        result: {
+          valid: false,
+          isLoading: false,
+          error: 'invalidCharacters',
+        },
+      },
     ],
   },
 ]
@@ -318,6 +336,7 @@ describe('useValidateSubnameLabel', () => {
             wrapperData: test.wrapperData,
             isLoading: false,
           })
+          mockUsePccExpired.mockReturnValue(!!(test as any).pccExpired)
 
           const { result, waitForNextUpdate } = renderHook(() =>
             useValidateSubnameLabel(test.name, test.label, test.isWrapped),

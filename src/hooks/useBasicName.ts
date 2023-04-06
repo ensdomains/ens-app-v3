@@ -9,6 +9,7 @@ import { emptyAddress } from '@app/utils/constants'
 import { getRegistrationStatus } from '@app/utils/registrationStatus'
 import { isLabelTooLong, yearsToSeconds } from '@app/utils/utils'
 
+import { usePccExpired } from './fuses/usePccExpired'
 import { useContractAddress } from './useContractAddress'
 import { useSupportsTLD } from './useSupportsTLD'
 import { useValidate } from './useValidate'
@@ -108,16 +109,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
       ),
     [ens.ready, nameWrapperAddress, isWrapped, normalisedName],
   )
-  const pccExpired = useMemo(
-    () =>
-      !!(
-        ownerData?.ownershipLevel === 'registry' &&
-        ownerData.owner === nameWrapperAddress &&
-        wrapperData?.expiryDate &&
-        wrapperData.expiryDate < new Date()
-      ),
-    [ownerData, wrapperData, nameWrapperAddress],
-  )
+  const pccExpired = usePccExpired({ ownerData, wrapperData })
 
   const isLoading = !ens.ready || batchLoading || supportedTLDLoading
 

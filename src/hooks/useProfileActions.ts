@@ -10,6 +10,7 @@ import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
 import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { nameParts } from '@app/utils/name'
 
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
@@ -22,6 +23,8 @@ type Action = {
   disabled?: boolean
   tooltipContent?: string
   skip2LDEth?: boolean
+  warning?: string
+  fullMobileWidth?: boolean
 }
 
 type Props = {
@@ -152,6 +155,26 @@ export const useProfileActions = ({
       })
     }
 
+    if (subnameAbilities.canReclaim) {
+      const { label, parent } = nameParts(name)
+      actions.push({
+        label: t('tabs.profile.actions.reclaim.label'),
+        warning: t('tabs.profile.actions.reclaim.warning'),
+        fullMobileWidth: true,
+        onClick: () => {
+          createTransactionFlow(`reclaim-${name}`, {
+            transactions: [
+              makeTransactionItem('createSubname', {
+                contract: 'nameWrapper',
+                label,
+                parent,
+              }),
+            ],
+          })
+        },
+      })
+    }
+
     if (actions.length === 0) return undefined
     return actions
   }, [
@@ -170,6 +193,7 @@ export const useProfileActions = ({
     subnameAbilities.isPCCBurned,
     isWrapped,
     latestResolverAddress,
+    subnameAbilities.canReclaim,
     t,
   ])
 
