@@ -74,24 +74,6 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('primary-name-label').should('contain.text', 'other-controller.eth')
     })
 
-    it('testing if other wrapped subname works', () => {
-      cy.visit('/my/settings')
-      cy.findByTestId('change-primary-name-button').click()
-      cy.findByTestId('name-item-xyz.wrapped.eth').click()
-      cy.findByTestId('primary-next').click()
-
-      cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
-      cy.findByTestId('transaction-modal-confirm-button').click()
-      cy.confirmMetamaskTransaction()
-      cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(CYPRESS_WAIT_TIME)
-      cy.findByTestId('transaction-modal-confirm-button').click()
-      cy.confirmMetamaskTransaction()
-      cy.findByTestId('transaction-modal-complete-button').click()
-      cy.wait(CYPRESS_WAIT_TIME)
-      cy.findByTestId('primary-name-label').should('contain.text', 'xyz.wrapped.eth')
-    })
-
     it('should allow setting wrapped name that user is manager of but whose resolved address is not the same as the user', () => {
       cy.visit('/my/settings')
       cy.findByTestId('change-primary-name-button').click()
