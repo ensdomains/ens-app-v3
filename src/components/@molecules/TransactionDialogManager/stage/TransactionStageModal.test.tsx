@@ -6,12 +6,14 @@ import { useSendTransaction, useSigner } from 'wagmi'
 
 import { useAddRecentTransaction } from '@app/hooks/transactions/useAddRecentTransaction'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'
+import { useAccountSafely } from '@app/hooks/useAccountSafely'
 import { useChainName } from '@app/hooks/useChainName'
 import { GenericTransaction } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
 
 import { TransactionStageModal, handleBackToInput } from './TransactionStageModal'
 
+jest.mock('@app/hooks/useAccountSafely')
 jest.mock('@app/hooks/useChainName')
 jest.mock('@app/hooks/transactions/useAddRecentTransaction')
 jest.mock('@app/hooks/transactions/useRecentTransactions')
@@ -52,6 +54,7 @@ jest.mock('@app/transaction-flow/transaction', () => {
 const mockUseEns = mockFunction(useEns)
 const mockUseAddRecentTransaction = mockFunction(useAddRecentTransaction)
 const mockUseRecentTransactions = mockFunction(useRecentTransactions)
+const mockUseAccountSafely = mockFunction(useAccountSafely)
 const mockUseChainName = mockFunction(useChainName)
 const mockUseSigner = mockFunction(useSigner)
 const mockUseSendTransaction = mockFunction(useSendTransaction)
@@ -60,26 +63,28 @@ const mockEstimateGas = jest.fn()
 const mockOnDismiss = jest.fn()
 const mockDispatch = jest.fn()
 
-const renderHelper = async ({
-  currentStep,
-  stepCount,
-  actionName,
-  displayItems,
-  transaction,
-}: Partial<ComponentProps<typeof TransactionStageModal>> = {}) => {
-  const renderValue = render(
-    <TransactionStageModal
-      currentStep={currentStep || 0}
-      stepCount={stepCount || 1}
-      actionName={actionName || 'test'}
-      displayItems={displayItems || []}
-      transaction={transaction || ({} as any)}
-      onDismiss={mockOnDismiss}
-      dispatch={mockDispatch}
-      backToInput={false}
-      txKey="test"
-    />,
-  )
+const ComponentWithDefaultProps = ({
+  currentStep = 0,
+  stepCount = 1,
+  actionName = 'test',
+  displayItems = [],
+  transaction = {} as any,
+}: Partial<ComponentProps<typeof TransactionStageModal>>) => (
+  <TransactionStageModal
+    currentStep={currentStep}
+    stepCount={stepCount}
+    actionName={actionName}
+    displayItems={displayItems}
+    transaction={transaction}
+    onDismiss={mockOnDismiss}
+    dispatch={mockDispatch}
+    backToInput={false}
+    txKey="test"
+  />
+)
+
+const renderHelper = async (props: Partial<ComponentProps<typeof TransactionStageModal>> = {}) => {
+  const renderValue = render(<ComponentWithDefaultProps key="component-default" {...props} />)
   await waitFor(() => expect(screen.getByTestId('transaction-modal-inner')).toBeVisible(), {
     timeout: 350,
   })
@@ -96,7 +101,6 @@ const clickRequest = async () => {
 }
 
 describe('TransactionStageModal', () => {
-  mockUseChainName.mockReturnValue('ethereum')
   mockUseSigner.mockReturnValue({
     data: {
       estimateGas: mockEstimateGas,
@@ -107,6 +111,9 @@ describe('TransactionStageModal', () => {
   mockUseEns.mockReturnValue({})
 
   beforeEach(() => {
+    mockEstimateGas.mockReset()
+    mockUseAccountSafely.mockReturnValue({ address: '0x1234' })
+    mockUseChainName.mockReturnValue('ethereum')
     mockUseRecentTransactions.mockReturnValue([
       {
         status: 'pending',
@@ -149,6 +156,43 @@ describe('TransactionStageModal', () => {
         await waitFor(() =>
           expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
         )
+      })
+      it('should show confirm button as disabled if a unique identifier is undefined', async () => {
+        mockEstimateGas.mockResolvedValue(1)
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: () => Promise.resolve(),
+        })
+        mockUseAccountSafely.mockReturnValue({ address: undefined })
+        await renderHelper({ transaction: mockTransaction })
+        await waitFor(() =>
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled(),
+        )
+      })
+      it('should disable confirm button and re-estimate gas if a unique identifier is changed', async () => {
+        mockEstimateGas.mockResolvedValue(1)
+        mockUseSendTransaction.mockReturnValue({
+          sendTransaction: () => Promise.resolve(),
+        })
+        const { rerender } = await renderHelper({ transaction: mockTransaction })
+        await waitFor(() =>
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
+        )
+        expect(mockEstimateGas).toHaveBeenCalledTimes(1)
+        mockEstimateGas.mockReset()
+        rerender(
+          <ComponentWithDefaultProps
+            transaction={{
+              ...mockTransaction,
+              data: { ...mockTransaction.data, name: 'test.eth' },
+            }}
+            key="component-default"
+          />,
+        )
+        expect(screen.getByTestId('transaction-modal-confirm-button')).toBeDisabled()
+        await waitFor(() =>
+          expect(screen.getByTestId('transaction-modal-confirm-button')).toBeEnabled(),
+        )
+        expect(mockEstimateGas).toHaveBeenCalledTimes(1)
       })
       it('should only show confirm button as enabled if gas is estimated and sendTransaction func is defined', async () => {
         mockEstimateGas.mockResolvedValue(1)

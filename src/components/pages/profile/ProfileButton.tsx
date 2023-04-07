@@ -21,14 +21,13 @@ const StyledAddressIcon = styled(DynamicAddressIcon)(
   `,
 )
 
-type RecordItemProps = React.ComponentProps<typeof RecordItem>
-
 export const SocialProfileButton = ({ iconKey, value }: { iconKey: string; value: string }) => {
   const breakpoints = useBreakpoint()
   const socialData = getSocialData(iconKey, value)
 
   return socialData ? (
     <RecordItem
+      as="a"
       icon={
         <DynamicSocialIcon
           fill={socialData.color}
@@ -120,9 +119,17 @@ export const OtherProfileButton = ({
     return value?.length > 5 ? `${value.slice(0, 5)}...` : value
   }, [type, value, breakpoints])
 
+  const linkProps = useMemo(() => {
+    if (!isLink) return {}
+    return {
+      as: 'a',
+      link: value,
+    } as const
+  }, [value, isLink])
+
   return (
     <RecordItem
-      link={isLink ? value : undefined}
+      {...linkProps}
       value={value}
       inline
       size={breakpoints.sm ? 'large' : 'small'}
@@ -172,50 +179,51 @@ export const OwnerProfileButton = ({
 
   const { name: primary, beautifiedName } = usePrimary(addressOrNameOrDate, dataType !== 'address')
 
-  const recordItemPartialProps: Pick<RecordItemProps, 'link' | 'value' | 'keyLabel' | 'children'> =
-    useMemo(() => {
-      const base = {
-        keyLabel: t(label).toLocaleLowerCase(),
-        value: addressOrNameOrDate,
-      }
-      if (dataType === 'expiry')
-        return {
-          ...base,
-          link: undefined,
-          children: addressOrNameOrDate,
-        }
-      if (dataType === 'noExpiry')
-        return {
-          ...base,
-          link: undefined,
-          children: t('name.noExpiry').toLocaleLowerCase(),
-        }
-      if (dataType === 'notOwned')
-        return {
-          ...base,
-          link: undefined,
-          children: t('name.notOwned').toLocaleLowerCase(),
-        }
-      if (dataType === 'noParent')
-        return { ...base, link: undefined, children: t('name.noParent').toLocaleLowerCase() }
-      if (dataType === 'address')
-        return {
-          ...base,
-          link: primary
-            ? (getDestination(`/profile/${primary}`) as string)
-            : (getDestination(`/address/${addressOrNameOrDate}`) as string),
-          children:
-            beautifiedName ||
-            (breakpoints.sm
-              ? shortenAddress(addressOrNameOrDate)
-              : addressOrNameOrDate.slice(0, 5)),
-        }
+  const recordItemPartialProps = useMemo(() => {
+    const base = {
+      keyLabel: t(label).toLocaleLowerCase(),
+      value: addressOrNameOrDate,
+      target: undefined,
+      as: 'button',
+    } as const
+    if (dataType === 'expiry')
       return {
         ...base,
-        link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
+        link: undefined,
         children: addressOrNameOrDate,
-      }
-    }, [dataType, addressOrNameOrDate, label, breakpoints, primary, beautifiedName, t])
+      } as const
+    if (dataType === 'noExpiry')
+      return {
+        ...base,
+        link: undefined,
+        children: t('name.noExpiry').toLocaleLowerCase(),
+      } as const
+    if (dataType === 'notOwned')
+      return {
+        ...base,
+        link: undefined,
+        children: t('name.notOwned').toLocaleLowerCase(),
+      } as const
+    if (dataType === 'noParent')
+      return { ...base, link: undefined, children: t('name.noParent').toLocaleLowerCase() }
+    if (dataType === 'address')
+      return {
+        ...base,
+        as: 'a',
+        link: primary
+          ? (getDestination(`/profile/${primary}`) as string)
+          : (getDestination(`/address/${addressOrNameOrDate}`) as string),
+        children:
+          beautifiedName ||
+          (breakpoints.sm ? shortenAddress(addressOrNameOrDate) : addressOrNameOrDate.slice(0, 5)),
+      } as const
+    return {
+      ...base,
+      as: 'a',
+      link: getDestination(`/profile/${addressOrNameOrDate}`) as string,
+      children: addressOrNameOrDate,
+    } as const
+  }, [dataType, addressOrNameOrDate, label, breakpoints, primary, beautifiedName, t])
 
   return (
     <RecordItem

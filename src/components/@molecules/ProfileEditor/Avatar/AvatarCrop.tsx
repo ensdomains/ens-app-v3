@@ -289,6 +289,7 @@ export const CropComponent = ({
       // multi-touch pinch to zoom
       if (e.targetTouches.length === 2 && e.changedTouches.length > 0 && pointInxs.length === 2) {
         const [touch1, touch2] = e.changedTouches
+        if (!touch2) return
         const diff1 = touch1.clientX / tpCache[pointInxs[0]].clientX
         const diff2 = touch2.clientX / tpCache[pointInxs[1]].clientX
         const zoomDiff = 1 - diff1 * diff2

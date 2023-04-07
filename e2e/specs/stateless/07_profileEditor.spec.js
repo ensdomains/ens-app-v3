@@ -163,7 +163,9 @@ describe('Profile Editor', () => {
         // Update and add records to test migration records merge
         cy.contains('Edit profile').click()
         cy.findByTestId('warning-overlay').should('be.visible')
-        cy.findByTestId('warning-overlay-secondary-action').should('have.text', 'Edit profile').click()
+        cy.findByTestId('warning-overlay-secondary-action')
+          .should('have.text', 'Edit profile')
+          .click()
         cy.findByTestId('profile-record-input-description')
           .get('textarea')
           .type('{selectall}{backspace}new name')

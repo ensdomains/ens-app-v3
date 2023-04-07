@@ -19,7 +19,7 @@ export const useProfile = (name: string, skip?: any) => {
     isFetched,
     // don't remove this line, it updates the isCachedData state (for some reason) but isn't needed to verify it
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    isFetching: _isFetching,
+    isFetching,
   } = useQuery(
     ['graph', 'getProfile', name],
     () =>
@@ -46,6 +46,7 @@ export const useProfile = (name: string, skip?: any) => {
     profile: returnProfile,
     loading: !ready || loading,
     status,
+    isFetching,
     isCachedData: status === 'success' && isFetched && !isFetchedAfterMount,
   }
 }
