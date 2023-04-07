@@ -153,8 +153,11 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const [error] = useErrorBoundary()
 
   useEffect(() => {
-    if (currentChain && !(currentChain?.id === 5 || currentChain?.id === 1337)) {
-      switchNetwork?.(5)
+    if (
+      currentChain &&
+      !(currentChain?.id === 1 || currentChain?.id === 5 || currentChain?.id === 1337)
+    ) {
+      switchNetwork?.(1)
       router.push('/unsupportedNetwork')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps

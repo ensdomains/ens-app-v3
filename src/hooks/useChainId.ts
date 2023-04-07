@@ -5,5 +5,5 @@ export const useChainId = (): number => {
   if (chain) {
     return chain.id ?? null
   }
-  return 5
+  return 1
 }
