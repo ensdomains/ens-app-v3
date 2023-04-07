@@ -74,24 +74,36 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('primary-name-label').should('contain.text', 'other-controller.eth')
     })
 
-    it('testing if other wrapped subname works', () => {
-      cy.clearLocalStorage()
-      acceptMetamaskAccess(2)
+    it('should allow setting wrapped name that user is manager of but whose resolved address is not the same as the user', () => {
       cy.visit('/my/settings')
       cy.findByTestId('change-primary-name-button').click()
-      cy.findByTestId('name-item-legacy.with-subnames.eth').click()
+      cy.findByTestId('name-item-sub.wrapped-without-resolver.eth')
+        .within(() => {
+          cy.findByTestId('tag-name.manager-true').should('be.visible')
+        })
+        .click()
       cy.findByTestId('primary-next').click()
 
+      // Intro modal
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
+
+      // Update Eth Address modal
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(CYPRESS_WAIT_TIME)
+
+      // Set Primary Name modal
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(CYPRESS_WAIT_TIME)
-      cy.findByTestId('primary-name-label').should('contain.text', 'legacy.with-subnames.eth')
+
+      // Assertion
+      cy.findByTestId('primary-name-label').should(
+        'contain.text',
+        'sub.wrapped-without-resolver.eth',
+      )
     })
 
     // it.todo('should allow setting a name that does not have a resolver --- can not do this until get resolver is updated to reject resolver if it does not support ExtendResolver')
@@ -114,37 +126,24 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('no-primary-name-section').should('be.visible')
     })
 
-    it('should allow setting wrapped name that user is manager rights of but whose resolved address is not the same as the user', () => {
+    it('testing if other wrapped subname works', () => {
       cy.clearLocalStorage()
       acceptMetamaskAccess(2)
       cy.visit('/my/settings')
       cy.findByTestId('set-primary-name-button').click()
-      cy.findByTestId('name-item-wrapped-without-resolver.eth')
-        .within(() => {
-          cy.findByTestId('tag-name.owner-true').should('be.visible')
-        }).click()
+      cy.findByTestId('name-item-wrapped-without-resolver.eth').click()
       cy.findByTestId('primary-next').click()
 
-      // Intro modal
       cy.findByTestId('transaction-dialog-intro-trailing-btn').click()
-
-      // Update Eth Address modal
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(CYPRESS_WAIT_TIME)
-
-      // Set Primary Name modal
       cy.findByTestId('transaction-modal-confirm-button').click()
       cy.confirmMetamaskTransaction()
       cy.findByTestId('transaction-modal-complete-button').click()
       cy.wait(CYPRESS_WAIT_TIME)
-
-      // Assertion
-      cy.findByTestId('primary-name-label').should(
-        'contain.text',
-        'wrapped-without-resolver.eth',
-      )
+      cy.findByTestId('primary-name-label').should('contain.text', 'wrapped-without-resolver.eth')
     })
 
     it('should allow setting primary name from name with encrypted label', () => {
