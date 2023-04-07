@@ -77,8 +77,13 @@ export const SyncProvider = ({ children }: { children: React.ReactNode }) => {
         if (!data) return
         const waitingForBlock = findTransactionHigherThanBlock(data)
         if (waitingForBlock) return
-        queryClient.invalidateQueries({ exact: false, queryKey: ['graph'], refetchType: 'all' })
-        queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
+        queryClient.resetQueries({ exact: false, queryKey: ['getSubnames', 'infinite'] }).then(() =>
+          queryClient.invalidateQueries({
+            exact: false,
+            queryKey: ['graph'],
+            refetchType: 'all',
+          }),
+        )
       },
     },
   )

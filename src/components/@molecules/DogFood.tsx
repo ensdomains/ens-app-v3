@@ -50,7 +50,7 @@ export const DogFood = (
         return ''
       }
     },
-    { enabled: inputWatch?.includes('.') },
+    { enabled: !!inputWatch?.includes('.') },
   )
   const finalValue = inputWatch?.includes('.') ? ethNameAddress : inputWatch
   useEffect(() => { 

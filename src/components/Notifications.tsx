@@ -107,7 +107,6 @@ export const Notifications = () => {
   useEffect(() => {
     if (currentNotification) {
       queryClient.invalidateQueries()
-      queryClient.resetQueries({ exact: false, queryKey: ['getSubnames'] })
     }
   }, [currentNotification, queryClient])
 
