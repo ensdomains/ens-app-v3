@@ -285,6 +285,23 @@ export const TransactionStageModal = ({
     [txKey, currentStep, transaction?.name, transaction?.data, chainName, address],
   )
 
+  // if not all unique identifiers are defined, there could be incorrect cached data
+  const isUniquenessDefined = useMemo(
+    // number check is for if step = 0
+    () => Object.values(uniqueTxIdentifiers).every((val) => typeof val === 'number' || !!val),
+    [uniqueTxIdentifiers],
+  )
+
+  const canEnableTransactionRequest = useMemo(
+    () =>
+      !!transaction &&
+      !!signer &&
+      !!ens &&
+      !(stage === 'sent' || stage === 'complete') &&
+      isUniquenessDefined,
+    [transaction, signer, ens, stage, isUniquenessDefined],
+  )
+
   const {
     data: request,
     isLoading: requestLoading,
@@ -311,13 +328,13 @@ export const TransactionStageModal = ({
       }
     },
     {
-      enabled: !!transaction && !!signer && !!ens && !(stage === 'sent' || stage === 'complete'),
+      enabled: canEnableTransactionRequest,
       onError: console.error,
     },
   )
   const requestError = _requestError as TxError | null
   useInvalidateOnBlock({
-    enabled: !!transaction && !!signer && !!ens,
+    enabled: canEnableTransactionRequest,
     queryKey: ['prepareTx', uniqueTxIdentifiers],
   })
 
@@ -388,7 +405,7 @@ export const TransactionStageModal = ({
       return (
         <Button
           onClick={() => sendTransaction!()}
-          disabled={requestLoading || !sendTransaction}
+          disabled={!canEnableTransactionRequest || requestLoading || !sendTransaction}
           colorStyle="redSecondary"
           data-testid="transaction-modal-failed-button"
         >
@@ -420,7 +437,9 @@ export const TransactionStageModal = ({
     }
     return (
       <Button
-        disabled={requestLoading || !sendTransaction || !!requestError}
+        disabled={
+          !canEnableTransactionRequest || requestLoading || !sendTransaction || !!requestError
+        }
         onClick={() => sendTransaction!()}
         data-testid="transaction-modal-confirm-button"
       >
@@ -428,6 +447,7 @@ export const TransactionStageModal = ({
       </Button>
     )
   }, [
+    canEnableTransactionRequest,
     currentStep,
     dispatch,
     onDismiss,
