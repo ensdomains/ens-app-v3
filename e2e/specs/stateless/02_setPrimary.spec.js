@@ -13,7 +13,7 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('header-profile').as('header-profile')
       cy.get('@header-profile').click()
       // length 4 = 3 buttons + 1 divider
-      cy.findByTestId('dropdown-menu').children().should('have.length', 1)
+      cy.findByTestId('dropdown-menu').children().first().children().should('have.length', 4)
     })
   })
 
@@ -174,7 +174,7 @@ describe('Set Primary Name from settings', () => {
       cy.findByTestId('header-profile').as('header-profile')
       cy.get('@header-profile').click()
       // length 4 = 3 buttons + 1 divider
-      cy.findByTestId('dropdown-menu').children().should('have.length', 4)
+      cy.findByTestId('dropdown-menu').children().first().children().should('have.length', 5)
     })
   })
 })
