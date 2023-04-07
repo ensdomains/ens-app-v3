@@ -7,13 +7,13 @@ describe('Set Primary Name from settings', () => {
     acceptMetamaskAccess(1, true)
   })
 
-  describe('header', () => {
+  describe('header without primary name', () => {
     it('should not show profile button in header dropdown', () => {
       cy.visit('/')
       cy.findByTestId('header-profile').as('header-profile')
       cy.get('@header-profile').click()
       // length 4 = 3 buttons + 1 divider
-      cy.findByTestId('dropdown-menu').children().should('have.length', 4)
+      cy.findByTestId('dropdown-menu').children().should('have.length', 1)
     })
   })
 
@@ -165,6 +165,16 @@ describe('Set Primary Name from settings', () => {
       
       // Assertion
       cy.findByTestId('primary-name-label').should('have.text', 'aaa123xyz000.unknown-labels.eth')
+    })
+  })
+
+  describe('header with primary name', () => {
+    it('should not show profile button in header dropdown', () => {
+      cy.visit('/')
+      cy.findByTestId('header-profile').as('header-profile')
+      cy.get('@header-profile').click()
+      // length 4 = 3 buttons + 1 divider
+      cy.findByTestId('dropdown-menu').children().should('have.length', 4)
     })
   })
 })
