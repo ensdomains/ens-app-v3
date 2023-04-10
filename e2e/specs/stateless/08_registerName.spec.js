@@ -129,8 +129,8 @@ describe('Register Name', () => {
     cy.findByTestId('finish-button').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.findByTestId('view-name').click()
     cy.wait(10000)
+    cy.findByTestId('view-name').click()
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
   it('should allow registering a premium name', () => {
@@ -149,7 +149,7 @@ describe('Register Name', () => {
     cy.findByTestId('finish-button').click()
     cy.findByTestId('transaction-modal-confirm-button').click()
     cy.confirmMetamaskTransaction()
-    cy.wait(1000)
+    cy.wait(10000)
     cy.findByTestId('view-name').click()
     cy.findByTestId('address-profile-button-eth').should('contain.text', '0x3C4...293BC')
   })
