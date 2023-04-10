@@ -11,7 +11,7 @@ const useEstimateTransactionCost = (...transactions: (keyof typeof gasLimitDicti
 
   const data = useMemo(() => {
     if (!feeData || isLoading) return undefined
-    const { maxFeePerGas } = feeData
+    const { gasPrice, maxFeePerGas } = feeData
 
     if (!maxFeePerGas) throw new Error('Fee data not found')
     const totalGasLimit = transactions
@@ -20,7 +20,8 @@ const useEstimateTransactionCost = (...transactions: (keyof typeof gasLimitDicti
     const transactionFee = maxFeePerGas.mul(totalGasLimit)
     return {
       transactionFee,
-      gasPrice: maxFeePerGas,
+      gasPrice,
+      maxFeePerGas,
       gasLimit: totalGasLimit,
     }
   }, [transactions, feeData, isLoading])
