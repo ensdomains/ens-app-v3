@@ -144,7 +144,7 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   const [view, setView] = useState<'main' | 'decrypt'>('main')
 
   const [sortType, setSortType] = useState<SortType>('labelName')
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc')
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc')
   const [searchInput, setSearchInput] = useState('')
   const [searchQuery, _setSearchQuery] = useState('')
   const setSearchQuery = useDebouncedCallback(_setSearchQuery, 300, [])
