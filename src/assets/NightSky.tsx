@@ -8,6 +8,7 @@ const Container = styled.div(
     height: 100%;
     overflow: hidden;
     border-radius: ${theme.radii['2xLarge']};
+    isolation: isolate; // Safari to clip svgs to border radius
 
     & > * {
       position: relative;
