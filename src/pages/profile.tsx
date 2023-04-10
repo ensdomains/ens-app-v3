@@ -28,6 +28,8 @@ export default function Page() {
 
   const isLoading = detailsLoading || primaryLoading || accountLoading || initial
 
+  console.log('profile')
+
   if (isViewingExpired && gracePeriodEndDate && gracePeriodEndDate > new Date()) {
     router.push(`/profile/${name}`)
     return null

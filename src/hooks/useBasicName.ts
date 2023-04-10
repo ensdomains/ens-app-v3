@@ -44,6 +44,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
         return Promise.all([ens.getOwner('', 'registry')])
       }
 
+      console.log('getBasicName', normalisedName)
       const labels = normalisedName.split('.')
       if (validation.isETH && validation.is2LD) {
         if (validation.isShort) {
@@ -63,7 +64,7 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
       enabled: !!(ens.ready && name && isValid),
     },
   )
-
+  console.log('useBasicName', batchData)
   const [ownerData, _wrapperData, expiryData, priceData] = batchData || []
 
   const wrapperData = useMemo(() => {

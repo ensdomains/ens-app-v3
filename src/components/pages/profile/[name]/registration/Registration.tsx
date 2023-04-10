@@ -216,6 +216,7 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
 
   useEffect(() => {
     const handleRouteChange = (e: string) => {
+      console.log('route change', e, 'router.asPath', router.asPath, 'step', step)
       if (e !== router.asPath && step === 'complete') {
         dispatch({ name: 'clearItem', selected })
         cleanupFlow(commitKey)
