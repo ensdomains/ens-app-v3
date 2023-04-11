@@ -64,6 +64,7 @@
     "privacy": "Privacy Policy",
     "back": "Back",
     "oldApp": "Old ENS App",
+    "ipfsApp": "IPFS ENS App",
     "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet."
   },
   "wallet": {

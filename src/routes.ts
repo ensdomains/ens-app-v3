@@ -23,6 +23,7 @@ export type PublicRoute =
   | 'terms'
   | 'privacy'
   | 'oldApp'
+  | 'IPFSApp'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -108,6 +109,14 @@ export const routes: RouteItemObj[] = [
     name: 'oldApp',
     href: 'https://app.ens.domains',
     label: 'navigation.oldApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
+  },
+  {
+    name: 'IPFSApp',
+    href: 'https://app.ens.eth.limo/',
+    label: 'navigation.ipfsApp',
     disabled: false,
     connected: false,
     onlyDropdown: true,

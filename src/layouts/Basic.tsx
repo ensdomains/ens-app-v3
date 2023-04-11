@@ -1,10 +1,10 @@
 import { useRouter } from 'next/router'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { Dialog, Typography, mq } from '@ensdomains/thorin'
+import { Dialog, mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
@@ -91,57 +91,57 @@ const StyledDialog = styled(Dialog)(
   `,
 )
 
-const FeedbackButton = styled.div(
-  ({ theme }) => css`
-    z-index: 10000;
-    background: ${theme.colors.orange};
-    width: ${theme.space['11']};
-    height: ${theme.space['52']};
-    border-radius: ${theme.radii['2xLarge']} 0 0 ${theme.radii['2xLarge']};
-    position: fixed;
-    right: -${theme.space['2']};
-    top: 50vh;
-    transform: translateY(-50%);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    transition: all 0.15s ease-in-out;
+// const FeedbackButton = styled.div(
+//   ({ theme }) => css`
+//     z-index: 10000;
+//     background: ${theme.colors.orange};
+//     width: ${theme.space['11']};
+//     height: ${theme.space['52']};
+//     border-radius: ${theme.radii['2xLarge']} 0 0 ${theme.radii['2xLarge']};
+//     position: fixed;
+//     right: -${theme.space['2']};
+//     top: 50vh;
+//     transform: translateY(-50%);
+//     display: flex;
+//     align-items: center;
+//     justify-content: center;
+//     cursor: pointer;
+//     transition: all 0.15s ease-in-out;
 
-    svg {
-      width: ${theme.space['4']};
-      height: ${theme.space['4']};
-    }
+//     svg {
+//       width: ${theme.space['4']};
+//       height: ${theme.space['4']};
+//     }
 
-    /* stylelint-disable-next-line no-descending-specificity */
-    & > div {
-      margin-right: ${theme.space['2']};
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      justify-content: center;
-      gap: ${theme.space['2']};
-      min-width: ${theme.space['52']};
-      transform: rotate(90deg);
-    }
+//     /* stylelint-disable-next-line no-descending-specificity */
+//     & > div {
+//       margin-right: ${theme.space['2']};
+//       display: flex;
+//       flex-direction: row;
+//       align-items: center;
+//       justify-content: center;
+//       gap: ${theme.space['2']};
+//       min-width: ${theme.space['52']};
+//       transform: rotate(90deg);
+//     }
 
-    @media (hover: hover) {
-      &:hover {
-        right: 0;
-        background: ${theme.colors.orangeBright};
-      }
-      &:active {
-        right: -${theme.space['2']};
-      }
-    }
-    @media (hover: none) {
-      &:active {
-        right: 0;
-        background: ${theme.colors.orangeBright};
-      }
-    }
-  `,
-)
+//     @media (hover: hover) {
+//       &:hover {
+//         right: 0;
+//         background: ${theme.colors.orangeBright};
+//       }
+//       &:active {
+//         right: -${theme.space['2']};
+//       }
+//     }
+//     @media (hover: none) {
+//       &:active {
+//         right: 0;
+//         background: ${theme.colors.orangeBright};
+//       }
+//     }
+//   `,
+// )
 
 export const StyledFeedbackSVG = styled(FeedbackSVG)(() => css``)
 
@@ -149,7 +149,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { chain: currentChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const router = useRouter()
-  const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
+  // const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
   const [error] = useErrorBoundary()
 
   useEffect(() => {
@@ -165,18 +165,18 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
 
   return (
     <Container className="min-safe">
-      <FeedbackButton onClick={() => setHasFeedbackForm(true)}>
+      {/* <FeedbackButton onClick={() => setHasFeedbackForm(true)}>
         <div>
           <FeedbackSVG />
           <Typography style={{ color: 'white' }}>Feedback</Typography>
         </div>
-      </FeedbackButton>
+      </FeedbackButton> */}
       <Navigation />
       <ContentWrapper>
         {error ? <ErrorScreen errorType="application-error" /> : children}
       </ContentWrapper>
       <BottomPlaceholder />
-      <StyledDialog
+      {/* <StyledDialog
         open={hasFeedbackForm}
         variant="actionable"
         onDismiss={() => setHasFeedbackForm(false)}
@@ -188,7 +188,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
           style={{ borderRadius: 25 }}
           src={`https://docs.google.com/forms/d/e/1FAIpQLSfAVFlV7LC2oCEBtZEK0uKpAU32-eYyY307Ji07wyGSFaZU8Q/viewform?usp=pp_url&entry.435573398=${router.asPath}`}
         />
-      </StyledDialog>
+      </StyledDialog> */}
     </Container>
   )
 })
