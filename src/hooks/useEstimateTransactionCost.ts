@@ -11,13 +11,14 @@ const useEstimateTransactionCost = (...transactions: (keyof typeof gasLimitDicti
 
   const data = useMemo(() => {
     if (!feeData || isLoading) return undefined
-    const { gasPrice } = feeData
+    const { lastBaseFeePerGas, maxPriorityFeePerGas } = feeData
 
-    if (!gasPrice) throw new Error('Fee data not found')
+    if (!lastBaseFeePerGas || !maxPriorityFeePerGas) throw new Error('Fee data not found')
     const totalGasLimit = transactions
       .map((transaction) => gasLimitDictionary[transaction])
       .reduce((a, b) => a + b)
-    const transactionFee = gasPrice.mul(1125).div(1000).mul(totalGasLimit)
+    const gasPrice = lastBaseFeePerGas.add(maxPriorityFeePerGas)
+    const transactionFee = gasPrice.mul(totalGasLimit).mul(110).div(100)
     return {
       transactionFee,
       gasPrice,
