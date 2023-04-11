@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useEffect, useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
@@ -151,6 +152,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const router = useRouter()
   const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
   const [error] = useErrorBoundary()
+  const { t } = useTranslation()
 
   useEffect(() => {
     if (
@@ -168,7 +170,7 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
       <FeedbackButton onClick={() => setHasFeedbackForm(true)}>
         <div>
           <FeedbackSVG />
-          <Typography style={{ color: 'white' }}>Feedback</Typography>
+          <Typography style={{ color: 'white' }}>{t('action.feedback')}</Typography>
         </div>
       </FeedbackButton>
       <Navigation />

@@ -320,11 +320,11 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
         <StyledInnerDialog>
           <MoonPayHeader>
             <Typography fontVariant="bodyBold" color="grey">
-              MoonPay Checkout
+              {t('steps.info.moonpayModalHeader')}
             </Typography>
             {chainId === 5 && (
               <Typography fontVariant="body" color="grey">
-                Test card details: 4000 0209 5159 5032, 12/2030, 123
+                {`${t('steps.info.moonpayTestCard')}: 4000 0209 5159 5032, 12/2030, 123`}
               </Typography>
             )}
           </MoonPayHeader>

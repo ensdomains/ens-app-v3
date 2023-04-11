@@ -1,5 +1,6 @@
 import { useRouter } from 'next/router'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import {
@@ -54,6 +55,7 @@ const FaucetBanner = () => {
   } = useFaucet()
   const dialogStage = isSuccess ? 'success' : 'default'
   const [dialogOpen, setDialogOpen] = useState(false)
+  const { t } = useTranslation()
 
   const closeDialog = () => setDialogOpen(false)
   const openDialog = () => setDialogOpen(true)
@@ -69,8 +71,7 @@ const FaucetBanner = () => {
         alert="info"
         title="You have unclaimed goETH!"
       >
-        Each address on goerli can claim <b>0.25 ETH</b> to test out the new ENS manager app, as
-        well as all the new contracts.
+        {t('testnetFaucet.explanation', { amount: '0.25' })}
       </StyledBanner>
     </BannerWrapper>
   )
@@ -92,12 +93,12 @@ const FaucetBanner = () => {
           <Dialog.Footer
             leading={
               <Button colorStyle="accentSecondary" onClick={closeDialog}>
-                Close
+                {t('action.close')}
               </Button>
             }
             trailing={
               <Button loading={mutationLoading} disabled={mutationLoading} onClick={() => mutate()}>
-                Claim
+                {t('action.claim')}
               </Button>
             }
           />
@@ -107,9 +108,9 @@ const FaucetBanner = () => {
           <Dialog.Heading title="Your claim was submitted!" />
           <InnerDialog>
             <LargeCheckIcon as={CheckCircleSVG} />
-            <Typography>It may take a few minutes to show up in your wallet.</Typography>
+            <Typography>{t('testnetFaucet.note')}</Typography>
           </InnerDialog>
-          <Dialog.Footer trailing={<Button onClick={closeDialog}>Close</Button>} />
+          <Dialog.Footer trailing={<Button onClick={closeDialog}>{t('action.close')}</Button>} />
         </>
       )}
     </Dialog>

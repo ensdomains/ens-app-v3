@@ -79,7 +79,7 @@ export const Notifications = () => {
               data-testid="notification-continue-button"
               onClick={() => resumeTransactionFlow(key)}
             >
-              Continue
+              {t('action.continue')}
             </Button>
           </ButtonContainer>
         ) : (

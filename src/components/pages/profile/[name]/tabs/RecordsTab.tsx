@@ -262,7 +262,7 @@ export const RecordsTab = ({
               {abi ? (
                 <>
                   <SectionTitle data-testid="abi-heading" fontVariant="bodyBold">
-                    ABI
+                    {t('details.tabs.records.abi')}
                   </SectionTitle>
                 </>
               ) : (
