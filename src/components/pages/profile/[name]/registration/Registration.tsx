@@ -7,6 +7,7 @@ import { useAccount } from 'wagmi'
 import { Dialog, Helper, Typography, mq } from '@ensdomains/thorin'
 
 import { BaseLinkWithHistory } from '@app/components/@atoms/BaseLink'
+import { InnerDialog } from '@app/components/@atoms/InnerDialog'
 import { useChainId } from '@app/hooks/useChainId'
 import { useContractAddress } from '@app/hooks/useContractAddress'
 import { useNameDetails } from '@app/hooks/useNameDetails'
@@ -58,46 +59,45 @@ type Props = {
   isLoading: boolean
 }
 
-const StyledDialog = styled(Dialog)(
-  ({ theme }) => css`
+const StyledInnerDialog = styled(InnerDialog)(({ theme }) => [
+  css`
     height: min(640px, 80vh);
-    & > div {
-      padding: 0;
+    max-height: min(640px, 80vh);
+    margin: -${theme.space['4']};
+    width: calc(100% + 2 * ${theme.space['4']});
+    gap: 0;
+    overflow: hidden;
+    border-top-left-radius: ${theme.radii['3xLarge']};
+    border-top-right-radius: ${theme.radii['3xLarge']};
+  `,
+  mq.sm.min(css`
+    width: calc(80vw - 2 * ${theme.space['6']});
+    max-width: ${theme.space['128']};
+    margin: -${theme.space['6']};
+    border-bottom-left-radius: ${theme.radii['3xLarge']};
+    border-bottom-right-radius: ${theme.radii['3xLarge']};
+  `),
+])
 
-      & > div {
-        height: 100%;
-        gap: 0;
+const MoonPayHeader = styled.div(
+  ({ theme }) =>
+    css`
+      width: 100%;
+      background-color: ${theme.colors.greySurface};
+      color: ${theme.colors.greyPrimary};
+      padding: ${theme.space['4']};
+    `,
+)
 
-        & > iframe {
-          height: 640px;
-          border-bottom-left-radius: ${theme.radii['2xLarge']};
-          border-bottom-right-radius: ${theme.radii['2xLarge']};
-        }
+const MoonPayIFrame = styled.iframe(
+  ({ theme }) => css`
+    max-width: 590px; // Prevent moonpay iframe from going into modal mode
+    padding: ${theme.space['2']};
+    background-color: #fff;
 
-        & > div:nth-child(2) {
-          width: 100%;
-          background-color: ${theme.colors.backgroundSecondary};
-          padding: ${theme.space['4']};
-          border-top-left-radius: ${theme.radii['2xLarge']};
-          border-top-right-radius: ${theme.radii['2xLarge']};
-        }
-      }
+    @media (prefers-color-scheme: dark) {
+      background-color: #1c1c1e;
     }
-    ${mq.sm.min(css`
-      max-width: 30rem;
-      width: 90vw;
-      & > div {
-        max-width: 30rem;
-        width: 90vw;
-        padding: 0;
-
-        & > div {
-          max-width: 30rem;
-          gap: 0;
-          max-height: 90vh;
-        }
-      }
-    `)}
   `,
 )
 
@@ -229,6 +229,13 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch, step, selected, router.asPath])
 
+  const onDismissMoonpayModal = () => {
+    if (moonpayTransactionStatus === 'waitingAuthorization') {
+      return
+    }
+    setHasMoonpayModal(false)
+  }
+
   return (
     <>
       <Head>
@@ -304,30 +311,32 @@ const Registration = ({ nameDetails, isLoading }: Props) => {
           ),
         }}
       </Content>
-      <StyledDialog
+      <Dialog
         open={hasMoonpayModal}
-        variant="actionable"
-        onDismiss={() => {
-          if (moonpayTransactionStatus === 'waitingAuthorization') {
-            return
-          }
-          setHasMoonpayModal(false)
-        }}
+        variant="blank"
+        onDismiss={onDismissMoonpayModal}
+        onClose={onDismissMoonpayModal}
       >
-        <div>
-          <Typography fontVariant="extraLargeBold">MoonPay Checkout</Typography>
-          {chainId === 5 && (
-            <Typography>Test card details: 4000 0209 5159 5032, 12/2030, 123</Typography>
-          )}
-        </div>
-        <iframe
-          title="Moonpay Checkout"
-          width="100%"
-          height="100%"
-          src={moonpayUrl}
-          id="moonpayIframe"
-        />
-      </StyledDialog>
+        <StyledInnerDialog>
+          <MoonPayHeader>
+            <Typography fontVariant="bodyBold" color="grey">
+              MoonPay Checkout
+            </Typography>
+            {chainId === 5 && (
+              <Typography fontVariant="body" color="grey">
+                Test card details: 4000 0209 5159 5032, 12/2030, 123
+              </Typography>
+            )}
+          </MoonPayHeader>
+          <MoonPayIFrame
+            title="Moonpay Checkout"
+            width="100%"
+            height="100%"
+            src={moonpayUrl}
+            id="moonpayIframe"
+          />
+        </StyledInnerDialog>
+      </Dialog>
     </>
   )
 }
