@@ -40,9 +40,15 @@ export const useProfileActions = ({
   selfAbilities,
   subnameAbilities,
 }: Props) => {
-  const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
-  const { createTransactionFlow, showDataInput } = useTransactionFlow()
   const { t } = useTranslation('profile')
+
+  const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
+  const { createTransactionFlow, prepareDataInput } = useTransactionFlow()
+  const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
+  const showProfileEditorInput = prepareDataInput('ProfileEditor')
+  const showDeleteEmancipatedSubnameWarningInput = prepareDataInput(
+    'DeleteEmancipatedSubnameWarning',
+  )
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -78,7 +84,7 @@ export const useProfileActions = ({
       actions.push({
         label: t('tabs.profile.actions.setAsPrimaryName.label'),
         onClick: !checkIsDecrypted(name)
-          ? () => showDataInput(key, 'UnknownLabels', { name, key, transactionFlowItem })
+          ? () => showUnknownLabelsInput(key, { name, key, transactionFlowItem })
           : () => createTransactionFlow(key, transactionFlowItem),
       })
     }
@@ -87,9 +93,8 @@ export const useProfileActions = ({
       actions.push({
         label: t('tabs.profile.actions.editProfile.label'),
         onClick: () =>
-          showDataInput(
+          showProfileEditorInput(
             `edit-profile-${name}`,
-            'ProfileEditor',
             { name },
             { disableBackgroundClick: true },
           ),
@@ -101,9 +106,8 @@ export const useProfileActions = ({
         ? {
             label: t('tabs.profile.actions.deleteSubname.label'),
             onClick: () => {
-              showDataInput(
+              showDeleteEmancipatedSubnameWarningInput(
                 `delete-emancipated-subname-warning-${name}`,
-                'DeleteEmancipatedSubnameWarning',
                 { name },
               )
             },
@@ -161,19 +165,21 @@ export const useProfileActions = ({
     return actions
   }, [
     address,
-    createTransactionFlow,
-    name,
-    primaryName,
-    profile?.address,
     selfAbilities.canEdit,
-    showDataInput,
+    profile?.address,
+    primaryName,
+    name,
     subnameAbilities.canDelete,
     subnameAbilities.canDeleteContract,
     subnameAbilities.canDeleteError,
-    subnameAbilities.canDeleteMethod,
-    subnameAbilities.isPCCBurned,
     subnameAbilities.canReclaim,
+    subnameAbilities.isPCCBurned,
+    subnameAbilities.canDeleteMethod,
     t,
+    showUnknownLabelsInput,
+    createTransactionFlow,
+    showProfileEditorInput,
+    showDeleteEmancipatedSubnameWarningInput,
   ])
 
   return {

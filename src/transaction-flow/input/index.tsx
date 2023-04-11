@@ -23,7 +23,7 @@ const dynamicHelper = <P,>(name: string) =>
         /* webpackExclude: /\.test.tsx$/ */
         `./${name}-flow`
       ),
-    { loading: () => <TransactionLoader /> },
+    { loading: () => <TransactionLoader isComponentLoader /> },
   )
 
 const EditResolver = dynamicHelper<EditResolverProps>('EditResolver/EditResolver')

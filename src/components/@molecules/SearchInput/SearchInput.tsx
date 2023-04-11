@@ -4,12 +4,12 @@
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { isAddress } from '@ethersproject/address'
-import { useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+import { useQueryClient } from 'wagmi'
 
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 

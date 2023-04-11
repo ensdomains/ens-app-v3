@@ -139,7 +139,8 @@ export const ProfileSnippet = ({
   const router = useRouterWithHistory()
   const { t } = useTranslation('common')
 
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showExtendNamesInput = prepareDataInput('ExtendNames')
 
   const beautifiedName = useBeautifiedName(name)
 
@@ -158,7 +159,7 @@ export const ProfileSnippet = ({
           prefix={<FastForwardSVG />}
           data-testid="extend-button"
           onClick={() => {
-            showDataInput(`extend-names-${name}`, 'ExtendNames', { names: [name], isSelf: canEdit })
+            showExtendNamesInput(`extend-names-${name}`, { names: [name], isSelf: canEdit })
           }}
         >
           {t('action.extend', { ns: 'common' })}

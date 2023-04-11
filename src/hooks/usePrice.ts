@@ -19,7 +19,10 @@ export const usePrice = (nameOrNames: string | string[], legacy?: boolean) => {
     isFetching,
   } = useQuery(
     ['usePrice', type, ...names],
-    async () => getPrice(nameOrNames, yearsToSeconds(1), legacy),
+    async () => {
+      console.log('getting price')
+      return getPrice(nameOrNames, yearsToSeconds(1), legacy)
+    },
     {
       enabled: !!(ready && nameOrNames && nameOrNames.length > 0),
     },
