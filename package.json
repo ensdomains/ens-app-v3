@@ -74,7 +74,7 @@
     "@ethersproject/transactions": "^5.7.0",
     "@ethersproject/units": "^5.7.0",
     "@ethersproject/web": "^5.7.1",
-    "@rainbow-me/rainbowkit": "0.12.1",
+    "@rainbow-me/rainbowkit": "0.12.7",
     "@sentry/nextjs": "^7.43.0",
     "@svgr/webpack": "^6.3.1",
     "@tanstack/query-persist-client-core": "4.14.5",
@@ -219,9 +219,9 @@
     },
     "patchedDependencies": {
       "react-confetti@6.1.0": "patches/react-confetti@6.1.0.patch",
-      "@rainbow-me/rainbowkit@0.12.1": "patches/@rainbow-me__rainbowkit@0.12.1.patch",
       "@synthetixio/synpress@3.5.1": "patches/@synthetixio__synpress@3.5.1.patch",
-      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch"
+      "next-dev-https@0.1.2": "patches/next-dev-https@0.1.2.patch",
+      "@rainbow-me/rainbowkit@0.12.7": "patches/@rainbow-me__rainbowkit@0.12.7.patch"
     }
   }
 }

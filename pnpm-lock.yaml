@@ -14,18 +14,18 @@ overrides:
   wagmi: 0.12.1
 
 patchedDependencies:
-  next-dev-https@0.1.2:
-    hash: q5l3x5627ujg3rak6l6v24c2cq
-    path: patches/next-dev-https@0.1.2.patch
-  react-confetti@6.1.0:
-    hash: bbuxkxhxbyez4jmqgptuoucij4
-    path: patches/react-confetti@6.1.0.patch
   '@synthetixio/synpress@3.5.1':
     hash: vmj4yqu63ybssl4vru7rjexy6m
     path: patches/@synthetixio__synpress@3.5.1.patch
-  '@rainbow-me/rainbowkit@0.12.1':
-    hash: z2ubwtguxrajavdusmmghl5kju
-    path: patches/@rainbow-me__rainbowkit@0.12.1.patch
+  next-dev-https@0.1.2:
+    hash: q5l3x5627ujg3rak6l6v24c2cq
+    path: patches/next-dev-https@0.1.2.patch
+  '@rainbow-me/rainbowkit@0.12.7':
+    hash: f2ny37ockjryajfu6zcn2nezee
+    path: patches/@rainbow-me__rainbowkit@0.12.7.patch
+  react-confetti@6.1.0:
+    hash: bbuxkxhxbyez4jmqgptuoucij4
+    path: patches/react-confetti@6.1.0.patch
 
 importers:
 
@@ -66,7 +66,7 @@ importers:
       '@nomiclabs/hardhat-ethers': npm:hardhat-deploy-ethers@0.3.0-beta.13
       '@openzeppelin/contracts': ^4.7.3
       '@openzeppelin/test-helpers': ^0.5.16
-      '@rainbow-me/rainbowkit': 0.12.1
+      '@rainbow-me/rainbowkit': 0.12.7
       '@sentry/nextjs': ^7.43.0
       '@svgr/webpack': ^6.3.1
       '@synthetixio/synpress': 3.5.1
@@ -202,7 +202,7 @@ importers:
       '@ethersproject/transactions': 5.7.0
       '@ethersproject/units': 5.7.0
       '@ethersproject/web': 5.7.1
-      '@rainbow-me/rainbowkit': 0.12.1_z2ubwtguxrajavdusmmghl5kju_vwgfuivoohbeopgq6vyae2p5py
+      '@rainbow-me/rainbowkit': 0.12.7_f2ny37ockjryajfu6zcn2nezee_vwgfuivoohbeopgq6vyae2p5py
       '@sentry/nextjs': 7.43.0_next@12.1.6+react@17.0.2
       '@svgr/webpack': 6.4.0
       '@tanstack/query-persist-client-core': 4.14.5
@@ -4995,8 +4995,8 @@ packages:
       - utf-8-validate
     dev: true
 
-  /@rainbow-me/rainbowkit/0.12.1_z2ubwtguxrajavdusmmghl5kju_vwgfuivoohbeopgq6vyae2p5py:
-    resolution: {integrity: sha512-zyKKYWBHRs+QUtxi85Lg6eOysy61nVSzDtSh5VRQ45X5j7AsoxGJE3Ddn7GwZvm0Jxt4XIIt79iDQdvkhTbb1Q==}
+  /@rainbow-me/rainbowkit/0.12.7_f2ny37ockjryajfu6zcn2nezee_vwgfuivoohbeopgq6vyae2p5py:
+    resolution: {integrity: sha512-TQGcClMC2reO2uOkIM6MrsQjKQ2gSM3Wo9g3WeSD8OtOfMbrngq3GQpKpHoQqBmvJIysMSnYUu0r9HZELhbKJA==}
     engines: {node: '>=12.4'}
     peerDependencies:
       ethers: '>=5.5.1'
