@@ -94,7 +94,7 @@
               "default": "在此添加 url",
               "ipfs": "ipfs://...",
               "skynet": "sia://...",
-              "arweave": "arweave://...",
+              "arweave": "ar://...",
               "swarm": "bzz://...",
               "onion": "onion3://..."
             }

@@ -23,7 +23,8 @@ const displayItems = (
 ): TransactionDisplayItem[] => {
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
   const recordOptions = profileRecordsToRecordOptions(submitRecords, clearRecords)
-
+  console.log('submitRecords', submitRecords)
+  console.log('recordOptions', recordOptions)
   const action = clearRecords
     ? {
         label: 'action',
@@ -75,6 +76,7 @@ const transaction = async (signer: JsonRpcSigner, ens: PublicENS, data: Data) =>
   const submitRecords = getProfileRecordsDiff(records, previousRecords)
   const recordOptions = profileRecordsToRecordOptions(submitRecords, clearRecords)
 
+  console.log('TRANSACTION', recordOptions)
   return ens.setRecords.populateTransaction(name, {
     records: recordOptions,
     resolverAddress: data.resolver,

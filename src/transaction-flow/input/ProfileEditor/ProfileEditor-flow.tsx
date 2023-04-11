@@ -161,6 +161,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const { profile, isWrapped, isLoading: profileLoading } = useNameDetails(name)
   const existingRecords = profileToProfileRecords(profile)
+
   const {
     records: profileRecords,
     register,
@@ -228,6 +229,8 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
+      console.log('records', records)
+      console.log('form', form)
       if (!profile?.resolverAddress || !resolverAddress) return
       if (status?.hasLatestResolver) {
         dispatch({

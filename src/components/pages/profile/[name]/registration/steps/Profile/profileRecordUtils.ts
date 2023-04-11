@@ -5,7 +5,11 @@ import supportedGeneralRecordKeys from '@app/constants/supportedGeneralRecordKey
 import supportedAccounts from '@app/constants/supportedSocialRecordKeys.json'
 import { DetailedProfile } from '@app/hooks/useNameDetails'
 import type { ProfileEditorForm } from '@app/hooks/useProfileEditorForm'
-import { contentHashToString, getProtocolTypeAndContentId } from '@app/utils/contenthash'
+import {
+  contentHashProtocolToContentHashProvider,
+  contentHashToString,
+  getProtocolTypeAndContentId,
+} from '@app/utils/contenthash'
 
 export const profileRecordsToRecordOptions = (
   profileRecords: ProfileRecord[] = [],
@@ -131,6 +135,7 @@ const sortProfileRecords = (recordA: ProfileRecord, recordB: ProfileRecord): num
 }
 
 export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecord[] => {
+  console.log('PROFILE', profile)
   const records = profile?.records || {}
   const texts: ProfileRecord[] =
     records.texts?.map(({ key, value }) => {
@@ -168,9 +173,10 @@ export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecor
 
   const contentHashStr = contentHashToString(records.contentHash)
   const { protocolType, contentId } = getProtocolTypeAndContentId(contentHashStr)
+  const protocolKey = contentHashProtocolToContentHashProvider(protocolType || undefined)
   const website: ProfileRecord[] =
-    protocolType && contentId
-      ? [{ key: protocolType, type: 'contenthash', group: 'website', value: contentHashStr }]
+    protocolKey && contentId
+      ? [{ key: protocolKey, type: 'contenthash', group: 'website', value: contentHashStr }]
       : []
 
   const abi: ProfileRecord[] = records.abi?.data
@@ -186,27 +192,33 @@ export const getProfileRecordsDiff = (
   previousRecords: ProfileRecord[] = [],
 ): ProfileRecord[] => {
   const updatedAndNewRecords = currentRecords
-    .map((record) => {
-      const previousRecord = previousRecords.find(
-        (r) => r.key === record.key && r.group === record.group,
+    .map((currentRecord) => {
+      const identicalRecord = previousRecords.find(
+        (previousRecord) =>
+          previousRecord.key === currentRecord.key && previousRecord.group === currentRecord.group,
       )
       // remove records that are empty
-      if (!record.value) return null
+      if (!currentRecord.value) return null
       // record is new
-      if (!previousRecord) return record
+      if (!identicalRecord) return currentRecord
       // record is updated
-      if (previousRecord.value !== record.value) return record
+      if (identicalRecord.value !== currentRecord.value) return currentRecord
       // remove records that have not changed
       return null
     })
     .filter((r) => !!r) as ProfileRecord[]
   const deletedRecords = previousRecords
-    //
-    .filter((record) => {
-      const index = currentRecords.findIndex(
-        (r) => r.key === record.key && r.group === record.group,
+    .filter((previousRecord) => {
+      // Can only have a single website, so check that no other website exists
+      if (previousRecord.group === 'website')
+        return currentRecords.findIndex((currentRecord) => currentRecord.group === 'website') === -1
+      return (
+        currentRecords.findIndex(
+          (currentRecord) =>
+            currentRecord.key === previousRecord.key &&
+            currentRecord.group === previousRecord.group,
+        ) === -1
       )
-      return index === -1
     })
     .map((r) => ({
       ...r,

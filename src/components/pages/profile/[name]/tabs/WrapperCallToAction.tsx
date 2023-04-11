@@ -102,9 +102,10 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
 
   const hasExistingRecords = useMemo(() => {
     if (profile?.records) {
-      if (profile.records.contentHash) return true
       if (Object.keys(profile.records.coinTypes || {}).length > 0) return true
       if (Object.keys(profile.records.texts || {}).length > 0) return true
+      if (profile.records.contentHash) return true
+      if (profile.records.abi) return true
     }
     return false
   }, [profile])

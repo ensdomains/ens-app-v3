@@ -10,6 +10,7 @@ const onion = 'onion://8zd335ae47dp89pd'
 const onion3 = 'onion3://jamie3vkiwibfiwucd6vxijskbhpjdyajmzeor4mc4i7yopvpo4p7cyd'
 const skylink = 'sia://CABAB_1Dt0FJsxqsu_J4TodNCbCGvtFf1Uys_3EgzOlTcg'
 const arweave = 'arweave://ys32Pt8uC7TrVxHdOLByOspfPEq2LO63wREHQIM9SJQ'
+const ar = 'ar://ys32Pt8uC7TrVxHdOLByOspfPEq2LO63wREHQIM9SJQ'
 
 const invalidate = (url: string) => `${url}invalid`
 
@@ -78,8 +79,16 @@ describe('validateContentHash', () => {
     expect(validateContentHash('arweave')(arweave)).toBe(true)
   })
 
+  it('should return true for valid ar url', () => {
+    expect(validateContentHash('arweave')(ar)).toBe(true)
+  })
+
   it('should fail for invalid arweave url', () => {
     expect(typeof validateContentHash('arweave')(invalidate(arweave))).toBe('string')
+  })
+
+  it('should faile for invalid ar url', () => {
+    expect(typeof validateContentHash('arweave')(invalidate(ar))).toBe('string')
   })
 
   it('should fail if the content hash is undefined', () => {
@@ -100,5 +109,6 @@ describe('validateContentHash', () => {
     expect(validateContentHash('all')(onion3)).toBe(true)
     expect(validateContentHash('all')(skylink)).toBe(true)
     expect(validateContentHash('all')(arweave)).toBe(true)
+    expect(validateContentHash('all')(ar)).toBe(true)
   })
 })
