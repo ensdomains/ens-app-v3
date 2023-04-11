@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query'
+import { useQuery } from 'wagmi'
 
 import { Profile } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
