@@ -135,7 +135,6 @@ const sortProfileRecords = (recordA: ProfileRecord, recordB: ProfileRecord): num
 }
 
 export const profileToProfileRecords = (profile?: DetailedProfile): ProfileRecord[] => {
-  console.log('PROFILE', profile)
   const records = profile?.records || {}
   const texts: ProfileRecord[] =
     records.texts?.map(({ key, value }) => {

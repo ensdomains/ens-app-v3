@@ -229,8 +229,6 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const handleCreateTransaction = useCallback(
     async (form: ProfileEditorForm) => {
       const records = profileEditorFormToProfileRecords(form)
-      console.log('records', records)
-      console.log('form', form)
       if (!profile?.resolverAddress || !resolverAddress) return
       if (status?.hasLatestResolver) {
         dispatch({
