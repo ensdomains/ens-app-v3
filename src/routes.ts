@@ -24,7 +24,7 @@ export type PublicRoute =
   | 'privacy'
   | 'oldApp'
   | 'IPFSApp'
-  | 'Feedback'
+  | 'feedBack'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -107,24 +107,8 @@ export const routes: RouteItemObj[] = [
     connected: false,
   },
   {
-    name: 'oldApp',
-    href: 'https://app.ens.domains',
-    label: 'navigation.oldApp',
-    disabled: false,
-    connected: false,
-    onlyDropdown: true,
-  },
-  {
-    name: 'IPFSApp',
-    href: 'https://app.ens.eth.limo/',
-    label: 'navigation.ipfsApp',
-    disabled: false,
-    connected: false,
-    onlyDropdown: true,
-  },
-  {
-    name: 'Feedback',
-    href: '',
+    name: 'feedBack',
+    href: '#',
     label: 'navigation.feedback',
     disabled: false,
     connected: false,
@@ -132,7 +116,7 @@ export const routes: RouteItemObj[] = [
   },
   {
     name: 'governance',
-    href: 'https://ens.domains/governance',
+    href: 'https://ensdao.org/',
     label: 'navigation.governance',
     disabled: false,
     connected: false,
@@ -171,6 +155,22 @@ export const routes: RouteItemObj[] = [
     label: 'navigation.privacy',
     disabled: false,
     connected: false,
+  },
+  {
+    name: 'oldApp',
+    href: 'https://app.ens.domains',
+    label: 'navigation.oldApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
+  },
+  {
+    name: 'IPFSApp',
+    href: 'https://app.ens.eth.limo/',
+    label: 'navigation.ipfsApp',
+    disabled: false,
+    connected: false,
+    onlyDropdown: true,
   },
 ]
 

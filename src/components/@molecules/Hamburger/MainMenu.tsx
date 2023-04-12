@@ -295,13 +295,9 @@ const MainMenu = ({
       </SettingsSection>
       <RoutesSection>
         {disconnectedRoutes.map((route) => {
-          if (route.name === 'Feedback') {
+          if (route.name === 'feedBack') {
             return (
-              <RouteItem
-                style={{ cursor: 'pointer' }}
-                onClick={handleOpenFeedbackForm}
-                key={route.href}
-              >
+              <RouteItem onClick={handleOpenFeedbackForm} href={route.href} key={route.name}>
                 <Typography>{t(route.label)}</Typography>
               </RouteItem>
             )
