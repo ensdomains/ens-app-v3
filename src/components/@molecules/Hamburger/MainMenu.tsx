@@ -245,10 +245,23 @@ const disconnectedRoutes = routes.filter(
   (route) => route.name !== 'search' && route.connected === false,
 )
 
-const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'language') => void }) => {
+const MainMenu = ({
+  setCurrentView,
+  setIsOpen,
+  setHasFeedbackForm,
+}: {
+  setCurrentView: (view: 'main' | 'language') => void
+  setIsOpen: (isOpen: boolean) => void
+  setHasFeedbackForm: (isOpen: boolean) => void
+}) => {
   const { t, i18n } = useTranslation('common')
   const language = i18n.resolvedLanguage || 'en'
   const { userConfig, setCurrency } = useUserConfig()
+
+  const handleOpenFeedbackForm = () => {
+    setHasFeedbackForm(true)
+    setIsOpen(false)
+  }
 
   return (
     <Container>
@@ -281,13 +294,22 @@ const MainMenu = ({ setCurrentView }: { setCurrentView: (view: 'main' | 'languag
         </SettingsItem>
       </SettingsSection>
       <RoutesSection>
-        {disconnectedRoutes.map((route) => (
-          <BaseLink href={route.href} passHref key={route.href}>
-            <RouteItem>
-              <Typography>{t(route.label)}</Typography>
-            </RouteItem>
-          </BaseLink>
-        ))}
+        {disconnectedRoutes.map((route) => {
+          if (route.name === 'Feedback') {
+            return (
+              <RouteItem onClick={handleOpenFeedbackForm} key={route.href}>
+                <Typography>{t(route.label)}</Typography>
+              </RouteItem>
+            )
+          }
+          return (
+            <BaseLink href={route.href} passHref key={route.href}>
+              <RouteItem>
+                <Typography>{t(route.label)}</Typography>
+              </RouteItem>
+            </BaseLink>
+          )
+        })}
       </RoutesSection>
       <SocialSection>
         <SocialIcon Icon={SocialTwitter} color="#5298FF" href="https://twitter.com/ensdomains" />

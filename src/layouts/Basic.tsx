@@ -4,7 +4,7 @@ import { useErrorBoundary, withErrorBoundary } from 'react-use-error-boundary'
 import styled, { css } from 'styled-components'
 import { useNetwork, useSwitchNetwork } from 'wagmi'
 
-import { Dialog, mq } from '@ensdomains/thorin'
+import { mq } from '@ensdomains/thorin'
 
 import FeedbackSVG from '@app/assets/Feedback.svg'
 import ErrorScreen from '@app/components/@atoms/ErrorScreen'
@@ -55,39 +55,6 @@ const BottomPlaceholder = styled.div(
         height: ${theme.space['12']};
       `,
     )}
-  `,
-)
-
-const StyledDialog = styled(Dialog)(
-  () => css`
-    height: 80vh;
-    z-index: 10001;
-
-    & > div {
-      padding: 0;
-    }
-
-    & > div > div {
-      height: 100%;
-      gap: 0;
-    }
-
-    ${mq.sm.min(css`
-      max-width: 70vw;
-      width: 60vw;
-      height: 90vh;
-
-      & > div {
-        max-width: 60vw;
-        width: 60vw;
-        height: 90vh;
-        padding: 0;
-      }
-      & > div > div {
-        max-width: 60vw;
-        height: 90vh;
-      }
-    `)}
   `,
 )
 
@@ -149,7 +116,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
   const { chain: currentChain } = useNetwork()
   const { switchNetwork } = useSwitchNetwork()
   const router = useRouter()
-  // const [hasFeedbackForm, setHasFeedbackForm] = useState(false)
   const [error] = useErrorBoundary()
 
   useEffect(() => {
@@ -176,19 +142,6 @@ export const Basic = withErrorBoundary(({ children }: { children: React.ReactNod
         {error ? <ErrorScreen errorType="application-error" /> : children}
       </ContentWrapper>
       <BottomPlaceholder />
-      {/* <StyledDialog
-        open={hasFeedbackForm}
-        variant="actionable"
-        onDismiss={() => setHasFeedbackForm(false)}
-      >
-        <iframe
-          title="Feedback"
-          width="100%"
-          height="100%"
-          style={{ borderRadius: 25 }}
-          src={`https://docs.google.com/forms/d/e/1FAIpQLSfAVFlV7LC2oCEBtZEK0uKpAU32-eYyY307Ji07wyGSFaZU8Q/viewform?usp=pp_url&entry.435573398=${router.asPath}`}
-        />
-      </StyledDialog> */}
     </Container>
   )
 })
