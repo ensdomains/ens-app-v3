@@ -1,11 +1,11 @@
+import { useMemo, useState } from 'react'
 import { useQuery } from 'wagmi'
 
-import { Profile } from '@app/types'
+import { Profile, ReturnedENS } from '@app/types'
 import { useEns } from '@app/utils/EnsProvider'
 import { contentHashToString } from '@app/utils/contenthash'
 
 import { useContractAddress } from './useContractAddress'
-import { useProfile } from './useProfile'
 
 const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean => {
   const areTextsEqual = Object.values(
@@ -43,31 +43,25 @@ const areRecordsEqual = (a: Profile['records'], b: Profile['records']): boolean 
 }
 
 type Options = {
-  skipCompare: boolean
+  skip?: boolean
+  skipCompare?: boolean
 }
 
-type Result = {
-  status?: {
-    hasResolver: boolean
-    hasLatestResolver: boolean
-    hasMigratedProfile: boolean
-    isMigratedProfileEqual: boolean
-  }
-  loading: boolean
-  isFetching: boolean
-}
-
-export const useResolverStatus = (name: string, skip?: boolean, options?: Options): Result => {
+export const useResolverStatus = (
+  name: string,
+  profile: ReturnedENS['getProfile'],
+  { skip, ...options }: Options = {},
+) => {
+  const [dummy, setDummy] = useState(false)
   const { ready, getProfile } = useEns()
 
   // Profile resolver address check
   const latestResolverAddress = useContractAddress('PublicResolver')
 
-  const { profile, loading: profileLoading, isFetching } = useProfile(name, !name || skip)
   const profileResolverAddress = profile?.resolverAddress
 
-  const { data: status, isLoading: loading } = useQuery(
-    ['resolverStatus', name, profileResolverAddress],
+  const { data, isLoading, isFetching } = useQuery(
+    ['resolverStatus', name, { profileResolverAddress, options }],
     async () => {
       if (!profileResolverAddress)
         return {
@@ -113,13 +107,14 @@ export const useResolverStatus = (name: string, skip?: boolean, options?: Option
       }
     },
     {
-      enabled: !profileLoading && ready,
+      enabled: ready && !skip,
+      onSettled: () => setDummy((d) => !d),
     },
   )
 
-  return {
-    status,
-    loading: profileLoading || loading,
-    isFetching,
-  }
+  // why does this work?
+  // idk, but it does
+  // (something something react lifecycle re-render logic, apparently this is fixed in react 18)
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  return useMemo(() => ({ data, isLoading, isFetching }), [dummy])
 }
