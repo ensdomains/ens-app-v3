@@ -63,7 +63,6 @@ export const useBasicName = (name?: string | null, normalised?: boolean) => {
       enabled: !!(ens.ready && name && isValid),
     },
   )
-
   const [ownerData, _wrapperData, expiryData, priceData] = batchData || []
 
   const wrapperData = useMemo(() => {
