@@ -9,7 +9,7 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
-import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
 import { nameParts } from '@app/utils/name'
 
 import { useNameDetails } from './useNameDetails'
@@ -71,7 +71,9 @@ export const useProfileActions = ({
           }),
         )
       }
-      if (!profile?.resolverAddress && profile?.address !== address) {
+      const hasInvalidResolver =
+        !profile?.resolverAddress || profile.resolverAddress === emptyAddress
+      if (hasInvalidResolver && profile?.address !== address) {
         setAsPrimaryTransactions.unshift(
           makeTransactionItem('updateResolver', {
             name,
