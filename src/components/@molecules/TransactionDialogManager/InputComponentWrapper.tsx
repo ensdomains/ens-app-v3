@@ -7,6 +7,8 @@ import { useQueryClient } from 'wagmi'
 
 import { Spinner } from '@ensdomains/thorin'
 
+import DynamicLoadingContext from './DynamicLoadingContext'
+
 const SpinnerOverlay = styled.div(
   () => css`
     z-index: 1;
@@ -26,11 +28,11 @@ const getModalCard = () => document.querySelector('.modal')
 const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
   const queryClient = useQueryClient()
 
-  const [isCached, _setIsCached] = useState(true)
-  const [isMounted, setIsMounted] = useState(false)
+  const [isCached, _setIsCached] = useState(false)
+  const [componentLoading, setComponentLoading] = useState(false)
   const [showSpinner, setShowSpinner] = useState(false)
 
-  const cachedRef = useRef(true)
+  const cachedRef = useRef(false)
 
   const setIsCached = (cached: boolean) => {
     _setIsCached(cached)
@@ -53,90 +55,101 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
   useEffect(() => {
     let staleCheckInterval: NodeJS.Timeout | undefined
     // this can be either the first cache subscription OR the stale check interval subscription
-    let unsubscribe: () => void | undefined
+    let unsubscribe: (() => void) | undefined
 
-    const cache = queryClient.getQueryCache()
+    // if the component is loading, don't do anything
+    if (!componentLoading) {
+      const cache = queryClient.getQueryCache()
 
-    const makeStaleCheckInterval = () => {
-      clearInterval(staleCheckInterval)
-      // poll for stale queries
-      staleCheckInterval = setInterval(() => {
-        // queries must be:
-        // refetch queries (under the input component)
-        // enabled
-        // active
-        // stale
-        // and have been updated more than staleTime ago (isStale() doesn't always work for some reason)
-        const staleQueries = cache
-          .getAll()
-          .filter(
-            (q) =>
-              q.meta?.isRefetchQuery &&
-              (q.options as any).enabled &&
-              q.isActive() &&
-              q.isStale() &&
-              Date.now() >
-                q.state.dataUpdatedAt + queryClient.getDefaultOptions().queries!.staleTime!,
-          )
-        // if there are stale queries, stop polling, set isCached to true, and subscribe to the cache
-        if (staleQueries.length > 0) {
-          clearInterval(staleCheckInterval)
-          setIsCached(true)
-          unsubscribe = cache.subscribe((query) => {
-            // only care about updated queries
-            if (query.type === 'updated') {
-              const staleQueryIndex = staleQueries.findIndex(
-                (q) => q?.queryHash === query.query.queryHash,
-              )
-              const queryState = query.query.state
-              if (
-                staleQueryIndex !== -1 &&
-                queryState.fetchStatus === 'idle' &&
-                queryState.status === 'success'
-              ) {
-                // if stale query exists in staleQueries and is updated, delete it from staleQueries
-                delete staleQueries[staleQueryIndex]
-                // if all stale queries have been updated, set isCached to false, unsubscribe from cache, and start polling again
-                if (staleQueries.every((q) => q === undefined)) {
-                  setIsCached(false)
-                  unsubscribe()
-                  makeStaleCheckInterval()
+      const makeStaleCheckInterval = () => {
+        clearInterval(staleCheckInterval)
+        // poll for stale queries
+        staleCheckInterval = setInterval(() => {
+          // queries must be:
+          // refetch queries (under the input component)
+          // enabled
+          // active
+          // stale
+          // and have been updated more than staleTime ago (isStale() doesn't always work for some reason)
+          const staleQueries = cache
+            .getAll()
+            .filter(
+              (q) =>
+                q.meta?.isRefetchQuery &&
+                (q.options as any).enabled &&
+                q.isActive() &&
+                q.isStale() &&
+                Date.now() >
+                  q.state.dataUpdatedAt + queryClient.getDefaultOptions().queries!.staleTime!,
+            )
+          // if there are stale queries, stop polling, set isCached to true, and subscribe to the cache
+          if (staleQueries.length > 0) {
+            clearInterval(staleCheckInterval)
+            setIsCached(true)
+            unsubscribe = cache.subscribe((query) => {
+              // only care about updated queries
+              if (query.type === 'updated') {
+                const staleQueryIndex = staleQueries.findIndex(
+                  (q) => q?.queryHash === query.query.queryHash,
+                )
+                const queryState = query.query.state
+                if (
+                  staleQueryIndex !== -1 &&
+                  queryState.fetchStatus === 'idle' &&
+                  queryState.status === 'success'
+                ) {
+                  // if stale query exists in staleQueries and is updated, delete it from staleQueries
+                  delete staleQueries[staleQueryIndex]
+                  // if all stale queries have been updated, set isCached to false, unsubscribe from cache, and start polling again
+                  if (staleQueries.every((q) => q === undefined)) {
+                    setIsCached(false)
+                    unsubscribe!()
+                    makeStaleCheckInterval()
+                  }
                 }
               }
-            }
-          })
-        }
-      }, 5000) // poll every 5 seconds
-    }
-
-    const fetchedKeys: string[] = []
-
-    unsubscribe = cache.subscribe((query) => {
-      // from the first cache update set isMounted to true
-      // this is used to prevent the spinner from showing up on top of the TransactionLoader spinner
-      setIsMounted(true)
-      // only care about updated queries
-      if (query.type === 'updated') {
-        const queryState = query.query.state
-        if (queryState.fetchStatus === 'idle' && queryState.status === 'success') {
-          // if query is updated, add it to fetchedKeys
-          fetchedKeys.push(query.query.queryHash)
-          // if all queries are updated, set isCached to false, unsubscribe from cache, and start polling for stale queries
-          const stillToFetch = cache.getAll().filter((q) => q.state.fetchStatus === 'fetching')
-          if (stillToFetch.length === 0) {
-            setIsCached(false)
-            unsubscribe()
-            makeStaleCheckInterval()
+            })
           }
-        }
+        }, 5000) // poll every 5 seconds
       }
-    })
+
+      const getFetchingQueries = () =>
+        cache.getAll().filter((q) => q.state.fetchStatus === 'fetching')
+      const fetchedKeys: string[] = []
+
+      // if there are any queries to fetch, run the cache subscription
+      if (getFetchingQueries().length !== 0) {
+        setIsCached(true)
+        unsubscribe = cache.subscribe((query) => {
+          // only care about updated queries
+          if (query.type === 'updated') {
+            const queryState = query.query.state
+            if (queryState.fetchStatus === 'idle' && queryState.status === 'success') {
+              // if query is updated, add it to fetchedKeys
+              fetchedKeys.push(query.query.queryHash)
+              // if all queries are updated, set isCached to false, unsubscribe from cache, and start polling for stale queries
+              const stillToFetch = getFetchingQueries()
+              console.log(stillToFetch)
+              if (stillToFetch.length === 0) {
+                setIsCached(false)
+                unsubscribe!()
+                makeStaleCheckInterval()
+              }
+            }
+          }
+        })
+      } else {
+        // if there are no queries, assume there is no initial data needed and start polling for stale queries
+        setIsCached(false)
+        makeStaleCheckInterval()
+      }
+    }
 
     return () => {
       clearInterval(staleCheckInterval)
-      unsubscribe()
+      unsubscribe?.()
     }
-  }, [queryClient])
+  }, [componentLoading, queryClient])
 
   // hook for detecting when the modal card is mounted
   // and adding the cacheable-component class to it
@@ -179,7 +192,7 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
   // uses isMounted to prevent the spinner from showing up on top of the TransactionLoader spinner
   useEffect(() => {
     let timeout: NodeJS.Timeout | undefined
-    if (isCached && isMounted) {
+    if (isCached && !componentLoading) {
       timeout = setTimeout(() => {
         setShowSpinner(true)
       }, 3000)
@@ -190,17 +203,17 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
     return () => {
       clearTimeout(timeout)
     }
-  }, [isMounted, isCached])
+  }, [componentLoading, isCached])
 
   return (
-    <>
+    <DynamicLoadingContext.Provider value={setComponentLoading}>
       {showSpinner && (
         <SpinnerOverlay className="transaction-loader">
           <Spinner size="large" color="accent" />
         </SpinnerOverlay>
       )}
       {children}
-    </>
+    </DynamicLoadingContext.Provider>
   )
 }
 
