@@ -39,16 +39,18 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
     cachedRef.current = cached
   }
 
-  if (!queryClient.getDefaultOptions().queries?.meta?.isRefetchQuery) {
-    queryClient.setDefaultOptions({
-      queries: {
-        meta: {
-          isRefetchQuery: true,
-        },
-        refetchOnMount: 'always',
-      },
-    })
-  }
+  useEffect(() => {
+    const cache = queryClient.getQueryCache()
+    const externalQueries = cache
+      .getAll()
+      .filter((q) => q.state.fetchStatus === 'fetching' && !q.getObserversCount())
+
+    if (externalQueries.length > 0) {
+      for (const eq of externalQueries) {
+        eq.setState({ ...eq.state, fetchStatus: 'idle' })
+      }
+    }
+  }, [queryClient])
 
   // hook for detecting when all queries have been refetched on mount generically
   // also handles stale queries
@@ -114,7 +116,7 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
       }
 
       const getFetchingQueries = () =>
-        cache.getAll().filter((q) => q.state.fetchStatus === 'fetching')
+        cache.getAll().filter((q) => q.state.fetchStatus === 'fetching' && q.meta?.isRefetchQuery)
       const fetchedKeys: string[] = []
 
       // if there are any queries to fetch, run the cache subscription

@@ -28,7 +28,7 @@ export const useProfile = (name: string, skip?: any) => {
           coinTypes: supportedAddresses,
           texts: [...supportedTexts, ...supportedProfileItems],
         },
-      }),
+      }).then((d) => d || null),
     {
       enabled: ready && !skip && name !== '',
     },

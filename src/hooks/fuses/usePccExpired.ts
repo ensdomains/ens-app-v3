@@ -10,7 +10,7 @@ export const usePccExpired = ({
   wrapperData,
 }: {
   ownerData: ReturnedENS['getOwner'] | null
-  wrapperData: ReturnedENS['getWrapperData']
+  wrapperData: ReturnedENS['getWrapperData'] | null
 }) => {
   const nameWrapperAddress = useContractAddress('NameWrapper')
   return useMemo(() => {
