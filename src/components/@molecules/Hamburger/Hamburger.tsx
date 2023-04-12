@@ -128,15 +128,14 @@ const SlideContainer = styled.div<{ $direction: 'backwards' | 'forwards' }>(
 
 const StyledDialog = styled(Dialog)(
   () => css`
-    height: 80vh;
     z-index: 10001;
 
     & > div {
       padding: 0;
+      gap: 0;
     }
 
     & > div > div {
-      height: 100%;
       gap: 0;
     }
 
@@ -148,12 +147,10 @@ const StyledDialog = styled(Dialog)(
       & > div {
         max-width: 60vw;
         width: 60vw;
-        height: 90vh;
         padding: 0;
       }
       & > div > div {
         max-width: 60vw;
-        height: 90vh;
       }
     `)}
   `,
