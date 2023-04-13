@@ -121,6 +121,14 @@ const LocationAndUrl = styled.div(
   `,
 )
 
+const getUserDefinedUrl = (url?: string) => {
+  if (!url) return undefined
+  if (url.startsWith('http://') || url.startsWith('https://')) {
+    return url
+  }
+  return ``
+}
+
 export const ProfileSnippet = ({
   name,
   getTextRecord,
@@ -145,7 +153,7 @@ export const ProfileSnippet = ({
 
   const banner = getTextRecord?.('banner')?.value
   const description = getTextRecord?.('description')?.value
-  const url = getTextRecord?.('url')?.value
+  const url = getUserDefinedUrl(getTextRecord?.('url')?.value)
   const location = getTextRecord?.('location')?.value
   const recordName = getTextRecord?.('name')?.value
 
@@ -221,7 +229,7 @@ export const ProfileSnippet = ({
               </Typography>
             )}
             {url && (
-              <a href={url} data-testid="profile-snippet-url">
+              <a href={url} data-testid="profile-snippet-url" target="_blank" rel="noreferrer">
                 <Typography color="blue" id="profile-url">
                   {url?.replace(/http(s?):\/\//g, '').replace(/\/$/g, '')}
                 </Typography>
