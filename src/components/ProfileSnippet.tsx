@@ -121,7 +121,7 @@ const LocationAndUrl = styled.div(
   `,
 )
 
-const getUserDefinedUrl = (url?: string) => {
+export const getUserDefinedUrl = (url?: string) => {
   if (!url) return undefined
   if (url.startsWith('http://') || url.startsWith('https://')) {
     return url
