@@ -13,11 +13,16 @@ describe('validateUrl', () => {
 
   it('should return an error message if url does not start with "http://" or "https://"', () => {
     const result = validateUrl('ftp://www.example.com')
-    expect(result).toBe("Error: URL must start with 'http://' or 'https://'")
+    expect(result).toBe("URL must start with 'http://' or 'https://'")
   })
 
-  it('should return an error message if url is empty', () => {
+  it('should return true if url is empty', () => {
     const result = validateUrl('')
-    expect(result).toBe("Error: URL must start with 'http://' or 'https://'")
+    expect(result).toBe(true)
+  })
+
+  it('should return an error message if url contains JavaScript code', () => {
+    const result = validateUrl('javascript:alert("hello")')
+    expect(result).toBe("URL must start with 'http://' or 'https://'")
   })
 })

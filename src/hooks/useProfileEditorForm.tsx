@@ -73,7 +73,6 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
   }
 
   const validatorForRecord = (record: ProfileRecord) => {
-    console.log('record: ', record)
     if (record.key === 'contentHash') return validateContentHash('all')
     if (record.key === 'url') return validateUrl
     if (record.group === 'address')
