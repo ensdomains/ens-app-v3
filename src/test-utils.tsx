@@ -19,6 +19,7 @@ jest.mock('wagmi', () => {
     useQuery,
     useQueryClient,
     useInfiniteQuery,
+    useMutation,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
   } = jest.requireActual('wagmi')
@@ -27,6 +28,7 @@ jest.mock('wagmi', () => {
     useQuery,
     useQueryClient,
     useInfiniteQuery,
+    useMutation,
     createClient: _createClient,
     WagmiConfig: _WagmiConfig,
     useAccount: jest.fn(),
@@ -36,6 +38,7 @@ jest.mock('wagmi', () => {
     useSignTypedData: jest.fn(),
     useBlockNumber: jest.fn(),
     useSendTransaction: jest.fn(),
+    configureChains: jest.fn(() => ({})),
   }
 })
 
@@ -87,6 +90,10 @@ const wagmiClient = createClient({
   ],
   provider: () => new EthersProviderWrapper(),
 })
+
+jest.mock('@app/utils/query', () => ({
+  wagmiClientWithRefetch: wagmiClient,
+}))
 
 const AllTheProviders: FC<{ children: React.ReactNode }> = ({ children }) => {
   return (
