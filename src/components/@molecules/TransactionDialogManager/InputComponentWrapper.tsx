@@ -84,6 +84,7 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
                 q.state.dataUpdatedAt + queryClient.getDefaultOptions().queries!.staleTime!
             )
           })
+          console.log('stale queries', staleQueries)
           // if there are stale queries, stop polling, set isCached to true, and subscribe to the cache
           if (staleQueries.length > 0) {
             clearInterval(staleCheckInterval)
@@ -131,6 +132,7 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
               fetchedKeys.push(query.query.queryHash)
               // if all queries are updated, set isCached to false, unsubscribe from cache, and start polling for stale queries
               const stillToFetch = getFetchingQueries()
+              console.log('still to fetch', stillToFetch)
               if (stillToFetch.length === 0) {
                 setIsCached(false)
                 unsubscribe!()
