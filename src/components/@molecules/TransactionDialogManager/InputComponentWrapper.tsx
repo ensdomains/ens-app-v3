@@ -84,7 +84,6 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
                 q.state.dataUpdatedAt + queryClient.getDefaultOptions().queries!.staleTime!
             )
           })
-          console.log('stale queries', staleQueries)
           // if there are stale queries, stop polling, set isCached to true, and subscribe to the cache
           if (staleQueries.length > 0) {
             clearInterval(staleCheckInterval)
@@ -99,7 +98,8 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
                 if (
                   staleQueryIndex !== -1 &&
                   queryState.fetchStatus === 'idle' &&
-                  queryState.status === 'success'
+                  // assume that errored queries are handled by the component
+                  (queryState.status === 'success' || queryState.status === 'error')
                 ) {
                   // if stale query exists in staleQueries and is updated, delete it from staleQueries
                   delete staleQueries[staleQueryIndex]
@@ -127,12 +127,15 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
           // only care about updated queries
           if (query.type === 'updated') {
             const queryState = query.query.state
-            if (queryState.fetchStatus === 'idle' && queryState.status === 'success') {
+            if (
+              queryState.fetchStatus === 'idle' &&
+              // assume that errored queries are handled by the component
+              (queryState.status === 'success' || queryState.status === 'error')
+            ) {
               // if query is updated, add it to fetchedKeys
               fetchedKeys.push(query.query.queryHash)
               // if all queries are updated, set isCached to false, unsubscribe from cache, and start polling for stale queries
               const stillToFetch = getFetchingQueries()
-              console.log('still to fetch', stillToFetch)
               if (stillToFetch.length === 0) {
                 setIsCached(false)
                 unsubscribe!()
