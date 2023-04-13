@@ -73,17 +73,17 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
           // active
           // stale
           // and have been updated more than staleTime ago (isStale() doesn't always work for some reason)
-          const staleQueries = cache
-            .getAll()
-            .filter(
-              (q) =>
-                q.meta?.isRefetchQuery &&
-                (q.options as any).enabled &&
-                q.isActive() &&
-                q.isStale() &&
-                Date.now() >
-                  q.state.dataUpdatedAt + queryClient.getDefaultOptions().queries!.staleTime!,
+          const staleQueries = cache.getAll().filter((q) => {
+            const { enabled } = q.options as any
+            return (
+              q.meta?.isRefetchQuery &&
+              (typeof enabled === 'undefined' || enabled) &&
+              q.isActive() &&
+              q.isStale() &&
+              Date.now() >
+                q.state.dataUpdatedAt + queryClient.getDefaultOptions().queries!.staleTime!
             )
+          })
           // if there are stale queries, stop polling, set isCached to true, and subscribe to the cache
           if (staleQueries.length > 0) {
             clearInterval(staleCheckInterval)
@@ -131,7 +131,6 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
               fetchedKeys.push(query.query.queryHash)
               // if all queries are updated, set isCached to false, unsubscribe from cache, and start polling for stale queries
               const stillToFetch = getFetchingQueries()
-              console.log(stillToFetch)
               if (stillToFetch.length === 0) {
                 setIsCached(false)
                 unsubscribe!()
@@ -210,7 +209,7 @@ const InputComponentWrapper = ({ children }: { children: ReactNode }) => {
   return (
     <DynamicLoadingContext.Provider value={setComponentLoading}>
       {showSpinner && (
-        <SpinnerOverlay className="transaction-loader">
+        <SpinnerOverlay data-testid="spinner-overlay" className="transaction-loader">
           <Spinner size="large" color="accent" />
         </SpinnerOverlay>
       )}
