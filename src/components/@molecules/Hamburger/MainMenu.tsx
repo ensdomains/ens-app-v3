@@ -295,7 +295,7 @@ const MainMenu = ({
       </SettingsSection>
       <RoutesSection>
         {disconnectedRoutes.map((route) => {
-          if (route.name === 'feedBack') {
+          if (route.name === 'feedback') {
             return (
               <RouteItem onClick={handleOpenFeedbackForm} href={route.href} key={route.name}>
                 <Typography>{t(route.label)}</Typography>

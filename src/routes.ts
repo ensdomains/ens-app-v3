@@ -23,8 +23,8 @@ export type PublicRoute =
   | 'terms'
   | 'privacy'
   | 'oldApp'
-  | 'IPFSApp'
-  | 'feedBack'
+  | 'ipfsApp'
+  | 'feedback'
 export type ConnectedRoute = 'names' | 'profile' | 'favourites' | 'settings'
 export type AnyRoute = PublicRoute | ConnectedRoute | 'unknown'
 
@@ -107,7 +107,7 @@ export const routes: RouteItemObj[] = [
     connected: false,
   },
   {
-    name: 'feedBack',
+    name: 'feedback',
     href: '#',
     label: 'navigation.feedback',
     disabled: false,
@@ -165,7 +165,7 @@ export const routes: RouteItemObj[] = [
     onlyDropdown: true,
   },
   {
-    name: 'IPFSApp',
+    name: 'ipfsApp',
     href: 'https://app.ens.eth.limo/',
     label: 'navigation.ipfsApp',
     disabled: false,
