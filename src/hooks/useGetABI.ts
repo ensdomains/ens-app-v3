@@ -23,6 +23,14 @@ export const useGetABI = (name: string, skip?: boolean) => {
           // getABI doesnt have support for UR revert so we catch here
           return { abi: '' }
         }
+        if (
+          e.errorName === 'Error' &&
+          (e.errorArgs[0] as string) ===
+            'UniversalResolver: Wildcard on non-extended resolvers is not supported'
+        ) {
+          // getABI doesn't have support for this error so we catch here
+          return { abi: '' }
+        }
         throw e
       }
     },
