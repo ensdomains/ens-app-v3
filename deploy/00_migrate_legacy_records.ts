@@ -14,7 +14,7 @@ const names = [
     records: {
       text: [
         { key: 'description', value: 'Hello2' },
-        { key: 'url', value: 'twitter.com' },
+        { key: 'url', value: 'https://twitter.com' },
         { key: 'blankrecord', value: '' },
         { key: 'email', value: 'fakeemail@fake.com' },
       ],
