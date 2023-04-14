@@ -38,9 +38,8 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
 
 const SearchResultsContainer = styled.div<{
   $state: TransitionState
-  $error?: boolean
 }>(
-  ({ theme, $state, $error }) => css`
+  ({ theme, $state }) => css`
     position: absolute;
     width: 100%;
     height: min-content;
@@ -49,8 +48,10 @@ const SearchResultsContainer = styled.div<{
     background-color: #f7f7f7;
     box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${$error ? theme.colors.red : theme.colors.border};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
+    &[data-error='true'] {
+      border-color: ${theme.colors.red};
+    }
 
     overflow: hidden;
 
@@ -437,8 +438,8 @@ export const SearchInput = ({
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
-      $error={!isValid && inputVal !== ''}
       data-testid="search-input-results"
+      data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
       {searchItems.map((item, index) => (
         <SearchResult

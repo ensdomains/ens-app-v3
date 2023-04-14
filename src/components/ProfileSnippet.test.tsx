@@ -1,3 +1,5 @@
+import '@app/test-utils'
+
 import { getUserDefinedUrl } from './ProfileSnippet'
 
 describe('getUserDefinedUrl', () => {
