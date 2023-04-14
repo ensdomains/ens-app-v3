@@ -66,6 +66,9 @@ export const useProfileActions = ({
   const profileActions = useMemo(() => {
     const actions: Action[] = []
     if (!address) return actions
+
+    console.log('resolverAddress', profile?.resolverAddress)
+    console.log('canResolverSetPrimaryName', canResolverSetPrimaryName)
     if ((selfAbilities.canEdit || profile?.address === address) && primaryName !== name) {
       const setAsPrimaryTransactions: GenericTransaction[] = [
         makeTransactionItem('setPrimaryName', {

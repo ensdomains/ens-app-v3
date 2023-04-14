@@ -163,6 +163,7 @@ describe('Set Primary Name from profile page', () => {
       cy.visit(
         '/[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
       )
+      cy.wait(10000)
 
       // Assert state
       cy.findByTestId('owner-profile-button-name.manager').should('have.text', 'manager0x3C4...293BC')
@@ -172,7 +173,6 @@ describe('Set Primary Name from profile page', () => {
         'unknown-label-input-0x5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04',
       ).type('aaa123xyz000')
       cy.findByTestId('unknown-labels-confirm').should('be.enabled').click()
-      cy.wait(10000)
 
       cy.location('pathname').should('equal', '/aaa123xyz000.unknown-labels.eth')
       cy.findByText('Set your primary name').should('be.visible')
