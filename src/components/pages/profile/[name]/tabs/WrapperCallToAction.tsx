@@ -102,9 +102,10 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
 
   const hasExistingRecords = useMemo(() => {
     if (profile?.records) {
-      if (profile.records.contentHash) return true
       if (Object.keys(profile.records.coinTypes || {}).length > 0) return true
       if (Object.keys(profile.records.texts || {}).length > 0) return true
+      if (profile.records.contentHash) return true
+      if (profile.records.abi) return true
     }
     return false
   }, [profile])
@@ -115,8 +116,9 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
     isSubdomain,
   )
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable, showDataInput } =
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, prepareDataInput } =
     useTransactionFlow()
+  const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleUpgradeClick = () => {
@@ -161,7 +163,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
       }
       const key = `wrapName-${name}`
       if (!checkIsDecrypted(name))
-        return showDataInput(key, 'UnknownLabels', {
+        return showUnknownLabelsInput(key, {
           name,
           key,
           transactionFlowItem,

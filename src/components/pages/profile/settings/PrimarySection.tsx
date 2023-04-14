@@ -131,8 +131,10 @@ const ActionsContainer = styled.div(({ theme }) => [
 export const PrimarySection = () => {
   const { t } = useTranslation('settings')
 
-  const { showDataInput } = useTransactionFlow()
   const { address } = useAccountSafely()
+  const { prepareDataInput } = useTransactionFlow()
+  const showSelectPrimaryNameInput = prepareDataInput('SelectPrimaryName')
+  const showResetPrimaryNameInput = prepareDataInput('ResetPrimaryName')
 
   const { name, loading: primaryLoading } = usePrimary(address!, !address)
   const { chain } = useNetwork()
@@ -141,18 +143,17 @@ export const PrimarySection = () => {
 
   const { truncatedName, isLoading: basicLoading } = useBasicName(name, true)
 
-  const isLoading = primaryLoading || basicLoading
+  const isLoading = basicLoading || primaryLoading
 
   const changePrimary = () => {
-    if (!address) return
-    showDataInput(`changePrimary-${address}`, 'SelectPrimaryName', {
-      address,
+    showSelectPrimaryNameInput(`changePrimary-${address}`, {
+      address: address!,
     })
   }
 
   const resetPrimary = () => {
     if (!address) return
-    showDataInput(`resetPrimary-${address}`, 'ResetPrimaryName', {
+    showResetPrimaryNameInput(`resetPrimary-${address}`, {
       name: name!,
       address,
     })

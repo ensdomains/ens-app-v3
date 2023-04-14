@@ -161,6 +161,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const { profile, isWrapped, isLoading: profileLoading } = useNameDetails(name)
   const existingRecords = profileToProfileRecords(profile)
+
   const {
     records: profileRecords,
     register,
@@ -216,10 +217,11 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
   const resolverAddress = useContractAddress('PublicResolver')
 
   const {
-    status,
-    loading: statusLoading,
+    data: status,
+    isLoading: statusLoading,
     isFetching,
-  } = useResolverStatus(name, profileLoading, {
+  } = useResolverStatus(name, profile, {
+    skip: profileLoading,
     skipCompare: resumable,
   })
 
@@ -283,7 +285,13 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
     if ((!statusLoading && !status?.hasLatestResolver) || resumable) {
       setView('warning')
     }
-  }, [status, statusLoading, resumable])
+  }, [statusLoading, status?.hasLatestResolver, resumable])
+
+  useEffect(() => {
+    if (!profileLoading && !profile?.isMigrated) {
+      setView('warning')
+    }
+  }, [profileLoading, profile?.isMigrated])
 
   const handleDeleteRecord = (record: ProfileRecord, index: number) => {
     removeRecordAtIndex(index)

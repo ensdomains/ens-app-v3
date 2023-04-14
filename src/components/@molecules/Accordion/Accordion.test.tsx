@@ -27,7 +27,7 @@ describe('Accordion', () => {
 
   it('should render', () => {
     mockUseTransactionFlow.mockReturnValue({
-      showDataInput: jest.fn(),
+      prepareDataInput: () => () => {},
     })
     render(<Accordion data={data} name="test" />)
   })
@@ -112,7 +112,7 @@ describe('Accordion', () => {
     const mockShowDataInput = jest.fn()
 
     mockUseTransactionFlow.mockReturnValue({
-      showDataInput: mockShowDataInput,
+      prepareDataInput: () => mockShowDataInput,
     })
     render(
       <Accordion
@@ -130,6 +130,6 @@ describe('Accordion', () => {
       />,
     )
     fireEvent.click(screen.getByText('action.edit'))
-    expect(mockShowDataInput).toHaveBeenCalledWith('burn-fuses-test', 'BurnFuses', { name: 'test' })
+    expect(mockShowDataInput).toHaveBeenCalledWith('burn-fuses-test', { name: 'test' })
   })
 })

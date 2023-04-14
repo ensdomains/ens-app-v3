@@ -1,4 +1,7 @@
 import dynamic from 'next/dynamic'
+import { useContext, useEffect } from 'react'
+
+import DynamicLoadingContext from '@app/components/@molecules/TransactionDialogManager/DynamicLoadingContext'
 
 import TransactionLoader from '../TransactionLoader'
 import type { Props as AdvancedEditorProps } from './AdvancedEditor/AdvancedEditor-flow'
@@ -24,7 +27,18 @@ const dynamicHelper = <P,>(name: string) =>
         /* webpackExclude: /\.test.tsx$/ */
         `./${name}-flow`
       ),
-    { loading: () => <TransactionLoader /> },
+    {
+      loading: () => {
+        /* eslint-disable react-hooks/rules-of-hooks */
+        const setLoading = useContext(DynamicLoadingContext)
+        useEffect(() => {
+          setLoading(true)
+          return () => setLoading(false)
+        }, [setLoading])
+        return <TransactionLoader isComponentLoader />
+        /* eslint-enable react-hooks/rules-of-hooks */
+      },
+    },
   )
 
 const EditResolver = dynamicHelper<EditResolverProps>('EditResolver/EditResolver')

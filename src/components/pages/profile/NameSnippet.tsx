@@ -141,8 +141,8 @@ export const NameDetailSnippet = ({
 }: {
   name: string
   expiryDate?: Date | null
-  ownerData: Exclude<ReturnedENS['getOwner'], undefined>
-  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined>
+  ownerData: Exclude<ReturnedENS['getOwner'], undefined | null>
+  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined | null>
   network: number
   showButton?: boolean
   dnsOwner?: string
@@ -214,8 +214,8 @@ export const NameSnippet = ({
   name: string
   network: number
   expiryDate?: Date | null
-  ownerData: Exclude<ReturnedENS['getOwner'], undefined>
-  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined>
+  ownerData: Exclude<ReturnedENS['getOwner'], undefined | null>
+  wrapperData: Exclude<ReturnedENS['getWrapperData'], undefined | null>
   showButton?: boolean
   dnsOwner?: string
   isCached: boolean

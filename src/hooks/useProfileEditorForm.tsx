@@ -10,6 +10,7 @@ import supportedAddresses from '@app/constants/supportedAddresses.json'
 import { AvatarEditorType } from '@app/types'
 import { validateCryptoAddress } from '@app/utils/validate'
 import { validateContentHash } from '@app/validators/validateContentHash'
+import { validateUrl } from '@app/validators/validateUrl'
 
 import { ContentHashProvider } from '../utils/contenthash'
 import { validateAbi } from '../validators/validateAbi'
@@ -73,6 +74,7 @@ export const useProfileEditorForm = (existingRecords: ProfileRecord[]) => {
 
   const validatorForRecord = (record: ProfileRecord) => {
     if (record.key === 'contentHash') return validateContentHash('all')
+    if (record.key === 'url') return validateUrl
     if (record.group === 'address')
       return (value?: string) => {
         const result = validateCryptoAddress(record.key)(value)

@@ -93,10 +93,12 @@ const MyNames = () => {
     setPage(1)
   }, [address])
 
-  const { showDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const { prepareDataInput, getTransactionFlowStage } = useTransactionFlow()
+  const showExtendNamesInput = prepareDataInput('ExtendNames')
+
   const handleExtend = () => {
     if (selectedNames.length === 0) return
-    showDataInput(`extend-names-${selectedNames.join('-')}`, 'ExtendNames', {
+    showExtendNamesInput(`extend-names-${selectedNames.join('-')}`, {
       names: selectedNames,
       isSelf,
     })

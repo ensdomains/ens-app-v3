@@ -79,7 +79,7 @@
             "default": "Voeg url hier toe",
             "ipfs": "ipfs://...",
             "skynet": "sia://...",
-            "arweave": "arweave://...",
+            "arweave": "ar://...",
             "swarm": "bzz://..."
           }
         },

@@ -79,6 +79,9 @@
     "registered": "已注册",
     "expires": "到期时间",
     "noExpiry": "无限期",
+    "expiry": "到期",
+    "parent": "父名称",
+    "noParent": "无父名称",
     "registrant": "注册人",
     "controller": "管理员",
     "dnsOwner": "DNS 所有者",
@@ -104,6 +107,17 @@
     "expiredInMonths_other": "{{count}} 个月前已过期",
     "expiredInYears_one": "{{count}} 年前已过期",
     "expiredInYears_other": "{{count}} 年前已过期",
+    "gracePeriod": {
+      "expiresInYears_one": "宽限期将在 {{count}} 年后到期",
+      "expiresInYears_other": "宽限期将在 {{count}} 年后到期",
+      "expiresInMonths_one": "宽限期将在 {{count}} 个月后到期",
+      "expiresInMonths_other": "宽限期将在 {{count}} 个月后到期",
+      "expiresInDays_one": "宽限期将在 {{count}} 天后到期",
+      "expiresInDays_other": "宽限期将在 {{count}} 天后到期",
+      "expiresInHours_one": "宽限期将在 {{count}} 个小时后到期",
+      "expiresInHours_other": "宽限期将在 {{count}} 个小时后到期",
+      "expiresInHours_zero": "宽限期将在 1 小时内到期"
+    },
     "extend": "续期",
     "send": "发送",
     "transfer": "转移",
@@ -183,7 +197,8 @@
         "CANNOT_SET_RESOLVER": "设置解析器",
         "CANNOT_SET_TTL": "设置 TTL",
         "CANNOT_TRANSFER": "转移该名称",
-        "CANNOT_BURN_FUSES": "更改权限"
+        "CANNOT_BURN_FUSES": "更改权限",
+        "CANNOT_APPROVE": "更改续期管理员"
       }
     },
     "itemLabel": {

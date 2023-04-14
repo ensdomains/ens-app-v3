@@ -1,0 +1,10 @@
+{
+  "not-found": {
+    "title": "未找到",
+    "message": "没有找到您要访问的页面。<br />您可以<HomeLink>搜索名称</HomeLink>，也可以<SupportLink>访问我们的支持页面</SupportLink>来获得帮助。"
+  },
+  "application-error": {
+    "title": "应用程序错误",
+    "message": "出现错误了。 <br /> 如何这个问题反复出现，请<SupportLink>访问我们的支持页面</SupportLink>来获得帮助。"
+  }
+}

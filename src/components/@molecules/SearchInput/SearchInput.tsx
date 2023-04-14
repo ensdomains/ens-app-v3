@@ -4,12 +4,12 @@
 
 /* eslint-disable jsx-a11y/interactive-supports-focus */
 import { isAddress } from '@ethersproject/address'
-import { useQueryClient } from '@tanstack/react-query'
 import debounce from 'lodash/debounce'
 import { RefObject, useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useTranslation } from 'react-i18next'
 import useTransition, { TransitionState } from 'react-transition-state'
 import styled, { css } from 'styled-components'
+import { useQueryClient } from 'wagmi'
 
 import { BackdropSurface, Portal, Typography, mq } from '@ensdomains/thorin'
 
@@ -38,9 +38,8 @@ const Container = styled.div<{ $size: 'medium' | 'extraLarge' }>(
 
 const SearchResultsContainer = styled.div<{
   $state: TransitionState
-  $error?: boolean
 }>(
-  ({ theme, $state, $error }) => css`
+  ({ theme, $state }) => css`
     position: absolute;
     width: 100%;
     height: min-content;
@@ -49,8 +48,10 @@ const SearchResultsContainer = styled.div<{
     background-color: #f7f7f7;
     box-shadow: 0 2px 12px ${theme.colors.border};
     border-radius: ${theme.radii.extraLarge};
-    border: ${theme.borderWidths.px} ${theme.borderStyles.solid}
-      ${$error ? theme.colors.red : theme.colors.border};
+    border: ${theme.borderWidths.px} ${theme.borderStyles.solid} ${theme.colors.border};
+    &[data-error='true'] {
+      border-color: ${theme.colors.red};
+    }
 
     overflow: hidden;
 
@@ -437,8 +438,8 @@ export const SearchInput = ({
       }}
       onMouseLeave={() => inputVal === '' && setSelected(-1)}
       $state={state}
-      $error={!isValid && inputVal !== ''}
       data-testid="search-input-results"
+      data-error={!isValid && !inputIsAddress && inputVal !== ''}
     >
       {searchItems.map((item, index) => (
         <SearchResult

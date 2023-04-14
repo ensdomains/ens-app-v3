@@ -1,6 +1,5 @@
-import { useQueryClient } from '@tanstack/react-query'
 import { createContext, useCallback, useContext, useEffect, useMemo, useRef } from 'react'
-import { useQuery } from 'wagmi'
+import { useQuery, useQueryClient } from 'wagmi'
 
 import { Transaction } from '@app/hooks/transactions/transactionStore'
 import { useRecentTransactions } from '@app/hooks/transactions/useRecentTransactions'

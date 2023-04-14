@@ -11,7 +11,7 @@ export const useSupportsTLD = (name = '') => {
     async () => {
       // if using "[root]", not really a valid TLD but return true for display purposes
       if (tld === '[root]') return true
-      return supportsTLD(tld)
+      return supportsTLD(tld).then((d) => d || null)
     },
     {
       enabled: ready && !!tld,
