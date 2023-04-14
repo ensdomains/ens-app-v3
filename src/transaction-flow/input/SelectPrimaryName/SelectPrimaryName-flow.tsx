@@ -2,7 +2,7 @@ import { useRef, useState } from 'react'
 import { UseFormReturn, useForm, useWatch } from 'react-hook-form'
 import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
-import { useQueryClient } from 'wagmi'
+import { useProvider, useQueryClient } from 'wagmi'
 
 import { isEncodedLabelhash, labelhash, saveName } from '@ensdomains/ensjs/utils/labels'
 import { Button, Dialog, Heading, Typography, mq } from '@ensdomains/thorin'
@@ -30,7 +30,8 @@ import { makeIntroItem } from '@app/transaction-flow/intro/index'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { TransactionDialogPassthrough } from '@app/transaction-flow/types'
 import { useEns } from '@app/utils/EnsProvider'
-import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
+import { canResolverSetPrimaryName } from '@app/utils/utils'
 
 const DEFAULT_PAGE_SIZE = 10
 
@@ -137,8 +138,10 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
   })
   const { handleSubmit, control, setValue } = form
 
+  const provider = useProvider()
   const chainId = useChainId()
   const lastestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
+
   const { ready: isEnsReady, getResolver } = useEns()
 
   const [view, setView] = useState<'main' | 'decrypt'>('main')
@@ -222,8 +225,8 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
     // If name does not have resolver, then three step transaction
     const isWrapped = !!data.name.fuses
     const resolver = await getResolver(validName)
-    const hasResolver = !!resolver && resolver !== emptyAddress
-    if (!hasResolver) {
+    const isResolverValid = await canResolverSetPrimaryName(resolver, isWrapped, provider, chainId)
+    if (!isResolverValid) {
       return dispatch({
         name: 'startFlow',
         key: 'ChangePrimaryName',
@@ -235,14 +238,15 @@ const SelectPrimaryName = ({ data: { address }, dispatch, onDismiss }: Props) =>
             }),
           },
           transactions: [
+            makeTransactionItem('migrateProfileWithEthAddress', {
+              name: validName,
+              ethAddress: address,
+              resolverAddress: lastestResolverAddress,
+            }),
             makeTransactionItem('updateResolver', {
               name: validName,
               contract: isWrapped ? 'nameWrapper' : 'registry',
               resolver: lastestResolverAddress,
-            }),
-            makeTransactionItem('updateEthAddress', {
-              address: address!,
-              name: validName,
             }),
             makeTransactionItem('setPrimaryName', {
               address,

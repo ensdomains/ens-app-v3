@@ -49,6 +49,35 @@ export const RESOLVER_ADDRESSES: ResolverAddresses = {
   ],
 }
 
+export const OWNED_PUBLIC_RESOLVERS: {
+  [key: string]: {
+    address: EthAddress
+    owner: string
+  }[]
+} = {
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1': [
+    {
+      address: '0x30200E0cb040F38E474E53EF437c95A1bE723b2B',
+      owner: '0x57f1887a8bf19b14fc0df6fd9b2acc9af147ea85',
+    },
+  ],
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '5': [
+    {
+      address: '0x7E7677AE71bf94f2442c074774c615481807B2f4',
+      owner: '0x57f1887a8BF19b14fC0dF6Fd9B2acc9Af147eA85',
+    },
+  ],
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  '1337': [
+    {
+      address: '0x0E801D84Fa97b50751Dbf25036d067dCf18858bF',
+      owner: '0x4A679253410272dd5232B3Ff7cF5dbB88f295319',
+    },
+  ],
+}
+
 export const NAMEWRAPPER_AWARE_RESOLVERS: ResolverAddresses = {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   '1': ['0x231b0Ee14048e9dCcD1d247744d114a4EB5E8E63'],

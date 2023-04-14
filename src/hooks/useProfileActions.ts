@@ -9,9 +9,10 @@ import { makeIntroItem } from '@app/transaction-flow/intro'
 import { makeTransactionItem } from '@app/transaction-flow/transaction'
 import { GenericTransaction, TransactionFlowItem } from '@app/transaction-flow/types'
 import { ReturnedENS } from '@app/types'
-import { RESOLVER_ADDRESSES, emptyAddress } from '@app/utils/constants'
+import { RESOLVER_ADDRESSES } from '@app/utils/constants'
 import { nameParts } from '@app/utils/name'
 
+import { useCanResolverSetPrimaryName } from './reverseRecord/useCanResolverSetPrimaryName'
 import { useNameDetails } from './useNameDetails'
 import { useSelfAbilities } from './useSelfAbilities'
 import { useSubnameAbilities } from './useSubnameAbilities'
@@ -48,10 +49,12 @@ export const useProfileActions = ({
 }: Props) => {
   const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
   const { createTransactionFlow, showDataInput } = useTransactionFlow()
+  const { t } = useTranslation('profile')
+
   const latestResolverAddress = RESOLVER_ADDRESSES[`${chainId}`]?.[0]
   const isWrapped = ownerData?.ownershipLevel === 'nameWrapper'
-
-  const { t } = useTranslation('profile')
+  const { canResolverSetPrimaryName, isLoading: isCanResolverSetPrimaryNameLoading } =
+    useCanResolverSetPrimaryName(profile?.resolverAddress, isWrapped)
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
@@ -63,7 +66,7 @@ export const useProfileActions = ({
           address: address!,
         }),
       ]
-      if (profile?.address !== address) {
+      if (profile?.address !== address && canResolverSetPrimaryName) {
         setAsPrimaryTransactions.unshift(
           makeTransactionItem('updateEthAddress', {
             address: address!,
@@ -71,10 +74,13 @@ export const useProfileActions = ({
           }),
         )
       }
-      const hasInvalidResolver =
-        !profile?.resolverAddress || profile.resolverAddress === emptyAddress
-      if (hasInvalidResolver && profile?.address !== address) {
+      if (profile?.address !== address && !canResolverSetPrimaryName) {
         setAsPrimaryTransactions.unshift(
+          makeTransactionItem('migrateProfileWithEthAddress', {
+            name,
+            ethAddress: address!,
+            resolverAddress: profile?.resolverAddress,
+          }),
           makeTransactionItem('updateResolver', {
             name,
             contract: isWrapped ? 'nameWrapper' : 'registry',
@@ -196,11 +202,12 @@ export const useProfileActions = ({
     isWrapped,
     latestResolverAddress,
     subnameAbilities.canReclaim,
+    canResolverSetPrimaryName,
     t,
   ])
 
   return {
     profileActions,
-    loading: primaryLoading,
+    loading: primaryLoading || isCanResolverSetPrimaryNameLoading,
   }
 }

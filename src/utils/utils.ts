@@ -2,7 +2,14 @@ import { toUtf8Bytes } from '@ethersproject/strings/lib/utf8'
 
 import { AllCurrentFuses } from '@ensdomains/ensjs/utils/fuses'
 
-import { NAMEWRAPPER_AWARE_RESOLVERS, networkName } from './constants'
+import validateResolver from '@app/validators/validateResolver'
+
+import {
+  NAMEWRAPPER_AWARE_RESOLVERS,
+  OWNED_PUBLIC_RESOLVERS,
+  emptyAddress,
+  networkName,
+} from './constants'
 
 export const getSupportedNetworkName = (networkId: number) =>
   networkName[`${networkId}` as keyof typeof networkName] || 'unknown'
@@ -131,4 +138,28 @@ export const canEditRecordsWhenWrappedCalc = (
 ) => {
   if (!isWrapped) return true
   return NAMEWRAPPER_AWARE_RESOLVERS[chainId]?.includes(resolverAddress)
+}
+
+export const isOwnedPublicResolver = (resolverAddress: string = '', chainId: number = 1) => {
+  return !!OWNED_PUBLIC_RESOLVERS[chainId]?.find(({ address }) => address === resolverAddress)
+}
+
+export const canResolverSetPrimaryName = async (
+  resolverAddress: string,
+  isWrapped: boolean,
+  provider: any,
+  chainId: number = 1,
+) => {
+  if (!resolverAddress || resolverAddress === emptyAddress) return false
+  const resolverErrors = await validateResolver(
+    ['IAddrResolver', 'IAddressResolver'],
+    resolverAddress,
+    provider,
+    {
+      networkId: chainId,
+    },
+  )
+  if (resolverErrors.length > 0) return false
+  if (isOwnedPublicResolver(resolverAddress, chainId)) return false
+  return canEditRecordsWhenWrappedCalc(isWrapped, resolverAddress, chainId)
 }
