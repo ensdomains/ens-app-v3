@@ -163,7 +163,6 @@ describe('Set Primary Name from profile page', () => {
       cy.visit(
         '/[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
       )
-      cy.wait(10000)
 
       // Assert state
       cy.findByTestId('owner-profile-button-name.manager').should('have.text', 'manager0x3C4...293BC')

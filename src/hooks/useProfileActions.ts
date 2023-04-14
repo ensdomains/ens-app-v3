@@ -57,6 +57,8 @@ export const useProfileActions = ({
 
   const { name: primaryName, loading: primaryLoading } = usePrimary(address || '')
 
+  const isLoading = primaryLoading || isCanResolverSetPrimaryNameLoading
+
   const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
   const showProfileEditorInput = prepareDataInput('ProfileEditor')
   const showDeleteEmancipatedSubnameWarningInput = prepareDataInput(
@@ -65,10 +67,8 @@ export const useProfileActions = ({
 
   const profileActions = useMemo(() => {
     const actions: Action[] = []
-    if (!address) return actions
+    if (!address || isLoading) return actions
 
-    console.log('resolverAddress', profile?.resolverAddress)
-    console.log('canResolverSetPrimaryName', canResolverSetPrimaryName)
     if ((selfAbilities.canEdit || profile?.address === address) && primaryName !== name) {
       const setAsPrimaryTransactions: GenericTransaction[] = [
         makeTransactionItem('setPrimaryName', {
@@ -214,10 +214,11 @@ export const useProfileActions = ({
     createTransactionFlow,
     showProfileEditorInput,
     showDeleteEmancipatedSubnameWarningInput,
+    isLoading,
   ])
 
   return {
     profileActions,
-    loading: primaryLoading || isCanResolverSetPrimaryNameLoading,
+    loading: isLoading,
   }
 }
