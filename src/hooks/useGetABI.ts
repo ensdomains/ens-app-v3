@@ -1,3 +1,4 @@
+import type { BigNumber } from '@ethersproject/bignumber'
 import { useMemo } from 'react'
 import { useQuery } from 'wagmi'
 
@@ -14,8 +15,24 @@ export const useGetABI = (name: string, skip?: boolean) => {
   } = useQuery(
     ['useGetABI', name],
     async () => {
-      const result = await getABI(name)
-      return result || { abi: '' }
+      try {
+        const result = await getABI(name)
+        return result || { abi: '' }
+      } catch (e: any) {
+        if (e.errorName === 'Panic' && (e.errorArgs[0] as BigNumber)._hex === '0x32') {
+          // getABI doesnt have support for UR revert so we catch here
+          return { abi: '' }
+        }
+        if (
+          e.errorName === 'Error' &&
+          (e.errorArgs[0] as string) ===
+            'UniversalResolver: Wildcard on non-extended resolvers is not supported'
+        ) {
+          // getABI doesn't have support for this error so we catch here
+          return { abi: '' }
+        }
+        throw e
+      }
     },
     {
       enabled: ready && !skip && name !== '',

@@ -115,8 +115,9 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
     isSubdomain,
   )
 
-  const { createTransactionFlow, resumeTransactionFlow, getResumable, showDataInput } =
+  const { createTransactionFlow, resumeTransactionFlow, getResumable, prepareDataInput } =
     useTransactionFlow()
+  const showUnknownLabelsInput = prepareDataInput('UnknownLabels')
   const resumable = getResumable(`wrapName-${name}`)
 
   const handleUpgradeClick = () => {
@@ -161,7 +162,7 @@ export const WrapperCallToAction = ({ name }: { name: string }) => {
       }
       const key = `wrapName-${name}`
       if (!checkIsDecrypted(name))
-        return showDataInput(key, 'UnknownLabels', {
+        return showUnknownLabelsInput(key, {
           name,
           key,
           transactionFlowItem,

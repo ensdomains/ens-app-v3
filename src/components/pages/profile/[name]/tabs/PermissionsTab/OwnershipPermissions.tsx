@@ -50,8 +50,10 @@ export const OwnershipPermissions = ({
   isUserOwner,
   isUserParentOwner,
 }: Props) => {
-  const { showDataInput } = useTransactionFlow()
   const { t } = useTranslation('profile')
+
+  const { prepareDataInput } = useTransactionFlow()
+  const showRevokePermissionsInput = prepareDataInput('RevokePermissions')
 
   const nameParts = name.split('.')
   const parentName = nameParts.slice(1).join('.')
@@ -80,7 +82,7 @@ export const OwnershipPermissions = ({
         'data-testid': 'button-revoke-pcc',
         onClick: () => {
           if (!parentExpiry) return
-          showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
+          showRevokePermissionsInput(`revoke-permissions-${name}`, {
             name,
             flowType: 'revoke-pcc',
             parentFuses: wrapperData.parent,
@@ -101,7 +103,7 @@ export const OwnershipPermissions = ({
         // eslint-disable-next-line @typescript-eslint/naming-convention
         'data-testid': 'button-revoke-change-fuses',
         onClick: () => {
-          showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
+          showRevokePermissionsInput(`revoke-permissions-${name}`, {
             name,
             flowType: 'revoke-change-fuses',
             parentFuses: wrapperData.parent,
@@ -118,7 +120,7 @@ export const OwnershipPermissions = ({
     editorStatus,
     parentState,
     t,
-    showDataInput,
+    showRevokePermissionsInput,
     name,
     wrapperData,
     expiry,

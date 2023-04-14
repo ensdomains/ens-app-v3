@@ -1,6 +1,5 @@
-import { useMutation } from '@tanstack/react-query'
 import { useState } from 'react'
-import { useQuery } from 'wagmi'
+import { useMutation, useQuery } from 'wagmi'
 
 import { labelhash } from '@ensdomains/ensjs/utils/labels'
 

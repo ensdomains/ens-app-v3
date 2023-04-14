@@ -46,11 +46,12 @@ export const ExpiryPermissions = ({
   parentExpiry,
 }: Props) => {
   const { t } = useTranslation('profile')
-  const { showDataInput } = useTransactionFlow()
+  const { prepareDataInput } = useTransactionFlow()
+  const showRevokePermissionsInput = prepareDataInput('RevokePermissions')
 
   const handleRevokePermissions = () => {
     if (!wrapperData || !parentExpiry) return
-    showDataInput(`revoke-permissions-${name}`, 'RevokePermissions', {
+    showRevokePermissionsInput(`revoke-permissions-${name}`, {
       name,
       owner: wrapperData.owner,
       parentFuses: wrapperData.parent,

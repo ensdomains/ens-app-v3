@@ -272,10 +272,10 @@ const Ownership = ({
 }) => {
   const { t } = useTranslation('profile')
 
-  const { showDataInput } = useTransactionFlow()
-
+  const { prepareDataInput } = useTransactionFlow()
+  const showSendNameInput = prepareDataInput('SendName')
   const handleSend = () => {
-    showDataInput(`send-name-${name}`, 'SendName', {
+    showSendNameInput(`send-name-${name}`, {
       name,
     })
   }

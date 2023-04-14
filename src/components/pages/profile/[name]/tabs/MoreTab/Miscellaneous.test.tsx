@@ -24,7 +24,7 @@ mockUseAccount.mockReturnValue({ address: '0x123' })
 mockUseChainName.mockReturnValue('mainnet')
 mockUseRegistrationData.mockReturnValue({ data: undefined })
 mockUseSelfAbilities.mockReturnValue({})
-mockUseTransactionFlow.mockReturnValue({})
+mockUseTransactionFlow.mockReturnValue({ prepareDataInput: () => () => {} })
 
 describe('Miscellaneous', () => {
   it('should not render anything if no expiryDate provided', () => {

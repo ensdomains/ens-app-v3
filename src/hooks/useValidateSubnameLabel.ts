@@ -20,7 +20,10 @@ export const useValidateSubnameLabel = (name: string, label: string, isWrapped: 
   const skipGetOwner = skipValidation || !validation.isValid || validation.labelCount > 1
   const { data: ownership, isLoading: isGetOwnerLoading } = useQuery(
     [validation.name, 'createSubname', 'getOwner'],
-    () => getOwner(`${validation.name}.${name}`),
+    async () => {
+      const owner = await getOwner(`${validation.name}.${name}`)
+      return owner || null
+    },
     {
       refetchOnMount: true,
       enabled: !skipGetOwner,
