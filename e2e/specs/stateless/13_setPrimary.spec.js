@@ -158,6 +158,7 @@ describe('Set Primary Name from profile page', () => {
     })
 
     it('should allow setting primary name from name with encrypted label', () => {
+      cy.clearLocalStorage()
       acceptMetamaskAccess(3)
       cy.visit(
         '/[5b3696f8cb09e643db6c96c1742cba8d54b434a77cf1bbada1531818c42fca04].unknown-labels.eth',
