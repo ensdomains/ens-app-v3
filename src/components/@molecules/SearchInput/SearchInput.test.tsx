@@ -1,4 +1,4 @@
-import { mockFunction, render, screen } from '@app/test-utils'
+import { mockFunction, render, screen, userEvent } from '@app/test-utils'
 
 import { act, waitFor } from '@testing-library/react'
 
@@ -205,5 +205,48 @@ describe('SearchInput', () => {
 
     expect(screen.getByText('test2.eth')).toBeInTheDocument()
     expect(screen.queryByText('test3.eth')).not.toBeInTheDocument()
+  })
+  it('should show address search as valid', async () => {
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+    render(<SearchInput />)
+    act(() => {
+      screen.getByTestId('search-input-box').focus()
+    })
+    await waitFor(() => screen.getByTestId('search-input-results'), {
+      timeout: 500,
+    })
+    await userEvent.type(
+      screen.getByTestId('search-input-box'),
+      '0xb6E040C9ECAaE172a89bD561c5F73e1C48d28cd9',
+    )
+    await waitFor(() =>
+      expect(screen.getByTestId('search-input-results')).toHaveAttribute('data-error', 'false'),
+    )
+  })
+  it('should show invalid search as invalid', async () => {
+    mockUseBreakpoint.mockReturnValue({
+      xs: true,
+      sm: true,
+      md: true,
+      lg: false,
+      xl: false,
+    })
+    render(<SearchInput />)
+    act(() => {
+      screen.getByTestId('search-input-box').focus()
+    })
+    await waitFor(() => screen.getByTestId('search-input-results'), {
+      timeout: 500,
+    })
+    await userEvent.type(screen.getByTestId('search-input-box'), '.')
+    await waitFor(() =>
+      expect(screen.getByTestId('search-input-results')).toHaveAttribute('data-error', 'true'),
+    )
   })
 })

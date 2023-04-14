@@ -341,7 +341,7 @@ export const SearchResult = ({
 
   if (type === 'address') {
     return (
-      <SearchItem data-testid="search-result-address" {...props}>
+      <SearchItem data-testid="search-result-address" $clickable {...props}>
         <AddressResultItem address={input} />
       </SearchItem>
     )
