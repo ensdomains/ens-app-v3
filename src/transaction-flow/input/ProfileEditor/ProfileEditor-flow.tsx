@@ -161,6 +161,7 @@ const ProfileEditor = ({ data = {}, transactions = [], dispatch, onDismiss }: Pr
 
   const { profile, isWrapped, isLoading: profileLoading } = useNameDetails(name)
   const existingRecords = profileToProfileRecords(profile)
+
   const {
     records: profileRecords,
     register,
