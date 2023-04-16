@@ -1,4 +1,5 @@
 import Head from 'next/head'
+import { useTranslation } from 'react-i18next'
 import styled, { css } from 'styled-components'
 
 import { mq } from '@ensdomains/thorin'
@@ -37,10 +38,11 @@ const StyledLeadingHeading = styled(LeadingHeading)(
 )
 
 export default function Page() {
+  const { t } = useTranslation()
   return (
     <>
       <Head>
-        <title>ENS - 404 Not Found</title>
+        <title>ENS - {t('notFound')}</title>
       </Head>
       <StyledLeadingHeading>
         <LogoAndLanguage>

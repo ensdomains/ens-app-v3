@@ -86,6 +86,7 @@
             "label": "Website",
             "items": {
               "ipfs": "IPFS",
+              "ipns": "IPNS",
               "swarm": "Swarm",
               "onion": "Onion",
               "skynet": "Skynet",
@@ -169,7 +170,9 @@
       "failedMoonpayTransaction": "Your moonpay transaction has failed. Please try again or choose the 'Ethereum' payment method.",
       "ethereum": "Ethereum",
       "processing": "Processing",
-      "poweredBy": "Powered by"
+      "poweredBy": "Powered by",
+      "moonpayModalHeader": "MoonPay Checkout",
+      "moonpayTestCard": "Test card details"
     },
     "transactions": {
       "heading": "Almost there",
@@ -178,6 +181,12 @@
       "wait": "Wait",
       "transactionFailed": "Transaction Failed",
       "transactionProgress": "Transaction in progress"
+    },
+    "cancelRegistration": {
+      "heading": "You will lose your transaction",
+      "contentOne": "Going back will reset your first transaction. If you go back you will need to complete the transaction again and pay the associated fees.",
+      "contentTwo": "Are you sure you want to continue?",
+      "footer": "Reset transaction and go back"
     }
   }
 }

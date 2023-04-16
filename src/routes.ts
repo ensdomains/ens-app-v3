@@ -268,13 +268,11 @@ export const getDestination = (url: UrlObject | string) => {
   if (href?.startsWith('/')) {
     //  for static html compilation
     href = `.${href}`
-    // <IPFSLink href="/about"> => <a class="jsx-2055897931" href="./about">About</a>
 
     // on the client
     //   document is unavailable when compiling on the server
     if (typeof document !== 'undefined') {
       href = new URL(href, document.baseURI).href
-      // => <a href="https://gateway.ipfs.io/ipfs/Qm<hash>/about">About</a>
     }
   }
   return makeURLString()

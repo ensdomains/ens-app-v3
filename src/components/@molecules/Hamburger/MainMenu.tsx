@@ -269,7 +269,7 @@ const MainMenu = ({
         <HoverableSettingsItem onClick={() => setCurrentView('language')}>
           <div>
             <LanguageSVG />
-            <Typography weight="bold">Language</Typography>
+            <Typography weight="bold">{t('navigation.language')}</Typography>
           </div>
           <div>
             <Typography>
@@ -281,7 +281,7 @@ const MainMenu = ({
         <SettingsItem>
           <div>
             <WalletSVG />
-            <Typography weight="bold">Currency</Typography>
+            <Typography weight="bold">{t('navigation.currency')}</Typography>
           </div>
           <div>
             <CurrencyToggle

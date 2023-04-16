@@ -243,7 +243,7 @@ const DNSOwnerSection = ({
       </Helper>
       <ButtonsContainer>
         <Button width="auto" colorStyle="accentSecondary" onClick={handleRefresh}>
-          Refresh DNS
+          {t('tabs.more.ownership.refreshDNS')}
         </Button>
         {!canSend && (
           <Button width="auto" onClick={handleSyncManager} loading={isLoading} disabled={!data}>

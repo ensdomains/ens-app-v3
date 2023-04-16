@@ -3,6 +3,8 @@
   "description": "Your identity across web3, one name for all your crypto addresses, and your decentralised website.",
   "loading": "Loading",
   "unsupportedNetwork": "Unsupported network",
+  "notFound": "404 Not Found",
+  "etherscan": "Etherscan",
   "action": {
     "cancel": "Cancel",
     "change": "Change",
@@ -39,7 +41,8 @@
     "finish": "Finish",
     "skip": "Skip",
     "changeNetwork": "Change Network",
-    "understand": "I understand"
+    "understand": "I understand",
+    "feedback": "Feedback"
   },
   "unit": {
     "years_one": "{{count}} year",
@@ -64,6 +67,8 @@
     "privacy": "Privacy Policy",
     "back": "Back",
     "oldApp": "Old ENS App",
+    "language": "Language",
+    "currency": "Currency",
     "ipfsApp": "IPFS ENS App",
     "feedback": "Feedback",
     "syncMessage": "Syncing with the network. Changes from your transaction may not be visible yet."
@@ -300,5 +305,9 @@
     "add": "Add",
     "placeholder": "Select an option",
     "empty": "No options found"
+  },
+  "testnetFaucet": {
+    "explanation": "Each address on goerli can claim {{ amount }}ETH to test out the ENS manager app, as well as all the new contracts.",
+    "note": "It may take a few minutes to show up in your wallet."
   }
 }
